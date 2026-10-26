@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { getLogger, setGlobalLogger, type Logger, } from "../logger";
 import { dispatchPluginRoute, registry, unloadAllPlugins, } from "./loader";
 
 beforeEach(() => {
@@ -65,6 +66,82 @@ describe("dispatchPluginRoute", () => {
     },);
 
     expect(await res?.text(),).toBe("second",);
+  });
+});
+
+// BUG-fix-plugins-define-plugin-route-matching-semantics: matching semantics
+// are exact-normalized-path only — :param paths are rejected at registration,
+// trailing slashes collapse on both sides, and duplicate method+path
+// registrations warn instead of silently pinning dispatch order.
+describe("plugin route matching semantics", () => {
+  test("rejects :param paths at registration with a clear error", () => {
+    expect(() =>
+      registry.addRoutes("demo", [
+        { method: "GET", path: "/plugin/:id", handler: async () => new Response("no",), },
+      ],),
+    ).toThrow(/:param segment/);
+
+    // The rejected def never lands in the registry.
+    expect(registry.getPluginRoutes("demo",).map((r,) => r.path,),).not.toContain("/plugin/:id",);
+  });
+
+  test("a :param request path can never match a plugin route", async () => {
+    registry.addRoutes("demo", [
+      { method: "GET", path: "/plugin/list", handler: async () => new Response("ok",), },
+    ],);
+
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://localhost/plugin/123",), },),
+    ).toBeNull();
+  });
+
+  test("trailing slashes normalize on registration and dispatch", async () => {
+    registry.addRoutes("demo", [
+      { method: "GET", path: "/plugin/widget/", handler: async () => new Response("w",), },
+    ],);
+
+    // Registration stored the normalized path (one canonical key).
+    expect(registry.getPluginRoutes("demo",).map((r,) => r.path,),).toEqual(["/plugin/widget",],);
+
+    const bare = await dispatchPluginRoute({ request: new Request("http://localhost/plugin/widget",), },);
+    const trailing = await dispatchPluginRoute({ request: new Request("http://localhost/plugin/widget/",), },);
+    expect(await bare?.text(),).toBe("w",);
+    expect(await trailing?.text(),).toBe("w",);
+  });
+
+  test("duplicate method+path registration warns loudly", () => {
+    const warnings: string[] = [];
+    const stub: Logger = {
+      trace() {},
+      debug() {},
+      info() {},
+      warn(message,) { warnings.push(String(message,),); },
+      error() {},
+      fatal() {},
+      child() {
+        return stub;
+      },
+      addTransport() {},
+      setBindings() {},
+      setLevel() {},
+      async flush() {},
+    };
+
+    registry.addRoutes("demo", [
+      { method: "GET", path: "/dup", handler: async () => new Response("first",), },
+    ],);
+
+    const previous = getLogger();
+    setGlobalLogger(stub,);
+    try {
+      registry.addRoutes("demo", [
+        { method: "GET", path: "/dup", handler: async () => new Response("second",), },
+      ],);
+    } finally {
+      setGlobalLogger(previous,);
+    }
+
+    expect(warnings.some((w,) => w.includes("GET /dup") && w.includes("already registered",),),).toBe(true,);
   });
 });
 

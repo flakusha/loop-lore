@@ -37,7 +37,7 @@ const AUDIT_ACTIONS = [
  * @param prefix
  * @returns Elysia plugin serving the memory audit endpoint.
  */
-export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api",): Elysia {
+export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api/v1",): Elysia {
   const { basePath, parentParam, } = entityPaths({
     parentPrefix: "actors",
     parentParam: "actorId",

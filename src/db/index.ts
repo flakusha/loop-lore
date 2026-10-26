@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { Database, } from "bun:sqlite";
+import { Database, type SQLQueryBindings, } from "bun:sqlite";
 import { Kysely, SqliteDialect, } from "kysely";
 import { mkdirSync, } from "node:fs";
 import path from "node:path";
@@ -21,8 +21,18 @@ interface BunSqliteWrapper {
 }
 
 // Wraps bun:sqlite to match the interface Kysely's SqliteDialect expects.
-// The `any` casts are required because Bun's SQLite accepts a wide union of binding types
-// that can't be expressed in Kysely's `readonly unknown[]` parameter signature.
+/**
+ * Kysely hands bindings as `readonly unknown[]`; bun:sqlite accepts only its
+ * `SQLQueryBindings` union, which `unknown` cannot be narrowed to structurally.
+ * One named boundary conversion, instead of an `as any[]` cast per call site
+ * (BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-).
+ * @param parameters - Bindings as Kysely supplies them
+ * @returns The same bindings typed for bun:sqlite
+ */
+function asBindings(parameters: readonly unknown[],): SQLQueryBindings[] {
+  return parameters as SQLQueryBindings[];
+}
+
 /**
  * @param database
  * @returns Database
@@ -55,11 +65,11 @@ export function createSqliteDialect(database: Database,): SqliteDialect {
           return statement.columnNames.length > 0;
         },
 
-        all: (parameters: readonly unknown[],) => statement.all(...(parameters as any[]),),
+        all: (parameters: readonly unknown[],) => statement.all(...asBindings(parameters,),),
 
-        run: (parameters: readonly unknown[],) => statement.run(...(parameters as any[]),),
+        run: (parameters: readonly unknown[],) => statement.run(...asBindings(parameters,),),
         iterate: function*(parameters: readonly unknown[],) {
-          yield* statement.all(...(parameters as any[]),);
+          yield* statement.all(...asBindings(parameters,),);
         },
       };
     },

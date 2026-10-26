@@ -74,9 +74,8 @@ describe("sdcppGenerate", () => {
         },);
 
         expect(results,).toHaveLength(2,);
-        for (const [i, result,] of results.entries()) {
-          expect(result.filename,).toMatch(new RegExp(`^sdserver-[0-9a-f]{8}-${i}\\.png$`,),);
-          expect(result.url,).toBe(`/api/assets/${result.id}/raw`,);
+        for (const result of results) {
+          expect(result.b64,).toBeTypeOf("string",);
           expect(result.mimeType,).toBe("image/png",);
         }
       },
@@ -122,18 +121,23 @@ describe("sdcppGenerate", () => {
     );
   });
 
-  test("throws when polling fails", async () => {
+  test("throws after repeated consecutive poll failures, not the first", async () => {
+    let polls = 0;
     await withMockFetch(
-      (_url, init,) =>
-        init?.method === "POST"
-          ? Response.json({ id: "job-1", },)
-          : Response.json({ error: "poll boom", }, { status: 503, statusText: "Service Unavailable", },),
+      (_url, init,) => {
+        if (init?.method === "POST") { return Response.json({ id: "job-1", },); }
+        polls += 1;
+        return Response.json({ error: "poll boom", }, { status: 503, statusText: "Service Unavailable", },);
+      },
       async () => {
         await expect(sdcppGenerate(makeHost(), "txt2img", {},),).rejects.toThrow(
-          "sd.cpp polling failed: HTTP 503: Service Unavailable",
+          /sd\.cpp polling failed 3x in a row: HTTP 503/,
         );
       },
     );
+
+    // Two transient polls are tolerated; the third consecutive failure aborts.
+    expect(polls,).toBe(3,);
   });
 
   test("throws when the job completes without images", async () => {
@@ -234,9 +238,8 @@ describe("sdapiGenerate", () => {
       async () => {
         const results = await sdapiGenerate(makeHost(ImageApiFamily.Sdapi,), "txt2img", { prompt: "x", },);
         expect(results,).toHaveLength(3,);
-        for (const [i, result,] of results.entries()) {
-          expect(result.filename,).toMatch(new RegExp(`^sdapi-[0-9a-f]{8}-${i}\\.png$`,),);
-          expect(result.url,).toBe(`/api/assets/${result.id}/raw`,);
+        for (const result of results) {
+          expect(result.b64,).toBeTypeOf("string",);
           expect(result.mimeType,).toBe("image/png",);
         }
       },
@@ -270,8 +273,7 @@ describe("openaiGenerate", () => {
         );
 
         expect(results,).toHaveLength(1,);
-        expect(results[0]!.filename,).toMatch(/^openai-[0-9a-f]{8}-0\.png$/,);
-        expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
+        expect(results[0]!.b64,).toBe("b64a",);
         expect(results[0]!.mimeType,).toBe("image/png",);
       },
     );

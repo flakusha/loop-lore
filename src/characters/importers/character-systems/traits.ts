@@ -5,7 +5,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
-import { jsonParseOr, safeJsonStringify, } from "../../../utils";
+import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
 import type { CharacterSystemsExport, } from "../../exporters/character-systems";
 import { TraitsService, } from "../../services/traits-service";
 import { errMsg, } from "../../shared/character-systems-utils";
@@ -55,7 +55,7 @@ async function importLocationTraits(
     const locationId = trait.locationId as string | undefined;
     const name = trait.name as string | undefined;
     if (!locationId || !name) {
-      result.errors.push(`Skipped location trait without locationId/name: ${safeJsonStringify(trait,)}`,);
+      result.errors.push(`Skipped location trait without locationId/name: ${jsonStringifyOr(trait,)}`,);
       continue;
     }
 

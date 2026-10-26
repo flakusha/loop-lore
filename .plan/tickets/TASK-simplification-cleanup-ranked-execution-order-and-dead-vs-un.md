@@ -4,6 +4,7 @@
 # TASK: Simplification cleanup ranked execution order and dead-vs-unwired decisions
 
 **Status:** Done
+**Status Note:** [2026-10-26] EVIDENCE SOURCE GONE: this ticket cites `.tmp/simplification/*.md` (platform.md, targets.md, verification.md, baseline.md), deleted by a .tmp cleanup on 2026-10-12 and never git-tracked (verified unrecoverable — see this ticket's own record and issue dd8e139). Every count, finding number, or ranking taken from those citations is UNSOURCED; re-derive against the current tree before acting.
 
 > The dead-vs-unwired call has been made per module in `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep` (DELETE / WIRE / FP / owned-elsewhere table). Items whose modules were deleted here are closed; items still on the list have a named owning ticket or epic.
 **Priority:** medium

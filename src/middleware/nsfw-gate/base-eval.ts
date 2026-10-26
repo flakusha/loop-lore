@@ -10,8 +10,10 @@
  * users in two queries total instead of 2N.
  */
 import type { Kysely, } from "kysely";
+import { getRuntimeConfig, } from "../../age-gate/controller";
+import { getStatus, } from "../../age-gate/service";
 import type { DB, } from "../../db";
-import { calculateAge, } from "./constants";
+import { calculateAge, } from "../../utils/date";
 
 /**
  * Raw per-user inputs for the base NSFW decision. Loaded in batch by
@@ -31,9 +33,14 @@ export interface GateInputs {
  * Pure base-gate decision over pre-loaded inputs. Single source of truth —
  * `canAccessNsfw` and the batched participant check both delegate here, so
  * single and multi-user paths cannot drift.
- * @param gateConfig `allowNsfw` toggle and `nsfwMinAge` threshold.
+ *
+ * The AGE verdict delegates to the `ageGate.*` runtime config via
+ * {@link getStatus} — the same function `checkAgeGate` (chats/create.ts)
+ * uses — so both gates return the same verdict for any given user and the
+ * `nsfw.nsfwMinAge` key no longer influences age passing
+ * (BUG-two-gates-age-gate-keys).
+ * @param gateConfig NSFW feature toggle.
  * @param gateConfig.allowNsfw
- * @param gateConfig.nsfwMinAge
  * @param inputs Pre-loaded user/prefs row, or undefined when the user is unknown.
  * @param opts `ignoreModeration` skips the banned/blocked denial — server-side
  *   backends (e.g. own-settings provisioning) that read, rather than enforce,
@@ -42,7 +49,7 @@ export interface GateInputs {
  * @returns {{ allowed: boolean; reason?: string | undefined; }}
  */
 export function evaluateNsfwBase(
-  gateConfig: { allowNsfw: boolean; nsfwMinAge: number },
+  gateConfig: { allowNsfw: boolean },
   inputs: GateInputs | undefined,
   opts?: { ignoreModeration?: boolean },
 ): { allowed: boolean; reason?: string } {
@@ -64,15 +71,24 @@ export function evaluateNsfwBase(
     }
   }
 
-  if (!inputs.ageGateAcceptedAt) {
-    return { allowed: false, reason: "age_gate_not_accepted", };
-  }
+  // Age component: shared verdict function with checkAgeGate. When the age
+  // gate is disabled/mode none, getStatus passes — NSFW enforcement of the
+  // age component follows the ageGate.* section, not nsfw.nsfwMinAge.
+  const ageGate = getRuntimeConfig();
+  const status = getStatus(ageGate, {
+    birth_date: inputs.birthDate,
+    age_gate_accepted_at: inputs.ageGateAcceptedAt,
+  },);
 
-  if (inputs.birthDate) {
-    const age = calculateAge(inputs.birthDate,);
-    if (age === null || age < gateConfig.nsfwMinAge) {
-      return { allowed: false, reason: age === null ? "invalid_birth_date" : `underage:${age}`, };
+  if (!status.hasPassed) {
+    // Reason is diagnostic only — the verdict itself comes from getStatus.
+    if (!inputs.ageGateAcceptedAt) {
+      return { allowed: false, reason: "age_gate_not_accepted", };
     }
+
+    const age = inputs.birthDate ? calculateAge(inputs.birthDate,) : null;
+    const reason = age !== null && age < ageGate.minimumAge ? `underage:${age}` : "age_gate_not_passed";
+    return { allowed: false, reason, };
   }
 
   return { allowed: true, };
@@ -137,7 +153,7 @@ export async function loadGateInputs(
  */
 export async function findBlockedParticipant(
   database: Kysely<DB>,
-  gateConfig: { allowNsfw: boolean; nsfwMinAge: number },
+  gateConfig: { allowNsfw: boolean },
   participantUserIds: string[],
   excludeUserId?: string,
 ): Promise<{ userId: string; reason: string } | null> {

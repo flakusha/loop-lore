@@ -45,6 +45,7 @@
  * loop against a real race, switch to child_process.fork workers — out of
  * scope for this audit fix.
  */
+import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { MessageContentFormat, MessageContentType, MessageRole, MessageStatus, } from "../../db/enums";
@@ -63,12 +64,13 @@ import {
 
 describe("swipe-race-insert — concurrent insert + retry", () => {
   let db: Kysely<DB>;
+  let sqlite: Database;
   let chatId: string;
   let actorId: string;
   let parentMessageId: string;
 
   beforeAll(async () => {
-    ({ db, } = await createTestDb());
+    ({ db, sqlite, } = await createTestDb());
 
     const userId = uid();
     await insertUsers(db, `user-${userId}`, "Test User", { id: userId, } as never,);
@@ -141,10 +143,7 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
     expect(result.swipeIndex,).toBeNull();
   });
 
-  test("exhausted retry throws SwipeInsertExhaustedError", async () => {
-    // Force a collision by pre-inserting a row with swipe_index = MAX_INSEMPTS
-    // so each retry attempt also collides. We use a stub id and let the
-    // helper exhaust the loop on the unique index.
+  test("swipe-index unique violations retry, then exhaust with SwipeInsertExhaustedError", async () => {
     const forcedChat = uid();
     await insertChats(db, "Exhaust Test Chat", actorId, { id: forcedChat, } as never,);
     const forcedParent = uid();
@@ -153,59 +152,38 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
       swipe_index: 0,
     } as never,);
 
-    // Pre-fill swipe_indexes 1..MAX to collide every retry attempt.
-    for (let i = 1; i <= 8; i++) {
-      await db
-        .insertInto("messages",)
-        .values({
-          id: uid(),
-          chat_id: forcedChat,
-          actor_id: actorId,
-          parent_id: forcedParent,
-          role: MessageRole.User,
-          content: "blocked",
-          content_format: MessageContentFormat.Markdown,
-          content_type: MessageContentType.Text,
-          content_encoding: "utf8" as ContentEncoding,
-          status: MessageStatus.Confirmed,
-          visibility: "visible",
-          swipe_index: i,
-        },)
-        .execute();
-    }
+    // Deterministic race: every INSERT that carries a swipe_index is rejected
+    // with the exact unique-violation text the retry gate classifies
+    // (isSwipeIndexUniqueViolation), so the helper burns all
+    // MAX_INSERT_ATTEMPTS and gives up with SwipeInsertExhaustedError.
+    sqlite.run(`
+      CREATE TRIGGER force_swipe_race BEFORE INSERT ON messages
+      WHEN NEW.swipe_index IS NOT NULL
+      BEGIN
+        SELECT RAISE(ABORT, 'UNIQUE constraint failed: messages.chat_id, messages.parent_id, messages.swipe_index');
+      END
+    `,);
 
-    // Now attempt an insert at swipe_index 9 — should also collide
-    // because the helper computes MAX then +1, then retries incrementing
-    // attempt counter only via the catch; since the underlying unique
-    // index covers (chat_id, parent_id, swipe_index) but a NEW swipe_index
-    // 9 is valid (no row at 9), this case actually succeeds. Adjust:
-    // fill 9..16 too.
-    for (let i = 9; i <= 16; i++) {
-      await db
-        .insertInto("messages",)
-        .values({
-          id: uid(),
-          chat_id: forcedChat,
-          actor_id: actorId,
-          parent_id: forcedParent,
-          role: MessageRole.User,
-          content: "blocked",
-          content_format: MessageContentFormat.Markdown,
-          content_type: MessageContentType.Text,
-          content_encoding: "utf8" as ContentEncoding,
-          status: MessageStatus.Confirmed,
-          visibility: "visible",
-          swipe_index: i,
-        },)
-        .execute();
+    try {
+      await expect(
+        insertUserMessageWithRetry(db, {
+          ...makeBase(uid(),),
+          chatId: forcedChat,
+          parentId: forcedParent,
+        },),
+      ).rejects.toBeInstanceOf(SwipeInsertExhaustedError,);
+    } finally {
+      sqlite.run("DROP TRIGGER force_swipe_race",);
     }
+  });
 
-    // Now MAX = 16, attempt 0 → swipe_index 17 → success.
-    // To force exhaustion we need to inject a unique-index violation
-    // independent of the swipe_index arithmetic. Use an explicit
-    // duplicate id collision as the trigger.
-    const dupId = uid();
-    // Pre-insert with the same id to force the FIRST attempt to collide.
+  test("non-swipe insert errors surface immediately without retry", async () => {
+    const forcedChat = uid();
+    await insertChats(db, "No-retry Chat", actorId, { id: forcedChat, } as never,);
+
+    const dupId = "probe-dup-id";
+    // Pre-insert the row the probe will collide against (PK violation on
+    // messages.id — NOT the swipe unique index).
     await db
       .insertInto("messages",)
       .values({
@@ -224,15 +202,19 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
       },)
       .execute();
 
-    // Now insert with the same id (collides on primary key, retries
-    // also collide because the helper re-uses the same id on every attempt).
+    // Counting attempts via a trigger is not possible here: a failed INSERT
+    // rolls back its BEFORE-trigger effects with the statement. The contract
+    // is pinned by the surfaced error instead: a PK collision is NOT the
+    // swipe unique violation, so the helper must propagate the raw error —
+    // under the old retry-anything gate this exact input came back as
+    // SwipeInsertExhaustedError (503 service_busy) after 8 retries.
     await expect(
       insertUserMessageWithRetry(db, {
         ...makeBase(dupId,),
         chatId: forcedChat,
         parentId: null,
       },),
-    ).rejects.toBeInstanceOf(SwipeInsertExhaustedError,);
+    ).rejects.toThrow(/UNIQUE constraint failed: messages\.id/,);
   });
 });
 

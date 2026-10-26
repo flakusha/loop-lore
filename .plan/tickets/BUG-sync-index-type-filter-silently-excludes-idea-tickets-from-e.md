@@ -3,7 +3,8 @@
 
 # BUG: sync-index type filter silently excludes IDEA tickets from every --fix mode
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-C verify + fix pass] NEEDS-UPSTREAM. Verified in node_modules/giwt/src/tickets/sync-index.ts:112 and :123 — the scan filter /^(TASK|FEAT|BUG|FIX|EPIC|SOL|INFRA|TEST|PERF|WIRE|IMPROVE)-/i still excludes IDEA, so IDEA tickets are invisible to every sync/`--fix` mode. `giwt` is a pinned GitHub dependency (package.json: `"giwt": "github:flakusha/giwt"`), node_modules must not be edited, and this repo carries NO local override seam: scripts/ contains no duplicate of the filter (grep for the prefix alternation across scripts/ finds nothing) — `plan:sync` shells straight through to the giwt binary. Fix requires an upstream giwt change (widen the prefix set to include IDEA, or derive it from guessType in sync-parse.ts); tracked here until the upstream dep is bumped.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-tooling-improvement

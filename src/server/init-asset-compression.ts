@@ -61,18 +61,21 @@ export async function initAssetCompression(logger: Logger,): Promise<void> {
     return false;
   }
 
-  // ── Pre-compress static assets (parallel, graceful on failure) ──
+  // ── Detect stale copies, then refresh them (order matters) ──
+  // needsCompression must run BEFORE copyDirectory: copyFileSync does not
+  // preserve source mtimes, so a post-copy comparison always sees a fresh
+  // destination and never triggers compression.
   const compressionJobs: { label: string; src: string; dest: string }[] = [];
   if (existsSync(sourcePublicDirectory,)) {
-    copyDirectory(sourcePublicDirectory, destinationPublicDirectory,);
     if (needsCompression(sourcePublicDirectory, destinationPublicDirectory,)) {
+      copyDirectory(sourcePublicDirectory, destinationPublicDirectory,);
       compressionJobs.push({ label: "public", src: sourcePublicDirectory, dest: destinationPublicDirectory, },);
     }
   }
 
   if (existsSync(sourceViewsDirectory,)) {
-    copyDirectory(sourceViewsDirectory, destinationPublicDirectory,);
     if (needsCompression(sourceViewsDirectory, destinationPublicDirectory,)) {
+      copyDirectory(sourceViewsDirectory, destinationPublicDirectory,);
       compressionJobs.push({ label: "views", src: sourceViewsDirectory, dest: destinationPublicDirectory, },);
     }
   }
@@ -81,6 +84,20 @@ export async function initAssetCompression(logger: Logger,): Promise<void> {
     compressionJobs.push({ label: "docs", src: DOCS_PATH, dest: DOCS_PATH, },);
   }
 
+  // Inject content-hashed filenames into HTML (enables immutable cache for hashed assets)
+  // BEFORE compressing: sidecars (.gz/.br/.zst) must embed the hashed references, matching
+  // the build-script order (src/build/compress.ts: inject → compress). Runs after
+  // copyDirectory so newly-copied HTML templates also get hashed references.
+  const hashResult = injectContentHashes(destinationPublicDirectory,);
+  if (hashResult.replaced > 0) {
+    logger.info({
+      message: "Hash-injected references",
+      replaced: hashResult.replaced,
+      skipped: hashResult.skipped,
+    },);
+  }
+
+  // ── Pre-compress static assets (parallel, graceful on failure) ──
   if (compressionJobs.length > 0) {
     const promises: Promise<void>[] = [];
     for (const job of compressionJobs) {
@@ -107,16 +124,5 @@ export async function initAssetCompression(logger: Logger,): Promise<void> {
         logger.warn({ message: "Asset compression failed", error: String(r.reason,), },);
       }
     }
-  }
-
-  // Inject content-hashed filenames into HTML (enables immutable cache for hashed assets).
-  // Runs after copyDirectory so newly-copied HTML templates also get hashed references.
-  const hashResult = injectContentHashes(destinationPublicDirectory,);
-  if (hashResult.replaced > 0) {
-    logger.info({
-      message: "Hash-injected references",
-      replaced: hashResult.replaced,
-      skipped: hashResult.skipped,
-    },);
   }
 }

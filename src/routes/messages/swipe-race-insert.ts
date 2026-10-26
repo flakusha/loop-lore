@@ -38,7 +38,7 @@ import {
 } from "../../db/enums";
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { retryBounded, } from "../../utils/swipe-retry";
+import { isSwipeIndexUniqueViolation, retryBounded, } from "../../utils/swipe-retry";
 
 export const MAX_INSERT_ATTEMPTS = 8;
 
@@ -147,15 +147,17 @@ export async function insertUserMessageWithRetry(
   database: Kysely<DB>,
   input: SwipeInsertInput,
 ): Promise<SwipeInsertResult> {
-  // NOTE: this site retries ANY error (`isRetryable: () => true`) EXCEPT the
-  // idempotency dedup violation — that one is a replay, not a retry: the
-  // pre-existing inconsistency versus the other swipe sites, kept verbatim
-  // to preserve semantics. The violation is non-retryable, so retryBounded
-  // THROWS it out of the frame; the catch maps it to the winner's row.
+  // Retry gate: only the swipe-index UNIQUE race is retryable (see
+  // isSwipeIndexUniqueViolation — it also refuses to classify an idempotency
+  // conflict as a swipe race). The idempotency dedup violation is a replay,
+  // not a retry: retryBounded throws it out of the frame and the catch maps
+  // it to the winner's row. Every other error (FK, NOT NULL, DB-down) is
+  // non-retryable and surfaces immediately instead of being retried 8x and
+  // mislabeled as 503 service_busy (BUG-user-message-swipe-insert).
   try {
     const outcome = await retryBounded({
       attempts: MAX_INSERT_ATTEMPTS,
-      isRetryable: (err,) => !isIdempotencyUniqueViolation(err,),
+      isRetryable: (err,) => isSwipeIndexUniqueViolation(err,),
       onAttempt: async () => {
         let swipeIndex: number | null = null;
         if (input.parentId) {

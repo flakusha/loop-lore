@@ -17,7 +17,7 @@ import {
   getClientIp,
   loginLimiter,
   parseCredentials,
-  rateLimitHtml,
+  rateLimitResponse,
 } from "./shared";
 
 /**
@@ -43,7 +43,8 @@ async function handleLogin(
   // X-RateLimit-* + Retry-After so well-behaved clients back off correctly.
   const loginLimit = limiter.consume(ip,);
   if (!loginLimit.allowed) {
-    return rateLimitHtml({
+    return rateLimitResponse({
+      request,
       limit: loginLimit,
       t,
       fallbackMessage: "Too many attempts. Try again later.",
@@ -141,7 +142,8 @@ async function handleDemoLogin(
   // creation (one DB row per request) and exhaust the sessions table.
   const demoLimit = limiter.consume(ip,);
   if (!demoLimit.allowed) {
-    return rateLimitHtml({
+    return rateLimitResponse({
+      request,
       limit: demoLimit,
       t,
       fallbackMessage: "Too many attempts. Try again later.",

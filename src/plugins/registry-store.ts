@@ -50,12 +50,16 @@ setEnabled(name: string, enabled: boolean): void {
   }
 
   /**
+ * Append route definitions for a plugin. Concatenates with any defs the
+ * plugin already registered, so manifest-declared routes and
+ * onLoad-registered routes coexist instead of replacing each other
+ * (BUG-fix-plugins-append-onload-registrations-to-manifest-registra).
  * @param {string} pluginName
  * @param {RouteDefinition[]} defs
  * @returns {void}
  */
-setRoutes(pluginName: string, defs: RouteDefinition[]): void {
-    this.routes.set(pluginName, defs);
+appendRoutes(pluginName: string, defs: RouteDefinition[],): void {
+    this.routes.set(pluginName, [...(this.routes.get(pluginName,) ?? []), ...defs],);
   }
 
   /**
@@ -74,12 +78,30 @@ getAllRoutes(): RouteDefinition[] {
   }
 
   /**
+ * First registered definition matching method + normalized path, across all
+ * plugins in registration order (enabled state is NOT consulted — callers
+ * decide whether disabled registrations count).
+ * @param {string} method
+ * @param {string} normalizedPath - already run through normalizePluginRoutePath
+ * @returns {RouteDefinition | undefined}
+ */
+findRoute(method: string, normalizedPath: string,): RouteDefinition | undefined {
+    for (const defs of this.routes.values()) {
+      const hit = defs.find((def,) => def.method === method && def.path === normalizedPath,);
+      if (hit) { return hit; }
+    }
+
+    return undefined;
+  }
+
+  /**
+ * Append tool definitions for a plugin (see {@link appendRoutes}).
  * @param {string} pluginName
  * @param {ToolDefinition[]} defs
  * @returns {void}
  */
-setTools(pluginName: string, defs: ToolDefinition[]): void {
-    this.tools.set(pluginName, defs);
+appendTools(pluginName: string, defs: ToolDefinition[],): void {
+    this.tools.set(pluginName, [...(this.tools.get(pluginName,) ?? []), ...defs],);
   }
 
   /**
@@ -90,12 +112,13 @@ getAllTools(): ToolDefinition[] {
   }
 
   /**
+ * Append agent-role definitions for a plugin (see {@link appendRoutes}).
  * @param {string} pluginName
  * @param {AgentRoleDefinition[]} defs
  * @returns {void}
  */
-setAgentRoles(pluginName: string, defs: AgentRoleDefinition[]): void {
-    this.agentRoles.set(pluginName, defs);
+appendAgentRoles(pluginName: string, defs: AgentRoleDefinition[],): void {
+    this.agentRoles.set(pluginName, [...(this.agentRoles.get(pluginName,) ?? []), ...defs],);
   }
 
   /**
@@ -106,12 +129,13 @@ getAllAgentRoles(): AgentRoleDefinition[] {
   }
 
   /**
+ * Append UI-component definitions for a plugin (see {@link appendRoutes}).
  * @param {string} pluginName
  * @param {UIComponentDefinition[]} defs
  * @returns {void}
  */
-setUIComponents(pluginName: string, defs: UIComponentDefinition[]): void {
-    this.uiComponents.set(pluginName, defs);
+appendUIComponents(pluginName: string, defs: UIComponentDefinition[],): void {
+    this.uiComponents.set(pluginName, [...(this.uiComponents.get(pluginName,) ?? []), ...defs],);
   }
 
   /**
@@ -122,12 +146,13 @@ getAllUIComponents(): UIComponentDefinition[] {
   }
 
   /**
+ * Append event-handler definitions for a plugin (see {@link appendRoutes}).
  * @param {string} pluginName
  * @param {EventHandlerDefinition[]} defs
  * @returns {void}
  */
-setEventHandlers(pluginName: string, defs: EventHandlerDefinition[]): void {
-    this.eventHandlers.set(pluginName, defs);
+appendEventHandlers(pluginName: string, defs: EventHandlerDefinition[],): void {
+    this.eventHandlers.set(pluginName, [...(this.eventHandlers.get(pluginName,) ?? []), ...defs],);
   }
 
   /**
@@ -138,12 +163,13 @@ getAllEventHandlers(): EventHandlerDefinition[] {
   }
 
   /**
+ * Append migration definitions for a plugin (see {@link appendRoutes}).
  * @param {string} pluginName
  * @param {MigrationDefinition[]} defs
  * @returns {void}
  */
-setMigrations(pluginName: string, defs: MigrationDefinition[]): void {
-    this.migrations.set(pluginName, defs);
+appendMigrations(pluginName: string, defs: MigrationDefinition[],): void {
+    this.migrations.set(pluginName, [...(this.migrations.get(pluginName,) ?? []), ...defs],);
   }
 
   /**

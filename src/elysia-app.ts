@@ -37,9 +37,11 @@ import { requestIdMiddleware, } from "./middleware/request-id";
 
 import { recordLifecycle, } from "./middleware/lifecycle";
 import { redirectTo, } from "./routes/http-utils";
+import { deprecationAfterHandle, } from "./routes/middleware/deprecation-headers";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
 import { versionResolver, } from "./routes/middleware/version-resolver";
 import { v1Routes, } from "./routes/v1";
+import { governanceAfterHook, governanceBeforeHook, } from "./routes/v1/governance";
 
 import { onValidationError, } from "./validation";
 
@@ -233,7 +235,7 @@ export function createApp(deps: AppDeps,): Elysia {
 
   registerPlugins(app as unknown as Elysia<any>, { database, config, asyncStore, },);
 
-  (app as any).use(v1Routes({ database, config, asyncStore, },),);
+  (app as unknown as Elysia<any>).use(v1Routes({ database, config, asyncStore, },),);
   // `all("/api/:resource/*")` here matched /api/v1/* too, causing a
   // double-prefix redirect loop (/api/v1/x → /api/v1/v1/x → 404).
 
@@ -245,6 +247,15 @@ export function createApp(deps: AppDeps,): Elysia {
   // get a 308 to /api/v1/assets from the catch-all below (RFC 7538 preserves
   // method + body). The other assets CRUD endpoints (GET/DELETE/links/...)
   // are served only under /api/v1/assets/* via the v1 barrel.
+  //
+  // Governance: the route carries the barrel's hooks ROUTE-LOCALLY (before /
+  // afterHandle) so the expensive upload path gets the same 429 rate limit,
+  // request metrics, and deprecation headers as every sibling — being outside
+  // the composed barrel no longer means skipping throttling
+  // (BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance).
+  // parse: "none" is the one option that must stay app-level; the governance
+  // hook factories are the exact ones the barrel uses, so behavior cannot
+  // drift. Enable predicates mirror routes/v1/index.ts.
   const uploadAsset = async (ctx: any,) => {
     const userId = ctx.userId as string | null;
     if (!userId) {
@@ -267,7 +278,20 @@ export function createApp(deps: AppDeps,): Elysia {
     },);
   };
 
-  app.post("/api/v1/assets", uploadAsset, { parse: "none", },);
+  const governanceEnabled = () => process.env.E2E_SAFEGUARD !== "1";
+  app.post("/api/v1/assets", uploadAsset, {
+    parse: "none",
+    beforeHandle: [governanceBeforeHook(governanceEnabled,),],
+    afterHandle: [
+      governanceAfterHook(governanceEnabled,),
+      deprecationAfterHandle({
+        enabled: () => process.env.API_V1_DEPRECATED === "1",
+        deprecatedVersion: "1",
+        successorVersion: "2",
+        sunset: "Sat, 01 Jan 2028 00:00:00 GMT",
+      },),
+    ],
+  },);
 
   // ── Convenience redirects ─────────────────────────────────────
   // Authenticated users land on the chat; everyone else on the login screen.

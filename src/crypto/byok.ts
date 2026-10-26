@@ -19,8 +19,16 @@
  * Wire format (new): `salt:iv:ciphertext` (three base64 chunks).
  * Wire format (old, still readable): `iv:ciphertext` (two base64 chunks).
  * `decryptValue` accepts both formats; new `encryptValue` always emits the
- * 3-chunk form. Rows persisted under the old format are not silently
- * re-encrypted — callers should plan a one-shot migration to re-encrypt.
+ * 3-chunk form.
+ *
+ * KEY VERSIONING (BUG-single-global-byok-encryption-key-no-rotation-story):
+ * a versioned envelope `v2:salt:iv:ciphertext` exists so a future key
+ * rotation can carry its key-generation tag per record instead of relying on
+ * one global secret. `encryptVersioned` emits it; `decryptValue` reads it AND
+ * both bare legacy formats, so rows sealed under any generation decrypt
+ * without a one-shot rewrite. The `key_version` columns added by migration
+ * 080 (`user_api_keys`, `mesh_peers`) default to 1 = bare (unversioned)
+ * format, matching every row written before the column existed.
  */
 const ALGORITHM = "AES-GCM";
 const KEY_LENGTH = 256;
@@ -98,8 +106,27 @@ export async function encryptValue(plaintext: string, secret: string, aad?: stri
   return `${salt.toBase64()}:${iv.toBase64()}:${new Uint8Array(ciphertext,).toBase64()}`;
 }
 
+/** Current versioned-envelope generation (BUG-4a052a5 rotation story). */
+export const BYOK_KEY_VERSION = 2;
+
 /**
- * Decrypt a base64-encoded string. Accepts both wire formats:
+ * Encrypt a plaintext string into the VERSIONED envelope:
+ * `v2:salt:iv:ciphertext` (version tag + three base64 chunks). The payload
+ * bytes are identical to {@link encryptValue} — the tag only records which
+ * key generation sealed the row, so a future rotation can branch per record
+ * instead of mass re-encrypting under one global secret.
+ * @param plaintext
+ * @param secret
+ * @param aad Optional additional authenticated data (see encryptValue)
+ * @returns string
+ */
+export async function encryptVersioned(plaintext: string, secret: string, aad?: string,): Promise<string> {
+  return `v${BYOK_KEY_VERSION}:${await encryptValue(plaintext, secret, aad,)}`;
+}
+
+/**
+ * Decrypt a base64-encoded string. Accepts all three wire formats:
+ *   - versioned (4 chunks): "v2:salt:iv:ciphertext" — current envelope
  *   - new (3 chunks): "salt:iv:ciphertext"
  *   - old (2 chunks): "iv:ciphertext" — uses the legacy global salt
  * @param encrypted
@@ -110,6 +137,20 @@ export async function encryptValue(plaintext: string, secret: string, aad?: stri
  * @throws {Error}
  */
 export async function decryptValue(encrypted: string, secret: string, aad?: string,): Promise<string> {
+  // Versioned envelope: strip the `v<N>:` tag, then decrypt the bare
+  // 3-chunk payload. Unknown generations fail LOUDLY (they need the key of
+  // that generation, which this caller does not hold) — never silently
+  // mis-decrypted with the current one.
+  if (encrypted.startsWith("v",)) {
+    const tagEnd = encrypted.indexOf(":",);
+    const version = Number(encrypted.slice(1, tagEnd,),);
+    if (version !== BYOK_KEY_VERSION) {
+      throw new Error(`Unsupported BYOK key version: ${encrypted.slice(1, tagEnd,)}`,);
+    }
+
+    encrypted = encrypted.slice(tagEnd + 1,);
+  }
+
   const parts = encrypted.split(":",);
   if (parts.length === 3) {
     const salt = Uint8Array.fromBase64(parts[0]!,);

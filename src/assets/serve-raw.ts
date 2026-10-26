@@ -83,7 +83,11 @@ export async function handleServeRaw({
         },
       },);
     } catch (error) {
-      getChildLogger("assets:serve-raw",)?.error({ message: "Failed to decrypt asset", error, },);
+      getChildLogger("assets:serve-raw",)?.error(
+        "Failed to decrypt asset",
+        error instanceof Error ? error : new Error(String(error,),),
+      );
+
       return new Response("Failed to decrypt asset", { status: 500, },);
     }
   }
@@ -154,7 +158,11 @@ export async function handleDownload({
         },
       },);
     } catch (error) {
-      getChildLogger("assets:serve-raw",)?.error({ message: "Failed to decrypt asset", error, },);
+      getChildLogger("assets:serve-raw",)?.error(
+        "Failed to decrypt asset",
+        error instanceof Error ? error : new Error(String(error,),),
+      );
+
       return new Response("Failed to decrypt asset", { status: 500, },);
     }
   }

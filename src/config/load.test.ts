@@ -2,12 +2,14 @@ import { beforeAll, describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
-import { createLogger, } from "../logger";
+import { createLogger, getLogger, type Logger, setGlobalLogger, } from "../logger";
 import {
   coerceValue,
   deepMerge,
   isLoopbackHost,
   loadConfig,
+  SESSION_JWT_DIVERGENCE_TOLERANCE_SEC,
+  sessionJwtDivergenceWarning,
   setByPath,
   validateAuthSafety,
   validateConfig,
@@ -368,6 +370,33 @@ configPath = "/tmp/llama-swap.yaml"
       expect(config.server.port,).toBe(7171,);
       expect(config.generation.autoStart?.llamaSwap?.enabled,).toBe(true,);
       expect(config.generation.autoStart?.llamaSwap?.configPath,).toBe("/tmp/llama-swap.yaml",);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("rejects a bedrock provider config at load (no implementation exists)", () => {
+    setupConfigFiles({
+      "config.toml": `
+[server]
+port = 7171
+
+[generation.providers.bedrock]
+name = "bedrock-main"
+label = "Bedrock"
+region = "us-east-1"
+model = "anthropic.claude-3-5-sonnet"
+timeout = 30000
+retries = 3
+allowUserApiKey = false
+
+[generation.providers.bedrock.models]
+"anthropic.claude-3-5-sonnet" = { contextWindow = 200000 }
+`,
+    },);
+
+    try {
+      expect(() => loadConfig(tmpDir,)).toThrow(/bedrock/i,);
     } finally {
       cleanup();
     }
@@ -770,5 +799,101 @@ describe("validateAuthSafety", () => {
     expect(() => {
       validateAuthSafety(authConfig({ required: true, jwtSecret: "change-me-now", },),);
     },).toThrow(/AUTH SAFETY/,);
+  });
+});
+
+describe("sessionJwtDivergenceWarning (BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive)", () => {
+  /**
+   * @param overrides
+   */
+  function authConfig(overrides?: Partial<Config["auth"]>,): Config {
+    const defaults = structuredClone(createConfigSchema().defaults,);
+    Object.assign(defaults.auth, overrides,);
+    return defaults;
+  }
+
+  test("returns null when the knobs agree (defaults: 24h vs 86400s)", () => {
+    expect(sessionJwtDivergenceWarning({ sessionTimeoutHours: 24, jwtExpiresIn: 86_400, },),).toBeNull();
+  });
+
+  test("returns null within the tolerance window", () => {
+    expect(sessionJwtDivergenceWarning({
+      sessionTimeoutHours: 24,
+      jwtExpiresIn: 86_400 + SESSION_JWT_DIVERGENCE_TOLERANCE_SEC,
+    },),).toBeNull();
+  });
+
+  test("builds a warning naming both knobs when they diverge", () => {
+    const warning = sessionJwtDivergenceWarning({ sessionTimeoutHours: 1, jwtExpiresIn: 86_400, },);
+    expect(warning,).toContain("sessionTimeoutHours",);
+    expect(warning,).toContain("jwtExpiresIn",);
+    expect(warning,).toContain("86400",);
+  });
+
+  test("skips the check when a knob is missing from a partial config", () => {
+    expect(sessionJwtDivergenceWarning({ jwtExpiresIn: 3600, },),).toBeNull();
+    expect(sessionJwtDivergenceWarning({ sessionTimeoutHours: 24, },),).toBeNull();
+  });
+
+  test("validateAuthSafety logs the warning when the knobs diverge", () => {
+    const warnings: string[] = [];
+    const stub: Logger = {
+      trace() {},
+      debug() {},
+      info() {},
+      warn(message,) {
+        warnings.push(String(typeof message === "string" ? message : JSON.stringify(message,),),);
+      },
+      error() {},
+      fatal() {},
+      child() {
+        return stub;
+      },
+      addTransport() {},
+      setBindings() {},
+      setLevel() {},
+      async flush() {},
+    };
+
+    const previous = getLogger();
+    setGlobalLogger(stub,);
+    try {
+      validateAuthSafety(authConfig({ required: false, sessionTimeoutHours: 1, jwtExpiresIn: 86_400, },),);
+    } finally {
+      setGlobalLogger(previous,);
+    }
+
+    expect(warnings.some((w,) => w.includes("sessionTimeoutHours",) && w.includes("jwtExpiresIn",)),).toBe(true,);
+  });
+
+  test("validateAuthSafety stays silent when the knobs agree", () => {
+    const warnings: string[] = [];
+    const stub: Logger = {
+      trace() {},
+      debug() {},
+      info() {},
+      warn(message,) {
+        warnings.push(String(typeof message === "string" ? message : JSON.stringify(message,),),);
+      },
+      error() {},
+      fatal() {},
+      child() {
+        return stub;
+      },
+      addTransport() {},
+      setBindings() {},
+      setLevel() {},
+      async flush() {},
+    };
+
+    const previous = getLogger();
+    setGlobalLogger(stub,);
+    try {
+      validateAuthSafety(authConfig({ required: false, },),);
+    } finally {
+      setGlobalLogger(previous,);
+    }
+
+    expect(warnings,).toEqual([],);
   });
 });

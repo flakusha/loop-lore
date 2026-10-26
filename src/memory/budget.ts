@@ -10,7 +10,8 @@
 import type { Kysely, } from "kysely";
 import { estimateTokens, } from "../chat/token-utils";
 import type { DB, } from "../db";
-import type { MemoryBudgetConfig, } from "./types";
+import { effectiveImportance, } from "./emotion-impact";
+import type { MemoryBudgetConfig, MemoryEmotionImpact, } from "./types";
 
 /** Default budget: 1024 tokens (~4K chars). */
 const DEFAULT_MAX_TOKENS = 1024;
@@ -23,7 +24,13 @@ const DEFAULT_MAX_TOKENS = 1024;
  * @returns the subset that fits the token budget
  */
 export function selectWithinBudget<
-  T extends { content: string; confidence: number; importance: number; pinned?: boolean },
+  T extends {
+    content: string;
+    confidence: number;
+    importance: number;
+    pinned?: boolean;
+    emotionImpact?: MemoryEmotionImpact | null;
+  },
 >(
   memories: T[],
   config: Partial<MemoryBudgetConfig> = {},
@@ -38,9 +45,13 @@ export function selectWithinBudget<
     else { unpinned.push(m,); }
   }
 
-  // Sort unpinned by importance desc, then confidence desc
+  // Sort unpinned by emotion-weighted importance desc, then confidence desc.
+  // A sustained emotional charge (TASK-memory-emotion-impact) lifts a memory
+  // above equal-importance peers; impact-free memories sort exactly as before.
   unpinned.sort((a, b,) => {
-    if (b.importance !== a.importance) { return b.importance - a.importance; }
+    const ea = effectiveImportance(a,);
+    const eb = effectiveImportance(b,);
+    if (eb !== ea) { return eb - ea; }
     return b.confidence - a.confidence;
   },);
 

@@ -11432,7 +11432,7 @@
     "hash": "74f07f2",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-2d-sprite-world.md",
+    "source": ".plan/epics/epic-2d-sprite-world.md",
     "status": "⬜ Not Started",
     "tags": [
       "canvas",
@@ -11454,7 +11454,7 @@
     "hash": "25a325e",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-3d-generation.md",
+    "source": ".plan/epics/epic-3d-generation.md",
     "status": "⬜ Not Started",
     "tags": [
       "3d",
@@ -11475,7 +11475,7 @@
     "hash": "696d3fc",
     "label": "epic",
     "priority": "P0 — Critical",
-    "source": ".plan/tickets/epic-accessibility-input.md",
+    "source": ".plan/epics/epic-accessibility-input.md",
     "status": "in_progress",
     "tags": [
       "accessibility",
@@ -11495,7 +11495,7 @@
     "hash": "f2f2e08",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-achievements.md",
+    "source": ".plan/epics/epic-achievements.md",
     "status": "done",
     "tags": [
       "achievements",
@@ -11514,7 +11514,7 @@
     "hash": "93e0928",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-actor-autonomy-story-drive.md",
+    "source": ".plan/epics/epic-actor-autonomy-story-drive.md",
     "status": "done",
     "tags": [
       "autonomy",
@@ -11536,7 +11536,7 @@
     "hash": "eedc367",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-actor-turn-skip.md",
+    "source": ".plan/epics/epic-actor-turn-skip.md",
     "status": "done",
     "tags": [
       "turn-skip",
@@ -11556,7 +11556,7 @@
     "hash": "043696c",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-actors.md",
+    "source": ".plan/epics/epic-actors.md",
     "status": "done",
     "tags": [
       "actors",
@@ -11576,7 +11576,7 @@
     "hash": "de645e5",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-agency-story-points.md",
+    "source": ".plan/epics/epic-agency-story-points.md",
     "status": "⬜ Not Started",
     "tags": [
       "agency",
@@ -11600,7 +11600,7 @@
     "hash": "af352f5",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-ambient-music-sfx.md",
+    "source": ".plan/epics/epic-ambient-music-sfx.md",
     "status": "⬜ Not Started",
     "tags": [
       "audio",
@@ -11620,7 +11620,7 @@
     "hash": "21b0254",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-analytics-observability.md",
+    "source": ".plan/epics/epic-analytics-observability.md",
     "status": "draft",
     "tags": [
       "analytics",
@@ -11639,7 +11639,7 @@
     "hash": "9a6d200",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-anonymity-decentralization.md",
+    "source": ".plan/epics/epic-anonymity-decentralization.md",
     "status": "Not Started",
     "tags": [
       "tor",
@@ -11661,7 +11661,7 @@
     "hash": "0eb513c",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-anonymity-decentralization-quickref.md",
+    "source": ".plan/epics/epic-anonymity-decentralization-quickref.md",
     "status": "Not Started",
     "tags": [
       "tor",
@@ -11682,7 +11682,7 @@
     "hash": "5ddedb2",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-api-first-foundation.md",
+    "source": ".plan/epics/epic-api-first-foundation.md",
     "status": "⬜ Not Started",
     "tags": [
       "api",
@@ -11702,7 +11702,7 @@
     "hash": "d7228b3",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-api-governance.md",
+    "source": ".plan/epics/epic-api-governance.md",
     "status": "⬜ Not Started",
     "tags": [
       "openapi",
@@ -11721,7 +11721,7 @@
     "hash": "89e1e24",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-api-governance-quickref.md",
+    "source": ".plan/epics/epic-api-governance-quickref.md",
     "status": "Not Started",
     "tags": [
       "openapi",
@@ -11740,7 +11740,7 @@
     "hash": "3103063",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-api-library-distribution.md",
+    "source": ".plan/epics/epic-api-library-distribution.md",
     "status": "⬜ Not Started",
     "tags": [
       "api",
@@ -11761,7 +11761,7 @@
     "hash": "60ec5b6",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-api-openapi.md",
+    "source": ".plan/epics/epic-api-openapi.md",
     "status": "⬜ Not Started",
     "tags": [
       "openapi",
@@ -11780,7 +11780,7 @@
     "hash": "0e59522",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-api-rate-limiting.md",
+    "source": ".plan/epics/epic-api-rate-limiting.md",
     "status": "done",
     "tags": [
       "rate-limiting",
@@ -11799,7 +11799,7 @@
     "hash": "e0b28ac",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-api-routes.md",
+    "source": ".plan/epics/epic-api-routes.md",
     "status": "⬜ Not Started",
     "tags": [
       "api",
@@ -11818,7 +11818,7 @@
     "hash": "8e60a51",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-api-task-offloading.md",
+    "source": ".plan/epics/epic-api-task-offloading.md",
     "status": "⬜ Not Started",
     "tags": [
       "offloading",
@@ -11837,7 +11837,7 @@
     "hash": "fb789c5",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-api-telemetry.md",
+    "source": ".plan/epics/epic-api-telemetry.md",
     "status": "⬜ Not Started",
     "tags": [
       "telemetry",
@@ -11856,7 +11856,7 @@
     "hash": "64a48b8",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-api-validation-guardrails.md",
+    "source": ".plan/epics/epic-api-validation-guardrails.md",
     "status": "⬜ Not Started",
     "tags": [
       "validation",
@@ -11875,7 +11875,7 @@
     "hash": "aaa3d10",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-api-versioning.md",
+    "source": ".plan/epics/epic-api-versioning.md",
     "status": "in_progress",
     "tags": [
       "api",
@@ -11895,7 +11895,7 @@
     "hash": "f987f0d",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-architecture.md",
+    "source": ".plan/epics/epic-architecture.md",
     "status": "⬜ Not Started",
     "tags": [
       "architecture",
@@ -11913,7 +11913,7 @@
     "hash": "2c23033",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-archival-workflow.md",
+    "source": ".plan/epics/epic-archival-workflow.md",
     "status": "done",
     "tags": [
       "archival",
@@ -11932,7 +11932,7 @@
     "hash": "66c5358",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-asset-platform-capabilities.md",
+    "source": ".plan/epics/epic-asset-platform-capabilities.md",
     "status": "🔴 Not Started",
     "tags": [
       "assets",
@@ -11953,7 +11953,7 @@
     "hash": "292e869",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-asset-transform-metadata.md",
+    "source": ".plan/epics/epic-asset-transform-metadata.md",
     "status": "🔴 Not Started",
     "tags": [
       "assets",
@@ -11973,7 +11973,7 @@
     "hash": "a56e119",
     "label": "epic",
     "priority": "High (MVP scoped, post-Gate C)",
-    "source": ".plan/tickets/epic-assistant-creative-studio-workflows.md",
+    "source": ".plan/epics/epic-assistant-creative-studio-workflows.md",
     "status": "draft",
     "tags": [
       "assistant",
@@ -11994,7 +11994,7 @@
     "hash": "660896e",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-assistant-entity-access.md",
+    "source": ".plan/epics/epic-assistant-entity-access.md",
     "status": "draft",
     "tags": [
       "assistant",
@@ -12021,7 +12021,7 @@
     "hash": "dcaa95a",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-assistant-generation-extensions.md",
+    "source": ".plan/epics/epic-assistant-generation-extensions.md",
     "status": "⬜ Not Started",
     "tags": [
       "assistant",
@@ -12044,7 +12044,7 @@
     "hash": "81f9696",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-assistant-gm-flows.md",
+    "source": ".plan/epics/epic-assistant-gm-flows.md",
     "status": "in_progress",
     "tags": [
       "assistant",
@@ -12087,7 +12087,7 @@
     "hash": "fb81619",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-audio-video-sound.md",
+    "source": ".plan/epics/epic-audio-video-sound.md",
     "status": "⬜ Not Started",
     "tags": [
       "audio",
@@ -12109,7 +12109,7 @@
     "hash": "0b6e53c",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-auth-access.md",
+    "source": ".plan/epics/epic-auth-access.md",
     "status": "⬜ Not Started",
     "tags": [
       "auth",
@@ -12129,7 +12129,7 @@
     "hash": "4513eb7",
     "label": "epic",
     "priority": "High (security-critical provisioning)",
-    "source": ".plan/tickets/epic-auth-channel-provisioning.md",
+    "source": ".plan/epics/epic-auth-channel-provisioning.md",
     "status": "📝 Planned (this bundle)",
     "tags": [
       "auth",
@@ -12173,7 +12173,7 @@
     "hash": "5481523",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-authoring-creation.md",
+    "source": ".plan/epics/epic-authoring-creation.md",
     "status": "done",
     "tags": [
       "authoring",
@@ -12194,7 +12194,7 @@
     "hash": "8ff57b8",
     "label": "epic",
     "priority": "P2-B",
-    "source": ".plan/tickets/epic-aux-enrichment-pipeline.md",
+    "source": ".plan/epics/epic-aux-enrichment-pipeline.md",
     "status": "in_progress",
     "tags": [
       "aux-llm",
@@ -12216,7 +12216,7 @@
     "hash": "5920f53",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-avatar-alpha-vn-layering.md",
+    "source": ".plan/epics/epic-avatar-alpha-vn-layering.md",
     "status": "🔴 Not Started",
     "tags": [
       "avatar",
@@ -12254,7 +12254,7 @@
     "hash": "8d78719",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-avatar-regeneration-control.md",
+    "source": ".plan/epics/epic-avatar-regeneration-control.md",
     "status": "🔴 Not Started",
     "tags": [
       "avatar",
@@ -12272,7 +12272,7 @@
     "hash": "8a1f4d8",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-battle-action-systems.md",
+    "source": ".plan/epics/epic-battle-action-systems.md",
     "status": "⬜ Not Started",
     "tags": [
       "battle",
@@ -12292,7 +12292,7 @@
     "hash": "dabd24c",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-battle-integration-gaps.md",
+    "source": ".plan/epics/epic-battle-integration-gaps.md",
     "status": "⬜ Not Started",
     "tags": [
       "battle",
@@ -12313,7 +12313,7 @@
     "hash": "78977ea",
     "label": "epic",
     "priority": "P0 — Critical",
-    "source": ".plan/tickets/epic-battle-ui.md",
+    "source": ".plan/epics/epic-battle-ui.md",
     "status": "⬜ Not Started",
     "tags": [
       "battle",
@@ -12331,7 +12331,7 @@
     "hash": "6a29294",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-benchmark-ci-regression.md",
+    "source": ".plan/epics/epic-benchmark-ci-regression.md",
     "status": "in_progress",
     "tags": [
       "benchmarking",
@@ -12349,7 +12349,7 @@
     "hash": "8fcd25e",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-blog-system.md",
+    "source": ".plan/epics/epic-blog-system.md",
     "status": "in_progress",
     "tags": [
       "blog",
@@ -12373,7 +12373,7 @@
     "hash": "ee0ac13",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-byok-api-keys.md",
+    "source": ".plan/epics/epic-byok-api-keys.md",
     "status": "⬜ Not Started",
     "tags": [
       "byok",
@@ -12393,7 +12393,7 @@
     "hash": "66eaf72",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-byok-local-models.md",
+    "source": ".plan/epics/epic-byok-local-models.md",
     "status": "⬜ Not Started",
     "tags": [
       "byok",
@@ -12414,7 +12414,7 @@
     "hash": "68b2309",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-certificate-and-tls-management.md",
+    "source": ".plan/epics/epic-certificate-and-tls-management.md",
     "status": "in_progress",
     "tags": [
       "tls",
@@ -12435,7 +12435,7 @@
     "hash": "685a84e",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-character-core-system.md",
+    "source": ".plan/epics/epic-character-core-system.md",
     "status": "in_progress",
     "tags": [
       "characters",
@@ -12453,7 +12453,7 @@
     "hash": "4f19731",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-character-growth.md",
+    "source": ".plan/epics/epic-character-growth.md",
     "status": "draft",
     "tags": [
       "characters",
@@ -12478,7 +12478,7 @@
     "hash": "e5e12b5",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-character-internal-traits.md",
+    "source": ".plan/epics/epic-character-internal-traits.md",
     "status": "draft",
     "tags": [
       "characters",
@@ -12505,7 +12505,7 @@
     "hash": "e271452",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-character-multi-personality.md",
+    "source": ".plan/epics/epic-character-multi-personality.md",
     "status": "⬜ Not Started",
     "tags": [
       "assistant",
@@ -12526,7 +12526,7 @@
     "hash": "e5774ad",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-character-npc-lore-access.md",
+    "source": ".plan/epics/epic-character-npc-lore-access.md",
     "status": "draft",
     "tags": [
       "character",
@@ -12549,7 +12549,7 @@
     "hash": "badc3d5",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-character-spec.md",
+    "source": ".plan/epics/epic-character-spec.md",
     "status": "in_progress",
     "tags": [
       "character",
@@ -12568,7 +12568,7 @@
     "hash": "a1d58aa",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-character-world-integration.md",
+    "source": ".plan/epics/epic-character-world-integration.md",
     "status": "Not Started",
     "tags": [
       "character",
@@ -12588,7 +12588,7 @@
     "hash": "06874b6",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-character-world-setup.md",
+    "source": ".plan/epics/epic-character-world-setup.md",
     "status": "in_progress",
     "tags": [
       "characters",
@@ -12631,7 +12631,7 @@
     "hash": "f0bd7e8",
     "label": "epic",
     "priority": "High — messenger parity gap",
-    "source": ".plan/tickets/epic-chat-composer-flows.md",
+    "source": ".plan/epics/epic-chat-composer-flows.md",
     "status": "done",
     "tags": [
       "chat",
@@ -12651,7 +12651,7 @@
     "hash": "ef69350",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-chat-context-optimization.md",
+    "source": ".plan/epics/epic-chat-context-optimization.md",
     "status": "draft",
     "tags": [
       "context",
@@ -12672,7 +12672,7 @@
     "hash": "5156f22",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-chat-lifecycle-moderation.md",
+    "source": ".plan/epics/epic-chat-lifecycle-moderation.md",
     "status": "done",
     "tags": [
       "chat",
@@ -12693,7 +12693,7 @@
     "hash": "231ef2f",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-chat-privacy.md",
+    "source": ".plan/epics/epic-chat-privacy.md",
     "status": "in_progress",
     "tags": [
       "chat",
@@ -12712,7 +12712,7 @@
     "hash": "be6db26",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-chat-product-features.md",
+    "source": ".plan/epics/epic-chat-product-features.md",
     "status": "🟡 Not Started",
     "tags": [
       "chat",
@@ -12739,7 +12739,7 @@
     "hash": "2390adc",
     "label": "epic",
     "priority": "Medium — messenger/AI parity gap",
-    "source": ".plan/tickets/epic-chat-rich-engagement.md",
+    "source": ".plan/epics/epic-chat-rich-engagement.md",
     "status": "Proposed",
     "tags": [
       "chat",
@@ -12758,7 +12758,7 @@
     "hash": "7245bac",
     "label": "epic",
     "priority": "P2-B",
-    "source": ".plan/tickets/epic-chat-transfer-location.md",
+    "source": ".plan/epics/epic-chat-transfer-location.md",
     "status": "in_progress",
     "tags": [
       "chat",
@@ -12775,7 +12775,7 @@
     "hash": "685caea",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-chat-variants-taxonomy.md",
+    "source": ".plan/epics/epic-chat-variants-taxonomy.md",
     "status": "done",
     "tags": [
       "chat",
@@ -12797,7 +12797,7 @@
     "hash": "34de13f",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-cicd-pipeline.md",
+    "source": ".plan/epics/epic-cicd-pipeline.md",
     "status": "⬜ Not Started",
     "tags": [
       "ci",
@@ -12833,7 +12833,7 @@
     "hash": "f796a28",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-cli-tooling-optique.md",
+    "source": ".plan/epics/epic-cli-tooling-optique.md",
     "status": "in_progress",
     "tags": [
       "cli",
@@ -12851,7 +12851,7 @@
     "hash": "8b9f417",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-code-quality.md",
+    "source": ".plan/epics/epic-code-quality.md",
     "status": "🟡 Permanently Ongoing",
     "tags": [
       "eslint",
@@ -12911,7 +12911,7 @@
     "hash": "4e7ff8e",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-comfyui-plugin.md",
+    "source": ".plan/epics/epic-comfyui-plugin.md",
     "status": "in_progress",
     "tags": [
       "comfyui",
@@ -12931,7 +12931,7 @@
     "hash": "1ac7727",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-communications-integrations.md",
+    "source": ".plan/epics/epic-communications-integrations.md",
     "status": "⬜ Not Started",
     "tags": [
       "chat",
@@ -12949,7 +12949,7 @@
     "hash": "5383845",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-communications-integrations-quickref.md",
+    "source": ".plan/epics/epic-communications-integrations-quickref.md",
     "status": "Not Started",
     "tags": [
       "chat",
@@ -12967,7 +12967,7 @@
     "hash": "b2f1862",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-companion-pet-mount.md",
+    "source": ".plan/epics/epic-companion-pet-mount.md",
     "status": "⬜ Not Started",
     "tags": [
       "companions",
@@ -12987,7 +12987,7 @@
     "hash": "98161b8",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-concurrency-runtime-benchmarks.md",
+    "source": ".plan/epics/epic-concurrency-runtime-benchmarks.md",
     "status": "⬜ Not Started",
     "tags": [
       "benchmarking",
@@ -13006,7 +13006,7 @@
     "hash": "777df36",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-config-extensions.md",
+    "source": ".plan/epics/epic-config-extensions.md",
     "status": "draft",
     "tags": [
       "config",
@@ -13024,7 +13024,7 @@
     "hash": "287626f",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-config-file-separation.md",
+    "source": ".plan/epics/epic-config-file-separation.md",
     "status": "done",
     "tags": [
       "config",
@@ -13043,7 +13043,7 @@
     "hash": "8466dce",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-config-templates.md",
+    "source": ".plan/epics/epic-config-templates.md",
     "status": "done",
     "tags": [
       "llm",
@@ -13064,7 +13064,7 @@
     "hash": "77c6f57",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-configs-path-resolution.md",
+    "source": ".plan/epics/epic-configs-path-resolution.md",
     "status": "⬜ Not Started",
     "tags": [
       "config",
@@ -13085,7 +13085,7 @@
     "hash": "d66caa8",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-content-hashing-distributed-integrity.md",
+    "source": ".plan/epics/epic-content-hashing-distributed-integrity.md",
     "status": "⬜ Not Started",
     "tags": [
       "content-hash",
@@ -13104,7 +13104,7 @@
     "hash": "61a2d9c",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-context-injection-correctness.md",
+    "source": ".plan/epics/epic-context-injection-correctness.md",
     "status": "Not Started",
     "tags": [
       "context-injection",
@@ -13122,7 +13122,7 @@
     "hash": "f9b67dd",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-context-injection-templates.md",
+    "source": ".plan/epics/epic-context-injection-templates.md",
     "status": "Not Started",
     "tags": [
       "context-injection",
@@ -13141,7 +13141,7 @@
     "hash": "f549271",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-continuous-improvement.md",
+    "source": ".plan/epics/epic-continuous-improvement.md",
     "status": "in_progress",
     "tags": [
       "lint",
@@ -13161,7 +13161,7 @@
     "hash": "ffe6674",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-conversation-branching.md",
+    "source": ".plan/epics/epic-conversation-branching.md",
     "status": "draft",
     "tags": [
       "chat",
@@ -13179,7 +13179,7 @@
     "hash": "964cf21",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-core-testing-frameworks.md",
+    "source": ".plan/epics/epic-core-testing-frameworks.md",
     "status": "⬜ Not Started",
     "tags": [
       "testing",
@@ -13198,7 +13198,7 @@
     "hash": "d1576f4",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-crafting-professions.md",
+    "source": ".plan/epics/epic-crafting-professions.md",
     "status": "in_progress",
     "tags": [
       "crafting",
@@ -13218,7 +13218,7 @@
     "hash": "d081f78",
     "label": "epic",
     "priority": "High (MVP), Medium (full)",
-    "source": ".plan/tickets/epic-creative-studio.md",
+    "source": ".plan/epics/epic-creative-studio.md",
     "status": "in_progress",
     "tags": [
       "creative-studio",
@@ -13237,7 +13237,7 @@
     "hash": "401ec2d",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-cron-scheduler.md",
+    "source": ".plan/epics/epic-cron-scheduler.md",
     "status": "Done",
     "tags": [
       "cron",
@@ -13256,7 +13256,7 @@
     "hash": "4e6ee3d",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-cross-layer-reconciliation.md",
+    "source": ".plan/epics/epic-cross-layer-reconciliation.md",
     "status": "draft",
     "tags": [
       "reconciliation",
@@ -13277,7 +13277,7 @@
     "hash": "f2b16af",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-cross-platform-portability.md",
+    "source": ".plan/epics/epic-cross-platform-portability.md",
     "status": "in_progress",
     "tags": [
       "cross-platform",
@@ -13297,7 +13297,7 @@
     "hash": "3f20cbd",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-crypto.md",
+    "source": ".plan/epics/epic-crypto.md",
     "status": "in_progress",
     "tags": [
       "encryption",
@@ -13316,7 +13316,7 @@
     "hash": "cb41b7f",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-data-integrity-acid.md",
+    "source": ".plan/epics/epic-data-integrity-acid.md",
     "status": "draft",
     "tags": [
       "acid",
@@ -13335,7 +13335,7 @@
     "hash": "730129b",
     "label": "task",
     "priority": "High",
-    "source": ".plan/tickets/epic-data-integrity-phase1.md",
+    "source": ".plan/epics/epic-data-integrity-phase1.md",
     "status": "Done",
     "tags": [
       "data",
@@ -13355,7 +13355,7 @@
     "hash": "801eba6",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-database-backup-recovery.md",
+    "source": ".plan/epics/epic-database-backup-recovery.md",
     "status": "Not Started",
     "tags": [
       "backup",
@@ -13373,7 +13373,7 @@
     "hash": "16cbca6",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-db-asset-snapshot-recovery.md",
+    "source": ".plan/epics/epic-db-asset-snapshot-recovery.md",
     "status": "🔵 Research",
     "tags": [
       "database",
@@ -13392,7 +13392,7 @@
     "hash": "f8b6356",
     "label": "epic",
     "priority": "Low (speculative — \"far-fetched\" scenario, only justified by measured need)",
-    "source": ".plan/tickets/epic-db-cold-storage-high-perf.md",
+    "source": ".plan/epics/epic-db-cold-storage-high-perf.md",
     "status": "draft",
     "tags": [
       "performance",
@@ -13414,7 +13414,7 @@
     "hash": "a1c07e4",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-db-content-versioning.md",
+    "source": ".plan/epics/epic-db-content-versioning.md",
     "status": "draft",
     "tags": [
       "database",
@@ -13453,7 +13453,7 @@
     "hash": "067de5a",
     "label": "epic",
     "priority": "Medium (maintainability; no runtime behavior change on a fresh DB)",
-    "source": ".plan/tickets/epic-db-migration-compaction.md",
+    "source": ".plan/epics/epic-db-migration-compaction.md",
     "status": "📝 Planned (document only — no migration edits until reviewed)",
     "tags": [
       "db",
@@ -13473,7 +13473,7 @@
     "hash": "155d81c",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-deno-support.md",
+    "source": ".plan/epics/epic-deno-support.md",
     "status": "⬜ Not Started",
     "tags": [
       "research",
@@ -13491,7 +13491,7 @@
     "hash": "94d0b1f",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-deployment-infrastructure.md",
+    "source": ".plan/epics/epic-deployment-infrastructure.md",
     "status": "Not Started",
     "tags": [
       "deployment",
@@ -13509,7 +13509,7 @@
     "hash": "6ebcd91",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-deployment-topologies.md",
+    "source": ".plan/epics/epic-deployment-topologies.md",
     "status": "draft",
     "tags": [
       "deployment",
@@ -13548,7 +13548,7 @@
     "hash": "14d556e",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-desktop-app.md",
+    "source": ".plan/epics/epic-desktop-app.md",
     "status": "⬜ Not Started",
     "tags": [
       "desktop",
@@ -13568,7 +13568,7 @@
     "hash": "15ab578",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-disease-poison.md",
+    "source": ".plan/epics/epic-disease-poison.md",
     "status": "⬜ Not Started",
     "tags": [
       "disease",
@@ -13588,7 +13588,7 @@
     "hash": "9ce4cd9",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-distributed-compute-sharing.md",
+    "source": ".plan/epics/epic-distributed-compute-sharing.md",
     "status": "done",
     "tags": [
       "distributed",
@@ -13611,7 +13611,7 @@
     "hash": "979316e",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-docs-reconciliation.md",
+    "source": ".plan/epics/epic-docs-reconciliation.md",
     "status": "in_progress",
     "tags": [
       "docs",
@@ -13631,7 +13631,7 @@
     "hash": "192be77",
     "label": "epic",
     "priority": "P2",
-    "source": ".plan/tickets/epic-docs-vs-plan-gap-audit-2026-09-19.md",
+    "source": ".plan/epics/epic-docs-vs-plan-gap-audit-2026-09-19.md",
     "status": "Done",
     "tags": [
       "audit",
@@ -13649,7 +13649,7 @@
     "hash": "0ca71f1",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-e2e-integration-testing.md",
+    "source": ".plan/epics/epic-e2e-integration-testing.md",
     "status": "done",
     "tags": [
       "testing",
@@ -13671,7 +13671,7 @@
     "hash": "6db042a",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-economy-trading.md",
+    "source": ".plan/epics/epic-economy-trading.md",
     "status": "⬜ Not Started",
     "tags": [
       "economy",
@@ -13701,7 +13701,7 @@
       "publications",
       "blog"
     ],
-    "source": ".plan/tickets/epic-editorial-workflow.md",
+    "source": ".plan/epics/epic-editorial-workflow.md",
     "status": "Not Started",
     "git_issue": "f1a9f47"
   },
@@ -13735,7 +13735,7 @@
     "hash": "6e850fc",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-email-integration.md",
+    "source": ".plan/epics/epic-email-integration.md",
     "status": "⬜ Not Started",
     "tags": [
       "email",
@@ -13754,7 +13754,7 @@
     "hash": "236d7c6",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-embeddable-backend.md",
+    "source": ".plan/epics/epic-embeddable-backend.md",
     "status": "⬜ Not Started",
     "tags": [
       "embeddable",
@@ -13773,7 +13773,7 @@
     "hash": "5843f62",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-embeddable-engine-game-frontend.md",
+    "source": ".plan/epics/epic-embeddable-engine-game-frontend.md",
     "status": "⬜ Not Started",
     "tags": [
       "embeddable",
@@ -13794,7 +13794,7 @@
     "hash": "f45b8d2",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-emergent-narrative-design.md",
+    "source": ".plan/epics/epic-emergent-narrative-design.md",
     "status": "⬜ Not Started",
     "tags": [
       "rpg",
@@ -13812,7 +13812,7 @@
     "hash": "b78baba",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-emotion-avatar-message-binding.md",
+    "source": ".plan/epics/epic-emotion-avatar-message-binding.md",
     "status": "in_progress",
     "tags": [
       "avatar",
@@ -13831,7 +13831,7 @@
     "hash": "302a058",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-encryption-workflow.md",
+    "source": ".plan/epics/epic-encryption-workflow.md",
     "status": "🟡 Core Built, Integration Pending",
     "tags": [
       "encryption",
@@ -13849,7 +13849,7 @@
     "hash": "f3a33da",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-enemies-monsters.md",
+    "source": ".plan/epics/epic-enemies-monsters.md",
     "status": "⬜ Not Started",
     "tags": [
       "bestiary",
@@ -13871,7 +13871,7 @@
     "hash": "3acb14f",
     "label": "epic",
     "priority": "High (MVP scoped, post-Gate C)",
-    "source": ".plan/tickets/epic-entity-generation-workflows.md",
+    "source": ".plan/epics/epic-entity-generation-workflows.md",
     "status": "⬜ Not Started",
     "tags": [
       "assistant",
@@ -13893,7 +13893,7 @@
     "hash": "e9dd81c",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-error-envelope.md",
+    "source": ".plan/epics/epic-error-envelope.md",
     "status": "⬜ Not Started",
     "tags": [
       "api",
@@ -13919,7 +13919,7 @@
       "research",
       "testing"
     ],
-    "source": ".plan/tickets/epic-experimental-egui-frontend.md",
+    "source": ".plan/epics/epic-experimental-egui-frontend.md",
     "status": "Not Started",
     "git_issue": "a515b55"
   },
@@ -13930,7 +13930,7 @@
     "hash": "51abae7",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-exploration-discovery.md",
+    "source": ".plan/epics/epic-exploration-discovery.md",
     "status": "⬜ Not Started",
     "tags": [
       "exploration",
@@ -13960,7 +13960,7 @@
       "async-jobs",
       "security"
     ],
-    "source": ".plan/tickets/epic-external-creative-tool-bridge.md",
+    "source": ".plan/epics/epic-external-creative-tool-bridge.md",
     "status": "Not Started"
   },
   "EPIC-EXTERNAL-TOOLING-BUILD": {
@@ -13980,7 +13980,7 @@
       "stable-diffusion",
       "provisioning"
     ],
-    "source": ".plan/tickets/epic-external-tooling-build.md",
+    "source": ".plan/epics/epic-external-tooling-build.md",
     "status": "Not Started"
   },
   "EPIC-FACTION-REPUTATION": {
@@ -13990,7 +13990,7 @@
     "hash": "92ba68d",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-faction-reputation.md",
+    "source": ".plan/epics/epic-faction-reputation.md",
     "status": "⬜ Not Started",
     "tags": [
       "factions",
@@ -14009,7 +14009,7 @@
     "hash": "65d55ca",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-fe-be-harmonization.md",
+    "source": ".plan/epics/epic-fe-be-harmonization.md",
     "status": "in_progress",
     "tags": [
       "frontend",
@@ -14064,7 +14064,7 @@
     "hash": "e52555d",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-file-splitting.md",
+    "source": ".plan/epics/epic-file-splitting.md",
     "status": "done",
     "tags": [
       "refactor",
@@ -14086,7 +14086,7 @@
     "hash": "fedf6e9",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-fractal-locations.md",
+    "source": ".plan/epics/epic-fractal-locations.md",
     "status": "⬜ Not Started",
     "tags": [
       "locations",
@@ -14106,7 +14106,7 @@
     "hash": "ba2de78",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-framework-sdks.md",
+    "source": ".plan/epics/epic-framework-sdks.md",
     "status": "⬜ Not Started",
     "tags": [
       "sdk",
@@ -14128,7 +14128,7 @@
     "hash": "e6e9287",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-fresh-alternative-frontend.md",
+    "source": ".plan/epics/epic-fresh-alternative-frontend.md",
     "status": "⬜ Not Started",
     "tags": [
       "fresh",
@@ -14148,7 +14148,7 @@
     "hash": "1f79672",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-admin.md",
+    "source": ".plan/epics/epic-frontend-admin.md",
     "status": "done",
     "tags": [
       "(none)"
@@ -14163,7 +14163,7 @@
     "hash": "c38ad66",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-age-gate.md",
+    "source": ".plan/epics/epic-frontend-age-gate.md",
     "status": "done",
     "tags": [
       "frontend",
@@ -14201,7 +14201,7 @@
     "hash": "e15f426",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-frontend-bundle-optimization.md",
+    "source": ".plan/epics/epic-frontend-bundle-optimization.md",
     "status": "⬜ Not Started",
     "tags": [
       "frontend",
@@ -14220,7 +14220,7 @@
     "hash": "5dfaa37",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-frontend-chat-commands.md",
+    "source": ".plan/epics/epic-frontend-chat-commands.md",
     "status": "Proposed",
     "tags": [
       "chat",
@@ -14241,7 +14241,7 @@
     "hash": "85fbcf9",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-component-architecture.md",
+    "source": ".plan/epics/epic-frontend-component-architecture.md",
     "status": "⬜ Not Started",
     "tags": [
       "frontend",
@@ -14259,7 +14259,7 @@
     "hash": "bfb0c2e",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-components.md",
+    "source": ".plan/epics/epic-frontend-components.md",
     "status": "in_progress",
     "tags": [
       "frontend",
@@ -14278,7 +14278,7 @@
     "hash": "5ac7d4c",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-frontend-emoji-reactions.md",
+    "source": ".plan/epics/epic-frontend-emoji-reactions.md",
     "status": "Proposed",
     "tags": [
       "frontend",
@@ -14298,7 +14298,7 @@
     "hash": "fa130df",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-encryption.md",
+    "source": ".plan/epics/epic-frontend-encryption.md",
     "status": "in_progress",
     "tags": [
       "frontend",
@@ -14316,7 +14316,7 @@
     "hash": "4e4298b",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-gallery.md",
+    "source": ".plan/epics/epic-frontend-gallery.md",
     "status": "done",
     "tags": [
       "gallery",
@@ -14335,7 +14335,7 @@
     "hash": "caf4692",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-headers-management.md",
+    "source": ".plan/epics/epic-frontend-headers-management.md",
     "status": "⬜ Not Started",
     "tags": [
       "frontend",
@@ -14352,7 +14352,7 @@
     "hash": "895a3e6",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-html-dedup-htmx-reuse.md",
+    "source": ".plan/epics/epic-frontend-html-dedup-htmx-reuse.md",
     "status": "done",
     "tags": [
       "frontend",
@@ -14374,7 +14374,7 @@
     "hash": "57428d6",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-internationalization.md",
+    "source": ".plan/epics/epic-frontend-internationalization.md",
     "status": "⬜ Not Started",
     "tags": [
       "frontend",
@@ -14392,7 +14392,7 @@
     "hash": "1010b33",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-login.md",
+    "source": ".plan/epics/epic-frontend-login.md",
     "status": "⬜ Not Started",
     "tags": [
       "frontend",
@@ -14410,7 +14410,7 @@
     "hash": "fbede90",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-notifications.md",
+    "source": ".plan/epics/epic-frontend-notifications.md",
     "status": "⬜ Not Started",
     "tags": [
       "frontend",
@@ -14428,7 +14428,7 @@
     "hash": "ba23cc2",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-overview.md",
+    "source": ".plan/epics/epic-frontend-overview.md",
     "status": "⬜ Not Started",
     "tags": [
       "frontend",
@@ -14445,7 +14445,7 @@
     "hash": "86187ca",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-routing.md",
+    "source": ".plan/epics/epic-frontend-routing.md",
     "status": "⬜ Not Started",
     "tags": [
       "frontend",
@@ -14463,7 +14463,7 @@
     "hash": "86b473d",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-frontend-settings.md",
+    "source": ".plan/epics/epic-frontend-settings.md",
     "status": "done",
     "tags": [
       "(none)"
@@ -14478,7 +14478,7 @@
     "hash": "5feb865",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-fuzzing-infrastructure.md",
+    "source": ".plan/epics/epic-fuzzing-infrastructure.md",
     "status": "⬜ Not Started",
     "tags": [
       "fuzzing",
@@ -14496,7 +14496,7 @@
     "hash": "50821b4",
     "label": "epic",
     "priority": "High (MVP scoped, post-Gate C)",
-    "source": ".plan/tickets/epic-gallery-batch-operations.md",
+    "source": ".plan/epics/epic-gallery-batch-operations.md",
     "status": "⬜ Not Started",
     "tags": [
       "gallery",
@@ -14515,7 +14515,7 @@
     "hash": "799bbf3",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-game-engine-sdks.md",
+    "source": ".plan/epics/epic-game-engine-sdks.md",
     "status": "⬜ Not Started",
     "tags": [
       "unity",
@@ -14535,7 +14535,7 @@
     "hash": "dcb65ed",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-game-frontend-scenes.md",
+    "source": ".plan/epics/epic-game-frontend-scenes.md",
     "status": "⬜ Not Started",
     "tags": [
       "game-frontend",
@@ -14554,7 +14554,7 @@
     "hash": "06538a7",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-generation-flow-control.md",
+    "source": ".plan/epics/epic-generation-flow-control.md",
     "status": "Not Started",
     "tags": [
       "llm",
@@ -14573,7 +14573,7 @@
     "hash": "bf58017",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-gm-shadow-notes.md",
+    "source": ".plan/epics/epic-gm-shadow-notes.md",
     "status": "in_progress",
     "tags": [
       "gm",
@@ -14594,7 +14594,7 @@
     "hash": "c6a9abe",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-group-chat.md",
+    "source": ".plan/epics/epic-group-chat.md",
     "status": "in_progress",
     "tags": [
       "group-chat",
@@ -14623,7 +14623,7 @@
       "visibility",
       "read-only"
     ],
-    "source": ".plan/tickets/epic-guest-access.md",
+    "source": ".plan/epics/epic-guest-access.md",
     "status": "Not Started"
   },
   "EPIC-HARNESS-INTEGRATION": {
@@ -14661,7 +14661,7 @@
     "hash": "98e95c8",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-headless-alternative-frontends.md",
+    "source": ".plan/epics/epic-headless-alternative-frontends.md",
     "status": "⬜ Not Started",
     "tags": [
       "frontend",
@@ -14679,7 +14679,7 @@
     "hash": "0825bcb",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-hidden-carriage-context.md",
+    "source": ".plan/epics/epic-hidden-carriage-context.md",
     "status": "Proposed",
     "tags": [
       "carriage",
@@ -14722,7 +14722,7 @@
     "hash": "ebfca55",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-housing-base-building.md",
+    "source": ".plan/epics/epic-housing-base-building.md",
     "status": "⬜ Not Started",
     "tags": [
       "housing",
@@ -14741,7 +14741,7 @@
     "hash": "51a0430",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-http-protocol-features.md",
+    "source": ".plan/epics/epic-http-protocol-features.md",
     "status": "⬜ Not Started",
     "tags": [
       "http2",
@@ -14764,7 +14764,7 @@
     "hash": "c1bb124",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-i18n.md",
+    "source": ".plan/epics/epic-i18n.md",
     "status": "done",
     "tags": [
       "i18n",
@@ -14783,7 +14783,7 @@
     "hash": "9c5b456",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-im-integrations.md",
+    "source": ".plan/epics/epic-im-integrations.md",
     "status": "⬜ Not Started",
     "tags": [
       "im",
@@ -14821,7 +14821,7 @@
     "hash": "f309fc1",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-immersion-consistency-gate.md",
+    "source": ".plan/epics/epic-immersion-consistency-gate.md",
     "status": "Not Started",
     "tags": [
       "immersion",
@@ -14842,7 +14842,7 @@
     "hash": "d9b35a3",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-immersion-presentation.md",
+    "source": ".plan/epics/epic-immersion-presentation.md",
     "status": "⬜ Not Started",
     "tags": [
       "immersion",
@@ -14865,7 +14865,7 @@
     "hash": "3989f5e",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-impersonation.md",
+    "source": ".plan/epics/epic-impersonation.md",
     "status": "in_progress",
     "tags": [
       "impersonation",
@@ -14884,7 +14884,7 @@
     "hash": "8b8294f",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-implementation.md",
+    "source": ".plan/epics/epic-implementation.md",
     "status": "⬜ Not Started",
     "tags": [
       "backend",
@@ -14903,7 +14903,7 @@
     "hash": "6066fbb",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-import-export-io.md",
+    "source": ".plan/epics/epic-import-export-io.md",
     "status": "done",
     "tags": [
       "import",
@@ -14922,7 +14922,7 @@
     "hash": "da62aed",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-instance-federation.md",
+    "source": ".plan/epics/epic-instance-federation.md",
     "status": "draft",
     "tags": [
       "federation",
@@ -14942,7 +14942,7 @@
     "hash": "2fb83c3",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-integrations-core.md",
+    "source": ".plan/epics/epic-integrations-core.md",
     "status": "⬜ Not Started",
     "tags": [
       "integrations",
@@ -14982,7 +14982,7 @@
     "hash": "6e8cec0",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-inventory.md",
+    "source": ".plan/epics/epic-inventory.md",
     "status": "draft",
     "tags": [
       "inventory",
@@ -15020,7 +15020,7 @@
     "hash": "d767e63",
     "label": "epic",
     "priority": "P1 — High",
-    "source": ".plan/tickets/epic-inventory-ui.md",
+    "source": ".plan/epics/epic-inventory-ui.md",
     "status": "⬜ Not Started",
     "tags": [
       "inventory",
@@ -15039,7 +15039,7 @@
     "hash": "b18084a",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-io-formats.md",
+    "source": ".plan/epics/epic-io-formats.md",
     "status": "⬜ Not Started",
     "tags": [
       "import-export",
@@ -15057,7 +15057,7 @@
     "hash": "30dea1e",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-item-system-extensions.md",
+    "source": ".plan/epics/epic-item-system-extensions.md",
     "status": "⬜ Not Started",
     "tags": [
       "items",
@@ -15078,7 +15078,7 @@
     "hash": "b6f35f8",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-item-systems-unification.md",
+    "source": ".plan/epics/epic-item-systems-unification.md",
     "status": "in_progress",
     "tags": [
       "items",
@@ -15100,7 +15100,7 @@
     "hash": "45ab1ed",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-items.md",
+    "source": ".plan/epics/epic-items.md",
     "status": "draft",
     "tags": [
       "items",
@@ -15119,7 +15119,7 @@
     "hash": "0124007",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-items-economy-crafting.md",
+    "source": ".plan/epics/epic-items-economy-crafting.md",
     "status": "⬜ Not Started",
     "tags": [
       "rpg",
@@ -15139,7 +15139,7 @@
     "hash": "703acd3",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-licensing.md",
+    "source": ".plan/epics/epic-licensing.md",
     "status": "⬜ Not Started",
     "tags": [
       "audit",
@@ -15178,7 +15178,7 @@
     "hash": "ca56ef1",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-llm-queue.md",
+    "source": ".plan/epics/epic-llm-queue.md",
     "status": "⬜ Not Started",
     "tags": [
       "llm",
@@ -15240,7 +15240,7 @@
     "hash": "d831119",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-local-process-swarm.md",
+    "source": ".plan/epics/epic-local-process-swarm.md",
     "status": "⬜ Not Started",
     "tags": [
       "architecture",
@@ -15260,7 +15260,7 @@
     "hash": "c41a2a2",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-locations.md",
+    "source": ".plan/epics/epic-locations.md",
     "status": "draft",
     "tags": [
       "locations",
@@ -15279,7 +15279,7 @@
     "hash": "7285eb5",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-logging.md",
+    "source": ".plan/epics/epic-logging.md",
     "status": "⬜ Not Started",
     "tags": [
       "logging",
@@ -15299,7 +15299,7 @@
     "hash": "9075591",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-logging-telemetry.md",
+    "source": ".plan/epics/epic-logging-telemetry.md",
     "status": "in_progress",
     "tags": [
       "logging",
@@ -15321,7 +15321,7 @@
     "hash": "6112ae9",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-logic-reconciliation.md",
+    "source": ".plan/epics/epic-logic-reconciliation.md",
     "status": "🟡 Permanently Ongoing",
     "tags": [
       "chat",
@@ -15342,7 +15342,7 @@
     "hash": "165a6a3",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-lora-discovery-application.md",
+    "source": ".plan/epics/epic-lora-discovery-application.md",
     "status": "done",
     "tags": [
       "lora",
@@ -15362,7 +15362,7 @@
     "hash": "3e747ff",
     "label": "epic",
     "priority": "High\\",
-    "source": ".plan/tickets/epic-lore-knowledge.md",
+    "source": ".plan/epics/epic-lore-knowledge.md",
     "status": "draft",
     "tags": [
       "lore",
@@ -15381,7 +15381,7 @@
     "hash": "5611f9f",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-magic-spell-systems.md",
+    "source": ".plan/epics/epic-magic-spell-systems.md",
     "status": "⬜ Not Started",
     "tags": [
       "magic",
@@ -15482,7 +15482,7 @@
     "hash": "282b877",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-matrix-integration.md",
+    "source": ".plan/epics/epic-matrix-integration.md",
     "status": "⬜ Not Started",
     "tags": [
       "matrix",
@@ -15501,7 +15501,7 @@
     "hash": "d19cd88",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-mechanics-governance.md",
+    "source": ".plan/epics/epic-mechanics-governance.md",
     "status": "⬜ Not Started",
     "tags": [
       "rpg",
@@ -15520,7 +15520,7 @@
     "hash": "97c01ac",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-memory-isolation-design.md",
+    "source": ".plan/epics/epic-memory-isolation-design.md",
     "status": "design (no code — IDEA ticket, Low priority / Large effort)",
     "tags": [
       "memory",
@@ -15537,7 +15537,7 @@
     "hash": "0ce2935",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-memory-knowledge-systems.md",
+    "source": ".plan/epics/epic-memory-knowledge-systems.md",
     "status": "in_progress",
     "tags": [
       "memory",
@@ -15560,7 +15560,7 @@
     "hash": "7b99834",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-memory-profiling-budgets.md",
+    "source": ".plan/epics/epic-memory-profiling-budgets.md",
     "status": "⬜ Not Started",
     "tags": [
       "profiling",
@@ -15579,7 +15579,7 @@
     "hash": "0428596",
     "label": "epic",
     "priority": "High\\",
-    "source": ".plan/tickets/epic-memory-propagation.md",
+    "source": ".plan/epics/epic-memory-propagation.md",
     "status": "draft",
     "tags": [
       "memory",
@@ -15598,7 +15598,7 @@
     "hash": "d0e739b",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-mesh-federation-content-sharing.md",
+    "source": ".plan/epics/epic-mesh-federation-content-sharing.md",
     "status": "done",
     "tags": [
       "mesh",
@@ -15617,7 +15617,7 @@
     "hash": "3f05c6f",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-message-seen-state.md",
+    "source": ".plan/epics/epic-message-seen-state.md",
     "status": "⬜ Not Started",
     "tags": [
       "messages",
@@ -15639,7 +15639,7 @@
     "hash": "403d3e4",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-messages.md",
+    "source": ".plan/epics/epic-messages.md",
     "status": "⬜ Not Started",
     "tags": [
       "messages",
@@ -15658,7 +15658,7 @@
     "hash": "696e348",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-middleware-request-lifecycle.md",
+    "source": ".plan/epics/epic-middleware-request-lifecycle.md",
     "status": "done",
     "tags": [
       "(none)"
@@ -15673,7 +15673,7 @@
     "hash": "3146b76",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-mini-games.md",
+    "source": ".plan/epics/epic-mini-games.md",
     "status": "⬜ Not Started",
     "tags": [
       "game-mechanics",
@@ -15692,7 +15692,7 @@
     "hash": "6529969",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-mini-games-db.md",
+    "source": ".plan/epics/epic-mini-games-db.md",
     "status": "Not Started",
     "tags": [
       "database",
@@ -15711,7 +15711,7 @@
     "hash": "bb1e9e6",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-mini-games-design.md",
+    "source": ".plan/epics/epic-mini-games-design.md",
     "status": "draft",
     "tags": [
       "game-mechanics",
@@ -15729,7 +15729,7 @@
     "hash": "2a0c0d8",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-mini-games-expanded.md",
+    "source": ".plan/epics/epic-mini-games-expanded.md",
     "status": "draft",
     "tags": [
       "ui",
@@ -15748,7 +15748,7 @@
     "hash": "a63bb47",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-mini-games-mechanics.md",
+    "source": ".plan/epics/epic-mini-games-mechanics.md",
     "status": "Done",
     "tags": [
       "(none)"
@@ -15763,7 +15763,7 @@
     "hash": "bcd259e",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-mini-games-ui-api.md",
+    "source": ".plan/epics/epic-mini-games-ui-api.md",
     "status": "Not Started",
     "tags": [
       "api",
@@ -15782,7 +15782,7 @@
     "hash": "7dc8f1c",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-mobile-app.md",
+    "source": ".plan/epics/epic-mobile-app.md",
     "status": "⬜ Not Started",
     "tags": [
       "mobile",
@@ -15802,7 +15802,7 @@
     "hash": "653c27f",
     "label": "epic",
     "priority": "High (MVP scoped, post-Gate C)",
-    "source": ".plan/tickets/epic-model-family-presets.md",
+    "source": ".plan/epics/epic-model-family-presets.md",
     "status": "⬜ Not Started",
     "tags": [
       "assistant",
@@ -15864,7 +15864,7 @@
     "hash": "a3be81f",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-multi-instance-reconciliation.md",
+    "source": ".plan/epics/epic-multi-instance-reconciliation.md",
     "status": "draft",
     "tags": [
       "concurrency",
@@ -15882,7 +15882,7 @@
     "hash": "650eaed",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-multi-session.md",
+    "source": ".plan/epics/epic-multi-session.md",
     "status": "⬜ Not Started",
     "tags": [
       "auth",
@@ -15918,7 +15918,7 @@
     "hash": "676f20f",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-multimodal-asset-reuse.md",
+    "source": ".plan/epics/epic-multimodal-asset-reuse.md",
     "status": "⬜ Not Started",
     "tags": [
       "multimodal",
@@ -15937,7 +15937,7 @@
     "hash": "6bdb9d5",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-narration-actor-separation.md",
+    "source": ".plan/epics/epic-narration-actor-separation.md",
     "status": "Not Started",
     "tags": [
       "narration",
@@ -15958,7 +15958,7 @@
     "hash": "7fb5196",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-narration-pipeline.md",
+    "source": ".plan/epics/epic-narration-pipeline.md",
     "status": "⬜ Not Started",
     "tags": [
       "narration",
@@ -15988,7 +15988,7 @@
       "assets",
       "export"
     ],
-    "source": ".plan/tickets/epic-narrative-publishing-workflows.md",
+    "source": ".plan/epics/epic-narrative-publishing-workflows.md",
     "status": "Not Started",
     "git_issue": "ad6907e"
   },
@@ -15999,7 +15999,7 @@
     "hash": "b550f20",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-native-module-benchmarks.md",
+    "source": ".plan/epics/epic-native-module-benchmarks.md",
     "status": "in_progress",
     "tags": [
       "benchmarking",
@@ -16018,7 +16018,7 @@
     "hash": "88aad9e",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-non-standard-browser-crypto.md",
+    "source": ".plan/epics/epic-non-standard-browser-crypto.md",
     "status": "🟦 Research",
     "tags": [
       "encryption",
@@ -16040,7 +16040,7 @@
     "hash": "26f4694",
     "label": "epic",
     "priority": "P2 — Medium",
-    "source": ".plan/tickets/epic-npc-management-ui.md",
+    "source": ".plan/epics/epic-npc-management-ui.md",
     "status": "Done",
     "tags": [
       "npc",
@@ -16059,7 +16059,7 @@
     "hash": "6bc8f5c",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-npc-navigation.md",
+    "source": ".plan/epics/epic-npc-navigation.md",
     "status": "done",
     "tags": [
       "npc",
@@ -16078,7 +16078,7 @@
     "hash": "d8a5fa9",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-npcs.md",
+    "source": ".plan/epics/epic-npcs.md",
     "status": "draft",
     "tags": [
       "npcs",
@@ -16097,7 +16097,7 @@
     "hash": "7369edd",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-nsfw-capabilities.md",
+    "source": ".plan/epics/epic-nsfw-capabilities.md",
     "status": "✅ In Review (Gating & Preferences + Consent cluster landed on dev via commit `49731047`)",
     "tags": [
       "nsfw",
@@ -16117,7 +16117,7 @@
     "hash": "4da9112",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-nsfw-game-mechanics.md",
+    "source": ".plan/epics/epic-nsfw-game-mechanics.md",
     "status": "draft",
     "tags": [
       "nsfw",
@@ -16137,7 +16137,7 @@
     "hash": "e53147b",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-nsfw-integration-gaps.md",
+    "source": ".plan/epics/epic-nsfw-integration-gaps.md",
     "status": "⬜ Not Started",
     "tags": [
       "nsfw",
@@ -16158,7 +16158,7 @@
     "hash": "610832a",
     "label": "task",
     "priority": "High",
-    "source": ".plan/tickets/epic-nsfw-moderation-priority.md",
+    "source": ".plan/epics/epic-nsfw-moderation-priority.md",
     "status": "⬜ Not Started",
     "tags": [
       "nsfw",
@@ -16177,7 +16177,7 @@
     "hash": "6a07a06",
     "label": "epic",
     "priority": "P0 — Critical",
-    "source": ".plan/tickets/epic-nsfw-ui.md",
+    "source": ".plan/epics/epic-nsfw-ui.md",
     "status": "⬜ Not Started",
     "tags": [
       "nsfw",
@@ -16195,7 +16195,7 @@
     "hash": "97a9146",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-observability-telemetry.md",
+    "source": ".plan/epics/epic-observability-telemetry.md",
     "status": "Not Started",
     "tags": [
       "telemetry",
@@ -16212,7 +16212,7 @@
     "hash": "2e86802",
     "label": "epic",
     "priority": "P1-High",
-    "source": ".plan/tickets/epic-openapi-reference.md",
+    "source": ".plan/epics/epic-openapi-reference.md",
     "status": "done",
     "tags": [
       "api",
@@ -16252,7 +16252,7 @@
     "hash": "b9c974f",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-output-control-transforms.md",
+    "source": ".plan/epics/epic-output-control-transforms.md",
     "status": "⬜ Not Started",
     "tags": [
       "llm",
@@ -16270,7 +16270,7 @@
     "hash": "0cf92a7",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-party-migration.md",
+    "source": ".plan/epics/epic-party-migration.md",
     "status": "⬜ Not Started",
     "tags": [
       "party",
@@ -16289,7 +16289,7 @@
     "hash": "98b29aa",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-performance-dashboard-slo.md",
+    "source": ".plan/epics/epic-performance-dashboard-slo.md",
     "status": "⬜ Not Started",
     "tags": [
       "observability",
@@ -16308,7 +16308,7 @@
     "hash": "b63a9d4",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-perspective-narration-voice.md",
+    "source": ".plan/epics/epic-perspective-narration-voice.md",
     "status": "Not Started",
     "tags": [
       "perspective",
@@ -16347,7 +16347,7 @@
     "hash": "e4b89fb",
     "label": "epic",
     "priority": "P1-High",
-    "source": ".plan/tickets/epic-platform-integrations.md",
+    "source": ".plan/epics/epic-platform-integrations.md",
     "status": "⬜ Not Started",
     "tags": [
       "providers",
@@ -16368,7 +16368,7 @@
     "hash": "4d2a325",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-platform-research.md",
+    "source": ".plan/epics/epic-platform-research.md",
     "status": "🟡 Permanently Ongoing",
     "tags": [
       "research",
@@ -16387,7 +16387,7 @@
     "hash": "c15faec",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-player-state-machine.md",
+    "source": ".plan/epics/epic-player-state-machine.md",
     "status": "draft",
     "tags": [
       "player-state",
@@ -16405,7 +16405,7 @@
     "hash": "f734560",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-plugin-extension-points.md",
+    "source": ".plan/epics/epic-plugin-extension-points.md",
     "status": "draft",
     "tags": [
       "plugins",
@@ -16423,7 +16423,7 @@
     "hash": "358bb95",
     "label": "epic",
     "priority": "P2 — Medium",
-    "source": ".plan/tickets/epic-plugin-management-ui.md",
+    "source": ".plan/epics/epic-plugin-management-ui.md",
     "status": "⬜ Not Started",
     "tags": [
       "plugins",
@@ -16441,7 +16441,7 @@
     "hash": "0ca8985",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-plugin-system.md",
+    "source": ".plan/epics/epic-plugin-system.md",
     "status": "⬜ Not Started",
     "tags": [
       "plugin",
@@ -16460,7 +16460,7 @@
     "hash": "a205cac",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-precompiled-hot-binaries.md",
+    "source": ".plan/epics/epic-precompiled-hot-binaries.md",
     "status": "in_progress",
     "tags": [
       "native-modules",
@@ -16501,7 +16501,7 @@
     "hash": "06c6c40",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-prompt-improvement.md",
+    "source": ".plan/epics/epic-prompt-improvement.md",
     "status": "in_progress",
     "tags": [
       "frontend",
@@ -16520,7 +16520,7 @@
     "hash": "b191694",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-provider-plugin-ecosystem.md",
+    "source": ".plan/epics/epic-provider-plugin-ecosystem.md",
     "status": "in_progress",
     "tags": [
       "providers",
@@ -16550,7 +16550,7 @@
       "reader",
       "llm"
     ],
-    "source": ".plan/tickets/epic-publication-i18n.md",
+    "source": ".plan/epics/epic-publication-i18n.md",
     "status": "Not Started",
     "git_issue": "36c4446"
   },
@@ -16561,7 +16561,7 @@
     "hash": "262b3ad",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-quests-encounters.md",
+    "source": ".plan/epics/epic-quests-encounters.md",
     "status": "🟡 Implementation exists (single consolidated engine, wired under /api/rpg/quests); quest type-taxonomy harmonization pending (see TASK-harmonize-quest-type-taxonomy)",
     "tags": [
       "quests",
@@ -16580,7 +16580,7 @@
     "hash": "e1cd3b3",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-rag-assets-unified-storage-and-assistant-flows.md",
+    "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md",
     "status": "⬜ Not Started",
     "tags": [
       "rag",
@@ -16604,7 +16604,7 @@
     "hash": "63e26b6",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-rag-context-sources.md",
+    "source": ".plan/epics/epic-rag-context-sources.md",
     "status": "⬜ Not Started",
     "tags": [
       "rag",
@@ -16626,7 +16626,7 @@
     "hash": "8f735e3",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-rag-document-processing.md",
+    "source": ".plan/epics/epic-rag-document-processing.md",
     "status": "⬜ Not Started",
     "tags": [
       "rag",
@@ -16645,7 +16645,7 @@
     "hash": "c622228",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-rag-document-processing-quickref.md",
+    "source": ".plan/epics/epic-rag-document-processing-quickref.md",
     "status": "Not Started",
     "tags": [
       "rag",
@@ -16664,7 +16664,7 @@
     "hash": "7ff11e7",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-rag-enterprise.md",
+    "source": ".plan/epics/epic-rag-enterprise.md",
     "status": "⬜ Not Started",
     "tags": [
       "rag",
@@ -16686,7 +16686,7 @@
     "hash": "9ef32dd",
     "label": "epic",
     "priority": "High (blocks shipping `epic-rag-assets-unified-storage-and-assistant-flows.md` B-R4 + B-R5 with confidence)",
-    "source": ".plan/tickets/epic-rag-evaluation-observability.md",
+    "source": ".plan/epics/epic-rag-evaluation-observability.md",
     "status": "⬜ Not Started",
     "tags": [
       "rag",
@@ -16727,7 +16727,7 @@
     "hash": "e67b3e3",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-rag-ingestion.md",
+    "source": ".plan/epics/epic-rag-ingestion.md",
     "status": "⬜ Not Started",
     "tags": [
       "rag",
@@ -16746,7 +16746,7 @@
     "hash": "b2627ba",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-rag-retrieval.md",
+    "source": ".plan/epics/epic-rag-retrieval.md",
     "status": "⬜ Not Started",
     "tags": [
       "rag",
@@ -16766,7 +16766,7 @@
     "hash": "263c610",
     "label": "epic",
     "priority": "P2 — Medium",
-    "source": ".plan/tickets/epic-rag-ui.md",
+    "source": ".plan/epics/epic-rag-ui.md",
     "status": "⬜ Not Started",
     "tags": [
       "rag",
@@ -16785,7 +16785,7 @@
     "hash": "223595d",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-rag-vector-store.md",
+    "source": ".plan/epics/epic-rag-vector-store.md",
     "status": "⬜ Not Started",
     "tags": [
       "rag",
@@ -16806,7 +16806,7 @@
     "hash": "4629ae4",
     "label": "epic",
     "priority": "High\\",
-    "source": ".plan/tickets/epic-rarity-extensions.md",
+    "source": ".plan/epics/epic-rarity-extensions.md",
     "status": "draft",
     "tags": [
       "rarity",
@@ -16851,7 +16851,7 @@
     "hash": "47b874d",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-realtime-transports.md",
+    "source": ".plan/epics/epic-realtime-transports.md",
     "status": "⬜ Not Started",
     "tags": [
       "websocket",
@@ -16909,7 +16909,7 @@
       "graph-builder",
       "lora-audit"
     ],
-    "source": ".plan/tickets/epic-reference-conditioned-generation.md",
+    "source": ".plan/epics/epic-reference-conditioned-generation.md",
     "status": "Not Started",
     "git_issue": "4ab9b9c"
   },
@@ -16939,7 +16939,7 @@
     "hash": "4c39313",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-relationships.md",
+    "source": ".plan/epics/epic-relationships.md",
     "status": "draft",
     "tags": [
       "relationships",
@@ -16958,7 +16958,7 @@
     "hash": "2b8b377",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-release-010.md",
+    "source": ".plan/epics/epic-release-010.md",
     "status": "in_progress",
     "tags": [
       "release",
@@ -16978,7 +16978,7 @@
     "hash": "4aa052b",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-replayability.md",
+    "source": ".plan/epics/epic-replayability.md",
     "status": "done",
     "tags": [
       "replayability",
@@ -16997,7 +16997,7 @@
     "hash": "60aa5a5",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-research-agency-affordance.md",
+    "source": ".plan/epics/epic-research-agency-affordance.md",
     "status": "draft",
     "tags": [
       "research",
@@ -17016,7 +17016,7 @@
     "hash": "d5b9924",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-research-agency-decision.md",
+    "source": ".plan/epics/epic-research-agency-decision.md",
     "status": "done",
     "tags": [
       "research",
@@ -17036,7 +17036,7 @@
     "hash": "1b8fbb0",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-research-agency-quality.md",
+    "source": ".plan/epics/epic-research-agency-quality.md",
     "status": "draft",
     "tags": [
       "research",
@@ -17055,7 +17055,7 @@
     "hash": "f10f117",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-resolution-system.md",
+    "source": ".plan/epics/epic-resolution-system.md",
     "status": "⬜ Not Started",
     "tags": [
       "resolution",
@@ -17076,7 +17076,7 @@
     "hash": "08580ef",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-resource-provision.md",
+    "source": ".plan/epics/epic-resource-provision.md",
     "status": "draft",
     "tags": [
       "byok",
@@ -17157,7 +17157,7 @@
     "hash": "5834a38",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-review-check-parallel-ram-2026-09-03.md",
+    "source": ".plan/epics/epic-review-check-parallel-ram-2026-09-03.md",
     "status": "Not Started",
     "tags": [
       "tooling",
@@ -17175,7 +17175,7 @@
     "hash": "70ea164",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-review-dev-2026-08-26-late-merges.md",
+    "source": ".plan/epics/epic-review-dev-2026-08-26-late-merges.md",
     "status": "Not Started",
     "tags": [
       "testing",
@@ -17193,7 +17193,7 @@
     "hash": "da940e5",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-review-dev-2026-08-26-security-data-integrity-merges.md",
+    "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md",
     "status": "Not Started",
     "tags": [
       "security",
@@ -17211,7 +17211,7 @@
     "hash": "c0e68c7",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-rpg-content-systems.md",
+    "source": ".plan/epics/epic-rpg-content-systems.md",
     "status": "⬜ Not Started",
     "tags": [
       "rpg",
@@ -17230,7 +17230,7 @@
     "hash": "f95ace8",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-rpg-core-wiring.md",
+    "source": ".plan/epics/epic-rpg-core-wiring.md",
     "status": "in_progress",
     "tags": [
       "rpg",
@@ -17250,7 +17250,7 @@
     "hash": "c28e02e",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-rpg-mechanics.md",
+    "source": ".plan/epics/epic-rpg-mechanics.md",
     "status": "in_progress",
     "tags": [
       "rpg",
@@ -17271,7 +17271,7 @@
     "hash": "23ccda2",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-rpg-patterns.md",
+    "source": ".plan/epics/epic-rpg-patterns.md",
     "status": "⬜ Not Started",
     "tags": [
       "game-mechanics",
@@ -17289,7 +17289,7 @@
     "hash": "1e347d7",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-rpg-progression.md",
+    "source": ".plan/epics/epic-rpg-progression.md",
     "status": "⬜ Not Started",
     "tags": [
       "rpg",
@@ -17309,7 +17309,7 @@
     "hash": "b874464",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-rpg-wiring-phase3.md",
+    "source": ".plan/epics/epic-rpg-wiring-phase3.md",
     "status": "in_progress",
     "tags": [
       "rpg",
@@ -17331,7 +17331,7 @@
     "hash": "1e472ed",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-runtime-integrity-fail-safes.md",
+    "source": ".plan/epics/epic-runtime-integrity-fail-safes.md",
     "status": "Done",
     "tags": [
       "(none)"
@@ -17386,7 +17386,7 @@
     "hash": "8443edd",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-schema.md",
+    "source": ".plan/epics/epic-schema.md",
     "status": "⬜ Not Started",
     "tags": [
       "database",
@@ -17405,7 +17405,7 @@
     "hash": "9cf4330",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-script-migration.md",
+    "source": ".plan/epics/epic-script-migration.md",
     "status": "done",
     "tags": [
       "(none)"
@@ -17420,7 +17420,7 @@
     "hash": "9c28d6a",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-security-sandboxing.md",
+    "source": ".plan/epics/epic-security-sandboxing.md",
     "status": "Not Started",
     "tags": [
       "security",
@@ -17438,7 +17438,7 @@
     "hash": "300057c",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-security-sandboxing-quickref.md",
+    "source": ".plan/epics/epic-security-sandboxing-quickref.md",
     "status": "Not Started",
     "tags": [
       "security",
@@ -17476,7 +17476,7 @@
     "hash": "4c0c21a",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-shared-client-sdk.md",
+    "source": ".plan/epics/epic-shared-client-sdk.md",
     "status": "⬜ Not Started",
     "tags": [
       "sdk",
@@ -17496,7 +17496,7 @@
     "hash": "4b235e5",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-shared-schemas.md",
+    "source": ".plan/epics/epic-shared-schemas.md",
     "status": "Done",
     "tags": [
       "schemas",
@@ -17516,7 +17516,7 @@
     "hash": "32d4d78",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-skills.md",
+    "source": ".plan/epics/epic-skills.md",
     "status": "done",
     "tags": [
       "skills",
@@ -17535,7 +17535,7 @@
     "hash": "81411ea",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-skills-professions-config.md",
+    "source": ".plan/epics/epic-skills-professions-config.md",
     "status": "⬜ Not Started",
     "tags": [
       "skills",
@@ -17556,7 +17556,7 @@
     "hash": "ad814f5",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-social-graph.md",
+    "source": ".plan/epics/epic-social-graph.md",
     "status": "draft",
     "tags": [
       "social",
@@ -17578,7 +17578,7 @@
     "hash": "e57ac4d",
     "label": "epic",
     "priority": "medium",
-    "source": ".plan/tickets/epic-social-hub.md",
+    "source": ".plan/epics/epic-social-hub.md",
     "status": "Not Started",
     "tags": [
       "social",
@@ -17595,7 +17595,7 @@
     "hash": "90d1da1",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-social-hub-quickref.md",
+    "source": ".plan/epics/epic-social-hub-quickref.md",
     "status": "Not Started",
     "tags": [
       "social-hub",
@@ -17615,7 +17615,7 @@
     "hash": "b078f03",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-social-interaction.md",
+    "source": ".plan/epics/epic-social-interaction.md",
     "status": "⬜ Not Started",
     "tags": [
       "social",
@@ -17636,7 +17636,7 @@
     "hash": "5ebc697",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-stealth-crime.md",
+    "source": ".plan/epics/epic-stealth-crime.md",
     "status": "⬜ Not Started",
     "tags": [
       "stealth",
@@ -17656,7 +17656,7 @@
     "hash": "4b7273f",
     "label": "epic",
     "priority": "P1 — High",
-    "source": ".plan/tickets/epic-story-mode-ui.md",
+    "source": ".plan/epics/epic-story-mode-ui.md",
     "status": "in_progress",
     "tags": [
       "story",
@@ -17675,7 +17675,7 @@
     "hash": "4dc3f1a",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-task-management-integration.md",
+    "source": ".plan/epics/epic-task-management-integration.md",
     "status": "done",
     "tags": [
       "task-management",
@@ -17707,7 +17707,7 @@
       "reproducibility",
       "frontend"
     ],
-    "source": ".plan/tickets/epic-technical-comparison-charts.md",
+    "source": ".plan/epics/epic-technical-comparison-charts.md",
     "status": "Not Started",
     "git_issue": "f1d8212"
   },
@@ -17718,7 +17718,7 @@
     "hash": "9af2d15",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-terminal-ui.md",
+    "source": ".plan/epics/epic-terminal-ui.md",
     "status": "in_progress",
     "tags": [
       "tui",
@@ -17738,7 +17738,7 @@
     "hash": "4b390ad",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-testing-benchmarking.md",
+    "source": ".plan/epics/epic-testing-benchmarking.md",
     "status": "in_progress",
     "tags": [
       "testing",
@@ -17757,7 +17757,7 @@
     "hash": "a03a6fc",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-testing-qa.md",
+    "source": ".plan/epics/epic-testing-qa.md",
     "status": "🟡 Permanently Ongoing",
     "tags": [
       "testing",
@@ -17776,7 +17776,7 @@
     "hash": "3748bd1",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-time-scale.md",
+    "source": ".plan/epics/epic-time-scale.md",
     "status": "draft",
     "tags": [
       "time",
@@ -17795,7 +17795,7 @@
     "hash": "21350af",
     "label": "epic",
     "priority": "High\\",
-    "source": ".plan/tickets/epic-timeline-system.md",
+    "source": ".plan/epics/epic-timeline-system.md",
     "status": "draft",
     "tags": [
       "timeline",
@@ -17813,7 +17813,7 @@
     "hash": "2ec4ef7",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-tooling-improvement.md",
+    "source": ".plan/epics/epic-tooling-improvement.md",
     "status": "🟡 Permanently Ongoing",
     "tags": [
       "tooling",
@@ -17832,7 +17832,7 @@
     "hash": "d5cf10f",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-transport-expansion.md",
+    "source": ".plan/epics/epic-transport-expansion.md",
     "status": "in_progress",
     "tags": [
       "transport",
@@ -17849,7 +17849,7 @@
     "hash": "b9378be",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-transport-layer-expansion.md",
+    "source": ".plan/epics/epic-transport-layer-expansion.md",
     "status": "⬜ Not Started",
     "tags": [
       "transport",
@@ -17866,7 +17866,7 @@
     "hash": "b0dd30a",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-tts-foundation.md",
+    "source": ".plan/epics/epic-tts-foundation.md",
     "status": "⬜ Not Started",
     "tags": [
       "tts",
@@ -17885,7 +17885,7 @@
     "hash": "6cbb9b0",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-two-factor-auth.md",
+    "source": ".plan/epics/epic-two-factor-auth.md",
     "status": "⬜ Not Started",
     "tags": [
       "auth",
@@ -17903,7 +17903,7 @@
     "hash": "b9f7075",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-two-pass-delivery.md",
+    "source": ".plan/epics/epic-two-pass-delivery.md",
     "status": "Not Started",
     "tags": [
       "generation",
@@ -17925,7 +17925,7 @@
     "hash": "b92f923",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-unified-spec-framework.md",
+    "source": ".plan/epics/epic-unified-spec-framework.md",
     "status": "Done",
     "tags": [
       "tooling",
@@ -17949,7 +17949,7 @@
     "hash": "1090d3a",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-use-case-agentic-workspace.md",
+    "source": ".plan/epics/epic-use-case-agentic-workspace.md",
     "status": "⬜ Not Started",
     "tags": [
       "agent",
@@ -17966,7 +17966,7 @@
     "hash": "fd19e46",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-user-stories.md",
+    "source": ".plan/epics/epic-user-stories.md",
     "status": "🟡 Permanently Ongoing",
     "tags": [
       "ux",
@@ -18006,7 +18006,7 @@
     "hash": "a68a46c",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-video-generation.md",
+    "source": ".plan/epics/epic-video-generation.md",
     "status": "⬜ Not Started",
     "tags": [
       "video",
@@ -18044,7 +18044,7 @@
     "hash": "2cf55b8",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-wardrobe-avatar-variants.md",
+    "source": ".plan/epics/epic-wardrobe-avatar-variants.md",
     "status": "done",
     "tags": [
       "avatar",
@@ -18065,7 +18065,7 @@
     "hash": "ec80440",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-weather-environment.md",
+    "source": ".plan/epics/epic-weather-environment.md",
     "status": "⬜ Not Started",
     "tags": [
       "weather",
@@ -18085,7 +18085,7 @@
     "hash": "944b7bd",
     "label": "epic",
     "priority": "High (MVP scoped, post-Gate C)",
-    "source": ".plan/tickets/epic-workflow-engine.md",
+    "source": ".plan/epics/epic-workflow-engine.md",
     "status": "in_progress",
     "tags": [
       "assistant",
@@ -18104,7 +18104,7 @@
     "hash": "83cc19e",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-world-chat-channels-invites.md",
+    "source": ".plan/epics/epic-world-chat-channels-invites.md",
     "status": "done",
     "tags": [
       "worlds",
@@ -18124,7 +18124,7 @@
     "hash": "02616d2",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-world-diplomacy-karma.md",
+    "source": ".plan/epics/epic-world-diplomacy-karma.md",
     "status": "Not Started",
     "tags": [
       "world",
@@ -18143,7 +18143,7 @@
     "hash": "dc36e4d",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-world-encounters.md",
+    "source": ".plan/epics/epic-world-encounters.md",
     "status": "Not Started",
     "tags": [
       "world",
@@ -18162,7 +18162,7 @@
     "hash": "c0039d5",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-world-locations.md",
+    "source": ".plan/epics/epic-world-locations.md",
     "status": "⬜ Not Started",
     "tags": [
       "world",
@@ -18179,7 +18179,7 @@
     "hash": "cf07d0b",
     "label": "epic",
     "priority": "P0 — Critical",
-    "source": ".plan/tickets/epic-world-management-ui.md",
+    "source": ".plan/epics/epic-world-management-ui.md",
     "status": "⬜ Not Started",
     "tags": [
       "world",
@@ -18198,7 +18198,7 @@
     "hash": "eda2068",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-world-npcs.md",
+    "source": ".plan/epics/epic-world-npcs.md",
     "status": "Not Started",
     "tags": [
       "world",
@@ -18217,7 +18217,7 @@
     "hash": "8836385",
     "label": "epic",
     "priority": "Low",
-    "source": ".plan/tickets/epic-world-shaping-divine.md",
+    "source": ".plan/epics/epic-world-shaping-divine.md",
     "status": "⬜ Not Started",
     "tags": [
       "world",
@@ -18234,7 +18234,7 @@
     "hash": "5f3f50c",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-world-travel-time.md",
+    "source": ".plan/epics/epic-world-travel-time.md",
     "status": "Not Started",
     "tags": [
       "world",
@@ -18253,7 +18253,7 @@
     "hash": "767735e",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-worlds-extension.md",
+    "source": ".plan/epics/epic-worlds-extension.md",
     "status": "⬜ Not Started",
     "tags": [
       "worlds",
@@ -18273,7 +18273,7 @@
     "hash": "1a1615f",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-xmpp-integration.md",
+    "source": ".plan/epics/epic-xmpp-integration.md",
     "status": "⬜ Not Started",
     "tags": [
       "xmpp",

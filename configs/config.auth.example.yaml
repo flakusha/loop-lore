@@ -6,6 +6,8 @@ auth:
   required: false
   guestAccess: false # true = visitors without an account get a read-mostly guest context
   registrationOpen: true
+  # Idle session-row timeout. Keep in sync with jwtExpiresIn below:
+  # 24h here should mean jwtExpiresIn = 86400 there (boot warns when they diverge).
   sessionTimeoutHours: 24
   maxSessionsPerUser: 10
   demoUsername: "demo"
@@ -17,4 +19,4 @@ auth:
 
   # Optional: JWT settings
   # jwtSecret: "generate-with-openssl-rand-hex-32"
-  # jwtExpiresIn: 86400  # integer seconds, e.g. 86400 = 24h
+  # jwtExpiresIn: 86400  # integer seconds, e.g. 86400 = 24h — keep in sync with sessionTimeoutHours above

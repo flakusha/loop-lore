@@ -103,7 +103,7 @@ export function telemetryRoutes(
         return new Response(null, {
           status: HttpStatus.TooManyRequests,
           // Retry-After = seconds until the oldest in-window hit ages out
-          // (same convention as the auth rateLimitHtml responses).
+          // (same convention as the auth rateLimitResponse responses).
           headers: rateLimitHeaders(limit, limit.resetSec,),
         },);
       }

@@ -40,6 +40,7 @@ export async function carryMemory(
         memory_type: m.memory_type,
         content: m.content,
         importance: m.importance,
+        emotion_impact: m.emotion_impact,
         last_accessed_at: m.last_accessed_at,
         created_at: m.created_at,
         source_message_id: m.source_message_id,

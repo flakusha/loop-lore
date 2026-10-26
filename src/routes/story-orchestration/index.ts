@@ -44,7 +44,7 @@ const ConfigureBody = t.Object({
  */
 export function storyOrchestrationRoutes(
   opts: { database: Db; config: Config },
-  prefix = "/api",
+  prefix = "/api/v1",
 ): Elysia {
   const db = opts.database;
 

@@ -48,7 +48,7 @@ export {
   needsEncryption,
 } from "./at-rest";
 export type { AtRestDecryptOpts, AtRestEncryptOpts, AtRestResult, } from "./at-rest";
-export { decryptValue, encryptValue, } from "./byok";
+export { BYOK_KEY_VERSION, decryptValue, encryptValue, encryptVersioned, } from "./byok";
 export { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds, } from "./chat-keys";
 export type { ChatKey, } from "./chat-keys";
 export { distributeKeysOnJoin, resolveChatKey, rotateKeyOnLeave, } from "./key-distribution";

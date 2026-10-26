@@ -18,6 +18,11 @@ export async function generateSDAPI(
 ): Promise<ImageGenOutcome> {
   const n = opts.n;
   const url = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/sdapi/v1/txt2img`;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...((opts.apiKey ?? sdConfig.apiKey) && { Authorization: `Bearer ${opts.apiKey ?? sdConfig.apiKey}`, }),
+  };
+
   const sdPayload = safeJsonStringify({
     prompt: opts.prompt,
     negative_prompt: opts.negativePrompt ?? sdConfig.defaults.negativePrompt ?? "",
@@ -32,7 +37,7 @@ export async function generateSDAPI(
   // Base64 image payloads can exceed safeFetch's default size cap.
   const result = await safeFetch<{ images: string[] }>(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json", },
+    headers,
     body: sdPayload.ok ? sdPayload.value : "{}",
     timeout: sdConfig.generationTimeout ?? 120_000,
     maxSize: Number.MAX_SAFE_INTEGER,

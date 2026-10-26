@@ -7,6 +7,7 @@
 import { describe, expect, test, } from "bun:test";
 import type { Config, } from "../schema";
 import { createConfigSchema, } from "../schema-class";
+import { ENV_MAP, } from "./constants";
 import { applyEnvironmentOverrides, applyProviderEnvVars, liftFlatEnvKeys, } from "./env";
 
 // ── Helpers ─────────────────────────────────────────────────
@@ -393,6 +394,59 @@ describe("applyProviderEnvVars", () => {
       expect(config.generation.providers.openaiCompatible.length,).toBe(2,);
       expect(config.generation.providers.openaiCompatible[0]?.name,).toBe("preexisting",);
       expect(config.generation.providers.openaiCompatible[1]?.name,).toBe("default",);
+    } finally {
+      restore();
+    }
+  });
+});
+
+// ── Documented auth-secret env names (BUG-fix-config-wire-auth-jwt-secret-
+// auth-csrf-secret-env-names-d): docs/error strings instruct AUTH_JWT_SECRET /
+// AUTH_CSRF_SECRET; the auto-generated legacy spellings must keep working and
+// the documented names must win when both are set.
+describe("documented auth secret env names", () => {
+  test("documented ENV_MAP entries point at the auth secret paths", () => {
+    expect(ENV_MAP.AUTH_JWT_SECRET,).toBe("auth.jwtSecret",);
+    expect(ENV_MAP.AUTH_CSRF_SECRET,).toBe("auth.csrfSecret",);
+    // Legacy auto-generated spellings stay as aliases.
+    expect(ENV_MAP.AUTH_JWTSECRET,).toBe("auth.jwtSecret",);
+    expect(ENV_MAP.AUTH_CSRFSECRET,).toBe("auth.csrfSecret",);
+  });
+
+  test("setting only the documented spellings populates the auth secrets", () => {
+    const restore = withEnv({ AUTH_JWT_SECRET: "a".repeat(48,), AUTH_CSRF_SECRET: "b".repeat(48,), },);
+    try {
+      const result = applyEnvironmentOverrides(freshConfig(), ENV_MAP,);
+      expect(result.auth.jwtSecret,).toBe("a".repeat(48,),);
+      expect(result.auth.csrfSecret,).toBe("b".repeat(48,),);
+    } finally {
+      restore();
+    }
+  });
+
+  test("legacy spellings still populate the auth secrets", () => {
+    const restore = withEnv({ AUTH_JWTSECRET: "c".repeat(48,), AUTH_CSRFSECRET: "d".repeat(48,), },);
+    try {
+      const result = applyEnvironmentOverrides(freshConfig(), ENV_MAP,);
+      expect(result.auth.jwtSecret,).toBe("c".repeat(48,),);
+      expect(result.auth.csrfSecret,).toBe("d".repeat(48,),);
+    } finally {
+      restore();
+    }
+  });
+
+  test("documented spelling wins when both spellings are set", () => {
+    const restore = withEnv({
+      AUTH_JWTSECRET: "legacy-secret-value",
+      AUTH_JWT_SECRET: "documented-secret-value",
+      AUTH_CSRFSECRET: "legacy-csrf-value",
+      AUTH_CSRF_SECRET: "documented-csrf-value",
+    },);
+
+    try {
+      const result = applyEnvironmentOverrides(freshConfig(), ENV_MAP,);
+      expect(result.auth.jwtSecret,).toBe("documented-secret-value",);
+      expect(result.auth.csrfSecret,).toBe("documented-csrf-value",);
     } finally {
       restore();
     }

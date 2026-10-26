@@ -2,12 +2,13 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { ImageProviderConfig, } from "../../../config/schema";
-import { safeFetch, safeJsonStringify, uid, } from "../../../utils";
-import type { ImageEditProgress, ImageEditResult, } from "../../types";
+import { safeFetch, safeJsonStringify, } from "../../../utils";
+import type { ImageEditProgress, } from "../../types";
 import {
   openaiGenerate,
   sdapiGenerate,
   sdcppGenerate,
+  type SdServerRawImage,
 } from "./families";
 import type { SDServerHost, } from "./types";
 
@@ -46,14 +47,14 @@ function getEmotionModifier(emotion: string,): string {
  * @param params
  * @param cfg
  * @param onProgress
- * @returns {Promise<ImageEditResult[]>}
+ * @returns {Promise<SdServerRawImage[]>}
  */
 export async function executeTxt2Img(
   host: SDServerHost,
   params: Record<string, unknown>,
   cfg: ImageProviderConfig,
   onProgress?: (progress: ImageEditProgress,) => void,
-): Promise<ImageEditResult[]> {
+): Promise<SdServerRawImage[]> {
   onProgress?.({ status: "running", message: "Generating image...", },);
 
   const prompt = (params.prompt as string) ?? "";
@@ -114,14 +115,14 @@ export async function executeTxt2Img(
  * @param cfg
  * @param onProgress
  * @throws {Error}
- * @returns {Promise<ImageEditResult[]>}
+ * @returns {Promise<SdServerRawImage[]>}
  */
 export async function executeImg2Img(
   host: SDServerHost,
   params: Record<string, unknown>,
   cfg: ImageProviderConfig,
   onProgress?: (progress: ImageEditProgress,) => void,
-): Promise<ImageEditResult[]> {
+): Promise<SdServerRawImage[]> {
   onProgress?.({ status: "running", message: "Transforming image...", },);
 
   const prompt = (params.prompt as string) ?? "";
@@ -174,13 +175,13 @@ export async function executeImg2Img(
  * @param onProgress
  * @throws {Error}
  * @throws {Error}
- * @returns {Promise<ImageEditResult[]>}
+ * @returns {Promise<SdServerRawImage[]>}
  */
 export async function executeUpscale(
   host: SDServerHost,
   params: Record<string, unknown>,
   onProgress?: (progress: ImageEditProgress,) => void,
-): Promise<ImageEditResult[]> {
+): Promise<SdServerRawImage[]> {
   onProgress?.({ status: "running", message: "Upscaling image...", },);
 
   const inputImage = (params.input_image as string) ?? "";
@@ -207,14 +208,7 @@ export async function executeUpscale(
       throw new Error(`Upscale failed: ${result.error.message}`,);
     }
 
-    const id = uid();
-
-    return [{
-      id,
-      filename: `upscaled-${id.slice(0, 8,)}.png`,
-      url: `/api/assets/${id}/raw`,
-      mimeType: "image/png",
-    },];
+    return [{ b64: result.data.image, mimeType: "image/png", },];
   }
 
   throw new Error(`Upscale not supported with ${host.apiFamily} API family`,);

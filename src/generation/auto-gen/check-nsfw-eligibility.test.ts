@@ -18,8 +18,9 @@ import {
   test,
 } from "bun:test";
 import type { Kysely, } from "kysely";
+import { initAgeGate, } from "../../age-gate/controller";
 import type { Config, } from "../../config/schema";
-import { ContentRating, } from "../../db/enums";
+import { AgeGateMode, ContentRating, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { recordNsfwConsent, } from "../../middleware/nsfw-gate/consent-ledger";
@@ -106,6 +107,9 @@ describe("checkNsfwEligibility (pre-LLM NSFW gate)", () => {
 
   beforeEach(async () => {
     createLogger({ level: "error", },);
+    // The NSFW age verdict now delegates to the ageGate.* runtime config
+    // (BUG-two-gates-age-gate-keys) — enable it so the age checks fire.
+    initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
     const created = await createTestDb();
     db = created.db;
     adultUserId = await seedUser(db, {
@@ -115,6 +119,8 @@ describe("checkNsfwEligibility (pre-LLM NSFW gate)", () => {
   },);
 
   afterAll(async () => {
+    // Reset the global age-gate singleton so later files see the default-off.
+    initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None, },);
     await db?.destroy();
   },);
 

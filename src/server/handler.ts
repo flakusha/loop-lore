@@ -11,6 +11,8 @@ import type { HandleResolver, } from "../middleware/handle-resolver";
 import { createHandleResolver, } from "../middleware/handle-resolver";
 import { applyRequestId, resolveRequestId, } from "../middleware/request-id";
 import { dispatchPluginRoute, type PluginCaller, } from "../plugins";
+import { applyDeprecationHeaders, } from "../routes/middleware/deprecation-headers";
+import { governanceAfterHook, governanceBeforeHook, } from "../routes/v1/governance";
 
 /**
  * Wrap the Elysia app so EVERY outgoing response (routes, errors, static,
@@ -133,21 +135,59 @@ export interface HandleApiRequestOpts {
   caller?: PluginCaller;
   /** Request-locale translator from the auth derive; localises 401/403 bodies. */
   t?: TranslatorFn;
+  /** Governance-guard enable predicate. Defaults to the same E2E_SAFEGUARD
+   *  env read the v1 barrel uses, so the plugin-dispatch fallback below
+   *  rate-limits identically to barrel routes. */
+  governanceEnabled?: () => boolean;
 }
+
+/** Deprecation envelope shared with the v1 barrel (routes/v1/index.ts). */
+const FALLBACK_DEPRECATION = {
+  enabled: () => process.env.API_V1_DEPRECATED === "1",
+  deprecatedVersion: "1",
+  successorVersion: "2",
+  sunset: "Sat, 01 Jan 2028 00:00:00 GMT",
+};
 
 /**
  * API request handler — dispatches to plugin routes.
- * All other API routes are handled by Elysia plugins.
+ *
+ * Both the direct dispatch and the /api/v1 strip-prefix fallback pass through
+ * the SAME governance guard (per-user rate limit + request metrics) and
+ * deprecation-header envelope as v1-barrel routes — the fallback used to be a
+ * bare dispatch that shipped a deprecated-but-unannounced, unthrottled v1
+ * surface (BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa).
  * @param root0 - options object
  * @param root0.request - incoming `Request` to dispatch
  * @param root0.caller - identity used to enforce plugin route `requiresAuth` / `permissions`
  * @param root0.t - translator used to localise plugin route denial bodies
+ * @param root0.governanceEnabled - governance predicate; defaults to the barrel's env read
  * @returns `Response` from the matched plugin route (404 when no plugin matches).
  */
 export async function handleApiRequest(
-  { request, caller, t, }: HandleApiRequestOpts,
+  { request, caller, t, governanceEnabled, }: HandleApiRequestOpts,
 ): Promise<Response> {
-  let pluginResult = await dispatchPluginRoute({ request, caller, t, },);
+  const enabled = governanceEnabled ?? (() => process.env.E2E_SAFEGUARD !== "1");
+  const govBefore = governanceBeforeHook(enabled,);
+  const govAfter = governanceAfterHook(enabled,);
+
+  const dispatch = async (dispatchRequest: Request,): Promise<Response | null> => {
+    const gctx: Record<string, unknown> = {
+      request: dispatchRequest,
+      userId: caller?.userId ?? null,
+    };
+
+    const denial = govBefore(gctx,);
+    if (denial) { return denial; }
+
+    const result = await dispatchPluginRoute({ request: dispatchRequest, caller, t, },);
+    if (!result) { return null; }
+
+    govAfter({ ...gctx, response: result, },);
+    return applyDeprecationHeaders(result, FALLBACK_DEPRECATION,);
+  };
+
+  let pluginResult = await dispatch(request,);
   if (pluginResult) { return pluginResult; }
 
   // Versioned fallback: the v1 barrel doesn't cover every route module yet.
@@ -157,7 +197,7 @@ export async function handleApiRequest(
   if (url.pathname.startsWith("/api/v1/",)) {
     const strippedUrl = new URL(url.pathname.slice("/api/v1".length,) + url.search, url,);
     const strippedRequest = new Request(strippedUrl, request,);
-    pluginResult = await dispatchPluginRoute({ request: strippedRequest, caller, t, },);
+    pluginResult = await dispatch(strippedRequest,);
     if (pluginResult) { return pluginResult; }
   }
 

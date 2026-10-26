@@ -135,6 +135,13 @@ export const envMap = (): EnvMap => {
 
   map.AUTH_ADMIN_PASSWORD = "auth.adminPassword";
   map.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "auth.legacyOpaqueTokenFallback";
+  // Documented spellings (docs/config examples, safety.ts error strings,
+  // authMeta descriptions): primary names for the auth secrets. The
+  // auto-generated AUTH_JWTSECRET/AUTH_CSRFSECRET entries above remain as
+  // legacy aliases; these documented entries are applied AFTER them, so an
+  // operator setting both spellings gets the documented one.
+  map.AUTH_JWT_SECRET = "auth.jwtSecret";
+  map.AUTH_CSRF_SECRET = "auth.csrfSecret";
   map.TRANSPORT_DEFAULT_PROTOCOL = "transport.defaultProtocol";
   map.TRANSPORT_ENABLE_WEBSOCKET = "transport.enableWebSocket";
   map.TRANSPORT_ENABLE_WEBTRANSPORT = "transport.enableWebTransport";

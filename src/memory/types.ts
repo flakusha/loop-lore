@@ -17,6 +17,38 @@ export type MemoryScope = "character" | "assistant" | "world";
 /** Memory privacy level — controls who can see this memory. */
 export type MemoryPrivacy = "public" | "shared" | "private" | "secret";
 
+/** Emotion a memory can carry (TASK-memory-emotion-impact). `neutral` never
+ * persists — sanitizeEmotionImpact normalizes it away. */
+export type EmotionImpact =
+  | "happy"
+  | "sad"
+  | "angry"
+  | "afraid"
+  | "disgusted"
+  | "surprised"
+  | "grudge"
+  | "grateful"
+  | "traumatized"
+  | "nostalgic"
+  | "embarrassed";
+
+/** Structured emotion impact of an episodic memory — what the character
+ * felt, how strongly, for how long (TASK-memory-emotion-impact). Stored
+ * JSON-encoded in `actor_memories.emotion_impact`. */
+export interface MemoryEmotionImpact {
+  emotion: EmotionImpact;
+  /** 0–100: how strong the emotion. */
+  intensity: number;
+  /** Who/what the emotion is directed at (character ID, event, location). */
+  target?: string;
+  /** How long it affects behavior. */
+  duration: "momentary" | "lasting" | "permanent";
+  /** How fast intensity decays (per game-day); 0 = permanent. */
+  decayRate?: number;
+  /** Whether this memory triggers coping mechanisms when retrieved. */
+  triggersCoping?: boolean;
+}
+
 /**
  * Extended injection privacy levels.
  * Maps to base MemoryPrivacy for provision pipeline compatibility.
@@ -73,6 +105,9 @@ export interface MemoryEntry {
   privacy: MemoryPrivacy;
   /** Shareability config — JSON-encoded, controls who this memory can be revealed to. */
   shareability: string | null;
+  /** Structured emotion charge carried by this memory (TASK-memory-emotion-impact);
+   * mirrors the JSON `actor_memories.emotion_impact` column. Undefined = none. */
+  emotionImpact?: MemoryEmotionImpact;
   expiresAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -85,6 +120,8 @@ export interface ExtractedMemory {
   confidence: number;
   importance: number;
   keywords: string[];
+  /** Validated emotion charge from the extraction response; absent = none. */
+  emotionImpact?: MemoryEmotionImpact;
 }
 
 /** Options for memory extraction after a generation. */

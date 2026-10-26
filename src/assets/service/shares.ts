@@ -71,7 +71,11 @@ export async function shareAsset({
       .values({ id, asset_id: assetId, shared_with_id: sharedWithId, shared_by_id: sharedById, },)
       .execute();
   } catch (error) {
-    getChildLogger("assets:shares",)?.warn({ message: "share insert failed (duplicate or FK)", error, },);
+    getChildLogger("assets:shares",)?.warn(
+      "share insert failed (duplicate or FK)",
+      { error: error instanceof Error ? error.stack ?? error.message : String(error,), },
+    );
+
     return null; /* duplicate or FK failure */
   }
 

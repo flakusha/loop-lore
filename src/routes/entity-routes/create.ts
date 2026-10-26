@@ -2,8 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
+import type { DB, } from "../../db/schema";
 import { EntityCreateBody, ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, } from "../http-utils";
 import { checkOwnership, entityPaths, } from "./context";
@@ -25,11 +27,27 @@ export function createRoutes(config: EntityConfig, opts: { database: Db; config:
     .post(
       basePath,
       async (ctx,) => {
-        const db = opts.database as any;
-        const parentId = (ctx.params as any)[parentParam];
-        const userId = (ctx as any).userId as string | null;
-        const userRole = (ctx as any).userRole as string | null;
-        const body = ((ctx as any).body || {}) as Record<string, unknown>;
+        // Auth derive fields (userId/userRole) are set on the context at
+        // runtime by the app-level auth middleware, but stay statically
+        // invisible on this self-contained Elysia instance — narrow them
+        // structurally instead of casting the whole context to `any`
+        // (BUG-route-bootstrap-as-any).
+        const auth = ctx as { userId?: unknown; userRole?: unknown };
+        const userId = typeof auth.userId === "string" ? auth.userId : null;
+        const userRole = typeof auth.userRole === "string" ? auth.userRole : null;
+        const params = ctx.params as Record<string, string | undefined>;
+        const parentId = params[parentParam];
+        if (!parentId) {
+          return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound, },);
+        }
+
+        const body = (typeof ctx.body === "object" && ctx.body !== null
+          ? ctx.body
+          : {}) as Record<string, unknown>;
+
+        // Config-driven table name: Kysely's builder needs the literal table
+        // union, so the dynamic access is isolated to this one boundary.
+        const db = opts.database as unknown as Kysely<Record<string, unknown>>;
 
         const ownershipOk = await checkOwnership(opts.database, config, parentId, userId, userRole,);
         if (!ownershipOk) {
@@ -52,13 +70,13 @@ export function createRoutes(config: EntityConfig, opts: { database: Db; config:
         const values = buildCreateValues({ config, parentId, body, },);
         await db.insertInto(config.tableName,).values(values,).execute();
 
-        const created = await db
-          .selectFrom(config.tableName,)
+        const created = await opts.database
+          .selectFrom(config.tableName as keyof DB & string,)
           .selectAll()
-          .where("id", "=", values.id,)
+          .where("id", "=", String(values.id,),)
           .executeTakeFirst();
 
-        return jsonCreated(applyResponseTransforms(config, created,),);
+        return jsonCreated(applyResponseTransforms(config, created ?? {},),);
       },
       {
         body: EntityCreateBody,

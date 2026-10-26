@@ -3,7 +3,14 @@
 
 # BUG: Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 final pass] REOPENED — closed while 2 of its 6 named sites were still cast-escaped. PARTIAL — 4 of 6 evidence sites are now cast-free, 2 remain:
+- FIXED `src/assets/controller.ts` — the `(ctx as any).userId as string | null` cluster is gone (zero `as any` in the file; handlers use `requireUserId`).
+- FIXED `src/routes/entity-routes/create.ts` — ctx narrowed structurally (userId/userRole typeof checks) and the dynamic table name isolated to one documented `Kysely<Record<string, unknown>>` boundary.
+- FIXED `src/db/index.ts` — the three `(parameters as any[])` casts collapse into one named `asBindings()` helper converting Kysely's `readonly unknown[]` to bun's `SQLQueryBindings[]` at the adapter boundary.
+- FIXED for the reported shape: `src/config/load/domain.ts:35` still merges domain overrides through `deepMerge`, but `deepMerge` is already generic (`src/config/load/parse.ts:11`), so the merge itself is typed; the remaining `as unknown as` is the untrusted-file trust transfer after `validateDomainConfig` (`:34`) — no removal without a schema-derived parse type.
+- REMAINING `src/chat/service/crud/get.ts:55-56` (`chatData as unknown as Record<string, unknown>`) and `src/elysia-app.ts:236-238` (`app as unknown as Elysia<any>` for `registerPlugins`/`v1Routes`) — both are Elysia/Kysely generic-width escapes, tracked by TASK-typed-userid-accessor for the ctx half.
+Verified: `bunx tsc --noEmit` clean apart from the in-flight federation edit at the time of writing.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-schema

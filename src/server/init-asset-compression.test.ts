@@ -39,6 +39,8 @@ const spawnSyncCalls: unknown[][] = [];
 const copyDirectoryCalls: [string, string,][] = [];
 const compressAssetsCalls: [string, string,][] = [];
 const injectContentHashesCalls: string[] = [];
+/** Unified ordering of copy/inject/compress boundary calls ("copy"|"inject"|"compress"). */
+const boundaryCallOrder: string[] = [];
 
 if (ISOLATED) {
   mock.module("node:fs", () => {
@@ -85,10 +87,12 @@ if (ISOLATED) {
   mock.module("../content/compress", () => ({
     compressAssets: async (src: string, dest: string,) => {
       compressAssetsCalls.push([src, dest,],);
+      boundaryCallOrder.push("compress",);
       return { total: 0, originalBytes: 0, compressedBytes: { gz: 0, zst: 0, br: 0, }, };
     },
     copyDirectory: (src: string, dest: string,) => {
       copyDirectoryCalls.push([src, dest,],);
+      boundaryCallOrder.push("copy",);
     },
   }),);
 
@@ -96,6 +100,7 @@ if (ISOLATED) {
     HASHED_ASSET_PATTERN: /mock-hash/,
     injectContentHashes: (dir: string,) => {
       injectContentHashesCalls.push(dir,);
+      boundaryCallOrder.push("inject",);
       return { replaced: 0, skipped: 0, };
     },
   }),);
@@ -149,6 +154,7 @@ beforeEach(() => {
   copyDirectoryCalls.length = 0;
   compressAssetsCalls.length = 0;
   injectContentHashesCalls.length = 0;
+  boundaryCallOrder.length = 0;
 },);
 
 afterEach(() => {
@@ -218,5 +224,32 @@ describeOrSkip("initAssetCompression", () => {
     await initAssetCompression(logger,);
     expect(copyDirectoryCalls,).toHaveLength(0,);
     expect(compressAssetsCalls,).toHaveLength(0,);
+  });
+
+  test("evaluates staleness before copying, skipping an up-to-date destination", async () => {
+    const fx = getFixtures();
+    writeFixture(fx.distPublic, "app.js", "bundle",);
+    writeFixture(fx.srcPublic, "style.css", "body{}",);
+    // Simulate a completed prior copy: destination at least as new as source.
+    writeFixture(fx.distPublic, "style.css", "body{}",);
+    const { logger, } = makeLogger();
+    await initAssetCompression(logger,);
+    // copyFileSync drops source mtimes, so the check must run pre-copy;
+    // a post-copy check would always see a fresh destination.
+    expect(copyDirectoryCalls,).toHaveLength(0,);
+    expect(compressAssetsCalls,).toHaveLength(0,);
+  });
+
+  test("hash-injects before compressing so sidecars embed hashed references", async () => {
+    const fx = getFixtures();
+    writeFixture(fx.distPublic, "app.js", "bundle",);
+    writeFixture(fx.srcPublic, "style.css", "body{}",);
+    const { logger, } = makeLogger();
+    await initAssetCompression(logger,);
+    expect(injectContentHashesCalls,).toContain(DIST_PUBLIC,);
+    expect(compressAssetsCalls.some(([src, dest,],) => src === SRC_PUBLIC && dest === DIST_PUBLIC),).toBe(true,);
+    // Build-script order: copy → inject → compress (sidecars embed hashed refs).
+    expect(boundaryCallOrder.indexOf("inject",),).toBeGreaterThan(boundaryCallOrder.indexOf("copy",),);
+    expect(boundaryCallOrder.indexOf("compress",),).toBeGreaterThan(boundaryCallOrder.indexOf("inject",),);
   });
 },);

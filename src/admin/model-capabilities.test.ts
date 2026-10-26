@@ -70,6 +70,16 @@ describe("model-capabilities", () => {
       expect(caps!.contextWindow,).toBe(256_000,);
     });
 
+    test("refreshes supports_vision when a text-only model gains image modality", async () => {
+      await upsertModelCapabilities(db, "openai", [makeModel({ modalities: ["text",], },),],);
+      let caps = await resolveModelCapabilities(db, "openai", "gpt-4o",);
+      expect(caps!.supportsVision,).toBe(false,);
+
+      await upsertModelCapabilities(db, "openai", [makeModel(),],);
+      caps = await resolveModelCapabilities(db, "openai", "gpt-4o",);
+      expect(caps!.supportsVision,).toBe(true,);
+    });
+
     test("preserves user override on update", async () => {
       await upsertModelCapabilities(db, "openai", [makeModel(),],);
       await setModelOverride(db, "openai", "gpt-4o", { contextWindow: 999_999, },);

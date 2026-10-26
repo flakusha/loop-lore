@@ -26,7 +26,7 @@ export interface AgencyHandlerOpts {
  * @param {unknown} prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { agency: { balance: { ...; }; }; }; } & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
-export function agencyRoutes(opts: AgencyHandlerOpts, prefix = "/api",) {
+export function agencyRoutes(opts: AgencyHandlerOpts, prefix = "/api/v1",) {
   return new Elysia({ name: "agency", },)
     .use(agencyBalanceRoute(opts, prefix,),)
     .use(agencySpendRoute(opts, prefix,),)
