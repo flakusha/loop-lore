@@ -162,6 +162,27 @@ describe("chat-pins routes", () => {
 
       expect(res.status,).toBe(404,);
     });
+
+    test("rejects pinning a message from another chat", async () => {
+      await insertChats(db, "Secret Chat", "owner", { id: "chat-2" as never, },);
+      await insertMessages(db, "chat-2", "owner", "assistant", "SECRET-CONTENT", { id: "msg-secret" as never, },);
+
+      const app = makeApp(db, "member", "user",);
+      const res = await app.handle(
+        new Request("http://localhost/api/chats/chat-1/pins", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ messageId: "msg-secret", },),
+        },),
+      );
+
+      expect(res.status,).toBe(403,);
+
+      const listRes = await app.handle(new Request("http://localhost/api/chats/chat-1/pins",),);
+      const body = await listRes.json() as PinResponse;
+      const leaked = (body.data ?? []).some((p,) => p.content === "SECRET-CONTENT");
+      expect(leaked,).toBe(false,);
+    });
   });
 
   describe("DELETE /chats/:id/pins/:pinId", () => {
