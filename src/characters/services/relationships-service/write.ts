@@ -7,7 +7,7 @@
  */
 import { randomUUID, } from "node:crypto";
 import { jsonStringifyOr, } from "../../../utils";
-import { guardNotExists, withTransaction, withWorldId, } from "../shared-service-utils";
+import { guardNotExists, withExplicitWorldScope, withTransaction, } from "../shared-service-utils";
 import { getRelationship, } from "./read";
 import type {
   CreateRelationshipOpts,
@@ -164,7 +164,7 @@ export async function updateRelationship(
   }
 
   await withTransaction(thisL.db, async (trx,) => {
-    await withWorldId(
+    await withExplicitWorldScope(
       trx.updateTable("character_relationships",)
         .set(updateData,)
         .where("actor_id", "=", actorId,)
@@ -174,7 +174,7 @@ export async function updateRelationship(
 
     // Update reverse if bidirectional
     if (existing.isBidirectional) {
-      await withWorldId(
+      await withExplicitWorldScope(
         trx.updateTable("character_relationships",)
           .set(updateData,)
           .where("actor_id", "=", targetActorId,)
@@ -220,7 +220,7 @@ export async function deleteRelationship(
   }
 
   await withTransaction(thisL.db, async (trx,) => {
-    await withWorldId(
+    await withExplicitWorldScope(
       trx.deleteFrom("character_relationships",)
         .where("actor_id", "=", actorId,)
         .where("target_actor_id", "=", targetActorId,),
@@ -229,7 +229,7 @@ export async function deleteRelationship(
 
     // Delete reverse if bidirectional
     if (existing.isBidirectional) {
-      await withWorldId(
+      await withExplicitWorldScope(
         trx.deleteFrom("character_relationships",)
           .where("actor_id", "=", targetActorId,)
           .where("target_actor_id", "=", actorId,),

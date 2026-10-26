@@ -146,6 +146,9 @@ afterAll(() => {
       "sm-cov-rr-c",
       "sm-cov-noop-a",
       "sm-cov-noop-b",
+      "sm-cov-deepl",
+      "sm-cov-lt",
+      "sm-cov-gt",
     ]
   ) { unregisterProvider(name,); }
 
@@ -206,6 +209,54 @@ describe("buildFailoverList", () => {
     const partial = { generation: { providers: {}, }, } as unknown as Config;
     const list = buildFailoverList("sm-cov-sig", partial, { taskType: "interactive-turn", },);
     expect(list.map((e,) => e.name),).toEqual(["sm-cov-sig",],);
+  });
+
+  /** */
+  test("excludes translation-only providers from the failover chain", () => {
+    registerMock("sm-cov-fail-b",);
+    registerMock("sm-cov-deepl",);
+    registerMock("sm-cov-lt",);
+    registerMock("sm-cov-gt",);
+    const config = emptyConfig();
+    config.generation.providers.deepl = {
+      name: "sm-cov-deepl",
+      label: "DeepL",
+      authKey: "k",
+      freeTier: true,
+      model: "en-us",
+      timeout: 1000,
+      retries: 0,
+      allowUserApiKey: false,
+    };
+
+    config.generation.providers.libretranslate = {
+      name: "sm-cov-lt",
+      label: "LibreTranslate",
+      baseUrl: "http://localhost:5000",
+      model: "en",
+      timeout: 1000,
+      retries: 0,
+      allowUserApiKey: false,
+    };
+
+    config.generation.providers.googleTranslate = {
+      name: "sm-cov-gt",
+      label: "Google Translate",
+      apiKey: "k",
+      model: "en",
+      timeout: 1000,
+      retries: 0,
+      allowUserApiKey: false,
+    };
+
+    // Regression for the translation-into-chat-turn bug: configured
+    // translation providers must never join an LLM failover chain (they
+    // stay registered for the translator model-role path).
+    const list = buildFailoverList("sm-cov-fail-b", config,);
+    expect(list.map((e,) => e.name),).toEqual(["sm-cov-fail-b",],);
+    expect(getProvider("sm-cov-deepl",),).toBeDefined();
+    expect(getProvider("sm-cov-lt",),).toBeDefined();
+    expect(getProvider("sm-cov-gt",),).toBeDefined();
   });
 
   test("adds only registered secondaries from config", () => {

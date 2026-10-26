@@ -8,6 +8,7 @@ import { beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
+import { insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { RelationshipsService, } from "./relationships-service";
 import { createTestActors, } from "./test-helpers";
 
@@ -197,6 +198,74 @@ describe("RelationshipsService", () => {
       const fulfilled = results.filter((r,) => r.status === "fulfilled");
       expect(fulfilled.length,).toBe(1,);
       expect(rows.length,).toBe(1,);
+    });
+  });
+
+  describe("explicit world scope (BUG-withworldid-undefined-means-no-filter)", () => {
+    it("omitted worldId reads and mutates only the global row, never an arbitrary world's", async () => {
+      await createTestActors(db, "test-actor-rel-scope-a",);
+      await createTestActors(db, "test-actor-rel-scope-b",);
+      const a = "test-actor-rel-scope-a";
+      const b = "test-actor-rel-scope-b";
+      const now = new Date().toISOString();
+
+      // The world FKs require a real users row for the owner.
+      await insertUsers(db, "test-user-rel-scope", "Scope Owner", { id: "test-user-rel-scope", } as never,);
+      await insertWorlds(db, "test-user-rel-scope", "Scope World", { id: "world-A", },);
+
+      // Same pair in a specific world AND globally.
+      await db.insertInto("character_relationships",).values({
+        id: "rel-scope-world",
+        actor_id: a,
+        target_actor_id: b,
+        world_id: "world-A",
+        relationship_type: "rival",
+        standing: 10,
+        trust: 10,
+        familiarity: 0,
+        is_bidirectional: 0,
+        metadata: "{}",
+        created_at: now,
+        updated_at: now,
+      },).execute();
+
+      await db.insertInto("character_relationships",).values({
+        id: "rel-scope-global",
+        actor_id: a,
+        target_actor_id: b,
+        world_id: null,
+        relationship_type: "friend",
+        standing: 50,
+        trust: 50,
+        familiarity: 0,
+        is_bidirectional: 0,
+        metadata: "{}",
+        created_at: now,
+        updated_at: now,
+      },).execute();
+
+      // Read without worldId resolves the global row deterministically.
+      const global = await relationshipsService.getRelationship(a, b,);
+      expect(global?.id,).toBe("rel-scope-global",);
+
+      // Read WITH worldId resolves that world's row.
+      const worldRow = await relationshipsService.getRelationship(a, b, "world-A",);
+      expect(worldRow?.id,).toBe("rel-scope-world",);
+
+      // Update without worldId mutates only the global row.
+      await relationshipsService.updateRelationship(a, b, undefined, { standing: 99, },);
+      const rows = await db.selectFrom("character_relationships",).selectAll()
+        .where("actor_id", "=", a,).where("target_actor_id", "=", b,).execute();
+
+      expect(rows.find((r,) => r.id === "rel-scope-global")?.standing,).toBe(99,);
+      expect(rows.find((r,) => r.id === "rel-scope-world")?.standing,).toBe(10,);
+
+      // Delete without worldId removes only the global row.
+      await relationshipsService.deleteRelationship(a, b, undefined,);
+      const after = await db.selectFrom("character_relationships",).selectAll()
+        .where("actor_id", "=", a,).where("target_actor_id", "=", b,).execute();
+
+      expect(after.map((r,) => r.id),).toEqual(["rel-scope-world",],);
     });
   });
 });

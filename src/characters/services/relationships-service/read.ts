@@ -4,7 +4,7 @@
 /**
  * Relationships Service — read dispatchers (getRelationships, getRelationship)
  */
-import { withWorldId, } from "../shared-service-utils";
+import { withExplicitWorldScope, } from "../shared-service-utils";
 import { rowToRelationship, } from "./serialize";
 import type { Relationship, RelationshipsContext, } from "./types";
 
@@ -26,7 +26,7 @@ export interface GetRelationshipsArgs {
 export async function getRelationships(
   { thisL, actorId, worldId, }: GetRelationshipsArgs,
 ): Promise<Relationship[]> {
-  const rows = await withWorldId(
+  const rows = await withExplicitWorldScope(
     thisL.db.selectFrom("character_relationships",).where("actor_id", "=", actorId,),
     worldId,
   )
@@ -56,7 +56,7 @@ export interface GetRelationshipArgs {
 export async function getRelationship(
   { thisL, actorId, targetActorId, worldId, }: GetRelationshipArgs,
 ): Promise<Relationship | undefined> {
-  const row = await withWorldId(
+  const row = await withExplicitWorldScope(
     thisL.db.selectFrom("character_relationships",)
       .where("actor_id", "=", actorId,)
       .where("target_actor_id", "=", targetActorId,),

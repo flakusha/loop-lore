@@ -206,20 +206,11 @@ export function buildFailoverList(
     result.push({ name: ollama.name, provider: registry.get(ollama.name,)!, },);
   }
 
-  const deepl = providers?.deepl;
-  if (deepl && deepl.name !== primaryName && registry.has(deepl.name,)) {
-    result.push({ name: deepl.name, provider: registry.get(deepl.name,)!, },);
-  }
-
-  const libretranslate = providers?.libretranslate;
-  if (libretranslate && libretranslate.name !== primaryName && registry.has(libretranslate.name,)) {
-    result.push({ name: libretranslate.name, provider: registry.get(libretranslate.name,)!, },);
-  }
-
-  const googleTranslate = providers?.googleTranslate;
-  if (googleTranslate && googleTranslate.name !== primaryName && registry.has(googleTranslate.name,)) {
-    result.push({ name: googleTranslate.name, provider: registry.get(googleTranslate.name,)!, },);
-  }
+  // Translation-only providers (deepl/libretranslate/googleTranslate) are
+  // deliberately EXCLUDED: callWithFailover calls prov.complete() with no
+  // modality gate, so a chat-generation failover into a translation API
+  // would return a bare translation as a chat turn. They remain registered
+  // and reachable through the translation path (model-roles "translator").
 
   const routing = config?.generation?.routing;
   if (!signal || !routingReorders(routing,)) { return result; }
