@@ -4,6 +4,7 @@
 # BUG: activitypub_actor_keys table and src/crypto/activitypub-keys.ts have no production reader
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 707ea1a): Ticket is a record-and-keep decision, not a code fix: acceptance criteria all checked in .md; src/crypto/activitypub-keys.ts still intentionally has zero production readers (groundwork for FEAT-activitypub-federation); nothing deleted, no drop migration added — state matches the ticket's own resolution.
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-crypto

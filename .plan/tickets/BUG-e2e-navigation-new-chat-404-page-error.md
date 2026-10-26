@@ -8,6 +8,7 @@
 **Acceptance Criteria:** The failing request is identified by URL; either the resource is served or the harness-induced request is excluded; the browser baseline gate passes with all 34 files green.
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue b99af61): tests/e2e/helpers/htmx-alpine.ts:113-116 now attributes console errors to their URL (404s no longer misattributed to the page); shared-dist race eliminated by per-pid staging + atomic rename in tests/e2e/helpers/browser-frontend-build.ts:153,185-188.
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-e2e-integration-testing

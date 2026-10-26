@@ -4,6 +4,7 @@
 # BUG: A community plugin named 'core' disables all five built-in tools
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue a06afc7): src/plugins/loader.ts:186-191 rejects a non-core plugin named 'core' at registration (log.warn + return), so it can no longer flip the built-in flag or shadow registry.addTools('core', ...) at loader.ts:121.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-security-sandboxing

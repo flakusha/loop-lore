@@ -4,6 +4,7 @@
 # BUG: admin-audit pagination uses || 1, so an empty result set reports one page
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue d790244): src/frontend/alpine/admin-audit.ts:46 is now Math.max(1, Math.ceil(auditTotal / pageSize)); same fix landed in admin-chats.ts:46, admin-users.ts:52, admin-worlds.ts:44.
 **Priority:** Low
 **Effort:** Medium
 **Epic:** epic-frontend-admin

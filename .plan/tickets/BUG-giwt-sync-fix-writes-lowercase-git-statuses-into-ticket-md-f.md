@@ -4,6 +4,7 @@
 # BUG: giwt sync --fix writes lowercase git statuses into ticket .md files, breaking the status-vocab gate
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: META pinned node_modules/giwt: statuses routed through vocabStatusTarget ("done"->"Done", "open"->"Not Started"; sync-fix-status.ts:50-90,124-171; pinned sync-issues-ops.test.ts:943-948). Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-giwt-sync-fix-writes-lowercase-git-statuses-into-ticket-md-f.md
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-tooling-improvement

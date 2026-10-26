@@ -4,6 +4,7 @@
 # BUG: Module-level in-memory state grows without eviction
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: queue cap coordination-priority.ts:95; listener removal safe-fetch/fetch.ts:36-41; morale no-op guards offensive.ts:101-103, support.ts:34-36,:76-78. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-module-level-in-memory-state-grows-without-eviction.md
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-runtime-memory-state-hygiene

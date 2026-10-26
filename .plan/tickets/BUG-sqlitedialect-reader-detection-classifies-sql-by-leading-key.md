@@ -4,6 +4,7 @@
 # BUG: SqliteDialect reader detection classifies SQL by leading keywords, misrouting EXPLAIN/commented/CTE-DML
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: src/db/index.ts:54-56 — reader now derives from statement.columnNames.length (sqlite3_column_count), eliminating the keyword-prefix misclassification.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-data-integrity-acid

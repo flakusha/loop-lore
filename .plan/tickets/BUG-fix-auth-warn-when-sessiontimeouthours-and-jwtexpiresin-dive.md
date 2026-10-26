@@ -3,7 +3,8 @@
 
 # BUG: fix(auth): warn when sessionTimeoutHours and jwtExpiresIn diverge
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 094b3b5): Verified: src/config/sections/auth.ts:10,18 keep divergent defaults (sessionTimeoutHours 24 = 86,400s, jwtExpiresIn 86,400) with no coherence warning anywhere in src/config or boot; grep shows only defaults, schema metadata and independent consumers (session.ts:74, sessions-switch).
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-auth-config-contracts

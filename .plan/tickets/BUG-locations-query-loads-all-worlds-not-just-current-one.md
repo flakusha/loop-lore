@@ -4,6 +4,7 @@
 # BUG: Locations query loads all worlds not just current one
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: src/rpg/world-travel/travel.ts:170 now filters locations by world_id as prescribed. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-locations-query-loads-all-worlds-not-just-current-one.md
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-locations

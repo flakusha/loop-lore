@@ -4,6 +4,7 @@
 # BUG: test - unhandled JSON cascade unexplained after chat-export fix
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: root-caused block fixed — src/routes/chat-export.test.ts:2 static import; class blocked by local/no-extensionless-require at error (eslint.config.mjs:206-209, src/eslint-rules/no-extensionless-require.mjs); state documented in docs/meta/tooling/log-problem-inventory.md P9.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-testing-qa

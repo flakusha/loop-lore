@@ -4,6 +4,7 @@
 # BUG: Branch merge/delete confirm modals never initialize — dead markup
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 48922f4): src/components/chat/branch-list-panel.html:12 roots the whole panel in one x-data; merge modal (:93-94 x-show) and delete modal (:129-131 x-show) live inside the Alpine root, so bindings initialize — no dead markup remains.
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability

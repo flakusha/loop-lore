@@ -4,6 +4,7 @@
 # BUG: Caption route never sends image bytes to the model
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] NEEDS-FIX-WITH-DETAILS (issue 42d6c17): Bytes now attached: caption-route.ts:138-146 reads image data (readCaptionImages) for vision-capable providers and :156 sets userMessage.images. Remaining: the ticket-required test does not exist — caption-route.test.ts:261-273 asserts only model + message roles, nothing asserts messages[].images carries the image.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-aux-enrichment-pipeline

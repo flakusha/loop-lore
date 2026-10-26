@@ -4,6 +4,7 @@
 # BUG: generation service silent catch blocks mask production errors
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: all three sites log: src/generation/auto-gen/resolve-known-names.ts:66-68, src/generation/auto-gen/handle-generation-error.ts:38-40,:61-63. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-generation-service-silent-catch-blocks-mask-production-error.md
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-logging
