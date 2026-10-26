@@ -189,8 +189,18 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         this.pendingAssets = [];
         this.clearComposerDraft();
         const data = await res.json();
-        if (data.action) {
-          await this.dispatchCommandAction(data.action, data.actionPayload ?? null, this.activeChat,);
+        // A command response (`command` present) never starts a generation:
+        // the server answers with the command's system message and, when the
+        // command has one, an action — and creates no generation buffer for
+        // it. Keying this branch on `action` alone sent every action-less
+        // command (/help, /char-list, ...) down the generation SSE, where the
+        // client waits 15s for a buffer that never arrives and then toasts
+        // "Generation failed" with the spinner still up.
+        if (data.action || data.command) {
+          if (data.action) {
+            await this.dispatchCommandAction(data.action, data.actionPayload ?? null, this.activeChat,);
+          }
+
           // Command actions do not open a generation SSE — clear the flag so
           // the UI can switch chats. Without this, a non-generation dispatch
           // (e.g. slash-command response) bricks `selectChat`.

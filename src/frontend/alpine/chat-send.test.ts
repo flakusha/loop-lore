@@ -239,6 +239,26 @@ describe("chatSendMethods.sendMessage — success paths", () => {
     expect(ctx.isGenerating,).toBe(false,);
   });
 
+  test("action-less command responses skip the SSE connection and clear the spinner", async () => {
+    const actions: string[] = [];
+    const sse: (string | null)[] = [];
+    const ctx = buildCtx({
+      dispatchCommandAction: async (action,) => {
+        actions.push(action,);
+      },
+      sendWithPreferredMode: async (chatId,) => {
+        sse.push(chatId,);
+      },
+    },);
+
+    ctx.$refs.messageInput.value = "/char-list";
+    handler = async () => Response.json({ command: "char-list", action: null, },);
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+    expect(actions,).toEqual([],);
+    expect(sse,).toEqual([],);
+    expect(ctx.isGenerating,).toBe(false,);
+  });
+
   test("a human send fires user-triggered quick replies and resets the loop counter", async () => {
     const triggers: string[] = [];
     const ctx = buildCtx({
