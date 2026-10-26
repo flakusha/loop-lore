@@ -86,7 +86,16 @@ async function handleLogin(
   }
 
   if (user.status === UserStatus.Disabled || user.status === UserStatus.Deactivated) {
-    return errorResponse(request, HttpStatus.Forbidden, "auth.accountLocked", t, "Account is disabled.",);
+    // AC10 enumeration-safe: identical message and status shape as
+    // unknown-user and wrong-password failures so account state is not
+    // observable through the login endpoint.
+    return errorResponse(
+      request,
+      HttpStatus.Unauthorized,
+      "auth.invalidCredentials",
+      t,
+      "Invalid username or password.",
+    );
   }
 
   if (!user.secret_hash) {

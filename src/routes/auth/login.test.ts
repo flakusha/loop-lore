@@ -158,7 +158,7 @@ describe("handleLogin — credential validation", () => {
     expect(body,).toContain("Invalid username or password",);
   });
 
-  test("returns account locked for disabled users", async () => {
+  test("returns enumeration-safe identical message for disabled users", async () => {
     const res = await handleLogin(
       makeRequest(loginBody("disabled-user", PASSWORD,),),
       db,
@@ -168,7 +168,33 @@ describe("handleLogin — credential validation", () => {
       loginLimiter,
     );
 
-    expect(await res.text(),).toContain("Account is disabled",);
+    expect(await res.text(),).toContain("Invalid username or password",);
+  });
+
+  test("disabled users get the same JSON status shape as invalid credentials", async () => {
+    const disabled = await handleLogin(
+      makeRequest(loginBody("disabled-user", PASSWORD,), { Accept: "application/json", },),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
+
+    const wrongPassword = await handleLogin(
+      makeRequest(loginBody(USERNAME, "wrong-password",), { Accept: "application/json", },),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
+
+    expect(disabled.status,).toBe(wrongPassword.status,);
+    expect(disabled.status,).toBe(401,);
+    const body = await disabled.json() as { error: string };
+    const wrongBody = await wrongPassword.json() as { error: string };
+    expect(body.error,).toBe(wrongBody.error,);
   });
 
   test("returns invalid credentials for wrong password", async () => {
