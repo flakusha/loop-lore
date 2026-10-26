@@ -114,6 +114,14 @@ impl GalleryState {
 
   /// Merge a fetched page into the grid. `replace` = first page (clears rows).
   ///
+  /// `has_more` is derived from the server's own row window, so a filtered
+  /// search keeps "Load more" exactly as the unfiltered grid does.
+  ///
+  /// Appending skips an asset id already on screen: the page windows are
+  /// computed with `offset`, so an upload or delete between two requests can
+  /// shift a row across the boundary and repeat it. A repeated tile would also
+  /// distract the thumbnail queue into a second fetch for the same texture.
+  ///
   /// # Panics
   ///
   /// Never — `page` is clamped to >= 1.
@@ -131,6 +139,9 @@ impl GalleryState {
     let page_size = self.page_size.unwrap_or(crate::api::GALLERY_PAGE_SIZE) as usize;
     self.has_more = assets.len() >= page_size;
     for asset in assets {
+      if !replace && self.cells.iter().any(|cell| cell.asset.id == asset.id) {
+        continue;
+      }
       self.cells.push(GalleryCell::new(asset));
     }
   }
@@ -360,6 +371,18 @@ mod tests {
   }
 
   #[test]
+  fn appended_page_drops_an_asset_id_already_on_screen() {
+    let mut state = GalleryState::new();
+    state.apply_page(vec![asset("a1", "image", None), asset("a2", "image", None)], 1, true);
+    // The offset window shifted between the two requests: `a2` comes back
+    // again on page 2, alongside the genuinely new `a3`.
+    state.apply_page(vec![asset("a2", "image", None), asset("a3", "image", None)], 2, false);
+    assert_eq!(state.cells.len(), 3);
+    let ids: Vec<&str> = state.cells.iter().map(|cell| cell.asset.id.as_str()).collect();
+    assert_eq!(ids, vec!["a1", "a2", "a3"]);
+  }
+
+  #[test]
   fn apply_page_marks_has_more_on_full_page() {
     let mut state = GalleryState::new();
     let full = (0..crate::api::GALLERY_PAGE_SIZE)
@@ -398,7 +421,7 @@ mod tests {
     // dependency.
     // A filtered search is paginated like the grid: page 1 comes back full,
     // "Load more" asks the search endpoint for page 2, and page 2's rows are
-    // appended to the rows already shown.</new_string>
+    // appended to the rows already shown.
     let mut state = GalleryState::new();
     state.set_filters(GalleryFilters {
       query: "cat".to_string(),
