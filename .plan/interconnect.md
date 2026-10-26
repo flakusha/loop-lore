@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3667
 - epics: 350
-- src paths owned: 4479
-- edges: produces 11739, consumes 404, sibling 35477, owns 2649, related 1191
+- src paths owned: 4480
+- edges: produces 11740, consumes 404, sibling 35477, owns 2648, related 1191
 
 ## Shared src hubs
 
@@ -4705,7 +4705,6 @@ output is byte-identical for identical inputs.
 | `epic-sam3-segmentation-integration` | owns | `TASK-sam3-feasibility-probe-meta-model-api-vs-comfyui-custom-node` | - |
 | `epic-sam3-segmentation-integration` | owns | `TASK-sam3-mask-cache-and-reuse` | - |
 | `epic-schema` | owns | `BUG-get-admin-model-roles-schema-array-vs-service-record-mismatc` | - |
-| `epic-schema` | owns | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | - |
 | `epic-schema` | owns | `TASK-agents-md-references-nonexistent-db-schemas-check-script` | - |
 | `epic-schema` | owns | `TASK-audit-t-unionenum-schema-fields-absent-value-silently-defaul` | - |
 | `epic-schema` | owns | `TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn` | - |
@@ -6769,6 +6768,7 @@ output is byte-identical for identical inputs.
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/assets/controller.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/characters/importers/character-systems/avatars.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/characters/services/shared-service-utils.ts` | - |
+| `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/characters/shared/character-systems-utils.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/chat/service/crud/get.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/config/load/domain.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/config/load/parse.ts` | - |
