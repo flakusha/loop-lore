@@ -102,7 +102,6 @@
     "displayName": "Display Name",
     "email": "Email",
     "invalidCredentials": "Invalid username or password",
-    "accountLocked": "Account is locked",
     "sessionExpired": "Session expired, please log in again",
     "forgotPassword": "Forgot password?",
     "needAnAccount": "Need an account?",
