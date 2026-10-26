@@ -330,6 +330,81 @@ describe("loadMessages", () => {
     expect(host.rendered[0]!.map((m,) => m.content),).toEqual(["newest", "reply",],);
   });
 
+  // A chat switch clears the list (chat/index.ts) and starts the new chat's own
+  // load; a page still in flight for the previous chat must not repopulate it.
+  it("drops a page that lands after the chat switched", async () => {
+    let release: () => void = () => {};
+    const landed = new Promise<void>((resolve,) => {
+      release = resolve;
+    },);
+
+    setFetch(async (url: string | URL | Request, init?: RequestInit,) => {
+      recordRequest(url, init,);
+      await landed;
+      return new Response(
+        JSON.stringify({
+          data: [{ id: "old-1", role: "user", content: "previous chat", },],
+          pagination: { total: 1, page: 1, pageSize: 200, totalPages: 1, },
+        },),
+        { status: 200, headers: { "Content-Type": "application/json", }, },
+      );
+    },);
+
+    const host = makeHost({ chatId: "chat-old", },);
+    const load = loadMessages(host,);
+    host.chatId = "chat-new";
+    release();
+    await load;
+
+    expect(host.rendered,).toEqual([],);
+    expect(host.showErrorMessages,).toEqual([],);
+  });
+
+  it("drops the last page when the chat switched between the two reads", async () => {
+    let releaseLast: () => void = () => {};
+    const lastInFlight = new Promise<void>((resolve,) => {
+      releaseLast = resolve;
+    },);
+
+    let secondRequestedResolve: () => void = () => {};
+    const secondRequested = new Promise<void>((resolve,) => {
+      secondRequestedResolve = resolve;
+    },);
+
+    let call = 0;
+    setFetch(async (url: string | URL | Request, init?: RequestInit,) => {
+      recordRequest(url, init,);
+      call++;
+      if (call === 1) {
+        return new Response(
+          JSON.stringify({ data: [], pagination: { total: 250, page: 1, pageSize: 200, totalPages: 2, }, },),
+          { status: 200, headers: { "Content-Type": "application/json", }, },
+        );
+      }
+
+      secondRequestedResolve();
+      await lastInFlight;
+      return new Response(
+        JSON.stringify({
+          data: [{ id: "old-50", role: "assistant", content: "previous chat tail", },],
+          pagination: { total: 250, page: 2, pageSize: 200, totalPages: 2, },
+        },),
+        { status: 200, headers: { "Content-Type": "application/json", }, },
+      );
+    },);
+
+    const host = makeHost({ chatId: "chat-old", },);
+    const load = loadMessages(host,);
+    // The last page is in flight for `chat-old`; switch before it lands.
+    await secondRequested;
+    host.chatId = "chat-new";
+    releaseLast();
+    await load;
+
+    expect(host.rendered,).toEqual([],);
+    expect(host.showErrorMessages,).toEqual([],);
+  });
+
   it("renders an empty list when the chat has no messages", async () => {
     stubFetchJson(200, {
       data: [],
