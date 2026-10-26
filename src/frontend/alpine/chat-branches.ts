@@ -54,6 +54,7 @@ async function mutateBranch(
   state: ChatState,
   call: () => Promise<Response>,
   toasts: BranchMutationToasts,
+  reload?: () => Promise<void>,
 ): Promise<void> {
   try {
     await call();
@@ -63,6 +64,10 @@ async function mutateBranch(
   }
 
   await state.loadBranches();
+  // BUG-324a2c9: a branch switch changes WHICH message chain is displayed,
+  // so the message list must be reloaded too (the branch list refresh above
+  // only updates the dropdown).
+  await reload?.();
   state.$dispatch?.("show-toast", { type: "success", message: t(toasts.done,), },);
 }
 
@@ -142,6 +147,7 @@ export const chatBranches: Partial<ChatBranchesState> & ThisType<ChatState> = {
           body: jsonBody({ branchId, },),
         },),
       { failed: "branches.failedSwitch", done: "branches.switched", },
+      () => this.loadMessages?.(),
     );
   },
 

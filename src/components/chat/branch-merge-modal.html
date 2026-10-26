@@ -22,7 +22,12 @@
 
     init() {
       this.$watch('$store.ui.mergeModalOpen', (open) => {
-        if (open) this.resetWizard();
+        if (open) {
+          // BUG-1476e6d: reset FIRST, then seed the caller's sources — the
+          // old order (reset after seeding) wiped whatever open() staged.
+          this.resetWizard();
+          this.sources = this.$store.ui.mergeSources ?? [];
+        }
       });
     },
 
@@ -41,10 +46,12 @@
     },
 
     open(sources) {
-      if (sources && sources.length >= 2) {
-        this.sources = sources;
-      }
+      // BUG-1476e6d: reset BEFORE seeding — the old order cleared the sources
+      // it had just been given. Sources also go through the store so the
+      // open-watcher (which resets again on the flag flip) re-seeds them.
       this.resetWizard();
+      this.$store.ui.mergeSources = sources ?? [];
+      this.sources = sources ?? [];
       this.$store.ui.mergeModalOpen = true;
     },
 

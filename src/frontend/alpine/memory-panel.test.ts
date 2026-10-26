@@ -45,8 +45,10 @@ afterEach(() => {
   (globalThis as Record<string, unknown>).apiFetch = originalApiFetch;
 },);
 
+// BUG-46fcedc: GET /actors/:id/memories serves the jsonPaginated envelope
+// ({ data, pagination }) — the panel must read `data`, not `items`.
 const sampleMemories = {
-  items: [
+  data: [
     {
       id: "m1",
       content: "char memory",
@@ -244,7 +246,7 @@ describe("memoryPanel.rememberMessage", () => {
 
 describe("memoryPanel.toggleMemoryInChat", () => {
   test("re-including an excluded memory POSTs carry with the chat id", async () => {
-    mockFetch(200, { items: [], },);
+    mockFetch(200, { data: [], pagination: { total: 0, page: 1, pageSize: 50, totalPages: 0, }, },);
     const c = ctx({
       activeChat: "chat-1",
       memoryPanel: {
@@ -274,7 +276,7 @@ describe("memoryPanel.toggleMemoryInChat", () => {
   });
 
   test("excluding a legacy full-carry chat calls carry-except", async () => {
-    mockFetch(200, { items: [], },);
+    mockFetch(200, { data: [], pagination: { total: 0, page: 1, pageSize: 50, totalPages: 0, }, },);
     const c = ctx({
       activeChat: "chat-1",
       memoryPanel: {
@@ -293,7 +295,7 @@ describe("memoryPanel.toggleMemoryInChat", () => {
   });
 
   test("removing a chat copy DELETEs the copy row", async () => {
-    mockFetch(200, { items: [], },);
+    mockFetch(200, { data: [], pagination: { total: 0, page: 1, pageSize: 50, totalPages: 0, }, },);
     const c = ctx({
       activeChat: "chat-1",
       memoryPanel: {
@@ -322,7 +324,7 @@ describe("memoryPanel.toggleMemoryInChat", () => {
 
 describe("memoryPanel review actions", () => {
   test("approveMemory PUTs reviewStatus committed and reloads", async () => {
-    mockFetch(200, { items: [], },);
+    mockFetch(200, { data: [], pagination: { total: 0, page: 1, pageSize: 50, totalPages: 0, }, },);
     const c = ctx({
       memoryPanel: {
         ...(memoryPanel.memoryPanel as object),
@@ -338,7 +340,7 @@ describe("memoryPanel review actions", () => {
   });
 
   test("rejectMemory PUTs reviewStatus rejected", async () => {
-    mockFetch(200, { items: [], },);
+    mockFetch(200, { data: [], pagination: { total: 0, page: 1, pageSize: 50, totalPages: 0, }, },);
     const c = ctx();
     await c.rejectMemory!("m1",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({ reviewStatus: "rejected", },);
