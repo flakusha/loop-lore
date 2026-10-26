@@ -18,9 +18,14 @@ const BASE = "http://localhost";
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 
 /** Build the derived-context app (userId/userRole) around the route. */
-function makeApp(db: Kysely<DB>, config: Config, userId: string | null,): Elysia {
+function makeApp(
+  db: Kysely<DB>,
+  config: Config,
+  userId: string | null,
+  userRole = "user",
+): Elysia {
   return new Elysia({ name: "test-voice-notes", },)
-    .derive(() => ({ userId, userRole: "user", }))
+    .derive(() => ({ userId, userRole, }))
     .use(voiceNoteRoutes({ database: db, config, },),) as unknown as Elysia;
 }
 
@@ -83,6 +88,14 @@ describe("voiceNoteRoutes", () => {
     const app = makeApp(db, config, uid(),);
     const res = await app.handle(uploadRequest("chat-1", "audio/ogg", 10,),);
     expect(res.status,).toBe(404,);
+  });
+
+  test("admin.chat capability bypasses participant check (userRole reaches checkChatAccess)", async () => {
+    const adminId = uid();
+    await insertUsers(db, "admin", "Admin", { id: adminId, role: "admin", } as never,);
+    const app = makeApp(db, config, adminId, "admin",);
+    const res = await app.handle(uploadRequest("chat-1", "audio/ogg", 64,),);
+    expect(res.status,).toBe(201,);
   });
 
   test("rejects non-audio uploads with 422", async () => {

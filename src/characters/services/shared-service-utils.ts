@@ -35,8 +35,37 @@ export async function withTransaction<T,>(
 }
 
 /**
- * Apply worldId conditional filter to a Kysely query builder.
- * Handles the null-world (global) vs specific-world distinction.
+ * Apply an EXPLICIT world scope to a Kysely query builder: filter to the
+ * given world when one is supplied, otherwise restrict to the global
+ * (world_id IS NULL) scope — never an unscoped, world-agnostic match.
+ *
+ * Use this for per-entity reads and mutations (relationships, traits) where
+ * an omitted worldId must not silently span every world's rows: an update or
+ * delete without a scope could otherwise hit an arbitrary world's row when
+ * the same actor pair exists in several worlds.
+ * @param qb
+ * @param worldId
+ * @param worldCol
+ * @returns the query builder narrowed to the world, or to the global scope
+ */
+export function withExplicitWorldScope<T,>(qb: T, worldId: string | undefined, worldCol = "world_id",): T {
+  if (worldId !== undefined) {
+    return (qb as any).where(worldCol, "=", worldId,) as T;
+  }
+
+  return (qb as any).where(worldCol, "is", null,) as T;
+}
+
+/**
+ * Apply worldId conditional filter to a Kysely query builder (world-agnostic
+ * when omitted). Handles the null-world (global) vs specific-world distinction.
+ *
+ * WORLD-AGNOSTIC contract: an undefined worldId adds NO world filter, so the
+ * query spans the global (NULL) scope and every world-scoped row. Only use
+ * for genuinely scope-spanning lookups (e.g. mood resolution, where the
+ * effective state is read across scopes); per-entity read/update/delete
+ * paths must use {@link withExplicitWorldScope} instead — a world-agnostic
+ * write can hit an arbitrary world's row.
  *
  * Usage:
  *   const qb = db.selectFrom("table").where("actor_id", "=", actorId);

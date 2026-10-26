@@ -40,16 +40,18 @@ async function executeTransferTx(
     chatId: string;
     previousOwnerId: string;
     newOwnerId: string;
+    /** Owning users.id of the new-owner actor — the value written to chats.created_by. */
+    newOwnerUserId: string;
     autoInvited: boolean;
     now: string;
     auditMeta: ReturnType<typeof buildOwnershipAuditMeta>;
     requesterId: string;
   },
 ): Promise<TransferOwnershipResult> {
-  const { chatId, previousOwnerId, newOwnerId, autoInvited, now, auditMeta, requesterId, } = params;
+  const { chatId, previousOwnerId, newOwnerId, newOwnerUserId, autoInvited, now, auditMeta, requesterId, } = params;
   const flipped = await trx
     .updateTable("chats",)
-    .set({ created_by: newOwnerId, updated_at: now, },)
+    .set({ created_by: newOwnerUserId, updated_at: now, },)
     .where("id", "=", chatId,)
     .where("created_by", "=", previousOwnerId,)
     .executeTakeFirst();
@@ -221,6 +223,27 @@ export async function transferOwnership(
     }
   }
 
+  // chats.created_by is an FK to users.id while newOwnerId names an ACTOR
+  // (chat_participants.actor_id). Resolve the actor's owning user — mirroring
+  // the seeding/adoption mapping (persona actors carry user_id, adopted
+  // characters carry owner_id) — so the write no longer trips the FK with a
+  // misleading 400. Writes that identify the participant keep using the actor id.
+  const actorRow = await db
+    .selectFrom("actors",)
+    .select(["user_id", "owner_id",],)
+    .where("id", "=", newOwnerId,)
+    .executeTakeFirst();
+
+  const newOwnerUserId = actorRow?.user_id ?? actorRow?.owner_id ?? null;
+  if (!newOwnerUserId) {
+    const ownerUserError: ServiceError = {
+      code: "bad_request",
+      message: "New owner actor has no owning user",
+    };
+
+    return { ok: false, error: ownerUserError, };
+  }
+
   const autoInvited = !newOwnerParticipant;
   const now = new Date().toISOString();
   const reason = opts.reason?.trim().slice(0, 500,) ?? null;
@@ -228,7 +251,16 @@ export async function transferOwnership(
   const auditMeta = buildOwnershipAuditMeta({ chatId, previousOwnerId, newOwnerId, autoInvited, reason, },);
   try {
     const outcome: TransferOwnershipResult = await db.transaction().execute((trx,) =>
-      executeTransferTx(trx, { chatId, previousOwnerId, newOwnerId, autoInvited, now, auditMeta, requesterId, },)
+      executeTransferTx(trx, {
+        chatId,
+        previousOwnerId,
+        newOwnerId,
+        newOwnerUserId,
+        autoInvited,
+        now,
+        auditMeta,
+        requesterId,
+      },)
     );
 
     await runPostTransferHooks(db, outcome, reason, chatId,);

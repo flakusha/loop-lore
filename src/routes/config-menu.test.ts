@@ -161,4 +161,33 @@ describe("config-menu routes", () => {
     expect(body.ok,).toBe(true,);
     expect(body.key,).toBe("theme",);
   });
+
+  test("GET overlays persisted system_config values after a PATCH (no revert after reload)", async () => {
+    const app = makeApp(db, "admin",);
+
+    const patch = await app.handle(
+      new Request("http://localhost/api/config-menu", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ key: "registration_open", value: "false", },),
+      },),
+    );
+
+    expect(patch.status,).toBe(200,);
+
+    const get = await app.handle(new Request("http://localhost/api/config-menu",),);
+    expect(get.status,).toBe(200,);
+    const body = await get.json() as {
+      sections: { fields: { key: string; default?: unknown }[] }[];
+    };
+
+    const field = body.sections
+      .flatMap((s,) => s.fields)
+      .find((f,) => f.key === "registration_open");
+
+    expect(field,).toBeDefined();
+    // Regression: GET used to serve the static catalog default only, so a
+    // persisted admin preference reverted in the UI after reload.
+    expect(field?.default,).toBe(false,);
+  });
 });
