@@ -4,6 +4,7 @@
 # BUG: story-states npc/location PUT schema drift: silent no-op with vacuous green e2e
 
 **Status:** Done
+**Status Note (2026-10-26 gate fallout):** the schema alignment landed (`NpcStateBody`/`LocationStateBody` now mirror the handler field set + `minProperties: 1`), which left two artifacts behind: (1) `src/validation/schema-fuzz.generated.test.ts` failed on `NpcStateBody` with counterexample `{}` — the fuzz mapper (`src/test-utils/schema-arbitrary.ts`) ignored `minProperties`, so it generated an empty object the schema correctly rejects; the mapper now promotes the first declared optional keys until the floor is met (`SchemaNode.minProperties` added in `schema-arbitrary-scalars.ts`). (2) `tests/e2e/flows/notification-world-mute.test.ts` still sent the obsolete `{npc_id, state_key, state_value}` body and got 422 — it now sends `{mentalState: "resting"}` and asserts the persisted `npc_states.mental_state`, closing the vacuous green flagged in this ticket.
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
