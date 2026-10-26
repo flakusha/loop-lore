@@ -6085,6 +6085,18 @@
       "source": ".plan/tickets/TASK-assistant-personality-drift-aux-advisory.md"
     }
   ],
+  "src/aux-pipeline/decision-client.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llama-cpp-decision-model-client-for-aux-classification.md"
+    }
+  ],
+  "src/aux-pipeline/decision-registry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llama-cpp-decision-model-client-for-aux-classification.md"
+    }
+  ],
   "src/aux-pipeline/eval/cli.ts": [
     {
       "kind": "epic",
@@ -6250,6 +6262,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-llama-cpp-decision-model-client-for-aux-classification.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
     },
     {
@@ -6373,6 +6389,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-aux-classification-template-registry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llama-cpp-decision-model-client-for-aux-classification.md"
     }
   ],
   "src/aux-pipeline/types.ts": [
