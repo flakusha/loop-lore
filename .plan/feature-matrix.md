@@ -1697,7 +1697,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2741 | 1254 | 45 | 891 | 31 | 0 | 520 |
+| (untagged) | 2741 | 1253 | 46 | 891 | 31 | 0 | 520 |
 
 ## By epic × status
 
@@ -1990,7 +1990,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | epic-runtime-integrity-fail-safes | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-runtime-memory-state-hygiene | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-sam3-segmentation-integration | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
-| epic-schema | 13 | 2 | 0 | 8 | 0 | 0 | 3 |
+| epic-schema | 13 | 1 | 1 | 8 | 0 | 0 | 3 |
 | epic-security-sandboxing | 15 | 7 | 0 | 7 | 0 | 0 | 1 |
 | epic-server-lifecycle-hardening | 6 | 5 | 0 | 0 | 0 | 0 | 1 |
 | epic-shared-schemas | 7 | 7 | 0 | 0 | 0 | 0 | 0 |

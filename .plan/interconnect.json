@@ -8243,9 +8243,11 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md",
       "title": "Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/assets/controller.ts",
+        "src/characters/importers/character-systems/avatars.ts",
+        "src/characters/services/shared-service-utils.ts",
         "src/chat/service/crud/get.ts",
         "src/config/load/domain.ts",
         "src/config/load/parse.ts",
@@ -56562,7 +56564,8 @@
     {
       "path": "src/characters/importers/character-systems/avatars.ts",
       "owners": [
-        "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip"
+        "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+        "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-"
       ]
     },
     {
@@ -57268,6 +57271,7 @@
     {
       "path": "src/characters/services/shared-service-utils.ts",
       "owners": [
+        "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
         "BUG-withworldid-undefined-means-no-filter-relationship-read-upda"
       ]
     },
@@ -110617,6 +110621,16 @@
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "produces",
       "to": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "produces",
+      "to": "src/characters/importers/character-systems/avatars.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "produces",
+      "to": "src/characters/services/shared-service-utils.ts"
     },
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
@@ -184602,6 +184616,12 @@
     {
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
       "kind": "sibling",
+      "to": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "via": "src/characters/importers/character-systems/avatars.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
       "to": "FEAT-066",
       "via": "src/characters/spec/character.ts"
     },
@@ -229550,6 +229570,12 @@
       "kind": "sibling",
       "to": "BUG-version-resolver-middleware-built-not-wired",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "sibling",
+      "to": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "via": "src/characters/services/shared-service-utils.ts"
     },
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",

@@ -7393,6 +7393,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-ccv3-export-and-import-lose-fields-on-round-trip.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md"
     }
   ],
   "src/characters/importers/character-systems/licensing.ts": [
@@ -8490,6 +8494,10 @@
     }
   ],
   "src/characters/services/shared-service-utils.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-withworldid-undefined-means-no-filter-relationship-read-upda.md"

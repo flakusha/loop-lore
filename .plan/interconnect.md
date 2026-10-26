@@ -11,7 +11,7 @@ output is byte-identical for identical inputs.
 - tickets: 3667
 - epics: 350
 - src paths owned: 4479
-- edges: produces 11737, consumes 404, sibling 35475, owns 2649, related 1191
+- edges: produces 11739, consumes 404, sibling 35477, owns 2649, related 1191
 
 ## Shared src hubs
 
@@ -274,6 +274,7 @@ output is byte-identical for identical inputs.
 | `src/characters/exporters/shared.ts` | `BUG-character-ccv3-export-and-import-lose-fields-on-round-trip`, `TASK-lorebook-template-seeding` |
 | `src/characters/exporters/toml.ts` | `TASK-epic14-import-export-reconciliation`, `epic-import-export-io` |
 | `src/characters/exporters/yaml.ts` | `TASK-adopt-bun-yaml-to-replace-js-yaml`, `TASK-epic14-import-export-reconciliation`, `epic-import-export-io` |
+| `src/characters/importers/character-systems/avatars.ts` | `BUG-character-ccv3-export-and-import-lose-fields-on-round-trip`, `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` |
 | `src/characters/importers/character-systems/licensing.ts` | `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `TASK-019-enforce-state-machine-validators-at-write`, `TASK-character-domain-residual-defects` |
 | `src/characters/index.ts` | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an`, `TASK-src-rpg-module-root-barrel-and-organization-nits` |
 | `src/characters/license-enforcement.ts` | `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `TASK-019-enforce-state-machine-validators-at-write`, `TASK-030` |
@@ -310,6 +311,7 @@ output is byte-identical for identical inputs.
 | `src/characters/services/personality-service/utility-scorer.ts` | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `TASK-npc-reaction-system`, `TASK-npc-social-decision`, `epic-research-agency-decision` |
 | `src/characters/services/relationships-service-bridge.ts` | `TASK-fix-lint-baseline-debt`, `epic-character-growth` |
 | `src/characters/services/relationships-service/write.ts` | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou`, `BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c`, `BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same`, `BUG-withworldid-undefined-means-no-filter-relationship-read-upda`, `TASK-move-relationship-update-delete-existence-check-inside-the-t`, `epic-character-growth` |
+| `src/characters/services/shared-service-utils.ts` | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-`, `BUG-withworldid-undefined-means-no-filter-relationship-read-upda` |
 | `src/characters/services/skills-service-bridge.ts` | `TASK-fix-lint-baseline-debt`, `epic-character-growth` |
 | `src/characters/services/traits-service-bridge.ts` | `TASK-fix-lint-baseline-debt`, `epic-character-growth` |
 | `src/characters/services/traits-service/types.ts` | `epic-character-growth`, `epic-character-internal-traits` |
@@ -6765,6 +6767,8 @@ output is byte-identical for identical inputs.
 | `BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-` | produces | `src/crypto/key-rotation/re-encrypt.ts` | - |
 | `BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-` | produces | `src/routes/chats/participants.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/assets/controller.ts` | - |
+| `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/characters/importers/character-systems/avatars.ts` | - |
+| `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/characters/services/shared-service-utils.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/chat/service/crud/get.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/config/load/domain.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/config/load/parse.ts` | - |
@@ -20964,6 +20968,7 @@ output is byte-identical for identical inputs.
 | `BUG-character-avatar-put-delete-idor-by-bare-avatarid` | sibling | `TASK-character-multi-avatar` | `src/routes/character-avatars.ts` |
 | `BUG-character-avatar-put-delete-idor-by-bare-avatarid` | sibling | `TASK-gallery-editor-structured-ui` | `src/routes/character-avatars.ts` |
 | `BUG-character-ccv3-export-and-import-lose-fields-on-round-trip` | sibling | `BUG-community-share-missing-lorebook-export` | `src/characters; src/characters/exporters/ccv3.ts` |
+| `BUG-character-ccv3-export-and-import-lose-fields-on-round-trip` | sibling | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | `src/characters/importers/character-systems/avatars.ts` |
 | `BUG-character-ccv3-export-and-import-lose-fields-on-round-trip` | sibling | `FEAT-066` | `src/characters/spec/character.ts` |
 | `BUG-character-ccv3-export-and-import-lose-fields-on-round-trip` | sibling | `FEAT-expand-character-templates-to-canonical-fields` | `src/characters/spec/character.ts` |
 | `BUG-character-ccv3-export-and-import-lose-fields-on-round-trip` | sibling | `TASK-alignment-speech-social-context` | `src/characters/spec/character.ts` |
@@ -28456,6 +28461,7 @@ output is byte-identical for identical inputs.
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key` | `src/db/index.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m` | `src/elysia-app.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `BUG-version-resolver-middleware-built-not-wired` | `src/elysia-app.ts` |
+| `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `BUG-withworldid-undefined-means-no-filter-relationship-read-upda` | `src/characters/services/shared-service-utils.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h` | `src/db/index.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `FEAT-035` | `src/elysia-app.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `FEAT-037` | `src/elysia-app.ts` |
