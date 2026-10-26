@@ -153,9 +153,9 @@ describe("importAvatars", () => {
     await importAvatars(db, actorId, {
       avatars: [],
       config: {
-        selectionRule: "weighted_random",
-        weights: { happy: 0.6, sad: 0.4, },
-        fallbackOrder: ["happy", "sad",],
+        selectionRule: "weighted",
+        weights: { emotion: 0.6, mood: 0.4, },
+        fallbackOrder: ["emotion", "mood",],
       },
     }, result,);
 
@@ -165,7 +165,7 @@ describe("importAvatars", () => {
       .where("actor_id", "=", actorId,).executeTakeFirst();
 
     expect(cfg,).toBeDefined();
-    expect(cfg!.selection_rule,).toBe("weighted_random",);
+    expect(cfg!.selection_rule,).toBe("weighted",);
   });
 
   test("captures config upsert errors without throwing", async () => {
@@ -174,7 +174,7 @@ describe("importAvatars", () => {
     await db.schema.dropTable("character_avatar_config",).execute();
     await importAvatars(db, actorId, {
       avatars: [],
-      config: { selectionRule: "round_robin", weights: {}, fallbackOrder: [], },
+      config: { selectionRule: "random", weights: {}, fallbackOrder: [], },
     }, result,);
 
     expect(result.errors.length,).toBe(1,);

@@ -10,6 +10,8 @@
 - FIXED `src/db/index.ts` — the three `(parameters as any[])` casts collapse into one named `asBindings()` helper converting Kysely's `readonly unknown[]` to bun's `SQLQueryBindings[]` at the adapter boundary.
 - FIXED for the reported shape: `src/config/load/domain.ts:35` still merges domain overrides through `deepMerge`, but `deepMerge` is already generic (`src/config/load/parse.ts:11`), so the merge itself is typed; the remaining `as unknown as` is the untrusted-file trust transfer after `validateDomainConfig` (`:34`) — no removal without a schema-derived parse type.
 - FIXED `src/characters/services/shared-service-utils.ts` — `withExplicitWorldScope` and `withWorldId` now take a structural `WorldFilterable<T>` instead of `(qb as any)`, so the world-scope builders add no type escape.
+- FIXED `src/characters/importers/character-systems/avatars.ts` — `avatars.config` and `avatars.worldConfigs` are declared shapes (`ExportedAvatarConfig`/`ExportedWorldAvatarConfig`) validated at the import boundary; the six `as any` casts on those two payloads are gone and a malformed entry is reported instead of written.
+- REMAINING in the same importer: `tags: avatar.tags as any` (plus the `as string`/`as boolean`/`as number` row reads) — the per-avatar row array is still `Record<string, unknown>[]`, so typing it means declaring the exported avatar row too.
 - REMAINING, verified by grep on this tree:
   - `src/chat/service/crud/get.ts:55-56` — `chatData as unknown as Record<string, unknown>` and the same for participants (Kysely row width).
   - `src/elysia-app.ts:175` — `app as unknown as Parameters<typeof applyCsrfPlugin>[0]`.
