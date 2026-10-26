@@ -460,6 +460,19 @@
     "status": "done",
     "git_issue": "22f20a2"
   },
+  "BUG-AI-ACTION-BILLABLE-LLM-ENDPOINT-CLASSIFIED-300-MIN-CHATPOLIC": {
+    "hash": "d0ecf0a",
+    "git_issue": "d0ecf0a",
+    "extid": "BUG-AI-ACTION-BILLABLE-LLM-ENDPOINT-CLASSIFIED-300-MIN-CHATPOLIC",
+    "type": "BUG",
+    "title": "ai-action billable LLM endpoint classified 300/min chatPolicy",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic.md",
+    "status": "Not Started"
+  },
   "BUG-ALIGN-SEEDDEFAULTS-NULL-HANDLING-WITH-RESOLVEMODELROLE-DEFEN": {
     "epic": "",
     "extid": "BUG-ALIGN-SEEDDEFAULTS-NULL-HANDLING-WITH-RESOLVEMODELROLE-DEFEN",
@@ -2535,6 +2548,19 @@
     "title": "`persistInitiative` writes against the literal scene \"main\" — group-scene initiative ordering is broken",
     "type": "BUG"
   },
+  "BUG-CHAT-PINS-CROSS-CHAT-CONTENT-LEAK-PIN-ANY-MESSAGE-ID-INTO-YO": {
+    "hash": "2d5152c",
+    "git_issue": "2d5152c",
+    "extid": "BUG-CHAT-PINS-CROSS-CHAT-CONTENT-LEAK-PIN-ANY-MESSAGE-ID-INTO-YO",
+    "type": "BUG",
+    "title": "chat-pins cross-chat content leak: pin any message id into your own chat",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo.md",
+    "status": "Not Started"
+  },
   "BUG-CHAT-PROMPT-OVERRIDE-BYPASS-ON-REPLY": {
     "epic": "epic-output-control-transforms",
     "extid": "BUG-CHAT-PROMPT-OVERRIDE-BYPASS-ON-REPLY",
@@ -3406,6 +3432,19 @@
     "title": "detectAvatarChangeIntent runs on user messages, not assistant responses",
     "type": "BUG"
   },
+  "BUG-DEV-RED-AT-HEAD-ASSISTANT-COMMAND-MODULE-SPLIT-BROKE-REGISTR": {
+    "hash": "2c64956",
+    "git_issue": "2c64956",
+    "extid": "BUG-DEV-RED-AT-HEAD-ASSISTANT-COMMAND-MODULE-SPLIT-BROKE-REGISTR",
+    "type": "BUG",
+    "title": "Dev red at HEAD: assistant command-module split broke registration and e2e import; uncommitted repair must land via worktree",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-dev-red-at-head-assistant-command-module-split-broke-registr.md",
+    "status": "Not Started"
+  },
   "BUG-DH-RATCHET-REGRESSION-TESTS-LACK-OUT-OF-ORDER-DELIVERY-ACROS": {
     "epic": "",
     "extid": "BUG-DH-RATCHET-REGRESSION-TESTS-LACK-OUT-OF-ORDER-DELIVERY-ACROS",
@@ -3996,6 +4035,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-export-routes-re-resolve-identity-and-fall-back-to-solo.md",
     "status": "done"
+  },
+  "BUG-EXPORT-SSE-JOB-MAP-NEVER-EVICTED-COMPLETED-ZIP-BUFFERS-RETAI": {
+    "hash": "ed44995",
+    "git_issue": "ed44995",
+    "extid": "BUG-EXPORT-SSE-JOB-MAP-NEVER-EVICTED-COMPLETED-ZIP-BUFFERS-RETAI",
+    "type": "BUG",
+    "title": "export-sse job Map never evicted; completed ZIP buffers retained forever",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai.md",
+    "status": "Not Started"
   },
   "BUG-EXPORT-SSE-START-THROWS-CONTROLLER-IS-ALREADY-CLOSED-ON-CLIE": {
     "epic": "",
@@ -9494,6 +9546,19 @@
     "source": ".plan/tickets/BUG-story-points-mutations-double-swallow-cache-refresh-failures.md",
     "status": "done"
   },
+  "BUG-STORY-STATES-NPC-LOCATION-PUT-SCHEMA-DRIFT-SILENT-NO-OP-WITH": {
+    "hash": "065ca42",
+    "git_issue": "065ca42",
+    "extid": "BUG-STORY-STATES-NPC-LOCATION-PUT-SCHEMA-DRIFT-SILENT-NO-OP-WITH",
+    "type": "BUG",
+    "title": "story-states npc/location PUT schema drift: silent no-op with vacuous green e2e",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-story-states-npc-location-put-schema-drift-silent-no-op-with.md",
+    "status": "Not Started"
+  },
   "BUG-STRANDED-POST-FINALIZE-FIX-THE-AUDIO-LOW-PASS-COEFFICIENT-RE": {
     "hash": "12911db",
     "git_issue": "12911db",
@@ -9900,6 +9965,32 @@
     "tags": [],
     "title": "transitions.test.ts ownership tests fail with FK constraint missing fixture rows",
     "type": "BUG"
+  },
+  "BUG-TRANSLATE-ONLY-PROVIDERS-RIDE-GENERAL-FAILOVER-CHAINS-COMPLE": {
+    "hash": "7f09e86",
+    "git_issue": "7f09e86",
+    "extid": "BUG-TRANSLATE-ONLY-PROVIDERS-RIDE-GENERAL-FAILOVER-CHAINS-COMPLE",
+    "type": "BUG",
+    "title": "translate-only providers ride general failover chains; complete() returns a translation as a successful turn (incl. merge-LLM path)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-translate-only-providers-ride-general-failover-chains-comple.md",
+    "status": "Not Started"
+  },
+  "BUG-TRANSLATION-ROUTE-SILENT-CATCH-SHIPS-UNDECRYPTABLE-CIPHERTEX": {
+    "hash": "61d78b5",
+    "git_issue": "61d78b5",
+    "extid": "BUG-TRANSLATION-ROUTE-SILENT-CATCH-SHIPS-UNDECRYPTABLE-CIPHERTEX",
+    "type": "BUG",
+    "title": "translation route silent catch ships undecryptable ciphertext to external MT and persists it",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-translation-route-silent-catch-ships-undecryptable-ciphertex.md",
+    "status": "Not Started"
   },
   "BUG-TRANSPORT-NEGOTIATION-PARSERS-DO-NOT-EXCLUDE-Q-0-OR-VALIDATE": {
     "epic": "",
@@ -10385,6 +10476,19 @@
     "title": "VN mode locked once chat has confirmed messages",
     "type": "BUG"
   },
+  "BUG-VOICE-NOTES-PASSES-NULL-USERROLE-DISABLING-ADMIN-ARM-OF-CHEC": {
+    "hash": "54b65a1",
+    "git_issue": "54b65a1",
+    "extid": "BUG-VOICE-NOTES-PASSES-NULL-USERROLE-DISABLING-ADMIN-ARM-OF-CHEC",
+    "type": "BUG",
+    "title": "voice-notes passes null userRole, disabling admin arm of checkChatAccess",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec.md",
+    "status": "Not Started"
+  },
   "BUG-WEB-UI-NEVER-SETS-DB-IDEMPOTENCYKEY": {
     "hash": "9e6a046",
     "git_issue": "9e6a046",
@@ -10453,6 +10557,19 @@
     "epic": "epic-encryption-workflow",
     "tags": [],
     "source": ".plan/tickets/BUG-wire-encryption-for-generated-images.md",
+    "status": "Not Started"
+  },
+  "BUG-WITHWORLDID-UNDEFINED-MEANS-NO-FILTER-RELATIONSHIP-READ-UPDA": {
+    "hash": "7f9bfa2",
+    "git_issue": "7f9bfa2",
+    "extid": "BUG-WITHWORLDID-UNDEFINED-MEANS-NO-FILTER-RELATIONSHIP-READ-UPDA",
+    "type": "BUG",
+    "title": "withWorldId undefined-means-no-filter: relationship read/update/delete can hit an arbitrary world row",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-withworldid-undefined-means-no-filter-relationship-read-upda.md",
     "status": "Not Started"
   },
   "BUG-WORKFLOW-CONFIRM-SESSION-TREATS-OPTIONAL-STEPS-AS-REQUIRED": {
@@ -16963,6 +17080,60 @@
     ],
     "title": "Resource Provision",
     "type": "EPIC"
+  },
+  "EPIC-REVIEW-20261025-API-GOVERNANCE-PERIMETER": {
+    "hash": "pending",
+    "extid": "EPIC-REVIEW-20261025-API-GOVERNANCE-PERIMETER",
+    "type": "EPIC",
+    "title": "API Governance Perimeter (2026-10-25 review round E-1)",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "api-governance",
+      "rate-limiting",
+      "mount-topology",
+      "versioning",
+      "review-2026-10-25"
+    ],
+    "source": ".plan/tickets/epic-review-20261025-api-governance-perimeter.md",
+    "status": "Not Started"
+  },
+  "EPIC-REVIEW-20261025-DEAD-CODE-SWEEP": {
+    "hash": "pending",
+    "extid": "EPIC-REVIEW-20261025-DEAD-CODE-SWEEP",
+    "type": "EPIC",
+    "title": "Dead-Code & Cutover-Debris Sweep + Gate Blind Spots (2026-10-25 review round E-3)",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "dead-code",
+      "knip",
+      "cutover-debris",
+      "gates",
+      "review-2026-10-25"
+    ],
+    "source": ".plan/tickets/epic-review-20261025-dead-code-sweep.md",
+    "status": "Not Started"
+  },
+  "EPIC-REVIEW-20261025-PARALLEL-MERGE-INTEGRATION": {
+    "hash": "pending",
+    "extid": "EPIC-REVIEW-20261025-PARALLEL-MERGE-INTEGRATION",
+    "type": "EPIC",
+    "title": "Parallel-Merge Integration Sweep (2026-10-25 review round E-2)",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "integration",
+      "parallel-merge",
+      "story-state",
+      "translation",
+      "review-2026-10-25"
+    ],
+    "source": ".plan/tickets/epic-review-20261025-parallel-merge-integration.md",
+    "status": "Not Started"
   },
   "EPIC-REVIEW-CHECK-PARALLEL-RAM-2026-09-03": {
     "epic": "",
@@ -43442,6 +43613,19 @@
     "title": "Local Swarm Router — in-host process manage/filter/balance",
     "type": "TASK"
   },
+  "TASK-LOCALE-VARIANT-AWARE-EAGER-TRANSLATION-COMPARATOR-EN-VS-EN-U": {
+    "hash": "4b7fad2",
+    "git_issue": "4b7fad2",
+    "extid": "TASK-LOCALE-VARIANT-AWARE-EAGER-TRANSLATION-COMPARATOR-EN-VS-EN-U",
+    "type": "TASK",
+    "title": "locale-variant-aware eager-translation comparator (en vs en-US)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-locale-variant-aware-eager-translation-comparator-en-vs-en-u.md",
+    "status": "Not Started"
+  },
   "TASK-LOCATION-CRUD-TREE-CONNECTIONS": {
     "hash": "571512d",
     "extid": "TASK-LOCATION-CRUD-TREE-CONNECTIONS",
@@ -45745,6 +45929,19 @@
     "title": "MoodHook — word-boundary matching + intensity-scaled delta",
     "type": "TASK"
   },
+  "TASK-MOVE-RELATIONSHIP-UPDATE-DELETE-EXISTENCE-CHECK-INSIDE-THE-T": {
+    "hash": "4f8b313",
+    "git_issue": "4f8b313",
+    "extid": "TASK-MOVE-RELATIONSHIP-UPDATE-DELETE-EXISTENCE-CHECK-INSIDE-THE-T",
+    "type": "TASK",
+    "title": "move relationship update/delete existence check inside the txn",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-move-relationship-update-delete-existence-check-inside-the-t.md",
+    "status": "Not Started"
+  },
   "TASK-MSG-FORWARD-ACROSS-CHATS": {
     "epic": "epic-chat-composer-flows",
     "extid": "TASK-MSG-FORWARD-ACROSS-CHATS",
@@ -47516,6 +47713,19 @@
     "title": "Ownership-access control refactor",
     "type": "TASK"
   },
+  "TASK-PARALLEL-SAFETY-AUDIT-OF-SHARED-STATE-TESTS-FLAKY-CHECK-COVE": {
+    "hash": "cdad234",
+    "git_issue": "cdad234",
+    "extid": "TASK-PARALLEL-SAFETY-AUDIT-OF-SHARED-STATE-TESTS-FLAKY-CHECK-COVE",
+    "type": "TASK",
+    "title": "parallel-safety audit of shared-state tests (flaky-check covers sleeps/timeouts only; suite documented serial-only)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-parallel-safety-audit-of-shared-state-tests-flaky-check-cove.md",
+    "status": "Not Started"
+  },
   "TASK-PARTY-AUX-TRANSITION": {
     "epic": "epic-chat-transfer-location",
     "extid": "TASK-PARTY-AUX-TRANSITION",
@@ -47968,6 +48178,19 @@
     "tags": [],
     "title": "Plan-format migration: bold-keyword sections + SPDX + orphan ref cleanup across legacy tickets/epics",
     "type": "TASK"
+  },
+  "TASK-PLAN-HYGIENE-55-ORPHAN-EPIC-BINDINGS-INCL-PHANTOM-EPIC-38-1-": {
+    "hash": "37a072e",
+    "git_issue": "37a072e",
+    "extid": "TASK-PLAN-HYGIENE-55-ORPHAN-EPIC-BINDINGS-INCL-PHANTOM-EPIC-38-1-",
+    "type": "TASK",
+    "title": "plan hygiene: ~55 orphan epic bindings (incl. phantom EPIC-38) + 1 actionable sync issue",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plan-hygiene-55-orphan-epic-bindings-incl-phantom-epic-38-1-.md",
+    "status": "Not Started"
   },
   "TASK-PLAN-INDEX-ORPHAN-PHANTOM-CLEANUP": {
     "epic": "epic-task-management-integration",
@@ -56004,6 +56227,19 @@
     "tags": [],
     "title": "Two tier custom instructions",
     "type": "TASK"
+  },
+  "TASK-TYPED-USERID-ACCESSOR-REPLACING-THE-CTX-AS-ANY-USERID-CLUSTE": {
+    "hash": "192385e",
+    "git_issue": "192385e",
+    "extid": "TASK-TYPED-USERID-ACCESSOR-REPLACING-THE-CTX-AS-ANY-USERID-CLUSTE",
+    "type": "TASK",
+    "title": "typed userId accessor replacing the (ctx as any).userId cluster",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste.md",
+    "status": "Not Started"
   },
   "TASK-TYPESCRIPT-7-MIGRATION-TYPECHECK-FAILURES": {
     "epic": "",
