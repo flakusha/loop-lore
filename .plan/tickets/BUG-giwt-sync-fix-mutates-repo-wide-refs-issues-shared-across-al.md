@@ -3,7 +3,7 @@
 
 # BUG: giwt sync --fix mutates repo-wide refs/issues/* shared across all worktrees with no worktree scoping
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -81,3 +81,5 @@ Whatever is chosen, the acting worktree should leave a durable trace of shared-r
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 68903ca (registry tip: 88a056c39 Konstantin Fedotov Close issue)

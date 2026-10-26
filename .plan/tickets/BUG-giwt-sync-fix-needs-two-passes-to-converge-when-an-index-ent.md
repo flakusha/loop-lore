@@ -3,7 +3,7 @@
 
 # BUG: giwt sync --fix needs two passes to converge when an index entry points at a closed issue with an open same-extid duplicate
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -68,3 +68,5 @@ The untested case is the real-world one: both fields on the closed sha. Add a fi
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue bd65207 (registry tip: 0a41d13c9 Konstantin Fedotov Close issue)

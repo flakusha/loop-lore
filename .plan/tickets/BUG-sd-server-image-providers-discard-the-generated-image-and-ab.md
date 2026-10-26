@@ -3,7 +3,7 @@
 
 # BUG: sd-server image providers discard the generated image and abort the job on one bad poll
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Critical
 **Effort:** Medium
 **Epic:** epic-comfyui-plugin
@@ -35,3 +35,5 @@ Source: .tmp/longcat/review-misc-services.md C1 and i6.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 7a23ecf (registry tip: 5d7ee29d6 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: sd-server edit returns synthetic asset URLs that 404
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-comfyui-plugin
@@ -22,3 +22,5 @@ sdcppGenerate/sdapiGenerate/openaiGenerate edit-side (families.ts:72-80,129-137,
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 2b4cbf8 (registry tip: 19cff423c Konstantin Fedotov Close issue)

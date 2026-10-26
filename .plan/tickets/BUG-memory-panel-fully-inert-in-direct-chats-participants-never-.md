@@ -3,7 +3,7 @@
 
 # BUG: Memory panel fully inert in direct chats — participants never loaded
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -27,3 +27,5 @@ FIX DIRECTION: Load chat_participants on direct-chat open as well, so `_getChara
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue c3e407b (registry tip: 90f9f83c9 Konstantin Fedotov Close issue)

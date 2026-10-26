@@ -3,7 +3,7 @@
 
 # BUG: extractJsonObject slices an unbounded LLM response before JSON.parse
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-provider-plugin-ecosystem
@@ -29,3 +29,5 @@ Source: .tmp/longcat/review-consolidated.md nit 22; .tmp/cat-jam/review-generati
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue cb56562 (registry tip: 5303cbfc8 Konstantin Fedotov Close issue)

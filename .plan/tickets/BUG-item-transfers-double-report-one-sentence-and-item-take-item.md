@@ -3,7 +3,7 @@
 
 # BUG: Item transfers double-report one sentence and ITEM_TAKE/ITEM_DROP capture only the first character of the item name
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-inventory
@@ -33,3 +33,5 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-12 + .tmp/glm-review/deep-re
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 5acbda7 (registry tip: 0081fd6d8 Konstantin Fedotov Close issue)

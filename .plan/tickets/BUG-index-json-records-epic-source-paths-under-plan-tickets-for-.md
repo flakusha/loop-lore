@@ -3,7 +3,7 @@
 
 # BUG: index.json records epic source paths under .plan/tickets/ for epic entries
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -21,3 +21,5 @@ The EPIC-CLI-TOOLING-OPTIQUE entry in .plan/tickets/index.json carries "source":
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 8e81ae2 (registry tip: 0b24368d8 Konstantin Fedotov Close issue)

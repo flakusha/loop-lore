@@ -38,3 +38,5 @@ On POST, resolve the message and require `message.chat_id === chatId` (reuse `re
 - [x] Implementation complete
 - [x] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 2d5152c (registry tip: 19bd1dc62 Konstantin Fedotov Close issue)

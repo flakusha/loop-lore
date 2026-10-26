@@ -3,7 +3,7 @@
 
 # BUG: fix(routing): bring POST /api/v1/assets under barrel governance or pin the carve-out
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-api-routes
@@ -21,3 +21,5 @@ Sources: stream-a #5 (standalone POST skips barrel hooks); stream-b #4 (upload l
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 3dd5054 (registry tip: a6344c8d6 Konstantin Fedotov Close issue)

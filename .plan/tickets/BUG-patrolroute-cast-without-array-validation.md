@@ -3,7 +3,7 @@
 
 # BUG: patrolRoute cast without array validation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-npc-navigation
@@ -21,3 +21,5 @@ schedule.patrolRoute (src/rpc/npc-navigation/service/processing.ts:151) is cast 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 3d95126 (registry tip: 35c7a15cf Konstantin Fedotov Close issue)

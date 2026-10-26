@@ -3,7 +3,7 @@
 
 # BUG: Message-create 503 passthrough omits persisted id and duplicates user messages on retry
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-messages
@@ -21,3 +21,5 @@ Evidence (approved finding 3, P2; .tmp/concern-dev-2026-10-07.md, .tmp/concern-a
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 86f9ce8 (registry tip: 642e44c38 Konstantin Fedotov Close issue)

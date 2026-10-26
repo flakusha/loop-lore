@@ -3,7 +3,7 @@
 
 # BUG: Wire encryption for generated images
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-encryption-workflow
@@ -23,3 +23,5 @@ Generated images are stored plaintext on disk. createAsset only encrypts when en
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue df32ec9 (registry tip: dfe0f9df0 Konstantin Fedotov Close issue)

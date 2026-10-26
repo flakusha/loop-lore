@@ -3,7 +3,7 @@
 
 # BUG: Runtime asset compression is structurally dead (needsCompression always false) and generates sidecars before hash injection
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-asset-platform-capabilities
@@ -33,3 +33,5 @@ Source: .tmp/glm-review/deep-content-1015.md F-1 + F-2 (gitignored; recorded her
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue c3e0217 (registry tip: 0e0317491 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: fix(config): wire AUTH_JWT_SECRET/AUTH_CSRF_SECRET env names (documented names are ignored)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-auth-config-contracts
@@ -21,3 +21,5 @@ Sources: stream-c #2. Where: src/config/schema-class/env-map.ts:65 (key generati
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 87d3164 (registry tip: d0d73a57e Konstantin Fedotov Close issue)

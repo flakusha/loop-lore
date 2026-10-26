@@ -3,7 +3,7 @@
 
 # BUG: activitypub_actor_keys table and src/crypto/activitypub-keys.ts have no production reader
 
-**Status:** Blocked
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-crypto
@@ -97,3 +97,5 @@ lands, the module gets its production reader and the table stays. If the
 feature is dropped instead, this ticket becomes a plain cleanup - delete the
 module and its test file, and append a NEW forward migration that drops the
 table (never edit an applied migration).
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 707ea1a (registry tip: 6c43e6d98 Konstantin Fedotov Close issue)

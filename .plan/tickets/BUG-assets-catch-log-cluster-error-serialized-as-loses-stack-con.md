@@ -3,7 +3,7 @@
 
 # BUG: assets catch-log cluster: Error serialized as {} loses stack; controller builds child logger per statement
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-logging
@@ -40,3 +40,5 @@ Caveats: observability-only change; no authorization impact; no partial-failure 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 2e001b6 (registry tip: 1ce10a24b Konstantin Fedotov Close issue)

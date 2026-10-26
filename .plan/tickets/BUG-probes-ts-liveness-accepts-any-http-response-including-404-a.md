@@ -3,7 +3,7 @@
 
 # BUG: probes.ts liveness accepts any HTTP response including 404 and 500
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-observability-telemetry
@@ -30,3 +30,5 @@ Severity: high — this is the input to every other liveness decision in the man
 - [ ] **Concurrency / TOCTOU:** *Not applicable to the probe itself* — it is a single stateless HTTP request with no check-then-act window, and the fix does not introduce one. The adjacent race is observability, not correctness: the manager polls every 30s, so a crash between polls is invisible regardless of this fix. Do not claim the fix closes it.
 - [ ] **Regressions:** existing `*-gaps.test.ts` and probe tests green.
 - [ ] **Repo gates:** `bun run check` green.
+
+**Resolved:** 2026-10-26 registry-driven close: git issue c23dba2 (registry tip: 2f8b6748d Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: Content-hash naming for generated assets
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen
@@ -21,3 +21,5 @@ Generated images use UUID-based naming (generated-{assetId.slice(0,8)}.png) inst
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue f7527f0 (registry tip: d8fcf2dfe Konstantin Fedotov Close issue)

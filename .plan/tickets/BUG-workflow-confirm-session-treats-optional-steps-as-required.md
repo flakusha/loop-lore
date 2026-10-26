@@ -3,7 +3,7 @@
 
 # BUG: workflow confirm session treats optional steps as required
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-workflow-engine
@@ -14,3 +14,5 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Verification command from ticket executed green
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 4f9bcd8 (registry tip: 7431accc0 Konstantin Fedotov Close issue)

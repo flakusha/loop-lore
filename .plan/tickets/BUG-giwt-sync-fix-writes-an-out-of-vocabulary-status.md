@@ -6,7 +6,7 @@
 **Summary:** 'giwt sync --fix' sets a closed ticket's status to lowercase 'done', which is outside the status vocabulary, so the file it just wrote fails the 'status-vocab' gate on the very next run.
 **Context:** Hit while resyncing a ticket status that a sibling worktree had closed on the shared issue tracker. The same command also leaves .plan/feature-matrix.md stale, failing the 'matrix' gate. The manual recovery was: write 'Done' by hand, then regenerate the matrix.
 **Acceptance Criteria:** The closed state maps onto the canonical 'Done' rather than 'done', and the feature matrix is regenerated as part of the fix pass so one command leaves plan state consistent.
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -48,3 +48,5 @@ Evidence that the canonical-`Done` half works: in this same session
 `plan:sync:fix` rewrote `BUG-duplicate-migration-numeric-prefix-021` to `Done`
 and the `status-vocab` gate passed on the following run, where it had previously
 failed on a lowercase or emoji-prefixed form.
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 8a0e647 (registry tip: 3fdf6dac8 Konstantin Fedotov Close issue)

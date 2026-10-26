@@ -3,7 +3,7 @@
 
 # BUG: e2e - browser (baseline) gate ignores --diff-base while the coverage gate honors it
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline
@@ -54,3 +54,5 @@ Browser e2e flows are not reliably isolated per file. In-tree tickets already re
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 5c4bf12 (registry tip: d13840f80 Konstantin Fedotov Close issue)

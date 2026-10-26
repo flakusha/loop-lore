@@ -3,7 +3,7 @@
 
 # BUG: Ambient audio route links generated assets to arbitrary messageId with no chat-membership check
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-audio-video-sound
@@ -33,3 +33,5 @@ Source: .tmp/glm-review/deep-landing-1015.md F-3 (gitignored; recorded here verb
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 0fa3a70 (registry tip: 2f3020043 Konstantin Fedotov Close issue)

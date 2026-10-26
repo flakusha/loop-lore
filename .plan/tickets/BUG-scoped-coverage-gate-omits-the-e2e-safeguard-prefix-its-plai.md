@@ -3,7 +3,7 @@
 
 # BUG: Scoped coverage gate omits the E2E_SAFEGUARD prefix its plain-mode sibling sets
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline
@@ -25,3 +25,5 @@ Fix direction: make `:500` match `:486`, or better, single-source the gate envir
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 9efafa4 (registry tip: 7fa5ea099 Konstantin Fedotov Close issue)

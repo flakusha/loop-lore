@@ -3,7 +3,7 @@
 
 # BUG: translate-only providers ride general failover chains; complete() returns a translation as a successful turn (incl. merge-LLM path)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -41,3 +41,5 @@ Modality gate — tag providers chat-capable vs translate-only and filter in `bu
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 7f09e86 (registry tip: e3a177854 Konstantin Fedotov Close issue)

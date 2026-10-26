@@ -3,7 +3,7 @@
 
 # BUG: Dev red at HEAD: assistant command-module split broke registration and e2e import; uncommitted repair must land via worktree
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -45,3 +45,5 @@ Documentation: `docs/spec/assistant-commands.md` documents the command framework
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 2c64956 (registry tip: a4d1bc5fe Konstantin Fedotov Close issue)

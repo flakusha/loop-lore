@@ -3,7 +3,7 @@
 
 # BUG: sync-index type filter silently excludes IDEA tickets from every --fix mode
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -31,3 +31,5 @@ Acceptance: every .md in .plan/tickets and .plan/epics is either reconciled or r
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 28d0678 (registry tip: 3b911ed55 Konstantin Fedotov Close issue)

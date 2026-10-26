@@ -3,7 +3,7 @@
 
 # BUG: fix(plugins): define plugin route matching semantics
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-mechanics-governance
@@ -21,3 +21,5 @@ Sources: stream-b #6. Where: src/plugins/loader.ts:dispatchPluginRoute (:331-342
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue cdc764a (registry tip: 4fa3411dc Konstantin Fedotov Close issue)

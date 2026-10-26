@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-federation-swarm-sync
@@ -22,3 +22,5 @@ FEAT-activitypub-federation AC covers only local WebFinger resolvable actors (@w
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 550802a (registry tip: 81ef919d9 Konstantin Fedotov Close issue)

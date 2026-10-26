@@ -3,7 +3,7 @@
 
 # BUG: Settings 'Delete All Data' can never succeed — DELETE /api/v1/users/me does not exist
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -27,3 +27,5 @@ FIX DIRECTION: Implement DELETE /api/v1/users/me that wipes the solo user's data
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 4b435ca (registry tip: ccc421a6a Konstantin Fedotov Close issue)

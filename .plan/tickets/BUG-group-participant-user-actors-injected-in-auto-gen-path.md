@@ -3,7 +3,7 @@
 
 # BUG: Group participant user actors injected in auto-gen path
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-context-injection-correctness
@@ -21,3 +21,5 @@ No description provided.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 18b8bfa (registry tip: 891f40e70 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: Admin analytics tab crashes when API omits fields
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-frontend-admin
@@ -21,3 +21,5 @@ conversationOverview.averageSessionLength.toFixed(1) and conversationOverview.av
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 05bcb6e (registry tip: 2f22ed7d2 Konstantin Fedotov Close issue)

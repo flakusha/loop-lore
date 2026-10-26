@@ -3,7 +3,7 @@
 
 # BUG: Diff-scoped gates miss test files that only collide when run in the same process
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline
@@ -29,3 +29,5 @@ Consider: have the finalize gate set include at least one unscoped run of the af
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 2d6dcf3 (registry tip: cc2507e44 Konstantin Fedotov Close issue)

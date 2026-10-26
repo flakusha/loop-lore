@@ -3,7 +3,7 @@
 
 # BUG: Quest and story-state routes discard notification rejections with an empty catch
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-quests-encounters
@@ -31,3 +31,5 @@ Source: .tmp/longcat/review-misc-services.md M3.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue fa1df82 (registry tip: 964482eed Konstantin Fedotov Close issue)

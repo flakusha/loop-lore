@@ -3,7 +3,7 @@
 
 # BUG: giwt finalize instructs a forbidden dev-checkout action
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -22,3 +22,5 @@ When the dev checkout has staged-but-uncommitted entries, giwt finalize exits 1 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 1563a62 (registry tip: a3647499e Konstantin Fedotov Close issue)

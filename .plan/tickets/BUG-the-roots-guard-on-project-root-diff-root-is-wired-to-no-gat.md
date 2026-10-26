@@ -3,7 +3,7 @@
 
 # BUG: The roots guard on PROJECT_ROOT/DIFF_ROOT is wired to no gate and no CI job
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline
@@ -46,3 +46,5 @@ Note the gate is cheap: the file is a resource contract test (asserts on module-
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e994806 (registry tip: 75461956e Konstantin Fedotov Close issue)

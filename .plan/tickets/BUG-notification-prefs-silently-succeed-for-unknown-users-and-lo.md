@@ -3,7 +3,7 @@
 
 # BUG: Notification prefs silently succeed for unknown users and lose concurrent updates
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-frontend-notifications
@@ -29,3 +29,5 @@ Source: .tmp/longcat/review-misc-services.md n1 and n2.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue f8a923a (registry tip: c3b8d2892 Konstantin Fedotov Close issue)

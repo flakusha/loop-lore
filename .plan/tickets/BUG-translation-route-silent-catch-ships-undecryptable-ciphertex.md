@@ -3,7 +3,7 @@
 
 # BUG: translation route silent catch ships undecryptable ciphertext to external MT and persists it
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -36,3 +36,5 @@ Replace the silent catch with the sibling degrade path (typed error, `[Encrypted
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 61d78b5 (registry tip: 17b60f539 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: authenticate last_seen_at update swallows errors silently
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-logging
@@ -39,3 +39,5 @@ A persistent failure (disk full, DB corruption) goes entirely unwarned.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 869eda3 (registry tip: a4e5ea089 Konstantin Fedotov Close issue)

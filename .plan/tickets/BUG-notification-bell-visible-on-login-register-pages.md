@@ -3,7 +3,7 @@
 
 # BUG: Notification bell visible on login/register pages
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-notifications
@@ -21,3 +21,5 @@ The notification bell (src/views/layout.html:253) is rendered on every page usin
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 64b4832 (registry tip: 273edc425 Konstantin Fedotov Close issue)

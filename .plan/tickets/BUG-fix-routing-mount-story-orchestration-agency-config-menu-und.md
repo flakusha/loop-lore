@@ -3,7 +3,7 @@
 
 # BUG: fix(routing): mount story-orchestration, agency, config-menu under /api/v1 or declare unversioned-by-spec
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-api-routes
@@ -21,3 +21,5 @@ Sources: stream-a #2; stream-b #1. Where: src/app/register-plugins.ts:60-67; src
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 3f07a06 (registry tip: 818261f3e Konstantin Fedotov Close issue)

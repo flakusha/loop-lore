@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-multi-instance-reconciliation
@@ -22,3 +22,5 @@ The federation epic says the same store reconciles via different topologies; FEA
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue b760e48 (registry tip: 7a37741a6 Konstantin Fedotov Close issue)

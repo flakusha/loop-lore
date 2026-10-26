@@ -3,7 +3,7 @@
 
 # BUG: GET admin/model-roles schema Array vs service Record mismatch
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-schema
@@ -22,3 +22,5 @@ Route declares overrides: t.Array (routes/admin/model-roles.ts:48) but service r
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue bc0043f (registry tip: b4f9b14cb Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: No image-provider plugin seam; adding family touches 7+ sites
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-provider-plugin-ecosystem
@@ -22,3 +22,5 @@ New family needs ImageApiFamily + schema + config + generateImages switch + ops 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue a663603 (registry tip: 45cdedf9f Konstantin Fedotov Close issue)

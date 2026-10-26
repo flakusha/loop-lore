@@ -3,7 +3,7 @@
 
 # BUG: admin-audit pagination uses || 1, so an empty result set reports one page
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Low
 **Effort:** Medium
 **Epic:** epic-frontend-admin
@@ -31,3 +31,5 @@ Source: .tmp/longcat/review-consolidated.md nit 27; .tmp/cat-jam/review-quality.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue d790244 (registry tip: ca637b245 Konstantin Fedotov Close issue)

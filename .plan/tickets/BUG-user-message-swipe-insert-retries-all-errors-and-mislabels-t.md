@@ -3,7 +3,7 @@
 
 # BUG: User message swipe insert retries ALL errors and mislabels them 503
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-conversation-branching
@@ -25,3 +25,5 @@ src/routes/messages/swipe-race-insert.ts:157-162 catches ALL insert errors and r
 ## Review 2026-10-04
 
 OPEN on dev - src/routes/messages/swipe-race-insert.ts:118-123 insertUserMessageWithRetry still passes isRetryable: () => true (comment explicitly notes it retries ANY error, "kept verbatim"); exhaustion maps to 503 via SwipeInsertExhaustedError (src/routes/messages/insert-message.ts); no gating on isSwipeIndexUniqueViolation for the user path. No worktree fixes it.
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 6f2b5f2 (registry tip: e50ebd11a Konstantin Fedotov Close issue)

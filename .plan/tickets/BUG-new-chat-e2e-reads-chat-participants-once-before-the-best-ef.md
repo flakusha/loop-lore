@@ -3,7 +3,7 @@
 
 # BUG: New-chat e2e reads chat_participants once before the best-effort persona PUT completes
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-e2e-integration-testing
@@ -27,3 +27,5 @@ Fix direction: poll `chat_participants` for the persona link rather than reading
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 9498418 (registry tip: a831ebdfa Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: fix(plugins): append onLoad registrations to manifest registrations
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-mechanics-governance
@@ -21,3 +21,5 @@ Sources: stream-b #5. Where: src/plugins/registry-store.ts:RegistryStore.setRout
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 23a4754 (registry tip: 76c1230e4 Konstantin Fedotov Close issue)

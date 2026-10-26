@@ -3,7 +3,7 @@
 
 # BUG: Stranded post-finalize fix: the audio low-pass coefficient restore is still unmerged on fix-audio-lowpass-coefficient while dev ships the spectrum regression
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -31,3 +31,5 @@ Source: .tmp/glm-review/deep-landing-1015.md F-4 (gitignored; recorded here verb
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 12911db (registry tip: 9b5916506 Konstantin Fedotov Close issue)

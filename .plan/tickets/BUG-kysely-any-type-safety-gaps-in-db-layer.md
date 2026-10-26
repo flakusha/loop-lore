@@ -3,7 +3,7 @@
 
 # BUG: Kysely<any> type safety gaps in DB layer
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-code-quality
@@ -21,3 +21,5 @@ Multiple places in the codebase use Kysely`<any>` instead of Kysely`<DB>`, losin
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 6738d32 (registry tip: 83c210ce5 Konstantin Fedotov Close issue)

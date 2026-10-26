@@ -3,7 +3,7 @@
 
 # BUG: fix(auth): warn when sessionTimeoutHours and jwtExpiresIn diverge
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-auth-config-contracts
@@ -21,3 +21,5 @@ Sources: stream-c #11. Where: src/routes/auth/session.ts:73 (row TTL) vs :85-92 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 094b3b5 (registry tip: 1bb2f256b Konstantin Fedotov Close issue)

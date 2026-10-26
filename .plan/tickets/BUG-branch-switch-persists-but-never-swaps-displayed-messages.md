@@ -3,7 +3,7 @@
 
 # BUG: Branch switch persists but never swaps displayed messages
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -31,3 +31,5 @@ FIX DIRECTION: Call loadMessages() after a successful switch, and make the messa
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 324a2c9 (registry tip: 249d0dbbf Konstantin Fedotov Close issue)

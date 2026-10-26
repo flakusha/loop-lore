@@ -3,7 +3,7 @@
 
 # BUG: Image/audio providers have no BYO key or failover
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-byok-api-keys
@@ -22,3 +22,5 @@ ImageGenOptions carries no key; only openai family sends server apiKey; sdcpp/sd
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue b104dd8 (registry tip: 2c4a7734d Konstantin Fedotov Close issue)

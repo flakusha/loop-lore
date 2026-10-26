@@ -3,7 +3,7 @@
 
 # BUG: withWorldId undefined-means-no-filter: relationship read/update/delete can hit an arbitrary world row
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -41,3 +41,5 @@ Make world-scope intent explicit per caller (globalOnly vs worldAgnostic helpers
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 7f9bfa2 (registry tip: 8ff54938b Konstantin Fedotov Close issue)

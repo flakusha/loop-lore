@@ -3,7 +3,7 @@
 
 # BUG: giwt sync --fix writes lowercase git statuses into ticket .md files, breaking the status-vocab gate
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -29,3 +29,5 @@ Evidence: tree/gallery-dedup-tickets/.tmp/run-78380-muozumma/check-fail-plan-tic
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue ac9a5ec (registry tip: 79dfdee25 Konstantin Fedotov Close issue)

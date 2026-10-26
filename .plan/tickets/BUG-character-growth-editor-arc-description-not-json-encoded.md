@@ -3,7 +3,7 @@
 
 # BUG: Character growth editor arc description not JSON-encoded
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-character-growth
@@ -21,3 +21,5 @@ initialArcDescription: {{.InitialArcDescription}} (src/views/partials/character-
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue ec7ebd3 (registry tip: c12ab07bc Konstantin Fedotov Close issue)
