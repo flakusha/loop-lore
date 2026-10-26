@@ -785,7 +785,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | instances | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
 | integration | 16 | 5 | 0 | 2 | 0 | 0 | 9 |
 | integration-testing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| integrations | 7 | 3 | 0 | 1 | 0 | 0 | 3 |
+| integrations | 7 | 4 | 0 | 1 | 0 | 0 | 2 |
 | integrity | 8 | 3 | 0 | 0 | 0 | 0 | 5 |
 | intent | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | intent-detection | 4 | 1 | 1 | 0 | 1 | 0 | 1 |
@@ -1360,7 +1360,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | seasons | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | secrets | 5 | 0 | 0 | 0 | 1 | 0 | 4 |
 | sectioning | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| security | 41 | 14 | 3 | 8 | 0 | 0 | 16 |
+| security | 41 | 15 | 3 | 8 | 0 | 0 | 15 |
 | seed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | seeding | 12 | 1 | 0 | 8 | 0 | 0 | 3 |
 | seen | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
@@ -2026,7 +2026,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
 | epic-world-travel-time | 6 | 3 | 0 | 1 | 0 | 0 | 2 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| (unbound) | 1035 | 662 | 46 | 33 | 43 | 0 | 251 |
+| (unbound) | 1035 | 663 | 46 | 33 | 43 | 0 | 250 |
 
 ## Ticket detail
 

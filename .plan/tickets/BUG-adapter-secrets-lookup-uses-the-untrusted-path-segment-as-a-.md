@@ -3,7 +3,8 @@
 
 # BUG: Adapter secrets lookup uses the untrusted path segment as a prototype-chain key
 
-**Status:** Wontfix
+**Status:** Done
+**Status Note:** [2026-10-26] fixed — hasOwnProperty guard on the adapterSecrets lookup (e403660) plus regression test for `__proto__`/`constructor`/`toString` returning unknown_adapter (1e13426)
 **Priority:** low
 **Effort:** Small
 **Tags:** security, integrations
