@@ -4,6 +4,7 @@
 # BUG: fix(routing): mount story-orchestration, agency, config-menu under /api/v1 or declare unversioned-by-spec
 
 **Status:** Done
+**Status Note:** [2026-10-26 final pass] VERIFIED + partially corrected: `agencyRoutes`, `storyOrchestrationRoutes` and `configMenuRoutes` all now declare `prefix = "/api/v1"` as their DEFAULT (config-menu.ts:99 — the hardcoded `/api/config-menu` path is gone), so registering them from `src/app/register-plugins.ts` yields /api/v1 paths; they have no other production mount (only tests), so there is no dual mount for these three. The dual-mount half of this ticket applied to `memory-audit` (nested in the v1 actors surface AND mounted top-level) and to `location-explorer` (registered twice) — both fixed, see BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop. Verified by grep over src/app, src/routes/v1 and src/elysia-app.ts.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-api-routes

@@ -4,7 +4,7 @@
 /**
  * Config menu — Alpine component.
  *
- * One catalog (`GET /api/config-menu`) drives every panel: the server decides
+ * One catalog (`GET /api/v1/config-menu`) drives every panel: the server decides
  * which sections/fields a role may see and which are editable, this layer only
  * renders and batches writes. Pure helpers are exported separately so the
  * coercion/validation/grouping rules are unit-testable without a DOM.
@@ -143,7 +143,7 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
 
     async init() {
       try {
-        const res = await request("/api/config-menu", { headers: { Accept: "application/json", }, },);
+        const res = await request("/api/v1/config-menu", { headers: { Accept: "application/json", }, },);
         const data = await res.json() as { role: "admin" | "user"; sections: ConfigMenuSection[] };
         this.role = data.role;
         this.sections = data.sections ?? [];
@@ -244,7 +244,7 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
       const failed: string[] = [];
       for (const { key, field, } of pending) {
         try {
-          await request("/api/config-menu", {
+          await request("/api/v1/config-menu", {
             method: "PATCH",
             headers: { "Content-Type": "application/json", },
             body: jsonBody({ key, value: coerceFieldValue(field, this.values[key],), },),

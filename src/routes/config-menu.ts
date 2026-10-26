@@ -4,8 +4,8 @@
 /**
  * Config Menu Routes
  *
- * GET  /api/config-menu  — role-filtered config catalog
- * PATCH /api/config-menu — write a config value (admin: system_config, user: settings)
+ * GET  /api/v1/config-menu  — role-filtered config catalog
+ * PATCH /api/v1/config-menu — write a config value (admin: system_config, user: settings)
  *
  * Auth: any authenticated user. Role-gating is per-field via the catalog.
  */
@@ -89,9 +89,16 @@ function overlayPersistedValues(
   }
 }
 
-export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
+/**
+ * @param opts
+ * @param opts.database
+ * @param prefix - route prefix; production mounts pass "/api/v1" (default)
+ *   via the v1 barrel — the unversioned /api/config-menu path 308s there
+ *   (BUG-fix-routing-mount-story-orchestration-agency-config-menu-und).
+ */
+export function configMenuRoutes({ database, }: ConfigMenuOpts, prefix = "/api/v1",) {
   return new Elysia({ name: "config-menu", },)
-    .get("/api/config-menu", async (ctx: ConfigMenuCtx,) => {
+    .get(`${prefix}/config-menu`, async (ctx: ConfigMenuCtx,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const isAdmin = can(ctx.userRole, "admin.system",);
@@ -135,7 +142,7 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
       },
     },)
     .patch(
-      "/api/config-menu",
+      `${prefix}/config-menu`,
       async (ctx: ConfigMenuCtx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }

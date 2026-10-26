@@ -4,6 +4,7 @@
 # BUG: fix(routing): consolidate versioned mounts into v1 barrel, drop unversioned halves
 
 **Status:** Done
+**Status Note:** [2026-10-26 final pass] FIXED in src/app/register-plugins.ts: the duplicated `locationExplorerRoutes` mount is gone (it was registered twice — bare + explicit "/api/v1", and the factory's default already IS "/api/v1", so both calls produced identical routes); `gameStateRoutes` now uses the default prefix too. `memoryAuditRoutes` was a second dual mount and is dropped from this file: it is nested inside the v1 actors surface (`src/routes/v1/actors-surface.ts:60` -> `src/routes/actor-memories.ts:173`), so the old top-level mount duplicated every memory-audit route. The file's header comment described the opposite contract and was rewritten to match (infra/HTML modules unversioned; the six migrated modules register once at their "/api/v1" default). Verified: `bunx tsc --noEmit` clean.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-api-routes
