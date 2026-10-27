@@ -22,7 +22,10 @@ import { isKeyboardNavEnabled, } from "./shortcuts";
  * @returns {{ isMobile: boolean; init(): void; destroy(): void; checkMobile(): boolean; submitMobile(): Promise<void>; }}
  */
 export function mobileComposer() {
-  let unlisten: (() => void) | null = null;
+  // The media-query list and its handler live in the closure: `addEventListener`
+  // returns undefined, so the teardown needs the pair to detach the listener.
+  let mediaQuery: MediaQueryList | null = null;
+  let onMediaChange: ((event: MediaQueryListEvent,) => void) | null = null;
 
   return {
     isMobile: false,
@@ -53,10 +56,12 @@ export function mobileComposer() {
      */
     init() {
       this.isMobile = this.checkMobile();
-      unlisten = globalThis.matchMedia("(max-width: 768px)",)
-        .addEventListener("change", (e: MediaQueryListEvent,) => {
-          this.isMobile = e.matches;
-        },) as unknown as () => void;
+      mediaQuery = globalThis.matchMedia("(max-width: 768px)",);
+      onMediaChange = (e: MediaQueryListEvent,) => {
+        this.isMobile = e.matches;
+      };
+
+      mediaQuery.addEventListener("change", onMediaChange,);
 
       this.restoreMobileDraft();
     },
@@ -109,7 +114,11 @@ export function mobileComposer() {
         this._draftTimer = null;
       }
 
-      unlisten?.();
+      if (mediaQuery && onMediaChange) {
+        mediaQuery.removeEventListener("change", onMediaChange,);
+        mediaQuery = null;
+        onMediaChange = null;
+      }
     },
 
     /**
