@@ -12,7 +12,7 @@
  * double-votes at the schema level). Closed polls reject votes with a
  * `conflict` ServiceError (HTTP 409 at the route layer).
  */
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { jsonParseOr, safeJsonStringify, uid, } from "../../utils";
@@ -466,8 +466,22 @@ export async function getMessagePoll(
   return { ok: true, poll, };
 }
 
+/** A vote row as it is needed to build the per-poll tallies. */
+interface PollVoteRow {
+  poll_id: string;
+  user_id: string;
+  option_idx: number;
+}
+
+/** Maximum polls returned for one chat by a single list call. */
+const MAX_POLLS_PER_CHAT = 100;
+
 /**
  * List every poll in a chat with tallies and the viewer's votes.
+ *
+ * Set-based: one query for the poll page and one for the votes of those
+ * polls. The per-poll hydrate loop made the query count grow with the poll
+ * count (2N+2); the returned rows are the same shape as before.
  * @throws never — returns a Result instead
  */
 export async function listChatPolls(
@@ -479,18 +493,66 @@ export async function listChatPolls(
     return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
   }
 
-  const polls = await database
+  const rows = await database
     .selectFrom("message_polls",)
     .innerJoin("messages", "messages.id", "message_polls.message_id",)
-    .select(["message_polls.id", "message_polls.message_id",],)
+    .select([
+      "message_polls.id",
+      "message_polls.message_id",
+      "message_polls.question",
+      "message_polls.options",
+      "message_polls.multi",
+      "message_polls.closes_at",
+      "message_polls.closed_at",
+      "message_polls.created_by",
+    ],)
     .where("messages.chat_id", "=", chatId,)
+    .orderBy(sql`message_polls.rowid`, "asc",)
+    .limit(MAX_POLLS_PER_CHAT,)
     .execute();
 
-  const hydrated: MessagePoll[] = [];
-  for (const row of polls) {
-    const poll = await hydratePoll(database, row.id, row.message_id, userId,);
-    if (poll) { hydrated.push(poll,); }
+  const pollIds = rows.map((row,) => row.id);
+  const votes: PollVoteRow[] = pollIds.length === 0 ? [] : await database
+    .selectFrom("poll_votes",)
+    .select(["poll_id", "user_id", "option_idx",],)
+    .where("poll_id", "in", pollIds,)
+    .execute();
+
+  const votesByPoll = new Map<string, PollVoteRow[]>();
+  for (const vote of votes) {
+    const bucket = votesByPoll.get(vote.poll_id,);
+    if (bucket) {
+      bucket.push(vote,);
+    } else {
+      votesByPoll.set(vote.poll_id, [vote,],);
+    }
   }
 
-  return { ok: true, polls: hydrated, };
+  const polls: MessagePoll[] = rows.map((row,) => {
+    const tallies = new Map<number, number>();
+    const viewerOptionIdxs: number[] = [];
+    for (const vote of votesByPoll.get(row.id,) ?? []) {
+      tallies.set(vote.option_idx, (tallies.get(vote.option_idx,) ?? 0) + 1,);
+      if (vote.user_id === userId) { viewerOptionIdxs.push(vote.option_idx,); }
+    }
+
+    let options: string[] = [];
+    const parsed: unknown = jsonParseOr(row.options, null,);
+    if (Array.isArray(parsed,)) { options = parsed.filter((o,): o is string => typeof o === "string"); }
+
+    return {
+      id: row.id,
+      messageId: row.message_id,
+      question: row.question,
+      options,
+      multi: row.multi !== 0,
+      closed: row.closed_at !== null,
+      closesAt: row.closes_at,
+      createdBy: row.created_by,
+      tallies: Array.from(tallies, ([optionIdx, count,],) => ({ optionIdx, count, }),),
+      viewerOptionIdxs,
+    };
+  },);
+
+  return { ok: true, polls, };
 }

@@ -110,6 +110,8 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **A concurrent poll creation answered 500 instead of 409** — `createPoll` (`src/chat/service/polls.ts`) checked for an existing poll and then inserted, so two concurrent calls on the same message both passed the check and the loser's INSERT hit the UNIQUE index on `message_polls.message_id`: the raw `SQLITE_CONSTRAINT_UNIQUE` escaped a function whose contract is `@throws never`, and the route turned it into a 500. The insert is now wrapped so the unique violation is translated into the same `conflict` Result the sequential path returns, and the route answers 409.
 
+- **Listing a chat's polls issued two queries per poll** — `listChatPolls` (`src/chat/service/polls.ts`) hydrated every poll with its own two queries (the poll row, then its votes), so the query count grew as 2N+2 and the poll list carried no `LIMIT`. It is now set-based: one query for the poll page (insertion order, capped at 100 polls) and one for the votes of those polls, so the query count is constant whatever the poll count. The returned polls keep the same shape.
+
 ### Removed
 
 - **Dead `src/actors/` layer** — deleted the directory: 11 files with zero importers, surfaced by the widened knip scan, including a third parallel actor-items implementation (`src/actors/actor-items.ts`) alongside `src/services/actor-items.ts` and `src/services/actor-items/`.
