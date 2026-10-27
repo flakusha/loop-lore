@@ -117,7 +117,7 @@ export async function runAdaptation(
     };
   }
 
-  const { db, config, userId, } = ctx;
+  const { db, userId, } = ctx;
   if (!db) {
     return { systemMessage: "**Adapt unavailable:** command context missing database.", handled: true, };
   }

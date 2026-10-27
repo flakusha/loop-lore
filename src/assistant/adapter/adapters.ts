@@ -9,8 +9,6 @@
  * position / route-defaulted fields, mirroring `/clone`.
  */
 
-import type { Kysely, } from "kysely";
-import type { DB, } from "../../db/schema";
 import { checkWorldOwnership, } from "../../routes/story-items/handlers";
 import { requireWorldOwner, } from "../../routes/worlds/access";
 import { safeJsonParse, } from "../../utils";
