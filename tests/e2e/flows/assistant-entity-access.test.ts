@@ -10,9 +10,14 @@
  *
  * Covered: /rag-search, /rag-preview, /duplicate (+ confirm → persisted
  * character), /adapt (mock provider returns non-JSON → graceful rejection,
- * the honest negative path), the adapt-entity confirm route persisting an
- * adapted entity in the TARGET world, and the cross-user access guard.
+ * the honest negative path), the /adapt POSITIVE path (system-prompt-scripted
+ * model JSON → preview → confirm → adapted entity persisted in the target
+ * world), the adapt-entity confirm route persisting an adapted entity in the
+ * TARGET world, the cross-user access guard, and quota exhaustion denying a
+ * real command with no side effects.
  */
+import { configureAssistantQuota, resetAssistantQuota, } from "@/assistant/quota/engine";
+import { ASSISTANT_QUOTA_DEFAULTS, } from "@/config/sections/assistant";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type ApiClient, createClient, } from "../helpers/client";
 import { SEED, seedUsers, } from "../helpers/seed";
@@ -210,5 +215,102 @@ describe("Assistant entity access E2E", () => {
     expect(status,).toBe(200,);
     expect(reply.systemMessage,).toContain("not found or not owned by you",);
     expect(reply.action ?? null,).toBeNull();
+  });
+
+  test("/adapt previews the model's adaptation and the confirm persists it", async () => {
+    // Positive LLM path: /adapt's completion is a NON-aux GenerateRequest, so
+    // it is scripted through the mock provider's system-prompt snippet hook.
+    const adaptedDescription = "A netrunner guard running the tide gate's security deck.";
+    server.mockProvider!.setSystemReply(
+      "adapting an entity to a new world",
+      JSON.stringify({
+        changes: [
+          {
+            field: "description",
+            newValue: adaptedDescription,
+            reason: "Cyberpunk Target runs on corporate arcologies.",
+          },
+          { field: "appearance", newValue: "Neon-lined tactical synthweave", reason: "Cyberpunk fashion", },
+        ],
+      },),
+    );
+
+    try {
+      const { status, reply, } = await sendCommand(`/adapt character ${actorId} --to ${targetWorldId}`,);
+      expect(status,).toBe(200,);
+      expect(reply.action,).toBe("adapt-entity",);
+      expect(reply.actionPayload?.targetWorldId,).toBe(targetWorldId,);
+
+      const changes = reply.actionPayload?.changes as Array<{ field: string; oldValue: string | null }>;
+      expect(changes.some((c,) => c.field === "description" && c.oldValue === "A medieval guard."),).toBe(true,);
+
+      // The frontend confirm posts the adapted fields to the confirm route,
+      // which re-checks target-world ownership server-side.
+      const confirm = await api.post<{ id: string; kind: string; name: string }>(
+        `/api/v1/chats/${chatId}/create-entity`,
+        { kind: reply.actionPayload?.kind, data: reply.actionPayload?.fields, worldId: targetWorldId, },
+      );
+
+      expect(confirm.status,).toBe(201,);
+      expect(confirm.data!.name,).toBe("Iria",);
+
+      // The adapted entity is a NEW actor carrying the adapted field values.
+      const adapted = await server.db
+        .selectFrom("actors",)
+        .select(["id", "display_name", "description",],)
+        .where("description", "=", adaptedDescription,)
+        .executeTakeFirst();
+
+      expect(adapted,).toBeTruthy();
+    } finally {
+      // The scripted reply must not leak into the canned-content paths the
+      // other suites rely on.
+      server.mockProvider!.clearScriptedReplies();
+    }
+  });
+
+  test("quota exhaustion denies commands before any work runs", async () => {
+    // Phase-2 wiring: the engine's limits are config-driven, but the e2e
+    // server runs in-process, so the test arms the runtime store directly.
+    const owner = await server.db
+      .selectFrom("users",)
+      .select("id",)
+      .where("username", "=", SEED.user.username,)
+      .executeTakeFirst();
+
+    resetAssistantQuota(owner!.id,);
+    configureAssistantQuota({ windowMs: 60_000, limitPerWindow: 8, },);
+
+    const actorsBefore = await server.db.selectFrom("actors",).select("id",).execute();
+
+    try {
+      // duplicate costs 2: exactly four previews fit the 8-unit window.
+      for (let i = 0; i < 4; i++) {
+        const { status, reply, } = await sendCommand(`/duplicate character ${actorId} --as "Quota Probe ${i}"`,);
+        expect(status,).toBe(200,);
+        expect(reply.systemMessage,).toContain("Duplicate preview",);
+      }
+
+      // The fifth command is denied pre-call: clear message, no preview action.
+      const denied = await sendCommand(`/duplicate character ${actorId} --as "Quota Denied"`,);
+      expect(denied.status,).toBe(200,);
+      expect(denied.reply.systemMessage,).toContain("**Quota exceeded for `duplicate`.**",);
+      expect(denied.reply.systemMessage,).toContain("Nothing ran",);
+      expect(denied.reply.action ?? null,).toBeNull();
+
+      // The window is per-user across operations: rag-preview is denied too.
+      const deniedPreview = await sendCommand(`/rag-preview ${loreId}`,);
+      expect(deniedPreview.reply.systemMessage,).toContain("**Quota exceeded for `rag-preview`.**",);
+      expect(deniedPreview.reply.action ?? null,).toBeNull();
+
+      // Denials persist nothing: the actor set is unchanged.
+      const actorsAfter = await server.db.selectFrom("actors",).select("id",).execute();
+      expect(actorsAfter.length,).toBe(actorsBefore.length,);
+    } finally {
+      configureAssistantQuota({
+        windowMs: ASSISTANT_QUOTA_DEFAULTS.quotaWindowMs,
+        limitPerWindow: ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow,
+      },);
+    }
   });
 });
