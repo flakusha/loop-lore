@@ -14,6 +14,8 @@
   "ASSETS_SIGNEDURLEXPIRYSECONDS": "assets.signedUrlExpirySeconds",
   "ASSISTANT_ENABLED": "assistant.enabled",
   "ASSISTANT_TRAVELPROMPTS": "assistant.travelPrompts",
+  "ASSISTANT_QUOTAWINDOWMS": "assistant.quotaWindowMs",
+  "ASSISTANT_QUOTALIMITPERWINDOW": "assistant.quotaLimitPerWindow",
   "LOGGING_LEVEL": "logging.level",
   "TUI_ENABLED": "tui.enabled",
   "TUI_SENDTIMEOUTMS": "tui.sendTimeoutMs",

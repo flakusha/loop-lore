@@ -56,6 +56,20 @@ export function configureAssistantQuota(options: QuotaStorageOptions,): void {
 }
 
 /**
+ * Apply the assistant config section's quota values (server boot + hot
+ * reload). Drops all counters, matching the configure contract.
+ * @param assistant - the assistant config section (quota fields read)
+ */
+export function initAssistantQuota(
+  assistant: { quotaWindowMs: number; quotaLimitPerWindow: number },
+): void {
+  configureQuotaStorage({
+    windowMs: assistant.quotaWindowMs,
+    limitPerWindow: assistant.quotaLimitPerWindow,
+  },);
+}
+
+/**
  * Drop one user's counters (admin reset/tests).
  * @param userId - user whose window is dropped
  */

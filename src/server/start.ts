@@ -17,6 +17,7 @@ import { getScheduler, } from "../cron";
 import { initAgeGate, } from "../age-gate/controller";
 import { initAnonymousMode, initSmk, } from "../crypto";
 import { initAssetCompression, } from "./init-asset-compression";
+import { initAssistantQuota, } from "../assistant/quota/engine";
 import { initBackgroundServices, } from "./init-background-services";
 import { initDefaultHooks, } from "../generation/hooks";
 import { initializeProviders, } from "../generation";
@@ -38,6 +39,7 @@ export async function start() {
   setGlobalLogger(createLogger(config.logging,),);
   initAgeGate(config.ageGate,);
   initNsfwRuntimeConfig(config.nsfw,);
+  initAssistantQuota(config.assistant,);
   // Seed the hot-apply snapshot and register live consumers so config edits
   // re-apply without a restart (see src/config/hot-apply.ts).
   initConfigHotApply(config,);
