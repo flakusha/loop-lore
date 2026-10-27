@@ -35,7 +35,12 @@ describe("command conformance vectors", () => {
       return requiredRole ? { name, requiredRole, } : { name, };
     },);
 
-    expect(live,).toEqual(VECTORS.commands,);
+    // Registration order is not a contract: a test file that imports a single
+    // command module before the barrel registers it earlier in the list. The
+    // frozen vector is compared by name so the check stays deterministic.
+    const byName = (a: Vectors["commands"][number], b: Vectors["commands"][number],) => a.name.localeCompare(b.name,);
+
+    expect([...live,].sort(byName,),).toEqual([...VECTORS.commands,].sort(byName,),);
   });
 
   test("role gate matches the frozen truth table", () => {
