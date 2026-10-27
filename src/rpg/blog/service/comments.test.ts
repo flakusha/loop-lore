@@ -241,6 +241,34 @@ describe("blog comments", () => {
     expect(tree.find((c,) => c.body === "Root B")?.children,).toEqual([],);
   });
 
+  test("listCommentsThreaded pages over roots and returns every reply exactly once", async () => {
+    const rootA = await createComment(db, { post_id: "post-1", author_id: "user-author", body: "Root A", },);
+    await createComment(db, { post_id: "post-1", author_id: "user-author", body: "A1", parent_comment_id: rootA.id, },);
+    const rootB = await createComment(db, { post_id: "post-1", author_id: "user-author", body: "Root B", },);
+    await createComment(db, { post_id: "post-1", author_id: "user-author", body: "A2", parent_comment_id: rootA.id, },);
+    await createComment(db, { post_id: "post-1", author_id: "user-author", body: "B1", parent_comment_id: rootB.id, },);
+
+    // Distinct timestamps: the roots are paged, so their order must be stable.
+    await db.updateTable("blog_comments",).set({ created_at: "2026-01-01 00:00:01", },).where("id", "=", rootA.id,)
+      .execute();
+
+    await db.updateTable("blog_comments",).set({ created_at: "2026-01-01 00:00:02", },).where("id", "=", rootB.id,)
+      .execute();
+
+    const pages: Awaited<ReturnType<typeof listCommentsThreaded>>[] = [];
+    for (const offset of [0, 1, 2,]) {
+      pages.push(await listCommentsThreaded(db, "post-1", { limit: 1, offset, },),);
+    }
+
+    const bodies = pages.flatMap((page,) =>
+      page.flatMap((root,) => [root.body, ...root.children.map((child,) => child.body),])
+    );
+
+    // Every comment shows up exactly once across the pages: a reply whose
+    // root sits on another page must not be dropped.
+    expect(bodies.toSorted(),).toEqual(["A1", "A2", "B1", "Root A", "Root B",].toSorted(),);
+  });
+
   test("listCommentsThreaded excludes deleted comments", async () => {
     const comment = await createComment(db, {
       post_id: "post-1",
