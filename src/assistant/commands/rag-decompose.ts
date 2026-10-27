@@ -17,6 +17,7 @@
 import { callAux, } from "../../aux-pipeline";
 import { requireWorldAccess, } from "../../routes/worlds/access";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
+import { quotaGate, } from "../quota/gate";
 import { type CommandResult, registerCommand, } from "./registry";
 
 /** The structured half of a decomposition. */
@@ -114,6 +115,9 @@ export function parseDecomposition(raw: string,): LoreDecomposition | null {
 }
 
 registerCommand("rag-decompose", async (args, ctx,): Promise<CommandResult> => {
+  const quota = quotaGate(ctx.userId ?? null, "rag-decompose",);
+  if (quota) { return quota; }
+
   const docId = args[0] || "";
   if (!docId) {
     return { systemMessage: "Usage: /rag-decompose <doc-id>", handled: true, };

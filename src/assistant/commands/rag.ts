@@ -13,6 +13,7 @@ import { callAux, } from "../../aux-pipeline";
 import type { DB, } from "../../db/schema";
 import { resolveSystemPrompt, } from "../../prompts";
 import { requireWorldAccess, } from "../../routes/worlds/access";
+import { quotaGate, } from "../quota/gate";
 import { type CommandResult, registerCommand, } from "./registry";
 
 interface LoreHit {
@@ -65,6 +66,9 @@ async function searchLore(db: Kysely<DB>, query: string, worldId: string,): Prom
 }
 
 registerCommand("rag-search", async (args, ctx,): Promise<CommandResult> => {
+  const quota = quotaGate(ctx.userId ?? null, "rag-search",);
+  if (quota) { return quota; }
+
   const query = args.join(" ",).trim();
   if (!query) {
     return { systemMessage: "Usage: /rag-search <query>", handled: true, };
@@ -100,6 +104,9 @@ registerCommand("rag-search", async (args, ctx,): Promise<CommandResult> => {
 }, { requiredRole: "member", },);
 
 registerCommand("rag-ask", async (args, ctx,): Promise<CommandResult> => {
+  const quota = quotaGate(ctx.userId ?? null, "rag-ask",);
+  if (quota) { return quota; }
+
   const query = args.join(" ",).trim();
   if (!query) {
     return { systemMessage: "Usage: /rag-ask <question>", handled: true, };

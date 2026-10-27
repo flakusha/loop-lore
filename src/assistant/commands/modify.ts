@@ -23,6 +23,7 @@ import type { GenerateRequest, } from "../../generation/providers/types";
 import { safeJsonParse, } from "../../utils";
 import { type EntityKind, resolveEntityGenerationPrompt, } from "../prompt/templates/entity-generation";
 import { normalizeEntity, runQualityGates, } from "../quality/entity-creation";
+import { quotaGate, } from "../quota/gate";
 import { requireOwnedCharacter, requireOwnedWorldEntity, } from "./entity-guard";
 import { formatPatch, validateJsonPatch, } from "./entity-patch";
 import {
@@ -83,6 +84,9 @@ export async function runModifyGeneration(
   complete: (req: GenerateRequest,) => Promise<{ content: string }>,
   model = "",
 ): Promise<CommandResult> {
+  const quota = quotaGate(ctx.userId ?? null, "modify",);
+  if (quota) { return quota; }
+
   const kind = (args[0] || "").toLowerCase() as ModifyKind;
   const entityId = args[1] || "";
   const request = args.slice(2,).join(" ",).trim();
