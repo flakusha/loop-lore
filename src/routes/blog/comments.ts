@@ -14,7 +14,14 @@ import {
   SuccessResponse,
 } from "../../validation/schemas";
 import { type HandlerOpts, } from "../actor-auth.js";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
+import {
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  parsePaginationParams,
+  requireUserId,
+} from "../http-utils.js";
 import { isReadablePost, } from "./post-read-policy.js";
 export const BlogCommentListResponse = ListResponse(BlogCommentResponse,);
 
@@ -82,15 +89,22 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
       }
 
+      const pagination = parsePaginationParams(
+        { size: ctx.query.limit, offset: ctx.query.offset, },
+        { defaultPageSize: 50, },
+      );
+
+      if (pagination instanceof Response) { return pagination; }
       const comments = await svc.listCommentsThreaded(ctx.params.id, {
-        limit: ctx.query.limit ? Number(ctx.query.limit,) : undefined,
-        offset: ctx.query.offset ? Number(ctx.query.offset,) : undefined,
+        limit: pagination.pageSize,
+        offset: pagination.offset,
       },);
 
       return jsonResponse({ success: true, comments, count: comments.length, },);
     }, {
       response: {
         200: BlogCommentListResponse,
+        400: ErrorResponse,
         404: ErrorResponse,
       },
       detail: {

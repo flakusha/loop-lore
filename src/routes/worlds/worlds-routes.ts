@@ -5,7 +5,7 @@ import { Elysia, t, } from "elysia";
 import { ErrorResponse, SuccessResponse, WorldCreateBody, WorldUpdateBody, } from "../../validation/schemas";
 import { buildWorldBundle, } from "../export-shared";
 import { prettyJson, } from "../export-shared/helpers";
-import { extractAuth, HttpStatus, jsonError, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonError, parsePaginationParams, } from "../http-utils";
 import { requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 import {
@@ -30,8 +30,13 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
       `${prefix}/worlds`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
-        const page = Number(ctx.query?.page,) || 1;
-        const pageSize = Number(ctx.query?.pageSize,) || 20;
+        const pagination = parsePaginationParams(
+          { page: ctx.query?.page, size: ctx.query?.pageSize, },
+          { defaultPageSize: 20, },
+        );
+
+        if (pagination instanceof Response) { return pagination; }
+        const { page, pageSize, } = pagination;
         const q = typeof ctx.query?.q === "string" ? ctx.query.q : undefined;
         return handleListWorlds(database, page, pageSize, userId, userRole, q,);
       },
@@ -46,6 +51,7 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
               totalPages: t.Number(),
             },),
           },),
+          400: ErrorResponse,
           401: ErrorResponse,
         },
         detail: {

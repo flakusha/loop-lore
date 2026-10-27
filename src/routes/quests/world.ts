@@ -10,6 +10,7 @@ import {
   QuestCreateBody,
   QuestResponse,
 } from "../../validation/schemas";
+import { parsePaginationParams, } from "../http-utils";
 import { handleCreateQuest, handleListQuests, } from "./handlers";
 export const WorldQuestListResponse = ListResponse(QuestResponse,);
 
@@ -24,11 +25,17 @@ export function questWorldRoutes({ database, }: { database: Kysely<DB> }, prefix
     .get(`${prefix}/worlds/:worldId/quests`, async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
+      const pagination = parsePaginationParams(
+        { page: ctx.query?.page, size: ctx.query?.pageSize, },
+        { defaultPageSize: 20, },
+      );
+
+      if (pagination instanceof Response) { return pagination; }
       return handleListQuests(
         database,
         ctx.params.worldId as string,
-        Number(ctx.query?.page,) || 1,
-        Number(ctx.query?.pageSize,) || 20,
+        pagination.page,
+        pagination.pageSize,
         userId,
         userRole,
         typeof ctx.query?.status === "string" ? ctx.query.status : undefined,
@@ -36,6 +43,7 @@ export function questWorldRoutes({ database, }: { database: Kysely<DB> }, prefix
     }, {
       response: {
         200: WorldQuestListResponse,
+        400: ErrorResponse,
         401: ErrorResponse,
         404: ErrorResponse,
       },

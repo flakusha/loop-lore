@@ -44,6 +44,7 @@ import {
   jsonResponse,
   notFoundResponse,
   notOwnerResponse,
+  parsePaginationParams,
   requireUserId,
 } from "../routes/http-utils";
 import { jsonStringifyOr, } from "../utils";
@@ -166,8 +167,13 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       // ── Collection routes ─────────────────────────────
       .get(`${prefix}/assets`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
-        const page = Number(searchParams.get("page",) ?? "1",);
-        const pageSize = Math.min(Number(searchParams.get("pageSize",) ?? "50",), 200,);
+        const pagination = parsePaginationParams(
+          { page: searchParams.get("page",), size: searchParams.get("pageSize",), },
+          { defaultPageSize: 50, maxPageSize: 200, },
+        );
+
+        if (pagination instanceof Response) { return pagination; }
+        const { page, pageSize, } = pagination;
         const entityType = searchParams.get("entity_type",) ?? undefined;
         const entityId = searchParams.get("entity_id",) ?? undefined;
         const label = searchParams.get("label",) ?? undefined;

@@ -11,6 +11,7 @@ import {
   StoryItemResponse,
   SuccessResponse,
 } from "../../validation/schemas";
+import { parsePaginationParams, } from "../http-utils";
 import { handleDefinition, handleDefinitions, handleDeleteDefinition, } from "./handlers";
 export const StoryItemDefinitionListResponse = ListResponse(StoryItemResponse,);
 
@@ -81,20 +82,27 @@ export function storyItemDefinitionsRoutes({ database, }: { database: Kysely<DB>
       const userRole = ctx.userRole as string | null;
       const { worldId, } = ctx.params;
       const category = ctx.query?.category as string | undefined;
+      const pagination = parsePaginationParams(
+        { page: ctx.query?.page, size: ctx.query?.pageSize, },
+        { defaultPageSize: 20, },
+      );
+
+      if (pagination instanceof Response) { return pagination; }
       return handleDefinitions(
         database,
         "GET",
         worldId,
         userId,
         userRole,
-        Number(ctx.query?.page,) || 1,
-        Number(ctx.query?.pageSize,) || 20,
+        pagination.page,
+        pagination.pageSize,
         category,
       );
     }, {
       params: t.Object({ worldId: Id, },),
       response: {
         200: StoryItemDefinitionListResponse,
+        400: ErrorResponse,
         401: ErrorResponse,
         404: ErrorResponse,
       },

@@ -31,7 +31,7 @@ import {
   type RateLimiter,
   rateLimitHeaders,
 } from "../middleware/rate-limit";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../routes/http-utils";
+import { ErrorCode, HttpStatus, jsonError, jsonResponse, parsePaginationParams, } from "../routes/http-utils";
 
 import {
   isFrontendTelemetryEnabled,
@@ -246,7 +246,9 @@ export function telemetryRoutes(
         },);
       }
 
-      const limit = Number(ctx.query.limit ?? 7,);
+      const pagination = parsePaginationParams({ size: ctx.query.limit, }, { defaultPageSize: 7, },);
+      if (pagination instanceof Response) { return pagination; }
+      const limit = pagination.pageSize;
       const rows = await database
         .selectFrom("telemetry_events",)
         .select((eb,) => [
@@ -261,7 +263,7 @@ export function telemetryRoutes(
 
       return jsonResponse(rows,);
     }, {
-      response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+      response: { 200: SuccessResponse, 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
       detail: {
         summary: "Get daily analytics",
         description: "Get telemetry event counts grouped by day. Admin only.",
