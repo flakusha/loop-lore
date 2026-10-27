@@ -385,6 +385,34 @@ describe("export-sse routes", () => {
     jobs.delete(job.id,);
   });
 
+  test("download releases the zip buffer once fetched (one-shot delivery, S-4)", async () => {
+    const job = stageJob(db, {
+      status: "completed",
+      progress: 1,
+      total: 1,
+      currentStep: "Export completed",
+      zipBuffer: Buffer.from("PKfakezip",),
+      completedAt: new Date(),
+    },);
+
+    const first = await app.handle(
+      new Request(`http://localhost/api/export/download/${job.id}`,),
+    );
+
+    expect(first.status,).toBe(200,);
+    // The archive left the process with the response — the Map no longer
+    // holds it (it used to be retained until the TTL evicted the whole job).
+    expect(job.zipBuffer,).toBeUndefined();
+
+    // A repeat fetch finds no buffer: 400 "not ready", not a crash.
+    const second = await app.handle(
+      new Request(`http://localhost/api/export/download/${job.id}`,),
+    );
+
+    expect(second.status,).toBe(400,);
+    jobs.delete(job.id,);
+  });
+
   test("status 404s when the caller is not the job owner", async () => {
     const job = stageJob(db, { userId: "cov-user", },);
     const other = new Elysia({ name: "test-export-idor-other", },)

@@ -51294,7 +51294,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-review-20261025-api-governance-perimeter.md",
       "title": "API Governance Perimeter (2026-10-25 review round E-1)",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/app/register-plugins.ts"
       ],
