@@ -16,6 +16,11 @@
 **Tags:** assistant, tests, e2e, entity-access
 **Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`
+**Status Note:** Done (2026-10-27, branch `r2-entity-access-wrapup`, commit `531328a72`). Spec: `tests/e2e/flows/assistant-entity-access.test.ts` — 6 pass / 0 fail; full dir `E2E_SAFEGUARD=1 bun test tests/e2e/` = 338 pass / 0 fail across 42 files.
+
+COVERED (the epic's core flow, real harness `createTestServer({auth:{required:true}}, true)` + `createClient` + `seedUsers`, commands driven through the message-send path → `dispatchCommand`): `/rag-search` returns ranked lore over the chat's world; `/rag-preview` renders the indexed document; `/duplicate character --as` preview action → confirm POST `/api/v1/chats/:id/create-entity` → 201 + actor row persisted ("Iria II"); `/adapt` degrades gracefully when the mock provider returns non-JSON (the honest negative path — nothing persists); the adapt-entity confirm route persists an adapted entity in the TARGET world and it is visible via `GET /api/v1/worlds/:id/items`; access guard — duplicating a foreign-owned world is denied with no action emitted.
+
+NOT covered here (deliberate scoping, noted for review): quota exhaustion and Playwright browser rendering of the confirm dialogs — quota enforcement is pinned by `src/assistant/quota/engine.test.ts` (8 pass), and the confirm dialog wiring is the shared `entityCopyActionHandlers`/`entityActionHandlers` surface covered by `src/assistant/commands/entities.test.ts` (47 pass). The `/adapt` POSITIVE LLM path is unit-tested via the injectable completion seam (adapt.test.ts, 14 pass); e2e covers its negative path because the mock provider cannot be task-scripted for a non-aux main-pipeline request (`auxTask` is not stamped on `/adapt`'s GenerateRequest).
 
 ## Summary
 
