@@ -93,10 +93,9 @@ describeOrSkip("per-sender inbound keys", () => {
     const origin = "https://race.example";
     const original = await getOrCreateInboundKey(db, key, origin,);
 
-    const [first, second,] = await Promise.all([
-      rotateInboundKey(db, key, origin,),
-      rotateInboundKey(db, key, origin,),
-    ],);
+    const rotation = rotateInboundKey(db, key, origin,);
+    const otherRotation = rotateInboundKey(db, key, origin,);
+    const [first, second,] = await Promise.all([rotation, otherRotation,],);
 
     const row = await db
       .selectFrom("mesh_inbound_keys",)
