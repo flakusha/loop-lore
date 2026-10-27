@@ -11,6 +11,8 @@
  * Limits come from {@link "src/assistant/quota/engine".configureAssistantQuota}.
  */
 
+import { ASSISTANT_QUOTA_DEFAULTS, } from "../../config/sections/assistant";
+
 /** One user's window state. */
 export interface QuotaWindow {
   used: number;
@@ -25,11 +27,11 @@ export interface QuotaStorageOptions {
   limitPerWindow: number;
 }
 
-/** Seconds per day (default window). */
-const DAY_MS = 24 * 60 * 60 * 1000;
-
 /** Mutable module settings; tests override via the engine's configure hook. */
-const settings: QuotaStorageOptions = { windowMs: DAY_MS, limitPerWindow: 200, };
+const settings: QuotaStorageOptions = {
+  windowMs: ASSISTANT_QUOTA_DEFAULTS.quotaWindowMs,
+  limitPerWindow: ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow,
+};
 
 /** userId → window counters. */
 const windows = new Map<string, QuotaWindow>();
