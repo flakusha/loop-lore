@@ -109,4 +109,17 @@ Every command handler, adapter, and the adaptation engine must have unit tests c
 
 ## Follow-ups (2026-10-27 epic-conformance audit)
 
+**Coverage-gap confirmation (2026-10-28 follow-up) — the six historically flagged files are all covered; no tests added.** Verified by reading the existing suites, not assumed:
+
+| File | Where behavior is asserted | Negative space covered |
+|---|---|---|
+| `apply.ts` | `entities.test.ts` (mustGet("apply")) | usage, kind outside v1 scope, foreign character/world/location/item refusals worded like missing, no-user context refusal, unknown-field + enum + non-array-effects parse rejections, no-db answers unavailable |
+| `clone.ts` | `entities.test.ts` (mustGet("clone")) | usage, kind scope, foreign-world refusal (location + item), unknown override fields, no-db |
+| `entity-guard.ts` | exercised through its consumers: `entities.test.ts` (requireOwnedCharacter foreign + null-user + no-user cases; requireOwnedWorldEntity world/location/item; requireOwnedWorld via `/add` incl. admin bypass + unprivileged refusal), `duplicate.test.ts` (non-owned source denial through the adapters), `characters-access.test.ts`, `modify.test.ts` | guard rejections, missing-worded-as-denied (no existence oracle), admin-class bypass, fail-closed on null user/role |
+| `characters-update.ts` | `characters-access.test.ts` (char-update section) | denies another user's character, missing worded identically to denied, unknown fields/bad numbers/booleans, missing context (no user / no db) |
+| `items-update.ts` | `items.test.ts` (item-update section) | missing ≡ denied, foreign-world item ignored, unknown fields + bad numbers + bad properties JSON, missing context |
+| `locations-update.ts` | `locations.test.ts` (loc-update section) | parser rejects unknown fields/bad numbers/malformed connections, foreign-world refusal, missing ≡ denied |
+
+Conclusion: the ticket's historical "unconfirmed coverage" flag is resolved — every flagged file has happy-path AND negative-path assertions in colocated suites; adding tests would duplicate existing ones. Remaining genuine test debt on this epic is none at unit level (e2e gaps closed the same day, see `TASK-assistant-entity-access-e2e`).
+
 **STRUCTURAL — invocation audit logging (epic principle "Deterministic + replayable").** The epic principle "assistant invocations logged with input args + output hash" is unimplemented repo-wide and is NOT epic-local work: no assistant command (`/modify`, `/apply`, `/import`, `/clone`, `/duplicate`, `/adapt`, `/create`, the create-entity confirm route) records input args or an output hash. The established, narrower pattern is (a) the preview/system `systemMessage` persisted to the chat transcript (`src/routes/messages/command.ts:363-374`) and (b) a structured-log line with the command name only (`command.ts:376`); nearest building blocks for a future args+hash layer are `src/logger` and `computeRowHash` (`src/db/content-version.ts:126`). Any args+hash facility needs a cross-command design decision (table/migration vs log-only) before it can be added — tracked here so the epic's delta is not lost.
