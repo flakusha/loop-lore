@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3668
+- tickets: 3669
 - epics: 350
-- src paths owned: 4483
-- edges: produces 11747, consumes 405, sibling 35510, owns 2650, related 1193
+- src paths owned: 4484
+- edges: produces 11752, consumes 405, sibling 35519, owns 2651, related 1193
 
 ## Shared src hubs
 
@@ -50,7 +50,8 @@ output is byte-identical for identical inputs.
 | `src/api-governance/openapi/validator.ts` | `TASK-openapi-specification`, `epic-api-openapi` |
 | `src/api-governance/rate-limiting/algorithms.ts` | `TASK-rate-limiting-telemetry`, `epic-api-rate-limiting` |
 | `src/api-governance/rate-limiting/limiter.ts` | `BUG-api-rate-limiter-persists-the-sliding-window-before-the-burs`, `TASK-rate-limiting-telemetry`, `epic-api-rate-limiting` |
-| `src/api-governance/rate-limiting/policies.ts` | `BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic`, `BUG-chat-sse-shares-generation-rate-bucket`, `BUG-rate-limit-misses-post-emotion-avatars-single`, `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s`, `TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes`, `epic-api-rate-limiting` |
+| `src/api-governance/rate-limiting/policies.test.ts` | `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s`, `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` |
+| `src/api-governance/rate-limiting/policies.ts` | `BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic`, `BUG-chat-sse-shares-generation-rate-bucket`, `BUG-rate-limit-misses-post-emotion-avatars-single`, `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s`, `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-`, `TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes`, `epic-api-rate-limiting` |
 | `src/api-governance/rate-limiting/store.ts` | `BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-`, `BUG-rate-limit-in-memory-store-never-evicts-idle-keys`, `epic-api-rate-limiting` |
 | `src/api-governance/telemetry/collector.ts` | `BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa`, `FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard`, `TASK-harness-otel-replay`, `TASK-rate-limiting-telemetry`, `epic-api-telemetry` |
 | `src/api-governance/telemetry/tracing.ts` | `TASK-rate-limiting-telemetry`, `epic-api-telemetry` |
@@ -1585,7 +1586,7 @@ output is byte-identical for identical inputs.
 | `src/routes/v1/actors-surface.ts` | `BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop`, `BUG-rate-limit-misses-post-emotion-avatars-single`, `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre`, `epic-achievements`, `epic-battle-action-systems`, `epic-battle-integration-gaps`, `epic-character-core-system`, `epic-character-internal-traits`, `epic-crafting-professions`, `epic-gm-shadow-notes` |
 | `src/routes/v1/admin-surface.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-frontend-client-contract-doc`, `epic-experimental-egui-frontend`, `epic-frontend-chat-commands` |
 | `src/routes/v1/base-surface.ts` | `BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-`, `TASK-delete-unreferenced-platform-service-util-modules-dead-barre`, `epic-assistant-step-planning`, `epic-auth-access`, `epic-frontend-settings`, `epic-research-agency-decision` |
-| `src/routes/v1/chats-surface.ts` | `epic-frontend-emoji-reactions`, `epic-visual-novel-mode` |
+| `src/routes/v1/chats-surface.ts` | `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-`, `epic-frontend-emoji-reactions`, `epic-visual-novel-mode` |
 | `src/routes/v1/content-surface.ts` | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty`, `FEAT-065-template-system`, `FEAT-memory-visualizer-knowledge-graph-over-asset-links`, `TASK-analytics-observability`, `TASK-blog-publish-unit-to-post-bridge`, `TASK-blog-rss-atom-sitemap`, `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-docs-spec-analytics-observability`, `TASK-public-templates-routes`, `epic-blog-system`, `epic-technical-comparison-charts` |
 | `src/routes/v1/governance.test.ts` | `BUG-governance-429-responses-missing-ratelimit-retry-after-heade`, `BUG-governance-429s-double-counted-in-telemetry`, `BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua` |
 | `src/routes/v1/governance.ts` | `BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua`, `FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard`, `TASK-docs-api-disambiguate-infra-metrics-from-governance-api-v1-m` |
@@ -1614,7 +1615,7 @@ output is byte-identical for identical inputs.
 | `src/routes/views/worlds.ts` | `FEAT-worlds-frontend-list-detail-timeline-location-travel-ui`, `TASK-world-editor-structured-ui`, `epic-world-locations`, `epic-world-management-ui` |
 | `src/routes/vn-choices.ts` | `BUG-dual-vn-choices-route-registration-shadows-guarded-route`, `BUG-e2e-test-infrastructure-fixes`, `BUG-vn-generate-choices-never-persists-to-vn-choices` |
 | `src/routes/vn-generate/choices.ts` | `BUG-vn-generate-choices-never-persists-to-vn-choices`, `TASK-route-plugin-calls-through-the-shared-provider-path`, `epic-visual-novel-mode` |
-| `src/routes/vn-generate/questions.ts` | `TASK-vn-qa-mode`, `epic-visual-novel-mode` |
+| `src/routes/vn-generate/questions.ts` | `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-`, `TASK-vn-qa-mode`, `epic-visual-novel-mode` |
 | `src/routes/vn-generate/story.ts` | `TASK-llm-markdown-document-prompts`, `TASK-route-plugin-calls-through-the-shared-provider-path`, `TASK-vn-dynamic-generation`, `epic-visual-novel-mode` |
 | `src/routes/wardrobe-avatars.ts` | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-rate-limit-misses-post-emotion-avatars-single`, `TASK-avatar-framing-column-migration-future`, `TASK-avatar-framing-tag-member`, `TASK-chat-avatar-resolver-outfit-aware`, `TASK-identity-lock-seed-negative-prompt-and-anchor`, `epic-avatar-regeneration-control` |
 | `src/routes/wardrobe-overrides.ts` | `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh`, `TASK-item-side-outfit-change-trigger`, `TASK-outfit-change-gate-initiator-mapping`, `epic-reactive-actor-appearance` |
@@ -4647,6 +4648,7 @@ output is byte-identical for identical inputs.
 | `epic-resource-provision` | owns | `TASK-resource-provision-routing-facade` | - |
 | `epic-resource-provision` | owns | `TASK-resource-provision-schema` | - |
 | `epic-resource-provision` | owns | `TASK-resource-provision-tests` | - |
+| `epic-review-20261025-api-governance-perimeter` | owns | `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | - |
 | `epic-review-check-parallel-ram-2026-09-03` | owns | `TASK-license-compliance-check-inert-check-parallel-emits-info-ski` | - |
 | `epic-review-dev-2026-08-26-late-merges` | owns | `TASK-dprint-formatting-enforced-ci-test-files` | - |
 | `epic-review-dev-2026-08-26-late-merges` | owns | `TASK-nsfw-moderation-delete-audit-regression-verify` | - |
@@ -7189,6 +7191,11 @@ output is byte-identical for identical inputs.
 | `BUG-vn-generate-choices-never-persists-to-vn-choices` | produces | `src/routes/vn-choices.ts` | - |
 | `BUG-vn-generate-choices-never-persists-to-vn-choices` | produces | `src/routes/vn-generate.test.ts` | - |
 | `BUG-vn-generate-choices-never-persists-to-vn-choices` | produces | `src/routes/vn-generate/choices.ts` | - |
+| `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | produces | `src/api-governance/rate-limiting/policies.test.ts` | - |
+| `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | produces | `src/api-governance/rate-limiting/policies.ts` | - |
+| `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | produces | `src/routes/v1/chats-surface.ts` | - |
+| `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | produces | `src/routes/v1/governance-integration.test.ts` | - |
+| `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | produces | `src/routes/vn-generate/questions.ts` | - |
 | `BUG-vn-mode-locked-once-chat-has-confirmed-messages` | produces | `src/chat/service/access.ts` | - |
 | `BUG-vn-mode-locked-once-chat-has-confirmed-messages` | produces | `src/chat/service/party.ts` | - |
 | `BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec` | produces | `src/chat/service/access.ts` | - |
@@ -18834,6 +18841,7 @@ output is byte-identical for identical inputs.
 | `BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic` | sibling | `BUG-chat-sse-shares-generation-rate-bucket` | `src/api-governance/rate-limiting/policies.ts` |
 | `BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic` | sibling | `BUG-rate-limit-misses-post-emotion-avatars-single` | `src/api-governance/rate-limiting/policies.ts` |
 | `BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic` | sibling | `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s` | `src/api-governance/rate-limiting/policies.ts` |
+| `BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic` | sibling | `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | `src/api-governance/rate-limiting/policies.ts` |
 | `BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic` | sibling | `BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec` | `src/routes/messages/ai-action.ts` |
 | `BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic` | sibling | `TASK-ai-message-utilities` | `src/routes/messages/ai-action.ts` |
 | `BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic` | sibling | `TASK-classifier-model-survey-message-intent-memory-ranking-emotio` | `src/routes/messages/ai-action.ts` |
@@ -21823,6 +21831,7 @@ output is byte-identical for identical inputs.
 | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `epic-federation-offload-quotas` | `src/aux-pipeline/runner.ts` |
 | `BUG-chat-sse-shares-generation-rate-bucket` | sibling | `BUG-rate-limit-misses-post-emotion-avatars-single` | `src/api-governance/rate-limiting/policies.ts` |
 | `BUG-chat-sse-shares-generation-rate-bucket` | sibling | `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s` | `src/api-governance/rate-limiting/policies.ts` |
+| `BUG-chat-sse-shares-generation-rate-bucket` | sibling | `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | `src/api-governance/rate-limiting/policies.ts` |
 | `BUG-chat-sse-shares-generation-rate-bucket` | sibling | `TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes` | `src/api-governance/rate-limiting/policies.ts` |
 | `BUG-chat-sse-shares-generation-rate-bucket` | sibling | `epic-api-rate-limiting` | `src/api-governance/rate-limiting/policies.ts` |
 | `BUG-chat-swipe-index-race` | sibling | `BUG-chat-trigger-auto-generation-unhandled-rejection` | `src/routes/messages/reply.ts` |
@@ -28214,6 +28223,7 @@ output is byte-identical for identical inputs.
 | `BUG-quest-update-notifications-ignore-the-muted-world-scope` | sibling | `epic-frontend-notifications` | `src/notifications/service/crud.ts` |
 | `BUG-rate-limit-in-memory-store-never-evicts-idle-keys` | sibling | `epic-api-rate-limiting` | `src/api-governance/rate-limiting/store.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s` | `src/api-governance/rate-limiting/policies.ts` |
+| `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | `src/api-governance/rate-limiting/policies.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `TASK-avatar-framing-column-migration-future` | `src/routes/wardrobe-avatars.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `TASK-avatar-framing-tag-member` | `src/routes/wardrobe-avatars.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `TASK-chat-avatar-resolver-outfit-aware` | `src/routes/wardrobe-avatars.ts` |
@@ -28229,6 +28239,7 @@ output is byte-identical for identical inputs.
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `epic-character-internal-traits` | `src/routes/v1/actors-surface.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `epic-crafting-professions` | `src/routes/v1/actors-surface.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `epic-gm-shadow-notes` | `src/routes/v1/actors-surface.ts` |
+| `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s` | sibling | `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | `src/api-governance/rate-limiting/policies.test.ts; src/api-governance/rate-limiting/policies.ts` |
 | `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s` | sibling | `EPIC-2026-24` | `src/frontend/alpine/chat-messages.ts` |
 | `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s` | sibling | `TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery` | `src/frontend/alpine/chat-seen.ts` |
 | `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s` | sibling | `TASK-composer-primitive-extraction` | `src/frontend/alpine/chat-messages.ts` |
@@ -30416,6 +30427,11 @@ output is byte-identical for identical inputs.
 | `BUG-vn-choices-idor-guard-non-compiling` | sibling | `epic-visual-novel-mode` | `src/routes/chats/vn-choices.ts` |
 | `BUG-vn-generate-choices-never-persists-to-vn-choices` | sibling | `TASK-route-plugin-calls-through-the-shared-provider-path` | `src/routes/vn-generate/choices.ts` |
 | `BUG-vn-generate-choices-never-persists-to-vn-choices` | sibling | `epic-visual-novel-mode` | `src/routes/vn-generate/choices.ts` |
+| `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | sibling | `TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes` | `src/api-governance/rate-limiting/policies.ts` |
+| `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | sibling | `TASK-vn-qa-mode` | `src/routes/vn-generate/questions.ts` |
+| `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | sibling | `epic-api-rate-limiting` | `src/api-governance/rate-limiting/policies.ts` |
+| `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | sibling | `epic-frontend-emoji-reactions` | `src/routes/v1/chats-surface.ts` |
+| `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-` | sibling | `epic-visual-novel-mode` | `src/routes/v1/chats-surface.ts; src/routes/vn-generate/questions.ts` |
 | `BUG-vn-mode-locked-once-chat-has-confirmed-messages` | sibling | `BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec` | `src/chat/service/access.ts` |
 | `BUG-vn-mode-locked-once-chat-has-confirmed-messages` | sibling | `TASK-024` | `src/chat/service/party.ts` |
 | `BUG-vn-mode-locked-once-chat-has-confirmed-messages` | sibling | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | `src/chat/service/access.ts` |
