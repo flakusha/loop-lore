@@ -104,9 +104,13 @@ describe("keynavHelp", () => {
     installWindow("1",);
     const { keynavHelp, } = await freshHelp();
     const help = keynavHelp();
-    expect(help.label("scroll-down",),).toBe("scroll-down",);
     const g = globalThis as unknown as { __localeStrings?: unknown };
     const saved = g.__localeStrings;
+    // The fallback assertion needs an EMPTY catalog: bun runs every test file
+    // in one process, so an earlier file may already have loaded the real
+    // en.json catalog into this shared global.
+    g.__localeStrings = {};
+    expect(help.label("scroll-down",),).toBe("scroll-down",);
     g.__localeStrings = {
       frontend: { keynav: { actions: { "scroll-down": "Scroll down", }, }, },
     };
