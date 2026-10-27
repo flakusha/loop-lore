@@ -68,6 +68,7 @@ function setup(opts: SetupOpts, asyncStore: AsyncStore,) {
           route: ctx.route ?? "?",
           requestId,
           userId: ctx.userId ?? null,
+          resolvedPath: new URL(ctx.request.url,).pathname,
         },);
 
         return;
@@ -78,6 +79,7 @@ function setup(opts: SetupOpts, asyncStore: AsyncStore,) {
         route: ctx.route ?? "?",
         requestId,
         userId: ctx.userId ?? null,
+        resolvedPath: new URL(ctx.request.url,).pathname,
         response,
       },);
     },);
@@ -121,7 +123,8 @@ describe("idempotent (Elysia integration, table backend)", () => {
     expect(runs,).toBe(1,);
     await asyncStore.flush();
 
-    const row = await asyncStore.read("POST /api/x anon r-tbl-1",);
+    // The cache key carries the resolved path: `METHOD ROUTE USER REQUEST_ID PATH`.
+    const row = await asyncStore.read("POST /api/x anon r-tbl-1 /api/x",);
     expect(row?.status,).toBe("complete",);
     expect(row?.responseBody,).toBe("ok-first",);
     expect(row?.responseHeaders,).toMatchObject({ "x-trace": "t1", },);
