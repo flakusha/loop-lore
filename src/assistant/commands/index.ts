@@ -4,6 +4,7 @@
 //
 // Command system barrel — registers all commands and re-exports registry.
 import "./agency";
+import "./adapt";
 import "./analyze";
 import "./apply";
 import "./assets";
