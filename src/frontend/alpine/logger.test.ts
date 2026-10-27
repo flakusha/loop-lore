@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
+import { readFileSync, } from "node:fs";
+import { join, } from "node:path";
 import type { Transport, } from "../../logger/types";
 import { createLogger, getLogger, log, setGlobalLogger, } from "./logger";
 
@@ -116,5 +118,31 @@ describe("logger bindings", () => {
 
     l.addTransport(t,);
     expect(true,).toBe(true,);
+  });
+});
+
+describe("frontend modules route diagnostics through the logger", () => {
+  /** Modules that used to call `console.*` directly, bypassing the logger. */
+  const MODULES = [
+    "alpine/notifications.ts",
+    "alpine/admin.ts",
+    "alpine/validation.ts",
+    "stores/index.ts",
+    "character-growth-editor.ts",
+  ];
+
+  test("no module calls console.* directly and each uses the frontend logger", () => {
+    const consoleCalls: Record<string, string[]> = {};
+    const withoutLogger: string[] = [];
+
+    for (const rel of MODULES) {
+      const source = readFileSync(join(import.meta.dir, "..", rel,), "utf8",);
+      const hits = source.match(/\bconsole\.\w+\(/g,);
+      if (hits) { consoleCalls[rel] = hits; }
+      if (!/from "[^"]*logger"/.test(source,)) { withoutLogger.push(rel,); }
+    }
+
+    expect(consoleCalls,).toEqual({},);
+    expect(withoutLogger,).toEqual([],);
   });
 });

@@ -20,12 +20,15 @@ import { adminWorldEvents, } from "./admin-world-events";
 import { adminWorlds, } from "./admin-worlds";
 import { formatDisplayDate, } from "./chat-utils/time";
 import { apiFetch, } from "./htmx";
+import { log as rootLog, } from "./logger";
+
+const log = rootLog.child({ module: "admin", },);
 
 // Fallback: expose showTab on globalThis so Alpine expressions don't
 // throw ReferenceError when initTree fails silently on HTMX swaps.
 const adminGlobals = globalThis as { showTab?: (tab: string,) => void; adminPage?: () => any };
 adminGlobals.showTab = function(tab: string,) {
-  console.warn("[admin] showTab called outside Alpine scope — initTree may have failed", { tab, },);
+  log.warn("showTab called outside Alpine scope — initTree may have failed", { tab, },);
 };
 
 adminGlobals.adminPage = function() {

@@ -18,7 +18,10 @@
 
 import { autoResize as autoResizeImpl, } from "./alpine/auto-resize";
 import { jsonBody, } from "./alpine/json";
+import { log as rootLog, } from "./alpine/logger";
 import { feFetch, } from "./fe-fetch";
+
+const log = rootLog.child({ module: "character-growth-editor", },);
 
 /** Growth-log entry row rendered by the partial. */
 export interface GrowthLogEntry {
@@ -102,7 +105,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
         this.message = "Saved.";
       } catch (err) {
         this.message = "Failed to save growth mode.";
-        console.error(err,);
+        log.error("Failed to save growth mode.", err instanceof Error ? err : undefined, {},);
       }
     },
 
@@ -128,7 +131,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
         this.message = "Arc saved.";
       } catch (err) {
         this.message = "Failed to save arc.";
-        console.error(err,);
+        log.error("Failed to save arc.", err instanceof Error ? err : undefined, {},);
       }
     },
 
@@ -149,7 +152,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
         this.message = "Entry confirmed.";
       } catch (err) {
         this.message = "Failed to confirm entry.";
-        console.error(err,);
+        log.error("Failed to confirm entry.", err instanceof Error ? err : undefined, {},);
       }
     },
 
@@ -170,7 +173,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
         this.message = "Entry rejected.";
       } catch (err) {
         this.message = "Failed to reject entry.";
-        console.error(err,);
+        log.error("Failed to reject entry.", err instanceof Error ? err : undefined, {},);
       }
     },
 
