@@ -99,6 +99,25 @@ describe("createPoll", () => {
     expect(result.poll.closed,).toBe(false,);
   });
 
+  it("turns a concurrent create into a conflict Result instead of a raw error", async () => {
+    const { messageId, } = await seedWorld();
+    const base = {
+      database,
+      messageId,
+      userId: OWNER,
+      userRole: null,
+      question: "Push forward?",
+      options: ["Yes", "No",],
+      multi: false,
+    };
+
+    // Both calls pass the pre-check before either insert lands, so the loser
+    // hits the UNIQUE index on message_polls.message_id.
+    const results = await Promise.all([createPoll(base,), createPoll(base,),],);
+
+    expect(results.map((r,) => (r.ok ? "ok" : r.error.code)).sort(),).toEqual(["conflict", "ok",],);
+  });
+
   it("rejects a second poll on the same message with conflict", async () => {
     const { messageId, } = await seedWorld();
     const base = {
