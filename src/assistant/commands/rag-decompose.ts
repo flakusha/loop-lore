@@ -14,9 +14,7 @@
  * keyword/sentence split is the fallback when the aux call returns null.
  */
 
-import type { Kysely, } from "kysely";
 import { callAux, } from "../../aux-pipeline";
-import type { DB, } from "../../db/schema";
 import { requireWorldAccess, } from "../../routes/worlds/access";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
