@@ -49,13 +49,24 @@ export async function checkOwnership(
     },);
   }
 
+  // An `actors` row carries two ownership links: `user_id` (the user's own
+  // persona) and `owner_id` (a character they own). Either grants access,
+  // mirroring `resolveActorAccess` in src/routes/actor-access.ts.
+  const columns: string[] = config.ownershipTable === "actors"
+    ? ["user_id", "owner_id",]
+    : [config.ownershipFkColumn,];
+
   const owner = await (database as any)
     .selectFrom(config.ownershipTable,)
-    .select(config.ownershipFkColumn,)
+    .select(columns,)
     .where("id", "=", parentId,)
     .executeTakeFirst();
 
-  return (
-    !!owner && (owner[config.ownershipFkColumn] === userId || can(userRole, "admin.character",))
-  );
+  if (!owner) { return false; }
+  if (can(userRole, "admin.character",)) { return true; }
+  // A NULL ownership column must never match a NULL (anonymous) userId:
+  // `null === null` would hand an unauthenticated caller the row.
+  if (typeof userId !== "string" || userId.length === 0) { return false; }
+
+  return columns.some((column,) => owner[column] === userId);
 }
