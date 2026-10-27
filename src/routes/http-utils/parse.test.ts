@@ -10,7 +10,7 @@
  * instead of being served.
  */
 import { describe, expect, test, } from "bun:test";
-import { MAX_PAGE_SIZE, parsePaginationParams, } from "./parse";
+import { MAX_PAGE_SIZE, num, parseBody, parsePagination, parsePaginationParams, str, } from "./parse";
 
 describe("parsePaginationParams", () => {
   test("falls back to the defaults when the parameters are absent", () => {
@@ -81,5 +81,60 @@ describe("parsePaginationParams", () => {
 
     expect(bad instanceof Response ? bad.status : bad,).toBe(400,);
     expect(zero instanceof Response ? zero.status : zero,).toBe(400,);
+  });
+});
+
+describe("parseBody", () => {
+  test("parses a JSON body", async () => {
+    const request = new Request("http://localhost/x", {
+      method: "POST",
+      headers: { "content-type": "application/json", },
+      body: JSON.stringify({ name: "ada", },),
+    },);
+
+    expect(await parseBody(request,),).toEqual({ name: "ada", },);
+  });
+
+  test("parses a form-encoded body", async () => {
+    const request = new Request("http://localhost/x", {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded", },
+      body: "name=ada&age=36",
+    },);
+
+    expect(await parseBody(request,),).toEqual({ name: "ada", age: "36", },);
+  });
+
+  test("answers 400 for a malformed JSON body", async () => {
+    const request = new Request("http://localhost/x", {
+      method: "POST",
+      headers: { "content-type": "application/json", },
+      body: "{not json",
+    },);
+
+    const result = await parseBody(request,);
+
+    expect(result instanceof Response ? result.status : result,).toBe(400,);
+  });
+});
+
+describe("parsePagination", () => {
+  test("falls back to the defaults", () => {
+    expect(parsePagination(new URLSearchParams("",),),).toEqual({ page: 1, pageSize: 50, },);
+  });
+
+  test("clamps the page and page size to safe ranges", () => {
+    expect(parsePagination(new URLSearchParams("page=0&pageSize=9999",),),).toEqual({ page: 1, pageSize: 200, },);
+    expect(parsePagination(new URLSearchParams("page=3.7&pageSize=10.9",),),).toEqual({ page: 3, pageSize: 10, },);
+    expect(parsePagination(new URLSearchParams("page=abc&pageSize=abc",),),).toEqual({ page: 1, pageSize: 50, },);
+  });
+});
+
+describe("body field helpers", () => {
+  test("str and num read the field as-is", () => {
+    expect(str({ name: "ada", }, "name",),).toBe("ada",);
+    expect(str({ name: "ada", }, "missing",),).toBeUndefined();
+    expect(num({ age: 36, }, "age",),).toBe(36,);
+    expect(num({ age: 36, }, "missing",),).toBeUndefined();
   });
 });
