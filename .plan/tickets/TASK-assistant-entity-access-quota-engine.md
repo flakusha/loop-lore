@@ -16,6 +16,11 @@
 **Tags:** assistant, quota, enforcement, rationing
 **Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `epic-resource-provision.md`
+**Status Note:** Done (2026-10-27, branch `r2-entity-access-wrapup`, commit `7b45729fc`). Pre-call enforcement via `src/assistant/quota/` — `errors.ts` (`QuotaExceededError` with needed/available/operation/resetsAt details), `storage.ts` (per-user fixed-window counters, lazy reset, O(1) check-and-deduct), `engine.ts` (`enforceQuota` + `QUOTA_OPERATION_COSTS`, structured `assistant_quota_exceeded` warn event via the project logger, lazy accessor so suites without a global logger still run), `gate.ts` (`quotaGate` → `CommandResult` denial). Wired into: rag-search (2), rag-ask (6), rag-preview (2), rag-decompose (6), asset-search (2), asset-preview (1), adapt (10), modify (6), duplicate (2), import (4) — costs are the ticket table ×2 so the 0.5-unit preview stays integral.
+
+DEVIATIONS, with reasons: (1) NO `quota` DB table — the epic mandates no schema/migration this phase, so storage is in-process per-user counters (the `federation/performance-quota.ts` cell pattern) with `configureQuotaStorage`/`configureAssistantQuota` hooks; persistence lands with a migration when cross-process quotas are required. (2) Limits are not yet read from the Config schema — module defaults (200 units / 24h window) plus the configure hooks; wiring `src/config/schema` touches the config-mirror gates and is deferred deliberately.
+
+Evidence: `src/assistant/quota/engine.test.ts` — 8 pass / 0 fail (allow-at-exact-boundary, over-limit reject with details, per-user isolation, lazy window reset, unauthenticated refusal, admin reset, gate null-vs-denial). Wired command suites re-run green after the gate landed (rag/modify/duplicate/rag-remainder/adapt/assets/import = 97 pass / 0 fail); full scoped `bun test --isolate src/assistant/ src/rag/` = 1146 pass / 0 fail across 111 files post-commit.
 
 ## Summary
 
