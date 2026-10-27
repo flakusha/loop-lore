@@ -171,15 +171,18 @@ export async function handleApiRequest(
   const govBefore = governanceBeforeHook(enabled,);
   const govAfter = governanceAfterHook(enabled,);
 
+  // The governance guard is charged ONCE per HTTP request. The versioned
+  // fallback below dispatches a second time, and charging per attempt made
+  // every /api/v1/* request cost two tokens (SUR-5).
+  const gctx: Record<string, unknown> = {
+    request,
+    userId: caller?.userId ?? null,
+  };
+
+  const denial = govBefore(gctx,);
+  if (denial) { return denial; }
+
   const dispatch = async (dispatchRequest: Request,): Promise<Response | null> => {
-    const gctx: Record<string, unknown> = {
-      request: dispatchRequest,
-      userId: caller?.userId ?? null,
-    };
-
-    const denial = govBefore(gctx,);
-    if (denial) { return denial; }
-
     const result = await dispatchPluginRoute({ request: dispatchRequest, caller, t, },);
     if (!result) { return null; }
 
@@ -195,11 +198,32 @@ export async function handleApiRequest(
   // requests during the migration ("breaking changes never break clients").
   const url = new URL(request.url,);
   if (url.pathname.startsWith("/api/v1/",)) {
-    const strippedUrl = new URL(url.pathname.slice("/api/v1".length,) + url.search, url,);
-    const strippedRequest = new Request(strippedUrl, request,);
-    pluginResult = await dispatch(strippedRequest,);
-    if (pluginResult) { return pluginResult; }
+    const stripped = url.pathname.slice("/api/v1".length,);
+    for (const candidate of pluginPathCandidates(stripped,)) {
+      const candidateUrl = new URL(candidate + url.search, url,);
+      const candidateRequest = new Request(candidateUrl, request,);
+      pluginResult = await dispatch(candidateRequest,);
+      if (pluginResult) { return pluginResult; }
+    }
   }
 
   return new Response("Not found", { status: 404, },);
+}
+
+/**
+ * Candidate plugin paths for a versioned request path.
+ *
+ * A plugin registers its route with its OWN `/api` prefix
+ * (`/api/card-battle/start`), while the version redirect consumes one `/api`
+ * segment of the request path (`/api/v1/card-battle/start`). Both spellings
+ * must therefore be tried: the stripped path for plugins that register
+ * without the prefix, and the stripped path with the prefix restored for the
+ * ones that register with it (SUR-3).
+ * @param stripped - request path with the `/api/v1` prefix removed
+ * @returns the candidate paths, in dispatch order
+ */
+function pluginPathCandidates(stripped: string,): string[] {
+  const withPrefix = `/api${stripped}`;
+
+  return withPrefix === stripped ? [stripped,] : [stripped, withPrefix,];
 }

@@ -96,7 +96,7 @@ export const plugin: PluginManifest = {
         if (action === "play") {
           // For chat play, the AI manages state internally
           return {
-            content: "To play cards, use the /api/card-battle/start and /api/card-battle/play endpoints. Chat-based card battles require stateful session — coming soon.",
+            content: "To play cards, use the /api/v1/card-battle/start and /api/v1/card-battle/play endpoints. Chat-based card battles require stateful session — coming soon.",
           };
         }
 
