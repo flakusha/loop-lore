@@ -21,6 +21,7 @@ import type { Kysely, } from "kysely";
 import { readFileSync, writeFileSync, } from "node:fs";
 import { getAssetFilePath, } from "../../assets/service/file-system";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
 import { decryptAssetBlob, encryptAssetBlob, } from "../asset-encryption";
 import type { ChatKey, } from "../chat-keys";
 import { deriveChatKeyForChat, } from "../chat-keys";
@@ -102,8 +103,26 @@ export async function reEncryptWithKeys(
 
       reEncrypted++;
     } catch (error) {
-      // Surface the failure — do not silently drop history.
       const reason = error instanceof Error ? error.message : String(error,);
+      // A row naming a key this chat does NOT hold was written under a
+      // foreign/forged key: nobody can decrypt it, so it can never be
+      // re-encrypted. Skip it (logged) instead of failing the rotation —
+      // one such row must not wedge the chat forever (BE-1). A row that
+      // names the live key and still fails is real corruption and stays
+      // fatal.
+      if (msg.key_id !== oldKey.keyId) {
+        getLogger().warn("Skipping message with a foreign key id during re-encrypt", {
+          chatId,
+          messageId: msg.id,
+          keyId: msg.key_id,
+          expectedKeyId: oldKey.keyId,
+          reason,
+        },);
+
+        continue;
+      }
+
+      // Surface the failure — do not silently drop history.
       failures.push({ id: msg.id, reason, },);
     }
   }

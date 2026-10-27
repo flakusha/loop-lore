@@ -90,6 +90,18 @@ export class ForbiddenError extends Error {
   }
 }
 
+/** */
+export class BadRequestError extends Error {
+  /**
+   * @param msg
+   * @param options
+   */
+  constructor(msg = "Bad request", options?: ErrorOptions,) {
+    super(msg, options,);
+    this.name = "BadRequestError";
+  }
+}
+
 /**
  * Create a translated error message.
  * If `t` is provided, translates the key; otherwise returns the key as-is.

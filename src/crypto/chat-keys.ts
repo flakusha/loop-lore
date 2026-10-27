@@ -110,6 +110,52 @@ export async function getChatKeyById(
 }
 
 /**
+ * True when `keyId` is a LIVE key of `chatId` (a `chat_keys` row owned by
+ * that chat).
+ *
+ * A client may pre-encrypt a message body and name the key it used in the
+ * payload envelope. That `key_id` used to be persisted unvalidated, so any
+ * forged id reached `messages.key_id` — and a row nobody can decrypt made
+ * `rotateKeyOnLeave` fail forever, wedging the chat (BE-1).
+ *
+ * Only `standard`-tier chats hold chat keys (and only they rotate on
+ * leave), so only they are validated. A chat with no `chats` row at all is
+ * not a chat the caller can write into (the request is rejected further up
+ * the stack), so there is nothing to validate against and the id is
+ * accepted.
+ * @param database
+ * @param chatId
+ * @param keyId
+ * @returns {Promise<boolean>}
+ */
+export async function isLiveChatKeyId(
+  database: Kysely<DB>,
+  chatId: string,
+  keyId: string | null,
+): Promise<boolean> {
+  if (!keyId) { return false; }
+
+  const chat = await database
+    .selectFrom("chats",)
+    .select(["id", "encryption_level",],)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+
+  if (!chat) { return true; }
+
+  if (chat.encryption_level !== "standard") { return true; }
+
+  const live = await database
+    .selectFrom("chat_keys",)
+    .select("id",)
+    .where("id", "=", keyId,)
+    .where("chat_id", "=", chatId,)
+    .executeTakeFirst();
+
+  return !!live;
+}
+
+/**
  * @param database
  * @param chatId
  * @param smk
