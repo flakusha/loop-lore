@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import type { LogEntry, Transport, } from "../../logger/types";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { log, } from "./logger";
 
 // ISOLATED-only: mock.module is process-global and poisons later files'
 // `./htmx` imports without --isolate (cross-file contamination).
@@ -146,20 +148,29 @@ describeOrSkip("loadOverview", () => {
 },);
 
 describeOrSkip("global showTab fallback", () => {
-  test("warns when called", () => {
-    const warn = console.warn;
-    let warned = false;
-    console.warn = () => {
-      warned = true;
+  test("routes the warning through the frontend logger", async () => {
+    const entries: LogEntry[] = [];
+    const transport: Transport = {
+      name: "test-capture",
+      write: (entry,) => {
+        entries.push(entry,);
+        return Promise.resolve();
+      },
+      flush: async () => {},
     };
 
-    try {
-      globalState.showTab!("x",);
-    } finally {
-      console.warn = warn;
-    }
+    log.addTransport(transport,);
 
-    expect(warned,).toBe(true,);
+    globalState.showTab!("x",);
+    // The browser logger batches entries on a 100ms interval.
+    await new Promise((resolve,) => setTimeout(resolve, 250,));
+
+    const entry = entries.find((e,) =>
+      typeof e.message === "string" && e.message.includes("showTab called outside Alpine scope",)
+    );
+
+    expect(entry,).toBeDefined();
+    expect(entry?.module,).toBe("admin",);
   });
 },);
 

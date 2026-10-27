@@ -9,8 +9,28 @@ import { SANITIZE_CONFIG, } from "./sanitize";
 /** */
 export type ChatUtilsRender = Partial<ChatState> & ThisType<ChatState>;
 
-const getMarked = () => globalThis.__marked;
-const getDOMPurify = () => globalThis.__DOMPurify;
+/** Minimal surface of the app-wide `marked` bundle. */
+interface MarkedLike {
+  parse(markdown: string,): string | Promise<string>;
+}
+
+/** Minimal surface of the app-wide `DOMPurify` bundle. */
+interface PurifyLike {
+  sanitize(html: string, config?: unknown,): string;
+}
+
+/**
+ * App-wide bundles installed by `src/frontend/chat-vendor.ts`. Typed locally
+ * so the file also typechecks under the backend/scripts projects, which do not
+ * include the frontend's global declarations.
+ */
+const appGlobals = globalThis as unknown as {
+  __marked?: MarkedLike;
+  __DOMPurify?: PurifyLike;
+};
+
+const getMarked = () => appGlobals.__marked;
+const getDOMPurify = () => appGlobals.__DOMPurify;
 
 export const chatUtilsRender: ChatUtilsRender = {
   /**

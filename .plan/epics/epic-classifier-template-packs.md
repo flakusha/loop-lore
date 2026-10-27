@@ -128,10 +128,13 @@ auxiliary path, and as option descriptions on the decision path. The client
 work is `TASK-llama-cpp-decision-model-client-for-aux-classification.md`.
 
 Known upstream limits to design around: a GGUF without `<arch>.decision.*`
-metadata → 501; question + options must fit one batch; LAYA-type models
-silently truncate options to their trained head budget; `score` confidence can
-be 0.0 next to a usable expected level — cutoffs belong per model and per
-quantization.
+metadata → 501; a request with images → 501 when the model has no image support
+or no multimodal projector; for some models the whole prompt is one batch and
+must fit `--ubatch-size`; `laya` truncates long questions and options to its
+trained token budget; option count is per-model (52 for `openjev`, 255 for
+`laya`/`clef`/`vllm-d3`); probabilities are scaled by per-model temperatures and
+are **not calibrated** — a vague input scored 0.25 on Julia-1 and 0.80 on
+Kev-4B upstream, so cutoffs belong per model and per quantization.
 
 ## Tasks
 

@@ -6,6 +6,8 @@
  * agnostic, importable by any text surface needing sanitized preview
  * rendering or the stream-preference keys.
  */
+import { escapeHtml, } from "../../html-escape";
+import { chatUtilsRender, } from "../chat-utils/render";
 import { STREAM_PREF_KEY, } from "./constants";
 
 /** Minimal DOMPurify surface the preview renderer accepts. */
@@ -14,6 +16,9 @@ export interface PreviewSanitizer {
 }
 
 const getPreviewSanitizer = () => (globalThis as unknown as { __DOMPurify?: PreviewSanitizer }).__DOMPurify;
+
+/** Markdown renderer installed app-wide by `src/frontend/chat-vendor.ts`. */
+const getMarked = () => (globalThis as unknown as { __marked?: unknown }).__marked;
 
 /**
  * Storage key for the stream preference; per-chat, global when no chatId.
@@ -68,14 +73,19 @@ export function isPreviewToggleEvent(event: Pick<KeyboardEvent, "ctrlKey" | "shi
 }
 
 /**
- * Sanitize raw composer text for preview. Falls back to the raw text when
- * no sanitizer global is present — the template must render it via
- * `textContent` in that case, never `innerHTML`.
+ * Render raw composer text as preview HTML.
+ *
+ * Uses the SHARED renderer (`chat-utils/render`) so markdown and
+ * `:shortcode:` expansion match every other render surface. Falls back to the
+ * sanitiser-only path when the markdown library is missing, and to the
+ * ESCAPED source text when no sanitizer global is present — the result is
+ * always safe to bind with `x-html`.
  * @param {string} raw
  * @returns {string}
  */
 export function renderPreviewHtml(raw: string,): string {
   const purify = getPreviewSanitizer();
-  if (purify) { return purify.sanitize(raw,); }
-  return raw;
+  if (!purify) { return escapeHtml(raw,); }
+  if (!getMarked()) { return purify.sanitize(raw,); }
+  return chatUtilsRender.renderMarkdown?.(raw,) ?? purify.sanitize(raw,);
 }
