@@ -9,9 +9,7 @@
  * create route is called.
  */
 
-import { checkWorldOwnership, } from "../../routes/story-items/handlers";
-import { requireWorldOwner, } from "../../routes/worlds/access";
-import { safeJsonParse, } from "../../utils";
+import { ENTITY_ADAPTERS, } from "../adapter/adapters";
 import { type EntityPatch, formatPatch, parseEntityPatch, } from "./entity-patch";
 import { ITEM_ADD_SPEC, LOCATION_ADD_SPEC, } from "./entity-patch-spec";
 import { type CommandResult, registerCommand, } from "./registry";
@@ -45,83 +43,24 @@ registerCommand("clone", async (args, ctx,): Promise<CommandResult> => {
   }
 
   // A clone is created in the SOURCE's world, so ownership of the source row
-  // IS ownership of the target world — one guard covers both sides. Same
-  // guards as the create routes (`requireWorldOwner` for locations,
-  // `checkWorldOwnership` for items).
-  let name: string;
-  let worldId: string;
-  let copied: EntityPatch;
-  if (kind === "location") {
-    const DENIED = `Location ${sourceId} not found or not owned by you.`;
-    const row = await db
-      .selectFrom("locations",)
-      .select([
-        "id",
-        "name",
-        "world_id",
-        "description",
-        "kind",
-        "mobility_mode",
-        "coord_x",
-        "coord_y",
-        "coord_z",
-        "connections",
-      ],)
-      .where("id", "=", sourceId,)
-      .executeTakeFirst();
+  // IS ownership of the target world — one guard covers both sides. The
+  // adapter composes the same guards as the create routes (`requireWorldOwner`
+  // for locations, `checkWorldOwnership` for items).
+  const loaded = await ENTITY_ADAPTERS[kind as "location" | "item"].loadForCopy(
+    db,
+    sourceId,
+    ctx.userId ?? null,
+    ctx.userRole ?? null,
+  );
 
-    if (!row) { return { systemMessage: DENIED, handled: true, }; }
-
-    const err = await requireWorldOwner(db, row.world_id, ctx.userId ?? null, ctx.userRole ?? null,);
-    if (err) { return { systemMessage: DENIED, handled: true, }; }
-
-    // parent_location_id is deliberately NOT copied: the clone must not
-    // silently appear as a sibling in the source's tree position.
-    const conn = safeJsonParse<unknown>(row.connections ?? "[]",);
-    copied = {
-      name: `${row.name} (copy)`,
-      ...(row.description != null ? { description: row.description, } : {}),
-      kind: row.kind,
-      mobilityMode: row.mobility_mode,
-      ...(row.coord_x !== null ? { coordX: row.coord_x, } : {}),
-      ...(row.coord_y !== null ? { coordY: row.coord_y, } : {}),
-      ...(row.coord_z !== null ? { coordZ: row.coord_z, } : {}),
-      ...(conn.ok && Array.isArray(conn.value,)
-        ? { connections: conn.value.filter((id,): id is string => typeof id === "string"), }
-        : {}),
-    };
-
-    name = row.name;
-    worldId = row.world_id;
-  } else {
-    const DENIED = `Item ${sourceId} not found or not owned by you.`;
-    const row = await db
-      .selectFrom("items",)
-      .select(["id", "name", "world_id", "description", "category", "rarity", "value", "weight", "properties",],)
-      .where("id", "=", sourceId,)
-      .executeTakeFirst();
-
-    if (!row) { return { systemMessage: DENIED, handled: true, }; }
-
-    const owned = await checkWorldOwnership(db, row.world_id, ctx.userId ?? null, ctx.userRole ?? null,);
-    if (!owned) { return { systemMessage: DENIED, handled: true, }; }
-
-    const props = safeJsonParse<Record<string, unknown>>(row.properties ?? "{}",);
-    copied = {
-      name: `${row.name} (copy)`,
-      ...(row.description != null ? { description: row.description, } : {}),
-      category: row.category,
-      rarity: row.rarity,
-      value: row.value,
-      weight: row.weight,
-      properties: props.ok && props.value && typeof props.value === "object" && !Array.isArray(props.value,)
-        ? props.value
-        : {},
-    };
-
-    name = row.name;
-    worldId = row.world_id;
+  if (!loaded.ok) {
+    return { systemMessage: loaded.message, handled: true, };
   }
+
+  const { entity, } = loaded;
+  const name = entity.name;
+  const worldId = entity.worldId ?? "";
+  const copied: EntityPatch = { ...entity.fields, name, };
 
   // Optional overrides: `name="…"` renames the copy; any other add-spec field
   // replaces the copied value. Last-wins via parseEntityPatch. Overrides are
@@ -141,7 +80,11 @@ registerCommand("clone", async (args, ctx,): Promise<CommandResult> => {
   }
 
   const fields = { ...copied, ...parsed.patch, };
-  const newName = (typeof fields.name === "string" ? fields.name : undefined) ?? `${name} (copy)`;
+  // The `(copy)` suffix is the default name; only an explicit `name=`
+  // override replaces it (the copied `fields.name` is the SOURCE name now
+  // that the adapter mapping carries it verbatim).
+  const overrideName = typeof parsed.patch.name === "string" ? parsed.patch.name : undefined;
+  const newName = overrideName ?? `${name} (copy)`;
   fields.name = newName;
 
   const cloneNote = kind === "location"
