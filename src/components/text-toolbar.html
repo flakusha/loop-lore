@@ -111,3 +111,14 @@
     </div>
   </template>
 </div>
+<!--
+  Markdown preview (the toolbar toggle fills `previewHtml`; the renderer
+  escapes the source when no sanitiser is installed, so x-html is safe).
+-->
+<div
+  class="text-toolbar-preview"
+  x-show="showPreview && !disabled"
+  x-html="previewHtml"
+  data-testid="text-toolbar-preview-body"
+>
+</div>

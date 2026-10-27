@@ -7,6 +7,8 @@
  */
 import "./i18n.test-helper";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { readFileSync, } from "node:fs";
+import { join, } from "node:path";
 import { textToolbar, } from "./text-toolbar";
 
 import type { ApiFetchMock, } from "../tests/test-types";
@@ -111,5 +113,14 @@ describe("textToolbar", () => {
 
     expect(threw,).toBe(false,);
     expect(textarea.value,).toBe("rough draft",);
+  });
+});
+
+describe("text-toolbar template — the markdown preview is bound", () => {
+  const html = readFileSync(join(import.meta.dir, "..", "..", "components", "text-toolbar.html",), "utf8",);
+
+  test("the template binds the html the toolbar computes", () => {
+    expect(html,).toContain('x-html="previewHtml"',);
+    expect(html,).toContain('x-show="showPreview',);
   });
 });
