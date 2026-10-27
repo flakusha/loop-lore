@@ -14,7 +14,7 @@
 // redeploy).
 //
 // Single-writer invariant: only the receiver generates/rotates its inbound
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import { decryptBytes, encryptBytes, } from "../crypto/actor-key-bytes";
 import type { DB, } from "../db/schema";
 import { safeFromBase64, safeFromUint8Array, safeToBase64, } from "../utils/safe-buffer";
@@ -115,34 +115,30 @@ export async function rotateInboundKey(
 ): Promise<string> {
   const origin = canonicalOrigin(senderOrigin,);
   if (origin === null) { throw new Error(`invalid sender origin: ${senderOrigin}`,); }
-  const row = await database
-    .selectFrom("mesh_inbound_keys",)
-    .select(["encrypted_key",],)
-    .where("peer_origin", "=", origin,)
-    .executeTakeFirst();
-
   const key = generateInboundKey();
   const keyBytes = safeFromBase64(key,);
   if (!keyBytes.ok) { throw keyBytes.error; }
   const encrypted = await encryptBytes(smk, keyBytes.buffer,);
-  if (row) {
-    await database
-      .updateTable("mesh_inbound_keys",)
-      .set({ encrypted_key: encrypted, previous_encrypted_key: row.encrypted_key, },)
-      .where("peer_origin", "=", origin,)
-      .execute();
 
-    return key;
-  }
-
+  // One atomic conditional write: the stored current key becomes the grace
+  // key and the fresh key becomes the current one. A read-then-write left
+  // outside a transaction let two concurrent rotations read the same old key
+  // and drop one of them (DOM-5). A transaction cannot close that hole here:
+  // the dialect drives a single bun:sqlite connection, so a second BEGIN on
+  // it fails with "cannot start a transaction within a transaction".
   await database
     .insertInto("mesh_inbound_keys",)
-    .values({ peer_origin: origin, encrypted_key: encrypted, },)
-    .onConflict((oc,) => oc.column("peer_origin",).doNothing())
+    .values({ peer_origin: origin, encrypted_key: encrypted, previous_encrypted_key: null, },)
+    .onConflict((oc,) =>
+      oc.column("peer_origin",).doUpdateSet({
+        previous_encrypted_key: sql`mesh_inbound_keys.encrypted_key`,
+        encrypted_key: encrypted,
+      },)
+    )
     .execute();
 
-  // Re-read: a concurrent rotate may have won the insert; either way the
-  // stored key is authoritative — never hand out an unstored key.
+  // Re-read: a concurrent rotate may have won; either way the stored key is
+  // authoritative — never hand out an unstored key.
   const stored = await database
     .selectFrom("mesh_inbound_keys",)
     .select(["encrypted_key",],)
