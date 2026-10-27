@@ -17,6 +17,9 @@
 
 import type { TSchema, } from "@sinclair/typebox";
 import { type TypeCheck, TypeCompiler, type ValueError, } from "@sinclair/typebox/compiler";
+import { log as rootLog, } from "./logger";
+
+const log = rootLog.child({ module: "validation", },);
 
 /** Cache of compiled checkers, keyed by the schema object identity. */
 const cache = new WeakMap<TSchema, TypeCheck<TSchema>>();
@@ -39,8 +42,8 @@ export function getChecker<T extends TSchema,>(schema: T,): TypeCheck<T> {
 /**
  * Strictly decode `value` against `schema`, returning `fallback` on mismatch.
  *
- * Never throws. On failure the first schema error is logged via console.warn
- * (the frontend has no logger at this layer) — set `onError` to customize.
+ * Never throws. On failure the first schema error is logged through the
+ * frontend logger — set `onError` to customize.
  * @param schema - shared response schema (from `../validation/schemas/responses`)
  * @param value - untrusted payload (e.g. `await res.json()`)
  * @param fallback - returned when `value` does not match `schema`
@@ -59,7 +62,7 @@ export function parseOr<T extends TSchema,>(
   if (onError) { onError(errors,); }
   else {
     const first = errors[0];
-    console.warn("parseOr: schema mismatch", { path: first?.path, message: first?.message, },);
+    log.warn("parseOr: schema mismatch", { path: first?.path, message: first?.message, },);
   }
 
   return fallback;

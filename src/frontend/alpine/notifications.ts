@@ -11,7 +11,10 @@
 // and a toast when a message lands in a chat the user isn't viewing.
 import { ActivitySnapshot, } from "../../validation/schemas/responses";
 import { jsonParseOr, } from "./json";
+import { log as rootLog, } from "./logger";
 import { parseOr, } from "./validation";
+
+const log = rootLog.child({ module: "notifications", },);
 
 interface ActivityEntry {
   unseenCount: number;
@@ -142,7 +145,7 @@ export class NotificationsManager {
         // Browser auto-reconnects; polling covers the gap.
       },);
     } catch (error) {
-      console.warn("SSE unavailable — polling only", error,);
+      log.warn("SSE unavailable — polling only", { error: String(error,), },);
     }
   }
 
@@ -157,7 +160,7 @@ export class NotificationsManager {
       const data = parseOr(ActivitySnapshot, await res.json(), { chats: {}, },);
       this.applySnapshot(data.chats,);
     } catch (error) {
-      console.warn("Activity poll failed", error,);
+      log.warn("Activity poll failed", { error: String(error,), },);
     }
   }
 

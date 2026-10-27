@@ -121,9 +121,13 @@ describe("settings keynav editor", () => {
 
   it("actionLabel translates via the i18n module and falls back to the raw id", () => {
     const ed = editor();
-    expect(ed.actionLabel("scroll-down",),).toBe("scroll-down",);
     const g = globalThis as unknown as { __localeStrings?: unknown };
     const saved = g.__localeStrings;
+    // The fallback assertion needs an EMPTY catalog: bun runs every test file
+    // in one process, so an earlier file may already have loaded the real
+    // en.json catalog into this shared global.
+    g.__localeStrings = {};
+    expect(ed.actionLabel("scroll-down",),).toBe("scroll-down",);
     g.__localeStrings = {
       frontend: { keynav: { actions: { "scroll-down": "Desplazar hacia abajo", }, }, },
     };
