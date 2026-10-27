@@ -112,6 +112,8 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **Listing a chat's polls issued two queries per poll** — `listChatPolls` (`src/chat/service/polls.ts`) hydrated every poll with its own two queries (the poll row, then its votes), so the query count grew as 2N+2 and the poll list carried no `LIMIT`. It is now set-based: one query for the poll page (insertion order, capped at 100 polls) and one for the votes of those polls, so the query count is constant whatever the poll count. The returned polls keep the same shape.
 
+- **Concurrent inbound-key rotations dropped one of the two keys** — `rotateInboundKey` (`src/federation/peer-keys.ts`) read the stored key and then wrote the new one, so two concurrent rotations both read the same old key and the second write overwrote the first: the grace key stayed on the pre-rotation key and one issued key was never stored. The rotation is now a single conditional write (`INSERT ... ON CONFLICT DO UPDATE` — the current key becomes the grace key, the fresh key becomes the current one), so no rotation is lost. A transaction cannot buy the same guarantee here: the dialect drives a single `bun:sqlite` connection, and a second `BEGIN` on it fails with "cannot start a transaction within a transaction".
+
 ### Removed
 
 - **Dead `src/actors/` layer** — deleted the directory: 11 files with zero importers, surfaced by the widened knip scan, including a third parallel actor-items implementation (`src/actors/actor-items.ts`) alongside `src/services/actor-items.ts` and `src/services/actor-items/`.

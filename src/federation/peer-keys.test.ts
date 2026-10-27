@@ -2,11 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { beforeAll, expect, test, } from "bun:test";
+import { decryptBytes, } from "../crypto/actor-key-bytes";
 import { initSmk, } from "../crypto/smk";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { safeFromUint8Array, safeToBase64, } from "../utils/safe-buffer";
 import { pskCipher, } from "./cipher";
 import { openEnvelope, sealContent, } from "./envelope";
+import { canonicalOrigin, } from "./peer-fetch";
 import {
   ciphersForSender,
   generateInboundKey,
@@ -34,6 +37,15 @@ async function smk(): Promise<CryptoKey> {
   const key = getSmk();
   if (key === null) { throw new Error("SMK not initialized",); }
   return key;
+}
+
+/** Decrypt a stored inbound key back to its base64 form. */
+async function storedKey(serverKey: CryptoKey, encrypted: string,): Promise<string> {
+  const plain = safeFromUint8Array(await decryptBytes(serverKey, encrypted,),);
+  if (!plain.ok) { throw plain.error; }
+  const b64 = safeToBase64(plain.buffer,);
+  if (!b64.ok) { throw b64.error; }
+  return b64.buffer;
 }
 
 describeOrSkip("per-sender inbound keys", () => {
@@ -73,6 +85,37 @@ describeOrSkip("per-sender inbound keys", () => {
     expect(new TextDecoder().decode(await openEnvelope(sealedNew, ciphers[0]!,),),).toBe(
       plaintext,
     );
+  });
+
+  test("concurrent rotations keep both keys", async () => {
+    const { db, } = await createTestDb();
+    const key = await smk();
+    const origin = "https://race.example";
+    const original = await getOrCreateInboundKey(db, key, origin,);
+
+    const [first, second,] = await Promise.all([
+      rotateInboundKey(db, key, origin,),
+      rotateInboundKey(db, key, origin,),
+    ],);
+
+    const row = await db
+      .selectFrom("mesh_inbound_keys",)
+      .select(["encrypted_key", "previous_encrypted_key",],)
+      .where("peer_origin", "=", canonicalOrigin(origin,),)
+      .executeTakeFirstOrThrow();
+
+    const current = await storedKey(key, row.encrypted_key,);
+    const previous = row.previous_encrypted_key === null
+      ? null
+      : await storedKey(key, row.previous_encrypted_key,);
+
+    // No rotation may be dropped: the current key is one of the two
+    // rotations and the grace key is the other one. A read-then-write
+    // outside a transaction left the grace key on the pre-rotation key and
+    // lost one of the rotations.
+    expect([first, second,],).toContain(current,);
+    expect(previous,).not.toBe(original,);
+    expect(previous,).not.toBe(current,);
   });
 
   test("ciphersForSender falls back to PSK without SMK or keys", async () => {
