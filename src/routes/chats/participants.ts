@@ -220,28 +220,37 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             return notFound("Chat not found",);
           }
 
-          const result = await leaveParty(database, { chatId: id, actorId, },);
-          if ("code" in result) {
-            const status = result.code === "not_found" ? HttpStatus.NotFound : HttpStatus.BadRequest;
-            return jsonError(result.message, status, result.code as never,);
-          }
-
-          // Rotate encryption key on participant leave (forward secrecy).
-          // Errors propagate — if rotation fails, the participant is NOT deleted.
-          // The caller receives a 500 and can retry.
+          // The chat's encryption tier decides whether the leave rotates the
+          // chat key (the `beforeRemove` hook below).
           const chatRecord = await database
             .selectFrom("chats",)
             .select("encryption_level",)
             .where("id", "=", id,)
             .executeTakeFirst();
 
-          if (chatRecord?.encryption_level === "standard") {
-            const { rotateKeyOnLeave, } = await import("../../crypto/key-distribution");
-            await rotateKeyOnLeave(database, id, actorId,);
-            log().info("Rotated encryption key after participant leave", {
-              chatId: id,
-              departedParticipantId: actorId,
-            },);
+          const result = await leaveParty(database, {
+            chatId: id,
+            actorId,
+            beforeRemove: async () => {
+              // Rotate the encryption key BEFORE the participant row is
+              // removed (forward secrecy). A failed rotation aborts the
+              // leave, so the participant row survives and the caller can
+              // retry — the old order deleted the row first and answered
+              // 500 after the removal had already taken effect, leaving
+              // the removed member with the live key (BE-2).
+              if (chatRecord?.encryption_level !== "standard") { return; }
+              const { rotateKeyOnLeave, } = await import("../../crypto/key-distribution");
+              await rotateKeyOnLeave(database, id, actorId,);
+              log().info("Rotated encryption key after participant leave", {
+                chatId: id,
+                departedParticipantId: actorId,
+              },);
+            },
+          },);
+
+          if ("code" in result) {
+            const status = result.code === "not_found" ? HttpStatus.NotFound : HttpStatus.BadRequest;
+            return jsonError(result.message, status, result.code as never,);
           }
 
           return jsonNoContent();

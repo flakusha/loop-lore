@@ -31,6 +31,13 @@ export interface PartyJoinParams {
 export interface PartyLeaveParams {
   chatId: string;
   actorId: string;
+  /**
+   * Optional hook run AFTER the membership check and BEFORE the row is
+   * deleted. A throwing hook aborts the leave, so the participant row
+   * survives — the chat key rotation runs here (a failed rotation must not
+   * leave the member removed while the live key is still in place, BE-2).
+   */
+  beforeRemove?: () => Promise<void>;
 }
 
 /** Result of a backend party join/leave operation. */
@@ -130,6 +137,8 @@ export async function joinParty(
  * Leave a party: remove a chat participant.
  * @param database
  * @param params
+ * @param params.beforeRemove - optional hook run after the membership check
+ *   and before the row is deleted; a throwing hook aborts the leave
  * @returns `{ ok: true }` or a ServiceError (not_found when the chat or the
  * member does not exist).
  */
@@ -157,6 +166,11 @@ export async function leaveParty(
   if (!member) {
     return { code: "not_found", message: "Participant not in chat", };
   }
+
+  // The hook runs while the member is still in the chat. A throw aborts the
+  // leave BEFORE the row is removed, so a failed rotation leaves the
+  // participant intact and the caller can retry (BE-2).
+  if (params.beforeRemove) { await params.beforeRemove(); }
 
   await database
     .deleteFrom("chat_participants",)

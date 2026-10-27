@@ -17,10 +17,12 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
+import { initSmk, } from "../../crypto/smk";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
+  insertChatParticipants,
   insertChats,
   insertUsers,
 } from "../../test-utils/insert-helpers";
@@ -124,6 +126,60 @@ describe("participantRoutes — invite ownership derived from session, not body"
       .execute();
 
     expect(rows.map((r,) => r.actor_id),).toContain(INVITER_ID,);
+
+    await db.destroy();
+  });
+});
+
+/**
+ * BE-2 — the participant row must NOT be removed when the key rotation
+ * fails. The old order deleted the row first and answered 500 after the
+ * removal had already taken effect, so the removed member kept the live key
+ * and the chat could not be rotated again.
+ */
+describe("participantRoutes — a failed key rotation keeps the participant", () => {
+  test("the participant row survives a rotation failure", async () => {
+    // A real SMK so the rotation fails on the business condition (no
+    // remaining participants), not on a missing-key misconfiguration.
+    await initSmk({
+      required: false,
+      serverEncryptionKey: "b".repeat(64,),
+      compressThreshold: 128,
+      compressAlgorithm: "gzip",
+    },);
+
+    const { db, } = await createTestDb();
+    const owner = randomUUID();
+    const leaver = randomUUID();
+    const chatId = randomUUID();
+    await insertUsers(db, `owner-${owner}`, "Owner", { id: owner, } as never,);
+    await insertActors(db, "Owner", { id: owner, user_id: owner, owner_id: owner, } as never,);
+    await insertActors(db, "Leaver", { id: leaver, } as never,);
+    await insertChats(db, "Encrypted Chat", owner, {
+      id: chatId,
+      encryption_level: "standard",
+    } as never,);
+
+    // The leaver is the ONLY participant — the rotation has nobody left to
+    // distribute a key to and must fail.
+    await insertChatParticipants(db, chatId, leaver,);
+
+    const app = makeApp(db, owner,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/participants/${leaver}`, {
+        method: "DELETE",
+      },),
+    );
+
+    expect(res.status,).toBe(500,);
+
+    const rows = await db
+      .selectFrom("chat_participants",)
+      .select("actor_id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+
+    expect(rows.map((r,) => r.actor_id),).toContain(leaver,);
 
     await db.destroy();
   });
