@@ -129,7 +129,7 @@ describe("handleStart", () => {
       }));
       expect(res!.status).toBe(400);
       const body = await json(res);
-      expect(body.error).toBe('difficulty must be "easy", "medium", or "hard"');
+      expect(body.error).toBe("difficulty must be one of: easy, medium, hard");
     });
   });
 
@@ -231,12 +231,12 @@ describe("handleStart", () => {
       playerHand = body.playerHand;
     });
 
-    test("ui-safe deck exposes only counts, not card array", () => {
+    test("the deck travels with the client so the state can be replayed", () => {
       const deck = state.deck as unknown as Record<string, unknown>;
-      expect(deck.remaining).toBeTypeOf("number");
-      expect(deck.discarded).toBeTypeOf("number");
-      expect(deck.remaining).toBe(47); // 52 - 5 dealt
-      expect(deck.discarded).toBe(0);
+      expect(deck.remaining).toBeInstanceOf(Array);
+      expect(deck.discarded).toBeInstanceOf(Array);
+      expect((deck.remaining as unknown[]).length).toBe(47); // 52 - 5 dealt
+      expect((deck.discarded as unknown[]).length).toBe(0);
     });
 
     test("handDisplay is arrays of {index, card, value} matching playerHand", () => {
@@ -374,7 +374,7 @@ describe("handlePlay", () => {
   });
 
   describe("happy path", () => {
-    test("returns round, state (with count-only deck), handDisplay, newCard, finished, winner", async () => {
+    test("returns round, state (with the replayable deck), handDisplay, newCard, finished, winner", async () => {
       const state = initBattle(100, "easy", 5);
       const res = await handlePlay(new Request(PLAY_URL, {
         method: "POST",
@@ -390,11 +390,10 @@ describe("handlePlay", () => {
       expect(typeof round.outcome).toBe("string");
       expect(typeof round.narrative).toBe("string");
 
-      // state — deck should be count-only
+      // state — the deck travels back so the next /play can replay it
       const returnedState = body.state as CardBattleState;
-      const deck = returnedState.deck as unknown as Record<string, unknown>;
-      expect(deck.remaining).toBeTypeOf("number");
-      expect(deck.discarded).toBeTypeOf("number");
+      expect(returnedState.deck.remaining).toBeInstanceOf(Array);
+      expect(returnedState.deck.discarded).toBeInstanceOf(Array);
 
       // handDisplay
       expect(Array.isArray(body.handDisplay)).toBe(true);

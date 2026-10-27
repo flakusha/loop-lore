@@ -24,8 +24,23 @@ export interface Card {
   value: number;
 }
 
+/**
+ * Combat actions the API accepts — the single source for the route validator,
+ * the tool schema and the engine modifiers.
+ */
+export const COMBAT_ACTIONS = ["attack", "defend", "feint", "bluff", "charm"] as const;
+
 /** Combat action mapped to card play */
-export type CombatCardAction = "attack" | "defend" | "feint" | "bluff" | "charm";
+export type CombatCardAction = (typeof COMBAT_ACTIONS)[number];
+
+/**
+ * Opponent difficulties — the single source for the route validator, the tool
+ * schema and the engine configuration.
+ */
+export const DIFFICULTIES = ["easy", "medium", "hard"] as const;
+
+/** Opponent difficulty */
+export type BattleDifficulty = (typeof DIFFICULTIES)[number];
 
 /** Outcome of a card play */
 export type CardOutcome = "win" | "lose" | "draw" | "critical_win" | "critical_lose";
@@ -95,7 +110,7 @@ export interface CardBattleStartRequest {
   /** Player max HP (default: 100) */
   playerHp?: number;
   /** Opponent difficulty: easy/medium/hard */
-  difficulty?: "easy" | "medium" | "hard";
+  difficulty?: BattleDifficulty;
   /** Number of cards in hand (default: 5) */
   handSize?: number;
 }

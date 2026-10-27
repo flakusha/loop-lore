@@ -12,8 +12,9 @@
  */
 
 import type { PluginManifest } from "../../../src/plugins/types";
-import { handleStart, handlePlay, handleActions } from "./routes";
+import { handleStart, handlePlay, handleActions, isDifficulty } from "./routes";
 import { initBattle, playBattleCard, cardToString } from "./engine";
+import { COMBAT_ACTIONS, DIFFICULTIES } from "./types";
 
 export const plugin: PluginManifest = {
   name: "card-battle",
@@ -60,7 +61,7 @@ export const plugin: PluginManifest = {
           },
           difficulty: {
             type: "string",
-            enum: ["easy", "medium", "hard"],
+            enum: [...DIFFICULTIES],
             description: "Opponent difficulty (for start)",
           },
           cardIndex: {
@@ -69,8 +70,8 @@ export const plugin: PluginManifest = {
           },
           combatAction: {
             type: "string",
-            enum: ["attack", "defend", "feint", "bluff", "charm"],
-            description: "Combat action to use (for play)",
+            enum: [...COMBAT_ACTIONS],
+            description: "Combat action to use (for play) — the HTTP body field is `action`",
           },
         },
         required: ["action"],
@@ -79,16 +80,19 @@ export const plugin: PluginManifest = {
         const action = params.action as string;
 
         if (action === "start") {
-          const difficulty = (params.difficulty as string) || "medium";
-          if (!["easy", "medium", "hard"].includes(difficulty)) {
-            return { content: "Invalid difficulty. Choose easy, medium, or hard.", isError: true };
+          const difficulty = typeof params.difficulty === "string" ? params.difficulty : "medium";
+          if (!isDifficulty(difficulty)) {
+            return {
+              content: `Invalid difficulty. Choose one of: ${DIFFICULTIES.join(", ")}.`,
+              isError: true,
+            };
           }
-          const state = initBattle(100, difficulty as "easy" | "medium" | "hard", 5);
+          const state = initBattle(100, difficulty, 5);
           const handStr = state.playerHand
             .map((c, i) => `[${i}] ${cardToString(c)}`)
             .join(", ");
           return {
-            content: `Battle started! HP: ${state.playerHp}/${state.playerMaxHp} vs ${state.opponentHp}/${state.opponentMaxHp}. Your hand: ${handStr}. Actions: attack, defend, feint, bluff, charm.`,
+            content: `Battle started! HP: ${state.playerHp}/${state.playerMaxHp} vs ${state.opponentHp}/${state.opponentMaxHp}. Your hand: ${handStr}. Actions: ${COMBAT_ACTIONS.join(", ")}.`,
             metadata: { state },
           };
         }
@@ -96,7 +100,13 @@ export const plugin: PluginManifest = {
         if (action === "play") {
           // For chat play, the AI manages state internally
           return {
-            content: "To play cards, use the /api/v1/card-battle/start and /api/v1/card-battle/play endpoints. Chat-based card battles require stateful session — coming soon.",
+            content:
+              "To play cards, use the /api/v1/card-battle/start and /api/v1/card-battle/play endpoints. " +
+              "POST /api/v1/card-battle/start with an optional body { playerHp?: 10-1000, difficulty?: " +
+              `${DIFFICULTIES.join("/")}, handSize?: 3-7 }. ` +
+              "POST /api/v1/card-battle/play with { cardIndex: number (0-based index in your hand), action: one of " +
+              `${COMBAT_ACTIONS.join("/")}, state: the state object from the previous response }. ` +
+              "Chat-based card battles require stateful session — coming soon.",
           };
         }
 

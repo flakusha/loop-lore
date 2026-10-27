@@ -11,9 +11,9 @@
  */
 
 import type { PluginManifest } from "../../../src/plugins/types";
-import { handleStart, handleAnswer, handleCategories } from "./routes";
-import { startSession, answerQuestion, getCurrentQuestion } from "./engine";
-import type { TriviaCategory, TriviaDifficulty } from "./types";
+import { handleStart, handleAnswer, handleCategories, isCategory, isDifficulty } from "./routes";
+import { startSession, answerQuestion, getCurrentQuestion, getCategories } from "./engine";
+import { TRIVIA_CATEGORIES, TRIVIA_DIFFICULTIES } from "./types";
 
 export const plugin: PluginManifest = {
   name: "trivia",
@@ -59,12 +59,12 @@ export const plugin: PluginManifest = {
           },
           category: {
             type: "string",
-            enum: ["general", "science", "history", "pop_culture", "geography", "technology"],
+            enum: [...TRIVIA_CATEGORIES],
             description: "Question category (for start)",
           },
           difficulty: {
             type: "string",
-            enum: ["easy", "medium", "hard"],
+            enum: [...TRIVIA_DIFFICULTIES],
             description: "Difficulty level (for start)",
           },
           answerIndex: {
@@ -78,24 +78,29 @@ export const plugin: PluginManifest = {
         const action = params.action as string;
 
         if (action === "categories") {
-          const cats = [
-            "general — General Knowledge",
-            "science — Science & Nature",
-            "history — History",
-            "pop_culture — Pop Culture",
-            "geography — Geography",
-            "technology — Technology",
-          ];
-          return { content: `Categories: ${cats.join(", ")}. Difficulties: easy, medium, hard.` };
+          const cats = getCategories().map((c) => `${c.id} — ${c.name}`);
+          return {
+            content: `Categories: ${cats.join(", ")}. Difficulties: ${TRIVIA_DIFFICULTIES.join(", ")}.`,
+          };
         }
 
         if (action === "start") {
+          const category = typeof params.category === "string" ? params.category : undefined;
+          const difficulty = typeof params.difficulty === "string" ? params.difficulty : undefined;
+          if (category !== undefined && !isCategory(category)) {
+            return {
+              content: `Invalid category. Choose one of: ${TRIVIA_CATEGORIES.join(", ")}.`,
+              isError: true,
+            };
+          }
+          if (difficulty !== undefined && !isDifficulty(difficulty)) {
+            return {
+              content: `Invalid difficulty. Choose one of: ${TRIVIA_DIFFICULTIES.join(", ")}.`,
+              isError: true,
+            };
+          }
           try {
-            const session = startSession(
-              params.category as TriviaCategory | undefined,
-              params.difficulty as TriviaDifficulty | undefined,
-              5,
-            );
+            const session = startSession(category, difficulty, 5);
 
             // Store session metadata in result
             const current = getCurrentQuestion(session);

@@ -11,6 +11,7 @@ import type {
   CardBattleRound,
   CombatCardAction,
   CardOutcome,
+  BattleDifficulty,
 } from "./types";
 import { initDeckState, drawCards, discardCards } from "./deck";
 import { ACTION_MODIFIERS, calculateDamage } from "./combat";
@@ -19,16 +20,16 @@ import { pickOpponentName, buildRoundNarrative } from "./narrative";
 // ── Battle State Machine ──────────────────────────────────────
 
 /** Difficulty → opponent hand size and card value boost */
-const DIFFICULTY_CONFIG = {
+const DIFFICULTY_CONFIG: Record<BattleDifficulty, { handSize: number; valueBoost: number }> = {
   easy:   { handSize: 3, valueBoost: 0 },
   medium: { handSize: 4, valueBoost: 1 },
   hard:   { handSize: 5, valueBoost: 2 },
-} as const;
+};
 
 /** Initialize a new card battle */
 export function initBattle(
   playerHp = 100,
-  difficulty: "easy" | "medium" | "hard" = "medium",
+  difficulty: BattleDifficulty = "medium",
   handSize = 5,
 ): CardBattleState {
   const deck = initDeckState();
