@@ -94,6 +94,15 @@ describe("v1 API enforcement (unversioned /api/* must redirect)", () => {
     expect(versioned.status,).not.toBe(308,);
   });
 
+  test("config-menu is versioned: bare /api/config-menu 308s to /api/v1 (S-7)", async () => {
+    // The route registers ONLY under /api/v1 (default prefix), so the
+    // unversioned path falls through to the catch-all version redirect —
+    // same convention as every other migrated surface.
+    const bare = await app.handle(new Request("http://localhost/api/config-menu",),);
+    expect(bare.status,).toBe(308,);
+    expect(bare.headers.get("location",),).toBe("/api/v1/config-menu",);
+  });
+
   test("/api/views/* stays unversioned (not redirected)", async () => {
     const res = await app.handle(new Request("http://localhost/api/views/no-such-view",),);
     expect(res.status,).not.toBe(308,);

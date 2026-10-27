@@ -901,6 +901,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-.md"
     }
   ],
   "src/api-governance/rate-limiting/policies.ts": [
@@ -923,6 +927,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-.md"
     },
     {
       "kind": "ticket",
@@ -46637,6 +46645,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-.md"
     }
   ],
   "src/routes/v1/content-surface.ts": [
@@ -46687,6 +46699,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-public-templates-routes.md"
+    }
+  ],
+  "src/routes/v1/governance-integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-.md"
     }
   ],
   "src/routes/v1/governance.test.ts": [
@@ -47513,6 +47531,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-.md"
     },
     {
       "kind": "ticket",

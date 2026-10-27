@@ -24,7 +24,7 @@
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Not Started | API Governance — Epic | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance.md](/.plan/epics/epic-api-governance.md) |
 | Not Started | API Governance — Quick Reference | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance-quickref.md](/.plan/epics/epic-api-governance-quickref.md) |
-| Not Started | API Governance Perimeter (2026-10-25 review round E-1) | High | Large | 0 | [epic-review-20261025-api-governance-perimeter.md](/.plan/epics/epic-review-20261025-api-governance-perimeter.md) |
+| In Progress | API Governance Perimeter (2026-10-25 review round E-1) | High | Large | 0 | [epic-review-20261025-api-governance-perimeter.md](/.plan/epics/epic-review-20261025-api-governance-perimeter.md) |
 | In Progress | API Routes | High | Medium | 0 | [epic-api-routes.md](/.plan/epics/epic-api-routes.md) |
 | Not Started | API-First Foundation | Medium | Medium | 0 | [epic-api-first-foundation.md](/.plan/epics/epic-api-first-foundation.md) |
 | Not Started | API/Library Distribution Mode | High | High | 0 | [epic-api-library-distribution.md](/.plan/epics/epic-api-library-distribution.md) |
@@ -480,7 +480,7 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 
 ### API Governance Perimeter (2026-10-25 review round E-1)
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** Large
 - **Type:** Infrastructure Epic

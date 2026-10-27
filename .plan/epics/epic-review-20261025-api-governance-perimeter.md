@@ -3,8 +3,8 @@
 
 # EPIC: API Governance Perimeter (2026-10-25 review round E-1)
 
-**Status:** Not Started
-**Status Note:** Filed from the 2026-10-25 post-merge review round
+**Status:** In Progress
+**Status Note:** Rate-limit items landed on epic-api-governance-perimeter: ai-action suffix rule (S-5) + dedicated outbound-fetch policy for link-preview (S-12) inserted above the /api/v1/chats prefix rule, which had also been shadowing the /story/step + /story/resume rules into dead code — rules reordered and now pinned by wiring tests through the real mounted surfaces (governance-integration + a new register-plugins wiring test). Guard scope aligned with the mount topology (S-6): registerPlugins wraps the root-mounted migrated surfaces (agency, location-explorer, game-state, story-orchestration, config-menu) in the same governanceGuard the v1 barrel uses. Export-sse (S-4): TTL+cap eviction pre-existed from the 2026-10-26 round; the zip buffer is now released on first download (one-shot delivery, discriminating test). Config-menu (S-7): FE+BE verified already on /api/v1; unversioned /api/config-menu pinned as 308 → /api/v1 in v1-enforcement.test. Remaining: finalize/merge (orchestrator).
 **Priority:** High
 **Effort:** Large
 **Type:** Infrastructure Epic
