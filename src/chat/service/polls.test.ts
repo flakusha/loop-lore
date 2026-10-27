@@ -361,6 +361,77 @@ describe("listChatPolls", () => {
     expect(result.polls[0]?.messageId,).toBe(messageId,);
   });
 
+  it("returns every poll of a chat in a bounded number of queries", async () => {
+    const { chatId, messageId, } = await seedWorld();
+    const messageIds = [messageId,];
+    for (const id of ["msg-2", "msg-3",]) {
+      await insertMessages(database, chatId, OWNER, "user", `Poll on ${id}`, { id, } as never,);
+      messageIds.push(id,);
+    }
+
+    const pollIds: string[] = [];
+    for (const [index, id,] of messageIds.entries()) {
+      const created = await createPoll({
+        database,
+        messageId: id,
+        userId: OWNER,
+        userRole: null,
+        question: `Question ${index}`,
+        options: [`${index}-a`, `${index}-b`,],
+        multi: false,
+      },);
+
+      expect(created.ok,).toBe(true,);
+      if (!created.ok) { return; }
+      pollIds.push(created.poll.id,);
+    }
+
+    const [firstId, secondId, thirdId,] = pollIds;
+    if (!firstId || !secondId || !thirdId) { throw new Error("expected three polls",); }
+
+    await database
+      .insertInto("poll_votes",)
+      .values([
+        { id: "v-1", poll_id: firstId, user_id: VOTER, option_idx: 0, },
+        { id: "v-2", poll_id: firstId, user_id: OTHER, option_idx: 0, },
+        { id: "v-3", poll_id: firstId, user_id: OWNER, option_idx: 1, },
+        { id: "v-4", poll_id: secondId, user_id: VOTER, option_idx: 1, },
+      ],)
+      .execute();
+
+    let queryCount = 0;
+    const countingDb = database.withPlugin({
+      transformQuery: (args,) => {
+        queryCount++;
+        return args.node;
+      },
+      transformResult: (args,) => args.result,
+    },);
+
+    const result = await listChatPolls({ database: countingDb, chatId, userId: VOTER, userRole: null, },);
+    expect(result.ok,).toBe(true,);
+    if (!result.ok) { return; }
+    expect(result.polls,).toHaveLength(3,);
+    expect(result.polls[0]?.options,).toEqual(["0-a", "0-b",],);
+    expect(result.polls[0]?.tallies,).toEqual([{ optionIdx: 0, count: 2, }, { optionIdx: 1, count: 1, },],);
+    expect(result.polls[0]?.viewerOptionIdxs,).toEqual([0,],);
+    expect(result.polls[1]?.tallies,).toEqual([{ optionIdx: 1, count: 1, },],);
+    expect(result.polls[1]?.viewerOptionIdxs,).toEqual([1,],);
+    expect(result.polls[2]?.tallies,).toEqual([],);
+    expect(queryCount,).toBeLessThanOrEqual(5,);
+
+    // The query count must not grow with the number of polls: the per-poll
+    // hydrate loop issued two queries per poll.
+    const threePollQueries = queryCount;
+    queryCount = 0;
+    await database.deleteFrom("poll_votes",).where("poll_id", "in", [secondId, thirdId,],).execute();
+    await database.deleteFrom("message_polls",).where("id", "in", [secondId, thirdId,],).execute();
+
+    const single = await listChatPolls({ database: countingDb, chatId, userId: VOTER, userRole: null, },);
+    expect(single.ok,).toBe(true,);
+    expect(queryCount,).toBe(threePollQueries,);
+  });
+
   it("denies non-participants", async () => {
     const { chatId, messageId, } = await seedWorld();
     await createPoll({
