@@ -3,6 +3,12 @@
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { ageGateConfig, initAgeGate, } from "../age-gate/controller";
+import {
+  configureAssistantQuota,
+  enforceQuota,
+  QuotaExceededError,
+} from "../assistant/quota/engine";
+import { quotaStorageOptions, } from "../assistant/quota/storage";
 import { createLogger, getLogger, type LogLevel, setGlobalLogger, } from "../logger";
 import {
   getRuntimeNsfwConfig,
@@ -22,6 +28,7 @@ import { applyHotConfig, } from "./hot-apply-consumers";
 import { createConfigSchema, } from "./schema-class";
 import type { Config, } from "./schema/config";
 import { AGE_GATE_DEFAULTS, } from "./sections/age-gate";
+import { ASSISTANT_QUOTA_DEFAULTS, } from "./sections/assistant";
 
 function makeConfig(): Config {
   return structuredClone(createConfigSchema().defaults,) as Config;
@@ -43,6 +50,13 @@ afterEach(() => {
   // leaves the gate enabled for every later file in the worker, and their
   // POST /api/chats requests are rejected with 403 (age gate not passed).
   initAgeGate({ ...AGE_GATE_DEFAULTS, },);
+  // Same for assistant.quota*: re-seed the quota window so a later file does
+  // not inherit this file's 7-unit test limit.
+  configureAssistantQuota({
+    windowMs: ASSISTANT_QUOTA_DEFAULTS.quotaWindowMs,
+    limitPerWindow: ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow,
+  },);
+
   getLogger().setLevel("error",);
 },);
 
@@ -182,6 +196,18 @@ describe("applyHotConfig", () => {
     config.nsfw.allowNsfw = false;
     applyConfigChange("nsfw", config,);
     expect(getRuntimeNsfwConfig().allowNsfw,).toBe(false,);
+  });
+
+  test("applies assistant quota limits live", () => {
+    const config = makeConfig();
+    config.assistant.quotaWindowMs = 60_000;
+    config.assistant.quotaLimitPerWindow = 7;
+    applyConfigChange("assistant", config,);
+
+    // The runtime store the commands read through enforceQuota now enforces
+    // the configured limit: 8 units > 7-unit window → denial.
+    expect(() => enforceQuota("quota-cfg-user", "adapt",)).toThrow(QuotaExceededError,);
+    expect(quotaStorageOptions(),).toEqual({ windowMs: 60_000, limitPerWindow: 7, },);
   });
 });
 
