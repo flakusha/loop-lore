@@ -11,13 +11,16 @@
  * - SUR-5: the governance limiter was charged once per dispatch attempt, so
  *   every `/api/v1/*` request consumed two tokens instead of one.
  *
- * Resource contract: this file owns the `handler-fixture` plugin registration
- * (added in `beforeAll`, removed in `afterAll`) and its own test database. The
- * limiter probe uses a user id no other test uses, so it never shares a rate
- * limit window with another file. The tests do not depend on each other's
- * order: every assertion reads the response it just produced.
+ * Resource contract: the plugin registry is process-wide, so this file
+ * registers its `handler-fixture` plugin before every test (a sibling suite may
+ * reset the registry between files) and unregisters ONLY its own plugin
+ * afterwards (never `unregisterAll`, which would wipe a sibling suite's
+ * routes). The limiter probe uses a user id no other test uses, and a fresh
+ * one per run, so it never shares a rate-limit window with another file. The
+ * tests do not depend on each other's order: every assertion reads the
+ * response it just produced.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
@@ -33,6 +36,8 @@ import { handleApiRequest, } from "./handler";
 
 /** Registered with its own `/api` prefix — the shape every shipped plugin uses. */
 const API_PREFIXED_PATH = "/api/handler-fixture/thing";
+/** POST route of the same plugin (own path, so the two never share a key). */
+const POST_PATH = "/api/handler-fixture/post";
 /** Registered without the prefix — the shape the auth-wiring fixture uses. */
 const BARE_PATH = "/handler-fixture/bare";
 
@@ -41,12 +46,14 @@ let config: Config;
 let app: ReturnType<typeof createApp>;
 let calls: string[] = [];
 
-beforeAll(async () => {
-  ({ db, } = await createTestDb());
-  config = loadConfig();
-  config.assets.uploadDir = ".tmp/";
-  config.auth.required = false;
-
+/**
+ * Register the fixture plugin and its routes.
+ *
+ * Re-registered before every test: the registry is process-wide and sibling
+ * suites reset it, which would otherwise turn these assertions into 404s.
+ */
+function registerFixture(): void {
+  registry.unregister("handler-fixture",);
   registry.register({
     manifest: { name: "handler-fixture", version: "1", description: "d", author: "t", },
     origin: "local",
@@ -64,7 +71,7 @@ beforeAll(async () => {
     },
     {
       method: "POST",
-      path: API_PREFIXED_PATH,
+      path: POST_PATH,
       handler: async (request,) => {
         const body = await request.text();
         calls.push(`post:${body}`,);
@@ -80,6 +87,13 @@ beforeAll(async () => {
       },
     },
   ],);
+}
+
+beforeAll(async () => {
+  ({ db, } = await createTestDb());
+  config = loadConfig();
+  config.assets.uploadDir = ".tmp/";
+  config.auth.required = false;
 
   app = createApp({
     database: db,
@@ -89,8 +103,13 @@ beforeAll(async () => {
   },);
 },);
 
+beforeEach(() => {
+  calls = [];
+  registerFixture();
+},);
+
 afterAll(async () => {
-  registry.unregisterAll();
+  registry.unregister("handler-fixture",);
   await db.destroy();
 },);
 
@@ -118,7 +137,7 @@ describe("plugin route resolution (SUR-3)", () => {
 
   test("the fallback re-dispatches the request body when it is still readable", async () => {
     const res = await handleApiRequest({
-      request: new Request("http://localhost/api/v1/handler-fixture/thing", {
+      request: new Request("http://localhost/api/v1/handler-fixture/post", {
         method: "POST",
         body: JSON.stringify({ hello: "world", },),
         headers: { "content-type": "application/json", },
@@ -149,7 +168,7 @@ describe("governance charging (SUR-5)", () => {
   test("a versioned request that matches no route costs exactly one token", async () => {
     const path = "/api/v1/handler-fixture/missing";
     const policy = policyForRoute(path,);
-    const userId = "handler-limiter-user";
+    const userId = `handler-limiter-user-${crypto.randomUUID()}`;
     const key = `${userId}:${policy.name}`;
     const before = governanceRateLimiter.peek(key, policy,).remaining;
 
