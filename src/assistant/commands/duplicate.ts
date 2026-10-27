@@ -18,6 +18,7 @@
 
 import { ENTITY_ADAPTERS, } from "../adapter/adapters";
 import { DUPLICATE_ENTITY_KINDS, } from "../adapter/entity";
+import { quotaGate, } from "../quota/gate";
 import { formatPatch, parseEntityPatch, type PatchSpec, } from "./entity-patch";
 import {
   ITEM_ADD_SPEC,
@@ -44,6 +45,9 @@ function overrideSpec(kind: string,): PatchSpec {
 }
 
 registerCommand("duplicate", async (args, ctx,): Promise<CommandResult> => {
+  const quota = quotaGate(ctx.userId ?? null, "duplicate",);
+  if (quota) { return quota; }
+
   const [kind, sourceId,] = args;
   if (!kind || !sourceId) {
     return {
