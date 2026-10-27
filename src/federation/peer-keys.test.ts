@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { beforeAll, expect, test, } from "bun:test";
+import { afterEach, beforeAll, expect, test, } from "bun:test";
 import { decryptBytes, } from "../crypto/actor-key-bytes";
 import { initSmk, } from "../crypto/smk";
-import { createTestDb, } from "../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import { safeFromUint8Array, safeToBase64, } from "../utils/safe-buffer";
 import { pskCipher, } from "./cipher";
@@ -20,6 +20,17 @@ import {
 } from "./peer-keys";
 
 const SMK_HEX = "b".repeat(64,);
+
+// Resource contract: every test in this file owns its own in-memory database
+// and releases it in afterEach, so a failed assertion cannot leak the
+// connection into the rest of the run.
+let fixture: TestDb | undefined;
+
+afterEach(async () => {
+  if (fixture === undefined) { return; }
+  await destroyTestDb(fixture,);
+  fixture = undefined;
+},);
 
 if (ISOLATED) {
   beforeAll(async () => {
@@ -50,7 +61,8 @@ async function storedKey(serverKey: CryptoKey, encrypted: string,): Promise<stri
 
 describeOrSkip("per-sender inbound keys", () => {
   test("provision is stable; rotation keeps a grace key", async () => {
-    const { db, } = await createTestDb();
+    fixture = await createTestDb();
+    const { db, } = fixture;
     const key = await smk();
     const first = await getOrCreateInboundKey(db, key, "https://a.example",);
     expect(first,).toHaveLength(44,);
@@ -88,7 +100,8 @@ describeOrSkip("per-sender inbound keys", () => {
   });
 
   test("concurrent rotations keep both keys", async () => {
-    const { db, } = await createTestDb();
+    fixture = await createTestDb();
+    const { db, } = fixture;
     const key = await smk();
     const origin = "https://race.example";
     const original = await getOrCreateInboundKey(db, key, origin,);
@@ -118,7 +131,8 @@ describeOrSkip("per-sender inbound keys", () => {
   });
 
   test("ciphersForSender falls back to PSK without SMK or keys", async () => {
-    const { db, } = await createTestDb();
+    fixture = await createTestDb();
+    const { db, } = fixture;
     const key = await smk();
     const psk = pskCipher("fallback",);
     expect(await ciphersForSender(db, "https://new.example", psk, null,),).toEqual([psk,],);
@@ -129,7 +143,8 @@ describeOrSkip("per-sender inbound keys", () => {
   });
 
   test("revoke drops current + grace keys; unknown peer is a no-op", async () => {
-    const { db, } = await createTestDb();
+    fixture = await createTestDb();
+    const { db, } = fixture;
     const key = await smk();
     await getOrCreateInboundKey(db, key, "https://a.example",);
     await rotateInboundKey(db, key, "https://a.example",);
@@ -142,7 +157,8 @@ describeOrSkip("per-sender inbound keys", () => {
   });
 
   test("invalid origins throw", async () => {
-    const { db, } = await createTestDb();
+    fixture = await createTestDb();
+    const { db, } = fixture;
     const key = await smk();
     await expect(getOrCreateInboundKey(db, key, "not a url",),).rejects.toThrow(
       "invalid sender origin",

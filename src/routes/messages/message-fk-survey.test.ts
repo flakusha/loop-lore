@@ -1,16 +1,28 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { MessageRole, } from "../../db/enums";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { structuralReferences, } from "./message-fk-survey";
 
+// Resource contract: each test owns its own in-memory database and releases
+// it in afterEach, so this file shares no handle with any other suite and a
+// failed assertion cannot leak the connection into the rest of the run.
+let fixture: TestDb | undefined;
+
+afterEach(async () => {
+  if (fixture === undefined) { return; }
+  await destroyTestDb(fixture,);
+  fixture = undefined;
+},);
+
 describe("message FK survey", () => {
   test("blocks a candidate that a surviving row still references", async () => {
-    const { db, } = await createTestDb();
+    fixture = await createTestDb();
+    const { db, } = fixture;
     const owner = uid();
     await insertUsers(db, `user-${owner}`, "Survey Owner", { id: owner, } as never,);
     await db
