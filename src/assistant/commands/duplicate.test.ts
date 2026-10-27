@@ -95,7 +95,7 @@ describe("/duplicate", () => {
     locationId = `loc-${crypto.randomUUID()}`;
     await db
       .insertInto("locations",)
-      .values({ id: locationId, world_id: worldId, name: "Tide Gate", kind: "urban", mobility_mode: "static", },)
+      .values({ id: locationId, world_id: worldId, name: "Tide Gate", kind: "building", mobility_mode: "static", },)
       .execute();
 
     itemId = `item-${crypto.randomUUID()}`;
