@@ -302,6 +302,55 @@ describe("archivingRoutes coverage", () => {
     expect(parsed.purged,).toBe(0,);
   });
 
+  test("purge keeps messages referenced by tables the old FK survey missed", async () => {
+    const app = makeApp(db, owner, "user",);
+    const day = 24 * 60 * 60 * 1000;
+    const referencedId = uid();
+    const plainId = uid();
+    await insertMessages(db, chatId, owner, MessageRole.User, "referenced", { id: referencedId, } as never,);
+    await insertMessages(db, chatId, owner, MessageRole.User, "plain", { id: plainId, } as never,);
+    const expired = new Date(Date.now() - 91 * day,).toISOString();
+    await db.updateTable("messages",).set({ archived_at: expired, },).where("id", "=", referencedId,).execute();
+    await db.updateTable("messages",).set({ archived_at: expired, },).where("id", "=", plainId,).execute();
+
+    // generation_attempts.parent_message_id and whitenotes.message_id
+    // reference messages.id with NO ACTION: deleting the message aborts the
+    // whole purge with a raw SQLite error.
+    await db.insertInto("generation_attempts",).values({
+      id: uid(),
+      chat_id: chatId,
+      parent_message_id: referencedId,
+      actor_id: owner,
+      idempotency_key: uid(),
+      model_id: "test-model",
+      provider: "test-provider",
+    },).execute();
+
+    await db.insertInto("whitenotes",).values({
+      id: uid(),
+      chat_id: chatId,
+      type: "note",
+      content: "secret",
+      created_at: new Date().toISOString(),
+      message_id: referencedId,
+    },).execute();
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
+    );
+
+    // The purge must complete - no raw SQLite 500.
+    expect(res.status,).toBe(200,);
+    const parsed = (await res.json()) as { ok: boolean; purged: number };
+    expect(parsed.ok,).toBe(true,);
+    // The referenced message is structural: it stays archived.
+    const kept = await db.selectFrom("messages",).select("id",).where("id", "=", referencedId,).executeTakeFirst();
+    expect(kept?.id,).toBe(referencedId,);
+    // The unreferenced one is purged.
+    const gone = await db.selectFrom("messages",).select("id",).where("id", "=", plainId,).executeTakeFirst();
+    expect(gone,).toBeUndefined();
+  });
+
   test("purge 404 for missing chat and non-owner", async () => {
     const app = makeApp(db, owner, "user",);
     const missing = await app.handle(
