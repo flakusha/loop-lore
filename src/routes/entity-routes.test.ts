@@ -318,6 +318,38 @@ describe("createEntityRoutes", () => {
     expect(res.status,).toBe(204,);
   });
 
+  // ── GET pagination bounds ───────────────────────────────────
+
+  test("GET rejects a negative page size with 400", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${actorId}/notes?pageSize=-1`,),
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("GET rejects a non-numeric page size with 400", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${actorId}/notes?pageSize=abc`,),
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("GET clamps an oversized page size and still paginates", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${actorId}/notes?page=1&pageSize=999999`,),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { pagination: { page: number; pageSize: number } };
+    expect(body.pagination.page,).toBe(1,);
+    expect(body.pagination.pageSize,).toBe(100,);
+  });
+
   // ── Ownership / Auth ────────────────────────────────────────
 
   test("all endpoints return 404 for non-owner user", async () => {

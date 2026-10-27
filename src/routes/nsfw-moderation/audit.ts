@@ -7,7 +7,7 @@
 import { Elysia, } from "elysia";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, } from "../http-utils";
+import { jsonError, jsonResponse, parsePaginationParams, } from "../http-utils";
 import { auditQuery, requireAdminUsers, requireModerationReview, userIdParam, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
@@ -25,14 +25,23 @@ export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
         const auth = requireModerationReview(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
-          const limit = Number(ctx.query.limit ?? 100,);
-          const offset = Number(ctx.query.offset ?? 0,);
+          const pagination = parsePaginationParams(
+            { size: ctx.query.limit, offset: ctx.query.offset, },
+            { defaultPageSize: 100, },
+          );
+
+          if (pagination instanceof Response) { return pagination; }
+          const { pageSize: limit, offset, } = pagination;
           const actions = await svc.getAuditLog(ctx.params.userId, { limit, offset, },);
           return jsonResponse({ ...SuccessResponse, data: actions, },);
         } catch (error: unknown) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
         }
-      }, { params: userIdParam, query: auditQuery, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
+      }, {
+        params: userIdParam,
+        query: auditQuery,
+        response: { 200: SuccessResponse, 400: ErrorResponse, 500: ErrorResponse, },
+      },)
       .get(`${prefix}/nsfw/moderation/export/:userId`, async (ctx: any,) => {
         // PII surface: require the elevated `admin.users` capability.
         const auth = requireAdminUsers(ctx,);

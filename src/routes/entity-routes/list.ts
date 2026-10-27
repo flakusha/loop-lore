@@ -4,9 +4,8 @@
 import { Elysia, } from "elysia";
 import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
-import { parseIntOr, } from "../../utils/parse-number";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { HttpStatus, jsonError, jsonPaginated, } from "../http-utils";
+import { HttpStatus, jsonError, jsonPaginated, parsePaginationParams, } from "../http-utils";
 import { checkOwnership, entityPaths, } from "./context";
 import { applyResponseTransforms, } from "./helpers";
 import type { EntityConfig, } from "./types";
@@ -35,9 +34,13 @@ export function listRoutes(config: EntityConfig, opts: { database: Db; config: C
         return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound, },);
       }
 
-      const page = parseIntOr(searchParams.get("page",) ?? "1", 1,);
-      const pageSize = parseIntOr(searchParams.get("pageSize",) ?? "50", 50,);
-      const offset = (page - 1) * pageSize;
+      const pagination = parsePaginationParams(
+        { page: searchParams.get("page",), size: searchParams.get("pageSize",), },
+        { defaultPageSize: 50, },
+      );
+
+      if (pagination instanceof Response) { return pagination; }
+      const { page, pageSize, offset, } = pagination;
 
       const countQuery = db
         .selectFrom(config.tableName,)
@@ -69,6 +72,7 @@ export function listRoutes(config: EntityConfig, opts: { database: Db; config: C
     }, {
       response: {
         200: SuccessResponse,
+        400: ErrorResponse,
         401: ErrorResponse,
         404: ErrorResponse,
       },
