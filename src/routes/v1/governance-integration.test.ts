@@ -33,9 +33,16 @@ import type { Kysely, } from "kysely";
 import { governanceRateLimiter, } from "../../api-governance/rate-limiting/instance";
 import { metrics, } from "../../api-governance/telemetry/collector";
 import type { AsyncStore, } from "../../async/store";
+import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
+import {
+  insertActors,
+  insertChatParticipants,
+  insertChats,
+  insertMessages,
+} from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { v1Routes, } from "./index";
 
@@ -171,5 +178,76 @@ describe("v1 governance guard is mounted by the real route tree", () => {
     expect(throttled?.status,).toBe(429,);
     expect(throttled?.headers.get("x-ratelimit-hit",),).toBe("1",);
     expect(throttled?.headers.get("ratelimit-remaining",),).toBe("0",);
+  });
+
+  test("ai-action is throttled by the generation policy through the real barrel (S-5)", async () => {
+    // Seed a real chat + message so the route HANDLER answers (503 — no aux
+    // model configured in this bare config): the first response proves the
+    // request reaches the mounted surface, so any later 429 is the guard.
+    const app = createV1App(db, userId,);
+    await insertActors(db, "Gov Actor", {
+      id: userId,
+      actor_type: "user",
+      user_id: userId,
+      owner_id: userId,
+      agent_type: "none",
+      settings: "{}",
+      row_version: 0,
+    } as never,);
+
+    await insertChats(db, "Gov Ai Action Chat", userId, {},);
+    const chatId =
+      (await db.selectFrom("chats",).select("id",).where("name", "=", "Gov Ai Action Chat",).executeTakeFirst())!.id;
+
+    await insertChatParticipants(db, chatId, userId, {},);
+    const messageId = uid();
+    await insertMessages(db, chatId, userId, MessageRole.User, "governance probe", { id: messageId, },);
+
+    const post = (): Request =>
+      new Request(`http://localhost/api/v1/chats/${chatId}/messages/${messageId}/ai-action`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ action: "summarize", },),
+      },);
+
+    const statuses: number[] = [];
+    for (let i = 0; i < 8; i++) {
+      statuses.push((await app.handle(post(),)).status,);
+    }
+
+    expect(statuses[0],).toBe(503,);
+    // generationPolicy: 20/min with burst 5 — a fast loop drains the burst
+    // bucket after 5 requests and the 6th is refused. Under the pre-fix
+    // classification (chatPolicy: 300/min, burst 50) none of these 8 would
+    // ever 429, so the boundary is the discriminating assertion.
+    expect(statuses.slice(5,).every((s,) => s === 429),).toBe(true,);
+  });
+
+  test("link-preview is throttled by the outbound-fetch policy through the real barrel (S-12)", async () => {
+    const app = createV1App(db, userId,);
+    await insertChats(db, "Gov Link Preview Chat", userId, {},);
+    const chatId =
+      (await db.selectFrom("chats",).select("id",).where("name", "=", "Gov Link Preview Chat",).executeTakeFirst())!.id;
+
+    await insertChatParticipants(db, chatId, userId, {},);
+
+    // The loopback URL is rejected by the service's SSRF guard — 400 with no
+    // network I/O, deterministic, and proof the route (not a fall-through)
+    // answered. outboundFetchPolicy allows 30/min with burst 10, so request
+    // 11 is the first refusal; under the pre-fix chatPolicy (burst 50) it
+    // would have been another 400.
+    const get = (): Request =>
+      new Request(`http://localhost/api/v1/chats/${chatId}/link-preview?url=http%3A%2F%2F127.0.0.1%2Fx`,);
+
+    const statuses: number[] = [];
+    let last: Response | undefined;
+    for (let i = 0; i < 12; i++) {
+      last = await app.handle(get(),);
+      statuses.push(last.status,);
+    }
+
+    expect(statuses[0],).toBe(400,);
+    expect(statuses.slice(10,).every((s,) => s === 429),).toBe(true,);
+    expect(last?.headers.get("x-ratelimit-hit",),).toBe("1",);
   });
 });
