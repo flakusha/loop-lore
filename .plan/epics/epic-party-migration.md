@@ -151,7 +151,7 @@ interface BoundNpcRetinue {
 - **Currency split reads sharedCurrency then writes per-member shares (check-then-act money path)** → db.transaction around the split (§Party)
 - **Planned join/leave/kick writes mutate party + party_member rows without a transaction** → db.transaction (§Design)
 - **World tick and chat transfer both advance the same party, so concurrent ticks double travel** → optimistic concurrency (version column) on party_state (§Party)
-- **Loot/combat consumption uses a stale item quantity read before the write** → conditional UPDATE … WHERE quantity >= n (`BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory`)
+- **Loot/combat consumption uses a stale item quantity read before the write** → re-read the stock inside the writing transaction, then write conditionally on the observed quantity (`WHERE quantity = current`) (`BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory`)
 
 ## Open Questions
 
