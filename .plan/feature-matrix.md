@@ -119,7 +119,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | asset-persistence | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | asset-search | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | assets | 41 | 8 | 2 | 6 | 3 | 0 | 22 |
-| assistant | 57 | 8 | 5 | 18 | 3 | 0 | 23 |
+| assistant | 57 | 10 | 5 | 16 | 3 | 0 | 23 |
 | assistant-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | assistant-flows | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | ast | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -509,7 +509,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | dynamic | 3 | 0 | 0 | 3 | 0 | 0 | 0 |
 | dynamic-image | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | dynamic-selection | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| e2e | 33 | 12 | 1 | 18 | 0 | 0 | 2 |
+| e2e | 33 | 13 | 1 | 17 | 0 | 0 | 2 |
 | e2e-blocking | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | e2ee | 3 | 0 | 1 | 1 | 0 | 0 | 1 |
 | ecology | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
@@ -547,7 +547,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | endpoints | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | endurance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | enemies | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| enforcement | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
+| enforcement | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | engagement | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | engine | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | enhance | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -557,7 +557,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | enterprise | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | entities | 3 | 1 | 0 | 1 | 1 | 0 | 0 |
 | entity | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
-| entity-access | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
+| entity-access | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | entity-creation | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | entity-generation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | enum-consolidation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1200,7 +1200,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | quic | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | quick-emojis | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | quick-replies | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| quota | 5 | 1 | 0 | 3 | 1 | 0 | 0 |
+| quota | 5 | 2 | 0 | 2 | 1 | 0 | 0 |
 | quotas | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | race | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
 | radicle | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -1212,7 +1212,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | rate-limit | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | rate-limiting | 9 | 2 | 0 | 0 | 0 | 0 | 7 |
 | rating | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
-| rationing | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| rationing | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | rbac | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | react | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | react-native | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1515,7 +1515,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | test-infra | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | testing | 35 | 7 | 2 | 15 | 0 | 0 | 11 |
 | testing-qa | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| tests | 7 | 4 | 0 | 2 | 0 | 0 | 1 |
+| tests | 7 | 5 | 0 | 1 | 0 | 0 | 1 |
 | text-effects | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
 | text-to-vn | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | texture | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1741,7 +1741,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | epic-asset-platform-capabilities | 30 | 9 | 0 | 12 | 0 | 0 | 9 |
 | epic-asset-transform-metadata | 11 | 1 | 0 | 9 | 0 | 0 | 1 |
 | epic-assistant-creative-studio-workflows | 12 | 2 | 0 | 0 | 10 | 0 | 0 |
-| epic-assistant-entity-access | 16 | 2 | 0 | 14 | 0 | 0 | 0 |
+| epic-assistant-entity-access | 16 | 4 | 0 | 12 | 0 | 0 | 0 |
 | epic-assistant-entity-access, epic-rag-context-sources | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-assistant-generation-extensions | 12 | 2 | 0 | 6 | 0 | 0 | 4 |
 | epic-assistant-generation-extensions, epic-assistant-gm-flows, epic-image-edit | 1 | 1 | 0 | 0 | 0 | 0 | 0 |

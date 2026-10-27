@@ -27408,7 +27408,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-assistant-entity-access-e2e.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "assistant",
       "tests",
@@ -27445,7 +27445,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "assistant",
       "quota",
