@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Scope:** R2 epic wrap-up: rag-preview/decompose, duplicate generalization, /adapt, quota engine, tests
 **Priority:** High
 **Effort:** Medium
 **Type:** Task
