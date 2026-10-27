@@ -21,7 +21,7 @@ Grounded state (src/):
 - ModelRole enum (src/db/enums-core/flags.ts) already has moderation/embeddings/summarization values, but VALID_ROLES (src/admin/model-roles.ts) exposes only main/auxiliary/captioning. model_role_overrides.role is plain-text PK (001_init.ts) — no CHECK constraint, so a new role value needs NO migration.
 
 Laya facts (huggingface.co/convaiinnovations/laya, Apache-2.0):
-- 421M ModernBERT-large + decision head, non-autoregressive: typed choice/score/noul answers, calibrated probs, single forward pass ~33ms GPU / 193-464ms CPU, 100+ langs via mmBERT subfolder (322M, ctx 1024).
+- 421M ModernBERT-large + decision head, non-autoregressive: typed choice/score/noul answers, temperature-scaled probs (upstream: not guaranteed calibrated — cutoffs belong per model and per quantization), single forward pass ~33ms GPU / 193-464ms CPU, 100+ langs via mmBERT subfolder (322M, ctx 1024).
 - Router(preload=True) required in prod: lazy max_loaded=1 costs 7-10s rebuild per language switch.
 - Honest limits: base checkpoints near-chance zero-shot on specialised benchmarks (0.362 vs 0.461 majority baseline); >20 options degrades (Banking77 0.425 vs Jev 0.870, shared head_max_len budget); raw ECE 0.213 pre-temperature. Capability comes from fine-tuning (typed-decisions ckpt 0.766, notebook provided).
 - Jev: closed API, $0.042/1M tokens, 236-276ms p50, better at 50+ options out-of-box.
