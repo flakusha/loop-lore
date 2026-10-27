@@ -114,6 +114,8 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **Concurrent inbound-key rotations dropped one of the two keys** — `rotateInboundKey` (`src/federation/peer-keys.ts`) read the stored key and then wrote the new one, so two concurrent rotations both read the same old key and the second write overwrote the first: the grace key stayed on the pre-rotation key and one issued key was never stored. The rotation is now a single conditional write (`INSERT ... ON CONFLICT DO UPDATE` — the current key becomes the grace key, the fresh key becomes the current one), so no rotation is lost. A transaction cannot buy the same guarantee here: the dialect drives a single `bun:sqlite` connection, and a second `BEGIN` on it fails with "cannot start a transaction within a transaction".
 
+- **A blog thread could be split across two comment pages** — `listCommentsThreaded` (`src/rpg/blog/service/comments.ts`) paged the flat comment list and then built the reply tree from that page alone, and the flat ordering interleaves a root with its replies: a thread that straddled a page boundary came back with its root on one page and its replies on another (or on no page at all). The list now pages over the root comments only and fetches every descendant of those roots in one recursive query, so every comment is returned exactly once, with its replies. The response shape is unchanged (`count` is the number of roots on the page).
+
 ### Removed
 
 - **Dead `src/actors/` layer** — deleted the directory: 11 files with zero importers, surfaced by the widened knip scan, including a third parallel actor-items implementation (`src/actors/actor-items.ts`) alongside `src/services/actor-items.ts` and `src/services/actor-items/`.
