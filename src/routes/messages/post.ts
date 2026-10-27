@@ -16,11 +16,13 @@ import {
   getSmk,
   isEncryptedPayload,
   isEncryptionEnabled,
+  isLiveChatKeyId,
 } from "../../crypto";
 import type { DB, } from "../../db/schema";
 import { extractMentionedActorIds, } from "../../group-chat/mention-parser";
 import { notifyMention, } from "../../notifications/service";
 import { safeJsonStringify, uid, } from "../../utils";
+import { BadRequestError, } from "../http-utils";
 import { verifyAttachmentsOwned, } from "./attachment-ownership";
 import { log, } from "./helpers";
 
@@ -53,6 +55,15 @@ export async function prepareContentStorage(
 ): Promise<StoredContent> {
   if (isEncryptedPayload(plaintext,)) {
     const storedKeyId = extractKeyIdFromPayload(plaintext,);
+    // The key id in the envelope is CLIENT supplied. It must name a LIVE key
+    // of THIS chat: an unvalidated id reached `messages.key_id`, and a row
+    // nobody can decrypt wedged `rotateKeyOnLeave` forever (BE-1).
+    if (!(await isLiveChatKeyId(database, chatId, storedKeyId,))) {
+      throw new BadRequestError(
+        "Encrypted content names a key that is not a live key of this chat",
+      );
+    }
+
     log().debug("Client pre-encrypted content detected", { keyId: storedKeyId, },);
     return { storedContent: plaintext, contentEncoding: "identity", storedKeyId, storedPlaintext: null, };
   }

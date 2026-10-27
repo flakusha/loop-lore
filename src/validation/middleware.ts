@@ -8,7 +8,7 @@
  */
 
 import { getLogger, } from "../logger";
-import { API_VERSION, ErrorCode, ForbiddenError, NotFoundError, } from "../routes/http-utils";
+import { API_VERSION, BadRequestError, ErrorCode, ForbiddenError, NotFoundError, } from "../routes/http-utils";
 
 /**
  * Elysia `onError` handler that standardises validation and service-layer error responses.
@@ -97,6 +97,11 @@ export function onValidationError(
   if (err instanceof ForbiddenError) {
     set.status = 403;
     return { error: err.message, code: "FORBIDDEN", meta: { api_version: API_VERSION, }, };
+  }
+
+  if (err instanceof BadRequestError) {
+    set.status = 400;
+    return { error: err.message, code: ErrorCode.BadRequest, meta: { api_version: API_VERSION, }, };
   }
 
   // ── Unknown errors → 500 ────────────────────────────────
