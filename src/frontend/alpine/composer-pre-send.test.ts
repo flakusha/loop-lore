@@ -560,14 +560,29 @@ describe("composer preview", () => {
     }
   });
 
-  test("composerPreviewHtml falls back to raw text without a sanitizer", () => {
+  test("composerPreviewHtml escapes the source text without a sanitizer", () => {
     clearPreviewSanitizer();
     const composer = withMessageInput(
       createComposerPreSend({ storage: makeStorage(), },),
       "plain <b>text</b>",
     );
 
-    expect(composer.composerPreviewHtml(),).toBe("plain <b>text</b>",);
+    const html = composer.composerPreviewHtml();
+    expect(html,).toBe("plain &lt;b&gt;text&lt;/b&gt;",);
+    // The preview is bound with x-html: the fallback must never emit markup.
+    expect(html,).not.toContain("<b>",);
+  });
+
+  test("composerPreviewHtml escapes quotes in the no-sanitizer fallback", () => {
+    clearPreviewSanitizer();
+    const composer = withMessageInput(
+      createComposerPreSend({ storage: makeStorage(), },),
+      'x" onerror="alert(1)',
+    );
+
+    const html = composer.composerPreviewHtml();
+    expect(html,).not.toContain('"',);
+    expect(html,).toBe("x&quot; onerror=&quot;alert(1)",);
   });
 
   test("handlePreviewKeydown toggles only on Ctrl+Shift+P", () => {
