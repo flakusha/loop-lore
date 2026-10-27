@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { jsonError, } from "./responses";
+import { safeParseInt, } from "../../utils/parse-number";
+import { badRequestResponse, jsonError, } from "./responses";
 import { HttpStatus, } from "./status";
 
 // ── Shared route utilities ─────────────────────────────────────
@@ -42,6 +43,101 @@ export function parsePagination(searchParams: URLSearchParams,): { page: number;
   const page = Number.isFinite(rawPage,) && rawPage >= 1 ? Math.floor(rawPage,) : 1;
   const pageSize = Number.isFinite(rawSize,) ? Math.min(Math.max(1, Math.floor(rawSize,),), 200,) : 50;
   return { page, pageSize, };
+}
+
+/** Largest page size a list endpoint serves. */
+export const MAX_PAGE_SIZE = 100;
+
+/** Raw pagination values as they arrive on a request's query string. */
+export interface PaginationInput {
+  /** Raw page number (1-based). */
+  page?: string | number | null | undefined;
+  /** Raw page size — the `limit` of limit/offset endpoints. */
+  size?: string | number | null | undefined;
+  /** Raw row offset; wins over the page-derived offset when present. */
+  offset?: string | number | null | undefined;
+}
+
+/** Options for {@link parsePaginationParams}. */
+export interface PaginationOptions {
+  /** Page size used when `size` is absent. */
+  defaultPageSize?: number;
+  /** Page size cap — larger requests are clamped to it. */
+  maxPageSize?: number;
+  /** Page number used when `page` is absent. */
+  defaultPage?: number;
+}
+
+/** Validated pagination values ready for a SQL LIMIT/OFFSET. */
+export interface Pagination {
+  page: number;
+  pageSize: number;
+  offset: number;
+}
+
+/**
+ * Read one bounded integer query parameter.
+ * Absent (or empty) values fall back to `default`; non-numeric values and
+ * values below `min` are rejected with 400; values above `max` are clamped.
+ */
+function readBoundedInt(
+  raw: string | number | null | undefined,
+  opts: { default: number; min: number; max: number; name: string },
+): number | Response {
+  if (raw === undefined || raw === null) { return opts.default; }
+  const text = typeof raw === "number" ? String(raw,) : raw.trim();
+  if (text === "") { return opts.default; }
+  const parsed = safeParseInt(text,);
+  if (!parsed.ok || parsed.value < opts.min) { return badRequestResponse(`Invalid ${opts.name}`,); }
+  if (parsed.value > opts.max) { return opts.max; }
+  return parsed.value;
+}
+
+/**
+ * Parse and validate the pagination of a list request.
+ * The size is bounded — never negative, never NaN — so it cannot reach SQL
+ * as `LIMIT -1` (whole table) or as a datatype mismatch; oversized requests
+ * are clamped to `maxPageSize` and invalid ones are rejected with 400.
+ * @param input - Raw query values (page, size, offset).
+ * @param options - Defaults and the page-size cap.
+ * @returns Validated pagination values, or a 400 Response for bad input.
+ */
+export function parsePaginationParams(
+  input: PaginationInput,
+  options: PaginationOptions = {},
+): Pagination | Response {
+  const pageSize = readBoundedInt(input.size, {
+    default: options.defaultPageSize ?? 50,
+    min: 1,
+    max: options.maxPageSize ?? MAX_PAGE_SIZE,
+    name: "pageSize",
+  },);
+
+  if (typeof pageSize !== "number") { return pageSize; }
+
+  const page = readBoundedInt(input.page, {
+    default: options.defaultPage ?? 1,
+    min: 1,
+    max: Number.MAX_SAFE_INTEGER,
+    name: "page",
+  },);
+
+  if (typeof page !== "number") { return page; }
+
+  let offset = (page - 1) * pageSize;
+  if (input.offset !== undefined && input.offset !== null) {
+    const parsed = readBoundedInt(input.offset, {
+      default: 0,
+      min: 0,
+      max: Number.MAX_SAFE_INTEGER,
+      name: "offset",
+    },);
+
+    if (typeof parsed !== "number") { return parsed; }
+    offset = parsed;
+  }
+
+  return { page, pageSize, offset, };
 }
 
 // ── Body field helpers ───────────────────────────────────────
