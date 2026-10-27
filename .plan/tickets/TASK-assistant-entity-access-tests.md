@@ -105,7 +105,8 @@ Every command handler, adapter, and the adaptation engine must have unit tests c
 
 ## Dependencies
 
-- All implementation tickets must be complete first
-- `src/assistant/quality/entity-creation.ts` — Existing quality gate tests as reference
+- All implementation tickets must be complete first\n- `src/assistant/quality/entity-creation.ts` — Existing quality gate tests as reference\n\n**Resolved:** 2026-10-29 registry-driven close: git issue 0a2ed94 (registry tip: dd1501a2b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ASSISTANT-ENTITY-ACCESS-TES)
 
-**Resolved:** 2026-10-29 registry-driven close: git issue 0a2ed94 (registry tip: dd1501a2b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ASSISTANT-ENTITY-ACCESS-TES)
+## Follow-ups (2026-10-27 epic-conformance audit)
+
+**STRUCTURAL — invocation audit logging (epic principle "Deterministic + replayable").** The epic principle "assistant invocations logged with input args + output hash" is unimplemented repo-wide and is NOT epic-local work: no assistant command (`/modify`, `/apply`, `/import`, `/clone`, `/duplicate`, `/adapt`, `/create`, the create-entity confirm route) records input args or an output hash. The established, narrower pattern is (a) the preview/system `systemMessage` persisted to the chat transcript (`src/routes/messages/command.ts:363-374`) and (b) a structured-log line with the command name only (`command.ts:376`); nearest building blocks for a future args+hash layer are `src/logger` and `computeRowHash` (`src/db/content-version.ts:126`). Any args+hash facility needs a cross-command design decision (table/migration vs log-only) before it can be added — tracked here so the epic's delta is not lost.

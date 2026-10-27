@@ -20,6 +20,7 @@ import { AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
+import { configureQuotaStorage, } from "../quota/storage";
 import type { CommandContext, CommandHandler, } from "./registry";
 import { getCommand, } from "./registry";
 import "./import";
@@ -156,5 +157,22 @@ describe("/import", () => {
 
     expect(result.action,).toBeUndefined();
     expect(result.systemMessage,).toContain("Unknown entity kind",);
+  });
+
+  test("quota exhaustion denies the import before the asset is read", async () => {
+    const assetId = await uploadAsset("rin.json", "{}",);
+    configureQuotaStorage({ windowMs: 60_000, limitPerWindow: 3, },);
+    try {
+      const spendUser = `quota-${crypto.randomUUID()}`;
+      // Cost 4 > the 3-unit window: denied before resolveImportAsset runs.
+      const denied = await importCommand(["character", assetId,], ctx({ userId: spendUser, },),);
+
+      expect(denied.handled,).toBe(true,);
+      expect(denied.systemMessage,).toContain("**Quota exceeded for `import`.**",);
+      expect(denied.systemMessage,).toContain("Nothing ran",);
+      expect(denied.action,).toBeUndefined();
+    } finally {
+      configureQuotaStorage({ windowMs: 24 * 60 * 60 * 1000, limitPerWindow: 200, },);
+    }
   });
 });
