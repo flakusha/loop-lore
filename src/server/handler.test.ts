@@ -125,7 +125,7 @@ describe("plugin route resolution (SUR-3)", () => {
       },),
       database: db,
       config,
-      caller: { userId: "handler-body-user", },
+      caller: { userId: "handler-body-user", userRole: null, },
       governanceEnabled: () => true,
     },);
 
@@ -157,7 +157,7 @@ describe("governance charging (SUR-5)", () => {
       request: new Request(`http://localhost${path}`,),
       database: db,
       config,
-      caller: { userId, },
+      caller: { userId, userRole: null, },
       governanceEnabled: () => true,
     },);
 

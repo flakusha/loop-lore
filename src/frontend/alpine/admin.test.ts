@@ -156,6 +156,7 @@ describeOrSkip("global showTab fallback", () => {
         entries.push(entry,);
         return Promise.resolve();
       },
+      flush: async () => {},
     };
 
     log.addTransport(transport,);
