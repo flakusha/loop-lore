@@ -329,7 +329,7 @@ describe("archivingRoutes coverage", () => {
     await db.insertInto("whitenotes",).values({
       id: uid(),
       chat_id: chatId,
-      type: "note",
+      type: "tone",
       content: "secret",
       created_at: new Date().toISOString(),
       message_id: referencedId,
