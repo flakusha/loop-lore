@@ -39,6 +39,8 @@ import "./narrate";
 import "./ooc";
 import "./quest";
 import "./rag";
+import "./rag-decompose";
+import "./rag-preview";
 import "./regen";
 import "./review";
 import "./rewrite";
