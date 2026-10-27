@@ -285,18 +285,31 @@ export async function createPoll(
     };
   }
 
-  await database
-    .insertInto("message_polls",)
-    .values({
-      id: pollId,
-      message_id: messageId,
-      question: question.trim(),
-      options: serialized.value,
-      multi: multi ? 1 : 0,
-      created_by: userId,
-      closes_at: closesAt ?? null,
-    },)
-    .execute();
+  try {
+    await database
+      .insertInto("message_polls",)
+      .values({
+        id: pollId,
+        message_id: messageId,
+        question: question.trim(),
+        options: serialized.value,
+        multi: multi ? 1 : 0,
+        created_by: userId,
+        closes_at: closesAt ?? null,
+      },)
+      .execute();
+  } catch (error) {
+    // A concurrent createPoll on the same message lost the race: the UNIQUE
+    // index on message_polls.message_id rejects the second row. Translate it
+    // into the same conflict Result the sequential pre-check returns, so the
+    // route answers 409 instead of surfacing a raw driver error.
+    if (!(error instanceof Error && error.message.includes("UNIQUE constraint failed",))) { throw error; }
+
+    return {
+      ok: false,
+      error: { code: "conflict", message: "Message already has a poll", },
+    };
+  }
 
   const poll = await hydratePoll(database, pollId, messageId, userId,);
   if (!poll) {
