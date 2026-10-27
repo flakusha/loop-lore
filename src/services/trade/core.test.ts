@@ -15,6 +15,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
+  insertActorCurrencies,
   insertActors,
   insertItems,
   insertUsers,
@@ -26,6 +27,7 @@ import { tradeCore, } from "./core";
 import { counterOffer, } from "./counter";
 import { buyFromNpc, sellToNpc, } from "./npc";
 import { createOffer, } from "./offers";
+import { DEFAULT_CURRENCY, } from "./types";
 
 let db: Kysely<DB>;
 let worldId: string;
@@ -291,6 +293,100 @@ describe("tradeCore — mid-transaction transfer failure", () => {
 
     expect(result.success,).toBe(false,);
     expect(result.reason,).toBe("seller item transfer failed",);
+  });
+});
+
+describe("tradeCore — DOM-1: a failed leg rolls the whole transaction back", () => {
+  test("a failed item transfer leaves the currency debit unapplied", async () => {
+    // Fresh world/actors so the currency balances are isolated from the rest
+    // of this file.
+    const userId = uid();
+    await insertUsers(db, `u-${userId}`, "Rollback Owner", {
+      id: userId as never,
+      role: "solo" as never,
+      status: "active" as never,
+      settings: "{}" as never,
+    },);
+
+    const rollbackWorld = uid();
+    await insertWorlds(db, userId, "Rollback World", { id: rollbackWorld as never, },);
+
+    const rollbackBuyer = uid();
+    const rollbackSeller = uid();
+    await insertActors(db, "Rollback Buyer", {
+      id: rollbackBuyer as never,
+      actor_type: "character" as never,
+      user_id: userId,
+      owner_id: userId,
+      agent_type: "ai" as never,
+      settings: "{}" as never,
+    },);
+
+    await insertActors(db, "Rollback Seller", {
+      id: rollbackSeller as never,
+      actor_type: "character" as never,
+      user_id: userId,
+      owner_id: userId,
+      agent_type: "ai" as never,
+      settings: "{}" as never,
+    },);
+
+    await insertActorCurrencies(db, rollbackBuyer, rollbackWorld, DEFAULT_CURRENCY, { balance: 100, },);
+    await insertActorCurrencies(db, rollbackSeller, rollbackWorld, DEFAULT_CURRENCY, { balance: 0, },);
+
+    const gemDef = uid();
+    await insertItems(db, rollbackWorld, "Rollback Gem", "misc", { id: gemDef as never, },);
+    const gemStock = uid();
+    await insertWorldItems(db, rollbackWorld, gemDef, {
+      id: gemStock as never,
+      owner_actor_id: rollbackBuyer,
+      quantity: 5 as never,
+    },);
+
+    // Both lines validate on their own (5 <= 5, 1 <= 5) but together exceed
+    // stock, so the SECOND transfer fails inside the transaction — after the
+    // currency debit has already been applied.
+    const result = await tradeCore(db, {
+      worldId: rollbackWorld,
+      buyerActorId: rollbackBuyer,
+      sellerActorId: rollbackSeller,
+      buyerItems: [
+        { worldItemId: gemStock, quantity: 5, },
+        { worldItemId: gemStock, quantity: 1, },
+      ],
+      sellerItems: [],
+      price: 50,
+    },);
+
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toBe("buyer item transfer failed",);
+
+    const buyerBalance = await db
+      .selectFrom("actor_currencies",)
+      .select("balance",)
+      .where("actor_id", "=", rollbackBuyer,)
+      .where("world_id", "=", rollbackWorld,)
+      .executeTakeFirst();
+
+    const sellerBalance = await db
+      .selectFrom("actor_currencies",)
+      .select("balance",)
+      .where("actor_id", "=", rollbackSeller,)
+      .where("world_id", "=", rollbackWorld,)
+      .executeTakeFirst();
+
+    // The debit AND the credit were rolled back with the failed item leg.
+    expect(buyerBalance?.balance,).toBe(100,);
+    expect(sellerBalance?.balance,).toBe(0,);
+
+    // The item transfer was rolled back too: the stock is unchanged.
+    const stock = await db
+      .selectFrom("world_items",)
+      .select("quantity",)
+      .where("id", "=", gemStock,)
+      .executeTakeFirst();
+
+    expect(stock?.quantity,).toBe(5,);
   });
 });
 
