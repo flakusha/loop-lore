@@ -7,9 +7,37 @@
 
 import { startSession, answerQuestion, getCurrentQuestion, getCategories } from "./engine";
 import { jsonResponse, jsonError, HttpStatus } from "../../../src/routes/http-utils";
+import { TRIVIA_CATEGORIES, TRIVIA_DIFFICULTIES } from "./types";
+import type { TriviaCategory, TriviaDifficulty, TriviaQuestion, TriviaSession } from "./types";
+
+/** Narrow an untrusted string to a known category. */
+export function isCategory(value: string): value is TriviaCategory {
+  return (TRIVIA_CATEGORIES as readonly string[]).includes(value);
+}
+
+/** Narrow an untrusted string to a known difficulty. */
+export function isDifficulty(value: string): value is TriviaDifficulty {
+  return (TRIVIA_DIFFICULTIES as readonly string[]).includes(value);
+}
+
+/**
+ * Validate an answer index against the question on screen.
+ *
+ * @returns The error message for an unanswerable index, null when the index is fine.
+ */
+function validateAnswerIndex(
+  answerIndex: number,
+  question: Omit<TriviaQuestion, "correctIndex"> | null,
+): string | null {
+  if (!Number.isInteger(answerIndex)) return "answerIndex must be an integer";
+  if (question && (answerIndex < 0 || answerIndex >= question.options.length)) {
+    return `answerIndex must be between 0 and ${question.options.length - 1}`;
+  }
+  return null;
+}
 
 // In-memory session store (per-process, no persistence — game sessions are ephemeral)
-const sessions = new Map<string, import("./types").TriviaSession>();
+const sessions = new Map<string, TriviaSession>();
 
 const MAX_SESSIONS = 100;
 /** Cleanup stale sessions */
@@ -39,13 +67,19 @@ export async function handleStart(request: Request): Promise<Response | null> {
   const difficulty = typeof body.difficulty === "string" ? body.difficulty : undefined;
   const questionCount = typeof body.questionCount === "number" ? body.questionCount : 5;
 
+  if (category !== undefined && !isCategory(category)) {
+    return jsonError(`category must be one of: ${TRIVIA_CATEGORIES.join(", ")}`, HttpStatus.BadRequest);
+  }
+  if (difficulty !== undefined && !isDifficulty(difficulty)) {
+    return jsonError(`difficulty must be one of: ${TRIVIA_DIFFICULTIES.join(", ")}`, HttpStatus.BadRequest);
+  }
+  if (!Number.isInteger(questionCount) || questionCount < 1) {
+    return jsonError("questionCount must be a positive integer", HttpStatus.BadRequest);
+  }
+
   try {
     gcSessions();
-    const session = startSession(
-      category as import("./types").TriviaCategory | undefined,
-      difficulty as import("./types").TriviaDifficulty | undefined,
-      questionCount,
-    );
+    const session = startSession(category, difficulty, questionCount);
     sessions.set(session.id, session);
 
     const current = getCurrentQuestion(session);
@@ -89,6 +123,11 @@ export async function handleAnswer(request: Request): Promise<Response | null> {
     return jsonError("Session not found or expired", HttpStatus.NotFound);
   }
 
+  const indexError = validateAnswerIndex(body.answerIndex, getCurrentQuestion(session));
+  if (indexError) {
+    return jsonError(indexError, HttpStatus.BadRequest);
+  }
+
   try {
     const result = answerQuestion(session, body.answerIndex);
     const nextQuestion = getCurrentQuestion(session);
@@ -120,6 +159,6 @@ export async function handleCategories(request: Request): Promise<Response | nul
 
   return jsonResponse({
     categories: getCategories(),
-    difficulties: ["easy", "medium", "hard"],
+    difficulties: [...TRIVIA_DIFFICULTIES],
   });
 }

@@ -15,6 +15,7 @@ import { dispatchPluginRoute, registry, } from "../../../src/plugins/loader";
 import type { PluginContext, RouteDefinition, } from "../../../src/plugins/types";
 import { plugin, } from "./plugin";
 import { handlePlay, handleStart, } from "./routes";
+import type { SeductionRound, SeductionState, } from "./types";
 
 /** Capture the routes the plugin registers without running real hooks. */
 function collectRoutes(): RouteDefinition[] {
@@ -91,5 +92,25 @@ describe("nsfw-cards route gating", () => {
     },);
     const resPlay = await handlePlay(reqPlay,);
     expect(resPlay?.status,).toBe(403,);
+  });
+});
+
+describe("nsfw-cards state round trip", () => {
+  test("the state from /start can be replayed into /play", async () => {
+    const caller = { userId: "u1", userRole: "admin", };
+    const startRes = await handleStart(new Request(START, { method: "POST", body: "{}", },), caller,);
+    expect(startRes?.status,).toBe(200,);
+
+    const started = (await startRes!.json()) as { state: SeductionState };
+    const playRes = await handlePlay(
+      new Request("http://localhost/api/nsfw-cards/play", {
+        method: "POST",
+        body: JSON.stringify({ state: started.state, cardIndex: 0, },),
+      },),
+      caller,
+    );
+    expect(playRes?.status,).toBe(200,);
+    const played = (await playRes!.json()) as { round: SeductionRound };
+    expect(played.round?.card,).toBeTruthy();
   });
 });

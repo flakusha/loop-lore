@@ -56,10 +56,8 @@ export async function handleStart(request: Request, caller?: PluginCaller): Prom
   const state = initSeduction(difficulty, handSize);
 
   return jsonResponse({
-    state: {
-      ...state,
-      hand: undefined, // Don't send full internal state
-    },
+    // The full state travels with the client: /play is stateless and replays it.
+    state,
     handDisplay: state.hand.map((c, i) => ({
       index: i,
       type: c.type,
