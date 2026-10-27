@@ -9,6 +9,7 @@
  */
 
 import { QUESTIONS } from "./questions";
+import { TRIVIA_CATEGORIES } from "./types";
 import type {
   TriviaQuestion,
   TriviaAnswerResult,
@@ -24,6 +25,16 @@ const BASE_POINTS: Record<TriviaDifficulty, number> = {
   easy: 10,
   medium: 20,
   hard: 30,
+};
+
+/** Display name per category — keyed by the shared category list. */
+const CATEGORY_NAMES: Record<TriviaCategory, string> = {
+  general: "General Knowledge",
+  science: "Science",
+  history: "History",
+  pop_culture: "Pop Culture",
+  geography: "Geography",
+  technology: "Technology",
 };
 
 // ── RNG ───────────────────────────────────────────────────────
@@ -61,14 +72,7 @@ export function getCategories(): { id: TriviaCategory; name: string; count: numb
   for (const q of QUESTIONS) {
     counts.set(q.category, (counts.get(q.category) || 0) + 1);
   }
-  return [
-    { id: "general", name: "General Knowledge", count: counts.get("general") || 0 },
-    { id: "science", name: "Science", count: counts.get("science") || 0 },
-    { id: "history", name: "History", count: counts.get("history") || 0 },
-    { id: "pop_culture", name: "Pop Culture", count: counts.get("pop_culture") || 0 },
-    { id: "geography", name: "Geography", count: counts.get("geography") || 0 },
-    { id: "technology", name: "Technology", count: counts.get("technology") || 0 },
-  ];
+  return TRIVIA_CATEGORIES.map((id) => ({ id, name: CATEGORY_NAMES[id], count: counts.get(id) || 0 }));
 }
 
 /**

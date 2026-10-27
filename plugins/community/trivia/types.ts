@@ -5,11 +5,30 @@
  * Trivia Types
  */
 
+/**
+ * Difficulty levels — the single source for the route validator, the tool
+ * schema and the scoring table.
+ */
+export const TRIVIA_DIFFICULTIES = ["easy", "medium", "hard"] as const;
+
 /** Difficulty levels */
-export type TriviaDifficulty = "easy" | "medium" | "hard";
+export type TriviaDifficulty = (typeof TRIVIA_DIFFICULTIES)[number];
+
+/**
+ * Question categories — the single source for the route validator, the tool
+ * schema and the category listing.
+ */
+export const TRIVIA_CATEGORIES = [
+  "general",
+  "science",
+  "history",
+  "pop_culture",
+  "geography",
+  "technology",
+] as const;
 
 /** Question category */
-export type TriviaCategory = "general" | "science" | "history" | "pop_culture" | "geography" | "technology";
+export type TriviaCategory = (typeof TRIVIA_CATEGORIES)[number];
 
 /** A trivia question */
 export interface TriviaQuestion {
