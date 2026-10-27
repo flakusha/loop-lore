@@ -13673,10 +13673,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dead-bedrock-config-path-accepted-but-never-dispatched.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md"
     }
   ],
   "src/config/schema-class.ts": [
@@ -14387,6 +14383,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-allow-data-dir-to-be-overridden-by-env-var.md"
+    }
+  ],
+  "src/config/sections/assistant.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md"
     }
   ],
   "src/config/sections/auth.ts": [
@@ -16757,6 +16759,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-content-versioning-heavy-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
     },
     {
       "kind": "ticket",
@@ -34755,6 +34761,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
     }
   ],
   "src/logger/archive.test.ts": [
@@ -44379,6 +44389,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-action-applicability-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
     },
     {
       "kind": "ticket",
