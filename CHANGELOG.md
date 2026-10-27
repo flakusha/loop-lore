@@ -71,6 +71,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Fixed
 
+- **The composer markdown preview rendered the raw source** — `renderPreviewHtml` (`src/frontend/alpine/composer-pre-send/preview.ts`) only ran the sanitiser over the composer text, so `**bold**`, code spans and `:shortcode:` shortcodes showed up literally in the preview. It now renders through the SHARED renderer (`src/frontend/alpine/chat-utils/render.ts`) every other surface uses, so the preview matches the chat bubble: markdown is parsed and the allowlisted shortcodes expand before the HTML is sanitised. When the markdown library is missing the preview keeps the sanitiser-only path.
 - **Cancelling a generation can no longer leave a stuck spinner or a live stream (TASK-2026-openwebui-cancel-generation-wiring)** — `cancelGeneration()` (`src/frontend/alpine/chat-generations.ts`) reset `isGenerating`/`activeAttemptId` only when the server acknowledged the cancel, and never closed the `EventSource` `connectGenerationSSE` had opened, so a failed or rejected cancel request (404 already-cancelled, 403, network drop) left the composer spinner + stop button up and the SSE stream attached until an unrelated `stream-error` arrived. Local teardown now runs in a `finally`: the state resets and the stream closes on every outcome; the success toast ("Generation cancelled") stays acknowledgement-only, and stream buffers are deliberately left intact so the partial bubble remains visible until the next message load renders the persisted draft. The ticket's sketched `DELETE /api/generation/cancel/:chatId` never existed — the shipped API is `POST /api/v1/generation/cancel` with a `{chatId}` body, which the client already called.
 - **Login no longer reveals whether an account exists (TASK-ac10-enumeration-safe-auth-error-strings-login-only)** — `handleLogin` (`src/routes/auth/login.ts`) answered unknown-user and wrong-password failures with 401 `auth.invalidCredentials` ("Invalid username or password.") but disabled/deactivated accounts with 403 `auth.accountLocked` ("Account is disabled."), so the endpoint was an account-existence oracle for anyone holding valid-looking credentials. The locked-or-gated branch now returns the identical message and status shape as the other failure paths (login-only scope — `register.ts` shares no strings), and the code fallback ("Account is disabled.") was reconciled with the locale string ("Account is locked") by removing the `auth.accountLocked` key from all 10 locale files and naturalizing the previously untranslated `invalidCredentials` strings.
 - **Admin-set secrets were stored in plain text** — `setConfig` (`src/admin/config.ts`) upserted every admin-written value straight into `system_config`, so an API key, a token or a DB URL sat in the database as plain text; only the GET/export responses were redacted, which never touched the row on disk. Secret-classified keys (the existing `SECRET_KEY_PATTERN`) are now sealed in the credential envelope the adapter credentials already use (`src/integrations/secrets.ts` — the same SMK-wrap AES-GCM `secret:v1:` form), and every read path (`getAllConfig` / `getConfig` / `getConfigValue`) opens the sealed value again, so the admin panel and the export endpoint show exactly what they showed before. A secret write with no key material is refused instead of falling back to plain text, and legacy plain-text rows still read back unchanged.
@@ -122,6 +123,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **Dead `src/actors/` layer** — deleted the directory: 11 files with zero importers, surfaced by the widened knip scan, including a third parallel actor-items implementation (`src/actors/actor-items.ts`) alongside `src/services/actor-items.ts` and `src/services/actor-items/`.
 
+
 ## [0.1.0] - 2026-08-15
 
 First release. Clean-room reimplementation of SillyTavern-style RPG chat.
@@ -139,17 +141,15 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Auth & safety** — authentication + sessions, NSFW gate + moderation, profanity filter, age gate, rate limiting, solo-user mode.
 - **Plumbing** — Kysely + `bun:sqlite` (PG dialect-swappable), encrypted DB backup/recovery, plugin system, structured logging, telemetry, auxiliary LLM pipeline, wiring gate (`scripts/check-wiring.ts`), e2e browser suite (19 flows).
 
+
 ### Changed
 
 - Lint debt resolved across `src` (156 files), eslint config + example configs shipped.
 - In-range dependency bumps (kysely, smol-toml, js-yaml, alpine, eslint, unicorn, typescript-eslint, etc.).
 
-### Fixed
-
-- `versionRedirect` double-prefix loop for `/api/v1/*` paths.
-- Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
 
 ### Removed
+
 
 ### Security
 
@@ -162,12 +162,14 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 - **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
 
+
 ### Fixed
 
 - **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
 - **Non-retryable provider errors keep their identity when the request is cancelled** — `withProviderRetry` classified an aborted signal before checking whether the failure was already a non-retryable `ProviderError`, so a 401 raised in the same tick as a user cancel surfaced as `Request cancelled` (no status) instead of the auth error. `callWithFailover` maps the two down different paths, which would have swallowed auth failures. Precedence now matches the hand-rolled loops these call sites replaced, and `retry.test.ts` pins it.
 
 - **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
+
 
 ### Fixed
 
@@ -178,3 +180,4 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Image-edit input images reach ComfyUI as uploaded bytes** — the ComfyUI image-edit provider now uploads every `image`-typed parameter (`input_image`, `mask_image`, `control_image`) before the workflow is built and substitutes the name ComfyUI stored the bytes under, so a `LoadImage` node no longer names a file the server never uploaded. The parameter carries the ASSET ID of an image the caller owns: the provider checks the owner, decrypts with the chat key when the asset is encrypted, and reads the bytes through the asset row — a path on the server is never opened. The run body is validated against one shared TypeBox schema (`src/validation/schemas/image-edit.ts`): the route declares it as its `body:`, so the server validates every run body before the handler runs — and `handleRun` applies the same validator, which covers the chain-run executor that calls the handler directly.
 - **Coverage run executes the bundled plugin engines' own tests** — the plugin engines under `plugins/` ship their own `*.test.ts`, but the coverage run's test set was `tests/e2e/ src/`, so those files never ran and the `plugins` module was measured at a fraction of what the tests actually cover. `test:coverage` now includes `plugins/`, and the parallel runner's coverage gate builds the same test set (it walks `plugins/` alongside `src/`, so the gate and the manual script agree). The plugin engines are in-process unit tests, so they belong inside the coverage invocation rather than in the separate scripts pass.
 - **Image-edit input images reach ComfyUI as uploaded bytes** — the ComfyUI image-edit provider now uploads every `image`-typed parameter (`input_image`, `mask_image`, `control_image`) before the workflow is built and substitutes the name ComfyUI stored the bytes under, so a `LoadImage` node no longer names a file the server never uploaded. The parameter carries the ASSET ID of an image the caller owns: the provider checks the owner, decrypts with the chat key when the asset is encrypted, and reads the bytes through the asset row — a path on the server is never opened. The run body is validated against one shared TypeBox schema (`src/validation/schemas/image-edit.ts`): the route declares it as its `body:` — so the served OpenAPI document carries the contract — and `handleRun` applies the same validator, which covers the chain-run executor that calls the handler directly.
+
