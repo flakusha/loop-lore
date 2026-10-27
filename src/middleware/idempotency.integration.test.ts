@@ -83,6 +83,7 @@ function setup(opts: SetupOpts,) {
           route: ctx.route ?? "?",
           requestId,
           userId: ctx.userId ?? null,
+          resolvedPath: new URL(ctx.request.url,).pathname,
         },);
 
         return;
@@ -93,6 +94,7 @@ function setup(opts: SetupOpts,) {
         route: ctx.route ?? "?",
         requestId,
         userId: ctx.userId ?? null,
+        resolvedPath: new URL(ctx.request.url,).pathname,
         response,
       },);
     },);
@@ -461,11 +463,23 @@ describe("idempotent (Elysia integration)", () => {
         if (!requestId) { return; }
         const response = ctx.response;
         if (!(response instanceof Response) || response.status >= 300) {
-          idem.release({ method: ctx.request.method, route: ctx.route, requestId, },);
+          idem.release({
+            method: ctx.request.method,
+            route: ctx.route,
+            requestId,
+            resolvedPath: new URL(ctx.request.url,).pathname,
+          },);
+
           return;
         }
 
-        idem.recordResponse({ method: ctx.request.method, route: ctx.route, requestId, response, },);
+        idem.recordResponse({
+          method: ctx.request.method,
+          route: ctx.route,
+          requestId,
+          resolvedPath: new URL(ctx.request.url,).pathname,
+          response,
+        },);
       },)
       // Mirror elysia-app.ts: the error boundary releases the idempotency slot
       // so a thrown handler does not strand the slot as a permanent 409.
@@ -474,7 +488,8 @@ describe("idempotent (Elysia integration)", () => {
         if (requestId) {
           idem.release({
             method: ctx.request.method,
-            route: new URL(ctx.request.url,).pathname,
+            route: ctx.route ?? "?",
+            resolvedPath: new URL(ctx.request.url,).pathname,
             requestId,
           },);
         }

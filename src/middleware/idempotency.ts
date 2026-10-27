@@ -126,9 +126,14 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
       if (!isValidRequestId(requestId,)) { return undefined; }
 
       const route = ctx.route ?? "?";
+      // The key must carry the RESOLVED path, not only the route pattern: the
+      // pattern is shared by every resource of a route family, so one client
+      // request id used on two resources replayed the first response and
+      // dropped the second write (SW-6).
+      const resolvedPath = new URL(ctx.request.url,).pathname;
       const userId = ctx.userId ?? null;
       const meta = { method, route, userId, };
-      const key = makeKey(method, route, requestId, userId,);
+      const key = makeKey(method, route, requestId, userId, resolvedPath,);
       const existing = backend.get(key,);
       if (existing?.inFlight) {
         return jsonError({
@@ -165,13 +170,21 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
      * @param args.response
      */
     recordResponse(
-      args: { method: string; route: string; requestId: string; userId?: string | null; response: Response },
+      args: {
+        method: string;
+        route: string;
+        requestId: string;
+        userId?: string | null;
+        response: Response;
+        /** The concrete request path — must match the beforeHandle key. */
+        resolvedPath?: string;
+      },
     ): void {
       const method = args.method.toUpperCase();
       const route = args.route;
       const userId = args.userId ?? null;
       const meta = { method, route, userId, };
-      const key = makeKey(method, route, args.requestId, userId,);
+      const key = makeKey(method, route, args.requestId, userId, args.resolvedPath ?? route,);
       // Streaming responses (SSE) never end: cloning + reading their body
       // would pin the tee buffer and hold the slot forever. Streams are not
       // replayable — release the slot without caching.
@@ -221,12 +234,21 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
      * @param args.requestId
      * @param args.userId
      */
-    release(args: { method: string; route: string; requestId: string; userId?: string | null },): void {
+    release(
+      args: {
+        method: string;
+        route: string;
+        requestId: string;
+        userId?: string | null;
+        /** The concrete request path — must match the beforeHandle key. */
+        resolvedPath?: string;
+      },
+    ): void {
       const method = args.method.toUpperCase();
       const route = args.route;
       const userId = args.userId ?? null;
       const meta = { method, route, userId, };
-      backend.release(makeKey(method, route, args.requestId, userId,), meta,);
+      backend.release(makeKey(method, route, args.requestId, userId, args.resolvedPath ?? route,), meta,);
     },
     /** Test seam: clear all in-flight + completed entries. */
     /**
@@ -287,7 +309,18 @@ export interface IdempotencyBeforeHandle {
     requestId: string;
     userId?: string | null;
     response: Response;
+    /** The concrete request path — must match the beforeHandle key. */
+    resolvedPath?: string;
   },): void;
-  release(args: { method: string; route: string; requestId: string; userId?: string | null },): void;
+  release(
+    args: {
+      method: string;
+      route: string;
+      requestId: string;
+      userId?: string | null;
+      /** The concrete request path — must match the beforeHandle key. */
+      resolvedPath?: string;
+    },
+  ): void;
   clear(): void;
 }
