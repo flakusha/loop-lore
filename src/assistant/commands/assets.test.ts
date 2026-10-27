@@ -26,6 +26,7 @@ import { AssetLinkEntity, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssetLinks, insertAssets, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
+import { configureQuotaStorage, } from "../quota/storage";
 import type { CommandContext, CommandHandler, } from "./registry";
 import { getCommand, } from "./registry";
 
@@ -287,5 +288,24 @@ describe("asset commands", () => {
   test("asset-search hides another user's private assets", async () => {
     const result = await assetSearch(["secret",], ownerCtx({ userId: otherId, activeChat: undefined, },),);
     expect(result.systemMessage,).toBe('No assets found for "secret".',);
+  });
+
+  test("quota exhaustion denies asset-preview and asset-search before any work", async () => {
+    // The gate is pre-call: with a 1-unit window the preview (cost 1) spends
+    // the whole budget and the search (cost 2) is denied with no DB read.
+    configureQuotaStorage({ windowMs: 60_000, limitPerWindow: 1, },);
+    try {
+      const spendUser = `quota-${crypto.randomUUID()}`;
+      const preview = await assetPreview([imageId,], ownerCtx({ userId: spendUser, },),);
+      expect(preview.systemMessage,).toContain("**Asset:** castle.png",);
+
+      const denied = await assetSearch(["castle",], ownerCtx({ userId: spendUser, },),);
+      expect(denied.handled,).toBe(true,);
+      expect(denied.systemMessage,).toContain("**Quota exceeded for `asset-search`.**",);
+      expect(denied.systemMessage,).toContain("Nothing ran",);
+      expect(denied.actionPayload,).toBeUndefined();
+    } finally {
+      configureQuotaStorage({ windowMs: 24 * 60 * 60 * 1000, limitPerWindow: 200, },);
+    }
   });
 });
