@@ -10,8 +10,9 @@ import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { insertChats, } from "../test-utils/insert-helpers";
 import { generateActorKey, loadActorKeys, } from "./actor-keys";
-import { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds, } from "./chat-keys";
+import { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds, isLiveChatKeyId, } from "./chat-keys";
 import { getSmk, initSmk, } from "./smk";
 
 const VALID_HEX_KEY = "a".repeat(64,);
@@ -224,5 +225,32 @@ describe("deriveChatKeyForChat", () => {
 
     expect(rows,).toHaveLength(1,);
     expect(rows[0]!.id,).toBe(results[0]!.keyId,);
+  });
+
+  /**
+   * `isLiveChatKeyId` decides whether a client-named `key_id` may be stored
+   * (BE-1). A forged id must never reach `messages.key_id`: a row nobody can
+   * decrypt wedges the chat rotation for good.
+   */
+  describe("isLiveChatKeyId", () => {
+    test("a null key id is never live", async () => {
+      expect(await isLiveChatKeyId(db, "chat-missing", null,),).toBe(false,);
+    });
+
+    test("a chat with no row accepts the id — there is nothing to validate against", async () => {
+      expect(await isLiveChatKeyId(db, "chat-missing", "key-forged",),).toBe(true,);
+    });
+
+    test("a non-standard chat accepts the id — only standard chats hold chat keys", async () => {
+      const chatId = "chat-none-tier";
+      await insertChats(db, "Chat", "user-1", { id: chatId, encryption_level: "none", } as never,);
+      expect(await isLiveChatKeyId(db, chatId, "key-forged",),).toBe(true,);
+    });
+
+    test("a standard chat rejects a key id that is not one of its live keys", async () => {
+      const chatId = "chat-standard-tier";
+      await insertChats(db, "Chat", "user-1", { id: chatId, encryption_level: "standard", } as never,);
+      expect(await isLiveChatKeyId(db, chatId, "key-forged",),).toBe(false,);
+    });
   });
 });

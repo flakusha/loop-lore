@@ -184,3 +184,75 @@ describe("participantRoutes — a failed key rotation keeps the participant", ()
     await db.destroy();
   });
 });
+
+/** The list, update and remove paths of the participants route. */
+describe("participantRoutes — list, update and remove", () => {
+  test("lists the participants of a chat the caller can access", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    await insertChatParticipants(db, CHAT_ID, OWNER_ID,);
+
+    const app = makeApp(db, INVITER_ID,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/participants`,),
+    );
+
+    expect(res.status,).toBe(200,);
+    const rows = await res.json() as Array<{ actor_id: string; display_name: string }>;
+    expect(rows.map((r,) => r.actor_id),).toContain(OWNER_ID,);
+    expect(rows[0]?.display_name,).toBe("Owner",);
+
+    await db.destroy();
+  });
+
+  test("updates a participant's talkativity", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    await insertChatParticipants(db, CHAT_ID, OWNER_ID,);
+
+    const app = makeApp(db, INVITER_ID,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/participants/${OWNER_ID}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ talkativity: 7, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const row = await db
+      .selectFrom("chat_participants",)
+      .select("talkativity",)
+      .where("chat_id", "=", CHAT_ID,)
+      .where("actor_id", "=", OWNER_ID,)
+      .executeTakeFirst();
+
+    expect(row?.talkativity,).toBe(7,);
+
+    await db.destroy();
+  });
+
+  test("removes a participant from a chat that does not rotate keys", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    await insertChatParticipants(db, CHAT_ID, OWNER_ID,);
+
+    const app = makeApp(db, INVITER_ID,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/participants/${OWNER_ID}`, {
+        method: "DELETE",
+      },),
+    );
+
+    expect(res.status,).toBe(204,);
+    const rows = await db
+      .selectFrom("chat_participants",)
+      .select("actor_id",)
+      .where("chat_id", "=", CHAT_ID,)
+      .execute();
+
+    expect(rows.map((r,) => r.actor_id),).not.toContain(OWNER_ID,);
+
+    await db.destroy();
+  });
+});
