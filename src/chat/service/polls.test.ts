@@ -405,7 +405,7 @@ describe("listChatPolls", () => {
         queryCount++;
         return args.node;
       },
-      transformResult: (args,) => args.result,
+      transformResult: async (args,) => args.result,
     },);
 
     const result = await listChatPolls({ database: countingDb, chatId, userId: VOTER, userRole: null, },);
