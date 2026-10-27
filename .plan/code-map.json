@@ -2330,6 +2330,10 @@
   "src/assistant": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-platform-research.md"
     },
     {
@@ -2881,6 +2885,12 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
     }
   ],
+  "src/assistant/commands/entities.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-e2e.md"
+    }
+  ],
   "src/assistant/commands/games.ts": [
     {
       "kind": "epic",
@@ -3071,6 +3081,12 @@
       "source": "docs/spec/character-interactions.md"
     }
   ],
+  "src/assistant/commands/items-instance.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    }
+  ],
   "src/assistant/commands/items.test.ts": [
     {
       "kind": "ticket",
@@ -3092,6 +3108,10 @@
     }
   ],
   "src/assistant/commands/locations-update.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
@@ -4944,6 +4964,14 @@
     }
   ],
   "src/assistant/quota/engine.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-e2e.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
@@ -13645,6 +13673,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dead-bedrock-config-path-accepted-but-never-dispatched.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md"
     }
   ],
   "src/config/schema-class.ts": [
@@ -23445,6 +23477,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-image-backends-x-assistant-image-command-backend-routing-fai.md"
+    }
+  ],
+  "src/frontend/alpine/chat-actions/entities.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
     }
   ],
   "src/frontend/alpine/chat-actions/gif-picker.test.ts": [
@@ -44390,6 +44428,10 @@
     }
   ],
   "src/routes/messages/create-entity-confirm.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-gm-flows.md"
