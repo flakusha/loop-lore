@@ -44,7 +44,15 @@ Response (no generated text — probabilities only):
 }
 ```
 
-Question types: `choice` (criteria map → pick + per-option probabilities + confidence), `score` (2–10 ordered levels → expected level + legend), `noul` (probability of yes).
+Question types (upstream README + `tools/server/server-decision.cpp`):
+
+| Type | `criteria` you send | You get back |
+| --- | --- | --- |
+| `choice` | object: option key → description (description may be `null`) | `choice` (highest probability), `probabilities` per option (sum to 1), `confidence` (0 = all options equally likely) |
+| `score` | array of 2–10 level descriptions, lowest first | `score` (expected level index, may fall between two), `legend`, `probabilities` per level, `confidence` |
+| `noul` | optional object: descriptions of `true` and `false` | `noul` = probability the answer is true |
+
+`state` is a string, an object (given to the model as JSON text) or an array of chat messages. Images go in `files` (alias `images`) as `data:` URLs.
 
 ## Measured against the local llama-swap proxy (`:7180`, model `llama-d3-2b`)
 
@@ -52,7 +60,15 @@ Question types: `choice` (criteria map → pick + per-option probabilities + con
 - `images: ["data:image/png;base64,…"]` → **502** (proxy; vision works over `/v1/chat/completions` on the same model → 200).
 - `videos: [...]` → **400** `"videos" is not supported` — the decision path has no video input upstream.
 
-Upstream limits (llama.cpp): a GGUF without `<arch>.decision.*` metadata → **501** "This model is not a decision model"; a GGUF without a `systemone` chat template → load error; question+options must fit one batch (400 otherwise); LAYA-type models silently truncate options to their trained head budget.
+Upstream limits (llama.cpp):
+
+- a GGUF without `<arch>.decision.*` metadata → **501** "This model is not a decision model" (`server-context.cpp`).
+- a GGUF without a `systemone` chat template → load-time throw `decision model has no "systemone" template` (`server-decision.cpp`).
+- a request with images → **501** when the model has no image support or no multimodal projector is loaded. (The local 502 above is the llama-swap proxy, not the upstream contract.)
+- for `laya`, `clef`, `vllm-d3` and `lfm2-d1-omni` the whole prompt is evaluated in one batch and must fit `--ubatch-size`; exceeding it is a server error ("input is too large to process"), not a client 400.
+- for `laya`, long questions and options are truncated to the token budget the model was trained with.
+- option count is per-model: 52 for `openjev`, 255 for `laya`/`clef`/`vllm-d3` and friends.
+- probabilities are scaled by per-model temperatures and are **not calibrated** — a vague input scored 0.25 on Julia-1 and 0.80 on Kev-4B upstream, so cutoffs belong per model AND per quantization.
 
 ## Scope (implementation upcoming)
 
