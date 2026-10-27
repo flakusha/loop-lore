@@ -18,7 +18,7 @@ export interface PreviewSanitizer {
 const getPreviewSanitizer = () => (globalThis as unknown as { __DOMPurify?: PreviewSanitizer }).__DOMPurify;
 
 /** Markdown renderer installed app-wide by `src/frontend/chat-vendor.ts`. */
-const getMarked = () => globalThis.__marked;
+const getMarked = () => (globalThis as unknown as { __marked?: unknown }).__marked;
 
 /**
  * Storage key for the stream preference; per-chat, global when no chatId.
