@@ -8,6 +8,7 @@ import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
 import { battleActionHandlers, } from "./battle";
 import { entityActionHandlers, } from "./entities";
+import { entityCopyActionHandlers, } from "./entity-copy";
 import { type DispatchCtx, dispatchGenerationAction, dispatchQuestAction, } from "./generation-helpers";
 import { itemActionHandlers, } from "./item-actions";
 import { wizardActionHandlers, } from "./wizard";
@@ -66,6 +67,7 @@ const actionHandlers: Record<string, ActionHandler> = {
   ...battleActionHandlers,
   ...itemActionHandlers,
   ...entityActionHandlers,
+  ...entityCopyActionHandlers,
   ...wizardActionHandlers,
   ...worldActionHandlers,
 
