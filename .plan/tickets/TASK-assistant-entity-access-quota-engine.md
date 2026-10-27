@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Task
@@ -112,3 +112,5 @@ Quota draws from the resource provision model (`epic-resource-provision.md`): us
 
 - `epic-resource-provision.md` — Resource provisioning model
 - `src/crypto/byok.ts` — Key wrapping (for quota-secured external inference)
+
+**Resolved:** 2026-10-27 registry-driven close: git issue f5a31cb (registry tip: cd198b4ef Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ASSISTANT-ENTITY-ACCESS-QUO)
