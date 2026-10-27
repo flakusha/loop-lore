@@ -12,6 +12,7 @@
  *  - decodeStoredDraft malformed-input handling
  */
 import { afterAll, afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { marked, } from "marked";
 import { TurnStrategy, } from "../../db/enums-core/users";
 import { createLogger, } from "../../logger";
 import {
@@ -453,7 +454,7 @@ describe("isSendBlocked side-effects", () => {
   });
 });
 
-type PreviewGlobals = { __DOMPurify?: { sanitize(html: string,): string } };
+type PreviewGlobals = { __DOMPurify?: { sanitize(html: string,): string }; __marked?: unknown };
 
 // `__DOMPurify` is installed app-wide by src/frontend/chat-vendor.ts.
 // clearPreviewSanitizer() must keep deleting it (the fallback test below asserts
@@ -473,8 +474,18 @@ function clearPreviewSanitizer(): void {
   delete (globalThis as unknown as PreviewGlobals).__DOMPurify;
 }
 
+// `__marked` is installed app-wide by src/frontend/chat-vendor.ts, exactly like
+// `__DOMPurify`. The markdown tests install the real renderer the app ships and
+// restore the load-time value afterwards.
+const realMarked = (globalThis as unknown as PreviewGlobals).__marked;
+
+function setMarkdownRenderer(): void {
+  (globalThis as unknown as PreviewGlobals).__marked = marked;
+}
+
 afterAll(() => {
   (globalThis as unknown as PreviewGlobals).__DOMPurify = realDOMPurify;
+  (globalThis as unknown as PreviewGlobals).__marked = realMarked;
 },);
 
 /** Attach a fake `$refs.messageInput` to a factory-built composer. */
@@ -514,6 +525,36 @@ describe("composer preview", () => {
       const html = composer.composerPreviewHtml();
       expect(html,).toContain("hello",);
       expect(html,).not.toContain("<script",);
+    } finally {
+      clearPreviewSanitizer();
+    }
+  });
+
+  test("composerPreviewHtml renders markdown through the shared renderer", () => {
+    setPreviewSanitizer();
+    setMarkdownRenderer();
+    try {
+      const composer = withMessageInput(
+        createComposerPreSend({ storage: makeStorage(), },),
+        "hello **world**",
+      );
+
+      expect(composer.composerPreviewHtml(),).toContain("<strong>world</strong>",);
+    } finally {
+      clearPreviewSanitizer();
+    }
+  });
+
+  test("composerPreviewHtml expands allowlisted shortcodes", () => {
+    setPreviewSanitizer();
+    setMarkdownRenderer();
+    try {
+      const composer = withMessageInput(
+        createComposerPreSend({ storage: makeStorage(), },),
+        "burning :fire:",
+      );
+
+      expect(composer.composerPreviewHtml(),).toContain("🔥",);
     } finally {
       clearPreviewSanitizer();
     }
