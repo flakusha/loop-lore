@@ -21,6 +21,7 @@ import type { AssetRecord, } from "../../assets/service";
 import { parseCharacterCard, validateCharacter, } from "../../characters/parser";
 import { ChatParticipantRole, ItemCategory, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { quotaGate, } from "../quota/gate";
 import { requireOwnedWorld, } from "./entity-guard";
 import { formatPatch, parseEntityPatch, } from "./entity-patch";
 import { ITEM_ADD_SPEC, LOCATION_ADD_SPEC, } from "./entity-patch-spec";
@@ -63,6 +64,9 @@ async function resolveImportAsset(
 }
 
 registerCommand("import", async (args, ctx,): Promise<CommandResult> => {
+  const quota = quotaGate(ctx.userId ?? null, "import",);
+  if (quota) { return quota; }
+
   const [kindArg, fileRef,] = args;
   if (!kindArg || !fileRef) {
     return { systemMessage: "Usage: /import character <asset-id|filename>", handled: true, };

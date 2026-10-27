@@ -9,6 +9,7 @@ import { canAccessAsset, getAsset, getAssetLinks, listAssets, } from "../../asse
 import { AssetType, } from "../../db/enums-content";
 import { requireWorldAccess, } from "../../routes/worlds/access";
 import { searchAssets, } from "../../search";
+import { quotaGate, } from "../quota/gate";
 import { type CommandResult, registerCommand, } from "./registry";
 
 const VALID_KINDS: Record<string, true> = {
@@ -59,6 +60,9 @@ registerCommand("asset-list", async (args, ctx,): Promise<CommandResult> => {
 }, { requiredRole: "member", },);
 
 registerCommand("asset-preview", async (args, ctx,): Promise<CommandResult> => {
+  const quota = quotaGate(ctx.userId ?? null, "asset-preview",);
+  if (quota) { return quota; }
+
   const assetId = args[0];
   if (!assetId) {
     return { systemMessage: "Usage: /asset-preview <asset-id>", handled: true, };
@@ -97,6 +101,9 @@ registerCommand("asset-preview", async (args, ctx,): Promise<CommandResult> => {
 }, { requiredRole: "member", },);
 
 registerCommand("asset-search", async (args, ctx,): Promise<CommandResult> => {
+  const quota = quotaGate(ctx.userId ?? null, "asset-search",);
+  if (quota) { return quota; }
+
   const query = args.join(" ",).trim();
   if (!query) {
     return { systemMessage: "Usage: /asset-search <query>", handled: true, };
