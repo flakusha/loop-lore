@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** High
 **Type:** Task
@@ -106,3 +106,5 @@ Unit tests verify individual handlers and adapters. E2E tests verify the full fl
 
 - All implementation and unit test tickets must be complete first
 - Running server for E2E tests
+
+**Resolved:** 2026-10-27 registry-driven close: git issue 646c660 (registry tip: 5675ded16 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ASSISTANT-ENTITY-ACCESS-E2E)
