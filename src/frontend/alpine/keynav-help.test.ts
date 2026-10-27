@@ -6,11 +6,27 @@
  * window stub + captured listeners, no real browser).
  */
 
-import { describe, expect, it, } from "bun:test";
-import { DEFAULT_KEYMAP, } from "./shortcuts";
+import { afterEach, describe, expect, it, } from "bun:test";
+import { DEFAULT_KEYMAP, resetKeymapOverrides, } from "./shortcuts";
 
 const listeners = new Map<string, () => void>();
 const flags = new Map<string, string>();
+
+// This file replaces the global window/document/localStorage with minimal
+// stubs and stores a keymap override. Bun runs every test file in one process,
+// so without a restore both the stubs and the override leak into later files
+// and break their window guards / keymap expectations.
+const globals = globalThis as { window?: unknown; document?: unknown; localStorage?: unknown };
+const originalWindow = globals.window;
+const originalDocument = globals.document;
+const originalLocalStorage = globals.localStorage;
+
+afterEach(() => {
+  globals.window = originalWindow;
+  globals.document = originalDocument;
+  globals.localStorage = originalLocalStorage;
+  resetKeymapOverrides();
+},);
 
 function installWindow(keynavFlag: string | null,): void {
   listeners.clear();
