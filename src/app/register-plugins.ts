@@ -23,7 +23,7 @@
  *   (`src/routes/v1/index.ts`), which mounts the per-section surfaces instead.
  * See `docs/spec/api-versioning.md`.
  */
-import type { Elysia, } from "elysia";
+import { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { agencyRoutes, } from "../routes/agency";
@@ -36,6 +36,7 @@ import { livenessRoutes, } from "../routes/liveness";
 import { locationExplorerRoutes, } from "../routes/location-explorer";
 import { metricsRoutes, } from "../routes/metrics";
 import { storyOrchestrationRoutes, } from "../routes/story-orchestration";
+import { governanceGuard, } from "../routes/v1/governance";
 import { viewRoutes, } from "../routes/views";
 
 /** */
@@ -77,13 +78,28 @@ export function registerPlugins(app: PluginHost, opts: RegisterPluginsOpts,): vo
   app.use(buildIdRoutes(),);
 
   // ── Migrated route modules ───────────────────────────────────────────────────
-  app.use(agencyRoutes({ database: handleOpts.database, },),);
-  // memory-audit is NOT mounted here: `actorMemoriesRoutes` nests it inside the
-  // v1 actors surface (`src/routes/v1/actors-surface.ts` -> actor-memories.ts:173),
-  // so a mount here would duplicate every /api/v1 memory-audit route.
-  app.use(locationExplorerRoutes(handleOpts,),);
-  app.use(gameStateRoutes(handleOpts,),);
-  app.use(storyOrchestrationRoutes(handleOpts,),);
+  // These mounts sit OUTSIDE the v1 barrel, so before the guarded instance
+  // below the governance guard never ran on them (S-6): story LLM endpoints
+  // were unlimited and config-menu writes carried no rate limit. One guarded
+  // Elysia instance carries them all — the guard's hooks apply to every
+  // plugin registered on it after the guard, the same arrangement as the v1
+  // barrel (src/routes/v1/index.ts). The enable predicate mirrors the barrel
+  // default; injected via RegisterPluginsOpts for tests.
+  const govEnabled = opts.governanceEnabled ?? (() => process.env.E2E_SAFEGUARD !== "1");
+  const migrated = new Elysia({ name: "migrated-v1", },)
+    .use(governanceGuard({ enabled: govEnabled, },),)
+    .use(agencyRoutes({ database: handleOpts.database, },),)
+    // memory-audit is NOT mounted here: `actorMemoriesRoutes` nests it inside the
+    // v1 actors surface (`src/routes/v1/actors-surface.ts` -> actor-memories.ts:173),
+    // so a mount here would duplicate every /api/v1 memory-audit route.
+    .use(locationExplorerRoutes(handleOpts,),)
+    .use(gameStateRoutes(handleOpts,),)
+    .use(storyOrchestrationRoutes(handleOpts,),)
+    .use(configMenuRoutes({ database: handleOpts.database, },),);
+
+  app.use(migrated,);
+  // views stays UNGUARDED: server-rendered HTML under /views/*, deliberately
+  // unversioned and not a JSON API surface (see the header comment and
+  // docs/spec/api-versioning.md).
   app.use(viewRoutes({ database: handleOpts.database, },),);
-  app.use(configMenuRoutes({ database: handleOpts.database, },),);
 }

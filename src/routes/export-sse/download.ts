@@ -38,7 +38,13 @@ export function downloadRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
       }
 
       const timestamp = job.createdAt.toISOString().slice(0, 10,);
-      return new Response(new Uint8Array(job.zipBuffer,), {
+      // Copy out of the Buffer first, then release the retained reference:
+      // the zip used to sit in the Map until the TTL evicted the whole job,
+      // so every completed export held a full-account archive in memory for
+      // up to JOB_TTL_MS after it had already been delivered (S-4).
+      const body = new Uint8Array(job.zipBuffer,);
+      job.zipBuffer = undefined;
+      return new Response(body, {
         headers: {
           "Content-Type": "application/zip",
           "Content-Disposition": `attachment; filename="loop-lore-export-${timestamp}.zip"`,
