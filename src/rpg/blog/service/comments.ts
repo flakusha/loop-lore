@@ -95,39 +95,79 @@ export async function listCommentsThreaded(
   postId: string,
   opts?: { limit?: number; offset?: number },
 ): Promise<BlogCommentWithChildren[]> {
-  const comments = await db
+  // Page over the ROOT comments only. The flat list interleaves a root with
+  // its replies, so paging it split a thread across pages: the root came
+  // back on one page and its replies on another (or on no page at all).
+  const roots = await db
     .selectFrom("blog_comments",)
     .selectAll()
     .where("post_id", "=", postId,)
     .where("status", "!=", "deleted",)
+    .where("parent_comment_id", "is", null,)
     .orderBy("created_at", "asc",)
     .limit(opts?.limit ?? 50,)
     .offset(opts?.offset ?? 0,)
     .execute() as unknown as BlogCommentRow[];
 
-  // Build a lookup map keyed by id
-  const byId = new Map<string, BlogCommentRow[]>();
+  if (roots.length === 0) { return []; }
 
-  for (const c of comments) {
-    const key = c.parent_comment_id ?? "__root__";
-    const arr = byId.get(key,);
-    if (arr) {
-      arr.push(c,);
+  const rootIds = roots.map((root,) => root.id);
+
+  // Every descendant of those roots, in one recursive query.
+  const descendants = await db
+    .withRecursive("thread", (cte,) =>
+      cte
+        .selectFrom("blog_comments",)
+        .select(["id", "post_id", "author_id", "body", "status", "created_at", "parent_comment_id",],)
+        .where("post_id", "=", postId,)
+        .where("status", "!=", "deleted",)
+        .where("parent_comment_id", "in", rootIds,)
+        .unionAll(
+          cte
+            .selectFrom("blog_comments",)
+            .innerJoin("thread", "thread.id", "blog_comments.parent_comment_id",)
+            .select([
+              "blog_comments.id",
+              "blog_comments.post_id",
+              "blog_comments.author_id",
+              "blog_comments.body",
+              "blog_comments.status",
+              "blog_comments.created_at",
+              "blog_comments.parent_comment_id",
+            ],)
+            .where("blog_comments.post_id", "=", postId,)
+            .where("blog_comments.status", "!=", "deleted",),
+        ),)
+    .selectFrom("thread",)
+    .selectAll()
+    .orderBy("created_at", "asc",)
+    .execute() as unknown as BlogCommentRow[];
+
+  const childrenByParent = new Map<string, BlogCommentRow[]>();
+
+  for (const comment of descendants) {
+    const parentId = comment.parent_comment_id;
+    if (parentId === null || parentId === undefined) { continue; }
+    const siblings = childrenByParent.get(parentId,);
+    if (siblings) {
+      siblings.push(comment,);
     } else {
-      byId.set(key, [c,],);
+      childrenByParent.set(parentId, [comment,],);
     }
   }
 
-  function buildTree(parentId: string | null,): BlogCommentWithChildren[] {
-    const key = parentId ?? "__root__";
-    const siblings = byId.get(key,) ?? [];
+  function buildTree(parentId: string,): BlogCommentWithChildren[] {
+    const siblings = childrenByParent.get(parentId,) ?? [];
     return siblings.map((c,) => ({
       ...c,
       children: buildTree(c.id,),
     }));
   }
 
-  return buildTree(null,);
+  return roots.map((root,) => ({
+    ...root,
+    children: buildTree(root.id,),
+  }));
 }
 
 /**
