@@ -10,6 +10,7 @@ import {
   PaginationQuery,
   WorldStateCreateBody,
 } from "../../validation/schemas";
+import { parsePaginationParams, } from "../http-utils";
 import { handleWorldStates, } from "./handlers";
 
 const worldStateListItem = t.Object({ id: t.String(), },);
@@ -34,20 +35,27 @@ export function storyWorldStateRoutes({ database, }: { database: Kysely<DB> }, p
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const { worldId, } = ctx.params;
+      const pagination = parsePaginationParams(
+        { page: ctx.query?.page, size: ctx.query?.pageSize, },
+        { defaultPageSize: 20, },
+      );
+
+      if (pagination instanceof Response) { return pagination; }
       return handleWorldStates(
         database,
         "GET",
         worldId,
         userId,
         userRole,
-        Number(ctx.query?.page,) || 1,
-        Number(ctx.query?.pageSize,) || 20,
+        pagination.page,
+        pagination.pageSize,
       );
     }, {
       params: t.Object({ worldId: Id, },),
       query: PaginationQuery,
       response: {
         200: worldStatesListResponse,
+        400: ErrorResponse,
         401: ErrorResponse,
         404: ErrorResponse,
       },
