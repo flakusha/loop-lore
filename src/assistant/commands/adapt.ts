@@ -20,6 +20,7 @@ import type { GenerateRequest, } from "../../generation/providers/types";
 import { jsonStringifyOr, } from "../../utils";
 import { ENTITY_ADAPTERS, } from "../adapter/adapters";
 import { ADAPT_ENTITY_KINDS, type AdaptEntityKind, } from "../adapter/entity";
+import { loadTargetWorldContext, } from "../adapter/world-context";
 import {
   ADAPTABLE_FIELDS,
   applyAdaptationChanges,
@@ -29,42 +30,6 @@ import {
 } from "../quality/adaptation";
 import { normalizeEntity, runQualityGates, } from "../quality/entity-creation";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
-
-/**
- * Load the target world's context: name, description, lore, and lore-entry
- * contents (the deterministic half of the adaptation — no LLM).
- * @param db - database handle
- * @param worldId - target world
- * @returns the world name + flattened context text, or null when unknown
- */
-async function loadTargetWorldContext(
-  db: NonNullable<CommandContext["db"]>,
-  worldId: string,
-): Promise<{ name: string; context: string } | null> {
-  const world = await db
-    .selectFrom("worlds",)
-    .select(["name", "description", "lore",],)
-    .where("id", "=", worldId,)
-    .executeTakeFirst();
-
-  if (!world) { return null; }
-
-  const loreRows = await db
-    .selectFrom("world_lore_entries",)
-    .select(["name", "content",],)
-    .where("world_id", "=", worldId,)
-    .where("enabled", "=", "enabled",)
-    .limit(10,)
-    .execute();
-
-  const context = [
-    world.description ?? "",
-    world.lore ?? "",
-    ...loreRows.map((row,) => `${row.name ?? "Lore"}: ${row.content}`),
-  ].filter((part,) => part !== "").join("\n",);
-
-  return { name: world.name, context, };
-}
 
 /**
  * Core `/adapt` logic (LLM completion injectable for tests).
