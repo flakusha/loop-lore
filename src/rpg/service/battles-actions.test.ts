@@ -85,6 +85,36 @@ function interleaveAfterActorItemsRead(sideEffect: () => void,): KyselyPlugin {
 }
 
 /**
+ * Fire `sideEffect` right after the Nth `actor_items` SELECT completes — the
+ * deterministic stand-in for a writer that commits between the in-transaction
+ * re-read and the conditional write it guards. The write goes through the raw
+ * handle: a nested Kysely query would re-enter the driver.
+ */
+function interleaveAfterNthActorItemsRead(nth: number, sideEffect: () => void,): KyselyPlugin {
+  let seen = 0;
+  let armed = false;
+  let fired = false;
+  return {
+    transformQuery: (args,) => {
+      if (!fired && selectsActorItems(args.node,)) {
+        seen += 1;
+        if (seen === nth) { armed = true; }
+      }
+
+      return args.node;
+    },
+    transformResult: (args,) => {
+      if (armed && !fired) {
+        fired = true;
+        sideEffect();
+      }
+
+      return Promise.resolve(args.result,);
+    },
+  };
+}
+
+/**
  * @param id
  * @param name
  * @param isNpc
@@ -448,6 +478,113 @@ describe("battle item + social service", () => {
       targetId: "orc-gone",
       itemId: "Healing Draught",
     },),).rejects.toThrow(`Item ${itemId} is no longer in inventory`,);
+  });
+
+  it("useBattleItem reports a concurrent modification when the stack changes inside the transaction", async () => {
+    const actorId = uid();
+    await seedActor(db, createdBy, actorId,);
+    const itemId = "dr-guard";
+    await insertActorItems(db, actorId, "Healing Draught", "consumable" as never, {
+      id: itemId,
+      quantity: 2,
+      metadata: healMeta(6,),
+    },);
+
+    const battle = await startBattle({ database: db, }, {
+      chatId: uid(),
+      createdBy,
+      combatants: [makeCombatant(actorId, "Alice", false, 20,), makeCombatant("orc-guard", "Orc", true, 15,),],
+    },);
+
+    const orc = battle.combatants.find((c,) => c.id === "orc-guard")!;
+    orc.hp = 10;
+    await persistBattle(
+      { database: db, },
+      battle.id,
+      battle.round,
+      battle.turnIndex,
+      battle.combatants,
+      battle.log,
+      BattleStatus.Active,
+    );
+
+    // The second `actor_items` SELECT is the re-read INSIDE the transaction. A
+    // writer landing right after it must trip the conditional-write guard
+    // instead of silently overwriting the stock
+    // (BUG-consumeinventoryunit-uses-stale-quantity-toctou).
+    const raced = db.withPlugin(interleaveAfterNthActorItemsRead(2, () => {
+      sqlite.run("UPDATE actor_items SET quantity = 5 WHERE id = ?", [itemId,],);
+    },),);
+
+    await expect(useBattleItem({ database: raced, }, {
+      battleId: battle.id,
+      actorId,
+      targetId: "orc-guard",
+      itemId: "Healing Draught",
+    },),).rejects.toThrow(`Item ${itemId} was modified concurrently`,);
+
+    // The failed consumption rolled back: the stack still holds its units.
+    const row = await db
+      .selectFrom("actor_items",)
+      .select(["quantity",],)
+      .where("id", "=", itemId,)
+      .executeTakeFirst();
+
+    expect(row?.quantity,).toBe(2,);
+  });
+
+  it("useBattleItem reports a concurrent modification when the last unit changes inside the transaction", async () => {
+    const actorId = uid();
+    await seedActor(db, createdBy, actorId,);
+    const itemId = "dr-guard-last";
+    await insertActorItems(db, actorId, "Healing Draught", "consumable" as never, {
+      id: itemId,
+      quantity: 1,
+      metadata: healMeta(6,),
+    },);
+
+    const battle = await startBattle({ database: db, }, {
+      chatId: uid(),
+      createdBy,
+      combatants: [
+        makeCombatant(actorId, "Alice", false, 20,),
+        makeCombatant("orc-guard-last", "Orc", true, 15,),
+      ],
+    },);
+
+    const orc = battle.combatants.find((c,) => c.id === "orc-guard-last")!;
+    orc.hp = 10;
+    await persistBattle(
+      { database: db, },
+      battle.id,
+      battle.round,
+      battle.turnIndex,
+      battle.combatants,
+      battle.log,
+      BattleStatus.Active,
+    );
+
+    // Same race on the DELETE path (the stack holds the last unit): the
+    // conditional delete must refuse to remove a row that still holds stock.
+    const raced = db.withPlugin(interleaveAfterNthActorItemsRead(2, () => {
+      sqlite.run("UPDATE actor_items SET quantity = 5 WHERE id = ?", [itemId,],);
+    },),);
+
+    await expect(useBattleItem({ database: raced, }, {
+      battleId: battle.id,
+      actorId,
+      targetId: "orc-guard-last",
+      itemId: "Healing Draught",
+    },),).rejects.toThrow(`Item ${itemId} was modified concurrently`,);
+
+    // The row survived (it still holds stock) and the rollback kept it intact.
+    const row = await db
+      .selectFrom("actor_items",)
+      .select(["quantity",],)
+      .where("id", "=", itemId,)
+      .executeTakeFirst();
+
+    expect(row?.quantity,).toBe(1,);
   });
 
   it("useBattleItem rejects unknown actors, targets, and items", async () => {
