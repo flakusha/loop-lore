@@ -29,6 +29,7 @@ import {
   parseAdaptationChanges,
 } from "../quality/adaptation";
 import { normalizeEntity, runQualityGates, } from "../quality/entity-creation";
+import { quotaGate, } from "../quota/gate";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 
 /**
@@ -45,6 +46,9 @@ export async function runAdaptation(
   complete: (req: GenerateRequest,) => Promise<{ content: string }>,
   model = "",
 ): Promise<CommandResult> {
+  const quota = quotaGate(ctx.userId ?? null, "adapt",);
+  if (quota) { return quota; }
+
   const [kind, sourceId,] = args;
   if (!kind || !sourceId) {
     return {

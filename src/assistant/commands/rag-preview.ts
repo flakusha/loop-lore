@@ -15,6 +15,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { requireWorldAccess, } from "../../routes/worlds/access";
+import { quotaGate, } from "../quota/gate";
 import { type CommandResult, registerCommand, } from "./registry";
 
 /** A lore row resolved from either lore table. */
@@ -76,6 +77,9 @@ async function loadLoreDocument(db: Kysely<DB>, docId: string,): Promise<LoreDoc
 }
 
 registerCommand("rag-preview", async (args, ctx,): Promise<CommandResult> => {
+  const quota = quotaGate(ctx.userId ?? null, "rag-preview",);
+  if (quota) { return quota; }
+
   const docId = args[0] || "";
   if (!docId) {
     return { systemMessage: "Usage: /rag-preview <doc-id>", handled: true, };
