@@ -16,6 +16,19 @@ import { DEFAULT_CURRENCY, } from "./types";
 import type { TradeHistoryEntry, TradeLine, TradeResult, TradeType, } from "./types";
 
 /**
+ * A trade failure raised inside the transaction callback. Throwing (rather
+ * than returning) is what makes the whole leg roll back; the reason is mapped
+ * back to the public `{ success: false, reason }` result outside the catch.
+ */
+class TradeFailure extends Error {
+  /** @param reason - Human-readable failure reason returned to the caller. */
+  constructor(readonly reason: string,) {
+    super(reason,);
+    this.name = "TradeFailure";
+  }
+}
+
+/**
  * Execute a two-sided trade atomically between two actors:
  *   buyer pays `price` gold + `buyerItems` → seller
  *   seller sends `sellerItems` → buyer
@@ -79,48 +92,43 @@ export async function tradeCore(
 
   if (preErr) { return { success: false, reason: preErr, }; }
 
-  let success = false;
   const moved: { pricePaid: number; itemsOffered: string[]; itemsRequested: string[] } = {
     pricePaid: 0,
     itemsOffered: [],
     itemsRequested: [],
   };
 
-  let reason: string | undefined;
-
-  await db.transaction().execute(async (trx,) => {
-    const paid = await debit(trx, buyerActorId, worldId, price, DEFAULT_CURRENCY, trx,);
-    if (!paid) {
-      reason = "buyer has insufficient currency";
-      return;
-    }
-
-    await credit(trx, sellerActorId, worldId, price, DEFAULT_CURRENCY, trx,);
-    moved.pricePaid = price;
-
-    for (const line of buyerItems) {
-      const res = await items.transfer(line.worldItemId, worldId, line.quantity, undefined, sellerActorId, trx,);
-      if (!res.success) {
-        reason = "buyer item transfer failed";
-        return;
+  try {
+    await db.transaction().execute(async (trx,) => {
+      // Every failure path THROWS so the transaction rolls back: a plain
+      // `return` would resolve the callback normally and Kysely would COMMIT
+      // the currency debit that already happened (DOM-1).
+      const paid = await debit(trx, buyerActorId, worldId, price, DEFAULT_CURRENCY, trx,);
+      if (!paid) {
+        throw new TradeFailure("buyer has insufficient currency",);
       }
 
-      moved.itemsOffered.push(line.worldItemId,);
-    }
+      await credit(trx, sellerActorId, worldId, price, DEFAULT_CURRENCY, trx,);
+      moved.pricePaid = price;
 
-    for (const line of sellerItems) {
-      const res = await items.transfer(line.worldItemId, worldId, line.quantity, undefined, buyerActorId, trx,);
-      if (!res.success) {
-        reason = "seller item transfer failed";
-        return;
+      for (const line of buyerItems) {
+        const res = await items.transfer(line.worldItemId, worldId, line.quantity, undefined, sellerActorId, trx,);
+        if (!res.success) {
+          throw new TradeFailure("buyer item transfer failed",);
+        }
+
+        moved.itemsOffered.push(line.worldItemId,);
       }
 
-      moved.itemsRequested.push(line.worldItemId,);
-    }
+      for (const line of sellerItems) {
+        const res = await items.transfer(line.worldItemId, worldId, line.quantity, undefined, buyerActorId, trx,);
+        if (!res.success) {
+          throw new TradeFailure("seller item transfer failed",);
+        }
 
-    success = true;
+        moved.itemsRequested.push(line.worldItemId,);
+      }
 
-    if (success) {
       await recordTrade(trx, {
         worldId,
         buyerActorId,
@@ -132,10 +140,16 @@ export async function tradeCore(
         tradeType,
         trx,
       },);
-    }
-  },);
+    },);
+  } catch (err) {
+    // The trade failed: the transaction was rolled back, so the currency
+    // debit/credit never took effect. Map the failure back to the public
+    // result shape instead of letting it escape as a 500.
+    if (err instanceof TradeFailure) { return { success: false, reason: err.reason, }; }
+    throw err;
+  }
 
-  return success ? { success: true, ...moved, } : { success: false, reason, };
+  return { success: true, ...moved, };
 }
 
 /**
