@@ -44,6 +44,8 @@ export class MockLLMProvider implements LLMProvider {
   private taskReplies = new Map<AuxTaskName, string>();
   /** Exact-input scripted replies — key `${task}\u0000${userText}`. */
   private inputReplies = new Map<string, string>();
+  /** Replies for non-aux requests, keyed by a system-message substring. */
+  private systemReplies = new Map<string, string>();
   readonly capabilities = MOCK_CAPABILITIES;
 
   /** Throw ProviderError on complete()/stream() */
@@ -89,24 +91,46 @@ export class MockLLMProvider implements LLMProvider {
     this.inputReplies.set(`${task}\u0000${input}`, reply,);
   }
 
+  /**
+   * Script a reply for a NON-aux request by a system-message substring —
+   * e.g. a command that calls the provider directly (`/adapt`) and does not
+   * carry an `auxTask` stamp. Checked only when no task-keyed reply matched.
+   * @param snippet - Substring the request's system message must contain
+   * @param reply - Raw provider content to return
+   */
+  setSystemReply(snippet: string, reply: string,): void {
+    this.systemReplies.set(snippet, reply,);
+  }
+
   /** Clear every scripted reply — back to pure legacy canned behavior. */
   clearScriptedReplies(): void {
     this.taskReplies.clear();
     this.inputReplies.clear();
+    this.systemReplies.clear();
   }
 
   /**
-   * Resolve the content for a request: exact-input reply → task reply → null.
-   * The task comes from the request's explicit `auxTask` id (stamped by
-   * `callAux`); prompt-shape sniffing is only the fallback.
+   * Resolve the content for a request: exact-input reply → task reply →
+   * system-snippet reply → null. The task comes from the request's explicit
+   * `auxTask` id (stamped by `callAux`); prompt-shape sniffing is only the
+   * fallback.
    * @param req - generate request
    * @returns Scripted content, or null when nothing is scripted for the request
    */
   private resolveScriptedContent(req: GenerateRequest,): string | null {
     const task = req.auxTask ?? detectAuxTask(req.messages,);
-    if (!task) { return null; }
-    const userText = [...req.messages,].reverse().find((m,) => m.role === "user")?.content ?? "";
-    return this.inputReplies.get(`${task}\u0000${userText}`,) ?? this.taskReplies.get(task,) ?? null;
+    if (task) {
+      const userText = [...req.messages,].reverse().find((m,) => m.role === "user")?.content ?? "";
+      const byTask = this.inputReplies.get(`${task}\u0000${userText}`,) ?? this.taskReplies.get(task,);
+      if (byTask !== undefined) { return byTask; }
+    }
+
+    const systemText = req.messages.find((m,) => m.role === "system")?.content ?? "";
+    for (const [snippet, reply,] of this.systemReplies) {
+      if (systemText.includes(snippet,)) { return reply; }
+    }
+
+    return null;
   }
 
   /**
