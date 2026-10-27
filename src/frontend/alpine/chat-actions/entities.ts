@@ -157,6 +157,35 @@ export const entityActionHandlers: Record<string, EntityActionHandler> = {
     }
   },
 
+  "duplicate-entity": async (ctx, payload, chatId,) => {
+    const kind = (payload?.kind as string) ?? "";
+    const name = (payload?.name as string) ?? "";
+    const worldId = (payload?.worldId as string | null) ?? null;
+    const fields = (payload?.fields ?? {}) as Record<string, unknown>;
+    if (!kind || !name || Object.keys(fields,).length === 0 || !chatId) {
+      log.warn("duplicate-entity: missing required payload fields", { payload, },);
+      return;
+    }
+
+    // The confirm route re-validates the copied+overridden fields server-side
+    // (normalizeEntity + validateEntitySchema) before insertGeneratedEntity.
+    if (!confirm(t("toasts.confirmDuplicateEntity", { name, },),)) { return; }
+    try {
+      const res = await apiFetch(`/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ kind, data: fields, worldId, },),
+      },);
+
+      ctx.$dispatch?.("show-toast", {
+        type: res.ok ? "success" : "error",
+        message: res.ok ? t("toasts.entityDuplicated", { name, },) : t("toasts.failedDuplicateEntity", { name, },),
+      },);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedDuplicateEntity", { name, },), },);
+    }
+  },
+
   "modify-entity": async (ctx, payload,) => {
     const kind = (payload?.kind as string) ?? "";
     const entityId = (payload?.entityId as string) ?? "";
