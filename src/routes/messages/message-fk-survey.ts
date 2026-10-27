@@ -80,9 +80,15 @@ async function blockingMessageForeignKeys(database: Kysely<DB>,): Promise<Messag
     select name from sqlite_master where type = 'table' and name not like 'sqlite_%'
   `.execute(database,)).rows;
 
+  // The per-table PRAGMA reads are independent, so they go out together
+  // instead of one await per table. A table whose foreign key list cannot be
+  // read is already skipped by the helper, so a rejection only means that
+  // table contributes nothing.
+  const perTable = await Promise.allSettled(tables.map(({ name, },) => blockingMessageForeignKeysOf(database, name,)),);
+
   const blocking: MessageForeignKey[] = [];
-  for (const { name, } of tables) {
-    blocking.push(...await blockingMessageForeignKeysOf(database, name,),);
+  for (const result of perTable) {
+    if (result.status === "fulfilled") { blocking.push(...result.value,); }
   }
 
   return blocking;
@@ -101,25 +107,32 @@ async function blockingMessageForeignKeys(database: Kysely<DB>,): Promise<Messag
  * @returns The blocked message ids.
  */
 export async function structuralReferences(database: Kysely<DB>, candidateIds: string[],): Promise<Set<string>> {
+  // One read per blocking column. The reads are independent of each other, so
+  // they run together; a failed read is rethrown so the purge still aborts
+  // instead of silently purging a referenced message.
+  const rowsPerColumn = await Promise.allSettled(
+    (await blockingMessageForeignKeys(database,)).map(async (fk,) => {
+      const column = quoteIdentifier(fk.column,);
+      const table = quoteIdentifier(fk.table,);
+      // A referencing row survives the purge unless it is a message the purge
+      // deletes itself (messages.parent_id - the leaf-first delete handles
+      // those).
+      return fk.table === "messages"
+        ? (await sql<{ value: string | null }>`
+          select ${sql.raw(column,)} as value from ${sql.raw(table,)}
+          where ${sql.raw(column,)} in (${sql.join(candidateIds,)}) and "id" not in (${sql.join(candidateIds,)})
+        `.execute(database,)).rows
+        : (await sql<{ value: string | null }>`
+          select ${sql.raw(column,)} as value from ${sql.raw(table,)}
+          where ${sql.raw(column,)} in (${sql.join(candidateIds,)})
+        `.execute(database,)).rows;
+    },),
+  );
+
   const blocked = new Set<string>();
-
-  for (const fk of await blockingMessageForeignKeys(database,)) {
-    const column = quoteIdentifier(fk.column,);
-    const table = quoteIdentifier(fk.table,);
-    // A referencing row survives the purge unless it is a message the purge
-    // deletes itself (messages.parent_id - the leaf-first delete handles
-    // those).
-    const rows = fk.table === "messages"
-      ? (await sql<{ value: string | null }>`
-        select ${sql.raw(column,)} as value from ${sql.raw(table,)}
-        where ${sql.raw(column,)} in (${sql.join(candidateIds,)}) and "id" not in (${sql.join(candidateIds,)})
-      `.execute(database,)).rows
-      : (await sql<{ value: string | null }>`
-        select ${sql.raw(column,)} as value from ${sql.raw(table,)}
-        where ${sql.raw(column,)} in (${sql.join(candidateIds,)})
-      `.execute(database,)).rows;
-
-    for (const row of rows) {
+  for (const result of rowsPerColumn) {
+    if (result.status === "rejected") { throw result.reason; }
+    for (const row of result.value) {
       if (row.value !== null) { blocked.add(row.value,); }
     }
   }
