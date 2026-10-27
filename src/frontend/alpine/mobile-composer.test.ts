@@ -21,6 +21,8 @@ interface FakeMediaQueryList {
 }
 
 const realMatchMedia = globalThis.matchMedia;
+const realLocalStorage = globalThis.localStorage;
+const realAlpine = (globalThis as unknown as { Alpine?: unknown }).Alpine;
 
 /** Install a `matchMedia` stub that records its listener bookkeeping. */
 function installMatchMedia(): FakeMediaQueryList {
@@ -52,8 +54,37 @@ function mountComposer(): ReturnType<typeof mobileComposer> {
   return composer;
 }
 
+/** Minimal localStorage stub — the shared draft store reads and writes it. */
+function installLocalStorage(get: (key: string,) => string | null,): Map<string, string> {
+  const data = new Map<string, string>();
+  const stub = {
+    getItem: (key: string,) => get(key,) ?? data.get(key,) ?? null,
+    setItem: (key: string, value: string,) => {
+      data.set(key, value,);
+    },
+    removeItem: (key: string,) => {
+      data.delete(key,);
+    },
+    clear: () => data.clear(),
+    key: () => null,
+    length: 0,
+  };
+
+  (globalThis as unknown as { localStorage: unknown }).localStorage = stub;
+  return data;
+}
+
+/** Point the component at a parent chatState scope (Alpine's $data lookup). */
+function installParentScope(parent: Record<string, unknown>,): void {
+  (globalThis as unknown as { Alpine?: unknown }).Alpine = {
+    $data: () => parent,
+  };
+}
+
 afterEach(() => {
   (globalThis as unknown as { matchMedia: unknown }).matchMedia = realMatchMedia;
+  (globalThis as unknown as { localStorage: unknown }).localStorage = realLocalStorage;
+  (globalThis as unknown as { Alpine?: unknown }).Alpine = realAlpine;
 },);
 
 describe("mobileComposer", () => {
@@ -77,5 +108,40 @@ describe("mobileComposer", () => {
     expect(() => {
       composer.destroy();
     },).not.toThrow();
+  });
+});
+
+describe("mobileComposer drafts", () => {
+  test("saveMobileDraft writes the shared draft after the debounce", async () => {
+    const data = installLocalStorage(() => null);
+    const composer = mountComposer();
+    const input = { value: "hello draft", } as unknown as HTMLInputElement;
+    (composer as unknown as { $refs: Record<string, unknown> }).$refs = { mobileInput: input, };
+    installParentScope({ activeChat: "chat-1", },);
+
+    composer.saveMobileDraft();
+    await new Promise((resolve,) => setTimeout(resolve, 400,));
+
+    expect([...data.values(),].join(" ",),).toContain("hello draft",);
+  });
+
+  test("submitMobile forwards the text to the parent chatState", async () => {
+    installLocalStorage(() => "1");
+    const composer = mountComposer();
+    const input = { value: "  send me  ", } as unknown as HTMLInputElement;
+    (composer as unknown as { $refs: Record<string, unknown> }).$refs = { mobileInput: input, };
+    let sent = false;
+    installParentScope({
+      activeChat: "chat-1",
+      sendMessage: async () => {
+        sent = true;
+      },
+      $refs: { messageInput: { value: "", }, },
+    },);
+
+    await composer.submitMobile();
+
+    expect(sent,).toBe(true,);
+    expect(input.value,).toBe("",);
   });
 });
