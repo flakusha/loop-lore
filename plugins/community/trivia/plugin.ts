@@ -114,7 +114,7 @@ export const plugin: PluginManifest = {
         if (action === "answer") {
           // For chat, sessions are managed via metadata round-trips
           return {
-            content: "To answer a trivia question, use the /api/trivia/answer endpoint with your sessionId and answerIndex. Chat-based stateful trivia coming soon.",
+            content: "To answer a trivia question, use the /api/v1/trivia/answer endpoint with your sessionId and answerIndex. Chat-based stateful trivia coming soon.",
           };
         }
 
