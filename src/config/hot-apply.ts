@@ -37,6 +37,8 @@ export const HOT_APPLY_PATHS: Readonly<Record<string, true>> = {
   "ageGate.enabled": true,
   "ageGate.minimumAge": true,
   "ageGate.mode": true,
+  "assistant.quotaWindowMs": true,
+  "assistant.quotaLimitPerWindow": true,
 };
 
 /**

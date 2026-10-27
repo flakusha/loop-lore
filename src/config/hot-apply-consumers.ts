@@ -9,6 +9,7 @@
 // toggle) with the on-disk value.
 
 import { ageGateConfig, } from "../age-gate/controller";
+import { initAssistantQuota, } from "../assistant/quota/engine";
 import { getLogger, } from "../logger";
 import {
   type NsfwRuntimeConfig,
@@ -39,6 +40,10 @@ export function applyHotConfig(change: ConfigChange,): void {
         minimumAge: config.ageGate.minimumAge,
         mode: config.ageGate.mode,
       },);
+    } else if (path === "assistant.quotaWindowMs" || path === "assistant.quotaLimitPerWindow") {
+      // Commands read the quota window through enforceQuota on every call;
+      // re-applying drops in-flight counters, matching the configure contract.
+      initAssistantQuota(config.assistant,);
     }
   }
 
