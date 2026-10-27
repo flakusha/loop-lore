@@ -12,7 +12,9 @@ Adaptation) delivered across 6 batches.
 
 
 **Status:** In Progress
-**Status Note:** In Progress (verified 2026-10-18 against `dev` at `08ef7efe7` — by file existence on `dev`, line-level reads of each cited path, and a `git log dev..<branch>` check that excludes unmerged work). The previous "Not Started" note in this file (dated 2026-10-09) was partly false: two of the ten feature areas DO have command handlers in `src/assistant/commands/`. SHIPPED AND LIVE: area 1 (RAG access) — `src/assistant/commands/rag.ts` registers `rag-search` at `:66` (keyword search over `world_lore_entries` + `actor_lore_entries`, world-scoped via `requireWorldAccess`) and `rag-ask` at `:101` (aux-LLM answer over the retrieved context); area 2 (Asset access) — `src/assistant/commands/assets.ts` registers `asset-list` at `:22` (kind-filtered via `listAssets`), `asset-preview` at `:61` (metadata + links, gated by `canAccessAsset`) and `asset-search` at `:99` (`searchAssets`). Both files are imported for side effects by the command barrel (`src/assistant/commands/index.ts:9` and `:31`), so the commands are registered at runtime. Unit coverage ships for every handler (`src/assistant/commands/rag.test.ts`, `src/assistant/commands/assets.test.ts`), including access-denial cases. REMAINS — genuinely absent from `dev`: areas 3 (World), 4 (Location), 5 (Character), 6 (Item & Inventory), 7 (Addition), 8 (Modification), 9 (Duplication) and 10 (Adaptation) have no command files or handlers at all; `/rag-preview` and `/rag-decompose` are unregistered; `/asset-link` is unregistered; there is no `EntityAdapter` layer (`src/assistant/adapter/` does not exist) and no quota engine (`src/assistant/quota/` does not exist), so the epic's "Quota-aware" core principle is unimplemented. NOT COUNTED AS DONE: an unmerged branch `entity-access-batch-a` carries entity read commands (`src/assistant/commands/{worlds-access,locations-access,characters-access,items}.ts` and their tests) plus world-UI panels; those commits are NOT reachable from `dev` and are deliberately excluded from this assessment. The `## Acceptance Criteria` block further down predates the RAG/Asset work and is stale in the same way.
+**Status Note:** In Progress (re-verified 2026-10-27 against `dev` at `f62e8563`). B1–B4 are shipped: RAG access (`src/assistant/commands/rag.ts` — `rag-search`, `rag-ask`), Asset access (`assets.ts`), World access (`worlds-access.ts` + `worlds-mutate.ts`), Location access (`locations.ts` + `locations-update.ts`), Character access (`characters-access.ts` + `characters-update.ts`), Item/inventory access (`items.ts`, `items-instance.ts`, `items-update.ts` — transfer/drop/pickup), Addition (`import.ts` — character kind + `/add`, `create-entity*.ts`), Modification (`modify.ts`, `apply.ts`, `entity-patch.ts` + `entity-guard.ts`, preview-only for world/location/item/character via the mutation-confirmation flow: frontend `src/frontend/alpine/chat-actions/entities.ts` → `POST /api/chats/:id/create-entity` in `src/routes/messages/create-entity-confirm.ts` with server re-validation). REMAINDER (implemented on `r2-entity-access-wrapup`): `/rag-preview` + `/rag-decompose` (§1), `/duplicate` with `--with <changes>` covering character+world kinds (§9; `clone.ts` is location|item only — `ENTITY_KINDS` at `clone.ts:24`), `/adapt` + adaptation engine + `EntityAdapter` (§10, B5), quota engine (no quota enforcement exists in `src/assistant`), unit tests + e2e spec (tests/e2e/flows/ has no coverage of these commands).
+
+Previous note (verified 2026-10-18 against `dev` at `08ef7efe7` — by file existence on `dev`, line-level reads of each cited path, and a `git log dev..<branch>` check that excludes unmerged work). The previous "Not Started" note in this file (dated 2026-10-09) was partly false: two of the ten feature areas DO have command handlers in `src/assistant/commands/`. SHIPPED AND LIVE: area 1 (RAG access) — `src/assistant/commands/rag.ts` registers `rag-search` at `:66` (keyword search over `world_lore_entries` + `actor_lore_entries`, world-scoped via `requireWorldAccess`) and `rag-ask` at `:101` (aux-LLM answer over the retrieved context); area 2 (Asset access) — `src/assistant/commands/assets.ts` registers `asset-list` at `:22` (kind-filtered via `listAssets`), `asset-preview` at `:61` (metadata + links, gated by `canAccessAsset`) and `asset-search` at `:99` (`searchAssets`). Both files are imported for side effects by the command barrel (`src/assistant/commands/index.ts:9` and `:31`), so the commands are registered at runtime. Unit coverage ships for every handler (`src/assistant/commands/rag.test.ts`, `src/assistant/commands/assets.test.ts`), including access-denial cases. REMAINS — genuinely absent from `dev`: areas 3 (World), 4 (Location), 5 (Character), 6 (Item & Inventory), 7 (Addition), 8 (Modification), 9 (Duplication) and 10 (Adaptation) have no command files or handlers at all; `/rag-preview` and `/rag-decompose` are unregistered; `/asset-link` is unregistered; there is no `EntityAdapter` layer (`src/assistant/adapter/` does not exist) and no quota engine (`src/assistant/quota/` does not exist), so the epic's "Quota-aware" core principle is unimplemented. NOT COUNTED AS DONE: an unmerged branch `entity-access-batch-a` carries entity read commands (`src/assistant/commands/{worlds-access,locations-access,characters-access,items}.ts` and their tests) plus world-UI panels; those commits are NOT reachable from `dev` and are deliberately excluded from this assessment. The `## Acceptance Criteria` block further down predates the RAG/Asset work and is stale in the same way.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -248,29 +250,29 @@ The adaptation engine:
 
 ### B1 — RAG + Asset Access (MVP)
 
-- [ ] `/rag-search` command + FTS5 fallback
-- [ ] `/rag-ask` command with LLM analysis
-- [ ] `/asset-list` command
-- [ ] `/asset-preview` command
-- [ ] `/asset-search` command
+- [x] `/rag-search` command + FTS5 fallback — `src/assistant/commands/rag.ts` (`rag-search`; keyword search over lore tables, FTS5 over `documents` still the fallback path for `/rag-preview`)
+- [x] `/rag-ask` command with LLM analysis — `src/assistant/commands/rag.ts` (`rag-ask`, aux-LLM)
+- [x] `/asset-list` command — `src/assistant/commands/assets.ts`, tested in `assets.test.ts`
+- [x] `/asset-preview` command — `src/assistant/commands/assets.ts`, tested in `assets.test.ts`
+- [x] `/asset-search` command — `src/assistant/commands/assets.ts`, tested in `assets.test.ts`
 
 ### B2 — World + Location Access
 
-- [ ] `/world-list` command
-- [ ] `/world-get` command
-- [ ] `/loc-list` command
-- [ ] `/loc-get` command
-- [ ] `/loc-update` command
+- [x] `/world-list` command — `src/assistant/commands/worlds-access.ts`
+- [x] `/world-get` command — `src/assistant/commands/worlds-access.ts`
+- [x] `/loc-list` command — `src/assistant/commands/locations.ts`
+- [x] `/loc-get` command — `src/assistant/commands/locations.ts`
+- [x] `/loc-update` command — `src/assistant/commands/locations-update.ts` (preview + confirm)
 
 ### B3 — Character + Item + Inventory Access
 
-- [ ] `/char-list` command
-- [ ] `/char-get` command
-- [ ] `/item-list` command
-- [ ] `/inventory` command
-- [ ] `/item-transfer` command
-- [ ] `/item-drop` command
-- [ ] `/item-pickup` command
+- [x] `/char-list` command — `src/assistant/commands/characters-access.ts`
+- [x] `/char-get` command — `src/assistant/commands/characters-access.ts`
+- [x] `/item-list` command — `src/assistant/commands/items.ts`
+- [x] `/inventory` command — `src/assistant/commands/items.ts`
+- [x] `/item-transfer` command — `src/assistant/commands/items-instance.ts`
+- [x] `/item-drop` command — `src/assistant/commands/items-instance.ts`
+- [x] `/item-pickup` command — `src/assistant/commands/items-instance.ts`
 
 ### B4 — Modification + Addition
 
@@ -284,14 +286,14 @@ Scope note: `/import` is wired for the `character` kind only (the repo's import 
 
 ### B5 — Duplication + Adaptation
 
-- [ ] `/duplicate` command
-- [ ] `/adapt` command
-- [ ] Adaptation engine with quality gates
+- [ ] `/duplicate` command — implementing on `r2-entity-access-wrapup` (generalizes `/clone` kinds to character + world, `--with <changes>` workflow)
+- [ ] `/adapt` command — implementing on `r2-entity-access-wrapup`
+- [ ] Adaptation engine with quality gates — implementing on `r2-entity-access-wrapup` (`src/assistant/adapter/` + `src/assistant/quality/adaptation.ts`)
 
 ### B6 — Tests
 
-- [ ] Unit tests for all command handlers
-- [ ] E2E tests for full command flow
+- [ ] Unit tests for all command handlers — implementing on `r2-entity-access-wrapup` for new/changed handlers
+- [ ] E2E tests for full command flow — implementing on `r2-entity-access-wrapup` (`tests/e2e/flows/` spec)
 
 ## Files
 
@@ -304,11 +306,11 @@ Scope note: `/import` is wired for the `character` kind only (the repo's import 
 - `src/assistant/commands/apply.ts` — `/apply`
 - `src/assistant/commands/modify.ts` — `/modify`
 - `src/assistant/commands/clone.ts` — `/clone`
-- `src/assistant/commands/duplicate.ts` — `/duplicate` (TODO)
-- `src/assistant/commands/adapt.ts` — `/adapt` (TODO)
+- `src/assistant/commands/duplicate.ts` — `/duplicate` (TODO — in flight on `r2-entity-access-wrapup`)
+- `src/assistant/commands/adapt.ts` — `/adapt` (TODO — in flight on `r2-entity-access-wrapup`)
 - `src/assistant/commands/import.ts` — `/import`, `/add`
-- `src/assistant/quality/adaptation.ts` — Adaptation quality gates (TODO)
-- `src/assistant/adapter/` — Entity adapter composing with existing services (TODO)
+- `src/assistant/quality/adaptation.ts` — Adaptation quality gates (TODO — in flight on `r2-entity-access-wrapup`)
+- `src/assistant/adapter/` — Entity adapter composing with existing services (TODO — in flight on `r2-entity-access-wrapup`)
 - `src/assistant/commands/registry.ts` — command registry (exists)
 - `src/assistant/quality/entity-creation.ts` — quality-gating pipeline (exists)
 - `src/routes/worlds/worlds.ts` — world access guards (exists)
