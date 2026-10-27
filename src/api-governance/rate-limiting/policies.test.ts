@@ -8,6 +8,7 @@ import {
   chatPolicy,
   defaultPolicy,
   generationPolicy,
+  outboundFetchPolicy,
   policies,
   policyForRoute,
   routePolicies,
@@ -92,6 +93,53 @@ describe("policyForRoute", () => {
 
   test("auth prefix resolves the auth policy", () => {
     expect(policyForRoute("/api/v1/auth/login",),).toBe(authPolicy,);
+  });
+
+  test("ai-action resolves the generation policy, not the chat bucket (S-5)", () => {
+    // The path STARTS WITH /api/v1/chats, so first-match-wins makes rule
+    // order load-bearing: before the reorder this resolved chatPolicy
+    // (300/min) despite the suffix rule existing further down the table.
+    expect(policyForRoute("/api/v1/chats/c1/messages/m1/ai-action",),).toBe(generationPolicy,);
+  });
+
+  test("link-preview resolves the dedicated outbound-fetch policy (S-12)", () => {
+    // Each cache miss is a server-side fetch of a caller-chosen URL — its
+    // own budget, not the 300/min chat read bucket.
+    expect(policyForRoute("/api/v1/chats/c1/link-preview",),).toBe(outboundFetchPolicy,);
+    // Nearby chat reads stay on the chat policy.
+    expect(policyForRoute("/api/v1/chats/c1",),).toBe(chatPolicy,);
+  });
+
+  test("story LLM suffix rules fire on the versioned mount (S-6)", () => {
+    // Since the versioned remount the story routes serve at
+    // /api/v1/chats/:id/story/* — UNDER the chats prefix, so the suffix
+    // rules must outrank it (they used to sit below it and never fired).
+    expect(policyForRoute("/api/v1/chats/c1/story/step",),).toBe(generationPolicy,);
+    expect(policyForRoute("/api/v1/chats/c1/story/resume",),).toBe(generationPolicy,);
+    // The unversioned shape keeps resolving too.
+    expect(policyForRoute("/api/chats/abc/story/step",),).toBe(generationPolicy,);
+    expect(policyForRoute("/api/chats/abc/story/resume",),).toBe(generationPolicy,);
+  });
+
+  test("chat-nested suffix rules precede the chats prefix rule (dead-rule guard)", () => {
+    // The exact regression S-6 exposed: a suffix rule below /api/v1/chats
+    // can never fire, because the prefix claims the path first.
+    const chatsIdx = routePolicies.findIndex(([pattern,],) => pattern === "/api/v1/chats");
+    expect(chatsIdx,).toBeGreaterThan(-1,);
+    for (
+      const pattern of [
+        "/ai-action",
+        "/link-preview",
+        "/story/step",
+        "/story/resume",
+        "/vn/generate-story",
+        "/vn/generate-choices",
+      ]
+    ) {
+      const idx = routePolicies.findIndex(([p,],) => p === pattern);
+      expect(idx, `${pattern} must exist`,).toBeGreaterThan(-1,);
+      expect(idx, `${pattern} must precede /api/v1/chats or it is dead code`,).toBeLessThan(chatsIdx,);
+    }
   });
 
   test("prefix rules match on segment boundaries, not raw startsWith", () => {

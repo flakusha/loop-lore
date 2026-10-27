@@ -30,12 +30,28 @@ export const generationPolicy: RatePolicy = { name: "generation", windowMs: 60_0
 /** Chat browsing + send cycles + the seen-poller — UI volume, not billable. */
 export const chatPolicy: RatePolicy = { name: "chat", windowMs: 60_000, max: 300, burst: 50, };
 
+/**
+ * Server-side outbound fetches: GET /api/v1/chats/:id/link-preview performs
+ * a remote fetch of a caller-chosen URL on every cache miss (S-12), so its
+ * budget must sit far below chat UI volume — 300/min would make the instance
+ * an open relaying fetcher. 30/min with burst 10 absorbs one rendered
+ * back-log of links at once yet stays an order of magnitude under the chat
+ * read budget; the 7-day preview cache keeps repeat renders free.
+ */
+export const outboundFetchPolicy: RatePolicy = {
+  name: "outbound-fetch",
+  windowMs: 60_000,
+  max: 30,
+  burst: 10,
+};
+
 /** Registry of all named policies. */
 export const policies: Record<string, RatePolicy> = {
   [defaultPolicy.name]: defaultPolicy,
   [authPolicy.name]: authPolicy,
   [generationPolicy.name]: generationPolicy,
   [chatPolicy.name]: chatPolicy,
+  [outboundFetchPolicy.name]: outboundFetchPolicy,
 };
 
 /**
@@ -70,13 +86,26 @@ export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: 
   // chatId, so endsWith can never match. Other generation/* stays generation.
   ["/api/v1/generation/stream", chatPolicy,],
   ["/api/v1/generation", generationPolicy,],
-  ["/api/v1/chats", chatPolicy,],
-  // BUG-seen-poller-starves-shared-default-rate-limit-bucket: the seen
-  // poller N-GETs /api/v1/messages/:id/seen every 5s per open chat; without
-  // this prefix those calls landed in the shared defaultPolicy bucket and a
-  // >=26-message chat sustained >300 req/min → 429 storm + starvation of
-  // every other unmatched route.
-  ["/api/v1/messages", chatPolicy,],
+  // ── Suffix rules — kept ABOVE the prefix rules on purpose ──────────────
+  // First-match wins: every path below is nested under /api/v1/chats/:id/…
+  // (or an id-bearing parent), so a suffix rule placed after the
+  // /api/v1/chats prefix rule is DEAD — the prefix claims the path first and
+  // bills an expensive call as chat UI volume. The /story + /vn rules sat in
+  // exactly that dead spot until the guard-scope fix (S-6); the wiring tests
+  // now pin each rule through the real mounted surface.
+  // BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic (S-5):
+  // POST /api/v1/chats/:id/messages/:messageId/ai-action runs an
+  // auxiliary-model call per request — generation budget, not chat volume.
+  ["/ai-action", generationPolicy, "suffix",],
+  // S-12: GET /api/v1/chats/:id/link-preview performs a server-side fetch of
+  // a caller-chosen URL on cache miss — dedicated outbound-fetch budget.
+  ["/link-preview", outboundFetchPolicy, "suffix",],
+  // S-6: story LLM turns live at /api/v1/chats/:id/story/{step,resume} since
+  // the versioned remount; each is a full GM turn through an LLM provider.
+  ["/story/step", generationPolicy, "suffix",],
+  ["/story/resume", generationPolicy, "suffix",],
+  ["/vn/generate-story", generationPolicy, "suffix",],
+  ["/vn/generate-choices", generationPolicy, "suffix",],
   // BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy: batch
   // avatar generation is POST /api/v1/actors/:actorId/emotion-avatars (and the
   // wardrobe variant) — nested under an id, so no prefix rule ever reached it
@@ -97,11 +126,16 @@ export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: 
   // read/list/status paths stay on their current policy.
   ["/image-edit/run", generationPolicy, "suffix",],
   ["/comfyui-builder/runs", generationPolicy, "suffix",],
-  ["/story/step", generationPolicy, "suffix",],
-  ["/story/resume", generationPolicy, "suffix",],
   ["/proactive-messaging/send", generationPolicy, "suffix",],
-  ["/vn/generate-story", generationPolicy, "suffix",],
-  ["/vn/generate-choices", generationPolicy, "suffix",],
+  // ── Prefix rules — steady-state UI buckets, evaluated after the suffix ──
+  // exceptions above.
+  ["/api/v1/chats", chatPolicy,],
+  // BUG-seen-poller-starves-shared-default-rate-limit-bucket: the seen
+  // poller N-GETs /api/v1/messages/:id/seen every 5s per open chat; without
+  // this prefix those calls landed in the shared defaultPolicy bucket and a
+  // >=26-message chat sustained >300 req/min → 429 storm + starvation of
+  // every other unmatched route.
+  ["/api/v1/messages", chatPolicy,],
 ];
 
 /**
