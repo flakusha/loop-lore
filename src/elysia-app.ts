@@ -200,7 +200,14 @@ export function createApp(deps: AppDeps,) {
     // Cache only successful Response objects (2xx/3xx). Everything else
     // releases the in-flight slot so the client can retry.
     if (!(response instanceof Response) || response.status >= 300) {
-      idem.release({ method: ctx.request.method, route: ctx.route ?? "?", requestId, userId: ctx.userId ?? null, },);
+      idem.release({
+        method: ctx.request.method,
+        route: ctx.route ?? "?",
+        requestId,
+        userId: ctx.userId ?? null,
+        resolvedPath: new URL(ctx.request.url,).pathname,
+      },);
+
       return;
     }
 
@@ -209,6 +216,7 @@ export function createApp(deps: AppDeps,) {
       route: ctx.route ?? "?",
       requestId,
       userId: ctx.userId ?? null,
+      resolvedPath: new URL(ctx.request.url,).pathname,
       response,
     },);
   },);

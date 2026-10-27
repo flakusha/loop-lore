@@ -35,10 +35,16 @@ export function filterReplayHeaders(headers: Record<string, string>,): Record<st
  * (BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r) so two
  * authenticated users sharing an X-Request-Id cannot replay each other's
  * cached responses; unauthenticated requests share the `anon` bucket.
+ *
+ * The resolved path scopes the key as well (SW-6): the route PATTERN is
+ * shared by every resource of a route family, so one client request id used
+ * on two different resources replayed the first response and silently
+ * dropped the second write.
  * @param method
  * @param routePattern
  * @param requestId
  * @param userId
+ * @param resolvedPath - the concrete request path (route params substituted)
  * @returns {string}
  */
 export function makeKey(
@@ -46,6 +52,7 @@ export function makeKey(
   routePattern: string,
   requestId: string,
   userId: string | null,
+  resolvedPath: string = routePattern,
 ): string {
-  return `${method.toUpperCase()} ${routePattern} ${userId ?? "anon"} ${requestId}`;
+  return `${method.toUpperCase()} ${routePattern} ${userId ?? "anon"} ${requestId} ${resolvedPath}`;
 }
