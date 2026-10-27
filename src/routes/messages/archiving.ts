@@ -2,14 +2,13 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
-import { type Kysely, sql, } from "kysely";
 import { ARCHIVE_RETENTION_DAYS_DEFAULT, getConfigValue, } from "../../admin/config";
-import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { can, } from "../../users/permissions";
 import { notFound, } from "../../validation/middleware";
 import { ChatIdParams, ErrorResponse, MessageIdParams, SuccessResponse, } from "../../validation/schemas";
 import { jsonResponse, requireUserId, } from "../http-utils";
+import { structuralReferences, } from "./message-fk-survey";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -22,121 +21,6 @@ import type { HandlerOpts, } from "./types";
 function resolveArchiveRetentionDays(raw: string | undefined,): number {
   const parsed = Number(raw,);
   return Number.isFinite(parsed,) && parsed >= 1 ? parsed : ARCHIVE_RETENTION_DAYS_DEFAULT;
-}
-
-/** A foreign key column that points at messages.id. */
-interface MessageForeignKey {
-  table: string;
-  column: string;
-}
-
-/**
- * Quote a SQLite identifier for interpolation into a statement.
- * @param name
- * @returns {string}
- */
-function quoteIdentifier(name: string,): string {
-  return `"${name.replace(/"/g, '""',)}"`;
-}
-
-/**
- * Every foreign key column that targets messages.id and whose delete action
- * blocks the delete. CASCADE removes the referencing rows and SET NULL clears
- * the reference, so neither of those stops a purge.
- * @param database The database handle to read the foreign keys with.
- * @param table The table to survey.
- * @returns The blocking foreign key columns.
- */
-async function blockingMessageForeignKeysOf(database: Kysely<DB>, table: string,): Promise<MessageForeignKey[]> {
-  let fks: { table: string; from: string; to: string; on_delete: string }[];
-  try {
-    fks = (await sql<{ table: string; from: string; to: string; on_delete: string }[]>`
-      pragma foreign_key_list(${sql.raw(quoteIdentifier(table,),)})
-    `.execute(database,)).rows;
-  } catch (error) {
-    // A table whose foreign key list cannot be read is a virtual table: it
-    // cannot hold a foreign key, so it cannot block a purge either.
-    getLogger().warn("fk survey skipped a table", {
-      table,
-      message: error instanceof Error ? error.message : String(error,),
-    },);
-
-    return [];
-  }
-
-  const blocking: MessageForeignKey[] = [];
-  for (const fk of fks) {
-    if (fk.table !== "messages" || fk.to !== "id") { continue; }
-    const action = fk.on_delete.toUpperCase();
-    if (action === "CASCADE" || action === "SET NULL") { continue; }
-    // The pragma names the referenced table (fk.table) and the referenced
-    // column (fk.to); the referencing column is fk.from and the referencing
-    // table is the surveyed one.
-    blocking.push({ table: table, column: fk.from, },);
-  }
-
-  return blocking;
-}
-
-/**
- * Every foreign key column of the database that targets messages.id and
- * whose delete action blocks the delete.
- * @param database The database handle to read the foreign keys with.
- * @returns The blocking foreign key columns.
- */
-async function blockingMessageForeignKeys(database: Kysely<DB>,): Promise<MessageForeignKey[]> {
-  const tables = (await sql<{ name: string }[]>`
-    select name from sqlite_master where type = 'table' and name not like 'sqlite_%'
-  `.execute(database,)).rows;
-
-  const blocking: MessageForeignKey[] = [];
-  for (const { name, } of tables) {
-    blocking.push(...await blockingMessageForeignKeysOf(database, name,),);
-  }
-
-  return blocking;
-}
-
-/**
- * The candidate messages that a surviving row still references. Such a message
- * is structural: the purge keeps it (archived) instead of deleting it and
- * aborting the whole run.
- *
- * The survey is PRAGMA-driven, so it covers every FK column that targets
- * messages.id. The hand-written survey it replaces only knew
- * messages.parent_id and chat_branches.parent_message_id, so a message
- * referenced from generation_attempts, whitenotes, game_states,
- * story_triggers or conversation_merge aborted the purge with a raw SQLite
- * 500.
- * @param database The database handle to read the references with.
- * @param candidateIds The messages the purge would delete.
- * @returns The blocked message ids.
- */
-async function structuralReferences(database: Kysely<DB>, candidateIds: string[],): Promise<Set<string>> {
-  const blocked = new Set<string>();
-
-  for (const fk of await blockingMessageForeignKeys(database,)) {
-    const column = quoteIdentifier(fk.column,);
-    const table = quoteIdentifier(fk.table,);
-    // A referencing row survives the purge unless it is a message the purge
-    // deletes itself (messages.parent_id - the leaf-first delete handles
-    // those).
-    const rows = fk.table === "messages"
-      ? (await sql<{ value: string | null }[]>`
-        select ${sql.raw(column,)} as value from ${sql.raw(table,)}
-        where ${sql.raw(column,)} in (${sql.join(candidateIds,)}) and "id" not in (${sql.join(candidateIds,)})
-      `.execute(database,)).rows
-      : (await sql<{ value: string | null }[]>`
-        select ${sql.raw(column,)} as value from ${sql.raw(table,)}
-        where ${sql.raw(column,)} in (${sql.join(candidateIds,)})
-      `.execute(database,)).rows;
-
-    for (const row of rows) {
-      if (row.value !== null) { blocked.add(row.value,); }
-    }
-  }
-
-  return blocked;
 }
 
 /**
@@ -236,12 +120,15 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
         const retentionDays = resolveArchiveRetentionDays(await getConfigValue(database, "archive_retention_days",),);
         const cutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000,).toISOString();
 
-        // FK-safe purge (BUG-chat-minors-variant): messages.parent_id and
-        // chat_branches.parent_message_id both reference messages.id with no
-        // cascade, so a bulk delete that takes a still-referenced row aborts
-        // with an FK error (500). Refuse structural rows instead — keep them
-        // archived — delete the rest leaf-first, and clean their asset_links
-        // rows in the SAME transaction so no dangling links survive.
+        // FK-safe purge (BUG-chat-minors-variant): many columns reference
+        // messages.id with no cascade (messages.parent_id,
+        // chat_branches.parent_message_id, generation_attempts.parent_message_id,
+        // whitenotes.message_id, ...), so a bulk delete that takes a
+        // still-referenced row aborts with an FK error (500). The
+        // PRAGMA-driven survey below finds every such column; refuse
+        // structural rows instead — keep them archived — delete the rest
+        // leaf-first, and clean their asset_links rows in the SAME
+        // transaction so no dangling links survive.
         const candidates = await database
           .selectFrom("messages",)
           .select(["id", "parent_id",],)
