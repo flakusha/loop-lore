@@ -12,8 +12,11 @@
  *   2. Import it here and add to the `stores` map below
  */
 
+import { log as rootLog, } from "../alpine/logger";
 import { applyChatViewDefaults, assertChatViewShape, } from "../alpine/store-schema";
 import { uiStoreDefinition, } from "./ui-store";
+
+const log = rootLog.child({ module: "stores", },);
 
 /** Store name → initial value object. */
 const stores: Record<string, Record<string, unknown>> = {
@@ -58,7 +61,7 @@ export function initAlpineStores(): void {
     try {
       Alpine.store(name, value,);
     } catch (error) {
-      console.warn(`[stores] Failed to register "${name}":`, error,);
+      log.warn(`Failed to register "${name}":`, { error: String(error,), },);
     }
   }
 }
