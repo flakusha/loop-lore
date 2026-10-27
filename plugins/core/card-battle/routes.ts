@@ -20,7 +20,7 @@ const ACTION_DETAILS: Record<CombatCardAction, { name: string; description: stri
 };
 
 /** Narrow an untrusted string to a known combat action. */
-export function isCombatAction(value: string): value is CombatCardAction {
+function isCombatAction(value: string): value is CombatCardAction {
   return (COMBAT_ACTIONS as readonly string[]).includes(value);
 }
 
