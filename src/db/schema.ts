@@ -240,4 +240,5 @@ export interface DB {
   character_trait_assignments: import("./schema-core").CharacterTraitAssignments;
   assistant_quota_usage: import("./schema-core").AssistantQuotaUsage;
   immersion_failed_checks: import("./schema-core").ImmersionFailedChecks;
+  immersion_decision_log: import("./schema-core").ImmersionDecisionLog;
 }
