@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft-07/schema#",
   "$id": "loop-lore-config.auth.schema.json",
   "title": "Loop Lore Auth Config",
   "description": "Domain-specific configuration for auth",
@@ -13,6 +13,11 @@
           "type": "boolean",
           "default": false,
           "description": "Require remote multi-user auth"
+        },
+        "guestAccess": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt-in guest tier: unauthenticated visitors derive a read-mostly guest context (no account, no session row) instead of a 401. Requires auth.required = true; solo mode (auth.required = false) always yields the solo user."
         },
         "registrationOpen": {
           "type": "boolean",
@@ -42,12 +47,32 @@
         "adminUsername": {
           "type": "string",
           "default": "",
-          "description": "Bootstrap admin username (multi-user mode). Env: AUTH_ADMIN_USERNAME."
+          "description": "Bootstrap admin username (multi-user mode). Set via config or AUTH_ADMIN_USERNAME env."
         },
         "adminPassword": {
           "type": "string",
           "default": "",
           "description": "Bootstrap admin password (multi-user mode). Env-only preferred: AUTH_ADMIN_PASSWORD. Never commit."
+        },
+        "jwtSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC-SHA256 secret for JWT signing. Env-only: AUTH_JWT_SECRET. Required when auth.required=true."
+        },
+        "csrfSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC secret for Bun.CSRF token issuance + verification. Env-only: AUTH_CSRF_SECRET. Falls back to auth.jwtSecret when unset."
+        },
+        "jwtExpiresIn": {
+          "type": "integer",
+          "default": 86400,
+          "description": "JWT token expiry in seconds (default: 86400 = 24h)"
+        },
+        "legacyOpaqueTokenFallback": {
+          "type": "boolean",
+          "default": false,
+          "description": "Permit sha256(token) lookup when JWT verify fails. Default false. Set AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1 only for one-shot legacy migrations."
         }
       },
       "required": [

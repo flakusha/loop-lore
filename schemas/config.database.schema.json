@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft-07/schema#",
   "$id": "loop-lore-config.database.schema.json",
   "title": "Loop Lore Database Config",
   "description": "Domain-specific configuration for database",
@@ -20,7 +20,7 @@
         },
         "sqliteFilename": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/loop-lore.db",
+          "default": "${DATA_DIR}/loop-lore.db",
           "description": "SQLite database file path"
         },
         "url": {

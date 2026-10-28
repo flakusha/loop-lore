@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft-07/schema#",
   "$id": "loop-lore-config.nsfw.schema.json",
   "title": "Loop Lore Nsfw Config",
   "description": "Domain-specific configuration for nsfw",
@@ -18,6 +18,41 @@
           "type": "integer",
           "default": 18,
           "description": "Minimum age for NSFW content"
+        },
+        "defaultNsfwScope": {
+          "type": "string",
+          "enum": [
+            "chat",
+            "user",
+            "world"
+          ],
+          "default": "chat",
+          "description": "Default NSFW scope for new chats"
+        },
+        "consentRequired": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require consent before NSFW encounters"
+        },
+        "auditLogging": {
+          "type": "boolean",
+          "default": true,
+          "description": "Log NSFW gate decisions to audit trail"
+        },
+        "piiSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC secret for NSFW PII pseudonymization. Env-only: NSFW_PII_SECRET. Required in production."
+        },
+        "reporterHashSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC secret for moderation reporter-hash projection. Env-only: NSFW_FLAG_REPORTER_HASH_SECRET. Falls back to nsfw.piiSecret when unset."
+        },
+        "useLlmClassifier": {
+          "type": "boolean",
+          "default": true,
+          "description": "Augment NSFW keyword detection with an LLM content rating classifier"
         }
       },
       "required": [
