@@ -5,7 +5,7 @@
 
 # Feature matrix
 
-Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
+Total tickets: **4050** — untagged: **2743** — unbound to epic: **1035**
 
 ## By tag × status
 
@@ -20,8 +20,8 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | 2d-sprite-world | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | 2d6 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | 2fa | 5 | 0 | 0 | 3 | 0 | 0 | 2 |
-| 3d | 12 | 4 | 0 | 6 | 0 | 0 | 2 |
-| a11y | 2 | 0 | 1 | 0 | 0 | 0 | 1 |
+| 3d | 29 | 4 | 0 | 6 | 0 | 0 | 19 |
+| a11y | 3 | 0 | 1 | 0 | 0 | 0 | 2 |
 | a9 | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | abilities | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | abort | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -90,7 +90,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | anomalies | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | anonymous | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | anthropic | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| api | 28 | 5 | 4 | 3 | 1 | 0 | 15 |
+| api | 29 | 5 | 4 | 3 | 1 | 0 | 16 |
 | api-contracts | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | api-governance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | api-key-resolution | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -118,8 +118,8 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | asset | 7 | 1 | 0 | 6 | 0 | 0 | 0 |
 | asset-persistence | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | asset-search | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| assets | 41 | 8 | 2 | 6 | 3 | 0 | 22 |
-| assistant | 57 | 10 | 5 | 16 | 3 | 0 | 23 |
+| assets | 59 | 8 | 2 | 6 | 3 | 0 | 40 |
+| assistant | 59 | 10 | 5 | 16 | 3 | 0 | 25 |
 | assistant-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | assistant-flows | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | ast | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -148,7 +148,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | aux | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | aux-llm | 11 | 1 | 5 | 5 | 0 | 0 | 0 |
 | aux-llm-judge | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| aux-pipeline | 3 | 1 | 1 | 0 | 0 | 0 | 1 |
+| aux-pipeline | 4 | 1 | 1 | 0 | 0 | 0 | 2 |
 | availability | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | avatar | 25 | 9 | 2 | 5 | 0 | 0 | 9 |
 | avatar-emotions | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -191,10 +191,12 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | bestiary | 9 | 0 | 0 | 0 | 0 | 0 | 9 |
 | beta-readers | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | between-session | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| bevy | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | billing | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | binary-distribution | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | bindings | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | blake3 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| blender | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | blessed | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | blocking | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | blocklists | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -215,7 +217,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | branches | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | branching | 5 | 2 | 0 | 1 | 2 | 0 | 0 |
 | brave | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| bridge | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
+| bridge | 7 | 1 | 0 | 0 | 0 | 0 | 6 |
 | bridges | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | briefing | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | briefingscript | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -241,7 +243,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | cache | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | caching | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | cadence | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| camera | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| camera | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | candidate-ranking | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | canvas | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | capabilities | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -311,7 +313,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | collab | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | collaboration | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | combat | 10 | 1 | 2 | 5 | 0 | 0 | 2 |
-| comfyui | 37 | 5 | 1 | 8 | 0 | 0 | 23 |
+| comfyui | 42 | 5 | 1 | 8 | 0 | 0 | 28 |
 | comic | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | command | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | command-palette | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -426,7 +428,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | data-stability | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | database | 17 | 4 | 1 | 0 | 3 | 0 | 9 |
 | day-night | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| db | 16 | 5 | 0 | 9 | 0 | 0 | 2 |
+| db | 18 | 5 | 0 | 9 | 0 | 0 | 4 |
 | db-types | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | dead-code | 10 | 7 | 0 | 2 | 0 | 0 | 1 |
 | debt | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -477,14 +479,14 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | discovery | 8 | 0 | 0 | 2 | 1 | 0 | 5 |
 | disease | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | disk-offload | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| dispatch | 2 | 1 | 0 | 0 | 1 | 0 | 0 |
+| dispatch | 3 | 1 | 0 | 0 | 1 | 0 | 1 |
 | display | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | distillation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | distributed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | distribution | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | divine | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | docker | 3 | 0 | 0 | 1 | 1 | 0 | 1 |
-| docs | 25 | 4 | 4 | 5 | 1 | 0 | 11 |
+| docs | 27 | 4 | 4 | 5 | 1 | 0 | 13 |
 | docs-gap | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | document-list | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | document-processing | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
@@ -592,7 +594,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | expedition | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | experimental | 4 | 3 | 0 | 0 | 0 | 0 | 1 |
 | exploration | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
-| export | 7 | 4 | 0 | 1 | 0 | 0 | 2 |
+| export | 12 | 4 | 0 | 1 | 0 | 0 | 7 |
 | expression | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | extensibility | 5 | 1 | 0 | 1 | 2 | 0 | 1 |
 | extensions | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -618,6 +620,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | feature-flags | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | federation | 24 | 12 | 1 | 1 | 1 | 0 | 9 |
 | feed | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| feedback-loop | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | feeds | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | ffi | 3 | 0 | 2 | 1 | 0 | 0 | 0 |
 | file-attachment | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -656,13 +659,13 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | free-will | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | fresh | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | friends | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| frontend | 161 | 42 | 7 | 66 | 0 | 0 | 46 |
+| frontend | 163 | 42 | 7 | 66 | 0 | 0 | 48 |
 | fts | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | furniture | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | future | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | fuzzing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | fuzzy | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| gallery | 14 | 3 | 0 | 5 | 0 | 0 | 6 |
+| gallery | 17 | 3 | 0 | 5 | 0 | 0 | 9 |
 | gallery-editor | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | game-engine | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | game-frontend | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -687,7 +690,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | github-actions | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | giwt | 11 | 3 | 0 | 0 | 1 | 0 | 7 |
 | glossary | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| gltf | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| gltf | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
 | gm | 22 | 9 | 4 | 1 | 0 | 0 | 8 |
 | gm-beats | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | gm-notes | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -697,7 +700,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | goals | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
 | god-mode | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | god-module | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
-| godot | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| godot | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | golden-datasets | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | gossip-protocol | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | governance | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
@@ -747,7 +750,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | hybrid | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | hybrid-search | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | hydration | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| i18n | 8 | 3 | 0 | 1 | 0 | 0 | 4 |
+| i18n | 9 | 3 | 0 | 1 | 0 | 0 | 5 |
 | i2p | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | idempotency | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | idempotent | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
@@ -827,6 +830,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | knip | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | knowledge | 4 | 0 | 1 | 1 | 2 | 0 | 0 |
 | knowledge-graph | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| krita | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | kysely | 4 | 1 | 0 | 0 | 0 | 0 | 3 |
 | l10n | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | law | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -843,9 +847,9 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | library | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | libsodium | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | license | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| licensing | 5 | 2 | 0 | 2 | 0 | 0 | 1 |
+| licensing | 8 | 2 | 0 | 2 | 0 | 0 | 4 |
 | lifecycle | 9 | 3 | 0 | 1 | 0 | 0 | 5 |
-| lineage | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| lineage | 9 | 0 | 0 | 0 | 0 | 0 | 9 |
 | link-preview | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | linkage | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | linking | 4 | 0 | 0 | 0 | 1 | 0 | 3 |
@@ -858,7 +862,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | llama-cpp-alternative | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | llama-swap | 8 | 0 | 0 | 2 | 0 | 0 | 6 |
 | llama.cpp | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
-| llm | 26 | 9 | 0 | 5 | 1 | 0 | 11 |
+| llm | 27 | 9 | 0 | 5 | 1 | 0 | 12 |
 | llm-authored | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | llm-context-cap | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | llm-narrative | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -924,7 +928,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | mention | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | merge | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | merge-readiness-pack | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| mesh | 4 | 1 | 0 | 0 | 0 | 0 | 3 |
+| mesh | 5 | 1 | 0 | 0 | 0 | 0 | 4 |
 | mesh-networking | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | message | 3 | 2 | 1 | 0 | 0 | 0 | 0 |
 | message-kind | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -932,7 +936,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | messaging | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | messenger | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | meta-currency | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| metadata | 11 | 1 | 0 | 1 | 0 | 0 | 9 |
+| metadata | 19 | 1 | 0 | 1 | 0 | 0 | 17 |
 | metrics | 4 | 0 | 0 | 2 | 1 | 0 | 1 |
 | mfa | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | mid-response | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1058,7 +1062,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | paths | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | patrol | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | pause | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
-| pbr | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| pbr | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | pbta | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | peer-to-peer | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | peer-verification | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1081,6 +1085,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | pet-battles | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | pets | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | pgp | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| photogrammetry | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | pii | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | pinecone | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | pins | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1300,6 +1305,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | rewards | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | rich-content | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | riding | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| rigging | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | ripgrep | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | rng | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | robots-txt | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1310,7 +1316,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | romance | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | room-layout | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | rotation | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| routes | 21 | 10 | 3 | 4 | 0 | 0 | 4 |
+| routes | 23 | 10 | 3 | 4 | 0 | 0 | 6 |
 | routing | 7 | 0 | 1 | 1 | 1 | 0 | 4 |
 | rpg | 80 | 35 | 3 | 15 | 5 | 0 | 22 |
 | rpg-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1334,7 +1340,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | scanning | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | scenario | 3 | 0 | 0 | 2 | 0 | 0 | 1 |
 | scenario-source | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
-| scene | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
+| scene | 12 | 1 | 0 | 1 | 0 | 0 | 10 |
 | scene-art | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | scene-exposition | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | scenes | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1342,7 +1348,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | scheduled | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | scheduler | 12 | 6 | 0 | 1 | 0 | 0 | 5 |
 | scheduling | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| schema | 25 | 3 | 0 | 10 | 1 | 0 | 11 |
+| schema | 26 | 3 | 0 | 10 | 1 | 0 | 12 |
 | schema-drift | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | schemas | 9 | 8 | 0 | 1 | 0 | 0 | 0 |
 | scope | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -1402,6 +1408,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | size-check | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | size-strict | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | skills | 15 | 4 | 0 | 3 | 3 | 0 | 5 |
+| skybox | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | slack | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | slash-command | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | slash-commands | 2 | 0 | 1 | 0 | 0 | 0 | 1 |
@@ -1458,6 +1465,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | steering | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | steganography | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | step-up | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| steps | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | storage | 9 | 2 | 0 | 2 | 2 | 0 | 3 |
 | story | 13 | 4 | 3 | 3 | 1 | 0 | 2 |
 | story-coherence | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -1509,7 +1517,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | templates | 33 | 9 | 2 | 15 | 1 | 0 | 6 |
 | tenancy | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | terminal | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| terrain | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| terrain | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | territory | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | test | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | test-infra | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1519,7 +1527,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | text-effects | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
 | text-to-vn | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | texture | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| textures | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| textures | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | thievery | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | thinking | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | thisL | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
@@ -1627,17 +1635,17 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | vector | 3 | 0 | 1 | 0 | 1 | 0 | 1 |
 | vector-store | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | versioning | 7 | 1 | 1 | 1 | 1 | 0 | 3 |
-| video | 4 | 1 | 0 | 0 | 0 | 0 | 3 |
+| video | 5 | 1 | 0 | 0 | 0 | 0 | 4 |
 | view-mode | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | viewer | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | viewership | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| views | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
+| views | 11 | 1 | 0 | 1 | 0 | 0 | 9 |
 | visibility | 5 | 0 | 0 | 2 | 0 | 0 | 3 |
 | visual-novel | 10 | 5 | 1 | 2 | 0 | 0 | 2 |
 | visualization | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | vitepress | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | viz | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| vn | 7 | 4 | 0 | 1 | 0 | 0 | 2 |
+| vn | 8 | 4 | 0 | 1 | 0 | 0 | 3 |
 | voice | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | voice-notes | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | vrm | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1654,6 +1662,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | watchdog | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | weather | 5 | 0 | 0 | 1 | 0 | 0 | 4 |
 | weaviate | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| web | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | web-platform | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | web-search | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | webgl | 6 | 0 | 0 | 4 | 0 | 0 | 2 |
@@ -1669,7 +1678,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | workers | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | workflow | 11 | 5 | 1 | 0 | 0 | 0 | 5 |
 | workflow-templates | 5 | 0 | 0 | 1 | 0 | 0 | 4 |
-| workflows | 7 | 0 | 1 | 0 | 1 | 0 | 5 |
+| workflows | 9 | 0 | 1 | 0 | 1 | 0 | 7 |
 | workspace-mode | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | worktree | 7 | 2 | 0 | 1 | 1 | 0 | 3 |
 | worktree-isolation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1715,7 +1724,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | epic-2d-sprite-world | 15 | 0 | 0 | 1 | 0 | 0 | 14 |
 | EPIC-38 (Output Control & Transforms) | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | EPIC-38 (Output Control & Transforms) — _proposed split: new EPIC-Generation-Templates_ | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-3d-generation | 6 | 1 | 0 | 5 | 0 | 0 | 0 |
+| epic-3d-generation | 18 | 1 | 0 | 5 | 0 | 0 | 12 |
 | epic-accessibility-input | 6 | 1 | 2 | 3 | 0 | 0 | 0 |
 | epic-accessibility-input, epic-3d-generation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-achievements | 5 | 1 | 1 | 3 | 0 | 0 | 0 |
@@ -1738,6 +1747,8 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | epic-api-versioning | 7 | 7 | 0 | 0 | 0 | 0 | 0 |
 | epic-architecture | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-archival-workflow | 7 | 6 | 0 | 1 | 0 | 0 | 0 |
+| epic-asset-generation-metadata | 8 | 0 | 0 | 0 | 0 | 0 | 8 |
+| epic-asset-lineage-provenance | 5 | 0 | 0 | 0 | 0 | 0 | 5 |
 | epic-asset-platform-capabilities | 30 | 9 | 0 | 12 | 0 | 0 | 9 |
 | epic-asset-transform-metadata | 11 | 1 | 0 | 9 | 0 | 0 | 1 |
 | epic-assistant-creative-studio-workflows | 12 | 2 | 0 | 0 | 10 | 0 | 0 |
@@ -1841,7 +1852,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | epic-error-envelope | 5 | 4 | 0 | 1 | 0 | 0 | 0 |
 | epic-experimental-egui-frontend | 13 | 11 | 0 | 0 | 0 | 0 | 2 |
 | epic-exploration-discovery | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
-| epic-external-creative-tool-bridge | 7 | 0 | 0 | 3 | 0 | 0 | 4 |
+| epic-external-creative-tool-bridge | 11 | 0 | 0 | 3 | 0 | 0 | 8 |
 | epic-external-tooling-build | 8 | 0 | 0 | 0 | 0 | 0 | 8 |
 | epic-faction-reputation | 7 | 3 | 0 | 1 | 0 | 0 | 3 |
 | epic-fe-be-harmonization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
@@ -1868,6 +1879,8 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | epic-frontend-routing | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
 | epic-frontend-settings | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
 | epic-fuzzing-infrastructure | 10 | 0 | 0 | 0 | 0 | 0 | 10 |
+| epic-gallery-batch-operations | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-game-asset-pipeline-export | 5 | 0 | 0 | 0 | 0 | 0 | 5 |
 | epic-game-frontend-scenes, epic-lore-knowledge | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-generation-flow-control | 7 | 3 | 0 | 4 | 0 | 0 | 0 |
 | epic-gm-shadow-notes | 12 | 5 | 0 | 1 | 0 | 0 | 6 |
@@ -1929,7 +1942,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | epic-multi-instance-reconciliation | 5 | 1 | 0 | 3 | 0 | 0 | 1 |
 | epic-multi-session | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | epic-multilingual-carriage | 8 | 1 | 0 | 0 | 0 | 0 | 7 |
-| epic-multimodal-asset-reuse | 4 | 0 | 0 | 3 | 0 | 0 | 1 |
+| epic-multimodal-asset-reuse | 5 | 0 | 0 | 3 | 0 | 0 | 2 |
 | epic-narration-actor-separation | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
 | epic-narrative-publishing-workflows | 19 | 0 | 0 | 0 | 0 | 0 | 19 |
 | epic-non-standard-browser-crypto | 3 | 0 | 1 | 2 | 0 | 0 | 0 |
@@ -1991,6 +2004,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | epic-runtime-integrity-fail-safes | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-runtime-memory-state-hygiene | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-sam3-segmentation-integration | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
+| epic-scene-environment-world-generation | 9 | 0 | 0 | 0 | 0 | 0 | 9 |
 | epic-schema | 12 | 1 | 0 | 8 | 0 | 0 | 3 |
 | epic-security-sandboxing | 15 | 7 | 0 | 7 | 0 | 0 | 1 |
 | epic-server-lifecycle-hardening | 6 | 5 | 0 | 0 | 0 | 0 | 1 |
@@ -2016,10 +2030,11 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 | epic-use-case-agentic-workspace | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-user-stories | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-vector-graphics-generation | 4 | 0 | 0 | 0 | 2 | 0 | 2 |
+| epic-view-set-generation | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | epic-visual-novel-mode | 10 | 8 | 0 | 2 | 0 | 0 | 0 |
 | epic-wardrobe-avatar-variants | 18 | 12 | 0 | 4 | 0 | 0 | 2 |
 | epic-weather-environment | 4 | 1 | 0 | 1 | 0 | 0 | 2 |
-| epic-workflow-engine | 20 | 9 | 1 | 8 | 0 | 0 | 2 |
+| epic-workflow-engine | 22 | 9 | 1 | 8 | 0 | 0 | 4 |
 | epic-world-chat-channels-invites | 5 | 1 | 0 | 3 | 0 | 0 | 1 |
 | epic-world-diplomacy-karma | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-world-locations | 11 | 1 | 0 | 10 | 0 | 0 | 0 |
@@ -2042,8 +2057,8 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `2d-sprite-world` (1): TASK-COMFYUI-FIRST-CLASS-SPRITE-PIPELINE-AVATAR-MATTING-WORKFLOWS
 - `2d6` (1): TASK-MATH-RESOLVER-PBTA-2D6
 - `2fa` (5): EPIC-AUTH-CHANNEL-PROVISIONING, EPIC-TWO-FACTOR-AUTH, TASK-MATRIX-AUTH-CHANNEL-AC12-PER-ROLE-POLICY-SHAPE, TASK-MATRIX-AUTH-CHANNEL-AC3-CAPABILITY-REGISTRY-NAMING, TASK-MATRIX-AUTH-CHANNEL-AC4-MATRIX-BOT-APPROVAL-SESSION
-- `3d` (12): EPIC-3D-GENERATION, EPIC-IMMERSION-PRESENTATION, FEAT-3D-CHARACTER-AVATAR-RENDERING, FEAT-3D-WORLD-MAP-NAVIGATION, FEAT-IMMERSIVE-SCENE-VIEW-FIRST-THIRD-PERSON-AMBIENT-AUDIO, TASK-023, TASK-3D-GLTF-ASSETS, TASK-3D-PERFORMANCE, TASK-3D-VIEW-MODES, TASK-3D-VIEW-MODES-UI, TASK-3D-VRM-FOUNDATION, TASK-ASSET-3D-MODELS
-- `a11y` (2): EPIC-ACCESSIBILITY-INPUT, EPIC-FRONTEND-EMOJI-REACTIONS
+- `3d` (29): EPIC-3D-GENERATION, EPIC-IMMERSION-PRESENTATION, FEAT-3D-CHARACTER-AVATAR-RENDERING, FEAT-3D-WORLD-MAP-NAVIGATION, FEAT-IMMERSIVE-SCENE-VIEW-FIRST-THIRD-PERSON-AMBIENT-AUDIO, TASK-023, TASK-3D-ASSET-TYPE-AND-SERVING, TASK-3D-FRONTEND-VIEWER-LAZY-MOUNT, TASK-3D-GENERATION-FACT-CAPTURE, TASK-3D-GLTF-ASSETS, TASK-3D-I18N-AND-A11Y-PASS, TASK-3D-PERFORMANCE, TASK-3D-VIEW-MODES, TASK-3D-VIEW-MODES-UI, TASK-3D-VRM-FOUNDATION, TASK-ASSET-3D-MODELS, TASK-GALLERY-SET-AND-3D-SURFACE, TASK-GENERATION-CONTEXT-3D-VIEW-SETS, TASK-HUNYUAN-OPTIONAL-FENCED-TIER, TASK-MESH-QA-AND-REPAIR-CHAIN, TASK-OPEN-IN-EDITOR-HANDOFF, TASK-PHOTOGRAMMETRY-EXTERNAL-TIER, TASK-RECONSTRUCTION-RUN-JOBS, TASK-RENDER-JUDGE-LOOP, TASK-RIG-ATTACH-TIER, TASK-TEXTURE-PBR-TIER, TASK-TRELLIS2-VIEW-SET-PIPELINE, TASK-VIEW-SET-CAMERA-CONVENTIONS-AND-EXPORT, TASK-VIEW-SET-CAMERA-METADATA-FIELDS
+- `a11y` (3): EPIC-ACCESSIBILITY-INPUT, EPIC-FRONTEND-EMOJI-REACTIONS, TASK-3D-I18N-AND-A11Y-PASS
 - `a9` (1): TASK-BACKLOG-SIZE-STRICT-REGRESSION-RECOVERY
 - `abilities` (1): EPIC-SKILLS
 - `abort` (1): TASK-MATRIX-CROSS-MECH-G46-INTERRUPT-SEMANTICS
@@ -2112,7 +2127,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `anomalies` (1): EPIC-WORLD-ENCOUNTERS
 - `anonymous` (1): EPIC-ANONYMITY-DECENTRALIZATION-QUICKREF
 - `anthropic` (1): EPIC-PROVIDER-PLUGIN-ECOSYSTEM
-- `api` (28): EPIC-API-FIRST-FOUNDATION, EPIC-API-LIBRARY-DISTRIBUTION, EPIC-API-ROUTES, EPIC-API-VERSIONING, EPIC-CHARACTER-SPEC, EPIC-COMFYUI-PLUGIN, EPIC-DB-COLD-STORAGE-HIGH-PERF, EPIC-DOCS-RECONCILIATION, EPIC-ERROR-ENVELOPE, EPIC-EXPERIMENTAL-EGUI-FRONTEND, EPIC-HEADLESS-ALTERNATIVE-FRONTENDS, EPIC-MINI-GAMES, EPIC-MINI-GAMES-UI-API, EPIC-MULTIMODAL-ASSET-REUSE, EPIC-OPENAPI-REFERENCE, TASK-047, TASK-CHAR-EDITOR-DB-STORAGE-SYNC, TASK-FRACTAL-LOCATIONS-API-ROUTES, TASK-FRONTEND-CLIENT-CONTRACT-DOC, TASK-FRONTEND-VIEW-MODEL-EXTRACTION, TASK-FRONTEND-VIEW-MODEL-JSON-NEGOTIATION, TASK-MESSAGE-SEEN-STATE-SERVICE-ROUTE, TASK-OFFLOADING, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-API-ROUTER-AND-TOKEN-SCOPE-, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-TICKET-OPS-ENDPOINTS-OPEN-CLOSE-COMMENT, TASK-SKILLS-ROUTES, TASK-TUI-API-CONTRACT-SMOKE-TESTS, TASK-TURN-SKIP-EVENT
+- `api` (29): EPIC-API-FIRST-FOUNDATION, EPIC-API-LIBRARY-DISTRIBUTION, EPIC-API-ROUTES, EPIC-API-VERSIONING, EPIC-CHARACTER-SPEC, EPIC-COMFYUI-PLUGIN, EPIC-DB-COLD-STORAGE-HIGH-PERF, EPIC-DOCS-RECONCILIATION, EPIC-ERROR-ENVELOPE, EPIC-EXPERIMENTAL-EGUI-FRONTEND, EPIC-HEADLESS-ALTERNATIVE-FRONTENDS, EPIC-MINI-GAMES, EPIC-MINI-GAMES-UI-API, EPIC-MULTIMODAL-ASSET-REUSE, EPIC-OPENAPI-REFERENCE, TASK-047, TASK-CHAR-EDITOR-DB-STORAGE-SYNC, TASK-FRACTAL-LOCATIONS-API-ROUTES, TASK-FRONTEND-CLIENT-CONTRACT-DOC, TASK-FRONTEND-VIEW-MODEL-EXTRACTION, TASK-FRONTEND-VIEW-MODEL-JSON-NEGOTIATION, TASK-GENERATION-CONTEXT-3D-VIEW-SETS, TASK-MESSAGE-SEEN-STATE-SERVICE-ROUTE, TASK-OFFLOADING, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-API-ROUTER-AND-TOKEN-SCOPE-, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-TICKET-OPS-ENDPOINTS-OPEN-CLOSE-COMMENT, TASK-SKILLS-ROUTES, TASK-TUI-API-CONTRACT-SMOKE-TESTS, TASK-TURN-SKIP-EVENT
 - `api-contracts` (1): EPIC-FE-BE-HARMONIZATION
 - `api-governance` (1): EPIC-REVIEW-20261025-API-GOVERNANCE-PERIMETER
 - `api-key-resolution` (1): EPIC-AUX-ENRICHMENT-PIPELINE
@@ -2140,8 +2155,8 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `asset` (7): FEAT-SEED-DEFAULT-CHARACTERS-AVATAR, TASK-ASSET-3D-MODELS, TASK-ASSET-RPG-TOKENS, TASK-ASSET-STORAGE-COMPRESSION, TASK-ASSET-TEMPLATES, TASK-ASSET-VERSIONING, TASK-CONFIG-GALLERY-ATTACHMENT-IDEMPOTENT
 - `asset-persistence` (1): TASK-COMFYUI-FIRST-CLASS-MOUNT-IMAGE-EDIT-ROUTES-VERIFY-ASSET-PER
 - `asset-search` (1): TASK-SEARCH-ALGORITHM-RESEARCH-RUST-FFI
-- `assets` (41): BUG-ASSET-LINK-SHARE-JSON-ROUTES-500-BODY-ALREADY-USED-ELYSIA-SU, BUG-ASSETS-E2E-UPLOAD-RETURNS-NULL-DATA-7-OF-8-TESTS-FAIL-IN-TES, BUG-ENCRYPTED-ASSET-THUMBNAIL-IS-STORED-AND-SERVED-IN-PLAINTEXT, BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE, EPIC-ASSET-PLATFORM-CAPABILITIES, EPIC-ASSET-TRANSFORM-METADATA, EPIC-ASSISTANT-ENTITY-ACCESS, EPIC-AVATAR-DOGFOOD, EPIC-BLOG-SYSTEM, EPIC-DERIVED-MAP-GENERATION, EPIC-ENCRYPTION-WORKFLOW, EPIC-FRONTEND-GALLERY, EPIC-GALLERY-BATCH-OPERATIONS, EPIC-IMPLEMENTATION, EPIC-LICENSING, EPIC-MULTIMODAL-ASSET-REUSE, EPIC-NARRATIVE-PUBLISHING-WORKFLOWS, EPIC-RAG-ASSETS-UNIFIED-STORAGE-AND-ASSISTANT-FLOWS, EPIC-TERMINAL-UI, EPIC-VECTOR-GRAPHICS-GENERATION, FEAT-BACKGROUND, FEAT-PROCEDURAL-ASSET-PIPELINES-MAPS-PORTRAITS-MUSIC-SFX, TASK-3D-GLTF-ASSETS, TASK-ASSET-ATTRIBUTION-CHAIN, TASK-ASSET-DOWNLOAD-FORMAT-CONVERSION-WEBP-PNG-JPG, TASK-ASSET-LIFECYCLE-ARCHIVE-FLAG-ORPHAN-PRUNE-QUOTA-EVICTION, TASK-ASSISTANT-ENTITY-ACCESS-ASSET-ACCESS, TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET, TASK-DERIVED-MAP-ORIGIN-LINKS, TASK-EXIF-EXTRACTION-IMAGE-HASHING, TASK-GALLERY-EDITOR-STRUCTURED-UI, TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED, TASK-MATRIX-CROSS-MECH-G21-ASSET-CONSISTENCY-GENERATION, TASK-MULTI-CONCEPT-SEGMENTATION-MASKS, TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE, TASK-SAM3-MASK-CACHE-AND-REUSE, TASK-SCENE-ASSET-PRECEDENCE-WORLD-VS-LOCATION, TASK-THUMBNAIL-GENERATION-256PX-WEBP-AT-UPLOAD, TASK-VECTOR-GEN-ANIMATED-RASTER, TASK-VECTOR-GEN-LLM-SVG-PIPELINE, TASK-WEBP-AS-A-FIRST-CLASS-STORED-ASSET-FORMAT
-- `assistant` (57): EPIC-2026-23, EPIC-ASSET-PLATFORM-CAPABILITIES, EPIC-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS, EPIC-ASSISTANT-ENTITY-ACCESS, EPIC-ASSISTANT-GENERATION-EXTENSIONS, EPIC-ASSISTANT-GM-FLOWS, EPIC-ASSISTANT-STEP-PLANNING, EPIC-CHARACTER-MULTI-PERSONALITY, EPIC-ENTITY-GENERATION-WORKFLOWS, EPIC-GM-SHADOW-NOTES, EPIC-IMPLEMENTATION, EPIC-MODEL-FAMILY-PRESETS, EPIC-NARRATIVE-PUBLISHING-WORKFLOWS, EPIC-PLATFORM-RESEARCH, EPIC-PROJECT-SPACES-PM-INTEGRATION, EPIC-RAG-ASSETS-UNIFIED-STORAGE-AND-ASSISTANT-FLOWS, EPIC-WORKFLOW-ENGINE, FEAT-CREATIVE-PROCESS-COMMIT-GATING, FEAT-LORE-STRUCTURED-GENERATION-VIA-ASSISTANT, FEAT-PER-CHAT-ASSISTANT-GM-FRONTEND, TASK-ADMIN-ASSISTANT-TOOLING-ALLOWLIST, TASK-ASSISTANT-CAPABILITY-DISCLOSURE, TASK-ASSISTANT-ENTITY-ACCESS-ADAPTATION, TASK-ASSISTANT-ENTITY-ACCESS-ADAPTER, TASK-ASSISTANT-ENTITY-ACCESS-ASSET-ACCESS, TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET, TASK-ASSISTANT-ENTITY-ACCESS-CHARACTER-ITEM-INVENTORY, TASK-ASSISTANT-ENTITY-ACCESS-DUPLICATION, TASK-ASSISTANT-ENTITY-ACCESS-E2E, TASK-ASSISTANT-ENTITY-ACCESS-MODIFICATION-ADDITION, TASK-ASSISTANT-ENTITY-ACCESS-QUOTA-ENGINE, TASK-ASSISTANT-ENTITY-ACCESS-RAG-ACCESS, TASK-ASSISTANT-ENTITY-ACCESS-SCHEMA, TASK-ASSISTANT-ENTITY-ACCESS-TESTS, TASK-ASSISTANT-ENTITY-ACCESS-WORLD-LOCATION-ACCESS, TASK-ASSISTANT-PERSONALITY-COMPOSER-INTEGRATION, TASK-ASSISTANT-PERSONALITY-CONTINUITY-ACROSS-CHATS, TASK-ASSISTANT-PERSONALITY-DRIFT-AUX-ADVISORY, TASK-ASSISTANT-PERSONALITY-PRESETS-CATALOG, TASK-ASSISTANT-PERSONALITY-SELECTOR-UI, TASK-ASSISTANT-PM-WORKFLOW-TEMPLATES-PM-SPACE-CREATE-PM-TRIAGE-PM, TASK-ASSISTANT-SLASH-COMMAND-TYPED-TOKEN-AUTOCOMPLETE, TASK-ASSISTANT-TODO-PLANNING-TABLES-SERVICE-ASSISTANT-WIRING, TASK-ASSISTANT-TOOL-INJECTION-GUARD, TASK-AUX-GM-TOOL-DETECTION, TASK-BOUND-LINKED-TRAVEL-PROMPTS, TASK-CHARACTER-AS-ASSISTANT-PICK-CHARACTER-AS-GM, TASK-CHAT-VARIANT-ASSISTANT, TASK-CHAT-VARIANT-ASSISTANT-GROUP, TASK-GM-SHADOW-NOTES, TASK-GM-WHITENOTES, TASK-GRAPH-VIEW-OF-PLAN-LINKS-TO-CHATS-STORIES-RAG-ITEMS-ASSETS, TASK-IMAGE-BACKENDS-X-ASSISTANT-IMAGE-COMMAND-BACKEND-ROUTING-FAI, TASK-KANBAN-BOARD-FOR-STORY-TASK-CONTEXT-CREATIVE-DRAFTS-PLANNING, TASK-MINIMAL-VIDEO-GENERATION-DISPATCH-ROUTE-FOR-WORKFLOW-ENGINE, TASK-SEARCH-SERVICE-UNIFIED, TASK-WIRE-INTENT-OUTPUT-TO-WORKFLOW-RUNNER-STARTWORKFLOW
+- `assets` (59): BUG-ASSET-LINK-SHARE-JSON-ROUTES-500-BODY-ALREADY-USED-ELYSIA-SU, BUG-ASSETS-E2E-UPLOAD-RETURNS-NULL-DATA-7-OF-8-TESTS-FAIL-IN-TES, BUG-ENCRYPTED-ASSET-THUMBNAIL-IS-STORED-AND-SERVED-IN-PLAINTEXT, BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE, EPIC-ASSET-PLATFORM-CAPABILITIES, EPIC-ASSET-TRANSFORM-METADATA, EPIC-ASSISTANT-ENTITY-ACCESS, EPIC-AVATAR-DOGFOOD, EPIC-BLOG-SYSTEM, EPIC-DERIVED-MAP-GENERATION, EPIC-ENCRYPTION-WORKFLOW, EPIC-FRONTEND-GALLERY, EPIC-GALLERY-BATCH-OPERATIONS, EPIC-IMPLEMENTATION, EPIC-LICENSING, EPIC-MULTIMODAL-ASSET-REUSE, EPIC-NARRATIVE-PUBLISHING-WORKFLOWS, EPIC-RAG-ASSETS-UNIFIED-STORAGE-AND-ASSISTANT-FLOWS, EPIC-TERMINAL-UI, EPIC-VECTOR-GRAPHICS-GENERATION, FEAT-BACKGROUND, FEAT-PROCEDURAL-ASSET-PIPELINES-MAPS-PORTRAITS-MUSIC-SFX, TASK-3D-ASSET-TYPE-AND-SERVING, TASK-3D-GENERATION-FACT-CAPTURE, TASK-3D-GLTF-ASSETS, TASK-ASSET-ATTRIBUTION-CHAIN, TASK-ASSET-DOWNLOAD-FORMAT-CONVERSION-WEBP-PNG-JPG, TASK-ASSET-LIFECYCLE-ARCHIVE-FLAG-ORPHAN-PRUNE-QUOTA-EVICTION, TASK-ASSET-LINEAGE-LINK-KINDS, TASK-ASSET-METADATA-SHADOW-OVERRIDES, TASK-ASSISTANT-ENTITY-ACCESS-ASSET-ACCESS, TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET, TASK-BRIDGE-FILE-WATCH-ROUNDTRIP, TASK-DERIVED-MAP-ORIGIN-LINKS, TASK-EMBEDDED-REGENERATION-MANIFEST, TASK-ENVIRONMENT-KIT-BACKGROUND-AND-PROPS-TIER, TASK-EXIF-EXTRACTION-IMAGE-HASHING, TASK-EXTERNAL-MANIFEST-INTEROP, TASK-GALLERY-EDITOR-STRUCTURED-UI, TASK-GENERATION-CONTEXT-3D-VIEW-SETS, TASK-GENERATION-FACT-CAPTURE-AT-QUEUE-TIME, TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED, TASK-IMPORTED-GENERATION-METADATA-PARSER, TASK-LINEAGE-CONTENT-HASH-ANCHORS, TASK-LINEAGE-PROPAGATION-POLICY, TASK-LINEAGE-QUERY-UI, TASK-MATRIX-CROSS-MECH-G21-ASSET-CONSISTENCY-GENERATION, TASK-METADATA-DETECTION-PROVENANCE-STAMPING, TASK-MULTI-CONCEPT-SEGMENTATION-MASKS, TASK-PROVENANCE-SUMMARY, TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE, TASK-SAM3-MASK-CACHE-AND-REUSE, TASK-SCENE-ASSET-PRECEDENCE-WORLD-VS-LOCATION, TASK-THUMBNAIL-GENERATION-256PX-WEBP-AT-UPLOAD, TASK-VECTOR-GEN-ANIMATED-RASTER, TASK-VECTOR-GEN-LLM-SVG-PIPELINE, TASK-VIEW-SET-CAMERA-METADATA-FIELDS, TASK-VIEW-SET-SCHEMA-AND-LINKS, TASK-WEBP-AS-A-FIRST-CLASS-STORED-ASSET-FORMAT
+- `assistant` (59): EPIC-2026-23, EPIC-ASSET-PLATFORM-CAPABILITIES, EPIC-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS, EPIC-ASSISTANT-ENTITY-ACCESS, EPIC-ASSISTANT-GENERATION-EXTENSIONS, EPIC-ASSISTANT-GM-FLOWS, EPIC-ASSISTANT-STEP-PLANNING, EPIC-CHARACTER-MULTI-PERSONALITY, EPIC-ENTITY-GENERATION-WORKFLOWS, EPIC-GM-SHADOW-NOTES, EPIC-IMPLEMENTATION, EPIC-MODEL-FAMILY-PRESETS, EPIC-NARRATIVE-PUBLISHING-WORKFLOWS, EPIC-PLATFORM-RESEARCH, EPIC-PROJECT-SPACES-PM-INTEGRATION, EPIC-RAG-ASSETS-UNIFIED-STORAGE-AND-ASSISTANT-FLOWS, EPIC-WORKFLOW-ENGINE, FEAT-CREATIVE-PROCESS-COMMIT-GATING, FEAT-LORE-STRUCTURED-GENERATION-VIA-ASSISTANT, FEAT-PER-CHAT-ASSISTANT-GM-FRONTEND, TASK-ADMIN-ASSISTANT-TOOLING-ALLOWLIST, TASK-ASSISTANT-CAPABILITY-DISCLOSURE, TASK-ASSISTANT-ENTITY-ACCESS-ADAPTATION, TASK-ASSISTANT-ENTITY-ACCESS-ADAPTER, TASK-ASSISTANT-ENTITY-ACCESS-ASSET-ACCESS, TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET, TASK-ASSISTANT-ENTITY-ACCESS-CHARACTER-ITEM-INVENTORY, TASK-ASSISTANT-ENTITY-ACCESS-DUPLICATION, TASK-ASSISTANT-ENTITY-ACCESS-E2E, TASK-ASSISTANT-ENTITY-ACCESS-MODIFICATION-ADDITION, TASK-ASSISTANT-ENTITY-ACCESS-QUOTA-ENGINE, TASK-ASSISTANT-ENTITY-ACCESS-RAG-ACCESS, TASK-ASSISTANT-ENTITY-ACCESS-SCHEMA, TASK-ASSISTANT-ENTITY-ACCESS-TESTS, TASK-ASSISTANT-ENTITY-ACCESS-WORLD-LOCATION-ACCESS, TASK-ASSISTANT-PERSONALITY-COMPOSER-INTEGRATION, TASK-ASSISTANT-PERSONALITY-CONTINUITY-ACROSS-CHATS, TASK-ASSISTANT-PERSONALITY-DRIFT-AUX-ADVISORY, TASK-ASSISTANT-PERSONALITY-PRESETS-CATALOG, TASK-ASSISTANT-PERSONALITY-SELECTOR-UI, TASK-ASSISTANT-PM-WORKFLOW-TEMPLATES-PM-SPACE-CREATE-PM-TRIAGE-PM, TASK-ASSISTANT-SLASH-COMMAND-TYPED-TOKEN-AUTOCOMPLETE, TASK-ASSISTANT-TODO-PLANNING-TABLES-SERVICE-ASSISTANT-WIRING, TASK-ASSISTANT-TOOL-INJECTION-GUARD, TASK-AUX-GM-TOOL-DETECTION, TASK-BOUND-LINKED-TRAVEL-PROMPTS, TASK-CHARACTER-AS-ASSISTANT-PICK-CHARACTER-AS-GM, TASK-CHAT-VARIANT-ASSISTANT, TASK-CHAT-VARIANT-ASSISTANT-GROUP, TASK-ENVIRONMENT-KIT-ASSISTANT-WORKFLOW, TASK-GM-SHADOW-NOTES, TASK-GM-WHITENOTES, TASK-GRAPH-VIEW-OF-PLAN-LINKS-TO-CHATS-STORIES-RAG-ITEMS-ASSETS, TASK-IMAGE-BACKENDS-X-ASSISTANT-IMAGE-COMMAND-BACKEND-ROUTING-FAI, TASK-KANBAN-BOARD-FOR-STORY-TASK-CONTEXT-CREATIVE-DRAFTS-PLANNING, TASK-MINIMAL-VIDEO-GENERATION-DISPATCH-ROUTE-FOR-WORKFLOW-ENGINE, TASK-SEARCH-SERVICE-UNIFIED, TASK-VIEW-SET-ASSISTANT-WORKFLOW, TASK-WIRE-INTENT-OUTPUT-TO-WORKFLOW-RUNNER-STARTWORKFLOW
 - `assistant-chat` (1): TASK-CREATION-CHAT-WORLD-LOCATION-CONTEXT-SCOPING
 - `assistant-flows` (1): EPIC-FRONTEND-CHAT-COMMANDS
 - `ast` (1): TASK-MATH-ROLL-FORMULA-AST
@@ -2170,7 +2185,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `aux` (2): TASK-ACTION-KARMA-ESTIMATION-VIA-AUX-MODEL, TASK-ASSISTANT-PERSONALITY-DRIFT-AUX-ADVISORY
 - `aux-llm` (11): EPIC-AUX-ENRICHMENT-PIPELINE, TASK-AUX-EMOTION-AVATAR, TASK-AUX-ENRICHMENT-EMOTION-AVATAR-TASK, TASK-AUX-ENVIRONMENT-INTERACTION, TASK-AUX-GM-TOOL-DETECTION, TASK-AUX-LLM-EMOTION-CLASSIFIER, TASK-AUX-MEMORY-EXTRACTION, TASK-AUX-MOOD-CLASSIFICATION, TASK-AUX-PERSONALITY-DRIFT, TASK-AUX-SCENE-CONTEXT, TASK-TRANSITION-AUX-LLM-FALLBACK
 - `aux-llm-judge` (1): TASK-ASSISTANT-TOOL-INJECTION-GUARD
-- `aux-pipeline` (3): BUG-ADMIN-AUXTELEMETRY-LEAKS-USERID-CHATID, EPIC-CLASSIFIER-TEMPLATE-PACKS, EPIC-PROMPT-IMPROVEMENT
+- `aux-pipeline` (4): BUG-ADMIN-AUXTELEMETRY-LEAKS-USERID-CHATID, EPIC-CLASSIFIER-TEMPLATE-PACKS, EPIC-PROMPT-IMPROVEMENT, TASK-VIEW-SET-CONSISTENCY-GATE
 - `availability` (1): TASK-ACTOR-AVAILABILITY-FRONTEND
 - `avatar` (25): BUG-AVATAR-SELECT-EMPTY-THROWS-NO-FRONTEND-FALLBACK, BUG-AVATAR-SELECT-FALLBACK-CHAIN-UNWIRED, BUG-AVATAR-SELECTION-RULE-UNIMPLEMENTED-BRANCHES, EPIC-ASSET-TRANSFORM-METADATA, EPIC-AVATAR-ALPHA-VN-LAYERING, EPIC-AVATAR-DOGFOOD, EPIC-AVATAR-REGENERATION-CONTROL, EPIC-CONFIG-TEMPLATES, EPIC-EMOTION-AVATAR-MESSAGE-BINDING, EPIC-REACTIVE-ACTOR-APPEARANCE, EPIC-WARDROBE-AVATAR-VARIANTS, FEAT-3D-CHARACTER-AVATAR-RENDERING, FEAT-BACKGROUND, FEAT-SEED-DEFAULT-CHARACTERS-AVATAR, TASK-001, TASK-3D-VIEW-MODES, TASK-3D-VRM-FOUNDATION, TASK-AUX-EMOTION-AVATAR, TASK-AVATAR-RENDER-TARGET-DISCRIMINATOR, TASK-AVATARS-DYNAMIC-2D, TASK-EMOTION-AVATAR-MESSAGE-BINDING, TASK-EMOTION-AVATARS-PIPELINE, TASK-NPC-CHARACTER-EDIT-STACK-PARITY, TASK-SAM3-CONCEPT-CUTOUT-WIRING-SPRITES-AVATAR-MATTING-VN-ALPHA, TEST-AVATAR-SELECTION-FALLBACK-EMPTY-COVERAGE
 - `avatar-emotions` (1): EPIC-CONFIG-EXTENSIONS
@@ -2213,10 +2228,12 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `bestiary` (9): EPIC-ENEMIES-MONSTERS, TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL, TASK-BESTIARY-CATALOG-SCHEMA-AND-MIGRATION, TASK-BESTIARY-CRUD-ROUTES-ADMIN-GM, TASK-BESTIARY-ECOLOGY-PRESSURE-MODEL, TASK-BESTIARY-LOOT-AND-XP-INTEGRATION, TASK-BESTIARY-QUEST-BINDINGS-INTEGRATION, TASK-BESTIARY-TIME-BASED-REPOPULATION-ENGINE, TASK-BESTIARY-UI-COMPENDIUM-AND-PER-LOCATION-POPULATION
 - `beta-readers` (1): EPIC-EDITORIAL-WORKFLOW
 - `between-session` (1): TASK-MATRIX-CROSS-MECH-G20-LIVING-WORLD-PERSISTENCE
+- `bevy` (1): TASK-BEVY-EXPORT-PROFILE
 - `billing` (1): TASK-MATRIX-CROSS-MECH-G46-INTERRUPT-SEMANTICS
 - `binary-distribution` (1): EPIC-PRECOMPILED-HOT-BINARIES
 - `bindings` (1): TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION
 - `blake3` (1): EPIC-MODEL-METADATA-READ
+- `blender` (1): TASK-BLENDER-HEADLESS-NODE-BRIDGE
 - `blessed` (1): EPIC-TERMINAL-UI
 - `blocking` (1): EPIC-SOCIAL-GRAPH
 - `blocklists` (1): TASK-FEDERATION-ADMIN-UI-FOR-FOLLOWS-BLOCKLISTS-KEY-ROTATION
@@ -2237,7 +2254,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `branches` (1): FEAT-WHAT-IF-BRANCH-SIMULATOR-FORK-WORLD-STATE-DIFF-NARRATIVES
 - `branching` (5): EPIC-CONVERSATION-BRANCHING, EPIC-REPLAYABILITY, EPIC-TIMELINE-SYSTEM, TASK-CHAT-FEATURE-MESSAGE-EDIT-RESUBMIT-BRANCH, TASK-VN-BRANCHING-CHOICES
 - `brave` (1): EPIC-RAG-CONTEXT-SOURCES
-- `bridge` (2): EPIC-INTEGRATIONS-CORE, TASK-PERSIST-LOOT-DROPS
+- `bridge` (7): EPIC-INTEGRATIONS-CORE, TASK-BLENDER-HEADLESS-NODE-BRIDGE, TASK-BRIDGE-FILE-WATCH-ROUNDTRIP, TASK-KRITA-SHARED-COMFYUI-TIER, TASK-OPEN-IN-EDITOR-HANDOFF, TASK-PERSIST-LOOT-DROPS, TASK-SUBSTANCE-RISK-ASSESSMENT
 - `bridges` (1): EPIC-MATRIX-INTEGRATION
 - `briefing` (2): TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER-PRE-AGENT-T, TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK-GENERATOR-FR
 - `briefingscript` (1): TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER-PRE-AGENT-T
@@ -2263,7 +2280,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `cache` (1): TASK-SAM3-MASK-CACHE-AND-REUSE
 - `caching` (2): EPIC-DB-COLD-STORAGE-HIGH-PERF, TASK-MODEL-METADATA-SIDECAR-CACHE-AND-HASH-LOOKUP-CASCADE
 - `cadence` (1): EPIC-ACTOR-TURN-SKIP
-- `camera` (1): EPIC-MOBILE-APP
+- `camera` (2): EPIC-MOBILE-APP, TASK-VIEW-SET-CAMERA-CONVENTIONS-AND-EXPORT
 - `candidate-ranking` (1): TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA-DETERMINIST
 - `canvas` (4): EPIC-2D-SPRITE-WORLD, EPIC-RELATION-GRAPH-CANVAS, TASK-COMFYUI-BUILDER-TRACK-B-LITEGRAPH-CANVAS-WRAPPER-LAZY-BUNDLE, TASK-RECURSIVE-SELF-IMPROVEMENT-NEAR-REAL-TIME-DESKTOP-AGENT-PLAY
 - `capabilities` (1): EPIC-NSFW-CAPABILITIES
@@ -2333,7 +2350,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `collab` (1): FEAT-CO-AUTHORING-PRESENCE-LIVE-CURSORS-TYPING-INDICATORS
 - `collaboration` (1): TASK-EXPLORATION-EXPEDITION-TEAMS
 - `combat` (10): EPIC-BATTLE-ACTION-SYSTEMS, EPIC-BATTLE-UI, EPIC-RPG-CORE-WIRING, EPIC-RPG-MECHANICS, FEAT-BATTLE-CORE-IMPLEMENTATION, TASK-BATTLE-FRONTEND-INTEGRATION, TASK-BATTLE-TEMPLATE-ACTIONS, TASK-CHARACTER-RPG-STATS, TASK-CHAT-BATTLE-MODE-SWITCH, TASK-ENEMIES-MONSTERS-SYSTEMS
-- `comfyui` (37): BUG-IMAGE-EDIT-COMFYUI-PROVIDER-NEVER-UPLOADS-INPUT-IMAGE, EPIC-ASSISTANT-GENERATION-EXTENSIONS, EPIC-COMFYUI-FIRST-CLASS-CITIZEN, EPIC-COMFYUI-LIFECYCLE, EPIC-COMFYUI-PLUGIN, EPIC-DERIVED-MAP-GENERATION, EPIC-IMAGE-PROMPT-TEMPLATING, EPIC-LORA-DISCOVERY-APPLICATION, EPIC-REFERENCE-CONDITIONED-GENERATION, EPIC-SAM3-SEGMENTATION-INTEGRATION, EPIC-TECHNICAL-COMPARISON-CHARTS, EPIC-VIDEO-GENERATION, FEAT-BACKGROUND, TASK-2026-OPENWEBUI-COMFYUI-WEBSOCKET-PROGRESS, TASK-COMFYUI-BUILDER-ROUTES-CHAIN-CRUD-RUN-PALETTE-PROXY-GRAPH-VA, TASK-COMFYUI-BUILDER-TRACK-A-ALPINE-PRESET-CHAIN-FORM, TASK-COMFYUI-BUILDER-TRACK-A-CHAIN-MODEL-PROMPT-TEMPLATES-WORKFLO, TASK-COMFYUI-BUILDER-TRACK-B-LITEGRAPH-CANVAS-WRAPPER-LAZY-BUNDLE, TASK-COMFYUI-BUILDER-TRACK-B-LITEGRAPH-SEPARABILITY-SPIKE, TASK-COMFYUI-BUILDER-UPLOAD-VALIDATION-ENDPOINT-OPERATOR-REFERENC, TASK-COMFYUI-DEPTH-MAP-GENERATION-TEMPLATE, TASK-COMFYUI-FIRST-CLASS-CLIENT-ID-WEBSOCKET-PROGRESS-IN-COMFYUIC, TASK-COMFYUI-FIRST-CLASS-IMAGE-GENERATION-QUEUE-HONORS-COMFYUI-BA, TASK-COMFYUI-FIRST-CLASS-LLAMA-SWAP-RECIPE-STANDALONE-VS-PROXY-MA, TASK-COMFYUI-FIRST-CLASS-MOUNT-IMAGE-EDIT-ROUTES-VERIFY-ASSET-PER, TASK-COMFYUI-FIRST-CLASS-SPRITE-PIPELINE-AVATAR-MATTING-WORKFLOWS, TASK-COMFYUI-FIRST-CLASS-STANDALONE-AUTO-START-CONFIG-LIFECYCLE, TASK-COMFYUI-FIRST-CLASS-UN-DEFER-VN-DYNAMIC-IMAGE-GENERATION-ONT, TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS, TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION, TASK-COMFYUI-SAM3-CONCEPT-MASK-TEMPLATE, TASK-COMFYUI-WS-PROGRESS-STREAMING, TASK-IMAGE-EDIT-CONCEPT-INPAINT-TEMPLATE, TASK-IMAGE-EDIT-DEPTH-CONDITIONED-EDITING, TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED, TASK-SAM3-FEASIBILITY-PROBE-META-MODEL-API-VS-COMFYUI-CUSTOM-NODE, TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE
+- `comfyui` (42): BUG-IMAGE-EDIT-COMFYUI-PROVIDER-NEVER-UPLOADS-INPUT-IMAGE, EPIC-ASSISTANT-GENERATION-EXTENSIONS, EPIC-COMFYUI-FIRST-CLASS-CITIZEN, EPIC-COMFYUI-LIFECYCLE, EPIC-COMFYUI-PLUGIN, EPIC-DERIVED-MAP-GENERATION, EPIC-IMAGE-PROMPT-TEMPLATING, EPIC-LORA-DISCOVERY-APPLICATION, EPIC-REFERENCE-CONDITIONED-GENERATION, EPIC-SAM3-SEGMENTATION-INTEGRATION, EPIC-TECHNICAL-COMPARISON-CHARTS, EPIC-VIDEO-GENERATION, FEAT-BACKGROUND, TASK-2026-OPENWEBUI-COMFYUI-WEBSOCKET-PROGRESS, TASK-COMFYUI-BUILDER-ROUTES-CHAIN-CRUD-RUN-PALETTE-PROXY-GRAPH-VA, TASK-COMFYUI-BUILDER-TRACK-A-ALPINE-PRESET-CHAIN-FORM, TASK-COMFYUI-BUILDER-TRACK-A-CHAIN-MODEL-PROMPT-TEMPLATES-WORKFLO, TASK-COMFYUI-BUILDER-TRACK-B-LITEGRAPH-CANVAS-WRAPPER-LAZY-BUNDLE, TASK-COMFYUI-BUILDER-TRACK-B-LITEGRAPH-SEPARABILITY-SPIKE, TASK-COMFYUI-BUILDER-UPLOAD-VALIDATION-ENDPOINT-OPERATOR-REFERENC, TASK-COMFYUI-DEPTH-MAP-GENERATION-TEMPLATE, TASK-COMFYUI-FIRST-CLASS-CLIENT-ID-WEBSOCKET-PROGRESS-IN-COMFYUIC, TASK-COMFYUI-FIRST-CLASS-IMAGE-GENERATION-QUEUE-HONORS-COMFYUI-BA, TASK-COMFYUI-FIRST-CLASS-LLAMA-SWAP-RECIPE-STANDALONE-VS-PROXY-MA, TASK-COMFYUI-FIRST-CLASS-MOUNT-IMAGE-EDIT-ROUTES-VERIFY-ASSET-PER, TASK-COMFYUI-FIRST-CLASS-SPRITE-PIPELINE-AVATAR-MATTING-WORKFLOWS, TASK-COMFYUI-FIRST-CLASS-STANDALONE-AUTO-START-CONFIG-LIFECYCLE, TASK-COMFYUI-FIRST-CLASS-UN-DEFER-VN-DYNAMIC-IMAGE-GENERATION-ONT, TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS, TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION, TASK-COMFYUI-SAM3-CONCEPT-MASK-TEMPLATE, TASK-COMFYUI-WS-PROGRESS-STREAMING, TASK-ENVIRONMENT-KIT-BACKGROUND-AND-PROPS-TIER, TASK-GENERATION-FACT-CAPTURE-AT-QUEUE-TIME, TASK-IMAGE-EDIT-CONCEPT-INPAINT-TEMPLATE, TASK-IMAGE-EDIT-DEPTH-CONDITIONED-EDITING, TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED, TASK-SAM3-FEASIBILITY-PROBE-META-MODEL-API-VS-COMFYUI-CUSTOM-NODE, TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE, TASK-TRELLIS2-VIEW-SET-PIPELINE, TASK-VIEW-SET-EDIT-GRID-WORKFLOWS, TASK-VIEW-SET-ORBIT-VIDEO-TIER
 - `comic` (1): EPIC-NARRATIVE-PUBLISHING-WORKFLOWS
 - `command` (1): TASK-AUX-GM-TOOL-DETECTION
 - `command-palette` (1): EPIC-FRONTEND-CHAT-COMMANDS
@@ -2448,7 +2465,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `data-stability` (1): TASK-DB-REINIT-ARCHIVES-PREVIOUS-DATABASE-INSTEAD-OF-DELETING
 - `database` (17): BUG-AGGREGATED-TRAITS-ENDPOINT-SHADOWED-AND-DROPPED, BUG-BACKUP-SQLITE-COPIES-LIVE-DB-WITHOUT-CHECKPOINT, BUG-DUPLICATE-MIGRATION-NUMERIC-PREFIX-021, BUG-MEMORY-EMBEDDINGS-ORPHANED-ON-ACTOR-DELETE, EPIC-CHAT-TRANSFER-LOCATION, EPIC-DB-ASSET-SNAPSHOT-RECOVERY, EPIC-DB-CONTENT-VERSIONING, EPIC-DB-GROWTH-TIERED-STORAGE, EPIC-DEPLOYMENT-TOPOLOGIES, EPIC-MINI-GAMES-DB, EPIC-SCHEMA, TASK-ASSET-LIFECYCLE-ARCHIVE-FLAG-ORPHAN-PRUNE-QUOTA-EVICTION, TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS, TASK-COLD-MESSAGE-ARCHIVAL-TO-ARCHIVE-DB-FILE, TASK-DB-GROWTH-MEASUREMENT-BASELINE, TASK-DB-READ-PATH-BENCHMARK-BASELINE, TASK-EMBEDDING-AND-TELEMETRY-RETENTION-POLICIES
 - `day-night` (1): EPIC-TIME-SCALE
-- `db` (16): EPIC-DB-MIGRATION-COMPACTION, TASK-2026-015, TASK-CHAR-EDITOR-DB-STORAGE-SYNC, TASK-DB-CONTENT-VERSIONING-SNAPSHOT-RESTORE, TASK-DB-REINIT-ARCHIVES-PREVIOUS-DATABASE-INSTEAD-OF-DELETING, TASK-DB-REINIT-BACKUP-RETENTION-POLICY, TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM, TASK-EPIC-DB-MIGRATION-COMPACTION-STALE-PREMISE-RECONCILE, TASK-FORMAT-VERSION-MIGRATION, TASK-GATE-BRANCHES-DISPLAY-INVARIANT-ITEM-INSTANCE-STATE, TASK-GATE-LICENSING-TRIPLE-VIA-LICENSERIGHTSVALIDATOR, TASK-GATE-SHADOW-NOTES-STATUS-X-VISIBILITY-COMPOSITE, TASK-GATE-WORLD-LORE-LIFECYCLE-CONFIDENCE-DISTORTION-DISPUTED-TRI, TASK-GATE-WORLDS-RPG-7-COL-FLAGS-THROUGH-MASTER-MECHANICS-VALIDAT, TASK-MIGRATIONS-AUTHORSHIP-CONVENTIONS, TASK-SCHEMA-MIGRATION
+- `db` (18): EPIC-DB-MIGRATION-COMPACTION, TASK-2026-015, TASK-CHAR-EDITOR-DB-STORAGE-SYNC, TASK-DB-CONTENT-VERSIONING-SNAPSHOT-RESTORE, TASK-DB-REINIT-ARCHIVES-PREVIOUS-DATABASE-INSTEAD-OF-DELETING, TASK-DB-REINIT-BACKUP-RETENTION-POLICY, TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM, TASK-EPIC-DB-MIGRATION-COMPACTION-STALE-PREMISE-RECONCILE, TASK-FORMAT-VERSION-MIGRATION, TASK-GATE-BRANCHES-DISPLAY-INVARIANT-ITEM-INSTANCE-STATE, TASK-GATE-LICENSING-TRIPLE-VIA-LICENSERIGHTSVALIDATOR, TASK-GATE-SHADOW-NOTES-STATUS-X-VISIBILITY-COMPOSITE, TASK-GATE-WORLD-LORE-LIFECYCLE-CONFIDENCE-DISTORTION-DISPUTED-TRI, TASK-GATE-WORLDS-RPG-7-COL-FLAGS-THROUGH-MASTER-MECHANICS-VALIDAT, TASK-MIGRATIONS-AUTHORSHIP-CONVENTIONS, TASK-RECONSTRUCTION-RUN-JOBS, TASK-SCHEMA-MIGRATION, TASK-VIEW-SET-SCHEMA-AND-LINKS
 - `db-types` (1): TASK-ACHIEVEMENTS-ENUM-REVIVAL-PROMOTE-SERVICE-LAYER-TO-DB-BARREL
 - `dead-code` (10): BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS, BUG-AVATAR-SELECT-FALLBACK-CHAIN-UNWIRED, BUG-NSFW-APPEALS-AS-ANY-AND-DEAD-ROUTE, BUG-ROUTES-CHARACTER-AVATARS-SUBDIR-IS-SHADOWED-BY-FLAT-FILE-CRU, BUG-SIMPLIFICATION-AUDIT-ARTIFACTS-LOST-TO-A-TMP-CLEANUP-13-TICK, EPIC-E2E-INTEGRATION-TESTING, EPIC-REVIEW-20261025-DEAD-CODE-SWEEP, TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM, TASK-SIMPLIFICATION-CLEANUP-RANKED-EXECUTION-ORDER-AND-DEAD-VS-UN, TASK-WIRING-DEAD-CODE-GATE
 - `debt` (1): TASK-PLAN-INDEX-ORPHAN-PHANTOM-CLEANUP
@@ -2499,14 +2516,14 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `discovery` (8): EPIC-EXPLORATION-DISCOVERY, EPIC-LOCAL-MODEL-FILE-DISCOVERY, EPIC-SOCIAL-GRAPH, FEAT-MODEL-CATEGORY-REGISTRY-WITH-MTIME-CACHE-LISTING, TASK-CRAFTING-RARE-DISCOVERY, TASK-LOCATION-GRAPH-EDITOR-AND-DISCOVERY-GATING, TASK-MAGIC-SPELL-CRAFTING, TASK-RECURSIVE-SELF-IMPROVEMENT-DEV-TARGET-DISCOVERY-MINER-OVER-BACKLOG
 - `disease` (2): EPIC-DISEASE-POISON, EPIC-NSFW-INTEGRATION-GAPS
 - `disk-offload` (1): EPIC-API-TASK-OFFLOADING
-- `dispatch` (2): EPIC-MATH-ECONOMY, TASK-STORY-AUTO-DRIVE-SCHEDULER
+- `dispatch` (3): EPIC-MATH-ECONOMY, TASK-STORY-AUTO-DRIVE-SCHEDULER, TASK-WORKFLOW-DISPATCH-GENERATION-BACKENDS
 - `display` (1): TASK-ACTION-KARMA-DISPLAY-AND-TIER-WIRING
 - `distillation` (1): TASK-MEMORY-DISTILLATION-DREAMS
 - `distributed` (1): EPIC-DISTRIBUTED-COMPUTE-SHARING
 - `distribution` (2): EPIC-API-LIBRARY-DISTRIBUTION, EPIC-RARITY-EXTENSIONS
 - `divine` (1): TASK-WORLD-SHAPING-DIVINE
 - `docker` (3): EPIC-DEPLOYMENT-INFRASTRUCTURE, EPIC-DEPLOYMENT-TOPOLOGIES, TASK-2026-022-DOCKERIZE-APPLICATION
-- `docs` (25): EPIC-COMMUNICATIONS-INTEGRATIONS-QUICKREF, EPIC-CROSS-LAYER-RECONCILIATION, EPIC-DENO-SUPPORT, EPIC-DOCS-RECONCILIATION, EPIC-FRONTEND-OVERVIEW, EPIC-INTERACTION-SURFACES-AUDIT, EPIC-OPENAPI-REFERENCE, EPIC-TOOLING-IMPROVEMENT, EPIC-TRANSPORT-LAYER-EXPANSION, EPIC-USE-CASE-AGENTIC-WORKSPACE, TASK-057, TASK-058, TASK-059, TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION, TASK-COMFYUI-FIRST-CLASS-LLAMA-SWAP-RECIPE-STANDALONE-VS-PROXY-MA, TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS, TASK-CORRECT-TASK-037-S-OVERSTATED-RESOLUTION-NO-CONTENTWARNING-T, TASK-DOC-AUDIT-UNDOCUMENTED-SRC-MODULES, TASK-DOC-SPEC-EMOTION-AVATARS, TASK-DOC-SPEC-PROFANITY-FILTER, TASK-DOC-SPEC-REGEX-EXTRACTION, TASK-FRONTEND-CLIENT-CONTRACT-DOC, TASK-HARNESS-SKILL-DOCS-PROJECT-SPACES-ROW-SCOPING-NOTE, TASK-TUI-SPEC-SYNC, TASK-ZOD-VS-TYPEBOX-DOCS-CODE-RECONCILIATION
+- `docs` (27): EPIC-COMMUNICATIONS-INTEGRATIONS-QUICKREF, EPIC-CROSS-LAYER-RECONCILIATION, EPIC-DENO-SUPPORT, EPIC-DOCS-RECONCILIATION, EPIC-FRONTEND-OVERVIEW, EPIC-INTERACTION-SURFACES-AUDIT, EPIC-OPENAPI-REFERENCE, EPIC-TOOLING-IMPROVEMENT, EPIC-TRANSPORT-LAYER-EXPANSION, EPIC-USE-CASE-AGENTIC-WORKSPACE, TASK-057, TASK-058, TASK-059, TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION, TASK-COMFYUI-FIRST-CLASS-LLAMA-SWAP-RECIPE-STANDALONE-VS-PROXY-MA, TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS, TASK-CORRECT-TASK-037-S-OVERSTATED-RESOLUTION-NO-CONTENTWARNING-T, TASK-DOC-AUDIT-UNDOCUMENTED-SRC-MODULES, TASK-DOC-SPEC-EMOTION-AVATARS, TASK-DOC-SPEC-PROFANITY-FILTER, TASK-DOC-SPEC-REGEX-EXTRACTION, TASK-FRONTEND-CLIENT-CONTRACT-DOC, TASK-HARNESS-SKILL-DOCS-PROJECT-SPACES-ROW-SCOPING-NOTE, TASK-KRITA-SHARED-COMFYUI-TIER, TASK-SUBSTANCE-RISK-ASSESSMENT, TASK-TUI-SPEC-SYNC, TASK-ZOD-VS-TYPEBOX-DOCS-CODE-RECONCILIATION
 - `docs-gap` (1): EPIC-DOCS-VS-PLAN-GAP-AUDIT-2026-09-19
 - `document-list` (1): TASK-RAG-DOCUMENT-LIST
 - `document-processing` (3): EPIC-RAG-DOCUMENT-PROCESSING, EPIC-RAG-DOCUMENT-PROCESSING-QUICKREF, EPIC-RAG-INGESTION
@@ -2614,7 +2631,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `expedition` (1): TASK-EXPLORATION-EXPEDITION-TEAMS
 - `experimental` (4): EPIC-IM-INTEGRATIONS, TASK-EGUI-TO-WASM-EXPERIMENTAL-FRONTEND-CRATE-JSON-CLIENT, TASK-EGUI-WASM-EMBED-SPIKE, TASK-HTMX-TO-EGUI-TO-HTMX-TRANSFERS-WITH-BROWSER-SIDE-CONTEXT-STO
 - `exploration` (3): EPIC-EXPLORATION-DISCOVERY, EPIC-QUESTS-ENCOUNTERS, TASK-EXPLORATION-EXPEDITION-TEAMS
-- `export` (7): BUG-NSFW-EXPORT-BUNDLE-NO-ACCESS-LOG, EPIC-IMPORT-EXPORT-IO, EPIC-NARRATIVE-PUBLISHING-WORKFLOWS, FEAT-SYNTHETIC-FINE-TUNE-DATA-EXPORT, TASK-ACTOR-SYSTEMS-EXPORT-FRONTEND, TASK-CHAT-FEATURE-SHARE-LINKS-EXPORT-FORMATS, TASK-EXPORT-FRONTEND-PROGRESS
+- `export` (12): BUG-NSFW-EXPORT-BUNDLE-NO-ACCESS-LOG, EPIC-IMPORT-EXPORT-IO, EPIC-NARRATIVE-PUBLISHING-WORKFLOWS, FEAT-SYNTHETIC-FINE-TUNE-DATA-EXPORT, TASK-ACTOR-SYSTEMS-EXPORT-FRONTEND, TASK-BEVY-EXPORT-PROFILE, TASK-CHAT-FEATURE-SHARE-LINKS-EXPORT-FORMATS, TASK-ENGINE-EXPORT-BUNDLES, TASK-EXPORT-FRONTEND-PROGRESS, TASK-GODOT-HEADLESS-IMPORT-VERIFICATION, TASK-INTERACTIVE-PROJECT-BINDING, TASK-WEB-EMBED-PROFILE
 - `expression` (2): TASK-AUX-EMOTION-AVATAR, TASK-MOOD-CORE
 - `extensibility` (5): EPIC-CONFIG-EXTENSIONS, EPIC-CONFIG-FILE-SEPARATION, EPIC-PLUGIN-EXTENSION-POINTS, EPIC-PLUGIN-SYSTEM, TASK-PLUGIN-MARKETPLACE
 - `extensions` (1): TASK-PROMPT-CHARACTER-EXTENSIONS-SECTION
@@ -2640,6 +2657,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `feature-flags` (1): TASK-PROMPT-FEATURE-FLAGS-CONDITIONAL-INJECTION
 - `federation` (24): BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS, BUG-CONSENT-TOCTOU-REVOKING-A-CHAT-CONSENT-DURING-A-FAN-OUT-ROUN, BUG-FAN-OUT-CONTENT-CLEARANCE-GATE-IS-OPT-IN-ON-A-CALLER-SUPPLIE, BUG-IMPORTCHATDEK-THROWS-ON-CHAT-KEYS-PRIMARY-KEY-COLLISION-INST, BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI, BUG-MESH-RESERVE-ISSUES-INBOUND-CONTENT-KEYS-WITHOUT-AUTHENTICAT, BUG-PIN-MISMATCH-AND-TRANSIENT-PROBE-FAILURE-BOTH-EVICT-A-PEER-F, BUG-RE-WRAPPED-DEK-ARTIFACTS-LACK-CONTEXT-BINDING-NO-AAD-ENABLIN, BUG-RUNRESYNCPASS-FETCHES-PEER-ADVERTISEMENTS-WITHOUT-THE-SPKI-P, BUG-SPKI-PIN-GATE-IS-NOT-ENFORCED-ACROSS-HTTP-REDIRECTS, EPIC-AUTH-CHANNEL-PROVISIONING, EPIC-CERTIFICATE-AND-TLS-MANAGEMENT, EPIC-COMMUNICATIONS-INTEGRATIONS, EPIC-ERROR-ENVELOPE, EPIC-FEDERATION-OFFLOAD-QUOTAS, EPIC-INSTANCE-FEDERATION, EPIC-MESH-FEDERATION-CONTENT-SHARING, EPIC-XMPP-INTEGRATION, TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE, TASK-BUILD-IDENTITY-HASH-FOR-TAMPER-DETECTION-SEARXNG-STYLE-COMMI, TASK-FEDERATION-ADMIN-UI-FOR-FOLLOWS-BLOCKLISTS-KEY-ROTATION, TASK-FEDERATION-DEFEDERATION-ADMIN-OPERATIONS-PEER-STATE-BLOCK-AL, TASK-FEDERATION-INSTANCE-SWITCHER-IN-FRONTEND-TRAVEL-BETWEEN-INST, TASK-FEDERATION-PEER-AUDIT-PROBE-ZERO-TRUST-CROSS-INSTANCE-VERIFI
 - `feed` (1): FEAT-PUBLIC-STORY-FEED-MODERATION
+- `feedback-loop` (1): TASK-RENDER-JUDGE-LOOP
 - `feeds` (1): TASK-RAG-FEED-SOURCES
 - `ffi` (3): EPIC-NATIVE-MODULE-BENCHMARKS, EPIC-PRECOMPILED-HOT-BINARIES, TASK-SEARCH-ALGORITHM-RESEARCH-RUST-FFI
 - `file-attachment` (1): TASK-CONFIG-GALLERY-ATTACHMENT-IDEMPOTENT
@@ -2678,13 +2696,13 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `free-will` (1): EPIC-CHARACTER-INTERNAL-TRAITS
 - `fresh` (1): EPIC-FRESH-ALTERNATIVE-FRONTEND
 - `friends` (1): EPIC-SOCIAL-GRAPH
-- `frontend` (161): BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY, BUG-ALPINE-INIT-HYDRATION, BUG-EXPORT-PROGRESS-STREAM-TEST-STATUS-ASSERTION-IS-FLAKY, BUG-JOURNAL-KEYPHRASE-PANEL-READS-ONLY-PAGE-1-OF-THE-PAGINATED-M, BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE, EPIC-2026-24, EPIC-AUTH-ACCESS, EPIC-BATTLE-UI, EPIC-DENO-SUPPORT, EPIC-ERROR-ENVELOPE, EPIC-EXPERIMENTAL-EGUI-FRONTEND, EPIC-FE-BE-HARMONIZATION, EPIC-FRESH-ALTERNATIVE-FRONTEND, EPIC-FRONTEND-AGE-GATE, EPIC-FRONTEND-BACKEND-INTEGRATION, EPIC-FRONTEND-BUNDLE-OPTIMIZATION, EPIC-FRONTEND-COMPONENT-ARCHITECTURE, EPIC-FRONTEND-COMPONENTS, EPIC-FRONTEND-EMOJI-REACTIONS, EPIC-FRONTEND-ENCRYPTION, EPIC-FRONTEND-GALLERY, EPIC-FRONTEND-HEADERS-MANAGEMENT, EPIC-FRONTEND-HTML-DEDUP-HTMX-REUSE, EPIC-FRONTEND-INTERNATIONALIZATION, EPIC-FRONTEND-LOGIN, EPIC-FRONTEND-NOTIFICATIONS, EPIC-FRONTEND-OVERVIEW, EPIC-FRONTEND-ROUTING, EPIC-HEADLESS-ALTERNATIVE-FRONTENDS, EPIC-HOUSING, EPIC-INVENTORY-UI, EPIC-MODEL-INFO-FRONTEND, EPIC-NPC-MANAGEMENT-UI, EPIC-NSFW-UI, EPIC-OUTPUT-CONTROL-TRANSFORMS, EPIC-PLUGIN-MANAGEMENT-UI, EPIC-PROMPT-IMPROVEMENT, EPIC-RAG-UI, EPIC-STORY-MODE-UI, EPIC-TECHNICAL-COMPARISON-CHARTS, EPIC-USER-STORIES, EPIC-WORLD-MANAGEMENT-UI, FEAT-ATTACHMENT-FRONTEND-UI, FEAT-FRONTEND-MODE-CONFIG-ACCEPT-HEADER-CONTENT-NEGOTIATION-CORS, FEAT-LLM-ENHANCE-ANY-TEXT-SURFACE, FEAT-LORA-ADMIN-ANNOTATION-ARCHIVAL, FEAT-MEMORY-FRONTEND-3-MEMORY-TYPES-SELECTION-UI-MID-CHAT-PANEL, FEAT-MODEL-CARDS-WITH-METADATA-PANELS-AND-SIZE-VRAM-SURFACING, FEAT-MODEL-TAGS-SEARCH-AND-FILTER-OVER-LOCAL-INDEX, FEAT-VISUAL-NOVEL-MODE-FULL-IMPLEMENTATION, FEAT-WORLD-TEMPLATE-CHAT-LIFECYCLE, FEAT-WORLDS-FRONTEND-LIST-DETAIL-TIMELINE-LOCATION-TRAVEL-UI, TASK-001, TASK-023, TASK-2026-OPENWEBUI-CANCEL-GENERATION-WIRING, TASK-2026-OPENWEBUI-RETRY-FROM-POINT, TASK-2026-OPENWEBUI-SSE-RECONNECT-REPLAY, TASK-2026-OPENWEBUI-STRUCTURED-TOOLCALL-RENDERER, TASK-2026-OPENWEBUI-THINKING-BLOCK-RENDER, TASK-2026-OPENWEBUI-TOOL-VALVES-PANEL, TASK-ACTOR-AVAILABILITY-FRONTEND, TASK-ACTOR-EMOTION-AVATARS-FRONTEND, TASK-ACTOR-LICENSING-FRONTEND, TASK-ACTOR-NOTES-ITEMS-LORE-FRONTEND, TASK-ACTOR-RELATIONSHIPS-FRONTEND, TASK-ACTOR-SYSTEMS-EXPORT-FRONTEND, TASK-ACTOR-TRAITS-FRONTEND, TASK-ADMIN-ASSISTANT-TOOLING-ALLOWLIST, TASK-ANALYTICS-FRONTEND-DASHBOARD, TASK-ASSISTANT-SLASH-COMMAND-TYPED-TOKEN-AUTOCOMPLETE, TASK-BACKLOG-COVERAGE-WAIVERS-FRONTEND-BATCHES, TASK-BATTLE-ALPINE, TASK-BATTLE-FRONTEND-INTEGRATION, TASK-BATTLE-LOG, TASK-BATTLE-SCREEN, TASK-BLOG-FRONTEND-AUTHORING, TASK-BROWSER-SIDE-GGUF-KV-EXTRACTION-FOR-LOCAL-BYOK-MODELS, TASK-CHAR-EDITOR-IMPORT-EXPORT-UI, TASK-CHAR-EDITOR-RAW-JSON-YAML-TOML-EDITOR, TASK-CHAR-EDITOR-STRUCTURED-FIELDS-UI, TASK-CHAR-EDITOR-VALIDATION-SPEC-COMPLIANCE, TASK-CHAT-AUTO-TITLE-BLANK-NAME, TASK-CHAT-LOCATION-FRONTEND, TASK-CHAT-PINS-FRONTEND, TASK-CHAT-TRANSFER-FRONTEND, TASK-CLARIFY-STORY-STATE-SSE-SUBSCRIPTION-CONTRACT, TASK-COMFYUI-BUILDER-TRACK-A-ALPINE-PRESET-CHAIN-FORM, TASK-COMFYUI-WS-PROGRESS-STREAMING, TASK-COMMENT-ONLY-CATCH-BLOCKS-IN-SRC-FRONTEND-ARE-INVISIBLE-TO-E, TASK-COMPOSER-PRIMITIVE-EXTRACTION, TASK-CREATIVE-STUDIO, TASK-DEDUPE-SSE-ACTIVITY-STREAM, TASK-EQUIPMENT-SLOTS, TASK-EQUIPMENT-STAT-PREVIEW, TASK-EXPORT-FRONTEND-PROGRESS, TASK-FEDERATION-ADMIN-UI-FOR-FOLLOWS-BLOCKLISTS-KEY-ROTATION, TASK-FEDERATION-INSTANCE-SWITCHER-IN-FRONTEND-TRAVEL-BETWEEN-INST, TASK-FRONTEND-BANNED-PATTERN-OWNERSHIP-COMMENT-CLAIMS-ESLINT-ENFO, TASK-FRONTEND-TSCONFIG-STRICTNESS-ALIGNMENT, TASK-FRONTEND-VIEW-MODEL-EXTRACTION, TASK-FRONTEND-VIEW-MODEL-JSON-NEGOTIATION, TASK-GALLERY-EDITOR-STRUCTURED-UI, TASK-GALLERY-FILTER-GENERATED-DERIVED-CONTENT, TASK-GALLERY-FUZZY-SEARCH-PAGINATION, TASK-GM-PANEL, TASK-HEALTH-BAR, TASK-HOUSING-FRONTEND, TASK-HTML-DEDUP-AUDIT, TASK-HTML-DEDUP-SHARED-PARTIALS, TASK-HTMX-AJAX-REQUEST-HELPER, TASK-HTMX-MIGRATE-VIEWS, TASK-HTMX-REUSE-E2E-VERIFY, TASK-INSTALLED-PLUGINS, TASK-INVENTORY-ALPINE, TASK-INVENTORY-GRID, TASK-ITEM-DETAILS, TASK-ITEM-GENERATION, TASK-ITEM-PROVISIONING-DASHBOARD, TASK-LOCATION-DETAILS, TASK-LOCATION-EDITOR-STRUCTURED-UI, TASK-LOCATION-EXPLORER, TASK-MATRIX-CROSS-MECH-G22-EVENT-DRIVEN-AUTOMATION, TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND, TASK-MESSAGE-SEEN-INDICATOR-FRONTEND, TASK-MIGRATE-TEXT-SURFACES-TO-SHARED-PRIMITIVES, TASK-NPC-INVENTORY-FRONTEND, TASK-NSFW-ALPINE, TASK-NSFW-BODY-STATE, TASK-NSFW-FRONTEND-INTEGRATION, TASK-NSFW-HOUSING-MANAGEMENT, TASK-NSFW-INTIMACY-INTERFACE, TASK-PLUGIN-ALPINE, TASK-PLUGIN-BROWSER, TASK-PLUGIN-CONFIG, TASK-PLUGIN-DETAILS, TASK-PROFESSIONS-FRONTEND, TASK-QUEST-LOG, TASK-QUICK-EMOJIS-PREFERENCE-ENDPOINT-HAS-NO-FRONTEND-CONSUMER, TASK-RAG-ALPINE, TASK-RAG-CITATION-DISPLAY, TASK-RAG-DOCUMENT-LIST, TASK-RAG-DOCUMENT-UPLOAD, TASK-RAG-SEARCH-INTERFACE, TASK-RPG-STATS-FRONTEND-WIRING, TASK-SHARED-TEXT-SURFACE-TOOLBAR, TASK-SKILL-CHECK, TASK-SKILLS-FRONTEND, TASK-SPECIFY-CONTENT-WARNINGS-WRITE-THE-FRONTEND-CONTRACT, TASK-STATUS-EFFECTS, TASK-STORY-ALPINE, TASK-STORY-TURN-ORDER, TASK-STORY-WORLD-STATE, TASK-TIME-WEATHER, TASK-TOUCH-GESTURES, TASK-TRADING-INTERFACE, TASK-TRAVEL-INTERFACE, TASK-WORLD-ALPINE, TASK-WORLD-EDITOR-STRUCTURED-UI, TASK-WORLD-ITEM-FRONTEND, TASK-WORLD-ITEM-INSTANCE-NPC, TASK-WORLD-LORE-ENTRIES-FRONTEND
+- `frontend` (163): BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY, BUG-ALPINE-INIT-HYDRATION, BUG-EXPORT-PROGRESS-STREAM-TEST-STATUS-ASSERTION-IS-FLAKY, BUG-JOURNAL-KEYPHRASE-PANEL-READS-ONLY-PAGE-1-OF-THE-PAGINATED-M, BUG-STORED-XSS-UNESCAPED-SERVER-DERIVED-ASSET-IDS-LABELS-IN-INNE, EPIC-2026-24, EPIC-AUTH-ACCESS, EPIC-BATTLE-UI, EPIC-DENO-SUPPORT, EPIC-ERROR-ENVELOPE, EPIC-EXPERIMENTAL-EGUI-FRONTEND, EPIC-FE-BE-HARMONIZATION, EPIC-FRESH-ALTERNATIVE-FRONTEND, EPIC-FRONTEND-AGE-GATE, EPIC-FRONTEND-BACKEND-INTEGRATION, EPIC-FRONTEND-BUNDLE-OPTIMIZATION, EPIC-FRONTEND-COMPONENT-ARCHITECTURE, EPIC-FRONTEND-COMPONENTS, EPIC-FRONTEND-EMOJI-REACTIONS, EPIC-FRONTEND-ENCRYPTION, EPIC-FRONTEND-GALLERY, EPIC-FRONTEND-HEADERS-MANAGEMENT, EPIC-FRONTEND-HTML-DEDUP-HTMX-REUSE, EPIC-FRONTEND-INTERNATIONALIZATION, EPIC-FRONTEND-LOGIN, EPIC-FRONTEND-NOTIFICATIONS, EPIC-FRONTEND-OVERVIEW, EPIC-FRONTEND-ROUTING, EPIC-HEADLESS-ALTERNATIVE-FRONTENDS, EPIC-HOUSING, EPIC-INVENTORY-UI, EPIC-MODEL-INFO-FRONTEND, EPIC-NPC-MANAGEMENT-UI, EPIC-NSFW-UI, EPIC-OUTPUT-CONTROL-TRANSFORMS, EPIC-PLUGIN-MANAGEMENT-UI, EPIC-PROMPT-IMPROVEMENT, EPIC-RAG-UI, EPIC-STORY-MODE-UI, EPIC-TECHNICAL-COMPARISON-CHARTS, EPIC-USER-STORIES, EPIC-WORLD-MANAGEMENT-UI, FEAT-ATTACHMENT-FRONTEND-UI, FEAT-FRONTEND-MODE-CONFIG-ACCEPT-HEADER-CONTENT-NEGOTIATION-CORS, FEAT-LLM-ENHANCE-ANY-TEXT-SURFACE, FEAT-LORA-ADMIN-ANNOTATION-ARCHIVAL, FEAT-MEMORY-FRONTEND-3-MEMORY-TYPES-SELECTION-UI-MID-CHAT-PANEL, FEAT-MODEL-CARDS-WITH-METADATA-PANELS-AND-SIZE-VRAM-SURFACING, FEAT-MODEL-TAGS-SEARCH-AND-FILTER-OVER-LOCAL-INDEX, FEAT-VISUAL-NOVEL-MODE-FULL-IMPLEMENTATION, FEAT-WORLD-TEMPLATE-CHAT-LIFECYCLE, FEAT-WORLDS-FRONTEND-LIST-DETAIL-TIMELINE-LOCATION-TRAVEL-UI, TASK-001, TASK-023, TASK-2026-OPENWEBUI-CANCEL-GENERATION-WIRING, TASK-2026-OPENWEBUI-RETRY-FROM-POINT, TASK-2026-OPENWEBUI-SSE-RECONNECT-REPLAY, TASK-2026-OPENWEBUI-STRUCTURED-TOOLCALL-RENDERER, TASK-2026-OPENWEBUI-THINKING-BLOCK-RENDER, TASK-2026-OPENWEBUI-TOOL-VALVES-PANEL, TASK-3D-FRONTEND-VIEWER-LAZY-MOUNT, TASK-ACTOR-AVAILABILITY-FRONTEND, TASK-ACTOR-EMOTION-AVATARS-FRONTEND, TASK-ACTOR-LICENSING-FRONTEND, TASK-ACTOR-NOTES-ITEMS-LORE-FRONTEND, TASK-ACTOR-RELATIONSHIPS-FRONTEND, TASK-ACTOR-SYSTEMS-EXPORT-FRONTEND, TASK-ACTOR-TRAITS-FRONTEND, TASK-ADMIN-ASSISTANT-TOOLING-ALLOWLIST, TASK-ANALYTICS-FRONTEND-DASHBOARD, TASK-ASSISTANT-SLASH-COMMAND-TYPED-TOKEN-AUTOCOMPLETE, TASK-BACKLOG-COVERAGE-WAIVERS-FRONTEND-BATCHES, TASK-BATTLE-ALPINE, TASK-BATTLE-FRONTEND-INTEGRATION, TASK-BATTLE-LOG, TASK-BATTLE-SCREEN, TASK-BLOG-FRONTEND-AUTHORING, TASK-BROWSER-SIDE-GGUF-KV-EXTRACTION-FOR-LOCAL-BYOK-MODELS, TASK-CHAR-EDITOR-IMPORT-EXPORT-UI, TASK-CHAR-EDITOR-RAW-JSON-YAML-TOML-EDITOR, TASK-CHAR-EDITOR-STRUCTURED-FIELDS-UI, TASK-CHAR-EDITOR-VALIDATION-SPEC-COMPLIANCE, TASK-CHAT-AUTO-TITLE-BLANK-NAME, TASK-CHAT-LOCATION-FRONTEND, TASK-CHAT-PINS-FRONTEND, TASK-CHAT-TRANSFER-FRONTEND, TASK-CLARIFY-STORY-STATE-SSE-SUBSCRIPTION-CONTRACT, TASK-COMFYUI-BUILDER-TRACK-A-ALPINE-PRESET-CHAIN-FORM, TASK-COMFYUI-WS-PROGRESS-STREAMING, TASK-COMMENT-ONLY-CATCH-BLOCKS-IN-SRC-FRONTEND-ARE-INVISIBLE-TO-E, TASK-COMPOSER-PRIMITIVE-EXTRACTION, TASK-CREATIVE-STUDIO, TASK-DEDUPE-SSE-ACTIVITY-STREAM, TASK-EQUIPMENT-SLOTS, TASK-EQUIPMENT-STAT-PREVIEW, TASK-EXPORT-FRONTEND-PROGRESS, TASK-FEDERATION-ADMIN-UI-FOR-FOLLOWS-BLOCKLISTS-KEY-ROTATION, TASK-FEDERATION-INSTANCE-SWITCHER-IN-FRONTEND-TRAVEL-BETWEEN-INST, TASK-FRONTEND-BANNED-PATTERN-OWNERSHIP-COMMENT-CLAIMS-ESLINT-ENFO, TASK-FRONTEND-TSCONFIG-STRICTNESS-ALIGNMENT, TASK-FRONTEND-VIEW-MODEL-EXTRACTION, TASK-FRONTEND-VIEW-MODEL-JSON-NEGOTIATION, TASK-GALLERY-EDITOR-STRUCTURED-UI, TASK-GALLERY-FILTER-GENERATED-DERIVED-CONTENT, TASK-GALLERY-FUZZY-SEARCH-PAGINATION, TASK-GM-PANEL, TASK-HEALTH-BAR, TASK-HOUSING-FRONTEND, TASK-HTML-DEDUP-AUDIT, TASK-HTML-DEDUP-SHARED-PARTIALS, TASK-HTMX-AJAX-REQUEST-HELPER, TASK-HTMX-MIGRATE-VIEWS, TASK-HTMX-REUSE-E2E-VERIFY, TASK-INSTALLED-PLUGINS, TASK-INVENTORY-ALPINE, TASK-INVENTORY-GRID, TASK-ITEM-DETAILS, TASK-ITEM-GENERATION, TASK-ITEM-PROVISIONING-DASHBOARD, TASK-LOCATION-DETAILS, TASK-LOCATION-EDITOR-STRUCTURED-UI, TASK-LOCATION-EXPLORER, TASK-MATRIX-CROSS-MECH-G22-EVENT-DRIVEN-AUTOMATION, TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND, TASK-MESSAGE-SEEN-INDICATOR-FRONTEND, TASK-MIGRATE-TEXT-SURFACES-TO-SHARED-PRIMITIVES, TASK-NPC-INVENTORY-FRONTEND, TASK-NSFW-ALPINE, TASK-NSFW-BODY-STATE, TASK-NSFW-FRONTEND-INTEGRATION, TASK-NSFW-HOUSING-MANAGEMENT, TASK-NSFW-INTIMACY-INTERFACE, TASK-PLUGIN-ALPINE, TASK-PLUGIN-BROWSER, TASK-PLUGIN-CONFIG, TASK-PLUGIN-DETAILS, TASK-PROFESSIONS-FRONTEND, TASK-QUEST-LOG, TASK-QUICK-EMOJIS-PREFERENCE-ENDPOINT-HAS-NO-FRONTEND-CONSUMER, TASK-RAG-ALPINE, TASK-RAG-CITATION-DISPLAY, TASK-RAG-DOCUMENT-LIST, TASK-RAG-DOCUMENT-UPLOAD, TASK-RAG-SEARCH-INTERFACE, TASK-RPG-STATS-FRONTEND-WIRING, TASK-SCENE-PARALLAX-VN-AND-CANVAS-CONSUMERS, TASK-SHARED-TEXT-SURFACE-TOOLBAR, TASK-SKILL-CHECK, TASK-SKILLS-FRONTEND, TASK-SPECIFY-CONTENT-WARNINGS-WRITE-THE-FRONTEND-CONTRACT, TASK-STATUS-EFFECTS, TASK-STORY-ALPINE, TASK-STORY-TURN-ORDER, TASK-STORY-WORLD-STATE, TASK-TIME-WEATHER, TASK-TOUCH-GESTURES, TASK-TRADING-INTERFACE, TASK-TRAVEL-INTERFACE, TASK-WORLD-ALPINE, TASK-WORLD-EDITOR-STRUCTURED-UI, TASK-WORLD-ITEM-FRONTEND, TASK-WORLD-ITEM-INSTANCE-NPC, TASK-WORLD-LORE-ENTRIES-FRONTEND
 - `fts` (1): TASK-CHAT-MESSAGE-SEARCH
 - `furniture` (1): TASK-HOUSING-FRONTEND
 - `future` (1): EPIC-3D-GENERATION
 - `fuzzing` (1): EPIC-FUZZING-INFRASTRUCTURE
 - `fuzzy` (1): TASK-GALLERY-FUZZY-SEARCH-PAGINATION
-- `gallery` (14): EPIC-DERIVED-MAP-GENERATION, EPIC-FRONTEND-GALLERY, EPIC-GALLERY-BATCH-OPERATIONS, EPIC-MULTIMODAL-ASSET-REUSE, EPIC-RAG-ASSETS-UNIFIED-STORAGE-AND-ASSISTANT-FLOWS, EPIC-TECHNICAL-COMPARISON-CHARTS, FEAT-SEED-DEFAULT-CHARACTERS-AVATAR, TASK-001, TASK-ASSISTANT-ENTITY-ACCESS-ASSET-ACCESS, TASK-CONFIG-GALLERY-ATTACHMENT-IDEMPOTENT, TASK-GALLERY-FILTER-GENERATED-DERIVED-CONTENT, TASK-GALLERY-FUZZY-SEARCH-PAGINATION, TASK-IMAGE-BACKENDS-X-GALLERY-PROVENANCE-FILTER-BACKEND-ATTRIBUTI, TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE
+- `gallery` (17): EPIC-DERIVED-MAP-GENERATION, EPIC-FRONTEND-GALLERY, EPIC-GALLERY-BATCH-OPERATIONS, EPIC-MULTIMODAL-ASSET-REUSE, EPIC-RAG-ASSETS-UNIFIED-STORAGE-AND-ASSISTANT-FLOWS, EPIC-TECHNICAL-COMPARISON-CHARTS, FEAT-SEED-DEFAULT-CHARACTERS-AVATAR, TASK-001, TASK-ASSISTANT-ENTITY-ACCESS-ASSET-ACCESS, TASK-CONFIG-GALLERY-ATTACHMENT-IDEMPOTENT, TASK-GALLERY-FILTER-GENERATED-DERIVED-CONTENT, TASK-GALLERY-FUZZY-SEARCH-PAGINATION, TASK-GALLERY-SET-AND-3D-SURFACE, TASK-IMAGE-BACKENDS-X-GALLERY-PROVENANCE-FILTER-BACKEND-ATTRIBUTI, TASK-LINEAGE-QUERY-UI, TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE, TASK-VIEW-SET-CRUD-AND-GALLERY-SURFACE
 - `gallery-editor` (1): TASK-GALLERY-EDITOR-STRUCTURED-UI
 - `game-engine` (1): EPIC-GAME-ENGINE-SDKS
 - `game-frontend` (2): EPIC-EMBEDDABLE-ENGINE-GAME-FRONTEND, EPIC-GAME-FRONTEND-SCENES
@@ -2709,7 +2727,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `github-actions` (1): TASK-CROSS-PLATFORM-CI-MATRIX
 - `giwt` (11): BUG-GIWT-SYNC-FIX-MUTATES-REPO-WIDE-REFS-ISSUES-SHARED-ACROSS-AL, BUG-GIWT-SYNC-FIX-NEEDS-TWO-PASSES-TO-CONVERGE-WHEN-AN-INDEX-ENT, EPIC-HARNESS-INTEGRATION, EPIC-PROJECT-SPACES-PM-INTEGRATION, TASK-GIWT-MIGRATION-OPEN-ITEMS, TASK-MANAGEMENT-INTEGRATION, TASK-PLAN-INDEX-ORPHAN-PHANTOM-CLEANUP, TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-COMMIT-AND-FINALIZE-GPG-DEL, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-WORKTREE-SPAWN-TTY-FREE-AND, TASK-SPACE-AWARE-ADMIN-TASKS-FILTER-MOVE-ITEM-DERIVES-LINK-OP
 - `glossary` (1): EPIC-PUBLICATION-I18N
-- `gltf` (1): TASK-3D-GLTF-ASSETS
+- `gltf` (2): TASK-3D-GLTF-ASSETS, TASK-ENGINE-EXPORT-BUNDLES
 - `gm` (22): EPIC-ACTOR-TURN-SKIP, EPIC-ASSISTANT-GM-FLOWS, EPIC-CHARACTER-MULTI-PERSONALITY, EPIC-CHAT-VARIANTS-TAXONOMY, EPIC-GM-SHADOW-NOTES, EPIC-HIDDEN-CARRIAGE-CONTEXT, EPIC-PERSPECTIVE-NARRATION-VOICE, EPIC-STORY-MODE-UI, EPIC-WORLD-SHAPING-DIVINE, FEAT-PER-CHAT-ASSISTANT-GM-FRONTEND, TASK-AUX-GM-TOOL-DETECTION, TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL, TASK-CHARACTER-AS-ASSISTANT-PICK-CHARACTER-AS-GM, TASK-CHAT-CONTEXT-PREFERENCE-PER-SCOPE, TASK-CHAT-VARIANT-CHARACTER-GROUP, TASK-CHAT-VARIANT-LLM-ONLY-GROUP-GM, TASK-GM-BEAT-SCHEDULING, TASK-GM-PANEL, TASK-GM-SHADOW-NOTES, TASK-GM-TRIGGER-AND-TIMELINE-BACKFILL-PROPAGATION, TASK-GM-WHITENOTES, TASK-INVISIBLE-GM-ONLY-QUEST-AND-ARK-SYSTEM
 - `gm-beats` (1): TASK-STORY-AUTO-DRIVE-SCHEDULER
 - `gm-notes` (1): BUG-GM-NOTES-GET-500-SQL-SYNTAX-ERROR
@@ -2719,7 +2737,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `goals` (2): EPIC-CHARACTER-INTERNAL-TRAITS, TASK-MATRIX-CROSS-MECH-G18-AGENTIC-NPC-AUTONOMY
 - `god-mode` (1): TASK-WORLD-SHAPING-DIVINE
 - `god-module` (3): EPIC-FILE-SPLITTING, TASK-FILE-SPLIT-CHAT-SERVICE, TASK-FILE-SPLIT-ROUTES
-- `godot` (1): EPIC-GAME-ENGINE-SDKS
+- `godot` (2): EPIC-GAME-ENGINE-SDKS, TASK-GODOT-HEADLESS-IMPORT-VERIFICATION
 - `golden-datasets` (1): EPIC-RAG-EVALUATION-OBSERVABILITY
 - `gossip-protocol` (1): EPIC-ANONYMITY-DECENTRALIZATION
 - `governance` (3): EPIC-MECHANICS-GOVERNANCE, FEAT-HUMAN-IN-THE-LOOP-APPROVAL-GATES, FEAT-PER-AGENT-USER-COST-GOVERNANCE
@@ -2769,7 +2787,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `hybrid` (1): TASK-AUX-LLM-EMOTION-CLASSIFIER
 - `hybrid-search` (3): EPIC-RAG-ASSETS-UNIFIED-STORAGE-AND-ASSISTANT-FLOWS, EPIC-RAG-RETRIEVAL, TASK-RAG-DECOMPOSITION-INDEX-PIPELINE
 - `hydration` (1): BUG-ALPINE-INIT-HYDRATION
-- `i18n` (8): EPIC-FRONTEND-INTERNATIONALIZATION, EPIC-I18N, EPIC-MULTILINGUAL-CARRIAGE, EPIC-OUTPUT-CONTROL-TRANSFORMS, EPIC-PUBLICATION-I18N, FEAT-AUTO-TRANSLATION-LAYER-INPUT-OUTPUT, TASK-010, TASK-010-PLURALS
+- `i18n` (9): EPIC-FRONTEND-INTERNATIONALIZATION, EPIC-I18N, EPIC-MULTILINGUAL-CARRIAGE, EPIC-OUTPUT-CONTROL-TRANSFORMS, EPIC-PUBLICATION-I18N, FEAT-AUTO-TRANSLATION-LAYER-INPUT-OUTPUT, TASK-010, TASK-010-PLURALS, TASK-3D-I18N-AND-A11Y-PASS
 - `i2p` (2): EPIC-ANONYMITY-DECENTRALIZATION, EPIC-ANONYMITY-DECENTRALIZATION-QUICKREF
 - `idempotency` (2): BUG-IDEMPOTENCY-TABLE-BACKEND-VERIFY-REPRODUCES, EPIC-CONTENT-HASHING-DISTRIBUTED-INTEGRITY
 - `idempotent` (2): TASK-CONFIG-GALLERY-ATTACHMENT-IDEMPOTENT, TASK-ITEM-CONFIG-TEMPLATES
@@ -2849,6 +2867,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `knip` (1): EPIC-REVIEW-20261025-DEAD-CODE-SWEEP
 - `knowledge` (4): EPIC-CHARACTER-NPC-LORE-ACCESS, EPIC-LORE-KNOWLEDGE, EPIC-MEMORY-KNOWLEDGE-SYSTEMS, TASK-ASSISTANT-ENTITY-ACCESS-ADAPTATION
 - `knowledge-graph` (1): TASK-RAG-KNOWLEDGE-GRAPH
+- `krita` (1): TASK-KRITA-SHARED-COMFYUI-TIER
 - `kysely` (4): BUG-GM-NOTES-GET-500-SQL-SYNTAX-ERROR, EPIC-DB-MIGRATION-COMPACTION, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-ACTIONS-AUDIT-TABLE-AND-SUR, TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-EVENTS-TABLE-AND-TELEMET
 - `l10n` (1): EPIC-I18N
 - `law` (1): EPIC-STEALTH-CRIME
@@ -2865,9 +2884,9 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `library` (1): EPIC-API-LIBRARY-DISTRIBUTION
 - `libsodium` (1): EPIC-NON-STANDARD-BROWSER-CRYPTO
 - `license` (1): EPIC-WORLDS-EXTENSION
-- `licensing` (5): TASK-030, TASK-ACTOR-LICENSING-FRONTEND, TASK-CHARACTER-LICENSING, TASK-GATE-LICENSING-TRIPLE-VIA-LICENSERIGHTSVALIDATOR, TASK-LICENSE-COMPLIANCE-CHECK-INERT-CHECK-PARALLEL-EMITS-INFO-SKI
+- `licensing` (8): TASK-030, TASK-ACTOR-LICENSING-FRONTEND, TASK-CHARACTER-LICENSING, TASK-ENVIRONMENT-KIT-SKYBOX-HDRI-TIER, TASK-GATE-LICENSING-TRIPLE-VIA-LICENSERIGHTSVALIDATOR, TASK-HUNYUAN-OPTIONAL-FENCED-TIER, TASK-LICENSE-COMPLIANCE-CHECK-INERT-CHECK-PARALLEL-EMITS-INFO-SKI, TASK-SUBSTANCE-RISK-ASSESSMENT
 - `lifecycle` (9): EPIC-CHAT-LIFECYCLE-MODERATION, EPIC-COMFYUI-LIFECYCLE, EPIC-LLAMA-SWAP, EPIC-RAG-ENTERPRISE, EPIC-SERVER-LIFECYCLE-HARDENING, FEAT-CHAT-TEMPLATE-CONFIG-LIFECYCLE, FEAT-LLAMA-SWAP-STYLE-ON-DEMAND-LOAD-UNLOAD-LIFECYCLE-WITH-HEALTH, TASK-COMFYUI-FIRST-CLASS-STANDALONE-AUTO-START-CONFIG-LIFECYCLE, TASK-PERSONA-LIFECYCLE-CONTRACT
-- `lineage` (2): TASK-HARNESS-TOPIC-SESSION-ATTACH, TASK-LORA-BASE-MODEL-LINEAGE-VIA-CHECKPOINT-METADATA
+- `lineage` (9): TASK-ASSET-LINEAGE-LINK-KINDS, TASK-HARNESS-TOPIC-SESSION-ATTACH, TASK-INTERACTIVE-PROJECT-BINDING, TASK-LINEAGE-CONTENT-HASH-ANCHORS, TASK-LINEAGE-PROPAGATION-POLICY, TASK-LINEAGE-QUERY-UI, TASK-LORA-BASE-MODEL-LINEAGE-VIA-CHECKPOINT-METADATA, TASK-PROVENANCE-SUMMARY, TASK-SCENE-REUSE-PROPAGATION
 - `link-preview` (1): EPIC-CHAT-RICH-ENGAGEMENT
 - `linkage` (1): EPIC-DOCS-RECONCILIATION
 - `linking` (4): EPIC-PROJECT-SPACES-PM-INTEGRATION, EPIC-RAG-EXTRACT-LINK, TASK-CROSS-SPACE-REFERENCES-LINKS-VISIBILITY-CHECKED-GRAPH-EXPANS, TASK-RAG-ENTITY-FACT-EXTRACTION-WITH-SOURCE-LINKING-AND-REVIEW-QU
@@ -2880,7 +2899,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `llama-cpp-alternative` (1): TASK-RECURSIVE-SELF-IMPROVEMENT-SIDECAR-PYTHON-PROVIDER-FOR-CUSTO
 - `llama-swap` (8): EPIC-COMFYUI-LIFECYCLE, EPIC-EXTERNAL-TOOLING-BUILD, EPIC-LLAMA-SWAP, EPIC-LLM-REQUEST-SCHEDULER, FEAT-LLAMA-SWAP-STYLE-ON-DEMAND-LOAD-UNLOAD-LIFECYCLE-WITH-HEALTH, TASK-COMFYUI-FIRST-CLASS-LLAMA-SWAP-RECIPE-STANDALONE-VS-PROXY-MA, TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS, TASK-REAL-LLM-SD-E2E-FIXTURE-LLAMA-CPP-LLAMA-SWAP-SD-SERVER
 - `llama.cpp` (3): EPIC-EXTERNAL-TOOLING-BUILD, TASK-INFERENCE-BROWSER-WLLAMA-GGUF, TASK-REAL-LLM-SD-E2E-FIXTURE-LLAMA-CPP-LLAMA-SWAP-SD-SERVER
-- `llm` (26): EPIC-BYOK-API-KEYS, EPIC-CONFIG-TEMPLATES, EPIC-GENERATION-FLOW-CONTROL, EPIC-LLM-QUEUE, EPIC-LLM-REQUEST-SCHEDULER, EPIC-MATH-AI-BRIDGE, EPIC-OUTPUT-CONTROL-TRANSFORMS, EPIC-PLATFORM-INTEGRATIONS, EPIC-PLATFORM-RESEARCH, EPIC-PUBLICATION-I18N, EPIC-SECURITY-SANDBOXING, EPIC-SECURITY-SANDBOXING-QUICKREF, FEAT-065-SUB-LLM, FEAT-BYOK-API-KEYS, FEAT-LLM-ENHANCE-ANY-TEXT-SURFACE, FEAT-MESSAGE-SWIPE-REPLAY-BRANCH, TASK-BOUND-LINKED-TRAVEL-PROMPTS, TASK-CHAT-AUTORENAMING, TASK-CHAT-VARIANT-LLM-ONLY, TASK-CHAT-VARIANT-LLM-ONLY-GROUP, TASK-CHAT-VARIANT-LLM-ONLY-GROUP-GM, TASK-ITEM-GENERATION, TASK-MATH-STRUCTURED-LLM-DICE-RESULT, TASK-QUICK-REGEN-BUTTON, TASK-RESPONSE-LENGTH-CONTROL, TASK-VN-DYNAMIC-GENERATION
+- `llm` (27): EPIC-BYOK-API-KEYS, EPIC-CONFIG-TEMPLATES, EPIC-GENERATION-FLOW-CONTROL, EPIC-LLM-QUEUE, EPIC-LLM-REQUEST-SCHEDULER, EPIC-MATH-AI-BRIDGE, EPIC-OUTPUT-CONTROL-TRANSFORMS, EPIC-PLATFORM-INTEGRATIONS, EPIC-PLATFORM-RESEARCH, EPIC-PUBLICATION-I18N, EPIC-SECURITY-SANDBOXING, EPIC-SECURITY-SANDBOXING-QUICKREF, FEAT-065-SUB-LLM, FEAT-BYOK-API-KEYS, FEAT-LLM-ENHANCE-ANY-TEXT-SURFACE, FEAT-MESSAGE-SWIPE-REPLAY-BRANCH, TASK-BOUND-LINKED-TRAVEL-PROMPTS, TASK-CHAT-AUTORENAMING, TASK-CHAT-VARIANT-LLM-ONLY, TASK-CHAT-VARIANT-LLM-ONLY-GROUP, TASK-CHAT-VARIANT-LLM-ONLY-GROUP-GM, TASK-ITEM-GENERATION, TASK-MATH-STRUCTURED-LLM-DICE-RESULT, TASK-QUICK-REGEN-BUTTON, TASK-RESPONSE-LENGTH-CONTROL, TASK-SCENE-LAYOUT-LLM-STEP, TASK-VN-DYNAMIC-GENERATION
 - `llm-authored` (1): EPIC-BLOG-SYSTEM
 - `llm-context-cap` (1): TASK-CHAT-CONTEXT-PREFERENCE-PER-SCOPE
 - `llm-narrative` (1): EPIC-RPG-CONTENT-SYSTEMS
@@ -2946,7 +2965,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `mention` (1): EPIC-GROUP-CHAT
 - `merge` (2): EPIC-CONFIG-TEMPLATES, TASK-WORLD-TIME-SYNC-WAIT-AND-CHAT-BRANCH-MERGE
 - `merge-readiness-pack` (1): TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK-GENERATOR-FR
-- `mesh` (4): EPIC-3D-GENERATION, EPIC-ANONYMITY-DECENTRALIZATION-QUICKREF, EPIC-FEDERATION-OFFLOAD-QUOTAS, EPIC-MESH-FEDERATION-CONTENT-SHARING
+- `mesh` (5): EPIC-3D-GENERATION, EPIC-ANONYMITY-DECENTRALIZATION-QUICKREF, EPIC-FEDERATION-OFFLOAD-QUOTAS, EPIC-MESH-FEDERATION-CONTENT-SHARING, TASK-MESH-QA-AND-REPAIR-CHAIN
 - `mesh-networking` (1): EPIC-ANONYMITY-DECENTRALIZATION
 - `message` (3): EPIC-EMOTION-AVATAR-MESSAGE-BINDING, TASK-CHAT-MESSAGE-SEARCH, TASK-EMOTION-AVATAR-MESSAGE-BINDING
 - `message-kind` (2): EPIC-NARRATION-ACTOR-SEPARATION, TASK-SC2-NARRATOR-MODE-KIND-STAMP
@@ -2954,7 +2973,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `messaging` (1): FEAT-ASYNC-NPC-MAIL-NPCS-MESSAGE-USER-WHEN-AWAY
 - `messenger` (2): EPIC-AUTH-CHANNEL-PROVISIONING, EPIC-CHAT-COMPOSER-FLOWS
 - `meta-currency` (1): EPIC-AGENCY-STORY-POINTS
-- `metadata` (11): EPIC-ASSET-TRANSFORM-METADATA, EPIC-MODEL-METADATA-READ, EPIC-TECHNICAL-COMPARISON-CHARTS, FEAT-GGUF-KV-TYPED-READER-WITH-ARCH-TEMPLATED-KEY-REGISTRY, FEAT-HEADER-ONLY-SAFETENSORS-METADATA-PARSER, TASK-GM-SHADOW-NOTES, TASK-HF-ID-TO-DISPLAY-NAME-HEURISTICS, TASK-LORA-BASE-MODEL-LINEAGE-VIA-CHECKPOINT-METADATA, TASK-MODEL-METADATA-SIDECAR-CACHE-AND-HASH-LOOKUP-CASCADE, TASK-MODEL-WEIGHT-SNIFFING-FALLBACK-DETECT-FROM-WEIGHTS, TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE
+- `metadata` (19): EPIC-ASSET-TRANSFORM-METADATA, EPIC-MODEL-METADATA-READ, EPIC-TECHNICAL-COMPARISON-CHARTS, FEAT-GGUF-KV-TYPED-READER-WITH-ARCH-TEMPLATED-KEY-REGISTRY, FEAT-HEADER-ONLY-SAFETENSORS-METADATA-PARSER, TASK-3D-GENERATION-FACT-CAPTURE, TASK-ASSET-METADATA-SHADOW-OVERRIDES, TASK-EMBEDDED-REGENERATION-MANIFEST, TASK-EXTERNAL-MANIFEST-INTEROP, TASK-GENERATION-FACT-CAPTURE-AT-QUEUE-TIME, TASK-GM-SHADOW-NOTES, TASK-HF-ID-TO-DISPLAY-NAME-HEURISTICS, TASK-IMPORTED-GENERATION-METADATA-PARSER, TASK-LORA-BASE-MODEL-LINEAGE-VIA-CHECKPOINT-METADATA, TASK-METADATA-DETECTION-PROVENANCE-STAMPING, TASK-MODEL-METADATA-SIDECAR-CACHE-AND-HASH-LOOKUP-CASCADE, TASK-MODEL-WEIGHT-SNIFFING-FALLBACK-DETECT-FROM-WEIGHTS, TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE, TASK-VIEW-SET-CAMERA-METADATA-FIELDS
 - `metrics` (4): EPIC-ANALYTICS-OBSERVABILITY, EPIC-API-TELEMETRY, TASK-ANALYTICS-FRONTEND-DASHBOARD, TASK-SEARCH-TELEMETRY-OBSERVABILITY
 - `mfa` (2): EPIC-AUTH-ACCESS, EPIC-AUTH-CHANNEL-PROVISIONING
 - `mid-response` (1): TASK-MATRIX-CROSS-MECH-G23-DYNAMIC-MEMORY-MID-RESPONSE
@@ -3080,7 +3099,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `paths` (1): EPIC-CONFIGS-PATH-RESOLUTION
 - `patrol` (1): TASK-PARTY-SCHEDULE-AND-PATROL-ROUTES
 - `pause` (2): TASK-GLOBAL-GENERATION-PAUSE-KILL-SWITCH, TASK-UNIFIED-HOLD-SEMANTICS-PER-CHAT-PAUSE-GATES-PRIMARY-GENERATE
-- `pbr` (2): EPIC-DERIVED-MAP-GENERATION, TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION
+- `pbr` (3): EPIC-DERIVED-MAP-GENERATION, TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION, TASK-TEXTURE-PBR-TIER
 - `pbta` (2): EPIC-RESOLUTION-SYSTEM, TASK-MATH-RESOLVER-PBTA-2D6
 - `peer-to-peer` (1): EPIC-DISTRIBUTED-COMPUTE-SHARING
 - `peer-verification` (1): TASK-FEDERATION-PEER-AUDIT-PROBE-ZERO-TRUST-CROSS-INSTANCE-VERIFI
@@ -3103,6 +3122,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `pet-battles` (1): EPIC-COMPANION-PET-MOUNT
 - `pets` (1): EPIC-COMPANION-PET-MOUNT
 - `pgp` (1): EPIC-EMAIL-INTEGRATION
+- `photogrammetry` (1): TASK-PHOTOGRAMMETRY-EXTERNAL-TIER
 - `pii` (5): BUG-ADMIN-AUXTELEMETRY-LEAKS-USERID-CHATID, BUG-NSFW-FLAGQUEUE-LEAKS-REPORTER-PII, BUG-NSFW-GATE-LOG-PLAINTEXT-PII, BUG-NSFW-MODSERVICE-NOTIFY-USER-LEAKS-ADMIN-REASON, BUG-TELEMETRY-ERRORS-LEAKS-RAW-EVENT-DATA
 - `pinecone` (1): EPIC-RAG-VECTOR-STORE
 - `pins` (1): TASK-CHAT-PINS-FRONTEND
@@ -3322,6 +3342,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `rewards` (2): EPIC-ACHIEVEMENTS, EPIC-EXPLORATION-DISCOVERY
 - `rich-content` (1): TASK-CHAT-FEATURE-CHAT-ARTIFACTS
 - `riding` (1): EPIC-COMPANION-PET-MOUNT
+- `rigging` (1): TASK-RIG-ATTACH-TIER
 - `ripgrep` (1): TASK-SEARCH-ALGORITHM-RESEARCH-RUST-FFI
 - `rng` (1): TASK-AUTONOMY-DETERMINISTIC-TURNS
 - `robots-txt` (1): TASK-RAG-SEARCH-ROBOTS-QUOTA
@@ -3332,7 +3353,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `romance` (1): EPIC-RELATIONSHIPS
 - `room-layout` (1): TASK-HOUSING-FRONTEND
 - `rotation` (2): EPIC-LLAMA-SWAP, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-TOKEN-LIFECYCLE-ISSUANCE-ROTATION-REV
-- `routes` (21): BUG-AGGREGATED-TRAITS-ENDPOINT-SHADOWED-AND-DROPPED, BUG-E2E-TEST-INFRASTRUCTURE-FIXES, BUG-ROUTES-CHARACTER-AVATARS-SUBDIR-IS-SHADOWED-BY-FLAT-FILE-CRU, EPIC-API-ROUTES, EPIC-API-VERSIONING, EPIC-RPG-CORE-WIRING, EPIC-RPG-WIRING-PHASE3, TASK-COMFYUI-BUILDER-ROUTES-CHAIN-CRUD-RUN-PALETTE-PROXY-GRAPH-VA, TASK-COMFYUI-FIRST-CLASS-MOUNT-IMAGE-EDIT-ROUTES-VERIFY-ASSET-PER, TASK-CRAFTING-STATIONS-EXECUTION, TASK-FILE-SPLIT-ROUTES, TASK-FRACTAL-LOCATIONS-API-ROUTES, TASK-HTTP-EXPOSE-AGENCY-EARN-AND-STATUS-ALONGSIDE-SPEND, TASK-PLAN-UNWIRED-CODEOUT, TASK-PLUGIN-API-ROUTES-ELYSIA-REGISTRATION, TASK-PROFESSIONS-SERVICE-ROUTES, TASK-SKILLS-ROUTES, TASK-TRADE-HISTORY-NPC-COUNTERPARTY, TASK-TRAVEL-ROUTES-SCHEMA-AND-CRUD, TASK-TRAVEL-ROUTES-SCHEMA-CRUD, TASK-WIRE-CRAFTING-ROUTES
+- `routes` (23): BUG-AGGREGATED-TRAITS-ENDPOINT-SHADOWED-AND-DROPPED, BUG-E2E-TEST-INFRASTRUCTURE-FIXES, BUG-ROUTES-CHARACTER-AVATARS-SUBDIR-IS-SHADOWED-BY-FLAT-FILE-CRU, EPIC-API-ROUTES, EPIC-API-VERSIONING, EPIC-RPG-CORE-WIRING, EPIC-RPG-WIRING-PHASE3, TASK-COMFYUI-BUILDER-ROUTES-CHAIN-CRUD-RUN-PALETTE-PROXY-GRAPH-VA, TASK-COMFYUI-FIRST-CLASS-MOUNT-IMAGE-EDIT-ROUTES-VERIFY-ASSET-PER, TASK-CRAFTING-STATIONS-EXECUTION, TASK-FILE-SPLIT-ROUTES, TASK-FRACTAL-LOCATIONS-API-ROUTES, TASK-HTTP-EXPOSE-AGENCY-EARN-AND-STATUS-ALONGSIDE-SPEND, TASK-PLAN-UNWIRED-CODEOUT, TASK-PLUGIN-API-ROUTES-ELYSIA-REGISTRATION, TASK-PROFESSIONS-SERVICE-ROUTES, TASK-RECONSTRUCTION-RUN-JOBS, TASK-SKILLS-ROUTES, TASK-TRADE-HISTORY-NPC-COUNTERPARTY, TASK-TRAVEL-ROUTES-SCHEMA-AND-CRUD, TASK-TRAVEL-ROUTES-SCHEMA-CRUD, TASK-VIEW-SET-CRUD-AND-GALLERY-SURFACE, TASK-WIRE-CRAFTING-ROUTES
 - `routing` (7): EPIC-CHAT-TRANSFER-LOCATION, EPIC-FEDERATION-OFFLOAD-QUOTAS, EPIC-FRONTEND-HEADERS-MANAGEMENT, EPIC-FRONTEND-ROUTING, EPIC-HARNESS-INTEGRATION, EPIC-SOCIAL-HUB, TASK-IMAGE-BACKENDS-X-ASSISTANT-IMAGE-COMMAND-BACKEND-ROUTING-FAI
 - `rpg` (80): BUG-AGGREGATED-TRAITS-ENDPOINT-SHADOWED-AND-DROPPED, EPIC-2026-22, EPIC-CHARACTER-WORLD-INTEGRATION, EPIC-CHARACTER-XP-LEVELING, EPIC-CHAT-PRODUCT-FEATURES, EPIC-CHAT-VARIANTS-TAXONOMY, EPIC-EMERGENT-NARRATIVE-DESIGN, EPIC-ENEMIES-MONSTERS, EPIC-ITEMS-ECONOMY-CRAFTING, EPIC-MATH-AI-BRIDGE, EPIC-MATH-ECONOMY, EPIC-MATH-LEDGER, EPIC-MATH-RESOLUTION, EPIC-MECHANICS-GOVERNANCE, EPIC-MINI-GAMES, EPIC-NSFW-GAME-MECHANICS, EPIC-RPG-CONTENT-SYSTEMS, EPIC-RPG-CORE-WIRING, EPIC-RPG-MECHANICS, EPIC-RPG-PATTERNS, EPIC-RPG-PROGRESSION, EPIC-RPG-WIRING-PHASE3, EPIC-SKILLS-PROFESSIONS-CONFIG, EPIC-WORLD-SHAPING-DIVINE, FEAT-BLADES-IN-THE-DARK-POSITION-EFFECT-CLOCKS, FEAT-FATE-ASPECTS-SYSTEM-INVOCABLE-LORE, FEAT-FATE-SKILL-PYRAMID, FEAT-FATE-STRESS-TRACKS-CONSEQUENCES, FEAT-FORGE-ENGINE-ENERGY-POOL-SAGE-ACTION-ECONOMY, FEAT-GATE-XP-AND-SKILL-XP-AWARDS-BEHIND-THE-PER-WORLD-RPG-XP-OPT-, FEAT-GURPS-POINT-BUY-CHARACTER-CREATION, FEAT-INTEGRATE-SKILL-PROGRESSION-WITH-LEVELSERVICE-AS-ONE-GUARDED, FEAT-IRONSWORN-ORACLE-D6-D10, FEAT-MARS-MODULES-MODES-MODULAR-RULES-ARCHITECTURE, FEAT-PER-WORLD-SKILLS-MECHANIC-FLAG-AND-WORLD-CREATION-OPT-IN-UI, FEAT-SKILL-USAGE-XP-AWARD-SKILL-AND-CHARACTER-XP-WHEN-SKILLS-ARE-, FEAT-WORLD-TEMPLATE-CHAT-LIFECYCLE, TASK-029, TASK-033, TASK-034, TASK-035, TASK-036, TASK-037, TASK-038, TASK-039, TASK-040, TASK-041, TASK-042, TASK-043, TASK-044, TASK-045, TASK-046, TASK-047, TASK-049, TASK-050, TASK-051, TASK-052, TASK-053, TASK-054, TASK-055, TASK-056, TASK-ADD-MISSING-RPG-MODULE-BARRELS, TASK-ASSET-3D-MODELS, TASK-ASSET-RPG-TOKENS, TASK-BACKLOG-CHAT-PRODUCT-RPG-FEATURES, TASK-CHARACTER-RPG-STATS, TASK-CHAT-VARIANT-RPG, TASK-CHAT-VARIANT-RPG-GROUP, TASK-CRAFTING-STATIONS-EXECUTION, TASK-GATE-WORLDS-RPG-7-COL-FLAGS-THROUGH-MASTER-MECHANICS-VALIDAT, TASK-ITEM-SYSTEM-EXTENSIONS, TASK-MATH-ADVANTAGE-CANCEL-RULE, TASK-MATH-MODIFIER-SOURCE-TABLE, TASK-MATH-POSITION-EFFECT-COLUMNS, TASK-MATH-RESOLVER-PBTA-2D6, TASK-MATH-ROLL-FORMULA-AST, TASK-MATH-STRUCTURED-LLM-DICE-RESULT, TASK-RPG-MECHANICS-BASE-IMPLEMENTATION-TICKETS, TASK-RPG-STATS-FRONTEND-WIRING, TASK-TRADE-HISTORY-NPC-COUNTERPARTY
 - `rpg-chat` (1): EPIC-RPG-CONTENT-SYSTEMS
@@ -3356,7 +3377,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `scanning` (2): EPIC-LOCAL-MODEL-FILE-DISCOVERY, FEAT-MODEL-CATEGORY-REGISTRY-WITH-MTIME-CACHE-LISTING
 - `scenario` (3): EPIC-CHARACTER-MULTI-PERSONALITY, TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE, TASK-SCENARIO-SYSTEM-AUTHORING
 - `scenario-source` (2): EPIC-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS, EPIC-ASSISTANT-GENERATION-EXTENSIONS
-- `scene` (3): EPIC-3D-GENERATION, FEAT-IMMERSIVE-SCENE-VIEW-FIRST-THIRD-PERSON-AMBIENT-AUDIO, TASK-AUX-SCENE-CONTEXT
+- `scene` (12): EPIC-3D-GENERATION, FEAT-IMMERSIVE-SCENE-VIEW-FIRST-THIRD-PERSON-AMBIENT-AUDIO, TASK-AUX-SCENE-CONTEXT, TASK-ENVIRONMENT-KIT-ASSISTANT-WORKFLOW, TASK-ENVIRONMENT-KIT-BACKGROUND-AND-PROPS-TIER, TASK-ENVIRONMENT-KIT-SKYBOX-HDRI-TIER, TASK-ENVIRONMENT-KIT-TERRAIN-TIER, TASK-ENVIRONMENT-KIT-TILEABLE-TEXTURE-TIER, TASK-SCENE-LAYOUT-LLM-STEP, TASK-SCENE-LAYOUT-MANIFEST-SCHEMA, TASK-SCENE-PARALLAX-VN-AND-CANVAS-CONSUMERS, TASK-SCENE-REUSE-PROPAGATION
 - `scene-art` (1): TASK-CHAT-FEATURE-SCENE-ART-GENERATION
 - `scene-exposition` (1): EPIC-NARRATION-ACTOR-SEPARATION
 - `scenes` (1): TASK-VN-TEMPLATE-ACTIONS
@@ -3364,7 +3385,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `scheduled` (1): EPIC-CHAT-COMPOSER-FLOWS
 - `scheduler` (12): EPIC-ACTOR-AUTONOMY-STORY-DRIVE, EPIC-CRON-SCHEDULER, EPIC-LLAMA-SWAP, EPIC-LLM-QUEUE, EPIC-LLM-REQUEST-SCHEDULER, EPIC-PARTY-MIGRATION, TASK-AUTONOMY-DETERMINISTIC-TURNS, TASK-GM-BEAT-SCHEDULING, TASK-MATRIX-CROSS-MECH-G20-LIVING-WORLD-PERSISTENCE, TASK-SCHEDULER-IMPLEMENTATION-INTERNAL-CRON-JOBS, TASK-STORY-AUTO-DRIVE-SCHEDULER, TASK-TRAVEL-SCHEDULER-TICK
 - `scheduling` (1): TASK-EFFECT-V4-RETRY-SCHEDULE-PARITY-SPIKE-ON-THE-PROVIDER-CALL-P
-- `schema` (25): EPIC-DB-CONTENT-VERSIONING, EPIC-DB-MIGRATION-COMPACTION, EPIC-IO-FORMATS, EPIC-MINI-GAMES-DB, EPIC-SCHEMA, EPIC-UNIFIED-SPEC-FRAMEWORK, TASK-ASSISTANT-ENTITY-ACCESS-SCHEMA, TASK-CHAR-EDITOR-DB-STORAGE-SYNC, TASK-CHAR-EDITOR-VALIDATION-SPEC-COMPLIANCE, TASK-CHAR-SPEC-ADOPT-CCV3-PARAMETERS, TASK-CHAR-SPEC-ADOPT-SILLYTAVERN-EXTENSIONS, TASK-CHAR-TEMPLATE-FULL-MODEL-COVERAGE, TASK-CONVERT-GENERATED-NUMBER-BOOLEAN-SHIMS-TO-BOOLEAN-ACROSS-SCH, TASK-FIX-ACTOR-ITEM-VALUE-TYPE, TASK-FIX-CHAT-SETUP-TEMPLATES-VISUAL-NOVEL-REMOVE-OR-TYPE-AS-CHAT, TASK-FRACTAL-LOCATIONS-MIGRATION-013-LOCATIONS-FRACTAL-TS, TASK-LOCATIONS-FRACTAL-MIGRATION, TASK-MATH-MODIFIER-SOURCE-TABLE, TASK-MATH-POSITION-EFFECT-COLUMNS, TASK-MESSAGE-SEEN-STATE-SCHEMA, TASK-PARTY-SCHEMA-CRUD-ROUTES-AND-MIGRATION, TASK-RAG-CONTEXT-SCHEMA, TASK-SC2-NARRATOR-MODE-KIND-STAMP, TASK-TURN-SKIP-EVENT, TASK-WORLD-TEMPLATE-FULL-MODEL-COVERAGE
+- `schema` (26): EPIC-DB-CONTENT-VERSIONING, EPIC-DB-MIGRATION-COMPACTION, EPIC-IO-FORMATS, EPIC-MINI-GAMES-DB, EPIC-SCHEMA, EPIC-UNIFIED-SPEC-FRAMEWORK, TASK-ASSISTANT-ENTITY-ACCESS-SCHEMA, TASK-CHAR-EDITOR-DB-STORAGE-SYNC, TASK-CHAR-EDITOR-VALIDATION-SPEC-COMPLIANCE, TASK-CHAR-SPEC-ADOPT-CCV3-PARAMETERS, TASK-CHAR-SPEC-ADOPT-SILLYTAVERN-EXTENSIONS, TASK-CHAR-TEMPLATE-FULL-MODEL-COVERAGE, TASK-CONVERT-GENERATED-NUMBER-BOOLEAN-SHIMS-TO-BOOLEAN-ACROSS-SCH, TASK-FIX-ACTOR-ITEM-VALUE-TYPE, TASK-FIX-CHAT-SETUP-TEMPLATES-VISUAL-NOVEL-REMOVE-OR-TYPE-AS-CHAT, TASK-FRACTAL-LOCATIONS-MIGRATION-013-LOCATIONS-FRACTAL-TS, TASK-LOCATIONS-FRACTAL-MIGRATION, TASK-MATH-MODIFIER-SOURCE-TABLE, TASK-MATH-POSITION-EFFECT-COLUMNS, TASK-MESSAGE-SEEN-STATE-SCHEMA, TASK-PARTY-SCHEMA-CRUD-ROUTES-AND-MIGRATION, TASK-RAG-CONTEXT-SCHEMA, TASK-SC2-NARRATOR-MODE-KIND-STAMP, TASK-SCENE-LAYOUT-MANIFEST-SCHEMA, TASK-TURN-SKIP-EVENT, TASK-WORLD-TEMPLATE-FULL-MODEL-COVERAGE
 - `schema-drift` (1): BUG-NSFW-APPEALS-AS-ANY-AND-DEAD-ROUTE
 - `schemas` (9): BUG-E2E-TEST-INFRASTRUCTURE-FIXES, EPIC-CONFIG-FILE-SEPARATION, EPIC-SHARED-SCHEMAS, FEAT-CONFIG-FILE-SEPARATION-SCHEMAS, TASK-CONSENT-SCHEMA, TASK-NSFW-RATING-SCHEMA, TASK-REPUTATION-SCHEMA, TASK-SCHEMA-MIGRATION, TASK-SCHEMA-VALIDATION
 - `scope` (2): TASK-INVISIBLE-NOTE-SCOPE-GLOBAL-LOCAL-TEMPORAL-RANDOM, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-API-ROUTER-AND-TOKEN-SCOPE-
@@ -3424,6 +3445,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `size-check` (1): TASK-SIZE-STRICT-DEBT
 - `size-strict` (2): EPIC-FILE-SPLITTING, TASK-BACKLOG-SIZE-STRICT-REGRESSION-RECOVERY
 - `skills` (15): EPIC-BATTLE-ACTION-SYSTEMS, EPIC-CHARACTER-GROWTH, EPIC-CHARACTER-NPC-LORE-ACCESS, EPIC-HARNESS-INTEGRATION, EPIC-RPG-PROGRESSION, EPIC-SKILLS, EPIC-SKILLS-PROFESSIONS-CONFIG, FEAT-FATE-SKILL-PYRAMID, FEAT-INTEGRATE-SKILL-PROGRESSION-WITH-LEVELSERVICE-AS-ONE-GUARDED, FEAT-PER-WORLD-SKILLS-MECHANIC-FLAG-AND-WORLD-CREATION-OPT-IN-UI, FEAT-SKILL-USAGE-XP-AWARD-SKILL-AND-CHARACTER-XP-WHEN-SKILLS-ARE-, TASK-CHARACTER-CONFIG-SKILLS-PROFESSIONS, TASK-SC10-PLAYER-STATE-MACHINE-ADAPTERS, TASK-SKILLS-FRONTEND, TASK-SKILLS-ROUTES
+- `skybox` (1): TASK-ENVIRONMENT-KIT-SKYBOX-HDRI-TIER
 - `slack` (1): TASK-RAG-CHAT-SOURCES
 - `slash-command` (1): TASK-ASSISTANT-SLASH-COMMAND-TYPED-TOKEN-AUTOCOMPLETE
 - `slash-commands` (2): EPIC-FRONTEND-CHAT-COMMANDS, EPIC-IMPERSONATION
@@ -3480,6 +3502,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `steering` (1): EPIC-GM-SHADOW-NOTES
 - `steganography` (1): EPIC-IMPORT-EXPORT-IO
 - `step-up` (1): EPIC-AUTH-CHANNEL-PROVISIONING
+- `steps` (1): TASK-WORKFLOW-ASSET-PICK-STEP-TYPE
 - `storage` (9): BUG-MEMORY-EMBEDDINGS-ORPHANED-ON-ACTOR-DELETE, EPIC-FEDERATION-OFFLOAD-QUOTAS, EPIC-HOUSING, EPIC-HOUSING-BASE-BUILDING, EPIC-INVENTORY, EPIC-RESOURCE-PROVISION, TASK-ASSET-STORAGE-COMPRESSION, TASK-DB-GROWTH-MEASUREMENT-BASELINE, TASK-HOUSING-FRONTEND
 - `story` (13): EPIC-EMERGENT-NARRATIVE-DESIGN, EPIC-GM-SHADOW-NOTES, EPIC-MINI-GAMES-DESIGN, EPIC-STORY-MODE-UI, FEAT-MULTI-LLM-STORY-MODE-FRONTEND, TASK-CLARIFY-STORY-STATE-SSE-SUBSCRIPTION-CONTRACT, TASK-GM-PANEL, TASK-IMPLEMENT-ITEM-TRANSFER-EVENT, TASK-QUEST-LOG, TASK-STORY-ALPINE, TASK-STORY-NOTES-PANEL-3-TABS-ROLE-ACCESS-MATRIX, TASK-STORY-TURN-ORDER, TASK-STORY-WORLD-STATE
 - `story-coherence` (2): TASK-MATRIX-STORY-COHERENCE-GATE-PASS2-QA-DECIDE-WHETHER-GATE-VER, TASK-MATRIX-STORY-COHERENCE-PERSPECTIVE-AWARE-DRAFT-SET-PERSPECTI
@@ -3531,7 +3554,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `templates` (33): EPIC-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS, EPIC-CHAT-PRODUCT-FEATURES, EPIC-CLASSIFIER-TEMPLATE-PACKS, EPIC-COMFYUI-PLUGIN, EPIC-CONFIG-TEMPLATES, EPIC-CONTEXT-INJECTION-TEMPLATES, EPIC-IMAGE-PROMPT-TEMPLATING, EPIC-SKILLS-PROFESSIONS-CONFIG, EPIC-WORKFLOW-ENGINE, FEAT-065-PROMPT-LIBRARY-EXPANDED, FEAT-065-SUB-AUDIO, FEAT-065-SUB-IMAGE, FEAT-065-SUB-LLM, FEAT-065-SUB-VIDEO, FEAT-CHAT-TEMPLATE-CONFIG-LIFECYCLE, FEAT-WORLD-TEMPLATE-CHAT-LIFECYCLE, TASK-BATTLE-ENCOUNTER-TEMPLATE-SYSTEM, TASK-BATTLE-TEMPLATE-ACTIONS, TASK-CHAR-TEMPLATE-FULL-MODEL-COVERAGE, TASK-CHARACTER-CONFIG-SKILLS-PROFESSIONS, TASK-CONFIG-EXAMPLE-TEMPLATE-VARIABLES-DOC, TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED, TASK-ITEM-CONFIG-TEMPLATES, TASK-LOREBOOK-TEMPLATE-SEEDING, TASK-PROMPT-CHARACTER-EXTENSIONS-SECTION, TASK-PROMPT-MOOD-FULL-SECTION, TASK-PROMPT-NSFW-TRAITS-SECTION, TASK-PROMPT-PERMANENT-TRAITS-SECTION, TASK-PROMPT-RELATIONSHIPS-SECTION, TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE, TASK-VN-SCENE-TEMPLATE-SYSTEM, TASK-VN-TEMPLATE-ACTIONS, TASK-WORLD-TEMPLATE-FULL-MODEL-COVERAGE
 - `tenancy` (1): FEAT-RBAC-SSO-TENANT-ISOLATION
 - `terminal` (1): EPIC-TERMINAL-UI
-- `terrain` (1): EPIC-WEATHER-ENVIRONMENT
+- `terrain` (2): EPIC-WEATHER-ENVIRONMENT, TASK-ENVIRONMENT-KIT-TERRAIN-TIER
 - `territory` (1): EPIC-FACTION-REPUTATION
 - `test` (2): TEST-AVATAR-SELECTION-FALLBACK-EMPTY-COVERAGE, TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION
 - `test-infra` (1): TASK-PLAN-E2E-STABILIZATION
@@ -3541,7 +3564,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `text-effects` (3): EPIC-IMMERSION-PRESENTATION, TASK-025, TASK-TEXT-EFFECTS-OVERLAYS
 - `text-to-vn` (1): TASK-TEXT-TO-VISUAL-NOVEL-IMPORTER
 - `texture` (1): EPIC-DERIVED-MAP-GENERATION
-- `textures` (1): TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION
+- `textures` (2): TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION, TASK-ENVIRONMENT-KIT-TILEABLE-TEXTURE-TIER
 - `thievery` (1): EPIC-STEALTH-CRIME
 - `thinking` (1): TASK-2026-OPENWEBUI-THINKING-BLOCK-RENDER
 - `thisL` (2): EPIC-FILE-SPLITTING, TASK-FILE-SPLIT-CLASS-FACTORY
@@ -3649,17 +3672,17 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `vector` (3): EPIC-VECTOR-GRAPHICS-GENERATION, TASK-SEARCH-SERVICE-UNIFIED, TASK-VECTOR-GEN-LLM-SVG-PIPELINE
 - `vector-store` (2): EPIC-RAG-DOCUMENT-PROCESSING, EPIC-RAG-VECTOR-STORE
 - `versioning` (7): EPIC-API-FIRST-FOUNDATION, EPIC-API-OPENAPI, EPIC-API-VERSIONING, EPIC-DB-CONTENT-VERSIONING, EPIC-REVIEW-20261025-API-GOVERNANCE-PERIMETER, TASK-ASSET-VERSIONING, TASK-DB-CONTENT-VERSIONING-SNAPSHOT-RESTORE
-- `video` (4): EPIC-AUDIO-VIDEO-SOUND, EPIC-VIDEO-GENERATION, FEAT-065-SUB-VIDEO, TASK-MINIMAL-VIDEO-GENERATION-DISPATCH-ROUTE-FOR-WORKFLOW-ENGINE
+- `video` (5): EPIC-AUDIO-VIDEO-SOUND, EPIC-VIDEO-GENERATION, FEAT-065-SUB-VIDEO, TASK-MINIMAL-VIDEO-GENERATION-DISPATCH-ROUTE-FOR-WORKFLOW-ENGINE, TASK-VIEW-SET-ORBIT-VIDEO-TIER
 - `view-mode` (3): TASK-023, TASK-3D-VIEW-MODES, TASK-3D-VIEW-MODES-UI
 - `viewer` (1): EPIC-FRONTEND-GALLERY
 - `viewership` (1): EPIC-MESSAGE-SEEN-STATE
-- `views` (2): EPIC-FRONTEND-HTML-DEDUP-HTMX-REUSE, TASK-HTMX-MIGRATE-VIEWS
+- `views` (11): EPIC-FRONTEND-HTML-DEDUP-HTMX-REUSE, TASK-GALLERY-SET-AND-3D-SURFACE, TASK-HTMX-MIGRATE-VIEWS, TASK-VIEW-SET-ASSISTANT-WORKFLOW, TASK-VIEW-SET-CAMERA-CONVENTIONS-AND-EXPORT, TASK-VIEW-SET-CAMERA-METADATA-FIELDS, TASK-VIEW-SET-CONSISTENCY-GATE, TASK-VIEW-SET-CRUD-AND-GALLERY-SURFACE, TASK-VIEW-SET-EDIT-GRID-WORKFLOWS, TASK-VIEW-SET-ORBIT-VIDEO-TIER, TASK-VIEW-SET-SCHEMA-AND-LINKS
 - `visibility` (5): EPIC-GUEST-ACCESS, TASK-CHAT-FEATURE-CARRIAGE-VISIBILITY-TIERS, TASK-IMAGE-BACKENDS-X-GALLERY-PROVENANCE-FILTER-BACKEND-ATTRIBUTI, TASK-INVISIBLE-GM-ONLY-QUEST-AND-ARK-SYSTEM, TASK-INVISIBLE-NOTE-SCOPE-GLOBAL-LOCAL-TEMPORAL-RANDOM
 - `visual-novel` (10): EPIC-AVATAR-ALPHA-VN-LAYERING, EPIC-IMMERSION-PRESENTATION, EPIC-VISUAL-NOVEL-MODE, TASK-COMFYUI-FIRST-CLASS-UN-DEFER-VN-DYNAMIC-IMAGE-GENERATION-ONT, TASK-TEXT-TO-VISUAL-NOVEL-IMPORTER, TASK-VISUAL-NOVEL-MODE, TASK-VN-BRANCHING-CHOICES, TASK-VN-CHOICE-OPT-IN, TASK-VN-DYNAMIC-GENERATION, TASK-VN-QA-MODE
 - `visualization` (2): EPIC-ASSISTANT-STEP-PLANNING, EPIC-RELATION-GRAPH-CANVAS
 - `vitepress` (2): EPIC-DOCS-RECONCILIATION, EPIC-OPENAPI-REFERENCE
 - `viz` (1): FEAT-RELATIONSHIP-DRIFT-TIMELINE-VISUALIZER
-- `vn` (7): FEAT-VISUAL-NOVEL-MODE-FULL-IMPLEMENTATION, TASK-COMFYUI-FIRST-CLASS-UN-DEFER-VN-DYNAMIC-IMAGE-GENERATION-ONT, TASK-SAM3-CONCEPT-CUTOUT-WIRING-SPRITES-AVATAR-MATTING-VN-ALPHA, TASK-SCENE-ASSET-PRECEDENCE-WORLD-VS-LOCATION, TASK-VISUAL-NOVEL-MODE, TASK-VN-SCENE-TEMPLATE-SYSTEM, TASK-VN-TEMPLATE-ACTIONS
+- `vn` (8): FEAT-VISUAL-NOVEL-MODE-FULL-IMPLEMENTATION, TASK-COMFYUI-FIRST-CLASS-UN-DEFER-VN-DYNAMIC-IMAGE-GENERATION-ONT, TASK-SAM3-CONCEPT-CUTOUT-WIRING-SPRITES-AVATAR-MATTING-VN-ALPHA, TASK-SCENE-ASSET-PRECEDENCE-WORLD-VS-LOCATION, TASK-SCENE-PARALLAX-VN-AND-CANVAS-CONSUMERS, TASK-VISUAL-NOVEL-MODE, TASK-VN-SCENE-TEMPLATE-SYSTEM, TASK-VN-TEMPLATE-ACTIONS
 - `voice` (3): EPIC-PERSPECTIVE-NARRATION-VOICE, EPIC-PLATFORM-INTEGRATIONS, EPIC-TTS-FOUNDATION
 - `voice-notes` (1): EPIC-CHAT-RICH-ENGAGEMENT
 - `vrm` (1): TASK-3D-VRM-FOUNDATION
@@ -3676,6 +3699,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `watchdog` (7): EPIC-RECURSIVE-SELF-IMPROVEMENT, TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-ADMIN-UI-PAGE-GET-API, TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-EVENTS-TABLE-AND-TELEMET, TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-STATE-MACHINE-AND-RESTAR, TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-SUPERVISOR-PROCESS-SPAWN, TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-TO-HEAVY-GATE-WEBHOOK-TR, TASK-RECURSIVE-SELF-IMPROVEMENT-WEEKLY-FAILURE-CLUSTER-MINING-CRON
 - `weather` (5): EPIC-BATTLE-INTEGRATION-GAPS, EPIC-NSFW-INTEGRATION-GAPS, EPIC-WEATHER-ENVIRONMENT, EPIC-WORLD-TRAVEL-TIME, TASK-TIME-WEATHER
 - `weaviate` (1): EPIC-RAG-VECTOR-STORE
+- `web` (1): TASK-WEB-EMBED-PROFILE
 - `web-platform` (1): EPIC-PLATFORM-API-ADOPTION
 - `web-search` (1): TASK-RECURSIVE-SELF-IMPROVEMENT-NEAR-REAL-TIME-DESKTOP-AGENT-PLAY
 - `webgl` (6): EPIC-3D-GENERATION, EPIC-GAME-FRONTEND-SCENES, TASK-3D-PERFORMANCE, TASK-3D-VIEW-MODES, TASK-3D-VIEW-MODES-UI, TASK-3D-VRM-FOUNDATION
@@ -3691,7 +3715,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `workers` (1): EPIC-CONCURRENCY-RUNTIME-BENCHMARKS
 - `workflow` (11): BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW-HAS-NO-PARAMETERS, EPIC-COMFYUI-PLUGIN, EPIC-TASK-MANAGEMENT-INTEGRATION, EPIC-TOOLING-IMPROVEMENT, EPIC-USER-STORIES, FEAT-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES-SCHEDULER, TASK-COMFYUI-BUILDER-TRACK-A-CHAIN-MODEL-PROMPT-TEMPLATES-WORKFLO, TASK-COMFYUI-BUILDER-UPLOAD-VALIDATION-ENDPOINT-OPERATOR-REFERENC, TASK-MINIMAL-VIDEO-GENERATION-DISPATCH-ROUTE-FOR-WORKFLOW-ENGINE, TASK-WIRE-INTENT-OUTPUT-TO-WORKFLOW-RUNNER-STARTWORKFLOW, TASK-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES
 - `workflow-templates` (5): EPIC-NARRATIVE-PUBLISHING-WORKFLOWS, TASK-COMFYUI-DEPTH-MAP-GENERATION-TEMPLATE, TASK-COMFYUI-FIRST-CLASS-SPRITE-PIPELINE-AVATAR-MATTING-WORKFLOWS, TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION, TASK-COMFYUI-SAM3-CONCEPT-MASK-TEMPLATE
-- `workflows` (7): EPIC-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS, EPIC-COMFYUI-FIRST-CLASS-CITIZEN, EPIC-ENTITY-GENERATION-WORKFLOWS, EPIC-MODEL-FAMILY-PRESETS, EPIC-WORKFLOW-ENGINE, TASK-ASSISTANT-PM-WORKFLOW-TEMPLATES-PM-SPACE-CREATE-PM-TRIAGE-PM, TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED
+- `workflows` (9): EPIC-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS, EPIC-COMFYUI-FIRST-CLASS-CITIZEN, EPIC-ENTITY-GENERATION-WORKFLOWS, EPIC-MODEL-FAMILY-PRESETS, EPIC-WORKFLOW-ENGINE, TASK-ASSISTANT-PM-WORKFLOW-TEMPLATES-PM-SPACE-CREATE-PM-TRIAGE-PM, TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED, TASK-WORKFLOW-ASSET-PICK-STEP-TYPE, TASK-WORKFLOW-DISPATCH-GENERATION-BACKENDS
 - `workspace-mode` (1): TASK-AGENTIC-CODING-SANDBOX-COMMUNITY-PLUGINS
 - `worktree` (7): EPIC-HARNESS-INTEGRATION, TASK-CHECK-PARALLEL-GATES-FILTER, TASK-CROSS-PLATFORM-DEV-TOOLING-PORT, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-TASK-QUEUE-CONCURRENCY-CAPS-WORKTREE, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-WORKTREE-SPAWN-TTY-FREE-AND, TASK-RETIRE-THE-SCRIPTS-WORKTREE-FORK-OF-GIWT-MIGRATION-NOT-DELET, TASK-WORKTREE-AGENT-LEDGER
 - `worktree-isolation` (1): BUG-GIWT-SYNC-FIX-MUTATES-REPO-WIDE-REFS-ISSUES-SHARED-ACROSS-AL
@@ -3735,7 +3759,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `epic-2d-sprite-world` (15): FEAT-2D-WORLD-BOARDING-FLOORS-VIA-FRACTAL-TREE-TRANSPORTS-PARALLA, FEAT-2D-WORLD-CLICK-TO-MOVE-PREDICTION-RECONCILE-PROXIMITY-TO-CHA, FEAT-2D-WORLD-NPC-SIMULATION-TIERS-T0-T3-TS-TICK-EVENT-DRIVEN-SNA, FEAT-2D-WORLD-PIXEL-ART-SPRITE-PIPELINE-STYLE-PACKS-EMOTION-STATU, FEAT-2D-WORLD-POSITION-AWARE-ENCOUNTERS-VIA-ZONE-AS-CONTEXT, FEAT-2D-WORLD-SEEDED-PROCGEN-STUB-THEN-POPULATE-LOCATION-SYNC, FEAT-2D-WORLD-SHARED-BATTLE-ENTRANCE-RULE-TABLE-CHAT-SPRITE, FEAT-2D-WORLD-SPATIAL-LAYER-MIGRATION-WORLD-MAPS-MAP-ZONES-SPAWN-, FEAT-2D-WORLD-VIEW-ONLY-CANVAS-MAP-CUSTOM-CANVAS-ZONES-SPRITES-AT, TASK-2D-WORLD-REVIEW-CANVAS-CLICK-TO-VN-CHOICE-CARD-PAYLOAD-CONTR, TASK-2D-WORLD-REVIEW-SHARED-SEEDED-RNG-UTIL-FOR-DETERMINISTIC-PRO, TASK-2D-WORLD-REVIEW-WORLD-SCOPED-SNAPSHOT-AND-EVENT-SSE-FEED, TASK-2D-WORLD-REVIEW-ZONE-ADJACENCY-VALIDATION-MISSING-CONNECTION, TASK-2D-WORLD-REVIEW-ZONE-RECT-EDITOR-FOR-MAP-ZONES-AUTHORING, TASK-BACKLOG-VN-SPRITE-STAGING-BATCH
 - `EPIC-38 (Output Control & Transforms)` (2): FEAT-065-SUB-AUDIO, FEAT-065-SUB-VIDEO
 - `EPIC-38 (Output Control & Transforms) — _proposed split: new EPIC-Generation-Templates_` (1): FEAT-065-PROMPT-LIBRARY-EXPANDED
-- `epic-3d-generation` (6): TASK-023, TASK-3D-CHARACTER-AVATARS, TASK-3D-GENERATION, TASK-3D-GLTF-ASSETS, TASK-FRONTEND-CHARACTERS-PAGE-SPEC, TASK-RIGGED-MODEL-BUFFER-RENDER
+- `epic-3d-generation` (18): TASK-023, TASK-3D-ASSET-TYPE-AND-SERVING, TASK-3D-CHARACTER-AVATARS, TASK-3D-FRONTEND-VIEWER-LAZY-MOUNT, TASK-3D-GENERATION, TASK-3D-GLTF-ASSETS, TASK-3D-I18N-AND-A11Y-PASS, TASK-FRONTEND-CHARACTERS-PAGE-SPEC, TASK-HUNYUAN-OPTIONAL-FENCED-TIER, TASK-MESH-QA-AND-REPAIR-CHAIN, TASK-OPEN-IN-EDITOR-HANDOFF, TASK-PHOTOGRAMMETRY-EXTERNAL-TIER, TASK-RECONSTRUCTION-RUN-JOBS, TASK-RENDER-JUDGE-LOOP, TASK-RIG-ATTACH-TIER, TASK-RIGGED-MODEL-BUFFER-RENDER, TASK-TEXTURE-PBR-TIER, TASK-TRELLIS2-VIEW-SET-PIPELINE
 - `epic-accessibility-input` (6): TASK-KEYBOARD-NAVIGATION, TASK-KEYBOARD-SHORTCUTS, TASK-MOBILE-TOUCH-GESTURES, TASK-RESPONSIVE-DESIGN, TASK-SCREEN-READER-SUPPORT, TASK-TOUCH-GESTURES
 - `epic-accessibility-input, epic-3d-generation` (1): TASK-FRONTEND-TOUCH-GESTURES
 - `epic-achievements` (5): FEAT-ACHIEVEMENTS, TASK-ACHIEVEMENTS, TASK-ADD-ACHIEVEMENTCATEGORY-AND-ACHIEVEMENTTIER-ENUMS-FOR-ACHIEV, TASK-ADD-DIFFICULTYLEVEL-ENUM-FOR-PLAYTHROUGHS-DIFFICULTY, TASK-WIRE-ACHIEVEMENTS-ROUTES
@@ -3758,6 +3782,8 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `epic-api-versioning` (7): BUG-FIX-API-RETURN-400-406-FOR-UNKNOWN-API-VERSIONS-INSTEAD-OF-S, BUG-VERSION-RESOLVER-MIDDLEWARE-BUILT-NOT-WIRED, FEAT-035, FEAT-036, FEAT-037, FEAT-038, FEAT-039
 - `epic-architecture` (2): BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC, TASK-ARCHITECTURE
 - `epic-archival-workflow` (7): BUG-ARCHIVE-RETENTION-HARDCODED-30-DAYS-SHOULD-BE-CONFIGURABLE-9, FEAT-CHAT-ARCHIVE-ASSET-CASCADE-LINK-UNLINK-ASSETS-ON-ARCHIVE-RES, FEAT-CHAT-ARCHIVE-GC-JOB-DAILY-SWEEP-OF-EXPIRED-ARCHIVES, FEAT-CHAT-ARCHIVE-PURGE-NOTIFICATIONS-EMIT-ON-ARCHIVE-RESTORE-PUR, FEAT-CHAT-ARCHIVE-RETENTION-CONFIG-ARCHIVE-RETENTION-DAYS-ADMIN-S, FEAT-CHAT-LEVEL-PURGE-ROUTE-DELETE-API-CHATS-ID-PURGE, TASK-ARCHIVAL-WORKFLOW
+- `epic-asset-generation-metadata` (8): TASK-3D-GENERATION-FACT-CAPTURE, TASK-ASSET-METADATA-SHADOW-OVERRIDES, TASK-EMBEDDED-REGENERATION-MANIFEST, TASK-EXTERNAL-MANIFEST-INTEROP, TASK-GENERATION-FACT-CAPTURE-AT-QUEUE-TIME, TASK-IMPORTED-GENERATION-METADATA-PARSER, TASK-METADATA-DETECTION-PROVENANCE-STAMPING, TASK-VIEW-SET-CAMERA-METADATA-FIELDS
+- `epic-asset-lineage-provenance` (5): TASK-ASSET-LINEAGE-LINK-KINDS, TASK-LINEAGE-CONTENT-HASH-ANCHORS, TASK-LINEAGE-PROPAGATION-POLICY, TASK-LINEAGE-QUERY-UI, TASK-PROVENANCE-SUMMARY
 - `epic-asset-platform-capabilities` (30): BUG-ASSET-DEDUP-COLLAPSES-ALL-USERS-EDITS-ONTO-ONE-SYSTEM-OWNED-, BUG-ASSET-DEDUP-IGNORES-REQUESTED-ENCRYPTION-TIER-AND-KEY-RETURN, BUG-COMFYUI-EDIT-PROVIDER-PERSISTS-NOTHING-OWNERID-SYSTEM-VIOLAT, BUG-CREATEASSET-CONTENT-HASH-DEDUP-IS-A-CHECK-THEN-ACT-RACE-WITH, BUG-ENCRYPTED-ASSET-THUMBNAIL-IS-STORED-AND-SERVED-IN-PLAINTEXT, BUG-IMAGE-EDIT-DERIVATIVE-LINK-FILES-AN-ASSET-ID-UNDER-ENTITY-TY, BUG-NEW-EDIT-ITERATIONS-COLLAPSE-ONTO-AN-EXISTING-ASSET-ROW-INST, BUG-RUNTIME-ASSET-COMPRESSION-IS-STRUCTURALLY-DEAD-NEEDSCOMPRESS, BUG-STATIC-ASSET-SERVING-NEVER-APPLIES-IMMUTABLE-CACHING-AND-CRA, TASK-ASSET-ATTRIBUTION-CHAIN, TASK-ASSET-B1-BLAKE3-CONTENT-STORE, TASK-ASSET-B1-RENDITION-PIPELINE, TASK-ASSET-DOWNLOAD-FORMAT-CONVERSION-WEBP-PNG-JPG, TASK-ASSET-PLATFORM-B1-CONTENT-FOUNDATION, TASK-ASSET-PLATFORM-B2-CHAT-UPLOAD-UX-PATTERNS, TASK-ASSET-PLATFORM-B3-LIFECYCLE-GOVERNANCE, TASK-ASSET-PLATFORM-B4-MACHINE-READABLE-SURFACE, TASK-ASSET-PLATFORM-B5-DETERMINISTIC-ASSET-OPS, TASK-ASSET-PROVENANCE-LEDGER-FOR-GENERATED-ASSETS, TASK-ASSET-TAG-GOVERNANCE-AND-UNIFIED-PREVIEW, TASK-CAPTION-VARIANTS-CREATE-RECREATE-PICK-BEST-SCENARIO, TASK-DB-ASSET-DELETE-NO-TX-N-1-MEMORY-PURGE-COLUMN-ALLOWLIST-PLAY, TASK-DECISION-AV10-ALBUM-MESSAGE-KIND-AXIS, TASK-DECISION-AV8-AUX-CAPTIONING-ROLE, TASK-GENERATION-ASSET-PERSISTENCE-CONTRACT, TASK-IN-CHAT-ASSET-EDIT-FLOW, TASK-KEEP-VS-REGENERATE-GRADING-AND-DEDUP-VERDICT-AT-IMAGE-PERSIS, TASK-LLM-CAPTIONER-TAGPROPOSITIONSOURCE-FOR-ASSET-ALT-TEXT-AND-TA, TASK-PREVIEW-DISPATCH-FOR-NON-IMAGE-ASSET-TYPES, TASK-WEBP-AS-A-FIRST-CLASS-STORED-ASSET-FORMAT
 - `epic-asset-transform-metadata` (11): BUG-CHARACTER-AVATAR-PUT-DELETE-IDOR-BY-BARE-AVATARID, TASK-ALPINE-CROPPER-COMPONENT-AND-INTEGRATIONS, TASK-ASSET-TRANSFORMS-MIGRATION-AND-TRANSFORMCONTEXT-ENUM, TASK-DECISION-AV3-TRANSFORMS-STORAGE-CANON, TASK-DERIVE-BAKE-ENDPOINT-SERVER-SIDE-CROP, TASK-RE-ROLL-TRANSFORM-INHERITANCE-FROM-PARENT-AVATAR, TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES, TASK-REPLACE-HAND-ROLLED-IMAGE-HEADER-PROBING-IN-SRC-ASSETS-WITH-, TASK-TRANSFORM-ROUTES-VALIDATION-AND-OWNERSHIP-AUTHZ, TASK-TRANSFORM-SERVICE-UPSERT-READ-DERIVED-DEFAULT, TASK-TRANSFORM-TESTS-IDEMPOTENCY-PRECEDENCE-AUTHZ
 - `epic-assistant-creative-studio-workflows` (12): BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE, TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-CHARACTER, TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-GALLERY-BATCH, TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-GALLERY-EDIT, TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-ITEM, TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-LOCATION, TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-NPC, TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-SPECIES, TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-WORLD, TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS, TASK-ASSISTANT-NSFW-API-PREFILTERING, TASK-ASSISTANT-THIRD-PARTY-API-INTEGRATION
@@ -3861,7 +3887,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `epic-error-envelope` (5): BUG-FIX-API-UNIFY-ERROR-RESPONSE-ENVELOPES-KILL-RAW-RESPONSE-JSO, BUG-FIX-AUTH-CONTENT-NEGOTIATE-THE-429-RATE-LIMIT-RESPONSE-LIKE-, BUG-MESSAGE-CREATE-RE-WRAPS-A-503-REPLY-INTO-201-JSONCREATED, BUG-MODALITY-TEMPLATE-PATCH-CLASSIFIES-DB-READ-FAILURES-AS-400-W, TASK-ERROR-ENVELOPE
 - `epic-experimental-egui-frontend` (13): BUG-EGUI-SENT-MESSAGE-ECHO-EMPTY, TASK-EGUI-COMMAND-SURFACE-PARITY-PALETTE-ROLE-GATED-COMMANDS-SLAS, TASK-EGUI-EMOJI-SHORTCODE-SUPPORT-REGISTRY-PARITY-AUTOCOMPLETE-BU, TASK-EGUI-GALLERY-SURFACE-GRID-FILTERS-THUMBNAILS-UPLOAD, TASK-EGUI-SSE-RESPONSE-STREAMING-THROUGH-THE-BROWSER-BRIDGE, TASK-EGUI-TO-WASM-EXPERIMENTAL-FRONTEND-CRATE-JSON-CLIENT, TASK-EGUI-WASM-EMBED-SPIKE, TASK-FRONTEND-CLIENT-CONTRACT-DOC, TASK-FRONTEND-VIEW-MODEL-EXTRACTION, TASK-FRONTEND-VIEW-MODEL-JSON-NEGOTIATION, TASK-HTMX-TO-EGUI-TO-HTMX-TRANSFERS-WITH-BROWSER-SIDE-CONTEXT-STO, TASK-JSON-VIEW-MODELS-FOR-GALLERY-AND-CHAT-LIST-ENDPOINTS-EGUI-CL, TASK-TUI-API-CONTRACT-SMOKE-TESTS
 - `epic-exploration-discovery` (4): TASK-EMIT-EXPLORATION-ENCOUNTER-TRIGGERED-FROM-THE-DISCOVERY-EVEN, TASK-EXPLORATION-DISCOVERY, TASK-EXPLORATION-EXPEDITION-TEAMS, TASK-RPG-EXPLORATION-DISCOVERY
-- `epic-external-creative-tool-bridge` (7): TASK-2026-OPENWEBUI-MCP-CLIENT-SKELETON, TASK-MCP-CLIENT-OVER-STDIO-AND-STREAMABLE-HTTP, TASK-MCP-TASKS-EXTENSION-AS-LONG-OPERATION-STATE-MACHINE, TASK-MCP-TOOL-DESCRIPTOR-TO-PLUGIN-TOOLDEFINITION-BRIDGE, TASK-ODYSSEUS-STYLE-EXTERNAL-AGENT-INTEGRATION-SURFACE, TASK-TOOL-CALLING-AGENTS, TASK-WORKSPACE-MCP-BRIDGE-ON-OPENCLAW-SERVE-REGISTRY-PATTERN
+- `epic-external-creative-tool-bridge` (11): TASK-2026-OPENWEBUI-MCP-CLIENT-SKELETON, TASK-BLENDER-HEADLESS-NODE-BRIDGE, TASK-BRIDGE-FILE-WATCH-ROUNDTRIP, TASK-KRITA-SHARED-COMFYUI-TIER, TASK-MCP-CLIENT-OVER-STDIO-AND-STREAMABLE-HTTP, TASK-MCP-TASKS-EXTENSION-AS-LONG-OPERATION-STATE-MACHINE, TASK-MCP-TOOL-DESCRIPTOR-TO-PLUGIN-TOOLDEFINITION-BRIDGE, TASK-ODYSSEUS-STYLE-EXTERNAL-AGENT-INTEGRATION-SURFACE, TASK-SUBSTANCE-RISK-ASSESSMENT, TASK-TOOL-CALLING-AGENTS, TASK-WORKSPACE-MCP-BRIDGE-ON-OPENCLAW-SERVE-REGISTRY-PATTERN
 - `epic-external-tooling-build` (8): TASK-TOOLING-BUILD-CLI-SURFACE, TASK-TOOLING-BUILD-CMAKE-DRIVER, TASK-TOOLING-BUILD-LLAMA-SWAP-GO-BUILD, TASK-TOOLING-BUILD-PATH-LAYOUT, TASK-TOOLING-BUILD-REF-PINNING, TASK-TOOLING-BUILD-STATUS-VERIFY, TASK-TOOLING-BUILD-UNVERIFIED-MATRIX-DOCS, TASK-TOOLING-BUILD-VARIANT-MATRIX
 - `epic-faction-reputation` (7): BUG-DERIVERUMORS-EXPOSES-INTERNAL-ACTOR-UUID-IN-USER-FACING-TEXT, FEAT-FACTION-SYSTEM-BACKEND, TASK-FACTION-LEADERS-AND-CADRE-GENERATION, TASK-FACTION-POLITICS-COUPS-AND-EXPANSION-ENGINE, TASK-FACTION-REPUTATION, TASK-FACTION-STANDING-AND-REPUTATION-DRIFT-INTEGRATION, TASK-RPG-FACTION-REPUTATION
 - `epic-fe-be-harmonization` (2): BUG-FE-BE-HARMONIZATION-GATE-IS-BLOCKING-CONTRADICTING-ITS-OWN-A, BUG-FE-BE-HARMONIZATION-SCRIPT-VIOLATES-ITS-OWN-NO-CONSOLE-ACCEP
@@ -3888,6 +3914,8 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `epic-frontend-routing` (3): BUG-FRONTEND-NAVIGATION-BUILDS-URLS-WITHOUT-ENCODEURICOMPONENT, TASK-DEFINE-SHARED-NAV-STATE-CONTRACT-BETWEEN-CLIENT-SIDE-ROUTING, TASK-RECONCILE-EPIC-FRONTEND-ROUTING-VERIFY-HTMX-VIEW-ROUTING-CAP
 - `epic-frontend-settings` (3): BUG-CONFIG-MENU-PATCH-STORES-THE-RAW-VALUE-FOR-USER-SCOPE-SETTIN, FEAT-USER-THEMING-SYSTEM, TASK-RECONCILE-EPIC-FRONTEND-SETTINGS-VERIFY-SETTINGS-UI-CAPTURE-
 - `epic-fuzzing-infrastructure` (10): TASK-CI-INTEGRATION-GITHUB-ACTIONS-MATRIX-ARTIFACT-UPLOAD-ON-CRAS, TASK-CONTINUOUS-FUZZING-CLUSTER-SCHEDULER-CORPUS-SYNC-CRASH-TRIAG, TASK-DASHBOARD-INTEGRATION-COVERAGE-CRASHES-CORPUS-PERFORMANCE-RO, TASK-FUZZING-INFRASTRUCTURE-HARNESS-RUNNER-CORPUS-MANAGER-CRASH-D, TASK-FUZZING-RUNTIME-HARNESS-TESTS-FUZZ-HARNESS-CORPUS-MUTATION-E, TASK-MUTATION-ENGINE-BITFLIP-ARITHMETIC-DICTIONARY-STRUCTURE-CROS, TASK-PER-TARGET-FUZZING-HARNESSES-AUTH-ASSET-CHAT-LLM-ADMIN-IPC, TASK-REGRESSION-PROCESS-CRASH-CLASSIFICATION-MINIMIZATION-FIX-VER, TASK-SANITIZER-INTEGRATION-ASAN-MSAN-UBSAN-TSAN, TASK-SEED-CORPORA-10K-SEEDS-PER-FUZZING-TARGET
+- `epic-gallery-batch-operations` (1): TASK-GALLERY-SET-AND-3D-SURFACE
+- `epic-game-asset-pipeline-export` (5): TASK-BEVY-EXPORT-PROFILE, TASK-ENGINE-EXPORT-BUNDLES, TASK-GODOT-HEADLESS-IMPORT-VERIFICATION, TASK-INTERACTIVE-PROJECT-BINDING, TASK-WEB-EMBED-PROFILE
 - `epic-game-frontend-scenes, epic-lore-knowledge` (1): TASK-CHAT-ASK-TYPE-FAST-MENU
 - `epic-generation-flow-control` (7): BUG-IMAGE-GEN-OPENS-DEAD-LLM-SSE, BUG-SINGLE-CHAT-PAUSE-NOT-GATING-AUTOREPLY, TASK-ADMIN-GENERATION-CONTROLS-RUNTIME-SURFACE, TASK-GENERATION-RATE-LIMITING-AND-CONCURRENCY-LIMITS, TASK-GLOBAL-GENERATION-PAUSE-KILL-SWITCH, TASK-STOP-AND-RESPOND-INTERRUPT-SEMANTICS, TASK-UNIFIED-HOLD-SEMANTICS-PER-CHAT-PAUSE-GATES-PRIMARY-GENERATE
 - `epic-gm-shadow-notes` (12): BUG-GM-NOTES-GET-500-SQL-SYNTAX-ERROR, BUG-GM-SHADOW-NOTE-REVEALED-TO-REVEAL-IS-A-READ-MODIFY-WRITE-WIT, TASK-GATE-SHADOW-NOTES-STATUS-X-VISIBILITY-COMPOSITE, TASK-GM-SHADOW-NOTE-TRIGGER-CONDITION-AND-REVEALED-TO-COLUMNS, TASK-GM-SHADOW-NOTES, TASK-GM-STORY-NOTES-ROLE-ACCESS-MATRIX, TASK-GM-TRIGGER-AND-TIMELINE-BACKFILL-PROPAGATION, TASK-GM-WHITENOTE-MESSAGE-SCOPING, TASK-GM-WHITENOTES, TASK-INVISIBLE-GM-ONLY-QUEST-AND-ARK-SYSTEM, TASK-INVISIBLE-NOTE-SCOPE-GLOBAL-LOCAL-TEMPORAL-RANDOM, TASK-STORY-NOTES-PANEL-3-TABS-ROLE-ACCESS-MATRIX
@@ -3949,7 +3977,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `epic-multi-instance-reconciliation` (5): BUG-LEADER-AND-SWARM-TOPOLOGIES-LACK-SIMULTANEOUS-WRITE-ARBITRAT, FEAT-MULTI-INSTANCE-RECONCILIATION, TASK-MULTI-INSTANCE-RECONCILIATION, TASK-REGISTER-USERNAME-RACE-AND-RATE-LIMITER-MULTI-INSTANCE-GAP, TASK-SWARM-VS-LEADER-WRITE-DOMAIN-PARTITION-AND-CROSS-TOPOLOGY-CO
 - `epic-multi-session` (4): TASK-MULTI-SESSION, TASK-MULTI-SESSION-CONTINUITY, TASK-MULTI-SESSION-SUPPORT, TASK-SESSIONS-API-ROUTES
 - `epic-multilingual-carriage` (8): FEAT-MESSAGE-TRANSLATIONS-CHAT-FIRST, TASK-MESSAGE-CARRIAGE-BACKFILL-PRIVACY, TASK-MESSAGE-CARRIAGE-CLASSIFICATION-INTEGRATION, TASK-MESSAGE-CARRIAGE-FILL-PATH-DETECTION, TASK-MESSAGE-CARRIAGE-PROMPT-INJECTION-SECTION, TASK-MESSAGE-CARRIAGE-TABLE-MIGRATION-ADMIN-READ, TASK-MESSAGE-CARRIAGE-TRANSLATOR-TICKET-CLOSEOUT, TASK-TRANSLATOR-MODEL-ROLE-WITH-GENERAL-MODEL-FALLBACK
-- `epic-multimodal-asset-reuse` (4): TASK-ASSET-DEDUP-TOCTOU-CREATES-DUPLICATE-ROWS-AND-ORPHAN-FILES, TASK-ASSET-EMOTION-JOB-HYGIENE-ORPHANED-THUMBNAILS-STUCK-RUNNING-, TASK-GALLERY-ASSET-REUSE-PICKER-FOR-WORLD-LOCATION-ITEM-CREATION, TASK-MODEL-AGNOSTIC-ASSET-REPRESENTATION
+- `epic-multimodal-asset-reuse` (5): TASK-ASSET-DEDUP-TOCTOU-CREATES-DUPLICATE-ROWS-AND-ORPHAN-FILES, TASK-ASSET-EMOTION-JOB-HYGIENE-ORPHANED-THUMBNAILS-STUCK-RUNNING-, TASK-GALLERY-ASSET-REUSE-PICKER-FOR-WORLD-LOCATION-ITEM-CREATION, TASK-GENERATION-CONTEXT-3D-VIEW-SETS, TASK-MODEL-AGNOSTIC-ASSET-REPRESENTATION
 - `epic-narration-actor-separation` (3): TASK-NARRATION-LEVELS, TASK-SC2-NARRATOR-MODE-KIND-STAMP, TASK-SC7-GATE-SEPARATION-KIND-SEMANTICS
 - `epic-narrative-publishing-workflows` (19): TASK-BOOK-OUTLINE-GENERATION-WORKFLOW, TASK-BOOK-UNIT-EDITOR-REVIEW-SURFACE, TASK-COLLAPSE-DUPLICATE-MARKDOWN-EXPORTER, TASK-COMIC-CAPTION-BUBBLE-LAYOUT, TASK-COMIC-PAGE-COMPOSITION-STRATEGY, TASK-COMIC-PAGE-PANEL-LAYOUT-MODEL, TASK-COMIC-STORYBOARD-PANEL-GENERATION-WORKFLOW, TASK-ILLUSTRATED-BOOK-REFERENCE-PASS, TASK-LLM-MARKDOWN-DOCUMENT-PROMPTS, TASK-MARKDOWN-CANONICAL-INTERMEDIATE-CONTRACT, TASK-MARKDOWN-DERIVE-OTHER-FORMATS, TASK-MARKDOWN-HEADING-PARSE-AND-IMPORT, TASK-PUBLICATION-ART-QUALITY-GATES, TASK-PUBLICATION-ARTIFACT-SCHEMA, TASK-PUBLICATION-ARTIFACT-VERSIONING, TASK-PUBLICATION-CONTINUITY-LINT, TASK-PUBLICATION-EXPORT-FORMATS, TASK-PUBLICATION-VIEWER-READ-MODE, TASK-WIDEN-IMPORT-EXPORT-IO-FOR-PUBLICATIONS
 - `epic-non-standard-browser-crypto` (3): TASK-CONTENT-HASH-CONSISTENCY, TASK-CRYPTO-LIBRARY-RESEARCH, TASK-NON-STANDARD-BROWSER-CRYPTO-RESEARCH
@@ -4011,6 +4039,7 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `epic-runtime-integrity-fail-safes` (5): TASK-ADMIN-HANDLERS-LACK-EXPLICIT-REQUIREUSERID-FAIL-OPEN-STRUCTU, TASK-FAIL-SAFE-EXECUTION-WORK-SAFETY, TASK-LOCAL-INSTANCE-INTEGRITY-HOLISTIC, TASK-RUNTIME-INTEGRITY-WATCHDOG-CRASH-RECOVERY, TASK-SERVER-EDGE-ERROR-HANDLING-GAPS-IN-ROUTES-LAYER
 - `epic-runtime-memory-state-hygiene` (1): BUG-MODULE-LEVEL-IN-MEMORY-STATE-GROWS-WITHOUT-EVICTION
 - `epic-sam3-segmentation-integration` (7): TASK-COMFYUI-SAM3-CONCEPT-MASK-TEMPLATE, TASK-IMAGE-EDIT-CONCEPT-INPAINT-TEMPLATE, TASK-MATTING-CONCEPT-PROMPT-CONTRACT, TASK-SAM3-CONCEPT-CUTOUT-WIRING-SPRITES-AVATAR-MATTING-VN-ALPHA, TASK-SAM3-DIRECT-PROVIDER-VIA-META-MODEL-API, TASK-SAM3-FEASIBILITY-PROBE-META-MODEL-API-VS-COMFYUI-CUSTOM-NODE, TASK-SAM3-MASK-CACHE-AND-REUSE
+- `epic-scene-environment-world-generation` (9): TASK-ENVIRONMENT-KIT-ASSISTANT-WORKFLOW, TASK-ENVIRONMENT-KIT-BACKGROUND-AND-PROPS-TIER, TASK-ENVIRONMENT-KIT-SKYBOX-HDRI-TIER, TASK-ENVIRONMENT-KIT-TERRAIN-TIER, TASK-ENVIRONMENT-KIT-TILEABLE-TEXTURE-TIER, TASK-SCENE-LAYOUT-LLM-STEP, TASK-SCENE-LAYOUT-MANIFEST-SCHEMA, TASK-SCENE-PARALLAX-VN-AND-CANVAS-CONSUMERS, TASK-SCENE-REUSE-PROPAGATION
 - `epic-schema` (12): BUG-GET-ADMIN-MODEL-ROLES-SCHEMA-ARRAY-VS-SERVICE-RECORD-MISMATC, TASK-AGENTS-MD-REFERENCES-NONEXISTENT-DB-SCHEMAS-CHECK-SCRIPT, TASK-AUDIT-T-UNIONENUM-SCHEMA-FIELDS-ABSENT-VALUE-SILENTLY-DEFAUL, TASK-DEAD-ESLINT-STUB-RULES-AND-A-DEAD-RESPONSE-SCHEMA-ON-THE-DYN, TASK-DEFINED-BUT-NOT-ENFORCED-DEBT-UNUSED-SCHEMAS-AND-DEAD-VALIDA, TASK-DELETE-DUPLICATE-CONFIG-SCHEMA-SHIM-LAYERS-DEAD-CONFIG-EMITT, TASK-FACTION-STANDING-SCHEMA, TASK-GATE-VALIDATE-CONFIGS-EXAMPLE-FILES-AGAINST-THEIR-SCHEMAS, TASK-INPUT-VALIDATION-BATTLE-SCHEMA-LESS-POST-EMOTION-AVATARS-PAR, TASK-SCHEMA, TASK-SCHEMA-CONSTRAINT-HARDENING-SWEEP-BOUNDS-DEAD-SCHEMAS-ADDITI, TASK-SCHEMA-RPG-INVESTIGATION
 - `epic-security-sandboxing` (15): BUG-A-COMMUNITY-PLUGIN-NAMED-CORE-DISABLES-ALL-FIVE-BUILT-IN-TOO, BUG-NINE-GETASSETFILEPATH-CALL-SITES-DO-NOT-HANDLE-THE-CONTAINME, BUG-NSFW-CARDS-SHIPS-UNGATED-POST-ROUTES, BUG-PLUGIN-ROUTE-REGISTRY-LACKS-OWNERSHIP-ENFORCEMENT-IDOR, BUG-PLUGIN-TOOL-AUTHORIZATION-FAILS-OPEN, FEAT-TOOL-EXECUTION-SANDBOX-WASM-CONTAINER-ISOLATION, TASK-ASSET-UPLOAD-PATH-TRAVERSAL-ENABLES-ARBITRARY-FILE-WRITE, TASK-CSP-ALLOWS-UNSAFE-INLINE-AND-UNSAFE-EVAL-DEFEATING-NONCE, TASK-GOLDEN-CORPUS-AND-SCORING-RATCHET-FOR-PROMPT-INJECTION-SIGNA, TASK-LLM-SANDBOXING, TASK-LOGGER-CENSOR-BYPASSES-MESSAGE-FIELD-PII-SECRET-LEAK, TASK-REPURPOSE-DEAD-SANDBOXED-FIELD-INTO-A-STRICT-MODE-POLICY-TAG, TASK-SETTINGS-PATCH-USES-T-ANY-BODY-ALLOWING-MASS-ASSIGNMENT, TASK-SVG-UPLOAD-LEADS-TO-STORED-XSS, TASK-TOOL-CALL-USER-TEXT-SANITIZATION
 - `epic-server-lifecycle-hardening` (6): BUG-FIX-SERVER-EXIT-NON-ZERO-ON-UNCAUGHTEXCEPTION-UNHANDLEDREJEC, BUG-FIX-SERVER-GATE-DOCS-SERVING-ON-CONFIG-REDIRECT-DOCS-TO-DOCS, BUG-FIX-SERVER-GATE-TRAFFIC-UNTIL-PLUGINS-SEEDS-ASSETS-ARE-READY, BUG-FIX-SERVER-LOG-REJECTED-BACKGROUND-INIT-PROMISES-WITH-MODULE, BUG-FIX-SERVER-TRACK-AND-CLEAR-THE-REGEX-TELEMETRY-FLUSH-TIMER-O, TASK-PERF-SERVER-NO-CACHE-HTML-ENTRY-POINTS-STREAM-STATIC-FILES-W
@@ -4036,10 +4065,11 @@ Total tickets: **3996** — untagged: **2743** — unbound to epic: **1035**
 - `epic-use-case-agentic-workspace` (5): TASK-ADOPT-HERMES-5-CATEGORY-TOOL-SURFACE-INTO-AGENTIC-WORKSPACE-, TASK-AGENTIC-CODING-SANDBOX-COMMUNITY-PLUGINS, TASK-AGENTIC-WORKSPACE-MODE, TASK-EPIC-USE-CASE-AGENTIC-WORKSPACE-CLARIFICATION-2026-09-26, TASK-USE-CASE-AGENTIC-WORKSPACE
 - `epic-user-stories` (1): TASK-USER-STORIES
 - `epic-vector-graphics-generation` (4): TASK-VECTOR-GEN-ANIMATED-RASTER, TASK-VECTOR-GEN-GALLERY-ASSET-SUPPORT, TASK-VECTOR-GEN-LLM-SVG-PIPELINE, TASK-VECTOR-GEN-SVG-SERVE-SAFETY
+- `epic-view-set-generation` (7): TASK-VIEW-SET-ASSISTANT-WORKFLOW, TASK-VIEW-SET-CAMERA-CONVENTIONS-AND-EXPORT, TASK-VIEW-SET-CONSISTENCY-GATE, TASK-VIEW-SET-CRUD-AND-GALLERY-SURFACE, TASK-VIEW-SET-EDIT-GRID-WORKFLOWS, TASK-VIEW-SET-ORBIT-VIDEO-TIER, TASK-VIEW-SET-SCHEMA-AND-LINKS
 - `epic-visual-novel-mode` (10): FEAT-VISUAL-NOVEL-MODE-FULL-IMPLEMENTATION, TASK-DEPICT-STYLE-STATE-TO-IMAGE-SCENE-COMPILER, TASK-TEXT-TO-VISUAL-NOVEL-IMPORTER, TASK-VISUAL-NOVEL-MODE, TASK-VN-BRANCHING-CHOICES, TASK-VN-CHOICE-OPT-IN, TASK-VN-DYNAMIC-GENERATION, TASK-VN-QA-MODE, TASK-VN-SCENE-TEMPLATE-SYSTEM, TASK-VN-TEMPLATE-ACTIONS
 - `epic-wardrobe-avatar-variants` (18): TASK-AVATAR-TEMPLATE-EXAMPLE-DOCUMENTS-OUTFITS-DEFAULT-OUTFIT-THA, TASK-C6-OUTFIT-GATE-VERDICT-NOTICES-WITH-AVATAR-REFRESH, TASK-DEFERRED-EQUIPPED-ITEMS-OUTFIT-AUTO-MAPPING, TASK-OUTFIT-SCOPED-GENERATION-JOBS-AND-PROMPT-SLOT, TASK-SELECTION-ALGORITHM-V2-OUTFIT-EMOTION, TASK-STORY-GM-OUTFIT-CHANGE-HOOK-ROUTING, TASK-WARDROBE-DEFERRED-EQUIPPED-ITEMS-OUTFIT-AUTO-MAPPING-FLAG-GA, TASK-WARDROBE-FRONTEND-MANAGER-ON-CHARACTER-SHEET-OUTFIT-SWITCHER, TASK-WARDROBE-MANAGER-UI-AND-CHAT-OUTFIT-SWITCHER, TASK-WARDROBE-OUTFIT-SCOPED-AVATAR-GENERATION-BATCH-SINGLE, TASK-WARDROBE-ROUTES-VALIDATION-AND-PER-OUTFIT-AVATAR-ENDPOINTS, TASK-WARDROBE-ROUTES-VALIDATION-CRUD-OUTFIT-OVERRIDE-ENDPOINTS, TASK-WARDROBE-SCHEMA-ITEMS-BINDINGS-OUTFIT-ID, TASK-WARDROBE-SCHEMA-WARDROBE-ITEMS-ACTOR-WARDROBE-AVATAR-OUTFIT-, TASK-WARDROBE-SELECTION-ALGORITHM-V2-OUTFIT-EMOTION-RESOLUTION-LA, TASK-WARDROBE-STORY-GM-INTEGRATION-OUTFIT-CHANGE-EVENTS, TASK-WARDROBE-TESTS-FALLBACK-LADDER-OVERRIDE-PRECEDENCE-OUTFIT-SC, TASK-WARDROBE-TESTS-LADDER-PRECEDENCE-SCOPED-REGEN
 - `epic-weather-environment` (4): TASK-RPG-WEATHER-ENVIRONMENT, TASK-SKILL-BIOME-HAZARD-COUNTERMEASURES, TASK-WEATHER-CONDITIONS-VITALS-BRIDGE, TASK-WEATHER-ENVIRONMENT
-- `epic-workflow-engine` (20): BUG-WORKFLOW-CONFIRM-SESSION-TREATS-OPTIONAL-STEPS-AS-REQUIRED, FEAT-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES-SCHEDULER, TASK-BACKLOG-WORKFLOW-GM-ROUTING-BATCH, TASK-GENERIC-GEN-COMMAND-FOR-PROMPT-TO-TEXT, TASK-GM-CHAT-ASSISTANT-GM-HANDOFF-VIA-INTENT-TO-WORKFLOW-ROUTING, TASK-GM-REUSE-WORKFLOWRUNNER-FOR-GUIDED-ENTITY-CREATION, TASK-GM-SHADOW-NOTE-STEERING-INTO-WORKFLOW-DISPATCH-PROMPTS, TASK-MINIMAL-VIDEO-GENERATION-DISPATCH-ROUTE-FOR-WORKFLOW-ENGINE, TASK-NAMED-ARGUMENTS-FOR-SLASH-COMMANDS, TASK-PIPE-OPERATOR-CHAINING-SLASH-COMMANDS, TASK-SHARED-MACRO-ENGINE-FOR-TEMPLATES-AND-COMMANDS, TASK-TEMPLATE-BASED-ENTITY-CREATION-DETERMINISTIC-PLUS-LLM-PATHS, TASK-TOP-LEVEL-CONFIRM-CANCEL-REFINE-ALIASES-FOR-WORKFLOW-SESSION, TASK-WIRE-INTENT-OUTPUT-TO-WORKFLOW-RUNNER-STARTWORKFLOW, TASK-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES, TASK-WORKFLOW-ENGINE-SCHEMA-LOADER-TEMPLATE-TYPES-WORKFLOW-DISCOV, TASK-WORKFLOW-PERSIST-RUN-SESSIONS-BEYOND-PROCESS-MEMORY, TASK-WORKFLOW-PROGRESS-EVENTS-OVER-TRANSPORT, TASK-WORKFLOW-RUNNER-START-PREVIEW-STEP-CONFIRM-DISPATCH-STEP-UI, TASK-WORKFLOW-STRIP-GROUP-CHAT-MENTION-PREFIX-BEFORE-TRIGGER-MATC
+- `epic-workflow-engine` (22): BUG-WORKFLOW-CONFIRM-SESSION-TREATS-OPTIONAL-STEPS-AS-REQUIRED, FEAT-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES-SCHEDULER, TASK-BACKLOG-WORKFLOW-GM-ROUTING-BATCH, TASK-GENERIC-GEN-COMMAND-FOR-PROMPT-TO-TEXT, TASK-GM-CHAT-ASSISTANT-GM-HANDOFF-VIA-INTENT-TO-WORKFLOW-ROUTING, TASK-GM-REUSE-WORKFLOWRUNNER-FOR-GUIDED-ENTITY-CREATION, TASK-GM-SHADOW-NOTE-STEERING-INTO-WORKFLOW-DISPATCH-PROMPTS, TASK-MINIMAL-VIDEO-GENERATION-DISPATCH-ROUTE-FOR-WORKFLOW-ENGINE, TASK-NAMED-ARGUMENTS-FOR-SLASH-COMMANDS, TASK-PIPE-OPERATOR-CHAINING-SLASH-COMMANDS, TASK-SHARED-MACRO-ENGINE-FOR-TEMPLATES-AND-COMMANDS, TASK-TEMPLATE-BASED-ENTITY-CREATION-DETERMINISTIC-PLUS-LLM-PATHS, TASK-TOP-LEVEL-CONFIRM-CANCEL-REFINE-ALIASES-FOR-WORKFLOW-SESSION, TASK-WIRE-INTENT-OUTPUT-TO-WORKFLOW-RUNNER-STARTWORKFLOW, TASK-WORKFLOW-ASSET-PICK-STEP-TYPE, TASK-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES, TASK-WORKFLOW-DISPATCH-GENERATION-BACKENDS, TASK-WORKFLOW-ENGINE-SCHEMA-LOADER-TEMPLATE-TYPES-WORKFLOW-DISCOV, TASK-WORKFLOW-PERSIST-RUN-SESSIONS-BEYOND-PROCESS-MEMORY, TASK-WORKFLOW-PROGRESS-EVENTS-OVER-TRANSPORT, TASK-WORKFLOW-RUNNER-START-PREVIEW-STEP-CONFIRM-DISPATCH-STEP-UI, TASK-WORKFLOW-STRIP-GROUP-CHAT-MENTION-PREFIX-BEFORE-TRIGGER-MATC
 - `epic-world-chat-channels-invites` (5): TASK-2D-WORLD-REVIEW-RECONCILE-SHARED-BATTLE-ENTRANCE-TABLE-WITH-, TASK-CHAT-ONLY-WORLD-CHANNELS-INVITE-DRIVEN-MEMBERSHIP, TASK-INVITE-CODE-GENERATION, TASK-JOIN-FLOW-MECHANICS, TASK-MODERATION-ACTIONS-FRONTEND
 - `epic-world-diplomacy-karma` (1): TASK-ACTION-KARMA-DISPLAY-AND-TIER-WIRING
 - `epic-world-locations` (11): BUG-WORLD-LOCATION-REPARENT-HAS-NO-CYCLE-SELF-DESCENDANT-CHECKS-, FEAT-WORLD-LOCATIONS, TASK-EXPLORATION-SINGLE-SQLITE-PG-FOUNDATION, TASK-FRONTEND-WORLD-LORE-ENTRIES-UI, TASK-LIVING-WORLD-PERSISTENCE, TASK-LOCATION-EDITOR-STRUCTURED-UI, TASK-RESEARCH-WORLD-LOCATION-SYSTEMS-LANDSCAPE, TASK-WORLD-EVENT-SYSTEM, TASK-WORLD-LOCATIONS, TASK-WORLD-STATE-MANAGEMENT, TASK-WORLD-TEMPLATE-FULL-MODEL-COVERAGE
