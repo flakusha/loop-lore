@@ -9,6 +9,7 @@
  * handle the content produce results; none short-circuit.
  */
 
+import { ImmersionGateHook, } from "../../immersion/gate-hook";
 import { getLogger, } from "../../logger";
 import { EmotionHook, } from "./emotion-hook";
 import { ModerationHook, } from "./moderation-hook";
@@ -89,4 +90,6 @@ export function initDefaultHooks(nsfwDeps?: Partial<NsfwHookDeps>,): void {
   registerHook(new EmotionHook(),);
   registerHook(new NsfwHook(nsfwDeps,),);
   registerHook(new ModerationHook(),);
+  // Fictional-consistency gate — independent layer (epic-immersion-consistency-gate).
+  registerHook(new ImmersionGateHook(),);
 }
