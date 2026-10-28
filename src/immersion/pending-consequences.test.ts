@@ -16,6 +16,7 @@ import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { createImmersionGate, } from "./engine";
 import {
+  dbPendingConsequenceLoader,
   loadOpenFailedChecks,
   MAX_PENDING_CONSEQUENCES,
   recordFailedCheck,
@@ -130,5 +131,27 @@ describe("failed-check consequence store", () => {
     },);
 
     expect(after.severity,).toBe(GateSeverity.Allow,);
+  });
+
+  test("dbPendingConsequenceLoader adapts the db reader to the loader shape", async () => {
+    const chatId = "chat-fc-adapter";
+    const actorId = "actor-fc-adapter";
+    const id = await recordFailedCheck(db, {
+      chatId,
+      actorId,
+      source: "dice",
+      blockedAction: "sprint",
+      reason: "DEX save failed",
+    },);
+
+    const loader = dbPendingConsequenceLoader(db,);
+    const open = await loader({ chatId, actorId, worldId: null, content: "I sprint away", },);
+    expect(open,).toHaveLength(1,);
+    expect(open[0]!.id,).toBe(id,);
+    expect(open[0]!.blockedAction,).toBe("sprint",);
+
+    // Resolved consequences disappear from the adapter's view too.
+    await resolveFailedCheck(db, id,);
+    expect(await loader({ chatId, actorId, worldId: null, content: "I sprint away", },),).toHaveLength(0,);
   });
 });
