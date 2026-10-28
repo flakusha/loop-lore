@@ -6,7 +6,7 @@
 **Summary:** None
 **Context:** `bun run dead:code:src` (knip `--no-gitignore --include files`) reported 66 unreferenced `src/` modules. 57 `src/` modules deleted across the branch (54 in `9f695c00b` plus 3 in the earlier sweep commits `71dd11b74` / `71e9782c8` / `a96cc0e17` — matches `git diff --name-status dev...HEAD -- src | grep -c '^D'` = 57), plus one dead export removed from a live file; 2 were real wiring bugs and are wired; 2 are genuine knip false positives and are gaged; 8 are unwired-but-owned by another workstream/epic and are recorded in `knip.json` with the owning ticket named. The gate now exits 0 and has been flipped from advisory to blocking.
 **Acceptance Criteria:** None
-**Status:** In Progress
+**Status:** Done
 **Status Note:** [2026-10-28 triage reopen] NOT-FIXED — the ticket body claims `src/frontend/alpine/mobile-composer.ts` "already ha[s] a live HTML partial binding `x-data="mobileComposer()"`". That claim is false: there is no include site for `src/components/chat/mobile-composer.html` anywhere in the repo, and `globalThis.mobileComposer` is never assigned (`src/frontend/alpine/mobile-composer.ts:24` only exports `mobileComposer()`; the only Alpine component published on `globalThis` is `globalThis.chatState`, `src/frontend/alpine/chat/index.ts:29`). Including the partial today throws `ReferenceError`. Remaining scope: correct the `knip.json:156-158` rationale to state that the module is NOT wired, and name the owning ticket for the wiring work (`WIRE-frontend-mobile-sticky-bottom-composer`, git issue `5aea351`). The wiring itself (include the partial + publish the component on `globalThis`) is tracked there, not here.
 **Priority:** Medium
 **Effort:** Medium
@@ -137,3 +137,5 @@ Run from `tree/deadcode-delete`:
 | `bun run test:unit` | exit 0 |
 
 `bun run test:gaps` fails with 7 new gaps (seed/identity, template-expansion/run, content/hash-injection). **Pre-existing and unrelated**: reproduced identically on a pristine stash of this branch's HEAD before any change, and fixed on dev by `4e00315be test: close coverage gaps for seed-identity and template-expansion`. None of those three source files are touched by this branch.
+
+**Resolved:** 2026-10-28 registry-driven close: git issue a7dbf02 (registry tip: 18af42884 Konstantin Fedotov Auto-closed: ticket TASK-DELETE-OR-WIRE-DEAD-MODULES-FLAGGED-IN-GLM-REV)

@@ -8378,7 +8378,7 @@
   "src/characters/services/mood-service/get-events.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md"
+      "source": ".plan/tickets/BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-.md"
     }
   ],
   "src/characters/services/mood-service/get-mood.ts": [
@@ -12362,7 +12362,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-ownership-transfer-button-is-shown-to-every-non-owner.md"
+      "source": ".plan/tickets/BUG-ownership-transfer-button-is-shown-to-every-non-owner-who-th.md"
     },
     {
       "kind": "ticket",
@@ -23954,7 +23954,7 @@
   "src/frontend/alpine/chat-settings/ownership.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-ownership-transfer-button-is-shown-to-every-non-owner.md"
+      "source": ".plan/tickets/BUG-ownership-transfer-button-is-shown-to-every-non-owner-who-th.md"
     },
     {
       "kind": "ticket",
@@ -38546,6 +38546,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-command-palette-descriptions-are-raw-i18n-keys-for-43-of-the.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave.md"
     },
     {
@@ -41418,7 +41422,7 @@
   "src/routes/character-mood/events.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md"
+      "source": ".plan/tickets/BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-.md"
     }
   ],
   "src/routes/character-relationships.test.ts": [
@@ -42547,6 +42551,12 @@
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
+  "src/routes/commands/harness-verbs.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-command-palette-descriptions-are-raw-i18n-keys-for-43-of-the.md"
+    }
+  ],
   "src/routes/commands/index.test.ts": [
     {
       "kind": "ticket",
@@ -42564,7 +42574,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-i18n-command-palette-descriptions-missing-for-most-registere.md"
+      "source": ".plan/tickets/TASK-command-palette-descriptions-are-raw-i18n-keys-for-43-of-the.md"
     },
     {
       "kind": "ticket",
@@ -42573,6 +42583,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
+    }
+  ],
+  "src/routes/commands/interaction.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-command-palette-descriptions-are-raw-i18n-keys-for-43-of-the.md"
     }
   ],
   "src/routes/companions.ts": [
@@ -43570,7 +43586,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md"
+      "source": ".plan/tickets/BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-.md"
     },
     {
       "kind": "ticket",
@@ -45346,7 +45362,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md"
+      "source": ".plan/tickets/BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-.md"
     }
   ],
   "src/routes/nsfw-moderation/audit.test.ts": [
@@ -46368,7 +46384,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md"
+      "source": ".plan/tickets/BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-.md"
     },
     {
       "kind": "ticket",
