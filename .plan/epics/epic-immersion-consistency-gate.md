@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** Done
 **Status Note:** Not Started — design and acceptance criteria are complete, but none of the six Work Items has code. The ground-truth state this gate reads is itself partially built (`src/rpg/skills`, `src/rpg/stats`, `src/story/items/`, `src/battle/resolution-integration/checks.ts`); the shared state module from `epic-player-state-machine.md` is not implemented, so the rule engine has no single source to check against. No ticket owns any Work Item.
 **Priority:** High
 **Effort:** Large
@@ -162,3 +162,4 @@ fiction, preserving story flow; reasons surfaced OOC only on hard-block.
 | ----- | --------- | ------- |
 | `gate.verdict` | emits | interlock, UI escape hatch, audit |
 
+**Resolved:** 2026-10-28 registry-driven close: git issue f309fc1 (registry tip: 27d161124 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-IMMERSION-CONSISTENCY-GATE )
