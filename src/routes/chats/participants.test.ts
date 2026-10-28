@@ -11,7 +11,7 @@
  * misaddressed notification). Cross-user joins belong to the invite-code
  * flow (`POST /api/invites/:code/join`), where the joiner consents.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
@@ -56,6 +56,13 @@ async function seed(db: Kysely<DB>,): Promise<void> {
     mode: "group",
   } as never,);
 }
+
+// Reset the process-global SMK once the file is done: the rotation test below
+// installs a real key, and a live SMK flips isEncryptionEnabled() for every
+// suite that shares the bun process.
+afterAll(async () => {
+  await initSmk({ required: false, compressThreshold: 128, compressAlgorithm: "gzip", },);
+},);
 
 describe("participantRoutes — invite ownership derived from session, not body", () => {
   test("invite rejects another user's actor even when the inviter owns the chat", async () => {
