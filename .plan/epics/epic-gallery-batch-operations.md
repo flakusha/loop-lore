@@ -105,3 +105,13 @@ Task breakdown (same deliverable, sequenced):
 
 - `TASK-assistant-creative-studio-workflow-gallery-batch.md` (draft — parent creative-studio epic's workflow ticket)
 - Epic ticket `EPIC-GALLERY-BATCH-OPERATIONS` (⬜ Not Started in `.plan/tickets/index.json`; tracks this epic file)
+
+## Annex: view-set cards & 3D preview surface (filed 2026-10-28)
+
+| Ticket | Scope |
+| ------ | ----- |
+| `TASK-gallery-set-and-3d-surface` | Set cards + 3D/splat preview cards integration (viewer component from `epic-3d-generation.md`), camera/format chips, facet-filter readiness once generation facts land |
+
+Set-membership composes with the batch selection model; the base gallery
+surface is `epic-frontend-gallery.md`, and facet filters over generation
+facts wait on `epic-asset-generation-metadata.md`.
