@@ -196,8 +196,8 @@ export interface GateVerdict {
   readonly stateSnapshot: ActorStateSnapshot;
   /** Every violation, strongest first. */
   readonly findings: readonly GateFinding[];
-  /** Engine attribution (audit requirement). */
-  readonly engine: "deterministic";
+  /** Engine attribution (audit requirement): the deterministic engine, or the deterministic engine with an opt-in LLM downgrade applied. */
+  readonly engine: "deterministic" | "deterministic+llm-downgrade";
 }
 
 /** Per-rule configuration: toggle + severity override. */
