@@ -34487,6 +34487,12 @@
       "source": ".plan/tickets/TASK-multi-reference-conditioning-request-model.md"
     }
   ],
+  "src/immersion/extract-claims.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-immersion-consistency-gate.md"
+    }
+  ],
   "src/import/__tests__/roundtrip.test.ts": [
     {
       "kind": "ticket",

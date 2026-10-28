@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
-**Status Note:** In Progress — tickets filed for all six Work Items (2026-10-28, branch `feat-immersion-gate`); design and acceptance criteria are complete. Ground-truth state remains partially built (`src/rpg/skills`, `src/rpg/stats`, `src/story/items/`, `src/battle/resolution-integration/checks.ts`); `epic-player-state-machine` is not implemented, so the rule engine builds SC10-style adapters over what exists and documents the seam.
+**Status:** Done
+**Status Note:** Done (2026-10-28, branch `feat-immersion-gate`) — all six Work Items implemented and ticketed Done: claim extraction (`src/immersion/extract-claims.ts` + `claim-patterns.ts`, deterministic regex reuse), deterministic rule engine (`rules.ts` + `state-snapshot.ts` adapters over skills/stats/inventory/pending checks), failed-check enforcement (`pending-consequences.ts`), refusal narration path (`narration.ts` wired via `pregeneration.ts`; soft-refuse consumes the beat, hard-block writes the OOC skip notice), config surface + audit (`gate-config.ts`, `immersion_decision_log` via migration 082), opt-in LLM classifier (`classifier.ts`, `immersion-audit` aux task, downgrade-only, budget-governed, default OFF). E2E acceptance flows in `e2e.test.ts`; latency budget in `perf.test.ts`. `epic-player-state-machine` remains unimplemented — SC10-style adapters stand in and document the seam for the later swap.
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic
@@ -74,10 +74,10 @@ fiction, preserving story flow; reasons surfaced OOC only on hard-block.
 
 | # | Work Item | Status | Ticket |
 | - | --------- | ------ | ------ |
-| 1 | Claim extraction - detect action/skill/item/movement claims (regex + aux) | In Progress | TASK-immersion-gate-claim-extraction |
+| 1 | Claim extraction - detect action/skill/item/movement claims (regex + aux) | Done | TASK-immersion-gate-claim-extraction |
 | 2 | Deterministic rule engine - actor state, skills, inventory, pending failed-check consequences | Done | TASK-immersion-gate-deterministic-rule-engine |
 | 3 | Failed-check enforcement - consume battle/dice outcomes to constrain follow-up actions | Done | TASK-immersion-gate-failed-check-enforcement |
-| 4 | LLM classifier (opt-in) - prose-level audit via aux-pipeline, budget-governed | Not Started | TASK-immersion-gate-opt-in-llm-classifier |
+| 4 | LLM classifier (opt-in) - prose-level audit via aux-pipeline, budget-governed | Done | TASK-immersion-gate-opt-in-llm-classifier |
 | 5 | Refusal narration path - soft-refusal to attempted-action framing into GM/narration | Done | TASK-immersion-gate-refusal-narration-path |
 | 6 | Config surface + audit - per-chat severity, per-rule toggles, decision log | Done | TASK-immersion-gate-config-surface-and-audit-log |
 
