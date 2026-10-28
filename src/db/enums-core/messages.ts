@@ -63,7 +63,9 @@ const messageStatusDef: StateDef<MessageStatus> = {
   transitions: {
     sending: ["confirmed", "partial", "failed", "cancelled",],
     partial: ["confirmed", "failed", "rejected", "cancelled",],
-    confirmed: [],
+    // confirmed → rejected: the immersion gate's soft-refuse consumes the
+    // beat (skip interlock producer side, TASK-turn-skip-gate-interlock).
+    confirmed: ["rejected",],
     failed: [],
     rejected: [],
     cancelled: [],

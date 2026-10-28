@@ -651,6 +651,11 @@
           "default": true,
           "description": "Enable moderation flagging"
         },
+        "enableImmersionGate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the fictional-consistency immersion gate"
+        },
         "enableModerationLlmClassifier": {
           "type": "boolean",
           "default": true,

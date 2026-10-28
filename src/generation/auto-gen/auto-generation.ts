@@ -15,6 +15,7 @@ import type { AsyncStore, } from "../../async/store";
 import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { runImmersionGatePrecheck, } from "../../immersion/pregeneration";
 import { getLogger, } from "../../logger";
 import { parseAssistantTuning, } from "../assistant-tuning";
 import { callLlm, } from "./call-llm";
@@ -131,7 +132,6 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     },);
 
     if (mode.handled) { return; }
-    const { systemPromptOverride, } = mode;
 
     const actor = await resolveActor(database, {
       type: chat?.type,
@@ -144,6 +144,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
 
     if (!actor) { return; }
     const { characterId, characterName, } = actor;
+    let systemPromptOverride: string | undefined = mode.systemPromptOverride;
 
     // Pre-LLM NSFW eligibility precheck (BUG-f0683a8 / BUG-5232abe). Block
     // BEFORE spending tokens on generation for users who would be blocked
@@ -165,6 +166,28 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       },);
 
       return;
+    }
+
+    // Pre-LLM immersion-consistency gate (epic-immersion-consistency-gate,
+    // WI-5): fictional-consistency only, independent from content policy.
+    // soft-refuse/annotate inject refusal framing/hints into the GM/narration
+    // prompt (systemPromptOverride); hard-block writes the OOC system notice
+    // with the skip affordance and aborts generation.
+    const immersion = await runImmersionGatePrecheck({
+      db: database,
+      chatId,
+      actorId: characterId,
+      actorName: characterName,
+      worldId: chat?.world_id ?? null,
+      content: userMessage,
+      parentMessageId,
+    },);
+
+    if (immersion.action === "blocked") { return; }
+    if (immersion.promptInjection) {
+      systemPromptOverride = [systemPromptOverride, immersion.promptInjection,]
+        .filter(Boolean,)
+        .join("\n\n",);
     }
 
     // ── Context pruning (critical/imminent threshold) ───────
