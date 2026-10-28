@@ -6121,6 +6121,35 @@ export async function insertImmersionFailedChecks(
   return id;
 }
 
+/** Insert a immersion_decision_log row. */
+export async function insertImmersionDecisionLog(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  severity: string,
+  opts?: {
+    id?: string;
+    source?: string;
+    rule_id?: string | null;
+    engine?: string;
+    claims?: string;
+    state_snapshot?: string;
+    verdict?: string;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("immersion_decision_log",).values({
+    id,
+    chat_id,
+    actor_id,
+    severity,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
 /** Insert a assistant_quota_usage row. */
 export async function insertAssistantQuotaUsage(
   db: Db,

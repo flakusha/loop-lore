@@ -29,7 +29,9 @@ import { emitPluginEvent, } from "../plugins/event-bus";
 import { registry, } from "../plugins/registry";
 import type { EventHandlerDefinition, } from "../plugins/types";
 import { safeJsonStringify, } from "../utils";
+import { recordImmersionDecision, } from "./decision-log";
 import { createImmersionGate, } from "./engine";
+import { resolveImmersionGateConfig, } from "./gate-config";
 import {
   buildAnnotateHint,
   buildHardBlockNotice,
@@ -52,7 +54,10 @@ export interface ImmersionPrecheckResult {
 /** Arguments for {@link runImmersionGatePrecheck}. */
 export interface ImmersionPrecheckArgs {
   readonly db: Kysely<DB>;
+  /** Explicit config; wins over the per-chat `gm_config` override when set. */
   readonly config?: ImmersionGateConfig;
+  /** Raw `chats.gm_config` JSON — per-chat severity/toggles (WI-6) when `config` unset. */
+  readonly gmConfig?: string | null;
   readonly chatId: string;
   readonly actorId: string;
   readonly actorName: string;
@@ -82,8 +87,27 @@ export async function runImmersionGatePrecheck(
     return { action: "continue", };
   }
 
-  const gate = createImmersionGate({ db, config: args.config, },);
+  // Config precedence: explicit args.config > per-chat gm_config (caller-
+  // supplied or read here) > engine default. The extra read only happens
+  // when the caller has no chat row at hand.
+  let overrideGmConfig: string | null | undefined = args.gmConfig;
+  if (args.config === undefined && overrideGmConfig === undefined) {
+    const chatRow = await db
+      .selectFrom("chats",)
+      .select("gm_config",)
+      .where("id", "=", chatId,)
+      .executeTakeFirst();
+
+    overrideGmConfig = chatRow?.gm_config ?? null;
+  }
+
+  const gate = createImmersionGate({
+    db,
+    config: args.config ?? resolveImmersionGateConfig(overrideGmConfig ?? null,),
+  },);
+
   const verdict = await gate.evaluate({ chatId, actorId, worldId, content, },);
+  await recordImmersionDecision(db, { chatId, actorId, source: "pregeneration", verdict, },);
 
   await emitPluginEvent(
     eventHandlers,
