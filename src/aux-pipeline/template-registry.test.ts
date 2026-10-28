@@ -30,6 +30,7 @@ describe("AUX_CLASSIFICATION_TASKS", () => {
     // assert pins the union size so accidental key drops surface here too.
     expect(Object.keys(AUX_CLASSIFICATION_TASKS,).sort(),).toEqual(
       [
+        "adapt",
         "carriage",
         "chat-title",
         "gm-tool",
@@ -85,7 +86,7 @@ describe("AUX_CLASSIFICATION_TASKS", () => {
       .map(([task,],) => task)
       .sort();
 
-    expect(nullPurpose,).toEqual(["message-action", "prompt-improve",],);
+    expect(nullPurpose,).toEqual(["adapt", "message-action", "prompt-improve",],);
   });
 });
 

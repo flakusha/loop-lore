@@ -10,7 +10,7 @@
  *
  * Covered: /rag-search, /rag-preview, /duplicate (+ confirm → persisted
  * character), /adapt (mock provider returns non-JSON → graceful rejection,
- * the honest negative path), the /adapt POSITIVE path (system-prompt-scripted
+ * the honest negative path), the /adapt POSITIVE path (task-keyed scripted
  * model JSON → preview → confirm → adapted entity persisted in the target
  * world), the adapt-entity confirm route persisting an adapted entity in the
  * TARGET world, the cross-user access guard, and quota exhaustion denying a
@@ -218,11 +218,11 @@ describe("Assistant entity access E2E", () => {
   });
 
   test("/adapt previews the model's adaptation and the confirm persists it", async () => {
-    // Positive LLM path: /adapt's completion is a NON-aux GenerateRequest, so
-    // it is scripted through the mock provider's system-prompt snippet hook.
+    // Positive LLM path: /adapt stamps auxTask "adapt" on its request, so the
+    // reply is scripted through the mock provider's task-keyed hook.
     const adaptedDescription = "A netrunner guard running the tide gate's security deck.";
-    server.mockProvider!.setSystemReply(
-      "adapting an entity to a new world",
+    server.mockProvider!.setTaskReply(
+      "adapt",
       JSON.stringify({
         changes: [
           {
