@@ -119,6 +119,7 @@ export async function runAdaptation(
   try {
     raw = (
       await complete({
+        auxTask: "adapt",
         model,
         messages: [
           {

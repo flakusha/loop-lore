@@ -163,4 +163,15 @@ export const AUX_CLASSIFICATION_TASKS: Readonly<Record<AuxTaskName, Classificati
     // TOML ledger stays small; deterministic estimate.
     call: { maxTokens: 800, },
   },),
+  adapt: defineClassificationTask({
+    task: "adapt",
+    // /adapt builds its system prompt inline (buildAdaptationPrompt) and
+    // dispatches directly — no fixed default prompt to resolve.
+    purpose: null,
+    labels: [],
+    preferClassifier: false,
+    // Never routed through callAux; these document the command's direct
+    // dispatch sampling and exec-log classification.
+    call: { maxTokens: 512, temperature: 0.7, },
+  },),
 };

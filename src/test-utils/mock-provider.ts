@@ -93,8 +93,9 @@ export class MockLLMProvider implements LLMProvider {
 
   /**
    * Script a reply for a NON-aux request by a system-message substring —
-   * e.g. a command that calls the provider directly (`/adapt`) and does not
-   * carry an `auxTask` stamp. Checked only when no task-keyed reply matched.
+   * a genuinely unstamped main-pipeline request. Checked only when no
+   * task-keyed reply matched, so direct-dispatch commands that DO carry an
+   * `auxTask` stamp (e.g. `/adapt`) script via {@link setTaskReply} instead.
    * @param snippet - Substring the request's system message must contain
    * @param reply - Raw provider content to return
    */

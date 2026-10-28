@@ -23,7 +23,8 @@ export type AuxTaskName =
   | "message-action"
   | "chat-title"
   | "rag-ask"
-  | "carriage";
+  | "carriage"
+  | "adapt";
 
 /** Per-call options for `callAux`. All optional — runner defaults apply. */
 export interface AuxCallOptions {
