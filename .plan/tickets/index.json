@@ -8677,7 +8677,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md",
-    "status": "done"
+    "status": "in_progress"
   },
   "BUG-ROUTE-LAYER-NSFW-GATE-KEEPS-SERVING-NSFW-AFTER-THE-ADMIN-KIL": {
     "hash": "eaa16ea",
@@ -9063,7 +9063,7 @@
     "epic": "epic-data-integrity-acid",
     "tags": [],
     "source": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md",
-    "status": "done"
+    "status": "in_progress"
   },
   "BUG-SERVICES-TRADECORE-VALIDATELINES-LACKS-WORLD-ID-FILTER-CROSS": {
     "epic": "",
@@ -36101,7 +36101,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md",
-    "status": "done"
+    "status": "in_progress"
   },
   "TASK-DELETE-ORPHANED-LOCALE-KEYS-ACROSS-ALL-10-LOCALE-FILES-LEAVE": {
     "hash": "041ce61",
@@ -42373,7 +42373,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-i18n-locale-completion.md",
-    "status": "done",
+    "status": "in_progress",
     "tags": [],
     "title": "i18n Locale Completion (Phase 1)",
     "type": "TASK"
