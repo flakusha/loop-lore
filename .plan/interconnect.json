@@ -50063,7 +50063,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-immersion-consistency-gate.md",
       "title": "Immersion Consistency Gate (Actor-State Blockage & Refusal)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/battle/resolution-integration/checks.ts",
         "src/regex",

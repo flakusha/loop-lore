@@ -228,7 +228,7 @@
 | Not Started | I/O Formats | Medium | Medium | 0 | [epic-io-formats.md](/.plan/epics/epic-io-formats.md) |
 | Not Started | Image Prompt Templating & Variance | P2 | Large | 0 | [epic-image-prompt-templating.md](/.plan/epics/epic-image-prompt-templating.md) |
 | In Progress | Immersion & Presentation | Medium | Medium | 0 | [epic-immersion-presentation.md](/.plan/epics/epic-immersion-presentation.md) |
-| Not Started | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 0 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
+| Done | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 0 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
 | In Progress | Impersonation System | Medium | Med | 0 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
 | Not Started | Implementation Guide | Medium | Medium | 0 | [epic-implementation.md](/.plan/epics/epic-implementation.md) |
 | Not Started | Instant Messaging Integrations | Medium | Medium | 0 | [epic-im-integrations.md](/.plan/epics/epic-im-integrations.md) |
@@ -2453,7 +2453,7 @@ Player housing and base building system — personal homes, guild halls, craftin
 
 ### Immersion Consistency Gate (Actor-State Blockage & Refusal)
 
-- **Status:** Not Started
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Large
 - **Type:** Feature Epic
