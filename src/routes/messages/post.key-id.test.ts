@@ -81,6 +81,8 @@ beforeAll(async () => {
 },);
 
 afterAll(async () => {
+  // Reset the process-global SMK so later suites do not inherit an active key.
+  await initSmk({ required: false, compressThreshold: 128, compressAlgorithm: "gzip", },);
   await db.destroy();
 },);
 
