@@ -3,7 +3,7 @@
 
 # TASK: immersion gate claim extraction
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Epic:** epic-immersion-consistency-gate
 **Tags:** immersion
