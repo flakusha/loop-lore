@@ -6,7 +6,8 @@
 **Summary:** None
 **Context:** `bun run dead:code:src` (knip `--no-gitignore --include files`) reported 66 unreferenced `src/` modules. 57 `src/` modules deleted across the branch (54 in `9f695c00b` plus 3 in the earlier sweep commits `71dd11b74` / `71e9782c8` / `a96cc0e17` — matches `git diff --name-status dev...HEAD -- src | grep -c '^D'` = 57), plus one dead export removed from a live file; 2 were real wiring bugs and are wired; 2 are genuine knip false positives and are gaged; 8 are unwired-but-owned by another workstream/epic and are recorded in `knip.json` with the owning ticket named. The gate now exits 0 and has been flipped from advisory to blocking.
 **Acceptance Criteria:** None
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-28 triage reopen] NOT-FIXED — the ticket body claims `src/frontend/alpine/mobile-composer.ts` "already ha[s] a live HTML partial binding `x-data="mobileComposer()"`". That claim is false: there is no include site for `src/components/chat/mobile-composer.html` anywhere in the repo, and `globalThis.mobileComposer` is never assigned (`src/frontend/alpine/mobile-composer.ts:24` only exports `mobileComposer()`; the only Alpine component published on `globalThis` is `globalThis.chatState`, `src/frontend/alpine/chat/index.ts:29`). Including the partial today throws `ReferenceError`. Remaining scope: correct the `knip.json:156-158` rationale to state that the module is NOT wired, and name the owning ticket for the wiring work (`WIRE-frontend-mobile-sticky-bottom-composer`, git issue `5aea351`). The wiring itself (include the partial + publish the component on `globalThis`) is tracked there, not here.
 **Priority:** Medium
 **Effort:** Medium
 
@@ -59,7 +60,7 @@ Additionally `src/chat/folders.ts` keeps its live `formatFolderTree` export but 
 | `src/assistant/prompt/sections/nsfw-context.ts`, `src/frontend/alpine/chat-creation/variants.ts` | `wire-deadcode` worktree — actively wiring these |
 | `src/crypto/activitypub-keys.ts` | Prerequisite for `FEAT-activitypub-federation`; `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys` says keep until the table lands |
 | `src/frontend/touch.ts` | `WIRE-frontend-touch-swipe-gestures` (Not Started) |
-| `src/frontend/alpine/keynav-help.ts`, `src/frontend/alpine/mobile-composer.ts` | `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-mobile-sticky-bottom-composer`. Both already have live HTML partials binding `x-data="keynavHelp()"` / `x-data="mobileComposer()"`; deleting the `.ts` would break the partial at runtime |
+| `src/frontend/alpine/keynav-help.ts`, `src/frontend/alpine/mobile-composer.ts` | `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-mobile-sticky-bottom-composer`. These modules are NOT wired: `src/frontend/alpine/mobile-composer.ts` only exports `mobileComposer()` and is never published on `globalThis`, and there is no include site for `src/components/chat/mobile-composer.html` — including that partial today throws `ReferenceError` (the only Alpine component published on `globalThis` is `globalThis.chatState`, `src/frontend/alpine/chat/index.ts:29`). The wiring work (include the partial + publish the component) is tracked by `WIRE-frontend-mobile-sticky-bottom-composer`; this ticket only owns the `knip.json:156-158` rationale, which must say the module is unwired rather than claiming a live `x-data="mobileComposer()"` binding. |
 | `src/transport/index.ts`, `src/transport/test/harness.ts` | Contested — `epic-transport-expansion.md` lists both as Built deliverables |
 
 ### Test impact
@@ -74,6 +75,7 @@ The dead `writeFolderSource` export had no test to remove. `src/characters/servi
 ## Acceptance Criteria
 
 - [x] knip re-run against the live tree; every remaining finding triaged DELETE / WIRE / FP / owned-elsewhere
+- [ ] `knip.json:156-158` rationale corrected: it must state that `src/frontend/alpine/mobile-composer.ts` is NOT wired (no include site for `src/components/chat/mobile-composer.html`, `mobileComposer` never published on `globalThis`) and name `WIRE-frontend-mobile-sticky-bottom-composer` as the owner of the wiring work. The claim that it "already has a live HTML partial binding `x-data=\"mobileComposer()\"`" must be removed.
 - [x] `bun run dead:code:src` exits 0 (was exit 1 with 66 unused files)
 - [x] `dead - code (src files)` flipped from `ADVISORY_GATES` to blocking in `scripts/check/parallel/gate-table.mjs`; the flip condition the table documented is now met
 - [x] `scripts/check/test-gaps-baseline.json` pruned: 25 baseline rows dropped, each naming a file this sweep deleted; no row remains for a nonexistent file
