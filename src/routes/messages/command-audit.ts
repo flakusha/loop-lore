@@ -3,12 +3,18 @@
 
 /**
  * Invocation audit for assistant command dispatch (epic principle:
- * "Deterministic + replayable"). Every HANDLED dispatch emits exactly one
+ * "Deterministic + replayable"). Every EXECUTED dispatch emits exactly one
  * structured `assistant_command_invoked` event carrying the caller, the
  * command token args, and a sha256 output hash over the canonical JSON of
  * the response triple {systemMessage, action, actionPayload} — identical
  * inputs always yield identical hashes, so replays are detectable. Message
  * content beyond the short slash-command tokens is never logged.
+ *
+ * Boundary: pre-execution rejections are NOT audited — the tiered-role
+ * denial in dispatchCommand returns `handled: true` before any handler runs
+ * (and builds no CommandResult), so the single emit point sits after the
+ * dispatch switch and covers only commands that actually executed ( denial,
+ * failure, and success results alike).
  */
 
 import { createHash, } from "node:crypto";
