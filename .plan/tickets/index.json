@@ -24296,6 +24296,22 @@
     "title": "EPIC: Two-Factor / Multi-Factor Authentication",
     "type": "TASK"
   },
+  "TASK-3D-ASSET-TYPE-AND-SERVING": {
+    "hash": "0b2989b",
+    "git_issue": "0b2989b",
+    "extid": "TASK-3D-ASSET-TYPE-AND-SERVING",
+    "type": "TASK",
+    "title": "3D asset type and serving",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "assets"
+    ],
+    "source": ".plan/tickets/TASK-3d-asset-type-and-serving.md",
+    "status": "Not Started"
+  },
   "TASK-3D-CHARACTER-AVATARS": {
     "epic": "epic-3d-generation",
     "extid": "TASK-3D-CHARACTER-AVATARS",
@@ -24309,6 +24325,22 @@
     "title": "3D Character Avatars",
     "type": "TASK"
   },
+  "TASK-3D-FRONTEND-VIEWER-LAZY-MOUNT": {
+    "hash": "0848631",
+    "git_issue": "0848631",
+    "extid": "TASK-3D-FRONTEND-VIEWER-LAZY-MOUNT",
+    "type": "TASK",
+    "title": "3D frontend viewer lazy mount",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "frontend"
+    ],
+    "source": ".plan/tickets/TASK-3d-frontend-viewer-lazy-mount.md",
+    "status": "Not Started"
+  },
   "TASK-3D-GENERATION": {
     "epic": "epic-3d-generation",
     "extid": "TASK-3D-GENERATION",
@@ -24321,6 +24353,23 @@
     "tags": [],
     "title": "3D Asset Generation",
     "type": "TASK"
+  },
+  "TASK-3D-GENERATION-FACT-CAPTURE": {
+    "hash": "7ac5d2f",
+    "git_issue": "7ac5d2f",
+    "extid": "TASK-3D-GENERATION-FACT-CAPTURE",
+    "type": "TASK",
+    "title": "3D generation fact capture",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-asset-generation-metadata",
+    "tags": [
+      "assets",
+      "metadata",
+      "3d"
+    ],
+    "source": ".plan/tickets/TASK-3d-generation-fact-capture.md",
+    "status": "Not Started"
   },
   "TASK-3D-GLTF-ASSETS": {
     "epic": "epic-3d-generation",
@@ -24338,6 +24387,23 @@
     ],
     "title": "# TASK-3d-gltf-assets: 3D GLTF/GLB asset support (Phase 3)",
     "type": "TASK"
+  },
+  "TASK-3D-I18N-AND-A11Y-PASS": {
+    "hash": "df07918",
+    "git_issue": "df07918",
+    "extid": "TASK-3D-I18N-AND-A11Y-PASS",
+    "type": "TASK",
+    "title": "3D i18n and a11y pass",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "i18n",
+      "a11y"
+    ],
+    "source": ".plan/tickets/TASK-3d-i18n-and-a11y-pass.md",
+    "status": "Not Started"
   },
   "TASK-3D-PERFORMANCE": {
     "epic": "(none — proposed epic never materialized)",
@@ -26876,6 +26942,38 @@
     ],
     "title": "Asset lifecycle: archive flag, orphan prune, quota eviction",
     "type": "TASK"
+  },
+  "TASK-ASSET-LINEAGE-LINK-KINDS": {
+    "hash": "d3f3fa8",
+    "git_issue": "d3f3fa8",
+    "extid": "TASK-ASSET-LINEAGE-LINK-KINDS",
+    "type": "TASK",
+    "title": "Asset lineage link kinds",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-asset-lineage-provenance",
+    "tags": [
+      "assets",
+      "lineage"
+    ],
+    "source": ".plan/tickets/TASK-asset-lineage-link-kinds.md",
+    "status": "Not Started"
+  },
+  "TASK-ASSET-METADATA-SHADOW-OVERRIDES": {
+    "hash": "1d6c15e",
+    "git_issue": "1d6c15e",
+    "extid": "TASK-ASSET-METADATA-SHADOW-OVERRIDES",
+    "type": "TASK",
+    "title": "Asset metadata shadow overrides",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-asset-generation-metadata",
+    "tags": [
+      "assets",
+      "metadata"
+    ],
+    "source": ".plan/tickets/TASK-asset-metadata-shadow-overrides.md",
+    "status": "Not Started"
   },
   "TASK-ASSET-PLATFORM-B1-CONTENT-FOUNDATION": {
     "epic": "epic-asset-platform-capabilities",
@@ -29519,6 +29617,22 @@
     "status": "Not Started",
     "git_issue": "b2af6ed"
   },
+  "TASK-BEVY-EXPORT-PROFILE": {
+    "hash": "c79fc05",
+    "git_issue": "c79fc05",
+    "extid": "TASK-BEVY-EXPORT-PROFILE",
+    "type": "TASK",
+    "title": "Bevy export profile",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-game-asset-pipeline-export",
+    "tags": [
+      "export",
+      "bevy"
+    ],
+    "source": ".plan/tickets/TASK-bevy-export-profile.md",
+    "status": "Not Started"
+  },
   "TASK-BKP-001-SQLITE-AUTOMATED-BACKUP": {
     "epic": "epic-database-backup-recovery",
     "extid": "TASK-BKP-001-SQLITE-AUTOMATED-BACKUP",
@@ -29586,6 +29700,22 @@
     ],
     "title": "PostgreSQL Backup Compatibility Layer",
     "type": "TASK"
+  },
+  "TASK-BLENDER-HEADLESS-NODE-BRIDGE": {
+    "hash": "ec74d7a",
+    "git_issue": "ec74d7a",
+    "extid": "TASK-BLENDER-HEADLESS-NODE-BRIDGE",
+    "type": "TASK",
+    "title": "Blender headless node bridge",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-creative-tool-bridge",
+    "tags": [
+      "bridge",
+      "blender"
+    ],
+    "source": ".plan/tickets/TASK-blender-headless-node-bridge.md",
+    "status": "Not Started"
   },
   "TASK-BLOG-FRONTEND-AUTHORING": {
     "epic": "epic-frontend-backend-integration",
@@ -29844,6 +29974,22 @@
     "epic": "epic-federation-swarm-sync",
     "tags": [],
     "source": ".plan/tickets/TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix-biboumi-e.md",
+    "status": "Not Started"
+  },
+  "TASK-BRIDGE-FILE-WATCH-ROUNDTRIP": {
+    "hash": "8ec9889",
+    "git_issue": "8ec9889",
+    "extid": "TASK-BRIDGE-FILE-WATCH-ROUNDTRIP",
+    "type": "TASK",
+    "title": "Bridge file-watch roundtrip",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-creative-tool-bridge",
+    "tags": [
+      "bridge",
+      "assets"
+    ],
+    "source": ".plan/tickets/TASK-bridge-file-watch-roundtrip.md",
     "status": "Not Started"
   },
   "TASK-BROWSER-CHATFLOW-UPLOAD-DEFERRED": {
@@ -37032,6 +37178,22 @@
     "title": "EPIC: Embeddable Engine & 2D/3D Game Frontend (Far Fetched)",
     "type": "TASK"
   },
+  "TASK-EMBEDDED-REGENERATION-MANIFEST": {
+    "hash": "e5e362d",
+    "git_issue": "e5e362d",
+    "extid": "TASK-EMBEDDED-REGENERATION-MANIFEST",
+    "type": "TASK",
+    "title": "Embedded regeneration manifest",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-asset-generation-metadata",
+    "tags": [
+      "assets",
+      "metadata"
+    ],
+    "source": ".plan/tickets/TASK-embedded-regeneration-manifest.md",
+    "status": "Not Started"
+  },
   "TASK-EMBEDDING-AND-TELEMETRY-RETENTION-POLICIES": {
     "epic": "epic-db-growth-tiered-storage",
     "extid": "TASK-EMBEDDING-AND-TELEMETRY-RETENTION-POLICIES",
@@ -37428,6 +37590,22 @@
     "source": ".plan/tickets/TASK-enforce-viewer-id-contract-in-memory-injection.md",
     "status": "Not Started"
   },
+  "TASK-ENGINE-EXPORT-BUNDLES": {
+    "hash": "38830ae",
+    "git_issue": "38830ae",
+    "extid": "TASK-ENGINE-EXPORT-BUNDLES",
+    "type": "TASK",
+    "title": "Engine export bundles",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-game-asset-pipeline-export",
+    "tags": [
+      "export",
+      "gltf"
+    ],
+    "source": ".plan/tickets/TASK-engine-export-bundles.md",
+    "status": "Not Started"
+  },
   "TASK-ENHANCE-PREVIEW-SHARED-DRAFT-STORE": {
     "epic": "epic-conversation-branching",
     "extid": "TASK-ENHANCE-PREVIEW-SHARED-DRAFT-STORE",
@@ -37452,6 +37630,88 @@
     "epic": "(none — hygiene/self-contained)",
     "tags": [],
     "source": ".plan/tickets/TASK-enrich-vector-gen-ticket-context-from-placeholder-pointers.md",
+    "status": "Not Started"
+  },
+  "TASK-ENVIRONMENT-KIT-ASSISTANT-WORKFLOW": {
+    "hash": "ba88a01",
+    "git_issue": "ba88a01",
+    "extid": "TASK-ENVIRONMENT-KIT-ASSISTANT-WORKFLOW",
+    "type": "TASK",
+    "title": "Environment kit assistant workflow",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-scene-environment-world-generation",
+    "tags": [
+      "scene",
+      "assistant"
+    ],
+    "source": ".plan/tickets/TASK-environment-kit-assistant-workflow.md",
+    "status": "Not Started"
+  },
+  "TASK-ENVIRONMENT-KIT-BACKGROUND-AND-PROPS-TIER": {
+    "hash": "4e58a69",
+    "git_issue": "4e58a69",
+    "extid": "TASK-ENVIRONMENT-KIT-BACKGROUND-AND-PROPS-TIER",
+    "type": "TASK",
+    "title": "Environment kit background and props tier",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-scene-environment-world-generation",
+    "tags": [
+      "scene",
+      "comfyui",
+      "assets"
+    ],
+    "source": ".plan/tickets/TASK-environment-kit-background-and-props-tier.md",
+    "status": "Not Started"
+  },
+  "TASK-ENVIRONMENT-KIT-SKYBOX-HDRI-TIER": {
+    "hash": "95e6815",
+    "git_issue": "95e6815",
+    "extid": "TASK-ENVIRONMENT-KIT-SKYBOX-HDRI-TIER",
+    "type": "TASK",
+    "title": "Environment kit skybox HDRI tier",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-scene-environment-world-generation",
+    "tags": [
+      "scene",
+      "skybox",
+      "licensing"
+    ],
+    "source": ".plan/tickets/TASK-environment-kit-skybox-hdri-tier.md",
+    "status": "Not Started"
+  },
+  "TASK-ENVIRONMENT-KIT-TERRAIN-TIER": {
+    "hash": "9cb9ca8",
+    "git_issue": "9cb9ca8",
+    "extid": "TASK-ENVIRONMENT-KIT-TERRAIN-TIER",
+    "type": "TASK",
+    "title": "Environment kit terrain tier",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-scene-environment-world-generation",
+    "tags": [
+      "scene",
+      "terrain"
+    ],
+    "source": ".plan/tickets/TASK-environment-kit-terrain-tier.md",
+    "status": "Not Started"
+  },
+  "TASK-ENVIRONMENT-KIT-TILEABLE-TEXTURE-TIER": {
+    "hash": "68e1c21",
+    "git_issue": "68e1c21",
+    "extid": "TASK-ENVIRONMENT-KIT-TILEABLE-TEXTURE-TIER",
+    "type": "TASK",
+    "title": "Environment kit tileable texture tier",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-scene-environment-world-generation",
+    "tags": [
+      "scene",
+      "textures"
+    ],
+    "source": ".plan/tickets/TASK-environment-kit-tileable-texture-tier.md",
     "status": "Not Started"
   },
   "TASK-EPIC-36-LINT-COGNITIVE-COMPLEXITY-MISC": {
@@ -37878,6 +38138,22 @@
     "source": ".plan/tickets/TASK-external-comfyui-plugin-repo-integration-contract.md",
     "status": "Not Started",
     "git_issue": "5d8de9f"
+  },
+  "TASK-EXTERNAL-MANIFEST-INTEROP": {
+    "hash": "dc90cfc",
+    "git_issue": "dc90cfc",
+    "extid": "TASK-EXTERNAL-MANIFEST-INTEROP",
+    "type": "TASK",
+    "title": "External manifest interop",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-asset-generation-metadata",
+    "tags": [
+      "assets",
+      "metadata"
+    ],
+    "source": ".plan/tickets/TASK-external-manifest-interop.md",
+    "status": "Not Started"
   },
   "TASK-EXTERNAL-PROCESS-SURVIVABILITY-PAUSE-AND-RESTART-ON-CRASH": {
     "hash": "8613846",
@@ -39905,6 +40181,23 @@
     "title": "Gallery search/filter + RAG feedback loop",
     "type": "TASK"
   },
+  "TASK-GALLERY-SET-AND-3D-SURFACE": {
+    "hash": "fb26b34",
+    "git_issue": "fb26b34",
+    "extid": "TASK-GALLERY-SET-AND-3D-SURFACE",
+    "type": "TASK",
+    "title": "Gallery set and 3D surface",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-gallery-batch-operations",
+    "tags": [
+      "gallery",
+      "views",
+      "3d"
+    ],
+    "source": ".plan/tickets/TASK-gallery-set-and-3d-surface.md",
+    "status": "Not Started"
+  },
   "TASK-GALLERY-USER-TAGGING-PROPOSITIONS": {
     "epic": "epic-frontend-gallery",
     "extid": "TASK-GALLERY-USER-TAGGING-PROPOSITIONS",
@@ -40115,6 +40408,23 @@
     "title": "Generation Cassette Replay",
     "type": "TASK"
   },
+  "TASK-GENERATION-CONTEXT-3D-VIEW-SETS": {
+    "hash": "ebbb977",
+    "git_issue": "ebbb977",
+    "extid": "TASK-GENERATION-CONTEXT-3D-VIEW-SETS",
+    "type": "TASK",
+    "title": "Generation context 3D view-sets",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-multimodal-asset-reuse",
+    "tags": [
+      "assets",
+      "api",
+      "3d"
+    ],
+    "source": ".plan/tickets/TASK-generation-context-3d-view-sets.md",
+    "status": "Not Started"
+  },
   "TASK-GENERATION-ERROR-HANDLING-GAPS-DETECTOR-ABORT-VOID-PROMISES": {
     "epic": "",
     "extid": "TASK-GENERATION-ERROR-HANDLING-GAPS-DETECTOR-ABORT-VOID-PROMISES",
@@ -40127,6 +40437,23 @@
     "tags": [],
     "title": "Generation error-handling gaps (detector, abort, void promises)",
     "type": "TASK"
+  },
+  "TASK-GENERATION-FACT-CAPTURE-AT-QUEUE-TIME": {
+    "hash": "31df5ce",
+    "git_issue": "31df5ce",
+    "extid": "TASK-GENERATION-FACT-CAPTURE-AT-QUEUE-TIME",
+    "type": "TASK",
+    "title": "Generation fact capture at queue time",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-asset-generation-metadata",
+    "tags": [
+      "assets",
+      "metadata",
+      "comfyui"
+    ],
+    "source": ".plan/tickets/TASK-generation-fact-capture-at-queue-time.md",
+    "status": "Not Started"
   },
   "TASK-GENERATION-FAILURE-EXPOSURE-SANITIZE-RAW-LLM-ERROR-OUTPUT-IN": {
     "epic": "",
@@ -40569,6 +40896,22 @@
     ],
     "title": "GM/Assistant Story Whitenotes System",
     "type": "TASK"
+  },
+  "TASK-GODOT-HEADLESS-IMPORT-VERIFICATION": {
+    "hash": "a96d730",
+    "git_issue": "a96d730",
+    "extid": "TASK-GODOT-HEADLESS-IMPORT-VERIFICATION",
+    "type": "TASK",
+    "title": "Godot headless import verification",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-game-asset-pipeline-export",
+    "tags": [
+      "export",
+      "godot"
+    ],
+    "source": ".plan/tickets/TASK-godot-headless-import-verification.md",
+    "status": "Not Started"
   },
   "TASK-GOLDEN-CORPUS-AND-SCORING-RATCHET-FOR-PROMPT-INJECTION-SIGNA": {
     "hash": "f1cfbc8",
@@ -41826,6 +42169,22 @@
     "title": "Human-in-the-loop tool approval gates",
     "type": "TASK"
   },
+  "TASK-HUNYUAN-OPTIONAL-FENCED-TIER": {
+    "hash": "aa53d38",
+    "git_issue": "aa53d38",
+    "extid": "TASK-HUNYUAN-OPTIONAL-FENCED-TIER",
+    "type": "TASK",
+    "title": "Hunyuan optional fenced tier",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "licensing"
+    ],
+    "source": ".plan/tickets/TASK-hunyuan-optional-fenced-tier.md",
+    "status": "Not Started"
+  },
   "TASK-I18N-ALPINE-CLIENT": {
     "epic": "epic-i18n",
     "extid": "TASK-I18N-ALPINE-CLIENT",
@@ -42336,6 +42695,22 @@
     "title": "Import YAML/TOML config into system_config DB",
     "type": "TASK"
   },
+  "TASK-IMPORTED-GENERATION-METADATA-PARSER": {
+    "hash": "18f7a0d",
+    "git_issue": "18f7a0d",
+    "extid": "TASK-IMPORTED-GENERATION-METADATA-PARSER",
+    "type": "TASK",
+    "title": "Imported generation metadata parser",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-asset-generation-metadata",
+    "tags": [
+      "assets",
+      "metadata"
+    ],
+    "source": ".plan/tickets/TASK-imported-generation-metadata-parser.md",
+    "status": "Not Started"
+  },
   "TASK-IN-CHAT-ASSET-EDIT-FLOW": {
     "epic": "epic-asset-platform-capabilities",
     "extid": "TASK-IN-CHAT-ASSET-EDIT-FLOW",
@@ -42681,6 +43056,22 @@
     "tags": [],
     "title": "InteractionService foundation (heavy-action engine)",
     "type": "TASK"
+  },
+  "TASK-INTERACTIVE-PROJECT-BINDING": {
+    "hash": "e8d834a",
+    "git_issue": "e8d834a",
+    "extid": "TASK-INTERACTIVE-PROJECT-BINDING",
+    "type": "TASK",
+    "title": "Interactive project binding",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-game-asset-pipeline-export",
+    "tags": [
+      "export",
+      "lineage"
+    ],
+    "source": ".plan/tickets/TASK-interactive-project-binding.md",
+    "status": "Not Started"
   },
   "TASK-INTERNAL-EXTERNAL-FLAGGING": {
     "epic": "epic-chat-lifecycle-moderation",
@@ -43248,6 +43639,23 @@
     "status": "Not Started",
     "git_issue": "77fbd4c"
   },
+  "TASK-KRITA-SHARED-COMFYUI-TIER": {
+    "hash": "f108415",
+    "git_issue": "f108415",
+    "extid": "TASK-KRITA-SHARED-COMFYUI-TIER",
+    "type": "TASK",
+    "title": "Krita shared ComfyUI tier",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-creative-tool-bridge",
+    "tags": [
+      "bridge",
+      "krita",
+      "docs"
+    ],
+    "source": ".plan/tickets/TASK-krita-shared-comfyui-tier.md",
+    "status": "Not Started"
+  },
   "TASK-LANGUAGE-GATED-LORE-VISIBILITY": {
     "epic": "epic-lore-knowledge",
     "extid": "TASK-LANGUAGE-GATED-LORE-VISIBILITY",
@@ -43342,6 +43750,55 @@
     "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md",
     "status": "Not Started",
     "git_issue": "5689bdf"
+  },
+  "TASK-LINEAGE-CONTENT-HASH-ANCHORS": {
+    "hash": "092f8fa",
+    "git_issue": "092f8fa",
+    "extid": "TASK-LINEAGE-CONTENT-HASH-ANCHORS",
+    "type": "TASK",
+    "title": "Lineage content-hash anchors",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-asset-lineage-provenance",
+    "tags": [
+      "assets",
+      "lineage"
+    ],
+    "source": ".plan/tickets/TASK-lineage-content-hash-anchors.md",
+    "status": "Not Started"
+  },
+  "TASK-LINEAGE-PROPAGATION-POLICY": {
+    "hash": "4d669b2",
+    "git_issue": "4d669b2",
+    "extid": "TASK-LINEAGE-PROPAGATION-POLICY",
+    "type": "TASK",
+    "title": "Lineage propagation policy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-asset-lineage-provenance",
+    "tags": [
+      "assets",
+      "lineage"
+    ],
+    "source": ".plan/tickets/TASK-lineage-propagation-policy.md",
+    "status": "Not Started"
+  },
+  "TASK-LINEAGE-QUERY-UI": {
+    "hash": "95eb9e3",
+    "git_issue": "95eb9e3",
+    "extid": "TASK-LINEAGE-QUERY-UI",
+    "type": "TASK",
+    "title": "Lineage query UI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-asset-lineage-provenance",
+    "tags": [
+      "assets",
+      "lineage",
+      "gallery"
+    ],
+    "source": ".plan/tickets/TASK-lineage-query-ui.md",
+    "status": "Not Started"
   },
   "TASK-LINK-MEMORIES-TO-WORLD-TIMELINE-EVENTS": {
     "hash": "d6df60b",
@@ -45214,6 +45671,22 @@
     "title": "Mesh peer discovery and gossip transport",
     "type": "TASK"
   },
+  "TASK-MESH-QA-AND-REPAIR-CHAIN": {
+    "hash": "008af4e",
+    "git_issue": "008af4e",
+    "extid": "TASK-MESH-QA-AND-REPAIR-CHAIN",
+    "type": "TASK",
+    "title": "Mesh QA and repair chain",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "mesh"
+    ],
+    "source": ".plan/tickets/TASK-mesh-qa-and-repair-chain.md",
+    "status": "Not Started"
+  },
   "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND": {
     "epic": "epic-frontend-backend-integration",
     "extid": "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND",
@@ -45501,6 +45974,22 @@
     "tags": [],
     "source": ".plan/tickets/TASK-messages-outfit-id-column.md",
     "status": "done"
+  },
+  "TASK-METADATA-DETECTION-PROVENANCE-STAMPING": {
+    "hash": "2e047e0",
+    "git_issue": "2e047e0",
+    "extid": "TASK-METADATA-DETECTION-PROVENANCE-STAMPING",
+    "type": "TASK",
+    "title": "Metadata detection provenance stamping",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-asset-generation-metadata",
+    "tags": [
+      "assets",
+      "metadata"
+    ],
+    "source": ".plan/tickets/TASK-metadata-detection-provenance-stamping.md",
+    "status": "Not Started"
   },
   "TASK-MIDDLEWARE-ACCEPT-FRONTEND-SUPPLIED-REQUEST-ID-UUID-WITH-SER": {
     "epic": "epic-middleware-request-lifecycle",
@@ -47537,6 +48026,22 @@
     "title": "Ollama Native Provider",
     "type": "TASK"
   },
+  "TASK-OPEN-IN-EDITOR-HANDOFF": {
+    "hash": "1358401",
+    "git_issue": "1358401",
+    "extid": "TASK-OPEN-IN-EDITOR-HANDOFF",
+    "type": "TASK",
+    "title": "Open-in-editor handoff",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "bridge"
+    ],
+    "source": ".plan/tickets/TASK-open-in-editor-handoff.md",
+    "status": "Not Started"
+  },
   "TASK-OPENAPI-DRIVEN-API-REFERENCE": {
     "epic": "epic-openapi-reference",
     "extid": "TASK-OPENAPI-DRIVEN-API-REFERENCE",
@@ -48193,6 +48698,22 @@
     "tags": [],
     "title": "Personas/impersonation plan + docs bookkeeping sweep",
     "type": "TASK"
+  },
+  "TASK-PHOTOGRAMMETRY-EXTERNAL-TIER": {
+    "hash": "7431dee",
+    "git_issue": "7431dee",
+    "extid": "TASK-PHOTOGRAMMETRY-EXTERNAL-TIER",
+    "type": "TASK",
+    "title": "Photogrammetry external tier",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "photogrammetry"
+    ],
+    "source": ".plan/tickets/TASK-photogrammetry-external-tier.md",
+    "status": "Not Started"
   },
   "TASK-PIPE-OPERATOR-CHAINING-SLASH-COMMANDS": {
     "epic": "epic-workflow-engine",
@@ -49309,6 +49830,22 @@
     "source": ".plan/tickets/TASK-property-test-the-status-machines-and-composite-validators.md",
     "status": "Not Started"
   },
+  "TASK-PROVENANCE-SUMMARY": {
+    "hash": "b1c2952",
+    "git_issue": "b1c2952",
+    "extid": "TASK-PROVENANCE-SUMMARY",
+    "type": "TASK",
+    "title": "Provenance summary",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-asset-lineage-provenance",
+    "tags": [
+      "assets",
+      "lineage"
+    ],
+    "source": ".plan/tickets/TASK-provenance-summary.md",
+    "status": "Not Started"
+  },
   "TASK-PROVIDE-SMK-SECRET-IN-BROWSER-TEST-SERVER-CONFIG-SO-KEY-GENE": {
     "hash": "016d3f9",
     "git_issue": "016d3f9",
@@ -50411,6 +50948,23 @@
     "title": "Backend Logic Reconciliation Plan",
     "type": "TASK"
   },
+  "TASK-RECONSTRUCTION-RUN-JOBS": {
+    "hash": "cff9dc3",
+    "git_issue": "cff9dc3",
+    "extid": "TASK-RECONSTRUCTION-RUN-JOBS",
+    "type": "TASK",
+    "title": "Reconstruction run jobs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "db",
+      "routes"
+    ],
+    "source": ".plan/tickets/TASK-reconstruction-run-jobs.md",
+    "status": "Not Started"
+  },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-ACTIONS-AUDIT-TABLE-AND-SUR": {
     "epic": "epic-recursive-self-improvement",
     "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-ACTIONS-AUDIT-TABLE-AND-SUR",
@@ -51481,6 +52035,22 @@
     "source": ".plan/tickets/TASK-remove-or-record-intent-for-stale-empty-diff-worktrees-g2-ti.md",
     "status": "Not Started"
   },
+  "TASK-RENDER-JUDGE-LOOP": {
+    "hash": "4c11089",
+    "git_issue": "4c11089",
+    "extid": "TASK-RENDER-JUDGE-LOOP",
+    "type": "TASK",
+    "title": "Render judge loop",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "feedback-loop"
+    ],
+    "source": ".plan/tickets/TASK-render-judge-loop.md",
+    "status": "Not Started"
+  },
   "TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES": {
     "epic": "epic-asset-transform-metadata",
     "extid": "TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES",
@@ -52145,6 +52715,22 @@
     "tags": [],
     "title": "/rewrite --apply write-back to target message",
     "type": "TASK"
+  },
+  "TASK-RIG-ATTACH-TIER": {
+    "hash": "8fb5477",
+    "git_issue": "8fb5477",
+    "extid": "TASK-RIG-ATTACH-TIER",
+    "type": "TASK",
+    "title": "Rig attach tier",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "rigging"
+    ],
+    "source": ".plan/tickets/TASK-rig-attach-tier.md",
+    "status": "Not Started"
   },
   "TASK-RIGGED-MODEL-BUFFER-RENDER": {
     "epic": "epic-3d-generation",
@@ -53120,6 +53706,71 @@
     "tags": [],
     "title": "Scene + chat/group transition with optional context inclusion",
     "type": "TASK"
+  },
+  "TASK-SCENE-LAYOUT-LLM-STEP": {
+    "hash": "fb46d59",
+    "git_issue": "fb46d59",
+    "extid": "TASK-SCENE-LAYOUT-LLM-STEP",
+    "type": "TASK",
+    "title": "Scene layout LLM step",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-scene-environment-world-generation",
+    "tags": [
+      "scene",
+      "llm"
+    ],
+    "source": ".plan/tickets/TASK-scene-layout-llm-step.md",
+    "status": "Not Started"
+  },
+  "TASK-SCENE-LAYOUT-MANIFEST-SCHEMA": {
+    "hash": "4098464",
+    "git_issue": "4098464",
+    "extid": "TASK-SCENE-LAYOUT-MANIFEST-SCHEMA",
+    "type": "TASK",
+    "title": "Scene layout manifest schema",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-scene-environment-world-generation",
+    "tags": [
+      "scene",
+      "schema"
+    ],
+    "source": ".plan/tickets/TASK-scene-layout-manifest-schema.md",
+    "status": "Not Started"
+  },
+  "TASK-SCENE-PARALLAX-VN-AND-CANVAS-CONSUMERS": {
+    "hash": "d1a1d46",
+    "git_issue": "d1a1d46",
+    "extid": "TASK-SCENE-PARALLAX-VN-AND-CANVAS-CONSUMERS",
+    "type": "TASK",
+    "title": "Scene parallax VN and canvas consumers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-scene-environment-world-generation",
+    "tags": [
+      "scene",
+      "vn",
+      "frontend"
+    ],
+    "source": ".plan/tickets/TASK-scene-parallax-vn-and-canvas-consumers.md",
+    "status": "Not Started"
+  },
+  "TASK-SCENE-REUSE-PROPAGATION": {
+    "hash": "060b640",
+    "git_issue": "060b640",
+    "extid": "TASK-SCENE-REUSE-PROPAGATION",
+    "type": "TASK",
+    "title": "Scene reuse propagation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-scene-environment-world-generation",
+    "tags": [
+      "scene",
+      "lineage"
+    ],
+    "source": ".plan/tickets/TASK-scene-reuse-propagation.md",
+    "status": "Not Started"
   },
   "TASK-SCHEDULED-MESSAGES-REMINDERS": {
     "epic": "epic-chat-composer-flows",
@@ -54594,6 +55245,23 @@
     "title": "Subagent delegation and parallel workstreams for local-process-swarm",
     "type": "TASK"
   },
+  "TASK-SUBSTANCE-RISK-ASSESSMENT": {
+    "hash": "7234a8d",
+    "git_issue": "7234a8d",
+    "extid": "TASK-SUBSTANCE-RISK-ASSESSMENT",
+    "type": "TASK",
+    "title": "Substance risk assessment",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-creative-tool-bridge",
+    "tags": [
+      "bridge",
+      "licensing",
+      "docs"
+    ],
+    "source": ".plan/tickets/TASK-substance-risk-assessment.md",
+    "status": "Not Started"
+  },
   "TASK-SUMMARIZE-FORMAT-TLDR-BULLETS-DETAILED-GRADATION": {
     "epic": "epic-output-control-transforms",
     "extid": "TASK-SUMMARIZE-FORMAT-TLDR-BULLETS-DETAILED-GRADATION",
@@ -55137,6 +55805,22 @@
     ],
     "title": "Text to visual novel importer",
     "type": "TASK"
+  },
+  "TASK-TEXTURE-PBR-TIER": {
+    "hash": "fa23900",
+    "git_issue": "fa23900",
+    "extid": "TASK-TEXTURE-PBR-TIER",
+    "type": "TASK",
+    "title": "Texture PBR tier",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "pbr"
+    ],
+    "source": ".plan/tickets/TASK-texture-pbr-tier.md",
+    "status": "Not Started"
   },
   "TASK-THE-LICENSE-HEADER-CHECKER-RUNS-IN-NO-GATE-AND-THE-GIWT-SUBC": {
     "hash": "bf339a4",
@@ -55917,6 +56601,22 @@
     ],
     "title": "Travel Scheduler Tick",
     "type": "TASK"
+  },
+  "TASK-TRELLIS2-VIEW-SET-PIPELINE": {
+    "hash": "2077990",
+    "git_issue": "2077990",
+    "extid": "TASK-TRELLIS2-VIEW-SET-PIPELINE",
+    "type": "TASK",
+    "title": "TRELLIS2 view-set pipeline",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-3d-generation",
+    "tags": [
+      "3d",
+      "comfyui"
+    ],
+    "source": ".plan/tickets/TASK-trellis2-view-set-pipeline.md",
+    "status": "Not Started"
   },
   "TASK-TRIAGE-KNIP-SRC-FINDINGS": {
     "hash": "9b90505",
@@ -56767,6 +57467,140 @@
     "status": "Not Started",
     "git_issue": "8857530"
   },
+  "TASK-VIEW-SET-ASSISTANT-WORKFLOW": {
+    "hash": "0403ad5",
+    "git_issue": "0403ad5",
+    "extid": "TASK-VIEW-SET-ASSISTANT-WORKFLOW",
+    "type": "TASK",
+    "title": "View-set assistant workflow",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-view-set-generation",
+    "tags": [
+      "views",
+      "assistant"
+    ],
+    "source": ".plan/tickets/TASK-view-set-assistant-workflow.md",
+    "status": "Not Started"
+  },
+  "TASK-VIEW-SET-CAMERA-CONVENTIONS-AND-EXPORT": {
+    "hash": "bb1c1f7",
+    "git_issue": "bb1c1f7",
+    "extid": "TASK-VIEW-SET-CAMERA-CONVENTIONS-AND-EXPORT",
+    "type": "TASK",
+    "title": "View-set camera conventions and export",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-view-set-generation",
+    "tags": [
+      "views",
+      "camera",
+      "3d"
+    ],
+    "source": ".plan/tickets/TASK-view-set-camera-conventions-and-export.md",
+    "status": "Not Started"
+  },
+  "TASK-VIEW-SET-CAMERA-METADATA-FIELDS": {
+    "hash": "fdd0b1f",
+    "git_issue": "fdd0b1f",
+    "extid": "TASK-VIEW-SET-CAMERA-METADATA-FIELDS",
+    "type": "TASK",
+    "title": "View-set camera metadata fields",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-asset-generation-metadata",
+    "tags": [
+      "assets",
+      "metadata",
+      "views",
+      "3d"
+    ],
+    "source": ".plan/tickets/TASK-view-set-camera-metadata-fields.md",
+    "status": "Not Started"
+  },
+  "TASK-VIEW-SET-CONSISTENCY-GATE": {
+    "hash": "d693f7d",
+    "git_issue": "d693f7d",
+    "extid": "TASK-VIEW-SET-CONSISTENCY-GATE",
+    "type": "TASK",
+    "title": "View-set consistency gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-view-set-generation",
+    "tags": [
+      "views",
+      "aux-pipeline"
+    ],
+    "source": ".plan/tickets/TASK-view-set-consistency-gate.md",
+    "status": "Not Started"
+  },
+  "TASK-VIEW-SET-CRUD-AND-GALLERY-SURFACE": {
+    "hash": "f269ece",
+    "git_issue": "f269ece",
+    "extid": "TASK-VIEW-SET-CRUD-AND-GALLERY-SURFACE",
+    "type": "TASK",
+    "title": "View-set CRUD and gallery surface",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-view-set-generation",
+    "tags": [
+      "views",
+      "gallery",
+      "routes"
+    ],
+    "source": ".plan/tickets/TASK-view-set-crud-and-gallery-surface.md",
+    "status": "Not Started"
+  },
+  "TASK-VIEW-SET-EDIT-GRID-WORKFLOWS": {
+    "hash": "4188494",
+    "git_issue": "4188494",
+    "extid": "TASK-VIEW-SET-EDIT-GRID-WORKFLOWS",
+    "type": "TASK",
+    "title": "View-set edit-grid workflows",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-view-set-generation",
+    "tags": [
+      "views",
+      "comfyui"
+    ],
+    "source": ".plan/tickets/TASK-view-set-edit-grid-workflows.md",
+    "status": "Not Started"
+  },
+  "TASK-VIEW-SET-ORBIT-VIDEO-TIER": {
+    "hash": "3d6d24d",
+    "git_issue": "3d6d24d",
+    "extid": "TASK-VIEW-SET-ORBIT-VIDEO-TIER",
+    "type": "TASK",
+    "title": "View-set orbit video tier",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-view-set-generation",
+    "tags": [
+      "views",
+      "video",
+      "comfyui"
+    ],
+    "source": ".plan/tickets/TASK-view-set-orbit-video-tier.md",
+    "status": "Not Started"
+  },
+  "TASK-VIEW-SET-SCHEMA-AND-LINKS": {
+    "hash": "38fdf28",
+    "git_issue": "38fdf28",
+    "extid": "TASK-VIEW-SET-SCHEMA-AND-LINKS",
+    "type": "TASK",
+    "title": "View-set schema and links",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-view-set-generation",
+    "tags": [
+      "views",
+      "db",
+      "assets"
+    ],
+    "source": ".plan/tickets/TASK-view-set-schema-and-links.md",
+    "status": "Not Started"
+  },
   "TASK-VISIBILITY-REPORT-FOR-CHAT-ADMINS": {
     "hash": "6b3558a",
     "git_issue": "6b3558a",
@@ -57237,6 +58071,22 @@
     "title": "Weather & Environmental Effects",
     "type": "TASK"
   },
+  "TASK-WEB-EMBED-PROFILE": {
+    "hash": "c93debd",
+    "git_issue": "c93debd",
+    "extid": "TASK-WEB-EMBED-PROFILE",
+    "type": "TASK",
+    "title": "Web embed profile",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-game-asset-pipeline-export",
+    "tags": [
+      "export",
+      "web"
+    ],
+    "source": ".plan/tickets/TASK-web-embed-profile.md",
+    "status": "Not Started"
+  },
   "TASK-WEBP-AS-A-FIRST-CLASS-STORED-ASSET-FORMAT": {
     "hash": "5fc5dab",
     "git_issue": "5fc5dab",
@@ -57673,6 +58523,22 @@
     "title": "wllama GGUF inference engine (browser)",
     "type": "TASK"
   },
+  "TASK-WORKFLOW-ASSET-PICK-STEP-TYPE": {
+    "hash": "1dad52b",
+    "git_issue": "1dad52b",
+    "extid": "TASK-WORKFLOW-ASSET-PICK-STEP-TYPE",
+    "type": "TASK",
+    "title": "Workflow asset pick step type",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-workflow-engine",
+    "tags": [
+      "workflows",
+      "steps"
+    ],
+    "source": ".plan/tickets/TASK-workflow-asset-pick-step-type.md",
+    "status": "Not Started"
+  },
   "TASK-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES": {
     "epic": "epic-workflow-engine",
     "extid": "TASK-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES",
@@ -57689,6 +58555,22 @@
     ],
     "title": "Workflow DAG engine — task dependencies",
     "type": "TASK"
+  },
+  "TASK-WORKFLOW-DISPATCH-GENERATION-BACKENDS": {
+    "hash": "626b373",
+    "git_issue": "626b373",
+    "extid": "TASK-WORKFLOW-DISPATCH-GENERATION-BACKENDS",
+    "type": "TASK",
+    "title": "Workflow dispatch generation backends",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-workflow-engine",
+    "tags": [
+      "workflows",
+      "dispatch"
+    ],
+    "source": ".plan/tickets/TASK-workflow-dispatch-generation-backends.md",
+    "status": "Not Started"
   },
   "TASK-WORKFLOW-ENGINE-SCHEMA-LOADER-TEMPLATE-TYPES-WORKFLOW-DISCOV": {
     "epic": "epic-workflow-engine",
