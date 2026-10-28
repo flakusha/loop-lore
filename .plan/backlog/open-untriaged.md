@@ -213,3 +213,19 @@ index metadata is stale. Do not apply a keyword-only bulk link. Triage by domain
    ticket scope names one existing epic.
 4. Create a new epic only when a cluster has repeated tickets, one owner, and no
    existing epic boundary; the current review found no such missing initiative.
+
+## 2026-10-28 creative-3D filing — E2 Phase A optional hardening-window row
+
+> Filing note (plan branch `plan-creative-3d`): the 3D epic was rewritten in
+> place (`epics/epic-3d-generation.md`). Its Phase A display foundations are
+> independently valuable and unblocked by the rest of the cluster; this row is
+> an optional additive candidate for the current release hardening window.
+> Promote to a priority tier at triage time if picked up.
+
+- [ ] **3D display foundations (E2 Phase A, optional)** — `AssetType.Model3D`
+  with magic-byte detection, serve parity, poster renditions
+  (`TASK-3d-asset-type-and-serving`), lazy-mounted model-viewer/splat viewer
+  partials with device-tier gate + 2D poster fallback
+  (`TASK-3d-frontend-viewer-lazy-mount`), `reconstruction_runs` job table +
+  owner-scoped routes + flow control (`TASK-reconstruction-run-jobs`) —
+  `epics/epic-3d-generation.md` | proposal

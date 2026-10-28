@@ -100,5 +100,25 @@ Krita, then Blender, then LibreOffice/GIMP/Inkscape. Each only after the app's M
 
 B1 -> B2 -> {B3, B4}. B3 is worth doing even if no creative-app adapter ever lands, because the state machine is reused by every long-running job in the platform.
 
+## Annex: creative-loop round-trips (DCC file round-trip; filed 2026-10-28)
+
+> **Scope expansion B.** File round-trip — export to a per-user working dir,
+> watch, versioned re-ingest — is the default integration for desktop DCC
+> tools; MCP adapters stay optional and sandboxed. Tasks below pair with
+> `epic-3d-generation.md` (export + re-ingest acceptance) and the asset
+> metadata/lineage epics (provenance on re-ingest).
+
+| Ticket | Scope |
+| ------ | ----- |
+| `TASK-bridge-file-watch-roundtrip` | Watch-folder + versioned re-ingest (awaitWriteFinish stability, atomic temp-rename); re-ingest creates new asset versions with lineage + provenance; never overwrites |
+| `TASK-krita-shared-comfyui-tier` | Documented Krita AI Diffusion tier (GPL-3, ComfyUI-only backend) sharing the loop-lore ComfyUI instance; working-dir contract; no in-process Krita code; no sdcpp bridge (unsupported upstream) |
+| `TASK-blender-headless-node-bridge` | Blender background-mode python recipes (conversion/repair/bake/retopo) as a B-tool for the 3D post-process chain; capability probe + version report; timeout-bounded, provenance-stamped subprocess isolation |
+| `TASK-substance-risk-assessment` | FOSS defaults documented (Material Maker MIT, ArmorPaint zlib, Materialize-CLI MIT); Substance enterprise-entitlement flagged — optional user-provided tier only, no bundling |
+
+**MCP-servers table refresh (2026-10-28):** krita-mcp (CC0, active) is now
+verified — resolve its row above; an official Blender Lab MCP server exists
+but ships with a no-guards security warning, so MCP adapters remain optional
+and sandboxed and the file round-trip stays the default integration.
+
 
 git issue: bd11716

@@ -152,3 +152,17 @@ moderation and `epic-nsfw-capabilities.md` consent infrastructure.
 - `epic-assistant-gm-flows.md` — quality/confirmation gating pattern
 - `epic-plugin-system.md` — plugin extension point
 - `TASK-assistant-third-party-api-integration.md`, `TASK-assistant-nsfw-api-prefiltering.md` — dispatch adapters & NSFW prefiltering
+
+## Annex: creative-3D dispatch backends + step types (filed 2026-10-28)
+
+> Task-level extension from the creative-3D package. New generation dispatch
+> backends land here — one runner, no per-epic runners.
+
+| Ticket | Scope |
+| ------ | ----- |
+| `TASK-workflow-dispatch-generation-backends` | Register `generation-viewset`, `generation-3d`, `world-environment`, `engine-export` through the existing dispatch schema (backend → route) with NSFW policy pass-through |
+| `TASK-workflow-asset-pick-step-type` | Shared asset-picker step type (subject/reference selection) for the view-set, 3D, environment, and export workflow templates |
+
+Consuming templates live in `epic-view-set-generation.md`,
+`epic-3d-generation.md`, `epic-scene-environment-world-generation.md`, and
+`epic-game-asset-pipeline-export.md`; this epic owns the dispatch plumbing.

@@ -77,3 +77,13 @@ full scope and slicing rationale.
 ## Linked Tasks
 
 - TASK-multimodal-asset-reuse.md
+
+## Annex: view-set & 3D generation context (filed 2026-10-28)
+
+| Ticket | Scope |
+| ------ | ----- |
+| `TASK-generation-context-3d-view-sets` | `GET /api/assets/:id/generation-context` extended to emit view-set and 3D context (camera facts, set membership, model format/PBR inventory) for downstream generation |
+
+Pairs with `epic-asset-generation-metadata.md` (camera/run facts) and
+`epic-view-set-generation.md` / `epic-3d-generation.md` (the producing
+epics); image/video context shape is unchanged for existing consumers.
