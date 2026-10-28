@@ -3762,3 +3762,10 @@ export const CharacterTraitAssignmentsSchema = t.Object({
   granted_at: t.String(),
   granted_by_user_id: t.Optional(t.String(),),
 },);
+
+// ── assistant_quota_usage ────────────────────────────────────────────
+export const AssistantQuotaUsageSchema = t.Object({
+  window_start: t.String(),
+  user_id: t.Optional(t.String(),),
+  used_units: t.Optional(t.Number(),),
+},);
