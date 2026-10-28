@@ -17,4 +17,6 @@ export interface HooksConfig {
   enableModerationLlmClassifier?: boolean;
   /** Enable the fictional-consistency immersion gate (independent from content policy). Default true. */
   enableImmersionGate?: boolean;
+  /** Opt-in prose-level LLM audit of immersion gate verdicts (downgrade-only). Default false. */
+  enableImmersionLlmClassifier?: boolean;
 }
