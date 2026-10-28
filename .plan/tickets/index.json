@@ -7773,7 +7773,7 @@
     "epic": "epic-chat-product-features",
     "tags": [],
     "source": ".plan/tickets/BUG-ownership-transfer-button-is-shown-to-every-non-owner-who-th.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-OWNERSHIP-TRANSFER-WRITES-ACTOR-ID-INTO-CHATS-CREATED-BY-FK-": {
     "hash": "9140e24",
@@ -9886,7 +9886,7 @@
     "epic": "epic-api-validation-guardrails",
     "tags": [],
     "source": ".plan/tickets/BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-TICKET-CLOSURE-CITES-NONEXISTENT-GIT-COMMIT-7A0F508C93": {
     "hash": "83bdf58",

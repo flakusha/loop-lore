@@ -7392,7 +7392,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ownership-transfer-button-is-shown-to-every-non-owner-who-th.md",
       "title": "Ownership-transfer button is shown to every non-owner, who then eats a 403",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/components/chat/chat-settings-modal.html",
         "src/frontend/alpine/chat-settings/ownership.ts"
@@ -9444,7 +9444,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-.md",
       "title": "Three pagination sites still parse a limit by hand, so LIMIT -1 returns the whole table and a bad limit is a 500",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/mood-service/get-events.ts",
         "src/routes/character-mood/events.ts",

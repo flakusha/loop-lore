@@ -1716,7 +1716,7 @@ Total tickets: **4058** — untagged: **2746** — unbound to epic: **1040**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2746 | 1251 | 49 | 891 | 31 | 0 | 524 |
+| (untagged) | 2746 | 1253 | 49 | 891 | 31 | 0 | 522 |
 
 ## By epic × status
 
@@ -1753,7 +1753,7 @@ Total tickets: **4058** — untagged: **2746** — unbound to epic: **1040**
 | epic-api-routes | 4 | 3 | 0 | 1 | 0 | 0 | 0 |
 | epic-api-task-offloading | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-api-telemetry | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
-| epic-api-validation-guardrails | 11 | 6 | 0 | 3 | 0 | 0 | 2 |
+| epic-api-validation-guardrails | 11 | 7 | 0 | 3 | 0 | 0 | 1 |
 | epic-api-versioning | 7 | 7 | 0 | 0 | 0 | 0 | 0 |
 | epic-architecture | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-archival-workflow | 7 | 6 | 0 | 1 | 0 | 0 | 0 |
@@ -1803,7 +1803,7 @@ Total tickets: **4058** — untagged: **2746** — unbound to epic: **1040**
 | epic-chat-lifecycle-moderation, epic-assistant-gm-flows | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-lifecycle-moderation, epic-group-chat | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-privacy | 3 | 0 | 0 | 2 | 0 | 0 | 1 |
-| epic-chat-product-features | 37 | 10 | 0 | 23 | 0 | 0 | 4 |
+| epic-chat-product-features | 37 | 11 | 0 | 23 | 0 | 0 | 3 |
 | epic-chat-rich-engagement | 6 | 5 | 0 | 0 | 0 | 0 | 1 |
 | epic-chat-transfer-location | 12 | 3 | 2 | 5 | 1 | 0 | 1 |
 | epic-chat-variants-taxonomy | 13 | 13 | 0 | 0 | 0 | 0 | 0 |
