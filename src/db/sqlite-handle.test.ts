@@ -20,6 +20,13 @@ let priorDbPath: string | undefined;
 
 afterEach(() => {
   setTestDatabase(null,);
+  if (priorDbPath === undefined) {
+    delete process.env.LOOP_LORE_DB_PATH;
+  } else {
+    process.env.LOOP_LORE_DB_PATH = priorDbPath;
+  }
+
+  priorDbPath = undefined;
   if (tmpDbPath) {
     rmSync(tmpDbPath, { force: true, },);
     tmpDbPath = null;
