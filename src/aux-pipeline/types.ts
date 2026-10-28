@@ -24,7 +24,8 @@ export type AuxTaskName =
   | "chat-title"
   | "rag-ask"
   | "carriage"
-  | "adapt";
+  | "adapt"
+  | "immersion-audit";
 
 /** Per-call options for `callAux`. All optional — runner defaults apply. */
 export interface AuxCallOptions {

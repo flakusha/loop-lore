@@ -180,6 +180,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       actorName: characterName,
       worldId: chat?.world_id ?? null,
       gmConfig: chat?.gm_config ?? null,
+      appConfig: config,
       content: userMessage,
       parentMessageId,
     },);

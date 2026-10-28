@@ -170,6 +170,7 @@ export const envMap = (): EnvMap => {
   map.ENABLE_NSFW_HOOKS = "hooks.enableNsfwHooks";
   map.ENABLE_MODERATION_HOOKS = "hooks.enableModerationHooks";
   map.ENABLE_IMMERSION_GATE = "hooks.enableImmersionGate";
+  map.IMMERSION_LLM_CLASSIFIER = "hooks.enableImmersionLlmClassifier";
   map.MODERATION_LLM_CLASSIFIER = "hooks.enableModerationLlmClassifier";
   map.LLM_DEFAULT_PROVIDER = "generation.defaultProvider";
   map.LLM_MAX_CONCURRENT_GLOBAL = "generation.flowControl.maxConcurrentGlobal";

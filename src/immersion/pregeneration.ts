@@ -22,6 +22,7 @@
  */
 import { type Kysely, } from "kysely";
 
+import type { Config, } from "../config/schema";
 import { MessageContentType, MessageRole, MessageStatus, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
@@ -29,6 +30,7 @@ import { emitPluginEvent, } from "../plugins/event-bus";
 import { registry, } from "../plugins/registry";
 import type { EventHandlerDefinition, } from "../plugins/types";
 import { safeJsonStringify, } from "../utils";
+import { auditVerdictWithLlm, } from "./classifier";
 import { recordImmersionDecision, } from "./decision-log";
 import { createImmersionGate, } from "./engine";
 import { resolveImmersionGateConfig, } from "./gate-config";
@@ -58,6 +60,8 @@ export interface ImmersionPrecheckArgs {
   readonly config?: ImmersionGateConfig;
   /** Raw `chats.gm_config` JSON — per-chat severity/toggles (WI-6) when `config` unset. */
   readonly gmConfig?: string | null;
+  /** App config — required for the opt-in LLM classifier (WI-4); omitted keeps the path fully deterministic. */
+  readonly appConfig?: Config;
   readonly chatId: string;
   readonly actorId: string;
   readonly actorName: string;
@@ -107,29 +111,55 @@ export async function runImmersionGatePrecheck(
   },);
 
   const verdict = await gate.evaluate({ chatId, actorId, worldId, content, },);
-  await recordImmersionDecision(db, { chatId, actorId, source: "pregeneration", verdict, },);
+
+  // Opt-in LLM audit (WI-4): downgrade-only, budget-governed, default OFF.
+  // When it applies, a second audit row attributes the change.
+  let finalVerdict = verdict;
+  if (args.appConfig !== undefined && verdict.severity !== GateSeverity.Allow) {
+    const audited = await auditVerdictWithLlm({
+      db,
+      config: args.appConfig,
+      chatId,
+      actorId,
+      content,
+      verdict,
+    },);
+
+    finalVerdict = audited.verdict;
+    if (audited.audit.applied) {
+      await recordImmersionDecision(db, { chatId, actorId, source: "classifier", verdict: finalVerdict, },);
+    }
+  }
+
+  await recordImmersionDecision(db, { chatId, actorId, source: "pregeneration", verdict: finalVerdict, },);
 
   await emitPluginEvent(
     eventHandlers,
     "gate.verdict",
-    gateVerdictEventPayload(verdict, { chatId, actorId, },),
+    gateVerdictEventPayload(finalVerdict, { chatId, actorId, },),
   );
 
-  if (verdict.severity === GateSeverity.Allow) {
+  if (finalVerdict.severity === GateSeverity.Allow) {
     log.debug("immersion gate allow", { chatId, actorId, },);
     return { action: "continue", };
   }
 
-  if (verdict.severity === GateSeverity.Annotate) {
-    return { action: "continue", promptInjection: buildAnnotateHint(verdict,), };
+  if (finalVerdict.severity === GateSeverity.Annotate) {
+    return { action: "continue", promptInjection: buildAnnotateHint(finalVerdict,), };
   }
 
-  if (verdict.severity === GateSeverity.SoftRefuse) {
+  if (finalVerdict.severity === GateSeverity.SoftRefuse) {
     const beatConsumed = await consumeBeat(db, chatId, parentMessageId,);
-    log.info("immersion gate soft-refuse: beat consumed", { chatId, actorId, beatConsumed, ruleId: verdict.ruleId, },);
+    log.info("immersion gate soft-refuse: beat consumed", {
+      chatId,
+      actorId,
+      beatConsumed,
+      ruleId: finalVerdict.ruleId,
+    },);
+
     return {
       action: "continue",
-      promptInjection: buildSoftRefuseFraming(verdict,),
+      promptInjection: buildSoftRefuseFraming(finalVerdict,),
       beatConsumed,
     };
   }
@@ -137,11 +167,11 @@ export async function runImmersionGatePrecheck(
   await writeHardBlockNotice(db, {
     chatId,
     actorId,
-    notice: buildHardBlockNotice(verdict, { actorName, },),
-    ruleId: verdict.ruleId,
+    notice: buildHardBlockNotice(finalVerdict, { actorName, },),
+    ruleId: finalVerdict.ruleId,
   },);
 
-  log.info("immersion gate hard-block: generation aborted", { chatId, actorId, ruleId: verdict.ruleId, },);
+  log.info("immersion gate hard-block: generation aborted", { chatId, actorId, ruleId: finalVerdict.ruleId, },);
   return { action: "blocked", };
 }
 
