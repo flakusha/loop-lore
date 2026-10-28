@@ -3,7 +3,8 @@
 
 # BUG: Ownership-transfer button is shown to every non-owner, who then eats a 403
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** [2026-10-28 triage] FIXED — filed against the 2026-10-25 triage snapshot, but the parallel fix `a763847ee` ("fix(frontend): gate the ownership-transfer button on ownership") landed first: `src/frontend/alpine/chat-settings/ownership.ts:144-152` now returns false without an active chat, allows `admin.chat`, and otherwise requires `chat.created_by === globalThis.__USER_ID`, so the button bound at `src/components/chat/chat-settings-modal.html:95` is only shown to the creator or an admin. No further work.
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-chat-product-features
