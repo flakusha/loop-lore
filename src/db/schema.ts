@@ -238,4 +238,5 @@ export interface DB {
   link_previews: import("./schema-core").LinkPreviews;
   character_stat_allocation: import("./schema-core").CharacterStatAllocation;
   character_trait_assignments: import("./schema-core").CharacterTraitAssignments;
+  assistant_quota_usage: import("./schema-core").AssistantQuotaUsage;
 }

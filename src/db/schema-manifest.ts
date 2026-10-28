@@ -194,6 +194,11 @@ export const SCHEMA = new SchemaManifest()
     hour_bucket: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("assistant_quota_usage", {
+    user_id: col("text", { primaryKey: true, },),
+    window_start: col("text", { notNull: true, },),
+    used_units: col("integer", { notNull: true, hasDefault: true, },),
+  },)
   .table("autonomy_budget", {
     scope_kind: col("text", { notNull: true, },),
     scope_id: col("text", { notNull: true, },),

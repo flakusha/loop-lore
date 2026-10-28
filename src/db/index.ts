@@ -78,17 +78,11 @@ export function createSqliteDialect(database: Database,): SqliteDialect {
   return new SqliteDialect({ database: wrapped, },);
 }
 
-/**
- * @param databasePath
- * @returns void
- */
-function createDialect(databasePath: string,): SqliteDialect {
-  // Pragmas are applied inside createSqliteDialect so both paths are enforced.
-  return createSqliteDialect(new Database(databasePath,),);
-}
-
 /** Test override — set by setTestDatabase(). When set, getDatabase() returns this instead. */
 let testDatabaseOverride: Kysely<DB> | null = null;
+
+/** Raw handle behind the test override, when the caller could provide it. */
+let testOverrideSqlite: Database | null = null;
 
 /**
  * Override the global database instance for testing.
@@ -98,11 +92,13 @@ let testDatabaseOverride: Kysely<DB> | null = null;
  * Bun's `--isolate` is best-effort — see BUG-settestdatabase-global-leak-on-test-throw.
  *
  * Pass null to clear the override.
- * @param db
- * @returns void
+ * @param db - the override Kysely handle, or null to clear
+ * @param sqlite - raw handle behind `db`, when the fixture owns one (lets
+ *   consumers like quota storage bind the SAME database the override routes to)
  */
-export function setTestDatabase(db: Kysely<DB> | null,): void {
+export function setTestDatabase(db: Kysely<DB> | null, sqlite?: Database,): void {
   testDatabaseOverride = db;
+  testOverrideSqlite = db ? sqlite ?? null : null;
 }
 
 /**
@@ -120,6 +116,23 @@ export function getTestDatabaseOverride(): Kysely<DB> | null {
 // `@/db` to materialize `loop-lore-data/loop-lore.db` (see BUG-eager-db-init-creates-on-disk-db-on-test-import).
 let database: Kysely<DB> | null = null;
 
+/** Raw handle behind the production singleton (null until it materializes). */
+let singletonSqlite: Database | null = null;
+
+/**
+ * The raw `bun:sqlite` handle behind the CURRENT getDatabase() resolution —
+ * the test override's handle when an override is active (never falling
+ * through to the production singleton, so consumers read the same database
+ * queries hit), otherwise the singleton's once materialized.
+ * Never creates anything: null means "no DB is available" and callers keep
+ * their non-DB fallback (preserving BUG-eager-db-init-creates-on-disk-db-on-test-import).
+ * @returns the active raw handle, or null when none is materialized
+ */
+export function getSqliteDatabase(): Database | null {
+  if (testDatabaseOverride) { return testOverrideSqlite; }
+  return singletonSqlite;
+}
+
 /**
  * @param _databasePath - path is unused when a test override is set; resolution falls back to the singleton DB otherwise.
  * @returns the Kysely DB handle (test override if set, otherwise the lazily-initialized singleton).
@@ -130,7 +143,9 @@ export function getDatabase(_databasePath?: string,): Kysely<DB> {
     const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db",);
     // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
     mkdirSync(path.dirname(dbPath,), { recursive: true, },);
-    database = new Kysely<DB>({ dialect: createDialect(dbPath,), },);
+    const sqlite = new Database(dbPath,);
+    singletonSqlite = sqlite;
+    database = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
   }
 
   return database;

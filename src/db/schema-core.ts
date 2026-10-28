@@ -2089,3 +2089,10 @@ export interface CharacterTraitAssignments {
   granted_at: string;
   granted_by_user_id: string | null;
 }
+
+// ── assistant_quota_usage ────────────────────────────────────────────
+export interface AssistantQuotaUsage {
+  user_id: string;
+  window_start: string;
+  used_units: Generated<number>;
+}
