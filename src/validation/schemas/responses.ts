@@ -120,6 +120,8 @@ export const ChatRow = Type.Object({
   type: Type.Optional(Type.String(),),
   mode: Type.Optional(Type.String(),),
   encryption_level: Type.Optional(Type.String(),),
+  /** Owner (creator) user id — the client gates owner-only affordances on it. */
+  created_by: Type.Optional(Type.String(),),
 },);
 export const ChatListResponse = PaginatedEnvelope(ChatRow,);
 /**

@@ -54,6 +54,8 @@ export interface ChatCoreState
     prompt_override?: string | null;
     quick_replies?: string | null;
     custom_instructions?: string | null;
+    /** Owner (creator) user id — gates owner-only affordances. */
+    created_by?: string;
   }[];
   activeChat: string | null;
   messages: Message[];

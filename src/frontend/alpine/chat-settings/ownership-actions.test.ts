@@ -195,15 +195,51 @@ describeOrSkip("ownershipActions.submitOwnershipTransfer", () => {
 },);
 
 describeOrSkip("ownershipActions.canTransferOwnership", () => {
-  test("true when activeChat is set", () => {
-    expect(ownershipActions.canTransferOwnership!.call(ownershipCtx(),),).toBe(true,);
+  const originalUserId = globalThis.__USER_ID;
+
+  afterEach(() => {
+    globalThis.__USER_ID = originalUserId;
+  },);
+
+  test("true for the chat owner", () => {
+    globalThis.__USER_ID = "user-1";
+    const ctx = ownershipCtx({ chats: [{ id: "chat-1", created_by: "user-1", },], userRole: "user", },);
+
+    expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(true,);
+  });
+
+  test("false for a chat the user does not own", () => {
+    globalThis.__USER_ID = "user-2";
+    const ctx = ownershipCtx({ chats: [{ id: "chat-1", created_by: "user-1", },], userRole: "user", },);
+
+    expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(false,);
+  });
+
+  test("true for an admin who does not own the chat", () => {
+    globalThis.__USER_ID = "user-2";
+    const ctx = ownershipCtx({ chats: [{ id: "chat-1", created_by: "user-1", },], userRole: "admin", },);
+
+    expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(true,);
   });
 
   test("false when no activeChat", () => {
-    expect(ownershipActions.canTransferOwnership!.call(ownershipCtx({ activeChat: null, },),),).toBe(false,);
+    globalThis.__USER_ID = "user-1";
+    const ctx = ownershipCtx({ activeChat: null, chats: [{ id: "chat-1", created_by: "user-1", },], },);
+
+    expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(false,);
   });
 
   test("false when activeChat is empty string", () => {
-    expect(ownershipActions.canTransferOwnership!.call(ownershipCtx({ activeChat: "", },),),).toBe(false,);
+    globalThis.__USER_ID = "user-1";
+    const ctx = ownershipCtx({ activeChat: "", chats: [{ id: "chat-1", created_by: "user-1", },], },);
+
+    expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(false,);
+  });
+
+  test("false when the chat row carries no owner id", () => {
+    globalThis.__USER_ID = "user-1";
+    const ctx = ownershipCtx({ chats: [{ id: "chat-1", },], userRole: "user", },);
+
+    expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(false,);
   });
 },);
