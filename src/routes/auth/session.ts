@@ -54,11 +54,11 @@ async function createSessionAndCookie(
 
   const cnt = Number(existingCount?.cnt ?? 0,);
   if (cnt >= maxSessions) {
-    // Evict the oldest session by id (lowest id = oldest auto-increment)
+    // Evict the oldest session by creation time (session ids are random UUIDs)
     await database
       .deleteFrom("sessions",)
       .where("user_id", "=", userId,)
-      .orderBy("id", "asc",)
+      .orderBy("created_at", "asc",)
       .limit(1,)
       .execute();
   }

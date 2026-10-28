@@ -20,10 +20,12 @@
 import { beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import type { Config, } from "../../config/schema";
+import { UserRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertUsers, } from "../../test-utils/insert-helpers";
-import { handleLogout, handleMe, } from "./session";
+import { insertSessions, insertUsers, } from "../../test-utils/insert-helpers";
+import { createSessionAndCookie, handleLogout, handleMe, } from "./session";
 import { TOKEN_COOKIE, } from "./shared";
 
 let db: Kysely<DB>;
@@ -198,5 +200,60 @@ describe("handleLogout — forged-cookie session deletion (regression)", () => {
 
     const row = await db.selectFrom("sessions",).selectAll().where("id", "=", sessionId,).executeTakeFirst();
     expect(row,).toBeUndefined();
+  });
+});
+
+describe("createSessionAndCookie — session cap eviction order", () => {
+  /**
+   * @param maxSessionsPerUser
+   */
+  function makeConfig(maxSessionsPerUser: number,): Config {
+    return {
+      auth: {
+        required: true,
+        registrationOpen: true,
+        sessionTimeoutHours: 24,
+        maxSessionsPerUser,
+        demoUsername: "demo",
+        demoAutoSetup: false,
+        jwtSecret: "test-jwt-secret",
+        jwtExpiresIn: 86_400,
+      },
+      encryption: { enabled: false, },
+    } as unknown as Config;
+  }
+
+  test("evicts the session with the oldest created_at, not the lowest id", async () => {
+    const expires = new Date(Date.now() + 3_600_000,).toISOString();
+
+    // The ids are deliberately ordered so that "lowest id" would evict the
+    // NEWER session — session ids are random UUIDs, so only created_at is a
+    // meaningful age signal.
+    const older = await insertSessions(db, "user-alice", "jwt:zzz-older", expires, {
+      id: "zzz-older",
+      created_at: "2026-01-01T00:00:00.000Z",
+    },);
+
+    const newer = await insertSessions(db, "user-alice", "jwt:aaa-newer", expires, {
+      id: "aaa-newer",
+      created_at: "2026-02-01T00:00:00.000Z",
+    },);
+
+    const res = await createSessionAndCookie(
+      new Request("http://localhost/api/auth/login",),
+      db,
+      makeConfig(2,),
+      "user-alice",
+      UserRole.User,
+      "127.0.0.1",
+      undefined,
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const rows = await db.selectFrom("sessions",).select("id",).where("user_id", "=", "user-alice",).execute();
+    const ids = rows.map((r,) => r.id);
+    expect(ids,).not.toContain(older,);
+    expect(ids,).toContain(newer,);
   });
 });
