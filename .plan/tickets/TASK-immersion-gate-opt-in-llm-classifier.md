@@ -3,7 +3,7 @@
 
 # TASK: immersion gate opt-in llm classifier
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Epic:** epic-immersion-consistency-gate
 **Tags:** immersion
