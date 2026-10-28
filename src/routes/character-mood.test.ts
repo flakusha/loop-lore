@@ -175,6 +175,24 @@ describe("Mood CRUD — owner", () => {
     expect(Array.isArray(await res.json(),),).toBe(true,);
   });
 
+  test("GET mood/events rejects a negative limit instead of returning every event", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/mood/events?limit=-1`,),
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("GET mood/events rejects a non-numeric limit", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/mood/events?limit=abc`,),
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
   test("PUT mood returns 404 for another user's actor", async () => {
     const app = makeApp(db, OTHER_USER, "user",);
     const res = await app.handle(

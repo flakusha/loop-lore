@@ -9,7 +9,14 @@ import {
   MoodEventBody,
 } from "../../validation/schemas";
 import { checkActorOwnership, } from "../actor-auth";
-import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  HttpStatus,
+  jsonCreated,
+  jsonError,
+  jsonResponse,
+  parsePaginationParams,
+  requireUserId,
+} from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
 const OptionalString = t.Optional(t.String(),);
@@ -98,7 +105,14 @@ export function eventsRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const { actorId, } = ctx.params;
         const worldId = ctx.query.worldId;
-        const limit = ctx.query.limit;
+
+        const pagination = parsePaginationParams(
+          { size: ctx.query.limit, },
+          { defaultPageSize: 50, },
+        );
+
+        if (pagination instanceof Response) { return pagination; }
+        const { pageSize: limit, } = pagination;
 
         if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
           return jsonError({
@@ -113,6 +127,7 @@ export function eventsRoutes(opts: HandlerOpts, prefix = "/api",) {
         params: ActorIdParams,
         response: {
           200: MoodEventsListResponse,
+          400: ErrorResponse,
           401: ErrorResponse,
           404: ErrorResponse,
         },
