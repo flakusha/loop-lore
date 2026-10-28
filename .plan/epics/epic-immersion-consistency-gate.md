@@ -78,7 +78,7 @@ fiction, preserving story flow; reasons surfaced OOC only on hard-block.
 | 2 | Deterministic rule engine - actor state, skills, inventory, pending failed-check consequences | In Progress | TASK-immersion-gate-deterministic-rule-engine |
 | 3 | Failed-check enforcement - consume battle/dice outcomes to constrain follow-up actions | Done | TASK-immersion-gate-failed-check-enforcement |
 | 4 | LLM classifier (opt-in) - prose-level audit via aux-pipeline, budget-governed | Not Started | TASK-immersion-gate-opt-in-llm-classifier |
-| 5 | Refusal narration path - soft-refusal to attempted-action framing into GM/narration | Not Started | TASK-immersion-gate-refusal-narration-path |
+| 5 | Refusal narration path - soft-refusal to attempted-action framing into GM/narration | Done | TASK-immersion-gate-refusal-narration-path |
 | 6 | Config surface + audit - per-chat severity, per-rule toggles, decision log | Not Started | TASK-immersion-gate-config-surface-and-audit-log |
 
 > **All six Work Items are ticketed (2026-10-28).** Ticket files live in

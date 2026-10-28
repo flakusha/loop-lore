@@ -80,11 +80,11 @@ describe("hook registry", () => {
     expect(getRegisteredHooks(),).toHaveLength(0,);
   });
 
-  test("initDefaultHooks registers all 4 hooks", () => {
+  test("initDefaultHooks registers all 5 hooks (incl. immersion gate)", () => {
     initDefaultHooks();
     const hooks = getRegisteredHooks();
-    expect(hooks,).toHaveLength(4,);
-    expect(hooks.map((h,) => h.name),).toEqual(["mood", "emotion", "nsfw", "moderation",],);
+    expect(hooks,).toHaveLength(5,);
+    expect(hooks.map((h,) => h.name),).toEqual(["mood", "emotion", "nsfw", "moderation", "immersion-gate",],);
   });
 });
 

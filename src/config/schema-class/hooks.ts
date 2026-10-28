@@ -10,4 +10,5 @@ export const HOOKS_DEFAULTS = {
   enableNsfwHooks: true,
   enableModerationHooks: true,
   enableModerationLlmClassifier: true,
+  enableImmersionGate: true,
 } satisfies HooksConfig;

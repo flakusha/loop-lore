@@ -19,7 +19,8 @@ export type HookEventType =
   | "emotion_change"
   | "nsfw_gate"
   | "moderation_flag"
-  | "privacy_check";
+  | "privacy_check"
+  | "immersion_gate";
 
 /** */
 export interface HookContext {

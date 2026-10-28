@@ -15,4 +15,6 @@ export interface HooksConfig {
   enableModerationHooks: boolean;
   /** When true (default), moderation hook escalates/flags via the AUX LLM moderation classifier. Default true. */
   enableModerationLlmClassifier?: boolean;
+  /** Enable the fictional-consistency immersion gate (independent from content policy). Default true. */
+  enableImmersionGate?: boolean;
 }

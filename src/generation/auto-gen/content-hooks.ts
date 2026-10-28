@@ -184,6 +184,7 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
     enableEmotionHooks: true,
     enableNsfwHooks: true,
     enableModerationHooks: true,
+    enableImmersionGate: true,
   };
 
   const enabledEventTypes: HookEventType[] = [];
@@ -191,6 +192,7 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
   if (hooksConfig.enableEmotionHooks) { enabledEventTypes.push("emotion_change",); }
   if (hooksConfig.enableNsfwHooks) { enabledEventTypes.push("nsfw_gate", "privacy_check",); }
   if (hooksConfig.enableModerationHooks) { enabledEventTypes.push("moderation_flag",); }
+  if (hooksConfig.enableImmersionGate !== false) { enabledEventTypes.push("immersion_gate",); }
 
   const hookResult = await runHookChain({
     hooks: [...getRegisteredHooks(),],
