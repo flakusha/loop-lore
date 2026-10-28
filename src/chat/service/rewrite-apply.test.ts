@@ -155,6 +155,27 @@ describe("applyRewriteToMessage", () => {
     expect(row?.content_plaintext,).toBeNull();
   });
 
+  test("a client key id that is not live for the chat is rejected, not stored", async () => {
+    const stdChatId = uid();
+    await insertChats(db, "Encrypted Chat", owner, { id: stdChatId, encryption_level: "standard", } as never,);
+    const id = await seedAssistant(stdChatId, owner,);
+    const result = await applyRewriteToMessage(db, {
+      messageId: id,
+      chatId: stdChatId,
+      userId: owner,
+      userRole: null,
+      content: fakePayload("k-forged",),
+      config: testConfig,
+    },);
+
+    expect(result,).toEqual({ ok: false, error: "invalid_payload", },);
+    const row = await db.selectFrom("messages",).select(["content", "key_id",],).where("id", "=", id,)
+      .executeTakeFirst();
+
+    expect(row?.key_id,).toBeNull();
+    expect(row?.content,).not.toContain("k-forged",);
+  });
+
   test("plaintext encrypts through SMK when enabled", async () => {
     await initSmk({
       serverEncryptionKey: "c".repeat(64,),

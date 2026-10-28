@@ -12,7 +12,14 @@ import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { insertChats, } from "../test-utils/insert-helpers";
 import { generateActorKey, loadActorKeys, } from "./actor-keys";
-import { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds, isLiveChatKeyId, } from "./chat-keys";
+import {
+  deriveChatKey,
+  deriveChatKeyForChat,
+  getChatParticipantActorIds,
+  isLiveChatKeyId,
+  validateClientEncryptedPayload,
+} from "./chat-keys";
+import { compressThenEncrypt, } from "./pipeline";
 import { getSmk, initSmk, } from "./smk";
 
 const VALID_HEX_KEY = "a".repeat(64,);
@@ -251,6 +258,76 @@ describe("deriveChatKeyForChat", () => {
       const chatId = "chat-standard-tier";
       await insertChats(db, "Chat", "user-1", { id: chatId, encryption_level: "standard", } as never,);
       expect(await isLiveChatKeyId(db, chatId, "key-forged",),).toBe(false,);
+    });
+  });
+
+  /**
+   * `validateClientEncryptedPayload` is the store boundary for a client-named
+   * `key_id` (BE-1). A forged id — or the LIVE key id paired with ciphertext
+   * nobody can read — reaches `messages.key_id` as a row that can never be
+   * re-encrypted, and that wedges `rotateKeyOnLeave` for good.
+   */
+  describe("validateClientEncryptedPayload", () => {
+    /**
+     * A well-shaped encrypted envelope whose ciphertext is NOT encrypted
+     * under the chat key — the shape a forged client payload has.
+     * @param keyId
+     * @returns {string}
+     */
+    function forgedPayload(keyId: string,): string {
+      return JSON.stringify({
+        enc: Buffer.from("not-a-real-ciphertext",).toString("base64",),
+        nonce: Buffer.alloc(12,).toString("base64",),
+        algo: "aes-256-gcm",
+        key_id: keyId,
+      },);
+    }
+
+    test("a standard chat rejects a key id that is not one of its live keys — stale, so the client can retry", async () => {
+      const chatId = "chat-validate-stale";
+      await insertChats(db, "Chat", "user-1", { id: chatId, encryption_level: "standard", } as never,);
+
+      const result = await validateClientEncryptedPayload(db, chatId, forgedPayload("key-forged",),);
+
+      expect(result.ok,).toBe(false,);
+      expect(result.ok ? null : result.stale,).toBe(true,);
+    });
+
+    test("a standard chat rejects the live key id when the ciphertext does not decrypt — forged, not recoverable", async () => {
+      const chatId = "chat-validate-forged";
+      await insertChats(db, "Chat", "user-1", { id: chatId, encryption_level: "standard", } as never,);
+      const chatKey = await deriveChatKeyForChat(db, chatId, getSmkKeySafe(),);
+
+      const result = await validateClientEncryptedPayload(db, chatId, forgedPayload(chatKey.keyId,),);
+
+      expect(result.ok,).toBe(false,);
+      expect(result.ok ? null : result.stale,).toBe(false,);
+    });
+
+    test("a standard chat accepts a payload that decrypts under its live key", async () => {
+      const chatId = "chat-validate-ok";
+      await insertChats(db, "Chat", "user-1", { id: chatId, encryption_level: "standard", } as never,);
+      const chatKey = await deriveChatKeyForChat(db, chatId, getSmkKeySafe(),);
+      const payload = await compressThenEncrypt({
+        plaintext: "the quick brown fox",
+        chatKey: chatKey.key,
+        keyId: chatKey.keyId,
+      },);
+
+      expect(await validateClientEncryptedPayload(db, chatId, payload,),).toEqual({
+        ok: true,
+        keyId: chatKey.keyId,
+      },);
+    });
+
+    test("a non-standard chat accepts the payload — the server holds no key to check it against", async () => {
+      const chatId = "chat-validate-none";
+      await insertChats(db, "Chat", "user-1", { id: chatId, encryption_level: "none", } as never,);
+
+      expect(await validateClientEncryptedPayload(db, chatId, forgedPayload("key-forged",),),).toEqual({
+        ok: true,
+        keyId: "key-forged",
+      },);
     });
   });
 });
