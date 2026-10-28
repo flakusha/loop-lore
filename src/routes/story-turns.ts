@@ -13,7 +13,6 @@ import { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { can, } from "../users/permissions";
-import { parseIntOr, } from "../utils/parse-number";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonPaginated, jsonResponse, parsePaginationParams, } from "./http-utils";
