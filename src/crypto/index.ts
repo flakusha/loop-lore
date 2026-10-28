@@ -54,8 +54,9 @@ export {
   deriveChatKeyForChat,
   getChatParticipantActorIds,
   isLiveChatKeyId,
+  validateClientEncryptedPayload,
 } from "./chat-keys";
-export type { ChatKey, } from "./chat-keys";
+export type { ChatKey, ClientPayloadValidation, } from "./chat-keys";
 export { distributeKeysOnJoin, resolveChatKey, rotateKeyOnLeave, } from "./key-distribution";
 export {
   findExpiredKeys,

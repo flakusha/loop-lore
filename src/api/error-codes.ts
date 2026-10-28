@@ -20,6 +20,7 @@ export const CODE_TO_STATUS: Record<ErrorCode, HttpStatusCode> = {
   [ErrorCode.Forbidden]: HttpStatus.Forbidden,
   [ErrorCode.NotFound]: HttpStatus.NotFound,
   [ErrorCode.ValidationError]: HttpStatus.UnprocessableEntity,
+  [ErrorCode.StaleChatKey]: HttpStatus.BadRequest,
   [ErrorCode.TooManyRequests]: HttpStatus.TooManyRequests,
   [ErrorCode.ServerError]: HttpStatus.InternalServerError,
   [ErrorCode.Conflict]: HttpStatus.Conflict,

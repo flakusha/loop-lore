@@ -49,6 +49,7 @@ export const ErrorCode = {
   Forbidden: "FORBIDDEN",
   NotFound: "NOT_FOUND",
   ValidationError: "VALIDATION_ERROR",
+  StaleChatKey: "STALE_CHAT_KEY",
   TooManyRequests: "TOO_MANY_REQUESTS",
   ServerError: "SERVER_ERROR",
   Conflict: "CONFLICT",
@@ -99,6 +100,22 @@ export class BadRequestError extends Error {
   constructor(msg = "Bad request", options?: ErrorOptions,) {
     super(msg, options,);
     this.name = "BadRequestError";
+  }
+}
+
+/**
+ * A client-supplied encrypted payload named a key that is not live for this
+ * chat — the chat key was rotated when a participant left. RECOVERABLE: the
+ * client refetches the key, re-encrypts the plaintext and retries.
+ */
+export class StaleChatKeyError extends Error {
+  /**
+   * @param msg
+   * @param options
+   */
+  constructor(msg = "Stale chat key", options?: ErrorOptions,) {
+    super(msg, options,);
+    this.name = "StaleChatKeyError";
   }
 }
 

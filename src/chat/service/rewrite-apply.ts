@@ -12,17 +12,17 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import {
   encryptMessageContent,
-  extractKeyIdFromPayload,
   getSmk,
   isEncryptedPayload,
   isEncryptionEnabled,
+  validateClientEncryptedPayload,
 } from "../../crypto";
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 
 /** Write-back failure modes: missing row, wrong author, or wrong chat. */
-export type RewriteApplyError = "not_found" | "forbidden" | "cross_chat";
+export type RewriteApplyError = "not_found" | "forbidden" | "cross_chat" | "invalid_payload";
 
 /** Options for {@link applyRewriteToMessage}. */
 export interface RewriteApplyOptions {
@@ -65,7 +65,12 @@ export async function applyRewriteToMessage(
   let storedKeyId: string | null = null;
   let storedPlaintext: string | null = trimmed;
   if (isEncryptedPayload(trimmed,)) {
-    storedKeyId = extractKeyIdFromPayload(trimmed,);
+    // A client-supplied key id must name a live key of THIS chat and the
+    // payload must decrypt under it (BE-1) — the same store boundary the
+    // POST/PATCH paths enforce.
+    const check = await validateClientEncryptedPayload(db, msg.chat_id, trimmed,);
+    if (!check.ok) { return { ok: false, error: "invalid_payload", }; }
+    storedKeyId = check.keyId;
     storedPlaintext = null;
   } else if (isEncryptionEnabled()) {
     const enc = await encryptMessageContent({

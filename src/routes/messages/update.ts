@@ -6,10 +6,10 @@ import { deleteMessageTranslations, } from "../../chat/message-translations";
 import { checkChatAccess, getMessageWithAccess, } from "../../chat/service";
 import {
   encryptMessageContent,
-  extractKeyIdFromPayload,
   getSmk,
   isEncryptedPayload,
   isEncryptionEnabled,
+  validateClientEncryptedPayload,
 } from "../../crypto";
 import type { ContentEncoding, } from "../../db/enums";
 import { can, } from "../../users/permissions";
@@ -140,8 +140,20 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         let storedPlaintext: string | null = trimmed;
 
         if (isEncryptedPayload(trimmed,)) {
+          // A client-supplied key id must name a live key of THIS chat and the
+          // payload must decrypt under it (BE-1) — the same store boundary the
+          // POST path enforces.
+          const check = await validateClientEncryptedPayload(database, msg.chat_id, trimmed,);
+          if (!check.ok) {
+            return jsonError({
+              message: check.reason,
+              status: HttpStatus.BadRequest,
+              code: check.stale ? ErrorCode.StaleChatKey : ErrorCode.BadRequest,
+            },);
+          }
+
           storedContent = trimmed;
-          storedKeyId = extractKeyIdFromPayload(trimmed,);
+          storedKeyId = check.keyId;
           storedPlaintext = null;
         } else if (isEncryptionEnabled()) {
           const smk = getSmk()!;
