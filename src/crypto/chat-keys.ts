@@ -20,6 +20,8 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { decryptBytes, encryptBytes, } from "./actor-key-bytes";
 import type { ActorKeyData, } from "./actor-keys";
+import { decryptThenDecompress, extractKeyIdFromPayload, } from "./pipeline";
+import { getSmk, } from "./smk";
 
 const HKDF_INFO = "loop-lore-chat-key-v1";
 
@@ -236,4 +238,88 @@ export async function deriveChatKeyForChat(
   );
 
   return { key, keyId: id, rawKey, };
+}
+
+/**
+ * Outcome of validating a client-supplied encrypted payload.
+ *
+ * `stale` marks the RECOVERABLE rejection: the payload named a key that is
+ * not live for this chat (the chat key was rotated when a participant left),
+ * so the client can refetch the key, re-encrypt and retry. A `stale: false`
+ * rejection is a forged payload — refetching would not help.
+ */
+export type ClientPayloadValidation =
+  | { ok: true; keyId: string }
+  | { ok: false; reason: string; stale: boolean };
+
+/**
+ * Validate a client-supplied encrypted payload before it is stored.
+ *
+ * The `key_id` in the envelope is CLIENT supplied, and it used to reach
+ * `messages.key_id` unvalidated. A forged id — or the LIVE key id paired
+ * with ciphertext nobody can decrypt — produced a row that wedged
+ * `rotateKeyOnLeave` forever: the chat could never be rotated again, so the
+ * removed member kept the live key (BE-1).
+ *
+ * A `standard`-tier chat holds a server-side chat key, so the server can
+ * check BOTH halves of the claim: the id must name a live key of THIS chat,
+ * and the payload must actually decrypt under it. `at-rest` / `none` chats
+ * use a key the server never sees and never rotates — there is nothing to
+ * verify there.
+ * @param database
+ * @param chatId
+ * @param payload
+ * @returns {Promise<ClientPayloadValidation>}
+ */
+export async function validateClientEncryptedPayload(
+  database: Kysely<DB>,
+  chatId: string,
+  payload: string,
+): Promise<ClientPayloadValidation> {
+  const keyId = extractKeyIdFromPayload(payload,);
+  if (!keyId) {
+    return { ok: false, reason: "Encrypted content names no key", stale: false, };
+  }
+
+  if (!(await isLiveChatKeyId(database, chatId, keyId,))) {
+    return {
+      ok: false,
+      reason: "Encrypted content names a key that is not a live key of this chat",
+      stale: true,
+    };
+  }
+
+  const chat = await database
+    .selectFrom("chats",)
+    .select("encryption_level",)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+
+  // No chat row, or a chat whose key the server never holds: nothing to verify.
+  if (!chat || chat.encryption_level !== "standard") { return { ok: true, keyId, }; }
+
+  const smk = getSmk();
+  if (!smk) {
+    return { ok: false, reason: "Encryption is not configured on this server", stale: false, };
+  }
+
+  const chatKey = await getChatKeyById(database, keyId, smk,);
+  if (!chatKey) {
+    return { ok: false, reason: "Encrypted content names an unreadable chat key", stale: false, };
+  }
+
+  // The id is live, so the payload must decrypt under it. A live id paired
+  // with garbage ciphertext is the other half of the wedge: it would be
+  // stored as a row nobody can decrypt (BE-1).
+  try {
+    await decryptThenDecompress(payload, chatKey.key,);
+  } catch {
+    return {
+      ok: false,
+      reason: "Encrypted content cannot be decrypted with the chat key",
+      stale: false,
+    };
+  }
+
+  return { ok: true, keyId, };
 }
