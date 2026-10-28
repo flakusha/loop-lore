@@ -2096,3 +2096,15 @@ export interface AssistantQuotaUsage {
   window_start: string;
   used_units: Generated<number>;
 }
+
+// ── immersion_failed_checks ────────────────────────────────────────────
+export interface ImmersionFailedChecks {
+  id: Generated<string>;
+  chat_id: string;
+  actor_id: string;
+  blocked_action: string;
+  reason: string;
+  source: Generated<string>;
+  created_at: Generated<string>;
+  resolved_at: string | null;
+}
