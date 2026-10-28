@@ -16,7 +16,7 @@ import { can, } from "../users/permissions";
 import { parseIntOr, } from "../utils/parse-number";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { HttpStatus, jsonPaginated, jsonResponse, } from "./http-utils";
+import { HttpStatus, jsonPaginated, jsonResponse, parsePaginationParams, } from "./http-utils";
 
 /**
  * @param database
@@ -64,9 +64,15 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
       }
 
       const searchParams = new URL(request.url,).searchParams;
-      const page = parseIntOr(searchParams.get("page",) ?? "1", 1,);
-      const pageSize = parseIntOr(searchParams.get("pageSize",) ?? "50", 50,);
-      const offset = (page - 1) * pageSize;
+
+      const pagination = parsePaginationParams(
+        { page: searchParams.get("page",), size: searchParams.get("pageSize",), },
+        { defaultPageSize: 50, },
+      );
+
+      if (pagination instanceof Response) { return pagination; }
+
+      const { page, pageSize, offset, } = pagination;
 
       const countResult = await opts.database
         .selectFrom("story_turns",)
@@ -89,6 +95,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
     }, {
       response: {
         200: SuccessResponse,
+        400: ErrorResponse,
         401: ErrorResponse,
         404: ErrorResponse,
       },
