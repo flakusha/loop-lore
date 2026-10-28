@@ -3,7 +3,7 @@
 
 # BUG: Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation
 
-**Status:** Done
+**Status:** In Progress
 **Status Note:** [2026-10-28 triage reopen] NOT-FIXED — the previous close claimed "every named site is now cast-free"; that claim is false. Live scope: five `src/routes/entity-routes/` files still cast to `any` (23 `as any` hits across them — 1 in context.ts, 5 in get.ts, 5 in list.ts, 6 in remove.ts, 6 in update.ts):
 - `src/routes/entity-routes/context.ts:59` — `(database as any)`.
 - `src/routes/entity-routes/get.ts:27-31`, `list.ts:26-30`, `remove.ts:26-30` (+`:57`), `update.ts:29-34` — `ctx` / `ctx.params` / `opts.database` cast to `any`.
@@ -68,5 +68,3 @@ Source: .tmp/longcat/review-consolidated.md nits 28, 29, 30, 31, 32, 33; .tmp/ca
 - [ ] Documentation updated
 
 **Reopened:** 2026-10-26 — the registry close (git issue 6ab31ad, tip d76e8d0c8) was premature: the sites above were still cast-escaped on dev.
-
-**Resolved:** 2026-10-28 registry-driven close: git issue 6ab31ad (registry tip: d2023bec1 Konstantin Fedotov Auto-closed: ticket BUG-ROUTE-AND-BOOTSTRAP-BOUNDARIES-USE-RAW-AS-ANY-C)
