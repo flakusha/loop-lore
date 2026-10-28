@@ -8,11 +8,14 @@
  * execution, system-message persistence, unhandled passthrough) plus the
  * shared chat-context helpers used by both the slash and GM tool paths.
  */
-import { beforeAll, describe, expect, it, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { parseCommand, } from "../../assistant/command-parser";
+import { registerCommand, } from "../../assistant/commands/registry";
 import type { Config, } from "../../config/schema";
 import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { getLogger, type Logger, setGlobalLogger, } from "../../logger";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
@@ -120,5 +123,109 @@ describe("dispatchCommand", () => {
     const { db, chatId, userId, } = await setup();
     const outcome = await dispatchCommand(db, config, userId, chatId, "/definitely-not-a-command",);
     expect(outcome.handled,).toBe(false,);
+  });
+});
+
+describe("invocation audit", () => {
+  interface AuditEntry {
+    level: string;
+    message: string;
+    meta?: Record<string, unknown>;
+  }
+
+  const entries: AuditEntry[] = [];
+  let priorLogger: Logger | undefined;
+
+  /** Capture-only logger implementing the full Logger interface (the spread
+   * of a class instance drops prototype methods like trace, which
+   * parseCommand's internal logging calls). */
+  class AuditCaptureLogger implements Logger {
+    trace(message: string, meta?: Record<string, unknown>,): void {
+      entries.push({ level: "trace", message, meta, },);
+    }
+    debug(message: string, meta?: Record<string, unknown>,): void {
+      entries.push({ level: "debug", message, meta, },);
+    }
+    info(message: string, meta?: Record<string, unknown>,): void {
+      entries.push({ level: "info", message, meta, },);
+    }
+    warn(message: string, meta?: Record<string, unknown>,): void {
+      entries.push({ level: "warn", message, meta, },);
+    }
+    error(message: string, error?: Error, meta?: Record<string, unknown>,): void {
+      entries.push({ level: "error", message, meta: { ...meta, error: error?.message, }, },);
+    }
+    fatal(message: string, error?: Error, meta?: Record<string, unknown>,): void {
+      entries.push({ level: "fatal", message, meta: { ...meta, error: error?.message, }, },);
+    }
+    child(): Logger {
+      return this;
+    }
+    addTransport(): void {}
+    setBindings(): void {}
+    setLevel(): void {}
+    flush(): Promise<void> {
+      return Promise.resolve();
+    }
+  }
+
+  afterAll(() => {
+    if (priorLogger) { setGlobalLogger(priorLogger,); }
+  },);
+
+  /** Swap in the capture logger (entries reset per test). */
+  function captureAudit(): void {
+    entries.length = 0;
+    priorLogger = getLogger();
+    setGlobalLogger(new AuditCaptureLogger(),);
+  }
+
+  function auditEvents(): Array<Record<string, unknown>> {
+    return entries
+      .filter((e,) => e.meta?.event === "assistant_command_invoked")
+      .map((e,) => e.meta!);
+  }
+
+  it("emits one structured event with command, user, args, and a stable hash", async () => {
+    const { db, chatId, userId, } = await setup();
+    captureAudit();
+    try {
+      await dispatchCommand(db, config, userId, chatId, "/narrate The sky darkens.",);
+      const events = auditEvents();
+      expect(events,).toHaveLength(1,);
+
+      const [event,] = events;
+      expect(event.command,).toBe("narrate",);
+      expect(event.userId,).toBe(userId,);
+      expect(event.args,).toEqual(parseCommand("/narrate The sky darkens.",)!.args,);
+      expect(event.outputHash,).toMatch(/^[0-9a-f]{64}$/,);
+
+      // Determinism: identical dispatch → identical hash (replay detection).
+      const { db: db2, chatId: chatId2, userId: userId2, } = await setup();
+      await dispatchCommand(db2, config, userId2, chatId2, "/narrate The sky darkens.",);
+      expect(auditEvents(),).toHaveLength(2,);
+      expect(auditEvents()[1]!.outputHash,).toBe(event.outputHash,);
+    } finally {
+      if (priorLogger) { setGlobalLogger(priorLogger,); }
+    }
+  });
+
+  it("still audits when the handler throws — the failure result is hashed", async () => {
+    registerCommand("audit-throw-probe", async () => {
+      throw new Error("probe failure",);
+    },);
+
+    const { db, chatId, userId, } = await setup();
+    captureAudit();
+    try {
+      const outcome = await dispatchCommand(db, config, userId, chatId, "/audit-throw-probe",);
+      expect(outcome.handled,).toBe(true,);
+      const events = auditEvents();
+      expect(events,).toHaveLength(1,);
+      expect(events[0]!.command,).toBe("audit-throw-probe",);
+      expect(events[0]!.outputHash,).toMatch(/^[0-9a-f]{64}$/,);
+    } finally {
+      if (priorLogger) { setGlobalLogger(priorLogger,); }
+    }
   });
 });
