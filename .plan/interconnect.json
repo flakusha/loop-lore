@@ -18976,7 +18976,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-e2e.md",
       "title": "Assistant Entity Access E2E Tests",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": [
         "epic-assistant-entity-access"
@@ -19005,7 +19005,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md",
       "title": "Assistant Entity Access Quota Engine",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/quota/engine.ts",
         "src/assistant/quota/errors.ts",
