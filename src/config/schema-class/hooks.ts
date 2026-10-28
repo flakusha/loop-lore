@@ -11,4 +11,7 @@ export const HOOKS_DEFAULTS = {
   enableModerationHooks: true,
   enableModerationLlmClassifier: true,
   enableImmersionGate: true,
+  // Opt-in LLM audit of immersion verdicts: DEFAULT OFF (epic truth — the
+  // default path stays deterministic and fast).
+  enableImmersionLlmClassifier: false,
 } satisfies HooksConfig;

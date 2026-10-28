@@ -20,6 +20,11 @@ export const hooks = {
       default: true,
       description: "LLM moderation verdict alongside keyword scan",
     },
+    enableImmersionLlmClassifier: {
+      type: "boolean",
+      default: false,
+      description: "Opt-in prose-level LLM audit of immersion gate verdicts (downgrade-only)",
+    },
   },
   required: ["enableMoodHooks", "enableEmotionHooks", "enableNsfwHooks", "enableModerationHooks",],
 };
