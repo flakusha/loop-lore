@@ -629,6 +629,16 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text",),
     updated_at: col("text",),
   },)
+  .table("immersion_failed_checks", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    chat_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    blocked_action: col("text", { notNull: true, },),
+    reason: col("text", { notNull: true, },),
+    source: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    resolved_at: col("text",),
+  },)
   .table("instance_storage_budgets", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     asset_class: col("text", { notNull: true, hasDefault: true, },),

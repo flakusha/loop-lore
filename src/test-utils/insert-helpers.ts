@@ -6099,6 +6099,28 @@ export async function insertCharacterTraitAssignments(
   return id;
 }
 
+/** Insert a immersion_failed_checks row. */
+export async function insertImmersionFailedChecks(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  blocked_action: string,
+  reason: string,
+  opts?: { id?: string; source?: string; created_at?: string; resolved_at?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("immersion_failed_checks",).values({
+    id,
+    chat_id,
+    actor_id,
+    blocked_action,
+    reason,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
 /** Insert a assistant_quota_usage row. */
 export async function insertAssistantQuotaUsage(
   db: Db,
