@@ -4,14 +4,19 @@
 /**
  * Per-user quota storage for assistant entity-access operations.
  *
- * In-process fixed-window counters (the `performance-quota.ts` cell
- * pattern): O(1) check-and-deduct, lazy window reset, no schema change —
- * the epic explicitly must not need a migration, and the ticket's `quota`
- * table row is deferred until cross-process quotas are actually required.
- * Limits come from {@link "src/assistant/quota/engine".configureAssistantQuota}.
+ * Two backends behind one synchronous interface:
+ * - DB-backed (default when a sqlite handle is available): persistent
+ *   fixed-window counters in `assistant_quota_usage` — cross-process safe,
+ *   see {@link "src/assistant/quota/db-storage"}.
+ * - In-process per-user counters (the `performance-quota.ts` cell pattern):
+ *   the fallback for unit suites without a DB handle.
+ *
+ * The configure/reset hooks operate on whichever backend is active; limits
+ * come from {@link "src/assistant/quota/engine".configureAssistantQuota}.
  */
 
 import { ASSISTANT_QUOTA_DEFAULTS, } from "../../config/sections/assistant";
+import { clearQuotaDb, consumeQuotaDb, quotaDatabase, resetQuotaDbUser, } from "./db-storage";
 
 /** One user's window state. */
 export interface QuotaWindow {
@@ -37,14 +42,16 @@ const settings: QuotaStorageOptions = {
 const windows = new Map<string, QuotaWindow>();
 
 /**
- * Replace the storage settings and drop all counters (deterministic tests,
- * admin reconfiguration).
+ * Replace the storage settings and drop all counters on the ACTIVE backend
+ * (deterministic tests, admin reconfiguration).
  * @param options - the new window length and per-window limit
  */
 export function configureQuotaStorage(options: QuotaStorageOptions,): void {
   settings.windowMs = options.windowMs;
   settings.limitPerWindow = options.limitPerWindow;
   windows.clear();
+  const db = quotaDatabase();
+  if (db) { clearQuotaDb(db,); }
 }
 
 /**
@@ -56,13 +63,27 @@ export function quotaStorageOptions(): QuotaStorageOptions {
 }
 
 /**
- * Check-and-deduct atomically for one user, lazily resetting the window.
+ * Check-and-deduct atomically for one user on the ACTIVE backend, lazily
+ * resetting the window. The DB-backed deduction is a single guarded upsert
+ * ({@link consumeQuotaDb}) so concurrent deductions cannot overshoot.
  * @param userId - authenticated caller
  * @param cost - units the operation consumes
  * @param now - current epoch ms (injectable for deterministic tests)
  * @returns the remaining units AFTER deduction, or null when the cost does not fit
  */
 export function consumeQuota(userId: string, cost: number, now: number,): number | null {
+  const db = quotaDatabase();
+  if (db) {
+    return consumeQuotaDb({
+      cost,
+      db,
+      limitPerWindow: settings.limitPerWindow,
+      now,
+      userId,
+      windowMs: settings.windowMs,
+    },);
+  }
+
   const current = windows.get(userId,);
   const active = current && now - current.windowStart < settings.windowMs
     ? current
@@ -76,9 +97,11 @@ export function consumeQuota(userId: string, cost: number, now: number,): number
 }
 
 /**
- * Drop one user's counters (tests; admin reset).
+ * Drop one user's counters on the ACTIVE backend (tests; admin reset).
  * @param userId - user whose window is dropped
  */
 export function resetUserQuota(userId: string,): void {
   windows.delete(userId,);
+  const db = quotaDatabase();
+  if (db) { resetQuotaDbUser(db, userId,); }
 }
