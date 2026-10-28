@@ -74,8 +74,8 @@ fiction, preserving story flow; reasons surfaced OOC only on hard-block.
 
 | # | Work Item | Status | Ticket |
 | - | --------- | ------ | ------ |
-| 1 | Claim extraction - detect action/skill/item/movement claims (regex + aux) | Not Started | TASK-immersion-gate-claim-extraction |
-| 2 | Deterministic rule engine - actor state, skills, inventory, pending failed-check consequences | Not Started | TASK-immersion-gate-deterministic-rule-engine |
+| 1 | Claim extraction - detect action/skill/item/movement claims (regex + aux) | In Progress | TASK-immersion-gate-claim-extraction |
+| 2 | Deterministic rule engine - actor state, skills, inventory, pending failed-check consequences | In Progress | TASK-immersion-gate-deterministic-rule-engine |
 | 3 | Failed-check enforcement - consume battle/dice outcomes to constrain follow-up actions | Not Started | TASK-immersion-gate-failed-check-enforcement |
 | 4 | LLM classifier (opt-in) - prose-level audit via aux-pipeline, budget-governed | Not Started | TASK-immersion-gate-opt-in-llm-classifier |
 | 5 | Refusal narration path - soft-refusal to attempted-action framing into GM/narration | Not Started | TASK-immersion-gate-refusal-narration-path |
