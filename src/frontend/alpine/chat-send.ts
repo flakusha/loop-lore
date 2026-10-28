@@ -14,6 +14,7 @@
  * names toast (with a did-you-mean hint when close) and never send.
  */
 
+import { ErrorCode, } from "../../api/error-codes";
 import { browserCompressThenEncrypt, browserRandomUUIDv7, } from "../browser";
 import { isVnDecisionPending, } from "../vn/pending-decision";
 import { requireActiveChat, } from "./chat-guards";
@@ -27,6 +28,14 @@ const log = rootLog.child({ module: "chat", },);
 
 /** Counter prefix marker for optimistic temp ids; the full id embeds a UUIDv7. */
 const TEMP_PREFIX = "tmp-";
+
+/** Error envelope the API answers a rejected request with. */
+interface ApiErrorBody {
+  error?: string;
+  code?: string;
+  id?: string;
+  data?: { sceneIndex?: number };
+}
 
 /**
  * Build request body for sendMessage (handles encryption + attachments).
@@ -170,12 +179,11 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
     // (10s window) and the DB unique index (migration 045) then coalesce the
     // same logical turn instead of minting independent keys per layer.
     const idempotencyKey = crypto.randomUUID();
-    const body = await buildSendBody(this, text, msgs, pendingAssets,);
-    body.idempotencyKey = idempotencyKey;
+    const postMessage = async () => {
+      const body = await buildSendBody(this, text, msgs, pendingAssets,);
+      body.idempotencyKey = idempotencyKey;
 
-    this.isGenerating = true;
-    try {
-      const res = await apiFetch(
+      return await apiFetch(
         `/api/v1/chats/${this.activeChat}/messages`,
         {
           method: "POST",
@@ -184,6 +192,30 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
           idempotencyKey,
         } as Parameters<typeof apiFetch>[1],
       );
+    };
+
+    this.isGenerating = true;
+    try {
+      let res = await postMessage();
+      let failure: ApiErrorBody | null = null;
+      if (!res.ok) {
+        failure = await res.json() as ApiErrorBody;
+
+        // A stale chat key is recoverable ONCE: the chat key was rotated when
+        // a participant left, so the cached key id is no longer live for this
+        // chat. Refetch the key and REBUILD the body from the plaintext — the
+        // ciphertext is bound to the old raw key, so re-sending the same bytes
+        // would store a message nobody can decrypt. A refetch that yields no
+        // key is not retried: posting the plaintext would silently downgrade
+        // the chat to an unencrypted send.
+        if (failure.code === ErrorCode.StaleChatKey && this._encryptionEnabled) {
+          await this.loadChatKey(this.activeChat, this._activeChatEncryptionLevel,);
+          if (this._encryptionEnabled && this._chatKey && this._keyId) {
+            res = await postMessage();
+            failure = res.ok ? null : await res.json() as ApiErrorBody;
+          }
+        }
+      }
 
       if (res.ok) {
         this.pendingAssets = [];
@@ -225,7 +257,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
       } else {
         this.isGenerating = false;
         this._autoFired = false;
-        const err = await res.json();
+        const err: ApiErrorBody = failure ?? {};
         // A 503 carrying a persisted id means the user message was stored
         // but the assistant reply failed — reconcile instead of duplicating.
         if (err.id) {
@@ -250,7 +282,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         if (res.status === 409 && Number.isInteger(err.data?.sceneIndex,)) {
           globalThis.dispatchEvent(
             new CustomEvent("vn:navigate-to-scene", {
-              detail: { sceneIndex: err.data.sceneIndex as number, },
+              detail: { sceneIndex: err.data?.sceneIndex as number, },
             },),
           );
         }
