@@ -3780,3 +3780,17 @@ export const ImmersionFailedChecksSchema = t.Object({
   created_at: t.Optional(t.String(),),
   resolved_at: t.Optional(t.String(),),
 },);
+
+// ── immersion_decision_log ────────────────────────────────────────────
+export const ImmersionDecisionLogSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  severity: t.String(),
+  source: t.Optional(t.String(),),
+  rule_id: t.Optional(t.String(),),
+  engine: t.Optional(t.String(),),
+  claims: t.Optional(t.String(),),
+  state_snapshot: t.Optional(t.String(),),
+  verdict: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);

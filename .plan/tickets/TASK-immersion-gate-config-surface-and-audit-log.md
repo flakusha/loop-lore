@@ -3,7 +3,7 @@
 
 # TASK: immersion gate config surface and audit log
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Epic:** epic-immersion-consistency-gate
 **Tags:** immersion

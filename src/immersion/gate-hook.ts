@@ -27,7 +27,9 @@ import { getLogger, } from "../logger";
 import { emitPluginEvent, } from "../plugins/event-bus";
 import { registry, } from "../plugins/registry";
 import type { EventHandlerDefinition, } from "../plugins/types";
+import { recordImmersionDecision, } from "./decision-log";
 import { createImmersionGate, } from "./engine";
+import { resolveImmersionGateConfig, } from "./gate-config";
 import { buildAnnotateHint, buildSoftRefuseFraming, gateVerdictEventPayload, } from "./narration";
 import type { ImmersionGateConfig, } from "./types";
 import { GateSeverity, } from "./types";
@@ -98,14 +100,29 @@ export class ImmersionGateHook implements HookHandler {
   private async evaluateVerdict(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger().child({ module: "immersion-gate-hook", },);
     const db: Kysely<DB> = context.db;
-    const worldId = await resolveWorldId(db, context.chatId,);
+    const chatState = await db
+      .selectFrom("chats",)
+      .select(["world_id", "gm_config",],)
+      .where("id", "=", context.chatId,)
+      .executeTakeFirst();
 
-    const gate = createImmersionGate({ db, config: this.config, },);
+    const worldId = chatState?.world_id ?? null;
+    // Per-chat severity/toggles (WI-6): explicit deps config wins.
+    const chatConfig = this.config ?? resolveImmersionGateConfig(chatState?.gm_config ?? null,);
+
+    const gate = createImmersionGate({ db, config: chatConfig, },);
     const verdict = await gate.evaluate({
       chatId: context.chatId,
       actorId: context.actorId,
       worldId,
       content,
+    },);
+
+    await recordImmersionDecision(db, {
+      chatId: context.chatId,
+      actorId: context.actorId,
+      source: "hook",
+      verdict,
     },);
 
     await emitPluginEvent(
@@ -153,15 +170,4 @@ export class ImmersionGateHook implements HookHandler {
       data: { verdict: "hard-block", verdict_severity: verdict.severity, ruleId: verdict.ruleId, skipOffered: true, },
     };
   }
-}
-
-/** Resolve the chat's world (null when the chat is worldless). */
-async function resolveWorldId(db: Kysely<DB>, chatId: string,): Promise<string | null> {
-  const row = await db
-    .selectFrom("chats",)
-    .select("world_id",)
-    .where("id", "=", chatId,)
-    .executeTakeFirst();
-
-  return row?.world_id ?? null;
 }

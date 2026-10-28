@@ -2108,3 +2108,18 @@ export interface ImmersionFailedChecks {
   created_at: Generated<string>;
   resolved_at: string | null;
 }
+
+// ── immersion_decision_log ────────────────────────────────────────────
+export interface ImmersionDecisionLog {
+  id: Generated<string>;
+  chat_id: string;
+  actor_id: string;
+  source: Generated<string>;
+  severity: string;
+  rule_id: string | null;
+  engine: Generated<string>;
+  claims: Generated<string>;
+  state_snapshot: Generated<string>;
+  verdict: Generated<string>;
+  created_at: Generated<string>;
+}
