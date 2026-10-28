@@ -239,4 +239,5 @@ export interface DB {
   character_stat_allocation: import("./schema-core").CharacterStatAllocation;
   character_trait_assignments: import("./schema-core").CharacterTraitAssignments;
   assistant_quota_usage: import("./schema-core").AssistantQuotaUsage;
+  immersion_failed_checks: import("./schema-core").ImmersionFailedChecks;
 }

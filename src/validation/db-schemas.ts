@@ -3769,3 +3769,14 @@ export const AssistantQuotaUsageSchema = t.Object({
   user_id: t.Optional(t.String(),),
   used_units: t.Optional(t.Number(),),
 },);
+
+// ── immersion_failed_checks ────────────────────────────────────────────
+export const ImmersionFailedChecksSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  blocked_action: t.String(),
+  reason: t.String(),
+  source: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  resolved_at: t.Optional(t.String(),),
+},);

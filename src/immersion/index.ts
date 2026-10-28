@@ -14,6 +14,14 @@
 export { createImmersionGate, } from "./engine";
 export type { ImmersionGate, ImmersionGateDeps, PendingConsequenceLoader, } from "./engine";
 export { extractClaims, } from "./extract-claims";
+export {
+  dbPendingConsequenceLoader,
+  loadOpenFailedChecks,
+  MAX_PENDING_CONSEQUENCES,
+  recordFailedCheck,
+  resolveFailedCheck,
+} from "./pending-consequences";
+export type { FailedCheckSource, } from "./pending-consequences";
 export { evaluateRules, } from "./rules";
 export { buildActorStateSnapshot, deriveRestricted, } from "./state-snapshot";
 export {

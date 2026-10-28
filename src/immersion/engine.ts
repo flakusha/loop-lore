@@ -19,6 +19,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { extractClaims, } from "./extract-claims";
+import { dbPendingConsequenceLoader, } from "./pending-consequences";
 import { evaluateRules, } from "./rules";
 import { buildActorStateSnapshot, } from "./state-snapshot";
 import {
@@ -42,7 +43,7 @@ export interface ImmersionGateDeps {
   readonly db: Kysely<DB>;
   /** Rule configuration; defaults when omitted (P4 wires the per-chat surface). */
   readonly config?: ImmersionGateConfig;
-  /** Pending failed-check consequence provider; none when omitted. */
+  /** Pending failed-check consequence provider; the DB store (`immersion_failed_checks`) when omitted and a db is provided. */
   readonly loadPendingConsequences?: PendingConsequenceLoader;
 }
 
@@ -66,13 +67,15 @@ export interface ImmersionGate {
 export function createImmersionGate(deps: ImmersionGateDeps,): ImmersionGate {
   const { db, config = DEFAULT_IMMERSION_CONFIG, loadPendingConsequences, } = deps;
   const log = getLogger().child({ module: "immersion-gate", },);
+  const pendingLoader = loadPendingConsequences ??
+    (db ? dbPendingConsequenceLoader(db,) : undefined);
 
   return {
     async evaluate(input: GateInput,): Promise<GateVerdict> {
       const claims = extractClaims({ content: input.content, },);
 
-      const pendingConsequences = loadPendingConsequences
-        ? await loadPendingConsequences(input,)
+      const pendingConsequences = pendingLoader
+        ? await pendingLoader(input,)
         : [];
 
       const stateSnapshot = await buildActorStateSnapshot({
