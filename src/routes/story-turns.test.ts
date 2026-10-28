@@ -89,4 +89,28 @@ describe("storyTurnsRoutes — pagination", () => {
     expect(body.data.length,).toBe(2,);
     expect(body.pagination.total,).toBe(5,);
   });
+
+  test("serves a single turn of an owned chat", async () => {
+    const app = makeApp(USER,);
+    const listed = await app.handle(new Request("http://localhost/api/chats/" + CHAT + "/story-turns",),);
+    const body = await listed.json() as { data: { id: string }[] };
+    const turnId = body.data[0]!.id;
+
+    const res = await app.handle(
+      new Request("http://localhost/api/chats/" + CHAT + "/story-turns/" + turnId,),
+    );
+
+    expect(res.status,).toBe(200,);
+    const turn = await res.json() as { id: string };
+    expect(turn.id,).toBe(turnId,);
+  });
+
+  test("answers 404 for an unknown turn id", async () => {
+    const app = makeApp(USER,);
+    const res = await app.handle(
+      new Request("http://localhost/api/chats/" + CHAT + "/story-turns/00000000-0000-4000-8000-0000000000ee",),
+    );
+
+    expect(res.status,).toBe(404,);
+  });
 });
