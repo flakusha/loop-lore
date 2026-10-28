@@ -223,6 +223,63 @@ describe("pendingFailedCheck", () => {
       config: DEFAULT_IMMERSION_CONFIG,
     },),).toEqual([],);
   });
+
+  test("failed skill check constrains the matching skill claim", () => {
+    const snapshot: ActorStateSnapshot = {
+      ...ALLOWED_SNAPSHOT,
+      pendingConsequences: [{
+        id: "fc-stealth-1",
+        blockedAction: "stealth",
+        reason: "the twig snapped underfoot",
+      },],
+    };
+
+    const claim: ExtractedClaim = {
+      kind: "skill",
+      skill: "stealth",
+      text: "I sneak behind the crates",
+      matchIndex: 0,
+    };
+
+    const findings = evaluateRules({
+      claims: [claim,],
+      snapshot,
+      config: DEFAULT_IMMERSION_CONFIG,
+    },);
+
+    expect(findings[0]?.ruleId,).toBe(GateRuleId.PendingFailedCheck,);
+    expect(findings[0]?.reason,).toContain("fc-stealth-1",);
+  });
+
+  test("failed item check constrains item claims by item name or action", () => {
+    const snapshot: ActorStateSnapshot = {
+      ...ALLOWED_SNAPSHOT,
+      pendingConsequences: [{
+        id: "fc-lockpick-1",
+        blockedAction: "iron lockpick",
+        reason: "the pick snapped in the lock",
+      },],
+    };
+
+    const claim: ExtractedClaim = {
+      kind: "item",
+      action: "use",
+      item: "iron lockpick",
+      text: "I use the iron lockpick",
+      matchIndex: 0,
+    };
+
+    const findings = evaluateRules({
+      claims: [claim,],
+      snapshot,
+      config: DEFAULT_IMMERSION_CONFIG,
+    },);
+
+    // "iron lockpick" is also not in ALLOWED_SNAPSHOT inventory, so two
+    // independent rules fire; assert the pending-consequence one directly.
+    const finding = findings.find((f,) => f.ruleId === GateRuleId.PendingFailedCheck);
+    expect(finding?.reason,).toContain("fc-lockpick-1",);
+  });
 });
 
 describe("evaluateRules ordering", () => {

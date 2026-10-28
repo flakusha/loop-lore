@@ -37,10 +37,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
-  await database.schema
-    .dropIndex("idx_immersion_failed_checks_open",)
-    .on("immersion_failed_checks",)
-    .execute();
+  // SQLite DROP INDEX takes no ON clause (Kysely's `.on()` emits MySQL syntax).
+  await database.schema.dropIndex("idx_immersion_failed_checks_open",).execute();
 
   await database.schema.dropTable("immersion_failed_checks",).execute();
 }
