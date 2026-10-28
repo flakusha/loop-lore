@@ -3,7 +3,8 @@
 
 # BUG: Three pagination sites still parse a limit by hand, so LIMIT -1 returns the whole table and a bad limit is a 500
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** [2026-10-28 triage] FIXED — filed against the 2026-10-25 triage snapshot, but the parallel fixes landed first: `d5dec33aa` (character-mood/events.ts:109-112), `675b57cec` (nsfw-moderation/appeals.ts:100-103) and `0c48e1cb5` (story-turns.ts:67-70) now route all three sites through the shared `parsePaginationParams` helper, so `LIMIT -1` and a non-numeric limit are rejected by the shared clamp instead of being parsed by hand. No further work.
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-api-validation-guardrails
