@@ -195,16 +195,16 @@ describe("invocation audit", () => {
       expect(events,).toHaveLength(1,);
 
       const [event,] = events;
-      expect(event.command,).toBe("narrate",);
-      expect(event.userId,).toBe(userId,);
-      expect(event.args,).toEqual(parseCommand("/narrate The sky darkens.",)!.args,);
-      expect(event.outputHash,).toMatch(/^[0-9a-f]{64}$/,);
+      expect(event?.command,).toBe("narrate",);
+      expect(event?.userId,).toBe(userId,);
+      expect(event?.args,).toEqual(parseCommand("/narrate The sky darkens.",)!.args,);
+      expect(event?.outputHash,).toMatch(/^[0-9a-f]{64}$/,);
 
       // Determinism: identical dispatch → identical hash (replay detection).
       const { db: db2, chatId: chatId2, userId: userId2, } = await setup();
       await dispatchCommand(db2, config, userId2, chatId2, "/narrate The sky darkens.",);
       expect(auditEvents(),).toHaveLength(2,);
-      expect(auditEvents()[1]!.outputHash,).toBe(event.outputHash,);
+      expect(auditEvents()[1]!.outputHash,).toBe(event?.outputHash,);
     } finally {
       if (priorLogger) { setGlobalLogger(priorLogger,); }
     }
