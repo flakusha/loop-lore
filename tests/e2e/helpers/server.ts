@@ -200,15 +200,23 @@ function sqliteInMemory(): Dialect {
 }
 
 /**
- * Create a test database using the supplied dialect factory.
+ * Create a test database using the supplied dialect factory. The default
+ * in-memory path also hands the raw sqlite handle to `setTestDatabase` so
+ * DB-backed consumers (e.g. quota storage) bind the SAME database the
+ * override routes queries to; custom factories keep the override sqlite-less.
  * @param dialectFactory Builder for the Kysely Dialect (defaults to in-memory SQLite).
  */
 export function createTestDb(dialectFactory: DialectFactory = sqliteInMemory,): Kysely<DB> {
-  const db = new Kysely<DB>({ dialect: dialectFactory(), },);
-
   // Override global DB so all getDatabase() calls resolve to test DB
-  setTestDatabase(db,);
+  if (dialectFactory === sqliteInMemory) {
+    const sqlite = new Database(":memory:",);
+    const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
+    setTestDatabase(db, sqlite,);
+    return db;
+  }
 
+  const db = new Kysely<DB>({ dialect: dialectFactory(), },);
+  setTestDatabase(db,);
   return db;
 }
 
