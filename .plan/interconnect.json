@@ -8256,7 +8256,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md",
       "title": "Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/assets/controller.ts",
         "src/characters/importers/character-systems/avatars.ts",
@@ -8618,7 +8618,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md",
       "title": "Service-layer multi-query mutations run without transactions or conditional writes",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/characters/services/mood-service/log-event.ts",
         "src/rpg/achievements/service/crud.ts",
@@ -26518,7 +26518,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md",
       "title": "Delete or wire dead modules flagged in the GLM review sweep",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/.gitignore",
         "src/assistant/prompt/sections/character-traits.ts",
@@ -32212,7 +32212,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-i18n-locale-completion.md",
       "title": "i18n Locale Completion (Phase 1)",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [],
       "related": []
     },
@@ -46736,15 +46736,8 @@
       "title": "3D Reconstruction & Model Management",
       "status": "Not Started",
       "srcRefs": [
-        "src/db/enums-content.ts",
-        "src/frontend/3d/avatar.ts",
-        "src/frontend/3d/device-check.test.ts",
-        "src/frontend/3d/device-check.ts",
-        "src/frontend/3d/scene.test.ts",
-        "src/frontend/3d/scene.ts",
-        "src/frontend/3d/world-map.ts",
-        "src/generation/providers/3d.ts",
-        "src/routes/three-d.ts"
+        "src/characters/services/emotion-avatar-service/job-records.ts",
+        "src/db/state.ts"
       ],
       "related": []
     },
@@ -47135,7 +47128,10 @@
       "path": ".plan/epics/epic-asset-generation-metadata.md",
       "title": "Asset Generation Metadata (Self-Describing Generations)",
       "status": "Not Started",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/assets/metadata.ts",
+        "src/assets/png-text-chunk.ts"
+      ],
       "related": []
     },
     {
@@ -52100,7 +52096,10 @@
       "path": ".plan/epics/epic-scene-environment-world-generation.md",
       "title": "Scene & Environment Generation for Automated World Building",
       "status": "Not Started",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/components/chat/game-canvas.html",
+        "src/memory/budget.ts"
+      ],
       "related": []
     },
     {
@@ -52591,7 +52590,15 @@
       "path": ".plan/epics/epic-view-set-generation.md",
       "title": "Contextual View-Set & Turnaround Generation",
       "status": "Not Started",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/api-governance/rate-limiting/policies.ts",
+        "src/assets/service/links.ts",
+        "src/assistant/workflow-runner.ts",
+        "src/components/chat/media-preview-modal.html",
+        "src/db/enums-content.ts",
+        "src/hash/record-hash.ts",
+        "src/image-edit/providers/comfyui-image-upload.ts"
+      ],
       "related": []
     },
     {
@@ -53510,7 +53517,8 @@
         "BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s",
         "BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-",
         "TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes",
-        "epic-api-rate-limiting"
+        "epic-api-rate-limiting",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -53829,6 +53837,7 @@
         "TASK-multimodal-asset-reuse",
         "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
         "TASK-webp-as-a-first-class-stored-asset-format",
+        "epic-asset-generation-metadata",
         "epic-technical-comparison-charts"
       ]
     },
@@ -53851,7 +53860,8 @@
       "owners": [
         "TASK-embedded-regeneration-manifest",
         "TASK-imported-generation-metadata-parser",
-        "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-"
+        "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+        "epic-asset-generation-metadata"
       ]
     },
     {
@@ -54034,7 +54044,8 @@
         "TASK-publication-artifact-schema",
         "TASK-reference-set-entity",
         "epic-narrative-publishing-workflows",
-        "epic-technical-comparison-charts"
+        "epic-technical-comparison-charts",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -55924,6 +55935,7 @@
         "epic-model-family-presets",
         "epic-narrative-publishing-workflows",
         "epic-technical-comparison-charts",
+        "epic-view-set-generation",
         "epic-workflow-engine"
       ]
     },
@@ -57710,7 +57722,8 @@
     {
       "path": "src/characters/services/emotion-avatar-service/job-records.ts",
       "owners": [
-        "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-"
+        "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
+        "epic-3d-generation"
       ]
     },
     {
@@ -60195,7 +60208,8 @@
       "path": "src/components/chat/game-canvas.html",
       "owners": [
         "FEAT-2d-interactive-game-canvas-for-chat-scenes",
-        "FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas"
+        "FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas",
+        "epic-scene-environment-world-generation"
       ]
     },
     {
@@ -60265,7 +60279,8 @@
     {
       "path": "src/components/chat/media-preview-modal.html",
       "owners": [
-        "FEAT-in-chat-asset-preview-linkage-side-panel"
+        "FEAT-in-chat-asset-preview-linkage-side-panel",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -62640,14 +62655,14 @@
         "TASK-vector-gen-gallery-asset-support",
         "TASK-video-gen-route",
         "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
-        "epic-3d-generation",
         "epic-audio-video-sound",
         "epic-editorial-workflow",
         "epic-narrative-publishing-workflows",
         "epic-technical-comparison-charts",
         "epic-tts-foundation",
         "epic-vector-graphics-generation",
-        "epic-video-generation"
+        "epic-video-generation",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -64739,7 +64754,8 @@
         "TASK-019-enforce-state-machine-validators-at-write",
         "TASK-add-compositevalidator-for-boolean-enum-state-combinations",
         "TASK-adopt-state-machine-framework-in-runtime-status-writes",
-        "TASK-quest-status-transitions-bypass-state-machine"
+        "TASK-quest-status-transitions-bypass-state-machine",
+        "epic-3d-generation"
       ]
     },
     {
@@ -65430,24 +65446,6 @@
       ]
     },
     {
-      "path": "src/frontend/3d/avatar.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
-      "path": "src/frontend/3d/device-check.test.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
-      "path": "src/frontend/3d/device-check.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
       "path": "src/frontend/3d/expression-controller.ts",
       "owners": [
         "TASK-3d-character-avatars",
@@ -65473,18 +65471,6 @@
       ]
     },
     {
-      "path": "src/frontend/3d/scene.test.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
-      "path": "src/frontend/3d/scene.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
       "path": "src/frontend/3d/styles.css",
       "owners": [
         "TASK-3d-view-modes-ui"
@@ -65501,12 +65487,6 @@
       "owners": [
         "TASK-3d-character-avatars",
         "TASK-3d-vrm-foundation"
-      ]
-    },
-    {
-      "path": "src/frontend/3d/world-map.ts",
-      "owners": [
-        "epic-3d-generation"
       ]
     },
     {
@@ -70936,12 +70916,6 @@
       ]
     },
     {
-      "path": "src/generation/providers/3d.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
       "path": "src/generation/providers/anthropic.ts",
       "owners": [
         "epic-provider-plugin-ecosystem"
@@ -71753,7 +71727,8 @@
       "path": "src/hash/record-hash.ts",
       "owners": [
         "TASK-middleware-fe-be-db-record-content-hashing",
-        "epic-content-hashing-distributed-integrity"
+        "epic-content-hashing-distributed-integrity",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -71856,7 +71831,8 @@
       "path": "src/image-edit/providers/comfyui-image-upload.ts",
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-        "epic-reactive-actor-appearance"
+        "epic-reactive-actor-appearance",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -72914,7 +72890,8 @@
         "TASK-memory-history-search-bind-message-chain-reconstructable-con",
         "epic-chat-context-optimization",
         "epic-harness-integration",
-        "epic-hidden-carriage-context"
+        "epic-hidden-carriage-context",
+        "epic-scene-environment-world-generation"
       ]
     },
     {
@@ -79693,12 +79670,6 @@
       "path": "src/routes/templates/transfer.ts",
       "owners": [
         "epic-comfyui-first-class-citizen"
-      ]
-    },
-    {
-      "path": "src/routes/three-d.ts",
-      "owners": [
-        "epic-3d-generation"
       ]
     },
     {
@@ -149130,47 +149101,12 @@
     {
       "from": "epic-3d-generation",
       "kind": "produces",
-      "to": "src/db/enums-content.ts"
+      "to": "src/characters/services/emotion-avatar-service/job-records.ts"
     },
     {
       "from": "epic-3d-generation",
       "kind": "produces",
-      "to": "src/frontend/3d/avatar.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/frontend/3d/device-check.test.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/frontend/3d/device-check.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/frontend/3d/scene.test.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/frontend/3d/scene.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/frontend/3d/world-map.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/generation/providers/3d.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/routes/three-d.ts"
+      "to": "src/db/state.ts"
     },
     {
       "from": "epic-accessibility-input",
@@ -149886,6 +149822,16 @@
       "from": "epic-archival-workflow",
       "kind": "produces",
       "to": "src/routes/messages/archiving.ts"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "produces",
+      "to": "src/assets/metadata.ts"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "produces",
+      "to": "src/assets/png-text-chunk.ts"
     },
     {
       "from": "epic-asset-platform-capabilities",
@@ -160628,6 +160574,16 @@
       "to": "src/image-edit/run-authz.ts"
     },
     {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "produces",
+      "to": "src/components/chat/game-canvas.html"
+    },
+    {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "produces",
+      "to": "src/memory/budget.ts"
+    },
+    {
       "from": "epic-schema",
       "kind": "produces",
       "to": "src/db/__tests__/schema-roundtrip.test.ts"
@@ -161416,6 +161372,41 @@
       "from": "epic-video-generation",
       "kind": "produces",
       "to": "src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/assets/service/links.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/components/chat/media-preview-modal.html"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/hash/record-hash.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/image-edit/providers/comfyui-image-upload.ts"
     },
     {
       "from": "epic-visual-novel-mode",
@@ -173012,6 +173003,12 @@
       "via": "src/api-governance/rate-limiting/policies.ts"
     },
     {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
       "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
       "kind": "sibling",
       "to": "BUG-archive-retention-hardcoded-30-days-should-be-configurable-9",
@@ -176938,6 +176935,12 @@
     {
       "from": "BUG-asset-webp-metadata-vp8l-vp8x-off-bytes",
       "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-asset-webp-metadata-vp8l-vp8x-off-bytes",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assets/metadata.ts"
     },
@@ -176981,6 +176984,12 @@
       "from": "BUG-asset-webp-vp8x-dimension-truncation",
       "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-asset-webp-vp8x-dimension-truncation",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
       "via": "src/assets/metadata.ts"
     },
     {
@@ -177233,6 +177242,12 @@
       "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assets/service/links.ts"
+    },
+    {
+      "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assets/service/links.ts"
     },
     {
@@ -178140,6 +178155,12 @@
       "kind": "sibling",
       "to": "epic-timeline-system",
       "via": "src/assistant/prompt/sections/lore.ts"
+    },
+    {
+      "from": "BUG-assistant-and-group-chat-correctness-defects",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "BUG-assistant-and-group-chat-correctness-defects",
@@ -179069,6 +179090,12 @@
       "from": "BUG-assistant-creative-studio-task-stale",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "BUG-assistant-creative-studio-task-stale",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -190973,6 +191000,12 @@
       "from": "BUG-chat-sse-shares-generation-rate-bucket",
       "kind": "sibling",
       "to": "epic-api-rate-limiting",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-chat-sse-shares-generation-rate-bucket",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/api-governance/rate-limiting/policies.ts"
     },
     {
@@ -215408,6 +215441,12 @@
       "via": "src/generation/providers/comfyui.ts"
     },
     {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/image-edit/providers/comfyui-image-upload.ts"
+    },
+    {
       "from": "BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty",
       "kind": "sibling",
       "to": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
@@ -229532,6 +229571,12 @@
       "via": "src/routes/v1/actors-surface.ts"
     },
     {
+      "from": "BUG-rate-limit-misses-post-emotion-avatars-single",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
       "from": "BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s",
       "kind": "sibling",
       "to": "BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-",
@@ -229590,6 +229635,12 @@
       "kind": "sibling",
       "to": "epic-frontend-emoji-reactions",
       "via": "src/frontend/alpine/chat-messages.ts"
+    },
+    {
+      "from": "BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/api-governance/rate-limiting/policies.ts"
     },
     {
       "from": "BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta",
@@ -236212,6 +236263,12 @@
     {
       "from": "BUG-size-strict-pre-existing-dev-drift",
       "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-size-strict-pre-existing-dev-drift",
+      "kind": "sibling",
       "to": "epic-assistant-creative-studio-workflows",
       "via": "src/assistant/prompt-assembler.ts"
     },
@@ -242710,6 +242767,12 @@
     {
       "from": "BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-",
+      "kind": "sibling",
       "to": "epic-visual-novel-mode",
       "via": "src/routes/v1/chats-surface.ts; src/routes/vn-generate/questions.ts"
     },
@@ -243413,6 +243476,12 @@
       "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -248390,6 +248459,12 @@
       "via": "src/db/enums-story/world.ts"
     },
     {
+      "from": "FEAT-2026-003",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
       "from": "FEAT-2026-007",
       "kind": "sibling",
       "to": "FEAT-chat-archive-asset-cascade-link-unlink-assets-on-archive-res",
@@ -248718,6 +248793,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/views/chat.html"
+    },
+    {
+      "from": "FEAT-2d-interactive-game-canvas-for-chat-scenes",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/components/chat/game-canvas.html"
     },
     {
       "from": "FEAT-2d-interactive-game-canvas-for-chat-scenes",
@@ -250378,12 +250459,6 @@
     {
       "from": "FEAT-background",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "FEAT-background",
-      "kind": "sibling",
       "to": "epic-ambient-music-sfx",
       "via": "src/generation/providers/comfyui.ts"
     },
@@ -250572,6 +250647,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts; src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "FEAT-background",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
     },
     {
       "from": "FEAT-background",
@@ -255020,6 +255101,12 @@
       "via": "src/routes/export.ts"
     },
     {
+      "from": "FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/components/chat/game-canvas.html"
+    },
+    {
       "from": "FEAT-gguf-kv-typed-reader-with-arch-templated-key-registry",
       "kind": "sibling",
       "to": "TASK-browser-side-gguf-kv-extraction-for-local-byok-models",
@@ -255108,6 +255195,12 @@
       "kind": "sibling",
       "to": "epic-gallery-batch-operations",
       "via": "src/components/chat/gallery-sidebar.html; src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "FEAT-in-chat-asset-preview-linkage-side-panel",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/components/chat/media-preview-modal.html"
     },
     {
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
@@ -259898,6 +259991,12 @@
       "via": "src/memory/budget.ts"
     },
     {
+      "from": "FEAT-relevance-gated-memory-injection-with-classifier-or-reranker",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
       "from": "FEAT-seed-character-loadouts-into-the-wardrobe-bridge",
       "kind": "sibling",
       "to": "TASK-char-template-full-model-coverage",
@@ -262382,6 +262481,12 @@
       "via": "src/db/schema-memory.ts"
     },
     {
+      "from": "IDEA-memory-knowledge-isolation-and-world-timeline",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
       "from": "IDEA-nli-grounding-classifier-behind-the-hallucination-guard",
       "kind": "sibling",
       "to": "TASK-chat-feature-introduction-generation-propagation",
@@ -263568,6 +263673,12 @@
       "kind": "sibling",
       "to": "TASK-world-simulation-discovery-and-trade-events",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-019-enforce-state-machine-validators-at-write",
+      "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/db/state.ts"
     },
     {
       "from": "TASK-019-enforce-state-machine-validators-at-write",
@@ -274016,6 +274127,12 @@
       "via": "src/db/state.ts"
     },
     {
+      "from": "TASK-add-compositevalidator-for-boolean-enum-state-combinations",
+      "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/db/state.ts"
+    },
+    {
       "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
       "kind": "sibling",
       "to": "TASK-asymmetric-key-pairs-followup",
@@ -277474,6 +277591,12 @@
     {
       "from": "TASK-adopt-state-machine-framework-in-runtime-status-writes",
       "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/db/state.ts"
+    },
+    {
+      "from": "TASK-adopt-state-machine-framework-in-runtime-status-writes",
+      "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/db/enums-core/messages.ts"
     },
@@ -279868,6 +279991,12 @@
     {
       "from": "TASK-asset-b1-rendition-pipeline",
       "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-asset-b1-rendition-pipeline",
+      "kind": "sibling",
       "to": "epic-avatar-dogfood",
       "via": "src/assets/service/thumbnail.ts"
     },
@@ -280192,12 +280321,6 @@
     {
       "from": "TASK-asset-download-format-conversion-webp-png-jpg",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -280253,6 +280376,12 @@
       "from": "TASK-asset-download-format-conversion-webp-png-jpg",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -280326,6 +280455,12 @@
       "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
+      "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/characters/services/emotion-avatar-service/job-records.ts"
     },
     {
       "from": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
@@ -280732,8 +280867,8 @@
     {
       "from": "TASK-assets-has-alpha-column-and-store-computation",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-assets-has-alpha-column-and-store-computation",
@@ -280793,6 +280928,12 @@
       "from": "TASK-assets-has-alpha-column-and-store-computation",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-assets-has-alpha-column-and-store-computation",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -282004,6 +282145,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-character",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-character",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -282203,6 +282350,12 @@
       "from": "TASK-assistant-creative-studio-workflow-gallery-batch",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-gallery-batch",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -282514,6 +282667,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-gallery-edit",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-gallery-edit",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -282712,6 +282871,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-item",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-item",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -282904,6 +283069,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-location",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-location",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -283090,6 +283261,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-npc",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-npc",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -283270,6 +283447,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-species",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-species",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -283439,6 +283622,12 @@
       "from": "TASK-assistant-creative-studio-workflow-world",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-world",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -283817,6 +284006,12 @@
       "from": "TASK-assistant-creative-studio-workflows",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflows",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -284818,6 +285013,12 @@
     {
       "from": "TASK-assistant-nsfw-api-prefiltering",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-nsfw-api-prefiltering",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/config/sections/templates.ts"
     },
@@ -285616,6 +285817,12 @@
     {
       "from": "TASK-assistant-third-party-api-integration",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-third-party-api-integration",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -285731,6 +285938,12 @@
       "from": "TASK-assistant-todo-planning-tables-service-assistant-wiring",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-todo-planning-tables-service-assistant-wiring",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -291202,12 +291415,6 @@
     {
       "from": "TASK-avatar-framing-column-migration-future",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-avatar-framing-column-migration-future",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -291275,6 +291482,12 @@
       "from": "TASK-avatar-framing-column-migration-future",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-avatar-framing-column-migration-future",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -291556,12 +291769,6 @@
     {
       "from": "TASK-avatar-framing-tag-member",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-avatar-framing-tag-member",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -291641,6 +291848,12 @@
       "from": "TASK-avatar-framing-tag-member",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-avatar-framing-tag-member",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -292120,12 +292333,6 @@
     {
       "from": "TASK-avatar-render-target-discriminator",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-avatar-render-target-discriminator",
-      "kind": "sibling",
       "to": "epic-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -292337,6 +292544,12 @@
       "from": "TASK-avatar-render-target-discriminator",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-avatar-render-target-discriminator",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -293922,6 +294135,12 @@
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/sections/templates-workflow.ts"
+    },
+    {
+      "from": "TASK-book-outline-generation-workflow",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "TASK-book-outline-generation-workflow",
@@ -296854,12 +297073,6 @@
     {
       "from": "TASK-character-avatar-gallery-binding",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-character-avatar-gallery-binding",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -296939,6 +297152,12 @@
       "from": "TASK-character-avatar-gallery-binding",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-character-avatar-gallery-binding",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -306172,6 +306391,12 @@
     {
       "from": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
       "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/generation/auto-gen/classify-intent.ts"
     },
@@ -311326,6 +311551,12 @@
     {
       "from": "TASK-comic-storyboard-panel-generation-workflow",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-comic-storyboard-panel-generation-workflow",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -311650,14 +311881,14 @@
     {
       "from": "TASK-comparison-cell-detail-metadata",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
+      "to": "epic-ambient-music-sfx",
+      "via": "src/generation/providers/comfyui.ts"
     },
     {
       "from": "TASK-comparison-cell-detail-metadata",
       "kind": "sibling",
-      "to": "epic-ambient-music-sfx",
-      "via": "src/generation/providers/comfyui.ts"
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-comparison-cell-detail-metadata",
@@ -311784,6 +312015,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts; src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "TASK-comparison-cell-detail-metadata",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-comparison-chart-export-png-svg-csv",
@@ -312214,6 +312451,12 @@
     {
       "from": "TASK-comparison-fan-out-engine",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-comparison-fan-out-engine",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -312370,12 +312613,6 @@
     {
       "from": "TASK-comparison-gallery-comparison-set-integration",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-comparison-gallery-comparison-set-integration",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -312426,6 +312663,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-comparison-gallery-comparison-set-integration",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-comparison-grid-frontend",
@@ -313390,6 +313633,12 @@
     {
       "from": "TASK-comparison-set-variant-data-model",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts"
+    },
+    {
+      "from": "TASK-comparison-set-variant-data-model",
+      "kind": "sibling",
       "to": "epic-worlds-extension",
       "via": "src/db/schema.ts"
     },
@@ -313756,12 +314005,6 @@
     {
       "from": "TASK-comparison-workflow-template-and-command",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-comparison-workflow-template-and-command",
-      "kind": "sibling",
       "to": "epic-assistant-gm-flows",
       "via": "src/routes/messages/command.ts"
     },
@@ -313884,6 +314127,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-comparison-workflow-template-and-command",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-comparison-workflow-template-and-command",
@@ -314772,6 +315021,12 @@
       "kind": "sibling",
       "to": "epic-project-spaces-pm-integration",
       "via": "src/memory/provision.ts"
+    },
+    {
+      "from": "TASK-context-injection-dedup",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
     },
     {
       "from": "TASK-context-lossless-lossy-tiering",
@@ -324689,6 +324944,12 @@
       "from": "TASK-embedded-regeneration-manifest",
       "kind": "sibling",
       "to": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "via": "src/assets/png-text-chunk.ts"
+    },
+    {
+      "from": "TASK-embedded-regeneration-manifest",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
       "via": "src/assets/png-text-chunk.ts"
     },
     {
@@ -335872,6 +336133,12 @@
     {
       "from": "TASK-gm-reuse-workflowrunner-for-guided-entity-creation",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-gm-reuse-workflowrunner-for-guided-entity-creation",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts"
     },
@@ -335988,6 +336255,12 @@
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts",
@@ -337674,6 +337947,12 @@
       "kind": "sibling",
       "to": "epic-project-spaces-pm-integration",
       "via": "src/memory/provision.ts"
+    },
+    {
+      "from": "TASK-harness-context-priority-tiers",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
     },
     {
       "from": "TASK-harness-context-templates",
@@ -341140,6 +341419,12 @@
     {
       "from": "TASK-illustrated-book-reference-pass",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-illustrated-book-reference-pass",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -341759,6 +342044,12 @@
       "from": "TASK-imported-generation-metadata-parser",
       "kind": "sibling",
       "to": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "via": "src/assets/png-text-chunk.ts"
+    },
+    {
+      "from": "TASK-imported-generation-metadata-parser",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
       "via": "src/assets/png-text-chunk.ts"
     },
     {
@@ -342772,12 +343063,6 @@
     {
       "from": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -342816,6 +343101,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-item-config-templates",
@@ -347560,6 +347851,12 @@
     {
       "from": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
       "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/db/migrations/README.md"
     },
@@ -349712,6 +350009,12 @@
       "via": "src/db/schema-"
     },
     {
+      "from": "TASK-middleware-fe-be-db-record-content-hashing",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/hash/record-hash.ts"
+    },
+    {
       "from": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
       "kind": "sibling",
       "to": "TASK-middleware-idempotency-wire-into-elysia",
@@ -351756,6 +352059,12 @@
       "kind": "sibling",
       "to": "epic-ambient-music-sfx",
       "via": "src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "TASK-multimodal-asset-reuse",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-multimodal-asset-reuse",
@@ -356158,12 +356467,6 @@
     {
       "from": "TASK-publication-artifact-schema",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-publication-artifact-schema",
-      "kind": "sibling",
       "to": "epic-actors",
       "via": "src/db/migrations/001_init.ts; src/db/schema-story.ts"
     },
@@ -356472,6 +356775,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-publication-artifact-schema",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-publication-artifact-schema",
@@ -357406,6 +357715,12 @@
     {
       "from": "TASK-quest-status-transitions-bypass-state-machine",
       "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/db/state.ts"
+    },
+    {
+      "from": "TASK-quest-status-transitions-bypass-state-machine",
+      "kind": "sibling",
       "to": "epic-quests-encounters",
       "via": "src/db/enums-story/quests.ts"
     },
@@ -358289,6 +358604,12 @@
       "from": "TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes",
       "kind": "sibling",
       "to": "epic-api-rate-limiting",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/api-governance/rate-limiting/policies.ts"
     },
     {
@@ -360214,12 +360535,6 @@
     {
       "from": "TASK-reference-set-entity",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-reference-set-entity",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -360294,6 +360609,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-reference-set-entity",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-reference-set-multi-image-upload",
@@ -360666,6 +360987,12 @@
       "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/metadata.ts; src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts; src/assets/png-text-chunk.ts"
     },
     {
       "from": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
@@ -361666,12 +361993,6 @@
     {
       "from": "TASK-review-thread-target-vocabulary",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-review-thread-target-vocabulary",
-      "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/db/enums-"
     },
@@ -361751,6 +362072,12 @@
       "from": "TASK-review-thread-target-vocabulary",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-review-thread-target-vocabulary",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -367132,12 +367459,6 @@
     {
       "from": "TASK-vector-gen-gallery-asset-support",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-vector-gen-gallery-asset-support",
-      "kind": "sibling",
       "to": "epic-assistant-creative-studio-workflows",
       "via": "src/frontend/alpine/chat-utils/gallery.ts"
     },
@@ -367187,6 +367508,12 @@
       "from": "TASK-vector-gen-gallery-asset-support",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-vector-gen-gallery-asset-support",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -367342,12 +367669,6 @@
     {
       "from": "TASK-video-gen-route",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-video-gen-route",
-      "kind": "sibling",
       "to": "epic-assistant-creative-studio-workflows",
       "via": "src/assistant/workflow-runner.test.ts"
     },
@@ -367421,6 +367742,12 @@
       "from": "TASK-video-gen-route",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-video-gen-route",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -367588,12 +367915,6 @@
     {
       "from": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -367649,6 +367970,12 @@
       "from": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -368052,6 +368379,12 @@
       "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-webp-as-a-first-class-stored-asset-format",
@@ -368579,6 +368912,12 @@
       "from": "TASK-wire-intent-output-to-workflow-runner-startworkflow",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-wire-intent-output-to-workflow-runner-startworkflow",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -369322,6 +369661,12 @@
     {
       "from": "TASK-workflow-dag-engine-task-dependencies",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-workflow-dag-engine-task-dependencies",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -369431,6 +369776,12 @@
       "from": "TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -370496,48 +370847,6 @@
       "via": "src/assets/service/create.ts"
     },
     {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-audio-video-sound",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-editorial-workflow",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-narrative-publishing-workflows",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-technical-comparison-charts",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-tts-foundation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-vector-graphics-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-video-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
       "from": "epic-accessibility-input",
       "kind": "sibling",
       "to": "epic-docs-reconciliation",
@@ -371216,6 +371525,12 @@
       "via": "src/middleware/rate-limit.ts"
     },
     {
+      "from": "epic-api-rate-limiting",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
       "from": "epic-api-routes",
       "kind": "sibling",
       "to": "epic-api-versioning",
@@ -371804,6 +372119,12 @@
       "via": "src/routes/chats.ts"
     },
     {
+      "from": "epic-asset-generation-metadata",
+      "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/assets/metadata.ts"
+    },
+    {
       "from": "epic-asset-platform-capabilities",
       "kind": "sibling",
       "to": "epic-assistant-generation-extensions",
@@ -372124,6 +372445,12 @@
     {
       "from": "epic-assistant-creative-studio-workflows",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "epic-assistant-creative-studio-workflows",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/sections/templates.ts; src/config/templates-loader.ts; src/config/templates-loader/discovery.ts; src/generation/auto-gen/classify-intent.ts; src/regex/intent.ts"
     },
@@ -372410,6 +372737,12 @@
       "via": "src/assistant/workflow-runner.ts"
     },
     {
+      "from": "epic-assistant-step-planning",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
       "from": "epic-audio-video-sound",
       "kind": "sibling",
       "to": "epic-authoring-creation",
@@ -372534,6 +372867,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts; src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "epic-audio-video-sound",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
     },
     {
       "from": "epic-auth-access",
@@ -375338,6 +375677,12 @@
       "via": "src/memory/provision.ts"
     },
     {
+      "from": "epic-chat-context-optimization",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
       "from": "epic-chat-lifecycle-moderation",
       "kind": "sibling",
       "to": "epic-chat-product-features",
@@ -376880,6 +377225,12 @@
       "via": "src/assets/service/create.ts"
     },
     {
+      "from": "epic-content-hashing-distributed-integrity",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/hash/record-hash.ts"
+    },
+    {
       "from": "epic-context-injection-correctness",
       "kind": "sibling",
       "to": "epic-context-injection-templates",
@@ -378274,6 +378625,12 @@
     {
       "from": "epic-editorial-workflow",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-editorial-workflow",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/regex/intent.ts"
     },
@@ -378780,6 +379137,12 @@
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "epic-entity-generation-workflows",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "epic-entity-generation-workflows",
@@ -379822,6 +380185,12 @@
     {
       "from": "epic-harness-integration",
       "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "epic-harness-integration",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts"
     },
@@ -379830,6 +380199,12 @@
       "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/tui/asset-view.ts; src/tui/chat/api.ts; src/views/admin.html"
+    },
+    {
+      "from": "epic-harness-integration",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "epic-harness-integration",
@@ -379878,6 +380253,12 @@
       "kind": "sibling",
       "to": "epic-project-spaces-pm-integration",
       "via": "src/memory/provision.ts"
+    },
+    {
+      "from": "epic-hidden-carriage-context",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
     },
     {
       "from": "epic-housing",
@@ -380860,6 +381241,12 @@
     {
       "from": "epic-model-family-presets",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "epic-model-family-presets",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -381096,6 +381483,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-narrative-publishing-workflows",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/assistant/workflow-runner.ts; src/db/enums-content.ts"
     },
     {
       "from": "epic-narrative-publishing-workflows",
@@ -381616,6 +382009,12 @@
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/image-edit/providers/comfyui-image-upload.ts"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "sibling",
       "to": "epic-wardrobe-avatar-variants",
       "via": "src/assistant/prompt-outfit.ts; src/characters/services/avatar-service/selection.ts"
     },
@@ -381796,6 +382195,12 @@
     {
       "from": "epic-technical-comparison-charts",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/assistant/workflow-runner.ts; src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-technical-comparison-charts",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts"
     },
@@ -381818,10 +382223,34 @@
       "via": "src/db/enums-content.ts"
     },
     {
+      "from": "epic-tts-foundation",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
       "from": "epic-vector-graphics-generation",
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-vector-graphics-generation",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-video-generation",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "sibling",
+      "to": "epic-workflow-engine",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "epic-visual-novel-mode",

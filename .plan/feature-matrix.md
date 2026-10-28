@@ -1716,7 +1716,7 @@ Total tickets: **4058** — untagged: **2746** — unbound to epic: **1040**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2746 | 1255 | 45 | 891 | 31 | 0 | 524 |
+| (untagged) | 2746 | 1251 | 49 | 891 | 31 | 0 | 524 |
 
 ## By epic × status
 
@@ -1832,7 +1832,7 @@ Total tickets: **4058** — untagged: **2746** — unbound to epic: **1040**
 | epic-cron-scheduler | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-cross-platform-portability | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-crypto | 35 | 15 | 3 | 14 | 0 | 0 | 3 |
-| epic-data-integrity-acid | 11 | 3 | 0 | 5 | 0 | 0 | 3 |
+| epic-data-integrity-acid | 11 | 2 | 1 | 5 | 0 | 0 | 3 |
 | epic-database-backup-recovery | 7 | 1 | 0 | 5 | 0 | 0 | 1 |
 | epic-database-backup-recovery, epic-db-asset-snapshot-recovery, epic-federation-swarm-sync | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-db-asset-snapshot-recovery | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
@@ -1902,7 +1902,7 @@ Total tickets: **4058** — untagged: **2746** — unbound to epic: **1040**
 | epic-housing | 6 | 0 | 0 | 6 | 0 | 0 | 0 |
 | epic-housing-base-building | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-http-protocol-features | 11 | 0 | 0 | 11 | 0 | 0 | 0 |
-| epic-i18n | 13 | 8 | 1 | 3 | 0 | 0 | 1 |
+| epic-i18n | 13 | 7 | 2 | 3 | 0 | 0 | 1 |
 | epic-i18n, epic-logging-telemetry | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-image-prompt-templating | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
 | epic-immersion-consistency-gate | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -2052,7 +2052,7 @@ Total tickets: **4058** — untagged: **2746** — unbound to epic: **1040**
 | epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
 | epic-world-travel-time | 6 | 3 | 0 | 1 | 0 | 0 | 2 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| (unbound) | 1040 | 666 | 46 | 33 | 43 | 0 | 252 |
+| (unbound) | 1040 | 664 | 48 | 33 | 43 | 0 | 252 |
 
 ## Ticket detail
 
