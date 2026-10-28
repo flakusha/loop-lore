@@ -268,9 +268,12 @@ describe("migration numbering is sequential from 001", () => {
     // landed, so they are no longer holes. 071 and 072 are parked on parallel
     // unmerged branches (`char-stat-traits`, `chat-rich-engagement`,
     // `xp-progression-surface`); the message-translations migrations were
-    // renumbered to 073/074 to avoid colliding with those claims. Only numbers
+    // renumbered to 073/074 to avoid colliding with those claims. 081 is
+    // parked on an unmerged sibling branch (observed there as `081_*`
+    // during the immersion-gate work); 082 onwards were numbered past it
+    // so no two branches collide. Only numbers
     // listed here may be absent; any other gap still fails below.
-    const PARKED = [58, 66, 71, 72,];
+    const PARKED = [58, 66, 71, 72, 81,];
     const parkedMissing = PARKED.filter((n,) => !prefixes.includes(n,));
     const expected = Array.from(
       { length: prefixes.length + parkedMissing.length, },
