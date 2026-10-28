@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft-07/schema#",
   "$id": "loop-lore-config.tui.schema.json",
   "title": "Loop Lore Tui Config",
   "description": "Domain-specific configuration for tui",
@@ -12,10 +12,20 @@
           "type": "boolean",
           "default": true,
           "description": "Enable TUI mode"
+        },
+        "sendTimeoutMs": {
+          "type": "integer",
+          "default": 300000,
+          "description": "Send-message timeout in ms; covers one full assistant generation"
+        },
+        "sessionToken": {
+          "type": "string",
+          "description": "Bearer token for authenticated chat routes; omit to run anonymous against solo deployments."
         }
       },
       "required": [
-        "enabled"
+        "enabled",
+        "sendTimeoutMs"
       ]
     }
   },
