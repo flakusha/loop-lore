@@ -137,6 +137,8 @@ export async function runRewrite(
       ? "The target message no longer exists."
       : applied.error === "cross_chat"
       ? "The target message belongs to another chat."
+      : applied.error === "invalid_payload"
+      ? "The rewritten content could not be stored."
       : "You are not the author of the target message.";
 
     return { systemMessage: `**Cannot apply.** ${reason}`, handled: true, };

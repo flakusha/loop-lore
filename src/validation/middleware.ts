@@ -8,7 +8,14 @@
  */
 
 import { getLogger, } from "../logger";
-import { API_VERSION, BadRequestError, ErrorCode, ForbiddenError, NotFoundError, } from "../routes/http-utils";
+import {
+  API_VERSION,
+  BadRequestError,
+  ErrorCode,
+  ForbiddenError,
+  NotFoundError,
+  StaleChatKeyError,
+} from "../routes/http-utils";
 
 /**
  * Elysia `onError` handler that standardises validation and service-layer error responses.
@@ -102,6 +109,14 @@ export function onValidationError(
   if (err instanceof BadRequestError) {
     set.status = 400;
     return { error: err.message, code: ErrorCode.BadRequest, meta: { api_version: API_VERSION, }, };
+  }
+
+  // A client-supplied encrypted payload named a key that is not live for this
+  // chat (the chat key was rotated when a participant left). Recoverable: the
+  // client refetches the key, re-encrypts the plaintext and retries once.
+  if (err instanceof StaleChatKeyError) {
+    set.status = 400;
+    return { error: err.message, code: ErrorCode.StaleChatKey, meta: { api_version: API_VERSION, }, };
   }
 
   // ── Unknown errors → 500 ────────────────────────────────

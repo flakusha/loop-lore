@@ -257,6 +257,35 @@ describe("updateRoutes coverage", () => {
     expect(row?.edited_at,).not.toBeNull();
   });
 
+  test("patch rejects a client key id that is not live for the chat", async () => {
+    const stdChatId = uid();
+    await insertChats(db, "Standard Chat", owner, { id: stdChatId, encryption_level: "standard", } as never,);
+    const id = uid();
+    await insertMessages(db, stdChatId, owner, MessageRole.User, "before", { id, } as never,);
+    const app = makeApp(db, owner, "user",);
+    // A client-supplied envelope naming a key the chat does not hold (BE-1).
+    const payload = JSON.stringify({
+      enc: Buffer.from("ciphertext",).toString("base64",),
+      nonce: Buffer.alloc(12,).toString("base64",),
+      algo: "aes-256-gcm",
+      key_id: "key-forged",
+    },);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/messages/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ content: payload, },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    const body = (await res.json()) as { code?: string };
+    expect(body.code,).toBe("STALE_CHAT_KEY",);
+    const row = await db.selectFrom("messages",).select("key_id",).where("id", "=", id,).executeTakeFirst();
+    expect(row?.key_id,).toBeNull();
+  });
+
   test("patch 404 for missing message and 403 for non-author", async () => {
     const id = await seedMessage("mine",);
     const app = makeApp(db, owner, "user",);
