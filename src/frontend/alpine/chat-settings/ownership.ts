@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { can, } from "../../../users/permissions";
 import { apiFetch, } from "../htmx";
 import { jsonBody, } from "../json";
 import { log as rootLog, } from "../logger";
@@ -133,12 +134,21 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
 
   /**
    * Predicate: is the current user allowed to attempt a transfer?
-   * Backend re-checks authority on the route; this is purely a UX hint to
-   * hide the button when no chat is active. True auth lives server-side.
-   * TODO(chat-ownership): gate on created_by/admin instead of !!activeChat — every
-   * non-owner currently sees the button and eats a 403 on submit.
+   *
+   * Mirrors the server rule in `transferOwnership` (src/chat/service/ownership.ts):
+   * the chat owner (`chats.created_by`) may transfer, and roles holding the
+   * `admin.chat` permission bypass the owner check. The chat row the panel
+   * already has (`this.chats`) carries `created_by`, so no extra request is
+   * needed.
    */
   canTransferOwnership(): boolean {
-    return !!this.activeChat;
+    if (!this.activeChat) { return false; }
+
+    if (can(this.userRole, "admin.chat",)) { return true; }
+
+    const chat = this.chats?.find((c,) => c.id === this.activeChat);
+    if (!chat?.created_by) { return false; }
+
+    return chat.created_by === globalThis.__USER_ID;
   },
 };
