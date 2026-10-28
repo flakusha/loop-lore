@@ -8,33 +8,36 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-28 triage reopen] NOT-FIXED — the ticket closed on *missing keys* only. Every non-English catalog now carries the full `en.json` key set (no missing keys), but a majority of the values are still byte-identical English and no gate measures that. Measured 2026-10-28 on dev: 54.2 %–57.0 % of each non-English catalog's leaf keys are byte-identical to `en.json` (per-locale figures are recomputed by the i18n gate; `scripts/i18n-reconcile.ts:28,40` reports only `missing` / `extra` / `type_mismatch`, so the ratio is invisible to CI). The previous acceptance criteria carried stale captured counts (they predate the current catalog size) and therefore passed while the defect was live — the criteria below are now stated as a ratio threshold the gate enforces. Translation backlog remains (9 locales × the untranslated leaf set).
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-i18n
 
 ## Summary
 
-Complete non-English locale files. All 9 non-English locales are missing 163 keys each (71/234 filled). This is pure JSON translation work — no code changes.
+Complete non-English locale files. All 9 non-English locales now carry the complete `en.json` key set, but a large share of their values are still the English source text (untranslated ratio measured per locale by the i18n gate; see Acceptance Criteria). The remaining work is translation work plus the gate change that measures it — no product source changes beyond the i18n gate.
 
 ## Scope
 
-### Missing Sections (per locale)
+### Sections still carrying English values
 
-| Section         | Keys Missing | Description                                                   |
-| --------------- | ------------ | ------------------------------------------------------------- |
-| `common`        | 15           | Generic labels (save, cancel, delete, confirm, loading, etc.) |
-| `auth`          | 4            | Login/register messages                                       |
-| `chat`          | 16           | Chat UI labels, message actions                               |
-| `settings`      | 44           | Settings page labels, tooltips, section headers               |
-| `admin`         | 11           | Admin panel labels                                            |
-| `errors`        | 7            | Error messages                                                |
-| `characters`    | 16           | Character management labels                                   |
-| `worlds`        | 10           | World management labels                                       |
-| `gallery`       | 16           | Gallery/upload labels                                         |
-| `navigation`    | 10           | Nav bar labels, sidebar                                       |
-| `modals`        | 9            | Modal dialog labels                                           |
-| `accessibility` | 5            | ARIA labels, screen reader text                               |
+Every section below still contains untranslated values in at least one non-English catalog; the exact per-locale set is recomputed by the i18n gate (do not hard-code counts here):
+
+| Section         | Description                                                   |
+| --------------- | ------------------------------------------------------------- |
+| `common`        | Generic labels (save, cancel, delete, confirm, loading, etc.) |
+| `auth`          | Login/register messages                                       |
+| `chat`          | Chat UI labels, message actions                               |
+| `settings`      | Settings page labels, tooltips, section headers               |
+| `admin`         | Admin panel labels                                            |
+| `errors`        | Error messages                                                |
+| `characters`    | Character management labels                                   |
+| `worlds`        | World management labels                                       |
+| `gallery`       | Gallery/upload labels                                         |
+| `navigation`    | Nav bar labels, sidebar                                       |
+| `modals`        | Modal dialog labels                                           |
+| `accessibility` | ARIA labels, screen reader text                               |
 
 ### Locales to Complete
 
@@ -58,11 +61,13 @@ Complete non-English locale files. All 9 non-English locales are missing 163 key
 
 ## Acceptance Criteria
 
-- [ ] All 9 non-English locales have 234 keys matching `en.json` structure
-- [ ] JSON is valid (no syntax errors)
-- [ ] Key hierarchy matches `en.json` exactly
-- [ ] Existing translations preserved (not overwritten)
-- [ ] `bun run check` passes
+- [ ] The i18n gate reports an **untranslated ratio** per non-English locale: the share of that locale's leaf keys whose value is byte-identical to the `en.json` value at the same key path. The ratio is computed at gate time from the catalogs on disk — no captured key counts are hard-coded here.
+- [ ] The gate **fails** when any non-English locale's untranslated ratio exceeds the threshold recorded in the gate (target: at most 10 % untranslated per locale), so the English backlog cannot silently regrow.
+- [ ] The untranslated leaf set of every non-English locale is translated down to that threshold.
+- [ ] All 9 non-English locales carry the complete `en.json` key hierarchy (no missing keys; no extra keys; no type mismatches).
+- [ ] JSON is valid (no syntax errors).
+- [ ] Existing translations preserved (not overwritten).
+- [ ] `bun run check` passes.
 
 ## Notes
 

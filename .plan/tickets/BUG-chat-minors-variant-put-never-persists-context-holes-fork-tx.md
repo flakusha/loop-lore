@@ -4,7 +4,7 @@
 # BUG: Chat minors: variant PUT never persists, context holes, fork txn, purge FK
 
 **Status:** Done
-**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 6f5e8fb): Items 1 and 3 fixed: variant PUT demoted to a stateless GET (src/routes/messages/read.ts:245-249) and fork now flips active_branch_id inside the transaction (src/chat/service/branch-fork.ts:132-136; caller branches.ts:97-101). Items 2 and 4 remain: context-window.ts:87-117 still retains non-contiguous history after a non-fit message (context holes); purge path src/routes/messages/archiving.ts:122-125 deletes on chat_id+archived_at with no fork-point/structural guard.
+**Status Note:** [2026-10-28 triage refresh] Items 1, 3 and 4 are fixed; item 2 remains open. Items 1 and 3 fixed: variant PUT demoted to a stateless GET (src/routes/messages/read.ts:245-249) and fork now flips active_branch_id inside the transaction (src/chat/service/branch-fork.ts:132-136; caller branches.ts:97-101). Item 4 (the purge FK guard) is now fixed: `src/routes/messages/archiving.ts:150` runs a PRAGMA + `sqlite_master` structural-reference survey BEFORE the transaction opens and refuses to purge structurally-referenced rows (`433244f7c`, `77d7471a1`). Item 2 remains open: `src/chat/context-window.ts:87-117` still retains non-contiguous history after a non-fit message (context holes). Item 2 is outside the 2026-10-25 review's 26 findings, so it was not verified by that sweep and this ticket is not reopened on its account.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-chat-context-optimization

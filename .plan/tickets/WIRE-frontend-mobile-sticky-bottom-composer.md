@@ -134,6 +134,8 @@ In `src/components/chat/chat.html` or the Alpine chat component template, includ
 
 ## Acceptance Criteria
 
+- [ ] `src/components/chat/mobile-composer.html` is actually included by the chat view (`src/components/chat/chat.html` or the Alpine chat template) — there is currently no include site for it, so the partial never renders.
+- [ ] `mobileComposer` is published on `globalThis` (like `globalThis.chatState` in `src/frontend/alpine/chat/index.ts:29`) so the partial's `x-data="mobileComposer()"` resolves. Including the partial today throws `ReferenceError` because the component is only exported from `src/frontend/alpine/mobile-composer.ts` and never exposed.
 - [ ] Mobile composer bar appears at bottom of screen on `<=768px`
 - [ ] Input submits via existing `hx-post="/chat/:id/message"`
 - [ ] Enter key submits without inserting newline
