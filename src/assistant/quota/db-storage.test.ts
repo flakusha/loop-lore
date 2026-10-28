@@ -15,6 +15,8 @@ import {
   bindQuotaDb,
   clearQuotaDb,
   consumeQuotaDb,
+  quotaDatabase,
+  resetQuotaDbUser,
 } from "./db-storage";
 import { configureQuotaStorage, consumeQuota, quotaStorageOptions, resetUserQuota, } from "./storage";
 
@@ -133,5 +135,21 @@ describe("hook parity on the DB backend", () => {
     consumeQuota("u12", 5, T0,);
     clearQuotaDb(fixture.sqlite,);
     expect(storedRow("u12",),).toBeNull();
+  });
+
+  test("resetQuotaDbUser deletes only the targeted row", () => {
+    consumeQuota("u13", 5, T0,);
+    consumeQuota("u14", 5, T0,);
+    resetQuotaDbUser(fixture.sqlite, "u13",);
+    expect(storedRow("u13",),).toBeNull();
+    expect(storedRow("u14",),).not.toBeNull();
+  });
+
+  test("quotaDatabase resolves the bound handle, then null after unbind", () => {
+    expect(quotaDatabase(),).toBe(fixture.sqlite,);
+    bindQuotaDb(null,);
+    // No test override / singleton in this isolated file → in-process fallback.
+    expect(quotaDatabase(),).toBeNull();
+    bindQuotaDb(fixture.sqlite,);
   });
 });
