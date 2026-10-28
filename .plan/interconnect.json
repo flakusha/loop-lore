@@ -16087,6 +16087,15 @@
       "related": []
     },
     {
+      "id": "TASK-3d-asset-type-and-serving",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-3d-asset-type-and-serving.md",
+      "title": "3D asset type and serving",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-3d-character-avatars",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-3d-character-avatars.md",
@@ -16107,10 +16116,28 @@
       ]
     },
     {
+      "id": "TASK-3d-frontend-viewer-lazy-mount",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-3d-frontend-viewer-lazy-mount.md",
+      "title": "3D frontend viewer lazy mount",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-3d-generation",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-3d-generation.md",
       "title": "3D Asset Generation",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-3d-generation-fact-capture",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-3d-generation-fact-capture.md",
+      "title": "3D generation fact capture",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -16127,6 +16154,15 @@
         "src/db/enums.ts",
         "src/routes/assets.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-3d-i18n-and-a11y-pass",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-3d-i18n-and-a11y-pass.md",
+      "title": "3D i18n and a11y pass",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -18502,6 +18538,24 @@
       "related": []
     },
     {
+      "id": "TASK-asset-lineage-link-kinds",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-asset-lineage-link-kinds.md",
+      "title": "Asset lineage link kinds",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-asset-metadata-shadow-overrides",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-asset-metadata-shadow-overrides.md",
+      "title": "Asset metadata shadow overrides",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-asset-platform-b1-content-foundation",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-asset-platform-b1-content-foundation.md",
@@ -20798,6 +20852,24 @@
       ]
     },
     {
+      "id": "TASK-bevy-export-profile",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-bevy-export-profile.md",
+      "title": "Bevy export profile",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-blender-headless-node-bridge",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-blender-headless-node-bridge.md",
+      "title": "Blender headless node bridge",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-blog-frontend-authoring",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-blog-frontend-authoring.md",
@@ -21136,6 +21208,15 @@
       "srcRefs": [
         "src/integrations/bridge-daemon.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-bridge-file-watch-roundtrip",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-bridge-file-watch-roundtrip.md",
+      "title": "Bridge file-watch roundtrip",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -27524,6 +27605,17 @@
       "related": []
     },
     {
+      "id": "TASK-embedded-regeneration-manifest",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-embedded-regeneration-manifest.md",
+      "title": "Embedded regeneration manifest",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/png-text-chunk.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-embedding-and-telemetry-retention-policies",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-embedding-and-telemetry-retention-policies.md",
@@ -27945,6 +28037,15 @@
       "related": []
     },
     {
+      "id": "TASK-engine-export-bundles",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-engine-export-bundles.md",
+      "title": "Engine export bundles",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-enhance-preview-shared-draft-store",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-enhance-preview-shared-draft-store.md",
@@ -27958,6 +28059,51 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-enrich-vector-gen-ticket-context-from-placeholder-pointers.md",
       "title": "Enrich vector-gen ticket Context from placeholder pointers",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-environment-kit-assistant-workflow",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-environment-kit-assistant-workflow.md",
+      "title": "Environment kit assistant workflow",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-environment-kit-background-and-props-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-environment-kit-background-and-props-tier.md",
+      "title": "Environment kit background and props tier",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-environment-kit-skybox-hdri-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-environment-kit-skybox-hdri-tier.md",
+      "title": "Environment kit skybox HDRI tier",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-environment-kit-terrain-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-environment-kit-terrain-tier.md",
+      "title": "Environment kit terrain tier",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-environment-kit-tileable-texture-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-environment-kit-tileable-texture-tier.md",
+      "title": "Environment kit tileable texture tier",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -28334,6 +28480,15 @@
         "epic-comfyui-first-class-citizen",
         "epic-reference-conditioned-generation"
       ]
+    },
+    {
+      "id": "TASK-external-manifest-interop",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-external-manifest-interop.md",
+      "title": "External manifest interop",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
     },
     {
       "id": "TASK-external-process-survivability-pause-and-restart-on-crash",
@@ -30221,6 +30376,15 @@
       "related": []
     },
     {
+      "id": "TASK-gallery-set-and-3d-surface",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-gallery-set-and-3d-surface.md",
+      "title": "Gallery set and 3D surface",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-gallery-user-tagging-propositions",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-gallery-user-tagging-propositions.md",
@@ -30401,6 +30565,15 @@
       ]
     },
     {
+      "id": "TASK-generation-context-3d-view-sets",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-generation-context-3d-view-sets.md",
+      "title": "Generation context 3D view-sets",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-generation-error-handling-gaps-detector-abort-void-promises",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-generation-error-handling-gaps-detector-abort-void-promises.md",
@@ -30410,6 +30583,15 @@
         "src/generation/auto-gen/call-llm.ts",
         "src/story/gm/decisions/llm.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-generation-fact-capture-at-queue-time",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-generation-fact-capture-at-queue-time.md",
+      "title": "Generation fact capture at queue time",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -30778,6 +30960,15 @@
         "src/routes/gm-notes.test.ts",
         "src/routes/gm-notes.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-godot-headless-import-verification",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-godot-headless-import-verification.md",
+      "title": "Godot headless import verification",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -31938,6 +32129,15 @@
       "related": []
     },
     {
+      "id": "TASK-hunyuan-optional-fenced-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-hunyuan-optional-fenced-tier.md",
+      "title": "Hunyuan optional fenced tier",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-i18n-alpine-client",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-i18n-alpine-client.md",
@@ -32385,6 +32585,17 @@
       "related": []
     },
     {
+      "id": "TASK-imported-generation-metadata-parser",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-imported-generation-metadata-parser.md",
+      "title": "Imported generation metadata parser",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/png-text-chunk.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-in-chat-asset-edit-flow",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-in-chat-asset-edit-flow.md",
@@ -32690,6 +32901,15 @@
         "src/assistant/commands/registry.ts",
         "src/routes/messages/command.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-interactive-project-binding",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-interactive-project-binding.md",
+      "title": "Interactive project binding",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -33168,6 +33388,15 @@
       ]
     },
     {
+      "id": "TASK-krita-shared-comfyui-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-krita-shared-comfyui-tier.md",
+      "title": "Krita shared ComfyUI tier",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-language-gated-lore-visibility",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-language-gated-lore-visibility.md",
@@ -33275,6 +33504,33 @@
         "TASK-licensing-publish-authorization-predicate",
         "epic-narrative-publishing-workflows"
       ]
+    },
+    {
+      "id": "TASK-lineage-content-hash-anchors",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-lineage-content-hash-anchors.md",
+      "title": "Lineage content-hash anchors",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-lineage-propagation-policy",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-lineage-propagation-policy.md",
+      "title": "Lineage propagation policy",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-lineage-query-ui",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-lineage-query-ui.md",
+      "title": "Lineage query UI",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
     },
     {
       "id": "TASK-link-memories-to-world-timeline-events",
@@ -34799,6 +35055,15 @@
       ]
     },
     {
+      "id": "TASK-mesh-qa-and-repair-chain",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-mesh-qa-and-repair-chain.md",
+      "title": "Mesh QA and repair chain",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-message-archive-restore-frontend",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-message-archive-restore-frontend.md",
@@ -35038,6 +35303,15 @@
         "src/generation/auto-gen/story-store.ts",
         "src/test-utils/insert-helpers.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-metadata-detection-provenance-stamping",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-metadata-detection-provenance-stamping.md",
+      "title": "Metadata detection provenance stamping",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -36808,6 +37082,15 @@
       "related": []
     },
     {
+      "id": "TASK-open-in-editor-handoff",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-open-in-editor-handoff.md",
+      "title": "Open-in-editor handoff",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-openapi-driven-api-reference",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-openapi-driven-api-reference.md",
@@ -37371,6 +37654,15 @@
         "src/chat/service/participants.ts",
         "src/frontend/alpine"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-photogrammetry-external-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-photogrammetry-external-tier.md",
+      "title": "Photogrammetry external tier",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -38158,6 +38450,15 @@
         "src/db/enums-story/turns.ts",
         "src/test-utils/schema-arbitrary.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-provenance-summary",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-provenance-summary.md",
+      "title": "Provenance summary",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -39217,6 +39518,15 @@
       "related": []
     },
     {
+      "id": "TASK-reconstruction-run-jobs",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-reconstruction-run-jobs.md",
+      "title": "Reconstruction run jobs",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-recursive-self-improvement-agent-actions-audit-table-and-sur",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-recursive-self-improvement-agent-actions-audit-table-and-sur.md",
@@ -40061,6 +40371,15 @@
       "related": []
     },
     {
+      "id": "TASK-render-judge-loop",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-render-judge-loop.md",
+      "title": "Render judge loop",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-render-path-resolvetransform-in-chat-bubbles",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-render-path-resolvetransform-in-chat-bubbles.md",
@@ -40654,6 +40973,15 @@
       "srcRefs": [
         "src/chat/service/rewrite-apply.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-rig-attach-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-rig-attach-tier.md",
+      "title": "Rig attach tier",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -41496,6 +41824,44 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-scene-chat-transition-context.md",
       "title": "Scene + chat/group transition with optional context inclusion",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-scene-layout-llm-step",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-scene-layout-llm-step.md",
+      "title": "Scene layout LLM step",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/regex/game-state.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-scene-layout-manifest-schema",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-scene-layout-manifest-schema.md",
+      "title": "Scene layout manifest schema",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-scene-parallax-vn-and-canvas-consumers",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-scene-parallax-vn-and-canvas-consumers.md",
+      "title": "Scene parallax VN and canvas consumers",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-scene-reuse-propagation",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-scene-reuse-propagation.md",
+      "title": "Scene reuse propagation",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -42802,6 +43168,15 @@
       "related": []
     },
     {
+      "id": "TASK-substance-risk-assessment",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-substance-risk-assessment.md",
+      "title": "Substance risk assessment",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-summarize-format-tldr-bullets-detailed-gradation",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-summarize-format-tldr-bullets-detailed-gradation.md",
@@ -43200,6 +43575,15 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-text-to-visual-novel-importer.md",
       "title": "Text to visual novel importer",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-texture-pbr-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-texture-pbr-tier.md",
+      "title": "Texture PBR tier",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -43782,6 +44166,15 @@
         "src/rpg/travel-scheduler/tick.test.ts",
         "src/rpg/travel-scheduler/tick.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-trellis2-view-set-pipeline",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-trellis2-view-set-pipeline.md",
+      "title": "TRELLIS2 view-set pipeline",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -44598,6 +44991,83 @@
       ]
     },
     {
+      "id": "TASK-view-set-assistant-workflow",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-view-set-assistant-workflow.md",
+      "title": "View-set assistant workflow",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-view-set-camera-conventions-and-export",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-view-set-camera-conventions-and-export.md",
+      "title": "View-set camera conventions and export",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-view-set-camera-metadata-fields",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-view-set-camera-metadata-fields.md",
+      "title": "View-set camera metadata fields",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-view-set-consistency-gate",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-view-set-consistency-gate.md",
+      "title": "View-set consistency gate",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/aux-pipeline/runner.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-view-set-crud-and-gallery-surface",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-view-set-crud-and-gallery-surface.md",
+      "title": "View-set CRUD and gallery surface",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-view-set-edit-grid-workflows",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-view-set-edit-grid-workflows.md",
+      "title": "View-set edit-grid workflows",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-view-set-orbit-video-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-view-set-orbit-video-tier.md",
+      "title": "View-set orbit video tier",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/generation/flow-control.ts",
+        "src/generation/hooks/registry.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-view-set-schema-and-links",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-view-set-schema-and-links.md",
+      "title": "View-set schema and links",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-visibility-report-for-chat-admins",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-visibility-report-for-chat-admins.md",
@@ -45015,6 +45485,15 @@
       "related": []
     },
     {
+      "id": "TASK-web-embed-profile",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-web-embed-profile.md",
+      "title": "Web embed profile",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-webp-as-a-first-class-stored-asset-format",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md",
@@ -45422,6 +45901,15 @@
       ]
     },
     {
+      "id": "TASK-workflow-asset-pick-step-type",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-workflow-asset-pick-step-type.md",
+      "title": "Workflow asset pick step type",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-workflow-dag-engine-task-dependencies",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-workflow-dag-engine-task-dependencies.md",
@@ -45435,6 +45923,15 @@
         "epic-assistant-step-planning",
         "epic-cron-scheduler"
       ]
+    },
+    {
+      "id": "TASK-workflow-dispatch-generation-backends",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-workflow-dispatch-generation-backends.md",
+      "title": "Workflow dispatch generation backends",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
     },
     {
       "id": "TASK-workflow-engine-schema-loader-template-types-workflow-discov",
@@ -46187,18 +46684,11 @@
       "id": "epic-3d-generation",
       "kind": "epic",
       "path": ".plan/epics/epic-3d-generation.md",
-      "title": "3D Asset Generation (Future)",
+      "title": "3D Reconstruction & Model Management",
       "status": "Not Started",
       "srcRefs": [
-        "src/db/enums-content.ts",
-        "src/frontend/3d/avatar.ts",
-        "src/frontend/3d/device-check.test.ts",
-        "src/frontend/3d/device-check.ts",
-        "src/frontend/3d/scene.test.ts",
-        "src/frontend/3d/scene.ts",
-        "src/frontend/3d/world-map.ts",
-        "src/generation/providers/3d.ts",
-        "src/routes/three-d.ts"
+        "src/characters/services/emotion-avatar-service/job-records.ts",
+        "src/db/state.ts"
       ],
       "related": []
     },
@@ -46581,6 +47071,27 @@
         "src/routes/messages/archiving.coverage.test.ts",
         "src/routes/messages/archiving.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "epic-asset-generation-metadata",
+      "kind": "epic",
+      "path": ".plan/epics/epic-asset-generation-metadata.md",
+      "title": "Asset Generation Metadata (Self-Describing Generations)",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/metadata.ts",
+        "src/assets/png-text-chunk.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "epic-asset-lineage-provenance",
+      "kind": "epic",
+      "path": ".plan/epics/epic-asset-lineage-provenance.md",
+      "title": "Asset Lineage Provenance (Generation Chains)",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -49247,6 +49758,15 @@
       "related": []
     },
     {
+      "id": "epic-game-asset-pipeline-export",
+      "kind": "epic",
+      "path": ".plan/epics/epic-game-asset-pipeline-export.md",
+      "title": "Game Asset Pipeline & Engine Export",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "epic-game-engine-sdks",
       "kind": "epic",
       "path": ".plan/epics/epic-game-engine-sdks.md",
@@ -51522,6 +52042,18 @@
       "related": []
     },
     {
+      "id": "epic-scene-environment-world-generation",
+      "kind": "epic",
+      "path": ".plan/epics/epic-scene-environment-world-generation.md",
+      "title": "Scene & Environment Generation for Automated World Building",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/components/chat/game-canvas.html",
+        "src/memory/budget.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "epic-schema",
       "kind": "epic",
       "path": ".plan/epics/epic-schema.md",
@@ -52000,6 +52532,23 @@
       "srcRefs": [
         "src/db/enums-content.ts",
         "src/generation/providers/comfyui.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "epic-view-set-generation",
+      "kind": "epic",
+      "path": ".plan/epics/epic-view-set-generation.md",
+      "title": "Contextual View-Set & Turnaround Generation",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/api-governance/rate-limiting/policies.ts",
+        "src/assets/service/links.ts",
+        "src/assistant/workflow-runner.ts",
+        "src/components/chat/media-preview-modal.html",
+        "src/db/enums-content.ts",
+        "src/hash/record-hash.ts",
+        "src/image-edit/providers/comfyui-image-upload.ts"
       ],
       "related": []
     },
@@ -52919,7 +53468,8 @@
         "BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s",
         "BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-",
         "TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes",
-        "epic-api-rate-limiting"
+        "epic-api-rate-limiting",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -53238,6 +53788,7 @@
         "TASK-multimodal-asset-reuse",
         "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
         "TASK-webp-as-a-first-class-stored-asset-format",
+        "epic-asset-generation-metadata",
         "epic-technical-comparison-charts"
       ]
     },
@@ -53258,7 +53809,10 @@
     {
       "path": "src/assets/png-text-chunk.ts",
       "owners": [
-        "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-"
+        "TASK-embedded-regeneration-manifest",
+        "TASK-imported-generation-metadata-parser",
+        "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+        "epic-asset-generation-metadata"
       ]
     },
     {
@@ -53441,7 +53995,8 @@
         "TASK-publication-artifact-schema",
         "TASK-reference-set-entity",
         "epic-narrative-publishing-workflows",
-        "epic-technical-comparison-charts"
+        "epic-technical-comparison-charts",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -55331,6 +55886,7 @@
         "epic-model-family-presets",
         "epic-narrative-publishing-workflows",
         "epic-technical-comparison-charts",
+        "epic-view-set-generation",
         "epic-workflow-engine"
       ]
     },
@@ -55840,6 +56396,7 @@
         "TASK-llama-cpp-decision-model-client-for-aux-classification",
         "TASK-outfit-change-aux-task-and-typebox-schema",
         "TASK-outfit-narrative-extractor-regex-prefilter",
+        "TASK-view-set-consistency-gate",
         "epic-aux-enrichment-pipeline",
         "epic-federation-offload-quotas"
       ]
@@ -57116,7 +57673,8 @@
     {
       "path": "src/characters/services/emotion-avatar-service/job-records.ts",
       "owners": [
-        "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-"
+        "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
+        "epic-3d-generation"
       ]
     },
     {
@@ -59594,7 +60152,8 @@
       "path": "src/components/chat/game-canvas.html",
       "owners": [
         "FEAT-2d-interactive-game-canvas-for-chat-scenes",
-        "FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas"
+        "FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas",
+        "epic-scene-environment-world-generation"
       ]
     },
     {
@@ -59664,7 +60223,8 @@
     {
       "path": "src/components/chat/media-preview-modal.html",
       "owners": [
-        "FEAT-in-chat-asset-preview-linkage-side-panel"
+        "FEAT-in-chat-asset-preview-linkage-side-panel",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -62038,14 +62598,14 @@
         "TASK-vector-gen-gallery-asset-support",
         "TASK-video-gen-route",
         "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
-        "epic-3d-generation",
         "epic-audio-video-sound",
         "epic-editorial-workflow",
         "epic-narrative-publishing-workflows",
         "epic-technical-comparison-charts",
         "epic-tts-foundation",
         "epic-vector-graphics-generation",
-        "epic-video-generation"
+        "epic-video-generation",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -64136,7 +64696,8 @@
         "TASK-019-enforce-state-machine-validators-at-write",
         "TASK-add-compositevalidator-for-boolean-enum-state-combinations",
         "TASK-adopt-state-machine-framework-in-runtime-status-writes",
-        "TASK-quest-status-transitions-bypass-state-machine"
+        "TASK-quest-status-transitions-bypass-state-machine",
+        "epic-3d-generation"
       ]
     },
     {
@@ -64827,24 +65388,6 @@
       ]
     },
     {
-      "path": "src/frontend/3d/avatar.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
-      "path": "src/frontend/3d/device-check.test.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
-      "path": "src/frontend/3d/device-check.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
       "path": "src/frontend/3d/expression-controller.ts",
       "owners": [
         "TASK-3d-character-avatars",
@@ -64870,18 +65413,6 @@
       ]
     },
     {
-      "path": "src/frontend/3d/scene.test.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
-      "path": "src/frontend/3d/scene.ts",
-      "owners": [
-        "epic-3d-generation"
-      ]
-    },
-    {
       "path": "src/frontend/3d/styles.css",
       "owners": [
         "TASK-3d-view-modes-ui"
@@ -64898,12 +65429,6 @@
       "owners": [
         "TASK-3d-character-avatars",
         "TASK-3d-vrm-foundation"
-      ]
-    },
-    {
-      "path": "src/frontend/3d/world-map.ts",
-      "owners": [
-        "epic-3d-generation"
       ]
     },
     {
@@ -69497,6 +70022,12 @@
       ]
     },
     {
+      "path": "src/generation/flow-control.ts",
+      "owners": [
+        "TASK-view-set-orbit-video-tier"
+      ]
+    },
+    {
       "path": "src/generation/gen-types-",
       "owners": [
         "TASK-delete-unreferenced-generation-story-assistant-and-chat-code"
@@ -69865,6 +70396,7 @@
         "TASK-hook-chain-and-moderation-robustness-in-generation-pipeline",
         "TASK-hook-result-payload-carry-context",
         "TASK-outfit-change-hook",
+        "TASK-view-set-orbit-video-tier",
         "epic-reactive-actor-appearance"
       ]
     },
@@ -70320,12 +70852,6 @@
       "owners": [
         "FEAT-byok-api-keys",
         "epic-byok-api-keys"
-      ]
-    },
-    {
-      "path": "src/generation/providers/3d.ts",
-      "owners": [
-        "epic-3d-generation"
       ]
     },
     {
@@ -71140,7 +71666,8 @@
       "path": "src/hash/record-hash.ts",
       "owners": [
         "TASK-middleware-fe-be-db-record-content-hashing",
-        "epic-content-hashing-distributed-integrity"
+        "epic-content-hashing-distributed-integrity",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -71243,7 +71770,8 @@
       "path": "src/image-edit/providers/comfyui-image-upload.ts",
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-        "epic-reactive-actor-appearance"
+        "epic-reactive-actor-appearance",
+        "epic-view-set-generation"
       ]
     },
     {
@@ -72301,7 +72829,8 @@
         "TASK-memory-history-search-bind-message-chain-reconstructable-con",
         "epic-chat-context-optimization",
         "epic-harness-integration",
-        "epic-hidden-carriage-context"
+        "epic-hidden-carriage-context",
+        "epic-scene-environment-world-generation"
       ]
     },
     {
@@ -74784,7 +75313,8 @@
       "path": "src/regex/game-state.ts",
       "owners": [
         "BUG-game-state-block-regex-truncates-payloads-containing-an-inne",
-        "FEAT-game-state-extraction-and-analysis-pipeline"
+        "FEAT-game-state-extraction-and-analysis-pipeline",
+        "TASK-scene-layout-llm-step"
       ]
     },
     {
@@ -79043,12 +79573,6 @@
       "path": "src/routes/templates/transfer.ts",
       "owners": [
         "epic-comfyui-first-class-citizen"
-      ]
-    },
-    {
-      "path": "src/routes/three-d.ts",
-      "owners": [
-        "epic-3d-generation"
       ]
     },
     {
@@ -88970,7 +89494,17 @@
     {
       "from": "epic-3d-generation",
       "kind": "owns",
+      "to": "TASK-3d-asset-type-and-serving"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
       "to": "TASK-3d-character-avatars"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-3d-frontend-viewer-lazy-mount"
     },
     {
       "from": "epic-3d-generation",
@@ -88985,12 +89519,62 @@
     {
       "from": "epic-3d-generation",
       "kind": "owns",
+      "to": "TASK-3d-i18n-and-a11y-pass"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
       "to": "TASK-frontend-characters-page-spec"
     },
     {
       "from": "epic-3d-generation",
       "kind": "owns",
+      "to": "TASK-hunyuan-optional-fenced-tier"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-mesh-qa-and-repair-chain"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-open-in-editor-handoff"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-photogrammetry-external-tier"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-reconstruction-run-jobs"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-render-judge-loop"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-rig-attach-tier"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
       "to": "TASK-rigged-model-buffer-render"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-texture-pbr-tier"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-trellis2-view-set-pipeline"
     },
     {
       "from": "epic-accessibility-input",
@@ -89701,6 +90285,71 @@
       "from": "epic-archival-workflow",
       "kind": "owns",
       "to": "TASK-archival-workflow"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "owns",
+      "to": "TASK-3d-generation-fact-capture"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "owns",
+      "to": "TASK-asset-metadata-shadow-overrides"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "owns",
+      "to": "TASK-embedded-regeneration-manifest"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "owns",
+      "to": "TASK-external-manifest-interop"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "owns",
+      "to": "TASK-generation-fact-capture-at-queue-time"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "owns",
+      "to": "TASK-imported-generation-metadata-parser"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "owns",
+      "to": "TASK-metadata-detection-provenance-stamping"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "owns",
+      "to": "TASK-view-set-camera-metadata-fields"
+    },
+    {
+      "from": "epic-asset-lineage-provenance",
+      "kind": "owns",
+      "to": "TASK-asset-lineage-link-kinds"
+    },
+    {
+      "from": "epic-asset-lineage-provenance",
+      "kind": "owns",
+      "to": "TASK-lineage-content-hash-anchors"
+    },
+    {
+      "from": "epic-asset-lineage-provenance",
+      "kind": "owns",
+      "to": "TASK-lineage-propagation-policy"
+    },
+    {
+      "from": "epic-asset-lineage-provenance",
+      "kind": "owns",
+      "to": "TASK-lineage-query-ui"
+    },
+    {
+      "from": "epic-asset-lineage-provenance",
+      "kind": "owns",
+      "to": "TASK-provenance-summary"
     },
     {
       "from": "epic-asset-platform-capabilities",
@@ -94590,6 +95239,21 @@
     {
       "from": "epic-external-creative-tool-bridge",
       "kind": "owns",
+      "to": "TASK-blender-headless-node-bridge"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
+      "to": "TASK-bridge-file-watch-roundtrip"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
+      "to": "TASK-krita-shared-comfyui-tier"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
       "to": "TASK-mcp-client-over-stdio-and-streamable-http"
     },
     {
@@ -94606,6 +95270,11 @@
       "from": "epic-external-creative-tool-bridge",
       "kind": "owns",
       "to": "TASK-odysseus-style-external-agent-integration-surface"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
+      "to": "TASK-substance-risk-assessment"
     },
     {
       "from": "epic-external-creative-tool-bridge",
@@ -95636,6 +96305,36 @@
       "from": "epic-fuzzing-infrastructure",
       "kind": "owns",
       "to": "TASK-seed-corpora-10k-seeds-per-fuzzing-target"
+    },
+    {
+      "from": "epic-gallery-batch-operations",
+      "kind": "owns",
+      "to": "TASK-gallery-set-and-3d-surface"
+    },
+    {
+      "from": "epic-game-asset-pipeline-export",
+      "kind": "owns",
+      "to": "TASK-bevy-export-profile"
+    },
+    {
+      "from": "epic-game-asset-pipeline-export",
+      "kind": "owns",
+      "to": "TASK-engine-export-bundles"
+    },
+    {
+      "from": "epic-game-asset-pipeline-export",
+      "kind": "owns",
+      "to": "TASK-godot-headless-import-verification"
+    },
+    {
+      "from": "epic-game-asset-pipeline-export",
+      "kind": "owns",
+      "to": "TASK-interactive-project-binding"
+    },
+    {
+      "from": "epic-game-asset-pipeline-export",
+      "kind": "owns",
+      "to": "TASK-web-embed-profile"
     },
     {
       "from": "epic-generation-flow-control",
@@ -97906,6 +98605,11 @@
       "from": "epic-multimodal-asset-reuse",
       "kind": "owns",
       "to": "TASK-gallery-asset-reuse-picker-for-world-location-item-creation"
+    },
+    {
+      "from": "epic-multimodal-asset-reuse",
+      "kind": "owns",
+      "to": "TASK-generation-context-3d-view-sets"
     },
     {
       "from": "epic-multimodal-asset-reuse",
@@ -100403,6 +101107,51 @@
       "to": "TASK-sam3-mask-cache-and-reuse"
     },
     {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "owns",
+      "to": "TASK-environment-kit-assistant-workflow"
+    },
+    {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "owns",
+      "to": "TASK-environment-kit-background-and-props-tier"
+    },
+    {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "owns",
+      "to": "TASK-environment-kit-skybox-hdri-tier"
+    },
+    {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "owns",
+      "to": "TASK-environment-kit-terrain-tier"
+    },
+    {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "owns",
+      "to": "TASK-environment-kit-tileable-texture-tier"
+    },
+    {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "owns",
+      "to": "TASK-scene-layout-llm-step"
+    },
+    {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "owns",
+      "to": "TASK-scene-layout-manifest-schema"
+    },
+    {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "owns",
+      "to": "TASK-scene-parallax-vn-and-canvas-consumers"
+    },
+    {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "owns",
+      "to": "TASK-scene-reuse-propagation"
+    },
+    {
       "from": "epic-schema",
       "kind": "owns",
       "to": "BUG-get-admin-model-roles-schema-array-vs-service-record-mismatc"
@@ -101698,6 +102447,41 @@
       "to": "TASK-vector-gen-svg-serve-safety"
     },
     {
+      "from": "epic-view-set-generation",
+      "kind": "owns",
+      "to": "TASK-view-set-assistant-workflow"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "owns",
+      "to": "TASK-view-set-camera-conventions-and-export"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "owns",
+      "to": "TASK-view-set-consistency-gate"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "owns",
+      "to": "TASK-view-set-crud-and-gallery-surface"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "owns",
+      "to": "TASK-view-set-edit-grid-workflows"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "owns",
+      "to": "TASK-view-set-orbit-video-tier"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "owns",
+      "to": "TASK-view-set-schema-and-links"
+    },
+    {
       "from": "epic-visual-novel-mode",
       "kind": "owns",
       "to": "FEAT-visual-novel-mode-full-implementation"
@@ -101930,7 +102714,17 @@
     {
       "from": "epic-workflow-engine",
       "kind": "owns",
+      "to": "TASK-workflow-asset-pick-step-type"
+    },
+    {
+      "from": "epic-workflow-engine",
+      "kind": "owns",
       "to": "TASK-workflow-dag-engine-task-dependencies"
+    },
+    {
+      "from": "epic-workflow-engine",
+      "kind": "owns",
+      "to": "TASK-workflow-dispatch-generation-backends"
     },
     {
       "from": "epic-workflow-engine",
@@ -130428,6 +131222,11 @@
       "to": "src/social-hub/email/modern/nostr.ts"
     },
     {
+      "from": "TASK-embedded-regeneration-manifest",
+      "kind": "produces",
+      "to": "src/assets/png-text-chunk.ts"
+    },
+    {
       "from": "TASK-embedding-vector-store",
       "kind": "produces",
       "to": "src/rag/embeddings.ts"
@@ -135296,6 +136095,11 @@
       "from": "TASK-import-export-io",
       "kind": "produces",
       "to": "src/routes/import.ts"
+    },
+    {
+      "from": "TASK-imported-generation-metadata-parser",
+      "kind": "produces",
+      "to": "src/assets/png-text-chunk.ts"
     },
     {
       "from": "TASK-inbound-webhook-ingestion-surface-hmac-verified-default-deny",
@@ -143513,6 +144317,11 @@
       "to": "src/generation/audio-prompt-templates.ts"
     },
     {
+      "from": "TASK-scene-layout-llm-step",
+      "kind": "produces",
+      "to": "src/regex/game-state.ts"
+    },
+    {
       "from": "TASK-scheduled-messages-reminders",
       "kind": "produces",
       "to": "src/chat/proactive/timing.ts"
@@ -146293,6 +147102,21 @@
       "to": "src/generation/video-prompt-templates.ts"
     },
     {
+      "from": "TASK-view-set-consistency-gate",
+      "kind": "produces",
+      "to": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-view-set-orbit-video-tier",
+      "kind": "produces",
+      "to": "src/generation/flow-control.ts"
+    },
+    {
+      "from": "TASK-view-set-orbit-video-tier",
+      "kind": "produces",
+      "to": "src/generation/hooks/registry.ts"
+    },
+    {
       "from": "TASK-visual-novel-mode",
       "kind": "produces",
       "to": "src/components/chat/chat-settings-modal.html"
@@ -148075,47 +148899,12 @@
     {
       "from": "epic-3d-generation",
       "kind": "produces",
-      "to": "src/db/enums-content.ts"
+      "to": "src/characters/services/emotion-avatar-service/job-records.ts"
     },
     {
       "from": "epic-3d-generation",
       "kind": "produces",
-      "to": "src/frontend/3d/avatar.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/frontend/3d/device-check.test.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/frontend/3d/device-check.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/frontend/3d/scene.test.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/frontend/3d/scene.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/frontend/3d/world-map.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/generation/providers/3d.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "produces",
-      "to": "src/routes/three-d.ts"
+      "to": "src/db/state.ts"
     },
     {
       "from": "epic-accessibility-input",
@@ -148831,6 +149620,16 @@
       "from": "epic-archival-workflow",
       "kind": "produces",
       "to": "src/routes/messages/archiving.ts"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "produces",
+      "to": "src/assets/metadata.ts"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "produces",
+      "to": "src/assets/png-text-chunk.ts"
     },
     {
       "from": "epic-asset-platform-capabilities",
@@ -159573,6 +160372,16 @@
       "to": "src/image-edit/run-authz.ts"
     },
     {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "produces",
+      "to": "src/components/chat/game-canvas.html"
+    },
+    {
+      "from": "epic-scene-environment-world-generation",
+      "kind": "produces",
+      "to": "src/memory/budget.ts"
+    },
+    {
       "from": "epic-schema",
       "kind": "produces",
       "to": "src/db/__tests__/schema-roundtrip.test.ts"
@@ -160361,6 +161170,41 @@
       "from": "epic-video-generation",
       "kind": "produces",
       "to": "src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/assets/service/links.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/components/chat/media-preview-modal.html"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/hash/record-hash.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "produces",
+      "to": "src/image-edit/providers/comfyui-image-upload.ts"
     },
     {
       "from": "epic-visual-novel-mode",
@@ -171083,6 +171927,12 @@
     {
       "from": "BUG-admin-auxtelemetry-leaks-userid-chatid",
       "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-admin-auxtelemetry-leaks-userid-chatid",
+      "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/aux-pipeline/runner.ts; src/routes/admin/aux-telemetry.test.ts"
     },
@@ -171936,6 +172786,12 @@
       "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
       "kind": "sibling",
       "to": "epic-api-rate-limiting",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/api-governance/rate-limiting/policies.ts"
     },
     {
@@ -175847,6 +176703,12 @@
     {
       "from": "BUG-asset-webp-metadata-vp8l-vp8x-off-bytes",
       "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-asset-webp-metadata-vp8l-vp8x-off-bytes",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assets/metadata.ts"
     },
@@ -175890,6 +176752,12 @@
       "from": "BUG-asset-webp-vp8x-dimension-truncation",
       "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-asset-webp-vp8x-dimension-truncation",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
       "via": "src/assets/metadata.ts"
     },
     {
@@ -176142,6 +177010,12 @@
       "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assets/service/links.ts"
+    },
+    {
+      "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assets/service/links.ts"
     },
     {
@@ -177049,6 +177923,12 @@
       "kind": "sibling",
       "to": "epic-timeline-system",
       "via": "src/assistant/prompt/sections/lore.ts"
+    },
+    {
+      "from": "BUG-assistant-and-group-chat-correctness-defects",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "BUG-assistant-and-group-chat-correctness-defects",
@@ -177978,6 +178858,12 @@
       "from": "BUG-assistant-creative-studio-task-stale",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "BUG-assistant-creative-studio-task-stale",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -184379,6 +185265,12 @@
     {
       "from": "BUG-callaux-graceful-failure-throws-on-empty-config",
       "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-callaux-graceful-failure-throws-on-empty-config",
+      "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/admin/model-roles.ts; src/aux-pipeline/runner.ts"
     },
@@ -189797,6 +190689,12 @@
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/aux-pipeline/runner.ts"
     },
@@ -189858,6 +190756,12 @@
       "from": "BUG-chat-sse-shares-generation-rate-bucket",
       "kind": "sibling",
       "to": "epic-api-rate-limiting",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-chat-sse-shares-generation-rate-bucket",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/api-governance/rate-limiting/policies.ts"
     },
     {
@@ -198839,6 +199743,12 @@
     {
       "from": "BUG-emotion-mood-hook-payload-missing-actor-chat",
       "kind": "sibling",
+      "to": "TASK-view-set-orbit-video-tier",
+      "via": "src/generation/hooks/registry.ts"
+    },
+    {
+      "from": "BUG-emotion-mood-hook-payload-missing-actor-chat",
+      "kind": "sibling",
       "to": "TEST-emotion-hook-to-avatarForMessage-integration",
       "via": "src/generation/auto-gen/content-hooks.ts; src/generation/hooks/emotion-hook.ts"
     },
@@ -198997,6 +199907,12 @@
       "kind": "sibling",
       "to": "TASK-prompt-template-registry",
       "via": "src/generation/hooks/nsfw-hook.ts"
+    },
+    {
+      "from": "BUG-emotion-mood-hook-stale-llm-javadoc",
+      "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "BUG-emotion-mood-hook-stale-llm-javadoc",
@@ -207951,6 +208867,12 @@
       "via": "src/regex/game-state.ts"
     },
     {
+      "from": "BUG-game-state-block-regex-truncates-payloads-containing-an-inne",
+      "kind": "sibling",
+      "to": "TASK-scene-layout-llm-step",
+      "via": "src/regex/game-state.ts"
+    },
+    {
       "from": "BUG-generate-route-authorizes-chatid-but-not-actorid",
       "kind": "sibling",
       "to": "BUG-generation-control-plane-routes-lack-authorization",
@@ -214263,6 +215185,12 @@
       "via": "src/generation/providers/comfyui.ts"
     },
     {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/image-edit/providers/comfyui-image-upload.ts"
+    },
+    {
       "from": "BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty",
       "kind": "sibling",
       "to": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
@@ -215623,6 +216551,12 @@
       "kind": "sibling",
       "to": "TASK-user-block-ban-shadow",
       "via": "src/chat/moderation.ts"
+    },
+    {
+      "from": "BUG-inbound-federation-content-not-moderated-before-display",
+      "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "BUG-inbound-federation-content-not-moderated-before-display",
@@ -228291,6 +229225,12 @@
       "via": "src/routes/v1/actors-surface.ts"
     },
     {
+      "from": "BUG-rate-limit-misses-post-emotion-avatars-single",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
       "from": "BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s",
       "kind": "sibling",
       "to": "BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-",
@@ -228349,6 +229289,12 @@
       "kind": "sibling",
       "to": "epic-frontend-emoji-reactions",
       "via": "src/frontend/alpine/chat-messages.ts"
+    },
+    {
+      "from": "BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/api-governance/rate-limiting/policies.ts"
     },
     {
       "from": "BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta",
@@ -234965,6 +235911,12 @@
     {
       "from": "BUG-size-strict-pre-existing-dev-drift",
       "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-size-strict-pre-existing-dev-drift",
+      "kind": "sibling",
       "to": "epic-assistant-creative-studio-workflows",
       "via": "src/assistant/prompt-assembler.ts"
     },
@@ -241445,6 +242397,12 @@
     {
       "from": "BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-",
+      "kind": "sibling",
       "to": "epic-visual-novel-mode",
       "via": "src/routes/v1/chats-surface.ts; src/routes/vn-generate/questions.ts"
     },
@@ -242148,6 +243106,12 @@
       "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -247125,6 +248089,12 @@
       "via": "src/db/enums-story/world.ts"
     },
     {
+      "from": "FEAT-2026-003",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
       "from": "FEAT-2026-007",
       "kind": "sibling",
       "to": "FEAT-chat-archive-asset-cascade-link-unlink-assets-on-archive-res",
@@ -247453,6 +248423,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/views/chat.html"
+    },
+    {
+      "from": "FEAT-2d-interactive-game-canvas-for-chat-scenes",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/components/chat/game-canvas.html"
     },
     {
       "from": "FEAT-2d-interactive-game-canvas-for-chat-scenes",
@@ -249107,12 +250083,6 @@
     {
       "from": "FEAT-background",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "FEAT-background",
-      "kind": "sibling",
       "to": "epic-ambient-music-sfx",
       "via": "src/generation/providers/comfyui.ts"
     },
@@ -249301,6 +250271,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts; src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "FEAT-background",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
     },
     {
       "from": "FEAT-background",
@@ -250831,6 +251807,12 @@
       "kind": "sibling",
       "to": "TASK-unify-item-types",
       "via": "src/db/enums-core/flags.ts"
+    },
+    {
+      "from": "FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-",
+      "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-",
@@ -253307,6 +254289,12 @@
     {
       "from": "FEAT-game-state-extraction-and-analysis-pipeline",
       "kind": "sibling",
+      "to": "TASK-scene-layout-llm-step",
+      "via": "src/regex/game-state.ts"
+    },
+    {
+      "from": "FEAT-game-state-extraction-and-analysis-pipeline",
+      "kind": "sibling",
       "to": "TEST-emotion-hook-to-avatarForMessage-integration",
       "via": "src/generation/auto-gen/store-message.ts"
     },
@@ -253731,6 +254719,12 @@
       "via": "src/routes/export.ts"
     },
     {
+      "from": "FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/components/chat/game-canvas.html"
+    },
+    {
       "from": "FEAT-gguf-kv-typed-reader-with-arch-templated-key-registry",
       "kind": "sibling",
       "to": "TASK-browser-side-gguf-kv-extraction-for-local-byok-models",
@@ -253819,6 +254813,12 @@
       "kind": "sibling",
       "to": "epic-gallery-batch-operations",
       "via": "src/components/chat/gallery-sidebar.html; src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "FEAT-in-chat-asset-preview-linkage-side-panel",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/components/chat/media-preview-modal.html"
     },
     {
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
@@ -255347,6 +256347,12 @@
     {
       "from": "FEAT-llm-request-complexity-classification",
       "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "FEAT-llm-request-complexity-classification",
+      "kind": "sibling",
       "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
       "via": "src/generation/auto-gen/call-llm.ts"
     },
@@ -255511,6 +256517,12 @@
       "kind": "sibling",
       "to": "TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste",
       "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "FEAT-llm-resource-aware-admission-control",
+      "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "FEAT-llm-resource-aware-admission-control",
@@ -258579,6 +259591,12 @@
       "via": "src/memory/budget.ts"
     },
     {
+      "from": "FEAT-relevance-gated-memory-injection-with-classifier-or-reranker",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
       "from": "FEAT-seed-character-loadouts-into-the-wardrobe-bridge",
       "kind": "sibling",
       "to": "TASK-char-template-full-model-coverage",
@@ -261063,6 +262081,12 @@
       "via": "src/db/schema-memory.ts"
     },
     {
+      "from": "IDEA-memory-knowledge-isolation-and-world-timeline",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
       "from": "IDEA-nli-grounding-classifier-behind-the-hallucination-guard",
       "kind": "sibling",
       "to": "TASK-chat-feature-introduction-generation-propagation",
@@ -262249,6 +263273,12 @@
       "kind": "sibling",
       "to": "TASK-world-simulation-discovery-and-trade-events",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-019-enforce-state-machine-validators-at-write",
+      "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/db/state.ts"
     },
     {
       "from": "TASK-019-enforce-state-machine-validators-at-write",
@@ -272673,6 +273703,12 @@
       "via": "src/db/state.ts"
     },
     {
+      "from": "TASK-add-compositevalidator-for-boolean-enum-state-combinations",
+      "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/db/state.ts"
+    },
+    {
       "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
       "kind": "sibling",
       "to": "TASK-asymmetric-key-pairs-followup",
@@ -273607,6 +274643,12 @@
       "kind": "sibling",
       "to": "TASK-tui-models-overlay",
       "via": "src/admin/model-roles.ts"
+    },
+    {
+      "from": "TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts",
+      "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts",
@@ -276119,6 +277161,12 @@
     {
       "from": "TASK-adopt-state-machine-framework-in-runtime-status-writes",
       "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/db/state.ts"
+    },
+    {
+      "from": "TASK-adopt-state-machine-framework-in-runtime-status-writes",
+      "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/db/enums-core/messages.ts"
     },
@@ -278513,6 +279561,12 @@
     {
       "from": "TASK-asset-b1-rendition-pipeline",
       "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-asset-b1-rendition-pipeline",
+      "kind": "sibling",
       "to": "epic-avatar-dogfood",
       "via": "src/assets/service/thumbnail.ts"
     },
@@ -278837,12 +279891,6 @@
     {
       "from": "TASK-asset-download-format-conversion-webp-png-jpg",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -278898,6 +279946,12 @@
       "from": "TASK-asset-download-format-conversion-webp-png-jpg",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -278971,6 +280025,12 @@
       "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
+      "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/characters/services/emotion-avatar-service/job-records.ts"
     },
     {
       "from": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
@@ -279377,8 +280437,8 @@
     {
       "from": "TASK-assets-has-alpha-column-and-store-computation",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-assets-has-alpha-column-and-store-computation",
@@ -279438,6 +280498,12 @@
       "from": "TASK-assets-has-alpha-column-and-store-computation",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-assets-has-alpha-column-and-store-computation",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -280079,6 +281145,12 @@
     {
       "from": "TASK-assistant-command-execution-intent-detection",
       "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-assistant-command-execution-intent-detection",
+      "kind": "sibling",
       "to": "TASK-wire-gm-service-story-mode",
       "via": "src/generation/auto-gen.ts"
     },
@@ -280643,6 +281715,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-character",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-character",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -280842,6 +281920,12 @@
       "from": "TASK-assistant-creative-studio-workflow-gallery-batch",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-gallery-batch",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -281153,6 +282237,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-gallery-edit",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-gallery-edit",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -281351,6 +282441,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-item",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-item",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -281543,6 +282639,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-location",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-location",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -281729,6 +282831,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-npc",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-npc",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -281909,6 +283017,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflow-species",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-species",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -282078,6 +283192,12 @@
       "from": "TASK-assistant-creative-studio-workflow-world",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflow-world",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -282456,6 +283576,12 @@
       "from": "TASK-assistant-creative-studio-workflows",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflows",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -283457,6 +284583,12 @@
     {
       "from": "TASK-assistant-nsfw-api-prefiltering",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-nsfw-api-prefiltering",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts; src/config/sections/templates.ts"
     },
@@ -284255,6 +285387,12 @@
     {
       "from": "TASK-assistant-third-party-api-integration",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-third-party-api-integration",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -284370,6 +285508,12 @@
       "from": "TASK-assistant-todo-planning-tables-service-assistant-wiring",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-assistant-todo-planning-tables-service-assistant-wiring",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -288455,6 +289599,18 @@
     {
       "from": "TASK-aux-llm-emotion-classifier",
       "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-aux-llm-emotion-classifier",
+      "kind": "sibling",
+      "to": "TASK-view-set-orbit-video-tier",
+      "via": "src/generation/hooks/registry.ts"
+    },
+    {
+      "from": "TASK-aux-llm-emotion-classifier",
+      "kind": "sibling",
       "to": "TEST-emotion-hook-to-avatarForMessage-integration",
       "via": "src/generation/hooks/emotion-hook.ts"
     },
@@ -289463,12 +290619,6 @@
     {
       "from": "TASK-avatar-framing-column-migration-future",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-avatar-framing-column-migration-future",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -289536,6 +290686,12 @@
       "from": "TASK-avatar-framing-column-migration-future",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-avatar-framing-column-migration-future",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -289817,12 +290973,6 @@
     {
       "from": "TASK-avatar-framing-tag-member",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-avatar-framing-tag-member",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -289902,6 +291052,12 @@
       "from": "TASK-avatar-framing-tag-member",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-avatar-framing-tag-member",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -290381,12 +291537,6 @@
     {
       "from": "TASK-avatar-render-target-discriminator",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-avatar-render-target-discriminator",
-      "kind": "sibling",
       "to": "epic-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -290598,6 +291748,12 @@
       "from": "TASK-avatar-render-target-discriminator",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-avatar-render-target-discriminator",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -292171,6 +293327,12 @@
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/sections/templates-workflow.ts"
+    },
+    {
+      "from": "TASK-book-outline-generation-workflow",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "TASK-book-outline-generation-workflow",
@@ -295097,12 +296259,6 @@
     {
       "from": "TASK-character-avatar-gallery-binding",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-character-avatar-gallery-binding",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -295182,6 +296338,12 @@
       "from": "TASK-character-avatar-gallery-binding",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-character-avatar-gallery-binding",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -304415,6 +305577,12 @@
     {
       "from": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
       "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/generation/auto-gen/classify-intent.ts"
     },
@@ -309569,6 +310737,12 @@
     {
       "from": "TASK-comic-storyboard-panel-generation-workflow",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-comic-storyboard-panel-generation-workflow",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -309863,14 +311037,14 @@
     {
       "from": "TASK-comparison-cell-detail-metadata",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
+      "to": "epic-ambient-music-sfx",
+      "via": "src/generation/providers/comfyui.ts"
     },
     {
       "from": "TASK-comparison-cell-detail-metadata",
       "kind": "sibling",
-      "to": "epic-ambient-music-sfx",
-      "via": "src/generation/providers/comfyui.ts"
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-comparison-cell-detail-metadata",
@@ -309997,6 +311171,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts; src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "TASK-comparison-cell-detail-metadata",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-comparison-chart-export-png-svg-csv",
@@ -310427,6 +311607,12 @@
     {
       "from": "TASK-comparison-fan-out-engine",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-comparison-fan-out-engine",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -310583,12 +311769,6 @@
     {
       "from": "TASK-comparison-gallery-comparison-set-integration",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-comparison-gallery-comparison-set-integration",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -310639,6 +311819,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-comparison-gallery-comparison-set-integration",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-comparison-grid-frontend",
@@ -311603,6 +312789,12 @@
     {
       "from": "TASK-comparison-set-variant-data-model",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts"
+    },
+    {
+      "from": "TASK-comparison-set-variant-data-model",
+      "kind": "sibling",
       "to": "epic-worlds-extension",
       "via": "src/db/schema.ts"
     },
@@ -311969,12 +313161,6 @@
     {
       "from": "TASK-comparison-workflow-template-and-command",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-comparison-workflow-template-and-command",
-      "kind": "sibling",
       "to": "epic-assistant-gm-flows",
       "via": "src/routes/messages/command.ts"
     },
@@ -312097,6 +313283,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-comparison-workflow-template-and-command",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-comparison-workflow-template-and-command",
@@ -312985,6 +314177,12 @@
       "kind": "sibling",
       "to": "epic-project-spaces-pm-integration",
       "via": "src/memory/provision.ts"
+    },
+    {
+      "from": "TASK-context-injection-dedup",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
     },
     {
       "from": "TASK-context-lossless-lossy-tiering",
@@ -322887,6 +324085,24 @@
       "via": "src/views/admin.html"
     },
     {
+      "from": "TASK-embedded-regeneration-manifest",
+      "kind": "sibling",
+      "to": "TASK-imported-generation-metadata-parser",
+      "via": "src/assets/png-text-chunk.ts"
+    },
+    {
+      "from": "TASK-embedded-regeneration-manifest",
+      "kind": "sibling",
+      "to": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "via": "src/assets/png-text-chunk.ts"
+    },
+    {
+      "from": "TASK-embedded-regeneration-manifest",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/png-text-chunk.ts"
+    },
+    {
       "from": "TASK-embedding-vector-store",
       "kind": "sibling",
       "to": "epic-rag-vector-store",
@@ -328601,6 +329817,12 @@
     {
       "from": "TASK-federation-peer-dispatch-compose-failover",
       "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-federation-peer-dispatch-compose-failover",
+      "kind": "sibling",
       "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
       "via": "src/generation/auto-gen/call-llm.ts; src/generation/providers/call-with-failover.ts; src/generation/providers/registry.ts"
     },
@@ -334061,6 +335283,12 @@
     {
       "from": "TASK-gm-reuse-workflowrunner-for-guided-entity-creation",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-gm-reuse-workflowrunner-for-guided-entity-creation",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts"
     },
@@ -334177,6 +335405,12 @@
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts",
@@ -335865,6 +337099,12 @@
       "via": "src/memory/provision.ts"
     },
     {
+      "from": "TASK-harness-context-priority-tiers",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
       "from": "TASK-harness-context-templates",
       "kind": "sibling",
       "to": "TASK-harness-lean-ctx-tools",
@@ -336727,6 +337967,12 @@
       "kind": "sibling",
       "to": "TASK-vector-gen-llm-svg-pipeline",
       "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "TASK-harness-model-routing",
+      "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "TASK-harness-model-routing",
@@ -338261,6 +339507,12 @@
     {
       "from": "TASK-hook-chain-and-moderation-robustness-in-generation-pipeline",
       "kind": "sibling",
+      "to": "TASK-view-set-orbit-video-tier",
+      "via": "src/generation/hooks/registry.ts"
+    },
+    {
+      "from": "TASK-hook-chain-and-moderation-robustness-in-generation-pipeline",
+      "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/generation/hooks/registry.ts"
     },
@@ -338293,6 +339545,12 @@
       "kind": "sibling",
       "to": "TASK-outfit-change-multi-actor-name-resolution",
       "via": "src/generation/auto-gen/content-hooks.ts; src/generation/hooks/types.ts"
+    },
+    {
+      "from": "TASK-hook-result-payload-carry-context",
+      "kind": "sibling",
+      "to": "TASK-view-set-orbit-video-tier",
+      "via": "src/generation/hooks/registry.ts"
     },
     {
       "from": "TASK-hook-result-payload-carry-context",
@@ -339311,6 +340569,12 @@
     {
       "from": "TASK-illustrated-book-reference-pass",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-illustrated-book-reference-pass",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -339925,6 +341189,18 @@
       "kind": "sibling",
       "to": "epic-import-export-io",
       "via": "src/routes/export.ts; src/routes/import.ts"
+    },
+    {
+      "from": "TASK-imported-generation-metadata-parser",
+      "kind": "sibling",
+      "to": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "via": "src/assets/png-text-chunk.ts"
+    },
+    {
+      "from": "TASK-imported-generation-metadata-parser",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/png-text-chunk.ts"
     },
     {
       "from": "TASK-inbound-webhook-ingestion-surface-hmac-verified-default-deny",
@@ -340937,12 +342213,6 @@
     {
       "from": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -340981,6 +342251,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-item-config-templates",
@@ -342414,6 +343690,12 @@
       "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
       "kind": "sibling",
       "to": "TASK-outfit-narrative-extractor-regex-prefilter",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
       "via": "src/aux-pipeline/runner.ts"
     },
     {
@@ -345719,6 +347001,12 @@
     {
       "from": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
       "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/db/migrations/README.md"
     },
@@ -347871,6 +349159,12 @@
       "via": "src/db/schema-"
     },
     {
+      "from": "TASK-middleware-fe-be-db-record-content-hashing",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/hash/record-hash.ts"
+    },
+    {
       "from": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
       "kind": "sibling",
       "to": "TASK-middleware-idempotency-wire-into-elysia",
@@ -349919,6 +351213,12 @@
     {
       "from": "TASK-multimodal-asset-reuse",
       "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-multimodal-asset-reuse",
+      "kind": "sibling",
       "to": "epic-assistant-generation-extensions",
       "via": "src/generation/providers/comfyui.ts"
     },
@@ -351449,6 +352749,12 @@
     {
       "from": "TASK-outfit-change-aux-task-and-typebox-schema",
       "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-outfit-change-aux-task-and-typebox-schema",
+      "kind": "sibling",
       "to": "TASK-vn-cast-server-producer",
       "via": "src/generation/auto-gen/resolve-known-names.ts"
     },
@@ -351691,6 +352997,12 @@
       "kind": "sibling",
       "to": "TASK-validate-expansion-config-at-load-time",
       "via": "src/generation/auto-gen/prepare-generation.ts"
+    },
+    {
+      "from": "TASK-outfit-change-hook",
+      "kind": "sibling",
+      "to": "TASK-view-set-orbit-video-tier",
+      "via": "src/generation/hooks/registry.ts"
     },
     {
       "from": "TASK-outfit-change-hook",
@@ -351985,6 +353297,12 @@
       "kind": "sibling",
       "to": "TASK-unify-item-types",
       "via": "src/db/enums-core/flags.ts"
+    },
+    {
+      "from": "TASK-outfit-narrative-extractor-regex-prefilter",
+      "kind": "sibling",
+      "to": "TASK-view-set-consistency-gate",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "TASK-outfit-narrative-extractor-regex-prefilter",
@@ -354299,12 +355617,6 @@
     {
       "from": "TASK-publication-artifact-schema",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-publication-artifact-schema",
-      "kind": "sibling",
       "to": "epic-actors",
       "via": "src/db/migrations/001_init.ts; src/db/schema-story.ts"
     },
@@ -354613,6 +355925,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-publication-artifact-schema",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-publication-artifact-schema",
@@ -355547,6 +356865,12 @@
     {
       "from": "TASK-quest-status-transitions-bypass-state-machine",
       "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/db/state.ts"
+    },
+    {
+      "from": "TASK-quest-status-transitions-bypass-state-machine",
+      "kind": "sibling",
       "to": "epic-quests-encounters",
       "via": "src/db/enums-story/quests.ts"
     },
@@ -356430,6 +357754,12 @@
       "from": "TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes",
       "kind": "sibling",
       "to": "epic-api-rate-limiting",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/api-governance/rate-limiting/policies.ts"
     },
     {
@@ -358355,12 +359685,6 @@
     {
       "from": "TASK-reference-set-entity",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-reference-set-entity",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -358435,6 +359759,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-reference-set-entity",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
     {
       "from": "TASK-reference-set-multi-image-upload",
@@ -358807,6 +360137,12 @@
       "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/metadata.ts; src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts; src/assets/png-text-chunk.ts"
     },
     {
       "from": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
@@ -359807,12 +361143,6 @@
     {
       "from": "TASK-review-thread-target-vocabulary",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-review-thread-target-vocabulary",
-      "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/db/enums-"
     },
@@ -359892,6 +361222,12 @@
       "from": "TASK-review-thread-target-vocabulary",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-review-thread-target-vocabulary",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -365273,12 +366609,6 @@
     {
       "from": "TASK-vector-gen-gallery-asset-support",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-vector-gen-gallery-asset-support",
-      "kind": "sibling",
       "to": "epic-assistant-creative-studio-workflows",
       "via": "src/frontend/alpine/chat-utils/gallery.ts"
     },
@@ -365328,6 +366658,12 @@
       "from": "TASK-vector-gen-gallery-asset-support",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-vector-gen-gallery-asset-support",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -365483,12 +366819,6 @@
     {
       "from": "TASK-video-gen-route",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-video-gen-route",
-      "kind": "sibling",
       "to": "epic-assistant-creative-studio-workflows",
       "via": "src/assistant/workflow-runner.test.ts"
     },
@@ -365565,6 +366895,12 @@
       "via": "src/db/enums-content.ts"
     },
     {
+      "from": "TASK-video-gen-route",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
       "from": "TASK-video-provider-minimax-h3",
       "kind": "sibling",
       "to": "TASK-workflow-engine-schema-loader-template-types-workflow-discov",
@@ -365605,6 +366941,24 @@
       "kind": "sibling",
       "to": "epic-federation-offload-quotas",
       "via": "src/db/enums-generation.ts"
+    },
+    {
+      "from": "TASK-view-set-consistency-gate",
+      "kind": "sibling",
+      "to": "epic-aux-enrichment-pipeline",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-view-set-consistency-gate",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-view-set-orbit-video-tier",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/generation/hooks/registry.ts"
     },
     {
       "from": "TASK-visual-novel-mode",
@@ -365711,12 +367065,6 @@
     {
       "from": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
       "kind": "sibling",
-      "to": "epic-3d-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
-      "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/db/enums-content.ts"
     },
@@ -365772,6 +367120,12 @@
       "from": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
       "kind": "sibling",
       "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/db/enums-content.ts"
     },
     {
@@ -366175,6 +367529,12 @@
       "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-webp-as-a-first-class-stored-asset-format",
@@ -366702,6 +368062,12 @@
       "from": "TASK-wire-intent-output-to-workflow-runner-startworkflow",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-wire-intent-output-to-workflow-runner-startworkflow",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -367445,6 +368811,12 @@
     {
       "from": "TASK-workflow-dag-engine-task-dependencies",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-workflow-dag-engine-task-dependencies",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -367554,6 +368926,12 @@
       "from": "TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
       "via": "src/assistant/workflow-runner.ts"
     },
     {
@@ -368619,48 +369997,6 @@
       "via": "src/assets/service/create.ts"
     },
     {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-audio-video-sound",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-editorial-workflow",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-narrative-publishing-workflows",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-technical-comparison-charts",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-tts-foundation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-vector-graphics-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-3d-generation",
-      "kind": "sibling",
-      "to": "epic-video-generation",
-      "via": "src/db/enums-content.ts"
-    },
-    {
       "from": "epic-accessibility-input",
       "kind": "sibling",
       "to": "epic-docs-reconciliation",
@@ -369339,6 +370675,12 @@
       "via": "src/middleware/rate-limit.ts"
     },
     {
+      "from": "epic-api-rate-limiting",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
       "from": "epic-api-routes",
       "kind": "sibling",
       "to": "epic-api-versioning",
@@ -369927,6 +371269,12 @@
       "via": "src/routes/chats.ts"
     },
     {
+      "from": "epic-asset-generation-metadata",
+      "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/assets/metadata.ts"
+    },
+    {
       "from": "epic-asset-platform-capabilities",
       "kind": "sibling",
       "to": "epic-assistant-generation-extensions",
@@ -370247,6 +371595,12 @@
     {
       "from": "epic-assistant-creative-studio-workflows",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "epic-assistant-creative-studio-workflows",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/sections/templates.ts; src/config/templates-loader.ts; src/config/templates-loader/discovery.ts; src/generation/auto-gen/classify-intent.ts; src/regex/intent.ts"
     },
@@ -370533,6 +371887,12 @@
       "via": "src/assistant/workflow-runner.ts"
     },
     {
+      "from": "epic-assistant-step-planning",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
       "from": "epic-audio-video-sound",
       "kind": "sibling",
       "to": "epic-authoring-creation",
@@ -370657,6 +372017,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts; src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "epic-audio-video-sound",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
     },
     {
       "from": "epic-auth-access",
@@ -373461,6 +374827,12 @@
       "via": "src/memory/provision.ts"
     },
     {
+      "from": "epic-chat-context-optimization",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
       "from": "epic-chat-lifecycle-moderation",
       "kind": "sibling",
       "to": "epic-chat-product-features",
@@ -375003,6 +376375,12 @@
       "via": "src/assets/service/create.ts"
     },
     {
+      "from": "epic-content-hashing-distributed-integrity",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/hash/record-hash.ts"
+    },
+    {
       "from": "epic-context-injection-correctness",
       "kind": "sibling",
       "to": "epic-context-injection-templates",
@@ -376397,6 +377775,12 @@
     {
       "from": "epic-editorial-workflow",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-editorial-workflow",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/regex/intent.ts"
     },
@@ -376903,6 +378287,12 @@
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "epic-entity-generation-workflows",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "epic-entity-generation-workflows",
@@ -377945,6 +379335,12 @@
     {
       "from": "epic-harness-integration",
       "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "epic-harness-integration",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts"
     },
@@ -377953,6 +379349,12 @@
       "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/tui/asset-view.ts; src/tui/chat/api.ts; src/views/admin.html"
+    },
+    {
+      "from": "epic-harness-integration",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "epic-harness-integration",
@@ -378001,6 +379403,12 @@
       "kind": "sibling",
       "to": "epic-project-spaces-pm-integration",
       "via": "src/memory/provision.ts"
+    },
+    {
+      "from": "epic-hidden-carriage-context",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
     },
     {
       "from": "epic-housing",
@@ -378983,6 +380391,12 @@
     {
       "from": "epic-model-family-presets",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "epic-model-family-presets",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -379219,6 +380633,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-narrative-publishing-workflows",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/assistant/workflow-runner.ts; src/db/enums-content.ts"
     },
     {
       "from": "epic-narrative-publishing-workflows",
@@ -379739,6 +381159,12 @@
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/image-edit/providers/comfyui-image-upload.ts"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "sibling",
       "to": "epic-wardrobe-avatar-variants",
       "via": "src/assistant/prompt-outfit.ts; src/characters/services/avatar-service/selection.ts"
     },
@@ -379919,6 +381345,12 @@
     {
       "from": "epic-technical-comparison-charts",
       "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/assets/service/links.ts; src/assistant/workflow-runner.ts; src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-technical-comparison-charts",
+      "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts"
     },
@@ -379941,10 +381373,34 @@
       "via": "src/db/enums-content.ts"
     },
     {
+      "from": "epic-tts-foundation",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
       "from": "epic-vector-graphics-generation",
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-vector-graphics-generation",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-video-generation",
+      "kind": "sibling",
+      "to": "epic-view-set-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-view-set-generation",
+      "kind": "sibling",
+      "to": "epic-workflow-engine",
+      "via": "src/assistant/workflow-runner.ts"
     },
     {
       "from": "epic-visual-novel-mode",

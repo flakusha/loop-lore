@@ -171,3 +171,13 @@ Remaining polish (Phase 3) only:
 | htmx grid refresh | emits | Re-render after upload/delete |
 
 **Resolved:** 2026-10-23 registry-driven close: git issue 4e4298b (registry tip: e3f00ee9d Konstantin Fedotov Auto-closed: ticket EPIC-FRONTEND-GALLERY marked done in index.json)
+
+## Annex: view-set cards & 3D preview surface (reopened surface; filed 2026-10-28)
+
+Set cards (stacked thumbnails, camera chips) and 3D/splat preview cards are
+gallery-surface extensions of the creative-3D package; the integration task
+lives in `epic-gallery-batch-operations.md`
+(`TASK-gallery-set-and-3d-surface`) and renders here once
+`epic-view-set-generation.md` sets and the `epic-3d-generation.md` viewer
+component exist. Facet filters over generation facts wait on
+`epic-asset-generation-metadata.md`.

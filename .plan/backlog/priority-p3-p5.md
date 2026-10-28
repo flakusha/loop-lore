@@ -99,6 +99,12 @@
 
 ## P4 — Core Experience (open remainder of P3 rows)
 
+**Creative-3D cluster (filed 2026-10-28, plan branch `plan-creative-3d`) — P3-P5 band:**
+
+- [ ] **Asset generation metadata spine (E0a)** — self-describing generations: queue-time fact capture, shadow overrides, tiered import parser, camera/3D fact extensions, embedded regeneration manifests — `epic-asset-generation-metadata.md` (8 tickets) | proposal
+- [ ] **Asset lineage provenance (E0b)** — generation chains over `assets.content_hash`: link kinds, lineage query/UI, provenance summaries, downstream-consumer propagation — `epic-asset-lineage-provenance.md` (5 tickets) | proposal
+- [ ] **Contextual view-set & turnaround generation (E1)** — ordered per-view camera-facted image sets (edit-grid + ControlNet tiers now; orbit-video tier blocked until the video run seam lands), gallery set cards, assistant `view-set` template — `epic-view-set-generation.md` (7 tickets) | proposal
+
 - [x] Memory + template injection UX — memory selection / pin UI ✅ shipped (verified 2026-08-16); per-chat prompt override ✅ shipped 2026-08-16 (`prompt_override`, migration 044)
 - [x] Character/world/location flows — multi-format import, creation + settings menus ✅ (code-verified 2026-08-20; C4 closed in open-inflight.md)
 - [x] Assistant tooling — creation wizards + `/commands` tiered access ✅ (C3, 2026-08-18); tool-call display ✅ 2026-08-12 (P3 #16 / P2-C)

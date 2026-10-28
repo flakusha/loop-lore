@@ -472,3 +472,15 @@ workflow and no create backend.
 - `.plan/backlog/open.md` § Dead / unwired code — `detectIntent` removal (row 4),
   `scenario-source.ts` + `sd.ts` dead stubs (row 10 — DELETED 2026-08-14)
 - `.plan/epics/epic-config-templates.md` — template system design doc
+
+## Annex: creative-3D workflow templates (filed 2026-10-28)
+
+Four new workflow templates ride the sub-epic machinery (coordination note;
+implementation plumbing owned by the Workflow Engine sub-epic — see its
+annex): `view-set` (`epic-view-set-generation.md`), the 3D reconstruct
+flows (`epic-3d-generation.md`), `world-environment`
+(`epic-scene-environment-world-generation.md`), and `engine-export`
+(`epic-game-asset-pipeline-export.md`). Dispatch backends
+(`TASK-workflow-dispatch-generation-backends`) and the shared asset-picker
+step type (`TASK-workflow-asset-pick-step-type`) are filed under the
+Workflow Engine sub-epic.

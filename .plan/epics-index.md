@@ -6,14 +6,14 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 347 epics
+**Total:** 352 epics
 
 ## Summary
 
 | Status | Title | Priority | Effort | Tasks | File |
 | ------ | ----- | -------- | ------ | ----- | ---- |
 | Not Started | 2D Sprite World | High | Very High total (split across sub-epics below) | 0 | [epic-2d-sprite-world.md](/.plan/epics/epic-2d-sprite-world.md) |
-| Not Started | 3D Asset Generation (Future) | Low | Very High | 0 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
+| Not Started | 3D Reconstruction & Model Management | Medium | XL | 0 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | In Progress | Accessibility & Input Systems | P0 — Critical | High | 0 | [epic-accessibility-input.md](/.plan/epics/epic-accessibility-input.md) |
 | Done | Actor Autonomy & Story Auto-Drive | High | Large | 0 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
 | Done | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 0 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
@@ -30,6 +30,8 @@
 | Not Started | API/Library Distribution Mode | High | High | 0 | [epic-api-library-distribution.md](/.plan/epics/epic-api-library-distribution.md) |
 | Not Started | Architecture Overview | High | Medium | 0 | [epic-architecture.md](/.plan/epics/epic-architecture.md) |
 | Done | Archival Workflow | Medium | Medium | 0 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
+| Not Started | Asset Generation Metadata (Self-Describing Generations) | Medium-High | Medium | 0 | [epic-asset-generation-metadata.md](/.plan/epics/epic-asset-generation-metadata.md) |
+| Not Started | Asset Lineage Provenance (Generation Chains) | Medium | Medium | 0 | [epic-asset-lineage-provenance.md](/.plan/epics/epic-asset-lineage-provenance.md) |
 | In Progress | Asset Platform Capabilities (Messenger/Social Patterns) | Medium | Large (batch-decomposable; each batch ships standalone value) | 0 | [epic-asset-platform-capabilities.md](/.plan/epics/epic-asset-platform-capabilities.md) |
 | In Progress | Asset Transform Editing + Metadata | Medium | Medium | 0 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
 | In Progress | Assistant Entity Access & Manipulation | High | High | 0 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
@@ -79,6 +81,7 @@
 | Not Started | Concurrency & Runtime Benchmarks | High | High | 0 | [epic-concurrency-runtime-benchmarks.md](/.plan/epics/epic-concurrency-runtime-benchmarks.md) |
 | Not Started | Configs Path Resolution — File-Relative Paths + Windows/macOS Parity | High | Medium | 0 | [epic-configs-path-resolution.md](/.plan/epics/epic-configs-path-resolution.md) |
 | In Progress | Content Hashing & Distributed Integrity | High | Large | 0 | [epic-content-hashing-distributed-integrity.md](/.plan/epics/epic-content-hashing-distributed-integrity.md) |
+| Not Started | Contextual View-Set & Turnaround Generation | Medium | Large | 0 | [epic-view-set-generation.md](/.plan/epics/epic-view-set-generation.md) |
 | In Progress | Continuous Improvement — Lint, TypeCheck, Build, Coverage | High | Medium | 0 | [epic-continuous-improvement.md](/.plan/epics/epic-continuous-improvement.md) |
 | Not Started | Conversation Branching | Medium | Medium | 0 | [epic-conversation-branching.md](/.plan/epics/epic-conversation-branching.md) |
 | Not Started | Core Testing Frameworks | High | Very High | 0 | [epic-core-testing-frameworks.md](/.plan/epics/epic-core-testing-frameworks.md) |
@@ -213,6 +216,7 @@
 | Not Started | Frontend Overview | Medium | Medium | 0 | [epic-frontend-overview.md](/.plan/epics/epic-frontend-overview.md) |
 | In Progress | Frontend Slash Commands (`/...`) for Chat, Group Chat, Assistant | medium | Medium | 0 | [epic-frontend-chat-commands.md](/.plan/epics/epic-frontend-chat-commands.md) |
 | In Progress | Fuzzing Infrastructure | Medium | Medium | 0 | [epic-fuzzing-infrastructure.md](/.plan/epics/epic-fuzzing-infrastructure.md) |
+| Not Started | Game Asset Pipeline & Engine Export | Low-Medium | Large | 0 | [epic-game-asset-pipeline-export.md](/.plan/epics/epic-game-asset-pipeline-export.md) |
 | In Progress | GM/Assistant Story Whitenotes & Shadow Notes | High | Medium | 0 | [epic-gm-shadow-notes.md](/.plan/epics/epic-gm-shadow-notes.md) |
 | In Progress | Group Chat | High | Medium | 0 | [epic-group-chat.md](/.plan/epics/epic-group-chat.md) |
 | In Progress | Guest Access — Unauthenticated Public Browsing (draft for new worktree) | High — public reach / demo-ability gap | Large | 0 | [epic-guest-access.md](/.plan/epics/epic-guest-access.md) |
@@ -320,6 +324,7 @@
 | In Progress | Runtime Integrity, Crash Recovery & Fail-Safes | medium | Medium | 0 | [epic-runtime-integrity-fail-safes.md](/.plan/epics/epic-runtime-integrity-fail-safes.md) |
 | Not Started | Runtime Memory State Hygiene | P2 | Medium | 0 | [epic-runtime-memory-state-hygiene.md](/.plan/epics/epic-runtime-memory-state-hygiene.md) |
 | Not Started | SAM3 / SAM3.1 Integration — Concept Segmentation for Generation | high | High | 0 | [epic-sam3-segmentation-integration.md](/.plan/epics/epic-sam3-segmentation-integration.md) |
+| Not Started | Scene & Environment Generation for Automated World Building | Medium | Large | 0 | [epic-scene-environment-world-generation.md](/.plan/epics/epic-scene-environment-world-generation.md) |
 | Done | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Not Started | Security & Sandboxing — Epic | medium | Medium | 0 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 0 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
@@ -373,16 +378,16 @@
 - **Tags:** canvas, spatial-layer, pixel-art, npc-simulation, procedural-generation, parallax-layers, proximity-interaction, multiplayer-presence
 - **File:** `.plan/epics/epic-2d-sprite-world.md`
 
-### 3D Asset Generation (Future)
+### 3D Reconstruction & Model Management
 
 - **Status:** Not Started
-- **Priority:** Low
-- **Effort:** Very High
-- **Type:** Vision Epic
-- **Tags:** 3d, generation, three.js, webgl, mesh, scene, future
+- **Priority:** Medium
+- **Effort:** XL
+- **Type:** Feature Epic
+- **Tags:** 3d, reconstruction, gaussian-splatting, photogrammetry, mesh, pbr, rigging, feedback-loop, comfyui, model-viewer
 - **File:** `.plan/epics/epic-3d-generation.md`
 
-Long-horizon vision for 3D asset generation and rendering. This epic covers:
+The superseded stub's plan predates the current landscape: ComfyUI now
 
 ### Accessibility & Input Systems
 
@@ -531,6 +536,28 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 - **Type:** Feature Epic
 - **Tags:** archival, soft-delete, retention, purge, data-lifecycle
 - **File:** `.plan/epics/epic-archival-workflow.md`
+
+### Asset Generation Metadata (Self-Describing Generations)
+
+- **Status:** Not Started
+- **Priority:** Medium-High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** assets, comfyui, metadata, provenance, views, 3d, gallery
+- **File:** `.plan/epics/epic-asset-generation-metadata.md`
+
+Generated assets should be self-describing: workflow facts (prompt, model,
+
+### Asset Lineage Provenance (Generation Chains)
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** assets, lineage, provenance, hash, gallery
+- **File:** `.plan/epics/epic-asset-lineage-provenance.md`
+
+First-class transformation chains over assets: an img2img/inpaint/upscale/edit
 
 ### Asset Platform Capabilities (Messenger/Social Patterns)
 
@@ -996,6 +1023,17 @@ Benchmark Bun's async execution model extensions — Worker threads, `Bun.spawn`
 - **Type:** Feature Epic
 - **Tags:** content-hash, integrity, idempotency, dedup, revalidation
 - **File:** `.plan/epics/epic-content-hashing-distributed-integrity.md`
+
+### Contextual View-Set & Turnaround Generation
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** views, turnaround, camera, comfyui, edit-models, orbit-video, gallery, assets, assistant
+- **File:** `.plan/epics/epic-view-set-generation.md`
+
+loop-lore can generate and edit single images (multi-provider engines,
 
 ### Continuous Improvement — Lint, TypeCheck, Build, Coverage
 
@@ -2299,6 +2337,17 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 
 Systematic approach to generating diverse, malicious, and edge-case inputs for fuzzing all external interfaces, with harness runner, corpora, mutation engine, sanitizer integration, CI targets, and crash triage.
 
+### Game Asset Pipeline & Engine Export
+
+- **Status:** Not Started
+- **Priority:** Low-Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** export, godot, bevy, gltf, engine, interactive, embeddable, manifest, packaging
+- **File:** `.plan/epics/epic-game-asset-pipeline-export.md`
+
+The engine-facing epics that exist are transport-shaped (Unity/Godot
+
 ### GM/Assistant Story Whitenotes & Shadow Notes
 
 - **Status:** In Progress
@@ -3291,6 +3340,17 @@ Reference-based generation and editing — "change this, keep that" driven by on
 - **File:** `.plan/epics/epic-sam3-segmentation-integration.md`
 
 SAM 3 / SAM 3.1 (Meta, Nov 2025) is a unified detection + segmentation +
+
+### Scene & Environment Generation for Automated World Building
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** environments, scene, world, skybox, hdri, terrain, textures, layout, parallax, assets, reuse, propagation
+- **File:** `.plan/epics/epic-scene-environment-world-generation.md`
+
+Worlds/locations exist as data + lore + a 2D game-state canvas
 
 ### Script Migration to Modular Architecture
 
