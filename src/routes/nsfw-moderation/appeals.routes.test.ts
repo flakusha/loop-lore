@@ -189,6 +189,40 @@ describe("nsfw moderation appeal routes", () => {
     expect(Array.isArray(body.data,),).toBe(true,);
   });
 
+  test("GET /pending rejects a non-numeric limit", async () => {
+    const app = createApp(db, uid(), "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/nsfw/moderation/appeals/pending?limit=abc",),
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("GET /pending clamps an oversized limit to the route maximum", async () => {
+    const actionId = `act-${uid()}`;
+    await seedAction(db, actionId, uid(),);
+
+    const rows = Array.from({ length: 120, }, (_, i,) => ({
+      id: `ap-${uid()}-${i}`,
+      user_id: uid(),
+      action_id: actionId,
+      reason: "r",
+      status: "pending",
+      created_at: new Date(2026, 0, 1, 0, i,).toISOString(),
+    }),);
+
+    await db.insertInto("moderation_appeals",).values(rows,).execute();
+
+    const app = createApp(db, uid(), "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/nsfw/moderation/appeals/pending?limit=500",),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { data: unknown[] };
+    expect(body.data.length,).toBe(100,);
+  });
+
   test("PUT /:id/review denied for plain user", async () => {
     const app = createApp(db, uid(), "user",);
     const res = await app.handle(
