@@ -3,8 +3,16 @@
 
 # BUG: Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation
 
-**Status:** Done
-**Status Note:** [2026-10-26 final pass] RESOLVED — every named site is now cast-free (26386ccfb):
+**Status:** In Progress
+**Status Note:** [2026-10-28 triage reopen] NOT-FIXED — the previous close claimed "every named site is now cast-free"; that claim is false. Live scope: five `src/routes/entity-routes/` files still cast to `any` (17 `as any` hits across them):
+- `src/routes/entity-routes/context.ts:59` — `(database as any)`.
+- `src/routes/entity-routes/get.ts:27-31`, `list.ts:26-30`, `remove.ts:26-30` (+`:57`), `update.ts:29-34` — `ctx` / `ctx.params` / `opts.database` cast to `any`.
+Reference implementation to copy: `src/routes/entity-routes/create.ts` (ctx narrowed structurally; the dynamic table name isolated to one documented `Kysely<Record<string, unknown>>` boundary).
+Separately, the shared `checkOwnership` NULL-ownership guard (finding SW-1) is fixed on dev (`935096f2f`, `src/routes/entity-routes/context.ts:65-71`); that leg is not part of this ticket's remaining work.
+
+Earlier notes (superseded, kept for history):
+
+[2026-10-26 final pass] RESOLVED — every named site is now cast-free (26386ccfb):
 - FIXED `src/chat/service/crud/get.ts:55-56` — `getChat` returns `Selectable<Chats>` / `Selectable<ChatParticipants>` rows; both `as unknown as Record<string, unknown>` casts are gone.
 - FIXED `src/elysia-app.ts:175` — `applyCsrfPlugin(app, ...)` type-checks directly; the `Parameters<typeof applyCsrfPlugin>[0]` cast is gone.
 - FIXED `src/elysia-app.ts:236,238` — `registerPlugins` now takes a structural `PluginHost` (`{ use }`), so `app as unknown as Elysia<any>` is gone; `app.use(v1Routes(...))` is called directly.

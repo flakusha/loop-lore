@@ -8375,6 +8375,12 @@
       "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
     }
   ],
+  "src/characters/services/mood-service/get-events.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md"
+    }
+  ],
   "src/characters/services/mood-service/get-mood.ts": [
     {
       "kind": "ticket",
@@ -12356,6 +12362,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-ownership-transfer-button-is-shown-to-every-non-owner.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-settings-modal-output-styling-control.md"
     },
     {
@@ -12696,6 +12706,10 @@
     }
   ],
   "src/components/chat/mobile-composer.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-migrate-text-surfaces-to-shared-primitives.md"
@@ -20288,6 +20302,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-rate-governor-for-llm-actors.md"
     },
     {
@@ -23936,6 +23954,10 @@
   "src/frontend/alpine/chat-settings/ownership.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-ownership-transfer-button-is-shown-to-every-non-owner.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
@@ -24401,6 +24423,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-backlog-size-strict-regression-recovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
     }
   ],
   "src/frontend/alpine/chat/lifecycle.ts": [
@@ -40802,6 +40832,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-auth-session-hardening-batch-from-2026-10-04-review.md"
     },
     {
@@ -41379,6 +41413,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mood-core.md"
+    }
+  ],
+  "src/routes/character-mood/events.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md"
     }
   ],
   "src/routes/character-relationships.test.ts": [
@@ -42524,6 +42564,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-i18n-command-palette-descriptions-missing-for-most-registere.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-slash-command-completion.md"
     },
     {
@@ -42791,7 +42835,19 @@
       "source": "docs/spec/api-routes.md"
     }
   ],
+  "src/routes/entity-routes/context.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md"
+    }
+  ],
   "src/routes/entity-routes/create.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md"
+    }
+  ],
+  "src/routes/entity-routes/get.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md"
@@ -43511,6 +43567,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-characters-list-and-chats-list-bypass-parsepagination-valida.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md"
     },
     {
       "kind": "ticket",
@@ -45283,6 +45343,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeals-as-any-and-dead-route.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md"
     }
   ],
   "src/routes/nsfw-moderation/audit.test.ts": [
@@ -46301,6 +46365,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md"
     },
     {
       "kind": "ticket",

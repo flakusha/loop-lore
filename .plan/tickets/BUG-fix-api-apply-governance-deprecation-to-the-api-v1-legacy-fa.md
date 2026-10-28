@@ -4,7 +4,7 @@
 # BUG: fix(api): apply governance + deprecation to the /api/v1 legacy fallback path
 
 **Status:** Done
-**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue afe12b9): Verified: src/server/handler.ts:150,160 still dispatch legacy/plugin fallback routes via bare dispatchPluginRoute with no governanceGuard, no deprecation headers, no migration-debt counter; those hooks exist only inside the v1 barrel (src/routes/v1/index.ts:46-58), which the fallback bypasses by design.
+**Status Note:** [2026-10-28 triage refresh] FIXED (issue afe12b9 closed) — the previous note claiming the fallback "still dispatch[es] … with no governanceGuard" is stale. The governance guard exists since `3d19f888f`, and the double-charge it introduced on the versioned fallback has since been fixed (`1dde19c91`): `src/server/handler.ts:174-183` states "The governance guard is charged ONCE per HTTP request" and `govBefore(gctx)` is called at `:182` OUTSIDE the `dispatch` closure (`:185`), so the versioned fallback no longer burns a second token. The fallback also now resolves at both URL shapes — `:199-208` strips `/api/v1` and tries `pluginPathCandidates(stripped)`, and `:225-228` returns both `[stripped, withPrefix]` so `/api/card-battle/start` and `/api/v1/card-battle/start` both resolve (`9b96d9162`, `0f0101ae3`). Ticket stays Done.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-api-governance

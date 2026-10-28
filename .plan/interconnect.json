@@ -7388,6 +7388,18 @@
       "related": []
     },
     {
+      "id": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-ownership-transfer-button-is-shown-to-every-non-owner.md",
+      "title": "Ownership transfer button is shown to every non-owner",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/components/chat/chat-settings-modal.html",
+        "src/frontend/alpine/chat-settings/ownership.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-.md",
@@ -8244,7 +8256,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md",
       "title": "Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/assets/controller.ts",
         "src/characters/importers/character-systems/avatars.ts",
@@ -8255,7 +8267,9 @@
         "src/config/load/parse.ts",
         "src/db/index.ts",
         "src/elysia-app.ts",
-        "src/routes/entity-routes/create.ts"
+        "src/routes/entity-routes/context.ts",
+        "src/routes/entity-routes/create.ts",
+        "src/routes/entity-routes/get.ts"
       ],
       "related": []
     },
@@ -8604,7 +8618,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md",
       "title": "Service-layer multi-query mutations run without transactions or conditional writes",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/characters/services/mood-service/log-event.ts",
         "src/rpg/achievements/service/crud.ts",
@@ -9423,6 +9437,21 @@
       "title": "The roots guard on PROJECT_ROOT/DIFF_ROOT is wired to no gate and no CI job",
       "status": "done",
       "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse.md",
+      "title": "Three pagination sites parse a limit by hand, bypassing parsePaginationParams",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/characters/services/mood-service/get-events.ts",
+        "src/routes/character-mood/events.ts",
+        "src/routes/http-utils/parse.ts",
+        "src/routes/nsfw-moderation/appeals.ts",
+        "src/routes/story-turns.ts"
+      ],
       "related": []
     },
     {
@@ -19704,7 +19733,10 @@
       "path": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md",
       "title": "Auth hardening: XFF trust, session cap, algo pin, derive short-circuit, logout verify",
       "status": "Not Started",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/db/schema-core.ts",
+        "src/routes/auth/session.ts"
+      ],
       "related": []
     },
     {
@@ -26472,7 +26504,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md",
       "title": "Delete or wire dead modules flagged in the GLM review sweep",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/.gitignore",
         "src/assistant/prompt/sections/character-traits.ts",
@@ -26487,6 +26519,7 @@
         "src/characters/services/personality-service/utility-scorer.ts",
         "src/chat/folders.test.ts",
         "src/chat/folders.ts",
+        "src/components/chat/mobile-composer.html",
         "src/config/generate-domain-schemas.ts",
         "src/config/load/pii-safety.ts",
         "src/config/migrate-config.ts",
@@ -26494,6 +26527,7 @@
         "src/cron/jobs.ts",
         "src/crypto/activitypub-keys.ts",
         "src/frontend/alpine/chat-creation/variants.ts",
+        "src/frontend/alpine/chat/index.ts",
         "src/frontend/alpine/keynav-help.ts",
         "src/frontend/alpine/mobile-composer.ts",
         "src/frontend/touch.ts",
@@ -32151,6 +32185,17 @@
       "related": []
     },
     {
+      "id": "TASK-i18n-command-palette-descriptions-missing-for-most-registere",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-i18n-command-palette-descriptions-missing-for-most-registere.md",
+      "title": "i18n command palette descriptions missing for most registered commands",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/routes/commands/index.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-i18n-doc-drift-translation-llm-spec-is-unimplemented",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-i18n-doc-drift-translation-llm-spec-is-unimplemented.md",
@@ -32164,7 +32209,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-i18n-locale-completion.md",
       "title": "i18n Locale Completion (Phase 1)",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [],
       "related": []
     },
@@ -46619,6 +46664,7 @@
         "src/components/chat/chat.html",
         "src/components/chat/input-area.html",
         "src/components/chat/mobile-composer.html",
+        "src/frontend/alpine/chat/index.ts",
         "src/frontend/alpine/mobile-composer.ts",
         "src/frontend/touch.ts",
         "src/public/css/app.css"
@@ -57772,6 +57818,12 @@
       ]
     },
     {
+      "path": "src/characters/services/mood-service/get-events.ts",
+      "owners": [
+        "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse"
+      ]
+    },
+    {
       "path": "src/characters/services/mood-service/get-mood.ts",
       "owners": [
         "BUG-mood-and-relationship-services-mutate-multi-row-state-withou"
@@ -60108,6 +60160,7 @@
       "path": "src/components/chat/chat-settings-modal.html",
       "owners": [
         "BUG-chat-settings-modal-invalid-mode",
+        "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
         "FEAT-chat-settings-modal-output-styling-control",
         "FEAT-chat-template-config-lifecycle",
         "TASK-chat-feature-ownership-transfer",
@@ -60273,6 +60326,7 @@
     {
       "path": "src/components/chat/mobile-composer.html",
       "owners": [
+        "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
         "TASK-migrate-text-surfaces-to-shared-primitives",
         "WIRE-frontend-mobile-sticky-bottom-composer"
       ]
@@ -64233,6 +64287,7 @@
         "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
         "TASK-asymmetric-key-pairs",
         "TASK-asymmetric-key-pairs-followup",
+        "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
         "TASK-autonomy-rate-governor-for-llm-actors",
         "TASK-avatar-render-target-discriminator",
         "TASK-character-creator-prerogative",
@@ -66281,6 +66336,7 @@
     {
       "path": "src/frontend/alpine/chat-settings/ownership.ts",
       "owners": [
+        "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
         "TASK-chat-feature-ownership-transfer"
       ]
     },
@@ -66539,7 +66595,9 @@
       "path": "src/frontend/alpine/chat/index.ts",
       "owners": [
         "BUG-alpine-init-hydration",
-        "TASK-backlog-size-strict-regression-recovery"
+        "TASK-backlog-size-strict-regression-recovery",
+        "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
+        "WIRE-frontend-mobile-sticky-bottom-composer"
       ]
     },
     {
@@ -76256,6 +76314,7 @@
       "owners": [
         "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
         "BUG-logout-deletes-session-without-signature-or-ownership-check",
+        "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
         "TASK-auth-session-hardening-batch-from-2026-10-04-review",
         "TASK-fb12-admin-role-change-notifies-affected-user-admxntf",
         "TASK-sessions-api-routes",
@@ -76599,6 +76658,12 @@
       "path": "src/routes/character-mood.ts",
       "owners": [
         "TASK-mood-core"
+      ]
+    },
+    {
+      "path": "src/routes/character-mood/events.ts",
+      "owners": [
+        "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse"
       ]
     },
     {
@@ -77257,6 +77322,7 @@
       "owners": [
         "BUG-advertised-sfx-music-video-commands-are-stubs",
         "BUG-routes-commands-index-ts-19-has-unused-import-t",
+        "TASK-i18n-command-palette-descriptions-missing-for-most-registere",
         "TASK-tui-slash-command-completion",
         "WIRE-assistant-command-palette-stale-static-list"
       ]
@@ -77438,7 +77504,19 @@
       ]
     },
     {
+      "path": "src/routes/entity-routes/context.ts",
+      "owners": [
+        "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-"
+      ]
+    },
+    {
       "path": "src/routes/entity-routes/create.ts",
+      "owners": [
+        "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-"
+      ]
+    },
+    {
+      "path": "src/routes/entity-routes/get.ts",
       "owners": [
         "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-"
       ]
@@ -77868,6 +77946,7 @@
       "path": "src/routes/http-utils/parse.ts",
       "owners": [
         "BUG-characters-list-and-chats-list-bypass-parsepagination-valida",
+        "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
         "EPIC-2026-24"
       ]
     },
@@ -78791,7 +78870,8 @@
       "path": "src/routes/nsfw-moderation/appeals.ts",
       "owners": [
         "BUG-nsfw-appeal-approvedby-taken-from-request-body",
-        "BUG-nsfw-appeals-as-any-and-dead-route"
+        "BUG-nsfw-appeals-as-any-and-dead-route",
+        "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse"
       ]
     },
     {
@@ -79478,6 +79558,7 @@
     {
       "path": "src/routes/story-turns.ts",
       "owners": [
+        "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
         "TASK-frontend-story-turn-by-id",
         "epic-terminal-ui"
       ]
@@ -90189,6 +90270,11 @@
     {
       "from": "epic-api-validation-guardrails",
       "kind": "owns",
+      "to": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse"
+    },
+    {
+      "from": "epic-api-validation-guardrails",
+      "kind": "owns",
       "to": "TASK-ai-guardrails-input-sanitization-content-filtering-output-va"
     },
     {
@@ -92875,6 +92961,11 @@
       "from": "epic-chat-privacy",
       "kind": "owns",
       "to": "TASK-encrypted-search-minimal-first-slice"
+    },
+    {
+      "from": "epic-chat-product-features",
+      "kind": "owns",
+      "to": "BUG-ownership-transfer-button-is-shown-to-every-non-owner"
     },
     {
       "from": "epic-chat-product-features",
@@ -96850,6 +96941,11 @@
       "from": "epic-i18n",
       "kind": "owns",
       "to": "TASK-i18n-alpine-client"
+    },
+    {
+      "from": "epic-i18n",
+      "kind": "owns",
+      "to": "TASK-i18n-command-palette-descriptions-missing-for-most-registere"
     },
     {
       "from": "epic-i18n",
@@ -110652,6 +110748,16 @@
       "to": "src/federation/outbox.ts"
     },
     {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "produces",
+      "to": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-settings/ownership.ts"
+    },
+    {
       "from": "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
       "kind": "produces",
       "to": "src/chat/service/ownership.ts"
@@ -111554,7 +111660,17 @@
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "produces",
+      "to": "src/routes/entity-routes/context.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "produces",
       "to": "src/routes/entity-routes/create.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "produces",
+      "to": "src/routes/entity-routes/get.ts"
     },
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
@@ -112965,6 +113081,31 @@
       "from": "BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th",
       "kind": "produces",
       "to": "src/frontend"
+    },
+    {
+      "from": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "kind": "produces",
+      "to": "src/characters/services/mood-service/get-events.ts"
+    },
+    {
+      "from": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "kind": "produces",
+      "to": "src/routes/character-mood/events.ts"
+    },
+    {
+      "from": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "kind": "produces",
+      "to": "src/routes/http-utils/parse.ts"
+    },
+    {
+      "from": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "kind": "produces",
+      "to": "src/routes/nsfw-moderation/appeals.ts"
+    },
+    {
+      "from": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "kind": "produces",
+      "to": "src/routes/story-turns.ts"
     },
     {
       "from": "BUG-ticket-epic-triage-and-triage-p3-idea-tickets-assign",
@@ -122552,6 +122693,16 @@
       "to": "src/auth/factors"
     },
     {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "produces",
+      "to": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "produces",
+      "to": "src/routes/auth/session.ts"
+    },
+    {
       "from": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "kind": "produces",
       "to": "src/middleware/auth/authenticate.ts"
@@ -129819,6 +129970,11 @@
     {
       "from": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
       "kind": "produces",
+      "to": "src/components/chat/mobile-composer.html"
+    },
+    {
+      "from": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
+      "kind": "produces",
       "to": "src/config/generate-domain-schemas.ts"
     },
     {
@@ -129850,6 +130006,11 @@
       "from": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
       "kind": "produces",
       "to": "src/frontend/alpine/chat-creation/variants.ts"
+    },
+    {
+      "from": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat/index.ts"
     },
     {
       "from": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
@@ -135700,6 +135861,11 @@
       "from": "TASK-i18n-alpine-client",
       "kind": "produces",
       "to": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-i18n-command-palette-descriptions-missing-for-most-registere",
+      "kind": "produces",
+      "to": "src/routes/commands/index.ts"
     },
     {
       "from": "TASK-i18n-reconciliation-script",
@@ -148805,6 +148971,11 @@
       "from": "WIRE-frontend-mobile-sticky-bottom-composer",
       "kind": "produces",
       "to": "src/components/chat/mobile-composer.html"
+    },
+    {
+      "from": "WIRE-frontend-mobile-sticky-bottom-composer",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat/index.ts"
     },
     {
       "from": "WIRE-frontend-mobile-sticky-bottom-composer",
@@ -169743,6 +169914,12 @@
     {
       "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
+      "kind": "sibling",
       "to": "TASK-autonomy-rate-governor-for-llm-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -172659,6 +172836,12 @@
     {
       "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
       "kind": "sibling",
+      "to": "TASK-i18n-command-palette-descriptions-missing-for-most-registere",
+      "via": "src/routes/commands/index.ts"
+    },
+    {
+      "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
+      "kind": "sibling",
       "to": "TASK-image-backends-x-assistant-image-command-backend-routing-fai",
       "via": "src/frontend/alpine/chat-actions/dispatch.ts"
     },
@@ -173577,6 +173760,12 @@
     {
       "from": "BUG-alpine-init-hydration",
       "kind": "sibling",
+      "to": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
+      "via": "src/frontend/alpine/chat/index.ts"
+    },
+    {
+      "from": "BUG-alpine-init-hydration",
+      "kind": "sibling",
       "to": "TASK-gm-panel",
       "via": "src/frontend/alpine/gm-panel.ts"
     },
@@ -173597,6 +173786,12 @@
       "kind": "sibling",
       "to": "TASK-gm-whitenotes",
       "via": "src/frontend/alpine/gm-panel.ts"
+    },
+    {
+      "from": "BUG-alpine-init-hydration",
+      "kind": "sibling",
+      "to": "WIRE-frontend-mobile-sticky-bottom-composer",
+      "via": "src/frontend/alpine/chat/index.ts"
     },
     {
       "from": "BUG-alpine-init-hydration",
@@ -174503,6 +174698,12 @@
       "kind": "sibling",
       "to": "TASK-async-request-response-result-store-separate-table-offload",
       "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -186975,6 +187176,12 @@
     {
       "from": "BUG-characters-list-and-chats-list-bypass-parsepagination-valida",
       "kind": "sibling",
+      "to": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "via": "src/routes/http-utils/parse.ts"
+    },
+    {
+      "from": "BUG-characters-list-and-chats-list-bypass-parsepagination-valida",
+      "kind": "sibling",
       "to": "EPIC-2026-24",
       "via": "src/routes/http-utils/parse.ts"
     },
@@ -190205,6 +190412,12 @@
       "kind": "sibling",
       "to": "BUG-e2e-test-infrastructure-fixes",
       "via": "src/validation/schemas.ts"
+    },
+    {
+      "from": "BUG-chat-settings-modal-invalid-mode",
+      "kind": "sibling",
+      "to": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "via": "src/components/chat/chat-settings-modal.html"
     },
     {
       "from": "BUG-chat-settings-modal-invalid-mode",
@@ -199041,6 +199254,12 @@
     {
       "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
+      "kind": "sibling",
       "to": "TASK-autonomy-rate-governor-for-llm-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -203255,6 +203474,12 @@
       "kind": "sibling",
       "to": "TASK-adopt-bun-csrf-for-csrf-protection",
       "via": "src/config/sections/auth.ts"
+    },
+    {
+      "from": "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/routes/auth/session.ts"
     },
     {
       "from": "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
@@ -218745,6 +218970,12 @@
     {
       "from": "BUG-logout-deletes-session-without-signature-or-ownership-check",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/routes/auth/session.ts"
+    },
+    {
+      "from": "BUG-logout-deletes-session-without-signature-or-ownership-check",
+      "kind": "sibling",
       "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "via": "src/routes/auth/session.ts"
     },
@@ -218956,6 +219187,12 @@
       "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
       "kind": "sibling",
       "to": "TASK-asymmetric-key-pairs",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -224961,8 +225198,20 @@
     {
       "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
       "kind": "sibling",
+      "to": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "via": "src/routes/nsfw-moderation/appeals.ts"
+    },
+    {
+      "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
+      "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/nsfw/moderation-service/appeals-reversal.ts"
+    },
+    {
+      "from": "BUG-nsfw-appeals-as-any-and-dead-route",
+      "kind": "sibling",
+      "to": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "via": "src/routes/nsfw-moderation/appeals.ts"
     },
     {
       "from": "BUG-nsfw-appeals-as-any-and-dead-route",
@@ -226183,6 +226432,66 @@
       "via": "src/cron/registry.ts"
     },
     {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "sibling",
+      "to": "FEAT-chat-settings-modal-output-styling-control",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "sibling",
+      "to": "FEAT-chat-template-config-lifecycle",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "sibling",
+      "to": "TASK-chat-feature-ownership-transfer",
+      "via": "src/components/chat/chat-settings-modal.html; src/frontend/alpine/chat-settings/ownership.ts"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "sibling",
+      "to": "TASK-epic11-admin-settings-reconciliation",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "sibling",
+      "to": "TASK-visual-novel-mode",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "sibling",
+      "to": "TASK-vn-scene-template-system",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "sibling",
+      "to": "TASK-vn-template-actions",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "sibling",
+      "to": "epic-chat-lifecycle-moderation",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "sibling",
+      "to": "epic-config-templates",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner",
+      "kind": "sibling",
+      "to": "epic-hidden-carriage-context",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
       "from": "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
       "kind": "sibling",
       "to": "TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha",
@@ -226486,6 +226795,12 @@
       "from": "BUG-personas-converttocharacter-drops-title-temperature-max-toke",
       "kind": "sibling",
       "to": "TASK-asymmetric-key-pairs",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-personas-converttocharacter-drops-title-temperature-max-toke",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -231845,6 +232160,12 @@
       "kind": "sibling",
       "to": "TASK-gallery-editor-structured-ui",
       "via": "src/routes/character-avatars.ts"
+    },
+    {
+      "from": "BUG-routes-commands-index-ts-19-has-unused-import-t",
+      "kind": "sibling",
+      "to": "TASK-i18n-command-palette-descriptions-missing-for-most-registere",
+      "via": "src/routes/commands/index.ts"
     },
     {
       "from": "BUG-routes-commands-index-ts-19-has-unused-import-t",
@@ -239351,6 +239672,24 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/frontend"
+    },
+    {
+      "from": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "kind": "sibling",
+      "to": "EPIC-2026-24",
+      "via": "src/routes/http-utils/parse.ts"
+    },
+    {
+      "from": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "kind": "sibling",
+      "to": "TASK-frontend-story-turn-by-id",
+      "via": "src/routes/story-turns.ts"
+    },
+    {
+      "from": "BUG-three-pagination-sites-parse-a-limit-by-hand-bypassing-parse",
+      "kind": "sibling",
+      "to": "epic-terminal-ui",
+      "via": "src/routes/story-turns.ts"
     },
     {
       "from": "BUG-timeline-event-steering-manifest-status-update-and-timeline-",
@@ -249117,6 +249456,12 @@
     {
       "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
+      "kind": "sibling",
       "to": "TASK-autonomy-rate-governor-for-llm-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -253671,6 +254016,12 @@
     {
       "from": "FEAT-expand-character-templates-to-canonical-fields",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-expand-character-templates-to-canonical-fields",
+      "kind": "sibling",
       "to": "TASK-autonomy-rate-governor-for-llm-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -254889,6 +255240,12 @@
     {
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
+      "kind": "sibling",
       "to": "TASK-autonomy-rate-governor-for-llm-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -255406,6 +255763,12 @@
       "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
       "kind": "sibling",
       "to": "TASK-asymmetric-key-pairs",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -258017,6 +258380,12 @@
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
       "via": "src/routes/messages/reply.ts"
+    },
+    {
+      "from": "FEAT-message-translations-chat-first",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "FEAT-message-translations-chat-first",
@@ -271449,6 +271818,12 @@
     {
       "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
+      "kind": "sibling",
       "to": "TASK-autonomy-rate-governor-for-llm-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -272188,6 +272563,12 @@
       "from": "TASK-actor-item-service",
       "kind": "sibling",
       "to": "TASK-asymmetric-key-pairs",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-actor-item-service",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -273231,6 +273612,12 @@
     {
       "from": "TASK-actors-data-versioning",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-actors-data-versioning",
+      "kind": "sibling",
       "to": "TASK-autonomy-rate-governor-for-llm-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -273718,6 +274105,12 @@
       "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
       "kind": "sibling",
       "to": "TASK-asymmetric-key-pairs",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -285597,6 +285990,12 @@
     {
       "from": "TASK-asymmetric-key-pairs-followup",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-asymmetric-key-pairs-followup",
+      "kind": "sibling",
       "to": "TASK-autonomy-rate-governor-for-llm-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -285953,6 +286352,12 @@
       "kind": "sibling",
       "to": "TASK-asymmetric-key-pairs-followup",
       "via": "src/crypto/e2e/key-pairs.ts; src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-asymmetric-key-pairs",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-asymmetric-key-pairs",
@@ -288011,6 +288416,360 @@
       "kind": "sibling",
       "to": "epic-two-pass-delivery",
       "via": "src/aux-pipeline"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
+      "via": "src/routes/auth/session.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-autonomy-rate-governor-for-llm-actors",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-avatar-render-target-discriminator",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-character-creator-prerogative",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-character-multi-avatar",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-character-personality-integrity",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-chat-context-preference-per-scope",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-chat-transfer-location",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-comfyui-first-class-workflow-library",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-e2ee-receiver-wiring",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-message-binding",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-fb12-admin-role-change-notifies-affected-user-admxntf",
+      "via": "src/routes/auth/session.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-registry-workload-columns",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-fix-actor-item-value-type",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-inline-markdown-suggestion-model",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-item-side-outfit-change-trigger",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-markdown-canonical-intermediate-contract",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-message-carriage-table-migration-admin-read",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-messages-outfit-id-column",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-mini-games-framework",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-publication-glossary-term-base",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-sessions-api-routes",
+      "via": "src/routes/auth/session.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-test-chat-module",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-timeline-id-world-timeline-events",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-world-requires-stats-flag-and-point-budget-config",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-actors",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-battle-action-systems",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-battle-integration-gaps",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-character-core-system",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-character-internal-traits",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-character-npc-lore-access",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-chat-lifecycle-moderation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-chat-transfer-location",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-config-extensions",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-editorial-workflow",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-emotion-avatar-message-binding",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-exploration-discovery",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-frontend-login",
+      "via": "src/routes/auth/session.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-impersonation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-item-systems-unification",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-logging",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-mini-games",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-multilingual-carriage",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-output-control-transforms",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-publication-i18n",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-rarity-extensions",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-research-agency-decision",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-skills-professions-config",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-world-chat-channels-invites",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
@@ -292035,6 +292794,12 @@
     {
       "from": "TASK-backlog-size-strict-regression-recovery",
       "kind": "sibling",
+      "to": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
+      "via": "src/frontend/alpine/chat/index.ts"
+    },
+    {
+      "from": "TASK-backlog-size-strict-regression-recovery",
+      "kind": "sibling",
       "to": "TASK-frontend-chat-rename-and-migrate",
       "via": "src/routes/chats/manage.ts"
     },
@@ -292049,6 +292814,12 @@
       "kind": "sibling",
       "to": "TASK-typescript-7-migration-typecheck-failures",
       "via": "src/routes/chats/manage.ts"
+    },
+    {
+      "from": "TASK-backlog-size-strict-regression-recovery",
+      "kind": "sibling",
+      "to": "WIRE-frontend-mobile-sticky-bottom-composer",
+      "via": "src/frontend/alpine/chat/index.ts"
     },
     {
       "from": "TASK-backlog-size-strict-regression-recovery",
@@ -319743,6 +320514,12 @@
     {
       "from": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
       "kind": "sibling",
+      "to": "TASK-migrate-text-surfaces-to-shared-primitives",
+      "via": "src/components/chat/mobile-composer.html"
+    },
+    {
+      "from": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
+      "kind": "sibling",
       "to": "TASK-npc-reaction-system",
       "via": "src/characters/services/personality-service/utility-scorer.ts"
     },
@@ -319840,7 +320617,7 @@
       "from": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
       "kind": "sibling",
       "to": "WIRE-frontend-mobile-sticky-bottom-composer",
-      "via": "src/frontend/alpine/mobile-composer.ts; src/frontend/touch.ts"
+      "via": "src/components/chat/mobile-composer.html; src/frontend/alpine/chat/index.ts; src/frontend/alpine/mobile-composer.ts; src/frontend/touch.ts"
     },
     {
       "from": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
@@ -340097,6 +340874,18 @@
       "kind": "sibling",
       "to": "epic-openapi-reference",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-i18n-command-palette-descriptions-missing-for-most-registere",
+      "kind": "sibling",
+      "to": "TASK-tui-slash-command-completion",
+      "via": "src/routes/commands/index.ts"
+    },
+    {
+      "from": "TASK-i18n-command-palette-descriptions-missing-for-most-registere",
+      "kind": "sibling",
+      "to": "WIRE-assistant-command-palette-stale-static-list",
+      "via": "src/routes/commands/index.ts"
     },
     {
       "from": "TASK-i18n-reconciliation-script",
