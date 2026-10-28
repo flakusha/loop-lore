@@ -23,7 +23,7 @@
 import { Elysia, t, } from "elysia";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { jsonError, jsonResponse, parsePaginationParams, requireUserId, } from "../http-utils";
 import { requireAdminUsers, requireModerationReview, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
@@ -97,15 +97,21 @@ export function appealsRoutes(opts: HandlerOpts, prefix = "/api",) {
         const auth = requireModerationReview(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
-          const limit = Math.min(Math.max(Number(ctx.query.limit ?? 50,), 1,), 100,);
-          const appeals = await svc.getPendingAppeals(limit,);
+          const pagination = parsePaginationParams(
+            { size: ctx.query.limit, },
+            { defaultPageSize: 50, maxPageSize: 100, },
+          );
+
+          if (pagination instanceof Response) { return pagination; }
+
+          const appeals = await svc.getPendingAppeals(pagination.pageSize,);
           return jsonResponse({ ...SuccessResponse, data: appeals, },);
         } catch (error: unknown) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
         }
       }, {
         query: t.Object({ limit: t.Optional(t.String(),), },),
-        response: { 200: SuccessResponse, 500: ErrorResponse, },
+        response: { 200: SuccessResponse, 400: ErrorResponse, 500: ErrorResponse, },
       },)
       // Review (approve/deny) — admin/moderator only. Caller is the reviewer.
       .put(`${prefix}/nsfw/moderation/appeals/:id/review`, async (ctx: any,) => {
