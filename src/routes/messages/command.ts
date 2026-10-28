@@ -38,6 +38,7 @@ import { stripLeadingMention, } from "../../group-chat/mention-parser";
 import { resolveUserRole, } from "../../users/roles";
 import { toErrorMessage, uid, } from "../../utils";
 import { jsonResponse, } from "../http-utils";
+import { auditCommandInvocation, } from "./command-audit";
 import { log, } from "./helpers";
 
 /**
@@ -359,6 +360,8 @@ export async function dispatchCommand(
   }
 
   if (!result.handled) { return { handled: false, }; }
+
+  auditCommandInvocation({ args: parsed?.args ?? [], command: commandName, result, userId: actorId, },);
 
   if (result.systemMessage) {
     // The handler already ran its side effects; a failed system-message insert
