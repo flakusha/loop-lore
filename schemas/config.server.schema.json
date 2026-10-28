@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft-07/schema#",
   "$id": "loop-lore-config.server.schema.json",
   "title": "Loop Lore Server Config",
   "description": "Domain-specific configuration for server",
@@ -21,18 +21,27 @@
           "default": "localhost",
           "description": "Server host"
         },
+        "trustProxy": {
+          "type": "boolean",
+          "default": false,
+          "description": "Honor X-Forwarded-For / X-Real-IP / CF-Connecting-IP for getClientIp. Default false (headers are spoofable). Env: SERVER_TRUST_PROXY=1."
+        },
+        "publicOrigin": {
+          "type": "string",
+          "description": "Public origin (scheme + host) when behind a TLS-terminating proxy. Used for self-referential URLs. Env: SERVER_PUBLIC_ORIGIN."
+        },
         "tls": {
           "type": "object",
           "description": "TLS certificate configuration",
           "properties": {
             "key": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/key.pem",
+              "default": "${DATA_DIR}/certs/key.pem",
               "description": "Path to TLS private key (PEM)"
             },
             "cert": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/cert.pem",
+              "default": "${DATA_DIR}/certs/cert.pem",
               "description": "Path to TLS certificate (PEM)"
             }
           },

@@ -1,9 +1,53 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft-07/schema#",
   "$id": "loop-lore-config.encryption.schema.json",
   "title": "Loop Lore Encryption Config",
   "description": "Domain-specific configuration for encryption",
   "type": "object",
-  "properties": {},
-  "required": []
+  "properties": {
+    "encryption": {
+      "type": "object",
+      "description": "Encryption / SMK configuration",
+      "properties": {
+        "serverEncryptionKey": {
+          "type": "string",
+          "description": "256-bit hex key. Missing = encryption disabled (dev mode)."
+        },
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "true = refuse to start without SMK (prod guard)"
+        },
+        "compressThreshold": {
+          "type": "integer",
+          "default": 128,
+          "description": "Min bytes before compressing prior to encrypt"
+        },
+        "compressAlgorithm": {
+          "type": "string",
+          "default": "gzip",
+          "description": "Preferred compression algorithm"
+        },
+        "keyRotationDays": {
+          "type": "integer",
+          "default": 90,
+          "description": "Days before auto-rotating actor keys. 0 = disabled."
+        },
+        "anonymous": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable anonymous chat mode. Actor identities hidden from other participants."
+        }
+      },
+      "required": [
+        "required",
+        "compressThreshold",
+        "compressAlgorithm",
+        "keyRotationDays"
+      ]
+    }
+  },
+  "required": [
+    "encryption"
+  ]
 }

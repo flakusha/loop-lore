@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft-07/schema#",
   "$id": "loop-lore-config.assets.schema.json",
   "title": "Loop Lore Assets Config",
   "description": "Domain-specific configuration for assets",
@@ -16,7 +16,7 @@
         },
         "uploadDir": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/uploads",
+          "default": "${DATA_DIR}/uploads",
           "description": "Directory for uploaded assets"
         },
         "maxFileSize": {
@@ -29,6 +29,17 @@
           "type": "boolean",
           "default": true,
           "description": "Compress uploaded assets"
+        },
+        "signedUrlSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC-SHA256 secret for signed asset URLs. Env-only: ASSETS_SIGNED_URL_SECRET. Falls back to auth.jwtSecret."
+        },
+        "signedUrlExpirySeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 900,
+          "description": "Signed-URL lifetime in seconds (default: 900 = 15 min)"
         }
       },
       "required": [

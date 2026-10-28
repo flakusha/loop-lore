@@ -222,13 +222,19 @@
           "default": true,
           "description": "Enable TUI mode"
         },
+        "sendTimeoutMs": {
+          "type": "integer",
+          "default": 300000,
+          "description": "Send-message timeout in ms; covers one full assistant generation"
+        },
         "sessionToken": {
           "type": "string",
           "description": "Bearer token for authenticated chat routes; omit to run anonymous against solo deployments."
         }
       },
       "required": [
-        "enabled"
+        "enabled",
+        "sendTimeoutMs"
       ]
     },
     "docs": {
@@ -290,6 +296,11 @@
           "type": "boolean",
           "default": false,
           "description": "Require remote multi-user auth"
+        },
+        "guestAccess": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt-in guest tier: unauthenticated visitors derive a read-mostly guest context (no account, no session row) instead of a 401. Requires auth.required = true; solo mode (auth.required = false) always yields the solo user."
         },
         "registrationOpen": {
           "type": "boolean",
@@ -528,6 +539,16 @@
           "default": true,
           "description": "Log NSFW gate decisions to audit trail"
         },
+        "piiSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC secret for NSFW PII pseudonymization. Env-only: NSFW_PII_SECRET. Required in production."
+        },
+        "reporterHashSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC secret for moderation reporter-hash projection. Env-only: NSFW_FLAG_REPORTER_HASH_SECRET. Falls back to nsfw.piiSecret when unset."
+        },
         "useLlmClassifier": {
           "type": "boolean",
           "default": true,
@@ -576,11 +597,24 @@
           "required": [
             "enabled"
           ]
+        },
+        "telemetry": {
+          "type": "object",
+          "description": "Admin telemetry PII pseudonymization.",
+          "properties": {
+            "piiSecret": {
+              "type": "string",
+              "default": "",
+              "description": "HMAC secret for admin-telemetry PII hashing. Env-only: TELEMETRY_PII_SECRET. Required in production."
+            }
+          },
+          "required": []
         }
       },
       "required": [
         "health",
-        "metrics"
+        "metrics",
+        "telemetry"
       ]
     },
     "hooks": {
@@ -606,6 +640,11 @@
           "type": "boolean",
           "default": true,
           "description": "Enable moderation flagging"
+        },
+        "enableModerationLlmClassifier": {
+          "type": "boolean",
+          "default": true,
+          "description": "LLM moderation verdict alongside keyword scan"
         }
       },
       "required": [
@@ -672,9 +711,44 @@
           "type": "string",
           "description": "Default provider name"
         },
+        "flowControl": {
+          "type": "object",
+          "description": "Concurrency regulation for generation endpoints (0 = unbounded)",
+          "properties": {
+            "maxConcurrentGlobal": {
+              "type": "number",
+              "description": "Max simultaneous tracked generations server-wide"
+            },
+            "maxConcurrentPerChat": {
+              "type": "number",
+              "description": "Max simultaneous tracked generations per chat"
+            }
+          }
+        },
         "defaultModels": {
           "type": "object",
           "description": "Default model per provider"
+        },
+        "routing": {
+          "type": "object",
+          "description": "Model routing policy applied to the provider failover order",
+          "properties": {
+            "strategy": {
+              "type": "string",
+              "description": "Ordering strategy: \"capability-match\" (default, no-op for unannotated models), \"cheapest\", \"fastest\", or \"round-robin\""
+            },
+            "fallbacks": {
+              "type": "number",
+              "description": "Hard cap on the fallback chain; entries past it are dropped"
+            },
+            "rules": {
+              "type": "array",
+              "description": "Per-task-type strategy overrides (taskType + strategy)",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
         },
         "autoStart": {
           "type": "object",
@@ -1547,6 +1621,34 @@
             "mode",
             "peers"
           ]
+        },
+        "workloadOffload": {
+          "type": "object",
+          "default": {
+            "classes": []
+          },
+          "description": "Workload classes this instance accepts from federation peers; published as `capabilities` in /api/instance-state.",
+          "properties": {
+            "classes": {
+              "type": "array",
+              "default": [],
+              "items": {
+                "type": "string",
+                "enum": [
+                  "chat",
+                  "image",
+                  "aux",
+                  "tts",
+                  "translation",
+                  "embedding",
+                  "vision"
+                ]
+              }
+            }
+          },
+          "required": [
+            "classes"
+          ]
         }
       },
       "required": [
@@ -1963,6 +2065,116 @@
             "merge",
             "templates"
           ]
+        },
+        "classifiers": {
+          "type": "object",
+          "description": "Classifier template packs — user-supplied 0-shot classification templates loaded from configs/templates/classifiers/*.yaml",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "classifiers": {
+              "type": "object",
+              "description": "Classifier template packs keyed by id",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique template id"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Human-readable label"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "serves": {
+                    "type": "array",
+                    "description": "Aux decision points this template can answer",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "Context tags required on the selection query",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "when": {
+                    "type": "object",
+                    "description": "Structured guards that must all hold",
+                    "properties": {
+                      "chatMode": {
+                        "type": "array",
+                        "description": "Chat mode whitelist: direct | group | story | battle",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "direct",
+                            "group",
+                            "story",
+                            "battle"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "priority": {
+                    "type": "number",
+                    "description": "Higher wins among matching templates"
+                  },
+                  "params": {
+                    "type": "object",
+                    "description": "Sampling overrides for the aux call",
+                    "properties": {
+                      "timeoutMs": {
+                        "type": "number"
+                      },
+                      "temperature": {
+                        "type": "number"
+                      },
+                      "maxTokens": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "labels": {
+                    "type": "array",
+                    "description": "Expected output vocabulary",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "template": {
+                    "type": "string",
+                    "description": "System prompt replacing the purpose default"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "serves",
+                  "tags",
+                  "template"
+                ]
+              }
+            }
+          },
+          "required": [
+            "merge",
+            "classifiers"
+          ]
         }
       },
       "required": [
@@ -1970,7 +2182,8 @@
         "sd",
         "avatar",
         "imageEdit",
-        "character"
+        "character",
+        "classifiers"
       ]
     },
     "characters": {
@@ -2250,6 +2463,237 @@
       },
       "required": [
         "enabled"
+      ]
+    },
+    "integrations": {
+      "type": "object",
+      "description": "External integrations (email, Matrix, XMPP, Telegram, Discord, IRC, Nostr)",
+      "sensitive": [
+        "email.imapPass",
+        "email.smtpPass",
+        "matrix.accessToken",
+        "xmpp.password",
+        "telegram.botToken",
+        "discord.botToken",
+        "irc.password"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Master switch. No adapter loads unless this is true."
+        },
+        "email": {
+          "type": "object",
+          "description": "Email (IMAP/SMTP) integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "imapHost": {
+              "type": "string",
+              "default": ""
+            },
+            "imapPort": {
+              "type": "integer",
+              "default": 993
+            },
+            "imapUser": {
+              "type": "string",
+              "default": ""
+            },
+            "imapPass": {
+              "type": "string",
+              "default": "",
+              "description": "IMAP password. Env-only: EMAIL_IMAP_PASS. SECRET — never log or echo."
+            },
+            "smtpHost": {
+              "type": "string",
+              "default": ""
+            },
+            "smtpPort": {
+              "type": "integer",
+              "default": 587
+            },
+            "smtpUser": {
+              "type": "string",
+              "default": ""
+            },
+            "smtpPass": {
+              "type": "string",
+              "default": "",
+              "description": "SMTP password. Env-only: EMAIL_SMTP_PASS. SECRET — never log or echo."
+            },
+            "pgpEnabled": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "required": [
+            "enabled",
+            "imapHost",
+            "imapPort",
+            "imapUser",
+            "imapPass",
+            "smtpHost",
+            "smtpPort",
+            "smtpUser",
+            "smtpPass",
+            "pgpEnabled"
+          ]
+        },
+        "matrix": {
+          "type": "object",
+          "description": "Matrix integration (client or appservice). Opt-in; disabled by default.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "homeserver": {
+              "type": "string",
+              "default": ""
+            },
+            "accessToken": {
+              "type": "string",
+              "default": "",
+              "description": "Matrix access token. Env-only: MATRIX_ACCESS_TOKEN. SECRET — never log or echo."
+            },
+            "appservice": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "required": [
+            "enabled",
+            "homeserver",
+            "accessToken",
+            "appservice"
+          ]
+        },
+        "xmpp": {
+          "type": "object",
+          "description": "XMPP integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "jid": {
+              "type": "string",
+              "default": ""
+            },
+            "password": {
+              "type": "string",
+              "default": "",
+              "description": "XMPP password. Env-only: XMPP_PASSWORD. SECRET — never log or echo."
+            }
+          },
+          "required": [
+            "enabled",
+            "jid",
+            "password"
+          ]
+        },
+        "telegram": {
+          "type": "object",
+          "description": "Telegram bot integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "botToken": {
+              "type": "string",
+              "default": "",
+              "description": "Telegram bot token. Env-only: TELEGRAM_BOT_TOKEN. SECRET — never log or echo."
+            }
+          },
+          "required": [
+            "enabled",
+            "botToken"
+          ]
+        },
+        "discord": {
+          "type": "object",
+          "description": "Discord bot integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "botToken": {
+              "type": "string",
+              "default": "",
+              "description": "Discord bot token. Env-only: DISCORD_BOT_TOKEN. SECRET — never log or echo."
+            }
+          },
+          "required": [
+            "enabled",
+            "botToken"
+          ]
+        },
+        "irc": {
+          "type": "object",
+          "description": "IRC integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "server": {
+              "type": "string",
+              "default": ""
+            },
+            "nick": {
+              "type": "string",
+              "default": ""
+            },
+            "password": {
+              "type": "string",
+              "default": "",
+              "description": "Optional SASL password. Env-only: IRC_PASSWORD. SECRET — never log or echo."
+            }
+          },
+          "required": [
+            "enabled",
+            "server",
+            "nick",
+            "password"
+          ]
+        },
+        "nostr": {
+          "type": "object",
+          "description": "Nostr integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "relayUrls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            }
+          },
+          "required": [
+            "enabled",
+            "relayUrls"
+          ]
+        }
+      },
+      "required": [
+        "enabled",
+        "email",
+        "matrix",
+        "xmpp",
+        "telegram",
+        "discord",
+        "irc",
+        "nostr"
       ]
     }
   },
