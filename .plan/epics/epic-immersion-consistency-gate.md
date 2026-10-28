@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
-**Status Note:** Not Started — design and acceptance criteria are complete, but none of the six Work Items has code. The ground-truth state this gate reads is itself partially built (`src/rpg/skills`, `src/rpg/stats`, `src/story/items/`, `src/battle/resolution-integration/checks.ts`); the shared state module from `epic-player-state-machine.md` is not implemented, so the rule engine has no single source to check against. No ticket owns any Work Item.
+**Status:** In Progress
+**Status Note:** In Progress — tickets filed for all six Work Items (2026-10-28, branch `feat-immersion-gate`); design and acceptance criteria are complete. Ground-truth state remains partially built (`src/rpg/skills`, `src/rpg/stats`, `src/story/items/`, `src/battle/resolution-integration/checks.ts`); `epic-player-state-machine` is not implemented, so the rule engine builds SC10-style adapters over what exists and documents the seam.
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic
@@ -74,15 +74,16 @@ fiction, preserving story flow; reasons surfaced OOC only on hard-block.
 
 | # | Work Item | Status | Ticket |
 | - | --------- | ------ | ------ |
-| 1 | Claim extraction - detect action/skill/item/movement claims (regex + aux) | Not Started | none |
-| 2 | Deterministic rule engine - actor state, skills, inventory, pending failed-check consequences | Not Started | none |
-| 3 | Failed-check enforcement - consume battle/dice outcomes to constrain follow-up actions | Not Started | none |
-| 4 | LLM classifier (opt-in) - prose-level audit via aux-pipeline, budget-governed | Not Started | none |
-| 5 | Refusal narration path - soft-refusal to attempted-action framing into GM/narration | Not Started | none |
-| 6 | Config surface + audit - per-chat severity, per-rule toggles, decision log | Not Started | none |
+| 1 | Claim extraction - detect action/skill/item/movement claims (regex + aux) | Not Started | TASK-immersion-gate-claim-extraction |
+| 2 | Deterministic rule engine - actor state, skills, inventory, pending failed-check consequences | Not Started | TASK-immersion-gate-deterministic-rule-engine |
+| 3 | Failed-check enforcement - consume battle/dice outcomes to constrain follow-up actions | Not Started | TASK-immersion-gate-failed-check-enforcement |
+| 4 | LLM classifier (opt-in) - prose-level audit via aux-pipeline, budget-governed | Not Started | TASK-immersion-gate-opt-in-llm-classifier |
+| 5 | Refusal narration path - soft-refusal to attempted-action framing into GM/narration | Not Started | TASK-immersion-gate-refusal-narration-path |
+| 6 | Config surface + audit - per-chat severity, per-rule toggles, decision log | Not Started | TASK-immersion-gate-config-surface-and-audit-log |
 
-> **Every Work Item is unticketed.** This epic is a design with no implementation
-> vehicle; filing a ticket for it is the prerequisite for any of the above to start.
+> **All six Work Items are ticketed (2026-10-28).** Ticket files live in
+> `.plan/tickets/` under the ids in the Ticket column; implementation proceeds
+> on `feat-immersion-gate`.
 
 ## Dependencies
 
@@ -112,7 +113,7 @@ fiction, preserving story flow; reasons surfaced OOC only on hard-block.
 
 ## Unticketed Gaps
 
-- No ticket file exists for this epic at all; all six Work Items are unowned.
+- Resolved 2026-10-28 — all six Work Items are ticketed (see Work Items table).
 - The severity ladder has no config surface (`allow`/`annotate`/`soft-refuse`/`hard-block`
   are design-only).
 - The decision log required by the audit acceptance criterion has no storage table.
