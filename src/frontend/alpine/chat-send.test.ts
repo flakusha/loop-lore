@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { browserDecryptThenDecompress, type BrowserEncryptedPayload, browserGenerateKey, } from "../browser";
 import "./i18n.test-helper";
 import { chatSendMethods, } from "./chat-send";
 import type { Message, } from "./types";
@@ -46,6 +47,9 @@ interface SendCtx {
   _encryptionEnabled: boolean;
   _chatKey: CryptoKey | null;
   _keyId: string | null;
+  _activeChatEncryptionLevel: string | null;
+  keyFetches: number;
+  loadChatKey: (chatId: string, encryptionLevel?: string | null,) => Promise<void>;
   $refs: { messageInput: { value: string } };
   autoResize: (el: unknown,) => void;
   scrollToBottom: () => void;
@@ -75,6 +79,11 @@ function buildCtx(overrides?: Partial<SendCtx>,): SendCtx {
     _encryptionEnabled: false,
     _chatKey: null,
     _keyId: null,
+    _activeChatEncryptionLevel: null,
+    keyFetches: 0,
+    loadChatKey: async () => {
+      ctx.keyFetches += 1;
+    },
     $refs: { messageInput: { value: "", }, },
     autoResize: () => {},
     scrollToBottom: () => {},
@@ -352,6 +361,115 @@ describe("chatSendMethods.sendMessage — failure paths", () => {
     // An error toast is still shown.
     expect(ctx.toasts[0]!.type,).toBe("error",);
     expect(ctx.isGenerating,).toBe(false,);
+  });
+});
+
+describe("chatSendMethods.sendMessage — stale chat key recovery", () => {
+  test("refetches the key, re-encrypts the plaintext and retries once", async () => {
+    const staleKey = await browserGenerateKey();
+    const freshKey = await browserGenerateKey();
+    const ctx = buildCtx({
+      _encryptionEnabled: true,
+      _chatKey: staleKey,
+      _keyId: "key-stale",
+      _activeChatEncryptionLevel: "standard",
+    },);
+
+    ctx.$refs.messageInput.value = "hello";
+    ctx.loadChatKey = async () => {
+      ctx.keyFetches += 1;
+      ctx._chatKey = freshKey;
+      ctx._keyId = "key-fresh";
+      ctx._encryptionEnabled = true;
+    };
+
+    let attempt = 0;
+    handler = async () => {
+      attempt += 1;
+      if (attempt === 1) {
+        return Response.json(
+          { error: "Encrypted content names a key that is not a live key of this chat", code: "STALE_CHAT_KEY", },
+          { status: 400, },
+        );
+      }
+
+      return Response.json({}, { status: 200, },);
+    };
+
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+
+    // The recovery happens exactly once — never a retry loop.
+    expect(attempt,).toBe(2,);
+    expect(ctx.keyFetches,).toBe(1,);
+
+    const first = JSON.parse(String(calls[0]!.opts.body,),) as { content: string };
+    const retried = JSON.parse(String(calls[1]!.opts.body,),) as { content: string };
+    // The first attempt named the stale key; the retry names the fresh one.
+    expect((JSON.parse(first.content,) as BrowserEncryptedPayload).key_id,).toBe("key-stale",);
+    expect((JSON.parse(retried.content,) as BrowserEncryptedPayload).key_id,).toBe("key-fresh",);
+    // The retried body is encrypted under the NEW key — re-sending the old
+    // ciphertext would store a message nobody can decrypt.
+    expect(await browserDecryptThenDecompress(retried.content, freshKey,),).toBe("hello",);
+
+    // The retry went through: no toast, no rollback, the input stays cleared.
+    expect(ctx.toasts,).toEqual([],);
+    expect(ctx.messages,).toHaveLength(1,);
+    expect(ctx.$refs.messageInput.value,).toBe("",);
+  });
+
+  test("does not retry when the refetch yields no key", async () => {
+    const ctx = buildCtx({
+      _encryptionEnabled: true,
+      _chatKey: await browserGenerateKey(),
+      _keyId: "key-stale",
+    },);
+
+    ctx.$refs.messageInput.value = "hello";
+    ctx.loadChatKey = async () => {
+      ctx.keyFetches += 1;
+      ctx._chatKey = null;
+      ctx._keyId = null;
+      ctx._encryptionEnabled = false;
+    };
+
+    let attempt = 0;
+    handler = async () => {
+      attempt += 1;
+      return Response.json({ error: "stale key", code: "STALE_CHAT_KEY", }, { status: 400, },);
+    };
+
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+
+    // No key means no safe retry — posting the plaintext would silently
+    // downgrade the chat to an unencrypted send.
+    expect(attempt,).toBe(1,);
+    expect(ctx.keyFetches,).toBe(1,);
+    expect(ctx.toasts[0]!.type,).toBe("error",);
+    // The typed text is restored so the message is not lost.
+    expect(ctx.$refs.messageInput.value,).toBe("hello",);
+  });
+
+  test("a forged payload rejection is not retried", async () => {
+    const ctx = buildCtx({
+      _encryptionEnabled: true,
+      _chatKey: await browserGenerateKey(),
+      _keyId: "key-live",
+    },);
+
+    ctx.$refs.messageInput.value = "hello";
+
+    let attempt = 0;
+    handler = async () => {
+      attempt += 1;
+      return Response.json({ error: "payload does not decrypt", code: "BAD_REQUEST", }, { status: 400, },);
+    };
+
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+
+    // A refetch yields the same key, so the retry would fail the same way.
+    expect(attempt,).toBe(1,);
+    expect(ctx.keyFetches,).toBe(0,);
+    expect(ctx.toasts[0]!.type,).toBe("error",);
   });
 });
 
