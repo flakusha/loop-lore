@@ -8,6 +8,7 @@
  * in `actor_currencies.balance` (never negative, CHECK-constrained).
  */
 import type { Kysely, Transaction, } from "kysely";
+import { withTransaction, } from "../../characters/services/shared-service-utils";
 import type { DB, } from "../../db/schema";
 import { ItemsService, } from "../../story/items";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
@@ -99,7 +100,10 @@ export async function tradeCore(
   };
 
   try {
-    await db.transaction().execute(async (trx,) => {
+    // Ambient-safe: reuses the caller's transaction when invoked on a trx
+    // (crafting fulfillOrder joins craft + payment + status flip in one
+    // unit) instead of throwing on a nested .transaction().
+    await withTransaction(db, async (trx,) => {
       // Every failure path THROWS so the transaction rolls back: a plain
       // `return` would resolve the callback normally and Kysely would COMMIT
       // the currency debit that already happened (DOM-1).

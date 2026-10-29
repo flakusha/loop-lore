@@ -35,7 +35,7 @@ export async function transfer(
   quantity: number,
   toLocationId?: string,
   toActorId?: string,
-  trx?: Transaction<DB>,
+  trx?: Kysely<DB> | Transaction<DB>,
 ): Promise<TransferResult> {
   const run = async (db: Kysely<DB>,): Promise<TransferResult> => {
     const source = await db
