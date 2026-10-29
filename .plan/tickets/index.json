@@ -8677,7 +8677,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "BUG-ROUTE-LAYER-NSFW-GATE-KEEPS-SERVING-NSFW-AFTER-THE-ADMIN-KIL": {
     "hash": "eaa16ea",
