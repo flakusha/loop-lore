@@ -11,6 +11,13 @@ import { describe, expect, test, } from "bun:test";
  * The script only READS src/, owns no fixture and writes nothing — safe under
  * `bun test --parallel`. The cwd is the repo root because the script resolves
  * `src/` relative to `process.cwd()`.
+ *
+ * Every full-scan case spawns the script over all of src/ (~1.8s per scan on
+ * an idle box; the --shared case runs it twice), so those cases carry an
+ * explicit timeout: Bun's 5s default sits under the real cost once the
+ * coverage gate's 4x-parallel test load is applied, and a timed-out spawn
+ * returns empty stdout — which surfaces as a JSON parse error, not as a
+ * timeout message.
  */
 
 const SCRIPT = `${import.meta.dir}/audit-runtime-compat.ts`;
@@ -26,24 +33,24 @@ function run(...args: string[]) {
 }
 
 describe("audit-runtime-compat CLI", () => {
-  test("no args: prints the report and exits 0", () => {
+  test("no args: prints the report and exits 0", { timeout: 60_000, }, () => {
     const result = run();
     expect(result.exitCode,).toBe(0,);
     expect(result.stdout.length,).toBeGreaterThan(0,);
-  });
+  },);
 
-  test("--json emits a findings array", () => {
+  test("--json emits a findings array", { timeout: 60_000, }, () => {
     const result = run("--json",);
     expect(result.exitCode,).toBe(0,);
     expect(Array.isArray(JSON.parse(result.stdout,),),).toBe(true,);
-  });
+  },);
 
-  test("--shared narrows findings to shared modules", () => {
+  test("--shared narrows findings to shared modules", { timeout: 60_000, }, () => {
     const all = JSON.parse(run("--json",).stdout,) as { shared: boolean }[];
     const shared = JSON.parse(run("--json", "--shared",).stdout,) as { shared: boolean }[];
     expect(shared.every((f,) => f.shared),).toBe(true,);
     expect(shared.length,).toBeLessThanOrEqual(all.length,);
-  });
+  },);
 
   test("--help prints the brief and exits 0", () => {
     const result = run("--help",);
