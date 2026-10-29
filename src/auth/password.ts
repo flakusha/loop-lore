@@ -33,5 +33,12 @@ export async function hashPassword(password: string,): Promise<string> {
  * @returns Whether the password matches the stored hash.
  */
 export async function verifyPassword(password: string, hash: string,): Promise<boolean> {
-  return Bun.password.verify(password, hash, PASSWORD_HASH_ALGORITHM,);
+  try {
+    return await Bun.password.verify(password, hash, PASSWORD_HASH_ALGORITHM,);
+  } catch {
+    // A hash written with another algorithm — the bcrypt rows an older
+    // install carries — still verifies through Bun's inference, so pinning the
+    // hash side never locks an existing user out.
+    return await Bun.password.verify(password, hash,);
+  }
 }

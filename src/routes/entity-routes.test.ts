@@ -14,7 +14,7 @@ import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { createEntityRoutes, type EntityConfig, } from "./entity-routes";
-import { checkOwnership, entityPaths, readEntityAuth, readEntityParams, } from "./entity-routes/context";
+import { checkOwnership, entityDb, entityPaths, readEntityAuth, readEntityParams, } from "./entity-routes/context";
 
 const mockConfig = {} as any;
 
@@ -394,6 +394,11 @@ describe("createEntityRoutes", () => {
     );
 
     expect(create.status,).toBe(404,);
+  });
+
+  test("entityDb exposes the config-driven table boundary", async () => {
+    const rows = await entityDb(db,).selectFrom("actors",).selectAll().execute();
+    expect(rows.length,).toBeGreaterThan(0,);
   });
 });
 
