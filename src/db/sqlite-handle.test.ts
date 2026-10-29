@@ -6,6 +6,12 @@
  * Standalone file so the module state (test override / production singleton)
  * starts clean under `bun test --isolate` — sibling db suites that materialize
  * the singleton cannot bleed in.
+ *
+ * Resource contract: owns the process-global test override + production
+ * singleton (cleared via setTestDatabase(null) in afterEach) and one tmp DB
+ * file `.tmp/sqlite-handle-probe-<pid>.db` — pid-unique, so parallel test
+ * processes never collide; removed (and LOOP_LORE_DB_PATH restored) in
+ * afterEach even on failure.
  */
 import { Database, } from "bun:sqlite";
 import { afterEach, describe, expect, test, } from "bun:test";
