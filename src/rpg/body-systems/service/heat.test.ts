@@ -1,4 +1,6 @@
 import { describe, expect, it, } from "bun:test";
+import type { KyselyPlugin, RootOperationNode, } from "kysely";
+import { TableNode, } from "kysely";
 import { HeatPhase, } from "../../../db/enums";
 import {
   advanceHeatCycle,
@@ -9,6 +11,43 @@ import {
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import { insertActors, } from "../../../test-utils/insert-helpers";
 import { Species, } from "../enums";
+
+/** True when `node` is a SELECT whose FROM includes `character_heat_cycle`. */
+function selectsHeatCycle(node: RootOperationNode,): boolean {
+  if (node.kind !== "SelectQueryNode") { return false; }
+  return node.from?.froms.some((from,) =>
+    TableNode.is(from,) && JSON.stringify(from,).includes("character_heat_cycle",)
+  ) ??
+    false;
+}
+
+/**
+ * Fire `sideEffect` right after the next `character_heat_cycle` SELECT
+ * completes — the deterministic stand-in for a concurrent advance that
+ * commits between the in-transaction read and the conditional write it
+ * guards. The write goes through the raw handle: a nested Kysely query
+ * would re-enter the driver.
+ */
+function interleaveAfterHeatCycleRead(sideEffect: () => void,): KyselyPlugin {
+  let armed = false;
+  let fired = false;
+  const plugin: KyselyPlugin = {
+    transformQuery: (args,) => {
+      if (!fired && selectsHeatCycle(args.node,)) { armed = true; }
+      return args.node;
+    },
+    transformResult: (args,) => {
+      if (armed && !fired) {
+        fired = true;
+        sideEffect();
+      }
+
+      return Promise.resolve(args.result,);
+    },
+  };
+
+  return plugin;
+}
 
 describe("body-systems/heat/rowToHeatCycle (real logic)", () => {
   it("transforms DB row to HeatCycleState correctly", () => {
@@ -159,6 +198,34 @@ describe("body-systems/heat/advanceHeatCycle", () => {
     expect(results,).toHaveLength(2,);
     const cycle = await getHeatCycle(db, "actor-1", "catgirl",);
     expect(cycle.daysUntilNextHeat,).toBe(10,);
+  });
+
+  it("a stale advance throws instead of silently overwriting the winner (lost-race contract)", async () => {
+    const { db, sqlite, } = await createTestDb();
+    await insertActors(db, "Actor", { id: "actor-1", } as never,);
+    await getHeatCycle(db, "actor-1", "catgirl",);
+
+    // Force the loser's pre-image stale: after its in-transaction read, a
+    // concurrent advance commits (rewriting `updated_at`), so the loser's
+    // conditional write touches 0 rows and throws instead of clobbering
+    // the winner. The caller retries the advance (claimRewards precedent:
+    // throw a lost-race error, no retry queue inside the service).
+    const raced = db.withPlugin(interleaveAfterHeatCycleRead(
+      () => {
+        sqlite.run(
+          "UPDATE character_heat_cycle SET days_until_next_heat = 5, updated_at = '2099-01-01' WHERE actor_id = 'actor-1'",
+        );
+      },
+    ),);
+
+    await expect(advanceHeatCycle(raced, "actor-1", 10,),).rejects.toThrow(
+      "changed concurrently",
+    );
+
+    // The loser's transaction rolled back, so the stranded interleaved
+    // winner write is gone too: the row still holds the 30-day default.
+    const cycle = await getHeatCycle(db, "actor-1", "catgirl",);
+    expect(cycle.daysUntilNextHeat,).toBe(30,);
   });
 });
 
