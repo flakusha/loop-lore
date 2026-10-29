@@ -551,12 +551,6 @@ bun run plan:sync:fix                 # apply fixes (non-interactive) — runs g
 bun run plan:sync                     # check — runs giwt sync
 
 # Comprehensive .plan/ validation (format, linkage, backlog, tickets, code-map,
-
-# links, spdx, naming, epics-doc, status-vocab, matrix, interconnect)
-bun run plan:validate                 # check — exits non-zero on findings
-bun run plan:validate:fix             # apply auto-fixable findings (giwt plan validate --fix)
-bun run plan:status                   # health summary (open/closed counts, gate pass/fail)
-
 # links, spdx, naming, epics-doc, status-vocab, matrix, interconnect)
 bun run plan:validate                 # check — exits non-zero on findings
 bun run plan:validate:fix             # apply auto-fixable findings (giwt plan validate --fix)
@@ -569,6 +563,10 @@ bun run plan:backlog:sync:fix         # add orphans, drop phantoms
 # Feature matrix (.plan/feature-matrix.md, generated from the ticket index)
 bun run plan:matrix                   # regenerate
 bun run plan:matrix:check             # freshness gate — committed matrix vs fresh rebuild
+
+# Interconnect pair (.plan/interconnect.json + .plan/interconnect.md)
+bun run plan:links                    # regenerate — run after any sync/map/matrix change
+bun run plan:links:check              # freshness gate — committed pair vs fresh rebuild
 
 # Direct git-issue
 giwt gi <command>
