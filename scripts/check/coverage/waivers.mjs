@@ -33,12 +33,10 @@ export const WAIVERS = {
   // coverage tracking starts; lcov shows it as `tests/` module. Scoped
   // file-alone run shows 100%; only the full-run path under-counts.
   "tests": { floor: 50, reason: "bun preload before coverage tracking starts (tests/setup-globals.ts)", },
-  // Gate pass: TUI module body is dominated by blessed widget binding
-  // (box / list / textbox) and event-handler wiring that requires a live
-  // terminal to exercise. The mock.module-based test files under src/tui/
-  // stub blessed and construct every view without a terminal. This
-  // module-wide floor covers the full-run path, where the screens that are
-  // only ever built (never driven) dominate the denominator.
+  // Gate pass: renderer-boundary module on @oh-my-pi/pi-tui — components are
+  // tested headlessly via pure render(width) / handleInput, so widget logic is
+  // covered, but the engine mount and terminal glue only run in full-run
+  // paths that unit tests never drive; the module-wide floor covers those.
   "tui": {
     floor: 74,
     reason:
