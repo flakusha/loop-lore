@@ -4,6 +4,7 @@
  * Exercises create/list/answer over a real test DB, including the system
  * message appended on answer and the typed error paths.
  */
+import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import { type Kysely, } from "kysely";
 import {
@@ -31,6 +32,7 @@ import { QuestionError, } from "./types";
 
 describe("RpgQuestionsService", () => {
   let db: Kysely<DB>;
+  let sqlite: Database;
   let userId: string;
   let chatId: string;
   let otherChatId: string;
@@ -47,6 +49,7 @@ describe("RpgQuestionsService", () => {
   beforeAll(async () => {
     const ctx = await createTestDb();
     db = ctx.db;
+    sqlite = ctx.sqlite;
 
     userId = uid();
     await insertUsers(
@@ -291,6 +294,53 @@ describe("RpgQuestionsService", () => {
       expect(row!.status,).toBe("answered",);
       const after = await countRecorded();
       expect(after - before,).toBe(1,);
+    });
+
+    it("a mid-sequence message failure rolls the claim back (no partial state)", async () => {
+      const question = await createQuestion(db, {
+        chatId,
+        actorId: emitterActorId,
+        type: RpgQuestionType.Action,
+        prompt: "Abort mid-answer",
+        options,
+      },);
+
+      // Fail the transcript insert after the status claim ran: the claim +
+      // effects + message are one transaction, so the abort leaves neither
+      // an answered row, effect rows, nor a system message.
+      const countAnswerMessages = async (): Promise<number> => {
+        const rows = await db.selectFrom("messages",).select("id",)
+          .where("chat_id", "=", chatId,)
+          .where("actor_id", "=", playerActorId,)
+          .where("content", "=", "Answer recorded: Open the door",)
+          .execute();
+
+        return rows.length;
+      };
+
+      const beforeCount = await countAnswerMessages();
+      sqlite.exec(
+        `CREATE TRIGGER abort_answer_message BEFORE INSERT ON messages BEGIN SELECT RAISE(ABORT, 'message boom'); END;`,
+      );
+
+      try {
+        await expect(
+          answerQuestion(db, question.id, { optionId: "opt-1", }, playerActorId,),
+        ).rejects.toThrow("message boom",);
+
+        const row = await db.selectFrom("rpg_questions",).selectAll()
+          .where("id", "=", question.id,).executeTakeFirst();
+
+        expect(row!.status,).toBe("open",);
+        expect(row!.selected_option_id,).toBeNull();
+        expect(row!.answered_at,).toBeNull();
+
+        // No transcript row for this answer: scope by the exact content this
+        // question's answer would have recorded (other tests share chatId).
+        expect(await countAnswerMessages(),).toBe(beforeCount,);
+      } finally {
+        sqlite.exec("DROP TRIGGER abort_answer_message;",);
+      }
     });
 
     it("throws not_open for an expired question", async () => {
