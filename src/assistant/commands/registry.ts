@@ -123,6 +123,20 @@ export function registerCommand(
 }
 
 /**
+ * Remove a registration.
+ *
+ * TEST-ONLY. The registry is a process-global map: every test file in one bun
+ * process shares it. A probe command that is registered and never removed shows
+ * up in `listCommands()` for whichever file runs next, so the command-conformance
+ * vectors (live registry vs the frozen list) pass or fail depending on file
+ * order. A test that registers a probe must remove it in its teardown.
+ * @param name - Command name to remove
+ */
+export function __unregisterCommandForTests(name: string,): void {
+  handlers.delete(name.toLowerCase(),);
+}
+
+/**
  * Get a command handler by name.
  * @param name - Command name
  * @returns Handler function, or undefined if not registered

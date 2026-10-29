@@ -8,7 +8,7 @@
  * These modules register their handlers as an import side effect, so each is
  * imported for registration and resolved through the command registry.
  */
-import { describe, expect, it, } from "bun:test";
+import { afterEach, describe, expect, it, } from "bun:test";
 import { ChatParticipantRole, } from "../../db/enums";
 import "./context";
 import "./debug";
@@ -23,6 +23,7 @@ import "./sfx";
 import "./summarize";
 import "./video";
 import {
+  __unregisterCommandForTests,
   type CommandContext,
   type CommandHandler,
   type CommandResult,
@@ -31,6 +32,17 @@ import {
   listCommands,
   registerCommand,
 } from "./registry";
+
+/**
+ * Resource contract: this file owns the `help-probe-owner` probe it registers
+ * and removes it in `afterEach`. The registry is a process-global map shared with
+ * every other test file in the same bun process; a probe left behind would show
+ * up in `listCommands()` for whichever file runs next (the command-conformance
+ * vectors compare the live registry against a frozen list).
+ */
+afterEach(() => {
+  __unregisterCommandForTests("help-probe-owner",);
+},);
 
 /** Resolve a registered handler, failing loudly when the module didn't register. */
 function mustGet(name: string,): CommandHandler {

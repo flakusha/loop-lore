@@ -1,15 +1,27 @@
 /**
  * Command Registry Tests — tiered access + role hierarchy.
  */
-import { describe, expect, it, } from "bun:test";
+import { afterEach, describe, expect, it, } from "bun:test";
 import { ChatParticipantRole, } from "../../db/enums";
 import {
+  __unregisterCommandForTests,
   getCommand,
   getCommandRequirement,
   listCommands,
   registerCommand,
   satisfiesRole,
 } from "./registry";
+
+/**
+ * Resource contract: this file owns the two probe commands it registers and
+ * removes them in `afterEach`. The registry is a process-global map shared with
+ * every other test file in the same bun process, so a probe left behind would
+ * change `listCommands()` for whichever file runs next.
+ */
+afterEach(() => {
+  __unregisterCommandForTests("tiered-test",);
+  __unregisterCommandForTests("open-test",);
+},);
 
 describe("satisfiesRole", () => {
   it("orders observer < member < owner", () => {
