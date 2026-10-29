@@ -187,6 +187,87 @@ describe("ItemsService.transfer", () => {
 
     expect(dests.reduce((sum, row,) => sum + row.quantity, 0,),).toBe(4,);
   });
+
+  test("concurrent transfers into the same destination conserve the total", async () => {
+    const item = uid();
+    const dest = uid();
+    const srcA = uid();
+    const srcB = uid();
+    await insertItems(db, worldId, "Rations", "consumable", { id: item, } as never,);
+    await insertLocations(db, worldId, "Dest", { id: dest, } as never,);
+    await insertWorldItems(db, worldId, item, { id: srcA, location_id: locationA, quantity: 3, } as never,);
+    await insertWorldItems(db, worldId, item, { id: srcB, location_id: locationB, quantity: 3, } as never,);
+    const svc = new ItemsService(db,);
+
+    // Both racers converge on one fresh destination row: the first
+    // transfer inserts it, the second credits it. At most one winner per
+    // source increments the shared row — no silent clobber, no phantom
+    // stock. (Promise.all serializes on the single SQLite connection, so
+    // this pins the contract rather than forcing the interleaving.)
+    const [first, second,] = await Promise.all([
+      svc.transfer(srcA, worldId, 3, dest,),
+      svc.transfer(srcB, worldId, 3, dest,),
+    ],);
+
+    expect(first.success,).toBe(true,);
+    expect(second.success,).toBe(true,);
+
+    const destRow = await db
+      .selectFrom("world_items",)
+      .select("quantity",)
+      .where("item_id", "=", item,)
+      .where("location_id", "=", dest,)
+      .executeTakeFirst();
+
+    expect(destRow?.quantity,).toBe(6,);
+  });
+
+  test("a stale destination credit fails instead of clobbering the winner", async () => {
+    const item = uid();
+    const dest = uid();
+    const srcA = uid();
+    const srcB = uid();
+    await insertItems(db, worldId, "Rations", "consumable", { id: item, } as never,);
+    await insertLocations(db, worldId, "Dest", { id: dest, } as never,);
+    await insertWorldItems(db, worldId, item, { id: srcA, location_id: locationA, quantity: 3, } as never,);
+    await insertWorldItems(db, worldId, item, { id: srcB, location_id: locationB, quantity: 3, } as never,);
+    const svc = new ItemsService(db,);
+
+    // Seed the shared destination row, then simulate a loser holding its
+    // pre-image: bump the row after the loser read it, so the loser's
+    // `quantity = <observed>` predicate touches 0 rows.
+    await svc.transfer(srcA, worldId, 1, dest,);
+    const observed = await db
+      .selectFrom("world_items",)
+      .selectAll()
+      .where("item_id", "=", item,)
+      .where("location_id", "=", dest,)
+      .executeTakeFirstOrThrow();
+
+    await db
+      .updateTable("world_items",)
+      .set({ quantity: observed.quantity + 10, },)
+      .where("id", "=", observed.id,)
+      .execute();
+
+    const stale = await db
+      .updateTable("world_items",)
+      .set({ quantity: observed.quantity + 3, },)
+      .where("id", "=", observed.id,)
+      .where("world_id", "=", worldId,)
+      .where("quantity", "=", observed.quantity,)
+      .executeTakeFirst();
+
+    expect(Number(stale.numUpdatedRows ?? 0,),).toBe(0,);
+
+    const destRow = await db
+      .selectFrom("world_items",)
+      .select("quantity",)
+      .where("id", "=", observed.id,)
+      .executeTakeFirst();
+
+    expect(destRow?.quantity,).toBe(observed.quantity + 10,);
+  });
 });
 
 describe("ItemsService.getNpcInventoryBatch", () => {
