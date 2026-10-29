@@ -63,14 +63,19 @@ async function seed(db: Kysely<DB>,): Promise<void> {
   await insertLocations(db, WORLD_ID, "Forest", { id: "forest", } as never,);
   await insertLocations(db, WORLD_ID, "Cave", { id: "cave", } as never,);
 
-  // A chat owned by the owner.
+  // A chat owned by the owner, in the world that owns the branch
+  // destinations. `splitParty` validates branch specs against the chat's
+  // world and participant list (C7 auto-execution slice), so the fixture
+  // must satisfy that contract for the success case to reach 201.
   await insertChats(db, "Party", OWNER_ID, {
     id: CHAT_ID,
     type: "group",
     mode: "group",
+    world_id: WORLD_ID,
   } as never,);
 
   await insertChatParticipants(db, CHAT_ID, OWNER_ID, {} as never,);
+  await insertChatParticipants(db, CHAT_ID, ATTACKER_ID, {} as never,);
 }
 
 describe("partySplitRoutes — ownership derived from session, not body", () => {

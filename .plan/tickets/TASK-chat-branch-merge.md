@@ -10,7 +10,7 @@
 
 **Status:** In Progress
 **Scope:** C7 party split/reunite auto-execution + VN choice-card location actions
-**Status Note:** split/reunite engine + routes shipped (verified 2026-10-08); regex narration detection helpers + scene-transition wiring landed 2026-10-20 (`detectSplitIntent`/`detectReuniteIntent` in `src/chat/service/split.ts`, wired in `src/routes/messages/handle-scene-transitions.ts`). Remaining: auto-execution of split/reunite from narration (needs branch specs: locations + actor sets), VN split/reunite + choice-card location effects.
+**Status Note:** split/reunite engine + routes shipped (verified 2026-10-08); regex narration detection helpers + scene-transition wiring landed 2026-10-20 (`detectSplitIntent`/`detectReuniteIntent` in `src/chat/service/split.ts`, wired in `src/routes/messages/handle-scene-transitions.ts`). 2026-10-30 (branch `c7-branch-exec`): `/split` + `/reunite` auto-execution commands shipped with branch-spec validation inside `splitParty` (`src/chat/service/split-validate.ts`) and `chat.party_split`/`chat.party_reunited` plugin events; Phase 4 choice-card location actions verified as already shipped on dev (`choice-cards.ts:169-244` + `extras.ts:36-116`). Remaining: VN split/reunite visual effects (`TASK-vn-party-split-reunite-visual-effects`) and party roster + travel progress UI (`TASK-party-roster-travel-progress-ui`).
 **Priority:** P2-B
 **Effort:** High
 **Epic:** epic-chat-transfer-location
@@ -105,21 +105,22 @@ enabled.
 - [x] Implement `POST /api/chats/:id/split` endpoint — shipped (`src/routes/chats/split.ts`, IDOR-guarded, `splitParty` service)
 - [x] Implement `POST /api/chats/:id/reunite` endpoint — shipped (same file, `reuniteChats` service)
 - [x] Wire parent-child chat linking — shipped (`parent_chat_id` on branch chats, carried context via `carry-*` modules)
-- [ ] Create split/reunite detection regex  patterns — narration path open
-- [ ] Add VN split/reunite visual effects — open
+- [x] Create split/reunite detection regex patterns — shipped 2026-10-20 (`detectSplitIntent`/`detectReuniteIntent`, `src/chat/service/split.ts`; wired detect-and-log in `src/routes/messages/handle-scene-transitions.ts`)
+- [x] `/split` + `/reunite` auto-execution commands — shipped 2026-10-30 (`src/assistant/commands/split.ts`, `reunite.ts`; branch-spec validation in `src/chat/service/split-validate.ts` wired inside `splitParty`; `chat.party_split`/`chat.party_reunited` plugin events)
+- [ ] Add VN split/reunite visual effects — open, tracked in `TASK-vn-party-split-reunite-visual-effects`
 
 ### Phase 4: VN Choice Card Integration
 
-- [ ] Extend choice card types with location actions
-- [ ] Wire card selection to location change API
-- [ ] Add travel progress UI for long distances
-- [ ] Add party roster panel showing who's where
+- [x] Extend choice card types with location actions — shipped: server-derived `locationId` on the select response (`src/routes/chats/vn-choices.ts:38,155-157`); consequence contract in `src/frontend/vn/choice-cards-consequences.ts`
+- [x] Wire card selection to location change API — shipped: `selectChoice` → `PUT /api/v1/chats/:id/location` + `chat:location-changed` (`src/frontend/vn/choice-cards.ts:169-244`; route `src/routes/chats/extras.ts:36-116`); covered by `choice-cards-effects.test.ts`
+- [ ] Add travel progress UI for long distances — open, tracked in `TASK-party-roster-travel-progress-ui`
+- [ ] Add party roster panel showing who's where — open, tracked in `TASK-party-roster-travel-progress-ui`
 
 ## Acceptance Criteria
 
 - [x] Party split creates branched chats with correct participants (Phase 3) — `splitParty` (`src/chat/service/split.ts:81`) → `createBranchChat` per sub-group with `parent_chat_id`, destination `current_location_id`, and the branch's `actorIds`
 - [x] Party merge combines messages and deduplicates participants (Phase 3) — `reuniteChats` (`src/chat/service/split.ts:170`) → `copyMessagesToPrimary` + `mergeParticipantsIntoPrimary` (dedupes by `actor_id`, `src/chat/service/split-utils.ts:82`); covered by `src/chat/service/split.test.ts`
-- [ ] VN choice cards can trigger location changes (Phase 4)
+- [x] VN choice cards can trigger location changes (Phase 4) — shipped: select route returns server-derived `locationId` (`src/routes/chats/vn-choices.ts`), `selectChoice` PUTs `/api/v1/chats/:id/location` and fires `chat:location-changed` (`src/frontend/vn/choice-cards.ts:169-244`); route `src/routes/chats/extras.ts:36-116`
 
 ## Auto-execution research (2026-10-20)
 
@@ -135,3 +136,11 @@ enabled.
 ## Auto-execution scope (2026-10-20)
 
 - Minimal scope: detect + log only (shipped). Full execution requires explicit command syntax + branch specs and is tracked separately.
+
+## Auto-execution commands shipped (2026-10-30, branch `c7-branch-exec`)
+
+- `/split <locationId>:<actorId>[,actorId...] [<locationId>:<actors> ...]` (≥2 whitespace branch groups; the token parser cannot carry `→` syntax) and `/reunite <secondaryChatId>` — `src/assistant/commands/split.ts` + `reunite.ts`, registered owner-role-gated, running the session user (`ctx.userId`) through the services' `created_by === actorId` guard (IDOR-safe, same model as `src/routes/chats/split.ts`).
+- Branch-spec validation wired INSIDE `splitParty` (`src/chat/service/split-validate.ts`): every branch needs ≥1 actor (the old silent empty-branch skip is gone), the chat needs a world, every locationId must exist in that world, every actorId must be a chat participant — `ServiceError` instead of raw FK errors; the REST route inherits the checks.
+- `chat.party_split` / `chat.party_reunited` plugin events emitted from both services via the established `emitPluginEvent` pattern (`chat.created`, `chat.archived`).
+- Tests: `src/assistant/commands/split.test.ts`, `reunite.test.ts`; `src/chat/service/split.test.ts` extended (unknown/foreign-world location, non-participant actor, empty branch, world-less chat).
+- Narration-derived auto-derivation of branch specs (aux LLM) stays a separate future ticket (see Aux/0-shot section).
