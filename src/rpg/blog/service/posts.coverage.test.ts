@@ -276,6 +276,31 @@ describe("updatePost", () => {
     const updated = await updatePost(db, row.id, { title: "AdminEdit", }, "user-admin", true,);
     expect(updated?.title,).toBe("AdminEdit",);
   });
+
+  test("updatePost is atomic — failed tag insert rolls the scalar update back (BUG-service-layer-multi-query-mutations-run-without-transactions)", async () => {
+    const row = await createPost(db, {
+      author_id: "user-author",
+      title: "Old",
+      body: "old body",
+      tags: ["stale",],
+    },);
+
+    // Fail the tag insert after the scalar update ran.
+    sqlite.exec(
+      `CREATE TRIGGER fail_blog_tag_insert BEFORE INSERT ON blog_tags BEGIN SELECT RAISE(ABORT, 'simulated tag failure'); END;`,
+    );
+
+    try {
+      await expect(updatePost(db, row.id, { title: "New", tags: ["fresh",], }, "user-author",),).rejects.toThrow();
+
+      // The scalar update must roll back with the failed tag insert.
+      const fresh = await getPost(db, row.id,);
+      expect(fresh?.title,).toBe("Old",);
+      expect(fresh?.tags.toSorted(),).toEqual(["stale",],);
+    } finally {
+      sqlite.exec("DROP TRIGGER fail_blog_tag_insert;",);
+    }
+  });
 });
 
 describe("deletePost", () => {
