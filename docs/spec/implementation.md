@@ -27,7 +27,8 @@
 
 - **Web UI**: htmx (server-driven AJAX) + Alpine.js (client-side interactivity)
 - **TUI Mode**: [`blessed`](https://github.com/chjj/blessed) — curses-like
-  terminal UI library
+  terminal UI library (current stack; renderer migration to `@oh-my-pi/pi-tui`
+  in progress — see `.plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md`)
 - **Documentation**: VitePress SSG for rich docs, optional; plain Markdown
   default
 
@@ -307,33 +308,24 @@ architecture:
 
 ### TUI Mode
 
-Located in `src/tui/` — detailed in [`docs/terminal-ui.md`](./terminal-ui.md)
+Located in `src/tui/` — current renderer is blessed + blessed-contrib; renderer
+migration to `@oh-my-pi/pi-tui` in progress (see
+`.plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md`).
+Detailed in [`docs/spec/terminal-ui.md`](./terminal-ui.md).
 
 #### Main Application (`src/tui/app.ts`)
 
-- Sets up the blessed screen
-- Initializes and manages child components (chat view, gallery view, input
-  handler)
+- Sets up the blessed screen (current renderer)
+- Initializes and manages child components (chat widget, asset view, overlays)
 - Handles global keyboard shortcuts (exit on Escape/q/Ctrl+C)
 - Coordinates data flow between components
 
-#### Chat View (`src/tui/chat.ts`)
+#### Chat, asset, and overlay surfaces
 
-- Displays message history using blessed's `Log` widget
-- Methods for adding messages, setting current chat, loading gallery for chat
-- Integrates with gallery service to display linked media
-
-#### Gallery View (`src/tui/gallery-view.ts`)
-
-- Displays gallery items for current chat using blessed's `Box` widget
-- Navigation: Left/Right arrows to browse items
-- Actions: Enter to link item, Delete to remove item
-
-#### Input Handler (`src/tui/input.ts`)
-
-- Manages text input at bottom of screen using blessed's `Textbox` widget
-- Captures Enter key to submit messages
-- Clears input after submission
+- Chat widget (`src/tui/chat/`): scrollable message history, `setChatId()`, slash-command completion strip
+- Asset view (`src/tui/asset-view.ts`): sidebar showing the current chat's linked assets
+- Overlays: chat picker (F1), harness runs (F3), models (F6) — `src/tui/chat-picker.ts`, `src/tui/harness/`, `src/tui/models-overlay.ts`
+- See `docs/spec/terminal-ui.md` for the per-surface inventory
 
 ### API Integration
 
