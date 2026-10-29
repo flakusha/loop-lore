@@ -59,48 +59,44 @@ describe("handleStart", () => {
       expect(state.playerHand).toHaveLength(5);
     });
 
-    test("malformed JSON body also falls back to defaults", async () => {
+    test("a malformed JSON body is rejected", async () => {
       const res = await handleStart(new Request(START_URL, {
         method: "POST",
         body: "not-json",
       }));
-      expect(res!.status).toBe(200);
+      expect(res!.status).toBe(400);
       const body = await json(res);
-      const state = body.state as CardBattleState;
-      expect(state.playerHp).toBe(100);
-      expect(state.playerHand).toHaveLength(5);
+      expect(body.error).toBe("Invalid JSON body");
     });
 
-    test("non-number playerHp falls back to default 100", async () => {
+    test("a non-number playerHp is rejected", async () => {
       const res = await handleStart(new Request(START_URL, {
         method: "POST",
         body: JSON.stringify({ playerHp: "150" }),
       }));
-      expect(res!.status).toBe(200);
+      expect(res!.status).toBe(400);
       const body = await json(res);
-      const state = body.state as CardBattleState;
-      expect(state.playerHp).toBe(100);
+      expect(body.error).toBe("playerHp must be 10-1000");
     });
 
-    test("non-string difficulty falls back to default medium", async () => {
+    test("a non-string difficulty is rejected", async () => {
       const res = await handleStart(new Request(START_URL, {
         method: "POST",
         body: JSON.stringify({ difficulty: 42 }),
       }));
-      expect(res!.status).toBe(200);
+      expect(res!.status).toBe(400);
       const body = await json(res);
-      const state = body.state as CardBattleState;
-      expect(state.opponentHandSize).toBe(4); // medium = 4
+      expect(body.error).toBe("difficulty must be one of: easy, medium, hard");
     });
 
-    test("non-number handSize falls back to default 5", async () => {
+    test("a non-number handSize is rejected", async () => {
       const res = await handleStart(new Request(START_URL, {
         method: "POST",
         body: JSON.stringify({ handSize: "big" }),
       }));
-      expect(res!.status).toBe(200);
+      expect(res!.status).toBe(400);
       const body = await json(res);
-      expect((body.state as CardBattleState).playerHand).toHaveLength(5);
+      expect(body.error).toBe("handSize must be 3-7");
     });
   });
 

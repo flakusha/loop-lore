@@ -7,6 +7,8 @@
 
 import { initSeduction, playSeductionCard, cardToString } from "./engine";
 import { jsonResponse, jsonError, HttpStatus } from "../../../src/routes/http-utils";
+import { readJsonBody } from "../../validation";
+import { parsePlayBody, parseStartBody } from "./schema";
 import type { PluginCaller } from "../../../src/plugins/types";
 import { hasAll } from "../../../src/users/permissions";
 
@@ -36,24 +38,17 @@ export async function handleStart(request: Request, caller?: PluginCaller): Prom
   const denial = nsfwDenial(caller,);
   if (denial) { return denial; }
 
-  let body: Record<string, unknown> = {};
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch { /* empty ok */ }
-
-  const difficulty = typeof body.difficulty === "string"
-    ? body.difficulty as "easy" | "medium" | "hard"
-    : "medium";
-  const handSize = typeof body.handSize === "number" ? body.handSize : 5;
-
-  if (!["easy", "medium", "hard"].includes(difficulty)) {
-    return jsonError('difficulty must be "easy", "medium", or "hard"', HttpStatus.BadRequest);
-  }
-  if (handSize < 3 || handSize > 7) {
-    return jsonError("handSize must be 3-7", HttpStatus.BadRequest);
+  const body = await readJsonBody(request);
+  if (!body.ok) {
+    return jsonError(body.error, HttpStatus.BadRequest);
   }
 
-  const state = initSeduction(difficulty, handSize);
+  const input = parseStartBody(body.value);
+  if (!input.ok) {
+    return jsonError(input.error, HttpStatus.BadRequest);
+  }
+
+  const state = initSeduction(input.value.difficulty, input.value.handSize);
 
   return jsonResponse({
     // The full state travels with the client: /play is stateless and replays it.
@@ -85,24 +80,20 @@ export async function handlePlay(request: Request, caller?: PluginCaller): Promi
   const denial = nsfwDenial(caller,);
   if (denial) { return denial; }
 
-  let body: Record<string, unknown>;
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return jsonError("Invalid JSON body", HttpStatus.BadRequest);
+  const body = await readJsonBody(request);
+  if (!body.ok) {
+    return jsonError(body.error, HttpStatus.BadRequest);
   }
 
-  if (typeof body.cardIndex !== "number") {
-    return jsonError("cardIndex is required (number)", HttpStatus.BadRequest);
+  const input = parsePlayBody(body.value);
+  if (!input.ok) {
+    return jsonError(input.error, HttpStatus.BadRequest);
   }
 
-  const state = body.state as import("./types").SeductionState | undefined;
-  if (!state || typeof state !== "object") {
-    return jsonError("state is required — send back from /start or /play", HttpStatus.BadRequest);
-  }
+  const state = input.value.state as unknown as import("./types").SeductionState;
 
   try {
-    const round = playSeductionCard(state, body.cardIndex as number);
+    const round = playSeductionCard(state, input.value.cardIndex);
 
     return jsonResponse({
       round,

@@ -11,7 +11,8 @@
  */
 
 import type { PluginManifest } from "../../../src/plugins/types";
-import { handleStart, handleAnswer, handleCategories, isCategory, isDifficulty } from "./routes";
+import { handleStart, handleAnswer, handleCategories } from "./routes";
+import { parseStartBody } from "./schema";
 import { startSession, answerQuestion, getCurrentQuestion, getCategories } from "./engine";
 import { TRIVIA_CATEGORIES, TRIVIA_DIFFICULTIES } from "./types";
 
@@ -85,22 +86,18 @@ export const plugin: PluginManifest = {
         }
 
         if (action === "start") {
-          const category = typeof params.category === "string" ? params.category : undefined;
-          const difficulty = typeof params.difficulty === "string" ? params.difficulty : undefined;
-          if (category !== undefined && !isCategory(category)) {
+          const input = parseStartBody({
+            category: params.category,
+            difficulty: params.difficulty,
+          });
+          if (!input.ok) {
             return {
-              content: `Invalid category. Choose one of: ${TRIVIA_CATEGORIES.join(", ")}.`,
-              isError: true,
-            };
-          }
-          if (difficulty !== undefined && !isDifficulty(difficulty)) {
-            return {
-              content: `Invalid difficulty. Choose one of: ${TRIVIA_DIFFICULTIES.join(", ")}.`,
+              content: input.error,
               isError: true,
             };
           }
           try {
-            const session = startSession(category, difficulty, 5);
+            const session = startSession(input.value.category, input.value.difficulty, input.value.questionCount);
 
             // Store session metadata in result
             const current = getCurrentQuestion(session);
