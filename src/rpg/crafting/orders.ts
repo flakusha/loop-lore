@@ -16,6 +16,7 @@
  * payment from requester to crafter.
  */
 import { type Kysely, type Selectable, sql, } from "kysely";
+import { withTransaction, } from "../../characters/services/shared-service-utils";
 import type { QualityLevel, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { CraftingOrders, } from "../../db/schema-crafting";
@@ -61,19 +62,26 @@ export interface FulfillResult {
   attemptId?: string;
 }
 
+/**
+ * Fulfilment aborted after the claim: the transaction rolls back, so the
+ * order stays `accepted` and the failure maps to the public refused shape.
+ */
+class FulfillAbortError extends Error {
+  constructor(reason: string,) {
+    super(reason,);
+    this.name = "FulfillAbortError";
+  }
+}
+
 /** */
 export class CraftingOrderService {
   private readonly db: Kysely<DB>;
-  private readonly process: CraftingProcessService;
-  private readonly trade: TradeService;
 
   /**
    * @param db
    */
   constructor(db: Kysely<DB>,) {
     this.db = db;
-    this.process = new CraftingProcessService(db,);
-    this.trade = new TradeService(db,);
   }
 
   /**
@@ -82,6 +90,16 @@ export class CraftingOrderService {
    * @returns the id of the newly created order
    */
   async placeOrder(input: PlaceOrderInput,): Promise<string> {
+    // Service-level guards: a zero/negative quantity or a negative payment
+    // must not reach the insert (BUG-service-layer-multi-query-mutations-run-without-transactions).
+    if (input.quantity !== undefined && (!Number.isInteger(input.quantity,) || input.quantity <= 0)) {
+      throw new Error("Order quantity must be a positive integer",);
+    }
+
+    if (input.offeredPayment !== undefined && input.offeredPayment < 0) {
+      throw new Error("Offered payment must not be negative",);
+    }
+
     const now = new Date().toISOString();
     const id = uid();
     await this.db.insertInto("crafting_orders",).values({
@@ -162,81 +180,96 @@ export class CraftingOrderService {
       return { ok: false, reason: "order is not accepted by a crafter", };
     }
 
-    // Claim before any side effect (loadOfferForAccept precedent): flip
-    // accepted → fulfilling only while the row still carries `accepted`.
-    // A concurrent fulfil's claim matches zero rows and returns WITHOUT
-    // crafting or paying — previously both fulfils read `accepted`, and
-    // both crafted and both paid. Raw SQL + numAffectedRows per the repo's
-    // CAS pattern (src/db/optimistic-locking.ts) — the Kysely query
-    // builder's UpdateResult does not surface affected rows on this driver.
-    const claim = await sql`
-      update ${sql.table("crafting_orders",)}
-      set status = ${"fulfilling"}, updated_at = ${new Date().toISOString()}
-      where ${sql.ref("id",)} = ${orderId} and ${sql.ref("status",)} = ${"accepted"}
-    `.execute(this.db,);
+    // Narrowed once: property narrowing does not survive into the
+    // transaction closure below, so capture the non-null locals here.
+    const {
+      requester_actor_id: requesterActorId,
+      world_id: worldId,
+      recipe_id: recipeId,
+      offered_payment: offeredPayment,
+      crafter_actor_id: crafterActorId,
+    } = order;
 
-    if (Number(claim.numAffectedRows,) === 0) {
-      return {
-        ok: false,
-        reason: "order is no longer accepted (already fulfilled, cancelled, or being fulfilled)",
-      };
-    }
-
-    // Hand the claim back on failure: the order returns to `accepted`, so
-    // the fulfil is retryable and cancelOrder (open|accepted) is reachable
-    // again. Side effects already committed by the failing leg stay (same
-    // semantics as the pre-fix code, which never reached the status flip).
-    const releaseClaim = async (): Promise<void> => {
-      await this.db.updateTable("crafting_orders",)
-        .set({ status: "accepted", updated_at: new Date().toISOString(), },)
-        .where("id", "=", orderId,)
-        .where("status", "=", "fulfilling",)
-        .execute();
-    };
-
-    let attempt: CraftResult;
+    // One atomic unit: craft + payment + status flip run in a single
+    // transaction. The order row is claimed (accepted → fulfilling) with a
+    // conditional predicate as the FIRST write, so a concurrent fulfil
+    // matches zero rows and fails before any side effect. A crash after the
+    // claim throws, and Kysely rolls the craft and payment back with it —
+    // previously each leg committed separately and a mid-sequence failure
+    // stranded crafted-but-unpaid (or paid-but-unflipped) state.
+    // (BUG-service-layer-multi-query-mutations-run-without-transactions).
     try {
-      attempt = await this.process.attemptCraft({
-        actorId: order.requester_actor_id,
-        worldId: order.world_id,
-        recipeId: order.recipe_id,
-      },);
-    } catch (error) {
-      await releaseClaim();
-      return { ok: false, reason: error instanceof Error ? error.message : String(error,), };
-    }
+      const outcome = await withTransaction(this.db, async (trx,) => {
+        // Claim before any side effect: flip accepted → fulfilling only
+        // while the row still carries `accepted`. Raw SQL +
+        // numAffectedRows per the repo's CAS pattern
+        // (src/db/optimistic-locking.ts) — the Kysely query builder's
+        // UpdateResult does not surface affected rows on this driver.
+        const claim = await sql`
+          update ${sql.table("crafting_orders",)}
+          set status = ${"fulfilling"}, updated_at = ${new Date().toISOString()}
+          where ${sql.ref("id",)} = ${orderId} and ${sql.ref("status",)} = ${"accepted"}
+        `.execute(trx,);
 
-    try {
-      if (order.offered_payment > 0) {
-        const paid = await this.trade.trade({
-          worldId: order.world_id,
-          buyerActorId: order.requester_actor_id,
-          sellerActorId: order.crafter_actor_id,
-          buyerItems: [],
-          sellerItems: [],
-          price: order.offered_payment,
-        },);
-
-        if (!paid.success) {
-          await releaseClaim();
-          return { ok: false, reason: "payment failed", };
+        if (Number(claim.numAffectedRows,) === 0) {
+          return {
+            ok: false as const,
+            reason: "order is no longer accepted (already fulfilled, cancelled, or being fulfilled)",
+          };
         }
-      }
 
-      await this.db.updateTable("crafting_orders",)
-        .set({ status: "fulfilled", updated_at: new Date().toISOString(), },)
-        .where("id", "=", orderId,)
-        .where("status", "=", "fulfilling",)
-        .execute();
+        const craft = new CraftingProcessService(trx,);
+        const trade = new TradeService(trx,);
+
+        let attempt: CraftResult;
+        try {
+          attempt = await craft.attemptCraft({
+            actorId: requesterActorId,
+            worldId,
+            recipeId,
+          },);
+        } catch (error) {
+          throw new FulfillAbortError(error instanceof Error ? error.message : String(error,),);
+        }
+
+        if (offeredPayment > 0) {
+          const paid = await trade.trade({
+            worldId,
+            buyerActorId: requesterActorId,
+            sellerActorId: crafterActorId,
+            buyerItems: [],
+            sellerItems: [],
+            price: offeredPayment,
+          },);
+
+          if (!paid.success) {
+            throw new FulfillAbortError(paid.reason ?? "payment failed",);
+          }
+        }
+
+        const flipped = await trx.updateTable("crafting_orders",)
+          .set({ status: "fulfilled", updated_at: new Date().toISOString(), },)
+          .where("id", "=", orderId,)
+          .where("status", "=", "fulfilling",)
+          .executeTakeFirst();
+
+        if (Number(flipped?.numUpdatedRows ?? 0,) === 0) {
+          throw new FulfillAbortError("order left the fulfilling state mid-fulfil",);
+        }
+
+        return { ok: true as const, attemptId: attempt.attemptId, };
+      },);
+
+      if (!outcome.ok) { return outcome; }
+
+      return { ok: true, attemptId: outcome.attemptId, };
     } catch (error) {
-      // The claim must never wedge the order: a crash or DB rejection here
-      // would otherwise strand 'fulfilling' — a status accept, cancel, and
-      // fulfil all refuse. Release first, then surface the original error.
-      await releaseClaim();
+      // Post-claim failure throws, so the transaction rolls back the craft
+      // and payment with it; the order is untouched (still `accepted`) and
+      // retryable, and cancelOrder (open|accepted) stays reachable.
+      if (error instanceof FulfillAbortError) { return { ok: false, reason: error.message, }; }
       throw error;
     }
-
-    return { ok: true, attemptId: attempt.attemptId, };
   }
 
   /**

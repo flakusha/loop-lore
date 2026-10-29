@@ -246,7 +246,7 @@ export class ItemsService {
     quantity: number,
     toLocationId?: string,
     toActorId?: string,
-    trx?: Transaction<DB>,
+    trx?: Kysely<DB> | Transaction<DB>,
   ): Promise<TransferResult> {
     return transferDispatch(this.state, worldItemId, worldId, quantity, toLocationId, toActorId, trx,);
   }
