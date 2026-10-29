@@ -8,11 +8,12 @@
  * paths.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { rmSync, } from "node:fs";
 import { join, } from "node:path";
 import { safeFetch, } from "../../utils";
 import type { FetchResult, SafeFetchOptions, } from "../../utils/safe-fetch/types";
 import { type Component, KeybindingsManager, setKeybindings, TUI_KEYBINDINGS, } from "../pi";
-import { stripRows, tick, } from "../test-support";
+import { stripRows, tick, until, } from "../test-support";
 import { setFetch, } from "./api";
 import { ChatWidget, } from "./index";
 import type { ChatWidgetOptions, } from "./types";
@@ -175,8 +176,9 @@ describe("ChatWidget submission", () => {
 
     chat.input.setValue("/image a castle",);
     chat.input.submit();
-    await tick(2,);
-    await tick();
+    // The image flow chains the fetch -> transcript report across async
+    // stages; poll the observable rather than settling a fixed tick count.
+    await until(() => chat.transcriptLines.some((row,) => row.includes("Image ready: out.png",)));
 
     expect(refreshed,).toHaveLength(1,);
     expect(chat.transcriptLines.some((row,) => row.includes("Image ready: out.png",)),).toBe(true,);
@@ -194,14 +196,21 @@ describe("ChatWidget submission", () => {
     chat.setChatId("chat-1",);
     await tick();
 
-    const uploadPath = join(import.meta.dir, "../../.tmp/upload-fixture.txt",);
-    await Bun.write(uploadPath, "payload",);
-    chat.input.setValue(`/upload ${uploadPath}`,);
-    chat.input.submit();
-    // The flow chains readUploadFile -> fetch -> linkAsset -> addMessage,
-    // so it needs a deeper settle than the single-request paths.
-    for (let i = 0; i < 50; i++) {
-      await tick();
+    const uploadPath = join(
+      import.meta.dir,
+      `../../.tmp/upload-fixture-${process.pid}-${Date.now()}.txt`,
+    );
+
+    try {
+      await Bun.write(uploadPath, "payload",);
+      chat.input.setValue(`/upload ${uploadPath}`,);
+      chat.input.submit();
+      // The flow chains readUploadFile -> fetch -> linkAsset -> addMessage,
+      // so it needs more settling than the single-request paths: poll the
+      // observable instead of a blind fixed-round settle.
+      await until(() => linked.length > 0);
+    } finally {
+      rmSync(uploadPath, { force: true, },);
     }
 
     expect(linked,).toEqual(["up-1",],);

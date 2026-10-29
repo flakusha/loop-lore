@@ -12,7 +12,7 @@
  * What needs the engine is the key router, and it only needs `addInputListener`
  * + `injectDebugInput`, which work on an unstarted TUI.
  */
-import { afterEach, describe, expect, it, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { existsSync, readFileSync, } from "node:fs";
 import { dirname, } from "node:path";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
@@ -68,6 +68,40 @@ afterEach(() => {
   setAssetFetch(safeFetch,);
   setModelsFetch(safeFetch,);
 },);
+
+/**
+ * Resource contract: every TUIApp constructed here is tracked and stopped in
+ * `afterEach` (TUI.stop is idempotent, so the smoke test's own stop is
+ * harmless), and any global root logger a test replaces is restored, so a
+ * failed test cannot leak render loops or a foreign logger into later tests.
+ * `getLogger()` throws before any initialization, hence the try/catch.
+ */
+const createdApps: TUIApp[] = [];
+let savedLogger: ReturnType<typeof getLogger> | null = null;
+
+beforeEach(() => {
+  try {
+    savedLogger = getLogger();
+  } catch {
+    savedLogger = null;
+  }
+},);
+
+afterEach(() => {
+  for (const app of createdApps) {
+    app.tui.stop();
+  }
+
+  createdApps.length = 0;
+  if (savedLogger !== null) {
+    setGlobalLogger(savedLogger,);
+  }
+},);
+
+function trackApp(app: TUIApp,): TUIApp {
+  createdApps.push(app,);
+  return app;
+}
 
 describe("global key router", () => {
   it("Escape quits when nothing is open", () => {
@@ -226,7 +260,7 @@ describe("TUIApp smoke", () => {
       Promise.resolve({ ok: true, data: { providers: [], } as T, status: 200, headers: new Headers(), },)
     );
 
-    const app = createTUIApp();
+    const app = trackApp(createTUIApp(),);
 
     expect(app,).toBeInstanceOf(TUIApp,);
     expect(app.chat.getChatId(),).toBeNull();
@@ -253,7 +287,7 @@ describe("TUI logging", () => {
   // records in a file and carries no console transport at all.
   it("leaves the TUI logger with a file transport and no console transport", () => {
     stubHealth();
-    createTUIApp();
+    trackApp(createTUIApp(),);
 
     const logger = getLogger() as unknown as { transports: { name: string }[] };
     const names = logger.transports.map((transport,) => transport.name);
@@ -267,7 +301,7 @@ describe("TUI logging", () => {
   // earlier run cannot satisfy the assertion.
   it("writes the TUI's structured log to the TUI log path", async () => {
     stubHealth();
-    createTUIApp();
+    trackApp(createTUIApp(),);
 
     const marker = `tui log path probe ${Date.now()}-${Math.random()}`;
     const logger = getLogger();
@@ -294,7 +328,7 @@ describe("TUI logging", () => {
 
     expect(names(),).toContain("console",);
 
-    createTUIApp();
+    trackApp(createTUIApp(),);
 
     expect(names(),).not.toContain("console",);
   });
