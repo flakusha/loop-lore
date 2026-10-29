@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { hashPassword, } from "../auth/password";
 import type { Config, } from "../config/schema";
 import { generateEncryptionSecret, } from "../crypto/user-secret";
 import { getLogger, type Logger, } from "../logger";
@@ -138,7 +139,7 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
         id: adminId,
         username,
         display_name: username,
-        secret_hash: await Bun.password.hash(password,),
+        secret_hash: await hashPassword(password,),
         role: UserRole.Admin,
         status: UserStatus.Active,
         settings: "{}",
