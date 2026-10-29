@@ -109,6 +109,16 @@ function readGitHead(projectRoot: string,): string {
       cwd: projectRoot,
       encoding: "utf8",
       timeout: 5_000,
+      // The build fingerprint must describe `projectRoot`, not whatever git
+      // context the caller happens to run in: an inherited GIT_DIR (git sets it
+      // for hooks) makes this read the caller's repository instead, and the
+      // ceiling stops discovery from escaping the project root.
+      env: {
+        ...process.env,
+        GIT_DIR: undefined,
+        GIT_WORK_TREE: undefined,
+        GIT_CEILING_DIRECTORIES: projectRoot,
+      },
     },);
 
     if (res.status !== 0) { return ""; }

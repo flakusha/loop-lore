@@ -31,6 +31,30 @@ import { join, } from "node:path";
 const SCRIPT = join(import.meta.dir, "commit-check.ts",);
 
 /**
+ * Environment for every git child process in this file.
+ *
+ * `GIT_DIR`/`GIT_WORK_TREE` are cleared so a hook context (git runs hooks with
+ * `GIT_DIR` pointing at the repository's gitdir) cannot redirect these writes
+ * into the real checkout: inherited, the fixture's `git update-ref
+ * refs/heads/main` rewrote the REAL repository's `main` branch, and the
+ * inherited `tag.gpgSign=true` turned the fixture's plain `git tag` into a
+ * signed annotated tag that needs a message ("fatal: no tag message?").
+ * `GIT_CEILING_DIRECTORIES` stops discovery from escaping the fixture dir, and
+ * the config overrides keep the ambient global git config out of the fixture.
+ * The script under test is spawned with the same environment: it runs its own
+ * git calls, and an inherited GIT_DIR would make it collect the CALLER's
+ * commits instead of the fixture repo's.
+ */
+const GIT_ENV: NodeJS.ProcessEnv = {
+  ...process.env,
+  GIT_DIR: undefined,
+  GIT_WORK_TREE: undefined,
+  GIT_CEILING_DIRECTORIES: tmpdir(),
+  GIT_CONFIG_NOSYSTEM: "1",
+  GIT_CONFIG_GLOBAL: join(tmpdir(), "loop-lore-empty-global-git-config",),
+};
+
+/**
  * @param cwd - directory to run git in
  * @param args - git argv; passed as an array, never through a shell
  * @param stdin - optional stdin payload
@@ -39,6 +63,7 @@ const SCRIPT = join(import.meta.dir, "commit-check.ts",);
 function git(cwd: string, args: string[], stdin?: string,): string {
   return execFileSync("git", args, {
     cwd,
+    env: GIT_ENV,
     stdio: [stdin === undefined ? "ignore" : "pipe", "pipe", "pipe",],
     encoding: "utf8",
     input: stdin,
@@ -96,7 +121,13 @@ describe("commit-check commit collection", () => {
       expect(() => git(dir, ["describe", "--tags", "--abbrev=0",],)).toThrow();
       expect(git(dir, ["rev-list", "--count", "HEAD",],),).toBe("2",);
 
-      const proc = Bun.spawnSync(["bun", SCRIPT, "--all",], { cwd: dir, stdout: "pipe", stderr: "pipe", },);
+      const proc = Bun.spawnSync(["bun", SCRIPT, "--all",], {
+        cwd: dir,
+        env: GIT_ENV,
+        stdout: "pipe",
+        stderr: "pipe",
+      },);
+
       const out = proc.stdout.toString();
 
       expect(out,).not.toContain("No commits to validate",);
@@ -116,7 +147,13 @@ describe("commit-check commit collection", () => {
       git(dir, ["tag", "v1.0.0", first,],);
       writeCommit(dir, tree, first, "fix: after the tag",);
 
-      const proc = Bun.spawnSync(["bun", SCRIPT, "--all",], { cwd: dir, stdout: "pipe", stderr: "pipe", },);
+      const proc = Bun.spawnSync(["bun", SCRIPT, "--all",], {
+        cwd: dir,
+        env: GIT_ENV,
+        stdout: "pipe",
+        stderr: "pipe",
+      },);
+
       const out = proc.stdout.toString();
 
       expect(out,).not.toContain("garbage before the tag",);
