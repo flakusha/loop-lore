@@ -164,7 +164,7 @@ be configured otherwise (e.g. `bun test --coverage` → `coverage/`).
 
 LLM RPG chat platform (SillyTavern-inspired, not a reimplementation):
 
-- TUI (blessed — renderer migration to `@oh-my-pi/pi-tui` in progress, see `.plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md`) + Web UI (htmx + Alpine.js)
+- TUI (@oh-my-pi/pi-tui) + Web UI (htmx + Alpine.js)
 - DB: `bun:sqlite` → Kysely (PG via dialect swap)
 - Assets (images/audio/video) — polymorphic linking
 - Enhanced assistant, user mgmt, multi-session
@@ -175,13 +175,13 @@ LLM RPG chat platform (SillyTavern-inspired, not a reimplementation):
 
 ## Technology Constraints
 
-| Layer    | Required                                                                                         |
-| -------- | ------------------------------------------------------------------------------------------------ |
-| Runtime  | Bun (`bun run` directly)                                                                         |
-| Language | TypeScript 5.4+ strict                                                                           |
-| Database | `bun:sqlite` + Kysely                                                                            |
-| TUI      | blessed + blessed-contrib (current; `@oh-my-pi/pi-tui` migration in progress — see ticket above) |
-| Web      | htmx + Alpine.js                                                                                 |
+| Layer    | Required                                |
+| -------- | --------------------------------------- |
+| Runtime  | Bun (`bun run` directly)                |
+| Language | TypeScript 5.4+ strict                  |
+| Database | `bun:sqlite` + Kysely                   |
+| TUI      | @oh-my-pi/pi-tui (subpath imports only) |
+| Web      | htmx + Alpine.js                        |
 
 ## Discovery Commands
 
@@ -221,7 +221,7 @@ src/
 ├── views/               # htmx templates (server-rendered)
 ├── public/              # Static assets served at / (CSS, locales)
 ├── plugins/             # Plugin system
-├── tui/                 # TUI widgets (blessed; `@oh-my-pi/pi-tui` migration in progress)
+├── tui/                 # Blessed widgets
 ├── regex/               # Extraction pipeline (image edits, intents, memory, etc.)
 ├── rpg/                 # RPG subsystems (combat, quests, skills, loot, etc.)
 ├── scripts/             # loop-lore-specific check/build scripts (giwt handles worktree ops)
@@ -551,6 +551,12 @@ bun run plan:sync:fix                 # apply fixes (non-interactive) — runs g
 bun run plan:sync                     # check — runs giwt sync
 
 # Comprehensive .plan/ validation (format, linkage, backlog, tickets, code-map,
+
+# links, spdx, naming, epics-doc, status-vocab, matrix, interconnect)
+bun run plan:validate                 # check — exits non-zero on findings
+bun run plan:validate:fix             # apply auto-fixable findings (giwt plan validate --fix)
+bun run plan:status                   # health summary (open/closed counts, gate pass/fail)
+
 # links, spdx, naming, epics-doc, status-vocab, matrix, interconnect)
 bun run plan:validate                 # check — exits non-zero on findings
 bun run plan:validate:fix             # apply auto-fixable findings (giwt plan validate --fix)
@@ -563,10 +569,6 @@ bun run plan:backlog:sync:fix         # add orphans, drop phantoms
 # Feature matrix (.plan/feature-matrix.md, generated from the ticket index)
 bun run plan:matrix                   # regenerate
 bun run plan:matrix:check             # freshness gate — committed matrix vs fresh rebuild
-
-# Interconnect pair (.plan/interconnect.json + .plan/interconnect.md)
-bun run plan:links                    # regenerate — inputs: tickets/epics .md + code-map.json
-bun run plan:links:check              # freshness gate — committed pair vs fresh rebuild
 
 # Direct git-issue
 giwt gi <command>
