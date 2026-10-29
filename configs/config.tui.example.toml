@@ -1,5 +1,5 @@
 # TUI configuration example
-# Domain: tui — terminal UI (blessed)
+# Domain: tui — terminal UI (pi-tui)
 
 [tui]
 enabled = true

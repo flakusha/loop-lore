@@ -25,7 +25,7 @@ LLM — on a sane foundation:
 - **TypeScript + Bun** — no compilation step, fast runtime
 - **Database-backed** — `bun:sqlite` local, PostgreSQL remote (Kysely query
   builder)
-- **TUI mode** — blessed-based terminal interface (no browser needed; renderer migration to oh-my-pi `pi-tui` in progress — see `.plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md`)
+- **TUI mode** — pi-tui-based terminal interface (no browser needed)
 - **Web UI** — htmx + Alpine.js (lightweight, no build step)
 - **Assets** — images/audio/video linked polymorphically to any entity
 - **Assistant** — user-focused help (ideas, suggestions, troubleshooting)
