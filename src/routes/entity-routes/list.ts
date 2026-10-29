@@ -6,7 +6,7 @@ import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonPaginated, parsePaginationParams, } from "../http-utils";
-import { checkOwnership, entityPaths, } from "./context";
+import { checkOwnership, entityDb, entityPaths, readEntityAuth, readEntityParams, } from "./context";
 import { applyResponseTransforms, } from "./helpers";
 import type { EntityConfig, } from "./types";
 
@@ -23,11 +23,14 @@ export function listRoutes(config: EntityConfig, opts: { database: Db; config: C
 
   return new Elysia({ name: `${config.entityPath}-list`, },)
     .get(basePath, async (ctx,) => {
-      const db = opts.database as any;
-      const parentId = (ctx.params as any)[parentParam];
-      const userId = (ctx as any).userId as string | null;
-      const userRole = (ctx as any).userRole as string | null;
-      const searchParams = new URL((ctx as any).request.url,).searchParams;
+      const db = entityDb(opts.database,);
+      const params = readEntityParams(ctx.params,);
+      const parentId = params[parentParam];
+      const { userId, userRole, } = readEntityAuth(ctx,);
+      const searchParams = new URL(ctx.request.url,).searchParams;
+      if (!parentId) {
+        return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound, },);
+      }
 
       const ownershipOk = await checkOwnership(opts.database, config, parentId, userId, userRole,);
       if (!ownershipOk) {
@@ -57,7 +60,7 @@ export function listRoutes(config: EntityConfig, opts: { database: Db; config: C
         }
       }
 
-      const countResult: { total?: number | bigint } = await countQuery.executeTakeFirst();
+      const countResult = await countQuery.executeTakeFirst();
       const total = Number(countResult?.total ?? 0,);
 
       let query = listQuery;
@@ -66,7 +69,7 @@ export function listRoutes(config: EntityConfig, opts: { database: Db; config: C
       }
 
       const entities = await query.limit(pageSize,).offset(offset,).execute();
-      const mapped = Array.from(entities, (e,) => applyResponseTransforms(config, e as Record<string, unknown>,),);
+      const mapped = Array.from(entities, (e,) => applyResponseTransforms(config, e,),);
 
       return jsonPaginated({ data: mapped, total, page, pageSize, },);
     }, {
