@@ -726,6 +726,7 @@
     "timelineEvents": "events",
     "timelineName": "Timeline Name",
     "timelineNamePlaceholder": "Enter timeline name",
+    "timelineTruncated": "Showing first 50 events",
     "conditionsTitle": "Conditions",
     "conditionsAuthorSet": "Author-set labels, not simulated",
     "conditionsAuthorSetHint": "Time of day, weather and hazards are set by the author on each location state. This build has no weather or clock engine.",

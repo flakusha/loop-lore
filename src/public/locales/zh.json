@@ -655,6 +655,7 @@
     "timelineEvents": "事件",
     "timelineName": "Timeline Name",
     "timelineNamePlaceholder": "Enter timeline name",
+    "timelineTruncated": "仅显示前 50 个事件",
     "unlisted": "未公开",
     "conditionsTitle": "状态",
     "conditionsAuthorSet": "由作者设定，非模拟",

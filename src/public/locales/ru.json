@@ -655,6 +655,7 @@
     "timelineEvents": "события",
     "timelineName": "Timeline Name",
     "timelineNamePlaceholder": "Enter timeline name",
+    "timelineTruncated": "Показаны первые 50 событий",
     "unlisted": "Не в списке",
     "conditionsTitle": "Условия",
     "conditionsAuthorSet": "Метки автора, а не симуляция",
