@@ -34,6 +34,10 @@ WebSocket and WebTransport endpoint support alongside the existing HTTP/SSE surf
 - **Transport selection:** HTTP SSE remains the baseline fallback; WebSocket is the
   default bidirectional path; WebTransport covers environments where WS is blocked or
   datagram latency matters.
+- **A5 signaling seam (smallest slice):** SDP/ICE-over-WebSocket layered on `src/transport/ws.ts` + factory, with a TURN config knob and no media — signaling only. Precondition: close the SSE-vs-WS gap (`src/transport/` is handler-only today; no `.ws(` mount in `src/elysia-app.ts`).
+- **TURN cost decision:** self-host (coturn) vs metered — traffic profile (signaling-only vs voice vs data) drives the choice; size with numbers before committing.
+- **Voice vs ambient boundary:** utterance/TTS realtime voice is NOT `ambient.ts` (SFX providers); architectural boundary TBD in this epic so realtime voice never lands in the ambient pipeline.
+- **`enableWebTransport` flip checklist (`src/config/sections/transport.ts:24`, default false):** HTTP/3 server config + Safari/caniuse gap evidence + equivalent event envelopes over WebTransport — flip only when all three check out.
 
 ## Tasks
 
@@ -54,6 +58,9 @@ WebSocket and WebTransport endpoint support alongside the existing HTTP/SSE surf
 - `epic-transport-expansion.md` — prior transport-layer expansion work
 - `epic-transport-layer-expansion.md` — transport layer architecture
 - `epic-shared-client-sdk.md` — client-side consumption of these contracts
+- `epic-byok-local-models.md` — A5 signaling seam (browser-engine side)
+- `epic-ambient-music-sfx.md` — voice-vs-SFX architectural boundary
+- `epic-instance-federation.md` — peer-identity-attach for realtime peers
 
 
 ## Integration Points
