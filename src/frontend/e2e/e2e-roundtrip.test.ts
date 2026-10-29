@@ -22,7 +22,14 @@ import { type EncryptedPayload, encryptMessage, } from "./encrypt-message";
 
 const pubKeyRegistry = new Map<string, JsonWebKey>();
 
-const originalFetch = globalThis.fetch;
+/**
+ * Per-test ownership of the two process globals this file mutates: `fetch` and
+ * `localStorage`. Both are captured in `beforeEach` and restored in `afterEach`
+ * instead of at module load, so a file that stubbed them earlier cannot leave
+ * this file restoring a stub, and this file cannot leave a stub behind either.
+ */
+let previousFetch: typeof globalThis.fetch | undefined;
+let previousLocalStorage: Storage | undefined;
 
 const stubbedFetch = mock(async (input: RequestInfo | URL,) => {
   const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
@@ -48,29 +55,35 @@ const stubbedFetch = mock(async (input: RequestInfo | URL,) => {
 
 beforeEach(() => {
   pubKeyRegistry.clear();
+  previousFetch = globalThis.fetch;
   globalThis.fetch = stubbedFetch as unknown as typeof fetch;
-  localStorage.clear();
+  previousLocalStorage = globalThis.localStorage;
+  globalThis.localStorage = localStorageShim;
+  localStorageShim.clear();
 },);
 
 afterEach(() => {
-  globalThis.fetch = originalFetch;
-  localStorage.clear();
+  globalThis.fetch = previousFetch as typeof globalThis.fetch;
+  globalThis.localStorage = previousLocalStorage as Storage;
+  localStorageShim.clear();
 },);
 
 // ── localStorage shim (Bun test env has none) ─────────────
 
+const storage = new Map<string, string>();
+const localStorageShim = {
+  getItem: (key: string,) => storage.get(key,) ?? null,
+  setItem: (key: string, value: string,) => storage.set(key, value,),
+  removeItem: (key: string,) => storage.delete(key,),
+  clear: () => storage.clear(),
+  key: (i: number,) => Array.from(storage.keys(),)[i] ?? null,
+  get length() {
+    return storage.size;
+  },
+} as Storage;
+
 if (typeof localStorage === "undefined") {
-  const storage = new Map<string, string>();
-  globalThis.localStorage = {
-    getItem: (key: string,) => storage.get(key,) ?? null,
-    setItem: (key: string, value: string,) => storage.set(key, value,),
-    removeItem: (key: string,) => storage.delete(key,),
-    clear: () => storage.clear(),
-    key: (i: number,) => Array.from(storage.keys(),)[i] ?? null,
-    get length() {
-      return storage.size;
-    },
-  } as Storage;
+  globalThis.localStorage = localStorageShim;
 }
 
 // ── Helpers ──────────────────────────────────────────────
