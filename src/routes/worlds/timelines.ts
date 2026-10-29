@@ -44,14 +44,46 @@ export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
           const worldErr = await requireWorldAccess(database, worldId, auth.userId, auth.userRole ?? null,);
           if (worldErr) { return worldErr; }
 
+          // One query: timeline rows plus a correlated event-count subquery.
+          // The prime branch counts events tagged with the conventional
+          // 'prime' slug even when its world_timelines row has a uuid id.
           const timelines = await database
             .selectFrom("world_timelines",)
-            .select(["id", "world_id", "name", "description", "is_prime", "created_at",],)
+            .select((eb,) => [
+              "id",
+              "world_id",
+              "name",
+              "description",
+              "is_prime",
+              "created_at",
+              eb
+                .selectFrom("world_timeline_events",)
+                .select((sub,) => sub.fn.countAll<string>().as("event_count",))
+                .where("world_id", "=", worldId,)
+                .where((web,) =>
+                  web.or(
+                    [
+                      web.eb("timeline_id", "=", eb.ref("world_timelines.id",),),
+                      web.and(
+                        [
+                          eb("world_timelines.is_prime", "=", 1,),
+                          web.eb("timeline_id", "=", "prime",),
+                        ],
+                      ),
+                    ],
+                  )
+                )
+                .as("eventCount",),
+            ])
             .where("world_id", "=", worldId,)
             .orderBy("is_prime", "desc",)
             .execute();
 
-          return jsonCreated({ data: timelines, },);
+          const data = timelines.map((row,) => {
+            return { ...row, eventCount: Number(row.eventCount,), };
+          },);
+
+          return jsonCreated({ data, },);
         },
         { params: t.Object({ worldId: t.String(), },), },
       )

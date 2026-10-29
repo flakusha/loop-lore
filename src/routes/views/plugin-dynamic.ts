@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
@@ -231,8 +231,12 @@ export function dynamicRoutes(database: Kysely<DB>,) {
         database,
         ctx.userId as string | null,
         (ctx.userRole as string | null) ?? null,
+        // Timeline branch to scope events to (?timeline=<world_timelines.id>);
+        // absent/unknown falls back to the prime branch inside the loader.
+        (ctx.query.timeline as string | undefined) ?? null,
       );
     }, {
+      query: t.Object({ timeline: t.Optional(t.String({ maxLength: 64, },),), },),
       response: { 200: SuccessResponse, },
     },)
     .get("/dynamic/characters/:id/edit-form", async (ctx,) => {

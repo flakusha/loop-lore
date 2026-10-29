@@ -40,18 +40,26 @@
   x-data="worldTimelineBar('{{worldId}}')"
   x-init="init()"
 >
-  <label class="timeline-label" for="timeline-select">{{t("worlds.timeline")}}</label>
-  <select
-    id="timeline-select"
-    class="timeline-select"
-    x-model="selectedTimeline"
-    @change="switchTimeline()"
-    data-testid="timeline-select"
-  >
+  <label class="timeline-label">{{t("worlds.timeline")}}</label>
+  <div class="timeline-list" data-testid="timeline-list" role="listbox" :aria-label="t('worlds.timeline')">
     <template x-for="tl in timelines" :key="tl.id">
-      <option :value="tl.id" :selected="tl.id === selectedTimeline" x-text="tl.name"></option>
+      <button
+        type="button"
+        class="timeline-item"
+        :class="{ 'timeline-item-active': tl.id === selectedTimeline }"
+        role="option"
+        :aria-selected="tl.id === selectedTimeline ? 'true' : 'false'"
+        @click="selectTimeline(tl.id)"
+        data-testid="timeline-item"
+      >
+        <span class="timeline-item-name" x-text="tl.name"></span>
+        <span class="timeline-item-meta">
+          <span class="timeline-item-count" x-text="tl.eventCount + ' ' + t('worlds.timelineEvents')"></span>
+          <span class="timeline-item-date" x-text="new Date(tl.created_at).toLocaleDateString()"></span>
+        </span>
+      </button>
     </template>
-  </select>
+  </div>
   <button
     class="btn btn-secondary btn-sm"
     @click="showCreate = true"

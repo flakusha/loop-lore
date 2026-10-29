@@ -652,6 +652,7 @@
     "timeline": "Timeline",
     "timelineDesc": "Description",
     "timelineDescPlaceholder": "Enter description",
+    "timelineEvents": "事件",
     "timelineName": "Timeline Name",
     "timelineNamePlaceholder": "Enter timeline name",
     "unlisted": "未公开",
