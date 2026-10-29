@@ -19732,10 +19732,17 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md",
       "title": "Auth hardening: XFF trust, session cap, algo pin, derive short-circuit, logout verify",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/db/schema-core.ts",
-        "src/routes/auth/session.ts"
+        "src/db/seed.ts",
+        "src/elysia-app.ts",
+        "src/routes/auth/get-client-ip.test.ts",
+        "src/routes/auth/register.ts",
+        "src/routes/auth/session.test.ts",
+        "src/routes/auth/session.ts",
+        "src/routes/auth/shared.ts",
+        "src/seeding/users.ts"
       ],
       "related": []
     },
@@ -64745,7 +64752,8 @@
       "owners": [
         "BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat",
         "TASK-019-users-encryption-secret",
-        "TASK-adopt-bun-randomuuidv7-for-time-sortable-ids"
+        "TASK-adopt-bun-randomuuidv7-for-time-sortable-ids",
+        "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c"
       ]
     },
     {
@@ -64850,6 +64858,7 @@
         "TASK-api-first-foundation",
         "TASK-async-request-response-result-store-separate-table-offload",
         "TASK-async-store-complete-fail-lifecycle-hooks",
+        "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
         "TASK-character-rpg-stats",
         "TASK-chat-room-search-join",
         "TASK-comfyui-first-class-admin-workflows",
@@ -76248,7 +76257,8 @@
       "owners": [
         "BUG-auth-rate-limiter-tests-seed-per-ip-buckets-via-getclientip-",
         "BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing",
-        "BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally"
+        "BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally",
+        "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c"
       ]
     },
     {
@@ -76294,6 +76304,7 @@
         "BUG-429-responses-omit-retry-after-and-x-ratelimit-headers",
         "BUG-register-rate-limiter-consumes-on-username-collision-retries",
         "TASK-019-users-encryption-secret",
+        "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
         "TASK-auth-session-hardening-batch-from-2026-10-04-review",
         "TASK-register-username-race-and-rate-limiter-multi-instance-gap",
         "epic-frontend-login"
@@ -76311,6 +76322,12 @@
       "owners": [
         "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
         "BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-"
+      ]
+    },
+    {
+      "path": "src/routes/auth/session.test.ts",
+      "owners": [
+        "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c"
       ]
     },
     {
@@ -76337,6 +76354,7 @@
         "BUG-rate-limiter-module-singletons-shared-across-test-files-caus",
         "BUG-register-rate-limiter-consumes-on-username-collision-retries",
         "TASK-adopt-bun-csrf-for-csrf-protection",
+        "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
         "TASK-auth-session-hardening-batch-from-2026-10-04-review",
         "TASK-guest-rate-limiting-audit-logging-for-guest-reads",
         "TASK-isolate-auth-cookies-per-local-instance-so-two-dev-servers-d",
@@ -83665,6 +83683,7 @@
       "path": "src/seeding/users.ts",
       "owners": [
         "BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir",
+        "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
         "TASK-reconcile-ts-import-extensions-user-seeding-session",
         "TASK-user-seeding-role-expansion"
       ]
@@ -122716,7 +122735,42 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "produces",
+      "to": "src/db/seed.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "produces",
+      "to": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "produces",
+      "to": "src/routes/auth/get-client-ip.test.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "produces",
+      "to": "src/routes/auth/register.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "produces",
+      "to": "src/routes/auth/session.test.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "produces",
       "to": "src/routes/auth/session.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "produces",
+      "to": "src/routes/auth/shared.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "produces",
+      "to": "src/seeding/users.ts"
     },
     {
       "from": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
@@ -168103,6 +168157,12 @@
     {
       "from": "BUG-429-responses-omit-retry-after-and-x-ratelimit-headers",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/routes/auth/register.ts"
+    },
+    {
+      "from": "BUG-429-responses-omit-retry-after-and-x-ratelimit-headers",
+      "kind": "sibling",
       "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "via": "src/routes/auth/login.ts; src/routes/auth/register.ts"
     },
@@ -168627,6 +168687,12 @@
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
       "via": "src/elysia-app.ts; src/server/handler.ts"
+    },
+    {
+      "from": "BUG-access-log-never-records-userid-handle-x-user-id-header-neve",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-access-log-never-records-userid-handle-x-user-id-header-neve",
@@ -179905,6 +179971,12 @@
     {
       "from": "BUG-auth-rate-limiter-tests-seed-per-ip-buckets-via-getclientip-",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/routes/auth/get-client-ip.test.ts; src/routes/auth/shared.ts"
+    },
+    {
+      "from": "BUG-auth-rate-limiter-tests-seed-per-ip-buckets-via-getclientip-",
+      "kind": "sibling",
       "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "via": "src/routes/auth/shared.ts"
     },
@@ -182029,6 +182101,12 @@
     {
       "from": "BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -183393,6 +183471,12 @@
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts; src/routes/auth/shared.ts"
     },
     {
       "from": "BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain",
@@ -187988,6 +188072,12 @@
       "from": "BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat",
       "kind": "sibling",
       "to": "TASK-adopt-bun-randomuuidv7-for-time-sortable-ids",
+      "via": "src/db/seed.ts"
+    },
+    {
+      "from": "BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/db/seed.ts"
     },
     {
@@ -193711,6 +193801,12 @@
     {
       "from": "BUG-coverage-mjs-counts-top-level-src-files-as-modules",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-coverage-mjs-counts-top-level-src-files-as-modules",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -197785,6 +197881,12 @@
     {
       "from": "BUG-e2e-version-redirect-test-fetches-v1-paths-but-expects-308",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-e2e-version-redirect-test-fetches-v1-paths-but-expects-308",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -198609,6 +198711,12 @@
       "kind": "sibling",
       "to": "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
       "via": "src/middleware/auth.test.ts"
+    },
+    {
+      "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
@@ -201811,6 +201919,12 @@
     {
       "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -203071,6 +203185,12 @@
     {
       "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -203815,6 +203935,12 @@
     {
       "from": "BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -204182,6 +204308,12 @@
       "from": "BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr",
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/elysia-app.ts"
     },
     {
@@ -205081,6 +205213,12 @@
     {
       "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -205562,6 +205700,12 @@
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/elysia-app.ts"
     },
     {
@@ -206091,6 +206235,12 @@
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
       "via": "src/elysia-app.ts; src/server/handler.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -207524,6 +207674,12 @@
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/elysia-app.ts"
     },
     {
@@ -210613,6 +210769,12 @@
     {
       "from": "BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/routes/auth/get-client-ip.test.ts; src/routes/auth/shared.ts"
+    },
+    {
+      "from": "BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing",
+      "kind": "sibling",
       "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "via": "src/routes/auth/shared.ts"
     },
@@ -210675,6 +210837,12 @@
       "kind": "sibling",
       "to": "TASK-adopt-bun-csrf-for-csrf-protection",
       "via": "src/routes/auth/shared.ts"
+    },
+    {
+      "from": "BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/routes/auth/get-client-ip.test.ts; src/routes/auth/shared.ts"
     },
     {
       "from": "BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally",
@@ -214171,6 +214339,12 @@
     {
       "from": "BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -214731,6 +214905,12 @@
       "kind": "sibling",
       "to": "TASK-audit-new-test-files-for-cross-file-process-collisions-befor",
       "via": "src/image-edit/providers/comfyui-owner.test.ts; src/image-edit/routes.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -216398,6 +216578,12 @@
       "from": "BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl",
       "kind": "sibling",
       "to": "TASK-adopt-bun-csrf-for-csrf-protection",
+      "via": "src/routes/auth/shared.ts"
+    },
+    {
+      "from": "BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/routes/auth/shared.ts"
     },
     {
@@ -221797,6 +221983,12 @@
     {
       "from": "BUG-middleware-asyncstore-fail-dead-code",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-middleware-asyncstore-fail-dead-code",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -222177,6 +222369,12 @@
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
       "via": "src/elysia-app.ts; src/middleware/idempotency.ts"
+    },
+    {
+      "from": "BUG-middleware-idempotency-table-backend-unimplemented",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-middleware-idempotency-table-backend-unimplemented",
@@ -223292,6 +223490,12 @@
       "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/elysia-app.ts"
     },
     {
@@ -229795,6 +229999,12 @@
     {
       "from": "BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/routes/auth/shared.ts"
+    },
+    {
+      "from": "BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-",
+      "kind": "sibling",
       "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "via": "src/routes/auth/shared.ts"
     },
@@ -229868,6 +230078,12 @@
       "from": "BUG-rate-limiter-module-singletons-shared-across-test-files-caus",
       "kind": "sibling",
       "to": "TASK-adopt-bun-csrf-for-csrf-protection",
+      "via": "src/routes/auth/shared.ts"
+    },
+    {
+      "from": "BUG-rate-limiter-module-singletons-shared-across-test-files-caus",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/routes/auth/shared.ts"
     },
     {
@@ -230575,6 +230791,12 @@
     {
       "from": "BUG-register-rate-limiter-consumes-on-username-collision-retries",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/routes/auth/register.ts; src/routes/auth/shared.ts"
+    },
+    {
+      "from": "BUG-register-rate-limiter-consumes-on-username-collision-retries",
+      "kind": "sibling",
       "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "via": "src/routes/auth/register.ts; src/routes/auth/shared.ts"
     },
@@ -231169,6 +231391,12 @@
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -231644,6 +231872,12 @@
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/elysia-app.ts"
     },
     {
@@ -233343,6 +233577,12 @@
       "kind": "sibling",
       "to": "epic-items",
       "via": "src/story/items/instances.ts"
+    },
+    {
+      "from": "BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/seeding/users.ts"
     },
     {
       "from": "BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir",
@@ -237937,6 +238177,12 @@
     {
       "from": "BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m",
+      "kind": "sibling",
       "to": "TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot",
       "via": "src/app/register-plugins.ts"
     },
@@ -242221,6 +242467,12 @@
     {
       "from": "BUG-version-resolver-middleware-built-not-wired",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-version-resolver-middleware-built-not-wired",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -244807,6 +245059,12 @@
     {
       "from": "FEAT-035",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "FEAT-035",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -245120,6 +245378,12 @@
       "from": "FEAT-037",
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "FEAT-037",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/elysia-app.ts"
     },
     {
@@ -253664,6 +253928,12 @@
       "from": "FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard",
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/elysia-app.ts"
     },
     {
@@ -264157,6 +264427,12 @@
     {
       "from": "TASK-019-users-encryption-secret",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/seed.ts; src/routes/auth/register.ts"
+    },
+    {
+      "from": "TASK-019-users-encryption-secret",
+      "kind": "sibling",
       "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "via": "src/routes/auth/register.ts"
     },
@@ -270715,6 +270991,12 @@
     {
       "from": "TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -275419,6 +275701,12 @@
     {
       "from": "TASK-admin-assistant-tooling-allowlist",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-admin-assistant-tooling-allowlist",
+      "kind": "sibling",
       "to": "TASK-bestiary-crud-routes-admin-gm",
       "via": "src/validation/schemas.ts"
     },
@@ -276775,6 +277063,12 @@
     {
       "from": "TASK-adopt-bun-csrf-for-csrf-protection",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts; src/routes/auth/shared.ts"
+    },
+    {
+      "from": "TASK-adopt-bun-csrf-for-csrf-protection",
+      "kind": "sibling",
       "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "via": "src/routes/auth/shared.ts"
     },
@@ -277281,6 +277575,12 @@
       "kind": "sibling",
       "to": "epic-auth-channel-provisioning",
       "via": "src/middleware/auth/token.ts"
+    },
+    {
+      "from": "TASK-adopt-bun-randomuuidv7-for-time-sortable-ids",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/db/seed.ts"
     },
     {
       "from": "TASK-adopt-bun-randomuuidv7-for-time-sortable-ids",
@@ -278372,6 +278672,12 @@
       "from": "TASK-api-first-foundation",
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-api-first-foundation",
+      "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "via": "src/elysia-app.ts"
     },
     {
@@ -286831,6 +287137,12 @@
     {
       "from": "TASK-async-request-response-result-store-separate-table-offload",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-async-request-response-result-store-separate-table-offload",
+      "kind": "sibling",
       "to": "TASK-avatar-dogfood-assistant-generation",
       "via": "src/test-utils/insert-helpers.ts"
     },
@@ -287653,6 +287965,12 @@
     {
       "from": "TASK-async-store-complete-fail-lifecycle-hooks",
       "kind": "sibling",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "kind": "sibling",
       "to": "TASK-character-rpg-stats",
       "via": "src/elysia-app.ts"
     },
@@ -288458,7 +288776,7 @@
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
       "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
-      "via": "src/routes/auth/session.ts"
+      "via": "src/routes/auth/register.ts; src/routes/auth/session.ts; src/routes/auth/shared.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -288493,8 +288811,20 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "TASK-character-rpg-stats",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "TASK-chat-context-preference-per-scope",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-chat-room-search-join",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -288505,8 +288835,26 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "TASK-comfyui-first-class-admin-workflows",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "TASK-comfyui-first-class-workflow-library",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/schema-core.ts; src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-cors-middleware",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-creative-studio-search-api",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -288523,6 +288871,12 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "TASK-emotion-avatar-message-binding",
       "via": "src/db/schema-core.ts"
     },
@@ -288531,6 +288885,12 @@
       "kind": "sibling",
       "to": "TASK-fb12-admin-role-change-notifies-affected-user-admxntf",
       "via": "src/routes/auth/session.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -288547,14 +288907,56 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "TASK-fractal-locations-api-routes",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-frontend-client-contract-doc",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-guest-rate-limiting-audit-logging-for-guest-reads",
+      "via": "src/routes/auth/shared.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-i18n-alpine-client",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "TASK-inline-markdown-suggestion-model",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-isolate-auth-cookies-per-local-instance-so-two-dev-servers-d",
+      "via": "src/routes/auth/shared.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -288583,6 +288985,30 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-middleware-idempotency-wire-into-elysia",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-middleware-request-id-elysia-derive",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "TASK-mini-games-framework",
       "via": "src/db/schema-core.ts"
     },
@@ -288597,6 +289023,42 @@
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-rate-limit-coverage-expansion",
+      "via": "src/routes/auth/shared.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-reconcile-ts-import-extensions-user-seeding-session",
+      "via": "src/seeding/users.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-agent-api-router-and-token-scope-",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-health-liveness-readiness-probes",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-register-username-race-and-rate-limiter-multi-instance-gap",
+      "via": "src/routes/auth/register.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-server-side-i18n-middleware",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -288619,6 +289081,18 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "TASK-user-seeding-role-expansion",
+      "via": "src/seeding/users.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "TASK-world-requires-stats-flag-and-point-budget-config",
       "via": "src/db/schema-core.ts"
     },
@@ -288631,14 +289105,44 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "epic-analytics-observability",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-api-versioning",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-architecture",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-assistant-creative-studio-workflows",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "epic-battle-action-systems",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/schema-core.ts; src/elysia-app.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
       "to": "epic-battle-integration-gaps",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-blog-system",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -288697,14 +289201,38 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "epic-db-cold-storage-high-perf",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-e2e-integration-testing",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "epic-editorial-workflow",
       "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "epic-effect-v4-adoption-evaluation",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "epic-emotion-avatar-message-binding",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -288721,8 +289249,32 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "epic-file-splitting",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "epic-frontend-login",
-      "via": "src/routes/auth/session.ts"
+      "via": "src/routes/auth/register.ts; src/routes/auth/session.ts; src/routes/auth/shared.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-gallery-batch-operations",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-guest-access",
+      "via": "src/elysia-app.ts; src/routes/auth/shared.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -288733,14 +289285,38 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "epic-item-systems-unification",
       "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "epic-logging",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-lora-discovery-application",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-middleware-request-lifecycle",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -288765,6 +289341,12 @@
       "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
+      "to": "epic-openapi-reference",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",

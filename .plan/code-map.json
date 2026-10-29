@@ -21341,6 +21341,10 @@
       "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/users-sessions.md"
     }
@@ -21659,6 +21663,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md"
     },
     {
       "kind": "ticket",
@@ -40721,6 +40729,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md"
     }
   ],
   "src/routes/auth/get-client-ip.unit.test.ts": [
@@ -40800,6 +40812,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-auth-session-hardening-batch-from-2026-10-04-review.md"
     },
     {
@@ -40825,6 +40841,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-.md"
+    }
+  ],
+  "src/routes/auth/session.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md"
     }
   ],
   "src/routes/auth/session.ts": [
@@ -40901,6 +40923,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md"
     },
     {
       "kind": "ticket",
@@ -52575,6 +52601,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c.md"
     },
     {
       "kind": "ticket",
