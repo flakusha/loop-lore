@@ -59,8 +59,8 @@ import {
 } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
 
-// Type-only imports: erased at runtime, so this suite never pulls `blessed`
-// into the process (see `src/tui/import-purity.test.ts`).
+// Type-only imports: erased at runtime, so this suite never pulls the
+// terminal engine into the process (see `src/tui/import-purity.test.ts`).
 import type { LinkedAsset, } from "./asset-view";
 import type { ChatMessage, } from "./chat/types";
 import type { HarnessRunDetail, HarnessRunSummary, } from "./harness/types";
