@@ -4,11 +4,11 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { listTimelineEntries, } from "../../story/timeline/world-timeline";
-import type { TimelineEntry, } from "../../story/timeline/world-timeline";
 import { can, } from "../../users/permissions";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { requireWorldAccess, } from "../worlds/access";
 import { escapeHtml, htmlResponse, } from "./layout";
+import { renderTimelineEvents, TIMELINE_EVENT_CAP, } from "./world-timeline-events";
 import { loadWorldListCards, renderWorldCard, } from "./worlds-list";
 
 /**
@@ -54,50 +54,6 @@ async function serveWorldsListDb(
     .join("",);
 
   return htmlResponse(items,);
-}
-
-/**
- * Cap on rendered timeline events in the world-detail fragment: a branch with
- * more events shows only the first TIMELINE_EVENT_CAP, plus a truncated note
- * (worlds.timelineTruncated) after the list.
- */
-const TIMELINE_EVENT_CAP = 50;
-
-/**
- * Render the branch-scoped timeline events block for the detail fragment.
- * @param events
- * @param branchName
- */
-function renderTimelineEvents(events: TimelineEntry[], branchName: string | null,): string {
-  const heading = `Timeline events${branchName ? ` — ${escapeHtml(branchName,)}` : ""}`;
-  if (events.length === 0) {
-    return `<div class="form-group" style="margin-bottom:var(--space-6)">
-      <label class="form-label">${heading}</label>
-      <div class="empty-state" style="padding: var(--space-4); font-size: 13px">No timeline events on this branch</div>
-    </div>`;
-  }
-
-  const rows = events
-    .map(
-      (entry,) =>
-        `<div class="timeline-event">
-        <span class="timeline-event-date">${escapeHtml(entry.occurred_at.slice(0, 10,),)}</span>
-        <span class="timeline-event-desc">${escapeHtml(entry.description,)}</span>
-      </div>`,
-    )
-    .join("",);
-
-  // Cap hit: the list is truncated (see TIMELINE_EVENT_CAP) — say so. The
-  // note carries the English fallback inline; $t resolves
-  // worlds.timelineTruncated client-side after the htmx swap.
-  const truncatedNote = events.length >= TIMELINE_EVENT_CAP
-    ? `<div class="timeline-truncated" style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-top: var(--space-2)" x-text="$t('worlds.timelineTruncated')">Showing first 50 events</div>`
-    : "";
-
-  return `<div class="form-group" style="margin-bottom:var(--space-6)">
-    <label class="form-label">${heading}</label>
-    <div class="timeline-events">${rows}</div>${truncatedNote}
-  </div>`;
 }
 
 /**
@@ -159,11 +115,13 @@ async function serveWorldDetailContent(
     }
   }
 
+  // Fetch one probe row past the cap: renderTimelineEvents shows the
+  // truncated note only when the extra row proves the branch has more.
   const timelineEvents = await listTimelineEntries({
     db: database,
     worldId,
     timelineId: eventTimeline,
-    limit: TIMELINE_EVENT_CAP,
+    limit: TIMELINE_EVENT_CAP + 1,
   },);
 
   const locations = await database
