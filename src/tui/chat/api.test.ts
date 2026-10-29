@@ -34,7 +34,7 @@ interface CaptureGlobal {
   [CAPTURE_KEY]?: Captured[];
 }
 
-/** Type cast used only for stubbing blessed widget refs and fetch in tests
+/** Type cast used only for stubbing widget refs and fetch in tests
  * — the test environment is non-TTY and the actual widget instances are
  * never exercised; only the dispatcher module's branching on host's plain
  * data fields matters here. */

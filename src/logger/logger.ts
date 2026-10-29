@@ -69,7 +69,7 @@ export class LoggerImpl implements Logger {
     this.limits = { ...limitsFromNested, ...limitsFromFlat, };
 
     this.transports = [];
-    // Hosts that own the terminal (the blessed TUI) opt out: a stdout write
+    // Hosts that own the terminal (the TUI) opt out: a stdout write
     // lands between two frames and corrupts the render.
     if (this.consoleEnabled) { this.transports.push(new ConsoleTransport(),); }
     // Canonical machine-readable JSONL output when a path is configured.
