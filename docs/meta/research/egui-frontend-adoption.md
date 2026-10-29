@@ -137,7 +137,9 @@ compresses. So a template rewrite is a *human* cost, not a codegen one.
 ### 1.4 The TUI
 
 `src/tui/` — `app.ts` (5.8 KB), `chat/`, `asset-view.ts` (6.1 KB),
-`harness/`, `nsfw-filter.ts` (3.4 KB), blessed + blessed-contrib.
+`harness/`, `nsfw-filter.ts` (3.4 KB), blessed + blessed-contrib (current stack;
+renderer migration to `@oh-my-pi/pi-tui` in progress — see
+`.plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md`).
 
 - Screens: chat (`blessed.list` + `blessed.textbox`), asset sidebar
   (`blessed.box`, right 30%), harness run browser (full overlay), status bar.
@@ -148,7 +150,7 @@ compresses. So a template rewrite is a *human* cost, not a codegen one.
   barrel: `src/tui/chat/api.ts:4` and `src/frontend/fe-fetch.ts:24` both import
   `safeFetch` from `src/utils.ts`, which re-exports it from
   `src/utils/safe-fetch/` (`src/utils.ts:27`). Everything else in the TUI is
-  blessed + terminal.
+  the terminal renderer (blessed currently; pi-tui migration in progress).
 
 This is the load-bearing prior art: **the TUI is a working non-htmx client of
 the same server.** `docs/meta/code-practices-improvements/07-alternative-frontend-support.md:8-13`
@@ -386,10 +388,11 @@ This is the option that makes an egui experiment cheap *later*, because the
 client would be a consumer of a stable contract rather than a second
 implementation of the product.
 
-### (d) Extend the blessed TUI — production-safe, zero new machinery
+### (d) Extend the TUI (blessed at the time of writing; pi-tui migration in progress) — production-safe, zero new machinery
 
 Already the reference alt-client (`src/tui/`, `epic-terminal-ui.md`). Its
-known limits are real (HTTP-only, no SSE, no theming, blessed's widget set),
+known limits are real (HTTP-only, no SSE, no theming, the blessed widget set —
+under migration to pi-tui),
 but it costs nothing new, is already covered by tests, and shares
 `safeFetch` (via the `src/utils.ts` barrel) with the web client. Correct default when the goal
 is "a second client" rather than "a desktop app".

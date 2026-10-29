@@ -5,7 +5,7 @@
 
 # TUI Implementation Details
 
-TUI built with `blessed` + `blessed-contrib`. Terminal chat interface with integrated asset viewer. Run: `bun run src/tui/app.ts` (backend on default port 3000).
+TUI built with `blessed` + `blessed-contrib` (current stack). Renderer migration to `@oh-my-pi/pi-tui` is in progress — see `.plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md`. Terminal chat interface with integrated asset viewer. Run: `bun run src/tui/app.ts` (backend on default port 3000).
 
 ## Implemented
 
@@ -20,7 +20,7 @@ TUI built with `blessed` + `blessed-contrib`. Terminal chat interface with integ
 
 ## Platform notes
 
-- Windows: Windows Terminal/ConEmu/WSL2; no mouse or resize events (blessed limitation) — use WSL2 for full experience.
+- Windows: Windows Terminal/ConEmu/WSL2; no mouse or resize events (blessed limitation — expected to change with the pi-tui migration) — use WSL2 for full experience.
 - Android (Termux): needs terminfo-capable terminal; server binaries must be compiled for Android or use Termux packages.
 
 ## Not implemented / aspirational

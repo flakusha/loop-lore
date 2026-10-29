@@ -76,8 +76,7 @@ From the workspace spec, `chat.mode='agentic'` switches layout:
 
 - **Web:** LEFT agents list · CENTER workspace/chat · RIGHT artifact gallery ·
   BOTTOM task graph (DAG of `locations`/`task_dependencies`).
-- **TUI:** agent list replaces character list; tool output as structured logs;
-  task graph via `blessed-contrib`.
+- **TUI:** agent list replaces character list; task graph via the TUI widget set (`blessed-contrib` currently; `@oh-my-pi/pi-tui` migration in progress).
 
 This is a _view-mode_ change, not a new app — confirm `src/frontend/` htmx
 partials already support mode-switching shells.

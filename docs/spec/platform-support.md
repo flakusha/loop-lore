@@ -45,7 +45,7 @@ Partial Windows compatibility exists. Core runtime and database layers work; TUI
 
 #### ⚠️ TUI Limitations
 
-- `blessed` library has no mouse/resize event support on Windows (per upstream docs)
+- `blessed` library has no mouse/resize event support on Windows (per upstream docs) — expected to change with the pi-tui renderer migration (see `.plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md`)
 - TUI works in Windows Terminal/ConEmu but with reduced functionality
 - Consider documenting alternative: WSL2 for full TUI experience
 

@@ -164,7 +164,7 @@ be configured otherwise (e.g. `bun test --coverage` → `coverage/`).
 
 LLM RPG chat platform (SillyTavern-inspired, not a reimplementation):
 
-- TUI (blessed) + Web UI (htmx + Alpine.js)
+- TUI (blessed — renderer migration to `@oh-my-pi/pi-tui` in progress, see `.plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md`) + Web UI (htmx + Alpine.js)
 - DB: `bun:sqlite` → Kysely (PG via dialect swap)
 - Assets (images/audio/video) — polymorphic linking
 - Enhanced assistant, user mgmt, multi-session
@@ -175,13 +175,13 @@ LLM RPG chat platform (SillyTavern-inspired, not a reimplementation):
 
 ## Technology Constraints
 
-| Layer    | Required                  |
-| -------- | ------------------------- |
-| Runtime  | Bun (`bun run` directly)  |
-| Language | TypeScript 5.4+ strict    |
-| Database | `bun:sqlite` + Kysely     |
-| TUI      | blessed + blessed-contrib |
-| Web      | htmx + Alpine.js          |
+| Layer    | Required                                                                                         |
+| -------- | ------------------------------------------------------------------------------------------------ |
+| Runtime  | Bun (`bun run` directly)                                                                         |
+| Language | TypeScript 5.4+ strict                                                                           |
+| Database | `bun:sqlite` + Kysely                                                                            |
+| TUI      | blessed + blessed-contrib (current; `@oh-my-pi/pi-tui` migration in progress — see ticket above) |
+| Web      | htmx + Alpine.js                                                                                 |
 
 ## Discovery Commands
 
@@ -221,7 +221,7 @@ src/
 ├── views/               # htmx templates (server-rendered)
 ├── public/              # Static assets served at / (CSS, locales)
 ├── plugins/             # Plugin system
-├── tui/                 # Blessed widgets
+├── tui/                 # TUI widgets (blessed; `@oh-my-pi/pi-tui` migration in progress)
 ├── regex/               # Extraction pipeline (image edits, intents, memory, etc.)
 ├── rpg/                 # RPG subsystems (combat, quests, skills, loot, etc.)
 ├── scripts/             # loop-lore-specific check/build scripts (giwt handles worktree ops)

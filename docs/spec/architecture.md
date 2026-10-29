@@ -18,7 +18,7 @@ A request traverses four layers top-to-bottom:
 **1. Client Layer** — Entry points for user interaction:
 
 - Web UI (htmx + Alpine.js) — browser-based, AJAX partial updates
-- TUI (blessed) — terminal interface for power users
+- TUI (blessed — current; renderer migration to `@oh-my-pi/pi-tui` in progress, see `.plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md`) — terminal interface for power users
 - API (REST) — programmatic access via curl, scripts, integrations
 
 **2. Server Layer** — Bun HTTP server receives client traffic:
@@ -40,7 +40,7 @@ A request traverses four layers top-to-bottom:
 ### Client Layer
 
 - **Web**: htmx for AJAX partial updates, Alpine.js for client state/interactivity. HTML prebuilt and pre-compressed where possible.
-- **TUI**: blessed/blessed-contrib terminal interface for power users.
+- **TUI**: blessed/blessed-contrib terminal interface for power users (current; `@oh-my-pi/pi-tui` migration in progress — see `.plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md`).
 - **API**: REST endpoints consumed by any client (web, TUI, curl, scripts).
 
 ### Server Layer
