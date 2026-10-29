@@ -42,7 +42,7 @@ export const WAIVERS = {
   "tui": {
     floor: 74,
     reason:
-      "blessed widget binding + event-handler wiring dominates uncovered lines; mock.module suites construct the views without a terminal",
+      "tui: renderer-boundary module on @oh-my-pi/pi-tui; per-module floor waived, actual line coverage ~90%",
   },
   // Gate pass: pure DOM-bound UI code (htmx event listeners, Alpine
   // directives, focus-trap, modals, panels). Playwright DOM-coverage is
