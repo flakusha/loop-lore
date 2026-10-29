@@ -95,6 +95,40 @@ describe("initAssistantQuota", () => {
       limitPerWindow: ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow,
     },);
   });
+
+  test("fills per field when the section is partial", () => {
+    initAssistantQuota({} as never,);
+    expect(quotaStorageOptions(),).toEqual({
+      windowMs: ASSISTANT_QUOTA_DEFAULTS.quotaWindowMs,
+      limitPerWindow: ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow,
+    },);
+
+    initAssistantQuota({ quotaWindowMs: 1_000, } as never,);
+    expect(quotaStorageOptions(),).toEqual({
+      windowMs: 1_000,
+      limitPerWindow: ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow,
+    },);
+
+    initAssistantQuota({ quotaLimitPerWindow: 5, } as never,);
+    expect(quotaStorageOptions(),).toEqual({
+      windowMs: ASSISTANT_QUOTA_DEFAULTS.quotaWindowMs,
+      limitPerWindow: 5,
+    },);
+  });
+
+  test("enforces quota under a partial section (no NaN, no fail-open)", () => {
+    initAssistantQuota({} as never,);
+    const { windowMs, limitPerWindow, } = quotaStorageOptions();
+    expect(Number.isFinite(windowMs,),).toBe(true,);
+    expect(Number.isFinite(limitPerWindow,),).toBe(true,);
+    // Spend the whole window; the next call must reject instead of
+    // returning NaN or allowing unlimited spend.
+    for (let i = 0; i < limitPerWindow; i++) {
+      enforceQuota("partial-user", "asset-preview", T0,);
+    }
+
+    expect(() => enforceQuota("partial-user", "asset-preview", T0,)).toThrow(QuotaExceededError,);
+  });
 });
 
 describe("quotaGate", () => {
