@@ -565,7 +565,7 @@ bun run plan:matrix                   # regenerate
 bun run plan:matrix:check             # freshness gate — committed matrix vs fresh rebuild
 
 # Interconnect pair (.plan/interconnect.json + .plan/interconnect.md)
-bun run plan:links                    # regenerate — run after any sync/map/matrix change
+bun run plan:links                    # regenerate — inputs: tickets/epics .md + code-map.json
 bun run plan:links:check              # freshness gate — committed pair vs fresh rebuild
 
 # Direct git-issue
