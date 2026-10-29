@@ -655,6 +655,7 @@
     "timelineEvents": "イベント",
     "timelineName": "Timeline Name",
     "timelineNamePlaceholder": "Enter timeline name",
+    "timelineTruncated": "最初の50件のイベントを表示しています",
     "unlisted": "限定公開",
     "conditionsTitle": "環境条件",
     "conditionsAuthorSet": "作者が設定するラベル（シミュレーション対象外）",

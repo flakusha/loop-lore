@@ -655,6 +655,7 @@
     "timelineEvents": "eventos",
     "timelineName": "Timeline Name",
     "timelineNamePlaceholder": "Enter timeline name",
+    "timelineTruncated": "Mostrando os primeiros 50 eventos",
     "unlisted": "Não listado",
     "conditionsTitle": "Condições",
     "conditionsAuthorSet": "Rótulos definidos pelo autor, não simulados",

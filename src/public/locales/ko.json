@@ -655,6 +655,7 @@
     "timelineEvents": "이벤트",
     "timelineName": "Timeline Name",
     "timelineNamePlaceholder": "Enter timeline name",
+    "timelineTruncated": "처음 50개의 이벤트가 표시됩니다",
     "unlisted": "목록 미공개",
     "conditionsTitle": "조건",
     "conditionsAuthorSet": "시뮬레이션이 아닌 저자가 설정한 라벨",
