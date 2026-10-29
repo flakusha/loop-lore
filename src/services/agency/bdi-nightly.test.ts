@@ -196,6 +196,30 @@ describe("runNightlyReflectionCycle — injected-seam hardening", () => {
     expect(result.revisionsEmitted,).toBe(0,);
     expect(raw.query("SELECT * FROM actor_plan_revisions",).all().length,).toBe(0,);
   });
+
+  test("a mid-loop activity failure rolls the plan row back (no partial plan)", async () => {
+    // Abort every activity insert at the storage layer: pre-fix the plan
+    // row committed before the loop, so the next night's prevPlan lookup
+    // found the partial plan. Now plan + activities are one transaction,
+    // so the abort leaves neither a plan row nor activity rows.
+    raw.exec(
+      `CREATE TRIGGER abort_activities BEFORE INSERT ON actor_planned_activities
+       BEGIN SELECT RAISE(ABORT, 'activity boom'); END;`,
+    );
+
+    const result = await runNightlyReflectionCycle(db, ["actor1",], {
+      budgetApprove: async () => true,
+      planRecompute: async () => ({
+        summary: "hunt",
+        priority: "high",
+        activities: [{ description: "scout", score: 80, },],
+      }),
+    },);
+
+    expect(result.failed,).toBe(1,);
+    expect(raw.query("SELECT * FROM actor_daily_plans",).all().length,).toBe(0,);
+    expect(raw.query("SELECT * FROM actor_planned_activities",).all().length,).toBe(0,);
+  });
 });
 
 describe("recordChatTurn — cooldown + consecutive cap", () => {
