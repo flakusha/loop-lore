@@ -110,12 +110,22 @@ export async function transfer(
       if (toActorId) { query = query.where("owner_actor_id", "=", toActorId,); }
       const existing = await query.executeTakeFirst();
       if (existing) {
-        await db
+        // Conditional write on the destination pre-image, mirroring the
+        // source-side guard above: a concurrent grant to the same
+        // destination touches 0 rows, so the loser fails instead of
+        // clobbering the winner's quantity. The insert path is unique per
+        // transfer (fresh `uid()` row), so no predicate is needed there.
+        const credited = await db
           .updateTable("world_items",)
           .set({ quantity: existing.quantity + actualTransfer, },)
           .where("id", "=", existing.id,)
           .where("world_id", "=", worldId,)
-          .execute();
+          .where("quantity", "=", existing.quantity,)
+          .executeTakeFirst();
+
+        if (Number(credited.numUpdatedRows ?? 0,) === 0) {
+          return { success: false, fromRemaining: 0, toQuantity: 0, transferred: 0, };
+        }
       } else {
         await db
           .insertInto("world_items",)
