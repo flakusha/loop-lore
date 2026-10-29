@@ -8256,7 +8256,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md",
       "title": "Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assets/controller.ts",
         "src/characters/importers/character-systems/avatars.ts",
@@ -18946,7 +18946,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-adaptation.md",
       "title": "Assistant Entity Adaptation Command & Engine",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/adapter/adapt.ts",
         "src/assistant/commands/adapt.ts",
@@ -18965,7 +18965,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-adapter.md",
       "title": "Assistant Entity Access Adapter Layer",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/adapter/access.ts",
         "src/assistant/adapter/assets.ts",
@@ -19043,7 +19043,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-duplication.md",
       "title": "Assistant Entity Duplication Command",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/adapter/duplicate.ts",
         "src/assistant/adapter/entity.ts",
@@ -19122,7 +19122,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-schema.md",
       "title": "Assistant Entity Access Schema",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/adapter/access.ts",
         "src/assistant/adapter/adapt.ts",
@@ -19142,7 +19142,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-tests.md",
       "title": "Assistant Entity Access Unit Tests",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/adapter/access.test.ts",
         "src/assistant/adapter/adapt.test.ts",
@@ -35610,6 +35610,17 @@
       "srcRefs": [
         "src/cli/parser",
         "src/cli/parser.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md",
+      "title": "Migrate TUI renderer from blessed to @oh-my-pi/pi-tui",
+      "status": "in_progress",
+      "srcRefs": [
+        "src/tui"
       ],
       "related": []
     },
@@ -85385,7 +85396,8 @@
     {
       "path": "src/tui",
       "owners": [
-        "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m"
+        "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+        "TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui"
       ]
     },
     {
@@ -139346,6 +139358,11 @@
       "from": "TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-",
       "kind": "produces",
       "to": "src/cli/parser"
+    },
+    {
+      "from": "TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui",
+      "kind": "produces",
+      "to": "src/tui"
     },
     {
       "from": "TASK-migration-076-distinguish-explicit-null-renderingoverride-fr",
@@ -241335,6 +241352,12 @@
       "kind": "sibling",
       "to": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
       "via": "src/api.rs; src/app.rs; src/gallery.rs"
+    },
+    {
+      "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+      "kind": "sibling",
+      "to": "TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui",
+      "via": "src/tui"
     },
     {
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",

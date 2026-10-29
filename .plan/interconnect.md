@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3726
+- tickets: 3727
 - epics: 355
 - src paths owned: 4484
-- edges: produces 11787, consumes 405, sibling 35817, owns 2708, related 1193
+- edges: produces 11788, consumes 405, sibling 35818, owns 2708, related 1193
 
 ## Shared src hubs
 
@@ -1897,6 +1897,7 @@ output is byte-identical for identical inputs.
 | `src/transport/upgrade.ts` | `BUG-upgrade-connection-metadata-state-lost`, `TASK-057`, `TASK-058`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `epic-transport-expansion` |
 | `src/transport/webtransport.ts` | `epic-embeddable-backend`, `epic-embeddable-engine-game-frontend`, `epic-game-frontend-scenes` |
 | `src/transport/ws.ts` | `BUG-wshandler-flushpending-rebuf-uses-stale-queue-slice-off-by-one`, `BUG-wshandler-send-queues-messages-while-disconnected-but-never-`, `TASK-059`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-federation-peer-workload-wire-endpoints`, `TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3`, `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un`, `epic-embeddable-backend`, `epic-embeddable-engine-game-frontend`, `epic-federation-offload-quotas`, `epic-game-frontend-scenes`, `epic-transport-expansion` |
+| `src/tui` | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m`, `TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui` |
 | `src/tui/app-keys.ts` | `BUG-tui-app-getlogger-throws-when-running-standalone`, `BUG-tui-blind-to-llm-assistant-turns`, `TASK-docs-drift-api`, `TASK-tui-fire-and-forget-void-without-catch` |
 | `src/tui/app.test.ts` | `TASK-tui-enabled-config-flag-never-read`, `TASK-tui-shell-testability`, `epic-terminal-ui` |
 | `src/tui/app.ts` | `BUG-assetview-loads-assets-without-auth`, `BUG-tui-app-getlogger-throws-when-running-standalone`, `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `TASK-delete-unreferenced-platform-service-util-modules-dead-barre`, `TASK-harness-frontend-consolidation`, `TASK-harness-topic-tui-surface`, `TASK-tui-chat-picker`, `TASK-tui-dedupe-api-base`, `TASK-tui-enabled-config-flag-never-read`, `TASK-tui-fire-and-forget-void-without-catch`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene`, `TASK-tui-models-overlay`, `TASK-tui-shell-testability`, `epic-cli-tooling-optique`, `epic-terminal-ui` |
@@ -12374,6 +12375,7 @@ output is byte-identical for identical inputs.
 | `TASK-migrate-text-surfaces-to-shared-primitives` | produces | `src/views/world-edit.html` | - |
 | `TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-` | produces | `src/cli/parser.ts` | - |
 | `TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-` | produces | `src/cli/parser` | - |
+| `TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui` | produces | `src/tui` | - |
 | `TASK-migration-076-distinguish-explicit-null-renderingoverride-fr` | produces | `src/db/migrations/076_drop_chats_visual_novel.ts` | - |
 | `TASK-migration-076-harden-against-malformed-gm-config-json` | produces | `src/db/migrations/076_drop_chats_visual_novel.ts` | - |
 | `TASK-migration-sequential-finalize-and-renumber-policy` | produces | `src/db/migrations/README.md` | - |
@@ -30326,6 +30328,7 @@ output is byte-identical for identical inputs.
 | `BUG-tui-blind-to-llm-assistant-turns` | sibling | `epic-terminal-ui` | `src/tui/chat/api.ts` |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | `src/tui/chat/api.ts` |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | `src/api.rs; src/app.rs; src/gallery.rs` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui` | `src/tui` |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui-api-contract-smoke-tests` | `src/tui/chat/api.ts` |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui-chat-picker` | `src/tui/chat/api.ts` |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui-dedupe-api-base` | `src/tui/chat/api.ts` |
