@@ -143,6 +143,8 @@
     "plan:map": "giwt plan code-map",
     "plan:map:check": "giwt plan code-map --check",
     "plan:find": "giwt plan code-map --find",
+    "plan:links": "giwt plan links --write",
+    "plan:links:check": "giwt plan links --check",
     "plan:validate": "giwt plan validate",
     "plan:validate:fix": "giwt plan validate --fix",
     "plan:status": "giwt plan status",
