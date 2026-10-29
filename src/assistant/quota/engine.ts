@@ -12,6 +12,7 @@
  * logger with a structured `assistant_quota_exceeded` event.
  */
 
+import { ASSISTANT_QUOTA_DEFAULTS, } from "../../config/sections/assistant";
 import type { Logger, } from "../../logger";
 import { getLogger, } from "../../logger";
 import {
@@ -58,14 +59,17 @@ export function configureAssistantQuota(options: QuotaStorageOptions,): void {
 /**
  * Apply the assistant config section's quota values (server boot + hot
  * reload). Drops all counters, matching the configure contract.
+ * A stored config predating the assistant section falls back to the quota
+ * defaults instead of crashing boot.
  * @param assistant - the assistant config section (quota fields read)
  */
 export function initAssistantQuota(
-  assistant: { quotaWindowMs: number; quotaLimitPerWindow: number },
+  assistant?: { quotaWindowMs: number; quotaLimitPerWindow: number } | null,
 ): void {
+  const { quotaWindowMs, quotaLimitPerWindow, } = assistant ?? ASSISTANT_QUOTA_DEFAULTS;
   configureQuotaStorage({
-    windowMs: assistant.quotaWindowMs,
-    limitPerWindow: assistant.quotaLimitPerWindow,
+    windowMs: quotaWindowMs,
+    limitPerWindow: quotaLimitPerWindow,
   },);
 }
 
