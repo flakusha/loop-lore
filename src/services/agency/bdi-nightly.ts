@@ -182,33 +182,39 @@ async function insertPlan(
   today: string,
   next: { summary: string; priority: string; activities: Array<{ description: string; score: number }> },
 ): Promise<void> {
-  const planId = await newId(db,);
-  await db
-    .insertInto("actor_daily_plans",)
-    .values({
-      id: planId,
-      actor_id: actorId,
-      world_id: worldId ?? null,
-      plan_date: today,
-      summary: next.summary,
-      priority: next.priority ?? DEFAULT_PRIORITY,
-      created_at: sql`datetime('now')`,
-    },)
-    .execute();
-
-  for (const a of next.activities) {
-    await db
-      .insertInto("actor_planned_activities",)
+  // Plan row + activity rows are one atomic unit: a mid-loop failure
+  // used to leave the plan row behind, and the next night's prevPlan
+  // lookup found the partial plan. One transaction or nothing lands.
+  // (BUG-service-layer-multi-query-mutations-run-without-transactions).
+  await db.transaction().execute(async (trx,) => {
+    const planId = await newId(trx,);
+    await trx
+      .insertInto("actor_daily_plans",)
       .values({
-        id: await newId(db,),
-        plan_id: planId,
-        description: a.description,
-        score: a.score,
-        completed: 0,
+        id: planId,
+        actor_id: actorId,
+        world_id: worldId ?? null,
+        plan_date: today,
+        summary: next.summary,
+        priority: next.priority ?? DEFAULT_PRIORITY,
         created_at: sql`datetime('now')`,
       },)
       .execute();
-  }
+
+    for (const a of next.activities) {
+      await trx
+        .insertInto("actor_planned_activities",)
+        .values({
+          id: await newId(trx,),
+          plan_id: planId,
+          description: a.description,
+          score: a.score,
+          completed: 0,
+          created_at: sql`datetime('now')`,
+        },)
+        .execute();
+    }
+  },);
 }
 
 /** The actor's world, via the `world_members` link.
