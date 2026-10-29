@@ -655,6 +655,7 @@
     "timelineEvents": "events",
     "timelineName": "Timeline Name",
     "timelineNamePlaceholder": "Enter timeline name",
+    "timelineTruncated": "Showing first 50 events",
     "unlisted": "غير مدرج",
     "conditionsTitle": "الحالات",
     "conditionsAuthorSet": "وسوم يحدّدها الكاتب، وليست محاكاة",
