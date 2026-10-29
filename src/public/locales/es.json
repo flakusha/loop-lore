@@ -652,6 +652,7 @@
     "timeline": "Timeline",
     "timelineDesc": "Description",
     "timelineDescPlaceholder": "Enter description",
+    "timelineEvents": "eventos",
     "timelineName": "Timeline Name",
     "timelineNamePlaceholder": "Enter timeline name",
     "unlisted": "Sin listar",

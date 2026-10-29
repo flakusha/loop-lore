@@ -3,6 +3,8 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { listTimelineEntries, } from "../../story/timeline/world-timeline";
+import type { TimelineEntry, } from "../../story/timeline/world-timeline";
 import { can, } from "../../users/permissions";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { requireWorldAccess, } from "../worlds/access";
@@ -55,10 +57,42 @@ async function serveWorldsListDb(
 }
 
 /**
+ * Render the branch-scoped timeline events block for the detail fragment.
+ * @param events
+ * @param branchName
+ */
+function renderTimelineEvents(events: TimelineEntry[], branchName: string | null,): string {
+  const heading = `Timeline events${branchName ? ` — ${escapeHtml(branchName,)}` : ""}`;
+  if (events.length === 0) {
+    return `<div class="form-group" style="margin-bottom:var(--space-6)">
+      <label class="form-label">${heading}</label>
+      <div class="empty-state" style="padding: var(--space-4); font-size: 13px">No timeline events on this branch</div>
+    </div>`;
+  }
+
+  const rows = events
+    .map(
+      (entry,) =>
+        `<div class="timeline-event">
+        <span class="timeline-event-date">${escapeHtml(entry.occurred_at.slice(0, 10,),)}</span>
+        <span class="timeline-event-desc">${escapeHtml(entry.description,)}</span>
+      </div>`,
+    )
+    .join("",);
+
+  return `<div class="form-group" style="margin-bottom:var(--space-6)">
+    <label class="form-label">${heading}</label>
+    <div class="timeline-events">${rows}</div>
+  </div>`;
+}
+
+/**
  * @param worldId
  * @param database
  * @param userId
  * @param userRole
+ * @param timelineId — branch to scope events to. Must belong to this world;
+ *   unknown/absent falls back to the conventional `prime` branch.
  * @returns the world detail HTML fragment, empty-state when access is denied
  */
 async function serveWorldDetailContent(
@@ -66,6 +100,7 @@ async function serveWorldDetailContent(
   database: Kysely<DB>,
   userId: string | null,
   userRole: string | null,
+  timelineId?: string | null,
 ): Promise<Response> {
   const world = await database.selectFrom("worlds",).selectAll().where("id", "=", worldId,).executeTakeFirst();
 
@@ -88,6 +123,34 @@ async function serveWorldDetailContent(
   const name = escapeHtml(world.name,);
   const desc = escapeHtml(world.description || "",);
   const lore = escapeHtml(world.lore || "",);
+
+  // Resolve the branch to render. An unknown or foreign timeline id silently
+  // falls back to `prime` (the event-table slug default): a fragment must not
+  // 404, and a foreign id must not leak branch existence.
+  let branchName: string | null = null;
+  let eventTimeline = "prime";
+  if (timelineId) {
+    const branch = await database
+      .selectFrom("world_timelines",)
+      .select(["id", "name", "is_prime",],)
+      .where("id", "=", timelineId,)
+      .where("world_id", "=", worldId,)
+      .executeTakeFirst();
+
+    if (branch) {
+      branchName = branch.name;
+      // Prime events carry the `prime` slug even when the world_timelines row
+      // has a uuid id; fork events carry the fork row's id.
+      eventTimeline = branch.is_prime ? "prime" : branch.id;
+    }
+  }
+
+  const timelineEvents = await listTimelineEntries({
+    db: database,
+    worldId,
+    timelineId: eventTimeline,
+    limit: 50,
+  },);
 
   const locations = await database
     .selectFrom("locations",)
@@ -165,6 +228,7 @@ async function serveWorldDetailContent(
         <label class="form-label">Lore</label>
         <div class="lore-content">${lore}</div>
       </div>
+      ${renderTimelineEvents(timelineEvents, branchName,)}
       <div class="form-group" style="margin-bottom:var(--space-6)">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3)">
           <label class="form-label" style="margin: 0" x-text="'Locations (' + locationCount + ')'"></label>

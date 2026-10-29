@@ -38,6 +38,19 @@ Zero worlds: empty state with "No worlds yet. Create a world to build a shared s
 
 **Header**: world name, description, edit button (secondary, top-right)
 
+**Timeline bar** (TASK-timeline-branching-ui):
+
+- Visible above the detail fragment; lists every branch of the world with
+  name, event count, and created date (`GET /api/v1/worlds/:id/timelines`)
+- Clicking a branch re-scopes the detail fragment to that branch via an
+  htmx fragment swap — `GET /dynamic/worlds/:id/detail?timeline=<id>` —
+  no full page reload; events for the selected branch render in a
+  "Timeline events" section
+- Absent or unknown `?timeline` falls back to the prime branch
+- `+` opens the create-timeline modal (`POST /api/v1/worlds/:id/timelines`,
+  owner only): name (required, ≤200), description (≤1000)
+- Mobile: stacks vertically ≤768px, 44px touch targets
+
 **Lore section** (textarea, rendered as formatted text):
 
 - Full lore description
