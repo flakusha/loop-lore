@@ -157,6 +157,36 @@ describe("ItemsService.transfer", () => {
     const source = await db.selectFrom("world_items",).select("quantity",).where("id", "=", wId,).executeTakeFirst();
     expect(source?.quantity,).toBe(4,);
   });
+
+  test("concurrent transfers cannot move more than stock", async () => {
+    const wId = uid();
+    const item = uid();
+    const destA = uid();
+    const destB = uid();
+    await insertItems(db, worldId, "Rations", "consumable", { id: item, } as never,);
+    await insertLocations(db, worldId, "DestA", { id: destA, } as never,);
+    await insertLocations(db, worldId, "DestB", { id: destB, } as never,);
+    await insertWorldItems(db, worldId, item, { id: wId, location_id: locationA, quantity: 4, } as never,);
+    const svc = new ItemsService(db,);
+
+    // Both racers read the same pre-image; the loser's conditional write
+    // touches 0 rows and fails instead of decrementing past zero.
+    const [first, second,] = await Promise.all([
+      svc.transfer(wId, worldId, 4, destA,),
+      svc.transfer(wId, worldId, 4, destB,),
+    ],);
+
+    expect([first.success, second.success,].filter(Boolean,),).toHaveLength(1,);
+
+    const dests = await db
+      .selectFrom("world_items",)
+      .select("quantity",)
+      .where("item_id", "=", item,)
+      .where("location_id", "in", [destA, destB,],)
+      .execute();
+
+    expect(dests.reduce((sum, row,) => sum + row.quantity, 0,),).toBe(4,);
+  });
 });
 
 describe("ItemsService.getNpcInventoryBatch", () => {
