@@ -14,6 +14,7 @@
 import type {
   SeductionCard,
   SeductionCardType,
+  SeductionDifficulty,
   SeductionOutcome,
   SeductionRound,
   SeductionState,
@@ -203,7 +204,7 @@ function resolveRound(
  * Initialize a seduction encounter.
  */
 export function initSeduction(
-  difficulty: "easy" | "medium" | "hard" = "medium",
+  difficulty: SeductionDifficulty = "medium",
   handSize = 5,
 ): SeductionState {
   const config = DIFFICULTY_CONFIG[difficulty];
