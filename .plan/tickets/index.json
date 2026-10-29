@@ -27534,7 +27534,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "assistant",
       "adaptation",
@@ -27554,7 +27554,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "assistant",
       "adapter",
@@ -27629,7 +27629,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "assistant",
       "duplication",
@@ -27720,7 +27720,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-assistant-entity-access-schema.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "assistant",
       "entity",
@@ -27739,7 +27739,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-assistant-entity-access-tests.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "assistant",
       "tests",
@@ -46322,6 +46322,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-.md",
     "status": "Not Started"
+  },
+  "TASK-MIGRATE-TUI-RENDERER-FROM-BLESSED-TO-OH-MY-PI-PI-TUI": {
+    "hash": "4a29161",
+    "git_issue": "4a29161",
+    "extid": "TASK-MIGRATE-TUI-RENDERER-FROM-BLESSED-TO-OH-MY-PI-PI-TUI",
+    "type": "TASK",
+    "title": "Migrate TUI renderer from blessed to @oh-my-pi/pi-tui",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md",
+    "status": "in_progress"
   },
   "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR": {
     "epic": "epic-db-migration-compaction",

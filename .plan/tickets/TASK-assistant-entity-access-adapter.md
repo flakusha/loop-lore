@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Task
@@ -154,3 +154,5 @@ export const worldGetHandler: CommandHandler = async (args, ctx) => {
 - `src/routes/story-items/handlers.ts` — Item CRUD, ItemsService
 - `src/assistant/quality/entity-creation.ts` — Quality gates
 - `src/assistant/commands/registry.ts` — Command registry
+
+**Resolved:** 2026-10-29 registry-driven close: git issue 4a5ca49 (registry tip: a16663b60 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ASSISTANT-ENTITY-ACCESS-ADA)

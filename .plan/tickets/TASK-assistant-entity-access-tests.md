@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** High
 **Type:** Task
@@ -107,3 +107,5 @@ Every command handler, adapter, and the adaptation engine must have unit tests c
 
 - All implementation tickets must be complete first
 - `src/assistant/quality/entity-creation.ts` — Existing quality gate tests as reference
+
+**Resolved:** 2026-10-29 registry-driven close: git issue 0a2ed94 (registry tip: dd1501a2b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ASSISTANT-ENTITY-ACCESS-TES)
