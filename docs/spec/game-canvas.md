@@ -148,4 +148,4 @@ never throws into the chat flow.
 - Token drag-to-move writing state back through API.
 - Sprite/image assets per entity (currently colored tokens).
 - Fog-of-war / per-player visibility.
-- TUI canvas rendering (blessed).
+- TUI canvas rendering (blessed widget set; revisit under the pi-tui migration).

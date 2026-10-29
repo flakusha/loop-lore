@@ -24,7 +24,7 @@ features:
     details: Bun, TypeScript, SQLite — optimal performance
     icon: <img src="/docs/img/icons/modern-stack.svg" alt="" width="32" height="32">
   - title: Dual Interface
-    details: Web UI (htmx+Alpine) or terminal TUI (blessed)
+    details: Web UI (htmx+Alpine) or terminal TUI (blessed; pi-tui migration in progress)
     icon: <img src="/docs/img/icons/dual-interface.svg" alt="" width="32" height="32">
   - title: Extensible
     details: Plugin-based architecture for customization

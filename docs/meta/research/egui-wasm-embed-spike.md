@@ -495,7 +495,7 @@ startup.
 
 **Verdict: do not adopt egui as a loop-lore frontend, in any of its three
 shapes, in the near term.** Adopt (c), the client-agnostic view-model layer;
-keep (d), the blessed TUI, as the reference non-web client. The
+keep (d), the TUI (blessed at the time of writing; pi-tui migration in progress), as the reference non-web client. The
 `TASK-egui-wasm-embed-spike.md` ticket is therefore **complete and negative**,
 which is the outcome it was scoped to allow.
 

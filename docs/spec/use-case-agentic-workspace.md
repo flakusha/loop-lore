@@ -60,7 +60,7 @@ See `docs/spec/plugin-system.md`. Plugin types: `plugins/core/`, `plugins/commun
 
 WebUI layout: LEFT agents list, CENTER workspace/chat, RIGHT artifacts gallery, BOTTOM task graph.
 
-TUI: agent list replaces character list, task graph via `blessed-contrib`, tool output as structured logs.
+TUI: agent list replaces character list, task graph via the TUI widget set (`blessed-contrib` currently; `@oh-my-pi/pi-tui` migration in progress), tool output as structured logs.
 
 ## Config
 

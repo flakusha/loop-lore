@@ -24,7 +24,7 @@ multi-backend — sobre una base sólida:
 
 - **TypeScript + Bun** — sin paso de compilación, runtime rápido
 - **Base de datos** — `bun:sqlite` local, PostgreSQL remoto (query builder Kysely)
-- **Modo TUI** — interfaz de terminal basada en blessed (sin navegador)
+- **Modo TUI** — interfaz de terminal basada en blessed (sin navegador; migración del renderizador a `pi-tui` en curso)
 - **Web UI** — htmx + Alpine.js (ligero, sin paso de build)
 - **Recursos** — imágenes/audio/video vinculados polimórficamente a cualquier entidad
 - **Asistente** — ayuda enfocada al usuario (ideas, sugerencias, solución de problemas)

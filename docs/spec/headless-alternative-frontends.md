@@ -11,7 +11,7 @@ Headless mode enables non-browser clients (CLI, automation scripts, third-party 
 
 ## Scope
 
-- **TUI:** `src/tui/` is the canonical blessed-based terminal UI.
+- **TUI:** `src/tui/` is the terminal UI (blessed-based currently; `@oh-my-pi/pi-tui` migration in progress).
 - **REST + WebSocket:** `src/server/` + `src/transport/` expose the full API.
 - **OpenAPI:** `docs/reference/openapi.json` is the machine-readable contract.
 - **Federation:** `src/federation/` enables multi-instance gossip.

@@ -166,7 +166,7 @@ The server applies CSRF double-submit cookie protection via
 SSE streams are not idempotent. Disconnecting mid-stream requires re-polling the
 originating endpoint to recover state.
 
-## Reference client: the blessed TUI
+## Reference client: the TUI (blessed-based currently, pi-tui migration in progress)
 
 The **TUI** (`src/tui/`) is the working non-htmx client. It implements auth via
 `auth: { sessionToken }` and reads `API_BASE` from `LOOP_LORE_API_BASE_URL`.
