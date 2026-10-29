@@ -75,6 +75,8 @@ export interface EstablishedHistoryOpts {
 export interface ListTimelineOpts {
   db: Kysely<DB>;
   worldId: string;
+  /** Branch to scope to (world_timelines.id). Undefined = all branches. */
+  timelineId?: string;
   occurredBefore?: string;
   occurredAfter?: string;
   limit?: number;
@@ -172,22 +174,27 @@ export async function seedBackstory(
 
 /**
  * List timeline entries for a world, ordered chronologically.
- * Optional time-range and limit filters.
+ * Optional branch (timelineId), time-range and limit filters.
  * @param root0
  * @param root0.db
  * @param root0.worldId
+ * @param root0.timelineId
  * @param root0.occurredBefore
  * @param root0.occurredAfter
  * @param root0.limit
  * @returns {Promise<TimelineEntry[]>}
  */
 export async function listTimelineEntries(
-  { db, worldId, occurredBefore, occurredAfter, limit, }: ListTimelineOpts,
+  { db, worldId, timelineId, occurredBefore, occurredAfter, limit, }: ListTimelineOpts,
 ): Promise<TimelineEntry[]> {
   let query = db
     .selectFrom("world_timeline_events",)
     .selectAll()
     .where("world_id", "=", worldId,);
+
+  if (timelineId !== undefined) {
+    query = query.where("timeline_id", "=", timelineId,);
+  }
 
   if (occurredBefore !== undefined) {
     query = query.where("occurred_at", "<", occurredBefore,);

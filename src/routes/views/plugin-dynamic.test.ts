@@ -19,6 +19,8 @@ import {
   insertChats,
   insertUsers,
   insertWorlds,
+  insertWorldTimelineEvents,
+  insertWorldTimelines,
 } from "../../test-utils/insert-helpers";
 import { safeJsonParse, } from "../../utils";
 import { dynamicRoutes, } from "./plugin-dynamic";
@@ -252,6 +254,84 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
 
     expect(res.status,).toBe(200,);
     expect(await res.text(),).toContain("World not found",);
+  });
+
+  // ── Timeline branch re-scoping (?timeline=, TASK-timeline-branching-ui) ──
+  describe("world detail — timeline branch re-scoping", () => {
+    let forkId: string;
+
+    beforeAll(async () => {
+      await insertWorldTimelines(db, "world-elm", "Prime", { id: "tl-elm-prime", is_prime: 1, } as never,);
+      forkId = await insertWorldTimelines(db, "world-elm", "Fork", {},);
+      await insertWorldTimelineEvents(
+        db,
+        "world-elm",
+        "world_lore_update",
+        "Prime-branch calamity",
+        "2024-05-01T00:00:00Z",
+        { timeline_id: "prime", },
+      );
+
+      await insertWorldTimelineEvents(
+        db,
+        "world-elm",
+        "world_lore_update",
+        "Fork-branch divergence",
+        "2024-05-02T00:00:00Z",
+        { timeline_id: forkId, },
+      );
+    },);
+
+    test("without ?timeline renders prime events only", async () => {
+      const res = await makeApp(db, "owner", "user",).handle(
+        new Request("http://localhost/dynamic/worlds/world-elm/detail", { headers: { "HX-Request": "true", }, },),
+      );
+
+      expect(res.status,).toBe(200,);
+      const html = await res.text();
+      expect(html,).toContain("Prime-branch calamity",);
+      expect(html,).not.toContain("Fork-branch divergence",);
+    });
+
+    test("?timeline=<fork> re-scopes events to that branch", async () => {
+      const res = await makeApp(db, "owner", "user",).handle(
+        new Request(`http://localhost/dynamic/worlds/world-elm/detail?timeline=${forkId}`, {
+          headers: { "HX-Request": "true", },
+        },),
+      );
+
+      expect(res.status,).toBe(200,);
+      const html = await res.text();
+      expect(html,).toContain("Fork-branch divergence",);
+      expect(html,).not.toContain("Prime-branch calamity",);
+      expect(html,).toContain("Fork",);
+    });
+
+    test("?timeline=<prime row> still shows the 'prime'-slug events", async () => {
+      const res = await makeApp(db, "owner", "user",).handle(
+        new Request("http://localhost/dynamic/worlds/world-elm/detail?timeline=tl-elm-prime", {
+          headers: { "HX-Request": "true", },
+        },),
+      );
+
+      expect(res.status,).toBe(200,);
+      const html = await res.text();
+      expect(html,).toContain("Prime-branch calamity",);
+      expect(html,).not.toContain("Fork-branch divergence",);
+    });
+
+    test("unknown ?timeline falls back to prime, still 200", async () => {
+      const res = await makeApp(db, "owner", "user",).handle(
+        new Request("http://localhost/dynamic/worlds/world-elm/detail?timeline=tl-foreign", {
+          headers: { "HX-Request": "true", },
+        },),
+      );
+
+      expect(res.status,).toBe(200,);
+      const html = await res.text();
+      expect(html,).toContain("Prime-branch calamity",);
+      expect(html,).not.toContain("Fork-branch divergence",);
+    });
   });
 
   test("character edit-form renders with HX-Request", async () => {

@@ -18,6 +18,8 @@ interface WorldTimeline {
   description: string | null;
   is_prime: number;
   created_at: string;
+  /** Events recorded on this branch (world_timeline_events count). */
+  eventCount: number;
 }
 
 interface WorldTimelineBarState {
@@ -29,6 +31,8 @@ interface WorldTimelineBarState {
   newDesc: string;
   init(): Promise<void>;
   loadTimelines(): Promise<void>;
+  /** Select a branch from the timeline list and re-scope the detail fragment. */
+  selectTimeline(id: string,): void;
   switchTimeline(): Promise<void>;
   createTimeline(): Promise<void>;
   /** Resize a textarea to fit its content. */
@@ -76,17 +80,24 @@ function worldTimelineBarImpl(
       }
     },
 
+    /** Select a branch and re-scope the detail fragment to it. */
+    selectTimeline(id: string,) {
+      if (id === this.selectedTimeline) { return; }
+      this.selectedTimeline = id;
+      void this.switchTimeline();
+    },
+
     /**
      * @returns {Promise<void>}
      */
     async switchTimeline() {
-      const tl = this.timelines.find((t,) => t.id === this.selectedTimeline);
-      if (!tl) { return; }
-      const detail = document.querySelector("#world-detail",);
-      if (!detail) { return; }
+      const hasBranch = this.timelines.some((t,) => t.id === this.selectedTimeline);
+      if (!hasBranch || !document.querySelector("#world-detail",)) { return; }
       const url = `/dynamic/worlds/${this.worldId}/detail?timeline=` +
         `${encodeURIComponent(this.selectedTimeline,)}`;
 
+      // Fragment swap only — no full page reload: htmx.ajax targets the
+      // #world-detail container and swaps its innerHTML.
       htmx.ajax("GET", url, { target: "#world-detail", swap: "innerHTML", },);
     },
 

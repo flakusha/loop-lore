@@ -18,6 +18,7 @@ import {
   insertActors,
   insertUsers,
   insertWorlds,
+  insertWorldTimelineEvents,
   insertWorldTimelines,
 } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
@@ -239,5 +240,74 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       .executeTakeFirst();
 
     expect(after,).toBeUndefined();
+  });
+});
+
+describe("timelinesRoutes — list eventCount per branch", () => {
+  let db: Kysely<DB>;
+  let sqlite: TestDb["sqlite"];
+  let ownerId: string;
+  let worldId: string;
+  let primeId: string;
+  let forkId: string;
+
+  beforeAll(async () => {
+    ({ db, sqlite, } = await createTestDb());
+
+    ownerId = uid();
+    await insertUsers(db, "owner", "Owner", { id: ownerId, } as never,);
+    await insertActors(db, ownerId, {
+      id: ownerId,
+      actor_type: "user",
+      user_id: ownerId,
+      owner_id: ownerId,
+      agent_type: "none",
+      settings: "{}",
+      row_version: 0,
+    } as never,);
+
+    await insertWorlds(db, ownerId, "Counted Realm", {},);
+    const w = await db
+      .selectFrom("worlds",)
+      .select("id",)
+      .where("owner_id", "=", ownerId,)
+      .executeTakeFirst();
+
+    if (!w) { throw new Error("seed: world not inserted",); }
+    worldId = w.id;
+
+    // Prime row gets a uuid id on purpose: its events still carry the
+    // conventional 'prime' slug, and the count must bridge that gap.
+    primeId = await insertWorldTimelines(db, worldId, "Prime", { is_prime: 1, },);
+    forkId = await insertWorldTimelines(db, worldId, "Fork", { is_prime: 0, },);
+
+    await insertWorldTimelineEvents(db, worldId, "world_lore_update", "Prime event A", "2024-01-01T00:00:00Z",);
+    await insertWorldTimelineEvents(db, worldId, "world_lore_update", "Prime event B", "2024-01-02T00:00:00Z",);
+    await insertWorldTimelineEvents(
+      db,
+      worldId,
+      "world_lore_update",
+      "Fork event A",
+      "2024-01-03T00:00:00Z",
+      { timeline_id: forkId, },
+    );
+  },);
+
+  afterAll(async () => {
+    await sqlite.close();
+  },);
+
+  test("GET list reports eventCount per branch (prime via the 'prime' slug)", async () => {
+    const res = await appHandle(
+      appWithAuth(db, ownerId, "user",),
+      get(`/api/worlds/${worldId}/timelines`,),
+    );
+
+    expect(res.status,).toBe(201,);
+    const body = (await res.json()) as { data: { id: string; eventCount: number }[] };
+
+    const byId = new Map(body.data.map((row,) => [row.id, row.eventCount,]),);
+    expect(byId.get(primeId,),).toBe(2,);
+    expect(byId.get(forkId,),).toBe(1,);
   });
 });
