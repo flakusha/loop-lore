@@ -121,7 +121,7 @@ describe("consumeQuotaDb", () => {
       .query("SELECT user_id FROM assistant_quota_usage",)
       .all() as Array<{ user_id: string }>;
 
-    expect(rows.map((r,) => r.user_id).toSorted(),).toEqual([hostile, "after-drop",],);
+    expect(rows.map((r,) => r.user_id).toSorted(),).toEqual(["after-drop", hostile,],);
   });
 
   test("8 parallel deductions of a limit-1 window — exactly 1 succeeds", async () => {
