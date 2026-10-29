@@ -142,6 +142,25 @@ describe("body-systems/heat/advanceHeatCycle", () => {
     const wrap = await advanceHeatCycle(db, "actor-1", 7,);
     expect(wrap,).toEqual({ newPhase: HeatPhase.Normal, daysUntilNext: 7, },);
   });
+
+  it("a raced pair of advances applies both exactly once (no lost update)", async () => {
+    const { db, } = await createTestDb();
+    await insertActors(db, "Actor", { id: "actor-1", } as never,);
+    await getHeatCycle(db, "actor-1", "catgirl",);
+
+    // Pre-fix the read sat outside the write, so both racers read 30 and
+    // both wrote 20 (final 20, one advance lost). Now the read and the
+    // conditional write are one atomic unit, so the pair lands 30 -> 20
+    // -> 10 even when the reads overlap.
+    const results = await Promise.all([
+      advanceHeatCycle(db, "actor-1", 10,),
+      advanceHeatCycle(db, "actor-1", 10,),
+    ],);
+
+    expect(results,).toHaveLength(2,);
+    const cycle = await getHeatCycle(db, "actor-1", "catgirl",);
+    expect(cycle.daysUntilNextHeat,).toBe(10,);
+  });
 });
 
 describe("body-systems/heat/getHeatEffects", () => {

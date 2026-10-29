@@ -123,43 +123,56 @@ export async function advanceHeatCycle(
   actorId: string,
   days: number,
 ): Promise<{ newPhase: HeatPhase; daysUntilNext: number }> {
-  const cycle = await getHeatCycle(db, actorId,);
-  if (cycle.cycleLengthDays === 0) {
-    return { newPhase: HeatPhase.Normal, daysUntilNext: 0, };
-  }
+  // Read, compute, write are one atomic unit: the UPDATE is conditional
+  // on the `updated_at` observed by the in-transaction read, so a
+  // concurrent advance touches 0 rows and throws instead of silently
+  // overwriting it (lost update). No migration needed — `updated_at` is
+  // rewritten on every advance, so it doubles as the CAS token.
+  // (BUG-service-layer-multi-query-mutations-run-without-transactions).
+  return db.transaction().execute(async (trx,) => {
+    const cycle = await getHeatCycle(trx, actorId,);
+    if (cycle.cycleLengthDays === 0) {
+      return { newPhase: HeatPhase.Normal, daysUntilNext: 0, };
+    }
 
-  let remaining = cycle.daysUntilNextHeat - days;
-  let newPhase = cycle.currentPhase;
+    let remaining = cycle.daysUntilNextHeat - days;
+    let newPhase = cycle.currentPhase;
 
-  // Phase transitions
-  if (remaining <= 0) {
-    // Cycle completes — advance phase
-    const phaseOrder: HeatPhase[] = [HeatPhase.Normal, HeatPhase.PreHeat, HeatPhase.Heat, HeatPhase.PostHeat,];
-    const currentIdx = phaseOrder.indexOf(cycle.currentPhase,);
-    const nextIdx = (currentIdx + 1) % phaseOrder.length;
-    newPhase = phaseOrder[nextIdx]!;
+    // Phase transitions
+    if (remaining <= 0) {
+      // Cycle completes — advance phase
+      const phaseOrder: HeatPhase[] = [HeatPhase.Normal, HeatPhase.PreHeat, HeatPhase.Heat, HeatPhase.PostHeat,];
+      const currentIdx = phaseOrder.indexOf(cycle.currentPhase,);
+      const nextIdx = (currentIdx + 1) % phaseOrder.length;
+      newPhase = phaseOrder[nextIdx]!;
 
-    // Reset remaining days for new phase
-    remaining = newPhase === HeatPhase.Heat
-      ? Math.floor(cycle.cycleLengthDays * 0.25,)
-      : Math.floor(cycle.cycleLengthDays * 0.25,);
-  }
+      // Reset remaining days for new phase
+      remaining = newPhase === HeatPhase.Heat
+        ? Math.floor(cycle.cycleLengthDays * 0.25,)
+        : Math.floor(cycle.cycleLengthDays * 0.25,);
+    }
 
-  const now = new Date().toISOString();
-  await db
-    .updateTable("character_heat_cycle",)
-    .set({
-      current_phase: newPhase,
-      days_until_next_heat: Math.max(0, remaining,),
-      updated_at: now,
-    },)
-    .where("actor_id", "=", actorId,)
-    .execute();
+    const now = new Date().toISOString();
+    const flipped = await trx
+      .updateTable("character_heat_cycle",)
+      .set({
+        current_phase: newPhase,
+        days_until_next_heat: Math.max(0, remaining,),
+        updated_at: now,
+      },)
+      .where("actor_id", "=", actorId,)
+      .where("updated_at", "=", cycle.updatedAt,)
+      .executeTakeFirst();
 
-  const log = getLogger().child({ module: "body-systems", },);
-  log.info(`Heat cycle ${actorId}: ${cycle.currentPhase}→${newPhase} (${days} days)`,);
+    if (Number(flipped?.numUpdatedRows ?? 0,) === 0) {
+      throw new Error(`Heat cycle for ${actorId} changed concurrently; retry the advance`,);
+    }
 
-  return { newPhase, daysUntilNext: Math.max(0, remaining,), };
+    const log = getLogger().child({ module: "body-systems", },);
+    log.info(`Heat cycle ${actorId}: ${cycle.currentPhase}→${newPhase} (${days} days)`,);
+
+    return { newPhase, daysUntilNext: Math.max(0, remaining,), };
+  },);
 }
 
 /**
