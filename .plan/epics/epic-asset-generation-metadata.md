@@ -47,10 +47,14 @@ facts, so it files first.
   exports).
 - **Dimensions come from the actual file, never the workflow**
   (upscale/crop invariant).
-- Camera/view-set facts and 3D run facts ride the same capture struct (see
-  extension tasks below) with an explicit camera-convention flag — the
-  COLMAP/nerfstudio hybrid (OpenCV|OpenGL), seeds stored as strings so
-  values above 2^53 survive round-trips exactly.
+- Camera/view-set facts, 3D run facts, **and video/audio run facts** ride
+  the same capture struct (see extension tasks below) with an explicit
+  camera-convention flag — the COLMAP/nerfstudio hybrid (OpenCV|OpenGL),
+  seeds stored as strings so values above 2^53 survive round-trips
+  exactly. Video facts add mode, duration, fps, and the
+  `timeline_data`/`builder_state` JSON (amended 2026-10-28, plan-ivss:
+  the capture-at-queue-time seam is unchanged; the >2^53 seed rule
+  applies to all video workflows).
 
 ## Relations (existing epics)
 

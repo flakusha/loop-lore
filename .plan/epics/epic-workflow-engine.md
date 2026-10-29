@@ -160,9 +160,12 @@ moderation and `epic-nsfw-capabilities.md` consent infrastructure.
 
 | Ticket | Scope |
 | ------ | ----- |
-| `TASK-workflow-dispatch-generation-backends` | Register `generation-viewset`, `generation-3d`, `world-environment`, `engine-export` through the existing dispatch schema (backend → route) with NSFW policy pass-through |
+| `TASK-workflow-dispatch-generation-backends` | Register `generation-viewset`, `generation-3d`, `world-environment`, `engine-export` through the existing dispatch schema (backend → route) with NSFW policy pass-through. **Extended 2026-10-28 (plan-ivss):** the backend list also gains `generation-video` + `generation-scenario` (same schema, same runner) for the Image/Video Scenario Studio |
 | `TASK-workflow-asset-pick-step-type` | Shared asset-picker step type (subject/reference selection) for the view-set, 3D, environment, and export workflow templates |
+| `TASK-workflow-payload-preview-step-type` | Confirm-preview step type rendering the assembled run payload (prompt + compiled slots) — shared by the scenario page Run panel and the assistant confirm flow (IVSS, filed 2026-10-28) |
 
 Consuming templates live in `epic-view-set-generation.md`,
-`epic-3d-generation.md`, `epic-scene-environment-world-generation.md`, and
-`epic-game-asset-pipeline-export.md`; this epic owns the dispatch plumbing.
+`epic-3d-generation.md`, `epic-scene-environment-world-generation.md`,
+`epic-game-asset-pipeline-export.md`, and
+`epic-image-video-scenario-studio.md` (video/scenario dispatch + the
+payload-preview step); this epic owns the dispatch plumbing.

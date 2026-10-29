@@ -105,6 +105,15 @@
 - [ ] **Asset lineage provenance (E0b)** — generation chains over `assets.content_hash`: link kinds, lineage query/UI, provenance summaries, downstream-consumer propagation — `epic-asset-lineage-provenance.md` (5 tickets) | proposal
 - [ ] **Contextual view-set & turnaround generation (E1)** — ordered per-view camera-facted image sets (edit-grid + ControlNet tiers now; orbit-video tier blocked until the video run seam lands), gallery set cards, assistant `view-set` template — `epic-view-set-generation.md` (7 tickets) | proposal
 
+### Image/Video Scenario Studio cluster (filed 2026-10-28, plan branch `plan-ivss`) — P3-P5 band
+
+> Sequencing: IVSS schema + CRUD + assembler + the converter ride the P3-P4 band with the creative-3D cluster; the video engine + run pipeline follow `epic-comfyui-first-class-citizen.md` Phase 2; browser editor tiers and DCC/bridge tiers run parallel; export profiles last (after lineage/licensing land). ComfyUI is the unified generation backend (2026-10-28 correction); sdcpp's disposition is decided (2026-10-29: opt-in lightweight fallback).
+
+- [ ] **Image/Video Scenario Studio (IVSS)** — world-owned scenario documents (scenes/shots/references/docs), scene run pipeline over ComfyUI video workflows, browser editing tiers (timeline, mask painter, storyboard, miniPaint handoff), annotations + collaboration, world/location binding, dual-use export profiles — `epic-image-video-scenario-studio.md` (17 tickets) | proposal
+- [ ] **Video generation engine tiers** — flow-tier workflow rows (Director first-class default tier per the 2026-10-29 decision, license terms recorded; Wan Apache-2.0 family alongside; LTX speed tier; post stages), per-workflow GPU probe gating, consent-gated BYOK Kling tier in scope (Veo later); the three filed video tickets fold into its phases — `epic-video-generation.md` (rewritten) | proposal
+- [ ] **UI→API workflow converter** — generic ComfyUI UI-format → API-format converter (subgraph flattening, promoted-widget substitution), filed under the workflow-library epic with the Director workflow as fixture — `epic-comfyui-first-class-citizen.md` (1 ticket) | proposal
+- [ ] **Workflow + bridge + reuse annex extensions** — `generation-video`/`generation-scenario` dispatch backends + payload-preview step type (`epic-workflow-engine.md`), melt/auto-editor/rawtherapee tiers (`epic-external-creative-tool-bridge.md`), video metadata extractor + from-asset i2v (`epic-multimodal-asset-reuse.md`) | proposal
+
 - [x] Memory + template injection UX — memory selection / pin UI ✅ shipped (verified 2026-08-16); per-chat prompt override ✅ shipped 2026-08-16 (`prompt_override`, migration 044)
 - [x] Character/world/location flows — multi-format import, creation + settings menus ✅ (code-verified 2026-08-20; C4 closed in open-inflight.md)
 - [x] Assistant tooling — creation wizards + `/commands` tiered access ✅ (C3, 2026-08-18); tool-call display ✅ 2026-08-12 (P3 #16 / P2-C)
