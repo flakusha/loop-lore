@@ -251,6 +251,48 @@ describe("RpgQuestionsService", () => {
       expect(row!.selected_option_id,).toBe("opt-1",);
     });
 
+    it("a raced pair of answers applies exactly once (one message, no double effects)", async () => {
+      const question = await createQuestion(db, {
+        chatId,
+        actorId: emitterActorId,
+        type: RpgQuestionType.Action,
+        prompt: "Race to answer",
+        options,
+      },);
+
+      // Pre-fix the claim, effects, and message were separate queries, so
+      // a concurrent pair could both pass the open check and both write.
+      // Now they are one atomic unit: exactly one racer wins, the loser
+      // throws, and only one system message appears.
+      const countRecorded = async (): Promise<number> => {
+        const rows = await db.selectFrom("messages",).selectAll()
+          .where("chat_id", "=", chatId,)
+          .where("role", "=", "system",)
+          .where("actor_id", "=", playerActorId,)
+          .execute();
+
+        return rows.filter((m,) => m.content.startsWith("Answer recorded: ",)).length;
+      };
+
+      const before = await countRecorded();
+      const results = await Promise.allSettled([
+        answerQuestion(db, question.id, { optionId: "opt-1", }, playerActorId,),
+        answerQuestion(db, question.id, { optionId: "opt-2", }, playerActorId,),
+      ],);
+
+      const ok = results.filter((r,) => r.status === "fulfilled");
+      const failed = results.filter((r,) => r.status === "rejected");
+      expect(ok,).toHaveLength(1,);
+      expect(failed,).toHaveLength(1,);
+
+      const row = await db.selectFrom("rpg_questions",).selectAll()
+        .where("id", "=", question.id,).executeTakeFirst();
+
+      expect(row!.status,).toBe("answered",);
+      const after = await countRecorded();
+      expect(after - before,).toBe(1,);
+    });
+
     it("throws not_open for an expired question", async () => {
       const expiredId = uid();
       await insertRpgQuestions(db, chatId, emitterActorId, "custom", "Too late", JSON.stringify(options,), {
