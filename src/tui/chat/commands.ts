@@ -7,7 +7,7 @@
  * The server dispatches ~40 commands during message creation and serves the
  * live registry from `GET /api/v1/commands` (src/routes/commands/index.ts).
  * This module turns that registry into a status-bar hint plus a select/commit
- * state machine for the chat input box — no second screen, no blessed import,
+ * state machine for the chat input box — no second screen, no engine import,
  * so every branch is testable without a terminal.
  *
  * The registry is fetched lazily on the first `/` the user types, not at boot:
