@@ -78,6 +78,19 @@ describe("card-battle tool copy vs route truth", () => {
     }
   });
 
+  test("the tool and the route reject the same difficulty with the same message", async () => {
+    const tool = collectTool();
+    const toolResult = await tool.handler({ action: "start", difficulty: "impossible" });
+    const res = await handleStart(new Request(START_URL, {
+      method: "POST",
+      body: JSON.stringify({ difficulty: "impossible" }),
+    }));
+    expect(res!.status).toBe(400);
+    const body = await json(res);
+    expect(toolResult.isError).toBe(true);
+    expect(toolResult.content).toBe(body.error);
+  });
+
   test("the actions endpoint lists exactly the advertised actions", async () => {
     const res = await handleActions(new Request(ACTIONS_URL, { method: "GET" }));
     const body = await json(res);

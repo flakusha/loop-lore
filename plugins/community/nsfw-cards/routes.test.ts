@@ -12,7 +12,7 @@
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { dispatchPluginRoute, registry, } from "../../../src/plugins/loader";
-import type { PluginContext, RouteDefinition, } from "../../../src/plugins/types";
+import type { PluginContext, RouteDefinition, ToolDefinition, } from "../../../src/plugins/types";
 import { plugin, } from "./plugin";
 import { handlePlay, handleStart, } from "./routes";
 import type { SeductionRound, SeductionState, } from "./types";
@@ -92,6 +92,60 @@ describe("nsfw-cards route gating", () => {
     },);
     const resPlay = await handlePlay(reqPlay,);
     expect(resPlay?.status,).toBe(403,);
+  });
+});
+
+describe("nsfw-cards input validation", () => {
+  /** Capture the tool the plugin registers without running real hooks. */
+  function collectTool(): ToolDefinition {
+    let tool: ToolDefinition | undefined;
+    const ctx = {
+      registerApiRoute: () => {},
+      registerTool: (t: ToolDefinition) => {
+        tool = t;
+      },
+      registerAgentRole: () => {},
+      logger: { info: () => {}, warn: () => {}, error: () => {}, debug: () => {} },
+    } as unknown as PluginContext;
+    void plugin.onLoad?.(ctx,);
+    if (!tool) throw new Error("nsfw-cards registered no tool");
+    return tool;
+  }
+
+  test("the route rejects a difficulty outside the advertised set", async () => {
+    const caller = { userId: "u1", userRole: "admin", };
+    const res = await handleStart(
+      new Request(START, { method: "POST", body: JSON.stringify({ difficulty: "impossible", }), },),
+      caller,
+    );
+    expect(res?.status,).toBe(400,);
+    const body = (await res!.json()) as { error: string };
+    expect(body.error,).toBe("difficulty must be one of: easy, medium, hard",);
+  });
+
+  test("the route rejects a hand size outside 3-7", async () => {
+    const caller = { userId: "u1", userRole: "admin", };
+    const res = await handleStart(
+      new Request(START, { method: "POST", body: JSON.stringify({ handSize: 9, }), },),
+      caller,
+    );
+    expect(res?.status,).toBe(400,);
+    const body = (await res!.json()) as { error: string };
+    expect(body.error,).toBe("handSize must be 3-7",);
+  });
+
+  test("the tool rejects a card type outside the advertised set", async () => {
+    const tool = collectTool();
+    const result = await tool.handler({ cardType: "banana", cardPower: 3, },);
+    expect(result.isError,).toBe(true,);
+    expect(result.content,).toBe("cardType must be one of: flirt, charm, tease, compliment, touch, kiss",);
+  });
+
+  test("the tool rejects a card power outside 1-5", async () => {
+    const tool = collectTool();
+    const result = await tool.handler({ cardType: "flirt", cardPower: 9, },);
+    expect(result.isError,).toBe(true,);
+    expect(result.content,).toBe("Card power must be between 1 and 5.",);
   });
 });
 

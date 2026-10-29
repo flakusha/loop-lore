@@ -11,6 +11,7 @@
 
 import type { PluginManifest } from "../../../src/plugins/types";
 import { handleStart, handlePlay } from "./routes";
+import { parseToolBody } from "./schema";
 
 export const plugin: PluginManifest = {
   name: "nsfw-cards",
@@ -68,12 +69,11 @@ export const plugin: PluginManifest = {
       handler: async (params) => {
         const { initSeduction, playSeductionCard, cardToString } = await import("./engine");
 
-        const cardType = params.cardType as string;
-        const cardPower = params.cardPower as number;
-
-        if (cardPower < 1 || cardPower > 5) {
-          return { content: "Card power must be between 1 and 5.", isError: true };
+        const input = parseToolBody({ cardType: params.cardType, cardPower: params.cardPower });
+        if (!input.ok) {
+          return { content: input.error, isError: true };
         }
+        const { cardType, cardPower } = input.value;
 
         // For AI tool, create a quick encounter if no state provided
         const state = initSeduction("medium", 5);

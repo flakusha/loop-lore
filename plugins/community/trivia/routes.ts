@@ -7,18 +7,10 @@
 
 import { startSession, answerQuestion, getCurrentQuestion, getCategories } from "./engine";
 import { jsonResponse, jsonError, HttpStatus } from "../../../src/routes/http-utils";
-import { TRIVIA_CATEGORIES, TRIVIA_DIFFICULTIES } from "./types";
-import type { TriviaCategory, TriviaDifficulty, TriviaQuestion, TriviaSession } from "./types";
-
-/** Narrow an untrusted string to a known category. */
-export function isCategory(value: string): value is TriviaCategory {
-  return (TRIVIA_CATEGORIES as readonly string[]).includes(value);
-}
-
-/** Narrow an untrusted string to a known difficulty. */
-export function isDifficulty(value: string): value is TriviaDifficulty {
-  return (TRIVIA_DIFFICULTIES as readonly string[]).includes(value);
-}
+import { readJsonBody } from "../../validation";
+import { parseAnswerBody, parseStartBody } from "./schema";
+import { TRIVIA_DIFFICULTIES } from "./types";
+import type { TriviaQuestion, TriviaSession } from "./types";
 
 /**
  * Validate an answer index against the question on screen.
@@ -58,28 +50,19 @@ export async function handleStart(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
   if (url.pathname !== "/api/trivia/start" || request.method !== "POST") return null;
 
-  let body: Record<string, unknown> = {};
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch { /* empty body ok */ }
-
-  const category = typeof body.category === "string" ? body.category : undefined;
-  const difficulty = typeof body.difficulty === "string" ? body.difficulty : undefined;
-  const questionCount = typeof body.questionCount === "number" ? body.questionCount : 5;
-
-  if (category !== undefined && !isCategory(category)) {
-    return jsonError(`category must be one of: ${TRIVIA_CATEGORIES.join(", ")}`, HttpStatus.BadRequest);
+  const body = await readJsonBody(request);
+  if (!body.ok) {
+    return jsonError(body.error, HttpStatus.BadRequest);
   }
-  if (difficulty !== undefined && !isDifficulty(difficulty)) {
-    return jsonError(`difficulty must be one of: ${TRIVIA_DIFFICULTIES.join(", ")}`, HttpStatus.BadRequest);
-  }
-  if (!Number.isInteger(questionCount) || questionCount < 1) {
-    return jsonError("questionCount must be a positive integer", HttpStatus.BadRequest);
+
+  const input = parseStartBody(body.value);
+  if (!input.ok) {
+    return jsonError(input.error, HttpStatus.BadRequest);
   }
 
   try {
     gcSessions();
-    const session = startSession(category, difficulty, questionCount);
+    const session = startSession(input.value.category, input.value.difficulty, input.value.questionCount);
     sessions.set(session.id, session);
 
     const current = getCurrentQuestion(session);
@@ -104,32 +87,28 @@ export async function handleAnswer(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
   if (url.pathname !== "/api/trivia/answer" || request.method !== "POST") return null;
 
-  let body: Record<string, unknown>;
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return jsonError("Invalid JSON body", HttpStatus.BadRequest);
+  const body = await readJsonBody(request);
+  if (!body.ok) {
+    return jsonError(body.error, HttpStatus.BadRequest);
   }
 
-  if (typeof body.sessionId !== "string") {
-    return jsonError("sessionId is required", HttpStatus.BadRequest);
-  }
-  if (typeof body.answerIndex !== "number") {
-    return jsonError("answerIndex is required (number)", HttpStatus.BadRequest);
+  const input = parseAnswerBody(body.value);
+  if (!input.ok) {
+    return jsonError(input.error, HttpStatus.BadRequest);
   }
 
-  const session = sessions.get(body.sessionId);
+  const session = sessions.get(input.value.sessionId);
   if (!session) {
     return jsonError("Session not found or expired", HttpStatus.NotFound);
   }
 
-  const indexError = validateAnswerIndex(body.answerIndex, getCurrentQuestion(session));
+  const indexError = validateAnswerIndex(input.value.answerIndex, getCurrentQuestion(session));
   if (indexError) {
     return jsonError(indexError, HttpStatus.BadRequest);
   }
 
   try {
-    const result = answerQuestion(session, body.answerIndex);
+    const result = answerQuestion(session, input.value.answerIndex);
     const nextQuestion = getCurrentQuestion(session);
 
     if (session.finished) {
