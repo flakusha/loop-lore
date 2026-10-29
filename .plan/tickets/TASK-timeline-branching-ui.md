@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** G2 timeline branching UI on world detail page
 **Priority:** P0 — Critical
 **Epic:** epic-timeline-system
 **Related:** `TASK-timeline-in-chat-command.md` (in-chat /timeline command complementing this fixed-flow UI)
