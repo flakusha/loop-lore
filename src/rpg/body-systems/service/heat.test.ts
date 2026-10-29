@@ -152,10 +152,9 @@ describe("body-systems/heat/advanceHeatCycle", () => {
     // both wrote 20 (final 20, one advance lost). Now the read and the
     // conditional write are one atomic unit, so the pair lands 30 -> 20
     // -> 10 even when the reads overlap.
-    const results = await Promise.all([
-      advanceHeatCycle(db, "actor-1", 10,),
-      advanceHeatCycle(db, "actor-1", 10,),
-    ],);
+    const racerA = () => advanceHeatCycle(db, "actor-1", 10,);
+    const racerB = () => advanceHeatCycle(db, "actor-1", 10,);
+    const results = await Promise.all([racerA(), racerB(),],);
 
     expect(results,).toHaveLength(2,);
     const cycle = await getHeatCycle(db, "actor-1", "catgirl",);
