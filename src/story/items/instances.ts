@@ -70,15 +70,33 @@ export async function transfer(
 
     const actualTransfer = Math.min(quantity, source.quantity,);
     const remaining = source.quantity - actualTransfer;
+    // Conditional write: a concurrent transfer that already drained or
+    // moved the row leaves 0 affected rows, so the loser fails instead of
+    // over-decrementing past zero (transaction alone cannot catch this —
+    // both readers see the same pre-image inside their own snapshot).
     if (remaining <= 0) {
-      await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,).execute();
+      const deleted = await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where(
+        "world_id",
+        "=",
+        worldId,
+      )
+        .where("quantity", "=", source.quantity,).executeTakeFirst();
+
+      if (Number(deleted.numDeletedRows ?? 0,) === 0) {
+        return { success: false, fromRemaining: 0, toQuantity: 0, transferred: 0, };
+      }
     } else {
-      await db
+      const decremented = await db
         .updateTable("world_items",)
         .set({ quantity: remaining, },)
         .where("id", "=", worldItemId,)
         .where("world_id", "=", worldId,)
-        .execute();
+        .where("quantity", "=", source.quantity,)
+        .executeTakeFirst();
+
+      if (Number(decremented.numUpdatedRows ?? 0,) === 0) {
+        return { success: false, fromRemaining: 0, toQuantity: 0, transferred: 0, };
+      }
     }
 
     if (toLocationId || toActorId) {
