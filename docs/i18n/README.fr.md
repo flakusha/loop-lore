@@ -26,7 +26,7 @@ multi-backend — sur des bases saines :
 - **Basé sur une base de données** — `bun:sqlite` en local, PostgreSQL
   à distance (constructeur de requêtes Kysely)
 - **Mode TUI** — interface terminal basée sur blessed (pas de navigateur
-  requis)
+  requis ; migration du moteur de rendu vers `pi-tui` en cours)
 - **Web UI** — htmx + Alpine.js (léger, pas d'étape de build)
 - **Ressources** — images/audio/vidéo liées polymorphiquement à toute
   entité
