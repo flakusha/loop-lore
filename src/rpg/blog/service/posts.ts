@@ -241,18 +241,23 @@ export async function updatePost(
     updates.metadata = jsonStringifyOr(input.metadata,);
   }
 
-  await db
-    .updateTable("blog_posts",)
-    .set(updates,)
-    .where("id", "=", id,)
-    .execute();
+  // Post + tag rows are one atomic unit: a mid-sequence tag failure must
+  // not strand the scalar update without its tags
+  // (BUG-service-layer-multi-query-mutations-run-without-transactions).
+  await db.transaction().execute(async (trx,) => {
+    await trx
+      .updateTable("blog_posts",)
+      .set(updates,)
+      .where("id", "=", id,)
+      .execute();
 
-  if (input.tags !== undefined) {
-    await clearTags(db, id,);
-    if (input.tags.length > 0) {
-      await addTags(db, id, input.tags,);
+    if (input.tags !== undefined) {
+      await clearTags(trx, id,);
+      if (input.tags.length > 0) {
+        await addTags(trx, id, input.tags,);
+      }
     }
-  }
+  },);
 
   return getPost(db, id,);
 }
