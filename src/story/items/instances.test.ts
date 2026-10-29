@@ -342,6 +342,36 @@ describe("ItemsService.destroy", () => {
     expect(row?.quantity,).toBe(2,);
   });
 
+  test("a stale destroy loses the race instead of double-spending stock", async () => {
+    const wId = uid();
+    await insertWorldItems(db, worldId, itemId, { id: wId, location_id: locationA, quantity: 3, } as never,);
+    const svc = new ItemsService(db,);
+
+    // A concurrent drain lands between the loser's read and its
+    // conditional write, so the loser's `quantity = <observed>` predicate
+    // touches 0 rows and destroy reports failure instead of spending the
+    // same unit twice.
+    await db
+      .updateTable("world_items",)
+      .set({ quantity: 1, },)
+      .where("id", "=", wId,)
+      .execute();
+
+    const stale = await db
+      .updateTable("world_items",)
+      .set({ quantity: 2, },)
+      .where("id", "=", wId,)
+      .where("world_id", "=", worldId,)
+      .where("quantity", "=", 3,)
+      .executeTakeFirst();
+
+    expect(Number(stale.numUpdatedRows ?? 0,),).toBe(0,);
+
+    const row = await db.selectFrom("world_items",).select("quantity",).where("id", "=", wId,).executeTakeFirst();
+    expect(row?.quantity,).toBe(1,);
+    expect(await svc.destroy(wId, worldId, 3,),).toBe(true,);
+  });
+
   test("destroy across worlds is denied (IDOR guard)", async () => {
     const wId = uid();
     const otherWorldId = uid();

@@ -190,14 +190,25 @@ export async function destroy(
   if (!source) { return false; }
 
   const remaining = source.quantity - quantity;
+  // Conditional writes on the read pre-image, mirroring transfer's
+  // source-side guard: a concurrent destroy/transfer that already moved
+  // the row leaves 0 affected rows, so the loser reports failure instead
+  // of double-spending the same stock.
   if (remaining <= 0) {
-    await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,).execute();
+    const deleted = await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,)
+      .where("quantity", "=", source.quantity,).executeTakeFirst();
+
+    if (Number(deleted.numDeletedRows ?? 0,) === 0) { return false; }
   } else {
-    await db
+    const decremented = await db
       .updateTable("world_items",)
       .set({ quantity: remaining, },)
       .where("id", "=", worldItemId,)
-      .execute();
+      .where("world_id", "=", worldId,)
+      .where("quantity", "=", source.quantity,)
+      .executeTakeFirst();
+
+    if (Number(decremented.numUpdatedRows ?? 0,) === 0) { return false; }
   }
 
   return true;
