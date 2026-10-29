@@ -10,7 +10,7 @@ output is byte-identical for identical inputs.
 
 - tickets: 3727
 - epics: 355
-- src paths owned: 4484\n- edges: produces 11788, consumes 405, sibling 35818, owns 2708, related 1193
+- src paths owned: 4492\n- edges: produces 11817, consumes 405, sibling 35880, owns 2708, related 1193
 
 ## Shared src hubs
 
