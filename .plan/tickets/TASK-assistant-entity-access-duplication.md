@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Task
@@ -129,3 +129,5 @@ Duplication requires user confirmation before persisting. The confirmation messa
 
 - `src/assistant/adapter/entity.ts` — EntityAccessor interface
 - `src/assistant/quality/entity-creation.ts` — Quality gates (reuse)
+
+**Resolved:** 2026-10-29 registry-driven close: git issue d27f7df (registry tip: d5623ea3a Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ASSISTANT-ENTITY-ACCESS-DUP)
