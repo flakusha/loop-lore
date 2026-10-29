@@ -8618,7 +8618,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md",
       "title": "Service-layer multi-query mutations run without transactions or conditional writes",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/mood-service/log-event.ts",
         "src/rpg/achievements/service/crud.ts",
@@ -21264,6 +21264,15 @@
       "related": []
     },
     {
+      "id": "TASK-bridge-auto-editor-handoff",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-bridge-auto-editor-handoff.md",
+      "title": "Bridge auto-editor handoff",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix-biboumi-e",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix-biboumi-e.md",
@@ -21279,6 +21288,24 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-bridge-file-watch-roundtrip.md",
       "title": "Bridge file-watch roundtrip",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-bridge-mlt-melt-render-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-bridge-mlt-melt-render-tier.md",
+      "title": "Bridge MLT melt render tier",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-bridge-rawtherapee-ingestion",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-bridge-rawtherapee-ingestion.md",
+      "title": "Bridge rawtherapee/darktable photographic ingestion",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -29678,6 +29705,15 @@
       ]
     },
     {
+      "id": "TASK-from-asset-i2v-flow",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-from-asset-i2v-flow.md",
+      "title": "From-asset i2v flow",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-frontend-actor-traits-location-and-world",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-frontend-actor-traits-location-and-world.md",
@@ -33294,6 +33330,163 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-item-system-extensions.md",
       "title": "# TASK-2026-049: Item System Extensions - Usable/Collectable/Consumable",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-annotations-surface",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-annotations-surface.md",
+      "title": "IVSS annotations surface",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-assistant-scenario-workflow",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-assistant-scenario-workflow.md",
+      "title": "IVSS assistant scenario workflow",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-collab-claim-and-roles",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-collab-claim-and-roles.md",
+      "title": "IVSS collab claim and roles",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-continuation-and-assembly",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-continuation-and-assembly.md",
+      "title": "IVSS continuation and assembly",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-cross-reference-surface",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-cross-reference-surface.md",
+      "title": "IVSS cross-reference surface",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-export-bundle-profiles",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-export-bundle-profiles.md",
+      "title": "IVSS export bundle profiles",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-mask-painter-frontend",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-mask-painter-frontend.md",
+      "title": "IVSS mask painter frontend",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-minipaint-photopea-handoff",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-minipaint-photopea-handoff.md",
+      "title": "IVSS minipaint photopea handoff",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-run-jobs-queue-gating",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-run-jobs-queue-gating.md",
+      "title": "IVSS run jobs queue gating",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-run-validation-gate",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-run-validation-gate.md",
+      "title": "IVSS run validation gate",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-scenario-crud-and-pages",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-scenario-crud-and-pages.md",
+      "title": "IVSS scenario CRUD and pages",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-scenario-schema",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-scenario-schema.md",
+      "title": "IVSS scenario schema",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-shot-grammar-assembler",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-shot-grammar-assembler.md",
+      "title": "IVSS shot grammar assembler",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/memory/budget.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-shot-timeline-widget",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-shot-timeline-widget.md",
+      "title": "IVSS shot timeline widget",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-storyboard-excalidraw",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-storyboard-excalidraw.md",
+      "title": "IVSS storyboard excalidraw",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-video-metadata-extractor",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-video-metadata-extractor.md",
+      "title": "IVSS video metadata extractor",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/metadata.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-ivss-video-run-pipeline",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ivss-video-run-pipeline.md",
+      "title": "IVSS video run pipeline",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -42068,7 +42261,7 @@
       "id": "TASK-sd-cpp-provider",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-sd-cpp-provider.md",
-      "title": "sd.cpp provider — secondary-backend adapter (Phase 1)",
+      "title": "sd.cpp provider — ComfyUI-first opt-in fallback adapter (Phase 1)",
       "status": "Not Started",
       "srcRefs": [
         "src/assistant/commands/image.ts",
@@ -42087,7 +42280,7 @@
       "id": "TASK-sd-cpp-reference-edit-parity",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-sd-cpp-reference-edit-parity.md",
-      "title": "sd.cpp reference-edit parity — capability flag + fallback",
+      "title": "sd.cpp reference-edit parity — RESCOPED: record non-capability only",
       "status": "Not Started",
       "srcRefs": [
         "src/generation/image-engine/sdcpp.ts"
@@ -44698,6 +44891,15 @@
       "related": []
     },
     {
+      "id": "TASK-ui-api-workflow-converter",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-ui-api-workflow-converter.md",
+      "title": "UI API workflow converter",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-unified-hold-semantics-per-chat-pause-gates-primary-generate",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-unified-hold-semantics-per-chat-pause-gates-primary-generate.md",
@@ -46035,6 +46237,15 @@
         "src/config/templates-loader.ts",
         "src/config/workflow-templates.test.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-workflow-payload-preview-step-type",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-workflow-payload-preview-step-type.md",
+      "title": "Workflow payload preview step type",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -50107,6 +50318,18 @@
       "related": []
     },
     {
+      "id": "epic-image-video-scenario-studio",
+      "kind": "epic",
+      "path": ".plan/epics/epic-image-video-scenario-studio.md",
+      "title": "Image/Video Scenario Studio",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/metadata.ts",
+        "src/memory/budget.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "epic-immersion-consistency-gate",
       "kind": "epic",
       "path": ".plan/epics/epic-immersion-consistency-gate.md",
@@ -53882,10 +54105,12 @@
         "TASK-asset-b1-rendition-pipeline",
         "TASK-assets-has-alpha-column-and-store-computation",
         "TASK-comparison-cell-detail-metadata",
+        "TASK-ivss-video-metadata-extractor",
         "TASK-multimodal-asset-reuse",
         "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
         "TASK-webp-as-a-first-class-stored-asset-format",
         "epic-asset-generation-metadata",
+        "epic-image-video-scenario-studio",
         "epic-technical-comparison-charts"
       ]
     },
@@ -73002,10 +73227,12 @@
         "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
         "TASK-context-injection-dedup",
         "TASK-harness-context-priority-tiers",
+        "TASK-ivss-shot-grammar-assembler",
         "TASK-memory-history-search-bind-message-chain-reconstructable-con",
         "epic-chat-context-optimization",
         "epic-harness-integration",
         "epic-hidden-carriage-context",
+        "epic-image-video-scenario-studio",
         "epic-scene-environment-world-generation"
       ]
     },
@@ -91219,21 +91446,6 @@
       "to": "TASK-tts-edge-integration"
     },
     {
-      "from": "epic-audio-video-sound",
-      "kind": "owns",
-      "to": "TASK-video-gen-route"
-    },
-    {
-      "from": "epic-audio-video-sound",
-      "kind": "owns",
-      "to": "TASK-video-provider-minimax-h3"
-    },
-    {
-      "from": "epic-audio-video-sound",
-      "kind": "owns",
-      "to": "TASK-video-template-schema"
-    },
-    {
       "from": "epic-auth-access",
       "kind": "owns",
       "to": "BUG-admin-providers-list-endpoint-is-public"
@@ -93734,6 +93946,11 @@
       "to": "TASK-implement-entity-based-asset-access-via-asset-links"
     },
     {
+      "from": "epic-comfyui-first-class-citizen",
+      "kind": "owns",
+      "to": "TASK-ui-api-workflow-converter"
+    },
+    {
       "from": "epic-comfyui-lifecycle",
       "kind": "owns",
       "to": "TASK-comfyui-launch-contract-llama-swap-recipe-and-docs"
@@ -95481,7 +95698,22 @@
     {
       "from": "epic-external-creative-tool-bridge",
       "kind": "owns",
+      "to": "TASK-bridge-auto-editor-handoff"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
       "to": "TASK-bridge-file-watch-roundtrip"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
+      "to": "TASK-bridge-mlt-melt-render-tier"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
+      "to": "TASK-bridge-rawtherapee-ingestion"
     },
     {
       "from": "epic-external-creative-tool-bridge",
@@ -97152,6 +97384,91 @@
       "from": "epic-image-prompt-templating",
       "kind": "owns",
       "to": "TASK-resolve-dormant-emotionentry-prompt-field"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-annotations-surface"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-assistant-scenario-workflow"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-collab-claim-and-roles"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-continuation-and-assembly"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-cross-reference-surface"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-export-bundle-profiles"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-mask-painter-frontend"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-minipaint-photopea-handoff"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-run-jobs-queue-gating"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-run-validation-gate"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-scenario-crud-and-pages"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-scenario-schema"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-shot-grammar-assembler"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-shot-timeline-widget"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-storyboard-excalidraw"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-video-metadata-extractor"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "owns",
+      "to": "TASK-ivss-video-run-pipeline"
     },
     {
       "from": "epic-immersion-consistency-gate",
@@ -98842,6 +99159,11 @@
       "from": "epic-multimodal-asset-reuse",
       "kind": "owns",
       "to": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-"
+    },
+    {
+      "from": "epic-multimodal-asset-reuse",
+      "kind": "owns",
+      "to": "TASK-from-asset-i2v-flow"
     },
     {
       "from": "epic-multimodal-asset-reuse",
@@ -102689,6 +103011,21 @@
       "to": "TASK-vector-gen-svg-serve-safety"
     },
     {
+      "from": "epic-video-generation",
+      "kind": "owns",
+      "to": "TASK-video-gen-route"
+    },
+    {
+      "from": "epic-video-generation",
+      "kind": "owns",
+      "to": "TASK-video-provider-minimax-h3"
+    },
+    {
+      "from": "epic-video-generation",
+      "kind": "owns",
+      "to": "TASK-video-template-schema"
+    },
+    {
       "from": "epic-view-set-generation",
       "kind": "owns",
       "to": "TASK-view-set-assistant-workflow"
@@ -102972,6 +103309,11 @@
       "from": "epic-workflow-engine",
       "kind": "owns",
       "to": "TASK-workflow-engine-schema-loader-template-types-workflow-discov"
+    },
+    {
+      "from": "epic-workflow-engine",
+      "kind": "owns",
+      "to": "TASK-workflow-payload-preview-step-type"
     },
     {
       "from": "epic-workflow-engine",
@@ -137289,6 +137631,16 @@
       "to": "src/rpg/items.ts"
     },
     {
+      "from": "TASK-ivss-shot-grammar-assembler",
+      "kind": "produces",
+      "to": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-ivss-video-metadata-extractor",
+      "kind": "produces",
+      "to": "src/assets/metadata.ts"
+    },
+    {
       "from": "TASK-join-flow-mechanics",
       "kind": "produces",
       "to": "src/chat/join-flow.ts"
@@ -157299,6 +157651,16 @@
       "to": "src/server/static-files.ts"
     },
     {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "produces",
+      "to": "src/assets/metadata.ts"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "produces",
+      "to": "src/memory/budget.ts"
+    },
+    {
       "from": "epic-immersion-consistency-gate",
       "kind": "produces",
       "to": "src/battle/resolution-integration/checks.ts"
@@ -177244,6 +177606,12 @@
     {
       "from": "BUG-asset-webp-metadata-vp8l-vp8x-off-bytes",
       "kind": "sibling",
+      "to": "TASK-ivss-video-metadata-extractor",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-asset-webp-metadata-vp8l-vp8x-off-bytes",
+      "kind": "sibling",
       "to": "TASK-multimodal-asset-reuse",
       "via": "src/assets/metadata.ts"
     },
@@ -177263,6 +177631,12 @@
       "from": "BUG-asset-webp-metadata-vp8l-vp8x-off-bytes",
       "kind": "sibling",
       "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-asset-webp-metadata-vp8l-vp8x-off-bytes",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
       "via": "src/assets/metadata.ts"
     },
     {
@@ -177298,6 +177672,12 @@
     {
       "from": "BUG-asset-webp-vp8x-dimension-truncation",
       "kind": "sibling",
+      "to": "TASK-ivss-video-metadata-extractor",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-asset-webp-vp8x-dimension-truncation",
+      "kind": "sibling",
       "to": "TASK-multimodal-asset-reuse",
       "via": "src/assets/metadata.ts"
     },
@@ -177317,6 +177697,12 @@
       "from": "BUG-asset-webp-vp8x-dimension-truncation",
       "kind": "sibling",
       "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-asset-webp-vp8x-dimension-truncation",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
       "via": "src/assets/metadata.ts"
     },
     {
@@ -236590,6 +236976,12 @@
     {
       "from": "BUG-size-strict-pre-existing-dev-drift",
       "kind": "sibling",
+      "to": "TASK-ivss-video-metadata-extractor",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-size-strict-pre-existing-dev-drift",
+      "kind": "sibling",
       "to": "TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds",
       "via": "src/generation/providers/comfyui.ts"
     },
@@ -237000,6 +237392,12 @@
       "kind": "sibling",
       "to": "epic-http-protocol-features",
       "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "BUG-size-strict-pre-existing-dev-drift",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "BUG-size-strict-pre-existing-dev-drift",
@@ -249004,6 +249402,12 @@
     {
       "from": "FEAT-2026-003",
       "kind": "sibling",
+      "to": "TASK-ivss-shot-grammar-assembler",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "FEAT-2026-003",
+      "kind": "sibling",
       "to": "TASK-llm-markdown-document-prompts",
       "via": "src/memory/extraction.ts"
     },
@@ -249095,6 +249499,12 @@
       "from": "FEAT-2026-003",
       "kind": "sibling",
       "to": "epic-hidden-carriage-context",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "FEAT-2026-003",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
       "via": "src/memory/budget.ts"
     },
     {
@@ -260620,6 +261030,12 @@
     {
       "from": "FEAT-relevance-gated-memory-injection-with-classifier-or-reranker",
       "kind": "sibling",
+      "to": "TASK-ivss-shot-grammar-assembler",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "FEAT-relevance-gated-memory-injection-with-classifier-or-reranker",
+      "kind": "sibling",
       "to": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
       "via": "src/memory/budget.ts"
     },
@@ -260639,6 +261055,12 @@
       "from": "FEAT-relevance-gated-memory-injection-with-classifier-or-reranker",
       "kind": "sibling",
       "to": "epic-hidden-carriage-context",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "FEAT-relevance-gated-memory-injection-with-classifier-or-reranker",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
       "via": "src/memory/budget.ts"
     },
     {
@@ -263104,6 +263526,12 @@
     {
       "from": "IDEA-memory-knowledge-isolation-and-world-timeline",
       "kind": "sibling",
+      "to": "TASK-ivss-shot-grammar-assembler",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "IDEA-memory-knowledge-isolation-and-world-timeline",
+      "kind": "sibling",
       "to": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
       "via": "src/memory/budget.ts"
     },
@@ -263123,6 +263551,12 @@
       "from": "IDEA-memory-knowledge-isolation-and-world-timeline",
       "kind": "sibling",
       "to": "epic-hidden-carriage-context",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "IDEA-memory-knowledge-isolation-and-world-timeline",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
       "via": "src/memory/budget.ts"
     },
     {
@@ -280636,6 +281070,12 @@
     {
       "from": "TASK-asset-b1-rendition-pipeline",
       "kind": "sibling",
+      "to": "TASK-ivss-video-metadata-extractor",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-asset-b1-rendition-pipeline",
+      "kind": "sibling",
       "to": "TASK-multimodal-asset-reuse",
       "via": "src/assets/metadata.ts"
     },
@@ -280716,6 +281156,12 @@
       "kind": "sibling",
       "to": "epic-federation-offload-quotas",
       "via": "src/db/schema-content.ts"
+    },
+    {
+      "from": "TASK-asset-b1-rendition-pipeline",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-asset-b1-rendition-pipeline",
@@ -281500,6 +281946,12 @@
     {
       "from": "TASK-assets-has-alpha-column-and-store-computation",
       "kind": "sibling",
+      "to": "TASK-ivss-video-metadata-extractor",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-assets-has-alpha-column-and-store-computation",
+      "kind": "sibling",
       "to": "TASK-middleware-content-assets-gallery-hashing-validation",
       "via": "src/assets/service/create.ts"
     },
@@ -281604,6 +282056,12 @@
       "kind": "sibling",
       "to": "epic-encryption-workflow",
       "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-assets-has-alpha-column-and-store-computation",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-assets-has-alpha-column-and-store-computation",
@@ -307456,6 +307914,12 @@
     {
       "from": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
       "kind": "sibling",
+      "to": "TASK-ivss-shot-grammar-assembler",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
+      "kind": "sibling",
       "to": "TASK-llm-markdown-document-prompts",
       "via": "src/memory/extraction.ts"
     },
@@ -307566,6 +308030,12 @@
       "kind": "sibling",
       "to": "epic-hidden-carriage-context",
       "via": "src/memory/budget.ts; src/memory/provision.ts"
+    },
+    {
+      "from": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/memory/budget.ts"
     },
     {
       "from": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
@@ -312964,6 +313434,12 @@
     {
       "from": "TASK-comparison-cell-detail-metadata",
       "kind": "sibling",
+      "to": "TASK-ivss-video-metadata-extractor",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-comparison-cell-detail-metadata",
+      "kind": "sibling",
       "to": "TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds",
       "via": "src/generation/providers/comfyui.ts"
     },
@@ -313146,6 +313622,12 @@
       "kind": "sibling",
       "to": "epic-frontend-gallery",
       "via": "src/partials/gallery/preview-modal.html"
+    },
+    {
+      "from": "TASK-comparison-cell-detail-metadata",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-comparison-cell-detail-metadata",
@@ -316162,6 +316644,12 @@
     {
       "from": "TASK-context-injection-dedup",
       "kind": "sibling",
+      "to": "TASK-ivss-shot-grammar-assembler",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-context-injection-dedup",
+      "kind": "sibling",
       "to": "TASK-matrix-story-coherence-perspective-aware-draft-set-perspecti",
       "via": "src/memory/provision.ts"
     },
@@ -316206,6 +316694,12 @@
       "kind": "sibling",
       "to": "epic-hidden-carriage-context",
       "via": "src/memory/budget.ts; src/memory/provision.ts"
+    },
+    {
+      "from": "TASK-context-injection-dedup",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/memory/budget.ts"
     },
     {
       "from": "TASK-context-injection-dedup",
@@ -338998,6 +339492,12 @@
     {
       "from": "TASK-harness-context-priority-tiers",
       "kind": "sibling",
+      "to": "TASK-ivss-shot-grammar-assembler",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-harness-context-priority-tiers",
+      "kind": "sibling",
       "to": "TASK-matrix-story-coherence-perspective-aware-draft-set-perspecti",
       "via": "src/memory/provision.ts"
     },
@@ -339132,6 +339632,12 @@
       "kind": "sibling",
       "to": "epic-hidden-carriage-context",
       "via": "src/assistant/prompt/registry.ts; src/memory/budget.ts; src/memory/provision.ts"
+    },
+    {
+      "from": "TASK-harness-context-priority-tiers",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/memory/budget.ts"
     },
     {
       "from": "TASK-harness-context-priority-tiers",
@@ -345116,6 +345622,78 @@
       "via": "src/rpg/items.ts"
     },
     {
+      "from": "TASK-ivss-shot-grammar-assembler",
+      "kind": "sibling",
+      "to": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-ivss-shot-grammar-assembler",
+      "kind": "sibling",
+      "to": "epic-chat-context-optimization",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-ivss-shot-grammar-assembler",
+      "kind": "sibling",
+      "to": "epic-harness-integration",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-ivss-shot-grammar-assembler",
+      "kind": "sibling",
+      "to": "epic-hidden-carriage-context",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-ivss-shot-grammar-assembler",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-ivss-shot-grammar-assembler",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-ivss-video-metadata-extractor",
+      "kind": "sibling",
+      "to": "TASK-multimodal-asset-reuse",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-ivss-video-metadata-extractor",
+      "kind": "sibling",
+      "to": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-ivss-video-metadata-extractor",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-ivss-video-metadata-extractor",
+      "kind": "sibling",
+      "to": "epic-asset-generation-metadata",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-ivss-video-metadata-extractor",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-ivss-video-metadata-extractor",
+      "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/assets/metadata.ts"
+    },
+    {
       "from": "TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl",
       "kind": "sibling",
       "to": "TASK-publication-reader-locale-selector",
@@ -349043,6 +349621,12 @@
       "from": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
       "kind": "sibling",
       "to": "epic-hidden-carriage-context",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
       "via": "src/memory/budget.ts"
     },
     {
@@ -353322,6 +353906,12 @@
       "kind": "sibling",
       "to": "epic-external-creative-tool-bridge",
       "via": "src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "TASK-multimodal-asset-reuse",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-multimodal-asset-reuse",
@@ -362218,6 +362808,12 @@
     {
       "from": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
       "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assets/metadata.ts"
     },
@@ -369652,6 +370248,12 @@
     {
       "from": "TASK-webp-as-a-first-class-stored-asset-format",
       "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/assets/service/create.ts; src/assets/service/detect.ts"
     },
@@ -373336,6 +373938,12 @@
     {
       "from": "epic-asset-generation-metadata",
       "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "epic-asset-generation-metadata",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assets/metadata.ts"
     },
@@ -376884,6 +377492,12 @@
       "kind": "sibling",
       "to": "epic-harness-integration",
       "via": "src/memory/budget.ts; src/memory/provision.ts"
+    },
+    {
+      "from": "epic-chat-context-optimization",
+      "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/memory/budget.ts"
     },
     {
       "from": "epic-chat-context-optimization",
@@ -381334,6 +381948,12 @@
     {
       "from": "epic-harness-integration",
       "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "epic-harness-integration",
+      "kind": "sibling",
       "to": "epic-llm-request-scheduler",
       "via": "src/config/schema/generation.ts"
     },
@@ -381472,6 +382092,12 @@
     {
       "from": "epic-hidden-carriage-context",
       "kind": "sibling",
+      "to": "epic-image-video-scenario-studio",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "epic-hidden-carriage-context",
+      "kind": "sibling",
       "to": "epic-project-spaces-pm-integration",
       "via": "src/memory/provision.ts"
     },
@@ -381516,6 +382142,18 @@
       "kind": "sibling",
       "to": "epic-skills-professions-config",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "sibling",
+      "to": "epic-scene-environment-world-generation",
+      "via": "src/memory/budget.ts"
+    },
+    {
+      "from": "epic-image-video-scenario-studio",
+      "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "epic-immersion-consistency-gate",

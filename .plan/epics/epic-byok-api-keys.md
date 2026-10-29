@@ -279,8 +279,13 @@ interface PlayerProviderConfig {
 |---|---|---|
 | `openai` | `src/generation/image-engine/openai.ts` -- POSTs `${baseUrl}/v1/images/generations` with `Authorization: Bearer ${apiKey}` (`:22-25`) | **Yes -- hosted** |
 | `sdapi` | `src/generation/image-engine/sdapi.ts` | Usually local |
-| `sdcpp` | `src/generation/image-engine/sdcpp.ts` | Local |
+| `sdcpp` | `src/generation/image-engine/sdcpp.ts` | Local — **fallback tier per the 2026-10-29 decision** (opt-in lightweight fallback, no new capability work; unified-backend amendment 2026-10-28) |
 | `comfyui` | `src/generation/image-engine/comfyui.ts` | Local (a ComfyUI you run) |
+
+Video BYOK rows (added 2026-10-28, owned by `epic-video-generation.md`):
+Kling partner nodes and Veo via Gemini API — consent-gated cloud tiers
+behind BYOK keys; local ComfyUI workflow runs remain the default video
+path.
 
 `src/generation/image-gen-route.ts:105` selects one via
 `pickSdProvider(config.generation.providers.sd, "generate")` and returns 501 when

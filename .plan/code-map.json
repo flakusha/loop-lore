@@ -1488,6 +1488,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-image-video-scenario-studio.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
@@ -1513,6 +1517,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ivss-video-metadata-extractor.md"
     },
     {
       "kind": "ticket",
@@ -35164,6 +35172,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-image-video-scenario-studio.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-scene-environment-world-generation.md"
     },
     {
@@ -35189,6 +35201,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ivss-shot-grammar-assembler.md"
     },
     {
       "kind": "ticket",

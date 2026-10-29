@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 352 epics
+**Total:** 353 epics
 
 ## Summary
 
@@ -187,7 +187,7 @@
 | Not Started | Epic: Time Scale | High | Medium | 0 | [epic-time-scale.md](/.plan/epics/epic-time-scale.md) |
 | Not Started | Epic: Timeline System | High\ | High\ | 0 | [epic-timeline-system.md](/.plan/epics/epic-timeline-system.md) |
 | Not Started | Epic: TTS Foundation | Medium | Medium | 0 | [epic-tts-foundation.md](/.plan/epics/epic-tts-foundation.md) |
-| Not Started | Epic: Video Generation | Low | Medium | 0 | [epic-video-generation.md](/.plan/epics/epic-video-generation.md) |
+| Not Started | Epic: Video Generation | Medium | Large | 0 | [epic-video-generation.md](/.plan/epics/epic-video-generation.md) |
 | In Progress | Epic: Workflow Engine | High (MVP scoped, post-Gate C) | Large | 0 | [epic-workflow-engine.md](/.plan/epics/epic-workflow-engine.md) |
 | Not Started | Epic: World Diplomacy & Karma | Medium | High | 0 | [epic-world-diplomacy-karma.md](/.plan/epics/epic-world-diplomacy-karma.md) |
 | Not Started | Epic: World Encounters & Resources | Medium | High | 0 | [epic-world-encounters.md](/.plan/epics/epic-world-encounters.md) |
@@ -227,6 +227,7 @@
 | Done | Housing System | Medium | Very High | 0 | [epic-housing.md](/.plan/epics/epic-housing.md) |
 | Not Started | I/O Formats | Medium | Medium | 0 | [epic-io-formats.md](/.plan/epics/epic-io-formats.md) |
 | Not Started | Image Prompt Templating & Variance | P2 | Large | 0 | [epic-image-prompt-templating.md](/.plan/epics/epic-image-prompt-templating.md) |
+| Not Started | Image/Video Scenario Studio | Medium-High | XL | 0 | [epic-image-video-scenario-studio.md](/.plan/epics/epic-image-video-scenario-studio.md) |
 | In Progress | Immersion & Presentation | Medium | Medium | 0 | [epic-immersion-presentation.md](/.plan/epics/epic-immersion-presentation.md) |
 | Done | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 0 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
 | In Progress | Impersonation System | Medium | Med | 0 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
@@ -2069,13 +2070,13 @@ Per-character text-to-speech synthesis: provider abstraction, free (Edge-TTS)
 ### Epic: Video Generation
 
 - **Status:** Not Started
-- **Priority:** Low
-- **Effort:** Medium
+- **Priority:** Medium
+- **Effort:** Large
 - **Type:** Feature Epic
-- **Tags:** video, generation, wan, ltx, comfyui
+- **Tags:** video, generation, wan, ltx, comfyui, director, gpu-gating, byok
 - **File:** `.plan/epics/epic-video-generation.md`
 
-Scene animation from narration via open video models (Phase 4 of the parent
+This epic owns the **engine tier list** for video generation: the flow
 
 ### Epic: Workflow Engine
 
@@ -2441,6 +2442,17 @@ Player housing and base building system — personal homes, guild halls, craftin
 - **Type:** Feature Epic / Generation
 - **Tags:** generation, image, templates, config, comfyui
 - **File:** `.plan/epics/epic-image-prompt-templating.md`
+
+### Image/Video Scenario Studio
+
+- **Status:** Not Started
+- **Priority:** Medium-High
+- **Effort:** XL
+- **Type:** Feature Epic
+- **Tags:** video, image, scenario, shots, timeline, editing, comfyui, worlds, locations, assistant, collaboration, browser-editors
+- **File:** `.plan/epics/epic-image-video-scenario-studio.md`
+
+loop-lore can store video assets, compose video prompts, and walk a user
 
 ### Immersion & Presentation
 

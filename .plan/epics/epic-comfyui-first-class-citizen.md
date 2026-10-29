@@ -626,6 +626,12 @@ git issue. Workflow JSON is inert — no secrets.
 - TASK-comfyui-output-directory-config.md
 - TASK-comfyui-parameter-form-renderer.md
 
+## Annex: UI→API workflow converter (filed 2026-10-28)
+
+| Ticket | Scope |
+| ------ | ----- |
+| `TASK-ui-api-workflow-converter` | UI-format → API-format converter: subgraph flattening, promoted-widget substitution by index, link rewrite, hidden JSON widget preservation — generic, library-level machinery (cross-linked from `epic-image-video-scenario-studio.md`, whose Director-tier workflow is the driving fixture) |
+
 ## Related Epics
 
 - `epic-comfyui-plugin` — the client/loader/template foundation this builds on

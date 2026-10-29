@@ -44,16 +44,21 @@ layers on top.
 
 ## Image Generation Integration
 
-### Primary Backend: ComfyUI
+### Backend framing (amended 2026-10-28: unified backend)
 
-ComfyUI is the first-class citizen. Finalized workflow files (JSON) are the API
+ComfyUI is the **unified generation backend for ALL image surfaces** —
+including emotion avatars and the chat flows. Finalized workflow files (JSON) are the API
 contract. The existing HTTP client (`src/generation/providers/comfyui.ts`) submits
 workflow JSON, polls for completion, and retrieves images.
 
-### Secondary Backend: sd.cpp Server
+### sd.cpp Server: legacy/opt-in fallback
 
 sd.cpp in server mode provides simpler single-model calls via OpenAI, WebUI, or
-sdcpp API families. Good for fast txt2img and basic img2img.
+sdcpp API families. It is a legacy/opt-in lightweight fallback per the
+2026-10-29 sdcpp decision (opt-in lightweight fallback, no new capability
+work, revisit after IVSS ships) — not a
+co-equal target; new capability work (reference editing, video, matting) lands
+ComfyUI-only.
 
 ### Generation Targets
 
