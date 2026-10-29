@@ -14,6 +14,7 @@
 // so plaintext credentials are never committed.
 
 import type { Kysely, } from "kysely";
+import { hashPassword, } from "../auth/password";
 import type { Config, SeedUserConfig, } from "../config/schema";
 import { UserStatus, } from "../db/enums";
 import type { DB, } from "../db/schema";
@@ -115,7 +116,7 @@ async function seedSingleUser(
   }
 
   const userId = uid();
-  const passwordHash = await Bun.password.hash(password,);
+  const passwordHash = await hashPassword(password,);
 
   try {
     await database.transaction().execute(async (trx,): Promise<void> => {

@@ -7,7 +7,7 @@ import type { Db, } from "../../db";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonResponse, } from "../http-utils";
-import { checkOwnership, entityPaths, } from "./context";
+import { checkOwnership, entityDb, entityPaths, readEntityAuth, readEntityParams, } from "./context";
 import { applyResponseTransforms, } from "./helpers";
 import type { EntityConfig, } from "./types";
 
@@ -24,11 +24,14 @@ export function getRoutes(config: EntityConfig, opts: { database: Db; config: Co
 
   return new Elysia({ name: `${config.entityPath}-get`, },)
     .get(withIdPath, async (ctx,) => {
-      const db = opts.database as any;
-      const parentId = (ctx.params as any)[parentParam];
-      const { entityId, } = ctx.params as any;
-      const userId = (ctx as any).userId as string | null;
-      const userRole = (ctx as any).userRole as string | null;
+      const db = entityDb(opts.database,);
+      const params = readEntityParams(ctx.params,);
+      const parentId = params[parentParam];
+      const entityId = params.entityId;
+      const { userId, userRole, } = readEntityAuth(ctx,);
+      if (!parentId || !entityId) {
+        return notFound(`${config.entityName} not found`,);
+      }
 
       const ownershipOk = await checkOwnership(opts.database, config, parentId, userId, userRole,);
       if (!ownershipOk) {

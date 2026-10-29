@@ -7,6 +7,7 @@ import { ASSISTANT_SYSTEM_PROMPT, resolveSystemPrompt, } from "../prompts";
 import { ActorType, AgentType, UserRole, UserStatus, } from "./enums";
 import { generateEncryptionSecret, } from "../crypto/user-secret";
 import { getLogger, type Logger, } from "../logger";
+import { hashPassword, } from "../auth/password";
 import { uid, } from "../utils";
 
 const ASSISTANT_ID = "assistant-default";
@@ -137,7 +138,7 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
         id: adminId,
         username,
         display_name: username,
-        secret_hash: await Bun.password.hash(password,),
+        secret_hash: await hashPassword(password,),
         role: UserRole.Admin,
         status: UserStatus.Active,
         settings: "{}",
