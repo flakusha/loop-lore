@@ -8,12 +8,13 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { readdirSync, readFileSync, } from "node:fs";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { createEntityRoutes, type EntityConfig, } from "./entity-routes";
-import { checkOwnership, entityPaths, } from "./entity-routes/context";
+import { checkOwnership, entityPaths, readEntityAuth, readEntityParams, } from "./entity-routes/context";
 
 const mockConfig = {} as any;
 
@@ -374,6 +375,26 @@ describe("createEntityRoutes", () => {
     const res = await app.handle(new Request(`http://localhost/api/actors/${actorId}/notes`,),);
     expect(res.status,).toBe(200,);
   });
+
+  test("all endpoints return 404 for an anonymous caller", async () => {
+    const app = createApp(db, null, null,);
+
+    const list = await app.handle(new Request(`http://localhost/api/actors/${actorId}/notes`,),);
+    expect(list.status,).toBe(404,);
+
+    const get = await app.handle(new Request(`http://localhost/api/actors/${actorId}/notes/nonexistent`,),);
+    expect(get.status,).toBe(404,);
+
+    const create = await app.handle(
+      new Request(`http://localhost/api/actors/${actorId}/notes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ title: "X", content: "Y", },),
+      },),
+    );
+
+    expect(create.status,).toBe(404,);
+  });
 });
 
 describe("entityPaths", () => {
@@ -497,5 +518,28 @@ describe("checkOwnership", () => {
 
   test("missing parent row fails the ownership check", async () => {
     expect(await checkOwnership(db, NOTES_CONFIG, "missing-parent", ownerId, "user",),).toBe(false,);
+  });
+});
+
+describe("entity route boundary", () => {
+  test("no entity route source file casts to `any`", () => {
+    const offenders = readdirSync(new URL("./entity-routes/", import.meta.url,),)
+      .filter((name,) => name.endsWith(".ts",))
+      .filter((name,) =>
+        readFileSync(new URL(`./entity-routes/${name}`, import.meta.url,), "utf8",).includes("as any",)
+      );
+
+    expect(offenders,).toEqual([],);
+  });
+
+  test("readEntityAuth narrows the context auth fields", () => {
+    expect(readEntityAuth({ userId: "u1", userRole: "admin", },),).toEqual({ userId: "u1", userRole: "admin", },);
+    expect(readEntityAuth({ userId: 42, userRole: null, },),).toEqual({ userId: null, userRole: null, },);
+    expect(readEntityAuth({},),).toEqual({ userId: null, userRole: null, },);
+  });
+
+  test("readEntityParams keeps only the string params", () => {
+    expect(readEntityParams({ actorId: "a1", entityId: "e1", },),).toEqual({ actorId: "a1", entityId: "e1", },);
+    expect(readEntityParams({ actorId: 7, },),).toEqual({},);
   });
 });

@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { verifyPassword, } from "../../auth/password";
 import type { Config, } from "../../config/schema";
 import { ensureActorKey, getSmk, isEncryptionEnabled, } from "../../crypto";
 import { UserRole, UserStatus, } from "../../db/enums";
@@ -108,7 +109,7 @@ async function handleLogin(
     );
   }
 
-  const passwordValid = await Bun.password.verify(password, user.secret_hash,);
+  const passwordValid = await verifyPassword(password, user.secret_hash,);
   if (!passwordValid) {
     return errorResponse(
       request,

@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { hashPassword, } from "../../auth/password";
 import type { Config, } from "../../config/schema";
 import { ensureActorKey, getSmk, isEncryptionEnabled, } from "../../crypto";
 import { generateEncryptionSecret, } from "../../crypto/user-secret";
@@ -140,7 +141,7 @@ async function handleRegister(
   // back, so a retry sees no committed username and re-inserts cleanly
   // (BUG-register-non-atomic-user-actor-key-insert).
   const userId = uid();
-  const passwordHash = await Bun.password.hash(password,);
+  const passwordHash = await hashPassword(password,);
   const smk = isEncryptionEnabled() ? getSmk()! : null;
 
   let userResult: "inserted" | "skipped";
