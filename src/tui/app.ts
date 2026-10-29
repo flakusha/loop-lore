@@ -1,18 +1,23 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 300
 /**
- * TUI Screen Manager
+ * TUI App Shell (pi-tui)
  *
- * Layout: chat view (full width), toggleable asset sidebar (right 30%),
- * input box at bottom, status bar at very bottom.
- * Global shortcuts: Esc/q/Ctrl+C quit, Tab focus switch, F2 toggle assets.
+ * One pi-tui engine whose root child is an `AppShell` component: chat column
+ * (optionally split 70/30 with the asset sidebar) above a one-row status bar.
+ * The full-screen overlays (chat picker, harness, models) are the same
+ * components shown through `TUI.showOverlay(..., { fullscreen: true })`.
+ *
+ * Global shortcuts: Esc/q/Ctrl+C quit (Esc closes overlays first), Tab focus
+ * switch, F1/F2/F3/F5/F6 — see `app-keys.ts`.
  */
 
-import blessed from "blessed";
 import { loadConfig, } from "../config/load";
 import { TUI_DEFAULTS, } from "../config/sections/tui";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
+import { tagsToAnsi, } from "./ansi";
 import { bindGlobalKeys, } from "./app-keys";
 import { AssetView, } from "./asset-view";
 import { API_BASE, ChatWidget, } from "./chat";
@@ -22,17 +27,83 @@ import { escapeMarkup, } from "./markup";
 import { loadPublicProviders, } from "./models-api";
 import { formatProviderHealth, HEALTH_UNAVAILABLE, } from "./models-display";
 import { ModelsOverlay, } from "./models-overlay";
+import {
+  type Component,
+  type OverlayHandle,
+  padding,
+  ProcessTerminal,
+  truncateToWidth,
+  TUI,
+  visibleWidth,
+} from "./pi";
 
 /** Status line painted when `[tui].enabled` is false; the shell exits right after. */
 export const TUI_DISABLED_STATUS = "TUI disabled by config — set [tui].enabled = true to start";
 
-/** Where the TUI's structured log is written; blessed owns the terminal. */
+/** Where the TUI's structured log is written; the renderer owns the terminal. */
 export const TUI_LOG_PATH = ".tmp/tui/tui.jsonl";
+
+/** Share of the body width the chat column keeps while the sidebar is open. */
+const CHAT_WIDTH_SHARE = 0.7;
+
+/** Exported for layout tests; the shell treats it as an internal detail. */
+export class AppShell implements Component {
+  readonly #chat: ChatWidget;
+  readonly #assets: AssetView;
+  readonly #terminalRows: () => number;
+  #statusRow = "";
+
+  constructor(chat: ChatWidget, assets: AssetView, terminalRows: () => number,) {
+    this.#chat = chat;
+    this.#assets = assets;
+    this.#terminalRows = terminalRows;
+  }
+
+  /** Remember the status row so a repaint or resize keeps it on screen. */
+  setStatus(row: string,): void {
+    this.#statusRow = row;
+  }
+
+  /** @param width */
+  render(width: number,): readonly string[] {
+    const total = Math.max(6, this.#terminalRows(),);
+    const bodyHeight = total - 1;
+
+    const sidebarVisible = this.#assets.isVisible();
+    const chatWidth = sidebarVisible ? Math.max(20, Math.trunc(width * CHAT_WIDTH_SHARE,),) : width;
+    const sidebarWidth = sidebarVisible ? Math.max(4, width - chatWidth - 1,) : 0;
+
+    this.#chat.setBodyHeight(bodyHeight,);
+    const left = this.#chat.render(chatWidth,);
+    const right = sidebarVisible ? this.#assets.render(sidebarWidth,) : [];
+
+    const rows: string[] = [];
+    for (let i = 0; i < bodyHeight; i++) {
+      const leftRow = left[i] ?? "";
+      const leftPad = Math.max(0, chatWidth - visibleWidth(leftRow,),);
+      let row = `${leftRow}${padding(leftPad,)}`;
+      if (sidebarVisible) {
+        const rightRow = right[i] ?? "";
+        const rightPad = Math.max(0, sidebarWidth - visibleWidth(rightRow,),);
+        const divider = i === 0 ? "\x1b[33m│\x1b[39m" : "│";
+        row += divider + `${rightRow}${padding(rightPad,)}`;
+      }
+
+      rows.push(row,);
+    }
+
+    // Status bar: blue background across the full width, like the old
+    // blessed.text status row.
+    const statusText = truncateToWidth(this.#statusRow, Math.max(0, width,),);
+    const statusPad = Math.max(0, width - visibleWidth(statusText,),);
+    rows.push(`\x1b[37m\x1b[44m${statusText}${padding(statusPad,)}\x1b[0m`,);
+    return rows;
+  }
+}
 
 /** */
 export class TUIApp {
-  private statusBar: blessed.Widgets.TextElement;
-  screen: blessed.Widgets.Screen;
+  tui: TUI;
   // Definite-assignment: the [tui].enabled gate returns from the constructor
   // before any widget exists. The shell is unusable in that case by design -
   // the process is on its way out and no caller holds the instance.
@@ -41,6 +112,7 @@ export class TUIApp {
   harness!: HarnessView;
   chatPicker!: ChatPicker;
   models!: ModelsOverlay;
+  private shell!: AppShell;
   /** Last message written by `updateStatus`, replayed so a health refresh
    * repaints the health segment without erasing the chat id or key hints. */
   private statusMessage = "";
@@ -67,45 +139,32 @@ export class TUIApp {
       getLogger().warn(`tui: failed to load config; running anonymous: ${(error as Error).message}`,);
     }
 
-    this.screen = blessed.screen({
-      smartCSR: true,
-      title: "Loop Lore TUI",
-      // The chat input reads keystrokes while it is focused, and blessed drops
-      // EVERY screen-level keypress while a widget holds `screen.grabKeys`
-      // (widgets/screen.js:591). `ignoreLocked` is blessed's own escape hatch
-      // for exactly this: these keys reach their handler even mid-read. `q` is
-      // deliberately absent — it is ordinary text inside a message, and the box
-      // must keep it. Nothing types Esc/C-l/F-keys, so all of them are safe.
-      ignoreLocked: ["escape", "C-c", "f1", "f2", "f3", "f5", "f6", "C-l", "tab",],
-    },);
-
-    // ── Status bar (bottom) ─────────────────────────────────
-    this.statusBar = blessed.text({
-      parent: this.screen,
-      bottom: 0,
-      left: 0,
-      width: "100%",
-      height: 1,
-      content: "",
-      tags: true,
-      style: { bg: "blue", fg: "white", },
-    },);
-
-    this.updateStatus("initializing...",);
+    this.tui = new TUI(new ProcessTerminal(),);
 
     // [tui].enabled = false is the deployment kill switch (TASK-tui-enabled-
-    // config-flag-never-read). Honour it before any widget exists: the screen
-    // and status bar are already built, so one render paints the reason.
+    // config-flag-never-read). Honour it before any widget exists: the engine
+    // has not touched the terminal yet, so plain stdout is still ours.
     if (!tuiEnabled) {
-      this.updateStatus(TUI_DISABLED_STATUS,);
-      // Returning the call keeps the constructor from building widgets even
-      // where process.exit is stubbed out, and marks the rest unreachable.
-      return this.shutdown();
+      this.tui.stop();
+      process.stdout.write(`${TUI_DISABLED_STATUS}\n`,);
+      return process.exit(0,);
     }
 
-    this.chat = new ChatWidget(this.screen, {
+    const requestRender = (): void => {
+      this.tui.requestRender();
+    };
+
+    const focus = (target: Component,): void => {
+      this.tui.setFocus(target,);
+    };
+
+    const viewportRows = (): number => this.tui.terminal.rows;
+
+    this.chat = new ChatWidget({
       sessionToken,
       sendTimeoutMs,
+      onFocusRequest: focus,
+      onRequestRender: requestRender,
       // After /image or /upload the chat has new assets server-side — the
       // sidebar only loads on chat switch, so reload it here to keep the
       // acceptance flow (generate -> sidebar -> attach) actually reachable.
@@ -113,10 +172,6 @@ export class TUIApp {
         void this.assets.loadAssets();
       },
       linkAsset: (assetId,) => this.assets.attachAsset(assetId,),
-      // The overlays are built after the chat; the closure runs at keypress
-      // time, when all of them exist. Without this the screen-level Tab would
-      // pull focus into the chat input underneath an open overlay.
-      isOverlayOpen: () => this.overlayOpen(),
       onChatChange: (chatId,) => {
         this.assets.setChatId(chatId,);
         this.updateStatus(`chat: ${chatId.slice(0, 8,)}... | F2: assets`,);
@@ -125,14 +180,13 @@ export class TUIApp {
     },);
 
     // ── Asset view (right sidebar, toggleable) ─────────────
-    this.assets = new AssetView(this.screen, { sessionToken, },);
+    this.assets = new AssetView({ sessionToken, onRequestRender: requestRender, },);
 
     // ── Harness view (full-screen overlay, toggleable) ──────
-    this.harness = createHarnessView(this.screen, {
+    this.harness = createHarnessView({
       sessionToken,
-      // F3 shows this view; if another overlay is stacked on top, harness
-      // up/down/enter must not fire beneath it.
-      isBlockedByOverlay: () => this.chatPicker.isVisible() || this.models.isVisible(),
+      onRequestRender: requestRender,
+      getViewportRows: viewportRows,
     },);
 
     // ── Chat picker (full-screen overlay, toggleable) ───────
@@ -140,7 +194,7 @@ export class TUIApp {
     // uses, so the chat's onChatChange callback stays the single place that
     // re-points the asset view and reloads messages. Binding the two views
     // here as well would be the second binding path and they would drift.
-    this.chatPicker = new ChatPicker(this.screen, {
+    this.chatPicker = new ChatPicker({
       sessionToken,
       onSelect: (chatId,) => {
         this.chatPicker.hide();
@@ -150,6 +204,8 @@ export class TUIApp {
       onHide: () => {
         this.chat.focusInput();
       },
+      onRequestRender: requestRender,
+      getViewportRows: viewportRows,
     },);
 
     // ── Models overlay (full-screen, toggleable) ────────────
@@ -157,16 +213,23 @@ export class TUIApp {
     // `config.tui.sessionToken` as every other view, so a 403 here means the
     // token's user lacks admin.system and the overlay says so rather than
     // failing silently.
-    this.models = new ModelsOverlay(this.screen, { sessionToken, },);
-
-    // ── Resize handler ─────────────────────────────────────
-    this.screen.on("resize", () => {
-      this.screen.render();
+    this.models = new ModelsOverlay({
+      sessionToken,
+      onRequestRender: requestRender,
+      getViewportRows: viewportRows,
     },);
+
+    // The overlays are components shown through the engine; their show/hide
+    // state and the engine handles live in one place.
+    this.#wireOverlays();
+
+    this.shell = new AppShell(this.chat, this.assets, viewportRows,);
+    this.tui.addChild(this.shell,);
 
     // ── Global keyboard shortcuts ──────────────────────────
     bindGlobalKeys(this,);
 
+    this.chat.focusInput();
     this.updateStatus(
       "ready — F1: chats | Tab: focus | F2: assets | F3: harness | F5: refresh | F6: models | Esc/q: quit",
     );
@@ -176,7 +239,29 @@ export class TUIApp {
     // background interval open to redraw a status line.
     this.refreshProviderHealth();
 
-    this.screen.render();
+    this.tui.start();
+  }
+
+  /** Overlay show/hide plumbing: the engine owns stacking and focus. */
+  #wireOverlays(): void {
+    for (const overlay of [this.chatPicker, this.harness, this.models,] as const) {
+      const originalShow = overlay.show.bind(overlay,);
+      const originalHide = overlay.hide.bind(overlay,);
+      let handle: OverlayHandle | null = null;
+      overlay.show = (): void => {
+        if (handle) { handle.setHidden(false,); }
+        else {
+          handle = this.tui.showOverlay(overlay, { fullscreen: true, anchor: "top-left", },);
+        }
+
+        originalShow();
+      };
+
+      overlay.hide = (): void => {
+        handle?.setHidden(true,);
+        originalHide();
+      };
+    }
   }
 
   // ── Status bar ─────────────────────────────────────────────
@@ -192,11 +277,9 @@ export class TUIApp {
     // Leading separator only once the segment exists, so the bar has no double
     // gap before the first fetch resolves.
     const health = this.healthSegment ? `  |  ${this.healthSegment}` : "";
-    this.statusBar.setContent(
-      ` {bold}Loop Lore{/bold}  |  ${escapeMarkup(msg,)}${health}  |  ${escapeMarkup(API_BASE,)}  `,
-    );
-
-    this.screen.render();
+    const raw = ` Loop Lore  |  ${escapeMarkup(msg,)}${health}  |  ${escapeMarkup(API_BASE,)} `;
+    this.shell?.setStatus(tagsToAnsi(raw,),);
+    this.tui.requestRender();
   }
 
   /**
@@ -221,28 +304,21 @@ export class TUIApp {
     })();
   }
 
-  // ── Overlay ownership ───────────────────────────────────────────────
-
-  /**
-   * True when any full-screen overlay owns the keyboard. Screen-level key
-   * bindings on overlays must check this so keys do not fire beneath an
-   * overlay stacked on top (e.g. harness up/down/enter under the models
-   * overlay).
-   */
-  private overlayOpen(): boolean {
-    return this.chatPicker.isVisible() || this.harness.isVisible() || this.models.isVisible();
+  /** True while a text field owns the keyboard (chat input, picker prompt). */
+  isTyping(): boolean {
+    return this.chat.isInputFocused() || this.chatPicker.isPromptOpen();
   }
 
   // ── Shutdown ───────────────────────────────────────────────
 
   /**
-   * Tear down the screen and exit. Typed `never` because `process.exit` is:
+   * Tear down the renderer and exit. Typed `never` because `process.exit` is:
    * callers can `return` straight after it, and the compiler treats the rest
    * of the branch as unreachable.
    * @returns never — the process is gone before this returns
    */
   shutdown(): never {
-    this.screen.destroy();
+    this.tui.stop();
     return process.exit(0,);
   }
 }
@@ -255,13 +331,13 @@ export class TUIApp {
  * BUG-tui-app-getlogger-throws-when-running-standalone). Keeping both steps
  * behind this factory is what makes importing the module side-effect free —
  * nothing touches a terminal until a caller asks for the app.
- * @returns {TUIApp} the constructed shell, with its screen and widgets bound
+ * @returns {TUIApp} the constructed shell, with its renderer and widgets bound
  * @throws if `new TUIApp()` fails — the constructor's own config-load catch
  *   calls `getLogger()`, which throws when no logger is initialized
  */
 export function createTUIApp(): TUIApp {
   // `console: false` keeps records in `.tmp/tui/tui.jsonl` only — a console write
-  // lands between two blessed frames and corrupts the render. `setGlobalLogger`
+  // lands between two rendered frames and corrupts the paint. `setGlobalLogger`
   // is load-bearing: `createLogger` adopts the global holder with `??=`
   // (src/logger/index.ts:31), so when a process bootstrapped a root before us the
   // returned instance would never become it and every `getLogger()` caller in the

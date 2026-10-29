@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type blessed from "blessed";
+import type { Component, } from "../pi";
 
 /** */
 export interface ChatMessage {
@@ -24,12 +24,11 @@ export interface ChatWidgetOptions {
   linkAsset?: (assetId: string,) => Promise<boolean>;
   /** Overrides the send-message timeout; defaults to `TUI_DEFAULTS.sendTimeoutMs`. */
   sendTimeoutMs?: number;
-  /**
-   * Reports whether a full-screen overlay (chat picker, harness, models)
-   * owns the keyboard. While true the widget's screen-level keys (Tab)
-   * must not fire, or focus jumps into a hidden element.
-   */
-  isOverlayOpen?: () => boolean;
+  /** Ask the host to move the pi-tui keyboard focus to a widget-owned target
+   *  (input or transcript). Absent in tests that drive the widget bare. */
+  onFocusRequest?: (target: Component,) => void;
+  /** Repaint hook; the shell routes this to the pi-tui renderer. */
+  onRequestRender?: () => void;
 }
 
 /**
@@ -37,8 +36,8 @@ export interface ChatWidgetOptions {
  * dispatcher modules (display / api) instead of relying on `this`.
  */
 export interface ChatHost {
-  screen: blessed.Widgets.Screen;
-  messageList: blessed.Widgets.ListElement;
+  /** Ask the host for a repaint (the shell routes this to the pi-tui renderer). */
+  requestRender(): void;
   chatId: string | null;
   messages: ChatMessage[];
   isSending: boolean;

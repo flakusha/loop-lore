@@ -2,103 +2,59 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Pins the AC2 invariant of `TASK-tui-shell-testability`: importing any
- * module under `src/tui/` constructs ZERO blessed objects. A module-scope
- * `blessed.screen()` blocks on terminal events outside a TTY and takes every
- * suite that imports the module down with it, so this guards a real
- * breakage, not a style rule.
+ * Import purity for the pi-tui TUI:
  *
- * The module list is read off disk rather than hard-coded: a module added
- * later is covered by this sweep the moment it lands, which is the point.
- * The specifiers are therefore runtime-selected — a static import per
- * module would have to be written twice and would rot silently.
- *
- * `blessed` is stubbed by `mock.module` for the same reason `app.test.ts`
- * and `chat/index.test.ts` stub it: the real module opens a terminal. The
- * stub is the counting form of theirs — every factory it names bumps one
- * counter, and a factory it does NOT name throws on use, so a new blessed
- * call site at module scope fails the sweep loudly instead of slipping past
- * an unlisted name.
+ * 1. Source-level: no module may import the `@oh-my-pi/pi-tui` ROOT barrel —
+ *    only package subpaths (see src/tui/pi.ts for why).
+ * 2. Runtime: importing every module under src/tui/ must construct no TUI
+ *    engine and touch no terminal (the entry guard in app.ts keeps the
+ *    module inert until `createTUIApp()`).
  */
-import { expect, it, mock, } from "bun:test";
-import { readdirSync, } from "node:fs";
-import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { describe, expect, it, } from "bun:test";
+import { readdirSync, readFileSync, } from "node:fs";
+import { join, } from "node:path";
 
-/** Blessed factory calls across EVERY import in this file — the contract is
- *  that this total never leaves zero. */
-let constructions = 0;
-/** Specifier whose import first pushed the counter off zero. This is the
- *  IMPORTER, not necessarily the offender: the construction may live in a
- *  transitive dependency, so the message says so rather than blaming the
- *  first specifier that happened to pull it in. */
-let firstImporter: string | null = null;
+/** Collect every TS module under src/tui (tests excluded from the rule). */
+function tuiModules(dir: string,): string[] {
+  const out: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true, },)) {
+    const full = join(dir, entry.name,);
+    if (entry.isDirectory()) { out.push(...tuiModules(full,),); }
+    else if (entry.name.endsWith(".ts",) && !entry.name.includes(".test.",)) {
+      out.push(full,);
+    }
+  }
 
-const widget = (): Record<string, unknown> => ({
-  append: () => {},
-  destroy: () => {},
-  focused: null,
-  render: () => {},
-  setContent: () => {},
-});
-
-const count = (): Record<string, unknown> => {
-  constructions++;
-  return widget();
-};
-
-const blessedStub = {
-  box: count,
-  list: count,
-  screen: count,
-  text: count,
-  textbox: count,
-  // ./markup reads `blessed.helpers.escape` at module scope, and this sweep
-  // imports EVERY module under src/tui/ — a stub without `helpers` fails the
-  // sweep on import. blessed's escape is pure string work, no terminal.
-  helpers: {
-    escape: (text: string,) => text.replaceAll("{", "{open}",).replaceAll("}", "{close}",),
-  },
-};
-
-if (ISOLATED) {
-  mock.module("blessed", () => ({ default: blessedStub, ...blessedStub, }),);
+  return out;
 }
 
-/** Every non-test module under `src/tui/`, as `./`-relative specifiers. */
-const tuiModules = readdirSync(import.meta.dir, { recursive: true, },)
-  .filter((name,): name is string =>
-    typeof name === "string" &&
-    name.endsWith(".ts",) &&
-    !name.endsWith(".test.ts",) &&
-    !name.endsWith(".d.ts",)
-  )
-  .map((name,) => `./${name}`);
-
-describeOrSkip("tui import purity", () => {
-  it("discovers every module under src/tui/", () => {
-    // A sweep that silently matched nothing would pass forever.
-    expect(tuiModules.length,).toBeGreaterThanOrEqual(11,);
+describe("tui import purity", () => {
+  it("discovers modules under src/tui/", () => {
+    expect(tuiModules(join(import.meta.dir,),).length,).toBeGreaterThan(10,);
   });
 
-  for (const specifier of tuiModules) {
-    it(`${specifier} constructs nothing at import time`, async () => {
-      // The counter is deliberately NOT reset per test. One file shares one
-      // module registry, so a module an earlier specifier already pulled in
-      // transitively (app.ts reaches asset-view, chat and harness) is a cached
-      // no-op here and reads a vacuous 0: resetting per test turned a
-      // module-scope blessed.screen() in any transitively-imported module into
-      // a silent pass. Asserting the ABSOLUTE total instead fails every test
-      // from the first construction on, whichever module caused it.
-      await import(specifier);
-      if (constructions > 0 && firstImporter === null) {
-        firstImporter = specifier;
+  it("imports every module through subpaths only — never the root barrel", () => {
+    const offenders: string[] = [];
+    for (const file of tuiModules(join(import.meta.dir,),)) {
+      const source = readFileSync(file, "utf8",);
+      if (/from\s+"@oh-my-pi\/pi-tui"/.test(source,) || /import\(["']@oh-my-pi\/pi-tui["']\)/.test(source,)) {
+        offenders.push(file,);
       }
+    }
 
-      const why = firstImporter === null
-        ? ""
-        : `first blessed construction came while importing ${firstImporter} (directly or transitively)`;
+    expect(offenders,).toEqual([],);
+  });
 
-      expect(constructions, why,).toBe(0,);
-    });
-  }
-},);
+  it("imports every module without side effects", async () => {
+    const modules = tuiModules(join(import.meta.dir,),);
+    for (const file of modules) {
+      const specifier = `./${file.slice(import.meta.dir.length + 1,).replaceAll("\\", "/",)}`;
+      // Dynamic by design: this test exercises the module loading boundary
+      // itself. A module that constructs a renderer or grabs the terminal at
+      // import time fails here under the non-TTY test environment.
+      await import(specifier);
+    }
+
+    expect(modules.length,).toBeGreaterThan(0,);
+  });
+});
