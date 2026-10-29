@@ -7,10 +7,11 @@
  * command-layer gate's denial shape.
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { ASSISTANT_QUOTA_DEFAULTS, } from "../../config/sections/assistant";
 import { createLogger, } from "../../logger";
-import { enforceQuota, QuotaExceededError, resetAssistantQuota, } from "./engine";
+import { enforceQuota, initAssistantQuota, QuotaExceededError, resetAssistantQuota, } from "./engine";
 import { quotaGate, } from "./gate";
-import { configureQuotaStorage, } from "./storage";
+import { configureQuotaStorage, quotaStorageOptions, } from "./storage";
 
 const T0 = 1_700_000_000_000;
 const WINDOW = 60_000;
@@ -71,6 +72,28 @@ describe("enforceQuota", () => {
     enforceQuota("user-d", "adapt", T0,);
     resetAssistantQuota("user-d",);
     enforceQuota("user-d", "adapt", T0,);
+  });
+});
+
+describe("initAssistantQuota", () => {
+  test("applies the section values", () => {
+    initAssistantQuota({ quotaWindowMs: 60_000, quotaLimitPerWindow: 7, },);
+    expect(quotaStorageOptions(),).toEqual({ windowMs: 60_000, limitPerWindow: 7, },);
+  });
+
+  test("falls back to quota defaults when the section is missing", () => {
+    // Stored configs predating the assistant section must boot, not crash.
+    initAssistantQuota(undefined,);
+    expect(quotaStorageOptions(),).toEqual({
+      windowMs: ASSISTANT_QUOTA_DEFAULTS.quotaWindowMs,
+      limitPerWindow: ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow,
+    },);
+
+    initAssistantQuota(null,);
+    expect(quotaStorageOptions(),).toEqual({
+      windowMs: ASSISTANT_QUOTA_DEFAULTS.quotaWindowMs,
+      limitPerWindow: ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow,
+    },);
   });
 });
 
