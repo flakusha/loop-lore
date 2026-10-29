@@ -1,18 +1,23 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 320
 /**
- * TUI Asset View
+ * TUI Asset View (pi-tui)
  *
- * Blessed widget for browsing assets linked to the current chat.
- * Left/Right arrow navigation, Enter/Delete interaction.
+ * Right-sidebar component browsing assets linked to the current chat.
+ * Left/Right arrow navigation, Enter attaches the selected asset. The shell
+ * routes those keys here while the sidebar is visible and the chat input does
+ * not own the keyboard (the same gating the old screen-level keys had).
  * Fetches from GET /api/assets?entity_type=chat&entity_id=...
  */
 
-import blessed from "blessed";
 import { safeFetch, } from "../utils";
+import { tagsToAnsi, } from "./ansi";
 import { API_BASE, } from "./chat";
+import { renderFramed, } from "./frame";
 import { escapeMarkup, } from "./markup";
+import { type Component, type Focusable, } from "./pi";
 
 let _fetch = safeFetch;
 
@@ -28,8 +33,8 @@ export function setFetch(fn: typeof safeFetch,): void {
 export interface AssetViewOptions {
   /** Bearer token for the assets call; omit to run anonymous. */
   sessionToken?: string;
-  /** Explicit parent box; defaults to the screen. */
-  parent?: blessed.Widgets.BoxElement;
+  /** Repaint hook; the shell routes this to the pi-tui renderer. */
+  onRequestRender?: () => void;
 }
 
 /** */
@@ -43,86 +48,87 @@ export interface LinkedAsset {
   created_at: string;
 }
 
+/** Sidebar body rows for the current asset, in blessed-tag form. */
+function assetRows(asset: LinkedAsset, index: number, count: number,): string[] {
+  const sizeStr = formatSize(asset.size_bytes,);
+  const rows = [
+    `Asset {bold}${index + 1}{/bold} of {bold}${count}{/bold}`,
+    "",
+    `{bold}Name:{/bold} ${escapeMarkup(asset.filename,)}`,
+    `{bold}Type:{/bold} ${escapeMarkup(asset.asset_type,)}`,
+    `{bold}MIME:{/bold} ${escapeMarkup(asset.mime_type,)}`,
+    `{bold}Size:{/bold} ${sizeStr}`,
+    `{bold}Added:{/bold} ${asset.created_at.slice(0, 10,)}`,
+  ];
+
+  if (asset.alt_text) {
+    rows.push(`{bold}Alt:{/bold} ${escapeMarkup(asset.alt_text,)}`,);
+  }
+
+  rows.push("", "{cyan-fg}← → navigate{/cyan-fg}",);
+  return rows;
+}
+
+/**
+ * @param bytes - raw byte count
+ * @returns human-readable size (`B` / `KB` / `MB`).
+ */
+function formatSize(bytes: number,): string {
+  if (bytes < 1024) { return `${bytes} B`; }
+  if (bytes < 1024 * 1024) { return `${(bytes / 1024).toFixed(1,)} KB`; }
+  return `${(bytes / (1024 * 1024)).toFixed(1,)} MB`;
+}
+
 /** */
-export class AssetView {
-  private screen: blessed.Widgets.Screen;
-  private box: blessed.Widgets.BoxElement;
-  private infoLabel: blessed.Widgets.BlessedElement;
+export class AssetView implements Component, Focusable {
+  focused = false;
+  /** Bordered-frame body rows, or a single info line; recomputed on changes. */
+  private rows: string[] = ["No assets loaded.",];
   private assets: LinkedAsset[] = [];
   private currentIndex = 0;
   private chatId: string | null = null;
-  private assetCountLabel: blessed.Widgets.BlessedElement;
+  private visibleFlag = false;
   private sessionToken: string | undefined;
+  private readonly requestRender: () => void;
 
   /**
-   * @param screen - surface the sidebar is drawn on
-   * @param options - bearer token and optional parent box
+   * @param options - bearer token and repaint hook
    */
-  constructor(screen: blessed.Widgets.Screen, options: AssetViewOptions = {},) {
-    this.screen = screen;
+  constructor(options: AssetViewOptions = {},) {
     // An empty string would ship as a bare `Bearer ` and trip a 401.
     this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
+    this.requestRender = options.onRequestRender ?? ((): void => {
+      /* no host wired: tests read render() directly */
+    });
+  }
 
-    this.box = blessed.box({
-      parent: options.parent ?? screen,
-      right: 0,
-      top: 0,
-      width: "30%",
-      height: "100%",
-      label: " {bold}Assets{/bold} ",
-      tags: true,
-      border: { type: "line", },
-      style: { bg: "black", fg: "white", border: { fg: "yellow", }, },
-      scrollable: true,
-      hidden: true,
-    },);
+  /** @param width */
+  render(width: number,): readonly string[] {
+    if (!this.visibleFlag) { return []; }
+    const body = this.rows.map((row,) => tagsToAnsi(row,));
+    return renderFramed({ title: "Assets", rows: body, width, color: "yellow", },);
+  }
 
-    this.assetCountLabel = blessed.text({
-      parent: this.box,
-      top: 1,
-      left: 1,
-      tags: true,
-      content: "",
-      style: { fg: "cyan", },
-    },);
-
-    this.infoLabel = blessed.text({
-      parent: this.box,
-      top: 3,
-      left: 1,
-      right: 1,
-      tags: true,
-      content: "No assets loaded.",
-      style: { fg: "white", },
-    },);
-
-    // Navigation: left/right cycle through assets
-    screen.key(["left", "right",], (_ch: string, key: { name: string },) => {
-      if (!this.box.visible || this.assets.length === 0) { return; }
-      this.currentIndex = (key.name === "left" ? this.currentIndex - 1 + this.assets.length : this.currentIndex + 1) %
-        this.assets.length;
-
+  /**
+   * Left/Right cycle, Enter attaches. Routed by the shell (and reachable
+   * directly when the sidebar itself holds focus).
+   * @param data - raw key data from pi-tui
+   */
+  handleInput(data: string,): void {
+    if (!this.visibleFlag || this.assets.length === 0) { return; }
+    if (data === "\x1b[D" || data === "\x1b[C") {
+      const dir = data === "\x1b[D" ? -1 : 1;
+      this.currentIndex = (this.currentIndex + dir + this.assets.length) % this.assets.length;
       this.renderCurrent();
-      screen.render();
-    },);
-
-    // Enter attaches the selected asset to the active chat so a later message
-    // send can carry it. While the input box is reading it holds
-    // `screen.grabKeys` (and Enter is not in `ignoreLocked`), so this only
-    // fires when focus is off the input — no conflict with sending.
-    screen.key(["enter",], () => {
-      if (!this.box.visible || this.assets.length === 0) { return; }
+    } else if (data === "\r" || data === "\n") {
       const asset = this.assets[this.currentIndex]!;
       void this.attachAsset(asset.id,);
-    },);
+    }
   }
 
   // ── Rendering ───────────────────────────────────────────────
 
   /** */
-  /**
-   * @returns {void}
-   */
   private renderCurrent(): void {
     if (this.assets.length === 0) {
       this.renderInfo("No assets linked to this chat.",);
@@ -130,78 +136,44 @@ export class AssetView {
     }
 
     const asset = this.assets[this.currentIndex]!;
-    const sizeStr = this.formatSize(asset.size_bytes,);
-
-    this.assetCountLabel.setContent(
-      `Asset {bold}${this.currentIndex + 1}{/bold} of {bold}${this.assets.length}{/bold}`,
-    );
-
-    this.infoLabel.setContent(
-      `{bold}Name:{/bold} ${escapeMarkup(asset.filename,)}\n` +
-        `{bold}Type:{/bold} ${escapeMarkup(asset.asset_type,)}\n` +
-        `{bold}MIME:{/bold} ${escapeMarkup(asset.mime_type,)}\n` +
-        `{bold}Size:{/bold} ${sizeStr}\n` +
-        `{bold}Added:{/bold} ${asset.created_at.slice(0, 10,)}\n${
-          asset.alt_text ? `{bold}Alt:{/bold} ${escapeMarkup(asset.alt_text,)}\n` : ""
-        }\n{cyan-fg}← → navigate{/cyan-fg}`,
-    );
-
-    this.screen.render();
+    this.rows = assetRows(asset, this.currentIndex, this.assets.length,);
+    this.requestRender();
   }
 
   /**
    * @param msg
    */
   private renderInfo(msg: string,): void {
-    this.assetCountLabel.setContent("",);
-    this.infoLabel.setContent(msg,);
-    this.screen.render();
-  }
-
-  /**
-   * @param bytes - raw byte count
-   * @returns human-readable size (`B` / `KB` / `MB`).
-   */
-  private formatSize(bytes: number,): string {
-    if (bytes < 1024) { return `${bytes} B`; }
-    if (bytes < 1024 * 1024) { return `${(bytes / 1024).toFixed(1,)} KB`; }
-    return `${(bytes / (1024 * 1024)).toFixed(1,)} MB`;
+    this.rows = [msg,];
+    this.requestRender();
   }
 
   // ── Public API ──────────────────────────────────────────────
 
-  /**
-   * Show the asset-view box and re-render the screen.
-   */
+  /** Show the asset-view sidebar. */
   show(): void {
-    this.box.show();
-    this.screen.render();
+    this.visibleFlag = true;
+    this.requestRender();
   }
 
-  /**
-   * Hide the asset-view box and re-render the screen.
-   */
+  /** Hide the asset-view sidebar. */
   hide(): void {
-    this.box.hide();
-    this.screen.render();
+    this.visibleFlag = false;
+    this.requestRender();
   }
 
-  /**
-   * @returns `true` when the box is currently visible.
-   */
+  /** Toggle sidebar visibility. */
   toggle(): void {
-    if (this.box.visible) {
+    if (this.visibleFlag) {
       this.hide();
     } else {
       this.show();
     }
   }
 
-  /**
-   * @returns `true` when the asset-view box is currently visible.
-   */
+  /** @returns `true` when the sidebar is currently visible. */
   isVisible(): boolean {
-    return this.box.visible;
+    return this.visibleFlag;
   }
 
   /**
@@ -219,6 +191,13 @@ export class AssetView {
    */
   getChatId(): string | null {
     return this.chatId;
+  }
+
+  /**
+   * @returns the currently highlighted asset, or `undefined` when none.
+   */
+  getCurrentAsset(): LinkedAsset | undefined {
+    return this.assets[this.currentIndex];
   }
 
   /**
@@ -271,10 +250,7 @@ export class AssetView {
 
   // ── Data loading ────────────────────────────────────────────
 
-  /** Load assets for the current chat into the asset-view's backing list. */
-  /**
-   * @returns {Promise<void>}
-   */
+  /** Load assets for the current chat into the sidebar's backing list. */
   async loadAssets(): Promise<void> {
     if (!this.chatId) {
       this.assets = [];

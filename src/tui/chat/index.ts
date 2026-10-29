@@ -1,22 +1,25 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 340
+// size-allow: 360
 /**
- * TUI Chat Widget
+ * TUI Chat Widget (pi-tui)
  *
- * Blessed-based chat interface with message list, input box,
- * and API wiring to send/receive messages from the backend.
- * Designed to be embedded in TUIApp.screen.
+ * Message transcript (follow-tail ScrollView), slash-command completion strip
+ * and a single-line input framed at the bottom. The API wiring (send / load /
+ * auth headers) and the message line formatting live in sibling dispatcher
+ * modules (api / display) threaded with an explicit `ChatHost` handle.
  *
- * The API wiring (send / load / auth headers) and the message line formatting
- * live in sibling dispatcher modules (api / display) threaded with an explicit
- * `ChatHost` handle. `ChatWidget` remains a class so it can be `new`-ed by the
- * TUI app and holds the blessed element references.
+ * Focus is delegated: the widget owns two focus targets (`input`,
+ * `transcript`) and asks the host to move the keyboard between them through
+ * `options.onFocusRequest`; Tab cycling lives in `handleTab`, invoked by the
+ * shell's global key router.
  */
-import blessed from "blessed";
 import { TUI_DEFAULTS, } from "../../config/sections/tui";
+import { tagsToAnsi, } from "../ansi";
+import { renderFramed, } from "../frame";
 import { escapeMarkup, } from "../markup";
+import { type Component, truncateToWidth, } from "../pi";
 import {
   generateImage as generateImageDispatch,
   handleSend as handleSendDispatch,
@@ -27,25 +30,24 @@ import {
 import type { ImageGenResult, MessageAttachment, UploadResult, } from "./api";
 import { CommandCompleter, } from "./commands";
 import { formatMessageLine, } from "./display";
+import { ChatInputField, } from "./input-field";
+import { TranscriptPane, } from "./transcript";
 import type { ChatHost, ChatMessage, ChatWidgetOptions, } from "./types";
 
 export { API_BASE, } from "./api";
 export type { ChatMessage, ChatWidgetOptions, } from "./types";
 
+/** Typing placeholder row, in blessed-tag form like every other row. */
+const TYPING_ROW = "{italic}{yellow}... typing{/yellow}{/italic}";
+
 /** */
-export class ChatWidget implements ChatHost {
-  screen: blessed.Widgets.Screen;
-  private box: blessed.Widgets.BoxElement;
-  messageList: blessed.Widgets.ListElement;
-  private inputBox: blessed.Widgets.TextboxElement;
-  private completionStrip: blessed.Widgets.TextElement;
-  private completer: CommandCompleter;
+export class ChatWidget implements Component, ChatHost {
+  readonly input: ChatInputField = new ChatInputField();
+  readonly transcript: TranscriptPane = new TranscriptPane();
+  /** Rows currently in the transcript (blessed-tagged, pre-ANSI conversion). */
+  transcriptLines: string[] = [];
   chatId: string | null = null;
   messages: ChatMessage[] = [];
-  /** Rows currently in the list. Owned by the widget alone: every append and
-   * removal below moves it with the list, so `scrollToBottom`'s `select()` can
-   * never point at a row the list does not have. */
-  itemCount = 0;
   /** Row the typing placeholder occupies, or null when none is showing.
    * `hideTyping` removes THIS row, not the tail — after a load or an error line
    * the tail is a real message, and popping it lost one per send. */
@@ -53,230 +55,112 @@ export class ChatWidget implements ChatHost {
   isSending = false;
   sessionToken: string | undefined;
   sendTimeoutMs: number;
+  private completer: CommandCompleter;
+  private completionHint = "";
+  private focus: "input" | "transcript" = "input";
+  private readonly onFocusRequest?: (target: Component,) => void;
+  private readonly requestRenderHook: () => void;
+  /** Total rows the widget may occupy; the shell updates it on resize. */
+  private bodyHeight = 20;
   private onChatChange?: (chatId: string,) => void;
   private onAssetsRefresh: () => void;
   private linkAsset?: (assetId: string,) => Promise<boolean>;
-  private isOverlayOpen: () => boolean;
 
-  /**
-   * @param screen
-   * @param options
-   */
-  constructor(screen: blessed.Widgets.Screen, options: ChatWidgetOptions = {},) {
-    this.screen = screen;
+  /** @returns row count of the transcript, placeholder included. */
+  get itemCount(): number {
+    return this.transcriptLines.length;
+  }
+
+  /** */
+  constructor(options: ChatWidgetOptions = {},) {
     // Normalize empty string to undefined (mirrors the frontend `if (token)`
     // pattern in src/frontend/fe-fetch.ts:41): an accidental `""` must not
     // ship as `Bearer ` and trip 401s.
     this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
     this.sendTimeoutMs = options.sendTimeoutMs ?? TUI_DEFAULTS.sendTimeoutMs;
     this.onChatChange = options.onChatChange;
+    this.onFocusRequest = options.onFocusRequest;
+    this.requestRenderHook = options.onRequestRender ?? ((): void => {
+      /* no host wired: tests drive render() directly */
+    });
+
     this.onAssetsRefresh = options.onAssetsRefresh ?? ((): void => {
       /* no sidebar wired: refresh is a host responsibility */
     });
 
     this.linkAsset = options.linkAsset;
-    this.isOverlayOpen = options.isOverlayOpen ?? (() => false);
-    // Main container box
-    this.box = blessed.box({
-      parent: screen,
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-    },);
-
-    // Message list (top portion)
-    this.messageList = blessed.list({
-      parent: this.box,
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "90%-1",
-      tags: true,
-      scrollable: true,
-      alwaysScroll: true,
-      scrollbar: {
-        ch: " ",
-        track: { bg: "blue", },
-        style: { bg: "cyan", },
-      },
-      style: {
-        item: { fg: "white", },
-        selected: { fg: "white", bg: "blue", },
-      },
-      mouse: true,
-    },);
-
-    // Input box (bottom)
-    this.inputBox = blessed.textbox({
-      parent: this.box,
-      bottom: 0,
-      left: 0,
-      width: "100%",
-      height: 3,
-      // inputOnFocus is deliberately OFF. It makes blessed call readInput() on
-      // focus, which sets `screen.grabKeys = true` and gates EVERY screen-level
-      // keypress (widgets/screen.js:591) for as long as the box holds focus —
-      // and `_done` re-arms via `screen.rewindFocus()`, so no overlay could take
-      // focus away from it either. Reading is armed explicitly by `focusInput()`
-      // instead; `releaseInput()` is the other half of that pair.
-      inputOnFocus: false,
-      style: {
-        bg: "black",
-        fg: "white",
-        focus: { bg: "blue", },
-      },
-      border: {
-        type: "line",
-        fg: 6, // cyan
-      },
-    },);
-
-    // Slash-command completion. The chat box already owns the layout, so the
-    // hint is one line above the input rather than a second screen - the
-    // epic bans a palette overlay.
-    this.completionStrip = blessed.text({
-      parent: this.box,
-      bottom: 3,
-      left: 0,
-      width: "100%",
-      height: 1,
-      tags: true,
-      content: "",
-      style: {
-        fg: "cyan",
-      },
-    },);
 
     this.completer = new CommandCompleter({
       loadRegistry: () => loadCommands(this.sessionToken, this.chatId,),
       onChange: () => {
-        this.completionStrip.setContent(this.completer.hint() ?? "",);
-        this.screen.render();
+        this.completionHint = this.completer.hint() ?? "";
+        this.requestRender();
       },
     },);
 
-    // Focus the input on startup and start reading keystrokes into it. Both
-    // halves are explicit — see `focusInput` for why `inputOnFocus` is unusable.
-    this.focusInput();
+    // Re-filter as the user types; the field calls back after every applied
+    // keystroke (see ChatInputField).
+    this.input.onChange = () => {
+      this.completer.update(this.input.getValue(),);
+    };
 
-    // Re-filter as the user types. Textarea attaches its own keypress listener
-    // in a nextTick after focus, so ours - registered here - runs first and
-    // would still see the previous value; a microtask runs once the emit has
-    // settled and the textbox has applied the keystroke.
-    this.inputBox.on("keypress", () => {
-      queueMicrotask(() => {
-        this.completer.update(this.inputBox.getValue(),);
-      },);
+    this.input.onSubmit = (value: string,) => {
+      this.handleSubmit(value,);
+    };
+  }
+
+  // ── Component ───────────────────────────────────────────────
+
+  /** @param width */
+  render(width: number,): readonly string[] {
+    // Transcript gets everything above the completion strip (1) and the
+    // framed input (3).
+    const transcriptHeight = Math.max(1, this.bodyHeight - 4,);
+    this.transcript.setHeight(transcriptHeight,);
+    const strip = this.completionHint
+      ? truncateToWidth(tagsToAnsi(`{cyan-fg}${this.completionHint}{/cyan-fg}`,), width,)
+      : "";
+
+    const framed = renderFramed({
+      title: "",
+      rows: this.input.render(Math.max(0, width - 2,),),
+      width,
+      color: "cyan",
     },);
 
-    // Send message on Enter, or commit the highlighted completion.
-    this.inputBox.on("submit", (value: string,) => {
-      const committed = this.completer.accept();
-      if (committed !== null) {
-        this.inputBox.setValue(committed,);
-        this.focusInput();
-        screen.render();
-        return;
-      }
+    return [...this.transcript.render(width,), strip, ...framed,];
+  }
 
-      const trimmed = value.trim();
-      // Client-side image-gen and upload: the TUI cannot rely on the web
-      // frontend's command-action dispatch, so `/image` and `/upload` are
-      // handled here. Anything else goes through the normal send path (the
-      // server still dispatches its own `/image` command for other clients).
-      if (trimmed.startsWith("/image ",)) {
-        this.inputBox.clearValue();
-        void this.generateImageFlow(trimmed.slice("/image ".length,),);
-        this.focusInput();
-        screen.render();
-        return;
-      }
+  // ── Focus ───────────────────────────────────────────────────
 
-      if (trimmed.startsWith("/upload ",)) {
-        this.inputBox.clearValue();
-        void this.uploadFlow(trimmed.slice("/upload ".length,),);
-        this.focusInput();
-        screen.render();
-        return;
-      }
+  /** Point the keyboard at the input box. Safe to call repeatedly. */
+  focusInput(): void {
+    this.focus = "input";
+    this.onFocusRequest?.(this.input,);
+  }
 
-      if (trimmed && !this.isSending) {
-        void this.handleSend(trimmed,);
-        // Clear only what was actually dispatched. A send already in flight can
-        // run for minutes, and clearing here threw away whatever the user typed
-        // while waiting for it.
-        this.inputBox.clearValue();
-      }
-
-      this.focusInput();
-      screen.render();
-    },);
-
-    // Focus management. A live completion owns Tab while one is on offer;
-    // with nothing to complete Tab keeps its input <-> list switch.
-    screen.key(["tab",], () => {
-      // An overlay on top owns the keyboard. Acting here would pull focus
-      // into a hidden input box underneath it.
-      if (this.isOverlayOpen()) { return; }
-      if (this.completer.cycle()) {
-        screen.render();
-        return;
-      }
-
-      if (screen.focused === this.inputBox) {
-        // Release first: a box still reading holds `screen.grabKeys`, which
-        // gates screen-level keys and would leave the list unreachable.
-        this.releaseInput();
-        this.messageList.focus();
-      } else {
-        this.focusInput();
-      }
-
-      screen.render();
-    },);
+  /** @returns `true` while the input field owns the keyboard. */
+  isInputFocused(): boolean {
+    return this.focus === "input";
   }
 
   /**
-   * Point the keyboard at the input box and start reading keystrokes into it.
-   *
-   * Both halves matter. `focus()` alone leaves the box visible but deaf —
-   * `readInput()` is what installs the keypress listener and sets
-   * `screen.grabKeys`. `readInput()` returns early when already reading, so
-   * this is safe to call on every path that wants the box live.
+   * Tab: a live completion owns it while one is on offer; with nothing to
+   * complete Tab keeps its input <-> transcript switch. Routed here by the
+   * shell's global key handler.
    */
-  focusInput(): void {
-    // Guard the focus call. `focus()` on an already-focused element still emits
-    // `blur`, which runs blessed's `_done` and tears down the read — including
-    // the one `readInput()` scheduled but has not attached yet, orphaning it and
-    // making the NEXT `readInput()` stack a second listener (every keystroke
-    // then applied twice). `readInput()` already no-ops while reading.
-    if (this.screen.focused !== this.inputBox) {
-      this.inputBox.focus();
+  handleTab(): void {
+    if (this.completer.cycle()) {
+      this.requestRender();
+      return;
     }
 
-    this.inputBox.readInput();
-  }
-
-  /**
-   * Hand the keyboard back so another widget can own it.
-   *
-   * `emit("blur")` is the event blessed's own Textarea listens for to tear
-   * down a read (widgets/textarea.js:206), so it clears the listener and drops
-   * `screen.grabKeys` without the `rewindFocus()` bounce that made overlays
-   * impossible to focus. Paired with {@link focusInput}.
-   */
-  releaseInput(): void {
-    // Deferred on purpose. blessed installs the read listener in a nextTick
-    // AFTER `readInput()` returns (widgets/textarea.js:200), and `_done` only
-    // removes the listener it can see. Emitting blur synchronously inside that
-    // window leaves the pending attach orphaned, so the next `focusInput()`
-    // stacks a second listener and every keystroke is applied twice. Yielding a
-    // tick puts the attach first and the teardown second, which is the order
-    // `_done` expects.
-    setImmediate(() => {
-      this.inputBox.emit("blur",);
-    },);
+    if (this.focus === "input") {
+      this.focus = "transcript";
+      this.onFocusRequest?.(this.transcript,);
+    } else {
+      this.focusInput();
+    }
   }
 
   /**
@@ -307,13 +191,18 @@ export class ChatWidget implements ChatHost {
 
   // ── Message display ─────────────────────────────────────────
 
+  /** Push the current rows into the scroll viewport and repaint. */
+  private syncTranscript(): void {
+    this.transcript.scroll.setLines(this.transcriptLines.map((line,) => tagsToAnsi(line,)),);
+    this.requestRender();
+  }
+
   /**
-   * @param message - chat message to append to the list
+   * @param message - chat message to append to the transcript
    */
   addMessage(message: ChatMessage,): void {
     this.messages.push(message,);
-    this.messageList.addItem(formatMessageLine(message,),);
-    this.itemCount++;
+    this.transcriptLines.push(formatMessageLine(message,),);
     this.scrollToBottom();
   }
 
@@ -324,37 +213,31 @@ export class ChatWidget implements ChatHost {
   setMessages(messages: ChatMessage[],): void {
     this.messages = messages;
     // A fresh transcript has no typing placeholder: whatever row one held is
-    // gone with the old items.
+    // gone with the old rows.
     this.typingRow = null;
-    const items = Array.from(messages, (msg,) => formatMessageLine(msg,),);
-    this.messageList.setItems(items,);
-    this.itemCount = items.length;
+    this.transcriptLines = Array.from(messages, (msg,) => formatMessageLine(msg,),);
     this.scrollToBottom();
   }
 
-  /** Clear the message list and item counter. */
+  /** Clear the transcript rows and message list. */
   clearMessages(): void {
     this.messages = [];
-    this.itemCount = 0;
     this.typingRow = null;
-    this.messageList.clearItems();
+    this.transcriptLines = [];
+    this.syncTranscript();
   }
 
-  /** Scroll the message list to the last item and re-render the screen. */
+  /** Scroll the transcript to the last row and re-render. */
   scrollToBottom(): void {
-    if (this.itemCount > 0) {
-      this.messageList.select(this.itemCount - 1,);
-    }
-
-    this.screen.render();
+    this.transcript.scroll.scrollToBottom();
+    this.syncTranscript();
   }
 
   /** Append a "…typing" placeholder and re-render. */
   showTyping(): void {
     if (this.typingRow !== null) { return; }
-    this.typingRow = this.itemCount;
-    this.messageList.addItem("{italic}{yellow}... typing{/yellow}{/italic}",);
-    this.itemCount++;
+    this.typingRow = this.transcriptLines.length;
+    this.transcriptLines.push(TYPING_ROW,);
     this.scrollToBottom();
   }
 
@@ -364,8 +247,7 @@ export class ChatWidget implements ChatHost {
     if (row === null) { return; }
 
     this.typingRow = null;
-    this.messageList.removeItem(row,);
-    this.itemCount--;
+    this.transcriptLines.splice(row, 1,);
     this.scrollToBottom();
   }
 
@@ -373,12 +255,65 @@ export class ChatWidget implements ChatHost {
    * @param message - error text to append in red
    */
   showError(message: string,): void {
-    this.messageList.addItem(`{red-fg}⚠ Error: ${escapeMarkup(message,)}{/red-fg}`,);
-    // itemCount tracks the list length for scrollToBottom's select().
-    // Omitting it here desynced the two, so the error line was the one
-    // line that could never be selected.
-    this.itemCount++;
+    this.transcriptLines.push(`{red-fg}⚠ Error: ${escapeMarkup(message,)}{/red-fg}`,);
     this.scrollToBottom();
+  }
+
+  /** @inheritdoc */
+  requestRender(): void {
+    this.requestRenderHook();
+  }
+
+  /**
+   * @param height - total rows the shell allocated to the chat column
+   */
+  setBodyHeight(height: number,): void {
+    this.bodyHeight = Math.max(5, height,);
+  }
+
+  // ── Submission ──────────────────────────────────────────────
+
+  /**
+   * Enter in the input: commit a highlighted completion, dispatch the
+   * client-side `/image` and `/upload` flows, or send the message.
+   * @param value - the input field's current value
+   */
+  private handleSubmit(value: string,): void {
+    const committed = this.completer.accept();
+    if (committed !== null) {
+      this.input.setValue(committed,);
+      this.completer.update(committed,);
+      this.requestRender();
+      return;
+    }
+
+    const trimmed = value.trim();
+    // Client-side image-gen and upload: the TUI cannot rely on the web
+    // frontend's command-action dispatch, so `/image` and `/upload` are
+    // handled here. Anything else goes through the normal send path (the
+    // server still dispatches its own `/image` command for other clients).
+    if (trimmed.startsWith("/image ",)) {
+      this.input.setValue("",);
+      void this.generateImageFlow(trimmed.slice("/image ".length,),);
+      return;
+    }
+
+    if (trimmed.startsWith("/upload ",)) {
+      this.input.setValue("",);
+      void this.uploadFlow(trimmed.slice("/upload ".length,),);
+      return;
+    }
+
+    if (trimmed && !this.isSending) {
+      void this.handleSend(trimmed,);
+      // Clear only what was actually dispatched. A send already in flight can
+      // run for minutes, and clearing here threw away whatever the user typed
+      // while waiting for it.
+      this.input.setValue("",);
+      this.completer.update("",);
+    }
+
+    this.requestRender();
   }
 
   // ── API wiring ─────────────────────────────────────────────────
