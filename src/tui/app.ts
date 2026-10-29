@@ -69,7 +69,10 @@ export class AppShell implements Component {
     const total = Math.max(6, this.#terminalRows(),);
     const bodyHeight = total - 1;
 
-    const sidebarVisible = this.#assets.isVisible();
+    // Below 25 columns (chat min 20 + divider 1 + sidebar min 4) the split
+    // cannot fit; give the chat the full width for this frame and skip the
+    // sidebar entirely instead of letting the engine clip it at flush.
+    const sidebarVisible = this.#assets.isVisible() && width >= 25;
     const chatWidth = sidebarVisible ? Math.max(20, Math.trunc(width * CHAT_WIDTH_SHARE,),) : width;
     const sidebarWidth = sidebarVisible ? Math.max(4, width - chatWidth - 1,) : 0;
 

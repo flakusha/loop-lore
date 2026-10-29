@@ -26,7 +26,7 @@ import { ChatPicker, } from "./chat-picker";
 import { createHarnessView, } from "./harness";
 import { setFetch as setModelsFetch, } from "./models-api";
 import { ModelsOverlay, } from "./models-overlay";
-import { ProcessTerminal, TUI, } from "./pi";
+import { ProcessTerminal, TUI, visibleWidth, } from "./pi";
 import { stripRows, } from "./test-support";
 
 interface HostLog {
@@ -195,6 +195,28 @@ describe("AppShell layout", () => {
     const withSidebar = shell.render(100,) as string[];
     expect(withSidebar[0],).toContain("│",);
     expect(stripRows(withSidebar,).every((row,) => row.length === 100),).toBe(true,);
+  });
+
+  // Below 25 columns (chat min 20 + divider 1 + sidebar min 4) the split
+  // cannot fit: the chat takes the full width for that frame and the sidebar
+  // column is skipped rather than silently clipped by the engine at flush.
+  it("renders the chat at full width without the sidebar below the 25-column split minimum", () => {
+    const chat = new ChatWidget({},);
+    const assets = new AssetView({},);
+    const shell = new AppShell(chat, assets, () => 10,);
+    shell.setStatus(" Loop Lore  |  ready",);
+    assets.show();
+
+    for (const width of [10, 20, 24,]) {
+      const rows = shell.render(width,) as string[];
+      expect(rows.every((row,) => visibleWidth(row,) <= width),).toBe(true,);
+      expect(rows[0],).not.toContain("│",);
+    }
+
+    // Still padded to exactly the frame width at a comfortable size.
+    const wide = shell.render(80,) as string[];
+    expect(wide.every((row,) => visibleWidth(row,) <= 80),).toBe(true,);
+    expect(wide[0],).toContain("│",);
   });
 });
 
