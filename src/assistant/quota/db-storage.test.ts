@@ -4,12 +4,17 @@
 /**
  * Tests for the DB-backed quota storage (`assistant_quota_usage`): first
  * deduction insert, accumulate, boundary allow, over-limit reject, lazy
- * window rollover, configure/reset hook parity, and a concurrency race
- * regression (N parallel deductions of a limit-1 window → exactly 1
- * succeeds). Runs against a real in-memory bun:sqlite with the full
- * migration chain applied (createTestDb), bound via `bindQuotaDb`.
+ * window rollover, SQL-injection hardening, configure/reset hook parity, and
+ * a concurrency race regression (N parallel deductions of a limit-1 window
+ * → exactly 1 succeeds).
+ *
+ * Resource contract: ONE in-memory bun:sqlite fixture per FILE (created in
+ * beforeAll, destroyed in afterAll — no fixed paths, no ports, nothing
+ * shared across processes); beforeEach re-arms `configureQuotaStorage`,
+ * which ALSO clears the bound table, so every test starts from an empty
+ * counter store.
  */
-import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import {
   bindQuotaDb,
@@ -25,9 +30,12 @@ const WINDOW = 60_000;
 
 let fixture: TestDb;
 
-beforeEach(async () => {
+beforeAll(async () => {
   fixture = await createTestDb();
   bindQuotaDb(fixture.sqlite,);
+},);
+
+beforeEach(() => {
   // Configure ALSO clears the bound DB — every test starts from an empty table.
   configureQuotaStorage({ windowMs: WINDOW, limitPerWindow: 10, },);
 },);
@@ -97,6 +105,23 @@ describe("consumeQuotaDb", () => {
   test("keeps per-user windows isolated", () => {
     deduct("u7", 10, T0,);
     expect(deduct("u8", 10, T0,),).toBe(0,);
+  });
+
+  test("treats a hostile userId as an opaque parameter — no injection", () => {
+    // userId is user-derived (authenticated caller id); it rides bound ?-
+    // parameters only. A statement-shaped value must become a literal row
+    // key, leave the table intact, and accumulate on its own window.
+    const hostile = "u'; DROP TABLE assistant_quota_usage; --";
+    expect(deduct(hostile, 6, T0,),).toBe(4,);
+    expect(storedRow(hostile,),).toEqual({ used: 6, windowStart: String(T0,), },);
+    expect(deduct(hostile, 1, T0,),).toBe(3,);
+    // The table survived the "DROP": a different user still deducts normally.
+    expect(deduct("after-drop", 1, T0,),).toBe(9,);
+    const rows = fixture.sqlite
+      .query("SELECT user_id FROM assistant_quota_usage",)
+      .all() as Array<{ user_id: string }>;
+
+    expect(rows.map((r,) => r.user_id).toSorted(),).toEqual([hostile, "after-drop",],);
   });
 
   test("8 parallel deductions of a limit-1 window — exactly 1 succeeds", async () => {
