@@ -155,9 +155,10 @@
     //     (BUG-activitypub-actor-keys-table... says keep until that FEAT lands)
     //   touch.ts, mobile-composer.ts -> open WIRE tickets under
     //     epic-frontend-keynav-mobile; mobile-composer.ts is NOT wired yet
-    //     (no partial includes it and the component is never published on
-    //     globalThis) - wiring it is tracked by
-    //     WIRE-frontend-mobile-sticky-bottom-composer
+    //     (no partial includes src/components/chat/mobile-composer.html and
+    //     mobileComposer is never published on globalThis - including that
+    //     partial today throws ReferenceError) - wiring it is tracked by
+    //     WIRE-frontend-mobile-sticky-bottom-composer (git issue 5aea351)
     //   (keynav-help.ts removed 2026-10-25: wired into layout.html + the
     //     Alpine bundle by a11y-keynav-phase3)
     //   transport/index.ts + transport/test/harness.ts -> CONTESTED:
