@@ -15,6 +15,7 @@
 **Tags:** assistant, adaptation, context, outfit, knowledge, background
 **Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `epic-lore-knowledge.md`, `epic-character-npc-lore-access.md`
+**Status Note:** Done (2026-10-29, branch `r2-entity-access-wrapup`, commits `f40cd67fe`, `c72a3d498`). `/adapt` shipped in `src/assistant/commands/adapt.ts`: the source loads through its adapter's ownership guard, the target world's description + lore + enabled lore entries load as context (`src/assistant/adapter/world-context.ts`), the model proposes per-field changes each carrying a reason (`src/assistant/quality/adaptation.ts` — `parseAdaptationChanges`/`applyAdaptationChanges`), the `/create` quality pipeline re-validates the merged draft against the target world (`normalizeEntity`/`runQualityGates` from `src/assistant/quality/entity-creation.ts`), and the change preview travels as an `adapt-entity` action the user must confirm before the entity is created in the target world. Unit coverage `src/assistant/commands/adapt.test.ts`; e2e positive path `tests/e2e/flows/assistant-entity-access.test.ts` (8 pass — count recorded in the e2e ticket's note). DEVIATIONS: the `worlds` table has no `style` column, so the target context carries description + lore + lore entries (the ticket's "style/setting notes (if any)"); `--force` (update the source instead of creating a new entity) is not implemented — `/adapt` always creates a new entity in the target world. Test suites were not re-run in this wrap-up.
 
 ## Summary
 
