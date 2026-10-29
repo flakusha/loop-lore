@@ -66,7 +66,8 @@ export function configureAssistantQuota(options: QuotaStorageOptions,): void {
 export function initAssistantQuota(
   assistant?: { quotaWindowMs: number; quotaLimitPerWindow: number } | null,
 ): void {
-  const { quotaWindowMs, quotaLimitPerWindow, } = assistant ?? ASSISTANT_QUOTA_DEFAULTS;
+  const quotaWindowMs = assistant?.quotaWindowMs ?? ASSISTANT_QUOTA_DEFAULTS.quotaWindowMs;
+  const quotaLimitPerWindow = assistant?.quotaLimitPerWindow ?? ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow;
   configureQuotaStorage({
     windowMs: quotaWindowMs,
     limitPerWindow: quotaLimitPerWindow,
