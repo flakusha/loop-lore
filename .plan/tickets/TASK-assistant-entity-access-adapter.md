@@ -16,6 +16,7 @@
 **Tags:** assistant, adapter, composition, integration
 **Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `src/assistant/commands/registry.ts`
+**Status Note:** Done (2026-10-29, branch `r2-entity-access-wrapup`, commits `526b3ed3b`, `b65a7eb95`). `src/assistant/adapter/adapters.ts` composes the existing service layer per kind — `ENTITY_ADAPTERS` covers character/world/location/item — and reuses the existing guards: `requireOwnedCharacter` (`src/assistant/commands/entity-guard.ts`), `requireWorldOwner` (`src/routes/worlds/access.ts`), `checkWorldOwnership` (`src/routes/story-items/handlers.ts`); no new access layer. The command handlers stay thin (`src/assistant/commands/duplicate.ts`, `src/assistant/commands/adapt.ts`) and the quality gates come from the existing `src/assistant/quality/entity-creation.ts` (`normalizeEntity`/`runQualityGates`) — no second gate module. Unit coverage: `src/assistant/commands/duplicate.test.ts` (guarded loads for all four kinds) and `src/assistant/commands/adapt.test.ts`; there is no separate `src/assistant/adapter/*.test.ts` — the adapters are exercised through the command suites (see the tests ticket's note). Test suites were not re-run in this wrap-up.
 
 ## Summary
 
