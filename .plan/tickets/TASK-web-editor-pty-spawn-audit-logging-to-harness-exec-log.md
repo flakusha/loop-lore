@@ -22,3 +22,5 @@ Epic: epic-browser-editor-support. Wire every terminal PTY spawn (command, sandb
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+git issue: 5669358

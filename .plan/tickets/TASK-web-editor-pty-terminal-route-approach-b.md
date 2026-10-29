@@ -22,3 +22,5 @@ Epic: epic-browser-editor-support. WS /api/v1/terminal via native Bun.serve webs
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+git issue: 5bf3df5

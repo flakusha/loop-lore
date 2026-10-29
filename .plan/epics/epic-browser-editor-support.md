@@ -62,7 +62,6 @@ that shape an Elysia `.ws()` route **fails to upgrade**. The working path is
 - Terminal recording/replay — harness exec-log covers audit.
 - Arbitrary shell over the socket — the route spawns a fixed allowlisted
   command (`$EDITOR <file>`), not a shell (see Security).
-  command (`$EDITOR <file>`), not a shell (see Security).
 
 ## Current State (verified 2026-10-30)
 
@@ -162,9 +161,10 @@ later optional addition, not a prerequisite.
 
 ## Linked Tasks
 
-- `TASK-web-editor-open-in-editor-links.md` — approach A (URI-scheme links).
-- `TASK-web-editor-pty-terminal-route.md` — approach B (PTY route + xterm panel).
-- `TASK-web-editor-config-section-bun-floor.md` — config section + Bun floor.
-- `TASK-web-editor-harness-sandbox-files.md` — approach C (sandbox file tree).
-- `TASK-web-editor-spawn-audit-logging.md` — PTY spawn → exec-log wiring.
+- `TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md` — approach A (URI-scheme links).
+- `TASK-web-editor-pty-terminal-route-approach-b.md` — approach B (PTY route + xterm panel).
+- `TASK-web-editor-config-section-plus-bun-floor-web-editor-web-term.md` — config section + Bun floor.
+- `TASK-web-editor-harness-sandbox-file-tree-approach-c.md` — approach C (sandbox file tree).
+- `TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log.md` — PTY spawn → exec-log wiring.
+
 git issue: 50112ba
