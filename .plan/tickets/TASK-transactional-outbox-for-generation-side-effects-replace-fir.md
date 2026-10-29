@@ -6,12 +6,12 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-architecture
+**Epic:** epic-data-integrity-acid
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 **Summary:**
 
-DDD recommendation 5 (Medium impact, Medium risk, 1-2 weeks). Replace fire-and-forget triggerAutoGeneration (void trigger in turn-skip route and message reply; only regenIdempotencyKey as idempotency) with queued job + idempotency key; reuse src/async offload infra. Transactional boundaries today: some routes/services use database.transaction() (auth/register.ts, admin comfyui-workflows flags.ts); many multi-write flows not clearly transactional (chat turn skip cues generation fire-and-forget; moderation actions + audit pair uses trx). Note overlap: TASK-task-generic-event-outbox-dlq-projections.md owns the generic event-outbox/DLQ/projection machinery (Watermill Forwarder pattern, full CQRS/ES deferred); this ticket owns the generation-trigger migration onto that machinery (queued triggerAutoGeneration + idempotency key), consuming it rather than rebuilding it.
+DDD recommendation 5 (Medium impact, Medium risk, 1-2 weeks). Replace fire-and-forget triggerAutoGeneration (void trigger in turn-skip route and message reply; only regenIdempotencyKey as idempotency) with queued job + idempotency key; reuse src/async offload infra. Owner: epic-data-integrity-acid (DDDReview correction 2026-10-29: generation-outbox is data-integrity, not federation). Co-bind: epic-llm-queue + epic-generation-flow-control (verified present). Transactional boundaries today: some routes/services use database.transaction() (auth/register.ts, admin comfyui-workflows flags.ts); many multi-write flows not clearly transactional (chat turn skip cues generation fire-and-forget; moderation actions + audit pair uses trx). Note overlap: TASK-task-generic-event-outbox-dlq-projections.md owns the generic event-outbox/DLQ/projection machinery (Watermill Forwarder pattern, full CQRS/ES deferred); this ticket owns the generation-trigger migration onto that machinery (queued triggerAutoGeneration + idempotency key), consuming it rather than rebuilding it.
 
 Acceptance: turn-skip + message-reply generation triggers go through queued job with idempotency key; duplicate delivery safe; failure retries via queue not lost; outbox drains; bun run check green.
 
