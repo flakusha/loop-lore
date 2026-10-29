@@ -4,6 +4,10 @@
       "name": "agency"
     },
     {
+      "name": "adapt",
+      "requiredRole": "owner"
+    },
+    {
       "name": "analyze"
     },
     {
@@ -74,6 +78,10 @@
     },
     {
       "name": "dice"
+    },
+    {
+      "name": "duplicate",
+      "requiredRole": "member"
     },
     {
       "name": "guide"
@@ -214,6 +222,14 @@
       "requiredRole": "member"
     },
     {
+      "name": "rag-decompose",
+      "requiredRole": "member"
+    },
+    {
+      "name": "rag-preview",
+      "requiredRole": "member"
+    },
+    {
       "name": "rewrite"
     },
     {
@@ -300,6 +316,7 @@
       "query": "",
       "expected": [
         "agency",
+        "adapt",
         "analyze",
         "apply",
         "asset-list",
@@ -320,6 +337,7 @@
         "detail",
         "roll",
         "dice",
+        "duplicate",
         "guide",
         "constraint",
         "scene",
@@ -359,6 +377,8 @@
         "quest",
         "rag-search",
         "rag-ask",
+        "rag-decompose",
+        "rag-preview",
         "rewrite",
         "regen",
         "review",
@@ -381,6 +401,7 @@
       "query": "a",
       "expected": [
         "agency",
+        "adapt",
         "analyze",
         "apply",
         "asset-list",
@@ -395,6 +416,7 @@
         "char-get",
         "create",
         "detail",
+        "duplicate",
         "constraint",
         "target",
         "orchestrate",
@@ -411,6 +433,8 @@
         "narrate",
         "rag-search",
         "rag-ask",
+        "rag-decompose",
+        "rag-preview",
         "stats",
         "summarize",
         "world-update"
