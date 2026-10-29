@@ -55651,6 +55651,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md"
     }
   ],
   "src/tui/api-contract.test.ts": [

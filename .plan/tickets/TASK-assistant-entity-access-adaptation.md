@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** High
 **Type:** Task
@@ -141,3 +141,5 @@ Adaptation requires user confirmation. The confirmation message shows:
 - `src/assistant/quality/entity-creation.ts` — Quality gates (reuse)
 - `epic-lore-knowledge.md` — World lore entries
 - `epic-character-npc-lore-access.md` — Character access profile (for knowledge adaptation)
+
+**Resolved:** 2026-10-29 registry-driven close: git issue 0fd3be4 (registry tip: 9cd05a40a Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ASSISTANT-ENTITY-ACCESS-ADA)

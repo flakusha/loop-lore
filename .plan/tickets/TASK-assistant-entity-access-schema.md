@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Task
@@ -141,3 +141,5 @@ export interface FieldChange {
 - `src/routes/worlds/access.ts` — `requireWorldAccess`, `requireWorldOwner`
 - `src/routes/story-items/handlers.ts` — `checkWorldOwnership`
 - `src/assistant/quality/entity-creation.ts` — Quality gates (reuse)
+
+**Resolved:** 2026-10-29 registry-driven close: git issue 01c9bfc (registry tip: 616d61643 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ASSISTANT-ENTITY-ACCESS-SCH)
