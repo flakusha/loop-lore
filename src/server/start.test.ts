@@ -64,7 +64,7 @@ if (ISOLATED) {
   mock.module("../config/load", () => ({ loadConfig: () => currentConfig, }),);
   mock.module("../cron", () => ({ getScheduler: () => ({ stop: () => {}, }), }),);
   mock.module("../crypto", () => ({ initAnonymousMode: () => {}, initSmk: async () => {}, }),);
-  mock.module("../db/index", () => ({ getDatabase: () => fakeDb, }),);
+  mock.module("../db/index", () => ({ getDatabase: () => fakeDb, getSqliteDatabase: () => null, }),);
   mock.module("../db/migrate", () => ({ runDataMigrations: async () => {}, runMigrations: async () => {}, }),);
   mock.module("../db/seed", () => ({ seedDefaultActors: async () => {}, }),);
   mock.module("../elysia-app", () => ({ createApp: () => fakeApp, }),);
