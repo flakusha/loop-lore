@@ -9,9 +9,13 @@
  *
  * Resource contract: owns the process-global test override + production
  * singleton (cleared via setTestDatabase(null) in afterEach) and one tmp DB
- * file `.tmp/sqlite-handle-probe-<pid>.db` — pid-unique, so parallel test
- * processes never collide; removed (and LOOP_LORE_DB_PATH restored) in
- * afterEach even on failure.
+ * file `.tmp/sqlite-handle-probe-<pid>-<run-id>.db` — pid + per-run id, so
+ * parallel test processes AND concurrent runs that share a pid never
+ * collide; removed in afterEach even on failure. LOOP_LORE_DB_PATH is a
+ * process-global: it is set only for the synchronous singleton creation and
+ * restored in the test body (afterEach is the safety net), and only when
+ * THIS file changed it — a concurrently running file never sees this
+ * file's probe path.
  */
 import { Database, } from "bun:sqlite";
 import { afterEach, describe, expect, test, } from "bun:test";
@@ -21,11 +25,23 @@ import path from "node:path";
 import { createSqliteDialect, getDatabase, getSqliteDatabase, setTestDatabase, } from "./index";
 import type { DB, } from "./schema";
 
+/** Unique per test-run id — keeps the probe DB path collision-free even when
+ * two runs share a pid (containers) or a checkout path. */
+const RUN_ID = Math.random().toString(36,).slice(2, 10,);
+
 let tmpDbPath: string | null = null;
 let priorDbPath: string | undefined;
+let dbPathOverridden = false;
 
-afterEach(() => {
-  setTestDatabase(null,);
+/**
+ * Restore LOOP_LORE_DB_PATH — but ONLY if this file changed it. The env var
+ * is a process-global: an unconditional delete/restore in afterEach would
+ * clobber a value another (concurrently running) file set, or an ambient one
+ * from the runner.
+ */
+function restoreDbPathEnv(): void {
+  if (!dbPathOverridden) { return; }
+  dbPathOverridden = false;
   if (priorDbPath === undefined) {
     delete process.env.LOOP_LORE_DB_PATH;
   } else {
@@ -33,6 +49,11 @@ afterEach(() => {
   }
 
   priorDbPath = undefined;
+}
+
+afterEach(() => {
+  setTestDatabase(null,);
+  restoreDbPathEnv();
   if (tmpDbPath) {
     rmSync(tmpDbPath, { force: true, },);
     tmpDbPath = null;
@@ -65,12 +86,23 @@ describe("getSqliteDatabase", () => {
 
   test("returns the production singleton's handle once getDatabase() runs", () => {
     priorDbPath = process.env.LOOP_LORE_DB_PATH;
-    tmpDbPath = path.join(import.meta.dir, "../../.tmp", `sqlite-handle-probe-${process.pid}.db`,);
+    dbPathOverridden = true;
+    // pid + per-run id: unique across parallel runner processes AND across
+    // concurrent runs that share a pid (separate containers, same repo path).
+    tmpDbPath = path.join(import.meta.dir, "../../.tmp", `sqlite-handle-probe-${process.pid}-${RUN_ID}.db`,);
     process.env.LOOP_LORE_DB_PATH = tmpDbPath;
-    const singleton = getDatabase();
-    const handle = getSqliteDatabase();
-    expect(handle,).not.toBeNull();
-    expect(handle!.query("SELECT 1 AS one",).get(),).toEqual({ one: 1, },);
-    void singleton.destroy();
+    try {
+      const singleton = getDatabase();
+      const handle = getSqliteDatabase();
+      expect(handle,).not.toBeNull();
+      expect(handle!.query("SELECT 1 AS one",).get(),).toEqual({ one: 1, },);
+      void singleton.destroy();
+    } finally {
+      // Restored HERE, not only in afterEach: the path is needed just for the
+      // synchronous singleton creation, and leaving a mutated process-global
+      // across the runner's await boundary lets a concurrently running file
+      // resolve its own DB to this probe file.
+      restoreDbPathEnv();
+    }
   });
 });
