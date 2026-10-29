@@ -4,6 +4,7 @@
 // size-allow: 389
 
 import type { Kysely, Selectable, } from "kysely";
+import { withTransaction, } from "../../characters/services/shared-service-utils";
 import { triggerItemOutfitChange, } from "../../characters/services/wardrobe/item-trigger";
 import { CraftingAttemptStatus, DiscoveryMethod, EquipState, } from "../../db/enums";
 import type { ItemCategory, } from "../../db/enums";
@@ -279,8 +280,10 @@ export class CraftingProcessService {
       };
     }
 
-    // Transactional: validate → consume → roll → produce → record → discover
-    const outcome = await this.db.transaction().execute(async (trx,) => {
+    // Transactional (ambient-safe): reuses the caller's transaction when
+    // this service is constructed on a trx (fulfillOrder) instead of
+    // throwing on a nested .transaction().
+    const outcome = await withTransaction(this.db, async (trx,) => {
       const consumed = await consumeRecipeMaterials(trx, opts.actorId, matRows, defMap,);
 
       // Roll success

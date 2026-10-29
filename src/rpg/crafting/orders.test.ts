@@ -151,7 +151,7 @@ describe("CraftingOrderService.fulfillOrder — concurrent fulfil", () => {
     expect(order?.status,).toBe("fulfilled",);
   });
 
-  test("a mid-fulfil side-effect failure releases the claim and the order stays retryable", async () => {
+  test("a mid-fulfil payment failure rolls craft and payment back and the order stays retryable", async () => {
     const outputItemId = uid();
     await insertItems(db, worldId, "Bolt", "material", { id: outputItemId as never, },);
     const recipeId = uid();
@@ -178,14 +178,25 @@ describe("CraftingOrderService.fulfillOrder — concurrent fulfil", () => {
       updated_at: now,
     },).execute();
 
-    // Fund the payment so the retry below can go through the real trade.
-    await credit(db, requesterId, worldId, 500,);
+    // Requester starts UNFUNDED: a dedicated actor with no balance row,
+    // so the payment leg fails inside the fulfil transaction and craft +
+    // payment roll back together — previously the craft committed and the
+    // payment failure stranded crafted-but-unpaid.
+    const poorRequesterId = uid();
+    await insertActors(db, "Broke Requester", {
+      id: poorRequesterId as never,
+      actor_type: "character" as never,
+      user_id: null,
+      owner_id: null,
+      agent_type: "ai" as never,
+      settings: "{}" as never,
+    },);
 
     const orderId = uid();
     await db.insertInto("crafting_orders",).values({
       id: orderId,
       world_id: worldId,
-      requester_actor_id: requesterId,
+      requester_actor_id: poorRequesterId,
       crafter_actor_id: crafterId,
       recipe_id: recipeId,
       quantity: 1,
@@ -199,16 +210,13 @@ describe("CraftingOrderService.fulfillOrder — concurrent fulfil", () => {
       trade_type: "crafting",
     },).execute();
 
-    // Crash-class payment failure AFTER the claim: the claim must release,
-    // or the order wedges in 'fulfilling' — a status accept, cancel, and
-    // fulfil all refuse.
-    const wedged = new CraftingOrderService(db,);
-    (wedged as unknown as { trade: { trade: () => Promise<never> } }).trade = {
-      trade: () => Promise.reject(new Error("payment exploded",),),
-    };
+    const svc = new CraftingOrderService(db,);
+    const failed = await svc.fulfillOrder(orderId,);
+    expect(failed.ok,).toBe(false,);
+    expect(failed.reason,).toBe("buyer has insufficient currency",);
 
-    await expect(wedged.fulfillOrder(orderId,),).rejects.toThrow("payment exploded",);
-
+    // The order never left `accepted` (the claim rolled back with the
+    // transaction), and no craft attempt survived the rollback.
     const released = await db
       .selectFrom("crafting_orders",)
       .select("status",)
@@ -217,8 +225,18 @@ describe("CraftingOrderService.fulfillOrder — concurrent fulfil", () => {
 
     expect(released?.status,).toBe("accepted",);
 
-    // Retry with the real trade — the order must be fulfillable again.
-    const retry = await new CraftingOrderService(db,).fulfillOrder(orderId,);
+    const attempts = await db
+      .selectFrom("crafting_attempts",)
+      .select("id",)
+      .where("actor_id", "=", poorRequesterId,)
+      .where("recipe_id", "=", recipeId,)
+      .execute();
+
+    expect(attempts,).toHaveLength(0,);
+
+    // Fund the requester and retry — the order must be fulfillable again.
+    await credit(db, poorRequesterId, worldId, 500,);
+    const retry = await svc.fulfillOrder(orderId,);
     expect(retry.ok,).toBe(true,);
 
     const fulfilled = await db
