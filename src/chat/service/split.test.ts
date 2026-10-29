@@ -15,6 +15,7 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import { reuniteChats, splitParty, } from "./split";
+import { validateBranchSpecs, } from "./split-validate";
 
 describe("party split / reunion (C7 Phase 3)", () => {
   let db: Kysely<DB>;
@@ -52,6 +53,22 @@ describe("party split / reunion (C7 Phase 3)", () => {
       } as never,
     );
 
+    // World + locations first — chats.world_id and branch destinations are
+    // FK-checked, and splitParty validates destinations against the chat's
+    // world (C7 auto-execution slice).
+    const worldId = "test-world";
+    await db.insertInto("worlds",).values({ id: worldId, name: "Test World", owner_id: ownerId, },).execute();
+    await db.insertInto("locations",).values({ id: "forest", world_id: worldId, name: "Forest", },).execute();
+    await db.insertInto("locations",).values({ id: "cave", world_id: worldId, name: "Cave", },).execute();
+    await db.insertInto("locations",).values({ id: "tower", world_id: worldId, name: "Tower", },).execute();
+    await db.insertInto("locations",).values({ id: "dungeon", world_id: worldId, name: "Dungeon", },)
+      .execute();
+
+    // A second world's location, for the foreign-destination rejection.
+    await db.insertInto("worlds",).values({ id: "other-world", name: "Other World", owner_id: ownerId, },).execute();
+    await db.insertInto("locations",).values({ id: "foreign-loc", world_id: "other-world", name: "Foreign", },)
+      .execute();
+
     await insertChats(
       db,
       "Party Dungeon",
@@ -60,6 +77,7 @@ describe("party split / reunion (C7 Phase 3)", () => {
         id: srcChatId,
         type: "group",
         mode: "group",
+        world_id: worldId,
         gm_config: JSON.stringify({ renderingOverride: "visual_novel", },),
       } as never,
     );
@@ -79,20 +97,45 @@ describe("party split / reunion (C7 Phase 3)", () => {
     await insertChatParticipants(db, srcChatId, mageId, {
       role_in_chat: ChatParticipantRole.Member,
     } as never,);
-
-    // Insert world + locations referenced by branch current_location_id FK
-    const worldId = "test-world";
-    await db.insertInto("worlds",).values({ id: worldId, name: "Test World", owner_id: ownerId, },).execute();
-    await db.insertInto("locations",).values({ id: "forest", world_id: worldId, name: "Forest", },).execute();
-    await db.insertInto("locations",).values({ id: "cave", world_id: worldId, name: "Cave", },).execute();
-    await db.insertInto("locations",).values({ id: "tower", world_id: worldId, name: "Tower", },).execute();
-    await db.insertInto("locations",).values({ id: "dungeon", world_id: worldId, name: "Dungeon", },)
-      .execute();
   },);
 
   afterAll(async () => {
     await db.destroy();
   },);
+
+  describe("validateBranchSpecs", () => {
+    test("accepts specs whose locations and actors resolve", async () => {
+      const result = await validateBranchSpecs(db, {
+        worldId: "test-world",
+        branches: [
+          { locationId: "forest", actorIds: [heroId,], name: "A", },
+          { locationId: "cave", actorIds: [rogueId,], name: "B", },
+        ],
+        chatId: srcChatId,
+      },);
+
+      expect(result,).toEqual({ ok: true, },);
+    });
+
+    test("rejects a spec whose actor is not a chat participant", async () => {
+      const outsiderId = crypto.randomUUID();
+      await insertActors(db, "Outsider", { id: outsiderId, user_id: ownerId, owner_id: ownerId, } as never,);
+
+      const result = await validateBranchSpecs(db, {
+        worldId: "test-world",
+        branches: [
+          { locationId: "forest", actorIds: [heroId,], name: "A", },
+          { locationId: "cave", actorIds: [outsiderId,], name: "B", },
+        ],
+        chatId: srcChatId,
+      },);
+
+      expect(result,).toEqual({
+        code: "bad_request",
+        message: `Actors are not participants of this chat: ${outsiderId}`,
+      },);
+    });
+  });
 
   describe("splitParty", () => {
     test("splits party into two branches with correct participants", async () => {
@@ -174,6 +217,95 @@ describe("party split / reunion (C7 Phase 3)", () => {
       expect(result,).toEqual({
         code: "forbidden",
         message: "Only the chat owner can split the party",
+      },);
+    });
+
+    test("returns bad_request for a location that does not exist", async () => {
+      const result = await splitParty(db, {
+        chatId: srcChatId,
+        actorId: ownerId,
+        branches: [
+          { locationId: "forest", actorIds: [heroId,], name: "A", },
+          { locationId: "swamp", actorIds: [rogueId,], name: "B", },
+        ],
+      },);
+
+      expect(result,).toEqual({
+        code: "bad_request",
+        message: "Locations not found in this chat's world: swamp",
+      },);
+    });
+
+    test("returns bad_request for a location belonging to another world", async () => {
+      const result = await splitParty(db, {
+        chatId: srcChatId,
+        actorId: ownerId,
+        branches: [
+          { locationId: "forest", actorIds: [heroId,], name: "A", },
+          { locationId: "foreign-loc", actorIds: [rogueId,], name: "B", },
+        ],
+      },);
+
+      expect(result,).toEqual({
+        code: "bad_request",
+        message: "Locations not found in this chat's world: foreign-loc",
+      },);
+    });
+
+    test("returns bad_request for an actor who is not a chat participant", async () => {
+      const outsiderId = crypto.randomUUID();
+      await insertActors(db, "Outsider", { id: outsiderId, user_id: ownerId, owner_id: ownerId, } as never,);
+
+      const result = await splitParty(db, {
+        chatId: srcChatId,
+        actorId: ownerId,
+        branches: [
+          { locationId: "forest", actorIds: [heroId,], name: "A", },
+          { locationId: "cave", actorIds: [outsiderId,], name: "B", },
+        ],
+      },);
+
+      expect(result,).toEqual({
+        code: "bad_request",
+        message: `Actors are not participants of this chat: ${outsiderId}`,
+      },);
+    });
+
+    test("returns bad_request for a branch with no actors", async () => {
+      const result = await splitParty(db, {
+        chatId: srcChatId,
+        actorId: ownerId,
+        branches: [
+          { locationId: "forest", actorIds: [heroId,], name: "A", },
+          { locationId: "cave", actorIds: [], name: "B", },
+        ],
+      },);
+
+      expect(result,).toEqual({
+        code: "bad_request",
+        message: "Branch 2 (B) has no actors",
+      },);
+    });
+
+    test("returns bad_request when the chat has no world", async () => {
+      const worldlessChatId = crypto.randomUUID();
+      await insertChats(db, "Worldless", ownerId, { id: worldlessChatId, type: "group", mode: "group", } as never,);
+      await insertChatParticipants(db, worldlessChatId, ownerId, {
+        role_in_chat: ChatParticipantRole.Owner,
+      } as never,);
+
+      const result = await splitParty(db, {
+        chatId: worldlessChatId,
+        actorId: ownerId,
+        branches: [
+          { locationId: "forest", actorIds: [ownerId,], name: "A", },
+          { locationId: "cave", actorIds: [heroId,], name: "B", },
+        ],
+      },);
+
+      expect(result,).toEqual({
+        code: "bad_request",
+        message: "Chat has no world assigned; branch destinations require one",
       },);
     });
   });

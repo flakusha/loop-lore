@@ -14,9 +14,12 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { emitPluginEvent, } from "../../plugins/event-bus";
+import { registry, } from "../../plugins/registry";
 import { recordCarriage, } from "./carriage";
 import { archiveChat, } from "./crud/archive";
 import { copyMessagesToPrimary, createBranchChat, mergeParticipantsIntoPrimary, } from "./split-utils";
+import { validateBranchSpecs, } from "./split-validate";
 import { injectNarration, } from "./transitions";
 import type { ServiceError, } from "./types";
 
@@ -102,11 +105,15 @@ export async function splitParty(
     return { code: "bad_request", message: "At least two branches are required", };
   }
 
+  // Branch specs are caller-authored (REST route or /split command) —
+  // validate locations/actors BEFORE any write so bad specs get a
+  // ServiceError instead of raw FK errors or silent participant skips.
+  const validation = await validateBranchSpecs(database, { worldId: chat.world_id, branches, chatId, },);
+  if ("code" in validation) { return validation; }
+
   const branchResults: { chatId: string; locationId: string; participantCount: number }[] = [];
 
   for (const branch of branches) {
-    if (branch.actorIds.length === 0) { continue; }
-
     const result = await createBranchChat(
       database,
       chatId,
@@ -147,6 +154,15 @@ export async function splitParty(
       .child({ module: "chat.split", },)
       .warn("carriage record failed", { chatId, error: String(error,), },);
   }
+
+  // Fan the split result out to registered plugin event handlers
+  // (`chat.party_split`), mirroring `chat.created` — per-handler errors
+  // are isolated by the EventBus dispatcher.
+  await emitPluginEvent(
+    registry.getAllEventHandlers(),
+    "chat.party_split",
+    { chatId, actorId, branches: branchResults, },
+  );
 
   return {
     ok: true,
@@ -216,6 +232,12 @@ export async function reuniteChats(
   // Role is undefined (not the route's session role) because both chats'
   // ownership was already verified above; no admin bypass is needed.
   await archiveChat(database, secondaryChatId, actorId, undefined,);
+
+  await emitPluginEvent(
+    registry.getAllEventHandlers(),
+    "chat.party_reunited",
+    { primaryChatId, secondaryChatId, mergedMessageCount: mergedCount, },
+  );
 
   return {
     ok: true,

@@ -203,20 +203,23 @@ describe("emitter wiring", () => {
       agent_type: "narrator",
     } as never,);
 
+    // World + locations first (chats.world_id FK) — splitParty validates
+    // branch destinations against the chat's world.
+    const worldId = crypto.randomUUID();
+    await db.insertInto("worlds",).values({ id: worldId, name: "W", owner_id: OWNER_ID, },).execute();
+    await db.insertInto("locations",).values({ id: "forest", world_id: worldId, name: "Forest", },).execute();
+    await db.insertInto("locations",).values({ id: "cave", world_id: worldId, name: "Cave", },).execute();
+
     await insertChats(db, "Party Dungeon", OWNER_ID, {
       id: srcChatId,
       type: "group",
       mode: "group",
+      world_id: worldId,
     } as never,);
 
     await insertChatParticipants(db, srcChatId, OWNER_ID, { role_in_chat: ChatParticipantRole.Owner, },);
     await insertChatParticipants(db, srcChatId, heroId, { role_in_chat: ChatParticipantRole.Member, },);
     await insertChatParticipants(db, srcChatId, rogueId, { role_in_chat: ChatParticipantRole.Member, },);
-
-    const worldId = crypto.randomUUID();
-    await db.insertInto("worlds",).values({ id: worldId, name: "W", owner_id: OWNER_ID, },).execute();
-    await db.insertInto("locations",).values({ id: "forest", world_id: worldId, name: "Forest", },).execute();
-    await db.insertInto("locations",).values({ id: "cave", world_id: worldId, name: "Cave", },).execute();
 
     const result = await splitParty(db, {
       chatId: srcChatId,
