@@ -5,6 +5,10 @@
  * Direct unit tests for the invocation audit emitter: one structured event,
  * deterministic output hash over the canonical response triple, hash change
  * when the output changes, and never-throw without a logger.
+ *
+ * Resource contract: owns only the process-global logger — seeded, captured,
+ * and restored in afterEach (prior root reinstalled), entries reset per
+ * test; no DB, files, ports, or ordering dependence.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { CommandResult, } from "../../assistant/commands/registry";
