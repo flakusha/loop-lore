@@ -2385,6 +2385,12 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
     }
   ],
+  "src/assistant/adapter/adapters.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    }
+  ],
   "src/assistant/adapter/assets.test.ts": [
     {
       "kind": "ticket",
@@ -2509,6 +2515,12 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-rag-access.md"
     }
   ],
+  "src/assistant/adapter/world-context.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
+    }
+  ],
   "src/assistant/adapter/worlds.test.ts": [
     {
       "kind": "ticket",
@@ -2584,6 +2596,18 @@
   "src/assistant/commands/adapt.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
     }
   ],
@@ -2595,6 +2619,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
     }
   ],
   "src/assistant/commands/analyze.ts": [
@@ -2872,6 +2900,18 @@
   "src/assistant/commands/duplicate.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
     }
   ],
@@ -2882,6 +2922,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
     }
   ],
@@ -2889,6 +2933,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-e2e.md"
+    }
+  ],
+  "src/assistant/commands/entity-guard.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
     }
   ],
   "src/assistant/commands/games.ts": [
@@ -4875,6 +4925,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
     }
   ],
   "src/assistant/quality/entity-creation-gates.ts": [
@@ -4911,6 +4965,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-check-duplicate-loads-all-owner-rows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
     },
     {
       "kind": "ticket",
@@ -4961,6 +5019,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-explicit-approval-flow-for-assistant-mutations.md"
+    }
+  ],
+  "src/assistant/quota/db-storage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
     }
   ],
   "src/assistant/quota/engine.test.ts": [
@@ -17861,6 +17925,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md"
     },
     {
       "kind": "ticket",
@@ -44456,6 +44524,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
     }
   ],
@@ -47970,6 +48042,10 @@
     }
   ],
   "src/routes/worlds/access.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"

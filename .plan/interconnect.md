@@ -10,8 +10,7 @@ output is byte-identical for identical inputs.
 
 - tickets: 3727
 - epics: 355
-- src paths owned: 4484
-- edges: produces 11788, consumes 405, sibling 35818, owns 2708, related 1193
+- src paths owned: 4484\n- edges: produces 11788, consumes 405, sibling 35818, owns 2708, related 1193
 
 ## Shared src hubs
 
@@ -95,7 +94,7 @@ output is byte-identical for identical inputs.
 | `src/assets/service/validate.ts` | `TASK-comparison-chart-export-png-svg-csv`, `TASK-licensing-asset-license-columns-migration`, `TASK-licensing-publish-enforcement-point`, `TASK-markdown-derive-other-formats`, `TASK-vector-gen-animated-raster`, `TASK-vector-gen-llm-svg-pipeline`, `epic-narrative-publishing-workflows`, `epic-technical-comparison-charts`, `epic-vector-graphics-generation` |
 | `src/assets/signed-url.ts` | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log`, `FEAT-background`, `TASK-frontend-and-http-utils-type-safety-batch`, `TASK-guest-asset-public-reads-open-public-asset-access`, `TASK-publication-export-formats`, `TASK-publication-viewer-read-mode`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-guest-access`, `epic-implementation`, `epic-logging` |
 | `src/assets/variant-path.ts` | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-asset-b1-rendition-pipeline`, `TASK-c1-moderation-action-notices-with-actor-thumb`, `TASK-webp-as-a-first-class-stored-asset-format` |
-| `src/assistant` | `TASK-harness-eval-harness`, `TASK-harness-tool-sandbox`, `TASK-odysseus-manage-tool-parity-evaluation`, `TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex`, `epic-platform-research` |
+| `src/assistant` | `TASK-harness-eval-harness`, `TASK-harness-tool-sandbox`, `TASK-odysseus-manage-tool-parity-evaluation`, `TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex`, `epic-assistant-entity-access`, `epic-platform-research` |
 | `src/assistant/adapter/access.ts` | `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-schema` |
 | `src/assistant/adapter/adapt.ts` | `TASK-assistant-entity-access-adaptation`, `TASK-assistant-entity-access-schema` |
 | `src/assistant/adapter/assets.ts` | `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-asset-access` |
@@ -107,7 +106,8 @@ output is byte-identical for identical inputs.
 | `src/assistant/adapter/rag.ts` | `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-rag-access` |
 | `src/assistant/adapter/worlds.ts` | `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-world-location-access` |
 | `src/assistant/command-parser.ts` | `BUG-assistant-and-group-chat-correctness-defects`, `EPIC-2026-23`, `TASK-assistant-command-execution-intent-detection`, `TASK-assistant-commands-extension`, `TASK-assistant-creative-studio-workflows`, `epic-assistant-creative-studio-workflows`, `epic-frontend-chat-commands`, `epic-impersonation` |
-| `src/assistant/commands/adapt.ts` | `TASK-assistant-entity-access-adaptation`, `epic-assistant-entity-access` |
+| `src/assistant/commands/adapt.test.ts` | `TASK-assistant-entity-access-adaptation`, `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-schema`, `TASK-assistant-entity-access-tests` |
+| `src/assistant/commands/adapt.ts` | `TASK-assistant-entity-access-adaptation`, `TASK-assistant-entity-access-adapter`, `epic-assistant-entity-access` |
 | `src/assistant/commands/assets.test.ts` | `TASK-assistant-entity-access-tests`, `epic-assistant-entity-access` |
 | `src/assistant/commands/assets.ts` | `TASK-assistant-entity-access-asset-access`, `TASK-assistant-entity-access-batch-rag-asset`, `epic-assistant-entity-access` |
 | `src/assistant/commands/attack.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `TASK-rpg-gate-chat-commands-behind-world-opt-in` |
@@ -117,7 +117,8 @@ output is byte-identical for identical inputs.
 | `src/assistant/commands/create-entity.ts` | `BUG-create-entity-confirm-bypasses-world-ownership`, `TASK-item-generation-review-parity-extract-category-rarity-stats-`, `TASK-typescript-7-migration-typecheck-failures`, `epic-assistant-gm-flows`, `epic-locations` |
 | `src/assistant/commands/create.ts` | `BUG-assistant-improve-translate-rewrite-never-call-llm`, `FEAT-creative-process-commit-gating`, `FEAT-lore-structured-generation-via-assistant`, `FEAT-origin-capture-generation-seeding`, `FEAT-world-template-chat-lifecycle`, `TASK-assistant-command-execution-intent-detection`, `TASK-assistant-creative-studio-workflow-character`, `TASK-creation-quality-gating-confirmation`, `TASK-generation-failure-exposure-sanitize-raw-llm-error-output-in`, `TASK-item-generation-review-parity-extract-category-rarity-stats-`, `TASK-llm-markdown-document-prompts`, `TASK-precompiled-templates-injection`, `TASK-route-plugin-calls-through-the-shared-provider-path`, `epic-assistant-generation-extensions`, `epic-assistant-gm-flows`, `epic-entity-generation-workflows` |
 | `src/assistant/commands/dice.ts` | `EPIC-2026-22`, `EPIC-2026-23`, `TASK-backlog-rpg-mechanics-opt-in-gating-priority`, `TASK-rpg-gate-chat-commands-behind-world-opt-in`, `TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history`, `epic-assistant-generation-extensions` |
-| `src/assistant/commands/duplicate.ts` | `TASK-assistant-entity-access-duplication`, `epic-assistant-entity-access` |
+| `src/assistant/commands/duplicate.test.ts` | `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-duplication`, `TASK-assistant-entity-access-schema`, `TASK-assistant-entity-access-tests` |
+| `src/assistant/commands/duplicate.ts` | `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-duplication`, `epic-assistant-entity-access` |
 | `src/assistant/commands/games.ts` | `TASK-mini-games-framework`, `epic-mini-games` |
 | `src/assistant/commands/generate.ts` | `TASK-assistant-gm-flows`, `epic-assistant-generation-extensions` |
 | `src/assistant/commands/help.ts` | `TASK-create-item-generation-discoverability-document-subcommands-`, `epic-assistant-generation-extensions` |
@@ -129,6 +130,7 @@ output is byte-identical for identical inputs.
 | `src/assistant/commands/interaction.ts` | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-`, `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre`, `epic-faction-reputation`, `epic-math-ai-bridge` |
 | `src/assistant/commands/items.test.ts` | `BUG-dev-red-at-head-assistant-command-module-split-broke-registr`, `TASK-assistant-entity-access-tests` |
 | `src/assistant/commands/items.ts` | `TASK-assistant-entity-access-character-item-inventory`, `epic-assistant-entity-access` |
+| `src/assistant/commands/locations-update.ts` | `TASK-assistant-entity-access-world-location-access`, `epic-assistant-entity-access` |
 | `src/assistant/commands/locations.ts` | `TASK-assistant-entity-access-world-location-access`, `epic-assistant-entity-access` |
 | `src/assistant/commands/modify.ts` | `TASK-assistant-entity-access-modification-addition`, `epic-assistant-entity-access` |
 | `src/assistant/commands/music.ts` | `BUG-advertised-sfx-music-video-commands-are-stubs`, `epic-assistant-generation-extensions` |
@@ -193,10 +195,11 @@ output is byte-identical for identical inputs.
 | `src/assistant/prompt/template-render.ts` | `FEAT-065-sub-llm`, `FEAT-065-template-system` |
 | `src/assistant/prompt/templates/entity-generation.ts` | `TASK-item-generation-review-parity-extract-category-rarity-stats-`, `TASK-precompiled-templates-injection`, `epic-assistant-gm-flows` |
 | `src/assistant/prompt/types.ts` | `BUG-sectionbuilder-interface-missing-included-memory-ids-field`, `TASK-char-growth-prompt`, `TASK-context-lossless-lossy-tiering`, `TASK-harness-context-priority-tiers`, `TASK-prompt-template-registry`, `epic-character-growth`, `epic-context-injection-templates`, `epic-harness-integration` |
-| `src/assistant/quality/adaptation.ts` | `TASK-assistant-entity-access-adaptation`, `epic-assistant-entity-access` |
+| `src/assistant/quality/adaptation.ts` | `TASK-assistant-entity-access-adaptation`, `TASK-assistant-entity-access-schema`, `epic-assistant-entity-access` |
 | `src/assistant/quality/entity-creation-gates.ts` | `TASK-publication-art-quality-gates`, `epic-assistant-gm-flows`, `epic-entity-generation-workflows` |
-| `src/assistant/quality/entity-creation.test.ts` | `BUG-check-duplicate-loads-all-owner-rows`, `TASK-precompiled-templates-injection`, `TASK-publication-art-quality-gates`, `epic-assistant-gm-flows` |
+| `src/assistant/quality/entity-creation.test.ts` | `BUG-check-duplicate-loads-all-owner-rows`, `TASK-assistant-entity-access-tests`, `TASK-precompiled-templates-injection`, `TASK-publication-art-quality-gates`, `epic-assistant-gm-flows` |
 | `src/assistant/quality/entity-creation.ts` | `BUG-check-duplicate-loads-all-owner-rows`, `TASK-assistant-entity-access-adaptation`, `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-duplication`, `TASK-assistant-entity-access-modification-addition`, `TASK-assistant-entity-access-schema`, `TASK-assistant-entity-access-tests`, `TASK-explicit-approval-flow-for-assistant-mutations`, `epic-assistant-entity-access`, `epic-assistant-gm-flows` |
+| `src/assistant/quota/engine.test.ts` | `TASK-assistant-entity-access-e2e`, `TASK-assistant-entity-access-quota-engine`, `TASK-assistant-entity-access-tests` |
 | `src/assistant/scenario-source.ts` | `BUG-assistant-creative-studio-task-stale`, `TASK-assistant-creative-studio-workflows`, `TASK-assistant-scenario-source`, `TASK-scenario-system-authoring`, `epic-assistant-creative-studio-workflows`, `epic-assistant-generation-extensions`, `epic-blog-system` |
 | `src/assistant/sd.ts` | `BUG-advertised-sfx-music-video-commands-are-stubs`, `BUG-assistant-creative-studio-task-stale`, `BUG-dual-vn-choices-route-registration-shadows-guarded-route`, `TASK-assistant-creative-studio-workflows`, `TASK-assistant-third-party-api-integration`, `epic-assistant-creative-studio-workflows`, `epic-assistant-generation-extensions` |
 | `src/assistant/workflow-routing.test.ts` | `TASK-book-outline-generation-workflow`, `TASK-comic-storyboard-panel-generation-workflow` |
@@ -586,7 +589,7 @@ output is byte-identical for identical inputs.
 | `src/db/020_actor_story_points_partial_unique.test.ts` | `TASK-story-points-prototype`, `epic-agency-story-points` |
 | `src/db/column-types.ts` | `BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me`, `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel`, `TASK-fix-actor-item-value-type`, `TASK-locations-fractal-migration`, `TASK-memory-history-search-bind-message-chain-reconstructable-con`, `TASK-recursive-self-improvement-watchdog-events-table-and-telemet`, `TASK-world-requires-stats-flag-and-point-budget-config` |
 | `src/db/content-version.test.ts` | `FEAT-042`, `TASK-019-content-versioning-heavy-tables`, `TASK-db-content-versioning-snapshot-restore`, `TASK-middleware-migration-compaction-data-version-hash` |
-| `src/db/content-version.ts` | `FEAT-042`, `TASK-019-content-versioning-heavy-tables`, `TASK-middleware-fe-be-db-record-content-hashing`, `TASK-middleware-migration-compaction-data-version-hash`, `epic-content-hashing-distributed-integrity` |
+| `src/db/content-version.ts` | `FEAT-042`, `TASK-019-content-versioning-heavy-tables`, `TASK-assistant-entity-access-tests`, `TASK-middleware-fe-be-db-record-content-hashing`, `TASK-middleware-migration-compaction-data-version-hash`, `epic-content-hashing-distributed-integrity` |
 | `src/db/data-migrations/runner.ts` | `TASK-data-migrations-atomicity-and-concurrency-guard`, `TASK-format-version-migration` |
 | `src/db/enums` | `TASK-world-item-frontend`, `epic-inventory` |
 | `src/db/enums-` | `TASK-review-thread-target-vocabulary`, `epic-architecture` |
@@ -612,7 +615,7 @@ output is byte-identical for identical inputs.
 | `src/db/enums.ts` | `TASK-054`, `TASK-3d-gltf-assets`, `TASK-asset-3d-models`, `TASK-federation-peer-capability-advertisement`, `TASK-location-editor-structured-ui`, `epic-platform-integrations`, `epic-transport-expansion`, `epic-world-chat-channels-invites` |
 | `src/db/generated/db-types.ts` | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-`, `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` |
 | `src/db/heal.ts` | `TASK-middleware-distributed-healing-revalidation-backups`, `epic-content-hashing-distributed-integrity` |
-| `src/db/index.ts` | `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx`, `BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run`, `BUG-eager-db-init-creates-on-disk-db-on-test-import`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-`, `BUG-settestdatabase-global-leak-on-test-throw`, `BUG-sqlite-foreign-keys-pragma-set-twice-redundant`, `BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data`, `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db`, `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key`, `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h`, `TASK-data-integrity-phase1`, `TASK-runtime-integrity-watchdog-crash-recovery`, `epic-architecture`, `epic-data-integrity-acid`, `epic-data-integrity-phase1`, `epic-db-cold-storage-high-perf`, `epic-db-growth-tiered-storage`, `epic-deno-support`, `epic-local-process-swarm`, `epic-multi-instance-reconciliation`, `epic-runtime-integrity-fail-safes` |
+| `src/db/index.ts` | `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx`, `BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run`, `BUG-eager-db-init-creates-on-disk-db-on-test-import`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-`, `BUG-settestdatabase-global-leak-on-test-throw`, `BUG-sqlite-foreign-keys-pragma-set-twice-redundant`, `BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data`, `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db`, `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key`, `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h`, `TASK-assistant-entity-access-quota-engine`, `TASK-data-integrity-phase1`, `TASK-runtime-integrity-watchdog-crash-recovery`, `epic-architecture`, `epic-data-integrity-acid`, `epic-data-integrity-phase1`, `epic-db-cold-storage-high-perf`, `epic-db-growth-tiered-storage`, `epic-deno-support`, `epic-local-process-swarm`, `epic-multi-instance-reconciliation`, `epic-runtime-integrity-fail-safes` |
 | `src/db/migrate.ts` | `BUG-create-test-db-custom-dialect-can-bypass-settestdatabase`, `BUG-migrate-ts-loader-imports-test-ts-files-from-src-db-migratio`, `BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num`, `TASK-comparison-set-variant-data-model`, `TASK-epic-db-migration-compaction-stale-premise-reconcile`, `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep`, `TASK-runtime-migration-staleness-guard`, `epic-architecture`, `epic-db-growth-tiered-storage`, `epic-db-migration-compaction`, `epic-local-process-swarm`, `epic-multi-instance-reconciliation` |
 | `src/db/migration-helpers.ts` | `TASK-cleanup-banned-types-console-logging-magic-strings`, `TASK-delete-dead-migration-helpers-ts-booltoenum` |
 | `src/db/migration-roundtrip.test.ts` | `BUG-create-test-db-custom-dialect-can-bypass-settestdatabase`, `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with`, `BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num`, `BUG-settestdatabase-global-leak-on-test-throw`, `BUG-single-global-byok-encryption-key-no-rotation-story`, `BUG-sqlite-foreign-keys-pragma-set-twice-redundant`, `TASK-019-audit-columns`, `TASK-019-content-versioning-heavy-tables`, `TASK-019-hot-path-indexes`, `TASK-019-users-encryption-secret`, `TASK-asset-b1-blake3-content-store`, `TASK-asset-provenance-ledger-for-generated-assets`, `TASK-blog-publish-unit-to-post-bridge`, `TASK-branch-merge-db-migration-039`, `TASK-branch-merge-tests-and-coverage`, `TASK-comic-page-composition-strategy`, `TASK-comparison-set-variant-data-model`, `TASK-coverage-gate-true-multi-worker-fanout-investigation`, `TASK-federation-peer-registry-workload-columns`, `TASK-licensing-asset-license-columns-migration`, `TASK-locations-fractal-migration`, `TASK-memory-history-search-bind-message-chain-reconstructable-con`, `TASK-publication-artifact-schema`, `TASK-reference-set-entity` |
@@ -1143,7 +1146,7 @@ output is byte-identical for identical inputs.
 | `src/locations/routes.ts` | `BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor`, `TASK-coverage-waiver-locations-at-78-under-check-gate`, `TASK-location-crud-tree-connections`, `epic-locations` |
 | `src/locations/travel-engine.ts` | `TASK-location-crud-tree-connections`, `epic-locations`, `epic-world-travel-time` |
 | `src/locations/tree.ts` | `BUG-locations-reparent-guard-silently-reverted-by-d572dddec`, `BUG-locations-tree-ts-header-names-nonexistent-triggers`, `BUG-world-location-reparent-has-no-cycle-self-descendant-checks-`, `TASK-harness-canvas-viz`, `TASK-location-crud-tree-connections`, `epic-locations` |
-| `src/logger` | `BUG-tui-app-getlogger-throws-when-running-standalone`, `epic-effect-v4-adoption-evaluation` |
+| `src/logger` | `BUG-tui-app-getlogger-throws-when-running-standalone`, `TASK-assistant-entity-access-tests`, `epic-effect-v4-adoption-evaluation` |
 | `src/logger/censors.ts` | `BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested-`, `TASK-input-hardening-batch`, `TASK-logging-censor-exact-match-rules-error-stack-path-leak`, `epic-logging` |
 | `src/logger/formatters.ts` | `TASK-logging-hardening-minors-injection-rotation-races-sink-path-`, `epic-logging-telemetry` |
 | `src/logger/index.ts` | `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con`, `TASK-code-quality`, `TASK-per-chat-auto-translation-layer`, `TASK-recursive-self-improvement-deep-analysis-logging-and-telemet`, `TASK-split-logger-god-module`, `epic-logging` |
@@ -1498,9 +1501,9 @@ output is byte-identical for identical inputs.
 | `src/routes/messages/archiving.coverage.test.ts` | `FEAT-2026-007`, `TASK-archival-workflow`, `epic-archival-workflow` |
 | `src/routes/messages/archiving.ts` | `BUG-archive-retention-hardcoded-30-days-should-be-configurable-9`, `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx`, `FEAT-2026-007`, `FEAT-chat-archive-retention-config-archive-retention-days-admin-s`, `TASK-archival-workflow`, `epic-archival-workflow` |
 | `src/routes/messages/command.test.ts` | `BUG-chat-prompt-override-bypass-on-reply`, `BUG-command-dispatch-async-handler-uncaught` |
-| `src/routes/messages/command.ts` | `BUG-assistant-and-group-chat-correctness-defects`, `BUG-assistant-intent-regexes-hijack-normal-chat-messages`, `BUG-chat-prompt-override-bypass-on-reply`, `BUG-command-dispatch-async-handler-uncaught`, `PERF-chat-dispatch-command-three-sequential-queries`, `TASK-action-applicability-gate`, `TASK-book-outline-generation-workflow`, `TASK-chat-branch-merge`, `TASK-comparison-workflow-template-and-command`, `TASK-document-dual-assistant-role-gates`, `TASK-harness-frontend-consolidation`, `TASK-interaction-service-foundation`, `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui`, `TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc`, `epic-assistant-creative-studio-workflows`, `epic-assistant-gm-flows`, `epic-entity-generation-workflows`, `epic-narrative-publishing-workflows` |
+| `src/routes/messages/command.ts` | `BUG-assistant-and-group-chat-correctness-defects`, `BUG-assistant-intent-regexes-hijack-normal-chat-messages`, `BUG-chat-prompt-override-bypass-on-reply`, `BUG-command-dispatch-async-handler-uncaught`, `PERF-chat-dispatch-command-three-sequential-queries`, `TASK-action-applicability-gate`, `TASK-assistant-entity-access-tests`, `TASK-book-outline-generation-workflow`, `TASK-chat-branch-merge`, `TASK-comparison-workflow-template-and-command`, `TASK-document-dual-assistant-role-gates`, `TASK-harness-frontend-consolidation`, `TASK-interaction-service-foundation`, `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui`, `TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc`, `epic-assistant-creative-studio-workflows`, `epic-assistant-gm-flows`, `epic-entity-generation-workflows`, `epic-narrative-publishing-workflows` |
 | `src/routes/messages/create-entity-confirm.test.ts` | `FEAT-human-in-the-loop-approval-gates`, `TASK-human-in-the-loop-tool-approval-gates`, `epic-assistant-gm-flows` |
-| `src/routes/messages/create-entity-confirm.ts` | `BUG-create-entity-confirm-bypasses-world-ownership`, `TASK-book-outline-generation-workflow`, `epic-assistant-gm-flows` |
+| `src/routes/messages/create-entity-confirm.ts` | `BUG-create-entity-confirm-bypasses-world-ownership`, `TASK-assistant-entity-access-duplication`, `TASK-book-outline-generation-workflow`, `epic-assistant-entity-access`, `epic-assistant-gm-flows` |
 | `src/routes/messages/create.ts` | `BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it`, `BUG-bug-async-result-store-track-never-called-request-results-pi`, `BUG-bug-message-create-accepts-parentid-from-any-chat-cross-chat`, `BUG-chat-idempotency-not-enforced`, `BUG-chat-message-create-swipe-race`, `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `BUG-message-create-503-passthrough-omits-persisted-id-and-duplic`, `BUG-message-create-re-wraps-a-503-reply-into-201-jsoncreated`, `BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup`, `BUG-nsfw-flag-side-effect-runs-before-access-check`, `TASK-019-enforce-state-machine-validators-at-write`, `TASK-assistant-server-side-branch-command`, `TASK-message-carriage-fill-path-detection`, `TASK-middleware-fe-be-db-record-content-hashing`, `TASK-middleware-global-idempotency-replay-for-re-fired-requests`, `TASK-msg-forward-across-chats`, `TASK-per-chat-auto-translation-layer`, `TASK-proactive-messaging`, `TASK-profanity-filter-hot-reload-per-chat-sensitivity`, `TASK-tui-slash-command-completion`, `TASK-turn-send-gate`, `epic-multilingual-carriage` |
 | `src/routes/messages/forward.ts` | `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `TASK-019-enforce-state-machine-validators-at-write`, `TASK-msg-forward-across-chats`, `TASK-tmp-janitor-and-staleness-markers` |
 | `src/routes/messages/guards.ts` | `TASK-chat-feature-moderation`, `TASK-vn-branching-choices`, `TASK-vn-choice-opt-in`, `TASK-vn-qa-mode`, `epic-visual-novel-mode` |
@@ -1627,7 +1630,7 @@ output is byte-identical for identical inputs.
 | `src/routes/world-lore-entries.ts` | `BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact`, `FEAT-world-lore-entries-add-alpine-js-ui-for-crud`, `TASK-frontend-world-lore-entries-ui` |
 | `src/routes/worlds` | `BUG-location-connections-validation-accepts-junk-and-persists-it`, `BUG-location-delete-crashes-on-location-states-fk`, `BUG-memory-decay-writes-nan-strength`, `TASK-181-pre-existing-options-object-params-eslint-warnings-acros`, `epic-platform-research` |
 | `src/routes/worlds.ts` | `TASK-chat-backgrounds-location-sync`, `TASK-chat-sectioning-multi-location`, `TASK-file-split-routes`, `TASK-world-location-encryption`, `epic-file-splitting` |
-| `src/routes/worlds/access.ts` | `TASK-assistant-entity-access-schema`, `TASK-assistant-entity-access-world-location-access`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-licensing-publish-authorization-predicate`, `TASK-licensing-publish-enforcement-point` |
+| `src/routes/worlds/access.ts` | `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-schema`, `TASK-assistant-entity-access-world-location-access`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-licensing-publish-authorization-predicate`, `TASK-licensing-publish-enforcement-point` |
 | `src/routes/worlds/autonomy-routes.test.ts` | `TASK-autonomy-config-surface-layering-presets-and-overrides`, `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` |
 | `src/routes/worlds/fractal-locations-routes.ts` | `epic-locations`, `epic-terminal-ui` |
 | `src/routes/worlds/fractal-travel-routes.ts` | `BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `epic-world-travel-time` |
@@ -2106,17 +2109,17 @@ output is byte-identical for identical inputs.
 | `TASK-asset-b1-blake3-content-store` | consumes | `TASK-asset-b1-rendition-pipeline` | `src/db/schema-content.ts` |
 | `TASK-asset-b1-rendition-pipeline` | consumes | `TASK-asset-b1-blake3-content-store` | `src/db/schema-content.ts` |
 | `TASK-assistant-entity-access-adaptation` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/adapt.ts; src/assistant/quality/adaptation.ts; src/assistant/quality/entity-creation.ts; src/routes/worlds/worlds.ts` |
-| `TASK-assistant-entity-access-adapter` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/registry.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts; src/routes/worlds/worlds.ts` |
+| `TASK-assistant-entity-access-adapter` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/adapt.ts; src/assistant/commands/duplicate.ts; src/assistant/commands/registry.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts; src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-asset-access` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/assets.ts; src/assistant/commands/index.ts` |
 | `TASK-assistant-entity-access-character-item-inventory` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/items.ts; src/routes/story-items/handlers.ts` |
-| `TASK-assistant-entity-access-duplication` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/duplicate.ts; src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-duplication` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/duplicate.ts; src/assistant/quality/entity-creation.ts; src/routes/messages/create-entity-confirm.ts` |
 | `TASK-assistant-entity-access-modification-addition` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/import.ts; src/assistant/commands/modify.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts` |
 | `TASK-assistant-entity-access-quota-engine` | consumes | `epic-resource-provision` | `src/crypto/byok.ts` |
 | `TASK-assistant-entity-access-rag-access` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/rag.ts` |
-| `TASK-assistant-entity-access-schema` | consumes | `epic-assistant-entity-access` | `src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts` |
+| `TASK-assistant-entity-access-schema` | consumes | `epic-assistant-entity-access` | `src/assistant/quality/adaptation.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts` |
 | `TASK-assistant-entity-access-schema` | consumes | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-tests` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/assets.test.ts; src/assistant/commands/rag.test.ts; src/assistant/quality/entity-creation.ts` |
-| `TASK-assistant-entity-access-world-location-access` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/index.ts; src/assistant/commands/locations.ts; src/assistant/commands/worlds-access.ts; src/routes/worlds/worlds.ts` |
+| `TASK-assistant-entity-access-world-location-access` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/index.ts; src/assistant/commands/locations-update.ts; src/assistant/commands/locations.ts; src/assistant/commands/worlds-access.ts; src/routes/worlds/worlds.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | consumes | `TASK-middleware-global-idempotency-replay-for-re-fired-requests` | `src/elysia-app.ts; src/routes/messages/reply.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | consumes | `TASK-middleware-in-progress-status-endpoint-for-long-running-requ` | `src/async/offload.ts; src/async/store.ts; src/routes/messages/reply.ts; src/server/handler.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | consumes | `epic-middleware-request-lifecycle` | `src/async/offload.ts; src/async/store.ts; src/db/migrations/067_request_results.ts; src/elysia-app.ts; src/routes/messages/reply.ts; src/server/handler.ts` |
@@ -2388,7 +2391,7 @@ output is byte-identical for identical inputs.
 | `TEST-avatar-selection-fallback-empty-coverage` | consumes | `BUG-avatar-select-fallback-chain-unwired` | `src/characters/services/avatar-service/selection.ts` |
 | `epic-actor-turn-skip` | consumes | `epic-group-chat` | `src/generation/auto-gen/pass-filter.ts; src/group-chat/mention-parser.ts` |
 | `epic-assistant-entity-access` | consumes | `epic-assistant-generation-extensions` | `src/assistant/commands/registry.ts` |
-| `epic-assistant-entity-access` | consumes | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.ts` |
+| `epic-assistant-entity-access` | consumes | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.ts; src/routes/messages/create-entity-confirm.ts` |
 | `epic-assistant-step-planning` | consumes | `epic-assistant-creative-studio-workflows` | `src/assistant/workflow-runner.ts` |
 | `epic-assistant-step-planning` | consumes | `epic-workflow-engine` | `src/assistant/workflow-runner.ts` |
 | `epic-character-multi-personality` | consumes | `epic-character-core-system` | `src/assistant/prompt/registry.ts` |
@@ -8830,11 +8833,14 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-creative-studio-workflows` | produces | `src/routes/generation/third-party.ts` | - |
 | `TASK-assistant-creative-studio-workflows` | produces | `src/routes/generation/video.ts` | - |
 | `TASK-assistant-entity-access-adaptation` | produces | `src/assistant/adapter/adapt.ts` | - |
+| `TASK-assistant-entity-access-adaptation` | produces | `src/assistant/adapter/world-context.ts` | - |
+| `TASK-assistant-entity-access-adaptation` | produces | `src/assistant/commands/adapt.test.ts` | - |
 | `TASK-assistant-entity-access-adaptation` | produces | `src/assistant/commands/adapt.ts` | - |
 | `TASK-assistant-entity-access-adaptation` | produces | `src/assistant/quality/adaptation.ts` | - |
 | `TASK-assistant-entity-access-adaptation` | produces | `src/assistant/quality/entity-creation.ts` | - |
 | `TASK-assistant-entity-access-adaptation` | produces | `src/routes/worlds/worlds.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/assistant/adapter/access.ts` | - |
+| `TASK-assistant-entity-access-adapter` | produces | `src/assistant/adapter/adapters.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/assistant/adapter/assets.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/assistant/adapter/characters.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/assistant/adapter/entity.ts` | - |
@@ -8843,9 +8849,15 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-adapter` | produces | `src/assistant/adapter/quality.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/assistant/adapter/rag.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/assistant/adapter/worlds.ts` | - |
+| `TASK-assistant-entity-access-adapter` | produces | `src/assistant/commands/adapt.test.ts` | - |
+| `TASK-assistant-entity-access-adapter` | produces | `src/assistant/commands/adapt.ts` | - |
+| `TASK-assistant-entity-access-adapter` | produces | `src/assistant/commands/duplicate.test.ts` | - |
+| `TASK-assistant-entity-access-adapter` | produces | `src/assistant/commands/duplicate.ts` | - |
+| `TASK-assistant-entity-access-adapter` | produces | `src/assistant/commands/entity-guard.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/assistant/commands/registry.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/assistant/quality/entity-creation.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/routes/story-items/handlers.ts` | - |
+| `TASK-assistant-entity-access-adapter` | produces | `src/routes/worlds/access.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/routes/worlds/locations.ts` | - |
 | `TASK-assistant-entity-access-adapter` | produces | `src/routes/worlds/worlds.ts` | - |
 | `TASK-assistant-entity-access-asset-access` | produces | `src/assets/controller.routes.test.ts` | - |
@@ -8866,18 +8878,25 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-character-item-inventory` | produces | `src/routes/story-items/handlers.ts` | - |
 | `TASK-assistant-entity-access-duplication` | produces | `src/assistant/adapter/duplicate.ts` | - |
 | `TASK-assistant-entity-access-duplication` | produces | `src/assistant/adapter/entity.ts` | - |
+| `TASK-assistant-entity-access-duplication` | produces | `src/assistant/commands/duplicate.test.ts` | - |
 | `TASK-assistant-entity-access-duplication` | produces | `src/assistant/commands/duplicate.ts` | - |
 | `TASK-assistant-entity-access-duplication` | produces | `src/assistant/quality/entity-creation.ts` | - |
+| `TASK-assistant-entity-access-duplication` | produces | `src/routes/messages/create-entity-confirm.ts` | - |
+| `TASK-assistant-entity-access-e2e` | produces | `src/assistant/commands/entities.test.ts` | - |
+| `TASK-assistant-entity-access-e2e` | produces | `src/assistant/quota/engine.test.ts` | - |
 | `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/adapter/entity.ts` | - |
 | `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/adapter/modify.ts` | - |
 | `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/commands/import.ts` | - |
 | `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/commands/modify.ts` | - |
 | `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/quality/entity-creation.ts` | - |
 | `TASK-assistant-entity-access-modification-addition` | produces | `src/routes/story-items/handlers.ts` | - |
+| `TASK-assistant-entity-access-quota-engine` | produces | `src/assistant/quota/engine.test.ts` | - |
 | `TASK-assistant-entity-access-quota-engine` | produces | `src/assistant/quota/engine.ts` | - |
 | `TASK-assistant-entity-access-quota-engine` | produces | `src/assistant/quota/errors.ts` | - |
 | `TASK-assistant-entity-access-quota-engine` | produces | `src/assistant/quota/storage.ts` | - |
+| `TASK-assistant-entity-access-quota-engine` | produces | `src/config/sections/assistant.ts` | - |
 | `TASK-assistant-entity-access-quota-engine` | produces | `src/crypto/byok.ts` | - |
+| `TASK-assistant-entity-access-quota-engine` | produces | `src/db/index.ts` | - |
 | `TASK-assistant-entity-access-rag-access` | produces | `src/assistant/adapter/rag.ts` | - |
 | `TASK-assistant-entity-access-rag-access` | produces | `src/assistant/commands/rag.ts` | - |
 | `TASK-assistant-entity-access-rag-access` | produces | `src/assistant/quota/rag-quota.ts` | - |
@@ -8886,6 +8905,9 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-schema` | produces | `src/assistant/adapter/adapt.ts` | - |
 | `TASK-assistant-entity-access-schema` | produces | `src/assistant/adapter/duplicate.ts` | - |
 | `TASK-assistant-entity-access-schema` | produces | `src/assistant/adapter/entity.ts` | - |
+| `TASK-assistant-entity-access-schema` | produces | `src/assistant/commands/adapt.test.ts` | - |
+| `TASK-assistant-entity-access-schema` | produces | `src/assistant/commands/duplicate.test.ts` | - |
+| `TASK-assistant-entity-access-schema` | produces | `src/assistant/quality/adaptation.ts` | - |
 | `TASK-assistant-entity-access-schema` | produces | `src/assistant/quality/entity-creation.ts` | - |
 | `TASK-assistant-entity-access-schema` | produces | `src/routes/story-items/handlers.ts` | - |
 | `TASK-assistant-entity-access-schema` | produces | `src/routes/worlds/access.ts` | - |
@@ -8907,9 +8929,14 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-tests` | produces | `src/assistant/commands/rag.test.ts` | - |
 | `TASK-assistant-entity-access-tests` | produces | `src/assistant/commands/worlds.test.ts` | - |
 | `TASK-assistant-entity-access-tests` | produces | `src/assistant/quality/adaptation.test.ts` | - |
+| `TASK-assistant-entity-access-tests` | produces | `src/assistant/quality/entity-creation.test.ts` | - |
 | `TASK-assistant-entity-access-tests` | produces | `src/assistant/quality/entity-creation.ts` | - |
+| `TASK-assistant-entity-access-tests` | produces | `src/assistant/quota/db-storage.test.ts` | - |
 | `TASK-assistant-entity-access-tests` | produces | `src/assistant/quota/engine.test.ts` | - |
 | `TASK-assistant-entity-access-tests` | produces | `src/assistant/quota/storage.test.ts` | - |
+| `TASK-assistant-entity-access-tests` | produces | `src/db/content-version.ts` | - |
+| `TASK-assistant-entity-access-tests` | produces | `src/logger` | - |
+| `TASK-assistant-entity-access-tests` | produces | `src/routes/messages/command.ts` | - |
 | `TASK-assistant-entity-access-world-location-access` | produces | `src/assistant/adapter/locations.ts` | - |
 | `TASK-assistant-entity-access-world-location-access` | produces | `src/assistant/adapter/worlds.ts` | - |
 | `TASK-assistant-entity-access-world-location-access` | produces | `src/assistant/commands/index.ts` | - |
@@ -14526,7 +14553,9 @@ output is byte-identical for identical inputs.
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/duplicate.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/import.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/index.ts` | - |
+| `epic-assistant-entity-access` | produces | `src/assistant/commands/items-instance.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/items.ts` | - |
+| `epic-assistant-entity-access` | produces | `src/assistant/commands/locations-update.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/locations.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/modify.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/rag.test.ts` | - |
@@ -14535,6 +14564,9 @@ output is byte-identical for identical inputs.
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/worlds-access.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/quality/adaptation.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/quality/entity-creation.ts` | - |
+| `epic-assistant-entity-access` | produces | `src/assistant` | - |
+| `epic-assistant-entity-access` | produces | `src/frontend/alpine/chat-actions/entities.ts` | - |
+| `epic-assistant-entity-access` | produces | `src/routes/messages/create-entity-confirm.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/routes/story-items/handlers.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/routes/worlds/worlds.ts` | - |
 | `epic-assistant-generation-extensions` | produces | `src/assistant/commands/caption.ts` | - |
@@ -19746,6 +19778,7 @@ output is byte-identical for identical inputs.
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-assistant-creative-studio-workflow-species` | `src/assistant/workflow-runner.ts` |
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-assistant-creative-studio-workflow-world` | `src/assistant/workflow-runner.ts` |
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-assistant-creative-studio-workflows` | `src/assistant/command-parser.ts; src/assistant/workflow-runner.ts` |
+| `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-assistant-entity-access-tests` | `src/routes/messages/command.ts` |
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-assistant-nsfw-api-prefiltering` | `src/assistant/workflow-runner.ts` |
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-assistant-secret-lore-access-guard` | `src/assistant/prompt/sections/lore.ts` |
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-assistant-third-party-api-integration` | `src/assistant/workflow-runner.ts` |
@@ -20003,6 +20036,7 @@ output is byte-identical for identical inputs.
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-assistant-creative-studio-workflow-species` | `src/regex/intent.ts` |
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-assistant-creative-studio-workflow-world` | `src/regex/intent.ts` |
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-assistant-creative-studio-workflows` | `src/regex/intent.ts` |
+| `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-assistant-entity-access-tests` | `src/routes/messages/command.ts` |
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-book-outline-generation-workflow` | `src/assistant/workflow-routing.ts; src/regex/intent.ts; src/routes/messages/command.ts` |
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/command.ts` |
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-comic-storyboard-panel-generation-workflow` | `src/assistant/workflow-routing.ts; src/regex/intent.ts` |
@@ -21662,6 +21696,7 @@ output is byte-identical for identical inputs.
 | `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx` | sibling | `FEAT-chat-archive-retention-config-archive-retention-days-admin-s` | `src/routes/messages/archiving.ts` |
 | `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx` | sibling | `FEAT-message-translations-chat-first` | `src/routes/messages/read.ts` |
 | `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx` | sibling | `TASK-archival-workflow` | `src/routes/messages/archiving.ts` |
+| `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx` | sibling | `TASK-branch-merge-continuation-semantics` | `src/chat/service/branch-fork.ts` |
 | `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx` | sibling | `TASK-branch-merge-frontend-wizard-ui` | `src/routes/messages/read.ts` |
 | `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx` | sibling | `TASK-branch-merges-routes-and-typebox-schemas` | `src/routes/chats/branches.ts` |
@@ -21742,6 +21777,7 @@ output is byte-identical for identical inputs.
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `FEAT-message-translations-chat-first` | `src/routes/messages/reply.ts` |
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `PERF-chat-dispatch-command-three-sequential-queries` | `src/routes/messages/command.ts` |
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-action-applicability-gate` | `src/routes/messages/command.ts` |
+| `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-assistant-entity-access-tests` | `src/routes/messages/command.ts` |
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/routes/messages/reply.ts` |
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-async-store-complete-fail-lifecycle-hooks` | `src/generation/auto-gen/auto-generation.ts; src/routes/messages/reply.ts` |
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-backlog-size-strict-regression-recovery` | `src/routes/chats/manage.ts` |
@@ -22041,7 +22077,7 @@ output is byte-identical for identical inputs.
 | `BUG-check-duplicate-loads-all-owner-rows` | sibling | `TASK-assistant-entity-access-duplication` | `src/assistant/quality/entity-creation.ts` |
 | `BUG-check-duplicate-loads-all-owner-rows` | sibling | `TASK-assistant-entity-access-modification-addition` | `src/assistant/quality/entity-creation.ts` |
 | `BUG-check-duplicate-loads-all-owner-rows` | sibling | `TASK-assistant-entity-access-schema` | `src/assistant/quality/entity-creation.ts` |
-| `BUG-check-duplicate-loads-all-owner-rows` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/quality/entity-creation.ts` |
+| `BUG-check-duplicate-loads-all-owner-rows` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/quality/entity-creation.test.ts; src/assistant/quality/entity-creation.ts` |
 | `BUG-check-duplicate-loads-all-owner-rows` | sibling | `TASK-explicit-approval-flow-for-assistant-mutations` | `src/assistant/quality/entity-creation.ts` |
 | `BUG-check-duplicate-loads-all-owner-rows` | sibling | `TASK-precompiled-templates-injection` | `src/assistant/quality/entity-creation.test.ts` |
 | `BUG-check-duplicate-loads-all-owner-rows` | sibling | `TASK-publication-art-quality-gates` | `src/assistant/quality/entity-creation.test.ts` |
@@ -22170,6 +22206,7 @@ output is byte-identical for identical inputs.
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-action-applicability-gate` | `src/assistant/commands/registry.ts; src/routes/messages/command.ts` |
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-assistant-capability-disclosure` | `src/assistant/commands/registry.ts` |
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-assistant-entity-access-adapter` | `src/assistant/commands/registry.ts` |
+| `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-assistant-entity-access-tests` | `src/routes/messages/command.ts` |
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-assistant-slash-command-typed-token-autocomplete` | `src/assistant/commands/registry.ts` |
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-assistant-tool-injection-guard` | `src/assistant/commands/registry.ts` |
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-book-outline-generation-workflow` | `src/routes/messages/command.ts` |
@@ -22453,9 +22490,11 @@ output is byte-identical for identical inputs.
 | `BUG-crafting-station-instances-scoped-across-worlds-cross-world-` | sibling | `TASK-crafting-stations-execution` | `src/routes/crafting/station-instances.ts` |
 | `BUG-crafting-station-instances-scoped-across-worlds-cross-world-` | sibling | `TASK-frontend-crafting-stations-ui` | `src/routes/crafting/station-instances.ts` |
 | `BUG-crafting-station-instances-scoped-across-worlds-cross-world-` | sibling | `TASK-wire-crafting-routes` | `src/routes/crafting/station-instances.ts` |
+| `BUG-create-entity-confirm-bypasses-world-ownership` | sibling | `TASK-assistant-entity-access-duplication` | `src/routes/messages/create-entity-confirm.ts` |
 | `BUG-create-entity-confirm-bypasses-world-ownership` | sibling | `TASK-book-outline-generation-workflow` | `src/routes/messages/create-entity-confirm.ts` |
 | `BUG-create-entity-confirm-bypasses-world-ownership` | sibling | `TASK-item-generation-review-parity-extract-category-rarity-stats-` | `src/assistant/commands/create-entity.ts` |
 | `BUG-create-entity-confirm-bypasses-world-ownership` | sibling | `TASK-typescript-7-migration-typecheck-failures` | `src/assistant/commands/create-entity.ts` |
+| `BUG-create-entity-confirm-bypasses-world-ownership` | sibling | `epic-assistant-entity-access` | `src/routes/messages/create-entity-confirm.ts` |
 | `BUG-create-entity-confirm-bypasses-world-ownership` | sibling | `epic-assistant-gm-flows` | `src/assistant/commands/create-entity.ts; src/routes/messages/create-entity-confirm.ts` |
 | `BUG-create-entity-confirm-bypasses-world-ownership` | sibling | `epic-locations` | `src/assistant/commands/create-entity.ts` |
 | `BUG-create-test-db-custom-dialect-can-bypass-settestdatabase` | sibling | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | `src/db/migration-roundtrip.test.ts; src/db/migrations/README.md` |
@@ -22840,6 +22879,7 @@ output is byte-identical for identical inputs.
 | `BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run` | sibling | `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | `src/db/index.ts` |
 | `BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run` | sibling | `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key` | `src/db/index.ts` |
 | `BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run` | sibling | `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h` | `src/db/index.ts` |
+| `BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run` | sibling | `TASK-data-integrity-phase1` | `src/db/index.ts` |
 | `BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/db/index.ts` |
 | `BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run` | sibling | `epic-architecture` | `src/db/index.ts` |
@@ -23144,6 +23184,7 @@ output is byte-identical for identical inputs.
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `BUG-test-run-id-uses-date-now-collision-risk-under-parallel` | `src/db/test-db-helpers.test.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h` | `src/db/index.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-allow-data-dir-to-be-overridden-by-env-var` | `src/config/constants.ts` |
+| `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/server/start.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | `src/server/start.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-cron-migrate-existing-timers` | `src/server/start.ts` |
@@ -25920,6 +25961,7 @@ output is byte-identical for identical inputs.
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-api-first-foundation` | `src/elysia-app.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-assistant-command-execution-intent-detection` | `src/image-edit/routes.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-assistant-creative-studio-workflow-gallery-edit` | `src/image-edit/routes.ts` |
+| `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/elysia-app.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-async-store-complete-fail-lifecycle-hooks` | `src/elysia-app.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-audit-new-test-files-for-cross-file-process-collisions-befor` | `src/image-edit/providers/comfyui-owner.test.ts; src/image-edit/routes.ts` |
@@ -28668,6 +28710,7 @@ output is byte-identical for identical inputs.
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-adopt-bun-csrf-for-csrf-protection` | `src/elysia-app.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-adopt-bun-yaml-to-replace-js-yaml` | `src/config/load/parse.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-api-first-foundation` | `src/elysia-app.ts` |
+| `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/elysia-app.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-async-store-complete-fail-lifecycle-hooks` | `src/elysia-app.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | `src/elysia-app.ts` |
@@ -29151,6 +29194,7 @@ output is byte-identical for identical inputs.
 | `BUG-settestdatabase-global-leak-on-test-throw` | sibling | `TASK-019-users-encryption-secret` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
 | `BUG-settestdatabase-global-leak-on-test-throw` | sibling | `TASK-asset-b1-blake3-content-store` | `src/db/migration-roundtrip.test.ts` |
 | `BUG-settestdatabase-global-leak-on-test-throw` | sibling | `TASK-asset-provenance-ledger-for-generated-assets` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
+| `BUG-settestdatabase-global-leak-on-test-throw` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-settestdatabase-global-leak-on-test-throw` | sibling | `TASK-blog-publish-unit-to-post-bridge` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
 | `BUG-settestdatabase-global-leak-on-test-throw` | sibling | `TASK-branch-merge-db-migration-039` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
 | `BUG-settestdatabase-global-leak-on-test-throw` | sibling | `TASK-branch-merge-tests-and-coverage` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
@@ -29617,6 +29661,7 @@ output is byte-identical for identical inputs.
 | `BUG-sqlite-foreign-keys-pragma-set-twice-redundant` | sibling | `TASK-019-users-encryption-secret` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
 | `BUG-sqlite-foreign-keys-pragma-set-twice-redundant` | sibling | `TASK-asset-b1-blake3-content-store` | `src/db/migration-roundtrip.test.ts` |
 | `BUG-sqlite-foreign-keys-pragma-set-twice-redundant` | sibling | `TASK-asset-provenance-ledger-for-generated-assets` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
+| `BUG-sqlite-foreign-keys-pragma-set-twice-redundant` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-sqlite-foreign-keys-pragma-set-twice-redundant` | sibling | `TASK-blog-publish-unit-to-post-bridge` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
 | `BUG-sqlite-foreign-keys-pragma-set-twice-redundant` | sibling | `TASK-branch-merge-db-migration-039` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
 | `BUG-sqlite-foreign-keys-pragma-set-twice-redundant` | sibling | `TASK-branch-merge-tests-and-coverage` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
@@ -29650,6 +29695,7 @@ output is byte-identical for identical inputs.
 | `BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data` | sibling | `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | `src/db/index.ts` |
 | `BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data` | sibling | `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key` | `src/db/index.ts` |
 | `BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data` | sibling | `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h` | `src/db/index.ts` |
+| `BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data` | sibling | `TASK-data-integrity-phase1` | `src/db/index.ts` |
 | `BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/db/index.ts` |
 | `BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data` | sibling | `epic-architecture` | `src/db/index.ts` |
@@ -29664,6 +29710,7 @@ output is byte-identical for identical inputs.
 | `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | sibling | `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key` | `src/db/index.ts` |
 | `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | sibling | `BUG-test-run-id-uses-date-now-collision-risk-under-parallel` | `src/db/test-db-helpers.test.ts` |
 | `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | sibling | `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h` | `src/db/index.ts` |
+| `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | sibling | `TASK-data-integrity-phase1` | `src/db/index.ts` |
 | `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/db/index.ts` |
 | `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | sibling | `epic-architecture` | `src/db/index.ts` |
@@ -29676,6 +29723,7 @@ output is byte-identical for identical inputs.
 | `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | sibling | `epic-multi-instance-reconciliation` | `src/db/index.ts` |
 | `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` | sibling | `epic-runtime-integrity-fail-safes` | `src/db/index.ts` |
 | `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key` | sibling | `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h` | `src/db/index.ts` |
+| `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key` | sibling | `TASK-data-integrity-phase1` | `src/db/index.ts` |
 | `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key` | sibling | `TASK-refactor-typed-kysely-upsert-by-unique-key-helpers` | `src/db/upsert-helpers.ts` |
 | `BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/db/index.ts` |
@@ -30238,6 +30286,7 @@ output is byte-identical for identical inputs.
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | `src/config/load/load.ts; src/tui/app.ts` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `BUG-tui-blind-to-llm-assistant-turns` | `src/tui/app-keys.ts` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `TASK-adopt-bun-color-for-tui-colors` | `src/tui/asset-view.ts` |
+| `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `TASK-assistant-entity-access-tests` | `src/logger` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `TASK-delete-unreferenced-platform-service-util-modules-dead-barre` | `src/tui/app.ts; src/tui/asset-view.ts` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `TASK-docs-drift-api` | `src/tui/app-keys.ts` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `TASK-frontend-and-http-utils-type-safety-batch` | `src/config/load/load.ts` |
@@ -30771,6 +30820,7 @@ output is byte-identical for identical inputs.
 | `BUG-world-bundle-import-untransacted-partial-import-corrupts-wor` | sibling | `BUG-world-import-quest-time-location-id-not-remapped-connections` | `src/routes/world-import/bundle.ts` |
 | `BUG-world-bundle-import-untransacted-partial-import-corrupts-wor` | sibling | `TASK-markdown-heading-parse-and-import` | `src/routes/world-import/bundle.ts` |
 | `BUG-world-bundle-import-untransacted-partial-import-corrupts-wor` | sibling | `epic-character-npc-lore-access` | `src/routes/world-import/bundle.ts` |
+| `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/db/index.ts` |
 | `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h` | sibling | `TASK-data-integrity-phase1` | `src/db/index.ts` |
 | `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/db/index.ts` |
 | `BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h` | sibling | `epic-architecture` | `src/db/index.ts` |
@@ -31055,6 +31105,7 @@ output is byte-identical for identical inputs.
 | `FEAT-039` | sibling | `epic-experimental-egui-frontend` | `src/routes/v1/openapi.ts` |
 | `FEAT-040` | sibling | `TASK-locations-fractal-migration` | `src/db/schema-version.ts` |
 | `FEAT-042` | sibling | `TASK-019-content-versioning-heavy-tables` | `src/db/content-version.test.ts; src/db/content-version.ts` |
+| `FEAT-042` | sibling | `TASK-assistant-entity-access-tests` | `src/db/content-version.ts` |
 | `FEAT-042` | sibling | `TASK-chat-context-preference-per-scope` | `src/db/migrations/parts/001_core.ts` |
 | `FEAT-042` | sibling | `TASK-db-content-versioning-snapshot-restore` | `src/db/content-version.test.ts` |
 | `FEAT-042` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/db/content-version.ts` |
@@ -33910,6 +33961,7 @@ output is byte-identical for identical inputs.
 | `IMPROVE-impersonate-explicit-else-branch` | sibling | `TASK-refine-impersonation-constraint-to-location-timeline-scope` | `src/chat/service/participants.ts` |
 | `IMPROVE-impersonate-explicit-else-branch` | sibling | `epic-impersonation` | `src/chat/service/participants.ts` |
 | `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-action-applicability-gate` | `src/routes/messages/command.ts` |
+| `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-assistant-entity-access-tests` | `src/routes/messages/command.ts` |
 | `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-book-outline-generation-workflow` | `src/routes/messages/command.ts` |
 | `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/command.ts` |
 | `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-comparison-workflow-template-and-command` | `src/routes/messages/command.ts` |
@@ -34021,6 +34073,7 @@ output is byte-identical for identical inputs.
 | `TASK-019-content-versioning-heavy-tables` | sibling | `TASK-019-users-encryption-secret` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
 | `TASK-019-content-versioning-heavy-tables` | sibling | `TASK-asset-b1-blake3-content-store` | `src/db/migration-roundtrip.test.ts` |
 | `TASK-019-content-versioning-heavy-tables` | sibling | `TASK-asset-provenance-ledger-for-generated-assets` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
+| `TASK-019-content-versioning-heavy-tables` | sibling | `TASK-assistant-entity-access-tests` | `src/db/content-version.ts` |
 | `TASK-019-content-versioning-heavy-tables` | sibling | `TASK-blog-publish-unit-to-post-bridge` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
 | `TASK-019-content-versioning-heavy-tables` | sibling | `TASK-branch-merge-db-migration-039` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
 | `TASK-019-content-versioning-heavy-tables` | sibling | `TASK-branch-merge-tests-and-coverage` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
@@ -35542,6 +35595,7 @@ output is byte-identical for identical inputs.
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `epic-world-chat-channels-invites` | `src/db/schema-core.ts` |
 | `TASK-action-applicability-gate` | sibling | `TASK-assistant-capability-disclosure` | `src/assistant/commands/registry.ts` |
 | `TASK-action-applicability-gate` | sibling | `TASK-assistant-entity-access-adapter` | `src/assistant/commands/registry.ts` |
+| `TASK-action-applicability-gate` | sibling | `TASK-assistant-entity-access-tests` | `src/routes/messages/command.ts` |
 | `TASK-action-applicability-gate` | sibling | `TASK-assistant-slash-command-typed-token-autocomplete` | `src/assistant/commands/registry.ts` |
 | `TASK-action-applicability-gate` | sibling | `TASK-assistant-tool-injection-guard` | `src/assistant/commands/registry.ts` |
 | `TASK-action-applicability-gate` | sibling | `TASK-book-outline-generation-workflow` | `src/routes/messages/command.ts` |
@@ -37495,11 +37549,11 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-creative-studio-workflows` | sibling | `epic-view-set-generation` | `src/assistant/workflow-runner.ts` |
 | `TASK-assistant-creative-studio-workflows` | sibling | `epic-workflow-engine` | `src/assistant/workflow-runner.ts; src/config/sections/templates.ts; src/config/templates-loader.ts; src/regex/intent.ts` |
 | `TASK-assistant-creative-studio-workflows` | sibling | `epic-world-chat-channels-invites` | `src/generation/auto-gen.ts` |
-| `TASK-assistant-entity-access-adaptation` | sibling | `TASK-assistant-entity-access-adapter` | `src/assistant/quality/entity-creation.ts; src/routes/worlds/worlds.ts` |
+| `TASK-assistant-entity-access-adaptation` | sibling | `TASK-assistant-entity-access-adapter` | `src/assistant/commands/adapt.test.ts; src/assistant/commands/adapt.ts; src/assistant/quality/entity-creation.ts; src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-adaptation` | sibling | `TASK-assistant-entity-access-duplication` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-adaptation` | sibling | `TASK-assistant-entity-access-modification-addition` | `src/assistant/quality/entity-creation.ts` |
-| `TASK-assistant-entity-access-adaptation` | sibling | `TASK-assistant-entity-access-schema` | `src/assistant/adapter/adapt.ts; src/assistant/quality/entity-creation.ts` |
-| `TASK-assistant-entity-access-adaptation` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-adaptation` | sibling | `TASK-assistant-entity-access-schema` | `src/assistant/adapter/adapt.ts; src/assistant/commands/adapt.test.ts; src/assistant/quality/adaptation.ts; src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-adaptation` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/commands/adapt.test.ts; src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-adaptation` | sibling | `TASK-assistant-entity-access-world-location-access` | `src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-adaptation` | sibling | `TASK-explicit-approval-flow-for-assistant-mutations` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-adaptation` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/routes/worlds/worlds.ts` |
@@ -37508,22 +37562,24 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-adaptation` | sibling | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-asset-access` | `src/assistant/adapter/assets.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-character-item-inventory` | `src/assistant/adapter/characters.ts; src/assistant/adapter/entity.ts; src/assistant/adapter/items.ts; src/routes/story-items/handlers.ts` |
-| `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-duplication` | `src/assistant/adapter/entity.ts; src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-duplication` | `src/assistant/adapter/entity.ts; src/assistant/commands/duplicate.test.ts; src/assistant/commands/duplicate.ts; src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-modification-addition` | `src/assistant/adapter/entity.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-rag-access` | `src/assistant/adapter/rag.ts` |
-| `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-schema` | `src/assistant/adapter/access.ts; src/assistant/adapter/entity.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts` |
-| `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/quality/entity-creation.ts` |
-| `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-world-location-access` | `src/assistant/adapter/locations.ts; src/assistant/adapter/worlds.ts; src/routes/worlds/locations.ts; src/routes/worlds/worlds.ts` |
+| `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-schema` | `src/assistant/adapter/access.ts; src/assistant/adapter/entity.ts; src/assistant/commands/adapt.test.ts; src/assistant/commands/duplicate.test.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts; src/routes/worlds/access.ts` |
+| `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/commands/adapt.test.ts; src/assistant/commands/duplicate.test.ts; src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-world-location-access` | `src/assistant/adapter/locations.ts; src/assistant/adapter/worlds.ts; src/routes/worlds/access.ts; src/routes/worlds/locations.ts; src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-slash-command-typed-token-autocomplete` | `src/assistant/commands/registry.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-tool-injection-guard` | `src/assistant/commands/registry.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-document-dual-assistant-role-gates` | `src/assistant/commands/registry.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-explicit-approval-flow-for-assistant-mutations` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-fast-action-prompt-pipeline` | `src/assistant/commands/registry.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-fractal-locations-api-routes` | `src/routes/worlds/locations.ts` |
-| `TASK-assistant-entity-access-adapter` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/routes/worlds/worlds.ts` |
+| `TASK-assistant-entity-access-adapter` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/routes/worlds/access.ts; src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/locations.ts; src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-harness-frontend-consolidation` | `src/assistant/commands/registry.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-interaction-service-foundation` | `src/assistant/commands/registry.ts` |
+| `TASK-assistant-entity-access-adapter` | sibling | `TASK-licensing-publish-authorization-predicate` | `src/routes/worlds/access.ts` |
+| `TASK-assistant-entity-access-adapter` | sibling | `TASK-licensing-publish-enforcement-point` | `src/routes/worlds/access.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-location-crud-tree-connections` | `src/routes/worlds/locations.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-location-editor-structured-ui` | `src/routes/worlds/locations.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-location-explorer` | `src/routes/worlds/locations.ts` |
@@ -37578,33 +37634,65 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-character-item-inventory` | sibling | `epic-chat-lifecycle-moderation` | `src/db/schema.ts` |
 | `TASK-assistant-entity-access-character-item-inventory` | sibling | `epic-worlds-extension` | `src/db/schema.ts` |
 | `TASK-assistant-entity-access-duplication` | sibling | `TASK-assistant-entity-access-modification-addition` | `src/assistant/adapter/entity.ts; src/assistant/quality/entity-creation.ts` |
-| `TASK-assistant-entity-access-duplication` | sibling | `TASK-assistant-entity-access-schema` | `src/assistant/adapter/duplicate.ts; src/assistant/adapter/entity.ts; src/assistant/quality/entity-creation.ts` |
-| `TASK-assistant-entity-access-duplication` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-duplication` | sibling | `TASK-assistant-entity-access-schema` | `src/assistant/adapter/duplicate.ts; src/assistant/adapter/entity.ts; src/assistant/commands/duplicate.test.ts; src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-duplication` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/commands/duplicate.test.ts; src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-duplication` | sibling | `TASK-book-outline-generation-workflow` | `src/routes/messages/create-entity-confirm.ts` |
 | `TASK-assistant-entity-access-duplication` | sibling | `TASK-explicit-approval-flow-for-assistant-mutations` | `src/assistant/quality/entity-creation.ts` |
-| `TASK-assistant-entity-access-duplication` | sibling | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-duplication` | sibling | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.ts; src/routes/messages/create-entity-confirm.ts` |
+| `TASK-assistant-entity-access-e2e` | sibling | `TASK-assistant-entity-access-quota-engine` | `src/assistant/quota/engine.test.ts` |
+| `TASK-assistant-entity-access-e2e` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/quota/engine.test.ts` |
 | `TASK-assistant-entity-access-modification-addition` | sibling | `TASK-assistant-entity-access-schema` | `src/assistant/adapter/entity.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts` |
 | `TASK-assistant-entity-access-modification-addition` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-modification-addition` | sibling | `TASK-explicit-approval-flow-for-assistant-mutations` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-modification-addition` | sibling | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/quota/engine.test.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations` | `src/crypto/byok.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat` | `src/crypto/byok.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-data-integrity-phase1` | `src/db/index.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-epic17-encryption-e2e-expansion` | `src/crypto/byok.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-federation-same-host-loopback-peer-auth` | `src/crypto/byok.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-mesh-encrypted-content-sharing-reservation-duplication` | `src/crypto/byok.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-provider-wiring-settings-convention-for-byok-and-resource-pr` | `src/crypto/byok.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-recursive-self-improvement-sidecar-python-provider-for-custo` | `src/crypto/byok.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-resource-provision-credential-store` | `src/crypto/byok.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/db/index.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `epic-architecture` | `src/db/index.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `epic-byok-api-keys` | `src/crypto/byok.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `epic-data-integrity-acid` | `src/db/index.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `epic-data-integrity-phase1` | `src/db/index.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `epic-db-cold-storage-high-perf` | `src/db/index.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `epic-db-growth-tiered-storage` | `src/db/index.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `epic-deno-support` | `src/db/index.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `epic-encryption-workflow` | `src/crypto/byok.ts` |
 | `TASK-assistant-entity-access-quota-engine` | sibling | `epic-federation-offload-quotas` | `src/crypto/byok.ts` |
-| `TASK-assistant-entity-access-schema` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `epic-local-process-swarm` | `src/db/index.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `epic-multi-instance-reconciliation` | `src/db/index.ts` |
+| `TASK-assistant-entity-access-quota-engine` | sibling | `epic-runtime-integrity-fail-safes` | `src/db/index.ts` |
+| `TASK-assistant-entity-access-schema` | sibling | `TASK-assistant-entity-access-tests` | `src/assistant/commands/adapt.test.ts; src/assistant/commands/duplicate.test.ts; src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-schema` | sibling | `TASK-assistant-entity-access-world-location-access` | `src/routes/worlds/access.ts` |
 | `TASK-assistant-entity-access-schema` | sibling | `TASK-explicit-approval-flow-for-assistant-mutations` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-schema` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/routes/worlds/access.ts` |
 | `TASK-assistant-entity-access-schema` | sibling | `TASK-licensing-publish-authorization-predicate` | `src/routes/worlds/access.ts` |
 | `TASK-assistant-entity-access-schema` | sibling | `TASK-licensing-publish-enforcement-point` | `src/routes/worlds/access.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-book-outline-generation-workflow` | `src/routes/messages/command.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/command.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-comparison-workflow-template-and-command` | `src/routes/messages/command.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-document-dual-assistant-role-gates` | `src/routes/messages/command.ts` |
 | `TASK-assistant-entity-access-tests` | sibling | `TASK-explicit-approval-flow-for-assistant-mutations` | `src/assistant/quality/entity-creation.ts` |
-| `TASK-assistant-entity-access-tests` | sibling | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-harness-frontend-consolidation` | `src/routes/messages/command.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-interaction-service-foundation` | `src/routes/messages/command.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/db/content-version.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/db/content-version.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-precompiled-templates-injection` | `src/assistant/quality/entity-creation.test.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-publication-art-quality-gates` | `src/assistant/quality/entity-creation.test.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui` | `src/routes/messages/command.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc` | `src/routes/messages/command.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `epic-assistant-creative-studio-workflows` | `src/routes/messages/command.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.test.ts; src/assistant/quality/entity-creation.ts; src/routes/messages/command.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `epic-content-hashing-distributed-integrity` | `src/db/content-version.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `epic-effect-v4-adoption-evaluation` | `src/logger` |
+| `TASK-assistant-entity-access-tests` | sibling | `epic-entity-generation-workflows` | `src/routes/messages/command.ts` |
+| `TASK-assistant-entity-access-tests` | sibling | `epic-narrative-publishing-workflows` | `src/routes/messages/command.ts` |
 | `TASK-assistant-entity-access-world-location-access` | sibling | `TASK-assistant-server-side-branch-command` | `src/assistant/commands/index.ts` |
 | `TASK-assistant-entity-access-world-location-access` | sibling | `TASK-assistant-tool-injection-guard` | `src/assistant/commands/index.ts` |
 | `TASK-assistant-entity-access-world-location-access` | sibling | `TASK-fractal-locations-api-routes` | `src/routes/worlds/locations.ts` |
@@ -39213,6 +39301,7 @@ output is byte-identical for identical inputs.
 | `TASK-book-outline-generation-workflow` | sibling | `TASK-workflow-dag-engine-task-dependencies` | `src/assistant/workflow-runner.ts` |
 | `TASK-book-outline-generation-workflow` | sibling | `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui` | `src/assistant/commands/workflow.ts; src/assistant/workflow-runner.ts; src/routes/messages/command.ts` |
 | `TASK-book-outline-generation-workflow` | sibling | `TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc` | `src/routes/messages/command.ts` |
+| `TASK-book-outline-generation-workflow` | sibling | `epic-assistant-entity-access` | `src/routes/messages/create-entity-confirm.ts` |
 | `TASK-book-outline-generation-workflow` | sibling | `epic-assistant-step-planning` | `src/assistant/workflow-runner.ts` |
 | `TASK-book-outline-generation-workflow` | sibling | `epic-classifier-template-packs` | `src/config/templates-loader/discovery.ts` |
 | `TASK-book-outline-generation-workflow` | sibling | `epic-creative-studio` | `src/story/book-compiler.ts` |
@@ -46575,6 +46664,7 @@ output is byte-identical for identical inputs.
 | `TASK-harness-eval-harness` | sibling | `TASK-harness-tool-sandbox` | `src/assistant` |
 | `TASK-harness-eval-harness` | sibling | `TASK-odysseus-manage-tool-parity-evaluation` | `src/assistant` |
 | `TASK-harness-eval-harness` | sibling | `TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex` | `src/assistant` |
+| `TASK-harness-eval-harness` | sibling | `epic-assistant-entity-access` | `src/assistant` |
 | `TASK-harness-eval-harness` | sibling | `epic-platform-research` | `src/assistant` |
 | `TASK-harness-frontend-consolidation` | sibling | `TASK-harness-otel-replay` | `src/views/admin.html` |
 | `TASK-harness-frontend-consolidation` | sibling | `TASK-harness-stats-dashboard` | `src/views/admin.html` |
@@ -46788,6 +46878,7 @@ output is byte-identical for identical inputs.
 | `TASK-harness-tool-sandbox` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/plugins/tool-executor.ts` |
 | `TASK-harness-tool-sandbox` | sibling | `TASK-tls-configuration-audit-and-startup-validation` | `src/config/cert.ts` |
 | `TASK-harness-tool-sandbox` | sibling | `epic-architecture` | `src/config/cert.ts` |
+| `TASK-harness-tool-sandbox` | sibling | `epic-assistant-entity-access` | `src/assistant` |
 | `TASK-harness-tool-sandbox` | sibling | `epic-certificate-and-tls-management` | `src/config/cert.ts` |
 | `TASK-harness-tool-sandbox` | sibling | `epic-configs-path-resolution` | `src/config/cert.ts` |
 | `TASK-harness-tool-sandbox` | sibling | `epic-cross-platform-portability` | `src/config/cert.ts` |
@@ -49110,6 +49201,7 @@ output is byte-identical for identical inputs.
 | `TASK-odysseus-manage-tool-parity-evaluation` | sibling | `TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag` | `src/plugins` |
 | `TASK-odysseus-manage-tool-parity-evaluation` | sibling | `TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex` | `src/assistant` |
 | `TASK-odysseus-manage-tool-parity-evaluation` | sibling | `TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on` | `src/services` |
+| `TASK-odysseus-manage-tool-parity-evaluation` | sibling | `epic-assistant-entity-access` | `src/assistant` |
 | `TASK-odysseus-manage-tool-parity-evaluation` | sibling | `epic-platform-research` | `src/assistant; src/plugins; src/services` |
 | `TASK-openapi-specification` | sibling | `epic-api-openapi` | `src/api-governance/openapi/diff.ts; src/api-governance/openapi/docs.ts; src/api-governance/openapi/generator.ts; src/api-governance/openapi/validator.ts` |
 | `TASK-optique-cli-tooling-integration` | sibling | `TASK-tooling-build-cli-surface` | `src/cli/parser.ts` |
@@ -50837,6 +50929,7 @@ output is byte-identical for identical inputs.
 | `TASK-shared-text-surface-toolbar` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts` |
 | `TASK-shared-text-surface-toolbar` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
 | `TASK-shared-text-surface-toolbar` | sibling | `epic-frontend-component-architecture` | `src/frontend/alpine/index.ts` |
+| `TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex` | sibling | `epic-assistant-entity-access` | `src/assistant` |
 | `TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex` | sibling | `epic-platform-research` | `src/assistant` |
 | `TASK-signed-urls-for-asset-downloads` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/auth/jwt.ts` |
 | `TASK-signed-urls-for-asset-downloads` | sibling | `epic-frontend-gallery` | `src/frontend/pages/gallery.ts` |
@@ -52279,6 +52372,7 @@ output is byte-identical for identical inputs.
 | `epic-assistant-creative-studio-workflows` | sibling | `epic-technical-comparison-charts` | `src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/sections/templates-workflow.ts` |
 | `epic-assistant-creative-studio-workflows` | sibling | `epic-view-set-generation` | `src/assistant/workflow-runner.ts` |
 | `epic-assistant-creative-studio-workflows` | sibling | `epic-workflow-engine` | `src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/sections/templates.ts; src/config/templates-loader.ts; src/config/templates-loader/discovery.ts; src/generation/auto-gen/classify-intent.ts; src/regex/intent.ts` |
+| `epic-assistant-entity-access` | sibling | `epic-platform-research` | `src/assistant` |
 | `epic-assistant-generation-extensions` | sibling | `epic-assistant-gm-flows` | `src/assistant/commands/create.ts` |
 | `epic-assistant-generation-extensions` | sibling | `epic-audio-video-sound` | `src/generation/providers/comfyui.ts` |
 | `epic-assistant-generation-extensions` | sibling | `epic-aux-enrichment-pipeline` | `src/assistant/intent.ts; src/generation/caption-route.ts` |

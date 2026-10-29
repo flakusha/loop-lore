@@ -15,6 +15,7 @@
 **Tags:** assistant, duplication, clone, copy
 **Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `src/assistant/adapter/duplicate.ts`
+**Status Note:** Done (2026-10-29, branch `r2-entity-access-wrapup`, commits `526b3ed3b`, `f31622da9`). `/duplicate <kind> <source-id> [--with key=value …] [--as "Name"]` shipped in `src/assistant/commands/duplicate.ts`: the source loads through its adapter's ownership guard, `--with` applies field overrides (last-wins) and `--as` renames the copy, the copied fields travel in the `duplicate-entity` payload (`fields`) with the overridden subset tracked separately (`overriddenFields`), and the copy is created only after the user confirms — the confirm route re-validates the draft (`normalizeEntity` + `validateEntitySchema` + world ownership in `src/routes/messages/create-entity-confirm.ts`) and attributes the new row to the confirming caller, i.e. the original owner. DEVIATION: there is no `DuplicateResult` type — the copied/overridden tracking lives in the preview payload, and the advisory duplicate/consistency checks are not run for copies (the schema gate still rejects invalid drafts). Unit coverage `src/assistant/commands/duplicate.test.ts`. Test suites were not re-run in this wrap-up.
 
 ## Summary
 

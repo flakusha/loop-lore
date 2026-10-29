@@ -18949,6 +18949,8 @@
       "status": "done",
       "srcRefs": [
         "src/assistant/adapter/adapt.ts",
+        "src/assistant/adapter/world-context.ts",
+        "src/assistant/commands/adapt.test.ts",
         "src/assistant/commands/adapt.ts",
         "src/assistant/quality/adaptation.ts",
         "src/assistant/quality/entity-creation.ts",
@@ -18968,6 +18970,7 @@
       "status": "done",
       "srcRefs": [
         "src/assistant/adapter/access.ts",
+        "src/assistant/adapter/adapters.ts",
         "src/assistant/adapter/assets.ts",
         "src/assistant/adapter/characters.ts",
         "src/assistant/adapter/entity.ts",
@@ -18976,9 +18979,15 @@
         "src/assistant/adapter/quality.ts",
         "src/assistant/adapter/rag.ts",
         "src/assistant/adapter/worlds.ts",
+        "src/assistant/commands/adapt.test.ts",
+        "src/assistant/commands/adapt.ts",
+        "src/assistant/commands/duplicate.test.ts",
+        "src/assistant/commands/duplicate.ts",
+        "src/assistant/commands/entity-guard.ts",
         "src/assistant/commands/registry.ts",
         "src/assistant/quality/entity-creation.ts",
         "src/routes/story-items/handlers.ts",
+        "src/routes/worlds/access.ts",
         "src/routes/worlds/locations.ts",
         "src/routes/worlds/worlds.ts"
       ],
@@ -19047,8 +19056,10 @@
       "srcRefs": [
         "src/assistant/adapter/duplicate.ts",
         "src/assistant/adapter/entity.ts",
+        "src/assistant/commands/duplicate.test.ts",
         "src/assistant/commands/duplicate.ts",
-        "src/assistant/quality/entity-creation.ts"
+        "src/assistant/quality/entity-creation.ts",
+        "src/routes/messages/create-entity-confirm.ts"
       ],
       "related": [
         "epic-assistant-entity-access"
@@ -19060,7 +19071,10 @@
       "path": ".plan/tickets/TASK-assistant-entity-access-e2e.md",
       "title": "Assistant Entity Access E2E Tests",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/assistant/commands/entities.test.ts",
+        "src/assistant/quota/engine.test.ts"
+      ],
       "related": [
         "epic-assistant-entity-access"
       ]
@@ -19090,10 +19104,13 @@
       "title": "Assistant Entity Access Quota Engine",
       "status": "done",
       "srcRefs": [
+        "src/assistant/quota/engine.test.ts",
         "src/assistant/quota/engine.ts",
         "src/assistant/quota/errors.ts",
         "src/assistant/quota/storage.ts",
-        "src/crypto/byok.ts"
+        "src/config/sections/assistant.ts",
+        "src/crypto/byok.ts",
+        "src/db/index.ts"
       ],
       "related": [
         "epic-assistant-entity-access",
@@ -19128,6 +19145,9 @@
         "src/assistant/adapter/adapt.ts",
         "src/assistant/adapter/duplicate.ts",
         "src/assistant/adapter/entity.ts",
+        "src/assistant/commands/adapt.test.ts",
+        "src/assistant/commands/duplicate.test.ts",
+        "src/assistant/quality/adaptation.ts",
         "src/assistant/quality/entity-creation.ts",
         "src/routes/story-items/handlers.ts",
         "src/routes/worlds/access.ts"
@@ -19162,9 +19182,14 @@
         "src/assistant/commands/rag.test.ts",
         "src/assistant/commands/worlds.test.ts",
         "src/assistant/quality/adaptation.test.ts",
+        "src/assistant/quality/entity-creation.test.ts",
         "src/assistant/quality/entity-creation.ts",
+        "src/assistant/quota/db-storage.test.ts",
         "src/assistant/quota/engine.test.ts",
-        "src/assistant/quota/storage.test.ts"
+        "src/assistant/quota/storage.test.ts",
+        "src/db/content-version.ts",
+        "src/logger",
+        "src/routes/messages/command.ts"
       ],
       "related": [
         "epic-assistant-entity-access"
@@ -47231,6 +47256,7 @@
       "title": "Assistant Entity Access & Manipulation",
       "status": "in_progress",
       "srcRefs": [
+        "src/assistant",
         "src/assistant/commands/adapt.ts",
         "src/assistant/commands/apply.ts",
         "src/assistant/commands/assets.test.ts",
@@ -47240,7 +47266,9 @@
         "src/assistant/commands/duplicate.ts",
         "src/assistant/commands/import.ts",
         "src/assistant/commands/index.ts",
+        "src/assistant/commands/items-instance.ts",
         "src/assistant/commands/items.ts",
+        "src/assistant/commands/locations-update.ts",
         "src/assistant/commands/locations.ts",
         "src/assistant/commands/modify.ts",
         "src/assistant/commands/rag.test.ts",
@@ -47249,6 +47277,8 @@
         "src/assistant/commands/worlds-access.ts",
         "src/assistant/quality/adaptation.ts",
         "src/assistant/quality/entity-creation.ts",
+        "src/frontend/alpine/chat-actions/entities.ts",
+        "src/routes/messages/create-entity-confirm.ts",
         "src/routes/story-items/handlers.ts",
         "src/routes/worlds/worlds.ts"
       ],
@@ -54219,6 +54249,7 @@
         "TASK-harness-tool-sandbox",
         "TASK-odysseus-manage-tool-parity-evaluation",
         "TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex",
+        "epic-assistant-entity-access",
         "epic-platform-research"
       ]
     },
@@ -54246,6 +54277,12 @@
       "owners": [
         "TASK-assistant-entity-access-adaptation",
         "TASK-assistant-entity-access-schema"
+      ]
+    },
+    {
+      "path": "src/assistant/adapter/adapters.ts",
+      "owners": [
+        "TASK-assistant-entity-access-adapter"
       ]
     },
     {
@@ -54343,6 +54380,12 @@
       ]
     },
     {
+      "path": "src/assistant/adapter/world-context.ts",
+      "owners": [
+        "TASK-assistant-entity-access-adaptation"
+      ]
+    },
+    {
       "path": "src/assistant/adapter/worlds.test.ts",
       "owners": [
         "TASK-assistant-entity-access-tests"
@@ -54389,6 +54432,9 @@
     {
       "path": "src/assistant/commands/adapt.test.ts",
       "owners": [
+        "TASK-assistant-entity-access-adaptation",
+        "TASK-assistant-entity-access-adapter",
+        "TASK-assistant-entity-access-schema",
         "TASK-assistant-entity-access-tests"
       ]
     },
@@ -54396,6 +54442,7 @@
       "path": "src/assistant/commands/adapt.ts",
       "owners": [
         "TASK-assistant-entity-access-adaptation",
+        "TASK-assistant-entity-access-adapter",
         "epic-assistant-entity-access"
       ]
     },
@@ -54578,14 +54625,30 @@
     {
       "path": "src/assistant/commands/duplicate.test.ts",
       "owners": [
+        "TASK-assistant-entity-access-adapter",
+        "TASK-assistant-entity-access-duplication",
+        "TASK-assistant-entity-access-schema",
         "TASK-assistant-entity-access-tests"
       ]
     },
     {
       "path": "src/assistant/commands/duplicate.ts",
       "owners": [
+        "TASK-assistant-entity-access-adapter",
         "TASK-assistant-entity-access-duplication",
         "epic-assistant-entity-access"
+      ]
+    },
+    {
+      "path": "src/assistant/commands/entities.test.ts",
+      "owners": [
+        "TASK-assistant-entity-access-e2e"
+      ]
+    },
+    {
+      "path": "src/assistant/commands/entity-guard.ts",
+      "owners": [
+        "TASK-assistant-entity-access-adapter"
       ]
     },
     {
@@ -54693,6 +54756,12 @@
       ]
     },
     {
+      "path": "src/assistant/commands/items-instance.ts",
+      "owners": [
+        "epic-assistant-entity-access"
+      ]
+    },
+    {
       "path": "src/assistant/commands/items.test.ts",
       "owners": [
         "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
@@ -54709,7 +54778,8 @@
     {
       "path": "src/assistant/commands/locations-update.ts",
       "owners": [
-        "TASK-assistant-entity-access-world-location-access"
+        "TASK-assistant-entity-access-world-location-access",
+        "epic-assistant-entity-access"
       ]
     },
     {
@@ -55740,6 +55810,7 @@
       "path": "src/assistant/quality/adaptation.ts",
       "owners": [
         "TASK-assistant-entity-access-adaptation",
+        "TASK-assistant-entity-access-schema",
         "epic-assistant-entity-access"
       ]
     },
@@ -55767,6 +55838,7 @@
       "path": "src/assistant/quality/entity-creation.test.ts",
       "owners": [
         "BUG-check-duplicate-loads-all-owner-rows",
+        "TASK-assistant-entity-access-tests",
         "TASK-precompiled-templates-injection",
         "TASK-publication-art-quality-gates",
         "epic-assistant-gm-flows"
@@ -55788,8 +55860,16 @@
       ]
     },
     {
+      "path": "src/assistant/quota/db-storage.test.ts",
+      "owners": [
+        "TASK-assistant-entity-access-tests"
+      ]
+    },
+    {
       "path": "src/assistant/quota/engine.test.ts",
       "owners": [
+        "TASK-assistant-entity-access-e2e",
+        "TASK-assistant-entity-access-quota-engine",
         "TASK-assistant-entity-access-tests"
       ]
     },
@@ -61311,6 +61391,12 @@
       ]
     },
     {
+      "path": "src/config/sections/assistant.ts",
+      "owners": [
+        "TASK-assistant-entity-access-quota-engine"
+      ]
+    },
+    {
       "path": "src/config/sections/auth.ts",
       "owners": [
         "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
@@ -62523,6 +62609,7 @@
       "owners": [
         "FEAT-042",
         "TASK-019-content-versioning-heavy-tables",
+        "TASK-assistant-entity-access-tests",
         "TASK-middleware-fe-be-db-record-content-hashing",
         "TASK-middleware-migration-compaction-data-version-hash",
         "epic-content-hashing-distributed-integrity"
@@ -63024,6 +63111,7 @@
         "BUG-sqlite-wal-pragma-noop-on-in-memory-test-db",
         "BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key",
         "BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h",
+        "TASK-assistant-entity-access-quota-engine",
         "TASK-data-integrity-phase1",
         "TASK-runtime-integrity-watchdog-crash-recovery",
         "epic-architecture",
@@ -66008,6 +66096,12 @@
         "TASK-assistant-entity-access-asset-access",
         "TASK-image-backends-x-assistant-image-command-backend-routing-fai",
         "epic-impersonation"
+      ]
+    },
+    {
+      "path": "src/frontend/alpine/chat-actions/entities.ts",
+      "owners": [
+        "epic-assistant-entity-access"
       ]
     },
     {
@@ -72704,6 +72798,7 @@
       "path": "src/logger",
       "owners": [
         "BUG-tui-app-getlogger-throws-when-running-standalone",
+        "TASK-assistant-entity-access-tests",
         "epic-effect-v4-adoption-evaluation"
       ]
     },
@@ -78384,6 +78479,7 @@
         "BUG-command-dispatch-async-handler-uncaught",
         "PERF-chat-dispatch-command-three-sequential-queries",
         "TASK-action-applicability-gate",
+        "TASK-assistant-entity-access-tests",
         "TASK-book-outline-generation-workflow",
         "TASK-chat-branch-merge",
         "TASK-comparison-workflow-template-and-command",
@@ -78410,7 +78506,9 @@
       "path": "src/routes/messages/create-entity-confirm.ts",
       "owners": [
         "BUG-create-entity-confirm-bypasses-world-ownership",
+        "TASK-assistant-entity-access-duplication",
         "TASK-book-outline-generation-workflow",
+        "epic-assistant-entity-access",
         "epic-assistant-gm-flows"
       ]
     },
@@ -80405,6 +80503,7 @@
     {
       "path": "src/routes/worlds/access.ts",
       "owners": [
+        "TASK-assistant-entity-access-adapter",
         "TASK-assistant-entity-access-schema",
         "TASK-assistant-entity-access-world-location-access",
         "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
@@ -87714,7 +87813,7 @@
       "from": "TASK-assistant-entity-access-adapter",
       "kind": "consumes",
       "to": "epic-assistant-entity-access",
-      "via": "src/assistant/commands/registry.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts; src/routes/worlds/worlds.ts"
+      "via": "src/assistant/commands/adapt.ts; src/assistant/commands/duplicate.ts; src/assistant/commands/registry.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts; src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-assistant-entity-access-asset-access",
@@ -87732,7 +87831,7 @@
       "from": "TASK-assistant-entity-access-duplication",
       "kind": "consumes",
       "to": "epic-assistant-entity-access",
-      "via": "src/assistant/commands/duplicate.ts; src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/commands/duplicate.ts; src/assistant/quality/entity-creation.ts; src/routes/messages/create-entity-confirm.ts"
     },
     {
       "from": "TASK-assistant-entity-access-modification-addition",
@@ -87756,7 +87855,7 @@
       "from": "TASK-assistant-entity-access-schema",
       "kind": "consumes",
       "to": "epic-assistant-entity-access",
-      "via": "src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts"
+      "via": "src/assistant/quality/adaptation.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts"
     },
     {
       "from": "TASK-assistant-entity-access-schema",
@@ -87774,7 +87873,7 @@
       "from": "TASK-assistant-entity-access-world-location-access",
       "kind": "consumes",
       "to": "epic-assistant-entity-access",
-      "via": "src/assistant/commands/index.ts; src/assistant/commands/locations.ts; src/assistant/commands/worlds-access.ts; src/routes/worlds/worlds.ts"
+      "via": "src/assistant/commands/index.ts; src/assistant/commands/locations-update.ts; src/assistant/commands/locations.ts; src/assistant/commands/worlds-access.ts; src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-async-request-response-result-store-separate-table-offload",
@@ -89406,7 +89505,7 @@
       "from": "epic-assistant-entity-access",
       "kind": "consumes",
       "to": "epic-assistant-gm-flows",
-      "via": "src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/quality/entity-creation.ts; src/routes/messages/create-entity-confirm.ts"
     },
     {
       "from": "epic-assistant-step-planning",
@@ -121637,6 +121736,16 @@
     {
       "from": "TASK-assistant-entity-access-adaptation",
       "kind": "produces",
+      "to": "src/assistant/adapter/world-context.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adaptation",
+      "kind": "produces",
+      "to": "src/assistant/commands/adapt.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adaptation",
+      "kind": "produces",
       "to": "src/assistant/commands/adapt.ts"
     },
     {
@@ -121658,6 +121767,11 @@
       "from": "TASK-assistant-entity-access-adapter",
       "kind": "produces",
       "to": "src/assistant/adapter/access.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "produces",
+      "to": "src/assistant/adapter/adapters.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adapter",
@@ -121702,6 +121816,31 @@
     {
       "from": "TASK-assistant-entity-access-adapter",
       "kind": "produces",
+      "to": "src/assistant/commands/adapt.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "produces",
+      "to": "src/assistant/commands/adapt.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "produces",
+      "to": "src/assistant/commands/duplicate.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "produces",
+      "to": "src/assistant/commands/duplicate.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "produces",
+      "to": "src/assistant/commands/entity-guard.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "produces",
       "to": "src/assistant/commands/registry.ts"
     },
     {
@@ -121713,6 +121852,11 @@
       "from": "TASK-assistant-entity-access-adapter",
       "kind": "produces",
       "to": "src/routes/story-items/handlers.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "produces",
+      "to": "src/routes/worlds/access.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adapter",
@@ -121817,12 +121961,32 @@
     {
       "from": "TASK-assistant-entity-access-duplication",
       "kind": "produces",
+      "to": "src/assistant/commands/duplicate.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-duplication",
+      "kind": "produces",
       "to": "src/assistant/commands/duplicate.ts"
     },
     {
       "from": "TASK-assistant-entity-access-duplication",
       "kind": "produces",
       "to": "src/assistant/quality/entity-creation.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-duplication",
+      "kind": "produces",
+      "to": "src/routes/messages/create-entity-confirm.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-e2e",
+      "kind": "produces",
+      "to": "src/assistant/commands/entities.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-e2e",
+      "kind": "produces",
+      "to": "src/assistant/quota/engine.test.ts"
     },
     {
       "from": "TASK-assistant-entity-access-modification-addition",
@@ -121857,6 +122021,11 @@
     {
       "from": "TASK-assistant-entity-access-quota-engine",
       "kind": "produces",
+      "to": "src/assistant/quota/engine.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "produces",
       "to": "src/assistant/quota/engine.ts"
     },
     {
@@ -121872,7 +122041,17 @@
     {
       "from": "TASK-assistant-entity-access-quota-engine",
       "kind": "produces",
+      "to": "src/config/sections/assistant.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "produces",
       "to": "src/crypto/byok.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "produces",
+      "to": "src/db/index.ts"
     },
     {
       "from": "TASK-assistant-entity-access-rag-access",
@@ -121913,6 +122092,21 @@
       "from": "TASK-assistant-entity-access-schema",
       "kind": "produces",
       "to": "src/assistant/adapter/entity.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-schema",
+      "kind": "produces",
+      "to": "src/assistant/commands/adapt.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-schema",
+      "kind": "produces",
+      "to": "src/assistant/commands/duplicate.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-schema",
+      "kind": "produces",
+      "to": "src/assistant/quality/adaptation.ts"
     },
     {
       "from": "TASK-assistant-entity-access-schema",
@@ -122022,7 +122216,17 @@
     {
       "from": "TASK-assistant-entity-access-tests",
       "kind": "produces",
+      "to": "src/assistant/quality/entity-creation.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "produces",
       "to": "src/assistant/quality/entity-creation.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "produces",
+      "to": "src/assistant/quota/db-storage.test.ts"
     },
     {
       "from": "TASK-assistant-entity-access-tests",
@@ -122033,6 +122237,21 @@
       "from": "TASK-assistant-entity-access-tests",
       "kind": "produces",
       "to": "src/assistant/quota/storage.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "produces",
+      "to": "src/db/content-version.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "produces",
+      "to": "src/logger"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "produces",
+      "to": "src/routes/messages/command.ts"
     },
     {
       "from": "TASK-assistant-entity-access-world-location-access",
@@ -150117,7 +150336,17 @@
     {
       "from": "epic-assistant-entity-access",
       "kind": "produces",
+      "to": "src/assistant/commands/items-instance.ts"
+    },
+    {
+      "from": "epic-assistant-entity-access",
+      "kind": "produces",
       "to": "src/assistant/commands/items.ts"
+    },
+    {
+      "from": "epic-assistant-entity-access",
+      "kind": "produces",
+      "to": "src/assistant/commands/locations-update.ts"
     },
     {
       "from": "epic-assistant-entity-access",
@@ -150158,6 +150387,21 @@
       "from": "epic-assistant-entity-access",
       "kind": "produces",
       "to": "src/assistant/quality/entity-creation.ts"
+    },
+    {
+      "from": "epic-assistant-entity-access",
+      "kind": "produces",
+      "to": "src/assistant"
+    },
+    {
+      "from": "epic-assistant-entity-access",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-actions/entities.ts"
+    },
+    {
+      "from": "epic-assistant-entity-access",
+      "kind": "produces",
+      "to": "src/routes/messages/create-entity-confirm.ts"
     },
     {
       "from": "epic-assistant-entity-access",
@@ -177864,6 +178108,12 @@
     {
       "from": "BUG-assistant-and-group-chat-correctness-defects",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "BUG-assistant-and-group-chat-correctness-defects",
+      "kind": "sibling",
       "to": "TASK-assistant-nsfw-api-prefiltering",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -179402,6 +179652,12 @@
       "kind": "sibling",
       "to": "TASK-assistant-creative-studio-workflows",
       "via": "src/regex/intent.ts"
+    },
+    {
+      "from": "BUG-assistant-intent-regexes-hijack-normal-chat-messages",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/routes/messages/command.ts"
     },
     {
       "from": "BUG-assistant-intent-regexes-hijack-normal-chat-messages",
@@ -189360,6 +189616,12 @@
     {
       "from": "BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx",
+      "kind": "sibling",
       "to": "TASK-branch-merge-continuation-semantics",
       "via": "src/chat/service/branch-fork.ts"
     },
@@ -189835,6 +190097,12 @@
       "from": "BUG-chat-prompt-override-bypass-on-reply",
       "kind": "sibling",
       "to": "TASK-action-applicability-gate",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "BUG-chat-prompt-override-bypass-on-reply",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
       "via": "src/routes/messages/command.ts"
     },
     {
@@ -191635,7 +191903,7 @@
       "from": "BUG-check-duplicate-loads-all-owner-rows",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-tests",
-      "via": "src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/quality/entity-creation.test.ts; src/assistant/quality/entity-creation.ts"
     },
     {
       "from": "BUG-check-duplicate-loads-all-owner-rows",
@@ -192404,6 +192672,12 @@
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-adapter",
       "via": "src/assistant/commands/registry.ts"
+    },
+    {
+      "from": "BUG-command-dispatch-async-handler-uncaught",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/routes/messages/command.ts"
     },
     {
       "from": "BUG-command-dispatch-async-handler-uncaught",
@@ -194106,6 +194380,12 @@
     {
       "from": "BUG-create-entity-confirm-bypasses-world-ownership",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-duplication",
+      "via": "src/routes/messages/create-entity-confirm.ts"
+    },
+    {
+      "from": "BUG-create-entity-confirm-bypasses-world-ownership",
+      "kind": "sibling",
       "to": "TASK-book-outline-generation-workflow",
       "via": "src/routes/messages/create-entity-confirm.ts"
     },
@@ -194120,6 +194400,12 @@
       "kind": "sibling",
       "to": "TASK-typescript-7-migration-typecheck-failures",
       "via": "src/assistant/commands/create-entity.ts"
+    },
+    {
+      "from": "BUG-create-entity-confirm-bypasses-world-ownership",
+      "kind": "sibling",
+      "to": "epic-assistant-entity-access",
+      "via": "src/routes/messages/create-entity-confirm.ts"
     },
     {
       "from": "BUG-create-entity-confirm-bypasses-world-ownership",
@@ -196428,6 +196714,12 @@
     {
       "from": "BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run",
+      "kind": "sibling",
       "to": "TASK-data-integrity-phase1",
       "via": "src/db/index.ts"
     },
@@ -198248,6 +198540,12 @@
       "kind": "sibling",
       "to": "TASK-allow-data-dir-to-be-overridden-by-env-var",
       "via": "src/config/constants.ts"
+    },
+    {
+      "from": "BUG-eager-db-init-creates-on-disk-db-on-test-import",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/db/index.ts"
     },
     {
       "from": "BUG-eager-db-init-creates-on-disk-db-on-test-import",
@@ -214908,6 +215206,12 @@
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "sibling",
       "to": "TASK-async-request-response-result-store-separate-table-offload",
       "via": "src/elysia-app.ts"
     },
@@ -231396,6 +231700,12 @@
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "sibling",
       "to": "TASK-async-request-response-result-store-separate-table-offload",
       "via": "src/elysia-app.ts"
     },
@@ -234294,6 +234604,12 @@
     {
       "from": "BUG-settestdatabase-global-leak-on-test-throw",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-settestdatabase-global-leak-on-test-throw",
+      "kind": "sibling",
       "to": "TASK-blog-publish-unit-to-post-bridge",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
     },
@@ -237090,6 +237406,12 @@
     {
       "from": "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
+      "kind": "sibling",
       "to": "TASK-blog-publish-unit-to-post-bridge",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
     },
@@ -237288,6 +237610,12 @@
     {
       "from": "BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data",
+      "kind": "sibling",
       "to": "TASK-data-integrity-phase1",
       "via": "src/db/index.ts"
     },
@@ -237372,6 +237700,12 @@
     {
       "from": "BUG-sqlite-wal-pragma-noop-on-in-memory-test-db",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-sqlite-wal-pragma-noop-on-in-memory-test-db",
+      "kind": "sibling",
       "to": "TASK-data-integrity-phase1",
       "via": "src/db/index.ts"
     },
@@ -237439,6 +237773,12 @@
       "from": "BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key",
       "kind": "sibling",
       "to": "BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
       "via": "src/db/index.ts"
     },
     {
@@ -240816,6 +241156,12 @@
     {
       "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/logger"
+    },
+    {
+      "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
+      "kind": "sibling",
       "to": "TASK-delete-unreferenced-platform-service-util-modules-dead-barre",
       "via": "src/tui/app.ts; src/tui/asset-view.ts"
     },
@@ -244014,6 +244360,12 @@
     {
       "from": "BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h",
+      "kind": "sibling",
       "to": "TASK-data-integrity-phase1",
       "via": "src/db/index.ts"
     },
@@ -245714,6 +246066,12 @@
       "kind": "sibling",
       "to": "TASK-019-content-versioning-heavy-tables",
       "via": "src/db/content-version.test.ts; src/db/content-version.ts"
+    },
+    {
+      "from": "FEAT-042",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/db/content-version.ts"
     },
     {
       "from": "FEAT-042",
@@ -262848,6 +263206,12 @@
     {
       "from": "PERF-chat-dispatch-command-three-sequential-queries",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "PERF-chat-dispatch-command-three-sequential-queries",
+      "kind": "sibling",
       "to": "TASK-book-outline-generation-workflow",
       "via": "src/routes/messages/command.ts"
     },
@@ -263510,6 +263874,12 @@
       "kind": "sibling",
       "to": "TASK-asset-provenance-ledger-for-generated-assets",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-019-content-versioning-heavy-tables",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/db/content-version.ts"
     },
     {
       "from": "TASK-019-content-versioning-heavy-tables",
@@ -272636,6 +273006,12 @@
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-adapter",
       "via": "src/assistant/commands/registry.ts"
+    },
+    {
+      "from": "TASK-action-applicability-gate",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/routes/messages/command.ts"
     },
     {
       "from": "TASK-action-applicability-gate",
@@ -284359,7 +284735,7 @@
       "from": "TASK-assistant-entity-access-adaptation",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-adapter",
-      "via": "src/assistant/quality/entity-creation.ts; src/routes/worlds/worlds.ts"
+      "via": "src/assistant/commands/adapt.test.ts; src/assistant/commands/adapt.ts; src/assistant/quality/entity-creation.ts; src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adaptation",
@@ -284377,13 +284753,13 @@
       "from": "TASK-assistant-entity-access-adaptation",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-schema",
-      "via": "src/assistant/adapter/adapt.ts; src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/adapter/adapt.ts; src/assistant/commands/adapt.test.ts; src/assistant/quality/adaptation.ts; src/assistant/quality/entity-creation.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adaptation",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-tests",
-      "via": "src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/commands/adapt.test.ts; src/assistant/quality/entity-creation.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adaptation",
@@ -284437,7 +284813,7 @@
       "from": "TASK-assistant-entity-access-adapter",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-duplication",
-      "via": "src/assistant/adapter/entity.ts; src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/adapter/entity.ts; src/assistant/commands/duplicate.test.ts; src/assistant/commands/duplicate.ts; src/assistant/quality/entity-creation.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adapter",
@@ -284455,19 +284831,19 @@
       "from": "TASK-assistant-entity-access-adapter",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-schema",
-      "via": "src/assistant/adapter/access.ts; src/assistant/adapter/entity.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts"
+      "via": "src/assistant/adapter/access.ts; src/assistant/adapter/entity.ts; src/assistant/commands/adapt.test.ts; src/assistant/commands/duplicate.test.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts; src/routes/worlds/access.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adapter",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-tests",
-      "via": "src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/commands/adapt.test.ts; src/assistant/commands/duplicate.test.ts; src/assistant/quality/entity-creation.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adapter",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-world-location-access",
-      "via": "src/assistant/adapter/locations.ts; src/assistant/adapter/worlds.ts; src/routes/worlds/locations.ts; src/routes/worlds/worlds.ts"
+      "via": "src/assistant/adapter/locations.ts; src/assistant/adapter/worlds.ts; src/routes/worlds/access.ts; src/routes/worlds/locations.ts; src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adapter",
@@ -284509,7 +284885,7 @@
       "from": "TASK-assistant-entity-access-adapter",
       "kind": "sibling",
       "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
-      "via": "src/routes/worlds/worlds.ts"
+      "via": "src/routes/worlds/access.ts; src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adapter",
@@ -284528,6 +284904,18 @@
       "kind": "sibling",
       "to": "TASK-interaction-service-foundation",
       "via": "src/assistant/commands/registry.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "sibling",
+      "to": "TASK-licensing-publish-authorization-predicate",
+      "via": "src/routes/worlds/access.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "sibling",
+      "to": "TASK-licensing-publish-enforcement-point",
+      "via": "src/routes/worlds/access.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adapter",
@@ -284857,13 +285245,19 @@
       "from": "TASK-assistant-entity-access-duplication",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-schema",
-      "via": "src/assistant/adapter/duplicate.ts; src/assistant/adapter/entity.ts; src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/adapter/duplicate.ts; src/assistant/adapter/entity.ts; src/assistant/commands/duplicate.test.ts; src/assistant/quality/entity-creation.ts"
     },
     {
       "from": "TASK-assistant-entity-access-duplication",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-tests",
-      "via": "src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/commands/duplicate.test.ts; src/assistant/quality/entity-creation.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-duplication",
+      "kind": "sibling",
+      "to": "TASK-book-outline-generation-workflow",
+      "via": "src/routes/messages/create-entity-confirm.ts"
     },
     {
       "from": "TASK-assistant-entity-access-duplication",
@@ -284875,7 +285269,19 @@
       "from": "TASK-assistant-entity-access-duplication",
       "kind": "sibling",
       "to": "epic-assistant-gm-flows",
-      "via": "src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/quality/entity-creation.ts; src/routes/messages/create-entity-confirm.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-e2e",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/assistant/quota/engine.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-e2e",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/assistant/quota/engine.test.ts"
     },
     {
       "from": "TASK-assistant-entity-access-modification-addition",
@@ -284904,6 +285310,12 @@
     {
       "from": "TASK-assistant-entity-access-quota-engine",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/assistant/quota/engine.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
       "to": "TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations",
       "via": "src/crypto/byok.ts"
     },
@@ -284912,6 +285324,12 @@
       "kind": "sibling",
       "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
       "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
+      "to": "TASK-data-integrity-phase1",
+      "via": "src/db/index.ts"
     },
     {
       "from": "TASK-assistant-entity-access-quota-engine",
@@ -284952,8 +285370,50 @@
     {
       "from": "TASK-assistant-entity-access-quota-engine",
       "kind": "sibling",
+      "to": "TASK-runtime-integrity-watchdog-crash-recovery",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
+      "to": "epic-architecture",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
       "to": "epic-byok-api-keys",
       "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
+      "to": "epic-data-integrity-acid",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
+      "to": "epic-data-integrity-phase1",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
+      "to": "epic-db-cold-storage-high-perf",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
+      "to": "epic-db-growth-tiered-storage",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
+      "to": "epic-deno-support",
+      "via": "src/db/index.ts"
     },
     {
       "from": "TASK-assistant-entity-access-quota-engine",
@@ -284968,10 +285428,28 @@
       "via": "src/crypto/byok.ts"
     },
     {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
+      "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-quota-engine",
+      "kind": "sibling",
+      "to": "epic-runtime-integrity-fail-safes",
+      "via": "src/db/index.ts"
+    },
+    {
       "from": "TASK-assistant-entity-access-schema",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-tests",
-      "via": "src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/commands/adapt.test.ts; src/assistant/commands/duplicate.test.ts; src/assistant/quality/entity-creation.ts"
     },
     {
       "from": "TASK-assistant-entity-access-schema",
@@ -285006,14 +285484,116 @@
     {
       "from": "TASK-assistant-entity-access-tests",
       "kind": "sibling",
+      "to": "TASK-book-outline-generation-workflow",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "TASK-chat-branch-merge",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "TASK-comparison-workflow-template-and-command",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "TASK-document-dual-assistant-role-gates",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
       "to": "TASK-explicit-approval-flow-for-assistant-mutations",
       "via": "src/assistant/quality/entity-creation.ts"
     },
     {
       "from": "TASK-assistant-entity-access-tests",
       "kind": "sibling",
+      "to": "TASK-harness-frontend-consolidation",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "TASK-interaction-service-foundation",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "TASK-middleware-fe-be-db-record-content-hashing",
+      "via": "src/db/content-version.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "TASK-middleware-migration-compaction-data-version-hash",
+      "via": "src/db/content-version.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "TASK-precompiled-templates-injection",
+      "via": "src/assistant/quality/entity-creation.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "TASK-publication-art-quality-gates",
+      "via": "src/assistant/quality/entity-creation.test.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "epic-assistant-creative-studio-workflows",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
       "to": "epic-assistant-gm-flows",
-      "via": "src/assistant/quality/entity-creation.ts"
+      "via": "src/assistant/quality/entity-creation.test.ts; src/assistant/quality/entity-creation.ts; src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "epic-content-hashing-distributed-integrity",
+      "via": "src/db/content-version.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "epic-effect-v4-adoption-evaluation",
+      "via": "src/logger"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "epic-entity-generation-workflows",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/routes/messages/command.ts"
     },
     {
       "from": "TASK-assistant-entity-access-world-location-access",
@@ -294662,6 +295242,12 @@
       "kind": "sibling",
       "to": "TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc",
       "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-book-outline-generation-workflow",
+      "kind": "sibling",
+      "to": "epic-assistant-entity-access",
+      "via": "src/routes/messages/create-entity-confirm.ts"
     },
     {
       "from": "TASK-book-outline-generation-workflow",
@@ -338838,6 +339424,12 @@
     {
       "from": "TASK-harness-eval-harness",
       "kind": "sibling",
+      "to": "epic-assistant-entity-access",
+      "via": "src/assistant"
+    },
+    {
+      "from": "TASK-harness-eval-harness",
+      "kind": "sibling",
       "to": "epic-platform-research",
       "via": "src/assistant"
     },
@@ -340112,6 +340704,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/config/cert.ts"
+    },
+    {
+      "from": "TASK-harness-tool-sandbox",
+      "kind": "sibling",
+      "to": "epic-assistant-entity-access",
+      "via": "src/assistant"
     },
     {
       "from": "TASK-harness-tool-sandbox",
@@ -354048,6 +354646,12 @@
     {
       "from": "TASK-odysseus-manage-tool-parity-evaluation",
       "kind": "sibling",
+      "to": "epic-assistant-entity-access",
+      "via": "src/assistant"
+    },
+    {
+      "from": "TASK-odysseus-manage-tool-parity-evaluation",
+      "kind": "sibling",
       "to": "epic-platform-research",
       "via": "src/assistant; src/plugins; src/services"
     },
@@ -364410,6 +365014,12 @@
     {
       "from": "TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex",
       "kind": "sibling",
+      "to": "epic-assistant-entity-access",
+      "via": "src/assistant"
+    },
+    {
+      "from": "TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex",
+      "kind": "sibling",
       "to": "epic-platform-research",
       "via": "src/assistant"
     },
@@ -373058,6 +373668,12 @@
       "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/sections/templates.ts; src/config/templates-loader.ts; src/config/templates-loader/discovery.ts; src/generation/auto-gen/classify-intent.ts; src/regex/intent.ts"
+    },
+    {
+      "from": "epic-assistant-entity-access",
+      "kind": "sibling",
+      "to": "epic-platform-research",
+      "via": "src/assistant"
     },
     {
       "from": "epic-assistant-generation-extensions",

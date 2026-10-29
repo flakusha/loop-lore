@@ -15,6 +15,7 @@
 **Tags:** assistant, entity, schema, access, adapter
 **Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `epic-assistant-gm-flows.md`
+**Status Note:** Done (2026-10-29, branch `r2-entity-access-wrapup`, commits `b65a7eb95`, `526b3ed3b`, `f40cd67fe`). Contracts live in `src/assistant/adapter/entity.ts`: `EntityAdapter` with `kind: DuplicateEntityKind` — character, world, location, item, i.e. all four kinds the ticket lists — plus `LoadedEntity`/`LoadedEntityResult`; the adaptation contract carries a per-field reason (`FieldChange.reason` in `src/assistant/quality/adaptation.ts`). Access-guard composition reuses the existing guards (no new access layer), and the duplication tracking (copied fields plus the overridden subset) travels in the `duplicate-entity` preview payload. DEVIATION: the shared interface is named `EntityAdapter` (the ticket's design block uses both `EntityAccessor` and `EntityAdapter`) and the duplication contract is the preview payload rather than a `DuplicateResult` type. Unit coverage `src/assistant/commands/duplicate.test.ts` + `src/assistant/commands/adapt.test.ts`. Test suites were not re-run in this wrap-up.
 
 ## Summary
 

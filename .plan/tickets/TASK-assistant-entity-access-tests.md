@@ -15,6 +15,7 @@
 **Tags:** assistant, tests, unit, entity-access
 **Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`
+**Status Note:** Done (2026-10-29, branch `r2-entity-access-wrapup`, commits `5d8524031`, `98ebda92a`, `a08f6575c`). Colocated suites cover the entity-access surface: `src/assistant/commands/rag.test.ts`, `assets.test.ts`, `worlds-access.test.ts`, `locations.test.ts`, `characters-access.test.ts`, `items.test.ts`, `duplicate.test.ts`, `adapt.test.ts`, `rag-remainder.test.ts` (`/rag-preview`, `/rag-decompose`), plus `src/assistant/quota/engine.test.ts`, `src/assistant/quota/db-storage.test.ts` (SQL-injection hardening + concurrency race) and `src/assistant/quality/entity-creation.test.ts`. The ticket's historical "unconfirmed coverage" flag stays resolved (see the Conclusion section): every flagged file has happy-path AND negative-path assertions, so a parallel `src/assistant/adapter/*.test.ts` set would duplicate the command suites. The coverage-gate baseline `scripts/check/test-gaps-baseline.json` carries the new adapter/quota exports as accepted debt (`--accept-new-debt`); the quota-storage exports are now reached by `db-storage.test.ts`. Test suites were not re-run in this wrap-up — the pass counts recorded in the epic's other Status Notes stand.
 
 ## Summary
 
