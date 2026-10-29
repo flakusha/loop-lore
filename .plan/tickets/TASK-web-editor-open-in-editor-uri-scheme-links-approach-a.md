@@ -22,3 +22,5 @@ Epic: epic-browser-editor-support. Add editorUrl(path,line,editor) helper emitti
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+git issue: 42b9293
