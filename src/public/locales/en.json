@@ -723,6 +723,7 @@
     "timeline": "Timeline",
     "timelineDesc": "Description",
     "timelineDescPlaceholder": "Enter description",
+    "timelineEvents": "events",
     "timelineName": "Timeline Name",
     "timelineNamePlaceholder": "Enter timeline name",
     "conditionsTitle": "Conditions",

@@ -4200,3 +4200,139 @@ html {
   margin: var(--space-1) 0 0;
   white-space: pre-wrap;
 }
+
+/* ── Timeline bar (world detail branch selector) ─────────────────── */
+
+.timeline-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  margin: var(--space-3) 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md, 6px);
+}
+
+.timeline-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.timeline-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.timeline-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm, 4px);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.timeline-item:hover {
+  border-color: var(--accent-primary);
+}
+
+.timeline-item-active {
+  border-color: var(--accent-primary);
+  background: var(--bg-tertiary);
+  box-shadow: inset 0 0 0 1px var(--accent-primary);
+}
+
+.timeline-item-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.timeline-item-meta {
+  display: flex;
+  gap: var(--space-2);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Branch-scoped events rendered inside the world detail fragment */
+
+.timeline-events {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.timeline-event {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm, 4px);
+  font-size: 13px;
+}
+
+.timeline-event-date {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+.timeline-event-desc {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (width <= 768px) {
+  .timeline-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .timeline-list {
+    width: 100%;
+  }
+
+  .timeline-item {
+    width: 100%;
+  }
+}
+
+@media (width <= 480px) {
+  .timeline-item-meta {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline-event {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .timeline-item {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline-item {
+    transition: none;
+  }
+}
