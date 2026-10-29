@@ -27,8 +27,9 @@ into scenes that consumed an asset.
 
 ## Goals
 
-1. **Environment kit generation** per location/world (all ComfyUI-first
-   where possible, sdcpp-compatible tiers flagged where not):
+1. **Environment kit generation** per location/world (ComfyUI-first
+   everywhere — the unified-backend decision, 2026-10-28; sdcpp
+   compatibility is not a tier axis):
    - backgrounds/establishing shots + prop assets (existing engines; prompt
      packs seeded from location description + lore with memory-budget-style
      assembly, `src/memory/budget.ts` pattern);

@@ -87,3 +87,10 @@ full scope and slicing rationale.
 Pairs with `epic-asset-generation-metadata.md` (camera/run facts) and
 `epic-view-set-generation.md` / `epic-3d-generation.md` (the producing
 epics); image/video context shape is unchanged for existing consumers.
+
+## Annex: video metadata + from-asset i2v (filed 2026-10-28)
+
+| Ticket | Scope |
+| ------ | ----- |
+| `TASK-ivss-video-metadata-extractor` | duration/fps/resolution facts on video assets (cross-listed with `epic-image-video-scenario-studio.md`); consumed by `GET /api/assets/:id/generation-context` |
+| `TASK-from-asset-i2v-flow` | Gallery image → i2v continuation via the video-generation workflows (from-asset API + i2v templates) |

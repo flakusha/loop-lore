@@ -82,7 +82,7 @@ Read against the worktree, not inferred:
 | Image-edit templates | `src/image-edit/templates/builtin/` | txt2img, img2img, inpaint, upscale, controlnet + `lora.ts`, `_helpers.ts`. No model-family template. |
 | Template registry | `src/image-edit/template-registry.ts` | `listForBackend` / `listByCategory` / `listAvailable(backend, installedNodes)`. **`listAvailable` has no production caller** — auto-filtering by installed nodes is implemented and unwired. |
 | Image-edit routes | `src/image-edit/routes.ts` | `handleRun` (authz wired via `authorizeRunLinkage`, `routes.ts:78`), `handleTemplates`, `handleNodes`, `handleCapabilities`, `handleHealth`; mounted via `imageEditRoutes` (`/api` prefix). |
-| sd.cpp engine | `src/generation/image-engine/sdcpp.ts` | `generateSDCPP` — `POST /sdcpp/v1/img_gen` + poll, tested. **No reference/img2img contract.** |
+| sd.cpp engine | `src/generation/image-engine/sdcpp.ts` | `generateSDCPP` — `POST /sdcpp/v1/img_gen` + poll, tested. **No reference/img2img contract.** **Amended 2026-10-28 (plan-ivss):** reference conditioning targets the ComfyUI path as primary (unified-backend decision); sd.cpp stays out of reference flows regardless of the sdcpp decision |
 | Provider selection | `src/config/schema/sd-provider.ts` | `pickSdProvider(providers, purpose)` — exact purpose → `"both"` → first. |
 | Model-family presets | `configs/templates/workflows/model-families.yaml` | **Design-only.** `epic-model-family-presets.md` status note: file "does not exist and no formatter engine is implemented". A `krea-2` and a `minimax-h3` preset are *specified* there; no `krea-3`, no `qwen-image-edit-2.1`. |
 
