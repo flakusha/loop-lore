@@ -129,7 +129,10 @@ themselves.
   HTTP clients over a `baseUrl` and never spawn a process). That is the fact
   this epic cares about: the *only* backend needing a provisioned local engine
   is the one this epic provisions. BYOK's non-coverage of the image surface is
-  recorded in `epic-byok-api-keys.md`.
+  recorded in `epic-byok-api-keys.md`. **Amended 2026-10-28 (plan-ivss):**
+  since ComfyUI is the unified generation backend across creative AND
+  chat/avatar flows, this epic's provisioning now covers the chat/avatar
+  image path too — lifecycle scope unchanged, blast radius larger.
 
 ## Acceptance Criteria
 

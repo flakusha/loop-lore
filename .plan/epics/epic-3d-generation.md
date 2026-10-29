@@ -132,6 +132,7 @@ consume.
 | `epic-generation-flow-control.md` | Hold/cancel for long reconstruction runs |
 | `epic-embeddable-engine-game-frontend.md` | Display spike cross-ref |
 | `epic-immersion-presentation.md` | `TASK-3d-view-modes` deferred row — align at pickup |
+| `epic-image-video-scenario-studio.md` / `epic-video-generation.md` | Video seam consumed from these epics (orbit tier); cross-ref added 2026-10-28 (plan-ivss) — already ComfyUI-first, no sdcpp assumption |
 
 ## Tickets (this epic)
 

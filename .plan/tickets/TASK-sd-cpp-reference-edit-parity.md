@@ -1,10 +1,10 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: sd.cpp reference-edit parity — capability flag + fallback
+# TASK: sd.cpp reference-edit parity — RESCOPED: record non-capability only
 
 **Status:** Not Started
-**Priority:** medium
+**Priority:** low
 **Effort:** Small
 **Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-sd-cpp-provider.md`, `TASK-reference-capability-matrix-data-model.md`, `epic-assistant-generation-extensions.md`
@@ -14,9 +14,12 @@
 
 ## Summary
 
-Determine what sd.cpp can actually do for reference-based editing, record it as a
-capability flag, and make the fallback explicit instead of discovering it at run
-time from a 4xx.
+**Rescoped 2026-10-28 (plan-ivss, unified-backend amendment):** with
+ComfyUI as the unified generation backend, reference edits route to the
+ComfyUI path — the original parity investigation (establish sd.cpp
+reference capability + fallback rule) is answered by backend unification
+and is dropped. This ticket now only records sdcpp's non-capability in
+the capability matrix; no parity work.
 
 ## Context
 
@@ -59,24 +62,14 @@ edit belongs to `TASK-sd-cpp-provider.md`. Coordinate — do not fork it.
 
 ## Acceptance Criteria
 
-- [ ] The sd.cpp reference/img2img capability is **established against a running
-      server**, not assumed from docs: which endpoint, which API family, whether it
-      accepts more than one image, and whether it takes a mask or a strength value
-- [ ] The finding lands in the capability matrix with the endpoint named, so a
-      future reader can verify it without re-running the experiment
-- [ ] If sd.cpp has no reference-edit capability, the matrix records that plainly
-      and the assistant's reference-edit path treats sd.cpp as unavailable for it
-      rather than submitting a request that will fail
-- [ ] The fallback rule is explicit: a reference-edit request routed to sd.cpp either
-      is rejected with a message naming the constraint, or is redirected to a
-      ComfyUI provider — whichever is chosen, it is written down and tested, not
-      emergent
-- [ ] If sd.cpp *does* support a single reference image, the reduction from the
-      ordered multi-reference model
-      (`TASK-multi-reference-conditioning-request-model.md`) is defined and tested:
-      which reference is used, and what happens to the rest
+- [ ] The capability matrix records, with the endpoint named
+      (`POST /sdcpp/v1/img_gen`), that sd.cpp has no reference/img2img
+      contract in this codebase — verified against code, not assumed
+- [ ] The assistant's reference-edit path treats sd.cpp as unavailable for
+      reference edits and routes them to ComfyUI (unified-backend
+      decision); no parity/experiment work is in scope
+- [ ] A reference-edit request routed to sd.cpp is rejected with a message
+      naming the constraint — never a raw 4xx passthrough
 - [ ] No change is made to `pickSdProvider` routing or the `/image` adapter; those
       stay with `TASK-sd-cpp-provider.md`
-- [ ] Test: a reference-edit request against an sd.cpp provider with no reference
-      support produces the declared response, not a raw 4xx passthrough
 - [ ] `bun run check` green

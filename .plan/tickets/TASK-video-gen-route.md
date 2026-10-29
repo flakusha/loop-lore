@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-audio-video-sound
+**Epic:** epic-video-generation
 **Related:** `TASK-video-provider-minimax-h3.md`, `TASK-video-template-schema.md`, `FEAT-065-sub-video.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.
