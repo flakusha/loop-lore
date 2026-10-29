@@ -11,6 +11,7 @@
  */
 
 import type { InsertObject, Kysely, Selectable, } from "kysely";
+import { withTransaction, } from "../../characters/services/shared-service-utils";
 import {
   RpgQuestionInputKind,
   RpgQuestionStatus,
@@ -225,41 +226,51 @@ export async function answerQuestion(
   const resolved = resolveAnswer(row, options, answer, questionId,);
 
   const answeredAt = new Date().toISOString();
-  const result = await db.updateTable("rpg_questions",)
-    .set({
-      status: RpgQuestionStatus.Answered,
-      selected_option_id: resolved.selectedOptionId,
-      answer_value: resolved.answerValue,
-      answered_at: answeredAt,
-    },)
-    .where("id", "=", questionId,)
-    .where("status", "=", RpgQuestionStatus.Open,)
-    .executeTakeFirst();
+  // Claim + effects + transcript message are one atomic unit: the status
+  // flip is conditional on `open` (a concurrent answer touches 0 rows and
+  // throws), and the effects fan-out plus the system message run inside
+  // the same transaction so a mid-sequence failure leaves no answered-
+  // without-effects (or effects-without-transcript) state.
+  // (BUG-service-layer-multi-query-mutations-run-without-transactions).
+  const { effectsApplied, } = await withTransaction(db, async (trx,) => {
+    const result = await trx.updateTable("rpg_questions",)
+      .set({
+        status: RpgQuestionStatus.Answered,
+        selected_option_id: resolved.selectedOptionId,
+        answer_value: resolved.answerValue,
+        answered_at: answeredAt,
+      },)
+      .where("id", "=", questionId,)
+      .where("status", "=", RpgQuestionStatus.Open,)
+      .executeTakeFirst();
 
-  if (Number(result.numUpdatedRows ?? 0,) === 0) {
-    throw new QuestionError(`Question ${questionId} is no longer open`, "not_open",);
-  }
+    if (Number(result.numUpdatedRows ?? 0,) === 0) {
+      throw new QuestionError(`Question ${questionId} is no longer open`, "not_open",);
+    }
 
-  const effect = parseJsonField<QuestionEffect>(row.effect, {},);
-  const { effectsApplied, messageParts, } = await applyQuestionEffects(
-    db,
-    row.chat_id,
-    answeredBy,
-    effect,
-  );
+    const effect = parseJsonField<QuestionEffect>(row.effect, {},);
+    const { effectsApplied, messageParts, } = await applyQuestionEffects(
+      trx,
+      row.chat_id,
+      answeredBy,
+      effect,
+    );
 
-  if (row.type === RpgQuestionType.LevelUp && resolved.selectedOptionId !== null) {
-    await applyLevelUpAnswer(db, questionId, answeredBy, resolved.selectedOptionId, effectsApplied, messageParts,);
-  }
+    if (row.type === RpgQuestionType.LevelUp && resolved.selectedOptionId !== null) {
+      await applyLevelUpAnswer(trx, questionId, answeredBy, resolved.selectedOptionId, effectsApplied, messageParts,);
+    }
 
-  const content = ["Answer recorded: " + resolved.display, ...messageParts,].join(" — ",);
-  await db.insertInto("messages",).values({
-    id: uid(),
-    chat_id: row.chat_id,
-    actor_id: answeredBy,
-    role: "system",
-    content,
-  },).execute();
+    const content = ["Answer recorded: " + resolved.display, ...messageParts,].join(" — ",);
+    await trx.insertInto("messages",).values({
+      id: uid(),
+      chat_id: row.chat_id,
+      actor_id: answeredBy,
+      role: "system",
+      content,
+    },).execute();
+
+    return { effectsApplied, };
+  },);
 
   getLog().info("Question answered", {
     id: questionId,
