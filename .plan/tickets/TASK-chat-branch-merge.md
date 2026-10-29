@@ -9,6 +9,7 @@
 
 
 **Status:** In Progress
+**Scope:** C7 party split/reunite auto-execution + VN choice-card location actions
 **Status Note:** split/reunite engine + routes shipped (verified 2026-10-08); regex narration detection helpers + scene-transition wiring landed 2026-10-20 (`detectSplitIntent`/`detectReuniteIntent` in `src/chat/service/split.ts`, wired in `src/routes/messages/handle-scene-transitions.ts`). Remaining: auto-execution of split/reunite from narration (needs branch specs: locations + actor sets), VN split/reunite + choice-card location effects.
 **Priority:** P2-B
 **Effort:** High
