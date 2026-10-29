@@ -1716,7 +1716,7 @@ Total tickets: **4059** — untagged: **2747** — unbound to epic: **1041**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2747 | 1254 | 49 | 891 | 31 | 0 | 522 |
+| (untagged) | 2747 | 1255 | 48 | 891 | 31 | 0 | 522 |
 
 ## By epic × status
 
@@ -1832,7 +1832,7 @@ Total tickets: **4059** — untagged: **2747** — unbound to epic: **1041**
 | epic-cron-scheduler | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-cross-platform-portability | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-crypto | 35 | 15 | 3 | 14 | 0 | 0 | 3 |
-| epic-data-integrity-acid | 11 | 2 | 1 | 5 | 0 | 0 | 3 |
+| epic-data-integrity-acid | 11 | 3 | 0 | 5 | 0 | 0 | 3 |
 | epic-database-backup-recovery | 7 | 1 | 0 | 5 | 0 | 0 | 1 |
 | epic-database-backup-recovery, epic-db-asset-snapshot-recovery, epic-federation-swarm-sync | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-db-asset-snapshot-recovery | 4 | 0 | 0 | 4 | 0 | 0 | 0 |

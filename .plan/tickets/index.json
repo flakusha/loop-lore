@@ -9063,7 +9063,7 @@
     "epic": "epic-data-integrity-acid",
     "tags": [],
     "source": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "BUG-SERVICES-TRADECORE-VALIDATELINES-LACKS-WORLD-ID-FILTER-CROSS": {
     "epic": "",
