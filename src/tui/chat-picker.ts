@@ -1,29 +1,27 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // size-allow: 340
 
 /**
- * TUI Chat Picker
+ * TUI Chat Picker (pi-tui)
  *
- * Toggleable overlay listing the caller's chats so one can be bound to the
- * chat + asset views. Mirrors `harness/index.ts`: a full-screen blessed box
- * holding a list plus a status label, with a `setFetch` seam for tests.
- *
- * Data comes from GET /api/v1/chats (src/routes/chats/list.ts), which is
- * auth-guarded and answers `{ data, pagination, meta }` with `selectAll()`
- * chat rows.
- *
- * Keybinding is F1: F2/F3 are taken, F4 is reserved by
- * TASK-harness-topic-tui-surface, F5 is refresh. Esc dismisses WITHOUT
- * quitting — `dismiss()` reports whether it consumed the key, and the app's
- * global Esc/q/Ctrl-C handler only shuts down when it returns false.
+ * Full-screen overlay listing the user's chats; Enter binds the chat through
+ * the host's `onSelect` (the same `ChatWidget.setChatId` path the web client
+ * uses), `c` opens an inline create-chat prompt. Shown by the shell via
+ * `TUI.showOverlay(this, { fullscreen: true })`; the shell also routes its
+ * global Esc chain through `dismiss()`.
  */
 
-import blessed from "blessed";
 import { safeFetch, } from "../utils";
+import { tagsToAnsi, } from "./ansi";
 import { API_BASE, } from "./chat";
 import { createChat, } from "./chat-create-api";
+import { ChatInputField, } from "./chat/input-field";
+import { renderFramed, } from "./frame";
 import { escapeMarkup, } from "./markup";
+import { MenuList, } from "./menu";
+import { type Component, type Focusable, matchesKey, } from "./pi";
 
 /** One row of GET /api/v1/chats, narrowed to what the picker renders. */
 export interface ChatSummary {
@@ -92,151 +90,171 @@ export function setCreateChat(fn: typeof createChat,): void {
   _createChat = fn;
 }
 
+/** Keys the shell owns even while an overlay is focused. */
+const SHELL_F_KEYS = ["f1", "f2", "f3", "f5", "f6",] as const;
+
 /**
  * Fetch the caller's chats, most recently updated first.
  * @param sessionToken - bearer token; omit to run anonymous
  * @returns the chats, or an error message to render in place of the list
+ * @throws never — network failures come back on the error arm
  */
 export async function loadChats(sessionToken: string | undefined,): Promise<ChatListResult> {
   try {
-    const result = await _fetch<ChatListEnvelope>(
-      `${API_BASE}/api/v1/chats?sort=recent&pageSize=50`,
-      {
-        auth: sessionToken ? { sessionToken, } : undefined,
-        handle401: false,
-      },
-    );
+    const result = await _fetch<ChatListEnvelope>(`${API_BASE}/api/v1/chats`, {
+      auth: sessionToken ? { sessionToken, } : undefined,
+      handle401: false,
+    },);
 
-    if (!result.ok) { return { ok: false, error: `HTTP ${result.status}`, }; }
+    if (!result.ok) {
+      return {
+        ok: false,
+        error: result.status !== undefined ? `HTTP ${result.status}` : result.error.message,
+      };
+    }
 
     return { ok: true, data: result.data.data ?? [], };
-  } catch (error: unknown) {
-    return { ok: false, error: error instanceof Error ? error.message : String(error,), };
+  } catch (error) {
+    return { ok: false, error: (error as Error).message, };
   }
 }
 
 /** Construction options for {@link ChatPicker}. */
 export interface ChatPickerOptions {
-  /** Bearer token for the chat-list call. */
+  /** Bearer token for the chats call; omit to run anonymous. */
   sessionToken?: string;
-  /** Invoked with the chosen chat id when the user commits a row. */
+  /** Invoked with the selected chat's id. */
   onSelect: (chatId: string,) => void;
-  /** Invoked when the overlay hides (Esc or selection). */
+  /** Invoked after the overlay hides. */
   onHide?: () => void;
+  /** Repaint hook; the shell routes this to the pi-tui renderer. */
+  onRequestRender?: () => void;
+  /** Terminal row count source (the shell passes `tui.terminal.rows`). */
+  getViewportRows?: () => number;
 }
 
-/**
- * Full-screen chat picker overlay.
- *
- * Binding a row never touches the views itself: it reports the id through
- * `onSelect` so the app owns the single binding path (chat + assets +
- * message reload), which is what keeps the two views consistent.
- */
-export class ChatPicker {
-  private screen: blessed.Widgets.Screen;
-  private box: blessed.Widgets.BoxElement;
-  private list: blessed.Widgets.ListElement;
-  private statusLabel: blessed.Widgets.BlessedElement;
+/** */
+export class ChatPicker implements Component, Focusable {
+  focused = false;
   private chats: ChatSummary[] = [];
-  private visible = false;
+  private rows: string[] = [];
+  /** Rendered in place of the list when loading failed. */
+  private failure: string | null = null;
+  private visibleFlag = false;
   private creating = false;
-  private prompt: blessed.Widgets.TextboxElement | null = null;
+  private prompt: ChatInputField | null = null;
   private sessionToken: string | undefined;
-  private onSelect: (chatId: string,) => void;
-  private onHide: (() => void) | undefined;
+  private footer = "Enter: bind chat | Esc: close";
+  private readonly menu: MenuList;
+  private readonly onSelect: (chatId: string,) => void;
+  private readonly onHide: (() => void) | undefined;
+  private readonly requestRender: () => void;
+  private readonly getViewportRows: () => number;
 
   /**
-   * @param screen
-   * @param options - session token and the selection callback
+   * @param options - session token, selection callback, repaint hooks
    */
-  constructor(screen: blessed.Widgets.Screen, options: ChatPickerOptions,) {
-    this.screen = screen;
+  constructor(options: ChatPickerOptions,) {
     this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
     this.onSelect = options.onSelect;
     this.onHide = options.onHide;
+    this.requestRender = options.onRequestRender ?? ((): void => {
+      /* no host wired: tests read render() directly */
+    });
 
-    this.box = blessed.box({
-      parent: screen,
-      left: 0,
-      top: 0,
-      width: "100%",
-      height: "100%",
-      label: " {bold}Chats{/bold} ",
-      tags: true,
-      border: { type: "line", },
-      style: { bg: "black", fg: "white", border: { fg: "magenta", }, },
-      hidden: true,
-    },);
-
-    this.list = blessed.list({
-      parent: this.box,
-      top: 0,
-      left: 1,
-      right: 1,
-      bottom: 2,
-      tags: true,
-      keys: true,
-      vi: true,
-      mouse: true,
-      border: { type: "line", },
-      style: {
-        selected: { bg: "magenta", fg: "black", },
-        item: { fg: "white", },
+    this.getViewportRows = options.getViewportRows ?? ((): number => 24);
+    this.menu = new MenuList({
+      rows: () => this.rows,
+      onSelect: (index,) => {
+        const chat = this.chats[index];
+        if (chat) { this.onSelect(chat.id,); }
       },
+      vi: true,
     },);
+  }
 
-    this.statusLabel = blessed.text({
-      parent: this.box,
-      bottom: 0,
-      left: 1,
-      right: 1,
-      height: 1,
-      tags: true,
-      content: "Enter: bind chat | Esc: close",
-      style: { fg: "gray", },
-    },);
+  /** @param width */
+  render(width: number,): readonly string[] {
+    const viewport = Math.max(8, this.getViewportRows(),);
+    const bodyHeight = Math.max(1, viewport - 3,); // top/bottom border + footer
+    this.menu.setHeight(bodyHeight - (this.prompt ? 2 : 0),);
 
-    // blessed hands `select` the row INDEX (lib/widgets/list.js:586). The row
-    // content is the FORMATTED line, which carries no reliable id, so index
-    // into `chats` — the same lesson harness/index.ts learned the hard way.
-    this.list.on("select", (_el: blessed.Widgets.BlessedElement, index: number,) => {
-      const chat = this.chats[index];
-      if (chat) { this.onSelect(chat.id,); }
-    },);
+    const body: string[] = [];
+    if (this.failure) {
+      body.push(`{red-fg}${this.failure}{/red-fg}`,);
+    } else if (this.rows.length === 0) {
+      body.push(this.footer === NO_CHATS_MESSAGE ? NO_CHATS_MESSAGE : "",);
+    } else {
+      body.push(...this.menu.render(width - 2,),);
+    }
 
-    // `c` is bound on the LIST, not the box, because blessed hands element-level
-    // keys to `screen.focused` only (widgets/screen.js:601-604) and the picker
-    // focuses the list. Always offered — with no rows `c` is the only way in.
-    this.list.key(["c",], () => {
-      if (!this.visible) { return; }
+    if (this.prompt) {
+      body.push("", ...this.prompt.render(width - 2,),);
+    }
+
+    while (body.length < bodyHeight) { body.push("",); }
+
+    const framed = renderFramed({ title: "Chats", rows: body, width, color: "magenta", },);
+    return [...framed, ` ${tagsToAnsi(this.footer,)}`,];
+  }
+
+  /**
+   * While the create prompt is open every key except the shell's toggles
+   * belongs to the prompt (Esc cancels it without closing the overlay).
+   * Without a prompt the shell's global chain owns Esc/q/Tab and everything
+   * else lands in `handleInput`.
+   * @param data - raw key data from pi-tui
+   * @returns whether this overlay claims the key
+   */
+  capturesInput(data: string,): boolean {
+    if (!this.visibleFlag || !this.prompt) { return false; }
+    return !isShellKey(data,);
+  }
+
+  /** @param data - raw key data from pi-tui */
+  handleInput(data: string,): void {
+    if (!this.visibleFlag) { return; }
+
+    const prompt = this.prompt;
+    if (prompt) {
+      if (matchesKey(data, "escape",)) {
+        this.cancelCreate();
+        return;
+      }
+
+      if (matchesKey(data, "enter",)) {
+        const value = prompt.getValue();
+        this.cancelCreate();
+        void this.commitCreate(value,);
+        return;
+      }
+
+      prompt.handleInput(data,);
+      this.requestRender();
+      return;
+    }
+
+    if (data === "c") {
       this.startCreate();
-    },);
+      return;
+    }
+
+    this.menu.handleInput(data,);
+    this.requestRender();
   }
 
   /** Show the overlay and load the chat list. */
   show(): void {
-    this.visible = true;
-    this.raise();
-    this.box.show();
-    this.list.focus();
-    this.screen.render();
+    this.visibleFlag = true;
+    this.requestRender();
     void this.refresh();
-  }
-
-  /**
-   * Move the box to the end of the screen's children, which is how blessed
-   * decides draw order — the overlay shown last paints on top.
-   */
-  private raise(): void {
-    this.screen.append(this.box,);
   }
 
   /** Hide the overlay without touching the bound chat. */
   hide(): void {
-    this.visible = false;
+    this.visibleFlag = false;
     this.cancelCreate();
-    this.box.hide();
-    this.screen.render();
+    this.requestRender();
     this.onHide?.();
   }
 
@@ -247,80 +265,40 @@ export class ChatPicker {
    * @returns true when the picker was visible and has now been hidden
    */
   dismiss(): boolean {
-    if (!this.visible) { return false; }
+    if (!this.visibleFlag) { return false; }
     this.hide();
     return true;
   }
 
   /**
-   * Open the new-chat prompt.
-   *
-   * `inputOnFocus` is deliberately OFF — the same reason ChatWidget's input box
-   * sets it: an element that arms `readInput()` on focus raises `screen.grabKeys`
-   * and gates every screen-level keypress (widgets/screen.js:591). Reading is armed
-   * explicitly by `readInput()` after `focus()`, which is what keeps Esc free for
-   * the app's dismiss chain.
+   * Open the new-chat prompt: an input row rendered inside the overlay.
+   * Enter commits, Esc cancels (see {@link capturesInput}).
    */
   startCreate(): void {
     if (this.creating) { return; }
-
     if (!this.prompt) {
-      this.prompt = blessed.textbox({
-        parent: this.box,
-        bottom: 1,
-        left: 1,
-        right: 1,
-        height: 3,
-        inputOnFocus: false,
-        border: { type: "line", },
-        style: { bg: "black", fg: "white", border: { fg: "cyan", }, },
-      },);
-
-      // Enter hands the textbox `_done(null, value)` (widgets/textbox.js:39-42),
-      // which is what emits `submit`. Esc takes the textarea branch instead
-      // (widgets/textarea.js:230-231) and emits `cancel` with a null value.
-      this.prompt.on("submit", (value: string,) => {
-        void this.commitCreate(value,);
-      },);
-
-      this.prompt.on("cancel", () => {
-        this.cancelCreate();
-      },);
+      this.prompt = new ChatInputField();
     }
 
     this.prompt.setValue("",);
-    this.prompt.show();
-    this.prompt.focus();
-    this.prompt.readInput();
-    this.statusLabel.setContent(CREATE_STATUS,);
-    this.screen.render();
+    this.footer = CREATE_STATUS;
+    this.requestRender();
   }
 
   /**
-   * Drop the prompt and hand the keyboard back to the list.
+   * Drop the prompt.
    *
    * `creating` is deliberately left alone: a commit already in flight must finish
    * on its own answer, which is what re-arms the status line and re-enables `c`.
    */
   cancelCreate(): void {
-    const prompt = this.prompt;
-    if (!prompt) { return; }
-
-    // Drop the field BEFORE the teardown emit. `emit("blur")` is blessed's own
-    // hook (widgets/textarea.js:206) and it re-enters this method through the
-    // textbox's `cancel` listener — with `prompt` still set, that nested call
-    // emitted blur a second time and then touched an already-torn-down widget.
+    if (!this.prompt) { return; }
     this.prompt = null;
-    prompt.emit("blur",);
-    prompt.hide();
-    this.statusLabel.setContent(
-      this.chats.length > 0
-        ? `${this.chats.length} chat(s) | Enter: bind chat | Esc: close`
-        : NO_CHATS_MESSAGE,
-    );
+    this.footer = this.chats.length > 0
+      ? `${this.chats.length} chat(s) | Enter: bind chat | Esc: close`
+      : NO_CHATS_MESSAGE;
 
-    this.list.focus();
-    this.screen.render();
+    this.requestRender();
   }
 
   /**
@@ -330,6 +308,7 @@ export class ChatPicker {
    * — 1-255 chars — so a blank line is rejected locally rather than round-tripped
    * into a 400 the user cannot act on.
    * @param name - the typed chat name
+   * @throws never — failures land on the footer
    */
   async commitCreate(name: string,): Promise<void> {
     const trimmed = name.trim();
@@ -343,27 +322,18 @@ export class ChatPicker {
     if (this.creating) { return; }
 
     this.creating = true;
-    const prompt = this.prompt;
-    if (prompt) {
-      // Same order as cancelCreate: the field goes first, because the blur emit
-      // can re-enter cancelCreate through the textbox's own `cancel` listener.
-      this.prompt = null;
-      prompt.emit("blur",);
-      prompt.hide();
-    }
-
-    this.statusLabel.setContent(CREATING_STATUS,);
-    this.screen.render();
+    this.prompt = null;
+    this.footer = CREATING_STATUS;
+    this.requestRender();
 
     try {
       const result = await _createChat({ name: trimmed, sessionToken: this.sessionToken, },);
 
       if (!result.ok) {
-        // The prompt is gone by now, so the error lands on the status line — the
+        // The prompt is gone by now, so the error lands on the footer — the
         // same place a load failure renders — and `c` still works to retry.
-        this.statusLabel.setContent(result.error,);
-        this.list.focus();
-        this.screen.render();
+        this.footer = result.error;
+        this.requestRender();
         return;
       }
 
@@ -376,6 +346,13 @@ export class ChatPicker {
   /**
    * @returns whether the new-chat prompt is open
    */
+  isPromptOpen(): boolean {
+    return this.prompt !== null;
+  }
+
+  /**
+   * @returns whether a create commit is in flight
+   */
   isCreating(): boolean {
     return this.creating;
   }
@@ -384,7 +361,7 @@ export class ChatPicker {
    * @returns whether the overlay is currently shown
    */
   isVisible(): boolean {
-    return this.visible;
+    return this.visibleFlag;
   }
 
   /** Reload chats from the API and re-render the list. */
@@ -393,33 +370,34 @@ export class ChatPicker {
 
     if (!result.ok) {
       this.chats = [];
-      this.list.setItems([],);
-      this.list.setContent(`Failed to load chats: ${result.error}`,);
-      this.statusLabel.setContent("Esc: close",);
-      this.screen.render();
+      this.rows = [];
+      this.failure = `Failed to load chats: ${result.error}`;
+      this.footer = "Esc: close";
+      this.requestRender();
       return;
     }
 
+    this.failure = null;
     this.chats = result.data;
     if (this.chats.length === 0) {
-      this.list.setItems([],);
-      this.list.setContent(NO_CHATS_MESSAGE,);
-      this.statusLabel.setContent(NO_CHATS_MESSAGE,);
+      this.rows = [];
+      this.footer = NO_CHATS_MESSAGE;
     } else {
-      this.list.setItems(
-        this.chats.map((chat,) =>
-          `${pinnedTag(chat.is_pinned,)}${escapeMarkup(chat.name,) || "(unnamed)"}  {gray}(${
-            chat.id.slice(0, 8,)
-          }…){/gray}`
-        ),
+      this.rows = this.chats.map((chat,) =>
+        `${pinnedTag(chat.is_pinned,)}${escapeMarkup(chat.name,) || "(unnamed)"}  {gray}(${
+          chat.id.slice(0, 8,)
+        }…){/gray}`
       );
 
-      this.list.setContent("",);
-      this.statusLabel.setContent(
-        `${this.chats.length} chat(s) | Enter: bind chat | Esc: close`,
-      );
+      this.footer = `${this.chats.length} chat(s) | Enter: bind chat | Esc: close`;
     }
 
-    this.screen.render();
+    this.requestRender();
   }
+}
+
+/** True for keys the shell owns even while an overlay is focused. */
+function isShellKey(data: string,): boolean {
+  return SHELL_F_KEYS.some((key,) => matchesKey(data, key,)) ||
+    matchesKey(data, "ctrl+c",);
 }

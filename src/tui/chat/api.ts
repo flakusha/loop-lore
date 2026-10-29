@@ -112,7 +112,7 @@ export async function handleSend(
     host.showError(`Network error: ${(error as Error).message}`,);
   } finally {
     host.isSending = false;
-    host.screen.render();
+    host.requestRender();
   }
 }
 

@@ -77,9 +77,10 @@
     // runtime dependencies, not dynamic imports. Retained rather than removed —
     // deleting a dependency is a separate decision from a knip-config edit, and
     // no importer can honestly be cited for them.
-    "blessed-contrib", // AGENTS.md:162 + docs/spec/terminal-ui.md:8 name it as the TUI stack; every src/tui/* import is plain "blessed"
+
     "htmx-ext-alpine-morph", // src/frontend/vendor.ts registers htmx-ext-sse + @alpinejs/morph directly; this extension has no registration site
     "bun-plugin-html", // Bun html-bundler plugin; no Bun.plugin()/preload registration in bunfig.toml or scripts/build-frontend.mjs
+    "@oh-my-pi/pi-tui", // TUI renderer; imported ONLY through package subpaths (./tui, ./terminal, ./keys, ./keybindings, ./utils, ./components/*) by src/tui/pi.ts — knip's specifier match misses subpath-only usage
     //
     // SRC-ONLY IMPORTERS (each cited below). Real import edges under src/ that
     // the gitignore-respecting pass 1 cannot see; pass 2 traces them.

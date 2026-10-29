@@ -19,11 +19,11 @@ interface Captured {
 
 const originalFetch = globalThis.fetch;
 
-/** No-op screen stub: blessed screen has a `render()` method called in
- * `handleSend`'s finally block. We never instantiate real blessed widgets
- * here (the test env is non-TTY) — a minimal object suffices. */
-function makeScreen(): ChatHost["screen"] {
-  return { render: () => {}, } as unknown as ChatHost["screen"];
+/** No-op repaint stub: the dispatcher calls `requestRender()` in
+ * `handleSend`'s finally block; the real renderer is never exercised here
+ * (the test env is non-TTY) — a minimal object suffices. */
+function makeRequestRender(): ChatHost["requestRender"] {
+  return () => {};
 }
 
 /** Marker key on `globalThis` to surface the most recent captured request
@@ -60,14 +60,7 @@ function makeHost(overrides: Partial<ChatHost> = {},): ChatHost & HostExtras {
   const addedMessages: ChatMessage[] = [];
   const rendered: ChatMessage[][] = [];
   const host: ChatHost & HostExtras = {
-    screen: makeScreen(),
-    messageList: {
-      setItems: () => {},
-      addItem: () => {},
-      clearItems: () => {},
-      popItem: () => {},
-      select: () => {},
-    } as unknown as ChatHost["messageList"],
+    requestRender: makeRequestRender(),
     chatId: "chat-1",
     messages: [],
     isSending: false,

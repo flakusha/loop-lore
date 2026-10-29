@@ -1,32 +1,32 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // size-allow: 300
 
 /**
- * TUI Models Overlay
+ * TUI Models Overlay (pi-tui)
  *
- * Admin model/provider configuration, shaped exactly like `chat-picker.ts`:
- * one full-screen `blessed.box` holding a list plus a status label, no second
- * screen framework. Three levels — roles, then providers, then that provider's
- * models — because every element here is a list plus a selection, which is the
- * property that makes this surface worth a terminal (see `.tmp/tui-web-parity.md`
- * §3.2). Anything needing a validated text box does not belong here and was
- * left out on purpose: temperature/maxTokens editors, the capabilities
- * registry, plugin toggles, anything destructive.
+ * Admin model/provider configuration as a full-screen overlay: three levels —
+ * roles, then providers, then that provider's models — because every element
+ * here is a list plus a selection, which is the property that makes this
+ * surface worth a terminal (see `.tmp/tui-web-parity.md` §3.2). Anything
+ * needing a validated text box does not belong here and was left out on
+ * purpose: temperature/maxTokens editors, the capabilities registry, plugin
+ * toggles, anything destructive.
  *
  * Keybinding is **F6**. F1/F2/F3 are chat picker / assets / harness, F4 is
  * reserved by TASK-harness-topic-tui-surface and F5 is refresh, so F6 is the
- * next free key in the same block — grouping it with the other view toggles
- * rather than inventing a Ctrl- or letter-combo binding that would collide with
- * the list's vi keys (`j`/`k`/`g`/`q`) inside the overlay.
+ * next free key in the same block.
  *
- * Why `source` is rendered on every row: it is the diagnostic that matters when
- * a generation is behaving badly over ssh with no browser. A role reading
+ * Why `source` is rendered on every row: it is the diagnostic that matters
+ * when a generation is behaving badly over ssh with no browser. A role reading
  * `[config]` was never overridden in the DB, so editing it here is the fix.
  */
 
-import blessed from "blessed";
 import { getChildLogger, } from "../logger";
+import { tagsToAnsi, } from "./ansi";
+import { renderFramed, } from "./frame";
+import { MenuList, } from "./menu";
 import {
   assignRole,
   clearRole,
@@ -38,6 +38,7 @@ import {
 } from "./models-api";
 import type { ProviderSummary, ResolvedRole, } from "./models-api";
 import { formatConnectionTest, providerLine, roleLine, } from "./models-display";
+import { type Component, type Focusable, matchesKey, } from "./pi";
 
 /** Which of the three drill-down levels the list is showing. */
 type OverlayLevel = "roles" | "providers" | "models";
@@ -46,16 +47,20 @@ type OverlayLevel = "roles" | "providers" | "models";
 export interface ModelsOverlayOptions {
   /** Bearer token for the admin calls; omit to run anonymous. */
   sessionToken?: string;
+  /** Repaint hook; the shell routes this to the pi-tui renderer. */
+  onRequestRender?: () => void;
+  /** Terminal row count source (the shell passes `tui.terminal.rows`). */
+  getViewportRows?: () => number;
 }
 
 /** Footer hint per level, so the keys on offer are never a guess.
  *
- *  Verified against real blessed: every letter/arrow/Enter key named here is
- *  bound on the focused box, and `Esc` is not bound here at all - it reaches
- *  the app's global dismiss chain and closes the whole overlay from any level.
- *  (An earlier draft promised "Esc: back" at the providers and models levels.
- *  No such binding existed and none does; the claim was removed rather than
- *  shipped, per the no-unverified-hints rule.) */
+ * Verified against the old bindings: every letter/arrow/Enter key named here
+ * is handled in `handleInput`, and `Esc` is not handled at all — it reaches
+ * the shell's global dismiss chain and closes the whole overlay from any
+ * level. (An earlier draft promised "Esc: back" at the providers and models
+ * levels. No such binding existed and none does; the claim was removed rather
+ * than shipped, per the no-unverified-hints rule.) */
 const HINTS: Record<OverlayLevel, string> = {
   roles: "Up/Down: move | Enter: pick provider | c: clear override | Esc: close",
   providers: "Up/Down: move | Enter: pick model | p: ping | r: rescan | Esc: close",
@@ -68,18 +73,14 @@ const HINTS: Record<OverlayLevel, string> = {
  * A 403 anywhere degrades to the ADMIN_ONLY line in the list rather than an
  * error: a non-admin opening this overlay is a normal state, not a failure.
  */
-export class ModelsOverlay {
-  private screen: blessed.Widgets.Screen;
-  private box: blessed.Widgets.BoxElement;
-  private list: blessed.Widgets.ListElement;
-  private statusLabel: blessed.Widgets.BlessedElement;
+export class ModelsOverlay implements Component, Focusable {
+  focused = false;
   private sessionToken: string | undefined;
-  private visible = false;
+  private visibleFlag = false;
   private level: OverlayLevel = "roles";
-  /** Highlighted row within the current level; blessed's own `selected` is not
-   * on the ListElement type, so the cursor is tracked here like HarnessView's
-   * `currentIndex` and pushed into the list with `select()`. */
-  private cursor = 0;
+  private rows: string[] = [];
+  /** Rendered in place of the list when loading failed. */
+  private failure: string | null = null;
   private roles: ResolvedRole[] = [];
   private providers: ProviderSummary[] = [];
   private modelIds: string[] = [];
@@ -87,147 +88,90 @@ export class ModelsOverlay {
   private targetRole: string | undefined;
   /** Provider whose models are listed; set while drilling out of providers. */
   private targetProvider: string | undefined;
+  private statusText = HINTS.roles;
+  private readonly menu: MenuList;
+  private readonly requestRender: () => void;
+  private readonly getViewportRows: () => number;
 
   /**
-   * @param screen - surface the overlay is drawn on
-   * @param options - bearer token for the admin calls
+   * @param options - bearer token for the admin calls, repaint hooks
    */
-  constructor(screen: blessed.Widgets.Screen, options: ModelsOverlayOptions = {},) {
-    this.screen = screen;
+  constructor(options: ModelsOverlayOptions = {},) {
     this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
+    this.requestRender = options.onRequestRender ?? ((): void => {
+      /* no host wired: tests read render() directly */
+    });
 
-    this.box = blessed.box({
-      parent: screen,
-      left: 0,
-      top: 0,
-      width: "100%",
-      height: "100%",
-      label: " {bold}Models{/bold} ",
-      tags: true,
-      border: { type: "line", },
-      style: { bg: "black", fg: "white", border: { fg: "cyan", }, },
-      hidden: true,
+    this.getViewportRows = options.getViewportRows ?? ((): number => 24);
+    this.menu = new MenuList({
+      rows: () => this.rows,
+      onSelect: () => undefined,
     },);
+  }
 
-    this.list = blessed.list({
-      parent: this.box,
-      top: 0,
-      left: 1,
-      right: 1,
-      bottom: 2,
-      tags: true,
-      // keys/vi off: blessed's own arrow handling would move its selection
-      // alongside the tracked `cursor`, so Enter and `c` would act on a
-      // different row than the highlight on screen. `cursor` is the only
-      // selection state; every key is bound on the box below.
-      keys: false,
-      vi: false,
-      mouse: true,
-      border: { type: "line", },
-      style: { selected: { bg: "cyan", fg: "black", }, item: { fg: "white", }, },
-    },);
+  /** @param width */
+  render(width: number,): readonly string[] {
+    const viewport = Math.max(8, this.getViewportRows(),);
+    const bodyHeight = Math.max(1, viewport - 3,);
+    this.menu.setHeight(bodyHeight,);
 
-    this.statusLabel = blessed.text({
-      parent: this.box,
-      bottom: 0,
-      left: 1,
-      right: 1,
-      height: 1,
-      tags: true,
-      content: HINTS.roles,
-      style: { fg: "gray", },
-    },);
+    const body: string[] = [];
+    if (this.failure) {
+      body.push(`{red-fg}${this.failure}{/red-fg}`,);
+    } else {
+      body.push(...this.menu.render(width - 2,),);
+    }
 
-    this.list.on("select", (_el: blessed.Widgets.BlessedElement, index: number,) => {
-      // Mouse click only — with `keys: false` blessed does not raise this for
-      // Enter, which is bound on the box below. Honour the clicked row so a
-      // mouse press does not act on whatever the arrow keys last left lit.
-      this.cursor = index;
-      void this.onSelect(index,);
-    },);
+    while (body.length < bodyHeight) { body.push("",); }
 
-    // `c` clears the focused role's override; `r` re-scans providers. Bound on
-    // the box rather than the screen so they only fire while the overlay has
-    // focus, and so they cannot shadow the chat input's keys.
-    this.box.key(["c",], () => {
+    const framed = renderFramed({ title: "Models", rows: body, width, color: "cyan", },);
+    return [...framed, ` ${tagsToAnsi(this.statusText,)}`,];
+  }
+
+  /** @param data - raw key data from pi-tui */
+  handleInput(data: string,): void {
+    if (!this.visibleFlag) { return; }
+
+    if (data === "c") {
       void this.onClear();
-    },);
+      return;
+    }
 
-    this.box.key(["r",], () => {
+    if (data === "r") {
       void this.onRescan();
-    },);
+      return;
+    }
 
-    // Arrow keys move a tracked cursor rather than blessed's own selection, so
-    // `c` and Enter always agree on which row they mean. Clamped, so holding a
-    // key at either end is a no-op rather than an out-of-range read.
-    this.box.key(["up",], () => {
-      this.moveCursor(-1,);
-    },);
-
-    this.box.key(["down",], () => {
-      this.moveCursor(1,);
-    },);
-
-    // Enter acts on `cursor`, the same row `c` reads, so the highlight on
-    // screen is always the row the keystroke applies to.
-    this.box.key(["enter",], () => {
-      void this.onSelect(this.cursor,);
-    },);
-
-    // `p` pings the focused provider. Only meaningful on the providers level,
-    // where a row names a provider; on any other level the handler says so
-    // rather than silently doing nothing.
-    this.box.key(["p",], () => {
+    if (data === "p") {
       void this.onPing();
-    },);
-  }
+      return;
+    }
 
-  /**
-   * Move the cursor by `delta` rows, clamped to the current level's list.
-   * @param delta - rows to move; negative moves up
-   */
-  private moveCursor(delta: number,): void {
-    const count = this.currentRows();
-    if (count === 0) { return; }
+    if (matchesKey(data, "enter",)) {
+      void this.onSelect(this.menu.getCursor(),);
+      this.requestRender();
+      return;
+    }
 
-    this.cursor = Math.max(0, Math.min(count - 1, this.cursor + delta,),);
-    this.list.select(this.cursor,);
-    this.screen.render();
-  }
-
-  /** @returns how many rows the current level is showing */
-  private currentRows(): number {
-    if (this.level === "roles") { return this.roles.length; }
-    if (this.level === "providers") { return this.providers.length; }
-
-    return this.modelIds.length;
+    this.menu.handleInput(data,);
+    this.requestRender();
   }
 
   /** Show the overlay at the roles level and load them. */
   show(): void {
-    this.visible = true;
+    this.visibleFlag = true;
     this.level = "roles";
-    this.cursor = 0;
+    this.menu.resetCursor();
     this.targetRole = undefined;
     this.targetProvider = undefined;
-    // blessed has no z-index: draw order is the screen's children order, so
-    // re-appending the box is what puts the overlay shown last on top.
-    this.screen.append(this.box,);
-    this.box.show();
-    // Focus the BOX, not the list: every key below is bound on the box, and
-    // blessed only dispatches element keys to the focused element
-    // (widgets/screen.js:601). The list is created with `keys: false`, so it is
-    // not keyable at all — focusing it made the whole drill-down unreachable.
-    this.box.focus();
-    this.screen.render();
+    this.requestRender();
     void this.refreshRoles();
   }
 
   /** Hide the overlay without changing any assignment. */
   hide(): void {
-    this.visible = false;
-    this.box.hide();
-    this.screen.render();
+    this.visibleFlag = false;
+    this.requestRender();
   }
 
   /**
@@ -236,14 +180,14 @@ export class ModelsOverlay {
    * @returns true when the overlay was visible and has now been hidden
    */
   dismiss(): boolean {
-    if (!this.visible) { return false; }
+    if (!this.visibleFlag) { return false; }
     this.hide();
     return true;
   }
 
   /** @returns whether the overlay is currently shown */
   isVisible(): boolean {
-    return this.visible;
+    return this.visibleFlag;
   }
 
   /** Reload whichever level is showing, from the top of the drill-down. */
@@ -301,10 +245,11 @@ export class ModelsOverlay {
    * @param rows - already-formatted lines for the current level
    */
   private renderRows(rows: string[],): void {
-    this.list.setItems(rows,);
-    this.list.setContent("",);
-    this.renderFooter(rows.length,);
-    this.screen.render();
+    this.rows = rows;
+    this.failure = null;
+    this.menu.resetCursor();
+    this.statusText = `${rows.length} | ${HINTS[this.level]}`;
+    this.requestRender();
   }
 
   /**
@@ -317,7 +262,6 @@ export class ModelsOverlay {
       if (!role) { return; }
       this.targetRole = role.role;
       this.level = "providers";
-      this.cursor = 0;
       await this.refreshProviders();
       return;
     }
@@ -327,7 +271,6 @@ export class ModelsOverlay {
       if (!provider) { return; }
       this.targetProvider = provider.name;
       this.level = "models";
-      this.cursor = 0;
       await this.refreshModels(provider.name,);
       return;
     }
@@ -359,7 +302,7 @@ export class ModelsOverlay {
     }
 
     this.level = "roles";
-    this.cursor = 0;
+    this.menu.resetCursor();
     this.targetRole = undefined;
     this.targetProvider = undefined;
     await this.refreshRoles();
@@ -370,7 +313,7 @@ export class ModelsOverlay {
   private async onClear(): Promise<void> {
     if (this.level !== "roles") { return; }
 
-    const role = this.roles[this.cursor]?.role;
+    const role = this.roles[this.menu.getCursor()]?.role;
     if (!role) { return; }
 
     const result = await clearRole({ role, sessionToken: this.sessionToken, },);
@@ -389,8 +332,8 @@ export class ModelsOverlay {
    * @param message - text to show in place of the level's key hints
    */
   private showStatus(message: string,): void {
-    this.statusLabel.setContent(message,);
-    this.screen.render();
+    this.statusText = message;
+    this.requestRender();
   }
 
   /** POST a provider re-scan and refresh the provider list in place. */
@@ -422,7 +365,7 @@ export class ModelsOverlay {
       return;
     }
 
-    const provider = this.providers[this.cursor];
+    const provider = this.providers[this.menu.getCursor()];
     if (!provider) {
       this.showStatus("no provider selected",);
       return;
@@ -444,18 +387,10 @@ export class ModelsOverlay {
    * @param message - already user-facing text from the result union
    */
   private renderFailure(message: string,): void {
-    this.list.setItems([],);
-    this.list.setContent(`{red-fg}${message}{/red-fg}`,);
-    this.statusLabel.setContent(HINTS[this.level],);
+    this.rows = [];
+    this.failure = message;
+    this.statusText = HINTS[this.level];
     getChildLogger("tui",)?.warn("tui: models overlay fetch failed", { level: this.level, message, },);
-    this.screen.render();
-  }
-
-  /**
-   * Set the footer to the current level's keys plus a row count.
-   * @param count - rows currently listed
-   */
-  private renderFooter(count: number,): void {
-    this.statusLabel.setContent(`${count} | ${HINTS[this.level]}`,);
+    this.requestRender();
   }
 }

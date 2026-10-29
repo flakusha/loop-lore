@@ -1,142 +1,129 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 260
 /**
- * TUI Harness View
+ * TUI Harness View (pi-tui)
  *
- * Toggleable panel showing recent harness agent runs.
- * F3 toggles visibility; Up/Down navigate runs; Enter loads detail.
- * Pure HTTP client — zero business logic.
+ * Toggleable full-screen overlay showing recent harness agent runs: run list
+ * on top, detail below. F3 toggles it (the shell refreshes on every open);
+ * Up/Down navigate runs, Enter reloads the detail. Pure HTTP client — zero
+ * business logic.
  */
 
-import blessed from "blessed";
+import { tagsToAnsi, } from "../ansi";
+import { renderFramed, } from "../frame";
+import { MenuList, } from "../menu";
+import { type Component, type Focusable, truncateToWidth, } from "../pi";
 import { loadRunDetail, loadRuns, loadStats, } from "./api";
 import { formatEmptyRuns, formatRunDetail, formatRunLine, formatStats, } from "./display";
 import type { HarnessRunSummary, } from "./types";
+
+/** Build a {@link HarnessView} (kept for the shell's import shape). */
+export function createHarnessView(options: HarnessViewOptions = {},): HarnessView {
+  return new HarnessView(options,);
+}
 
 export { loadRunDetail, loadRuns, loadStats, } from "./api";
 export { formatDuration, formatEmptyRuns, formatRunDetail, formatRunLine, formatStats, } from "./display";
 export type { HarnessRunDetail, HarnessRunSummary, HarnessStats, } from "./types";
 
-const DETAIL_TOP = 3;
 const RUN_LIMIT = 25;
 
 /** Construction options for {@link HarnessView}. */
 export interface HarnessViewOptions {
   /** Bearer token for the harness API; omit to run anonymous. */
   sessionToken?: string;
-  /** Return true when another overlay is stacked above this view and this view's
-   *  key handlers should be no-ops. */
-  isBlockedByOverlay?: () => boolean;
+  /** Repaint hook; the shell routes this to the pi-tui renderer. */
+  onRequestRender?: () => void;
+  /** Terminal row count source (the shell passes `tui.terminal.rows`). */
+  getViewportRows?: () => number;
 }
 
-export function createHarnessView(
-  screen: blessed.Widgets.Screen,
-  options: HarnessViewOptions = {},
-): HarnessView {
-  return new HarnessView(screen, options,);
-}
-
-export class HarnessView {
-  private screen: blessed.Widgets.Screen;
+/** */
+export class HarnessView implements Component, Focusable {
+  focused = false;
   private sessionToken: string | undefined;
-  private box: blessed.Widgets.BoxElement;
-  private list: blessed.Widgets.ListElement;
-  private detailLabel: blessed.Widgets.BlessedElement;
+  private rows: string[] = [];
+  /** Detail rows (already ANSI-converted, multi-line block). */
+  private detailLines: string[] = [];
+  /** Rendered in place of the list when loading failed. */
+  private failure: string | null = null;
   private runs: HarnessRunSummary[] = [];
-  private currentIndex = 0;
-  private _visible = false;
-  private isBlockedByOverlay: () => boolean;
+  private visibleFlag = false;
+  private readonly menu: MenuList;
+  private readonly requestRender: () => void;
+  private readonly getViewportRows: () => number;
 
-  constructor(
-    screen: blessed.Widgets.Screen,
-    options: HarnessViewOptions = {},
-  ) {
-    this.screen = screen;
-    this.sessionToken = options.sessionToken;
-    this.isBlockedByOverlay = options.isBlockedByOverlay ?? (() => false);
+  /**
+   * @param options - bearer token and repaint hooks
+   */
+  constructor(options: HarnessViewOptions = {},) {
+    this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
+    this.requestRender = options.onRequestRender ?? ((): void => {
+      /* no host wired: tests read render() directly */
+    });
 
-    this.box = blessed.box({
-      parent: screen,
-      left: 0,
-      top: 0,
-      width: "100%",
-      height: "100%",
-      label: " {bold}Harness Runs{/bold} ",
-      tags: true,
-      border: { type: "line", },
-      style: { bg: "black", fg: "white", border: { fg: "cyan", }, },
-      scrollable: true,
-      hidden: true,
-    },);
-
-    this.list = blessed.list({
-      parent: this.box,
-      top: 0,
-      left: 1,
-      right: 1,
-      height: "50%",
-      tags: true,
-      keys: true,
-      vi: true,
-      mouse: true,
-      border: { type: "line", },
-      style: {
-        selected: { bg: "cyan", fg: "black", },
-        item: { fg: "white", },
+    this.getViewportRows = options.getViewportRows ?? ((): number => 24);
+    this.menu = new MenuList({
+      rows: () => this.rows,
+      onSelect: (index,) => {
+        void this.showDetail(index,);
       },
-    },);
-
-    this.detailLabel = blessed.text({
-      parent: this.box,
-      top: DETAIL_TOP,
-      left: 1,
-      right: 1,
-      tags: true,
-      content: "",
-      style: { fg: "white", },
-    },);
-
-    this.list.on("select", (_el: blessed.Widgets.BlessedElement, index: number,) => {
-      if (index >= 0 && index < this.runs.length) { this.currentIndex = index; }
-      void this.showDetail(this.currentIndex,);
-    },);
-
-    screen.key(["up", "down",], (_ch: string, key: { name: string },) => {
-      if (!this._visible || this.runs.length === 0 || this.isBlockedByOverlay()) { return; }
-      if (key.name === "up") {
-        this.currentIndex = (this.currentIndex - 1 + this.runs.length) % this.runs.length;
-      } else {
-        this.currentIndex = (this.currentIndex + 1) % this.runs.length;
-      }
-
-      this.list.select(this.currentIndex,);
-      void this.showDetail(this.currentIndex,);
-    },);
-
-    screen.key(["enter",], () => {
-      if (!this._visible || this.runs.length === 0 || this.isBlockedByOverlay()) { return; }
-      void this.showDetail(this.currentIndex,);
+      vi: true,
     },);
   }
 
+  /** @param width */
+  render(width: number,): readonly string[] {
+    const viewport = Math.max(10, this.getViewportRows(),);
+    const bodyHeight = Math.max(1, viewport - 3,);
+    const listHeight = Math.max(3, Math.trunc(bodyHeight / 2,),);
+    this.menu.setHeight(listHeight - 2,); // minus the list's own frame
+
+    const body: string[] = [];
+    const inner = Math.max(0, width - 2,);
+    if (this.failure) {
+      body.push(`{red-fg}${this.failure}{/red-fg}`,);
+    } else if (this.rows.length === 0) {
+      body.push(formatEmptyRuns(),);
+    } else {
+      // The run list is a plain menu block; an inner frame would force ANSI
+      // rows through a second border pass and invite width drift.
+      body.push("Runs", ...this.menu.render(inner,),);
+    }
+
+    for (const line of this.detailLines) {
+      body.push(truncateToWidth(line, inner,),);
+    }
+
+    while (body.length < bodyHeight) { body.push("",); }
+
+    return renderFramed({ title: "Harness Runs", rows: body, width, color: "cyan", },);
+  }
+
+  /** @param data - raw key data from pi-tui */
+  handleInput(data: string,): void {
+    if (!this.visibleFlag) { return; }
+    this.menu.handleInput(data,);
+    this.requestRender();
+  }
+
+  /** Show the overlay. */
   show(): void {
-    this._visible = true;
-    // blessed has no z-index: draw order is the screen's children order, so
-    // re-appending the box is what puts the overlay shown last on top.
-    this.screen.append(this.box,);
-    this.box.show();
-    this.screen.render();
+    this.visibleFlag = true;
+    this.requestRender();
   }
 
+  /** Hide the overlay. */
   hide(): void {
-    this._visible = false;
-    this.box.hide();
-    this.screen.render();
+    this.visibleFlag = false;
+    this.requestRender();
   }
 
+  /** Toggle overlay visibility; opening refreshes the run list. */
   toggle(): void {
-    if (this._visible) {
+    if (this.visibleFlag) {
       this.hide();
     } else {
       this.show();
@@ -151,29 +138,32 @@ export class HarnessView {
    * @returns true when the panel was visible and has now been hidden
    */
   dismiss(): boolean {
-    if (!this._visible) { return false; }
+    if (!this.visibleFlag) { return false; }
     this.hide();
     return true;
   }
 
+  /** @returns whether the overlay is currently shown */
   isVisible(): boolean {
-    return this._visible;
+    return this.visibleFlag;
   }
 
+  /** Reload the run list (and the first run's detail, or the stats line). */
   async refresh(): Promise<void> {
     const result = await loadRuns(RUN_LIMIT, this.sessionToken,);
     if (!result.ok) {
       this.runs = [];
-      this.currentIndex = 0;
-      this.list.clearItems();
-      this.list.setContent(result.error,);
-      this.detailLabel.setContent("",);
-      this.screen.render();
+      this.rows = [];
+      this.menu.resetCursor();
+      this.failure = result.error;
+      this.detailLines = [];
+      this.requestRender();
       return;
     }
 
+    this.failure = null;
     this.runs = result.data.items;
-    this.currentIndex = 0;
+    this.menu.resetCursor();
     this.renderList();
 
     if (this.runs.length > 0) {
@@ -181,35 +171,40 @@ export class HarnessView {
     } else {
       const stats = await loadStats(this.sessionToken,);
       if (stats.ok && stats.data) {
-        this.detailLabel.setContent(formatStats(stats.data,),);
-        this.screen.render();
+        this.detailLines = tagsToAnsi(formatStats(stats.data,),).split("\n",);
+        this.requestRender();
       }
     }
   }
 
+  /** @returns the loaded run summaries */
   getRuns(): HarnessRunSummary[] {
     return this.runs;
   }
 
+  /** @returns the highlighted row index */
+  getCursor(): number {
+    return this.menu.getCursor();
+  }
+
   private renderList(): void {
-    this.list.clearItems();
     if (this.runs.length === 0) {
-      this.list.setContent(formatEmptyRuns(),);
-      this.screen.render();
+      this.rows = [];
       return;
     }
 
-    for (const run of this.runs) {
-      this.list.add(formatRunLine(run,),);
-    }
-
-    this.list.select(0,);
+    this.rows = this.runs.map((run,) => formatRunLine(run,));
   }
 
+  /**
+   * Load one run's detail into the bottom pane.
+   * @param index - run row to load
+   * @throws never — failures land on the detail pane
+   */
   private async showDetail(index: number,): Promise<void> {
     if (this.runs.length === 0) {
-      this.detailLabel.setContent("",);
-      this.screen.render();
+      this.detailLines = [];
+      this.requestRender();
       return;
     }
 
@@ -218,15 +213,12 @@ export class HarnessView {
 
     const result = await loadRunDetail(run.runId, this.sessionToken,);
     if (!result.ok) {
-      this.detailLabel.setContent(
-        `{red-fg}Failed to load detail: ${result.error}{/red-fg}`,
-      );
-
-      this.screen.render();
+      this.detailLines = [tagsToAnsi(`{red-fg}Failed to load detail: ${result.error}{/red-fg}`,),];
+      this.requestRender();
       return;
     }
 
-    this.detailLabel.setContent(formatRunDetail(result.data,),);
-    this.screen.render();
+    this.detailLines = tagsToAnsi(formatRunDetail(result.data,),).split("\n",);
+    this.requestRender();
   }
 }

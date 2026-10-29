@@ -37,14 +37,7 @@ const calls: ClientCall[] = [];
 function makeHost(overrides: Partial<ChatHost> = {},): ChatHost {
   const noop = (): void => {};
   return {
-    screen: { render: noop, } as unknown as ChatHost["screen"],
-    messageList: {
-      setItems: noop,
-      addItem: noop,
-      clearItems: noop,
-      popItem: noop,
-      select: noop,
-    } as unknown as ChatHost["messageList"],
+    requestRender: noop,
     chatId: "chat-1",
     messages: [] as ChatMessage[],
     isSending: false,

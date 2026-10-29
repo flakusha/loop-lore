@@ -28,20 +28,9 @@ interface CaptureGlobal {
   [CAPTURE_KEY]?: Captured[];
 }
 
-function makeScreen(): ChatHost["screen"] {
-  return { render: () => {}, } as unknown as ChatHost["screen"];
-}
-
 function makeHost(overrides: Partial<ChatHost> = {},): ChatHost {
   return {
-    screen: makeScreen(),
-    messageList: {
-      setItems: () => {},
-      addItem: () => {},
-      clearItems: () => {},
-      popItem: () => {},
-      select: () => {},
-    } as unknown as ChatHost["messageList"],
+    requestRender: () => {},
     chatId: "chat-1",
     messages: [],
     isSending: false,

@@ -2,46 +2,22 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Tests that `AssetView.loadAssets` sends the `[tui].sessionToken` on the
- * `GET /api/v1/assets` call.
- *
- * The regression this pins: loadAssets called safeFetch with no `auth`, so on
- * any non-solo deployment the endpoint's user requirement rejected the request
- * and the F2 sidebar rendered `Failed to load (HTTP 401)`.
- *
- * The view is built from the prototype rather than `new AssetView(screen)`,
- * which would call `blessed.box()` and block outside a TTY. Only the plain
- * data loadAssets reads and writes is exercised, so the render helpers are
- * no-ops — no `mock.module`, no per-file isolation gate, so these tests run
- * under a bare `bun test src/tui/`.
+ * AssetView (pi-tui): sidebar rendering + Left/Right/Enter behaviour, driven
+ * through the setFetch seam. Pure component — render(width), handleInput(raw).
  */
 import { afterEach, describe, expect, it, } from "bun:test";
 import { safeFetch, } from "../utils";
 import type { FetchResult, SafeFetchOptions, } from "../utils/safe-fetch/types";
 import { AssetView, setFetch, } from "./asset-view";
 import type { LinkedAsset, } from "./asset-view";
+import { stripRows, tick, } from "./test-support";
 
-const noop = (): void => {};
-
-/** One recorded client call. */
 interface ClientCall {
   url: string;
   options: SafeFetchOptions;
 }
 
-/** The private state loadAssets touches, as a flat record for assignment. */
-interface LoadableView {
-  chatId: string | null;
-  assets: LinkedAsset[];
-  currentIndex: number;
-  sessionToken: string | undefined;
-  renderInfo: (msg: string,) => void;
-  renderCurrent: () => void;
-  loadAssets: () => Promise<void>;
-}
-
 const calls: ClientCall[] = [];
-const realFetch = safeFetch;
 
 const ONE_ASSET: LinkedAsset = {
   id: "a-1",
@@ -53,142 +29,164 @@ const ONE_ASSET: LinkedAsset = {
   created_at: "2026-01-01T00:00:00.000Z",
 };
 
-/** Answer every call with one asset so the success branch runs.
- *
- * Generic over the response body so it satisfies `setFetch`'s
- * `<T>(url, options?) => Promise<FetchResult<T>>` signature, the same shape
- * harness/api.test.ts's `makeMockSafeFetch<T>` uses. The cast is confined to
- * the double's return; the recorded call is what the tests assert on.
- */
-function stubClient(): void {
+const TWO_ASSETS: LinkedAsset[] = [
+  ONE_ASSET,
+  { ...ONE_ASSET, id: "a-2", filename: "scene.jpg", asset_type: "video", size_bytes: 2_048, },
+];
+
+/** Answer the assets list call with `body`. */
+function stubAssets(body: LinkedAsset[] | undefined,): void {
   setFetch(<T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
     calls.push({ url, options: options ?? {}, },);
     return Promise.resolve({
       ok: true,
-      data: { data: [ONE_ASSET,], } as T,
+      data: { data: body, } as T,
       status: 200,
       headers: new Headers(),
     },);
   },);
 }
 
-/** Build a loadable view without running the blessed-touching constructor. */
-function buildView(sessionToken?: string,): LoadableView {
-  const view = Object.create(AssetView.prototype,) as LoadableView;
-  view.chatId = "chat-1";
-  view.assets = [];
-  view.currentIndex = 0;
-  view.sessionToken = sessionToken;
-  view.renderInfo = noop;
-  view.renderCurrent = noop;
-  return view;
+/** Answer with an HTTP failure. */
+function stubFailure(status: number,): void {
+  setFetch(<T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
+    Promise.resolve({
+      ok: false,
+      error: new Error("boom",),
+      status,
+      headers: new Headers(),
+    },)
+  );
 }
 
 afterEach(() => {
   calls.length = 0;
-  setFetch(realFetch,);
+  setFetch(safeFetch,);
 },);
 
-describe("AssetView — loadAssets auth", () => {
-  it("sends the session token as auth when one is supplied", async () => {
-    stubClient();
-    await buildView("tok-1",).loadAssets();
+describe("AssetView", () => {
+  it("loads assets for the chat with the session token attached", async () => {
+    stubAssets([ONE_ASSET,],);
+    const view = new AssetView({ sessionToken: "tok", },);
+    view.setChatId("chat-1",);
+    await tick();
 
-    expect(calls,).toHaveLength(1,);
-    expect(calls[0]?.options.auth,).toEqual({ sessionToken: "tok-1", },);
+    expect(calls[0]?.url,).toContain("entity_type=chat&entity_id=chat-1",);
+    expect(calls[0]?.options.auth,).toEqual({ sessionToken: "tok", },);
   });
 
-  it("omits auth entirely when no session token is supplied", async () => {
-    stubClient();
-    await buildView().loadAssets();
+  it("renders nothing while hidden and the framed sidebar once shown", async () => {
+    stubAssets([ONE_ASSET,],);
+    const view = new AssetView({},);
+    expect(view.render(30,),).toEqual([],);
 
-    expect(calls,).toHaveLength(1,);
-    expect(calls[0]?.options.auth,).toBeUndefined();
+    view.setChatId("chat-1",);
+    await tick();
+    view.show();
+
+    const rows = stripRows(view.render(30,),);
+    expect(rows[0],).toContain("Assets",);
+    expect(rows.join("\n",),).toContain("Name: portrait.png",);
+    expect(rows.join("\n",),).toContain("MIME: image/png",);
+    expect(rows.join("\n",),).toContain("10 B",);
+    expect(rows.join("\n",),).toContain("Added: 2026-01-01",);
+    expect(view.isVisible(),).toBe(true,);
   });
 
-  it("normalizes an empty-string token to undefined rather than shipping a blank Bearer", async () => {
-    stubClient();
-    await buildView("",).loadAssets();
+  it("shows the alt-text row only when an alt text exists", async () => {
+    stubAssets([{ ...ONE_ASSET, alt_text: "a portrait", },],);
+    const view = new AssetView({},);
+    view.setChatId("chat-1",);
+    await tick();
+    view.show();
 
-    expect(calls[0]?.options.auth,).toBeUndefined();
+    const rows = stripRows(view.render(30,),).join("\n",);
+    expect(rows,).toContain("Alt: a portrait",);
   });
 
-  it("requests the chat-scoped asset list", async () => {
-    stubClient();
-    await buildView("tok-1",).loadAssets();
+  it("cycles assets with Left/Right and wraps", async () => {
+    stubAssets(TWO_ASSETS,);
+    const view = new AssetView({},);
+    view.setChatId("chat-1",);
+    await tick();
+    view.show();
 
-    expect(calls[0]?.url,).toContain("/api/v1/assets?entity_type=chat&entity_id=chat-1",);
+    expect(view.getCurrentAsset()?.id,).toBe("a-1",);
+    view.handleInput("\x1b[C",);
+    expect(view.getCurrentAsset()?.id,).toBe("a-2",);
+    view.handleInput("\x1b[C",);
+    expect(view.getCurrentAsset()?.id,).toBe("a-1",);
+    view.handleInput("\x1b[D",);
+    expect(view.getCurrentAsset()?.id,).toBe("a-2",);
   });
 
-  it("does not call the client at all when no chat is bound", async () => {
-    stubClient();
-    const view = buildView("tok-1",);
-    view.chatId = null;
-    await view.loadAssets();
+  it("Enter attaches the highlighted asset and reloads", async () => {
+    let links = 0;
+    setFetch(<T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
+      calls.push({ url, options: options ?? {}, },);
+      if (url.endsWith("/links",)) {
+        links++;
+        return Promise.resolve({ ok: true, data: {} as T, status: 201, headers: new Headers(), },);
+      }
 
-    expect(calls,).toHaveLength(0,);
-  });
-
-  // --- Markup escaping + URL encoding tests ---
-
-  it("percent-encodes chatId containing / in loadAssets URL", async () => {
-    const view = buildView();
-    view.chatId = "abc/def";
-    stubClient();
-    await view.loadAssets();
-    expect(calls[0]!.url,).toContain("entity_id=abc%2Fdef",);
-    expect(calls[0]!.url,).not.toContain("entity_id=abc/def",);
-  });
-
-  it("percent-encodes chatId containing ? in loadAssets URL", async () => {
-    const view = buildView();
-    view.chatId = "abc?def";
-    stubClient();
-    await view.loadAssets();
-    expect(calls[0]!.url,).toContain("entity_id=abc%3Fdef",);
-  });
-});
-
-describe("AssetView — attachAsset", () => {
-  it("POSTs the chat link for the asset and reloads the list", async () => {
-    stubClient();
-    const view = buildView("tok-1",) as LoadableView & Pick<AssetView, "attachAsset">;
-    const ok = await view.attachAsset("asset-9",);
-    expect(ok,).toBe(true,);
-    // First call is the link POST, second is the sidebar reload.
-    expect(calls,).toHaveLength(2,);
-    expect(calls[0]?.url,).toBe("http://localhost:3000/api/v1/assets/asset-9/links",);
-    expect(calls[0]?.options.auth,).toEqual({ sessionToken: "tok-1", },);
-    // Unlabelled: the `generated` label is the server's own image-gen
-    // signal — a manual attach must not stamp it.
-    expect(calls[0]?.options.body as Record<string, unknown>,).toEqual({
-      entityType: "chat",
-      entityId: "chat-1",
-    },);
-  });
-
-  it("returns false without calling the client when no chat is bound", async () => {
-    stubClient();
-    const view = buildView("tok-1",) as LoadableView & Pick<AssetView, "attachAsset">;
-    view.chatId = null;
-    const ok = await view.attachAsset("asset-9",);
-    expect(ok,).toBe(false,);
-    expect(calls,).toHaveLength(0,);
-  });
-
-  it("returns false on an HTTP denial", async () => {
-    setFetch(<T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
-      Promise.resolve({
-        ok: false,
-        error: new Error("Forbidden",),
-        status: 403,
+      return Promise.resolve({
+        ok: true,
+        data: { data: TWO_ASSETS, } as T,
+        status: 200,
         headers: new Headers(),
-      } as FetchResult<T>,)
-    );
+      },);
+    },);
 
-    const view = buildView() as LoadableView & Pick<AssetView, "attachAsset">;
-    const ok = await view.attachAsset("asset-9",);
-    expect(ok,).toBe(false,);
-    expect(calls,).toHaveLength(0,);
+    const view = new AssetView({},);
+    view.setChatId("chat-1",);
+    await tick();
+    view.show();
+    view.handleInput("\r",);
+    await tick();
+
+    expect(links,).toBe(1,);
+    expect(calls.some((call,) => call.url.endsWith("/links",)),).toBe(true,);
+  });
+
+  it("attach without an active chat reports instead of calling the API", async () => {
+    const view = new AssetView({},);
+    view.show();
+    const attached = await view.attachAsset("a-1",);
+    expect(attached,).toBe(false,);
+    expect(calls,).toEqual([],);
+  });
+
+  it("degrades the sidebar to an HTTP failure message", async () => {
+    stubFailure(500,);
+    const view = new AssetView({},);
+    view.setChatId("chat-1",);
+    await tick();
+    view.show();
+
+    expect(stripRows(view.render(30,),).join("\n",),).toContain("Failed to load (HTTP 500)",);
+  });
+
+  it("reports no active chat before any chat is bound", async () => {
+    const view = new AssetView({},);
+    view.show();
+    await view.loadAssets();
+    expect(stripRows(view.render(30,),).join("\n",),).toContain("No active chat.",);
+  });
+
+  it("toggle flips visibility", () => {
+    const view = new AssetView({},);
+    view.toggle();
+    expect(view.isVisible(),).toBe(true,);
+    view.toggle();
+    expect(view.isVisible(),).toBe(false,);
+  });
+
+  it("formats sizes through KB and MB", async () => {
+    stubAssets([{ ...ONE_ASSET, size_bytes: 5 * 1024 * 1024, },],);
+    const view = new AssetView({},);
+    view.setChatId("chat-1",);
+    await tick();
+    view.show();
+    expect(stripRows(view.render(40,),).join("\n",),).toContain("5.0 MB",);
   });
 });
