@@ -8,14 +8,23 @@
  * Builds on card-battle engine with NSFW-specific mechanics.
  */
 
+/**
+ * Seduction card types — the single source for the route validator, the tool
+ * schema and the card templates.
+ */
+export const SEDUCTION_CARD_TYPES = ["flirt", "charm", "tease", "compliment", "touch", "kiss"] as const;
+
 /** Seduction card type */
-export type SeductionCardType =
-  | "flirt"
-  | "charm"
-  | "tease"
-  | "compliment"
-  | "touch"
-  | "kiss";
+export type SeductionCardType = (typeof SEDUCTION_CARD_TYPES)[number];
+
+/**
+ * Seduction difficulties — the single source for the route validator, the tool
+ * schema and the engine configuration.
+ */
+export const SEDUCTION_DIFFICULTIES = ["easy", "medium", "hard"] as const;
+
+/** Seduction difficulty */
+export type SeductionDifficulty = (typeof SEDUCTION_DIFFICULTIES)[number];
 
 /** Seduction card */
 export interface SeductionCard {
@@ -75,7 +84,7 @@ export interface SeductionState {
 /** API request */
 export interface SeductionStartRequest {
   /** Target difficulty: easy/medium/hard */
-  difficulty?: "easy" | "medium" | "hard";
+  difficulty?: SeductionDifficulty;
   /** Number of cards in hand (default: 5) */
   handSize?: number;
 }

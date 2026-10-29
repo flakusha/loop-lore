@@ -101,6 +101,19 @@ describe("trivia tool copy vs route truth", () => {
     }
   });
 
+  test("the tool and the route reject the same category with the same message", async () => {
+    const tool = collectTool();
+    const toolResult = await tool.handler({ action: "start", category: "sports" });
+    const res = await handleStart(new Request(START_URL, {
+      method: "POST",
+      body: JSON.stringify({ category: "sports" }),
+    }));
+    expect(res!.status).toBe(400);
+    const body = await json(res);
+    expect(toolResult.isError).toBe(true);
+    expect(toolResult.content).toBe(body.error);
+  });
+
   test("the categories endpoint lists exactly the advertised categories and difficulties", async () => {
     const tool = collectTool();
     const body = await json(await handleCategories(new Request(CATEGORIES_URL, { method: "GET" })));

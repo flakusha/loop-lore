@@ -7,8 +7,10 @@
 
 import { initBattle, playBattleCard, cardToString } from "./engine";
 import { jsonResponse, jsonError, HttpStatus } from "../../../src/routes/http-utils";
-import { COMBAT_ACTIONS, DIFFICULTIES } from "./types";
-import type { BattleDifficulty, Card, CardBattleState, CombatCardAction } from "./types";
+import { readJsonBody } from "../../validation";
+import { parsePlayBody, parseStartBody } from "./schema";
+import { COMBAT_ACTIONS } from "./types";
+import type { Card, CardBattleState, CombatCardAction } from "./types";
 
 /** Display metadata per combat action — keyed by the shared action list. */
 const ACTION_DETAILS: Record<CombatCardAction, { name: string; description: string }> = {
@@ -18,16 +20,6 @@ const ACTION_DETAILS: Record<CombatCardAction, { name: string; description: stri
   bluff: { name: "Bluff", description: "Standard play — no modifiers" },
   charm: { name: "Charm", description: "Seductive — +1 to comparison, damage ×0.8" },
 };
-
-/** Narrow an untrusted string to a known combat action. */
-function isCombatAction(value: string): value is CombatCardAction {
-  return (COMBAT_ACTIONS as readonly string[]).includes(value);
-}
-
-/** Narrow an untrusted string to a known difficulty. */
-export function isDifficulty(value: string): value is BattleDifficulty {
-  return (DIFFICULTIES as readonly string[]).includes(value);
-}
 
 /**
  * Handle POST /api/card-battle/start
@@ -40,28 +32,17 @@ export async function handleStart(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
   if (url.pathname !== "/api/card-battle/start" || request.method !== "POST") return null;
 
-  let body: Record<string, unknown> = {};
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    // empty body is fine — all params optional
+  const body = await readJsonBody(request);
+  if (!body.ok) {
+    return jsonError(body.error, HttpStatus.BadRequest);
   }
 
-  const playerHp = typeof body.playerHp === "number" ? body.playerHp : 100;
-  const difficulty = typeof body.difficulty === "string" ? body.difficulty : "medium";
-  const handSize = typeof body.handSize === "number" ? body.handSize : 5;
-
-  if (!isDifficulty(difficulty)) {
-    return jsonError(`difficulty must be one of: ${DIFFICULTIES.join(", ")}`, HttpStatus.BadRequest);
-  }
-  if (playerHp < 10 || playerHp > 1000) {
-    return jsonError("playerHp must be 10-1000", HttpStatus.BadRequest);
-  }
-  if (handSize < 3 || handSize > 7) {
-    return jsonError("handSize must be 3-7", HttpStatus.BadRequest);
+  const input = parseStartBody(body.value);
+  if (!input.ok) {
+    return jsonError(input.error, HttpStatus.BadRequest);
   }
 
-  const state = initBattle(playerHp, difficulty, handSize);
+  const state = initBattle(input.value.playerHp, input.value.difficulty, input.value.handSize);
 
   // The full state travels with the client: /play is stateless and replays it.
   return jsonResponse({
@@ -86,34 +67,21 @@ export async function handlePlay(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
   if (url.pathname !== "/api/card-battle/play" || request.method !== "POST") return null;
 
-  let body: Record<string, unknown>;
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return jsonError("Invalid JSON body", HttpStatus.BadRequest);
+  const body = await readJsonBody(request);
+  if (!body.ok) {
+    return jsonError(body.error, HttpStatus.BadRequest);
   }
 
-  if (typeof body.cardIndex !== "number") {
-    return jsonError("cardIndex is required (number)", HttpStatus.BadRequest);
-  }
-
-  if (typeof body.action !== "string" || !isCombatAction(body.action)) {
-    return jsonError(
-      `action must be one of: ${COMBAT_ACTIONS.join(", ")}`,
-      HttpStatus.BadRequest,
-    );
+  const input = parsePlayBody(body.value);
+  if (!input.ok) {
+    return jsonError(input.error, HttpStatus.BadRequest);
   }
 
   // Client sends full state for stateless play
-  const state = body.state;
-  if (!state || typeof state !== "object") {
-    return jsonError("state is required — send back the state from /start or previous /play", HttpStatus.BadRequest);
-  }
-
-  const battleState = state as unknown as CardBattleState;
+  const battleState = input.value.state as unknown as CardBattleState;
 
   try {
-    const round = playBattleCard(battleState, body.cardIndex, body.action);
+    const round = playBattleCard(battleState, input.value.cardIndex, input.value.action);
 
     const newCard = battleState.playerHand.length > 0
       ? battleState.playerHand[battleState.playerHand.length - 1]

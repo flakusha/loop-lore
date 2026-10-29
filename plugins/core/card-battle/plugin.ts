@@ -12,7 +12,8 @@
  */
 
 import type { PluginManifest } from "../../../src/plugins/types";
-import { handleStart, handlePlay, handleActions, isDifficulty } from "./routes";
+import { handleStart, handlePlay, handleActions } from "./routes";
+import { parseStartBody } from "./schema";
 import { initBattle, playBattleCard, cardToString } from "./engine";
 import { COMBAT_ACTIONS, DIFFICULTIES } from "./types";
 
@@ -80,14 +81,14 @@ export const plugin: PluginManifest = {
         const action = params.action as string;
 
         if (action === "start") {
-          const difficulty = typeof params.difficulty === "string" ? params.difficulty : "medium";
-          if (!isDifficulty(difficulty)) {
+          const input = parseStartBody({ difficulty: params.difficulty });
+          if (!input.ok) {
             return {
-              content: `Invalid difficulty. Choose one of: ${DIFFICULTIES.join(", ")}.`,
+              content: input.error,
               isError: true,
             };
           }
-          const state = initBattle(100, difficulty, 5);
+          const state = initBattle(input.value.playerHp, input.value.difficulty, input.value.handSize);
           const handStr = state.playerHand
             .map((c, i) => `[${i}] ${cardToString(c)}`)
             .join(", ");
