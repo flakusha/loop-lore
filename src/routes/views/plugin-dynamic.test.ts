@@ -24,6 +24,7 @@ import {
 } from "../../test-utils/insert-helpers";
 import { safeJsonParse, } from "../../utils";
 import { dynamicRoutes, } from "./plugin-dynamic";
+import { TIMELINE_EVENT_CAP, } from "./world-timeline-events";
 
 /**
  * @param db
@@ -331,6 +332,60 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
       const html = await res.text();
       expect(html,).toContain("Prime-branch calamity",);
       expect(html,).not.toContain("Fork-branch divergence",);
+    });
+
+    // ── Event cap: exact-50 shows no note; 51 shows it without the 51st row ──
+    test("exactly-cap branch renders all events and no truncated note", async () => {
+      const capId = await insertWorldTimelines(db, "world-elm", "Cap50", {},);
+      for (let i = 0; i < TIMELINE_EVENT_CAP; i++) {
+        await insertWorldTimelineEvents(
+          db,
+          "world-elm",
+          "world_lore_update",
+          `Cap-exact event ${i}`,
+          `2024-06-01T00:00:${String(i % 60,).padStart(2, "0",)}Z`,
+          { timeline_id: capId, },
+        );
+      }
+
+      const res = await makeApp(db, "owner", "user",).handle(
+        new Request(`http://localhost/dynamic/worlds/world-elm/detail?timeline=${capId}`, {
+          headers: { "HX-Request": "true", },
+        },),
+      );
+
+      expect(res.status,).toBe(200,);
+      const html = await res.text();
+      expect(html,).toContain("Cap-exact event 0",);
+      expect(html,).toContain("Cap-exact event 49",);
+      expect(html,).not.toContain("timeline-truncated",);
+    });
+
+    test("over-cap branch shows the truncated note without the extra row", async () => {
+      const overId = await insertWorldTimelines(db, "world-elm", "Cap51", {},);
+      for (let i = 0; i < TIMELINE_EVENT_CAP + 1; i++) {
+        await insertWorldTimelineEvents(
+          db,
+          "world-elm",
+          "world_lore_update",
+          `Cap-over event ${i}`,
+          `2024-07-01T00:00:${String(i % 60,).padStart(2, "0",)}Z`,
+          { timeline_id: overId, },
+        );
+      }
+
+      const res = await makeApp(db, "owner", "user",).handle(
+        new Request(`http://localhost/dynamic/worlds/world-elm/detail?timeline=${overId}`, {
+          headers: { "HX-Request": "true", },
+        },),
+      );
+
+      expect(res.status,).toBe(200,);
+      const html = await res.text();
+      expect(html,).toContain("timeline-truncated",);
+      // Capped slice still renders; the probe row never does.
+      expect(html,).toContain("Cap-over event 49",);
+      expect(html,).not.toContain("Cap-over event 50",);
     });
   });
 
