@@ -1970,6 +1970,10 @@
     "byModel": "モデル別の実行",
     "toolingGaps": "ツールの不足",
     "runDetail": "実行の詳細",
+    "filesTitle": "サンドボックスのファイル",
+    "filesButton": "ファイルを閲覧",
+    "openSandboxInEditor": "$EDITORでサンドボックスを開く",
+    "filesError": "サンドボックスのファイルツリーを読み込めませんでした。",
     "noRuns": "ハーネスの実行はまだ記録されていません",
     "noModelStats": "モデル統計はまだありません",
     "noToolingGaps": "ツールの不足は記録されていません",
@@ -2019,7 +2023,9 @@
       "turnId": "ターンID",
       "toolingGap": "ツールの不足",
       "tools": "ツール",
-      "message": "メッセージ"
+      "message": "メッセージ",
+      "fileName": "名前",
+      "fileSize": "サイズ"
     },
     "taskType": {
       "harnessCode": "コード",

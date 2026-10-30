@@ -1970,6 +1970,10 @@
     "byModel": "按模型统计",
     "toolingGaps": "工具缺失",
     "runDetail": "运行详情",
+    "filesTitle": "沙箱文件",
+    "filesButton": "浏览文件",
+    "openSandboxInEditor": "在 $EDITOR 中打开沙箱",
+    "filesError": "无法加载沙箱文件树。",
     "noRuns": "尚无 harness 运行记录",
     "noModelStats": "尚无模型统计",
     "noToolingGaps": "未记录工具缺失",
@@ -2019,7 +2023,9 @@
       "turnId": "轮次 ID",
       "toolingGap": "工具缺失",
       "tools": "工具",
-      "message": "消息"
+      "message": "消息",
+      "fileName": "名称",
+      "fileSize": "大小"
     },
     "taskType": {
       "harnessCode": "代码",

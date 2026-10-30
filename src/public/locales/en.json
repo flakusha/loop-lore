@@ -2146,6 +2146,10 @@
     "byModel": "Runs by model",
     "toolingGaps": "Tooling gaps",
     "runDetail": "Run detail",
+    "filesTitle": "Sandbox files",
+    "filesButton": "Browse files",
+    "openSandboxInEditor": "Open sandbox in $EDITOR",
+    "filesError": "Could not load the sandbox file tree.",
     "noRuns": "No harness runs recorded yet",
     "noModelStats": "No model stats yet",
     "noToolingGaps": "No tooling gaps recorded",
@@ -2195,7 +2199,9 @@
       "turnId": "Turn ID",
       "toolingGap": "Tooling gap",
       "tools": "Tools",
-      "message": "Message"
+      "message": "Message",
+      "fileName": "Name",
+      "fileSize": "Size"
     },
     "taskType": {
       "harnessCode": "Code",
