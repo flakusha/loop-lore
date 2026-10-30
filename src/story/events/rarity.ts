@@ -29,6 +29,22 @@ export const EVENT_RARITY_TIERS: readonly EventRarity[] = Object.keys(
 /** Rarity → distribution weight. Shared with loot; heavier = more likely. */
 export const EVENT_RARITY_WEIGHTS: Record<EventRarity, number> = RARITY_WEIGHTS;
 
+/**
+ * Rarity → world-lore promotion priority (`world_lore_entries.priority`).
+ * Monotonic with tier so rarer promoted lore sorts ahead in prompt
+ * assembly. A rarity absent from the event keeps the historic default 0,
+ * which is why `common` deliberately maps to 0 too.
+ */
+export const EVENT_RARITY_PRIORITY: Record<EventRarity, number> = {
+  common: 0,
+  uncommon: 10,
+  rare: 20,
+  epic: 30,
+  legendary: 40,
+  unique: 50,
+  artifact: 60,
+};
+
 /** Per-call weight overrides applied over {@link EVENT_RARITY_WEIGHTS}. */
 export type RarityWeightOverrides = Partial<Record<EventRarity, number>>;
 
