@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** medium
 **Epic:** epic-resource-provision
@@ -52,3 +52,5 @@ verifiable reference and quota enforcement via the routing facade.
   generation call when a resource is selected
 - [ ] Fallback to platform default on revoke/quota-exceeded
 - [ ] `bun run check` green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 3346596 (registry tip: b6b40fcbf Konstantin Fedotov Close issue)

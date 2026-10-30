@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** medium
 **Epic:** epic-resource-provision
@@ -80,3 +80,5 @@ interface BackupManifest {
 - [ ] Unit tests: export, hash computation, IndexedDB round-trip,
   rotation eviction, manifest integrity, quota enforcement
 - [ ] `bun run check` green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 6c0cbf9 (registry tip: 58825214e Konstantin Fedotov Close issue)
