@@ -3,7 +3,7 @@
 
 # EPIC: Avatar Dogfood Defaults
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -80,10 +80,10 @@ the app cannot yet produce its own face.
 
 ## Work Items
 
-- [ ] Assistant→avatar generation wiring → `TASK-avatar-dogfood-assistant-generation`
-- [ ] Promote-to-defaults (generated asset → `configs/assets/characters/<slug>/` + `defaults.ts` file wiring) → `TASK-avatar-dogfood-promote-defaults`
-- [ ] Webp lossless masters + png/jpg export op → `TASK-avatar-dogfood-webp-export`
-- [ ] E2E dogfood verification (fresh DB → seed → verify) → `TASK-avatar-dogfood-e2e-verify`
+- [x] Assistant→avatar generation wiring → `TASK-avatar-dogfood-assistant-generation` (landed as e57109ded on feat-avatar-dogfood)
+- [x] Promote-to-defaults (generated asset → `configs/assets/characters/<slug>/` + `defaults.ts` file wiring) → `TASK-avatar-dogfood-promote-defaults` (landed as dev 946df0525; issue 9d91dd6 kept open pending the real-art flip of a template's `avatar:` line in defaults.ts — the op emits the paste literal, no real art exists yet. Note: that ticket's Status Note cites stale hash 2a960c696; 946df0525 is the landed commit)
+- [x] Webp lossless masters + png/jpg export op → `TASK-avatar-dogfood-webp-export` (landed as 50703ddfc on feat-avatar-dogfood)
+- [x] E2E dogfood verification (fresh DB → seed → verify) → `TASK-avatar-dogfood-e2e-verify` (landed as 9a1ac9387 on feat-avatar-dogfood)
 
 ## Non-Goals
 
@@ -94,10 +94,9 @@ the app cannot yet produce its own face.
 
 ## Acceptance Criteria
 
-- [ ] Fresh boot shows placeholders; after generation + promote + clean +
-      restart, promoted characters show the promoted art (ticket d verifies)
-- [ ] Slice 1 ships without touching webp/thumbnail paths
-- [ ] Slice 2 stores promoted masters as lossless webp and exports png/jpg on demand
+- [x] Fresh boot shows placeholders; after generation + promote + clean + restart, promoted characters show the promoted art (ticket d verifies) — pinned by `tests/e2e/flows/avatar-dogfood.test.ts` (slice 3, 9a1ac9387): fresh `:memory:` DB + empty upload dir → production `seedCharacterTemplates` → promoted primary avatar bytes byte-equal the master file (webp + png legs), unpromoted templates seed the SVG placeholder, reseed insert-once. Generation→variant binding pinned by slice 1 (e57109ded: `image-gen-route.test.ts`, `generated.test.ts`, `/avatar` command tests); promote pinned by dev 946df0525 + slice 2 (50703ddfc: `promote.test.ts`)
+- [x] Slice 1 ships without touching webp/thumbnail paths — e57109ded touched no `thumbnail.ts`/webp code; webp arrived only in slice 2
+- [x] Slice 2 stores promoted masters as lossless webp and exports png/jpg on demand — 50703ddfc: `promoteAvatarToDefault` defaults to `webp({lossless:true})` (pixel-exact round-trip pinned), `exportAvatarMaster({bytes, format: "png"|"jpg"})` in `master-export.test.ts`
 
 ## Related
 
