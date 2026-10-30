@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 084_actor_memories_timeline_id
+ * 085_actor_memories_timeline_id
  *
  * Add `timeline_id` to `actor_memories` so memories can be bound to a
  * timeline (epic-memory-propagation: "memories don't propagate between
@@ -21,7 +21,7 @@
  * chat's `chats.timeline_id`) — extraction without a resolvable chat row
  * stores NULL rather than guessing.
  *
- * `down()` drops the column, restoring the exact pre-084 shape for every
+ * `down()` drops the column, restoring the exact pre-085 shape for every
  * row — the binding is fully reverted.
  */
 import { type Kysely, } from "kysely";
