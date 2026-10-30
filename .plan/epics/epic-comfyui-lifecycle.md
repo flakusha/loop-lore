@@ -162,6 +162,7 @@ themselves.
 ## Linked Tasks
 
 - [TASK-comfyui-launch-contract-llama-swap-recipe-and-docs.md](../tickets/TASK-comfyui-launch-contract-llama-swap-recipe-and-docs.md)
+- [TASK-track-upstream-comfyui-memory-leak-issues-fixes.md](../tickets/TASK-track-upstream-comfyui-memory-leak-issues-fixes.md)
 
 ## References
 

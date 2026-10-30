@@ -57,6 +57,18 @@ discovered mid-implementation.
       params from the previous workflow must not be submitted.
 - [ ] Works in both the chat selection surface and the admin editor; a second
       consumer must not require a second renderer.
+- [ ] A `select` whose option source is runtime discovery or another
+      growable set (models, samplers/schedulers, LoRAs, folder-backed
+      combos) renders as a **searchable/filterable** control (type-ahead or
+      filtered dropdown); a small fixed options list may stay a plain
+      `<select>`. The runtime-discovered sources already in scope
+      (`TASK-comfyui-sampler-scheduler-discovery`, the LoRA picker, and the
+      derived folder-backed combos from
+      `TASK-comfyui-parameter-map-derivation-from-marked-workflows`)
+      are all unbounded — an operator's model tree routinely runs to
+      hundreds of entries, and the v-0010 Director boundary alone exposes
+      ~27 combo inputs. One shared searchable-select Alpine partial, not a
+      per-surface reimplementation.
 
 ## Technical Notes
 

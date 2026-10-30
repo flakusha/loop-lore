@@ -12,7 +12,14 @@
 
 **Summary:**
 
-Generic, library-level UI-format to API-format ComfyUI workflow converter: subgraph flattening, promoted-widget substitution by index, link rewrite, and hidden JSON widget preservation. Driven by the v-0010 Director workflow as fixture; cross-linked from the IVSS epic. AC: v-0010 converts to a submittable API graph (fixture committed) and a subgraph-free reference workflow converts identically to its own API form.
+Generic, library-level UI-format to API-format ComfyUI workflow
+converter: subgraph flattening, promoted-widget substitution, link rewrite,
+and hidden JSON widget preservation — **offline**: it converts a saved
+UI-format workflow JSON (no editor, no live graph) guided by a pinned
+`/object_info` snapshot, following the current frontend export behavior
+(`graphToPrompt`, comfyui-frontend-package 1.57.6) with the Unlicense
+SethRobinson converter as reference implementation. Driven by the v-0010
+Director workflow as fixture; cross-linked from the IVSS epic.
 
 **Context:**
 
@@ -20,6 +27,29 @@ Generic, library-level UI-format to API-format ComfyUI workflow converter: subgr
 
 **Acceptance Criteria:**
 
+- [ ] Converts a **saved** UI-format workflow (file on disk, editor absent):
+      the v-0010 fixture (subgraph "Checkpoint settings", 47 inner nodes)
+      produces a submittable flat API graph with colon-path node ids
+      (`<containerId>:<innerId>`), committed as a fixture.
+- [ ] Widget values map **by name** when `widgets_values_named` is present;
+      positional `widgets_values` fallback resolves widget order via
+      `input_order` from the `/object_info` snapshot; unresolved widget inputs
+      are named in a converter report, never silently dropped.
+- [ ] Subgraph-boundary inputs are flattened correctly: a link entering the
+      subgraph lands on the inner `inputNode`'s target; outputs exit from the
+      `outputNode`; global-subgraph references (by definition id from
+      `GET /global_subgraphs`) are fetched and inlined.
+- [ ] Muted (`mode 2/4`) and bypassed (`mode 8`) nodes are excluded and their
+      consumers' dangling inputs pruned, matching frontend export; hidden JSON
+      widgets (`serialize !== false`) preserved; array widget values wrapped
+      `{__value__: [...]}`.
+- [ ] The converter is a pure function over (workflow JSON, object_info
+      snapshot) — unit-tested without a server; a subgraph-free reference
+      workflow converts identically to its own editor-exported API form
+      (round-trip fixture).
+- [ ] Converter report: dropped-muted/bypassed list, unresolved inputs, and
+      node-pack identity (`_meta.cnr_id`/`aux_id`/`ver`) emitted for reuse by
+      `missingRequiredNodes`.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
