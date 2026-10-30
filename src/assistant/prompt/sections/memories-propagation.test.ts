@@ -108,6 +108,14 @@ describe("memory propagation — timeline + party isolation", () => {
     expect(other.partyChatIds,).toEqual([otherId,],);
   });
 
+  test("resolveChatScopeContext terminates on a corrupted parent cycle", async () => {
+    // A data bug must not hang prompt assembly: root ↔ branch cycle.
+    await db.updateTable("chats",).set({ parent_chat_id: branchId, },).where("id", "=", rootId,).execute();
+
+    const ctx = await resolveChatScopeContext(db, rootId,);
+    expect(ctx.partyChatIds,).toEqual([rootId, branchId,],);
+  });
+
   test("party-scoped memories reach split branches but never unrelated chats", async () => {
     await insertActorMemories(db, actorId, "party secret", {
       scope: "party",
