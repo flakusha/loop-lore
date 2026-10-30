@@ -11,6 +11,7 @@ import { createApp, } from "../elysia-app";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { createNonApiHandler, } from "./static-files";
 import { createRequestHandler, handleApiRequest, } from "./handler";
+import { createTerminalGateway, type TerminalSocketData, } from "./terminal-ws";
 import { ensureTlsCerts, } from "../config/cert";
 import { flushActiveStore, } from "../async";
 import { getDatabase, } from "../db/index";
@@ -22,6 +23,7 @@ import { initAssistantQuota, } from "../assistant/quota/engine";
 import { initBackgroundServices, } from "./init-background-services";
 import { initDefaultHooks, } from "../generation/hooks";
 import { initializeProviders, } from "../generation";
+import { isTerminalUpgradeRequest, } from "./terminal-ws-protocol";
 import { join, } from "node:path";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { loadConfig, } from "../config/load";
@@ -125,15 +127,33 @@ export async function start() {
   // Applied to EVERY outgoing response via createRequestHandler.
   const handleRequest = createRequestHandler(app, config, logger, database,);
 
+  // ── Browser PTY terminal (epic approach B) ────────────────
+  // Native Bun websocket handler; an Elysia route cannot upgrade under
+  // this Bun.serve shape. The gate runs after the readiness check so a
+  // booting server still answers 503, never spawns a PTY.
+  const terminalGateway = createTerminalGateway({
+    config,
+    database,
+    logger,
+    rootDir: process.cwd(),
+  },);
+
   // ── Readiness gate ─────────────────────────────────────────
   // The listener opens before plugins/seeds/assets are loaded, so early
   // traffic would hit unloaded routes or unserved assets. Every request
   // gets 503 until the boot work below finishes, so a readiness probe can
   // tell "booting" from "broken".
   let ready = false;
-  const handleGatedRequest = async (request: Request,): Promise<Response> => {
+  const handleGatedRequest = async (
+    request: Request,
+    server?: Bun.Server<TerminalSocketData>,
+  ): Promise<Response | undefined> => {
     if (!ready) {
       return new Response("Server is starting", { status: 503, headers: { "Retry-After": "1", }, },);
+    }
+
+    if (server && isTerminalUpgradeRequest(request,)) {
+      return terminalGateway.handleTerminalUpgrade(request, server,);
     }
 
     return handleRequest(request,);
@@ -168,7 +188,13 @@ export async function start() {
   }
 
   // ── Start HTTP server ──────────────────────────────────────
-  const httpServer = serve({ port: config.server.port, hostname: config.server.host, fetch: handleGatedRequest, },);
+  const httpServer = serve({
+    port: config.server.port,
+    hostname: config.server.host,
+    fetch: (request, server,) => handleGatedRequest(request, server,),
+    websocket: terminalGateway.websocket,
+  },);
+
   serverLogger.info(`HTTP  → http://localhost:${config.server.port}`,);
 
   // ── HTTPS server (TLS certs configured or auto-generated) ─
@@ -179,7 +205,8 @@ export async function start() {
       port: httpsPort,
       hostname: config.server.host,
       tls: { key: Bun.file(tlsFiles.key,), cert: Bun.file(tlsFiles.cert,), },
-      fetch: handleGatedRequest,
+      fetch: (request, server,) => handleGatedRequest(request, server,),
+      websocket: terminalGateway.websocket,
     },);
 
     serverLogger.info(`HTTPS → https://localhost:${httpsPort}`,);
