@@ -29,6 +29,7 @@ import {
   insertMessages,
   insertUsers,
 } from "../../test-utils/insert-helpers";
+import { repetitionRate, } from "../quality";
 import type { GenDeps, } from "./deps";
 import { storeMessage, type StoreMessageOpts, } from "./store-message";
 
@@ -91,8 +92,16 @@ describe("storeMessage", () => {
   test("happy path without parent persists message with null swipe index", async () => {
     await seedChat("chat-1",);
 
+    // Repeated trigram so the recorded repetition rate is non-zero.
+    const content = "the cat sat the cat sat the cat sat and more";
     const result = await storeMessage(
-      makeOpts(db, { chatId: "chat-1", actorId: "actor-chat-1", content: "plain content", },),
+      makeOpts(db, {
+        chatId: "chat-1",
+        actorId: "actor-chat-1",
+        content,
+        latencyMs: 1000,
+        tokenUsage: { promptTokens: 10, completionTokens: 1000, totalTokens: 1010, },
+      },),
     );
 
     expect(result.transformed,).toBe(false,);
@@ -102,10 +111,26 @@ describe("storeMessage", () => {
       .where("id", "=", result.messageId,)
       .executeTakeFirstOrThrow();
 
-    expect(row.content,).toBe("plain content",);
+    expect(row.content,).toBe(content,);
     expect(row.role,).toBe(MessageRole.Assistant,);
     expect(row.parent_id,).toBeNull();
     expect(row.swipe_index,).toBeNull();
+
+    // FEAT-062: latency and throughput land in their dedicated columns.
+    expect(row.generation_time_ms,).toBe(1000,);
+    expect(row.tokens_per_second,).toBe(1000,);
+
+    // ... and the quality blob lands under `metadata.quality`.
+    const metadata = JSON.parse(row.metadata ?? "{}",) as {
+      quality?: { repetitionRate?: number; finishReason?: string };
+    };
+
+    expect(metadata,).toEqual({
+      quality: {
+        repetitionRate: repetitionRate(content,),
+        finishReason: "stop",
+      },
+    },);
   });
 
   test("with parent computes swipe_index as max+1", async () => {
