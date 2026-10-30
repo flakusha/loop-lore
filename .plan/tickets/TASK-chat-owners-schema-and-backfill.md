@@ -3,7 +3,8 @@
 
 # TASK: Chat owners schema and backfill
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Done 2026-10-30 in worktree tree/chat-multi-ownership (commit follows): migration 082 + backfill; `bun run db:sync-types && db:sync-manifest && schemas:check` green; targeted suite `src/db/082_chat_owners.test.ts` + chain suites (migrations/roundtrip/schema-sync) 278/278 pass; gates db-schema/migrations-ordering/typecheck-backend/size-strict PASS. Git issue closes at finalize.
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-chat-multi-ownership
@@ -20,6 +21,6 @@ Migration 082_chat_owners (number picked against real src/db/migrations HEAD at 
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — `src/db/migrations/082_chat_owners.ts` (CREATE TABLE + UNIQUE + CHECK + FK cascades + idx_chat_owners_user + creator backfill; down() drops the table).
+- [x] Tests passing — `bun test src/db/082_chat_owners.test.ts src/db/migrations.test.ts src/db/migration-roundtrip.test.ts src/db/schema-sync.test.ts` → 278 pass / 0 fail (backfill exactness, UNIQUE rejection, reason CHECK 500/501, FK cascades, down() reversal).
+- [x] Documentation updated — `docs/spec/schema.md` Entity Relationships gains chat_owners; generated artifacts regenerated via db:sync-types/db:sync-manifest (schemas:check green).

@@ -6120,6 +6120,23 @@ export async function insertAssistantQuotaUsage(
   return id;
 }
 
+/** Insert a chat_owners row. */
+export async function insertChatOwners(
+  db: Db,
+  chat_id: string,
+  user_id: string,
+  opts?: { id?: string; granted_by?: string | null; granted_at?: string; reason?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("chat_owners",).values({
+    id,
+    chat_id,
+    user_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
 /** Insert a immersion_failed_checks row. */
 export async function insertImmersionFailedChecks(
   db: Db,
