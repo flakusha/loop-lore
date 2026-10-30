@@ -4,8 +4,7 @@
 # TASK: NSFW read-only status panel
 
 **Status:** Done
- **Status Note:** All 7 ACs green — verified against src + scoped frontend tests 2026-10-30.
-**Status:** Done (2026-10-30)
+**Status Note:** All 7 ACs green — verified against src + scoped frontend tests 2026-10-30.
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-nsfw-ui
