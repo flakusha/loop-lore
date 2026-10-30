@@ -7,6 +7,9 @@ import type { InventoryItem, } from "../inventory/inventory-grid";
 import { inventoryOffers, inventoryOffersFactory, stateFromOfferActors, } from "./inventory-offers";
 
 // ── Mock apiFetch (inventory-offers imports ./htmx) ──
+// Resource contract: this file OWNS the ./htmx module mock under --isolate;
+// module-level calls/handler are per-file state reset in afterEach. No fixed
+// paths, ports, or DB are allocated — fetch is fully mocked.
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({ data: [], },);
@@ -267,6 +270,41 @@ describeOrSkip("inventory offers state", () => {
     expect(JSON.parse(String(counter?.opts.body ?? "{}",),),).toEqual({
       counterActorId: "them",
     },);
+  });
+
+  test("counterOffer with cleared (null) price omits the price key", async () => {
+    handler = async (url: string, _opts?: RequestInit,) => {
+      if (url === "/api/v1/worlds/world-1/item-instances") {
+        return Response.json([{ id: "inst-s", item_id: "sword", quantity: 1, owner_actor_id: "them", },],);
+      }
+
+      if (url.startsWith("/api/v1/worlds/world-1/items",)) {
+        return Response.json({ data: [sword(),], },);
+      }
+
+      if (url.includes("/trade/offers?actorId=",)) {
+        return Response.json({ offers: [], },);
+      }
+
+      return Response.json({ ok: true, },);
+    };
+
+    const state = stateFromOfferActors("world-1", "them",);
+    await state.load();
+    await flush();
+    state.offers = [offerBody({ buyerActorId: "me", sellerActorId: "them", },),];
+    state.toggleMine("inst-s",);
+    state.counterPrice = null;
+    await state.counterOffer("offer-1",);
+    await flush();
+    const counter = calls.find((call,) => call.url.endsWith("/counter",));
+    const body = JSON.parse(String(counter?.opts.body ?? "{}",),) as Record<string, unknown>;
+    expect(body,).toEqual({
+      counterActorId: "them",
+      sellerItems: [{ worldItemId: "inst-s", quantity: 1, },],
+    },);
+
+    expect("price" in body,).toBe(false,);
   });
 
   test("loadHistory reads newest-first rows; TypeBox dump falls back", async () => {

@@ -151,3 +151,13 @@ export function ownedBy(body: unknown, actorId: string,): InventoryItem[] {
 
   return rows.filter((row,) => row != null && (row.owner_actor_id === actorId || row.ownerActorId === actorId));
 }
+
+/**
+ * Normalize a draft price: a cleared `x-model.number` input writes null, and
+ * 0 means "no explicit price" — both are unset so the caller falls back.
+ * @param value The raw price, possibly null after the input is cleared.
+ * @returns The price, or undefined when unset.
+ */
+export function priceOrUnset(value: number | null,): number | undefined {
+  return value === null || value === 0 ? undefined : value;
+}
