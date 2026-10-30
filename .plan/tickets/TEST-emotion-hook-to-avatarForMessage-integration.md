@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Emotion-Avatar Completion
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding
 **Tags:** test, integration, emotion-avatar, end-to-end
