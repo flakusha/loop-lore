@@ -38,3 +38,5 @@ exist, but world-timeline fork/switch (`story/whatif-simulator.ts:fork`,
 - [x] Switching updates subsequent generation context to the active timeline — `chats.timeline_id` rewrite drives prompt-assembly scoping (lore section reads it via the AssembleChat projection)
 - [x] Error paths: no world bound to chat, unknown timeline id — plus no-db, unknown subcommand, missing switch id, and non-owner fork/switch
 - [x] Unit tests for the three subcommands + gating (world-scoped authorization) — `src/assistant/commands/timeline.test.ts` (11 tests)
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 0c5128c (registry tip: 15c008ac9 Konstantin Fedotov Close issue)
