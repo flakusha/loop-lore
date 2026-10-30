@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3855
 - epics: 358
-- src paths owned: 4538
-- edges: produces 12069, consumes 405, sibling 37420, owns 2831, related 1193
+- src paths owned: 4537
+- edges: produces 12068, consumes 405, sibling 37420, owns 2831, related 1193
 
 ## Shared src hubs
 
@@ -9841,7 +9841,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-backgrounds-location-sync` | produces | `src/routes/backgrounds.ts` | - |
 | `TASK-chat-backgrounds-location-sync` | produces | `src/routes/worlds.ts` | - |
 | `TASK-chat-backgrounds-location-sync` | produces | `src/views/chat.html` | - |
-| `TASK-chat-branch-merge` | produces | `src/chat/service/split-execution.ts` | - |
 | `TASK-chat-branch-merge` | produces | `src/chat/service/split-utils.ts` | - |
 | `TASK-chat-branch-merge` | produces | `src/chat/service/split.test.ts` | - |
 | `TASK-chat-branch-merge` | produces | `src/chat/service/split.ts` | - |
