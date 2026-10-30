@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
+**Status Note:** [2026-10-30, feat-timeline-remainder] Both gaps closed. (1) `rollSteering`/`resolveSteering` now run the pending-status read INSIDE `db.transaction()` together with the status flip + `appendTimelineEvents` (src/story/timeline/event-steering.ts), so a concurrent double-roll can no longer both observe Pending; covered by the new "concurrent double-roll manifests exactly one timeline event" test. (2) `createSteering` rejects an empty/whitespace `timelineId` with a clear error (documented via `@throws`) instead of seeding an orphan branch id — reject chosen over coerce because the only non-test caller (src/story/plot-autopilot.ts) omits `timelineId`, and the function already rejects an empty `description`; covered by "rejects an empty timelineId instead of persisting it". Suite: bun test src/story/timeline/event-steering.test.ts — 14 pass / 0 fail (12 pre-existing + 2 new). Gates: typecheck - backend, typecheck - frontend, lint - eslint, format - dprint, fe-be - harmony — all PASS.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-timeline-system
@@ -19,9 +20,9 @@ Self-review of G2 merge (257010652) found two non-blocking gaps in src/story/tim
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated (@throws JSDoc + ticket status note)
 
 ## Progress (2026-09-11)
 
