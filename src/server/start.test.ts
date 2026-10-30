@@ -67,6 +67,11 @@ if (ISOLATED) {
   mock.module("../db/index", () => ({ getDatabase: () => fakeDb, getSqliteDatabase: () => null, }),);
   mock.module("../db/migrate", () => ({ runDataMigrations: async () => {}, runMigrations: async () => {}, }),);
   mock.module("../db/seed", () => ({ seedDefaultActors: async () => {}, }),);
+  mock.module(
+    "../characters/services/emotion-avatar-service/restart-reconcile",
+    () => ({ reconcileInterruptedJobs: async () => ({ cached: 0, interrupted: 0, }), }),
+  );
+
   mock.module("../elysia-app", () => ({ createApp: () => fakeApp, }),);
   mock.module("../generation", () => ({ initializeProviders: () => {}, }),);
   mock.module("../generation/hooks", () => ({ initDefaultHooks: () => {}, }),);

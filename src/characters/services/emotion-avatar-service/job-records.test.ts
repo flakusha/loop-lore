@@ -12,6 +12,7 @@ import {
   createGenerationJobRecord,
   findRecordedBaseSeed,
   getGenerationJobRecord,
+  listEmotionAvatarJobRecords,
   listGenerationJobRecords,
   recordBatchFinish,
   recordBatchStart,
@@ -199,6 +200,35 @@ describe("generation job records", () => {
       expect(await findRecordedBaseSeed(db, "actor-seed-1", "outfit-1",),).toBe(333,);
       expect(await findRecordedBaseSeed(db, "actor-seed-1", "outfit-unknown",),).toBeUndefined();
       expect(await findRecordedBaseSeed(db, "actor-seed-unknown",),).toBeUndefined();
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("listEmotionAvatarJobRecords returns all emotion-avatar rows newest first", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertActors(db, "Avatar List Actor", { id: "actor-avlist-1", },);
+      for (const id of ["job-av-a", "job-av-b",]) {
+        await createGenerationJobRecord(db, {
+          id,
+          kind: "emotion-avatar",
+          actorId: "actor-avlist-1",
+          payload: { emotions: [], baseAvatarId: "av-x", },
+          startedAt: "2026-09-11T00:00:00.000Z",
+        },);
+      }
+
+      await createGenerationJobRecord(db, {
+        id: "job-other-kind",
+        kind: "other-kind",
+        actorId: "actor-avlist-1",
+        payload: { emotions: [], baseAvatarId: "av-x", },
+        startedAt: "2026-09-11T00:00:00.000Z",
+      },);
+
+      const listed = await listEmotionAvatarJobRecords(db,);
+      expect(listed.map((record,) => record.id),).toEqual(["job-av-b", "job-av-a",],);
     } finally {
       sqlite.close();
     }
