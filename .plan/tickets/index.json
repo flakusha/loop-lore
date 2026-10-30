@@ -28245,7 +28245,7 @@
     "label": "task",
     "priority": "High (security)",
     "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "assistant",
       "prompt-injection",
