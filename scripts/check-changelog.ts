@@ -13,7 +13,10 @@
  *  2. Every released section matches `## [x.y.z] - YYYY-MM-DD`.
  *  3. Sections are newest-first (descending semver, `[Unreleased]` on top).
  *  4. No duplicate version sections.
- *  5. If the latest `x.y.z` git tag (bare, no `v` prefix) exists, CHANGELOG
+ *  5. No duplicate `### ` subheadings within `[Unreleased]` (a verbatim
+ *     re-paste of a block defeats the weave merge driver's heading-entity
+ *     matching and fans out into phantom CHANGELOG conflicts).
+ *  6. If the latest `x.y.z` git tag (bare, no `v` prefix) exists, CHANGELOG
  *     must already contain a matching section (prevents releasing with a
  *     stale changelog).
  *
@@ -38,6 +41,32 @@ interface Section {
 
 const VERSION_RE = /^## \[(\d+\.\d+\.\d+)\]\s+-\s+(\d{4}-\d{2}-\d{2})$/;
 const UNRELEASED_RE = /^## \[Unreleased\]$/;
+const SUBHEADING_RE = /^### (.+)$/;
+
+function checkUnreleasedSubheadings(lines: string[],): string[] {
+  const errors: string[] = [];
+  const start = lines.findIndex((l,) => UNRELEASED_RE.test(l,));
+  if (start === -1) { return errors; }
+  const rest = lines.slice(start + 1,);
+  const end = rest.findIndex((l,) => l.startsWith("## ",));
+  const scope = end === -1 ? rest : rest.slice(0, end,);
+  const base = start + 2; // 1-based line number of scope[0]
+  const seen = new Map<string, number>();
+  scope.forEach((line, index,) => {
+    const match = SUBHEADING_RE.exec(line,);
+    if (!match) { return; }
+    const name = match[1]!;
+    const prev = seen.get(name,);
+    if (prev !== undefined) {
+      errors.push(
+        `duplicate ### ${name} in [Unreleased] (lines ${prev} and ${base + index})`,
+      );
+      return;
+    }
+    seen.set(name, base + index,);
+  },);
+  return errors;
+}
 
 function parseSections(lines: string[],): { sections: Section[]; errors: string[] } {
   const sections: Section[] = [];
@@ -128,6 +157,7 @@ function main(): void {
   }
 
   errors.push(...checkOrdering(sections,),);
+  errors.push(...checkUnreleasedSubheadings(lines,),);
 
   const latestTag = ignoreTag ? null : latestGitTag();
   if (latestTag) {
@@ -150,4 +180,8 @@ function main(): void {
   console.log(`changelog - gate: OK - [Unreleased] present, ${versionCount} version section(s)`,);
 }
 
-main();
+if (import.meta.main) {
+  main();
+}
+
+export { checkUnreleasedSubheadings, };
