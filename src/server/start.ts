@@ -6,6 +6,7 @@ import { applyConfigChange, initConfigHotApply, onConfigChange, } from "../confi
 import { applyEnvironmentOverrides, seedConfiguredContent, seedConfiguredUsers, } from "../seeding";
 import { applyHotConfig, } from "../config/hot-apply-consumers";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
+import { bindSharedQuotaEngine, } from "../generation/quota-engine";
 import { createApp, } from "../elysia-app";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { createNonApiHandler, } from "./static-files";
@@ -92,6 +93,7 @@ export async function start() {
 
   const database = getDatabase();
   const logger = getLogger();
+  bindSharedQuotaEngine(database,);
 
   // ── Periodic key rotation + telemetry retention ──────────
   // Owned by the cron scheduler (started in createApp below): jobs

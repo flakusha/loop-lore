@@ -29,6 +29,7 @@ import { handleImageCaption, } from "./caption-route";
 import { handleGenerate, } from "./generate-route";
 import {
   handleBackupHashes,
+  handleBackupRestore,
   handleCancelGeneration,
   handleContinueGeneration,
   handleGenerationStatus,
@@ -161,6 +162,12 @@ export function generationRoutes(
   app.get(`${prefix}/settings/backups/hashes`, async (ctx,) => {
     const auth = ctx as unknown as { userId?: string; userRole?: string | null };
     return handleBackupHashes(database, auth.userId, auth.userRole,);
+  },);
+
+  app.post(`${prefix}/settings/backups/:id/restore`, async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    const params = ctx.params as { id?: string };
+    return handleBackupRestore(readBody(ctx,), params.id ?? "", database, auth.userId, auth.userRole,);
   },);
 
   return app;
