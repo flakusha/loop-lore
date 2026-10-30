@@ -13,6 +13,8 @@ export interface ChatCoreGenerationState {
   _streamToolCalls: string[];
   /** Latest streamed content HTML (preserved so tool-call renders don't wipe it). */
   _streamContent: string;
+  /** Latest harness job-status line pushed over the per-chat SSE stream (empty = none). */
+  _jobStatusLine: string;
   generationDetail: GenerationDetail | null;
   connectGenerationSSE(chatId: string,): void;
   sendWithPreferredMode(chatId: string, onDone?: () => void,): Promise<void>;
