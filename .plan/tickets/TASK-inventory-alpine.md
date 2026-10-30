@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Inventory & Trading UI frontend (epic-inventory-ui.md Phase 1: grid/list, sorting/filtering, details panel)
 **Priority:** P1 — High
 **Effort:** Medium
@@ -38,3 +38,5 @@ Alpine.js state management for inventory system.
 ## Files to Create
 
 - `src/frontend/alpine/inventory.ts`
+
+**Resolved:** 2026-10-30 registry-driven close: git issue e854971 (registry tip: fd1cce650 Konstantin Fedotov Close issue)

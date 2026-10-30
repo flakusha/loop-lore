@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Inventory & Trading UI frontend (epic-inventory-ui.md Phase 1: grid/list, sorting/filtering, details panel)
 **Priority:** P1 — High
 **Effort:** Medium
@@ -39,3 +39,5 @@ Inventory grid display for items.
 
 - `src/frontend/inventory/inventory-grid.ts`
 - `src/frontend/inventory/inventory-slot.ts`
+
+**Resolved:** 2026-10-30 registry-driven close: git issue d3b7eba (registry tip: c3d2789b1 Konstantin Fedotov Close issue)
