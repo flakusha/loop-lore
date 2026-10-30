@@ -13,6 +13,16 @@
 export { deriveParameters, } from "./derive";
 export { ParameterDerivationError, } from "./errors";
 export type { ParameterDerivationFailure, } from "./errors";
+export { IngestError, ingestWorkflow, sniffWorkflowFormat, } from "./ingest";
+export type {
+  IngestFailure,
+  IngestOptions,
+  IngestRejection,
+  IngestResult,
+  IngestSuccess,
+  IngestWorkflowId,
+  WorkflowFormat,
+} from "./ingest";
 export { injectPlaceholders, resolveBindings, } from "./inject";
 export type { InjectedPlaceholder, InjectOptions, ResolveOptions, } from "./inject";
 export { collectMarked, MARK_PREFIX, } from "./marks";
