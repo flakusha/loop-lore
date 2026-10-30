@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-30T12:32:44.659Z",
-  "count": 1416,
+  "generatedAt": "2026-10-30T13:18:19.626Z",
+  "count": 1414,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -214,7 +214,6 @@
     "src/chat/service/ownership-events.ts#emitOwnershipTransferNotifications",
     "src/chat/service/party-narration.ts#injectPartyNarration",
     "src/chat/service/read.ts#getMessageVariants",
-    "src/chat/service/read.ts#getMessageWithAccess",
     "src/chat/service/split-utils.ts#copyMessagesToPrimary",
     "src/chat/service/split-utils.ts#createBranchChat",
     "src/chat/service/split-utils.ts#mergeParticipantsIntoPrimary",
@@ -413,7 +412,6 @@
     "src/db/enums-core/moderation.ts#ModerationFlagStatus",
     "src/db/enums-core/moderation.ts#NsfwAccessStatus",
     "src/db/enums-core/moderation.ts#nsfwAccessStatusMachine",
-    "src/db/enums-core/users.ts#ChatVisibility",
     "src/db/enums-core/users.ts#ThinkingVisibility",
     "src/db/enums-crafting.ts#CraftingDiscipline",
     "src/db/enums-crafting.ts#GatheringDiscipline",

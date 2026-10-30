@@ -18,7 +18,7 @@
  */
 import { afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
-import { ownersActions, } from "./owners";
+import { OWNER_CAP, ownersActions, } from "./owners";
 
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
@@ -108,6 +108,10 @@ describeOrSkip("ownersActions.loadChatOwners", () => {
 },);
 
 describeOrSkip("ownersActions.ownerCapReached", () => {
+  test("OWNER_CAP mirrors the server 3-owner ceiling", () => {
+    expect(OWNER_CAP,).toBe(3,);
+  });
+
   test("false below the cap", () => {
     const ctx = ownersCtx({ _owners: ["a", "b",], },);
     expect(ownersActions.ownerCapReached!.call(ctx,),).toBe(false,);
