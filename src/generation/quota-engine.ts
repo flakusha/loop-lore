@@ -3,11 +3,14 @@
 
 // src/generation/quota-engine.ts — per-resource fixed-window quota counters.
 //
-// In-memory map is the routing-decision source of truth; `resource_quota_counters`
-// persists it for durability across sessions. The check-and-increment in
-// `consumeRequest` runs synchronously with no await between check and mutation,
-// so concurrent callers cannot interleave and overshoot (single-threaded
-// atomicity) — the DB persist happens after the decision, never before it.
+// Durability first: the DB row (`resource_quota_counters`) is the source of
+// truth. `rolled()` keeps an in-memory fast path, but every `consumeRequest`
+// re-reads the row through `refreshFromDb` BEFORE the guard, so two engine
+// instances (or a process restart) observe the same counters. The refresh is
+// also the lazy window rollover: an expired window reads back as zeroed (and
+// persists the reset, so the quota gauge never shows a stale spent window).
+// In-process concurrency is serialized by a promise chain (ponytail:
+// single-process lock; multi-process needs a guarded DB write).
 // See epic-resource-provision.md (Quota Enforcement Points).
 
 import type { Kysely, } from "kysely";
@@ -39,6 +42,11 @@ interface Counter {
   windowStart: number;
   requests: number;
   tokens: number;
+}
+
+/** Chain keepalive: later consume/record calls still serialize after a rejection. */
+function keepChainAlive(): void {
+  /* promise-chain keepalive, intentionally empty */
 }
 
 export interface QuotaEngineOpts {
@@ -77,6 +85,8 @@ export class QuotaEngine {
   private readonly windowMs: number;
   private readonly clock: () => number;
   private db: Kysely<DB> | null;
+  /** Serializes consume/record pairs in-process; the DB row is the authority. */
+  private chain: Promise<void> = Promise.resolve();
 
   constructor(opts?: QuotaEngineOpts,) {
     this.windowMs = opts?.windowMs ?? 60_000;
@@ -112,12 +122,65 @@ export class QuotaEngine {
   }
 
   /**
-   * Pre-call guard: reject when the request or token budget is spent, else
-   * consume one request. Throws QuotaExceededError BEFORE any external call.
+   * Roll a DB row into the fixed window: an expired window reads back as
+   * zeroed. Returns null when the window expired (caller persists the reset).
+   */
+  private rollRow(row: { window_start: string; requests: number; tokens: number },): Counter | null {
+    const now = this.clock();
+    const windowStart = Number(row.window_start,);
+    if (!Number.isFinite(windowStart,) || now - windowStart >= this.windowMs) { return null; }
+    return { windowStart, requests: row.requests, tokens: row.tokens, };
+  }
+
+  /** Re-read the persisted row; rolls an expired window on the read path. */
+  private async refreshFromDb(resourceId: string,): Promise<void> {
+    if (!this.db) { return; }
+    const row = await this.db
+      .selectFrom("resource_quota_counters",)
+      .select(["window_start", "requests", "tokens",],)
+      .where("resource_id", "=", resourceId,)
+      .executeTakeFirst();
+
+    if (!row) {
+      this.counters.delete(resourceId,);
+      return;
+    }
+
+    const rolled = this.rollRow(row,);
+    if (!rolled) {
+      // Expired: the window reads back as zeroed. Persist the reset so a
+      // second instance (or the quota gauge) never sees the stale window.
+      const fresh: Counter = { windowStart: this.clock(), requests: 0, tokens: 0, };
+      this.counters.set(resourceId, fresh,);
+      await this.persist(resourceId, fresh,);
+      return;
+    }
+
+    this.counters.set(resourceId, rolled,);
+  }
+
+  /** Current counter; consults the DB row first when a handle is bound. Test seam. */
+  async readCounter(resourceId: string,): Promise<Counter> {
+    await this.refreshFromDb(resourceId,);
+    return this.rolled(resourceId,);
+  }
+
+  /**
+   * Pre-call guard: DB row is re-read BEFORE the check (two instances see
+   * the same usage), then reject when the request or token budget is spent,
+   * else consume one request. Throws QuotaExceededError BEFORE any call.
    * @param resourceId - resource being charged
    * @param quota - ceiling from the resource record
    */
   async consumeRequest(resourceId: string, quota: ResourceQuota,): Promise<void> {
+    const ticket = this.chain.then(() => this.consumeInner(resourceId, quota,));
+    // Keep the chain alive across a rejection so later calls still serialize.
+    this.chain = ticket.then(keepChainAlive, keepChainAlive,);
+    return ticket;
+  }
+
+  private async consumeInner(resourceId: string, quota: ResourceQuota,): Promise<void> {
+    await this.refreshFromDb(resourceId,);
     const state = this.rolled(resourceId,);
     if (quota.requestsPerMinute > 0 && state.requests >= quota.requestsPerMinute) {
       throw new QuotaExceededError({ resourceId, kind: "requests", limit: quota.requestsPerMinute, },);
@@ -140,9 +203,21 @@ export class QuotaEngine {
    */
   async recordTokenUsage(resourceId: string, tokens: number,): Promise<void> {
     if (tokens <= 0) { return; }
+    const ticket = this.chain.then(() => this.recordInner(resourceId, tokens,));
+    this.chain = ticket.then(keepChainAlive, keepChainAlive,);
+    return ticket;
+  }
+
+  private async recordInner(resourceId: string, tokens: number,): Promise<void> {
+    await this.refreshFromDb(resourceId,);
     const state = this.rolled(resourceId,);
     state.tokens += tokens;
     await this.persist(resourceId, state,);
+  }
+
+  /** Drop the cached counter (quota-override path). DB delete happens at the call site. */
+  invalidate(resourceId: string,): void {
+    this.counters.delete(resourceId,);
   }
 
   /** Lazy fixed-window rollover: an expired window resets to zero. */
@@ -185,4 +260,29 @@ export class QuotaEngine {
       )
       .execute();
   }
+}
+
+/**
+ * Process-wide quota engine shared by the production dispatch path.
+ * Bound once per process to the app DB at startup (bindSharedQuotaEngine);
+ * tests inject their own engine instead.
+ */
+let sharedEngine: QuotaEngine | null = null;
+
+/** The shared engine, creating (unbound) on first use. */
+export function getQuotaEngine(): QuotaEngine {
+  if (!sharedEngine) { sharedEngine = new QuotaEngine(); }
+  return sharedEngine;
+}
+
+/** Bind the shared engine to the app DB. Call once at startup. */
+export function bindSharedQuotaEngine(db: Kysely<DB> | null,): QuotaEngine {
+  const engine = getQuotaEngine();
+  engine.bindDb(db,);
+  return engine;
+}
+
+/** Drop one resource from the shared engine (quota-override path). */
+export function invalidateSharedQuota(resourceId: string,): void {
+  sharedEngine?.invalidate(resourceId,);
 }

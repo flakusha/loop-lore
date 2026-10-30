@@ -135,6 +135,16 @@ export async function handleQuotaOverride(
   return jsonResponse({ ok: true, resourceId, },);
 }
 
+/** One server-side backup entry: keyed per backup so multiple backups of
+ * one resource_type/owner (e.g. two chats) never collapse into one row. */
+export interface BackupHashEntry {
+  id: string;
+  resourceType: string;
+  resourceId: string;
+  serverHash: string;
+  serverVersion: number;
+}
+
 /**
  * GET /api/v1/settings/backups/hashes
  *
@@ -142,6 +152,11 @@ export async function handleQuotaOverride(
  * reconciles its local backup copies against these content hashes.
  * Owners see only their own backups; `admin.settings` holders see all
  * (mirrors the scoping of handleQuotaState).
+ *
+ * Response shape: `{ hashes: Record<backupId, BackupHashEntry> }` keyed by
+ * the server backup `id` (stable across owners/types). The legacy
+ * `resource_type:owner_id` key collapsed every owner's same-type backups
+ * into the last row — clients key reconcile lookups per backup instead.
  */
 export async function handleBackupHashes(
   database: Kysely<DB>,
@@ -154,15 +169,20 @@ export async function handleBackupHashes(
   const isAdmin = can(userRole ?? null, "admin.settings",);
   let query = database
     .selectFrom("backup_records",)
-    .select(["resource_type", "owner_id", "content_hash", "version",],);
+    .select(["id", "resource_type", "owner_id", "content_hash", "version",],);
 
   if (!isAdmin) { query = query.where("owner_id", "=", authUserId,); }
   const rows = await query.execute();
 
-  const hashes: Record<string, { serverHash?: string; serverVersion?: number }> = {};
+  const hashes: Record<string, BackupHashEntry> = {};
   for (const row of rows) {
-    const key = `${row.resource_type}:${row.owner_id}`;
-    hashes[key] = { serverHash: row.content_hash, serverVersion: row.version, };
+    hashes[row.id] = {
+      id: row.id,
+      resourceType: row.resource_type,
+      resourceId: row.id,
+      serverHash: row.content_hash,
+      serverVersion: row.version,
+    };
   }
 
   return jsonResponse({ hashes, },);
