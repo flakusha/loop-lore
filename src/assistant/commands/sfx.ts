@@ -33,11 +33,7 @@ function handleSfx(args: string[],): CommandResult {
   };
 }
 
-registerCommand("sfx", (args,): CommandResult => {
-  return handleSfx(args,);
-}, { available: false, capabilities: ["write-asset",], },);
+registerCommand("sfx", handleSfx, { available: false, capabilities: ["write-asset",], },);
 
 // Alias: /sound → /sfx
-registerCommand("sound", (args,): CommandResult => {
-  return handleSfx(args,);
-}, { available: false, capabilities: ["write-asset",], },);
+registerCommand("sound", handleSfx, { available: false, capabilities: ["write-asset",], },);
