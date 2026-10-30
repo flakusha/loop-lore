@@ -15,6 +15,7 @@ import { charactersHandler, } from "./characters";
 import { chatDetailHandler, } from "./chats";
 import { knowledgeGraphHandler, } from "./knowledge-graph";
 import { overviewHandler, } from "./overview";
+import { qualityHandler, } from "./quality";
 import type { AnalyticsCtx, } from "./types";
 
 interface HandleOpts {
@@ -45,6 +46,7 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
       (ctx,) => charactersHandler(database, ctx as unknown as AnalyticsCtx,),
       hooks,
     )
+    .get(`${prefix}/analytics/quality`, (ctx,) => qualityHandler(database, ctx as unknown as AnalyticsCtx,), hooks,)
     .get(
       `${prefix}/memory/knowledge-graph`,
       (ctx,) => knowledgeGraphHandler(database, ctx as unknown as AnalyticsCtx,),

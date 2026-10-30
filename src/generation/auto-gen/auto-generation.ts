@@ -268,6 +268,8 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       tokenUsage: llm.tokenUsage,
       dominantEmotion: hooks.dominantEmotion,
       thinking: llm.thinking,
+      finishReason: llm.finishReason,
+      latencyMs: Date.now() - startedAtMs,
     },);
 
     log.debug("message stored", { messageId: stored.messageId, contentLength: llm.content.length, requestId, },);
