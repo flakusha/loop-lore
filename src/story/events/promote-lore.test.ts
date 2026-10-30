@@ -11,8 +11,10 @@
  *     (and can be opted out via data.promoteToLore === false)
  */
 import { describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
 import { isLoreVisibleTo, parseLoreScope, } from "../../assistant/lore/audience";
 import { WorldEventType, } from "../../db/enums-story";
+import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
@@ -167,6 +169,61 @@ describe("applyEvents — WorldLoreUpdate promotes to structured lore", () => {
       },);
 
       expect(await countRows(),).toHaveLength(1,);
+    } finally {
+      sqlite.close();
+    }
+  });
+});
+
+describe("promoteEventToLore — rarity → priority mapping", () => {
+  /** Read back the promoted row's priority by content. */
+  async function priorityOf(db: Kysely<DB>, content: string,): Promise<number> {
+    const row = await db
+      .selectFrom("world_lore_entries",)
+      .select("priority",)
+      .where("content", "=", content,)
+      .executeTakeFirstOrThrow();
+
+    return row.priority;
+  }
+
+  test("a valid rarity sets the priority from the documented mapping", async () => {
+    const { db, sqlite, worldId, } = await setupWorld();
+    try {
+      await promoteEventToLore(db, worldId, {
+        description: "A legend is born.",
+        data: { newLoreEntry: "The artifact sleeps beneath the tarn.", rarity: "legendary", },
+      },);
+
+      expect(await priorityOf(db, "The artifact sleeps beneath the tarn.",),).toBe(40,);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("an absent rarity keeps the behavior-preserving priority 0", async () => {
+    const { db, sqlite, worldId, } = await setupWorld();
+    try {
+      await promoteEventToLore(db, worldId, {
+        description: "A battle is won.",
+        data: { newLoreEntry: "The western gate fell at dusk.", },
+      },);
+
+      expect(await priorityOf(db, "The western gate fell at dusk.",),).toBe(0,);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("an invalid rarity is ignored — priority 0, no throw", async () => {
+    const { db, sqlite, worldId, } = await setupWorld();
+    try {
+      await promoteEventToLore(db, worldId, {
+        description: "A rumor spreads.",
+        data: { newLoreEntry: "The tavern keeper lies about dragons.", rarity: "MYTHIC", },
+      },);
+
+      expect(await priorityOf(db, "The tavern keeper lies about dragons.",),).toBe(0,);
     } finally {
       sqlite.close();
     }

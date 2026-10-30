@@ -18,6 +18,7 @@ import { isValidUuid, type LoreScope, } from "../../assistant/lore/audience";
 import { LoreEntryStatus, LorePosition, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
 import { safeJsonStringify, } from "../../utils";
+import { EVENT_RARITY_PRIORITY, parseEventRarity, } from "./rarity";
 
 /** Known subject kinds accepted at promotion time (docs/spec/lore.md §3.2). */
 export const KNOWN_SUBJECT_KINDS: Record<string, true> = {
@@ -85,6 +86,8 @@ export function normalizeAudienceScope(value: unknown,): LoreScope | null {
  * @param event   The validated world event to promote.
  * @param event.description
  * @param event.data
+ * @param event.data.rarity - Optional rarity tier (shared loot scale); an
+ *   absent or invalid value is ignored and the entry keeps priority 0.
  * @returns The new entry's id, or null when there is nothing to promote.
  */
 export async function promoteEventToLore(
@@ -104,6 +107,11 @@ export async function promoteEventToLore(
   const name = typeof event.data.name === "string" ? event.data.name : null;
   const audienceScope = normalizeAudienceScope(event.data.audienceScope,);
 
+  // Rarity is optional metadata: absent or invalid → priority 0
+  // (behavior-preserving; promotion must never fail on an unknown tier).
+  const rarity = parseEventRarity(event.data.rarity,);
+  const priority = rarity === null ? 0 : EVENT_RARITY_PRIORITY[rarity];
+
   // audienceScope is already a validated LoreScope object; serialization is safe.
   const scopeJson = audienceScope ? safeJsonStringify(audienceScope,) : null;
   const audienceScopeJson = scopeJson?.ok ? scopeJson.value : null;
@@ -120,7 +128,7 @@ export async function promoteEventToLore(
     constant: 0,
     selective: 0,
     insertion_order: 0,
-    priority: 0,
+    priority,
     sort_order: 0,
     cooldown_seconds: 0,
     created_at: new Date().toISOString(),
