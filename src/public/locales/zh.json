@@ -246,7 +246,10 @@
     "stored": "stored",
     "localInference": "Browser-side inference (opt-in)",
     "templates": "Templates",
-    "contentLanguage": "内容语言"
+    "contentLanguage": "内容语言",
+    "sessions": "Sessions",
+    "sessionsTitle": "Active Sessions",
+    "sessionsDescription": "Devices currently signed in to your account. Revoke anything you do not recognize; switching moves your active login to that device."
   },
   "admin": {
     "title": "Administration",
@@ -1428,7 +1431,16 @@
     "invalidLocale": "Invalid locale"
   },
   "sessions": {
-    "cannotDeleteCurrent": "Cannot delete current session. Use /api/auth/logout instead."
+    "cannotDeleteCurrent": "Cannot delete current session. Use /api/auth/logout instead.",
+    "loadFailed": "Failed to load sessions.",
+    "revokeFailed": "Failed to revoke the session.",
+    "switchFailed": "Failed to switch session.",
+    "expired": "That session has expired and the list was refreshed.",
+    "unknownDevice": "Unknown device",
+    "current": "Current",
+    "switch": "Switch",
+    "revoke": "Revoke",
+    "expires": "Expires"
   },
   "filter": {
     "allTypes": "All types",
