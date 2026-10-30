@@ -46905,6 +46905,10 @@
   ],
   "src/routes/nsfw/shared.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-capabilities.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md"
     },
@@ -59146,6 +59150,10 @@
     }
   ],
   "src/validation/schemas/nsfw.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-capabilities.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md"

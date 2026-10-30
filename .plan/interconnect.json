@@ -52667,7 +52667,9 @@
         "src/middleware/nsfw-gate/consent.ts",
         "src/nsfw/moderation-service/overrides.ts",
         "src/routes/nsfw-moderation/overrides.ts",
-        "src/schemas/nsfw-rating.ts"
+        "src/routes/nsfw/shared.ts",
+        "src/schemas/nsfw-rating.ts",
+        "src/validation/schemas/nsfw.ts"
       ],
       "related": []
     },
@@ -81209,7 +81211,8 @@
       "owners": [
         "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
-        "TASK-nsfw-consent-grant-route-missing"
+        "TASK-nsfw-consent-grant-route-missing",
+        "epic-nsfw-capabilities"
       ]
     },
     {
@@ -88677,7 +88680,8 @@
       "path": "src/validation/schemas/nsfw.ts",
       "owners": [
         "BUG-nsfw-write-routes-authorize-actor-but-not-target",
-        "TASK-nsfw-consent-grant-route-missing"
+        "TASK-nsfw-consent-grant-route-missing",
+        "epic-nsfw-capabilities"
       ]
     },
     {
@@ -163293,7 +163297,17 @@
     {
       "from": "epic-nsfw-capabilities",
       "kind": "produces",
+      "to": "src/routes/nsfw/shared.ts"
+    },
+    {
+      "from": "epic-nsfw-capabilities",
+      "kind": "produces",
       "to": "src/schemas/nsfw-rating.ts"
+    },
+    {
+      "from": "epic-nsfw-capabilities",
+      "kind": "produces",
+      "to": "src/validation/schemas/nsfw.ts"
     },
     {
       "from": "epic-nsfw-game-mechanics",
@@ -232771,6 +232785,12 @@
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
+      "to": "epic-nsfw-capabilities",
+      "via": "src/routes/nsfw/shared.ts; src/validation/schemas/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
       "to": "epic-nsfw-game-mechanics",
       "via": "src/db/enums-character/nsfw.ts"
     },
@@ -238911,6 +238931,12 @@
       "kind": "sibling",
       "to": "epic-middleware-request-lifecycle",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "sibling",
+      "to": "epic-nsfw-capabilities",
+      "via": "src/routes/nsfw/shared.ts"
     },
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
@@ -365319,6 +365345,12 @@
       "kind": "sibling",
       "to": "epic-frontend-age-gate",
       "via": "src/middleware/nsfw-gate/index.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "sibling",
+      "to": "epic-nsfw-capabilities",
+      "via": "src/routes/nsfw/shared.ts; src/validation/schemas/nsfw.ts"
     },
     {
       "from": "TASK-nsfw-consent-grant-route-missing",
