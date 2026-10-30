@@ -319,9 +319,9 @@ export function defaultJobs(): CronJobDef[] {
       schedule: "0 4 * * *",
       enabled: true,
       run: async ({ database, logger, },) => {
-        const { importUgi, } = await import("../models/global-boards");
-        const written = await importUgi(database,);
-        logger.info("global board import complete", { module: "cron", written, },);
+        const { importAllBoards, } = await import("../models/boards-registry");
+        const written = await importAllBoards(database,);
+        logger.info("global boards import complete", { module: "cron", written, },);
         return { written, };
       },
     },),
