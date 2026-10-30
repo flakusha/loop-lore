@@ -95,6 +95,12 @@ export interface ToolExecutionContext {
   db: Kysely<DB>;
   actorId: string;
   chatId: string;
+  /**
+   * Explicit escalation for the worktree scope guard
+   * (`src/harness/worktree-scope.ts`): allows tool path arguments that resolve
+   * outside the worktree root. Every escalation is logged; default is deny.
+   */
+  requestRootChange?: boolean;
 }
 
 /**
