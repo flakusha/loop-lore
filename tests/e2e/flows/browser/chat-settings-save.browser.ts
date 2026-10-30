@@ -81,6 +81,13 @@ describe("Chat settings save + ownership transfer (B5)", () => {
         .insertInto("chat_participants",)
         .values({ chat_id: chatId, actor_id: SEED.solo.id, role_in_chat: "owner", },)
         .execute();
+
+      // Production create path seeds the creator's owners row (owners set
+      // is the authority source) — mirror it so settings/transfer see solo.
+      await ctx.db
+        .insertInto("chat_owners",)
+        .values({ chat_id: chatId, user_id: SEED.solo.id, },)
+        .execute();
     }
 
     // Second user + actor (same id, per app convention), participant (member)
@@ -211,14 +218,23 @@ describe("Chat settings save + ownership transfer (B5)", () => {
       expect(byActor.get(newUserActorId,),).toBe("owner",);
       expect(byActor.get(SEED.solo.id,),).toBe("member",);
 
-      // The chat's created_by follows the new owner.
+      // created_by is the frozen creator record — it stays with the
+      // original creator; ownership itself moves in the owners set.
       const chat = await ctx.db
         .selectFrom("chats",)
         .select(["created_by",],)
         .where("id", "=", ownershipChatId,)
         .executeTakeFirstOrThrow();
 
-      expect(chat.created_by,).toBe(newUserActorId,);
+      expect(chat.created_by,).toBe(SEED.solo.id,);
+
+      const owners = await ctx.db
+        .selectFrom("chat_owners",)
+        .select("user_id",)
+        .where("chat_id", "=", ownershipChatId,)
+        .execute();
+
+      expect(owners.map((r,) => r.user_id),).toEqual([newUserActorId,],);
     } finally {
       errors.assert();
       errors.detach();
