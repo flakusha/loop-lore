@@ -31,30 +31,31 @@ This ticket elevates the NSFW moderation tasks to High Priority. The capability 
 
 ### Gate Decision Auditing
 
-- [ ] Non-public audit log of NSFW gate decisions
+- [x] Non-public audit log of NSFW gate decisions — `logNsfwEvent` (`src/middleware/nsfw-gate/logging.ts:56`, HMAC-hashed ids + closed reason enum); every gate decision flows through it (`src/generation/hooks/nsfw-hook-log.ts:25`); `TASK-nsfw-gate-moderation.md` Done
 
 ### User Block / Ban / Shadow
 
-- [ ] Block users from NSFW interactions specifically
-- [ ] Ban users from NSFW content entirely
-- [ ] Shadow NSFW messages for specific viewers
-- [ ] Collapse NSFW content in group chats
+- [x] Block users from NSFW interactions specifically — `POST /api/nsfw/moderation/block` → `svc.blockUser` (`src/routes/nsfw-moderation/actions.ts:53-63`) + guard tests (`actions.routes.test.ts`); `BUG-nsfw-modactions-performedby-from-body.md` Done
+- [x] Ban users from NSFW content entirely — `POST /api/nsfw/moderation/ban` → `svc.banUser` (`src/routes/nsfw-moderation/actions.ts:75-96`), `banned_at/banned_by` on `nsfw_user_preferences` (`preferences.ts:37-39`)
+- [x] Shadow NSFW messages for specific viewers — `POST /api/nsfw/moderation/shadow` → `svc.shadowUser` (`src/routes/nsfw-moderation/actions.ts:97-107`); `shadow_nsfw` pref column (`preferences.ts:36`)
+- [x] Collapse NSFW content in group chats — `getShadowState` returns per-viewer `"collapse"` (`src/chat/service/moderation.ts:171-179`, owner/admin-gated at :110-114)
 - [ ] Admin override for emergency NSFW content removal
 
 ### Internal + External Flagging
 
-- [ ] Internal flag queue for NSFW content review
-- [ ] External reporting pathway for users
-- [ ] Automated NSFW content detection integration
-- [ ] Flag resolution workflow with audit trail
-- [ ] False report protection
+- [x] Internal flag queue for NSFW content review — `GET /api/nsfw/moderation/flags` → `svc.getFlagQueue` (`src/routes/nsfw-moderation/flags.ts:72`), moderator+ roles accepted (`flags.routes.test.ts:7-8`)
+- [x] External reporting pathway for users — `POST /api/nsfw/moderation/flags` open to any authenticated user (`requireUserId`, `flags.ts:34-36`)
+- [ ] Automated NSFW content detection integration — no auto-detector in `src/` (needs owner)
+- [x] Flag resolution workflow with audit trail — `PUT /flags/:id` → `svc.resolveFlag` (`flags.ts:85`); soft-deleted-action exclusion fixed (`BUG-executereversal-and-reviewappeal-do-not-exclude-soft-deleted.md` Done, worktree `fix-nsfw-soft-deleted-exclusion`)
+- [ ] False report protection — only reporter-PII hashing exists (`reporterHash`, `flags.ts:8-10`); malicious-report handling unverified (needs owner)
 
 ### Moderation Privacy Foundation
 
+> Governing ticket `TASK-moderation-privacy-first-foundation.md` is **In Progress** — the four unticked boxes below stay open until it closes; only the appeal box is ticked (independent Done tickets + shipped routes).
 - [ ] Privacy-first moderation (minimal data exposure)
 - [ ] GDPR-compliant audit logs
 - [ ] User notification of moderation actions
-- [ ] Appeal mechanism for NSFW content flags
+- [x] Appeal mechanism for NSFW content flags — `src/routes/nsfw-moderation/appeals.ts` + two-phase submit/review/execute tests incl. self-reversal block (`appeals.routes.test.ts:297-372`); `BUG-nsfw-appeals-as-any-and-dead-route.md` + `TASK-implement-bug-nsfw-reviewappeal-auto-reverses-actions.md` both Done
 - [ ] Moderator anonymity options
 
 ## Integration Points
