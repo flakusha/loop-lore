@@ -448,13 +448,14 @@ Combinators:
 ```json
 { "all": [{ "keywords": ["beacon"] }, { "event": "meteor_fall" }] }
 { "any": [{ "keywords": ["beacon"] }, { "event": "meteor_fall" }] }
-{ "not": { "keywords": ["lie"] } }
 ```
 
-`all`/`any` combine up to 8 children; `not` negates one child. Conditions
+`all`/`any` combine up to 8 children. Conditions
 are validated client-side in the editor and server-side on write
-(HTTP 400 otherwise). The lore section fails closed: an unparsable stored
-condition never reveals its entry.
+(HTTP 400 otherwise) — the grammar is exactly `keywords`, `event`,
+`all`, `any`. An empty or whitespace-only condition string clears the
+gate (blank = not secret). The lore section fails closed: an unparsable
+stored condition never reveals its entry.
 
 ---
 
