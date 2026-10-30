@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Inventory & Trading UI frontend (epic-inventory-ui.md Phase 1: grid/list, sorting/filtering, details panel)
 **Priority:** P1 — High
 **Effort:** Small
 **Type:** Feature Task
