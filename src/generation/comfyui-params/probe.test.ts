@@ -116,4 +116,21 @@ describe("runAcceptanceProbe", () => {
     expect(result.errors.some((error,) => error.includes("unresolved placeholders",) && error.includes("ghost",)),)
       .toBe(true,);
   });
+
+  it("reports a prototype-chain output kind instead of throwing", () => {
+    const { graph, derived, snapshot, } = derivedFixture();
+    const result = runAcceptanceProbe(optionsOf({ graph, derived, snapshot, expectedOutputKind: "__proto__", },),);
+    expect(result.ok,).toBe(false,);
+    expect(result.errors.some((error,) => error.includes("wrong output kind",)),).toBe(true,);
+  });
+
+  it("flags a prototype-chain class name as missing", () => {
+    const { graph, derived, snapshot, } = derivedFixture();
+    const [id, node,] = Object.entries(graph,)[0]!;
+    const tampered = { ...graph, [id]: { ...node, class_type: "toString", }, };
+    const result = runAcceptanceProbe(optionsOf({ graph: tampered, derived, snapshot, },),);
+    expect(result.ok,).toBe(false,);
+    expect(result.errors.some((error,) => error.includes("missing node classes",) && error.includes("toString",)),)
+      .toBe(true,);
+  });
 });
