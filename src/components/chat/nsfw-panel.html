@@ -1,0 +1,77 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- NSFW Panel — Read-only intimacy & body status for the chat character -->
+<template x-if="!_nsfwUnavailable && ((_nsfwIntimacy && _nsfwIntimacy.length > 0) || _nsfwBody)">
+  <div class="nsfw-section" data-testid="nsfw-panel">
+    <div class="nsfw-header">
+      <h4 class="nsfw-title">Intimacy</h4>
+    </div>
+
+    <!-- Intimacy pairs -->
+    <template x-if="_nsfwIntimacy && _nsfwIntimacy.length > 0">
+      <div class="nsfw-intimacy-list">
+        <template x-for="pair in _nsfwIntimacy" :key="pair.targetActorId">
+          <div class="nsfw-pair" data-testid="nsfw-pair">
+            <div class="nsfw-pair-name">
+              <span x-text="pair.targetDisplayName || pair.targetActorId"></span>
+            </div>
+            <div class="nsfw-pair-score">
+              <span x-text="pair.score"></span>
+            </div>
+            <template x-if="pair.unlockedThresholds.length > 0">
+              <div class="nsfw-pair-thresholds" data-testid="nsfw-pair-thresholds">
+                <template x-for="threshold in pair.unlockedThresholds" :key="threshold">
+                  <span class="nsfw-threshold" x-text="threshold"></span>
+                </template>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <!-- Body stats -->
+    <template x-if="_nsfwBody">
+      <div class="nsfw-body" data-testid="nsfw-body">
+        <div class="nsfw-header">
+          <h4 class="nsfw-title">Body</h4>
+        </div>
+        <div class="nsfw-stat">
+          <span class="nsfw-stat-label">Stamina</span>
+          <div class="nsfw-stat-track">
+            <div class="nsfw-stat-fill" :style="{width: (_nsfwBody.stamina || 0) + '%'}"></div>
+          </div>
+          <span class="nsfw-stat-value" x-text="_nsfwBody.stamina || 0"></span>
+        </div>
+        <div class="nsfw-stat">
+          <span class="nsfw-stat-label">Flexibility</span>
+          <div class="nsfw-stat-track">
+            <div class="nsfw-stat-fill" :style="{width: (_nsfwBody.flexibility || 0) + '%'}"></div>
+          </div>
+          <span class="nsfw-stat-value" x-text="_nsfwBody.flexibility || 0"></span>
+        </div>
+        <div class="nsfw-stat">
+          <span class="nsfw-stat-label">Sensitivity</span>
+          <div class="nsfw-stat-track">
+            <div class="nsfw-stat-fill" :style="{width: (_nsfwBody.sensitivity || 0) + '%'}"></div>
+          </div>
+          <span class="nsfw-stat-value" x-text="_nsfwBody.sensitivity || 0"></span>
+        </div>
+        <div class="nsfw-stat">
+          <span class="nsfw-stat-label">Endurance</span>
+          <div class="nsfw-stat-track">
+            <div class="nsfw-stat-fill" :style="{width: (_nsfwBody.endurance || 0) + '%'}"></div>
+          </div>
+          <span class="nsfw-stat-value" x-text="_nsfwBody.endurance || 0"></span>
+        </div>
+        <div class="nsfw-body-meta">
+          <span class="nsfw-meta-label">Size</span>
+          <span class="nsfw-meta-value" x-text="_nsfwBody.sizeCategory"></span>
+          <span class="nsfw-meta-label">Build</span>
+          <span class="nsfw-meta-value" x-text="_nsfwBody.build"></span>
+        </div>
+      </div>
+    </template>
+  </div>
+</template>
