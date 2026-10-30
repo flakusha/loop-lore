@@ -122,8 +122,13 @@ describe("v1 governance guard is mounted by the real route tree", () => {
   test("crossing the auth policy limit through v1Routes answers 429 (index.ts:57 guard is live)", async () => {
     const app = createV1App(db, userId,);
     const statuses: number[] = [];
+    // POST /api/v1/auth/logout is the still-protected auth-budget probe:
+    // GET /api/v1/auth/me was reclassified to chatPolicy
+    // (BUG-e2e-browser-authme-429), so hammering it can no longer trip the
+    // 10/min auth budget this test is about.
+    const logout = (): Request => new Request("http://localhost/api/v1/auth/logout", { method: "POST", },);
     for (let i = 0; i < 11; i++) {
-      const res = await app.handle(new Request("http://localhost/api/v1/auth/me",),);
+      const res = await app.handle(logout(),);
       statuses.push(res.status,);
     }
 
@@ -134,10 +139,25 @@ describe("v1 governance guard is mounted by the real route tree", () => {
     expect(statuses.at(-1,),).toBe(429,);
   });
 
+  test("the auth/me identity probe is NOT on the auth budget (BUG-e2e-browser-authme-429)", async () => {
+    const app = createV1App(db, userId,);
+    const statuses: number[] = [];
+    for (let i = 0; i < 11; i++) {
+      const res = await app.handle(new Request("http://localhost/api/v1/auth/me",),);
+      statuses.push(res.status,);
+    }
+
+    // 11 per-page probes in a burst: chatPolicy (300/min, burst 50) absorbs
+    // them all. Under the old classification (authPolicy: 10/min, burst 5)
+    // the tail of this loop 429'd.
+    expect(statuses.every((st,) => st === 200),).toBe(true,);
+  });
+
   test("a different policy prefix is not throttled by the auth policy (policyForRoute ran per-prefix)", async () => {
     const app = createV1App(db, userId,);
+    const logout = (): Request => new Request("http://localhost/api/v1/auth/logout", { method: "POST", },);
     for (let i = 0; i < 11; i++) {
-      await app.handle(new Request("http://localhost/api/v1/auth/me",),);
+      await app.handle(logout(),);
     }
 
     // /api/v1/auth/* → authPolicy (max 10); /api/v1/health → defaultPolicy
@@ -150,8 +170,9 @@ describe("v1 governance guard is mounted by the real route tree", () => {
   test("the throttled request reaches the real /metrics Prometheus surface (onAfterHandle → collector)", async () => {
     const app = createV1App(db, userId,);
     let throttled = 0;
+    const logout = (): Request => new Request("http://localhost/api/v1/auth/logout", { method: "POST", },);
     for (let i = 0; i < 11; i++) {
-      const res = await app.handle(new Request("http://localhost/api/v1/auth/me",),);
+      const res = await app.handle(logout(),);
       if (res.status === 429) { throttled += 1; }
     }
 
@@ -162,15 +183,16 @@ describe("v1 governance guard is mounted by the real route tree", () => {
     // Every request through the barrel is recorded exactly once (200s by the
     // guard's onAfterHandle, 429s by its onBeforeHandle branch), and the
     // rate_limited counter matches the 429s actually served.
-    expect(body,).toContain(`loop_lore_route_requests_total{route="/api/v1/auth/me"} 11`,);
+    expect(body,).toContain(`loop_lore_route_requests_total{route="/api/v1/auth/logout"} 11`,);
     expect(body,).toContain(`loop_lore_rate_limited_total ${throttled}`,);
   });
 
   test("the 429 carries the guard's own x-ratelimit-hit marker (not a route-level 429)", async () => {
     const app = createV1App(db, userId,);
     let throttled: Response | undefined;
+    const logout = (): Request => new Request("http://localhost/api/v1/auth/logout", { method: "POST", },);
     for (let i = 0; i < 11; i++) {
-      throttled = await app.handle(new Request("http://localhost/api/v1/auth/me",),);
+      throttled = await app.handle(logout(),);
     }
 
     // Only governance.ts sets this header; a 429 from any other layer (route
