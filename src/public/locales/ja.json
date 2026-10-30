@@ -1686,7 +1686,8 @@
     "inventoryEquipFailed": "Failed to equip item.",
     "inventoryUnequipFailed": "Failed to unequip item.",
     "inventoryDropFailed": "Failed to drop item.",
-    "inventoryTransferFailed": "Failed to transfer item."
+    "inventoryTransferFailed": "Failed to transfer item.",
+    "inventoryEquippedFailed": "Failed to load equipped items."
   },
   "commands": {
     "modify": "エンティティをモデルに書き換えさせる (/modify <kind> <id> \"変更内容\")",

@@ -139,13 +139,55 @@ describeOrSkip("inventory state", () => {
     await flush();
     expect(seen[0]?.url,).toBe("/api/v1/actors/actor-1/items/sword/unequip",);
     expect(seen[0]?.opts.method,).toBe("POST",);
-    expect(seen[2]?.url,).toBe("/api/v1/actors/actor-1/items/sword",);
-    expect(seen[2]?.opts.method,).toBe("DELETE",);
-    expect(seen[4]?.url,).toBe("/api/v1/actors/actor-1/items/sword/transfer",);
-    expect(JSON.parse(String(seen[4]?.opts.body ?? "{}",) as string,),).toEqual({
+    expect(seen[3]?.url,).toBe("/api/v1/actors/actor-1/items/sword",);
+    expect(seen[3]?.opts.method,).toBe("DELETE",);
+    expect(seen[6]?.url,).toBe("/api/v1/actors/actor-1/items/sword/transfer",);
+    expect(JSON.parse(String(seen[6]?.opts.body ?? "{}",) as string,),).toEqual({
       toActorId: "actor-2",
       quantity: 2,
     },);
+  });
+
+  test("loadEquipped pulls snake_case rows; equip refreshes both lists", async () => {
+    const seen: string[] = [];
+    handler = async (url: string,) => {
+      seen.push(url,);
+      if (url === "/api/v1/actors/actor-1/items/equipped") {
+        return Response.json([{ id: "sword", name: "Iron Sword", item_type: "weapon", equipped: "equipped", },],);
+      }
+
+      return Response.json({ data: [], },);
+    };
+
+    const state = stateFromActor("actor-1",);
+    await state.loadEquipped();
+    await flush();
+    expect(state.equipped.map((item,) => item.id),).toEqual(["sword",],);
+    expect(state.equipped[0]?.itemType,).toBe("weapon",);
+    expect(state.equippedLoading,).toBe(false,);
+    expect(state.equippedError,).toBe("",);
+
+    seen.length = 0;
+    await state.equip("sword",);
+    await flush();
+    expect(seen,).toContain("/api/v1/actors/actor-1/items/equipped",);
+  });
+
+  test("loadEquipped surfaces failures via equippedError", async () => {
+    handler = async () => Response.json({ message: "nope", }, { status: 500, },);
+    const state = stateFromActor("actor-1",);
+    await state.loadEquipped();
+    await flush();
+    expect(state.equippedError.length > 0,).toBe(true,);
+    expect(state.equippedLoading,).toBe(false,);
+    expect(state.equipped,).toEqual([],);
+  });
+
+  test("setActorId clears equipped rows", () => {
+    const state = stateFromActor("actor-1",);
+    state.equipped = [sword(),];
+    state.setActorId("actor-2",);
+    expect(state.equipped,).toEqual([],);
   });
 },);
 
