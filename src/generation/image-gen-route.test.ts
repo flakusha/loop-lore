@@ -15,6 +15,7 @@ import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 // clobbers every other export it provides (e.g. safeJsonParse in ../utils),
 // breaking unrelated tests that import the same barrel/module.
 import * as realPersistGenerated from "../assets/service/persist-generated";
+import * as realAvatarService from "../characters/services/avatar-service";
 import * as realConfigLoad from "../config/load";
 import { createConfigSchema, } from "../config/schema-class";
 // (no realDb import: ../db/index is intentionally unstubbed; see NOTE above)
@@ -30,6 +31,21 @@ import type * as imageGenRoute from "./image-gen-route";
 
 const generateImagesCalls: Array<[unknown, Record<string, unknown>,]> = [];
 const persistGeneratedCalls: Array<{ links: Array<{ entityType: string; entityId: string; label: string }> }> = [];
+/** bindGeneratedActorAvatar call history (Avatar Dogfood slice 1). */
+const bindAvatarCalls: Array<{ actorId: string; assetIds: string[] }> = [];
+/** When set, the mocked binding op throws this (failure path). */
+let bindError: Error | null = null;
+
+/**
+ * @param _db
+ * @param opts
+ */
+async function mockBindGeneratedAvatar(_db: unknown, opts: { actorId: string; assetIds: string[] },) {
+  bindAvatarCalls.push({ actorId: opts.actorId, assetIds: [...opts.assetIds,], },);
+  if (bindError) { throw bindError; }
+  return opts.assetIds.map((_, i,) => `avatar-${i + 1}`);
+}
+
 /** When set, mockGenerateImages fails with this outcome (provider-error path). */
 let generateError: { ok: false; error: string; status: number } | null = null;
 
@@ -137,6 +153,14 @@ if (ISOLATED) {
   mock.module("../assets/service/persist-generated", () => ({
     ...realPersistGenerated,
     persistGeneratedImages: mockPersistGeneratedImages,
+  }),);
+
+  // Avatar Dogfood slice 1: the binding op is mocked so the route tests
+  // exercise gating + plumbing; the op itself has its own real-DB suite
+  // (avatar-service/generated.test.ts).
+  mock.module("../characters/services/avatar-service", () => ({
+    ...realAvatarService,
+    bindGeneratedActorAvatar: mockBindGeneratedAvatar,
   }),);
 
   // No ../db/index stub (see NOTE above).
@@ -598,6 +622,134 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
         entityId: "chat-1",
         label: "generated",
       },);
+    } finally {
+      await db.destroy();
+    }
+  });
+},);
+
+// ── Avatar Dogfood slice 1: bindActorAvatar ────────────────────────────────
+
+/** Seed avatar-user (owns avatar-actor) + avatar-other (owns foreign-actor). */
+async function seedAvatarFixtures(db: Kysely<DB>,): Promise<void> {
+  for (
+    const u of [
+      { id: "avatar-user", username: "avatar-user", },
+      { id: "avatar-other", username: "avatar-other", },
+    ] as const
+  ) {
+    await db.insertInto("users",).values({
+      ...u,
+      display_name: u.username,
+      role: "solo",
+      status: "active",
+      settings: "{}",
+    },).execute();
+  }
+
+  await db.insertInto("actors",).values({
+    id: "avatar-actor",
+    display_name: "Elara Nightwhisper",
+    owner_id: "avatar-user",
+  },).execute();
+
+  await db.insertInto("actors",).values({
+    id: "foreign-actor",
+    display_name: "Foreign Character",
+    owner_id: "avatar-other",
+  },).execute();
+}
+
+describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 1)", () => {
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    bindAvatarCalls.length = 0;
+    bindError = null;
+  },);
+
+  it("binds persisted images as variants on an owned actor and returns avatarIds", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await seedAvatarFixtures(db,);
+      const res = await handleImageGeneration(
+        makeBody({ bindActorAvatar: "avatar-actor", },),
+        db,
+        "avatar-user",
+      );
+
+      expect(res.status,).toBe(200,);
+      expect(bindAvatarCalls,).toHaveLength(1,);
+      expect(bindAvatarCalls[0],).toEqual({ actorId: "avatar-actor", assetIds: ["asset-1",], },);
+      const json = await res.json() as { data: Array<{ avatarId: string | null }> };
+      expect(json.data[0]?.avatarId,).toBe("avatar-1",);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("denies binding onto a foreign actor with 403 BEFORE paying for generation", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await seedAvatarFixtures(db,);
+      const res = await handleImageGeneration(
+        makeBody({ bindActorAvatar: "foreign-actor", },),
+        db,
+        "avatar-user",
+      );
+
+      expect(res.status,).toBe(403,);
+      expect(generateImagesCalls,).toHaveLength(0,);
+      expect(bindAvatarCalls,).toHaveLength(0,);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("answers 404 for a missing actor without generating", async () => {
+    const { db, } = await createTestDb();
+    try {
+      const res = await handleImageGeneration(
+        makeBody({ bindActorAvatar: "no-such-actor", },),
+        db,
+        "avatar-user",
+      );
+
+      expect(res.status,).toBe(404,);
+      expect(generateImagesCalls,).toHaveLength(0,);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("surfaces a binding failure as 500 with no avatar created", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await seedAvatarFixtures(db,);
+      bindError = new Error("mid-bind FK failure",);
+      const res = await handleImageGeneration(
+        makeBody({ bindActorAvatar: "avatar-actor", },),
+        db,
+        "avatar-user",
+      );
+
+      expect(res.status,).toBe(500,);
+      const json = await res.json() as { error: string };
+      expect(json.error,).toContain("avatar binding failed",);
+    } finally {
+      bindError = null;
+      await db.destroy();
+    }
+  });
+
+  it("does not bind (and reports avatarId null) without bindActorAvatar", async () => {
+    const { db, } = await createTestDb();
+    try {
+      const res = await handleImageGeneration(makeBody(), db, "test-user",);
+
+      expect(res.status,).toBe(200,);
+      expect(bindAvatarCalls,).toHaveLength(0,);
+      const json = await res.json() as { data: Array<{ avatarId: string | null }> };
+      expect(json.data[0]?.avatarId,).toBeNull();
     } finally {
       await db.destroy();
     }

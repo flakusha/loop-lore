@@ -41,6 +41,8 @@ import {
 } from "./world-config";
 
 export type { UpsertAvatarConfigOpts, } from "./config";
+export { bindGeneratedActorAvatar, } from "./generated";
+export type { BindGeneratedAvatarOpts, } from "./generated";
 export type {
   Avatar,
   AvatarConfig,

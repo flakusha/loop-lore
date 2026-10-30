@@ -7,7 +7,7 @@
 **Context:** Slice 1 of epic-avatar-dogfood (dogfood loop on PNG masters).
 **Acceptance Criteria:** (see below)
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-avatar-dogfood
@@ -22,10 +22,10 @@ generation backend, no webp work.
 
 ## Acceptance Criteria
 
-- [ ] Assistant chat turn with an avatar request produces a generated image via the existing `/image` → `POST /api/v1/generation/image` path (no parallel pipeline)
-- [ ] Generated image is persisted via `persistGeneratedImages` (`src/assets/service/persist-generated.ts`) and bound as an avatar variant on the target actor (planned-new: actor-avatar binding op for generated variants)
-- [ ] Generation failures surface to the operator in chat; no partial avatar binding left behind
-- [ ] Unit/route tests: prompt→generation→persist→avatar-variant binding (bun:test, `createTestDb` + `src/test-utils/insert-helpers.ts`)
+- [x] Assistant chat turn with an avatar request produces a generated image via the existing `/image` → `POST /api/v1/generation/image` path (no parallel pipeline) — new `/avatar` assistant command (`src/assistant/commands/avatar.ts`) rides the same `generate-image` frontend action; the frontend handler forwards `bindActorAvatar` (`src/frontend/alpine/chat-actions/dispatch.ts`). Pinned by `simple-commands.test.ts` describe `/avatar` and `chat-actions-dispatch.test.ts` "forwards bindActorAvatar…".
+- [x] Generated image is persisted via `persistGeneratedImages` (`src/assets/service/persist-generated.ts`) and bound as an avatar variant on the target actor — new binding op `bindGeneratedActorAvatar` (`src/characters/services/avatar-service/generated.ts`) called from `handleImageGeneration` after persist; ownership gated pre-provider via `resolveActorAccess` (403 foreign / 404 missing, no generation paid). Pinned by `image-gen-route.test.ts` describe "bindActorAvatar (Avatar Dogfood slice 1)" and `avatar-service/generated.test.ts`.
+- [x] Generation failures surface to the operator in chat; no partial avatar binding left behind — provider failures return the existing error envelope; a mid-bind failure unwinds every avatar row/link created by the call and answers 500 (pinned: `generated.test.ts` rollback test + route 500 test).
+- [x] Unit/route tests: prompt→generation→persist→avatar-variant binding (bun:test, `createTestDb` + `src/test-utils/insert-helpers.ts`) — see the suites above.
 
 ## Linked Epics
 
