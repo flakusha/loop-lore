@@ -391,4 +391,37 @@ describe("reconcileModeratorGrants", () => {
 
     expect(row.role_in_chat,).toBe("gm",);
   });
+
+  it("keeps gm seats for EVERY chat_owners member and demotes the rest (epic-chat-multi-ownership)", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner-m",
+      participants: [
+        { userId: "u-co-owner", role: "gm", },
+        { userId: "u-gm-out", role: "gm", },
+      ],
+    },);
+
+    // Materialized owners set: creator + co-owner (migration 082 model).
+    await database
+      .insertInto("chat_owners",)
+      .values([
+        { chat_id: chatId, user_id: "u-owner-m", },
+        { chat_id: chatId, user_id: "u-co-owner", },
+      ],)
+      .execute();
+
+    await reconcileModeratorGrants(database, chatId, "u-owner-m", "u-co-owner",);
+
+    const rows = await database
+      .selectFrom("chat_participants",)
+      .select(["actor_id", "role_in_chat",],)
+      .where("chat_id", "=", chatId,)
+      .where("actor_id", "in", ["u-co-owner", "u-gm-out",],)
+      .execute();
+
+    const byActor = Object.fromEntries(rows.map((r,) => [r.actor_id, r.role_in_chat,]),);
+    // The co-owner IS in the owners set → gm seat kept; the outsider gm demoted.
+    expect(byActor["u-co-owner"],).toBe("gm",);
+    expect(byActor["u-gm-out"],).toBe("member",);
+  });
 });

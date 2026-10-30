@@ -88,6 +88,11 @@ async function executeTransferTx(
     .where("actor_id", "=", previousOwnerId,)
     .execute();
 
+  // Owners-set maintenance (epic-chat-multi-ownership): grant the new
+  // owner, revoke the previous one, materializing the baseline row first.
+  const { syncOwnersOnTransfer, } = await import("./owners-core");
+  await syncOwnersOnTransfer(trx, chatId, previousOwnerId, newOwnerUserId,);
+
   await trx
     .insertInto("log_entries",)
     .values({

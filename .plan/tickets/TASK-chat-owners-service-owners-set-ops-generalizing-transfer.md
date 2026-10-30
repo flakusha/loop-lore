@@ -3,7 +3,8 @@
 
 # TASK: Chat owners service: owners-set ops generalizing transfer
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Done 2026-10-30 in worktree tree/chat-multi-ownership: owners.ts/owners-core.ts/owners-types.ts/owners-events.ts (isChatOwner + addChatOwner + removeChatOwner + MAX_CHAT_OWNERS=3), transfer tx maintains the owners set, reconcileModeratorGrants keeps GM seats for every owners-set member (fallback: newOwnerId for unmaterialized chats). Existing ownership/route tests unchanged and green (compat proof); suites 74 pass / 0 fail (+1 pre-existing skip); gates typecheck-backend/eslint/size-strict/wiring PASS. Deviation flagged: `chats.created_by` flip RETAINED in transferOwnership (existing tests pin it); `created_by` stays "current owner of record" rather than frozen creator — revisit in check-sweep ticket.
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-chat-multi-ownership
@@ -20,6 +21,6 @@ Owners-set service in src/chat/service: isChatOwner(db, chatId, userId) predicat
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — `src/chat/service/owners.ts` (addChatOwner/removeChatOwner, owner-or-admin authority, actor→user resolution, auto-invite role owner, duplicate + MAX_CHAT_OWNERS=3 refusal, last-owner guard, conditional in-tx DELETE), `owners-core.ts` (isChatOwner transitional predicate row-OR-created_by, syncOwnersOnTransfer), `owners-types.ts`, `owners-events.ts` (chat_owner_added/removed audit rows with owners-array meta; notification fan-out to affected + all remaining owners). transferOwnership tx calls syncOwnersOnTransfer (HTTP contract untouched). reconcileModeratorGrants keeps GM for every owners-set member.
+- [x] Tests passing — ownership.test.ts extended (+12 cases: cap, duplicate, last-owner, resign, authority/admin, auto-invite, concurrent last-two + same-target removals with exactly-one-winner, audit rows, notification fan-out, transfer owners-set maintenance, isChatOwner fallback); access.test.ts +multi-owner reconcile case; routes/chats/ownership.test.ts UNCHANGED and green (compat proof). 74 pass / 0 fail / 1 pre-existing skip across ownership+access+route suites.
+- [x] Documentation updated — module docstrings; ticket Status Note records the created_by-flip deviation for the check-sweep ticket.

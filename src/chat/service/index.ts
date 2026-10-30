@@ -56,6 +56,17 @@ export {
   type TransferOwnershipResult,
 } from "./ownership";
 
+// ── Owners set (epic-chat-multi-ownership) ──────────────────────
+export { addChatOwner, removeChatOwner, } from "./owners";
+export { isChatOwner, } from "./owners-core";
+export {
+  type AddChatOwnerOptions,
+  type ChatOwnersOpOutcome,
+  type ChatOwnersOpResult,
+  MAX_CHAT_OWNERS,
+  type RemoveChatOwnerOptions,
+} from "./owners-types";
+
 // ── Party join/leave (C7 — group-chat VN party) ──────────────
 export {
   joinParty,
