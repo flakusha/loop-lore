@@ -12,7 +12,9 @@
  */
 import { afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
+import { moodStateAvatars, } from "../mood/avatars";
 import { dispatch, } from "./dispatch";
+import { emotionAvatarActionHandlers, } from "./emotion-avatars";
 
 import type { ApiFetchMock, Toast, } from "../../tests/test-types";
 
@@ -154,6 +156,11 @@ describeOrSkip("dispatch: char-update", () => {
 
 describeOrSkip("dispatch: generate-emotion-avatars", () => {
   const PAYLOAD = { actorId: "actor-9", baseAvatarId: "av-base", emotions: ["happy",], jobId: null, };
+  const origPoll = moodStateAvatars._pollEmotionJob;
+
+  afterEach(() => {
+    moodStateAvatars._pollEmotionJob = origPoll;
+  },);
 
   test("POSTs the regenerate route with slot replace and polls the job", async () => {
     const ctx = buildCtx();
@@ -164,6 +171,11 @@ describeOrSkip("dispatch: generate-emotion-avatars", () => {
       return Response.json({ status: "completed", },);
     };
 
+    const polled: [string, string | null,][] = [];
+    moodStateAvatars._pollEmotionJob = (async (actorId: string, jobId: string | null,) => {
+      polled.push([actorId, jobId,],);
+    }) as typeof moodStateAvatars._pollEmotionJob;
+
     await dispatch.dispatchCommandAction!.call(ctx as never, "generate-emotion-avatars", PAYLOAD, "chat-1",);
 
     expect(seen[0],).toBe("/api/v1/actors/actor-9/emotion-avatars/regenerate",);
@@ -173,7 +185,8 @@ describeOrSkip("dispatch: generate-emotion-avatars", () => {
       replace: "slot",
     },);
 
-    expect(seen.some((url,) => url.endsWith("/jobs/job-r1",)),).toBe(true,);
+    expect(polled,).toEqual([["actor-9", "job-r1",],],);
+    expect(emotionAvatarActionHandlers["generate-emotion-avatars"],).toBeDefined();
     expect(ctx.toasts[0],).toEqual({ type: "info", message: expect.any(String,), },);
   });
 

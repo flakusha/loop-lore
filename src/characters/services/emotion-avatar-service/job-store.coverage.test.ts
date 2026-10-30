@@ -11,7 +11,7 @@
  */
 import { describe, expect, test, } from "bun:test";
 import { EmotionType, } from "../../../db/enums";
-import { cancelJob, createJob, getJob, listJobs, storeJob, } from "./job-store";
+import { cancelJob, createJob, getJob, listJobs, rebuildJobCache, storeJob, } from "./job-store";
 import type { BatchJobId, } from "./types";
 
 describe("emotion-avatar job store", () => {
@@ -108,5 +108,22 @@ describe("emotion-avatar job store", () => {
       storeJob(job,);
       expect(cancelJob(`job-${status}` as BatchJobId,),).toBe(false,);
     }
+  });
+
+  test("rebuildJobCache loads records into getJob/listJobs", () => {
+    rebuildJobCache([{
+      id: "job-rebuilt",
+      kind: "emotion-avatar",
+      actorId: "actor-rebuild",
+      status: "running",
+      payload: { emotions: [EmotionType.Happy,], baseAvatarId: "av-base", seed: 7, },
+      results: [],
+      errorMessage: null,
+      startedAt: "2026-09-11T00:00:00.000Z",
+      completedAt: null,
+    },],);
+
+    expect(getJob("job-rebuilt" as BatchJobId,)?.status,).toBe("running",);
+    expect(listJobs("actor-rebuild",).map((job,) => job.id),).toContain("job-rebuilt" as BatchJobId,);
   });
 });
