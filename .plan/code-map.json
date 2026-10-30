@@ -5764,6 +5764,10 @@
   "src/async/offload.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-cron-scheduler.md"
     },
     {
@@ -5888,6 +5892,10 @@
     }
   ],
   "src/async/spill.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-.md"
@@ -12776,6 +12784,10 @@
   "src/components/chat/chat-settings-modal.html": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
     },
     {
@@ -13386,6 +13398,10 @@
   "src/components/modals/settings.html": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-settings.md"
     },
     {
@@ -13510,6 +13526,10 @@
     }
   ],
   "src/components/text-toolbar.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-shared-text-surface-toolbar.md"
@@ -15313,6 +15333,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
+    }
+  ],
+  "src/config/sections/web.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
     }
   ],
   "src/config/seeding.ts": [
@@ -33743,6 +33769,10 @@
   ],
   "src/harness/exec-log.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-engine-docs-search.md"
     },
@@ -33757,6 +33787,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-reusable-chat-route-files-from-the-generate-route-pa.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log.md"
     }
   ],
   "src/harness/exec-recorder.ts": [
@@ -37072,6 +37106,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
     },
     {
@@ -37996,6 +38034,10 @@
     }
   ],
   "src/partials/characters/create-modal.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
@@ -42041,6 +42083,10 @@
   ],
   "src/routes/build-id.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
     }
@@ -43576,6 +43622,10 @@
     }
   ],
   "src/routes/config-menu.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-config-menu-patch-stores-the-raw-value-for-user-scope-settin.md"
@@ -48062,6 +48112,10 @@
   "src/routes/views/character-edit-form.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
     },
     {
@@ -48300,6 +48354,10 @@
     }
   ],
   "src/routes/views/layout.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-docs-reconciliation.md"
@@ -53862,6 +53920,10 @@
   "src/server/start.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-certificate-and-tls-management.md"
     },
     {
@@ -56614,6 +56676,10 @@
   "src/transport/ws.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-embeddable-backend.md"
     },
     {
@@ -58872,6 +58938,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
     },
     {
@@ -59239,6 +59309,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-accessibility-input.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
     },
     {
       "kind": "epic",

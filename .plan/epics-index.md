@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 354 epics
+**Total:** 355 epics
 
 ## Summary
 
@@ -52,6 +52,7 @@
 | In Progress | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High | High | 0 | [epic-battle-integration-gaps.md](/.plan/epics/epic-battle-integration-gaps.md) |
 | In Progress | Benchmark CI & Performance Regression Detection | High | High | 0 | [epic-benchmark-ci-regression.md](/.plan/epics/epic-benchmark-ci-regression.md) |
 | In Progress | Blog System | Medium | High | 0 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
+| Not Started | Browser-Side Terminal `$EDITOR` Support | Medium | Medium | 0 | [epic-browser-editor-support.md](/.plan/epics/epic-browser-editor-support.md) |
 | Not Started | BYOK API Keys (Bring Your Own Key) | high | Large | 0 | [epic-byok-api-keys.md](/.plan/epics/epic-byok-api-keys.md) |
 | Not Started | BYOK Local Models (Bring Your Own Model) | High | Large | 0 | [epic-byok-local-models.md](/.plan/epics/epic-byok-local-models.md) |
 | In Progress | Certificate & TLS Management | High | Large | 0 | [epic-certificate-and-tls-management.md](/.plan/epics/epic-certificate-and-tls-management.md) |
@@ -750,6 +751,15 @@ Benchmarks run on every PR via GitHub Actions, comparing against the baseline (m
 - **File:** `.plan/epics/epic-blog-system.md`
 
 A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
+
+### Browser-Side Terminal `$EDITOR` Support
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** web, terminal, pty, editor, harness, sandbox, websocket, bun
+- **File:** `.plan/epics/epic-browser-editor-support.md`
 
 ### BYOK API Keys (Bring Your Own Key)
 

@@ -46810,6 +46810,53 @@
       "related": []
     },
     {
+      "id": "TASK-web-editor-config-section-plus-bun-floor-web-editor-web-term",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-web-editor-config-section-plus-bun-floor-web-editor-web-term.md",
+      "title": "Web editor: config section plus Bun floor (web.editor/web.terminal)",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-web-editor-harness-sandbox-file-tree-approach-c",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md",
+      "title": "Web editor: harness sandbox file tree (approach C)",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-web-editor-open-in-editor-uri-scheme-links-approach-a",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md",
+      "title": "Web editor: open-in-editor URI-scheme links (approach A)",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log.md",
+      "title": "Web editor: PTY spawn audit logging to harness exec-log",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/harness/exec-log.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-web-editor-pty-terminal-route-approach-b",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md",
+      "title": "Web editor: PTY terminal route (approach B)",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-web-embed-profile",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-web-embed-profile.md",
@@ -49000,6 +49047,33 @@
         "src/rpg/blog/service/tags.ts",
         "src/rpg/blog/service/types.ts",
         "src/views/blog.html"
+      ],
+      "related": []
+    },
+    {
+      "id": "epic-browser-editor-support",
+      "kind": "epic",
+      "path": ".plan/epics/epic-browser-editor-support.md",
+      "title": "Browser-Side Terminal `$EDITOR` Support",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/async/offload.ts",
+        "src/async/spill.ts",
+        "src/components/chat/chat-settings-modal.html",
+        "src/components/modals/settings.html",
+        "src/components/text-toolbar.html",
+        "src/config/sections/web.ts",
+        "src/harness/exec-log.ts",
+        "src/middleware/permissions.ts",
+        "src/partials/characters/create-modal.html",
+        "src/routes/build-id.ts",
+        "src/routes/config-menu.ts",
+        "src/routes/views/character-edit-form.ts",
+        "src/routes/views/layout.ts",
+        "src/server/start.ts",
+        "src/transport/ws.ts",
+        "src/views/blog.html",
+        "src/views/layout.html"
       ],
       "related": []
     },
@@ -57583,6 +57657,7 @@
         "TASK-middleware-distributed-healing-revalidation-backups",
         "TASK-middleware-in-progress-status-endpoint-for-long-running-requ",
         "TASK-tmp-janitor-and-staleness-markers",
+        "epic-browser-editor-support",
         "epic-cron-scheduler",
         "epic-effect-v4-adoption-evaluation",
         "epic-middleware-request-lifecycle"
@@ -57627,7 +57702,8 @@
         "BUG-test-async-store-offload-dir-fixed-path-race",
         "TASK-async-store-retention-cap",
         "TASK-async-store-tests-per-test-tmpdir",
-        "TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase"
+        "TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase",
+        "epic-browser-editor-support"
       ]
     },
     {
@@ -61788,6 +61864,7 @@
         "TASK-visual-novel-mode",
         "TASK-vn-scene-template-system",
         "TASK-vn-template-actions",
+        "epic-browser-editor-support",
         "epic-chat-lifecycle-moderation",
         "epic-config-templates",
         "epic-hidden-carriage-context"
@@ -62163,6 +62240,7 @@
         "TASK-markdown-heading-parse-and-import",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
         "TASK-widen-import-export-io-for-publications",
+        "epic-browser-editor-support",
         "epic-frontend-settings",
         "epic-narrative-publishing-workflows"
       ]
@@ -62258,7 +62336,8 @@
     {
       "path": "src/components/text-toolbar.html",
       "owners": [
-        "TASK-shared-text-surface-toolbar"
+        "TASK-shared-text-surface-toolbar",
+        "epic-browser-editor-support"
       ]
     },
     {
@@ -63196,6 +63275,12 @@
         "BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-",
         "TASK-tui-enabled-config-flag-never-read",
         "epic-terminal-ui"
+      ]
+    },
+    {
+      "path": "src/config/sections/web.ts",
+      "owners": [
+        "epic-browser-editor-support"
       ]
     },
     {
@@ -73432,7 +73517,9 @@
         "TASK-engine-docs-search",
         "TASK-engine-feedback-loop",
         "TASK-harness-executions-jsonl-query-sidecar-offset-index-behind-e",
-        "TASK-harness-reusable-chat-route-files-from-the-generate-route-pa"
+        "TASK-harness-reusable-chat-route-files-from-the-generate-route-pa",
+        "TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log",
+        "epic-browser-editor-support"
       ]
     },
     {
@@ -75319,6 +75406,7 @@
         "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
         "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
         "epic-architecture",
+        "epic-browser-editor-support",
         "epic-chat-product-features",
         "epic-logging",
         "epic-security-sandboxing-quickref"
@@ -75823,7 +75911,8 @@
         "BUG-actortype-persona-422-on-valid-ui-input",
         "BUG-character-create-silently-drops-personality-scenario-welcome",
         "BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x",
-        "TASK-migrate-text-surfaces-to-shared-primitives"
+        "TASK-migrate-text-surfaces-to-shared-primitives",
+        "epic-browser-editor-support"
       ]
     },
     {
@@ -78326,7 +78415,8 @@
     {
       "path": "src/routes/build-id.ts",
       "owners": [
-        "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi"
+        "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
+        "epic-browser-editor-support"
       ]
     },
     {
@@ -79234,7 +79324,8 @@
       "owners": [
         "BUG-config-menu-patch-stores-the-raw-value-for-user-scope-settin",
         "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
-        "BUG-put-api-users-id-settings-mass-assigns-the-request-body-and-"
+        "BUG-put-api-users-id-settings-mass-assigns-the-request-body-and-",
+        "epic-browser-editor-support"
       ]
     },
     {
@@ -81803,6 +81894,7 @@
         "TASK-char-editor-structured-fields-ui",
         "TASK-character-edit-form-renders-unescaped-user-fields-stored-xss",
         "TASK-nsfw-rating-enforcement",
+        "epic-browser-editor-support",
         "epic-character-internal-traits"
       ]
     },
@@ -81929,6 +82021,7 @@
         "TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl",
         "TASK-server-side-i18n-middleware",
         "TASK-template-preflight-production-resolver-gate",
+        "epic-browser-editor-support",
         "epic-docs-reconciliation",
         "epic-experimental-egui-frontend"
       ]
@@ -85713,6 +85806,7 @@
         "TASK-swarm-supervisor",
         "TASK-tls-cipher-suite-hardening-and-secure-defaults",
         "TASK-wire-fswatcher-onreload-callback-in-server-startup",
+        "epic-browser-editor-support",
         "epic-certificate-and-tls-management",
         "epic-cron-scheduler",
         "epic-cross-platform-portability",
@@ -87254,6 +87348,7 @@
         "TASK-federation-peer-workload-wire-endpoints",
         "TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3",
         "TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un",
+        "epic-browser-editor-support",
         "epic-embeddable-backend",
         "epic-embeddable-engine-game-frontend",
         "epic-federation-offload-quotas",
@@ -88458,6 +88553,7 @@
         "TASK-blog-frontend-authoring",
         "TASK-blog-publish-unit-to-post-bridge",
         "epic-blog-system",
+        "epic-browser-editor-support",
         "epic-terminal-ui"
       ]
     },
@@ -88626,6 +88722,7 @@
         "TASK-task-web-aa-axe-ratchet",
         "WIRE-frontend-keyboard-help-overlay",
         "epic-accessibility-input",
+        "epic-browser-editor-support",
         "epic-docs-reconciliation",
         "epic-frontend-headers-management"
       ]
@@ -93716,6 +93813,31 @@
       "from": "epic-blog-system",
       "kind": "owns",
       "to": "TASK-collapse-duplicate-markdown-exporters"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "owns",
+      "to": "TASK-web-editor-config-section-plus-bun-floor-web-editor-web-term"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "owns",
+      "to": "TASK-web-editor-harness-sandbox-file-tree-approach-c"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "owns",
+      "to": "TASK-web-editor-open-in-editor-uri-scheme-links-approach-a"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "owns",
+      "to": "TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "owns",
+      "to": "TASK-web-editor-pty-terminal-route-approach-b"
     },
     {
       "from": "epic-byok-api-keys",
@@ -151443,6 +151565,11 @@
       "to": "src/rpg/service/character-stats.ts"
     },
     {
+      "from": "TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log",
+      "kind": "produces",
+      "to": "src/harness/exec-log.ts"
+    },
+    {
       "from": "TASK-web-lazy-slash-command-hint-bar-port-of-commandcompleter",
       "kind": "produces",
       "to": "src/tui/chat/api.ts"
@@ -154871,6 +154998,91 @@
       "from": "epic-blog-system",
       "kind": "produces",
       "to": "src/views/blog.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/async/offload.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/async/spill.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/components/modals/settings.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/components/text-toolbar.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/config/sections/web.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/harness/exec-log.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/middleware/permissions.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/partials/characters/create-modal.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/routes/build-id.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/routes/config-menu.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/routes/views/character-edit-form.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/transport/ws.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/views/blog.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/views/layout.html"
     },
     {
       "from": "epic-byok-api-keys",
@@ -175504,6 +175716,12 @@
     {
       "from": "BUG-actortype-persona-422-on-valid-ui-input",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/partials/characters/create-modal.html"
+    },
+    {
+      "from": "BUG-actortype-persona-422-on-valid-ui-input",
+      "kind": "sibling",
       "to": "epic-byok-api-keys",
       "via": "src/validation/db-schemas.ts"
     },
@@ -177216,6 +177434,12 @@
       "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/admin/model-roles.ts"
+    },
+    {
+      "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
@@ -183634,6 +183858,12 @@
     {
       "from": "BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/spill.ts"
+    },
+    {
+      "from": "BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-",
+      "kind": "sibling",
       "to": "epic-harness-integration",
       "via": "src/async/store.ts"
     },
@@ -183696,6 +183926,12 @@
       "kind": "sibling",
       "to": "TASK-middleware-fe-be-db-record-content-hashing",
       "via": "src/middleware/idempotency-utils.ts"
+    },
+    {
+      "from": "BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/spill.ts"
     },
     {
       "from": "BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose",
@@ -184414,6 +184650,12 @@
     {
       "from": "BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -184769,6 +185011,12 @@
       "from": "BUG-auto-rotation-config-drift",
       "kind": "sibling",
       "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-auto-rotation-config-drift",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/server/start.ts"
     },
     {
@@ -185866,6 +186114,12 @@
     {
       "from": "BUG-browser-e2e-suite-flakes-under-concurrent-runs",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/spill.ts"
+    },
+    {
+      "from": "BUG-browser-e2e-suite-flakes-under-concurrent-runs",
+      "kind": "sibling",
       "to": "epic-harness-integration",
       "via": "src/async/store.ts"
     },
@@ -186953,6 +187207,12 @@
       "from": "BUG-bug-async-store-complete-drops-response-body-larger-than-max",
       "kind": "sibling",
       "to": "TASK-tmp-janitor-and-staleness-markers",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "BUG-bug-async-store-complete-drops-response-body-larger-than-max",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/async/offload.ts"
     },
     {
@@ -190236,6 +190496,12 @@
       "kind": "sibling",
       "to": "WIRE-nsfw-audit-page-missing-inline-authz",
       "via": "src/routes/characters/create.ts"
+    },
+    {
+      "from": "BUG-character-create-silently-drops-personality-scenario-welcome",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/partials/characters/create-modal.html"
     },
     {
       "from": "BUG-character-creation-wizard-bug-wizardid-unused",
@@ -194842,6 +195108,12 @@
     {
       "from": "BUG-chat-settings-modal-invalid-mode",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-chat-settings-modal-invalid-mode",
+      "kind": "sibling",
       "to": "epic-character-core-system",
       "via": "src/validation/schemas.ts"
     },
@@ -197110,6 +197382,12 @@
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -197195,6 +197473,12 @@
       "from": "BUG-config-menu-patch-stores-the-raw-value-for-user-scope-settin",
       "kind": "sibling",
       "to": "BUG-put-api-users-id-settings-mass-assigns-the-request-body-and-",
+      "via": "src/routes/config-menu.ts"
+    },
+    {
+      "from": "BUG-config-menu-patch-stores-the-raw-value-for-user-scope-settin",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/routes/config-menu.ts"
     },
     {
@@ -199776,6 +200060,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/middleware/response-headers.ts"
+    },
+    {
+      "from": "BUG-csp-unsafe-inline-defeats-per-request-nonce",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/character-edit-form.ts"
     },
     {
       "from": "BUG-csp-unsafe-inline-defeats-per-request-nonce",
@@ -202674,6 +202964,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-eager-db-init-creates-on-disk-db-on-test-import",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-eager-db-init-creates-on-disk-db-on-test-import",
@@ -210934,6 +211230,12 @@
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/config-menu.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
       "to": "epic-character-core-system",
       "via": "src/routes/v1/index.ts"
     },
@@ -211234,6 +211536,12 @@
     {
       "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -211516,6 +211824,12 @@
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/config/cert.ts; src/server/start.ts"
     },
@@ -211703,6 +212017,12 @@
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
       "kind": "sibling",
       "to": "TASK-template-preflight-production-resolver-gate",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/routes/views/layout.ts"
     },
     {
@@ -211913,6 +212233,12 @@
       "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
       "kind": "sibling",
       "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/server/start.ts"
     },
     {
@@ -212430,6 +212756,12 @@
       "kind": "sibling",
       "to": "epic-blog-system",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -218098,6 +218430,12 @@
     {
       "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/config/sections/server.ts; src/server/start.ts"
     },
@@ -218650,6 +218988,12 @@
     {
       "from": "BUG-html-lang-hardcoded-no-dir-handling-for-i18n",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-html-lang-hardcoded-no-dir-handling-for-i18n",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -218747,6 +219091,12 @@
       "from": "BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x",
       "kind": "sibling",
       "to": "TASK-migrate-text-surfaces-to-shared-primitives",
+      "via": "src/partials/characters/create-modal.html"
+    },
+    {
+      "from": "BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/partials/characters/create-modal.html"
     },
     {
@@ -223230,6 +223580,12 @@
       "kind": "sibling",
       "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/layout.ts; src/views/layout.html"
     },
     {
       "from": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
@@ -229630,6 +229986,12 @@
     {
       "from": "BUG-new-migration-parts-never-apply-to-existing-databases",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-new-migration-parts-never-apply-to-existing-databases",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -230213,6 +230575,12 @@
       "from": "BUG-notification-bell-visible-on-login-register-pages",
       "kind": "sibling",
       "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-notification-bell-visible-on-login-register-pages",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/views/layout.html"
     },
     {
@@ -231676,6 +232044,12 @@
     {
       "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner-who-th",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "BUG-ownership-transfer-button-is-shown-to-every-non-owner-who-th",
+      "kind": "sibling",
       "to": "epic-chat-lifecycle-moderation",
       "via": "src/components/chat/chat-settings-modal.html"
     },
@@ -231875,6 +232249,12 @@
       "from": "BUG-permissions-middleware-auditentry-reaches-console-warn-in-pr",
       "kind": "sibling",
       "to": "epic-architecture",
+      "via": "src/middleware/permissions.ts"
+    },
+    {
+      "from": "BUG-permissions-middleware-auditentry-reaches-console-warn-in-pr",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/middleware/permissions.ts"
     },
     {
@@ -234566,6 +234946,12 @@
       "via": "src/middleware/rate-limit.ts"
     },
     {
+      "from": "BUG-put-api-users-id-settings-mass-assigns-the-request-body-and-",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/config-menu.ts"
+    },
+    {
       "from": "BUG-put-messages-id-variant-silently-returns-200-with-no-variant",
       "kind": "sibling",
       "to": "BUG-tool-call-result-no-frontend-rendering",
@@ -235301,6 +235687,12 @@
       "from": "BUG-raw-json-parse-outside-safe-json-3-sites",
       "kind": "sibling",
       "to": "TASK-template-preflight-production-resolver-gate",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-raw-json-parse-outside-safe-json-3-sites",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/routes/views/layout.ts"
     },
     {
@@ -237346,6 +237738,12 @@
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -237748,6 +238146,12 @@
     {
       "from": "BUG-runoffloadpass-phase1-spill-and-db-update-not-atomic",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "BUG-runoffloadpass-phase1-spill-and-db-update-not-atomic",
+      "kind": "sibling",
       "to": "epic-cron-scheduler",
       "via": "src/async/offload.ts"
     },
@@ -237844,6 +238248,12 @@
     {
       "from": "BUG-runoffloadpass-phase3-unlink-and-db-update-not-atomic",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "BUG-runoffloadpass-phase3-unlink-and-db-update-not-atomic",
+      "kind": "sibling",
       "to": "epic-cron-scheduler",
       "via": "src/async/offload.ts"
     },
@@ -237929,6 +238339,12 @@
       "from": "BUG-runoffloadpass-phase3-unlink-races-with-phase1-respill",
       "kind": "sibling",
       "to": "TASK-tmp-janitor-and-staleness-markers",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "BUG-runoffloadpass-phase3-unlink-races-with-phase1-respill",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/async/offload.ts"
     },
     {
@@ -238931,6 +239347,12 @@
       "from": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
       "kind": "sibling",
       "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/server/start.ts"
     },
     {
@@ -244772,6 +245194,12 @@
       "via": "src/async/offload.test.ts"
     },
     {
+      "from": "BUG-test-async-store-offload-dir-fixed-path-race",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/spill.ts"
+    },
+    {
       "from": "BUG-test-e2e-env-default-mismatch",
       "kind": "sibling",
       "to": "BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-",
@@ -245028,6 +245456,12 @@
       "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/frontend/asset-preview.ts"
+    },
+    {
+      "from": "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/layout.ts"
     },
     {
       "from": "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
@@ -249706,6 +250140,12 @@
     {
       "from": "BUG-wshandler-flushpending-rebuf-uses-stale-queue-slice-off-by-one",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/transport/ws.ts"
+    },
+    {
+      "from": "BUG-wshandler-flushpending-rebuf-uses-stale-queue-slice-off-by-one",
+      "kind": "sibling",
       "to": "epic-embeddable-backend",
       "via": "src/transport/ws.ts"
     },
@@ -249767,6 +250207,12 @@
       "from": "BUG-wshandler-send-queues-messages-while-disconnected-but-never-",
       "kind": "sibling",
       "to": "TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un",
+      "via": "src/transport/ws.ts"
+    },
+    {
+      "from": "BUG-wshandler-send-queues-messages-while-disconnected-but-never-",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/transport/ws.ts"
     },
     {
@@ -256654,6 +257100,12 @@
     {
       "from": "FEAT-blog-system",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/blog.html"
+    },
+    {
+      "from": "FEAT-blog-system",
+      "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/views/blog.html"
     },
@@ -257380,6 +257832,12 @@
     {
       "from": "FEAT-chat-settings-modal-output-styling-control",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "FEAT-chat-settings-modal-output-styling-control",
+      "kind": "sibling",
       "to": "epic-chat-lifecycle-moderation",
       "via": "src/components/chat/chat-settings-modal.html"
     },
@@ -257736,6 +258194,12 @@
       "kind": "sibling",
       "to": "epic-auth-channel-provisioning",
       "via": "src/validation/schemas.ts"
+    },
+    {
+      "from": "FEAT-chat-template-config-lifecycle",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/chat/chat-settings-modal.html"
     },
     {
       "from": "FEAT-chat-template-config-lifecycle",
@@ -262594,6 +263058,12 @@
     {
       "from": "FEAT-llm-enhance-outside-the-chat-composer",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/blog.html"
+    },
+    {
+      "from": "FEAT-llm-enhance-outside-the-chat-composer",
+      "kind": "sibling",
       "to": "epic-character-growth",
       "via": "src/views/partials/character-growth-editor.html"
     },
@@ -265829,6 +266299,12 @@
       "from": "FEAT-pwa-manifest-offline-shell",
       "kind": "sibling",
       "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "FEAT-pwa-manifest-offline-shell",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/views/layout.html"
     },
     {
@@ -275680,6 +276156,12 @@
     {
       "from": "TASK-059",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/transport/ws.ts"
+    },
+    {
+      "from": "TASK-059",
+      "kind": "sibling",
       "to": "epic-embeddable-backend",
       "via": "src/transport/ws.ts"
     },
@@ -279766,6 +280248,12 @@
     {
       "from": "TASK-actor-licensing-frontend",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/character-edit-form.ts"
+    },
+    {
+      "from": "TASK-actor-licensing-frontend",
+      "kind": "sibling",
       "to": "epic-character-internal-traits",
       "via": "src/routes/views/character-edit-form.ts"
     },
@@ -279797,6 +280285,12 @@
       "from": "TASK-actor-notes-items-lore-frontend",
       "kind": "sibling",
       "to": "TASK-nsfw-rating-enforcement",
+      "via": "src/routes/views/character-edit-form.ts"
+    },
+    {
+      "from": "TASK-actor-notes-items-lore-frontend",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/routes/views/character-edit-form.ts"
     },
     {
@@ -279838,6 +280332,12 @@
     {
       "from": "TASK-actor-systems-export-frontend",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/character-edit-form.ts"
+    },
+    {
+      "from": "TASK-actor-systems-export-frontend",
+      "kind": "sibling",
       "to": "epic-character-internal-traits",
       "via": "src/routes/views/character-edit-form.ts"
     },
@@ -279857,6 +280357,12 @@
       "from": "TASK-actor-traits-frontend",
       "kind": "sibling",
       "to": "TASK-nsfw-rating-enforcement",
+      "via": "src/routes/views/character-edit-form.ts"
+    },
+    {
+      "from": "TASK-actor-traits-frontend",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/routes/views/character-edit-form.ts"
     },
     {
@@ -283908,6 +284414,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/middleware/dynamic-response.ts"
+    },
+    {
+      "from": "TASK-adopt-bun-gzipsync-for-compression-standardization",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts"
     },
     {
       "from": "TASK-adopt-bun-gzipsync-for-compression-standardization",
@@ -294622,6 +295134,12 @@
     {
       "from": "TASK-async-request-response-result-store-separate-table-offload",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts; src/server/start.ts"
+    },
+    {
+      "from": "TASK-async-request-response-result-store-separate-table-offload",
+      "kind": "sibling",
       "to": "epic-byok-api-keys",
       "via": "src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
     },
@@ -295312,6 +295830,12 @@
     {
       "from": "TASK-async-store-retention-cap",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts; src/async/spill.ts"
+    },
+    {
+      "from": "TASK-async-store-retention-cap",
+      "kind": "sibling",
       "to": "epic-cron-scheduler",
       "via": "src/async/offload.ts"
     },
@@ -295344,6 +295868,12 @@
       "kind": "sibling",
       "to": "TASK-middleware-distributed-healing-revalidation-backups",
       "via": "src/async/offload.test.ts"
+    },
+    {
+      "from": "TASK-async-store-tests-per-test-tmpdir",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/spill.ts"
     },
     {
       "from": "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
@@ -295650,6 +296180,12 @@
       "kind": "sibling",
       "to": "epic-assistant-creative-studio-workflows",
       "via": "src/image-edit"
+    },
+    {
+      "from": "TASK-audit-undocumented-src-content-src-aux-pipeline-and-src-imag",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/layout.ts"
     },
     {
       "from": "TASK-audit-undocumented-src-content-src-aux-pipeline-and-src-imag",
@@ -301396,6 +301932,12 @@
     {
       "from": "TASK-blog-frontend-authoring",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/blog.html; src/views/layout.html"
+    },
+    {
+      "from": "TASK-blog-frontend-authoring",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -301662,6 +302204,12 @@
       "kind": "sibling",
       "to": "epic-blog-system",
       "via": "src/db/schema-blog.ts; src/frontend/alpine/blog.ts; src/routes/v1/content-surface.ts; src/rpg/blog/service/posts.ts; src/rpg/blog/service/types.ts; src/views/blog.html"
+    },
+    {
+      "from": "TASK-blog-publish-unit-to-post-bridge",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/blog.html"
     },
     {
       "from": "TASK-blog-publish-unit-to-post-bridge",
@@ -303940,6 +304488,12 @@
     {
       "from": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/build-id.ts; src/server/start.ts"
+    },
+    {
+      "from": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -304578,6 +305132,12 @@
       "kind": "sibling",
       "to": "TASK-nsfw-rating-enforcement",
       "via": "src/frontend/pages/characters-edit-form.ts; src/routes/views/character-edit-form.ts"
+    },
+    {
+      "from": "TASK-char-editor-structured-fields-ui",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/character-edit-form.ts"
     },
     {
       "from": "TASK-char-editor-structured-fields-ui",
@@ -305783,6 +306343,12 @@
       "from": "TASK-character-edit-form-renders-unescaped-user-fields-stored-xss",
       "kind": "sibling",
       "to": "TASK-nsfw-rating-enforcement",
+      "via": "src/routes/views/character-edit-form.ts"
+    },
+    {
+      "from": "TASK-character-edit-form-renders-unescaped-user-fields-stored-xss",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/routes/views/character-edit-form.ts"
     },
     {
@@ -310852,6 +311418,12 @@
     {
       "from": "TASK-chat-feature-moderation",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/middleware/permissions.ts"
+    },
+    {
+      "from": "TASK-chat-feature-moderation",
+      "kind": "sibling",
       "to": "epic-chat-lifecycle-moderation",
       "via": "src/chat/moderation.ts; src/generation/hooks/moderation-hook.ts"
     },
@@ -311033,6 +311605,12 @@
       "from": "TASK-chat-feature-ownership-transfer",
       "kind": "sibling",
       "to": "TASK-vn-template-actions",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "TASK-chat-feature-ownership-transfer",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/components/chat/chat-settings-modal.html"
     },
     {
@@ -315845,6 +316423,12 @@
       "from": "TASK-comfyui-builder-track-a-alpine-preset-chain-form",
       "kind": "sibling",
       "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-comfyui-builder-track-a-alpine-preset-chain-form",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/views/layout.html"
     },
     {
@@ -324040,6 +324624,12 @@
     {
       "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -325930,6 +326520,12 @@
     {
       "from": "TASK-cron-migrate-existing-timers",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts; src/server/start.ts"
+    },
+    {
+      "from": "TASK-cron-migrate-existing-timers",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -326170,6 +326766,12 @@
     {
       "from": "TASK-cron-provider-health-rescan",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-cron-provider-health-rescan",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -326334,6 +326936,12 @@
       "kind": "sibling",
       "to": "TASK-workflow-dag-engine-task-dependencies",
       "via": "src/cron/registry.ts"
+    },
+    {
+      "from": "TASK-cron-registry-core",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts"
     },
     {
       "from": "TASK-cron-registry-core",
@@ -326580,6 +327188,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/config/cert.ts"
+    },
+    {
+      "from": "TASK-cross-platform-portability",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-cross-platform-portability",
@@ -328462,6 +329076,12 @@
     {
       "from": "TASK-define-shared-nav-state-contract-between-client-side-routing",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-define-shared-nav-state-contract-between-client-side-routing",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -329130,6 +329750,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/middleware/dynamic-response.ts"
+    },
+    {
+      "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts; src/transport/ws.ts"
     },
     {
       "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
@@ -331468,6 +332094,12 @@
     {
       "from": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -331812,6 +332444,12 @@
       "kind": "sibling",
       "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-docs-ui-endpoint-linkage",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/layout.ts; src/views/layout.html"
     },
     {
       "from": "TASK-docs-ui-endpoint-linkage",
@@ -333310,6 +333948,12 @@
     {
       "from": "TASK-effect-v4-s6-resource-safety-spike",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "TASK-effect-v4-s6-resource-safety-spike",
+      "kind": "sibling",
       "to": "epic-cron-scheduler",
       "via": "src/async/offload.ts"
     },
@@ -333407,6 +334051,12 @@
       "from": "TASK-effect-v4-scoped-concurrency-and-interruption-spike",
       "kind": "sibling",
       "to": "TASK-tmp-janitor-and-staleness-markers",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "TASK-effect-v4-scoped-concurrency-and-interruption-spike",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/async/offload.ts"
     },
     {
@@ -335452,6 +336102,12 @@
     {
       "from": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-enable-http-2-via-single-tls-port-consolidation",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -337042,6 +337698,18 @@
     {
       "from": "TASK-engine-docs-search",
       "kind": "sibling",
+      "to": "TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log",
+      "via": "src/harness/exec-log.ts"
+    },
+    {
+      "from": "TASK-engine-docs-search",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/harness/exec-log.ts"
+    },
+    {
+      "from": "TASK-engine-docs-search",
+      "kind": "sibling",
       "to": "epic-output-control-transforms",
       "via": "src/plugins/registry.ts"
     },
@@ -337092,6 +337760,18 @@
       "kind": "sibling",
       "to": "TASK-text-effects-overlays",
       "via": "src/plugins/registry.ts"
+    },
+    {
+      "from": "TASK-engine-feedback-loop",
+      "kind": "sibling",
+      "to": "TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log",
+      "via": "src/harness/exec-log.ts"
+    },
+    {
+      "from": "TASK-engine-feedback-loop",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/harness/exec-log.ts"
     },
     {
       "from": "TASK-engine-feedback-loop",
@@ -337392,6 +338072,12 @@
       "kind": "sibling",
       "to": "epic-auth-access",
       "via": "src/frontend/alpine/admin-users.ts"
+    },
+    {
+      "from": "TASK-epic11-admin-settings-reconciliation",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/chat/chat-settings-modal.html; src/components/modals/settings.html"
     },
     {
       "from": "TASK-epic11-admin-settings-reconciliation",
@@ -338824,6 +339510,12 @@
     {
       "from": "TASK-fail-safe-execution-work-safety",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-fail-safe-execution-work-safety",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -339119,6 +339811,12 @@
       "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
       "kind": "sibling",
       "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/views/layout.html"
     },
     {
@@ -340794,6 +341492,12 @@
       "kind": "sibling",
       "to": "TASK-x3-federated-otp-carry-but-reverify-phase-1-matrix-dm-send-v",
       "via": "src/federation/clearance.ts"
+    },
+    {
+      "from": "TASK-federation-peer-workload-wire-endpoints",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/transport/ws.ts"
     },
     {
       "from": "TASK-federation-peer-workload-wire-endpoints",
@@ -343942,6 +344646,12 @@
     {
       "from": "TASK-frontend-view-model-extraction",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "TASK-frontend-view-model-extraction",
+      "kind": "sibling",
       "to": "epic-character-internal-traits",
       "via": "src/routes/views/characters.ts"
     },
@@ -344022,6 +344732,12 @@
       "kind": "sibling",
       "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
       "via": "src/routes/views/view-serving.ts"
+    },
+    {
+      "from": "TASK-frontend-view-model-json-negotiation",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/layout.ts"
     },
     {
       "from": "TASK-frontend-view-model-json-negotiation",
@@ -346486,6 +347202,12 @@
     {
       "from": "TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts; src/async/spill.ts"
+    },
+    {
+      "from": "TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase",
+      "kind": "sibling",
       "to": "epic-cron-scheduler",
       "via": "src/async/offload.ts"
     },
@@ -348058,8 +348780,20 @@
     {
       "from": "TASK-harness-executions-jsonl-query-sidecar-offset-index-behind-e",
       "kind": "sibling",
+      "to": "TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log",
+      "via": "src/harness/exec-log.ts"
+    },
+    {
+      "from": "TASK-harness-executions-jsonl-query-sidecar-offset-index-behind-e",
+      "kind": "sibling",
       "to": "TASK-web-preserve-error-bodies-plus-per-chat-send-timeout-plus-st",
       "via": "src/tui/harness/api.ts"
+    },
+    {
+      "from": "TASK-harness-executions-jsonl-query-sidecar-offset-index-behind-e",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/harness/exec-log.ts"
     },
     {
       "from": "TASK-harness-executions-jsonl-query-sidecar-offset-index-behind-e",
@@ -349024,8 +349758,20 @@
     {
       "from": "TASK-harness-reusable-chat-route-files-from-the-generate-route-pa",
       "kind": "sibling",
+      "to": "TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log",
+      "via": "src/harness/exec-log.ts"
+    },
+    {
+      "from": "TASK-harness-reusable-chat-route-files-from-the-generate-route-pa",
+      "kind": "sibling",
       "to": "TASK-web-preserve-error-bodies-plus-per-chat-send-timeout-plus-st",
       "via": "src/tui/harness/api.ts"
+    },
+    {
+      "from": "TASK-harness-reusable-chat-route-files-from-the-generate-route-pa",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/harness/exec-log.ts"
     },
     {
       "from": "TASK-harness-reusable-chat-route-files-from-the-generate-route-pa",
@@ -350242,6 +350988,12 @@
     {
       "from": "TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/transport/ws.ts"
+    },
+    {
+      "from": "TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3",
+      "kind": "sibling",
       "to": "epic-embeddable-backend",
       "via": "src/transport/ws.ts"
     },
@@ -350602,6 +351354,12 @@
     {
       "from": "TASK-https-redirect-enforcement-for-plaintext-http",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-https-redirect-enforcement-for-plaintext-http",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -350808,6 +351566,12 @@
       "kind": "sibling",
       "to": "epic-blog-system",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-i18n-alpine-client",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
     },
     {
       "from": "TASK-i18n-alpine-client",
@@ -351071,6 +351835,12 @@
       "from": "TASK-i18n-template-strings",
       "kind": "sibling",
       "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-i18n-template-strings",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/views/layout.html"
     },
     {
@@ -352150,6 +352920,12 @@
     {
       "from": "TASK-info-bubbles",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-info-bubbles",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -353224,6 +354000,12 @@
     {
       "from": "TASK-item-config-templates",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-item-config-templates",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -354047,6 +354829,12 @@
       "from": "TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl",
       "kind": "sibling",
       "to": "TASK-template-preflight-production-resolver-gate",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/routes/views/layout.ts"
     },
     {
@@ -355414,6 +356202,12 @@
     {
       "from": "TASK-local-instance-integrity-holistic",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-local-instance-integrity-holistic",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -356128,6 +356922,12 @@
     {
       "from": "TASK-logging-hardening-minors-injection-rotation-races-sink-path-",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-logging-hardening-minors-injection-rotation-races-sink-path-",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -356225,6 +357025,12 @@
       "from": "TASK-logging-separate-database-research",
       "kind": "sibling",
       "to": "TASK-tmp-janitor-and-staleness-markers",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "TASK-logging-separate-database-research",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/async/offload.ts"
     },
     {
@@ -357192,6 +357998,12 @@
       "kind": "sibling",
       "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
       "via": "src/generation/auto-gen/deps.ts"
+    },
+    {
+      "from": "TASK-markdown-heading-parse-and-import",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/modals/settings.html"
     },
     {
       "from": "TASK-markdown-heading-parse-and-import",
@@ -359812,6 +360624,12 @@
     {
       "from": "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/middleware/permissions.ts"
+    },
+    {
+      "from": "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
+      "kind": "sibling",
       "to": "epic-chat-composer-flows",
       "via": "src/routes/messages/reply.ts"
     },
@@ -360131,6 +360949,12 @@
       "from": "TASK-middleware-distributed-healing-revalidation-backups",
       "kind": "sibling",
       "to": "TASK-tmp-janitor-and-staleness-markers",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "TASK-middleware-distributed-healing-revalidation-backups",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/async/offload.ts"
     },
     {
@@ -360534,6 +361358,12 @@
       "kind": "sibling",
       "to": "epic-blog-system",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/middleware/permissions.ts"
     },
     {
       "from": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
@@ -361048,6 +361878,12 @@
     {
       "from": "TASK-middleware-in-progress-status-endpoint-for-long-running-requ",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "TASK-middleware-in-progress-status-endpoint-for-long-running-requ",
+      "kind": "sibling",
       "to": "epic-character-growth",
       "via": "src/app/register-plugins.ts"
     },
@@ -361554,6 +362390,12 @@
       "kind": "sibling",
       "to": "WIRE-frontend-mobile-sticky-bottom-composer",
       "via": "src/components/chat/mobile-composer.html"
+    },
+    {
+      "from": "TASK-migrate-text-surfaces-to-shared-primitives",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/partials/characters/create-modal.html"
     },
     {
       "from": "TASK-migrate-text-surfaces-to-shared-primitives",
@@ -362142,6 +362984,12 @@
       "kind": "sibling",
       "to": "epic-accessibility-input",
       "via": "src/frontend/touch.ts; src/views/layout.html"
+    },
+    {
+      "from": "TASK-mobile-surface-audit-360px",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
     },
     {
       "from": "TASK-mobile-surface-audit-360px",
@@ -363502,6 +364350,12 @@
     {
       "from": "TASK-nsfw-rating-enforcement",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/character-edit-form.ts"
+    },
+    {
+      "from": "TASK-nsfw-rating-enforcement",
+      "kind": "sibling",
       "to": "epic-character-growth",
       "via": "src/routes/characters/update.ts"
     },
@@ -363899,6 +364753,12 @@
       "from": "TASK-ocsp-stapling-for-tls-certificate-status",
       "kind": "sibling",
       "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-ocsp-stapling-for-tls-certificate-status",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/server/start.ts"
     },
     {
@@ -364488,6 +365348,12 @@
       "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/assistant/intent.ts"
+    },
+    {
+      "from": "TASK-outfit-change-hook",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-outfit-change-hook",
@@ -365940,6 +366806,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/config/cert.ts"
+    },
+    {
+      "from": "TASK-production-tls-modes-byo-certs-acme-and-proxy-termination",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-production-tls-modes-byo-certs-acme-and-proxy-termination",
@@ -368508,6 +369380,12 @@
       "kind": "sibling",
       "to": "epic-auth-access",
       "via": "src/frontend/fe-fetch.ts"
+    },
+    {
+      "from": "TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
     },
     {
       "from": "TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice",
@@ -371152,6 +372030,12 @@
     {
       "from": "TASK-recursive-self-improvement-watchdog-supervisor-process-spawn",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-recursive-self-improvement-watchdog-supervisor-process-spawn",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -371956,6 +372840,12 @@
     {
       "from": "TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -372654,6 +373544,12 @@
       "kind": "sibling",
       "to": "epic-accessibility-input",
       "via": "src/frontend/a11y/responsive.ts; src/views/layout.html"
+    },
+    {
+      "from": "TASK-responsive-design",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
     },
     {
       "from": "TASK-responsive-design",
@@ -373632,6 +374528,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/db/index.ts"
+    },
+    {
+      "from": "TASK-runtime-integrity-watchdog-crash-recovery",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-runtime-integrity-watchdog-crash-recovery",
@@ -374668,6 +375570,12 @@
     {
       "from": "TASK-server-side-i18n-middleware",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "TASK-server-side-i18n-middleware",
+      "kind": "sibling",
       "to": "epic-db-cold-storage-high-perf",
       "via": "src/elysia-app.ts"
     },
@@ -374866,6 +375774,12 @@
     {
       "from": "TASK-shared-text-surface-toolbar",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/text-toolbar.html"
+    },
+    {
+      "from": "TASK-shared-text-surface-toolbar",
+      "kind": "sibling",
       "to": "epic-encryption-workflow",
       "via": "src/frontend/alpine/index.ts"
     },
@@ -374946,6 +375860,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/middleware/dynamic-response.ts"
+    },
+    {
+      "from": "TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/transport/ws.ts"
     },
     {
       "from": "TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un",
@@ -375108,6 +376028,12 @@
       "kind": "sibling",
       "to": "epic-battle-integration-gaps",
       "via": "src/battle/item-mapping.ts"
+    },
+    {
+      "from": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/modals/settings.html"
     },
     {
       "from": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
@@ -375282,6 +376208,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/server.ts"
+    },
+    {
+      "from": "TASK-size-strict-debt",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-size-strict-debt",
@@ -375605,6 +376537,12 @@
       "from": "TASK-sni-multi-certificate-serving-for-multiple-domains",
       "kind": "sibling",
       "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-sni-multi-certificate-serving-for-multiple-domains",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/server/start.ts"
     },
     {
@@ -376133,6 +377071,12 @@
       "from": "TASK-swarm-supervisor",
       "kind": "sibling",
       "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-swarm-supervisor",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
       "via": "src/server/start.ts"
     },
     {
@@ -376960,6 +377904,12 @@
     {
       "from": "TASK-task-web-aa-axe-ratchet",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-task-web-aa-axe-ratchet",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -376974,6 +377924,12 @@
       "kind": "sibling",
       "to": "epic-logging",
       "via": "src/routes/telemetry.ts"
+    },
+    {
+      "from": "TASK-template-preflight-production-resolver-gate",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/views/layout.ts"
     },
     {
       "from": "TASK-template-preflight-production-resolver-gate",
@@ -377632,6 +378588,12 @@
     {
       "from": "TASK-tls-cipher-suite-hardening-and-secure-defaults",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-tls-cipher-suite-hardening-and-secure-defaults",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
       "via": "src/server/start.ts"
     },
@@ -377718,6 +378680,12 @@
       "kind": "sibling",
       "to": "epic-cross-platform-portability",
       "via": "src/config/cert.ts"
+    },
+    {
+      "from": "TASK-tmp-janitor-and-staleness-markers",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/async/offload.ts"
     },
     {
       "from": "TASK-tmp-janitor-and-staleness-markers",
@@ -380212,6 +381180,12 @@
     {
       "from": "TASK-visual-novel-mode",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "TASK-visual-novel-mode",
+      "kind": "sibling",
       "to": "epic-chat-lifecycle-moderation",
       "via": "src/components/chat/chat-settings-modal.html; src/frontend/alpine/chat-settings.ts; src/public/css/app.css"
     },
@@ -380542,6 +381516,12 @@
     {
       "from": "TASK-vn-scene-template-system",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "TASK-vn-scene-template-system",
+      "kind": "sibling",
       "to": "epic-chat-lifecycle-moderation",
       "via": "src/components/chat/chat-settings-modal.html"
     },
@@ -380562,6 +381542,12 @@
       "kind": "sibling",
       "to": "epic-visual-novel-mode",
       "via": "src/frontend/vn/templates/apply.ts"
+    },
+    {
+      "from": "TASK-vn-template-actions",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/chat/chat-settings-modal.html"
     },
     {
       "from": "TASK-vn-template-actions",
@@ -380714,6 +381700,12 @@
       "via": "src/rpg/service/character-stats.ts"
     },
     {
+      "from": "TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/harness/exec-log.ts"
+    },
+    {
       "from": "TASK-web-lazy-slash-command-hint-bar-port-of-commandcompleter",
       "kind": "sibling",
       "to": "epic-harness-integration",
@@ -380826,6 +381818,12 @@
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-widen-import-export-io-for-publications",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/components/modals/settings.html"
     },
     {
       "from": "TASK-widen-import-export-io-for-publications",
@@ -381096,6 +382094,12 @@
       "kind": "sibling",
       "to": "epic-chat-product-features",
       "via": "src/memory/injection/relevance.ts"
+    },
+    {
+      "from": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
@@ -383032,6 +384036,12 @@
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -383262,6 +384272,12 @@
       "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/layout.html"
     },
     {
       "from": "epic-accessibility-input",
@@ -384114,6 +385130,12 @@
       "kind": "sibling",
       "to": "epic-blog-system",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-architecture",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/middleware/permissions.ts"
     },
     {
       "from": "epic-architecture",
@@ -386122,6 +387144,12 @@
     {
       "from": "epic-blog-system",
       "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/views/blog.html"
+    },
+    {
+      "from": "epic-blog-system",
+      "kind": "sibling",
       "to": "epic-db-cold-storage-high-perf",
       "via": "src/elysia-app.ts"
     },
@@ -386220,6 +387248,198 @@
       "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/views/blog.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-certificate-and-tls-management",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-character-internal-traits",
+      "via": "src/routes/views/character-edit-form.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-chat-lifecycle-moderation",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-chat-product-features",
+      "via": "src/middleware/permissions.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-config-templates",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-cron-scheduler",
+      "via": "src/async/offload.ts; src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-cross-platform-portability",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-db-migration-compaction",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-docs-reconciliation",
+      "via": "src/routes/views/layout.ts; src/views/layout.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-effect-v4-adoption-evaluation",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-embeddable-backend",
+      "via": "src/transport/ws.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-embeddable-engine-game-frontend",
+      "via": "src/transport/ws.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/transport/ws.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-file-splitting",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-frontend-headers-management",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-frontend-settings",
+      "via": "src/components/modals/settings.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-game-frontend-scenes",
+      "via": "src/transport/ws.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-hidden-carriage-context",
+      "via": "src/components/chat/chat-settings-modal.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-http-protocol-features",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-logging",
+      "via": "src/middleware/permissions.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-middleware-request-lifecycle",
+      "via": "src/async/offload.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/components/modals/settings.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-realtime-transports",
+      "via": "src/transport/ws.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-recursive-self-improvement",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-runtime-integrity-fail-safes",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-security-sandboxing-quickref",
+      "via": "src/middleware/permissions.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-skills-professions-config",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-terminal-ui",
+      "via": "src/views/blog.html"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "sibling",
+      "to": "epic-transport-expansion",
+      "via": "src/transport/ws.ts"
     },
     {
       "from": "epic-byok-api-keys",
