@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// Central post-derive guard: closes the delegated-enforcement residual
+// (derive-audit R1/R2 — fail-open owner_id===userId on nullable-owner rows).
+// Unlisted routes fail closed (401); entries below trace to the audit allowlist.
 import type { TranslatorFn, } from "../i18n/types";
 import { registry, } from "../plugins";
 import { normalizePluginRoutePath, } from "../plugins/registry-policy";
@@ -32,9 +35,12 @@ const PUBLIC_ENTRIES: readonly AllowEntry[] = [
   { method: "GET", prefix: "/api/v1/health", },
   { method: "GET", prefix: "/metrics", },
   { method: "POST", prefix: "/api/telemetry/event", },
+  // Anonymous sink: rate-limited, no domain rows (audit R3).
   { method: "POST", prefix: "/api/v1/telemetry/event", },
+  // Anonymous log sink: no domain writes (audit R3).
   { method: "POST", prefix: "/api/frontend/logs", },
   { method: "POST", prefix: "/api/v1/frontend/logs", },
+  // Stateless pure-compute calculators: no DB, no identity.
   { method: "POST", prefix: "/api/battle/morale", },
   { method: "POST", prefix: "/api/v1/battle/morale", },
   { method: "POST", prefix: "/api/battle/npc", },
@@ -45,10 +51,13 @@ const PUBLIC_ENTRIES: readonly AllowEntry[] = [
   { method: "POST", prefix: "/api/v1/battle/social", },
   { method: "POST", prefix: "/api/battle/weather", },
   { method: "POST", prefix: "/api/v1/battle/weather", },
+  // HMAC trust (not session): verified per-request inside the handler.
   { method: "POST", prefix: "/api/v1/integrations/webhooks/", },
+  // Peer-credential trust: verified via assertTrustedPeer, not the session.
   { method: "POST", prefix: "/api/mesh-reserve", },
   { method: "POST", prefix: "/api/mesh-deliver", },
   { method: "POST", prefix: "/api/peer-work/run", },
+  // Guest-read carve-out: GET-only, role='guest', shapes below.
   { method: "GET", prefix: "/api/auth/me", },
   { method: "GET", prefix: "/api/v1/auth/me", },
   { method: "GET", prefix: "/api/emoji", },
