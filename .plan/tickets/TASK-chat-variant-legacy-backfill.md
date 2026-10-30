@@ -27,7 +27,7 @@ Legacy chats predate the variants taxonomy: they are taxonomy-blind. From schema
 
 **Mapping rules (the spec):**
 
-Evaluated once per row by migration `084_chat_variant_backfill`, in order, only on rows with `purpose IS NULL`. Only `chats.purpose` is written — `type`/`mode` are never rewritten (mode drives rendering/turn-orchestration defaults; flipping legacy `direct`/`group` modes would silently change existing chats' behavior). Unmapped rows stay `purpose = NULL` = unclassified, by design.
+Applied by migration `084_chat_variant_backfill` as ONE single-pass UPDATE per direction (the rule predicates are pairwise disjoint, so a precedence-ordered CASE encodes the R1→R2→R3 order in one atomic statement), only on rows with `purpose IS NULL`. Only `chats.purpose` is written — `type`/`mode` are never rewritten (mode drives rendering/turn-orchestration defaults; flipping legacy `direct`/`group` modes would silently change existing chats' behavior). Unmapped rows stay `purpose = NULL` = unclassified, by design.
 
 | # | Observed legacy shape | → variant | purpose set | Rationale |
 |---|---|---|---|---|
@@ -38,7 +38,7 @@ Evaluated once per row by migration `084_chat_variant_backfill`, in order, only 
 
 **Acceptance Criteria:**
 
-- [x] Migration `084_chat_variant_backfill` (pure data migration, zero schema change) classifies per R1–R3 in one transaction; `type`/`mode` untouched; ambiguous rows stay NULL.
+- [x] Migration `084_chat_variant_backfill` (pure data migration, zero schema change) classifies per R1–R3 in one atomic single-pass statement per direction; `type`/`mode` untouched; ambiguous rows stay NULL.
 - [x] Rows that already carry a taxonomy purpose (variant-era creates) are never modified.
 - [x] `down()` restores the pre-backfill state deterministically (recompute: same classifier shapes reset `purpose` to NULL); roundtrip up→down→up is stable.
 - [x] Fixture tests: plain 1:1 (stays NULL), group social (stays NULL), VN chat (stays NULL), battle/validation direct+group (→ validation), rpg with world binding direct+group (→ rpg), battle group with world (→ rpg, R1 precedence), gm_config validation block (→ validation), GM-role chat (stays NULL), corrupted gm_config (stays NULL, no throw), pre-purposed variant rows (untouched).
