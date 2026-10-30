@@ -60444,7 +60444,7 @@
     "epic": "epic-browser-editor-support",
     "tags": [],
     "source": ".plan/tickets/TASK-web-editor-config-section-plus-bun-floor-web-editor-web-term.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-WEB-EDITOR-HARNESS-SANDBOX-FILE-TREE-APPROACH-C": {
     "hash": "f63d7d9",
@@ -60457,7 +60457,7 @@
     "epic": "epic-browser-editor-support",
     "tags": [],
     "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-WEB-EDITOR-OPEN-IN-EDITOR-URI-SCHEME-LINKS-APPROACH-A": {
     "hash": "42b9293",
@@ -60470,7 +60470,7 @@
     "epic": "epic-browser-editor-support",
     "tags": [],
     "source": ".plan/tickets/TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-WEB-EDITOR-PTY-SPAWN-AUDIT-LOGGING-TO-HARNESS-EXEC-LOG": {
     "hash": "5669358",
@@ -60483,7 +60483,7 @@
     "epic": "epic-browser-editor-support",
     "tags": [],
     "source": ".plan/tickets/TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-WEB-EDITOR-PTY-TERMINAL-ROUTE-APPROACH-B": {
     "hash": "5bf3df5",
@@ -60496,7 +60496,7 @@
     "epic": "epic-browser-editor-support",
     "tags": [],
     "source": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-WEB-EMBED-PROFILE": {
     "hash": "c93debd",
