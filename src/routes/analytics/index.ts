@@ -29,7 +29,7 @@ interface HandleOpts {
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): Elysia {
-  const hooks = { response: { 200: SuccessResponse, 401: ErrorResponse, }, };
+  const hooks = { response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, };
 
   // `as unknown as AnalyticsCtx` is the sanctioned single boundary cast: the
   // global derive populates `userId`, but a standalone plugin's ctx type does

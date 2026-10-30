@@ -85,6 +85,8 @@ Users need objective metrics to evaluate generation quality over time. Is the mo
 
 **Ownership.** The handler inner-joins `chats` and filters on `chats.created_by = userId`, so a caller only ever sees their own chats' data. A `chatId` filter naming a chat the caller does not own is answered 404, never 403, so the endpoint cannot be used to probe for the existence of a foreign chat.
 
+**Scope: completed generations only.** Metrics are recorded for completed generations — that is, for the assistant message row the write path persists. An exception-cancel or an error that never produces a message row (`auto-generation.ts` routes the throw to `handle-generation-error`, and the stream-to-client path only cleans up the attempt) writes no row, so it is absent from the totals and from the finish-reason histogram: the histogram covers graceful completions only.
+
 **Filters.** `model`, `chatId`, `from`, `to` — `from`/`to` follow the `parseExpiryMs` / `toDate` convention of `src/routes/analytics/chats.ts`; `to` is exclusive. The comparison normalises both sides with SQLite's `datetime()`, because `messages.created_at` is stored in SQLite datetime text (`"2026-01-02 10:00:00"`) while the parsed bound is ISO (`"2026-01-02T00:00:00.000Z"`) — raw string comparison mis-orders the two formats and shifts both boundaries by a day.
 
 **Quality trends (AC4).** Rendered as CSS bars in the admin analytics panel, not a chart library: FEAT-059 deliberately ships CSS/SVG bars and Chart.js is not a dependency. The widget charts the daily trend (latency, tokens/sec, repetition rate) and a per-model comparison table.

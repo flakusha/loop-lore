@@ -9,14 +9,23 @@
  * reason from the `metadata.quality` JSON blob. The fixture therefore seeds
  * messages the way the write paths do - including SQLite datetime text, which
  * is what the `created_at` column default stores.
+ *
+ * Resource contract (parallel-safe): every database here is an in-memory
+ * SQLite handle created by `createTestDb()`, so no two tests - in this file or
+ * in a sibling file - ever share a database, a file path or a port. The
+ * process-global `setTestDatabase()` override is never touched, so a failed
+ * assertion cannot leak a handle into another file. The negative-space block
+ * below owns a SEPARATE database and gives each of its tests a DISTINCT user,
+ * so no test can observe another test's rows and the block passes in any
+ * order.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
   insertChats,
@@ -40,6 +49,47 @@ function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-analytics-quality", },)
     .derive(() => ({ userId, }))
     .use(analyticsRoutes({ database: db, },),) as unknown as Elysia;
+}
+
+/** Shape of the quality endpoint's JSON body. */
+interface QualityBody {
+  totals: {
+    generations: number;
+    withQualityMetrics: number;
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+    avgLatencyMs: number;
+    avgTokensPerSecond: number;
+    avgRepetitionRate: number;
+  };
+  byModel: {
+    model: string | null;
+    provider: string | null;
+    generations: number;
+    totalTokens: number;
+    avgRepetitionRate: number;
+  }[];
+  trend: { date: string; generations: number; totalTokens: number; avgRepetitionRate: number }[];
+  finishReasons: { reason: string; count: number }[];
+}
+
+/**
+ * Issue a quality report request against a specific database as a specific
+ * user. Takes the database explicitly so every caller owns its own handle.
+ * @param db - the database the request must read from
+ * @param query - the query string, without the leading `?` for an empty one
+ * @param user - the calling user, or null for an unauthenticated request
+ * @returns the HTTP status and the parsed body
+ */
+async function requestQuality(
+  db: Kysely<DB>,
+  query: string,
+  user: string | null,
+): Promise<{ status: number; body: QualityBody }> {
+  const app = createApp(db, user,);
+  const res = await app.handle(new Request(`http://localhost/api/analytics/quality${query}`,),);
+  return { status: res.status, body: (await res.json()) as QualityBody, };
 }
 
 describe("GET /api/analytics/quality", () => {
@@ -132,32 +182,8 @@ describe("GET /api/analytics/quality", () => {
     await db.destroy();
   },);
 
-  interface QualityBody {
-    totals: {
-      generations: number;
-      withQualityMetrics: number;
-      promptTokens: number;
-      completionTokens: number;
-      totalTokens: number;
-      avgLatencyMs: number;
-      avgTokensPerSecond: number;
-      avgRepetitionRate: number;
-    };
-    byModel: {
-      model: string | null;
-      provider: string | null;
-      generations: number;
-      totalTokens: number;
-      avgRepetitionRate: number;
-    }[];
-    trend: { date: string; generations: number; totalTokens: number; avgRepetitionRate: number }[];
-    finishReasons: { reason: string; count: number }[];
-  }
-
   async function get(query: string, user: string | null = userId,): Promise<{ status: number; body: QualityBody }> {
-    const app = createApp(db, user,);
-    const res = await app.handle(new Request(`http://localhost/api/analytics/quality${query}`,),);
-    return { status: res.status, body: (await res.json()) as QualityBody, };
+    return requestQuality(db, query, user,);
   }
 
   test("returns 401 without a userId", async () => {
@@ -305,5 +331,149 @@ describe("GET /api/analytics/quality", () => {
     expect(body.totals.avgRepetitionRate,).toBe(0,);
     expect(body.byModel,).toEqual([],);
     expect(body.trend,).toEqual([],);
+  });
+});
+
+// ── Negative space ───────────────────────────────────────────────
+// The endpoint guards every json_extract with json_valid() and silently
+// ignores an unparsable date filter (the parseExpiryMs convention of
+// chats.ts). These tests pin that behaviour.
+//
+// Resource contract: each test below owns its OWN in-memory database,
+// created in beforeEach and destroyed in afterEach, so no test can observe
+// another test's rows and a failed assertion cannot leave a handle behind.
+// The process-global setTestDatabase() override is never touched.
+describe("GET /api/analytics/quality - negative space", () => {
+  let fixture: TestDb | undefined;
+
+  beforeEach(async () => {
+    fixture = await createTestDb();
+  },);
+
+  afterEach(async () => {
+    // Undefined when the setup itself failed - there is nothing to release.
+    if (fixture !== undefined) {
+      await destroyTestDb(fixture,);
+      fixture = undefined;
+    }
+  },);
+
+  /** The current test's own database. */
+  function db(): Kysely<DB> {
+    if (fixture === undefined) { throw new Error("test fixture not created",); }
+    return fixture.db;
+  }
+
+  /** @param userId */
+  async function seedUser(userId: string,): Promise<void> {
+    await insertUsers(db(), userId, `Neg ${userId}`, { id: userId, } as never,);
+    await insertActors(db(), `Neg ${userId}`, {
+      id: userId,
+      actor_type: "user" as never,
+      user_id: userId,
+    },);
+  }
+
+  /**
+   * Seed a chat with one well-formed generation.
+   * @param userId - the owning user
+   * @param chatId - the chat to create
+   * @param createdAt - the SQLite datetime text of the generation
+   */
+  async function seedGeneration(userId: string, chatId: string, createdAt: string,): Promise<void> {
+    await insertChats(db(), `Neg chat ${chatId}`, userId, { id: chatId, },);
+    await insertMessages(db(), chatId, userId, MessageRole.Assistant, "baseline reply", {
+      model_id: "model-a",
+      provider: "openai",
+      token_count_prompt: 100,
+      token_count_completion: 50,
+      token_count_total: 150,
+      generation_time_ms: 1000,
+      tokens_per_second: 50,
+      metadata: qualityBlob(0.5, "stop",),
+      created_at: createdAt,
+    },);
+  }
+
+  test("a row with malformed metadata JSON is ignored, not fatal", async () => {
+    // Without the json_valid() guard, json_extract() on "{bad" throws and
+    // the whole report would fail instead of skipping the row.
+    const userId = "neg-malformed-user";
+    const goodChat = "neg-malformed-good";
+    const badChat = "neg-malformed-bad";
+
+    await seedUser(userId,);
+    await seedGeneration(userId, goodChat, "2026-01-01 10:00:00",);
+    await seedGeneration(userId, badChat, "2026-01-01 10:00:00",);
+    await insertMessages(db(), badChat, userId, MessageRole.Assistant, "malformed reply", {
+      model_id: "model-a",
+      provider: "openai",
+      token_count_prompt: 999,
+      token_count_completion: 999,
+      token_count_total: 1998,
+      generation_time_ms: 9999,
+      tokens_per_second: 1,
+      metadata: "{bad",
+      created_at: "2026-01-01 11:00:00",
+    },);
+
+    const bad = await requestQuality(db(), `?chatId=${badChat}`, userId,);
+    expect(bad.status,).toBe(200,);
+
+    const good = await requestQuality(db(), `?chatId=${goodChat}`, userId,);
+    expect(bad.body.totals,).toEqual(good.body.totals,);
+    expect(bad.body.totals.generations,).toBe(1,);
+    expect(bad.body.totals.totalTokens,).toBe(150,);
+  });
+
+  test("a row without a quality blob counts neither as a generation nor in the averages", async () => {
+    const userId = "neg-no-quality-user";
+    const goodChat = "neg-no-quality-good";
+    const bareChat = "neg-no-quality-bare";
+
+    await seedUser(userId,);
+    await seedGeneration(userId, goodChat, "2026-01-01 10:00:00",);
+    await seedGeneration(userId, bareChat, "2026-01-01 10:00:00",);
+    await insertMessages(db(), bareChat, userId, MessageRole.Assistant, "no quality reply", {
+      model_id: "model-a",
+      provider: "openai",
+      token_count_prompt: 888,
+      token_count_completion: 888,
+      token_count_total: 1776,
+      generation_time_ms: 8888,
+      tokens_per_second: 2,
+      metadata: '{"note":"x"}',
+      created_at: "2026-01-01 12:00:00",
+    },);
+
+    const bare = await requestQuality(db(), `?chatId=${bareChat}`, userId,);
+    expect(bare.status,).toBe(200,);
+
+    const good = await requestQuality(db(), `?chatId=${goodChat}`, userId,);
+    expect(bare.body.totals,).toEqual(good.body.totals,);
+    expect(bare.body.totals.generations,).toBe(1,);
+    expect(bare.body.totals.withQualityMetrics,).toBe(1,);
+    expect(bare.body.totals.totalTokens,).toBe(150,);
+    expect(bare.body.totals.avgLatencyMs,).toBe(1000,);
+    expect(bare.body.totals.avgRepetitionRate,).toBe(0.5,);
+  });
+
+  test("an unparsable date filter is ignored and the report stays unfiltered", async () => {
+    const userId = "neg-date-user";
+
+    await seedUser(userId,);
+    await seedGeneration(userId, "neg-date-chat-1", "2026-01-01 10:00:00",);
+    await seedGeneration(userId, "neg-date-chat-2", "2026-01-02 10:00:00",);
+
+    const unfiltered = await requestQuality(db(), "", userId,);
+    const garbage = await requestQuality(db(), "?from=garbage", userId,);
+    expect(garbage.status,).toBe(200,);
+    expect(garbage.body.totals,).toEqual(unfiltered.body.totals,);
+    expect(garbage.body.totals.generations,).toBe(2,);
+
+    // Positive control: a parsable date filter still narrows the report, so
+    // the garbage case is a silent skip, not a broken filter.
+    const filtered = await requestQuality(db(), "?from=2026-01-02", userId,);
+    expect(filtered.body.totals.generations,).toBe(1,);
   });
 });
