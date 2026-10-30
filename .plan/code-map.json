@@ -17515,6 +17515,12 @@
       "source": "docs/spec/nsfw-integration.md"
     }
   ],
+  "src/db/enums-config": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-human-hybrid-gm-config-authoring-d3.md"
+    }
+  ],
   "src/db/enums-config.ts": [
     {
       "kind": "epic",
@@ -24658,6 +24664,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-human-hybrid-gm-config-authoring-d3.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
     }
   ],
@@ -30457,6 +30467,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-story-mode-prompt-stored-as-content.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-human-hybrid-gm-config-authoring-d3.md"
     },
     {
       "kind": "ticket",
@@ -37772,6 +37786,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-automated-nsfw-content-detection-integration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md"
     },
     {
@@ -44660,6 +44678,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-false-report-protection.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
     },
     {
@@ -46479,6 +46501,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-e2e-nsfw-appeals-audit-routes-coverage.md"
     }
   ],
   "src/routes/nsfw-moderation/appeals.ts": [
@@ -46497,6 +46523,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-e2e-nsfw-appeals-audit-routes-coverage.md"
     }
   ],
   "src/routes/nsfw-moderation/audit.test.ts": [
@@ -46524,6 +46554,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-e2e-nsfw-appeals-audit-routes-coverage.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     }
   ],
@@ -46545,6 +46579,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-attachment-review-queue-admin-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-automated-nsfw-content-detection-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-false-report-protection.md"
     },
     {
       "kind": "ticket",
@@ -55947,6 +55989,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-link-npc-inventory.md"
+    }
+  ],
+  "src/story/story-types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-human-hybrid-gm-config-authoring-d3.md"
     }
   ],
   "src/story/timeline/event-steering.ts": [
