@@ -38,6 +38,8 @@ import "./scene/view-mode";
 // ── 10c. TASK-025: text effects (shake / glow / typewriter / fade) ──
 import { toDate, } from "../utils/date";
 import { applyFx, isFxActive, prefersReducedMotion, } from "./effects/text-fx";
+// ── 10e. Open-in-$EDITOR links (approach A, epic-browser-editor-support) ──
+import { enhanceOpenInEditorLinks, } from "./open-in-editor";
 // ── 10d. TASK-text-effects-overlays: emotion triggers + status/badge overlays ──
 import {
   applyEmotionFx,
@@ -128,15 +130,30 @@ function hydrateClientDates(root: ParentNode = document,): void {
 }
 
 g.hydrateClientDates = hydrateClientDates;
-document.addEventListener("DOMContentLoaded", () => hydrateClientDates(),);
+
+// ── 5c. Open-in-$EDITOR links (approach A, epic-browser-editor-support) ──
+// Hydrates a[data-editor-path] anchors against the __EDITOR__ /
+// __EDITOR_FILE_ROOT__ globals the layout bootstrap seeds. Same load +
+// after-swap cadence as hydrateClientDates.
+document.addEventListener("DOMContentLoaded", () => {
+  hydrateClientDates();
+  enhanceOpenInEditorLinks();
+},);
+
 document.addEventListener("htmx:after:swap", (e: Event,) => {
   // htmx dispatches afterSwap on each settled element (bubbles to document);
   // detail.target is the swap target. Hydrate both subtrees — each call is
   // a scoped querySelectorAll, so over-coverage costs one extra scan.
   const detail = (e as CustomEvent<{ target?: Element }>).detail;
-  if (e.target instanceof Element) { hydrateClientDates(e.target,); }
-  if (detail?.target instanceof Element && detail.target !== e.target) {
-    hydrateClientDates(detail.target,);
+  const swappedRoots = [
+    e.target instanceof Element ? e.target : null,
+    detail?.target instanceof Element && detail.target !== e.target ? detail.target : null,
+  ];
+
+  for (const swapped of swappedRoots) {
+    if (!swapped) { continue; }
+    hydrateClientDates(swapped,);
+    enhanceOpenInEditorLinks(swapped,);
   }
 },);
 

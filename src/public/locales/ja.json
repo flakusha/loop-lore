@@ -52,7 +52,8 @@
     "filter": "Filter…",
     "archive": "Archive",
     "user": "ユーザー",
-    "actions": "アクション"
+    "actions": "アクション",
+    "openInEditor": "Open in $EDITOR"
   },
   "auth": {
     "login": "Log In",

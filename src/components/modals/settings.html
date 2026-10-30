@@ -133,6 +133,13 @@
               <div x-data="textToolbar({ target: '#settings-custom-instructions' })">
                 {{> text-toolbar.html }}
               </div>
+              <a
+                class="btn btn-ghost btn-sm open-in-editor"
+                data-editor-path="src/components/modals/settings.html"
+                data-editor-line="122"
+                href="#"
+                hidden
+              >{{{ t("common.openInEditor") }}}</a>
             </div>
           </div>
         </div>
@@ -267,6 +274,13 @@
                   @input="autoResize($el)"
                   data-testid="template-payload"
                 ></textarea>
+                <a
+                  class="btn btn-ghost btn-sm open-in-editor"
+                  data-editor-path="src/components/modals/settings.html"
+                  data-editor-line="261"
+                  href="#"
+                  hidden
+                >{{{ t("common.openInEditor") }}}</a>
               </div>
               <div style="display: flex; gap: var(--space-2); justify-content: flex-end">
                 <button class="btn btn-ghost btn-sm" @click="draft = null; editingId = ''">

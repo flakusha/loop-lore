@@ -52,6 +52,8 @@
     <!-- Telemetry config injected by server (replaced in wrapWithLayout) -->
     <script nonce="{{cspNonce}}">
       globalThis.__TELEMETRY_FRONTEND_ENABLED = {{telemetryEnabled}};
+      globalThis.__EDITOR__ = {{editorScheme}};
+      globalThis.__EDITOR_FILE_ROOT__ = {{editorFileRoot}};
     </script>
     <script nonce="{{cspNonce}}">
       globalThis.__USER_ID = {{userId}}; globalThis.__SESSION_ID = {{sessionId}};

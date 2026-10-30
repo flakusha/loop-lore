@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { existsSync, readFileSync, } from "node:fs";
-import { join, } from "node:path";
+import { join, resolve, } from "node:path";
+import { loadConfig, } from "../../config/load";
 import { getRawTranslations, } from "../../i18n/locale-loader";
 import { isLocale, LOCALE_REGISTRY, } from "../../i18n/locale-registry";
 import type { Locale, } from "../../i18n/types";
@@ -16,6 +17,26 @@ import { resolveHashedAssets, } from "./hashed-assets";
 import { resolvePluginMounts, } from "./plugin-mounts";
 
 const viewCache = new Map<string, string>();
+
+/**
+ * Approach-A open-in-editor bootstrap (epic-browser-editor-support): the
+ * editor scheme from `web.editor` and the absolute repo root the
+ * `data-editor-path` anchors resolve against. Resolved lazily on the first
+ * layout wrap and cached — loadConfig() needs the initialized logger, so a
+ * module-scope read crashes tooling that imports this module without a
+ * booted server (frontend template preflight), and a per-request read would
+ * re-run template expansion on every page render.
+ */
+let editorBootstrapCache: { scheme: string; fileRoot: string } | null = null;
+
+function editorBootstrap(): { scheme: string; fileRoot: string } {
+  editorBootstrapCache ??= {
+    scheme: loadConfig().web.editor,
+    fileRoot: resolve(VIEWS_DIR, "..", "..",),
+  };
+
+  return editorBootstrapCache;
+}
 
 /**
  * Docs are served when DOCS_ENABLED is not explicitly "false" — matches the
@@ -64,6 +85,18 @@ function wrapWithLayout(
   let layout = readFileSync(layoutPath, "utf8",);
   layout = layout.replace("{{{content}}}", () => content,);
   layout = layout.replace("{{telemetryEnabled}}", () => (isFrontendTelemetryEnabled() ? "true" : "false"),);
+  // Approach-A open-in-editor globals land in the same inline <script> block,
+  // so they take the same </script> breakout escape as the ids below.
+  layout = layout.replace(
+    "{{editorScheme}}",
+    () => escapeJsonForScript(jsonStringifyOr(editorBootstrap().scheme, '"vscode"',),),
+  );
+
+  layout = layout.replace(
+    "{{editorFileRoot}}",
+    () => escapeJsonForScript(jsonStringifyOr(editorBootstrap().fileRoot, '""',),),
+  );
+
   layout = layout.replace("{{docsNav}}", () => (isDocsServed() ? DOCS_NAV_HTML : ""),);
   // Both land in an inline <script> block (views/layout.html), so they get the
   // same `</script>` breakout escape as the locale data below. Not reachable
