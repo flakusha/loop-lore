@@ -1,35 +1,35 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
-import { serve, } from "bun";
-import { join, } from "node:path";
-import { initAgeGate, } from "../age-gate/controller";
-import { initAssistantQuota, } from "../assistant/quota/engine";
-import { flushActiveStore, } from "../async";
-import { reconcileInterruptedJobs, } from "../characters/services/emotion-avatar-service/restart-reconcile";
-import { ensureTlsCerts, } from "../config/cert";
-import { applyConfigChange, initConfigHotApply, onConfigChange, } from "../config/hot-apply";
-import { applyHotConfig, } from "../config/hot-apply-consumers";
-import { loadConfig, } from "../config/load";
 import type { Config, } from "../config/schema";
-import { getScheduler, } from "../cron";
-import { initAnonymousMode, initSmk, } from "../crypto";
+import { ServerExternalManager, } from "../services/server-external-manager";
+import { applyConfigChange, initConfigHotApply, onConfigChange, } from "../config/hot-apply";
+import { applyEnvironmentOverrides, seedConfiguredContent, seedConfiguredUsers, } from "../seeding";
+import { applyHotConfig, } from "../config/hot-apply-consumers";
+import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
+import { bindSharedQuotaEngine, } from "../generation/quota-engine";
+import { createApp, } from "../elysia-app";
+import { createLogger, getLogger, setGlobalLogger, } from "../logger";
+import { createNonApiHandler, } from "./static-files";
+import { createRequestHandler, handleApiRequest, } from "./handler";
+import { ensureTlsCerts, } from "../config/cert";
+import { flushActiveStore, } from "../async";
 import { getDatabase, } from "../db/index";
+import { getScheduler, } from "../cron";
+import { initAgeGate, } from "../age-gate/controller";
+import { initAnonymousMode, initSmk, } from "../crypto";
+import { initAssetCompression, } from "./init-asset-compression";
+import { initAssistantQuota, } from "../assistant/quota/engine";
+import { initBackgroundServices, } from "./init-background-services";
+import { initDefaultHooks, } from "../generation/hooks";
+import { initializeProviders, } from "../generation";
+import { join, } from "node:path";
+import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
+import { loadConfig, } from "../config/load";
+import { reconcileInterruptedJobs, } from "../characters/services/emotion-avatar-service/restart-reconcile";
 import { runDataMigrations, runMigrations, } from "../db/migrate";
 import { seedDefaultActors, } from "../db/seed";
-import { createApp, } from "../elysia-app";
-import { initializeProviders, } from "../generation";
-import { initDefaultHooks, } from "../generation/hooks";
-import { createLogger, getLogger, setGlobalLogger, } from "../logger";
-import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
-import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
-import { applyEnvironmentOverrides, seedConfiguredContent, seedConfiguredUsers, } from "../seeding";
-import { ServerExternalManager, } from "../services/server-external-manager";
 import { seedDynamicContent, } from "./boot-seed";
-import { createRequestHandler, handleApiRequest, } from "./handler";
-import { initAssetCompression, } from "./init-asset-compression";
-import { initBackgroundServices, } from "./init-background-services";
-import { createNonApiHandler, } from "./static-files";
+import { serve, } from "bun";
 
 /** Exit code for a clean, signal-triggered shutdown. */
 const CLEAN_EXIT_CODE = 0;
@@ -101,6 +101,7 @@ export async function start() {
 
   const database = getDatabase();
   const logger = getLogger();
+  bindSharedQuotaEngine(database,);
 
   // ── Periodic key rotation + telemetry retention ──────────
   // Owned by the cron scheduler (started in createApp below): jobs
