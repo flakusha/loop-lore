@@ -8,14 +8,31 @@
  * chats: happy path (messages merged, secondary archived, count reported),
  * usage grammar, the service-level ownership guard, and the unknown-secondary
  * rejection — all surfaced as system messages.
+ *
+ * Resource contract (parallel-safe):
+ * - Each test owns a FRESH in-memory SQLite DB (`createTestDb` in
+ *   beforeEach) — `:memory:` handles are per-instance, never a shared
+ *   file, so concurrent runners cannot collide.
+ * - Teardown is deterministic: `destroyTestDb` runs in `afterEach`, which
+ *   Bun executes even when an assertion throws, so a failed test cannot
+ *   leak an open handle into the next one.
+ * - No ordering dependence: every test performs its own split, so the
+ *   primary/secondary branch chats it merges are its own; no test reads
+ *   the archive state left behind by another test.
+ * - No process globals are set: this file never calls `setTestDatabase`,
+ *   never registers a provider, opens a port or writes a file.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { splitParty, } from "../../chat/service/split";
 import { ChatParticipantRole, MessageRole, PinnedState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import {
+  createTestDb,
+  destroyTestDb,
+  type TestDb,
+} from "../../test-utils/create-test-db";
 import {
   insertActors,
   insertChatParticipants,
@@ -29,6 +46,7 @@ import "./index"; // register all slash commands (self-registering)
 const WORLD_ID = "reunite-cmd-world";
 
 describe("/reunite", () => {
+  let fixture: TestDb | undefined;
   let db: Kysely<DB>;
   let ownerId: string;
   let heroId: string;
@@ -36,9 +54,10 @@ describe("/reunite", () => {
   let primaryChatId: string;
   let secondaryChatId: string;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     createLogger({ level: "error", },);
-    ({ db, } = await createTestDb());
+    fixture = await createTestDb();
+    db = fixture.db;
 
     ownerId = crypto.randomUUID();
     heroId = crypto.randomUUID();
@@ -52,7 +71,7 @@ describe("/reunite", () => {
       db,
       "Narrator",
       {
-        id: "reunite-narrator",
+        id: crypto.randomUUID(),
         user_id: ownerId,
         owner_id: ownerId,
         actor_type: "narrator",
@@ -96,8 +115,12 @@ describe("/reunite", () => {
     await insertMessages(db, secondaryChatId, rogueId, MessageRole.User, "We cleared the cave!",);
   },);
 
-  afterAll(async () => {
-    await db.destroy();
+  afterEach(async () => {
+    const current = fixture;
+    fixture = undefined;
+    if (current) {
+      await destroyTestDb(current,);
+    }
   },);
 
   /** Build a /reunite context in the primary (forest) branch chat. */
@@ -153,8 +176,9 @@ describe("/reunite", () => {
 
   test("non-owner caller is rejected by the ownership guard", async () => {
     const handler = getCommand("reunite",)!;
-    // Both chats must exist before the ownership guards fire, so reuse the
-    // (archived) secondary — heroId is not the primary's creator.
+    // Both chats must exist before the ownership guards fire; this test owns
+    // its own split, so the secondary is fresh — heroId is not the
+    // primary's creator.
     const result = await handler([secondaryChatId,], ctxFor({ userId: heroId, },),);
 
     expect(result.handled,).toBe(true,);
