@@ -60,6 +60,28 @@ export async function listOwnerUserIds(db: Kysely<DB>, chatId: string,): Promise
 }
 
 /**
+ * Effective owners set for read paths: `chat_owners` rows, falling back to
+ * `[chats.created_by]` when no rows exist yet (chats created after the 082
+ * backfill, before their first owners mutation materializes a row). Mirrors
+ * the transitional isChatOwner predicate and the reconcile fallback.
+ * @param {Kysely<DB>} db
+ * @param {string} chatId
+ * @returns sorted effective owner user ids
+ */
+export async function listEffectiveOwnerUserIds(db: Kysely<DB>, chatId: string,): Promise<string[]> {
+  const rows = await listOwnerUserIds(db, chatId,);
+  if (rows.length > 0) { return rows; }
+
+  const chat = await db
+    .selectFrom("chats",)
+    .select("created_by",)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+
+  return chat?.created_by ? [chat.created_by,] : [];
+}
+
+/**
  * Materialize the creator's owners row when a chat predates the owners set
  * (no rows yet). Idempotent; call inside the mutation transaction.
  * @param {Kysely<DB>} trx

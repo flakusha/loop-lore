@@ -232,3 +232,22 @@ export const ChatMarkReadBody = t.Object({
 export const BatchIdsBody = t.Object({
   ids: t.Array(t.String(), { minItems: 1, },),
 },);
+
+// ── Chat owners (epic-chat-multi-ownership) ────────────────
+
+/** Body for `POST /api/chats/:id/owners` — grant co-ownership to an actor's owning user. */
+export const ChatOwnerAddBody = t.Object({
+  actorId: Id,
+  reason: t.Optional(t.String({ maxLength: 500, },),),
+},);
+
+/** Params for `DELETE /api/chats/:id/owners/:userId` — `userId` names a USER; self-removal = resign. */
+export const ChatOwnerParams = t.Object({
+  id: Id,
+  userId: Id,
+},);
+
+/** Query for `DELETE /api/chats/:id/owners/:userId` (optional removal reason). */
+export const ChatOwnerRemoveQuery = t.Object({
+  reason: t.Optional(t.String({ maxLength: 500, },),),
+},);
