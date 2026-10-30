@@ -36,5 +36,6 @@ export * from "./server";
 export * from "./testing";
 export * from "./transport";
 export * from "./tui";
+export * from "./web";
 
 export type { TemplatesConfig, } from "../sections/templates";

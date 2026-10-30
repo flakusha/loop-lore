@@ -130,6 +130,7 @@ export const SECTION_GROUPS: Record<string, string> = {
   docs: "Platform",
   logging: "Platform",
   tui: "Platform",
+  web: "Platform",
 };
 
 /** User settings field types. */

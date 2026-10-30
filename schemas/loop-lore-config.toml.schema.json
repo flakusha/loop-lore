@@ -140,6 +140,16 @@
           "type": "boolean",
           "default": false,
           "description": "Bound/linked travel mode: prompt the LLM to narrate travel and suggest moving the chat to another location/chat when the narrative leaves the current one"
+        },
+        "quotaWindowMs": {
+          "type": "integer",
+          "default": 86400000,
+          "description": "Assistant quota window length in ms: the fixed window per user over which expensive-command quota units are counted"
+        },
+        "quotaLimitPerWindow": {
+          "type": "integer",
+          "default": 200,
+          "description": "Assistant quota units available per user per window; expensive commands (rag, asset, duplicate, adapt, import, modify) deduct their cost pre-call"
         }
       },
       "required": [
@@ -2695,6 +2705,41 @@
         "irc",
         "nostr"
       ]
+    },
+    "web": {
+      "type": "object",
+      "description": "Web editor and browser-terminal configuration",
+      "properties": {
+        "editor": {
+          "type": "string",
+          "default": "vscode",
+          "description": "Editor scheme for open-in-editor links (vscode, zed, cursor, idea)"
+        },
+        "terminal": {
+          "type": "object",
+          "description": "Browser PTY terminal settings (WS /api/v1/terminal)",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable the browser-terminal route (default false)"
+            },
+            "allowRemote": {
+              "type": "boolean",
+              "default": false,
+              "description": "Allow non-localhost clients to open the PTY (default false)"
+            }
+          },
+          "required": [
+            "enabled",
+            "allowRemote"
+          ]
+        }
+      },
+      "required": [
+        "editor",
+        "terminal"
+      ]
     }
   },
   "required": [
@@ -2714,7 +2759,8 @@
     "frontend",
     "seeding",
     "templates",
-    "characters"
+    "characters",
+    "web"
   ],
   "description": "JSON Schema optimized for TOML language servers (Taplo, Even Better TOML, Tombi). Reference from config.toml via $schema key."
 }

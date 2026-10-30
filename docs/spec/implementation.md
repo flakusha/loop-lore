@@ -407,6 +407,8 @@ Env vars override config file values (12-factor style). Mapping in
 | `ENABLE_ASSISTANT`       | `assistant.enabled`        | boolean |
 | `LOG_LEVEL`              | `logging.level`            | string  |
 | `ENABLE_TUI`             | `tui.enabled`              | boolean |
+| `WEB_EDITOR`              | `web.editor`               | string  |
+| `WEB_TERMINAL_ENABLED`    | `web.terminal.enabled`     | boolean |
 | `ENABLE_DOCS`            | `docs.enabled`             | boolean |
 | `TLS_KEY`                | `server.tls.key`           | string  |
 | `TLS_CERT`               | `server.tls.cert`          | string  |

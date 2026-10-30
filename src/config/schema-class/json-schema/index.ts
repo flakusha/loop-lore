@@ -30,6 +30,7 @@ import { server, } from "./server";
 import { templates, } from "./templates";
 import { transport, } from "./transport";
 import { tui, } from "./tui";
+import { web, } from "./web";
 type JSONSchema = Record<string, unknown>;
 
 /**
@@ -88,6 +89,7 @@ export const jsonSchema = (): JSONSchema => {
       characters,
       cron,
       integrations,
+      web,
     },
     required: [
       "server",
@@ -107,6 +109,7 @@ export const jsonSchema = (): JSONSchema => {
       "seeding",
       "templates",
       "characters",
+      "web",
     ],
   },) as JSONSchema;
 };

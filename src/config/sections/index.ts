@@ -36,3 +36,4 @@ export {
   TransportSection,
 } from "./transport";
 export { TUI_DEFAULTS, tuiMeta, TuiSection, } from "./tui";
+export { WEB_DEFAULTS, WEB_TERMINAL_DEFAULTS, webMeta, WebSection, } from "./web";

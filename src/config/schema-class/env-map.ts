@@ -26,6 +26,7 @@ import { OBSERVABILITY_DEFAULTS, } from "./observability";
 import { SERVER_DEFAULTS, } from "./server";
 import { TRANSPORT_DEFAULTS, } from "./transport";
 import { TUI_DEFAULTS, } from "./tui";
+import { WEB_DEFAULTS, } from "./web";
 
 type EnvMap = Record<string, string>;
 
@@ -60,6 +61,7 @@ export const envMap = (): EnvMap => {
     cron: CRON_DEFAULTS,
     federation: FEDERATION_DEFAULTS,
     integrations: INTEGRATIONS_DEFAULTS,
+    web: WEB_DEFAULTS,
   };
 
   const add = (prefix: string, obj: Record<string, unknown>,) => {
@@ -98,6 +100,7 @@ export const envMap = (): EnvMap => {
   add("cron", s.cron,);
   add("federation", s.federation,);
   add("integrations", s.integrations,);
+  add("web", s.web,);
 
   // Manual overrides for renamed/mapped env vars
   map.PORT = "server.port";

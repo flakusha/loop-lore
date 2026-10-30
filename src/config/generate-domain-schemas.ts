@@ -34,6 +34,7 @@ const DOMAINS: Record<string, string[]> = {
   byokey: ["byoKey",],
   encryption: ["encryption",],
   headers: ["headers",],
+  web: ["web",],
 };
 
 /** */
