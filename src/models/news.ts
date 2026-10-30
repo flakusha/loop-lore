@@ -127,9 +127,9 @@ export function parseHfModels(json: string,): NewsItem[] {
   return items;
 }
 
-type FetchImpl = (url: string, init?: RequestInit,) => Promise<Response>;
+export type NewsFetch = (url: string, init?: RequestInit,) => Promise<Response>;
 
-async function fetchText(fetchImpl: FetchImpl, url: string,): Promise<string | null> {
+async function fetchText(fetchImpl: NewsFetch, url: string,): Promise<string | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 30_000,);
   try {
@@ -158,7 +158,7 @@ async function fetchText(fetchImpl: FetchImpl, url: string,): Promise<string | n
  * @param feed
  * @param fetchImpl - injectable for tests
  */
-export async function pollFeed(db: Kysely<DB>, feed: NewsFeed, fetchImpl: FetchImpl = fetch,): Promise<number> {
+export async function pollFeed(db: Kysely<DB>, feed: NewsFeed, fetchImpl: NewsFetch = fetch,): Promise<number> {
   const body = await fetchText(fetchImpl, feed.url,);
   if (body === null) {
     getLogger().child({ module: "model-news", },).warn("feed fetch failed", { family: feed.family, },);
@@ -187,7 +187,7 @@ export async function pollFeed(db: Kysely<DB>, feed: NewsFeed, fetchImpl: FetchI
  * @param fetchImpl - injectable for tests
  * @returns total items stored across feeds
  */
-export async function pollAllFeeds(db: Kysely<DB>, fetchImpl: FetchImpl = fetch,): Promise<number> {
+export async function pollAllFeeds(db: Kysely<DB>, fetchImpl: NewsFetch = fetch,): Promise<number> {
   let total = 0;
   for (const feed of NEWS_FEEDS) {
     total += await pollFeed(db, feed, fetchImpl,);

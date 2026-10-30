@@ -38,9 +38,9 @@ interface TreeSnapshot {
   entries: HfTreeEntry[];
 }
 
-type FetchImpl = (url: string, init?: RequestInit,) => Promise<Response>;
+export type WeightFetch = (url: string, init?: RequestInit,) => Promise<Response>;
 
-async function fetchJson(fetchImpl: FetchImpl, url: string,): Promise<unknown | null> {
+async function fetchJson(fetchImpl: WeightFetch, url: string,): Promise<unknown | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 30_000,);
   try {
@@ -99,7 +99,7 @@ function isWeightPath(path: string,): boolean {
   return path.toLowerCase().endsWith(".gguf",);
 }
 
-async function modelHead(modelId: string, fetchImpl: FetchImpl,): Promise<HfCommit | null> {
+async function modelHead(modelId: string, fetchImpl: WeightFetch,): Promise<HfCommit | null> {
   // One commit is enough: the head tells "changed at T"; the tree
   // tells whether T moved weights. Full history is a fan-in
   // refinement, not this slice.
@@ -107,7 +107,7 @@ async function modelHead(modelId: string, fetchImpl: FetchImpl,): Promise<HfComm
   return parseHfCommits(body,)[0] ?? null;
 }
 
-async function modelTree(modelId: string, fetchImpl: FetchImpl,): Promise<TreeSnapshot> {
+async function modelTree(modelId: string, fetchImpl: WeightFetch,): Promise<TreeSnapshot> {
   const card = await fetchJson(fetchImpl, `https://huggingface.co/api/models/${modelId}`,);
   const sha = typeof card === "object" && card !== null
     ? (card as Record<string, unknown>)["sha"]
@@ -132,7 +132,7 @@ async function modelTree(modelId: string, fetchImpl: FetchImpl,): Promise<TreeSn
 export async function confirmWeightChange(
   db: Kysely<DB>,
   modelId: string,
-  fetchImpl: FetchImpl = fetch,
+  fetchImpl: WeightFetch = fetch,
 ): Promise<boolean> {
   const head = await modelHead(modelId, fetchImpl,);
   if (!head) {

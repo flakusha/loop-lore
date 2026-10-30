@@ -52,7 +52,14 @@ describe("cron default jobs", () => {
     }
   });
 
+  // Two network-backed jobs (news-poll, global-import) hit live feeds;
+  // stub fetch with 500s everywhere so the catalog test asserts job
+  // wiring success, not feed reachability (covered per-feed in
+  // news.test.ts / boards-importers.test.ts with body fixtures).
   test("every job runOnce succeeds against a migrated db", async () => {
+    const failingFetch = async (_url: string | URL | Request,) => new Response("offline", { status: 500, },);
+    const priorFetch = globalThis.fetch;
+    globalThis.fetch = failingFetch as typeof fetch;
     const { db, } = await createTestDb();
     const scheduler = startScheduler({
       database: db,
@@ -70,6 +77,7 @@ describe("cron default jobs", () => {
       const statuses = scheduler.getStatus();
       expect(statuses.every((s,) => s.runCount === 1 && s.lastError === null),).toBe(true,);
     } finally {
+      globalThis.fetch = priorFetch;
       scheduler.stop();
     }
   });
