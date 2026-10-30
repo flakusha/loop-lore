@@ -3,7 +3,8 @@
 
 # TASK: UI API workflow converter
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** merged to dev (src/generation/comfyui-converter/, fixtures, 21 tests), gates-verified by the owner 2026-10-30
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-comfyui-first-class-citizen
@@ -23,7 +24,7 @@ Director workflow as fixture; cross-linked from the IVSS epic.
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Shipped implementation license-clean references (see `src/generation/comfyui-converter/fixtures/README.md`): the Unlicense-licensed SethRobinson converter (https://github.com/SethRobinson/comfyui-workflow-to-api-converter-endpoint) as reference implementation; the MIT-licensed comfy-workflow-studio analyzer (`py/services/workflow_analyzer.py`, (c) 2026 ketle-man) for traversal primitives with attribution; ComfyUI frontend source (GPL-3) and krita-ai-diffusion (GPL-3) were behavior-study only, never ported.
 
 **Acceptance Criteria:**
 
