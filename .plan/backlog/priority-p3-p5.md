@@ -46,7 +46,7 @@
 ### Chat Variants Taxonomy cluster (filed 2026-09-11)
 
 > Taxonomy-only epic — no schema migration. Twelve canonical chat variants map onto the existing `(chat_type, chat_mode, chat_purpose)` triple plus the auxiliary `max_turns`, `auto_advance`, `gm_config`, `talkativity`, `prompt_override` columns. Authority for "chat admin" = global admin OR creator OR owning gm.
-> Spec: `../epics/epic-chat-variants-taxonomy.md`. Status: 🟢 Done — the twelve variants ship as the canonical table and every one is selectable in the new-chat form; the entry-point tab branching and the legacy-chat backfill remain as cross-cutting work below.
+> Spec: `../epics/epic-chat-variants-taxonomy.md`. Status: 🟢 Done — the twelve variants ship as the canonical table and every one is selectable in the new-chat form; the entry-point branching has since shipped via the new-chat `?variant=` param (the Characters surface preselects the character variant; the Assistant/Social/Sandbox tab surfaces don't exist yet), while the legacy-chat backfill remains as cross-cutting work below.
 
 | Variant | Tickets | chat_type | chat_mode | chat_purpose | Where / next |
 | --- | --- | --- | --- | --- | --- |
