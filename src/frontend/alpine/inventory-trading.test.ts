@@ -175,7 +175,7 @@ describeOrSkip("inventory trading state", () => {
   test("trade failures surface via error without clearing the draft", async () => {
     handler = async (url: string,) => {
       if (url.endsWith("/trade/buy-from-npc",)) {
-        return Response.json({ message: "broke", }, { status: 400, },);
+        return Response.json({ error: "broke", code: "BAD_REQUEST", }, { status: 400, },);
       }
 
       return Response.json({ data: [], },);

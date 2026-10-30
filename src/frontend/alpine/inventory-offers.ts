@@ -19,12 +19,22 @@
 // The counterparty's inventory is never fetched — only their offered lines.
 // No push channel exists for offers, so the scope re-polls after mutations.
 import type { InventoryItem, } from "../inventory/inventory-grid.js";
-import type { TradeOfferRow, } from "../inventory/trade-offers.js";
+import {
+  canAccept,
+  canCancel,
+  canCounter,
+  draftHasNoTerms,
+  type TradeHistoryRow,
+  type TradeOfferRow,
+} from "../inventory/trade-offers.js";
 import {
   emptyDraft,
   enrichInstances,
+  historyFromBody,
+  offersFromBody,
   ownedBy,
   priceOrUnset,
+  routeErrorMessage,
   rowsFromBody,
   rowsValue,
   selectedRows,
@@ -39,17 +49,6 @@ import { jsonBody, } from "./json.js";
 import { log as rootLog, } from "./logger.js";
 
 const log = rootLog.child({ module: "inventory-offers", },);
-
-/** One completed trade row from GET .../trade/history. */
-export interface TradeHistoryEntry {
-  id: string;
-  buyerActorId: string;
-  sellerActorId: string;
-  price: number;
-  itemsOffered: string[];
-  itemsRequested: string[];
-  createdAt: string;
-}
 
 /** Alpine scope for the player-to-player offers panel. */
 export interface InventoryOffersState {
@@ -67,7 +66,7 @@ export interface InventoryOffersState {
   counterPrice: number | null;
   offerPrice: number | null;
   draft: TradeDraft;
-  history: TradeHistoryEntry[];
+  history: TradeHistoryRow[];
   historyLoading: boolean;
   historyError: string;
   busy: boolean;
@@ -95,32 +94,15 @@ export interface InventoryOffersState {
   counterOffer(offerId: string,): Promise<void>;
   /** Cancel an offer I created. */
   cancelOffer(offerId: string,): Promise<void>;
+  /** Whether the selected offer accepts action `kind` for the current actor. */
+  canActSelected(kind: "accept" | "cancel" | "counter",): boolean;
   /** Offer backing the open trade window, if any. */
   selectedOffer(): TradeOfferRow | null;
 }
 
-/** Decode GET offers: the route wraps rows in `{ offers }`. */
-function offersFromBody(body: unknown,): TradeOfferRow[] {
-  if (body && typeof body === "object" && Array.isArray((body as { offers?: unknown }).offers,)) {
-    return (body as { offers: TradeOfferRow[] }).offers;
-  }
-
-  return [];
-}
-
-/** Decode GET history: the route wraps rows in `{ history }`. */
-function historyFromBody(body: unknown,): TradeHistoryEntry[] {
-  if (body && typeof body === "object" && Array.isArray((body as { history?: unknown }).history,)) {
-    return (body as { history: TradeHistoryEntry[] }).history;
-  }
-
-  return [];
-}
-
-/** Surface a route error body: `{ message }` or the raw TypeBox dump. */
+/** Surface a route error body: server `{ error }` first, legacy `{ message }` next. */
 async function routeError(res: Response, fallback: string,): Promise<string> {
-  const body = (await res.json().catch(() => ({}))) as { message?: unknown };
-  return typeof body.message === "string" && body.message.length > 0 ? body.message : fallback;
+  return routeErrorMessage(await res.json().catch(() => ({})), fallback,);
 }
 
 /** Build a state with defaults; no auto-load so tests skip the side effect. */
@@ -268,6 +250,11 @@ export const stateFromOfferActors = (
     const sellerId = this.counterpartyId.trim();
     if (!worldId || !myActorId || !sellerId || this.busy) { return; }
     const rows = selectedRows(this.myItems, this.draft.playerIds,);
+    if (draftHasNoTerms(this.offerPrice, rows.length,)) {
+      this.error = t("status.tradeOfferEmptyDraft",);
+      return;
+    }
+
     this.busy = true;
     this.error = "";
     this.message = "";
@@ -417,6 +404,14 @@ export const stateFromOfferActors = (
 
   selectedOffer() {
     return this.offers.find((offer,) => offer.id === this.selectedOfferId) ?? null;
+  },
+
+  canActSelected(kind: "accept" | "cancel" | "counter",) {
+    const offer = this.selectedOffer();
+    const actor = this._myActorId;
+    if (offer === null || actor === null) { return false; }
+    const gate = kind === "accept" ? canAccept : kind === "cancel" ? canCancel : canCounter;
+    return gate(offer, actor,);
   },
 });
 
