@@ -7,6 +7,12 @@
  * The fixture carries no `[p]` marks, so the test marks the Settings
  * subgraph instance in memory — the fixture file is never written. The
  * v-0010 family emits video through DaSiWa publish/combine nodes.
+ *
+ * Resource contract: each test owns only its own in-memory copies (the
+ * loaded fixture is re-parsed and re-derived per test; tampered graphs are
+ * shallow copies). Shared state is the committed fixture files plus the
+ * snapshot, read-only. No sockets, no tmp files, no DB — every test passes
+ * alone, in any order, and under the default parallel runner.
  */
 import { describe, expect, it, } from "bun:test";
 import { readFileSync, } from "node:fs";
