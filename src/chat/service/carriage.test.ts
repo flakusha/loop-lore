@@ -8,13 +8,30 @@
  * limit clamp, survival of source-chat deletion) plus the three emitter
  * wirings: carryLocation → "section", splitParty → "party",
  * migrateChat → "session".
+ *
+ * Resource contract (parallel-safe):
+ * - Each test owns a FRESH in-memory SQLite DB (`createTestDb` in
+ *   beforeEach) — `:memory:` handles are per-instance, never a shared
+ *   file, so concurrent runners cannot collide.
+ * - Teardown is deterministic: `destroyTestDb` runs in `afterEach`, which
+ *   Bun executes even when an assertion throws, so a failed test cannot
+ *   leak an open handle into the next one.
+ * - No ordering dependence: every test seeds its own chats (and, for the
+ *   split emitter, its own actors/world) in `beforeEach`; the ids are
+ *   per-test, so no test reads rows another test created.
+ * - No process globals are set: this file never calls `setTestDatabase`,
+ *   never registers a provider, opens a port or writes a file.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import {
+  createTestDb,
+  destroyTestDb,
+  type TestDb,
+} from "../../test-utils/create-test-db";
 import {
   insertActors,
   insertCarriageRecords,
@@ -32,28 +49,35 @@ import { carryLocation, } from "./carry-location";
 import { splitParty, } from "./split";
 import { migrateChat, } from "./transitions";
 
+let fixture: TestDb | undefined;
 let db: Kysely<DB>;
-const OWNER_ID = crypto.randomUUID();
+let ownerId: string;
 
-beforeAll(async () => {
+beforeEach(async () => {
   createLogger({ level: "error", },);
-  ({ db, } = await createTestDb());
-  await insertUsers(db, "owner", "Owner", { id: OWNER_ID, } as never,);
+  fixture = await createTestDb();
+  db = fixture.db;
+  ownerId = crypto.randomUUID();
+  await insertUsers(db, `owner-${ownerId}`, "Owner", { id: ownerId, } as never,);
   await insertActors(db, "Owner", {
-    id: OWNER_ID,
-    user_id: OWNER_ID,
-    owner_id: OWNER_ID,
+    id: ownerId,
+    user_id: ownerId,
+    owner_id: ownerId,
   } as never,);
 },);
 
-afterAll(async () => {
-  await db.destroy();
+afterEach(async () => {
+  const current = fixture;
+  fixture = undefined;
+  if (current) {
+    await destroyTestDb(current,);
+  }
 },);
 
 describe("carriage service", () => {
   test("roundtrip: record persists and lists newest-first", async () => {
     const chatId = crypto.randomUUID();
-    await insertChats(db, "Carriage Chat", OWNER_ID, { id: chatId, } as never,);
+    await insertChats(db, "Carriage Chat", ownerId, { id: chatId, } as never,);
 
     const first = await recordCarriage(db, {
       chatId,
@@ -80,7 +104,7 @@ describe("carriage service", () => {
 
   test("unknown scope is rejected", async () => {
     const chatId = crypto.randomUUID();
-    await insertChats(db, "Bad Scope", OWNER_ID, { id: chatId, } as never,);
+    await insertChats(db, "Bad Scope", ownerId, { id: chatId, } as never,);
     expect(
       recordCarriage(db, {
         chatId,
@@ -96,8 +120,8 @@ describe("carriage service", () => {
   test("list is scoped to one chat", async () => {
     const chatA = crypto.randomUUID();
     const chatB = crypto.randomUUID();
-    await insertChats(db, "A", OWNER_ID, { id: chatA, } as never,);
-    await insertChats(db, "B", OWNER_ID, { id: chatB, } as never,);
+    await insertChats(db, "A", ownerId, { id: chatA, } as never,);
+    await insertChats(db, "B", ownerId, { id: chatB, } as never,);
     await recordCarriage(db, { chatId: chatB, scope: "section", payload: {}, },);
 
     expect(await listCarriage(db, chatA,),).toHaveLength(0,);
@@ -106,7 +130,7 @@ describe("carriage service", () => {
 
   test("scope option restricts the listing to one scope", async () => {
     const chatId = crypto.randomUUID();
-    await insertChats(db, "Scoped", OWNER_ID, { id: chatId, } as never,);
+    await insertChats(db, "Scoped", ownerId, { id: chatId, } as never,);
     await insertCarriageRecords(db, chatId, "section", "{}", "2026-08-01T00:00:00Z",);
     await new Promise((resolve,) => setTimeout(resolve, 5,));
     await insertCarriageRecords(
@@ -131,7 +155,7 @@ describe("carriage service", () => {
 
   test("limit option clamps the row count", async () => {
     const chatId = crypto.randomUUID();
-    await insertChats(db, "Limited", OWNER_ID, { id: chatId, } as never,);
+    await insertChats(db, "Limited", ownerId, { id: chatId, } as never,);
     for (let i = 0; i < 3; i++) {
       await recordCarriage(db, { chatId, scope: "section", payload: { i, }, },);
       await new Promise((resolve,) => setTimeout(resolve, 5,));
@@ -146,8 +170,8 @@ describe("carriage service", () => {
   test("record survives deletion of its source chat", async () => {
     const sourceChatId = crypto.randomUUID();
     const destChatId = crypto.randomUUID();
-    await insertChats(db, "Source", OWNER_ID, { id: sourceChatId, } as never,);
-    await insertChats(db, "Dest", OWNER_ID, { id: destChatId, } as never,);
+    await insertChats(db, "Source", ownerId, { id: sourceChatId, } as never,);
+    await insertChats(db, "Dest", ownerId, { id: destChatId, } as never,);
     const record = await recordCarriage(db, {
       chatId: destChatId,
       sourceChatId,
@@ -168,8 +192,8 @@ describe("emitter wiring", () => {
   test("carryLocation emits a section-scope record", async () => {
     const sourceChatId = crypto.randomUUID();
     const newChatId = crypto.randomUUID();
-    await insertChats(db, "Loc Source", OWNER_ID, { id: sourceChatId, } as never,);
-    await insertChats(db, "Loc Dest", OWNER_ID, { id: newChatId, } as never,);
+    await insertChats(db, "Loc Source", ownerId, { id: sourceChatId, } as never,);
+    await insertChats(db, "Loc Dest", ownerId, { id: newChatId, } as never,);
     await db
       .insertInto("chat_sections",)
       .values({ id: crypto.randomUUID(), chat_id: sourceChatId, label: "Journey 1", },)
@@ -193,12 +217,12 @@ describe("emitter wiring", () => {
     const heroId = crypto.randomUUID();
     const rogueId = crypto.randomUUID();
     const srcChatId = crypto.randomUUID();
-    await insertActors(db, "Hero", { id: heroId, user_id: OWNER_ID, owner_id: OWNER_ID, } as never,);
-    await insertActors(db, "Rogue", { id: rogueId, user_id: OWNER_ID, owner_id: OWNER_ID, } as never,);
+    await insertActors(db, "Hero", { id: heroId, user_id: ownerId, owner_id: ownerId, } as never,);
+    await insertActors(db, "Rogue", { id: rogueId, user_id: ownerId, owner_id: ownerId, } as never,);
     await insertActors(db, "Narrator", {
       id: crypto.randomUUID(),
-      user_id: OWNER_ID,
-      owner_id: OWNER_ID,
+      user_id: ownerId,
+      owner_id: ownerId,
       actor_type: "narrator",
       agent_type: "narrator",
     } as never,);
@@ -206,24 +230,24 @@ describe("emitter wiring", () => {
     // World + locations first (chats.world_id FK) — splitParty validates
     // branch destinations against the chat's world.
     const worldId = crypto.randomUUID();
-    await db.insertInto("worlds",).values({ id: worldId, name: "W", owner_id: OWNER_ID, },).execute();
+    await db.insertInto("worlds",).values({ id: worldId, name: "W", owner_id: ownerId, },).execute();
     await db.insertInto("locations",).values({ id: "forest", world_id: worldId, name: "Forest", },).execute();
     await db.insertInto("locations",).values({ id: "cave", world_id: worldId, name: "Cave", },).execute();
 
-    await insertChats(db, "Party Dungeon", OWNER_ID, {
+    await insertChats(db, "Party Dungeon", ownerId, {
       id: srcChatId,
       type: "group",
       mode: "group",
       world_id: worldId,
     } as never,);
 
-    await insertChatParticipants(db, srcChatId, OWNER_ID, { role_in_chat: ChatParticipantRole.Owner, },);
+    await insertChatParticipants(db, srcChatId, ownerId, { role_in_chat: ChatParticipantRole.Owner, },);
     await insertChatParticipants(db, srcChatId, heroId, { role_in_chat: ChatParticipantRole.Member, },);
     await insertChatParticipants(db, srcChatId, rogueId, { role_in_chat: ChatParticipantRole.Member, },);
 
     const result = await splitParty(db, {
       chatId: srcChatId,
-      actorId: OWNER_ID,
+      actorId: ownerId,
       branches: [
         { locationId: "forest", actorIds: [heroId,], name: "Scouts", },
         { locationId: "cave", actorIds: [rogueId,], name: "Main", },
@@ -252,11 +276,11 @@ describe("emitter wiring", () => {
       { mode: "direct", } as never,
     );
 
-    await insertChats(db, "To Migrate", OWNER_ID, { id: sourceChatId, } as never,);
+    await insertChats(db, "To Migrate", ownerId, { id: sourceChatId, } as never,);
 
     const result = await migrateChat(db, sourceChatId, {
       templateId,
-      createdBy: OWNER_ID,
+      createdBy: ownerId,
       name: "Migrated",
       carry: {},
     },);

@@ -9,14 +9,31 @@
  * ids), the service-level ownership guard, and branch-spec validation
  * surfaced as a system message. One case goes through the full slash
  * dispatch to pin the owner role gate and system-message persistence.
+ *
+ * Resource contract (parallel-safe):
+ * - Each test owns a FRESH in-memory SQLite DB (`createTestDb` in
+ *   beforeEach) — `:memory:` handles are per-instance, never a shared
+ *   file, so concurrent runners cannot collide.
+ * - Teardown is deterministic: `destroyTestDb` runs in `afterEach`, which
+ *   Bun executes even when an assertion throws, so a failed test cannot
+ *   leak an open handle into the next one.
+ * - No ordering dependence: every test seeds its own actors, world,
+ *   locations and chat in `beforeEach`; the chat id is per-test, so the
+ *   branch chats one test creates are invisible to every other test.
+ * - No process globals are set: this file never calls `setTestDatabase`,
+ *   never registers a provider, opens a port or writes a file.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { ChatParticipantRole, MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { dispatchCommand, } from "../../routes/messages/command";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import {
+  createTestDb,
+  destroyTestDb,
+  type TestDb,
+} from "../../test-utils/create-test-db";
 import {
   insertActors,
   insertChatParticipants,
@@ -29,15 +46,17 @@ import "./index"; // register all slash commands (self-registering)
 const WORLD_ID = "split-cmd-world";
 
 describe("/split", () => {
+  let fixture: TestDb | undefined;
   let db: Kysely<DB>;
   let chatId: string;
   let ownerId: string;
   let heroId: string;
   let rogueId: string;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     createLogger({ level: "error", },);
-    ({ db, } = await createTestDb());
+    fixture = await createTestDb();
+    db = fixture.db;
 
     ownerId = crypto.randomUUID();
     heroId = crypto.randomUUID();
@@ -77,8 +96,12 @@ describe("/split", () => {
     await insertChatParticipants(db, chatId, rogueId, { role_in_chat: ChatParticipantRole.Member, } as never,);
   },);
 
-  afterAll(async () => {
-    await db.destroy();
+  afterEach(async () => {
+    const current = fixture;
+    fixture = undefined;
+    if (current) {
+      await destroyTestDb(current,);
+    }
   },);
 
   /** Build a /split command context, defaulting to the chat owner. */
@@ -172,15 +195,16 @@ describe("/split", () => {
       const body = await res.json() as { systemMessage?: string };
       expect(body.systemMessage,).toContain("**Party split**",);
 
-      const row = await db
+      const systemMessages = await db
         .selectFrom("messages",)
         .select("content",)
         .where("chat_id", "=", chatId,)
         .where("role", "=", MessageRole.System as never,)
-        .orderBy("created_at", "desc",)
-        .executeTakeFirst();
+        .execute();
 
-      expect(row?.content,).toContain("branches created",);
+      // The split also narrates into the source chat, so more than one
+      // system message exists; assert on content, never on row order.
+      expect(systemMessages.some((row,) => (row.content ?? "").includes("branches created",)),).toBe(true,);
     });
 
     test("denies a member-role participant before the handler runs", async () => {
