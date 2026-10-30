@@ -16036,7 +16036,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/epics/epic-multi-session.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "auth",
       "security",
@@ -47891,7 +47891,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-multi-session.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "EPIC: Multi-Session Support",
     "type": "TASK"

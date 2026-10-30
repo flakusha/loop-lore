@@ -136,7 +136,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | audience | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | audio | 4 | 1 | 0 | 0 | 0 | 0 | 3 |
 | audit | 21 | 10 | 0 | 2 | 1 | 0 | 8 |
-| auth | 23 | 2 | 0 | 4 | 0 | 0 | 17 |
+| auth | 23 | 3 | 0 | 4 | 0 | 0 | 16 |
 | authentication | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | author-note | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | authoring | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
@@ -157,7 +157,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | avatar-emotions | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | avatar-matting | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | avoid | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| backend | 19 | 8 | 0 | 6 | 0 | 0 | 5 |
+| backend | 19 | 9 | 0 | 6 | 0 | 0 | 4 |
 | backend-selection | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | backend-sort | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | backfill | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
@@ -1402,7 +1402,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | seasons | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | secrets | 5 | 0 | 0 | 0 | 1 | 0 | 4 |
 | sectioning | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| security | 41 | 15 | 3 | 8 | 0 | 0 | 15 |
+| security | 41 | 16 | 3 | 8 | 0 | 0 | 14 |
 | seed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | seeding | 12 | 1 | 0 | 8 | 0 | 0 | 3 |
 | seen | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
@@ -1752,7 +1752,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2837 | 1256 | 48 | 891 | 30 | 0 | 612 |
+| (untagged) | 2837 | 1257 | 48 | 890 | 30 | 0 | 612 |
 
 ## By epic × status
 
@@ -1990,7 +1990,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | epic-model-info-frontend | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | epic-model-metadata-read | 8 | 1 | 0 | 0 | 0 | 0 | 7 |
 | epic-multi-instance-reconciliation | 5 | 1 | 0 | 3 | 0 | 0 | 1 |
-| epic-multi-session | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
+| epic-multi-session | 4 | 2 | 0 | 2 | 0 | 0 | 0 |
 | epic-multilingual-carriage | 8 | 1 | 0 | 0 | 0 | 0 | 7 |
 | epic-multimodal-asset-reuse | 6 | 0 | 0 | 3 | 0 | 0 | 3 |
 | epic-narration-actor-separation | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
@@ -2098,7 +2098,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
 | epic-world-travel-time | 6 | 3 | 0 | 1 | 0 | 0 | 2 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| (unbound) | 1049 | 665 | 48 | 33 | 43 | 0 | 260 |
+| (unbound) | 1049 | 666 | 48 | 33 | 43 | 0 | 259 |
 
 ## Ticket detail
 
