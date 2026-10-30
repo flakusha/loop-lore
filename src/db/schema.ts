@@ -242,4 +242,5 @@ export interface DB {
   immersion_failed_checks: import("./schema-core").ImmersionFailedChecks;
   immersion_decision_log: import("./schema-core").ImmersionDecisionLog;
   chat_owners: import("./schema-core").ChatOwners;
+  world_timeline_selections: import("./schema-core").WorldTimelineSelections;
 }
