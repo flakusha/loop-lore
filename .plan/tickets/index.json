@@ -12326,7 +12326,7 @@
       "dogfood"
     ],
     "source": ".plan/epics/epic-avatar-dogfood.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "1ee81d2"
   },
   "EPIC-AVATAR-REGENERATION-CONTROL": {
@@ -28974,7 +28974,7 @@
     "epic": "epic-avatar-dogfood",
     "tags": [],
     "source": ".plan/tickets/TASK-avatar-dogfood-assistant-generation.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "747ea17"
   },
   "TASK-AVATAR-DOGFOOD-E2E-VERIFY": {
@@ -28987,7 +28987,7 @@
     "epic": "epic-avatar-dogfood",
     "tags": [],
     "source": ".plan/tickets/TASK-avatar-dogfood-e2e-verify.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "e5fc3f7"
   },
   "TASK-AVATAR-DOGFOOD-PROMOTE-DEFAULTS": {
@@ -29013,7 +29013,7 @@
     "epic": "epic-avatar-dogfood",
     "tags": [],
     "source": ".plan/tickets/TASK-avatar-dogfood-webp-export.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "b1b252a"
   },
   "TASK-AVATAR-EMOTION-MAP-CONFIG": {

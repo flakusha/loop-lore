@@ -34,3 +34,5 @@ re-run for slice-2 webp masters.
 
 
 git issue: e5fc3f7
+
+**Resolved:** 2026-10-30 registry-driven close: git issue e5fc3f7 (registry tip: ea1f78785 Konstantin Fedotov Close issue)
