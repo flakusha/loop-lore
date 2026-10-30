@@ -197,6 +197,9 @@ test("persists the assistant row with encrypted content and confirmed status", a
     response: "The wind howls over the pass.",
     usedModel: "model-x",
     usedProviderName: "provider-y",
+    completionTokens: 10,
+    finishReason: "stop",
+    latencyMs: 500,
     deps: makeDeps(),
     log: logger,
   },);
@@ -230,6 +233,9 @@ test("computes swipe_index = max existing sibling swipe + 1 when parent set", as
     response: "new variant",
     usedModel: "m",
     usedProviderName: "p",
+    completionTokens: 5,
+    finishReason: "stop",
+    latencyMs: 250,
     deps: makeDeps(),
     log: logger,
   },);
@@ -256,6 +262,9 @@ test("first variant under a parent gets swipe_index 1", async () => {
     response: "first variant",
     usedModel: "m",
     usedProviderName: "p",
+    completionTokens: 5,
+    finishReason: "stop",
+    latencyMs: 250,
     deps: makeDeps(),
     log: logger,
   },);
@@ -280,6 +289,9 @@ test("ensureActorKey runs only when an SMK exists", async () => {
     response: "smk run",
     usedModel: "m",
     usedProviderName: "p",
+    completionTokens: 5,
+    finishReason: "stop",
+    latencyMs: 250,
     deps: makeDeps({ smk: "smk-bytes", },),
     log: logger,
   },);
@@ -298,6 +310,9 @@ test("ensureActorKey runs only when an SMK exists", async () => {
     response: "no smk run",
     usedModel: "m",
     usedProviderName: "p",
+    completionTokens: 5,
+    finishReason: "stop",
+    latencyMs: 250,
     deps: makeDeps({ smk: null, },),
     log: logger,
   },);
@@ -332,6 +347,9 @@ test("content-hook denial returns null and persists nothing (fail closed)", asyn
     response: "spicy text",
     usedModel: "m",
     usedProviderName: "p",
+    completionTokens: 5,
+    finishReason: "stop",
+    latencyMs: 250,
     deps: makeDeps(),
     log: logger,
   },);
@@ -342,4 +360,39 @@ test("content-hook denial returns null and persists nothing (fail closed)", asyn
     .where("chat_id", "=", chatId,).execute();
 
   expect(rows,).toHaveLength(0,);
+});
+
+test("persists generation_time_ms, tokens_per_second and metadata.quality", async () => {
+  const { chatId, actorId, } = await seedScenario();
+
+  const result = await storeStoryResponse({
+    database: db,
+    config: makeConfig(),
+    chatId,
+    userId: "user-1",
+    parentMessageId: null,
+    actorId,
+    response: "The hero advances down the dark corridor.",
+    usedModel: "model-x",
+    usedProviderName: "provider-y",
+    completionTokens: 20,
+    finishReason: "stop",
+    latencyMs: 500,
+    deps: makeDeps(),
+    log: logger,
+  },);
+
+  const row = await db
+    .selectFrom("messages",).selectAll()
+    .where("id", "=", result!.messageId,).executeTakeFirstOrThrow();
+
+  expect(row.generation_time_ms,).toBe(500,);
+  expect(row.tokens_per_second,).toBe(40,);
+
+  const metadata = JSON.parse(row.metadata ?? "{}",) as {
+    quality?: { repetitionRate: number; finishReason: string };
+  };
+
+  expect(typeof metadata.quality?.repetitionRate,).toBe("number",);
+  expect(metadata.quality?.finishReason,).toBe("stop",);
 });
