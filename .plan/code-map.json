@@ -12491,10 +12491,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-multi-session.md"
     }
   ],
   "src/components/3d/ViewModeSwitcher.vue": [
@@ -13573,14 +13569,6 @@
   ],
   "src/components/security/sessions-panel.html": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-multi-session.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-multi-session.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/users-sessions.md"
     }
@@ -14113,10 +14101,6 @@
       "source": ".plan/epics/epic-local-process-swarm.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-multi-session.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d.md"
     },
@@ -14203,10 +14187,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-multi-session.md"
     },
     {
       "kind": "ticket",
@@ -20844,10 +20824,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-multi-session.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-multilingual-carriage.md"
     },
     {
@@ -21029,10 +21005,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mini-games-framework.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-multi-session.md"
     },
     {
       "kind": "ticket",
@@ -21591,6 +21563,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-sectioning-multi-location.md"
+    }
+  ],
+  "src/db/schema-sessions.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-multi-session.md"
     }
   ],
   "src/db/schema-shared.ts": [
@@ -23401,10 +23379,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-provisioning-dashboard.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-multi-session.md"
     },
     {
       "kind": "ticket",
@@ -26489,19 +26463,15 @@
   ],
   "src/frontend/alpine/settings-sessions.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-multi-session.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-multi-session.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/users-sessions.md"
     }
   ],
   "src/frontend/alpine/settings.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-multi-session.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
@@ -47401,16 +47371,8 @@
   ],
   "src/routes/sessions-switch.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-multi-session.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-auth-session-hardening-batch-from-2026-10-04-review.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-multi-session.md"
     },
     {
       "kind": "spec",
@@ -47419,16 +47381,8 @@
   ],
   "src/routes/sessions.test.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-multi-session.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-multi-session.md"
     }
   ],
   "src/routes/sessions.ts": [
@@ -47439,10 +47393,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-auth-session-hardening-batch-from-2026-10-04-review.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-multi-session.md"
     },
     {
       "kind": "spec",
@@ -60034,10 +59984,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-multi-session.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
     },
     {
@@ -60071,10 +60017,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-info-bubbles.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-multi-session.md"
     },
     {
       "kind": "ticket",
