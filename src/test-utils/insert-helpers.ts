@@ -6196,6 +6196,73 @@ export async function insertImmersionDecisionLog(
   return id;
 }
 
+/** Insert a model_rankings row. */
+export async function insertModelRankings(
+  db: Db,
+  scope: string,
+  subject_key: string,
+  metric: string,
+  value: number,
+  basis: string,
+  source: string,
+  observed_at: string,
+  opts?: {
+    id?: string;
+    scope_key?: string;
+    unit?: string | null;
+    source_version?: string | null;
+    source_ref?: string | null;
+    expires_at?: string | null;
+    meta?: string;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("model_rankings",).values({
+    id,
+    scope,
+    subject_key,
+    metric,
+    value,
+    basis,
+    source,
+    observed_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a ranking_snapshots row. */
+export async function insertRankingSnapshots(
+  db: Db,
+  source: string,
+  version: string,
+  next_refresh_after: string,
+  opts?: {
+    id?: string;
+    source_key?: string;
+    checksum?: string | null;
+    fetched_at?: string;
+    row_count?: number | null;
+    payload?: string;
+    status?: string;
+    last_error?: string | null;
+    meta?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("ranking_snapshots",).values({
+    id,
+    source,
+    version,
+    next_refresh_after,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
 /** Insert a resource_records row. */
 export async function insertResourceRecords(
   db: Db,

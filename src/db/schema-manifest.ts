@@ -1145,6 +1145,20 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
+  .table("ranking_snapshots", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    source: col("text", { notNull: true, },),
+    source_key: col("text", { notNull: true, hasDefault: true, },),
+    version: col("text", { notNull: true, },),
+    checksum: col("text",),
+    fetched_at: col("text", { notNull: true, hasDefault: true, },),
+    next_refresh_after: col("text", { notNull: true, },),
+    row_count: col("integer",),
+    payload: col("text", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    last_error: col("text",),
+    meta: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("recipe_discoveries", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
@@ -2930,6 +2944,23 @@ export const SCHEMA = new SchemaManifest()
     preference: col("text", { notNull: true, },),
     confidence: col("real", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
+  },)
+  .table("model_rankings", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    scope: col("text", { notNull: true, },),
+    scope_key: col("text", { notNull: true, hasDefault: true, },),
+    subject_key: col("text", { notNull: true, },),
+    metric: col("text", { notNull: true, },),
+    value: col("real", { notNull: true, },),
+    unit: col("text",),
+    basis: col("text", { notNull: true, },),
+    source: col("text", { notNull: true, },),
+    source_version: col("text",),
+    source_ref: col("text",),
+    observed_at: col("text", { notNull: true, },),
+    expires_at: col("text",),
+    meta: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("model_role_overrides", {
     role: col("text", { primaryKey: true, },),
