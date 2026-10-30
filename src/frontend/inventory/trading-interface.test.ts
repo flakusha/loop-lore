@@ -10,7 +10,7 @@ import type { InventoryItem, } from "./inventory-grid";
 import {
   emptyDraft,
   enrichInstances,
-  npcOwned,
+  ownedBy,
   rowsFromBody,
   rowsValue,
   selectedRows,
@@ -97,10 +97,10 @@ describe("trade draft", () => {
     expect(enrichInstances(instances, [sword(),],),).toEqual([{ ...sword(), id: "inst-1", },],);
   });
 
-  test("npcOwned skips null rows", () => {
-    const body = [null, { id: "a", owner_actor_id: "npc-1", },] as unknown[];
+  test("ownedBy keeps only rows the actor owns", () => {
+    const body = [null, { id: "a", owner_actor_id: "npc-1", }, { id: "b", owner_actor_id: "other", },] as unknown[];
     const expected = [{ id: "a", owner_actor_id: "npc-1", },] as unknown as InventoryItem[];
-    expect(npcOwned(body, "npc-1",),).toEqual(expected,);
+    expect(ownedBy(body, "npc-1",),).toEqual(expected,);
   });
 
   test("emptyDraft starts with both sides empty", () => {

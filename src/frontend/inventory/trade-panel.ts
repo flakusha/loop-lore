@@ -146,7 +146,7 @@ export function rowsFromBody(body: unknown,): InventoryItem[] {
  * @param actorId Owner to keep.
  * @returns Rows owned by the actor.
  */
-export function npcOwned(body: unknown, actorId: string,): InventoryItem[] {
+export function ownedBy(body: unknown, actorId: string,): InventoryItem[] {
   const rows = rowsFromBody(body,) as Array<InventoryItem & { owner_actor_id?: unknown; ownerActorId?: unknown }>;
 
   return rows.filter((row,) => row != null && (row.owner_actor_id === actorId || row.ownerActorId === actorId));

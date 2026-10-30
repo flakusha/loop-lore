@@ -5,8 +5,8 @@
 
 // ── NPC trading state (Phase 3: NPC buy/sell; offers arrive in Phase 4).
 // Drives:
-//   GET    /api/v1/actors/:actorId/items                       (player list)
-//   GET    /api/v1/worlds/:worldId/item-instances             (NPC stock, owner_actor_id filter is client-side)
+//   GET    /api/v1/worlds/:worldId/item-instances             (both sides; owner_actor_id filter is client-side)
+//   GET    /api/v1/worlds/:worldId/items?pageSize=100         (definitions: name + value)
 //   POST   /api/v1/worlds/:worldId/trade/buy-from-npc         { buyerActorId, npcActorId, sellerItems, price }
 //   POST   /api/v1/worlds/:worldId/trade/sell-to-npc          { sellerActorId, npcActorId, buyerItems, price }
 // Selection/pricing reuse src/frontend/inventory/trade-panel.ts.
@@ -16,7 +16,7 @@ import type { InventoryItem, } from "../inventory/inventory-grid.js";
 import {
   emptyDraft,
   enrichInstances,
-  npcOwned,
+  ownedBy,
   rowsFromBody,
   rowsValue,
   selectedRows,
@@ -135,20 +135,29 @@ export const stateFromTradeActors = (
 
   async loadPlayerItems() {
     const actorId = this._playerActorId;
-    if (!actorId) {
+    const worldId = this._worldId;
+    if (!actorId || !worldId) {
       return;
     }
 
     this.playerLoading = true;
     this.playerLoadError = "";
     try {
-      const res = await apiFetch(`/api/v1/actors/${actorId}/items`,);
-      if (!res.ok) {
+      // The NPC trade routes resolve every line against `world_items`, so the
+      // sellable stock is the player's world-item instances (owner_actor_id =
+      // player), not the character sheet's actor_items rows.
+      const instRes = await apiFetch(`/api/v1/worlds/${worldId}/item-instances`,);
+      const defRes = await apiFetch(`/api/v1/worlds/${worldId}/items?pageSize=100`,);
+      if (!instRes.ok || !defRes.ok) {
         this.playerLoadError = t("status.inventoryLoadFailed",);
         return;
       }
 
-      this.playerItems = rowsFromBody(await res.json(),);
+      this.playerItems = enrichInstances(
+        ownedBy(await instRes.json(), actorId,),
+        rowsFromBody(await defRes.json(),),
+      );
+
       this.draft = {
         playerIds: this.draft.playerIds.filter((id,) => this.playerItems.some((item,) => item.id === id)),
         npcIds: this.draft.npcIds,
@@ -177,7 +186,7 @@ export const stateFromTradeActors = (
       }
 
       this.npcItems = enrichInstances(
-        npcOwned(await instRes.json(), npcActorId,),
+        ownedBy(await instRes.json(), npcActorId,),
         rowsFromBody(await defRes.json(),),
       );
 
