@@ -29,6 +29,7 @@ import {
   selectedRows,
   toggleId,
   type TradeDraft,
+  type TradeLine,
   tradeLines,
 } from "../inventory/trade-panel.js";
 import { apiFetch, } from "./htmx.js";
@@ -63,6 +64,7 @@ export interface InventoryOffersState {
   selectedOfferId: string | null;
   confirmingAcceptId: string | null;
   counterPrice: number;
+  offerPrice: number;
   draft: TradeDraft;
   history: TradeHistoryEntry[];
   historyLoading: boolean;
@@ -137,6 +139,7 @@ export const stateFromOfferActors = (
   selectedOfferId: null,
   confirmingAcceptId: null,
   counterPrice: 0,
+  offerPrice: 0,
   draft: emptyDraft(),
   history: [],
   historyLoading: false,
@@ -275,7 +278,7 @@ export const stateFromOfferActors = (
           buyerActorId: myActorId,
           sellerActorId: sellerId,
           buyerItems: tradeLines(rows,),
-          price: rowsValue(rows,),
+          price: this.offerPrice !== 0 ? this.offerPrice : rowsValue(rows,),
         },),
       },);
 
@@ -345,14 +348,20 @@ export const stateFromOfferActors = (
     this.message = "";
     try {
       const lines = tradeLines(rows,);
+
+      const body: {
+        counterActorId: string;
+        buyerItems?: TradeLine[];
+        sellerItems?: TradeLine[];
+        price?: number;
+      } = { counterActorId: myActorId, };
+
+      if (lines.length > 0) { body[mineIsBuyer ? "buyerItems" : "sellerItems"] = lines; }
+      if (this.counterPrice !== 0) { body.price = this.counterPrice; }
       const res = await apiFetch(`/api/v1/worlds/${worldId}/trade/offers/${offerId}/counter`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody(
-          mineIsBuyer
-            ? { counterActorId: myActorId, buyerItems: lines, price: this.counterPrice, }
-            : { counterActorId: myActorId, sellerItems: lines, price: this.counterPrice, },
-        ),
+        body: jsonBody(body,),
       },);
 
       if (!res.ok) {
