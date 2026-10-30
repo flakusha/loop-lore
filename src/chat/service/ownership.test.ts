@@ -109,9 +109,10 @@ async function resetChat(): Promise<void> {
     .where("actor_id", "not in", [OWNER_ID, PARTICIPANT_ID,],)
     .execute();
 
-  // Owners set back to scratch: the creator fallback covers authority until
-  // an owners-set op or a transfer materializes rows (epic-chat-multi-ownership).
+  // Owners set back to the baseline: exactly the creator (post-cutover the
+  // owners set is the single source of authority — no created_by fallback).
   await db.deleteFrom("chat_owners",).where("chat_id", "=", CHAT_ID,).execute();
+  await db.insertInto("chat_owners",).values({ chat_id: CHAT_ID, user_id: OWNER_ID, },).execute();
 
   await db.deleteFrom("notifications",).where("link", "=", `/chat/${CHAT_ID}`,).execute();
 
@@ -121,7 +122,7 @@ async function resetChat(): Promise<void> {
 describe("transferOwnership", () => {
   beforeEach(resetChat,);
 
-  test("transfers ownership to existing participant; flips created_by and demotes previous owner", async () => {
+  test("transfers ownership to existing participant; swaps the owners set and demotes previous owner", async () => {
     const beforeChat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
       .executeTakeFirstOrThrow();
 
@@ -141,10 +142,20 @@ describe("transferOwnership", () => {
     expect(result.result.newOwnerId,).toBe(PARTICIPANT_ID,);
     expect(result.result.autoInvited,).toBe(false,);
 
+    // created_by is the frozen creator record — the transfer must NOT flip it.
     const afterChat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
       .executeTakeFirstOrThrow();
 
-    expect(afterChat.created_by,).toBe(PARTICIPANT_ID,);
+    expect(afterChat.created_by,).toBe(OWNER_ID,);
+
+    // Ownership moved inside the owners set: requester out, target in.
+    const owners = await db
+      .selectFrom("chat_owners",)
+      .select("user_id",)
+      .where("chat_id", "=", CHAT_ID,)
+      .execute();
+
+    expect(owners.map((o,) => o.user_id),).toEqual([PARTICIPANT_ID,],);
 
     const roles = await db
       .selectFrom("chat_participants",)
@@ -278,10 +289,20 @@ describe("transferOwnership", () => {
     expect(result.result.newOwnerId,).toBe(PARTICIPANT_ID,);
     expect(result.result.autoInvited,).toBe(false,);
 
+    // Admin transfers clear the whole set (legacy reassignment) and grant the
+    // target; the frozen creator record stays untouched.
+    const owners = await db
+      .selectFrom("chat_owners",)
+      .select("user_id",)
+      .where("chat_id", "=", CHAT_ID,)
+      .execute();
+
+    expect(owners.map((o,) => o.user_id),).toEqual([PARTICIPANT_ID,],);
+
     const afterChat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
       .executeTakeFirstOrThrow();
 
-    expect(afterChat.created_by,).toBe(PARTICIPANT_ID,);
+    expect(afterChat.created_by,).toBe(OWNER_ID,);
   });
 
   test("not_found: unknown chat id", async () => {
@@ -339,10 +360,13 @@ describe("transferOwnership", () => {
     const winner = winners[0]!;
     if (!winner.ok) { return; }
 
-    const afterChat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
-      .executeTakeFirstOrThrow();
+    const owners = await db
+      .selectFrom("chat_owners",)
+      .select("user_id",)
+      .where("chat_id", "=", CHAT_ID,)
+      .execute();
 
-    expect(afterChat.created_by,).toBe(winner.result.newOwnerId,);
+    expect(owners.map((o,) => o.user_id),).toEqual([winner.result.newOwnerId,],);
 
     const roles = await db
       .selectFrom("chat_participants",)
@@ -448,14 +472,14 @@ describe("transferOwnership", () => {
 
       expect(result.ok,).toBe(true,);
       expect(callCount,).toBe(1,);
-      // Ownership flip must survive the reconcile failure.
-      const after = await db
-        .selectFrom("chats",)
-        .select("created_by",)
-        .where("id", "=", CHAT_ID,)
-        .executeTakeFirstOrThrow();
+      // The owners-set swap must survive the reconcile failure.
+      const owners = await db
+        .selectFrom("chat_owners",)
+        .select("user_id",)
+        .where("chat_id", "=", CHAT_ID,)
+        .execute();
 
-      expect(after.created_by,).toBe(PARTICIPANT_ID,);
+      expect(owners.map((o,) => o.user_id),).toEqual([PARTICIPANT_ID,],);
     } finally {
       mock.module("./access", () => realAccessSnapshot,);
     }
@@ -528,11 +552,12 @@ describe("transferOwnership", () => {
   });
 
   /**
-   * Regression: newOwnerId names an ACTOR; chats.created_by is users.id.
-   * An adopted character actor (owner_id set, user_id null) must transfer
-   * by writing its owning user, not the actor id (which tripped the FK → 400).
+   * Regression: newOwnerId names an ACTOR; chats.created_by is the frozen
+   * creator record (users.id). An adopted character actor (owner_id set,
+   * user_id null) must transfer by granting its owning user an owners row,
+   * not the actor id (which tripped the FK → 400).
    */
-  test("transfer to an adopted character actor writes its owning user into created_by", async () => {
+  test("transfer to an adopted character actor grants its owning user an owners row", async () => {
     const adopterId = randomUUID();
     const characterActorId = randomUUID();
     await insertUsers(db, `adopter-${adopterId}`, "Adopter", { id: adopterId, } as never,);
@@ -550,10 +575,10 @@ describe("transferOwnership", () => {
     },);
 
     expect(result.ok,).toBe(true,);
-    const chat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
-      .executeTakeFirst();
+    const owners = await db.selectFrom("chat_owners",).select("user_id",).where("chat_id", "=", CHAT_ID,)
+      .execute();
 
-    expect(chat?.created_by,).toBe(adopterId,);
+    expect(owners.map((o,) => o.user_id),).toEqual([adopterId,],);
 
     // The participant rows still identify actors, not users.
     const participant = await db.selectFrom("chat_participants",).select("role_in_chat",)
@@ -614,10 +639,10 @@ describe("transferOwnership — tx error mapping (stubbed db)", () => {
    * @param txError
    */
   function stubDb(txError: Error,): Kysely<DB> {
-    const chain = (row: unknown,): unknown => {
+    const chain = (row: unknown, list: unknown = { numUpdatedRows: 1, },): unknown => {
       const c: Record<string, unknown> = {
         executeTakeFirst: async () => row,
-        execute: async () => ({ numUpdatedRows: 1, }),
+        execute: async () => list,
       };
 
       c.select = () => c;
@@ -633,7 +658,10 @@ describe("transferOwnership — tx error mapping (stubbed db)", () => {
             ? { id: CHAT_ID, created_by: OWNER_ID, }
             : table === "actors"
             ? { user_id: PARTICIPANT_ID, owner_id: null, }
+            : table === "chat_owners"
+            ? { user_id: OWNER_ID, }
             : { actor_id: PARTICIPANT_ID, role_in_chat: "member", },
+          table === "chat_owners" ? [] : undefined,
         ),
       transaction: () => ({
         execute: async () => {
@@ -700,16 +728,20 @@ async function chatOwners(): Promise<string[]> {
 describe("owners set (addChatOwner / removeChatOwner / isChatOwner)", () => {
   beforeEach(resetChat,);
 
-  test("isChatOwner: creator true via fallback, stranger false, row-holder true", async () => {
-    // No rows materialized: the created_by fallback carries authority.
-    expect(await chatOwners(),).toEqual([],);
+  test("isChatOwner is rows-only post-cutover: baseline creator true, stranger false; empty set denies all", async () => {
+    // Baseline: exactly the creator's seeded row carries authority.
+    expect(await chatOwners(),).toEqual([OWNER_ID,],);
     expect(await isChatOwner(db, CHAT_ID, OWNER_ID,),).toBe(true,);
     expect(await isChatOwner(db, CHAT_ID, STRANGER_ID,),).toBe(false,);
+
+    // No created_by fallback: with the set emptied even the creator is denied.
+    await db.deleteFrom("chat_owners",).where("chat_id", "=", CHAT_ID,).execute();
+    expect(await isChatOwner(db, CHAT_ID, OWNER_ID,),).toBe(false,);
 
     const added = await addChatOwner(db, {
       chatId: CHAT_ID,
       requesterId: OWNER_ID,
-      requesterRole: "user",
+      requesterRole: "admin",
       actorId: PARTICIPANT_ID,
     },);
 
@@ -865,7 +897,7 @@ describe("owners set (addChatOwner / removeChatOwner / isChatOwner)", () => {
   });
 
   test("removeChatOwner refuses to remove the last remaining owner", async () => {
-    // Fresh chat: only the creator (via fallback) — removal must refuse.
+    // Fresh chat: only the creator's seeded row — removal must refuse.
     const result = await removeChatOwner(db, {
       chatId: CHAT_ID,
       requesterId: OWNER_ID,

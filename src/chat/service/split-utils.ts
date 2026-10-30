@@ -55,6 +55,14 @@ export async function createBranchChat(
     },)
     .execute();
 
+  // Seed the owners set (epic-chat-multi-ownership cutover): the splitting
+  // actor is the branch chat's owner of record. `created_by` (an actor id
+  // here; user actors share the id) stays the frozen creator record.
+  await database
+    .insertInto("chat_owners",)
+    .values({ chat_id: chatId, user_id: actorId, },)
+    .execute();
+
   for (const aId of actorIds) {
     await database
       .insertInto("chat_participants",)

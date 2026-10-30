@@ -76,7 +76,7 @@ async function seed(db: Kysely<DB>,): Promise<void> {
 }
 
 describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
-  test("200: owner transfers to existing participant; created_by flips and roles swap", async () => {
+  test("200: owner transfers to existing participant; owners set swaps and roles swap", async () => {
     const { db, } = await createTestDb();
     await seed(db,);
 
@@ -102,8 +102,12 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
     expect(json.newOwnerId,).toBe(PARTICIPANT_ID,);
     expect(json.autoInvited,).toBe(false,);
 
+    // created_by stays frozen at the creator; ownership lives in chat_owners.
     const chat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,).executeTakeFirst();
-    expect(chat?.created_by,).toBe(PARTICIPANT_ID,);
+    expect(chat?.created_by,).toBe(OWNER_ID,);
+
+    const owners = await db.selectFrom("chat_owners",).select("user_id",).where("chat_id", "=", CHAT_ID,).execute();
+    expect(owners.map((o,) => o.user_id),).toEqual([PARTICIPANT_ID,],);
 
     const rows = await db
       .selectFrom("chat_participants",)
@@ -162,8 +166,8 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
     );
 
     expect(res.status,).toBe(403,);
-    const chat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,).executeTakeFirst();
-    expect(chat?.created_by,).toBe(OWNER_ID,);
+    const owners = await db.selectFrom("chat_owners",).select("user_id",).where("chat_id", "=", CHAT_ID,).execute();
+    expect(owners.map((o,) => o.user_id),).toEqual([OWNER_ID,],);
 
     await db.destroy();
   });
@@ -196,8 +200,8 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
     expect(json.newOwnerId,).toBe(PARTICIPANT_ID,);
     expect(json.autoInvited,).toBe(false,);
 
-    const afterChat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,).executeTakeFirst();
-    expect(afterChat?.created_by,).toBe(PARTICIPANT_ID,);
+    const owners = await db.selectFrom("chat_owners",).select("user_id",).where("chat_id", "=", CHAT_ID,).execute();
+    expect(owners.map((o,) => o.user_id),).toEqual([PARTICIPANT_ID,],);
 
     await db.destroy();
   });

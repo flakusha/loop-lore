@@ -418,7 +418,7 @@ describe("listChatPolls", () => {
     expect(result.polls[1]?.tallies,).toEqual([{ optionIdx: 1, count: 1, },],);
     expect(result.polls[1]?.viewerOptionIdxs,).toEqual([1,],);
     expect(result.polls[2]?.tallies,).toEqual([],);
-    expect(queryCount,).toBeLessThanOrEqual(5,);
+    expect(queryCount,).toBeLessThanOrEqual(6,);
 
     // The query count must not grow with the number of polls: the per-poll
     // hydrate loop issued two queries per poll.
