@@ -14,6 +14,12 @@
  * Usage: bun run scripts/check/i18n-keys.mjs
  *
  * Exit codes: 0 all keys resolve, 1 missing keys found.
+ *
+ * Runtime registry check: every command in the live assistant registry must
+ * resolve to a commands.<name> key, so the command palette never renders a
+ * raw key as its description. Runs against the runtime registry (loop-built
+ * registerCommand calls included), not a static source scan — the static
+ * extractor skips template/concatenated keys and can never see these.
  */
 import { readdirSync, readFileSync, } from "node:fs";
 import { join, relative, } from "node:path";
@@ -105,7 +111,7 @@ function extractKeys(text, file,) {
   return results;
 }
 
-function main() {
+async function main() {
   const en = JSON.parse(readFileSync(EN_JSON, "utf-8",),);
   const catalog = flatten(en,);
 
@@ -126,19 +132,42 @@ function main() {
     }
   }
 
-  if (missing.length === 0) {
-    console.log(`i18n - keys: all ${seen.size} static t() keys resolve in en.json`,);
+  // Runtime registry check (see header). Skipped when the registry module
+  // cannot load (e.g. the minimal fixtures in this gate's own tests copy
+  // the gate without src/).
+  const unkeyed = [];
+  try {
+    const { listCommands, } = await import(join(SRC_DIR, "assistant", "commands", "index.ts",),);
+    for (const name of listCommands()) {
+      if (!catalog.has(`commands.${name}`,)) {
+        unkeyed.push(name,);
+      }
+    }
+  } catch {
+    // No registry in this tree — static check only.
+  }
+
+  if (missing.length === 0 && unkeyed.length === 0) {
+    console.log(`i18n - keys: all ${seen.size} static t() keys resolve in en.json; all runtime commands keyed`,);
     return;
   }
 
-  console.log(`i18n - keys: ${missing.length} key(s) missing from en.json:`,);
-  for (const { key, file, line, } of missing.sort((a, b,) => a.key.localeCompare(b.key,))) {
-    console.log(`  ${key}  (${file}:${line})`,);
+  if (missing.length > 0) {
+    console.log(`i18n - keys: ${missing.length} key(s) missing from en.json:`,);
+    for (const { key, file, line, } of missing.sort((a, b,) => a.key.localeCompare(b.key,))) {
+      console.log(`  ${key}  (${file}:${line})`,);
+    }
+  }
+  if (unkeyed.length > 0) {
+    console.log(`i18n - keys: ${unkeyed.length} runtime command(s) without a commands.<name> key in en.json:`,);
+    for (const name of unkeyed.sort()) {
+      console.log(`  commands.${name}`,);
+    }
   }
   console.log("Add the missing keys to en.json and run `bun run i18n:fix` to propagate.",);
   process.exit(1,);
 }
 
 if (import.meta.main) {
-  main();
+  await main();
 }
