@@ -1,0 +1,1872 @@
+{
+  "UNETLoader": {
+    "input": {
+      "required": {
+        "unet_name": [
+          "COMBO"
+        ],
+        "weight_dtype": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "unet_name",
+        "weight_dtype"
+      ],
+      "optional": []
+    },
+    "_source": "pack:nodes.py"
+  },
+  "CLIPLoader": {
+    "input": {
+      "required": {
+        "clip_name": [
+          "COMBO"
+        ],
+        "type": [
+          "COMBO"
+        ]
+      },
+      "optional": {
+        "device": [
+          "COMBO"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name",
+        "type"
+      ],
+      "optional": [
+        "device"
+      ]
+    },
+    "_source": "pack:nodes.py"
+  },
+  "VAELoader": {
+    "input": {
+      "required": {
+        "vae_name": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "vae_name"
+      ],
+      "optional": []
+    },
+    "_source": "pack:nodes.py"
+  },
+  "CLIPTextEncode": {
+    "input": {
+      "required": {
+        "text": [
+          "STRING"
+        ],
+        "clip": [
+          "CLIP"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "text",
+        "clip"
+      ],
+      "optional": []
+    },
+    "_source": "pack:nodes.py"
+  },
+  "KSampler": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "seed": [
+          "INT"
+        ],
+        "steps": [
+          "INT"
+        ],
+        "cfg": [
+          "FLOAT"
+        ],
+        "sampler_name": [
+          "COMBO"
+        ],
+        "scheduler": [
+          "COMBO"
+        ],
+        "positive": [
+          "CONDITIONING"
+        ],
+        "negative": [
+          "CONDITIONING"
+        ],
+        "latent_image": [
+          "LATENT"
+        ],
+        "denoise": [
+          "FLOAT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "seed",
+        "steps",
+        "cfg",
+        "sampler_name",
+        "scheduler",
+        "positive",
+        "negative",
+        "latent_image",
+        "denoise"
+      ],
+      "optional": []
+    },
+    "_source": "pack:nodes.py"
+  },
+  "SaveImage": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE"
+        ],
+        "filename_prefix": [
+          "STRING"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "images",
+        "filename_prefix"
+      ],
+      "optional": []
+    },
+    "_source": "pack:nodes.py"
+  },
+  "LoadImage": {
+    "input": {
+      "required": {
+        "image": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "image"
+      ],
+      "optional": []
+    },
+    "_source": "pack:nodes.py"
+  },
+  "VAEDecode": {
+    "input": {
+      "required": {
+        "samples": [
+          "LATENT"
+        ],
+        "vae": [
+          "VAE"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "samples",
+        "vae"
+      ],
+      "optional": []
+    },
+    "_source": "pack:nodes.py"
+  },
+  "KSamplerSelect": {
+    "input": {
+      "required": {
+        "sampler_name": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "sampler_name"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_custom_sampler.py"
+  },
+  "BasicScheduler": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "scheduler": [
+          "COMBO"
+        ],
+        "steps": [
+          "INT"
+        ],
+        "denoise": [
+          "FLOAT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "scheduler",
+        "steps",
+        "denoise"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_custom_sampler.py"
+  },
+  "BasicGuider": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "conditioning": [
+          "CONDITIONING"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "conditioning"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_custom_sampler.py"
+  },
+  "SamplerCustomAdvanced": {
+    "input": {
+      "required": {
+        "noise": [
+          "NOISE"
+        ],
+        "guider": [
+          "GUIDER"
+        ],
+        "sampler": [
+          "SAMPLER"
+        ],
+        "sigmas": [
+          "SIGMAS"
+        ],
+        "latent_image": [
+          "LATENT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "noise",
+        "guider",
+        "sampler",
+        "sigmas",
+        "latent_image"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_custom_sampler.py"
+  },
+  "UpscaleModelLoader": {
+    "input": {
+      "required": {
+        "model_name": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model_name"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_upscale_model.py"
+  },
+  "ImageUpscaleWithModel": {
+    "input": {
+      "required": {
+        "upscale_model": [
+          "UPSCALEMODEL"
+        ],
+        "image": [
+          "IMAGE"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "upscale_model",
+        "image"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_upscale_model.py"
+  },
+  "ImageScaleToTotalPixels": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "upscale_method": [
+          "COMBO"
+        ],
+        "megapixels": [
+          "FLOAT"
+        ],
+        "resolution_steps": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "upscale_method",
+        "megapixels",
+        "resolution_steps"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_post_processing.py"
+  },
+  "EmptyFlux2LatentImage": {
+    "input": {
+      "required": {
+        "width": [
+          "INT"
+        ],
+        "height": [
+          "INT"
+        ],
+        "batch_size": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "width",
+        "height",
+        "batch_size"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_flux.py"
+  },
+  "GetImageSize": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "image"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_images.py"
+  },
+  "ImageFromBatch": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "batch_index": [
+          "INT"
+        ],
+        "length": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "batch_index",
+        "length"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_images.py"
+  },
+  "FrameInterpolate": {
+    "input": {
+      "required": {
+        "interp_model": [
+          "FRAMEINTERPOLATIONMODEL"
+        ],
+        "images": [
+          "IMAGE"
+        ],
+        "multiplier": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "interp_model",
+        "images",
+        "multiplier"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_frame_interpolation.py"
+  },
+  "FrameInterpolationModelLoader": {
+    "input": {
+      "required": {
+        "model_name": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model_name"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_frame_interpolation.py"
+  },
+  "ModelPatchLoader": {
+    "input": {
+      "required": {
+        "name": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "name"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_model_patch.py"
+  },
+  "ModelAttentionBackend": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "attention": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "attention"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_model_advanced.py"
+  },
+  "ModelPatchTorchSettings": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "enable_fp16_accumulation": [
+          "BOOLEAN"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "enable_fp16_accumulation"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/comfyui-kjnodes/nodes/model_optimization_nodes.py"
+  },
+  "SkipLayerGuidanceDiTSimple": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "double_layers": [
+          "STRING"
+        ],
+        "single_layers": [
+          "STRING"
+        ],
+        "start_percent": [
+          "FLOAT"
+        ],
+        "end_percent": [
+          "FLOAT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "double_layers",
+        "single_layers",
+        "start_percent",
+        "end_percent"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_slg.py"
+  },
+  "MiniMaxH3Director": {
+    "input": {
+      "required": {
+        "mode": [
+          "COMBO"
+        ],
+        "prompt": [
+          "STRING"
+        ],
+        "width": [
+          "INT"
+        ],
+        "height": [
+          "INT"
+        ],
+        "duration": [
+          "FLOAT"
+        ],
+        "ref_image_size": [
+          "COMBO"
+        ],
+        "timeline_data": [
+          "STRING"
+        ],
+        "builder_state": [
+          "STRING"
+        ],
+        "frame_rate": [
+          "FLOAT"
+        ]
+      },
+      "optional": {
+        "fl2va_model": [
+          "MODEL"
+        ],
+        "ref2va_model": [
+          "MODEL"
+        ],
+        "external_width_overwrite": [
+          "INT"
+        ],
+        "external_height_overwrite": [
+          "INT"
+        ],
+        "external_prompt_overwrite": [
+          "STRING"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "mode",
+        "prompt",
+        "width",
+        "height",
+        "duration",
+        "ref_image_size",
+        "timeline_data",
+        "builder_state",
+        "frame_rate"
+      ],
+      "optional": [
+        "fl2va_model",
+        "ref2va_model",
+        "external_width_overwrite",
+        "external_height_overwrite",
+        "external_prompt_overwrite"
+      ]
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_minimax_h3_director.py"
+  },
+  "MiniMaxH3DirectorGuide": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "vae": [
+          "VAE"
+        ],
+        "guide": [
+          "MINIMAX_H3_DIRECTOR_GUIDE"
+        ]
+      },
+      "optional": {
+        "audio_vae": [
+          "VAE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "vae",
+        "guide"
+      ],
+      "optional": [
+        "audio_vae"
+      ]
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_minimax_h3_director_guide.py"
+  },
+  "DaSiWa_NodeStatusSwitch": {
+    "input": {
+      "required": {
+        "enabled": [
+          "BOOLEAN"
+        ],
+        "trigger_on": [
+          "COMBO"
+        ],
+        "action": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "enabled",
+        "trigger_on",
+        "action"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_status_switch.py"
+  },
+  "DaSiWa_SeedControl": {
+    "input": {
+      "required": {
+        "seed_value": [
+          "INT"
+        ],
+        "seed_control_state": [
+          "STRING"
+        ]
+      },
+      "optional": {
+        "seed": [
+          "INT"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "seed_value",
+        "seed_control_state"
+      ],
+      "optional": [
+        "seed"
+      ]
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_seed_control.py"
+  },
+  "DaSiWa_MetadataImageSaver": {
+    "input": {
+      "required": {
+        "filename_prefix": [
+          "STRING"
+        ],
+        "file_format": [
+          "COMBO"
+        ],
+        "compression": [
+          "INT"
+        ],
+        "save_output": [
+          "BOOLEAN"
+        ]
+      },
+      "optional": {
+        "images": [
+          "IMAGE"
+        ],
+        "metadata_config": [
+          "METADATA_CONFIG"
+        ],
+        "extra_metadata": [
+          "EXTRA_METADATA"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "filename_prefix",
+        "file_format",
+        "compression",
+        "save_output"
+      ],
+      "optional": [
+        "images",
+        "metadata_config",
+        "extra_metadata"
+      ]
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_metadata.py"
+  },
+  "DaSiWa_EnhancedVideoCombine": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE"
+        ],
+        "frame_rate": [
+          "FLOAT"
+        ],
+        "codec": [
+          "COMBO"
+        ],
+        "container": [
+          "COMBO"
+        ],
+        "bit_depth": [
+          "COMBO"
+        ],
+        "quality": [
+          "INT"
+        ],
+        "log_level": [
+          "COMBO"
+        ],
+        "pingpong": [
+          "BOOLEAN"
+        ],
+        "save_metadata": [
+          "BOOLEAN"
+        ],
+        "filename_prefix": [
+          "STRING"
+        ],
+        "save_output": [
+          "BOOLEAN"
+        ],
+        "pass_frames": [
+          "BOOLEAN"
+        ],
+        "crop_to_audio": [
+          "BOOLEAN"
+        ],
+        "audio_codec": [
+          "COMBO"
+        ],
+        "audio_bitrate": [
+          "COMBO"
+        ],
+        "save_first_frame": [
+          "BOOLEAN"
+        ],
+        "save_last_frame": [
+          "BOOLEAN"
+        ]
+      },
+      "optional": {
+        "audio": [
+          "AUDIO"
+        ],
+        "seed": [
+          "INT"
+        ],
+        "free_memory_if_needed": [
+          "BOOLEAN"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "images",
+        "frame_rate",
+        "codec",
+        "container",
+        "bit_depth",
+        "quality",
+        "log_level",
+        "pingpong",
+        "save_metadata",
+        "filename_prefix",
+        "save_output",
+        "pass_frames",
+        "crop_to_audio",
+        "audio_codec",
+        "audio_bitrate",
+        "save_first_frame",
+        "save_last_frame"
+      ],
+      "optional": [
+        "audio",
+        "seed",
+        "free_memory_if_needed"
+      ]
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_enhanced_video_combine.py"
+  },
+  "DaSiWa_LTX2LoraLoader": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "clip": [
+          "CLIP"
+        ],
+        "stack_data": [
+          "STRING"
+        ],
+        "model_type": [
+          "COMBO"
+        ]
+      },
+      "optional": {
+        "use_cache": [
+          "BOOLEAN"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "clip",
+        "stack_data",
+        "model_type"
+      ],
+      "optional": [
+        "use_cache"
+      ]
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_advanced_lora_loader.py"
+  },
+  "DaSiWa_TorchResize": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "size_mode": [
+          "COMBO"
+        ],
+        "aspect_mode": [
+          "COMBO"
+        ],
+        "target_width": [
+          "INT"
+        ],
+        "target_height": [
+          "INT"
+        ],
+        "scale_multiplier": [
+          "FLOAT"
+        ],
+        "interpolation": [
+          "COMBO"
+        ],
+        "gamma_correct": [
+          "BOOLEAN"
+        ],
+        "divisible_by": [
+          "INT"
+        ],
+        "pad_color": [
+          "STRING"
+        ],
+        "crop_position": [
+          "COMBO"
+        ],
+        "batch_size": [
+          "INT"
+        ],
+        "max_batch_megapixels": [
+          "FLOAT"
+        ],
+        "cache_size": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "size_mode",
+        "aspect_mode",
+        "target_width",
+        "target_height",
+        "scale_multiplier",
+        "interpolation",
+        "gamma_correct",
+        "divisible_by",
+        "pad_color",
+        "crop_position",
+        "batch_size",
+        "max_batch_megapixels",
+        "cache_size"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_scaling.py"
+  },
+  "DaSiWa_Watermark": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE"
+        ],
+        "watermark_path": [
+          "COMBO"
+        ],
+        "position": [
+          "COMBO"
+        ],
+        "scale": [
+          "FLOAT"
+        ],
+        "resampling": [
+          "COMBO"
+        ],
+        "transparency": [
+          "FLOAT"
+        ],
+        "rotation": [
+          "INT"
+        ],
+        "padding_x": [
+          "INT"
+        ],
+        "padding_y": [
+          "INT"
+        ],
+        "optical_padding": [
+          "BOOLEAN"
+        ],
+        "optical_strength": [
+          "FLOAT"
+        ],
+        "random_switches": [
+          "INT"
+        ],
+        "fade": [
+          "BOOLEAN"
+        ],
+        "fade_margin": [
+          "FLOAT"
+        ],
+        "randomize_position": [
+          "BOOLEAN"
+        ],
+        "random_seed": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "images",
+        "watermark_path",
+        "position",
+        "scale",
+        "resampling",
+        "transparency",
+        "rotation",
+        "padding_x",
+        "padding_y",
+        "optical_padding",
+        "optical_strength",
+        "random_switches",
+        "fade",
+        "fade_margin",
+        "randomize_position",
+        "random_seed"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_watermark.py"
+  },
+  "DaSiWa_RTX_UpscalerRefiner": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE"
+        ],
+        "denoise": [
+          "BOOLEAN"
+        ],
+        "denoise_quality": [
+          "COMBO"
+        ],
+        "deblur": [
+          "BOOLEAN"
+        ],
+        "deblur_quality": [
+          "COMBO"
+        ],
+        "upscale": [
+          "COMBO"
+        ],
+        "upscale_quality": [
+          "COMBO"
+        ],
+        "resize_type": [
+          "COMBO"
+        ],
+        "scale": [
+          "FLOAT"
+        ],
+        "megapixels": [
+          "FLOAT"
+        ],
+        "width": [
+          "INT"
+        ],
+        "height": [
+          "INT"
+        ],
+        "divisible_by": [
+          "COMBO"
+        ],
+        "ratio_preset": [
+          "COMBO"
+        ],
+        "resize_method": [
+          "COMBO"
+        ],
+        "device_id": [
+          "INT"
+        ]
+      },
+      "optional": {
+        "empty_cache": [
+          "BOOLEAN"
+        ],
+        "use_mmap": [
+          "BOOLEAN"
+        ],
+        "auto_unload_models": [
+          "BOOLEAN"
+        ],
+        "chunking": [
+          "BOOLEAN"
+        ],
+        "lossless_fp16": [
+          "BOOLEAN"
+        ],
+        "chunk_frames": [
+          "INT"
+        ],
+        "image_encoding": [
+          "COMBO"
+        ],
+        "denoise_strength": [
+          "FLOAT"
+        ],
+        "deblur_strength": [
+          "FLOAT"
+        ],
+        "upscale_strength": [
+          "FLOAT"
+        ],
+        "preserve_alpha": [
+          "BOOLEAN"
+        ],
+        "channel_integrity_check": [
+          "BOOLEAN"
+        ],
+        "hdr_enabled": [
+          "BOOLEAN"
+        ],
+        "hdr_contrast": [
+          "INT"
+        ],
+        "hdr_saturation": [
+          "INT"
+        ],
+        "hdr_middle_gray": [
+          "INT"
+        ],
+        "hdr_luminance": [
+          "INT"
+        ],
+        "hdr_debanding": [
+          "BOOLEAN"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "images",
+        "denoise",
+        "denoise_quality",
+        "deblur",
+        "deblur_quality",
+        "upscale",
+        "upscale_quality",
+        "resize_type",
+        "scale",
+        "megapixels",
+        "width",
+        "height",
+        "divisible_by",
+        "ratio_preset",
+        "resize_method",
+        "device_id"
+      ],
+      "optional": [
+        "empty_cache",
+        "use_mmap",
+        "auto_unload_models",
+        "chunking",
+        "lossless_fp16",
+        "chunk_frames",
+        "image_encoding",
+        "denoise_strength",
+        "deblur_strength",
+        "upscale_strength",
+        "preserve_alpha",
+        "channel_integrity_check",
+        "hdr_enabled",
+        "hdr_contrast",
+        "hdr_saturation",
+        "hdr_middle_gray",
+        "hdr_luminance",
+        "hdr_debanding"
+      ]
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_rtx_upscaler_refiner.py"
+  },
+  "DaSiWa_RTX_FrameGeneration": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE"
+        ],
+        "generation_type": [
+          "COMBO"
+        ],
+        "multiplier": [
+          "INT"
+        ],
+        "timestep": [
+          "FLOAT"
+        ],
+        "mode": [
+          "COMBO"
+        ],
+        "automatic_shot_change_detection": [
+          "BOOLEAN"
+        ],
+        "shot_change": [
+          "BOOLEAN"
+        ],
+        "device_id": [
+          "INT"
+        ]
+      },
+      "optional": {
+        "image_encoding": [
+          "COMBO"
+        ],
+        "auto_unload_models": [
+          "BOOLEAN"
+        ],
+        "use_mmap": [
+          "BOOLEAN"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "images",
+        "generation_type",
+        "multiplier",
+        "timestep",
+        "mode",
+        "automatic_shot_change_detection",
+        "shot_change",
+        "device_id"
+      ],
+      "optional": [
+        "image_encoding",
+        "auto_unload_models",
+        "use_mmap"
+      ]
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_rtx_frame_generation.py"
+  },
+  "DaSiWaH3TiledUpscale": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "conditioning": [
+          "CONDITIONING"
+        ],
+        "latent": [
+          "LATENT"
+        ],
+        "scale": [
+          "FLOAT"
+        ],
+        "upscale_model": [
+          "COMBO"
+        ],
+        "steps": [
+          "INT"
+        ],
+        "denoise": [
+          "FLOAT"
+        ],
+        "seed": [
+          "INT"
+        ]
+      },
+      "optional": {
+        "director_guide": [
+          "MINIMAX_H3_DIRECTOR_GUIDE"
+        ],
+        "vae": [
+          "VAE"
+        ],
+        "start_image": [
+          "IMAGE"
+        ],
+        "negative": [
+          "CONDITIONING"
+        ],
+        "cfg": [
+          "FLOAT"
+        ],
+        "sampler_name": [
+          "COMBO"
+        ],
+        "scheduler": [
+          "COMBO"
+        ],
+        "memory_budget_mb": [
+          "INT"
+        ],
+        "sampler": [
+          "SAMPLER"
+        ],
+        "noise": [
+          "NOISE"
+        ],
+        "continuity_context": [
+          "DF_H3_CONTINUITY_CONTEXT"
+        ],
+        "upscale_precision": [
+          "COMBO"
+        ],
+        "continuity_soft_refine": [
+          "BOOLEAN"
+        ],
+        "continuity_mask_strength": [
+          "FLOAT"
+        ],
+        "spatial_tiling": [
+          "BOOLEAN"
+        ],
+        "temporal_chunking": [
+          "BOOLEAN"
+        ],
+        "spike_guard": [
+          "BOOLEAN"
+        ],
+        "guard_sensitivity": [
+          "FLOAT"
+        ],
+        "guard_strength": [
+          "FLOAT"
+        ],
+        "guard_mode": [
+          "COMBO"
+        ],
+        "enforce_memory_budget": [
+          "BOOLEAN"
+        ],
+        "memory_reserve_pct": [
+          "FLOAT"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "conditioning",
+        "latent",
+        "scale",
+        "upscale_model",
+        "steps",
+        "denoise",
+        "seed"
+      ],
+      "optional": [
+        "director_guide",
+        "vae",
+        "start_image",
+        "negative",
+        "cfg",
+        "sampler_name",
+        "scheduler",
+        "memory_budget_mb",
+        "sampler",
+        "noise",
+        "continuity_context",
+        "upscale_precision",
+        "continuity_soft_refine",
+        "continuity_mask_strength",
+        "spatial_tiling",
+        "temporal_chunking",
+        "spike_guard",
+        "guard_sensitivity",
+        "guard_strength",
+        "guard_mode",
+        "enforce_memory_budget",
+        "memory_reserve_pct"
+      ]
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_minimax_h3_tiled_upscale.py"
+  },
+  "DaSiWaH3ContinuitySegmentPrepare": {
+    "input": {
+      "required": {
+        "sampled": [
+          "LATENT"
+        ],
+        "context": [
+          "DF_H3_CONTINUITY_CONTEXT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "sampled",
+        "context"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/h3_continuity/segment_nodes.py"
+  },
+  "DaSiWaH3ContinuitySegmentDecode": {
+    "input": {
+      "required": {
+        "latent": [
+          "LATENT"
+        ],
+        "vae": [
+          "VAE"
+        ],
+        "audio_vae": [
+          "VAE"
+        ],
+        "context": [
+          "DF_H3_CONTINUITY_CONTEXT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "latent",
+        "vae",
+        "audio_vae",
+        "context"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/h3_continuity/segment_nodes.py"
+  },
+  "DaSiWaH3ContinuityPublish": {
+    "input": {
+      "required": {
+        "filename": [
+          "STRING"
+        ],
+        "ticket": [
+          "DF_H3_CONTINUITY_TICKET"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "filename",
+        "ticket"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/h3_continuity/nodes.py"
+  },
+  "MiniMaxH3Cache": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "reuse_threshold": [
+          "FLOAT"
+        ],
+        "start_percent": [
+          "FLOAT"
+        ],
+        "end_percent": [
+          "FLOAT"
+        ],
+        "max_steps": [
+          "INT"
+        ],
+        "device": [
+          "COMBO"
+        ],
+        "verbose": [
+          "BOOLEAN"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "reuse_threshold",
+        "start_percent",
+        "end_percent",
+        "max_steps",
+        "device",
+        "verbose"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/ComfyUI-DaSiWa-Nodes/nodes/nodes_minimax_h3_cache.py"
+  },
+  "MiniMaxChunkFeedForward": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "chunks": [
+          "INT"
+        ],
+        "seq_threshold": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "chunks",
+        "seq_threshold"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/comfyui-kjnodes/nodes/minimax_nodes.py"
+  },
+  "MiniMaxH3SigmaShift": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "shift_video": [
+          "FLOAT"
+        ],
+        "shift_audio": [
+          "FLOAT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "shift_video",
+        "shift_audio"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_minimax_h3.py"
+  },
+  "ModelPreviewOverrideKJ": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "max_resolution": [
+          "INT"
+        ],
+        "jpeg_quality": [
+          "INT"
+        ],
+        "suppress_default_preview": [
+          "BOOLEAN"
+        ],
+        "preview_frames": [
+          "INT"
+        ],
+        "preview_fps": [
+          "INT"
+        ]
+      },
+      "optional": {
+        "vae": [
+          "VAE"
+        ],
+        "tiny_vae": [
+          "COMBO"
+        ],
+        "audio_vae": [
+          "VAE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "max_resolution",
+        "jpeg_quality",
+        "suppress_default_preview",
+        "preview_frames",
+        "preview_fps"
+      ],
+      "optional": [
+        "vae",
+        "tiny_vae",
+        "audio_vae"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-kjnodes/nodes/preview_override_node.py"
+  },
+  "ResolutionSelector": {
+    "input": {
+      "required": {
+        "aspect_ratio": [
+          "COMBO"
+        ],
+        "megapixels": [
+          "FLOAT"
+        ],
+        "multiple": [
+          "INT"
+        ]
+      },
+      "optional": {
+        "preview": [
+          "RESOLUTION_PREVIEW"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "aspect_ratio",
+        "megapixels",
+        "multiple"
+      ],
+      "optional": [
+        "preview"
+      ]
+    },
+    "_source": "observed:workflow-pack-drifted"
+  },
+  "ClipProjLoader": {
+    "input": {
+      "required": {
+        "clip_name": [
+          "COMBO"
+        ],
+        "type": [
+          "COMBO"
+        ],
+        "projection": [
+          "COMBO"
+        ],
+        "device": [
+          "COMBO"
+        ],
+        "mode": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "clip_name",
+        "type",
+        "projection",
+        "device",
+        "mode"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/ComfyUI-ClipProj/clipproj_nodes.py"
+  },
+  "SpectrumApplyMiniMaxH3": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "enabled": [
+          "BOOLEAN"
+        ],
+        "blend_weight": [
+          "FLOAT"
+        ],
+        "degree": [
+          "INT"
+        ],
+        "ridge_lambda": [
+          "FLOAT"
+        ],
+        "window_size": [
+          "FLOAT"
+        ],
+        "flex_window": [
+          "FLOAT"
+        ],
+        "warmup_steps": [
+          "INT"
+        ],
+        "tail_actual_steps": [
+          "INT"
+        ],
+        "max_history": [
+          "INT"
+        ],
+        "debug": [
+          "BOOLEAN"
+        ]
+      },
+      "optional": {
+        "history_storage": [
+          "COMBO"
+        ],
+        "bootstrap_first_forecast": [
+          "BOOLEAN"
+        ],
+        "anchor_residual_feedback": [
+          "BOOLEAN"
+        ],
+        "selective_rollback_correction": [
+          "BOOLEAN"
+        ],
+        "offline_smoothing_replay": [
+          "BOOLEAN"
+        ],
+        "audio_blend_weight": [
+          "FLOAT"
+        ],
+        "offline_archive_storage": [
+          "COMBO"
+        ],
+        "model_aware_mode": [
+          "COMBO"
+        ],
+        "model_aware_risk_threshold": [
+          "FLOAT"
+        ],
+        "model_aware_trust_shrinkage": [
+          "BOOLEAN"
+        ],
+        "model_aware_replay_generic_correction": [
+          "BOOLEAN"
+        ],
+        "generic_correction_mode": [
+          "COMBO"
+        ],
+        "generic_correction_limiter": [
+          "COMBO"
+        ],
+        "generic_correction_limit": [
+          "FLOAT"
+        ],
+        "generic_correction_attenuation": [
+          "COMBO"
+        ],
+        "sa_pece_forecast_policy": [
+          "COMBO"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "enabled",
+        "blend_weight",
+        "degree",
+        "ridge_lambda",
+        "window_size",
+        "flex_window",
+        "warmup_steps",
+        "tail_actual_steps",
+        "max_history",
+        "debug"
+      ],
+      "optional": [
+        "history_storage",
+        "bootstrap_first_forecast",
+        "anchor_residual_feedback",
+        "selective_rollback_correction",
+        "offline_smoothing_replay",
+        "audio_blend_weight",
+        "offline_archive_storage",
+        "model_aware_mode",
+        "model_aware_risk_threshold",
+        "model_aware_trust_shrinkage",
+        "model_aware_replay_generic_correction",
+        "generic_correction_mode",
+        "generic_correction_limiter",
+        "generic_correction_limit",
+        "generic_correction_attenuation",
+        "sa_pece_forecast_policy"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-spectrum-minimax-h3/comfyui_spectrum_h3/nodes.py"
+  },
+  "ComfyMathExpression": {
+    "input": {
+      "required": {
+        "expression": [
+          "STRING"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "expression"
+      ],
+      "optional": []
+    },
+    "_source": "frontend-core:observed"
+  },
+  "ComfySwitchNode": {
+    "input": {
+      "required": {
+        "switch": [
+          "BOOLEAN"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "switch"
+      ],
+      "optional": []
+    },
+    "_source": "frontend-core:observed"
+  },
+  "Reroute": {
+    "input": {
+      "required": {},
+      "optional": {}
+    },
+    "input_order": {
+      "required": [],
+      "optional": []
+    },
+    "_source": "frontend-core:observed"
+  },
+  "ApplyMossImageEdit": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "model_patch": [
+          "MODEL_PATCH"
+        ],
+        "vae": [
+          "VAE"
+        ],
+        "positive": [
+          "CONDITIONING"
+        ],
+        "negative": [
+          "CONDITIONING"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "reference_max_edge": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "model_patch",
+        "vae",
+        "positive",
+        "negative",
+        "image",
+        "reference_max_edge"
+      ],
+      "optional": []
+    },
+    "_source": "observed:workflow-pack-absent"
+  }
+}
