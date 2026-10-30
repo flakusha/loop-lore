@@ -57,7 +57,8 @@ export async function runPostInsertChatEffects(
  * Federation sender trigger: replicate a persisted chat message to duplication
  * targets via fanOutContent. Fire-and-forget with a logged catch — a peer
  * failure must never fail or delay the message write (mirrors the advisory
- * title call above). No-op when federation is disabled.
+ * title call above). No-op when federation is disabled. Chat id is always
+ * populated: the content-clearance gate default-denies on a missing chat.
  * @param {Kysely<DB>} database
  * @param {Config} config
  * @param {string} chatId
