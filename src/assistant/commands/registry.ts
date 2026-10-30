@@ -127,8 +127,8 @@ const ROLE_PRIORITY: Record<ChatParticipantRole, number> = {
  * @param required - The minimum role required
  * @returns true when `actual` is at least as privileged as `required`
  */
-export function satisfiesRole(actual: ChatParticipantRole, required: ChatParticipantRole,): boolean {
-  return ROLE_PRIORITY[actual] >= ROLE_PRIORITY[required];
+export function satisfiesRole(actual: ChatParticipantRole | undefined | null, required: ChatParticipantRole,): boolean {
+  return ROLE_PRIORITY[actual ?? "guest"] >= ROLE_PRIORITY[required];
 }
 
 /**
