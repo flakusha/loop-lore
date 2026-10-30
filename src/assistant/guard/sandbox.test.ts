@@ -162,15 +162,6 @@ describe("runInSandbox — filesystem", () => {
     expect(message,).toContain(blockedFile,);
   });
 
-  it("allows a read inside the allowed paths", async () => {
-    const content = await runInSandbox(
-      context({ allowedFsReadPaths: [allowedDir,], allowedFsWritePaths: [allowedDir,], },),
-      async () => fs.readFileSync(allowedFile, "utf8",),
-    );
-
-    expect(content,).toBe("inside",);
-  });
-
   it("refuses a read through a symlink escaping the allowed dir", async () => {
     const dir = fs.mkdtempSync(join(tmpdir(), "guard-symlink-",),);
     try {
@@ -185,6 +176,15 @@ describe("runInSandbox — filesystem", () => {
     } finally {
       fs.rmSync(dir, { recursive: true, force: true, },);
     }
+  });
+
+  it("allows a read inside the allowed paths", async () => {
+    const content = await runInSandbox(
+      context({ allowedFsReadPaths: [allowedDir,], allowedFsWritePaths: [allowedDir,], },),
+      async () => fs.readFileSync(allowedFile, "utf8",),
+    );
+
+    expect(content,).toBe("inside",);
   });
 
   it("rejects a write outside the allowed paths", async () => {
