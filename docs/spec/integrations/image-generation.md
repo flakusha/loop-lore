@@ -147,6 +147,16 @@ Node-based workflow editor for complex pipelines (img2img + ControlNet + upscali
 Key endpoints: `POST /prompt`, `GET /history/{prompt_id}`, `POST /interrupt`, `GET /object_info`, `/ws` (WebSocket progress).
 Use when: complex multi-step needed. Not for simple text-to-image.
 
+## ComfyUI Parameter Derivation (`src/generation/comfyui-params/`)
+
+A workflow-library row's `TemplateParameter[]` derives from `[p]`-marked node titles in the saved UI-format workflow, typed by a pinned `/object_info` snapshot. Offline throughout.
+
+- **Marking:** a node whose `title` starts with `[p]` exposes its unconnected widget inputs. A marked subgraph *instance* exposes its boundary pins instead (one parameter per pin, fanned out to the inner inputs at injection); marks inside a subgraph definition apply to every instance. The mark lives in `title`, so it survives the editor save round-trip verbatim. Optional label text after the prefix (`[p] Sampling steps`) becomes the parameter label.
+- **Type mapping:** INT/FLOAT/NUMBER to `number` (min/max/step when the spec carries them), BOOLEAN to `boolean`, STRING to `string`, static COMBO to `select` (option-SOURCE `static`), folder-backed COMBO (checkpoints, UNets, CLIPs, VAEs, LoRAs, upscalers, watermark paths) to `string` with SOURCE `runtime` (options from live discovery, the LoRA-cache pattern), IMAGE sockets to `image` (asset-id upload path). Default is always the workflow's current widget value.
+- **Sidecar (`<workflowId>.overrides.json`):** `{ "<param>": { "rename?", "hide?", "label?", "description?", "min?", "max?", "step?", "options?", "default?" } }`. Every target must name a derived parameter — unknown targets throw, never silently skip.
+- **Injection:** whole-string `{{name}}` tokens written at the marked inputs of the converted API graph via `applyNodeOverrides` (unchanged), so `substituteWorkflow` preserves types and `uploadImageParams` keeps working. Linked or vanished inputs are skipped.
+- **Idempotency:** re-derivation is INSERT-IF-CHANGED — pass the row's current parameters as `existing` and operator labels/descriptions win unless the sidecar touches that parameter. Fresh marks are added, vanished marks dropped.
+
 ## Config
 
 Env vars: `SDCPP_BASE_URL`, `SDCPP_API_FAMILY`, `SDCPP_DEFAULT_WIDTH/HEIGHT/STEPS/CFG`, `SDCPP_TIMEOUT`, `SDCPP_GENERATION_TIMEOUT`, `SDCPP_RETRIES`.
