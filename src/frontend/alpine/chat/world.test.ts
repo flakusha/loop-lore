@@ -135,6 +135,7 @@ function makeSelectCtx(overrides: Record<string, unknown> = {},): Record<string,
     loadParticipants: noop,
     loadTurnOrder: noop,
     loadAvailableActors: noop,
+    loadNsfwPanel: noop,
     ...overrides,
   },);
 }
@@ -527,6 +528,23 @@ describeOrSkip("chatWorld._selectChatInner happy path", () => {
     // Direct chats still need participants — the memory panel resolves the
     // character actor from them.
     expect(calls,).toEqual(["participants",],);
+  });
+
+  test("loads the NSFW panel after participants so pair targets can be named", async () => {
+    const calls: string[] = [];
+    const ctx = makeSelectCtx({
+      loadParticipants: () => {
+        calls.push("participants",);
+        return Promise.resolve();
+      },
+      loadNsfwPanel: () => {
+        calls.push("nsfw",);
+        return Promise.resolve();
+      },
+    },);
+
+    await chatWorld._selectChatInner!.call(ctx, "c1",);
+    expect(calls,).toEqual(["participants", "nsfw",],);
   });
 },);
 

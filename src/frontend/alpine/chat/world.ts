@@ -201,6 +201,10 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
       const directLoad = await Promise.allSettled([this.loadParticipants(),],);
       if (directLoad.some((r,) => r.status === "rejected")) { throw new Error("chat participant load failed",); }
     }
+
+    // NSFW panel loads AFTER participants so the intimacy pair targets can be
+    // resolved to display names. It never rejects (denied → hidden).
+    await this.loadNsfwPanel();
   },
 
   /**

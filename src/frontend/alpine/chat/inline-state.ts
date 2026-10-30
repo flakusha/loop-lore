@@ -8,6 +8,7 @@ import { DEFAULT_QUICK_EMOJIS, } from "../chat-utils/emoji";
 import { t, } from "../i18n";
 import { memoryPanel, } from "../memory-panel";
 import { moodState, } from "../mood";
+import { nsfwPanelState, } from "../nsfw-panel";
 import { rpgQuestions, } from "../rpg-questions";
 import { rpgStats, } from "../rpg-stats";
 import type { AlpineMagicThis, ChatState, WorldChannelChat, } from "../types";
@@ -191,4 +192,7 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
 
   // ── Memory Panel State ──
   ...memoryPanel,
+
+  // ── NSFW Panel State (read-only status) ──
+  ...nsfwPanelState,
 };
