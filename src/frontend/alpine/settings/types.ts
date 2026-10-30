@@ -9,7 +9,21 @@ export type { LocaleInfo, };
 /** */
 export type LocaleInfoArray = LocaleInfo[];
 
-/** */
+export interface QuotaGaugeDimension {
+  key: string;
+  used: number;
+  ceiling: number | null;
+}
+
+export interface QuotaGaugeResource {
+  id: string;
+  provider: string;
+  type: string;
+  status: string;
+  overQuota: boolean;
+  dimensions: QuotaGaugeDimension[];
+}
+
 export interface NsfwConsent {
   nsfwEnabled: boolean;
   maxRating: string;
@@ -48,6 +62,9 @@ export interface SettingsState {
   saving: boolean;
   loaded: boolean;
   nsfwConsent: NsfwConsent | null;
+  quotaResources: QuotaGaugeResource[];
+  quotaIsAdmin: boolean;
+  quotaNotice: string;
 
   // Restart-required banner (TASK-restart-required-indicator-on-system-config-changes)
   pendingRestartKeys: string[];
@@ -91,4 +108,9 @@ export interface SettingsState {
   handleRebindKeydown(e: KeyboardEvent,): void;
   resetKeymapToDefaults(): void;
   actionLabel(action: string,): string;
+
+  loadQuotaState(): Promise<void>;
+  quotaPercent(used: number, ceiling: number | null,): number;
+  notifyQuotaExceeded(error: { name?: string; kind?: string; limit?: number },): void;
+  overrideQuota(resourceId: string,): Promise<void>;
 }
