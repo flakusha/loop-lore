@@ -52,7 +52,8 @@
     "filter": "Filter…",
     "archive": "Archive",
     "user": "المستخدم",
-    "actions": "الإجراءات"
+    "actions": "الإجراءات",
+    "openInEditor": "Open in $EDITOR"
   },
   "auth": {
     "login": "Log In",

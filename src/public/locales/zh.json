@@ -52,7 +52,8 @@
     "filter": "Filter…",
     "archive": "Archive",
     "user": "用户",
-    "actions": "操作"
+    "actions": "操作",
+    "openInEditor": "Open in $EDITOR"
   },
   "auth": {
     "login": "Log In",

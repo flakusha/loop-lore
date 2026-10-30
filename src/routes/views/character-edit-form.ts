@@ -146,6 +146,7 @@ export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: strin
           </div>
         </div>
 ${avatarFocusSection(v,)}
+        <a class="btn btn-ghost btn-sm open-in-editor" data-editor-path="src/routes/views/character-edit-form.ts" data-editor-line="152" href="#" hidden>Open in $EDITOR</a>
         <div class="form-group"><label class="form-label" for="edit-name">Display Name</label><input class="form-input" type="text" id="edit-name" value="${
     escapeHtml(v.name,)
   }" /></div>
