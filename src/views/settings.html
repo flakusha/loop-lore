@@ -133,7 +133,7 @@
         <button
           class="world-edit-tab"
           :class="{ active: activeTab === 'backup' }"
-          @click="activeTab = 'backup'; loadBackupPrefs()"
+          @click="activeTab = 'backup'; loadBackupPrefs(); refreshBackupDashboard([])"
           role="tab"
           :aria-selected="activeTab === 'backup'"
           id="tab-backup"
@@ -517,7 +517,7 @@
           <template x-if="backupReport.length === 0">
             <p class="text-gray-500 text-sm">{{{t("settings.backupEmpty")}}}</p>
           </template>
-          <template x-for="e in backupReport" :key="e.resourceId">
+          <template x-for="e in backupReport" :key="e.backupId">
             <div
               style="padding: 12px; background: var(--bg-secondary, #f8f9fa); border-radius: 6px; margin-bottom: 8px"
               data-testid="backup-entry"
@@ -531,7 +531,7 @@
                 <button
                   class="btn btn-secondary btn-xs"
                   style="margin-left: auto"
-                  @click="recoverBackup(e.resourceId)"
+                  @click="recoverBackup(e.backupId)"
                   data-testid="backup-recover"
                 >
                   {{{t("settings.backupRecover")}}}

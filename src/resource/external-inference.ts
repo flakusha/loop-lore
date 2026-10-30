@@ -16,14 +16,16 @@ import { storeCredential, } from "./credential-store";
 /** Supported external inference endpoint kinds. */
 export type InferenceKind = "llm" | "sd" | "comfyui";
 
-/** Public view of a provisioned inference resource (no secret material). */
+/** Public view of a provisioned inference resource (no secret material).
+ * `credentialRef` is intentionally absent: even the one-way ref leaks
+ * account-linkable material, so HTTP responses never carry it (the
+ * internal router reads the column directly for call-out signing). */
 export interface InferenceResource {
   id: string;
   ownerId: string;
   kind: InferenceKind;
   provider: string;
   endpoint: string;
-  credentialRef: string;
   quota: ResourceQuota;
   status: string;
 }
@@ -91,7 +93,6 @@ function toPublic(row: InferenceRow, quota: ResourceQuota,): InferenceResource {
     kind,
     provider: row.provider,
     endpoint: row.endpoint,
-    credentialRef: row.credential_ref,
     quota,
     status: row.status,
   };
@@ -107,7 +108,7 @@ export async function addInferenceResource(db: Kysely<DB>, opts: AddInferenceOpt
     throw new Error("ownerId, provider, and endpoint are required",);
   }
 
-  const credentialRef = await storeCredential(opts.secret, opts.wrapSecret,);
+  const persistedRef = await storeCredential(opts.secret, opts.wrapSecret,);
   const quota = opts.quota ?? { requestsPerMinute: 60, };
   const id = opts.id ?? randomUUID();
   await db
@@ -118,7 +119,7 @@ export async function addInferenceResource(db: Kysely<DB>, opts: AddInferenceOpt
       type: `${KIND_PREFIX}${opts.kind}`,
       provider: opts.provider,
       endpoint: opts.endpoint,
-      credential_ref: credentialRef,
+      credential_ref: persistedRef,
       quota: jsonStringifyOr(quota,),
       status: "active",
     },)
@@ -130,7 +131,6 @@ export async function addInferenceResource(db: Kysely<DB>, opts: AddInferenceOpt
     kind: opts.kind,
     provider: opts.provider,
     endpoint: opts.endpoint,
-    credentialRef,
     quota,
     status: "active",
   };

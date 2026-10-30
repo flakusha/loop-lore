@@ -45,7 +45,7 @@ describe("external-inference", () => {
       secret: SECRET,
     },);
 
-    expect(added.credentialRef,).not.toContain(SECRET,);
+    expect(Object.keys(added,),).not.toContain("credentialRef",);
 
     const row = await testDb
       .selectFrom("resource_records",)

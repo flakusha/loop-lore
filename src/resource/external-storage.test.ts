@@ -53,7 +53,7 @@ describe("external-storage", () => {
       storageQuotaBytes: 1024,
     },);
 
-    expect(added.credentialRef,).not.toContain(SECRET,);
+    expect(Object.keys(added,) as string[],).not.toContain("credentialRef",);
 
     const row = await testDb
       .selectFrom("resource_records",)

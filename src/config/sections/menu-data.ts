@@ -149,6 +149,8 @@ export const USER_FIELD_TYPES: Record<string, ConfigMenuField["type"]> = {
   birthDate: "string",
   customInstructions: "string",
   notifications: "object",
+  backupEnabled: "boolean",
+  backupTypes: "object",
 };
 
 export function humanize(key: string,): string {
