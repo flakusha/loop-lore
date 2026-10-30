@@ -193,4 +193,4 @@ export async function runRerollEmotion(args: string[], ctx: CommandContext,): Pr
 
 registerCommand("reroll-emotion", async (args, ctx,): Promise<CommandResult> => {
   return await runRerollEmotion(args, ctx,);
-},);
+}, { capabilities: ["write-asset", "network", "write-character",], },);

@@ -151,5 +151,6 @@ async function startHarnessVerb(
 for (const verb of VERBS) {
   registerCommand(verb.name, (args, ctx,) => startHarnessVerb(verb, args, ctx,), {
     requiredRole: ChatParticipantRole.Member,
+    capabilities: ["write-chat",],
   },);
 }

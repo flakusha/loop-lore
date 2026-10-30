@@ -14,7 +14,7 @@
  * @module logger-transports-file
  */
 
-import { appendFile, mkdir, rename, rm, stat, } from "node:fs/promises";
+import fsPromises from "node:fs/promises";
 import { dirname, } from "node:path";
 import { formatJSONL, } from "../formatters";
 import type { LogEntry, Transport, } from "../types";
@@ -72,14 +72,14 @@ export class FileTransport implements Transport {
   private async writeLocked(entry: LogEntry,): Promise<void> {
     try {
       const line = formatJSONL(entry,);
-      await mkdir(dirname(this.activePath,), { recursive: true, mode: 0o700, },);
+      await fsPromises.mkdir(dirname(this.activePath,), { recursive: true, mode: 0o700, },);
 
       const currentSize = await this.fileSize(this.activePath,);
       if (currentSize >= this.maxBytes) {
         await this.rotate();
       }
 
-      await appendFile(this.activePath, line, { encoding: "utf8", mode: 0o600, },);
+      await fsPromises.appendFile(this.activePath, line, { encoding: "utf8", mode: 0o600, },);
     } catch {
       // Silently ignore — logging must not crash the app
     }
@@ -100,18 +100,18 @@ export class FileTransport implements Transport {
   private async rotate(): Promise<void> {
     // Remove oldest first so renames never collide with an existing target.
     if (this.maxFiles > 0) {
-      await rm(`${this.activePath}.${this.maxFiles}`, { force: true, },);
+      await fsPromises.rm(`${this.activePath}.${this.maxFiles}`, { force: true, },);
     }
 
     for (let i = this.maxFiles - 1; i >= 1; i--) {
-      await rename(`${this.activePath}.${i}`, `${this.activePath}.${i + 1}`,);
+      await fsPromises.rename(`${this.activePath}.${i}`, `${this.activePath}.${i + 1}`,);
     }
 
     // Default maxFiles=5 → keep path.1..path.5, then rotate current → path.1.
     if (this.maxFiles >= 1) {
-      await rename(this.activePath, `${this.activePath}.1`,);
+      await fsPromises.rename(this.activePath, `${this.activePath}.1`,);
     } else {
-      await rm(this.activePath, { force: true, },);
+      await fsPromises.rm(this.activePath, { force: true, },);
     }
   }
 
@@ -120,7 +120,7 @@ export class FileTransport implements Transport {
    */
   private async fileSize(path: string,): Promise<number> {
     try {
-      const s = await stat(path,);
+      const s = await fsPromises.stat(path,);
       return s.size;
     } catch {
       return 0; // file doesn't exist yet

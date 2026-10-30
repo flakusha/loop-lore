@@ -3,7 +3,7 @@
 
 // src/config/load/fs.ts — Filesystem lookup helpers
 
-import { existsSync, readFileSync, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import { findMainRepoRoot, } from "../../utils/git-worktree";
 import { CONFIG_FILES, NETWORK_FS_PREFIXES, } from "./constants";
@@ -22,7 +22,7 @@ export function isNetworkFilesystem(filePath: string,): boolean {
 
   // Linux: check /proc/mounts for the path's device
   try {
-    const mounts = readFileSync("/proc/mounts", "utf8",);
+    const mounts = fs.readFileSync("/proc/mounts", "utf8",);
     const lines = mounts.split("\n",);
     for (const line of lines) {
       const parts = line.split(" ",);
@@ -74,7 +74,7 @@ export function findConfigFile(cwd: string, fileNames: string[] = CONFIG_FILES,)
   for (const dir of searchDirs) {
     for (const name of fileNames) {
       const fullPath = path.join(dir, name,);
-      if (existsSync(fullPath,)) {
+      if (fs.existsSync(fullPath,)) {
         return { path: fullPath, ext: name.split(".",).pop() as string, };
       }
     }
@@ -90,7 +90,7 @@ export function findConfigFile(cwd: string, fileNames: string[] = CONFIG_FILES,)
  */
 export function firstExisting(candidates: string[],): string | null {
   for (const candidate of candidates) {
-    if (existsSync(candidate,)) { return candidate; }
+    if (fs.existsSync(candidate,)) { return candidate; }
   }
 
   return null;

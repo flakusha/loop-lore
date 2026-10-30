@@ -2128,6 +2128,7 @@ export interface ImmersionDecisionLog {
   created_at: Generated<string>;
 }
 
+
 // ── chat_owners ────────────────────────────────────────────
 export interface ChatOwners {
   id: Generated<string>;
@@ -2136,6 +2137,14 @@ export interface ChatOwners {
   granted_by: string | null;
   granted_at: Generated<string>;
   reason: string | null;
+}
+
+// ── world_timeline_selections ────────────────────────────────────────────
+export interface WorldTimelineSelections {
+  user_id: string;
+  world_id: string;
+  timeline_id: string;
+  selected_at: string;
 }
 
 // ── resource_records ────────────────────────────────────────────
@@ -2174,10 +2183,17 @@ export interface ResourceQuotaCounters {
   updated_at: Generated<string>;
 }
 
-// ── world_timeline_selections ────────────────────────────────────────────
-export interface WorldTimelineSelections {
-  user_id: string;
-  world_id: string;
-  timeline_id: string;
-  selected_at: string;
+// ── tool_call_audit ────────────────────────────────────────────
+export interface ToolCallAudit {
+  id: Generated<string>;
+  tool: string;
+  chat_id: Generated<string>;
+  user_id: Generated<string>;
+  verdict: string;
+  rationale: Generated<string>;
+  escalation_attempt: Generated<number>;
+  required_role: string | null;
+  tags: Generated<string>;
+  duration_ms: Generated<number>;
+  created_at: Generated<string>;
 }

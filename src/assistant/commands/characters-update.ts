@@ -183,4 +183,4 @@ registerCommand("char-update", async (args, ctx,): Promise<CommandResult> => {
     },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-character", "cross-user",], },);

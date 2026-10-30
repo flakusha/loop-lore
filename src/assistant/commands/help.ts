@@ -19,4 +19,4 @@ registerCommand("help", (_args, ctx,) => {
   ];
 
   return { systemMessage: lines.join("\n",), handled: true, };
-},);
+}, { capabilities: ["read-chat",], },);

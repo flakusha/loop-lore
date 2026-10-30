@@ -166,4 +166,4 @@ registerCommand("agency", async (args, ctx,): Promise<CommandResult> => {
     systemMessage: "Usage: `/agency [status|earn <n> [reason]|spend <n> [reason]|cap <n|clear>]`",
     handled: true,
   };
-},);
+}, { capabilities: ["write-character",], },);

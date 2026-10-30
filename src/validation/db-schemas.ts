@@ -3806,6 +3806,7 @@ export const ImmersionDecisionLogSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
+
 // ── chat_owners ────────────────────────────────────────────
 export const ChatOwnersSchema = t.Object({
   chat_id: t.String(),
@@ -3888,4 +3889,18 @@ export const WorldTimelineSelectionsSchema = t.Object({
   world_id: t.String(),
   timeline_id: t.String(),
   selected_at: t.String(),
+},);
+
+// ── tool_call_audit ────────────────────────────────────────────
+export const ToolCallAuditSchema = t.Object({
+  tool: t.String(),
+  verdict: t.String(),
+  chat_id: t.Optional(t.String(),),
+  user_id: t.Optional(t.String(),),
+  rationale: t.Optional(t.String(),),
+  escalation_attempt: t.Optional(t.Number(),),
+  required_role: t.Optional(t.String(),),
+  tags: t.Optional(t.String(),),
+  duration_ms: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
 },);

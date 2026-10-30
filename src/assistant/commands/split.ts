@@ -56,7 +56,7 @@ registerCommand("split", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { branches: result.branches, },
     handled: true,
   };
-}, { requiredRole: ChatParticipantRole.Owner, },);
+}, { requiredRole: ChatParticipantRole.Owner, capabilities: ["write-chat",], },);
 
 /** Parse `/split` branch-group tokens into service branches. */
 function parseBranchGroups(

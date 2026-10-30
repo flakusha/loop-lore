@@ -103,13 +103,110 @@ Commands have access tiers based on world rules:
 
 ## Command Registration
 
-Commands registered via `registerCommand(name, handler)` in src/assistant/commands/
+Location: src/assistant/commands/registry.ts
 
-Handlers receive:
+```typescript
+export type CommandHandler = (args: string[], ctx: CommandContext,) => CommandResult | Promise<CommandResult>;
 
-- context: { chatId, actorId, userId, worldId }
-- args: string[]
-- respond: (text) => void
+registerCommand(name, handler, options?: CommandOptions,);
+```
+
+`CommandOptions`:
+
+- `requiredRole` — minimum participant role (`observer` < `member` < `owner`);
+  omitted means any participant who can message may run the command.
+- `available` — `false` hides a stub command from `GET /api/commands` and the
+  palette while keeping it callable by direct input.
+- `capabilities` — the capability tags the guard checks (see below).
+- `limits` — per-command resource ceilings; defaults to `DEFAULT_LIMITS`.
+- `allowedNetworkHosts` — hosts the command may reach over the network. The
+  guard's effective network allowlist for one call is the union of this
+  declaration and the instance's configured provider hosts; an empty union
+  reaches no host at all.
+
+`CommandContext` carries `chatId`, `roleInChat`, `userId`, `userRole`, `db`,
+`config`, `activeChat`, `currentCharacter` and `messages`. `CommandResult`
+carries `systemMessage`, `action`, `actionPayload` and `handled`.
+
+## Capability Declaration and the Tool Guard
+
+Location: src/assistant/capabilities.ts, src/assistant/guard/
+
+Every command declares the capabilities it needs. The declaration IS the
+security contract — a command that declares none is denied. "Every command
+declares its capabilities" is enforced by
+src/assistant/commands/capability-coverage.test.ts, which walks the command
+modules and the live registry (stubs included, since a stub stays callable by
+direct slash input).
+
+```typescript
+registerCommand("world-delete", handler, {
+  requiredRole: "member",
+  capabilities: ["delete-world", "irreversible", "destructive"],
+});
+```
+
+Tag policy (`CAPABILITY_POLICY` in src/assistant/capabilities.ts):
+
+| Tags | Policy | Lifted by |
+|------|--------|-----------|
+| `read-*` | allow | — |
+| `write-*`, `delete-*`, `network`, `cross-user`, `irreversible` | review | the Layer 2 judge (natural-language path) |
+| `admin-only` | deny | a site administrator |
+| `moderator-only` | deny | an elevated site role or the chat owner |
+| `destructive` | deny | a site administrator or the chat owner |
+
+A deny-tier tag is not an absolute ban: the Layer 1 matrix LIFTS it for a
+privileged caller — `admin-only` for a site administrator, `moderator-only`
+for an elevated site role or the chat owner, `destructive` for a site
+administrator or the chat owner. Without that privilege the call is denied.
+
+`capabilities` is an axis of its own: `requiredRole` answers "may this
+participant run the command", the capabilities answer "what does the command
+do".
+
+Every tool call — slash input and natural-language GM tool requests alike —
+runs through `runGuardedToolCall`:
+
+1. `matrix.ts` — deterministic capability check (allow / review / deny),
+   no LLM. It fails closed: a command that declares no capabilities is
+   denied. The deny-tier tags are LIFTED for a privileged caller -
+   `admin-only` needs a site administrator, `moderator-only` an elevated site
+   role or the chat owner, `destructive` a site administrator or the chat
+   owner.
+2. `judge.ts` — the auxiliary-LLM judge reviews review-tier calls on the
+   natural-language path. It fails closed: no answer, an unparsable answer,
+   or a confidence below 0.7 denies the call.
+3. `sandbox.ts` — the handler runs under a per-call scope that carries the
+   call's allowlists. The sandbox is IN-PROCESS, scoped by
+   `AsyncLocalStorage` — it is NOT a Bun Worker: a `Kysely<DB>` handle cannot
+   cross a worker boundary (it clones into an empty object and loses its
+   session), and Bun exposes no `ResourceLimits` equivalent, so neither the DB
+   handle nor a memory ceiling could live inside a worker. `timeoutMs` IS
+   enforced (the call is aborted and rejected on expiry); `memoryMb` is
+   DECLARED ONLY and cannot be enforced in-process - the upgrade path is a
+   worker-side DB RPC layer, if per-call memory isolation ever matters.
+   The effective network allowlist for one call is the union of the
+   instance's configured provider hosts and the command's own declared
+   `allowedNetworkHosts`. The filesystem scope is split into a READ scope (the
+   asset upload directory) and a WRITE scope (the upload directory plus the
+   JSONL log directory). BOTH the network and the filesystem allowlist fail
+   closed: an empty allowlist denies everything. A refusal is reported as
+   `403 Forbidden in sandbox`.
+4. `audit.ts` — every call is recorded in `tool_call_audit` (best-effort: a
+   failed insert is logged, never thrown). The row carries the verdict, the
+   rationale, the capability tags, the command's required role and the call
+   duration.
+
+The sandbox polices the filesystem by patching the CJS module objects that
+`require("node:fs")` and `require("node:fs/promises")` return, so it reaches
+a consumer that uses the default-import form (`import fs from "node:fs"`).
+A static named import (`import { readFileSync } from "node:fs"`) binds the
+function at ESM link time and can never be intercepted — such a module sits
+outside the file allowlist with no error and no log line. Production modules a
+command handler can reach must use the default-import form;
+`src/assistant/guard/fs-import-ratchet.test.ts` fails the build when one adds
+a named import.
 
 ## UI Integration
 

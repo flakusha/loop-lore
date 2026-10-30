@@ -80,6 +80,7 @@ describe("/help", () => {
   it("hides owner-gated commands from a member caller's listing", () => {
     registerCommand("help-probe-owner", () => ({ handled: true, }), {
       requiredRole: ChatParticipantRole.Owner,
+      capabilities: ["read-chat",],
     },);
 
     const result = mustGet("help",)(

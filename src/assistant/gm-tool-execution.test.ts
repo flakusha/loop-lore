@@ -20,7 +20,7 @@ import { dispatchCommand, } from "../routes/messages/command";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import type { CommandContext, } from "./commands/registry";
-import { getCommand, getCommandRequirement, registerCommand, } from "./commands/registry";
+import { getCommand, getCommandCapabilities, getCommandRequirement, registerCommand, } from "./commands/registry";
 import type { GmToolDetection, } from "./gm-tool-detection";
 import { executeGmToolRequest, isGmModeChat, } from "./gm-tool-execution";
 
@@ -239,11 +239,12 @@ describe("executeGmToolRequest", () => {
     let seen: CommandContext["currentCharacter"];
     const original = getCommand("stats",);
     const originalRequirement = getCommandRequirement("stats",);
+    const originalCapabilities = getCommandCapabilities("stats",);
     try {
       registerCommand("stats", async (_args, ctx,) => {
         seen = ctx.currentCharacter;
         return { handled: true, systemMessage: "stats-ok", };
-      }, { requiredRole: "member", },);
+      }, { requiredRole: "member", capabilities: ["read-chat",], },);
 
       const outcome = await executeGmToolRequest({
         database: db,
@@ -258,7 +259,13 @@ describe("executeGmToolRequest", () => {
       expect(seen,).toEqual({ id: charId, name: "Iria", },);
       expect(await systemMessageCount(db, chatId,),).toBe(1,);
     } finally {
-      if (original) { registerCommand("stats", original, { requiredRole: originalRequirement, },); }
+      if (original) {
+        registerCommand("stats", original, {
+          requiredRole: originalRequirement,
+          capabilities: originalCapabilities?.tags,
+          limits: originalCapabilities?.limits,
+        },);
+      }
     }
   });
 
@@ -292,11 +299,12 @@ describe("executeGmToolRequest", () => {
     let seenArgs: string[] = [];
     const original = getCommand("roll",);
     const originalRequirement = getCommandRequirement("roll",);
+    const originalCapabilities = getCommandCapabilities("roll",);
     try {
       registerCommand("roll", async (args,) => {
         seenArgs = args;
         return { handled: true, systemMessage: "roll-ok", };
-      }, { requiredRole: originalRequirement, },);
+      }, { requiredRole: originalRequirement, capabilities: ["read-chat",], },);
 
       const outcome = await executeGmToolRequest({
         database: db,
@@ -311,7 +319,50 @@ describe("executeGmToolRequest", () => {
       expect(outcome.handled,).toBe(true,);
       expect(seenArgs,).toEqual(["2d6", "+3",],);
     } finally {
-      if (original) { registerCommand("roll", original, { requiredRole: originalRequirement, },); }
+      if (original) {
+        registerCommand("roll", original, {
+          requiredRole: originalRequirement,
+          capabilities: originalCapabilities?.tags,
+          limits: originalCapabilities?.limits,
+        },);
+      }
+    }
+  });
+
+  it("does not run the handler when the capability guard denies the command", async () => {
+    const { db, chatId, userId, } = await setupChat(true,);
+    // Register the mapped command WITHOUT capabilities: the guard fails
+    // closed on an undeclared command, so the GM path must not run it.
+    const original = getCommand("stats",);
+    const originalRequirement = getCommandRequirement("stats",);
+    const originalCapabilities = getCommandCapabilities("stats",);
+    let handlerRan = false;
+    try {
+      registerCommand("stats", async () => {
+        handlerRan = true;
+        return { handled: true, systemMessage: "stats-ok", };
+      }, { requiredRole: originalRequirement, },);
+
+      const outcome = await executeGmToolRequest({
+        database: db,
+        config,
+        actorId: userId,
+        chatId,
+        content: "show my stats",
+        detect: async () => detection("check_stats", 0.9,),
+      },);
+
+      expect(outcome.handled,).toBe(false,);
+      expect(handlerRan,).toBe(false,);
+      expect(await systemMessageCount(db, chatId,),).toBe(0,);
+    } finally {
+      if (original) {
+        registerCommand("stats", original, {
+          requiredRole: originalRequirement,
+          capabilities: originalCapabilities?.tags,
+          limits: originalCapabilities?.limits,
+        },);
+      }
     }
   });
 });

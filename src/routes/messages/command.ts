@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 317
+// size-allow: 345
 
 import type { Kysely, } from "kysely";
 import { parseCommand, } from "../../assistant/command-parser";
@@ -15,6 +15,7 @@ import {
   fillNextStep,
   formatWorkflowPreview,
 } from "../../assistant/commands/workflow";
+import { runGuardedToolCall, } from "../../assistant/guard/pipeline";
 import { matchWorkflowIntent, matchWorkflowTrigger, } from "../../assistant/workflow-routing";
 import { previewSteps, } from "../../assistant/workflow-runner";
 import { getSession, startSession, } from "../../assistant/workflow-session";
@@ -319,7 +320,34 @@ export async function dispatchCommand(
   if (handler && parsed) {
     commandName = parsed.command;
     try {
-      result = await handler(parsed.args, cmdCtx,);
+      // The guard is an additional layer on top of the role gate above: it
+      // checks the command's declared capabilities, then runs the handler in
+      // the sandbox. A denial never reaches the handler.
+      const outcome = await runGuardedToolCall({
+        tool: parsed.command,
+        args: parsed.args,
+        ctx: cmdCtx,
+        origin: "slash-command",
+      }, database,);
+
+      if (!outcome.allowed) {
+        log().warn("command denied by the capability guard", {
+          command: parsed.command,
+          reason: outcome.reason,
+        },);
+
+        return {
+          handled: true,
+          response: jsonResponse({
+            command: parsed.command,
+            systemMessage: `**Permission denied:** ${outcome.reason}`,
+            action: null,
+            actionPayload: null,
+          },),
+        };
+      }
+
+      result = outcome.result ?? { handled: true, systemMessage: `\`/${parsed.command}\` produced no result.`, };
     } catch (error) {
       const msg = toErrorMessage(error,);
       log().warn("command handler threw", { command: parsed.command, error: msg, },);

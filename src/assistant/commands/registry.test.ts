@@ -48,6 +48,7 @@ describe("registerCommand (tiered access)", () => {
   it("records requiredRole metadata without affecting the handler", () => {
     registerCommand("tiered-test", () => ({ handled: true, }), {
       requiredRole: ChatParticipantRole.Owner,
+      capabilities: ["read-chat",],
     },);
 
     expect(getCommandRequirement("tiered-test",),).toBe(ChatParticipantRole.Owner,);
@@ -55,7 +56,7 @@ describe("registerCommand (tiered access)", () => {
   });
 
   it("returns undefined requirement for unrestricted commands", () => {
-    registerCommand("open-test", () => ({ handled: true, }),);
+    registerCommand("open-test", () => ({ handled: true, }), { capabilities: ["read-chat",], },);
 
     expect(getCommandRequirement("open-test",),).toBeUndefined();
     expect(listCommands(),).toContain("open-test",);

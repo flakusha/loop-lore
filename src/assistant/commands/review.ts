@@ -54,7 +54,7 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
       };
     }
   }
-},);
+}, { capabilities: ["read-character", "read-world",], },);
 
 /**
  * Review the most recently created character owned by the user.

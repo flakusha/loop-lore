@@ -176,7 +176,7 @@ registerCommand("guide", async (args, ctx,): Promise<CommandResult> => {
     { constraints: appendUnique(target.guidance.constraints, direction,), },
     `**GM guidance:** added direction — ${direction}`,
   );
-},);
+}, { capabilities: ["write-chat", "read-character",], },);
 
 registerCommand("constraint", async (args, ctx,): Promise<CommandResult> => {
   const target = await loadGmTarget(ctx,);
@@ -188,7 +188,7 @@ registerCommand("constraint", async (args, ctx,): Promise<CommandResult> => {
     { constraints: appendUnique(target.guidance.constraints, rule,), },
     `**GM guidance:** added constraint — ${rule}`,
   );
-},);
+}, { capabilities: ["write-chat", "read-character",], },);
 
 registerCommand("scene", async (args, ctx,): Promise<CommandResult> => {
   const target = await loadGmTarget(ctx,);
@@ -196,7 +196,7 @@ registerCommand("scene", async (args, ctx,): Promise<CommandResult> => {
   const scene = args.join(" ",).trim();
   if (scene.length === 0) { return message("Usage: `/scene <description>`",); }
   return await saveGuidance(target, { sceneDescription: scene, }, `**GM guidance:** scene set — ${scene}`,);
-},);
+}, { capabilities: ["write-chat", "read-character",], },);
 
 registerCommand("target", async (args, ctx,): Promise<CommandResult> => {
   const target = await loadGmTarget(ctx,);
@@ -204,7 +204,7 @@ registerCommand("target", async (args, ctx,): Promise<CommandResult> => {
   const character = args.join(" ",).trim();
   if (character.length === 0) { return message("Usage: `/target <character>`",); }
   return await saveGuidance(target, { targetCharacter: character, }, `**GM guidance:** targeting ${character}.`,);
-},);
+}, { capabilities: ["write-chat", "read-character",], },);
 
 registerCommand("priority", async (args, ctx,): Promise<CommandResult> => {
   const target = await loadGmTarget(ctx,);
@@ -225,7 +225,7 @@ registerCommand("priority", async (args, ctx,): Promise<CommandResult> => {
     { turnPriority: { ...target.guidance.turnPriority, [actorId]: level, }, },
     `**GM guidance:** ${character} turn priority set to ${level}.`,
   );
-},);
+}, { capabilities: ["write-chat", "read-character",], },);
 
 registerCommand("skip", async (args, ctx,): Promise<CommandResult> => {
   const target = await loadGmTarget(ctx,);
@@ -249,4 +249,4 @@ registerCommand("skip", async (args, ctx,): Promise<CommandResult> => {
   return message(
     `**GM guidance:** ${character} skips this beat${result.deduped ? " (already recorded)" : ""}.`,
   );
-},);
+}, { capabilities: ["write-chat", "read-character",], },);

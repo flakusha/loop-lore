@@ -46,4 +46,4 @@ registerCommand("music", (args,): CommandResult => {
     actionPayload: { prompt, },
     handled: true,
   };
-}, { available: false, },);
+}, { available: false, capabilities: ["write-asset",], },);

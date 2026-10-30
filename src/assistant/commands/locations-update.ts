@@ -194,4 +194,4 @@ registerCommand("loc-update", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { locId, worldId: loc.world_id, updates: parsed.updates, name: loc.name, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-world", "cross-user",], },);

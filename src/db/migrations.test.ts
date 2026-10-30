@@ -274,7 +274,9 @@ describe("migration numbering is sequential from 001", () => {
     // so no two branches collide. 084 is parked on the unmerged
     // `feat-lore-knowledge` branch (`084_lore_reveal_condition_timeline_rarity`,
     // authored first); the memory-propagation branch took 085 to avoid the
-    // collision. Only numbers
+    // collision. The `feat-model-rankings` branch (`084_model_rankings.ts`)
+    // also claims 084; the tool-call audit migration is numbered 085 so the
+    // two branches do not collide. Only numbers
     // listed here may be absent; any other gap still fails below.
     const PARKED = [58, 66, 71, 72, 81, 84,];
     const parkedMissing = PARKED.filter((n,) => !prefixes.includes(n,));

@@ -1319,6 +1319,19 @@ export const SCHEMA = new SchemaManifest()
     source: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
   },)
+  .table("tool_call_audit", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    tool: col("text", { notNull: true, },),
+    chat_id: col("text", { notNull: true, hasDefault: true, },),
+    user_id: col("text", { notNull: true, hasDefault: true, },),
+    verdict: col("text", { notNull: true, },),
+    rationale: col("text", { notNull: true, hasDefault: true, },),
+    escalation_attempt: col("integer", { notNull: true, hasDefault: true, },),
+    required_role: col("text",),
+    tags: col("text", { notNull: true, hasDefault: true, },),
+    duration_ms: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("trade_history", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text", { notNull: true, },),

@@ -9,6 +9,8 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import type { CapabilityTag, ToolLimits, } from "../capabilities";
+import { DEFAULT_LIMITS, } from "../capabilities";
 
 /** Context provided to command handlers */
 export interface CommandContext {
@@ -65,11 +67,37 @@ export interface CommandOptions {
    * remaining callable for direct input.
    */
   available?: boolean;
+  /**
+   * Capabilities the command needs. REQUIRED at registration time: an
+   * untagged registration throws, so a command that declares none fails to
+   * load (and fails the coverage test) rather than being silently denied at
+   * runtime.
+   *
+   * Separate from `requiredRole`: the role gate answers "may this
+   * participant run the command", the capabilities answer "what does the
+   * command do".
+   */
+  capabilities?: CapabilityTag[];
+  /** Per-command resource ceilings. Defaults to {@link DEFAULT_LIMITS}. */
+  limits?: ToolLimits;
+  /**
+   * Hosts the command may reach over the network.
+   *
+   * The guard's effective network allowlist for one call is the union of
+   * this declaration and the instance's configured provider hosts. The
+   * effective allowlist FAILS CLOSED: when it is empty the command reaches
+   * no host at all.
+   */
+  allowedNetworkHosts?: string[];
 }
 
-interface CommandRegistration {
+/**
+ * A registered command: its handler plus the options it was registered with.
+ * Extends {@link CommandOptions} so an option is declared in ONE place —
+ * adding a field to the options cannot leave the stored registration behind.
+ */
+interface CommandRegistration extends CommandOptions {
   handler: CommandHandler;
-  requiredRole?: ChatParticipantRole;
   available: boolean;
 }
 
@@ -115,9 +143,12 @@ export function registerCommand(
   handler: CommandHandler,
   opts?: CommandOptions,
 ): void {
+  if (!opts?.capabilities || opts.capabilities.length === 0) {
+    throw new Error(`registerCommand("${name}"): missing or empty capabilities — every command must declare at least one capability tag.`);
+  }
   handlers.set(name.toLowerCase(), {
+    ...opts,
     handler,
-    requiredRole: opts?.requiredRole,
     available: opts?.available ?? true,
   },);
 }
@@ -162,4 +193,56 @@ export function listCommands(): string[] {
   return Array.from(handlers.entries(),)
     .filter(([, reg,],) => reg.available)
     .map(([name,],) => name);
+}
+
+/**
+ * List every registered command name, stubs included.
+ *
+ * `listCommands` hides `available: false` stubs because the command palette
+ * must not advertise them; a guard that checks declarations needs the full
+ * roster, because a stub stays callable by direct slash input.
+ * @returns Array of all registered command names
+ */
+export function listAllCommands(): string[] {
+  return Array.from(handlers.keys(),);
+}
+
+/**
+ * Get the declared capabilities of a command.
+ * @param name - Command name
+ * @returns Tags and limits, or undefined when the command is unknown or declares no capabilities
+ */
+export function getCommandCapabilities(name: string,): { tags: CapabilityTag[]; limits: ToolLimits } | undefined {
+  const registration = handlers.get(name.toLowerCase(),);
+  if (!registration?.capabilities || registration.capabilities.length === 0) { return undefined; }
+  return { tags: registration.capabilities, limits: registration.limits ?? DEFAULT_LIMITS, };
+}
+
+/**
+ * Get the limits of a command.
+ *
+ * A command that declares no limits inherits the shared conservative
+ * default — the fail-closed rule applies to the capability declaration, not
+ * to the limits, or every command would be denied.
+ * @param name - Command name
+ * @returns Limits, or undefined when the command is not registered
+ */
+export function getCommandLimits(name: string,): ToolLimits | undefined {
+  const registration = handlers.get(name.toLowerCase(),);
+  if (!registration) { return undefined; }
+  return registration.limits ?? DEFAULT_LIMITS;
+}
+
+/**
+ * Get the network hosts a command declares.
+ *
+ * The guard unions this with the instance's configured provider hosts to
+ * build the effective allowlist for one call. A command that declares no
+ * hosts is not thereby denied network access — the configured providers
+ * still apply — but it adds nothing of its own.
+ * @param name - Command name
+ * @returns The declared hosts, or undefined when the command declares none
+ */
+export function getCommandNetworkHosts(name: string,): string[] | undefined {
+  return handlers.get(name.toLowerCase(),)?.allowedNetworkHosts;
 }

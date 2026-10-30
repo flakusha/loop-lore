@@ -80,4 +80,6 @@ export async function runImprove(args: string[], ctx: CommandContext,): Promise<
   };
 }
 
-registerCommand("improve", async (args, ctx,): Promise<CommandResult> => runImprove(args, ctx,),);
+registerCommand("improve", async (args, ctx,): Promise<CommandResult> => runImprove(args, ctx,), {
+  capabilities: ["network",],
+},);

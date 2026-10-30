@@ -6155,6 +6155,34 @@ export async function insertImmersionDecisionLog(
   } as any,).execute();
   return id;
 }
+
+/** Insert a tool_call_audit row. */
+export async function insertToolCallAudit(
+  db: Db,
+  tool: string,
+  verdict: string,
+  opts?: {
+    id?: string;
+    chat_id?: string;
+    user_id?: string;
+    rationale?: string;
+    escalation_attempt?: number;
+    required_role?: string | null;
+    tags?: string;
+    duration_ms?: number;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("tool_call_audit",).values({
+    id,
+    tool,
+    verdict,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
 /** Insert a model_rankings row. */
 export async function insertModelRankings(
   db: Db,

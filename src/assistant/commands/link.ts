@@ -109,4 +109,4 @@ registerCommand("link", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { ...resolved.preview, },
     handled: true,
   };
-}, { requiredRole: ChatParticipantRole.Member, },);
+}, { requiredRole: ChatParticipantRole.Member, capabilities: ["read-chat", "write-asset",], },);

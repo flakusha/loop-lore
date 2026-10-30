@@ -126,4 +126,4 @@ registerCommand("caption", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
-},);
+}, { capabilities: ["read-chat", "write-asset", "network",], },);

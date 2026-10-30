@@ -62,4 +62,6 @@ export async function runAnalyze(
   };
 }
 
-registerCommand("analyze", async (args, ctx,): Promise<CommandResult> => runAnalyze(args, ctx,),);
+registerCommand("analyze", async (args, ctx,): Promise<CommandResult> => runAnalyze(args, ctx,), {
+  capabilities: ["network",],
+},);
