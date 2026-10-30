@@ -8,7 +8,7 @@
 **Acceptance Criteria:** see the acceptance criteria list below.
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** The implementation shipped on branch `feat-assistant-tool-guard`. The ticket's original Layer 3 design (a Bun `Worker` with `ResourceLimits`, plus a `src/db/migrations/parts/` migration path) was not implementable and has been corrected below — the Layer 3 section below describes the shipped design; `docs/spec/assistant-commands.md` now spells out the shipped guard: the sandbox is in-process and scoped by `AsyncLocalStorage` (not a Bun `Worker`), `timeoutMs` is enforced while `memoryMb` is declared-only, the effective network allowlist is the union of the instance's configured provider hosts and the command's own `allowedNetworkHosts`, the filesystem scope is split into read and write scopes, BOTH allowlists fail closed on an empty list, refusals are reported as `403 Forbidden in sandbox`, and the filesystem interception depends on the default-import form (a named import binds at ESM link time and can never be intercepted), enforced by `src/assistant/guard/fs-import-ratchet.test.ts`. The deviations are listed in the notes on each acceptance criterion. The ticket stays `In Progress` because two criteria are not fully met: the Layer 2 judge does not gate literal slash-command invocations, and the `memoryMb` ceiling is declared but not enforceable in-process. The ticket is deliberately not being finalized.
 **Scope:** Assistant tool capability matrix + 3-layer prompt-injection guard
 **Priority:** High (security)
@@ -181,3 +181,5 @@ The capability tags live at each `registerCommand(...)` call site in the individ
 - Builds on: `src/assistant/gm-tool-detection.ts` (AUX-LLM pattern)
 - Builds on: `src/assistant/commands/registry.ts:requiredRole`
 - Enables: `TASK-assistant-capability-disclosure.md` (capability lookup depends on matrix)
+
+**Resolved:** 2026-10-30 registry-driven close: git issue be41fae (registry tip: 36d03ef88 Konstantin Fedotov Close issue)
