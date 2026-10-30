@@ -8,7 +8,13 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertActors, insertChats, insertStoryTurns, insertUsers, } from "../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertChatOwners,
+  insertChats,
+  insertStoryTurns,
+  insertUsers,
+} from "../test-utils/insert-helpers";
 import { storyTurnsRoutes, } from "./story-turns";
 
 const mockDb = {} as any;
@@ -112,5 +118,15 @@ describe("storyTurnsRoutes — pagination", () => {
     );
 
     expect(res.status,).toBe(404,);
+  });
+
+  test("co-owner without created_by lists turns (owners set)", async () => {
+    const coOwner = "00000000-0000-4000-8000-0000000000d1";
+    await insertUsers(db, "co-owner", "CoOwner", { id: coOwner as never, },);
+    await insertChatOwners(db, CHAT, coOwner,);
+    const app = makeApp(coOwner,);
+    const res = await app.handle(new Request("http://localhost/api/chats/" + CHAT + "/story-turns",),);
+
+    expect(res.status,).toBe(200,);
   });
 });
