@@ -3,8 +3,8 @@
 // src/assistant/commands/index.ts
 //
 // Command system barrel — registers all commands and re-exports registry.
-import "./agency";
 import "./adapt";
+import "./agency";
 import "./analyze";
 import "./apply";
 import "./assets";
@@ -45,6 +45,7 @@ import "./rag";
 import "./rag-decompose";
 import "./rag-preview";
 import "./regen";
+import "./reroll-emotion";
 import "./review";
 import "./rewrite";
 import "./sfx";
