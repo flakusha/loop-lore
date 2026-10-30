@@ -7317,13 +7317,20 @@
       "title": "NSFW write routes authorize actor but not target",
       "status": "Not Started",
       "srcRefs": [
+        "src/db/enums-character/nsfw.ts",
         "src/routes/actor-auth.ts",
         "src/routes/nsfw/encounters.ts",
         "src/routes/nsfw/intimacy.ts",
+        "src/routes/nsfw/seduction.ts",
         "src/routes/nsfw/shared.ts",
         "src/rpg/encounters/service/participant-legs.ts",
         "src/rpg/intimacy/service/actions.ts",
-        "src/rpg/trauma.ts"
+        "src/rpg/seduction/service/attempt.ts",
+        "src/rpg/trauma.ts",
+        "src/validation/middleware.ts",
+        "src/validation/schemas/chat.ts",
+        "src/validation/schemas/index.ts",
+        "src/validation/schemas/nsfw.ts"
       ],
       "related": []
     },
@@ -37441,7 +37448,11 @@
         "src/routes/nsfw/encounters.ts",
         "src/routes/nsfw/index.ts",
         "src/routes/nsfw/intimacy.ts",
-        "src/routes/nsfw/shared.ts"
+        "src/routes/nsfw/shared.ts",
+        "src/validation/middleware.ts",
+        "src/validation/schemas/index.ts",
+        "src/validation/schemas/nsfw.ts",
+        "src/validation/schemas/settings.ts"
       ],
       "related": []
     },
@@ -64468,6 +64479,7 @@
     {
       "path": "src/db/enums-character/nsfw.ts",
       "owners": [
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "TASK-033",
         "TASK-034",
         "TASK-035",
@@ -81188,6 +81200,7 @@
     {
       "path": "src/routes/nsfw/seduction.ts",
       "owners": [
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "epic-faction-reputation"
       ]
     },
@@ -84671,6 +84684,7 @@
     {
       "path": "src/rpg/seduction/service/attempt.ts",
       "owners": [
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "TASK-034",
         "TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio"
@@ -88467,9 +88481,11 @@
         "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
         "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
         "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "BUG-validation-middleware-leaks-raw-err-message-in-500-envelope",
         "FEAT-036",
         "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+        "TASK-nsfw-consent-grant-route-missing",
         "TASK-server-edge-error-handling-gaps-in-routes-layer"
       ]
     },
@@ -88601,6 +88617,7 @@
     {
       "path": "src/validation/schemas/chat.ts",
       "owners": [
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve",
         "BUG-settings-save-omits-gmconfig-for-online-chats",
         "BUG-visualnovel-type-mismatch-across-api-db-layers",
@@ -88644,14 +88661,23 @@
       "path": "src/validation/schemas/index.ts",
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "TASK-branch-merges-routes-and-typebox-schemas",
-        "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas"
+        "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
+        "TASK-nsfw-consent-grant-route-missing"
       ]
     },
     {
       "path": "src/validation/schemas/music-links.ts",
       "owners": [
         "BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-"
+      ]
+    },
+    {
+      "path": "src/validation/schemas/nsfw.ts",
+      "owners": [
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+        "TASK-nsfw-consent-grant-route-missing"
       ]
     },
     {
@@ -88688,7 +88714,8 @@
     {
       "path": "src/validation/schemas/settings.ts",
       "owners": [
-        "BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings"
+        "BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings",
+        "TASK-nsfw-consent-grant-route-missing"
       ]
     },
     {
@@ -113636,6 +113663,11 @@
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "produces",
+      "to": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
       "to": "src/routes/actor-auth.ts"
     },
     {
@@ -113647,6 +113679,11 @@
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "produces",
       "to": "src/routes/nsfw/intimacy.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/routes/nsfw/seduction.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
@@ -113666,7 +113703,32 @@
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "produces",
+      "to": "src/rpg/seduction/service/attempt.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
       "to": "src/rpg/trauma.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/validation/middleware.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/validation/schemas/chat.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/validation/schemas/index.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/validation/schemas/nsfw.ts"
     },
     {
       "from": "BUG-ollama-native-provider-drops-generationmessage-images-so-fil",
@@ -143587,6 +143649,26 @@
       "from": "TASK-nsfw-consent-grant-route-missing",
       "kind": "produces",
       "to": "src/routes/nsfw/shared.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/validation/middleware.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/validation/schemas/index.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/validation/schemas/nsfw.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/validation/schemas/settings.ts"
     },
     {
       "from": "TASK-nsfw-encounter-system",
@@ -208725,6 +208807,12 @@
     {
       "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
       "kind": "sibling",
+      "to": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "via": "src/validation/middleware.ts"
+    },
+    {
+      "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
+      "kind": "sibling",
       "to": "BUG-validation-middleware-leaks-raw-err-message-in-500-envelope",
       "via": "src/validation/middleware.ts"
     },
@@ -208769,6 +208857,12 @@
       "kind": "sibling",
       "to": "TASK-message-seen-state-service-route",
       "via": "src/routes/message-reactions.ts"
+    },
+    {
+      "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/validation/middleware.ts"
     },
     {
       "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
@@ -217677,6 +217771,12 @@
     {
       "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
       "kind": "sibling",
+      "to": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "via": "src/validation/middleware.ts"
+    },
+    {
+      "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
+      "kind": "sibling",
       "to": "BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -218045,6 +218145,12 @@
       "kind": "sibling",
       "to": "TASK-msg-forward-across-chats",
       "via": "src/routes/messages/create.ts; src/routes/messages/forward.ts"
+    },
+    {
+      "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/validation/middleware.ts"
     },
     {
       "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
@@ -220239,6 +220345,12 @@
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "sibling",
+      "to": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "via": "src/validation/schemas/index.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "sibling",
       "to": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "via": "src/assets/controller.ts; src/db/index.ts; src/elysia-app.ts"
     },
@@ -220793,6 +220905,12 @@
       "kind": "sibling",
       "to": "TASK-multimodal-asset-reuse",
       "via": "src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/validation/schemas/index.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -229209,6 +229327,12 @@
     {
       "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
       "kind": "sibling",
+      "to": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "via": "src/validation/middleware.ts"
+    },
+    {
+      "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
+      "kind": "sibling",
       "to": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "via": "src/elysia-app.ts"
     },
@@ -229427,6 +229551,12 @@
       "kind": "sibling",
       "to": "TASK-middleware-request-id-elysia-derive",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/validation/middleware.ts"
     },
     {
       "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
@@ -232335,8 +232465,38 @@
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
+      "to": "BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve",
+      "via": "src/validation/schemas/chat.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
       "to": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
       "via": "src/routes/nsfw/shared.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "BUG-settings-save-omits-gmconfig-for-online-chats",
+      "via": "src/validation/schemas/chat.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "BUG-validation-middleware-leaks-raw-err-message-in-500-envelope",
+      "via": "src/validation/middleware.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "BUG-visualnovel-type-mismatch-across-api-db-layers",
+      "via": "src/validation/schemas/chat.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "FEAT-036",
+      "via": "src/validation/middleware.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
@@ -232359,44 +232519,74 @@
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
+      "to": "FEAT-world-template-chat-lifecycle",
+      "via": "src/validation/schemas/chat.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
       "to": "TASK-033",
-      "via": "src/rpg/intimacy/service/actions.ts"
+      "via": "src/db/enums-character/nsfw.ts; src/rpg/intimacy/service/actions.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-034",
+      "via": "src/db/enums-character/nsfw.ts; src/rpg/seduction/service/attempt.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-035",
+      "via": "src/db/enums-character/nsfw.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
       "to": "TASK-036",
-      "via": "src/rpg/encounters/service/participant-legs.ts"
+      "via": "src/db/enums-character/nsfw.ts; src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-037",
+      "via": "src/db/enums-character/nsfw.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
       "to": "TASK-038",
-      "via": "src/rpg/encounters/service/participant-legs.ts"
+      "via": "src/db/enums-character/nsfw.ts; src/rpg/encounters/service/participant-legs.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
       "to": "TASK-039",
-      "via": "src/rpg/encounters/service/participant-legs.ts"
+      "via": "src/db/enums-character/nsfw.ts; src/rpg/encounters/service/participant-legs.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
       "to": "TASK-040",
-      "via": "src/rpg/encounters/service/participant-legs.ts"
+      "via": "src/db/enums-character/nsfw.ts; src/rpg/encounters/service/participant-legs.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
       "to": "TASK-041",
-      "via": "src/rpg/encounters/service/participant-legs.ts"
+      "via": "src/db/enums-character/nsfw.ts; src/rpg/encounters/service/participant-legs.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
       "to": "TASK-042",
-      "via": "src/rpg/encounters/service/participant-legs.ts"
+      "via": "src/db/enums-character/nsfw.ts; src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-043",
+      "via": "src/db/enums-character/nsfw.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
@@ -232407,8 +232597,110 @@
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
+      "to": "TASK-add-heatphase-state-machine-for-character-heat-cycle-current",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-add-missing-rpg-module-barrels",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-add-nsfwencounterstatus-state-machine-for-nsfw-encounters-st",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-bound-linked-travel-prompts",
+      "via": "src/validation/schemas/chat.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-branch-merges-routes-and-typebox-schemas",
+      "via": "src/validation/schemas/index.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre",
+      "via": "src/rpg/seduction/service/attempt.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+      "via": "src/validation/middleware.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
+      "via": "src/validation/schemas/index.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min",
+      "via": "src/validation/schemas/chat.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
       "to": "TASK-nsfw-consent-grant-route-missing",
-      "via": "src/routes/nsfw/encounters.ts; src/routes/nsfw/intimacy.ts; src/routes/nsfw/shared.ts"
+      "via": "src/routes/nsfw/encounters.ts; src/routes/nsfw/intimacy.ts; src/routes/nsfw/shared.ts; src/validation/middleware.ts; src/validation/schemas/index.ts; src/validation/schemas/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-nsfw-encounter-system",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-nsfw-fantasy-kink",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-nsfw-intimacy-system",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-nsfw-location-environment",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-nsfw-pheromones-chemistry",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-nsfw-seduction-desire",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-nsfw-skills-experience",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-nsfw-species-mechanics",
+      "via": "src/db/enums-character/nsfw.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
@@ -232431,8 +232723,20 @@
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
+      "to": "TASK-server-edge-error-handling-gaps-in-routes-layer",
+      "via": "src/validation/middleware.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
       "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
-      "via": "src/routes/actor-auth.ts"
+      "via": "src/routes/actor-auth.ts; src/rpg/seduction/service/attempt.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-specify-content-warnings-write-the-frontend-contract",
+      "via": "src/db/enums-character/nsfw.ts"
     },
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
@@ -232443,8 +232747,38 @@
     {
       "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
       "kind": "sibling",
+      "to": "TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings",
+      "via": "src/validation/schemas/chat.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "WIRE-extras-impersonateactorid-schema-validation",
+      "via": "src/validation/schemas/chat.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
       "to": "epic-character-xp-leveling",
       "via": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "epic-faction-reputation",
+      "via": "src/routes/nsfw/seduction.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "epic-nsfw-game-mechanics",
+      "via": "src/db/enums-character/nsfw.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "epic-nsfw-integration-gaps",
+      "via": "src/db/enums-character/nsfw.ts"
     },
     {
       "from": "BUG-ollama-native-provider-drops-generationmessage-images-so-fil",
@@ -232889,6 +233223,12 @@
       "kind": "sibling",
       "to": "TASK-format-version-migration",
       "via": "src/routes/settings.ts"
+    },
+    {
+      "from": "BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/validation/schemas/settings.ts"
     },
     {
       "from": "BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings",
@@ -249009,6 +249349,12 @@
     {
       "from": "BUG-validation-middleware-leaks-raw-err-message-in-500-envelope",
       "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/validation/middleware.ts"
+    },
+    {
+      "from": "BUG-validation-middleware-leaks-raw-err-message-in-500-envelope",
+      "kind": "sibling",
       "to": "TASK-server-edge-error-handling-gaps-in-routes-layer",
       "via": "src/validation/middleware.ts"
     },
@@ -252010,6 +252356,12 @@
       "from": "FEAT-036",
       "kind": "sibling",
       "to": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+      "via": "src/validation/middleware.ts"
+    },
+    {
+      "from": "FEAT-036",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
       "via": "src/validation/middleware.ts"
     },
     {
@@ -304995,6 +305347,12 @@
     {
       "from": "TASK-branch-merges-routes-and-typebox-schemas",
       "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/validation/schemas/index.ts"
+    },
+    {
+      "from": "TASK-branch-merges-routes-and-typebox-schemas",
+      "kind": "sibling",
       "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
       "via": "src/routes/http-utils/errors.ts"
     },
@@ -332127,6 +332485,12 @@
     {
       "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
       "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/validation/middleware.ts"
+    },
+    {
+      "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+      "kind": "sibling",
       "to": "TASK-professions-service-routes",
       "via": "src/routes/rpg/index.ts"
     },
@@ -339719,6 +340083,12 @@
       "kind": "sibling",
       "to": "TASK-middleware-idempotency-wire-into-elysia",
       "via": "src/config/schema.ts"
+    },
+    {
+      "from": "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/validation/schemas/index.ts"
     },
     {
       "from": "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
@@ -364931,6 +365301,12 @@
       "kind": "sibling",
       "to": "TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char",
       "via": "src/middleware/nsfw-gate/request-context.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "sibling",
+      "to": "TASK-server-edge-error-handling-gaps-in-routes-layer",
+      "via": "src/validation/middleware.ts"
     },
     {
       "from": "TASK-nsfw-consent-grant-route-missing",

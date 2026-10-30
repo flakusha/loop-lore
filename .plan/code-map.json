@@ -17464,6 +17464,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
     },
     {
@@ -46893,6 +46897,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-faction-reputation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md"
     }
   ],
   "src/routes/nsfw/shared.ts": [
@@ -52268,6 +52276,10 @@
     }
   ],
   "src/rpg/seduction/service/attempt.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-034.md"
@@ -58734,6 +58746,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-validation-middleware-leaks-raw-err-message-in-500-envelope.md"
     },
     {
@@ -58743,6 +58759,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-consent-grant-route-missing.md"
     },
     {
       "kind": "ticket",
@@ -59018,6 +59038,10 @@
   "src/validation/schemas/chat.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve.md"
     },
     {
@@ -59100,17 +59124,35 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merges-routes-and-typebox-schemas.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-consent-grant-route-missing.md"
     }
   ],
   "src/validation/schemas/music-links.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-.md"
+    }
+  ],
+  "src/validation/schemas/nsfw.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-consent-grant-route-missing.md"
     }
   ],
   "src/validation/schemas/primitives.ts": [
@@ -59169,6 +59211,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-consent-grant-route-missing.md"
     }
   ],
   "src/validation/schemas/story.ts": [
