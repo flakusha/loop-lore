@@ -68,7 +68,7 @@ pair targets resolve to participant display names without an extra request.
 - [x] A 403 from either endpoint hides the panel instead of rendering an error
 - [x] A non-403 failure leaves the affected section empty and never throws
 - [x] The panel renders nothing when the chat has no character
-- [x] No mutating NSFW endpoint is called (list endpoint only — no row insert on read)
+- [x] No mutating NSFW endpoint is called (intimacy list endpoint only — pure SELECT, no row insert on read; body profile GET may INSERT a default `character_body_profile` row when absent, but only after the ownership check, so only for a character the viewer owns)
 - [x] Unit coverage for both fetch helpers and the state mixin
 
 ## Files
