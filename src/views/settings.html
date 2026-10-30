@@ -116,6 +116,14 @@
         </button>
         <button
           class="world-edit-tab"
+          :class="{ active: activeTab === 'sessions' }"
+          @click="activeTab = 'sessions'"
+          data-testid="settings-tab-sessions"
+        >
+          {{{t("settings.sessions") || "Sessions"}}}
+        </button>
+        <button
+          class="world-edit-tab"
           :class="{ active: activeTab === 'keynav' }"
           @click="activeTab = 'keynav'; loadKeymapSection()"
           role="tab"
@@ -654,6 +662,10 @@
         </div>
       </div>
 
+      <!-- Sessions Tab -->
+      <div x-show="activeTab === 'sessions'" class="settings-tab-content" data-testid="settings-sessions">
+        {{> security/sessions-panel.html }}
+      </div>
       <!-- Models Tab -->
       <div x-show="activeTab === 'models'" class="settings-tab-content" data-testid="settings-models">
         <div class="settings-section" x-data="modelManager()" x-init="init()">

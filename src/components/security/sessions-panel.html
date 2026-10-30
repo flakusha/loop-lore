@@ -1,0 +1,64 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Sessions Security Panel. Bound to the `sessionsPanel` Alpine component
+  (src/frontend/alpine/settings-sessions.ts). Lists active device sessions
+  with the current-session badge plus revoke / switch actions.
+-->
+<div class="settings-section" x-data="sessionsPanel()" x-init="init()" data-testid="sessions-panel">
+  <div class="section-title">{{{t("settings.sessionsTitle") || "Active Sessions"}}}</div>
+  <div class="section-description">
+    {{{t("settings.sessionsDescription") || "Devices currently signed in to your account. Revoke anything you do not
+    recognize; switching moves your active login to that device."}}}
+  </div>
+
+  <p x-show="error" class="text-sm text-red-600 mb-3" x-text="error" data-testid="sessions-error"></p>
+  <p x-show="loading && sessions.length === 0" class="text-sm text-gray-500">
+    {{{t("common.loading") || "Loading…"}}}
+  </p>
+
+  <ul class="divide-y divide-gray-100" data-testid="sessions-list">
+    <template x-for="session in sessions" :key="session.id">
+      <li class="py-3 flex items-center justify-between gap-4">
+        <div class="min-w-0">
+          <div
+            class="text-sm font-medium truncate"
+            x-text="deviceLabel(session.userAgent)"
+            data-testid="sessions-device"
+          >
+          </div>
+          <div class="text-xs text-gray-500" x-text="session.ip ?? ''"></div>
+          <div class="text-xs text-gray-400" x-text="formatDate(session.lastActivity)"></div>
+          <div
+            class="text-xs text-gray-400"
+            x-text="(t('sessions.expires') || 'Expires') + ': ' + formatDate(session.expiresAt)"
+          >
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <span x-show="session.isCurrent" class="text-xs font-semibold text-green-700" data-testid="sessions-current"
+          >{{{t("sessions.current") || "Current"}}}</span>
+          <button
+            x-show="!session.isCurrent"
+            @click="switchTo(session.id)"
+            :disabled="loading"
+            class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm rounded-lg transition-colors disabled:opacity-50"
+            data-testid="sessions-switch"
+          >
+            {{{t("sessions.switch") || "Switch"}}}
+          </button>
+          <button
+            x-show="!session.isCurrent"
+            @click="revoke(session.id)"
+            :disabled="loading"
+            class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors disabled:opacity-50"
+            data-testid="sessions-revoke"
+          >
+            {{{t("sessions.revoke") || "Revoke"}}}
+          </button>
+        </div>
+      </li>
+    </template>
+  </ul>
+</div>
