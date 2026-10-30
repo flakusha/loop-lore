@@ -2141,3 +2141,39 @@ export interface WorldTimelineSelections {
   timeline_id: string;
   selected_at: string;
 }
+
+// ── resource_records ────────────────────────────────────────────
+export interface ResourceRecords {
+  id: string;
+  owner_id: string;
+  type: string;
+  provider: string;
+  endpoint: string;
+  credential_ref: string;
+  quota: Generated<string>;
+  status: Generated<string>;
+  created_at: Generated<string>;
+  last_used_at: string | null;
+}
+
+// ── backup_records ────────────────────────────────────────────
+export interface BackupRecords {
+  id: string;
+  resource_type: string;
+  owner_id: string;
+  content_hash: string;
+  server_hash: string | null;
+  payload: string;
+  version: Generated<number>;
+  created_at: Generated<string>;
+  storage_quota_bytes: Generated<number>;
+}
+
+// ── resource_quota_counters ────────────────────────────────────────────
+export interface ResourceQuotaCounters {
+  resource_id: string;
+  window_start: string;
+  requests: Generated<number>;
+  tokens: Generated<number>;
+  updated_at: Generated<string>;
+}
