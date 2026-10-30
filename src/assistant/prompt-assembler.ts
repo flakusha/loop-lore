@@ -161,6 +161,7 @@ export class PromptAssembler {
           "mode",
           "world_id",
           "current_location_id",
+          "timeline_id",
           "prompt_override",
           "output_style_preset",
           "gm_config",

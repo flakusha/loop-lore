@@ -1535,6 +1535,9 @@ export const SCHEMA = new SchemaManifest()
     activation_chance: col("real",),
     content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+    reveal_condition: col("text",),
+    timeline_id: col("text",),
+    rarity: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("actor_memories", {
     id: col("text", { primaryKey: true, },),
@@ -2733,6 +2736,9 @@ export const SCHEMA = new SchemaManifest()
     disputed: col("integer", { notNull: true, hasDefault: true, },),
     content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+    reveal_condition: col("text",),
+    timeline_id: col("text",),
+    rarity: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("world_maps", {
     id: col("text", { primaryKey: true, hasDefault: true, },),

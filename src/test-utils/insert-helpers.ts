@@ -813,6 +813,9 @@ export async function insertWorldLoreEntries(
     disputed?: number;
     content_version?: number;
     record_hash?: string;
+    reveal_condition?: string | null;
+    timeline_id?: string | null;
+    rarity?: ItemRarity;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -1145,6 +1148,9 @@ export async function insertActorLoreEntries(
     activation_chance?: number | null;
     content_version?: number;
     record_hash?: string;
+    reveal_condition?: string | null;
+    timeline_id?: string | null;
+    rarity?: ItemRarity;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

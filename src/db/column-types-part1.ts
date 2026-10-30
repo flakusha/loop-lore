@@ -20,6 +20,9 @@ export const PART_1: Record<string, Record<string, string>> = {
   "ActorLoreEntries": {
     "enabled": "LoreEntryStatus",
     "position": "LorePosition",
+    // 084: unified lore rarity tier (epic-lore-knowledge) — same canonical
+    // ItemRarity scale items and loot use.
+    "rarity": "ItemRarity",
   },
   "ActorMemories": {
     "memory_type": "MemoryType",

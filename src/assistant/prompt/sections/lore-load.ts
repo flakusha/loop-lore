@@ -7,8 +7,14 @@
  * single round of `Promise.allSettled`; downstream code consumes the typed
  * `LoadedLore` bundle.
  *
+ * Timeline scoping (084, epic-lore-knowledge): rows carry a nullable
+ * `timeline_id`; NULL rows exist on every timeline, non-NULL rows only on the
+ * chat's own timeline (`chats.timeline_id`, default 'prime'). Timeline-event
+ * ground truth for reveal conditions lives in `lore-timeline.ts`.
+ *
  * Resolves: TASK-world-lore-lifecycle-confidence-decay-distortion,
- *           BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression.
+ *           BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression,
+ *           epic-lore-knowledge (timeline-scoped lore + reveal conditions).
  */
 import { safeJsonParse, } from "@/utils";
 import type { ExpressionBuilder, Kysely, } from "kysely";
@@ -16,29 +22,38 @@ import type { DB, } from "../../../db/schema";
 import { resolveLifecycleConfig, } from "../../lore/lifecycle";
 import type { AssembleContext, } from "../types";
 import { resolveActorIdentity, } from "./lore-identity";
+import { loadRevealTimelineEvents, type TimelineEventScan, } from "./lore-timeline";
 import type { LoreRow, } from "./lore-types";
+
+/** Fallback timeline slug matching the `chats.timeline_id` default. */
+const DEFAULT_TIMELINE = "prime";
 
 /** Resolved bundle handed to the lore section's relevance + wrap pipeline. */
 export interface LoadedLore {
   entries: LoreRow[];
   lifecycleConfig: ReturnType<typeof resolveLifecycleConfig>;
   actorIdentity: Awaited<ReturnType<typeof resolveActorIdentity>>;
+  /** Timeline events for reveal evaluation; empty when nothing needs them. */
+  timelineEvents: TimelineEventScan;
 }
 
 /**
  * Typed SELECT over `actor_lore_entries` for one actor, optionally
- * restricting rows to a world scope. The eb callback uses
- * `ExpressionBuilder<DB, "actor_lore_entries">` so the where-clause
+ * restricting rows to a world scope and the chat's timeline. The eb callback
+ * uses `ExpressionBuilder<DB, "actor_lore_entries">` so the where-clause
  * expressions are checked against the table's column set.
  * @param db
  * @param actorId
  * @param worldId
+ * @param timelineId Chat's timeline slug; non-NULL `timeline_id` rows outside
+ *   it are excluded (NULL rows are timeline-universal).
  * @returns All enabled lore rows for the actor, world-scoped when given.
  */
 function actorLoreQuery(
   db: Kysely<DB>,
   actorId: string,
   worldId: string | null,
+  timelineId: string,
 ) {
   return db
     .selectFrom("actor_lore_entries",)
@@ -57,6 +72,9 @@ function actorLoreQuery(
       "scan_depth",
       "activation_chance",
       "priority",
+      "reveal_condition",
+      "timeline_id",
+      "rarity",
     ],)
     .where("actor_id", "=", actorId,)
     .where("enabled", "=", "enabled",)
@@ -68,13 +86,20 @@ function actorLoreQuery(
         ],)
         : eb("world_id", "is", null,)
     )
+    .where((eb: ExpressionBuilder<DB, "actor_lore_entries">,) =>
+      eb.or([
+        eb("timeline_id", "is", null,),
+        eb("timeline_id", "=", timelineId,),
+      ],)
+    )
     .orderBy("position", "asc",)
     .execute();
 }
 
 /**
  * Issue the actor-lore + world-lore + worlds.rules SELECTs and the
- * identity resolver in parallel; throw on the first rejection.
+ * identity resolver in parallel; throw on the first rejection. Timeline
+ * events are scanned afterwards, only when a reveal condition needs them.
  *
  * @param ctx Standard {@link AssembleContext} — same shape every other
  *   lore section consumes. Using the typed ctx (instead of an ad-hoc
@@ -85,13 +110,15 @@ function actorLoreQuery(
  * @throws {Error}
  * @throws {Error}
  * @throws {Error}
+ * @throws {Error}
  */
 export async function loadLore(
   ctx: Pick<AssembleContext, "db" | "chat" | "actor">,
 ): Promise<LoadedLore> {
   const chat = ctx.chat;
+  const timelineId = chat.timeline_id ?? DEFAULT_TIMELINE;
   const results = await Promise.allSettled([
-    actorLoreQuery(ctx.db, ctx.actor.id, chat.world_id ?? null,),
+    actorLoreQuery(ctx.db, ctx.actor.id, chat.world_id ?? null, timelineId,),
     chat.world_id
       ? ctx.db
         .selectFrom("world_lore_entries",)
@@ -115,9 +142,18 @@ export async function loadLore(
           "distortion_level",
           "source_count",
           "disputed",
+          "reveal_condition",
+          "timeline_id",
+          "rarity",
         ],)
         .where("world_id", "=", chat.world_id,)
         .where("enabled", "=", "enabled",)
+        .where((eb: ExpressionBuilder<DB, "world_lore_entries">,) =>
+          eb.or([
+            eb("timeline_id", "is", null,),
+            eb("timeline_id", "=", timelineId,),
+          ],)
+        )
         .orderBy("position", "asc",)
         .execute()
       : Promise.resolve([] as LoreRow[],),
@@ -144,9 +180,16 @@ export async function loadLore(
     if (parsed.ok) { parsedRules = parsed.value; }
   }
 
+  const entries: LoreRow[] = [...actorR.value, ...worldR.value,];
   return {
-    entries: [...actorR.value, ...worldR.value,],
+    entries,
     lifecycleConfig: resolveLifecycleConfig(parsedRules,),
     actorIdentity: identityR.value,
+    timelineEvents: await loadRevealTimelineEvents(
+      ctx.db,
+      chat.world_id ?? null,
+      timelineId,
+      entries,
+    ),
   };
 }

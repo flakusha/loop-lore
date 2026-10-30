@@ -115,6 +115,9 @@ export interface WorldLoreEntries extends AuditColumns {
   source_count: Generated<number>;
   distortion_level: Generated<number>;
   disputed: Generated<number>;
+  reveal_condition: string | null;
+  timeline_id: string | null;
+  rarity: Generated<ItemRarity>;
 }
 
 // ── world_states ────────────────────────────────────────────
@@ -185,6 +188,9 @@ export interface ActorLoreEntries extends AuditColumns {
   key_groups: string | null;
   scan_depth: number | null;
   activation_chance: number | null;
+  reveal_condition: string | null;
+  timeline_id: string | null;
+  rarity: Generated<ItemRarity>;
 }
 
 // ── story_turns ────────────────────────────────────────────

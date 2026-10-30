@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** \
+**Status:** In Progress
+**Status Note:** First slice landed on `feat-lore-knowledge` (2026-10-30): `timeline_id` + `reveal_condition` + `rarity` columns (084), reveal-condition evaluation + timeline-scoped + rarity-weighted injection in `loreSection`, unit tests. Deferred: secret lore UI (`docs/frontend/worlds.md` lorebook section) and knowledge propagation rules (blocked on `epic-memory-propagation.md`, Not Started).\
 **Priority:** High\
 **Effort:** Medium\
 **Type:** Feature Epic\
@@ -34,12 +34,12 @@ Extends lore system to support timeline-specific knowledge propagation, secret l
 
 ## Acceptance Criteria
 
-- [ ] `timeline_id` column added to lore tables (migration)
-- [ ] `reveal_condition` field in lore entries schema
-- [ ] Timeline-aware lore injection in `src/assistant/prompt/sections/lore.ts`
+- [x] `timeline_id` column added to lore tables (migration 084)
+- [x] `reveal_condition` field in lore entries schema (migration 084; evaluation in `src/assistant/lore/reveal-condition.ts`)
+- [x] Timeline-aware lore injection in `src/assistant/prompt/sections/lore.ts` (load-time filter in `lore-load.ts`)
 - [ ] Secret lore UI in `docs/frontend/worlds.md` (lorebook section)
-- [ ] Rarity-weighted lore selection algorithm
-- [ ] Unit tests for timeline-specific lore access
+- [x] Rarity-weighted lore selection algorithm (`src/assistant/lore/rarity-weight.ts`, `rarity` column in 084)
+- [x] Unit tests for timeline-specific lore access (`src/assistant/lore/*.test.ts`, `src/assistant/prompt/sections/lore-reveal.test.ts`)
 
 ## Dependencies
 
