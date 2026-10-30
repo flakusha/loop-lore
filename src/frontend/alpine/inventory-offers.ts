@@ -24,6 +24,7 @@ import {
   emptyDraft,
   enrichInstances,
   ownedBy,
+  priceOrUnset,
   rowsFromBody,
   rowsValue,
   selectedRows,
@@ -63,8 +64,8 @@ export interface InventoryOffersState {
   offersError: string;
   selectedOfferId: string | null;
   confirmingAcceptId: string | null;
-  counterPrice: number;
-  offerPrice: number;
+  counterPrice: number | null;
+  offerPrice: number | null;
   draft: TradeDraft;
   history: TradeHistoryEntry[];
   historyLoading: boolean;
@@ -278,7 +279,7 @@ export const stateFromOfferActors = (
           buyerActorId: myActorId,
           sellerActorId: sellerId,
           buyerItems: tradeLines(rows,),
-          price: this.offerPrice !== 0 ? this.offerPrice : rowsValue(rows,),
+          price: priceOrUnset(this.offerPrice,) ?? rowsValue(rows,),
         },),
       },);
 
@@ -357,7 +358,9 @@ export const stateFromOfferActors = (
       } = { counterActorId: myActorId, };
 
       if (lines.length > 0) { body[mineIsBuyer ? "buyerItems" : "sellerItems"] = lines; }
-      if (this.counterPrice !== 0) { body.price = this.counterPrice; }
+
+      const counter = priceOrUnset(this.counterPrice,);
+      if (counter !== undefined) { body.price = counter; }
       const res = await apiFetch(`/api/v1/worlds/${worldId}/trade/offers/${offerId}/counter`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
