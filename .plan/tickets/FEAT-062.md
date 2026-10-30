@@ -1,6 +1,7 @@
 ---
 title: "FEAT-062: Generation quality metrics"
-status: Not Started
+status: In Progress
+**Scope:** FEAT-062 generation quality metrics: record per-generation quality signals and expose GET /api/analytics/quality (source: generation_attempts, no DB migration)
 priority: medium
 labels: [feature, generation, quality]
 epic: epic-analytics-observability
@@ -10,7 +11,7 @@ related: [FEAT-059, FEAT-060, FEAT-066]
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
