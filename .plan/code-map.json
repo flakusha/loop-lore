@@ -8593,6 +8593,10 @@
       "source": ".plan/tickets/IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-emotion-avatar-job-restart-reconciliation.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/emotion-avatars.md"
     }
@@ -11257,6 +11261,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-group-chat-per-actor-emotion-avatar-resolution.md"
     },
     {
       "kind": "ticket",
@@ -23599,6 +23607,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-group-chat-per-actor-emotion-avatar-resolution.md"
     }
   ],
   "src/frontend/alpine/actor-entities.ts": [
@@ -26137,6 +26149,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-group-chat-per-actor-emotion-avatar-resolution.md"
     },
     {
       "kind": "ticket",
@@ -42248,6 +42264,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-emotion-avatar-job-restart-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-char-emotion-types-and-prompt-modifier.md"
     },
     {
@@ -48817,6 +48837,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md"
     },
     {
       "kind": "ticket",

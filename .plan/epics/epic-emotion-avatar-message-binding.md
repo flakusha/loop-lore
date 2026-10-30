@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** backend persist + read + per-message frontend binding shipped (cbf8ec95); group-chat per-actor resolution and the end-to-end integration test pending
+**Status Note:** backend persist + read + per-message frontend binding shipped (cbf8ec95); group-chat per-actor resolution and the end-to-end integration test pending. Remaining scope decomposed 2026-10-30; tickets scoped to worktree feat-emotion-avatar-completion
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -83,10 +83,11 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
       stays for non-message areas)
 - [ ] Group chats: resolve the avatar per speaking actor instead of the chat's
       current character
+      → [`TASK-group-chat-per-actor-emotion-avatar-resolution.md`](../tickets/TASK-group-chat-per-actor-emotion-avatar-resolution.md)
 - [x] Tests: migration/schema-sync, message-persist (hook→`messages.emotion`),
       and frontend `avatarForMessage` resolution unit-tested
 - [ ] End-to-end integration test hook → `messages.emotion` →
-      `avatarForMessage` (`TEST-emotion-hook-to-avatarForMessage-integration`)
+      `avatarForMessage` ([`TEST-emotion-hook-to-avatarForMessage-integration.md`](../tickets/TEST-emotion-hook-to-avatarForMessage-integration.md))
 - [x] Reconcile related epics/tickets (`TASK-aux-emotion-avatar` status note
       updated to the binding model; `TASK-emotions-avatar-edit-model` and
       `TASK-character-mood-happiness` done; `FEAT-avatar-expression-system`

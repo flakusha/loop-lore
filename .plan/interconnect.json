@@ -24328,17 +24328,6 @@
       "related": []
     },
     {
-      "id": "TASK-comfyui-parameter-map-derivation-from-marked-workflows",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-comfyui-parameter-map-derivation-from-marked-workflows.md",
-      "title": "ComfyUI parameter-map derivation from marked workflows",
-      "status": "Not Started",
-      "srcRefs": [
-        "src/generation/workflow-library/seed-parameters.ts"
-      ],
-      "related": []
-    },
-    {
       "id": "TASK-comfyui-pbr-texture-set-generation",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-comfyui-pbr-texture-set-generation.md",
@@ -24407,15 +24396,6 @@
       "srcRefs": [
         "src/generation/providers/comfyui.ts"
       ],
-      "related": []
-    },
-    {
-      "id": "TASK-comfyui-workflow-acceptance-probe-scaffold",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-comfyui-workflow-acceptance-probe-scaffold.md",
-      "title": "ComfyUI workflow acceptance-probe scaffold",
-      "status": "Not Started",
-      "srcRefs": [],
       "related": []
     },
     {
@@ -27999,6 +27979,18 @@
       "related": []
     },
     {
+      "id": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-emotion-avatar-job-restart-reconciliation.md",
+      "title": "Emotion-avatar job restart reconciliation",
+      "status": "in_progress",
+      "srcRefs": [
+        "src/characters/services/emotion-avatar-service/job-store.ts",
+        "src/routes/character-emotion-avatars.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-emotion-avatar-message-binding",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-emotion-avatar-message-binding.md",
@@ -28023,6 +28015,17 @@
         "TASK-aux-emotion-avatar",
         "TASK-emotions-avatar-edit-model"
       ]
+    },
+    {
+      "id": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md",
+      "title": "Emotion-avatar regen atomicity and subset regression tests",
+      "status": "in_progress",
+      "srcRefs": [
+        "src/routes/wardrobe-avatars.ts"
+      ],
+      "related": []
     },
     {
       "id": "TASK-emotion-avatars-pipeline",
@@ -28997,15 +29000,6 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-f9-factor-management-and-recovery-ui.md",
       "title": "F9 factor management and recovery UI",
-      "status": "Not Started",
-      "srcRefs": [],
-      "related": []
-    },
-    {
-      "id": "TASK-face-detailer-refinement-tier",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-face-detailer-refinement-tier.md",
-      "title": "Face-detailer refinement tier",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -31594,6 +31588,19 @@
       "related": []
     },
     {
+      "id": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-group-chat-per-actor-emotion-avatar-resolution.md",
+      "title": "Group-chat per-actor emotion-avatar resolution",
+      "status": "in_progress",
+      "srcRefs": [
+        "src/chat/service/read.ts",
+        "src/frontend/alpine/actor-emotion-avatars.ts",
+        "src/frontend/alpine/mood/avatars.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-group-chat-turn-orchestration",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-group-chat-turn-orchestration.md",
@@ -32998,72 +33005,6 @@
       ]
     },
     {
-      "id": "TASK-immersion-gate-claim-extraction",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-immersion-gate-claim-extraction.md",
-      "title": "immersion gate claim extraction",
-      "status": "done",
-      "srcRefs": [],
-      "related": []
-    },
-    {
-      "id": "TASK-immersion-gate-config-surface-and-audit-log",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-immersion-gate-config-surface-and-audit-log.md",
-      "title": "immersion gate config surface and audit log",
-      "status": "done",
-      "srcRefs": [
-        "src/config/sections"
-      ],
-      "related": []
-    },
-    {
-      "id": "TASK-immersion-gate-deterministic-rule-engine",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-immersion-gate-deterministic-rule-engine.md",
-      "title": "immersion gate deterministic rule engine",
-      "status": "done",
-      "srcRefs": [
-        "src/rpg/skills",
-        "src/story/items"
-      ],
-      "related": []
-    },
-    {
-      "id": "TASK-immersion-gate-failed-check-enforcement",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-immersion-gate-failed-check-enforcement.md",
-      "title": "immersion gate failed-check enforcement",
-      "status": "done",
-      "srcRefs": [
-        "src/battle/resolution-integration/checks.ts",
-        "src/rpg/dice"
-      ],
-      "related": []
-    },
-    {
-      "id": "TASK-immersion-gate-opt-in-llm-classifier",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-immersion-gate-opt-in-llm-classifier.md",
-      "title": "immersion gate opt-in llm classifier",
-      "status": "done",
-      "srcRefs": [
-        "src/generation/flow-control.ts"
-      ],
-      "related": []
-    },
-    {
-      "id": "TASK-immersion-gate-refusal-narration-path",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-immersion-gate-refusal-narration-path.md",
-      "title": "immersion gate refusal narration path",
-      "status": "done",
-      "srcRefs": [
-        "src/turning"
-      ],
-      "related": []
-    },
-    {
       "id": "TASK-immersion-presentation",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-immersion-presentation.md",
@@ -34195,15 +34136,6 @@
         "TASK-reference-capability-matrix-data-model",
         "epic-model-family-presets"
       ]
-    },
-    {
-      "id": "TASK-krea-moodboard-style-conditioning-templates",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-krea-moodboard-style-conditioning-templates.md",
-      "title": "Krea moodboard style-conditioning templates",
-      "status": "Not Started",
-      "srcRefs": [],
-      "related": []
     },
     {
       "id": "TASK-krita-shared-comfyui-tier",
@@ -36737,15 +36669,6 @@
         "BUG-emotion-mood-hook-stale-llm-javadoc",
         "TASK-aux-mood-classification"
       ]
-    },
-    {
-      "id": "TASK-moss-plus-anima-family-templates-from-operator-workflows",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-moss-plus-anima-family-templates-from-operator-workflows.md",
-      "title": "Moss + Anima family templates from operator workflows",
-      "status": "Not Started",
-      "srcRefs": [],
-      "related": []
     },
     {
       "id": "TASK-move-relationship-update-delete-existence-check-inside-the-t",
@@ -39862,15 +39785,6 @@
       ]
     },
     {
-      "id": "TASK-qwenvl-in-graph-prompt-enhancer",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-qwenvl-in-graph-prompt-enhancer.md",
-      "title": "QwenVL in-graph prompt enhancer",
-      "status": "Not Started",
-      "srcRefs": [],
-      "related": []
-    },
-    {
       "id": "TASK-rag-alpine",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-rag-alpine.md",
@@ -41540,7 +41454,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-reroll-emotion-command.md",
       "title": "reroll-emotion command",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/assistant/commands/reroll-emotion.ts"
       ],
@@ -45178,15 +45092,6 @@
       ]
     },
     {
-      "id": "TASK-track-upstream-comfyui-memory-leak-issues-fixes",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-track-upstream-comfyui-memory-leak-issues-fixes.md",
-      "title": "Track upstream ComfyUI memory-leak issues/fixes",
-      "status": "Not Started",
-      "srcRefs": [],
-      "related": []
-    },
-    {
       "id": "TASK-track-voyage-inspiration",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-track-voyage-inspiration.md",
@@ -46182,15 +46087,6 @@
       "path": ".plan/tickets/TASK-users-roles-sessions-lifecycle.md",
       "title": "Users, Roles & Sessions Lifecycle",
       "status": "done",
-      "srcRefs": [],
-      "related": []
-    },
-    {
-      "id": "TASK-vaedegrid-post-decode-cleanup-stage",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-vaedegrid-post-decode-cleanup-stage.md",
-      "title": "VAEDeGrid post-decode cleanup stage",
-      "status": "Not Started",
       "srcRefs": [],
       "related": []
     },
@@ -47439,15 +47335,6 @@
       "related": []
     },
     {
-      "id": "TASK-workflow-library-ui-format-ingest",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-workflow-library-ui-format-ingest.md",
-      "title": "Workflow library UI-format ingest",
-      "status": "Not Started",
-      "srcRefs": [],
-      "related": []
-    },
-    {
       "id": "TASK-workflow-payload-preview-step-type",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-workflow-payload-preview-step-type.md",
@@ -47954,7 +47841,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md",
       "title": "End-to-end emotion-hook → messages.emotion → avatarForMessage",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/chat/service/read.ts",
         "src/frontend/alpine/mood.test.ts",
@@ -51593,7 +51480,6 @@
       "status": "done",
       "srcRefs": [
         "src/battle/resolution-integration/checks.ts",
-        "src/immersion/extract-claims.ts",
         "src/regex",
         "src/rpg/dice",
         "src/rpg/skills",
@@ -58382,7 +58268,6 @@
     {
       "path": "src/battle/resolution-integration/checks.ts",
       "owners": [
-        "TASK-immersion-gate-failed-check-enforcement",
         "TASK-sc10-player-state-machine-adapters",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
         "epic-immersion-consistency-gate"
@@ -59434,6 +59319,7 @@
       "path": "src/characters/services/emotion-avatar-service/job-store.ts",
       "owners": [
         "IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live",
+        "TASK-emotion-avatar-job-restart-reconciliation",
         "epic-avatar-regeneration-control"
       ]
     },
@@ -60953,6 +60839,7 @@
       "owners": [
         "BUG-tool-call-result-no-frontend-rendering",
         "TASK-chat-transfer-location",
+        "TASK-group-chat-per-actor-emotion-avatar-resolution",
         "TASK-guest-chat-public-reads-visibility-aware-chat-access",
         "TASK-message-carriage-table-migration-admin-read",
         "TEST-emotion-hook-to-avatarForMessage-integration",
@@ -63042,8 +62929,7 @@
     {
       "path": "src/config/sections",
       "owners": [
-        "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
-        "TASK-immersion-gate-config-surface-and-audit-log"
+        "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt"
       ]
     },
     {
@@ -67471,7 +67357,8 @@
       "path": "src/frontend/alpine/actor-emotion-avatars.ts",
       "owners": [
         "TASK-actor-emotion-avatars-frontend",
-        "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin"
+        "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
+        "TASK-group-chat-per-actor-emotion-avatar-resolution"
       ]
     },
     {
@@ -69061,6 +68948,7 @@
         "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
         "TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh",
         "TASK-chat-avatar-resolver-outfit-aware",
+        "TASK-group-chat-per-actor-emotion-avatar-resolution",
         "TASK-messages-outfit-id-column",
         "TEST-emotion-hook-to-avatarForMessage-integration",
         "epic-emotion-avatar-message-binding",
@@ -71968,7 +71856,6 @@
     {
       "path": "src/generation/flow-control.ts",
       "owners": [
-        "TASK-immersion-gate-opt-in-llm-classifier",
         "TASK-view-set-orbit-video-tier"
       ]
     },
@@ -73406,7 +73293,6 @@
     {
       "path": "src/generation/workflow-library/seed-parameters.ts",
       "owners": [
-        "TASK-comfyui-parameter-map-derivation-from-marked-workflows",
         "epic-reactive-actor-appearance"
       ]
     },
@@ -73948,12 +73834,6 @@
         "TASK-multi-concept-segmentation-masks",
         "TASK-multi-reference-conditioning-request-model",
         "epic-comfyui-first-class-citizen"
-      ]
-    },
-    {
-      "path": "src/immersion/extract-claims.ts",
-      "owners": [
-        "epic-immersion-consistency-gate"
       ]
     },
     {
@@ -78566,6 +78446,7 @@
         "BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-",
         "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
         "BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy",
+        "TASK-emotion-avatar-job-restart-reconciliation",
         "TASK-frontend-char-emotion-types-and-prompt-modifier",
         "TASK-input-validation-battle-schema-less-post-emotion-avatars-par",
         "epic-avatar-regeneration-control"
@@ -82306,6 +82187,7 @@
         "TASK-avatar-framing-column-migration-future",
         "TASK-avatar-framing-tag-member",
         "TASK-chat-avatar-resolver-outfit-aware",
+        "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
         "TASK-identity-lock-seed-negative-prompt-and-anchor",
         "epic-avatar-regeneration-control"
       ]
@@ -83080,7 +82962,6 @@
     {
       "path": "src/rpg/dice",
       "owners": [
-        "TASK-immersion-gate-failed-check-enforcement",
         "epic-immersion-consistency-gate"
       ]
     },
@@ -84673,7 +84554,6 @@
     {
       "path": "src/rpg/skills",
       "owners": [
-        "TASK-immersion-gate-deterministic-rule-engine",
         "TASK-sc10-player-state-machine-adapters",
         "epic-immersion-consistency-gate"
       ]
@@ -86692,7 +86572,6 @@
       "path": "src/story/items",
       "owners": [
         "TASK-181-pre-existing-options-object-params-eslint-warnings-acros",
-        "TASK-immersion-gate-deterministic-rule-engine",
         "TASK-sc10-player-state-machine-adapters",
         "epic-immersion-consistency-gate"
       ]
@@ -87752,7 +87631,6 @@
     {
       "path": "src/turning",
       "owners": [
-        "TASK-immersion-gate-refusal-narration-path",
         "epic-emergent-narrative-design",
         "epic-rpg-patterns"
       ]
@@ -93637,6 +93515,16 @@
     {
       "from": "epic-avatar-regeneration-control",
       "kind": "owns",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation"
+    },
+    {
+      "from": "epic-avatar-regeneration-control",
+      "kind": "owns",
+      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests"
+    },
+    {
+      "from": "epic-avatar-regeneration-control",
+      "kind": "owns",
       "to": "TASK-generation-seed-capture-and-override-per-avatar"
     },
     {
@@ -95782,22 +95670,12 @@
     {
       "from": "epic-comfyui-first-class-citizen",
       "kind": "owns",
-      "to": "TASK-comfyui-parameter-map-derivation-from-marked-workflows"
-    },
-    {
-      "from": "epic-comfyui-first-class-citizen",
-      "kind": "owns",
       "to": "TASK-comfyui-sampler-scheduler-discovery"
     },
     {
       "from": "epic-comfyui-first-class-citizen",
       "kind": "owns",
       "to": "TASK-comfyui-template-parameter-validation"
-    },
-    {
-      "from": "epic-comfyui-first-class-citizen",
-      "kind": "owns",
-      "to": "TASK-comfyui-workflow-acceptance-probe-scaffold"
     },
     {
       "from": "epic-comfyui-first-class-citizen",
@@ -95812,42 +95690,12 @@
     {
       "from": "epic-comfyui-first-class-citizen",
       "kind": "owns",
-      "to": "TASK-face-detailer-refinement-tier"
-    },
-    {
-      "from": "epic-comfyui-first-class-citizen",
-      "kind": "owns",
       "to": "TASK-implement-entity-based-asset-access-via-asset-links"
     },
     {
       "from": "epic-comfyui-first-class-citizen",
       "kind": "owns",
-      "to": "TASK-krea-moodboard-style-conditioning-templates"
-    },
-    {
-      "from": "epic-comfyui-first-class-citizen",
-      "kind": "owns",
-      "to": "TASK-moss-plus-anima-family-templates-from-operator-workflows"
-    },
-    {
-      "from": "epic-comfyui-first-class-citizen",
-      "kind": "owns",
-      "to": "TASK-qwenvl-in-graph-prompt-enhancer"
-    },
-    {
-      "from": "epic-comfyui-first-class-citizen",
-      "kind": "owns",
       "to": "TASK-ui-api-workflow-converter"
-    },
-    {
-      "from": "epic-comfyui-first-class-citizen",
-      "kind": "owns",
-      "to": "TASK-vaedegrid-post-decode-cleanup-stage"
-    },
-    {
-      "from": "epic-comfyui-first-class-citizen",
-      "kind": "owns",
-      "to": "TASK-workflow-library-ui-format-ingest"
     },
     {
       "from": "epic-comfyui-lifecycle",
@@ -95863,11 +95711,6 @@
       "from": "epic-comfyui-lifecycle",
       "kind": "owns",
       "to": "TASK-generic-rebase-guard-checklist"
-    },
-    {
-      "from": "epic-comfyui-lifecycle",
-      "kind": "owns",
-      "to": "TASK-track-upstream-comfyui-memory-leak-issues-fixes"
     },
     {
       "from": "epic-comfyui-plugin",
@@ -97413,6 +97256,11 @@
       "from": "epic-emotion-avatar-message-binding",
       "kind": "owns",
       "to": "TASK-emotion-avatars-pipeline"
+    },
+    {
+      "from": "epic-emotion-avatar-message-binding",
+      "kind": "owns",
+      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution"
     },
     {
       "from": "epic-emotion-avatar-message-binding",
@@ -99483,36 +99331,6 @@
       "from": "epic-immersion-consistency-gate",
       "kind": "owns",
       "to": "TASK-action-applicability-gate"
-    },
-    {
-      "from": "epic-immersion-consistency-gate",
-      "kind": "owns",
-      "to": "TASK-immersion-gate-claim-extraction"
-    },
-    {
-      "from": "epic-immersion-consistency-gate",
-      "kind": "owns",
-      "to": "TASK-immersion-gate-config-surface-and-audit-log"
-    },
-    {
-      "from": "epic-immersion-consistency-gate",
-      "kind": "owns",
-      "to": "TASK-immersion-gate-deterministic-rule-engine"
-    },
-    {
-      "from": "epic-immersion-consistency-gate",
-      "kind": "owns",
-      "to": "TASK-immersion-gate-failed-check-enforcement"
-    },
-    {
-      "from": "epic-immersion-consistency-gate",
-      "kind": "owns",
-      "to": "TASK-immersion-gate-opt-in-llm-classifier"
-    },
-    {
-      "from": "epic-immersion-consistency-gate",
-      "kind": "owns",
-      "to": "TASK-immersion-gate-refusal-narration-path"
     },
     {
       "from": "epic-immersion-consistency-gate",
@@ -130500,11 +130318,6 @@
       "to": "src/image-edit/types.ts"
     },
     {
-      "from": "TASK-comfyui-parameter-map-derivation-from-marked-workflows",
-      "kind": "produces",
-      "to": "src/generation/workflow-library/seed-parameters.ts"
-    },
-    {
       "from": "TASK-comfyui-pbr-texture-set-generation",
       "kind": "produces",
       "to": "src/generation/matting/service.ts"
@@ -134520,6 +134333,16 @@
       "to": "src/frontend/alpine/chat-utils/emoji.ts"
     },
     {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "produces",
+      "to": "src/characters/services/emotion-avatar-service/job-store.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "produces",
+      "to": "src/routes/character-emotion-avatars.ts"
+    },
+    {
       "from": "TASK-emotion-avatar-message-binding",
       "kind": "produces",
       "to": "src/characters/services/avatar-service.ts"
@@ -134578,6 +134401,11 @@
       "from": "TASK-emotion-avatar-message-binding",
       "kind": "produces",
       "to": "src/routes/chats.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
+      "kind": "produces",
+      "to": "src/routes/wardrobe-avatars.ts"
     },
     {
       "from": "TASK-emotion-intent-detection",
@@ -138030,6 +137858,21 @@
       "to": "src/group-chat/mention-parser.ts"
     },
     {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "produces",
+      "to": "src/chat/service/read.ts"
+    },
+    {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "produces",
+      "to": "src/frontend/alpine/actor-emotion-avatars.ts"
+    },
+    {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "produces",
+      "to": "src/frontend/alpine/mood/avatars.ts"
+    },
+    {
       "from": "TASK-growth-epic-reconciliation",
       "kind": "produces",
       "to": "src/frontend/character-growth-editor.ts"
@@ -139553,41 +139396,6 @@
       "from": "TASK-imgedit-in-chat-command",
       "kind": "produces",
       "to": "src/image-edit/routes.ts"
-    },
-    {
-      "from": "TASK-immersion-gate-config-surface-and-audit-log",
-      "kind": "produces",
-      "to": "src/config/sections"
-    },
-    {
-      "from": "TASK-immersion-gate-deterministic-rule-engine",
-      "kind": "produces",
-      "to": "src/rpg/skills"
-    },
-    {
-      "from": "TASK-immersion-gate-deterministic-rule-engine",
-      "kind": "produces",
-      "to": "src/story/items"
-    },
-    {
-      "from": "TASK-immersion-gate-failed-check-enforcement",
-      "kind": "produces",
-      "to": "src/battle/resolution-integration/checks.ts"
-    },
-    {
-      "from": "TASK-immersion-gate-failed-check-enforcement",
-      "kind": "produces",
-      "to": "src/rpg/dice"
-    },
-    {
-      "from": "TASK-immersion-gate-opt-in-llm-classifier",
-      "kind": "produces",
-      "to": "src/generation/flow-control.ts"
-    },
-    {
-      "from": "TASK-immersion-gate-refusal-narration-path",
-      "kind": "produces",
-      "to": "src/turning"
     },
     {
       "from": "TASK-implement-memory-decay-logic",
@@ -161078,11 +160886,6 @@
       "from": "epic-immersion-consistency-gate",
       "kind": "produces",
       "to": "src/battle/resolution-integration/checks.ts"
-    },
-    {
-      "from": "epic-immersion-consistency-gate",
-      "kind": "produces",
-      "to": "src/immersion/extract-claims.ts"
     },
     {
       "from": "epic-immersion-consistency-gate",
@@ -185598,6 +185401,12 @@
     {
       "from": "BUG-avatar-select-empty-throws-no-frontend-fallback",
       "kind": "sibling",
+      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "via": "src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "BUG-avatar-select-empty-throws-no-frontend-fallback",
+      "kind": "sibling",
       "to": "TASK-messages-outfit-id-column",
       "via": "src/frontend/alpine/mood/avatars.ts"
     },
@@ -188191,6 +188000,12 @@
       "from": "BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-",
       "kind": "sibling",
       "to": "BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy",
+      "via": "src/routes/character-emotion-avatars.ts"
+    },
+    {
+      "from": "BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
       "via": "src/routes/character-emotion-avatars.ts"
     },
     {
@@ -203844,6 +203659,18 @@
     {
       "from": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/routes/character-emotion-avatars.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
+      "via": "src/routes/wardrobe-avatars.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
+      "kind": "sibling",
       "to": "TASK-frontend-char-emotion-types-and-prompt-modifier",
       "via": "src/routes/character-emotion-avatars.ts"
     },
@@ -203942,6 +203769,12 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/characters/services/emotion-avatar-fallback.ts; src/characters/services/emotion-avatar-service/index.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/routes/character-emotion-avatars.ts"
     },
     {
       "from": "BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy",
@@ -235302,6 +235135,12 @@
     {
       "from": "BUG-rate-limit-misses-post-emotion-avatars-single",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
+      "via": "src/routes/wardrobe-avatars.ts"
+    },
+    {
+      "from": "BUG-rate-limit-misses-post-emotion-avatars-single",
+      "kind": "sibling",
       "to": "TASK-identity-lock-seed-negative-prompt-and-anchor",
       "via": "src/routes/wardrobe-avatars.ts"
     },
@@ -246026,6 +245865,12 @@
       "kind": "sibling",
       "to": "TASK-gate-shadow-notes-status-x-visibility-composite",
       "via": "src/db/enums-core/messages.ts"
+    },
+    {
+      "from": "BUG-tool-call-result-no-frontend-rendering",
+      "kind": "sibling",
+      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "via": "src/chat/service/read.ts"
     },
     {
       "from": "BUG-tool-call-result-no-frontend-rendering",
@@ -259866,6 +259711,12 @@
     {
       "from": "FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect",
       "kind": "sibling",
+      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "via": "src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect",
+      "kind": "sibling",
       "to": "TASK-link-previews-unfurl",
       "via": "src/components/chat/message-list.html"
     },
@@ -269184,6 +269035,12 @@
     {
       "from": "IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/characters/services/emotion-avatar-service/job-store.ts"
+    },
+    {
+      "from": "IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live",
+      "kind": "sibling",
       "to": "TASK-identity-lock-seed-negative-prompt-and-anchor",
       "via": "src/characters/services/emotion-avatar-service/generation.ts"
     },
@@ -276372,12 +276229,6 @@
     {
       "from": "TASK-181-pre-existing-options-object-params-eslint-warnings-acros",
       "kind": "sibling",
-      "to": "TASK-immersion-gate-deterministic-rule-engine",
-      "via": "src/story/items"
-    },
-    {
-      "from": "TASK-181-pre-existing-options-object-params-eslint-warnings-acros",
-      "kind": "sibling",
       "to": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision",
       "via": "src/routes/story-items"
     },
@@ -279757,6 +279608,12 @@
       "from": "TASK-actor-emotion-avatars-frontend",
       "kind": "sibling",
       "to": "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
+      "via": "src/frontend/alpine/actor-emotion-avatars.ts"
+    },
+    {
+      "from": "TASK-actor-emotion-avatars-frontend",
+      "kind": "sibling",
+      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
       "via": "src/frontend/alpine/actor-emotion-avatars.ts"
     },
     {
@@ -298116,6 +297973,12 @@
     {
       "from": "TASK-aux-emotion-avatar",
       "kind": "sibling",
+      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "via": "src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "TASK-aux-emotion-avatar",
+      "kind": "sibling",
       "to": "TASK-hook-result-payload-carry-context",
       "via": "src/generation/auto-gen/content-hooks.ts"
     },
@@ -299382,6 +299245,12 @@
     {
       "from": "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
       "kind": "sibling",
+      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "via": "src/frontend/alpine/actor-emotion-avatars.ts; src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
+      "kind": "sibling",
       "to": "TASK-messages-outfit-id-column",
       "via": "src/frontend/alpine/mood/avatars.ts"
     },
@@ -299712,6 +299581,12 @@
     {
       "from": "TASK-avatar-framing-column-migration-future",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
+      "via": "src/routes/wardrobe-avatars.ts"
+    },
+    {
+      "from": "TASK-avatar-framing-column-migration-future",
+      "kind": "sibling",
       "to": "TASK-emotion-intent-detection",
       "via": "src/db/schema-character.ts"
     },
@@ -300014,6 +299889,12 @@
       "kind": "sibling",
       "to": "TASK-emotion-avatar-message-binding",
       "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-avatar-framing-tag-member",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
+      "via": "src/routes/wardrobe-avatars.ts"
     },
     {
       "from": "TASK-avatar-framing-tag-member",
@@ -305046,6 +304927,12 @@
     {
       "from": "TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh",
       "kind": "sibling",
+      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "via": "src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh",
+      "kind": "sibling",
       "to": "TASK-item-side-outfit-change-trigger",
       "via": "src/characters/services/wardrobe/change-gate.ts; src/routes/wardrobe-overrides.ts"
     },
@@ -308958,6 +308845,12 @@
     {
       "from": "TASK-chat-avatar-resolver-outfit-aware",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
+      "via": "src/routes/wardrobe-avatars.ts"
+    },
+    {
+      "from": "TASK-chat-avatar-resolver-outfit-aware",
+      "kind": "sibling",
       "to": "TASK-equip-binds-outfit-write-side",
       "via": "src/characters/services/wardrobe/resolve.ts"
     },
@@ -308966,6 +308859,12 @@
       "kind": "sibling",
       "to": "TASK-equipment-stat-preview",
       "via": "src/frontend"
+    },
+    {
+      "from": "TASK-chat-avatar-resolver-outfit-aware",
+      "kind": "sibling",
+      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "via": "src/frontend/alpine/mood/avatars.ts"
     },
     {
       "from": "TASK-chat-avatar-resolver-outfit-aware",
@@ -314196,6 +314095,12 @@
     {
       "from": "TASK-chat-transfer-location",
       "kind": "sibling",
+      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "via": "src/chat/service/read.ts"
+    },
+    {
+      "from": "TASK-chat-transfer-location",
+      "kind": "sibling",
       "to": "TASK-guest-chat-public-reads-visibility-aware-chat-access",
       "via": "src/chat/service/read.ts"
     },
@@ -318686,12 +318591,6 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/generation/providers/comfyui-upload.ts"
-    },
-    {
-      "from": "TASK-comfyui-parameter-map-derivation-from-marked-workflows",
-      "kind": "sibling",
-      "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/workflow-library/seed-parameters.ts"
     },
     {
       "from": "TASK-comfyui-pbr-texture-set-generation",
@@ -330054,12 +329953,6 @@
     {
       "from": "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
       "kind": "sibling",
-      "to": "TASK-immersion-gate-config-surface-and-audit-log",
-      "via": "src/config/sections"
-    },
-    {
-      "from": "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
-      "kind": "sibling",
       "to": "TASK-integration-config-surface-schemas-example-toml-env-map",
       "via": "src/config/schema-class/env-map.ts; src/config/sections/integrations.ts"
     },
@@ -334744,6 +334637,24 @@
       "via": "src/frontend/alpine/chat-utils/emoji.ts"
     },
     {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-frontend-char-emotion-types-and-prompt-modifier",
+      "via": "src/routes/character-emotion-avatars.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-input-validation-battle-schema-less-post-emotion-avatars-par",
+      "via": "src/routes/character-emotion-avatars.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-avatar-regeneration-control",
+      "via": "src/characters/services/emotion-avatar-service/job-store.ts; src/routes/character-emotion-avatars.ts"
+    },
+    {
       "from": "TASK-emotion-avatar-message-binding",
       "kind": "sibling",
       "to": "TASK-emotion-intent-detection",
@@ -335246,6 +335157,18 @@
       "kind": "sibling",
       "to": "epic-world-chat-channels-invites",
       "via": "src/db/schema-core.ts; src/generation/auto-gen.ts; src/routes/chats.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
+      "kind": "sibling",
+      "to": "TASK-identity-lock-seed-negative-prompt-and-anchor",
+      "via": "src/routes/wardrobe-avatars.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
+      "kind": "sibling",
+      "to": "epic-avatar-regeneration-control",
+      "via": "src/routes/wardrobe-avatars.ts"
     },
     {
       "from": "TASK-emotion-intent-detection",
@@ -347326,6 +347249,54 @@
       "via": "src/group-chat/mention-parser.ts"
     },
     {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "sibling",
+      "to": "TASK-guest-chat-public-reads-visibility-aware-chat-access",
+      "via": "src/chat/service/read.ts"
+    },
+    {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "sibling",
+      "to": "TASK-message-carriage-table-migration-admin-read",
+      "via": "src/chat/service/read.ts"
+    },
+    {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "sibling",
+      "to": "TASK-messages-outfit-id-column",
+      "via": "src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "sibling",
+      "to": "TEST-emotion-hook-to-avatarForMessage-integration",
+      "via": "src/chat/service/read.ts; src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "sibling",
+      "to": "epic-emotion-avatar-message-binding",
+      "via": "src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "sibling",
+      "to": "epic-guest-access",
+      "via": "src/chat/service/read.ts"
+    },
+    {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "sibling",
+      "to": "epic-multilingual-carriage",
+      "via": "src/chat/service/read.ts"
+    },
+    {
+      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/frontend/alpine/mood/avatars.ts"
+    },
+    {
       "from": "TASK-growth-epic-reconciliation",
       "kind": "sibling",
       "to": "TASK-nsfw-rating-enforcement",
@@ -352868,54 +352839,6 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/image-edit/routes.ts"
-    },
-    {
-      "from": "TASK-immersion-gate-deterministic-rule-engine",
-      "kind": "sibling",
-      "to": "TASK-sc10-player-state-machine-adapters",
-      "via": "src/rpg/skills; src/story/items"
-    },
-    {
-      "from": "TASK-immersion-gate-deterministic-rule-engine",
-      "kind": "sibling",
-      "to": "epic-immersion-consistency-gate",
-      "via": "src/rpg/skills; src/story/items"
-    },
-    {
-      "from": "TASK-immersion-gate-failed-check-enforcement",
-      "kind": "sibling",
-      "to": "TASK-sc10-player-state-machine-adapters",
-      "via": "src/battle/resolution-integration/checks.ts"
-    },
-    {
-      "from": "TASK-immersion-gate-failed-check-enforcement",
-      "kind": "sibling",
-      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
-      "via": "src/battle/resolution-integration/checks.ts"
-    },
-    {
-      "from": "TASK-immersion-gate-failed-check-enforcement",
-      "kind": "sibling",
-      "to": "epic-immersion-consistency-gate",
-      "via": "src/battle/resolution-integration/checks.ts; src/rpg/dice"
-    },
-    {
-      "from": "TASK-immersion-gate-opt-in-llm-classifier",
-      "kind": "sibling",
-      "to": "TASK-view-set-orbit-video-tier",
-      "via": "src/generation/flow-control.ts"
-    },
-    {
-      "from": "TASK-immersion-gate-refusal-narration-path",
-      "kind": "sibling",
-      "to": "epic-emergent-narrative-design",
-      "via": "src/turning"
-    },
-    {
-      "from": "TASK-immersion-gate-refusal-narration-path",
-      "kind": "sibling",
-      "to": "epic-rpg-patterns",
-      "via": "src/turning"
     },
     {
       "from": "TASK-implement-memory-decay-logic",

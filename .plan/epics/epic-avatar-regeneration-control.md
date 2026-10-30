@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** durable jobs, emotions-subset, outfit-scoped replace + single-slot re-roll shipped; dedicated actor-level regenerate route and seed capture shipped; per-avatar UI re-roll shipped (regenerate all / selected / per-variant, seed pin + reuse)
+**Status Note:** durable jobs, emotions-subset, outfit-scoped replace + single-slot re-roll shipped; dedicated actor-level regenerate route and seed capture shipped; per-avatar UI re-roll shipped (regenerate all / selected / per-variant, seed pin + reuse). Remaining scope decomposed 2026-10-30; tickets scoped to worktree feat-emotion-avatar-completion
 **Priority:** Medium
 **Effort:** Small
 **Type:** Feature Epic
@@ -88,6 +88,7 @@ landed (verified 2026-10-09):
       transactional, (emotion, outfit)-scoped isolation
 - [ ] Persistent job store (migration + regen schema artifacts) with
       in-memory cache; restart reconciliation for orphaned jobs
+      → [`TASK-emotion-avatar-job-restart-reconciliation.md`](../tickets/TASK-emotion-avatar-job-restart-reconciliation.md)
 - [x] Seed capture/override per generation — one base seed per batch
       (`seed.ts`), slot seeds derived as `base + EMOTION_ORDINAL[emotion]`, the
       base seed persisted with the job (`generation_jobs.payload.seed`) and
@@ -100,6 +101,7 @@ landed (verified 2026-10-09):
 - [ ] Tests: subset regen, replace-atomicity (old variant never unbound-mid-
       flight), restart-durable job status, route authz (actor + wardrobe-item
       ownership)
+      → [`TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md`](../tickets/TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md)
 
 - `TASK-reroll-emotion-command.md` — /reroll-emotion in-chat command wrapping emotion-avatar regenerate (open, 2026-10-23 attachment batch)
 

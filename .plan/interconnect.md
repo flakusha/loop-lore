@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3855
+- tickets: 3843
 - epics: 358
-- src paths owned: 4537
-- edges: produces 12062, consumes 405, sibling 37382, owns 2831, related 1193
+- src paths owned: 4536
+- edges: produces 12059, consumes 405, sibling 37402, owns 2819, related 1193
 
 ## Shared src hubs
 
@@ -265,7 +265,7 @@ output is byte-identical for identical inputs.
 | `src/battle/items-integration.ts` | `TASK-actor-item-service`, `TASK-equipment-stat-preview`, `TASK-map-battle-equipment`, `TASK-persist-loot-drops`, `TASK-unify-item-types`, `epic-battle-action-systems`, `epic-battle-integration-gaps`, `epic-item-system-extensions`, `epic-item-systems-unification`, `epic-items` |
 | `src/battle/modes.ts` | `TASK-battle-encounter-template-system`, `TASK-battle-template-actions`, `epic-battle-action-systems` |
 | `src/battle/resolution-integration/attacks.ts` | `BUG-battle-attacks-calculatedamage-doubles-flat-dice-notation-bo`, `BUG-critical-hit-rolls-ignore-advantage` |
-| `src/battle/resolution-integration/checks.ts` | `TASK-immersion-gate-failed-check-enforcement`, `TASK-sc10-player-state-machine-adapters`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-immersion-consistency-gate` |
+| `src/battle/resolution-integration/checks.ts` | `TASK-sc10-player-state-machine-adapters`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-immersion-consistency-gate` |
 | `src/battle/resolution-integration/initiative.ts` | `FEAT-battle-core-implementation`, `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre` |
 | `src/battle/social-integration/surrender.ts` | `BUG-battle-surrender-cansurrender-is-always-true-when-morale-30-`, `epic-faction-reputation` |
 | `src/battle/templates/index.ts` | `TASK-battle-encounter-template-system`, `TASK-battle-template-actions` |
@@ -309,7 +309,7 @@ output is byte-identical for identical inputs.
 | `src/characters/services/emotion-avatar-service/generation.ts` | `BUG-characters-emotion-avatar-sortorder-derived-from-object-valu`, `BUG-emotion-avatar-fallback-metadata-incomplete`, `BUG-size-strict-pre-existing-dev-drift`, `FEAT-background`, `IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live`, `TASK-appearance-edit-vs-generation-strategy-selector`, `TASK-identity-lock-seed-negative-prompt-and-anchor`, `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images`, `epic-comfyui-plugin`, `epic-effect-v4-adoption-evaluation` |
 | `src/characters/services/emotion-avatar-service/index.ts` | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `epic-reactive-actor-appearance` |
 | `src/characters/services/emotion-avatar-service/job-records.ts` | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-`, `epic-3d-generation` |
-| `src/characters/services/emotion-avatar-service/job-store.ts` | `IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live`, `epic-avatar-regeneration-control` |
+| `src/characters/services/emotion-avatar-service/job-store.ts` | `IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live`, `TASK-emotion-avatar-job-restart-reconciliation`, `epic-avatar-regeneration-control` |
 | `src/characters/services/emotion-avatar-service/single-generation.ts` | `TASK-appearance-edit-vs-generation-strategy-selector`, `TASK-ground-up-scene-generation-with-background`, `TASK-held-item-whole-outfit-variant-axis`, `TASK-identity-lock-seed-negative-prompt-and-anchor` |
 | `src/characters/services/federation-consent.ts` | `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys`, `BUG-backfill-of-historical-posts-on-new-follower-unspecified`, `BUG-character-federation-lacks-owner-consent-or-nsfw-gate`, `BUG-federation-authorization-who-may-publish-an-actor-undefined`, `BUG-federation-identity-mapping-to-local-users-undefined`, `FEAT-activitypub-federation`, `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation`, `TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-` |
 | `src/characters/services/internal-traits/index.ts` | `TASK-adopt-bun-randomuuidv7-for-time-sortable-ids`, `epic-character-internal-traits` |
@@ -407,7 +407,7 @@ output is byte-identical for identical inputs.
 | `src/chat/service/party-narration.ts` | `TASK-chat-feature-location-transition-transfer`, `TASK-chat-feature-notes-shadow-carriage`, `TASK-chat-feature-rpg-rule-system`, `epic-chat-product-features` |
 | `src/chat/service/party.ts` | `BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat`, `BUG-vn-mode-locked-once-chat-has-confirmed-messages`, `TASK-024`, `TASK-chat-feature-location-transition-transfer`, `TASK-chat-feature-rpg-location-uniqueness`, `TASK-chat-feature-rpg-rule-system`, `TASK-chat-transfer-location`, `TASK-party-join-leave`, `TASK-travel-party-migration`, `TASK-typescript-7-migration-typecheck-failures`, `TASK-world-simulation-timeline-driven-travel-patrol`, `epic-chat-product-features`, `epic-chat-transfer-location` |
 | `src/chat/service/polls.ts` | `BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo`, `TASK-message-polls-votes`, `TASK-tui-reactions-plus-polls-voting-inline` |
-| `src/chat/service/read.ts` | `BUG-tool-call-result-no-frontend-rendering`, `TASK-chat-transfer-location`, `TASK-guest-chat-public-reads-visibility-aware-chat-access`, `TASK-message-carriage-table-migration-admin-read`, `TEST-emotion-hook-to-avatarForMessage-integration`, `epic-guest-access`, `epic-multilingual-carriage` |
+| `src/chat/service/read.ts` | `BUG-tool-call-result-no-frontend-rendering`, `TASK-chat-transfer-location`, `TASK-group-chat-per-actor-emotion-avatar-resolution`, `TASK-guest-chat-public-reads-visibility-aware-chat-access`, `TASK-message-carriage-table-migration-admin-read`, `TEST-emotion-hook-to-avatarForMessage-integration`, `epic-guest-access`, `epic-multilingual-carriage` |
 | `src/chat/service/seen.ts` | `BUG-bug-chat-service-seen-ts-is-dead-code-and-its-upsert-is-brok`, `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` |
 | `src/chat/service/split-utils.ts` | `BUG-chat-reunite-copymessagestoprimary-carries-source-chat-key-i`, `BUG-generate-route-authorizes-chatid-but-not-actorid`, `BUG-plugin-tool-authorization-fails-open`, `TASK-chat-branch-merge`, `TASK-chat-feature-rpg-chronological-navigation`, `TASK-typescript-7-migration-typecheck-failures`, `epic-chat-product-features` |
 | `src/chat/service/split-validate.ts` | `TASK-egui-frontend-buttons-for-party-split-reunite-parity-with-sp`, `TASK-web-ui-buttons-for-party-split-reunite-parity-with-split-reu` |
@@ -524,7 +524,6 @@ output is byte-identical for identical inputs.
 | `src/config/schema/seeding.ts` | `BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir`, `TASK-lorebook-template-seeding`, `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr`, `TASK-reconcile-ts-import-extensions-user-seeding-session`, `TASK-world-template-full-model-coverage` |
 | `src/config/schema/testing.ts` | `BUG-advertised-sfx-music-video-commands-are-stubs`, `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr`, `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server`, `TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene` |
 | `src/config/schema/tui.ts` | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `TASK-tui-enabled-config-flag-never-read`, `epic-terminal-ui` |
-| `src/config/sections` | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt`, `TASK-immersion-gate-config-surface-and-audit-log` |
 | `src/config/sections/age-gate.ts` | `BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k`, `epic-frontend-age-gate` |
 | `src/config/sections/auth.ts` | `BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive`, `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `TASK-adopt-bun-csrf-for-csrf-protection`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` |
 | `src/config/sections/autonomy.ts` | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `epic-research-agency-decision` |
@@ -749,7 +748,7 @@ output is byte-identical for identical inputs.
 | `src/frontend/a11y/touch-gestures.ts` | `TASK-frontend-touch-gestures`, `TASK-mobile-touch-gestures`, `epic-accessibility-input` |
 | `src/frontend/alpine` | `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th`, `TASK-181-pre-existing-options-object-params-eslint-warnings-acros`, `TASK-chat-composer-markdown-pre-render-preview-before-send`, `TASK-personas-impersonation-plan-docs-bookkeeping-sweep`, `TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag` |
 | `src/frontend/alpine-init.ts` | `BUG-gallery-openAssetPreview-context-safety`, `BUG-server-view-date-display-ignores-user-timezone-locale`, `TASK-comfyui-builder-track-a-alpine-preset-chain-form`, `TASK-comparison-grid-frontend`, `TASK-text-effects-overlays` |
-| `src/frontend/alpine/actor-emotion-avatars.ts` | `TASK-actor-emotion-avatars-frontend`, `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` |
+| `src/frontend/alpine/actor-emotion-avatars.ts` | `TASK-actor-emotion-avatars-frontend`, `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin`, `TASK-group-chat-per-actor-emotion-avatar-resolution` |
 | `src/frontend/alpine/actor-entities.ts` | `FEAT-llm-enhance-outside-the-chat-composer`, `TASK-actor-notes-items-lore-frontend` |
 | `src/frontend/alpine/actor-licensing.ts` | `TASK-030`, `TASK-actor-licensing-frontend` |
 | `src/frontend/alpine/admin-audit.ts` | `BUG-admin-audit-pagination-uses-1-so-an-empty-result-set-reports`, `BUG-admin-audit-selectAll-schema-mismatch-empty`, `TASK-epic11-admin-settings-reconciliation`, `TASK-frontend-and-http-utils-type-safety-batch` |
@@ -841,7 +840,7 @@ output is byte-identical for identical inputs.
 | `src/frontend/alpine/model-manager.ts` | `FEAT-model-cards-with-metadata-panels-and-size-vram-surfacing`, `TASK-inference-browser-wllama-gguf`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-model-info-frontend` |
 | `src/frontend/alpine/mood.test.ts` | `TASK-aux-emotion-avatar`, `TASK-chat-avatar-resolver-outfit-aware`, `TEST-emotion-hook-to-avatarForMessage-integration` |
 | `src/frontend/alpine/mood.ts` | `TASK-emotion-avatar-message-binding`, `TASK-mood-core` |
-| `src/frontend/alpine/mood/avatars.ts` | `BUG-avatar-select-empty-throws-no-frontend-fallback`, `FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect`, `TASK-aux-emotion-avatar`, `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin`, `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh`, `TASK-chat-avatar-resolver-outfit-aware`, `TASK-messages-outfit-id-column`, `TEST-emotion-hook-to-avatarForMessage-integration`, `epic-emotion-avatar-message-binding`, `epic-reactive-actor-appearance` |
+| `src/frontend/alpine/mood/avatars.ts` | `BUG-avatar-select-empty-throws-no-frontend-fallback`, `FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect`, `TASK-aux-emotion-avatar`, `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin`, `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh`, `TASK-chat-avatar-resolver-outfit-aware`, `TASK-group-chat-per-actor-emotion-avatar-resolution`, `TASK-messages-outfit-id-column`, `TEST-emotion-hook-to-avatarForMessage-integration`, `epic-emotion-avatar-message-binding`, `epic-reactive-actor-appearance` |
 | `src/frontend/alpine/new-chat.ts` | `FEAT-chat-template-config-lifecycle`, `epic-config-templates` |
 | `src/frontend/alpine/notifications.ts` | `FEAT-pwa-manifest-offline-shell`, `TASK-dedupe-sse-activity-stream` |
 | `src/frontend/alpine/npc-faction-mock.ts` | `TASK-faction-relation-graph-on-2d-canvas-backend-first`, `epic-faction-reputation` |
@@ -1008,7 +1007,6 @@ output is byte-identical for identical inputs.
 | `src/generation/continuation.ts` | `BUG-generation-continuation-maps-never-evicted-unbounded-process`, `BUG-module-level-in-memory-state-grows-without-eviction`, `epic-actor-turn-skip` |
 | `src/generation/controller.ts` | `BUG-generate-route-authorizes-chatid-but-not-actorid`, `BUG-generation-control-plane-routes-lack-authorization`, `TASK-clarify-prompt-improve-route-path-reconciliation`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-egui-sse-response-streaming-through-the-browser-bridge`, `TASK-illustrated-book-reference-pass`, `TASK-llm-scheduler-observability`, `TASK-server-emit-id-plus-retry-on-every-generation-sse-frame`, `epic-architecture` |
 | `src/generation/fallback.ts` | `FEAT-byok-api-keys`, `epic-byok-api-keys` |
-| `src/generation/flow-control.ts` | `TASK-immersion-gate-opt-in-llm-classifier`, `TASK-view-set-orbit-video-tier` |
 | `src/generation/generate-route.ts` | `FEAT-065-prompt-library-expanded`, `TASK-code-quality`, `TASK-response-length-control`, `TASK-split-generate-route`, `TASK-thinking-tag-context-prune` |
 | `src/generation/generate-route/actor-authorization.test.ts` | `BUG-generate-route-authorizes-chatid-but-not-actorid`, `BUG-plugin-tool-authorization-fails-open` |
 | `src/generation/generate-route/build-prompt.ts` | `BUG-group-participant-injection-absent-on-manual-generate-route`, `TASK-2026-openwebui-tool-valves-panel`, `TASK-context-lossless-lossy-tiering`, `epic-chat-context-optimization`, `epic-context-injection-correctness` |
@@ -1100,7 +1098,6 @@ output is byte-identical for identical inputs.
 | `src/generation/video-prompt-templates.ts` | `FEAT-065-sub-video`, `FEAT-065-template-system`, `TASK-video-template-schema` |
 | `src/generation/workflow-library/hydrate.ts` | `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders` |
 | `src/generation/workflow-library/row.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders` |
-| `src/generation/workflow-library/seed-parameters.ts` | `TASK-comfyui-parameter-map-derivation-from-marked-workflows`, `epic-reactive-actor-appearance` |
 | `src/generation/workflow-library/seed.ts` | `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders`, `epic-reactive-actor-appearance` |
 | `src/generation/workflow-library/validate.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `TASK-comfyui-node-discovery-template-autofilter`, `TASK-external-comfyui-plugin-repo-integration-contract` |
 | `src/generation/workflow-loader/loader.ts` | `TASK-comfyui-first-class-workflow-library`, `epic-comfyui-first-class-citizen`, `epic-comfyui-plugin`, `epic-configs-path-resolution` |
@@ -1410,7 +1407,7 @@ output is byte-identical for identical inputs.
 | `src/routes/build-id.ts` | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi`, `epic-browser-editor-support` |
 | `src/routes/character-avatars.test.ts` | `BUG-character-avatar-put-delete-idor-by-bare-avatarid`, `BUG-routes-character-avatars-subdir-is-shadowed-by-flat-file-cru` |
 | `src/routes/character-avatars.ts` | `BUG-character-avatar-put-delete-idor-by-bare-avatarid`, `BUG-routes-character-avatars-subdir-is-shadowed-by-flat-file-cru`, `TASK-character-avatar-gallery-binding`, `TASK-character-multi-avatar`, `TASK-gallery-editor-structured-ui` |
-| `src/routes/character-emotion-avatars.ts` | `BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-`, `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy`, `TASK-frontend-char-emotion-types-and-prompt-modifier`, `TASK-input-validation-battle-schema-less-post-emotion-avatars-par`, `epic-avatar-regeneration-control` |
+| `src/routes/character-emotion-avatars.ts` | `BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-`, `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy`, `TASK-emotion-avatar-job-restart-reconciliation`, `TASK-frontend-char-emotion-types-and-prompt-modifier`, `TASK-input-validation-battle-schema-less-post-emotion-avatars-par`, `epic-avatar-regeneration-control` |
 | `src/routes/character-emotions/actor.ts` | `BUG-character-emotions-get-delete-idor-no-actor-id-scoping`, `BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500`, `BUG-quest-and-story-state-handlers-read-ctx-userid-directly-retu`, `TASK-character-emotion-definitions-crud-ui`, `TASK-hoist-inline-route-response-schemas-to-exported-consts`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` |
 | `src/routes/character-emotions/definitions.ts` | `TASK-character-emotion-definitions-crud-ui`, `TASK-hoist-inline-route-response-schemas-to-exported-consts` |
 | `src/routes/character-growth/index.ts` | `BUG-character-growth-patch-confirm-reject-always-422-dead-endpoi`, `BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia`, `epic-character-growth` |
@@ -1651,7 +1648,7 @@ output is byte-identical for identical inputs.
 | `src/routes/vn-generate/index.ts` | `TASK-harness-reusable-chat-route-files-from-the-generate-route-pa`, `TASK-vn-dynamic-generation` |
 | `src/routes/vn-generate/questions.ts` | `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-`, `TASK-vn-qa-mode`, `epic-visual-novel-mode` |
 | `src/routes/vn-generate/story.ts` | `TASK-llm-markdown-document-prompts`, `TASK-route-plugin-calls-through-the-shared-provider-path`, `TASK-vn-dynamic-generation`, `epic-visual-novel-mode` |
-| `src/routes/wardrobe-avatars.ts` | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-rate-limit-misses-post-emotion-avatars-single`, `TASK-avatar-framing-column-migration-future`, `TASK-avatar-framing-tag-member`, `TASK-chat-avatar-resolver-outfit-aware`, `TASK-identity-lock-seed-negative-prompt-and-anchor`, `epic-avatar-regeneration-control` |
+| `src/routes/wardrobe-avatars.ts` | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-rate-limit-misses-post-emotion-avatars-single`, `TASK-avatar-framing-column-migration-future`, `TASK-avatar-framing-tag-member`, `TASK-chat-avatar-resolver-outfit-aware`, `TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests`, `TASK-identity-lock-seed-negative-prompt-and-anchor`, `epic-avatar-regeneration-control` |
 | `src/routes/wardrobe-overrides.ts` | `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh`, `TASK-item-side-outfit-change-trigger`, `TASK-outfit-change-gate-initiator-mapping`, `epic-reactive-actor-appearance` |
 | `src/routes/world-import/bundle.ts` | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-`, `BUG-community-share-missing-lorebook-export`, `BUG-world-bundle-import-untransacted-partial-import-corrupts-wor`, `BUG-world-import-quest-time-location-id-not-remapped-connections`, `TASK-markdown-heading-parse-and-import`, `epic-character-npc-lore-access` |
 | `src/routes/world-lore-entries.ts` | `BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact`, `FEAT-world-lore-entries-add-alpine-js-ui-for-crud`, `TASK-frontend-world-lore-entries-ui` |
@@ -1696,7 +1693,6 @@ output is byte-identical for identical inputs.
 | `src/rpg/crafting/station-types.ts` | `TASK-051`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` |
 | `src/rpg/crafting/stations.ts` | `TASK-051`, `TASK-053`, `epic-crafting-professions` |
 | `src/rpg/crime/pickpocket.ts` | `TASK-stealth-slash-interactions`, `epic-stealth-crime` |
-| `src/rpg/dice` | `TASK-immersion-gate-failed-check-enforcement`, `epic-immersion-consistency-gate` |
 | `src/rpg/dice.test.ts` | `TASK-rpg-mechanics-dice-stats`, `epic-rpg-mechanics` |
 | `src/rpg/dice.ts` | `TASK-038`, `TASK-040`, `TASK-resolution-family-decision`, `TASK-rpg-mechanics`, `TASK-rpg-mechanics-dice-stats`, `epic-rpg-mechanics` |
 | `src/rpg/dice/roll.ts` | `TASK-rpg-silent-catches-and-dice-modular-bias`, `TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history` |
@@ -1773,7 +1769,7 @@ output is byte-identical for identical inputs.
 | `src/rpg/service/world-gate.test.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` |
 | `src/rpg/service/world-gate.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui`, `TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s`, `epic-character-xp-leveling`, `epic-mechanics-governance` |
 | `src/rpg/service/xp.ts` | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `TASK-wire-xp-loot-routes`, `epic-character-xp-leveling`, `epic-rpg-core-wiring` |
-| `src/rpg/skills` | `TASK-immersion-gate-deterministic-rule-engine`, `TASK-sc10-player-state-machine-adapters`, `epic-immersion-consistency-gate` |
+| `src/rpg/skills` | `TASK-sc10-player-state-machine-adapters`, `epic-immersion-consistency-gate` |
 | `src/rpg/skills/index.ts` | `FEAT-skills`, `TASK-add-missing-rpg-module-barrels` |
 | `src/rpg/skills/service` | `TASK-040`, `TASK-add-missing-rpg-module-barrels`, `TASK-skill-biome-hazard-countermeasures`, `TASK-skill-check-slash-commands`, `epic-character-world-integration` |
 | `src/rpg/skills/service.test.ts` | `FEAT-skills`, `TASK-040`, `TASK-baseline-skills-seed-from-character-template`, `TASK-rpg-skill-combos-and-synergies`, `TASK-rpg-skill-points-on-level-up`, `TASK-rpg-skill-reset` |
@@ -1883,7 +1879,7 @@ output is byte-identical for identical inputs.
 | `src/story/game-master/narration.ts` | `BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat`, `BUG-encryption-tier-not-enforced`, `epic-narration-actor-separation` |
 | `src/story/gm/decisions/llm.ts` | `BUG-llmdecision-assembles-the-prompt-outside-the-try-block-so-an`, `FEAT-classifier-backed-actor-and-beat-selection-for-turn-decision`, `TASK-generation-error-handling-gaps-detector-abort-void-promises`, `TASK-llm-markdown-document-prompts` |
 | `src/story/index.ts` | `TASK-authoring-creation`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` |
-| `src/story/items` | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros`, `TASK-immersion-gate-deterministic-rule-engine`, `TASK-sc10-player-state-machine-adapters`, `epic-immersion-consistency-gate` |
+| `src/story/items` | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros`, `TASK-sc10-player-state-machine-adapters`, `epic-immersion-consistency-gate` |
 | `src/story/items/balance.ts` | `TASK-056`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `epic-item-system-extensions` |
 | `src/story/items/definitions.ts` | `BUG-item-definition-route-non-array-properties-effects-causes-un`, `BUG-story-items-cross-world-idor-read-transfer-destroy`, `TASK-049`, `TASK-050`, `TASK-054`, `TASK-055`, `epic-item-systems-unification` |
 | `src/story/items/effects.ts` | `BUG-item-definition-route-non-array-properties-effects-causes-un`, `TASK-052`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `epic-item-system-extensions`, `epic-items` |
@@ -1956,7 +1952,7 @@ output is byte-identical for identical inputs.
 | `src/tui/models-display.ts` | `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene`, `TASK-tui-models-overlay` |
 | `src/tui/models-overlay.ts` | `TASK-tui-fire-and-forget-void-without-catch`, `TASK-tui-models-overlay`, `epic-terminal-ui` |
 | `src/tui/nsfw-filter.test.ts` | `TASK-tui`, `TASK-tui-shell-testability` |
-| `src/turning` | `TASK-immersion-gate-refusal-narration-path`, `epic-emergent-narrative-design`, `epic-rpg-patterns` |
+| `src/turning` | `epic-emergent-narrative-design`, `epic-rpg-patterns` |
 | `src/turning/classifier-selection.ts` | `BUG-extractjsonobject-slices-an-unbounded-llm-response-before-js`, `TASK-outfit-change-aux-task-and-typebox-schema` |
 | `src/turning/skip-cooldown.ts` | `TASK-chat-feature-turn-talkativity-skip`, `TASK-fetchskipcooldowns-issues-one-query-per-cooling-actor` |
 | `src/turning/turn-manager.test.ts` | `BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c`, `BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` |
@@ -2853,6 +2849,8 @@ output is byte-identical for identical inputs.
 | `epic-avatar-dogfood` | owns | `TASK-avatar-dogfood-webp-export` | - |
 | `epic-avatar-regeneration-control` | owns | `BUG-rate-limit-misses-post-emotion-avatars-single` | - |
 | `epic-avatar-regeneration-control` | owns | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | - |
+| `epic-avatar-regeneration-control` | owns | `TASK-emotion-avatar-job-restart-reconciliation` | - |
+| `epic-avatar-regeneration-control` | owns | `TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests` | - |
 | `epic-avatar-regeneration-control` | owns | `TASK-generation-seed-capture-and-override-per-avatar` | - |
 | `epic-avatar-regeneration-control` | owns | `TASK-persistent-regen-job-store-migration` | - |
 | `epic-avatar-regeneration-control` | owns | `TASK-regen-routes-and-job-status-endpoints` | - |
@@ -3282,24 +3280,15 @@ output is byte-identical for identical inputs.
 | `epic-comfyui-first-class-citizen` | owns | `TASK-comfyui-node-id-allocation` | - |
 | `epic-comfyui-first-class-citizen` | owns | `TASK-comfyui-output-directory-config` | - |
 | `epic-comfyui-first-class-citizen` | owns | `TASK-comfyui-parameter-form-renderer` | - |
-| `epic-comfyui-first-class-citizen` | owns | `TASK-comfyui-parameter-map-derivation-from-marked-workflows` | - |
 | `epic-comfyui-first-class-citizen` | owns | `TASK-comfyui-sampler-scheduler-discovery` | - |
 | `epic-comfyui-first-class-citizen` | owns | `TASK-comfyui-template-parameter-validation` | - |
-| `epic-comfyui-first-class-citizen` | owns | `TASK-comfyui-workflow-acceptance-probe-scaffold` | - |
 | `epic-comfyui-first-class-citizen` | owns | `TASK-comfyui-workflow-parameterization` | - |
 | `epic-comfyui-first-class-citizen` | owns | `TASK-consolidate-image-gen-route-to-persistgeneratedimages` | - |
-| `epic-comfyui-first-class-citizen` | owns | `TASK-face-detailer-refinement-tier` | - |
 | `epic-comfyui-first-class-citizen` | owns | `TASK-implement-entity-based-asset-access-via-asset-links` | - |
-| `epic-comfyui-first-class-citizen` | owns | `TASK-krea-moodboard-style-conditioning-templates` | - |
-| `epic-comfyui-first-class-citizen` | owns | `TASK-moss-plus-anima-family-templates-from-operator-workflows` | - |
-| `epic-comfyui-first-class-citizen` | owns | `TASK-qwenvl-in-graph-prompt-enhancer` | - |
 | `epic-comfyui-first-class-citizen` | owns | `TASK-ui-api-workflow-converter` | - |
-| `epic-comfyui-first-class-citizen` | owns | `TASK-vaedegrid-post-decode-cleanup-stage` | - |
-| `epic-comfyui-first-class-citizen` | owns | `TASK-workflow-library-ui-format-ingest` | - |
 | `epic-comfyui-lifecycle` | owns | `TASK-comfyui-launch-contract-llama-swap-recipe-and-docs` | - |
 | `epic-comfyui-lifecycle` | owns | `TASK-fork-adapter-contract` | - |
 | `epic-comfyui-lifecycle` | owns | `TASK-generic-rebase-guard-checklist` | - |
-| `epic-comfyui-lifecycle` | owns | `TASK-track-upstream-comfyui-memory-leak-issues-fixes` | - |
 | `epic-comfyui-plugin` | owns | `BUG-image-edit-provider-and-template-capabilities-disagree` | - |
 | `epic-comfyui-plugin` | owns | `BUG-image-edit-run-crashes-on-missing-params-and-the-template-re` | - |
 | `epic-comfyui-plugin` | owns | `BUG-sd-server-edit-returns-synthetic-asset-urls-that-404` | - |
@@ -3609,6 +3598,7 @@ output is byte-identical for identical inputs.
 | `epic-emotion-avatar-message-binding` | owns | `TASK-classifier-model-survey-message-intent-memory-ranking-emotio` | - |
 | `epic-emotion-avatar-message-binding` | owns | `TASK-emotion-avatar-message-binding` | - |
 | `epic-emotion-avatar-message-binding` | owns | `TASK-emotion-avatars-pipeline` | - |
+| `epic-emotion-avatar-message-binding` | owns | `TASK-group-chat-per-actor-emotion-avatar-resolution` | - |
 | `epic-emotion-avatar-message-binding` | owns | `TASK-mood-shift-delta-tuning-word-boundary` | - |
 | `epic-emotion-avatar-message-binding` | owns | `TEST-emotion-hook-to-avatarForMessage-integration` | - |
 | `epic-encryption-workflow` | owns | `BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans` | - |
@@ -4023,12 +4013,6 @@ output is byte-identical for identical inputs.
 | `epic-image-video-scenario-studio` | owns | `TASK-ivss-video-metadata-extractor` | - |
 | `epic-image-video-scenario-studio` | owns | `TASK-ivss-video-run-pipeline` | - |
 | `epic-immersion-consistency-gate` | owns | `TASK-action-applicability-gate` | - |
-| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-claim-extraction` | - |
-| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-config-surface-and-audit-log` | - |
-| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-deterministic-rule-engine` | - |
-| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-failed-check-enforcement` | - |
-| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-opt-in-llm-classifier` | - |
-| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-refusal-narration-path` | - |
 | `epic-immersion-consistency-gate` | owns | `TASK-sc1-perspective-gate-bypass` | - |
 | `epic-immersion-presentation` | owns | `TASK-chat-text-effects-overlays` | - |
 | `epic-immersion-presentation` | owns | `TASK-chat-visual-novel-mode` | - |
@@ -10226,7 +10210,6 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-output-directory-config` | produces | `src/services/server-external-manager/start-llama.ts` | - |
 | `TASK-comfyui-parameter-form-renderer` | produces | `src/generation/providers/comfyui-upload.ts` | - |
 | `TASK-comfyui-parameter-form-renderer` | produces | `src/image-edit/types.ts` | - |
-| `TASK-comfyui-parameter-map-derivation-from-marked-workflows` | produces | `src/generation/workflow-library/seed-parameters.ts` | - |
 | `TASK-comfyui-pbr-texture-set-generation` | produces | `src/generation/matting/service.ts` | - |
 | `TASK-comfyui-sam3-concept-mask-template` | produces | `src/image-edit/routes.ts` | - |
 | `TASK-comfyui-sam3-concept-mask-template` | produces | `src/image-edit/types.ts` | - |
@@ -11030,6 +11013,8 @@ output is byte-identical for identical inputs.
 | `TASK-embedding-vector-store` | produces | `src/rag/vector-store/weaviate.ts` | - |
 | `TASK-emit-exploration-encounter-triggered-from-the-discovery-even` | produces | `src/rpg/world-discovery/events.ts` | - |
 | `TASK-emoji-colon-format-frontend` | produces | `src/frontend/alpine/chat-utils/emoji.ts` | - |
+| `TASK-emotion-avatar-job-restart-reconciliation` | produces | `src/characters/services/emotion-avatar-service/job-store.ts` | - |
+| `TASK-emotion-avatar-job-restart-reconciliation` | produces | `src/routes/character-emotion-avatars.ts` | - |
 | `TASK-emotion-avatar-message-binding` | produces | `src/characters/services/avatar-service.ts` | - |
 | `TASK-emotion-avatar-message-binding` | produces | `src/chat/service.ts` | - |
 | `TASK-emotion-avatar-message-binding` | produces | `src/components/chat/message-list.html` | - |
@@ -11042,6 +11027,7 @@ output is byte-identical for identical inputs.
 | `TASK-emotion-avatar-message-binding` | produces | `src/generation/auto-gen.ts` | - |
 | `TASK-emotion-avatar-message-binding` | produces | `src/generation/hooks/emotion-hook.ts` | - |
 | `TASK-emotion-avatar-message-binding` | produces | `src/routes/chats.ts` | - |
+| `TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests` | produces | `src/routes/wardrobe-avatars.ts` | - |
 | `TASK-emotion-intent-detection` | produces | `src/assistant/emotion-detector.test.ts` | - |
 | `TASK-emotion-intent-detection` | produces | `src/assistant/emotion-detector.ts` | - |
 | `TASK-emotion-intent-detection` | produces | `src/assistant/prompt/sections/emotion-context.ts` | - |
@@ -11732,6 +11718,9 @@ output is byte-identical for identical inputs.
 | `TASK-group-chat-minors-from-2026-10-04-review` | produces | `src/generation/auto-gen/group-cascade.ts` | - |
 | `TASK-group-chat-minors-from-2026-10-04-review` | produces | `src/group-chat/group-chat-coverage.test.ts` | - |
 | `TASK-group-chat-minors-from-2026-10-04-review` | produces | `src/group-chat/mention-parser.ts` | - |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | produces | `src/chat/service/read.ts` | - |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | produces | `src/frontend/alpine/actor-emotion-avatars.ts` | - |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | produces | `src/frontend/alpine/mood/avatars.ts` | - |
 | `TASK-growth-epic-reconciliation` | produces | `src/frontend/character-growth-editor.ts` | - |
 | `TASK-growth-epic-reconciliation` | produces | `src/frontend/pages/characters-journey.ts` | - |
 | `TASK-growth-epic-reconciliation` | produces | `src/partials/characters/detail-modal.html` | - |
@@ -12037,13 +12026,6 @@ output is byte-identical for identical inputs.
 | `TASK-img2img-init-image-plumbing` | produces | `src/image-edit/templates/builtin/img2img.ts` | - |
 | `TASK-imgedit-in-chat-command` | produces | `src/assistant/commands/imgedit.ts` | - |
 | `TASK-imgedit-in-chat-command` | produces | `src/image-edit/routes.ts` | - |
-| `TASK-immersion-gate-config-surface-and-audit-log` | produces | `src/config/sections` | - |
-| `TASK-immersion-gate-deterministic-rule-engine` | produces | `src/rpg/skills` | - |
-| `TASK-immersion-gate-deterministic-rule-engine` | produces | `src/story/items` | - |
-| `TASK-immersion-gate-failed-check-enforcement` | produces | `src/battle/resolution-integration/checks.ts` | - |
-| `TASK-immersion-gate-failed-check-enforcement` | produces | `src/rpg/dice` | - |
-| `TASK-immersion-gate-opt-in-llm-classifier` | produces | `src/generation/flow-control.ts` | - |
-| `TASK-immersion-gate-refusal-narration-path` | produces | `src/turning` | - |
 | `TASK-implement-memory-decay-logic` | produces | `src/memory/purge.ts` | - |
 | `TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal` | produces | `src/crypto/e2e/key-pairs.ts` | - |
 | `TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal` | produces | `src/crypto/e2e/server-registry.ts` | - |
@@ -16342,7 +16324,6 @@ output is byte-identical for identical inputs.
 | `epic-image-video-scenario-studio` | produces | `src/assets/metadata.ts` | - |
 | `epic-image-video-scenario-studio` | produces | `src/memory/budget.ts` | - |
 | `epic-immersion-consistency-gate` | produces | `src/battle/resolution-integration/checks.ts` | - |
-| `epic-immersion-consistency-gate` | produces | `src/immersion/extract-claims.ts` | - |
 | `epic-immersion-consistency-gate` | produces | `src/regex` | - |
 | `epic-immersion-consistency-gate` | produces | `src/rpg/dice` | - |
 | `epic-immersion-consistency-gate` | produces | `src/rpg/skills` | - |
@@ -20793,6 +20774,7 @@ output is byte-identical for identical inputs.
 | `BUG-avatar-select-empty-throws-no-frontend-fallback` | sibling | `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh` | `src/frontend/alpine/mood/avatars.ts` |
 | `BUG-avatar-select-empty-throws-no-frontend-fallback` | sibling | `TASK-character-domain-residual-defects` | `src/characters/services/avatar-service/selection.ts` |
 | `BUG-avatar-select-empty-throws-no-frontend-fallback` | sibling | `TASK-chat-avatar-resolver-outfit-aware` | `src/characters/services/avatar-service/selection.ts; src/frontend/alpine/mood/avatars.ts` |
+| `BUG-avatar-select-empty-throws-no-frontend-fallback` | sibling | `TASK-group-chat-per-actor-emotion-avatar-resolution` | `src/frontend/alpine/mood/avatars.ts` |
 | `BUG-avatar-select-empty-throws-no-frontend-fallback` | sibling | `TASK-messages-outfit-id-column` | `src/frontend/alpine/mood/avatars.ts` |
 | `BUG-avatar-select-empty-throws-no-frontend-fallback` | sibling | `TEST-emotion-hook-to-avatarForMessage-integration` | `src/frontend/alpine/mood/avatars.ts` |
 | `BUG-avatar-select-empty-throws-no-frontend-fallback` | sibling | `epic-emotion-avatar-message-binding` | `src/frontend/alpine/mood/avatars.ts` |
@@ -21226,6 +21208,7 @@ output is byte-identical for identical inputs.
 | `BUG-bug-csrf-verification-accepts-cookie-only-token-defeating-do` | sibling | `TASK-adopt-bun-csrf-for-csrf-protection` | `src/middleware/csrf.ts` |
 | `BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-` | sibling | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-` | sibling | `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy` | `src/routes/character-emotion-avatars.ts` |
+| `BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-` | sibling | `TASK-frontend-char-emotion-types-and-prompt-modifier` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-` | sibling | `TASK-input-validation-battle-schema-less-post-emotion-avatars-par` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-` | sibling | `epic-avatar-regeneration-control` | `src/routes/character-emotion-avatars.ts` |
@@ -23834,6 +23817,8 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `TASK-comparison-comparability-validation` | `src/assets/service/read.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `TASK-derived-map-origin-links` | `src/generation/matting/service.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `TASK-doc-spec-emotion-avatars` | `src/characters/services/emotion-avatar-fallback.ts` |
+| `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/routes/character-emotion-avatars.ts` |
+| `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests` | `src/routes/wardrobe-avatars.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `TASK-frontend-char-emotion-types-and-prompt-modifier` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `TASK-ground-up-scene-generation-with-background` | `src/characters/services/emotion-avatar-fallback.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `TASK-guest-asset-public-reads-open-public-asset-access` | `src/assets/service/read.ts` |
@@ -23851,6 +23836,7 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `epic-encryption-workflow` | `src/assets/service/read.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `epic-guest-access` | `src/assets/service/read.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `epic-reactive-actor-appearance` | `src/characters/services/emotion-avatar-fallback.ts; src/characters/services/emotion-avatar-service/index.ts` |
+| `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy` | sibling | `TASK-frontend-char-emotion-types-and-prompt-modifier` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy` | sibling | `TASK-input-validation-battle-schema-less-post-emotion-avatars-par` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy` | sibling | `epic-avatar-regeneration-control` | `src/routes/character-emotion-avatars.ts` |
@@ -29077,6 +29063,7 @@ output is byte-identical for identical inputs.
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `TASK-avatar-framing-tag-member` | `src/routes/wardrobe-avatars.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `TASK-chat-avatar-resolver-outfit-aware` | `src/routes/wardrobe-avatars.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre` | `src/routes/v1/actors-surface.ts` |
+| `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests` | `src/routes/wardrobe-avatars.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `TASK-identity-lock-seed-negative-prompt-and-anchor` | `src/routes/wardrobe-avatars.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes` | `src/api-governance/rate-limiting/policies.ts` |
 | `BUG-rate-limit-misses-post-emotion-avatars-single` | sibling | `epic-achievements` | `src/routes/v1/actors-surface.ts` |
@@ -30865,6 +30852,7 @@ output is byte-identical for identical inputs.
 | `BUG-tool-call-result-no-frontend-rendering` | sibling | `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` | `src/generation/generate-route/tool-execution.ts` |
 | `BUG-tool-call-result-no-frontend-rendering` | sibling | `TASK-federation-offload-adopt-dispatch-in-the-chat-turn-call-site` | `src/generation/generate-route/stream-to-client.ts` |
 | `BUG-tool-call-result-no-frontend-rendering` | sibling | `TASK-gate-shadow-notes-status-x-visibility-composite` | `src/db/enums-core/messages.ts` |
+| `BUG-tool-call-result-no-frontend-rendering` | sibling | `TASK-group-chat-per-actor-emotion-avatar-resolution` | `src/chat/service/read.ts` |
 | `BUG-tool-call-result-no-frontend-rendering` | sibling | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | `src/chat/service/read.ts; src/routes/messages/read.ts` |
 | `BUG-tool-call-result-no-frontend-rendering` | sibling | `TASK-harness-lean-ctx-tools` | `src/generation/generate-route/tool-execution.ts` |
 | `BUG-tool-call-result-no-frontend-rendering` | sibling | `TASK-harness-tool-sandbox` | `src/generation/generate-route/tool-execution.ts` |
@@ -33171,6 +33159,7 @@ output is byte-identical for identical inputs.
 | `FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect` | sibling | `TASK-emotion-avatar-message-binding` | `src/components/chat/message-list.html` |
 | `FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect` | sibling | `TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing` | `src/components/chat/message-list.html` |
 | `FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect` | sibling | `TASK-frontend-story-mode-ui` | `src/components/chat/message-list.html` |
+| `FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect` | sibling | `TASK-group-chat-per-actor-emotion-avatar-resolution` | `src/frontend/alpine/mood/avatars.ts` |
 | `FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect` | sibling | `TASK-link-previews-unfurl` | `src/components/chat/message-list.html` |
 | `FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect` | sibling | `TASK-message-polls-votes` | `src/components/chat/message-list.html` |
 | `FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect` | sibling | `TASK-message-reactions-in-out-context` | `src/components/chat/message-list.html` |
@@ -34724,6 +34713,7 @@ output is byte-identical for identical inputs.
 | `IDEA-epic-tool-calling-mcp-2026-09-26` | sibling | `epic-plugin-system` | `src/plugins/registry.ts` |
 | `IDEA-epic-tool-calling-mcp-2026-09-26` | sibling | `epic-provider-plugin-ecosystem` | `src/plugins/registry.ts` |
 | `IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live` | sibling | `TASK-appearance-edit-vs-generation-strategy-selector` | `src/characters/services/emotion-avatar-service/generation.ts` |
+| `IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/characters/services/emotion-avatar-service/job-store.ts` |
 | `IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live` | sibling | `TASK-identity-lock-seed-negative-prompt-and-anchor` | `src/characters/services/emotion-avatar-service/generation.ts` |
 | `IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/characters/services/emotion-avatar-service/generation.ts` |
 | `IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live` | sibling | `epic-avatar-regeneration-control` | `src/characters/services/emotion-avatar-service/job-store.ts` |
@@ -35922,7 +35912,6 @@ output is byte-identical for identical inputs.
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-chat-composer-markdown-pre-render-preview-before-send` | `src/frontend/alpine` |
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-etl-dag-wrapped-ingest-with-idempotency-and-dlq` | `src/cron/dag` |
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-extract-application-services-per-context-routes-to-thin-adap` | `src/nsfw/moderation-service` |
-| `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-immersion-gate-deterministic-rule-engine` | `src/story/items` |
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-item-asset-avatar-display-in-inventory-trading-and-provision` | `src/routes/story-items` |
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-personas-impersonation-plan-docs-bookkeeping-sweep` | `src/frontend/alpine` |
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag` | `src/frontend/alpine` |
@@ -36487,6 +36476,7 @@ output is byte-identical for identical inputs.
 | `TASK-action-applicability-gate` | sibling | `epic-narrative-publishing-workflows` | `src/routes/messages/command.ts` |
 | `TASK-action-applicability-gate` | sibling | `epic-world-chat-channels-invites` | `src/group-chat/turn-selector.ts` |
 | `TASK-actor-emotion-avatars-frontend` | sibling | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | `src/frontend/alpine/actor-emotion-avatars.ts` |
+| `TASK-actor-emotion-avatars-frontend` | sibling | `TASK-group-chat-per-actor-emotion-avatar-resolution` | `src/frontend/alpine/actor-emotion-avatars.ts` |
 | `TASK-actor-item-service` | sibling | `TASK-actor-items-crud-ownership` | `src/routes/actor-items.ts` |
 | `TASK-actor-item-service` | sibling | `TASK-actors-api-routes` | `src/routes/actor-items.ts` |
 | `TASK-actor-item-service` | sibling | `TASK-actors-data-versioning` | `src/db/schema-core.ts` |
@@ -39546,6 +39536,7 @@ output is byte-identical for identical inputs.
 | `TASK-aux-emotion-avatar` | sibling | `TASK-encryption-browser-pre-encrypt` | `src/frontend/alpine/chat.ts` |
 | `TASK-aux-emotion-avatar` | sibling | `TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing` | `src/components/chat/message-list.html` |
 | `TASK-aux-emotion-avatar` | sibling | `TASK-frontend-story-mode-ui` | `src/components/chat/message-list.html` |
+| `TASK-aux-emotion-avatar` | sibling | `TASK-group-chat-per-actor-emotion-avatar-resolution` | `src/frontend/alpine/mood/avatars.ts` |
 | `TASK-aux-emotion-avatar` | sibling | `TASK-hook-result-payload-carry-context` | `src/generation/auto-gen/content-hooks.ts` |
 | `TASK-aux-emotion-avatar` | sibling | `TASK-link-previews-unfurl` | `src/components/chat/message-list.html` |
 | `TASK-aux-emotion-avatar` | sibling | `TASK-message-polls-votes` | `src/components/chat/message-list.html` |
@@ -39757,6 +39748,7 @@ output is byte-identical for identical inputs.
 | `TASK-aux-scene-context` | sibling | `epic-context-injection-correctness` | `src/assistant/prompt-assembler.ts` |
 | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | sibling | `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh` | `src/frontend/alpine/mood/avatars.ts` |
 | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | sibling | `TASK-chat-avatar-resolver-outfit-aware` | `src/frontend/alpine/mood/avatars.ts` |
+| `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | sibling | `TASK-group-chat-per-actor-emotion-avatar-resolution` | `src/frontend/alpine/actor-emotion-avatars.ts; src/frontend/alpine/mood/avatars.ts` |
 | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | sibling | `TASK-messages-outfit-id-column` | `src/frontend/alpine/mood/avatars.ts` |
 | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | sibling | `TEST-emotion-hook-to-avatarForMessage-integration` | `src/frontend/alpine/mood/avatars.ts` |
 | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | sibling | `epic-emotion-avatar-message-binding` | `src/frontend/alpine/mood/avatars.ts` |
@@ -39812,6 +39804,7 @@ output is byte-identical for identical inputs.
 | `TASK-avatar-framing-column-migration-future` | sibling | `TASK-comparison-cell-detail-metadata` | `src/db/enums-content.ts` |
 | `TASK-avatar-framing-column-migration-future` | sibling | `TASK-comparison-gallery-comparison-set-integration` | `src/db/enums-content.ts` |
 | `TASK-avatar-framing-column-migration-future` | sibling | `TASK-comparison-workflow-template-and-command` | `src/db/enums-content.ts` |
+| `TASK-avatar-framing-column-migration-future` | sibling | `TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests` | `src/routes/wardrobe-avatars.ts` |
 | `TASK-avatar-framing-column-migration-future` | sibling | `TASK-emotion-intent-detection` | `src/db/schema-character.ts` |
 | `TASK-avatar-framing-column-migration-future` | sibling | `TASK-encryption-asset-encryption-update` | `src/db/schema-content.ts` |
 | `TASK-avatar-framing-column-migration-future` | sibling | `TASK-encryption-asset-encryption` | `src/db/schema-content.ts` |
@@ -39863,6 +39856,7 @@ output is byte-identical for identical inputs.
 | `TASK-avatar-framing-tag-member` | sibling | `TASK-comparison-workflow-template-and-command` | `src/db/enums-content.ts` |
 | `TASK-avatar-framing-tag-member` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/components/chat/message-list.html` |
 | `TASK-avatar-framing-tag-member` | sibling | `TASK-emotion-avatar-message-binding` | `src/components/chat/message-list.html` |
+| `TASK-avatar-framing-tag-member` | sibling | `TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests` | `src/routes/wardrobe-avatars.ts` |
 | `TASK-avatar-framing-tag-member` | sibling | `TASK-emotion-intent-detection` | `src/db/schema-character.ts` |
 | `TASK-avatar-framing-tag-member` | sibling | `TASK-encryption-asset-encryption-update` | `src/db/schema-content.ts` |
 | `TASK-avatar-framing-tag-member` | sibling | `TASK-encryption-asset-encryption` | `src/db/schema-content.ts` |
@@ -40701,6 +40695,7 @@ output is byte-identical for identical inputs.
 | `TASK-c5-swarm-mergeable-skip-preservation-with-beat-reclaim-parke` | sibling | `TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-` | `src/federation/envelope.ts; src/federation/fan-out.ts` |
 | `TASK-c5-swarm-mergeable-skip-preservation-with-beat-reclaim-parke` | sibling | `epic-licensing` | `src/federation/fan-out.ts` |
 | `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh` | sibling | `TASK-chat-avatar-resolver-outfit-aware` | `src/frontend/alpine/mood/avatars.ts` |
+| `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh` | sibling | `TASK-group-chat-per-actor-emotion-avatar-resolution` | `src/frontend/alpine/mood/avatars.ts` |
 | `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh` | sibling | `TASK-item-side-outfit-change-trigger` | `src/characters/services/wardrobe/change-gate.ts; src/routes/wardrobe-overrides.ts` |
 | `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh` | sibling | `TASK-messages-outfit-id-column` | `src/frontend/alpine/mood/avatars.ts` |
 | `TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh` | sibling | `TASK-outfit-change-gate-initiator-mapping` | `src/characters/services/wardrobe/change-gate.ts; src/routes/wardrobe-overrides.ts` |
@@ -41353,8 +41348,10 @@ output is byte-identical for identical inputs.
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-coverage-waivers-for-3-modules-below-80-floor` | `src/frontend` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-db-read-path-benchmark-baseline` | `src/routes/messages/read.ts` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/frontend` |
+| `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests` | `src/routes/wardrobe-avatars.ts` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-equip-binds-outfit-write-side` | `src/characters/services/wardrobe/resolve.ts` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-equipment-stat-preview` | `src/frontend` |
+| `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-group-chat-per-actor-emotion-avatar-resolution` | `src/frontend/alpine/mood/avatars.ts` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | `src/routes/messages/read.ts` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-held-item-axis-data-model` | `src/characters/services/wardrobe/resolve.ts` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-held-item-whole-outfit-variant-axis` | `src/characters/services/wardrobe/selection-ladder.ts` |
@@ -42226,6 +42223,7 @@ output is byte-identical for identical inputs.
 | `TASK-chat-transfer-location` | sibling | `TASK-fix-actor-item-value-type` | `src/db/schema-core.ts` |
 | `TASK-chat-transfer-location` | sibling | `TASK-format-version-migration` | `src/chat/service.ts` |
 | `TASK-chat-transfer-location` | sibling | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | `src/db/schema-core.ts; src/db/schema-manifest.ts` |
+| `TASK-chat-transfer-location` | sibling | `TASK-group-chat-per-actor-emotion-avatar-resolution` | `src/chat/service/read.ts` |
 | `TASK-chat-transfer-location` | sibling | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | `src/chat/service/read.ts` |
 | `TASK-chat-transfer-location` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/chat-search/join.ts` |
 | `TASK-chat-transfer-location` | sibling | `TASK-harness-topic-session-attach` | `src/db/schema-manifest.ts` |
@@ -42975,7 +42973,6 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-parameter-form-renderer` | sibling | `TASK-reference-set-multi-image-upload` | `src/generation/providers/comfyui-upload.ts` |
 | `TASK-comfyui-parameter-form-renderer` | sibling | `epic-comfyui-first-class-citizen` | `src/image-edit/types.ts` |
 | `TASK-comfyui-parameter-form-renderer` | sibling | `epic-reactive-actor-appearance` | `src/generation/providers/comfyui-upload.ts` |
-| `TASK-comfyui-parameter-map-derivation-from-marked-workflows` | sibling | `epic-reactive-actor-appearance` | `src/generation/workflow-library/seed-parameters.ts` |
 | `TASK-comfyui-pbr-texture-set-generation` | sibling | `TASK-derived-map-origin-links` | `src/generation/matting/service.ts` |
 | `TASK-comfyui-pbr-texture-set-generation` | sibling | `TASK-held-item-axis-data-model` | `src/generation/matting/service.ts` |
 | `TASK-comfyui-pbr-texture-set-generation` | sibling | `TASK-multi-concept-segmentation-masks` | `src/generation/matting/service.ts` |
@@ -44869,7 +44866,6 @@ output is byte-identical for identical inputs.
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep` | `src/config/migrate-config.ts` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | `src/config/schema-class/env-map.ts` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/config/schema-class/env-map.ts` |
-| `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-immersion-gate-config-surface-and-audit-log` | `src/config/sections` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-integration-config-surface-schemas-example-toml-env-map` | `src/config/schema-class/env-map.ts; src/config/sections/integrations.ts` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr` | `src/config/schema-class/env-map.ts` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-optique-cli-tooling-integration` | `src/config/migrate-config.ts` |
@@ -45651,6 +45647,9 @@ output is byte-identical for identical inputs.
 | `TASK-emit-exploration-encounter-triggered-from-the-discovery-even` | sibling | `epic-exploration-discovery` | `src/rpg/world-discovery/events.ts` |
 | `TASK-emoji-colon-format-frontend` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/chat-utils/emoji.ts` |
 | `TASK-emoji-colon-format-frontend` | sibling | `epic-frontend-emoji-reactions` | `src/frontend/alpine/chat-utils/emoji.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-frontend-char-emotion-types-and-prompt-modifier` | `src/routes/character-emotion-avatars.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-input-validation-battle-schema-less-post-emotion-avatars-par` | `src/routes/character-emotion-avatars.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-avatar-regeneration-control` | `src/characters/services/emotion-avatar-service/job-store.ts; src/routes/character-emotion-avatars.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-emotion-intent-detection` | `src/generation/hooks/emotion-hook.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-encryption-access-management` | `src/routes/chats.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-encryption-browser-pre-encrypt` | `src/frontend/alpine/chat.ts` |
@@ -45735,6 +45734,8 @@ output is byte-identical for identical inputs.
 | `TASK-emotion-avatar-message-binding` | sibling | `epic-research-agency-decision` | `src/db/schema-core.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `epic-skills-professions-config` | `src/db/schema-core.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `epic-world-chat-channels-invites` | `src/db/schema-core.ts; src/generation/auto-gen.ts; src/routes/chats.ts` |
+| `TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests` | sibling | `TASK-identity-lock-seed-negative-prompt-and-anchor` | `src/routes/wardrobe-avatars.ts` |
+| `TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests` | sibling | `epic-avatar-regeneration-control` | `src/routes/wardrobe-avatars.ts` |
 | `TASK-emotion-intent-detection` | sibling | `TASK-emotions-avatar-edit-model` | `src/views/chat.html; src/views/settings.html` |
 | `TASK-emotion-intent-detection` | sibling | `TASK-encryption-browser-pre-encrypt` | `src/views/chat.html` |
 | `TASK-emotion-intent-detection` | sibling | `TASK-encryption-key-management-ui` | `src/views/settings.html` |
@@ -47748,6 +47749,14 @@ output is byte-identical for identical inputs.
 | `TASK-group-chat-minors-from-2026-10-04-review` | sibling | `epic-context-injection-correctness` | `src/group-chat/mention-parser.ts` |
 | `TASK-group-chat-minors-from-2026-10-04-review` | sibling | `epic-group-chat` | `src/generation/auto-gen/group-cascade.ts; src/group-chat/mention-parser.ts` |
 | `TASK-group-chat-minors-from-2026-10-04-review` | sibling | `epic-world-chat-channels-invites` | `src/group-chat/mention-parser.ts` |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | sibling | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | `src/chat/service/read.ts` |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/chat/service/read.ts` |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | sibling | `TASK-messages-outfit-id-column` | `src/frontend/alpine/mood/avatars.ts` |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | sibling | `TEST-emotion-hook-to-avatarForMessage-integration` | `src/chat/service/read.ts; src/frontend/alpine/mood/avatars.ts` |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | sibling | `epic-emotion-avatar-message-binding` | `src/frontend/alpine/mood/avatars.ts` |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | sibling | `epic-guest-access` | `src/chat/service/read.ts` |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | sibling | `epic-multilingual-carriage` | `src/chat/service/read.ts` |
+| `TASK-group-chat-per-actor-emotion-avatar-resolution` | sibling | `epic-reactive-actor-appearance` | `src/frontend/alpine/mood/avatars.ts` |
 | `TASK-growth-epic-reconciliation` | sibling | `TASK-nsfw-rating-enforcement` | `src/validation/schemas/actors.ts` |
 | `TASK-growth-epic-reconciliation` | sibling | `epic-character-growth` | `src/views/partials/character-growth-editor.html` |
 | `TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase` | sibling | `TASK-logging-separate-database-research` | `src/async/offload.ts` |
@@ -48672,14 +48681,6 @@ output is byte-identical for identical inputs.
 | `TASK-imgedit-in-chat-command` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/image-edit/routes.ts` |
 | `TASK-imgedit-in-chat-command` | sibling | `epic-comfyui-first-class-citizen` | `src/image-edit/routes.ts` |
 | `TASK-imgedit-in-chat-command` | sibling | `epic-reactive-actor-appearance` | `src/image-edit/routes.ts` |
-| `TASK-immersion-gate-deterministic-rule-engine` | sibling | `TASK-sc10-player-state-machine-adapters` | `src/rpg/skills; src/story/items` |
-| `TASK-immersion-gate-deterministic-rule-engine` | sibling | `epic-immersion-consistency-gate` | `src/rpg/skills; src/story/items` |
-| `TASK-immersion-gate-failed-check-enforcement` | sibling | `TASK-sc10-player-state-machine-adapters` | `src/battle/resolution-integration/checks.ts` |
-| `TASK-immersion-gate-failed-check-enforcement` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/battle/resolution-integration/checks.ts` |
-| `TASK-immersion-gate-failed-check-enforcement` | sibling | `epic-immersion-consistency-gate` | `src/battle/resolution-integration/checks.ts; src/rpg/dice` |
-| `TASK-immersion-gate-opt-in-llm-classifier` | sibling | `TASK-view-set-orbit-video-tier` | `src/generation/flow-control.ts` |
-| `TASK-immersion-gate-refusal-narration-path` | sibling | `epic-emergent-narrative-design` | `src/turning` |
-| `TASK-immersion-gate-refusal-narration-path` | sibling | `epic-rpg-patterns` | `src/turning` |
 | `TASK-implement-memory-decay-logic` | sibling | `TASK-memory-decay-logic` | `src/memory/purge.ts` |
 | `TASK-implement-memory-decay-logic` | sibling | `epic-crafting-professions` | `src/memory/purge.ts` |
 | `TASK-implement-memory-decay-logic` | sibling | `epic-cron-scheduler` | `src/memory/purge.ts` |
