@@ -3,7 +3,8 @@
 
 # TASK: Emotion-avatar regen atomicity and subset regression tests
 
-**Status:** In Progress
+**Status:** Done
+**Status Note:** [2026-10-30, worktree feat-emotion-avatar-completion] All three regression tests green in the default suite: subset re-roll leaves sibling asset ids untouched, failure-injection keeps the old variant bound, outfit-scoped replace never reaches other outfits or the base scope. No service changes needed — `runBatchGeneration` `replace` path already commits new avatars before unbinding olds (tests in `regen-atomicity.test.ts`, 3 pass). Scoped: `bun test src/characters/services/emotion-avatar-service/regen-atomicity.test.ts` (3 pass), `bun run typecheck` green.
 **Scope:** Emotion-Avatar Completion
 **Priority:** medium
 **Effort:** Medium
@@ -36,9 +37,9 @@ outfit-scoped regeneration.
 
 **Acceptance Criteria:**
 
-- [ ] Subset test asserts untouched sibling slots keep asset ids
-- [ ] Failure-injection test proves the old variant stays bound until
+- [x] Subset test asserts untouched sibling slots keep asset ids
+- [x] Failure-injection test proves the old variant stays bound until
   the new one commits
 
-- [ ] Outfit-scoped isolation test
-- [ ] Tests green in the default suite (no --isolate)
+- [x] Outfit-scoped isolation test
+- [x] Tests green in the default suite (no --isolate)

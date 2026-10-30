@@ -127,7 +127,7 @@ export async function runBatchGeneration(
   // no row behind, so the gallery can never misread a stillborn batch as
   // in-flight work.
   const config = loadConfig();
-  const sdConfig = pickSdProvider(config.generation.providers.sd, "generate",);
+  const sdConfig = opts.imageProvider ?? pickSdProvider(config.generation.providers.sd, "generate",);
   // Config-driven per-emotion intent/asset map consumed by prompt building.
   const avatarEmotions = config.templates.avatar.emotions;
 
