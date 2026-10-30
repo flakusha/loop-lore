@@ -1757,7 +1757,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2862 | 1285 | 47 | 877 | 29 | 0 | 624 |
+| (untagged) | 2862 | 1290 | 47 | 877 | 29 | 0 | 619 |
 
 ## By epic × status
 
@@ -1825,7 +1825,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | epic-battle-ui | 9 | 1 | 0 | 8 | 0 | 0 | 0 |
 | epic-benchmark-ci-regression | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-blog-system | 8 | 1 | 1 | 1 | 0 | 0 | 5 |
-| epic-browser-editor-support | 5 | 0 | 0 | 0 | 0 | 0 | 5 |
+| epic-browser-editor-support | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-byok-api-keys | 8 | 7 | 0 | 1 | 0 | 0 | 0 |
 | EPIC-byok-api-keys | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-byok-local-models | 10 | 2 | 0 | 3 | 0 | 0 | 5 |

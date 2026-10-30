@@ -27,3 +27,5 @@ Implemented alongside approach B in worktree feat-web-editor-support (slice 3). 
 **Evidence:** `buildTerminalSpawnRecord` unit-tested in `src/server/terminal-ws.test.ts` (taskType `harness`, pattern `web-terminal`, patternDetail `file=src/views/blog.html`, pid 4242, result `ok`, msg contains acting user) — part of the 26-pass S3 run. Append rides the existing `appendExecLog` path (never throws; covered by harness exec-log tests). CHANGELOG bullet + ticket context record the `recordExecRun` → `appendExecLog` name deviation.
 
 git issue: 5669358
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 5669358 (registry tip: 7288961b7 Konstantin Fedotov Close issue)

@@ -25,3 +25,5 @@ Shipped 2026-10-30. `isWithin` (src/utils/is-within.ts) resolves through realpat
 - [x] Documentation updated — CHANGELOG.md Unreleased/Added entry; ticket + epic ACs ticked.
 
 git issue: f63d7d9
+
+**Resolved:** 2026-10-30 registry-driven close: git issue f63d7d9 (registry tip: 2f40f3f9a Konstantin Fedotov Close issue)

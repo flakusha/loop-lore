@@ -13051,6 +13051,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-template-actions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md"
     }
   ],
   "src/components/chat/chat.html": [
@@ -13643,6 +13647,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md"
     },
     {
       "kind": "ticket",
@@ -15577,10 +15585,20 @@
       "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
     }
   ],
+  "src/config/sections/web.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-config-section-plus-bun-floor-web-editor-web-term.md"
+    }
+  ],
   "src/config/sections/web.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-config-section-plus-bun-floor-web-editor-web-term.md"
     }
   ],
   "src/config/seeding.ts": [
@@ -24035,6 +24053,12 @@
       "source": ".plan/tickets/TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave.md"
     }
   ],
+  "src/frontend/alpine/admin-harness-rows.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md"
+    }
+  ],
   "src/frontend/alpine/admin-models.ts": [
     {
       "kind": "ticket",
@@ -28381,6 +28405,22 @@
       "source": ".plan/tickets/TASK-nsfw-intimacy-interface.md"
     }
   ],
+  "src/frontend/open-in-editor.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md"
+    }
+  ],
+  "src/frontend/open-in-editor.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md"
+    }
+  ],
   "src/frontend/pages": [
     {
       "kind": "ticket",
@@ -29133,6 +29173,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-world-state.md"
+    }
+  ],
+  "src/frontend/terminal-panel.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md"
+    }
+  ],
+  "src/frontend/terminal-panel.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md"
     }
   ],
   "src/frontend/tests/i18n.test.ts": [
@@ -38615,6 +38667,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-migrate-text-surfaces-to-shared-primitives.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md"
     }
   ],
   "src/partials/characters/detail-modal.html": [
@@ -45061,6 +45117,18 @@
       "source": ".plan/tickets/BUG-shadow-and-whitenote-crud-open-to-any-chat-participant.md"
     }
   ],
+  "src/routes/harness/files.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md"
+    }
+  ],
+  "src/routes/harness/files.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md"
+    }
+  ],
   "src/routes/harness/index.ts": [
     {
       "kind": "ticket",
@@ -45069,6 +45137,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md"
     }
   ],
   "src/routes/health.ts": [
@@ -48943,6 +49015,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md"
     }
   ],
   "src/routes/views/character-edit-sections.ts": [
@@ -55081,6 +55157,28 @@
       "source": ".plan/tickets/BUG-static-asset-serving-never-applies-immutable-caching-and-cra.md"
     }
   ],
+  "src/server/terminal-ws-protocol.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md"
+    }
+  ],
+  "src/server/terminal-ws.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md"
+    }
+  ],
+  "src/server/terminal-ws.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md"
+    }
+  ],
   "src/server/watchdog/cli.ts": [
     {
       "kind": "epic",
@@ -58837,6 +58935,26 @@
       "source": ".plan/tickets/TASK-recursive-self-improvement-near-real-time-desktop-agent-play.md"
     }
   ],
+  "src/utils/is-within.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md"
+    }
+  ],
+  "src/utils/is-within.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md"
+    }
+  ],
   "src/utils/json-parse.ts": [
     {
       "kind": "ticket",
@@ -59949,6 +60067,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log.md"
     }
   ],
   "src/views/character-chat-list.html": [

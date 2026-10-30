@@ -27,3 +27,5 @@ S1 of the browser-editor epic. `src/config/sections/web.ts` (defaults + `WebSect
 - [x] Documentation updated — `configs/env.example.yaml` (web block) + `docs/spec/implementation.md` env table + CHANGELOG [Unreleased]/Added
 
 git issue: c9decab
+
+**Resolved:** 2026-10-30 registry-driven close: git issue c9decab (registry tip: 605ae2478 Konstantin Fedotov Close issue)
