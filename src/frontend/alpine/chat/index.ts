@@ -3,6 +3,7 @@
 
 // ── Chat page component (chat.html) — global bootstrap wiring ────
 import { jsonParseOr, } from "../json";
+import { mobileComposer, } from "../mobile-composer";
 import { chatState, } from "./bootstrap";
 
 const g = globalThis as Record<string, unknown>;
@@ -27,3 +28,6 @@ g.toggleGroupPause = async function() {
 // Register the chat page's reactive Alpine state (plain function kept on
 // globalThis so Alpine's x-data="chatState" resolves it as a component).
 globalThis.chatState = chatState;
+// Mobile sticky bottom composer (WIRE-frontend-mobile-sticky-bottom-composer):
+// the partial's x-data="mobileComposer()" resolves it as a component.
+g.mobileComposer = mobileComposer;
