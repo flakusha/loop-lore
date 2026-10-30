@@ -4,6 +4,7 @@
 // ── New Chat page: actor search, participant selection, form ──
 import { $, } from "../../dom";
 import { feFetch, } from "../../fe-fetch";
+import { applyEntryVariant, } from "./entry-point";
 import { bindMemoryHandlers, } from "./memory";
 import { bindSelectionHandlers, } from "./selection";
 import { createCtx, type NewChatCtx, } from "./state";
@@ -188,6 +189,11 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
       ctx.worldSelect.required = WORLD_REQUIRED_VARIANTS.has(ctx.variantSelect.value,);
     }
   };
+
+  // Entry-point branch: `/views/new-chat?variant=<id>` from an origin surface
+  // (Characters tab) preselects its taxonomy variant; the plain path stays
+  // standard. The sync below applies the disabled/world-required state.
+  applyEntryVariant(ctx.variantSelect, location.search,);
 
   ctx.variantSelect?.addEventListener("change", syncVariantControls,);
   syncVariantControls();
