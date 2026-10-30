@@ -19,8 +19,8 @@ import type { DB, } from "../../db/schema";
 import { DEFAULT_CONTEXT_WINDOW, } from "../../generation/context-window-config";
 import type { ModelInfo, } from "../../generation/providers/types";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertChats, insertMessages, } from "../../test-utils/insert-helpers";
-import { handleGetContext, } from "./handlers";
+import { insertActors, insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
+import { handleGetContext, handleRegenerateMessage, } from "./handlers";
 
 /** */
 function makeConfig(): Config {
@@ -192,5 +192,47 @@ describe("handleGetContext max-tokens resolution", () => {
 
     const maxTokens = await getMaxTokens(chatId,);
     expect(maxTokens,).toBe(128_000,);
+  });
+});
+
+describe("handleGetContext/handleRegenerateMessage — owners-set authority (epic-chat-multi-ownership)", () => {
+  test("handleGetContext 200: creator holds an owners row via insertChats", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const ownerId = await insertUsers(db, `owner-${crypto.randomUUID()}`, "Owner",);
+    const chatId = await insertChats(db, "Party", ownerId,);
+
+    const res = await handleGetContext(db, chatId, ownerId, "user", makeConfig(),);
+    expect(res.status,).toBe(200,);
+
+    sqlite.close();
+    await db.destroy();
+  });
+
+  test("handleGetContext 404: user without an owners row", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const ownerId = await insertUsers(db, `owner-${crypto.randomUUID()}`, "Owner",);
+    const outsiderId = await insertUsers(db, `out-${crypto.randomUUID()}`, "Outsider",);
+    const chatId = await insertChats(db, "Party", ownerId,);
+
+    const res = await handleGetContext(db, chatId, outsiderId, "user", makeConfig(),);
+    expect(res.status,).toBe(404,);
+
+    sqlite.close();
+    await db.destroy();
+  });
+
+  test("handleRegenerateMessage 404: user without an owners row", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const ownerId = await insertUsers(db, `owner-${crypto.randomUUID()}`, "Owner",);
+    const outsiderId = await insertUsers(db, `out-${crypto.randomUUID()}`, "Outsider",);
+    const actorId = await insertActors(db, "Speaker", { owner_id: ownerId, } as never,);
+    const chatId = await insertChats(db, "Party", ownerId,);
+    const messageId = await insertMessages(db, chatId, actorId, "assistant", "Hello",);
+
+    const res = await handleRegenerateMessage(db, chatId, messageId, undefined, outsiderId, "user",);
+    expect(res.status,).toBe(404,);
+
+    sqlite.close();
+    await db.destroy();
   });
 });
