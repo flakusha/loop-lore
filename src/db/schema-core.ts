@@ -2138,14 +2138,6 @@ export interface ChatOwners {
   reason: string | null;
 }
 
-// ── world_timeline_selections ────────────────────────────────────────────
-export interface WorldTimelineSelections {
-  user_id: string;
-  world_id: string;
-  timeline_id: string;
-  selected_at: string;
-}
-
 // ── resource_records ────────────────────────────────────────────
 export interface ResourceRecords {
   id: string;
@@ -2180,4 +2172,12 @@ export interface ResourceQuotaCounters {
   requests: Generated<number>;
   tokens: Generated<number>;
   updated_at: Generated<string>;
+}
+
+// ── world_timeline_selections ────────────────────────────────────────────
+export interface WorldTimelineSelections {
+  user_id: string;
+  world_id: string;
+  timeline_id: string;
+  selected_at: string;
 }

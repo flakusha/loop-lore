@@ -248,7 +248,27 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
     if (existing) {
       // Backup scheduling on the dedupe-hit path too: the upload resolved
       // to an existing row, still a completed upload. Failure-safe.
-      await scheduleAssetUploadBackup(database, { ownerId: input.ownerId, assetId: existing.id, contentHash, },);
+      // Payload carries assetId + contentHash (resolve keys) plus the row
+      // ref; quota forwards from the owner's active endpoint (fail-open).
+      let quota: { storageQuotaBytes?: number } = {};
+      try {
+        const { listStorageResources, } = await import("../../resource/external-storage");
+        const stores = await listStorageResources(database, input.ownerId,);
+        const active = stores.find((s,) => s.status === "active");
+        if (active && active.storageQuotaBytes > 0) { quota = { storageQuotaBytes: active.storageQuotaBytes, }; }
+      } catch { /* fail-open: schedule without a quota ceiling */ }
+
+      await scheduleAssetUploadBackup(database, {
+        ownerId: input.ownerId,
+        assetId: existing.id,
+        contentHash,
+        storagePath: existing.storage_path,
+        mimeType: existing.mime_type,
+        filename: existing.filename,
+        sizeBytes: existing.size_bytes,
+        ...quota,
+      },);
+
       return {
         asset: {
           id: existing.id,
@@ -281,7 +301,25 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
 
   // Backup scheduling: asset-upload snapshot after the row commits, keyed on
   // the dedupe hash. Failure-safe: logs and skips, never throws into upload.
-  await scheduleAssetUploadBackup(database, { ownerId: input.ownerId, assetId: asset.id, contentHash, },);
+  // Quota forwards from the owner's active endpoint (fail-open).
+  let freshQuota: { storageQuotaBytes?: number } = {};
+  try {
+    const { listStorageResources, } = await import("../../resource/external-storage");
+    const stores = await listStorageResources(database, input.ownerId,);
+    const active = stores.find((s,) => s.status === "active");
+    if (active && active.storageQuotaBytes > 0) { freshQuota = { storageQuotaBytes: active.storageQuotaBytes, }; }
+  } catch { /* fail-open: schedule without a quota ceiling */ }
+
+  await scheduleAssetUploadBackup(database, {
+    ownerId: input.ownerId,
+    assetId: asset.id,
+    contentHash,
+    storagePath: asset.storage_path,
+    mimeType: asset.mime_type,
+    filename: asset.filename,
+    sizeBytes: asset.size_bytes,
+    ...freshQuota,
+  },);
 
   return { asset, duplicate: false, };
 }

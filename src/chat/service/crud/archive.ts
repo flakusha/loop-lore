@@ -140,10 +140,21 @@ export async function archiveChat(
 
   // Backup scheduling: chat-end snapshot for the chat creator when external
   // storage is provisioned + enabled. Failure-safe: logs and skips, never
-  // throws into the archive flow.
+  // throws into the archive flow. The scheduler reads the live messages
+  // itself; the quota forwards from the owner's active storage endpoint
+  // (fail-open: forward nothing when the lookup fails or is empty).
   {
     const chat = await database.selectFrom("chats",).select("created_by",).where("id", "=", chatId,).executeTakeFirst();
-    await scheduleChatEndBackup(database, { ownerId: chat?.created_by ?? requesterId, chatId, },);
+    const ownerId = chat?.created_by ?? requesterId;
+    let quota: { storageQuotaBytes?: number } = {};
+    try {
+      const { listStorageResources, } = await import("../../../resource/external-storage");
+      const stores = await listStorageResources(database, ownerId,);
+      const active = stores.find((s,) => s.status === "active");
+      if (active && active.storageQuotaBytes > 0) { quota = { storageQuotaBytes: active.storageQuotaBytes, }; }
+    } catch { /* fail-open: schedule without a quota ceiling */ }
+
+    await scheduleChatEndBackup(database, { ownerId, chatId, ...quota, },);
   }
 
   return { ok: true, chatId, };

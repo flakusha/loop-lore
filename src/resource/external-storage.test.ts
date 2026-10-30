@@ -20,6 +20,7 @@ import {
   listBackups,
   listStorageResources,
   persistBackupHook,
+  pruneBackups,
   registerBackupHook,
   revokeStorageResource,
   testStorageResource,
@@ -137,6 +138,63 @@ describe("external-storage", () => {
     const after = await listBackups(testDb, "backup-hook-user", "chat",);
     expect(after,).toHaveLength(1,);
     expect(after[0]!.payload,).toBe('{"hook":1}',);
+  });
+
+  test("concurrent writeBackups under a tight quota serialize: exactly one wins", async () => {
+    const payload = "x".repeat(8,);
+    const results = await Promise.allSettled([
+      writeBackup(testDb, {
+        id: "race-1",
+        resourceType: "chat",
+        ownerId: "race-user",
+        payload,
+        storageQuotaBytes: 10,
+      },),
+      writeBackup(testDb, {
+        id: "race-2",
+        resourceType: "chat",
+        ownerId: "race-user",
+        payload,
+        storageQuotaBytes: 10,
+      },),
+    ],);
+
+    const wins = results.filter((r,) => r.status === "fulfilled");
+    expect(wins,).toHaveLength(1,);
+    const rows = await testDb
+      .selectFrom("backup_records",)
+      .select(["id",],)
+      .where("owner_id", "=", "race-user",)
+      .execute();
+
+    expect(rows,).toHaveLength(1,);
+    const used = payload.length;
+    expect(used,).toBeLessThanOrEqual(10,);
+  });
+
+  test("pruneBackups keeps the latest N per owner+type scope", async () => {
+    for (let i = 0; i < 5; i += 1) {
+      await writeBackup(testDb, {
+        id: `prune-${i}`,
+        resourceType: "chat",
+        ownerId: "prune-user",
+        payload: JSON.stringify({ n: i, },),
+      },);
+    }
+
+    // Distinct versions so ordering is deterministic.
+    for (let i = 0; i < 5; i += 1) {
+      await testDb
+        .updateTable("backup_records",)
+        .set({ version: i + 1, },)
+        .where("id", "=", `prune-${i}`,)
+        .execute();
+    }
+
+    const deleted = await pruneBackups(testDb, { ownerId: "prune-user", resourceType: "chat", keep: 2, },);
+    expect(deleted,).toBe(3,);
+    const rows = await listBackups(testDb, "prune-user", "chat",);
+    expect(rows.map((r,) => r.id).sort(),).toEqual(["prune-3", "prune-4",],);
   });
 
   test("backupHooks register and invoke", async () => {

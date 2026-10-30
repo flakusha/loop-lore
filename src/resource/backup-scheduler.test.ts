@@ -10,6 +10,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, destroyTestDb, } from "../test-utils/create-test-db";
+import { jsonStringifyOr, } from "../utils";
 import {
   configureBackupScheduling,
   isBackupSchedulingEnabled,
@@ -114,6 +115,88 @@ describe("backup-scheduler", () => {
     const r = await scheduleChatEndBackup(testDb, { ownerId: "sched-fail-user", chatId: "c1", },);
     expect(r,).toEqual({ scheduled: false, reason: "failed", },);
     expect(await listBackups(testDb, "sched-fail-user",),).toHaveLength(0,);
+    resetBackupScheduling();
+  });
+
+  test("owner opt-out (backupEnabled:false) skips while master stays enabled", async () => {
+    resetBackupScheduling();
+    await testDb.insertInto("users",).values({
+      id: "sched-optout-user",
+      username: "sched-optout-user",
+      display_name: "Opt Out",
+      settings: jsonStringifyOr({ backupEnabled: false, },),
+    },).execute();
+
+    await addStorageResource(testDb, {
+      id: "sched-store-optout",
+      ownerId: "sched-optout-user",
+      kind: "s3",
+      endpoint: "https://s3.example.com/b",
+      secret: "sk-test",
+    },);
+
+    configureBackupScheduling({ enabled: true, },);
+    const r = await scheduleChatEndBackup(testDb, { ownerId: "sched-optout-user", chatId: "c1", },);
+    expect(r,).toEqual({ scheduled: false, reason: "disabled", },);
+    expect(await listBackups(testDb, "sched-optout-user",),).toHaveLength(0,);
+    expect(isBackupSchedulingEnabled(),).toBe(true,);
+    resetBackupScheduling();
+  });
+
+  test("fail-open: missing owner row still schedules", async () => {
+    resetBackupScheduling();
+    await addStorageResource(testDb, {
+      id: "sched-store-failopen",
+      ownerId: "sched-ghost-user",
+      kind: "s3",
+      endpoint: "https://s3.example.com/b",
+      secret: "sk-test",
+    },);
+
+    configureBackupScheduling({ enabled: true, },);
+    const r = await scheduleChatEndBackup(testDb, { ownerId: "sched-ghost-user", chatId: "c1", },);
+    expect(r,).toEqual({ scheduled: true, },);
+    expect(await listBackups(testDb, "sched-ghost-user",),).toHaveLength(1,);
+    resetBackupScheduling();
+  });
+
+  test("chat payload round-trips messages and asset payload carries identifiers", async () => {
+    resetBackupScheduling();
+    await addStorageResource(testDb, {
+      id: "sched-store-payload",
+      ownerId: "sched-payload-user",
+      kind: "s3",
+      endpoint: "https://s3.example.com/b",
+      secret: "sk-test",
+    },);
+
+    configureBackupScheduling({ enabled: true, },);
+
+    await scheduleChatEndBackup(testDb, {
+      ownerId: "sched-payload-user",
+      chatId: "c-payload",
+      messages: [{ id: "m1", role: "user", content: "hello", },],
+    },);
+
+    await scheduleAssetUploadBackup(testDb, {
+      ownerId: "sched-payload-user",
+      assetId: "a-payload",
+      contentHash: "h-payload",
+      storagePath: "/tmp/a-payload",
+      mimeType: "image/png",
+    },);
+
+    const rows = await listBackups(testDb, "sched-payload-user",);
+    expect(rows,).toHaveLength(2,);
+    const chatRow = rows.find((r,) => r.resourceType === "chat")!;
+    const chatPayload = JSON.parse(chatRow.payload,) as { chatId: string; messages: unknown[] };
+    expect(chatPayload.chatId,).toBe("c-payload",);
+    expect(chatPayload.messages,).toHaveLength(1,);
+    const assetRow = rows.find((r,) => r.resourceType === "asset")!;
+    const assetPayload = JSON.parse(assetRow.payload,) as Record<string, string>;
+    expect(assetPayload.assetId,).toBe("a-payload",);
+    expect(assetPayload.contentHash,).toBe("h-payload",);
+    expect(assetPayload.storagePath,).toBe("/tmp/a-payload",);
     resetBackupScheduling();
   });
 
