@@ -3,7 +3,7 @@
 
 # TASK: Guest rate limiting + audit logging for guest reads
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-guest-access
