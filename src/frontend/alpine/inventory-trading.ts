@@ -17,6 +17,7 @@ import {
   emptyDraft,
   enrichInstances,
   ownedBy,
+  routeErrorMessage,
   rowsFromBody,
   rowsValue,
   selectedRows,
@@ -302,9 +303,9 @@ async function mutate(url: string, init: RequestInit,): Promise<{ ok: boolean; m
   try {
     const res = await apiFetch(url, init,);
     if (res.ok) { return { ok: true, }; }
-    const body = (await res.json().catch(() => ({}))) as { message?: string };
+    const reason = routeErrorMessage(await res.json().catch(() => ({})), "",);
 
-    return { ok: false, message: body.message, };
+    return { ok: false, message: reason.length > 0 ? reason : undefined, };
   } catch (error) {
     log.error("NPC trade request failed", error instanceof Error ? error : undefined, { url, },);
 
