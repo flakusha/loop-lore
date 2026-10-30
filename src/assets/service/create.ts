@@ -8,6 +8,7 @@ import type { AnyColumn, } from "kysely";
 import { encryptAssetBlob, } from "../../crypto/asset-encryption";
 import { AssetVisibility, StorageBackend, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { scheduleAssetUploadBackup, } from "../../resource/backup-scheduler";
 import { uid, } from "../../utils";
 import { isEncryptedAsset, } from "../encryption";
 import { extractImageMetadata, } from "../metadata";
@@ -245,6 +246,9 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       : base.where("encrypted_key_id", "=", encryptedKeyId,)).executeTakeFirst();
 
     if (existing) {
+      // Backup scheduling on the dedupe-hit path too: the upload resolved
+      // to an existing row, still a completed upload. Failure-safe.
+      await scheduleAssetUploadBackup(database, { ownerId: input.ownerId, assetId: existing.id, contentHash, },);
       return {
         asset: {
           id: existing.id,
@@ -274,6 +278,10 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
   if (input.mimeType.startsWith("image/",)) {
     await seedBaseTransform(database, id,);
   }
+
+  // Backup scheduling: asset-upload snapshot after the row commits, keyed on
+  // the dedupe hash. Failure-safe: logs and skips, never throws into upload.
+  await scheduleAssetUploadBackup(database, { ownerId: input.ownerId, assetId: asset.id, contentHash, },);
 
   return { asset, duplicate: false, };
 }
