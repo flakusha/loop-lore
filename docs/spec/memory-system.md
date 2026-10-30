@@ -27,7 +27,7 @@
 
 Secret memories (`privacy: secret`) evaluate shareability FIRST and skip the scope check entirely — a trusted viewer receives a secret regardless of party/timeline scope (pre-existing semantic, now covering the new scopes too).
 
-**Timeline binding**: `actor_memories.timeline_id` (migration `084_actor_memories_timeline_id`; plain slug, no FK). NULL = timeline-AGNOSTIC — visible in every timeline. It is both the backfilled state of all pre-084 rows (existing visibility unchanged) and the explicit cross-timeline sharing exception ("GM-created lore or rare events seed knowledge across timelines"). New rows are bound at extraction: `storeMemories` copies the source chat's `chats.timeline_id` (NOT NULL DEFAULT 'prime', migration `048_chats_timeline_id`); an unresolvable chat row stores NULL.
+**Timeline binding**: `actor_memories.timeline_id` (migration `085_actor_memories_timeline_id`; plain slug, no FK). NULL = timeline-AGNOSTIC — visible in every timeline. It is both the backfilled state of all pre-085 rows (existing visibility unchanged) and the explicit cross-timeline sharing exception ("GM-created lore or rare events seed knowledge across timelines"). New rows are bound at extraction: `storeMemories` copies the source chat's `chats.timeline_id` (NOT NULL DEFAULT 'prime', migration `048_chats_timeline_id`); an unresolvable chat row stores NULL.
 
 **Injection filter**: `fetchActorMemories` (src/assistant/prompt/sections/memories-helpers.ts) applies `timeline_id IS NULL OR = :chatTimelineId` (chat's `chats.timeline_id`, 'prime' fallback) — the same convention as lore loading. The chat's timeline + party lineage are resolved by `resolveChatScopeContext` and carried on `ProvisionContext` (`timelineId`, `partyChatIds`).
 

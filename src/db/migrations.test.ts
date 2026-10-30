@@ -271,9 +271,12 @@ describe("migration numbering is sequential from 001", () => {
     // renumbered to 073/074 to avoid colliding with those claims. 081 is
     // parked on an unmerged sibling branch (observed there as `081_*`
     // during the immersion-gate work); 082 onwards were numbered past it
-    // so no two branches collide. Only numbers
+    // so no two branches collide. 084 is parked on the unmerged
+    // `feat-lore-knowledge` branch (`084_lore_reveal_condition_timeline_rarity`,
+    // authored first); the memory-propagation branch took 085 to avoid the
+    // collision. Only numbers
     // listed here may be absent; any other gap still fails below.
-    const PARKED = [58, 66, 71, 72, 81,];
+    const PARKED = [58, 66, 71, 72, 81, 84,];
     const parkedMissing = PARKED.filter((n,) => !prefixes.includes(n,));
     const expected = Array.from(
       { length: prefixes.length + parkedMissing.length, },
