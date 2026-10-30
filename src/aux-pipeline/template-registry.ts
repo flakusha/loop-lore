@@ -60,6 +60,109 @@ export function defineClassificationTask(
 
 /** Every aux decision point, keyed by task name. */
 export const AUX_CLASSIFICATION_TASKS: Readonly<Record<AuxTaskName, ClassificationTaskDef>> = {
+  transition: defineClassificationTask({
+    task: "transition",
+    purpose: "transition",
+    labels: ["location_change", "context_cut", "description",],
+    preferClassifier: true,
+    call: {},
+  },),
+  intent: defineClassificationTask({
+    task: "intent",
+    purpose: "intent",
+    labels: ["greeting", "question", "command", "roleplay", "narrative",],
+    preferClassifier: true,
+    call: {},
+  },),
+  memory: defineClassificationTask({
+    task: "memory",
+    purpose: "memory",
+    labels: ["episodic", "semantic", "procedural",],
+    preferClassifier: false,
+    call: { maxTokens: 200, },
+  },),
+  nsfw: defineClassificationTask({
+    task: "nsfw",
+    purpose: "nsfw",
+    labels: ["sfw", "nsfw_mild", "nsfw_moderate", "nsfw_intense", "nsfw_extreme",],
+    preferClassifier: true,
+    // Deterministic rating verdicts; small verdict JSON.
+    call: { temperature: 0, maxTokens: 50, },
+  },),
+  moderation: defineClassificationTask({
+    task: "moderation",
+    purpose: "moderation",
+    labels: ["severe", "moderate", "clean",],
+    preferClassifier: true,
+    // Deterministic severity verdicts; small verdict JSON.
+    call: { temperature: 0, maxTokens: 50, },
+  },),
+  "gm-tool": defineClassificationTask({
+    task: "gm-tool",
+    purpose: "gmTool",
+    labels: [
+      "roll_dice",
+      "check_stats",
+      "generate_npc",
+      "generate_item",
+      "modify_world",
+      "trigger_event",
+      "summarize",
+      "none",
+    ],
+    preferClassifier: true,
+    call: {},
+  },),
+  "prompt-improve": defineClassificationTask({
+    task: "prompt-improve",
+    purpose: null, // per-level factory prompt (`promptImproveSystemPrompt`)
+    labels: [],
+    preferClassifier: false,
+    call: { timeoutMs: 15_000, },
+  },),
+  "prompt-analysis": defineClassificationTask({
+    task: "prompt-analysis",
+    purpose: "promptAnalysis",
+    labels: ["statement", "question", "action", "narration", "ooc",],
+    preferClassifier: false,
+    call: { timeoutMs: 15_000, },
+  },),
+  "injection-check": defineClassificationTask({
+    task: "injection-check",
+    purpose: "injectionCheck",
+    labels: ["instruction_override", "role_hijack", "delimiter_smuggle", "exfiltration", "none",],
+    preferClassifier: true,
+    call: {},
+  },),
+  "message-action": defineClassificationTask({
+    task: "message-action",
+    purpose: null, // dead slot — no production caller (gm-tool wire-or-remove precedent)
+    labels: [],
+    preferClassifier: true,
+    call: {},
+  },),
+  "chat-title": defineClassificationTask({
+    task: "chat-title",
+    purpose: "chatTitle",
+    labels: [],
+    preferClassifier: false,
+    call: { maxTokens: 20, },
+  },),
+  "rag-ask": defineClassificationTask({
+    task: "rag-ask",
+    purpose: "ragAsk",
+    labels: [],
+    preferClassifier: false,
+    call: { maxTokens: 500, },
+  },),
+  carriage: defineClassificationTask({
+    task: "carriage",
+    purpose: "carriage",
+    labels: [],
+    preferClassifier: false,
+    // TOML ledger stays small; deterministic estimate.
+    call: { maxTokens: 800, },
+  },),
   adapt: defineClassificationTask({
     task: "adapt",
     // /adapt builds its system prompt inline (buildAdaptationPrompt) and
