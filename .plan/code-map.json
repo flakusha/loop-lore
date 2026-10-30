@@ -9564,6 +9564,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-check-sweep-across-single-owner-call-sites.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md"
     },
     {
@@ -10370,6 +10374,10 @@
   "src/chat/service": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-service-owners-set-ops-generalizing-transfer.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
     },
     {
@@ -10461,6 +10469,10 @@
   ],
   "src/chat/service/access-moderation.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-full-moderation-system-review-queue-reports-mod-role.md"
     },
@@ -10488,6 +10500,10 @@
     }
   ],
   "src/chat/service/access.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-guest-access.md"
@@ -10519,6 +10535,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-check-sweep-across-single-owner-call-sites.md"
     },
     {
       "kind": "ticket",
@@ -11164,6 +11184,10 @@
     }
   ],
   "src/chat/service/ownership.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
@@ -12896,6 +12920,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
     },
     {
@@ -12921,6 +12949,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-frontend-in-chat-settings.md"
     },
     {
       "kind": "ticket",
@@ -16750,6 +16782,10 @@
   "src/crypto/key-distribution.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
     },
     {
@@ -18305,6 +18341,12 @@
       "source": "docs/spec/schema.md"
     }
   ],
+  "src/db/enums/enums-core/actors.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    }
+  ],
   "src/db/fractal-locations-invariants.test.ts": [
     {
       "kind": "ticket",
@@ -18648,6 +18690,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-schema-and-backfill.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-migration-sequential-finalize-and-renumber-policy.md"
     }
   ],
@@ -18817,6 +18863,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
     },
     {
       "kind": "epic",
@@ -20817,6 +20867,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
     },
     {
       "kind": "epic",
@@ -24753,12 +24807,20 @@
   ],
   "src/frontend/alpine/chat-settings/ownership.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-ownership-transfer-button-is-shown-to-every-non-owner-who-th.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-frontend-in-chat-settings.md"
     }
   ],
   "src/frontend/alpine/chat-settings/persona.ts": [
@@ -43706,6 +43768,10 @@
     }
   ],
   "src/routes/chats/ownership.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-.md"

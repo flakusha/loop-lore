@@ -65,6 +65,7 @@
 | In Progress | Character XP, Leveling & Stat Progression in World | High | High | 0 | [epic-character-xp-leveling.md](/.plan/epics/epic-character-xp-leveling.md) |
 | Done | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
 | Done | Chat Lifecycle, Transitions & Moderation | High | High | 0 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
+| Not Started | Chat Multi-Ownership | High | Medium | 0 | [epic-chat-multi-ownership.md](/.plan/epics/epic-chat-multi-ownership.md) |
 | Not Started | Chat Product Features | High | High | 0 | [epic-chat-product-features.md](/.plan/epics/epic-chat-product-features.md) |
 | Not Started | Chat Rich Engagement (draft for new worktree) | Medium — messenger/AI parity gap | Medium | 0 | [epic-chat-rich-engagement.md](/.plan/epics/epic-chat-rich-engagement.md) |
 | Done | Chat Variants Taxonomy | High | Medium | 0 | [epic-chat-variants-taxonomy.md](/.plan/epics/epic-chat-variants-taxonomy.md) |
@@ -730,6 +731,8 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### Benchmark CI & Performance Regression Detection
 
 - **Status:** In Progress
@@ -870,6 +873,16 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 - **File:** `.plan/epics/epic-chat-lifecycle-moderation.md`
 
 Covers the full chat lifecycle beyond raw message exchange: context management
+
+
+### Chat Multi-Ownership
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** chat, ownership, access-control, moderation, audit
+- **File:** `.plan/epics/epic-chat-multi-ownership.md`
 
 ### Chat Product Features
 
@@ -2911,6 +2924,8 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### NSFW Interaction UI
 
 - **Status:** In Progress
@@ -3439,6 +3454,8 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 - **Type:** Feature Epic
 - **Tags:** schemas, reputation, consent, nsfw, shared, cross-system
 - **File:** `.plan/epics/epic-shared-schemas.md`
+
+### Current State Assessment
 
 ### Current State Assessment
 
