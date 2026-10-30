@@ -2002,6 +2002,7 @@
     "sum": "Summarize recent messages — alias for /summarize",
     "summarize": "Summarize recent messages",
     "target": "GM: pick the character to respond next (/target <character>)",
+    "timeline": "Manage world timeline branches (list/fork/switch)",
     "tl": "Translate text (/tl <lang> <text>) — alias for /translate",
     "translate": "Translate text (/translate <text> to <lang>)",
     "workflow": "Manage a multi-step workflow (/workflow [status|cancel|confirm])",
