@@ -4,6 +4,10 @@
 import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import type { InventoryItem, } from "../inventory/inventory-grid";
+import {
+  draftHasNoTerms,
+  isOpenOfferStatus,
+} from "../inventory/trade-offers";
 import { inventoryOffers, inventoryOffersFactory, stateFromOfferActors, } from "./inventory-offers";
 
 // ── Mock apiFetch (inventory-offers imports ./htmx) ──
@@ -175,7 +179,7 @@ describeOrSkip("inventory offers state", () => {
   test("acceptOffer arms confirm first, posts actorId second, wrong side surfaces the 400", async () => {
     handler = async (url: string, _opts?: RequestInit,) => {
       if (url.endsWith("/accept",)) {
-        return Response.json({ message: "wrong side", }, { status: 400, },);
+        return Response.json({ error: "wrong side", code: "BAD_REQUEST", }, { status: 400, },);
       }
 
       if (url.includes("/trade/offers?actorId=",)) {
@@ -259,6 +263,14 @@ describeOrSkip("inventory offers state", () => {
 
       return Response.json({ ok: true, },);
     };
+
+    expect(draftHasNoTerms(0, 0,),).toBe(true,);
+    expect(draftHasNoTerms(null, 0,),).toBe(true,);
+    expect(draftHasNoTerms(75, 0,),).toBe(false,);
+    expect(draftHasNoTerms(0, 1,),).toBe(false,);
+    expect(isOpenOfferStatus("pending",),).toBe(true,);
+    expect(isOpenOfferStatus("countered",),).toBe(true,);
+    expect(isOpenOfferStatus("accepted",),).toBe(false,);
 
     const state = stateFromOfferActors("world-1", "them",);
     await state.load();
@@ -353,6 +365,43 @@ describeOrSkip("inventory offers state", () => {
     expect(state.offers,).toEqual([],);
     expect(state.selectedOfferId,).toBeNull();
     expect(state._worldId,).toBe("world-2",);
+  });
+
+  test("createOffer with empty draft + unset price is a no-op with an error", async () => {
+    handler = async () => Response.json({ ok: true, },);
+
+    const state = stateFromOfferActors("world-1", "me",);
+    state.counterpartyId = "them";
+    await state.createOffer();
+    await flush();
+    expect(state.error.length > 0,).toBe(true,);
+    expect(calls.some((call,) => call.url.endsWith("/trade/offers",) && call.opts.method === "POST"),).toBe(false,);
+  });
+
+  test("loadOffers keeps only open offers; canActSelected gates the window buttons", async () => {
+    handler = async (url: string,) => {
+      if (url.includes("/trade/offers?actorId=",)) {
+        return Response.json({
+          offers: [
+            offerBody({ id: "open", status: "pending", buyerActorId: "me", sellerActorId: "them", },),
+            offerBody({ id: "closed", status: "accepted", buyerActorId: "me", sellerActorId: "them", },),
+          ],
+        },);
+      }
+
+      return Response.json({ data: [], },);
+    };
+
+    const state = stateFromOfferActors("world-1", "me",);
+    await state.loadOffers();
+    await flush();
+    expect(state.offers.map((offer,) => offer.id),).toEqual(["open",],);
+
+    state.offers = [offerBody({ id: "open", status: "pending", buyerActorId: "me", sellerActorId: "them", },),];
+    state.selectedOfferId = "open";
+    expect(state.canActSelected("cancel",),).toBe(true,);
+    expect(state.canActSelected("accept",),).toBe(false,);
+    expect(state.canActSelected("counter",),).toBe(true,);
   });
 },);
 

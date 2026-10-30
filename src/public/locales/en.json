@@ -1778,6 +1778,7 @@
     "tradeHistoryLoadFailed": "Failed to load trade history.",
     "tradeOfferCreateFailed": "Failed to create trade offer.",
     "tradeOfferCreated": "Trade offer created.",
+    "tradeOfferEmptyDraft": "Select items or set a price for the offer.",
     "tradeOfferCounterFailed": "Failed to counter trade offer.",
     "tradeOfferCountered": "Trade offer countered.",
     "tradeOfferCancelFailed": "Failed to cancel trade offer.",
