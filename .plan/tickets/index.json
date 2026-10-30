@@ -49376,7 +49376,7 @@
     "tags": []
   },
   "TASK-O-1-PLUGIN-ROUTE-DISPATCH-INDEX": {
-    "hash": "pending",
+    "hash": "1da795f",
     "extid": "TASK-O-1-PLUGIN-ROUTE-DISPATCH-INDEX",
     "type": "TASK",
     "title": "O(1) plugin route dispatch index",
@@ -49385,7 +49385,8 @@
     "epic": "epic-plugin-system",
     "tags": [],
     "source": ".plan/tickets/TASK-o-1-plugin-route-dispatch-index.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "1da795f"
   },
   "TASK-OBSERVABILITY-CONFIG-SECTION": {
     "epic": "epic-api-telemetry",

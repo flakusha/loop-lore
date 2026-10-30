@@ -4013,6 +4013,26 @@
       "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
     }
   ],
+  "src/assistant/lore/rarity-weight.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-lore-knowledge.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/lore.md"
+    }
+  ],
+  "src/assistant/lore/reveal-condition.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-lore-knowledge.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/lore.md"
+    }
+  ],
   "src/assistant/memory/injection.ts": [
     {
       "kind": "epic",
@@ -4761,6 +4781,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression.md"
+    }
+  ],
+  "src/assistant/prompt/sections/lore-reveal.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-lore-knowledge.md"
     }
   ],
   "src/assistant/prompt/sections/lore.test.ts": [
