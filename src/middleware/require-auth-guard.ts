@@ -53,7 +53,7 @@ const PUBLIC_ENTRIES: readonly AllowEntry[] = [
   { method: "POST", prefix: "/api/v1/battle/weather", },
   // HMAC trust (not session): verified per-request inside the handler.
   { method: "POST", prefix: "/api/v1/integrations/webhooks/", },
-  // Peer-credential trust: verified via assertTrustedPeer, not the session.
+  // Peer-credential trust: PSK proof / peer credential checked in-handler.
   { method: "POST", prefix: "/api/mesh-reserve", },
   { method: "POST", prefix: "/api/mesh-deliver", },
   { method: "POST", prefix: "/api/peer-work/run", },
