@@ -85,6 +85,12 @@ describe("getPartialContent — DB fallback", () => {
       created_by: "user-1",
     },).execute();
 
+    // Owners set is the authority source — mirror the production create path.
+    await testDb
+      .insertInto("chat_owners",)
+      .values({ chat_id: "chat-1", user_id: "user-1", },)
+      .execute();
+
     await testDb.insertInto("actors",).values({
       id: "actor-1",
       actor_type: "character",
@@ -202,6 +208,12 @@ describe("handleContinueGeneration", () => {
     await testDb
       .insertInto("chats",)
       .values({ id: "chat-1", name: "Test Chat", type: "direct", mode: "direct", created_by: "user-1", },)
+      .execute();
+
+    // Owners set is the authority source — mirror the production create path.
+    await testDb
+      .insertInto("chat_owners",)
+      .values({ chat_id: "chat-1", user_id: "user-1", },)
       .execute();
 
     await testDb
@@ -374,6 +386,12 @@ describe("handleRetryGeneration", () => {
       .values({ id: "chat-1", name: "Test Chat", type: "direct", mode: "direct", created_by: "user-1", },)
       .execute();
 
+    // Owners set is the authority source — mirror the production create path.
+    await testDb
+      .insertInto("chat_owners",)
+      .values({ chat_id: "chat-1", user_id: "user-1", },)
+      .execute();
+
     await testDb
       .insertInto("actors",)
       .values({
@@ -516,6 +534,12 @@ describe("cancelGeneration captures partial content", () => {
       mode: "direct",
       created_by: "user-1",
     },).execute();
+
+    // Owners set is the authority source — mirror the production create path.
+    await testDb
+      .insertInto("chat_owners",)
+      .values({ chat_id: "chat-cancel-test", user_id: "user-1", },)
+      .execute();
 
     await testDb.insertInto("actors",).values({
       id: "actor-1",
