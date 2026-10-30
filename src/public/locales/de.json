@@ -1681,7 +1681,12 @@
     "traitsNameRequired": "Name is required",
     "allocationLoadFailed": "Failed to load stat allocation",
     "allocationSaveFailed": "Failed to save stat allocation",
-    "allocationSaved": "Stat allocation saved"
+    "allocationSaved": "Stat allocation saved",
+    "inventoryLoadFailed": "Failed to load inventory.",
+    "inventoryEquipFailed": "Failed to equip item.",
+    "inventoryUnequipFailed": "Failed to unequip item.",
+    "inventoryDropFailed": "Failed to drop item.",
+    "inventoryTransferFailed": "Failed to transfer item."
   },
   "commands": {
     "modify": "Eine Entität vom Modell umschreiben lassen (/modify <kind> <id> \"Anfrage\")",
