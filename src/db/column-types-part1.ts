@@ -127,6 +127,7 @@ export const PART_1: Record<string, Record<string, string>> = {
     "detail_level": "TemplateDetailLevel",
     "is_default": "DefaultState",
     "enabled": "LoreEntryStatus",
+    "probe_status": "WorkflowProbeStatus",
   },
   "InstanceStorageBudgets": {
     "asset_class": "StorageBudgetScope",

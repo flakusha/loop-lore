@@ -9,11 +9,15 @@
  * `GET /api/v1/image-edit/templates` with no change to that route: it already
  * reads the registry, the registry just needs to learn about DB rows.
  */
+import type { WorkflowProbeStatus, } from "../../db/enums-generation";
 import type { WorkflowTemplate, } from "../../image-edit/types";
 import { jsonParseOr, } from "../../utils";
 import type { ComfyUINodeInfo, ComfyUIWorkflow, } from "../providers/comfyui";
 import type { WorkflowPayload, } from "../template-types";
 import { collectPlaceholders, substituteWorkflow, type SubstitutionVars, } from "../workflow-substitutor";
+
+/** Probe gate state for a workflow library row. Re-exported from the DB enum. */
+export type { WorkflowProbeStatus, } from "../../db/enums-generation";
 
 /** The columns a workflow library row needs. Matches the generated schema. */
 export interface WorkflowRow {
@@ -26,6 +30,18 @@ export interface WorkflowRow {
   enabled: string;
   lora_slots: string | null;
   min_vram: number | null;
+  /**
+   * Acceptance-probe gate state. Optional in memory (ingest builds rows
+   * before persistence); stored rows always carry the column default.
+   */
+  probe_status?: WorkflowProbeStatus;
+  /**
+   * Operator params-review flag, SQLite integer 0/1. Optional in memory
+   * for the same reason; stored rows default to 0.
+   */
+  params_reviewed?: number;
+  /** License fence text; null when the operator has not recorded one. */
+  license?: string | null;
 }
 
 /**
