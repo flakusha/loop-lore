@@ -20989,6 +20989,19 @@
     "source": ".plan/tickets/FEAT-header-only-safetensors-metadata-parser.md",
     "status": "Not Started"
   },
+  "FEAT-HUMAN-HYBRID-GM-CONFIG-AUTHORING-D3": {
+    "hash": "dcbd923",
+    "git_issue": "dcbd923",
+    "extid": "FEAT-HUMAN-HYBRID-GM-CONFIG-AUTHORING-D3",
+    "type": "FEAT",
+    "title": "Human/hybrid GM-config authoring (D3)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-human-hybrid-gm-config-authoring-d3.md",
+    "status": "Not Started"
+  },
   "FEAT-HUMAN-IN-THE-LOOP-APPROVAL-GATES": {
     "epic": "(none — proposed epic never materialized)",
     "extid": "FEAT-HUMAN-IN-THE-LOOP-APPROVAL-GATES",
@@ -28677,6 +28690,19 @@
     "title": "Auto Translation Layer",
     "type": "TASK"
   },
+  "TASK-AUTOMATED-NSFW-CONTENT-DETECTION-INTEGRATION": {
+    "hash": "7b4f85e",
+    "git_issue": "7b4f85e",
+    "extid": "TASK-AUTOMATED-NSFW-CONTENT-DETECTION-INTEGRATION",
+    "type": "TASK",
+    "title": "Automated NSFW content detection integration",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/TASK-automated-nsfw-content-detection-integration.md",
+    "status": "Not Started"
+  },
   "TASK-AUTONOMY-CONFIG-SURFACE": {
     "epic": "",
     "extid": "TASK-AUTONOMY-CONFIG-SURFACE",
@@ -32035,7 +32061,7 @@
     "label": "task",
     "priority": "P2-B",
     "source": ".plan/tickets/TASK-chat-branch-merge.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Chat Split/Reunite Engine (Party Branch & Merge)",
     "type": "TASK"
@@ -37176,6 +37202,19 @@
     "title": "E2E browser reliability hardening",
     "type": "TASK"
   },
+  "TASK-E2E-NSFW-APPEALS-AUDIT-ROUTES-COVERAGE": {
+    "hash": "00cf1da",
+    "git_issue": "00cf1da",
+    "extid": "TASK-E2E-NSFW-APPEALS-AUDIT-ROUTES-COVERAGE",
+    "type": "TASK",
+    "title": "e2e: nsfw appeals + audit routes coverage",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-nsfw-appeals-audit-routes-coverage.md",
+    "status": "Not Started"
+  },
   "TASK-E2E-PLAYWRIGHT-HARNESS": {
     "epic": "epic-testing-qa",
     "extid": "TASK-E2E-PLAYWRIGHT-HARNESS",
@@ -37794,6 +37833,19 @@
     "title": "`:...:` emoji shortcode support (frontend)",
     "type": "TASK"
   },
+  "TASK-EMOTION-AVATAR-JOB-RESTART-RECONCILIATION": {
+    "hash": "89091b4",
+    "git_issue": "89091b4",
+    "extid": "TASK-EMOTION-AVATAR-JOB-RESTART-RECONCILIATION",
+    "type": "TASK",
+    "title": "Emotion-avatar job restart reconciliation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-avatar-regeneration-control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-emotion-avatar-job-restart-reconciliation.md",
+    "status": "done"
+  },
   "TASK-EMOTION-AVATAR-MESSAGE-BINDING": {
     "epic": "epic-emotion-avatar-message-binding",
     "extid": "TASK-EMOTION-AVATAR-MESSAGE-BINDING",
@@ -37812,6 +37864,19 @@
     ],
     "title": "Emotion-Avatar Message Binding (persist + render)",
     "type": "TASK"
+  },
+  "TASK-EMOTION-AVATAR-REGEN-ATOMICITY-AND-SUBSET-REGRESSION-TESTS": {
+    "hash": "793a01d",
+    "git_issue": "793a01d",
+    "extid": "TASK-EMOTION-AVATAR-REGEN-ATOMICITY-AND-SUBSET-REGRESSION-TESTS",
+    "type": "TASK",
+    "title": "Emotion-avatar regen atomicity and subset regression tests",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-avatar-regeneration-control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md",
+    "status": "done"
   },
   "TASK-EMOTION-AVATARS-PIPELINE": {
     "epic": "epic-emotion-avatar-message-binding",
@@ -39068,6 +39133,19 @@
     "tags": [],
     "title": "Fail-Safe Execution & Work Safety",
     "type": "TASK"
+  },
+  "TASK-FALSE-REPORT-PROTECTION": {
+    "hash": "e2d659b",
+    "git_issue": "e2d659b",
+    "extid": "TASK-FALSE-REPORT-PROTECTION",
+    "type": "TASK",
+    "title": "False-report protection",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-nsfw-moderation-priority",
+    "tags": [],
+    "source": ".plan/tickets/TASK-false-report-protection.md",
+    "status": "Not Started"
   },
   "TASK-FANOUT-CHATID-DEFAULT-DENY": {
     "hash": "b990548",
@@ -41771,6 +41849,19 @@
     "tags": [],
     "title": "Group-chat minors from 2026-10-04 review",
     "type": "TASK"
+  },
+  "TASK-GROUP-CHAT-PER-ACTOR-EMOTION-AVATAR-RESOLUTION": {
+    "hash": "652c188",
+    "git_issue": "652c188",
+    "extid": "TASK-GROUP-CHAT-PER-ACTOR-EMOTION-AVATAR-RESOLUTION",
+    "type": "TASK",
+    "title": "Group-chat per-actor emotion-avatar resolution",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/TASK-group-chat-per-actor-emotion-avatar-resolution.md",
+    "status": "done"
   },
   "TASK-GROUP-CHAT-TURN-ORCHESTRATION": {
     "epic": "epic-group-chat",
@@ -53688,7 +53779,7 @@
     "epic": "epic-avatar-regeneration-control",
     "tags": [],
     "source": ".plan/tickets/TASK-reroll-emotion-command.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-RESEARCH-CHARACTER-SYSTEMS-LANDSCAPE": {
     "epic": "epic-character-core-system",
@@ -58860,7 +58951,7 @@
       "workflows"
     ],
     "source": ".plan/tickets/TASK-ui-api-workflow-converter.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-UNIFIED-HOLD-SEMANTICS-PER-CHAT-PAUSE-GATES-PRIMARY-GENERATE": {
     "epic": "epic-generation-flow-control",
@@ -61224,7 +61315,7 @@
     "label": "test",
     "priority": "P2",
     "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "test",
       "integration",

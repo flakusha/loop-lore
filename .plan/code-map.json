@@ -3557,7 +3557,17 @@
       "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
+  "src/assistant/commands/split.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
+    }
+  ],
   "src/assistant/commands/split.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-frontend-buttons-for-party-split-reunite-parity-with-sp.md"
@@ -8601,6 +8611,12 @@
       "source": "docs/spec/emotion-avatars.md"
     }
   ],
+  "src/characters/services/emotion-avatar-service/regen-atomicity.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md"
+    }
+  ],
   "src/characters/services/emotion-avatar-service/restart-reconcile.test.ts": [
     {
       "kind": "ticket",
@@ -11348,6 +11364,10 @@
     }
   ],
   "src/chat/service/split-validate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-frontend-buttons-for-party-split-reunite-parity-with-sp.md"
@@ -26132,6 +26152,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-group-chat-per-actor-emotion-avatar-resolution.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
     }
   ],
@@ -28897,6 +28921,12 @@
       "source": ".plan/tickets/TASK-frontend-lazy-vendor.md"
     }
   ],
+  "src/frontend/vn/choice-cards-consequences.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
+    }
+  ],
   "src/frontend/vn/choice-cards-render.ts": [
     {
       "kind": "ticket",
@@ -28931,6 +28961,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
     },
     {
       "kind": "ticket",
@@ -30639,6 +30673,12 @@
       "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
+  "src/generation/comfyui-converter/fixtures/README.md": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ui-api-workflow-converter.md"
+    }
+  ],
   "src/generation/context-compactor.ts": [
     {
       "kind": "epic",
@@ -30734,6 +30774,10 @@
     }
   ],
   "src/generation/emotion-avatar-pipeline.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
@@ -43330,6 +43374,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-location-change-event-log.md"
     },
     {
@@ -43643,6 +43691,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2d-world-review-canvas-click-to-vn-choice-card-payload-contr.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
     },
     {
       "kind": "ticket",
@@ -56943,6 +56995,12 @@
       "source": ".plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md"
     }
   ],
+  "src/tui/ansi.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/terminal-ui.md"
+    }
+  ],
   "src/tui/api-contract.test.ts": [
     {
       "kind": "ticket",
@@ -57167,10 +57225,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/terminal-ui.md"
     }
   ],
   "src/tui/chat/api.test.ts": [
@@ -57413,6 +57467,12 @@
       "source": ".plan/tickets/TASK-web-preserve-error-bodies-plus-per-chat-send-timeout-plus-st.md"
     }
   ],
+  "src/tui/frame.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/terminal-ui.md"
+    }
+  ],
   "src/tui/harness/api.test.ts": [
     {
       "kind": "ticket",
@@ -57549,6 +57609,12 @@
       "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
     }
   ],
+  "src/tui/menu.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/terminal-ui.md"
+    }
+  ],
   "src/tui/models-api.ts": [
     {
       "kind": "ticket",
@@ -57595,6 +57661,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
+    }
+  ],
+  "src/tui/pi.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/terminal-ui.md"
     }
   ],
   "src/turning": [
