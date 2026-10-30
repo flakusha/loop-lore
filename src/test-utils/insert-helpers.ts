@@ -6128,7 +6128,6 @@ export async function insertAssistantQuotaUsage(
   } as any,).execute();
   return id;
 }
-
 /** Insert a chat_owners row. */
 export async function insertChatOwners(
   db: Db,
