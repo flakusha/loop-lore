@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T13:18:19.626Z",
+  "generatedAt": "2026-10-30T13:19:50.895Z",
   "count": 1414,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
@@ -214,6 +214,7 @@
     "src/chat/service/ownership-events.ts#emitOwnershipTransferNotifications",
     "src/chat/service/party-narration.ts#injectPartyNarration",
     "src/chat/service/read.ts#getMessageVariants",
+    "src/chat/service/read.ts#getMessageWithAccess",
     "src/chat/service/split-utils.ts#copyMessagesToPrimary",
     "src/chat/service/split-utils.ts#createBranchChat",
     "src/chat/service/split-utils.ts#mergeParticipantsIntoPrimary",
@@ -412,6 +413,7 @@
     "src/db/enums-core/moderation.ts#ModerationFlagStatus",
     "src/db/enums-core/moderation.ts#NsfwAccessStatus",
     "src/db/enums-core/moderation.ts#nsfwAccessStatusMachine",
+    "src/db/enums-core/users.ts#ChatVisibility",
     "src/db/enums-core/users.ts#ThinkingVisibility",
     "src/db/enums-crafting.ts#CraftingDiscipline",
     "src/db/enums-crafting.ts#GatheringDiscipline",
@@ -652,8 +654,6 @@
     "src/frontend/preview-escape.ts#previewEscapeState",
     "src/frontend/stores/ui-store.ts#uiStoreDefinition",
     "src/frontend/tests/battle-fake-dom.ts#fire",
-    "src/frontend/tests/battle-fake-dom.ts#makeEl",
-    "src/frontend/tests/battle-fake-dom.ts#query",
     "src/frontend/vn/scene-renderer/stage.ts#createStage",
     "src/frontend/vn/settings.ts#resetVnSettings",
     "src/generation/assistant-tuning.ts#AUTO_GEN_DEFAULT_MAX_TOKENS",
