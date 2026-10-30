@@ -143,34 +143,29 @@ export interface AssembleChat {
   id: string;
   mode: string;
   world_id: string | null;
-  current_location_id: string | null;
   /**
-   * Timeline branch this chat plays on (084/epic-lore-knowledge consumers,
-   * e.g. timeline-scoped lore). Optional so hand-built test contexts stay
-   * valid; absent means the `chats.timeline_id` default ("prime").
+   * Chat's active timeline branch (chats.timeline_id, migration 048: the
+   * 'prime' slug or a world_timelines row id). Rides the AssembleChat
+   * projection so timeline-aware sections can scope to the branch; optional
+   * so direct section.build callers in tests stay world-scoped.
    */
   timeline_id?: string | null;
   output_style_preset?: string | null;
   gm_config?: string | null;
   response_length_preset?: string | null;
-  response_length_custom?: number | null;
   /**
    * Chat-level system prompt override (untrusted; set by the chat
    * creator). Tracked separately so `system.ts` can wrap it with a
    * `<untrusted_user_content>` marker — see TASK-character-world-prompt-
    * overrides-injected-verbatim-as-system.
    */
-  prompt_override?: string | null;
   /**
    * World-setup system prompt override applied to this actor in this
    * world (untrusted; set by the world creator). Tracked separately so
    * `system.ts` can wrap it.
    */
-  world_system_prompt_override?: string | null;
   /** Per-story custom instructions (story tier of the two-tier steering). */
-  custom_instructions?: string | null;
   /** Chat-level LLM prompt template override (FEAT-065-LLM). */
-  prompt_template_id?: string | null;
 }
 
 /** Shared inputs handed to every section builder. */

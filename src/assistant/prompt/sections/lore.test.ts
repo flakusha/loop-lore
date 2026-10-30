@@ -27,11 +27,13 @@ import {
   insertChats,
   insertMessages,
   insertUsers,
+  insertWorldEventSteerings,
   insertWorldLoreEntries,
   insertWorlds,
+  insertWorldTimelineEvents,
 } from "../../../test-utils/insert-helpers";
 import type { AssembleContext, } from "../types";
-import { loreSection, } from "./lore";
+import { loreSection, MAX_CONVERGENT_EVENTS, MAX_PROMPT_STEERINGS, } from "./lore";
 
 describe("loreSection — audience-constrained world-lore injection", () => {
   const elfLore = "The underground castle was abandoned centuries ago.";
@@ -722,6 +724,172 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
       expect(afterRender.last_verified,).toBe(afterRender.last_activated,);
     } finally {
       sqlite.close();
+    }
+  });
+});
+
+/**
+ * loreSection timeline injection (epic-timeline-system lore-injection AC):
+ * pending steerings inject as audience-scoped foreshadowing scoped to the
+ * chat's branch; convergent world events surface sibling stories while
+ * excluding the caller's own. Bracket sentinels survive wrapSection escaping
+ * like [disputed].
+ */
+describe("loreSection — timeline foreshadowing + convergence injection", () => {
+  const CHAT_ID = "chat-tl-a";
+
+  try {
+    createLogger({ level: "error", },);
+  } catch {
+    // Already initialized — ignore.
+  }
+
+  /**
+   * @param db
+   */
+  async function setupWorld(db: Kysely<DB>,): Promise<{ worldId: string; actorId: string }> {
+    await insertUsers(db, "gm", "GM",);
+    const user = await db.selectFrom("users",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+
+    await insertActors(db, "Seer",);
+    const actor = await db.selectFrom("actors",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+
+    await insertWorlds(db, user.id, "Timeline World",);
+    const world = await db.selectFrom("worlds",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+    return { worldId: world.id, actorId: actor.id, };
+  }
+
+  /**
+   * @param db
+   * @param worldId
+   * @param actorId
+   * @param timelineId — omit to simulate a caller without the chat projection
+   */
+  function ctxFor(db: Kysely<DB>, worldId: string, actorId: string, timelineId?: string,): AssembleContext {
+    return {
+      db,
+      actor: {
+        id: actorId,
+        display_name: "Seer",
+        system_prompt: null,
+        description: null,
+        personality: null,
+        scenario: null,
+        post_history_instructions: null,
+        mes_example: null,
+        agent_role: null,
+      },
+      chat: {
+        id: CHAT_ID,
+        mode: "story",
+        world_id: worldId,
+        timeline_id: timelineId ?? null,
+        current_location_id: null,
+      },
+      params: { actorId, chatId: CHAT_ID, modelId: "test-model", selectiveKeys: [], },
+      isStory: true,
+      tokenBudget: 4000,
+    };
+  }
+
+  test("injects pending steerings (branch + audience scoped) and sibling-story events", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const { worldId, actorId, } = await setupWorld(db,);
+
+      await insertWorldEventSteerings(db, worldId, "A comet approaches the valley.", {
+        timeline_id: "prime",
+        status: "pending",
+      },);
+
+      await insertWorldEventSteerings(db, worldId, "Elves-only omen.", {
+        timeline_id: "prime",
+        status: "pending",
+        audience_scope: JSON.stringify({ subject: { kind: "race", race: "dark elf", }, },),
+      },);
+
+      await insertWorldEventSteerings(db, worldId, "Dark-age fork omen.", {
+        timeline_id: "dark-age",
+        status: "pending",
+      },);
+
+      await insertWorldEventSteerings(db, worldId, "Already-manifested omen.", {
+        timeline_id: "prime",
+        status: "manifested",
+      },);
+
+      await insertWorldTimelineEvents(
+        db,
+        worldId,
+        "world_lore_update",
+        "The bridge burned in the east.",
+        "2024-06-01T00:00:00Z",
+        { story_id: "chat-tl-b", },
+      );
+
+      await insertWorldTimelineEvents(db, worldId, "world_lore_update", "Own scouting trip.", "2024-06-02T00:00:00Z", {
+        story_id: CHAT_ID,
+      },);
+
+      const text = (await loreSection.build(ctxFor(db, worldId, actorId, "prime",),)).map((m,) => m.content).join(
+        "\n",
+      );
+
+      expect(text,).toContain("[foreshadowing] A comet approaches the valley.",);
+      expect(text,).not.toContain("Elves-only omen",);
+      expect(text,).not.toContain("Dark-age fork omen",);
+      expect(text,).not.toContain("Already-manifested omen",);
+      expect(text,).toContain("[sibling story] The bridge burned in the east.",);
+      expect(text,).not.toContain("Own scouting trip",);
+    } finally {
+      await sqlite.close();
+    }
+  });
+
+  test("injection caps hold (5 steerings, 10 convergent events)", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const { worldId, actorId, } = await setupWorld(db,);
+
+      for (let i = 0; i < MAX_PROMPT_STEERINGS + 2; i++) {
+        await insertWorldEventSteerings(db, worldId, `Omen ${i}.`, { timeline_id: "prime", status: "pending", },);
+      }
+
+      for (let i = 0; i < MAX_CONVERGENT_EVENTS + 2; i++) {
+        await insertWorldTimelineEvents(
+          db,
+          worldId,
+          "world_lore_update",
+          `Sibling event ${i}.`,
+          `2024-05-${String(i + 1,).padStart(2, "0",)}T00:00:00Z`,
+          { story_id: "chat-tl-b", },
+        );
+      }
+
+      const text = (await loreSection.build(ctxFor(db, worldId, actorId, "prime",),)).map((m,) => m.content).join(
+        "\n",
+      );
+
+      expect(text.split("[foreshadowing]",).length - 1,).toBe(MAX_PROMPT_STEERINGS,);
+      expect(text.split("[sibling story]",).length - 1,).toBe(MAX_CONVERGENT_EVENTS,);
+    } finally {
+      await sqlite.close();
+    }
+  });
+
+  test("without a chat branch projection the section stays world-scoped", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const { worldId, actorId, } = await setupWorld(db,);
+      await insertWorldEventSteerings(db, worldId, "Dark-age fork omen.", {
+        timeline_id: "dark-age",
+        status: "pending",
+      },);
+
+      const text = (await loreSection.build(ctxFor(db, worldId, actorId,),)).map((m,) => m.content).join("\n",);
+      expect(text,).toContain("[foreshadowing] Dark-age fork omen.",);
+    } finally {
+      await sqlite.close();
     }
   });
 });
