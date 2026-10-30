@@ -932,24 +932,6 @@ describe("ChatOutfitOverrideBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_wardrobe.ChatOutfitOverrideBody,));
 });
 
-describe("ChatOwnerAddBody", () => {
-  test("accepts generated values", () => checkAllValid(validation_chat.ChatOwnerAddBody,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_chat.ChatOwnerAddBody,));
-});
-
-describe("ChatOwnerParams", () => {
-  test("accepts generated values", () => checkAllValid(validation_chat.ChatOwnerParams,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_chat.ChatOwnerParams,));
-});
-
-describe("ChatOwnerRemoveQuery", () => {
-  test("accepts generated values", () => checkAllValid(validation_chat.ChatOwnerRemoveQuery,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_chat.ChatOwnerRemoveQuery,));
-});
-
 describe("ChatParticipantParams", () => {
   test("accepts generated values", () => checkAllValid(validation_chat.ChatParticipantParams,));
 
@@ -2716,6 +2698,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// hint: Renamed and reformatted. Prefer the structural change, verify formatting.
-// hint: Cosmetic change on both sides. Pick either version or combine formatting.
-// 430 schemas discovered across 524 module(s).
+// 427 schemas discovered across 524 module(s).
