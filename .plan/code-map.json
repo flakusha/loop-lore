@@ -2750,6 +2750,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-legacy-backfill.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
     }
   ],
@@ -10907,6 +10911,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-locations-worlds-finalize-current-implementation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-legacy-backfill.md"
     },
     {
       "kind": "ticket",

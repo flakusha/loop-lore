@@ -13,8 +13,11 @@
  * `purpose IS NULL` identifies the legacy population exactly.
  *
  * Spec: .plan/tickets/TASK-chat-variant-legacy-backfill.md (mapping rules
- * table). Conservative classify-or-leave-NULL policy — rules run in order,
- * only on rows with `purpose IS NULL`, and only `purpose` is ever written:
+ * table). Conservative classify-or-leave-NULL policy — ONE single-pass
+ * UPDATE per direction, only on rows with `purpose IS NULL`, and only
+ * `purpose` is ever written. The R1/R2/R3 predicates are pairwise disjoint,
+ * so a precedence-ordered CASE (R1→R2→R3) classifies exactly as the ordered
+ * reading would:
  *   R1  world_id IS NOT NULL                          → 'rpg'         (11 rpg / 12 rpg_group by type)
  *   R2  world_id IS NULL AND mode = 'battle'          → 'validation'  (6 llm_only / 7 llm_only_group by type)
  *   R3  world_id IS NULL, non-battle, gm_config carries a `.validation` block
@@ -47,66 +50,57 @@ import { type Kysely, sql, } from "kysely";
 
 /** @param database */
 export async function up(database: Kysely<unknown>,): Promise<void> {
-  await database.transaction().execute(async (trx,) => {
-    // R1 — world-bound chats are RPG chats (variant 11 direct / 12 group).
-    await sql`
-      UPDATE chats
-      SET purpose = 'rpg'
-      WHERE purpose IS NULL
-        AND world_id IS NOT NULL
-    `.execute(trx,);
-
-    // R2 — battle mode without a world is the LLM↔LLM validation harness.
-    await sql`
-      UPDATE chats
-      SET purpose = 'validation'
-      WHERE purpose IS NULL
-        AND world_id IS NULL
-        AND mode = 'battle'
-    `.execute(trx,);
-
-    // R3 — a gm_config validation block only exists on the llm-only variants.
-    // json_valid keeps corrupted gm_config rows unclassified instead of erroring.
-    await sql`
-      UPDATE chats
-      SET purpose = 'validation'
-      WHERE purpose IS NULL
-        AND world_id IS NULL
+  // ONE statement, ONE pass: the R1/R2/R3 predicates are pairwise disjoint
+  // (world-bound / world-less battle / world-less non-battle harness), so a
+  // single precedence-ordered CASE classifies exactly as the ordered
+  // R1→R2→R3 reading would — without three sequential table scans. A single
+  // UPDATE is atomic on its own; the migrator wraps the migration besides.
+  await sql`
+    UPDATE chats
+    SET purpose = CASE
+      WHEN world_id IS NOT NULL THEN 'rpg'
+      WHEN world_id IS NULL AND mode = 'battle' THEN 'validation'
+      WHEN world_id IS NULL
         AND mode <> 'battle'
         AND gm_config IS NOT NULL
         AND json_valid(gm_config)
         AND json_extract(gm_config, '$.validation') IS NOT NULL
-    `.execute(trx,);
-  },);
+        THEN 'validation'
+      ELSE purpose
+    END
+    WHERE purpose IS NULL
+      AND (
+        world_id IS NOT NULL
+        OR mode = 'battle'
+        OR (
+          mode <> 'battle'
+          AND gm_config IS NOT NULL
+          AND json_valid(gm_config)
+          AND json_extract(gm_config, '$.validation') IS NOT NULL
+        )
+      )
+  `.execute(database,);
 }
 
 /** @param database */
 export async function down(database: Kysely<unknown>,): Promise<void> {
-  await database.transaction().execute(async (trx,) => {
-    await sql`
-      UPDATE chats
-      SET purpose = NULL
-      WHERE purpose = 'rpg'
-        AND world_id IS NOT NULL
-    `.execute(trx,);
-
-    await sql`
-      UPDATE chats
-      SET purpose = NULL
-      WHERE purpose = 'validation'
-        AND world_id IS NULL
-        AND mode = 'battle'
-    `.execute(trx,);
-
-    await sql`
-      UPDATE chats
-      SET purpose = NULL
-      WHERE purpose = 'validation'
-        AND world_id IS NULL
-        AND mode <> 'battle'
-        AND gm_config IS NOT NULL
-        AND json_valid(gm_config)
-        AND json_extract(gm_config, '$.validation') IS NOT NULL
-    `.execute(trx,);
-  },);
+  // Single-pass inverse: reset `purpose` on exactly the shapes up() wrote
+  // (same pairwise-disjoint predicates, value+shape conjuncts OR'd).
+  await sql`
+    UPDATE chats
+    SET purpose = NULL
+    WHERE purpose IS NOT NULL
+      AND (
+        (purpose = 'rpg' AND world_id IS NOT NULL)
+        OR (purpose = 'validation' AND world_id IS NULL AND mode = 'battle')
+        OR (
+          purpose = 'validation'
+          AND world_id IS NULL
+          AND mode <> 'battle'
+          AND gm_config IS NOT NULL
+          AND json_valid(gm_config)
+          AND json_extract(gm_config, '$.validation') IS NOT NULL
+        )
+      )
+  `.execute(database,);
 }
