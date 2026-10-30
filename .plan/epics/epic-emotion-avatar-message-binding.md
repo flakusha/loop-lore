@@ -81,13 +81,15 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
 - [x] Frontend: per-message rendering no longer mutates the global
       `_currentEmotionAvatar` mood-driven swap (pure resolver; mood-avatar
       stays for non-message areas)
-- [ ] Group chats: resolve the avatar per speaking actor instead of the chat's
-      current character
+- [x] Group chats: resolve the avatar per speaking actor instead of the chat's
+      current character (done 2026-10-30: per-actor `_emotionAvatarsByActor` +
+      `_actorBaseAvatars` maps; unknown-author messages keep the legacy
+      flat-list walk)
       → [`TASK-group-chat-per-actor-emotion-avatar-resolution.md`](../tickets/TASK-group-chat-per-actor-emotion-avatar-resolution.md)
 - [x] Tests: migration/schema-sync, message-persist (hook→`messages.emotion`),
       and frontend `avatarForMessage` resolution unit-tested
-- [ ] End-to-end integration test hook → `messages.emotion` →
-      `avatarForMessage` ([`TEST-emotion-hook-to-avatarForMessage-integration.md`](../tickets/TEST-emotion-hook-to-avatarForMessage-integration.md))
+- [x] End-to-end integration test hook → `messages.emotion` →
+      `avatarForMessage` ([`TEST-emotion-hook-to-avatarForMessage-integration.md`](../tickets/TEST-emotion-hook-to-avatarForMessage-integration.md)) (done 2026-10-30: `src/generation/emotion-avatar-pipeline.test.ts`, default suite)
 - [x] Reconcile related epics/tickets (`TASK-aux-emotion-avatar` status note
       updated to the binding model; `TASK-emotions-avatar-edit-model` and
       `TASK-character-mood-happiness` done; `FEAT-avatar-expression-system`
