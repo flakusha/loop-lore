@@ -3,7 +3,8 @@
 
 # TASK: ComfyUI workflow acceptance-probe scaffold
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Landed on feat-comfyui-param-derivation (owner-verified 2026-10-30): src/generation/comfyui-params/probe.ts + probe-generate.ts (plus probe/probe-generate tests), checklist-fields migration 082_prompt_templates_probe_checklist, validator converted-mode in src/generation/workflow-library/validate.ts, and admin wiring (ui-ingest.ts, create/update routes, seed repair leg).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen

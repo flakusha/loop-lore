@@ -3,7 +3,8 @@
 
 # TASK: ComfyUI parameter-map derivation from marked workflows
 
-**Status:** In Progress
+**Status:** Done
+**Status Note:** Landed on feat-comfyui-param-derivation (owner-verified 2026-10-30): src/generation/comfyui-params/ (marks.ts, type-map.ts, spec-shape.ts, sidecar.ts, inject.ts, derive.ts, types.ts, errors.ts, index.ts plus derivation/type-map tests) and the derivation docs section in docs/spec/integrations/image-generation.md.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen
