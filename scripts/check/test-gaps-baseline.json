@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-30T13:19:50.895Z",
-  "count": 1414,
+  "generatedAt": "2026-10-30T13:32:58.435Z",
+  "count": 1436,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
