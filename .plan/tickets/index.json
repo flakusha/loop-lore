@@ -54171,7 +54171,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-e2e.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "Resource Provision End-to-End",
     "type": "TASK"
@@ -54223,7 +54223,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-resource-provision-quota-ui.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "Quota UI & Admin Override",
     "type": "TASK"
@@ -54249,7 +54249,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-recovery.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "User-Confirmed Recovery & Backup Rotation",
     "type": "TASK"
@@ -54288,7 +54288,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-tests.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "Resource Provision Tests",
     "type": "TASK"
@@ -57938,7 +57938,7 @@
     "epic": "epic-timeline-system",
     "tags": [],
     "source": ".plan/tickets/TASK-timeline-in-chat-command.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-TIMELINE-MEMORY-INJECTION": {
     "epic": "epic-memory-propagation",
@@ -57974,7 +57974,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-timeline-selection-api.md",
-    "status": "draft",
+    "status": "done",
     "tags": [],
     "title": "Timeline selection API — backend endpoints",
     "type": "TASK"
@@ -57987,7 +57987,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [],
     "title": "Timeline steering: close roll race and empty timelineId gap",
     "type": "TASK"

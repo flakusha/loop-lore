@@ -47,3 +47,5 @@ POST   /api/worlds/:worldId/timelines/:id/select — set active timeline (sessio
 ## Dependencies
 
 - `world_timeline_events.timeline_id` migration (TASK-timeline-id-world-timeline-events)
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 0cc4bc6 (registry tip: c2945c0ac Konstantin Fedotov Close issue)

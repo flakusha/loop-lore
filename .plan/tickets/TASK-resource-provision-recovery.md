@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** large
 **Epic:** epic-resource-provision
@@ -51,3 +51,5 @@ so that stale backups are pruned while recent ones are retained.
 - [ ] Recovery audit log: each recovery records the backup ID,
   timestamp, and items restored
 - [ ] `bun run check` green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue edbeecd (registry tip: 893425982 Konstantin Fedotov Close issue)

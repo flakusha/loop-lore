@@ -1752,7 +1752,7 @@ Total tickets: **4208** — untagged: **2847** — unbound to epic: **1050**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2847 | 1277 | 48 | 881 | 30 | 0 | 611 |
+| (untagged) | 2847 | 1284 | 47 | 877 | 29 | 0 | 610 |
 
 ## By epic × status
 
@@ -2046,7 +2046,7 @@ Total tickets: **4208** — untagged: **2847** — unbound to epic: **1050**
 | epic-replayability | 7 | 4 | 1 | 2 | 0 | 0 | 0 |
 | epic-research-agency-quality | 3 | 0 | 0 | 0 | 2 | 0 | 1 |
 | epic-resolution-system | 10 | 3 | 0 | 2 | 0 | 0 | 5 |
-| epic-resource-provision | 13 | 8 | 0 | 5 | 0 | 0 | 0 |
+| epic-resource-provision | 13 | 12 | 0 | 1 | 0 | 0 | 0 |
 | epic-review-20261025-api-governance-perimeter | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-review-check-parallel-ram-2026-09-03 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-review-dev-2026-08-26-late-merges | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
@@ -2077,7 +2077,7 @@ Total tickets: **4208** — untagged: **2847** — unbound to epic: **1050**
 | epic-testing-benchmarking | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
 | epic-testing-qa | 65 | 9 | 2 | 43 | 1 | 0 | 10 |
 | epic-time-scale | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
-| epic-timeline-system | 7 | 3 | 1 | 0 | 2 | 0 | 1 |
+| epic-timeline-system | 7 | 6 | 0 | 0 | 1 | 0 | 0 |
 | epic-tooling-improvement | 26 | 18 | 0 | 5 | 0 | 0 | 3 |
 | epic-transport-expansion | 12 | 0 | 2 | 10 | 0 | 0 | 0 |
 | epic-transport-layer-expansion | 1 | 0 | 0 | 1 | 0 | 0 | 0 |

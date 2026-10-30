@@ -3605,6 +3605,12 @@
       "source": ".plan/tickets/TASK-summarize-format-tldr-bullets-detailed-gradation.md"
     }
   ],
+  "src/assistant/commands/timeline.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-in-chat-command.md"
+    }
+  ],
   "src/assistant/commands/timeline.ts": [
     {
       "kind": "ticket",
@@ -49079,6 +49085,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-selection-api.md"
     }
   ],
   "src/routes/views/plugin-dynamic.ts": [
@@ -49247,6 +49257,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-timeline-branching-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-selection-api.md"
     },
     {
       "kind": "ticket",
@@ -49771,6 +49785,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-selection-api.md"
     }
   ],
   "src/routes/worlds/timelines.ts": [
@@ -49785,6 +49803,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-timeline-branching-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-selection-api.md"
     }
   ],
   "src/routes/worlds/world-rpg-flags.ts": [
@@ -56319,6 +56341,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-authoring-creation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap.md"
     }
   ],
   "src/story/quality": [
@@ -56481,6 +56507,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-human-hybrid-gm-config-authoring-d3.md"
+    }
+  ],
+  "src/story/timeline/event-steering.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap.md"
     }
   ],
   "src/story/timeline/event-steering.ts": [
