@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Inventory & Trading UI frontend (epic-inventory-ui.md Phase 1: grid/list, sorting/filtering, details panel)
 **Priority:** P1 — High
 **Effort:** Small
@@ -39,3 +39,5 @@ Item details panel showing full item information.
 
 - `src/frontend/inventory/item-details.ts`
 - `src/frontend/inventory/item-actions.ts`
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 5ef5c93 (registry tip: cff45fa41 Konstantin Fedotov Close issue)
