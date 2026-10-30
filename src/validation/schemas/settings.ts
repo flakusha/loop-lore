@@ -38,6 +38,8 @@ export const SettingsUpdateAllowedKeys = [
   "birthDate",
   "customInstructions",
   "notifications",
+  "backupEnabled",
+  "backupTypes",
 ] as const;
 
 /** */
@@ -74,6 +76,8 @@ export const SettingsUpdateBody = t.Object(
       t.Union([t.String({ maxLength: 5000, },), t.Null(),],),
     ),
     notifications: t.Optional(t.Record(t.String(), t.Unknown(),),),
+    backupEnabled: t.Optional(t.Boolean(),),
+    backupTypes: t.Optional(t.Record(t.String(), t.Boolean(),),),
   },
   { additionalProperties: false, },
 );

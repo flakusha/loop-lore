@@ -87,6 +87,28 @@ async function handleUpdateSettings(
     }
   }
 
+  if ("backupEnabled" in body && typeof body.backupEnabled !== "boolean") {
+    return jsonError(
+      "backupEnabled must be a boolean",
+      HttpStatus.BadRequest,
+      "validation_error" as never,
+    );
+  }
+
+  if ("backupTypes" in body) {
+    const bt = body.backupTypes;
+    const ok = typeof bt === "object" && bt !== null && !Array.isArray(bt,) &&
+      Object.entries(bt,).every(([, v,],) => typeof v === "boolean");
+
+    if (!ok) {
+      return jsonError(
+        "backupTypes must be an object mapping backup type names to booleans",
+        HttpStatus.BadRequest,
+        "validation_error" as never,
+      );
+    }
+  }
+
   const current = await database
     .selectFrom("users",)
     .select("settings",)

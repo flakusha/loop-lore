@@ -71,7 +71,7 @@ describe("handleQuotaState", () => {
 });
 
 describe("handleBackupHashes", () => {
-  test("returns owner-scoped hashes with 200 and array-free object", async () => {
+  test("two chat backups for one owner stay two per-backup entries", async () => {
     await fixture.db
       .insertInto("backup_records",)
       .values({
@@ -79,7 +79,18 @@ describe("handleBackupHashes", () => {
         resource_type: "chat",
         owner_id: "backup-owner",
         content_hash: "abc123",
-        payload: "{}",
+        payload: JSON.stringify({ chatId: "chat-a", },),
+      },)
+      .execute();
+
+    await fixture.db
+      .insertInto("backup_records",)
+      .values({
+        id: "bh-1b",
+        resource_type: "chat",
+        owner_id: "backup-owner",
+        content_hash: "def456",
+        payload: JSON.stringify({ chatId: "chat-b", },),
       },)
       .execute();
 
@@ -89,16 +100,25 @@ describe("handleBackupHashes", () => {
         id: "bh-2",
         resource_type: "asset",
         owner_id: "other-owner",
-        content_hash: "def456",
+        content_hash: "999999",
         payload: "{}",
       },)
       .execute();
 
     const res = await handleBackupHashes(fixture.db, "backup-owner", "user",);
     expect(res.status,).toBe(200,);
-    const body = await res.json() as { hashes: Record<string, { serverHash?: string; serverVersion?: number }> };
-    expect(Object.keys(body.hashes,),).toEqual(["chat:backup-owner",],);
-    expect(body.hashes["chat:backup-owner"]?.serverHash,).toBe("abc123",);
+    const body = await res.json() as {
+      hashes: Record<
+        string,
+        { id: string; resourceType: string; resourceId: string; serverHash?: string; serverVersion?: number }
+      >;
+    };
+
+    expect(Object.keys(body.hashes,),).toEqual(["bh-1", "bh-1b",],);
+    expect(body.hashes["bh-1"]?.serverHash,).toBe("abc123",);
+    expect(body.hashes["bh-1"]?.resourceId,).toBe("chat-a",);
+    expect(body.hashes["bh-1b"]?.serverHash,).toBe("def456",);
+    expect(body.hashes["bh-1b"]?.resourceId,).toBe("chat-b",);
   });
 });
 

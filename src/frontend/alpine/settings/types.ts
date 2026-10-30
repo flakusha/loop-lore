@@ -67,7 +67,14 @@ export interface SettingsState {
   quotaNotice: string;
   backupEnabled: boolean;
   backupTypes: Record<string, boolean>;
-  backupReport: { resourceId: string; resourceType: string; status: string; action: string; detail: string }[];
+  backupReport: {
+    backupId: string;
+    resourceId: string;
+    resourceType: string;
+    status: string;
+    action: string;
+    detail: string;
+  }[];
   backupNotice: string;
 
   // Restart-required banner (TASK-restart-required-indicator-on-system-config-changes)
@@ -122,7 +129,7 @@ export interface SettingsState {
   toggleBackupType(type: string,): Promise<void>;
   saveBackupPrefs(): Promise<void>;
   refreshBackupDashboard(
-    locals: { resourceId: string; resourceType: string; contentHash: string; version: number }[],
+    locals: { backupId?: string; resourceId: string; resourceType: string; contentHash: string; version: number }[],
   ): Promise<void>;
   recoverBackup(backupId: string,): Promise<void>;
 }

@@ -12,6 +12,7 @@ export type BackupResourceType = "chat" | "asset" | "world" | "lore";
 export type BackupReconcileStatus = "consistent" | "drifted" | "orphaned" | "stale";
 
 export interface BackupDashboardEntry {
+  backupId: string;
   resourceId: string;
   resourceType: BackupResourceType;
   status: BackupReconcileStatus;
@@ -27,6 +28,7 @@ export interface BackupLocalRecord {
 }
 
 export interface BackupServerState {
+  backupId?: string;
   serverHash?: string;
   serverVersion?: number;
 }
@@ -56,15 +58,22 @@ export function classifyBackupStatus(
 }
 
 /** Build the per-item dashboard report from local records + server hashes. */
+/** Server hashes are keyed per backup (see handleBackupHashes): match a
+ * local record to the entry carrying its backup id, falling back to the
+ * legacy resource-id key. */
 export function reconcileBackups(
-  locals: BackupLocalRecord[],
-  serverByResourceId: Record<string, BackupServerState>,
+  locals: (BackupLocalRecord & { backupId?: string })[],
+  serverByBackupId: Record<string, BackupServerState>,
 ): BackupDashboardEntry[] {
   return locals.map((local,) => {
-    const server = serverByResourceId[local.resourceId] ?? {};
+    const key = local.backupId ?? local.resourceId;
+    const server = serverByBackupId[key] ??
+      (local.backupId !== undefined ? (serverByBackupId[local.resourceId] ?? {}) : {});
+
     const status = classifyBackupStatus(local, server,);
     const serverHash = (server.serverHash ?? "none").slice(0, 12,);
     return {
+      backupId: local.backupId ?? local.resourceId,
       resourceId: local.resourceId,
       resourceType: local.resourceType,
       status,
@@ -175,9 +184,9 @@ export function backup(): Partial<SettingsState> & ThisType<SettingsState> {
 
     /**
      * One-click recovery: refuses without explicit user confirmation,
-     * then verifies integrity via the existing admin verify endpoint
-     * before reporting a restore.
-     * @param backupId
+     * then restores through the user-scoped restore endpoint (which
+     * verifies integrity and applies the payload).
+     * @param backupId server backup id (threaded through BackupDashboardEntry.backupId)
      * @returns {Promise<void>}
      */
     async recoverBackup(backupId: string,): Promise<void> {
@@ -187,10 +196,10 @@ export function backup(): Partial<SettingsState> & ThisType<SettingsState> {
       }
 
       try {
-        const res = await apiFetch(`/api/admin/resources/backups/${backupId}/verify`, {
+        const res = await apiFetch(`/api/v1/settings/backups/${backupId}/restore`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({},),
+          headers: { "Content-Type": "application/json", Accept: "application/json", },
+          body: jsonBody({ confirm: true, },),
         },);
 
         if (!res.ok) {
