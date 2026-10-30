@@ -15,7 +15,7 @@
  * on `template_id` so the two child kinds never collide.
  */
 import { Elysia, t, } from "elysia";
-import { checkChatAccess, createChat, } from "../../chat/service";
+import { checkChatAccess, createChat, isChatOwner, } from "../../chat/service";
 import { Name, } from "../../validation/schemas/primitives";
 import { jsonCreated, jsonResponse, notFoundResponse as notFound, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
@@ -90,7 +90,7 @@ export function sideChannelRoutes(opts: HandlerOpts, prefix = "/api",) {
             .executeTakeFirst();
 
           if (!parent) { return notFound("Chat not found",); }
-          if (parent.created_by !== userId) { return notFound("Chat not found",); }
+          if (!(await isChatOwner(database, id, userId,))) { return notFound("Chat not found",); }
 
           const newChatId = await createChat(database, {
             name: body.name ?? `${parent.name} (side)`,

@@ -1,8 +1,9 @@
 /**
  * Tests for batch chat operations (archive / delete / export).
  *
- * All three functions scope to chats the user owns (`created_by = userId`):
- * foreign chats are never touched, and empty ownership yields empty results.
+ * All three functions scope to chats where the user holds an owners-set
+ * row (`chat_owners` membership): foreign chats are never touched, and
+ * empty ownership yields empty results.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";

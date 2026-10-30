@@ -14,6 +14,7 @@ import { assertValidWrite, } from "../../db/validators/enforce";
 import { emitPluginEvent, } from "../../plugins/event-bus";
 import { registry, } from "../../plugins/registry";
 import { can, } from "../../users/permissions";
+import { isChatOwner, } from "./owners-core";
 import type {
   RegenerateVariantParams,
   RegenerateVariantResult,
@@ -72,14 +73,8 @@ export async function regenerateMessageVariant(
     return { code: "not_found", message: "Message not found", };
   }
 
-  // Permission: chat owner, admin/solo, or the message author.
-  const chat = await database
-    .selectFrom("chats",)
-    .select("created_by",)
-    .where("id", "=", chatId,)
-    .executeTakeFirst();
-
-  const isOwner = chat?.created_by === userId;
+  // Permission: any chat owner (owners set), admin/solo, or the message author.
+  const isOwner = userId !== null && await isChatOwner(database, chatId, userId,);
   const isAdmin = can(userRole, "admin.chat",);
   const isAuthor = message.actor_id === userId;
   if (!isOwner && !isAdmin && !isAuthor) {

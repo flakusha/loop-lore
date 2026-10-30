@@ -2316,6 +2316,15 @@ export async function insertChats(
     created_by,
     ...restOpts,
   } as any,).execute();
+  // Epic-chat-multi-ownership: mirror the production create path —
+  // every chat is born with exactly one chat_owners row (its creator).
+  // Kept in the GENERATOR (not hand-patched) so db:sync-types
+  // regenerations preserve it and the db-schema gate stays green.
+  await db.insertInto("chat_owners",).values({
+    id: crypto.randomUUID(),
+    chat_id: id,
+    user_id: created_by,
+  },).execute();
   return id;
 }
 

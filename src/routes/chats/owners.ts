@@ -5,7 +5,7 @@ import { Elysia, } from "elysia";
 import {
   addChatOwner,
   checkChatAccess,
-  listEffectiveOwnerUserIds,
+  listOwnerUserIds,
   removeChatOwner,
 } from "../../chat/service";
 import type { ChatOwnersOpOutcome, } from "../../chat/service";
@@ -77,7 +77,7 @@ export function chatOwnerRoutes(opts: HandlerOpts, prefix = "/api",) {
             return notFoundResponse("Chat not found",);
           }
 
-          const owners = await listEffectiveOwnerUserIds(database, chatId,);
+          const owners = await listOwnerUserIds(database, chatId,);
           return jsonResponse({ chatId, owners, },);
         },
         { params: ChatIdParams, },

@@ -3,7 +3,8 @@
 
 # TASK: Chat owners check sweep across single-owner call sites
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Shipped 2026-10-30: created_by cutover (seed owners on create via create.ts + split-utils + insertChats/generator, transfer swaps owners-set only with created_by frozen, isChatOwner rows-only no fallback) + call-site sweep (access, settings access, read, batch, polls, music-links, split/reunion, transitions/migrate-carry, routes) + spec §5.1. Suite: bun test src/chat/ src/routes/ 4649 pass / 89 skip / 0 fail (448 files); gates: typecheck-backend, lint-eslint, wiring-check, size-check, db-schema-gate, migrations-ordering PASS; size-strict FAIL is frontend-owned (chat-types/core.ts 288L, ticket-5 scope).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-chat-multi-ownership
@@ -20,6 +21,6 @@ Swap every created_by === userId single-owner check to the isChatOwner predicate
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — isChatOwner rows-only; transfer/add/remove operate on chat_owners; created_by frozen; create/split/migrate/transitions seed or carry the set; insertChats + generate-db-types.ts generator seed the creator row; ownership.ts:46 comment corrected.
+- [x] Tests passing — owners-authority.test.ts pins co-owner positives per call site (settings access, batch archive, hidden-message read, poll close, party-split gate incl. resigned-creator/stranger denial, migrate set-carry, creation invariant); ownership.test.ts + access.test.ts updated to owners-set post-states; bun test src/chat/ src/routes/ 4649 pass / 89 skip / 0 fail.
+- [x] Documentation updated — docs/spec/chat-privacy.md §5.1 owners-set rule; src/chat grep for created_by === leaves only creator-semantics uses (owners.ts:91 duplicate check, ownership.ts:207/230 materialize/fallback reads) plus out-of-scope route checks tracked as epic follow-up.

@@ -5,12 +5,13 @@
  * Chat access control and online-state (key mechanics) checks.
  *
  * Two layered helpers:
- *   - `checkChatAccess` — broad read/join/leave access: admin, creator, or any
- *     participant. Used by message-seen, exports, participant-management.
+ *   - `checkChatAccess` — broad read/join/leave access: admin, any chat owner
+ *     (chat_owners set), or any participant. Used by message-seen, exports,
+ *     participant-management.
  *   - `checkChatSettingsAccess` — stricter authority required to mutate chat
  *     settings (mode, turnStrategy, worldId, gmConfig, name, pinned, paused,
  *     etc.) per `docs/spec/chat-privacy.md` §5.1.
- *     Passes for admin, chat creator, `role_in_chat = "owner"`, OR
+ *     Passes for admin, any chat owner (chat_owners set) OR
  *     `role_in_chat = "gm"` (added by migration 007).
  *
  * Both helpers return the same `{ ok: true } | { ok: false, error }` shape so
@@ -20,6 +21,7 @@ import type { Kysely, } from "kysely";
 import { ChatParticipantRole, ChatVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
+import { isChatOwner, } from "./owners-core";
 import type { ServiceError, } from "./types";
 
 /**
@@ -130,7 +132,7 @@ export async function checkChatAccess(
     return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
   }
 
-  if (can(userRole, "admin.chat",) || chat.created_by === userId) {
+  if (can(userRole, "admin.chat",) || (userId && await isChatOwner(database, chatId, userId,))) {
     return { ok: true, };
   }
 
@@ -207,7 +209,7 @@ export async function checkChatSettingsAccess(
     return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
   }
 
-  if (chat.created_by === userId) {
+  if (await isChatOwner(database, chatId, userId,)) {
     return { ok: true, };
   }
 

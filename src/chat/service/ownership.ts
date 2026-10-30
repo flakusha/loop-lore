@@ -4,17 +4,20 @@
 /**
  * Chat ownership transfer service (transactional core).
  *
- * Flips `chats.created_by` to the new owner (auto-inviting non-participants
- * with `role_in_chat = "owner"` first); demotes the previous owner to `member`.
- * Authority: admin OR the current owner. Writes one `log_entries` row;
- * notifications live in ./ownership-events. Types in ./ownership-types.
+ * Transfers ownership within the `chat_owners` set (epic-chat-multi-ownership
+ * cutover): revokes the previous owner's row, grants the new owner
+ * (auto-inviting non-participants with `role_in_chat = "owner"`), demotes the
+ * previous owner's participant role to `member`. `chats.created_by` is a
+ * frozen creator record and is NEVER mutated. Authority: admin OR any
+ * current owner. Writes one `log_entries` row; notifications live in
+ * ./ownership-events. Types in ./ownership-types.
  */
 import type { Kysely, } from "kysely";
 import { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 
 import { can, } from "../../users/permissions";
-import { checkChatSettingsAccess, reconcileModeratorGrants, } from "./access";
+import { reconcileModeratorGrants, } from "./access";
 import { CONCURRENT_MODIFICATION, interpretTransferError, ownershipLogger, } from "./ownership-errors";
 import { buildOwnershipAuditMeta, emitOwnershipTransferNotifications, } from "./ownership-events";
 import type { TransferOwnershipOptions, TransferOwnershipOutcome, TransferOwnershipResult, } from "./ownership-types";
@@ -40,25 +43,60 @@ async function executeTransferTx(
     chatId: string;
     previousOwnerId: string;
     newOwnerId: string;
-    /** Owning users.id of the new-owner actor — the value written to chats.created_by. */
+    /** Owning users.id of the new-owner actor — granted a chat_owners row (created_by is never written). */
     newOwnerUserId: string;
     autoInvited: boolean;
     now: string;
     auditMeta: ReturnType<typeof buildOwnershipAuditMeta>;
     requesterId: string;
+    /** Admin-initiated transfer: clear the whole owners set (legacy reassignment). */
+    revokeAllOwners: boolean;
   },
 ): Promise<TransferOwnershipResult> {
-  const { chatId, previousOwnerId, newOwnerId, newOwnerUserId, autoInvited, now, auditMeta, requesterId, } = params;
-  const flipped = await trx
-    .updateTable("chats",)
-    .set({ created_by: newOwnerUserId, updated_at: now, },)
-    .where("id", "=", chatId,)
-    .where("created_by", "=", previousOwnerId,)
-    .executeTakeFirst();
+  const {
+    chatId,
+    previousOwnerId,
+    newOwnerId,
+    newOwnerUserId,
+    autoInvited,
+    now,
+    auditMeta,
+    requesterId,
+    revokeAllOwners,
+  } = params;
 
-  if (Number(flipped.numUpdatedRows ?? 0,) === 0) {
+  // Touch updated_at only — created_by is the frozen creator record.
+  await trx
+    .updateTable("chats",)
+    .set({ updated_at: now, },)
+    .where("id", "=", chatId,)
+    .execute();
+
+  // Owners-set swap. The conditional DELETE is the TOCTOU guard: a lost
+  // race sees zero deleted rows and aborts (never last-writer-wins).
+  // Admin-initiated transfers clear the whole set (legacy single-owner
+  // reassignment semantics); owner-initiated ones hand over only the
+  // requester's own ownership, preserving co-owners.
+  const revoked = revokeAllOwners
+    ? await trx.deleteFrom("chat_owners",).where("chat_id", "=", chatId,).executeTakeFirst()
+    : await trx
+      .deleteFrom("chat_owners",)
+      .where("chat_id", "=", chatId,)
+      .where("user_id", "=", previousOwnerId,)
+      .executeTakeFirst();
+
+  if (Number(revoked.numDeletedRows ?? 0,) === 0) {
     throw new Error(CONCURRENT_MODIFICATION,);
   }
+
+  await trx
+    .insertInto("chat_owners",)
+    .values({
+      chat_id: chatId,
+      user_id: newOwnerUserId,
+      granted_by: requesterId,
+    },)
+    .execute();
 
   if (autoInvited) {
     await trx
@@ -87,11 +125,6 @@ async function executeTransferTx(
     .where("chat_id", "=", chatId,)
     .where("actor_id", "=", previousOwnerId,)
     .execute();
-
-  // Owners-set maintenance (epic-chat-multi-ownership): grant the new
-  // owner, revoke the previous one, materializing the baseline row first.
-  const { syncOwnersOnTransfer, } = await import("./owners-core");
-  await syncOwnersOnTransfer(trx, chatId, previousOwnerId, newOwnerUserId,);
 
   await trx
     .insertInto("log_entries",)
@@ -159,20 +192,8 @@ export async function transferOwnership(
   const { chatId, requesterId, requesterRole, newOwnerId, } = opts;
 
   if (newOwnerId === requesterId) {
-    // TODO(chat-ownership): ownerless chats stay stuck — the previous-owner check below
-    // returns bad_request when chats.created_by is null (unreachable given the schema
-    // guard, but defense-in-depth). Decide the recovery path for that branch.
     const selfError: ServiceError = { code: "bad_request", message: "Cannot transfer ownership to yourself", };
     return { ok: false, error: selfError, };
-  }
-
-  // Admin bypass first: the helper below only consults creator + role_in_chat.
-  const isAdmin = can(requesterRole, "admin.chat",);
-  if (!isAdmin) {
-    const settings = await checkChatSettingsAccess(db, chatId, requesterId, requesterRole,);
-    if (!settings.ok) {
-      return settings;
-    }
   }
 
   // Sequential reads so a missing chat surfaces before we probe participants.
@@ -189,27 +210,38 @@ export async function transferOwnership(
     return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
   }
 
-  const previousOwnerId = chat.created_by;
-  if (!previousOwnerId) {
-    const ownerlessError: ServiceError = { code: "bad_request", message: "Chat has no current owner", };
-    return { ok: false, error: ownerlessError, };
+  const { isChatOwner, listOwnerUserIds, materializeCreatorOwnerRow, } = await import("./owners-core");
+
+  // Defense-in-depth for chats created after the 082 backfill but before the
+  // owners-seeding cutover: materialize the creator baseline row on first touch.
+  if ((await listOwnerUserIds(db, chatId,)).length === 0 && chat.created_by) {
+    await materializeCreatorOwnerRow(db, chatId, chat.created_by,);
   }
 
-  if (previousOwnerId === newOwnerId) {
-    const sameOwnerError: ServiceError = { code: "bad_request", message: "New owner is already the current owner", };
-    return { ok: false, error: sameOwnerError, };
-  }
+  const ownerRows = await listOwnerUserIds(db, chatId,);
 
-  // Only the current owner or an admin may transfer — a delegated
-  // `role_in_chat = 'owner'` grant cannot pass the chat around.
-  // TOCTOU guard is the conditional flip inside the tx below.
-  if (!isAdmin && requesterId !== previousOwnerId) {
+  // Only a current owner or an admin may transfer. Owner-initiated transfers
+  // hand over the requester's own ownership; admin-initiated ones clear the
+  // whole set (legacy single-owner reassignment semantics).
+  const isAdmin = can(requesterRole, "admin.chat",);
+  const requesterIsOwner = await isChatOwner(db, chatId, requesterId,);
+
+  if (!isAdmin && !requesterIsOwner) {
     const forbiddenError: ServiceError = {
       code: "forbidden",
       message: "Only the current owner or an admin may transfer ownership",
     };
 
     return { ok: false, error: forbiddenError, };
+  }
+
+  const previousOwnerId: string | null = requesterIsOwner
+    ? requesterId
+    : (ownerRows.length === 1 ? ownerRows[0]! : (chat.created_by ?? null));
+
+  if (!previousOwnerId) {
+    const ownerlessError: ServiceError = { code: "bad_request", message: "Chat has no current owner", };
+    return { ok: false, error: ownerlessError, };
   }
 
   if (!newOwnerParticipant) {
@@ -231,8 +263,8 @@ export async function transferOwnership(
   // chats.created_by is an FK to users.id while newOwnerId names an ACTOR
   // (chat_participants.actor_id). Resolve the actor's owning user — mirroring
   // the seeding/adoption mapping (persona actors carry user_id, adopted
-  // characters carry owner_id) — so the write no longer trips the FK with a
-  // misleading 400. Writes that identify the participant keep using the actor id.
+  // characters carry owner_id). Writes that identify the participant keep
+  // using the actor id.
   const actorRow = await db
     .selectFrom("actors",)
     .select(["user_id", "owner_id",],)
@@ -247,6 +279,11 @@ export async function transferOwnership(
     };
 
     return { ok: false, error: ownerUserError, };
+  }
+
+  if (ownerRows.includes(newOwnerUserId,)) {
+    const sameOwnerError: ServiceError = { code: "bad_request", message: "New owner is already the current owner", };
+    return { ok: false, error: sameOwnerError, };
   }
 
   const autoInvited = !newOwnerParticipant;
@@ -265,6 +302,7 @@ export async function transferOwnership(
         now,
         auditMeta,
         requesterId,
+        revokeAllOwners: isAdmin && !requesterIsOwner,
       },)
     );
 

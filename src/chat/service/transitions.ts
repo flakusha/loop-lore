@@ -5,6 +5,7 @@
  * Chat transitions: migrate an online chat to a new template-bound chat.
  */
 import type { Kysely, } from "kysely";
+import { sql, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
@@ -17,6 +18,7 @@ import { carryPins, } from "./carry-pins";
 import { carryState, } from "./carry-state";
 import { carryWorldState, } from "./carry-world-state";
 import { recordLocationChange, } from "./location-events";
+import { isChatOwner, } from "./owners-core";
 import { getChatSetupTemplate, } from "./template-queries";
 import type { MigrateChatParams, MigrateChatResult, } from "./types";
 
@@ -51,8 +53,8 @@ export async function migrateChat(
     return { code: "not_found", message: "Chat not found", };
   }
 
-  // Ownership guard
-  if (source.created_by !== params.createdBy) {
+  // Ownership guard — any member of the chat's owners set may migrate it.
+  if (!(await isChatOwner(database, chatId, params.createdBy,))) {
     return { code: "forbidden", message: "You do not own this chat", };
   }
 
@@ -107,6 +109,46 @@ export async function migrateChat(
       template_id: template.id,
     },)
     .execute();
+
+  // Seed the owners set (epic-chat-multi-ownership cutover): carry the
+  // source owners set forward so co-ownership survives migration — a
+  // co-owner's migrate must not silently demote the other owners. Empty
+  // source set (pre-cutover chat) falls back to the migrating user;
+  // created_by stays the frozen creator record in all cases. Over-cap
+  // source sets trim oldest-grant-first, keeping the migrating user.
+  const { MAX_CHAT_OWNERS, } = await import("./owners-types");
+  const sourceOwnerRows = await database
+    .selectFrom("chat_owners",)
+    .select(["user_id", "granted_by", "reason",],)
+    .where("chat_id", "=", chatId,)
+    .orderBy(sql`rowid`,)
+    .execute();
+
+  const sourceOwnerIds = sourceOwnerRows.map((o,) => o.user_id);
+  const carried = sourceOwnerIds.length > 0 ? sourceOwnerIds : [params.createdBy,];
+  const kept = carried.length > MAX_CHAT_OWNERS
+    ? [params.createdBy, ...carried.filter((u,) => u !== params.createdBy),].slice(0, MAX_CHAT_OWNERS,)
+    : carried;
+
+  const grantById = new Map<string, { granted_by: string | null; reason: string | null }>();
+  for (const row of sourceOwnerRows) {
+    grantById.set(row.user_id, {
+      granted_by: row.granted_by,
+      reason: row.reason,
+    },);
+  }
+
+  const seedRows = kept.map((userId,) => {
+    const prior = grantById.get(userId,);
+    return {
+      chat_id: newChatId,
+      user_id: userId,
+      granted_by: prior?.granted_by ?? params.createdBy,
+      reason: prior?.reason ?? null,
+    };
+  },);
+
+  await database.insertInto("chat_owners",).values(seedRows,).execute();
 
   // Record migration event for the new chat's starting location.
   await recordLocationChange(database, {

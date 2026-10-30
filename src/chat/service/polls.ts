@@ -17,6 +17,7 @@ import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { jsonParseOr, safeJsonStringify, uid, } from "../../utils";
 import { checkChatAccess, } from "./access";
+import { isChatOwner, } from "./owners-core";
 import type { ServiceError, } from "./types";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -238,13 +239,7 @@ async function canClosePoll(
 ): Promise<boolean> {
   if (createdBy === userId) { return true; }
   if (can(userRole, "admin.chat",)) { return true; }
-  const chat = await database
-    .selectFrom("chats",)
-    .select("created_by",)
-    .where("id", "=", chatId,)
-    .executeTakeFirst();
-
-  return chat?.created_by === userId;
+  return isChatOwner(database, chatId, userId,);
 }
 
 // ── Service ────────────────────────────────────────────────────────────────

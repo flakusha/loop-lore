@@ -70,6 +70,8 @@ describe("musicLinksRoutes coverage", () => {
     },).execute();
 
     await db.insertInto("chats",).values({ id: chatId, name: "ML Chat", created_by: owner, },).execute();
+    // Raw insert: seed the owners row the production create path guarantees.
+    await db.insertInto("chat_owners",).values({ chat_id: chatId, user_id: owner, },).execute();
   },);
 
   afterAll(async () => {

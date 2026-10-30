@@ -12,10 +12,10 @@ import type { DB, } from "../../db/schema";
 import { buildOwnersAuditMeta, type OwnersChangeEvent, } from "./owners-events";
 
 /**
- * Transitional owner predicate. A user holds owner authority when they have
- * a `chat_owners` row OR are `chats.created_by` — the fallback covers chats
- * created after the 082 backfill until chat creation seeds an owners row
- * (check-sweep ticket).
+ * Owner predicate (post-cutover): a user holds owner authority exactly when
+ * they have a `chat_owners` row. Every chat carries at least one row — the
+ * 082 backfill covered existing chats and the create path seeds the creator
+ * — so no `created_by` fallback remains.
  * @param {Kysely<DB>} database
  * @param {string} chatId
  * @param {string} userId
@@ -33,15 +33,7 @@ export async function isChatOwner(
     .where("user_id", "=", userId,)
     .executeTakeFirst();
 
-  if (row) { return true; }
-
-  const chat = await database
-    .selectFrom("chats",)
-    .select("created_by",)
-    .where("id", "=", chatId,)
-    .executeTakeFirst();
-
-  return chat?.created_by === userId;
+  return !!row;
 }
 
 /**
@@ -60,30 +52,9 @@ export async function listOwnerUserIds(db: Kysely<DB>, chatId: string,): Promise
 }
 
 /**
- * Effective owners set for read paths: `chat_owners` rows, falling back to
- * `[chats.created_by]` when no rows exist yet (chats created after the 082
- * backfill, before their first owners mutation materializes a row). Mirrors
- * the transitional isChatOwner predicate and the reconcile fallback.
- * @param {Kysely<DB>} db
- * @param {string} chatId
- * @returns sorted effective owner user ids
- */
-export async function listEffectiveOwnerUserIds(db: Kysely<DB>, chatId: string,): Promise<string[]> {
-  const rows = await listOwnerUserIds(db, chatId,);
-  if (rows.length > 0) { return rows; }
-
-  const chat = await db
-    .selectFrom("chats",)
-    .select("created_by",)
-    .where("id", "=", chatId,)
-    .executeTakeFirst();
-
-  return chat?.created_by ? [chat.created_by,] : [];
-}
-
-/**
  * Materialize the creator's owners row when a chat predates the owners set
- * (no rows yet). Idempotent; call inside the mutation transaction.
+ * (no rows yet — created between the 082 backfill and the seeding cutover).
+ * Idempotent; call inside the mutation transaction.
  * @param {Kysely<DB>} trx
  * @param {string} chatId
  * @param {string} creatorUserId
@@ -180,44 +151,4 @@ export async function writeOwnersAuditRow(
       created_at: now,
     },)
     .execute();
-}
-
-/**
- * Maintain the owners set across a transfer: materialize the baseline if
- * needed, grant the new owner, revoke the previous one. Called inside the
- * transfer transaction.
- * @param {Kysely<DB>} trx
- * @param {string} chatId
- * @param {string} previousOwnerUserId previous `chats.created_by` value
- * @param {string} newOwnerUserId owning user of the new owner actor
- * @returns {Promise<void>}
- */
-export async function syncOwnersOnTransfer(
-  trx: Kysely<DB>,
-  chatId: string,
-  previousOwnerUserId: string,
-  newOwnerUserId: string,
-): Promise<void> {
-  await materializeCreatorOwnerRow(trx, chatId, previousOwnerUserId,);
-
-  const already = await trx
-    .selectFrom("chat_owners",)
-    .select("user_id",)
-    .where("chat_id", "=", chatId,)
-    .where("user_id", "=", newOwnerUserId,)
-    .executeTakeFirst();
-
-  if (!already) {
-    await trx.insertInto("chat_owners",).values({ chat_id: chatId, user_id: newOwnerUserId, },).execute();
-  }
-
-  // The previous owner leaves the set — unless the transfer is a no-op
-  // identity flip (previous === new, rejected earlier; guard anyway).
-  if (previousOwnerUserId !== newOwnerUserId) {
-    await trx
-      .deleteFrom("chat_owners",)
-      .where("chat_id", "=", chatId,)
-      .where("user_id", "=", previousOwnerUserId,)
-      .execute();
-  }
 }

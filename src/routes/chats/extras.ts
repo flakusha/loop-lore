@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
-import { updateImpersonation, } from "../../chat/service";
+import { isChatOwner, updateImpersonation, } from "../../chat/service";
 import { recordLocationChange, } from "../../chat/service/location-events";
 import { can, } from "../../users/permissions";
 import {
@@ -48,7 +48,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", id,)
             .executeTakeFirst();
 
-          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && !(await isChatOwner(database, id, userId,)))) {
             return notFound("Chat not found",);
           }
 
@@ -131,7 +131,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", id,)
             .executeTakeFirst();
 
-          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && !(await isChatOwner(database, id, userId,)))) {
             return notFound("Chat not found",);
           }
 
@@ -161,7 +161,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", id,)
             .executeTakeFirst();
 
-          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && !(await isChatOwner(database, id, userId,)))) {
             return notFound("Chat not found",);
           }
 

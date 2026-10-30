@@ -8,6 +8,7 @@ import type { Kysely, } from "kysely";
 import { getContextWindowForModel, } from "../../admin/model-capabilities";
 import { computeContextWindow, estimateTokens, } from "../../chat";
 import type { MessageRef, } from "../../chat";
+import { isChatOwner, } from "../../chat/service";
 import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -87,7 +88,7 @@ export async function handleGetContext(
     return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
   }
 
-  const isOwner = chat.created_by === userId;
+  const isOwner = userId !== null && await isChatOwner(database, chatId, userId,);
   const isAdmin = can(userRole, "admin.chat",);
   if (!isOwner && !isAdmin) {
     return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
@@ -199,7 +200,7 @@ export async function handleRegenerateMessage(
     return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
   }
 
-  const isOwner = chat.created_by === userId;
+  const isOwner = userId !== null && await isChatOwner(database, chatId, userId,);
   const isAdmin = can(userRole, "admin.chat",);
   if (!isOwner && !isAdmin) {
     return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);

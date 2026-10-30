@@ -563,6 +563,17 @@ function generateTestHelpers(tables: Map<string, Record<string, ColumnDef>>,): v
     }
 
     lines.push(`  } as any,).execute();`,);
+    if (name === "chats") {
+      lines.push(`  // Epic-chat-multi-ownership: mirror the production create path —`,);
+      lines.push(`  // every chat is born with exactly one chat_owners row (its creator).`,);
+      lines.push(`  // Kept in the GENERATOR (not hand-patched) so db:sync-types`,);
+      lines.push(`  // regenerations preserve it and the db-schema gate stays green.`,);
+      lines.push(`  await db.insertInto("chat_owners",).values({`,);
+      lines.push(`    id: crypto.randomUUID(),`,);
+      lines.push(`    chat_id: id,`,);
+      lines.push(`    user_id: created_by,`,);
+      lines.push(`  },).execute();`,);
+    }
     lines.push(`  return id;`,);
     lines.push(`}`,);
     lines.push(``,);
