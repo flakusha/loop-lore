@@ -7034,6 +7034,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-immersion-gate-failed-check-enforcement.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-sc10-player-state-machine-adapters.md"
     },
     {
@@ -14773,6 +14777,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-immersion-gate-config-surface-and-audit-log.md"
     }
   ],
   "src/config/sections/age-gate.ts": [
@@ -30680,6 +30688,10 @@
     }
   ],
   "src/generation/flow-control.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-immersion-gate-opt-in-llm-classifier.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-view-set-orbit-video-tier.md"
@@ -49975,6 +49987,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-immersion-consistency-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-immersion-gate-failed-check-enforcement.md"
     }
   ],
   "src/rpg/dice.test.ts": [
@@ -52199,6 +52215,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-immersion-consistency-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-immersion-gate-deterministic-rule-engine.md"
     },
     {
       "kind": "ticket",
@@ -55352,6 +55372,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-immersion-gate-deterministic-rule-engine.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-sc10-player-state-machine-adapters.md"
     }
   ],
@@ -57413,6 +57437,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-patterns.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-immersion-gate-refusal-narration-path.md"
     }
   ],
   "src/turning/classifier-selection.ts": [
