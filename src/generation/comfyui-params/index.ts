@@ -17,6 +17,8 @@ export { injectPlaceholders, resolveBindings, } from "./inject";
 export type { InjectedPlaceholder, InjectOptions, ResolveOptions, } from "./inject";
 export { collectMarked, MARK_PREFIX, } from "./marks";
 export type { CollectMarksOptions, MarkedInput, MarkedNodeId, MarkedTarget, } from "./marks";
+export { runAcceptanceProbe, } from "./probe";
+export type { ProbeFanOut, ProbeOptions, ProbeResult, ProbeWorkflowId, } from "./probe";
 export { applySidecar, } from "./sidecar";
 export type { ApplySidecarOptions, SidecarOverride, SidecarOverrides, } from "./sidecar";
 export { boundsOf, specOf, specTagOf, staticOptions, } from "./spec-shape";
