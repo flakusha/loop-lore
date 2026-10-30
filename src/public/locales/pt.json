@@ -787,7 +787,11 @@
     "tradeConfirmAccept": "Confirm accept",
     "tradeCounter": "Counter",
     "tradeCancel": "Cancel",
-    "tradeHistoryLabel": "Past trades"
+    "tradeHistoryLabel": "Past trades",
+    "tradeCreateLabel": "New offer",
+    "tradeCreate": "Create offer",
+    "tradeOfferPrice": "Offer price (Gold)",
+    "tradeCounterPrice": "Counter price (Gold)"
   },
   "gallery": {
     "title": "Galeria",
