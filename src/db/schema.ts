@@ -243,4 +243,7 @@ export interface DB {
   immersion_decision_log: import("./schema-core").ImmersionDecisionLog;
   chat_owners: import("./schema-core").ChatOwners;
   world_timeline_selections: import("./schema-core").WorldTimelineSelections;
+  resource_records: import("./schema-core").ResourceRecords;
+  backup_records: import("./schema-core").BackupRecords;
+  resource_quota_counters: import("./schema-core").ResourceQuotaCounters;
 }
