@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-30T01:51:27.350Z",
-  "count": 1417,
+  "generatedAt": "2026-10-30T12:32:44.659Z",
+  "count": 1416,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -1036,7 +1036,6 @@
     "src/routes/messages/helpers.ts#isServiceError",
     "src/routes/messages/helpers.ts#resolveMessageContent",
     "src/routes/messages/helpers.ts#serviceErrorToResponse",
-    "src/routes/messages/post-insert.ts#runPostInsertChatEffects",
     "src/routes/messages/source-message.ts#loadSourcePlaintext",
     "src/routes/messages/swipe-race-insert.ts#MAX_INSERT_ATTEMPTS",
     "src/routes/messages/translate-inbound.ts#translateInboundContent",

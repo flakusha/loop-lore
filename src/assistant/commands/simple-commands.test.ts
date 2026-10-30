@@ -15,7 +15,7 @@ import "./debug";
 import "./detail";
 import "./help";
 import "./avatar";
-import "./image";
+import { resolveImageCommandAvailability, } from "./image";
 import "./impersonate";
 import "./music";
 import "./narrate";
@@ -199,6 +199,10 @@ describe("/image", () => {
     const result = mustGet("image",)(["a", "medieval", "castle",], baseCtx(),) as CommandResult;
     expect(result.action,).toBe("generate-image",);
     expect(result.actionPayload,).toEqual({ prompt: "a medieval castle", },);
+  });
+
+  it("reports availability from the configured image providers", () => {
+    expect(typeof resolveImageCommandAvailability(),).toBe("boolean",);
   });
 });
 
