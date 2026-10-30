@@ -29,6 +29,13 @@ export interface ProvisionContext {
   worldId: string | null;
   /** All participant IDs in the current chat. */
   participantIds: string[];
+  /** Timeline of the consuming chat ('prime' fallback). Timeline-scoped
+   * memories must match it. Omitted — no timeline enforcement. */
+  timelineId?: string;
+  /** Party lineage of the consuming chat (chat + ancestor chain via
+   * `chats.parent_chat_id`). Party-scoped memories must originate in one of
+   * these chats. Omitted — party scope rejects without a lineage. */
+  partyChatIds?: string[];
   /** Optional trust modifier for this viewer-owner pair (-1 to +1). */
   trustModifier?: number;
   /** Random function for deterministic testing. */
@@ -138,10 +145,12 @@ function evaluateMemory(
 /**
  * Check if a memory's scope allows it in this context.
  *
- * Rules:
+ * Rules (epic-memory-propagation):
  * - `character`: owner sees own; shared/public visible to all
  * - `world`: must be in the same world
  * - `assistant`: visible to all users
+ * - `party`: must originate in the consuming chat's party lineage
+ * - `timeline`: must be bound to the consuming chat's timeline
  * @param memory
  * @param ctx
  * @param privacy
@@ -166,6 +175,19 @@ function checkScope(
 
     case "assistant": {
       return null;
+    }
+
+    case "party": {
+      if (memory.sourceChatId && ctx.partyChatIds?.includes(memory.sourceChatId,) === true) {
+        return null;
+      }
+
+      return "scope:party_mismatch";
+    }
+
+    case "timeline": {
+      if (ctx.timelineId !== undefined && memory.timelineId === ctx.timelineId) { return null; }
+      return "scope:timeline_mismatch";
     }
 
     default: {

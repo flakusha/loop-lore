@@ -154,10 +154,10 @@ describe("memorySection helpers — carry scoping", () => {
       expect(await chatHasMemoryCopies(db, actorId, chat.id,),).toBe(true,);
       expect(await chatHasMemoryCopies(db, actorId, "no-such-chat",),).toBe(false,);
 
-      const scoped = await fetchActorMemories(db, actorId, 50, chat.id,);
+      const scoped = await fetchActorMemories(db, { actorId, limit: 50, onlyChatId: chat.id, },);
       expect(scoped.map((m,) => m.content),).toEqual(["carried copy",],);
 
-      const unscoped = await fetchActorMemories(db, actorId,);
+      const unscoped = await fetchActorMemories(db, { actorId, },);
       expect(unscoped,).toHaveLength(2,);
     } finally {
       sqlite.close();
@@ -279,7 +279,7 @@ describe("memorySection helpers — extraction review gating", () => {
         review_status: "rejected",
       },);
 
-      const visible = await fetchActorMemories(db, actorId,);
+      const visible = await fetchActorMemories(db, { actorId, },);
       expect(visible.map((m,) => m.content),).toEqual(["committed fact",],);
     } finally {
       sqlite.close();
