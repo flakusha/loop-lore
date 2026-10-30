@@ -8,7 +8,7 @@
 **Acceptance Criteria:** Party split creates branched chats with correct participants; party merge combines messages and deduplicates participants (Phase 3); VN choice cards can trigger location changes (Phase 4).
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** C7 party split/reunite auto-execution + VN choice-card location actions
 **Status Note:** split/reunite engine + routes shipped (verified 2026-10-08); regex narration detection helpers + scene-transition wiring landed 2026-10-20 (`detectSplitIntent`/`detectReuniteIntent` in `src/chat/service/split.ts`, wired in `src/routes/messages/handle-scene-transitions.ts`). 2026-10-30 (branch `c7-branch-exec`): `/split` + `/reunite` auto-execution commands shipped with branch-spec validation inside `splitParty` (`src/chat/service/split-validate.ts`) and `chat.party_split`/`chat.party_reunited` plugin events; Phase 4 choice-card location actions verified as already shipped on dev (`choice-cards.ts:169-244` + `extras.ts:36-116`). Remaining: VN split/reunite visual effects (`TASK-vn-party-split-reunite-visual-effects`) and party roster + travel progress UI (`TASK-party-roster-travel-progress-ui`).
 **Priority:** P2-B
@@ -144,3 +144,5 @@ enabled.
 - `chat.party_split` / `chat.party_reunited` plugin events emitted from both services via the established `emitPluginEvent` pattern (`chat.created`, `chat.archived`).
 - Tests: `src/assistant/commands/split.test.ts`, `reunite.test.ts`; `src/chat/service/split.test.ts` extended (unknown/foreign-world location, non-participant actor, empty branch, world-less chat).
 - Narration-derived auto-derivation of branch specs (aux LLM) stays a separate future ticket (see Aux/0-shot section).
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 6382211 (registry tip: 3fbc563bc Konstantin Fedotov Close issue)
