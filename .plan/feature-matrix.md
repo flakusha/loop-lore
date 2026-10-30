@@ -80,7 +80,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | allocation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | allowlist | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | alpha | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| alpine | 27 | 6 | 2 | 14 | 0 | 0 | 5 |
+| alpine | 27 | 7 | 2 | 13 | 0 | 0 | 5 |
 | alpn | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | alternate-paths | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | alternative-flows | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -671,7 +671,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | free-will | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | fresh | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | friends | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| frontend | 168 | 42 | 7 | 66 | 0 | 0 | 53 |
+| frontend | 168 | 45 | 7 | 63 | 0 | 0 | 53 |
 | fts | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | furniture | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | fuzzing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -722,7 +722,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | gpu-gating | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | graph | 5 | 1 | 0 | 0 | 1 | 0 | 3 |
 | graph-builder | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| grid | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| grid | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | group | 7 | 6 | 0 | 1 | 0 | 0 | 0 |
 | group-chat | 12 | 2 | 1 | 3 | 1 | 0 | 5 |
 | growth | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -821,7 +821,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | intimidation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | introspection | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | invariants | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
-| inventory | 23 | 6 | 2 | 8 | 2 | 0 | 5 |
+| inventory | 23 | 9 | 2 | 5 | 2 | 0 | 5 |
 | investigation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | invites | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | io-formats | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -829,7 +829,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | islands | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | isolation | 3 | 0 | 0 | 1 | 1 | 0 | 1 |
 | item | 3 | 0 | 0 | 1 | 1 | 0 | 1 |
-| item-details | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| item-details | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | items | 39 | 17 | 2 | 12 | 2 | 0 | 6 |
 | ivss | 17 | 0 | 0 | 0 | 0 | 0 | 17 |
 | jingle | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -901,7 +901,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | log-entries | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | logger | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
 | logging | 5 | 2 | 1 | 0 | 0 | 0 | 2 |
-| logic | 8 | 3 | 1 | 4 | 0 | 0 | 0 |
+| logic | 8 | 4 | 1 | 3 | 0 | 0 | 0 |
 | login | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | loot | 8 | 1 | 3 | 0 | 1 | 0 | 3 |
 | lora | 6 | 2 | 0 | 1 | 0 | 0 | 3 |
@@ -1646,7 +1646,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | types | 4 | 2 | 0 | 0 | 0 | 0 | 2 |
 | typescript | 5 | 2 | 2 | 0 | 0 | 0 | 1 |
 | typescript7 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| ui | 62 | 11 | 2 | 31 | 1 | 0 | 17 |
+| ui | 62 | 13 | 2 | 29 | 1 | 0 | 17 |
 | unification | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | unified | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | unified-search | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -1955,7 +1955,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | epic-interaction-surfaces-audit.md | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-inventory | 7 | 3 | 0 | 1 | 1 | 0 | 2 |
 | epic-inventory-system | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-inventory-ui | 8 | 1 | 0 | 7 | 0 | 0 | 0 |
+| epic-inventory-ui | 8 | 4 | 0 | 4 | 0 | 0 | 0 |
 | epic-io-formats | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-item-system-extensions | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-item-systems-unification | 17 | 10 | 0 | 7 | 0 | 0 | 0 |
