@@ -34,6 +34,7 @@ import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { idempotent, } from "./middleware/idempotency";
 import type { IdempotencyCtx, } from "./middleware/idempotency";
 import { requestIdMiddleware, } from "./middleware/request-id";
+import { requireAuthGuard, } from "./middleware/require-auth-guard";
 
 import { recordLifecycle, } from "./middleware/lifecycle";
 import { redirectTo, } from "./routes/http-utils";
@@ -142,7 +143,14 @@ export function createApp(deps: AppDeps,) {
         sessionId: authResult.context.sessionId,
         ...i18n,
       };
-    },);
+    },)
+    // ── Central auth guard: fail-closed 401 for null-userId requests ──
+    // Registered immediately after the auth derive (before CSRF/idempotency)
+    // so unauthenticated requests never reach a handler. Routes the audit
+    // allowlists (auth issuance, infra probes, anonymous sinks, battle
+    // calculators, HMAC/peer-trust receivers, guest GET reads) pass through;
+    // everything else with no userId gets the canonical 401 body.
+    .onBeforeHandle(requireAuthGuard,);
 
   // ── CSRF protection (double-submit cookie via Bun.CSRF) ───────
   // Runs after auth derive so sessionId is available for token binding,
