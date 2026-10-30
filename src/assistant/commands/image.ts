@@ -17,7 +17,8 @@
 import { loadConfig, } from "../../config/load";
 import { type CommandResult, registerCommand, } from "./registry";
 
-function resolveImageCommandAvailability(): boolean {
+/** True when at least one image provider is configured (shared with /avatar). */
+export function resolveImageCommandAvailability(): boolean {
   try {
     return (loadConfig().generation.providers.sd?.length ?? 0) > 0;
   } catch {
