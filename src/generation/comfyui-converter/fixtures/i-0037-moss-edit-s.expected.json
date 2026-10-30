@@ -1,0 +1,212 @@
+{
+  "1": {
+    "inputs": {
+      "unet_name": "moss\\mossImage_sft_pruned_int8.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {}
+  },
+  "2": {
+    "inputs": {
+      "clip_name": "moss\\qwen3.5_9b_int8_convrot.safetensors",
+      "type": "moss_image",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {}
+  },
+  "3": {
+    "inputs": {
+      "vae_name": "flux2-vae_small.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {}
+  },
+  "4": {
+    "inputs": {
+      "name": "moss_image_edit.safetensors"
+    },
+    "class_type": "ModelPatchLoader",
+    "_meta": {}
+  },
+  "5": {
+    "inputs": {
+      "reference_max_edge": 512,
+      "model": [
+        "1",
+        0
+      ],
+      "model_patch": [
+        "4",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ],
+      "positive": [
+        "9",
+        0
+      ],
+      "negative": [
+        "10",
+        0
+      ],
+      "image": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "ApplyMossImageEdit",
+    "_meta": {
+      "title": "Apply MOSS Edit · 原图 + 可选参考图"
+    }
+  },
+  "6": {
+    "inputs": {
+      "image": "example.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {}
+  },
+  "7": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "megapixels": 1,
+      "resolution_steps": 16,
+      "image": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "ImageScaleToTotalPixels",
+    "_meta": {
+      "title": "输出尺寸：缩放图像（像素）· 1MP / 对齐16"
+    }
+  },
+  "9": {
+    "inputs": {
+      "text": "Change only the pink dress to bright red. Keep the character, face, hair, pose, background and composition unchanged.",
+      "clip": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "编辑指令（正面）"
+    }
+  },
+  "10": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "负面提示词（可留空）"
+    }
+  },
+  "13": {
+    "inputs": {
+      "width": [
+        "17",
+        0
+      ],
+      "height": [
+        "17",
+        1
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptyFlux2LatentImage",
+    "_meta": {
+      "title": "空 FLUX.2 latent · 跟随输出尺寸"
+    }
+  },
+  "14": {
+    "inputs": {
+      "seed": 42,
+      "steps": 30,
+      "cfg": 4,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": [
+        "18",
+        0
+      ],
+      "positive": [
+        "5",
+        1
+      ],
+      "negative": [
+        "5",
+        2
+      ],
+      "latent_image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {}
+  },
+  "15": {
+    "inputs": {
+      "samples": [
+        "14",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {}
+  },
+  "16": {
+    "inputs": {
+      "filename_prefix": "MOSS-Image-Edit/integrated-1mp",
+      "images": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {}
+  },
+  "17": {
+    "inputs": {
+      "image": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "读取输出宽高"
+    }
+  },
+  "18": {
+    "inputs": {
+      "double_layers": "",
+      "single_layers": "22",
+      "start_percent": 0,
+      "end_percent": 1,
+      "model": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "SkipLayerGuidanceDiTSimple",
+    "_meta": {
+      "title": "跳过层引导（DiT简化）· 启用 / 第22层"
+    }
+  }
+}
