@@ -7,7 +7,7 @@
 **Context:** Slice 1 of epic-avatar-dogfood (dogfood loop on PNG masters).
 **Acceptance Criteria:** (see below)
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-avatar-dogfood
