@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// ── Inventory panel state (Phase 1: display; trading arrives in Phase 3).
+// ── Inventory panel state (Phase 1: display; Phase 2: equipment loadout; trading arrives in Phase 3).
 // Drives:
 //   GET    /api/v1/actors/:actorId/items                       (list, paginated)
 //   POST   /api/v1/actors/:actorId/items/:itemId/equip
@@ -45,6 +45,9 @@ export interface InventoryState {
   busy: boolean;
   message: string;
   error: string;
+  equipped: InventoryItem[];
+  equippedLoading: boolean;
+  equippedError: string;
   /** Point the panel at an actor; clears rows when the actor changes. */
   setActorId(actorId: string,): void;
   /** Rows after the active filter + sort. */
@@ -65,6 +68,8 @@ export interface InventoryState {
   drop(itemId: string,): Promise<void>;
   /** Transfer `quantity` of the `itemId` row to `toActorId`, then reload. */
   transfer(transfer: { itemId: string; toActorId: string; quantity: number },): Promise<void>;
+  /** Reload equipped rows from the server. */
+  loadEquipped(): Promise<void>;
   /** Flip grid/list view. */
   toggleView(): void;
 }
@@ -76,6 +81,27 @@ function rowsFromBody(body: unknown,): InventoryItem[] {
   }
 
   return Array.isArray(body,) ? (body as InventoryItem[]) : [];
+}
+
+/**
+ * Normalize the equipped endpoint body: raw `selectAll` rows (snake_case)
+ * rather than the CRUD list's camelCase shape. Bare `{ data }` wrap and
+ * camelCase pass-through stay accepted.
+ * @param body Decoded response body.
+ * @returns Equipped rows in `InventoryItem` shape.
+ */
+function normalizeEquipped(body: unknown,): InventoryItem[] {
+  const rows = rowsFromBody(body,);
+  return rows.map((row,) => {
+    const record = row as unknown as Record<string, unknown>;
+    const itemType = record["itemType"] ?? record["item_type"];
+    const equipped = record["equipped"] ?? "equipped";
+    return {
+      ...row,
+      itemType: typeof itemType === "string" ? itemType : "misc",
+      equipped: typeof equipped === "string" || typeof equipped === "boolean" ? equipped : "equipped",
+    } as InventoryItem;
+  },);
 }
 
 /** POST/DELETE helper: false on transport error or non-2xx. */
@@ -107,6 +133,9 @@ export const stateFromActor = (actorId: string | null = null,): InventoryState =
   busy: false,
   message: "",
   error: "",
+  equipped: [],
+  equippedLoading: false,
+  equippedError: "",
 
   setActorId(actorId: string,) {
     if (this._invActorId === actorId) { return; }
@@ -116,6 +145,8 @@ export const stateFromActor = (actorId: string | null = null,): InventoryState =
     this.loadError = "";
     this.message = "";
     this.error = "";
+    this.equipped = [];
+    this.equippedError = "";
   },
 
   visibleItems() {
@@ -199,6 +230,27 @@ export const stateFromActor = (actorId: string | null = null,): InventoryState =
     );
   },
 
+  async loadEquipped() {
+    const actorId = this._invActorId;
+    if (!actorId) { return; }
+    this.equippedLoading = true;
+    this.equippedError = "";
+    try {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/items/equipped`,);
+      if (!res.ok) {
+        this.equippedError = t("status.inventoryEquippedFailed",);
+        return;
+      }
+
+      this.equipped = normalizeEquipped(await res.json(),);
+    } catch (error) {
+      log.error("Failed to load equipped items", error instanceof Error ? error : undefined, { actorId, },);
+      this.equippedError = t("status.inventoryEquippedFailed",);
+    } finally {
+      this.equippedLoading = false;
+    }
+  },
+
   toggleView() {
     this.view = this.view === "grid" ? "list" : "grid";
   },
@@ -226,6 +278,7 @@ async function runItemOp(state: InventoryState, failureKey: string, url: string,
 
   state.busy = false;
   await state.load();
+  await state.loadEquipped();
 }
 
 /**
