@@ -117,6 +117,65 @@ describe("resourcesRoutes", () => {
 
     expect(verify.status,).toBe(409,);
   });
+
+  test("storage lifecycle and backup verify round-trip", async () => {
+    const listed0 = await makeApp("admin",).handle(new Request("http://localhost/api/admin/resources/storage",),);
+    const created = await postJson(makeApp("admin",), "http://localhost/api/admin/resources/storage", {
+      endpoint: "https://s3.example.com/b",
+      kind: "s3",
+      secret: "sk-s",
+    },);
+
+    expect(created.status,).toBe(201,);
+    expect(listed0.status,).toBe(200,);
+    const createdBody = await created.json() as { resource: { id: string } };
+    const sid = createdBody.resource.id;
+    const probeUrl = "http://localhost/api/admin/resources/storage/" + sid + "/test";
+    const probe = await postJson(makeApp("admin",), probeUrl, {},);
+    const probeBody = await probe.json() as { ok: boolean };
+    expect(probeBody.ok,).toBe(true,);
+    const backup = await postJson(makeApp("admin",), "http://localhost/api/admin/resources/backups", {
+      payload: "x",
+      resourceType: "chat",
+    },);
+
+    expect(backup.status,).toBe(201,);
+    const backupBody = await backup.json() as { backup: { id: string } };
+    const verifyUrl = "http://localhost/api/admin/resources/backups/" + backupBody.backup.id + "/verify";
+    const verify = await postJson(makeApp("admin",), verifyUrl, {},);
+    expect(verify.status,).toBe(200,);
+    const missing = await postJson(makeApp("admin",), "http://localhost/api/admin/resources/backups/nope/verify", {},);
+    expect(missing.status,).toBe(404,);
+    const delUrl = "http://localhost/api/admin/resources/storage/" + sid;
+    const revoked = await makeApp("admin",).handle(new Request(delUrl, { method: "DELETE", },),);
+    expect(revoked.status,).toBe(200,);
+    const badAdd = await postJson(makeApp("admin",), "http://localhost/api/admin/resources/inference", {
+      kind: "llm",
+    },);
+
+    expect(badAdd.status,).toBe(422,);
+    const quotaAdd = await postJson(makeApp("admin",), "http://localhost/api/admin/resources/inference", {
+      endpoint: "https://q.example.com",
+      kind: "llm",
+      provider: "x",
+      quota: { requestsPerMinute: 5, },
+      secret: "sk-q",
+    },);
+
+    expect(quotaAdd.status,).toBe(201,);
+    const noRevoke = await makeApp("admin",).handle(
+      new Request("http://localhost/api/admin/resources/inference/nope", { method: "DELETE", },),
+    );
+
+    expect(noRevoke.status,).toBe(404,);
+    const bigBackup = await postJson(makeApp("admin",), "http://localhost/api/admin/resources/backups", {
+      payload: "y",
+      resourceType: "chat",
+      storageQuotaBytes: 1,
+    },);
+
+    expect(bigBackup.status,).toBe(507,);
+  });
 });
 
 afterAll(async () => {
