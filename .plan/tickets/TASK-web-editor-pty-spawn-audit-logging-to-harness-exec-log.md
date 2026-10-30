@@ -3,7 +3,8 @@
 
 # TASK: Web editor: PTY spawn audit logging to harness exec-log
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Browser-side terminal EDITOR support epic (S1 config, S2 URI links, S3 PTY route, S4 sandbox tree)
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-browser-editor-support
