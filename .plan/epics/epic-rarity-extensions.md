@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** \
+**Status:** In Progress
+**Status Note:** Boxes 2–6 implemented on `feat-rarity-extensions` (ticket TASK-rarity-extended-event-distribution, issue 46d76f4): shared scale + distribution roll + weighted selection in `src/story/events/rarity.ts`, rarity→priority promotion in `src/story/events/promote-lore.ts`, spec in `docs/spec/rarity.md`, tests in `rarity.test.ts` + `promote-lore.test.ts`. Box 3 deviation: `src/db/schema-core.ts` is GENERATED — the unified schema is delivered as the shared TS value-object module with rarity riding in events' `data` JSON; the schema-level column is box 1. Box 1 (`rarity_multiplier` migration on `world_timeline_events`) intentionally NOT done here — owned by `TASK-timeline-rarity-multiplier` (timeline family).\
 **Priority:** High\
 **Effort:** Medium\
 **Type:** Feature Epic\
@@ -33,12 +33,12 @@ Extends the rarity system to support timeline-weighted rarity modifiers, event r
 
 ## Acceptance Criteria
 
-- [ ] `rarity_multiplier` field added to `world_timeline_events` (migration — adds column, does not own `timeline_id`)
-- [ ] Event rarity distribution algorithm in `src/story/events/`
-- [ ] Unified rarity schema in `src/db/schema-core.ts`
-- [ ] Rarity-based event probability in `src/story/events/promote-lore.ts`
-- [ ] Documentation in `docs/spec/rarity.md` (updated)
-- [ ] Unit tests for rarity-weighted event distribution
+- [ ] `rarity_multiplier` field added to `world_timeline_events` (migration — adds column, does not own `timeline_id`) — NOT here: owned by TASK-timeline-rarity-multiplier (timeline family)
+- [x] Event rarity distribution algorithm in `src/story/events/` — `rollRarity` + `selectEventByRarity` in `src/story/events/rarity.ts` (rarity.test.ts)
+- [x] Unified rarity schema in `src/db/schema-core.ts` — DEVIATION: schema-core is generated; satisfied by shared value-object `src/story/events/rarity.ts` re-using the loot scale (ItemRarity + RARITY_WEIGHTS); rarity rides in events' `data` JSON (see docs/spec/rarity.md)
+- [x] Rarity-based event probability in `src/story/events/promote-lore.ts` — `event.data.rarity` → `EVENT_RARITY_PRIORITY` monotonic priority; absent/invalid → 0 (promote-lore.test.ts)
+- [x] Documentation in `docs/spec/rarity.md` (updated) — scale, distribution, promotion mapping, selection, schema boundary
+- [x] Unit tests for rarity-weighted event distribution — `src/story/events/rarity.test.ts` (15 tests) + rarity block in `promote-lore.test.ts` (3 tests)
 
 ## Dependencies
 
