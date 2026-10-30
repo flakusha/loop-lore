@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 084_prompt_templates_probe_checklist
+ * 086_prompt_templates_probe_checklist
  *
  * Confirm-checklist columns for the ComfyUI acceptance-probe gate on
  * `prompt_templates` workflow rows (TASK-comfyui-workflow-acceptance-probe-scaffold):
