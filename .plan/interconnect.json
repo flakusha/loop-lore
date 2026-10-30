@@ -40140,6 +40140,22 @@
       "related": []
     },
     {
+      "id": "TASK-rarity-extended-event-distribution",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-rarity-extended-event-distribution.md",
+      "title": "Rarity-extended event distribution",
+      "status": "done",
+      "srcRefs": [
+        "src/autonomy/rng",
+        "src/db/schema-core.ts",
+        "src/items/rarity.ts",
+        "src/rpg/loot/types.ts",
+        "src/rpg/loot/weights.ts",
+        "src/story/events/rarity.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-rate-limit-coverage-expansion",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-rate-limit-coverage-expansion.md",
@@ -52982,11 +52998,13 @@
       "kind": "epic",
       "path": ".plan/epics/epic-rarity-extensions.md",
       "title": "Rarity Extensions",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/db/schema-core.ts",
         "src/items/rarity.ts",
-        "src/story/events/promote-lore.ts"
+        "src/story/events/promote-lore.ts",
+        "src/story/events/rarity.test.ts",
+        "src/story/events/rarity.ts"
       ],
       "related": []
     },
@@ -57842,6 +57860,12 @@
         "TASK-autonomy-cost-ledger-kill-switch",
         "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
         "epic-research-agency-decision"
+      ]
+    },
+    {
+      "path": "src/autonomy/rng",
+      "owners": [
+        "TASK-rarity-extended-event-distribution"
       ]
     },
     {
@@ -65964,6 +65988,7 @@
         "TASK-mini-games-framework",
         "TASK-publication-glossary-term-base",
         "TASK-publication-unit-translation-store",
+        "TASK-rarity-extended-event-distribution",
         "TASK-task-i18n-workflow-hardening",
         "TASK-task-minimal-mlops-cards-runlog-canary",
         "TASK-test-chat-module",
@@ -74248,6 +74273,7 @@
     {
       "path": "src/items/rarity.ts",
       "owners": [
+        "TASK-rarity-extended-event-distribution",
         "epic-rarity-extensions"
       ]
     },
@@ -83696,6 +83722,7 @@
       "owners": [
         "TASK-049",
         "TASK-persist-loot-drops",
+        "TASK-rarity-extended-event-distribution",
         "TASK-unify-item-types"
       ]
     },
@@ -83704,7 +83731,8 @@
       "owners": [
         "BUG-rpg-loot-luckmodifier-inverts-drop-quality-positive-luck-pro",
         "TASK-053",
-        "TASK-054"
+        "TASK-054",
+        "TASK-rarity-extended-event-distribution"
       ]
     },
     {
@@ -86420,6 +86448,19 @@
         "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
         "FEAT-origin-capture-generation-seeding",
         "TASK-world-lore-lifecycle-confidence-decay-distortion",
+        "epic-rarity-extensions"
+      ]
+    },
+    {
+      "path": "src/story/events/rarity.test.ts",
+      "owners": [
+        "epic-rarity-extensions"
+      ]
+    },
+    {
+      "path": "src/story/events/rarity.ts",
+      "owners": [
+        "TASK-rarity-extended-event-distribution",
         "epic-rarity-extensions"
       ]
     },
@@ -102613,6 +102654,11 @@
       "from": "epic-rarity-extensions",
       "kind": "owns",
       "to": "FEAT-item-rarity-system"
+    },
+    {
+      "from": "epic-rarity-extensions",
+      "kind": "owns",
+      "to": "TASK-rarity-extended-event-distribution"
     },
     {
       "from": "epic-rarity-extensions",
@@ -145660,6 +145706,36 @@
       "to": "src/chat/random-events.ts"
     },
     {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "produces",
+      "to": "src/autonomy/rng"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "produces",
+      "to": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "produces",
+      "to": "src/items/rarity.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "produces",
+      "to": "src/rpg/loot/types.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "produces",
+      "to": "src/rpg/loot/weights.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "produces",
+      "to": "src/story/events/rarity.ts"
+    },
+    {
       "from": "TASK-rate-limit-coverage-expansion",
       "kind": "produces",
       "to": "src/middleware/rate-limit.ts"
@@ -163405,6 +163481,16 @@
       "to": "src/story/events/promote-lore.ts"
     },
     {
+      "from": "epic-rarity-extensions",
+      "kind": "produces",
+      "to": "src/story/events/rarity.test.ts"
+    },
+    {
+      "from": "epic-rarity-extensions",
+      "kind": "produces",
+      "to": "src/story/events/rarity.ts"
+    },
+    {
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
       "to": "src/assistant/intent.ts"
@@ -173999,6 +174085,12 @@
     {
       "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
+      "kind": "sibling",
       "to": "TASK-review-thread-comment-model",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -178909,6 +179001,12 @@
       "kind": "sibling",
       "to": "TASK-rag-decomposition-index-pipeline",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -204119,6 +204217,12 @@
     {
       "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
+      "kind": "sibling",
       "to": "TASK-reference-set-alt-text-consistency",
       "via": "src/db/schema-content.ts"
     },
@@ -224471,6 +224575,12 @@
     {
       "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
+      "kind": "sibling",
       "to": "TASK-review-thread-comment-model",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -232403,6 +232513,12 @@
     {
       "from": "BUG-personas-converttocharacter-drops-title-temperature-max-toke",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-personas-converttocharacter-drops-title-temperature-max-toke",
+      "kind": "sibling",
       "to": "TASK-task-i18n-workflow-hardening",
       "via": "src/db/schema-core.ts"
     },
@@ -237847,6 +237963,12 @@
       "kind": "sibling",
       "to": "TASK-persist-loot-drops",
       "via": "src/rpg/loot/generation.ts"
+    },
+    {
+      "from": "BUG-rpg-loot-luckmodifier-inverts-drop-quality-positive-luck-pro",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/rpg/loot/weights.ts"
     },
     {
       "from": "BUG-rpg-loot-luckmodifier-inverts-drop-quality-positive-luck-pro",
@@ -255827,6 +255949,12 @@
     {
       "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
+      "kind": "sibling",
       "to": "TASK-rpg-skill-combos-and-synergies",
       "via": "src/rpg/service/character-stats.ts"
     },
@@ -260597,6 +260725,12 @@
     {
       "from": "FEAT-expand-character-templates-to-canonical-fields",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-expand-character-templates-to-canonical-fields",
+      "kind": "sibling",
       "to": "TASK-resolve-dormant-emotionentry-prompt-field",
       "via": "src/config/sections/templates.ts"
     },
@@ -261791,6 +261925,12 @@
     {
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
+      "kind": "sibling",
       "to": "TASK-rpg-gate-chat-commands-behind-world-opt-in",
       "via": "src/routes/rpg/stats-actor.ts"
     },
@@ -262332,6 +262472,12 @@
       "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -265153,6 +265299,12 @@
       "kind": "sibling",
       "to": "TASK-rag-decomposition-index-pipeline",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "FEAT-message-translations-chat-first",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "FEAT-message-translations-chat-first",
@@ -274613,6 +274765,12 @@
     {
       "from": "TASK-049",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/rpg/loot/types.ts"
+    },
+    {
+      "from": "TASK-049",
+      "kind": "sibling",
       "to": "TASK-unify-item-types",
       "via": "src/db/enums-story/items.ts; src/rpg/loot/types.ts"
     },
@@ -275309,6 +275467,12 @@
     {
       "from": "TASK-053",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/rpg/loot/weights.ts"
+    },
+    {
+      "from": "TASK-053",
+      "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/rpg/crafting/process.ts; src/rpg/crafting/stations.ts"
     },
@@ -275467,6 +275631,12 @@
       "kind": "sibling",
       "to": "TASK-publication-viewer-read-mode",
       "via": "src/db/enums-story/items.ts"
+    },
+    {
+      "from": "TASK-054",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/rpg/loot/weights.ts"
     },
     {
       "from": "TASK-054",
@@ -279017,6 +279187,12 @@
     {
       "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
+      "kind": "sibling",
       "to": "TASK-reconcile-achievement-unlock-sources",
       "via": "src/test-utils/insert-helpers.ts"
     },
@@ -279786,6 +279962,12 @@
       "from": "TASK-actor-item-service",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-actor-item-service",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -280811,6 +280993,12 @@
     {
       "from": "TASK-actors-data-versioning",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-actors-data-versioning",
+      "kind": "sibling",
       "to": "TASK-task-i18n-workflow-hardening",
       "via": "src/db/schema-core.ts"
     },
@@ -281466,6 +281654,12 @@
       "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -293807,6 +294001,12 @@
     {
       "from": "TASK-asymmetric-key-pairs-followup",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-asymmetric-key-pairs-followup",
+      "kind": "sibling",
       "to": "TASK-task-i18n-workflow-hardening",
       "via": "src/db/schema-core.ts"
     },
@@ -294234,6 +294434,12 @@
       "from": "TASK-asymmetric-key-pairs",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-asymmetric-key-pairs",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -296423,6 +296629,12 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "TASK-rate-limit-coverage-expansion",
       "via": "src/routes/auth/shared.ts"
     },
@@ -297480,6 +297692,12 @@
       "from": "TASK-autonomy-rate-governor-for-llm-actors",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-autonomy-rate-governor-for-llm-actors",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -300498,6 +300716,12 @@
       "from": "TASK-avatar-render-target-discriminator",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-avatar-render-target-discriminator",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -305993,6 +306217,12 @@
     {
       "from": "TASK-character-creator-prerogative",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-creator-prerogative",
+      "kind": "sibling",
       "to": "TASK-rigged-model-buffer-render",
       "via": "src/routes/characters.ts"
     },
@@ -306707,6 +306937,12 @@
     {
       "from": "TASK-character-multi-avatar",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-multi-avatar",
+      "kind": "sibling",
       "to": "TASK-rigged-model-buffer-render",
       "via": "src/views/chat.html"
     },
@@ -307164,6 +307400,12 @@
       "from": "TASK-character-personality-integrity",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-personality-integrity",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -309613,6 +309855,12 @@
       "kind": "sibling",
       "to": "TASK-rag-search-robots-quota",
       "via": "src/config/schema.ts"
+    },
+    {
+      "from": "TASK-chat-context-preference-per-scope",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-chat-context-preference-per-scope",
@@ -314315,6 +314563,12 @@
     {
       "from": "TASK-chat-transfer-location",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-chat-transfer-location",
+      "kind": "sibling",
       "to": "TASK-recon-critical-fixes",
       "via": "src/chat/transitions.ts"
     },
@@ -317934,6 +318188,12 @@
       "from": "TASK-comfyui-first-class-workflow-library",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-workflow-library",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -331361,6 +331621,12 @@
     {
       "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+      "kind": "sibling",
       "to": "TASK-server-edge-error-handling-gaps-in-routes-layer",
       "via": "src/validation/middleware.ts"
     },
@@ -333281,6 +333547,12 @@
     {
       "from": "TASK-e2ee-receiver-wiring",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-e2ee-receiver-wiring",
+      "kind": "sibling",
       "to": "TASK-reconcile-achievement-unlock-sources",
       "via": "src/test-utils/insert-helpers.ts"
     },
@@ -334860,6 +335132,12 @@
       "from": "TASK-emotion-avatar-message-binding",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-message-binding",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -341135,6 +341413,12 @@
     {
       "from": "TASK-federation-peer-registry-workload-columns",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-federation-peer-registry-workload-columns",
+      "kind": "sibling",
       "to": "TASK-reconcile-achievement-unlock-sources",
       "via": "src/test-utils/insert-helpers.ts"
     },
@@ -342474,6 +342758,12 @@
       "from": "TASK-fix-actor-item-value-type",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-fix-actor-item-value-type",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -345654,6 +345944,12 @@
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -353129,6 +353425,12 @@
     {
       "from": "TASK-inline-markdown-suggestion-model",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-inline-markdown-suggestion-model",
+      "kind": "sibling",
       "to": "TASK-reference-set-entity",
       "via": "src/db/migrations/README.md"
     },
@@ -354480,6 +354782,12 @@
       "from": "TASK-item-side-outfit-change-trigger",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-item-side-outfit-change-trigger",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -357599,6 +357907,12 @@
     {
       "from": "TASK-markdown-canonical-intermediate-contract",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-markdown-canonical-intermediate-contract",
+      "kind": "sibling",
       "to": "TASK-reference-set-entity",
       "via": "src/db/migrations/README.md"
     },
@@ -359369,6 +359683,12 @@
     {
       "from": "TASK-message-carriage-table-migration-admin-read",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-message-carriage-table-migration-admin-read",
+      "kind": "sibling",
       "to": "TASK-task-i18n-workflow-hardening",
       "via": "src/db/schema-core.ts"
     },
@@ -360156,6 +360476,12 @@
       "from": "TASK-messages-outfit-id-column",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-messages-outfit-id-column",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -362706,6 +363032,12 @@
       "from": "TASK-mini-games-framework",
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-mini-games-framework",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -366167,6 +366499,12 @@
     {
       "from": "TASK-persist-loot-drops",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/rpg/loot/types.ts"
+    },
+    {
+      "from": "TASK-persist-loot-drops",
+      "kind": "sibling",
       "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
       "via": "src/rpg/loot/generation.ts"
     },
@@ -368543,6 +368881,12 @@
     {
       "from": "TASK-publication-glossary-term-base",
       "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-publication-glossary-term-base",
+      "kind": "sibling",
       "to": "TASK-reference-set-entity",
       "via": "src/db/migrations/README.md"
     },
@@ -368953,6 +369297,12 @@
       "kind": "sibling",
       "to": "epic-research-agency-decision",
       "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "TASK-publication-unit-translation-store",
+      "kind": "sibling",
+      "to": "TASK-rarity-extended-event-distribution",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-publication-unit-translation-store",
@@ -370225,6 +370575,222 @@
       "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/chat/random-events.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "TASK-task-i18n-workflow-hardening",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "TASK-task-minimal-mlops-cards-runlog-canary",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "TASK-test-chat-module",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "TASK-timeline-id-world-timeline-events",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "TASK-unify-item-types",
+      "via": "src/rpg/loot/types.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "TASK-world-requires-stats-flag-and-point-budget-config",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-actors",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-battle-action-systems",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-battle-integration-gaps",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-character-core-system",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-character-internal-traits",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-character-npc-lore-access",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-chat-lifecycle-moderation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-chat-transfer-location",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-config-extensions",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-editorial-workflow",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-emotion-avatar-message-binding",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-exploration-discovery",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-impersonation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-item-systems-unification",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-logging",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-mini-games",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-multilingual-carriage",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-output-control-transforms",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-publication-i18n",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-rarity-extensions",
+      "via": "src/db/schema-core.ts; src/items/rarity.ts; src/story/events/rarity.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-research-agency-decision",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-skills-professions-config",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-rarity-extended-event-distribution",
+      "kind": "sibling",
+      "to": "epic-world-chat-channels-invites",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-rate-limit-coverage-expansion",

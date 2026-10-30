@@ -178,7 +178,7 @@
 | Not Started | Epic: NPCs | High | High | 0 | [epic-npcs.md](/.plan/epics/epic-npcs.md) |
 | Not Started | Epic: Plugin Extension Points | Medium | Medium | 0 | [epic-plugin-extension-points.md](/.plan/epics/epic-plugin-extension-points.md) |
 | In Progress | Epic: Quests & Encounters | High | High | 0 | [epic-quests-encounters.md](/.plan/epics/epic-quests-encounters.md) |
-| Not Started | Epic: Rarity Extensions | High\ | Medium\ | 0 | [epic-rarity-extensions.md](/.plan/epics/epic-rarity-extensions.md) |
+| In Progress | Epic: Rarity Extensions | High\ | Medium\ | 0 | [epic-rarity-extensions.md](/.plan/epics/epic-rarity-extensions.md) |
 | Not Started | Epic: Relationships | High | High | 0 | [epic-relationships.md](/.plan/epics/epic-relationships.md) |
 | Done | Epic: Replayability | Medium | Medium | 0 | [epic-replayability.md](/.plan/epics/epic-replayability.md) |
 | Not Started | Epic: Review — `bun run check` RAM Footprint (2026-09-03) | Low | Medium | 0 | [epic-review-check-parallel-ram-2026-09-03.md](/.plan/epics/epic-review-check-parallel-ram-2026-09-03.md) |
@@ -1972,7 +1972,7 @@ Quests and encounters system specification — covers quest generation, encounte
 
 ### Epic: Rarity Extensions
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High\
 - **Effort:** Medium\
 - **Type:** Feature Epic\
