@@ -114,6 +114,14 @@
 - [ ] **UI→API workflow converter** — generic ComfyUI UI-format → API-format converter (subgraph flattening, promoted-widget substitution), filed under the workflow-library epic with the Director workflow as fixture — `epic-comfyui-first-class-citizen.md` (1 ticket) | proposal
 - [ ] **Workflow + bridge + reuse annex extensions** — `generation-video`/`generation-scenario` dispatch backends + payload-preview step type (`epic-workflow-engine.md`), melt/auto-editor/rawtherapee tiers (`epic-external-creative-tool-bridge.md`), video metadata extractor + from-asset i2v (`epic-multimodal-asset-reuse.md`) | proposal
 
+**ComfyUI workflow-prep + capabilities cluster (filed 2026-10-30, plan branch `plan-comfy-capabilities`) — P3-P5 band:**
+
+> Sequencing: the workflow-prep chain (converter → param-map derivation → probe scaffold → UI-format ingest) rides the workflow-library epic's Phase 6 and precedes the capability rows; the capability tickets depend on the probe scaffold + ingest landing first. ComfyUI is the unified generation backend; RES4LYF stays fenced out (settled gate); no ticket assumes weights not on disk — acquisition is in-AC with license/VRAM fences where missing.
+
+- [ ] **ComfyUI workflow-prep pipeline** — offline UI→API conversion of saved workflow JSON, parameter-map derivation from marked workflows, generated acceptance probes (stubbed + live-probe stub, confirm-checklist row gates), and UI-format-first library ingest — `epic-comfyui-first-class-citizen.md` Phase 6 (4 tickets incl. the amended converter) | proposal
+- [ ] **Installed-pack capability rows** — moss/anima family templates from operator fixtures, opt-in VAEDeGrid post-decode cleanup, face-detailer refinement tier (detector acquisition fenced), QwenVL in-graph prompt enhancer (boundary: not a second captioner), Krea moodboard style-conditioning rows — `epic-comfyui-first-class-citizen.md` (5 tickets) + one mask-painter seeding AC in `epic-image-video-scenario-studio.md` | proposal
+- [ ] **Upstream ComfyUI memory-leak watchlist** — tracked OPEN set (#16150, comfy-aimdo #129/#130 follow-ups, #10475 glibc RSS retention, #14719 LTX freezes; PR#15456 + #11930 watch-rows) re-checked at every fork sync, with symptom tells, launch-flag escape hatches, and the `POST /free` caveat — `epic-comfyui-lifecycle.md` (1 ticket) | proposal
+
 - [x] Memory + template injection UX — memory selection / pin UI ✅ shipped (verified 2026-08-16); per-chat prompt override ✅ shipped 2026-08-16 (`prompt_override`, migration 044)
 - [x] Character/world/location flows — multi-format import, creation + settings menus ✅ (code-verified 2026-08-20; C4 closed in open-inflight.md)
 - [x] Assistant tooling — creation wizards + `/commands` tiered access ✅ (C3, 2026-08-18); tool-call display ✅ 2026-08-12 (P3 #16 / P2-C)

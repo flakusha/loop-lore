@@ -529,6 +529,31 @@ keep their built-in metadata.
 - [ ] Un-defer `client_id` + `/ws` progress (carried from `epic-comfyui-plugin`
       Phase 0) — required for a queue with real concurrency.
 
+### Phase 6: Workflow preparation pipeline (single-source-of-truth UI workflows)
+
+- [ ] `TASK-ui-api-workflow-converter` *(amended)* — offline UI→API
+      conversion of saved workflow JSON: subgraph flattening with
+      colon-path ids, widget mapping by name (`widgets_values_named`) with
+      `input_order`-guided positional fallback, muted/bypass handling,
+      hidden-JSON-widget preservation, converter report. Spec = frontend
+      `graphToPrompt` (1.57.6); reference = Unlicense SethRobinson port.
+- [ ] `TASK-comfyui-parameter-map-derivation-from-marked-workflows` — marks (`[p]` title prefix) +
+      `/object_info` snapshot + current widget values → `TemplateParameter[]`
+      and `{{var}}` injection via `applyNodeOverrides`; sidecar overrides;
+      idempotent re-derivation.
+- [ ] `TASK-comfyui-workflow-acceptance-probe-scaffold` — generated stubbed-ComfyUI
+      probe tests + live-probe stub + row confirm-checklist fields
+      (probe/params/license/min_vram), mirroring the IVSS/VG
+      confirm-before-shipping gate.
+- [ ] `TASK-workflow-library-ui-format-ingest` — ingest accepts UI-format
+      JSON (admin + seed dir): convert → derive → store; API-format path
+      unchanged.
+
+Design source: workflow-prep automation analysis (2026-10-30). Human steps
+stay human: authoring/marking the workflow,
+reviewing the derived param map, license/VRAM fences, live-probe
+observables, final confirm.
+
 ## Operator Workflow Request
 
 **Agreed delivery (2026-09-27):** the operator drops each workflow into
@@ -625,12 +650,22 @@ git issue. Workflow JSON is inert — no secrets.
 - TASK-comfyui-sampler-scheduler-discovery.md
 - TASK-comfyui-output-directory-config.md
 - TASK-comfyui-parameter-form-renderer.md
+- TASK-comfyui-parameter-map-derivation-from-marked-workflows.md
+- TASK-comfyui-workflow-acceptance-probe-scaffold.md
+- TASK-workflow-library-ui-format-ingest.md
+- TASK-moss-plus-anima-family-templates-from-operator-workflows.md
+- TASK-vaedegrid-post-decode-cleanup-stage.md
+- TASK-face-detailer-refinement-tier.md
+- TASK-qwenvl-in-graph-prompt-enhancer.md
+- TASK-krea-moodboard-style-conditioning-templates.md
 
 ## Annex: UI→API workflow converter (filed 2026-10-28)
 
 | Ticket | Scope |
 | ------ | ----- |
 | `TASK-ui-api-workflow-converter` | UI-format → API-format converter: subgraph flattening, promoted-widget substitution by index, link rewrite, hidden JSON widget preservation — generic, library-level machinery (cross-linked from `epic-image-video-scenario-studio.md`, whose Director-tier workflow is the driving fixture) |
+
+Downstream consumers of the converter (Phase 6 pipeline): `TASK-comfyui-parameter-map-derivation-from-marked-workflows.md`, `TASK-comfyui-workflow-acceptance-probe-scaffold.md`, `TASK-workflow-library-ui-format-ingest.md`.
 
 ## Related Epics
 
