@@ -23663,6 +23663,20 @@
       "related": []
     },
     {
+      "id": "TASK-chat-variant-legacy-backfill",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-chat-variant-legacy-backfill.md",
+      "title": "Chat Variant Legacy Backfill",
+      "status": "done",
+      "srcRefs": [
+        "src/chat/types/variants.ts",
+        "src/db/migrations.test.ts",
+        "src/db/migrations/044_chat_purpose.ts",
+        "src/routes/chats/create-variant.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-chat-variant-llm-only",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-llm-only.md",
@@ -61477,6 +61491,7 @@
       "path": "src/chat/types/variants.ts",
       "owners": [
         "TASK-chat-variant-behavioral-wiring",
+        "TASK-chat-variant-legacy-backfill",
         "TASK-vn-cast-server-producer",
         "epic-chat-variants-taxonomy",
         "epic-worlds-extension"
@@ -65041,6 +65056,7 @@
         "TASK-branch-merge-db-migration-039",
         "TASK-branch-merge-tests-and-coverage",
         "TASK-character-stat-allocation-integration-tests-e2e",
+        "TASK-chat-variant-legacy-backfill",
         "TASK-comic-page-composition-strategy",
         "TASK-comparison-set-variant-data-model",
         "TASK-comparison-tests-set-lifecycle-fan-out-comparability",
@@ -65493,6 +65509,7 @@
     {
       "path": "src/db/migrations/044_chat_purpose.ts",
       "owners": [
+        "TASK-chat-variant-legacy-backfill",
         "epic-chat-variants-taxonomy"
       ]
     },
@@ -79274,6 +79291,7 @@
       "path": "src/routes/chats/create-variant.ts",
       "owners": [
         "TASK-chat-variant-behavioral-wiring",
+        "TASK-chat-variant-legacy-backfill",
         "epic-chat-variants-taxonomy"
       ]
     },
@@ -95625,6 +95643,11 @@
       "from": "epic-chat-variants-taxonomy",
       "kind": "owns",
       "to": "TASK-chat-variant-character"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "owns",
+      "to": "TASK-chat-variant-legacy-backfill"
     },
     {
       "from": "epic-chat-variants-taxonomy",
@@ -130230,6 +130253,26 @@
       "from": "TASK-chat-variant-character",
       "kind": "produces",
       "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "produces",
+      "to": "src/chat/types/variants.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "produces",
+      "to": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "produces",
+      "to": "src/db/migrations/044_chat_purpose.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "produces",
+      "to": "src/routes/chats/create-variant.ts"
     },
     {
       "from": "TASK-chat-variant-llm-only-group-gm",
@@ -199511,6 +199554,12 @@
     {
       "from": "BUG-create-test-db-custom-dialect-can-bypass-settestdatabase",
       "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-create-test-db-custom-dialect-can-bypass-settestdatabase",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts; src/db/migrations/README.md; src/db/schema-manifest.ts"
     },
@@ -202008,6 +202057,12 @@
       "from": "BUG-duplicate-migration-numeric-prefix-021",
       "kind": "sibling",
       "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-duplicate-migration-numeric-prefix-021",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
       "via": "src/db/migrations.test.ts"
     },
     {
@@ -228893,6 +228948,12 @@
     {
       "from": "BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade",
       "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migrations.test.ts"
     },
@@ -229236,6 +229297,12 @@
       "from": "BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num",
       "kind": "sibling",
       "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
       "via": "src/db/migrations.test.ts"
     },
     {
@@ -240635,6 +240702,12 @@
     {
       "from": "BUG-settestdatabase-global-leak-on-test-throw",
       "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-settestdatabase-global-leak-on-test-throw",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
     },
@@ -241776,6 +241849,12 @@
       "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
       "kind": "sibling",
       "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
       "via": "src/db/migrations.test.ts"
     },
     {
@@ -243522,6 +243601,12 @@
       "from": "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
       "kind": "sibling",
       "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
       "via": "src/db/migrations.test.ts"
     },
     {
@@ -270653,6 +270738,12 @@
     {
       "from": "TASK-019-audit-columns",
       "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-019-audit-columns",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts; src/db/migrations/001_init.ts"
     },
@@ -270978,6 +271069,12 @@
       "from": "TASK-019-content-versioning-heavy-tables",
       "kind": "sibling",
       "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-019-content-versioning-heavy-tables",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
       "via": "src/db/migrations.test.ts"
     },
     {
@@ -271721,6 +271818,12 @@
     {
       "from": "TASK-019-hot-path-indexes",
       "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-019-hot-path-indexes",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts; src/db/migrations/README.md"
     },
@@ -271963,6 +272066,12 @@
       "kind": "sibling",
       "to": "TASK-chat-feature-encryption-key-rotation",
       "via": "src/crypto/pipeline.ts"
+    },
+    {
+      "from": "TASK-019-users-encryption-secret",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/db/migrations.test.ts"
     },
     {
       "from": "TASK-019-users-encryption-secret",
@@ -288839,6 +288948,12 @@
     {
       "from": "TASK-asset-provenance-ledger-for-generated-assets",
       "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-asset-provenance-ledger-for-generated-assets",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
     },
@@ -303077,6 +303192,12 @@
     {
       "from": "TASK-blog-publish-unit-to-post-bridge",
       "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-blog-publish-unit-to-post-bridge",
+      "kind": "sibling",
       "to": "TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va",
       "via": "src/routes/v1/content-surface.ts"
     },
@@ -304727,6 +304848,12 @@
     {
       "from": "TASK-branch-merge-db-migration-039",
       "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-branch-merge-db-migration-039",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts; src/db/migrations/README.md"
     },
@@ -305196,6 +305323,12 @@
       "from": "TASK-branch-merge-tests-and-coverage",
       "kind": "sibling",
       "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-branch-merge-tests-and-coverage",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
       "via": "src/db/migrations.test.ts"
     },
     {
@@ -309133,6 +309266,12 @@
       "kind": "sibling",
       "to": "epic-skills",
       "via": "src/routes/rpg/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/db/migrations.test.ts"
     },
     {
       "from": "TASK-character-stat-allocation-integration-tests-e2e",
@@ -316019,6 +316158,12 @@
     {
       "from": "TASK-chat-variant-behavioral-wiring",
       "kind": "sibling",
+      "to": "TASK-chat-variant-legacy-backfill",
+      "via": "src/chat/types/variants.ts; src/routes/chats/create-variant.ts"
+    },
+    {
+      "from": "TASK-chat-variant-behavioral-wiring",
+      "kind": "sibling",
       "to": "TASK-group-chat-minors-from-2026-10-04-review",
       "via": "src/generation/auto-gen/group-cascade.ts"
     },
@@ -316189,6 +316334,108 @@
       "kind": "sibling",
       "to": "TASK-chat-variant-user-group",
       "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-comic-page-composition-strategy",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-comparison-set-variant-data-model",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-comparison-tests-set-lifecycle-fan-out-comparability",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-coverage-gate-true-multi-worker-fanout-investigation",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-registry-workload-columns",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-fractal-locations-invariants-tests",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-licensing-asset-license-columns-migration",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-locations-fractal-migration",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-middleware-migration-compaction-data-version-hash",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-publication-artifact-schema",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-watchdog-events-table-and-telemet",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-reference-set-entity",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "TASK-vn-cast-server-producer",
+      "via": "src/chat/types/variants.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/types/variants.ts; src/db/migrations/044_chat_purpose.ts; src/routes/chats/create-variant.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "epic-fractal-locations",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-legacy-backfill",
+      "kind": "sibling",
+      "to": "epic-worlds-extension",
+      "via": "src/chat/types/variants.ts"
     },
     {
       "from": "TASK-chat-variant-llm-only-group-gm",
