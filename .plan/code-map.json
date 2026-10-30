@@ -15952,6 +15952,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-model-rankings-history.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
@@ -33421,6 +33425,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-model-rankings-history.md"
     },
     {
       "kind": "ticket",
@@ -59641,6 +59649,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-model-rankings-history.md"
     },
     {
       "kind": "epic",
