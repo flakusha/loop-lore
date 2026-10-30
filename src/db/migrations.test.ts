@@ -559,3 +559,247 @@ describe("migration loader excludes colocated *.test.ts", () => {
     expect(strayTests,).toEqual([],);
   });
 });
+
+// ── 084_chat_variant_backfill — legacy chat classification ───
+
+/**
+ * Fixture-backed classification tests for the legacy-chat taxonomy backfill
+ * (spec: .plan/tickets/TASK-chat-variant-legacy-backfill.md).
+ *
+ * Mirrors migration-rename-upgrade.test.ts: a fresh in-memory DB migrates to
+ * the pre-backfill tail (083), legacy-shaped chats are seeded, and the REAL
+ * Migrator then applies (and later rolls back / re-applies) 084 — through
+ * migrateTo()/migrateToLatest()/migrateDown(), so transactional behavior
+ * matches a real upgrade rather than a direct up()/down() call.
+ */
+describe("084_chat_variant_backfill — legacy chat classification", () => {
+  /** Last migration before the backfill. */
+  const BEFORE_BACKFILL = "083_immersion_decision_log";
+
+  interface LegacyFixture {
+    name: string;
+    type: string;
+    mode: string;
+    worldId?: string;
+    gmConfig?: string;
+    /** Purpose present BEFORE the backfill (taxonomy-era creates). */
+    purpose?: string;
+    /** Purpose the backfill must produce; null = stays unclassified. */
+    expected: string | null;
+  }
+
+  // One row per ticket mapping-rule bucket plus every must-stay-NULL shape.
+  const FIXTURES: readonly LegacyFixture[] = [
+    // — unclassified (ambiguous): variants 1/3/9 and 2/4/5/8/10 are
+    //   indistinguishable on the observed columns —
+    { name: "legacy plain direct", type: "direct", mode: "direct", expected: null, },
+    { name: "legacy group social", type: "group", mode: "group", expected: null, },
+    // VN is a rendering concern (gm_config), not a taxonomy dimension.
+    {
+      name: "legacy vn flagged",
+      type: "direct",
+      mode: "direct",
+      gmConfig: '{"renderingOverride":"visual_novel"}',
+      expected: null,
+    },
+    // GM-role chat could be variant 8 (guided) or 11 (rpg) — ambiguous.
+    {
+      name: "legacy gm role",
+      type: "direct",
+      mode: "story",
+      gmConfig: '{"assistantRole":"gm"}',
+      expected: null,
+    },
+    // Corrupted gm_config must not throw (json_valid guard) and stays NULL.
+    {
+      name: "legacy corrupted gm_config",
+      type: "direct",
+      mode: "direct",
+      gmConfig: "{not json",
+      expected: null,
+    },
+    // — R2: battle without a world = LLM↔LLM validation harness —
+    { name: "legacy battle direct", type: "direct", mode: "battle", expected: "validation", },
+    { name: "legacy battle group", type: "group", mode: "battle", expected: "validation", },
+    // — R3: gm_config validation block without battle mode —
+    {
+      name: "legacy harness gm_config",
+      type: "direct",
+      mode: "direct",
+      gmConfig: '{"validation":{"harness":"smoke"}}',
+      expected: "validation",
+    },
+    // — R1: world-bound chats are RPG chats (any type/mode) —
+    { name: "legacy rpg direct", type: "direct", mode: "direct", worldId: "backfill-world", expected: "rpg", },
+    { name: "legacy rpg group", type: "group", mode: "group", worldId: "backfill-world", expected: "rpg", },
+    // R1 outranks R2: a world-bound battle chat is an RPG party chat.
+    { name: "legacy rpg battle group", type: "group", mode: "battle", worldId: "backfill-world", expected: "rpg", },
+    // — taxonomy-era rows the create route already purposed —
+    { name: "variant roleplay chat", type: "direct", mode: "story", purpose: "roleplay", expected: "roleplay", },
+    {
+      name: "variant rpg world chat",
+      type: "direct",
+      mode: "story",
+      purpose: "rpg",
+      worldId: "backfill-world",
+      expected: "rpg",
+    },
+  ];
+
+  /** Provider over the same directory scan MIGRATION_NAMES reflects. */
+  function backfillProvider() {
+    return {
+      async getMigrations(): Promise<Record<string, Migration>> {
+        const migrations: Record<string, Migration> = {};
+        for (const name of MIGRATION_NAMES) {
+          migrations[name] = await loadMigration(name,);
+        }
+
+        return migrations;
+      },
+    };
+  }
+
+  /**
+   * Migrate to the pre-backfill tail, seed one user + world + the fixture
+   * chats, and hand back the DB before 084 has run.
+   */
+  async function seededLegacyDb() {
+    const sqlite = new Database(":memory:",);
+    // Kysely<any>, as in migration-rename-upgrade.test.ts: legacy fixtures are
+    // deliberately written as raw shape rows, not typed inserts.
+    const db = new Kysely<any>({ dialect: createSqliteDialect(sqlite,), },);
+    setTestDatabase(db as unknown as Kysely<import("./schema").DB>,);
+    const migrator = new Migrator({ db, provider: backfillProvider(), },);
+
+    const before = await migrator.migrateTo(BEFORE_BACKFILL,);
+    expect(before.error, "migrating to the pre-backfill state should not error",).toBeUndefined();
+
+    await db.insertInto("users",).values({
+      id: "backfill-user",
+      username: "backfill-user",
+      display_name: "Backfill User",
+    },).execute();
+
+    await db.insertInto("worlds",).values({
+      id: "backfill-world",
+      owner_id: "backfill-user",
+      name: "Backfill World",
+    },).execute();
+
+    for (const [i, fixture,] of FIXTURES.entries()) {
+      await db.insertInto("chats",).values({
+        id: `backfill-chat-${i}`,
+        name: fixture.name,
+        type: fixture.type,
+        mode: fixture.mode,
+        created_by: "backfill-user",
+        world_id: fixture.worldId ?? null,
+        gm_config: fixture.gmConfig ?? null,
+        purpose: fixture.purpose ?? null,
+      },).execute();
+    }
+
+    return { db, sqlite, migrator, };
+  }
+
+  /**
+   * @param db
+   */
+  async function purposeByName(db: Kysely<any>,): Promise<Record<string, string | null>> {
+    const rows = await db
+      .selectFrom("chats",)
+      .select(["name", "purpose", "type", "mode",],)
+      .execute();
+
+    return Object.fromEntries(rows.map((r,) => [r.name, r.purpose,]),);
+  }
+
+  afterEach(() => {
+    setTestDatabase(null,);
+  },);
+
+  test(
+    "up() classifies legacy shapes per the ticket mapping table",
+    async () => {
+      const { db, sqlite, migrator, } = await seededLegacyDb();
+      try {
+        const applied = await migrator.migrateToLatest();
+        expect(applied.error, "applying the backfill should not error",).toBeUndefined();
+
+        const purposes = await purposeByName(db,);
+        for (const fixture of FIXTURES) {
+          expect(
+            purposes[fixture.name],
+            `purpose for "${fixture.name}" (${fixture.type}/${fixture.mode})`,
+          ).toBe(fixture.expected,);
+        }
+
+        // Pure data migration: type/mode must be untouched on every row.
+        const rows = await db.selectFrom("chats",).select(["name", "type", "mode",],).execute();
+        for (const row of rows) {
+          const fixture = FIXTURES.find((f,) => f.name === row.name);
+          expect(fixture, `fixture missing for seeded row "${row.name}"`,).toBeDefined();
+          expect(row.type, `type for "${row.name}"`,).toBe(fixture!.type,);
+          expect(row.mode, `mode for "${row.name}"`,).toBe(fixture!.mode,);
+        }
+      } finally {
+        await db.destroy();
+        sqlite.close();
+      }
+    },
+    120000,
+  );
+
+  test(
+    "down() restores the pre-backfill state and a re-up re-derives it",
+    async () => {
+      const { db, sqlite, migrator, } = await seededLegacyDb();
+      try {
+        await migrator.migrateToLatest();
+
+        const rolledBack = await migrator.migrateDown();
+        expect(rolledBack.error, "rolling the backfill back should not error",).toBeUndefined();
+
+        const afterDown = await purposeByName(db,);
+        for (const fixture of FIXTURES) {
+          if (fixture.purpose !== undefined) {
+            // Rows that carried a purpose BEFORE the backfill keep it, unless
+            // they share a classifier shape: the documented recompute inverse
+            // resets world-bound rpg rows (shared with legacy R1) — the re-up
+            // below re-derives the identical value.
+            const expectCleared = fixture.expected !== null &&
+              fixture.expected === fixture.purpose && fixture.worldId !== undefined;
+
+            expect(
+              afterDown[fixture.name],
+              `post-down purpose for "${fixture.name}"`,
+            ).toBe(expectCleared ? null : fixture.purpose,);
+          } else {
+            // Legacy rows: the backfill is fully reverted.
+            expect(
+              afterDown[fixture.name],
+              `post-down purpose for "${fixture.name}"`,
+            ).toBeNull();
+          }
+        }
+
+        // Roundtrip: the second up() re-derives the exact same classification.
+        const reapplied = await migrator.migrateToLatest();
+        expect(reapplied.error, "re-applying the backfill should not error",).toBeUndefined();
+
+        const afterReUp = await purposeByName(db,);
+        for (const fixture of FIXTURES) {
+          expect(
+            afterReUp[fixture.name],
+            `re-up purpose for "${fixture.name}"`,
+          ).toBe(fixture.expected,);
+        }
+      } finally {
+        await db.destroy();
+        sqlite.close();
+      }
+    },
+    120000,
+  );
+});
