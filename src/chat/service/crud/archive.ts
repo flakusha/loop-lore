@@ -23,6 +23,7 @@ import { getLogger, } from "../../../logger";
 import { NotificationService, } from "../../../notifications/service/service";
 import { emitPluginEvent, } from "../../../plugins/event-bus";
 import { registry, } from "../../../plugins/registry";
+import { scheduleChatEndBackup, } from "../../../resource/backup-scheduler";
 import { checkChatSettingsAccess, } from "../access";
 import type { ServiceError, } from "../types";
 
@@ -136,6 +137,14 @@ export async function archiveChat(
 
   // FEAT-chat-archive-purge-notifications: fan out to chat participants.
   await notifyLifecycle(database, chatId, requesterId, "chat_archived",);
+
+  // Backup scheduling: chat-end snapshot for the chat creator when external
+  // storage is provisioned + enabled. Failure-safe: logs and skips, never
+  // throws into the archive flow.
+  {
+    const chat = await database.selectFrom("chats",).select("created_by",).where("id", "=", chatId,).executeTakeFirst();
+    await scheduleChatEndBackup(database, { ownerId: chat?.created_by ?? requesterId, chatId, },);
+  }
 
   return { ok: true, chatId, };
 }

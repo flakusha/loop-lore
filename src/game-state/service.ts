@@ -14,6 +14,7 @@ import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { extractGameStateBlock, } from "../regex/game-state";
+import { scheduleWorldSaveBackup, } from "../resource/backup-scheduler";
 import { jsonStringifyOr, safeJsonParse, } from "../utils";
 import { analyzeGameState, type GameState, type GameStateAnalysis, } from "./analyze";
 
@@ -72,15 +73,25 @@ export async function extractAndStore(
   if (!state) { return null; }
 
   const id = crypto.randomUUID();
+  const stored = jsonStringifyOr(state, "{}",);
   await database
     .insertInto("game_states",)
     .values({
       id,
       chat_id: chatId,
       ...(messageId !== null ? { message_id: messageId, } : {}),
-      state: jsonStringifyOr(state, "{}",),
+      state: stored,
     },)
     .execute();
+
+  // Backup scheduling: world-save snapshot after the row commits, keyed on
+  // the chat owner. Failure-safe: logs and skips, never throws into save.
+  {
+    const chat = await database.selectFrom("chats",).select("created_by",).where("id", "=", chatId,).executeTakeFirst();
+    if (chat) {
+      await scheduleWorldSaveBackup(database, { ownerId: chat.created_by, chatId, payload, },);
+    }
+  }
 
   return id;
 }
