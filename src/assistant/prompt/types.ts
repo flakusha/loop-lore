@@ -144,6 +144,12 @@ export interface AssembleChat {
   mode: string;
   world_id: string | null;
   current_location_id: string | null;
+  /**
+   * Timeline branch this chat plays on (084/epic-lore-knowledge consumers,
+   * e.g. timeline-scoped lore). Optional so hand-built test contexts stay
+   * valid; absent means the `chats.timeline_id` default ("prime").
+   */
+  timeline_id?: string | null;
   output_style_preset?: string | null;
   gm_config?: string | null;
   response_length_preset?: string | null;

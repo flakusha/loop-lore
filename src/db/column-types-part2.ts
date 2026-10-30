@@ -117,6 +117,9 @@ export const PART_2: Record<string, Record<string, string>> = {
   "WorldLoreEntries": {
     "enabled": "LoreEntryStatus",
     "position": "LorePosition",
+    // 084: unified lore rarity tier (epic-lore-knowledge) — same canonical
+    // ItemRarity scale items and loot use.
+    "rarity": "ItemRarity",
   },
   "Worlds": {
     "difficulty_reroll": "DifficultyReroll",

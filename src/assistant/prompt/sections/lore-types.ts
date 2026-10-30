@@ -31,4 +31,14 @@ export interface LoreRow extends ActivationEntry {
   distortion_level?: number;
   source_count?: number;
   disputed?: number;
+  /**
+   * Secret-lore reveal gate (084, epic-lore-knowledge): JSON condition text;
+   * null/blank = not secret. Optional — consumers tolerate `undefined` and
+   * apply defaults at the gate site (same convention as lifecycle fields).
+   */
+  reveal_condition?: string | null;
+  /** Timeline scoping slug; null/undefined = available on every timeline. */
+  timeline_id?: string | null;
+  /** Unified rarity tier; null/undefined = common (weight 1, always passes). */
+  rarity?: string | null;
 }
