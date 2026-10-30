@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -52,6 +52,11 @@ Open work is feature-level (dashboard UI, memory visualizer), not route wiring.
 ## Docs-Gap Audit Remainders (2026-09-19)
 
 - [ ] [gap-audit E10] Admin analytics: latency p50/p95/p99 trends, SSE live push, Chart.js widgets
+
+  - Partially addressed by FEAT-062 (2026-10-30): latency trends, token-efficiency and repetition-rate
+    trends plus a per-model quality comparison are live in the admin analytics panel
+    (`GET /api/analytics/quality`, `src/routes/analytics/quality.ts`). **Still open:** SSE live push,
+    Chart.js widgets, and p50/p95/p99 percentiles (the endpoint reports averages only).
 - [ ] [gap-audit E11] Error monitoring: alert rules CRUD, webhook notifications, error grouping
   - Ticket: `FEAT-error-monitoring-alert-rules-crud-webhook-notifications-erro` (issue e21ff70)
 - [ ] [gap-audit E14] Memory visualizer: knowledge graph over `asset_links` (FEA-2026-058)

@@ -2064,6 +2064,203 @@
                 </div>
               </template>
             </div>
+            <div data-testid="analytics-quality-panel" style="margin-bottom: var(--space-6)">
+              <h3
+                style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)"
+                x-text="t('admin.qualityMetrics')"
+              >
+              </h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-4)">
+                <div class="admin-stat-card">
+                  <div class="admin-stat-value" x-text="analyticsQualityTotals?.generations ?? 0">0</div>
+                  <div class="admin-stat-label" x-text="t('admin.generations')"></div>
+                </div>
+                <div class="admin-stat-card">
+                  <div class="admin-stat-value" x-text="analyticsQualityTotals?.withQualityMetrics ?? 0">0</div>
+                  <div class="admin-stat-label" x-text="t('admin.generationsWithMetrics')"></div>
+                </div>
+                <div class="admin-stat-card">
+                  <div class="admin-stat-value" x-text="analyticsQualityTotals?.totalTokens ?? 0">0</div>
+                  <div class="admin-stat-label" x-text="t('admin.tokens')"></div>
+                </div>
+                <div class="admin-stat-card">
+                  <div class="admin-stat-value" x-text="(analyticsQualityTotals?.avgLatencyMs ?? 0).toFixed(0)">0</div>
+                  <div class="admin-stat-label" x-text="t('admin.avgLatencyMs')"></div>
+                </div>
+                <div class="admin-stat-card">
+                  <div class="admin-stat-value" x-text="(analyticsQualityTotals?.avgTokensPerSecond ?? 0).toFixed(1)">
+                    0
+                  </div>
+                  <div class="admin-stat-label" x-text="t('admin.avgTokensPerSecond')"></div>
+                </div>
+                <div class="admin-stat-card">
+                  <div
+                    class="admin-stat-value"
+                    x-text="((analyticsQualityTotals?.avgRepetitionRate ?? 0) * 100).toFixed(1)"
+                  >
+                    0
+                  </div>
+                  <div class="admin-stat-label" x-text="t('admin.avgRepetitionRate')"></div>
+                </div>
+              </div>
+              <div
+                x-show="analyticsQualityTrend.length === 0"
+                class="empty-state"
+                style="padding: var(--space-4); font-size: 13px"
+                x-text="t('admin.noQualityData')"
+              >
+              </div>
+              <div data-testid="analytics-quality-trend" x-show="analyticsQualityTrend.length > 0">
+                <div style="margin-bottom: var(--space-4)">
+                  <div
+                    style="font-size: 12px; color: var(--text-muted, #6b7280); margin-bottom: var(--space-2)"
+                    x-text="t('admin.avgLatencyMs')"
+                  >
+                  </div>
+                  <div style="display: flex; align-items: flex-end; gap: 2px; height: 90px">
+                    <template x-for="d in analyticsQualityTrend" :key="'q-lat-' + d.date">
+                      <div
+                        style="flex: 1 1 0; min-width: 4px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end"
+                        :title="d.date + ': ' + d.avgLatencyMs + 'ms'"
+                      >
+                        <div
+                          style="width: 100%; background: #0891b2; border-radius: 2px 2px 0 0"
+                          :style="'height: ' + d.latencyPct + '%'"
+                        >
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+                <div style="margin-bottom: var(--space-4)">
+                  <div
+                    style="font-size: 12px; color: var(--text-muted, #6b7280); margin-bottom: var(--space-2)"
+                    x-text="t('admin.avgTokensPerSecond')"
+                  >
+                  </div>
+                  <div style="display: flex; align-items: flex-end; gap: 2px; height: 90px">
+                    <template x-for="d in analyticsQualityTrend" :key="'q-tps-' + d.date">
+                      <div
+                        style="flex: 1 1 0; min-width: 4px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end"
+                        :title="d.date + ': ' + d.avgTokensPerSecond + ' t/s'"
+                      >
+                        <div
+                          style="width: 100%; background: var(--color-primary, #4f46e5); border-radius: 2px 2px 0 0"
+                          :style="'height: ' + d.tokensPerSecondPct + '%'"
+                        >
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+                <div style="margin-bottom: var(--space-4)">
+                  <div
+                    style="font-size: 12px; color: var(--text-muted, #6b7280); margin-bottom: var(--space-2)"
+                    x-text="t('admin.avgRepetitionRate')"
+                  >
+                  </div>
+                  <div style="display: flex; align-items: flex-end; gap: 2px; height: 90px">
+                    <template x-for="d in analyticsQualityTrend" :key="'q-rep-' + d.date">
+                      <div
+                        style="flex: 1 1 0; min-width: 4px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end"
+                        :title="d.date + ': ' + ((d.avgRepetitionRate ?? 0) * 100).toFixed(1) + '%'"
+                      >
+                        <div
+                          style="width: 100%; background: #d97706; border-radius: 2px 2px 0 0"
+                          :style="'height: ' + d.repetitionPct + '%'"
+                        >
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+                <div
+                  style="font-size: 12px; color: var(--text-muted, #6b7280); margin-bottom: var(--space-2)"
+                  x-text="t('admin.finishReasons')"
+                >
+                </div>
+                <template x-for="r in analyticsQualityFinishReasons" :key="'q-fin-' + r.reason">
+                  <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1)">
+                    <span style="font-size: 12px; width: 90px" x-text="r.reason"></span>
+                    <div style="flex: 1 1 0; height: 10px; background: var(--border-default, #e9ecef); border-radius: 2px">
+                      <div
+                        style="height: 100%; background: #059669; border-radius: 2px"
+                        :style="'width: ' + r.pct + '%'"
+                      >
+                      </div>
+                    </div>
+                    <span style="font-size: 12px; color: var(--text-muted, #6b7280)" x-text="r.count"></span>
+                  </div>
+                </template>
+              </div>
+              <h4
+                style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-3)"
+                x-text="t('admin.qualityModelComparison')"
+              >
+              </h4>
+              <div
+                x-show="analyticsQualityModels.length === 0"
+                class="empty-state"
+                style="padding: var(--space-4); font-size: 13px"
+                x-text="t('admin.noQualityData')"
+              >
+              </div>
+              <table
+                class="admin-table"
+                data-testid="analytics-quality-models"
+                x-show="analyticsQualityModels.length > 0"
+              >
+                <thead>
+                  <tr>
+                    <th x-text="t('admin.model')"></th>
+                    <th x-text="t('admin.provider')"></th>
+                    <th x-text="t('admin.generations')"></th>
+                    <th x-text="t('admin.tokens')"></th>
+                    <th x-text="t('admin.avgLatencyMs')"></th>
+                    <th x-text="t('admin.avgTokensPerSecond')"></th>
+                    <th x-text="t('admin.avgRepetitionRate')"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template
+                    x-for="m in analyticsQualityModels"
+                    :key="'q-model-' + (m.model ?? '?') + '-' + (m.provider ?? '?')"
+                  >
+                    <tr>
+                      <td x-text="m.model ?? t('admin.unknownModel')"></td>
+                      <td x-text="m.provider ?? '-'"></td>
+                      <td x-text="m.generations"></td>
+                      <td x-text="m.totalTokens"></td>
+                      <td>
+                        <div style="display: flex; align-items: center; gap: var(--space-2)">
+                          <span style="width: 55px" x-text="(m.avgLatencyMs ?? 0).toFixed(0)"></span>
+                          <div style="flex: 1 1 0; height: 8px; background: var(--border-default, #e9ecef); border-radius: 2px">
+                            <div
+                              style="height: 100%; background: #0891b2; border-radius: 2px"
+                              :style="'width: ' + m.latencyPct + '%'"
+                            >
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div style="display: flex; align-items: center; gap: var(--space-2)">
+                          <span style="width: 55px" x-text="(m.avgTokensPerSecond ?? 0).toFixed(1)"></span>
+                          <div style="flex: 1 1 0; height: 8px; background: var(--border-default, #e9ecef); border-radius: 2px">
+                            <div
+                              style="height: 100%; background: var(--color-primary, #4f46e5); border-radius: 2px"
+                              :style="'width: ' + m.tokensPerSecondPct + '%'"
+                            >
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td x-text="((m.avgRepetitionRate ?? 0) * 100).toFixed(1) + '%'"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
             <h3
               style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)"
               x-text="t('admin.characterComparison')"
