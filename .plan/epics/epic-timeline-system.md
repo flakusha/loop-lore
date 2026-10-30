@@ -35,7 +35,7 @@ Extends the time scale system (epic-time-scale.md) to manage branching world tim
 ### Bind Tickets (2026-10-23 attachment batch)
 
 - `TASK-timeline-branching-ui.md` — fixed-flow world-detail UI (open)
-- `TASK-timeline-in-chat-command.md` — /timeline list/fork/switch in-chat complement (open)
+- `TASK-timeline-in-chat-command.md` — /timeline list/fork/switch in-chat complement (Done 2026-10-30, feat-timeline-remainder)
 
 ## Acceptance Criteria
 
@@ -43,7 +43,7 @@ Extends the time scale system (epic-time-scale.md) to manage branching world tim
 - [x] `world_timeline_events` schema updated with `timeline_id` (migration) — in final-form `parts/003_worlds.ts` (squash `e3b8edbf3`)
 - [x] Timeline selection API in `src/story/timeline/world-timeline.ts` — §5.3 steering service `src/story/timeline/event-steering.ts` (`createSteering`/`rollSteering`/`resolveSteering`/`listPendingSteerings`, G2 2026-09-10)
 - [x] Cross-story event propagation logic in `src/story/timeline/index.ts` — `getConvergentEvents` (sibling-story exclusion, newest-first; audience filtering stays prompt-side)
-- [ ] Timeline-specific lore injection in `src/assistant/prompt/sections/lore.ts` — OPEN (foreshadowing/convergence rows available, no prompt wiring yet)
+- [x] Timeline-specific lore injection in `src/assistant/prompt/sections/lore.ts` — pending steerings inject as audience-scoped foreshadowing (chat-branch scoped, cap 5); convergent events surface sibling stories (cap 10); `timeline_id` rides the AssembleChat projection
 - [x] Unit tests for timeline branching and event propagation — `event-steering.test.ts` (12 tests)
 
 ## Dependencies
