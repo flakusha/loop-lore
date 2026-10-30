@@ -26,6 +26,93 @@ interface CharacterStat {
   tokensPerMessage: number;
 }
 
+interface QualityTotals {
+  generations: number;
+  withQualityMetrics: number;
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+  avgLatencyMs: number;
+  avgTokensPerSecond: number;
+  avgRepetitionRate: number;
+}
+
+interface QualityModelRow {
+  model: string | null;
+  provider: string | null;
+  generations: number;
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+  avgLatencyMs: number;
+  avgTokensPerSecond: number;
+  avgRepetitionRate: number;
+}
+
+interface QualityTrendRow {
+  date: string;
+  generations: number;
+  totalTokens: number;
+  avgLatencyMs: number;
+  avgTokensPerSecond: number;
+  avgRepetitionRate: number;
+}
+
+interface QualityResponse {
+  totals?: QualityTotals;
+  byModel?: QualityModelRow[];
+  trend?: QualityTrendRow[];
+  finishReasons?: { reason: string; count: number }[];
+}
+
+/** Scale a value against the series max as a CSS bar percentage. */
+function barPct(value: number, max: number,): number {
+  return max > 0 ? Math.round(value / max * 100,) : 0;
+}
+
+/** Project the quality trend rows into CSS-bar friendly series. */
+function projectQualityTrend(
+  rows: QualityTrendRow[] | undefined,
+): (QualityTrendRow & { latencyPct: number; tokensPerSecondPct: number; repetitionPct: number })[] {
+  const trend = Array.isArray(rows,) ? rows : [];
+  const maxLatency = Math.max(1, ...trend.map((r,) => r?.avgLatencyMs ?? 0),);
+  const maxTps = Math.max(1, ...trend.map((r,) => r?.avgTokensPerSecond ?? 0),);
+  const maxRep = Math.max(0.0001, ...trend.map((r,) => r?.avgRepetitionRate ?? 0),);
+  return trend.map((r,) => ({
+    ...r,
+    latencyPct: barPct(r?.avgLatencyMs ?? 0, maxLatency,),
+    tokensPerSecondPct: barPct(r?.avgTokensPerSecond ?? 0, maxTps,),
+    repetitionPct: barPct(r?.avgRepetitionRate ?? 0, maxRep,),
+  }));
+}
+
+/** Project per-model quality rows into CSS-bar friendly series. */
+function projectQualityModels(
+  rows: QualityModelRow[] | undefined,
+): (QualityModelRow & { latencyPct: number; tokensPerSecondPct: number })[] {
+  const models = Array.isArray(rows,) ? rows : [];
+  const maxLatency = Math.max(1, ...models.map((m,) => m?.avgLatencyMs ?? 0),);
+  const maxTps = Math.max(1, ...models.map((m,) => m?.avgTokensPerSecond ?? 0),);
+  return models.map((m,) => ({
+    ...m,
+    latencyPct: barPct(m?.avgLatencyMs ?? 0, maxLatency,),
+    tokensPerSecondPct: barPct(m?.avgTokensPerSecond ?? 0, maxTps,),
+  }));
+}
+
+/** Project finish reasons into CSS-bar friendly series. */
+function projectFinishReasons(
+  rows: { reason: string; count: number }[] | undefined,
+): { reason: string; count: number; pct: number }[] {
+  const reasons = Array.isArray(rows,) ? rows : [];
+  const max = Math.max(1, ...reasons.map((r,) => r?.count ?? 0),);
+  return reasons.map((r,) => ({
+    reason: r?.reason ?? "",
+    count: r?.count ?? 0,
+    pct: barPct(r?.count ?? 0, max,),
+  }));
+}
+
 const ROLE_COLORS = { user: "#4f46e5", assistant: "#059669", system: "#d97706", } as const;
 
 /** Analytics state + loaders for the admin page. */
@@ -48,18 +135,24 @@ export const adminAnalytics = {
   analyticsDailyBars: [] as { date: string; count: number; pct: number }[],
   analyticsLatencyBars: [] as { label: string; count: number; pct: number }[],
   analyticsRoleSegments: [] as { role: string; label: string; tokens: number; color: string; pct: number }[],
+  analyticsQualityTotals: null as QualityTotals | null,
+  analyticsQualityTrend:
+    [] as (QualityTrendRow & { latencyPct: number; tokensPerSecondPct: number; repetitionPct: number })[],
+  analyticsQualityModels: [] as (QualityModelRow & { latencyPct: number; tokensPerSecondPct: number })[],
+  analyticsQualityFinishReasons: [] as { reason: string; count: number; pct: number }[],
   loadingAnalytics: false,
   purgingAnalytics: false,
 
   async loadAnalytics() {
     this.loadingAnalytics = true;
     try {
-      const [summaryRes, dailyRes, errorsRes, conversationRes, charactersRes,] = await Promise.allSettled([
+      const [summaryRes, dailyRes, errorsRes, conversationRes, charactersRes, qualityRes,] = await Promise.allSettled([
         apiFetch("/api/v1/telemetry/analytics/summary", { headers: { Accept: "application/json", }, },),
         apiFetch("/api/v1/telemetry/analytics/daily?limit=30", { headers: { Accept: "application/json", }, },),
         apiFetch("/api/v1/telemetry/analytics/errors", { headers: { Accept: "application/json", }, },),
         apiFetch("/api/v1/analytics/overview", { headers: { Accept: "application/json", }, },),
         apiFetch("/api/v1/analytics/characters", { headers: { Accept: "application/json", }, },),
+        apiFetch("/api/v1/analytics/quality", { headers: { Accept: "application/json", }, },),
       ],);
 
       if (
@@ -120,6 +213,24 @@ export const adminAnalytics = {
       if (charactersRes.value.ok) {
         const chars = await charactersRes.value.json() as { characters?: CharacterStat[] };
         this.analyticsCharacters = Array.isArray(chars?.characters,) ? chars.characters : [];
+      }
+
+      // Quality metrics are optional: a failure here must not break the panel or toast.
+      // Reset first so a failed refresh never leaves stale numbers on screen.
+      this.analyticsQualityTotals = null;
+      this.analyticsQualityTrend = [];
+      this.analyticsQualityModels = [];
+      this.analyticsQualityFinishReasons = [];
+      if (qualityRes.status === "fulfilled" && qualityRes.value.ok) {
+        try {
+          const quality = await qualityRes.value.json() as QualityResponse;
+          this.analyticsQualityTotals = quality?.totals ?? null;
+          this.analyticsQualityTrend = projectQualityTrend(quality?.trend,);
+          this.analyticsQualityModels = projectQualityModels(quality?.byModel,);
+          this.analyticsQualityFinishReasons = projectFinishReasons(quality?.finishReasons,);
+        } catch {
+          // Malformed body — leave the quality panel empty instead of toasting.
+        }
       }
     } catch {
       showToast("error", t("toasts.failedLoadAnalytics",),);

@@ -93,6 +93,64 @@ function routeResponses(): void {
       },);
     }
 
+    if (url === "/api/v1/analytics/quality") {
+      return Response.json({
+        totals: {
+          generations: 4,
+          withQualityMetrics: 3,
+          promptTokens: 100,
+          completionTokens: 200,
+          totalTokens: 300,
+          avgLatencyMs: 800,
+          avgTokensPerSecond: 40,
+          avgRepetitionRate: 0.05,
+        },
+        byModel: [
+          {
+            model: "m1",
+            provider: "p1",
+            generations: 3,
+            promptTokens: 60,
+            completionTokens: 120,
+            totalTokens: 180,
+            avgLatencyMs: 400,
+            avgTokensPerSecond: 60,
+            avgRepetitionRate: 0.01,
+          },
+          {
+            model: "m2",
+            provider: "p1",
+            generations: 1,
+            promptTokens: 40,
+            completionTokens: 80,
+            totalTokens: 120,
+            avgLatencyMs: 800,
+            avgTokensPerSecond: 20,
+            avgRepetitionRate: 0.09,
+          },
+        ],
+        trend: [
+          {
+            date: "2026-10-01",
+            generations: 2,
+            totalTokens: 100,
+            avgLatencyMs: 400,
+            avgTokensPerSecond: 60,
+            avgRepetitionRate: 0.02,
+          },
+          {
+            date: "2026-10-02",
+            generations: 2,
+            totalTokens: 200,
+            avgLatencyMs: 800,
+            avgTokensPerSecond: 30,
+            avgRepetitionRate: 0.08,
+          },
+        ],
+        finishReasons: [{ reason: "stop", count: 3, }, { reason: "length", count: 1, },],
+      },);
+    }
+
     return new Response("", { status: 404, },);
   };
 }
@@ -126,6 +184,78 @@ describe("adminAnalytics.loadAnalytics", () => {
     expect(toasts[0]!.type,).toBe("error",);
     expect(state.loadingAnalytics,).toBe(false,);
     expect(state.analyticsCharacters,).toHaveLength(0,);
+  });
+
+  test("projects quality metrics into chart-ready bars", async () => {
+    const state = makeState();
+    routeResponses();
+    await state.loadAnalytics();
+
+    expect(state.analyticsQualityTotals?.generations,).toBe(4,);
+    // Trend bars scale per metric to their own max (400 -> 50%, 800 -> 100%).
+    expect(state.analyticsQualityTrend.map((r,) => r.latencyPct),).toEqual([50, 100,],);
+    expect(state.analyticsQualityTrend.map((r,) => r.tokensPerSecondPct),).toEqual([100, 50,],);
+    // Model bars scale to the slowest / fastest model.
+    expect(state.analyticsQualityModels.map((m,) => m.latencyPct),).toEqual([50, 100,],);
+    expect(state.analyticsQualityModels.map((m,) => m.tokensPerSecondPct),).toEqual([100, 33,],);
+    expect(state.analyticsQualityFinishReasons.map((r,) => r.pct),).toEqual([100, 33,],);
+    expect(toasts,).toHaveLength(0,);
+  });
+
+  test("keeps quality state empty and does not toast when the quality request fails", async () => {
+    const state = makeState();
+    routeResponses();
+    const base = handler;
+    handler = (url,) => url === "/api/v1/analytics/quality" ? Promise.reject(new Error("offline",),) : base(url,);
+    await state.loadAnalytics();
+
+    expect(toasts,).toHaveLength(0,);
+    expect(state.analyticsQualityTotals,).toBeNull();
+    expect(state.analyticsQualityTrend,).toHaveLength(0,);
+    expect(state.analyticsQualityModels,).toHaveLength(0,);
+    expect(state.analyticsCharacters,).toHaveLength(1,);
+  });
+
+  test("does not toast when the quality response body is not valid JSON", async () => {
+    const state = makeState();
+    routeResponses();
+    const base = handler;
+    const badBody = new Response("not json", { status: 200, },);
+    handler = (url,) => (url === "/api/v1/analytics/quality" ? Promise.resolve(badBody,) : base(url,));
+
+    await state.loadAnalytics();
+
+    expect(toasts,).toHaveLength(0,);
+    expect(state.analyticsQualityTotals,).toBeNull();
+    expect(state.analyticsCharacters,).toHaveLength(1,);
+  });
+
+  test("does not toast when the quality request answers with an error status", async () => {
+    const state = makeState();
+    routeResponses();
+    const base = handler;
+    const errBody = new Response("err", { status: 500, },);
+    handler = (url,) => (url === "/api/v1/analytics/quality" ? Promise.resolve(errBody,) : base(url,));
+
+    await state.loadAnalytics();
+
+    expect(toasts,).toHaveLength(0,);
+    expect(state.analyticsQualityTotals,).toBeNull();
+  });
+
+  test("clears stale quality data when a later refresh fails", async () => {
+    const state = makeState();
+    routeResponses();
+    await state.loadAnalytics();
+    expect(state.analyticsQualityTotals?.generations,).toBe(4,);
+
+    const base = handler;
+    handler = (url,) => url === "/api/v1/analytics/quality" ? Promise.reject(new Error("offline",),) : base(url,);
+    await state.loadAnalytics();
+
+    expect(toasts,).toHaveLength(0,);
+    expect(state.analyticsQualityTotals,).toBeNull();
+    expect(state.analyticsQualityTrend,).toHaveLength(0,);
   });
 });
 
