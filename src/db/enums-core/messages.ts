@@ -26,6 +26,8 @@ export const MessageContentType = {
   ToolResult: "tool_result",
   /** First-class turn-skip event (TASK-turn-skip-event-and-persistence). */
   TurnSkip: "turn_skip",
+  /** Harness/async job lifecycle journal row (TASK-harness-inflight-job-handles). */
+  JobStatus: "job_status",
 } as const;
 /** */
 export type MessageContentType = (typeof MessageContentType)[keyof typeof MessageContentType];

@@ -12,16 +12,16 @@
  * and race on INSERT, producing duplicate or lost swipes.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { AsyncStore, } from "../../async/store";
 import type { Config, } from "../../config/schema";
-import { MessageRole, } from "../../db/enums";
+import { MessageContentType, MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getProvider, registerProvider, unregisterProvider, } from "../../generation/providers/registry";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
-import { uid, } from "../../utils";
+import { jsonParseOr, uid, } from "../../utils";
 import { isSwipeIndexUniqueViolation, maybeAutoReply, } from "./reply";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
@@ -706,5 +706,150 @@ describeReal("maybeAutoReply — story pause gate", () => {
     );
 
     expect(result.replied,).toBe(true,);
+  });
+},);
+
+describeReal("maybeAutoReply — initial job_status row (TASK-harness-inflight-job-handles)", () => {
+  let db: Kysely<DB>;
+  let chatId: string;
+  let actorId: string;
+  let parentMessageId: string;
+
+  /** In-memory AsyncStore mock; maybeAutoReply only calls track() on this path. */
+  function makeAsyncStoreMock(): AsyncStore {
+    return {
+      track() {},
+      progress() {},
+      complete() {},
+      fail() {},
+      read: async () => null,
+      flush: async () => undefined,
+      config: { offloadThresholdBytes: 0, baseDir: "/tmp/async-store-test", },
+    } as unknown as AsyncStore;
+  }
+
+  /** Minimal config that takes the async LLM branch (defaultProvider set). */
+  const llmConfig = {
+    encryption: { compressThreshold: 1024, compressAlgorithm: "gzip" as const, },
+    generation: {
+      providers: { openaiCompatible: [], },
+      defaultProvider: "mock-provider",
+    },
+  } as unknown as Config;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+
+    const userId = uid();
+    await insertUsers(db, `user-${userId}`, "Test User", { id: userId, } as never,);
+    actorId = userId;
+    await db
+      .insertInto("actors",)
+      .values({
+        id: actorId,
+        actor_type: "user",
+        display_name: "Test Actor",
+        user_id: userId,
+        owner_id: userId,
+        agent_type: "none",
+        settings: "{}",
+        row_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+
+    chatId = uid();
+    await insertChats(db, "Job Status Reply Chat", actorId, { id: chatId, } as never,);
+
+    parentMessageId = uid();
+    await insertMessages(db, chatId, actorId, MessageRole.User, "hello world", {
+      id: parentMessageId,
+      swipe_index: 0,
+    } as never,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  /** Count pending job_status rows (the route's initial-row footprint). */
+  async function countPendingRows(): Promise<number> {
+    const rows = await db
+      .selectFrom("messages",)
+      .select("metadata",)
+      .where("chat_id", "=", chatId,)
+      .where("content_type", "=", MessageContentType.JobStatus,)
+      .execute();
+
+    return rows.filter((row,) => {
+      const meta = jsonParseOr(row.metadata ?? "", null,) as { state?: string } | null;
+      return meta?.state === "pending";
+    },).length;
+  }
+
+  test("posts the pending job_status row keyed by the tracked request id", async () => {
+    const requestId = `req-${uid()}`;
+    const request = new Request("http://localhost/", {
+      method: "POST",
+      headers: { "x-request-id": requestId, },
+    },);
+
+    await maybeAutoReply(
+      db,
+      llmConfig,
+      chatId,
+      actorId,
+      parentMessageId,
+      "hello",
+      request,
+      makeAsyncStoreMock(),
+    );
+
+    // The pending row is awaited BEFORE triggerAutoGeneration is kicked off,
+    // so it is the FIRST job_status row (rowid order) when maybeAutoReply
+    // resolves. The background pipeline may already have appended follow-up
+    // rows by the time we query — those are the bridge's, not the route's.
+    const rows = await db
+      .selectFrom("messages",)
+      .select(["role", "content_type", "metadata",],)
+      .where("chat_id", "=", chatId,)
+      .where("content_type", "=", MessageContentType.JobStatus,)
+      .orderBy(sql`rowid`, "asc",)
+      .execute();
+
+    expect(rows.length,).toBeGreaterThan(0,);
+    expect(rows[0]!.role,).toBe(MessageRole.System,);
+    const meta = jsonParseOr(rows[0]!.metadata ?? "", null,) as {
+      jobId?: string;
+      requestId?: string;
+      op?: string;
+      state?: string;
+    } | null;
+
+    expect(meta,).not.toBeNull();
+    expect(meta!.requestId,).toBe(requestId,);
+    expect(meta!.jobId,).toBe(requestId,);
+    expect(meta!.op,).toBe("auto-gen",);
+    expect(meta!.state,).toBe("pending",);
+  });
+
+  test("no request id — no new pending job_status row", async () => {
+    const pendingBefore = await countPendingRows();
+    await maybeAutoReply(
+      db,
+      llmConfig,
+      chatId,
+      actorId,
+      parentMessageId,
+      "hello again",
+      new Request("http://localhost/",),
+      makeAsyncStoreMock(),
+    );
+
+    // The un-keyed call posts nothing: without x-request-id there is no job
+    // id to journal under, so the pending count is unchanged.
+    expect(await countPendingRows(),).toBe(pendingBefore,);
   });
 },);

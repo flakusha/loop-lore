@@ -30,6 +30,7 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
   _generationEventSource: null as EventSource | null,
   _streamToolCalls: [] as string[],
   _streamContent: "",
+  _jobStatusLine: "",
   chats: [] as { id: string; name?: string; thinking_visibility?: string }[],
   activeChat: null as string | null,
   messages: [] as {

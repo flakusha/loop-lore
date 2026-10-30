@@ -183,10 +183,13 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
       let row: { id: string; content: string; key_id: string | null } | undefined;
       const deadline = Date.now() + 15_000;
       while (Date.now() < deadline) {
+        // content_type='text' skips job_status journal rows (harness job
+        // lifecycle rows appended alongside the user's message).
         const candidate = await ctx.db
           .selectFrom("messages",)
           .select(["id", "content", "key_id", "chat_id",],)
           .where("chat_id", "=", SEED.soloChat.id,)
+          .where("content_type", "=", "text",)
           .orderBy("created_at", "desc",)
           .executeTakeFirst();
 

@@ -61,6 +61,17 @@
     "require-attr": false,
     "require-accessible-name": false
   },
+  "nodeRules": [
+    {
+      "selector": "a.link-preview-card",
+      "rules": {
+        "no-disallowed-attr": {
+          "severity": "off",
+          "reason": "The href is Alpine-bound (:href), invisible to the static mustache parser — the linter sees an <a> without href, where target/rel are disallowed. At runtime the anchor always carries a real external href."
+        }
+      }
+    }
+  ],
   "overrideMode": "merge",
   "overrides": {
     "src/components/{asset-preview-modal,autonomy-panel,edge-mode-options,filter-bar,filter-chips,key-management,location-options}.html": {

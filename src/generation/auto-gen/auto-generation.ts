@@ -24,6 +24,7 @@ import { checkNsfwEligibility, runContentHooks, } from "./content-hooks";
 import { checkAndPruneContext, } from "./context-pruning";
 import { createDefaultDeps, type GenDeps, } from "./deps";
 import { handleGenerationError, } from "./handle-generation-error";
+import { postJobStatus, } from "./job-status-bridge";
 import { applyPostStoreEffects, } from "./post-store";
 import { prepareGeneration, } from "./prepare-generation";
 import { resolveActor, } from "./resolve-actor";
@@ -91,10 +92,15 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   // emitting progress updates for the status endpoint. Scoped by userId
   // so a client that guesses another user's requestId cannot push progress
   // on their row. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
-  const emitProgress = (step: string,): void => {
+  // The same step is journaled as an append-only job_status chat row
+  // (TASK-harness-inflight-job-handles) — display-only, it never schedules
+  // generation, so the pause/cascade gates stay authoritative.
+  const emitProgress = async (step: string,): Promise<void> => {
     if (asyncStore && requestId) {
       asyncStore.progress(requestId, { userId, }, { progress: { step, }, },);
     }
+
+    await postJobStatus({ database, chatId, userId, requestId, state: "in_progress", step, },);
   };
 
   let attemptId: string | undefined;
@@ -104,7 +110,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   const startedAtMs = Date.now();
 
   try {
-    emitProgress("preparing",);
+    await emitProgress("preparing",);
 
     if (parentMessageId) {
       d.cancelGenerationByChat({
@@ -228,7 +234,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       lastContentPreview: lastMsg?.content?.slice(0, 200,),
     },);
 
-    emitProgress("generating",);
+    await emitProgress("generating",);
     const llm = await callLlm({
       d,
       database,
@@ -256,7 +262,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
 
     if (!hooks.allowed) { return; }
 
-    emitProgress("storing",);
+    await emitProgress("storing",);
     const stored = await storeMessage({
       d,
       database,
@@ -308,11 +314,20 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       cascadeDepth,
       deps: opts.deps,
     },);
+
+    // Terminal journal row (TASK-harness-inflight-job-handles): carries the
+    // harness turnId (attempt id) so `.harness/executions.jsonl` lines join
+    // to chat rows via metadata.
+    await postJobStatus({ database, chatId, userId, requestId, state: "complete", turnId: attemptId, },);
   } catch (error) {
     if (asyncStore && requestId) {
       // Scope by userId — see BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
       asyncStore.fail(requestId, { userId, }, String(error,),);
     }
+
+    // Failure journal row; attemptId is undefined when the pipeline failed
+    // before an attempt was minted — the row then carries no turnId.
+    await postJobStatus({ database, chatId, userId, requestId, state: "failed", turnId: attemptId, },);
 
     await handleGenerationError(error, database, d, chatId, userId, attemptId, {
       model: resolvedModel,

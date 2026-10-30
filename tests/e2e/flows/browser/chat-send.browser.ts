@@ -185,11 +185,13 @@ describe("Chat encryption flow (SMK configured)", () => {
       // UI renders plaintext (server decrypts on read).
       await page.locator("#message-list",).getByText(secret,).waitFor({ timeout: 30_000, },);
 
-      // DB stores an encrypted payload, not the plaintext.
+      // DB stores an encrypted payload, not the plaintext. content_type='text'
+      // skips job_status journal rows appended alongside the send.
       const row = await ctx.db
         .selectFrom("messages",)
         .select(["content", "key_id", "chat_id",],)
         .where("chat_id", "=", SEED.soloChat.id,)
+        .where("content_type", "=", "text",)
         .orderBy("created_at", "desc",)
         .executeTakeFirst();
 

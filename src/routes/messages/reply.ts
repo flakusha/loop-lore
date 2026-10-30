@@ -5,6 +5,7 @@ import { type Kysely, } from "kysely";
 import { generateResponse, isAssistantEnabled, } from "../../assistant/service";
 import type { AsyncStore, } from "../../async/store";
 import { triggerMessageTranslation, } from "../../chat/message-translations";
+import { postInitialJobStatus, } from "../../chat/service/job-status";
 import type { Config, } from "../../config/schema";
 
 import {
@@ -89,6 +90,19 @@ export async function maybeAutoReply(
   }
 
   if (isLlmGenerationConfigured(config,)) {
+    // Initial job_status row (TASK-harness-inflight-job-handles): posted
+    // BEFORE triggerAutoGeneration so the pending row is journaled ahead of
+    // the pipeline's in_progress rows. Appending rows never schedules
+    // generation — the pause/cascade gates above stay authoritative.
+    await postInitialJobStatus({
+      database,
+      chatId,
+      actorId,
+      requestId,
+      asyncStore,
+      op: "auto-gen",
+    },);
+
     void triggerAutoGeneration({
       database,
       config,

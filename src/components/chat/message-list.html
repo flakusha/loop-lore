@@ -103,8 +103,16 @@
       <!-- System / narration: centered narrative line, no bubble, actions, or stats -->
       <template x-if="msg.role === 'system'">
         <div class="system-message" data-testid="system-message">
-          <span class="system-marker" aria-hidden="true">◆</span>
-          <div class="content" x-html="renderMarkdown(msg.content)"></div>
+          <!-- Harness job-status journal rows: compact machine one-liner, text-only (no markdown) -->
+          <template x-if="msg.content_type === 'job_status'">
+            <div class="job-status-row" data-testid="job-status-row">
+              <span class="system-marker" aria-hidden="true">⚙</span>
+              <span class="content" x-text="msg.content"></span>
+            </div>
+          </template>
+          <template x-if="msg.content_type !== 'job_status'">
+            <div class="content" x-html="renderMarkdown(msg.content)"></div>
+          </template>
         </div>
       </template>
       <template x-if="msg.role !== 'system'">
