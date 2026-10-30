@@ -11,7 +11,7 @@ output is byte-identical for identical inputs.
 - tickets: 3856
 - epics: 358
 - src paths owned: 4537
-- edges: produces 12068, consumes 405, sibling 37420, owns 2832, related 1193
+- edges: produces 12073, consumes 405, sibling 37446, owns 2832, related 1193
 
 ## Shared src hubs
 
@@ -1280,12 +1280,13 @@ output is byte-identical for identical inputs.
 | `src/plugins/events.ts` | `TASK-eventbus-toolregistry-core-wiring`, `epic-plugin-extension-points`, `epic-plugin-system` |
 | `src/plugins/hooks.ts` | `TASK-crypto-plugin-hooks`, `epic-plugin-system` |
 | `src/plugins/lifecycle.ts` | `TASK-plugin-and-tool-runtime-residual-defects`, `epic-plugin-system` |
+| `src/plugins/loader-dispatch.test.ts` | `BUG-fix-plugins-define-plugin-route-matching-semantics`, `TASK-o-1-plugin-route-dispatch-index`, `epic-plugin-system` |
 | `src/plugins/loader.discovery-failures.test.ts` | `BUG-fix-plugins-make-plugin-discovery-failures-visible`, `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error` |
-| `src/plugins/loader.ts` | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too`, `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat`, `BUG-failed-plugin-load-leaks-a-registered-plugin`, `BUG-fix-plugins-append-onload-registrations-to-manifest-registra`, `BUG-fix-plugins-define-plugin-route-matching-semantics`, `BUG-fix-plugins-make-plugin-discovery-failures-visible`, `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error`, `BUG-nsfw-cards-ships-ungated-post-routes`, `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-`, `BUG-plugin-route-registry-lacks-ownership-enforcement-idor`, `BUG-plugin-state-is-auto-approved-on-first-sight`, `TASK-046`, `TASK-047`, `TASK-048`, `TASK-055`, `TASK-add-per-plugin-unload`, `TASK-enforce-plugin-origin-at-request-time`, `TASK-harness-programmatic-api`, `TASK-plugin-auth-runtime-seed`, `TASK-plugin-host-contract-for-third-party-integration-plugins`, `TASK-plugin-hot-reload-with-real-module-cache-busting`, `TASK-plugin-management-api`, `epic-platform-research`, `epic-plugin-system`, `epic-provider-plugin-ecosystem`, `epic-security-sandboxing` |
+| `src/plugins/loader.ts` | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too`, `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat`, `BUG-failed-plugin-load-leaks-a-registered-plugin`, `BUG-fix-plugins-append-onload-registrations-to-manifest-registra`, `BUG-fix-plugins-define-plugin-route-matching-semantics`, `BUG-fix-plugins-make-plugin-discovery-failures-visible`, `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error`, `BUG-nsfw-cards-ships-ungated-post-routes`, `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-`, `BUG-plugin-route-registry-lacks-ownership-enforcement-idor`, `BUG-plugin-state-is-auto-approved-on-first-sight`, `TASK-046`, `TASK-047`, `TASK-048`, `TASK-055`, `TASK-add-per-plugin-unload`, `TASK-enforce-plugin-origin-at-request-time`, `TASK-harness-programmatic-api`, `TASK-o-1-plugin-route-dispatch-index`, `TASK-plugin-auth-runtime-seed`, `TASK-plugin-host-contract-for-third-party-integration-plugins`, `TASK-plugin-hot-reload-with-real-module-cache-busting`, `TASK-plugin-management-api`, `epic-platform-research`, `epic-plugin-system`, `epic-provider-plugin-ecosystem`, `epic-security-sandboxing` |
 | `src/plugins/mcp/client.ts` | `TASK-2026-openwebui-mcp-client-skeleton`, `TASK-harness-mcp-server-surface`, `epic-external-creative-tool-bridge` |
 | `src/plugins/mount-points.ts` | `TASK-047`, `TASK-056`, `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre` |
 | `src/plugins/registry-policy.ts` | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too`, `TASK-enforce-plugin-origin-at-request-time` |
-| `src/plugins/registry-store.ts` | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too`, `BUG-fix-plugins-append-onload-registrations-to-manifest-registra`, `BUG-fix-plugins-define-plugin-route-matching-semantics`, `TASK-add-per-plugin-unload` |
+| `src/plugins/registry-store.ts` | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too`, `BUG-fix-plugins-append-onload-registrations-to-manifest-registra`, `BUG-fix-plugins-define-plugin-route-matching-semantics`, `TASK-add-per-plugin-unload`, `TASK-o-1-plugin-route-dispatch-index`, `epic-plugin-system` |
 | `src/plugins/registry.ts` | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-`, `BUG-plugin-tool-gating-empty-role-bypass`, `BUG-size-strict-pre-existing-dev-drift`, `IDEA-epic-tool-calling-mcp-2026-09-26`, `TASK-046`, `TASK-047`, `TASK-2026-openwebui-mcp-client-skeleton`, `TASK-add-per-plugin-unload`, `TASK-engine-docs-search`, `TASK-engine-feedback-loop`, `TASK-plugin-integration-mining`, `TASK-plugin-management-api`, `TASK-text-effects-overlays`, `epic-output-control-transforms`, `epic-plugin-extension-points`, `epic-plugin-system`, `epic-provider-plugin-ecosystem` |
 | `src/plugins/route-access.ts` | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor`, `BUG-plugin-tool-authorization-fails-open`, `TASK-enforce-plugin-origin-at-request-time`, `TASK-plugin-auth-runtime-seed` |
 | `src/plugins/sandbox.ts` | `FEAT-tool-execution-sandbox-wasm-container-isolation`, `epic-provider-plugin-ecosystem` |
@@ -12900,6 +12901,9 @@ output is byte-identical for identical inputs.
 | `TASK-nsfw-trauma-recovery` | produces | `src/rpg/trauma/types.ts` | - |
 | `TASK-nsfw-wire-consent-gate-into-nsfw-surfaces` | produces | `src/middleware/nsfw-gate/consent.ts` | - |
 | `TASK-nsfw-wire-seduction-encounter-preconditions` | produces | `src/nsfw/seduction-prerequisites.ts` | - |
+| `TASK-o-1-plugin-route-dispatch-index` | produces | `src/plugins/loader-dispatch.test.ts` | - |
+| `TASK-o-1-plugin-route-dispatch-index` | produces | `src/plugins/loader.ts` | - |
+| `TASK-o-1-plugin-route-dispatch-index` | produces | `src/plugins/registry-store.ts` | - |
 | `TASK-observability-config-section` | produces | `src/config/schema/observability.ts` | - |
 | `TASK-observability-config-section` | produces | `src/config/sections/index.ts` | - |
 | `TASK-observability-config-section` | produces | `src/config/sections/observability.ts` | - |
@@ -16766,8 +16770,10 @@ output is byte-identical for identical inputs.
 | `epic-plugin-system` | produces | `src/plugins/events.ts` | - |
 | `epic-plugin-system` | produces | `src/plugins/hooks.ts` | - |
 | `epic-plugin-system` | produces | `src/plugins/lifecycle.ts` | - |
+| `epic-plugin-system` | produces | `src/plugins/loader-dispatch.test.ts` | - |
 | `epic-plugin-system` | produces | `src/plugins/loader.ts` | - |
 | `epic-plugin-system` | produces | `src/plugins/overrides.ts` | - |
+| `epic-plugin-system` | produces | `src/plugins/registry-store.ts` | - |
 | `epic-plugin-system` | produces | `src/plugins/registry.ts` | - |
 | `epic-plugin-system` | produces | `src/plugins/security.ts` | - |
 | `epic-plugin-system` | produces | `src/plugins/storage.ts` | - |
@@ -18618,12 +18624,13 @@ output is byte-identical for identical inputs.
 | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts; src/plugins/registry-store.ts` |
 | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts; src/plugins/registry-policy.ts` |
 | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
+| `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts; src/plugins/registry-store.ts` |
 | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
 | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `TASK-plugin-management-api` | `src/plugins/loader.ts` |
 | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `epic-platform-research` | `src/plugins/loader.ts` |
-| `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `epic-plugin-system` | `src/plugins/loader.ts` |
+| `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `epic-plugin-system` | `src/plugins/loader.ts; src/plugins/registry-store.ts` |
 | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `epic-provider-plugin-ecosystem` | `src/plugins/loader.ts` |
 | `BUG-a-community-plugin-named-core-disables-all-five-built-in-too` | sibling | `epic-security-sandboxing` | `src/plugins/loader.ts` |
 | `BUG-acceptresponse-applies-world-events-before-the-turn-write-so` | sibling | `BUG-humanoverride-silently-drops-the-gm-decision-when-serializat` | `src/story/game-master/accept.ts` |
@@ -19282,6 +19289,7 @@ output is byte-identical for identical inputs.
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts` |
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts` |
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
+| `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -24253,6 +24261,7 @@ output is byte-identical for identical inputs.
 | `BUG-failed-plugin-load-leaks-a-registered-plugin` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts` |
 | `BUG-failed-plugin-load-leaks-a-registered-plugin` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts` |
 | `BUG-failed-plugin-load-leaks-a-registered-plugin` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
+| `BUG-failed-plugin-load-leaks-a-registered-plugin` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `BUG-failed-plugin-load-leaks-a-registered-plugin` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `BUG-failed-plugin-load-leaks-a-registered-plugin` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `BUG-failed-plugin-load-leaks-a-registered-plugin` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -24805,12 +24814,13 @@ output is byte-identical for identical inputs.
 | `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts; src/plugins/registry-store.ts` |
 | `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
+| `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts; src/plugins/registry-store.ts` |
 | `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `TASK-plugin-management-api` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `epic-platform-research` | `src/plugins/loader.ts` |
-| `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `epic-plugin-system` | `src/plugins/loader.ts` |
+| `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `epic-plugin-system` | `src/plugins/loader.ts; src/plugins/registry-store.ts` |
 | `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `epic-provider-plugin-ecosystem` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-append-onload-registrations-to-manifest-registra` | sibling | `epic-security-sandboxing` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `BUG-fix-plugins-make-plugin-discovery-failures-visible` | `src/plugins/loader.ts` |
@@ -24826,12 +24836,13 @@ output is byte-identical for identical inputs.
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts; src/plugins/registry-store.ts` |
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
+| `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader-dispatch.test.ts; src/plugins/loader.ts; src/plugins/registry-store.ts` |
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `TASK-plugin-management-api` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `epic-platform-research` | `src/plugins/loader.ts` |
-| `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `epic-plugin-system` | `src/plugins/loader.ts` |
+| `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `epic-plugin-system` | `src/plugins/loader-dispatch.test.ts; src/plugins/loader.ts; src/plugins/registry-store.ts` |
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `epic-provider-plugin-ecosystem` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-define-plugin-route-matching-semantics` | sibling | `epic-security-sandboxing` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-make-plugin-discovery-failures-visible` | sibling | `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error` | `src/plugins/loader.discovery-failures.test.ts; src/plugins/loader.ts` |
@@ -24846,6 +24857,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-plugins-make-plugin-discovery-failures-visible` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-make-plugin-discovery-failures-visible` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-make-plugin-discovery-failures-visible` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
+| `BUG-fix-plugins-make-plugin-discovery-failures-visible` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-make-plugin-discovery-failures-visible` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-make-plugin-discovery-failures-visible` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `BUG-fix-plugins-make-plugin-discovery-failures-visible` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -26958,6 +26970,7 @@ output is byte-identical for identical inputs.
 | `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts` |
 | `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts` |
 | `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
+| `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -28395,6 +28408,7 @@ output is byte-identical for identical inputs.
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | `src/plugins/types.ts` |
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-moderator-permission-gating-for-read-only-review-surface` | `src/users/permissions.ts` |
+| `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts; src/plugins/types.ts` |
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -28757,6 +28771,7 @@ output is byte-identical for identical inputs.
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | sibling | `TASK-engine-feedback-loop` | `src/plugins/registry.ts` |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | sibling | `TASK-location-crud-tree-connections` | `src/db/migrations/001_init.ts` |
+| `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/001_init.ts` |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
@@ -28811,6 +28826,7 @@ output is byte-identical for identical inputs.
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-harness-plugin-runtime` | `src/plugins/types.ts` |
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | `src/plugins/types.ts` |
+| `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts; src/plugins/route-access.ts` |
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts; src/plugins/types.ts` |
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -28830,6 +28846,7 @@ output is byte-identical for identical inputs.
 | `BUG-plugin-state-is-auto-approved-on-first-sight` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts` |
 | `BUG-plugin-state-is-auto-approved-on-first-sight` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts` |
 | `BUG-plugin-state-is-auto-approved-on-first-sight` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
+| `BUG-plugin-state-is-auto-approved-on-first-sight` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `BUG-plugin-state-is-auto-approved-on-first-sight` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `BUG-plugin-state-is-auto-approved-on-first-sight` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `BUG-plugin-state-is-auto-approved-on-first-sight` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -35572,6 +35589,7 @@ output is byte-identical for identical inputs.
 | `TASK-046` | sibling | `TASK-harness-plugin-runtime` | `src/plugins/types.ts` |
 | `TASK-046` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
 | `TASK-046` | sibling | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | `src/plugins/types.ts` |
+| `TASK-046` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `TASK-046` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `TASK-046` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts; src/plugins/types.ts` |
 | `TASK-046` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -35604,6 +35622,7 @@ output is byte-identical for identical inputs.
 | `TASK-047` | sibling | `TASK-harness-subagent-delegation` | `src/plugins/tool-executor.ts` |
 | `TASK-047` | sibling | `TASK-harness-tool-sandbox` | `src/plugins/tool-executor.ts` |
 | `TASK-047` | sibling | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | `src/plugins/tool-executor.ts; src/plugins/types.ts` |
+| `TASK-047` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `TASK-047` | sibling | `TASK-plugin-and-tool-runtime-residual-defects` | `src/plugins/event-bus.ts; src/plugins/tool-executor.ts` |
 | `TASK-047` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `TASK-047` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts; src/plugins/types.ts` |
@@ -35634,6 +35653,7 @@ output is byte-identical for identical inputs.
 | `TASK-048` | sibling | `TASK-harness-subagent-delegation` | `src/plugins/tool-executor.ts` |
 | `TASK-048` | sibling | `TASK-harness-tool-sandbox` | `src/plugins/tool-executor.ts` |
 | `TASK-048` | sibling | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | `src/plugins/tool-executor.ts; src/plugins/types.ts` |
+| `TASK-048` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `TASK-048` | sibling | `TASK-plugin-and-tool-runtime-residual-defects` | `src/plugins/event-bus.ts; src/plugins/tool-executor.ts` |
 | `TASK-048` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `TASK-048` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts; src/plugins/types.ts` |
@@ -35857,6 +35877,7 @@ output is byte-identical for identical inputs.
 | `TASK-055` | sibling | `TASK-markdown-derive-other-formats` | `src/db/enums-story/items.ts` |
 | `TASK-055` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/db/schema.ts` |
 | `TASK-055` | sibling | `TASK-nsfw-gate-moderation-events` | `src/db/schema.ts` |
+| `TASK-055` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `TASK-055` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `TASK-055` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `TASK-055` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -36959,6 +36980,7 @@ output is byte-identical for identical inputs.
 | `TASK-add-per-plugin-unload` | sibling | `TASK-engine-docs-search` | `src/plugins/registry.ts` |
 | `TASK-add-per-plugin-unload` | sibling | `TASK-engine-feedback-loop` | `src/plugins/registry.ts` |
 | `TASK-add-per-plugin-unload` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
+| `TASK-add-per-plugin-unload` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts; src/plugins/registry-store.ts` |
 | `TASK-add-per-plugin-unload` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `TASK-add-per-plugin-unload` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `TASK-add-per-plugin-unload` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -36968,7 +36990,7 @@ output is byte-identical for identical inputs.
 | `TASK-add-per-plugin-unload` | sibling | `epic-output-control-transforms` | `src/plugins/registry.ts` |
 | `TASK-add-per-plugin-unload` | sibling | `epic-platform-research` | `src/plugins/loader.ts` |
 | `TASK-add-per-plugin-unload` | sibling | `epic-plugin-extension-points` | `src/plugins/registry.ts` |
-| `TASK-add-per-plugin-unload` | sibling | `epic-plugin-system` | `src/plugins/loader.ts; src/plugins/registry.ts` |
+| `TASK-add-per-plugin-unload` | sibling | `epic-plugin-system` | `src/plugins/loader.ts; src/plugins/registry-store.ts; src/plugins/registry.ts` |
 | `TASK-add-per-plugin-unload` | sibling | `epic-provider-plugin-ecosystem` | `src/plugins/loader.ts; src/plugins/registry.ts` |
 | `TASK-add-per-plugin-unload` | sibling | `epic-security-sandboxing` | `src/plugins/loader.ts` |
 | `TASK-add-response-schemas-remaining-routes` | sibling | `TASK-admin-assistant-tooling-allowlist` | `src/validation/schemas.ts` |
@@ -46179,6 +46201,7 @@ output is byte-identical for identical inputs.
 | `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-harness-plugin-runtime` | `src/plugins/types.ts` |
 | `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-harness-programmatic-api` | `src/plugins/loader.ts` |
 | `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | `src/plugins/types.ts` |
+| `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts; src/plugins/route-access.ts` |
 | `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts; src/plugins/types.ts` |
 | `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -48197,6 +48220,7 @@ output is byte-identical for identical inputs.
 | `TASK-harness-plugin-runtime` | sibling | `epic-mini-games` | `src/plugins/types.ts` |
 | `TASK-harness-plugin-runtime` | sibling | `epic-plugin-extension-points` | `src/plugins/types.ts` |
 | `TASK-harness-plugin-runtime` | sibling | `epic-precompiled-hot-binaries` | `src/native/loader.ts` |
+| `TASK-harness-programmatic-api` | sibling | `TASK-o-1-plugin-route-dispatch-index` | `src/plugins/loader.ts` |
 | `TASK-harness-programmatic-api` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
 | `TASK-harness-programmatic-api` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
 | `TASK-harness-programmatic-api` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
@@ -50706,6 +50730,14 @@ output is byte-identical for identical inputs.
 | `TASK-nsfw-wire-consent-gate-into-nsfw-surfaces` | sibling | `epic-nsfw-integration-gaps` | `src/middleware/nsfw-gate/consent.ts` |
 | `TASK-nsfw-wire-consent-gate-into-nsfw-surfaces` | sibling | `epic-shared-schemas` | `src/middleware/nsfw-gate/consent.ts` |
 | `TASK-nsfw-wire-seduction-encounter-preconditions` | sibling | `epic-faction-reputation` | `src/nsfw/seduction-prerequisites.ts` |
+| `TASK-o-1-plugin-route-dispatch-index` | sibling | `TASK-plugin-auth-runtime-seed` | `src/plugins/loader.ts` |
+| `TASK-o-1-plugin-route-dispatch-index` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/loader.ts` |
+| `TASK-o-1-plugin-route-dispatch-index` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/plugins/loader.ts` |
+| `TASK-o-1-plugin-route-dispatch-index` | sibling | `TASK-plugin-management-api` | `src/plugins/loader.ts` |
+| `TASK-o-1-plugin-route-dispatch-index` | sibling | `epic-platform-research` | `src/plugins/loader.ts` |
+| `TASK-o-1-plugin-route-dispatch-index` | sibling | `epic-plugin-system` | `src/plugins/loader-dispatch.test.ts; src/plugins/loader.ts; src/plugins/registry-store.ts` |
+| `TASK-o-1-plugin-route-dispatch-index` | sibling | `epic-provider-plugin-ecosystem` | `src/plugins/loader.ts` |
+| `TASK-o-1-plugin-route-dispatch-index` | sibling | `epic-security-sandboxing` | `src/plugins/loader.ts` |
 | `TASK-observability-config-section` | sibling | `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination` | `src/config/sections/server.ts` |
 | `TASK-observability-config-section` | sibling | `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un` | `src/config/sections/index.ts` |
 | `TASK-observability-config-section` | sibling | `epic-certificate-and-tls-management` | `src/config/sections/server.ts` |

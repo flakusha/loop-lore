@@ -37996,7 +37996,11 @@
       "path": ".plan/tickets/TASK-o-1-plugin-route-dispatch-index.md",
       "title": "O(1) plugin route dispatch index",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/plugins/loader-dispatch.test.ts",
+        "src/plugins/loader.ts",
+        "src/plugins/registry-store.ts"
+      ],
       "related": []
     },
     {
@@ -52929,8 +52933,10 @@
         "src/plugins/events.ts",
         "src/plugins/hooks.ts",
         "src/plugins/lifecycle.ts",
+        "src/plugins/loader-dispatch.test.ts",
         "src/plugins/loader.ts",
         "src/plugins/overrides.ts",
+        "src/plugins/registry-store.ts",
         "src/plugins/registry.ts",
         "src/plugins/security.ts",
         "src/plugins/storage.ts",
@@ -76496,7 +76502,9 @@
     {
       "path": "src/plugins/loader-dispatch.test.ts",
       "owners": [
-        "BUG-fix-plugins-define-plugin-route-matching-semantics"
+        "BUG-fix-plugins-define-plugin-route-matching-semantics",
+        "TASK-o-1-plugin-route-dispatch-index",
+        "epic-plugin-system"
       ]
     },
     {
@@ -76527,6 +76535,7 @@
         "TASK-add-per-plugin-unload",
         "TASK-enforce-plugin-origin-at-request-time",
         "TASK-harness-programmatic-api",
+        "TASK-o-1-plugin-route-dispatch-index",
         "TASK-plugin-auth-runtime-seed",
         "TASK-plugin-host-contract-for-third-party-integration-plugins",
         "TASK-plugin-hot-reload-with-real-module-cache-busting",
@@ -76584,7 +76593,9 @@
         "BUG-a-community-plugin-named-core-disables-all-five-built-in-too",
         "BUG-fix-plugins-append-onload-registrations-to-manifest-registra",
         "BUG-fix-plugins-define-plugin-route-matching-semantics",
-        "TASK-add-per-plugin-unload"
+        "TASK-add-per-plugin-unload",
+        "TASK-o-1-plugin-route-dispatch-index",
+        "epic-plugin-system"
       ]
     },
     {
@@ -144334,6 +144345,21 @@
       "to": "src/nsfw/seduction-prerequisites.ts"
     },
     {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "produces",
+      "to": "src/plugins/loader-dispatch.test.ts"
+    },
+    {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "produces",
+      "to": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "produces",
+      "to": "src/plugins/registry-store.ts"
+    },
+    {
       "from": "TASK-observability-config-section",
       "kind": "produces",
       "to": "src/config/schema/observability.ts"
@@ -163676,12 +163702,22 @@
     {
       "from": "epic-plugin-system",
       "kind": "produces",
+      "to": "src/plugins/loader-dispatch.test.ts"
+    },
+    {
+      "from": "epic-plugin-system",
+      "kind": "produces",
       "to": "src/plugins/loader.ts"
     },
     {
       "from": "epic-plugin-system",
       "kind": "produces",
       "to": "src/plugins/overrides.ts"
+    },
+    {
+      "from": "epic-plugin-system",
+      "kind": "produces",
+      "to": "src/plugins/registry-store.ts"
     },
     {
       "from": "epic-plugin-system",
@@ -173015,6 +173051,12 @@
     {
       "from": "BUG-a-community-plugin-named-core-disables-all-five-built-in-too",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts; src/plugins/registry-store.ts"
+    },
+    {
+      "from": "BUG-a-community-plugin-named-core-disables-all-five-built-in-too",
+      "kind": "sibling",
       "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
@@ -173046,7 +173088,7 @@
       "from": "BUG-a-community-plugin-named-core-disables-all-five-built-in-too",
       "kind": "sibling",
       "to": "epic-plugin-system",
-      "via": "src/plugins/loader.ts"
+      "via": "src/plugins/loader.ts; src/plugins/registry-store.ts"
     },
     {
       "from": "BUG-a-community-plugin-named-core-disables-all-five-built-in-too",
@@ -176994,6 +177036,12 @@
       "from": "BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat",
       "kind": "sibling",
       "to": "TASK-harness-programmatic-api",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat",
+      "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
       "via": "src/plugins/loader.ts"
     },
     {
@@ -206837,6 +206885,12 @@
     {
       "from": "BUG-failed-plugin-load-leaks-a-registered-plugin",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-failed-plugin-load-leaks-a-registered-plugin",
+      "kind": "sibling",
       "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
@@ -210161,6 +210215,12 @@
     {
       "from": "BUG-fix-plugins-append-onload-registrations-to-manifest-registra",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts; src/plugins/registry-store.ts"
+    },
+    {
+      "from": "BUG-fix-plugins-append-onload-registrations-to-manifest-registra",
+      "kind": "sibling",
       "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
@@ -210192,7 +210252,7 @@
       "from": "BUG-fix-plugins-append-onload-registrations-to-manifest-registra",
       "kind": "sibling",
       "to": "epic-plugin-system",
-      "via": "src/plugins/loader.ts"
+      "via": "src/plugins/loader.ts; src/plugins/registry-store.ts"
     },
     {
       "from": "BUG-fix-plugins-append-onload-registrations-to-manifest-registra",
@@ -210287,6 +210347,12 @@
     {
       "from": "BUG-fix-plugins-define-plugin-route-matching-semantics",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader-dispatch.test.ts; src/plugins/loader.ts; src/plugins/registry-store.ts"
+    },
+    {
+      "from": "BUG-fix-plugins-define-plugin-route-matching-semantics",
+      "kind": "sibling",
       "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
@@ -210318,7 +210384,7 @@
       "from": "BUG-fix-plugins-define-plugin-route-matching-semantics",
       "kind": "sibling",
       "to": "epic-plugin-system",
-      "via": "src/plugins/loader.ts"
+      "via": "src/plugins/loader-dispatch.test.ts; src/plugins/loader.ts; src/plugins/registry-store.ts"
     },
     {
       "from": "BUG-fix-plugins-define-plugin-route-matching-semantics",
@@ -210402,6 +210468,12 @@
       "from": "BUG-fix-plugins-make-plugin-discovery-failures-visible",
       "kind": "sibling",
       "to": "TASK-harness-programmatic-api",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-fix-plugins-make-plugin-discovery-failures-visible",
+      "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
       "via": "src/plugins/loader.ts"
     },
     {
@@ -223103,6 +223175,12 @@
     {
       "from": "BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error",
+      "kind": "sibling",
       "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
@@ -231749,6 +231827,12 @@
     {
       "from": "BUG-nsfw-cards-ships-ungated-post-routes",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-nsfw-cards-ships-ungated-post-routes",
+      "kind": "sibling",
       "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
@@ -234257,6 +234341,12 @@
     {
       "from": "BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-",
+      "kind": "sibling",
       "to": "TASK-per-model-per-provider-cost-attribution-for-llm-execution-st",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -234581,6 +234671,12 @@
     {
       "from": "BUG-plugin-route-registry-lacks-ownership-enforcement-idor",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-plugin-route-registry-lacks-ownership-enforcement-idor",
+      "kind": "sibling",
       "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts; src/plugins/route-access.ts"
     },
@@ -234690,6 +234786,12 @@
       "from": "BUG-plugin-state-is-auto-approved-on-first-sight",
       "kind": "sibling",
       "to": "TASK-harness-programmatic-api",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-plugin-state-is-auto-approved-on-first-sight",
+      "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
       "via": "src/plugins/loader.ts"
     },
     {
@@ -275189,6 +275291,12 @@
     {
       "from": "TASK-046",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-046",
+      "kind": "sibling",
       "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
@@ -275381,6 +275489,12 @@
     {
       "from": "TASK-047",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-047",
+      "kind": "sibling",
       "to": "TASK-plugin-and-tool-runtime-residual-defects",
       "via": "src/plugins/event-bus.ts; src/plugins/tool-executor.ts"
     },
@@ -275557,6 +275671,12 @@
       "kind": "sibling",
       "to": "TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge",
       "via": "src/plugins/tool-executor.ts; src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-048",
+      "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
     },
     {
       "from": "TASK-048",
@@ -276895,6 +277015,12 @@
       "kind": "sibling",
       "to": "TASK-nsfw-gate-moderation-events",
       "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-055",
+      "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
     },
     {
       "from": "TASK-055",
@@ -283517,6 +283643,12 @@
     {
       "from": "TASK-add-per-plugin-unload",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts; src/plugins/registry-store.ts"
+    },
+    {
+      "from": "TASK-add-per-plugin-unload",
+      "kind": "sibling",
       "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
@@ -283572,7 +283704,7 @@
       "from": "TASK-add-per-plugin-unload",
       "kind": "sibling",
       "to": "epic-plugin-system",
-      "via": "src/plugins/loader.ts; src/plugins/registry.ts"
+      "via": "src/plugins/loader.ts; src/plugins/registry-store.ts; src/plugins/registry.ts"
     },
     {
       "from": "TASK-add-per-plugin-unload",
@@ -338879,6 +339011,12 @@
     {
       "from": "TASK-enforce-plugin-origin-at-request-time",
       "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-enforce-plugin-origin-at-request-time",
+      "kind": "sibling",
       "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts; src/plugins/route-access.ts"
     },
@@ -350995,6 +351133,12 @@
       "kind": "sibling",
       "to": "epic-precompiled-hot-binaries",
       "via": "src/native/loader.ts"
+    },
+    {
+      "from": "TASK-harness-programmatic-api",
+      "kind": "sibling",
+      "to": "TASK-o-1-plugin-route-dispatch-index",
+      "via": "src/plugins/loader.ts"
     },
     {
       "from": "TASK-harness-programmatic-api",
@@ -366175,6 +366319,54 @@
       "kind": "sibling",
       "to": "epic-faction-reputation",
       "via": "src/nsfw/seduction-prerequisites.ts"
+    },
+    {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "sibling",
+      "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "sibling",
+      "to": "TASK-plugin-hot-reload-with-real-module-cache-busting",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "sibling",
+      "to": "TASK-plugin-management-api",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "sibling",
+      "to": "epic-platform-research",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "sibling",
+      "to": "epic-plugin-system",
+      "via": "src/plugins/loader-dispatch.test.ts; src/plugins/loader.ts; src/plugins/registry-store.ts"
+    },
+    {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "sibling",
+      "to": "epic-provider-plugin-ecosystem",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "sibling",
+      "to": "epic-security-sandboxing",
+      "via": "src/plugins/loader.ts"
     },
     {
       "from": "TASK-observability-config-section",
