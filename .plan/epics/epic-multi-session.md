@@ -8,7 +8,7 @@
 
 
 **Status:** Done
-**Status Note:** Not Started
+**Status Note:** closed 2026-10-30 — git issue done (see Resolved)
 **Priority:** Medium
 **Effort:** Med
 **Type:** Feature Epic
