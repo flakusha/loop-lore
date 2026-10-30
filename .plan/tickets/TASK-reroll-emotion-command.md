@@ -3,7 +3,8 @@
 
 # TASK: reroll-emotion command
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Emotion-Avatar Completion
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-avatar-regeneration-control
