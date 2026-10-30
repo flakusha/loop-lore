@@ -146,6 +146,7 @@ adminGlobals.adminPage = function() {
           this.loadSdConfig();
           this.loadModelCapabilities();
           this.loadComparisonHistory();
+          this.loadModelNews();
           break;
         }
 
