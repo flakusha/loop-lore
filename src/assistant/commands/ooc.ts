@@ -20,4 +20,4 @@ registerCommand("ooc", (args,): CommandResult => {
     action: "inject-ooc",
     handled: true,
   };
-},);
+}, { capabilities: ["write-chat",], },);

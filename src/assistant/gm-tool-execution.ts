@@ -25,6 +25,7 @@ import type { CommandContext, CommandResult, } from "./commands/registry";
 import { getCommand, getCommandRequirement, satisfiesRole, } from "./commands/registry";
 import { detectGmTool, GM_TOOL_NAMES, } from "./gm-tool-detection";
 import type { GmToolDetection, GmToolName, } from "./gm-tool-detection";
+import { runGuardedToolCall, } from "./guard/pipeline";
 
 /** Confidence threshold for executing a detected tool request. */
 const CONFIDENCE_THRESHOLD = 0.7;
@@ -195,7 +196,26 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
   const args = [...(mapping.prefixArgs ?? []), ...paramsToArgs(detection.params, mapping.paramOrder,),];
   let result: CommandResult;
   try {
-    result = await handler(args, cmdCtx,);
+    // The guard is the natural-language path's safety net: the capability
+    // matrix, the aux-LLM judge for review-tier commands, and the sandbox.
+    const outcome = await runGuardedToolCall({
+      tool: mapping.command,
+      args,
+      ctx: cmdCtx,
+      origin: "natural-language",
+      content,
+    }, database,);
+
+    if (!outcome.allowed) {
+      logger.warn("GM tool request denied by the capability guard", {
+        command: mapping.command,
+        reason: outcome.reason,
+      },);
+
+      return noop;
+    }
+
+    result = outcome.result ?? { handled: true, systemMessage: `\`/${mapping.command}\` produced no result.`, };
   } catch (error) {
     logger.debug("GM tool command handler threw", {
       command: mapping.command,

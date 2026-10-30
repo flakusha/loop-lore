@@ -7,7 +7,7 @@
 // Supports single-character and multi-character files (YAML/TOML).
 // Merges all found characters by name (user wins on conflict).
 
-import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import type { ContentRating, } from "../characters/spec";
 import { findMainRepoRoot, } from "../utils/git-worktree";
@@ -86,9 +86,9 @@ function findCharacterFiles(cwd: string,): string[] {
   const seen = new Set<string>();
 
   for (const dir of searchDirs) {
-    if (!existsSync(dir,) || !statSync(dir,).isDirectory()) { continue; }
+    if (!fs.existsSync(dir,) || !fs.statSync(dir,).isDirectory()) { continue; }
 
-    const entries = readdirSync(dir,);
+    const entries = fs.readdirSync(dir,);
     for (const entry of entries) {
       const ext = path.extname(entry,).toLowerCase();
       if (ext !== ".yaml" && ext !== ".yml" && ext !== ".toml") { continue; }
@@ -112,7 +112,7 @@ function findCharacterFiles(cwd: string,): string[] {
  * @returns void
  */
 function parseCharacterFile(filePath: string,): CharacterFileData {
-  const content = readFileSync(filePath, "utf8",);
+  const content = fs.readFileSync(filePath, "utf8",);
   const ext = path.extname(filePath,).slice(1,).toLowerCase();
 
   if (ext === "toml") {

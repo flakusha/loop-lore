@@ -11,7 +11,7 @@
  * and admin CRUD.
  */
 import type { Kysely, } from "kysely";
-import { existsSync, readFileSync, statSync, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, } from "../../utils";
@@ -48,7 +48,7 @@ export function loadConfigChatSetupTemplates(cwd?: string,): ChatSetupTemplateDe
 
   // YAML wins over TOML when both exist (templates-loader convention).
   const chosen = candidates.find((c,) => c.kind === "yaml") ?? candidates[0]!;
-  const raw = readFileSync(chosen.path, "utf8",);
+  const raw = fs.readFileSync(chosen.path, "utf8",);
   let parsed: unknown;
   try {
     parsed = chosen.kind === "toml" ? Bun.TOML.parse(raw,) : Bun.YAML.parse(raw,);
@@ -84,10 +84,10 @@ function findTemplateCandidates(
   const candidates: { path: string; kind: "yaml" | "toml" }[] = [];
   for (const root of roots) {
     const dir = path.join(root, "configs", "templates",);
-    if (!existsSync(dir,) || !statIsDir(dir,)) { continue; }
+    if (!fs.existsSync(dir,) || !statIsDir(dir,)) { continue; }
     for (const file of ["chat-setup.yaml", "chat-setup.yml", "chat-setup.toml",]) {
       const full = path.join(dir, file,);
-      if (existsSync(full,)) {
+      if (fs.existsSync(full,)) {
         candidates.push({ path: full, kind: file.endsWith(".toml",) ? "toml" : "yaml", },);
       }
     }
@@ -128,7 +128,7 @@ function toTemplateDefault(item: unknown,): ChatSetupTemplateDefault | null {
  */
 function statIsDir(p: string,): boolean {
   try {
-    return statSync(p,).isDirectory();
+    return fs.statSync(p,).isDirectory();
   } catch {
     return false;
   }

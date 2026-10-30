@@ -3,7 +3,7 @@
 
 // src/config/load/domain.ts — Domain-specific config loading & validation
 
-import { existsSync, readFileSync, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import type { Config, } from "../schema";
 import { DOMAIN_CONFIG_EXTENSIONS, DOMAINS, } from "./constants";
@@ -27,9 +27,9 @@ export function loadDomainConfigs(directory: string, baseConfig: Config,): Confi
     for (const ext of DOMAIN_CONFIG_EXTENSIONS) {
       const domainFile = `config.${domain}${ext}`;
       const domainPath = path.join(configsDir, domainFile,);
-      if (existsSync(domainPath,)) {
+      if (fs.existsSync(domainPath,)) {
         try {
-          const content = readFileSync(domainPath, "utf8",);
+          const content = fs.readFileSync(domainPath, "utf8",);
           const parsed = parseFileContent(content, ext.slice(1,),);
           validateDomainConfig(domain, parsed, domainPath,);
           config = deepMerge(config, parsed,);

@@ -186,4 +186,4 @@ registerCommand("rag-decompose", async (args, ctx,): Promise<CommandResult> => {
     ].join("\n",),
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-lore", "network", "cross-user",], },);

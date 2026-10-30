@@ -9,7 +9,7 @@
 // avoid the circular import:
 //   config/load/load.ts → templates-loader → (if we imported fs.ts) → ???
 
-import { existsSync, readFileSync, statSync, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import { getChildLogger, } from "../logger";
 
@@ -25,17 +25,17 @@ import { getChildLogger, } from "../logger";
  */
 export function findMainRepoRoot(cwd: string,): string | null {
   const gitPath = path.join(cwd, ".git",);
-  if (!existsSync(gitPath,)) { return null; }
+  if (!fs.existsSync(gitPath,)) { return null; }
 
   try {
-    if (statSync(gitPath,).isDirectory()) { return null; }
+    if (fs.statSync(gitPath,).isDirectory()) { return null; }
   } catch (error) {
     // Rare race: `.git` removed between existsSync and statSync, or unreadable.
     getChildLogger("utils/git-worktree",)?.debug("findMainRepoRoot: stat on .git failed", { cwd, err: error, },);
     return null;
   }
 
-  const content = readFileSync(gitPath, "utf8",).trim();
+  const content = fs.readFileSync(gitPath, "utf8",).trim();
   const match = /^gitdir:\s*(.+)$/.exec(content,);
   if (!match) { return null; }
 
@@ -45,9 +45,9 @@ export function findMainRepoRoot(cwd: string,): string | null {
   const mainRoot = path.dirname(gitDir,);
 
   const mainGitPath = path.join(mainRoot, ".git",);
-  if (existsSync(mainGitPath,)) {
+  if (fs.existsSync(mainGitPath,)) {
     try {
-      if (statSync(mainGitPath,).isDirectory()) { return mainRoot; }
+      if (fs.statSync(mainGitPath,).isDirectory()) { return mainRoot; }
     } catch (error) {
       getChildLogger("utils/git-worktree",)?.debug("findMainRepoRoot: stat on main .git failed, not a worktree", {
         mainRoot,
