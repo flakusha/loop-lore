@@ -16,6 +16,7 @@ import { keyRotationRoutes, } from "./key-rotation";
 import { modelCapabilitiesRoutes, } from "./model-capabilities";
 import { modelRolesRoutes, } from "./model-roles";
 import { providersRoutes, } from "./providers";
+import { resourcesRoutes, } from "./resources";
 import { reviewStatsRoutes, } from "./review-stats";
 import { sdStatusRoutes, } from "./sd-status";
 import { seedRoutes, } from "./seed";
@@ -43,6 +44,16 @@ import { worldsRoutes, } from "./worlds";
  *   GET  /api/admin/world-events?world_id=… — world simulation event log
  *   GET  /api/admin/cron/jobs      — list scheduled job statuses
  *   POST /api/admin/cron/jobs/:name/run — manually trigger a job
+ *   GET  /api/admin/resources/inference — list provisioned inference endpoints
+ *   POST /api/admin/resources/inference — add an inference endpoint
+ *   DELETE /api/admin/resources/inference/:id — revoke an inference endpoint
+ *   POST /api/admin/resources/inference/:id/test — dry-run probe (no call-out)
+ *   GET  /api/admin/resources/storage   — list provisioned storage endpoints
+ *   POST /api/admin/resources/storage   — add a storage endpoint
+ *   DELETE /api/admin/resources/storage/:id — revoke a storage endpoint
+ *   POST /api/admin/resources/storage/:id/test — dry-run probe (no call-out)
+ *   POST /api/admin/resources/backups   — write a hash-checked backup
+ *   POST /api/admin/resources/backups/:id/verify — integrity check one backup
  * @param opts
  * @param opts.database
  * @param opts.config
@@ -56,6 +67,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(statsRoutes(opts, prefix,),)
       .use(providersRoutes({ database: opts.database, }, prefix,),)
       .use(reviewStatsRoutes(opts, prefix,),)
+      .use(resourcesRoutes(opts, prefix,),)
       .use(modelRolesRoutes(opts, prefix,),)
       .use(modelCapabilitiesRoutes(opts, prefix,),)
       .use(sdStatusRoutes(opts, prefix,),)
