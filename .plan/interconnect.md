@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3849
+- tickets: 3855
 - epics: 358
-- src paths owned: 4536
-- edges: produces 12054, consumes 405, sibling 37372, owns 2825, related 1193
+- src paths owned: 4537
+- edges: produces 12062, consumes 405, sibling 37382, owns 2831, related 1193
 
 ## Shared src hubs
 
@@ -265,7 +265,7 @@ output is byte-identical for identical inputs.
 | `src/battle/items-integration.ts` | `TASK-actor-item-service`, `TASK-equipment-stat-preview`, `TASK-map-battle-equipment`, `TASK-persist-loot-drops`, `TASK-unify-item-types`, `epic-battle-action-systems`, `epic-battle-integration-gaps`, `epic-item-system-extensions`, `epic-item-systems-unification`, `epic-items` |
 | `src/battle/modes.ts` | `TASK-battle-encounter-template-system`, `TASK-battle-template-actions`, `epic-battle-action-systems` |
 | `src/battle/resolution-integration/attacks.ts` | `BUG-battle-attacks-calculatedamage-doubles-flat-dice-notation-bo`, `BUG-critical-hit-rolls-ignore-advantage` |
-| `src/battle/resolution-integration/checks.ts` | `TASK-sc10-player-state-machine-adapters`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-immersion-consistency-gate` |
+| `src/battle/resolution-integration/checks.ts` | `TASK-immersion-gate-failed-check-enforcement`, `TASK-sc10-player-state-machine-adapters`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-immersion-consistency-gate` |
 | `src/battle/resolution-integration/initiative.ts` | `FEAT-battle-core-implementation`, `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre` |
 | `src/battle/social-integration/surrender.ts` | `BUG-battle-surrender-cansurrender-is-always-true-when-morale-30-`, `epic-faction-reputation` |
 | `src/battle/templates/index.ts` | `TASK-battle-encounter-template-system`, `TASK-battle-template-actions` |
@@ -524,6 +524,7 @@ output is byte-identical for identical inputs.
 | `src/config/schema/seeding.ts` | `BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir`, `TASK-lorebook-template-seeding`, `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr`, `TASK-reconcile-ts-import-extensions-user-seeding-session`, `TASK-world-template-full-model-coverage` |
 | `src/config/schema/testing.ts` | `BUG-advertised-sfx-music-video-commands-are-stubs`, `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr`, `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server`, `TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene` |
 | `src/config/schema/tui.ts` | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `TASK-tui-enabled-config-flag-never-read`, `epic-terminal-ui` |
+| `src/config/sections` | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt`, `TASK-immersion-gate-config-surface-and-audit-log` |
 | `src/config/sections/age-gate.ts` | `BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k`, `epic-frontend-age-gate` |
 | `src/config/sections/auth.ts` | `BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive`, `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `TASK-adopt-bun-csrf-for-csrf-protection`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` |
 | `src/config/sections/autonomy.ts` | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `epic-research-agency-decision` |
@@ -1007,6 +1008,7 @@ output is byte-identical for identical inputs.
 | `src/generation/continuation.ts` | `BUG-generation-continuation-maps-never-evicted-unbounded-process`, `BUG-module-level-in-memory-state-grows-without-eviction`, `epic-actor-turn-skip` |
 | `src/generation/controller.ts` | `BUG-generate-route-authorizes-chatid-but-not-actorid`, `BUG-generation-control-plane-routes-lack-authorization`, `TASK-clarify-prompt-improve-route-path-reconciliation`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-egui-sse-response-streaming-through-the-browser-bridge`, `TASK-illustrated-book-reference-pass`, `TASK-llm-scheduler-observability`, `TASK-server-emit-id-plus-retry-on-every-generation-sse-frame`, `epic-architecture` |
 | `src/generation/fallback.ts` | `FEAT-byok-api-keys`, `epic-byok-api-keys` |
+| `src/generation/flow-control.ts` | `TASK-immersion-gate-opt-in-llm-classifier`, `TASK-view-set-orbit-video-tier` |
 | `src/generation/generate-route.ts` | `FEAT-065-prompt-library-expanded`, `TASK-code-quality`, `TASK-response-length-control`, `TASK-split-generate-route`, `TASK-thinking-tag-context-prune` |
 | `src/generation/generate-route/actor-authorization.test.ts` | `BUG-generate-route-authorizes-chatid-but-not-actorid`, `BUG-plugin-tool-authorization-fails-open` |
 | `src/generation/generate-route/build-prompt.ts` | `BUG-group-participant-injection-absent-on-manual-generate-route`, `TASK-2026-openwebui-tool-valves-panel`, `TASK-context-lossless-lossy-tiering`, `epic-chat-context-optimization`, `epic-context-injection-correctness` |
@@ -1694,6 +1696,7 @@ output is byte-identical for identical inputs.
 | `src/rpg/crafting/station-types.ts` | `TASK-051`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` |
 | `src/rpg/crafting/stations.ts` | `TASK-051`, `TASK-053`, `epic-crafting-professions` |
 | `src/rpg/crime/pickpocket.ts` | `TASK-stealth-slash-interactions`, `epic-stealth-crime` |
+| `src/rpg/dice` | `TASK-immersion-gate-failed-check-enforcement`, `epic-immersion-consistency-gate` |
 | `src/rpg/dice.test.ts` | `TASK-rpg-mechanics-dice-stats`, `epic-rpg-mechanics` |
 | `src/rpg/dice.ts` | `TASK-038`, `TASK-040`, `TASK-resolution-family-decision`, `TASK-rpg-mechanics`, `TASK-rpg-mechanics-dice-stats`, `epic-rpg-mechanics` |
 | `src/rpg/dice/roll.ts` | `TASK-rpg-silent-catches-and-dice-modular-bias`, `TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history` |
@@ -1770,7 +1773,7 @@ output is byte-identical for identical inputs.
 | `src/rpg/service/world-gate.test.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` |
 | `src/rpg/service/world-gate.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui`, `TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s`, `epic-character-xp-leveling`, `epic-mechanics-governance` |
 | `src/rpg/service/xp.ts` | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `TASK-wire-xp-loot-routes`, `epic-character-xp-leveling`, `epic-rpg-core-wiring` |
-| `src/rpg/skills` | `TASK-sc10-player-state-machine-adapters`, `epic-immersion-consistency-gate` |
+| `src/rpg/skills` | `TASK-immersion-gate-deterministic-rule-engine`, `TASK-sc10-player-state-machine-adapters`, `epic-immersion-consistency-gate` |
 | `src/rpg/skills/index.ts` | `FEAT-skills`, `TASK-add-missing-rpg-module-barrels` |
 | `src/rpg/skills/service` | `TASK-040`, `TASK-add-missing-rpg-module-barrels`, `TASK-skill-biome-hazard-countermeasures`, `TASK-skill-check-slash-commands`, `epic-character-world-integration` |
 | `src/rpg/skills/service.test.ts` | `FEAT-skills`, `TASK-040`, `TASK-baseline-skills-seed-from-character-template`, `TASK-rpg-skill-combos-and-synergies`, `TASK-rpg-skill-points-on-level-up`, `TASK-rpg-skill-reset` |
@@ -1880,7 +1883,7 @@ output is byte-identical for identical inputs.
 | `src/story/game-master/narration.ts` | `BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat`, `BUG-encryption-tier-not-enforced`, `epic-narration-actor-separation` |
 | `src/story/gm/decisions/llm.ts` | `BUG-llmdecision-assembles-the-prompt-outside-the-try-block-so-an`, `FEAT-classifier-backed-actor-and-beat-selection-for-turn-decision`, `TASK-generation-error-handling-gaps-detector-abort-void-promises`, `TASK-llm-markdown-document-prompts` |
 | `src/story/index.ts` | `TASK-authoring-creation`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` |
-| `src/story/items` | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros`, `TASK-sc10-player-state-machine-adapters`, `epic-immersion-consistency-gate` |
+| `src/story/items` | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros`, `TASK-immersion-gate-deterministic-rule-engine`, `TASK-sc10-player-state-machine-adapters`, `epic-immersion-consistency-gate` |
 | `src/story/items/balance.ts` | `TASK-056`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `epic-item-system-extensions` |
 | `src/story/items/definitions.ts` | `BUG-item-definition-route-non-array-properties-effects-causes-un`, `BUG-story-items-cross-world-idor-read-transfer-destroy`, `TASK-049`, `TASK-050`, `TASK-054`, `TASK-055`, `epic-item-systems-unification` |
 | `src/story/items/effects.ts` | `BUG-item-definition-route-non-array-properties-effects-causes-un`, `TASK-052`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `epic-item-system-extensions`, `epic-items` |
@@ -1953,7 +1956,7 @@ output is byte-identical for identical inputs.
 | `src/tui/models-display.ts` | `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene`, `TASK-tui-models-overlay` |
 | `src/tui/models-overlay.ts` | `TASK-tui-fire-and-forget-void-without-catch`, `TASK-tui-models-overlay`, `epic-terminal-ui` |
 | `src/tui/nsfw-filter.test.ts` | `TASK-tui`, `TASK-tui-shell-testability` |
-| `src/turning` | `epic-emergent-narrative-design`, `epic-rpg-patterns` |
+| `src/turning` | `TASK-immersion-gate-refusal-narration-path`, `epic-emergent-narrative-design`, `epic-rpg-patterns` |
 | `src/turning/classifier-selection.ts` | `BUG-extractjsonobject-slices-an-unbounded-llm-response-before-js`, `TASK-outfit-change-aux-task-and-typebox-schema` |
 | `src/turning/skip-cooldown.ts` | `TASK-chat-feature-turn-talkativity-skip`, `TASK-fetchskipcooldowns-issues-one-query-per-cooling-actor` |
 | `src/turning/turn-manager.test.ts` | `BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c`, `BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` |
@@ -4020,6 +4023,12 @@ output is byte-identical for identical inputs.
 | `epic-image-video-scenario-studio` | owns | `TASK-ivss-video-metadata-extractor` | - |
 | `epic-image-video-scenario-studio` | owns | `TASK-ivss-video-run-pipeline` | - |
 | `epic-immersion-consistency-gate` | owns | `TASK-action-applicability-gate` | - |
+| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-claim-extraction` | - |
+| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-config-surface-and-audit-log` | - |
+| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-deterministic-rule-engine` | - |
+| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-failed-check-enforcement` | - |
+| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-opt-in-llm-classifier` | - |
+| `epic-immersion-consistency-gate` | owns | `TASK-immersion-gate-refusal-narration-path` | - |
 | `epic-immersion-consistency-gate` | owns | `TASK-sc1-perspective-gate-bypass` | - |
 | `epic-immersion-presentation` | owns | `TASK-chat-text-effects-overlays` | - |
 | `epic-immersion-presentation` | owns | `TASK-chat-visual-novel-mode` | - |
@@ -12028,6 +12037,13 @@ output is byte-identical for identical inputs.
 | `TASK-img2img-init-image-plumbing` | produces | `src/image-edit/templates/builtin/img2img.ts` | - |
 | `TASK-imgedit-in-chat-command` | produces | `src/assistant/commands/imgedit.ts` | - |
 | `TASK-imgedit-in-chat-command` | produces | `src/image-edit/routes.ts` | - |
+| `TASK-immersion-gate-config-surface-and-audit-log` | produces | `src/config/sections` | - |
+| `TASK-immersion-gate-deterministic-rule-engine` | produces | `src/rpg/skills` | - |
+| `TASK-immersion-gate-deterministic-rule-engine` | produces | `src/story/items` | - |
+| `TASK-immersion-gate-failed-check-enforcement` | produces | `src/battle/resolution-integration/checks.ts` | - |
+| `TASK-immersion-gate-failed-check-enforcement` | produces | `src/rpg/dice` | - |
+| `TASK-immersion-gate-opt-in-llm-classifier` | produces | `src/generation/flow-control.ts` | - |
+| `TASK-immersion-gate-refusal-narration-path` | produces | `src/turning` | - |
 | `TASK-implement-memory-decay-logic` | produces | `src/memory/purge.ts` | - |
 | `TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal` | produces | `src/crypto/e2e/key-pairs.ts` | - |
 | `TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal` | produces | `src/crypto/e2e/server-registry.ts` | - |
@@ -16326,6 +16342,7 @@ output is byte-identical for identical inputs.
 | `epic-image-video-scenario-studio` | produces | `src/assets/metadata.ts` | - |
 | `epic-image-video-scenario-studio` | produces | `src/memory/budget.ts` | - |
 | `epic-immersion-consistency-gate` | produces | `src/battle/resolution-integration/checks.ts` | - |
+| `epic-immersion-consistency-gate` | produces | `src/immersion/extract-claims.ts` | - |
 | `epic-immersion-consistency-gate` | produces | `src/regex` | - |
 | `epic-immersion-consistency-gate` | produces | `src/rpg/dice` | - |
 | `epic-immersion-consistency-gate` | produces | `src/rpg/skills` | - |
@@ -35905,6 +35922,7 @@ output is byte-identical for identical inputs.
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-chat-composer-markdown-pre-render-preview-before-send` | `src/frontend/alpine` |
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-etl-dag-wrapped-ingest-with-idempotency-and-dlq` | `src/cron/dag` |
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-extract-application-services-per-context-routes-to-thin-adap` | `src/nsfw/moderation-service` |
+| `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-immersion-gate-deterministic-rule-engine` | `src/story/items` |
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-item-asset-avatar-display-in-inventory-trading-and-provision` | `src/routes/story-items` |
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-personas-impersonation-plan-docs-bookkeeping-sweep` | `src/frontend/alpine` |
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | sibling | `TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag` | `src/frontend/alpine` |
@@ -44851,6 +44869,7 @@ output is byte-identical for identical inputs.
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep` | `src/config/migrate-config.ts` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | `src/config/schema-class/env-map.ts` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/config/schema-class/env-map.ts` |
+| `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-immersion-gate-config-surface-and-audit-log` | `src/config/sections` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-integration-config-surface-schemas-example-toml-env-map` | `src/config/schema-class/env-map.ts; src/config/sections/integrations.ts` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr` | `src/config/schema-class/env-map.ts` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `TASK-optique-cli-tooling-integration` | `src/config/migrate-config.ts` |
@@ -48653,6 +48672,14 @@ output is byte-identical for identical inputs.
 | `TASK-imgedit-in-chat-command` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/image-edit/routes.ts` |
 | `TASK-imgedit-in-chat-command` | sibling | `epic-comfyui-first-class-citizen` | `src/image-edit/routes.ts` |
 | `TASK-imgedit-in-chat-command` | sibling | `epic-reactive-actor-appearance` | `src/image-edit/routes.ts` |
+| `TASK-immersion-gate-deterministic-rule-engine` | sibling | `TASK-sc10-player-state-machine-adapters` | `src/rpg/skills; src/story/items` |
+| `TASK-immersion-gate-deterministic-rule-engine` | sibling | `epic-immersion-consistency-gate` | `src/rpg/skills; src/story/items` |
+| `TASK-immersion-gate-failed-check-enforcement` | sibling | `TASK-sc10-player-state-machine-adapters` | `src/battle/resolution-integration/checks.ts` |
+| `TASK-immersion-gate-failed-check-enforcement` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/battle/resolution-integration/checks.ts` |
+| `TASK-immersion-gate-failed-check-enforcement` | sibling | `epic-immersion-consistency-gate` | `src/battle/resolution-integration/checks.ts; src/rpg/dice` |
+| `TASK-immersion-gate-opt-in-llm-classifier` | sibling | `TASK-view-set-orbit-video-tier` | `src/generation/flow-control.ts` |
+| `TASK-immersion-gate-refusal-narration-path` | sibling | `epic-emergent-narrative-design` | `src/turning` |
+| `TASK-immersion-gate-refusal-narration-path` | sibling | `epic-rpg-patterns` | `src/turning` |
 | `TASK-implement-memory-decay-logic` | sibling | `TASK-memory-decay-logic` | `src/memory/purge.ts` |
 | `TASK-implement-memory-decay-logic` | sibling | `epic-crafting-professions` | `src/memory/purge.ts` |
 | `TASK-implement-memory-decay-logic` | sibling | `epic-cron-scheduler` | `src/memory/purge.ts` |

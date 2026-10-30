@@ -32998,6 +32998,72 @@
       ]
     },
     {
+      "id": "TASK-immersion-gate-claim-extraction",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-claim-extraction.md",
+      "title": "immersion gate claim extraction",
+      "status": "done",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-immersion-gate-config-surface-and-audit-log",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-config-surface-and-audit-log.md",
+      "title": "immersion gate config surface and audit log",
+      "status": "done",
+      "srcRefs": [
+        "src/config/sections"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-immersion-gate-deterministic-rule-engine",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-deterministic-rule-engine.md",
+      "title": "immersion gate deterministic rule engine",
+      "status": "done",
+      "srcRefs": [
+        "src/rpg/skills",
+        "src/story/items"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-failed-check-enforcement.md",
+      "title": "immersion gate failed-check enforcement",
+      "status": "done",
+      "srcRefs": [
+        "src/battle/resolution-integration/checks.ts",
+        "src/rpg/dice"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-immersion-gate-opt-in-llm-classifier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-opt-in-llm-classifier.md",
+      "title": "immersion gate opt-in llm classifier",
+      "status": "done",
+      "srcRefs": [
+        "src/generation/flow-control.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-immersion-gate-refusal-narration-path",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-refusal-narration-path.md",
+      "title": "immersion gate refusal narration path",
+      "status": "done",
+      "srcRefs": [
+        "src/turning"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-immersion-presentation",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-immersion-presentation.md",
@@ -51527,6 +51593,7 @@
       "status": "done",
       "srcRefs": [
         "src/battle/resolution-integration/checks.ts",
+        "src/immersion/extract-claims.ts",
         "src/regex",
         "src/rpg/dice",
         "src/rpg/skills",
@@ -58315,6 +58382,7 @@
     {
       "path": "src/battle/resolution-integration/checks.ts",
       "owners": [
+        "TASK-immersion-gate-failed-check-enforcement",
         "TASK-sc10-player-state-machine-adapters",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
         "epic-immersion-consistency-gate"
@@ -62974,7 +63042,8 @@
     {
       "path": "src/config/sections",
       "owners": [
-        "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt"
+        "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
+        "TASK-immersion-gate-config-surface-and-audit-log"
       ]
     },
     {
@@ -71899,6 +71968,7 @@
     {
       "path": "src/generation/flow-control.ts",
       "owners": [
+        "TASK-immersion-gate-opt-in-llm-classifier",
         "TASK-view-set-orbit-video-tier"
       ]
     },
@@ -73878,6 +73948,12 @@
         "TASK-multi-concept-segmentation-masks",
         "TASK-multi-reference-conditioning-request-model",
         "epic-comfyui-first-class-citizen"
+      ]
+    },
+    {
+      "path": "src/immersion/extract-claims.ts",
+      "owners": [
+        "epic-immersion-consistency-gate"
       ]
     },
     {
@@ -83004,6 +83080,7 @@
     {
       "path": "src/rpg/dice",
       "owners": [
+        "TASK-immersion-gate-failed-check-enforcement",
         "epic-immersion-consistency-gate"
       ]
     },
@@ -84596,6 +84673,7 @@
     {
       "path": "src/rpg/skills",
       "owners": [
+        "TASK-immersion-gate-deterministic-rule-engine",
         "TASK-sc10-player-state-machine-adapters",
         "epic-immersion-consistency-gate"
       ]
@@ -86614,6 +86692,7 @@
       "path": "src/story/items",
       "owners": [
         "TASK-181-pre-existing-options-object-params-eslint-warnings-acros",
+        "TASK-immersion-gate-deterministic-rule-engine",
         "TASK-sc10-player-state-machine-adapters",
         "epic-immersion-consistency-gate"
       ]
@@ -87673,6 +87752,7 @@
     {
       "path": "src/turning",
       "owners": [
+        "TASK-immersion-gate-refusal-narration-path",
         "epic-emergent-narrative-design",
         "epic-rpg-patterns"
       ]
@@ -99403,6 +99483,36 @@
       "from": "epic-immersion-consistency-gate",
       "kind": "owns",
       "to": "TASK-action-applicability-gate"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-claim-extraction"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-config-surface-and-audit-log"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-deterministic-rule-engine"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-failed-check-enforcement"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-opt-in-llm-classifier"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-refusal-narration-path"
     },
     {
       "from": "epic-immersion-consistency-gate",
@@ -139445,6 +139555,41 @@
       "to": "src/image-edit/routes.ts"
     },
     {
+      "from": "TASK-immersion-gate-config-surface-and-audit-log",
+      "kind": "produces",
+      "to": "src/config/sections"
+    },
+    {
+      "from": "TASK-immersion-gate-deterministic-rule-engine",
+      "kind": "produces",
+      "to": "src/rpg/skills"
+    },
+    {
+      "from": "TASK-immersion-gate-deterministic-rule-engine",
+      "kind": "produces",
+      "to": "src/story/items"
+    },
+    {
+      "from": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "produces",
+      "to": "src/battle/resolution-integration/checks.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "produces",
+      "to": "src/rpg/dice"
+    },
+    {
+      "from": "TASK-immersion-gate-opt-in-llm-classifier",
+      "kind": "produces",
+      "to": "src/generation/flow-control.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-refusal-narration-path",
+      "kind": "produces",
+      "to": "src/turning"
+    },
+    {
       "from": "TASK-implement-memory-decay-logic",
       "kind": "produces",
       "to": "src/memory/purge.ts"
@@ -160933,6 +161078,11 @@
       "from": "epic-immersion-consistency-gate",
       "kind": "produces",
       "to": "src/battle/resolution-integration/checks.ts"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "produces",
+      "to": "src/immersion/extract-claims.ts"
     },
     {
       "from": "epic-immersion-consistency-gate",
@@ -276222,6 +276372,12 @@
     {
       "from": "TASK-181-pre-existing-options-object-params-eslint-warnings-acros",
       "kind": "sibling",
+      "to": "TASK-immersion-gate-deterministic-rule-engine",
+      "via": "src/story/items"
+    },
+    {
+      "from": "TASK-181-pre-existing-options-object-params-eslint-warnings-acros",
+      "kind": "sibling",
       "to": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision",
       "via": "src/routes/story-items"
     },
@@ -329898,6 +330054,12 @@
     {
       "from": "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
       "kind": "sibling",
+      "to": "TASK-immersion-gate-config-surface-and-audit-log",
+      "via": "src/config/sections"
+    },
+    {
+      "from": "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
+      "kind": "sibling",
       "to": "TASK-integration-config-surface-schemas-example-toml-env-map",
       "via": "src/config/schema-class/env-map.ts; src/config/sections/integrations.ts"
     },
@@ -352706,6 +352868,54 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/image-edit/routes.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-deterministic-rule-engine",
+      "kind": "sibling",
+      "to": "TASK-sc10-player-state-machine-adapters",
+      "via": "src/rpg/skills; src/story/items"
+    },
+    {
+      "from": "TASK-immersion-gate-deterministic-rule-engine",
+      "kind": "sibling",
+      "to": "epic-immersion-consistency-gate",
+      "via": "src/rpg/skills; src/story/items"
+    },
+    {
+      "from": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "sibling",
+      "to": "TASK-sc10-player-state-machine-adapters",
+      "via": "src/battle/resolution-integration/checks.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "sibling",
+      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "via": "src/battle/resolution-integration/checks.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "sibling",
+      "to": "epic-immersion-consistency-gate",
+      "via": "src/battle/resolution-integration/checks.ts; src/rpg/dice"
+    },
+    {
+      "from": "TASK-immersion-gate-opt-in-llm-classifier",
+      "kind": "sibling",
+      "to": "TASK-view-set-orbit-video-tier",
+      "via": "src/generation/flow-control.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-refusal-narration-path",
+      "kind": "sibling",
+      "to": "epic-emergent-narrative-design",
+      "via": "src/turning"
+    },
+    {
+      "from": "TASK-immersion-gate-refusal-narration-path",
+      "kind": "sibling",
+      "to": "epic-rpg-patterns",
+      "via": "src/turning"
     },
     {
       "from": "TASK-implement-memory-decay-logic",
