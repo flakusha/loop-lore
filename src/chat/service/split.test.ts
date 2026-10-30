@@ -1,12 +1,30 @@
 /**
  * Tests for party split / reunion (C7 Phase 3 — group-chat VN party migration).
+ *
+ * Resource contract (parallel-safe):
+ * - Each test owns a FRESH in-memory SQLite DB (`createTestDb` in
+ *   beforeEach) — `:memory:` handles are per-instance, never a shared
+ *   file, so concurrent runners cannot collide.
+ * - Teardown is deterministic: `destroyTestDb` runs in `afterEach`, which
+ *   Bun executes even when an assertion throws, so a failed test cannot
+ *   leak an open handle into the next one.
+ * - No ordering dependence: every test seeds its own actors, world,
+ *   locations and source chat in `beforeEach`; the source chat id is
+ *   per-test, so the branch chats one test splits are invisible to the
+ *   others and no test reads rows another test created.
+ * - No process globals are set: this file never calls `setTestDatabase`,
+ *   never registers a provider, opens a port or writes a file.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { ChatParticipantRole, MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import {
+  createTestDb,
+  destroyTestDb,
+  type TestDb,
+} from "../../test-utils/create-test-db";
 import {
   insertActors,
   insertChatParticipants,
@@ -18,17 +36,19 @@ import { reuniteChats, splitParty, } from "./split";
 import { validateBranchSpecs, } from "./split-validate";
 
 describe("party split / reunion (C7 Phase 3)", () => {
+  let fixture: TestDb | undefined;
   let db: Kysely<DB>;
   let ownerId: string;
   let heroId: string;
   let rogueId: string;
   let mageId: string;
-  const srcChatId = crypto.randomUUID();
+  let srcChatId: string;
   const missingChatId = "missing-chat";
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     createLogger({ level: "error", },);
-    ({ db, } = await createTestDb());
+    fixture = await createTestDb();
+    db = fixture.db;
 
     ownerId = crypto.randomUUID();
     heroId = crypto.randomUUID();
@@ -45,7 +65,7 @@ describe("party split / reunion (C7 Phase 3)", () => {
       db,
       "Narrator",
       {
-        id: "narrator",
+        id: crypto.randomUUID(),
         user_id: ownerId,
         owner_id: ownerId,
         actor_type: "narrator",
@@ -69,6 +89,7 @@ describe("party split / reunion (C7 Phase 3)", () => {
     await db.insertInto("locations",).values({ id: "foreign-loc", world_id: "other-world", name: "Foreign", },)
       .execute();
 
+    srcChatId = crypto.randomUUID();
     await insertChats(
       db,
       "Party Dungeon",
@@ -99,8 +120,12 @@ describe("party split / reunion (C7 Phase 3)", () => {
     } as never,);
   },);
 
-  afterAll(async () => {
-    await db.destroy();
+  afterEach(async () => {
+    const current = fixture;
+    fixture = undefined;
+    if (current) {
+      await destroyTestDb(current,);
+    }
   },);
 
   describe("validateBranchSpecs", () => {
