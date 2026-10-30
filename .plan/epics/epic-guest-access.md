@@ -193,12 +193,19 @@ outright until a guest-tier policy exists.
       assets: Phase 2 — the `public` branch of `checkChatAccess` and
       `canAccessAsset` admits any authenticated caller. Public worlds: reading a
       PUBLIC world was already open to any authenticated user.)
-- [ ] NSFW gate still denies guest; guest reads are per-IP rate limited and
-      audit-logged.
-- [ ] Unit tests for the derive branch, both visibility tiers, and the
+- [x] NSFW gate still denies guest; guest reads are per-IP rate limited and
+      audit-logged. (Phase 4: `src/middleware/guest-rate-limit.ts` — per-IP
+      sliding window on guest GET reads (`auth.guestReadLimit` /
+      `auth.guestReadWindowSec`), served reads audited to `log_entries` as
+      `guest.read`; the NSFW gate's `resolveRequestContext` short-circuits a
+      null-userId (guest) request to `auth_required` — pinned in
+      `request-context.test.ts`.)
+- [x] Unit tests for the derive branch, both visibility tiers, and the
       solo-fallback guard; e2e smoke for a guest public-chat read. (Unit tests
       for the derive branch, the solo-fallback guard and both visibility tiers
-      are in; the e2e smoke is Phase 4.)
+      are in; the e2e smoke is Phase 4: `tests/e2e/flows/guest-hardening.test.ts`
+      — guest public-chat read under limit 200 + audited, over limit 429 with
+      Retry-After, registered user unaffected.)
 
 ## Implementation Phases
 
