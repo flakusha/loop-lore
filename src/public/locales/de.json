@@ -1970,6 +1970,10 @@
     "byModel": "Läufe nach Modell",
     "toolingGaps": "Tooling-Lücken",
     "runDetail": "Laufdetails",
+    "filesTitle": "Sandbox-Dateien",
+    "filesButton": "Dateien durchsehen",
+    "openSandboxInEditor": "Sandbox in $EDITOR öffnen",
+    "filesError": "Der Sandbox-Dateibaum konnte nicht geladen werden.",
     "noRuns": "Noch keine Harness-Läufe aufgezeichnet",
     "noModelStats": "Noch keine Modellstatistiken",
     "noToolingGaps": "Keine Tooling-Lücken erfasst",
@@ -2019,7 +2023,9 @@
       "turnId": "Turn-ID",
       "toolingGap": "Tooling-Lücke",
       "tools": "Werkzeuge",
-      "message": "Nachricht"
+      "message": "Nachricht",
+      "fileName": "Name",
+      "fileSize": "Größe"
     },
     "taskType": {
       "harnessCode": "Code",
