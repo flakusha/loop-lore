@@ -238,3 +238,169 @@ describe("unloadAllPlugins", () => {
     ).toBeNull();
   });
 });
+
+// O(1) dispatch index (gap-audit E6): the index keys method + normalized
+// path to the ORDERED candidate list in plugin-grouped registration order;
+// dispatch picks the first ENABLED candidate at request time. These tests pin
+// the exact semantics the linear getEnabledRoutes() scan had, so the index
+// cannot silently change who wins a contested path.
+describe("O(1) route dispatch index", () => {
+  test("first-enabled-wins: earlier plugin disabled then re-enabled", async () => {
+    registry.register({
+      manifest: { name: "early", version: "1", description: "d", author: "t", },
+      origin: "local",
+      directory: "test",
+    },);
+
+    registry.register({
+      manifest: { name: "late", version: "1", description: "d", author: "t", },
+      origin: "local",
+      directory: "test",
+    },);
+
+    registry.addRoutes("early", [
+      { method: "GET", path: "/shared", handler: async () => new Response("early",), },
+    ],);
+
+    registry.addRoutes("late", [
+      { method: "GET", path: "/shared", handler: async () => new Response("late",), },
+    ],);
+
+    const first = await dispatchPluginRoute({
+      request: new Request("http://localhost/shared",),
+    },);
+
+    expect(await first?.text(),).toBe("early",);
+
+    // Disabling the winner falls through to the next enabled candidate...
+    registry.setEnabled("early", false,);
+    const fallback = await dispatchPluginRoute({
+      request: new Request("http://localhost/shared",),
+    },);
+
+    expect(await fallback?.text(),).toBe("late",);
+
+    // ...and re-enabling restores it, without any re-registration.
+    registry.setEnabled("early", true,);
+    const restored = await dispatchPluginRoute({
+      request: new Request("http://localhost/shared",),
+    },);
+
+    expect(await restored?.text(),).toBe("early",);
+  },);
+
+  test("append-order preservation: manifest + onLoad routes coexist", async () => {
+    registry.addRoutes("demo", [
+      { method: "GET", path: "/p", handler: async () => new Response("manifest",), },
+    ],);
+
+    // A second batch for the SAME plugin (onLoad pattern) must append, not
+    // replace — and the earlier registration keeps winning dispatch.
+    registry.addRoutes("demo", [
+      { method: "GET", path: "/p", handler: async () => new Response("onload",), },
+    ],);
+
+    expect(registry.getPluginRoutes("demo",).map((r,) => r.path,),).toEqual(["/p", "/p",],);
+    const res = await dispatchPluginRoute({ request: new Request("http://localhost/p",), },);
+    expect(await res?.text(),).toBe("manifest",);
+  },);
+
+  test("plugin-grouped order: late append to earlier plugin beats later plugin", async () => {
+    registry.register({
+      manifest: { name: "first", version: "1", description: "d", author: "t", },
+      origin: "local",
+      directory: "test",
+    },);
+
+    registry.register({
+      manifest: { name: "second", version: "1", description: "d", author: "t", },
+      origin: "local",
+      directory: "test",
+    },);
+
+    registry.addRoutes("first", [
+      { method: "GET", path: "/own", handler: async () => new Response("own",), },
+    ],);
+
+    registry.addRoutes("second", [
+      { method: "GET", path: "/contested", handler: async () => new Response("second",), },
+    ],);
+
+    // A LATER append to the EARLIER-registered plugin: plugin-grouped
+    // registration order (first before second) decides, not global append
+    // chronology — this is what a naive append-order index would get wrong.
+    registry.addRoutes("first", [
+      { method: "GET", path: "/contested", handler: async () => new Response("first-late",), },
+    ],);
+
+    const res = await dispatchPluginRoute({
+      request: new Request("http://localhost/contested",),
+    },);
+
+    expect(await res?.text(),).toBe("first-late",);
+  },);
+
+  test("method+path misses stay misses under the keyed lookup", async () => {
+    registry.addRoutes("demo", [
+      { method: "GET", path: "/exact", handler: async () => new Response("get",), },
+      { method: "POST", path: "/exact", handler: async () => new Response("post",), },
+    ],);
+
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://localhost/exact-other",), },),
+    ).toBeNull();
+
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://localhost/exac",), },),
+    ).toBeNull();
+
+    expect(
+      await dispatchPluginRoute({
+        request: new Request("http://localhost/exact", { method: "PUT", },),
+      },),
+    ).toBeNull();
+
+    // The keyed entries themselves still hit.
+    const get = await dispatchPluginRoute({ request: new Request("http://localhost/exact",), },);
+    expect(await get?.text(),).toBe("get",);
+    const post = await dispatchPluginRoute({
+      request: new Request("http://localhost/exact", { method: "POST", },),
+    },);
+
+    expect(await post?.text(),).toBe("post",);
+  },);
+
+  test("normalization parity: both slash styles land on one index key", async () => {
+    registry.register({
+      manifest: { name: "slash-a", version: "1", description: "d", author: "t", },
+      origin: "local",
+      directory: "test",
+    },);
+
+    registry.register({
+      manifest: { name: "slash-b", version: "1", description: "d", author: "t", },
+      origin: "local",
+      directory: "test",
+    },);
+
+    registry.addRoutes("slash-a", [
+      { method: "GET", path: "/norm/", handler: async () => new Response("a",), },
+    ],);
+
+    registry.addRoutes("slash-b", [
+      { method: "GET", path: "/norm", handler: async () => new Response("b",), },
+    ],);
+
+    // Registration collapsed both to the same canonical path.
+    expect(registry.getPluginRoutes("slash-a",).map((r,) => r.path,),).toEqual(["/norm",],);
+    expect(registry.getPluginRoutes("slash-b",).map((r,) => r.path,),).toEqual(["/norm",],);
+
+    const bare = await dispatchPluginRoute({ request: new Request("http://localhost/norm",), },);
+    expect(await bare?.text(),).toBe("a",);
+    const trailing = await dispatchPluginRoute({
+      request: new Request("http://localhost/norm/",),
+    },);
+
+    expect(await trailing?.text(),).toBe("a",);
+  },);
+});
