@@ -12,6 +12,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import { can, } from "../../users/permissions";
+import { safeJsonParse, } from "../../utils";
 import { parseQuota, } from "../quota-engine";
 
 /** One gauge dimension: used vs ceiling (null = unlimited). */
@@ -136,13 +137,31 @@ export async function handleQuotaOverride(
 }
 
 /** One server-side backup entry: keyed per backup so multiple backups of
- * one resource_type/owner (e.g. two chats) never collapse into one row. */
+ * one resource_type/owner (e.g. two chats) never collapse into one row.
+ * `resourceId` is parsed out of the stored payload (`{ chatId }`,
+ * `{ assetId }`, …) when present; otherwise it falls back to the backup
+ * `id` so the dashboard always has a stable per-row key. */
 export interface BackupHashEntry {
   id: string;
   resourceType: string;
   resourceId: string;
   serverHash: string;
   serverVersion: number;
+}
+
+/** Best-effort resource id from a stored backup payload: the schedulers
+ * persist `{ chatId }`, `{ assetId, contentHash }`, or a raw snapshot.
+ * Unknown shapes fall back to the backup id. */
+export function backupResourceId(payload: string, fallbackId: string,): string {
+  const parsed = safeJsonParse<Record<string, unknown> | null>(payload,);
+  if (parsed.ok && parsed.value && typeof parsed.value === "object") {
+    for (const key of ["chatId", "assetId", "resourceId", "worldId", "loreId",]) {
+      const value = parsed.value[key];
+      if (typeof value === "string" && value.length > 0) { return value; }
+    }
+  }
+
+  return fallbackId;
 }
 
 /**
@@ -169,7 +188,7 @@ export async function handleBackupHashes(
   const isAdmin = can(userRole ?? null, "admin.settings",);
   let query = database
     .selectFrom("backup_records",)
-    .select(["id", "resource_type", "owner_id", "content_hash", "version",],);
+    .select(["id", "resource_type", "owner_id", "content_hash", "version", "payload",],);
 
   if (!isAdmin) { query = query.where("owner_id", "=", authUserId,); }
   const rows = await query.execute();
@@ -179,7 +198,7 @@ export async function handleBackupHashes(
     hashes[row.id] = {
       id: row.id,
       resourceType: row.resource_type,
-      resourceId: row.id,
+      resourceId: backupResourceId(row.payload, row.id,),
       serverHash: row.content_hash,
       serverVersion: row.version,
     };

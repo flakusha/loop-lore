@@ -4,7 +4,7 @@
 export { handleListActiveGenerations, } from "./active";
 export { handleCancelGeneration, } from "./cancel";
 export { handleContinueGeneration, } from "./continue";
-export { handleBackupHashes, handleQuotaOverride, handleQuotaState, } from "./quota-state";
+export { backupResourceId, handleBackupHashes, handleQuotaOverride, handleQuotaState, } from "./quota-state";
 export type { BackupHashEntry, QuotaDimensionState, QuotaResourceState, } from "./quota-state";
 export { handleRegenerate, } from "./regenerate";
 export { handleRetryGeneration, } from "./retry";
