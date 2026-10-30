@@ -288,14 +288,34 @@ void
           await this.loadMessages()
 ;
 
-          await this.fireAutoQuickReplies("ai",)
-;
+    // Harness job-status pushes (TASK-harness-inflight-job-handles): the
+    // server appends a `job-status` event per journal row while a stream is
+    // open. Payload is a plain server-built one-liner (op/state/step — no
+    // user content), rendered as text inside the sanitized container.
+    es.addEventListener("job-status", (event: MessageEvent,) => {
+      if (isStale()) { return; }
+      this._jobStatusLine = event.data;
+      this.renderStreamContainer();
+    },);
 
-        
-}
- catch 
-{
+    es.addEventListener("stream-done", () => {
+      if (!isStale()) {
+        trackTelemetry("generation.completed", { chatId, },);
+      }
 
+      this.isGenerating = false;
+      this.activeAttemptId = null;
+      this.generationDetail = null;
+      this._streamToolCalls = [];
+      this._streamContent = "";
+      this._jobStatusLine = "";
+      this._cleanupSSE();
+      if (isStale()) { return; }
+      void (async () => {
+        try {
+          await this.loadMessages();
+          await this.fireAutoQuickReplies("ai",);
+        } catch {
           /* non-critical */
         
 }
@@ -403,13 +423,23 @@ void
       this.isGenerating = false
 ;
 
-      this._cleanupSSE()
-;
-
-    
-}
-,)
-;
+    es.addEventListener("stream-error", (event: MessageEvent,) => {
+      log.warn("generation error via SSE", { chatId, error: event.data, },);
+      this.isGenerating = false;
+      this.activeAttemptId = null;
+      this.generationDetail = null;
+      this._streamToolCalls = [];
+      this._streamContent = "";
+      this._jobStatusLine = "";
+      this._cleanupSSE();
+      if (isStale()) { return; }
+      try {
+        const data = parseOr(ErrorEvent, jsonParseOr(event.data, null,), {},);
+        this.$dispatch?.("show-toast", { type: "error", message: data.error ?? t("toasts.generationFailed",), },);
+      } catch {
+        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.generationFailed",), },);
+      }
+    },);
 
   
 }
@@ -745,30 +775,21 @@ void
 }
 
    */
-  renderStreamContainer() 
-{
+  renderStreamContainer() {
+    const container = document.querySelector("#stream-container",);
+    if (!container) { return; }
+    const DOMPurify = getDOMPurify();
+    // Job-status line is plain server text (op/state/step identifiers); the
+    // ⚙ prefix + div are the only markup and DOMPurify passes text through.
+    const statusHtml = this._jobStatusLine
+      ? `<div class="job-status-line">⚙ ${this._jobStatusLine}</div>`
+      : "";
 
-    const container = document.querySelector("#stream-container",)
-;
-
-    if (!container) 
-{
- return
-;
- 
-}
-
-    const DOMPurify = getDOMPurify()
-;
-
-    const html = `${this._streamToolCalls.join("",)}${this._streamContent}`
-;
-
-    if (DOMPurify) 
-{
-
-      container.innerHTML = DOMPurify.sanitize(html, SANITIZE_CONFIG,)
-;
+    const html = `${statusHtml}${this._streamToolCalls.join("",)}${this._streamContent}`;
+    if (DOMPurify) {
+      container.innerHTML = DOMPurify.sanitize(html, SANITIZE_CONFIG,);
+      return;
+    }
 
       return
 ;
@@ -817,21 +838,10 @@ void
     this._streamToolCalls = []
 ;
 
-    this._streamContent = ""
-;
-
-    const container = document.querySelector("#stream-container",)
-;
-
-    if (container) 
-{
- container.replaceChildren()
-;
- 
-}
-
-  
-}
-,
-}
-;
+    this._streamToolCalls = [];
+    this._streamContent = "";
+    this._jobStatusLine = "";
+    const container = document.querySelector("#stream-container",);
+    if (container) { container.replaceChildren(); }
+  },
+};
