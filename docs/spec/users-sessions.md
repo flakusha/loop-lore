@@ -71,12 +71,31 @@ Full table definition in `src/db/schema-core.ts` → `Sessions` interface.
   `sessions.secret_hash` (legacy `resolveUserIdFromRequest()` path in
   `src/middleware/auth/token.ts`). Used only for older sessions created before
   the JWT migration.
-- Multiple simultaneous sessions per user allowed (configurable max)
-- Session timeout configurable (default: 24h idle)
+- Multiple simultaneous sessions per user allowed (configurable max,
+  `auth.maxSessionsPerUser`)
+- Session timeout configurable (`auth.sessionTimeoutHours`, default: 24h idle;
+  must stay coherent with `auth.jwtExpiresIn` — a divergence warning fires on
+  boot, see `src/config/load/safety.ts`)
 - Web clients carry the token in the `ll_token` HttpOnly cookie; API clients may
   use `Authorization: Bearer [REDACTED:Authorization header]
-- **Not implemented:** there is no `/api/sessions` list endpoint and no remote
-  force-logout. Logout (`/api/auth/logout`) only deletes the caller's own session.
+
+### Session Management API + Settings Panel
+
+- `GET /api/v1/sessions` — list the caller's sessions (admin sees all), rows
+  sanitized via `sanitizeSession` (`src/routes/sessions.ts`):
+  `{ id, userId, ip, userAgent, createdAt, lastActivity, expiresAt, isCurrent }`
+- `GET /api/v1/sessions/:id` — session detail (admin or self)
+- `DELETE /api/v1/sessions/:id` — remote force-logout (admin or self;
+  deleting the current session is rejected with 400 — use
+  `/api/auth/logout` instead)
+- `POST /api/v1/sessions/:id/switch` — switch the active login to another
+  device session: verifies ownership + expiry, rotates the session cookie
+  (`src/routes/sessions-switch.ts`); an expired target answers 410 and the
+  row is removed
+- Settings → **Sessions** tab (partial
+  `src/components/security/sessions-panel.html`, Alpine component
+  `sessionsPanel()` in `src/frontend/alpine/settings-sessions.ts`): lists
+  device rows with the current-session badge and wires revoke/switch
 
 ### Rate Limiting
 

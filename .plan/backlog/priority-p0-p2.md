@@ -92,6 +92,5 @@ inheritance, `bun test src/story/` verification.
   key-mgmt UI + chat-list 🔒 badge; 401 guards unified (`requireUserId` canonical).
 - **World/location access enforced 2026-08-12** — `requireWorldAccess`/`requireWorldOwner`
   on all locations handlers (stale "SKIPPED" claim from 2026-08-06 superseded).
-- MFA (TOTP) deferred to P6+ (2026-08-05, local-only auth); **re-opened for planning 2026-09-02** — `epic-auth-channel-provisioning.md` + rewritten `epic-two-factor-auth.md` + `matrix-authentication-channels.md` (branch `plan-2fa-channel-integrations`); implementation scheduling remains human triage. `/api/sessions` pending.
+- MFA (TOTP) deferred to P6+ (2026-08-05, local-only auth); **re-opened for planning 2026-09-02** — `epic-auth-channel-provisioning.md` + rewritten `epic-two-factor-auth.md` + `matrix-authentication-channels.md` (branch `plan-2fa-channel-integrations`); implementation scheduling remains human triage. `/api/sessions` shipped (`src/routes/sessions.ts` + `sessions-switch.ts`) with the Settings Sessions management UI (2026-10-30, `feat-multi-session-ui`).
 - Open: authoring/creation ownership indicators.
-
