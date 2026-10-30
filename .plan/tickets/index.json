@@ -44013,7 +44013,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-inventory-alpine.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "inventory",
       "frontend",
@@ -44031,7 +44031,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-inventory-grid.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "inventory",
       "frontend",
@@ -44180,7 +44180,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-item-details.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "inventory",
       "frontend",
