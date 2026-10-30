@@ -8,9 +8,18 @@
  * when a requestId is in scope, no-ops without one, and pushes a live
  * `job-status` event into the chat's EXISTING SSE stream buffer without
  * ever creating one.
+ *
+ * Resource contract (parallel-safe): each test owns a private in-memory
+ * SQLite DB from `createTestDb()` (never the process-global override) and
+ * fresh `crypto.randomUUID()` ids for the user/chat/request, so no key
+ * collides across tests or suites. `seed()` destroys the DB on its own
+ * failure path and every test destroys it in `finally`; `afterEach` drops
+ * the suite's stream buffer and clears the writer's module-global dedupe
+ * memo (`resetJobStatusMemoForTests()`), so shared module state is per-test.
  */
 import { afterEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { resetJobStatusMemoForTests, } from "../../chat/service/job-status";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -25,15 +34,25 @@ const CHAT_ID = crypto.randomUUID();
 async function seed(): Promise<Kysely<DB>> {
   createLogger({ level: "error", },);
   const { db, } = await createTestDb();
-  await insertUsers(db, "owner", "owner", { id: USER_ID, } as never,);
-  await insertActors(db, "owner", { id: USER_ID, user_id: USER_ID, owner_id: USER_ID, } as never,);
-  await insertChats(db, "Bridge Chat", USER_ID, { id: CHAT_ID, } as never,);
+  try {
+    await insertUsers(db, "owner", "owner", { id: USER_ID, } as never,);
+    await insertActors(db, "owner", { id: USER_ID, user_id: USER_ID, owner_id: USER_ID, } as never,);
+    await insertChats(db, "Bridge Chat", USER_ID, { id: CHAT_ID, } as never,);
+  } catch (error) {
+    // Deterministic teardown on the failure path too: a failed seed must not
+    // leak the DB handle into the rest of the run.
+    await db.destroy();
+    throw error;
+  }
+
   return db;
 }
 
 describe("postJobStatus", () => {
   afterEach(() => {
     removeBuffer(CHAT_ID,);
+    // Clear the writer's module-global dedupe memo so it stays per-test.
+    resetJobStatusMemoForTests();
   },);
 
   test("no requestId — no row, no throw", async () => {

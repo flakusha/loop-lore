@@ -45,6 +45,16 @@ const MEMO_CAP = 1024;
 /** Per-process memo of already-written events, keyed `${jobId}\u0000${state}\u0000${step ?? ""}`. */
 const writtenEvents = new Map<string, true>();
 
+/**
+ * Clear the dedupe memo. Test-only seam: suites exercising
+ * {@link appendJobStatus} call this in `afterEach` so the process-global
+ * memo never carries entries between tests (parallel-safe contract —
+ * shared module state must be per-test, not accumulated).
+ */
+export function resetJobStatusMemoForTests(): void {
+  writtenEvents.clear();
+}
+
 /** Input for {@link appendJobStatus}. */
 export interface JobStatusInput {
   database: Kysely<DB>;

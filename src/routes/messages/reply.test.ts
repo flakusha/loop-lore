@@ -10,6 +10,15 @@
  * `idx_messages_swipe_unique` and the retry-on-conflict insert in
  * reply.ts, two concurrent replies could read the same MAX(swipe_index)
  * and race on INSERT, producing duplicate or lost swipes.
+ *
+ * Resource contract (parallel-safe): each describe owns a private in-memory
+ * SQLite DB from `createTestDb()` (never the process-global override) with
+ * `uid()`-generated user/chat/row ids, destroyed in its `afterAll`. No
+ * ports, no files, no `setTestDatabase` override, no `mock.module`. The
+ * module-load registry probe registers and unregisters a uniquely-named
+ * provider synchronously — atomic under the single-threaded runner — and
+ * skips its DB-backed assertions when a stubbed registry is detected, so
+ * this file leaves no shared state behind in any order.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type Kysely, sql, } from "kysely";

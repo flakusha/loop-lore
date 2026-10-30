@@ -4,6 +4,10 @@
  * Ensures all expected enum exports are present in the barrel
  * and that their values are non-empty strings. Prevents drift
  * between domain enum files and the barrel re-export.
+ *
+ * Resource contract (parallel-safe): owns nothing — pure assertions over
+ * module exports (read-only shared state), no DB, files, ports, timers, or
+ * process globals, so the file is order- and concurrency-independent.
  */
 import { describe, expect, test, } from "bun:test";
 import * as enums from "./enums";
