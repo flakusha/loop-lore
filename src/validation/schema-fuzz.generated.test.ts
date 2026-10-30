@@ -932,6 +932,24 @@ describe("ChatOutfitOverrideBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_wardrobe.ChatOutfitOverrideBody,));
 });
 
+describe("ChatOwnerAddBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_chat.ChatOwnerAddBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_chat.ChatOwnerAddBody,));
+});
+
+describe("ChatOwnerParams", () => {
+  test("accepts generated values", () => checkAllValid(validation_chat.ChatOwnerParams,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_chat.ChatOwnerParams,));
+});
+
+describe("ChatOwnerRemoveQuery", () => {
+  test("accepts generated values", () => checkAllValid(validation_chat.ChatOwnerRemoveQuery,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_chat.ChatOwnerRemoveQuery,));
+});
+
 describe("ChatParticipantParams", () => {
   test("accepts generated values", () => checkAllValid(validation_chat.ChatParticipantParams,));
 
@@ -2698,4 +2716,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 427 schemas discovered across 523 module(s).
+// 430 schemas discovered across 524 module(s).
