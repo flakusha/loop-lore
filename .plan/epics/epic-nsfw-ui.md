@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** Read-only status panel shipped 2026-10-30 (`TASK-nsfw-read-only-status-panel.md`); mutating surfaces (action selection, consent dialogs, partner selection, housing) still open.
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Epic
@@ -126,6 +126,7 @@ Complete NSFW interaction interface for intimacy system, body state display, hea
 | TASK-nsfw-body-state.md         | P0       | ⬜ Not Started |
 | TASK-nsfw-housing-management.md | P0       | ⬜ Not Started |
 | TASK-nsfw-alpine.md             | P0       | ⬜ Not Started |
+| TASK-nsfw-read-only-status-panel.md | P0   | ✅ Done        |
 
 ## Files to Create
 

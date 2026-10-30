@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3855
+- tickets: 3856
 - epics: 358
-- src paths owned: 4537
-- edges: produces 12068, consumes 405, sibling 37420, owns 2831, related 1193
+- src paths owned: 4548
+- edges: produces 12082, consumes 405, sibling 37441, owns 2832, related 1193
 
 ## Shared src hubs
 
@@ -457,7 +457,7 @@ output is byte-identical for identical inputs.
 | `src/components/chat/archive-confirm.html` | `TASK-archival-workflow`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-archival-workflow` |
 | `src/components/chat/branch-list-panel.html` | `BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar`, `TASK-web-ui-buttons-for-party-split-reunite-parity-with-split-reu` |
 | `src/components/chat/branch-merge-modal.html` | `TASK-branch-merge-frontend-wizard-ui`, `TASK-web-ui-buttons-for-party-split-reunite-parity-with-split-reu`, `epic-conversation-branching` |
-| `src/components/chat/character-info-panel.html` | `TASK-equipment-stat-preview`, `TASK-rpg-stats-frontend-wiring`, `TASK-skills-frontend` |
+| `src/components/chat/character-info-panel.html` | `TASK-equipment-stat-preview`, `TASK-nsfw-read-only-status-panel`, `TASK-rpg-stats-frontend-wiring`, `TASK-skills-frontend` |
 | `src/components/chat/chat-header.html` | `TASK-i18n-template-strings`, `TASK-web-ui-buttons-for-party-split-reunite-parity-with-split-reu`, `epic-chat-lifecycle-moderation` |
 | `src/components/chat/chat-settings-modal.html` | `BUG-chat-settings-modal-invalid-mode`, `BUG-ownership-transfer-button-is-shown-to-every-non-owner-who-th`, `FEAT-chat-settings-modal-output-styling-control`, `FEAT-chat-template-config-lifecycle`, `TASK-chat-feature-ownership-transfer`, `TASK-epic11-admin-settings-reconciliation`, `TASK-visual-novel-mode`, `TASK-vn-scene-template-system`, `TASK-vn-template-actions`, `epic-browser-editor-support`, `epic-chat-lifecycle-moderation`, `epic-config-templates`, `epic-hidden-carriage-context` |
 | `src/components/chat/gallery-sidebar.html` | `FEAT-in-chat-asset-preview-linkage-side-panel`, `TASK-gallery-fuzzy-search-pagination`, `epic-assistant-creative-studio-workflows`, `epic-frontend-gallery`, `epic-gallery-batch-operations` |
@@ -803,7 +803,7 @@ output is byte-identical for identical inputs.
 | `src/frontend/alpine/chat/index.ts` | `BUG-alpine-init-hydration`, `TASK-backlog-size-strict-regression-recovery`, `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `WIRE-frontend-mobile-sticky-bottom-composer` |
 | `src/frontend/alpine/chat/lifecycle.ts` | `TASK-browser-chatflow-upload-deferred`, `TASK-quick-emojis-preference-endpoint-has-no-frontend-consumer` |
 | `src/frontend/alpine/chat/music-embed.ts` | `BUG-frontend-music-embed-fallback-esc-allows-stored-xss-via-attr`, `BUG-xss-in-music-embed-fallback-rendering`, `TASK-chat-external-music-linking` |
-| `src/frontend/alpine/chat/world.ts` | `BUG-memory-panel-fully-inert-in-direct-chats-participants-never-`, `BUG-music-links-panel-stale-after-in-page-chat-switch`, `BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-` |
+| `src/frontend/alpine/chat/world.ts` | `BUG-memory-panel-fully-inert-in-direct-chats-participants-never-`, `BUG-music-links-panel-stale-after-in-page-chat-switch`, `BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-`, `TASK-nsfw-read-only-status-panel` |
 | `src/frontend/alpine/comfyui-builder/form.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters` |
 | `src/frontend/alpine/command-buttons.ts` | `TASK-assistant-commands-extension`, `TASK-egui-command-surface-parity-palette-role-gated-commands-slas`, `TASK-frontend-button-parity-for-slash-commands-lacking-ui-afforda`, `TASK-gm-guided-story-creation`, `WIRE-impersonate-command-palette-no-actionpayload-dispatch`, `epic-experimental-egui-frontend` |
 | `src/frontend/alpine/composer-pre-send.test.ts` | `BUG-assistant-and-group-chat-correctness-defects`, `BUG-tests-delete-app-installed-globals-breaking-every-later-test` |
@@ -1299,7 +1299,7 @@ output is byte-identical for identical inputs.
 | `src/prompts/registry.test.ts` | `TASK-prompt-template-registry`, `epic-config-templates` |
 | `src/prompts/registry.ts` | `BUG-aux-pipeline-prompt-reexport-asymmetry`, `FEAT-065`, `FEAT-065-template-system`, `FEAT-aux-classification-template-registry`, `FEAT-world-template-chat-lifecycle`, `TASK-cleanup-banned-types-console-logging-magic-strings`, `TASK-llm-markdown-document-prompts`, `TASK-prompt-library`, `TASK-prompt-template-registry`, `TASK-template-unified-variable-engine`, `epic-assistant-gm-flows`, `epic-classifier-template-packs`, `epic-config-templates`, `epic-context-injection-templates` |
 | `src/prompts/task-clarification.ts` | `FEAT-task-clarification-injection-template-for-chat-assistant-gen`, `TASK-author-task-clarification-prompt-templates-per-task-type`, `epic-task-management-integration` |
-| `src/public/css/app.css` | `BUG-undefined-css-custom-properties-break-rendering`, `TASK-025`, `TASK-chat-feature-component-buttons`, `TASK-chat-flow-section-navigation`, `TASK-chat-message-search`, `TASK-chat-room-filters`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-location-explorer`, `TASK-text-effects-overlays`, `TASK-timeline-branching-ui`, `TASK-visual-novel-mode`, `WIRE-frontend-mobile-off-canvas-drawer`, `WIRE-frontend-mobile-sticky-bottom-composer`, `WIRE-frontend-touch-swipe-gestures`, `epic-chat-lifecycle-moderation` |
+| `src/public/css/app.css` | `BUG-undefined-css-custom-properties-break-rendering`, `TASK-025`, `TASK-chat-feature-component-buttons`, `TASK-chat-flow-section-navigation`, `TASK-chat-message-search`, `TASK-chat-room-filters`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-location-explorer`, `TASK-nsfw-read-only-status-panel`, `TASK-text-effects-overlays`, `TASK-timeline-branching-ui`, `TASK-visual-novel-mode`, `WIRE-frontend-mobile-off-canvas-drawer`, `WIRE-frontend-mobile-sticky-bottom-composer`, `WIRE-frontend-touch-swipe-gestures`, `epic-chat-lifecycle-moderation` |
 | `src/public/css/gallery.css` | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-gallery-minimal-image-asset-viewer` |
 | `src/public/css/games.css` | `TASK-mini-games-framework`, `epic-mini-games` |
 | `src/public/css/mobile-keynav.css` | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `WIRE-frontend-keyboard-help-overlay` |
@@ -4497,6 +4497,7 @@ output is byte-identical for identical inputs.
 | `epic-nsfw-ui` | owns | `TASK-nsfw-body-state` | - |
 | `epic-nsfw-ui` | owns | `TASK-nsfw-housing-management` | - |
 | `epic-nsfw-ui` | owns | `TASK-nsfw-intimacy-interface` | - |
+| `epic-nsfw-ui` | owns | `TASK-nsfw-read-only-status-panel` | - |
 | `epic-observability-telemetry` | owns | `BUG-probes-ts-liveness-accepts-any-http-response-including-404-a` | - |
 | `epic-observability-telemetry` | owns | `TASK-annoyance-scoring-dashboard` | - |
 | `epic-observability-telemetry` | owns | `TASK-observability-telemetry` | - |
@@ -12864,6 +12865,20 @@ output is byte-identical for identical inputs.
 | `TASK-nsfw-rating-schema` | produces | `src/schemas/nsfw-rating.test.ts` | - |
 | `TASK-nsfw-rating-schema` | produces | `src/schemas/nsfw-rating.ts` | - |
 | `TASK-nsfw-rating-schema` | produces | `src/validation/schemas.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/components/chat/character-info-panel.html` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/components/chat/nsfw-panel.html` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/chat-types/chat-state.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/chat-types/index.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/chat-types/nsfw-state.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/chat/inline-state.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/chat/world.test.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/chat/world.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/nsfw-panel/api.test.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/nsfw-panel/api.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/nsfw-panel/index.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/nsfw-panel/state.test.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/frontend/alpine/nsfw-panel/state.ts` | - |
+| `TASK-nsfw-read-only-status-panel` | produces | `src/public/css/app.css` | - |
 | `TASK-nsfw-reputation-social` | produces | `src/rpg/reputation-nsfw/conquests.ts` | - |
 | `TASK-nsfw-reputation-social` | produces | `src/rpg/reputation-nsfw/effects.ts` | - |
 | `TASK-nsfw-reputation-social` | produces | `src/rpg/reputation-nsfw/manager.ts` | - |
@@ -27504,6 +27519,7 @@ output is byte-identical for identical inputs.
 | `BUG-memory-injection-reason-not-displayed-in-ui` | sibling | `FEAT-memory-frontend-3-memory-types-selection-ui-mid-chat-panel` | `src/frontend/alpine/memory-panel.ts` |
 | `BUG-memory-panel-fully-inert-in-direct-chats-participants-never-` | sibling | `BUG-music-links-panel-stale-after-in-page-chat-switch` | `src/frontend/alpine/chat/world.ts` |
 | `BUG-memory-panel-fully-inert-in-direct-chats-participants-never-` | sibling | `BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-` | `src/frontend/alpine/chat/world.ts` |
+| `BUG-memory-panel-fully-inert-in-direct-chats-participants-never-` | sibling | `TASK-nsfw-read-only-status-panel` | `src/frontend/alpine/chat/world.ts` |
 | `BUG-mention-parser-regex-fails-on-multi-word-names` | sibling | `TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery` | `src/group-chat/mention-parser.ts` |
 | `BUG-mention-parser-regex-fails-on-multi-word-names` | sibling | `TASK-chat-feature-component-buttons` | `src/group-chat/mention-parser.ts` |
 | `BUG-mention-parser-regex-fails-on-multi-word-names` | sibling | `TASK-chat-feature-entry-field-pre-send` | `src/group-chat/mention-parser.ts` |
@@ -28096,6 +28112,7 @@ output is byte-identical for identical inputs.
 | `BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-` | sibling | `epic-ambient-music-sfx` | `src/routes/music-links.ts` |
 | `BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-` | sibling | `epic-audio-video-sound` | `src/routes/music-links.ts` |
 | `BUG-music-links-panel-stale-after-in-page-chat-switch` | sibling | `BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-` | `src/frontend/alpine/chat/world.ts` |
+| `BUG-music-links-panel-stale-after-in-page-chat-switch` | sibling | `TASK-nsfw-read-only-status-panel` | `src/frontend/alpine/chat/world.ts` |
 | `BUG-music-links-post-body-chatid-is-required-but-ignored-dead-sc` | sibling | `BUG-music-links-routes-lack-chat-access-checks-cross-chat-read-w` | `src/routes/music-links.ts` |
 | `BUG-music-links-post-body-chatid-is-required-but-ignored-dead-sc` | sibling | `TASK-frontend-chat-music-links` | `src/routes/music-links.ts` |
 | `BUG-music-links-post-body-chatid-is-required-but-ignored-dead-sc` | sibling | `epic-ambient-music-sfx` | `src/routes/music-links.ts` |
@@ -29751,6 +29768,7 @@ output is byte-identical for identical inputs.
 | `BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir` | sibling | `TASK-reconcile-ts-import-extensions-user-seeding-session` | `src/config/schema/seeding.ts; src/seeding/users.ts` |
 | `BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir` | sibling | `TASK-user-seeding-role-expansion` | `src/seeding/users.ts` |
 | `BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir` | sibling | `TASK-world-template-full-model-coverage` | `src/config/schema/seeding.ts` |
+| `BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-` | sibling | `TASK-nsfw-read-only-status-panel` | `src/frontend/alpine/chat/world.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `TASK-add-federation-to-the-config-domains-list-so-config-federati` | `src/config/schema-class/env-map.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/server/start.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | `src/server/start.ts` |
@@ -31184,6 +31202,7 @@ output is byte-identical for identical inputs.
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/public/css/app.css; src/public/css/vn.css` |
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `TASK-held-item-axis-data-model` | `src/public/css/vn.css` |
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `TASK-location-explorer` | `src/public/css/app.css` |
+| `BUG-undefined-css-custom-properties-break-rendering` | sibling | `TASK-nsfw-read-only-status-panel` | `src/public/css/app.css` |
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `TASK-timeline-branching-ui` | `src/public/css/app.css` |
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css; src/public/css/vn.css` |
@@ -35138,6 +35157,7 @@ output is byte-identical for identical inputs.
 | `TASK-025` | sibling | `TASK-chat-room-filters` | `src/public/css/app.css` |
 | `TASK-025` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/public/css/app.css` |
 | `TASK-025` | sibling | `TASK-location-explorer` | `src/public/css/app.css` |
+| `TASK-025` | sibling | `TASK-nsfw-read-only-status-panel` | `src/public/css/app.css` |
 | `TASK-025` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `TASK-025` | sibling | `TASK-timeline-branching-ui` | `src/public/css/app.css` |
 | `TASK-025` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css` |
@@ -41626,6 +41646,7 @@ output is byte-identical for identical inputs.
 | `TASK-chat-feature-component-buttons` | sibling | `TASK-messages-outfit-id-column` | `src/chat/service/write.ts` |
 | `TASK-chat-feature-component-buttons` | sibling | `TASK-migrate-text-surfaces-to-shared-primitives` | `src/components/chat/message-list.html` |
 | `TASK-chat-feature-component-buttons` | sibling | `TASK-msg-forward-across-chats` | `src/components/chat/message-list.html` |
+| `TASK-chat-feature-component-buttons` | sibling | `TASK-nsfw-read-only-status-panel` | `src/public/css/app.css` |
 | `TASK-chat-feature-component-buttons` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `TASK-chat-feature-component-buttons` | sibling | `TASK-timeline-branching-ui` | `src/public/css/app.css` |
 | `TASK-chat-feature-component-buttons` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css` |
@@ -41939,6 +41960,7 @@ output is byte-identical for identical inputs.
 | `TASK-chat-flow-section-navigation` | sibling | `TASK-harness-canvas-viz` | `src/views/chat.html` |
 | `TASK-chat-flow-section-navigation` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/views/chat.html` |
 | `TASK-chat-flow-section-navigation` | sibling | `TASK-location-explorer` | `src/public/css/app.css` |
+| `TASK-chat-flow-section-navigation` | sibling | `TASK-nsfw-read-only-status-panel` | `src/public/css/app.css` |
 | `TASK-chat-flow-section-navigation` | sibling | `TASK-rigged-model-buffer-render` | `src/frontend/alpine/chat.ts; src/views/chat.html` |
 | `TASK-chat-flow-section-navigation` | sibling | `TASK-story-points-prototype` | `src/views/chat.html` |
 | `TASK-chat-flow-section-navigation` | sibling | `TASK-text-effects-overlays` | `src/frontend/alpine/chat.ts; src/public/css/app.css; src/views/chat.html` |
@@ -42050,6 +42072,7 @@ output is byte-identical for identical inputs.
 | `TASK-chat-message-search` | sibling | `TASK-harness-canvas-viz` | `src/views/chat.html` |
 | `TASK-chat-message-search` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/views/chat.html` |
 | `TASK-chat-message-search` | sibling | `TASK-location-explorer` | `src/public/css/app.css` |
+| `TASK-chat-message-search` | sibling | `TASK-nsfw-read-only-status-panel` | `src/public/css/app.css` |
 | `TASK-chat-message-search` | sibling | `TASK-quick-regen-button` | `src/routes/messages.ts` |
 | `TASK-chat-message-search` | sibling | `TASK-retire-stale-integration-testing-tools` | `src/routes/router.ts` |
 | `TASK-chat-message-search` | sibling | `TASK-rigged-model-buffer-render` | `src/views/chat.html` |
@@ -42083,6 +42106,7 @@ output is byte-identical for identical inputs.
 | `TASK-chat-room-filters` | sibling | `TASK-extract-chat-route-business-logic` | `src/routes/chats.ts` |
 | `TASK-chat-room-filters` | sibling | `TASK-frontend-touch-gestures` | `src/frontend/alpine/sidebar.ts` |
 | `TASK-chat-room-filters` | sibling | `TASK-location-explorer` | `src/public/css/app.css` |
+| `TASK-chat-room-filters` | sibling | `TASK-nsfw-read-only-status-panel` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `TASK-timeline-branching-ui` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css` |
@@ -44991,6 +45015,7 @@ output is byte-identical for identical inputs.
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-msg-forward-across-chats` | `src/components/chat/message-list.html` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-nodeinfo-well-known-discovery-endpoints` | `src/routes` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-npc-inventory-frontend` | `src/frontend; src/views/characters.html` |
+| `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-nsfw-read-only-status-panel` | `src/public/css/app.css` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-professions-frontend` | `src/frontend; src/views/characters.html` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-prompt-improve-composer-ui` | `src/components/chat/input-area.html` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend` |
@@ -46323,6 +46348,7 @@ output is byte-identical for identical inputs.
 | `TASK-equipment-stat-preview` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
 | `TASK-equipment-stat-preview` | sibling | `TASK-map-battle-equipment` | `src/battle/items-integration.ts` |
 | `TASK-equipment-stat-preview` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
+| `TASK-equipment-stat-preview` | sibling | `TASK-nsfw-read-only-status-panel` | `src/components/chat/character-info-panel.html` |
 | `TASK-equipment-stat-preview` | sibling | `TASK-persist-loot-drops` | `src/battle/items-integration.ts` |
 | `TASK-equipment-stat-preview` | sibling | `TASK-professions-frontend` | `src/frontend` |
 | `TASK-equipment-stat-preview` | sibling | `TASK-rpg-stats-frontend-wiring` | `src/components/chat/character-info-panel.html; src/frontend/alpine/rpg-stats.ts` |
@@ -49362,6 +49388,7 @@ output is byte-identical for identical inputs.
 | `TASK-location-editor-structured-ui` | sibling | `epic-world-chat-channels-invites` | `src/db/enums.ts` |
 | `TASK-location-explorer` | sibling | `TASK-location-explorer-recursive-tree` | `src/frontend/alpine/location-explorer.ts` |
 | `TASK-location-explorer` | sibling | `TASK-migrate-text-surfaces-to-shared-primitives` | `src/views/world-edit.html` |
+| `TASK-location-explorer` | sibling | `TASK-nsfw-read-only-status-panel` | `src/public/css/app.css` |
 | `TASK-location-explorer` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `TASK-location-explorer` | sibling | `TASK-timeline-branching-ui` | `src/public/css/app.css` |
 | `TASK-location-explorer` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css` |
@@ -50687,6 +50714,15 @@ output is byte-identical for identical inputs.
 | `TASK-nsfw-rating-schema` | sibling | `epic-nsfw-moderation-priority` | `src/chat/types/nsfw.ts` |
 | `TASK-nsfw-rating-schema` | sibling | `epic-openapi-reference` | `src/validation/schemas.ts` |
 | `TASK-nsfw-rating-schema` | sibling | `epic-shared-schemas` | `src/schemas/nsfw-rating.test.ts; src/schemas/nsfw-rating.ts; src/validation/schemas.ts` |
+| `TASK-nsfw-read-only-status-panel` | sibling | `TASK-rpg-stats-frontend-wiring` | `src/components/chat/character-info-panel.html` |
+| `TASK-nsfw-read-only-status-panel` | sibling | `TASK-skills-frontend` | `src/components/chat/character-info-panel.html` |
+| `TASK-nsfw-read-only-status-panel` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
+| `TASK-nsfw-read-only-status-panel` | sibling | `TASK-timeline-branching-ui` | `src/public/css/app.css` |
+| `TASK-nsfw-read-only-status-panel` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css` |
+| `TASK-nsfw-read-only-status-panel` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/public/css/app.css` |
+| `TASK-nsfw-read-only-status-panel` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
+| `TASK-nsfw-read-only-status-panel` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/public/css/app.css` |
+| `TASK-nsfw-read-only-status-panel` | sibling | `epic-chat-lifecycle-moderation` | `src/public/css/app.css` |
 | `TASK-nsfw-seduction-desire` | sibling | `TASK-nsfw-skills-experience` | `src/db/enums-character/nsfw.ts` |
 | `TASK-nsfw-seduction-desire` | sibling | `TASK-nsfw-species-mechanics` | `src/db/enums-character/nsfw.ts` |
 | `TASK-nsfw-seduction-desire` | sibling | `TASK-specify-content-warnings-write-the-frontend-contract` | `src/db/enums-character/nsfw.ts` |

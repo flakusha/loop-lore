@@ -3460,6 +3460,123 @@ html {
   border-radius: 2px;
 }
 
+/* ── NSFW Panel Styles ─────────────────────────────────────── */
+
+.nsfw-section {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-default);
+}
+
+.nsfw-title {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nsfw-header {
+  margin-bottom: var(--space-2);
+}
+
+.nsfw-intimacy-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nsfw-pair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 12px;
+}
+
+.nsfw-pair-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nsfw-pair-score {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+.nsfw-pair-thresholds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+}
+
+.nsfw-threshold {
+  padding: 1px 6px;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  font-size: 10px;
+}
+
+.nsfw-body {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-default);
+}
+
+.nsfw-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.nsfw-stat-label {
+  width: 80px;
+  color: var(--text-secondary);
+}
+
+.nsfw-stat-track {
+  flex: 1;
+  height: 4px;
+  background: var(--border-default);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.nsfw-stat-fill {
+  height: 100%;
+  background: var(--accent-primary);
+  border-radius: 2px;
+  transition: width 0.2s ease;
+}
+
+.nsfw-stat-value {
+  width: 30px;
+  text-align: right;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.nsfw-body-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  font-size: 11px;
+}
+
+.nsfw-meta-label {
+  color: var(--text-secondary);
+}
+
+.nsfw-meta-value {
+  text-transform: capitalize;
+}
+
 .mood-empty {
   text-align: center;
   padding: var(--space-4);

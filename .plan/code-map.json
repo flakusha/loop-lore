@@ -12814,6 +12814,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-stats-frontend-wiring.md"
     },
     {
@@ -13253,6 +13257,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-review-20261025-dead-code-sweep.md"
+    }
+  ],
+  "src/components/chat/nsfw-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
     }
   ],
   "src/components/chat/participant-mgmt.html": [
@@ -24827,6 +24837,12 @@
       "source": ".plan/tickets/TASK-branch-merge-frontend-wizard-ui.md"
     }
   ],
+  "src/frontend/alpine/chat-types/chat-state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
+    }
+  ],
   "src/frontend/alpine/chat-types/core.ts": [
     {
       "kind": "epic",
@@ -24875,6 +24891,12 @@
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
     }
   ],
+  "src/frontend/alpine/chat-types/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
+    }
+  ],
   "src/frontend/alpine/chat-types/memory.ts": [
     {
       "kind": "ticket",
@@ -24907,6 +24929,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-npc-management-ui.md"
+    }
+  ],
+  "src/frontend/alpine/chat-types/nsfw-state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
     }
   ],
   "src/frontend/alpine/chat-types/tool-call-render.ts": [
@@ -25189,6 +25217,12 @@
       "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
     }
   ],
+  "src/frontend/alpine/chat/inline-state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
+    }
+  ],
   "src/frontend/alpine/chat/lifecycle.ts": [
     {
       "kind": "ticket",
@@ -25231,6 +25265,12 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
+  "src/frontend/alpine/chat/world.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
+    }
+  ],
   "src/frontend/alpine/chat/world.ts": [
     {
       "kind": "ticket",
@@ -25243,6 +25283,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
     }
   ],
   "src/frontend/alpine/comfyui-builder.ts": [
@@ -26289,6 +26333,36 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-alpine-component-wire-into-app.md"
+    }
+  ],
+  "src/frontend/alpine/nsfw-panel/api.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
+    }
+  ],
+  "src/frontend/alpine/nsfw-panel/api.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
+    }
+  ],
+  "src/frontend/alpine/nsfw-panel/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
+    }
+  ],
+  "src/frontend/alpine/nsfw-panel/state.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
+    }
+  ],
+  "src/frontend/alpine/nsfw-panel/state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
     }
   ],
   "src/frontend/alpine/nsfw.ts": [
@@ -39485,6 +39559,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-location-explorer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md"
     },
     {
       "kind": "ticket",

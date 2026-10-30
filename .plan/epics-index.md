@@ -277,7 +277,7 @@
 | Done | NPC & Social UI | P2 — Medium | Medium | 0 | [epic-npc-management-ui.md](/.plan/epics/epic-npc-management-ui.md) |
 | In Progress | NSFW Capabilities — Ratings, Consent & Gating | High | Medium | 0 | [epic-nsfw-capabilities.md](/.plan/epics/epic-nsfw-capabilities.md) |
 | Not Started | NSFW Integration Gaps — Housing, Weather, Social, Disease | High | Medium | 0 | [epic-nsfw-integration-gaps.md](/.plan/epics/epic-nsfw-integration-gaps.md) |
-| Not Started | NSFW Interaction UI | P0 — Critical | Medium | 0 | [epic-nsfw-ui.md](/.plan/epics/epic-nsfw-ui.md) |
+| In Progress | NSFW Interaction UI | P0 — Critical | Medium | 0 | [epic-nsfw-ui.md](/.plan/epics/epic-nsfw-ui.md) |
 | Not Started | Open WebUI Parity | P2 | Large | 0 | [epic-openwebui-parity.md](/.plan/epics/epic-openwebui-parity.md) |
 | Done | OpenAPI-Driven API Reference | P1-High | Medium | 0 | [epic-openapi-reference.md](/.plan/epics/epic-openapi-reference.md) |
 | Not Started | Parallel-Merge Integration Sweep (2026-10-25 review round E-2) | Medium | Large | 0 | [epic-review-20261025-parallel-merge-integration.md](/.plan/epics/epic-review-20261025-parallel-merge-integration.md) |
@@ -2913,7 +2913,7 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 
 ### NSFW Interaction UI
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** P0 — Critical
 - **Effort:** Medium
 - **Type:** Feature Epic
