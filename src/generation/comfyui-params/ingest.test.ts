@@ -56,6 +56,7 @@ describe("ingestWorkflow", () => {
     expect(green.probe.ok,).toBe(true,);
     expect(green.row.id,).toBe("v-0010",);
     expect(green.row.enabled,).toBe("enabled",);
+    expect(green.row.probe_status,).toBe("passing",);
     expect(green.payload.parameters.length,).toBeGreaterThan(0,);
     const roundTripped = rowToPayload(green.row,);
     expect(roundTripped,).not.toBeNull();

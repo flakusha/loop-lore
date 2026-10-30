@@ -23,6 +23,14 @@ export interface WorkflowMetaInput {
   parameters?: unknown;
   requiredNodes?: unknown;
   loraSlots?: unknown;
+  expectedOutputKind?: unknown;
+}
+
+/** A saved UI-format workflow, as `ingestWorkflow` consumes it. */
+export interface UiFormatUpload {
+  readonly nodes: readonly { readonly id: number | string; readonly type: string }[];
+  readonly links?: readonly unknown[];
+  readonly definitions?: { readonly subgraphs?: readonly unknown[] };
 }
 
 /** Wrapper keys a graph may arrive under, in precedence order. */
@@ -69,7 +77,34 @@ export function readMeta(body: unknown,): WorkflowMetaInput {
     parameters: body.parameters,
     requiredNodes: body.requiredNodes,
     loraSlots: body.loraSlots,
+    expectedOutputKind: body.expectedOutputKind,
   };
+}
+
+/**
+ * The UI-format workflow a request body carried, or null when it carried none.
+ *
+ * Mirrors `uploadedGraph`'s wrapper search, but matches the `nodes`-array
+ * shape `ingestWorkflow` consumes instead of the API-format node map.
+ * @param body - Untrusted request body
+ * @returns {UiFormatUpload | null}
+ */
+export function uploadedUiWorkflow(body: unknown,): UiFormatUpload | null {
+  if (!isRecord(body,)) { return null; }
+  const candidates = [...GRAPH_KEYS.map((key,) => body[key]), body,];
+  for (const candidate of candidates) {
+    if (!isRecord(candidate,)) { continue; }
+    const nodes = candidate.nodes;
+    if (!Array.isArray(nodes,) || nodes.length === 0) { continue; }
+    const shaped = nodes.every((node,) =>
+      isRecord(node,) && (typeof node.id === "number" || typeof node.id === "string") &&
+      typeof node.type === "string"
+    );
+
+    if (shaped) { return candidate as unknown as UiFormatUpload; }
+  }
+
+  return null;
 }
 
 /**

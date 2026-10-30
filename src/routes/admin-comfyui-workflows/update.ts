@@ -3,11 +3,16 @@
 
 /**
  * Update endpoint: edit a workflow's metadata, its graph, or both.
+ *
+ * A UI-format graph re-upload runs the same convert → derive → probe ingest
+ * as create and re-stamps `passing`; API-format edits keep the existing
+ * validated-payload path.
  * @module routes/admin-comfyui-workflows/update
  */
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import type { IngestError, } from "../../generation/comfyui-params/ingest";
 import { serializeTemplateInput, } from "../../generation/template-service/crud";
 import {
   invalidateWorkflowRegistry,
@@ -16,9 +21,10 @@ import {
 } from "../../generation/workflow-library";
 import { ErrorResponse, } from "../../validation/schemas";
 import { jsonResponse, requireUserId, } from "../http-utils";
-import { buildWorkflowPayload, readMeta, slotsColumn, uploadedGraph, } from "./payload";
+import { buildWorkflowPayload, readMeta, slotsColumn, uploadedGraph, uploadedUiWorkflow, } from "./payload";
 import { getWorkflowRow, } from "./rows";
 import { log, workflowGuard, workflowInvalid, workflowNotFound, } from "./shared";
+import { ingestErrors, ingestUpload, liveSnapshot, outputKindOf, } from "./ui-ingest";
 
 /** Open object so a bare graph (node-id keys) passes validation untouched. */
 const UpdateBody = t.Object(
@@ -31,6 +37,7 @@ const UpdateBody = t.Object(
     parameters: t.Optional(t.Array(t.Unknown(),),),
     requiredNodes: t.Optional(t.Array(t.String(),),),
     loraSlots: t.Optional(t.Array(t.Unknown(),),),
+    expectedOutputKind: t.Optional(t.String(),),
   },
   { additionalProperties: true, },
 );
@@ -69,6 +76,68 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
               // A request without a graph is a metadata-only edit; the stored
               // graph is carried forward so the ingest gate still sees it.
               const meta = readMeta(body,);
+
+              // UI-format re-upload: convert → derive → probe against the live
+              // snapshot, re-stamping `passing`. Operator `existing` params
+              // ride along so labels survive the re-ingest.
+              const uiUpload = uploadedUiWorkflow(body,);
+              if (uiUpload) {
+                const snapshot = await liveSnapshot();
+                if (!snapshot.ok) {
+                  return workflowInvalid([`ComfyUI is unreachable: ${snapshot.error}`,],);
+                }
+
+                let ingested;
+                try {
+                  ingested = ingestUpload({
+                    upload: uiUpload,
+                    workflowId: id,
+                    meta,
+                    deps: { snapshot: snapshot.snapshot, expectedOutputKind: outputKindOf(meta,), },
+                    existing: current.parameters,
+                  },);
+                } catch (error) {
+                  return workflowInvalid(ingestErrors(error as IngestError,),);
+                }
+
+                if (!ingested.ok) { return workflowInvalid(ingestErrors(ingested.probe.errors,),); }
+
+                const name = typeof body.name === "string" ? body.name.trim() : row.name;
+                const description = body.description === undefined
+                  ? row.description
+                  : String(body.description,);
+
+                const modelFamily = body.model_family === undefined
+                  ? row.model_family
+                  : String(body.model_family,);
+
+                const serialized = serializeTemplateInput({
+                  modality: "workflow",
+                  name,
+                  description,
+                  model_family: modelFamily,
+                  detail_level: row.detail_level,
+                  payload: ingested.payload,
+                },);
+
+                if (!serialized.ok) { return workflowInvalid([serialized.error,],); }
+
+                await database.updateTable("prompt_templates",).set({
+                  name,
+                  description,
+                  model_family: modelFamily,
+                  payload: serialized.payload,
+                  probe_status: ingested.row.probe_status ?? "passing",
+                  lora_slots: slotsColumn(ingested.payload.loraSlots,),
+                  min_vram: typeof body.min_vram === "number" ? body.min_vram : row.min_vram,
+                  updated_at: new Date().toISOString(),
+                },).where("id", "=", id,).where("modality", "=", "workflow",).execute();
+
+                invalidateWorkflowRegistry();
+                log().info("workflow row re-ingested from UI-format upload", { id, },);
+                return jsonResponse({ id, name, },);
+              }
+
               const graph = uploadedGraph(body,) ?? current.body;
               const validated = validateWorkflowPayload(
                 buildWorkflowPayload(graph, {
