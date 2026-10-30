@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
+import { checkUnreleasedSubheadings, } from "./check-changelog.js";
 
 /**
  * CLI contract for scripts/check-changelog.ts.
@@ -40,5 +41,50 @@ describe("check-changelog CLI", () => {
     const result = run("--no-such-flag",);
     expect(result.exitCode,).toBe(1,);
     expect(result.stderr,).toContain("--no-such-flag",);
+  });
+
+  test("duplicate ### subheading fixture is rejected", () => {
+    // Pre-fix shape: the Changed block pasted verbatim a second time.
+    const fixture = [
+      "# Changelog",
+      "",
+      "## [Unreleased]",
+      "",
+      "### Added",
+      "",
+      "- one",
+      "",
+      "### Changed",
+      "",
+      "- two",
+      "",
+      "### Changed",
+      "",
+      "- two",
+      "",
+      "### Fixed",
+      "",
+      "- three",
+    ].join("\n",);
+    const errors = checkUnreleasedSubheadings(fixture.split("\n",),);
+    expect(errors,).toHaveLength(1,);
+    expect(errors[0],).toContain("duplicate ### Changed",);
+  });
+
+  test("single ### subheading each passes", () => {
+    const fixture = [
+      "# Changelog",
+      "",
+      "## [Unreleased]",
+      "",
+      "### Changed",
+      "",
+      "- two",
+      "",
+      "### Fixed",
+      "",
+      "- three",
+    ].join("\n",);
+    expect(checkUnreleasedSubheadings(fixture.split("\n",),),).toEqual([],);
   });
 });
