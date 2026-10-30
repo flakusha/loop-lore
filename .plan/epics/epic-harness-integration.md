@@ -528,6 +528,11 @@ Concrete gaps with evidence; each has an explicit `IN or OUT?` marker.
 - [ ] TASK-harness-hook-contract — event→matcher→handler type, veto/bracket seams, HookResult
 - [ ] TASK-harness-canonical-usage — cache/reasoning/requestCount counters replacing ExecUsage
 - [ ] TASK-harness-scoped-fallback-chain — ordered scoped fallback lists ([] disables)
+- [ ] TASK-harness-inflight-job-handles — job-status messages on the existing chat chain (Option B first slice)
+- [ ] TASK-harness-context-op-events — context add/remove/compact/rotate as first-class event records
+- [ ] TASK-harness-delegated-permission-grants — spawn-time capability grants persisted on chat_branches
+- [ ] TASK-harness-worktree-scope-guard — worktree-root path guard + explicit request_root_change escalation
+- [ ] TASK-harness-multi-agent-turn-queue — assistant participant turns + detached-job parallelism (deferred until Option C)
 
 ## Dependencies
 
