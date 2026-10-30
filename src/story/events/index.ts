@@ -11,6 +11,16 @@ export type { AppliedEvent, } from "./application";
 export type { ApplyEventsOpts, } from "./application";
 export { extractEvents, } from "./extraction";
 export type { ExtractEventsOpts, } from "./extraction";
+export {
+  EVENT_RARITY_PRIORITY,
+  EVENT_RARITY_TIERS,
+  EVENT_RARITY_WEIGHTS,
+  isEventRarity,
+  parseEventRarity,
+  rollRarity,
+  selectEventByRarity,
+} from "./rarity";
+export type { EventRarity, RarityWeightOverrides, } from "./rarity";
 export { validateEvents, } from "./validation";
 export type { ValidationResult, } from "./validation";
 export type { ValidateEventsOpts, } from "./validation";
