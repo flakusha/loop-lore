@@ -71,7 +71,6 @@ export const nsfwPanelState: Partial<ChatState> & ThisType<ChatState> = {
   _nsfwIntimacy: null,
   _nsfwBody: null,
   _nsfwUnavailable: false,
-  _nsfwLoading: false,
 
   /**
    * Load the read-only NSFW status for the active chat's character.
@@ -90,7 +89,6 @@ export const nsfwPanelState: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
 
-    this._nsfwLoading = true;
     try {
       const actorId = await resolveCharacterId(chatId,);
       if (!actorId) {
@@ -127,8 +125,6 @@ export const nsfwPanelState: Partial<ChatState> & ThisType<ChatState> = {
       this._nsfwIntimacy = null;
       this._nsfwBody = null;
       this._nsfwUnavailable = false;
-    } finally {
-      this._nsfwLoading = false;
     }
   },
 };
