@@ -50,7 +50,9 @@ describe("slotForItem", () => {
     expect(slotForItem(sword(),),).toBe("weapon",);
     expect(slotForItem(sword({ itemType: "WAND", },),),).toBe("accessory",);
     expect(slotForItem(sword({ metadata: { slot: "nope", }, },),),).toBe("weapon",);
-    expect(slotForItem(sword({ metadata: '{"slot":"shield"}', },),),).toBe("weapon",);
+    expect(slotForItem(sword({ metadata: '{"slot":"shield"}', },),),).toBe("shield",);
+    expect(slotForItem(sword({ metadata: "not json", },),),).toBe("weapon",);
+    expect(slotForItem(sword({ metadata: '["slot"]', },),),).toBe("weapon",);
   });
 
   test("explicit metadata.slot wins over the item-type fallback", () => {
