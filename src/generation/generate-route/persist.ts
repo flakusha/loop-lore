@@ -9,6 +9,7 @@
  */
 
 import type { Kysely, } from "kysely";
+import { sql, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import {
   ContentEncoding,
@@ -22,6 +23,7 @@ import type { CancelReason, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { safeJsonStringify, } from "../../utils";
 import { completeGeneration, } from "../cancellation-manager";
+import { buildQualityMetadata, qualityMetricsJson, repetitionRate, } from "../quality";
 import type { GenerationResult, GenerationToolCall, } from "../types";
 import { encryptStoredContent, } from "./tool-result-persist";
 
@@ -93,6 +95,14 @@ async function storeGeneratedMessage({
         token_count_prompt: result.tokenUsage.promptTokens,
         token_count_completion: result.tokenUsage.completionTokens,
         token_count_total: result.tokenUsage.totalTokens,
+        generation_time_ms: result.generationTimeMs,
+        tokens_per_second: result.generationTimeMs > 0
+          ? Math.round((result.tokenUsage.completionTokens / result.generationTimeMs) * 1000,)
+          : null,
+        // Merge, never replace: other metadata keys on this row must survive.
+        metadata: sql<string>`json_set(coalesce(messages.metadata, '{}'), '$.quality', json(${
+          qualityMetricsJson(qualityMetrics(result,),)
+        }))`,
         status,
         tool_calls: toolCallsJson,
       },)
@@ -120,6 +130,11 @@ async function storeGeneratedMessage({
       token_count_prompt: result.tokenUsage.promptTokens,
       token_count_completion: result.tokenUsage.completionTokens,
       token_count_total: result.tokenUsage.totalTokens,
+      generation_time_ms: result.generationTimeMs,
+      tokens_per_second: result.generationTimeMs > 0
+        ? Math.round((result.tokenUsage.completionTokens / result.generationTimeMs) * 1000,)
+        : null,
+      metadata: buildQualityMetadata(qualityMetrics(result,),),
       status,
       visibility: MessageVisibility.Visible,
       continuation_index: continuationNumber ?? null,
@@ -128,6 +143,18 @@ async function storeGeneratedMessage({
     .execute();
 
   return messageId;
+}
+
+/**
+ * Quality signals recorded next to a generated message (FEAT-062).
+ * @param result - the generation result
+ * @returns the repetition rate and the raw provider finish reason
+ */
+function qualityMetrics(result: GenerationResult,): { repetitionRate: number; finishReason: string } {
+  return {
+    repetitionRate: repetitionRate(result.content,),
+    finishReason: result.finishReason ?? "stop",
+  };
 }
 
 /**
@@ -155,6 +182,7 @@ export function buildGenerationResult(
   },
   cancelled: boolean,
   cancelReason?: CancelReason,
+  generationTimeMs = 0,
 ): GenerationResult {
   return {
     content: response.content,
@@ -165,7 +193,8 @@ export function buildGenerationResult(
       completionTokens: response.usage.completionTokens,
       totalTokens: response.usage.totalTokens,
     },
-    generationTimeMs: 0,
+    generationTimeMs,
+    finishReason: response.finishReason,
     cancelled,
     ...(cancelReason && { cancelReason, }),
   };
