@@ -48,6 +48,7 @@ const EXPECTED_ENUMS: Record<string, string[]> = {
     "music_link",
     "tool_result",
     "turn_skip",
+    "job_status",
   ],
   MessageContentFormat: ["markdown",],
   MessageStatus: ["sending", "confirmed", "failed", "partial", "rejected", "cancelled",],

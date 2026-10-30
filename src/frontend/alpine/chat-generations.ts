@@ -45,6 +45,16 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.renderStreamContainer();
     },);
 
+    // Harness job-status pushes (TASK-harness-inflight-job-handles): the
+    // server appends a `job-status` event per journal row while a stream is
+    // open. Payload is a plain server-built one-liner (op/state/step — no
+    // user content), rendered as text inside the sanitized container.
+    es.addEventListener("job-status", (event: MessageEvent,) => {
+      if (isStale()) { return; }
+      this._jobStatusLine = event.data;
+      this.renderStreamContainer();
+    },);
+
     es.addEventListener("stream-done", () => {
       if (!isStale()) {
         trackTelemetry("generation.completed", { chatId, },);
@@ -55,6 +65,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.generationDetail = null;
       this._streamToolCalls = [];
       this._streamContent = "";
+      this._jobStatusLine = "";
       this._cleanupSSE();
       if (isStale()) { return; }
       void (async () => {
@@ -74,6 +85,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.generationDetail = null;
       this._streamToolCalls = [];
       this._streamContent = "";
+      this._jobStatusLine = "";
       this._cleanupSSE();
       if (isStale()) { return; }
       try {
@@ -216,7 +228,13 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     const container = document.querySelector("#stream-container",);
     if (!container) { return; }
     const DOMPurify = getDOMPurify();
-    const html = `${this._streamToolCalls.join("",)}${this._streamContent}`;
+    // Job-status line is plain server text (op/state/step identifiers); the
+    // ⚙ prefix + div are the only markup and DOMPurify passes text through.
+    const statusHtml = this._jobStatusLine
+      ? `<div class="job-status-line">⚙ ${this._jobStatusLine}</div>`
+      : "";
+
+    const html = `${statusHtml}${this._streamToolCalls.join("",)}${this._streamContent}`;
     if (DOMPurify) {
       container.innerHTML = DOMPurify.sanitize(html, SANITIZE_CONFIG,);
       return;
@@ -239,6 +257,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
 
     this._streamToolCalls = [];
     this._streamContent = "";
+    this._jobStatusLine = "";
     const container = document.querySelector("#stream-container",);
     if (container) { container.replaceChildren(); }
   },

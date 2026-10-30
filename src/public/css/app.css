@@ -806,6 +806,28 @@ body {
   margin-bottom: 0;
 }
 
+/* Harness job-status journal rows: compact muted machine one-liner (not italic prose) */
+.system-message .job-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-style: normal;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* Live job-status line inside the SSE stream container */
+.job-status-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  padding: var(--space-1) 0;
+}
+
 /* --- New message floating button --- */
 .new-message-btn {
   position: sticky;
