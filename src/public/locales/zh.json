@@ -1686,7 +1686,8 @@
     "inventoryEquipFailed": "Failed to equip item.",
     "inventoryUnequipFailed": "Failed to unequip item.",
     "inventoryDropFailed": "Failed to drop item.",
-    "inventoryTransferFailed": "Failed to transfer item."
+    "inventoryTransferFailed": "Failed to transfer item.",
+    "inventoryEquippedFailed": "Failed to load equipped items."
   },
   "commands": {
     "modify": "让模型重写实体 (/modify <kind> <id> \"请求\")",

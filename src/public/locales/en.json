@@ -1747,6 +1747,7 @@
     "wardrobeUpdated": "Outfit updated.",
     "wardrobeDeleteFailed": "Failed to delete outfit.",
     "inventoryLoadFailed": "Failed to load inventory.",
+    "inventoryEquippedFailed": "Failed to load equipped items.",
     "inventoryEquipFailed": "Failed to equip item.",
     "inventoryUnequipFailed": "Failed to unequip item.",
     "inventoryDropFailed": "Failed to drop item.",
