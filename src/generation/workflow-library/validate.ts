@@ -19,6 +19,7 @@
  * never disagree about what counts as a valid graph.
  */
 import type { ImageEditCategory, TemplateParameter, } from "../../image-edit/types";
+import { UNREFERENCED_LIVE_CLASSES, } from "../comfyui-converter/types";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import type { WorkflowPayload, } from "../template-types";
 import { findDeadNodes, } from "../workflow-loader/workflow-validation";
@@ -141,15 +142,22 @@ function payloadShapeErrors(value: unknown,): string[] | null {
   return errors.length > 0 ? errors : null;
 }
 
+/** Options for {@link validateWorkflowPayload}. */
+export interface ValidateWorkflowOptions {
+  /** Exempt converter-reported ids from the dead-node rule. Empty by default. */
+  readonly unreferencedLive?: readonly string[];
+}
+
 /**
  * Validate an untrusted value as a storable workflow payload.
  *
  * Callers store `result.payload` (not the input) so what lands in the DB is
  * the same shape that was checked.
  * @param value - Untrusted, already JSON-parsed value
+ * @param options - Converted-mode exemption ids; omitted means strict
  * @returns {ValidationResult}
  */
-export function validateWorkflowPayload(value: unknown,): ValidationResult {
+export function validateWorkflowPayload(value: unknown, options: ValidateWorkflowOptions = {},): ValidationResult {
   const shapeErrors = payloadShapeErrors(value,);
   if (shapeErrors) { return { ok: false, errors: shapeErrors, }; }
 
@@ -169,10 +177,19 @@ export function validateWorkflowPayload(value: unknown,): ValidationResult {
   errors.push(...parameterErrors(payload.parameters, collectPlaceholders(graph,),),);
   errors.push(...loraSlotErrors(payload,),);
 
-  // Same strict rule as the disk loader: reject, do not warn.
+  // Same strict rule as the disk loader: reject, do not warn. Converted
+  // mode exempts exactly the converter-reported ids — each must still be
+  // dead AND in an allowlisted control/config class, so a caller cannot
+  // smuggle a hand-authored dead node through by listing it.
   const dead = findDeadNodes(graph,);
-  if (dead.length > 0) {
-    errors.push(`dead node(s) not linked into the graph: ${dead.join(", ",)}`,);
+  const exempt = new Set(options.unreferencedLive ?? [],);
+  const unexpected = dead.filter((id,) => {
+    const node = graph[id];
+    return !(exempt.has(id,) && node !== undefined && UNREFERENCED_LIVE_CLASSES.has(node.class_type,));
+  },);
+
+  if (unexpected.length > 0) {
+    errors.push(`dead node(s) not linked into the graph: ${unexpected.join(", ",)}`,);
   }
 
   return errors.length > 0 ? { ok: false, errors, } : { ok: true, payload, };

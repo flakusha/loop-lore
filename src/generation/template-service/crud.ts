@@ -26,6 +26,8 @@ export interface CreateTemplateInput {
   model_family?: string | null;
   detail_level?: TemplateDetailLevel;
   payload: unknown;
+  /** Converter-reported live ids, exempt from the dead-node rule. */
+  unreferencedLive?: readonly string[];
 }
 
 /**
@@ -78,7 +80,7 @@ export function serializeTemplateInput(
       return { ok: true, payload: jsonStringifyOr(chain.payload,), };
     }
 
-    const ingested = validateWorkflowPayload(input.payload,);
+    const ingested = validateWorkflowPayload(input.payload, { unreferencedLive: input.unreferencedLive, },);
     if (!ingested.ok) {
       return { ok: false, error: ingested.errors.join("; ",), };
     }

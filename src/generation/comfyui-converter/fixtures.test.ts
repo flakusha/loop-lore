@@ -14,6 +14,8 @@
  */
 import { describe, expect, it, } from "bun:test";
 import { readFileSync, } from "node:fs";
+import { validateWorkflowPayload, } from "../workflow-library/validate";
+import { findDeadNodes, } from "../workflow-loader/workflow-validation";
 import { convertWorkflow, } from "./index";
 import type { ApiGraph, ConversionResult, ObjectInfoSnapshot, UiWorkflow, } from "./types";
 
@@ -102,6 +104,22 @@ describe("v-0010 Director workflow", () => {
     const { report, } = convertDirector();
     expect(report.packIdentity,).toHaveLength(26,);
     expect(report.notesSkipped,).toHaveLength(11,);
+  });
+
+  it("exposes the converted dead set for the validator's converted mode", () => {
+    const { graph, report, } = convertDirector();
+    expect([...report.unreferencedLive,].toSorted(),).toEqual(findDeadNodes(graph,).toSorted(),);
+    const payload = {
+      body: graph,
+      category: "txt2img",
+      parameters: [],
+      requiredNodes: [],
+    };
+
+    expect(validateWorkflowPayload(payload,).ok,).toBe(false,);
+    expect(
+      validateWorkflowPayload(payload, { unreferencedLive: report.unreferencedLive, },).ok,
+    ).toBe(true,);
   });
 });
 

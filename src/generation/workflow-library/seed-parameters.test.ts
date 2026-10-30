@@ -132,4 +132,27 @@ describe("repairParameters", () => {
     expect(repaired,).toBe(false,);
     expect((await storedPayload("plain-row",)).parameters,).toEqual([],);
   });
+
+  it("repairs a probe-ingested converted row in converted mode", async () => {
+    const body = {
+      ...graphWith("input_image",),
+      "9": { class_type: "DaSiWa_NodeStatusSwitch", inputs: { enabled: true, }, },
+    } as ComfyUIWorkflow;
+
+    const broken = payloadText(body, [],);
+    await insertRow("converted-row", broken,);
+
+    expect(await repairParameters(db, { payload: broken, }, "converted-row",),).toBe(false,);
+
+    const repaired = await repairParameters(
+      db,
+      { payload: broken, },
+      "converted-row",
+      { unreferencedLive: ["9",], },
+    );
+
+    expect(repaired,).toBe(true,);
+    expect((await storedPayload("converted-row",)).parameters.map((parameter,) => parameter.name),)
+      .toEqual(["input_image",],);
+  });
 });

@@ -17,6 +17,7 @@ import { Elysia, } from "elysia";
 import { Kysely, } from "kysely";
 import { readFile, } from "node:fs/promises";
 import type { DB, } from "../../db/schema";
+import { validateWorkflowPayload, } from "../../generation/workflow-library/validate";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { adminSurface, } from "../v1/admin-surface";
@@ -291,6 +292,48 @@ describe("admin ComfyUI workflow routes — read one / update", () => {
 
     expect(res.status,).toBe(400,);
     expect((await rowById(id,))?.name,).toBe("Keep",);
+  });
+
+  it("revalidates a probe-passing converted row on a metadata-only update", async () => {
+    const converted = {
+      "1": { inputs: { ckpt_name: "{{model}}", }, class_type: "CheckpointLoaderSimple", },
+      "2": { inputs: { model: ["1", 0,], }, class_type: "KSampler", },
+      "3": { inputs: { samples: ["2", 0,], }, class_type: "SaveImage", },
+      "9": { inputs: { enabled: true, }, class_type: "DaSiWa_NodeStatusSwitch", },
+    };
+
+    const payload = {
+      body: converted,
+      category: "txt2img",
+      parameters: [],
+      requiredNodes: [],
+    };
+
+    const validated = validateWorkflowPayload(payload, { unreferencedLive: ["9",], },);
+    if (!validated.ok) { throw new Error(validated.errors.join("; ",),); }
+
+    await db.insertInto("prompt_templates",).values({
+      id: "converted-1",
+      owner_id: "admin-1",
+      modality: "workflow",
+      name: "Converted",
+      description: null,
+      model_family: null,
+      detail_level: "balanced",
+      payload: JSON.stringify(validated.payload,),
+      probe_status: "passing",
+    },).execute();
+
+    const res = await appFor("admin",).handle(
+      new Request(`http://localhost${BASE}/converted-1`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "Renamed", },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    expect((await rowById("converted-1",))?.name,).toBe("Renamed",);
   });
 });
 
