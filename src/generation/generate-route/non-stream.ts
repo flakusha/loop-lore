@@ -145,6 +145,7 @@ export async function runNonStreaming({
       finalResponse,
       finalResponse.finishReason === "cancelled",
       finalResponse.finishReason === "cancelled" ? CancelReason.UserCancel : undefined,
+      Date.now() - startedAt,
     );
 
     // BUG-generation-error-handling-gaps: reject empty non-stream content.

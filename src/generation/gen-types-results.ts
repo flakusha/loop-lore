@@ -35,6 +35,8 @@ export interface GenerationResult {
   tokenUsage: TokenUsage;
   /** Generation time in ms */
   generationTimeMs: number;
+  /** Raw provider finish reason (stop, length, error, cancelled). */
+  finishReason?: string;
   /** Whether generation was cancelled */
   cancelled: boolean;
   /** Cancellation reason if cancelled */

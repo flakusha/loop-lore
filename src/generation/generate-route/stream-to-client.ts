@@ -238,6 +238,7 @@ export function streamToClient({
           },
           finalCancelled,
           finalCancelled ? CancelReason.UserCancel : undefined,
+          Date.now() - streamStartedAtMs,
         );
 
         // BUG-generation-error-handling-gaps: reject empty streamed content.
