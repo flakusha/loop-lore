@@ -20,7 +20,7 @@
  * Entry points swallow their own errors: an advisory narration signal must
  * never fail the message POST path.
  */
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import { PinnedState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
@@ -225,12 +225,15 @@ export async function executeReuniteFromNarration(
   const logger = getLogger().child(MODULE,);
 
   try {
+    // joined_at/updated_at have second precision, so same-instant updates
+    // tie; rowid breaks the tie by insertion order (BUG-12f087e pattern).
     const secondary = await database
       .selectFrom("chats",)
       .select(["id",],)
       .where("parent_chat_id", "=", chatId,)
       .where("is_pinned", "!=", PinnedState.Archived,)
       .orderBy("updated_at", "desc",)
+      .orderBy(sql`rowid`, "desc",)
       .limit(1,)
       .executeTakeFirst();
 
