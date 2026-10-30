@@ -147,7 +147,7 @@ later optional addition, not a prerequisite.
   (native `Bun.serve` handler), spawns `$EDITOR <file>` in a PTY, relays
   bytes both ways, handles resize, dies on disconnect/idle.
 - [ ] Route refuses to start when `typeof Bun.Terminal !== "function"`.
-- [ ] `GET /api/v1/harness/runs/:id/files` lists the sandbox tree read-only
+- [x] `GET /api/v1/harness/runs/:id/files` lists the sandbox tree read-only
   with traversal tests (`..`, symlink escape, absolute path all rejected).
 - [ ] Every PTY spawn is logged to the harness exec-log.
 - [ ] `bun run check` green; no `any`, no new backend dep for the PTY path.

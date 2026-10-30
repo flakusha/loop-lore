@@ -1970,6 +1970,10 @@
     "byModel": "Exécutions par modèle",
     "toolingGaps": "Manques d'outils",
     "runDetail": "Détail de l'exécution",
+    "filesTitle": "Fichiers du sandbox",
+    "filesButton": "Parcourir les fichiers",
+    "openSandboxInEditor": "Ouvrir le sandbox dans $EDITOR",
+    "filesError": "Impossible de charger l’arborescence des fichiers du sandbox.",
     "noRuns": "Aucune exécution du harness enregistrée",
     "noModelStats": "Aucune statistique de modèle pour l'instant",
     "noToolingGaps": "Aucun manque d'outil enregistré",
@@ -2019,7 +2023,9 @@
       "turnId": "ID du tour",
       "toolingGap": "Manque d'outil",
       "tools": "Outils",
-      "message": "Message"
+      "message": "Message",
+      "fileName": "Nom",
+      "fileSize": "Taille"
     },
     "taskType": {
       "harnessCode": "Code",

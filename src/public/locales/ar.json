@@ -1970,6 +1970,10 @@
     "byModel": "العمليات حسب النموذج",
     "toolingGaps": "ثغرات الأدوات",
     "runDetail": "تفاصيل العملية",
+    "filesTitle": "ملفات البيئة المعزولة",
+    "filesButton": "استعراض الملفات",
+    "openSandboxInEditor": "افتح البيئة المعزولة في $EDITOR",
+    "filesError": "تعذّر تحميل شجرة ملفات البيئة المعزولة.",
     "noRuns": "لم تُسجَّل أي عمليات Harness بعد",
     "noModelStats": "لا توجد إحصاءات للنماذج بعد",
     "noToolingGaps": "لم تُسجَّل أي ثغرات في الأدوات",
@@ -2019,7 +2023,9 @@
       "turnId": "معرّف الدور",
       "toolingGap": "ثغرة الأدوات",
       "tools": "الأدوات",
-      "message": "الرسالة"
+      "message": "الرسالة",
+      "fileName": "الاسم",
+      "fileSize": "الحجم"
     },
     "taskType": {
       "harnessCode": "شيفرة",

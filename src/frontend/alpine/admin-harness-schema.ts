@@ -78,6 +78,32 @@ export const HarnessRunsResponse = Type.Object({
   items: Type.Array(HarnessRunSummarySchema,),
 },);
 
+/** One listed sandbox entry (`GET /api/v1/harness/runs/:runId/files`). */
+export const HarnessSandboxEntrySchema = Type.Object({
+  name: Type.String({},),
+  /** Repo-relative path from the sandbox root, `/`-separated. */
+  path: Type.String({},),
+  type: Type.Union([Type.Literal("file",), Type.Literal("dir",),],),
+  size: Type.Number({},),
+  mtimeMs: Type.Number({},),
+},);
+
+/** `GET /api/v1/harness/runs/:runId/files` body (read-only tree, one level). */
+export const HarnessSandboxFilesSchema = Type.Object({
+  /** Repo-relative sandbox root, so the client can build editor links. */
+  root: Type.String({},),
+  /** The listed subdirectory, `""` for the root. */
+  path: Type.String({},),
+  entries: Type.Array(HarnessSandboxEntrySchema,),
+},);
+
+/**
+ * The listing, nullable — `parseOr` needs a fallback of the schema's own
+ * static type, and "no tree loaded" is exactly the state after a bad
+ * response, so the nullability lives in the schema instead of a cast.
+ */
+export const HarnessSandboxFilesNullable = Type.Union([HarnessSandboxFilesSchema, Type.Null(),],);
+
 /**
  * The detail record, nullable — `parseOr` needs a fallback of the schema's own
  * static type, and "no detail loaded" is exactly the state after a bad
