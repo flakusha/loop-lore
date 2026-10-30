@@ -49205,7 +49205,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-READ-ONLY-STATUS-PANEL": {
-    "hash": "pending",
+    "hash": "8ee3cd3",
     "extid": "TASK-NSFW-READ-ONLY-STATUS-PANEL",
     "type": "TASK",
     "title": "NSFW read-only status panel",
@@ -49214,7 +49214,8 @@
     "epic": "epic-nsfw-ui",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "8ee3cd3"
   },
   "TASK-NSFW-REPUTATION-CONSEQUENCES": {
     "epic": "epic-nsfw-game-mechanics",
@@ -49373,6 +49374,18 @@
     "status": "Done",
     "title": "# TASK: NSFW: wire seduction/encounter preconditions",
     "tags": []
+  },
+  "TASK-O-1-PLUGIN-ROUTE-DISPATCH-INDEX": {
+    "hash": "pending",
+    "extid": "TASK-O-1-PLUGIN-ROUTE-DISPATCH-INDEX",
+    "type": "TASK",
+    "title": "O(1) plugin route dispatch index",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-o-1-plugin-route-dispatch-index.md",
+    "status": "done"
   },
   "TASK-OBSERVABILITY-CONFIG-SECTION": {
     "epic": "epic-api-telemetry",
