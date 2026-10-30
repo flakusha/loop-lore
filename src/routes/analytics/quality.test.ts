@@ -24,6 +24,8 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import { analyticsRoutes, } from "./index";
+import { qualityHandler, } from "./quality";
+import type { AnalyticsCtx, } from "./types";
 
 /** Quality blob as the write path stores it under `messages.metadata`. */
 function qualityBlob(repetitionRate: number, finishReason: string,): string {
@@ -161,6 +163,15 @@ describe("GET /api/analytics/quality", () => {
   test("returns 401 without a userId", async () => {
     const { status, } = await get("", null,);
     expect(status,).toBe(401,);
+  });
+
+  test("qualityHandler returns 200 totals directly", async () => {
+    const ctx = { userId, query: {}, } as unknown as AnalyticsCtx;
+    const res = await qualityHandler(db, ctx,);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as QualityBody;
+    expect(body.totals.generations,).toBe(3,);
+    expect(body.totals.totalTokens,).toBe(525,);
   });
 
   test("aggregates totals over the caller's own generations", async () => {

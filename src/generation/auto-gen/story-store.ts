@@ -26,6 +26,7 @@ import {
 import type { DB, } from "../../db/schema";
 import type { Logger, } from "../../logger/types";
 import { uid, } from "../../utils";
+import { buildQualityMetadata, repetitionRate, } from "../quality";
 import { runContentHooks, } from "./content-hooks";
 import type { GenDeps, } from "./deps";
 
@@ -40,6 +41,12 @@ export interface StoryStoreOpts {
   response: string;
   usedModel: string;
   usedProviderName: string;
+  /** Estimated completion tokens for the response (story path has no provider usage). */
+  completionTokens: number;
+  /** Raw provider finish reason (stop, length, error, cancelled). */
+  finishReason: string;
+  /** Generation duration in milliseconds. */
+  latencyMs: number;
   deps: Pick<
     GenDeps,
     "getSmk" | "ensureActorKey" | "getChatEncryptionLevel" | "encryptAtRest"
@@ -71,6 +78,9 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
     response,
     usedModel,
     usedProviderName,
+    completionTokens,
+    finishReason,
+    latencyMs,
     deps,
     log,
   } = opts;
@@ -164,6 +174,14 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
       content_encoding: contentEncoding,
       model_id: usedModel,
       provider: usedProviderName,
+      token_count_completion: completionTokens,
+      token_count_total: completionTokens,
+      generation_time_ms: latencyMs,
+      tokens_per_second: latencyMs > 0 ? Math.round((completionTokens / latencyMs) * 1000,) : null,
+      metadata: buildQualityMetadata({
+        repetitionRate: repetitionRate(response,),
+        finishReason,
+      },),
       status: MessageStatus.Confirmed,
       visibility: MessageVisibility.Visible,
       swipe_index: swipeIndex,

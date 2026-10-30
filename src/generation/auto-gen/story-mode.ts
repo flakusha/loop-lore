@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { detectHallucinations, } from "../../chat";
+import { estimateTokens, } from "../../chat/token-utils";
 import type { GmGuidance, } from "../../chat/types/config";
 import { GameMasterType, } from "../../db/enums";
 import { getLogger, } from "../../logger";
@@ -112,8 +113,13 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
 
   await gm.initialize();
 
-  // Execute turn — calls generateText internally to get GM decision
+  // Execute turn — calls generateText internally to get GM decision.
+  // The story path's GenerateTextFn returns text only (no provider usage
+  // or finish reason flows through the GM service), so latency is timed
+  // here and token counts are estimated from the raw response text.
+  const turnStartedAt = Date.now();
   const turnResult = await gm.executeTurn();
+  const turnLatencyMs = Date.now() - turnStartedAt;
 
   // In Human GM mode `turnResult.response` is null — there is no AI reply
   // to store. The GM IS the user and posts via the chat input directly,
@@ -170,6 +176,10 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
     response: turnResult.response,
     usedModel,
     usedProviderName,
+    completionTokens: estimateTokens(turnResult.response,),
+    // The GM boundary returns text only — no provider finish reason exists.
+    finishReason: "stop",
+    latencyMs: turnLatencyMs,
     deps,
     log,
   },);
