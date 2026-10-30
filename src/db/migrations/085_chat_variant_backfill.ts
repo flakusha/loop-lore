@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 084_chat_variant_backfill
+ * 085_chat_variant_backfill
  *
  * Backfills the chat-variants taxonomy onto legacy (taxonomy-blind) chats —
  * the cross-cutting "migration of legacy chats into the taxonomy" row of the
@@ -36,8 +36,8 @@
  * rendering + turn-orchestration defaults (MODE_DEFAULTS), and flipping
  * legacy 'direct'/'group' modes would silently change existing chats.
  *
- * Numbering: 084 is the lowest free slot on dev (083_immersion_decision_log
- * is the current tail; nothing is parked past it).
+ * Numbering: 085 is the lowest free slot on dev (084_lore_reveal_condition_timeline_rarity
+ * landed on dev first; 083_immersion_decision_log was the tail when this was written as 084).
  *
  * down() is loss-tolerant by recompute (047_conversation_merge style): the
  * same classifier shapes reset `purpose` back to NULL. A variant-era row that
