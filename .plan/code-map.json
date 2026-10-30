@@ -30830,6 +30830,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-062.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md"
     },
     {
@@ -31465,6 +31469,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-062.md"
     }
   ],
   "src/generation/generate-route/provider-request.ts": [
@@ -33494,6 +33502,24 @@
     }
   ],
   "src/generation/quality-metrics.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-062.md"
+    }
+  ],
+  "src/generation/quality/aggregate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-062.md"
+    }
+  ],
+  "src/generation/quality/metadata.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-062.md"
+    }
+  ],
+  "src/generation/quality/repetition-rate.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-062.md"
@@ -42153,6 +42179,12 @@
       "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
     }
   ],
+  "src/routes/analytics/chats.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-062.md"
+    }
+  ],
   "src/routes/analytics/knowledge-graph.ts": [
     {
       "kind": "ticket",
@@ -42163,6 +42195,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
+    }
+  ],
+  "src/routes/analytics/quality.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-analytics-observability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-062.md"
     }
   ],
   "src/routes/api-keys.coverage.test.ts": [

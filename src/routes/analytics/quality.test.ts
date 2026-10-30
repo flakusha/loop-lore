@@ -224,6 +224,29 @@ describe("GET /api/analytics/quality", () => {
     expect(body.byModel[0]?.model,).toBe("model-b",);
   });
 
+  test("the model, chat and date filters combine", async () => {
+    const { status, body, } = await get(`?model=model-a&chatId=${chatOne}&from=2026-01-02&to=2026-01-03`,);
+    expect(status,).toBe(200,);
+    expect(body.totals.generations,).toBe(1,);
+    expect(body.totals.totalTokens,).toBe(75,);
+    expect(body.byModel.length,).toBe(1,);
+    expect(body.byModel[0]?.model,).toBe("model-a",);
+    expect(body.trend.length,).toBe(1,);
+    expect(body.trend[0]?.date,).toBe("2026-01-02",);
+    expect(body.finishReasons,).toEqual([{ reason: "stop", count: 1, },],);
+  });
+
+  test("filters that exclude every row return zeroed totals", async () => {
+    // model-b only ever occurs in chatTwo, so narrowing to chatOne excludes it.
+    const { status, body, } = await get(`?model=model-b&chatId=${chatOne}`,);
+    expect(status,).toBe(200,);
+    expect(body.totals.generations,).toBe(0,);
+    expect(body.totals.totalTokens,).toBe(0,);
+    expect(body.byModel,).toEqual([],);
+    expect(body.trend,).toEqual([],);
+    expect(body.finishReasons,).toEqual([],);
+  });
+
   test("the from filter keeps the from-day and drops earlier days", async () => {
     const { body, } = await get("?from=2026-01-02",);
     expect(body.totals.generations,).toBe(1,);
