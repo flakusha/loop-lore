@@ -772,7 +772,22 @@
     "wizardRpgEnabledHint": "Master switch — per-mechanic flags inherit this unless overridden.",
     "wizardRpgXp": "XP and leveling",
     "wizardRpgSkills": "Skills",
-    "wizardRpgSkillsHint": "Gates skill-XP awards; off keeps the world playable without skill progression."
+    "wizardRpgSkillsHint": "Gates skill-XP awards; off keeps the world playable without skill progression.",
+    "tradeWindowTitle": "Player trades",
+    "tradeMyActor": "My actor id",
+    "tradeCounterparty": "Counterparty actor id",
+    "tradeCounterpartyPlaceholder": "Their actor id…",
+    "tradeReload": "Reload",
+    "tradeOffersLabel": "Open offers",
+    "tradeNoOffers": "No open offers.",
+    "tradeOpen": "Open",
+    "tradeYouOffer": "You offer",
+    "tradeTheyOffer": "They offer",
+    "tradeAccept": "Accept",
+    "tradeConfirmAccept": "Confirm accept",
+    "tradeCounter": "Counter",
+    "tradeCancel": "Cancel",
+    "tradeHistoryLabel": "Past trades"
   },
   "gallery": {
     "title": "ギャラリー",
@@ -1690,7 +1705,15 @@
     "inventoryEquippedFailed": "Failed to load equipped items.",
     "tradeNpcLoadFailed": "Failed to load merchant items.",
     "tradeFailed": "Trade failed.",
-    "tradeConfirmed": "Trade confirmed."
+    "tradeConfirmed": "Trade confirmed.",
+    "tradeOffersLoadFailed": "Failed to load trade offers.",
+    "tradeHistoryLoadFailed": "Failed to load trade history.",
+    "tradeOfferCreateFailed": "Failed to create trade offer.",
+    "tradeOfferCreated": "Trade offer created.",
+    "tradeOfferCounterFailed": "Failed to counter trade offer.",
+    "tradeOfferCountered": "Trade offer countered.",
+    "tradeOfferCancelFailed": "Failed to cancel trade offer.",
+    "tradeOfferCancelled": "Trade offer cancelled."
   },
   "commands": {
     "modify": "エンティティをモデルに書き換えさせる (/modify <kind> <id> \"変更内容\")",
