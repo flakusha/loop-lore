@@ -4,11 +4,18 @@
 /**
  * Real-workflow coverage: the v-0010 Director graph and the i-0037
  * round-trip control, converted offline against the pinned fixture.
+ *
+ * Parallel-safety contract: every `it` owns its conversion. The converter
+ * is a pure function over parsed JSON, so each test re-parses its fixture
+ * files and converts locally — no shared `graph`/`report` across tests,
+ * no shared mutable state, no tmp resources, no ordering dependence. File
+ * reads are read-only (fixtures are never written); JSON.parse per test
+ * keeps the parsed inputs unshared too.
  */
 import { describe, expect, it, } from "bun:test";
 import { readFileSync, } from "node:fs";
 import { convertWorkflow, } from "./index";
-import type { ApiGraph, ObjectInfoSnapshot, UiWorkflow, } from "./types";
+import type { ApiGraph, ConversionResult, ObjectInfoSnapshot, UiWorkflow, } from "./types";
 
 const DIR = "src/generation/comfyui-converter/fixtures";
 
@@ -16,13 +23,25 @@ function load(name: string,): unknown {
   return JSON.parse(readFileSync(`${DIR}/${name}`, "utf8",),);
 }
 
-const SNAPSHOT = load("object-info.json",) as ObjectInfoSnapshot;
+function snapshot(): ObjectInfoSnapshot {
+  return load("object-info.json",) as ObjectInfoSnapshot;
+}
+
+/** Fresh per-test conversion of the v-0010 Director fixture. */
+function convertDirector(): ConversionResult {
+  const workflow = load("v-0010-dasiwa-minimax.json",) as UiWorkflow;
+  return convertWorkflow(workflow, snapshot(),);
+}
+
+/** Fresh per-test conversion of the i-0037 round-trip control. */
+function convertControl(): ConversionResult {
+  const workflow = load("i-0037-moss-edit-s.json",) as UiWorkflow;
+  return convertWorkflow(workflow, snapshot(),);
+}
 
 describe("v-0010 Director workflow", () => {
-  const workflow = load("v-0010-dasiwa-minimax.json",) as UiWorkflow;
-  const { graph, report, } = convertWorkflow(workflow, SNAPSHOT,);
-
   it("flattens to a submittable graph with colon-path ids", () => {
+    const { graph, report, } = convertDirector();
     expect(report.nodeCount,).toBe(42,);
     expect(report.bypassedDropped,).toEqual([],);
     expect(report.unresolvedInputs,).toEqual([],);
@@ -36,6 +55,7 @@ describe("v-0010 Director workflow", () => {
   });
 
   it("excludes muted nodes and prunes their consumers", () => {
+    const { graph, report, } = convertDirector();
     expect(report.mutedDropped,).toEqual([
       "2760",
       "2753",
@@ -60,6 +80,7 @@ describe("v-0010 Director workflow", () => {
   });
 
   it("routes boundary links and promoted overrides", () => {
+    const { graph, } = convertDirector();
     expect(graph["1512:2598"]?.inputs["sampler_name"],).toBe("euler_ancestral",);
     expect(graph["1512:2701"]?.inputs["guide"],).toEqual(["2730", 0,],);
     expect(graph["1512:2738"]?.inputs[""],).toEqual(["2739", 1,],);
@@ -67,6 +88,7 @@ describe("v-0010 Director workflow", () => {
   });
 
   it("preserves hidden JSON widgets and drops frontend-only state", () => {
+    const { graph, } = convertDirector();
     const director = graph["2730"]?.inputs ?? {};
     expect(typeof director["timeline_data"],).toBe("string",);
     expect(typeof director["builder_state"],).toBe("string",);
@@ -77,21 +99,21 @@ describe("v-0010 Director workflow", () => {
   });
 
   it("emits pack identity for downstream presence checks", () => {
+    const { report, } = convertDirector();
     expect(report.packIdentity,).toHaveLength(26,);
     expect(report.notesSkipped,).toHaveLength(11,);
   });
 });
 
 describe("i-0037 round-trip control", () => {
-  const workflow = load("i-0037-moss-edit-s.json",) as UiWorkflow;
-  const expected = load("i-0037-moss-edit-s.expected.json",) as ApiGraph;
-  const { graph, report, } = convertWorkflow(workflow, SNAPSHOT,);
-
   it("converts identically to the hand-derived API form", () => {
+    const { graph, } = convertControl();
+    const expected = load("i-0037-moss-edit-s.expected.json",) as ApiGraph;
     expect(graph,).toEqual(expected,);
   });
 
   it("reports the single unattested widget, nothing else", () => {
+    const { report, } = convertControl();
     expect(report.nodeCount,).toBe(15,);
     expect(report.mutedDropped,).toEqual([],);
     expect(report.bypassedDropped,).toEqual([],);
