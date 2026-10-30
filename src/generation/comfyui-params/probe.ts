@@ -117,7 +117,7 @@ export function runAcceptanceProbe(options: ProbeOptions,): ProbeResult {
   }
 
   const classes = new Set(Object.values(graph,).map((node,) => node.class_type),);
-  const missing = [...classes,].filter((className,) => !(className in snapshot));
+  const missing = [...classes,].filter((className,) => !Object.hasOwn(snapshot, className,));
   if (missing.length > 0) {
     errors.push(`missing node classes: ${missing.toSorted().join(", ",)}`,);
   }
@@ -125,7 +125,7 @@ export function runAcceptanceProbe(options: ProbeOptions,): ProbeResult {
   const dangling: string[] = [];
   for (const [id, node,] of Object.entries(graph,)) {
     for (const [input, value,] of Object.entries(node.inputs,)) {
-      if (Array.isArray(value,) && typeof value[0] === "string" && !(value[0] as string in graph)) {
+      if (Array.isArray(value,) && typeof value[0] === "string" && !Object.hasOwn(graph, value[0],)) {
         dangling.push(`${id}.${input}`,);
       }
     }
@@ -135,7 +135,10 @@ export function runAcceptanceProbe(options: ProbeOptions,): ProbeResult {
     errors.push(`dangling links: ${dangling.toSorted().join(", ",)}`,);
   }
 
-  const matcher = KIND_MATCHERS[expectedOutputKind.toLowerCase()];
+  const matcher = Object.hasOwn(KIND_MATCHERS, expectedOutputKind.toLowerCase(),)
+    ? KIND_MATCHERS[expectedOutputKind.toLowerCase() as keyof typeof KIND_MATCHERS]
+    : undefined;
+
   const emitted = [...classes,].filter((className,) => matcher?.test(className,) ?? false);
   if (matcher === undefined || emitted.length === 0) {
     errors.push(
@@ -157,7 +160,7 @@ export function runAcceptanceProbe(options: ProbeOptions,): ProbeResult {
   // would always come back clean (the same reason `buildWorkflowGraph`
   // resolves the needed set from the body first).
   const needed = [...collectPlaceholders(injected,),];
-  const unresolved = needed.filter((name,) => !(name in vars));
+  const unresolved = needed.filter((name,) => !Object.hasOwn(vars, name,));
   if (unresolved.length > 0) {
     errors.push(`unresolved placeholders: ${unresolved.toSorted().join(", ",)}`,);
   } else {
