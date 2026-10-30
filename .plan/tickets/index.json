@@ -12448,6 +12448,28 @@
     "title": "Blog System",
     "type": "EPIC"
   },
+  "EPIC-BROWSER-EDITOR-SUPPORT": {
+    "hash": "50112ba",
+    "git_issue": "50112ba",
+    "extid": "EPIC-BROWSER-EDITOR-SUPPORT",
+    "type": "EPIC",
+    "title": "Browser-Side Terminal `$EDITOR` Support",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "web",
+      "terminal",
+      "pty",
+      "editor",
+      "harness",
+      "sandbox",
+      "websocket",
+      "bun"
+    ],
+    "source": ".plan/tickets/epic-browser-editor-support.md",
+    "status": "Not Started"
+  },
   "EPIC-BYOK-API-KEYS": {
     "epic": "",
     "extid": "EPIC-BYOK-API-KEYS",
@@ -33822,6 +33844,24 @@
     "status": "Not Started",
     "git_issue": "9d82194"
   },
+  "TASK-COMFYUI-PARAMETER-MAP-DERIVATION-FROM-MARKED-WORKFLOWS": {
+    "hash": "5785328",
+    "git_issue": "5785328",
+    "extid": "TASK-COMFYUI-PARAMETER-MAP-DERIVATION-FROM-MARKED-WORKFLOWS",
+    "type": "TASK",
+    "title": "ComfyUI parameter-map derivation from marked workflows",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "workflows",
+      "parameterization",
+      "object-info"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-parameter-map-derivation-from-marked-workflows.md",
+    "status": "Not Started"
+  },
   "TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION": {
     "hash": "80566a1",
     "extid": "TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION",
@@ -33894,6 +33934,24 @@
     "tags": [],
     "title": "ComfyUI Workflow Template Registry",
     "type": "TASK"
+  },
+  "TASK-COMFYUI-WORKFLOW-ACCEPTANCE-PROBE-SCAFFOLD": {
+    "hash": "f518aa7",
+    "git_issue": "f518aa7",
+    "extid": "TASK-COMFYUI-WORKFLOW-ACCEPTANCE-PROBE-SCAFFOLD",
+    "type": "TASK",
+    "title": "ComfyUI workflow acceptance-probe scaffold",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "workflows",
+      "testing",
+      "probes"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-workflow-acceptance-probe-scaffold.md",
+    "status": "Not Started"
   },
   "TASK-COMFYUI-WORKFLOW-PARAMETERIZATION": {
     "hash": "cefeb42",
@@ -38863,6 +38921,26 @@
     "title": "F9 factor management and recovery UI",
     "type": "TASK"
   },
+  "TASK-FACE-DETAILER-REFINEMENT-TIER": {
+    "hash": "ec05023",
+    "git_issue": "ec05023",
+    "extid": "TASK-FACE-DETAILER-REFINEMENT-TIER",
+    "type": "TASK",
+    "title": "Face-detailer refinement tier",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "detailer",
+      "impact-pack",
+      "easy-use",
+      "kreaphoton",
+      "image-edit"
+    ],
+    "source": ".plan/tickets/TASK-face-detailer-refinement-tier.md",
+    "status": "Not Started"
+  },
   "TASK-FACTION-LEADERS-AND-CADRE-GENERATION": {
     "epic": "epic-faction-reputation",
     "extid": "TASK-FACTION-LEADERS-AND-CADRE-GENERATION",
@@ -43200,6 +43278,96 @@
     "source": ".plan/tickets/TASK-imgedit-in-chat-command.md",
     "status": "Not Started"
   },
+  "TASK-IMMERSION-GATE-CLAIM-EXTRACTION": {
+    "hash": "17e9357",
+    "git_issue": "17e9357",
+    "extid": "TASK-IMMERSION-GATE-CLAIM-EXTRACTION",
+    "type": "TASK",
+    "title": "immersion gate claim extraction",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-immersion-consistency-gate",
+    "tags": [
+      "immersion"
+    ],
+    "source": ".plan/tickets/TASK-immersion-gate-claim-extraction.md",
+    "status": "done"
+  },
+  "TASK-IMMERSION-GATE-CONFIG-SURFACE-AND-AUDIT-LOG": {
+    "hash": "10a878a",
+    "git_issue": "10a878a",
+    "extid": "TASK-IMMERSION-GATE-CONFIG-SURFACE-AND-AUDIT-LOG",
+    "type": "TASK",
+    "title": "immersion gate config surface and audit log",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-immersion-consistency-gate",
+    "tags": [
+      "immersion"
+    ],
+    "source": ".plan/tickets/TASK-immersion-gate-config-surface-and-audit-log.md",
+    "status": "done"
+  },
+  "TASK-IMMERSION-GATE-DETERMINISTIC-RULE-ENGINE": {
+    "hash": "8236273",
+    "git_issue": "8236273",
+    "extid": "TASK-IMMERSION-GATE-DETERMINISTIC-RULE-ENGINE",
+    "type": "TASK",
+    "title": "immersion gate deterministic rule engine",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-immersion-consistency-gate",
+    "tags": [
+      "immersion"
+    ],
+    "source": ".plan/tickets/TASK-immersion-gate-deterministic-rule-engine.md",
+    "status": "done"
+  },
+  "TASK-IMMERSION-GATE-FAILED-CHECK-ENFORCEMENT": {
+    "hash": "fb98de9",
+    "git_issue": "fb98de9",
+    "extid": "TASK-IMMERSION-GATE-FAILED-CHECK-ENFORCEMENT",
+    "type": "TASK",
+    "title": "immersion gate failed-check enforcement",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-immersion-consistency-gate",
+    "tags": [
+      "immersion"
+    ],
+    "source": ".plan/tickets/TASK-immersion-gate-failed-check-enforcement.md",
+    "status": "done"
+  },
+  "TASK-IMMERSION-GATE-OPT-IN-LLM-CLASSIFIER": {
+    "hash": "95b1588",
+    "git_issue": "95b1588",
+    "extid": "TASK-IMMERSION-GATE-OPT-IN-LLM-CLASSIFIER",
+    "type": "TASK",
+    "title": "immersion gate opt-in llm classifier",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-immersion-consistency-gate",
+    "tags": [
+      "immersion"
+    ],
+    "source": ".plan/tickets/TASK-immersion-gate-opt-in-llm-classifier.md",
+    "status": "done"
+  },
+  "TASK-IMMERSION-GATE-REFUSAL-NARRATION-PATH": {
+    "hash": "2c2f5cf",
+    "git_issue": "2c2f5cf",
+    "extid": "TASK-IMMERSION-GATE-REFUSAL-NARRATION-PATH",
+    "type": "TASK",
+    "title": "immersion gate refusal narration path",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-immersion-consistency-gate",
+    "tags": [
+      "immersion"
+    ],
+    "source": ".plan/tickets/TASK-immersion-gate-refusal-narration-path.md",
+    "status": "done"
+  },
   "TASK-IMMERSION-PRESENTATION": {
     "epic": "epic-immersion-presentation",
     "extid": "TASK-IMMERSION-PRESENTATION",
@@ -44665,6 +44833,25 @@
     "source": ".plan/tickets/TASK-krea-3-reference-edit-template.md",
     "status": "Not Started",
     "git_issue": "77fbd4c"
+  },
+  "TASK-KREA-MOODBOARD-STYLE-CONDITIONING-TEMPLATES": {
+    "hash": "8f151b5",
+    "git_issue": "8f151b5",
+    "extid": "TASK-KREA-MOODBOARD-STYLE-CONDITIONING-TEMPLATES",
+    "type": "TASK",
+    "title": "Krea moodboard style-conditioning templates",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "krea",
+      "moodboard",
+      "style-conditioning",
+      "workflow-library"
+    ],
+    "source": ".plan/tickets/TASK-krea-moodboard-style-conditioning-templates.md",
+    "status": "Not Started"
   },
   "TASK-KRITA-SHARED-COMFYUI-TIER": {
     "hash": "f108415",
@@ -47606,6 +47793,26 @@
     "tags": [],
     "title": "MoodHook — word-boundary matching + intensity-scaled delta",
     "type": "TASK"
+  },
+  "TASK-MOSS-PLUS-ANIMA-FAMILY-TEMPLATES-FROM-OPERATOR-WORKFLOWS": {
+    "hash": "91bd794",
+    "git_issue": "91bd794",
+    "extid": "TASK-MOSS-PLUS-ANIMA-FAMILY-TEMPLATES-FROM-OPERATOR-WORKFLOWS",
+    "type": "TASK",
+    "title": "Moss + Anima family templates from operator workflows",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "workflow-library",
+      "image-edit",
+      "moss",
+      "anima",
+      "operator-workflows"
+    ],
+    "source": ".plan/tickets/TASK-moss-plus-anima-family-templates-from-operator-workflows.md",
+    "status": "Not Started"
   },
   "TASK-MOVE-RELATIONSHIP-UPDATE-DELETE-EXISTENCE-CHECK-INSIDE-THE-T": {
     "hash": "4f8b313",
@@ -51421,6 +51628,25 @@
     "source": ".plan/tickets/TASK-qwen-image-edit-21-reference-template.md",
     "status": "Not Started",
     "git_issue": "9cba818"
+  },
+  "TASK-QWENVL-IN-GRAPH-PROMPT-ENHANCER": {
+    "hash": "1ebf7b2",
+    "git_issue": "1ebf7b2",
+    "extid": "TASK-QWENVL-IN-GRAPH-PROMPT-ENHANCER",
+    "type": "TASK",
+    "title": "QwenVL in-graph prompt enhancer",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "qwenvl",
+      "prompt-enhancement",
+      "image-edit",
+      "vlm"
+    ],
+    "source": ".plan/tickets/TASK-qwenvl-in-graph-prompt-enhancer.md",
+    "status": "Not Started"
   },
   "TASK-RAG-ALPINE": {
     "epic": "epic-rag-ui",
@@ -57752,6 +57978,25 @@
     "title": "Touch gestures (mobile interaction surface)",
     "type": "TASK"
   },
+  "TASK-TRACK-UPSTREAM-COMFYUI-MEMORY-LEAK-ISSUES-FIXES": {
+    "hash": "7b130ad",
+    "git_issue": "7b130ad",
+    "extid": "TASK-TRACK-UPSTREAM-COMFYUI-MEMORY-LEAK-ISSUES-FIXES",
+    "type": "TASK",
+    "title": "Track upstream ComfyUI memory-leak issues/fixes",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-comfyui-lifecycle",
+    "tags": [
+      "comfyui",
+      "lifecycle",
+      "memory",
+      "watchlist",
+      "sync"
+    ],
+    "source": ".plan/tickets/TASK-track-upstream-comfyui-memory-leak-issues-fixes.md",
+    "status": "Not Started"
+  },
   "TASK-TRACK-VOYAGE-INSPIRATION": {
     "epic": "epic-emergent-narrative-design",
     "extid": "TASK-TRACK-VOYAGE-INSPIRATION",
@@ -58892,6 +59137,25 @@
     "title": "Users, Roles & Sessions Lifecycle",
     "type": "TASK"
   },
+  "TASK-VAEDEGRID-POST-DECODE-CLEANUP-STAGE": {
+    "hash": "06dbb7c",
+    "git_issue": "06dbb7c",
+    "extid": "TASK-VAEDEGRID-POST-DECODE-CLEANUP-STAGE",
+    "type": "TASK",
+    "title": "VAEDeGrid post-decode cleanup stage",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "image-edit",
+      "post-processing",
+      "vae",
+      "degrid"
+    ],
+    "source": ".plan/tickets/TASK-vaedegrid-post-decode-cleanup-stage.md",
+    "status": "Not Started"
+  },
   "TASK-VALIDATE-AND-FIX-FE-BE-DB-GAPS-FOR-CHAT-VN-SETTINGS": {
     "epic": "",
     "extid": "TASK-VALIDATE-AND-FIX-FE-BE-DB-GAPS-FOR-CHAT-VN-SETTINGS",
@@ -59687,6 +59951,71 @@
     "title": "Weather & Environmental Effects",
     "type": "TASK"
   },
+  "TASK-WEB-EDITOR-CONFIG-SECTION-PLUS-BUN-FLOOR-WEB-EDITOR-WEB-TERM": {
+    "hash": "c9decab",
+    "git_issue": "c9decab",
+    "extid": "TASK-WEB-EDITOR-CONFIG-SECTION-PLUS-BUN-FLOOR-WEB-EDITOR-WEB-TERM",
+    "type": "TASK",
+    "title": "Web editor: config section plus Bun floor (web.editor/web.terminal)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-browser-editor-support",
+    "tags": [],
+    "source": ".plan/tickets/TASK-web-editor-config-section-plus-bun-floor-web-editor-web-term.md",
+    "status": "Not Started"
+  },
+  "TASK-WEB-EDITOR-HARNESS-SANDBOX-FILE-TREE-APPROACH-C": {
+    "hash": "f63d7d9",
+    "git_issue": "f63d7d9",
+    "extid": "TASK-WEB-EDITOR-HARNESS-SANDBOX-FILE-TREE-APPROACH-C",
+    "type": "TASK",
+    "title": "Web editor: harness sandbox file tree (approach C)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-browser-editor-support",
+    "tags": [],
+    "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md",
+    "status": "Not Started"
+  },
+  "TASK-WEB-EDITOR-OPEN-IN-EDITOR-URI-SCHEME-LINKS-APPROACH-A": {
+    "hash": "42b9293",
+    "git_issue": "42b9293",
+    "extid": "TASK-WEB-EDITOR-OPEN-IN-EDITOR-URI-SCHEME-LINKS-APPROACH-A",
+    "type": "TASK",
+    "title": "Web editor: open-in-editor URI-scheme links (approach A)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-browser-editor-support",
+    "tags": [],
+    "source": ".plan/tickets/TASK-web-editor-open-in-editor-uri-scheme-links-approach-a.md",
+    "status": "Not Started"
+  },
+  "TASK-WEB-EDITOR-PTY-SPAWN-AUDIT-LOGGING-TO-HARNESS-EXEC-LOG": {
+    "hash": "5669358",
+    "git_issue": "5669358",
+    "extid": "TASK-WEB-EDITOR-PTY-SPAWN-AUDIT-LOGGING-TO-HARNESS-EXEC-LOG",
+    "type": "TASK",
+    "title": "Web editor: PTY spawn audit logging to harness exec-log",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-browser-editor-support",
+    "tags": [],
+    "source": ".plan/tickets/TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log.md",
+    "status": "Not Started"
+  },
+  "TASK-WEB-EDITOR-PTY-TERMINAL-ROUTE-APPROACH-B": {
+    "hash": "5bf3df5",
+    "git_issue": "5bf3df5",
+    "extid": "TASK-WEB-EDITOR-PTY-TERMINAL-ROUTE-APPROACH-B",
+    "type": "TASK",
+    "title": "Web editor: PTY terminal route (approach B)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-browser-editor-support",
+    "tags": [],
+    "source": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md",
+    "status": "Not Started"
+  },
   "TASK-WEB-EMBED-PROFILE": {
     "hash": "c93debd",
     "git_issue": "c93debd",
@@ -60252,6 +60581,24 @@
     "tags": [],
     "title": "Workflow engine schema + loader (template types, workflow discovery, defaults)",
     "type": "TASK"
+  },
+  "TASK-WORKFLOW-LIBRARY-UI-FORMAT-INGEST": {
+    "hash": "da06db7",
+    "git_issue": "da06db7",
+    "extid": "TASK-WORKFLOW-LIBRARY-UI-FORMAT-INGEST",
+    "type": "TASK",
+    "title": "Workflow library UI-format ingest",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "workflows",
+      "admin",
+      "converter"
+    ],
+    "source": ".plan/tickets/TASK-workflow-library-ui-format-ingest.md",
+    "status": "Not Started"
   },
   "TASK-WORKFLOW-PAYLOAD-PREVIEW-STEP-TYPE": {
     "hash": "0b64aea",
