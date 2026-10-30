@@ -33,3 +33,5 @@ generation backend, no webp work.
 
 
 git issue: 747ea17
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 747ea17 (registry tip: ca0e2bdca Konstantin Fedotov Close issue)
