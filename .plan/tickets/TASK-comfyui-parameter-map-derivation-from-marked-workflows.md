@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI parameter-map derivation from marked workflows
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen
