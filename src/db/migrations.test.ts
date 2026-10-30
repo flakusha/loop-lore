@@ -571,6 +571,20 @@ describe("migration loader excludes colocated *.test.ts", () => {
  * Migrator then applies (and later rolls back / re-applies) 084 — through
  * migrateTo()/migrateToLatest()/migrateDown(), so transactional behavior
  * matches a real upgrade rather than a direct up()/down() call.
+ *
+ * RESOURCE CONTRACT — what each test owns:
+ * - DISK/PORTS: none. Each test builds its OWN `:memory:` SQLite Database +
+ *   Kysely + Migrator via seededLegacyDb(); no fixed paths, no ports, no
+ *   shared fixture files — safe under parallel file runners.
+ * - GLOBALS: the process-local `setTestDatabase` override is registered by
+ *   seededLegacyDb() and cleared in afterEach AND on helper failure, so a
+ *   throwing test cannot leak the override or an unclosed handle into
+ *   sibling files (BUG-settestdatabase-global-leak-on-test-throw).
+ * - ORDERING: the two tests are independent — each seeds and migrates its
+ *   own DB from scratch and passes alone or in any order.
+ * - SHARED READS: MIGRATION_NAMES and the migrations directory are imported
+ *   read-only, never mutated; each import gets Bun's per-process module
+ *   cache.
  */
 describe("084_chat_variant_backfill — legacy chat classification", () => {
   /** Last migration before the backfill. */
@@ -672,32 +686,41 @@ describe("084_chat_variant_backfill — legacy chat classification", () => {
     setTestDatabase(db as unknown as Kysely<import("./schema").DB>,);
     const migrator = new Migrator({ db, provider: backfillProvider(), },);
 
-    const before = await migrator.migrateTo(BEFORE_BACKFILL,);
-    expect(before.error, "migrating to the pre-backfill state should not error",).toBeUndefined();
+    try {
+      const before = await migrator.migrateTo(BEFORE_BACKFILL,);
+      expect(before.error, "migrating to the pre-backfill state should not error",).toBeUndefined();
 
-    await db.insertInto("users",).values({
-      id: "backfill-user",
-      username: "backfill-user",
-      display_name: "Backfill User",
-    },).execute();
-
-    await db.insertInto("worlds",).values({
-      id: "backfill-world",
-      owner_id: "backfill-user",
-      name: "Backfill World",
-    },).execute();
-
-    for (const [i, fixture,] of FIXTURES.entries()) {
-      await db.insertInto("chats",).values({
-        id: `backfill-chat-${i}`,
-        name: fixture.name,
-        type: fixture.type,
-        mode: fixture.mode,
-        created_by: "backfill-user",
-        world_id: fixture.worldId ?? null,
-        gm_config: fixture.gmConfig ?? null,
-        purpose: fixture.purpose ?? null,
+      await db.insertInto("users",).values({
+        id: "backfill-user",
+        username: "backfill-user",
+        display_name: "Backfill User",
       },).execute();
+
+      await db.insertInto("worlds",).values({
+        id: "backfill-world",
+        owner_id: "backfill-user",
+        name: "Backfill World",
+      },).execute();
+
+      for (const [i, fixture,] of FIXTURES.entries()) {
+        await db.insertInto("chats",).values({
+          id: `backfill-chat-${i}`,
+          name: fixture.name,
+          type: fixture.type,
+          mode: fixture.mode,
+          created_by: "backfill-user",
+          world_id: fixture.worldId ?? null,
+          gm_config: fixture.gmConfig ?? null,
+          purpose: fixture.purpose ?? null,
+        },).execute();
+      }
+    } catch (error) {
+      // A mid-setup throw must not leak the handle or the global override —
+      // the caller's try/finally never runs when the helper itself fails.
+      await db.destroy();
+      sqlite.close();
+      setTestDatabase(null,);
+      throw error;
     }
 
     return { db, sqlite, migrator, };
