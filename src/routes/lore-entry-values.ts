@@ -49,13 +49,16 @@ export type RevealConditionWriteResult =
  * Accepts the same string/object forms as {@link revealConditionValue} and
  * rejects values that do not parse into a valid reveal-condition tree —
  * the lore section fails closed on such rows, so a typo would silently
- * hide the secret forever.
+ * hide the secret forever. An empty/whitespace-only string clears the
+ * condition (column semantics: NULL/blank = not secret), matching what a
+ * null/omitted field expresses on create.
  * @param body - create/update body (may omit revealCondition).
  * @returns ok, or a 400-ready rejection naming the field.
  */
 export function validateRevealConditionWrite(body: Record<string, unknown>,): RevealConditionWriteResult {
   const raw = body["revealCondition"];
   if (raw == null) { return { ok: true, }; }
+  if (typeof raw === "string" && raw.trim() === "") { return { ok: true, }; } // blank = not secret: a valid clear
   const normalized = revealConditionValue(raw,);
   if (typeof normalized !== "string") {
     return { ok: false, status: HttpStatus.BadRequest, message: "revealCondition must be a JSON object or string", };

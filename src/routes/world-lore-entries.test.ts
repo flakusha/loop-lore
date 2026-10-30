@@ -476,6 +476,36 @@ describe("worldLoreEntriesRoutes — reveal/timeline/rarity fields (084)", () =>
     expect(put.status,).toBe(400,);
   });
 
+  test("blank revealCondition string clears the secret (not a 400)", async () => {
+    const worldId = await seedWorld(db, ownerId,);
+    const entryId = await seedEntry(db, worldId, "Clearable secret.",);
+
+    // Create path: blank means not secret, same as omitting the field.
+    const post = await makeApp(db, ownerId, "user",).handle(
+      new Request(`http://localhost/api/worlds/${worldId}/lore-entries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ content: "Plain lore.", revealCondition: "  ", },),
+      },),
+    );
+
+    expect(post.status,).toBe(201,);
+
+    // Update path: clearing an existing secret with "" is a valid write
+    // (column semantics: NULL/blank = not secret).
+    const put = await makeApp(db, ownerId, "user",).handle(
+      new Request(`http://localhost/api/worlds/${worldId}/lore-entries/${entryId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ revealCondition: "", },),
+      },),
+    );
+
+    expect(put.status,).toBe(200,);
+    const updated = (await put.json()) as LoreEntryPayload;
+    expect(updated.reveal_condition,).toBe("",);
+  });
+
   test("unknown rarity falls back to common; rarity is updatable", async () => {
     const worldId = await seedWorld(db, ownerId,);
 
