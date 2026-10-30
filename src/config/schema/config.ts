@@ -35,6 +35,7 @@ import type { ServerConfig, } from "./server";
 import type { TestingConfig, } from "./testing";
 import type { TransportConfig, } from "./transport";
 import type { TuiConfig, } from "./tui";
+import type { WebConfig, } from "./web";
 
 /** */
 export interface Config {
@@ -48,6 +49,7 @@ export interface Config {
   ageGate: AgeGateConfig;
   auth: AuthConfig;
   transport: TransportConfig;
+  web: WebConfig;
   messages: MessagesConfig;
   idempotency: IdempotencyConfig;
   nsfw: NsfwConfig;

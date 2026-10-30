@@ -35,6 +35,7 @@ export const DOMAINS = [
   "byokey",
   "encryption",
   "headers",
+  "web",
 ] as const;
 
 /** Known network filesystem mount prefixes (Linux/macOS). */

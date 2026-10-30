@@ -29,6 +29,7 @@ const DOMAINS = [
   "byokey",
   "encryption",
   "headers",
+  "web",
 ] as const;
 
 type DomainReloadCallback = (domain: string, config: Config,) => void;

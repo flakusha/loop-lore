@@ -109,4 +109,8 @@ export const validate = (config: Config,): void => {
       `Invalid headers.crossOriginResourcePolicy: "${config.headers.crossOriginResourcePolicy}"`,
     );
   }
+
+  if (typeof config.web.editor !== "string" || config.web.editor.trim() === "") {
+    throw new Error(`Invalid web.editor: "${config.web.editor}"`,);
+  }
 };

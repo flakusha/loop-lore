@@ -37,6 +37,7 @@ import { SEEDING_DEFAULTS, } from "./seeding";
 import { SERVER_DEFAULTS, } from "./server";
 import { TRANSPORT_DEFAULTS, } from "./transport";
 import { TUI_DEFAULTS, } from "./tui";
+import { WEB_DEFAULTS, } from "./web";
 
 import type { Config, } from "../schema";
 import { CHARACTERS_DEFAULTS, } from "../sections/characters";
@@ -92,6 +93,7 @@ export const createConfigSchema = () => {
     integrations: deepClone(INTEGRATIONS_DEFAULTS,),
     templates: deepClone(TEMPLATES_DEFAULTS,),
     characters: deepClone(CHARACTERS_DEFAULTS,),
+    web: deepClone(WEB_DEFAULTS,),
   };
 
   return {
@@ -125,6 +127,7 @@ export const createConfigSchema = () => {
         templates: sections.templates,
         characters: sections.characters,
         integrations: sections.integrations,
+        web: sections.web,
       };
     },
   };
