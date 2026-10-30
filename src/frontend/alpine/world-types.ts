@@ -218,6 +218,12 @@ export interface WorldLoreEntry {
   constant: number | null;
   priority: number | null;
   comment: string | null;
+  /** 084: serialized reveal-condition JSON; null = not secret. */
+  revealCondition?: string | null;
+  /** 084: timeline slug scoping; null = every timeline. */
+  timelineId?: string | null;
+  /** 084: canonical ItemRarity tier ('common' when unset). */
+  rarity?: string | null;
 }
 
 /** The merged world-page Alpine state. Mixins fill disjoint slices. */
@@ -277,7 +283,20 @@ export interface WorldPageState {
   loreEditingId: string | null;
   loreBusy: boolean;
   loreMessage: string;
-  loreForm: { name: string; keys: string; content: string; priority: string; constant: boolean };
+  /** Client-side reveal-condition validation feedback (empty = valid). */
+  loreFormError: string;
+  loreForm: {
+    name: string;
+    keys: string;
+    content: string;
+    priority: string;
+    constant: boolean;
+    revealCondition: string;
+    rarity: string;
+    timelineId: string;
+  };
+  /** Canonical rarity tiers for the editor dropdown (ItemRarity scale). */
+  readonly loreRarityTiers: readonly string[];
   loadLore(): Promise<void>;
   openLoreForm(id: string | null,): void;
   cancelLoreForm(): void;

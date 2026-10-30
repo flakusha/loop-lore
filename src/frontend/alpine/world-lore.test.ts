@@ -3,7 +3,7 @@
 
 import { afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
-import { groupLoreEntries, parseLoreKeys, worldLore, } from "./world-lore";
+import { groupLoreEntries, isValidRevealCondition, parseLoreKeys, worldLore, } from "./world-lore";
 import type { WorldLoreEntry, WorldPageState, } from "./world-types";
 
 // ── Mock ../htmx (must precede importing side effects) ──
@@ -88,7 +88,12 @@ describeOrSkip("worldLore.loadLore", () => {
   test("decodes the paginated lore list through the response schema", async () => {
     handler = async () =>
       Response.json({
-        data: [entry({ keys: '["dragon"]', },),],
+        data: [entry({
+          keys: '["dragon"]',
+          revealCondition: '{"keywords": ["dragon"]}',
+          rarity: "epic",
+          timelineId: "alt",
+        },),],
         total: 1,
         page: 1,
         pageSize: 500,
@@ -98,7 +103,19 @@ describeOrSkip("worldLore.loadLore", () => {
     await worldLore.loadLore!.call(ctx,);
     expect(ctx.loreEntries,).toHaveLength(1,);
     expect(ctx.loreEntries[0]!.id,).toBe("l1",);
+    expect(ctx.loreEntries[0]!.revealCondition,).toBe('{"keywords": ["dragon"]}',);
+    expect(ctx.loreEntries[0]!.rarity,).toBe("epic",);
+    expect(ctx.loreEntries[0]!.timelineId,).toBe("alt",);
     expect(ctx.loreLoading,).toBe(false,);
+  });
+
+  test("decodes rows without the 084 fields", async () => {
+    handler = async () => Response.json({ data: [entry({ id: "l2", },),], total: 1, page: 1, pageSize: 500, },);
+    const ctx = loreCtx();
+    await worldLore.loadLore!.call(ctx,);
+    expect(ctx.loreEntries[0]!.revealCondition,).toBeUndefined();
+    expect(ctx.loreEntries[0]!.rarity,).toBeUndefined();
+    expect(ctx.loreEntries[0]!.timelineId,).toBeUndefined();
   });
 
   test("falls back to empty on malformed payloads", async () => {
@@ -119,7 +136,17 @@ describeOrSkip("worldLore.loadLore", () => {
 describeOrSkip("worldLore.saveLore", () => {
   test("requires content before calling the API", async () => {
     const ctx = loreCtx();
-    ctx.loreForm = { name: "", keys: "", content: "  ", priority: "100", constant: false, };
+    ctx.loreForm = {
+      name: "",
+      keys: "",
+      content: "  ",
+      priority: "100",
+      constant: false,
+      revealCondition: "",
+      rarity: "common",
+      timelineId: "",
+    };
+
     await worldLore.saveLore!.call(ctx,);
     expect(calls,).toHaveLength(0,);
     expect(ctx.loreMessage,).toBe("Content is required.",);
@@ -128,7 +155,17 @@ describeOrSkip("worldLore.saveLore", () => {
   test("creates via POST with camelCase payload", async () => {
     handler = async () => Response.json({ success: true, }, { status: 201, },);
     const ctx = loreCtx();
-    ctx.loreForm = { name: "Dragons", keys: "dragon, wyrm", content: "Old lore.", priority: "42", constant: true, };
+    ctx.loreForm = {
+      name: "Dragons",
+      keys: "dragon, wyrm",
+      content: "Old lore.",
+      priority: "42",
+      constant: true,
+      revealCondition: "",
+      rarity: "common",
+      timelineId: "",
+    };
+
     await worldLore.saveLore!.call(ctx,);
     expect(calls,).toHaveLength(2,); // save + reload
     expect(calls[0]!.url,).toBe("/api/v1/worlds/w1/lore-entries",);
@@ -140,14 +177,109 @@ describeOrSkip("worldLore.saveLore", () => {
     expect(ctx.loreFormOpen,).toBe(false,);
   });
 
+  test("sends revealCondition, rarity and timelineId when set", async () => {
+    handler = async () => Response.json({ success: true, }, { status: 201, },);
+    const ctx = loreCtx();
+    ctx.loreForm = {
+      name: "Meteor secret",
+      keys: "",
+      content: "Hidden lore.",
+      priority: "100",
+      constant: true,
+      revealCondition: '{"event": "meteor_fall"}',
+      rarity: "artifact",
+      timelineId: "alt",
+    };
+
+    await worldLore.saveLore!.call(ctx,);
+    expect(calls,).toHaveLength(2,);
+    const body = JSON.parse(String(calls[0]!.opts.body,),) as Record<string, unknown>;
+    expect(body.revealCondition,).toBe('{"event": "meteor_fall"}',);
+    expect(body.rarity,).toBe("artifact",);
+    expect(body.timelineId,).toBe("alt",);
+  });
+
+  test("blocks save with inline error on invalid reveal-condition JSON", async () => {
+    const ctx = loreCtx();
+    ctx.loreFormOpen = true;
+    ctx.loreForm = {
+      name: "",
+      keys: "",
+      content: "Secret.",
+      priority: "100",
+      constant: false,
+      revealCondition: "not-json",
+      rarity: "common",
+      timelineId: "",
+    };
+
+    await worldLore.saveLore!.call(ctx,);
+    expect(calls,).toHaveLength(0,);
+    expect(ctx.loreFormError,).not.toBe("",);
+    expect(ctx.loreFormOpen,).toBe(true,);
+  });
+
   test("updates via PUT on the editing id", async () => {
     handler = async () => Response.json({ success: true, },);
     const ctx = loreCtx();
     ctx.loreEditingId = "l9";
-    ctx.loreForm = { name: "n", keys: "", content: "c", priority: "100", constant: false, };
+    ctx.loreForm = {
+      name: "n",
+      keys: "",
+      content: "c",
+      priority: "100",
+      constant: false,
+      revealCondition: "",
+      rarity: "common",
+      timelineId: "",
+    };
+
     await worldLore.saveLore!.call(ctx,);
     expect(calls[0]!.url,).toBe("/api/v1/worlds/w1/lore-entries/l9",);
     expect(calls[0]!.opts.method,).toBe("PUT",);
+  });
+},);
+
+describeOrSkip("worldLore.openLoreForm (084 fields)", () => {
+  test("fills reveal condition, rarity and timeline from the entry", () => {
+    const ctx = loreCtx();
+    ctx.loreEntries = [entry({
+      id: "s1",
+      revealCondition: '{"keywords": ["beacon"]}',
+      rarity: "rare",
+      timelineId: "alt",
+    },),];
+
+    worldLore.openLoreForm!.call(ctx, "s1",);
+    expect(ctx.loreForm.revealCondition,).toBe('{"keywords": ["beacon"]}',);
+    expect(ctx.loreForm.rarity,).toBe("rare",);
+    expect(ctx.loreForm.timelineId,).toBe("alt",);
+    expect(ctx.loreFormError,).toBe("",);
+  });
+
+  test("defaults rarity to common and clears the error for a new entry", () => {
+    const ctx = loreCtx();
+    ctx.loreFormError = "stale";
+    worldLore.openLoreForm!.call(ctx, null,);
+    expect(ctx.loreForm.rarity,).toBe("common",);
+    expect(ctx.loreForm.revealCondition,).toBe("",);
+    expect(ctx.loreForm.timelineId,).toBe("",);
+    expect(ctx.loreFormError,).toBe("",);
+  });
+},);
+
+describeOrSkip("isValidRevealCondition (pure)", () => {
+  test("blank is valid (not secret)", () => {
+    expect(isValidRevealCondition("",),).toBe(true,);
+    expect(isValidRevealCondition("   ",),).toBe(true,);
+  });
+
+  test("valid trees parse; malformed JSON and wrong shapes are invalid", () => {
+    expect(isValidRevealCondition('{"keywords": ["beacon"]}',),).toBe(true,);
+    expect(isValidRevealCondition('{"all": [{"event": "e"}], "any": []}',),).toBe(true,);
+    expect(isValidRevealCondition("not-json",),).toBe(false,);
+    expect(isValidRevealCondition('["beacon"]',),).toBe(false,);
+    expect(isValidRevealCondition('{"keywords": "beacon"}',),).toBe(false,);
   });
 },);
 

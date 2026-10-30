@@ -11,6 +11,8 @@
  * display via {@link parseLoreKeys}.
  */
 import { Type, } from "@sinclair/typebox";
+import { parseRevealCondition, } from "../../assistant/lore/reveal-condition";
+import { ItemRarity, } from "../../db/enums-story/items";
 import { jsonStringifyOr, parseJsonList, } from "../../utils";
 import { apiFetch, } from "./htmx";
 import { parseOr, } from "./validation";
@@ -27,12 +29,40 @@ const LoreEntrySchema = Type.Object({
   constant: Type.Union([Type.Number(), Type.Null(),],),
   priority: Type.Union([Type.Number(), Type.Null(),],),
   comment: Type.Union([Type.String(), Type.Null(),],),
+  revealCondition: Type.Optional(Type.Union([Type.String(), Type.Null(),],),),
+  timelineId: Type.Optional(Type.Union([Type.String(), Type.Null(),],),),
+  rarity: Type.Optional(Type.Union([Type.String(), Type.Null(),],),),
 },);
 
 /** Strict decoder for the paginated lore list body. */
 const LoreListSchema = Type.Object({ data: Type.Array(LoreEntrySchema,), },);
 
-const EMPTY_FORM = { name: "", keys: "", content: "", priority: "100", constant: false, };
+const EMPTY_FORM = {
+  name: "",
+  keys: "",
+  content: "",
+  priority: "100",
+  constant: false,
+  revealCondition: "",
+  rarity: ItemRarity.Common,
+  timelineId: "",
+};
+
+/** Rarity tiers for the editor dropdown — canonical ItemRarity scale. */
+export const LORE_RARITY_TIERS: readonly string[] = Object.values(ItemRarity,);
+
+/**
+ * Client-side reveal-condition validation, mirroring the server write guard
+ * (`lore-entry-values.ts` → `parseRevealCondition`): the lore section fails
+ * closed on unparsable conditions, so a typo would hide the secret forever.
+ * @param raw textarea content (stored JSON text form)
+ * @returns {boolean} true when blank or a valid reveal-condition tree
+ */
+export function isValidRevealCondition(raw: string,): boolean {
+  const trimmed = raw.trim();
+  if (trimmed === "") { return true; } // blank = not secret = nothing to validate
+  return parseRevealCondition(trimmed,) !== null;
+}
 
 /**
  * Parse the stored keys JSON string into a display list.
@@ -60,6 +90,43 @@ export function groupLoreEntries(entries: WorldLoreEntry[],): WorldPageState["lo
   return groups;
 }
 
+/**
+ * Reveal-condition editor error, or "" when blank/valid. Mirrors the server
+ * write guard — the lore section fails closed on unparsable conditions, so a
+ * typo would hide the secret forever.
+ * @param raw textarea content (stored JSON text form)
+ * @returns {string}
+ */
+function revealConditionError(raw: string,): string {
+  const trimmed = raw.trim();
+  if (trimmed === "") { return ""; }
+  return isValidRevealCondition(trimmed,) ? "" : "Reveal condition is not valid reveal-condition JSON.";
+}
+
+/**
+ * Build the create/update API payload from the editor form. Blank optional
+ * fields are omitted (undefined) so create uses column defaults and update
+ * leaves the stored value untouched.
+ * @param form editor form state
+ * @returns {Record<string, unknown>}
+ */
+function lorePayload(form: WorldPageState["loreForm"],): Record<string, unknown> {
+  const revealCondition = form.revealCondition.trim();
+  return {
+    name: form.name.trim() || undefined,
+    content: form.content,
+    keys: parseLoreKeys(jsonStringifyOr(
+      form.keys.split(",",).map((k,) => k.trim()).filter((k,) => k.length > 0),
+    ),),
+    priority: Number(form.priority,) || 100,
+    constant: form.constant ? 1 : 0,
+    enabled: "enabled",
+    revealCondition: revealCondition === "" ? undefined : revealCondition,
+    rarity: form.rarity || undefined,
+    timelineId: form.timelineId.trim() || undefined,
+  };
+}
+
 /** Lore list + editor state for the world page. */
 export const worldLore: Partial<WorldPageState> & ThisType<WorldPageState> = {
   loreEntries: [],
@@ -69,6 +136,7 @@ export const worldLore: Partial<WorldPageState> & ThisType<WorldPageState> = {
   loreEditingId: null,
   loreBusy: false,
   loreMessage: "",
+  loreFormError: "",
   loreForm: { ...EMPTY_FORM, },
 
   /** @returns {Promise<void>} */
@@ -96,6 +164,7 @@ export const worldLore: Partial<WorldPageState> & ThisType<WorldPageState> = {
    */
   openLoreForm(id: string | null,) {
     this.loreMessage = "";
+    this.loreFormError = "";
     const entry = id ? this.loreEntries.find((e,) => e.id === id) : undefined;
     this.loreEditingId = entry?.id ?? null;
     this.loreForm = entry
@@ -105,6 +174,9 @@ export const worldLore: Partial<WorldPageState> & ThisType<WorldPageState> = {
         content: entry.content,
         priority: String(entry.priority ?? 100,),
         constant: entry.constant === 1,
+        revealCondition: entry.revealCondition ?? "",
+        rarity: entry.rarity ?? ItemRarity.Common,
+        timelineId: entry.timelineId ?? "",
       }
       : { ...EMPTY_FORM, };
 
@@ -115,6 +187,7 @@ export const worldLore: Partial<WorldPageState> & ThisType<WorldPageState> = {
   cancelLoreForm() {
     this.loreFormOpen = false;
     this.loreEditingId = null;
+    this.loreFormError = "";
     this.loreForm = { ...EMPTY_FORM, };
   },
 
@@ -125,19 +198,17 @@ export const worldLore: Partial<WorldPageState> & ThisType<WorldPageState> = {
       return;
     }
 
+    const revealError = revealConditionError(this.loreForm.revealCondition,);
+    if (revealError !== "") {
+      this.loreFormError = revealError;
+      return;
+    }
+
     this.loreBusy = true;
     this.loreMessage = "";
+    this.loreFormError = "";
     try {
-      const payload = {
-        name: this.loreForm.name.trim() || undefined,
-        content: this.loreForm.content,
-        keys: parseLoreKeys(jsonStringifyOr(
-          this.loreForm.keys.split(",",).map((k,) => k.trim()).filter((k,) => k.length > 0),
-        ),),
-        priority: Number(this.loreForm.priority,) || 100,
-        constant: this.loreForm.constant ? 1 : 0,
-        enabled: "enabled",
-      };
+      const payload = lorePayload(this.loreForm,);
 
       const url = this.loreEditingId
         ? `/api/v1/worlds/${this.worldId}/lore-entries/${this.loreEditingId}`
@@ -189,6 +260,11 @@ export const worldLore: Partial<WorldPageState> & ThisType<WorldPageState> = {
   /** @returns {WorldPageState["loreGroups"]} */
   get loreGroups(): WorldPageState["loreGroups"] {
     return groupLoreEntries(this.loreEntries,);
+  },
+
+  /** @returns {readonly string[]} */
+  get loreRarityTiers(): readonly string[] {
+    return LORE_RARITY_TIERS;
   },
 
   parseLoreKeys,

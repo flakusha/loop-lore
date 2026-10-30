@@ -415,6 +415,49 @@ For performance, a materialized `world_stats_cache` table can be added later.
 
 ---
 
+## Lorebook (Secret Lore)
+
+The lorebook panel on the world detail page lists entries grouped as
+always-on constants, enabled and disabled. The editor form exposes the
+core fields (name, keywords, content, priority, constant) plus three
+secret-lore fields (epic: lore knowledge system, migration 084):
+
+| Field            | Column              | Behavior                                                                 |
+| ---------------- | ------------------- | ------------------------------------------------------------------------ |
+| Rarity           | `rarity`            | Canonical `ItemRarity` tier (`common`…`artifact`); weights the lore selection draw (weight `6 − tier`), so rare entries surface less often. Entry badge shows the tier when not `common`. |
+| Timeline         | `timeline_id`       | Timeline slug; scoped entries exist only on that timeline branch (chats with a matching `chats.timeline_id`). Empty = every timeline. |
+| Reveal condition | `reveal_condition`  | JSON gate; the entry stays hidden from the lore injection until met. Entry badge marks secret entries. |
+
+### Reveal condition grammar
+
+```json
+{ "keywords": ["beacon", "meteor"] }
+```
+
+Any keyword appearing in the recent conversation window reveals the entry.
+
+```json
+{ "event": "meteor_fall" }
+```
+
+Reveals once a timeline event with slug `meteor_fall` exists on the
+chat's timeline (`world_timeline_events.timeline_id` = chat's timeline).
+
+Combinators:
+
+```json
+{ "all": [{ "keywords": ["beacon"] }, { "event": "meteor_fall" }] }
+{ "any": [{ "keywords": ["beacon"] }, { "event": "meteor_fall" }] }
+{ "not": { "keywords": ["lie"] } }
+```
+
+`all`/`any` combine up to 8 children; `not` negates one child. Conditions
+are validated client-side in the editor and server-side on write
+(HTTP 400 otherwise). The lore section fails closed: an unparsable stored
+condition never reveals its entry.
+
+---
+
 ## Export & Sharing
 
 See [chat/export.md](./chat/export.md) for chat export functionality.

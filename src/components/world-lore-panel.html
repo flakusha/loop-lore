@@ -71,6 +71,50 @@
           {{{ t("worlds.loreConstant") }}}
         </label>
       </div>
+      <div class="form-group">
+        <label class="form-label" for="lore-rarity">{{{ t("worlds.loreRarity") }}}</label>
+        <select
+          id="lore-rarity"
+          class="form-input"
+          x-model="loreForm.rarity"
+          data-testid="lore-rarity"
+          aria-label="{{{ t('worlds.loreRarity') }}}"
+        >
+          <template x-for="tier in loreRarityTiers" :key="tier">
+            <option :value="tier" x-text="tier"></option>
+          </template>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="lore-timeline">{{{ t("worlds.loreTimelineId") }}}</label>
+        <input
+          id="lore-timeline"
+          class="form-input"
+          x-model="loreForm.timelineId"
+          placeholder="{{{ t('worlds.loreTimelineIdPlaceholder') }}}"
+        />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="lore-reveal">{{{ t("worlds.loreRevealCondition") }}}</label>
+        <textarea
+          id="lore-reveal"
+          class="form-input"
+          x-model="loreForm.revealCondition"
+          rows="3"
+          spellcheck="false"
+          data-testid="lore-reveal-condition"
+          placeholder="{{{ t('worlds.loreRevealConditionPlaceholder') }}}"
+        ></textarea>
+        <p class="muted" x-show="!loreFormError">{{{ t("worlds.loreRevealConditionHint") }}}</p>
+        <p
+          class="muted"
+          role="alert"
+          x-show="loreFormError"
+          x-text="loreFormError"
+          data-testid="lore-reveal-error"
+        >
+        </p>
+      </div>
       <div class="quick-actions">
         <button class="btn btn-secondary btn-sm" @click="cancelLoreForm()">
           {{{ t("wizard.cancel") }}}
@@ -104,6 +148,13 @@
         <div class="lore-entry" data-testid="lore-entry">
           <div>
             <strong x-text="entry.name || t('worlds.loreUntitled')"></strong>
+            <span
+              class="muted"
+              x-show="entry.rarity && entry.rarity !== 'common'"
+              x-text="` · ${entry.rarity}`"
+            ></span>
+            <span class="muted" x-show="entry.revealCondition" x-text="` · ${t('worlds.loreSecretBadge')}`"></span>
+            <span class="muted" x-show="entry.timelineId" x-text="` · @${entry.timelineId}`"></span>
             <span
               class="muted"
               x-show="entry.priority"
