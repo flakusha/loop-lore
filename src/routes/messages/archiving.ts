@@ -3,6 +3,7 @@
 
 import { Elysia, } from "elysia";
 import { ARCHIVE_RETENTION_DAYS_DEFAULT, getConfigValue, } from "../../admin/config";
+import { isChatOwner, } from "../../chat/service";
 import { getLogger, } from "../../logger";
 import { can, } from "../../users/permissions";
 import { notFound, } from "../../validation/middleware";
@@ -48,11 +49,15 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (!message) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
         const chat = await database
           .selectFrom("chats",)
-          .select("created_by",)
+          .select("id",)
           .where("id", "=", message.chat_id,)
           .executeTakeFirst();
 
-        if (!chat || (chat.created_by !== userId && !can(ctx.userRole as string | null, "admin.chat",))) {
+        if (
+          !chat ||
+          (!(await isChatOwner(database, message.chat_id, userId,)) &&
+            !can(ctx.userRole as string | null, "admin.chat",))
+        ) {
           return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",);
         }
 
@@ -82,11 +87,15 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (!message) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
         const chat = await database
           .selectFrom("chats",)
-          .select("created_by",)
+          .select("id",)
           .where("id", "=", message.chat_id,)
           .executeTakeFirst();
 
-        if (!chat || (chat.created_by !== userId && !can(ctx.userRole as string | null, "admin.chat",))) {
+        if (
+          !chat ||
+          (!(await isChatOwner(database, message.chat_id, userId,)) &&
+            !can(ctx.userRole as string | null, "admin.chat",))
+        ) {
           return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",);
         }
 
@@ -109,11 +118,14 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const chat = await database
           .selectFrom("chats",)
-          .select("created_by",)
+          .select("id",)
           .where("id", "=", chatId,)
           .executeTakeFirst();
 
-        if (!chat || (chat.created_by !== userId && !can(ctx.userRole as string | null, "admin.chat",))) {
+        if (
+          !chat ||
+          (!(await isChatOwner(database, chatId, userId,)) && !can(ctx.userRole as string | null, "admin.chat",))
+        ) {
           return notFound(ctx.t?.("messages.chatNotFound",) ?? "Chat not found",);
         }
 

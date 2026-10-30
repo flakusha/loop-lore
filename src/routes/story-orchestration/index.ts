@@ -16,6 +16,7 @@
  *   POST /api/chats/:id/gm/escalate      — escalate the latest open turn
  */
 import { Elysia, t, } from "elysia";
+import { isChatOwner, } from "../../chat/service";
 import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
 import { TurnStrategy, } from "../../db/enums";
@@ -57,8 +58,8 @@ export function storyOrchestrationRoutes(
         const { params, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
-        const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
+        if (!(await isChatOwner(db, params.id, userId,))) { return forbiddenResponse("Not allowed",); }
+        const gm = createGm(db, opts.config, params.id, chat.gm_config, userId,);
         await gm.initialize();
         return jsonResponse({
           chatId: params.id,
@@ -76,8 +77,8 @@ export function storyOrchestrationRoutes(
         const { params, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
-        const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
+        if (!(await isChatOwner(db, params.id, userId,))) { return forbiddenResponse("Not allowed",); }
+        const gm = createGm(db, opts.config, params.id, chat.gm_config, userId,);
         await gm.initialize();
         await gm.pause();
         return jsonResponse({ ok: true, isPaused: true, },);
@@ -91,8 +92,8 @@ export function storyOrchestrationRoutes(
         const { params, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
-        const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
+        if (!(await isChatOwner(db, params.id, userId,))) { return forbiddenResponse("Not allowed",); }
+        const gm = createGm(db, opts.config, params.id, chat.gm_config, userId,);
         await gm.initialize();
         await gm.resume();
         return jsonResponse({ ok: true, isPaused: false, },);
@@ -106,7 +107,7 @@ export function storyOrchestrationRoutes(
         const { params, body, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
+        if (!(await isChatOwner(db, params.id, userId,))) { return forbiddenResponse("Not allowed",); }
 
         if (body.forceActorId) {
           const participant = await db.selectFrom("chat_participants",)
@@ -120,7 +121,7 @@ export function storyOrchestrationRoutes(
           }
         }
 
-        const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
+        const gm = createGm(db, opts.config, params.id, chat.gm_config, userId,);
         await gm.initialize();
         const result = await gm.executeTurn(body.forceActorId,);
         return jsonResponse({
@@ -140,7 +141,7 @@ export function storyOrchestrationRoutes(
         const { params, body, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
+        if (!(await isChatOwner(db, params.id, userId,))) { return forbiddenResponse("Not allowed",); }
         const merged = parseGmConfig(chat.gm_config,);
         if (body.qualityThresholds) {
           merged.qualityThresholds = { ...merged.qualityThresholds, ...body.qualityThresholds, };
@@ -174,7 +175,7 @@ export function storyOrchestrationRoutes(
         const { params, body, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
+        if (!(await isChatOwner(db, params.id, userId,))) { return forbiddenResponse("Not allowed",); }
         if (!chat.world_id) {
           return jsonError({
             message: "Chat has no world — narration requires a world context",
@@ -182,7 +183,7 @@ export function storyOrchestrationRoutes(
           },);
         }
 
-        const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
+        const gm = createGm(db, opts.config, params.id, chat.gm_config, userId,);
         await gm.initialize();
         await gm.injectNarration(chat.world_id, body.text,);
         return jsonResponse({ ok: true, },);
@@ -197,7 +198,7 @@ export function storyOrchestrationRoutes(
         const { params, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
+        if (!(await isChatOwner(db, params.id, userId,))) { return forbiddenResponse("Not allowed",); }
         const turn = await latestOpenTurn(db, params.id,);
         if (!turn) {
           return jsonError({ message: "No open story turn to escalate", status: HttpStatus.NotFound, },);

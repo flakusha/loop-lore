@@ -10,6 +10,7 @@
  */
 
 import { Elysia, } from "elysia";
+import { isChatOwner, } from "../chat/service";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { can, } from "../users/permissions";
@@ -18,6 +19,8 @@ import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonPaginated, jsonResponse, parsePaginationParams, } from "./http-utils";
 
 /**
+ * Chat ownership (owners set) or admin check; returns true when allowed.
+ * Routes stay thin: existence + admin shape here, ownership in the service.
  * @param database
  * @param chatId
  * @param userId
@@ -29,13 +32,14 @@ async function checkChatOwnership(
   userId: string | null,
   userRole: string | null,
 ): Promise<boolean> {
+  if (userId === null) { return can(userRole, "admin.chat",); }
   const chat = await database
     .selectFrom("chats",)
-    .select(["created_by",],)
+    .select(["id",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
 
-  return !!chat && (chat.created_by === userId || can(userRole, "admin.chat",));
+  return !!chat && ((await isChatOwner(database, chatId, userId,)) || can(userRole, "admin.chat",));
 }
 
 /**

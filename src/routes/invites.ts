@@ -24,6 +24,7 @@ import {
   redeemInvite,
   revokeInvite,
 } from "../chat/invites";
+import { isChatOwner, } from "../chat/service";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
 import { can, } from "../users/permissions";
@@ -56,13 +57,14 @@ interface HandlerOpts {
 }
 
 /**
- * True if the user owns the chat or is an admin.
+ * True if the user owns the chat (owners set) or is an admin.
+ * Routes stay thin: existence + admin shape here, ownership in the service.
  * @param database
  * @param chatId
  * @param userId
  * @param userRole
  */
-async function isChatOwner(
+async function checkInviteAccess(
   database: Kysely<DB>,
   chatId: string,
   userId: string,
@@ -70,11 +72,11 @@ async function isChatOwner(
 ): Promise<boolean> {
   const chat = await database
     .selectFrom("chats",)
-    .select("created_by",)
+    .select("id",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
 
-  return Boolean(chat,) && (chat!.created_by === userId || can(userRole, "admin.chat",));
+  return Boolean(chat,) && ((await isChatOwner(database, chatId, userId,)) || can(userRole, "admin.chat",));
 }
 
 /**
@@ -96,7 +98,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const chatId = (ctx.params as { id: string }).id;
 
-          if (!(await isChatOwner(database, chatId, userId, userRole,))) {
+          if (!(await checkInviteAccess(database, chatId, userId, userRole,))) {
             return notFound("Chat not found",);
           }
 
@@ -130,7 +132,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const chatId = (ctx.params as { id: string }).id;
 
-          if (!(await isChatOwner(database, chatId, userId, userRole,))) {
+          if (!(await checkInviteAccess(database, chatId, userId, userRole,))) {
             return notFound("Chat not found",);
           }
 
@@ -148,7 +150,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const { id: chatId, inviteId, } = ctx.params as { id: string; inviteId: string };
 
-          if (!(await isChatOwner(database, chatId, userId, userRole,))) {
+          if (!(await checkInviteAccess(database, chatId, userId, userRole,))) {
             return notFound("Chat not found",);
           }
 

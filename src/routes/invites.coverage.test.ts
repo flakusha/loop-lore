@@ -10,7 +10,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
+import { insertChatOwners, insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
 import { invitesRoutes, } from "./invites";
 
@@ -163,6 +163,19 @@ describe("invitesRoutes coverage", () => {
     const other = makeApp(db, joiner, "user",);
     const res = await other.handle(new Request(`http://localhost/api/chats/${chatId}/invites`,),);
     expect(res.status,).toBe(404,);
+  });
+
+  test("co-owner without created_by passes create + list (owners set)", async () => {
+    const coOwner = uid();
+    await seedUser(db, coOwner, "CoOwner",);
+    await insertChatOwners(db, chatId, coOwner,);
+    const app = makeApp(db, coOwner, "user",);
+    const invite = await createInvite(app,);
+    expect(invite.chatId,).toBe(chatId,);
+    const list = await app.handle(new Request(`http://localhost/api/chats/${chatId}/invites`,),);
+    expect(list.status,).toBe(200,);
+    const parsed = (await list.json()) as { data: InviteBody[] };
+    expect(parsed.data.some((i,) => i.id === invite.id),).toBe(true,);
   });
 
   test("revoke removes the invite and is idempotent", async () => {

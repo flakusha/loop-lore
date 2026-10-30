@@ -20,6 +20,7 @@ import { registerProvider, unregisterProvider, } from "../../generation/provider
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
+  insertChatOwners,
   insertChatParticipants,
   insertChats,
   insertLocations,
@@ -527,5 +528,23 @@ describe("story-orchestration routes", () => {
     );
 
     expect(res.status,).toBe(403,);
+  });
+
+  test("co-owner without created_by passes state + pause (owners set)", async () => {
+    const chatId = await seedChat();
+    const coOwnerId = crypto.randomUUID();
+    await insertUsers(db, "co-owner", "CoOwner", { id: coOwnerId, },);
+    await insertChatOwners(db, chatId, coOwnerId,);
+    const app = new Elysia({ name: "test-co-owner", },)
+      .derive(() => ({ userId: coOwnerId, userRole: "user" as const, }))
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const state = await app.handle(new Request(`http://localhost/api/v1/chats/${chatId}/story/state`,),);
+    expect(state.status,).toBe(200,);
+    const paused = await app.handle(
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/pause`,),
+    );
+
+    expect(paused.status,).toBe(200,);
   });
 });
