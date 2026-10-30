@@ -1,0 +1,132 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Player-to-player trade window (Phase 4). Host scope: worldState(worldId)
+  supplies the world id; the viewer picks their actor id once (no roster
+  endpoint exists for counterparty discovery — the counterparty id is typed
+  in). The scope never fetches the counterparty's inventory, only the
+  offered lines already on each offer. Polls GET offers on load + after
+  every mutation; offer expiry is inert (no deadline field), no SSE.
+-->
+<section
+  class="panel"
+  aria-labelledby="trade-window-heading"
+  data-testid="trade-window-panel"
+  x-data="inventoryOffersFactory('{{worldId}}', '')"
+  x-init="load()"
+>
+  <h3 id="trade-window-heading">{{{ t("worlds.tradeWindowTitle") }}}</h3>
+  <div class="form-row">
+    <label class="form-label" for="trade-my-actor">{{{ t("worlds.tradeMyActor") }}}</label>
+    <input
+      id="trade-my-actor"
+      class="form-input"
+      x-model="_myActorId"
+      data-testid="trade-my-actor"
+    />
+    <label class="form-label" for="trade-counterparty">{{{ t("worlds.tradeCounterparty") }}}</label>
+    <input
+      id="trade-counterparty"
+      class="form-input"
+      x-model="counterpartyId"
+      :placeholder="t('worlds.tradeCounterpartyPlaceholder')"
+      data-testid="trade-counterparty"
+    />
+    <button
+      class="btn btn-secondary btn-sm"
+      @click="load()"
+      data-testid="trade-reload"
+      x-text="t('worlds.tradeReload')"
+    >
+    </button>
+  </div>
+  <div x-show="offersError" class="muted" role="alert" x-text="offersError"></div>
+
+  <h5>{{{ t("worlds.tradeOffersLabel") }}}</h5>
+  <template x-for="offer in offers" :key="offer.id">
+    <div class="trade-offer-row" :data-offer-id="offer.id">
+      <span class="tag" x-text="offer.status"></span>
+      <span x-text="offer.price + ' Gold'"></span>
+      <span x-text="offer.items.length + ' + ' + offer.sellerItems.length + ' items'"></span>
+      <button
+        class="btn btn-secondary btn-sm"
+        @click="selectedOfferId = offer.id; confirmingAcceptId = null"
+        data-testid="trade-open"
+        x-text="t('worlds.tradeOpen')"
+      >
+      </button>
+    </div>
+  </template>
+  <div x-show="offers.length === 0" class="muted">{{{ t("worlds.tradeNoOffers") }}}</div>
+
+  <template x-if="selectedOffer()">
+    <div class="trade-window" :data-offer-id="selectedOffer().id">
+      <div class="trade-window-pane" data-trade-pane="mine">
+        <h4>{{{ t("worlds.tradeYouOffer") }}}</h4>
+        <template
+          x-for="line in (selectedOffer().buyerActorId === _myActorId ? selectedOffer().items : selectedOffer().sellerItems)"
+          :key="line.worldItemId"
+        >
+          <div class="tag" x-text="line.worldItemId + ' × ' + line.quantity"></div>
+        </template>
+      </div>
+      <div class="trade-window-pane" data-trade-pane="theirs">
+        <h4>{{{ t("worlds.tradeTheyOffer") }}}</h4>
+        <template
+          x-for="line in (selectedOffer().buyerActorId === _myActorId ? selectedOffer().sellerItems : selectedOffer().items)"
+          :key="line.worldItemId"
+        >
+          <div class="tag" x-text="line.worldItemId + ' × ' + line.quantity"></div>
+        </template>
+      </div>
+      <div x-text="selectedOffer().price + ' Gold'"></div>
+      <div class="trade-window-actions">
+        <button
+          class="btn btn-primary btn-sm"
+          x-show="confirmingAcceptId !== selectedOffer().id"
+          @click="acceptOffer(selectedOffer().id)"
+          data-testid="trade-accept"
+          x-text="t('worlds.tradeAccept')"
+        >
+        </button>
+        <button
+          class="btn btn-primary btn-sm"
+          x-show="confirmingAcceptId === selectedOffer().id"
+          @click="acceptOffer(selectedOffer().id)"
+          data-testid="trade-confirm-accept"
+          x-text="t('worlds.tradeConfirmAccept')"
+        >
+        </button>
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="counterOffer(selectedOffer().id)"
+          data-testid="trade-counter"
+          x-text="t('worlds.tradeCounter')"
+        >
+        </button>
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="cancelOffer(selectedOffer().id)"
+          data-testid="trade-cancel"
+          x-text="t('worlds.tradeCancel')"
+        >
+        </button>
+      </div>
+      <div x-show="error" class="muted" role="alert" x-text="error"></div>
+    </div>
+  </template>
+
+  <h5>{{{ t("worlds.tradeHistoryLabel") }}}</h5>
+  <button
+    class="btn btn-secondary btn-sm"
+    @click="loadHistory()"
+    data-testid="trade-history-reload"
+    x-text="t('worlds.tradeReload')"
+  >
+  </button>
+  <template x-for="entry in history" :key="entry.id">
+    <div class="muted" :data-trade-id="entry.id" x-text="entry.price + ' Gold'"></div>
+  </template>
+  <div x-show="historyError" class="muted" role="alert" x-text="historyError"></div>
+</section>
