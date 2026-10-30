@@ -41,6 +41,20 @@ export const EntityScopeUpdateSchema = t.Union([
  * whichever path lost it.
  */
 const Keywords = t.Array(t.String({ maxLength: 120, },), { maxItems: 8, },);
+
+/**
+ * Lore-entry 084 fields (epic-lore-knowledge), shared by create AND update.
+ * `revealCondition` accepts an already-serialized JSON string or a plain
+ * object — both normalize to the stored `reveal_condition` text via the
+ * route's value transform, and invalid JSON is rejected by the write guard.
+ * `rarity` is the canonical ItemRarity scale; unknown tiers fall back to
+ * 'common' at the route layer. `timelineId` is a nullable timeline slug.
+ */
+const RevealConditionBody = t.Union([
+  t.String(),
+  t.Record(t.String(), t.Any(),),
+],);
+
 export const EntityCreateBody = t.Object({
   entityId: t.Optional(t.String({ minLength: 1, },),),
   type: t.Optional(t.String(),),
@@ -53,6 +67,9 @@ export const EntityCreateBody = t.Object({
   reviewStatus: t.Optional(EntityReviewStatusSchema,),
   scope: t.Optional(EntityScopeSchema,),
   keywords: t.Optional(Keywords,),
+  revealCondition: t.Optional(RevealConditionBody,),
+  timelineId: t.Optional(t.String(),),
+  rarity: t.Optional(t.String(),),
 },);
 
 export const EntityUpdateBody = t.Object({
@@ -63,4 +80,7 @@ export const EntityUpdateBody = t.Object({
   pinned: t.Optional(t.Boolean(),),
   reviewStatus: t.Optional(EntityReviewStatusSchema,),
   keywords: t.Optional(Keywords,),
+  revealCondition: t.Optional(RevealConditionBody,),
+  timelineId: t.Optional(t.String(),),
+  rarity: t.Optional(t.String(),),
 },);

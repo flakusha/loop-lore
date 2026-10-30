@@ -13,6 +13,11 @@ import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { can, } from "../users/permissions";
 import { createEntityRoutes, } from "./entity-routes";
+import {
+  rarityValue,
+  revealConditionValue,
+  validateRevealConditionWrite,
+} from "./lore-entry-values";
 
 /**
  * @param root0
@@ -96,8 +101,19 @@ export function worldLoreEntriesRoutes(opts: { database: Db; config: Config }, p
         comment: "comment",
         sortOrder: "sort_order",
         audienceScope: "audience_scope",
+        revealCondition: "reveal_condition",
+        timelineId: "timeline_id",
+        rarity: "rarity",
       },
       jsonFields: ["keys", "secondary_keys", "audience_scope",],
+      valueTransforms: {
+        revealCondition: revealConditionValue,
+        rarity: rarityValue,
+      },
+      // Reject invalid reveal-condition JSON before it reaches the DB: the
+      // lore section fails closed on such rows, so a typo would silently
+      // hide the secret forever instead of surfacing as a broken prompt.
+      writeGuard: async ({ body, },) => validateRevealConditionWrite(body,),
       defaults: {
         selective: 0,
         caseSensitive: 0,
