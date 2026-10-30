@@ -137,7 +137,7 @@ async function main() {
   // the gate without src/).
   const unkeyed = [];
   try {
-    const { listCommands, } = await import(join(SRC_DIR, "assistant", "commands", "index.ts",),);
+    const { listCommands, } = await import(join(SRC_DIR, "assistant", "commands", "index.ts",));
     for (const name of listCommands()) {
       if (!catalog.has(`commands.${name}`,)) {
         unkeyed.push(name,);
