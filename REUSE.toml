@@ -1,5 +1,13 @@
 version = 1
 
+# Vendored third-party file: upstream MIT text kept verbatim below; the
+# annotation carries the machine-readable identifiers for the LGPL repo tree.
+[[annotations]]
+path = ["src/public/css/xterm.css"]
+precedence = "override"
+SPDX-FileCopyrightText = "2014 The xterm.js authors"
+SPDX-License-Identifier = "MIT"
+
 [[annotations]]
 path = [
   "bin/**",
