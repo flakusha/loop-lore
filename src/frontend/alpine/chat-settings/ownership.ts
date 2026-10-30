@@ -135,20 +135,19 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Predicate: is the current user allowed to attempt a transfer?
    *
-   * Mirrors the server rule in `transferOwnership` (src/chat/service/ownership.ts):
-   * the chat owner (`chats.created_by`) may transfer, and roles holding the
-   * `admin.chat` permission bypass the owner check. The chat row the panel
-   * already has (`this.chats`) carries `created_by`, so no extra request is
-   * needed.
+   * Authority comes from the loaded owners set (`this._owners`): roles
+   * holding the `admin.chat` permission bypass the check, otherwise the
+   * current user must be listed in `_owners`. `chats.created_by` is a
+   * creator-only record and confers no authority, so it is ignored here.
+   * While the owners list is loading or failed to load, `_owners` is
+   * empty (see `_ownersError`) and the predicate stays false.
    */
   canTransferOwnership(): boolean {
     if (!this.activeChat) { return false; }
 
     if (can(this.userRole, "admin.chat",)) { return true; }
 
-    const chat = this.chats?.find((c,) => c.id === this.activeChat);
-    if (!chat?.created_by) { return false; }
-
-    return chat.created_by === globalThis.__USER_ID;
+    return typeof globalThis.__USER_ID === "string" &&
+      (this._owners?.includes(globalThis.__USER_ID,) ?? false);
   },
 };

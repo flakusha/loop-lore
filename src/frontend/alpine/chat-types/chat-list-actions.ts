@@ -17,6 +17,16 @@ export interface ChatCoreChatListActions {
   closeOwnershipTransferModal(): void;
   submitOwnershipTransfer(): Promise<void>;
   canTransferOwnership(): boolean;
+  loadChatOwners(): Promise<void>;
+  ownerCapReached(): boolean;
+  ownerName(userId: string,): string;
+  addableParticipants(): { actor_id: string; name: string; display_name?: string }[];
+  openAddOwnerModal(): void;
+  closeAddOwnerModal(): void;
+  submitAddOwner(): Promise<void>;
+  openRemoveOwnerModal(userId: string,): void;
+  closeRemoveOwnerModal(): void;
+  submitRemoveOwner(): Promise<void>;
   loadPersonas(): Promise<void>;
   setPersona(): Promise<void>;
   toggleGroupPause(): Promise<void>;

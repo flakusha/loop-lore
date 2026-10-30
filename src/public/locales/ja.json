@@ -130,6 +130,32 @@
       "title": "分類タグ",
       "description": "このチャットで有効にする分類タグを選択します。",
       "save": "タグを保存"
+    },
+    "owners": {
+      "title": "オーナー",
+      "description": "このチャットのオーナーを管理します。最大3人のオーナーが設定と所有権を管理できます。",
+      "you": "（あなた）",
+      "remove": "削除",
+      "resign": "辞退",
+      "capHint": "オーナー数の上限に達しました（最大3人）。",
+      "addOwner": "オーナーを追加…",
+      "addTitle": "共同オーナーを追加",
+      "addSelectLabel": "新しい共同オーナー",
+      "selectParticipant": "— 参加者を選択 —",
+      "noEligibleParticipants": "対象の参加者がいません — チャットの全員がすでにオーナーです。",
+      "reasonLabel": "理由（任意）",
+      "reasonPlaceholder": "この変更を行う理由は？",
+      "cancel": "キャンセル",
+      "addSubmit": "オーナーを追加",
+      "addSubmitting": "追加中…",
+      "removeTitle": "オーナーを削除",
+      "removeBody": "{name} をこのチャットのオーナーから削除しますか？",
+      "removeSubmit": "オーナーを削除",
+      "removeSubmitting": "削除中…",
+      "resignTitle": "所有権を辞退",
+      "resignBody": "このチャットの共同所有権を放棄します。後で別のオーナーが再び追加できます。",
+      "resignSubmit": "辞退",
+      "resignSubmitting": "辞退中…"
     }
   },
   "settings": {
