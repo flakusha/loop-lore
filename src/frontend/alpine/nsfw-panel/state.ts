@@ -83,6 +83,9 @@ export const nsfwPanelState: Partial<ChatState> & ThisType<ChatState> = {
   async loadNsfwPanel() {
     const chatId = this.activeChat;
     if (!chatId) {
+      // A load captured for a chat that is no longer active must not clobber
+      // the now-active chat's panel state.
+      if (this.activeChat !== chatId) { return; }
       this._nsfwIntimacy = null;
       this._nsfwBody = null;
       this._nsfwUnavailable = false;
@@ -91,6 +94,9 @@ export const nsfwPanelState: Partial<ChatState> & ThisType<ChatState> = {
 
     try {
       const actorId = await resolveCharacterId(chatId,);
+      // The user may have switched chats while this load was in flight — a
+      // stale load must not write state for a chat that is no longer active.
+      if (this.activeChat !== chatId) { return; }
       if (!actorId) {
         this._nsfwIntimacy = null;
         this._nsfwBody = null;
@@ -101,7 +107,9 @@ export const nsfwPanelState: Partial<ChatState> & ThisType<ChatState> = {
       // Sequential: both helpers swallow their own errors, so there is no
       // rejection to lose, and the two reads are cheap local queries.
       const intimacy = await fetchIntimacyPairs(actorId,);
+      if (this.activeChat !== chatId) { return; }
       const body = await fetchBodyProfile(actorId,);
+      if (this.activeChat !== chatId) { return; }
 
       // A 403 on either endpoint means the viewer cannot access this
       // character's NSFW state — hide the panel instead of showing a
@@ -121,6 +129,8 @@ export const nsfwPanelState: Partial<ChatState> & ThisType<ChatState> = {
       this._nsfwIntimacy = intimacy.status === "ok" ? intimacy.data.map((row,) => toPairView(row, names,)) : null;
       this._nsfwBody = body.status === "ok" ? toBodyView(body.data,) : null;
     } catch (error) {
+      // A failed load must not clear a newer chat's panel state either.
+      if (this.activeChat !== chatId) { return; }
       log.error("Failed to load NSFW panel", error instanceof Error ? error : undefined, {},);
       this._nsfwIntimacy = null;
       this._nsfwBody = null;
