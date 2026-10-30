@@ -36,3 +36,5 @@ Still missing:
 
 - (1) `rollSteering`/`resolveSteering` read-modify-write race not wrapped in Kysely transaction — concurrent manifest rolls both pass pending check and append duplicate timeline events
 - (2) `createSteering` passes empty-string `timelineId` through (`??` only catches null/undefined) — needs normalization to prime or rejection
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 18bb7ff (registry tip: df864f465 Konstantin Fedotov Close issue)

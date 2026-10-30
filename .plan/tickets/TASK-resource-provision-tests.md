@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** large
 **Epic:** epic-resource-provision
@@ -46,3 +46,5 @@ browser backup, reconciliation, and recovery.
 - [ ] `bun run test src/` green for all new test files
 - [ ] Test helpers in `src/test-utils/` as needed
 - [ ] `bun run check` gate green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 52c7ad6 (registry tip: 07359b037 Konstantin Fedotov Close issue)
