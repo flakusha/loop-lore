@@ -7,7 +7,7 @@
 **Context:** Slice 2 of epic-avatar-dogfood (builds on the slice-1 promote path).
 **Acceptance Criteria:** (see below)
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** Medium
 **Effort:** Small
 **Epic:** epic-avatar-dogfood

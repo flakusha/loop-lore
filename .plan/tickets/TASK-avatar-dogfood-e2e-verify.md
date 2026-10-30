@@ -7,7 +7,7 @@
 **Context:** Closes epic-avatar-dogfood (verifies the full 7-step scenario).
 **Acceptance Criteria:** (see below)
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-avatar-dogfood
