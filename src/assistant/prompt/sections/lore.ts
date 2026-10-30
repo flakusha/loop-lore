@@ -40,6 +40,8 @@
  *
  * Included entries are ordered by `priority` (high first) then insertion order.
  */
+import { getConvergentEvents, } from "../../../story/timeline/convergence";
+import { listPendingSteerings, } from "../../../story/timeline/event-steering";
 import { isLoreVisibleTo, parseLoreScope, } from "../../lore/audience";
 import type { ActorIdentity, } from "../../lore/audience";
 import { passesRarityWeight, } from "../../lore/rarity-weight";
@@ -228,7 +230,46 @@ export const loreSection: SectionBuilder = {
       parts.push(lines.join("\n\n",),);
     }
 
+    // Timeline foreshadowing + cross-story convergence (epic-timeline-system
+    // lore-injection AC). Pending steerings inject as audience-scoped
+    // foreshadowing on the chat's branch; convergent world events surface
+    // sibling stories' consequences while the caller's own story is excluded
+    // by getConvergentEvents. Audience filtering reuses the lore gate;
+    // bracket sentinels survive the wrapSection escape pass like [disputed].
+    if (chat.world_id) {
+      const pending = await listPendingSteerings({
+        db: ctx.db,
+        worldId: chat.world_id,
+        timelineId: chat.timeline_id ?? undefined,
+        limit: MAX_PROMPT_STEERINGS,
+      },);
+
+      const visibleSteerings = pending.filter((row,) =>
+        isLoreVisibleTo({ audienceScope: parseLoreScope(row.audience_scope,), }, identityWithLocation,)
+      );
+
+      const convergent = await getConvergentEvents({
+        db: ctx.db,
+        worldId: chat.world_id,
+        excludeStoryId: chat.id,
+        limit: MAX_CONVERGENT_EVENTS,
+      },);
+
+      const timelineLines = [
+        ...Array.from(visibleSteerings, (row,) => `[foreshadowing] ${row.description}`,),
+        ...Array.from(convergent, (row,) => `[sibling story] ${row.description}`,),
+      ];
+
+      if (timelineLines.length > 0) { parts.push(timelineLines.join("\n",),); }
+    }
+
     const loreText = parts.join("\n\n",);
     return loreText ? [{ role: "system", content: wrapSection("lore", loreText,), },] : [];
   },
 };
+
+/** Cap on pending steerings injected as foreshadowing per prompt. */
+export const MAX_PROMPT_STEERINGS = 5;
+
+/** Cap on sibling-story convergent events injected per prompt. */
+export const MAX_CONVERGENT_EVENTS = 10;
