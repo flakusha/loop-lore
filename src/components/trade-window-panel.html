@@ -141,7 +141,8 @@
       <div class="trade-window-actions">
         <button
           class="btn btn-primary btn-sm"
-          x-show="confirmingAcceptId !== selectedOffer().id"
+          x-show="confirmingAcceptId !== selectedOffer().id && canActSelected('accept')"
+          :disabled="!canActSelected('accept')"
           @click="acceptOffer(selectedOffer().id)"
           data-testid="trade-accept"
           x-text="t('worlds.tradeAccept')"
@@ -149,7 +150,8 @@
         </button>
         <button
           class="btn btn-primary btn-sm"
-          x-show="confirmingAcceptId === selectedOffer().id"
+          x-show="confirmingAcceptId === selectedOffer().id && canActSelected('accept')"
+          :disabled="!canActSelected('accept')"
           @click="acceptOffer(selectedOffer().id)"
           data-testid="trade-confirm-accept"
           x-text="t('worlds.tradeConfirmAccept')"
@@ -157,13 +159,17 @@
         </button>
         <button
           class="btn btn-secondary btn-sm"
-          @click="counterOffer(selectedOffer().id)"
+          x-show="canActSelected('counter')"
+          :disabled="!canActSelected('counter') || (draft.playerIds.length === 0 && (counterPrice === 0 || counterPrice === null))"
           data-testid="trade-counter"
           x-text="t('worlds.tradeCounter')"
+          @click="counterOffer(selectedOffer().id)"
         >
         </button>
         <button
           class="btn btn-secondary btn-sm"
+          x-show="canActSelected('cancel')"
+          :disabled="!canActSelected('cancel')"
           @click="cancelOffer(selectedOffer().id)"
           data-testid="trade-cancel"
           x-text="t('worlds.tradeCancel')"

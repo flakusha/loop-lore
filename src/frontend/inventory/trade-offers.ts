@@ -36,6 +36,16 @@ export interface TradeHistoryRow {
   createdAt: string;
 }
 
+/** Whether an offer status is still actionable in the open list. */
+export function isOpenOfferStatus(status: string,): boolean {
+  return status === "pending" || status === "countered";
+}
+
+/** Whether a terms draft is empty: no rows and no explicit price. */
+export function draftHasNoTerms(price: number | null, rowCount: number,): boolean {
+  return rowCount === 0 && (price === null || price === 0);
+}
+
 /** Role of the viewer on one offer. */
 export type OfferRole = "buyer" | "seller" | "other";
 

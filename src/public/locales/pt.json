@@ -1717,7 +1717,8 @@
     "tradeOfferCounterFailed": "Failed to counter trade offer.",
     "tradeOfferCountered": "Trade offer countered.",
     "tradeOfferCancelFailed": "Failed to cancel trade offer.",
-    "tradeOfferCancelled": "Trade offer cancelled."
+    "tradeOfferCancelled": "Trade offer cancelled.",
+    "tradeOfferEmptyDraft": "Select items or set a price for the offer."
   },
   "commands": {
     "modify": "Deixar o modelo reescrever uma entidade (/modify <kind> <id> \"pedido\")",

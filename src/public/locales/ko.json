@@ -1717,7 +1717,8 @@
     "tradeOfferCounterFailed": "Failed to counter trade offer.",
     "tradeOfferCountered": "Trade offer countered.",
     "tradeOfferCancelFailed": "Failed to cancel trade offer.",
-    "tradeOfferCancelled": "Trade offer cancelled."
+    "tradeOfferCancelled": "Trade offer cancelled.",
+    "tradeOfferEmptyDraft": "Select items or set a price for the offer."
   },
   "commands": {
     "modify": "모델이 엔티티를 다시 쓰게 합니다 (/modify <kind> <id> \"요청\")",
