@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Med
 **Epic:** epic-multi-session
@@ -26,3 +26,5 @@ Support multiple sessions for the same user. Enable concurrent access from diffe
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 27ea534 (registry tip: 97592ee4c Konstantin Fedotov Auto-closed: appended .md marker marks TASK-MULTI-SESSION done)
