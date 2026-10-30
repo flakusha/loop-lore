@@ -3800,3 +3800,12 @@ export const ImmersionDecisionLogSchema = t.Object({
   verdict: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
 },);
+
+// ── chat_owners ────────────────────────────────────────────
+export const ChatOwnersSchema = t.Object({
+  chat_id: t.String(),
+  user_id: t.String(),
+  granted_by: t.Optional(t.String(),),
+  granted_at: t.Optional(t.String(),),
+  reason: t.Optional(t.String(),),
+},);
