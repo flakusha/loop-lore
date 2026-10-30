@@ -6321,6 +6321,16 @@
       "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     }
   ],
+  "src/autonomy/rng": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/rarity.md"
+    }
+  ],
   "src/autonomy/rng.ts": [
     {
       "kind": "spec",
@@ -21160,6 +21170,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-task-i18n-workflow-hardening.md"
     },
     {
@@ -21217,6 +21231,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/nsfw-integration.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/rarity.md"
     },
     {
       "kind": "spec",
@@ -35535,6 +35553,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rarity-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
     }
   ],
   "src/items/seed/index.ts": [
@@ -51698,6 +51720,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-item-types.md"
     }
   ],
@@ -51715,8 +51741,16 @@
       "source": ".plan/tickets/TASK-054.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/items.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/rarity.md"
     }
   ],
   "src/rpg/magic/casting.ts": [
@@ -55829,6 +55863,12 @@
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
+  "src/story/events/promote-lore.test.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/rarity.md"
+    }
+  ],
   "src/story/events/promote-lore.ts": [
     {
       "kind": "epic",
@@ -55849,6 +55889,34 @@
     {
       "kind": "spec",
       "source": "docs/spec/lore.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/rarity.md"
+    }
+  ],
+  "src/story/events/rarity.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rarity-extensions.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/rarity.md"
+    }
+  ],
+  "src/story/events/rarity.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rarity-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/rarity.md"
     }
   ],
   "src/story/game-master": [
