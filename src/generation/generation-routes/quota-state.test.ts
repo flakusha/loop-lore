@@ -6,7 +6,7 @@
 // non-admin override attempts get 403.
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
-import { handleQuotaOverride, handleQuotaState, } from "./quota-state";
+import { handleBackupHashes, handleQuotaOverride, handleQuotaState, } from "./quota-state";
 
 let fixture: TestDb;
 
@@ -67,6 +67,38 @@ describe("handleQuotaState", () => {
     const res = await handleQuotaState(fixture.db, "owner-a", "user",);
     const body = await res.json() as { resources: { id: string; overQuota: boolean }[] };
     expect(body.resources.find((r,) => r.id === "qr-spent")?.overQuota,).toBe(true,);
+  });
+});
+
+describe("handleBackupHashes", () => {
+  test("returns owner-scoped hashes with 200 and array-free object", async () => {
+    await fixture.db
+      .insertInto("backup_records",)
+      .values({
+        id: "bh-1",
+        resource_type: "chat",
+        owner_id: "backup-owner",
+        content_hash: "abc123",
+        payload: "{}",
+      },)
+      .execute();
+
+    await fixture.db
+      .insertInto("backup_records",)
+      .values({
+        id: "bh-2",
+        resource_type: "asset",
+        owner_id: "other-owner",
+        content_hash: "def456",
+        payload: "{}",
+      },)
+      .execute();
+
+    const res = await handleBackupHashes(fixture.db, "backup-owner", "user",);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { hashes: Record<string, { serverHash?: string; serverVersion?: number }> };
+    expect(Object.keys(body.hashes,),).toEqual(["chat:backup-owner",],);
+    expect(body.hashes["chat:backup-owner"]?.serverHash,).toBe("abc123",);
   });
 });
 
