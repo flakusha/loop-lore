@@ -134,6 +134,7 @@ export function stripApiVersion(pathname: string,): string | null {
     ? pathname.slice("/api".length,)
     : null;
 }
+
 function isNonApiGet(method: string, pathname: string,): boolean {
   if (method !== "GET") { return false; }
   if (pathname === "/" || pathname === "/chat" || pathname === "/register") { return true; }

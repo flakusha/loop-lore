@@ -3,7 +3,14 @@
 
 import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
-import { isAllowlisted, requireAuthGuard, } from "./require-auth-guard";
+import {
+  GUEST_READ_SHAPES,
+  isAllowlisted,
+  isGuestReadPath,
+  isGuestReadRequest,
+  requireAuthGuard,
+  stripApiVersion,
+} from "./require-auth-guard";
 
 function req(method: string, pathname: string,): Request {
   return new Request(`http://localhost${pathname}`, { method, },);
@@ -86,6 +93,31 @@ describe("requireAuthGuard", () => {
 
   test("unauthenticated telemetry still passes", () => {
     expect(guardRes("POST", "/api/v1/telemetry/event", null, null,).allowed,).toBe(true,);
+  });
+});
+
+describe("guest-read shape helpers", () => {
+  test("guest shapes cover the read surface", () => {
+    expect(GUEST_READ_SHAPES.length,).toBeGreaterThan(0,);
+    expect(GUEST_READ_SHAPES,).toContainEqual(["worlds", ":id",],);
+  });
+
+  test("shape match accepts literals, rejects drift", () => {
+    expect(isGuestReadPath("/chats/abc/messages",),).toBe(true,);
+    expect(isGuestReadPath("/worlds/abc/factions",),).toBe(false,);
+  });
+
+  test("request check is GET-only and version-agnostic", () => {
+    expect(isGuestReadRequest("GET", "/api/v1/worlds/abc",),).toBe(true,);
+    expect(isGuestReadRequest("get", "/api/worlds",),).toBe(true,);
+    expect(isGuestReadRequest("POST", "/api/v1/worlds/abc",),).toBe(false,);
+    expect(isGuestReadRequest("GET", "/health/live",),).toBe(false,);
+  });
+
+  test("version strip handles both prefixes", () => {
+    expect(stripApiVersion("/api/v1/chats",),).toBe("/chats",);
+    expect(stripApiVersion("/api/chats",),).toBe("/chats",);
+    expect(stripApiVersion("/health/live",),).toBeNull();
   });
 });
 
