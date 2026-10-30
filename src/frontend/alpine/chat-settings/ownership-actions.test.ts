@@ -48,6 +48,7 @@ function ownershipCtx(overrides: Record<string, unknown> = {},): Record<string, 
     _ownershipReason: "",
     _ownershipSubmitting: false,
     _ownershipError: "" as string,
+    _owners: [] as string[],
     loadChatParticipants: async () => {},
     ...overrides,
   };
@@ -201,16 +202,24 @@ describeOrSkip("ownershipActions.canTransferOwnership", () => {
     globalThis.__USER_ID = originalUserId;
   },);
 
-  test("true for the chat owner", () => {
+  test("true for a listed owner (creator still in the owners set)", () => {
     globalThis.__USER_ID = "user-1";
-    const ctx = ownershipCtx({ chats: [{ id: "chat-1", created_by: "user-1", },], userRole: "user", },);
+    const ctx = ownershipCtx({
+      chats: [{ id: "chat-1", created_by: "user-1", },],
+      userRole: "user",
+      _owners: ["user-1",],
+    },);
 
     expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(true,);
   });
 
-  test("false for a chat the user does not own", () => {
+  test("false for a user absent from the owners set", () => {
     globalThis.__USER_ID = "user-2";
-    const ctx = ownershipCtx({ chats: [{ id: "chat-1", created_by: "user-1", },], userRole: "user", },);
+    const ctx = ownershipCtx({
+      chats: [{ id: "chat-1", created_by: "user-1", },],
+      userRole: "user",
+      _owners: ["user-1",],
+    },);
 
     expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(false,);
   });
@@ -220,6 +229,28 @@ describeOrSkip("ownershipActions.canTransferOwnership", () => {
     const ctx = ownershipCtx({ chats: [{ id: "chat-1", created_by: "user-1", },], userRole: "admin", },);
 
     expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(true,);
+  });
+
+  test("true when the user is listed in the owners payload (co-owner)", () => {
+    globalThis.__USER_ID = "user-2";
+    const ctx = ownershipCtx({
+      chats: [{ id: "chat-1", created_by: "user-1", },],
+      userRole: "user",
+      _owners: ["user-1", "user-2",],
+    },);
+
+    expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(true,);
+  });
+
+  test("false for a stranger who is neither creator nor co-owner", () => {
+    globalThis.__USER_ID = "user-3";
+    const ctx = ownershipCtx({
+      chats: [{ id: "chat-1", created_by: "user-1", },],
+      userRole: "user",
+      _owners: ["user-1", "user-2",],
+    },);
+
+    expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(false,);
   });
 
   test("false when no activeChat", () => {
@@ -236,9 +267,25 @@ describeOrSkip("ownershipActions.canTransferOwnership", () => {
     expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(false,);
   });
 
-  test("false when the chat row carries no owner id", () => {
+  test("false for a resigned creator absent from the owners set", () => {
     globalThis.__USER_ID = "user-1";
-    const ctx = ownershipCtx({ chats: [{ id: "chat-1", },], userRole: "user", },);
+    const ctx = ownershipCtx({
+      chats: [{ id: "chat-1", created_by: "user-1", },],
+      userRole: "user",
+      _owners: ["user-2",],
+    },);
+
+    expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(false,);
+  });
+
+  test("false when the owners list has not loaded yet", () => {
+    globalThis.__USER_ID = "user-1";
+    const ctx = ownershipCtx({
+      chats: [{ id: "chat-1", created_by: "user-1", },],
+      userRole: "user",
+      _owners: [],
+      _ownersLoading: true,
+    },);
 
     expect(ownershipActions.canTransferOwnership!.call(ctx,),).toBe(false,);
   });

@@ -5,6 +5,7 @@ import type { OutputStylePreset, } from "../../chat/output-style";
 import { classifierTagsActions, } from "./chat-settings/classifier-tags";
 import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
 import { presentationGmConfig, } from "./chat-settings/gm-config-presentation";
+import { ownersActions, } from "./chat-settings/owners";
 import { ownershipActions, } from "./chat-settings/ownership";
 import { personaActions, } from "./chat-settings/persona";
 import { syncVnRenderer, vnQaActions, } from "./chat-settings/vn";
@@ -18,6 +19,7 @@ const log = rootLog.child({ module: "chat-settings", },);
 
 export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   ...ownershipActions,
+  ...ownersActions,
   ...personaActions,
   ...vnQaActions,
   ...classifierTagsActions,
@@ -87,6 +89,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._chatOnline = Array.isArray(this.messages,) && this.messages.some((m,) => m.status === "confirmed");
     this._groupPaused = this.isChatPaused(chat,);
     await this.loadChatParticipants();
+    await this.loadChatOwners();
     const config = chat?.gm_config ? jsonParseOr<GmConfig>(chat.gm_config, {},) : {};
     const fields = readGmSettings(config,);
     this._assistantRole = fields.assistantRole;
