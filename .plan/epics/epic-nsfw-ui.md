@@ -127,6 +127,7 @@ Complete NSFW interaction interface for intimacy system, body state display, hea
 | TASK-nsfw-housing-management.md | P0       | ⬜ Not Started |
 | TASK-nsfw-alpine.md             | P0       | ⬜ Not Started |
 | TASK-nsfw-read-only-status-panel.md | P0   | ✅ Done        |
+| TASK-nsfw-consent-grant-route-missing.md | P0 | ⬜ Not Started |
 
 ## Files to Create
 
