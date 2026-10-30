@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** medium
 **Epic:** epic-resource-provision
@@ -52,3 +52,5 @@ community-hosted instances.
 - [ ] Unit tests: gauge computation, notification triggers,
   admin override auth gate
 - [ ] `bun run check` green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 7e5119c (registry tip: 8f0d280ca Konstantin Fedotov Close issue)

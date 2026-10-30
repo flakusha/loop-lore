@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** large
 **Epic:** epic-resource-provision
@@ -49,3 +49,5 @@ generation registry → browser IndexedDB.
 - [ ] E2E scenario: raw credential never appears in any server response
 - [ ] Uses `E2E_SAFEGUARD=1` guard
 - [ ] `bun run check` gate green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 1e6cb0a (registry tip: ac1bc1d31 Konstantin Fedotov Close issue)
