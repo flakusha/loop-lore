@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { api, } from "./api";
+import { backup, } from "./backup";
 import { chat, } from "./chat";
 import { general, } from "./general";
 import { keynav, } from "./keynav";
@@ -36,6 +37,10 @@ settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
     quotaResources: [] as QuotaGaugeResource[],
     quotaIsAdmin: false,
     quotaNotice: "",
+    backupEnabled: false,
+    backupTypes: { chat: true, asset: true, world: false, lore: false, },
+    backupReport: [],
+    backupNotice: "",
     nsfwConsent: null as null | {
       nsfwEnabled: boolean;
       maxRating: string;
@@ -49,6 +54,7 @@ settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
     ...chat(),
     ...api(),
     ...quota(),
+    ...backup(),
     ...restartBanner(),
     ...keynav(),
   };
