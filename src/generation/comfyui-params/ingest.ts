@@ -22,10 +22,9 @@
  * only transforms. Re-ingest is idempotent — pass the row's parameters as
  * `existing` and operator labels survive unless the sidecar changed.
  *
- * The probe checklist fields (`probe_status`, `params_reviewed`, `license`)
- * are not wired: they do not exist on `WorkflowRow` yet (only `min_vram`
- * does), and that migration belongs to the sibling row-fields workstream.
- * The probe report travels beside the row in `IngestSuccess` until then.
+ * Green rows stamp `probe_status: "passing"`; `params_reviewed` and `license`
+ * stay at the column defaults — ingest has no operator review or license
+ * value to record, and setting them would fabricate operator actions.
  *
  * @module comfyui-params/ingest
  */
@@ -184,6 +183,7 @@ export function ingestWorkflow(options: IngestOptions,): IngestResult {
       payload: jsonStringifyOr(payload,),
       is_default: "not_default",
       enabled: "enabled",
+      probe_status: "passing",
       lora_slots: null,
       min_vram: null,
     },
