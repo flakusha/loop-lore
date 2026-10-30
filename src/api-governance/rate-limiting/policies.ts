@@ -76,6 +76,13 @@ export type RouteMatch = "prefix" | "suffix";
  * under an id-bearing path no prefix rule can reach.
  */
 export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: RouteMatch,]> = [
+  // BUG-e2e-browser-authme-429: GET /api/v1/auth/me is a per-page identity
+  // probe (sidebar user-info + chat lifecycle), not token minting — it must
+  // not share the 10/min login budget. Prefix (not suffix): the path is a
+  // fixed endpoint with no trailing id. MUST stay above the /api/v1/auth
+  // prefix, or the prefix claims it first and every page load burns the
+  // login burst (429 storm when >5 pages/probes land in one window).
+  ["/api/v1/auth/me", chatPolicy,],
   ["/api/v1/auth", authPolicy,],
   // BUG-chat-sse-shares-generation-rate-bucket: the chat generation stream
   // GET /api/v1/generation/stream/:chatId is a read on an open SSE, not a

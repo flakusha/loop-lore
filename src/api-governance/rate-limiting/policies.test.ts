@@ -95,6 +95,16 @@ describe("policyForRoute", () => {
     expect(policyForRoute("/api/v1/auth/login",),).toBe(authPolicy,);
   });
 
+  test("auth/me identity probe resolves the chat policy, not the login bucket (BUG-e2e-browser-authme-429)", () => {
+    // GET /api/v1/auth/me is a per-page probe, not token minting: it must
+    // not share the 10/min auth budget. First-match-wins makes this order
+    // load-bearing — the /auth/me rule MUST stay above the /auth prefix.
+    expect(policyForRoute("/api/v1/auth/me",),).toBe(chatPolicy,);
+    // Login/register stay on the tight budget.
+    expect(policyForRoute("/api/v1/auth/login",),).toBe(authPolicy,);
+    expect(policyForRoute("/api/v1/auth/register",),).toBe(authPolicy,);
+  });
+
   test("ai-action resolves the generation policy, not the chat bucket (S-5)", () => {
     // The path STARTS WITH /api/v1/chats, so first-match-wins makes rule
     // order load-bearing: before the reorder this resolved chatPolicy
