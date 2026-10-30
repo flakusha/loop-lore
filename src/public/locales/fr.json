@@ -130,6 +130,32 @@
       "title": "Étiquettes du classificateur",
       "description": "Choisissez les étiquettes du classificateur actives pour cette conversation.",
       "save": "Enregistrer les étiquettes"
+    },
+    "owners": {
+      "title": "Propriétaires",
+      "description": "Gérez qui possède cette conversation. Jusqu'à 3 propriétaires peuvent gérer les paramètres et la propriété.",
+      "you": "(vous)",
+      "remove": "Retirer",
+      "resign": "Démissionner",
+      "capHint": "Limite de propriétaires atteinte (max 3).",
+      "addOwner": "Ajouter un propriétaire…",
+      "addTitle": "Ajouter un copropriétaire",
+      "addSelectLabel": "Nouveau copropriétaire",
+      "selectParticipant": "— Sélectionner un participant —",
+      "noEligibleParticipants": "Aucun participant éligible — tout le monde dans la conversation est déjà propriétaire.",
+      "reasonLabel": "Raison (facultatif)",
+      "reasonPlaceholder": "Pourquoi ce changement est-il effectué ?",
+      "cancel": "Annuler",
+      "addSubmit": "Ajouter le propriétaire",
+      "addSubmitting": "Ajout en cours…",
+      "removeTitle": "Retirer le propriétaire",
+      "removeBody": "Retirer {name} comme propriétaire de cette conversation ?",
+      "removeSubmit": "Retirer le propriétaire",
+      "removeSubmitting": "Retrait en cours…",
+      "resignTitle": "Renoncer à la propriété",
+      "resignBody": "Vous abandonnerez la copropriété de cette conversation. Un autre propriétaire pourra vous rajouter plus tard.",
+      "resignSubmit": "Démissionner",
+      "resignSubmitting": "Démission en cours…"
     }
   },
   "settings": {

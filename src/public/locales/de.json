@@ -130,6 +130,32 @@
       "title": "Klassifikator-Tags",
       "description": "Wählen Sie, welche kuratierten Klassifikator-Tags für diesen Chat aktiv sind.",
       "save": "Tags speichern"
+    },
+    "owners": {
+      "title": "Besitzer",
+      "description": "Verwalten Sie, wem dieser Chat gehört. Bis zu 3 Besitzer können Chateinstellungen und Eigentum verwalten.",
+      "you": "(Sie)",
+      "remove": "Entfernen",
+      "resign": "Zurücktreten",
+      "capHint": "Besitzerlimit erreicht (max. 3).",
+      "addOwner": "Besitzer hinzufügen …",
+      "addTitle": "Mit-Besitzer hinzufügen",
+      "addSelectLabel": "Neuer Mit-Besitzer",
+      "selectParticipant": "— Teilnehmer wählen —",
+      "noEligibleParticipants": "Keine geeigneten Teilnehmer — alle im Chat sind bereits Besitzer.",
+      "reasonLabel": "Grund (optional)",
+      "reasonPlaceholder": "Warum wird diese Änderung vorgenommen?",
+      "cancel": "Abbrechen",
+      "addSubmit": "Besitzer hinzufügen",
+      "addSubmitting": "Wird hinzugefügt …",
+      "removeTitle": "Besitzer entfernen",
+      "removeBody": "{name} als Besitzer dieses Chats entfernen?",
+      "removeSubmit": "Besitzer entfernen",
+      "removeSubmitting": "Wird entfernt …",
+      "resignTitle": "Eigentum abgeben",
+      "resignBody": "Sie geben die Mit-Eigentümerschaft dieses Chats auf. Ein anderer Besitzer kann Sie später wieder hinzufügen.",
+      "resignSubmit": "Zurücktreten",
+      "resignSubmitting": "Wird zurückgetreten …"
     }
   },
   "settings": {

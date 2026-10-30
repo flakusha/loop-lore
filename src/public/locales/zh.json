@@ -130,6 +130,32 @@
       "title": "分类标签",
       "description": "选择此聊天启用哪些精选分类标签。",
       "save": "保存标签"
+    },
+    "owners": {
+      "title": "所有者",
+      "description": "管理此聊天的所有者。最多 3 位所有者可共同管理设置与所有权。",
+      "you": "（你）",
+      "remove": "移除",
+      "resign": "退出",
+      "capHint": "已达到所有者上限（最多 3 位）。",
+      "addOwner": "添加所有者…",
+      "addTitle": "添加共同所有者",
+      "addSelectLabel": "新的共同所有者",
+      "selectParticipant": "— 选择参与者 —",
+      "noEligibleParticipants": "没有可选的参与者 — 聊天中的每个人都已是所有者。",
+      "reasonLabel": "原因（可选）",
+      "reasonPlaceholder": "为什么要进行此更改？",
+      "cancel": "取消",
+      "addSubmit": "添加所有者",
+      "addSubmitting": "添加中…",
+      "removeTitle": "移除所有者",
+      "removeBody": "将 {name} 从此聊天的所有者中移除？",
+      "removeSubmit": "移除所有者",
+      "removeSubmitting": "移除中…",
+      "resignTitle": "放弃所有权",
+      "resignBody": "你将放弃此聊天的共同所有权。其他所有者以后可以重新添加你。",
+      "resignSubmit": "退出",
+      "resignSubmitting": "退出中…"
     }
   },
   "settings": {
