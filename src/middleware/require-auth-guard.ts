@@ -97,13 +97,32 @@ const GUEST_READ_SHAPES: readonly (readonly string[])[] = [
 ];
 
 /** Whether a stripped path matches one of the guest GET read shapes. */
-function isGuestReadPath(stripped: string,): boolean {
+export function isGuestReadPath(stripped: string,): boolean {
   const segs = stripped.split("/",).filter((s,) => s.length > 0);
   return GUEST_READ_SHAPES.some((shape,) =>
     shape.length === segs.length && shape.every((part, i,) => part === ":id" || part === segs[i])
   );
 }
 
+/**
+ * Whether a request (method + full pathname) is a guest-tier GET read.
+ * Single-sources the `/api` / `/api/v1` strip + shape match used by both
+ * {@link isAllowlisted} and the guest read rate limiter
+ * (`src/middleware/guest-rate-limit.ts`), so the two can never drift.
+ * @param method - request method (any case)
+ * @param pathname - full request pathname (version prefix still on)
+ * @returns true when the method is GET and the stripped path is a guest read shape
+ */
+export function isGuestReadRequest(method: string, pathname: string,): boolean {
+  if (method.toUpperCase() !== "GET") { return false; }
+  const stripped = pathname.startsWith("/api/v1/",)
+    ? pathname.slice("/api/v1".length,)
+    : pathname.startsWith("/api/",)
+    ? pathname.slice("/api".length,)
+    : null;
+
+  return stripped !== null && isGuestReadPath(stripped,);
+}
 function isNonApiGet(method: string, pathname: string,): boolean {
   if (method !== "GET") { return false; }
   if (pathname === "/" || pathname === "/chat" || pathname === "/register") { return true; }
@@ -170,15 +189,7 @@ export function isAllowlisted(method: string, pathname: string, userRole: string
 
   if (isOpenPluginRoute(upper, pathname,)) { return true; }
 
-  if (userRole === "guest" && upper === "GET") {
-    const stripped = pathname.startsWith("/api/v1/",)
-      ? pathname.slice("/api/v1".length,)
-      : pathname.startsWith("/api/",)
-      ? pathname.slice("/api".length,)
-      : null;
-
-    if (stripped !== null && isGuestReadPath(stripped,)) { return true; }
-  }
+  if (userRole === "guest" && isGuestReadRequest(upper, pathname,)) { return true; }
 
   return false;
 }
