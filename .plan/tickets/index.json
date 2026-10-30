@@ -18858,7 +18858,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-062.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# FEAT-062: Generation quality metrics",
     "type": "FEAT"
