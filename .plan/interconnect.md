@@ -11,7 +11,7 @@ output is byte-identical for identical inputs.
 - tickets: 3855
 - epics: 358
 - src paths owned: 4538
-- edges: produces 12083, consumes 405, sibling 37635, owns 2830, related 1193
+- edges: produces 12069, consumes 405, sibling 37420, owns 2831, related 1193
 
 ## Shared src hubs
 
@@ -450,7 +450,7 @@ output is byte-identical for identical inputs.
 | `src/comparisons/fan-out.ts` | `TASK-comparison-cell-detail-metadata`, `TASK-comparison-fan-out-engine`, `TASK-comparison-metric-collection-and-charts`, `TASK-comparison-seed-parameter-lock-and-rerun`, `TASK-cross-model-comparison-run-data-side`, `epic-technical-comparison-charts` |
 | `src/comparisons/metrics.test.ts` | `TASK-comparison-metric-collection-and-charts`, `TASK-comparison-tests-set-lifecycle-fan-out-comparability` |
 | `src/comparisons/rerun.test.ts` | `TASK-comparison-seed-parameter-lock-and-rerun`, `TASK-comparison-tests-set-lifecycle-fan-out-comparability` |
-| `src/components` | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a`, `TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd`, `TASK-multi-session` |
+| `src/components` | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a`, `TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd` |
 | `src/components/asset-preview-modal.html` | `TASK-001`, `TASK-comparison-cell-detail-metadata`, `TASK-derived-map-origin-links`, `TASK-gallery-filter-generated-derived-content`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` |
 | `src/components/auth-form-fields.html` | `TASK-i18n-template-strings`, `epic-frontend-login` |
 | `src/components/character/licensing-panel.html` | `TASK-030`, `TASK-actor-licensing-frontend` |
@@ -481,7 +481,6 @@ output is byte-identical for identical inputs.
 | `src/components/modals/settings.html` | `TASK-epic11-admin-settings-reconciliation`, `TASK-markdown-heading-parse-and-import`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `TASK-widen-import-export-io-for-publications`, `epic-browser-editor-support`, `epic-frontend-settings`, `epic-narrative-publishing-workflows` |
 | `src/components/overlay-stack.html` | `TASK-025`, `epic-frontend-components` |
 | `src/components/section-divider.html` | `TASK-chat-flow-section-navigation`, `TASK-chat-sectioning-multi-location` |
-| `src/components/security/sessions-panel.html` | `TASK-multi-session`, `epic-multi-session` |
 | `src/components/settings/key-management.html` | `TASK-e2ee-crypto-ui`, `TASK-encryption-key-management-ui`, `epic-encryption-workflow` |
 | `src/components/text-toolbar.html` | `TASK-shared-text-surface-toolbar`, `epic-browser-editor-support` |
 | `src/config` | `BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive`, `TASK-observability-config-section` |
@@ -502,10 +501,10 @@ output is byte-identical for identical inputs.
 | `src/config/load/env.ts` | `FEAT-model-native-locale-config`, `epic-effect-v4-adoption-evaluation` |
 | `src/config/load/load.ts` | `BUG-tui-app-getlogger-throws-when-running-standalone`, `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `TASK-frontend-and-http-utils-type-safety-batch`, `TASK-validate-expansion-config-at-load-time`, `epic-byok-api-keys`, `epic-config-templates`, `epic-configs-path-resolution` |
 | `src/config/load/parse.ts` | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-`, `TASK-adopt-bun-yaml-to-replace-js-yaml`, `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep`, `epic-configs-path-resolution` |
-| `src/config/load/safety.ts` | `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `TASK-cleanup-banned-types-console-logging-magic-strings`, `TASK-cors-middleware`, `epic-local-process-swarm`, `epic-multi-session` |
+| `src/config/load/safety.ts` | `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `TASK-cleanup-banned-types-console-logging-magic-strings`, `TASK-cors-middleware`, `epic-local-process-swarm` |
 | `src/config/migrate-config.ts` | `BUG-simplification-audit-artifacts-lost-to-a-tmp-cleanup-13-tick`, `TASK-adopt-bun-yaml-to-replace-js-yaml`, `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt`, `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `TASK-optique-cli-tooling-integration`, `epic-cli-tooling-optique` |
 | `src/config/schema` | `BUG-dead-bedrock-config-path-accepted-but-never-dispatched`, `epic-api-telemetry` |
-| `src/config/schema-class/env-map.ts` | `BUG-auto-rotation-config-drift`, `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d`, `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n`, `TASK-add-federation-to-the-config-domains-list-so-config-federati`, `TASK-config-examples-and-domain-file-support-for-uncovered-sectio`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt`, `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-integration-config-surface-schemas-example-toml-env-map`, `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr`, `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-outfit-change-hook`, `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server`, `TASK-tui-enabled-config-flag-never-read`, `epic-encryption-workflow`, `epic-multi-session` |
+| `src/config/schema-class/env-map.ts` | `BUG-auto-rotation-config-drift`, `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d`, `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n`, `TASK-add-federation-to-the-config-domains-list-so-config-federati`, `TASK-config-examples-and-domain-file-support-for-uncovered-sectio`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt`, `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-integration-config-surface-schemas-example-toml-env-map`, `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr`, `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-outfit-change-hook`, `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server`, `TASK-tui-enabled-config-flag-never-read`, `epic-encryption-workflow` |
 | `src/config/schema-class/federation.ts` | `BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori`, `FEAT-activitypub-federation`, `TASK-add-federation-to-the-config-domains-list-so-config-federati`, `TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot` |
 | `src/config/schema-class/hooks.ts` | `TASK-moderation-privacy-first-foundation`, `TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa`, `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-outfit-change-hook`, `TASK-outfit-narrative-extractor-regex-prefilter`, `epic-reactive-actor-appearance` |
 | `src/config/schema-class/index.ts` | `BUG-config-schema-emitter-missing-top-level-sections`, `TASK-add-federation-to-the-config-domains-list-so-config-federati`, `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` |
@@ -683,7 +682,7 @@ output is byte-identical for identical inputs.
 | `src/db/schema-characters.ts` | `TASK-3d-character-avatars`, `TASK-3d-vrm-foundation` |
 | `src/db/schema-chats.ts` | `TASK-chat-room-search-join`, `TASK-chat-sectioning-multi-location`, `TASK-encryption-access-management`, `TASK-encryption-group-key-distribution`, `TASK-encryption-key-rotation`, `TASK-encryption-wire-message-pipeline`, `TASK-thinking-tag-context-prune` |
 | `src/db/schema-content.ts` | `BUG-emotion-avatar-fallback-metadata-incomplete`, `TASK-asset-b1-blake3-content-store`, `TASK-asset-b1-rendition-pipeline`, `TASK-asset-provenance-ledger-for-generated-assets`, `TASK-avatar-framing-column-migration-future`, `TASK-avatar-framing-tag-member`, `TASK-character-avatar-gallery-binding`, `TASK-encryption-asset-encryption`, `TASK-encryption-asset-encryption-update`, `TASK-encryption-backward-compatibility`, `TASK-federation-storage-quota-accounting`, `TASK-held-item-axis-data-model`, `TASK-publication-art-quality-gates`, `TASK-publication-artifact-schema`, `TASK-reference-set-alt-text-consistency`, `TASK-reference-set-entity`, `TASK-review-thread-target-vocabulary`, `epic-derived-map-generation`, `epic-federation-offload-quotas`, `epic-narrative-publishing-workflows`, `epic-reactive-actor-appearance` |
-| `src/db/schema-core.ts` | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry`, `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-`, `BUG-emotion-avatar-fallback-metadata-incomplete`, `BUG-memory-audit-log-action-column-typed-string-not-union`, `BUG-personas-converttocharacter-drops-title-temperature-max-toke`, `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points`, `FEAT-expand-character-templates-to-canonical-fields`, `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `FEAT-message-translations-chat-first`, `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel`, `TASK-actor-item-service`, `TASK-actors-data-versioning`, `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation`, `TASK-asymmetric-key-pairs`, `TASK-asymmetric-key-pairs-followup`, `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c`, `TASK-autonomy-rate-governor-for-llm-actors`, `TASK-avatar-render-target-discriminator`, `TASK-character-creator-prerogative`, `TASK-character-multi-avatar`, `TASK-character-personality-integrity`, `TASK-chat-context-preference-per-scope`, `TASK-chat-transfer-location`, `TASK-comfyui-first-class-workflow-library`, `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an`, `TASK-e2ee-receiver-wiring`, `TASK-emotion-avatar-message-binding`, `TASK-federation-peer-registry-workload-columns`, `TASK-fix-actor-item-value-type`, `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so`, `TASK-inline-markdown-suggestion-model`, `TASK-item-side-outfit-change-trigger`, `TASK-markdown-canonical-intermediate-contract`, `TASK-message-carriage-table-migration-admin-read`, `TASK-messages-outfit-id-column`, `TASK-mini-games-framework`, `TASK-multi-session`, `TASK-publication-glossary-term-base`, `TASK-publication-unit-translation-store`, `TASK-task-i18n-workflow-hardening`, `TASK-task-minimal-mlops-cards-runlog-canary`, `TASK-test-chat-module`, `TASK-timeline-id-world-timeline-events`, `TASK-world-requires-stats-flag-and-point-budget-config`, `epic-actors`, `epic-battle-action-systems`, `epic-battle-integration-gaps`, `epic-byok-api-keys`, `epic-character-core-system`, `epic-character-internal-traits`, `epic-character-npc-lore-access`, `epic-character-xp-leveling`, `epic-chat-lifecycle-moderation`, `epic-chat-transfer-location`, `epic-chat-variants-taxonomy`, `epic-config-extensions`, `epic-editorial-workflow`, `epic-emotion-avatar-message-binding`, `epic-exploration-discovery`, `epic-federation-offload-quotas`, `epic-impersonation`, `epic-item-systems-unification`, `epic-logging`, `epic-mini-games`, `epic-multi-instance-reconciliation`, `epic-multi-session`, `epic-multilingual-carriage`, `epic-narrative-publishing-workflows`, `epic-output-control-transforms`, `epic-publication-i18n`, `epic-rarity-extensions`, `epic-reactive-actor-appearance`, `epic-research-agency-decision`, `epic-skills-professions-config`, `epic-world-chat-channels-invites` |
+| `src/db/schema-core.ts` | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry`, `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-`, `BUG-emotion-avatar-fallback-metadata-incomplete`, `BUG-memory-audit-log-action-column-typed-string-not-union`, `BUG-personas-converttocharacter-drops-title-temperature-max-toke`, `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points`, `FEAT-expand-character-templates-to-canonical-fields`, `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `FEAT-message-translations-chat-first`, `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel`, `TASK-actor-item-service`, `TASK-actors-data-versioning`, `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation`, `TASK-asymmetric-key-pairs`, `TASK-asymmetric-key-pairs-followup`, `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c`, `TASK-autonomy-rate-governor-for-llm-actors`, `TASK-avatar-render-target-discriminator`, `TASK-character-creator-prerogative`, `TASK-character-multi-avatar`, `TASK-character-personality-integrity`, `TASK-chat-context-preference-per-scope`, `TASK-chat-transfer-location`, `TASK-comfyui-first-class-workflow-library`, `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an`, `TASK-e2ee-receiver-wiring`, `TASK-emotion-avatar-message-binding`, `TASK-federation-peer-registry-workload-columns`, `TASK-fix-actor-item-value-type`, `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so`, `TASK-inline-markdown-suggestion-model`, `TASK-item-side-outfit-change-trigger`, `TASK-markdown-canonical-intermediate-contract`, `TASK-message-carriage-table-migration-admin-read`, `TASK-messages-outfit-id-column`, `TASK-mini-games-framework`, `TASK-publication-glossary-term-base`, `TASK-publication-unit-translation-store`, `TASK-task-i18n-workflow-hardening`, `TASK-task-minimal-mlops-cards-runlog-canary`, `TASK-test-chat-module`, `TASK-timeline-id-world-timeline-events`, `TASK-world-requires-stats-flag-and-point-budget-config`, `epic-actors`, `epic-battle-action-systems`, `epic-battle-integration-gaps`, `epic-byok-api-keys`, `epic-character-core-system`, `epic-character-internal-traits`, `epic-character-npc-lore-access`, `epic-character-xp-leveling`, `epic-chat-lifecycle-moderation`, `epic-chat-transfer-location`, `epic-chat-variants-taxonomy`, `epic-config-extensions`, `epic-editorial-workflow`, `epic-emotion-avatar-message-binding`, `epic-exploration-discovery`, `epic-federation-offload-quotas`, `epic-impersonation`, `epic-item-systems-unification`, `epic-logging`, `epic-mini-games`, `epic-multi-instance-reconciliation`, `epic-multilingual-carriage`, `epic-narrative-publishing-workflows`, `epic-output-control-transforms`, `epic-publication-i18n`, `epic-rarity-extensions`, `epic-reactive-actor-appearance`, `epic-research-agency-decision`, `epic-skills-professions-config`, `epic-world-chat-channels-invites` |
 | `src/db/schema-crafting.ts` | `TASK-crafting-system`, `TASK-unify-item-types`, `epic-crafting-professions`, `epic-item-systems-unification`, `epic-skills-professions-config` |
 | `src/db/schema-emotions.ts` | `TASK-emotion-intent-detection`, `epic-config-extensions` |
 | `src/db/schema-generation.ts` | `FEAT-065-sub-audio`, `FEAT-065-sub-image`, `FEAT-065-sub-llm`, `FEAT-065-sub-video`, `TASK-asset-provenance-ledger-for-generated-assets`, `TASK-comparison-set-variant-data-model` |
@@ -740,7 +739,7 @@ output is byte-identical for identical inputs.
 | `src/federation/sharing.ts` | `BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori`, `BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat`, `TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot`, `TASK-expose-dek-export-and-import-over-the-federation-wire-routes`, `TASK-federation-storage-quota-accounting`, `TASK-mesh-encrypted-content-sharing-reservation-duplication`, `epic-federation-offload-quotas` |
 | `src/federation/spki-pin.test.ts` | `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f`, `TASK-federation-same-host-loopback-peer-auth` |
 | `src/federation/spki-pin.ts` | `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f`, `TASK-federation-peer-workload-wire-endpoints`, `TASK-federation-same-host-loopback-peer-auth`, `epic-federation-offload-quotas` |
-| `src/frontend` | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio`, `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam`, `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null`, `BUG-frontend-dead-csrf-bearer-header-machinery`, `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th`, `TASK-chat-avatar-resolver-outfit-aware`, `TASK-chat-composer-gif-picker`, `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e`, `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che`, `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature`, `TASK-coverage-waivers-for-3-modules-below-80-floor`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-equipment-stat-preview`, `TASK-item-provisioning-dashboard`, `TASK-multi-session`, `TASK-npc-inventory-frontend`, `TASK-professions-frontend`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `TASK-skills-frontend`, `TASK-world-item-instance-npc`, `epic-reactive-actor-appearance`, `epic-use-case-agentic-workspace` |
+| `src/frontend` | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio`, `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam`, `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null`, `BUG-frontend-dead-csrf-bearer-header-machinery`, `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th`, `TASK-chat-avatar-resolver-outfit-aware`, `TASK-chat-composer-gif-picker`, `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e`, `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che`, `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature`, `TASK-coverage-waivers-for-3-modules-below-80-floor`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-equipment-stat-preview`, `TASK-item-provisioning-dashboard`, `TASK-npc-inventory-frontend`, `TASK-professions-frontend`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `TASK-skills-frontend`, `TASK-world-item-instance-npc`, `epic-reactive-actor-appearance`, `epic-use-case-agentic-workspace` |
 | `src/frontend/3d/expression-controller.ts` | `TASK-3d-character-avatars`, `TASK-3d-vrm-foundation` |
 | `src/frontend/3d/vrm-loader.ts` | `TASK-3d-character-avatars`, `TASK-3d-vrm-foundation` |
 | `src/frontend/a11y/a11y.css` | `TASK-keyboard-navigation`, `epic-accessibility-input` |
@@ -853,8 +852,7 @@ output is byte-identical for identical inputs.
 | `src/frontend/alpine/rag-dashboard.ts` | `TASK-rag-business-features`, `epic-rag-document-processing`, `epic-rag-enterprise`, `epic-rag-ui` |
 | `src/frontend/alpine/rag.ts` | `TASK-rag-alpine`, `TASK-rag-pipeline-context`, `epic-rag-document-processing`, `epic-rag-retrieval`, `epic-rag-ui` |
 | `src/frontend/alpine/rpg-stats.ts` | `TASK-equipment-stat-preview`, `TASK-rpg-stats-frontend-wiring`, `epic-battle-ui`, `epic-frontend-backend-integration` |
-| `src/frontend/alpine/settings-sessions.ts` | `TASK-multi-session`, `epic-multi-session` |
-| `src/frontend/alpine/settings.ts` | `TASK-encryption-key-management-ui`, `TASK-epic11-admin-settings-reconciliation`, `TASK-i18n-settings-wiring`, `TASK-response-length-control` |
+| `src/frontend/alpine/settings.ts` | `TASK-encryption-key-management-ui`, `TASK-epic11-admin-settings-reconciliation`, `TASK-i18n-settings-wiring`, `TASK-response-length-control`, `epic-multi-session` |
 | `src/frontend/alpine/settings/general.ts` | `BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use`, `epic-terminal-ui` |
 | `src/frontend/alpine/shortcuts-listener.test.ts` | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che`, `TASK-plugin-hot-reload-with-real-module-cache-busting` |
 | `src/frontend/alpine/shortcuts.ts` | `BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l`, `BUG-keynav-stale-unsubscribe-deletes-live-handler-set`, `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che`, `TASK-keyboard-navigation`, `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-keyboard-navigation-global-keymap`, `WIRE-frontend-touch-swipe-gestures`, `epic-accessibility-input` |
@@ -1596,9 +1594,7 @@ output is byte-identical for identical inputs.
 | `src/routes/rpg/world-location-traits.ts` | `BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-`, `TASK-wire-world-location-traits-routes`, `epic-rpg-wiring-phase3` |
 | `src/routes/rpg/xp-loot.ts` | `BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-`, `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre`, `TASK-wire-xp-loot-routes`, `epic-character-xp-leveling`, `epic-rpg-core-wiring`, `epic-rpg-mechanics`, `epic-rpg-wiring-phase3` |
 | `src/routes/search.ts` | `TASK-creative-studio-search-api`, `epic-creative-studio` |
-| `src/routes/sessions-switch.ts` | `TASK-auth-session-hardening-batch-from-2026-10-04-review`, `TASK-multi-session`, `epic-multi-session` |
-| `src/routes/sessions.test.ts` | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing`, `TASK-multi-session`, `epic-multi-session` |
-| `src/routes/sessions.ts` | `TASK-auth-session-hardening-batch-from-2026-10-04-review`, `TASK-multi-session`, `epic-multi-session` |
+| `src/routes/sessions.ts` | `TASK-auth-session-hardening-batch-from-2026-10-04-review`, `epic-multi-session` |
 | `src/routes/settings.ts` | `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai`, `BUG-handleexportall-leaks-group-chat-participants-messages-expor`, `BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings`, `BUG-settings-export-endpoint-has-no-rate-limiting`, `TASK-format-version-migration`, `TASK-response-length-control`, `TASK-settings-patch-uses-t-any-body-allowing-mass-assignment`, `TASK-text-effects-overlays` |
 | `src/routes/story-items` | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros`, `TASK-item-asset-avatar-display-in-inventory-trading-and-provision` |
 | `src/routes/story-items.ts` | `TASK-world-item-frontend`, `TASK-world-item-instance-npc` |
@@ -2034,7 +2030,7 @@ output is byte-identical for identical inputs.
 | `src/views/publication.html` | `TASK-publication-reader-locale-selector`, `TASK-publication-viewer-read-mode` |
 | `src/views/quests.html` | `FEAT-llm-enhance-outside-the-chat-composer`, `TASK-harmonize-quest-type-taxonomy`, `TASK-i18n-template-strings`, `epic-db-cold-storage-high-perf`, `epic-quests-encounters` |
 | `src/views/register.html` | `TASK-e2e-auth-flows`, `TASK-i18n-template-strings` |
-| `src/views/settings.html` | `TASK-emotion-intent-detection`, `TASK-emotions-avatar-edit-model`, `TASK-encryption-key-management-ui`, `TASK-export-frontend-progress`, `TASK-finalize-notification-bell-header-wiring`, `TASK-i18n-settings-wiring`, `TASK-i18n-template-strings`, `TASK-info-bubbles`, `TASK-multi-session`, `TASK-restart-required-indicator-on-system-config-changes`, `TASK-thinking-tag-context-prune`, `epic-encryption-workflow`, `epic-frontend-settings`, `epic-multi-session`, `epic-terminal-ui` |
+| `src/views/settings.html` | `TASK-emotion-intent-detection`, `TASK-emotions-avatar-edit-model`, `TASK-encryption-key-management-ui`, `TASK-export-frontend-progress`, `TASK-finalize-notification-bell-header-wiring`, `TASK-i18n-settings-wiring`, `TASK-i18n-template-strings`, `TASK-info-bubbles`, `TASK-restart-required-indicator-on-system-config-changes`, `TASK-thinking-tag-context-prune`, `epic-encryption-workflow`, `epic-frontend-settings`, `epic-terminal-ui` |
 | `src/views/world-detail.html` | `FEAT-llm-enhance-outside-the-chat-composer`, `FEAT-world-template-chat-lifecycle`, `TASK-frontend-view-model-extraction`, `TASK-timeline-branching-ui`, `epic-world-management-ui` |
 | `src/views/world-edit.html` | `FEAT-llm-enhance-outside-the-chat-composer`, `TASK-i18n-template-strings`, `TASK-item-generation`, `TASK-item-provisioning-dashboard`, `TASK-location-explorer`, `TASK-migrate-text-surfaces-to-shared-primitives`, `epic-experimental-egui-frontend`, `epic-npc-management-ui`, `epic-world-management-ui` |
 | `src/views/worlds.html` | `TASK-frontend-view-model-extraction`, `epic-world-management-ui` |
@@ -4371,6 +4367,7 @@ output is byte-identical for identical inputs.
 | `epic-multi-instance-reconciliation` | owns | `TASK-swarm-vs-leader-write-domain-partition-and-cross-topology-co` | - |
 | `epic-multi-session` | owns | `TASK-multi-session-continuity` | - |
 | `epic-multi-session` | owns | `TASK-multi-session-support` | - |
+| `epic-multi-session` | owns | `TASK-multi-session` | - |
 | `epic-multi-session` | owns | `TASK-sessions-api-routes` | - |
 | `epic-multilingual-carriage` | owns | `FEAT-message-translations-chat-first` | - |
 | `epic-multilingual-carriage` | owns | `TASK-message-carriage-backfill-privacy` | - |
@@ -9844,6 +9841,7 @@ output is byte-identical for identical inputs.
 | `TASK-chat-backgrounds-location-sync` | produces | `src/routes/backgrounds.ts` | - |
 | `TASK-chat-backgrounds-location-sync` | produces | `src/routes/worlds.ts` | - |
 | `TASK-chat-backgrounds-location-sync` | produces | `src/views/chat.html` | - |
+| `TASK-chat-branch-merge` | produces | `src/chat/service/split-execution.ts` | - |
 | `TASK-chat-branch-merge` | produces | `src/chat/service/split-utils.ts` | - |
 | `TASK-chat-branch-merge` | produces | `src/chat/service/split.test.ts` | - |
 | `TASK-chat-branch-merge` | produces | `src/chat/service/split.ts` | - |
@@ -12744,15 +12742,6 @@ output is byte-identical for identical inputs.
 | `TASK-multi-concept-segmentation-masks` | produces | `src/image-edit/types.ts` | - |
 | `TASK-multi-reference-conditioning-request-model` | produces | `src/image-edit/run-authz.ts` | - |
 | `TASK-multi-reference-conditioning-request-model` | produces | `src/image-edit/types.ts` | - |
-| `TASK-multi-session` | produces | `src/components/security/sessions-panel.html` | - |
-| `TASK-multi-session` | produces | `src/components` | - |
-| `TASK-multi-session` | produces | `src/db/schema-core.ts` | - |
-| `TASK-multi-session` | produces | `src/frontend/alpine/settings-sessions.ts` | - |
-| `TASK-multi-session` | produces | `src/frontend` | - |
-| `TASK-multi-session` | produces | `src/routes/sessions-switch.ts` | - |
-| `TASK-multi-session` | produces | `src/routes/sessions.test.ts` | - |
-| `TASK-multi-session` | produces | `src/routes/sessions.ts` | - |
-| `TASK-multi-session` | produces | `src/views/settings.html` | - |
 | `TASK-multimodal-asset-reuse` | produces | `src/assets/metadata.ts` | - |
 | `TASK-multimodal-asset-reuse` | produces | `src/generation/providers/comfyui.ts` | - |
 | `TASK-narration-levels` | produces | `src/turning/turn-strategies.ts` | - |
@@ -16642,15 +16631,9 @@ output is byte-identical for identical inputs.
 | `epic-multi-instance-reconciliation` | produces | `src/routes/activity-stream.ts` | - |
 | `epic-multi-instance-reconciliation` | produces | `src/routes/health.ts` | - |
 | `epic-multi-instance-reconciliation` | produces | `src/server.ts` | - |
-| `epic-multi-session` | produces | `src/components/security/sessions-panel.html` | - |
-| `epic-multi-session` | produces | `src/config/load/safety.ts` | - |
-| `epic-multi-session` | produces | `src/config/schema-class/env-map.ts` | - |
-| `epic-multi-session` | produces | `src/db/schema-core.ts` | - |
-| `epic-multi-session` | produces | `src/frontend/alpine/settings-sessions.ts` | - |
-| `epic-multi-session` | produces | `src/routes/sessions-switch.ts` | - |
-| `epic-multi-session` | produces | `src/routes/sessions.test.ts` | - |
+| `epic-multi-session` | produces | `src/db/schema-sessions.ts` | - |
+| `epic-multi-session` | produces | `src/frontend/alpine/settings.ts` | - |
 | `epic-multi-session` | produces | `src/routes/sessions.ts` | - |
-| `epic-multi-session` | produces | `src/views/settings.html` | - |
 | `epic-multilingual-carriage` | produces | `src/chat/auto-translate.ts` | - |
 | `epic-multilingual-carriage` | produces | `src/chat/service/carriage.ts` | - |
 | `epic-multilingual-carriage` | produces | `src/chat/service/read.ts` | - |
@@ -18927,7 +18910,6 @@ output is byte-identical for identical inputs.
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/001_init.ts` |
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `TASK-publication-artifact-schema` | `src/db/migrations/001_init.ts` |
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
@@ -18972,7 +18954,6 @@ output is byte-identical for identical inputs.
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -19325,7 +19306,6 @@ output is byte-identical for identical inputs.
 | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/frontend` |
 | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-equipment-stat-preview` | `src/frontend` |
 | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
-| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-multi-session` | `src/frontend` |
 | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-professions-frontend` | `src/frontend` |
 | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend` |
@@ -19748,7 +19728,6 @@ output is byte-identical for identical inputs.
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-moderation-domain-service-consolidate-audit-writes-shared-sc` | `src/nsfw/moderation-service/audit.ts` |
-| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-notification-and-telemetry-service-nits` | `src/notifications/service/crud.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-publication-artifact-schema` | `src/db/migrations/001_init.ts; src/db/schema-` |
@@ -19800,7 +19779,6 @@ output is byte-identical for identical inputs.
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -20760,7 +20738,6 @@ output is byte-identical for identical inputs.
 | `BUG-auto-rotation-config-drift` | sibling | `epic-file-splitting` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `epic-http-protocol-features` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `epic-local-process-swarm` | `src/server/start.ts` |
-| `BUG-auto-rotation-config-drift` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `epic-reactive-actor-appearance` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `epic-recursive-self-improvement` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `epic-runtime-integrity-fail-safes` | `src/server/start.ts` |
@@ -21470,7 +21447,6 @@ output is byte-identical for identical inputs.
 | `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam` | sibling | `TASK-html-dedup-shared-partials` | `src/frontend/alpine/htmx.ts` |
 | `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam` | sibling | `TASK-htmx-ajax-request-helper` | `src/frontend/alpine/htmx.ts` |
 | `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
-| `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam` | sibling | `TASK-multi-session` | `src/frontend` |
 | `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam` | sibling | `TASK-nodeinfo-well-known-discovery-endpoints` | `src/routes` |
 | `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam` | sibling | `TASK-odysseus-manage-tool-parity-evaluation` | `src/services` |
@@ -22397,7 +22373,6 @@ output is byte-identical for identical inputs.
 | `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
 | `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null` | sibling | `TASK-message-seen-realtime-broadcast` | `src/routes/message-seen.ts` |
 | `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null` | sibling | `TASK-message-seen-state-service-route` | `src/routes/message-seen.ts` |
-| `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null` | sibling | `TASK-multi-session` | `src/frontend` |
 | `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null` | sibling | `TASK-professions-frontend` | `src/frontend` |
 | `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend` |
@@ -23956,7 +23931,6 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/assets/service/create.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-migration-tooling-for-legacy-to-rich-character-data` | `src/db/schema-character.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-prompt-mood-full-section` | `src/db/schema-character.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-prompt-nsfw-traits-section` | `src/db/schema-character.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-prompt-permanent-traits-section` | `src/db/schema-character.ts` |
@@ -24004,7 +23978,6 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `epic-narrative-publishing-workflows` | `src/assets/service/create.ts; src/db/schema-content.ts; src/db/schema-core.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -24672,7 +24645,6 @@ output is byte-identical for identical inputs.
 | `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d` | sibling | `TASK-tui-enabled-config-flag-never-read` | `src/config/schema-class/env-map.ts` |
 | `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d` | sibling | `epic-encryption-workflow` | `src/config/schema-class/env-map.ts` |
 | `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d` | sibling | `epic-local-process-swarm` | `src/config/load/safety.ts` |
-| `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d` | sibling | `epic-multi-session` | `src/config/load/safety.ts; src/config/schema-class/env-map.ts` |
 | `BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h` | sibling | `BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr` | `src/elysia-app.ts; src/middleware/csrf.integration.test.ts` |
 | `BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/elysia-app.ts` |
 | `BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h` | sibling | `BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop` | `src/elysia-app.ts` |
@@ -25448,7 +25420,6 @@ output is byte-identical for identical inputs.
 | `BUG-frontend-dead-csrf-bearer-header-machinery` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
 | `BUG-frontend-dead-csrf-bearer-header-machinery` | sibling | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | `src/frontend/fe-fetch.ts` |
 | `BUG-frontend-dead-csrf-bearer-header-machinery` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/frontend/fe-fetch.ts` |
-| `BUG-frontend-dead-csrf-bearer-header-machinery` | sibling | `TASK-multi-session` | `src/frontend` |
 | `BUG-frontend-dead-csrf-bearer-header-machinery` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `BUG-frontend-dead-csrf-bearer-header-machinery` | sibling | `TASK-professions-frontend` | `src/frontend` |
 | `BUG-frontend-dead-csrf-bearer-header-machinery` | sibling | `TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice` | `src/frontend/fe-fetch.ts` |
@@ -26337,7 +26308,6 @@ output is byte-identical for identical inputs.
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `epic-guest-access` | `src/middleware/auth/authenticate.ts` |
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `epic-http-protocol-features` | `src/server/start.ts` |
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `epic-local-process-swarm` | `src/config/load/safety.ts; src/config/sections/server.ts; src/server/start.ts` |
-| `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `epic-multi-session` | `src/config/load/safety.ts` |
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `epic-reactive-actor-appearance` | `src/server/start.ts` |
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `epic-recursive-self-improvement` | `src/server/start.ts` |
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `epic-runtime-integrity-fail-safes` | `src/server/start.ts` |
@@ -27360,7 +27330,6 @@ output is byte-identical for identical inputs.
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/001_init.ts` |
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `TASK-publication-artifact-schema` | `src/db/migrations/001_init.ts` |
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
@@ -27407,7 +27376,6 @@ output is byte-identical for identical inputs.
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `BUG-memory-audit-log-action-column-typed-string-not-union` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -28681,7 +28649,6 @@ output is byte-identical for identical inputs.
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `TASK-persona-lifecycle-contract` | `src/personas/convert.ts; src/personas/handlers.test.ts; src/personas/service.ts` |
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `TASK-persona-setdefault-getdefault-unwired-delete-or-wire` | `src/personas/service.ts` |
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
@@ -28713,7 +28680,6 @@ output is byte-identical for identical inputs.
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -29829,7 +29795,6 @@ output is byte-identical for identical inputs.
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `epic-file-splitting` | `src/server/start.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `epic-http-protocol-features` | `src/server/start.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `epic-local-process-swarm` | `src/server/start.ts` |
-| `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `epic-reactive-actor-appearance` | `src/server/start.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `epic-recursive-self-improvement` | `src/server/start.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `epic-runtime-integrity-fail-safes` | `src/server/start.ts` |
@@ -30862,7 +30827,6 @@ output is byte-identical for identical inputs.
 | `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th` | sibling | `TASK-fb3-frontend-hub-index-ovr-subsystems` | `src/frontend/pages` |
 | `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th` | sibling | `TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx` | `src/frontend/pages` |
 | `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
-| `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th` | sibling | `TASK-multi-session` | `src/frontend` |
 | `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th` | sibling | `TASK-personas-impersonation-plan-docs-bookkeeping-sweep` | `src/frontend/alpine` |
 | `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th` | sibling | `TASK-professions-frontend` | `src/frontend` |
@@ -32587,7 +32551,6 @@ output is byte-identical for identical inputs.
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `TASK-rpg-skill-combos-and-synergies` | `src/rpg/service/character-stats.ts` |
@@ -32619,7 +32582,6 @@ output is byte-identical for identical inputs.
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -33378,7 +33340,6 @@ output is byte-identical for identical inputs.
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-migration-tooling-for-legacy-to-rich-character-data` | `src/characters/spec/character.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-nsfw-rating-enforcement` | `src/routes/characters/update.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-outfit-change-hook` | `src/config/sections/templates.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-prompt-template-registry` | `src/config/sections/templates.ts` |
@@ -33427,7 +33388,6 @@ output is byte-identical for identical inputs.
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-lore-knowledge` | `src/routes/actor-lore-entries.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -33578,7 +33538,6 @@ output is byte-identical for identical inputs.
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `TASK-raise-rpg-battle-social-skills-progression-and-replayability` | `src/rpg/skills/service/progression.ts` |
@@ -33618,7 +33577,6 @@ output is byte-identical for identical inputs.
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-mechanics-governance` | `src/rpg/service/world-gate.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -33671,7 +33629,6 @@ output is byte-identical for identical inputs.
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `TASK-rpg-skill-combos-and-synergies` | `src/rpg/service/character-stats.ts` |
@@ -33705,7 +33662,6 @@ output is byte-identical for identical inputs.
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -34138,7 +34094,6 @@ output is byte-identical for identical inputs.
 | `FEAT-message-translations-chat-first` | sibling | `TASK-middleware-request-id-elysia-derive` | `src/routes/messages/reply.ts` |
 | `FEAT-message-translations-chat-first` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
 | `FEAT-message-translations-chat-first` | sibling | `TASK-mood-shift-delta-tuning-word-boundary` | `src/generation/auto-gen/post-store.ts` |
-| `FEAT-message-translations-chat-first` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `FEAT-message-translations-chat-first` | sibling | `TASK-outfit-change-multi-actor-name-resolution` | `src/generation/auto-gen/post-store.ts` |
 | `FEAT-message-translations-chat-first` | sibling | `TASK-per-chat-auto-translation-layer` | `src/chat/auto-translate.ts; src/routes/messages/reply.ts` |
 | `FEAT-message-translations-chat-first` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/001_init.ts` |
@@ -34193,7 +34148,6 @@ output is byte-identical for identical inputs.
 | `FEAT-message-translations-chat-first` | sibling | `epic-middleware-request-lifecycle` | `src/routes/messages/reply.ts` |
 | `FEAT-message-translations-chat-first` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `FEAT-message-translations-chat-first` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `FEAT-message-translations-chat-first` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `FEAT-message-translations-chat-first` | sibling | `epic-multilingual-carriage` | `src/chat/auto-translate.ts; src/db/schema-core.ts; src/generation/translator-role.ts; src/routes/messages/read.ts` |
 | `FEAT-message-translations-chat-first` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `FEAT-message-translations-chat-first` | sibling | `epic-output-control-transforms` | `src/chat/auto-translate.ts; src/db/schema-core.ts; src/generation/translator-role.ts` |
@@ -36456,7 +36410,6 @@ output is byte-identical for identical inputs.
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts; src/test-utils/insert-helpers.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/test-utils/insert-helpers.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-reconcile-achievement-unlock-sources` | `src/test-utils/insert-helpers.ts` |
@@ -36500,7 +36453,6 @@ output is byte-identical for identical inputs.
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -36584,7 +36536,6 @@ output is byte-identical for identical inputs.
 | `TASK-actor-item-service` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `TASK-actor-item-service` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-actor-item-service` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-actor-item-service` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-actor-item-service` | sibling | `TASK-npc-inventory-frontend` | `src/routes/actor-items.ts` |
 | `TASK-actor-item-service` | sibling | `TASK-persist-loot-drops` | `src/battle/items-integration.ts` |
 | `TASK-actor-item-service` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
@@ -36621,7 +36572,6 @@ output is byte-identical for identical inputs.
 | `TASK-actor-item-service` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-actor-item-service` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-actor-item-service` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-actor-item-service` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-actor-item-service` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-actor-item-service` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-actor-item-service` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -36761,7 +36711,6 @@ output is byte-identical for identical inputs.
 | `TASK-actors-data-versioning` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `TASK-actors-data-versioning` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-actors-data-versioning` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-actors-data-versioning` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-actors-data-versioning` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-actors-data-versioning` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-actors-data-versioning` | sibling | `TASK-task-i18n-workflow-hardening` | `src/db/schema-core.ts` |
@@ -36790,7 +36739,6 @@ output is byte-identical for identical inputs.
 | `TASK-actors-data-versioning` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-actors-data-versioning` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-actors-data-versioning` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-actors-data-versioning` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-actors-data-versioning` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-actors-data-versioning` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-actors-data-versioning` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -36871,7 +36819,6 @@ output is byte-identical for identical inputs.
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `TASK-rigged-model-buffer-render` | `src/views/chat.html` |
@@ -36912,7 +36859,6 @@ output is byte-identical for identical inputs.
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -36937,7 +36883,6 @@ output is byte-identical for identical inputs.
 | `TASK-add-federation-to-the-config-domains-list-so-config-federati` | sibling | `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server` | `src/config/schema-class/env-map.ts` |
 | `TASK-add-federation-to-the-config-domains-list-so-config-federati` | sibling | `TASK-tui-enabled-config-flag-never-read` | `src/config/schema-class/env-map.ts` |
 | `TASK-add-federation-to-the-config-domains-list-so-config-federati` | sibling | `epic-encryption-workflow` | `src/config/schema-class/env-map.ts` |
-| `TASK-add-federation-to-the-config-domains-list-so-config-federati` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-add-heatphase-state-machine-for-character-heat-cycle-current` | sibling | `TASK-add-missing-rpg-module-barrels` | `src/db/enums-character/nsfw.ts` |
 | `TASK-add-heatphase-state-machine-for-character-heat-cycle-current` | sibling | `TASK-add-nsfwencounterstatus-state-machine-for-nsfw-encounters-st` | `src/db/enums-character/nsfw.ts` |
 | `TASK-add-heatphase-state-machine-for-character-heat-cycle-current` | sibling | `TASK-nsfw-encounter-system` | `src/db/enums-character/nsfw.ts` |
@@ -37367,9 +37312,7 @@ output is byte-identical for identical inputs.
 | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | sibling | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | `src/middleware/auth.test.ts` |
 | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | sibling | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | `src/middleware/auth.test.ts` |
 | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | sibling | `TASK-input-hardening-batch` | `src/middleware/auth/token.ts` |
-| `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | sibling | `TASK-multi-session` | `src/routes/sessions.test.ts` |
 | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | sibling | `epic-auth-channel-provisioning` | `src/middleware/auth/token.ts` |
-| `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | sibling | `epic-multi-session` | `src/routes/sessions.test.ts` |
 | `TASK-adopt-bun-randomuuidv7-for-time-sortable-ids` | sibling | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | `src/db/seed.ts` |
 | `TASK-adopt-bun-randomuuidv7-for-time-sortable-ids` | sibling | `TASK-chat-feature-notes-shadow-carriage` | `src/chat/proactive/db-helpers.ts` |
 | `TASK-adopt-bun-randomuuidv7-for-time-sortable-ids` | sibling | `TASK-middleware-request-id-elysia-derive` | `src/middleware/request-id.integration.test.ts` |
@@ -38931,7 +38874,6 @@ output is byte-identical for identical inputs.
 | `TASK-asymmetric-key-pairs-followup` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs-followup` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs-followup` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-asymmetric-key-pairs-followup` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs-followup` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs-followup` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs-followup` | sibling | `TASK-task-i18n-workflow-hardening` | `src/db/schema-core.ts` |
@@ -38961,7 +38903,6 @@ output is byte-identical for identical inputs.
 | `TASK-asymmetric-key-pairs-followup` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs-followup` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs-followup` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-asymmetric-key-pairs-followup` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs-followup` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs-followup` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs-followup` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -39004,7 +38945,6 @@ output is byte-identical for identical inputs.
 | `TASK-asymmetric-key-pairs` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-asymmetric-key-pairs` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs` | sibling | `TASK-task-i18n-workflow-hardening` | `src/db/schema-core.ts` |
@@ -39036,7 +38976,6 @@ output is byte-identical for identical inputs.
 | `TASK-asymmetric-key-pairs` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-asymmetric-key-pairs` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-asymmetric-key-pairs` | sibling | `epic-non-standard-browser-crypto` | `src/frontend/browser.ts` |
@@ -39372,7 +39311,6 @@ output is byte-identical for identical inputs.
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `TASK-middleware-idempotency-wire-into-elysia` | `src/elysia-app.ts` |
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `TASK-middleware-request-id-elysia-derive` | `src/elysia-app.ts` |
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `TASK-rate-limit-coverage-expansion` | `src/routes/auth/shared.ts` |
@@ -39428,7 +39366,6 @@ output is byte-identical for identical inputs.
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `epic-middleware-request-lifecycle` | `src/elysia-app.ts` |
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c` | sibling | `epic-openapi-reference` | `src/elysia-app.ts` |
@@ -39448,7 +39385,6 @@ output is byte-identical for identical inputs.
 | `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/middleware/auth/authenticate.ts` |
 | `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `TASK-guest-rate-limiting-audit-logging-for-guest-reads` | `src/routes/auth/shared.ts` |
 | `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `TASK-isolate-auth-cookies-per-local-instance-so-two-dev-servers-d` | `src/routes/auth/shared.ts` |
-| `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `TASK-multi-session` | `src/routes/sessions-switch.ts; src/routes/sessions.ts` |
 | `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `TASK-rate-limit-coverage-expansion` | `src/routes/auth/shared.ts` |
 | `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `TASK-register-username-race-and-rate-limiter-multi-instance-gap` | `src/routes/auth/register.ts` |
 | `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `TASK-sessions-api-routes` | `src/routes/auth/session.ts` |
@@ -39457,7 +39393,7 @@ output is byte-identical for identical inputs.
 | `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `epic-frontend-login` | `src/routes/auth/register.ts; src/routes/auth/session.ts; src/routes/auth/shared.ts` |
 | `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `epic-guest-access` | `src/middleware/auth/authenticate.ts; src/routes/auth/shared.ts` |
 | `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `epic-hidden-carriage-context` | `src/utils.ts` |
-| `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `epic-multi-session` | `src/routes/sessions-switch.ts; src/routes/sessions.ts` |
+| `TASK-auth-session-hardening-batch-from-2026-10-04-review` | sibling | `epic-multi-session` | `src/routes/sessions.ts` |
 | `TASK-author-suggestion-resolution-surface` | sibling | `TASK-book-outline-generation-workflow` | `src/assistant/commands/workflow.ts` |
 | `TASK-author-suggestion-resolution-surface` | sibling | `TASK-character-stat-allocation-frontend-modal-and-edit-integration` | `src/frontend/alpine/index.ts` |
 | `TASK-author-suggestion-resolution-surface` | sibling | `TASK-comic-caption-bubble-layout` | `src/routes/views/escape-html.ts` |
@@ -39552,7 +39488,6 @@ output is byte-identical for identical inputs.
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `TASK-restart-required-indicator-on-system-config-changes` | `src/admin/config.ts` |
@@ -39587,7 +39522,6 @@ output is byte-identical for identical inputs.
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-autonomy-rate-governor-for-llm-actors` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -40051,7 +39985,6 @@ output is byte-identical for identical inputs.
 | `TASK-avatar-render-target-discriminator` | sibling | `TASK-migration-tooling-for-legacy-to-rich-character-data` | `src/db/schema-character.ts` |
 | `TASK-avatar-render-target-discriminator` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
 | `TASK-avatar-render-target-discriminator` | sibling | `TASK-msg-forward-across-chats` | `src/components/chat/message-list.html` |
-| `TASK-avatar-render-target-discriminator` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-avatar-render-target-discriminator` | sibling | `TASK-prompt-mood-full-section` | `src/db/schema-character.ts` |
 | `TASK-avatar-render-target-discriminator` | sibling | `TASK-prompt-nsfw-traits-section` | `src/db/schema-character.ts` |
 | `TASK-avatar-render-target-discriminator` | sibling | `TASK-prompt-permanent-traits-section` | `src/db/schema-character.ts` |
@@ -40099,7 +40032,6 @@ output is byte-identical for identical inputs.
 | `TASK-avatar-render-target-discriminator` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-avatar-render-target-discriminator` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-avatar-render-target-discriminator` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-avatar-render-target-discriminator` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-avatar-render-target-discriminator` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-avatar-render-target-discriminator` | sibling | `epic-narrative-publishing-workflows` | `src/db/enums-content.ts; src/db/schema-core.ts; src/frontend/vn/sprite-stage.ts` |
 | `TASK-avatar-render-target-discriminator` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -40977,7 +40909,6 @@ output is byte-identical for identical inputs.
 | `TASK-character-creator-prerogative` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-character-creator-prerogative` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
 | `TASK-character-creator-prerogative` | sibling | `TASK-mood-core` | `src/views/character-editor.html` |
-| `TASK-character-creator-prerogative` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-character-creator-prerogative` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-character-creator-prerogative` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-character-creator-prerogative` | sibling | `TASK-rigged-model-buffer-render` | `src/routes/characters.ts` |
@@ -41010,7 +40941,6 @@ output is byte-identical for identical inputs.
 | `TASK-character-creator-prerogative` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-character-creator-prerogative` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-character-creator-prerogative` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-character-creator-prerogative` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-character-creator-prerogative` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-character-creator-prerogative` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-character-creator-prerogative` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -41098,7 +41028,6 @@ output is byte-identical for identical inputs.
 | `TASK-character-multi-avatar` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-character-multi-avatar` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
 | `TASK-character-multi-avatar` | sibling | `TASK-mood-core` | `src/characters/avatar-selector.ts; src/characters/mood.ts; src/views/character-editor.html` |
-| `TASK-character-multi-avatar` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-character-multi-avatar` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-character-multi-avatar` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-character-multi-avatar` | sibling | `TASK-rigged-model-buffer-render` | `src/views/chat.html` |
@@ -41136,7 +41065,6 @@ output is byte-identical for identical inputs.
 | `TASK-character-multi-avatar` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-character-multi-avatar` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-character-multi-avatar` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-character-multi-avatar` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-character-multi-avatar` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-character-multi-avatar` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-character-multi-avatar` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -41176,7 +41104,6 @@ output is byte-identical for identical inputs.
 | `TASK-character-personality-integrity` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-character-personality-integrity` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
 | `TASK-character-personality-integrity` | sibling | `TASK-mood-core` | `src/characters/resolver.ts` |
-| `TASK-character-personality-integrity` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-character-personality-integrity` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-character-personality-integrity` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-character-personality-integrity` | sibling | `TASK-rigged-model-buffer-render` | `src/routes/characters.ts` |
@@ -41209,7 +41136,6 @@ output is byte-identical for identical inputs.
 | `TASK-character-personality-integrity` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-character-personality-integrity` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-character-personality-integrity` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-character-personality-integrity` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-character-personality-integrity` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-character-personality-integrity` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-character-personality-integrity` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -41454,7 +41380,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-item-side-outfit-change-trigger` | `src/characters/services/wardrobe/message-avatar.ts; src/characters/services/wardrobe/resolve.ts; src/characters/services/wardrobe/selection-ladder.ts; src/routes/messages/read.ts` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/routes/messages/read.ts` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-messages-outfit-id-column` | `src/characters/services/wardrobe/resolve.ts; src/frontend/alpine/mood/avatars.ts` |
-| `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-multi-session` | `src/frontend` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-professions-frontend` | `src/frontend` |
 | `TASK-chat-avatar-resolver-outfit-aware` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend` |
@@ -41541,7 +41466,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-composer-gif-picker` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/frontend` |
 | `TASK-chat-composer-gif-picker` | sibling | `TASK-equipment-stat-preview` | `src/frontend` |
 | `TASK-chat-composer-gif-picker` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
-| `TASK-chat-composer-gif-picker` | sibling | `TASK-multi-session` | `src/frontend` |
 | `TASK-chat-composer-gif-picker` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `TASK-chat-composer-gif-picker` | sibling | `TASK-professions-frontend` | `src/frontend` |
 | `TASK-chat-composer-gif-picker` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend` |
@@ -41581,7 +41505,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-context-preference-per-scope` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-chat-context-preference-per-scope` | sibling | `TASK-middleware-idempotency-wire-into-elysia` | `src/config/schema.ts` |
 | `TASK-chat-context-preference-per-scope` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-chat-context-preference-per-scope` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-chat-context-preference-per-scope` | sibling | `TASK-prompt-template-registry` | `src/config/schema.ts` |
 | `TASK-chat-context-preference-per-scope` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-chat-context-preference-per-scope` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
@@ -41629,7 +41552,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-context-preference-per-scope` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-chat-context-preference-per-scope` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-chat-context-preference-per-scope` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-chat-context-preference-per-scope` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-chat-context-preference-per-scope` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-chat-context-preference-per-scope` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-chat-context-preference-per-scope` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -42340,7 +42262,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-transfer-location` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts; src/db/schema-manifest.ts` |
 | `TASK-chat-transfer-location` | sibling | `TASK-migration-sequential-finalize-and-renumber-policy` | `src/db/schema-manifest.ts` |
 | `TASK-chat-transfer-location` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-chat-transfer-location` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-chat-transfer-location` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/chat/transition-classifier.ts` |
 | `TASK-chat-transfer-location` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/chat/transition-classifier.ts` |
 | `TASK-chat-transfer-location` | sibling | `TASK-party-aux-transition` | `src/chat/transition-classifier.ts` |
@@ -42415,7 +42336,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-transfer-location` | sibling | `epic-message-seen-state` | `src/chat/service.ts` |
 | `TASK-chat-transfer-location` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-chat-transfer-location` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts; src/db/schema-manifest.ts` |
-| `TASK-chat-transfer-location` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-chat-transfer-location` | sibling | `epic-multilingual-carriage` | `src/chat/service/read.ts; src/db/schema-core.ts` |
 | `TASK-chat-transfer-location` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-chat-transfer-location` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -42589,7 +42509,6 @@ output is byte-identical for identical inputs.
 | `TASK-cleanup-banned-types-console-logging-magic-strings` | sibling | `epic-config-templates` | `src/prompts/registry.ts` |
 | `TASK-cleanup-banned-types-console-logging-magic-strings` | sibling | `epic-context-injection-templates` | `src/prompts/registry.ts` |
 | `TASK-cleanup-banned-types-console-logging-magic-strings` | sibling | `epic-local-process-swarm` | `src/config/load/safety.ts` |
-| `TASK-cleanup-banned-types-console-logging-magic-strings` | sibling | `epic-multi-session` | `src/config/load/safety.ts` |
 | `TASK-code-quality` | sibling | `TASK-config-gallery-attachment-idempotent` | `src/config/schema.ts` |
 | `TASK-code-quality` | sibling | `TASK-conversation-branching` | `src/routes/messages.ts` |
 | `TASK-code-quality` | sibling | `TASK-emotions-avatar-edit-model` | `src/config/schema.ts` |
@@ -42955,7 +42874,6 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-middleware-idempotency-wire-into-elysia` | `src/elysia-app.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-middleware-request-id-elysia-derive` | `src/elysia-app.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-recursive-self-improvement-agent-api-router-and-token-scope-` | `src/elysia-app.ts` |
@@ -43015,7 +42933,6 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-first-class-workflow-library` | sibling | `epic-middleware-request-lifecycle` | `src/elysia-app.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-comfyui-first-class-workflow-library` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `epic-openapi-reference` | `src/elysia-app.ts` |
@@ -43450,7 +43367,6 @@ output is byte-identical for identical inputs.
 | `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/frontend` |
 | `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e` | sibling | `TASK-equipment-stat-preview` | `src/frontend` |
 | `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
-| `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e` | sibling | `TASK-multi-session` | `src/frontend` |
 | `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e` | sibling | `TASK-professions-frontend` | `src/frontend` |
 | `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend` |
@@ -43904,7 +43820,6 @@ output is byte-identical for identical inputs.
 | `TASK-config-examples-and-domain-file-support-for-uncovered-sectio` | sibling | `TASK-tui-enabled-config-flag-never-read` | `src/config/schema-class/env-map.ts` |
 | `TASK-config-examples-and-domain-file-support-for-uncovered-sectio` | sibling | `epic-configs-path-resolution` | `src/config/load/domain.ts` |
 | `TASK-config-examples-and-domain-file-support-for-uncovered-sectio` | sibling | `epic-encryption-workflow` | `src/config/schema-class/env-map.ts` |
-| `TASK-config-examples-and-domain-file-support-for-uncovered-sectio` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-config-gallery-attachment-idempotent` | sibling | `TASK-emotions-avatar-edit-model` | `src/assets/service.ts; src/config/schema.ts` |
 | `TASK-config-gallery-attachment-idempotent` | sibling | `TASK-encryption-asset-encryption-update` | `src/assets/service.ts` |
 | `TASK-config-gallery-attachment-idempotent` | sibling | `TASK-encryption-asset-encryption` | `src/assets/service.ts` |
@@ -44164,7 +44079,6 @@ output is byte-identical for identical inputs.
 | `TASK-cors-middleware` | sibling | `epic-local-process-swarm` | `src/config/load/safety.ts; src/elysia-app.ts` |
 | `TASK-cors-middleware` | sibling | `epic-lora-discovery-application` | `src/elysia-app.ts` |
 | `TASK-cors-middleware` | sibling | `epic-middleware-request-lifecycle` | `src/elysia-app.ts; src/server/handler.ts` |
-| `TASK-cors-middleware` | sibling | `epic-multi-session` | `src/config/load/safety.ts` |
 | `TASK-cors-middleware` | sibling | `epic-openapi-reference` | `src/elysia-app.ts` |
 | `TASK-cors-middleware` | sibling | `epic-realtime-transports` | `src/elysia-app.ts` |
 | `TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-` | sibling | `TASK-map-battle-equipment` | `src/routes/battle/equipment.ts` |
@@ -44203,7 +44117,6 @@ output is byte-identical for identical inputs.
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-keyboard-navigation` | `src/frontend/alpine/shortcuts.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | `src/frontend/fe-fetch.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/frontend/fe-fetch.ts` |
-| `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-multi-session` | `src/frontend` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/frontend/alpine/shortcuts-listener.test.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-professions-frontend` | `src/frontend` |
@@ -44236,7 +44149,6 @@ output is byte-identical for identical inputs.
 | `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
 | `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature` | sibling | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | `src/frontend/fe-fetch.ts` |
 | `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/frontend/fe-fetch.ts` |
-| `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature` | sibling | `TASK-multi-session` | `src/frontend` |
 | `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature` | sibling | `TASK-professions-frontend` | `src/frontend` |
 | `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature` | sibling | `TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice` | `src/frontend/fe-fetch.ts` |
@@ -44274,7 +44186,6 @@ output is byte-identical for identical inputs.
 | `TASK-coverage-waivers-for-3-modules-below-80-floor` | sibling | `TASK-message-seen-state-schema` | `src/test-utils/insert-helpers.ts` |
 | `TASK-coverage-waivers-for-3-modules-below-80-floor` | sibling | `TASK-messages-outfit-id-column` | `src/test-utils/insert-helpers.ts` |
 | `TASK-coverage-waivers-for-3-modules-below-80-floor` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/test-utils/insert-helpers.ts` |
-| `TASK-coverage-waivers-for-3-modules-below-80-floor` | sibling | `TASK-multi-session` | `src/frontend` |
 | `TASK-coverage-waivers-for-3-modules-below-80-floor` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `TASK-coverage-waivers-for-3-modules-below-80-floor` | sibling | `TASK-professions-frontend` | `src/frontend` |
 | `TASK-coverage-waivers-for-3-modules-below-80-floor` | sibling | `TASK-reconcile-achievement-unlock-sources` | `src/test-utils/insert-helpers.ts` |
@@ -44973,7 +44884,6 @@ output is byte-identical for identical inputs.
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `epic-game-frontend-scenes` | `src/transport/ws.ts` |
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `epic-http-protocol-features` | `src/server/start.ts` |
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `epic-local-process-swarm` | `src/server/start.ts` |
-| `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `epic-reactive-actor-appearance` | `src/server/start.ts` |
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `epic-realtime-transports` | `src/config/sections/transport.ts; src/transport/ws.ts` |
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `epic-recursive-self-improvement` | `src/server/start.ts` |
@@ -44995,7 +44905,6 @@ output is byte-identical for identical inputs.
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `epic-cli-tooling-optique` | `src/config/migrate-config.ts` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `epic-encryption-workflow` | `src/config/schema-class/env-map.ts` |
 | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `epic-logging-telemetry` | `src/config/generate-schema.ts` |
-| `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep` | sibling | `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` | `src/assistant/prompt/sections/character-traits.ts; src/assistant/prompt/sections/nsfw-context.ts; src/chat/folders.ts; src/story/turn-strategies.ts` |
 | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep` | sibling | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | `src/characters/index.ts; src/routes/generation/comparison-store.ts; src/routes/rpg/handler.ts` |
 | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep` | sibling | `TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-` | `src/crypto/activitypub-keys.ts` |
@@ -45081,7 +44990,6 @@ output is byte-identical for identical inputs.
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-message-reactions-in-out-context` | `src/components/chat/message-list.html` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-migrate-text-surfaces-to-shared-primitives` | `src/components/chat/message-list.html` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-msg-forward-across-chats` | `src/components/chat/message-list.html` |
-| `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-multi-session` | `src/components; src/frontend` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-nodeinfo-well-known-discovery-endpoints` | `src/routes` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-npc-inventory-frontend` | `src/frontend; src/views/characters.html` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-professions-frontend` | `src/frontend; src/views/characters.html` |
@@ -45213,7 +45121,6 @@ output is byte-identical for identical inputs.
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `TASK-professions-service-routes` | `src/routes/rpg/index.ts` |
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
@@ -45254,7 +45161,6 @@ output is byte-identical for identical inputs.
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `epic-logging` | `src/db/schema-core.ts; src/routes/admin/aux-telemetry.ts` |
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts; src/routes/import/handle.ts` |
 | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -45338,7 +45244,6 @@ output is byte-identical for identical inputs.
 | `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | sibling | `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server` | `src/config/schema-class/env-map.ts` |
 | `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | sibling | `TASK-tui-enabled-config-flag-never-read` | `src/config/schema-class/env-map.ts` |
 | `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | sibling | `epic-encryption-workflow` | `src/config/schema-class/env-map.ts` |
-| `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-docs-drift-api` | sibling | `TASK-tui-fire-and-forget-void-without-catch` | `src/tui/app-keys.ts` |
 | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
@@ -45534,7 +45439,6 @@ output is byte-identical for identical inputs.
 | `TASK-e2ee-receiver-wiring` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/db/schema.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts` |
 | `TASK-e2ee-receiver-wiring` | sibling | `TASK-migration-sequential-finalize-and-renumber-policy` | `src/db/schema-manifest.ts; src/validation/db-schemas.ts` |
 | `TASK-e2ee-receiver-wiring` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-e2ee-receiver-wiring` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-e2ee-receiver-wiring` | sibling | `TASK-nsfw-gate-moderation-events` | `src/db/schema.ts` |
 | `TASK-e2ee-receiver-wiring` | sibling | `TASK-prompt-nsfw-traits-section` | `src/db/schema.ts` |
 | `TASK-e2ee-receiver-wiring` | sibling | `TASK-property-test-the-db-schemas-insert-read-round-trip` | `src/validation/db-schemas.ts` |
@@ -45591,7 +45495,6 @@ output is byte-identical for identical inputs.
 | `TASK-e2ee-receiver-wiring` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-e2ee-receiver-wiring` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-e2ee-receiver-wiring` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts; src/db/schema-manifest.ts` |
-| `TASK-e2ee-receiver-wiring` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-e2ee-receiver-wiring` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-e2ee-receiver-wiring` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-e2ee-receiver-wiring` | sibling | `epic-non-standard-browser-crypto` | `src/frontend/browser.ts` |
@@ -45804,7 +45707,6 @@ output is byte-identical for identical inputs.
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-mood-core` | `src/frontend/alpine/mood.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-mood-shift-delta-tuning-word-boundary` | `src/generation/hooks/emotion-hook.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-msg-forward-across-chats` | `src/components/chat/message-list.html` |
-| `TASK-emotion-avatar-message-binding` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-nsfw-rating-schema-consent-state-machine` | `src/generation/auto-gen.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-personas-impersonation-plan-docs-bookkeeping-sweep` | `src/chat/service.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
@@ -45850,7 +45752,6 @@ output is byte-identical for identical inputs.
 | `TASK-emotion-avatar-message-binding` | sibling | `epic-message-seen-state` | `src/chat/service.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts; src/db/schema-sync.test.ts` |
-| `TASK-emotion-avatar-message-binding` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `epic-nsfw-capabilities` | `src/generation/auto-gen.ts` |
@@ -45881,7 +45782,6 @@ output is byte-identical for identical inputs.
 | `TASK-emotion-intent-detection` | sibling | `TASK-migration-tooling-for-legacy-to-rich-character-data` | `src/db/schema-character.ts` |
 | `TASK-emotion-intent-detection` | sibling | `TASK-mood-core` | `src/characters/avatar-selector.ts; src/characters/mood.ts` |
 | `TASK-emotion-intent-detection` | sibling | `TASK-mood-shift-delta-tuning-word-boundary` | `src/generation/hooks/emotion-hook.ts` |
-| `TASK-emotion-intent-detection` | sibling | `TASK-multi-session` | `src/views/settings.html` |
 | `TASK-emotion-intent-detection` | sibling | `TASK-nsfw-gate-moderation-events` | `src/db/schema.ts` |
 | `TASK-emotion-intent-detection` | sibling | `TASK-prompt-mood-full-section` | `src/db/schema-character.ts` |
 | `TASK-emotion-intent-detection` | sibling | `TASK-prompt-nsfw-traits-section` | `src/db/schema-character.ts; src/db/schema.ts` |
@@ -45911,7 +45811,6 @@ output is byte-identical for identical inputs.
 | `TASK-emotion-intent-detection` | sibling | `epic-emotion-avatar-message-binding` | `src/generation/hooks/emotion-hook.ts` |
 | `TASK-emotion-intent-detection` | sibling | `epic-encryption-workflow` | `src/views/settings.html` |
 | `TASK-emotion-intent-detection` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
-| `TASK-emotion-intent-detection` | sibling | `epic-multi-session` | `src/views/settings.html` |
 | `TASK-emotion-intent-detection` | sibling | `epic-reactive-actor-appearance` | `src/db/schema-character.ts` |
 | `TASK-emotion-intent-detection` | sibling | `epic-shared-schemas` | `src/db/enums-character.ts` |
 | `TASK-emotion-intent-detection` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
@@ -45948,7 +45847,6 @@ output is byte-identical for identical inputs.
 | `TASK-emotions-avatar-edit-model` | sibling | `TASK-message-seen-state-schema` | `src/db/schema-` |
 | `TASK-emotions-avatar-edit-model` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/db/schema-` |
 | `TASK-emotions-avatar-edit-model` | sibling | `TASK-middleware-idempotency-wire-into-elysia` | `src/config/schema.ts` |
-| `TASK-emotions-avatar-edit-model` | sibling | `TASK-multi-session` | `src/views/settings.html` |
 | `TASK-emotions-avatar-edit-model` | sibling | `TASK-npc-inventory-frontend` | `src/views/characters.html` |
 | `TASK-emotions-avatar-edit-model` | sibling | `TASK-professions-frontend` | `src/views/characters.html` |
 | `TASK-emotions-avatar-edit-model` | sibling | `TASK-prompt-template-registry` | `src/config/schema.ts` |
@@ -46003,7 +45901,6 @@ output is byte-identical for identical inputs.
 | `TASK-emotions-avatar-edit-model` | sibling | `epic-llm-request-scheduler` | `src/generation/providers/registry.ts` |
 | `TASK-emotions-avatar-edit-model` | sibling | `epic-local-process-swarm` | `src/generation/providers/registry.ts` |
 | `TASK-emotions-avatar-edit-model` | sibling | `epic-lora-discovery-application` | `src/generation/image-gen-route.ts` |
-| `TASK-emotions-avatar-edit-model` | sibling | `epic-multi-session` | `src/views/settings.html` |
 | `TASK-emotions-avatar-edit-model` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-` |
 | `TASK-emotions-avatar-edit-model` | sibling | `epic-platform-integrations` | `src/config/schema.ts; src/generation/providers/registry.ts` |
 | `TASK-emotions-avatar-edit-model` | sibling | `epic-provider-plugin-ecosystem` | `src/generation/providers/registry.ts` |
@@ -46217,7 +46114,6 @@ output is byte-identical for identical inputs.
 | `TASK-encryption-key-management-ui` | sibling | `TASK-i18n-settings-wiring` | `src/frontend/alpine/settings.ts; src/views/settings.html` |
 | `TASK-encryption-key-management-ui` | sibling | `TASK-i18n-template-strings` | `src/views/settings.html` |
 | `TASK-encryption-key-management-ui` | sibling | `TASK-info-bubbles` | `src/views/settings.html` |
-| `TASK-encryption-key-management-ui` | sibling | `TASK-multi-session` | `src/views/settings.html` |
 | `TASK-encryption-key-management-ui` | sibling | `TASK-response-length-control` | `src/frontend/alpine/settings.ts` |
 | `TASK-encryption-key-management-ui` | sibling | `TASK-restart-required-indicator-on-system-config-changes` | `src/views/settings.html` |
 | `TASK-encryption-key-management-ui` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/components/key-management.html` |
@@ -46225,7 +46121,7 @@ output is byte-identical for identical inputs.
 | `TASK-encryption-key-management-ui` | sibling | `epic-encryption-workflow` | `src/components/settings/key-management.html; src/crypto/actor-keys.ts; src/crypto/smk.ts; src/frontend/alpine/key-management.ts; src/routes/key-management.ts; src/routes/message-encryption.ts; src/views/settings.html` |
 | `TASK-encryption-key-management-ui` | sibling | `epic-frontend-encryption` | `src/components/key-management.html` |
 | `TASK-encryption-key-management-ui` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
-| `TASK-encryption-key-management-ui` | sibling | `epic-multi-session` | `src/views/settings.html` |
+| `TASK-encryption-key-management-ui` | sibling | `epic-multi-session` | `src/frontend/alpine/settings.ts` |
 | `TASK-encryption-key-management-ui` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
 | `TASK-encryption-key-rotation` | sibling | `TASK-encryption-wire-message-pipeline` | `src/crypto/chat-keys.ts; src/db/schema-chats.ts; src/routes/chats.ts` |
 | `TASK-encryption-key-rotation` | sibling | `TASK-epic17-encryption-e2e-expansion` | `src/crypto/actor-keys.ts; src/crypto/chat-keys.ts; src/crypto/key-rotation.ts` |
@@ -46371,6 +46267,7 @@ output is byte-identical for identical inputs.
 | `TASK-epic11-admin-settings-reconciliation` | sibling | `epic-frontend-admin` | `src/frontend/alpine/admin-users.ts; src/frontend/alpine/admin.ts` |
 | `TASK-epic11-admin-settings-reconciliation` | sibling | `epic-frontend-settings` | `src/components/modals/settings.html` |
 | `TASK-epic11-admin-settings-reconciliation` | sibling | `epic-hidden-carriage-context` | `src/components/chat/chat-settings-modal.html; src/frontend/alpine/chat-settings.ts` |
+| `TASK-epic11-admin-settings-reconciliation` | sibling | `epic-multi-session` | `src/frontend/alpine/settings.ts` |
 | `TASK-epic11-admin-settings-reconciliation` | sibling | `epic-narrative-publishing-workflows` | `src/components/modals/settings.html` |
 | `TASK-epic11-admin-settings-reconciliation` | sibling | `epic-terminal-ui` | `src/frontend/alpine/admin-system.ts` |
 | `TASK-epic14-import-export-reconciliation` | sibling | `TASK-file-split-routes` | `src/routes/characters.ts` |
@@ -46426,7 +46323,6 @@ output is byte-identical for identical inputs.
 | `TASK-equipment-stat-preview` | sibling | `TASK-inventory-alpine` | `src/frontend/alpine/inventory.ts` |
 | `TASK-equipment-stat-preview` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
 | `TASK-equipment-stat-preview` | sibling | `TASK-map-battle-equipment` | `src/battle/items-integration.ts` |
-| `TASK-equipment-stat-preview` | sibling | `TASK-multi-session` | `src/frontend` |
 | `TASK-equipment-stat-preview` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `TASK-equipment-stat-preview` | sibling | `TASK-persist-loot-drops` | `src/battle/items-integration.ts` |
 | `TASK-equipment-stat-preview` | sibling | `TASK-professions-frontend` | `src/frontend` |
@@ -46463,13 +46359,11 @@ output is byte-identical for identical inputs.
 | `TASK-export-frontend-progress` | sibling | `TASK-i18n-settings-wiring` | `src/views/settings.html` |
 | `TASK-export-frontend-progress` | sibling | `TASK-i18n-template-strings` | `src/views/settings.html` |
 | `TASK-export-frontend-progress` | sibling | `TASK-info-bubbles` | `src/views/settings.html` |
-| `TASK-export-frontend-progress` | sibling | `TASK-multi-session` | `src/views/settings.html` |
 | `TASK-export-frontend-progress` | sibling | `TASK-publication-export-formats` | `src/frontend/alpine/export-progress.ts` |
 | `TASK-export-frontend-progress` | sibling | `TASK-restart-required-indicator-on-system-config-changes` | `src/views/settings.html` |
 | `TASK-export-frontend-progress` | sibling | `TASK-thinking-tag-context-prune` | `src/views/settings.html` |
 | `TASK-export-frontend-progress` | sibling | `epic-encryption-workflow` | `src/views/settings.html` |
 | `TASK-export-frontend-progress` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
-| `TASK-export-frontend-progress` | sibling | `epic-multi-session` | `src/views/settings.html` |
 | `TASK-export-frontend-progress` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
 | `TASK-expose-dek-export-and-import-over-the-federation-wire-routes` | sibling | `TASK-fanout-chatid-default-deny` | `src/federation/clearance.ts` |
 | `TASK-expose-dek-export-and-import-over-the-federation-wire-routes` | sibling | `TASK-federation-admin-peer-and-quota-routes` | `src/federation/dek-rewrap.ts` |
@@ -46489,7 +46383,6 @@ output is byte-identical for identical inputs.
 | `TASK-expose-dek-export-and-import-over-the-federation-wire-routes` | sibling | `epic-visual-novel-mode` | `src/chat/service/access.ts` |
 | `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a` | sibling | `TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd` | `src/components` |
 | `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a` | sibling | `TASK-frontend-client-contract-doc` | `src/routes/v1/openapi.ts` |
-| `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a` | sibling | `TASK-multi-session` | `src/components` |
 | `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/routes/v1/openapi.ts` |
 | `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a` | sibling | `epic-experimental-egui-frontend` | `src/routes/v1/openapi.ts` |
 | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `TASK-middleware-idempotency-wire-into-elysia` | `src/config/schema.ts` |
@@ -46668,7 +46561,6 @@ output is byte-identical for identical inputs.
 | `TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx` | sibling | `epic-frontend-components` | `src/frontend/alpine/htmx.ts` |
 | `TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx` | sibling | `epic-frontend-html-dedup-htmx-reuse` | `src/frontend/alpine/htmx.ts` |
 | `TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd` | sibling | `TASK-frontend-lazy-pages` | `src/frontend/pages.ts` |
-| `TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd` | sibling | `TASK-multi-session` | `src/components` |
 | `TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd` | sibling | `epic-frontend-bundle-optimization` | `src/frontend/pages.ts` |
 | `TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd` | sibling | `epic-frontend-routing` | `src/frontend/pages.ts` |
 | `TASK-fb9-gallery-private-asset-auth-gating-logxgal` | sibling | `TASK-gallery-editor-structured-ui` | `src/routes/views/gallery.ts` |
@@ -46860,7 +46752,6 @@ output is byte-identical for identical inputs.
 | `TASK-federation-peer-registry-workload-columns` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/db/migrations.test.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts` |
 | `TASK-federation-peer-registry-workload-columns` | sibling | `TASK-migration-sequential-finalize-and-renumber-policy` | `src/db/migrations/README.md; src/validation/db-schemas.ts` |
 | `TASK-federation-peer-registry-workload-columns` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-federation-peer-registry-workload-columns` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-federation-peer-registry-workload-columns` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/README.md` |
 | `TASK-federation-peer-registry-workload-columns` | sibling | `TASK-property-test-the-db-schemas-insert-read-round-trip` | `src/validation/db-schemas.ts` |
 | `TASK-federation-peer-registry-workload-columns` | sibling | `TASK-publication-artifact-schema` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts; src/db/migrations/README.md` |
@@ -46917,7 +46808,6 @@ output is byte-identical for identical inputs.
 | `TASK-federation-peer-registry-workload-columns` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-federation-peer-registry-workload-columns` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-federation-peer-registry-workload-columns` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-federation-peer-registry-workload-columns` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-federation-peer-registry-workload-columns` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-federation-peer-registry-workload-columns` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-federation-peer-registry-workload-columns` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -47062,7 +46952,6 @@ output is byte-identical for identical inputs.
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `TASK-i18n-template-strings` | `src/views/settings.html` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `TASK-info-bubbles` | `src/frontend/alpine/index.ts; src/views/settings.html` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | `src/frontend/alpine/index.ts` |
-| `TASK-finalize-notification-bell-header-wiring` | sibling | `TASK-multi-session` | `src/views/settings.html` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `TASK-publication-reader-locale-selector` | `src/frontend/alpine/index.ts` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `TASK-publication-viewer-read-mode` | `src/frontend/alpine/index.ts` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `TASK-restart-required-indicator-on-system-config-changes` | `src/views/settings.html` |
@@ -47076,7 +46965,6 @@ output is byte-identical for identical inputs.
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `epic-frontend-component-architecture` | `src/frontend/alpine/index.ts` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
-| `TASK-finalize-notification-bell-header-wiring` | sibling | `epic-multi-session` | `src/views/settings.html` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `epic-terminal-ui` | `src/views/notifications.html; src/views/settings.html` |
 | `TASK-fix-actor-item-value-type` | sibling | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | `src/db/schema-core.ts; src/validation/db-schemas.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `TASK-implement-trade` | `src/db/migrations/parts/005_actor_data.ts` |
@@ -47091,7 +46979,6 @@ output is byte-identical for identical inputs.
 | `TASK-fix-actor-item-value-type` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/validation/db-schemas.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `TASK-migration-sequential-finalize-and-renumber-policy` | `src/validation/db-schemas.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-fix-actor-item-value-type` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `TASK-property-test-the-db-schemas-insert-read-round-trip` | `src/validation/db-schemas.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
@@ -47128,7 +47015,6 @@ output is byte-identical for identical inputs.
 | `TASK-fix-actor-item-value-type` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-fix-actor-item-value-type` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-fix-actor-item-value-type` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -47623,7 +47509,6 @@ output is byte-identical for identical inputs.
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/db/schema.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts` |
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `TASK-migration-sequential-finalize-and-renumber-policy` | `src/db/schema-manifest.ts; src/validation/db-schemas.ts` |
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `TASK-nsfw-gate-moderation-events` | `src/db/schema.ts` |
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `TASK-prompt-nsfw-traits-section` | `src/db/schema.ts` |
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `TASK-property-test-the-db-schemas-insert-read-round-trip` | `src/validation/db-schemas.ts` |
@@ -47685,7 +47570,6 @@ output is byte-identical for identical inputs.
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts; src/db/schema-manifest.ts` |
-| `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-; src/db/schema-core.ts` |
 | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -47983,7 +47867,6 @@ output is byte-identical for identical inputs.
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `epic-local-process-swarm` | `src/elysia-app.ts` |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `epic-lora-discovery-application` | `src/elysia-app.ts` |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `epic-middleware-request-lifecycle` | `src/elysia-app.ts` |
-| `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `epic-openapi-reference` | `src/elysia-app.ts` |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `epic-realtime-transports` | `src/elysia-app.ts` |
 | `TASK-guest-public-functionality-surface-feed-templates-docs` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
@@ -48649,13 +48532,12 @@ output is byte-identical for identical inputs.
 | `TASK-i18n-reconciliation-script` | sibling | `epic-publication-i18n` | `src/i18n/locale-loader.ts` |
 | `TASK-i18n-settings-wiring` | sibling | `TASK-i18n-template-strings` | `src/views/settings.html` |
 | `TASK-i18n-settings-wiring` | sibling | `TASK-info-bubbles` | `src/views/settings.html` |
-| `TASK-i18n-settings-wiring` | sibling | `TASK-multi-session` | `src/views/settings.html` |
 | `TASK-i18n-settings-wiring` | sibling | `TASK-response-length-control` | `src/frontend/alpine/settings.ts` |
 | `TASK-i18n-settings-wiring` | sibling | `TASK-restart-required-indicator-on-system-config-changes` | `src/views/settings.html` |
 | `TASK-i18n-settings-wiring` | sibling | `TASK-thinking-tag-context-prune` | `src/views/settings.html` |
 | `TASK-i18n-settings-wiring` | sibling | `epic-encryption-workflow` | `src/views/settings.html` |
 | `TASK-i18n-settings-wiring` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
-| `TASK-i18n-settings-wiring` | sibling | `epic-multi-session` | `src/views/settings.html` |
+| `TASK-i18n-settings-wiring` | sibling | `epic-multi-session` | `src/frontend/alpine/settings.ts` |
 | `TASK-i18n-settings-wiring` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
 | `TASK-i18n-template-strings` | sibling | `TASK-info-bubbles` | `src/views/layout.html; src/views/settings.html` |
 | `TASK-i18n-template-strings` | sibling | `TASK-item-generation` | `src/views/world-edit.html` |
@@ -48663,7 +48545,6 @@ output is byte-identical for identical inputs.
 | `TASK-i18n-template-strings` | sibling | `TASK-location-explorer` | `src/views/world-edit.html` |
 | `TASK-i18n-template-strings` | sibling | `TASK-migrate-text-surfaces-to-shared-primitives` | `src/views/world-edit.html` |
 | `TASK-i18n-template-strings` | sibling | `TASK-mobile-surface-audit-360px` | `src/views/layout.html` |
-| `TASK-i18n-template-strings` | sibling | `TASK-multi-session` | `src/views/settings.html` |
 | `TASK-i18n-template-strings` | sibling | `TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice` | `src/views/layout.html` |
 | `TASK-i18n-template-strings` | sibling | `TASK-reconcile-epic-frontend-login-verify-login-register-ui-captu` | `src/views/login.html` |
 | `TASK-i18n-template-strings` | sibling | `TASK-responsive-design` | `src/views/layout.html` |
@@ -48691,7 +48572,6 @@ output is byte-identical for identical inputs.
 | `TASK-i18n-template-strings` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
 | `TASK-i18n-template-strings` | sibling | `epic-harness-integration` | `src/views/admin.html` |
 | `TASK-i18n-template-strings` | sibling | `epic-impersonation` | `src/views/personas.html` |
-| `TASK-i18n-template-strings` | sibling | `epic-multi-session` | `src/views/settings.html` |
 | `TASK-i18n-template-strings` | sibling | `epic-npc-management-ui` | `src/views/world-edit.html` |
 | `TASK-i18n-template-strings` | sibling | `epic-quests-encounters` | `src/views/quests.html` |
 | `TASK-i18n-template-strings` | sibling | `epic-terminal-ui` | `src/views/admin.html; src/views/chat-list.html; src/views/settings.html` |
@@ -48854,7 +48734,6 @@ output is byte-identical for identical inputs.
 | `TASK-info-bubbles` | sibling | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | `src/frontend/alpine/index.ts` |
 | `TASK-info-bubbles` | sibling | `TASK-mobile-surface-audit-360px` | `src/views/layout.html` |
 | `TASK-info-bubbles` | sibling | `TASK-mood-core` | `src/views/character-editor.html` |
-| `TASK-info-bubbles` | sibling | `TASK-multi-session` | `src/views/settings.html` |
 | `TASK-info-bubbles` | sibling | `TASK-publication-reader-locale-selector` | `src/frontend/alpine/index.ts` |
 | `TASK-info-bubbles` | sibling | `TASK-publication-viewer-read-mode` | `src/frontend/alpine/index.ts` |
 | `TASK-info-bubbles` | sibling | `TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice` | `src/views/layout.html` |
@@ -48875,7 +48754,6 @@ output is byte-identical for identical inputs.
 | `TASK-info-bubbles` | sibling | `epic-frontend-headers-management` | `src/views/layout.html` |
 | `TASK-info-bubbles` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
 | `TASK-info-bubbles` | sibling | `epic-immersion-presentation` | `src/frontend/alpine/info-bubble.ts; src/frontend/components/info-bubble.html` |
-| `TASK-info-bubbles` | sibling | `epic-multi-session` | `src/views/settings.html` |
 | `TASK-info-bubbles` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
 | `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-` | sibling | `TASK-markdown-derive-other-formats` | `src/generation/auto-gen/deps.ts` |
 | `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-` | sibling | `TASK-markdown-heading-parse-and-import` | `src/generation/auto-gen/deps.ts` |
@@ -48894,7 +48772,6 @@ output is byte-identical for identical inputs.
 | `TASK-inline-markdown-suggestion-model` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-inline-markdown-suggestion-model` | sibling | `TASK-migration-sequential-finalize-and-renumber-policy` | `src/db/migrations/README.md` |
 | `TASK-inline-markdown-suggestion-model` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-inline-markdown-suggestion-model` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-inline-markdown-suggestion-model` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/README.md` |
 | `TASK-inline-markdown-suggestion-model` | sibling | `TASK-publication-artifact-schema` | `src/db/migrations/README.md` |
 | `TASK-inline-markdown-suggestion-model` | sibling | `TASK-publication-artifact-versioning` | `src/db/migrations/README.md` |
@@ -48931,7 +48808,6 @@ output is byte-identical for identical inputs.
 | `TASK-inline-markdown-suggestion-model` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-inline-markdown-suggestion-model` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-inline-markdown-suggestion-model` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-inline-markdown-suggestion-model` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-inline-markdown-suggestion-model` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-inline-markdown-suggestion-model` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
 | `TASK-inline-markdown-suggestion-model` | sibling | `epic-publication-i18n` | `src/db/schema-core.ts` |
@@ -48968,7 +48844,6 @@ output is byte-identical for identical inputs.
 | `TASK-integration-config-surface-schemas-example-toml-env-map` | sibling | `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server` | `src/config/schema-class/env-map.ts` |
 | `TASK-integration-config-surface-schemas-example-toml-env-map` | sibling | `TASK-tui-enabled-config-flag-never-read` | `src/config/schema-class/env-map.ts` |
 | `TASK-integration-config-surface-schemas-example-toml-env-map` | sibling | `epic-encryption-workflow` | `src/config/schema-class/env-map.ts` |
-| `TASK-integration-config-surface-schemas-example-toml-env-map` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-integration-infrastructure` | sibling | `TASK-integrations-shared-seams-encryptionprovider-messagebridge-b` | `src/integrations/bridge.ts` |
 | `TASK-integration-infrastructure` | sibling | `epic-integrations-core` | `src/frontend/alpine/integrations.ts; src/integrations/bridge.ts; src/integrations/protocols/adapter.ts` |
 | `TASK-integration-infrastructure` | sibling | `epic-runtime-memory-state-hygiene` | `src/integrations/bridge.ts` |
@@ -49105,7 +48980,6 @@ output is byte-identical for identical inputs.
 | `TASK-item-inventory-view-page` | sibling | `epic-items` | `src/story/items/instances.ts` |
 | `TASK-item-provisioning-dashboard` | sibling | `TASK-location-explorer` | `src/views/world-edit.html` |
 | `TASK-item-provisioning-dashboard` | sibling | `TASK-migrate-text-surfaces-to-shared-primitives` | `src/views/world-edit.html` |
-| `TASK-item-provisioning-dashboard` | sibling | `TASK-multi-session` | `src/frontend` |
 | `TASK-item-provisioning-dashboard` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
 | `TASK-item-provisioning-dashboard` | sibling | `TASK-professions-frontend` | `src/frontend` |
 | `TASK-item-provisioning-dashboard` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend` |
@@ -49123,7 +48997,6 @@ output is byte-identical for identical inputs.
 | `TASK-item-side-outfit-change-trigger` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts; src/routes/messages/read.ts` |
 | `TASK-item-side-outfit-change-trigger` | sibling | `TASK-messages-outfit-id-column` | `src/characters/services/wardrobe/resolve.ts; src/db/schema-core.ts` |
 | `TASK-item-side-outfit-change-trigger` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-item-side-outfit-change-trigger` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-item-side-outfit-change-trigger` | sibling | `TASK-npc-inventory-frontend` | `src/routes/actor-items.ts` |
 | `TASK-item-side-outfit-change-trigger` | sibling | `TASK-outfit-change-gate-initiator-mapping` | `src/characters/services/wardrobe/change-gate.ts; src/routes/wardrobe-overrides.ts` |
 | `TASK-item-side-outfit-change-trigger` | sibling | `TASK-outfit-change-multi-actor-name-resolution` | `src/characters/services/wardrobe/bindings.ts; src/characters/services/wardrobe/change-gate.ts` |
@@ -49163,7 +49036,6 @@ output is byte-identical for identical inputs.
 | `TASK-item-side-outfit-change-trigger` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-item-side-outfit-change-trigger` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-item-side-outfit-change-trigger` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-item-side-outfit-change-trigger` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-item-side-outfit-change-trigger` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts; src/routes/messages/read.ts` |
 | `TASK-item-side-outfit-change-trigger` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-item-side-outfit-change-trigger` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -49646,7 +49518,6 @@ output is byte-identical for identical inputs.
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `TASK-migration-sequential-finalize-and-renumber-policy` | `src/db/migrations/README.md` |
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `TASK-moderation-privacy-first-foundation` | `src/db/enums-core/flags.ts` |
-| `TASK-markdown-canonical-intermediate-contract` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/db/enums-core/flags.ts` |
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/db/enums-core/flags.ts` |
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/README.md` |
@@ -49695,7 +49566,6 @@ output is byte-identical for identical inputs.
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `epic-message-seen-state` | `src/db/enums-core/flags.ts` |
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-markdown-canonical-intermediate-contract` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `epic-narrative-publishing-workflows` | `src/db/enums-core/flags.ts; src/db/enums-core/messages.ts; src/db/schema-core.ts; src/frontend/alpine/chat-utils/sanitize.ts; src/frontend/chat-utils/render.ts; src/frontend/chat-vendor.ts` |
 | `TASK-markdown-canonical-intermediate-contract` | sibling | `epic-output-control-transforms` | `src/db/enums-core/flags.ts; src/db/schema-core.ts` |
@@ -49949,7 +49819,6 @@ output is byte-identical for identical inputs.
 | `TASK-message-carriage-prompt-injection-section` | sibling | `epic-multilingual-carriage` | `src/chat/service/carriage.ts` |
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-message-carriage-table-migration-admin-read` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `TASK-task-i18n-workflow-hardening` | `src/db/schema-core.ts` |
@@ -49984,7 +49853,6 @@ output is byte-identical for identical inputs.
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-message-carriage-table-migration-admin-read` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `epic-multilingual-carriage` | `src/chat/service/read.ts; src/db/schema-core.ts; src/routes/admin/carriage.ts; src/routes/messages/helpers.ts; src/routes/messages/read.ts` |
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-message-carriage-table-migration-admin-read` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -50077,7 +49945,6 @@ output is byte-identical for identical inputs.
 | `TASK-messages-outfit-id-column` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/test-utils/insert-helpers.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `TASK-migration-sequential-finalize-and-renumber-policy` | `src/db/schema-manifest.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
-| `TASK-messages-outfit-id-column` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `TASK-nsfw-age-gate-never-verified-at-generation-time` | `src/generation/auto-gen/content-hooks.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa` | `src/generation/auto-gen/content-hooks.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `TASK-outfit-change-hook` | `src/generation/auto-gen/content-hooks.ts; src/generation/auto-gen/story-store.ts` |
@@ -50132,7 +49999,6 @@ output is byte-identical for identical inputs.
 | `TASK-messages-outfit-id-column` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts; src/db/schema-manifest.ts` |
-| `TASK-messages-outfit-id-column` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -50513,7 +50379,6 @@ output is byte-identical for identical inputs.
 | `TASK-migration-tooling-for-legacy-to-rich-character-data` | sibling | `epic-character-world-integration` | `src/characters/spec/character.ts` |
 | `TASK-migration-tooling-for-legacy-to-rich-character-data` | sibling | `epic-character-world-setup` | `src/db/schema-character.ts` |
 | `TASK-migration-tooling-for-legacy-to-rich-character-data` | sibling | `epic-reactive-actor-appearance` | `src/db/schema-character.ts` |
-| `TASK-mini-games-framework` | sibling | `TASK-multi-session` | `src/db/schema-core.ts` |
 | `TASK-mini-games-framework` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `TASK-mini-games-framework` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `TASK-mini-games-framework` | sibling | `TASK-task-i18n-workflow-hardening` | `src/db/schema-core.ts` |
@@ -50542,7 +50407,6 @@ output is byte-identical for identical inputs.
 | `TASK-mini-games-framework` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-mini-games-framework` | sibling | `epic-mini-games` | `src/assistant/commands/games.ts; src/db/schema-core.ts; src/frontend/alpine/games.ts; src/public/css/games.css` |
 | `TASK-mini-games-framework` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-mini-games-framework` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-mini-games-framework` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-mini-games-framework` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-mini-games-framework` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -50634,55 +50498,6 @@ output is byte-identical for identical inputs.
 | `TASK-multi-concept-segmentation-masks` | sibling | `epic-sam3-segmentation-integration` | `src/generation/matting/types.ts` |
 | `TASK-multi-reference-conditioning-request-model` | sibling | `epic-comfyui-first-class-citizen` | `src/image-edit/types.ts` |
 | `TASK-multi-reference-conditioning-request-model` | sibling | `epic-sam3-segmentation-integration` | `src/image-edit/run-authz.ts` |
-| `TASK-multi-session` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
-| `TASK-multi-session` | sibling | `TASK-professions-frontend` | `src/frontend` |
-| `TASK-multi-session` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `TASK-restart-required-indicator-on-system-config-changes` | `src/views/settings.html` |
-| `TASK-multi-session` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend` |
-| `TASK-multi-session` | sibling | `TASK-skills-frontend` | `src/frontend` |
-| `TASK-multi-session` | sibling | `TASK-task-i18n-workflow-hardening` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `TASK-task-minimal-mlops-cards-runlog-canary` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `TASK-test-chat-module` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `TASK-thinking-tag-context-prune` | `src/views/settings.html` |
-| `TASK-multi-session` | sibling | `TASK-timeline-id-world-timeline-events` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `TASK-world-item-instance-npc` | `src/frontend` |
-| `TASK-multi-session` | sibling | `TASK-world-requires-stats-flag-and-point-budget-config` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-actors` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-battle-action-systems` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-battle-integration-gaps` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-byok-api-keys` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-character-core-system` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-character-internal-traits` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-character-npc-lore-access` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-character-xp-leveling` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-chat-lifecycle-moderation` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-chat-transfer-location` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-chat-variants-taxonomy` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-config-extensions` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-editorial-workflow` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-emotion-avatar-message-binding` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-encryption-workflow` | `src/views/settings.html` |
-| `TASK-multi-session` | sibling | `epic-exploration-discovery` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-federation-offload-quotas` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
-| `TASK-multi-session` | sibling | `epic-impersonation` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-item-systems-unification` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-logging` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-multi-session` | `src/components/security/sessions-panel.html; src/db/schema-core.ts; src/frontend/alpine/settings-sessions.ts; src/routes/sessions-switch.ts; src/routes/sessions.test.ts; src/routes/sessions.ts; src/views/settings.html` |
-| `TASK-multi-session` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-publication-i18n` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-rarity-extensions` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-reactive-actor-appearance` | `src/db/schema-core.ts; src/frontend` |
-| `TASK-multi-session` | sibling | `epic-research-agency-decision` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-skills-professions-config` | `src/db/schema-core.ts` |
-| `TASK-multi-session` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
-| `TASK-multi-session` | sibling | `epic-use-case-agentic-workspace` | `src/frontend` |
-| `TASK-multi-session` | sibling | `epic-world-chat-channels-invites` | `src/db/schema-core.ts` |
 | `TASK-multimodal-asset-reuse` | sibling | `TASK-reference-capability-probe-runtime` | `src/generation/providers/comfyui.ts` |
 | `TASK-multimodal-asset-reuse` | sibling | `TASK-reference-set-multi-image-upload` | `src/generation/providers/comfyui.ts` |
 | `TASK-multimodal-asset-reuse` | sibling | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | `src/assets/metadata.ts` |
@@ -50716,7 +50531,6 @@ output is byte-identical for identical inputs.
 | `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr` | sibling | `TASK-tui-enabled-config-flag-never-read` | `src/config/schema-class/env-map.ts` |
 | `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr` | sibling | `TASK-world-template-full-model-coverage` | `src/config/schema/seeding.ts` |
 | `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr` | sibling | `epic-encryption-workflow` | `src/config/schema-class/env-map.ts` |
-| `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-nodeinfo-well-known-discovery-endpoints` | sibling | `TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on` | `src/routes` |
 | `TASK-nodeinfo-well-known-discovery-endpoints` | sibling | `epic-faction-reputation` | `src/routes` |
 | `TASK-non-standard-browser-crypto-research` | sibling | `epic-auth-access` | `src/frontend/browser-crypto.ts` |
@@ -50972,7 +50786,6 @@ output is byte-identical for identical inputs.
 | `TASK-outfit-change-aux-task-and-typebox-schema` | sibling | `epic-item-systems-unification` | `src/db/enums-core/flags.ts` |
 | `TASK-outfit-change-aux-task-and-typebox-schema` | sibling | `epic-llm-request-scheduler` | `src/config/schema/generation.ts` |
 | `TASK-outfit-change-aux-task-and-typebox-schema` | sibling | `epic-message-seen-state` | `src/db/enums-core/flags.ts` |
-| `TASK-outfit-change-aux-task-and-typebox-schema` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-outfit-change-aux-task-and-typebox-schema` | sibling | `epic-narrative-publishing-workflows` | `src/db/enums-core/flags.ts` |
 | `TASK-outfit-change-aux-task-and-typebox-schema` | sibling | `epic-output-control-transforms` | `src/db/enums-core/flags.ts` |
 | `TASK-outfit-change-aux-task-and-typebox-schema` | sibling | `epic-perspective-narration-voice` | `src/chat/transition-classifier.ts` |
@@ -51019,7 +50832,6 @@ output is byte-identical for identical inputs.
 | `TASK-outfit-change-hook` | sibling | `epic-file-splitting` | `src/server/start.ts` |
 | `TASK-outfit-change-hook` | sibling | `epic-http-protocol-features` | `src/server/start.ts` |
 | `TASK-outfit-change-hook` | sibling | `epic-local-process-swarm` | `src/server/start.ts` |
-| `TASK-outfit-change-hook` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-outfit-change-hook` | sibling | `epic-reactive-actor-appearance` | `src/assistant/intent.ts; src/config/schema-class/hooks.ts; src/config/schema/hooks.ts; src/generation/auto-gen/content-hooks.ts; src/generation/auto-gen/prepare-generation.ts; src/generation/auto-gen/story-store.ts; src/generation/hooks/registry.ts; src/regex/outfit-events.ts; src/server/start.ts` |
 | `TASK-outfit-change-hook` | sibling | `epic-recursive-self-improvement` | `src/server/start.ts` |
 | `TASK-outfit-change-hook` | sibling | `epic-research-agency-affordance` | `src/assistant/intent.ts` |
@@ -51573,7 +51385,6 @@ output is byte-identical for identical inputs.
 | `TASK-publication-glossary-term-base` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-publication-glossary-term-base` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-publication-glossary-term-base` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-publication-glossary-term-base` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-publication-glossary-term-base` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-publication-glossary-term-base` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
 | `TASK-publication-glossary-term-base` | sibling | `epic-publication-i18n` | `src/db/schema-core.ts; src/i18n/locale-registry.ts` |
@@ -51643,7 +51454,6 @@ output is byte-identical for identical inputs.
 | `TASK-publication-unit-translation-store` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-publication-unit-translation-store` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-publication-unit-translation-store` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-publication-unit-translation-store` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-publication-unit-translation-store` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-publication-unit-translation-store` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-publication-unit-translation-store` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -51856,7 +51666,6 @@ output is byte-identical for identical inputs.
 | `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server` | sibling | `epic-llama-swap` | `src/services/server-external-manager/start-llama.ts` |
 | `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server` | sibling | `epic-llm-request-scheduler` | `src/services/server-external-manager/start-llama.ts` |
 | `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server` | sibling | `epic-local-process-swarm` | `src/services/server-external-manager/start-llama.ts` |
-| `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-recon-critical-fixes` | sibling | `TASK-recon-test-coverage` | `src/chat/auto-rename.ts; src/chat/hallucination-guard.ts; src/chat/memory-injection.ts; src/chat/memory-promotion.ts; src/chat/pruning.ts; src/chat/transitions.ts` |
 | `TASK-recon-critical-fixes` | sibling | `TASK-repetition-hallucination-guards` | `src/chat/hallucination-guard.ts` |
 | `TASK-recon-critical-fixes` | sibling | `TASK-smart-context-pruning` | `src/chat/pruning.ts` |
@@ -52370,6 +52179,7 @@ output is byte-identical for identical inputs.
 | `TASK-response-length-control` | sibling | `TASK-split-generate-route` | `src/generation/generate-route.ts` |
 | `TASK-response-length-control` | sibling | `TASK-text-effects-overlays` | `src/routes/settings.ts` |
 | `TASK-response-length-control` | sibling | `TASK-thinking-tag-context-prune` | `src/generation/generate-route.ts` |
+| `TASK-response-length-control` | sibling | `epic-multi-session` | `src/frontend/alpine/settings.ts` |
 | `TASK-response-validation-logic-additions` | sibling | `TASK-rpg-mechanics-combat` | `src/rpg/combat.ts` |
 | `TASK-response-validation-logic-additions` | sibling | `TASK-rpg-mechanics` | `src/rpg/combat.ts` |
 | `TASK-response-validation-logic-additions` | sibling | `epic-character-world-integration` | `src/rpg/combat.ts` |
@@ -52385,7 +52195,6 @@ output is byte-identical for identical inputs.
 | `TASK-restart-required-indicator-on-system-config-changes` | sibling | `TEST-admin-seeddefaults-silent-duplicate-skip-untested` | `src/admin/config.ts` |
 | `TASK-restart-required-indicator-on-system-config-changes` | sibling | `epic-encryption-workflow` | `src/views/settings.html` |
 | `TASK-restart-required-indicator-on-system-config-changes` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
-| `TASK-restart-required-indicator-on-system-config-changes` | sibling | `epic-multi-session` | `src/views/settings.html` |
 | `TASK-restart-required-indicator-on-system-config-changes` | sibling | `epic-recursive-self-improvement` | `src/admin/config.ts` |
 | `TASK-restart-required-indicator-on-system-config-changes` | sibling | `epic-terminal-ui` | `src/frontend/alpine/admin-system.ts; src/views/settings.html` |
 | `TASK-result-grade-persistence` | sibling | `TASK-view-set-consistency-gate` | `src/aux-pipeline/runner.ts` |
@@ -53042,7 +52851,6 @@ output is byte-identical for identical inputs.
 | `TASK-task-i18n-workflow-hardening` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-task-i18n-workflow-hardening` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-task-i18n-workflow-hardening` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-task-i18n-workflow-hardening` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-task-i18n-workflow-hardening` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-task-i18n-workflow-hardening` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-task-i18n-workflow-hardening` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -53083,7 +52891,6 @@ output is byte-identical for identical inputs.
 | `TASK-task-minimal-mlops-cards-runlog-canary` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-task-minimal-mlops-cards-runlog-canary` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-task-minimal-mlops-cards-runlog-canary` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-task-minimal-mlops-cards-runlog-canary` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-task-minimal-mlops-cards-runlog-canary` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-task-minimal-mlops-cards-runlog-canary` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-task-minimal-mlops-cards-runlog-canary` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -53142,7 +52949,6 @@ output is byte-identical for identical inputs.
 | `TASK-test-chat-module` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-test-chat-module` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-test-chat-module` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `TASK-test-chat-module` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-test-chat-module` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-test-chat-module` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-test-chat-module` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -53172,7 +52978,6 @@ output is byte-identical for identical inputs.
 | `TASK-thinking-tag-context-prune` | sibling | `epic-architecture` | `src/views/chat.html` |
 | `TASK-thinking-tag-context-prune` | sibling | `epic-encryption-workflow` | `src/views/settings.html` |
 | `TASK-thinking-tag-context-prune` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
-| `TASK-thinking-tag-context-prune` | sibling | `epic-multi-session` | `src/views/settings.html` |
 | `TASK-thinking-tag-context-prune` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
 | `TASK-thinking-tag-context-prune` | sibling | `epic-visual-novel-mode` | `src/views/chat.html` |
 | `TASK-thumbnail-generation-256px-webp-at-upload` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/thumbnail.ts` |
@@ -53218,7 +53023,6 @@ output is byte-identical for identical inputs.
 | `TASK-timeline-id-world-timeline-events` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-timeline-id-world-timeline-events` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-timeline-id-world-timeline-events` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts; src/db/schema-manifest.ts` |
-| `TASK-timeline-id-world-timeline-events` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-timeline-id-world-timeline-events` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-timeline-id-world-timeline-events` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-timeline-id-world-timeline-events` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -53350,7 +53154,6 @@ output is byte-identical for identical inputs.
 | `TASK-tui-enabled-config-flag-never-read` | sibling | `TASK-tui-shell-testability` | `src/tui/app.test.ts; src/tui/app.ts` |
 | `TASK-tui-enabled-config-flag-never-read` | sibling | `epic-cli-tooling-optique` | `src/tui/app.ts` |
 | `TASK-tui-enabled-config-flag-never-read` | sibling | `epic-encryption-workflow` | `src/config/schema-class/env-map.ts` |
-| `TASK-tui-enabled-config-flag-never-read` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts` |
 | `TASK-tui-enabled-config-flag-never-read` | sibling | `epic-terminal-ui` | `src/config/schema/tui.ts; src/config/sections/tui.ts; src/tui/app.test.ts; src/tui/app.ts` |
 | `TASK-tui-fire-and-forget-void-without-catch` | sibling | `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene` | `src/tui/app.ts; src/tui/chat/index.ts` |
 | `TASK-tui-fire-and-forget-void-without-catch` | sibling | `TASK-tui-models-overlay` | `src/tui/app.ts; src/tui/chat-picker.ts; src/tui/chat/index.ts; src/tui/harness/index.ts; src/tui/models-overlay.ts` |
@@ -54059,7 +53862,6 @@ output is byte-identical for identical inputs.
 | `TASK-world-requires-stats-flag-and-point-budget-config` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `TASK-world-requires-stats-flag-and-point-budget-config` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `TASK-world-requires-stats-flag-and-point-budget-config` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts; src/db/schema-manifest.ts` |
-| `TASK-world-requires-stats-flag-and-point-budget-config` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `TASK-world-requires-stats-flag-and-point-budget-config` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `TASK-world-requires-stats-flag-and-point-budget-config` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `TASK-world-requires-stats-flag-and-point-budget-config` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -54236,7 +54038,6 @@ output is byte-identical for identical inputs.
 | `epic-actors` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-actors` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-actors` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-actors` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-actors` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-actors` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts; src/db/schema-story.ts` |
 | `epic-actors` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -54614,7 +54415,6 @@ output is byte-identical for identical inputs.
 | `epic-battle-action-systems` | sibling | `epic-middleware-request-lifecycle` | `src/elysia-app.ts` |
 | `epic-battle-action-systems` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-battle-action-systems` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-battle-action-systems` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-battle-action-systems` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-battle-action-systems` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-battle-action-systems` | sibling | `epic-openapi-reference` | `src/elysia-app.ts` |
@@ -54654,7 +54454,6 @@ output is byte-identical for identical inputs.
 | `epic-battle-integration-gaps` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `epic-battle-integration-gaps` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-battle-integration-gaps` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-battle-integration-gaps` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-battle-integration-gaps` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-battle-integration-gaps` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-battle-integration-gaps` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -54755,7 +54554,6 @@ output is byte-identical for identical inputs.
 | `epic-byok-api-keys` | sibling | `epic-lora-discovery-application` | `src/generation/image-gen-route.ts` |
 | `epic-byok-api-keys` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-byok-api-keys` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-byok-api-keys` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-byok-api-keys` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-byok-api-keys` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-byok-api-keys` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -54823,7 +54621,6 @@ output is byte-identical for identical inputs.
 | `epic-character-core-system` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-character-core-system` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-character-core-system` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts; src/server.ts` |
-| `epic-character-core-system` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-character-core-system` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-character-core-system` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-character-core-system` | sibling | `epic-openapi-reference` | `src/validation/schemas.ts` |
@@ -54897,7 +54694,6 @@ output is byte-identical for identical inputs.
 | `epic-character-internal-traits` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-character-internal-traits` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-character-internal-traits` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-character-internal-traits` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-character-internal-traits` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-character-internal-traits` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-character-internal-traits` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -54937,7 +54733,6 @@ output is byte-identical for identical inputs.
 | `epic-character-npc-lore-access` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-character-npc-lore-access` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-character-npc-lore-access` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-character-npc-lore-access` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-character-npc-lore-access` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-character-npc-lore-access` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts; src/db/schema-story.ts` |
 | `epic-character-npc-lore-access` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55012,7 +54807,6 @@ output is byte-identical for identical inputs.
 | `epic-character-xp-leveling` | sibling | `epic-mechanics-governance` | `src/rpg/service/world-gate.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-character-xp-leveling` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55064,7 +54858,6 @@ output is byte-identical for identical inputs.
 | `epic-chat-lifecycle-moderation` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `epic-chat-lifecycle-moderation` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-chat-lifecycle-moderation` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-chat-lifecycle-moderation` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-chat-lifecycle-moderation` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-chat-lifecycle-moderation` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-chat-lifecycle-moderation` | sibling | `epic-nsfw-capabilities` | `src/generation/auto-gen.ts` |
@@ -55121,7 +54914,6 @@ output is byte-identical for identical inputs.
 | `epic-chat-transfer-location` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-chat-transfer-location` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-chat-transfer-location` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-chat-transfer-location` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-chat-transfer-location` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-chat-transfer-location` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-chat-transfer-location` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55150,7 +54942,6 @@ output is byte-identical for identical inputs.
 | `epic-chat-variants-taxonomy` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-chat-variants-taxonomy` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-chat-variants-taxonomy` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-chat-variants-taxonomy` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-chat-variants-taxonomy` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-chat-variants-taxonomy` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-chat-variants-taxonomy` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55251,7 +55042,6 @@ output is byte-identical for identical inputs.
 | `epic-config-extensions` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `epic-config-extensions` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-config-extensions` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-config-extensions` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-config-extensions` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-config-extensions` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-config-extensions` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55522,7 +55312,6 @@ output is byte-identical for identical inputs.
 | `epic-editorial-workflow` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-editorial-workflow` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-editorial-workflow` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-editorial-workflow` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-editorial-workflow` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-editorial-workflow` | sibling | `epic-narrative-publishing-workflows` | `src/db/enums-content.ts; src/db/enums-story/items.ts; src/db/schema-; src/db/schema-core.ts; src/frontend/chat-vendor.ts; src/regex/intent.ts` |
 | `epic-editorial-workflow` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55589,7 +55378,6 @@ output is byte-identical for identical inputs.
 | `epic-emotion-avatar-message-binding` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-emotion-avatar-message-binding` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-emotion-avatar-message-binding` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts; src/db/schema-manifest.ts` |
-| `epic-emotion-avatar-message-binding` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-emotion-avatar-message-binding` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts; src/routes/messages/read.ts` |
 | `epic-emotion-avatar-message-binding` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-emotion-avatar-message-binding` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55609,7 +55397,6 @@ output is byte-identical for identical inputs.
 | `epic-encryption-workflow` | sibling | `epic-frontend-component-architecture` | `src/frontend/alpine/index.ts` |
 | `epic-encryption-workflow` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
 | `epic-encryption-workflow` | sibling | `epic-guest-access` | `src/assets/service/read.ts` |
-| `epic-encryption-workflow` | sibling | `epic-multi-session` | `src/config/schema-class/env-map.ts; src/views/settings.html` |
 | `epic-encryption-workflow` | sibling | `epic-narrative-publishing-workflows` | `src/assets/service/create.ts` |
 | `epic-encryption-workflow` | sibling | `epic-resource-provision` | `src/crypto/byok.ts` |
 | `epic-encryption-workflow` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
@@ -55661,7 +55448,6 @@ output is byte-identical for identical inputs.
 | `epic-exploration-discovery` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `epic-exploration-discovery` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-exploration-discovery` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-exploration-discovery` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-exploration-discovery` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-exploration-discovery` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-exploration-discovery` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55702,7 +55488,6 @@ output is byte-identical for identical inputs.
 | `epic-federation-offload-quotas` | sibling | `epic-logging` | `src/db/schema-core.ts` |
 | `epic-federation-offload-quotas` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-federation-offload-quotas` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-federation-offload-quotas` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-federation-offload-quotas` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-federation-offload-quotas` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-content.ts; src/db/schema-core.ts` |
 | `epic-federation-offload-quotas` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55769,7 +55554,6 @@ output is byte-identical for identical inputs.
 | `epic-frontend-notifications` | sibling | `epic-local-process-swarm` | `src/routes/activity-stream.ts` |
 | `epic-frontend-notifications` | sibling | `epic-multi-instance-reconciliation` | `src/routes/activity-stream.ts` |
 | `epic-frontend-notifications` | sibling | `epic-transport-expansion` | `src/routes/activity-stream.ts` |
-| `epic-frontend-settings` | sibling | `epic-multi-session` | `src/views/settings.html` |
 | `epic-frontend-settings` | sibling | `epic-narrative-publishing-workflows` | `src/components/modals/settings.html` |
 | `epic-frontend-settings` | sibling | `epic-research-agency-decision` | `src/routes/v1/base-surface.ts` |
 | `epic-frontend-settings` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
@@ -55845,7 +55629,6 @@ output is byte-identical for identical inputs.
 | `epic-impersonation` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-impersonation` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-impersonation` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-impersonation` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-impersonation` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-impersonation` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-impersonation` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55897,7 +55680,6 @@ output is byte-identical for identical inputs.
 | `epic-item-systems-unification` | sibling | `epic-message-seen-state` | `src/db/enums-core/flags.ts` |
 | `epic-item-systems-unification` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-item-systems-unification` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-item-systems-unification` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-item-systems-unification` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-item-systems-unification` | sibling | `epic-narrative-publishing-workflows` | `src/db/enums-core/flags.ts; src/db/enums-story/items.ts; src/db/schema-core.ts; src/db/schema-story.ts` |
 | `epic-item-systems-unification` | sibling | `epic-output-control-transforms` | `src/db/enums-core/flags.ts; src/db/schema-core.ts` |
@@ -55937,7 +55719,6 @@ output is byte-identical for identical inputs.
 | `epic-local-process-swarm` | sibling | `epic-lora-discovery-application` | `src/elysia-app.ts` |
 | `epic-local-process-swarm` | sibling | `epic-middleware-request-lifecycle` | `src/elysia-app.ts` |
 | `epic-local-process-swarm` | sibling | `epic-multi-instance-reconciliation` | `src/db/index.ts; src/db/migrate.ts; src/routes/activity-stream.ts` |
-| `epic-local-process-swarm` | sibling | `epic-multi-session` | `src/config/load/safety.ts` |
 | `epic-local-process-swarm` | sibling | `epic-openapi-reference` | `src/elysia-app.ts` |
 | `epic-local-process-swarm` | sibling | `epic-platform-integrations` | `src/generation/providers/registry.ts` |
 | `epic-local-process-swarm` | sibling | `epic-provider-plugin-ecosystem` | `src/generation/providers/registry.ts` |
@@ -55960,7 +55741,6 @@ output is byte-identical for identical inputs.
 | `epic-logging` | sibling | `epic-logging-telemetry` | `src/logger/logger.ts; src/logger/types.ts` |
 | `epic-logging` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-logging` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-logging` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-logging` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-logging` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-logging` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -55990,7 +55770,6 @@ output is byte-identical for identical inputs.
 | `epic-mini-games-design` | sibling | `epic-nsfw-integration-gaps` | `src/nsfw/social-integration.ts` |
 | `epic-mini-games-design` | sibling | `epic-shared-schemas` | `src/nsfw/social-integration.ts` |
 | `epic-mini-games` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
-| `epic-mini-games` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-mini-games` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-mini-games` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-mini-games` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -56005,7 +55784,6 @@ output is byte-identical for identical inputs.
 | `epic-model-family-presets` | sibling | `epic-technical-comparison-charts` | `src/assistant/workflow-runner.ts` |
 | `epic-model-family-presets` | sibling | `epic-view-set-generation` | `src/assistant/workflow-runner.ts` |
 | `epic-model-family-presets` | sibling | `epic-workflow-engine` | `src/assistant/workflow-runner.ts` |
-| `epic-multi-instance-reconciliation` | sibling | `epic-multi-session` | `src/db/schema-core.ts` |
 | `epic-multi-instance-reconciliation` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
 | `epic-multi-instance-reconciliation` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-multi-instance-reconciliation` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
@@ -56018,16 +55796,6 @@ output is byte-identical for identical inputs.
 | `epic-multi-instance-reconciliation` | sibling | `epic-transport-expansion` | `src/routes/activity-stream.ts; src/server.ts` |
 | `epic-multi-instance-reconciliation` | sibling | `epic-visual-novel-mode` | `src/db/schema-manifest.ts` |
 | `epic-multi-instance-reconciliation` | sibling | `epic-world-chat-channels-invites` | `src/db/schema-core.ts` |
-| `epic-multi-session` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
-| `epic-multi-session` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
-| `epic-multi-session` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
-| `epic-multi-session` | sibling | `epic-publication-i18n` | `src/db/schema-core.ts` |
-| `epic-multi-session` | sibling | `epic-rarity-extensions` | `src/db/schema-core.ts` |
-| `epic-multi-session` | sibling | `epic-reactive-actor-appearance` | `src/db/schema-core.ts` |
-| `epic-multi-session` | sibling | `epic-research-agency-decision` | `src/db/schema-core.ts` |
-| `epic-multi-session` | sibling | `epic-skills-professions-config` | `src/db/schema-core.ts` |
-| `epic-multi-session` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
-| `epic-multi-session` | sibling | `epic-world-chat-channels-invites` | `src/db/schema-core.ts` |
 | `epic-multilingual-carriage` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
 | `epic-multilingual-carriage` | sibling | `epic-output-control-transforms` | `src/chat/auto-translate.ts; src/db/schema-core.ts; src/generation/translator-role.ts` |
 | `epic-multilingual-carriage` | sibling | `epic-publication-i18n` | `src/chat/auto-translate.ts; src/db/schema-core.ts` |

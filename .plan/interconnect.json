@@ -22770,6 +22770,7 @@
       "title": "Chat Split/Reunite Engine (Party Branch & Merge)",
       "status": "in_progress",
       "srcRefs": [
+        "src/chat/service/split-execution.ts",
         "src/chat/service/split-utils.ts",
         "src/chat/service/split.test.ts",
         "src/chat/service/split.ts",
@@ -60994,6 +60995,12 @@
       "owners": [
         "BUG-bug-chat-service-seen-ts-is-dead-code-and-its-upsert-is-brok",
         "TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep"
+      ]
+    },
+    {
+      "path": "src/chat/service/split-execution.ts",
+      "owners": [
+        "TASK-chat-branch-merge"
       ]
     },
     {
@@ -128617,6 +128624,11 @@
       "from": "TASK-chat-backgrounds-location-sync",
       "kind": "produces",
       "to": "src/views/chat.html"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "produces",
+      "to": "src/chat/service/split-execution.ts"
     },
     {
       "from": "TASK-chat-branch-merge",
