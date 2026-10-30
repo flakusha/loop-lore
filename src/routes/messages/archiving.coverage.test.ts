@@ -13,7 +13,7 @@ import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
+import { insertChatOwners, insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { archivingRoutes, } from "./archiving";
 
@@ -148,6 +148,23 @@ describe("archivingRoutes coverage", () => {
     );
 
     expect(res.status,).toBe(200,);
+  });
+
+  test("co-owner without created_by archives and restores (owners set)", async () => {
+    const coOwner = uid();
+    await seedUser(db, coOwner, "CoOwner",);
+    await insertChatOwners(db, chatId, coOwner,);
+    const app = makeApp(db, coOwner, "user",);
+    const archived = await app.handle(
+      new Request(`http://localhost/api/messages/${messageId}/archive`, { method: "POST", },),
+    );
+
+    expect(archived.status,).toBe(200,);
+    const restored = await app.handle(
+      new Request(`http://localhost/api/messages/${messageId}/restore`, { method: "POST", },),
+    );
+
+    expect(restored.status,).toBe(200,);
   });
 
   test("restore happy path clears archived_at", async () => {

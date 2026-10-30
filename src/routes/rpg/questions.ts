@@ -13,6 +13,7 @@
  * acting actor server-side from the session (resolvePrimaryActorId).
  */
 import { Elysia, t, } from "elysia";
+import { isChatOwner, } from "../../chat/service";
 import type { Db, } from "../../db";
 import type { RpgQuestionType, } from "../../db/enums-story";
 import {
@@ -30,7 +31,8 @@ import { answerQuestionBody, createQuestionBody, } from "./questions-schemas";
 import type { HandlerOpts, } from "./types";
 
 /**
- * Check chat ownership (creator or admin) — same rule as story-turns.
+ * Check chat ownership (owners set) or admin — same rule as story-turns.
+ * Routes stay thin: existence + admin shape here, ownership in the service.
  * @param database
  * @param chatId
  * @param userId
@@ -42,11 +44,12 @@ async function checkChatOwnership(
   userId: string | null,
   userRole: string | null,
 ): Promise<boolean> {
-  const chat = await database.selectFrom("chats",).select(["created_by",],)
+  if (userId === null) { return can(userRole, "admin.chat",); }
+  const chat = await database.selectFrom("chats",).select(["id",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
 
-  return !!chat && (chat.created_by === userId || can(userRole, "admin.chat",));
+  return !!chat && ((await isChatOwner(database, chatId, userId,)) || can(userRole, "admin.chat",));
 }
 
 /**
