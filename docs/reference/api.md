@@ -711,6 +711,10 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 `GET /api/v1/analytics/characters` — per-character rollup (messages, tokens, avg response length, tokens/message). Characters are `actors` rows with `actor_type='character'`; the caller must own both the chat and the character. Ordered by tokens desc, then id; capped at 50.
 
+### Quality Metrics
+
+`GET /api/v1/analytics/quality` — aggregated per-generation quality metrics for the caller's own chats: latency, token counts, repetition rate and finish reason. Only assistant messages carrying a recorded `metadata.quality` blob are counted. Optional query params: `model` (model id), `chatId` (chat id — a chat the caller does not own is reported as 404), `from`/`to` (ISO date range, `to` exclusive). Returns `{ totals: { generations, withQualityMetrics, promptTokens, completionTokens, totalTokens, avgLatencyMs, avgTokensPerSecond, avgRepetitionRate }, byModel: [{ model, provider, generations, promptTokens, completionTokens, totalTokens, avgLatencyMs, avgTokensPerSecond, avgRepetitionRate }], trend: [{ date, generations, totalTokens, avgLatencyMs, avgTokensPerSecond, avgRepetitionRate }], finishReasons: [{ reason, count }] }`
+
 ### Model Comparisons — Create
 
 `POST /api/v1/analytics/comparisons` — body: `{ messageId, referenceModel, preference, confidence }` — `messageId` and `referenceModel` required; `preference` is one of `better`, `worse`, `same`
