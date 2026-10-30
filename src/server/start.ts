@@ -24,6 +24,7 @@ import { initializeProviders, } from "../generation";
 import { join, } from "node:path";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { loadConfig, } from "../config/load";
+import { reconcileInterruptedJobs, } from "../characters/services/emotion-avatar-service/restart-reconcile";
 import { runDataMigrations, runMigrations, } from "../db/migrate";
 import { seedDefaultActors, } from "../db/seed";
 import { seedDynamicContent, } from "./boot-seed";
@@ -130,6 +131,11 @@ export async function start() {
 
   await runMigrations(database,); // ensure DB schema ready before serving
   await runDataMigrations(database,); // row-level, after schema is final, before seeding
+  // Orphaned emotion-avatar jobs from a previous process are terminal, never
+  // resumed: mark them failed with an explicit reason and rebuild the
+  // in-memory job cache from the durable rows, so no list/status/SSE consumer
+  // can observe a zombie `running` job after a restart.
+  await reconcileInterruptedJobs(database,);
   await seedDefaultActors(database, config,);
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
   await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);

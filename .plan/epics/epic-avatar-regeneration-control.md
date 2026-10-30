@@ -86,8 +86,10 @@ landed (verified 2026-10-09):
       outfit-scoped batch/single generation with ownership-checked wardrobe item params
 - [ ] Slot-replace semantics: re-point binding, cleanup old asset,
       transactional, (emotion, outfit)-scoped isolation
-- [ ] Persistent job store (migration + regen schema artifacts) with
+- [x] Persistent job store (migration + regen schema artifacts) with
       in-memory cache; restart reconciliation for orphaned jobs
+      (durable `generation_jobs` mirror predates this; the restart
+      reconciliation + cache-rebuild half landed with the ticket below)
       → [`TASK-emotion-avatar-job-restart-reconciliation.md`](../tickets/TASK-emotion-avatar-job-restart-reconciliation.md)
 - [x] Seed capture/override per generation — one base seed per batch
       (`seed.ts`), slot seeds derived as `base + EMOTION_ORDINAL[emotion]`, the
@@ -103,7 +105,7 @@ landed (verified 2026-10-09):
       ownership)
       → [`TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md`](../tickets/TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md)
 
-- `TASK-reroll-emotion-command.md` — /reroll-emotion in-chat command wrapping emotion-avatar regenerate (open, 2026-10-23 attachment batch)
+- `TASK-reroll-emotion-command.md` — /reroll-emotion in-chat command wrapping emotion-avatar regenerate (done 2026-10-30: service dispatch with slot replace, command-context actor resolution, avatar action renders in chat)
 
 ## Non-Goals
 
