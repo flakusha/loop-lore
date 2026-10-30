@@ -248,57 +248,87 @@ export async function testStorageResource(db: Kysely<DB>, resourceId: string,): 
   }
 }
 
+// Serializes concurrent writers on one connection: quota-sum check + insert
+// run inside a single transaction, so two racing writers cannot both pass.
+let backupWriteChain: Promise<void> = Promise.resolve();
+
 /**
  * Write a backup blob with a content hash. Enforces the storage-bytes quota
  * (summed over the owner+type scope) BEFORE the insert; rejects on overflow.
+ * The quota check runs inside the same transaction as the insert, and
+ * concurrent writers queue behind a module mutex so one connection never
+ * holds overlapping transactions.
+ * // ponytail: in-process mutex, not a distributed lock — correct for the
+ * // single-writer sqlite hosts this module targets; revisit for multi-node.
  */
 export async function writeBackup(db: Kysely<DB>, opts: WriteBackupOpts,): Promise<BackupRecord> {
   if (!opts.ownerId || !opts.resourceType) { throw new Error("ownerId and resourceType are required",); }
   const quotaBytes = Math.max(0, opts.storageQuotaBytes ?? 0,);
-  if (quotaBytes > 0) {
-    const existing = await db
-      .selectFrom("backup_records",)
-      .select("payload",)
-      .where("owner_id", "=", opts.ownerId,)
-      .where("resource_type", "=", opts.resourceType,)
-      .execute();
-
-    const used = existing.reduce((sum, row,) => sum + Buffer.byteLength(row.payload, "utf8",), 0,);
-    if (used + Buffer.byteLength(opts.payload, "utf8",) > quotaBytes) {
-      throw new QuotaExceededError({
-        resourceId: `${opts.ownerId}:${opts.resourceType}`,
-        kind: "storage-bytes",
-        limit: quotaBytes,
-      },);
-    }
-  }
-
   const id = opts.id ?? randomUUID();
   const contentHash = hashContent(opts.payload,);
-  await db
-    .insertInto("backup_records",)
-    .values({
+  const incomingBytes = Buffer.byteLength(opts.payload, "utf8",);
+
+  // Already inside a transaction (e.g. restoreBackupForOwner's audit write):
+  // Kysely rejects nested db.transaction() on a Transaction handle, so run
+  // the body directly — the outer tx is the serialization boundary.
+  if (db.isTransaction) {
+    return runWrite(db,);
+  }
+
+  const prior = backupWriteChain;
+  const gate = Promise.withResolvers<void>();
+  backupWriteChain = gate.promise;
+  await prior;
+  try {
+    return await db.transaction().execute((tx,) => runWrite(tx as unknown as Kysely<DB>,));
+  } finally {
+    gate.resolve();
+  }
+
+  async function runWrite(executor: Kysely<DB>,): Promise<BackupRecord> {
+    if (quotaBytes > 0) {
+      const existing = await executor
+        .selectFrom("backup_records",)
+        .select("payload",)
+        .where("owner_id", "=", opts.ownerId,)
+        .where("resource_type", "=", opts.resourceType,)
+        .execute();
+
+      const used = existing.reduce((sum, row,) => sum + Buffer.byteLength(row.payload, "utf8",), 0,);
+      if (used + incomingBytes > quotaBytes) {
+        throw new QuotaExceededError({
+          resourceId: `${opts.ownerId}:${opts.resourceType}`,
+          kind: "storage-bytes",
+          limit: quotaBytes,
+        },);
+      }
+    }
+
+    await executor
+      .insertInto("backup_records",)
+      .values({
+        id,
+        resource_type: opts.resourceType,
+        owner_id: opts.ownerId,
+        content_hash: contentHash,
+        server_hash: contentHash,
+        payload: opts.payload,
+        version: 1,
+        storage_quota_bytes: quotaBytes,
+      },)
+      .execute();
+
+    return {
       id,
-      resource_type: opts.resourceType,
-      owner_id: opts.ownerId,
-      content_hash: contentHash,
-      server_hash: contentHash,
+      resourceType: opts.resourceType,
+      ownerId: opts.ownerId,
+      contentHash,
+      serverHash: contentHash,
       payload: opts.payload,
       version: 1,
-      storage_quota_bytes: quotaBytes,
-    },)
-    .execute();
-
-  return {
-    id,
-    resourceType: opts.resourceType,
-    ownerId: opts.ownerId,
-    contentHash,
-    serverHash: contentHash,
-    payload: opts.payload,
-    version: 1,
-    storageQuotaBytes: quotaBytes,
-  };
+      storageQuotaBytes: quotaBytes,
+    };
+  }
 }
 
 /**
@@ -315,6 +345,47 @@ export async function verifyBackupIntegrity(db: Kysely<DB>, backupId: string,): 
   if (!row) { throw new Error(`Unknown backup "${backupId}"`,); }
   if (hashContent(row.payload,) !== row.content_hash) { throw new HashMismatchError(backupId,); }
   return toBackup(row,);
+}
+
+// No production rotation constant exists (rotateBackups is browser-pure and
+// test-only); the scheduler default below is 10 per owner+type scope.
+export const BACKUP_PRUNE_KEEP_DEFAULT = 10;
+
+export interface PruneBackupsOpts {
+  ownerId: string;
+  resourceType: string;
+  keep?: number;
+}
+
+/**
+ * Bounded rotation prune: delete every backup row for an owner+type scope
+ * except the latest `keep` by version desc, created_at desc, id asc.
+ * Returns 0 (no-op) when keep <= 0 or the scope already fits — call after
+ * a persist.
+ */
+export async function pruneBackups(db: Kysely<DB>, opts: PruneBackupsOpts,): Promise<number> {
+  const keep = opts.keep ?? BACKUP_PRUNE_KEEP_DEFAULT;
+  if (keep <= 0) { return 0; }
+  const rows = await db
+    .selectFrom("backup_records",)
+    .select(["id", "version", "created_at",],)
+    .where("owner_id", "=", opts.ownerId,)
+    .where("resource_type", "=", opts.resourceType,)
+    .execute();
+
+  if (rows.length <= keep) { return 0; }
+  const ordered = [...rows,].sort((a, b,) =>
+    b.version - a.version || String(b.created_at,).localeCompare(String(a.created_at,),) || a.id.localeCompare(b.id,)
+  );
+
+  const stale = ordered.slice(keep,);
+  const ids = stale.map((row,) => row.id);
+  const deleted = await db
+    .deleteFrom("backup_records",)
+    .where("id", "in", ids,)
+    .executeTakeFirst();
+
+  return Number(deleted.numDeletedRows ?? 0n,);
 }
 
 /** List stored backups, optionally scoped to an owner and resource type. */
@@ -359,9 +430,10 @@ export async function restoreBackupForOwner(
   if (!parsed.ok) { return { restored: false, reason: "integrity check failed: payload is not valid JSON", }; }
   const data: unknown = parsed.value;
 
-  const resourceId = typeof (data as Record<string, unknown> | null)?.["chatId"] === "string"
-    ? (data as Record<string, string>)["chatId"]
-    : backup.id;
+  const record = (data ?? {}) as Record<string, unknown>;
+  const resourceId = ["chatId", "assetId", "messageId", "worldId", "resourceId", "restoredFrom", "loreId",]
+    .map((key,) => record[key])
+    .find((value,): value is string => typeof value === "string" && value.length > 0) ?? backup.id;
 
   await db.transaction().execute(async (tx,) => {
     await target.applyPayload(resourceId, data,);

@@ -6,6 +6,7 @@
 // non-admin override attempts get 403.
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
+import { bindSharedQuotaEngine, getQuotaEngine, } from "../quota-engine";
 import { handleBackupHashes, handleBackupRestore, handleQuotaOverride, handleQuotaState, } from "./quota-state";
 
 let fixture: TestDb;
@@ -67,6 +68,24 @@ describe("handleQuotaState", () => {
     const res = await handleQuotaState(fixture.db, "owner-a", "user",);
     const body = await res.json() as { resources: { id: string; overQuota: boolean }[] };
     expect(body.resources.find((r,) => r.id === "qr-spent")?.overQuota,).toBe(true,);
+  });
+
+  test("expired windows read back as zeroed, not overQuota", async () => {
+    await seedResource("qr-expired", "owner-a",);
+    await fixture.db
+      .insertInto("resource_quota_counters",)
+      .values({ resource_id: "qr-expired", window_start: String(Date.now() - 120_000,), requests: 2, tokens: 0, },)
+      .execute();
+
+    const res = await handleQuotaState(fixture.db, "owner-a", "user",);
+    const body = await res.json() as {
+      resources: { id: string; overQuota: boolean; dimensions: { key: string; used: number }[] }[];
+    };
+
+    const gauge = body.resources.find((r,) => r.id === "qr-expired");
+
+    expect(gauge?.overQuota,).toBe(false,);
+    expect(gauge?.dimensions.find((d,) => d.key === "requests")?.used,).toBe(0,);
   });
 });
 
@@ -224,6 +243,30 @@ describe("handleQuotaOverride", () => {
       .execute();
 
     expect(rows.length,).toBe(0,);
+  });
+
+  test("override clears the shared engine's in-memory counter", async () => {
+    // Seed both the DB row and the shared in-memory counter: without the
+    // invalidateSharedQuota call the second-instance engine would keep
+    // serving the stale count after the admin reset.
+    bindSharedQuotaEngine(fixture.db,);
+    try {
+      const engine = getQuotaEngine();
+      await fixture.db
+        .insertInto("resource_quota_counters",)
+        .values({ resource_id: "qr-shared-invalidate", window_start: String(Date.now(),), requests: 2, tokens: 0, },)
+        .execute();
+
+      await engine.readCounter("qr-shared-invalidate",);
+      expect(engine.peek("qr-shared-invalidate",).requests,).toBe(2,);
+
+      const res = await handleQuotaOverride({ resourceId: "qr-shared-invalidate", }, fixture.db, "admin-1", "admin",);
+      expect(res.status,).toBe(200,);
+
+      expect(engine.peek("qr-shared-invalidate",).requests,).toBe(0,);
+    } finally {
+      bindSharedQuotaEngine(null,);
+    }
   });
 
   test("missing resourceId is 400", async () => {

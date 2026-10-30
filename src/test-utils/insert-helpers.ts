@@ -149,9 +149,8 @@ export async function insertDataMigrations(
   to_version: number,
   description: string,
   opts?: { applied_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("data_migrations",).values({
     table_name,
     from_version,
@@ -159,7 +158,6 @@ export async function insertDataMigrations(
     description,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a log_entries row. */
@@ -210,12 +208,11 @@ export async function insertMetaProgression(
     updated_at?: string;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("meta_progression",).values({
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).player_id as string;
 }
 
 /** Insert a model_capabilities row. */
@@ -294,14 +291,13 @@ export async function insertModelRoleOverrides(
     max_tokens?: number | null;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("model_role_overrides",).values({
     provider,
     model,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).role as string;
 }
 
 /** Insert a notifications row. */
@@ -344,12 +340,11 @@ export async function insertPluginState(
     config_json?: string | null;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("plugin_state",).values({
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).name as string;
 }
 
 /** Insert a request_results row. */
@@ -437,13 +432,12 @@ export async function insertSystemConfig(
   value: string,
   opts: { key: string; description?: string | null; created_at?: string; updated_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("system_config",).values({
     value,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).key as string;
 }
 
 /** Insert a telemetry_events row. */
@@ -528,16 +522,14 @@ export async function insertAssetLinks(
   entity_type: AssetLinkEntity,
   entity_id: string,
   opts?: { label?: string | null; sort_order?: number; created_at?: string; archived_at?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("asset_links",).values({
     asset_id,
     entity_type,
     entity_id,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a asset_shares row. */
@@ -618,15 +610,13 @@ export async function insertAssetTransforms(
     focal_point_y?: number | null;
     updated_at?: string;
   },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("asset_transforms",).values({
     asset_id,
     context,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a location_states row. */
@@ -831,13 +821,11 @@ export async function insertWorldLoreEntries(
 }
 
 /** Insert a world_members row. */
-export async function insertWorldMembers(db: Db, world_id: string, actor_id: string,): Promise<string> {
-  const id = crypto.randomUUID();
+export async function insertWorldMembers(db: Db, world_id: string, actor_id: string,): Promise<void> {
   await db.insertInto("world_members",).values({
     world_id,
     actor_id,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a world_states row. */
@@ -2179,15 +2167,13 @@ export async function insertChatParticipants(
     muted_until?: string | null;
     banned_until?: string | null;
   },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("chat_participants",).values({
     chat_id,
     actor_id,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a chat_pins row. */
@@ -2364,16 +2350,14 @@ export async function insertGroupInitiatives(
   scene_id: string,
   actor_id: string,
   opts?: { score?: number; created_at?: string; updated_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("group_initiatives",).values({
     chat_id,
     scene_id,
     actor_id,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a message_reactions row. */
@@ -3674,14 +3658,13 @@ export async function insertMemoryEmbeddings(
   created_at: number,
   opts: { memory_id: string; model?: string; dimensions?: number },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("memory_embeddings",).values({
     vector_blob,
     created_at,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).memory_id as string;
 }
 
 /** Insert a generation_attempts row. */
@@ -4146,14 +4129,12 @@ export async function insertMessageSearchTokens(
   message_id: string,
   term: string,
   scope: string,
-): Promise<string> {
-  const id = crypto.randomUUID();
+): Promise<void> {
   await db.insertInto("message_search_tokens",).values({
     message_id,
     term,
     scope,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a workflow_sessions row. */
@@ -4162,13 +4143,12 @@ export async function insertWorkflowSessions(
   workflow_id: string,
   opts: { chat_id: string; step_values?: string; confirmed?: number; updated_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("workflow_sessions",).values({
     workflow_id,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).chat_id as string;
 }
 
 /** Insert a mesh_peers row. */
@@ -4191,12 +4171,11 @@ export async function insertMeshPeers(
     key_version?: number;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("mesh_peers",).values({
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).origin as string;
 }
 
 /** Insert a mesh_negotiations row. */
@@ -4245,15 +4224,14 @@ export async function insertMeshDeliveries(
   clock: number,
   opts: { content_id: string; received_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("mesh_deliveries",).values({
     origin,
     content_hash,
     clock,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).content_id as string;
 }
 
 /** Insert a mesh_inbound_keys row. */
@@ -4262,13 +4240,12 @@ export async function insertMeshInboundKeys(
   encrypted_key: string,
   opts: { peer_origin: string; previous_encrypted_key?: string | null; created_at?: string; updated_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("mesh_inbound_keys",).values({
     encrypted_key,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).peer_origin as string;
 }
 
 /** Insert a asset_tags row. */
@@ -4436,14 +4413,13 @@ export async function insertActorLocations(
   spatial_location_id: string,
   opts: { actor_id: string; entered_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("actor_locations",).values({
     physical_location_id,
     spatial_location_id,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).actor_id as string;
 }
 
 /** Insert a rpg_questions row. */
@@ -4814,9 +4790,8 @@ export async function insertAutonomyBudget(
   limit_name: string,
   window_start_at: string,
   opts?: { window_count?: number; updated_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("autonomy_budget",).values({
     scope_kind,
     scope_id,
@@ -4824,7 +4799,6 @@ export async function insertAutonomyBudget(
     window_start_at,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a world_simulation_state row. */
@@ -4840,13 +4814,12 @@ export async function insertWorldSimulationState(
     updated_at?: string;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("world_simulation_state",).values({
     next_tick_at,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).world_id as string;
 }
 
 /** Insert a carriage_records row. */
@@ -4984,15 +4957,13 @@ export async function insertTaskDependencies(
   task_id: string,
   depends_on_task_id: string,
   opts?: { on_failure?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("task_dependencies",).values({
     task_id,
     depends_on_task_id,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a travel_parties row. */
@@ -5063,12 +5034,11 @@ export async function insertWorldTravelBudget(
   db: Db,
   opts: { world_id: string; spent?: number; ceiling?: number; window_start_tick?: number; updated_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("world_travel_budget",).values({
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).world_id as string;
 }
 
 /** Insert a world_event_log row. */
@@ -5107,16 +5077,14 @@ export async function insertLocationDiscovery(
     created_at?: string;
     updated_at?: string;
   },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("location_discovery",).values({
     world_id,
     location_id,
     actor_id,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a scheduled_messages row. */
@@ -5199,16 +5167,14 @@ export async function insertBranchMergeSources(
   ordinal: number,
   tip_message_id: string,
   opts?: { branch_id?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("branch_merge_sources",).values({
     merge_id,
     ordinal,
     tip_message_id,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a plan_items row. */
@@ -5245,16 +5211,14 @@ export async function insertPlanLinks(
   to_id: string,
   relation: string,
   opts?: { created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("plan_links",).values({
     from_id,
     to_id,
     relation,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a vn_questions row. */
@@ -5380,12 +5344,11 @@ export async function insertWorldConditions(
     updated_at?: string;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("world_conditions",).values({
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).world_id as string;
 }
 
 /** Insert a world_condition_history row. */
@@ -5966,16 +5929,14 @@ export async function insertMeshWorkAssignments(
     released_at?: string | null;
     release_reason?: string | null;
   },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("mesh_work_assignments",).values({
     affinity_key,
     workload_class,
     peer_origin,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a federation_performance_budgets row. */
@@ -5991,16 +5952,14 @@ export async function insertFederationPerformanceBudgets(
     requests_per_minute?: number | null;
     tokens_per_minute?: number | null;
   },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("federation_performance_budgets",).values({
     origin,
     workload_class,
     updated_at,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a message_polls row. */
@@ -6082,8 +6041,7 @@ export async function insertCharacterStatAllocation(
   allocated_at: string,
   opts: { actor_id: string; allocated_by_user_id?: string | null },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("character_stat_allocation",).values({
     world_id,
     allocated_str,
@@ -6095,7 +6053,7 @@ export async function insertCharacterStatAllocation(
     allocated_at,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).actor_id as string;
 }
 
 /** Insert a character_trait_assignments row. */
@@ -6106,9 +6064,8 @@ export async function insertCharacterTraitAssignments(
   world_id: string,
   granted_at: string,
   opts?: { granted_by_user_id?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
   await db.insertInto("character_trait_assignments",).values({
     actor_id,
     trait_id,
@@ -6116,7 +6073,6 @@ export async function insertCharacterTraitAssignments(
     granted_at,
     ...restOpts,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a assistant_quota_usage row. */
@@ -6125,13 +6081,12 @@ export async function insertAssistantQuotaUsage(
   window_start: string,
   opts: { user_id: string; used_units?: number },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("assistant_quota_usage",).values({
     window_start,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).user_id as string;
 }
 /** Insert a chat_owners row. */
 export async function insertChatOwners(
@@ -6200,7 +6155,6 @@ export async function insertImmersionDecisionLog(
   } as any,).execute();
   return id;
 }
-
 /** Insert a model_rankings row. */
 export async function insertModelRankings(
   db: Db,
@@ -6326,13 +6280,12 @@ export async function insertResourceQuotaCounters(
   window_start: string,
   opts: { resource_id: string; requests?: number; tokens?: number; updated_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const { ...restOpts } = opts as Record<string, unknown>;
   await db.insertInto("resource_quota_counters",).values({
     window_start,
     ...restOpts,
   } as any,).execute();
-  return id;
+  return (restOpts as Record<string, unknown>).resource_id as string;
 }
 
 /** Insert a world_timeline_selections row. */
@@ -6342,13 +6295,11 @@ export async function insertWorldTimelineSelections(
   world_id: string,
   timeline_id: string,
   selected_at: string,
-): Promise<string> {
-  const id = crypto.randomUUID();
+): Promise<void> {
   await db.insertInto("world_timeline_selections",).values({
     user_id,
     world_id,
     timeline_id,
     selected_at,
   } as any,).execute();
-  return id;
 }
