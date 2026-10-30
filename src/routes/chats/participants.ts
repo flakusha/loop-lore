@@ -68,6 +68,11 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
               "chat_participants.persona_id",
               "actors.display_name",
               "actors.actor_type",
+              // Group-chat per-actor avatar fallback: the actor row's base
+              // portrait, so the FE resolves an author without emotion
+              // variants to THAT actor's portrait (additive — existing
+              // consumers ignore unknown fields).
+              "actors.avatar_asset_id",
             ],)
             .where("chat_participants.chat_id", "=", id,)
             .execute();
