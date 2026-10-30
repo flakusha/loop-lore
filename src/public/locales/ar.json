@@ -53,7 +53,9 @@
     "archive": "Archive",
     "user": "المستخدم",
     "actions": "الإجراءات",
-    "openInEditor": "Open in $EDITOR"
+    "openInEditor": "Open in $EDITOR",
+    "terminalTitle": "Terminal editor",
+    "closeTerminal": "Close terminal"
   },
   "auth": {
     "login": "Log In",
