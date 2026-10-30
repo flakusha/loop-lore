@@ -15,6 +15,13 @@
  * Offline throughout — the snapshot is a committed fixture; no server, no
  * weights. Server-side submission is out of scope (deferred per ticket).
  *
+ * Parallel-safe by construction: the probe is a pure function of its
+ * options — no listening socket (no server at all, stubbed or otherwise),
+ * no filesystem writes, no shared mutable state. Concurrent runs share only
+ * the committed snapshot fixture, read-only. Each call allocates its own
+ * bindings and substitution vars, so there is nothing to tear down and no
+ * `afterEach`/`finally` to forget; a failed probe leaks nothing.
+ *
  * @module comfyui-params/probe
  */
 import { type Brand, brand, } from "../../utils/brands";
