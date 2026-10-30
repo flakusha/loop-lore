@@ -120,6 +120,22 @@ describe("createSteering", () => {
       await sqlite.close();
     }
   });
+
+  test("rejects an empty timelineId instead of persisting it", async () => {
+    ensureLogger();
+    const { db, sqlite, worldId, } = await setupWorld();
+    try {
+      await expect(createSteering({ db, worldId, description: "x", timelineId: "", },),).rejects.toThrow(/timelineId/,);
+      await expect(createSteering({ db, worldId, description: "x", timelineId: "   ", },),).rejects.toThrow(
+        /timelineId/,
+      );
+
+      const rows = await db.selectFrom("world_event_steerings",).selectAll().execute();
+      expect(rows,).toHaveLength(0,);
+    } finally {
+      await sqlite.close();
+    }
+  });
 });
 
 describe("listPendingSteerings", () => {
@@ -207,6 +223,26 @@ describe("rollSteering", () => {
       const dismissed = await createSteering({ db, worldId, description: "Gone.", },);
       await resolveSteering({ db, id: dismissed, manifest: false, },);
       expect(await rollSteering({ db, id: dismissed, random: () => 0, },),).toBe(false,);
+      expect(await db.selectFrom("world_timeline_events",).selectAll().execute(),).toHaveLength(1,);
+    } finally {
+      await sqlite.close();
+    }
+  });
+
+  test("concurrent double-roll manifests exactly one timeline event", async () => {
+    ensureLogger();
+    const { db, sqlite, worldId, } = await setupWorld();
+    try {
+      const id = await createSteering({ db, worldId, description: "Race the storm.", manifestProbability: 1, },);
+      // Both rolls race the same pending row; the in-transaction status read
+      // must let exactly one of them append the timeline event (18bb7ff gap 1).
+      const outcomes = await Promise.all([
+        rollSteering({ db, id, random: () => 0, },),
+        rollSteering({ db, id, random: () => 0, },),
+      ],);
+
+      expect(outcomes,).toEqual([true, true,],);
+      expect((await readSteering(db, id,)).status,).toBe("manifested",);
       expect(await db.selectFrom("world_timeline_events",).selectAll().execute(),).toHaveLength(1,);
     } finally {
       await sqlite.close();
