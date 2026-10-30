@@ -19,6 +19,8 @@ export { collectMarked, MARK_PREFIX, } from "./marks";
 export type { CollectMarksOptions, MarkedInput, MarkedNodeId, MarkedTarget, } from "./marks";
 export { applySidecar, } from "./sidecar";
 export type { ApplySidecarOptions, SidecarOverride, SidecarOverrides, } from "./sidecar";
+export { boundsOf, specOf, specTagOf, staticOptions, } from "./spec-shape";
+export type { SpecBounds, } from "./spec-shape";
 export { mapSpecToParam, } from "./type-map";
 export type { TypeMappingInput, } from "./type-map";
 export type { DerivedParameter, DeriveOptions, DeriveResult, OptionSource, ParameterName, } from "./types";
