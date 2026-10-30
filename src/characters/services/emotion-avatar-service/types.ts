@@ -3,6 +3,7 @@
 
 // Public types for the emotion avatar service.
 
+import type { ImageProviderConfig, } from "../../../config/schema";
 import type { EmotionType, } from "../../../db/enums";
 import type { MattingProvider, } from "../../../generation/matting/types";
 
@@ -43,6 +44,11 @@ export interface GenerateEmotionAvatarsOpts {
   seed?: number;
   /** "reuse" re-runs the batch under the last recorded base seed. */
   seedStrategy?: "reuse";
+  /**
+   * Pre-resolved image provider; when set, skips config lookup
+   * (management/test override — same precedent as `uploadDir`).
+   */
+  imageProvider?: ImageProviderConfig;
 }
 
 /** Status of a single emotion generation */
