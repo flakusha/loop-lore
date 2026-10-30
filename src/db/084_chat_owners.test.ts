@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Migration 082 — `chat_owners` co-owners table + creator backfill
+ * Migration 084 — `chat_owners` co-owners table + creator backfill
  * (TASK-chat-owners-schema-and-backfill, epic-chat-multi-ownership).
  *
  * Pins the ticket ACs directly: backfill exactness (one row per chat,
  * user = created_by, granted_by null), UNIQUE(chat_id, user_id)
  * enforcement at the database, the reason ≤ 500 CHECK, FK cascades, and
- * `down()` restoring the pre-082 shape (no table, backfilled rows gone).
+ * `down()` restoring the pre-084 shape (no table, backfilled rows gone).
  *
  * Mirrors src/db/078_user_api_keys_unique.test.ts and, like it, lives in
  * `src/db/` NOT `src/db/migrations/` (getMigrationFiles would register the
@@ -24,10 +24,10 @@ import { type Kysely, sql, } from "kysely";
 
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
-import { down, up, } from "./migrations/082_chat_owners";
+import { down, up, } from "./migrations/084_chat_owners";
 import type { DB, } from "./schema";
 
-const MIGRATION = "082_chat_owners";
+const MIGRATION = "084_chat_owners";
 
 /** `up`/`down` are typed against the untyped handle the migrator passes them. */
 type UntypedDb = Kysely<unknown>;
@@ -89,16 +89,17 @@ describe(MIGRATION, () => {
   test("backfills exactly one owners row per chat from chats.created_by", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
-      // Back to the pre-082 shape: table gone, so `up` runs the backfill
-      // against chats we control.
-      await down(db as unknown as UntypedDb,);
-      expect(await hasTable(db,),).toBe(false,);
-
+      // insertChats needs the table (it seeds the creator row), so build
+      // chats first, then drop to the pre-084 shape and let `up` backfill
+      // from chats.created_by alone.
       const u1 = await insertUsers(db, `co-u1-${crypto.randomUUID()}`, "U1",);
       const u2 = await insertUsers(db, `co-u2-${crypto.randomUUID()}`, "U2",);
       const c1 = await insertChats(db, "Chat One", u1,);
       const c2 = await insertChats(db, "Chat Two", u1,);
       const c3 = await insertChats(db, "Chat Three", u2,);
+
+      await down(db as unknown as UntypedDb,);
+      expect(await hasTable(db,),).toBe(false,);
 
       await up(db as unknown as UntypedDb,);
 
@@ -127,11 +128,13 @@ describe(MIGRATION, () => {
   test("UNIQUE(chat_id, user_id) rejects the same owner twice", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
-      // createTestDb() ran 082 as part of the chain.
+      // insertChats seeds the creator's baseline row (production create
+      // path) — the seeded row IS the first insert, so re-granting the
+      // creator must reject as a duplicate.
       const u = await insertUsers(db, `co-dup-${crypto.randomUUID()}`, "Dup",);
       const c = await insertChats(db, "Dup Chat", u,);
 
-      await insertOwner(db, c, u,);
+      // The seeded creator row is the first insert — re-granting rejects.
       await expect(insertOwner(db, c, u,),).rejects.toThrow(/UNIQUE/i,);
       // A different user on the same chat, and the same user on a different
       // chat, are both fine — the constraint is the pair, not a column.
@@ -139,7 +142,8 @@ describe(MIGRATION, () => {
       const cOther = await insertChats(db, "Other Chat", other,);
       await insertOwner(db, c, other,);
       await insertOwner(db, cOther, u,);
-      expect((await ownerRows(db,)).length,).toBe(3,);
+      // Seed rows (c,u) + (cOther,other) plus the two explicit grants.
+      expect((await ownerRows(db,)).length,).toBe(4,);
     } finally {
       await db.destroy();
       sqlite.close();
@@ -150,14 +154,17 @@ describe(MIGRATION, () => {
     const { db, sqlite, } = await createTestDb();
     try {
       const u = await insertUsers(db, `co-reason-${crypto.randomUUID()}`, "Reason",);
+      const r = await insertUsers(db, `co-reason2-${crypto.randomUUID()}`, "Reason2",);
       const cA = await insertChats(db, "Reason A", u,);
       const cB = await insertChats(db, "Reason B", u,);
 
-      await expect(insertOwner(db, cA, u, "x".repeat(501,),),).rejects.toThrow(
+      // A second user per chat: the seeded creator rows stay reason-free,
+      // so the CHECK (not a UNIQUE conflict) decides these inserts.
+      await expect(insertOwner(db, cA, r, "x".repeat(501,),),).rejects.toThrow(
         /ck_chat_owners_reason|CHECK/i,
       );
 
-      await insertOwner(db, cB, u, "x".repeat(500,),);
+      await insertOwner(db, cB, r, "x".repeat(500,),);
       const rows = await ownerRows(db,);
       expect(rows.filter((r,) => r.reason?.length === 500),).toHaveLength(1,);
     } finally {
@@ -175,22 +182,22 @@ describe(MIGRATION, () => {
       const coOwner = await insertUsers(db, `co-fk-${crypto.randomUUID()}`, "CoOwner",);
       const gone = await insertChats(db, "FK Chat", creator,);
       const kept = await insertChats(db, "Kept Chat", creator,);
-      // Explicit rows (the chain's backfill ran on an empty chats table, so
-      // chats created now carry no owners row until granted).
+      // insertChats seeds one creator row per chat (production create
+      // path); the two explicit grants below bring the total to four.
       await insertOwner(db, gone, coOwner,);
       await insertOwner(db, kept, coOwner,);
-      expect((await ownerRows(db,)).length,).toBe(2,);
+      expect((await ownerRows(db,)).length,).toBe(4,);
 
       await sql`DELETE FROM chats WHERE id = ${gone}`.execute(db,);
       let rows = await ownerRows(db,);
-      expect(rows,).toHaveLength(1,);
-      expect(rows[0]!.chat_id,).toBe(kept,);
+      expect(rows,).toHaveLength(2,);
+      expect(new Set(rows.map((r,) => r.chat_id,)),).toEqual(new Set([kept,]),);
 
       // Deleting the co-owner cascades their surviving row away; the chats
       // themselves are untouched (creator column still references creator).
       await sql`DELETE FROM users WHERE id = ${coOwner}`.execute(db,);
       rows = await ownerRows(db,);
-      expect(rows,).toEqual([],);
+      expect(rows.map((r,) => [r.chat_id, r.user_id,],),).toEqual([[kept, creator,],],);
       const chatsLeft = await sql<{ id: string }>`SELECT id FROM chats ORDER BY id`.execute(db,);
       expect(chatsLeft.rows,).toHaveLength(1,);
     } finally {
@@ -199,20 +206,20 @@ describe(MIGRATION, () => {
     }
   });
 
-  test("down() restores the pre-082 shape, backfilled rows included", async () => {
+  test("down() restores the pre-084 shape, backfilled rows included", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
       const u = await insertUsers(db, `co-down-${crypto.randomUUID()}`, "Down",);
       await insertChats(db, "Down Chat", u,);
 
-      // Re-run 082 against this chat: down() first (pre-082 shape), then up()
+      // Re-run 084 against this chat: down() first (pre-084 shape), then up()
       // whose backfill creates exactly one row for it.
       await down(db as unknown as UntypedDb,);
       expect(await hasTable(db,),).toBe(false,);
       await up(db as unknown as UntypedDb,);
       expect((await ownerRows(db,)).length,).toBe(1,);
 
-      // down() again drops the table WITH the backfilled row — the pre-082
+      // down() again drops the table WITH the backfilled row — the pre-084
       // shape is exactly "no table".
       await down(db as unknown as UntypedDb,);
       expect(await hasTable(db,),).toBe(false,);
