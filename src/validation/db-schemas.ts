@@ -3817,3 +3817,37 @@ export const WorldTimelineSelectionsSchema = t.Object({
   timeline_id: t.String(),
   selected_at: t.String(),
 },);
+
+// ── resource_records ────────────────────────────────────────────
+export const ResourceRecordsSchema = t.Object({
+  owner_id: t.String(),
+  type: t.String(),
+  provider: t.String(),
+  endpoint: t.String(),
+  credential_ref: t.String(),
+  quota: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  last_used_at: t.Optional(t.String(),),
+},);
+
+// ── backup_records ────────────────────────────────────────────
+export const BackupRecordsSchema = t.Object({
+  resource_type: t.String(),
+  owner_id: t.String(),
+  content_hash: t.String(),
+  payload: t.String(),
+  server_hash: t.Optional(t.String(),),
+  version: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  storage_quota_bytes: t.Optional(t.Number(),),
+},);
+
+// ── resource_quota_counters ────────────────────────────────────────────
+export const ResourceQuotaCountersSchema = t.Object({
+  window_start: t.String(),
+  resource_id: t.Optional(t.String(),),
+  requests: t.Optional(t.Number(),),
+  tokens: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);

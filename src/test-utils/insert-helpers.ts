@@ -6196,6 +6196,73 @@ export async function insertImmersionDecisionLog(
   return id;
 }
 
+/** Insert a resource_records row. */
+export async function insertResourceRecords(
+  db: Db,
+  owner_id: string,
+  type: string,
+  provider: string,
+  endpoint: string,
+  credential_ref: string,
+  opts?: { id?: string; quota?: string; status?: string; created_at?: string; last_used_at?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("resource_records",).values({
+    id,
+    owner_id,
+    type,
+    provider,
+    endpoint,
+    credential_ref,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a backup_records row. */
+export async function insertBackupRecords(
+  db: Db,
+  resource_type: string,
+  owner_id: string,
+  content_hash: string,
+  payload: string,
+  opts?: {
+    id?: string;
+    server_hash?: string | null;
+    version?: number;
+    created_at?: string;
+    storage_quota_bytes?: number;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("backup_records",).values({
+    id,
+    resource_type,
+    owner_id,
+    content_hash,
+    payload,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a resource_quota_counters row. */
+export async function insertResourceQuotaCounters(
+  db: Db,
+  window_start: string,
+  opts: { resource_id: string; requests?: number; tokens?: number; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = opts as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("resource_quota_counters",).values({
+    window_start,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
 /** Insert a world_timeline_selections row. */
 export async function insertWorldTimelineSelections(
   db: Db,

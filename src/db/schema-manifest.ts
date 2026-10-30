@@ -207,6 +207,17 @@ export const SCHEMA = new SchemaManifest()
     window_count: col("integer", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("backup_records", {
+    id: col("text", { primaryKey: true, },),
+    resource_type: col("text", { notNull: true, },),
+    owner_id: col("text", { notNull: true, },),
+    content_hash: col("text", { notNull: true, },),
+    server_hash: col("text",),
+    payload: col("text", { notNull: true, },),
+    version: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    storage_quota_bytes: col("integer", { notNull: true, hasDefault: true, },),
+  },)
   .table("battles", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -1162,6 +1173,25 @@ export const SCHEMA = new SchemaManifest()
     offload_path: col("text",),
     content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("resource_quota_counters", {
+    resource_id: col("text", { primaryKey: true, },),
+    window_start: col("text", { notNull: true, },),
+    requests: col("integer", { notNull: true, hasDefault: true, },),
+    tokens: col("integer", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("resource_records", {
+    id: col("text", { primaryKey: true, },),
+    owner_id: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, },),
+    provider: col("text", { notNull: true, },),
+    endpoint: col("text", { notNull: true, },),
+    credential_ref: col("text", { notNull: true, },),
+    quota: col("text", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    last_used_at: col("text",),
   },)
   .table("rotation_history", {
     id: col("text", { primaryKey: true, },),
