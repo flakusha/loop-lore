@@ -472,7 +472,24 @@ The following memory-related tasks have been migrated to Epic 36 as they are cor
 
 ## Docs-Gap Audit Remainders (2026-09-19)
 
-- [ ] [gap-audit E6] Elysia startup-time plugin route registration (replace O(n) dispatchPluginRoute scan, src/plugins/loader.ts:195)
+- [x] [gap-audit E6] Elysia startup-time plugin route registration (replace O(n) dispatchPluginRoute scan, src/plugins/loader.ts:195)
+      — closed in worktree `feat-plugin-route-index` (commit `cdb751135`):
+      `RegistryStore` (src/plugins/registry-store.ts) now keeps a private
+      `method + normalized-path` → ordered-candidates index in plugin-grouped
+      registration order, rebuilt on `appendRoutes`/`removePlugin`/`clear`; the
+      index derives from the same map `findRoute` scans, so `findRoute`'s
+      first-registered contract is untouched.
+      `dispatchPluginRoute` (src/plugins/loader.ts:408) replaced the linear
+      `getEnabledRoutes()` scan with an O(1) bucket lookup that walks the
+      (usually one-element) candidate list and picks the first ENABLED
+      candidate at dispatch time — first-enabled-wins and runtime `setEnabled`
+      flips behave exactly as before, and `normalizePluginRoutePath`
+      normalization is unchanged on both sides. Pinned by the
+      "O(1) route dispatch index" tests in src/plugins/loader-dispatch.test.ts
+      (first-enabled-wins across disable/re-enable, manifest+onLoad append
+      coexistence, plugin-grouped ordering beating global append order,
+      method+path miss correctness, trailing-slash normalization parity).
+      Ticket: TASK-o-1-plugin-route-dispatch-index.
 
 **Update — approval is origin-scoped, failed loads roll back.** `plugin_state`
 rows are now written per origin: only `core` self-inserts as `active`;
