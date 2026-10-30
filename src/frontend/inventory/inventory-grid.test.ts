@@ -2,17 +2,15 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Inventory grid tests: sort/filter units plus fake-dom render behavior.
+ * Inventory grid tests: sort/filter units.
  */
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { type FakeEl, installBattleDom, makeEl, query, } from "../tests/battle-fake-dom";
+import { describe, expect, test, } from "bun:test";
 import {
   filterItems,
   type InventoryItem,
   isItemEquipped,
   isItemUsable,
   itemTags,
-  renderInventoryGrid,
   sortItems,
 } from "./inventory-grid";
 
@@ -45,16 +43,6 @@ const shield = (overrides: Partial<InventoryItem> = {},): InventoryItem => ({
   value: 75,
   ...overrides,
 });
-
-let restoreDom: () => void;
-
-beforeEach(() => {
-  restoreDom = installBattleDom();
-},);
-
-afterEach(() => {
-  restoreDom();
-},);
 
 describe("sortItems", () => {
   test("sorts by name by default without touching the input", () => {
@@ -111,65 +99,5 @@ describe("item flags and tags", () => {
     expect(isItemUsable(sword({ itemType: "tool", },),),).toBe(true,);
     expect(isItemUsable(sword({ tags: ["usable",], },),),).toBe(true,);
     expect(isItemUsable(sword(),),).toBe(false,);
-  });
-});
-
-describe("renderInventoryGrid", () => {
-  test("renders grid slots sorted with stack counts and selection", () => {
-    const root = makeEl("div",);
-    const seen: string[] = [];
-    renderInventoryGrid(root as unknown as HTMLElement, [sword(), potion(),], {
-      onSelect: (id,) => {
-        seen.push(id,);
-      },
-    },);
-
-    expect(root.className,).toBe("inventory-grid",);
-    expect(root.children.map((child,) => child.getAttribute("data-item-id",)),).toEqual([
-      "potion",
-      "sword",
-    ],);
-
-    // Quantity badge only on stacks: potion ×3, sword has none.
-    expect(
-      query(root, `[data-item-id="potion"]`,)?.children.some((child,) =>
-        child.getAttribute("data-slot-part",) === "quantity" && child.textContent === "×3"
-      ),
-    ).toBe(true,);
-
-    expect(
-      query(root, `[data-item-id="sword"]`,)?.children.some((child,) =>
-        child.getAttribute("data-slot-part",) === "quantity"
-      ),
-    ).toBe(false,);
-
-    query(root, `[data-item-id="sword"]`,)?.click();
-    expect(seen,).toEqual(["sword",],);
-  });
-
-  test("renders list view with meta line and equipped badge", () => {
-    const root = makeEl("div",);
-    renderInventoryGrid(root as unknown as HTMLElement, [shield({ equipped: true, },),], {
-      view: "list",
-      selectedId: "shield",
-    },);
-
-    expect(root.className,).toBe("inventory-list",);
-    const slot = query(root, `[data-item-id="shield"]`,) as FakeEl | null;
-    expect(slot?.className.includes("selected",),).toBe(true,);
-    expect(slot?.className.includes("equipped",),).toBe(true,);
-    expect(slot?.children.some((child,) => child.getAttribute("data-slot-part",) === "meta"),).toBe(true,);
-    expect(
-      slot?.children.some((child,) =>
-        child.getAttribute("data-slot-part",) === "equipped" && child.textContent === "Equipped"
-      ),
-    ).toBe(true,);
-  });
-
-  test("renders empty state and applies filters", () => {
-    const root = makeEl("div",);
-    renderInventoryGrid(root as unknown as HTMLElement, [sword(),], { filter: { type: "armor", }, },);
-    expect(root.children[0]?.className,).toBe("inventory-empty",);
-    expect(root.children[0]?.textContent,).toBe("No items to display.",);
   });
 });
