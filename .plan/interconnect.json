@@ -24328,6 +24328,17 @@
       "related": []
     },
     {
+      "id": "TASK-comfyui-parameter-map-derivation-from-marked-workflows",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-comfyui-parameter-map-derivation-from-marked-workflows.md",
+      "title": "ComfyUI parameter-map derivation from marked workflows",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/generation/workflow-library/seed-parameters.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-comfyui-pbr-texture-set-generation",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-comfyui-pbr-texture-set-generation.md",
@@ -24396,6 +24407,15 @@
       "srcRefs": [
         "src/generation/providers/comfyui.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-comfyui-workflow-acceptance-probe-scaffold",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-comfyui-workflow-acceptance-probe-scaffold.md",
+      "title": "ComfyUI workflow acceptance-probe scaffold",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -27979,22 +27999,6 @@
       "related": []
     },
     {
-      "id": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-emotion-avatar-job-restart-reconciliation.md",
-      "title": "Emotion-avatar job restart reconciliation",
-      "status": "done",
-      "srcRefs": [
-        "src/characters/services/emotion-avatar-service/job-store.ts",
-        "src/characters/services/emotion-avatar-service/restart-reconcile.test.ts",
-        "src/characters/services/emotion-avatar-service/restart-reconcile.ts",
-        "src/routes/character-emotion-avatars.ts",
-        "src/server/start.test.ts",
-        "src/server/start.ts"
-      ],
-      "related": []
-    },
-    {
       "id": "TASK-emotion-avatar-message-binding",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-emotion-avatar-message-binding.md",
@@ -28019,17 +28023,6 @@
         "TASK-aux-emotion-avatar",
         "TASK-emotions-avatar-edit-model"
       ]
-    },
-    {
-      "id": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md",
-      "title": "Emotion-avatar regen atomicity and subset regression tests",
-      "status": "in_progress",
-      "srcRefs": [
-        "src/routes/wardrobe-avatars.ts"
-      ],
-      "related": []
     },
     {
       "id": "TASK-emotion-avatars-pipeline",
@@ -29004,6 +28997,15 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-f9-factor-management-and-recovery-ui.md",
       "title": "F9 factor management and recovery UI",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-face-detailer-refinement-tier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-face-detailer-refinement-tier.md",
+      "title": "Face-detailer refinement tier",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -31592,19 +31594,6 @@
       "related": []
     },
     {
-      "id": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-group-chat-per-actor-emotion-avatar-resolution.md",
-      "title": "Group-chat per-actor emotion-avatar resolution",
-      "status": "in_progress",
-      "srcRefs": [
-        "src/chat/service/read.ts",
-        "src/frontend/alpine/actor-emotion-avatars.ts",
-        "src/frontend/alpine/mood/avatars.ts"
-      ],
-      "related": []
-    },
-    {
       "id": "TASK-group-chat-turn-orchestration",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-group-chat-turn-orchestration.md",
@@ -33009,6 +32998,72 @@
       ]
     },
     {
+      "id": "TASK-immersion-gate-claim-extraction",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-claim-extraction.md",
+      "title": "immersion gate claim extraction",
+      "status": "done",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-immersion-gate-config-surface-and-audit-log",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-config-surface-and-audit-log.md",
+      "title": "immersion gate config surface and audit log",
+      "status": "done",
+      "srcRefs": [
+        "src/config/sections"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-immersion-gate-deterministic-rule-engine",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-deterministic-rule-engine.md",
+      "title": "immersion gate deterministic rule engine",
+      "status": "done",
+      "srcRefs": [
+        "src/rpg/skills",
+        "src/story/items"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-failed-check-enforcement.md",
+      "title": "immersion gate failed-check enforcement",
+      "status": "done",
+      "srcRefs": [
+        "src/battle/resolution-integration/checks.ts",
+        "src/rpg/dice"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-immersion-gate-opt-in-llm-classifier",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-opt-in-llm-classifier.md",
+      "title": "immersion gate opt-in llm classifier",
+      "status": "done",
+      "srcRefs": [
+        "src/generation/flow-control.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-immersion-gate-refusal-narration-path",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-immersion-gate-refusal-narration-path.md",
+      "title": "immersion gate refusal narration path",
+      "status": "done",
+      "srcRefs": [
+        "src/turning"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-immersion-presentation",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-immersion-presentation.md",
@@ -34140,6 +34195,15 @@
         "TASK-reference-capability-matrix-data-model",
         "epic-model-family-presets"
       ]
+    },
+    {
+      "id": "TASK-krea-moodboard-style-conditioning-templates",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-krea-moodboard-style-conditioning-templates.md",
+      "title": "Krea moodboard style-conditioning templates",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
     },
     {
       "id": "TASK-krita-shared-comfyui-tier",
@@ -36675,6 +36739,15 @@
       ]
     },
     {
+      "id": "TASK-moss-plus-anima-family-templates-from-operator-workflows",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-moss-plus-anima-family-templates-from-operator-workflows.md",
+      "title": "Moss + Anima family templates from operator workflows",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-move-relationship-update-delete-existence-check-inside-the-t",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-move-relationship-update-delete-existence-check-inside-the-t.md",
@@ -36747,7 +36820,17 @@
       "path": ".plan/tickets/TASK-multi-session.md",
       "title": "EPIC: Multi-Session Support",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/components",
+        "src/components/security/sessions-panel.html",
+        "src/db/schema-core.ts",
+        "src/frontend",
+        "src/frontend/alpine/settings-sessions.ts",
+        "src/routes/sessions-switch.ts",
+        "src/routes/sessions.test.ts",
+        "src/routes/sessions.ts",
+        "src/views/settings.html"
+      ],
       "related": []
     },
     {
@@ -39789,6 +39872,15 @@
       ]
     },
     {
+      "id": "TASK-qwenvl-in-graph-prompt-enhancer",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-qwenvl-in-graph-prompt-enhancer.md",
+      "title": "QwenVL in-graph prompt enhancer",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-rag-alpine",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-rag-alpine.md",
@@ -41458,7 +41550,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-reroll-emotion-command.md",
       "title": "reroll-emotion command",
-      "status": "in_progress",
+      "status": "Not Started",
       "srcRefs": [
         "src/assistant/commands/reroll-emotion.ts"
       ],
@@ -45103,6 +45195,15 @@
       ]
     },
     {
+      "id": "TASK-track-upstream-comfyui-memory-leak-issues-fixes",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-track-upstream-comfyui-memory-leak-issues-fixes.md",
+      "title": "Track upstream ComfyUI memory-leak issues/fixes",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-track-voyage-inspiration",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-track-voyage-inspiration.md",
@@ -46098,6 +46199,15 @@
       "path": ".plan/tickets/TASK-users-roles-sessions-lifecycle.md",
       "title": "Users, Roles & Sessions Lifecycle",
       "status": "done",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-vaedegrid-post-decode-cleanup-stage",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-vaedegrid-post-decode-cleanup-stage.md",
+      "title": "VAEDeGrid post-decode cleanup stage",
+      "status": "Not Started",
       "srcRefs": [],
       "related": []
     },
@@ -47346,6 +47456,15 @@
       "related": []
     },
     {
+      "id": "TASK-workflow-library-ui-format-ingest",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-workflow-library-ui-format-ingest.md",
+      "title": "Workflow library UI-format ingest",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-workflow-payload-preview-step-type",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-workflow-payload-preview-step-type.md",
@@ -47852,7 +47971,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md",
       "title": "End-to-end emotion-hook → messages.emotion → avatarForMessage",
-      "status": "in_progress",
+      "status": "Not Started",
       "srcRefs": [
         "src/chat/service/read.ts",
         "src/frontend/alpine/mood.test.ts",
@@ -51491,6 +51610,7 @@
       "status": "done",
       "srcRefs": [
         "src/battle/resolution-integration/checks.ts",
+        "src/immersion/extract-claims.ts",
         "src/regex",
         "src/rpg/dice",
         "src/rpg/skills",
@@ -52307,9 +52427,15 @@
       "title": "Multi-Session Support",
       "status": "done",
       "srcRefs": [
-        "src/db/schema-sessions.ts",
-        "src/frontend/alpine/settings.ts",
-        "src/routes/sessions.ts"
+        "src/components/security/sessions-panel.html",
+        "src/config/load/safety.ts",
+        "src/config/schema-class/env-map.ts",
+        "src/db/schema-core.ts",
+        "src/frontend/alpine/settings-sessions.ts",
+        "src/routes/sessions-switch.ts",
+        "src/routes/sessions.test.ts",
+        "src/routes/sessions.ts",
+        "src/views/settings.html"
       ],
       "related": []
     },
@@ -52523,13 +52649,7 @@
       "title": "NSFW Moderation Safety Infrastructure — Priority Elevation",
       "status": "Not Started",
       "srcRefs": [
-        "src/chat/service/moderation.ts",
-        "src/chat/types/nsfw.ts",
-        "src/generation/hooks/nsfw-hook-log.ts",
-        "src/middleware/nsfw-gate/logging.ts",
-        "src/routes/nsfw-moderation/actions.ts",
-        "src/routes/nsfw-moderation/appeals.ts",
-        "src/routes/nsfw-moderation/flags.ts"
+        "src/chat/types/nsfw.ts"
       ],
       "related": []
     },
@@ -53870,7 +53990,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-timeline-system.md",
       "title": "Timeline System",
-      "status": "in_progress",
+      "status": "Not Started",
       "srcRefs": [
         "src/assistant/prompt/sections/lore.ts",
         "src/story/timeline/event-steering.ts",
@@ -58285,6 +58405,7 @@
     {
       "path": "src/battle/resolution-integration/checks.ts",
       "owners": [
+        "TASK-immersion-gate-failed-check-enforcement",
         "TASK-sc10-player-state-machine-adapters",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
         "epic-immersion-consistency-gate"
@@ -59336,20 +59457,7 @@
       "path": "src/characters/services/emotion-avatar-service/job-store.ts",
       "owners": [
         "IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live",
-        "TASK-emotion-avatar-job-restart-reconciliation",
         "epic-avatar-regeneration-control"
-      ]
-    },
-    {
-      "path": "src/characters/services/emotion-avatar-service/restart-reconcile.test.ts",
-      "owners": [
-        "TASK-emotion-avatar-job-restart-reconciliation"
-      ]
-    },
-    {
-      "path": "src/characters/services/emotion-avatar-service/restart-reconcile.ts",
-      "owners": [
-        "TASK-emotion-avatar-job-restart-reconciliation"
       ]
     },
     {
@@ -60791,12 +60899,6 @@
       ]
     },
     {
-      "path": "src/chat/service/moderation.ts",
-      "owners": [
-        "epic-nsfw-moderation-priority"
-      ]
-    },
-    {
       "path": "src/chat/service/ownership.test.ts",
       "owners": [
         "TASK-chat-feature-ownership-transfer",
@@ -60874,7 +60976,6 @@
       "owners": [
         "BUG-tool-call-result-no-frontend-rendering",
         "TASK-chat-transfer-location",
-        "TASK-group-chat-per-actor-emotion-avatar-resolution",
         "TASK-guest-chat-public-reads-visibility-aware-chat-access",
         "TASK-message-carriage-table-migration-admin-read",
         "TEST-emotion-hook-to-avatarForMessage-integration",
@@ -61536,7 +61637,8 @@
       "owners": [
         "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
         "TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a",
-        "TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd"
+        "TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd",
+        "TASK-multi-session"
       ]
     },
     {
@@ -62298,6 +62400,13 @@
       ]
     },
     {
+      "path": "src/components/security/sessions-panel.html",
+      "owners": [
+        "TASK-multi-session",
+        "epic-multi-session"
+      ]
+    },
+    {
       "path": "src/components/settings/key-management.html",
       "owners": [
         "TASK-e2ee-crypto-ui",
@@ -62605,7 +62714,8 @@
         "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
         "TASK-cleanup-banned-types-console-logging-magic-strings",
         "TASK-cors-middleware",
-        "epic-local-process-swarm"
+        "epic-local-process-swarm",
+        "epic-multi-session"
       ]
     },
     {
@@ -62662,7 +62772,8 @@
         "TASK-outfit-change-hook",
         "TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server",
         "TASK-tui-enabled-config-flag-never-read",
-        "epic-encryption-workflow"
+        "epic-encryption-workflow",
+        "epic-multi-session"
       ]
     },
     {
@@ -62964,7 +63075,8 @@
     {
       "path": "src/config/sections",
       "owners": [
-        "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt"
+        "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
+        "TASK-immersion-gate-config-surface-and-audit-log"
       ]
     },
     {
@@ -66028,6 +66140,7 @@
         "TASK-message-carriage-table-migration-admin-read",
         "TASK-messages-outfit-id-column",
         "TASK-mini-games-framework",
+        "TASK-multi-session",
         "TASK-publication-glossary-term-base",
         "TASK-publication-unit-translation-store",
         "TASK-task-i18n-workflow-hardening",
@@ -66056,6 +66169,7 @@
         "epic-logging",
         "epic-mini-games",
         "epic-multi-instance-reconciliation",
+        "epic-multi-session",
         "epic-multilingual-carriage",
         "epic-narrative-publishing-workflows",
         "epic-output-control-transforms",
@@ -66303,12 +66417,6 @@
       "path": "src/db/schema-sections.ts",
       "owners": [
         "TASK-chat-sectioning-multi-location"
-      ]
-    },
-    {
-      "path": "src/db/schema-sessions.ts",
-      "owners": [
-        "epic-multi-session"
       ]
     },
     {
@@ -67182,6 +67290,7 @@
         "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
         "TASK-equipment-stat-preview",
         "TASK-item-provisioning-dashboard",
+        "TASK-multi-session",
         "TASK-npc-inventory-frontend",
         "TASK-professions-frontend",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
@@ -67392,8 +67501,7 @@
       "path": "src/frontend/alpine/actor-emotion-avatars.ts",
       "owners": [
         "TASK-actor-emotion-avatars-frontend",
-        "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
-        "TASK-group-chat-per-actor-emotion-avatar-resolution"
+        "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin"
       ]
     },
     {
@@ -68983,7 +69091,6 @@
         "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
         "TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh",
         "TASK-chat-avatar-resolver-outfit-aware",
-        "TASK-group-chat-per-actor-emotion-avatar-resolution",
         "TASK-messages-outfit-id-column",
         "TEST-emotion-hook-to-avatarForMessage-integration",
         "epic-emotion-avatar-message-binding",
@@ -69167,13 +69274,19 @@
       ]
     },
     {
+      "path": "src/frontend/alpine/settings-sessions.ts",
+      "owners": [
+        "TASK-multi-session",
+        "epic-multi-session"
+      ]
+    },
+    {
       "path": "src/frontend/alpine/settings.ts",
       "owners": [
         "TASK-encryption-key-management-ui",
         "TASK-epic11-admin-settings-reconciliation",
         "TASK-i18n-settings-wiring",
-        "TASK-response-length-control",
-        "epic-multi-session"
+        "TASK-response-length-control"
       ]
     },
     {
@@ -71892,6 +72005,7 @@
     {
       "path": "src/generation/flow-control.ts",
       "owners": [
+        "TASK-immersion-gate-opt-in-llm-classifier",
         "TASK-view-set-orbit-video-tier"
       ]
     },
@@ -72244,12 +72358,6 @@
         "FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-",
         "TASK-aux-grade-judge-tasks",
         "epic-config-templates"
-      ]
-    },
-    {
-      "path": "src/generation/hooks/nsfw-hook-log.ts",
-      "owners": [
-        "epic-nsfw-moderation-priority"
       ]
     },
     {
@@ -73335,6 +73443,7 @@
     {
       "path": "src/generation/workflow-library/seed-parameters.ts",
       "owners": [
+        "TASK-comfyui-parameter-map-derivation-from-marked-workflows",
         "epic-reactive-actor-appearance"
       ]
     },
@@ -73876,6 +73985,12 @@
         "TASK-multi-concept-segmentation-masks",
         "TASK-multi-reference-conditioning-request-model",
         "epic-comfyui-first-class-citizen"
+      ]
+    },
+    {
+      "path": "src/immersion/extract-claims.ts",
+      "owners": [
+        "epic-immersion-consistency-gate"
       ]
     },
     {
@@ -75374,8 +75489,7 @@
         "BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud",
         "BUG-nsfw-gate-log-plaintext-pii",
         "TASK-chat-feature-moderation",
-        "epic-chat-product-features",
-        "epic-nsfw-moderation-priority"
+        "epic-chat-product-features"
       ]
     },
     {
@@ -78490,7 +78604,6 @@
         "BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-",
         "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
         "BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy",
-        "TASK-emotion-avatar-job-restart-reconciliation",
         "TASK-frontend-char-emotion-types-and-prompt-modifier",
         "TASK-input-validation-battle-schema-less-post-emotion-avatars-par",
         "epic-avatar-regeneration-control"
@@ -80826,8 +80939,7 @@
         "BUG-nsfw-modactions-performedby-from-body",
         "TASK-fb12-admin-role-change-notifies-affected-user-admxntf",
         "TASK-moderator-permission-gating-for-read-only-review-surface",
-        "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa",
-        "epic-nsfw-moderation-priority"
+        "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa"
       ]
     },
     {
@@ -80841,8 +80953,7 @@
       "owners": [
         "BUG-nsfw-appeal-approvedby-taken-from-request-body",
         "BUG-nsfw-appeals-as-any-and-dead-route",
-        "BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-",
-        "epic-nsfw-moderation-priority"
+        "BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-"
       ]
     },
     {
@@ -80872,8 +80983,7 @@
       "owners": [
         "BUG-nsfw-flagqueue-leaks-reporter-pii",
         "FEAT-attachment-review-queue-admin-ui",
-        "TASK-moderator-permission-gating-for-read-only-review-surface",
-        "epic-nsfw-moderation-priority"
+        "TASK-moderator-permission-gating-for-read-only-review-surface"
       ]
     },
     {
@@ -81360,19 +81470,24 @@
     {
       "path": "src/routes/sessions-switch.ts",
       "owners": [
-        "TASK-auth-session-hardening-batch-from-2026-10-04-review"
+        "TASK-auth-session-hardening-batch-from-2026-10-04-review",
+        "TASK-multi-session",
+        "epic-multi-session"
       ]
     },
     {
       "path": "src/routes/sessions.test.ts",
       "owners": [
-        "TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing"
+        "TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing",
+        "TASK-multi-session",
+        "epic-multi-session"
       ]
     },
     {
       "path": "src/routes/sessions.ts",
       "owners": [
         "TASK-auth-session-hardening-batch-from-2026-10-04-review",
+        "TASK-multi-session",
         "epic-multi-session"
       ]
     },
@@ -82236,7 +82351,6 @@
         "TASK-avatar-framing-column-migration-future",
         "TASK-avatar-framing-tag-member",
         "TASK-chat-avatar-resolver-outfit-aware",
-        "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
         "TASK-identity-lock-seed-negative-prompt-and-anchor",
         "epic-avatar-regeneration-control"
       ]
@@ -83012,6 +83126,7 @@
     {
       "path": "src/rpg/dice",
       "owners": [
+        "TASK-immersion-gate-failed-check-enforcement",
         "epic-immersion-consistency-gate"
       ]
     },
@@ -84604,6 +84719,7 @@
     {
       "path": "src/rpg/skills",
       "owners": [
+        "TASK-immersion-gate-deterministic-rule-engine",
         "TASK-sc10-player-state-machine-adapters",
         "epic-immersion-consistency-gate"
       ]
@@ -85771,8 +85887,7 @@
         "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
         "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
         "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
-        "TASK-add-a-federation-e2e-test-that-boots-two-real-servers",
-        "TASK-emotion-avatar-job-restart-reconciliation"
+        "TASK-add-a-federation-e2e-test-that-boots-two-real-servers"
       ]
     },
     {
@@ -85798,7 +85913,6 @@
         "TASK-cross-platform-portability",
         "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
         "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
-        "TASK-emotion-avatar-job-restart-reconciliation",
         "TASK-enable-http-2-via-single-tls-port-consolidation",
         "TASK-fail-safe-execution-work-safety",
         "TASK-https-redirect-enforcement-for-plaintext-http",
@@ -86624,6 +86738,7 @@
       "path": "src/story/items",
       "owners": [
         "TASK-181-pre-existing-options-object-params-eslint-warnings-acros",
+        "TASK-immersion-gate-deterministic-rule-engine",
         "TASK-sc10-player-state-machine-adapters",
         "epic-immersion-consistency-gate"
       ]
@@ -87683,6 +87798,7 @@
     {
       "path": "src/turning",
       "owners": [
+        "TASK-immersion-gate-refusal-narration-path",
         "epic-emergent-narrative-design",
         "epic-rpg-patterns"
       ]
@@ -88931,10 +89047,12 @@
         "TASK-i18n-settings-wiring",
         "TASK-i18n-template-strings",
         "TASK-info-bubbles",
+        "TASK-multi-session",
         "TASK-restart-required-indicator-on-system-config-changes",
         "TASK-thinking-tag-context-prune",
         "epic-encryption-workflow",
         "epic-frontend-settings",
+        "epic-multi-session",
         "epic-terminal-ui"
       ]
     },
@@ -89243,12 +89361,6 @@
       "kind": "consumes",
       "to": "BUG-nsfw-reviewappeal-auto-reverses-actions",
       "via": "src/nsfw/moderation-service/appeals.test.ts; src/nsfw/moderation-service/appeals.ts"
-    },
-    {
-      "from": "BUG-nsfw-appeals-as-any-and-dead-route",
-      "kind": "consumes",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/routes/nsfw-moderation/appeals.ts"
     },
     {
       "from": "BUG-nsfw-export-bundle-no-access-log",
@@ -93574,16 +93686,6 @@
     {
       "from": "epic-avatar-regeneration-control",
       "kind": "owns",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation"
-    },
-    {
-      "from": "epic-avatar-regeneration-control",
-      "kind": "owns",
-      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests"
-    },
-    {
-      "from": "epic-avatar-regeneration-control",
-      "kind": "owns",
       "to": "TASK-generation-seed-capture-and-override-per-avatar"
     },
     {
@@ -95729,12 +95831,22 @@
     {
       "from": "epic-comfyui-first-class-citizen",
       "kind": "owns",
+      "to": "TASK-comfyui-parameter-map-derivation-from-marked-workflows"
+    },
+    {
+      "from": "epic-comfyui-first-class-citizen",
+      "kind": "owns",
       "to": "TASK-comfyui-sampler-scheduler-discovery"
     },
     {
       "from": "epic-comfyui-first-class-citizen",
       "kind": "owns",
       "to": "TASK-comfyui-template-parameter-validation"
+    },
+    {
+      "from": "epic-comfyui-first-class-citizen",
+      "kind": "owns",
+      "to": "TASK-comfyui-workflow-acceptance-probe-scaffold"
     },
     {
       "from": "epic-comfyui-first-class-citizen",
@@ -95749,12 +95861,42 @@
     {
       "from": "epic-comfyui-first-class-citizen",
       "kind": "owns",
+      "to": "TASK-face-detailer-refinement-tier"
+    },
+    {
+      "from": "epic-comfyui-first-class-citizen",
+      "kind": "owns",
       "to": "TASK-implement-entity-based-asset-access-via-asset-links"
     },
     {
       "from": "epic-comfyui-first-class-citizen",
       "kind": "owns",
+      "to": "TASK-krea-moodboard-style-conditioning-templates"
+    },
+    {
+      "from": "epic-comfyui-first-class-citizen",
+      "kind": "owns",
+      "to": "TASK-moss-plus-anima-family-templates-from-operator-workflows"
+    },
+    {
+      "from": "epic-comfyui-first-class-citizen",
+      "kind": "owns",
+      "to": "TASK-qwenvl-in-graph-prompt-enhancer"
+    },
+    {
+      "from": "epic-comfyui-first-class-citizen",
+      "kind": "owns",
       "to": "TASK-ui-api-workflow-converter"
+    },
+    {
+      "from": "epic-comfyui-first-class-citizen",
+      "kind": "owns",
+      "to": "TASK-vaedegrid-post-decode-cleanup-stage"
+    },
+    {
+      "from": "epic-comfyui-first-class-citizen",
+      "kind": "owns",
+      "to": "TASK-workflow-library-ui-format-ingest"
     },
     {
       "from": "epic-comfyui-lifecycle",
@@ -95770,6 +95912,11 @@
       "from": "epic-comfyui-lifecycle",
       "kind": "owns",
       "to": "TASK-generic-rebase-guard-checklist"
+    },
+    {
+      "from": "epic-comfyui-lifecycle",
+      "kind": "owns",
+      "to": "TASK-track-upstream-comfyui-memory-leak-issues-fixes"
     },
     {
       "from": "epic-comfyui-plugin",
@@ -97315,11 +97462,6 @@
       "from": "epic-emotion-avatar-message-binding",
       "kind": "owns",
       "to": "TASK-emotion-avatars-pipeline"
-    },
-    {
-      "from": "epic-emotion-avatar-message-binding",
-      "kind": "owns",
-      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution"
     },
     {
       "from": "epic-emotion-avatar-message-binding",
@@ -99394,6 +99536,36 @@
     {
       "from": "epic-immersion-consistency-gate",
       "kind": "owns",
+      "to": "TASK-immersion-gate-claim-extraction"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-config-surface-and-audit-log"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-deterministic-rule-engine"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-failed-check-enforcement"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-opt-in-llm-classifier"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
+      "to": "TASK-immersion-gate-refusal-narration-path"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "owns",
       "to": "TASK-sc1-perspective-gate-bypass"
     },
     {
@@ -101080,11 +101252,6 @@
       "from": "epic-multi-session",
       "kind": "owns",
       "to": "TASK-multi-session-support"
-    },
-    {
-      "from": "epic-multi-session",
-      "kind": "owns",
-      "to": "TASK-multi-session"
     },
     {
       "from": "epic-multi-session",
@@ -130377,6 +130544,11 @@
       "to": "src/image-edit/types.ts"
     },
     {
+      "from": "TASK-comfyui-parameter-map-derivation-from-marked-workflows",
+      "kind": "produces",
+      "to": "src/generation/workflow-library/seed-parameters.ts"
+    },
+    {
       "from": "TASK-comfyui-pbr-texture-set-generation",
       "kind": "produces",
       "to": "src/generation/matting/service.ts"
@@ -134392,36 +134564,6 @@
       "to": "src/frontend/alpine/chat-utils/emoji.ts"
     },
     {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "produces",
-      "to": "src/characters/services/emotion-avatar-service/job-store.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "produces",
-      "to": "src/characters/services/emotion-avatar-service/restart-reconcile.test.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "produces",
-      "to": "src/characters/services/emotion-avatar-service/restart-reconcile.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "produces",
-      "to": "src/routes/character-emotion-avatars.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "produces",
-      "to": "src/server/start.test.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "produces",
-      "to": "src/server/start.ts"
-    },
-    {
       "from": "TASK-emotion-avatar-message-binding",
       "kind": "produces",
       "to": "src/characters/services/avatar-service.ts"
@@ -134480,11 +134622,6 @@
       "from": "TASK-emotion-avatar-message-binding",
       "kind": "produces",
       "to": "src/routes/chats.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
-      "kind": "produces",
-      "to": "src/routes/wardrobe-avatars.ts"
     },
     {
       "from": "TASK-emotion-intent-detection",
@@ -137937,21 +138074,6 @@
       "to": "src/group-chat/mention-parser.ts"
     },
     {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "produces",
-      "to": "src/chat/service/read.ts"
-    },
-    {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "produces",
-      "to": "src/frontend/alpine/actor-emotion-avatars.ts"
-    },
-    {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "produces",
-      "to": "src/frontend/alpine/mood/avatars.ts"
-    },
-    {
       "from": "TASK-growth-epic-reconciliation",
       "kind": "produces",
       "to": "src/frontend/character-growth-editor.ts"
@@ -139475,6 +139597,41 @@
       "from": "TASK-imgedit-in-chat-command",
       "kind": "produces",
       "to": "src/image-edit/routes.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-config-surface-and-audit-log",
+      "kind": "produces",
+      "to": "src/config/sections"
+    },
+    {
+      "from": "TASK-immersion-gate-deterministic-rule-engine",
+      "kind": "produces",
+      "to": "src/rpg/skills"
+    },
+    {
+      "from": "TASK-immersion-gate-deterministic-rule-engine",
+      "kind": "produces",
+      "to": "src/story/items"
+    },
+    {
+      "from": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "produces",
+      "to": "src/battle/resolution-integration/checks.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "produces",
+      "to": "src/rpg/dice"
+    },
+    {
+      "from": "TASK-immersion-gate-opt-in-llm-classifier",
+      "kind": "produces",
+      "to": "src/generation/flow-control.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-refusal-narration-path",
+      "kind": "produces",
+      "to": "src/turning"
     },
     {
       "from": "TASK-implement-memory-decay-logic",
@@ -142960,6 +143117,51 @@
       "from": "TASK-multi-reference-conditioning-request-model",
       "kind": "produces",
       "to": "src/image-edit/types.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "produces",
+      "to": "src/components/security/sessions-panel.html"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "produces",
+      "to": "src/components"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "produces",
+      "to": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "produces",
+      "to": "src/frontend/alpine/settings-sessions.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "produces",
+      "to": "src/frontend"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "produces",
+      "to": "src/routes/sessions-switch.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "produces",
+      "to": "src/routes/sessions.test.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "produces",
+      "to": "src/routes/sessions.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "produces",
+      "to": "src/views/settings.html"
     },
     {
       "from": "TASK-multimodal-asset-reuse",
@@ -160999,6 +161201,11 @@
     {
       "from": "epic-immersion-consistency-gate",
       "kind": "produces",
+      "to": "src/immersion/extract-claims.ts"
+    },
+    {
+      "from": "epic-immersion-consistency-gate",
+      "kind": "produces",
       "to": "src/regex"
     },
     {
@@ -162404,17 +162611,47 @@
     {
       "from": "epic-multi-session",
       "kind": "produces",
-      "to": "src/db/schema-sessions.ts"
+      "to": "src/components/security/sessions-panel.html"
     },
     {
       "from": "epic-multi-session",
       "kind": "produces",
-      "to": "src/frontend/alpine/settings.ts"
+      "to": "src/config/load/safety.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "produces",
+      "to": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "produces",
+      "to": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "produces",
+      "to": "src/frontend/alpine/settings-sessions.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "produces",
+      "to": "src/routes/sessions-switch.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "produces",
+      "to": "src/routes/sessions.test.ts"
     },
     {
       "from": "epic-multi-session",
       "kind": "produces",
       "to": "src/routes/sessions.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "produces",
+      "to": "src/views/settings.html"
     },
     {
       "from": "epic-multilingual-carriage",
@@ -162774,37 +163011,7 @@
     {
       "from": "epic-nsfw-moderation-priority",
       "kind": "produces",
-      "to": "src/chat/service/moderation.ts"
-    },
-    {
-      "from": "epic-nsfw-moderation-priority",
-      "kind": "produces",
       "to": "src/chat/types/nsfw.ts"
-    },
-    {
-      "from": "epic-nsfw-moderation-priority",
-      "kind": "produces",
-      "to": "src/generation/hooks/nsfw-hook-log.ts"
-    },
-    {
-      "from": "epic-nsfw-moderation-priority",
-      "kind": "produces",
-      "to": "src/middleware/nsfw-gate/logging.ts"
-    },
-    {
-      "from": "epic-nsfw-moderation-priority",
-      "kind": "produces",
-      "to": "src/routes/nsfw-moderation/actions.ts"
-    },
-    {
-      "from": "epic-nsfw-moderation-priority",
-      "kind": "produces",
-      "to": "src/routes/nsfw-moderation/appeals.ts"
-    },
-    {
-      "from": "epic-nsfw-moderation-priority",
-      "kind": "produces",
-      "to": "src/routes/nsfw-moderation/flags.ts"
     },
     {
       "from": "epic-nsfw-ui",
@@ -174200,6 +174407,12 @@
     {
       "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
+      "kind": "sibling",
       "to": "TASK-per-model-per-provider-cost-attribution-for-llm-execution-st",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -174459,6 +174672,12 @@
       "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -176576,6 +176795,12 @@
     {
       "from": "BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
+    },
+    {
+      "from": "BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio",
+      "kind": "sibling",
       "to": "TASK-npc-inventory-frontend",
       "via": "src/frontend"
     },
@@ -177381,12 +177606,6 @@
       "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
       "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
       "via": "src/server/start.ts"
     },
     {
@@ -179114,6 +179333,12 @@
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
       "to": "TASK-notification-and-telemetry-service-nits",
       "via": "src/notifications/service/crud.ts"
     },
@@ -179415,6 +179640,12 @@
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -184646,12 +184877,6 @@
     {
       "from": "BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -184982,12 +185207,6 @@
     {
       "from": "BUG-auto-rotation-config-drift",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "BUG-auto-rotation-config-drift",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -185182,6 +185401,12 @@
       "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-auto-rotation-config-drift",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts"
     },
     {
       "from": "BUG-auto-rotation-config-drift",
@@ -185554,12 +185779,6 @@
       "kind": "sibling",
       "to": "TASK-chat-avatar-resolver-outfit-aware",
       "via": "src/characters/services/avatar-service/selection.ts; src/frontend/alpine/mood/avatars.ts"
-    },
-    {
-      "from": "BUG-avatar-select-empty-throws-no-frontend-fallback",
-      "kind": "sibling",
-      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "via": "src/frontend/alpine/mood/avatars.ts"
     },
     {
       "from": "BUG-avatar-select-empty-throws-no-frontend-fallback",
@@ -188162,12 +188381,6 @@
     {
       "from": "BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/routes/character-emotion-avatars.ts"
-    },
-    {
-      "from": "BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-",
-      "kind": "sibling",
       "to": "TASK-frontend-char-emotion-types-and-prompt-modifier",
       "via": "src/routes/character-emotion-avatars.ts"
     },
@@ -189447,6 +189660,12 @@
       "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
       "kind": "sibling",
       "to": "TASK-item-provisioning-dashboard",
+      "via": "src/frontend"
+    },
+    {
+      "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
       "via": "src/frontend"
     },
     {
@@ -195008,6 +195227,12 @@
     {
       "from": "BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
+    },
+    {
+      "from": "BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null",
+      "kind": "sibling",
       "to": "TASK-npc-inventory-frontend",
       "via": "src/frontend"
     },
@@ -197362,12 +197587,6 @@
       "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
       "via": "src/server/start.ts"
-    },
-    {
-      "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.test.ts; src/server/start.ts"
     },
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
@@ -202994,12 +203213,6 @@
     {
       "from": "BUG-eager-db-init-creates-on-disk-db-on-test-import",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "BUG-eager-db-init-creates-on-disk-db-on-test-import",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -203834,18 +204047,6 @@
     {
       "from": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/routes/character-emotion-avatars.ts"
-    },
-    {
-      "from": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
-      "via": "src/routes/wardrobe-avatars.ts"
-    },
-    {
-      "from": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
-      "kind": "sibling",
       "to": "TASK-frontend-char-emotion-types-and-prompt-modifier",
       "via": "src/routes/character-emotion-avatars.ts"
     },
@@ -203944,12 +204145,6 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/characters/services/emotion-avatar-fallback.ts; src/characters/services/emotion-avatar-service/index.ts"
-    },
-    {
-      "from": "BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/routes/character-emotion-avatars.ts"
     },
     {
       "from": "BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy",
@@ -204386,6 +204581,12 @@
     {
       "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
+      "kind": "sibling",
       "to": "TASK-prompt-mood-full-section",
       "via": "src/db/schema-character.ts"
     },
@@ -204663,6 +204864,12 @@
       "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -208668,6 +208875,12 @@
       "via": "src/config/load/safety.ts"
     },
     {
+      "from": "BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/load/safety.ts; src/config/schema-class/env-map.ts"
+    },
+    {
       "from": "BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h",
       "kind": "sibling",
       "to": "BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr",
@@ -211592,12 +211805,6 @@
     {
       "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.test.ts; src/server/start.ts"
-    },
-    {
-      "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -211864,12 +212071,6 @@
       "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
       "via": "src/server/start.ts"
-    },
-    {
-      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.test.ts; src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
@@ -212306,12 +212507,6 @@
     {
       "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.test.ts; src/server/start.ts"
-    },
-    {
-      "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -212710,12 +212905,6 @@
       "kind": "sibling",
       "to": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
       "via": "src/elysia-app.ts"
-    },
-    {
-      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -213340,6 +213529,12 @@
       "kind": "sibling",
       "to": "TASK-middleware-fe-be-db-record-content-hashing",
       "via": "src/frontend/fe-fetch.ts"
+    },
+    {
+      "from": "BUG-frontend-dead-csrf-bearer-header-machinery",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
     },
     {
       "from": "BUG-frontend-dead-csrf-bearer-header-machinery",
@@ -218492,12 +218687,6 @@
     {
       "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -218674,6 +218863,12 @@
       "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/config/load/safety.ts; src/config/sections/server.ts; src/server/start.ts"
+    },
+    {
+      "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/load/safety.ts"
     },
     {
       "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
@@ -224448,12 +224643,6 @@
       "via": "src/middleware/nsfw-gate/logging.ts"
     },
     {
-      "from": "BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud",
-      "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/middleware/nsfw-gate/logging.ts"
-    },
-    {
       "from": "BUG-logout-deletes-session-without-signature-or-ownership-check",
       "kind": "sibling",
       "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -224816,6 +225005,12 @@
     {
       "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
+      "kind": "sibling",
       "to": "TASK-per-model-per-provider-cost-attribution-for-llm-execution-st",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -225087,6 +225282,12 @@
       "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -230084,12 +230285,6 @@
     {
       "from": "BUG-new-migration-parts-never-apply-to-existing-databases",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "BUG-new-migration-parts-never-apply-to-existing-databases",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -230934,12 +231129,6 @@
       "via": "src/nsfw/moderation-service/appeals-reversal.ts"
     },
     {
-      "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
-      "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/routes/nsfw-moderation/appeals.ts"
-    },
-    {
       "from": "BUG-nsfw-appeals-as-any-and-dead-route",
       "kind": "sibling",
       "to": "BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-",
@@ -231666,12 +231855,6 @@
       "via": "src/nsfw/moderation-service/flags.ts"
     },
     {
-      "from": "BUG-nsfw-flagqueue-leaks-reporter-pii",
-      "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/routes/nsfw-moderation/flags.ts"
-    },
-    {
       "from": "BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al",
       "kind": "sibling",
       "to": "BUG-nsfw-gate-log-plaintext-pii",
@@ -231789,7 +231972,7 @@
       "from": "BUG-nsfw-gate-log-plaintext-pii",
       "kind": "sibling",
       "to": "epic-nsfw-moderation-priority",
-      "via": "src/chat/types/nsfw.ts; src/middleware/nsfw-gate/logging.ts"
+      "via": "src/chat/types/nsfw.ts"
     },
     {
       "from": "BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g",
@@ -231843,12 +232026,6 @@
       "from": "BUG-nsfw-modactions-performedby-from-body",
       "kind": "sibling",
       "to": "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa",
-      "via": "src/routes/nsfw-moderation/actions.ts"
-    },
-    {
-      "from": "BUG-nsfw-modactions-performedby-from-body",
-      "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
       "via": "src/routes/nsfw-moderation/actions.ts"
     },
     {
@@ -232754,6 +232931,12 @@
     {
       "from": "BUG-personas-converttocharacter-drops-title-temperature-max-toke",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-personas-converttocharacter-drops-title-temperature-max-toke",
+      "kind": "sibling",
       "to": "TASK-persona-lifecycle-contract",
       "via": "src/personas/convert.ts; src/personas/handlers.test.ts; src/personas/service.ts"
     },
@@ -232935,6 +233118,12 @@
       "from": "BUG-personas-converttocharacter-drops-title-temperature-max-toke",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-personas-converttocharacter-drops-title-temperature-max-toke",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -235376,12 +235565,6 @@
     {
       "from": "BUG-rate-limit-misses-post-emotion-avatars-single",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
-      "via": "src/routes/wardrobe-avatars.ts"
-    },
-    {
-      "from": "BUG-rate-limit-misses-post-emotion-avatars-single",
-      "kind": "sibling",
       "to": "TASK-identity-lock-seed-negative-prompt-and-anchor",
       "via": "src/routes/wardrobe-avatars.ts"
     },
@@ -237704,12 +237887,6 @@
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -239450,12 +239627,6 @@
     {
       "from": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -239644,6 +239815,12 @@
       "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts"
     },
     {
       "from": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
@@ -245840,6 +246017,12 @@
     {
       "from": "BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
+    },
+    {
+      "from": "BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th",
+      "kind": "sibling",
       "to": "TASK-npc-inventory-frontend",
       "via": "src/frontend"
     },
@@ -245914,12 +246097,6 @@
       "kind": "sibling",
       "to": "TASK-frontend-story-turn-by-id",
       "via": "src/routes/story-turns.ts"
-    },
-    {
-      "from": "BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-",
-      "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/routes/nsfw-moderation/appeals.ts"
     },
     {
       "from": "BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-",
@@ -246124,12 +246301,6 @@
       "kind": "sibling",
       "to": "TASK-gate-shadow-notes-status-x-visibility-composite",
       "via": "src/db/enums-core/messages.ts"
-    },
-    {
-      "from": "BUG-tool-call-result-no-frontend-rendering",
-      "kind": "sibling",
-      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "via": "src/chat/service/read.ts"
     },
     {
       "from": "BUG-tool-call-result-no-frontend-rendering",
@@ -256014,12 +256185,6 @@
       "via": "src/routes/nsfw-moderation/flags.ts"
     },
     {
-      "from": "FEAT-attachment-review-queue-admin-ui",
-      "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/routes/nsfw-moderation/flags.ts"
-    },
-    {
       "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
       "kind": "sibling",
       "to": "FEAT-expand-character-templates-to-canonical-fields",
@@ -256197,6 +256362,12 @@
       "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
       "kind": "sibling",
       "to": "TASK-mini-games-framework",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -256383,6 +256554,12 @@
       "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -259988,12 +260165,6 @@
     {
       "from": "FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect",
       "kind": "sibling",
-      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "via": "src/frontend/alpine/mood/avatars.ts"
-    },
-    {
-      "from": "FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect",
-      "kind": "sibling",
       "to": "TASK-link-previews-unfurl",
       "via": "src/components/chat/message-list.html"
     },
@@ -260942,6 +261113,12 @@
     {
       "from": "FEAT-expand-character-templates-to-canonical-fields",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-expand-character-templates-to-canonical-fields",
+      "kind": "sibling",
       "to": "TASK-nsfw-rating-enforcement",
       "via": "src/routes/characters/update.ts"
     },
@@ -261225,6 +261402,12 @@
       "from": "FEAT-expand-character-templates-to-canonical-fields",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-expand-character-templates-to-canonical-fields",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -262130,6 +262313,12 @@
     {
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -262359,6 +262548,12 @@
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -262676,6 +262871,12 @@
     {
       "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -262869,6 +263070,12 @@
       "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -265466,6 +265673,12 @@
     {
       "from": "FEAT-message-translations-chat-first",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-message-translations-chat-first",
+      "kind": "sibling",
       "to": "TASK-outfit-change-multi-actor-name-resolution",
       "via": "src/generation/auto-gen/post-store.ts"
     },
@@ -265785,6 +265998,12 @@
       "from": "FEAT-message-translations-chat-first",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-message-translations-chat-first",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -269326,12 +269545,6 @@
       "kind": "sibling",
       "to": "TASK-appearance-edit-vs-generation-strategy-selector",
       "via": "src/characters/services/emotion-avatar-service/generation.ts"
-    },
-    {
-      "from": "IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/characters/services/emotion-avatar-service/job-store.ts"
     },
     {
       "from": "IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live",
@@ -276530,6 +276743,12 @@
     {
       "from": "TASK-181-pre-existing-options-object-params-eslint-warnings-acros",
       "kind": "sibling",
+      "to": "TASK-immersion-gate-deterministic-rule-engine",
+      "via": "src/story/items"
+    },
+    {
+      "from": "TASK-181-pre-existing-options-object-params-eslint-warnings-acros",
+      "kind": "sibling",
       "to": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision",
       "via": "src/routes/story-items"
     },
@@ -279362,6 +279581,12 @@
     {
       "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -279615,6 +279840,12 @@
       "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -279912,12 +280143,6 @@
       "via": "src/frontend/alpine/actor-emotion-avatars.ts"
     },
     {
-      "from": "TASK-actor-emotion-avatars-frontend",
-      "kind": "sibling",
-      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "via": "src/frontend/alpine/actor-emotion-avatars.ts"
-    },
-    {
       "from": "TASK-actor-item-service",
       "kind": "sibling",
       "to": "TASK-actor-items-crud-ownership",
@@ -280119,6 +280344,12 @@
       "from": "TASK-actor-item-service",
       "kind": "sibling",
       "to": "TASK-mini-games-framework",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-actor-item-service",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -280335,6 +280566,12 @@
       "from": "TASK-actor-item-service",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-actor-item-service",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -281174,6 +281411,12 @@
     {
       "from": "TASK-actors-data-versioning",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-actors-data-versioning",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -281342,6 +281585,12 @@
     {
       "from": "TASK-actors-data-versioning",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-actors-data-versioning",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -281470,12 +281719,6 @@
       "kind": "sibling",
       "to": "epic-gallery-batch-operations",
       "via": "src/routes/assets.ts"
-    },
-    {
-      "from": "TASK-add-a-federation-e2e-test-that-boots-two-real-servers",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.test.ts"
     },
     {
       "from": "TASK-add-a-federation-e2e-test-that-boots-two-real-servers",
@@ -281828,6 +282071,12 @@
     {
       "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -282068,6 +282317,12 @@
     {
       "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -282207,6 +282462,12 @@
       "from": "TASK-add-federation-to-the-config-domains-list-so-config-federati",
       "kind": "sibling",
       "to": "epic-encryption-workflow",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-add-federation-to-the-config-domains-list-so-config-federati",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/config/schema-class/env-map.ts"
     },
     {
@@ -284786,8 +285047,20 @@
     {
       "from": "TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/routes/sessions.test.ts"
+    },
+    {
+      "from": "TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing",
+      "kind": "sibling",
       "to": "epic-auth-channel-provisioning",
       "via": "src/middleware/auth/token.ts"
+    },
+    {
+      "from": "TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/routes/sessions.test.ts"
     },
     {
       "from": "TASK-adopt-bun-randomuuidv7-for-time-sortable-ids",
@@ -294158,6 +294431,12 @@
     {
       "from": "TASK-asymmetric-key-pairs-followup",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-asymmetric-key-pairs-followup",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -294327,6 +294606,12 @@
       "from": "TASK-asymmetric-key-pairs-followup",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-asymmetric-key-pairs-followup",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -294584,6 +294869,12 @@
     {
       "from": "TASK-asymmetric-key-pairs",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-asymmetric-key-pairs",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -294765,6 +295056,12 @@
       "from": "TASK-asymmetric-key-pairs",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-asymmetric-key-pairs",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -294982,12 +295279,6 @@
       "kind": "sibling",
       "to": "TASK-effect-v4-scoped-concurrency-and-interruption-spike",
       "via": "src/async/offload.ts"
-    },
-    {
-      "from": "TASK-async-request-response-result-store-separate-table-offload",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-async-request-response-result-store-separate-table-offload",
@@ -296786,6 +297077,12 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -297116,6 +297413,12 @@
     {
       "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -297230,6 +297533,12 @@
     {
       "from": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/routes/sessions-switch.ts; src/routes/sessions.ts"
+    },
+    {
+      "from": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
+      "kind": "sibling",
       "to": "TASK-rate-limit-coverage-expansion",
       "via": "src/routes/auth/shared.ts"
     },
@@ -297279,7 +297588,7 @@
       "from": "TASK-auth-session-hardening-batch-from-2026-10-04-review",
       "kind": "sibling",
       "to": "epic-multi-session",
-      "via": "src/routes/sessions.ts"
+      "via": "src/routes/sessions-switch.ts; src/routes/sessions.ts"
     },
     {
       "from": "TASK-author-suggestion-resolution-surface",
@@ -297848,6 +298157,12 @@
     {
       "from": "TASK-autonomy-rate-governor-for-llm-actors",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-autonomy-rate-governor-for-llm-actors",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -298047,6 +298362,12 @@
       "from": "TASK-autonomy-rate-governor-for-llm-actors",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-autonomy-rate-governor-for-llm-actors",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -298288,12 +298609,6 @@
       "kind": "sibling",
       "to": "TASK-frontend-story-mode-ui",
       "via": "src/components/chat/message-list.html"
-    },
-    {
-      "from": "TASK-aux-emotion-avatar",
-      "kind": "sibling",
-      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "via": "src/frontend/alpine/mood/avatars.ts"
     },
     {
       "from": "TASK-aux-emotion-avatar",
@@ -299564,12 +299879,6 @@
     {
       "from": "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
       "kind": "sibling",
-      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "via": "src/frontend/alpine/actor-emotion-avatars.ts; src/frontend/alpine/mood/avatars.ts"
-    },
-    {
-      "from": "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
-      "kind": "sibling",
       "to": "TASK-messages-outfit-id-column",
       "via": "src/frontend/alpine/mood/avatars.ts"
     },
@@ -299900,12 +300209,6 @@
     {
       "from": "TASK-avatar-framing-column-migration-future",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
-      "via": "src/routes/wardrobe-avatars.ts"
-    },
-    {
-      "from": "TASK-avatar-framing-column-migration-future",
-      "kind": "sibling",
       "to": "TASK-emotion-intent-detection",
       "via": "src/db/schema-character.ts"
     },
@@ -300208,12 +300511,6 @@
       "kind": "sibling",
       "to": "TASK-emotion-avatar-message-binding",
       "via": "src/components/chat/message-list.html"
-    },
-    {
-      "from": "TASK-avatar-framing-tag-member",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
-      "via": "src/routes/wardrobe-avatars.ts"
     },
     {
       "from": "TASK-avatar-framing-tag-member",
@@ -300854,6 +301151,12 @@
     {
       "from": "TASK-avatar-render-target-discriminator",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-avatar-render-target-discriminator",
+      "kind": "sibling",
       "to": "TASK-prompt-mood-full-section",
       "via": "src/db/schema-character.ts"
     },
@@ -301131,6 +301434,12 @@
       "from": "TASK-avatar-render-target-discriminator",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-avatar-render-target-discriminator",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -304688,12 +304997,6 @@
     {
       "from": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -305253,12 +305556,6 @@
       "from": "TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh",
       "kind": "sibling",
       "to": "TASK-chat-avatar-resolver-outfit-aware",
-      "via": "src/frontend/alpine/mood/avatars.ts"
-    },
-    {
-      "from": "TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh",
-      "kind": "sibling",
-      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
       "via": "src/frontend/alpine/mood/avatars.ts"
     },
     {
@@ -306410,6 +306707,12 @@
     {
       "from": "TASK-character-creator-prerogative",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-creator-prerogative",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -306597,6 +306900,12 @@
       "from": "TASK-character-creator-prerogative",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-creator-prerogative",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -307124,6 +307433,12 @@
     {
       "from": "TASK-character-multi-avatar",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-multi-avatar",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -307341,6 +307656,12 @@
       "from": "TASK-character-multi-avatar",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-multi-avatar",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -307580,6 +307901,12 @@
     {
       "from": "TASK-character-personality-integrity",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-personality-integrity",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -307767,6 +308094,12 @@
       "from": "TASK-character-personality-integrity",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-personality-integrity",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -309176,12 +309509,6 @@
     {
       "from": "TASK-chat-avatar-resolver-outfit-aware",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
-      "via": "src/routes/wardrobe-avatars.ts"
-    },
-    {
-      "from": "TASK-chat-avatar-resolver-outfit-aware",
-      "kind": "sibling",
       "to": "TASK-equip-binds-outfit-write-side",
       "via": "src/characters/services/wardrobe/resolve.ts"
     },
@@ -309190,12 +309517,6 @@
       "kind": "sibling",
       "to": "TASK-equipment-stat-preview",
       "via": "src/frontend"
-    },
-    {
-      "from": "TASK-chat-avatar-resolver-outfit-aware",
-      "kind": "sibling",
-      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "via": "src/frontend/alpine/mood/avatars.ts"
     },
     {
       "from": "TASK-chat-avatar-resolver-outfit-aware",
@@ -309244,6 +309565,12 @@
       "kind": "sibling",
       "to": "TASK-messages-outfit-id-column",
       "via": "src/characters/services/wardrobe/resolve.ts; src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "TASK-chat-avatar-resolver-outfit-aware",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
     },
     {
       "from": "TASK-chat-avatar-resolver-outfit-aware",
@@ -309764,6 +310091,12 @@
     {
       "from": "TASK-chat-composer-gif-picker",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-chat-composer-gif-picker",
+      "kind": "sibling",
       "to": "TASK-npc-inventory-frontend",
       "via": "src/frontend"
     },
@@ -309993,6 +310326,12 @@
       "from": "TASK-chat-context-preference-per-scope",
       "kind": "sibling",
       "to": "TASK-mini-games-framework",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-chat-context-preference-per-scope",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -310275,6 +310614,12 @@
       "from": "TASK-chat-context-preference-per-scope",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-chat-context-preference-per-scope",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -311842,12 +312187,6 @@
       "kind": "sibling",
       "to": "epic-nsfw-integration-gaps",
       "via": "src/middleware/nsfw-gate/consent.ts"
-    },
-    {
-      "from": "TASK-chat-feature-moderation",
-      "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/middleware/nsfw-gate/logging.ts"
     },
     {
       "from": "TASK-chat-feature-moderation",
@@ -314456,12 +314795,6 @@
     {
       "from": "TASK-chat-transfer-location",
       "kind": "sibling",
-      "to": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "via": "src/chat/service/read.ts"
-    },
-    {
-      "from": "TASK-chat-transfer-location",
-      "kind": "sibling",
       "to": "TASK-guest-chat-public-reads-visibility-aware-chat-access",
       "via": "src/chat/service/read.ts"
     },
@@ -314547,6 +314880,12 @@
       "from": "TASK-chat-transfer-location",
       "kind": "sibling",
       "to": "TASK-mini-games-framework",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-chat-transfer-location",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -314992,6 +315331,12 @@
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
       "via": "src/db/schema-core.ts; src/db/schema-manifest.ts"
+    },
+    {
+      "from": "TASK-chat-transfer-location",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-chat-transfer-location",
@@ -316029,6 +316374,12 @@
       "from": "TASK-cleanup-banned-types-console-logging-magic-strings",
       "kind": "sibling",
       "to": "epic-local-process-swarm",
+      "via": "src/config/load/safety.ts"
+    },
+    {
+      "from": "TASK-cleanup-banned-types-console-logging-magic-strings",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/config/load/safety.ts"
     },
     {
@@ -318224,6 +318575,12 @@
     {
       "from": "TASK-comfyui-first-class-workflow-library",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-workflow-library",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -318573,6 +318930,12 @@
       "from": "TASK-comfyui-first-class-workflow-library",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-workflow-library",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -318952,6 +319315,12 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/generation/providers/comfyui-upload.ts"
+    },
+    {
+      "from": "TASK-comfyui-parameter-map-derivation-from-marked-workflows",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/generation/workflow-library/seed-parameters.ts"
     },
     {
       "from": "TASK-comfyui-pbr-texture-set-generation",
@@ -321171,6 +321540,12 @@
       "from": "TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e",
       "kind": "sibling",
       "to": "TASK-item-provisioning-dashboard",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
       "via": "src/frontend"
     },
     {
@@ -323892,6 +324267,12 @@
       "via": "src/config/schema-class/env-map.ts"
     },
     {
+      "from": "TASK-config-examples-and-domain-file-support-for-uncovered-sectio",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
       "from": "TASK-config-gallery-attachment-idempotent",
       "kind": "sibling",
       "to": "TASK-emotions-avatar-edit-model",
@@ -325448,6 +325829,12 @@
     {
       "from": "TASK-cors-middleware",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/load/safety.ts"
+    },
+    {
+      "from": "TASK-cors-middleware",
+      "kind": "sibling",
       "to": "epic-openapi-reference",
       "via": "src/elysia-app.ts"
     },
@@ -325676,6 +326063,12 @@
     {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
       "to": "TASK-npc-inventory-frontend",
       "via": "src/frontend"
     },
@@ -325864,6 +326257,12 @@
       "kind": "sibling",
       "to": "TASK-middleware-fe-be-db-record-content-hashing",
       "via": "src/frontend/fe-fetch.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
     },
     {
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
@@ -326086,6 +326485,12 @@
       "kind": "sibling",
       "to": "TASK-middleware-migration-compaction-data-version-hash",
       "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-coverage-waivers-for-3-modules-below-80-floor",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
     },
     {
       "from": "TASK-coverage-waivers-for-3-modules-below-80-floor",
@@ -326798,12 +327203,6 @@
     {
       "from": "TASK-cron-migrate-existing-timers",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-cron-migrate-existing-timers",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -327063,12 +327462,6 @@
       "from": "TASK-cron-provider-health-rescan",
       "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-cron-provider-health-rescan",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
       "via": "src/server/start.ts"
     },
     {
@@ -327478,12 +327871,6 @@
       "kind": "sibling",
       "to": "TASK-docs-ui-endpoint-linkage",
       "via": "src/server/static-files.ts"
-    },
-    {
-      "from": "TASK-cross-platform-portability",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-cross-platform-portability",
@@ -329972,12 +330359,6 @@
     {
       "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
       "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
-      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -330302,6 +330683,12 @@
     {
       "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
+      "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/server/start.ts"
     },
@@ -330362,6 +330749,12 @@
     {
       "from": "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
       "kind": "sibling",
+      "to": "TASK-immersion-gate-config-surface-and-audit-log",
+      "via": "src/config/sections"
+    },
+    {
+      "from": "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
+      "kind": "sibling",
       "to": "TASK-integration-config-surface-schemas-example-toml-env-map",
       "via": "src/config/schema-class/env-map.ts; src/config/sections/integrations.ts"
     },
@@ -330418,6 +330811,12 @@
       "kind": "sibling",
       "to": "epic-logging-telemetry",
       "via": "src/config/generate-schema.ts"
+    },
+    {
+      "from": "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts"
     },
     {
       "from": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
@@ -330928,6 +331327,12 @@
       "kind": "sibling",
       "to": "TASK-msg-forward-across-chats",
       "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/components; src/frontend"
     },
     {
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
@@ -331718,6 +332123,12 @@
     {
       "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+      "kind": "sibling",
       "to": "TASK-professions-service-routes",
       "via": "src/routes/rpg/index.ts"
     },
@@ -331953,6 +332364,12 @@
       "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -332454,16 +332871,16 @@
       "via": "src/config/schema-class/env-map.ts"
     },
     {
+      "from": "TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
       "from": "TASK-docs-drift-api",
       "kind": "sibling",
       "to": "TASK-tui-fire-and-forget-void-without-catch",
       "via": "src/tui/app-keys.ts"
-    },
-    {
-      "from": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
-      "kind": "sibling",
-      "to": "TASK-emotion-avatar-job-restart-reconciliation",
-      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
@@ -333632,6 +334049,12 @@
     {
       "from": "TASK-e2ee-receiver-wiring",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-e2ee-receiver-wiring",
+      "kind": "sibling",
       "to": "TASK-nsfw-gate-moderation-events",
       "via": "src/db/schema.ts"
     },
@@ -333964,6 +334387,12 @@
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
       "via": "src/db/schema-core.ts; src/db/schema-manifest.ts"
+    },
+    {
+      "from": "TASK-e2ee-receiver-wiring",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-e2ee-receiver-wiring",
@@ -335064,198 +335493,6 @@
       "via": "src/frontend/alpine/chat-utils/emoji.ts"
     },
     {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-fail-safe-execution-work-safety",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-frontend-char-emotion-types-and-prompt-modifier",
-      "via": "src/routes/character-emotion-avatars.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-https-redirect-enforcement-for-plaintext-http",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-input-validation-battle-schema-less-post-emotion-avatars-par",
-      "via": "src/routes/character-emotion-avatars.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-item-config-templates",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-local-instance-integrity-holistic",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-logging-hardening-minors-injection-rotation-races-sink-path-",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-ocsp-stapling-for-tls-certificate-status",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-outfit-change-hook",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-production-tls-modes-byo-certs-acme-and-proxy-termination",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-recursive-self-improvement-watchdog-supervisor-process-spawn",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-runtime-integrity-watchdog-crash-recovery",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-size-strict-debt",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-sni-multi-certificate-serving-for-multiple-domains",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-swarm-supervisor",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-tls-cipher-suite-hardening-and-secure-defaults",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-avatar-regeneration-control",
-      "via": "src/characters/services/emotion-avatar-service/job-store.ts; src/routes/character-emotion-avatars.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-browser-editor-support",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-certificate-and-tls-management",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-cron-scheduler",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-cross-platform-portability",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-db-migration-compaction",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-file-splitting",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-http-protocol-features",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-local-process-swarm",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-reactive-actor-appearance",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-recursive-self-improvement",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-runtime-integrity-fail-safes",
-      "via": "src/server/start.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-job-restart-reconciliation",
-      "kind": "sibling",
-      "to": "epic-skills-professions-config",
-      "via": "src/server/start.ts"
-    },
-    {
       "from": "TASK-emotion-avatar-message-binding",
       "kind": "sibling",
       "to": "TASK-emotion-intent-detection",
@@ -335428,6 +335665,12 @@
       "kind": "sibling",
       "to": "TASK-msg-forward-across-chats",
       "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-emotion-avatar-message-binding",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-emotion-avatar-message-binding",
@@ -335702,6 +335945,12 @@
     {
       "from": "TASK-emotion-avatar-message-binding",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-message-binding",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -335758,18 +336007,6 @@
       "kind": "sibling",
       "to": "epic-world-chat-channels-invites",
       "via": "src/db/schema-core.ts; src/generation/auto-gen.ts; src/routes/chats.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
-      "kind": "sibling",
-      "to": "TASK-identity-lock-seed-negative-prompt-and-anchor",
-      "via": "src/routes/wardrobe-avatars.ts"
-    },
-    {
-      "from": "TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests",
-      "kind": "sibling",
-      "to": "epic-avatar-regeneration-control",
-      "via": "src/routes/wardrobe-avatars.ts"
     },
     {
       "from": "TASK-emotion-intent-detection",
@@ -335890,6 +336127,12 @@
       "kind": "sibling",
       "to": "TASK-mood-shift-delta-tuning-word-boundary",
       "via": "src/generation/hooks/emotion-hook.ts"
+    },
+    {
+      "from": "TASK-emotion-intent-detection",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/views/settings.html"
     },
     {
       "from": "TASK-emotion-intent-detection",
@@ -336063,6 +336306,12 @@
       "from": "TASK-emotion-intent-detection",
       "kind": "sibling",
       "to": "epic-frontend-settings",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-emotion-intent-detection",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/views/settings.html"
     },
     {
@@ -336280,6 +336529,12 @@
       "kind": "sibling",
       "to": "TASK-middleware-idempotency-wire-into-elysia",
       "via": "src/config/schema.ts"
+    },
+    {
+      "from": "TASK-emotions-avatar-edit-model",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/views/settings.html"
     },
     {
       "from": "TASK-emotions-avatar-edit-model",
@@ -336604,6 +336859,12 @@
       "kind": "sibling",
       "to": "epic-lora-discovery-application",
       "via": "src/generation/image-gen-route.ts"
+    },
+    {
+      "from": "TASK-emotions-avatar-edit-model",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/views/settings.html"
     },
     {
       "from": "TASK-emotions-avatar-edit-model",
@@ -337886,6 +338147,12 @@
     {
       "from": "TASK-encryption-key-management-ui",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-encryption-key-management-ui",
+      "kind": "sibling",
       "to": "TASK-response-length-control",
       "via": "src/frontend/alpine/settings.ts"
     },
@@ -337929,7 +338196,7 @@
       "from": "TASK-encryption-key-management-ui",
       "kind": "sibling",
       "to": "epic-multi-session",
-      "via": "src/frontend/alpine/settings.ts"
+      "via": "src/views/settings.html"
     },
     {
       "from": "TASK-encryption-key-management-ui",
@@ -338804,12 +339071,6 @@
     {
       "from": "TASK-epic11-admin-settings-reconciliation",
       "kind": "sibling",
-      "to": "epic-multi-session",
-      "via": "src/frontend/alpine/settings.ts"
-    },
-    {
-      "from": "TASK-epic11-admin-settings-reconciliation",
-      "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/components/modals/settings.html"
     },
@@ -339140,6 +339401,12 @@
     {
       "from": "TASK-equipment-stat-preview",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-equipment-stat-preview",
+      "kind": "sibling",
       "to": "TASK-npc-inventory-frontend",
       "via": "src/frontend"
     },
@@ -339356,6 +339623,12 @@
     {
       "from": "TASK-export-frontend-progress",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-export-frontend-progress",
+      "kind": "sibling",
       "to": "TASK-publication-export-formats",
       "via": "src/frontend/alpine/export-progress.ts"
     },
@@ -339381,6 +339654,12 @@
       "from": "TASK-export-frontend-progress",
       "kind": "sibling",
       "to": "epic-frontend-settings",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-export-frontend-progress",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/views/settings.html"
     },
     {
@@ -339496,6 +339775,12 @@
       "kind": "sibling",
       "to": "TASK-frontend-client-contract-doc",
       "via": "src/routes/v1/openapi.ts"
+    },
+    {
+      "from": "TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/components"
     },
     {
       "from": "TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a",
@@ -340440,12 +340725,6 @@
       "via": "src/routes/auth/session.ts"
     },
     {
-      "from": "TASK-fb12-admin-role-change-notifies-affected-user-admxntf",
-      "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/routes/nsfw-moderation/actions.ts"
-    },
-    {
       "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
       "kind": "sibling",
       "to": "TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx",
@@ -340570,6 +340849,12 @@
       "kind": "sibling",
       "to": "TASK-frontend-lazy-pages",
       "via": "src/frontend/pages.ts"
+    },
+    {
+      "from": "TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/components"
     },
     {
       "from": "TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd",
@@ -341720,6 +342005,12 @@
     {
       "from": "TASK-federation-peer-registry-workload-columns",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-federation-peer-registry-workload-columns",
+      "kind": "sibling",
       "to": "TASK-per-model-per-provider-cost-attribution-for-llm-execution-st",
       "via": "src/db/migrations/README.md"
     },
@@ -342051,6 +342342,12 @@
       "from": "TASK-federation-peer-registry-workload-columns",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-federation-peer-registry-workload-columns",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -342920,6 +343217,12 @@
     {
       "from": "TASK-finalize-notification-bell-header-wiring",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-finalize-notification-bell-header-wiring",
+      "kind": "sibling",
       "to": "TASK-publication-reader-locale-selector",
       "via": "src/frontend/alpine/index.ts"
     },
@@ -342993,6 +343296,12 @@
       "from": "TASK-finalize-notification-bell-header-wiring",
       "kind": "sibling",
       "to": "epic-frontend-settings",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-finalize-notification-bell-header-wiring",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/views/settings.html"
     },
     {
@@ -343077,6 +343386,12 @@
       "from": "TASK-fix-actor-item-value-type",
       "kind": "sibling",
       "to": "TASK-mini-games-framework",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-fix-actor-item-value-type",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -343293,6 +343608,12 @@
       "from": "TASK-fix-actor-item-value-type",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-fix-actor-item-value-type",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -346262,6 +346583,12 @@
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
       "to": "TASK-nsfw-gate-moderation-events",
       "via": "src/db/schema.ts"
     },
@@ -346624,6 +346951,12 @@
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
       "via": "src/db/schema-core.ts; src/db/schema-manifest.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
@@ -347868,54 +348201,6 @@
       "via": "src/group-chat/mention-parser.ts"
     },
     {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "sibling",
-      "to": "TASK-guest-chat-public-reads-visibility-aware-chat-access",
-      "via": "src/chat/service/read.ts"
-    },
-    {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "sibling",
-      "to": "TASK-message-carriage-table-migration-admin-read",
-      "via": "src/chat/service/read.ts"
-    },
-    {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "sibling",
-      "to": "TASK-messages-outfit-id-column",
-      "via": "src/frontend/alpine/mood/avatars.ts"
-    },
-    {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "sibling",
-      "to": "TEST-emotion-hook-to-avatarForMessage-integration",
-      "via": "src/chat/service/read.ts; src/frontend/alpine/mood/avatars.ts"
-    },
-    {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "sibling",
-      "to": "epic-emotion-avatar-message-binding",
-      "via": "src/frontend/alpine/mood/avatars.ts"
-    },
-    {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "sibling",
-      "to": "epic-guest-access",
-      "via": "src/chat/service/read.ts"
-    },
-    {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "sibling",
-      "to": "epic-multilingual-carriage",
-      "via": "src/chat/service/read.ts"
-    },
-    {
-      "from": "TASK-group-chat-per-actor-emotion-avatar-resolution",
-      "kind": "sibling",
-      "to": "epic-reactive-actor-appearance",
-      "via": "src/frontend/alpine/mood/avatars.ts"
-    },
-    {
       "from": "TASK-growth-epic-reconciliation",
       "kind": "sibling",
       "to": "TASK-nsfw-rating-enforcement",
@@ -348454,6 +348739,12 @@
       "kind": "sibling",
       "to": "epic-middleware-request-lifecycle",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts"
     },
     {
       "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
@@ -352448,6 +352739,12 @@
     {
       "from": "TASK-i18n-settings-wiring",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-i18n-settings-wiring",
+      "kind": "sibling",
       "to": "TASK-response-length-control",
       "via": "src/frontend/alpine/settings.ts"
     },
@@ -352479,7 +352776,7 @@
       "from": "TASK-i18n-settings-wiring",
       "kind": "sibling",
       "to": "epic-multi-session",
-      "via": "src/frontend/alpine/settings.ts"
+      "via": "src/views/settings.html"
     },
     {
       "from": "TASK-i18n-settings-wiring",
@@ -352522,6 +352819,12 @@
       "kind": "sibling",
       "to": "TASK-mobile-surface-audit-360px",
       "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-i18n-template-strings",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/views/settings.html"
     },
     {
       "from": "TASK-i18n-template-strings",
@@ -352684,6 +352987,12 @@
       "kind": "sibling",
       "to": "epic-impersonation",
       "via": "src/views/personas.html"
+    },
+    {
+      "from": "TASK-i18n-template-strings",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/views/settings.html"
     },
     {
       "from": "TASK-i18n-template-strings",
@@ -353466,6 +353775,54 @@
       "via": "src/image-edit/routes.ts"
     },
     {
+      "from": "TASK-immersion-gate-deterministic-rule-engine",
+      "kind": "sibling",
+      "to": "TASK-sc10-player-state-machine-adapters",
+      "via": "src/rpg/skills; src/story/items"
+    },
+    {
+      "from": "TASK-immersion-gate-deterministic-rule-engine",
+      "kind": "sibling",
+      "to": "epic-immersion-consistency-gate",
+      "via": "src/rpg/skills; src/story/items"
+    },
+    {
+      "from": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "sibling",
+      "to": "TASK-sc10-player-state-machine-adapters",
+      "via": "src/battle/resolution-integration/checks.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "sibling",
+      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "via": "src/battle/resolution-integration/checks.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-failed-check-enforcement",
+      "kind": "sibling",
+      "to": "epic-immersion-consistency-gate",
+      "via": "src/battle/resolution-integration/checks.ts; src/rpg/dice"
+    },
+    {
+      "from": "TASK-immersion-gate-opt-in-llm-classifier",
+      "kind": "sibling",
+      "to": "TASK-view-set-orbit-video-tier",
+      "via": "src/generation/flow-control.ts"
+    },
+    {
+      "from": "TASK-immersion-gate-refusal-narration-path",
+      "kind": "sibling",
+      "to": "epic-emergent-narrative-design",
+      "via": "src/turning"
+    },
+    {
+      "from": "TASK-immersion-gate-refusal-narration-path",
+      "kind": "sibling",
+      "to": "epic-rpg-patterns",
+      "via": "src/turning"
+    },
+    {
       "from": "TASK-implement-memory-decay-logic",
       "kind": "sibling",
       "to": "TASK-memory-decay-logic",
@@ -353612,6 +353969,12 @@
     {
       "from": "TASK-info-bubbles",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-info-bubbles",
+      "kind": "sibling",
       "to": "TASK-publication-reader-locale-selector",
       "via": "src/frontend/alpine/index.ts"
     },
@@ -353732,6 +354095,12 @@
     {
       "from": "TASK-info-bubbles",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-info-bubbles",
+      "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/views/settings.html"
     },
@@ -353835,6 +354204,12 @@
       "from": "TASK-inline-markdown-suggestion-model",
       "kind": "sibling",
       "to": "TASK-mini-games-framework",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-inline-markdown-suggestion-model",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -354056,6 +354431,12 @@
     {
       "from": "TASK-inline-markdown-suggestion-model",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-inline-markdown-suggestion-model",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -354267,6 +354648,12 @@
       "from": "TASK-integration-config-surface-schemas-example-toml-env-map",
       "kind": "sibling",
       "to": "epic-encryption-workflow",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-integration-config-surface-schemas-example-toml-env-map",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/config/schema-class/env-map.ts"
     },
     {
@@ -355088,6 +355475,12 @@
     {
       "from": "TASK-item-provisioning-dashboard",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-item-provisioning-dashboard",
+      "kind": "sibling",
       "to": "TASK-npc-inventory-frontend",
       "via": "src/frontend"
     },
@@ -355185,6 +355578,12 @@
       "from": "TASK-item-side-outfit-change-trigger",
       "kind": "sibling",
       "to": "TASK-mini-games-framework",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-item-side-outfit-change-trigger",
+      "kind": "sibling",
+      "to": "TASK-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -355419,6 +355818,12 @@
       "from": "TASK-item-side-outfit-change-trigger",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-item-side-outfit-change-trigger",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -358316,6 +358721,12 @@
     {
       "from": "TASK-markdown-canonical-intermediate-contract",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-markdown-canonical-intermediate-contract",
+      "kind": "sibling",
       "to": "TASK-outfit-change-aux-task-and-typebox-schema",
       "via": "src/db/enums-core/flags.ts"
     },
@@ -358599,6 +359010,12 @@
       "from": "TASK-markdown-canonical-intermediate-contract",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-markdown-canonical-intermediate-contract",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -360122,6 +360539,12 @@
     {
       "from": "TASK-message-carriage-table-migration-admin-read",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-message-carriage-table-migration-admin-read",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -360321,6 +360744,12 @@
       "from": "TASK-message-carriage-table-migration-admin-read",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-message-carriage-table-migration-admin-read",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -360878,6 +361307,12 @@
     {
       "from": "TASK-messages-outfit-id-column",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-messages-outfit-id-column",
+      "kind": "sibling",
       "to": "TASK-nsfw-age-gate-never-verified-at-generation-time",
       "via": "src/generation/auto-gen/content-hooks.ts"
     },
@@ -361198,6 +361633,12 @@
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
       "via": "src/db/schema-core.ts; src/db/schema-manifest.ts"
+    },
+    {
+      "from": "TASK-messages-outfit-id-column",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-messages-outfit-id-column",
@@ -363482,6 +363923,12 @@
     {
       "from": "TASK-mini-games-framework",
       "kind": "sibling",
+      "to": "TASK-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-mini-games-framework",
+      "kind": "sibling",
       "to": "TASK-publication-glossary-term-base",
       "via": "src/db/schema-core.ts"
     },
@@ -363645,6 +364092,12 @@
       "from": "TASK-mini-games-framework",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-mini-games-framework",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -364038,12 +364491,6 @@
       "via": "src/routes/nsfw-moderation/overrides.ts"
     },
     {
-      "from": "TASK-moderator-permission-gating-for-read-only-review-surface",
-      "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/routes/nsfw-moderation/actions.ts; src/routes/nsfw-moderation/flags.ts"
-    },
-    {
       "from": "TASK-mood-shift-delta-tuning-word-boundary",
       "kind": "sibling",
       "to": "TASK-outfit-change-multi-actor-name-resolution",
@@ -364198,6 +364645,300 @@
       "kind": "sibling",
       "to": "epic-sam3-segmentation-integration",
       "via": "src/image-edit/run-authz.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-npc-inventory-frontend",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-professions-frontend",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-publication-glossary-term-base",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-restart-required-indicator-on-system-config-changes",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-skills-frontend",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-task-i18n-workflow-hardening",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-task-minimal-mlops-cards-runlog-canary",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-test-chat-module",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-thinking-tag-context-prune",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-timeline-id-world-timeline-events",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-world-item-instance-npc",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "TASK-world-requires-stats-flag-and-point-budget-config",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-actors",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-battle-action-systems",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-battle-integration-gaps",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-character-core-system",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-character-internal-traits",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-character-npc-lore-access",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-chat-lifecycle-moderation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-chat-transfer-location",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-config-extensions",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-editorial-workflow",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-emotion-avatar-message-binding",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-exploration-discovery",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-frontend-settings",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-impersonation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-item-systems-unification",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-logging",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-mini-games",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/components/security/sessions-panel.html; src/db/schema-core.ts; src/frontend/alpine/settings-sessions.ts; src/routes/sessions-switch.ts; src/routes/sessions.test.ts; src/routes/sessions.ts; src/views/settings.html"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-multilingual-carriage",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-output-control-transforms",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-publication-i18n",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-rarity-extensions",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/db/schema-core.ts; src/frontend"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-research-agency-decision",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-skills-professions-config",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-terminal-ui",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-use-case-agentic-workspace",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-multi-session",
+      "kind": "sibling",
+      "to": "epic-world-chat-channels-invites",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-multimodal-asset-reuse",
@@ -364395,6 +365136,12 @@
       "from": "TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr",
       "kind": "sibling",
       "to": "epic-encryption-workflow",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/config/schema-class/env-map.ts"
     },
     {
@@ -364882,12 +365629,6 @@
       "kind": "sibling",
       "to": "epic-emotion-avatar-message-binding",
       "via": "src/generation/auto-gen/content-hooks.ts"
-    },
-    {
-      "from": "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa",
-      "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/routes/nsfw-moderation/actions.ts"
     },
     {
       "from": "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa",
@@ -365936,6 +366677,12 @@
     {
       "from": "TASK-outfit-change-aux-task-and-typebox-schema",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-outfit-change-aux-task-and-typebox-schema",
+      "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/db/enums-core/flags.ts"
     },
@@ -366208,6 +366955,12 @@
       "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-outfit-change-hook",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts"
     },
     {
       "from": "TASK-outfit-change-hook",
@@ -369530,6 +370283,12 @@
     {
       "from": "TASK-publication-glossary-term-base",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-publication-glossary-term-base",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -369939,6 +370698,12 @@
       "from": "TASK-publication-unit-translation-store",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-publication-unit-translation-store",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -371212,6 +371977,12 @@
       "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/services/server-external-manager/start-llama.ts"
+    },
+    {
+      "from": "TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts"
     },
     {
       "from": "TASK-recon-critical-fixes",
@@ -374292,12 +375063,6 @@
       "via": "src/generation/generate-route.ts"
     },
     {
-      "from": "TASK-response-length-control",
-      "kind": "sibling",
-      "to": "epic-multi-session",
-      "via": "src/frontend/alpine/settings.ts"
-    },
-    {
       "from": "TASK-response-validation-logic-additions",
       "kind": "sibling",
       "to": "TASK-rpg-mechanics-combat",
@@ -374385,6 +375150,12 @@
       "from": "TASK-restart-required-indicator-on-system-config-changes",
       "kind": "sibling",
       "to": "epic-frontend-settings",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-restart-required-indicator-on-system-config-changes",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/views/settings.html"
     },
     {
@@ -378326,6 +379097,12 @@
     {
       "from": "TASK-task-i18n-workflow-hardening",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-task-i18n-workflow-hardening",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -378561,6 +379338,12 @@
       "from": "TASK-task-minimal-mlops-cards-runlog-canary",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-task-minimal-mlops-cards-runlog-canary",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -378914,6 +379697,12 @@
     {
       "from": "TASK-test-chat-module",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-test-chat-module",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -379083,6 +379872,12 @@
       "from": "TASK-thinking-tag-context-prune",
       "kind": "sibling",
       "to": "epic-frontend-settings",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "TASK-thinking-tag-context-prune",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/views/settings.html"
     },
     {
@@ -379354,6 +380149,12 @@
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
       "via": "src/db/schema-core.ts; src/db/schema-manifest.ts"
+    },
+    {
+      "from": "TASK-timeline-id-world-timeline-events",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-timeline-id-world-timeline-events",
@@ -380139,6 +380940,12 @@
       "from": "TASK-tui-enabled-config-flag-never-read",
       "kind": "sibling",
       "to": "epic-encryption-workflow",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-tui-enabled-config-flag-never-read",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/config/schema-class/env-map.ts"
     },
     {
@@ -384392,6 +385199,12 @@
     {
       "from": "TASK-world-requires-stats-flag-and-point-budget-config",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-world-requires-stats-flag-and-point-budget-config",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -385443,6 +386256,12 @@
       "from": "epic-actors",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-actors",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -387710,6 +388529,12 @@
     {
       "from": "epic-battle-action-systems",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-battle-action-systems",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -387939,6 +388764,12 @@
       "from": "epic-battle-integration-gaps",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-battle-integration-gaps",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -388544,6 +389375,12 @@
     {
       "from": "epic-byok-api-keys",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-byok-api-keys",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -388942,6 +389779,12 @@
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
       "via": "src/db/schema-core.ts; src/server.ts"
+    },
+    {
+      "from": "epic-character-core-system",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "epic-character-core-system",
@@ -389384,6 +390227,12 @@
     {
       "from": "epic-character-internal-traits",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-character-internal-traits",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -389613,6 +390462,12 @@
       "from": "epic-character-npc-lore-access",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-character-npc-lore-access",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -390062,6 +390917,12 @@
     {
       "from": "epic-character-xp-leveling",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -390368,6 +391229,12 @@
     {
       "from": "epic-chat-lifecycle-moderation",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -390554,12 +391421,6 @@
     {
       "from": "epic-chat-product-features",
       "kind": "sibling",
-      "to": "epic-nsfw-moderation-priority",
-      "via": "src/middleware/nsfw-gate/logging.ts"
-    },
-    {
-      "from": "epic-chat-product-features",
-      "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/chat/service/write.ts; src/generation/auto-gen/resolve-known-names.ts"
     },
@@ -390705,6 +391566,12 @@
       "from": "epic-chat-transfer-location",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-chat-transfer-location",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -390873,6 +391740,12 @@
       "from": "epic-chat-variants-taxonomy",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -391473,6 +392346,12 @@
       "from": "epic-config-extensions",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-config-extensions",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -393098,6 +393977,12 @@
     {
       "from": "epic-editorial-workflow",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-editorial-workflow",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -393494,6 +394379,12 @@
     {
       "from": "epic-emotion-avatar-message-binding",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-emotion-avatar-message-binding",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts; src/routes/messages/read.ts"
     },
@@ -393604,6 +394495,12 @@
       "kind": "sibling",
       "to": "epic-guest-access",
       "via": "src/assets/service/read.ts"
+    },
+    {
+      "from": "epic-encryption-workflow",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/schema-class/env-map.ts; src/views/settings.html"
     },
     {
       "from": "epic-encryption-workflow",
@@ -393914,6 +394811,12 @@
     {
       "from": "epic-exploration-discovery",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-exploration-discovery",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -394149,6 +395052,12 @@
       "from": "epic-federation-offload-quotas",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-federation-offload-quotas",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -394546,6 +395455,12 @@
       "kind": "sibling",
       "to": "epic-transport-expansion",
       "via": "src/routes/activity-stream.ts"
+    },
+    {
+      "from": "epic-frontend-settings",
+      "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/views/settings.html"
     },
     {
       "from": "epic-frontend-settings",
@@ -395000,6 +395915,12 @@
     {
       "from": "epic-impersonation",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-impersonation",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -395306,6 +396227,12 @@
     {
       "from": "epic-item-systems-unification",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-item-systems-unification",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -395540,6 +396467,12 @@
     {
       "from": "epic-local-process-swarm",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/config/load/safety.ts"
+    },
+    {
+      "from": "epic-local-process-swarm",
+      "kind": "sibling",
       "to": "epic-openapi-reference",
       "via": "src/elysia-app.ts"
     },
@@ -395667,6 +396600,12 @@
       "from": "epic-logging",
       "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-logging",
+      "kind": "sibling",
+      "to": "epic-multi-session",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -395846,6 +396785,12 @@
     {
       "from": "epic-mini-games",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-mini-games",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -395930,6 +396875,12 @@
     {
       "from": "epic-multi-instance-reconciliation",
       "kind": "sibling",
+      "to": "epic-multi-session",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-instance-reconciliation",
+      "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/db/schema-core.ts"
     },
@@ -395995,6 +396946,66 @@
     },
     {
       "from": "epic-multi-instance-reconciliation",
+      "kind": "sibling",
+      "to": "epic-world-chat-channels-invites",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "sibling",
+      "to": "epic-multilingual-carriage",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "sibling",
+      "to": "epic-output-control-transforms",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "sibling",
+      "to": "epic-publication-i18n",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "sibling",
+      "to": "epic-rarity-extensions",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "sibling",
+      "to": "epic-research-agency-decision",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "sibling",
+      "to": "epic-skills-professions-config",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-multi-session",
+      "kind": "sibling",
+      "to": "epic-terminal-ui",
+      "via": "src/views/settings.html"
+    },
+    {
+      "from": "epic-multi-session",
       "kind": "sibling",
       "to": "epic-world-chat-channels-invites",
       "via": "src/db/schema-core.ts"
