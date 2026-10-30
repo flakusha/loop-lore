@@ -24,7 +24,7 @@ import {
 } from "../../test-utils/insert-helpers";
 import { safeJsonParse, } from "../../utils";
 import { dynamicRoutes, } from "./plugin-dynamic";
-import { TIMELINE_EVENT_CAP, } from "./world-timeline-events";
+import { renderTimelineEvents, TIMELINE_EVENT_CAP, } from "./world-timeline-events";
 
 /**
  * @param db
@@ -359,6 +359,12 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
       expect(html,).toContain("Cap-exact event 0",);
       expect(html,).toContain("Cap-exact event 49",);
       expect(html,).not.toContain("timeline-truncated",);
+    });
+
+    test("empty branch renders the empty state", async () => {
+      const html = renderTimelineEvents([], "Fork",);
+      expect(html,).toContain("No timeline events on this branch",);
+      expect(html,).toContain("Fork",);
     });
 
     test("over-cap branch shows the truncated note without the extra row", async () => {
