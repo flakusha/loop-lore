@@ -31,6 +31,7 @@ import "./htmx";
 import "./i18n";
 import "./info-bubble";
 import "./inventory";
+import "./inventory-offers";
 import "./inventory-trading";
 import "./key-management";
 import "./keynav-help";
