@@ -28321,6 +28321,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-branching-ui.md"
     }
   ],
   "src/frontend/pages/worlds": [
@@ -39338,6 +39342,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-branching-ui.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     },
     {
@@ -48533,6 +48541,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-branching-ui.md"
     }
   ],
   "src/routes/views/plugin-pages.ts": [
@@ -48631,6 +48643,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-worlds-frontend-list-detail-timeline-location-travel-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-branching-ui.md"
     },
     {
       "kind": "ticket",
@@ -49161,6 +49177,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-timelines-unauthenticated-read-and-create.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-branching-ui.md"
     }
   ],
   "src/routes/worlds/world-rpg-flags.ts": [
@@ -59783,6 +59803,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-branching-ui.md"
     }
   ],
   "src/views/world-edit.html": [

@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** G2 timeline branching UI on world detail page
 **Priority:** P0 — Critical
 **Epic:** epic-timeline-system
@@ -42,3 +42,5 @@ Core UX for timeline system. Without this, players cannot interact with branchin
 ## Related
 
 - `docs/frontend/worlds.md` (world detail page spec)
+
+**Resolved:** 2026-10-30 registry-driven close: git issue ed8dd6e (registry tip: ce230ed74 Konstantin Fedotov Close issue)

@@ -1752,7 +1752,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2837 | 1255 | 48 | 891 | 31 | 0 | 612 |
+| (untagged) | 2837 | 1256 | 48 | 891 | 30 | 0 | 612 |
 
 ## By epic × status
 
@@ -2075,7 +2075,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | epic-testing-benchmarking | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
 | epic-testing-qa | 65 | 9 | 2 | 43 | 1 | 0 | 10 |
 | epic-time-scale | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
-| epic-timeline-system | 7 | 2 | 1 | 0 | 3 | 0 | 1 |
+| epic-timeline-system | 7 | 3 | 1 | 0 | 2 | 0 | 1 |
 | epic-tooling-improvement | 26 | 18 | 0 | 5 | 0 | 0 | 3 |
 | epic-transport-expansion | 12 | 0 | 2 | 10 | 0 | 0 | 0 |
 | epic-transport-layer-expansion | 1 | 0 | 0 | 1 | 0 | 0 | 0 |

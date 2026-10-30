@@ -57642,7 +57642,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-timeline-branching-ui.md",
-    "status": "draft",
+    "status": "done",
     "tags": [],
     "title": "Timeline branching UI — world detail page",
     "type": "TASK"
