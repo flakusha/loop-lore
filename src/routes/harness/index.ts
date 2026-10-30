@@ -12,6 +12,7 @@ import { Elysia, t, } from "elysia";
 import {
   HarnessRunDetailSchema,
   HarnessRunsResponse,
+  HarnessSandboxFilesSchema,
   HarnessStatsSchema,
 } from "../../frontend/alpine/admin-harness-schema";
 import { getRun, listRuns, stats, } from "../../harness/query";
@@ -19,7 +20,8 @@ import type { HarnessResult, HarnessTaskType, } from "../../harness/types";
 import { HARNESS_TASK_TYPES, toDetail, toSummary, } from "../../harness/types";
 import { requirePermission, } from "../../middleware/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { ErrorCode, HttpStatus, type HttpStatusCode, jsonError, jsonResponse, } from "../http-utils";
+import { harnessRunFiles, type SandboxFilesError, } from "./files";
 
 /**
  * Narrow an untrusted query string to the closed `HarnessTaskType` union.
@@ -42,6 +44,26 @@ function asResult(value: unknown,): HarnessResult | undefined {
   if (typeof value !== "string") { return undefined; }
   const known: readonly HarnessResult[] = ["ok", "error", "timeout", "cancelled",];
   return known.find((k,) => k === value);
+}
+
+/**
+ * HTTP status for each listing refusal. `escape` is a bad request (the client
+ * asked for something outside the sandbox), missing runs/sandboxes/dirs are
+ * not found, and an `io` failure is a server-side problem.
+ * @param refusal - the listing refusal.
+ * @returns the matching HTTP status.
+ */
+function filesErrorStatus(refusal: SandboxFilesError,): HttpStatusCode {
+  switch (refusal.kind) {
+    case "escape":
+      return HttpStatus.BadRequest;
+    case "no-run":
+    case "no-sandbox":
+    case "not-found":
+      return HttpStatus.NotFound;
+    case "io":
+      return HttpStatus.InternalServerError;
+  }
 }
 
 /**
@@ -92,6 +114,35 @@ export function harnessRoutes(prefix = "/api/v1",) {
         }, {
           params: t.Object({ runId: t.String({},), },),
           response: { 200: HarnessRunDetailSchema, ...denied, },
+        },)
+        .get(`${prefix}/harness/runs/:runId/files`, async (ctx,) => {
+          const { runId, } = ctx.params as { runId: string };
+          const q = ctx.query as Record<string, string | undefined>;
+          const listed = await harnessRunFiles({
+            runId,
+            relPath: q.path ?? "",
+            // The server runs from the repo root; worktree sandboxes live under
+            // `tree/<branch>` relative to it (giwt layout).
+            repoRoot: process.cwd(),
+            getRun,
+          },);
+
+          if ("kind" in listed) {
+            return jsonError({
+              message: `Sandbox listing refused (${listed.kind},)`,
+              status: filesErrorStatus(listed,),
+              code: listed.kind === "escape"
+                ? ErrorCode.BadRequest
+                : listed.kind === "io"
+                ? ErrorCode.ServerError
+                : ErrorCode.NotFound,
+            },);
+          }
+
+          return jsonResponse(listed,);
+        }, {
+          query: t.Object({ path: t.Optional(t.String({},),), },),
+          response: { 200: HarnessSandboxFilesSchema, ...denied, },
         },)
         .get(`${prefix}/harness/stats`, async () => jsonResponse(await stats(),), {
           response: { 200: HarnessStatsSchema, ...denied, },

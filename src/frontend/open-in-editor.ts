@@ -57,7 +57,7 @@ export function editorUrl(options: EditorUrlOptions,): string {
  * @param path - repo-relative path.
  * @returns the joined absolute path with a single separator.
  */
-function joinEditorPath(root: string, path: string,): string {
+export function joinEditorPath(root: string, path: string,): string {
   return `${root.replace(/\/+$/, "",)}/${path.replace(/^\/+/, "",)}`;
 }
 

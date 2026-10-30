@@ -20,6 +20,12 @@ import {
   RUNS_URL,
 } from "./admin-harness-detail";
 import {
+  editorFileRoot,
+  loadHarnessFiles,
+  sandboxEditorHref,
+  type SandboxFileRow,
+} from "./admin-harness-files";
+import {
   buildGapRows,
   buildModelRows,
   buildRunRows,
@@ -62,6 +68,12 @@ export const adminHarness = {
   loadingHarness: false,
   loadingHarnessDetail: false,
   harnessError: "",
+  harnessFilesOpen: false,
+  loadingHarnessFiles: false,
+  harnessFilesError: "",
+  harnessFilesRoot: "",
+  harnessFilesPath: "",
+  harnessFileRows: [] as SandboxFileRow[],
 
   /**
    * Load the runs list and the stats rollup together. Each response is
@@ -207,5 +219,44 @@ export const adminHarness = {
   closeHarnessRun() {
     this.harnessRunId = "";
     this.harnessDetail = null;
+    this.harnessFilesOpen = false;
+  },
+
+  /**
+   * Load the sandbox file tree root for the open run (approach C).
+   * @returns {Promise<void>}
+   */
+  async openHarnessFiles() {
+    if (this.harnessRunId === "") { return; }
+    await loadHarnessFiles(this, this.harnessRunId, "",);
+  },
+
+  /**
+   * Descend into a listed subdirectory of the sandbox tree.
+   * @param {string} relPath - entry path relative to the sandbox root.
+   * @returns {Promise<void>}
+   */
+  async navigateHarnessFiles(relPath: string,) {
+    if (this.harnessRunId === "") { return; }
+    await loadHarnessFiles(this, this.harnessRunId, relPath,);
+  },
+
+  /**
+   * Climb to the parent directory of the current listing.
+   * @returns {Promise<void>}
+   */
+  async upHarnessFiles() {
+    const cut = this.harnessFilesPath.lastIndexOf("/",);
+    await this.navigateHarnessFiles(cut === -1 ? "" : this.harnessFilesPath.slice(0, cut,),);
+  },
+
+  /**
+   * Open-in-editor URI for one tree entry; `""` hides the link when the
+   * server did not seed `__EDITOR_FILE_ROOT__` (approach-A gate).
+   * @param {string} relPath - entry path relative to the sandbox root.
+   * @returns {string} the editor URI, or `""` when unavailable.
+   */
+  harnessFileHref(relPath: string,): string {
+    return sandboxEditorHref(editorFileRoot(), this.harnessFilesRoot, relPath,);
   },
 };

@@ -1970,6 +1970,10 @@
     "byModel": "모델별 실행",
     "toolingGaps": "도구 부족",
     "runDetail": "실행 상세",
+    "filesTitle": "샌드박스 파일",
+    "filesButton": "파일 탐색",
+    "openSandboxInEditor": "$EDITOR에서 샌드박스 열기",
+    "filesError": "샌드박스 파일 트리를 불러올 수 없습니다.",
     "noRuns": "아직 기록된 하네스 실행이 없습니다",
     "noModelStats": "아직 모델 통계가 없습니다",
     "noToolingGaps": "기록된 도구 부족이 없습니다",
@@ -2019,7 +2023,9 @@
       "turnId": "턴 ID",
       "toolingGap": "도구 부족",
       "tools": "도구",
-      "message": "메시지"
+      "message": "메시지",
+      "fileName": "이름",
+      "fileSize": "크기"
     },
     "taskType": {
       "harnessCode": "코드",

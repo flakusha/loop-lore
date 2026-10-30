@@ -1970,6 +1970,10 @@
     "byModel": "Execuções por modelo",
     "toolingGaps": "Lacunas de ferramentas",
     "runDetail": "Detalhe da execução",
+    "filesTitle": "Arquivos do sandbox",
+    "filesButton": "Explorar arquivos",
+    "openSandboxInEditor": "Abrir sandbox no $EDITOR",
+    "filesError": "Não foi possível carregar a árvore de arquivos do sandbox.",
     "noRuns": "Nenhuma execução do harness registrada ainda",
     "noModelStats": "Ainda sem estatísticas de modelo",
     "noToolingGaps": "Nenhuma lacuna de ferramenta registrada",
@@ -2019,7 +2023,9 @@
       "turnId": "ID do turno",
       "toolingGap": "Lacuna de ferramenta",
       "tools": "Ferramentas",
-      "message": "Mensagem"
+      "message": "Mensagem",
+      "fileName": "Nome",
+      "fileSize": "Tamanho"
     },
     "taskType": {
       "harnessCode": "Código",

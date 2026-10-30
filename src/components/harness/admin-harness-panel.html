@@ -259,6 +259,89 @@
           <span style="color: var(--text-secondary)">{{{t("harness.column.message")}}}: </span>
           <span style="font-family: monospace" x-text="harnessDetail.msg"></span>
         </div>
+
+        <!-- Approach C: read-only sandbox file tree; the editor owns writes. -->
+        <div style="margin-top: var(--space-4)">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); flex-wrap: wrap">
+            <h4 style="font-size: 13px; font-weight: 600; margin: 0">{{{t("harness.filesTitle")}}}</h4>
+            <div style="display: flex; gap: var(--space-2); align-items: center">
+              <button
+                x-show="!harnessFilesOpen"
+                class="btn btn-secondary btn-xs"
+                @click="openHarnessFiles()"
+                data-testid="harness-files-open"
+              >
+                {{{t("harness.filesButton")}}}
+              </button>
+              <a
+                x-show="harnessFilesOpen && harnessFileHref(harnessFilesRoot) !== ''"
+                class="btn btn-secondary btn-xs"
+                :href="harnessFileHref(harnessFilesRoot)"
+                data-testid="harness-files-open-in-editor"
+              >
+                {{{t("harness.openSandboxInEditor")}}}
+              </a>
+            </div>
+          </div>
+          <div x-show="harnessFilesOpen && loadingHarnessFiles" data-loading-style="padding: var(--space-4)">
+            {{> loading-state.html}}
+          </div>
+          <div
+            x-show="harnessFilesOpen && harnessFilesError !== ''"
+            style="color: var(--color-danger, #dc3545); font-size: 12px; margin-top: var(--space-2)"
+            data-testid="harness-files-error"
+            x-text="harnessFilesError"
+          >
+          </div>
+          <table
+            x-show="harnessFilesOpen && !loadingHarnessFiles && harnessFilesError === ''"
+            class="admin-table"
+            data-testid="harness-files-table"
+          >
+            <thead>
+              <tr>
+                <th>{{{t("harness.column.fileName")}}}</th>
+                <th>{{{t("harness.column.fileSize")}}}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                x-show="harnessFilesPath !== ''"
+                @click="upHarnessFiles()"
+                style="cursor: pointer"
+                data-testid="harness-files-up"
+              >
+                <td colspan="2">..</td>
+                <td></td>
+              </tr>
+              <template x-for="row in harnessFileRows" :key="row.path">
+                <tr>
+                  <td style="font-family: monospace">
+                    <span
+                      x-show="row.type === 'dir'"
+                      @click="navigateHarnessFiles(row.path)"
+                      style="cursor: pointer"
+                      data-testid="harness-file-dir"
+                      x-text="row.name + '/'"
+                    ></span>
+                    <span x-show="row.type === 'file'" x-text="row.name"></span>
+                  </td>
+                  <td x-text="row.sizeLabel"></td>
+                  <td>
+                    <a
+                      x-show="row.type === 'file' && harnessFileHref(row.path) !== ''"
+                      :href="harnessFileHref(row.path)"
+                      data-testid="harness-file-editor-link"
+                    >
+                      {{{t("common.openInEditor")}}}
+                    </a>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
       </div>
     </template>
   </div>
