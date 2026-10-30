@@ -13,6 +13,11 @@
  * Mirrors src/db/078_user_api_keys_unique.test.ts and, like it, lives in
  * `src/db/` NOT `src/db/migrations/` (getMigrationFiles would register the
  * colocated test as a migration).
+ *
+ * Parallel-safety contract: every test owns a private `:memory:` SQLite DB
+ * from its own `createTestDb()` call (no shared handle, no fixed-path
+ * fixture) and disposes it in `finally`; usernames carry a randomUUID()
+ * suffix. Tests are order-independent and pass alone.
  */
 import { describe, expect, test, } from "bun:test";
 import { type Kysely, sql, } from "kysely";
