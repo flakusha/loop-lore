@@ -3,8 +3,13 @@
 
 import type { Kysely, } from "kysely";
 import { titleUntitledChatFromFirstMessage, } from "../../chat/title-suggest";
-import type { Config, } from "../../config/schema";
+import type { Config, FederationPeerTrustConfig, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import { createMeshEncryption, } from "../../federation/encryption";
+import { fanOutContent, } from "../../federation/fan-out";
+import { publicOriginOf, } from "../../federation/gossip";
+import { type PeerPost, postPeerJson, } from "../../federation/peer-fetch";
+import { getLogger, } from "../../logger";
 import { handleSceneTransitions, } from "./handle-scene-transitions";
 import { autoRenameChat, type ChatRecord, } from "./transitions";
 
@@ -44,4 +49,49 @@ export async function runPostInsertChatEffects(
   },);
 
   await handleSceneTransitions(database, config, chatId, actorId, effectiveContent, chatRecord, messageId,);
+
+  replicateChatMessage(database, config, chatId, messageId, effectiveContent,);
+}
+
+/**
+ * Federation sender trigger: replicate a persisted chat message to duplication
+ * targets via fanOutContent. Fire-and-forget with a logged catch — a peer
+ * failure must never fail or delay the message write (mirrors the advisory
+ * title call above). No-op when federation is disabled.
+ * @param {Kysely<DB>} database
+ * @param {Config} config
+ * @param {string} chatId
+ * @param {string} messageId
+ * @param {string} effectiveContent
+ * @returns {void}
+ */
+function replicateChatMessage(
+  database: Kysely<DB>,
+  config: Config,
+  chatId: string,
+  messageId: string,
+  effectiveContent: string,
+): void {
+  if (!config.federation?.enabled) { return; }
+  const trustByOrigin: Record<string, FederationPeerTrustConfig | undefined> = {};
+  for (const peer of config.federation.peers) {
+    trustByOrigin[peer.origin] = peer.trust;
+  }
+
+  const post: PeerPost = (url: string, body: unknown,) => postPeerJson(url, body, trustByOrigin[new URL(url,).origin],);
+  void fanOutContent(
+    database,
+    post,
+    publicOriginOf(config.server,),
+    config.federation.duplication,
+    createMeshEncryption(config.federation.meshPsk,),
+    { id: messageId, content: effectiveContent, chatId, kind: "chat", },
+    { meshPsk: config.federation.meshPsk, },
+  ).catch((error: unknown,) => {
+    getLogger().child({ module: "messages/post-insert", },).warn("chat fan-out failed", {
+      chatId,
+      messageId,
+      error: error instanceof Error ? error.message : String(error,),
+    },);
+  },);
 }
