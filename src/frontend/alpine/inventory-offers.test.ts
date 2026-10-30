@@ -131,6 +131,44 @@ describeOrSkip("inventory offers state", () => {
     expect(state.offers.map((offer,) => offer.id),).toEqual(["offer-9",],);
   });
 
+  test("createOffer posts explicit offerPrice when set", async () => {
+    handler = async (url: string, opts?: RequestInit,) => {
+      if (url.endsWith("/trade/offers",) && opts?.method === "POST") {
+        return Response.json({ ok: true, offerId: "offer-9", },);
+      }
+
+      if (url === "/api/v1/worlds/world-1/item-instances") {
+        return Response.json([{ id: "inst-a", item_id: "sword", quantity: 2, owner_actor_id: "me", },],);
+      }
+
+      if (url.startsWith("/api/v1/worlds/world-1/items",)) {
+        return Response.json({ data: [sword(),], },);
+      }
+
+      if (url.includes("/trade/offers?actorId=",)) {
+        return Response.json({ offers: [offerBody({ id: "offer-9", },),], },);
+      }
+
+      return Response.json({ data: [], },);
+    };
+
+    const state = stateFromOfferActors("world-1", "me",);
+    state.counterpartyId = "them";
+    await state.loadMyItems();
+    await flush();
+    state.toggleMine("inst-a",);
+    state.offerPrice = 250;
+    await state.createOffer();
+    await flush();
+    const create = calls.find((call,) => call.url.endsWith("/trade/offers",) && call.opts.method === "POST");
+    expect(JSON.parse(String(create?.opts.body ?? "{}",),),).toEqual({
+      buyerActorId: "me",
+      sellerActorId: "them",
+      buyerItems: [{ worldItemId: "inst-a", quantity: 2, },],
+      price: 250,
+    },);
+  });
+
   test("acceptOffer arms confirm first, posts actorId second, wrong side surfaces the 400", async () => {
     handler = async (url: string, _opts?: RequestInit,) => {
       if (url.endsWith("/accept",)) {
@@ -200,6 +238,35 @@ describeOrSkip("inventory offers state", () => {
     const cancel = calls.find((call,) => call.url.endsWith("/cancel",));
     expect(JSON.parse(String(cancel?.opts.body ?? "{}",),),).toEqual({ buyerActorId: "them", },);
     expect(creator.selectedOfferId,).toBeNull();
+  });
+
+  test("counterOffer with empty draft + zero price omits terms so existing terms survive", async () => {
+    handler = async (url: string, _opts?: RequestInit,) => {
+      if (url === "/api/v1/worlds/world-1/item-instances") {
+        return Response.json([{ id: "inst-s", item_id: "sword", quantity: 1, owner_actor_id: "them", },],);
+      }
+
+      if (url.startsWith("/api/v1/worlds/world-1/items",)) {
+        return Response.json({ data: [sword(),], },);
+      }
+
+      if (url.includes("/trade/offers?actorId=",)) {
+        return Response.json({ offers: [], },);
+      }
+
+      return Response.json({ ok: true, },);
+    };
+
+    const state = stateFromOfferActors("world-1", "them",);
+    await state.load();
+    await flush();
+    state.offers = [offerBody({ buyerActorId: "me", sellerActorId: "them", },),];
+    await state.counterOffer("offer-1",);
+    await flush();
+    const counter = calls.find((call,) => call.url.endsWith("/counter",));
+    expect(JSON.parse(String(counter?.opts.body ?? "{}",),),).toEqual({
+      counterActorId: "them",
+    },);
   });
 
   test("loadHistory reads newest-first rows; TypeBox dump falls back", async () => {
