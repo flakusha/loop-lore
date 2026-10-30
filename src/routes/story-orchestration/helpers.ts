@@ -37,7 +37,6 @@ export interface ChatRow {
   mode: string | null;
   world_id: string | null;
   gm_config: string | null;
-  created_by: string;
 }
 
 /** Terminal statuses — an open turn is anything else. */
@@ -56,7 +55,7 @@ export function notFound(): Response {
 export async function loadChat(db: Db, chatId: string,): Promise<ChatRow | null> {
   return await db
     .selectFrom("chats",)
-    .select(["mode", "world_id", "gm_config", "created_by",],)
+    .select(["mode", "world_id", "gm_config",],)
     .where("id", "=", chatId,)
     .executeTakeFirst() ?? null;
 }

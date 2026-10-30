@@ -12,7 +12,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertActors, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
+import { insertActors, insertChatOwners, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { questionsRoutes, } from "./questions";
 
@@ -116,6 +116,24 @@ describe("questions create/list/answer (auth-gated)", () => {
     );
 
     expect(res.status,).toBe(404,);
+  });
+
+  test("co-owner without created_by lists questions (owners set)", async () => {
+    const coOwner = uid();
+    await insertUsers(
+      db,
+      `user-${coOwner}`,
+      "Co Owner",
+      { id: coOwner, role: "solo", status: "active", settings: "{}", } as never,
+    );
+
+    await insertChatOwners(db, chatId, coOwner,);
+    const app = authedApp(coOwner,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/questions`,),
+    );
+
+    expect(res.status,).toBe(200,);
   });
 
   test("rejects invalid create body with 422", async () => {
