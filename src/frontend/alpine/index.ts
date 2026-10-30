@@ -50,6 +50,7 @@ import "./rpg-questions";
 import "./rpg-stats";
 import "./settings";
 import "./settings-modal";
+import "./settings-sessions";
 import "./shortcuts";
 import "./sidebar";
 import "./stat-allocation";
