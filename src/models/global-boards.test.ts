@@ -3,7 +3,7 @@
  */
 import { describe, expect, it, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { importUgi, parseUgiCsv, parseUgiDate, } from "./global-boards";
+import { importUgi, parseUgiCsv, parseUgiDate, } from "./boards-ugi";
 import { latestRankings, } from "./rankings";
 
 const CSV = [
