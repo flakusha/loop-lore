@@ -7,6 +7,7 @@
  * weapon/armor/accessory, so `SLOT_FOR_TYPE` maps every item type onto the
  * closest visual slot and an explicit `metadata.slot` override wins.
  */
+import { jsonParseOr, } from "../alpine/json.js";
 import { type InventoryItem, isItemEquipped, } from "./inventory-grid.js";
 import { itemStatEntries, } from "./item-details.js";
 
@@ -38,8 +39,11 @@ const SLOT_FOR_TYPE: Record<string, EquipmentSlot> = {
  * @returns The visual slot, accessory when unknown.
  */
 export function slotForItem(item: InventoryItem,): EquipmentSlot {
-  const metadata = typeof item.metadata === "string" ? null : item.metadata;
-  const override = metadata?.["slot"];
+  const metadata = typeof item.metadata === "string" ? jsonParseOr<unknown>(item.metadata, null,) : item.metadata;
+  const override = metadata != null && typeof metadata === "object" && !Array.isArray(metadata,)
+    ? (metadata as Record<string, unknown>)["slot"]
+    : undefined;
+
   if (typeof override === "string" && (EQUIPMENT_SLOTS as readonly string[]).includes(override,)) {
     return override as EquipmentSlot;
   }
