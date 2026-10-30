@@ -186,7 +186,7 @@
 | Not Started | Epic: Social Graph | High | High | 0 | [epic-social-graph.md](/.plan/epics/epic-social-graph.md) |
 | Not Started | Epic: Strict Review — dev 2026-08-26 Merges (Security & Data-Integrity) | High | Medium | 0 | [epic-review-dev-2026-08-26-security-data-integrity-merges.md](/.plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md) |
 | Not Started | Epic: Time Scale | High | Medium | 0 | [epic-time-scale.md](/.plan/epics/epic-time-scale.md) |
-| Not Started | Epic: Timeline System | High\ | High\ | 0 | [epic-timeline-system.md](/.plan/epics/epic-timeline-system.md) |
+| In Progress | Epic: Timeline System | High\ | High\ | 0 | [epic-timeline-system.md](/.plan/epics/epic-timeline-system.md) |
 | Not Started | Epic: TTS Foundation | Medium | Medium | 0 | [epic-tts-foundation.md](/.plan/epics/epic-tts-foundation.md) |
 | Not Started | Epic: Video Generation | Medium | Large | 0 | [epic-video-generation.md](/.plan/epics/epic-video-generation.md) |
 | In Progress | Epic: Workflow Engine | High (MVP scoped, post-Gate C) | Large | 0 | [epic-workflow-engine.md](/.plan/epics/epic-workflow-engine.md) |
@@ -267,7 +267,7 @@
 | Not Started | Mini-Games: UI Components & API Contracts | medium | Medium | 0 | [epic-mini-games-ui-api.md](/.plan/epics/epic-mini-games-ui-api.md) |
 | Not Started | Model Info Frontend (Cards, Tags, Filters) | Medium | Medium | 0/2 | [epic-model-info-frontend.md](/.plan/epics/epic-model-info-frontend.md) |
 | Not Started | Model Metadata Read (Headers, Hashing, Classification) | High | Large | 0/7 | [epic-model-metadata-read.md](/.plan/epics/epic-model-metadata-read.md) |
-| Not Started | Multi-Session Support | Medium | Med | 0 | [epic-multi-session.md](/.plan/epics/epic-multi-session.md) |
+| Done | Multi-Session Support | Medium | Med | 0 | [epic-multi-session.md](/.plan/epics/epic-multi-session.md) |
 | Not Started | Multilingual Carriage — Hidden Per-Message Language/Context Carriage | Medium | Medium | 0 | [epic-multilingual-carriage.md](/.plan/epics/epic-multilingual-carriage.md) |
 | Not Started | Narration / Actor Separation | High | Medium–Large | 0 | [epic-narration-actor-separation.md](/.plan/epics/epic-narration-actor-separation.md) |
 | Not Started | Narrative Publishing Workflows (Books & Comics) | medium | Large | 0 | [epic-narrative-publishing-workflows.md](/.plan/epics/epic-narrative-publishing-workflows.md) |
@@ -2058,7 +2058,7 @@ Time scale system — manage game time progression, day/night cycles, seasons, a
 
 ### Epic: Timeline System
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High\
 - **Effort:** High\
 - **Type:** Feature Epic\
@@ -2817,7 +2817,7 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 
 ### Multi-Session Support
 
-- **Status:** Not Started
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Med
 - **Type:** Feature Epic

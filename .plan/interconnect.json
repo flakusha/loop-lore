@@ -36746,7 +36746,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-multi-session.md",
       "title": "EPIC: Multi-Session Support",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -44837,8 +44837,15 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-timeline-branching-ui.md",
       "title": "Timeline branching UI — world detail page",
-      "status": "Not Started",
-      "srcRefs": [],
+      "status": "done",
+      "srcRefs": [
+        "src/frontend/pages/world-timeline-bar.ts",
+        "src/public/css/app.css",
+        "src/routes/views/plugin-dynamic.ts",
+        "src/routes/views/worlds.ts",
+        "src/routes/worlds/timelines.ts",
+        "src/views/world-detail.html"
+      ],
       "related": [
         "TASK-timeline-in-chat-command"
       ]
@@ -52298,7 +52305,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-multi-session.md",
       "title": "Multi-Session Support",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/schema-sessions.ts",
         "src/frontend/alpine/settings.ts",
@@ -52516,7 +52523,13 @@
       "title": "NSFW Moderation Safety Infrastructure — Priority Elevation",
       "status": "Not Started",
       "srcRefs": [
-        "src/chat/types/nsfw.ts"
+        "src/chat/service/moderation.ts",
+        "src/chat/types/nsfw.ts",
+        "src/generation/hooks/nsfw-hook-log.ts",
+        "src/middleware/nsfw-gate/logging.ts",
+        "src/routes/nsfw-moderation/actions.ts",
+        "src/routes/nsfw-moderation/appeals.ts",
+        "src/routes/nsfw-moderation/flags.ts"
       ],
       "related": []
     },
@@ -53857,7 +53870,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-timeline-system.md",
       "title": "Timeline System",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/assistant/prompt/sections/lore.ts",
         "src/story/timeline/event-steering.ts",
@@ -60775,6 +60788,12 @@
       "owners": [
         "TASK-019-enforce-state-machine-validators-at-write",
         "epic-file-splitting"
+      ]
+    },
+    {
+      "path": "src/chat/service/moderation.ts",
+      "owners": [
+        "epic-nsfw-moderation-priority"
       ]
     },
     {
@@ -70503,6 +70522,7 @@
         "TASK-book-unit-editor-review-surface",
         "TASK-harness-canvas-viz",
         "TASK-publication-viewer-read-mode",
+        "TASK-timeline-branching-ui",
         "epic-world-management-ui"
       ]
     },
@@ -72224,6 +72244,12 @@
         "FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-",
         "TASK-aux-grade-judge-tasks",
         "epic-config-templates"
+      ]
+    },
+    {
+      "path": "src/generation/hooks/nsfw-hook-log.ts",
+      "owners": [
+        "epic-nsfw-moderation-priority"
       ]
     },
     {
@@ -75348,7 +75374,8 @@
         "BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud",
         "BUG-nsfw-gate-log-plaintext-pii",
         "TASK-chat-feature-moderation",
-        "epic-chat-product-features"
+        "epic-chat-product-features",
+        "epic-nsfw-moderation-priority"
       ]
     },
     {
@@ -76597,6 +76624,7 @@
         "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
         "TASK-location-explorer",
         "TASK-text-effects-overlays",
+        "TASK-timeline-branching-ui",
         "TASK-visual-novel-mode",
         "WIRE-frontend-mobile-off-canvas-drawer",
         "WIRE-frontend-mobile-sticky-bottom-composer",
@@ -80798,7 +80826,8 @@
         "BUG-nsfw-modactions-performedby-from-body",
         "TASK-fb12-admin-role-change-notifies-affected-user-admxntf",
         "TASK-moderator-permission-gating-for-read-only-review-surface",
-        "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa"
+        "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa",
+        "epic-nsfw-moderation-priority"
       ]
     },
     {
@@ -80812,7 +80841,8 @@
       "owners": [
         "BUG-nsfw-appeal-approvedby-taken-from-request-body",
         "BUG-nsfw-appeals-as-any-and-dead-route",
-        "BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-"
+        "BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-",
+        "epic-nsfw-moderation-priority"
       ]
     },
     {
@@ -80842,7 +80872,8 @@
       "owners": [
         "BUG-nsfw-flagqueue-leaks-reporter-pii",
         "FEAT-attachment-review-queue-admin-ui",
-        "TASK-moderator-permission-gating-for-read-only-review-surface"
+        "TASK-moderator-permission-gating-for-read-only-review-surface",
+        "epic-nsfw-moderation-priority"
       ]
     },
     {
@@ -82044,6 +82075,7 @@
         "TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl",
         "TASK-publication-reader-locale-selector",
         "TASK-publication-viewer-read-mode",
+        "TASK-timeline-branching-ui",
         "epic-experimental-egui-frontend"
       ]
     },
@@ -82108,6 +82140,7 @@
       "path": "src/routes/views/worlds.ts",
       "owners": [
         "FEAT-worlds-frontend-list-detail-timeline-location-travel-ui",
+        "TASK-timeline-branching-ui",
         "TASK-world-editor-structured-ui",
         "epic-world-locations",
         "epic-world-management-ui"
@@ -82429,6 +82462,7 @@
       "path": "src/routes/worlds/timelines.ts",
       "owners": [
         "BUG-world-timelines-unauthenticated-read-and-create",
+        "TASK-timeline-branching-ui",
         "epic-review-dev-2026-08-26-security-data-integrity-merges"
       ]
     },
@@ -88910,6 +88944,7 @@
         "FEAT-llm-enhance-outside-the-chat-composer",
         "FEAT-world-template-chat-lifecycle",
         "TASK-frontend-view-model-extraction",
+        "TASK-timeline-branching-ui",
         "epic-world-management-ui"
       ]
     },
@@ -89208,6 +89243,12 @@
       "kind": "consumes",
       "to": "BUG-nsfw-reviewappeal-auto-reverses-actions",
       "via": "src/nsfw/moderation-service/appeals.test.ts; src/nsfw/moderation-service/appeals.ts"
+    },
+    {
+      "from": "BUG-nsfw-appeals-as-any-and-dead-route",
+      "kind": "consumes",
+      "to": "epic-nsfw-moderation-priority",
+      "via": "src/routes/nsfw-moderation/appeals.ts"
     },
     {
       "from": "BUG-nsfw-export-bundle-no-access-log",
@@ -149711,6 +149752,36 @@
       "to": "src/frontend/world/weather-icons.ts"
     },
     {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "produces",
+      "to": "src/frontend/pages/world-timeline-bar.ts"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "produces",
+      "to": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "produces",
+      "to": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "produces",
+      "to": "src/routes/views/worlds.ts"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "produces",
+      "to": "src/routes/worlds/timelines.ts"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "produces",
+      "to": "src/views/world-detail.html"
+    },
+    {
       "from": "TASK-timeline-id-world-timeline-events",
       "kind": "produces",
       "to": "src/db/migrations/parts/003_worlds.ts"
@@ -162703,7 +162774,37 @@
     {
       "from": "epic-nsfw-moderation-priority",
       "kind": "produces",
+      "to": "src/chat/service/moderation.ts"
+    },
+    {
+      "from": "epic-nsfw-moderation-priority",
+      "kind": "produces",
       "to": "src/chat/types/nsfw.ts"
+    },
+    {
+      "from": "epic-nsfw-moderation-priority",
+      "kind": "produces",
+      "to": "src/generation/hooks/nsfw-hook-log.ts"
+    },
+    {
+      "from": "epic-nsfw-moderation-priority",
+      "kind": "produces",
+      "to": "src/middleware/nsfw-gate/logging.ts"
+    },
+    {
+      "from": "epic-nsfw-moderation-priority",
+      "kind": "produces",
+      "to": "src/routes/nsfw-moderation/actions.ts"
+    },
+    {
+      "from": "epic-nsfw-moderation-priority",
+      "kind": "produces",
+      "to": "src/routes/nsfw-moderation/appeals.ts"
+    },
+    {
+      "from": "epic-nsfw-moderation-priority",
+      "kind": "produces",
+      "to": "src/routes/nsfw-moderation/flags.ts"
     },
     {
       "from": "epic-nsfw-ui",
@@ -201903,6 +202004,12 @@
     {
       "from": "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
+      "kind": "sibling",
       "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
       "via": "src/routes/http-utils/errors.ts"
     },
@@ -214143,6 +214250,12 @@
     {
       "from": "BUG-gallery-search-401s-anonymous-users-while-grid-serves-them",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "BUG-gallery-search-401s-anonymous-users-while-grid-serves-them",
+      "kind": "sibling",
       "to": "WIRE-nsfw-audit-page-missing-inline-authz",
       "via": "src/routes/views/plugin-pages.ts"
     },
@@ -224335,6 +224448,12 @@
       "via": "src/middleware/nsfw-gate/logging.ts"
     },
     {
+      "from": "BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud",
+      "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
+      "via": "src/middleware/nsfw-gate/logging.ts"
+    },
+    {
       "from": "BUG-logout-deletes-session-without-signature-or-ownership-check",
       "kind": "sibling",
       "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c",
@@ -230815,6 +230934,12 @@
       "via": "src/nsfw/moderation-service/appeals-reversal.ts"
     },
     {
+      "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
+      "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
+      "via": "src/routes/nsfw-moderation/appeals.ts"
+    },
+    {
       "from": "BUG-nsfw-appeals-as-any-and-dead-route",
       "kind": "sibling",
       "to": "BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-",
@@ -231541,6 +231666,12 @@
       "via": "src/nsfw/moderation-service/flags.ts"
     },
     {
+      "from": "BUG-nsfw-flagqueue-leaks-reporter-pii",
+      "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
+      "via": "src/routes/nsfw-moderation/flags.ts"
+    },
+    {
       "from": "BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al",
       "kind": "sibling",
       "to": "BUG-nsfw-gate-log-plaintext-pii",
@@ -231658,7 +231789,7 @@
       "from": "BUG-nsfw-gate-log-plaintext-pii",
       "kind": "sibling",
       "to": "epic-nsfw-moderation-priority",
-      "via": "src/chat/types/nsfw.ts"
+      "via": "src/chat/types/nsfw.ts; src/middleware/nsfw-gate/logging.ts"
     },
     {
       "from": "BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g",
@@ -231712,6 +231843,12 @@
       "from": "BUG-nsfw-modactions-performedby-from-body",
       "kind": "sibling",
       "to": "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa",
+      "via": "src/routes/nsfw-moderation/actions.ts"
+    },
+    {
+      "from": "BUG-nsfw-modactions-performedby-from-body",
+      "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
       "via": "src/routes/nsfw-moderation/actions.ts"
     },
     {
@@ -245781,6 +245918,12 @@
     {
       "from": "BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-",
       "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
+      "via": "src/routes/nsfw-moderation/appeals.ts"
+    },
+    {
+      "from": "BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-",
+      "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/routes/story-turns.ts"
     },
@@ -247858,6 +248001,12 @@
       "from": "BUG-undefined-css-custom-properties-break-rendering",
       "kind": "sibling",
       "to": "TASK-text-effects-overlays",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "BUG-undefined-css-custom-properties-break-rendering",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
       "via": "src/public/css/app.css"
     },
     {
@@ -250205,6 +250354,12 @@
       "kind": "sibling",
       "to": "epic-character-world-setup",
       "via": "src/story/world-state/init.ts"
+    },
+    {
+      "from": "BUG-world-timelines-unauthenticated-read-and-create",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/worlds/timelines.ts"
     },
     {
       "from": "BUG-world-timelines-unauthenticated-read-and-create",
@@ -255856,6 +256011,12 @@
       "from": "FEAT-attachment-review-queue-admin-ui",
       "kind": "sibling",
       "to": "TASK-moderator-permission-gating-for-read-only-review-surface",
+      "via": "src/routes/nsfw-moderation/flags.ts"
+    },
+    {
+      "from": "FEAT-attachment-review-queue-admin-ui",
+      "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
       "via": "src/routes/nsfw-moderation/flags.ts"
     },
     {
@@ -263169,6 +263330,12 @@
     {
       "from": "FEAT-llm-enhance-outside-the-chat-composer",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/views/world-detail.html"
+    },
+    {
+      "from": "FEAT-llm-enhance-outside-the-chat-composer",
+      "kind": "sibling",
       "to": "epic-blog-system",
       "via": "src/views/blog.html"
     },
@@ -268143,6 +268310,12 @@
     {
       "from": "FEAT-world-template-chat-lifecycle",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/views/world-detail.html"
+    },
+    {
+      "from": "FEAT-world-template-chat-lifecycle",
+      "kind": "sibling",
       "to": "TASK-typescript-7-migration-typecheck-failures",
       "via": "src/routes/chats/create.ts"
     },
@@ -268253,6 +268426,12 @@
       "kind": "sibling",
       "to": "TASK-location-explorer",
       "via": "src/routes/location-explorer.ts"
+    },
+    {
+      "from": "FEAT-worlds-frontend-list-detail-timeline-location-travel-ui",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/worlds.ts"
     },
     {
       "from": "FEAT-worlds-frontend-list-detail-timeline-location-travel-ui",
@@ -271564,6 +271743,12 @@
       "from": "TASK-025",
       "kind": "sibling",
       "to": "TASK-text-effects-overlays",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-025",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
       "via": "src/public/css/app.css"
     },
     {
@@ -297279,6 +297464,12 @@
     {
       "from": "TASK-author-suggestion-resolution-surface",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/frontend/pages/world-timeline-bar.ts; src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-author-suggestion-resolution-surface",
+      "kind": "sibling",
       "to": "TASK-unify-item-types",
       "via": "src/db/enums-story/items.ts"
     },
@@ -303119,6 +303310,12 @@
       "kind": "sibling",
       "to": "TASK-shared-text-surface-toolbar",
       "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-book-unit-editor-review-surface",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/frontend/pages/world-timeline-bar.ts; src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-book-unit-editor-review-surface",
@@ -310539,6 +310736,12 @@
     {
       "from": "TASK-chat-feature-component-buttons",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-chat-feature-component-buttons",
+      "kind": "sibling",
       "to": "TASK-visual-novel-mode",
       "via": "src/public/css/app.css"
     },
@@ -311643,6 +311846,12 @@
     {
       "from": "TASK-chat-feature-moderation",
       "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
+      "via": "src/middleware/nsfw-gate/logging.ts"
+    },
+    {
+      "from": "TASK-chat-feature-moderation",
+      "kind": "sibling",
       "to": "epic-review-dev-2026-08-26-security-data-integrity-merges",
       "via": "src/middleware/nsfw-gate/access.ts"
     },
@@ -312429,6 +312638,12 @@
     {
       "from": "TASK-chat-flow-section-navigation",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-chat-flow-section-navigation",
+      "kind": "sibling",
       "to": "TASK-visual-novel-mode",
       "via": "src/public/css/app.css; src/views/chat.html"
     },
@@ -313107,6 +313322,12 @@
     {
       "from": "TASK-chat-message-search",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-chat-message-search",
+      "kind": "sibling",
       "to": "TASK-visual-novel-mode",
       "via": "src/public/css/app.css; src/views/chat.html"
     },
@@ -313258,6 +313479,12 @@
       "from": "TASK-chat-room-filters",
       "kind": "sibling",
       "to": "TASK-text-effects-overlays",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-chat-room-filters",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
       "via": "src/public/css/app.css"
     },
     {
@@ -320523,6 +320750,12 @@
     {
       "from": "TASK-comic-page-panel-layout-model",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-comic-page-panel-layout-model",
+      "kind": "sibling",
       "to": "TASK-vn-cast-server-producer",
       "via": "src/frontend/vn/sprite-stage.ts"
     },
@@ -321927,6 +322160,12 @@
     {
       "from": "TASK-comparison-gallery-comparison-set-integration",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-comparison-gallery-comparison-set-integration",
+      "kind": "sibling",
       "to": "TASK-vector-gen-gallery-asset-support",
       "via": "src/db/enums-content.ts"
     },
@@ -322157,6 +322396,12 @@
       "kind": "sibling",
       "to": "TASK-text-effects-overlays",
       "via": "src/frontend/alpine-init.ts"
+    },
+    {
+      "from": "TASK-comparison-grid-frontend",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-comparison-grid-frontend",
@@ -328881,6 +329126,12 @@
     {
       "from": "TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn",
+      "kind": "sibling",
       "to": "epic-experimental-egui-frontend",
       "via": "src/routes/views/plugin-dynamic.ts"
     },
@@ -330724,6 +330975,12 @@
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
       "kind": "sibling",
       "to": "TASK-text-effects-overlays",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
       "via": "src/public/css/app.css"
     },
     {
@@ -334529,6 +334786,12 @@
       "kind": "sibling",
       "to": "TASK-review-thread-target-vocabulary",
       "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
@@ -340177,6 +340440,12 @@
       "via": "src/routes/auth/session.ts"
     },
     {
+      "from": "TASK-fb12-admin-role-change-notifies-affected-user-admxntf",
+      "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
+      "via": "src/routes/nsfw-moderation/actions.ts"
+    },
+    {
       "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
       "kind": "sibling",
       "to": "TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx",
@@ -345021,6 +345290,12 @@
     {
       "from": "TASK-frontend-view-model-extraction",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts; src/views/world-detail.html"
+    },
+    {
+      "from": "TASK-frontend-view-model-extraction",
+      "kind": "sibling",
       "to": "TASK-visual-novel-mode",
       "via": "src/views/chat.html"
     },
@@ -345149,6 +345424,12 @@
       "kind": "sibling",
       "to": "TASK-template-preflight-production-resolver-gate",
       "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "TASK-frontend-view-model-json-negotiation",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-frontend-view-model-json-negotiation",
@@ -348665,6 +348946,12 @@
       "kind": "sibling",
       "to": "TASK-thinking-tag-context-prune",
       "via": "src/views/chat.html"
+    },
+    {
+      "from": "TASK-harness-canvas-viz",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/frontend/pages/world-timeline-bar.ts"
     },
     {
       "from": "TASK-harness-canvas-viz",
@@ -355305,6 +355592,12 @@
     {
       "from": "TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl",
+      "kind": "sibling",
       "to": "epic-browser-editor-support",
       "via": "src/routes/views/layout.ts"
     },
@@ -357094,6 +357387,12 @@
       "from": "TASK-location-explorer",
       "kind": "sibling",
       "to": "TASK-text-effects-overlays",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-location-explorer",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
       "via": "src/public/css/app.css"
     },
     {
@@ -363739,6 +364038,12 @@
       "via": "src/routes/nsfw-moderation/overrides.ts"
     },
     {
+      "from": "TASK-moderator-permission-gating-for-read-only-review-surface",
+      "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
+      "via": "src/routes/nsfw-moderation/actions.ts; src/routes/nsfw-moderation/flags.ts"
+    },
+    {
       "from": "TASK-mood-shift-delta-tuning-word-boundary",
       "kind": "sibling",
       "to": "TASK-outfit-change-multi-actor-name-resolution",
@@ -364577,6 +364882,12 @@
       "kind": "sibling",
       "to": "epic-emotion-avatar-message-binding",
       "via": "src/generation/auto-gen/content-hooks.ts"
+    },
+    {
+      "from": "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa",
+      "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
+      "via": "src/routes/nsfw-moderation/actions.ts"
     },
     {
       "from": "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa",
@@ -369279,6 +369590,12 @@
     {
       "from": "TASK-publication-reader-locale-selector",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-publication-reader-locale-selector",
+      "kind": "sibling",
       "to": "TASK-unit-translation-service",
       "via": "src/i18n/locale-registry.ts"
     },
@@ -369701,6 +370018,12 @@
       "kind": "sibling",
       "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
       "via": "src/assets/signed-url.ts"
+    },
+    {
+      "from": "TASK-publication-viewer-read-mode",
+      "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/frontend/pages/world-timeline-bar.ts; src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-publication-viewer-read-mode",
@@ -378657,6 +378980,12 @@
     {
       "from": "TASK-text-effects-overlays",
       "kind": "sibling",
+      "to": "TASK-timeline-branching-ui",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-text-effects-overlays",
+      "kind": "sibling",
       "to": "TASK-visual-novel-mode",
       "via": "src/public/css/app.css; src/views/chat.html"
     },
@@ -378785,6 +379114,66 @@
       "kind": "sibling",
       "to": "epic-encryption-workflow",
       "via": "src/assets/serve-raw.ts"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "sibling",
+      "to": "TASK-visual-novel-mode",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "sibling",
+      "to": "TASK-world-editor-structured-ui",
+      "via": "src/routes/views/worlds.ts"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "sibling",
+      "to": "WIRE-frontend-mobile-off-canvas-drawer",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "sibling",
+      "to": "WIRE-frontend-mobile-sticky-bottom-composer",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "sibling",
+      "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "sibling",
+      "to": "epic-chat-lifecycle-moderation",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "sibling",
+      "to": "epic-review-dev-2026-08-26-security-data-integrity-merges",
+      "via": "src/routes/worlds/timelines.ts"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "sibling",
+      "to": "epic-world-locations",
+      "via": "src/routes/views/worlds.ts"
+    },
+    {
+      "from": "TASK-timeline-branching-ui",
+      "kind": "sibling",
+      "to": "epic-world-management-ui",
+      "via": "src/frontend/pages/world-timeline-bar.ts; src/routes/views/worlds.ts; src/views/world-detail.html"
     },
     {
       "from": "TASK-timeline-id-world-timeline-events",
@@ -390161,6 +390550,12 @@
       "kind": "sibling",
       "to": "epic-nsfw-integration-gaps",
       "via": "src/middleware/nsfw-gate/consent.ts"
+    },
+    {
+      "from": "epic-chat-product-features",
+      "kind": "sibling",
+      "to": "epic-nsfw-moderation-priority",
+      "via": "src/middleware/nsfw-gate/logging.ts"
     },
     {
       "from": "epic-chat-product-features",

@@ -11105,6 +11105,12 @@
       "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
     }
   ],
+  "src/chat/service/moderation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-moderation-priority.md"
+    }
+  ],
   "src/chat/service/ownership.test.ts": [
     {
       "kind": "ticket",
@@ -31423,6 +31429,12 @@
       "source": ".plan/tickets/TASK-aux-grade-judge-tasks.md"
     }
   ],
+  "src/generation/hooks/nsfw-hook-log.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-moderation-priority.md"
+    }
+  ],
   "src/generation/hooks/nsfw-hook.ts": [
     {
       "kind": "epic",
@@ -37141,6 +37153,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-moderation-priority.md"
     },
     {
       "kind": "ticket",
@@ -46439,6 +46455,10 @@
   ],
   "src/routes/nsfw-moderation/actions.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-moderation-priority.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-modactions-performedby-from-body.md"
     },
@@ -46462,6 +46482,10 @@
     }
   ],
   "src/routes/nsfw-moderation/appeals.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-moderation-priority.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
@@ -46510,6 +46534,10 @@
     }
   ],
   "src/routes/nsfw-moderation/flags.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-moderation-priority.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-flagqueue-leaks-reporter-pii.md"
