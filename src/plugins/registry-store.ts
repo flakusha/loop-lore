@@ -10,6 +10,12 @@ import type {
   MigrationDefinition,
 } from "./types";
 
+/** A registered route paired with the plugin that registered it. */
+export interface RouteCandidate {
+  plugin: string;
+  route: RouteDefinition;
+}
+
 /** Stores per-plugin extension definitions and enabled state. */
 export class RegistryStore {
   private routes = new Map<string, RouteDefinition[]>();
@@ -19,6 +25,14 @@ export class RegistryStore {
   private eventHandlers = new Map<string, EventHandlerDefinition[]>();
   private migrations = new Map<string, MigrationDefinition[]>();
   private enabledMap = new Map<string, boolean>();
+  /**
+   * method + normalized path → registered candidates in plugin-grouped
+   * registration order (the order `enabledDefinitions`/`findRoute` scan).
+   * Derived cache over `routes`; enablement is NOT baked in — dispatch
+   * filters per candidate so runtime `setEnabled` flips are honored
+   * (first-enabled-wins).
+   */
+  private routeIndex = new Map<string, RouteCandidate[]>();
 
   /**
  * @param {string} name
@@ -60,6 +74,7 @@ setEnabled(name: string, enabled: boolean): void {
  */
 appendRoutes(pluginName: string, defs: RouteDefinition[],): void {
     this.routes.set(pluginName, [...(this.routes.get(pluginName,) ?? []), ...defs],);
+    this.reindexRoutes();
   }
 
   /**
@@ -68,6 +83,20 @@ appendRoutes(pluginName: string, defs: RouteDefinition[],): void {
  */
 getPluginRoutes(pluginName: string): RouteDefinition[] {
     return this.routes.get(pluginName) ?? [];
+  }
+
+  /**
+   * Registered candidates for method + normalized path, in plugin-grouped
+   * registration order regardless of enabled state — the caller filters by
+   * enablement at dispatch time, preserving first-ENABLED-wins (the exact
+   * contract the linear `getEnabledRoutes()` scan had). Usually a
+   * one-element bucket, so dispatch is O(1) per request.
+   * @param method
+   * @param normalizedPath - already run through normalizePluginRoutePath
+   * @returns {ReadonlyArray<RouteCandidate>}
+   */
+  getRouteCandidates(method: string, normalizedPath: string,): ReadonlyArray<RouteCandidate> {
+    return this.routeIndex.get(`${method} ${normalizedPath}`,) ?? [];
   }
 
   /**
@@ -191,6 +220,7 @@ removePlugin(pluginName: string): void {
     this.eventHandlers.delete(pluginName);
     this.migrations.delete(pluginName);
     this.enabledMap.delete(pluginName);
+    this.reindexRoutes();
   }
 
   /**
@@ -204,6 +234,7 @@ clear(): void {
     this.eventHandlers.clear();
     this.migrations.clear();
     this.enabledMap.clear();
+    this.routeIndex.clear();
   }
 
   /**
@@ -218,5 +249,25 @@ private enabledDefinitions<T>(definitions: Map<string, T[]>): T[] {
     }
 
     return out;
+  }
+
+  /**
+   * Rebuild the route index from `routes`. A full rebuild keeps candidate
+   * order identical to the plugin-grouped scan order by construction — an
+   * incremental append could NOT (a late append to an earlier-registered
+   * plugin must still outrank a later plugin's same-key route, and
+   * `findRoute` must keep scanning exactly this order).
+   * @returns {void}
+   */
+  private reindexRoutes(): void {
+    this.routeIndex.clear();
+    for (const [plugin, defs] of this.routes) {
+      for (const def of defs) {
+        const key = `${def.method} ${def.path}`;
+        const bucket = this.routeIndex.get(key,);
+        if (bucket) { bucket.push({ plugin, route: def, },); }
+        else { this.routeIndex.set(key, [{ plugin, route: def, },],); }
+      }
+    }
   }
 }

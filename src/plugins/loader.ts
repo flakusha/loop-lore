@@ -405,8 +405,14 @@ export async function dispatchPluginRoute(
   // incoming path is normalized the same way before the exact compare
   // (BUG-fix-plugins-define-plugin-route-matching-semantics).
   const pathname = normalizePluginRoutePath(url.pathname,);
-  for (const route of registry.getEnabledRoutes()) {
-    if (pathname !== route.path || request.method !== route.method) { continue; }
+  // O(1) candidates lookup keyed by method + normalized path
+  // (gap-audit E6). Candidates are in plugin-grouped registration order and
+  // include disabled plugins; enablement is checked per candidate below, so
+  // the first-ENABLED-wins semantics of the linear `getEnabledRoutes()` scan
+  // are preserved exactly and runtime `setEnabled` flips stay visible at
+  // dispatch time.
+  for (const { plugin, route } of registry.getRouteCandidates(request.method, pathname,)) {
+    if (!registry.isEnabled(plugin,)) { continue; }
 
     const denial = checkRouteAccess({ route, request, caller, t, },);
     if (denial) { return denial; }
