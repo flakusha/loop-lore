@@ -1802,6 +1802,7 @@
     "tradeOfferEmptyDraft": "Select items or set a price for the offer."
   },
   "commands": {
+    "timeline": "管理世界时间线分支 (list/fork/switch)",
     "modify": "让模型重写实体 (/modify <kind> <id> \"请求\")",
     "import": "从上传的文件导入角色卡 (/import character <文件>)",
     "apply": "修改 world/location/item 的字段 (/apply <kind> <id> 键=值 …)",
