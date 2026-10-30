@@ -3,7 +3,7 @@
 
 # TASK: timeline in-chat command
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-timeline-system
