@@ -40,6 +40,10 @@ import { toDate, } from "../utils/date";
 import { applyFx, isFxActive, prefersReducedMotion, } from "./effects/text-fx";
 // ── 10e. Open-in-$EDITOR links (approach A, epic-browser-editor-support) ──
 import { enhanceOpenInEditorLinks, } from "./open-in-editor";
+// ── 10f. Browser PTY terminal panel (approach B, epic-browser-editor-support) ──
+// Lazy-loads @xterm/xterm on first open; upgrades approach-A anchors when
+// web.terminal.enabled.
+import "./terminal-panel";
 // ── 10d. TASK-text-effects-overlays: emotion triggers + status/badge overlays ──
 import {
   applyEmotionFx,

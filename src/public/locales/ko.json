@@ -53,7 +53,9 @@
     "archive": "Archive",
     "user": "사용자",
     "actions": "동작",
-    "openInEditor": "Open in $EDITOR"
+    "openInEditor": "Open in $EDITOR",
+    "terminalTitle": "Terminal editor",
+    "closeTerminal": "Close terminal"
   },
   "auth": {
     "login": "Log In",

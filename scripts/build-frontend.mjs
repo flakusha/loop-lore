@@ -66,6 +66,14 @@ async function buildBundles() {
   // WASM module loader (pre-compiled hot binary — fetches + exposes C ABI)
   await $`bun build --target browser --minify --outdir ${DIST} --banner "(()=>{" --footer "})()" ${frontend}/wasm-loader.ts`;
 
+  // xterm PTY panel chunk (epic-browser-editor-support, approach B). ESM
+  // because terminal-panel.ts consumes it via runtime dynamic
+  // import("/terminal-xterm.js") — bun builds the main bundle as one
+  // non-split IIFE, so a runtime URL import is the only way to keep the
+  // ~300KB terminal stack off the every-page bundle. Deliberately UNHASHED
+  // (same rationale as egui-bridge: consumed outside hash injection).
+  await $`bun build --target browser --minify --format=esm --outdir ${DIST} ${frontend}/terminal-xterm.ts`;
+
   // Local inference workers (standalone — no IIFE wrapper: workers run in
   // their own scope. Each lazy-loads its SDK from CDN on first use;
   // never part of the main-thread bundle.)
