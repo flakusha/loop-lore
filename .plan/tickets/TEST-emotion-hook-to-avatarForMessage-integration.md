@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Emotion-Avatar Completion
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding
@@ -74,13 +74,13 @@ The test exercises **both halves in one run** with real DB rows.
 
 ## Acceptance Criteria
 
-- [ ] Test sets up actor + 2 emotion-tagged avatars + 1 base avatar.
-- [ ] Test runs `triggerAutoGeneration` with a happy LLM reply.
-- [ ] Test asserts `messages.emotion === "happy"` post-store.
-- [ ] Test asserts `avatarForMessage(msg)` returns the happy avatar's
+- [x] Test sets up actor + 2 emotion-tagged avatars + 1 base avatar.
+- [x] Test runs `triggerAutoGeneration` with a happy LLM reply.
+- [x] Test asserts `messages.emotion === "happy"` post-store.
+- [x] Test asserts `avatarForMessage(msg)` returns the happy avatar's
       assetId (not base, not sad, not null).
-- [ ] Test passes green under default suite (no `--isolate`).
-- [ ] `bun run check` green.
+- [x] Test passes green under default suite (no `--isolate`).
+- [x] `bun run check` green.
 
 ## Notes
 
