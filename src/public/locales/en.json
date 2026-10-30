@@ -187,6 +187,32 @@
       "title": "Classifier Tags",
       "description": "Choose which curated classifier tags are active for this chat.",
       "save": "Save Tags"
+    },
+    "owners": {
+      "title": "Owners",
+      "description": "Manage who owns this chat. Up to 3 owners can manage chat settings and ownership.",
+      "you": "(you)",
+      "remove": "Remove",
+      "resign": "Resign",
+      "capHint": "Owner limit reached (max 3).",
+      "addOwner": "Add Owner…",
+      "addTitle": "Add Co-Owner",
+      "addSelectLabel": "New Co-Owner",
+      "selectParticipant": "— Select participant —",
+      "noEligibleParticipants": "No eligible participants — everyone in the chat is already an owner.",
+      "reasonLabel": "Reason (optional)",
+      "reasonPlaceholder": "Why is this change being made?",
+      "cancel": "Cancel",
+      "addSubmit": "Add Owner",
+      "addSubmitting": "Adding…",
+      "removeTitle": "Remove Owner",
+      "removeBody": "Remove {name} as an owner of this chat?",
+      "removeSubmit": "Remove Owner",
+      "removeSubmitting": "Removing…",
+      "resignTitle": "Resign Ownership",
+      "resignBody": "You will give up co-ownership of this chat. Another owner can re-add you later.",
+      "resignSubmit": "Resign",
+      "resignSubmitting": "Resigning…"
     }
   },
   "settings": {

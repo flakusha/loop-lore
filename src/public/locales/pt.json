@@ -130,6 +130,32 @@
       "title": "Etiquetas do classificador",
       "description": "Escolha quais etiquetas curadas do classificador estão ativas neste chat.",
       "save": "Salvar etiquetas"
+    },
+    "owners": {
+      "title": "Proprietários",
+      "description": "Gerencie quem é proprietário deste chat. Até 3 proprietários podem gerenciar as configurações e a propriedade.",
+      "you": "(você)",
+      "remove": "Remover",
+      "resign": "Renunciar",
+      "capHint": "Limite de proprietários atingido (máx. 3).",
+      "addOwner": "Adicionar proprietário…",
+      "addTitle": "Adicionar coproprietário",
+      "addSelectLabel": "Novo coproprietário",
+      "selectParticipant": "— Selecionar participante —",
+      "noEligibleParticipants": "Nenhum participante elegível — todos no chat já são proprietários.",
+      "reasonLabel": "Motivo (opcional)",
+      "reasonPlaceholder": "Por que esta alteração está sendo feita?",
+      "cancel": "Cancelar",
+      "addSubmit": "Adicionar proprietário",
+      "addSubmitting": "Adicionando…",
+      "removeTitle": "Remover proprietário",
+      "removeBody": "Remover {name} como proprietário deste chat?",
+      "removeSubmit": "Remover proprietário",
+      "removeSubmitting": "Removendo…",
+      "resignTitle": "Renunciar à propriedade",
+      "resignBody": "Você abrirá mão da copropriedade deste chat. Outro proprietário poderá readicioná-lo depois.",
+      "resignSubmit": "Renunciar",
+      "resignSubmitting": "Renunciando…"
     }
   },
   "settings": {
