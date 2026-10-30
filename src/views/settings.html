@@ -132,6 +132,17 @@
         </button>
         <button
           class="world-edit-tab"
+          :class="{ active: activeTab === 'backup' }"
+          @click="activeTab = 'backup'; loadBackupPrefs()"
+          role="tab"
+          :aria-selected="activeTab === 'backup'"
+          id="tab-backup"
+          data-testid="settings-tab-backup"
+        >
+          {{{t("settings.backup")}}}
+        </button>
+        <button
+          class="world-edit-tab"
           :class="{ active: activeTab === 'keynav' }"
           @click="activeTab = 'keynav'; loadKeymapSection()"
           role="tab"
@@ -459,6 +470,75 @@
                   </div>
                 </div>
               </template>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Backup Tab -->
+      <div x-show="activeTab === 'backup'" class="settings-tab-content" data-testid="settings-backup">
+        <div class="settings-section">
+          <div class="form-group">
+            <span class="form-label">{{{t("settings.backupEnabled")}}}</span>
+            <label class="toggle">
+              <input
+                type="checkbox"
+                id="backup-enabled"
+                x-model="backupEnabled"
+                @change="toggleBackup(backupEnabled)"
+                data-testid="backup-toggle"
+              />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="form-group" x-show="backupEnabled">
+            <span class="form-label">{{{t("settings.backupTypes")}}}</span>
+            <template x-for="t in ['chat', 'asset', 'world', 'lore']" :key="t">
+              <label class="pref-row">
+                <input
+                  type="checkbox"
+                  :checked="backupTypes[t]"
+                  @change="toggleBackupType(t)"
+                  :data-testid="'backup-type-' + t"
+                />
+                <span x-text="t"></span>
+              </label>
+            </template>
+          </div>
+          <template x-if="backupNotice !== ''">
+            <div
+              style="padding: 10px 14px; margin-bottom: 12px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; font-size: 13px; color: #6b5400"
+              role="alert"
+              data-testid="backup-notice"
+            >
+              <strong x-text="t('settings.' + backupNotice)"></strong>
+            </div>
+          </template>
+          <template x-if="backupReport.length === 0">
+            <p class="text-gray-500 text-sm">{{{t("settings.backupEmpty")}}}</p>
+          </template>
+          <template x-for="e in backupReport" :key="e.resourceId">
+            <div
+              style="padding: 12px; background: var(--bg-secondary, #f8f9fa); border-radius: 6px; margin-bottom: 8px"
+              data-testid="backup-entry"
+            >
+              <div style="display: flex; align-items: center; gap: 8px">
+                <strong x-text="e.resourceId"></strong>
+                <span
+                  style="font-size: 12px; color: var(--text-secondary)"
+                  x-text="e.resourceType + ' / ' + e.status"
+                ></span>
+                <button
+                  class="btn btn-secondary btn-xs"
+                  style="margin-left: auto"
+                  @click="recoverBackup(e.resourceId)"
+                  data-testid="backup-recover"
+                >
+                  {{{t("settings.backupRecover")}}}
+                </button>
+              </div>
+              <div style="margin-top: 6px; font-size: 12px" x-text="e.detail"></div>
+              <div style="font-size: 11px; color: var(--text-secondary)" x-text="e.action"></div>
             </div>
           </template>
         </div>

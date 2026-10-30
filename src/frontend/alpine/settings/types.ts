@@ -65,6 +65,10 @@ export interface SettingsState {
   quotaResources: QuotaGaugeResource[];
   quotaIsAdmin: boolean;
   quotaNotice: string;
+  backupEnabled: boolean;
+  backupTypes: Record<string, boolean>;
+  backupReport: { resourceId: string; resourceType: string; status: string; action: string; detail: string }[];
+  backupNotice: string;
 
   // Restart-required banner (TASK-restart-required-indicator-on-system-config-changes)
   pendingRestartKeys: string[];
@@ -113,4 +117,12 @@ export interface SettingsState {
   quotaPercent(used: number, ceiling: number | null,): number;
   notifyQuotaExceeded(error: { name?: string; kind?: string; limit?: number },): void;
   overrideQuota(resourceId: string,): Promise<void>;
+  loadBackupPrefs(): Promise<void>;
+  toggleBackup(enabled: boolean,): Promise<void>;
+  toggleBackupType(type: string,): Promise<void>;
+  saveBackupPrefs(): Promise<void>;
+  refreshBackupDashboard(
+    locals: { resourceId: string; resourceType: string; contentHash: string; version: number }[],
+  ): Promise<void>;
+  recoverBackup(backupId: string,): Promise<void>;
 }
