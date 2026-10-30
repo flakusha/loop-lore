@@ -33141,6 +33141,19 @@
     "title": "Chat Variant — Group Chat (Multi-Character)",
     "type": "TASK"
   },
+  "TASK-CHAT-VARIANT-LEGACY-BACKFILL": {
+    "hash": "957a0c0",
+    "git_issue": "957a0c0",
+    "extid": "TASK-CHAT-VARIANT-LEGACY-BACKFILL",
+    "type": "TASK",
+    "title": "Chat Variant Legacy Backfill",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-variants-taxonomy",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-variant-legacy-backfill.md",
+    "status": "done"
+  },
   "TASK-CHAT-VARIANT-LLM-ONLY": {
     "epic": "epic-chat-variants-taxonomy",
     "extid": "TASK-CHAT-VARIANT-LLM-ONLY",
@@ -42289,6 +42302,19 @@
     "status": "Not Started",
     "git_issue": "f279c9f"
   },
+  "TASK-HARNESS-CONTEXT-OP-EVENTS": {
+    "hash": "cf6b83a",
+    "git_issue": "cf6b83a",
+    "extid": "TASK-HARNESS-CONTEXT-OP-EVENTS",
+    "type": "TASK",
+    "title": "Harness context op events",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-context-op-events.md",
+    "status": "Not Started"
+  },
   "TASK-HARNESS-CONTEXT-PRIORITY-TIERS": {
     "hash": "1584986",
     "git_issue": "1584986",
@@ -42331,6 +42357,19 @@
     "source": ".plan/tickets/TASK-harness-db-tables.md",
     "status": "Not Started",
     "git_issue": "55d6d79"
+  },
+  "TASK-HARNESS-DELEGATED-PERMISSION-GRANTS": {
+    "hash": "176912d",
+    "git_issue": "176912d",
+    "extid": "TASK-HARNESS-DELEGATED-PERMISSION-GRANTS",
+    "type": "TASK",
+    "title": "Harness delegated permission grants",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-delegated-permission-grants.md",
+    "status": "Not Started"
   },
   "TASK-HARNESS-EDIT-JOURNAL": {
     "hash": "e04a242",
@@ -42436,6 +42475,19 @@
     "status": "Not Started",
     "git_issue": "cf78912"
   },
+  "TASK-HARNESS-INFLIGHT-JOB-HANDLES": {
+    "hash": "2b1e55d",
+    "git_issue": "2b1e55d",
+    "extid": "TASK-HARNESS-INFLIGHT-JOB-HANDLES",
+    "type": "TASK",
+    "title": "Harness inflight job handles",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-inflight-job-handles.md",
+    "status": "Not Started"
+  },
   "TASK-HARNESS-IRC-TTSR": {
     "hash": "1bdc949",
     "extid": "TASK-HARNESS-IRC-TTSR",
@@ -42539,6 +42591,19 @@
     "source": ".plan/tickets/TASK-harness-model-routing.md",
     "status": "Not Started",
     "git_issue": "ca8751c"
+  },
+  "TASK-HARNESS-MULTI-AGENT-TURN-QUEUE": {
+    "hash": "14a71f7",
+    "git_issue": "14a71f7",
+    "extid": "TASK-HARNESS-MULTI-AGENT-TURN-QUEUE",
+    "type": "TASK",
+    "title": "Harness multi-agent turn queue",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-harness-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-multi-agent-turn-queue.md",
+    "status": "Not Started"
   },
   "TASK-HARNESS-OTEL-REPLAY": {
     "hash": "f6a9b23",
@@ -42747,6 +42812,19 @@
       "context"
     ],
     "source": ".plan/tickets/TASK-harness-work-topics.md",
+    "status": "Not Started"
+  },
+  "TASK-HARNESS-WORKTREE-SCOPE-GUARD": {
+    "hash": "8f3a81a",
+    "git_issue": "8f3a81a",
+    "extid": "TASK-HARNESS-WORKTREE-SCOPE-GUARD",
+    "type": "TASK",
+    "title": "Harness worktree scope guard",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-worktree-scope-guard.md",
     "status": "Not Started"
   },
   "TASK-HASH-MENTION-RETRIEVAL-UX-FOR-CHAT-CONTEXT": {
@@ -48004,6 +48082,19 @@
     "tags": [],
     "title": "Moderation: Privacy-First Foundation",
     "type": "TASK"
+  },
+  "TASK-MODERATION-REPORT-ENDPOINT": {
+    "hash": "f3e274b",
+    "git_issue": "f3e274b",
+    "extid": "TASK-MODERATION-REPORT-ENDPOINT",
+    "type": "TASK",
+    "title": "moderation report endpoint",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-moderation-report-endpoint.md",
+    "status": "Not Started"
   },
   "TASK-MODERATOR-FRONTEND-FOR-PER-CHAT-TUNABLE-OVERRIDES": {
     "epic": "epic-frontend-admin",
@@ -56033,6 +56124,19 @@
     "tags": [],
     "title": "Server-Side i18n Middleware",
     "type": "TASK"
+  },
+  "TASK-SERVER-SIDE-ROOM-FILTER-ENFORCEMENT": {
+    "hash": "f69c9c8",
+    "git_issue": "f69c9c8",
+    "extid": "TASK-SERVER-SIDE-ROOM-FILTER-ENFORCEMENT",
+    "type": "TASK",
+    "title": "server-side room-filter enforcement",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-server-side-room-filter-enforcement.md",
+    "status": "Not Started"
   },
   "TASK-SERVICES-ACTOR-ITEMS-TS-VS-SERVICES-ACTOR-ITEMS-NAME-COLLISI": {
     "hash": "1f9ebc1",
