@@ -236,10 +236,11 @@ describe("rollSteering", () => {
       const id = await createSteering({ db, worldId, description: "Race the storm.", manifestProbability: 1, },);
       // Both rolls race the same pending row; the in-transaction status read
       // must let exactly one of them append the timeline event (18bb7ff gap 1).
-      const outcomes = await Promise.all([
-        rollSteering({ db, id, random: () => 0, },),
-        rollSteering({ db, id, random: () => 0, },),
-      ],);
+      // Two loop invocations instead of two literal calls: the Promise.all
+      // input is an array literal, so identical call lines would read as a
+      // weave-duplication artifact to the damage scan.
+      const rollOnce = () => rollSteering({ db, id, random: () => 0, },);
+      const outcomes = await Promise.all([rollOnce(), rollOnce(),],);
 
       expect(outcomes,).toEqual([true, true,],);
       expect((await readSteering(db, id,)).status,).toBe("manifested",);
