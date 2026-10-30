@@ -62,7 +62,8 @@ async function serveWorldsListDb(
  * @param userId
  * @param userRole
  * @param timelineId — branch to scope events to. Must belong to this world;
- *   unknown/absent falls back to the conventional `prime` branch.
+ *   absent falls back to the caller's persisted selection
+ *   (world_timeline_selections), unknown to the conventional `prime` branch.
  * @returns the world detail HTML fragment, empty-state when access is denied
  */
 async function serveWorldDetailContent(
@@ -96,14 +97,30 @@ async function serveWorldDetailContent(
 
   // Resolve the branch to render. An unknown or foreign timeline id silently
   // falls back to `prime` (the event-table slug default): a fragment must not
-  // 404, and a foreign id must not leak branch existence.
+  // 404, and a foreign id must not leak branch existence. With no explicit
+  // `?timeline=`, the caller's persisted selection
+  // (world_timeline_selections, TASK-timeline-selection-api) is the default
+  // branch; a stale selection (fork deleted — FK cascade removes the row)
+  // degrades to prime the same way.
+  let requestedTimeline = timelineId ?? null;
+  if (!requestedTimeline && userId) {
+    const selection = await database
+      .selectFrom("world_timeline_selections",)
+      .select("timeline_id",)
+      .where("user_id", "=", userId,)
+      .where("world_id", "=", worldId,)
+      .executeTakeFirst();
+
+    requestedTimeline = selection?.timeline_id ?? null;
+  }
+
   let branchName: string | null = null;
   let eventTimeline = "prime";
-  if (timelineId) {
+  if (requestedTimeline) {
     const branch = await database
       .selectFrom("world_timelines",)
       .select(["id", "name", "is_prime",],)
-      .where("id", "=", timelineId,)
+      .where("id", "=", requestedTimeline,)
       .where("world_id", "=", worldId,)
       .executeTakeFirst();
 

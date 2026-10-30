@@ -3809,3 +3809,11 @@ export const ChatOwnersSchema = t.Object({
   granted_at: t.Optional(t.String(),),
   reason: t.Optional(t.String(),),
 },);
+
+// ── world_timeline_selections ────────────────────────────────────────────
+export const WorldTimelineSelectionsSchema = t.Object({
+  user_id: t.String(),
+  world_id: t.String(),
+  timeline_id: t.String(),
+  selected_at: t.String(),
+},);
