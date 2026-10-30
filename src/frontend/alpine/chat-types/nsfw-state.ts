@@ -35,8 +35,6 @@ export interface ChatNsfwState {
   _nsfwBody: NsfwBodyStatsView | null;
   /** True when the backend denied access (403) — the panel stays hidden. */
   _nsfwUnavailable: boolean;
-  /** True while a load is in flight. */
-  _nsfwLoading: boolean;
   /** Load intimacy + body state for the active chat's character. */
   loadNsfwPanel(): Promise<void>;
 }
