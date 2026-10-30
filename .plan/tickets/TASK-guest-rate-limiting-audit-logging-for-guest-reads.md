@@ -3,7 +3,7 @@
 
 # TASK: Guest rate limiting + audit logging for guest reads
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-guest-access
@@ -60,9 +60,32 @@ table, or migration. The path gate reuses the central null-userId guard's
   (rows = served reads)`). AC covered: "Audit rows written for guest reads"
   (`allowed guest read writes exactly one audit row with expected fields`,
   `registered reads write no audit rows`, `audit failure never fails the read`).
+- Slice 3 (NSFW pin + e2e smoke): the deny was already pinned by
+  `request-context.test.ts` "anonymous caller short-circuits to auth_required";
+  added the explicit guest-tier pin ("guest tier (null userId) is denied
+  regardless of derived role"). e2e smoke
+  `tests/e2e/flows/guest-hardening.test.ts`: guest public-chat read under limit
+  200 + exactly one audit row; over limit 429 with Retry-After, not audited;
+  registered user unaffected, zero rows.
+
+**Test totals:** `guest-rate-limit.test.ts` 14 tests,
+`require-auth-guard.test.ts` + `get-client-ip.test.ts` unchanged (still green),
+`request-context.test.ts` 10 tests, e2e smoke 3 tests. Scoped gates
+(typecheck backend/frontend, eslint, dprint) all PASS.
+
+**Acceptance evidence (issue ACs):**
+
+- 429 with retry-after: `guest read over the limit gets 429 with Retry-After`
+  and e2e `repeating past the per-IP limit gets 429 with Retry-After`.
+- Audit rows: `allowed guest read writes exactly one audit row with expected
+  fields` and e2e `guest public read under the limit succeeds and is audited`.
+- Registered-user reads unaffected: `registered users are never limited` and
+  e2e `registered user on the same route is unaffected and unaudited`.
+- NSFW gate still denies guest: `guest tier (null userId) is denied regardless
+  of derived role — Phase 4 pin`.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
