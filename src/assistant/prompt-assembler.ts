@@ -160,6 +160,7 @@ export class PromptAssembler {
           "id",
           "mode",
           "world_id",
+          "timeline_id",
           "current_location_id",
           "timeline_id",
           "prompt_override",
