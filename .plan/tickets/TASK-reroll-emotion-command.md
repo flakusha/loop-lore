@@ -3,7 +3,7 @@
 
 # TASK: reroll-emotion command
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Emotion-Avatar Completion
 **Priority:** medium
 **Effort:** Medium
@@ -35,7 +35,7 @@ conversation-driven (merged `b430b0c94`, `01b426213`).
 
 **Acceptance Criteria:**
 
-- [ ] `/reroll-emotion [slot]` regenerates the actor's current emotion avatar
-- [ ] Actor resolution follows the command context (mentioned actor in group chat)
-- [ ] Result avatar event renders in chat
-- [ ] Unit tests: dispatch → service regenerate; missing actor/slot error paths
+- [x] `/reroll-emotion [slot]` regenerates the actor's current emotion avatar
+- [x] Actor resolution follows the command context (mentioned actor in group chat)
+- [x] Result avatar event renders in chat
+- [x] Unit tests: dispatch → service regenerate; missing actor/slot error paths

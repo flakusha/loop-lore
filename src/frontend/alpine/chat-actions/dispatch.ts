@@ -5,6 +5,7 @@ import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import { log as rootLog, } from "../logger";
+import { moodStateAvatars, } from "../mood/avatars";
 import type { ChatState, } from "../types";
 import { battleActionHandlers, } from "./battle";
 import { entityActionHandlers, } from "./entities";
@@ -290,6 +291,44 @@ const actionHandlers: Record<string, ActionHandler> = {
 
   "create-quest": async (ctx, payload, chatId,) => {
     await dispatchQuestAction(ctx, (payload?.description as string) ?? "", chatId,);
+  },
+
+  "generate-emotion-avatars": async (ctx, payload,) => {
+    const actorId = (payload?.actorId as string) ?? "";
+    const baseAvatarId = (payload?.baseAvatarId as string) ?? "";
+    if (!actorId || !baseAvatarId) {
+      log.warn("generate-emotion-avatars: missing required payload fields", { payload, },);
+      return;
+    }
+
+    try {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/emotion-avatars/regenerate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({
+          baseAvatarId,
+          emotions: (payload?.emotions as string[] | null) ?? undefined,
+          replace: "slot",
+        },),
+      },);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}) as { message?: string });
+        ctx.$dispatch?.("show-toast", {
+          type: "error",
+          message: (err as { message?: string }).message ??
+            t("status.emotionAvatarsStartFailed",),
+        },);
+
+        return;
+      }
+
+      const body = await res.json() as { jobId?: string | null };
+      ctx.$dispatch?.("show-toast", { type: "info", message: t("status.emotionAvatarsStarted",), },);
+      await moodStateAvatars._pollEmotionJob!.call(ctx as never, actorId, body.jobId ?? null,);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("status.emotionAvatarsStartFailed",), },);
+    }
   },
 
   "review-entity": (_ctx, payload,) => {
