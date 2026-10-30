@@ -21,11 +21,12 @@
       Refresh
     </button>
     <a
-      href="/views/new-chat"
+      href="/views/new-chat?variant=character"
       class="btn btn-primary"
-      hx-get="/views/new-chat"
+      hx-get="/views/new-chat?variant=character"
       hx-target="#app-root"
       hx-swap="innerHTML"
+      hx-push-url="true"
       data-testid="new-chat-from-character"
     >+ New Chat</a>
   </div>
