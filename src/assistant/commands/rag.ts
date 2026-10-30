@@ -101,7 +101,7 @@ registerCommand("rag-search", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { hits, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-lore", "cross-user",], },);
 
 registerCommand("rag-ask", async (args, ctx,): Promise<CommandResult> => {
   const quota = quotaGate(ctx.userId ?? null, "rag-ask",);
@@ -159,4 +159,4 @@ registerCommand("rag-ask", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { answer: result.content, citations: hits, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-lore", "network", "cross-user",], },);

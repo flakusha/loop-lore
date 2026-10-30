@@ -57,7 +57,7 @@ registerCommand("asset-list", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { assets: filtered, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-asset", "cross-user",], },);
 
 registerCommand("asset-preview", async (args, ctx,): Promise<CommandResult> => {
   const quota = quotaGate(ctx.userId ?? null, "asset-preview",);
@@ -98,7 +98,7 @@ registerCommand("asset-preview", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { asset, links, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-asset", "cross-user",], },);
 
 registerCommand("asset-search", async (args, ctx,): Promise<CommandResult> => {
   const quota = quotaGate(ctx.userId ?? null, "asset-search",);
@@ -142,4 +142,4 @@ registerCommand("asset-search", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { hits, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-asset", "cross-user",], },);

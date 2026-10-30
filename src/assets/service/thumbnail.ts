@@ -15,7 +15,7 @@
  * serve path (`handleServeCompressed`) falls back to the raw bytes when
  * `thumbnail_path` is null, so a missing thumb never breaks the request.
  */
-import { mkdirSync, writeFileSync, } from "node:fs";
+import fs from "node:fs";
 import { dirname, join, } from "node:path";
 import sharp, {} from "sharp";
 import { getChildLogger, } from "../../logger";
@@ -71,7 +71,7 @@ export async function writeThumbnail(
   const subDir = `${assetId.slice(0, 2,)}/${assetId.slice(2, 4,)}`;
   const relativePath = `compressed/${subDir}/${assetId}_thumb.webp`;
   const absolutePath = join(resolveUploadDir(uploadDir,), relativePath,);
-  mkdirSync(dirname(absolutePath,), { recursive: true, },);
-  writeFileSync(absolutePath, encoded,);
+  fs.mkdirSync(dirname(absolutePath,), { recursive: true, },);
+  fs.writeFileSync(absolutePath, encoded,);
   return relativePath;
 }

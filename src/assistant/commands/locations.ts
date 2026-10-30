@@ -59,7 +59,7 @@ registerCommand("loc-list", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { worldId, locations: rows, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-world", "cross-user",], },);
 
 registerCommand("loc-get", async (args, ctx,): Promise<CommandResult> => {
   const locId = args[0];
@@ -136,4 +136,4 @@ registerCommand("loc-get", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { location: loc, connections: connIds, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-world", "cross-user",], },);

@@ -179,7 +179,7 @@ registerCommand("item-transfer", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: payload,
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-world", "cross-user",], },);
 
 registerCommand("item-drop", async (args, ctx,): Promise<CommandResult> => {
   const instanceId = args[0];
@@ -240,7 +240,7 @@ registerCommand("item-drop", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: payload,
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-world", "cross-user",], },);
 
 registerCommand("item-pickup", async (args, ctx,): Promise<CommandResult> => {
   const instanceId = args[0];
@@ -308,4 +308,4 @@ registerCommand("item-pickup", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: payload,
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-world", "cross-user",], },);

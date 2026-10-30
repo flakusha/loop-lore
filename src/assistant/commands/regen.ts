@@ -103,4 +103,4 @@ registerCommand("regen", async (args, ctx,): Promise<CommandResult> => {
   } catch {
     return runRegenAction(args, ctx, {},);
   }
-},);
+}, { capabilities: ["read-chat", "network",], },);

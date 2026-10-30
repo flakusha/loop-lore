@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { unlinkSync, } from "node:fs";
+import fs from "node:fs";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { spill, } from "./spill";
@@ -68,7 +68,7 @@ export async function runOffloadPass(
             .execute();
         } catch (error) {
           try {
-            unlinkSync(spillPath,);
+            fs.unlinkSync(spillPath,);
           } catch { /* already gone */ }
 
           throw error;
@@ -122,7 +122,7 @@ export async function runOffloadPass(
     },);
 
     try {
-      unlinkSync(filePath,);
+      fs.unlinkSync(filePath,);
     } catch { /* already gone */ }
   }
 

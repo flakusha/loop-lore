@@ -114,7 +114,7 @@ registerCommand("attack", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
-}, { requiredRole: ChatParticipantRole.Owner, },);
+}, { requiredRole: ChatParticipantRole.Owner, capabilities: ["write-world", "irreversible",], },);
 
 /**
  * Parse a positive integer, or null when absent/invalid.

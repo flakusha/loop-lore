@@ -131,4 +131,4 @@ registerCommand("timeline", async (args, ctx,): Promise<CommandResult> => {
     action: "timeline-switch",
     actionPayload: { worldId, chatId: ctx.chatId, timelineId: slug, name: branch.name, },
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-world", "write-world",], },);
