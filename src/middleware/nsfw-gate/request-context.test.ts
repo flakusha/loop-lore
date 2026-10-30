@@ -74,6 +74,22 @@ describe("resolveRequestContext", () => {
     expect(result.consentGranted,).toBe(false,);
   });
 
+  test("guest tier (null userId) is denied regardless of derived role — Phase 4 pin", async () => {
+    // The gate is identity-based: the synthetic guest tier derives userId=null
+    // (epic-guest-access Phase 1), and no userRole input can carry it past
+    // the auth stage. Pins the epic AC "NSFW gate still denies guest".
+    const result = await resolveRequestContext({
+      database: db,
+      config: makeConfig(),
+      userId: null,
+      chatId: "chat-guest-pin",
+      actorId: "actor-guest-pin",
+    },);
+
+    expect(result.allowed,).toBe(false,);
+    expect(result.reason,).toBe("auth_required",);
+  });
+
   test("full gate allows adult with consent grant + enforcement present", async () => {
     await seedAdult(db, "u-ctx-ok",);
     await insertActors(db, "actor-ctx-ok", { id: "actor-ctx-ok" as never, },);
