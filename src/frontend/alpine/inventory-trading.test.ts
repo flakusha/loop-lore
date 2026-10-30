@@ -58,14 +58,11 @@ afterEach(() => {
 },);
 
 describeOrSkip("inventory trading state", () => {
-  test("load pulls player list and NPC-owned instances", async () => {
+  test("load pulls player-owned and NPC-owned world instances", async () => {
     handler = async (url: string,) => {
-      if (url === "/api/v1/actors/player-1/items") {
-        return Response.json({ data: [sword(),], },);
-      }
-
       if (url === "/api/v1/worlds/world-1/item-instances") {
         return Response.json([
+          { id: "inst-player", item_id: "sword", quantity: 2, owner_actor_id: "player-1", },
           { id: "inst-1", item_id: "steel-sword", quantity: 1, owner_actor_id: "npc-1", },
           { id: "stray", item_id: "sword", quantity: 1, owner_actor_id: "someone-else", },
         ],);
@@ -81,7 +78,7 @@ describeOrSkip("inventory trading state", () => {
     const state = stateFromTradeActors("world-1", "player-1", "npc-1",);
     await state.load();
     await flush();
-    expect(state.playerItems.map((item,) => item.id),).toEqual(["sword",],);
+    expect(state.playerItems.map((item,) => item.id),).toEqual(["inst-player",],);
     expect(state.npcItems.map((item,) => item.id),).toEqual(["inst-1",],);
     expect(state.playerLoadError,).toBe("",);
     expect(state.npcLoadError,).toBe("",);
@@ -106,10 +103,6 @@ describeOrSkip("inventory trading state", () => {
     const seen: { url: string; opts: RequestInit }[] = [];
     handler = async (url: string, opts?: RequestInit,) => {
       seen.push({ url, opts: opts ?? {}, },);
-      if (url === "/api/v1/actors/player-1/items") {
-        return Response.json({ data: [sword(),], },);
-      }
-
       if (url === "/api/v1/worlds/world-1/item-instances") {
         return Response.json([],);
       }
@@ -141,12 +134,11 @@ describeOrSkip("inventory trading state", () => {
     const seen: string[] = [];
     handler = async (url: string,) => {
       seen.push(url,);
-      if (url === "/api/v1/actors/player-1/items") {
-        return Response.json({ data: [sword(),], },);
-      }
-
       if (url === "/api/v1/worlds/world-1/item-instances") {
-        return Response.json([{ id: "inst-9", item_id: "steel-sword", quantity: 1, owner_actor_id: "npc-1", },],);
+        return Response.json([
+          { id: "inst-player", item_id: "sword", quantity: 1, owner_actor_id: "player-1", },
+          { id: "inst-9", item_id: "steel-sword", quantity: 1, owner_actor_id: "npc-1", },
+        ],);
       }
 
       if (url.startsWith("/api/v1/worlds/world-1/items",)) {
@@ -161,16 +153,16 @@ describeOrSkip("inventory trading state", () => {
     };
 
     const state = stateFromTradeActors("world-1", "player-1", "npc-1",);
-    state.playerItems = [sword(),];
+    state.playerItems = [{ ...sword(), id: "inst-player", },];
     state.npcItems = [{ ...steelSword(), id: "inst-9", },];
-    state.toggle("player", "sword",);
+    state.toggle("player", "inst-player",);
     await state.sellToNpc();
     await flush();
     const sell = seen.find((url,) => url.endsWith("/trade/sell-to-npc",));
     expect(sell,).toBe("/api/v1/worlds/world-1/trade/sell-to-npc",);
     expect(state.draft.playerIds,).toEqual([],);
 
-    state.toggle("player", "sword",);
+    state.toggle("player", "inst-player",);
     state.toggle("npc", "inst-9",);
     seen.length = 0;
     await state.confirm();
@@ -196,6 +188,42 @@ describeOrSkip("inventory trading state", () => {
     await flush();
     expect(state.error.length > 0,).toBe(true,);
     expect(state.draft.npcIds,).toEqual(["steel-sword",],);
+  });
+
+  test("sell sends world-item instance ids, not character-sheet ids", async () => {
+    const seen: { url: string; body: string }[] = [];
+    handler = async (url: string, opts?: RequestInit,) => {
+      if (url.endsWith("/trade/sell-to-npc",)) {
+        seen.push({ url, body: String(opts?.body ?? "",), },);
+        return Response.json({ ok: true, },);
+      }
+
+      if (url === "/api/v1/worlds/world-1/item-instances") {
+        return Response.json([{ id: "inst-player", item_id: "sword", quantity: 2, owner_actor_id: "player-1", },],);
+      }
+
+      if (url.startsWith("/api/v1/worlds/world-1/items",)) {
+        return Response.json({ data: [sword(),], },);
+      }
+
+      return Response.json({ data: [], },);
+    };
+
+    const state = stateFromTradeActors("world-1", "player-1", "npc-1",);
+    await state.load();
+    await flush();
+    // The player row is the world-item instance the NPC route can resolve.
+    expect(state.playerItems.map((item,) => item.id),).toEqual(["inst-player",],);
+
+    state.toggle("player", "inst-player",);
+    await state.sellToNpc();
+    await flush();
+    expect(JSON.parse(seen[0]?.body ?? "{}",),).toEqual({
+      sellerActorId: "player-1",
+      npcActorId: "npc-1",
+      buyerItems: [{ worldItemId: "inst-player", quantity: 2, },],
+      price: 100,
+    },);
   });
 
   test("confirm is a no-op on an empty draft; setTradeActors resets", () => {
