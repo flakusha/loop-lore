@@ -27983,10 +27983,14 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-emotion-avatar-job-restart-reconciliation.md",
       "title": "Emotion-avatar job restart reconciliation",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/emotion-avatar-service/job-store.ts",
-        "src/routes/character-emotion-avatars.ts"
+        "src/characters/services/emotion-avatar-service/restart-reconcile.test.ts",
+        "src/characters/services/emotion-avatar-service/restart-reconcile.ts",
+        "src/routes/character-emotion-avatars.ts",
+        "src/server/start.test.ts",
+        "src/server/start.ts"
       ],
       "related": []
     },
@@ -59324,6 +59328,18 @@
       ]
     },
     {
+      "path": "src/characters/services/emotion-avatar-service/restart-reconcile.test.ts",
+      "owners": [
+        "TASK-emotion-avatar-job-restart-reconciliation"
+      ]
+    },
+    {
+      "path": "src/characters/services/emotion-avatar-service/restart-reconcile.ts",
+      "owners": [
+        "TASK-emotion-avatar-job-restart-reconciliation"
+      ]
+    },
+    {
       "path": "src/characters/services/emotion-avatar-service/seed.ts",
       "owners": [
         "TASK-generation-seed-capture-and-override-per-avatar"
@@ -85721,7 +85737,8 @@
         "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
         "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
         "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
-        "TASK-add-a-federation-e2e-test-that-boots-two-real-servers"
+        "TASK-add-a-federation-e2e-test-that-boots-two-real-servers",
+        "TASK-emotion-avatar-job-restart-reconciliation"
       ]
     },
     {
@@ -85747,6 +85764,7 @@
         "TASK-cross-platform-portability",
         "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
         "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
+        "TASK-emotion-avatar-job-restart-reconciliation",
         "TASK-enable-http-2-via-single-tls-port-consolidation",
         "TASK-fail-safe-execution-work-safety",
         "TASK-https-redirect-enforcement-for-plaintext-http",
@@ -134340,7 +134358,27 @@
     {
       "from": "TASK-emotion-avatar-job-restart-reconciliation",
       "kind": "produces",
+      "to": "src/characters/services/emotion-avatar-service/restart-reconcile.test.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "produces",
+      "to": "src/characters/services/emotion-avatar-service/restart-reconcile.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "produces",
       "to": "src/routes/character-emotion-avatars.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "produces",
+      "to": "src/server/start.test.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "produces",
+      "to": "src/server/start.ts"
     },
     {
       "from": "TASK-emotion-avatar-message-binding",
@@ -177247,6 +177285,12 @@
     {
       "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
+      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -184501,6 +184545,12 @@
     {
       "from": "BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k",
+      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -184826,6 +184876,12 @@
       "from": "BUG-auto-rotation-config-drift",
       "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-auto-rotation-config-drift",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
       "via": "src/server/start.ts"
     },
     {
@@ -197209,6 +197265,12 @@
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.test.ts; src/server/start.ts"
+    },
+    {
+      "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
+      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -202820,6 +202882,12 @@
       "from": "BUG-eager-db-init-creates-on-disk-db-on-test-import",
       "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-eager-db-init-creates-on-disk-db-on-test-import",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
       "via": "src/server/start.ts"
     },
     {
@@ -211417,6 +211485,12 @@
     {
       "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.test.ts; src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
+      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -211683,6 +211757,12 @@
       "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.test.ts; src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
@@ -212119,6 +212199,12 @@
     {
       "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.test.ts; src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
+      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -212517,6 +212603,12 @@
       "kind": "sibling",
       "to": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -218282,6 +218374,12 @@
       "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
       "via": "src/server/start.ts"
     },
     {
@@ -229867,6 +229965,12 @@
     {
       "from": "BUG-new-migration-parts-never-apply-to-existing-databases",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-new-migration-parts-never-apply-to-existing-databases",
+      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -237463,6 +237567,12 @@
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -239198,6 +239308,12 @@
       "from": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
       "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
       "via": "src/server/start.ts"
     },
     {
@@ -281173,6 +281289,12 @@
     {
       "from": "TASK-add-a-federation-e2e-test-that-boots-two-real-servers",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.test.ts"
+    },
+    {
+      "from": "TASK-add-a-federation-e2e-test-that-boots-two-real-servers",
+      "kind": "sibling",
       "to": "TASK-federation-offload-two-instance-e2e",
       "via": "src/routes/federation-transfer.test.ts"
     },
@@ -294679,6 +294801,12 @@
     {
       "from": "TASK-async-request-response-result-store-separate-table-offload",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-async-request-response-result-store-separate-table-offload",
+      "kind": "sibling",
       "to": "TASK-emotions-avatar-edit-model",
       "via": "src/db/schema-"
     },
@@ -304359,6 +304487,12 @@
       "kind": "sibling",
       "to": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
       "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
@@ -326419,6 +326553,12 @@
     {
       "from": "TASK-cron-migrate-existing-timers",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-cron-migrate-existing-timers",
+      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -326678,6 +326818,12 @@
       "from": "TASK-cron-provider-health-rescan",
       "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-cron-provider-health-rescan",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
       "via": "src/server/start.ts"
     },
     {
@@ -327087,6 +327233,12 @@
       "kind": "sibling",
       "to": "TASK-docs-ui-endpoint-linkage",
       "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "TASK-cross-platform-portability",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-cross-platform-portability",
@@ -329569,6 +329721,12 @@
     {
       "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
       "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
+      "kind": "sibling",
       "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
       "via": "src/server/start.ts"
     },
@@ -332043,6 +332201,12 @@
       "kind": "sibling",
       "to": "TASK-tui-fire-and-forget-void-without-catch",
       "via": "src/tui/app-keys.ts"
+    },
+    {
+      "from": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
+      "kind": "sibling",
+      "to": "TASK-emotion-avatar-job-restart-reconciliation",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
@@ -334639,8 +334803,26 @@
     {
       "from": "TASK-emotion-avatar-job-restart-reconciliation",
       "kind": "sibling",
+      "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-fail-safe-execution-work-safety",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
       "to": "TASK-frontend-char-emotion-types-and-prompt-modifier",
       "via": "src/routes/character-emotion-avatars.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-https-redirect-enforcement-for-plaintext-http",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-emotion-avatar-job-restart-reconciliation",
@@ -334651,8 +334833,164 @@
     {
       "from": "TASK-emotion-avatar-job-restart-reconciliation",
       "kind": "sibling",
+      "to": "TASK-item-config-templates",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-local-instance-integrity-holistic",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-logging-hardening-minors-injection-rotation-races-sink-path-",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-ocsp-stapling-for-tls-certificate-status",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-outfit-change-hook",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-production-tls-modes-byo-certs-acme-and-proxy-termination",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-watchdog-supervisor-process-spawn",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-runtime-integrity-watchdog-crash-recovery",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-size-strict-debt",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-sni-multi-certificate-serving-for-multiple-domains",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-swarm-supervisor",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-tls-cipher-suite-hardening-and-secure-defaults",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
       "to": "epic-avatar-regeneration-control",
       "via": "src/characters/services/emotion-avatar-service/job-store.ts; src/routes/character-emotion-avatars.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-certificate-and-tls-management",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-cron-scheduler",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-cross-platform-portability",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-db-migration-compaction",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-file-splitting",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-http-protocol-features",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-recursive-self-improvement",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-runtime-integrity-fail-safes",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-job-restart-reconciliation",
+      "kind": "sibling",
+      "to": "epic-skills-professions-config",
+      "via": "src/server/start.ts"
     },
     {
       "from": "TASK-emotion-avatar-message-binding",

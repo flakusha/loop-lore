@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3843
 - epics: 358
-- src paths owned: 4536
-- edges: produces 12059, consumes 405, sibling 37402, owns 2819, related 1193
+- src paths owned: 4538
+- edges: produces 12063, consumes 405, sibling 37452, owns 2819, related 1193
 
 ## Shared src hubs
 
@@ -1827,8 +1827,8 @@ output is byte-identical for identical inputs.
 | `src/server/index.ts` | `TASK-cross-platform-portability`, `TASK-cross-platform-single-binary`, `epic-file-splitting`, `epic-interaction-surfaces-audit` |
 | `src/server/init-background-services.test.ts` | `BUG-fix-server-log-rejected-background-init-promises-with-module`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` |
 | `src/server/init-background-services.ts` | `BUG-auto-started-llama-cpp-skips-circuit-breaker-registration`, `BUG-character-seed-dedupes-on-display-name`, `BUG-fix-server-log-rejected-background-init-promises-with-module`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o`, `epic-character-core-system`, `epic-cron-scheduler` |
-| `src/server/start.test.ts` | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-`, `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` |
-| `src/server/start.ts` | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen`, `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k`, `BUG-auto-rotation-config-drift`, `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-`, `BUG-eager-db-init-creates-on-disk-db-on-test-import`, `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `BUG-new-migration-parts-never-apply-to-existing-databases`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi`, `TASK-cron-migrate-existing-timers`, `TASK-cron-provider-health-rescan`, `TASK-cross-platform-portability`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h`, `TASK-enable-http-2-via-single-tls-port-consolidation`, `TASK-fail-safe-execution-work-safety`, `TASK-https-redirect-enforcement-for-plaintext-http`, `TASK-item-config-templates`, `TASK-local-instance-integrity-holistic`, `TASK-logging-hardening-minors-injection-rotation-races-sink-path-`, `TASK-ocsp-stapling-for-tls-certificate-status`, `TASK-outfit-change-hook`, `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination`, `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn`, `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota`, `TASK-runtime-integrity-watchdog-crash-recovery`, `TASK-size-strict-debt`, `TASK-sni-multi-certificate-serving-for-multiple-domains`, `TASK-swarm-supervisor`, `TASK-tls-cipher-suite-hardening-and-secure-defaults`, `TASK-wire-fswatcher-onreload-callback-in-server-startup`, `epic-browser-editor-support`, `epic-certificate-and-tls-management`, `epic-cron-scheduler`, `epic-cross-platform-portability`, `epic-db-migration-compaction`, `epic-file-splitting`, `epic-http-protocol-features`, `epic-local-process-swarm`, `epic-reactive-actor-appearance`, `epic-recursive-self-improvement`, `epic-runtime-integrity-fail-safes`, `epic-skills-professions-config` |
+| `src/server/start.test.ts` | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-`, `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `TASK-add-a-federation-e2e-test-that-boots-two-real-servers`, `TASK-emotion-avatar-job-restart-reconciliation` |
+| `src/server/start.ts` | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen`, `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k`, `BUG-auto-rotation-config-drift`, `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-`, `BUG-eager-db-init-creates-on-disk-db-on-test-import`, `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `BUG-new-migration-parts-never-apply-to-existing-databases`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi`, `TASK-cron-migrate-existing-timers`, `TASK-cron-provider-health-rescan`, `TASK-cross-platform-portability`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h`, `TASK-emotion-avatar-job-restart-reconciliation`, `TASK-enable-http-2-via-single-tls-port-consolidation`, `TASK-fail-safe-execution-work-safety`, `TASK-https-redirect-enforcement-for-plaintext-http`, `TASK-item-config-templates`, `TASK-local-instance-integrity-holistic`, `TASK-logging-hardening-minors-injection-rotation-races-sink-path-`, `TASK-ocsp-stapling-for-tls-certificate-status`, `TASK-outfit-change-hook`, `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination`, `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn`, `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota`, `TASK-runtime-integrity-watchdog-crash-recovery`, `TASK-size-strict-debt`, `TASK-sni-multi-certificate-serving-for-multiple-domains`, `TASK-swarm-supervisor`, `TASK-tls-cipher-suite-hardening-and-secure-defaults`, `TASK-wire-fswatcher-onreload-callback-in-server-startup`, `epic-browser-editor-support`, `epic-certificate-and-tls-management`, `epic-cron-scheduler`, `epic-cross-platform-portability`, `epic-db-migration-compaction`, `epic-file-splitting`, `epic-http-protocol-features`, `epic-local-process-swarm`, `epic-reactive-actor-appearance`, `epic-recursive-self-improvement`, `epic-runtime-integrity-fail-safes`, `epic-skills-professions-config` |
 | `src/server/static-files.ts` | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-`, `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra`, `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e`, `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc`, `TASK-cross-platform-portability`, `TASK-cross-platform-single-binary`, `TASK-docs-ui-endpoint-linkage`, `TASK-guest-public-functionality-surface-feed-templates-docs`, `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto`, `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w`, `epic-cross-platform-portability`, `epic-docs-reconciliation`, `epic-guest-access`, `epic-http-protocol-features` |
 | `src/server/static-mime.ts` | `BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` |
 | `src/server/watchdog/cli.ts` | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn`, `epic-recursive-self-improvement` |
@@ -11014,7 +11014,11 @@ output is byte-identical for identical inputs.
 | `TASK-emit-exploration-encounter-triggered-from-the-discovery-even` | produces | `src/rpg/world-discovery/events.ts` | - |
 | `TASK-emoji-colon-format-frontend` | produces | `src/frontend/alpine/chat-utils/emoji.ts` | - |
 | `TASK-emotion-avatar-job-restart-reconciliation` | produces | `src/characters/services/emotion-avatar-service/job-store.ts` | - |
+| `TASK-emotion-avatar-job-restart-reconciliation` | produces | `src/characters/services/emotion-avatar-service/restart-reconcile.test.ts` | - |
+| `TASK-emotion-avatar-job-restart-reconciliation` | produces | `src/characters/services/emotion-avatar-service/restart-reconcile.ts` | - |
 | `TASK-emotion-avatar-job-restart-reconciliation` | produces | `src/routes/character-emotion-avatars.ts` | - |
+| `TASK-emotion-avatar-job-restart-reconciliation` | produces | `src/server/start.test.ts` | - |
+| `TASK-emotion-avatar-job-restart-reconciliation` | produces | `src/server/start.ts` | - |
 | `TASK-emotion-avatar-message-binding` | produces | `src/characters/services/avatar-service.ts` | - |
 | `TASK-emotion-avatar-message-binding` | produces | `src/chat/service.ts` | - |
 | `TASK-emotion-avatar-message-binding` | produces | `src/components/chat/message-list.html` | - |
@@ -19415,6 +19419,7 @@ output is byte-identical for identical inputs.
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `TASK-dbrt-validation-gaps` | `src/admin/config.test.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `TASK-harness-model-routing` | `src/admin/model-roles.ts` |
@@ -20624,6 +20629,7 @@ output is byte-identical for identical inputs.
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `TASK-cross-platform-portability` | `src/server/start.ts` |
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `TASK-https-redirect-enforcement-for-plaintext-http` | `src/server/start.ts` |
@@ -20679,6 +20685,7 @@ output is byte-identical for identical inputs.
 | `BUG-auto-rotation-config-drift` | sibling | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | `src/config/schema-class/env-map.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | `src/config/schema-class/env-map.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-auto-rotation-config-drift` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/config/schema-class/env-map.ts` |
@@ -22742,6 +22749,7 @@ output is byte-identical for identical inputs.
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-cross-platform-portability` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.test.ts; src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-fix-eslint-errors` | `src/config/hot-reload.ts` |
@@ -23678,6 +23686,7 @@ output is byte-identical for identical inputs.
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-data-integrity-phase1` | `src/db/index.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `TASK-https-redirect-enforcement-for-plaintext-http` | `src/server/start.ts` |
@@ -25110,6 +25119,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-cross-platform-portability` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.test.ts; src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-https-redirect-enforcement-for-plaintext-http` | `src/server/start.ts` |
@@ -25155,6 +25165,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-cross-platform-portability` | `src/config/cert.ts; src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.test.ts; src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-harness-tool-sandbox` | `src/config/cert.ts` |
@@ -25227,6 +25238,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-cross-platform-portability` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.test.ts; src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-https-redirect-enforcement-for-plaintext-http` | `src/server/start.ts` |
@@ -25294,6 +25306,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-` | `src/elysia-app.ts` |
@@ -26255,6 +26268,7 @@ output is byte-identical for identical inputs.
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `TASK-cross-platform-portability` | `src/server/start.ts` |
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | sibling | `TASK-federation-interconnect-peer-config` | `src/config/sections/server.ts` |
@@ -28185,6 +28199,7 @@ output is byte-identical for identical inputs.
 | `BUG-new-migration-parts-never-apply-to-existing-databases` | sibling | `TASK-cross-platform-portability` | `src/server/start.ts` |
 | `BUG-new-migration-parts-never-apply-to-existing-databases` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-new-migration-parts-never-apply-to-existing-databases` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-new-migration-parts-never-apply-to-existing-databases` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `BUG-new-migration-parts-never-apply-to-existing-databases` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-new-migration-parts-never-apply-to-existing-databases` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-new-migration-parts-never-apply-to-existing-databases` | sibling | `TASK-https-redirect-enforcement-for-plaintext-http` | `src/server/start.ts` |
@@ -29451,6 +29466,7 @@ output is byte-identical for identical inputs.
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` | `src/assistant/prompt/sections/nsfw-context.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag` | `src/elysia-app.ts` |
+| `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-` | `src/elysia-app.ts` |
@@ -29741,6 +29757,7 @@ output is byte-identical for identical inputs.
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | `src/config/schema-class/env-map.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | `src/config/schema-class/env-map.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/config/schema-class/env-map.ts` |
@@ -36736,6 +36753,7 @@ output is byte-identical for identical inputs.
 | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | sibling | `epic-chat-variants-taxonomy` | `src/routes/chats/create.ts` |
 | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | sibling | `epic-frontend-age-gate` | `src/middleware/nsfw-gate/index.ts` |
 | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | sibling | `epic-gallery-batch-operations` | `src/routes/assets.ts` |
+| `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.test.ts` |
 | `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` | sibling | `TASK-federation-offload-two-instance-e2e` | `src/routes/federation-transfer.test.ts` |
 | `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` | sibling | `TASK-federation-peer-workload-wire-endpoints` | `src/routes/federation-transfer.test.ts` |
 | `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` | sibling | `TASK-mesh-encrypted-content-sharing-reservation-duplication` | `src/routes/federation-transfer.test.ts` |
@@ -38987,6 +39005,7 @@ output is byte-identical for identical inputs.
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag` | `src/elysia-app.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-effect-v4-s6-resource-safety-spike` | `src/async/offload.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-effect-v4-scoped-concurrency-and-interruption-spike` | `src/async/offload.ts` |
+| `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-emotions-avatar-edit-model` | `src/db/schema-` |
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-extract-turn-skip-orchestration-into-application-service` | `src/routes/messages/reply.ts` |
@@ -40601,6 +40620,7 @@ output is byte-identical for identical inputs.
 | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
 | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | sibling | `TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag` | `src/app/register-plugins.ts` |
+| `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | sibling | `TASK-federation-peer-capability-advertisement` | `src/routes/federation.test.ts; src/routes/federation.ts` |
@@ -44277,6 +44297,7 @@ output is byte-identical for identical inputs.
 | `TASK-cron-migrate-existing-timers` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
 | `TASK-cron-migrate-existing-timers` | sibling | `TASK-effect-v4-s6-resource-safety-spike` | `src/async/offload.ts` |
 | `TASK-cron-migrate-existing-timers` | sibling | `TASK-effect-v4-scoped-concurrency-and-interruption-spike` | `src/async/offload.ts` |
+| `TASK-cron-migrate-existing-timers` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `TASK-cron-migrate-existing-timers` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `TASK-cron-migrate-existing-timers` | sibling | `TASK-encryption-auto-key-rotation` | `src/crypto/key-rotation.ts` |
 | `TASK-cron-migrate-existing-timers` | sibling | `TASK-encryption-key-rotation` | `src/crypto/key-rotation.ts` |
@@ -44321,6 +44342,7 @@ output is byte-identical for identical inputs.
 | `TASK-cron-provider-health-rescan` | sibling | `TASK-cross-platform-portability` | `src/server/start.ts` |
 | `TASK-cron-provider-health-rescan` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `TASK-cron-provider-health-rescan` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `TASK-cron-provider-health-rescan` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `TASK-cron-provider-health-rescan` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `TASK-cron-provider-health-rescan` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `TASK-cron-provider-health-rescan` | sibling | `TASK-federation-peer-health-and-load-registry` | `src/admin/provider-health.ts` |
@@ -44389,6 +44411,7 @@ output is byte-identical for identical inputs.
 | `TASK-cross-platform-portability` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-docs-ui-endpoint-linkage` | `src/server/static-files.ts` |
+| `TASK-cross-platform-portability` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
@@ -44802,6 +44825,7 @@ output is byte-identical for identical inputs.
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/routes` |
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | `src/config/schema-class/env-map.ts` |
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
+| `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | sibling | `TASK-federation-peer-workload-wire-endpoints` | `src/transport/protocol.unified.ts; src/transport/ws.ts` |
@@ -45215,6 +45239,7 @@ output is byte-identical for identical inputs.
 | `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | sibling | `TASK-tui-enabled-config-flag-never-read` | `src/config/schema-class/env-map.ts` |
 | `TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en` | sibling | `epic-encryption-workflow` | `src/config/schema-class/env-map.ts` |
 | `TASK-docs-drift-api` | sibling | `TASK-tui-fire-and-forget-void-without-catch` | `src/tui/app-keys.ts` |
+| `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | sibling | `TASK-emotion-avatar-job-restart-reconciliation` | `src/server/start.ts` |
 | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | sibling | `TASK-https-redirect-enforcement-for-plaintext-http` | `src/server/start.ts` |
@@ -45647,9 +45672,38 @@ output is byte-identical for identical inputs.
 | `TASK-emit-exploration-encounter-triggered-from-the-discovery-even` | sibling | `epic-exploration-discovery` | `src/rpg/world-discovery/events.ts` |
 | `TASK-emoji-colon-format-frontend` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/chat-utils/emoji.ts` |
 | `TASK-emoji-colon-format-frontend` | sibling | `epic-frontend-emoji-reactions` | `src/frontend/alpine/chat-utils/emoji.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-frontend-char-emotion-types-and-prompt-modifier` | `src/routes/character-emotion-avatars.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-https-redirect-enforcement-for-plaintext-http` | `src/server/start.ts` |
 | `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-input-validation-battle-schema-less-post-emotion-avatars-par` | `src/routes/character-emotion-avatars.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-item-config-templates` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-local-instance-integrity-holistic` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-logging-hardening-minors-injection-rotation-races-sink-path-` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-ocsp-stapling-for-tls-certificate-status` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-outfit-change-hook` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-size-strict-debt` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-sni-multi-certificate-serving-for-multiple-domains` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-swarm-supervisor` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-tls-cipher-suite-hardening-and-secure-defaults` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `TASK-wire-fswatcher-onreload-callback-in-server-startup` | `src/server/start.ts` |
 | `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-avatar-regeneration-control` | `src/characters/services/emotion-avatar-service/job-store.ts; src/routes/character-emotion-avatars.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-browser-editor-support` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-certificate-and-tls-management` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-cron-scheduler` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-cross-platform-portability` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-db-migration-compaction` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-file-splitting` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-http-protocol-features` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-local-process-swarm` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-reactive-actor-appearance` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-recursive-self-improvement` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-runtime-integrity-fail-safes` | `src/server/start.ts` |
+| `TASK-emotion-avatar-job-restart-reconciliation` | sibling | `epic-skills-professions-config` | `src/server/start.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-emotion-intent-detection` | `src/generation/hooks/emotion-hook.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-encryption-access-management` | `src/routes/chats.ts` |
 | `TASK-emotion-avatar-message-binding` | sibling | `TASK-encryption-browser-pre-encrypt` | `src/frontend/alpine/chat.ts` |

@@ -8601,6 +8601,18 @@
       "source": "docs/spec/emotion-avatars.md"
     }
   ],
+  "src/characters/services/emotion-avatar-service/restart-reconcile.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-emotion-avatar-job-restart-reconciliation.md"
+    }
+  ],
+  "src/characters/services/emotion-avatar-service/restart-reconcile.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-emotion-avatar-job-restart-reconciliation.md"
+    }
+  ],
   "src/characters/services/emotion-avatar-service/seed.ts": [
     {
       "kind": "ticket",
@@ -54013,6 +54025,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-emotion-avatar-job-restart-reconciliation.md"
     }
   ],
   "src/server/start.ts": [
@@ -54143,6 +54159,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-emotion-avatar-job-restart-reconciliation.md"
     },
     {
       "kind": "ticket",
