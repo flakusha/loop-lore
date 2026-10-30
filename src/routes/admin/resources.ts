@@ -97,9 +97,7 @@ export function resourcesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             quota,
           },);
 
-          const { credentialRef: _credentialRef, ...publicView } = resource;
-          void _credentialRef;
-          return jsonResponse({ resource: publicView, }, HttpStatus.Created,);
+          return jsonResponse({ resource, }, HttpStatus.Created,);
         } catch (error) {
           return jsonError({
             message: (error as Error).message,
@@ -178,9 +176,7 @@ export function resourcesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             storageQuotaBytes: body.storageQuotaBytes,
           },);
 
-          const { credentialRef: _credentialRef, ...publicView } = resource;
-          void _credentialRef;
-          return jsonResponse({ resource: publicView, }, HttpStatus.Created,);
+          return jsonResponse({ resource, }, HttpStatus.Created,);
         } catch (error) {
           return jsonError({
             message: (error as Error).message,
