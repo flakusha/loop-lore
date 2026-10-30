@@ -3,7 +3,8 @@
 
 # TASK: Workflow library UI-format ingest
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Landed on feat-comfyui-param-derivation (owner-verified 2026-10-30): src/generation/comfyui-params/ingest.ts (plus ingest tests) with admin/seed wiring and the probe_status stamp.
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-comfyui-first-class-citizen
