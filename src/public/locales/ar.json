@@ -1687,7 +1687,10 @@
     "inventoryUnequipFailed": "Failed to unequip item.",
     "inventoryDropFailed": "Failed to drop item.",
     "inventoryTransferFailed": "Failed to transfer item.",
-    "inventoryEquippedFailed": "Failed to load equipped items."
+    "inventoryEquippedFailed": "Failed to load equipped items.",
+    "tradeNpcLoadFailed": "Failed to load merchant items.",
+    "tradeFailed": "Trade failed.",
+    "tradeConfirmed": "Trade confirmed."
   },
   "commands": {
     "modify": "دع النموذج يعيد كتابة كيان (/modify <kind> <id> \"الطلب\")",
