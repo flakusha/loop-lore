@@ -17,6 +17,19 @@
  * until the cooldown expires. Entries with an audience scope
  * (race/profession/location) are filtered by the speaking actor's identity.
  *
+ * Secret lore (084, epic-lore-knowledge): entries with a `reveal_condition`
+ * (JSON) stay withheld until the condition is met — `keywords` matched
+ * against the entry's scan window and/or `event` matched against the chat's
+ * timeline events; `all`/`any` combine sub-conditions; malformed JSON fails
+ * closed (same convention as invalid regex keys).
+ *
+ * Timeline scoping (084): rows with a `timeline_id` exist only on that
+ * timeline branch — filtered at load time against `chats.timeline_id`
+ * (see `lore-load.ts`); NULL rows are timeline-universal.
+ *
+ * Rarity (084): after activation, non-common entries are admitted by their
+ * rarity weight (`LORE_RARITY_WEIGHTS`), so rare tiers surface sparingly.
+ *
  * Lifecycle gate (TASK-world-lore-lifecycle-confidence-decay-distortion):
  * each world's `worlds.rules.lifecycle_config` may set a `min_confidence`
  * floor; rows whose `effectiveConfidence` (decay + distortion adjusted) drop
@@ -29,6 +42,12 @@
  */
 import { isLoreVisibleTo, parseLoreScope, } from "../../lore/audience";
 import type { ActorIdentity, } from "../../lore/audience";
+import { passesRarityWeight, } from "../../lore/rarity-weight";
+import {
+  hasRevealCondition,
+  parseRevealCondition,
+  revealConditionMet,
+} from "../../lore/reveal-condition";
 import { wrapSection, } from "../../xml-utils";
 import { recentConversation, } from "../keywords";
 import type { SectionBuilder, } from "../types";
@@ -80,6 +99,23 @@ export const loreSection: SectionBuilder = {
       ? Array.from(params.selectiveKeys,)
       : scanned!.text.split("\n",);
 
+    // Lowercased word set from a scan window — shared by the selective
+    // activation matcher and reveal-condition keyword leaves.
+    const windowWords = (window: string,): Set<string> => {
+      const words = new Set<string>();
+      for (const w of window.toLowerCase().split(/[^a-z0-9]+/i,)) {
+        if (w) { words.add(w,); }
+      }
+
+      return words;
+    };
+
+    // Final stochastic gates shared by every activation path: ambient
+    // activation_chance, then rarity-weighted selection (epic-lore-knowledge).
+    const admitStochastically = (entry: LoreRow,): boolean =>
+      passesActivationChance(entry.activation_chance,) &&
+      passesRarityWeight(entry.rarity,);
+
     const isRelevant = (entry: LoreRow,): boolean => {
       // Audience gate first — forbidden lore is never considered for activation.
       if (!isLoreVisibleTo({ audienceScope: parseLoreScope(entry.audience_scope,), }, identityWithLocation,)) {
@@ -93,19 +129,35 @@ export const loreSection: SectionBuilder = {
         return false;
       }
 
-      if (entry.constant) { return passesActivationChance(entry.activation_chance,); }
-      if (!entry.selective) { return passesActivationChance(entry.activation_chance,); }
+      // Secret-lore reveal gate (084/epic-lore-knowledge): entries with a
+      // reveal_condition stay withheld until conversation keywords or the
+      // chat's timeline events satisfy the condition. Malformed conditions
+      // fail closed — the entry is never revealed by accident.
+      if (hasRevealCondition(entry.reveal_condition,)) {
+        const revealWindow = recentMessages
+          .slice(0, clampScanDepth(entry.scan_depth,),)
+          .join("\n",);
+
+        const condition = parseRevealCondition(entry.reveal_condition,);
+        if (condition === null) { return false; }
+        const met = revealConditionMet(condition, {
+          words: windowWords(revealWindow,),
+          timelineEventTypes: loaded.timelineEvents.eventTypes,
+          timelineEventText: loaded.timelineEvents.descriptionText,
+        },);
+
+        if (!met) { return false; }
+      }
+
+      if (entry.constant || !entry.selective) { return admitStochastically(entry,); }
 
       // Selective: build the per-entry scan window (first `scanDepth` messages).
       const depth = clampScanDepth(entry.scan_depth,);
       const window = recentMessages.slice(0, depth,).join("\n",);
-      const words = new Set<string>();
-      for (const w of window.toLowerCase().split(/[^a-z0-9]+/i,)) {
-        if (w) { words.add(w,); }
-      }
+      const words = windowWords(window,);
 
       if (!matchesSelectiveKeys(entry, words, window,)) { return false; }
-      return passesActivationChance(entry.activation_chance,);
+      return admitStochastically(entry,);
     };
 
     const relevantEntries: LoreRow[] = [];

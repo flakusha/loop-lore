@@ -1086,6 +1086,9 @@ export const WorldLoreEntriesSchema = t.Object({
   disputed: t.Optional(t.Number(),),
   content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
+  reveal_condition: t.Optional(t.String(),),
+  timeline_id: t.Optional(t.String(),),
+  rarity: t.Optional(ItemRaritySchema,),
 },);
 
 // ── world_members ────────────────────────────────────────────
@@ -1266,6 +1269,9 @@ export const ActorLoreEntriesSchema = t.Object({
   activation_chance: t.Optional(t.Number(),),
   content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
+  reveal_condition: t.Optional(t.String(),),
+  timeline_id: t.Optional(t.String(),),
+  rarity: t.Optional(ItemRaritySchema,),
 },);
 
 // ── actor_notes ────────────────────────────────────────────

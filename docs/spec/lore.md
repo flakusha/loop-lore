@@ -9,6 +9,9 @@
 
 - Tables: `world_lore_entries`, `actor_lore_entries` — lorebook rows with keys/selective/constant/position/activation_chance; CRUD via `src/routes/world-lore-entries.ts` (+ actor entries via the generic entity routes).
 - Injection: `loreSection` (`src/assistant/prompt/sections/lore.ts`) — keyword/constant/cooldown with audience pre-filter; lore and memory are the two knowledge paths into a prompt, injected per-viewer (owner vs viewer, shared budget).
+- Secret lore: `reveal_condition` JSON column (084, epic-lore-knowledge) evaluated by `src/assistant/lore/reveal-condition.ts` — `keywords`/`event` leaves with `all`/`any` combinators, matched against the entry's scan window and the chat's timeline events; malformed conditions fail closed.
+- Timeline scoping: nullable `timeline_id` on both lore tables (084) — NULL rows are timeline-universal, non-NULL rows load only for chats on that timeline (`chats.timeline_id`, filtered in `lore-load.ts`).
+- Rarity-weighted selection: `rarity` column (canonical `ItemRarity` scale, default `common`) with tier weights in `src/assistant/lore/rarity-weight.ts` — non-common entries are admitted stochastically after activation; common/unknown always pass.
 - Audience scoping: `src/assistant/lore/audience.ts` — subject kinds world / location / profession / race; unknown subjects hidden by default.
 - Event → lore promotion: `src/story/events/promote-lore.ts` (additive; opt-out via `promoteToLore === false`).
 - Timeline: `src/story/timeline/event-steering.ts` (create/roll/resolve steerings, red-herring guard) and `src/story/timeline/world-timeline.ts` (shared per-world event timeline; convergence queries exclude the caller's own story).
