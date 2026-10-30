@@ -10,6 +10,7 @@
 
 import { assertPluginCanRegister, assertPluginRoutePath, normalizePluginRoutePath } from "./registry-policy";
 import { RegistryStore } from "./registry-store";
+import type { RouteCandidate } from "./registry-store";
 import type {
   LoadedPlugin,
   PluginOrigin,
@@ -176,6 +177,18 @@ class PluginRegistry {
   /** Alias of {@link getAllRoutes}. */
   getEnabledRoutes(): RouteDefinition[] {
     return this.getAllRoutes();
+  }
+
+  /**
+   * Registered route candidates for method + normalized path in registration
+   * order (plugin-grouped), regardless of enabled state — dispatch filters by
+   * enablement per candidate so runtime flips are honored
+   * (first-enabled-wins).
+   * @param method
+   * @param normalizedPath - already run through normalizePluginRoutePath
+   */
+  getRouteCandidates(method: string, normalizedPath: string,): ReadonlyArray<RouteCandidate> {
+    return this.store.getRouteCandidates(method, normalizedPath,);
   }
 
   /**
