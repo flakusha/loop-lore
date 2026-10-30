@@ -13,7 +13,9 @@ import { LLM_PROMPT_DEFAULTS, } from "../prompts/registry";
 import { AUX_CLASSIFICATION_TASKS, defineClassificationTask, } from "./template-registry";
 import type { AuxTaskName, } from "./types";
 
-/** Tasks that historically preferred the classifier role (old CLASSIFIER_TASKS). */
+/** Tasks that historically preferred the classifier role (old CLASSIFIER_TASKS).
+ * immersion-audit is new (not legacy) but prefers the classifier role: it is
+ * an opt-in prose-level audit that resolves the classifier model first. */
 const LEGACY_CLASSIFIER_TASKS: readonly AuxTaskName[] = [
   "intent",
   "injection-check",
@@ -22,6 +24,7 @@ const LEGACY_CLASSIFIER_TASKS: readonly AuxTaskName[] = [
   "gm-tool",
   "moderation",
   "nsfw",
+  "immersion-audit",
 ];
 
 describe("AUX_CLASSIFICATION_TASKS", () => {
@@ -34,6 +37,7 @@ describe("AUX_CLASSIFICATION_TASKS", () => {
         "carriage",
         "chat-title",
         "gm-tool",
+        "immersion-audit",
         "injection-check",
         "intent",
         "memory",
@@ -86,7 +90,7 @@ describe("AUX_CLASSIFICATION_TASKS", () => {
       .map(([task,],) => task)
       .sort();
 
-    expect(nullPurpose,).toEqual(["adapt", "message-action", "prompt-improve",],);
+    expect(nullPurpose,).toEqual(["adapt", "immersion-audit", "message-action", "prompt-improve",],);
   });
 });
 
