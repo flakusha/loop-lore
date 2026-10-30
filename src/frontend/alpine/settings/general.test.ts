@@ -44,6 +44,8 @@ interface Host {
   pendingRestartLoads: number;
   persistSettings(payload: Record<string, unknown>,): Promise<void>;
   loadPendingRestart(): Promise<void>;
+  quotaStateLoads: number;
+  loadQuotaState(): Promise<void>;
   init(): Promise<void>;
   loadLocales(): Promise<void>;
   loadSettings(): Promise<void>;
@@ -149,6 +151,10 @@ function freshHost(): Host {
     },
     loadPendingRestart: async () => {
       host.pendingRestartLoads += 1;
+    },
+    quotaStateLoads: 0,
+    loadQuotaState: async () => {
+      host.quotaStateLoads += 1;
     },
     init: async () => {},
     loadLocales: async () => {},
@@ -297,6 +303,7 @@ describe("settings general init", () => {
     expect(urls,).toContain("/api/v1/providers",);
     expect(urls,).toContain("/api/v1/settings",);
     expect(host.pendingRestartLoads,).toBe(1,);
+    expect(host.quotaStateLoads,).toBe(1,);
   });
 });
 
