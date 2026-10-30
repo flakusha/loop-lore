@@ -2,11 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Inventory grid/list rendering — pure functions over plain item data.
+ * Inventory data helpers — pure functions over plain item rows.
  *
- * No fetching here: callers (Alpine state, stories) supply the rows and
- * receive selection callbacks. DOM is built with `document.createElement`
- * so the battle-panel fake-dom test harness works unchanged.
+ * No fetching here: callers (Alpine state, stories) supply the rows.
  */
 import { jsonParseOr, } from "../alpine/json.js";
 
@@ -157,115 +155,4 @@ function rarityRank(rarity: string | null | undefined,): number {
  */
 function asNumber(value: number | null | undefined,): number {
   return typeof value === "number" ? value : Number.NEGATIVE_INFINITY;
-}
-
-/**
- * Render options for the inventory grid.
- */
-export interface InventoryGridOptions {
-  /** Tile grid (default) or compact rows. */
-  view?: InventoryView;
-  /** Sort key, defaults to name. */
-  sort?: InventorySortKey;
-  /** Active filter; empty matches everything. */
-  filter?: InventoryFilter;
-  /** Highlighted row id. */
-  selectedId?: string | null;
-  /** Called when a slot is clicked. */
-  onSelect?: (itemId: string,) => void;
-}
-
-/**
- * Render the (filtered, sorted) rows into a container, grid or list style.
- * @param container Element to render into; previous children are replaced.
- * @param items Raw rows; filtering/sorting happen inside.
- * @param options View, sort, filter, selection, and click callback.
- * @returns {void}
- */
-export function renderInventoryGrid(
-  container: HTMLElement,
-  items: InventoryItem[],
-  options: InventoryGridOptions = {},
-): void {
-  const { view = "grid", sort = "name", filter = {}, selectedId = null, onSelect, } = options;
-  const visible = sortItems(filterItems(items, filter,), sort,);
-  container.replaceChildren();
-  container.className = view === "list" ? "inventory-list" : "inventory-grid";
-  if (visible.length === 0) {
-    const empty = document.createElement("div",);
-    empty.className = "inventory-empty";
-    empty.textContent = "No items to display.";
-    container.append(empty,);
-    return;
-  }
-
-  for (const item of visible) {
-    container.append(buildSlot(item, view, item.id === selectedId, onSelect,),);
-  }
-}
-
-/**
- * Build one slot/row element.
- * @param item Row to render.
- * @param view Grid tile or list row.
- * @param selected Whether to mark the slot selected.
- * @param onSelect Click callback, if any.
- * @returns The slot element.
- */
-function buildSlot(
-  item: InventoryItem,
-  view: InventoryView,
-  selected: boolean,
-  onSelect: ((itemId: string,) => void) | undefined,
-): HTMLElement {
-  const equipped = isItemEquipped(item,);
-  const slot = document.createElement("div",);
-  slot.className = `inventory-slot${selected ? " selected" : ""}${equipped ? " equipped" : ""}`;
-  slot.setAttribute("data-item-id", item.id,);
-
-  const name = document.createElement("span",);
-  name.className = "inventory-slot-name";
-  name.setAttribute("data-slot-part", "name",);
-  name.textContent = item.name;
-  slot.append(name,);
-
-  const quantity = item.quantity ?? 1;
-  if (quantity > 1) {
-    const stack = document.createElement("span",);
-    stack.className = "inventory-slot-quantity";
-    stack.setAttribute("data-slot-part", "quantity",);
-    stack.textContent = `×${quantity}`;
-    slot.append(stack,);
-  }
-
-  const rarity = document.createElement("span",);
-  const rarityName = item.rarity ?? "common";
-  rarity.className = `inventory-slot-rarity rarity-${rarityName.toLowerCase()}`;
-  rarity.setAttribute("data-slot-part", "rarity",);
-  rarity.textContent = rarityName;
-  slot.append(rarity,);
-
-  if (equipped) {
-    const badge = document.createElement("span",);
-    badge.className = "inventory-slot-equipped";
-    badge.setAttribute("data-slot-part", "equipped",);
-    badge.textContent = "Equipped";
-    slot.append(badge,);
-  }
-
-  if (view === "list") {
-    const meta = document.createElement("span",);
-    meta.className = "inventory-slot-meta";
-    meta.setAttribute("data-slot-part", "meta",);
-    meta.textContent = item.value == null ? item.itemType : `${item.itemType} · ${item.value}g`;
-    slot.append(meta,);
-  }
-
-  if (onSelect) {
-    slot.addEventListener("click", () => {
-      onSelect(item.id,);
-    },);
-  }
-
-  return slot;
 }
