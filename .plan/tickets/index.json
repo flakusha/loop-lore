@@ -16045,6 +16045,26 @@
     "status": "Not Started",
     "git_issue": "51f7108"
   },
+  "EPIC-MODEL-RANKINGS-HISTORY": {
+    "hash": "pending",
+    "extid": "EPIC-MODEL-RANKINGS-HISTORY",
+    "type": "EPIC",
+    "title": "Model Rankings History, Fit Scoring, News & Local Grading",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "models",
+      "rankings",
+      "llmfit",
+      "hardware-fit",
+      "news",
+      "admin",
+      "local-grading"
+    ],
+    "source": ".plan/tickets/epic-model-rankings-history.md",
+    "status": "Not Started"
+  },
   "EPIC-MULTI-INSTANCE-RECONCILIATION": {
     "epic": "",
     "extid": "EPIC-MULTI-INSTANCE-RECONCILIATION",
@@ -39845,6 +39865,19 @@
     "title": "Finalize notification bell header wiring",
     "type": "TASK"
   },
+  "TASK-FIT-COLUMN-ON-PROVIDERS-ADMIN-SURFACE": {
+    "hash": "e2696e1",
+    "git_issue": "e2696e1",
+    "extid": "TASK-FIT-COLUMN-ON-PROVIDERS-ADMIN-SURFACE",
+    "type": "TASK",
+    "title": "fit column on providers admin surface",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-model-rankings-history",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fit-column-on-providers-admin-surface.md",
+    "status": "Not Started"
+  },
   "TASK-FIX-ACTOR-ITEM-VALUE-TYPE": {
     "epic": "epic-item-systems-unification",
     "extid": "TASK-FIX-ACTOR-ITEM-VALUE-TYPE",
@@ -45534,6 +45567,19 @@
     "status": "Not Started",
     "git_issue": "1051b53"
   },
+  "TASK-LLMFIT-FIT-SERVICE-VIA-SHELL-OUT": {
+    "hash": "266bdf4",
+    "git_issue": "266bdf4",
+    "extid": "TASK-LLMFIT-FIT-SERVICE-VIA-SHELL-OUT",
+    "type": "TASK",
+    "title": "llmfit fit service via shell-out",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-model-rankings-history",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llmfit-fit-service-via-shell-out.md",
+    "status": "Not Started"
+  },
   "TASK-LOCAL-IMAGE-GENERATION-QUEUE": {
     "epic": "epic-llm-queue",
     "extid": "TASK-LOCAL-IMAGE-GENERATION-QUEUE",
@@ -47863,6 +47909,45 @@
       "caching"
     ],
     "source": ".plan/tickets/TASK-model-metadata-sidecar-cache-and-hash-lookup-cascade.md",
+    "status": "Not Started"
+  },
+  "TASK-MODEL-NEWS-ADMIN-TAB": {
+    "hash": "a668782",
+    "git_issue": "a668782",
+    "extid": "TASK-MODEL-NEWS-ADMIN-TAB",
+    "type": "TASK",
+    "title": "model news admin tab",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-model-rankings-history",
+    "tags": [],
+    "source": ".plan/tickets/TASK-model-news-admin-tab.md",
+    "status": "Not Started"
+  },
+  "TASK-MODEL-NEWS-INGESTION-PIPELINE": {
+    "hash": "7899d8f",
+    "git_issue": "7899d8f",
+    "extid": "TASK-MODEL-NEWS-INGESTION-PIPELINE",
+    "type": "TASK",
+    "title": "model news ingestion pipeline",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-model-rankings-history",
+    "tags": [],
+    "source": ".plan/tickets/TASK-model-news-ingestion-pipeline.md",
+    "status": "Not Started"
+  },
+  "TASK-MODEL-RANKINGS-STORAGE-FOUNDATION": {
+    "hash": "114ac17",
+    "git_issue": "114ac17",
+    "extid": "TASK-MODEL-RANKINGS-STORAGE-FOUNDATION",
+    "type": "TASK",
+    "title": "model rankings storage foundation",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-model-rankings-history",
+    "tags": [],
+    "source": ".plan/tickets/TASK-model-rankings-storage-foundation.md",
     "status": "Not Started"
   },
   "TASK-MODEL-WEIGHT-SNIFFING-FALLBACK-DETECT-FROM-WEIGHTS": {
@@ -52396,6 +52481,32 @@
     "tags": [],
     "title": "Re-roll transform inheritance from parent avatar",
     "type": "TASK"
+  },
+  "TASK-REACTION-BASED-MODEL-GRADING-SCORER": {
+    "hash": "ee3ad36",
+    "git_issue": "ee3ad36",
+    "extid": "TASK-REACTION-BASED-MODEL-GRADING-SCORER",
+    "type": "TASK",
+    "title": "reaction-based model grading scorer",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-model-rankings-history",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reaction-based-model-grading-scorer.md",
+    "status": "Not Started"
+  },
+  "TASK-REACTION-TABLE-PREREQS-FOR-MODEL-GRADING": {
+    "hash": "fbefbb4",
+    "git_issue": "fbefbb4",
+    "extid": "TASK-REACTION-TABLE-PREREQS-FOR-MODEL-GRADING",
+    "type": "TASK",
+    "title": "reaction table prereqs for model grading",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-model-rankings-history",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reaction-table-prereqs-for-model-grading.md",
+    "status": "Not Started"
   },
   "TASK-REAL-LLM-SD-E2E-FIXTURE-LLAMA-CPP-LLAMA-SWAP-SD-SERVER": {
     "epic": "epic-e2e-integration-testing",
