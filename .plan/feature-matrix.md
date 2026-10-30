@@ -122,7 +122,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | asset-persistence | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | asset-search | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | assets | 65 | 9 | 2 | 6 | 3 | 0 | 45 |
-| assistant | 63 | 15 | 5 | 11 | 3 | 0 | 29 |
+| assistant | 63 | 16 | 5 | 10 | 3 | 0 | 29 |
 | assistant-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | assistant-flows | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | ast | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -150,7 +150,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | autonomy | 7 | 5 | 0 | 1 | 1 | 0 | 0 |
 | aux | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | aux-llm | 11 | 1 | 5 | 5 | 0 | 0 | 0 |
-| aux-llm-judge | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| aux-llm-judge | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | aux-pipeline | 4 | 1 | 1 | 0 | 0 | 0 | 2 |
 | availability | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | avatar | 25 | 10 | 2 | 5 | 0 | 0 | 8 |
@@ -253,7 +253,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | capabilities | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | capability-disclosure | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | capability-levels | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| capability-matrix | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| capability-matrix | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | capability-probe | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | capability-registry | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | capacitor | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -734,7 +734,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | gurps | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | handles | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | hard-block | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| hardening | 5 | 0 | 1 | 2 | 0 | 0 | 2 |
+| hardening | 5 | 1 | 1 | 1 | 0 | 0 | 2 |
 | hardware-fit | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | harm | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | harness | 8 | 0 | 1 | 0 | 1 | 0 | 6 |
@@ -1206,7 +1206,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | prompt-formatting | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | prompt-improve | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | prompt-improvement | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| prompt-injection | 6 | 1 | 0 | 1 | 0 | 0 | 4 |
+| prompt-injection | 6 | 2 | 0 | 0 | 0 | 0 | 4 |
 | prompt-sections | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | prompt-templates | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | prompts | 7 | 5 | 0 | 1 | 0 | 0 | 1 |
@@ -1372,7 +1372,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | safety | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | sage | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | sam3 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| sandbox | 12 | 3 | 0 | 2 | 1 | 0 | 6 |
+| sandbox | 12 | 4 | 0 | 1 | 1 | 0 | 6 |
 | sandboxing | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | sanitization | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | sase | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
@@ -1407,7 +1407,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | seasons | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | secrets | 5 | 0 | 0 | 0 | 1 | 0 | 4 |
 | sectioning | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| security | 42 | 16 | 3 | 8 | 0 | 0 | 15 |
+| security | 42 | 17 | 3 | 7 | 0 | 0 | 15 |
 | seed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | seeding | 12 | 2 | 0 | 8 | 0 | 0 | 2 |
 | seen | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
@@ -1808,7 +1808,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | epic-assistant-entity-access, epic-rag-context-sources | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-assistant-generation-extensions | 12 | 2 | 0 | 6 | 0 | 0 | 4 |
 | epic-assistant-generation-extensions, epic-assistant-gm-flows, epic-image-edit | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-assistant-gm-flows | 36 | 10 | 4 | 18 | 0 | 0 | 4 |
+| epic-assistant-gm-flows | 36 | 11 | 4 | 17 | 0 | 0 | 4 |
 | epic-assistant-gm-flows, epic-conversation-branching | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-assistant-step-planning | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | epic-audio-video-sound | 9 | 2 | 0 | 6 | 0 | 0 | 1 |
