@@ -157,6 +157,12 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     this._chatCurrentLocationId = null;
     this._chatRecentLocationChanged = false;
     this._locationJoinableChats = [];
+    // The NSFW panel is per-chat too: clear the outgoing chat's values here so
+    // they are never shown under the newly selected chat (the panel load below
+    // runs last and may never run if an earlier load rejects).
+    this._nsfwIntimacy = null;
+    this._nsfwBody = null;
+    this._nsfwUnavailable = false;
     const selectReload = await Promise.allSettled([
       this.loadMessages(),
       this.loadSections(),

@@ -564,3 +564,19 @@ describeOrSkip("chatWorld.selectChat successful flow", () => {
     expect(ctx._selectingChat,).toBe(false,);
   });
 },);
+
+describeOrSkip("chatWorld._selectChatInner NSFW reset", () => {
+  test("clears NSFW panel state even when an earlier load rejects", async () => {
+    const ctx = makeSelectCtx({
+      _nsfwIntimacy: [{ score: 5, },],
+      _nsfwBody: { stamina: 5, },
+      _nsfwUnavailable: true,
+      loadSections: () => Promise.reject(new Error("sections down",),),
+    },);
+
+    await expect(chatWorld._selectChatInner!.call(ctx, "c1",),).rejects.toThrow("select chat reload failed",);
+    expect(ctx._nsfwIntimacy,).toBeNull();
+    expect(ctx._nsfwBody,).toBeNull();
+    expect(ctx._nsfwUnavailable,).toBe(false,);
+  });
+},);
