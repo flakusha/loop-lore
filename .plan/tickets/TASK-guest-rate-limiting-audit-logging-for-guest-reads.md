@@ -51,6 +51,15 @@ table, or migration. The path gate reuses the central null-userId guard's
   reads unaffected" (`registered users are never limited`, `non-guest roles are
   never limited`, `non-GET methods do not consume budget`,
   `non-guest-read paths do not consume budget`).
+- Slice 2 (audit rows): served (non-429) guest reads write one `log_entries`
+  row — level 6, `event_type=guest.read`, `action=read`, `request_id` from the
+  request-id derive, `user_id` stays null (no invented identity), meta
+  `{ userRole, route, targetId, ip }`; insert failures are logged and swallowed
+  (never fail the read). DELIBERATE DEVIATION: 429 rejections are NOT logged —
+  rows count reads actually served (pinned by `429 rejections are not logged
+  (rows = served reads)`). AC covered: "Audit rows written for guest reads"
+  (`allowed guest read writes exactly one audit row with expected fields`,
+  `registered reads write no audit rows`, `audit failure never fails the read`).
 
 **Acceptance Criteria:**
 
