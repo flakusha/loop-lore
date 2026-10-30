@@ -27,3 +27,5 @@ Implemented in worktree feat-web-editor-support (slice 3). `src/server/terminal-
 **Evidence:** `bun test src/server/terminal-ws.test.ts src/utils/is-within.test.ts src/frontend/terminal-panel.test.ts` → 26 pass / 0 fail (gate chain: 426/404/501/401/403 non-admin/403 remote+origin/501 no-editor/400 traversal+missing-path/upgrade-data; envelope parser; spawn record; isWithin traversal+symlink-escape+prefix-collision; anchor interception modifiers). `bun test src/routes/views/` → 208 pass (layout bootstrap). Scoped gates all PASS: typecheck backend/bun/frontend, lint eslint, format dprint, size strict, changelog gate, i18n reconcile + static keys, template preflight, innerHTML xss, wiring check, db schema gate (13/13). CHANGELOG `[Unreleased] → Added` bullet added. Frontend build emits unhashed `dist/public/terminal-xterm.js` (333KB) + main alpine-init without xterm inlined.
 
 git issue: 5bf3df5
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 5bf3df5 (registry tip: 18a5b01b6 Konstantin Fedotov Close issue)

@@ -27,3 +27,5 @@ Scope note: the anchors open the surface's backing repo file (the only file a UR
 - [x] Documentation updated — CHANGELOG [Unreleased]/Added
 
 git issue: 42b9293
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 42b9293 (registry tip: 41c9a60bf Konstantin Fedotov Close issue)
