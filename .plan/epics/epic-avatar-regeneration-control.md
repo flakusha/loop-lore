@@ -100,10 +100,11 @@ landed (verified 2026-10-09):
 - [x] UI: per-avatar "re-roll" button on emotion grid + "regenerate all" +
       subset picker + job progress (SSE)
       → `TASK-regen-ui-re-roll-and-regenerate-all-controls`
-- [ ] Tests: subset regen, replace-atomicity (old variant never unbound-mid-
-      flight), restart-durable job status, route authz (actor + wardrobe-item
-      ownership)
-      → [`TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md`](../tickets/TASK-emotion-avatar-regen-atomicity-and-subset-regression-tests.md)
+- [x] Tests: subset regen, replace-atomicity (old variant never unbound-mid-
+      flight) (regen-atomicity.test.ts, 3 green); restart-durable job status
+      (restart-reconcile.test.ts, 4 green); route authz — actor ownership via
+      requireOwnedActor (character-emotion-avatars.test.ts), wardrobe-item
+      ownership (wardrobe.test.ts / wardrobe-avatars.test.ts)
 
 - `TASK-reroll-emotion-command.md` — /reroll-emotion in-chat command wrapping emotion-avatar regenerate (done 2026-10-30: service dispatch with slot replace, command-context actor resolution, avatar action renders in chat)
 
