@@ -273,9 +273,26 @@
     "localInference": "Browser-side inference (opt-in)",
     "templates": "Templates",
     "contentLanguage": "Idioma del contenido",
+// hint: Logic changed on both sides. Requires understanding intent of each change.
     "sessions": "Sessions",
     "sessionsTitle": "Active Sessions",
     "sessionsDescription": "Devices currently signed in to your account. Revoke anything you do not recognize; switching moves your active login to that device."
+    "quota": "Quota",
+    "quotaExhausted": "Quota exhausted.",
+    "quotaFallbackNote": "Requests fall back to the next provider or queue until the window resets.",
+    "quotaEmpty": "No provisioned resources yet.",
+    "quotaOver": "over quota",
+    "quotaOverride": "Reset window",
+    "quotaUnlimited": "unlimited",
+    "backup": "Backup",
+    "backupEnabled": "Browser backup (opt-in)",
+    "backupTypes": "Backed-up types",
+    "backupEmpty": "No local backups to reconcile yet.",
+    "backupRecover": "Recover",
+    "backupDrift": "Some backups differ from the server.",
+    "backupRestored": "Backup verified and restored.",
+    "backupRecoverFailed": "Recovery failed: integrity check did not pass.",
+    "backupConfirmRequired": "Recovery requires explicit confirmation."
   },
   "admin": {
     "title": "Administration",
