@@ -191,13 +191,13 @@ describe(MIGRATION, () => {
       await sql`DELETE FROM chats WHERE id = ${gone}`.execute(db,);
       let rows = await ownerRows(db,);
       expect(rows,).toHaveLength(2,);
-      expect(new Set(rows.map((r,) => r.chat_id,)),).toEqual(new Set([kept,]),);
+      expect(new Set(rows.map((r,) => r.chat_id),),).toEqual(new Set([kept,],),);
 
       // Deleting the co-owner cascades their surviving row away; the chats
       // themselves are untouched (creator column still references creator).
       await sql`DELETE FROM users WHERE id = ${coOwner}`.execute(db,);
       rows = await ownerRows(db,);
-      expect(rows.map((r,) => [r.chat_id, r.user_id,],),).toEqual([[kept, creator,],],);
+      expect(rows.map((r,) => [r.chat_id, r.user_id,]),).toEqual([[kept, creator,],],);
       const chatsLeft = await sql<{ id: string }>`SELECT id FROM chats ORDER BY id`.execute(db,);
       expect(chatsLeft.rows,).toHaveLength(1,);
     } finally {
