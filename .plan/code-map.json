@@ -11333,12 +11333,6 @@
       "source": ".plan/tickets/TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep.md"
     }
   ],
-  "src/chat/service/split-execution.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-chat-branch-merge.md"
-    }
-  ],
   "src/chat/service/split-utils.ts": [
     {
       "kind": "epic",
