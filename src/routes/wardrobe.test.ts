@@ -62,6 +62,9 @@ describe("Wardrobe routes — auth & ownership", () => {
       created_by: OWNER_USER,
     },).execute();
 
+    // Raw insert: seed the owners row the production create path guarantees.
+    await db.insertInto("chat_owners",).values({ chat_id: CHAT, user_id: OWNER_USER, },).execute();
+
     const res = await makeApp(db, OWNER_USER, "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER}/wardrobe`, {
         method: "POST",
@@ -303,6 +306,9 @@ describe("Wardrobe chat override routes", () => {
       name: "Override Chat",
       created_by: OWNER_USER,
     },).execute();
+
+    // Raw insert: seed the owners row the production create path guarantees.
+    await db.insertInto("chat_owners",).values({ chat_id: CHAT, user_id: OWNER_USER, },).execute();
 
     const res = await makeApp(db, OWNER_USER, "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER}/wardrobe`, {

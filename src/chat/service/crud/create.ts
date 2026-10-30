@@ -58,6 +58,12 @@ export async function createChat(
     },)
     .execute();
 
+  // Seed the owners set (epic-chat-multi-ownership): every chat is born with
+  // exactly one chat_owners row — its creator. `chats.created_by` stays the
+  // frozen creator record and is never mutated again.
+  const { materializeCreatorOwnerRow, } = await import("../owners-core");
+  await materializeCreatorOwnerRow(database, newChatId, params.createdBy,);
+
   // Add additional participants
   if (params.participantIds && params.participantIds.length > 0) {
     for (const actorId of params.participantIds) {
