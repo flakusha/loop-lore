@@ -2699,6 +2699,41 @@
         "irc",
         "nostr"
       ]
+    },
+    "web": {
+      "type": "object",
+      "description": "Web editor and browser-terminal configuration",
+      "properties": {
+        "editor": {
+          "type": "string",
+          "default": "vscode",
+          "description": "Editor scheme for open-in-editor links (vscode, zed, cursor, idea)"
+        },
+        "terminal": {
+          "type": "object",
+          "description": "Browser PTY terminal settings (WS /api/v1/terminal)",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable the browser-terminal route (default false)"
+            },
+            "allowRemote": {
+              "type": "boolean",
+              "default": false,
+              "description": "Allow non-localhost clients to open the PTY (default false)"
+            }
+          },
+          "required": [
+            "enabled",
+            "allowRemote"
+          ]
+        }
+      },
+      "required": [
+        "editor",
+        "terminal"
+      ]
     }
   },
   "required": [
@@ -2718,6 +2753,7 @@
     "frontend",
     "seeding",
     "templates",
-    "characters"
+    "characters",
+    "web"
   ]
 }
