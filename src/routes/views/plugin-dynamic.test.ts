@@ -21,6 +21,7 @@ import {
   insertWorlds,
   insertWorldTimelineEvents,
   insertWorldTimelines,
+  insertWorldTimelineSelections,
 } from "../../test-utils/insert-helpers";
 import { safeJsonParse, } from "../../utils";
 import { dynamicRoutes, } from "./plugin-dynamic";
@@ -306,6 +307,25 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
       expect(html,).toContain("Fork-branch divergence",);
       expect(html,).not.toContain("Prime-branch calamity",);
       expect(html,).toContain("Fork",);
+    });
+
+    test("persisted selection is the default branch when ?timeline is absent", async () => {
+      // The owner selected the fork via POST .../select; the detail fragment
+      // must now default to it without an explicit ?timeline=
+      // (TASK-timeline-selection-api).
+      await insertWorldTimelineSelections(db, "owner", "world-elm", forkId, new Date().toISOString(),);
+      try {
+        const res = await makeApp(db, "owner", "user",).handle(
+          new Request("http://localhost/dynamic/worlds/world-elm/detail", { headers: { "HX-Request": "true", }, },),
+        );
+
+        expect(res.status,).toBe(200,);
+        const html = await res.text();
+        expect(html,).toContain("Fork-branch divergence",);
+        expect(html,).not.toContain("Prime-branch calamity",);
+      } finally {
+        await db.deleteFrom("world_timeline_selections",).execute();
+      }
     });
 
     test("?timeline=<prime row> still shows the 'prime'-slug events", async () => {

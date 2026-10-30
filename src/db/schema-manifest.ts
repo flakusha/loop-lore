@@ -2792,6 +2792,12 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     timeline_id: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("world_timeline_selections", {
+    user_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    timeline_id: col("text", { notNull: true, },),
+    selected_at: col("text", { notNull: true, },),
+  },)
   .table("world_timelines", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text", { notNull: true, },),

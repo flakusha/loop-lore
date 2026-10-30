@@ -17,6 +17,7 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
   insertUsers,
+  insertWorldMembers,
   insertWorlds,
   insertWorldTimelineEvents,
   insertWorldTimelines,
@@ -309,5 +310,198 @@ describe("timelinesRoutes — list eventCount per branch", () => {
     const byId = new Map(body.data.map((row,) => [row.id, row.eventCount,]),);
     expect(byId.get(primeId,),).toBe(2,);
     expect(byId.get(forkId,),).toBe(1,);
+  });
+});
+
+describe("timelinesRoutes — update + select (TASK-timeline-selection-api)", () => {
+  let db: Kysely<DB>;
+  let sqlite: TestDb["sqlite"];
+  let ownerId: string;
+  let memberId: string;
+  let outsiderId: string;
+  let worldId: string;
+  let primeId: string;
+  let forkId: string;
+
+  /**
+   * @param path
+   * @param body
+   */
+  async function putJson(path: string, body: unknown,): Promise<Request> {
+    return new Request(`${BASE}${path}`, {
+      method: "PUT",
+      headers: { "content-type": "application/json", },
+      body: JSON.stringify(body,),
+    },);
+  }
+
+  beforeAll(async () => {
+    ({ db, sqlite, } = await createTestDb());
+
+    ownerId = uid();
+    memberId = uid();
+    outsiderId = uid();
+
+    await insertUsers(db, "owner", "Owner", { id: ownerId, } as never,);
+    await insertUsers(db, "member", "Member", { id: memberId, } as never,);
+    await insertUsers(db, "outsider", "Outsider", { id: outsiderId, } as never,);
+
+    for (const id of [ownerId, memberId, outsiderId,]) {
+      await insertActors(db, id, {
+        id,
+        actor_type: "user",
+        user_id: id,
+        owner_id: id,
+        agent_type: "none",
+        settings: "{}",
+        row_version: 0,
+      } as never,);
+    }
+
+    await insertWorlds(db, ownerId, "Selectable Realm", {},);
+    const w = await db
+      .selectFrom("worlds",)
+      .select("id",)
+      .where("owner_id", "=", ownerId,)
+      .executeTakeFirst();
+
+    if (!w) { throw new Error("seed: world not inserted",); }
+    worldId = w.id;
+
+    primeId = await insertWorldTimelines(db, worldId, "Prime", { is_prime: 1, },);
+    forkId = await insertWorldTimelines(db, worldId, "Fork", { is_prime: 0, },);
+    await insertWorldMembers(db, worldId, memberId,);
+  },);
+
+  afterAll(async () => {
+    await sqlite.close();
+  },);
+
+  test("PUT updates name and description for the owner", async () => {
+    const res = await appHandle(
+      appWithAuth(db, ownerId, "user",),
+      await putJson(`/api/worlds/${worldId}/timelines/${forkId}`, {
+        name: "Renamed Fork",
+        description: "now described",
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: { name: string; description: string | null; is_prime: number } };
+    expect(body.data.name,).toBe("Renamed Fork",);
+    expect(body.data.description,).toBe("now described",);
+    expect(body.data.is_prime,).toBe(0,);
+  });
+
+  test("PUT rejects an empty body with 400 and unknown ids with 404", async () => {
+    const app = appWithAuth(db, ownerId, "user",);
+    const empty = await appHandle(app, await putJson(`/api/worlds/${worldId}/timelines/${forkId}`, {},),);
+    expect(empty.status,).toBe(400,);
+
+    const unknown = await appHandle(app, await putJson(`/api/worlds/${worldId}/timelines/tl-nope`, { name: "x", },),);
+    expect(unknown.status,).toBe(404,);
+  });
+
+  test("PUT requires ownership: outsider 403, unauthenticated 401", async () => {
+    const forbidden = await appHandle(
+      appWithAuth(db, outsiderId, "user",),
+      await putJson(`/api/worlds/${worldId}/timelines/${forkId}`, { name: "hijack", },),
+    );
+
+    expect(forbidden.status,).toBe(403,);
+
+    const unauth = await appHandle(
+      appWithAuth(db, null, null,),
+      await putJson(`/api/worlds/${worldId}/timelines/${forkId}`, { name: "anon", },),
+    );
+
+    expect(unauth.status,).toBe(401,);
+  });
+
+  test("select persists the caller's branch and re-select switches it", async () => {
+    const app = appWithAuth(db, ownerId, "user",);
+    const select = (timelineId: string,) =>
+      appHandle(
+        app,
+        new Request(`${BASE}/api/worlds/${worldId}/timelines/${timelineId}/select`, { method: "POST", },),
+      );
+
+    const first = await select(forkId,);
+    expect(first.status,).toBe(200,);
+    expect(((await first.json()) as { data: { timelineId: string } }).data.timelineId,).toBe(forkId,);
+
+    const reSelected = await select(primeId,);
+    expect(reSelected.status,).toBe(200,);
+
+    // Upsert: still exactly one row per (user, world), now pointing at prime.
+    const rows = await db.selectFrom("world_timeline_selections",).selectAll().execute();
+    expect(rows,).toHaveLength(1,);
+    expect(rows[0]!.user_id,).toBe(ownerId,);
+    expect(rows[0]!.world_id,).toBe(worldId,);
+    expect(rows[0]!.timeline_id,).toBe(primeId,);
+  });
+
+  test("select admits a world MEMBER (view preference) but not an outsider", async () => {
+    const memberRes = await appHandle(
+      appWithAuth(db, memberId, "user",),
+      new Request(`${BASE}/api/worlds/${worldId}/timelines/${forkId}/select`, { method: "POST", },),
+    );
+
+    expect(memberRes.status,).toBe(200,);
+
+    // Outsider: requireWorldAccess 404s to hide existence.
+    const outsiderRes = await appHandle(
+      appWithAuth(db, outsiderId, "user",),
+      new Request(`${BASE}/api/worlds/${worldId}/timelines/${forkId}/select`, { method: "POST", },),
+    );
+
+    expect(outsiderRes.status,).toBe(404,);
+
+    const unauthRes = await appHandle(
+      appWithAuth(db, null, null,),
+      new Request(`${BASE}/api/worlds/${worldId}/timelines/${forkId}/select`, { method: "POST", },),
+    );
+
+    expect(unauthRes.status,).toBe(401,);
+
+    const unknownRes = await appHandle(
+      appWithAuth(db, ownerId, "user",),
+      new Request(`${BASE}/api/worlds/${worldId}/timelines/tl-nope/select`, { method: "POST", },),
+    );
+
+    expect(unknownRes.status,).toBe(404,);
+  });
+
+  test("deleting a selected fork cascades the selection away (loader falls back to prime)", async () => {
+    const ownerApp = appWithAuth(db, ownerId, "user",);
+    const selected = await appHandle(
+      ownerApp,
+      new Request(`${BASE}/api/worlds/${worldId}/timelines/${forkId}/select`, { method: "POST", },),
+    );
+
+    expect(selected.status,).toBe(200,);
+
+    const before = await db
+      .selectFrom("world_timeline_selections",)
+      .selectAll()
+      .where("user_id", "=", ownerId,)
+      .executeTakeFirstOrThrow();
+
+    expect(before.timeline_id,).toBe(forkId,);
+
+    const deleted = await appHandle(
+      ownerApp,
+      new Request(`${BASE}/api/worlds/${worldId}/timelines/${forkId}`, { method: "DELETE", },),
+    );
+
+    expect(deleted.status,).toBe(204,);
+
+    const after = await db
+      .selectFrom("world_timeline_selections",)
+      .selectAll()
+      .where("user_id", "=", ownerId,)
+      .executeTakeFirst();
+
+    expect(after,).toBeUndefined();
   });
 });

@@ -6195,3 +6195,21 @@ export async function insertImmersionDecisionLog(
   } as any,).execute();
   return id;
 }
+
+/** Insert a world_timeline_selections row. */
+export async function insertWorldTimelineSelections(
+  db: Db,
+  user_id: string,
+  world_id: string,
+  timeline_id: string,
+  selected_at: string,
+): Promise<string> {
+  const id = crypto.randomUUID();
+  await db.insertInto("world_timeline_selections",).values({
+    user_id,
+    world_id,
+    timeline_id,
+    selected_at,
+  } as any,).execute();
+  return id;
+}
