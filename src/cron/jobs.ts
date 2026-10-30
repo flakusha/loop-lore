@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
+// size-allow: 335
+// Single built-in job catalog for the cron scheduler.
 // src/cron/jobs.ts — Built-in job catalog for the cron scheduler.
 //
 // Each job is a thin body over an existing service entry point; timing and
