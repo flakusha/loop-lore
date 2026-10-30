@@ -12,6 +12,11 @@
  * A declared `tool.policy` is checked here, on every invocation, and never
  * cached: a tool loaded before its tag was known is still gated, and one that
  * gains a tag after a first invocation cannot keep that decision.
+ *
+ * Path-bearing arguments are additionally confined to the harness worktree
+ * root (`./worktree-scope`): outside-scope paths fail unless the call
+ * escalated via `ctx.requestRootChange`, in which case the crossing is
+ * logged.
  */
 
 import type {
@@ -20,6 +25,7 @@ import type {
   ToolResult,
 } from "./types";
 import { assertToolPolicySatisfied } from "./tool-policy";
+import { assertParamsWithinScope } from "../harness/worktree-scope";
 import { jsonStringifyOr, } from "../utils";
 
 /** Default handler timeout when `tool.timeoutMs` is unset. */
@@ -40,6 +46,12 @@ export async function executePluginTool(
   const timeoutMs = tool.timeoutMs ?? DEFAULT_TOOL_TIMEOUT_MS;
   try {
     assertToolPolicySatisfied(tool,);
+    await assertParamsWithinScope({
+      toolName: tool.name,
+      params,
+      requestRootChange: ctx?.requestRootChange,
+    },);
+
     const handler = Promise.resolve(tool.handler(params, ctx));
     return await new Promise<ToolResult>((resolve, reject) => {
       const timer = setTimeout(() => {
