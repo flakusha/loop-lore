@@ -34052,7 +34052,7 @@
       "object-info"
     ],
     "source": ".plan/tickets/TASK-comfyui-parameter-map-derivation-from-marked-workflows.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION": {
     "hash": "80566a1",
@@ -34143,7 +34143,7 @@
       "probes"
     ],
     "source": ".plan/tickets/TASK-comfyui-workflow-acceptance-probe-scaffold.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-COMFYUI-WORKFLOW-PARAMETERIZATION": {
     "hash": "cefeb42",
@@ -61080,7 +61080,7 @@
       "converter"
     ],
     "source": ".plan/tickets/TASK-workflow-library-ui-format-ingest.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-WORKFLOW-PAYLOAD-PREVIEW-STEP-TYPE": {
     "hash": "0b64aea",

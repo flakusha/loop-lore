@@ -31073,6 +31073,18 @@
       "source": ".plan/tickets/TASK-ui-api-workflow-converter.md"
     }
   ],
+  "src/generation/comfyui-params/ingest.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-library-ui-format-ingest.md"
+    }
+  ],
+  "src/generation/comfyui-params/probe.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-workflow-acceptance-probe-scaffold.md"
+    }
+  ],
   "src/generation/context-compactor.ts": [
     {
       "kind": "epic",
@@ -33987,6 +33999,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-node-discovery-template-autofilter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-workflow-acceptance-probe-scaffold.md"
     },
     {
       "kind": "ticket",

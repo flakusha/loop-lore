@@ -48,7 +48,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | adapter | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | adapters | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | addition | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| admin | 32 | 11 | 0 | 8 | 0 | 0 | 13 |
+| admin | 32 | 12 | 0 | 8 | 0 | 0 | 12 |
 | admin-trust | 4 | 4 | 0 | 0 | 0 | 0 | 0 |
 | admin-ui | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | admission-control | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -317,7 +317,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | collab | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | collaboration | 4 | 0 | 0 | 1 | 0 | 0 | 3 |
 | combat | 10 | 1 | 2 | 5 | 0 | 0 | 2 |
-| comfyui | 57 | 6 | 1 | 8 | 0 | 0 | 42 |
+| comfyui | 57 | 9 | 1 | 8 | 0 | 0 | 39 |
 | comic | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | command | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | command-palette | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -375,7 +375,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | controlnet | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | controls | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | conversation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| converter | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
+| converter | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | coordinator-server | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | coping | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | copy | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1041,7 +1041,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | npm | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | nsfw | 40 | 19 | 0 | 11 | 1 | 0 | 9 |
 | nuxt | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| object-info | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| object-info | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | objects | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | observability | 18 | 4 | 1 | 2 | 2 | 0 | 9 |
 | offline | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
@@ -1083,7 +1083,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | parallax | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | parallax-layers | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | parallel-merge | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| parameterization | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| parameterization | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | parity | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | parseOr | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | parser | 3 | 0 | 0 | 1 | 2 | 0 | 0 |
@@ -1181,7 +1181,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | privacy | 11 | 3 | 2 | 2 | 0 | 0 | 4 |
 | private-cache | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | probe | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| probes | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| probes | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | procedural | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
 | procedural-assets | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | procedural-generation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1566,7 +1566,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | territory | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | test | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | test-infra | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| testing | 36 | 7 | 2 | 15 | 0 | 0 | 12 |
+| testing | 36 | 8 | 2 | 15 | 0 | 0 | 11 |
 | testing-qa | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | tests | 7 | 6 | 0 | 0 | 0 | 0 | 1 |
 | text-effects | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
@@ -1729,7 +1729,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | workflow-engine | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | workflow-library | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | workflow-templates | 5 | 0 | 0 | 1 | 0 | 0 | 4 |
-| workflows | 13 | 1 | 1 | 0 | 1 | 0 | 10 |
+| workflows | 13 | 4 | 1 | 0 | 1 | 0 | 7 |
 | workspace-mode | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | worktree | 7 | 2 | 0 | 1 | 1 | 0 | 3 |
 | worktree-isolation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1855,7 +1855,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | epic-classifier-template-packs | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | epic-cli-tooling-optique | 2 | 0 | 1 | 0 | 0 | 0 | 1 |
 | epic-code-quality | 26 | 9 | 0 | 12 | 0 | 0 | 5 |
-| epic-comfyui-first-class-citizen | 31 | 5 | 0 | 1 | 0 | 0 | 25 |
+| epic-comfyui-first-class-citizen | 31 | 8 | 0 | 1 | 0 | 0 | 22 |
 | epic-comfyui-lifecycle | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | epic-comfyui-plugin | 20 | 9 | 0 | 7 | 0 | 0 | 4 |
 | epic-communications-integrations | 7 | 0 | 1 | 6 | 0 | 0 | 0 |

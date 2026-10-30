@@ -59,3 +59,5 @@ discovery ticket set the reuse-the-discovery-cache precedent.
 
 **Depends on:** TASK-ui-api-workflow-converter (converted API graph is the
 injection target).
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 5785328 (registry tip: cd799776c Konstantin Fedotov Close issue)
