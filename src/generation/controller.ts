@@ -33,6 +33,8 @@ import {
   handleGenerationStatus,
   handleGenerationStream,
   handleListActiveGenerations,
+  handleQuotaOverride,
+  handleQuotaState,
   handleRegenerate,
   handleRetryGeneration,
   handleTestConnection,
@@ -143,6 +145,16 @@ export function generationRoutes(
   app.post(`${prefix}/generation/test-connection`, async (ctx,) => {
     const auth = ctx as unknown as { userId?: string };
     return handleTestConnection(readBody(ctx,), config, auth.userId,);
+  },);
+
+  app.get(`${prefix}/generation/quota-state`, async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleQuotaState(database, auth.userId, auth.userRole,);
+  },);
+
+  app.post(`${prefix}/generation/quota/override`, async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleQuotaOverride(readBody(ctx,), database, auth.userId, auth.userRole,);
   },);
 
   return app;

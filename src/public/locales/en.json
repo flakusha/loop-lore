@@ -332,7 +332,14 @@
     "nsfwShadow": "Shadow-restricted",
     "nsfwConsentUnavailable": "Could not load NSFW consent state.",
     "templates": "Templates",
-    "contentLanguage": "Content language"
+    "contentLanguage": "Content language",
+    "quota": "Quota",
+    "quotaExhausted": "Quota exhausted.",
+    "quotaFallbackNote": "Requests fall back to the next provider or queue until the window resets.",
+    "quotaEmpty": "No provisioned resources yet.",
+    "quotaOver": "over quota",
+    "quotaOverride": "Reset window",
+    "quotaUnlimited": "unlimited"
   },
   "admin": {
     "title": "Administration",

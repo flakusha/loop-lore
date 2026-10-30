@@ -36,6 +36,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       await this.loadSettings();
       await this.loadNsfwConsent();
       await this.loadPendingRestart();
+      await this.loadQuotaState();
     },
 
     /**
