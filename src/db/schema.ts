@@ -241,4 +241,5 @@ export interface DB {
   assistant_quota_usage: import("./schema-core").AssistantQuotaUsage;
   immersion_failed_checks: import("./schema-core").ImmersionFailedChecks;
   immersion_decision_log: import("./schema-core").ImmersionDecisionLog;
+  chat_owners: import("./schema-core").ChatOwners;
 }

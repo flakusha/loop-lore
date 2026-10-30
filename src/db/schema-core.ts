@@ -2123,3 +2123,13 @@ export interface ImmersionDecisionLog {
   verdict: Generated<string>;
   created_at: Generated<string>;
 }
+
+// ── chat_owners ────────────────────────────────────────────
+export interface ChatOwners {
+  id: Generated<string>;
+  chat_id: string;
+  user_id: string;
+  granted_by: string | null;
+  granted_at: Generated<string>;
+  reason: string | null;
+}

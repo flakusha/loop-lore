@@ -60,7 +60,7 @@ Should be converted to proper enums with CHECK constraints:
 
 - **Users** — 1:N → Sessions, Actors (as `actor_type='user'`), Actors (as owner of `actor_type='character'`)
 - **Actors** — M:N → Chats (via `chat_participants`); 1:N → Messages, Assets, NpcStates, GenerationAttempts, ActorMemories, ActorNotes, ActorItems, ActorLoreEntries; M:N → Worlds (via `WorldLoreEntries`)
-- **Chats** — 1:N → Messages, Assets, GenerationAttempts, StoryTurns, QuestProgress, SyntheticData; M:N → Worlds (via `asset_links`)
+- **Chats** — 1:N → Messages, Assets, GenerationAttempts, StoryTurns, QuestProgress, SyntheticData; M:N → Worlds (via `asset_links`); M:N → Users (via `chat_owners`, migration 082 — the owner-authority set, backfilled from `chats.created_by`, which is retained as the append-only creator reference)
 - **Worlds** — 1:N → Items, Locations, Quests, WorldStates, NpcStates, LocationStates, SyntheticData
 - **Items** — 1:N → WorldItems (item instances in locations / carried by NPCs)
 - **Messages** — 1:N → Messages (self-referential via `parent_id` tree model), GenerationAttempts (via `parent_message_id`)

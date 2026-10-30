@@ -2204,6 +2204,14 @@ export const SCHEMA = new SchemaManifest()
     actor_id: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("chat_owners", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    chat_id: col("text", { notNull: true, },),
+    user_id: col("text", { notNull: true, },),
+    granted_by: col("text",),
+    granted_at: col("text", { notNull: true, hasDefault: true, },),
+    reason: col("text",),
+  },)
   .table("chat_participants", {
     chat_id: col("text", { notNull: true, },),
     actor_id: col("text", { notNull: true, },),
