@@ -6,6 +6,8 @@
 export const AUTH_DEFAULTS = {
   required: false,
   guestAccess: false,
+  guestReadLimit: 60,
+  guestReadWindowSec: 60,
   registrationOpen: true,
   sessionTimeoutHours: 24,
   maxSessionsPerUser: 10,
@@ -30,6 +32,10 @@ export class AuthSection {
    * validate (it is not part of the schema's `required` list).
    */
   guestAccess? = AUTH_DEFAULTS.guestAccess;
+  /** Per-IP guest read budget per sliding window. */
+  guestReadLimit? = AUTH_DEFAULTS.guestReadLimit;
+  /** Sliding-window length in seconds for the per-IP guest read budget. */
+  guestReadWindowSec? = AUTH_DEFAULTS.guestReadWindowSec;
   registrationOpen = AUTH_DEFAULTS.registrationOpen;
   sessionTimeoutHours = AUTH_DEFAULTS.sessionTimeoutHours;
   maxSessionsPerUser = AUTH_DEFAULTS.maxSessionsPerUser;
@@ -67,6 +73,17 @@ export const authMeta = {
       description: "Opt-in guest tier: unauthenticated visitors derive a read-mostly guest " +
         "context (no account, no session row) instead of a 401. Requires auth.required = true; " +
         "solo mode (auth.required = false) always yields the solo user.",
+    },
+    guestReadLimit: {
+      type: "integer",
+      default: AUTH_DEFAULTS.guestReadLimit,
+      description: "Per-IP budget of guest GET reads per guestReadWindowSec " +
+        "(sliding window; enforced by src/middleware/guest-rate-limit.ts).",
+    },
+    guestReadWindowSec: {
+      type: "integer",
+      default: AUTH_DEFAULTS.guestReadWindowSec,
+      description: "Sliding-window length in seconds for the per-IP guest read budget.",
     },
     registrationOpen: {
       type: "boolean",
