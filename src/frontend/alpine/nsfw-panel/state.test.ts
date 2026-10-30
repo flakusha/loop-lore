@@ -22,7 +22,6 @@ interface NsfwCtx {
   _nsfwIntimacy: unknown;
   _nsfwBody: unknown;
   _nsfwUnavailable: boolean;
-  _nsfwLoading: boolean;
   loadNsfwPanel: () => Promise<void>;
 }
 
@@ -33,7 +32,6 @@ function buildCtx(overrides?: Partial<NsfwCtx>,): NsfwCtx {
     _nsfwIntimacy: null,
     _nsfwBody: null,
     _nsfwUnavailable: false,
-    _nsfwLoading: false,
     loadNsfwPanel: async () => {},
     ...overrides,
   };
@@ -165,6 +163,6 @@ describeOrSkip("loadNsfwPanel", () => {
 
     expect(ctx._nsfwUnavailable,).toBe(false,);
     expect(ctx._nsfwIntimacy,).toBeNull();
-    expect(ctx._nsfwLoading,).toBe(false,);
+    expect(ctx._nsfwBody,).toBeNull();
   });
 },);
