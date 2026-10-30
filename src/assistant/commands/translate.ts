@@ -188,9 +188,9 @@ async function runTranslateCommand(args: string[], ctx: CommandContext,): Promis
  * Translate command registration.
  * @returns void
  */
-registerCommand("translate", runTranslateCommand,);
+registerCommand("translate", runTranslateCommand, { capabilities: ["network",], },);
 
 /** Alias: /tl → /translate */
-registerCommand("tl", runTranslateCommand,);
+registerCommand("tl", runTranslateCommand, { capabilities: ["network",], },);
 
 export { LANGUAGES, };

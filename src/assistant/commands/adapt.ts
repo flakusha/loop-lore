@@ -231,4 +231,7 @@ registerCommand("adapt", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
-}, { requiredRole: ChatParticipantRole.Owner, },);
+}, {
+  requiredRole: ChatParticipantRole.Owner,
+  capabilities: ["read-lore", "write-world", "write-character", "network", "cross-user",],
+},);

@@ -155,7 +155,7 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
       "Usage: `/battle [start|status|align <target> <player|enemy>|use <item> [target]|social <action> <target>|end]`",
     handled: true,
   };
-}, { requiredRole: ChatParticipantRole.Owner, },);
+}, { requiredRole: ChatParticipantRole.Owner, capabilities: ["write-world", "write-character",], },);
 
 /**
  * Set a roster combatant's battle side (`player` or `enemy`).

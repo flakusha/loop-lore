@@ -65,7 +65,7 @@ registerCommand("world-list", async (_args, ctx,): Promise<CommandResult> => {
     actionPayload: { worlds: rows, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-world", "cross-user",], },);
 
 registerCommand("world-get", async (args, ctx,): Promise<CommandResult> => {
   const worldId = args[0];
@@ -123,4 +123,4 @@ registerCommand("world-get", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { world, locations, lore, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-world", "read-lore", "cross-user",], },);

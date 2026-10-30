@@ -20,4 +20,4 @@ registerCommand("narrate", (args,): CommandResult => {
     action: "inject-narration",
     handled: true,
   };
-},);
+}, { capabilities: ["write-chat",], },);

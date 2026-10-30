@@ -45,4 +45,7 @@ const imageCommandHandler = (args: string[],): Promise<CommandResult> | CommandR
   };
 };
 
-registerCommand("image", imageCommandHandler, { available: resolveImageCommandAvailability(), },);
+registerCommand("image", imageCommandHandler, {
+  available: resolveImageCommandAvailability(),
+  capabilities: ["write-asset", "network",],
+},);

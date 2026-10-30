@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { mkdirSync, } from "node:fs";
+import fs from "node:fs";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { runOffloadPass, } from "./offload-pass";
@@ -79,7 +79,7 @@ export class OffloadDaemon {
     this.ttlMs = config.ttlMs ?? DEFAULT_TTL_MS;
     this.maxInlineBytes = getMaxInlineBytes(config.maxInlineBytes, asyncStoreConfig,);
     this.state = { rowCount: 0, lastWriteAt: Date.now(), eventLoopLagMs: 0, };
-    mkdirSync(offloadDir(), { recursive: true, },);
+    fs.mkdirSync(offloadDir(), { recursive: true, },);
   }
 
   /** Start the interval timer. No-op when already started. */

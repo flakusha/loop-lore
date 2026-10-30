@@ -17,7 +17,7 @@
  */
 
 import type { Kysely, } from "kysely";
-import { renameSync, rmSync, } from "node:fs";
+import fs from "node:fs";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import type { Logger, } from "../logger";
@@ -59,7 +59,7 @@ export function resetRotationEventCount(): void {
 function discardStagedAssets(staged: { tmpPath: string; finalPath: string }[],): void {
   for (const { tmpPath, } of staged) {
     try {
-      rmSync(tmpPath, { force: true, },);
+      fs.rmSync(tmpPath, { force: true, },);
     } catch (error) {
       log().warn("Failed to remove staged re-encrypt temp file", {
         tmpPath,
@@ -272,7 +272,7 @@ async function doRotate(
 
   // The key swap is committed and durable — now swap the file bytes in.
   for (const { tmpPath, finalPath, } of assetResult.staged) {
-    renameSync(tmpPath, finalPath,);
+    fs.renameSync(tmpPath, finalPath,);
   }
 
   await recordRotationAuditLeave(database, {

@@ -3,7 +3,7 @@
 
 import { Database, type SQLQueryBindings, } from "bun:sqlite";
 import { Kysely, SqliteDialect, } from "kysely";
-import { mkdirSync, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import { DATA_DIR, } from "../config/constants";
 import type { DB, } from "./schema";
@@ -142,7 +142,7 @@ export function getDatabase(_databasePath?: string,): Kysely<DB> {
   if (!database) {
     const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db",);
     // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
-    mkdirSync(path.dirname(dbPath,), { recursive: true, },);
+    fs.mkdirSync(path.dirname(dbPath,), { recursive: true, },);
     const sqlite = new Database(dbPath,);
     singletonSqlite = sqlite;
     database = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);

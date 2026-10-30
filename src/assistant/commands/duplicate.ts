@@ -134,4 +134,4 @@ registerCommand("duplicate", async (args, ctx,): Promise<CommandResult> => {
     },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-world", "write-character",], },);

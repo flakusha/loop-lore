@@ -124,6 +124,28 @@ describe("dispatchCommand", () => {
     const outcome = await dispatchCommand(db, config, userId, chatId, "/definitely-not-a-command",);
     expect(outcome.handled,).toBe(false,);
   });
+
+  it("denies a command the capability guard rejects, without running the handler", async () => {
+    let handlerRan = false;
+    // No capability declaration: the guard fails closed on an undeclared
+    // command, so the handler must never run.
+    registerCommand("guard-denied-probe", async () => {
+      handlerRan = true;
+      return { handled: true, systemMessage: "probe-ran", };
+    },);
+
+    const { db, chatId, userId, } = await setup();
+    const outcome = await dispatchCommand(db, config, userId, chatId, "/guard-denied-probe",);
+
+    expect(outcome.handled,).toBe(true,);
+    expect(handlerRan,).toBe(false,);
+    if (!outcome.handled) { throw new Error("the denial must be handled",); }
+    const body = await outcome.response.json() as Record<string, unknown>;
+    expect(body.command,).toBe("guard-denied-probe",);
+    expect(String(body.systemMessage,),).toContain("Permission denied",);
+    expect(body.action,).toBeNull();
+    expect(body.actionPayload,).toBeNull();
+  });
 });
 
 describe("invocation audit", () => {
@@ -213,7 +235,7 @@ describe("invocation audit", () => {
   it("still audits when the handler throws — the failure result is hashed", async () => {
     registerCommand("audit-throw-probe", async () => {
       throw new Error("probe failure",);
-    },);
+    }, { capabilities: ["read-chat",], },);
 
     const { db, chatId, userId, } = await setup();
     captureAudit();

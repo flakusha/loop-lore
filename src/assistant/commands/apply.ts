@@ -120,4 +120,4 @@ registerCommand("apply", async (args, ctx,): Promise<CommandResult> => {
     },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-world", "write-character", "cross-user",], },);

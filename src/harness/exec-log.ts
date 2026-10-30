@@ -12,7 +12,7 @@
  * Every write is best-effort. A run must never fail because its log line did
  * not land, so failures are swallowed after one warn per process.
  */
-import { appendFileSync, mkdirSync, } from "node:fs";
+import fs from "node:fs";
 import { dirname, } from "node:path";
 import { getLogger, } from "../logger";
 import { safeJsonStringify, } from "../utils";
@@ -74,13 +74,13 @@ export function appendExecLog(record: HarnessRunRecord,): void {
   const path = getExecLogPath();
   if (path === null) { return; }
   try {
-    mkdirSync(dirname(path,), { recursive: true, },);
+    fs.mkdirSync(dirname(path,), { recursive: true, },);
     // A record with a circular/unserializable field must drop the line, not
     // write a truncated one: a torn line would break every later reader that
     // greps the log. safeJsonStringify reports the failure instead of throwing.
     const encoded = safeJsonStringify(serializeRun(record,),);
     if (!encoded.ok) { throw encoded.error; }
-    appendFileSync(path, `${encoded.value}\n`, "utf8",);
+    fs.appendFileSync(path, `${encoded.value}\n`, "utf8",);
   } catch (error) {
     // Everything below is best-effort reporting of a best-effort write. The
     // warn is wrapped because `getLogger()` itself throws when the root logger

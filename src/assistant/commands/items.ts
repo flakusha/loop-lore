@@ -56,7 +56,7 @@ registerCommand("item-list", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { worldId, items: defs, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-world",], },);
 
 registerCommand("item-get", async (args, ctx,): Promise<CommandResult> => {
   const itemId = args[0];
@@ -121,7 +121,7 @@ registerCommand("item-get", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { item: def, instances, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-world",], },);
 
 registerCommand("inventory", async (args, ctx,): Promise<CommandResult> => {
   const charId = args[0] ?? ctx.currentCharacter?.id;
@@ -165,4 +165,4 @@ registerCommand("inventory", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { worldId, charId, items: carried, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-world", "read-character",], },);

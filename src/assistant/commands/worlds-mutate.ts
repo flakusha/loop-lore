@@ -152,7 +152,7 @@ registerCommand("world-update", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { worldId, updates: parsed.updates, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-world", "cross-user",], },);
 
 registerCommand("world-delete", async (args, ctx,): Promise<CommandResult> => {
   const worldId = args[0];
@@ -206,4 +206,4 @@ registerCommand("world-delete", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { worldId, cascade, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["delete-world", "irreversible", "destructive", "cross-user",], },);

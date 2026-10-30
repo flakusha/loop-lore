@@ -150,7 +150,7 @@ registerCommand("import", async (args, ctx,): Promise<CommandResult> => {
     },
     handled: true,
   };
-}, { requiredRole: ChatParticipantRole.Member, },);
+}, { requiredRole: ChatParticipantRole.Member, capabilities: ["read-asset", "write-character", "cross-user",], },);
 
 // ── /add <kind> <name> [world] [extras] ──────────────────────
 
@@ -246,4 +246,4 @@ registerCommand("add", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { kind, worldId, name, fields: parsed.patch, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-world", "cross-user",], },);

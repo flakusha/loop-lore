@@ -199,7 +199,7 @@ registerCommand("rewrite", async (args, ctx,): Promise<CommandResult> => {
   } catch {
     return runRewrite(args, ctx, { apply: buildApply(ctx, db, config,), },);
   }
-},);
+}, { capabilities: ["write-chat", "network",], },);
 
 /**
  * Local fallback: trim whitespace, style-based transforms, sentence punctuation.

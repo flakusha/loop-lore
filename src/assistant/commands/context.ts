@@ -20,4 +20,4 @@ registerCommand("context", (_args, ctx,): CommandResult => {
   ];
 
   return { systemMessage: lines.join("\n",), handled: true, };
-},);
+}, { capabilities: ["read-chat", "read-character",], },);

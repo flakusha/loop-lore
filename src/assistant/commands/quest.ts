@@ -207,4 +207,4 @@ registerCommand("quest", async (args, ctx,): Promise<CommandResult> => {
       };
     }
   }
-},);
+}, { capabilities: ["write-world", "write-character", "cross-user",], },);

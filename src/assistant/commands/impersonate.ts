@@ -45,8 +45,8 @@ registerCommand("impersonate", (args,): CommandResult => {
     args,
     "Usage: /impersonate <character_name> — play as a character. /impersonate off — stop impersonating.",
   );
-},);
+}, { capabilities: ["write-chat", "read-character",], },);
 
 registerCommand("char", (args,): CommandResult => {
   return buildImpersonateResult(args, "Usage: /char <character_name> — alias for /impersonate. /char off — stop.",);
-},);
+}, { capabilities: ["write-chat", "read-character",], },);

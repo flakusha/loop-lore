@@ -166,7 +166,7 @@ registerCommand("roll", async (args, ctx,): Promise<CommandResult> => {
     systemMessage: handleRollCommand(args,),
     handled: true,
   };
-},);
+}, { capabilities: ["read-world",], },);
 
 registerCommand("dice", async (args, ctx,): Promise<CommandResult> => {
   const denial = await checkCommandMechanic(ctx.db, ctx.activeChat?.worldId, RpgMechanic.Dice,);
@@ -175,4 +175,4 @@ registerCommand("dice", async (args, ctx,): Promise<CommandResult> => {
     systemMessage: handleRollCommand(args,),
     handled: true,
   };
-},);
+}, { capabilities: ["read-world",], },);

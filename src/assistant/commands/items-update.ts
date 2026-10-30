@@ -166,4 +166,4 @@ registerCommand("item-update", async (args, ctx,): Promise<CommandResult> => {
     },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-world", "cross-user",], },);

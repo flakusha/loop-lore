@@ -4,7 +4,7 @@
 /**
  * Asset Service — local filesystem helpers
  */
-import { existsSync, mkdirSync, unlinkSync, writeFileSync, } from "node:fs";
+import fs from "node:fs";
 import { join, resolve, } from "node:path";
 
 /**
@@ -55,7 +55,7 @@ export function storeFile(uploadDir: string, assetId: string, filename: string, 
   const root = resolveUploadDir(uploadDir,);
   const subDir = `${assetId.slice(0, 2,)}/${assetId.slice(2, 4,)}`;
   const fullDir = join(root, "raw", subDir,);
-  mkdirSync(fullDir, { recursive: true, },);
+  fs.mkdirSync(fullDir, { recursive: true, },);
 
   // Preserve a sanitized extension only: basename (no separators), then a
   // strict charset/length whitelist. A raw filename like "../../evil" or
@@ -72,7 +72,7 @@ export function storeFile(uploadDir: string, assetId: string, filename: string, 
     throw new Error(`Refusing to write outside upload dir: ${target}`,);
   }
 
-  writeFileSync(target, buffer,);
+  fs.writeFileSync(target, buffer,);
   return storagePath;
 }
 
@@ -93,7 +93,7 @@ export function deleteFile(uploadDir: string, storagePath: string,): void {
     throw new Error(`Refusing to delete outside upload dir: ${fullPath}`,);
   }
 
-  if (existsSync(fullPath,)) { unlinkSync(fullPath,); }
+  if (fs.existsSync(fullPath,)) { fs.unlinkSync(fullPath,); }
 }
 
 /**

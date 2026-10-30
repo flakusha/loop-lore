@@ -179,7 +179,9 @@ const runInteraction = async (
 };
 
 for (const definition of Object.values(INTERACTION_COMMANDS,)) {
-  registerCommand(definition.command, (args, ctx,) => runInteraction(definition, args, ctx,),);
+  registerCommand(definition.command, (args, ctx,) => runInteraction(definition, args, ctx,), {
+    capabilities: ["write-world", "write-character", "cross-user",],
+  },);
 }
 
 export { applyRelationshipRipple, getRelationshipModifiers, resolveTargetActor, runInteraction, };

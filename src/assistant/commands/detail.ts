@@ -22,4 +22,4 @@ registerCommand("detail", (args,): CommandResult => {
     actionPayload: { level, },
     handled: true,
   };
-},);
+}, { capabilities: ["write-chat",], },);

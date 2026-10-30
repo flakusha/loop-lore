@@ -237,4 +237,7 @@ registerCommand("workflow", async (args, ctx,): Promise<CommandResult> => {
 
   if (sub === "confirm") { return confirmSession(session, ctx,); }
   return { systemMessage: formatWorkflowProgress(session,), handled: true, };
-}, { requiredRole: ChatParticipantRole.Member, },);
+}, {
+  requiredRole: ChatParticipantRole.Member,
+  capabilities: ["write-chat", "read-lore", "write-world", "write-character", "write-lore", "network",],
+},);

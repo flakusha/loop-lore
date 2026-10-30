@@ -14,4 +14,4 @@ registerCommand("debug", (): CommandResult => {
     action: "toggle-debug-view",
     handled: true,
   };
-}, { requiredRole: ChatParticipantRole.Owner, },);
+}, { requiredRole: ChatParticipantRole.Owner, capabilities: ["read-chat",], },);

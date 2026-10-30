@@ -310,4 +310,4 @@ registerCommand("modify", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
-}, { requiredRole: ChatParticipantRole.Owner, },);
+}, { requiredRole: ChatParticipantRole.Owner, capabilities: ["write-world", "write-character", "network",], },);

@@ -94,7 +94,7 @@ registerCommand("heal", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
-}, { requiredRole: ChatParticipantRole.Owner, },);
+}, { requiredRole: ChatParticipantRole.Owner, capabilities: ["write-world",], },);
 
 /**
  * Parse a non-negative integer, or null when absent/invalid.

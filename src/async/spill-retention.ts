@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { readdirSync, rmdirSync, statSync, unlinkSync, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
@@ -19,7 +19,7 @@ import { spillRootDir, } from "./spill";
 function collectSpillFiles(dir: string,): string[] {
   let names: string[];
   try {
-    names = readdirSync(dir,);
+    names = fs.readdirSync(dir,);
   } catch {
     return []; // no spill dir yet — nothing to sweep
   }
@@ -34,8 +34,8 @@ function collectSpillFiles(dir: string,): string[] {
 
     let inner: string[];
     try {
-      if (!statSync(entry,).isDirectory()) { continue; }
-      inner = readdirSync(entry,);
+      if (!fs.statSync(entry,).isDirectory()) { continue; }
+      inner = fs.readdirSync(entry,);
     } catch {
       continue;
     }
@@ -62,7 +62,7 @@ function collectSpillFiles(dir: string,): string[] {
 function removeEmptyNamespaces(dir: string,): void {
   let names: string[];
   try {
-    names = readdirSync(dir,);
+    names = fs.readdirSync(dir,);
   } catch {
     return;
   }
@@ -70,9 +70,9 @@ function removeEmptyNamespaces(dir: string,): void {
   for (const name of names) {
     const child = path.join(dir, name,);
     try {
-      if (!statSync(child,).isDirectory()) { continue; }
-      if (readdirSync(child,).length > 0) { continue; }
-      rmdirSync(child,);
+      if (!fs.statSync(child,).isDirectory()) { continue; }
+      if (fs.readdirSync(child,).length > 0) { continue; }
+      fs.rmdirSync(child,);
     } catch { /* a sibling sweep already took it — nothing left to clean */ }
   }
 }
@@ -111,7 +111,7 @@ export async function pruneOrphanSpills(
   for (const filePath of found) {
     let mtimeMs: number;
     try {
-      mtimeMs = statSync(filePath,).mtimeMs;
+      mtimeMs = fs.statSync(filePath,).mtimeMs;
     } catch {
       /* raced with another writer/sweeper */ continue;
     }
@@ -146,7 +146,7 @@ export async function pruneOrphanSpills(
   for (const filePath of candidates) {
     if (referenced.has(filePath,)) { continue; }
     try {
-      unlinkSync(filePath,);
+      fs.unlinkSync(filePath,);
       pruned++;
     } catch { /* raced with another writer — keep going */ }
   }

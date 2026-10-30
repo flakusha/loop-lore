@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
+import fs from "node:fs";
 import { extname, join, } from "node:path";
 import { brotliCompressSync, gzipSync, } from "node:zlib";
 import { safeFromString, } from "../utils/safe-buffer";
@@ -15,9 +15,9 @@ const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg",],);
  * @returns string
  */
 export function copyDirectory(sourceDir: string, destDir: string,): void {
-  if (!existsSync(sourceDir,)) { return; }
+  if (!fs.existsSync(sourceDir,)) { return; }
 
-  const sourceDirEntries = readdirSync(sourceDir, { withFileTypes: true, },);
+  const sourceDirEntries = fs.readdirSync(sourceDir, { withFileTypes: true, },);
   for (const entry of sourceDirEntries) {
     const srcPath = join(sourceDir, entry.name,);
     const destPath = join(destDir, entry.name,);
@@ -25,8 +25,8 @@ export function copyDirectory(sourceDir: string, destDir: string,): void {
     if (entry.isDirectory()) {
       copyDirectory(srcPath, destPath,);
     } else if (entry.isFile()) {
-      mkdirSync(join(destPath, "..",), { recursive: true, },);
-      copyFileSync(srcPath, destPath,);
+      fs.mkdirSync(join(destPath, "..",), { recursive: true, },);
+      fs.copyFileSync(srcPath, destPath,);
     }
   }
 }
@@ -37,7 +37,7 @@ export function copyDirectory(sourceDir: string, destDir: string,): void {
  */
 export function walkDirectory(directory: string,): string[] {
   const files: string[] = [];
-  const entries = readdirSync(directory, { withFileTypes: true, },);
+  const entries = fs.readdirSync(directory, { withFileTypes: true, },);
 
   for (const entry of entries) {
     const full = join(directory, entry.name,);
@@ -57,11 +57,11 @@ export function walkDirectory(directory: string,): string[] {
  * @returns void
  */
 function _setupStaticDirectory(sourceDirectory: string, destinationDirectory: string,): void {
-  if (!existsSync(destinationDirectory,)) {
-    mkdirSync(destinationDirectory, { recursive: true, },);
+  if (!fs.existsSync(destinationDirectory,)) {
+    fs.mkdirSync(destinationDirectory, { recursive: true, },);
   }
 
-  const entries = readdirSync(sourceDirectory, { withFileTypes: true, },);
+  const entries = fs.readdirSync(sourceDirectory, { withFileTypes: true, },);
 
   for (const entry of entries) {
     const sourcePath = join(sourceDirectory, entry.name,);
@@ -70,7 +70,7 @@ function _setupStaticDirectory(sourceDirectory: string, destinationDirectory: st
     if (entry.isDirectory()) {
       _setupStaticDirectory(sourcePath, destinationPath,);
     } else if (entry.isFile()) {
-      copyFileSync(sourcePath, destinationPath,);
+      fs.copyFileSync(sourcePath, destinationPath,);
     }
   }
 }
@@ -107,7 +107,7 @@ async function _getMinimizedContent(content: string, extension: string,): Promis
  * @returns {Promise<void>}
  */
 export async function compressFile(filePath: string,): Promise<void> {
-  const content = readFileSync(filePath, "utf8",);
+  const content = fs.readFileSync(filePath, "utf8",);
   const extension = extname(filePath,);
   const minimized = await _getMinimizedContent(content, extension,);
 
@@ -116,21 +116,21 @@ export async function compressFile(filePath: string,): Promise<void> {
   const buffer = bufResult.buffer;
 
   if (minimized.length < content.length) {
-    writeFileSync(filePath, minimized, "utf8",);
+    fs.writeFileSync(filePath, minimized, "utf8",);
   }
 
   const gz = gzipSync(buffer,);
-  writeFileSync(`${filePath}.gz`, gz,);
+  fs.writeFileSync(`${filePath}.gz`, gz,);
 
   // zstd compression via Bun runtime (type-safe wrapper)
   const bun = Bun as { zstdCompressSync?: (data: Buffer,) => Buffer };
   const zstdFn = bun.zstdCompressSync;
   if (zstdFn) {
-    writeFileSync(`${filePath}.zst`, zstdFn(buffer,),);
+    fs.writeFileSync(`${filePath}.zst`, zstdFn(buffer,),);
   }
 
   const br = brotliCompressSync(buffer,);
-  writeFileSync(`${filePath}.br`, br,);
+  fs.writeFileSync(`${filePath}.br`, br,);
 }
 
 /**
@@ -147,7 +147,7 @@ export async function compressAssets(
   originalBytes: number;
   compressedBytes: Record<string, number>;
 }> {
-  if (!existsSync(destinationDirectory,)) {
+  if (!fs.existsSync(destinationDirectory,)) {
     _setupStaticDirectory(sourceDirectory, destinationDirectory,);
   }
 
@@ -158,15 +158,15 @@ export async function compressAssets(
   const zstdFn = bun.zstdCompressSync;
 
   for (const file of files) {
-    const stat = readFileSync(file,);
+    const stat = fs.readFileSync(file,);
     originalBytes += stat.length;
     await compressFile(file,);
-    compressedBytes.gz += readFileSync(`${file}.gz`, { encoding: null, },).length;
+    compressedBytes.gz += fs.readFileSync(`${file}.gz`, { encoding: null, },).length;
     if (zstdFn) {
-      compressedBytes.zst += readFileSync(`${file}.zst`, { encoding: null, },).length;
+      compressedBytes.zst += fs.readFileSync(`${file}.zst`, { encoding: null, },).length;
     }
 
-    compressedBytes.br += readFileSync(`${file}.br`, { encoding: null, },).length;
+    compressedBytes.br += fs.readFileSync(`${file}.br`, { encoding: null, },).length;
   }
 
   return { total: files.length, compressed: files.length, originalBytes, compressedBytes, };

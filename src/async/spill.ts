@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { createHash, } from "node:crypto";
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import { gunzipSync, gzipSync, } from "node:zlib";
 import { safeFromString, } from "../utils/safe-buffer";
@@ -125,12 +125,12 @@ export async function spill(id: string, body: string,): Promise<string> {
   // given directory at most once, and `recursive` recreates it. Only ENOENT
   // retries: ENOSPC/EACCES must surface rather than masquerade as a race.
   try {
-    mkdirSync(spillDir, { recursive: true, },);
-    writeFileSync(filePath, compressed,);
+    fs.mkdirSync(spillDir, { recursive: true, },);
+    fs.writeFileSync(filePath, compressed,);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") { throw error; }
-    mkdirSync(spillDir, { recursive: true, },);
-    writeFileSync(filePath, compressed,);
+    fs.mkdirSync(spillDir, { recursive: true, },);
+    fs.writeFileSync(filePath, compressed,);
   }
 
   return filePath;
@@ -143,8 +143,8 @@ export async function spill(id: string, body: string,): Promise<string> {
  */
 export function readOffloadedBody(filePath: string,): string | null {
   try {
-    if (!existsSync(filePath,)) { return null; }
-    const compressed = readFileSync(filePath,);
+    if (!fs.existsSync(filePath,)) { return null; }
+    const compressed = fs.readFileSync(filePath,);
     return gunzipSync(compressed,).toString("utf8",);
   } catch {
     return null;
@@ -157,7 +157,7 @@ export function readOffloadedBody(filePath: string,): string | null {
  * @returns `true` when the file for that id exists in the process spill namespace.
  */
 export function offloadExists(id: string,): boolean {
-  return existsSync(path.join(spillDir, `${spillFileStem(id,)}.json.gz`,),);
+  return fs.existsSync(path.join(spillDir, `${spillFileStem(id,)}.json.gz`,),);
 }
 
 /**
@@ -165,14 +165,14 @@ export function offloadExists(id: string,): boolean {
  * @returns sum of `*.json.gz` file sizes in the process spill namespace, or `0` when the directory does not exist.
  */
 export function offloadDiskBytes(): number {
-  if (!existsSync(spillDir,)) { return 0; }
+  if (!fs.existsSync(spillDir,)) { return 0; }
   // Bun's `Glob` is overkill; a flat scan is fine for one process namespace
   // (only `*.json.gz` files directly inside it; no recursion).
   let total = 0;
-  for (const name of readdirSync(spillDir,)) {
+  for (const name of fs.readdirSync(spillDir,)) {
     if (!name.endsWith(".json.gz",)) { continue; }
     try {
-      total += statSync(path.join(spillDir, name,),).size;
+      total += fs.statSync(path.join(spillDir, name,),).size;
     } catch { /* raced with another writer */ }
   }
 

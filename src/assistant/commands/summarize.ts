@@ -155,8 +155,8 @@ function resolveAndSummarize(args: string[], ctx: CommandContext,): CommandResul
 
 registerCommand("summarize", (args, ctx,): CommandResult | Promise<CommandResult> => {
   return resolveAndSummarize(args, ctx,);
-},);
+}, { capabilities: ["read-chat", "network",], },);
 
 registerCommand("sum", (args, ctx,): CommandResult | Promise<CommandResult> => {
   return resolveAndSummarize(args, ctx,);
-},);
+}, { capabilities: ["read-chat", "network",], },);

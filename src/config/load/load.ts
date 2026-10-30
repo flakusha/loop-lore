@@ -3,7 +3,7 @@
 
 // src/config/load/load.ts — Config load pipeline
 
-import { readFileSync, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import { findMainRepoRoot, } from "../../utils/git-worktree";
 import type { Config, } from "../schema";
@@ -41,7 +41,7 @@ export function loadConfig(cwd?: string,): Config {
   const defaultFound = findConfigFile(directory, DEFAULT_CONFIG_FILES,);
   if (defaultFound) {
     try {
-      const content = readFileSync(defaultFound.path, "utf8",);
+      const content = fs.readFileSync(defaultFound.path, "utf8",);
       const parsed = parseFileContent(content, defaultFound.ext,);
       config = deepMerge(config, parsed,);
     } catch (error) {
@@ -56,7 +56,7 @@ export function loadConfig(cwd?: string,): Config {
   const mainFound = findConfigFile(directory,);
   if (mainFound) {
     try {
-      const content = readFileSync(mainFound.path, "utf8",);
+      const content = fs.readFileSync(mainFound.path, "utf8",);
       const parsed = parseFileContent(content, mainFound.ext,);
       config = deepMerge(config, parsed,);
     } catch (error) {
@@ -75,7 +75,7 @@ export function loadConfig(cwd?: string,): Config {
   const localFound = findConfigFile(directory, LOCAL_CONFIG_FILES,);
   if (localFound) {
     try {
-      const content = readFileSync(localFound.path, "utf8",);
+      const content = fs.readFileSync(localFound.path, "utf8",);
       const parsed = parseFileContent(content, localFound.ext,);
       config = deepMerge(config, parsed,);
     } catch (error) {
@@ -108,7 +108,7 @@ export function loadConfig(cwd?: string,): Config {
   if (envConfigPath) {
     const ext = envConfigPath.split(".",).pop() as string;
     try {
-      const content = readFileSync(envConfigPath, "utf8",);
+      const content = fs.readFileSync(envConfigPath, "utf8",);
       const parsed = parseFileContent(content, ext,);
       // Flat ENV_MAP-style keys (TELEMETRY_PII_SECRET, ...) hoist to their
       // nested config paths; explicit nested keys in the same file win.

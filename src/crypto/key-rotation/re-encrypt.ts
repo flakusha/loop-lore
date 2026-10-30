@@ -18,7 +18,7 @@
  * explicit old+new keys to correctly handle key rotation.
  */
 import type { Kysely, } from "kysely";
-import { readFileSync, writeFileSync, } from "node:fs";
+import fs from "node:fs";
 import { getAssetFilePath, } from "../../assets/service/file-system";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
@@ -200,7 +200,7 @@ export async function reEncryptChatAssets(
     const filePath = getAssetFilePath(uploadDir, asset.storage_path,);
     let buffer: Buffer;
     try {
-      buffer = readFileSync(filePath,);
+      buffer = fs.readFileSync(filePath,);
     } catch (err) {
       failures.push({ id: asset.id, reason: `read failed: ${(err as Error).message}`, },);
       continue;
@@ -225,7 +225,7 @@ export async function reEncryptChatAssets(
         // ciphertext on disk under the old key
         // (BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans).
         const tmpPath = `${filePath}.reenc-${asset.id}.tmp`;
-        writeFileSync(tmpPath, result.data,);
+        fs.writeFileSync(tmpPath, result.data,);
         staged.push({ tmpPath, finalPath: filePath, },);
         reEncrypted++;
       }

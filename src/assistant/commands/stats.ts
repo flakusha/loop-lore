@@ -49,7 +49,7 @@ registerCommand("stats", async (_args, ctx,): Promise<CommandResult> => {
     actionPayload: { characterId: resolved.characterId, stats, },
     handled: true,
   };
-},);
+}, { capabilities: ["read-character",], },);
 
 interface ResolvedStatCharacter {
   characterId: string | null;

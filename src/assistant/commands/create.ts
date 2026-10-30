@@ -255,4 +255,7 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
 
   const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
   return runCreateGeneration(args, ctx, (req,) => resolved.provider.complete(req,), resolved.resolvedModel,);
-}, { requiredRole: ChatParticipantRole.Owner, },);
+}, {
+  requiredRole: ChatParticipantRole.Owner,
+  capabilities: ["write-world", "write-character", "write-lore", "network",],
+},);

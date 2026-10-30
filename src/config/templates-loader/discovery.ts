@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import { findMainRepoRoot, } from "../../utils/git-worktree";
 import type { TemplatesConfig, } from "../sections/templates";
@@ -49,14 +49,14 @@ export function findTemplateFiles(cwd: string,): Map<string, string> {
   const found = new Map<string, string>();
 
   for (const dir of searchDirs) {
-    if (!existsSync(dir,) || !statSync(dir,).isDirectory()) { continue; }
+    if (!fs.existsSync(dir,) || !fs.statSync(dir,).isDirectory()) { continue; }
 
     for (const [filename, domain,] of Object.entries(TEMPLATE_FILES,)) {
       if (found.has(domain,)) { continue; // first match wins
        }
 
       const fullPath = path.join(dir, filename,);
-      if (existsSync(fullPath,)) {
+      if (fs.existsSync(fullPath,)) {
         found.set(domain, fullPath,);
       }
     }
@@ -98,8 +98,8 @@ export function findWorkflowFiles(cwd: string,): string[] {
   const found: string[] = [];
   const seen: Record<string, true> = {};
   for (const dir of searchDirs) {
-    if (!existsSync(dir,) || !statSync(dir,).isDirectory()) { continue; }
-    for (const name of readdirSync(dir,).sort()) {
+    if (!fs.existsSync(dir,) || !fs.statSync(dir,).isDirectory()) { continue; }
+    for (const name of fs.readdirSync(dir,).sort()) {
       if (!WORKFLOW_EXTENSIONS.some((ext,) => name.endsWith(ext,))) { continue; }
       const fullPath = path.join(dir, name,);
       if (seen[fullPath]) { continue; }
@@ -145,8 +145,8 @@ export function findClassifierFiles(cwd: string,): string[] {
   const found: string[] = [];
   const seen: Record<string, true> = {};
   for (const dir of searchDirs) {
-    if (!existsSync(dir,) || !statSync(dir,).isDirectory()) { continue; }
-    for (const name of readdirSync(dir,).sort()) {
+    if (!fs.existsSync(dir,) || !fs.statSync(dir,).isDirectory()) { continue; }
+    for (const name of fs.readdirSync(dir,).sort()) {
       if (!CLASSIFIER_EXTENSIONS.some((ext,) => name.endsWith(ext,))) { continue; }
       if (name.includes(".example.",)) { continue; } // docs-only, never live
       const fullPath = path.join(dir, name,);
@@ -166,7 +166,7 @@ export function findClassifierFiles(cwd: string,): string[] {
  * @returns void
  */
 export function parseTemplateFile(filePath: string,): Record<string, unknown> {
-  const content = readFileSync(filePath, "utf8",);
+  const content = fs.readFileSync(filePath, "utf8",);
   const ext = path.extname(filePath,).slice(1,);
   if (ext === "toml") {
     return Bun.TOML.parse(content,) as Record<string, unknown>;

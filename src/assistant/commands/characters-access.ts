@@ -66,7 +66,7 @@ registerCommand("char-list", async (_args, ctx,): Promise<CommandResult> => {
     systemMessage: `**Your characters (${rows.length}):**\n\n${list}`,
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-character",], },);
 
 registerCommand("char-get", async (args, ctx,): Promise<CommandResult> => {
   const charId = args[0];
@@ -137,4 +137,4 @@ registerCommand("char-get", async (args, ctx,): Promise<CommandResult> => {
     ].filter(Boolean,).join("\n",),
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-character", "read-lore",], },);

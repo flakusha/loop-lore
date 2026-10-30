@@ -109,4 +109,4 @@ registerCommand("rag-preview", async (args, ctx,): Promise<CommandResult> => {
   ].filter((l,) => l !== "");
 
   return { systemMessage: lines.join("\n",), handled: true, };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["read-lore", "cross-user",], },);

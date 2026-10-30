@@ -101,4 +101,4 @@ registerCommand("clone", async (args, ctx,): Promise<CommandResult> => {
     actionPayload: { kind, sourceId, name: newName, worldId, fields, },
     handled: true,
   };
-}, { requiredRole: "member", },);
+}, { requiredRole: "member", capabilities: ["write-world",], },);

@@ -248,4 +248,5 @@ export interface DB {
   backup_records: import("./schema-core").BackupRecords;
   resource_quota_counters: import("./schema-core").ResourceQuotaCounters;
   world_timeline_selections: import("./schema-core").WorldTimelineSelections;
+  tool_call_audit: import("./schema-core").ToolCallAudit;
 }
