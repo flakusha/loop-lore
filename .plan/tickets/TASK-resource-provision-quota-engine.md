@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** medium
 **Epic:** epic-resource-provision
@@ -74,3 +74,5 @@ interface QuotaSnapshot {
 - [ ] Unit tests: window reset, cumulative persistence, optimistic
   consumption, concurrent call accounting, boundary resets
 - [ ] `bun run check` green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue f0b8556 (registry tip: b103ce90e Konstantin Fedotov Close issue)
