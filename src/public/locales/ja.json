@@ -795,8 +795,6 @@
     "tradeCreate": "Create offer",
     "tradeOfferPrice": "Offer price (Gold)",
     "tradeCounterPrice": "Counter price (Gold)",
-"// keep both
-// hint: Logic changed on both sides. Requires understanding intent of each change.
     "inventoryTitle": "Inventory",
     "inventoryActor": "Actor id",
     "inventoryViewList": "List view",
@@ -832,7 +830,7 @@
     "npcBuy": "Buy selected",
     "npcSell": "Sell selected",
     "npcConfirm": "Confirm all",
-    "npcClear": "Clear selection"
+    "npcClear": "Clear selection",
     "loreRarity": "Rarity",
     "loreTimelineId": "Timeline",
     "loreTimelineIdPlaceholder": "timeline slug (empty = every timeline)",
