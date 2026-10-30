@@ -27,12 +27,13 @@ const viewCache = new Map<string, string>();
  * booted server (frontend template preflight), and a per-request read would
  * re-run template expansion on every page render.
  */
-let editorBootstrapCache: { scheme: string; fileRoot: string } | null = null;
+let editorBootstrapCache: { scheme: string; fileRoot: string; terminalEnabled: boolean } | null = null;
 
-function editorBootstrap(): { scheme: string; fileRoot: string } {
+function editorBootstrap(): { scheme: string; fileRoot: string; terminalEnabled: boolean } {
   editorBootstrapCache ??= {
     scheme: loadConfig().web.editor,
     fileRoot: resolve(VIEWS_DIR, "..", "..",),
+    terminalEnabled: loadConfig().web.terminal.enabled,
   };
 
   return editorBootstrapCache;
@@ -96,6 +97,9 @@ function wrapWithLayout(
     "{{editorFileRoot}}",
     () => escapeJsonForScript(jsonStringifyOr(editorBootstrap().fileRoot, '""',),),
   );
+
+  // Approach-B terminal flag: plain boolean, no </script> breakout surface.
+  layout = layout.replace("{{webTerminalEnabled}}", () => (editorBootstrap().terminalEnabled ? "true" : "false"),);
 
   layout = layout.replace("{{docsNav}}", () => (isDocsServed() ? DOCS_NAV_HTML : ""),);
   // Both land in an inline <script> block (views/layout.html), so they get the

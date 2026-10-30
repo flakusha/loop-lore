@@ -32,6 +32,8 @@
     <link rel="stylesheet" href="/css/vn.css" media="all" />
     <link rel="stylesheet" href="/css/story.css" media="all" />
     <link rel="stylesheet" href="/css/components/info-bubble.css" media="all" />
+    <link rel="stylesheet" href="/css/components/terminal-panel.css" media="all" />
+    <link rel="stylesheet" href="/css/xterm.css" media="all" />
     <link rel="stylesheet" href="/css/mobile-keynav.css" media="all" />
 
     <!-- Responsive layer (TASK-responsive-design) — must stay LAST:
@@ -54,6 +56,7 @@
       globalThis.__TELEMETRY_FRONTEND_ENABLED = {{telemetryEnabled}};
       globalThis.__EDITOR__ = {{editorScheme}};
       globalThis.__EDITOR_FILE_ROOT__ = {{editorFileRoot}};
+      globalThis.__WEB_TERMINAL_ENABLED__ = {{webTerminalEnabled}};
     </script>
     <script nonce="{{cspNonce}}">
       globalThis.__USER_ID = {{userId}}; globalThis.__SESSION_ID = {{sessionId}};
@@ -65,6 +68,36 @@
   <body x-data="app()">
     <!-- Toast container (fixed, outside layout) -->
     <div class="toast-container" id="toast-container" data-testid="toast-container" aria-live="polite" aria-atomic="false" role="region" aria-label="Notifications"></div>
+
+    <!-- Browser PTY terminal panel (epic-browser-editor-support, approach B).
+         Hidden until an approach-A anchor (or openWebTerminal) opens it; xterm
+         itself is code-split and only loaded on first open. -->
+    <div
+      id="terminal-panel"
+      x-data="terminalPanel()"
+      x-show="open"
+      x-cloak
+      class="terminal-panel-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-label="{{{t("common.terminalTitle")}}}"
+      data-testid="terminal-panel"
+    >
+      <div class="terminal-panel">
+        <header class="terminal-panel-header">
+          <span class="terminal-panel-path" x-text="filePath"></span>
+          <span class="terminal-panel-status" x-text="status"></span>
+          <button
+            type="button"
+            class="btn-icon"
+            x-on:click="closePanel()"
+            aria-label="{{{t("common.closeTerminal")}}}"
+            data-testid="terminal-panel-close"
+          >&times;</button>
+        </header>
+        <div id="terminal-panel-body" class="terminal-panel-body" data-testid="terminal-panel-body"></div>
+      </div>
+    </div>
 
     <!-- Skip to content (first focusable element for keyboard users) -->
     <a class="skip-to-content" href="#app-root" data-testid="skip-to-content">{{{t("accessibility.skipToContent")}}}</a>

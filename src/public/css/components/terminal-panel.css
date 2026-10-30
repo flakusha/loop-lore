@@ -1,0 +1,57 @@
+/*
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ * SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+ */
+
+/* Browser PTY terminal panel (epic-browser-editor-support, approach B).
+ * Chrome only — xterm's own rules live in /css/xterm.css (vendored). */
+
+.terminal-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 55%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+}
+
+.terminal-panel {
+  width: min(920px, 92vw);
+  height: min(640px, 84vh);
+  display: flex;
+  flex-direction: column;
+  background: #1b1b1f;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.terminal-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: rgb(255 255 255 / 5%);
+  font-size: 0.8rem;
+  color: inherit;
+}
+
+.terminal-panel-path {
+  font-family: var(--font-mono, monospace);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.terminal-panel-status {
+  opacity: 0.7;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.terminal-panel-body {
+  flex: 1;
+  min-height: 0;
+  padding: 0.25rem;
+}

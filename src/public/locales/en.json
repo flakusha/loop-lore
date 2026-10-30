@@ -1,6 +1,8 @@
 {
   "common": {
     "openInEditor": "Open in $EDITOR",
+    "terminalTitle": "Terminal editor",
+    "closeTerminal": "Close terminal",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
