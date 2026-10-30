@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** \
+**Status:** In Progress
+**Status Note:** Branching UI + selection landed on `dev` (5883881c0, 11563c760, 2026-10-30); steering/lore-injection//timeline-command ticks pending on un-finalized `feat-timeline-remainder` — mark Done after that branch finalizes.
 **Priority:** High\
 **Effort:** High\
 **Type:** Feature Epic\

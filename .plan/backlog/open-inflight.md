@@ -41,7 +41,7 @@ linking) · G4 (authoring ownership indicators) — see `open-deferred.md`.
 
 ### F1 — wiring remainders (small, ticket-backed)
 
-- `TASK-sessions-api-routes` — `/api/sessions` pending (P3 #2 remainder)
+- ~~`TASK-sessions-api-routes`~~ ✅ Done — ticket Status Done 2026-09-11; `src/routes/sessions.ts` + `src/routes/sessions-switch.ts` + `sessions.test.ts` on `dev`; Settings Sessions management UI rides un-finalized `feat-multi-session-ui`
 - `PERF-gallery-uploadChatAssets-sequential` — ✅ Done 2026-09-19 (already parallel via `Promise.allSettled`; 3 regression tests on dev)
 - World/location search (P3 filtering row remainder)
 - Detailed tuning frontend (P3 #13 remainder) — ✅ Done 2026-10-01 (settings modal inputs + component state → `buildGmConfig` → `gm_config.assistantTuning`; backend resolves via `parseAssistantTuning` in `generate-route/handler.ts` and `resolveAutoGenSamplingParams` in `auto-gen/call-llm.ts`, beating the 0.9/2048 defaults and the short-reply heuristic)
@@ -52,8 +52,7 @@ linking) · G4 (authoring ownership indicators) — see `open-deferred.md`.
   (`TASK-chat-branch-merge.md`, child of `TASK-travel-party-migration.md`)
 - G2 remainder — timeline branching UI + `loreSection` injection
   (service layer shipped 2026-09-10; `TASK-timeline-branching-ui.md`)
-- E2E gaps — `TEST-e2e-auth-flows-missing`, `TEST-e2e-nsfw-moderation-routes-missing`,
-  `TEST-e2e-users-personas-routes-missing`
+- E2E gaps — `TEST-e2e-users-personas-routes-missing` ✅ closed: `tests/e2e/flows/users.test.ts` + `personas.test.ts` on `dev`. `TEST-e2e-nsfw-moderation-routes-missing` ✅ closed for block/ban/shadow/flags (`tests/e2e/flows/nsfw.test.ts` covers the moderation HTTP surface; appeals/audit admin routes not asserted there — residual gap, refile if wanted). `TEST-e2e-auth-flows-missing` 🟡 stale-with-caveat: login/logout covered (`auth.test.ts` + `auth-session.browser.ts`) but generic token-expiry is only exercised on the export route (`export-auth.test.ts:197`) — keep open narrowed to token-expiry/general-routes.
 
 ### Hygiene closed in this wave (planning only, no code)
 
