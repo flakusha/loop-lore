@@ -28,7 +28,12 @@ import { touchMemories, } from "../../../memory/purge";
 import type { MemoryEntry, } from "../../../memory/types";
 import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
-import { buildProvisionContext, chatHasMemoryCopies, fetchActorMemories, } from "./memories-helpers";
+import {
+  buildProvisionContext,
+  chatHasMemoryCopies,
+  fetchActorMemories,
+  resolveChatScopeContext,
+} from "./memories-helpers";
 import { applyKeyphraseRecalls, collectKeyphraseHits, } from "./memories-keyphrase";
 
 export const memorySection: SectionBuilder = {
@@ -49,29 +54,26 @@ export const memorySection: SectionBuilder = {
     const otherParticipants: string[] = [];
     for (const p of participantIds) { if (p !== ctx.actor.id) { otherParticipants.push(p,); } }
     const ownerSources = [ctx.actor.id, ...otherParticipants,];
+    // Timeline isolation (epic-memory-propagation): every owner's fetch is
+    // scoped to this chat's timeline ('prime' fallback) up front.
+    const { timelineId, } = await resolveChatScopeContext(ctx.db, ctx.chat.id,);
     const provisionTasks = Array.from(ownerSources, async (ownerId,) => {
       const isSpeaker = ownerId === ctx.actor.id;
       // When the chat carries chat-scoped copies of an actor's memories
       // (memory-carry flow), inject only those copies so the carry mode
       // (full/selective/fresh) chosen at chat creation is honored.
       const hasCopies = await chatHasMemoryCopies(ctx.db, ownerId, ctx.chat.id,);
-      const rows = await fetchActorMemories(
-        ctx.db,
-        ownerId,
-        isSpeaker ? 50 : OTHER_MEMORY_CAP,
-        hasCopies ? ctx.chat.id : undefined,
-      );
+      const rows = await fetchActorMemories(ctx.db, {
+        actorId: ownerId,
+        limit: isSpeaker ? 50 : OTHER_MEMORY_CAP,
+        onlyChatId: hasCopies ? ctx.chat.id : undefined,
+        timelineId,
+      },);
 
       if (rows.length === 0) { return []; }
-      const provisionCtx = await buildProvisionContext(
-        ctx.db,
-        ctx.actor.id,
-        ctx.chat.id,
-        ctx.chat.world_id,
-        ownerId,
-      );
-
-      const result = provisionMemories(rows, provisionCtx, Number.MAX_SAFE_INTEGER,);
+      // Per-owner context = the viewer's baseCtx with the owner swapped:
+      // participants, trust, timeline and party lineage are owner-independent.
+      const result = provisionMemories(rows, { ...baseCtx, ownerId, }, Number.MAX_SAFE_INTEGER,);
       return result.accepted;
     },);
 

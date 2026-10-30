@@ -313,6 +313,7 @@ export interface ActorMemories {
   context_window_start: string | null;
   context_window_end: string | null;
   emotion_impact: string | null;
+  timeline_id: string | null;
 }
 
 // ── quest_reward_ledger ────────────────────────────────────────────

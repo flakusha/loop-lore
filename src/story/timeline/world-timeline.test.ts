@@ -14,15 +14,23 @@ import { isLoreVisibleTo, parseLoreScope, } from "../../assistant/lore/audience"
 import { WorldEventType, } from "../../db/enums-story";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
+import {
+  insertUsers,
+  insertWorlds,
+  insertWorldTimelineEvents,
+} from "../../test-utils/insert-helpers";
 import { applyEvents, } from "../events/application";
 import type { WorldEvent, } from "../story-events-types";
 import {
   appendTimelineEvents,
+  detectEventConflicts,
   getEstablishedHistory,
   listTimelineEntries,
+  mergeTimelineEvents,
+  orderAcrossSessions,
   seedBackstory,
 } from "./world-timeline";
+import type { TimelineEntry, } from "./world-timeline";
 
 // ── Helpers ─────────────────────────────────────────────────
 
@@ -384,6 +392,159 @@ describe("applyEvents — timeline persistence hook", () => {
       const timeline = await db.selectFrom("world_timeline_events",).select("story_id",).execute();
       expect(timeline,).toHaveLength(1,);
       expect(timeline[0]!.story_id,).toBe("story-xyz",);
+    } finally {
+      sqlite.close();
+    }
+  });
+});
+
+// ── Cross-chat propagation (epic-memory-propagation) ────────
+
+/** */
+function makeEntry(overrides: Partial<TimelineEntry> & { id: string },): TimelineEntry {
+  return {
+    world_id: "world-1",
+    story_id: null,
+    event_type: "world_lore_update",
+    actor_id: "actor-1",
+    description: "Something happened.",
+    data: null,
+    occurred_at: "2026-01-01T00:00:00Z",
+    created_at: "2026-01-02T00:00:00Z",
+    ...overrides,
+  };
+}
+
+describe("orderAcrossSessions", () => {
+  test("orders by occurred_at, breaking ties by ingest time then id", () => {
+    const events = [
+      makeEntry({ id: "late", occurred_at: "2026-01-02T00:00:00Z", created_at: "2026-01-01T00:00:00Z", },),
+      makeEntry({ id: "tie-b", occurred_at: "2026-01-01T00:00:00Z", created_at: "2026-01-02T00:00:00Z", },),
+      makeEntry({ id: "tie-a", occurred_at: "2026-01-01T00:00:00Z", created_at: "2026-01-02T00:00:00Z", },),
+      makeEntry({ id: "early", occurred_at: "2026-01-01T00:00:00Z", created_at: "2026-01-01T00:00:00Z", },),
+    ];
+
+    const ordered = orderAcrossSessions(events,);
+    expect(ordered.map((e,) => e.id),).toEqual(["early", "tie-a", "tie-b", "late",],);
+  });
+
+  test("does not mutate the input array", () => {
+    const events = [
+      makeEntry({ id: "b", occurred_at: "2026-01-02T00:00:00Z", },),
+      makeEntry({ id: "a", occurred_at: "2026-01-01T00:00:00Z", },),
+    ];
+
+    orderAcrossSessions(events,);
+    expect(events.map((e,) => e.id),).toEqual(["b", "a",],);
+  });
+});
+
+describe("detectEventConflicts", () => {
+  test("flags same-actor same-moment events with divergent descriptions", () => {
+    const moment = "2026-01-01T00:00:00Z";
+    const first = makeEntry({
+      id: "e1",
+      occurred_at: moment,
+      created_at: "2026-01-01T01:00:00Z",
+      description: "The bridge held.",
+    },);
+
+    const second = makeEntry({
+      id: "e2",
+      occurred_at: moment,
+      created_at: "2026-01-01T02:00:00Z",
+      description: "The bridge collapsed.",
+    },);
+
+    const conflicts = detectEventConflicts([second, first,],);
+    expect(conflicts,).toHaveLength(1,);
+    expect(conflicts[0]!.first.id,).toBe("e1",);
+    expect(conflicts[0]!.second.id,).toBe("e2",);
+    expect(conflicts[0]!.reason,).toBe("same_moment_divergent_description",);
+  });
+
+  test("ignores identical records, different actors, and different moments", () => {
+    const moment = "2026-01-01T00:00:00Z";
+    const same = [
+      makeEntry({ id: "e1", occurred_at: moment, description: "The bridge held.", },),
+      makeEntry({ id: "e2", occurred_at: moment, description: "The bridge held.", },),
+    ];
+
+    expect(detectEventConflicts(same,),).toHaveLength(0,);
+
+    const otherActor = [
+      makeEntry({ id: "e1", occurred_at: moment, actor_id: "actor-1", description: "A", },),
+      makeEntry({ id: "e2", occurred_at: moment, actor_id: "actor-2", description: "B", },),
+    ];
+
+    expect(detectEventConflicts(otherActor,),).toHaveLength(0,);
+
+    const otherMoment = [
+      makeEntry({ id: "e1", occurred_at: moment, description: "A", },),
+      makeEntry({ id: "e2", occurred_at: "2026-01-02T00:00:00Z", description: "B", },),
+    ];
+
+    expect(detectEventConflicts(otherMoment,),).toHaveLength(0,);
+  });
+});
+
+describe("mergeTimelineEvents", () => {
+  test("moves unique events into the target timeline and drops exact duplicates", async () => {
+    ensureLogger();
+    const { db, sqlite, worldId, } = await setupWorld();
+    try {
+      const moment = "2026-01-01T00:00:00Z";
+      // Present in both timelines: exact duplicate, must stay behind.
+      await insertWorldTimelineEvents(db, worldId, "world_lore_update", "Shared origin", moment, {
+        timeline_id: "fork",
+      },);
+
+      await insertWorldTimelineEvents(db, worldId, "world_lore_update", "Shared origin", moment, {
+        timeline_id: "prime",
+      },);
+
+      // Fork-only events: must move.
+      await insertWorldTimelineEvents(db, worldId, "world_lore_update", "Fork divergence", "2026-01-02T00:00:00Z", {
+        timeline_id: "fork",
+        actor_id: "actor-1",
+      },);
+
+      await insertWorldTimelineEvents(db, worldId, "world_lore_update", "Fork reunion", "2026-01-03T00:00:00Z", {
+        timeline_id: "fork",
+        actor_id: "actor-2",
+      },);
+
+      const moved = await mergeTimelineEvents({ db, worldId, fromTimelineId: "fork", intoTimelineId: "prime", },);
+      expect(moved,).toBe(2,);
+
+      const forkRows = await db
+        .selectFrom("world_timeline_events",)
+        .selectAll()
+        .where("timeline_id", "=", "fork",)
+        .execute();
+
+      expect(forkRows.map((r,) => r.description),).toEqual(["Shared origin",],);
+
+      const primeRows = await db
+        .selectFrom("world_timeline_events",)
+        .selectAll()
+        .where("timeline_id", "=", "prime",)
+        .orderBy("occurred_at", "asc",)
+        .execute();
+
+      expect(primeRows.map((r,) => r.description),).toEqual(["Shared origin", "Fork divergence", "Fork reunion",],);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("refuses to merge a timeline into itself", async () => {
+    ensureLogger();
+    const { db, sqlite, worldId, } = await setupWorld();
+    try {
+      expect(
+        mergeTimelineEvents({ db, worldId, fromTimelineId: "prime", intoTimelineId: "prime", },),
+      ).rejects.toThrow("refusing self-merge",);
     } finally {
       sqlite.close();
     }

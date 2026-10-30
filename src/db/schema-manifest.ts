@@ -1613,6 +1613,7 @@ export const SCHEMA = new SchemaManifest()
     context_window_start: col("text",),
     context_window_end: col("text",),
     emotion_impact: col("text",),
+    timeline_id: col("text",),
   },)
   .table("actor_notes", {
     id: col("text", { primaryKey: true, },),
