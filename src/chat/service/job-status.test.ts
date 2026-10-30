@@ -9,8 +9,15 @@
  * append-only transitions, the turnId stamp on the completion row, and
  * exactly-once rows under a double progress callback (per-process dedupe
  * keyed by jobId+state+step).
+ *
+ * Resource contract (parallel-safe): each test owns a private in-memory
+ * SQLite DB from `createTestDb()` (never the process-global override) and a
+ * fresh `crypto.randomUUID()` jobId, so no key collides across tests or
+ * suites. `seed()` destroys the DB on its own failure path; every test
+ * destroys it in `finally`; `afterEach` clears the module-global dedupe memo
+ * via `resetJobStatusMemoForTests()` so the shared writer state is per-test.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { sql, } from "kysely";
 import type { Kysely, } from "kysely";
 import type { AsyncStore, } from "../../async/store";
@@ -20,7 +27,13 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { jsonParseOr, } from "../../utils";
-import { appendJobStatus, type JobState, jobStatusLine, postInitialJobStatus, } from "./job-status";
+import {
+  appendJobStatus,
+  type JobState,
+  jobStatusLine,
+  postInitialJobStatus,
+  resetJobStatusMemoForTests,
+} from "./job-status";
 
 /** Metadata payload carried on every job_status row. */
 interface JobStatusMeta {
@@ -37,12 +50,25 @@ describe("appendJobStatus", () => {
   const USER_ID = crypto.randomUUID();
   const CHAT_ID = crypto.randomUUID();
 
+  // Per-test reset of the writer's module-global dedupe memo (see header):
+  // shared state must be per-test, not accumulated across the run.
+  afterEach(() => {
+    resetJobStatusMemoForTests();
+  },);
+
   const seed = async (): Promise<void> => {
     createLogger({ level: "error", },);
     ({ db, } = await createTestDb());
-    await insertUsers(db, "owner", "owner", { id: USER_ID, } as never,);
-    await insertActors(db, "owner", { id: USER_ID, user_id: USER_ID, owner_id: USER_ID, } as never,);
-    await insertChats(db, "Job Status Chat", USER_ID, { id: CHAT_ID, } as never,);
+    try {
+      await insertUsers(db, "owner", "owner", { id: USER_ID, } as never,);
+      await insertActors(db, "owner", { id: USER_ID, user_id: USER_ID, owner_id: USER_ID, } as never,);
+      await insertChats(db, "Job Status Chat", USER_ID, { id: CHAT_ID, } as never,);
+    } catch (error) {
+      // Deterministic teardown on the failure path too: a failed seed must
+      // not leak the DB handle into the rest of the run.
+      await db.destroy();
+      throw error;
+    }
   };
 
   /** Oldest-first job_status rows for the chat, with parsed metadata. */
