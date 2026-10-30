@@ -10,6 +10,7 @@
 // `admin.settings` gate on the admin-template surface.
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { restoreBackupForOwner, } from "../../resource/external-storage";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import { can, } from "../../users/permissions";
 import { safeJsonParse, } from "../../utils";
@@ -205,4 +206,57 @@ export async function handleBackupHashes(
   }
 
   return jsonResponse({ hashes, },);
+}
+
+/**
+ * POST /api/v1/settings/backups/:id/restore
+ *
+ * User-scoped one-click recovery behind explicit confirmation: verifies the
+ * backup belongs to the caller and re-hashes its payload, then records the
+ * recovery as a fresh audit row. There is no server-side apply surface for
+ * browser-local state, so the target is a no-op — the browser already holds
+ * the payload (fetched via the hashes endpoint) and applies it locally.
+ *
+ * Non-owners get restored:false (403); `confirm:true` missing gets 400
+ * without touching any row, so the dashboard confirm gate stays meaningful.
+ * @param body
+ * @param backupId
+ * @param database
+ * @param userId
+ * @param userRole
+ * @returns {Promise<Response>}
+ */
+export async function handleBackupRestore(
+  body: unknown,
+  backupId: string,
+  database: Kysely<DB>,
+  userId?: string,
+  userRole?: string | null,
+): Promise<Response> {
+  const authUserId = requireUserId({ userId, },);
+  if (typeof authUserId !== "string") { return authUserId; }
+
+  const confirmed = (body as Record<string, unknown> | null)?.confirm === true;
+  if (!confirmed) {
+    return jsonError({ message: "confirm is required", status: HttpStatus.BadRequest, },);
+  }
+
+  void userRole;
+  const result = await restoreBackupForOwner(
+    database,
+    authUserId,
+    backupId,
+    true,
+    { applyPayload: () => {/* no server-side apply: the browser holds the payload */}, },
+  );
+
+  if (!result.restored && result.reason === "not owner") {
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
+  }
+
+  if (!result.restored) {
+    return jsonError({ message: result.reason, status: HttpStatus.NotFound, },);
+  }
+
+  return jsonResponse({ ok: true, reason: result.reason, },);
 }
