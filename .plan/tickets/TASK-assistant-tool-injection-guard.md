@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Assistant tool capability matrix + 3-layer prompt-injection guard
 **Priority:** High (security)
 **Effort:** High
 **Type:** Feature Task (security)
