@@ -3652,6 +3652,7 @@ export async function insertActorMemories(
     context_window_start?: string | null;
     context_window_end?: string | null;
     emotion_impact?: string | null;
+    timeline_id?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

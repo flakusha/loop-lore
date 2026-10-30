@@ -226,3 +226,143 @@ export async function getEstablishedHistory(
 ): Promise<TimelineEntry[]> {
   return listTimelineEntries({ db, worldId, occurredBefore: since, limit, },);
 }
+
+// ── Cross-chat propagation (epic-memory-propagation) ────────
+
+/**
+ * Order events collected across sessions/chats into one deterministic
+ * sequence: `occurred_at` ascending, ties broken by ingest time
+ * (`created_at`, then `id`) so equal-timestamp events from different
+ * sessions interleave stably across reloads.
+ * @param events - entries from any number of sessions
+ * @returns a new chronologically ordered array
+ */
+export function orderAcrossSessions(
+  events: readonly TimelineEntry[],
+): TimelineEntry[] {
+  return [...events,].sort((a, b,) =>
+    a.occurred_at.localeCompare(b.occurred_at,) ||
+    a.created_at.localeCompare(b.created_at,) ||
+    a.id.localeCompare(b.id,)
+  );
+}
+
+/** Two timeline events recorded as contradictory versions of one moment. */
+export interface EventConflict {
+  first: TimelineEntry;
+  second: TimelineEntry;
+  /** Why the pair conflicts. */
+  reason: "same_moment_divergent_description";
+}
+
+/**
+ * Detect contradictory events across sessions: two events by the same actor
+ * at the same `occurred_at` whose descriptions disagree are conflicting
+ * records of the same moment — a merge must not keep both as independent
+ * truth. Events are compared in {@link orderAcrossSessions} order; the
+ * earlier-ingested one is `first`.
+ * @param events - entries from any number of sessions
+ * @returns conflicting pairs, first-seen order
+ */
+export function detectEventConflicts(
+  events: readonly TimelineEntry[],
+): EventConflict[] {
+  const ordered = orderAcrossSessions(events,);
+  const conflicts: EventConflict[] = [];
+  for (let i = 0; i < ordered.length; i++) {
+    const first = ordered[i]!;
+    for (let j = i + 1; j < ordered.length; j++) {
+      const second = ordered[j]!;
+      // Ordered by occurred_at: once we leave the moment, no later pair matches.
+      if (second.occurred_at !== first.occurred_at) { break; }
+      if (
+        first.actor_id !== null &&
+        first.actor_id === second.actor_id &&
+        first.description !== second.description
+      ) {
+        conflicts.push({ first, second, reason: "same_moment_divergent_description", },);
+      }
+    }
+  }
+
+  return conflicts;
+}
+
+/** */
+export interface MergeTimelinesOpts {
+  db: Kysely<DB>;
+  worldId: string;
+  /** Timeline whose events move into `intoTimelineId`. */
+  fromTimelineId: string;
+  /** Timeline absorbing the events. */
+  intoTimelineId: string;
+}
+
+/** Identity key of a timeline event: type + actor + description + moment. */
+function eventIdentityKey(event: {
+  event_type: string;
+  actor_id: string | null;
+  description: string;
+  occurred_at: string;
+},): string {
+  return [
+    event.event_type,
+    event.actor_id ?? "",
+    event.description,
+    event.occurred_at,
+  ].join("\u0000",);
+}
+
+/**
+ * Merge one timeline into another (multi-session world merge): every event
+ * of `fromTimelineId` is re-tagged to `intoTimelineId`, except exact
+ * duplicates — same event_type + actor_id + description + occurred_at —
+ * already present in the target timeline, which stay behind untouched.
+ * `fromTimelineId === intoTimelineId` refuses rather than silently no-oping.
+ * @param root0
+ * @param root0.db
+ * @param root0.worldId
+ * @param root0.fromTimelineId
+ * @param root0.intoTimelineId
+ * @returns how many events moved
+ * @throws {Error} on self-merge
+ */
+export async function mergeTimelineEvents(
+  { db, worldId, fromTimelineId, intoTimelineId, }: MergeTimelinesOpts,
+): Promise<number> {
+  if (fromTimelineId === intoTimelineId) {
+    throw new Error("mergeTimelineEvents: refusing self-merge",);
+  }
+
+  const source = await db
+    .selectFrom("world_timeline_events",)
+    .select(["id", "event_type", "actor_id", "description", "occurred_at",],)
+    .where("world_id", "=", worldId,)
+    .where("timeline_id", "=", fromTimelineId,)
+    .execute();
+
+  const targetRows = await db
+    .selectFrom("world_timeline_events",)
+    .select(["event_type", "actor_id", "description", "occurred_at",],)
+    .where("world_id", "=", worldId,)
+    .where("timeline_id", "=", intoTimelineId,)
+    .execute();
+
+  const targetKeys = new Set(Array.from(targetRows, eventIdentityKey,),);
+
+  let moved = 0;
+  for (const event of source) {
+    const key = eventIdentityKey(event,);
+    if (targetKeys.has(key,)) { continue; }
+    await db
+      .updateTable("world_timeline_events",)
+      .set({ timeline_id: intoTimelineId, },)
+      .where("id", "=", event.id,)
+      .execute();
+
+    targetKeys.add(key,);
+    moved++;
+  }
+
+  return moved;
+}

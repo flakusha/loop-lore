@@ -86,6 +86,68 @@ describe("provisionMemories — scope filtering", () => {
     const result = provisionMemories([mem,], makeCtx({ viewerId: "char-2", },),);
     expect(result.accepted,).toHaveLength(1,);
   });
+
+  test("party memory accepted when source chat is in the party lineage", () => {
+    const mem = makeMemory({ id: "m1", scope: "party", sourceChatId: "chat-root", },);
+    const result = provisionMemories(
+      [mem,],
+      makeCtx({ partyChatIds: ["chat-root", "chat-branch",], },),
+    );
+
+    expect(result.accepted,).toHaveLength(1,);
+  });
+
+  test("party memory rejected when source chat is outside the lineage", () => {
+    const mem = makeMemory({ id: "m1", scope: "party", sourceChatId: "chat-other", },);
+    const result = provisionMemories([mem,], makeCtx({ partyChatIds: ["chat-root",], },),);
+    expect(result.accepted,).toHaveLength(0,);
+    expect(result.rejected[0]!.reason,).toBe("scope:party_mismatch",);
+  });
+
+  test("party memory rejected when lineage context is absent", () => {
+    const mem = makeMemory({ id: "m1", scope: "party", sourceChatId: "chat-root", },);
+    const result = provisionMemories([mem,], makeCtx(),);
+    expect(result.accepted,).toHaveLength(0,);
+    expect(result.rejected[0]!.reason,).toBe("scope:party_mismatch",);
+  });
+
+  test("timeline memory accepted when bound to the chat's timeline", () => {
+    const mem = makeMemory({ id: "m1", scope: "timeline", timelineId: "prime", },);
+    const result = provisionMemories([mem,], makeCtx({ timelineId: "prime", },),);
+    expect(result.accepted,).toHaveLength(1,);
+  });
+
+  test("timeline memory rejected across timelines", () => {
+    const mem = makeMemory({ id: "m1", scope: "timeline", timelineId: "alt", },);
+    const result = provisionMemories([mem,], makeCtx({ timelineId: "prime", },),);
+    expect(result.accepted,).toHaveLength(0,);
+    expect(result.rejected[0]!.reason,).toBe("scope:timeline_mismatch",);
+  });
+
+  test("timeline memory rejected when timeline context is absent", () => {
+    const mem = makeMemory({ id: "m1", scope: "timeline", timelineId: "prime", },);
+    const result = provisionMemories([mem,], makeCtx(),);
+    expect(result.accepted,).toHaveLength(0,);
+    expect(result.rejected[0]!.reason,).toBe("scope:timeline_mismatch",);
+  });
+
+  test("secret memories bypass party/timeline scope (trusted viewer)", () => {
+    const mem = makeMemory({
+      id: "m1",
+      scope: "timeline",
+      timelineId: "alt",
+      privacy: "secret",
+      actorId: "char-1",
+      shareability: JSON.stringify({
+        shareProbability: 0,
+        trustedActorIds: ["char-2",],
+        blockedActorIds: [],
+      },),
+    },);
+
+    const result = provisionMemories([mem,], makeCtx({ viewerId: "char-2", timelineId: "prime", },),);
+    expect(result.accepted,).toHaveLength(1,);
+  });
 });
 
 // ─── Privacy Filtering ────────────────────────────────────────

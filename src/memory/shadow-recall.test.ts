@@ -64,7 +64,7 @@ afterAll(async () => {
 
 describe("shared recall excludes shadow notes (AC6)", () => {
   test("fetchActorMemories returns committed memories and never shadow rows", async () => {
-    const entries = await fetchActorMemories(db, actorId,);
+    const entries = await fetchActorMemories(db, { actorId, },);
     expect(entries.length,).toBeGreaterThan(0,);
     expect(
       entries.some((entry,) => entry.content.includes("silver compass",)),

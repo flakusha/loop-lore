@@ -11,8 +11,25 @@
 import type { Config, } from "../config/schema";
 import type { ExtractionKind, MemoryType, } from "../db/enums-story";
 
-/** Memory scope determines ownership and injection target. */
-export type MemoryScope = "character" | "assistant" | "world";
+/**
+ * Memory scope determines ownership and injection target.
+ *
+ * - `character`: per-actor — owner always sees it; non-owners only when public.
+ * - `assistant`: per-user assistant facts — visible in any context.
+ * - `world`: per-world — visible in every chat of the same world.
+ * - `party`: party-shared — visible only in chats of the party lineage the
+ *   memory was formed in (its source chat + that chat's ancestor chain via
+ *   `chats.parent_chat_id`, i.e. party-split branches); never leaks into
+ *   unrelated chats.
+ * - `timeline`: timeline-shared — visible in every chat of the memory's
+ *   timeline (`actor_memories.timeline_id`); never crosses timelines.
+ */
+export type MemoryScope =
+  | "character"
+  | "assistant"
+  | "world"
+  | "party"
+  | "timeline";
 
 /** Memory privacy level — controls who can see this memory. */
 export type MemoryPrivacy = "public" | "shared" | "private" | "secret";
@@ -93,6 +110,10 @@ export interface MemoryEntry {
   sourceMessageIds?: string[];
   /** Chat IDs the source chain spans (carry-forward / side chats feeding main). */
   sourceChatIds?: string[];
+  /** Timeline the memory is bound to (timeline slug). Undefined/null =
+   * timeline-agnostic — visible in every timeline (the explicit
+   * cross-timeline sharing exception, epic-memory-propagation). */
+  timelineId?: string;
   /** How the memory was formed (single_response | burst | compaction | manual | carry_forward). */
   extractionKind?: ExtractionKind;
   /** Game-time bounds of the source span (timescape-aware decay, future use). */

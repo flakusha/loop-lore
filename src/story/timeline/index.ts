@@ -22,14 +22,19 @@ export type {
 } from "./event-steering";
 export {
   appendTimelineEvents,
+  detectEventConflicts,
   getEstablishedHistory,
   listTimelineEntries,
+  mergeTimelineEvents,
+  orderAcrossSessions,
   seedBackstory,
 } from "./world-timeline";
 export type {
   AppendTimelineOpts,
   EstablishedHistoryOpts,
+  EventConflict,
   ListTimelineOpts,
+  MergeTimelinesOpts,
   SeedBackstoryOpts,
   TimelineEntry,
 } from "./world-timeline";

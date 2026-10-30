@@ -73,6 +73,7 @@ export async function buildProvisionContext(
 
   const participantIds = Array.from(participants, (p,) => p.actor_id,);
   const trustModifier = await computeTrustModifier(db, actorId, participantIds, worldId,);
+  const scopeCtx = await resolveChatScopeContext(db, chatId,);
 
   return {
     viewerId: actorId,
@@ -80,23 +81,78 @@ export async function buildProvisionContext(
     chatId,
     worldId,
     participantIds,
+    timelineId: scopeCtx.timelineId,
+    partyChatIds: scopeCtx.partyChatIds,
     trustModifier,
   };
+}
+
+/** Conventional slug for the prime timeline (timeline_id fallback). */
+const DEFAULT_TIMELINE = "prime";
+
+/** Timeline + party-lineage context of a chat (epic-memory-propagation). */
+export interface ChatScopeContext {
+  /** The chat's `timeline_id`, 'prime' fallback. */
+  timelineId: string;
+  /** The chat + its ancestor chain via `chats.parent_chat_id` — the party
+   * lineage party-scoped memories must originate in. */
+  partyChatIds: string[];
+}
+
+/**
+ * Resolve a chat's timeline and party lineage: the chat itself plus every
+ * ancestor reachable through `parent_chat_id` (party-split branches inherit
+ * the party's memories; branch-formed memories do not flow back up until a
+ * merge happens). Cycle-safe via a visited set.
+ * @param db
+ * @param chatId
+ * @returns the chat's scope context
+ */
+export async function resolveChatScopeContext(
+  db: Kysely<DB>,
+  chatId: string,
+): Promise<ChatScopeContext> {
+  const partyChatIds: string[] = [];
+  const visited = new Set<string>();
+  let timelineId: string | undefined;
+  let current: string | null = chatId;
+  while (current !== null && !visited.has(current,)) {
+    visited.add(current,);
+    partyChatIds.push(current,);
+    const row = await db
+      .selectFrom("chats",)
+      .select(["timeline_id", "parent_chat_id",],)
+      .where("id", "=", current,)
+      .executeTakeFirst();
+
+    if (!row) { break; }
+    timelineId ??= row.timeline_id;
+    current = row.parent_chat_id;
+  }
+
+  return { timelineId: timelineId ?? DEFAULT_TIMELINE, partyChatIds, };
 }
 
 /**
  * Fetch memories for the actor from the database.
  * @param db
- * @param actorId
- * @param limit
- * @param onlyChatId - when set, only memories carried into this chat
- * @returns the actor's committed memories, optionally limited to one chat
+ * @param opts options object
+ * @returns the actor's committed memories, optionally limited to one chat / timeline
  */
+export interface FetchMemoriesOpts {
+  actorId: string;
+  /** Max rows (default 50). */
+  limit?: number;
+  /** When set, only memories carried into this chat. */
+  onlyChatId?: string;
+  /** Timeline slug of the consuming chat. Keeps timeline-agnostic rows
+   * (`timeline_id` NULL) and rows bound to this timeline; drops rows from
+   * other timelines (epic-memory-propagation injection isolation). */
+  timelineId?: string;
+}
 export async function fetchActorMemories(
   db: Kysely<DB>,
-  actorId: string,
-  limit = 50,
-  onlyChatId?: string,
+  { actorId, limit = 50, onlyChatId, timelineId, }: FetchMemoriesOpts,
 ): Promise<MemoryEntry[]> {
   const rows = await db
     .selectFrom("actor_memories",)
@@ -104,6 +160,15 @@ export async function fetchActorMemories(
     .where("actor_id", "=", actorId,)
     .where("review_status", "=", "committed",)
     .$if(!!onlyChatId, (qb,) => qb.where("source_chat_id", "=", onlyChatId as string,),)
+    // Timeline isolation (epic-memory-propagation), mirroring the lore-load
+    // convention: `timeline_id IS NULL OR = :timelineId`.
+    .$if(!!timelineId, (qb,) =>
+      qb.where((eb,) =>
+        eb.or([
+          eb("timeline_id", "is", null,),
+          eb("timeline_id", "=", timelineId as string,),
+        ],)
+      ),)
     .limit(limit,)
     .execute();
 
@@ -142,6 +207,7 @@ export async function fetchActorMemories(
     pinned: r.pinned === "pinned",
     scope: (r.scope ?? "character") as MemoryEntry["scope"],
     privacy: (r.privacy ?? "shared") as MemoryEntry["privacy"],
+    timelineId: r.timeline_id ?? undefined,
     shareability: r.shareability,
     emotionImpact: parseEmotionImpact(r.emotion_impact,),
     expiresAt: r.expires_at ?? undefined,
