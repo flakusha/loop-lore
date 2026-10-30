@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** large
 **Epic:** epic-resource-provision
@@ -66,3 +66,5 @@ callWithResource(resourceId, request)
 - [ ] Unit tests: happy path, quota-exceeded rejection, fallback,
   credential verification failure, concurrency gate
 - [ ] `bun run check` green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 5ab219e (registry tip: d1173a09f Konstantin Fedotov Close issue)

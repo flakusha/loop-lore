@@ -1752,7 +1752,7 @@ Total tickets: **4208** — untagged: **2847** — unbound to epic: **1050**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2847 | 1268 | 48 | 889 | 30 | 0 | 612 |
+| (untagged) | 2847 | 1277 | 48 | 881 | 30 | 0 | 611 |
 
 ## By epic × status
 
@@ -1936,7 +1936,7 @@ Total tickets: **4208** — untagged: **2847** — unbound to epic: **1050**
 | epic-generation-flow-control | 7 | 3 | 0 | 4 | 0 | 0 | 0 |
 | epic-gm-shadow-notes | 12 | 5 | 0 | 1 | 0 | 0 | 6 |
 | epic-group-chat | 10 | 5 | 0 | 0 | 0 | 0 | 5 |
-| epic-guest-access | 6 | 5 | 0 | 0 | 0 | 0 | 1 |
+| epic-guest-access | 6 | 6 | 0 | 0 | 0 | 0 | 0 |
 | epic-harness-integration | 38 | 0 | 0 | 0 | 0 | 0 | 38 |
 | epic-headless-alternative-frontends | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
 | epic-hidden-carriage-context | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
@@ -2046,7 +2046,7 @@ Total tickets: **4208** — untagged: **2847** — unbound to epic: **1050**
 | epic-replayability | 7 | 4 | 1 | 2 | 0 | 0 | 0 |
 | epic-research-agency-quality | 3 | 0 | 0 | 0 | 2 | 0 | 1 |
 | epic-resolution-system | 10 | 3 | 0 | 2 | 0 | 0 | 5 |
-| epic-resource-provision | 13 | 0 | 0 | 13 | 0 | 0 | 0 |
+| epic-resource-provision | 13 | 8 | 0 | 5 | 0 | 0 | 0 |
 | epic-review-20261025-api-governance-perimeter | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-review-check-parallel-ram-2026-09-03 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-review-dev-2026-08-26-late-merges | 2 | 0 | 0 | 2 | 0 | 0 | 0 |

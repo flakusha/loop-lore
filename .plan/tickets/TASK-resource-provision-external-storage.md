@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** large
 **Epic:** epic-resource-provision
@@ -60,3 +60,5 @@ on world save) — configurable and opt-in per resource type.
 - [ ] Unit tests: endpoint provisioning, credential verification,
   quota enforcement, backup scheduling triggers
 - [ ] `bun run check` green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue d2de8f8 (registry tip: 33f80220f Konstantin Fedotov Close issue)

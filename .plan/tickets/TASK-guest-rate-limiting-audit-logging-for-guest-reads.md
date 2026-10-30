@@ -89,3 +89,5 @@ table, or migration. The path gate reuses the central null-userId guard's
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 1d01122 (registry tip: 58a78dfbd Konstantin Fedotov Close issue)

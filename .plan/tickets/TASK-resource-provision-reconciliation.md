@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** large
 **Epic:** epic-resource-provision
@@ -68,3 +68,5 @@ non-blocking; the report is surfaced in the backup dashboard.
 - [ ] Unit tests: classification logic, incremental pass,
   drift report shape, hash comparison
 - [ ] `bun run check` green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue caa6014 (registry tip: a29d4f447 Konstantin Fedotov Close issue)

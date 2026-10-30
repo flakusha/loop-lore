@@ -22466,6 +22466,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-rate-limiting-audit-logging-for-guest-reads.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-alpine-client.md"
     },
     {
@@ -37059,6 +37063,16 @@
     {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
+    }
+  ],
+  "src/middleware/guest-rate-limit.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-guest-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-rate-limiting-audit-logging-for-guest-reads.md"
     }
   ],
   "src/middleware/handle-resolver.ts": [

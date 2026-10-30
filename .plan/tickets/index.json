@@ -42111,7 +42111,7 @@
     "epic": "epic-guest-access",
     "tags": [],
     "source": ".plan/tickets/TASK-guest-rate-limiting-audit-logging-for-guest-reads.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-GUEST-WORLD-PUBLIC-BROWSE-READ-ONLY-PUBLIC-WORLDS": {
     "hash": "495ce0f",
@@ -54145,7 +54145,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-browser-backup.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "Browser-Storage Backup (Opt-In)",
     "type": "TASK"
@@ -54158,7 +54158,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-credential-store.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "Credential Store (Hash & Wrapped-Key References)",
     "type": "TASK"
@@ -54184,7 +54184,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-external-inference.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "External Inference Endpoint Provisioning",
     "type": "TASK"
@@ -54197,7 +54197,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-external-storage.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "External Storage Provisioning & Backup Scheduling",
     "type": "TASK"
@@ -54210,7 +54210,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-quota-engine.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "Quota Engine & Counter Service",
     "type": "TASK"
@@ -54236,7 +54236,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-reconciliation.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "Hashing-Based Reconciliation & Drift Detection",
     "type": "TASK"
@@ -54262,7 +54262,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-routing-facade.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "Resource Provider Routing Facade",
     "type": "TASK"
@@ -54275,7 +54275,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-resource-provision-schema.md",
-    "status": "⬜ Open",
+    "status": "done",
     "tags": [],
     "title": "Resource Provision Schema & Migrations",
     "type": "TASK"
