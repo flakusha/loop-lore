@@ -6,6 +6,8 @@ import type { Kysely, } from "kysely";
 import { getHealthCache, getProviderHealth, providerToSummary, scanAllProviders, } from "../../admin/provider-health";
 import type { DB, } from "../../db/schema";
 import { listProviders, } from "../../generation/providers/registry";
+import type { ModelFit, } from "../../models/fit-lookup";
+import type { GlobalScore, } from "../../models/global-score";
 import { ErrorResponse, } from "../../validation/schemas";
 import {
   ErrorCode,
@@ -76,7 +78,7 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
           403: ErrorResponse,
         },
       },)
-      .get(`${prefix}/admin/providers/:name/models`, (ctx: any,) => {
+      .get(`${prefix}/admin/providers/:name/models`, async (ctx: any,) => {
         const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
 
@@ -91,10 +93,32 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
           },);
         }
 
+        // Cached llmfit verdicts per model id; nulls when the DB is
+        // unavailable or no verdict matches — never a guess. Same for
+        // the global board score: a separate badge, never merged into fit.
+        let fit = new Map<string, ModelFit | null>();
+        let globalScore = new Map<string, GlobalScore | null>();
+        if (opts.database) {
+          try {
+            const { fitForModels, } = await import("../../models/fit-lookup");
+            const { globalScoresForModels, } = await import("../../models/global-score");
+            const ids = health.models.map((m,) => m.id);
+            fit = await fitForModels(opts.database, ids,);
+            globalScore = await globalScoresForModels(opts.database, ids,);
+          } catch {
+            fit = new Map<string, ModelFit | null>();
+            globalScore = new Map<string, GlobalScore | null>();
+          }
+        }
+
         return jsonResponse({
           name: health.name,
           label: health.label,
-          models: health.models,
+          models: health.models.map((m,) => ({
+            ...m,
+            fit: fit.get(m.id,) ?? null,
+            globalScore: globalScore.get(m.id,) ?? null,
+          })),
           status: health.status,
         },);
       }, {

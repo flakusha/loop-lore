@@ -1001,6 +1001,16 @@
                             <div style="font-weight: 600; margin-bottom: 3px" x-text="m.id"></div>
                             <div style="display: flex; flex-wrap: wrap; gap: 3px">
                               <span
+                                x-show="m.fit"
+                                style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                                x-text="(m.fit.fitLevel ?? 'fit') + ' ' + Math.round(m.fit.score * 100) + '%'"
+                              ></span>
+                              <span
+                                x-show="m.globalScore"
+                                style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                                x-text="m.globalScore.source + ' ' + m.globalScore.value"
+                              ></span>
+                              <span
                                 x-show="m.contextWindow"
                                 style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
                                 x-text="m.contextWindow + ' ctx'"
@@ -1444,6 +1454,56 @@
                       <span x-text="run.createdAt"></span> — <span x-text="run.prompt.slice(0, 80)"></span>
                     </div></template>
                 </div>
+              </div>
+            </div>
+            <!-- Model News -->
+            <div style="margin-bottom: var(--space-6)">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3)">
+                <h3 style="font-size: 16px; font-weight: 600; margin: 0">
+                  Model News
+                </h3>
+                <button
+                  class="btn btn-secondary btn-xs"
+                  @click="refreshModelNews()"
+                  :disabled="loadingNews"
+                  x-text="loadingNews ? 'Refreshing...' : 'Refresh'"
+                >
+                </button>
+              </div>
+              <template x-if="!loadingNews && modelNews.length === 0">
+                <p style="font-size: 12px; color: var(--text-secondary, #6c757d)">
+                  No news polled yet.
+                </p>
+              </template>
+              <div style="display: grid; gap: var(--space-3)">
+                <template x-for="f in modelNews" :key="f.family">
+                  <div style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline">
+                      <strong style="font-size: 13px" x-text="f.family"></strong>
+                      <span
+                        style="font-size: 11px; color: var(--text-secondary, #6c757d)"
+                        x-text="f.refreshedAt ?? ''"
+                      ></span>
+                    </div>
+                    <template x-for="item in f.items.slice(0, 5)" :key="item.id">
+                      <div style="font-size: 12px; padding: 3px 0">
+                        <a
+                          :href="item.url"
+                          target="_blank"
+                          rel="noopener"
+                          x-show="item.url"
+                          x-text="item.title"
+                        ></a>
+                        <span x-show="!item.url" x-text="item.title"></span>
+                        <span
+                          style="color: var(--text-secondary, #6c757d)"
+                          x-show="item.publishedAt"
+                          x-text="' — ' + (item.publishedAt ?? '').slice(0, 10)"
+                        ></span>
+                      </div>
+                    </template>
+                  </div>
+                </template>
               </div>
             </div>
           </div>
