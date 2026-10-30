@@ -164,7 +164,7 @@ describe("decision-log audit wiring", () => {
   });
 
   test("hook path writes audit rows attributed to the hook source", async () => {
-    const hook = new ImmersionGateHook();
+    const hook = new ImmersionGateHook({ eventHandlers: [], },);
     await hook.execute("I sprint away from the ropes", {
       chatId,
       actorId,
@@ -185,5 +185,45 @@ describe("decision-log audit wiring", () => {
       .executeTakeFirst();
 
     expect(top?.source,).toBe("hook",);
+  });
+
+  test("hook hard-block suppresses content and fails open on db errors", async () => {
+    const hook = new ImmersionGateHook({
+      config: {
+        ...DEFAULT_IMMERSION_CONFIG,
+        rules: {
+          ...DEFAULT_IMMERSION_CONFIG.rules,
+          [GateRuleId.MovementWhileRestrained]: { enabled: true, severity: GateSeverity.HardBlock, },
+        },
+      },
+      eventHandlers: [],
+    },);
+
+    const result = await hook.execute("I sprint away from the ropes", {
+      chatId,
+      actorId,
+      userId: "wi6-user",
+      content: "I sprint away from the ropes",
+      config: {} as never,
+      nsfwConfig: {} as never,
+      db,
+    },);
+
+    expect(result.handled,).toBe(true,);
+    expect(result.suppressContent,).toBe(true,);
+    expect(result.data,).toMatchObject({ verdict: "hard-block", skipOffered: true, },);
+
+    // Fail open: a broken db handle must never wedge generation.
+    const broken = await hook.execute("I sprint away from the ropes", {
+      chatId,
+      actorId,
+      userId: "wi6-user",
+      content: "I sprint away from the ropes",
+      config: {} as never,
+      nsfwConfig: {} as never,
+      db: null as never,
+    },);
+
+    expect(broken,).toEqual({ handled: false, eventType: "immersion_gate", },);
   });
 });
