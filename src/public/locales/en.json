@@ -271,6 +271,9 @@
     "deleteAllPlaceholder": "Type \"DELETE\" to confirm",
     "encryptionKeys": "Encryption Keys",
     "encryptionKeysDescription": "Manage your encryption keys for end-to-end encrypted messages.",
+    "sessions": "Sessions",
+    "sessionsTitle": "Active Sessions",
+    "sessionsDescription": "Devices currently signed in to your account. Revoke anything you do not recognize; switching moves your active login to that device.",
     "generateNewKey": "Generate New Key",
     "rotatePrimaryKey": "Rotate Primary Key",
     "noEncryptionKeys": "No encryption keys found.",
@@ -1485,7 +1488,16 @@
     "invalidLocale": "Invalid locale"
   },
   "sessions": {
-    "cannotDeleteCurrent": "Cannot delete current session. Use /api/auth/logout instead."
+    "cannotDeleteCurrent": "Cannot delete current session. Use /api/auth/logout instead.",
+    "loadFailed": "Failed to load sessions.",
+    "revokeFailed": "Failed to revoke the session.",
+    "switchFailed": "Failed to switch session.",
+    "expired": "That session has expired and the list was refreshed.",
+    "unknownDevice": "Unknown device",
+    "current": "Current",
+    "switch": "Switch",
+    "revoke": "Revoke",
+    "expires": "Expires"
   },
   "mood": {
     "adjustHappiness": "Adjust Happiness"
