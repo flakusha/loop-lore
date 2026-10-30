@@ -1802,6 +1802,7 @@
     "tradeOfferEmptyDraft": "Select items or set a price for the offer."
   },
   "commands": {
+    "timeline": "Gerencia os ramos de linha do tempo do mundo (list/fork/switch)",
     "modify": "Deixar o modelo reescrever uma entidade (/modify <kind> <id> \"pedido\")",
     "import": "Importar uma ficha de personagem de um ficheiro enviado (/import character <ficheiro>)",
     "apply": "Alterar campos de world/location/item (/apply <kind> <id> chave=valor …)",

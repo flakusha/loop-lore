@@ -1802,6 +1802,7 @@
     "tradeOfferEmptyDraft": "Select items or set a price for the offer."
   },
   "commands": {
+    "timeline": "Управление ветками мировой хронологии (list/fork/switch)",
     "modify": "Попросить модель переписать сущность (/modify <kind> <id> \"запрос\")",
     "import": "Импортировать карточку персонажа из загруженного файла (/import character <файл>)",
     "apply": "Изменить поля world/location/item (/apply <kind> <id> ключ=значение …)",

@@ -1802,6 +1802,7 @@
     "tradeOfferEmptyDraft": "Select items or set a price for the offer."
   },
   "commands": {
+    "timeline": "ワールドのタイムラインブランチを管理 (list/fork/switch)",
     "modify": "エンティティをモデルに書き換えさせる (/modify <kind> <id> \"変更内容\")",
     "import": "アップロードしたファイルからキャラクターカードを取り込む (/import character <ファイル>)",
     "apply": "world/location/item のフィールドを変更 (/apply <kind> <id> キー=値 …)",

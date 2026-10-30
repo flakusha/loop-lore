@@ -1802,6 +1802,7 @@
     "tradeOfferEmptyDraft": "Select items or set a price for the offer."
   },
   "commands": {
+    "timeline": "إدارة فروع الخط الزمني للعالم (list/fork/switch)",
     "modify": "دع النموذج يعيد كتابة كيان (/modify <kind> <id> \"الطلب\")",
     "import": "استيراد بطاقة شخصية من ملف مرفوع (/import character <ملف>)",
     "apply": "تعديل حقول world/location/item (/apply <kind> <id> مفتاح=قيمة …)",

@@ -248,6 +248,10 @@
       "name": "summarize"
     },
     {
+      "name": "timeline",
+      "requiredRole": "member"
+    },
+    {
       "name": "sum"
     },
     {
@@ -388,6 +392,7 @@
         "review",
         "stats",
         "summarize",
+        "timeline",
         "sum",
         "world-list",
         "world-get",

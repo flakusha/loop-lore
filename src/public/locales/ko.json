@@ -1802,6 +1802,7 @@
     "tradeOfferEmptyDraft": "Select items or set a price for the offer."
   },
   "commands": {
+    "timeline": "월드 타임라인 브랜치 관리 (list/fork/switch)",
     "modify": "모델이 엔티티를 다시 쓰게 합니다 (/modify <kind> <id> \"요청\")",
     "import": "업로드한 파일에서 캐릭터 카드를 가져옵니다 (/import character <파일>)",
     "apply": "world/location/item 필드 변경 (/apply <kind> <id> 키=값 …)",
