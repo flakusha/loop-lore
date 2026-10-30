@@ -41,6 +41,10 @@ describe("cron default jobs", () => {
       "locations.tick",
       "chat.scheduled",
       "nsfw.status-sweep",
+      "models.rankings-prune",
+      "models.news-poll",
+      "models.reaction-grade",
+      "models.global-import",
     ],);
 
     for (const job of jobs) {

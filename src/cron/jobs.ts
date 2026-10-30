@@ -276,5 +276,54 @@ export function defaultJobs(): CronJobDef[] {
         return { deleted, };
       },
     },),
+    defineJob({
+      name: "models.rankings-prune",
+      schedule: "0 3 * * *",
+      enabled: true,
+      run: async ({ database, logger, },) => {
+        const { pruneRankings, } = await import("../models/rankings");
+        const deleted = await pruneRankings(database,);
+        logger.info("ranking prune complete", { module: "cron", deleted, },);
+        return { deleted, };
+      },
+    },),
+    defineJob({
+      name: "models.news-poll",
+      // Six-hour cadence matches NEWS_REFRESH_MS in src/models/news.ts.
+      schedule: "0 */6 * * *",
+      enabled: true,
+      run: async ({ database, logger, },) => {
+        const { pollAllFeeds, } = await import("../models/news");
+        const total = await pollAllFeeds(database,);
+        logger.info("news poll complete", { module: "cron", total, },);
+        return { total, };
+      },
+    },),
+    defineJob({
+      name: "models.reaction-grade",
+      // Hourly recomputation; each run appends one row per model, so
+      // history accumulates. Pruned by models.rankings-prune.
+      schedule: "0 * * * *",
+      enabled: true,
+      run: async ({ database, logger, },) => {
+        const { gradeModelsFromReactions, } = await import("../models/reaction-grade");
+        const graded = await gradeModelsFromReactions(database,);
+        logger.info("reaction grading complete", { module: "cron", graded, },);
+        return { graded, };
+      },
+    },),
+    defineJob({
+      name: "models.global-import",
+      // Daily board pull; per-source next_refresh_after gates the
+      // network. Idempotent — re-runs write nothing new.
+      schedule: "0 4 * * *",
+      enabled: true,
+      run: async ({ database, logger, },) => {
+        const { importUgi, } = await import("../models/global-boards");
+        const written = await importUgi(database,);
+        logger.info("global board import complete", { module: "cron", written, },);
+        return { written, };
+      },
+    },),
   ];
 }
