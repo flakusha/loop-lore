@@ -134,4 +134,12 @@ export interface ModelsState {
   addComparisonModel(): void;
   removeComparisonModel(index: number,): void;
   rateComparison(resultIndex: number,): Promise<void>;
+  modelNews: {
+    family: string;
+    refreshedAt: string | null;
+    items: { id: string; title: string; url: string | null; publishedAt: string | null; author: string | null }[];
+  }[];
+  loadingNews: boolean;
+  loadModelNews(): Promise<void>;
+  refreshModelNews(): Promise<void>;
 }

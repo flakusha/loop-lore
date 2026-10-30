@@ -4,6 +4,7 @@
 import { capabilitiesState, } from "./capabilities";
 import { comparisonState, } from "./comparison";
 import { fineTuneState, } from "./fine-tune";
+import { newsState, } from "./news";
 import { pluginState, } from "./plugins";
 import { providerState, } from "./providers";
 import { roleState, } from "./roles";
@@ -26,4 +27,5 @@ export const adminModels = {
   ...capabilitiesState,
   ...fineTuneState,
   ...comparisonState,
+  ...newsState,
 } as unknown as ModelsState;

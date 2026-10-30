@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
-import { Elysia, } from "elysia";
 import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
+import { Elysia, } from "elysia";
 import { auditRoutes, } from "./audit";
 import { auxTelemetryRoutes, } from "./aux-telemetry";
 import { carriageRoutes, } from "./carriage";
@@ -15,6 +14,7 @@ import { itemPowerRoutes, } from "./item-power";
 import { keyRotationRoutes, } from "./key-rotation";
 import { modelCapabilitiesRoutes, } from "./model-capabilities";
 import { modelRolesRoutes, } from "./model-roles";
+import { newsRoutes, } from "./news";
 import { providersRoutes, } from "./providers";
 import { resourcesRoutes, } from "./resources";
 import { reviewStatsRoutes, } from "./review-stats";
@@ -41,6 +41,8 @@ import { worldsRoutes, } from "./worlds";
  *   GET  /api/admin/model-roles    — get current role assignments
  *   PUT  /api/admin/model-roles/:role — set role override
  *   DELETE /api/admin/model-roles/:role — clear role override
+ *   GET  /api/admin/model-news     — latest model news per feed family
+ *   POST /api/admin/model-news/refresh — re-poll model news feeds
  *   GET  /api/admin/world-events?world_id=… — world simulation event log
  *   GET  /api/admin/cron/jobs      — list scheduled job statuses
  *   POST /api/admin/cron/jobs/:name/run — manually trigger a job
@@ -70,6 +72,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(resourcesRoutes(opts, prefix,),)
       .use(modelRolesRoutes(opts, prefix,),)
       .use(modelCapabilitiesRoutes(opts, prefix,),)
+      .use(newsRoutes(opts, prefix,),)
       .use(sdStatusRoutes(opts, prefix,),)
       .use(systemConfigRoutes(opts, prefix,),)
       .use(worldsRoutes(opts, prefix,),)
