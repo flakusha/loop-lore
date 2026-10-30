@@ -795,6 +795,8 @@
     "tradeCreate": "Create offer",
     "tradeOfferPrice": "Offer price (Gold)",
     "tradeCounterPrice": "Counter price (Gold)",
+"// keep both
+// hint: Logic changed on both sides. Requires understanding intent of each change.
     "inventoryTitle": "Inventory",
     "inventoryActor": "Actor id",
     "inventoryViewList": "List view",
@@ -831,6 +833,13 @@
     "npcSell": "Sell selected",
     "npcConfirm": "Confirm all",
     "npcClear": "Clear selection"
+    "loreRarity": "Rarity",
+    "loreTimelineId": "Timeline",
+    "loreTimelineIdPlaceholder": "timeline slug (empty = every timeline)",
+    "loreRevealCondition": "Reveal condition (secret)",
+    "loreRevealConditionPlaceholder": "{\"keywords\": [\"beacon\"], \"event\": \"meteor_fall\"}",
+    "loreRevealConditionHint": "JSON gate: the entry stays hidden until met. keywords match the conversation, event matches timeline events; all/any combine.",
+    "loreSecretBadge": "secret"
   },
   "gallery": {
     "title": "갤러리",
