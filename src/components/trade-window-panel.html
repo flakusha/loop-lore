@@ -43,6 +43,39 @@
   </div>
   <div x-show="offersError" class="muted" role="alert" x-text="offersError"></div>
 
+  <h5>{{{ t("worlds.tradeCreateLabel") }}}</h5>
+  <div class="form-row">
+    <template x-for="item in myItems" :key="item.id">
+      <label class="condition">
+        <input
+          type="checkbox"
+          :checked="draft.playerIds.includes(item.id)"
+          :data-testid="'trade-create-pick-' + item.id"
+          @change="toggleMine(item.id)"
+        />
+        <span x-text="item.name + ' (' + (item.value ?? 0) + ' Gold)'"></span>
+      </label>
+    </template>
+  </div>
+  <div class="form-row">
+    <label class="form-label" for="trade-offer-price">{{{ t("worlds.tradeOfferPrice") }}}</label>
+    <input
+      id="trade-offer-price"
+      class="form-input"
+      type="number"
+      min="0"
+      x-model.number="offerPrice"
+      data-testid="trade-offer-price"
+    />
+    <button
+      class="btn btn-secondary btn-sm"
+      @click="createOffer()"
+      data-testid="trade-create"
+      x-text="t('worlds.tradeCreate')"
+    >
+    </button>
+  </div>
+
   <h5>{{{ t("worlds.tradeOffersLabel") }}}</h5>
   <template x-for="offer in offers" :key="offer.id">
     <div class="trade-offer-row" :data-offer-id="offer.id">
@@ -81,6 +114,30 @@
         </template>
       </div>
       <div x-text="selectedOffer().price + ' Gold'"></div>
+      <div class="form-row">
+        <template x-for="item in myItems" :key="item.id">
+          <label class="condition">
+            <input
+              type="checkbox"
+              :checked="draft.playerIds.includes(item.id)"
+              :data-testid="'trade-counter-pick-' + item.id"
+              @change="toggleMine(item.id)"
+            />
+            <span x-text="item.name + ' (' + (item.value ?? 0) + ' Gold)'"></span>
+          </label>
+        </template>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="trade-counter-price">{{{ t("worlds.tradeCounterPrice") }}}</label>
+        <input
+          id="trade-counter-price"
+          class="form-input"
+          type="number"
+          min="0"
+          x-model.number="counterPrice"
+          data-testid="trade-counter-price"
+        />
+      </div>
       <div class="trade-window-actions">
         <button
           class="btn btn-primary btn-sm"
