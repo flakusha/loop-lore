@@ -14,6 +14,7 @@ import "./context";
 import "./debug";
 import "./detail";
 import "./help";
+import "./avatar";
 import "./image";
 import "./impersonate";
 import "./music";
@@ -198,6 +199,41 @@ describe("/image", () => {
     const result = mustGet("image",)(["a", "medieval", "castle",], baseCtx(),) as CommandResult;
     expect(result.action,).toBe("generate-image",);
     expect(result.actionPayload,).toEqual({ prompt: "a medieval castle", },);
+  });
+});
+
+describe("/avatar", () => {
+  it("returns a usage hint for empty args even with a character in ctx", () => {
+    const result = mustGet("avatar",)(
+      [],
+      baseCtx({ currentCharacter: { id: "actor-1", name: "Elara", }, },),
+    ) as CommandResult;
+
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBeUndefined();
+    expect(result.systemMessage,).toContain("Usage: /avatar <prompt>",);
+  });
+
+  it("returns a usage hint when no character is in ctx", () => {
+    const result = mustGet("avatar",)(["Elara", "portrait",], baseCtx(),) as CommandResult;
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBeUndefined();
+    expect(result.systemMessage,).toContain("Run it in a chat with a character",);
+  });
+
+  it("rides the generate-image action with the chat character as binding target", () => {
+    const result = mustGet("avatar",)(
+      ["Elara", "portrait,", "moonlit", "library",],
+      baseCtx({ currentCharacter: { id: "actor-1", name: "Elara", }, },),
+    ) as CommandResult;
+
+    expect(result.action,).toBe("generate-image",);
+    expect(result.actionPayload,).toEqual({ prompt: "Elara portrait, moonlit library", bindActorAvatar: "actor-1", },);
+  });
+
+  it("is registered as unavailable without an image provider (hidden from listings)", () => {
+    expect(listCommands(),).not.toContain("avatar",);
+    expect(getCommand("avatar",),).toBeDefined();
   });
 });
 

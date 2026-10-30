@@ -72,10 +72,17 @@ const actionHandlers: Record<string, ActionHandler> = {
   ...worldActionHandlers,
 
   "generate-image": async (ctx, payload, chatId,) => {
+    // Avatar Dogfood slice 1: /avatar rides the same action; its payload only
+    // adds bindActorAvatar, forwarded so the route binds generated variants.
+    const body: Record<string, unknown> = { prompt: (payload?.prompt as string) ?? "", chatId, };
+    if (typeof payload?.bindActorAvatar === "string" && payload.bindActorAvatar) {
+      body.bindActorAvatar = payload.bindActorAvatar;
+    }
+
     await dispatchGenerationAction(
       ctx,
       "/api/v1/generation/image",
-      { prompt: (payload?.prompt as string) ?? "", chatId, },
+      body,
       "Image generation",
       chatId,
     );

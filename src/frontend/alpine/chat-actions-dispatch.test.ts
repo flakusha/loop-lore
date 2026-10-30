@@ -84,6 +84,21 @@ describeOrSkip("dispatchCommandAction", () => {
       expect(body,).toEqual({ prompt: "a cat", chatId: "chat-1", },);
     });
 
+    test("forwards bindActorAvatar from the payload (/avatar rides the same action)", async () => {
+      mockFetch(200,);
+      const ctx = buildCtx();
+      await chatActions.dispatchCommandAction!.call(
+        ctx as any,
+        "generate-image",
+        { prompt: "Elara portrait", bindActorAvatar: "actor-1", },
+        "chat-1",
+      );
+
+      expect(fetchCalls.length,).toBe(1,);
+      const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
+      expect(body,).toEqual({ prompt: "Elara portrait", chatId: "chat-1", bindActorAvatar: "actor-1", },);
+    });
+
     test("does NOT arm the LLM SSE on 200 (image POST writes no generation buffer)", async () => {
       mockFetch(200,);
       const ctx = buildCtx();

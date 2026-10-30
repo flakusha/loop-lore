@@ -9,6 +9,7 @@ import "./analyze";
 import "./apply";
 import "./assets";
 import "./attack";
+import "./avatar";
 import "./battle";
 import "./caption";
 import "./characters-access";

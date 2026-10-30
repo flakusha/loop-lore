@@ -4,12 +4,15 @@
 import type { Kysely, } from "kysely";
 import { extractImageMetadata, } from "../assets/metadata";
 import { persistGeneratedImages, } from "../assets/service";
+import { bindGeneratedActorAvatar, } from "../characters/services/avatar-service";
 import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
 import { listSdProviders, } from "../config/schema";
 import { AssetType, } from "../db/enums";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
+import { resolveActorAccess, } from "../routes/actor-access";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
 import { generateImagesWithFailover, } from "./image-engine";
@@ -51,6 +54,43 @@ interface ImageGenBody {
   templateId?: string;
   /** {{variable}} values substituted into the template body. */
   context?: Record<string, string>;
+  /**
+   * Avatar Dogfood (slice 1): bind every generated image as a `generated`
+   * avatar variant on this actor. Caller must own the actor; checked before
+   * the provider runs so a refused request never pays for generation.
+   */
+  bindActorAvatar?: string;
+}
+
+/**
+ * Avatar Dogfood (slice 1): bind persisted images as `generated` avatar
+ * variants on an actor. The binding op unwinds its own rows on failure, so a
+ * mid-bind error surfaces without a partial binding; the persisted assets
+ * stay (they are ordinary gallery rows at this point).
+ * @param db       Kysely database handle.
+ * @param actorId  Owned actor the variants bind to (ownership proven upstream).
+ * @param assetIds Persisted asset ids, in generation order.
+ * @returns The created avatar ids in input order, or a 500 `Response` when
+ *   the binding failed (logged, nothing half-bound).
+ */
+async function bindGeneratedVariants(
+  db: Kysely<DB>,
+  actorId: string,
+  assetIds: string[],
+): Promise<string[] | Response> {
+  try {
+    return await bindGeneratedActorAvatar(db, { actorId, assetIds, },);
+  } catch (error) {
+    getLogger().warn("avatar binding after image generation failed", {
+      actorId,
+      error: error instanceof Error ? error.message : String(error,),
+    },);
+
+    return Response.json(
+      { error: "Image generated but avatar binding failed; no avatar was created.", status: 500, },
+      { status: 500, },
+    );
+  }
 }
 
 /**
@@ -80,6 +120,15 @@ export async function handleImageGeneration(
     const db = database ?? getDatabase();
     const access = await checkChatAccess(db, req.chatId, userId, userRole,);
     if (!access.ok) { return forbiddenResponse(); }
+  }
+
+  // Avatar Dogfood (slice 1): binding generated art onto an actor is a write
+  // against that actor, so prove ownership BEFORE the provider call — a
+  // refused request must never pay for generation. resolveActorAccess answers
+  // 404 for a missing actor and 403 for a foreign one (no existence oracle).
+  if (req.bindActorAvatar) {
+    const denied = await resolveActorAccess(database ?? getDatabase(), req.bindActorAvatar, userId,);
+    if (denied) { return denied; }
   }
 
   const db = database ?? getDatabase();
@@ -228,11 +277,21 @@ export async function handleImageGeneration(
     links,
   },);
 
-  const assets = persisted.map(({ asset, },) => ({
+  // Avatar Dogfood (slice 1): bind each persisted image as a `generated`
+  // avatar variant on the target actor (see bindGeneratedVariants).
+  const bound = req.bindActorAvatar
+    ? await bindGeneratedVariants(db, req.bindActorAvatar, persisted.map(({ asset, },) => asset.id),)
+    : null;
+
+  if (bound instanceof Response) { return bound; }
+  const avatarIds = bound ?? [];
+
+  const assets = persisted.map(({ asset, }, index,) => ({
     id: asset.id,
     url: `/api/assets/${asset.id}/raw`,
     filename: asset.filename,
     mimeType: asset.mime_type,
+    avatarId: avatarIds[index] ?? null,
   }));
 
   return Response.json({ data: assets, },);
