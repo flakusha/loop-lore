@@ -6099,6 +6099,21 @@ export async function insertCharacterTraitAssignments(
   return id;
 }
 
+/** Insert a assistant_quota_usage row. */
+export async function insertAssistantQuotaUsage(
+  db: Db,
+  window_start: string,
+  opts: { user_id: string; used_units?: number },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = opts as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("assistant_quota_usage",).values({
+    window_start,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
 /** Insert a immersion_failed_checks row. */
 export async function insertImmersionFailedChecks(
   db: Db,
@@ -6145,21 +6160,6 @@ export async function insertImmersionDecisionLog(
     chat_id,
     actor_id,
     severity,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a assistant_quota_usage row. */
-export async function insertAssistantQuotaUsage(
-  db: Db,
-  window_start: string,
-  opts: { user_id: string; used_units?: number },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = opts as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("assistant_quota_usage",).values({
-    window_start,
     ...restOpts,
   } as any,).execute();
   return id;

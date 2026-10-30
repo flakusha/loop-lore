@@ -9,7 +9,7 @@
  * handle the content produce results; none short-circuit.
  */
 
-import { ImmersionGateHook, } from "../../immersion/gate-hook";
+import { ImmersionGateHook, } from "../../immersion";
 import { getLogger, } from "../../logger";
 import { EmotionHook, } from "./emotion-hook";
 import { ModerationHook, } from "./moderation-hook";

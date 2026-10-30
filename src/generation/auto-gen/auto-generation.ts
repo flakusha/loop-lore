@@ -15,7 +15,7 @@ import type { AsyncStore, } from "../../async/store";
 import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { runImmersionGatePrecheck, } from "../../immersion/pregeneration";
+import { runImmersionGatePrecheck, } from "../../immersion";
 import { getLogger, } from "../../logger";
 import { parseAssistantTuning, } from "../assistant-tuning";
 import { callLlm, } from "./call-llm";

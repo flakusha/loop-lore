@@ -14,6 +14,8 @@
 export { createImmersionGate, } from "./engine";
 export type { ImmersionGate, ImmersionGateDeps, PendingConsequenceLoader, } from "./engine";
 export { extractClaims, } from "./extract-claims";
+export { ImmersionGateHook, } from "./gate-hook";
+export type { ImmersionGateHookDeps, } from "./gate-hook";
 export {
   dbPendingConsequenceLoader,
   loadOpenFailedChecks,
@@ -22,6 +24,8 @@ export {
   resolveFailedCheck,
 } from "./pending-consequences";
 export type { FailedCheckSource, } from "./pending-consequences";
+export { runImmersionGatePrecheck, } from "./pregeneration";
+export type { ImmersionPrecheckArgs, ImmersionPrecheckResult, } from "./pregeneration";
 export { evaluateRules, } from "./rules";
 export { buildActorStateSnapshot, deriveRestricted, } from "./state-snapshot";
 export {
