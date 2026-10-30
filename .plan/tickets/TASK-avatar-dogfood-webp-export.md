@@ -7,7 +7,7 @@
 **Context:** Slice 2 of epic-avatar-dogfood (builds on the slice-1 promote path).
 **Acceptance Criteria:** (see below)
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** Medium
 **Effort:** Small
 **Epic:** epic-avatar-dogfood
@@ -23,10 +23,10 @@ the `file` hook already resolves webp via `mimeFromExtension`.
 
 ## Acceptance Criteria
 
-- [ ] Promote path converts masters to lossless webp (planned-new: webp-master conversion in promote; sharp is thumbnail-only today)
-- [ ] Export op renders a webp master to png/jpg bytes on demand (planned-new: avatar export op, format param `png | jpg`)
-- [ ] `resolveTemplateAvatar` `file` hook serves webp masters through the existing `mimeFromExtension` mapping (already accepted — verify, don't rebuild)
-- [ ] Tests: webp-master byte round-trip (lossless: decode equals source pixels) + png/jpg export smoke test
+- [x] Promote path converts masters to lossless webp — `promoteAvatarToDefault` (src/characters/seed/promote.ts) now defaults to a lossless-webp master (sharp, full size, `webp({ lossless: true })`); PNG input stays the promote contract, `master: "png"` preserves the slice-1 byte-for-byte cell. Pinned by `promote.test.ts` "converts to a lossless webp master by default" (raw-pixel round-trip) and "master: 'png' keeps the slice-1…".
+- [x] Export op renders a webp master to png/jpg bytes on demand — new `exportAvatarMaster({ bytes, format: "png" | "jpg" })` (src/characters/seed/master-export.ts), webp-only input contract. Pinned by `master-export.test.ts` (pixel-exact png export, jpg smoke, non-webp refusal).
+- [x] `resolveTemplateAvatar` `file` hook serves webp masters through the existing `mimeFromExtension` mapping — verified, not rebuilt: `promote.test.ts` "seed file hook reads back promoted webp and png masters with the right mime" asserts `image/webp` / `image/png`.
+- [x] Tests: webp-master byte round-trip (lossless: decode equals source pixels, alpha-normalized because sharp omits an opaque alpha on webp decode) + png/jpg export smoke test — see the suites above (8 pass).
 
 ## Linked Epics
 
