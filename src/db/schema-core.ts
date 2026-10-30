@@ -2133,3 +2133,11 @@ export interface ChatOwners {
   granted_at: Generated<string>;
   reason: string | null;
 }
+
+// ── world_timeline_selections ────────────────────────────────────────────
+export interface WorldTimelineSelections {
+  user_id: string;
+  world_id: string;
+  timeline_id: string;
+  selected_at: string;
+}
