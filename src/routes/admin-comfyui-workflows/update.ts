@@ -19,6 +19,7 @@ import {
   rowToPayload,
   validateWorkflowPayload,
 } from "../../generation/workflow-library";
+import { findDeadNodes, } from "../../generation/workflow-loader/workflow-validation";
 import { ErrorResponse, } from "../../validation/schemas";
 import { jsonResponse, requireUserId, } from "../http-utils";
 import { buildWorkflowPayload, readMeta, slotsColumn, uploadedGraph, uploadedUiWorkflow, } from "./payload";
@@ -118,6 +119,7 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                   model_family: modelFamily,
                   detail_level: row.detail_level,
                   payload: ingested.payload,
+                  unreferencedLive: ingested.report.unreferencedLive,
                 },);
 
                 if (!serialized.ok) { return workflowInvalid([serialized.error,],); }
@@ -139,6 +141,15 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
               }
 
               const graph = uploadedGraph(body,) ?? current.body;
+              // A probe-passing row revalidates in converted mode: its graph
+              // came from the converter, so the dead-node rule would reject
+              // the control/config nodes the editor submits unreferenced.
+              // The exemption equals the live graph's own dead set — a fresh
+              // API-format upload with a genuinely dead node still fails.
+              const converted = uploadedGraph(body,) === null && row.probe_status === "passing"
+                ? findDeadNodes(current.body,)
+                : [];
+
               const validated = validateWorkflowPayload(
                 buildWorkflowPayload(graph, {
                   category: meta.category ?? current.category,
@@ -146,6 +157,7 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                   requiredNodes: meta.requiredNodes ?? current.requiredNodes,
                   loraSlots: meta.loraSlots ?? current.loraSlots,
                 },),
+                { unreferencedLive: converted, },
               );
 
               if (!validated.ok) { return workflowInvalid(validated.errors,); }
@@ -166,6 +178,7 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                 model_family: modelFamily,
                 detail_level: row.detail_level,
                 payload: validated.payload,
+                unreferencedLive: converted,
               },);
 
               if (!serialized.ok) { return workflowInvalid([serialized.error,],); }

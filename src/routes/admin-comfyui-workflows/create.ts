@@ -92,7 +92,7 @@ async function createFromUiUpload(input: UiCreateInput,): Promise<Response> {
   if (!ingested.ok) { return workflowInvalid(ingestErrors(ingested.probe.errors,),); }
 
   const payload = { ...ingested.payload, };
-  const validated = validateWorkflowPayload(payload,);
+  const validated = validateWorkflowPayload(payload, { unreferencedLive: ingested.report.unreferencedLive, },);
   if (!validated.ok) { return workflowInvalid(validated.errors,); }
 
   const serialized = serializeTemplateInput({
@@ -102,6 +102,7 @@ async function createFromUiUpload(input: UiCreateInput,): Promise<Response> {
     model_family: modelFamily,
     detail_level: "balanced",
     payload: validated.payload,
+    unreferencedLive: ingested.report.unreferencedLive,
   },);
 
   if (!serialized.ok) { return workflowInvalid([serialized.error,],); }

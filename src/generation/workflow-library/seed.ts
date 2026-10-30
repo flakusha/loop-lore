@@ -33,7 +33,7 @@ import type { ImageEditCategory, } from "../../image-edit/types";
 import { getLogger, } from "../../logger";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import type { WorkflowPayload, } from "../template-types";
-import { isValidWorkflow, } from "../workflow-loader/workflow-validation";
+import { findDeadNodes, isValidWorkflow, } from "../workflow-loader/workflow-validation";
 import { deriveParameters, repairParameters, } from "./seed-parameters";
 import { CATEGORIES, validateWorkflowPayload, } from "./validate";
 
@@ -139,6 +139,21 @@ async function readPayload(
 }
 
 /**
+ * Converted-mode ids for a stored probe-passing row, else none.
+ * @param payloadText - Stored row payload JSON
+ * @param probeStatus - Stored probe gate state
+ * @returns The row's own dead ids when converted, otherwise empty
+ */
+function convertedExemption(payloadText: string, probeStatus: string,): string[] {
+  if (probeStatus !== "passing") { return []; }
+  const stored = jsonParseOr<unknown>(payloadText, null,);
+  if (typeof stored !== "object" || stored === null || Array.isArray(stored,)) { return []; }
+  const body = (stored as { body?: unknown }).body;
+  if (typeof body !== "object" || body === null || Array.isArray(body,)) { return []; }
+  return findDeadNodes(body as WorkflowPayload["body"],);
+}
+
+/**
  * Import any workflow file that is not already in the library.
  *
  * Never throws for a single bad file: a malformed workflow is logged and
@@ -174,7 +189,7 @@ export async function seedWorkflowLibrary(
 
     const existing = await database
       .selectFrom("prompt_templates",)
-      .select(["id", "payload",],)
+      .select(["id", "payload", "probe_status",],)
       .where("id", "=", id,)
       .executeTakeFirst();
 
@@ -184,8 +199,10 @@ export async function seedWorkflowLibrary(
       // declared parameters while its body carries placeholders. That row can
       // never be built, so the missing parameters are derived and written
       // back. A row the operator edited declares its own parameters and is
-      // left alone.
-      if (await repairParameters(database, existing, id,)) {
+      // left alone. A probe-passing row revalidates in converted mode: its
+      // graph came from the converter.
+      const converted = convertedExemption(existing.payload, existing.probe_status,);
+      if (await repairParameters(database, existing, id, { unreferencedLive: converted, },)) {
         outcome.repaired.push(id,);
         log.info("repaired workflow parameters", { id, },);
         continue;

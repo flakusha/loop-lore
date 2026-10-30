@@ -12,6 +12,7 @@
  */
 import type { FlatNode, } from "./flatten";
 import type { FlatLink, } from "./links";
+import { UNREFERENCED_LIVE_CLASSES, } from "./types";
 import type {
   ApiGraph,
   ConversionResult,
@@ -104,6 +105,24 @@ export function wireNode(
   };
 }
 
+/** Unreferenced ids whose class the editor submits live without links. */
+function unreferencedLive(graph: ApiGraph,): string[] {
+  const referenced = new Set<string>();
+  for (const node of Object.values(graph,)) {
+    for (const value of Object.values(node.inputs,)) {
+      if (Array.isArray(value,) && typeof value[0] === "string") { referenced.add(value[0],); }
+    }
+  }
+
+  const live: string[] = [];
+  for (const [id, node,] of Object.entries(graph,)) {
+    if (referenced.has(id,)) { continue; }
+    if (UNREFERENCED_LIVE_CLASSES.has(node.class_type,)) { live.push(id,); }
+  }
+
+  return live;
+}
+
 /** Assemble the report tail from wiring state. */
 export function wireReport(state: WireState, live: LiveSet,): ConversionResult["report"] {
   return {
@@ -114,5 +133,6 @@ export function wireReport(state: WireState, live: LiveSet,): ConversionResult["
     prunedDangling: state.pruned,
     packIdentity: [...state.packSeen,].map(([cls, pack,],) => ({ class: cls, ...pack, })),
     nodeCount: live.nodes.length,
+    unreferencedLive: unreferencedLive(state.graph,),
   };
 }

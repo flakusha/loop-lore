@@ -157,6 +157,14 @@ export interface PackIdentity {
   readonly ver?: string;
 }
 
+/** Control/config classes whose instances the editor submits unreferenced. */
+export const UNREFERENCED_LIVE_CLASSES: ReadonlySet<string> = new Set([
+  "DaSiWaH3ContinuityPublish",
+  "DaSiWa_NodeStatusSwitch",
+  "ModelPatchTorchSettings",
+  "ResolutionSelector",
+],);
+
 /** Converter report consumed by param derivation, probe scaffold, ingest. */
 export interface ConverterReport {
   readonly mutedDropped: readonly string[];
@@ -166,6 +174,8 @@ export interface ConverterReport {
   readonly prunedDangling: readonly PrunedDangling[];
   readonly packIdentity: readonly PackIdentity[];
   readonly nodeCount: number;
+  /** Unreferenced-but-live control/config ids, computed from the converted graph. */
+  readonly unreferencedLive: readonly string[];
 }
 
 /** Converter output: the submittable graph plus its report. */

@@ -19,6 +19,7 @@ import { toDate, } from "../../utils/date";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import type { WorkflowPayload, } from "../template-types";
 import { collectPlaceholders, } from "../workflow-substitutor";
+import type { ValidateWorkflowOptions, } from "./validate";
 import { validateWorkflowPayload, } from "./validate";
 
 /**
@@ -62,12 +63,14 @@ export function deriveParameters(id: string, body: ComfyUIWorkflow,): TemplatePa
  * @param database - Kysely handle
  * @param row - The stored row's payload
  * @param id - Workflow id
+ * @param options - Converted-mode exemption ids for probe-ingested rows
  * @returns {Promise<boolean>} True when the row was repaired
  */
 export async function repairParameters(
   database: Kysely<DB>,
   row: { payload: string },
   id: string,
+  options: ValidateWorkflowOptions = {},
 ): Promise<boolean> {
   const parsed = jsonParseOr<unknown>(row.payload, null,);
   if (!parsed || typeof parsed !== "object") { return false; }
@@ -82,7 +85,7 @@ export async function repairParameters(
   const parameters = deriveParameters(id, payload.body,);
   if (parameters.length === 0) { return false; }
 
-  const validated = validateWorkflowPayload({ ...payload, parameters, },);
+  const validated = validateWorkflowPayload({ ...payload, parameters, }, options,);
   if (!validated.ok) { return false; }
 
   await database
