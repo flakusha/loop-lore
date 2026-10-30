@@ -242,10 +242,10 @@ export interface DB {
   immersion_failed_checks: import("./schema-core").ImmersionFailedChecks;
   immersion_decision_log: import("./schema-core").ImmersionDecisionLog;
   chat_owners: import("./schema-core").ChatOwners;
-  world_timeline_selections: import("./schema-core").WorldTimelineSelections;
+  model_rankings: import("./schema-telemetry").ModelRankings;
+  ranking_snapshots: import("./schema-telemetry").RankingSnapshots;
   resource_records: import("./schema-core").ResourceRecords;
   backup_records: import("./schema-core").BackupRecords;
   resource_quota_counters: import("./schema-core").ResourceQuotaCounters;
-  model_rankings: import("./schema-telemetry").ModelRankings;
-  ranking_snapshots: import("./schema-telemetry").RankingSnapshots;
+  world_timeline_selections: import("./schema-core").WorldTimelineSelections;
 }

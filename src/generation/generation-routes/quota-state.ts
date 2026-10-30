@@ -14,7 +14,7 @@ import { restoreBackupForOwner, } from "../../resource/external-storage";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import { can, } from "../../users/permissions";
 import { safeJsonParse, } from "../../utils";
-import { parseQuota, } from "../quota-engine";
+import { invalidateSharedQuota, parseQuota, QuotaEngine, } from "../quota-engine";
 
 /** One gauge dimension: used vs ceiling (null = unlimited). */
 export interface QuotaDimensionState {
@@ -62,14 +62,13 @@ export async function handleQuotaState(
   const ids = rows.map((r,) => r.id);
   const counterById = new Map<string, { requests: number; tokens: number }>();
   if (ids.length > 0) {
-    const counters = await database
-      .selectFrom("resource_quota_counters",)
-      .select(["resource_id", "requests", "tokens",],)
-      .where("resource_id", "in", ids,)
-      .execute();
-
-    for (const c of counters) {
-      counterById.set(c.resource_id, { requests: c.requests, tokens: c.tokens, },);
+    // Roll persisted windows on read (via the engine's DB-backed read path,
+    // so the read is authoritative); expired windows surface as zeroed, so
+    // the gauge never shows a stale spent window.
+    const reader = new QuotaEngine({ db: database, },);
+    for (const id of ids) {
+      const counter = await reader.readCounter(id,);
+      counterById.set(id, { requests: counter.requests, tokens: counter.tokens, },);
     }
   }
 
@@ -134,6 +133,9 @@ export async function handleQuotaOverride(
   }
 
   await database.deleteFrom("resource_quota_counters",).where("resource_id", "=", resourceId,).execute();
+
+  invalidateSharedQuota(resourceId,);
+
   return jsonResponse({ ok: true, resourceId, },);
 }
 
@@ -151,12 +153,12 @@ export interface BackupHashEntry {
 }
 
 /** Best-effort resource id from a stored backup payload: the schedulers
- * persist `{ chatId }`, `{ assetId, contentHash }`, or a raw snapshot.
- * Unknown shapes fall back to the backup id. */
+ * persist `{ chatId, messages }`, `{ assetId, contentHash, ...ref }`, or a
+ * raw snapshot. Unknown shapes fall back to the backup id. */
 export function backupResourceId(payload: string, fallbackId: string,): string {
   const parsed = safeJsonParse<Record<string, unknown> | null>(payload,);
   if (parsed.ok && parsed.value && typeof parsed.value === "object") {
-    for (const key of ["chatId", "assetId", "resourceId", "worldId", "loreId",]) {
+    for (const key of ["chatId", "assetId", "messageId", "worldId", "resourceId", "restoredFrom", "loreId",]) {
       const value = parsed.value[key];
       if (typeof value === "string" && value.length > 0) { return value; }
     }

@@ -16,7 +16,7 @@ import type { Kysely, } from "kysely";
 import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
-import { jsonError, } from "../../routes/http-utils";
+import { HttpStatus, jsonError, jsonResponse, } from "../../routes/http-utils";
 import { hasInFlightGeneration, IdempotencyKeyConflictError, startGenerationTracking, } from "../cancellation-manager";
 import { applyChatFormat, } from "../generate-format";
 import { harnessContext, } from "../providers/harness-context";
@@ -25,6 +25,8 @@ import {
   resolveProvider,
 } from "../providers/registry";
 import type { ResolvedProvider, } from "../providers/registry";
+import { getQuotaEngine, QuotaExceededError, } from "../quota-engine";
+import { callWithResource, } from "../resource-provider";
 import { INTERACTIVE_TURN, type TaskSignal, } from "../routing/task-signal";
 import { appendStylePrompt, buildStylePrompt, } from "../smart-regen";
 import type { GenerationMessage, } from "../types";
@@ -71,6 +73,37 @@ export async function handleGenerate({
 
   const rejected = await validateGenerateRequest({ input, database, userId, userRole, config: cfg, },);
   if (rejected !== null) { return rejected; }
+
+  // ── Provisioned-resource path ───────────────────────
+  // Quota is enforced pre-provider-call through the resource facade;
+  // QuotaExceededError maps to 429 (same shape as other rate limits here).
+  // The facade owns provider resolution + failover; the 20/min governance
+  // guard already ran in validate, so this branch skips prompt assembly and
+  // ships the request straight through the provisioned resource.
+  if (input.resourceId !== undefined) {
+    const resourceId = input.resourceId;
+    const model = input.modelId ?? cfg.generation.defaultModels[cfg.generation.defaultProvider] ??
+      cfg.generation.defaultProvider;
+
+    try {
+      const provisioned = await callWithResource(
+        resourceId,
+        { model, messages: input.prompt ?? [], params: { maxTokens: input.maxTokens, }, },
+        { db: database, config: cfg, userId, quota: getQuotaEngine(), },
+      );
+
+      return jsonResponse({ ok: true, content: provisioned.content, usage: provisioned.usage, },);
+    } catch (error) {
+      if (error instanceof QuotaExceededError) {
+        return jsonError({ message: error.message, status: HttpStatus.TooManyRequests, },);
+      }
+
+      return jsonError({
+        message: `Provider resolution failed: ${(error as Error).message}`,
+        status: 422,
+      },);
+    }
+  }
 
   // ── Resolve provider + model ──────────────────────────
 

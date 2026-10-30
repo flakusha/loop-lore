@@ -85,11 +85,21 @@ export async function extractAndStore(
     .execute();
 
   // Backup scheduling: world-save snapshot after the row commits, keyed on
-  // the chat owner. Failure-safe: logs and skips, never throws into save.
+  // the chat owner. Persists `stored` (the canonical validated snapshot),
+  // not `payload` (the raw fenced block). Quota forwards from the owner's
+  // active endpoint (fail-open). Failure-safe: never throws into save.
   {
     const chat = await database.selectFrom("chats",).select("created_by",).where("id", "=", chatId,).executeTakeFirst();
     if (chat) {
-      await scheduleWorldSaveBackup(database, { ownerId: chat.created_by, chatId, payload, },);
+      let quota: { storageQuotaBytes?: number } = {};
+      try {
+        const { listStorageResources, } = await import("../resource/external-storage");
+        const stores = await listStorageResources(database, chat.created_by,);
+        const active = stores.find((s,) => s.status === "active");
+        if (active && active.storageQuotaBytes > 0) { quota = { storageQuotaBytes: active.storageQuotaBytes, }; }
+      } catch { /* fail-open: schedule without a quota ceiling */ }
+
+      await scheduleWorldSaveBackup(database, { ownerId: chat.created_by, chatId, payload: stored, ...quota, },);
     }
   }
 
