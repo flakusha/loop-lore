@@ -246,4 +246,6 @@ export interface DB {
   resource_records: import("./schema-core").ResourceRecords;
   backup_records: import("./schema-core").BackupRecords;
   resource_quota_counters: import("./schema-core").ResourceQuotaCounters;
+  model_rankings: import("./schema-telemetry").ModelRankings;
+  ranking_snapshots: import("./schema-telemetry").RankingSnapshots;
 }

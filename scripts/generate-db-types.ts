@@ -212,6 +212,8 @@ const DOMAIN_MAP: Record<string, string> = {
   crafting_orders: "crafting",
   // Telemetry
   telemetry_events: "telemetry",
+  model_rankings: "telemetry",
+  ranking_snapshots: "telemetry",
   // Blog
   blog_posts: "blog",
   blog_comments: "blog",
