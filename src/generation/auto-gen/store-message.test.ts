@@ -62,6 +62,8 @@ function makeOpts(db: Kysely<DB>, overrides: Partial<StoreMessageOpts>,): StoreM
     tokenUsage: { promptTokens: 1, completionTokens: 2, totalTokens: 3, },
     dominantEmotion: undefined,
     thinking: undefined,
+    finishReason: "stop",
+    latencyMs: 0,
     ...overrides,
   };
 }

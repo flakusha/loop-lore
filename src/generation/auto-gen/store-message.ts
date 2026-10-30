@@ -25,6 +25,7 @@ import {
   isSwipeIndexUniqueViolation,
   retryBounded,
 } from "../../utils/swipe-retry";
+import { buildQualityMetadata, repetitionRate, } from "../quality";
 import type { GenDeps, } from "./deps";
 
 /** */
@@ -46,6 +47,10 @@ export interface StoreMessageOpts {
   dominantEmotion: string | undefined;
   /** LLM reasoning/thinking content (persisted, excluded from context). */
   thinking: string | undefined;
+  /** Raw provider finish reason (stop, length, error, cancelled). */
+  finishReason: string;
+  /** Generation duration in milliseconds. */
+  latencyMs: number;
 }
 
 /** */
@@ -87,6 +92,8 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
     tokenUsage,
     dominantEmotion,
     thinking,
+    finishReason,
+    latencyMs,
   } = opts;
 
   // BUG-regex-transform-runs-at-store-time-not-render-time: transforms
@@ -155,6 +162,14 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
             token_count_prompt: tokenUsage.promptTokens,
             token_count_completion: tokenUsage.completionTokens,
             token_count_total: tokenUsage.totalTokens,
+            generation_time_ms: latencyMs,
+            tokens_per_second: latencyMs > 0
+              ? Math.round((tokenUsage.completionTokens / latencyMs) * 1000,)
+              : null,
+            metadata: buildQualityMetadata({
+              repetitionRate: repetitionRate(storedText,),
+              finishReason,
+            },),
             status: MessageStatus.Confirmed,
             visibility: MessageVisibility.Visible,
             swipe_index: candidate,
