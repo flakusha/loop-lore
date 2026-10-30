@@ -2566,6 +2566,7 @@ export const ActorMemoriesSchema = t.Object({
   context_window_start: t.Optional(t.String(),),
   context_window_end: t.Optional(t.String(),),
   emotion_impact: t.Optional(t.String(),),
+  timeline_id: t.Optional(t.String(),),
 },);
 
 // ── memory_embeddings ────────────────────────────────────────────

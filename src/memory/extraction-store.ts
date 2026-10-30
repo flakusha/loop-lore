@@ -66,6 +66,16 @@ export async function storeMemories(
   // (BUG-memory-extraction-store-writes-memories-without-a-transactio).
   return db.transaction().execute(async (trx,) => {
     let stored = 0;
+    // Timeline binding (epic-memory-propagation): memories don't propagate
+    // between timelines by default, so a new row is bound to the source
+    // chat's timeline. An unresolvable chat row stores NULL —
+    // timeline-agnostic (visible everywhere) — rather than guessing.
+    const sourceTimeline = await trx
+      .selectFrom("chats",)
+      .select("timeline_id",)
+      .where("id", "=", chatId,)
+      .executeTakeFirst();
+
     const auditEntries: Array<
       { memoryId: string; actorId: string; userId: string | null; action: "create"; details: Record<string, unknown> }
     > = [];
@@ -101,6 +111,7 @@ export async function storeMemories(
           extraction_kind: extractionKind,
           scope: "character",
           privacy: "shared",
+          timeline_id: sourceTimeline?.timeline_id ?? null,
           review_status: provenance.reviewStatus ?? "committed",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
