@@ -15,6 +15,7 @@ import { generateEntityRoutes, } from "./generate-entity";
 import { listRoutes, } from "./list";
 import { manageRoutes, } from "./manage";
 import { moderationRoutes, } from "./moderation";
+import { chatOwnerRoutes, } from "./owners";
 import { ownershipRoutes, } from "./ownership";
 import { participantRoutes, } from "./participants";
 import { sideChannelRoutes, } from "./side-channels";
@@ -55,6 +56,7 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(moderationRoutes(opts, prefix,),)
       .use(participantRoutes(opts, prefix,),)
       .use(ownershipRoutes(opts, prefix,),)
+      .use(chatOwnerRoutes(opts, prefix,),)
       .use(sideChannelRoutes(opts, prefix,),)
       .use(turnOrderRoutes(opts, prefix,),)
       .use(partySplitRoutes(opts, prefix,),)
