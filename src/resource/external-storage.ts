@@ -23,13 +23,14 @@ import { ResourceUnavailableError, type ResourceUnavailableReason, } from "./ext
 /** Supported external storage endpoint kinds. */
 export type StorageKind = "s3" | "webdav";
 
-/** Public view of a provisioned storage resource (no secret material). */
+/** Public view of a provisioned storage resource (no secret material).
+ * `credentialRef` is intentionally absent: even the one-way ref leaks
+ * account-linkable material, so HTTP responses never carry it. */
 export interface StorageResource {
   id: string;
   ownerId: string;
   kind: StorageKind;
   endpoint: string;
-  credentialRef: string;
   storageQuotaBytes: number;
   status: string;
 }
@@ -139,7 +140,6 @@ function toPublic(row: StorageRow,): StorageResource {
     ownerId: row.owner_id,
     kind: row.type.slice(TYPE_PREFIX.length,) as StorageKind,
     endpoint: row.endpoint,
-    credentialRef: row.credential_ref,
     storageQuotaBytes: storageQuotaOf(row.quota,),
     status: row.status,
   };
@@ -165,7 +165,7 @@ function toBackup(row: BackupRow,): BackupRecord {
 export async function addStorageResource(db: Kysely<DB>, opts: AddStorageOpts,): Promise<StorageResource> {
   if (!KINDS.includes(opts.kind,)) { throw new Error(`Unknown storage kind "${opts.kind}"`,); }
   if (!opts.ownerId || !opts.endpoint) { throw new Error("ownerId and endpoint are required",); }
-  const credentialRef = await storeCredential(opts.secret, opts.wrapSecret,);
+  const persistedSecretRef = await storeCredential(opts.secret, opts.wrapSecret,);
   const storageQuotaBytes = Math.max(0, opts.storageQuotaBytes ?? 0,);
   const id = opts.id ?? randomUUID();
   await db
@@ -176,7 +176,7 @@ export async function addStorageResource(db: Kysely<DB>, opts: AddStorageOpts,):
       type: `${TYPE_PREFIX}${opts.kind}`,
       provider: opts.kind,
       endpoint: opts.endpoint,
-      credential_ref: credentialRef,
+      credential_ref: persistedSecretRef,
       quota: jsonStringifyOr({ requestsPerMinute: 0, storageQuotaBytes, },),
       status: "active",
     },)
@@ -187,7 +187,6 @@ export async function addStorageResource(db: Kysely<DB>, opts: AddStorageOpts,):
     ownerId: opts.ownerId,
     kind: opts.kind,
     endpoint: opts.endpoint,
-    credentialRef,
     storageQuotaBytes,
     status: "active",
   };
@@ -325,6 +324,55 @@ export async function listBackups(db: Kysely<DB>, ownerId?: string, resourceType
   if (resourceType !== undefined) { query = query.where("resource_type", "=", resourceType,); }
   const rows = await query.execute() as BackupRow[];
   return rows.map(toBackup,);
+}
+
+/** What the owner chose to restore into (chat store, asset dir, …). */
+export interface BackupRestoreTarget {
+  applyPayload(resourceId: string, data: unknown,): void | Promise<void>;
+}
+
+export interface OwnerRestoreResult {
+  restored: boolean;
+  reason: string;
+}
+
+/**
+ * Owner-scoped restore: verify the backup belongs to `ownerId`, re-hash its
+ * payload, parse it, apply it to `target`, and record the recovery source
+ * as a fresh backup row. Non-owners get restored:false (route maps to 403);
+ * `confirmed:false` refuses with zero applies so the dashboard confirm gate
+ * stays meaningful. The target apply runs inside one transaction with the
+ * recovery-source write, so a failed apply rolls back the audit row.
+ */
+export async function restoreBackupForOwner(
+  db: Kysely<DB>,
+  ownerId: string,
+  backupId: string,
+  confirmed: boolean,
+  target: BackupRestoreTarget,
+): Promise<OwnerRestoreResult> {
+  const backup = await verifyBackupIntegrity(db, backupId,).catch(() => null);
+  if (!backup) { return { restored: false, reason: "backup not found or integrity check failed", }; }
+  if (backup.ownerId !== ownerId) { return { restored: false, reason: "not owner", }; }
+  if (!confirmed) { return { restored: false, reason: "recovery requires explicit user confirmation", }; }
+  const parsed = safeJsonParse<unknown>(backup.payload,);
+  if (!parsed.ok) { return { restored: false, reason: "integrity check failed: payload is not valid JSON", }; }
+  const data: unknown = parsed.value;
+
+  const resourceId = typeof (data as Record<string, unknown> | null)?.["chatId"] === "string"
+    ? (data as Record<string, string>)["chatId"]
+    : backup.id;
+
+  await db.transaction().execute(async (tx,) => {
+    await target.applyPayload(resourceId, data,);
+    await writeBackup(tx as unknown as Kysely<DB>, {
+      ownerId,
+      resourceType: backup.resourceType,
+      payload: jsonStringifyOr({ restoredFrom: backup.id, resourceId, },),
+    },);
+  },);
+
+  return { restored: true, reason: `restored ${resourceId} v${backup.version}`, };
 }
 
 /** Backup trigger input shared by all scheduling hooks. */
