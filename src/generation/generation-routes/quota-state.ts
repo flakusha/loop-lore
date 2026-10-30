@@ -134,3 +134,36 @@ export async function handleQuotaOverride(
   await database.deleteFrom("resource_quota_counters",).where("resource_id", "=", resourceId,).execute();
   return jsonResponse({ ok: true, resourceId, },);
 }
+
+/**
+ * GET /api/v1/settings/backups/hashes
+ *
+ * Server-side hashes for the settings backup dashboard: the caller
+ * reconciles its local backup copies against these content hashes.
+ * Owners see only their own backups; `admin.settings` holders see all
+ * (mirrors the scoping of handleQuotaState).
+ */
+export async function handleBackupHashes(
+  database: Kysely<DB>,
+  userId?: string,
+  userRole?: string | null,
+): Promise<Response> {
+  const authUserId = requireUserId({ userId, },);
+  if (typeof authUserId !== "string") { return authUserId; }
+
+  const isAdmin = can(userRole ?? null, "admin.settings",);
+  let query = database
+    .selectFrom("backup_records",)
+    .select(["resource_type", "owner_id", "content_hash", "version",],);
+
+  if (!isAdmin) { query = query.where("owner_id", "=", authUserId,); }
+  const rows = await query.execute();
+
+  const hashes: Record<string, { serverHash?: string; serverVersion?: number }> = {};
+  for (const row of rows) {
+    const key = `${row.resource_type}:${row.owner_id}`;
+    hashes[key] = { serverHash: row.content_hash, serverVersion: row.version, };
+  }
+
+  return jsonResponse({ hashes, },);
+}

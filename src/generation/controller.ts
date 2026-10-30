@@ -28,6 +28,7 @@ import { handleAmbientGeneration, } from "./audio-gen-route";
 import { handleImageCaption, } from "./caption-route";
 import { handleGenerate, } from "./generate-route";
 import {
+  handleBackupHashes,
   handleCancelGeneration,
   handleContinueGeneration,
   handleGenerationStatus,
@@ -155,6 +156,11 @@ export function generationRoutes(
   app.post(`${prefix}/generation/quota/override`, async (ctx,) => {
     const auth = ctx as unknown as { userId?: string; userRole?: string | null };
     return handleQuotaOverride(readBody(ctx,), database, auth.userId, auth.userRole,);
+  },);
+
+  app.get(`${prefix}/settings/backups/hashes`, async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleBackupHashes(database, auth.userId, auth.userRole,);
   },);
 
   return app;

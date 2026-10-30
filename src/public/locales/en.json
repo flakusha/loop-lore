@@ -339,7 +339,16 @@
     "quotaEmpty": "No provisioned resources yet.",
     "quotaOver": "over quota",
     "quotaOverride": "Reset window",
-    "quotaUnlimited": "unlimited"
+    "quotaUnlimited": "unlimited",
+    "backup": "Backup",
+    "backupEnabled": "Browser backup (opt-in)",
+    "backupTypes": "Backed-up types",
+    "backupEmpty": "No local backups to reconcile yet.",
+    "backupRecover": "Recover",
+    "backupDrift": "Some backups differ from the server.",
+    "backupRestored": "Backup verified and restored.",
+    "backupRecoverFailed": "Recovery failed: integrity check did not pass.",
+    "backupConfirmRequired": "Recovery requires explicit confirmation."
   },
   "admin": {
     "title": "Administration",
