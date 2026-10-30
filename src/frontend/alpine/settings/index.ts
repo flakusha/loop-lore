@@ -5,8 +5,9 @@ import { api, } from "./api";
 import { chat, } from "./chat";
 import { general, } from "./general";
 import { keynav, } from "./keynav";
+import { quota, } from "./quota";
 import { restartBanner, } from "./restart-banner";
-import type { LocaleInfoArray, SettingsState, } from "./types";
+import type { LocaleInfoArray, QuotaGaugeResource, SettingsState, } from "./types";
 
 settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
   return {
@@ -32,6 +33,9 @@ settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
     confirmDeleteText: "",
     saving: false,
     loaded: false,
+    quotaResources: [] as QuotaGaugeResource[],
+    quotaIsAdmin: false,
+    quotaNotice: "",
     nsfwConsent: null as null | {
       nsfwEnabled: boolean;
       maxRating: string;
@@ -44,6 +48,7 @@ settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
     ...general(),
     ...chat(),
     ...api(),
+    ...quota(),
     ...restartBanner(),
     ...keynav(),
   };
