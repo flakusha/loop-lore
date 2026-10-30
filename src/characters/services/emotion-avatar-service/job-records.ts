@@ -9,8 +9,8 @@ import type { DB, } from "../../../db/schema";
 import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
 import type { BatchGenerationJob, EmotionGenerationResult, GenerateEmotionAvatarsOpts, } from "./types";
 
-/** Job kind recorded for emotion-avatar batches. */
-const EMOTION_AVATAR_JOB_KIND = "emotion-avatar";
+/** Job kind recorded for emotion-avatar batches (startup sweep scope). */
+export const EMOTION_AVATAR_JOB_KIND = "emotion-avatar";
 
 /** Lifecycle status persisted per generation job. */
 export type GenerationJobStatus = "pending" | "running" | "completed" | "failed" | "cancelled";
@@ -162,6 +162,26 @@ export async function listGenerationJobRecords(
     .selectFrom("generation_jobs",)
     .selectAll()
     .where("actor_id", "=", actorId,)
+    .orderBy("created_at", "desc",)
+    .orderBy(sql`rowid desc`,)
+    .execute();
+
+  return rows.map((row,) => toRecord(row,));
+}
+
+/**
+ * List every emotion-avatar job record, newest first — the startup cache
+ * rebuild source, so the in-memory store mirrors the durable rows.
+ * @param database
+ * @returns Records newest first.
+ */
+export async function listEmotionAvatarJobRecords(
+  database: Kysely<DB>,
+): Promise<GenerationJobRecord[]> {
+  const rows = await database
+    .selectFrom("generation_jobs",)
+    .selectAll()
+    .where("kind", "=", EMOTION_AVATAR_JOB_KIND,)
     .orderBy("created_at", "desc",)
     .orderBy(sql`rowid desc`,)
     .execute();

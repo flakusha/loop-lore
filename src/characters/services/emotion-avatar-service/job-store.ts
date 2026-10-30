@@ -4,6 +4,8 @@
 // In-memory batch job store for emotion avatar generation.
 
 import type { EmotionType, } from "../../../db/enums";
+import { toDate, } from "../../../utils/date";
+import type { GenerationJobRecord, } from "./job-records";
 import type { BatchGenerationJob, BatchJobId, } from "./types";
 
 /** In-memory job store (persists until server restart) */
@@ -69,6 +71,32 @@ export function listJobs(actorId: string,): BatchGenerationJob[] {
   }
 
   return jobs.sort((a, b,) => b.startedAt.localeCompare(a.startedAt,));
+}
+
+/**
+ * Rebuild the in-memory cache from durable job records (startup path).
+ *
+ * The store stays a cache over `generation_jobs`: after a restart every
+ * emotion-avatar record — reconciled-interrupted ones included — is loaded
+ * back so job list/status surfaces serve durable state, never an empty or
+ * zombie-`running` view.
+ * @param records
+ * @returns void
+ */
+export function rebuildJobCache(records: GenerationJobRecord[],): void {
+  for (const record of records) {
+    activeJobs.set(record.id as BatchJobId, {
+      id: record.id as BatchJobId,
+      actorId: record.actorId,
+      baseAvatarId: record.payload.baseAvatarId,
+      status: record.status,
+      results: record.results,
+      ...(record.payload.seed !== undefined ? { seed: record.payload.seed, } : {}),
+      startedAt: record.startedAt ?? toDate(0,).toISOString(),
+      ...(record.completedAt !== null ? { completedAt: record.completedAt, } : {}),
+      ...(record.errorMessage !== null ? { error: record.errorMessage, } : {}),
+    },);
+  }
 }
 
 /**
