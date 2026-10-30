@@ -7,7 +7,7 @@
 **Context:** Closes epic-avatar-dogfood (verifies the full 7-step scenario).
 **Acceptance Criteria:** (see below)
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-avatar-dogfood
@@ -23,10 +23,10 @@ re-run for slice-2 webp masters.
 
 ## Acceptance Criteria
 
-- [ ] Fresh DB + empty upload dir → boot → seed → promoted characters' primary avatar bytes byte-equal the committed default files (planned-new: e2e dogfood test harness)
-- [ ] Unpromoted templates still seed the deterministic SVG placeholder
-- [ ] Reseed is insert-once safe: second seed run changes nothing (existing `findExistingActor` / `adoptExistingActor` behavior asserted)
-- [ ] Test documents the 7-step scenario outcome (fresh boot, chat, generation, promote, clean, restart, verify) as the epic's done evidence
+- [x] Fresh DB + empty upload dir → boot → seed → promoted characters' primary avatar bytes byte-equal the committed default files (tests/e2e/flows/avatar-dogfood.test.ts — `wipe → seed → promoted bytes byte-equal the committed master`, both master formats: slice-2 webp default + slice-1 png, byte-equality via character_avatars+assets storage_path read-back)
+- [x] Unpromoted templates still seed the deterministic SVG placeholder (same test — Detective Morgan leg: PLACEHOLDER byte-equality + `image/svg+xml` mime)
+- [x] Reseed is insert-once safe: second seed run changes nothing (same test — second `seedCharacterTemplates` run: created=0, skipped=6, avatar ids stable)
+- [x] Test documents the 7-step scenario outcome (fresh boot, chat, generation, promote, clean, restart, verify) as the epic's done evidence (avatar-dogfood.test.ts header comment maps each scenario step to where it is exercised: steps 2–4 unit-pinned by slice 1 + deterministic sharp stand-in + real promoteAvatarToDefault, steps 5–7 driven for real in the test)
 
 ## Linked Epics
 
