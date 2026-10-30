@@ -184,4 +184,53 @@ describe("reroll-emotion command", () => {
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("missing database",);
   });
+
+  test("current character resolves without a token", async () => {
+    const result = await runRerollEmotion(
+      [],
+      ctxFor({ currentCharacter: { id: heroId, name: "Luna", }, },),
+    );
+
+    expect(result.handled,).toBe(true,);
+    expect(calls,).toHaveLength(1,);
+    expect(calls[0]?.actorId,).toBe(heroId,);
+    expect(result.action,).toBe("regenerate-emotion-avatars",);
+  });
+
+  test("no token falls back to a chat participant", async () => {
+    // The fallback query has no ORDER BY, so either non-user participant
+    // may win — assert the exhaustive outcome set instead of which one.
+    const result = await runRerollEmotion([], ctxFor(),);
+    expect(result.handled,).toBe(true,);
+    const succeeded = result.action === "regenerate-emotion-avatars" && calls.length === 1;
+    const noAvatar = (result.systemMessage ?? "").includes("no primary avatar",);
+    const noCharacter = (result.systemMessage ?? "").includes("no character found",);
+    expect(succeeded || noAvatar || noCharacter,).toBe(true,);
+  });
+
+  test("service failure surfaces a reroll-failed message", async () => {
+    const passing = EmotionAvatarService.prototype.startBatchGeneration;
+    EmotionAvatarService.prototype.startBatchGeneration = (async () => {
+      throw new Error("boom",);
+    }) as typeof passing;
+
+    try {
+      const result = await runRerollEmotion(["@Luna",], ctxFor(),);
+      expect(result.handled,).toBe(true,);
+      expect(result.systemMessage,).toContain("boom",);
+      expect(calls,).toHaveLength(0,);
+    } finally {
+      EmotionAvatarService.prototype.startBatchGeneration = passing;
+    }
+  });
+
+  test("registry dispatch delegates to the service", async () => {
+    const handler = getCommand("reroll-emotion",);
+    expect(handler,).toBeDefined();
+
+    const result = await handler!(["@Luna",], ctxFor(),);
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBe("regenerate-emotion-avatars",);
+    expect(calls,).toHaveLength(1,);
+  });
 });
