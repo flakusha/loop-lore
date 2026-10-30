@@ -17,8 +17,9 @@
 import type { TemplateParameter, } from "../../image-edit/types";
 import { brand, } from "../../utils/brands";
 import { lookupClass, } from "../comfyui-converter/object-info";
-import type { ObjectInfoClass, ObjectInfoSnapshot, } from "../comfyui-converter/types";
+import type { ObjectInfoSnapshot, } from "../comfyui-converter/types";
 import type { MarkedInput, } from "./marks";
+import { boundsOf, specOf, specTagOf, staticOptions, } from "./spec-shape";
 import type { DerivedParameter, OptionSource, ParameterName, } from "./types";
 
 /** Input for {@link mapSpecToParam}. */
@@ -42,51 +43,6 @@ const RUNTIME_COMBO_PATTERNS: readonly RegExp[] = [
 
 function isRuntimeCombo(inputName: string,): boolean {
   return RUNTIME_COMBO_PATTERNS.some((pattern,) => pattern.test(inputName,));
-}
-
-function specOf(info: ObjectInfoClass | undefined, name: string,): readonly unknown[] | undefined {
-  return info?.input?.required?.[name] ?? info?.input?.optional?.[name];
-}
-
-function tagOf(spec: readonly unknown[] | undefined,): string {
-  if (spec === undefined || spec.length === 0) { return "?"; }
-  const first = spec[0];
-  if (typeof first === "string") { return first; }
-  if (Array.isArray(first,)) { return "COMBO"; }
-  return "?";
-}
-
-interface Bounds {
-  readonly min?: number;
-  readonly max?: number;
-  readonly step?: number;
-}
-
-function boundsOf(spec: readonly unknown[] | undefined,): Bounds {
-  if (spec === undefined || spec.length < 2) { return {}; }
-  const opts = spec[1];
-  if (typeof opts !== "object" || opts === null || Array.isArray(opts,)) { return {}; }
-  const record = opts as Readonly<Record<string, unknown>>;
-  const pick = (key: string,): number | undefined => {
-    const value = record[key];
-    return typeof value === "number" && Number.isFinite(value,) ? value : undefined;
-  };
-
-  const min = pick("min",);
-  const max = pick("max",);
-  const step = pick("step",);
-  return {
-    ...(min === undefined ? {} : { min, }),
-    ...(max === undefined ? {} : { max, }),
-    ...(step === undefined ? {} : { step, }),
-  };
-}
-
-function staticOptions(spec: readonly unknown[] | undefined,): Array<{ label: string; value: unknown }> | null {
-  if (spec === undefined || spec.length === 0) { return null; }
-  const first = spec[0];
-  if (!Array.isArray(first,)) { return null; }
-  return first.map((option,) => ({ label: String(option,), value: option, }));
 }
 
 function slugify(label: string | null, fallback: string,): string {
@@ -113,7 +69,7 @@ export function mapSpecToParam(input: TypeMappingInput, taken: ReadonlySet<strin
   const info = marked.className.startsWith("subgraph:",) ? undefined : lookupClass(snapshot, marked.className,);
   const spec = info === undefined ? undefined : specOf(info, marked.inputName,);
   const socketTag = marked.socketType.split(",",)[0]?.trim() ?? "?";
-  const tag = spec === undefined ? socketTag : tagOf(spec,);
+  const tag = spec === undefined ? socketTag : specTagOf(spec,);
   const name = paramName(marked, taken,);
   const label = marked.label ?? marked.inputName;
   const fallback = { name, label, default: marked.defaultValue ?? "", } as const;
