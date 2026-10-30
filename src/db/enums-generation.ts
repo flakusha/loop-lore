@@ -103,3 +103,12 @@ export const TemplateDetailLevel = {
 } as const;
 /** */
 export type TemplateDetailLevel = (typeof TemplateDetailLevel)[keyof typeof TemplateDetailLevel];
+
+/** Acceptance-probe gate state for a `prompt_templates` workflow row. */
+export const WorkflowProbeStatus = {
+  Unprobed: "unprobed",
+  Passing: "passing",
+  Failing: "failing",
+} as const;
+/** */
+export type WorkflowProbeStatus = (typeof WorkflowProbeStatus)[keyof typeof WorkflowProbeStatus];

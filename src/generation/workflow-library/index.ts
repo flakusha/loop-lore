@@ -22,6 +22,7 @@ export {
   missingRequiredNodes,
   rowToPayload,
   rowToTemplate,
+  type WorkflowProbeStatus,
   type WorkflowRow,
 } from "./row";
 export {

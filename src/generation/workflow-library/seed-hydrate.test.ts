@@ -321,6 +321,37 @@ describe("buildWorkflowGraph", () => {
   });
 });
 
+describe("probe checklist fields", () => {
+  it("reads back sane defaults on a seeded row", async () => {
+    const row = await workflowRowById("txt2img",);
+    expect(row.probe_status,).toBe("unprobed",);
+    expect(row.params_reviewed,).toBe(0,);
+    expect(row.license,).toBeNull();
+  });
+
+  it("round-trips checklist updates", async () => {
+    const row = await workflowRowById("txt2img",);
+    await db
+      .updateTable("prompt_templates",)
+      .set({ probe_status: "passing", params_reviewed: 1, license: "CC-BY-4.0", },)
+      .where("id", "=", row.id,)
+      .execute();
+
+    try {
+      const stored = await workflowRowById("txt2img",);
+      expect(stored.probe_status,).toBe("passing",);
+      expect(stored.params_reviewed,).toBe(1,);
+      expect(stored.license,).toBe("CC-BY-4.0",);
+    } finally {
+      await db
+        .updateTable("prompt_templates",)
+        .set({ probe_status: "unprobed", params_reviewed: 0, license: null, },)
+        .where("id", "=", row.id,)
+        .execute();
+    }
+  });
+});
+
 describe("hydrateWorkflowRegistry", () => {
   it("registers enabled library rows", async () => {
     const registry = new TemplateRegistry();

@@ -70,6 +70,7 @@ import type {
   UserRole,
   UserStatus,
   VnChoiceStatus,
+  WorkflowProbeStatus,
   ZoneType,
 } from "./enums";
 import type { AuditColumns, } from "./schema-audit";
@@ -1080,6 +1081,9 @@ export interface PromptTemplates {
   enabled: Generated<LoreEntryStatus>;
   lora_slots: string | null;
   min_vram: number | null;
+  probe_status: Generated<WorkflowProbeStatus>;
+  params_reviewed: Generated<number>;
+  license: string | null;
 }
 
 // ── nsfw_consent_state ────────────────────────────────────────────

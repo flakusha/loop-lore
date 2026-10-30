@@ -2987,6 +2987,9 @@ export const SCHEMA = new SchemaManifest()
     enabled: col("text", { notNull: true, hasDefault: true, },),
     lora_slots: col("text",),
     min_vram: col("integer",),
+    probe_status: col("text", { notNull: true, hasDefault: true, },),
+    params_reviewed: col("integer", { notNull: true, hasDefault: true, },),
+    license: col("text",),
   },)
   // ── Core: Users & Sessions ──────────────────────────────────────────────
   .table("personas", {
