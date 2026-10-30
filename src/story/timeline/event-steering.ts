@@ -95,6 +95,8 @@ export interface ResolveSteeringOpts {
  * @returns The new steering id.
  * @throws {RangeError} When the probability is outside 0–1.
  * @throws {Error} When the description is empty.
+ * @throws {Error} When `timelineId` is provided but empty/whitespace — the
+ *   caller must either omit it (prime default) or name a real branch.
  */
 export async function createSteering(
   { db, worldId, description, manifestProbability, conditions, mayManifest, timelineId, audienceScope, }:
@@ -102,6 +104,12 @@ export async function createSteering(
 ): Promise<string> {
   if (!description.trim()) {
     throw new Error("Steering description must not be empty.",);
+  }
+
+  // `??` below only catches null/undefined, so an empty string would slip
+  // through and seed an orphan branch id (TASK-timeline-steering gap 2).
+  if (timelineId !== undefined && !timelineId.trim()) {
+    throw new Error("Steering timelineId must not be empty when provided.",);
   }
 
   const probability = manifestProbability ?? 0.5;
@@ -169,34 +177,38 @@ export async function listPendingSteerings(
 export async function rollSteering(
   { db, id, random, }: RollSteeringOpts,
 ): Promise<boolean> {
-  const row = await db
-    .selectFrom("world_event_steerings",)
-    .selectAll()
-    .where("id", "=", id,)
-    .executeTakeFirst();
+  // The pending-status read MUST run inside the same transaction as the
+  // status flip + timeline append: a read outside would let two concurrent
+  // manifest rolls both observe Pending and append duplicate timeline events
+  // (TASK-timeline-steering gap 1).
+  return db.transaction().execute(async (trx,) => {
+    const row = await trx
+      .selectFrom("world_event_steerings",)
+      .selectAll()
+      .where("id", "=", id,)
+      .executeTakeFirst();
 
-  if (!row) {
-    throw new Error(`Unknown steering ${id}.`,);
-  }
+    if (!row) {
+      throw new Error(`Unknown steering ${id}.`,);
+    }
 
-  if (row.status !== SteeringStatus.Pending) {
-    return row.status === SteeringStatus.Manifested;
-  }
+    if (row.status !== SteeringStatus.Pending) {
+      return row.status === SteeringStatus.Manifested;
+    }
 
-  if (row.may_manifest === 0) {
-    return false;
-  }
+    if (row.may_manifest === 0) {
+      return false;
+    }
 
-  const roll = (random ?? Math.random)();
-  if (!(roll < row.manifest_probability)) {
-    return false;
-  }
+    const roll = (random ?? Math.random)();
+    if (!(roll < row.manifest_probability)) {
+      return false;
+    }
 
-  const now = new Date().toISOString();
-  // Status flip and timeline append must commit together: a crash between two
-  // independent writes would mark the steering Manifested while the timeline
-  // event is lost (BUG-timeline-event-steering).
-  await db.transaction().execute(async (trx,) => {
+    const now = new Date().toISOString();
+    // Status flip and timeline append commit together: a crash between two
+    // independent writes would mark the steering Manifested while the
+    // timeline event is lost (BUG-timeline-event-steering).
     await trx
       .updateTable("world_event_steerings",)
       .set({ status: SteeringStatus.Manifested, resolved_at: now, },)
@@ -214,9 +226,9 @@ export async function rollSteering(
         data: { steeringId: id, },
       },],
     },);
-  },);
 
-  return true;
+    return true;
+  },);
 }
 
 /**
@@ -232,28 +244,32 @@ export async function rollSteering(
 export async function resolveSteering(
   { db, id, manifest, }: ResolveSteeringOpts,
 ): Promise<void> {
-  const row = await db
-    .selectFrom("world_event_steerings",)
-    .select(["may_manifest", "status", "world_id", "description",],)
-    .where("id", "=", id,)
-    .executeTakeFirst();
-
-  if (!row) {
-    throw new Error(`Unknown steering ${id}.`,);
-  }
-
-  if (row.status !== SteeringStatus.Pending) {
-    throw new Error(`Steering ${id} is already ${row.status}.`,);
-  }
-
-  if (manifest && row.may_manifest === 0) {
-    throw new Error(`Steering ${id} is a red herring and cannot manifest; dismiss it instead.`,);
-  }
-
-  const now = new Date().toISOString();
-  // Same atomicity contract as rollSteering: the dismissal/manifestation stamp
-  // and the appended timeline event commit or roll back together.
+  // The status read happens inside the same transaction as the resolution
+  // write so a concurrent roll/resolve cannot both observe Pending
+  // (TASK-timeline-steering gap 1). Throws inside roll the tx back — safe,
+  // nothing has been written yet.
   await db.transaction().execute(async (trx,) => {
+    const row = await trx
+      .selectFrom("world_event_steerings",)
+      .select(["may_manifest", "status", "world_id", "description",],)
+      .where("id", "=", id,)
+      .executeTakeFirst();
+
+    if (!row) {
+      throw new Error(`Unknown steering ${id}.`,);
+    }
+
+    if (row.status !== SteeringStatus.Pending) {
+      throw new Error(`Steering ${id} is already ${row.status}.`,);
+    }
+
+    if (manifest && row.may_manifest === 0) {
+      throw new Error(`Steering ${id} is a red herring and cannot manifest; dismiss it instead.`,);
+    }
+
+    const now = new Date().toISOString();
+    // Same atomicity contract as rollSteering: the dismissal/manifestation
+    // stamp and the appended timeline event commit or roll back together.
     await trx
       .updateTable("world_event_steerings",)
       .set({ status: manifest ? SteeringStatus.Manifested : SteeringStatus.Dismissed, resolved_at: now, },)
