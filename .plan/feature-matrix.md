@@ -1757,7 +1757,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2862 | 1290 | 47 | 877 | 29 | 0 | 619 |
+| (untagged) | 2862 | 1291 | 47 | 876 | 29 | 0 | 619 |
 
 ## By epic × status
 
@@ -2106,7 +2106,7 @@ Total tickets: **4224** — untagged: **2862** — unbound to epic: **1051**
 | epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
 | epic-world-travel-time | 6 | 3 | 0 | 1 | 0 | 0 | 2 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| (unbound) | 1051 | 667 | 49 | 33 | 43 | 0 | 259 |
+| (unbound) | 1051 | 668 | 49 | 32 | 43 | 0 | 259 |
 
 ## Ticket detail
 

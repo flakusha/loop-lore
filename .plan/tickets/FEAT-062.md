@@ -1,6 +1,6 @@
 ---
 title: "FEAT-062: Generation quality metrics"
-status: In Progress
+status: Done
 **Scope:** FEAT-062 generation quality metrics: record per-generation quality signals and expose GET /api/analytics/quality (source: generation_attempts, no DB migration)
 priority: medium
 labels: [feature, generation, quality]
@@ -11,7 +11,7 @@ related: [FEAT-059, FEAT-060, FEAT-066]
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -97,3 +97,5 @@ Users need objective metrics to evaluate generation quality over time. Is the mo
 
 - Blocked by: FEAT-059 (analytics dashboard provides the UI framework)
 - Blocks: nothing
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 6a79bb2 (registry tip: bcd6ddfda Konstantin Fedotov Close issue)
