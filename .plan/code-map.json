@@ -4208,6 +4208,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-op-events.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     }
   ],
@@ -5967,6 +5971,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-retention-cap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-inflight-job-handles.md"
     },
     {
       "kind": "ticket",
@@ -10229,6 +10237,10 @@
       "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-op-events.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/chat-lifecycle-moderation.md"
     }
@@ -11173,6 +11185,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-rpg-rule-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-inflight-job-handles.md"
     },
     {
       "kind": "spec",
@@ -17838,6 +17854,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-inflight-job-handles.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
     },
     {
@@ -20931,6 +20951,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-delegated-permission-grants.md"
     },
     {
       "kind": "ticket",
@@ -29878,6 +29902,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-inflight-job-handles.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     },
     {
@@ -30843,6 +30871,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-op-events.md"
     },
     {
       "kind": "spec",
@@ -33808,6 +33840,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-multi-agent-turn-queue.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-subagent-delegation.md"
     },
     {
@@ -33899,6 +33935,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
+    }
+  ],
+  "src/harness/worktree-scope.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-worktree-scope-guard.md"
     }
   ],
   "src/hash/record-hash.test.ts": [
@@ -45980,6 +46022,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-inflight-job-handles.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
     },
     {
@@ -49051,6 +49097,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-delegated-permission-grants.md"
     },
     {
       "kind": "ticket",
