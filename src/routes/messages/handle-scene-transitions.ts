@@ -12,6 +12,11 @@
 import type { Kysely, } from "kysely";
 import { classifyTransitionMessage, } from "../../chat";
 import { recordLocationChange, } from "../../chat/service/location-events";
+import {
+  executeReuniteFromNarration,
+  executeSplitFromNarration,
+  resolveLocation,
+} from "../../chat/service/split-execution";
 import { classifySplitIntent, } from "../../chat/split-classifier";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
@@ -25,45 +30,6 @@ import type { ChatRecord, } from "./transitions";
  * @param locationId
  */
 const locationIdToLabel = (locationId: string,): string => `Location ${locationId.slice(0, 8,)}`;
-
-/**
- * Resolve a location name to a world-scoped location row.
- * Exact match first, then LIKE with dedup; ambiguous matches return null.
- * @param database
- * @param locationName
- * @param worldId
- */
-async function resolveLocation(
-  database: Kysely<DB>,
-  locationName: string,
-  worldId: string,
-): Promise<{ id: string; name?: string } | null> {
-  const exact = await database
-    .selectFrom("locations",)
-    .select(["id", "name",],)
-    .where("world_id", "=", worldId,)
-    .where("name", "=", locationName,)
-    .executeTakeFirst();
-
-  if (exact) { return exact; }
-  const likeMatches = await database
-    .selectFrom("locations",)
-    .select(["id", "name",],)
-    .where("world_id", "=", worldId,)
-    .where("name", "like", `%${locationName}%`,)
-    .execute();
-
-  if (likeMatches.length === 1) { return likeMatches[0] ?? null; }
-
-  if (likeMatches.length > 1) {
-    log().warn("Ambiguous location match, skipping", {
-      locationName,
-      matches: Array.from(likeMatches, loc => loc.name,),
-    },);
-  }
-
-  return null;
-}
 
 /**
  * Detect scene transitions for the message and apply their side effects:
@@ -96,17 +62,19 @@ export async function handleSceneTransitions(
 
   const recentContent = Array.from(recentMsgs, (m,) => m.content,).reverse();
 
-  // Regex-only by design: split detection here is detect-and-log, and this runs
-  // per user message. The classifier's AUX fallback is opt-in (allowAux) and
-  // belongs to the transition AUX slice, not to a second blocking roundtrip on
-  // a message that already pays one in classifyTransitionMessage below.
+  // Regex-only by design: split detection runs on every user message. The
+  // classifier's AUX fallback is opt-in (allowAux) and belongs to the
+  // transition AUX slice, not to a second blocking roundtrip on a message
+  // that already pays one in classifyTransitionMessage below. Execution is
+  // deterministic derivation (see chat/service/split-execution.ts) and
+  // silently skips narration that yields no executable specs.
   const splitClass = await classifySplitIntent(effectiveContent, config, database,);
   if (splitClass.isSplit) {
     log().info("Split narration detected", { chatId, source: splitClass.source, },);
-  }
-
-  if (splitClass.isReunite) {
+    await executeSplitFromNarration(database, { chatId, actorId, narration: effectiveContent, },);
+  } else if (splitClass.isReunite) {
     log().info("Reunite narration detected", { chatId, source: splitClass.source, },);
+    await executeReuniteFromNarration(database, { chatId, actorId, },);
   }
 
   const classification = await classifyTransitionMessage(
