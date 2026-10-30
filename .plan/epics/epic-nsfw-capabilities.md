@@ -34,12 +34,14 @@ Split from `epic-nsfw-moderation-priority.md` (which was triple-duplicated and o
 - [x] NSFW content rating enforcement (5-tier from Character Core) — `ContentRating` enum + TypeBox schema
 - [x] Consent state tracking (from TASK-shared-schemas) — `ConsentState` TypeBox schema
 - [x] Integration with generation boundary (LLM request filtering) — wired at `src/generation/auto-gen.ts:412`
+- [ ] NSFW consent grant/revoke route — `TASK-nsfw-consent-grant-route-missing.md` (the ledger is enforced but never granted: `recordNsfwConsent` has zero production callers, so every NSFW write route denies with `consent_required`; git issue `3352640`)
 
 ### Gating & Preferences
 
 - [x] NSFW enable/disable at per-chat, per-user, per-world level — `setChatNsfwOverride` / `setWorldNsfwOverride` in `src/nsfw/moderation-service/overrides.ts`; routes in `src/routes/nsfw-moderation/overrides.ts` (commit `49731047`, git issue `94f9a36`)
 - [x] Age gate enforcement for NSFW content access — weakest-link intersect across participants in `src/middleware/nsfw-gate/consent.ts`; regression test `consent.test.ts` "weakest link: participant without age gate blocks chat access" (commit `49731047`, git issue `f89168b`)
 - [x] User preferences / allow-lists for permitted NSFW intensity — `getEffectiveNsfw` walks shadow_ban → chat override → world override → user pref (fail-closed, git issue `da08f1b`); persisted consent ledger in `nsfw_consent_state` (migration 069, `consent-ledger.ts`, git issue `4f8aeb2`)
+- [ ] NSFW write routes authorize every actor id they name — `BUG-nsfw-write-routes-authorize-actor-but-not-target.md` (`targetActorId` and the encounters `participants` list are taken from the request body without an ownership/participation check, so a caller can mutate another user's intimacy and trauma state; P0 security, git issue `5da1d4c`)
 
 ## Open Items
 

@@ -7311,6 +7311,23 @@
       "related": []
     },
     {
+      "id": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md",
+      "title": "NSFW write routes authorize actor but not target",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/routes/actor-auth.ts",
+        "src/routes/nsfw/encounters.ts",
+        "src/routes/nsfw/intimacy.ts",
+        "src/routes/nsfw/shared.ts",
+        "src/rpg/encounters/service/participant-legs.ts",
+        "src/rpg/intimacy/service/actions.ts",
+        "src/rpg/trauma.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-nsfwmoderationservice-missing-getorcreateown-wiring-block-ba",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-nsfwmoderationservice-missing-getorcreateown-wiring-block-ba.md",
@@ -33590,7 +33607,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-inventory-alpine.md",
       "title": "Inventory Alpine.js Logic",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/inventory.ts"
       ],
@@ -33601,7 +33618,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-inventory-grid.md",
       "title": "Inventory Grid",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/inventory/inventory-grid.ts",
         "src/frontend/inventory/inventory-slot.ts"
@@ -33719,7 +33736,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-item-details.md",
       "title": "Item Details Panel",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/inventory/item-actions.ts",
         "src/frontend/inventory/item-details.ts"
@@ -37403,6 +37420,28 @@
       "srcRefs": [
         "src/frontend/nsfw/body-region.ts",
         "src/frontend/nsfw/body-state.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-nsfw-consent-grant-route-missing.md",
+      "title": "NSFW consent-grant route missing",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/config/sections/nsfw.ts",
+        "src/generation/auto-gen/check-nsfw-eligibility.test.ts",
+        "src/generation/auto-gen/content-hooks-nsfw-gate.test.ts",
+        "src/middleware/nsfw-gate/consent-ledger.ts",
+        "src/middleware/nsfw-gate/consent.test.ts",
+        "src/middleware/nsfw-gate/index.ts",
+        "src/middleware/nsfw-gate/request-context.ts",
+        "src/routes/nsfw/consent.ts",
+        "src/routes/nsfw/encounters.ts",
+        "src/routes/nsfw/index.ts",
+        "src/routes/nsfw/intimacy.ts",
+        "src/routes/nsfw/shared.ts"
       ],
       "related": []
     },
@@ -63304,6 +63343,7 @@
     {
       "path": "src/config/sections/nsfw.ts",
       "owners": [
+        "TASK-nsfw-consent-grant-route-missing",
         "TASK-outfit-change-aux-task-and-typebox-schema",
         "TASK-prompt-template-registry"
       ]
@@ -71648,6 +71688,12 @@
       ]
     },
     {
+      "path": "src/generation/auto-gen/check-nsfw-eligibility.test.ts",
+      "owners": [
+        "TASK-nsfw-consent-grant-route-missing"
+      ]
+    },
+    {
       "path": "src/generation/auto-gen/classify-intent.test.ts",
       "owners": [
         "BUG-classify-intent-confidence-unbounded"
@@ -71674,6 +71720,7 @@
       "path": "src/generation/auto-gen/content-hooks-nsfw-gate.test.ts",
       "owners": [
         "TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-",
+        "TASK-nsfw-consent-grant-route-missing",
         "epic-review-dev-2026-08-26-security-data-integrity-merges"
       ]
     },
@@ -75507,12 +75554,14 @@
       "owners": [
         "BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa",
         "TASK-harness-sync-ledger-v2",
+        "TASK-nsfw-consent-grant-route-missing",
         "TASK-specify-content-warnings-write-the-frontend-contract"
       ]
     },
     {
       "path": "src/middleware/nsfw-gate/consent.test.ts",
       "owners": [
+        "TASK-nsfw-consent-grant-route-missing",
         "epic-shared-schemas"
       ]
     },
@@ -75543,6 +75592,7 @@
       "path": "src/middleware/nsfw-gate/index.ts",
       "owners": [
         "TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r",
+        "TASK-nsfw-consent-grant-route-missing",
         "epic-frontend-age-gate"
       ]
     },
@@ -75571,6 +75621,7 @@
       "path": "src/middleware/nsfw-gate/request-context.ts",
       "owners": [
         "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+        "TASK-nsfw-consent-grant-route-missing",
         "TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char"
       ]
     },
@@ -77720,6 +77771,7 @@
       "owners": [
         "BUG-character-licensing-upsert-records-license-history-for-any-a",
         "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
         "TASK-unify-401-guard-helpers"
@@ -81095,9 +81147,35 @@
       ]
     },
     {
+      "path": "src/routes/nsfw/consent.ts",
+      "owners": [
+        "TASK-nsfw-consent-grant-route-missing"
+      ]
+    },
+    {
+      "path": "src/routes/nsfw/encounters.ts",
+      "owners": [
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+        "TASK-nsfw-consent-grant-route-missing"
+      ]
+    },
+    {
       "path": "src/routes/nsfw/index.test.ts",
       "owners": [
         "BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k"
+      ]
+    },
+    {
+      "path": "src/routes/nsfw/index.ts",
+      "owners": [
+        "TASK-nsfw-consent-grant-route-missing"
+      ]
+    },
+    {
+      "path": "src/routes/nsfw/intimacy.ts",
+      "owners": [
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+        "TASK-nsfw-consent-grant-route-missing"
       ]
     },
     {
@@ -81116,7 +81194,9 @@
     {
       "path": "src/routes/nsfw/shared.ts",
       "owners": [
-        "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil"
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+        "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+        "TASK-nsfw-consent-grant-route-missing"
       ]
     },
     {
@@ -83356,6 +83436,7 @@
     {
       "path": "src/rpg/encounters/service/participant-legs.ts",
       "owners": [
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "FEAT-battle-rewards-grant-character-xp-on-enemy-defeat",
         "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
         "FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-",
@@ -83713,6 +83794,7 @@
     {
       "path": "src/rpg/intimacy/service/actions.ts",
       "owners": [
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "TASK-033",
         "TASK-rpg-nsfw-services-add-config-level-opt-in-gate",
         "TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr"
@@ -85107,6 +85189,7 @@
     {
       "path": "src/rpg/trauma.ts",
       "owners": [
+        "BUG-nsfw-write-routes-authorize-actor-but-not-target",
         "TASK-044"
       ]
     },
@@ -101593,6 +101676,11 @@
     {
       "from": "epic-nsfw-capabilities",
       "kind": "owns",
+      "to": "BUG-nsfw-write-routes-authorize-actor-but-not-target"
+    },
+    {
+      "from": "epic-nsfw-capabilities",
+      "kind": "owns",
       "to": "TASK-PLAN-NSFW-RATING-UI"
     },
     {
@@ -101949,6 +102037,11 @@
       "from": "epic-nsfw-ui",
       "kind": "owns",
       "to": "TASK-nsfw-body-state"
+    },
+    {
+      "from": "epic-nsfw-ui",
+      "kind": "owns",
+      "to": "TASK-nsfw-consent-grant-route-missing"
     },
     {
       "from": "epic-nsfw-ui",
@@ -113539,6 +113632,41 @@
       "from": "BUG-nsfw-runtime-config-singleton-leaks-across-tests",
       "kind": "produces",
       "to": "src/story/game-master.test.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/routes/actor-auth.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/routes/nsfw/encounters.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/routes/nsfw/intimacy.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/routes/nsfw/shared.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/rpg/intimacy/service/actions.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "produces",
+      "to": "src/rpg/trauma.ts"
     },
     {
       "from": "BUG-ollama-native-provider-drops-generationmessage-images-so-fil",
@@ -143399,6 +143527,66 @@
       "from": "TASK-nsfw-body-state",
       "kind": "produces",
       "to": "src/frontend/nsfw/body-state.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/config/sections/nsfw.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/generation/auto-gen/check-nsfw-eligibility.test.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/generation/auto-gen/content-hooks-nsfw-gate.test.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/middleware/nsfw-gate/consent-ledger.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/middleware/nsfw-gate/consent.test.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/middleware/nsfw-gate/index.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/middleware/nsfw-gate/request-context.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/routes/nsfw/consent.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/routes/nsfw/encounters.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/routes/nsfw/index.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/routes/nsfw/intimacy.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "produces",
+      "to": "src/routes/nsfw/shared.ts"
     },
     {
       "from": "TASK-nsfw-encounter-system",
@@ -191125,6 +191313,12 @@
     {
       "from": "BUG-character-licensing-upsert-records-license-history-for-any-a",
       "kind": "sibling",
+      "to": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "via": "src/routes/actor-auth.ts"
+    },
+    {
+      "from": "BUG-character-licensing-upsert-records-license-history-for-any-a",
+      "kind": "sibling",
       "to": "TASK-019-enforce-state-machine-validators-at-write",
       "via": "src/routes/character-licensing.ts"
     },
@@ -204009,6 +204203,12 @@
       "kind": "sibling",
       "to": "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
       "via": "src/assets/service/read.ts; src/generation/matting/service.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
+      "kind": "sibling",
+      "to": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "via": "src/routes/actor-auth.ts"
     },
     {
       "from": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
@@ -232087,6 +232287,12 @@
     {
       "from": "BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa",
       "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/middleware/nsfw-gate/consent-ledger.ts"
+    },
+    {
+      "from": "BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa",
+      "kind": "sibling",
       "to": "TASK-specify-content-warnings-write-the-frontend-contract",
       "via": "src/middleware/nsfw-gate/consent-ledger.ts"
     },
@@ -232125,6 +232331,120 @@
       "kind": "sibling",
       "to": "epic-config-templates",
       "via": "src/assistant/prompt/sections/nsfw-policy.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "via": "src/routes/nsfw/shared.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "FEAT-battle-rewards-grant-character-xp-on-enemy-defeat",
+      "via": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
+      "via": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-",
+      "via": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-033",
+      "via": "src/rpg/intimacy/service/actions.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-036",
+      "via": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-038",
+      "via": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-039",
+      "via": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-040",
+      "via": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-041",
+      "via": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-042",
+      "via": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-044",
+      "via": "src/rpg/trauma.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/routes/nsfw/encounters.ts; src/routes/nsfw/intimacy.ts; src/routes/nsfw/shared.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char",
+      "via": "src/routes/actor-auth.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-rpg-nsfw-services-add-config-level-opt-in-gate",
+      "via": "src/rpg/intimacy/service/actions.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr",
+      "via": "src/rpg/intimacy/service/actions.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "via": "src/routes/actor-auth.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "TASK-unify-401-guard-helpers",
+      "via": "src/routes/actor-auth.ts"
+    },
+    {
+      "from": "BUG-nsfw-write-routes-authorize-actor-but-not-target",
+      "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/rpg/encounters/service/participant-legs.ts"
     },
     {
       "from": "BUG-ollama-native-provider-drops-generationmessage-images-so-fil",
@@ -237963,6 +238283,12 @@
       "kind": "sibling",
       "to": "TASK-middleware-request-id-elysia-derive",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/middleware/nsfw-gate/request-context.ts; src/routes/nsfw/shared.ts"
     },
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
@@ -281565,6 +281891,12 @@
       "kind": "sibling",
       "to": "TASK-chat-variant-behavioral-wiring",
       "via": "src/routes/chats/create.ts"
+    },
+    {
+      "from": "TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/middleware/nsfw-gate/index.ts"
     },
     {
       "from": "TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r",
@@ -350683,6 +351015,12 @@
     {
       "from": "TASK-harness-sync-ledger-v2",
       "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/middleware/nsfw-gate/consent-ledger.ts"
+    },
+    {
+      "from": "TASK-harness-sync-ledger-v2",
+      "kind": "sibling",
       "to": "TASK-specify-content-warnings-write-the-frontend-contract",
       "via": "src/middleware/nsfw-gate/consent-ledger.ts"
     },
@@ -353613,6 +353951,12 @@
       "kind": "sibling",
       "to": "TASK-markdown-heading-parse-and-import",
       "via": "src/generation/auto-gen/deps.ts"
+    },
+    {
+      "from": "TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-",
+      "kind": "sibling",
+      "to": "TASK-nsfw-consent-grant-route-missing",
+      "via": "src/generation/auto-gen/content-hooks-nsfw-gate.test.ts"
     },
     {
       "from": "TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-",
@@ -364569,6 +364913,48 @@
       "kind": "sibling",
       "to": "epic-nsfw-ui",
       "via": "src/frontend/nsfw/body-state.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "sibling",
+      "to": "TASK-outfit-change-aux-task-and-typebox-schema",
+      "via": "src/config/sections/nsfw.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "sibling",
+      "to": "TASK-prompt-template-registry",
+      "via": "src/config/sections/nsfw.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "sibling",
+      "to": "TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char",
+      "via": "src/middleware/nsfw-gate/request-context.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "sibling",
+      "to": "TASK-specify-content-warnings-write-the-frontend-contract",
+      "via": "src/middleware/nsfw-gate/consent-ledger.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "sibling",
+      "to": "epic-frontend-age-gate",
+      "via": "src/middleware/nsfw-gate/index.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "sibling",
+      "to": "epic-review-dev-2026-08-26-security-data-integrity-merges",
+      "via": "src/generation/auto-gen/content-hooks-nsfw-gate.test.ts"
+    },
+    {
+      "from": "TASK-nsfw-consent-grant-route-missing",
+      "kind": "sibling",
+      "to": "epic-shared-schemas",
+      "via": "src/middleware/nsfw-gate/consent.test.ts"
     },
     {
       "from": "TASK-nsfw-encounter-system",

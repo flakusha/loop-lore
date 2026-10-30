@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3856
+- tickets: 3858
 - epics: 358
-- src paths owned: 4548
-- edges: produces 12082, consumes 405, sibling 37441, owns 2832, related 1193
+- src paths owned: 4553
+- edges: produces 12101, consumes 405, sibling 37474, owns 2834, related 1193
 
 ## Shared src hubs
 
@@ -541,7 +541,7 @@ output is byte-identical for identical inputs.
 | `src/config/sections/integrations.ts` | `FEAT-2026-irc-group-chat-integration`, `FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal`, `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt`, `TASK-integration-config-surface-schemas-example-toml-env-map` |
 | `src/config/sections/llm-templates.ts` | `TASK-prompt-template-registry`, `epic-config-templates` |
 | `src/config/sections/messages.ts` | `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida`, `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` |
-| `src/config/sections/nsfw.ts` | `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-prompt-template-registry` |
+| `src/config/sections/nsfw.ts` | `TASK-nsfw-consent-grant-route-missing`, `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-prompt-template-registry` |
 | `src/config/sections/server.ts` | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-`, `TASK-add-a-two-instance-local-federation-dev-harness-and-runbook`, `TASK-allow-data-dir-to-be-overridden-by-env-var`, `TASK-federation-interconnect-peer-config`, `TASK-observability-config-section`, `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination`, `epic-certificate-and-tls-management`, `epic-local-process-swarm` |
 | `src/config/sections/templates-workflow.ts` | `TASK-book-outline-generation-workflow`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-comparison-fan-out-engine`, `TASK-comparison-workflow-template-and-command`, `TASK-publication-art-quality-gates`, `epic-assistant-creative-studio-workflows`, `epic-narrative-publishing-workflows`, `epic-technical-comparison-charts` |
 | `src/config/sections/templates.ts` | `BUG-character-template-validator-rejects-every-legal-content-rat`, `FEAT-065`, `FEAT-expand-character-templates-to-canonical-fields`, `TASK-assistant-creative-studio-workflows`, `TASK-assistant-nsfw-api-prefiltering`, `TASK-avatar-template-example-documents-outfits-default-outfit-tha`, `TASK-comfyui-first-class-admin-workflows`, `TASK-outfit-change-hook`, `TASK-prompt-template-registry`, `TASK-resolve-dormant-emotionentry-prompt-field`, `TASK-talkativity-influence-response-verbosity`, `TASK-workflow-engine-schema-loader-template-types-workflow-discov`, `epic-assistant-creative-studio-workflows`, `epic-config-templates`, `epic-context-injection-templates`, `epic-workflow-engine` |
@@ -983,7 +983,7 @@ output is byte-identical for identical inputs.
 | `src/generation/auto-gen/auto-generation.ts` | `BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor`, `BUG-bug-hallucination-guard-runs-outside-try-catch-after-message`, `BUG-cascade-mid-cascade-pause-ignores-abort`, `BUG-chat-prompt-override-bypass-on-reply`, `BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa`, `BUG-generation-failed-drops-model-provider-context`, `BUG-middleware-requestid-dual-write-last-wins`, `BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-stale-audit-claim-aux-emotion-mood-task-tables`, `TASK-async-store-complete-fail-lifecycle-hooks`, `TASK-outfit-change-multi-actor-name-resolution`, `epic-file-splitting` |
 | `src/generation/auto-gen/call-llm.ts` | `BUG-auto-gen-streaming-path-unhandled-rejection-abort-never-wire`, `BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san`, `BUG-translate-only-providers-ride-general-failover-chains-comple`, `FEAT-llm-request-complexity-classification`, `TASK-federation-peer-dispatch-compose-failover`, `TASK-generation-error-handling-gaps-detector-abort-void-promises`, `TASK-wire-llm-resource-manager-into-generation-dispatch`, `epic-federation-offload-quotas` |
 | `src/generation/auto-gen/classify-intent.ts` | `BUG-classify-intent-confidence-unbounded`, `FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-`, `TASK-assistant-command-execution-intent-detection`, `TASK-aux-mood-classification`, `TASK-chat-feature-introduction-generation-propagation`, `TASK-classifier-model-survey-message-intent-memory-ranking-emotio`, `TASK-message-carriage-classification-integration`, `TASK-wire-intent-output-to-workflow-runner-startworkflow`, `epic-assistant-creative-studio-workflows`, `epic-chat-product-features`, `epic-multilingual-carriage`, `epic-workflow-engine` |
-| `src/generation/auto-gen/content-hooks-nsfw-gate.test.ts` | `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-`, `epic-review-dev-2026-08-26-security-data-integrity-merges` |
+| `src/generation/auto-gen/content-hooks-nsfw-gate.test.ts` | `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-`, `TASK-nsfw-consent-grant-route-missing`, `epic-review-dev-2026-08-26-security-data-integrity-merges` |
 | `src/generation/auto-gen/content-hooks.ts` | `BUG-content-hooks-ts-missing-imports-breaks-typecheck`, `BUG-emotion-mood-hook-payload-missing-actor-chat`, `BUG-stale-audit-claim-aux-emotion-mood-task-tables`, `TASK-aux-emotion-avatar`, `TASK-aux-mood-classification`, `TASK-hook-result-payload-carry-context`, `TASK-messages-outfit-id-column`, `TASK-nsfw-age-gate-never-verified-at-generation-time`, `TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa`, `TASK-outfit-change-hook`, `TASK-outfit-change-multi-actor-name-resolution`, `TEST-emotion-hook-to-avatarForMessage-integration`, `epic-emotion-avatar-message-binding`, `epic-reactive-actor-appearance` |
 | `src/generation/auto-gen/context-pruning.ts` | `BUG-context-pruning-is-a-silent-no-op`, `TASK-chat-lifecycle-moderation`, `TASK-context-lossless-lossy-tiering`, `epic-chat-lifecycle-moderation` |
 | `src/generation/auto-gen/deps.ts` | `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-`, `TASK-markdown-derive-other-formats`, `TASK-markdown-heading-parse-and-import`, `TASK-wire-llm-resource-manager-into-generation-dispatch`, `epic-narrative-publishing-workflows` |
@@ -1216,12 +1216,13 @@ output is byte-identical for identical inputs.
 | `src/middleware/lifecycle.ts` | `BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user-`, `BUG-bug-async-result-store-track-never-called-request-results-pi`, `BUG-middleware-recordlifecycle-marks-error-complete`, `TASK-async-store-complete-fail-lifecycle-hooks`, `epic-middleware-request-lifecycle` |
 | `src/middleware/nsfw-gate/access.ts` | `BUG-group-chat-nsfw-weakest-link-violated-enforcement-hardcodes-`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `BUG-untrusted-new-date-parse-without-invalid-date-guard`, `TASK-chat-feature-archive-deletion-search`, `TASK-chat-feature-moderation`, `epic-chat-product-features`, `epic-review-dev-2026-08-26-security-data-integrity-merges` |
 | `src/middleware/nsfw-gate/base-eval.ts` | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char`, `TASK-rpg-nsfw-services-add-config-level-opt-in-gate`, `TASK-server-enforce-age-nsfw-consent-on-send-and-on-participant-a`, `epic-frontend-age-gate` |
-| `src/middleware/nsfw-gate/consent-ledger.ts` | `BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa`, `TASK-harness-sync-ledger-v2`, `TASK-specify-content-warnings-write-the-frontend-contract` |
+| `src/middleware/nsfw-gate/consent-ledger.ts` | `BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa`, `TASK-harness-sync-ledger-v2`, `TASK-nsfw-consent-grant-route-missing`, `TASK-specify-content-warnings-write-the-frontend-contract` |
+| `src/middleware/nsfw-gate/consent.test.ts` | `TASK-nsfw-consent-grant-route-missing`, `epic-shared-schemas` |
 | `src/middleware/nsfw-gate/consent.ts` | `BUG-consent-state-not-persisted-in-memory-only`, `BUG-nsfw-consent-auto-granted-in-memory-for-any-logged-in-user-n`, `TASK-chat-feature-moderation`, `TASK-consent-schema`, `TASK-licensing-publish-enforcement-point`, `TASK-nsfw-wire-consent-gate-into-nsfw-surfaces`, `TASK-wire-nsfw-5-tier-rating-into-enforcement-epic-open-item-b4`, `epic-chat-product-features`, `epic-nsfw-capabilities`, `epic-nsfw-integration-gaps`, `epic-shared-schemas` |
 | `src/middleware/nsfw-gate/constants.ts` | `BUG-untrusted-new-date-parse-without-invalid-date-guard`, `epic-review-dev-2026-08-26-security-data-integrity-merges` |
-| `src/middleware/nsfw-gate/index.ts` | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r`, `epic-frontend-age-gate` |
+| `src/middleware/nsfw-gate/index.ts` | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r`, `TASK-nsfw-consent-grant-route-missing`, `epic-frontend-age-gate` |
 | `src/middleware/nsfw-gate/logging.ts` | `BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud`, `BUG-nsfw-gate-log-plaintext-pii`, `TASK-chat-feature-moderation`, `epic-chat-product-features` |
-| `src/middleware/nsfw-gate/request-context.ts` | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` |
+| `src/middleware/nsfw-gate/request-context.ts` | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `TASK-nsfw-consent-grant-route-missing`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` |
 | `src/middleware/permissions.ts` | `BUG-permissions-middleware-auditentry-reaches-console-warn-in-pr`, `TASK-chat-feature-moderation`, `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser`, `TASK-middleware-global-idempotency-replay-for-re-fired-requests`, `epic-architecture`, `epic-browser-editor-support`, `epic-chat-product-features`, `epic-logging`, `epic-security-sandboxing-quickref` |
 | `src/middleware/rate-limit.test.ts` | `BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta`, `BUG-register-rate-limiter-consumes-on-username-collision-retries`, `TASK-federation-performance-quota-enforcement` |
 | `src/middleware/rate-limit.ts` | `BUG-429-responses-omit-retry-after-and-x-ratelimit-headers`, `BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te`, `BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl`, `BUG-limiter-is-fixed-window-but-mislabeled-sliding-window-2x-bou`, `BUG-nsfw-export-bundle-no-access-log`, `BUG-pruneexpired-boundary-comment-states-opposite-of-implementat`, `BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta`, `BUG-refund-contract-invites-over-admission-in-peek-record-flows-`, `BUG-register-rate-limiter-consumes-on-username-collision-retries`, `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif`, `TASK-federation-performance-quota-enforcement`, `TASK-guest-rate-limiting-audit-logging-for-guest-reads`, `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser`, `TASK-middleware-in-progress-status-endpoint-for-long-running-requ`, `TASK-middleware-request-id-elysia-derive`, `TASK-rate-limit-coverage-expansion`, `TASK-recursive-self-improvement-agent-api-router-and-token-scope-`, `TASK-recursive-self-improvement-agent-task-queue-concurrency-caps-worktree`, `TASK-recursive-self-improvement-health-liveness-readiness-probes`, `TASK-recursive-self-improvement-sidecar-python-provider-for-custo`, `TASK-register-username-race-and-rate-limiter-multi-instance-gap`, `epic-api-rate-limiting`, `epic-architecture`, `epic-db-cold-storage-high-perf`, `epic-federation-offload-quotas`, `epic-local-process-swarm`, `epic-recursive-self-improvement` |
@@ -1349,7 +1350,7 @@ output is byte-identical for identical inputs.
 | `src/routes` | `BUG-allowuserapikey-defined-but-never-enforced`, `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam`, `BUG-federation-authorization-who-may-publish-an-actor-undefined`, `BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-nodeinfo-well-known-discovery-endpoints`, `TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on`, `epic-faction-reputation` |
 | `src/routes/activity-stream.ts` | `TASK-2d-world-review-world-scoped-snapshot-and-event-sse-feed`, `TASK-dedup-top-jscpd-clone-clusters`, `TASK-egui-sse-response-streaming-through-the-browser-bridge`, `epic-frontend-notifications`, `epic-local-process-swarm`, `epic-multi-instance-reconciliation`, `epic-transport-expansion` |
 | `src/routes/actor-access.ts` | `TASK-refactor-extract-scopebyuserid-middleware`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` |
-| `src/routes/actor-auth.ts` | `BUG-character-licensing-upsert-records-license-history-for-any-a`, `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `TASK-unify-401-guard-helpers` |
+| `src/routes/actor-auth.ts` | `BUG-character-licensing-upsert-records-license-history-for-any-a`, `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-nsfw-write-routes-authorize-actor-but-not-target`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `TASK-unify-401-guard-helpers` |
 | `src/routes/actor-e2e-pubkeys.ts` | `TASK-asymmetric-key-pairs-followup`, `TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-`, `TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal`, `epic-crypto` |
 | `src/routes/actor-items.ts` | `BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact`, `TASK-actor-item-service`, `TASK-actor-items-crud-ownership`, `TASK-actors-api-routes`, `TASK-chat-ask-type-fast-menu`, `TASK-item-side-outfit-change-trigger`, `TASK-npc-inventory-frontend`, `epic-inventory`, `epic-inventory-system`, `epic-inventory-ui`, `epic-item-systems-unification`, `epic-items` |
 | `src/routes/actor-items/service.ts` | `TASK-actor-items-crud-ownership`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-inventory`, `epic-inventory-system` |
@@ -1567,7 +1568,10 @@ output is byte-identical for identical inputs.
 | `src/routes/nsfw-moderation/overrides.ts` | `TASK-moderator-permission-gating-for-read-only-review-surface`, `epic-nsfw-capabilities` |
 | `src/routes/nsfw-moderation/shared.ts` | `BUG-getauditlog-performedby-exposed-to-moderators`, `BUG-nsfw-export-bundle-no-access-log`, `BUG-nsfw-flagqueue-leaks-reporter-pii`, `BUG-nsfw-modactions-performedby-from-body`, `BUG-nsfw-moderation-delete-destroys-audit-log`, `BUG-nsfw-preferences-admin-read-materializes-row`, `TASK-moderator-permission-gating-for-read-only-review-surface` |
 | `src/routes/nsfw.ts` | `TASK-nsfw-frontend-integration`, `epic-nsfw-integration-gaps` |
+| `src/routes/nsfw/encounters.ts` | `BUG-nsfw-write-routes-authorize-actor-but-not-target`, `TASK-nsfw-consent-grant-route-missing` |
+| `src/routes/nsfw/intimacy.ts` | `BUG-nsfw-write-routes-authorize-actor-but-not-target`, `TASK-nsfw-consent-grant-route-missing` |
 | `src/routes/nsfw/location.ts` | `TASK-location-editor-structured-ui`, `TASK-world-editor-structured-ui` |
+| `src/routes/nsfw/shared.ts` | `BUG-nsfw-write-routes-authorize-actor-but-not-target`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `TASK-nsfw-consent-grant-route-missing` |
 | `src/routes/openapi.ts` | `TASK-api-first-foundation`, `epic-api-library-distribution` |
 | `src/routes/planning.ts` | `TASK-assistant-todo-planning-tables-service-assistant-wiring`, `epic-assistant-step-planning` |
 | `src/routes/plugins.ts` | `TASK-plugin-management-api`, `epic-plugin-system`, `epic-provider-plugin-ecosystem` |
@@ -1703,7 +1707,7 @@ output is byte-identical for identical inputs.
 | `src/rpg/encounter.ts` | `TASK-036`, `TASK-038`, `TASK-044`, `TASK-add-missing-rpg-module-barrels`, `TASK-src-rpg-module-root-barrel-and-organization-nits`, `TASK-src-rpg-nit-1-4-barrel-organization-implementations` |
 | `src/rpg/encounters.ts` | `TASK-src-rpg-module-root-barrel-and-organization-nits`, `TASK-src-rpg-nit-1-4-barrel-organization-implementations` |
 | `src/rpg/encounters/service/index.ts` | `TASK-036`, `TASK-add-missing-rpg-module-barrels` |
-| `src/rpg/encounters/service/participant-legs.ts` | `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat`, `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-`, `TASK-036`, `TASK-038`, `TASK-039`, `TASK-040`, `TASK-041`, `TASK-042`, `epic-character-xp-leveling` |
+| `src/rpg/encounters/service/participant-legs.ts` | `BUG-nsfw-write-routes-authorize-actor-but-not-target`, `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat`, `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-`, `TASK-036`, `TASK-038`, `TASK-039`, `TASK-040`, `TASK-041`, `TASK-042`, `epic-character-xp-leveling` |
 | `src/rpg/encounters/service/phases.ts` | `BUG-service-layer-multi-query-mutations-run-without-transactions`, `TASK-036` |
 | `src/rpg/encounters/service/reputation-leg.ts` | `TASK-036`, `TASK-042`, `epic-faction-reputation` |
 | `src/rpg/encounters/service/types.ts` | `TASK-036`, `TASK-052` |
@@ -1721,7 +1725,7 @@ output is byte-identical for identical inputs.
 | `src/rpg/integration-registry/edges/faction.ts` | `epic-faction-reputation`, `epic-shared-schemas` |
 | `src/rpg/interaction/contract/dice-result.ts` | `TASK-math-structured-llm-dice-result`, `epic-math-ai-bridge` |
 | `src/rpg/intimacy.ts` | `TASK-033`, `TASK-add-missing-rpg-module-barrels`, `TASK-src-rpg-module-root-barrel-and-organization-nits` |
-| `src/rpg/intimacy/service/actions.ts` | `TASK-033`, `TASK-rpg-nsfw-services-add-config-level-opt-in-gate`, `TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr` |
+| `src/rpg/intimacy/service/actions.ts` | `BUG-nsfw-write-routes-authorize-actor-but-not-target`, `TASK-033`, `TASK-rpg-nsfw-services-add-config-level-opt-in-gate`, `TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr` |
 | `src/rpg/intimacy/service/persist.ts` | `TASK-033`, `TASK-041`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` |
 | `src/rpg/items.ts` | `TASK-item-spec-parameters`, `epic-items-economy-crafting` |
 | `src/rpg/level/asi.ts` | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points`, `epic-character-xp-leveling` |
@@ -1789,6 +1793,7 @@ output is byte-identical for identical inputs.
 | `src/rpg/stats/types.ts` | `TASK-character-stat-allocation-frontend-modal-and-edit-integration`, `TASK-character-stat-modifiers-and-trait-application-engine`, `TASK-world-requires-stats-flag-and-point-budget-config` |
 | `src/rpg/stats/validation.test.ts` | `TASK-character-stat-allocation-integration-tests-e2e`, `epic-character-core-system` |
 | `src/rpg/status-effects.ts` | `TASK-039`, `TASK-041` |
+| `src/rpg/trauma.ts` | `BUG-nsfw-write-routes-authorize-actor-but-not-target`, `TASK-044` |
 | `src/rpg/world-discovery/discovery.ts` | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel`, `epic-exploration-discovery` |
 | `src/rpg/world-discovery/events.ts` | `TASK-emit-exploration-encounter-triggered-from-the-discovery-even`, `epic-exploration-discovery` |
 | `src/rpg/world-discovery/trade.ts` | `BUG-edgeahead-does-not-validate-location-existence`, `epic-exploration-discovery` |
@@ -4423,6 +4428,7 @@ output is byte-identical for identical inputs.
 | `epic-npcs` | owns | `TASK-npc-reaction-system` | - |
 | `epic-npcs` | owns | `TASK-npc-retinue-minimal-chat-act-send-react-join` | - |
 | `epic-npcs` | owns | `TASK-npcs` | - |
+| `epic-nsfw-capabilities` | owns | `BUG-nsfw-write-routes-authorize-actor-but-not-target` | - |
 | `epic-nsfw-capabilities` | owns | `TASK-PLAN-NSFW-RATING-UI` | - |
 | `epic-nsfw-capabilities` | owns | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | - |
 | `epic-nsfw-capabilities` | owns | `TASK-nsfw-rating-schema-consent-state-machine` | - |
@@ -4495,6 +4501,7 @@ output is byte-identical for identical inputs.
 | `epic-nsfw-moderation-priority` | owns | `TASK-telemetry-schema-comment-claims-additionalproperties-false-r` | - |
 | `epic-nsfw-ui` | owns | `TASK-nsfw-alpine` | - |
 | `epic-nsfw-ui` | owns | `TASK-nsfw-body-state` | - |
+| `epic-nsfw-ui` | owns | `TASK-nsfw-consent-grant-route-missing` | - |
 | `epic-nsfw-ui` | owns | `TASK-nsfw-housing-management` | - |
 | `epic-nsfw-ui` | owns | `TASK-nsfw-intimacy-interface` | - |
 | `epic-nsfw-ui` | owns | `TASK-nsfw-read-only-status-panel` | - |
@@ -6813,6 +6820,13 @@ output is byte-identical for identical inputs.
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | produces | `src/routes/admin-nsfw.test.ts` | - |
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | produces | `src/routes/admin-nsfw.ts` | - |
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | produces | `src/story/game-master.test.ts` | - |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | produces | `src/routes/actor-auth.ts` | - |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | produces | `src/routes/nsfw/encounters.ts` | - |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | produces | `src/routes/nsfw/intimacy.ts` | - |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | produces | `src/routes/nsfw/shared.ts` | - |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | produces | `src/rpg/encounters/service/participant-legs.ts` | - |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | produces | `src/rpg/intimacy/service/actions.ts` | - |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | produces | `src/rpg/trauma.ts` | - |
 | `BUG-ollama-native-provider-drops-generationmessage-images-so-fil` | produces | `src/generation/caption-route.ts` | - |
 | `BUG-ollama-native-provider-drops-generationmessage-images-so-fil` | produces | `src/generation/providers/ollama-native/http.ts` | - |
 | `BUG-ollama-outage-hard-fails-all-generations` | produces | `src/assistant/prompt/sections/memories.test.ts` | - |
@@ -12785,6 +12799,18 @@ output is byte-identical for identical inputs.
 | `TASK-nsfw-body-physical` | produces | `src/rpg/body/types.ts` | - |
 | `TASK-nsfw-body-state` | produces | `src/frontend/nsfw/body-region.ts` | - |
 | `TASK-nsfw-body-state` | produces | `src/frontend/nsfw/body-state.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/config/sections/nsfw.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/generation/auto-gen/check-nsfw-eligibility.test.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/generation/auto-gen/content-hooks-nsfw-gate.test.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/middleware/nsfw-gate/consent-ledger.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/middleware/nsfw-gate/consent.test.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/middleware/nsfw-gate/index.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/middleware/nsfw-gate/request-context.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/routes/nsfw/consent.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/routes/nsfw/encounters.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/routes/nsfw/index.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/routes/nsfw/intimacy.ts` | - |
+| `TASK-nsfw-consent-grant-route-missing` | produces | `src/routes/nsfw/shared.ts` | - |
 | `TASK-nsfw-encounter-system` | produces | `src/db/enums-character/nsfw.ts` | - |
 | `TASK-nsfw-encounter-system` | produces | `src/rpg/encounters/aftercare.ts` | - |
 | `TASK-nsfw-encounter-system` | produces | `src/rpg/encounters/manager.ts` | - |
@@ -21700,6 +21726,7 @@ output is byte-identical for identical inputs.
 | `BUG-character-internal-traits-idor-cross-user-read-write-delete` | sibling | `epic-character-internal-traits` | `src/routes/character-internal-traits/index.ts` |
 | `BUG-character-licensing-upsert-records-license-history-for-any-a` | sibling | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | `src/routes/actor-auth.ts` |
 | `BUG-character-licensing-upsert-records-license-history-for-any-a` | sibling | `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just` | `src/routes/character-licensing.ts` |
+| `BUG-character-licensing-upsert-records-license-history-for-any-a` | sibling | `BUG-nsfw-write-routes-authorize-actor-but-not-target` | `src/routes/actor-auth.ts` |
 | `BUG-character-licensing-upsert-records-license-history-for-any-a` | sibling | `TASK-019-enforce-state-machine-validators-at-write` | `src/routes/character-licensing.ts` |
 | `BUG-character-licensing-upsert-records-license-history-for-any-a` | sibling | `TASK-030` | `src/routes/character-licensing.ts` |
 | `BUG-character-licensing-upsert-records-license-history-for-any-a` | sibling | `TASK-licensing-asset-license-columns-migration` | `src/routes/character-licensing.ts` |
@@ -23848,6 +23875,7 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-listassets-treats-shared-visibility-as-world-readable` | `src/assets/service/read.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/generation/matting/service.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | `src/assets/service/read.ts; src/generation/matting/service.ts` |
+| `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-nsfw-write-routes-authorize-actor-but-not-target` | `src/routes/actor-auth.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-rate-limit-misses-post-emotion-avatars-single` | `src/routes/wardrobe-avatars.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `TASK-avatar-framing-column-migration-future` | `src/routes/wardrobe-avatars.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `TASK-avatar-framing-tag-member` | `src/routes/wardrobe-avatars.ts` |
@@ -28527,6 +28555,7 @@ output is byte-identical for identical inputs.
 | `BUG-nsfw-nsfwhook-blocked-by-override-and-blocked-by-error-paths` | sibling | `epic-chat-lifecycle-moderation` | `src/generation/hooks/nsfw-hook.ts` |
 | `BUG-nsfw-preferences-admin-read-materializes-row` | sibling | `TASK-moderator-permission-gating-for-read-only-review-surface` | `src/routes/nsfw-moderation/shared.ts` |
 | `BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa` | sibling | `TASK-harness-sync-ledger-v2` | `src/middleware/nsfw-gate/consent-ledger.ts` |
+| `BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa` | sibling | `TASK-nsfw-consent-grant-route-missing` | `src/middleware/nsfw-gate/consent-ledger.ts` |
 | `BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa` | sibling | `TASK-specify-content-warnings-write-the-frontend-contract` | `src/middleware/nsfw-gate/consent-ledger.ts` |
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | sibling | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | `src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts; src/routes/admin-nsfw.test.ts; src/routes/admin-nsfw.ts` |
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | sibling | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | `src/story/game-master.test.ts` |
@@ -28534,6 +28563,25 @@ output is byte-identical for identical inputs.
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | sibling | `TASK-wire-gm-service-story-mode` | `src/story/game-master.test.ts` |
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | sibling | `epic-assistant-gm-flows` | `src/story/game-master.test.ts` |
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | sibling | `epic-config-templates` | `src/assistant/prompt/sections/nsfw-policy.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | `src/routes/nsfw/shared.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat` | `src/rpg/encounters/service/participant-legs.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | `src/rpg/encounters/service/participant-legs.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | `src/rpg/encounters/service/participant-legs.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-033` | `src/rpg/intimacy/service/actions.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-036` | `src/rpg/encounters/service/participant-legs.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-038` | `src/rpg/encounters/service/participant-legs.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-039` | `src/rpg/encounters/service/participant-legs.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-040` | `src/rpg/encounters/service/participant-legs.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-041` | `src/rpg/encounters/service/participant-legs.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-042` | `src/rpg/encounters/service/participant-legs.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-044` | `src/rpg/trauma.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-nsfw-consent-grant-route-missing` | `src/routes/nsfw/encounters.ts; src/routes/nsfw/intimacy.ts; src/routes/nsfw/shared.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` | `src/routes/actor-auth.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-rpg-nsfw-services-add-config-level-opt-in-gate` | `src/rpg/intimacy/service/actions.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr` | `src/rpg/intimacy/service/actions.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/routes/actor-auth.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `TASK-unify-401-guard-helpers` | `src/routes/actor-auth.ts` |
+| `BUG-nsfw-write-routes-authorize-actor-but-not-target` | sibling | `epic-character-xp-leveling` | `src/rpg/encounters/service/participant-legs.ts` |
 | `BUG-ollama-native-provider-drops-generationmessage-images-so-fil` | sibling | `TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts` | `src/generation/caption-route.ts` |
 | `BUG-ollama-native-provider-drops-generationmessage-images-so-fil` | sibling | `TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p` | `src/generation/providers/ollama-native/http.ts` |
 | `BUG-ollama-native-provider-drops-generationmessage-images-so-fil` | sibling | `TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta` | `src/generation/caption-route.ts` |
@@ -29507,6 +29555,7 @@ output is byte-identical for identical inputs.
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-middleware-global-idempotency-replay-for-re-fired-requests` | `src/elysia-app.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-middleware-idempotency-wire-into-elysia` | `src/elysia-app.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-middleware-request-id-elysia-derive` | `src/elysia-app.ts` |
+| `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-nsfw-consent-grant-route-missing` | `src/middleware/nsfw-gate/request-context.ts; src/routes/nsfw/shared.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-ocsp-stapling-for-tls-certificate-status` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-outfit-change-hook` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination` | `src/server/start.ts` |
@@ -36774,6 +36823,7 @@ output is byte-identical for identical inputs.
 | `TASK-adapter-health-monitoring-and-per-protocol-rate-limiting` | sibling | `epic-runtime-memory-state-hygiene` | `src/integrations/bridge.ts` |
 | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | sibling | `TASK-assistant-creative-studio-workflow-gallery-batch` | `src/routes/assets.ts` |
 | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | sibling | `TASK-chat-variant-behavioral-wiring` | `src/routes/chats/create.ts` |
+| `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | sibling | `TASK-nsfw-consent-grant-route-missing` | `src/middleware/nsfw-gate/index.ts` |
 | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | sibling | `TASK-server-enforce-age-nsfw-consent-on-send-and-on-participant-a` | `src/routes/chats/create.ts` |
 | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | sibling | `TASK-typescript-7-migration-typecheck-failures` | `src/routes/chats/create.ts` |
 | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | sibling | `epic-assistant-creative-studio-workflows` | `src/routes/assets.ts` |
@@ -48293,6 +48343,7 @@ output is byte-identical for identical inputs.
 | `TASK-harness-subagent-delegation` | sibling | `epic-harness-integration` | `src/assistant/workflow-session-store.ts; src/async/store.ts` |
 | `TASK-harness-subagent-delegation` | sibling | `epic-middleware-request-lifecycle` | `src/async/store.ts` |
 | `TASK-harness-subagent-delegation` | sibling | `epic-world-chat-channels-invites` | `src/group-chat/turn-selector.ts` |
+| `TASK-harness-sync-ledger-v2` | sibling | `TASK-nsfw-consent-grant-route-missing` | `src/middleware/nsfw-gate/consent-ledger.ts` |
 | `TASK-harness-sync-ledger-v2` | sibling | `TASK-specify-content-warnings-write-the-frontend-contract` | `src/middleware/nsfw-gate/consent-ledger.ts` |
 | `TASK-harness-tool-sandbox` | sibling | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | `src/plugins/tool-executor.ts` |
 | `TASK-harness-tool-sandbox` | sibling | `TASK-odysseus-manage-tool-parity-evaluation` | `src/assistant; src/plugins` |
@@ -48782,6 +48833,7 @@ output is byte-identical for identical inputs.
 | `TASK-info-bubbles` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
 | `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-` | sibling | `TASK-markdown-derive-other-formats` | `src/generation/auto-gen/deps.ts` |
 | `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-` | sibling | `TASK-markdown-heading-parse-and-import` | `src/generation/auto-gen/deps.ts` |
+| `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-` | sibling | `TASK-nsfw-consent-grant-route-missing` | `src/generation/auto-gen/content-hooks-nsfw-gate.test.ts` |
 | `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/generation/auto-gen/deps.ts` |
 | `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-` | sibling | `epic-narrative-publishing-workflows` | `src/generation/auto-gen/deps.ts` |
 | `TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-` | sibling | `epic-review-dev-2026-08-26-security-data-integrity-merges` | `src/generation/auto-gen/content-hooks-nsfw-gate.test.ts` |
@@ -50608,6 +50660,13 @@ output is byte-identical for identical inputs.
 | `TASK-nsfw-alpine` | sibling | `epic-nsfw-ui` | `src/frontend/alpine/nsfw.ts` |
 | `TASK-nsfw-body-state` | sibling | `TASK-nsfw-frontend-integration` | `src/frontend/nsfw/body-state.ts` |
 | `TASK-nsfw-body-state` | sibling | `epic-nsfw-ui` | `src/frontend/nsfw/body-state.ts` |
+| `TASK-nsfw-consent-grant-route-missing` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/config/sections/nsfw.ts` |
+| `TASK-nsfw-consent-grant-route-missing` | sibling | `TASK-prompt-template-registry` | `src/config/sections/nsfw.ts` |
+| `TASK-nsfw-consent-grant-route-missing` | sibling | `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` | `src/middleware/nsfw-gate/request-context.ts` |
+| `TASK-nsfw-consent-grant-route-missing` | sibling | `TASK-specify-content-warnings-write-the-frontend-contract` | `src/middleware/nsfw-gate/consent-ledger.ts` |
+| `TASK-nsfw-consent-grant-route-missing` | sibling | `epic-frontend-age-gate` | `src/middleware/nsfw-gate/index.ts` |
+| `TASK-nsfw-consent-grant-route-missing` | sibling | `epic-review-dev-2026-08-26-security-data-integrity-merges` | `src/generation/auto-gen/content-hooks-nsfw-gate.test.ts` |
+| `TASK-nsfw-consent-grant-route-missing` | sibling | `epic-shared-schemas` | `src/middleware/nsfw-gate/consent.test.ts` |
 | `TASK-nsfw-encounter-system` | sibling | `TASK-nsfw-fantasy-kink` | `src/db/enums-character/nsfw.ts` |
 | `TASK-nsfw-encounter-system` | sibling | `TASK-nsfw-intimacy-system` | `src/db/enums-character/nsfw.ts` |
 | `TASK-nsfw-encounter-system` | sibling | `TASK-nsfw-location-environment` | `src/db/enums-character/nsfw.ts` |

@@ -120,6 +120,8 @@ pair targets resolve to participant display names without an extra request.
 - `epic-nsfw-ui.md`
 - `TASK-nsfw-body-state.md`
 - `TASK-nsfw-frontend-integration.md`
+- `TASK-nsfw-consent-grant-route-missing.md` — the write-path blocker this read-only slice deliberately avoided: the consent ledger is enforced but never granted
+- `BUG-nsfw-write-routes-authorize-actor-but-not-target.md` — the authorization gap on the same NSFW write routes; it protects the integrity of the intimacy/trauma state this panel displays
 
 **Context:**
 
