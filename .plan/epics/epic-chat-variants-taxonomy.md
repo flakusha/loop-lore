@@ -77,8 +77,12 @@ Current chat creation (see `epic-chat-lifecycle-moderation` and existing fronten
 The Characters tab is the canonical entry point for variants 9–12; the Assistant tab is the entry point for variants 1–2; the Social/People tab is the entry point for variants 3–5; an internal "Sandbox" tab is the entry point for variants 6–8.
 
 > Shipped state: those four tabs do not exist yet — the new-chat form carries a
-> single picker offering all twelve variants. Splitting it per tab is the
-> deferred entry-point work below.
+> single picker offering all twelve variants. Entry-point branching itself now
+> ships for the surfaces that exist: an origin surface links to
+> `/views/new-chat?variant=<id>` and the form preselects that variant (the
+> Characters chat surface preselects the character variant). Opening the
+> Assistant/Social/Sandbox origins stays deferred until those tab views land;
+> until then every other entry reaches the single picker and stays standard.
 
 ## Tasks
 
@@ -100,7 +104,7 @@ The Characters tab is the canonical entry point for variants 9–12; the Assista
 ### Cross-cutting (Medium Priority — opened if/when needed)
 
 - [x] Frontend variant picker — all twelve variants are selectable in the new-chat form
-- [ ] Frontend variant picker entry-point branches — the Characters/Assistant/Social/Sandbox tabs the single picker currently replaces
+- [ ] Frontend variant picker entry-point branches — branching itself shipped via the new-chat `?variant=` param (the existing Characters chat surface preselects the character variant); still open: the Assistant/Social/Sandbox origin tab surfaces the single picker currently stands in for (those views do not exist yet)
 - [x] Create-chat payload validator per variant — `validateVariantTriple` guards `routes/chats/create`
 - [ ] Migration of legacy chats into the taxonomy — `(chat_type, chat_mode)` remap for chats predating migration `044_chat_purpose.ts`
 
