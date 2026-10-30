@@ -30,6 +30,7 @@ import "./gm-panel";
 import "./htmx";
 import "./i18n";
 import "./info-bubble";
+import "./inventory";
 import "./key-management";
 import "./keynav-help";
 import "./location-explorer";
