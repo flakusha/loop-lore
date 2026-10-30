@@ -61,6 +61,13 @@ describe("Chat batch operations E2E", () => {
         },)
         .execute();
 
+      // Production create path seeds the creator's owners row (owners set
+      // is the authority source) — mirror it so batch ops see the chats.
+      await ctx.db
+        .insertInto("chat_owners",)
+        .values({ chat_id: id, user_id: SEED.solo.id, },)
+        .execute();
+
       ids.push(id,);
     }
 

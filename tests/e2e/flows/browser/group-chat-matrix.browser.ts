@@ -60,6 +60,17 @@ describe("Group-chat matrix UI (C1)", () => {
       .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doNothing())
       .execute();
 
+    // Production create path seeds the creator's owners row (owners set
+    // is the authority source) — mirror it so side-channel ops see solo.
+    await ctx.db
+      .insertInto("chat_owners",)
+      .values({
+        chat_id: "11000001-0000-4000-a000-000000000001",
+        user_id: SEED.solo.id,
+      },)
+      .onConflict((oc,) => oc.columns(["chat_id", "user_id",],).doNothing())
+      .execute();
+
     const chat = await ctx.db
       .selectFrom("chats",)
       .select(["id",],)
