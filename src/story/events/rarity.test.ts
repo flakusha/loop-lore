@@ -16,6 +16,7 @@ import {
   isEventRarity,
   parseEventRarity,
   rollRarity,
+  selectEventByRarity,
 } from "./rarity";
 
 describe("event rarity scale", () => {
@@ -120,5 +121,102 @@ describe("rollRarity", () => {
     ) as Record<EventRarity, number>;
 
     expect(() => rollRarity({ rng: mulberry32(1,), weights: allZero, },)).toThrow(TypeError,);
+  });
+});
+
+describe("selectEventByRarity", () => {
+  const tagged = [
+    { id: "a", data: { rarity: "common", }, },
+    { id: "b", data: { rarity: "artifact", }, },
+    { id: "c", data: { other: true, }, },
+    { id: "d", data: { rarity: "not-a-tier", }, },
+    { id: "e", },
+  ] as { id: string; data?: Record<string, unknown> }[];
+
+  test("returns null for an empty candidate list", () => {
+    expect(selectEventByRarity({ events: [], rng: mulberry32(1,), },),).toBeNull();
+  });
+
+  test("returns the only candidate regardless of rng", () => {
+    expect(
+      selectEventByRarity({ events: [tagged[2]!,], rng: mulberry32(3,), },),
+    ).toBe(tagged[2]!,);
+  });
+
+  test("is deterministic for the same rng seed", () => {
+    const a = Array.from(
+      { length: 10, },
+      () => selectEventByRarity({ events: tagged, rng: mulberry32(11,), },),
+    );
+
+    const b = Array.from(
+      { length: 10, },
+      () => selectEventByRarity({ events: tagged, rng: mulberry32(11,), },),
+    );
+
+    expect(a,).toEqual(b,);
+  });
+
+  test("absence-preserving: rarity-less candidates all get picked", () => {
+    const plain: { id: string; data: Record<string, unknown> }[] = [
+      { id: "p1", data: {}, },
+      { id: "p2", data: {}, },
+      { id: "p3", data: {}, },
+      { id: "p4", data: {}, },
+      { id: "p5", data: {}, },
+    ];
+
+    const hits = new Set<string>();
+    const rng = mulberry32(21,);
+    for (let i = 0; i < 500; i++) {
+      const pick = selectEventByRarity({ events: plain, rng, },);
+      expect(pick,).not.toBeNull();
+      hits.add(pick!.id,);
+    }
+
+    // Equal default weights → every candidate manifests over enough draws.
+    expect(hits.size,).toBe(plain.length,);
+  });
+
+  test("heavier rarity dominates lighter rarity over samples", () => {
+    const pair = [
+      { id: "common", data: { rarity: "common", }, },
+      { id: "artifact", data: { rarity: "artifact", }, },
+    ];
+
+    const rng = mulberry32(31,);
+    let commonWins = 0;
+    for (let i = 0; i < 2000; i++) {
+      if (selectEventByRarity({ events: pair, rng, },)!.id === "common") {
+        commonWins++;
+      }
+    }
+
+    // 50:1 weight ratio — a strict majority is the weak deterministic bound.
+    expect(commonWins,).toBeGreaterThan(1000,);
+  });
+
+  test("custom weights can exclude a tier entirely", () => {
+    const rng = mulberry32(41,);
+    for (let i = 0; i < 200; i++) {
+      const pick = selectEventByRarity({
+        events: tagged,
+        rng,
+        weights: { common: 0, },
+      },);
+
+      expect(pick!.id,).not.toBe("a",);
+    }
+  });
+
+  test("throws on invalid custom weights", () => {
+    expect(() =>
+      selectEventByRarity({
+        events: tagged,
+        rng: mulberry32(1,),
+        weights: { rare: -5, },
+      },)
+    )
+      .toThrow(TypeError,);
   });
 });
