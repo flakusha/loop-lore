@@ -7,7 +7,7 @@
 // Pins are stored in the `chat_pins` table and displayed in a pinned bar.
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
-import { checkChatAccess, } from "../chat/service";
+import { checkChatAccess, isChatOwner, } from "../chat/service";
 import type { DB, } from "../db/schema";
 import { getChildLogger, } from "../logger";
 import { can, } from "../users/permissions";
@@ -189,16 +189,8 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!pin) { return notFound("Pin not found",); }
 
           // The owner/admin check is evaluated against the pin's own chat.
-          const chat = await database
-            .selectFrom("chats",)
-            .select("created_by",)
-            .where("id", "=", pin.chat_id,)
-            .executeTakeFirst();
-
-          if (!chat) { return notFound("Chat not found",); }
-
           const isPinner = pin.pinned_by === userId;
-          const isOwner = chat.created_by === userId;
+          const isOwner = await isChatOwner(database, pin.chat_id, userId,);
           const isAdmin = can(ctx.userRole as string | null, "admin.chat",);
 
           if (!isPinner && !isOwner && !isAdmin) {

@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Filed 2026-10-30 from the 2026-10-30 operator direction: "this may be a cause for management/transfer/coauthorship/co-work". Generalizes the shipped single-owner transfer (`src/chat/service/ownership.ts`) to N concurrent owners. No prior plan doc anticipated co-ownership (verified: `rg -il "co-own|multi-owner|multiple owner|shared ownership" .plan/` → 0 chat-related hits).
+**Status:** In Progress
+**Status Note:** Filed 2026-10-30 from the 2026-10-30 operator direction: "this may be a cause for management/transfer/coauthorship/co-work". Generalizes the shipped single-owner transfer (`src/chat/service/ownership.ts`) to N concurrent owners. No prior plan doc anticipated co-ownership (verified: `rg -il "co-own|multi-owner|multiple owner|shared ownership" .plan/` → 0 chat-related hits). DEVIATION RESOLVED 2026-10-30 (ticket 4 cutover, operator decision): tickets 1–3 had temporarily retained the `created_by` flip in transfer because pre-existing tests pinned it; ticket 4 shipped the cutover — chat creation seeds the creator's `chat_owners` row, transfer no longer mutates `created_by` (frozen creator record; owners-set swap only), the `isChatOwner` fallback is dropped, and the single-owner call-site sweep now keys on the owners set. Tickets 1–4 Done (ticket 4: cutover + sweep verified — bun test src/chat/ src/routes/ 4649 pass / 89 skip / 0 fail; 6/7 gates pass, size-strict fails only on frontend-owned chat-types/core.ts); ticket 5 (frontend) in flight.
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -152,6 +152,17 @@ audit meta, the route, and the two frontend surfaces.
 
 - `epic-chat-product-features.md` — shipped the single-owner transfer ticket this epic generalizes
 - `epic-chat-privacy.md` — owner of the `docs/spec/chat-privacy.md` access rule this epic amends (§5.1)
+
+## Follow-up: remaining route creator-checks (out of ticket-4 scope)
+
+Deliberately untouched by the ticket-4 sweep; a follow-up ticket decides
+whether each moves to the owners set:
+
+- `src/routes/invites.ts` (invite create/list/revoke guard)
+- `src/routes/story-turns.ts` (story-turns ownership guard)
+- `src/routes/rpg/questions.ts` (questions ownership guard)
+- `src/routes/messages/archiving.ts` (message archive guards)
+- `src/routes/story-orchestration/index.ts` (GM lifecycle guards)
 
 ## Definition of Done
 

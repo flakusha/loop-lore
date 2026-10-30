@@ -14,6 +14,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
+  insertChatOwners,
   insertChatParticipants,
   insertChats,
   insertModerationActions,
@@ -380,6 +381,10 @@ describe("reconcileModeratorGrants", () => {
       participants: [{ userId: "u-new-owner", role: "gm", },],
     },);
 
+    // Post-transfer state: the new owner carries an owners row (the transfer
+    // tx grants it), so reconcile must keep their gm seat.
+    await insertChatOwners(database, chatId, "u-new-owner",);
+
     await reconcileModeratorGrants(database, chatId, "u-owner", "u-new-owner",);
 
     const row = await database
@@ -401,11 +406,10 @@ describe("reconcileModeratorGrants", () => {
       ],
     },);
 
-    // Materialized owners set: creator + co-owner (migration 082 model).
+    // Materialized owners set: creator (seeded by insertChats) + co-owner.
     await database
       .insertInto("chat_owners",)
       .values([
-        { chat_id: chatId, user_id: "u-owner-m", },
         { chat_id: chatId, user_id: "u-co-owner", },
       ],)
       .execute();

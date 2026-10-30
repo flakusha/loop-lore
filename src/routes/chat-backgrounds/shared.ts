@@ -6,6 +6,7 @@
  */
 import { t, } from "elysia";
 import type { Kysely, } from "kysely";
+import { isChatOwner, } from "../../chat/service";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 
@@ -37,9 +38,9 @@ export async function chatAccess(
 ): Promise<boolean> {
   const chat = await database
     .selectFrom("chats",)
-    .select("created_by",)
+    .select("id",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
 
-  return !!chat && (chat.created_by === userId || can(userRole, "admin.chat",));
+  return !!chat && ((await isChatOwner(database, chatId, userId,)) || can(userRole, "admin.chat",));
 }

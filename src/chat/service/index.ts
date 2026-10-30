@@ -58,7 +58,7 @@ export {
 
 // ── Owners set (epic-chat-multi-ownership) ──────────────────────
 export { addChatOwner, removeChatOwner, } from "./owners";
-export { isChatOwner, listEffectiveOwnerUserIds, listOwnerUserIds, } from "./owners-core";
+export { isChatOwner, listOwnerUserIds, } from "./owners-core";
 export {
   type AddChatOwnerOptions,
   type ChatOwnersOpOutcome,

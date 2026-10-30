@@ -16,6 +16,7 @@ import { hashId, record, } from "../telemetry/service";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActors,
+  insertChatOwners,
   insertChats,
   insertMessages,
   insertUsers,
@@ -47,6 +48,9 @@ describe("analyticsRoutes", () => {
       name: "Analytics chat",
       created_at: new Date().toISOString(),
     },).execute();
+
+    // Raw insert: seed the owners row the production create path guarantees.
+    await insertChatOwners(db, chatId, userId,);
   },);
 
   afterAll(async () => {

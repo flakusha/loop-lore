@@ -12,6 +12,7 @@ import type { DB, } from "../db/schema";
 import { can, } from "../users/permissions";
 import { uid, } from "../utils";
 import type { MusicService, } from "../validation/schemas/music-links";
+import { isChatOwner, } from "./service/owners-core";
 
 // ── Types ────────────────────────────────────────────────────
 // Types split into ./music-links/types.ts
@@ -200,7 +201,7 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
   /**
    * Delete a music link. Enforces ownership:
    *   - admin role bypasses owner check
-   *   - chat owner (chat.created_by) can delete any link in their chat
+   *   - any chat owner (chat_owners set) can delete any link in their chat
    *   - original sender can delete their own link
    *
    * Returns true if a row was deleted, false if the link was missing or
@@ -214,16 +215,16 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
     const row = await db
       .selectFrom("music_links",)
       .innerJoin("chats", "chats.id", "music_links.chat_id",)
-      .select(["music_links.sender_id", "chats.created_by",],)
+      .select(["music_links.sender_id", "music_links.chat_id",],)
       .where("music_links.id", "=", id,)
       .executeTakeFirst();
 
     if (!row) { return false; }
 
     const isAdmin = can(userRole, "admin.chat",);
-    const isChatOwner = row.created_by === userId;
+    const chatOwner = await isChatOwner(db, row.chat_id, userId,);
     const isOriginalSender = row.sender_id === userId;
-    if (!isAdmin && !isChatOwner && !isOriginalSender) { return false; }
+    if (!isAdmin && !chatOwner && !isOriginalSender) { return false; }
 
     await db.deleteFrom("music_links",).where("id", "=", id,).execute();
     return true;

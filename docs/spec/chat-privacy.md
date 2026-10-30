@@ -14,6 +14,15 @@
 
 ## Implemented
 
+- **Owners-set authority (epic-chat-multi-ownership)**: owner-gated
+  capabilities (settings mutation, batch ops, poll close, music-link and pin
+  deletion, party split/reunion, hidden-message read, side-channel creation,
+  chat migrate/regen) key on membership in the `chat_owners` set
+  (migration 082; `src/chat/service/owners-core.ts` `isChatOwner`), capped at
+  3 owners with a never-zero-owners guard. `chats.created_by` is a frozen
+  creator record — never mutated; transfer/add/remove operate on the set
+  only. Settings access: any owner, `role_in_chat = "gm"`, or admin
+  (`src/chat/service/access.ts` `checkChatSettingsAccess`).
 - `chats.purpose` column (nullable text, no enum enforcement) — `src/db/schema-core.ts`.
 - `chats.encryption_level` (`none|standard|private`; default out-of-enum `"public"`, not enforced by the pipeline — epic Known Issue) — `src/db/schema-manifest.ts`.
 - Per-chat encryption keys — `src/crypto/` (see `docs/spec/encryption-workflow.md`).

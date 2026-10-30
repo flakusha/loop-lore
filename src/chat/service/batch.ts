@@ -2,8 +2,24 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // ── Batch chat operations ────────────────────────────────────
-import { type Kysely, sql, } from "kysely";
+import { type ExpressionBuilder, type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
+
+/**
+ * Owned-chat filter shared by the batch helpers: chats where `userId` has a
+ * `chat_owners` row (the owners set — epic-chat-multi-ownership).
+ * @param eb
+ * @param userId
+ */
+function ownedByUser(eb: ExpressionBuilder<DB, "chats">, userId: string,) {
+  return eb.exists(
+    eb
+      .selectFrom("chat_owners",)
+      .select("user_id",)
+      .whereRef("chat_owners.chat_id", "=", "chats.id",)
+      .where("chat_owners.user_id", "=", userId,),
+  );
+}
 
 /**
  * Batch archive chats owned by a user.
@@ -21,7 +37,7 @@ export async function batchArchiveChats(
     .selectFrom("chats",)
     .select("id",)
     .where("id", "in", chatIds,)
-    .where("created_by", "=", userId,)
+    .where((eb,) => ownedByUser(eb, userId,))
     .orderBy(sql`rowid`,)
     .execute();
 
@@ -53,7 +69,7 @@ export async function batchDeleteChats(
     .selectFrom("chats",)
     .select("id",)
     .where("id", "in", chatIds,)
-    .where("created_by", "=", userId,)
+    .where((eb,) => ownedByUser(eb, userId,))
     .execute();
 
   const ownedIds = Array.from(owned, (c,) => c.id,);
@@ -101,7 +117,7 @@ export async function batchExportChats(
     .selectFrom("chats",)
     .select("id",)
     .where("id", "in", chatIds,)
-    .where("created_by", "=", userId,)
+    .where((eb,) => ownedByUser(eb, userId,))
     .orderBy(sql`rowid`,)
     .execute();
 

@@ -9,6 +9,7 @@ import { ChatVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { walkMessagePath, } from "./branch-helpers";
+import { isChatOwner, } from "./owners-core";
 import type {
   ListMessagesParams,
   ServiceError,
@@ -48,7 +49,7 @@ export async function getMessageWithAccess(
     return { code: "not_found", message: "Message not found", };
   }
 
-  if (can(userRole, "admin.chat",) || chat.created_by === userId) {
+  if (can(userRole, "admin.chat",) || (userId !== null && await isChatOwner(database, message.chat_id, userId,))) {
     return message;
   }
 

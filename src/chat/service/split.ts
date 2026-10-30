@@ -18,6 +18,7 @@ import { emitPluginEvent, } from "../../plugins/event-bus";
 import { registry, } from "../../plugins/registry";
 import { recordCarriage, } from "./carriage";
 import { archiveChat, } from "./crud/archive";
+import { isChatOwner, } from "./owners-core";
 import { copyMessagesToPrimary, createBranchChat, mergeParticipantsIntoPrimary, } from "./split-utils";
 import { validateBranchSpecs, } from "./split-validate";
 import { injectNarration, } from "./transitions";
@@ -97,7 +98,7 @@ export async function splitParty(
     return { code: "not_found", message: "Chat not found", };
   }
 
-  if (chat.created_by !== actorId) {
+  if (!(await isChatOwner(database, chatId, actorId,))) {
     return { code: "forbidden", message: "Only the chat owner can split the party", };
   }
 
@@ -204,11 +205,11 @@ export async function reuniteChats(
   if (!primary) { return { code: "not_found", message: "Primary chat not found", }; }
   if (!secondary) { return { code: "not_found", message: "Secondary chat not found", }; }
 
-  if (primary.created_by !== actorId) {
+  if (!(await isChatOwner(database, primaryChatId, actorId,))) {
     return { code: "forbidden", message: "Only the primary chat owner can initiate a reunion", };
   }
 
-  if (secondary.created_by !== actorId) {
+  if (!(await isChatOwner(database, secondaryChatId, actorId,))) {
     return { code: "forbidden", message: "Only the secondary chat owner can initiate a reunion", };
   }
 

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { checkChatAccess, joinParty, leaveParty, } from "../../chat/service";
+import { checkChatAccess, isChatOwner, joinParty, leaveParty, } from "../../chat/service";
 import { ChatParticipantRole, } from "../../db/enums";
 import { getLogger, type Logger, } from "../../logger";
 import { notifyChatInvite, } from "../../notifications/service";
@@ -96,7 +96,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", id,)
             .executeTakeFirst();
 
-          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && !(await isChatOwner(database, id, userId,)))) {
             return notFound("Chat not found",);
           }
 
@@ -180,7 +180,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", id,)
             .executeTakeFirst();
 
-          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && !(await isChatOwner(database, id, userId,)))) {
             return notFound("Chat not found",);
           }
 
@@ -221,7 +221,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", id,)
             .executeTakeFirst();
 
-          if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
+          if (!chat || (!can(userRole, "admin.chat",) && !(await isChatOwner(database, id, userId,)))) {
             return notFound("Chat not found",);
           }
 
