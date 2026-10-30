@@ -133,6 +133,7 @@ themselves.
   since ComfyUI is the unified generation backend across creative AND
   chat/avatar flows, this epic's provisioning now covers the chat/avatar
   image path too — lifecycle scope unchanged, blast radius larger.
+- **Study citation (2026-10-30):** krita-ai-diffusion `backend/server.py` implements a full background-ComfyUI installer/lifecycle state machine — states `not_installed`, `missing_resources`, `installing`, `stopped`, `starting`, `running`, `verifying`, `uninstalling`, `update_required`, with `InstallationProgress` carrying stage + progress + message. GPL-3/Qt-coupled: STUDY ONLY, never port — the citation informs provisioning design, not a dependency.
 
 ## Acceptance Criteria
 
@@ -172,6 +173,7 @@ themselves.
 - `epic-byok-api-keys.md` — BYOK credential scope, incl. why it excludes image providers
 - `TASK-external-comfyui-plugin-repo-integration-contract.md` — the external-plugin consumption contract
 - `docs/spec/integrations/llm-serving.md` — where the launch prose lives
+- krita-ai-diffusion `backend/server.py` — background-ComfyUI installer/lifecycle state machine (study-only citation, see Verified facts)
 
 
 git issue: 33453cb
