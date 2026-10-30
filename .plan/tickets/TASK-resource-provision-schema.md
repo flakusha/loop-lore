@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** medium
 **Epic:** epic-resource-provision
@@ -62,3 +62,5 @@ migration file; the generated files will be regenerated via
 - [ ] `bun run check` gate green on the new schema
 - [ ] `src/test-utils/insert-helpers.ts` updated for the new tables
 - [ ] Unit tests for migration up/down
+
+**Resolved:** 2026-10-30 registry-driven close: git issue 1bcd66d (registry tip: 4916e6195 Konstantin Fedotov Close issue)

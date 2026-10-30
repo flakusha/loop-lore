@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** medium
 **Epic:** epic-resource-provision
@@ -70,3 +70,5 @@ type CredentialRef =
 - [ ] Unit tests: hash strategy, wrapped strategy, round-trip verify,
   raw-credential never leaves client
 - [ ] `bun run check` green
+
+**Resolved:** 2026-10-30 registry-driven close: git issue a915050 (registry tip: acc05dd1c Konstantin Fedotov Close issue)
