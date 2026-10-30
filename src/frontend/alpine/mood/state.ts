@@ -17,6 +17,8 @@ export const moodStateProps: Partial<ChatState> & ThisType<ChatState> = {
   _moodSliderValue: 50,
   _activeChatWorldId: null as string | null,
   _emotionAvatars: [] as { emotion: string; avatarId: string; assetId: string }[],
+  _emotionAvatarsByActor: {} as Record<string, { emotion: string; avatarId: string; assetId: string }[]>,
+  _actorBaseAvatars: {} as Record<string, string>,
   _emotionAvatarsLoading: false,
   _currentEmotionAvatar: null as string | null,
   _emotionGenRunning: false,
