@@ -132,3 +132,59 @@ export function rollRarity({ rng, weights, }: RollRarityOpts,): EventRarity {
   // fall back to the heaviest tier rather than returning undefined.
   return EVENT_RARITY_TIERS[0]!;
 }
+
+/** Options for {@link selectEventByRarity}. */
+export interface SelectEventByRarityOpts<E,> {
+  /** Candidate events; empty lists yield null. */
+  events: readonly E[];
+  /** Injected random source in `[0, 1)` — seed for determinism. */
+  rng: () => number;
+  /** Weight overrides merged over the shared loot scale. */
+  weights?: RarityWeightOverrides;
+  /** Key read from each event's `data` blob. Default `"rarity"`. */
+  rarityKey?: string;
+}
+
+/**
+ * Pick one event with probability proportional to its rarity weight
+ * (effectiveWeight pattern from rpg/loot). Events without a valid
+ * `data[rarityKey]` ride at the default tier weight, so a candidate set
+ * without rarity is selected uniformly — behavior-preserving for callers
+ * that never tag rarity. A pure steering primitive: the extraction →
+ * application pipeline today applies every validated event; callers that
+ * want rarity-weighted manifestation (e.g. timeline steering, box 1) pick
+ * with this before applying.
+ *
+ * @typeParam E - Event shape carrying a `data` record
+ * @param root0 - Options
+ * @param root0.events - Candidates
+ * @param root0.rng - Injected random source in `[0, 1)`
+ * @param root0.weights - Optional per-tier weight overrides
+ * @param root0.rarityKey - Optional key name in the event's data blob
+ * @returns One of the candidates, or null for an empty list
+ * @throws TypeError when an override weight is negative/non-finite or all
+ *   weights (after merging) total to 0
+ */
+export function selectEventByRarity<E extends { data?: Record<string, unknown> },>(
+  { events, rng, weights, rarityKey = "rarity", }: SelectEventByRarityOpts<E>,
+): E | null {
+  if (events.length === 0) { return null; }
+
+  const merged = assertUsableWeights({ ...EVENT_RARITY_WEIGHTS, ...weights, },);
+  const entries = events.map((event,) => ({
+    event,
+    // Unparseable rarity (including missing data) rides at the common
+    // default — the lightest sensible floor, never a throw.
+    weight: merged[parseEventRarity(event.data?.[rarityKey],) ?? "common"],
+  }));
+
+  const total = entries.reduce((sum, entry,) => sum + entry.weight, 0,);
+
+  let point = rng() * total;
+  for (const entry of entries) {
+    point -= entry.weight;
+    if (point < 0) { return entry.event; }
+  }
+
+  return entries[entries.length - 1]!.event;
+}
