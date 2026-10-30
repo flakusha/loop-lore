@@ -131,6 +131,7 @@ import type {
   VnChoiceStatus,
   WhiteneoteScope,
   WhiteneoteType,
+  WorkflowProbeStatus,
   WorldKind,
   WorldTraitCategory,
   WorldVisibility,
@@ -3813,6 +3814,9 @@ export async function insertPromptTemplates(
     enabled?: LoreEntryStatus;
     lora_slots?: string | null;
     min_vram?: number | null;
+    probe_status?: WorkflowProbeStatus;
+    params_reviewed?: number;
+    license?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

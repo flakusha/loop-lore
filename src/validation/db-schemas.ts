@@ -704,6 +704,7 @@ export const WhiteneoteTypeSchema = t.UnionEnum([
   "character_context",
   "world_state",
 ],);
+export const WorkflowProbeStatusSchema = t.UnionEnum(["unprobed", "passing", "failing",],);
 export const WorldEventTypeSchema = t.UnionEnum([
   "location_change",
   "npc_state_change",
@@ -2659,6 +2660,9 @@ export const PromptTemplatesSchema = t.Object({
   enabled: t.Optional(LoreEntryStatusSchema,),
   lora_slots: t.Optional(t.String(),),
   min_vram: t.Optional(t.Number(),),
+  probe_status: t.Optional(WorkflowProbeStatusSchema,),
+  params_reviewed: t.Optional(t.Number(),),
+  license: t.Optional(t.String(),),
 },);
 
 // ── content_flags ────────────────────────────────────────────
