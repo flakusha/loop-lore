@@ -7,7 +7,7 @@
  * detection, and the gate's exit-code contract.
  */
 import { expect, test, } from "bun:test";
-import { copyFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
@@ -93,4 +93,27 @@ test("ternary branches are both checked", () => {
   },);
   expect(code,).toBe(1,);
   expect(out,).toContain("errors.serverError",);
+});
+
+test("runtime registry: every registered command resolves to a commands.<name> key", () => {
+  // Runs the gate in-tree (cwd = project root) so the dynamic registry
+  // import resolves the real command barrel. A registered command without
+  // a catalog key must fail the gate — the palette renders t(key) raw.
+  const proc = Bun.spawnSync(["bun", GATE,], {
+    cwd: join(import.meta.dir, "..", "..",),
+    stdout: "pipe",
+    stderr: "pipe",
+  },);
+  const out = new TextDecoder().decode(proc.stdout,);
+  if (proc.exitCode !== 0) { console.error("FAIL runtime-registry:", { code: proc.exitCode, out, },); }
+  expect(proc.exitCode,).toBe(0,);
+  expect(out,).toContain("all runtime commands keyed",);
+});
+
+test("runtime registry: gate source performs the runtime check", () => {
+  // Guards against silent deletion of the registry-check block: the
+  // static extractor skips template/concatenated keys and can never
+  // see runtime-minted commands.<name> keys on its own.
+  const gateSrc = readFileSync(GATE, "utf-8",);
+  expect(gateSrc,).toContain("listCommands",);
 });
