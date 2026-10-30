@@ -53,6 +53,7 @@ import "./sfx";
 import "./split";
 import "./stats";
 import "./summarize";
+import "./timeline";
 import "./translate";
 import "./video";
 import "./workflow";
