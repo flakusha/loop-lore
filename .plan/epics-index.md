@@ -46,7 +46,7 @@
 | In Progress | Authorization & Access Control | High | High | 0 | [epic-auth-access.md](/.plan/epics/epic-auth-access.md) |
 | In Progress | AUX LLM Enrichment Pipeline | P2-B | Medium | 0 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
 | In Progress | Avatar Alpha Channel + VN Layering | Medium | Medium | 0 | [epic-avatar-alpha-vn-layering.md](/.plan/epics/epic-avatar-alpha-vn-layering.md) |
-| Not Started | Avatar Dogfood Defaults | High | Medium | 0 | [epic-avatar-dogfood.md](/.plan/epics/epic-avatar-dogfood.md) |
+| Done | Avatar Dogfood Defaults | High | Medium | 0 | [epic-avatar-dogfood.md](/.plan/epics/epic-avatar-dogfood.md) |
 | In Progress | Battle & Action Systems | Medium | Very High (split into 5 sub-epics) | 0 | [epic-battle-action-systems.md](/.plan/epics/epic-battle-action-systems.md) |
 | In Progress | Battle & Combat UI | P0 — Critical | High | 0 | [epic-battle-ui.md](/.plan/epics/epic-battle-ui.md) |
 | In Progress | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High | High | 0 | [epic-battle-integration-gaps.md](/.plan/epics/epic-battle-integration-gaps.md) |
@@ -695,7 +695,7 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Avatar Dogfood Defaults
 
-- **Status:** Not Started
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
