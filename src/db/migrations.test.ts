@@ -560,15 +560,15 @@ describe("migration loader excludes colocated *.test.ts", () => {
   });
 });
 
-// ── 084_chat_variant_backfill — legacy chat classification ───
+// ── 085_chat_variant_backfill — legacy chat classification ───
 
 /**
  * Fixture-backed classification tests for the legacy-chat taxonomy backfill
  * (spec: .plan/tickets/TASK-chat-variant-legacy-backfill.md).
  *
  * Mirrors migration-rename-upgrade.test.ts: a fresh in-memory DB migrates to
- * the pre-backfill tail (083), legacy-shaped chats are seeded, and the REAL
- * Migrator then applies (and later rolls back / re-applies) 084 — through
+ * the pre-backfill tail (084), legacy-shaped chats are seeded, and the REAL
+ * Migrator then applies (and later rolls back / re-applies) 085 — through
  * migrateTo()/migrateToLatest()/migrateDown(), so transactional behavior
  * matches a real upgrade rather than a direct up()/down() call.
  *
@@ -586,9 +586,9 @@ describe("migration loader excludes colocated *.test.ts", () => {
  *   read-only, never mutated; each import gets Bun's per-process module
  *   cache.
  */
-describe("084_chat_variant_backfill — legacy chat classification", () => {
+describe("085_chat_variant_backfill — legacy chat classification", () => {
   /** Last migration before the backfill. */
-  const BEFORE_BACKFILL = "083_immersion_decision_log";
+  const BEFORE_BACKFILL = "084_lore_reveal_condition_timeline_rarity";
 
   interface LegacyFixture {
     name: string;
@@ -676,7 +676,7 @@ describe("084_chat_variant_backfill — legacy chat classification", () => {
 
   /**
    * Migrate to the pre-backfill tail, seed one user + world + the fixture
-   * chats, and hand back the DB before 084 has run.
+   * chats, and hand back the DB before 085 has run.
    */
   async function seededLegacyDb() {
     const sqlite = new Database(":memory:",);

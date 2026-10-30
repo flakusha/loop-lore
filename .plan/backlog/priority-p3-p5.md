@@ -63,7 +63,7 @@
 | 11. rpg chat | `TASK-chat-variant-rpg.md` | `direct` | `story` | `rpg` | Attached to a world, in a location, rules enforced |
 | 12. rpg group chat | `TASK-chat-variant-rpg-group.md` | `group` | `battle` | `rpg` | Multi-user party, turn rules, world+location binding |
 
-**Cross-cutting** (Medium — opened if/when needed): frontend variant picker — shipped (all twelve variants selectable); frontend variant picker entry-point branches (Characters/Assistant/Social/Sandbox tabs) — open; create-chat payload validator per variant (guard at `routes/chats/create`) — shipped; migration of legacy chats into the taxonomy — shipped (`TASK-chat-variant-legacy-backfill.md`, migration 084: conservative `chats.purpose` backfill — world-bound → `rpg`, world-less battle → `validation`, everything ambiguous stays NULL/unclassified).
+**Cross-cutting** (Medium — opened if/when needed): frontend variant picker — shipped (all twelve variants selectable); frontend variant picker entry-point branches (Characters/Assistant/Social/Sandbox tabs) — open; create-chat payload validator per variant (guard at `routes/chats/create`) — shipped; migration of legacy chats into the taxonomy — shipped (`TASK-chat-variant-legacy-backfill.md`, migration 085: conservative `chats.purpose` backfill — world-bound → `rpg`, world-less battle → `validation`, everything ambiguous stays NULL/unclassified).
 
 ### Chat Product Features cluster (filed 2026-09-11)
 
