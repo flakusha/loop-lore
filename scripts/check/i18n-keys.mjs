@@ -132,8 +132,9 @@ async function main() {
     }
   }
 
-  // Runtime registry check (see header). Skipped when the registry module
-  // cannot load (e.g. the minimal fixtures in this gate's own tests copy
+  // Runtime registry check: the palette renders the raw key when a runtime-registered
+  // command lacks a catalog key, and the static scan is blind to template-built keys.
+  // Skipped when the registry module cannot load (this gate's own test fixtures copy
   // the gate without src/).
   const unkeyed = [];
   try {
