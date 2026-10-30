@@ -30,6 +30,7 @@ import {
   readCookieSecureOverrideFromEnv,
 } from "./middleware/csrf";
 import { applyCsrfPlugin, type CsrfMiddlewareOptions, } from "./middleware/csrf-plugin";
+import { createGuestReadLimiter, } from "./middleware/guest-rate-limit";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { idempotent, } from "./middleware/idempotency";
 import type { IdempotencyCtx, } from "./middleware/idempotency";
@@ -150,7 +151,13 @@ export function createApp(deps: AppDeps,) {
     // allowlists (auth issuance, infra probes, anonymous sinks, battle
     // calculators, HMAC/peer-trust receivers, guest GET reads) pass through;
     // everything else with no userId gets the canonical 401 body.
-    .onBeforeHandle(requireAuthGuard,);
+    .onBeforeHandle(requireAuthGuard,)
+    // ── Guest read rate limiter: per-IP sliding window on guest GET reads ──
+    // Registered AFTER the 401 guard so a guest read is auth-gated before it
+    // consumes budget; requests with a userId skip without touching the Map.
+    // Over-budget reads get the shared 429 envelope with Retry-After
+    // (src/middleware/guest-rate-limit.ts, epic-guest-access Phase 4).
+    .onBeforeHandle(createGuestReadLimiter({ config, },).guard,);
 
   // ── CSRF protection (double-submit cookie via Bun.CSRF) ───────
   // Runs after auth derive so sessionId is available for token binding,
