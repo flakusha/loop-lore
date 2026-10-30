@@ -157,7 +157,7 @@ export function createApp(deps: AppDeps,) {
     // consumes budget; requests with a userId skip without touching the Map.
     // Over-budget reads get the shared 429 envelope with Retry-After
     // (src/middleware/guest-rate-limit.ts, epic-guest-access Phase 4).
-    .onBeforeHandle(createGuestReadLimiter({ config, },).guard,);
+    .onBeforeHandle(createGuestReadLimiter({ config, database, },).guard,);
 
   // ── CSRF protection (double-submit cookie via Bun.CSRF) ───────
   // Runs after auth derive so sessionId is available for token binding,

@@ -79,7 +79,7 @@ const PUBLIC_ENTRIES: readonly AllowEntry[] = [
   { method: "GET", prefix: "/api/admin/build-id", },
 ];
 
-const GUEST_READ_SHAPES: readonly (readonly string[])[] = [
+export const GUEST_READ_SHAPES: readonly (readonly string[])[] = [
   ["worlds",],
   ["worlds", ":id",],
   ["worlds", ":id", "locations",],
@@ -115,13 +115,24 @@ export function isGuestReadPath(stripped: string,): boolean {
  */
 export function isGuestReadRequest(method: string, pathname: string,): boolean {
   if (method.toUpperCase() !== "GET") { return false; }
-  const stripped = pathname.startsWith("/api/v1/",)
+  const stripped = stripApiVersion(pathname,);
+
+  return stripped !== null && isGuestReadPath(stripped,);
+}
+
+/**
+ * Strip the `/api` or `/api/v1` prefix from a request pathname — the form
+ * `GUEST_READ_SHAPES` and plugin dispatch match against. Null when the path
+ * is outside the versioned API surface.
+ * @param pathname - full request pathname
+ * @returns the version-stripped path, or null when not under `/api`
+ */
+export function stripApiVersion(pathname: string,): string | null {
+  return pathname.startsWith("/api/v1/",)
     ? pathname.slice("/api/v1".length,)
     : pathname.startsWith("/api/",)
     ? pathname.slice("/api".length,)
     : null;
-
-  return stripped !== null && isGuestReadPath(stripped,);
 }
 function isNonApiGet(method: string, pathname: string,): boolean {
   if (method !== "GET") { return false; }
