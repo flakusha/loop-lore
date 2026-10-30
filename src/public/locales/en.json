@@ -1910,6 +1910,7 @@
     "rag-preview": "Preview an indexed doc (/rag-preview <doc-id>)",
     "rag-search": "Search indexed docs (/rag-search <query>)",
     "regen": "Regenerate the last assistant message (/regen <try-again|add-details|more-concise>)",
+    "reroll-emotion": "Re-roll a character's emotion-avatar slots (/reroll-emotion [@Name] [emotion...])",
     "review": "Review entity data for completeness",
     "rewrite": "Rewrite the last assistant message (/rewrite <instruction>)",
     "roll": "Roll dice (e.g., /roll 2d6+3)",
