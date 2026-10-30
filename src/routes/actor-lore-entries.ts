@@ -11,6 +11,11 @@ import type { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { createEntityRoutes, } from "./entity-routes";
+import {
+  rarityValue,
+  revealConditionValue,
+  validateRevealConditionWrite,
+} from "./lore-entry-values";
 
 /**
  * @param opts
@@ -50,8 +55,18 @@ export function actorLoreEntriesRoutes(opts: { database: Db; config: Config }, p
         sortOrder: "sort_order",
         audienceScope: "audience_scope",
         worldId: "world_id",
+        revealCondition: "reveal_condition",
+        timelineId: "timeline_id",
+        rarity: "rarity",
       },
       jsonFields: ["keys", "secondary_keys", "audience_scope",],
+      valueTransforms: {
+        revealCondition: revealConditionValue,
+        rarity: rarityValue,
+      },
+      // Reject invalid reveal-condition JSON before it reaches the DB (see
+      // the world-lore route guard — same fail-closed rationale).
+      writeGuard: async ({ body, },) => validateRevealConditionWrite(body,),
       defaults: {
         selective: 0,
         caseSensitive: 0,

@@ -42,6 +42,14 @@ interface LoreEntryPayload {
   world_id: string;
   name: string | null;
   content: string;
+  /** 084: serialized reveal-condition JSON (secret lore gate). */
+  revealCondition?: string;
+  /** Raw snake_case column on the update endpoint's untransformed row. */
+  reveal_condition?: string;
+  /** 084: timeline scoping slug; null = every timeline. */
+  timelineId?: string | null;
+  /** 084: unified rarity tier. */
+  rarity?: string;
 }
 
 /** Paginated list envelope. */
@@ -366,5 +374,136 @@ describe("worldLoreEntriesRoutes — ownership", () => {
       .executeTakeFirst();
 
     expect(row,).toBeUndefined();
+  });
+});
+
+// ── 084 fields: reveal_condition / timeline_id / rarity roundtrip ──
+//
+// The entity routes are config-driven with an explicit fieldMappings
+// allowlist; these tests pin that the 084 columns are actually accepted on
+// create/update and served back, not silently dropped.
+describe("worldLoreEntriesRoutes — reveal/timeline/rarity fields (084)", () => {
+  let db: Kysely<DB>;
+  let sqlite: TestDb["sqlite"];
+
+  const ownerId = uid();
+
+  beforeAll(async () => {
+    const tdb = await createTestDb();
+    db = tdb.db;
+    sqlite = tdb.sqlite;
+    await insertUsers(db, `owner-${ownerId}`, "World Owner", { id: ownerId, },);
+  },);
+
+  afterAll(() => {
+    sqlite.close();
+  },);
+
+  test("create accepts revealCondition (object form), timelineId, and rarity", async () => {
+    const worldId = await seedWorld(db, ownerId,);
+
+    const res = await makeApp(db, ownerId, "user",).handle(
+      new Request(`http://localhost/api/worlds/${worldId}/lore-entries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          content: "The beacon signals the hidden fleet.",
+          revealCondition: { keywords: ["beacon",], },
+          timelineId: "alt",
+          rarity: "artifact",
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
+    const created = (await res.json()) as LoreEntryPayload;
+    expect(created.revealCondition,).toBe(JSON.stringify({ keywords: ["beacon",], },),);
+    expect(created.timelineId,).toBe("alt",);
+    expect(created.rarity,).toBe("artifact",);
+
+    const row = await db
+      .selectFrom("world_lore_entries",)
+      .select(["reveal_condition", "timeline_id", "rarity",],)
+      .where("id", "=", created.id,)
+      .executeTakeFirst();
+
+    expect(row?.reveal_condition,).toBe(JSON.stringify({ keywords: ["beacon",], },),);
+    expect(row?.timeline_id,).toBe("alt",);
+    expect(row?.rarity,).toBe("artifact",);
+  });
+
+  test("revealCondition string form passes through without double encoding", async () => {
+    const worldId = await seedWorld(db, ownerId,);
+    const raw = JSON.stringify({ event: "meteor_fall", },);
+
+    const res = await makeApp(db, ownerId, "user",).handle(
+      new Request(`http://localhost/api/worlds/${worldId}/lore-entries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ content: "Sky-glass lore.", revealCondition: raw, },),
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
+    const created = (await res.json()) as LoreEntryPayload;
+    expect(created.revealCondition,).toBe(raw,);
+  });
+
+  test("invalid revealCondition JSON is rejected server-side (400)", async () => {
+    const worldId = await seedWorld(db, ownerId,);
+
+    const post = await makeApp(db, ownerId, "user",).handle(
+      new Request(`http://localhost/api/worlds/${worldId}/lore-entries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ content: "Broken secret.", revealCondition: "not-json", },),
+      },),
+    );
+
+    expect(post.status,).toBe(400,);
+
+    // Update path: the guard runs after existence/ownership, so seed a real
+    // entry and PUT a structurally invalid condition ({all} must be an array).
+    const entryId = await seedEntry(db, worldId, "Updatable secret.",);
+    const put = await makeApp(db, ownerId, "user",).handle(
+      new Request(`http://localhost/api/worlds/${worldId}/lore-entries/${entryId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ revealCondition: { all: "not-an-array", }, },),
+      },),
+    );
+
+    expect(put.status,).toBe(400,);
+  });
+
+  test("unknown rarity falls back to common; rarity is updatable", async () => {
+    const worldId = await seedWorld(db, ownerId,);
+
+    const post = await makeApp(db, ownerId, "user",).handle(
+      new Request(`http://localhost/api/worlds/${worldId}/lore-entries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ content: "Tiered lore.", rarity: "mythic-plus", },),
+      },),
+    );
+
+    expect(post.status,).toBe(201,);
+    const created = (await post.json()) as LoreEntryPayload;
+    expect(created.rarity,).toBe("common",);
+
+    const put = await makeApp(db, ownerId, "user",).handle(
+      new Request(`http://localhost/api/worlds/${worldId}/lore-entries/${created.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ rarity: "rare", revealCondition: { event: "eclipse", }, },),
+      },),
+    );
+
+    expect(put.status,).toBe(200,);
+    // The update endpoint returns the raw row (snake_case) — pre-existing
+    // asymmetry vs create's applyResponseTransforms; assert that contract.
+    const updated = (await put.json()) as LoreEntryPayload;
+    expect(updated.rarity,).toBe("rare",);
+    expect(updated.reveal_condition,).toBe(JSON.stringify({ event: "eclipse", },),);
   });
 });

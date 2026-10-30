@@ -268,6 +268,48 @@ describe("loreSection — timeline-scoped lore (epic-lore-knowledge)", () => {
       sqlite.close();
     }
   });
+
+  test("actor lore rows load when timeline-universal or matching the chat's timeline", async () => {
+    createLoggerSafe();
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const { actorId, } = await setupWorld(db, [], "alt",);
+      await insertActorLoreEntries(db, actorId, "Universal actor memory for every timeline.", {
+        enabled,
+        constant: constantOne,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+      },);
+
+      await insertActorLoreEntries(db, actorId, "Alt-timeline actor secret.", {
+        enabled,
+        constant: constantOne,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        timeline_id: "alt",
+      },);
+
+      await insertActorLoreEntries(db, actorId, "Prime-timeline actor secret.", {
+        enabled,
+        constant: constantOne,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        timeline_id: "prime",
+      },);
+
+      const onAlt = await render(db, "", actorId, "alt",);
+      expect(onAlt,).toContain("Universal actor memory",);
+      expect(onAlt,).toContain("Alt-timeline actor secret.",);
+      expect(onAlt,).not.toContain("Prime-timeline actor secret.",);
+
+      const onPrime = await render(db, "", actorId, "prime",);
+      expect(onPrime,).toContain("Universal actor memory",);
+      expect(onPrime,).toContain("Prime-timeline actor secret.",);
+      expect(onPrime,).not.toContain("Alt-timeline actor secret.",);
+    } finally {
+      sqlite.close();
+    }
+  });
 });
 
 describe("loreSection — rarity-weighted selection (epic-lore-knowledge)", () => {
