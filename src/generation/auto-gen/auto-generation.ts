@@ -100,6 +100,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   let attemptId: string | undefined;
   let resolvedModel: string | undefined;
   let resolvedProviderName: string | undefined;
+  // Path A latency scope: end-to-end pipeline latency (chat load/mode/actor/prune/hooks included); Path B starts at generation+tool-rounds, so cross-path comparisons mix scopes.
   const startedAtMs = Date.now();
 
   try {

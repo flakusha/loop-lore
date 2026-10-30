@@ -81,6 +81,8 @@ async function storeGeneratedMessage({
     toolCallsJson = r.ok ? r.value : null;
   }
 
+  const qm = qualityMetrics(result,);
+
   // Smart-regen variant fill: update the pending placeholder row in place
   // (it already carries role/visibility/swipe_index) instead of inserting
   // yet another sibling row.
@@ -95,14 +97,19 @@ async function storeGeneratedMessage({
         token_count_prompt: result.tokenUsage.promptTokens,
         token_count_completion: result.tokenUsage.completionTokens,
         token_count_total: result.tokenUsage.totalTokens,
+        // Path B latency scope: generation+tool-rounds only (cf. Path A end-to-end comment at auto-generation.ts startedAtMs).
         generation_time_ms: result.generationTimeMs,
         tokens_per_second: result.generationTimeMs > 0
           ? Math.round((result.tokenUsage.completionTokens / result.generationTimeMs) * 1000,)
           : null,
         // Merge, never replace: other metadata keys on this row must survive.
-        metadata: sql<string>`json_set(coalesce(messages.metadata, '{}'), '$.quality', json(${
-          qualityMetricsJson(qualityMetrics(result,),)
-        }))`,
+        // Guarded: a legacy corrupt (non-JSON) blob would make json_set throw,
+        // so fall back to a fresh quality document on that row.
+        metadata: sql<
+          string
+        >`case when json_valid(coalesce(messages.metadata, '{}')) then json_set(coalesce(messages.metadata, '{}'), '$.quality', json(${
+          qualityMetricsJson(qm,)
+        })) else ${buildQualityMetadata(qm,)} end`,
         status,
         tool_calls: toolCallsJson,
       },)
@@ -134,7 +141,7 @@ async function storeGeneratedMessage({
       tokens_per_second: result.generationTimeMs > 0
         ? Math.round((result.tokenUsage.completionTokens / result.generationTimeMs) * 1000,)
         : null,
-      metadata: buildQualityMetadata(qualityMetrics(result,),),
+      metadata: buildQualityMetadata(qm,),
       status,
       visibility: MessageVisibility.Visible,
       continuation_index: continuationNumber ?? null,
