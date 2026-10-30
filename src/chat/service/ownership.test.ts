@@ -33,6 +33,8 @@ import {
   insertChats,
   insertUsers,
 } from "../../test-utils/insert-helpers";
+import { addChatOwner, removeChatOwner, } from "./owners";
+import { isChatOwner, listOwnerUserIds, } from "./owners-core";
 import { transferOwnership, } from "./ownership";
 
 const OWNER_ID = randomUUID();
@@ -106,6 +108,12 @@ async function resetChat(): Promise<void> {
     .where("chat_id", "=", CHAT_ID,)
     .where("actor_id", "not in", [OWNER_ID, PARTICIPANT_ID,],)
     .execute();
+
+  // Owners set back to scratch: the creator fallback covers authority until
+  // an owners-set op or a transfer materializes rows (epic-chat-multi-ownership).
+  await db.deleteFrom("chat_owners",).where("chat_id", "=", CHAT_ID,).execute();
+
+  await db.deleteFrom("notifications",).where("link", "=", `/chat/${CHAT_ID}`,).execute();
 
   await db.deleteFrom("log_entries",).where("entity_id", "=", CHAT_ID,).execute();
 }
@@ -664,5 +672,315 @@ describe("transferOwnership — tx error mapping (stubbed db)", () => {
     if (result.ok) { return; }
     expect(result.error.code,).toBe("bad_request",);
     expect(result.error.message,).toContain("changed concurrently",);
+  });
+});
+
+/**
+ * Owners-set operations (epic-chat-multi-ownership,
+ * TASK-chat-owners-service-owners-set-ops-generalizing-transfer).
+ *
+ * Parallel-safety contract: the file shares one private `:memory:` DB
+ * created in `beforeAll`; `resetChat` (beforeEach) restores the CHAT_ID
+ * baseline — chats, participants, chat_owners, notifications, audit rows —
+ * so every test is order-independent.
+ */
+async function settleNotifications(): Promise<void> {
+  // NotificationService.emit is fire-and-forget (`void create().catch`);
+  // one macrotask lets the inserts land deterministically.
+  await new Promise((resolve,) => setTimeout(resolve, 25,));
+}
+
+/**
+ * @returns owner user ids for CHAT_ID, sorted
+ */
+async function chatOwners(): Promise<string[]> {
+  return listOwnerUserIds(db, CHAT_ID,);
+}
+
+describe("owners set (addChatOwner / removeChatOwner / isChatOwner)", () => {
+  beforeEach(resetChat,);
+
+  test("isChatOwner: creator true via fallback, stranger false, row-holder true", async () => {
+    // No rows materialized: the created_by fallback carries authority.
+    expect(await chatOwners(),).toEqual([],);
+    expect(await isChatOwner(db, CHAT_ID, OWNER_ID,),).toBe(true,);
+    expect(await isChatOwner(db, CHAT_ID, STRANGER_ID,),).toBe(false,);
+
+    const added = await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      actorId: PARTICIPANT_ID,
+    },);
+
+    expect(added.ok,).toBe(true,);
+    expect(await isChatOwner(db, CHAT_ID, PARTICIPANT_ID,),).toBe(true,);
+  });
+
+  test("transferOwnership maintains the owners set: grant new, revoke previous", async () => {
+    const result = await transferOwnership(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      newOwnerId: PARTICIPANT_ID,
+    },);
+
+    expect(result.ok,).toBe(true,);
+
+    expect(await chatOwners(),).toEqual([PARTICIPANT_ID,],);
+    expect(await isChatOwner(db, CHAT_ID, PARTICIPANT_ID,),).toBe(true,);
+    expect(await isChatOwner(db, CHAT_ID, OWNER_ID,),).toBe(false,);
+  });
+
+  test("addChatOwner grants co-ownership: owners, participant role, audit, notifications", async () => {
+    const result = await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      actorId: PARTICIPANT_ID,
+      reason: "co-work",
+    },);
+
+    expect(result.ok,).toBe(true,);
+    if (!result.ok) { return; }
+
+    expect(result.result.owners,).toEqual([OWNER_ID, PARTICIPANT_ID,].sort(),);
+    expect(result.result.autoInvited,).toBe(false,);
+
+    const role = await db.selectFrom("chat_participants",).select("role_in_chat",)
+      .where("chat_id", "=", CHAT_ID,).where("actor_id", "=", PARTICIPANT_ID,)
+      .executeTakeFirstOrThrow();
+
+    expect(role.role_in_chat,).toBe("owner",);
+
+    const audit = await db.selectFrom("log_entries",).select(["event_type", "meta",],)
+      .where("entity_id", "=", CHAT_ID,).where("event_type", "=", "chat_owner_added",)
+      .executeTakeFirstOrThrow();
+
+    const meta = JSON.parse(audit.meta ?? "{}",) as { owners?: string[]; user_id?: string; reason?: string };
+    expect(meta.user_id,).toBe(PARTICIPANT_ID,);
+    expect(meta.owners,).toEqual([OWNER_ID, PARTICIPANT_ID,].sort(),);
+    expect(meta.reason,).toBe("co-work",);
+
+    await settleNotifications();
+    const notes = await db.selectFrom("notifications",).select("user_id",)
+      .where("link", "=", `/chat/${CHAT_ID}`,).execute();
+
+    expect(new Set(notes.map((n,) => n.user_id),),).toEqual(new Set([OWNER_ID, PARTICIPANT_ID,],),);
+  });
+
+  test("addChatOwner refuses duplicates (row member and creator)", async () => {
+    const first = await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      actorId: PARTICIPANT_ID,
+    },);
+
+    expect(first.ok,).toBe(true,);
+
+    const dup = await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      actorId: PARTICIPANT_ID,
+    },);
+
+    expect(dup.ok,).toBe(false,);
+    if (dup.ok) { return; }
+    expect(dup.error.code,).toBe("bad_request",);
+    expect(dup.error.message,).toContain("already an owner",);
+
+    const creator = await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      actorId: OWNER_ID,
+    },);
+
+    expect(creator.ok,).toBe(false,);
+  });
+
+  test("addChatOwner enforces the MAX_CHAT_OWNERS cap", async () => {
+    for (const actorId of [PARTICIPANT_ID, STRANGER_ID,]) {
+      const ok = await addChatOwner(db, { chatId: CHAT_ID, requesterId: OWNER_ID, requesterRole: "user", actorId, },);
+      expect(ok.ok,).toBe(true,);
+    }
+
+    expect(await chatOwners(),).toEqual([OWNER_ID, PARTICIPANT_ID, STRANGER_ID,].sort(),);
+
+    const capped = await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      actorId: OUTSIDER_ID,
+    },);
+
+    expect(capped.ok,).toBe(false,);
+    if (capped.ok) { return; }
+    expect(capped.error.code,).toBe("bad_request",);
+    expect(capped.error.message,).toContain("maximum",);
+    expect(await chatOwners(),).toHaveLength(3,);
+  });
+
+  test("addChatOwner authority: stranger forbidden, admin bypasses", async () => {
+    const denied = await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: STRANGER_ID,
+      requesterRole: "user",
+      actorId: PARTICIPANT_ID,
+    },);
+
+    expect(denied.ok,).toBe(false,);
+    if (denied.ok) { return; }
+    expect(denied.error.code,).toBe("forbidden",);
+
+    const admin = await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: STRANGER_ID,
+      requesterRole: "admin",
+      actorId: PARTICIPANT_ID,
+    },);
+
+    expect(admin.ok,).toBe(true,);
+  });
+
+  test("addChatOwner auto-invites a non-participant with role owner", async () => {
+    const result = await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      actorId: OUTSIDER_ID,
+    },);
+
+    expect(result.ok,).toBe(true,);
+    if (!result.ok) { return; }
+    expect(result.result.autoInvited,).toBe(true,);
+
+    const row = await db.selectFrom("chat_participants",).select("role_in_chat",)
+      .where("chat_id", "=", CHAT_ID,).where("actor_id", "=", OUTSIDER_ID,)
+      .executeTakeFirstOrThrow();
+
+    expect(row.role_in_chat,).toBe("owner",);
+  });
+
+  test("removeChatOwner refuses to remove the last remaining owner", async () => {
+    // Fresh chat: only the creator (via fallback) — removal must refuse.
+    const result = await removeChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      userId: OWNER_ID,
+    },);
+
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { return; }
+    expect(result.error.code,).toBe("bad_request",);
+    expect(result.error.message,).toContain("last remaining owner",);
+    expect(await isChatOwner(db, CHAT_ID, OWNER_ID,),).toBe(true,);
+  });
+
+  test("removeChatOwner removes a co-owner: owners, demotion, audit, notification", async () => {
+    await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      actorId: PARTICIPANT_ID,
+    },);
+
+    const result = await removeChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      userId: PARTICIPANT_ID,
+    },);
+
+    expect(result.ok,).toBe(true,);
+    if (!result.ok) { return; }
+    expect(result.result.owners,).toEqual([OWNER_ID,],);
+
+    const role = await db.selectFrom("chat_participants",).select("role_in_chat",)
+      .where("chat_id", "=", CHAT_ID,).where("actor_id", "=", PARTICIPANT_ID,)
+      .executeTakeFirstOrThrow();
+
+    expect(role.role_in_chat,).toBe("member",);
+
+    const audit = await db.selectFrom("log_entries",).select("event_type",)
+      .where("entity_id", "=", CHAT_ID,).where("event_type", "=", "chat_owner_removed",)
+      .executeTakeFirstOrThrow();
+
+    expect(audit.event_type,).toBe("chat_owner_removed",);
+
+    await settleNotifications();
+    const notes = await db.selectFrom("notifications",).select("user_id",)
+      .where("link", "=", `/chat/${CHAT_ID}`,).execute();
+
+    // Remaining owners (OWNER) are notified; PARTICIPANT is out of the set.
+    expect(notes.map((n,) => n.user_id),).toContain(OWNER_ID,);
+  });
+
+  test("removeChatOwner refuses a user who is not an owner", async () => {
+    const result = await removeChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      userId: STRANGER_ID,
+    },);
+
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { return; }
+    expect(result.error.code,).toBe("bad_request",);
+    expect(result.error.message,).toContain("not an owner",);
+  });
+
+  test("concurrent last-two-owner removals: exactly one commits", async () => {
+    await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      actorId: PARTICIPANT_ID,
+    },);
+
+    expect(await chatOwners(),).toEqual([OWNER_ID, PARTICIPANT_ID,].sort(),);
+
+    // Each owner resigns concurrently; SQLite serializes the transactions,
+    // so the second sees a single remaining owner and refuses.
+    const [a, b,] = await Promise.all([
+      removeChatOwner(db, { chatId: CHAT_ID, requesterId: OWNER_ID, requesterRole: "user", userId: OWNER_ID, },),
+      removeChatOwner(db, {
+        chatId: CHAT_ID,
+        requesterId: PARTICIPANT_ID,
+        requesterRole: "user",
+        userId: PARTICIPANT_ID,
+      },),
+    ],);
+
+    const outcomes = [a, b,];
+    expect(outcomes.filter((o,) => o.ok),).toHaveLength(1,);
+    expect(outcomes.filter((o,) => !o.ok),).toHaveLength(1,);
+    expect(await chatOwners(),).toHaveLength(1,);
+  });
+
+  test("concurrent removals of the SAME owner: exactly one commits", async () => {
+    await addChatOwner(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      actorId: PARTICIPANT_ID,
+    },);
+
+    const [byOwner, bySelf,] = await Promise.all([
+      removeChatOwner(db, { chatId: CHAT_ID, requesterId: OWNER_ID, requesterRole: "user", userId: PARTICIPANT_ID, },),
+      removeChatOwner(db, {
+        chatId: CHAT_ID,
+        requesterId: PARTICIPANT_ID,
+        requesterRole: "user",
+        userId: PARTICIPANT_ID,
+      },),
+    ],);
+
+    const outcomes = [byOwner, bySelf,];
+    expect(outcomes.filter((o,) => o.ok),).toHaveLength(1,);
+    expect(await chatOwners(),).toEqual([OWNER_ID,],);
   });
 });

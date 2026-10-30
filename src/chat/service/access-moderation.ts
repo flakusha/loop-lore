@@ -17,17 +17,20 @@ import { getLogger, } from "../../logger";
 
 /**
  * Re-evaluate which participants hold GM-tier grants after an ownership
- * transfer. Any participant currently flagged as GM (`role_in_chat = "gm"`)
- * loses the role if they are neither the new chat owner nor a chat-admin
- * (`can(role, "admin.chat")`). Idempotent: callers may invoke this on every
- * transfer; it only touches rows that need to change.
+ * change. Any participant currently flagged as GM (`role_in_chat = "gm"`)
+ * loses the role unless their ACTOR's owning user is in the chat's owners
+ * set (`chat_owners`), or — for chats whose owners set has not been
+ * materialized — is the single new owner of the just-completed transfer.
+ * Idempotent: callers may invoke this on every transfer; it only touches
+ * rows that need to change.
  *
  * Best-effort reconciliation: callers MUST wrap this in a try/catch so a
  * single failure does not roll back a successful ownership transfer.
  * @param database
  * @param chatId
  * @param previousOwnerId Owner before the transfer (informational).
- * @param newOwnerId Owner after the transfer (preserved GM if they were one).
+ * @param newOwnerId Owner after the transfer (fallback sole owner when the
+ *   chat has no `chat_owners` rows yet).
  * @throws {Error} When the Kysely update fails; the caller is expected to
  *   log + swallow so the transfer itself is not rolled back.
  * @returns {Promise<void>}
@@ -41,18 +44,35 @@ export async function reconcileModeratorGrants(
   const log = getLogger().child({ module: "chat-access", },);
   log.debug("reconciling moderator grants", { chatId, previousOwnerId, newOwnerId, },);
 
+  // Owners set; unmaterialized chats fall back to the transfer's new owner.
+  const ownerRows = await database
+    .selectFrom("chat_owners",)
+    .select("user_id",)
+    .where("chat_id", "=", chatId,)
+    .execute();
+
+  const ownerUserIds = ownerRows.length > 0
+    ? new Set(ownerRows.map((r,) => r.user_id),)
+    : new Set([newOwnerId,],);
+
   const gmParticipants = await database
     .selectFrom("chat_participants",)
-    .select(["actor_id", "role_in_chat",],)
-    .where("chat_id", "=", chatId,)
-    .where("role_in_chat", "=", ChatParticipantRole.Gm,)
+    .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+    .select([
+      "chat_participants.actor_id as actor_id",
+      "actors.user_id as actor_user_id",
+      "actors.owner_id as actor_owner_id",
+    ],)
+    .where("chat_participants.chat_id", "=", chatId,)
+    .where("chat_participants.role_in_chat", "=", ChatParticipantRole.Gm,)
     .execute();
 
   if (gmParticipants.length === 0) { return; }
 
   const demoteIds: string[] = [];
   for (const participant of gmParticipants) {
-    if (participant.actor_id === newOwnerId) { continue; }
+    const owningUser = participant.actor_user_id ?? participant.actor_owner_id ?? participant.actor_id;
+    if (ownerUserIds.has(owningUser,)) { continue; }
     demoteIds.push(participant.actor_id,);
   }
 
