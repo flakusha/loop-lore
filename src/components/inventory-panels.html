@@ -1,0 +1,274 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Player inventory + NPC merchant trade (Phases 1-3). Host scope:
+  worldState(worldId) supplies the world id; the viewer picks actor ids
+  (no roster endpoint exists). Scopes fetch on load() and refresh after
+  every mutation; no SSE list subscription exists. Pure Alpine templating
+  over the scope state — no imperative DOM renderers.
+-->
+<section
+  class="panel"
+  aria-labelledby="inventory-heading"
+  data-testid="inventory-panel"
+  x-data="inventoryFactory('')"
+  x-init="load(); loadEquipped()"
+>
+  <h3 id="inventory-heading">{{{ t("worlds.inventoryTitle") }}}</h3>
+  <div class="form-row">
+    <label class="form-label" for="inventory-actor">{{{ t("worlds.inventoryActor") }}}</label>
+    <input
+      id="inventory-actor"
+      class="form-input"
+      :value="_invActorId ?? ''"
+      @change="setActorId($el.value); load(); loadEquipped()"
+      data-testid="inventory-actor"
+    />
+    <button
+      class="btn btn-secondary btn-sm"
+      @click="toggleView()"
+      data-testid="inventory-view-toggle"
+      x-text="view === 'grid' ? t('worlds.inventoryViewList') : t('worlds.inventoryViewGrid')"
+    >
+    </button>
+    <button
+      class="btn btn-secondary btn-sm"
+      @click="load(); loadEquipped()"
+      data-testid="inventory-reload"
+      x-text="t('worlds.tradeReload')"
+    >
+    </button>
+  </div>
+  <div x-show="loadError" class="muted" role="alert" x-text="loadError"></div>
+  <div class="form-row">
+    <label class="form-label" for="inventory-sort">{{{ t("worlds.inventorySort") }}}</label>
+    <select id="inventory-sort" class="form-input" x-model="sort" data-testid="inventory-sort">
+      <option value="name" x-text="t('worlds.inventorySortName')"></option>
+      <option value="type" x-text="t('worlds.inventorySortType')"></option>
+      <option value="rarity" x-text="t('worlds.inventorySortRarity')"></option>
+      <option value="value" x-text="t('worlds.inventorySortValue')"></option>
+    </select>
+    <label class="form-label" for="inventory-type-filter">{{{ t("worlds.inventoryTypeFilter") }}}</label>
+    <input
+      id="inventory-type-filter"
+      class="form-input"
+      x-model="typeFilter"
+      :placeholder="t('worlds.inventoryTypePlaceholder')"
+      data-testid="inventory-type-filter"
+    />
+    <label class="form-label" for="inventory-rarity-filter">{{{ t("worlds.inventoryRarityFilter") }}}</label>
+    <input
+      id="inventory-rarity-filter"
+      class="form-input"
+      x-model="rarityFilter"
+      :placeholder="t('worlds.inventoryRarityPlaceholder')"
+      data-testid="inventory-rarity-filter"
+    />
+  </div>
+  <div class="form-row">
+    <label class="condition">
+      <input type="checkbox" x-model="equippedOnly" data-testid="inventory-equipped-only" />
+      <span>{{{ t("worlds.inventoryEquippedOnly") }}}</span>
+    </label>
+    <label class="condition">
+      <input type="checkbox" x-model="usableOnly" data-testid="inventory-usable-only" />
+      <span>{{{ t("worlds.inventoryUsableOnly") }}}</span>
+    </label>
+  </div>
+
+  <h5>{{{ t("worlds.inventoryItemsLabel") }}}</h5>
+  <div x-show="loading" class="muted">{{{ t("common.loading") }}}</div>
+  <template x-for="item in visibleItems()" :key="item.id">
+    <div class="trade-offer-row" :data-item-id="item.id">
+      <span x-text="item.name + (item.quantity ? ' × ' + item.quantity : '')"></span>
+      <span class="tag" x-text="item.itemType"></span>
+      <span class="muted" x-text="(item.value ?? 0) + ' Gold'"></span>
+      <button
+        class="btn btn-secondary btn-sm"
+        @click="select(item.id)"
+        :data-testid="'inventory-select-' + item.id"
+        x-text="t('worlds.inventoryDetailsLabel')"
+      >
+      </button>
+    </div>
+  </template>
+  <div x-show="!loading && visibleItems().length === 0" class="muted">{{{ t("worlds.inventoryEmpty") }}}</div>
+
+  <template x-if="selectedItem()">
+    <div>
+      <h5>{{{ t("worlds.inventoryDetailsLabel") }}}</h5>
+      <div class="tag" data-testid="inventory-detail-name" x-text="selectedItem().name"></div>
+      <div class="muted" data-testid="inventory-detail-desc" x-text="selectedItem().description ?? ''"></div>
+      <div class="form-row">
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="equip(selectedItem().id)"
+          data-testid="inventory-equip"
+          :disabled="busy"
+          x-text="t('worlds.inventoryEquip')"
+        >
+        </button>
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="unequip(selectedItem().id)"
+          data-testid="inventory-unequip"
+          :disabled="busy"
+          x-text="t('worlds.inventoryUnequip')"
+        >
+        </button>
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="drop(selectedItem().id)"
+          data-testid="inventory-drop"
+          :disabled="busy"
+          x-text="t('worlds.inventoryDrop')"
+        >
+        </button>
+      </div>
+      <div class="form-row" x-data="{ toActorId: '', qty: 1 }">
+        <label class="form-label" for="inventory-transfer-to">{{{ t("worlds.inventoryTransferTo") }}}</label>
+        <input
+          id="inventory-transfer-to"
+          class="form-input"
+          x-model="toActorId"
+          data-testid="inventory-transfer-to"
+        />
+        <label class="form-label" for="inventory-transfer-qty">{{{ t("worlds.inventoryTransferQty") }}}</label>
+        <input
+          id="inventory-transfer-qty"
+          class="form-input"
+          type="number"
+          min="1"
+          x-model.number="qty"
+          data-testid="inventory-transfer-qty"
+        />
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="transfer({ itemId: selectedItem().id, toActorId: toActorId, quantity: qty ?? 1 })"
+          data-testid="inventory-transfer"
+          :disabled="busy"
+          x-text="t('worlds.inventoryTransfer')"
+        >
+        </button>
+      </div>
+      <div x-show="error" class="muted" role="alert" x-text="error"></div>
+      <div x-show="message" class="muted" x-text="message"></div>
+    </div>
+  </template>
+
+  <h5>{{{ t("worlds.inventoryEquippedLabel") }}}</h5>
+  <div x-show="equippedError" class="muted" role="alert" x-text="equippedError"></div>
+  <template x-for="item in equipped" :key="item.id">
+    <div class="tag" :data-equipped-id="item.id" x-text="item.name"></div>
+  </template>
+</section>
+
+<section
+  class="panel"
+  aria-labelledby="npc-trade-heading"
+  data-testid="npc-trade-panel"
+  x-data="inventoryTradingFactory('{{worldId}}', '', '')"
+  x-init="load()"
+>
+  <h3 id="npc-trade-heading">{{{ t("worlds.npcTradeTitle") }}}</h3>
+  <div class="form-row">
+    <label class="form-label" for="npc-player-actor">{{{ t("worlds.npcPlayerActor") }}}</label>
+    <input
+      id="npc-player-actor"
+      class="form-input"
+      :value="_playerActorId ?? ''"
+      @change="setTradeActors(_worldId ?? '{{worldId}}', $el.value, _npcActorId ?? ''); load()"
+      data-testid="npc-player-actor"
+    />
+    <label class="form-label" for="npc-merchant-actor">{{{ t("worlds.npcMerchantActor") }}}</label>
+    <input
+      id="npc-merchant-actor"
+      class="form-input"
+      :value="_npcActorId ?? ''"
+      @change="setTradeActors(_worldId ?? '{{worldId}}', _playerActorId ?? '', $el.value); load()"
+      data-testid="npc-merchant-actor"
+    />
+    <button
+      class="btn btn-secondary btn-sm"
+      @click="load()"
+      data-testid="npc-reload"
+      x-text="t('worlds.tradeReload')"
+    >
+    </button>
+  </div>
+  <div x-show="playerLoadError" class="muted" role="alert" x-text="playerLoadError"></div>
+  <div x-show="npcLoadError" class="muted" role="alert" x-text="npcLoadError"></div>
+
+  <div class="trade-window">
+    <div class="trade-window-pane" data-trade-pane="player">
+      <h4>{{{ t("worlds.npcPlayerItems") }}}</h4>
+      <template x-for="item in playerItems" :key="item.id">
+        <label class="condition">
+          <input
+            type="checkbox"
+            :checked="draft.playerIds.includes(item.id)"
+            :data-testid="'npc-sell-pick-' + item.id"
+            @change="toggle('player', item.id)"
+          />
+          <span x-text="item.name + ' (' + (item.value ?? 0) + ' Gold)'"></span>
+        </label>
+      </template>
+    </div>
+    <div class="trade-window-pane" data-trade-pane="npc">
+      <h4>{{{ t("worlds.npcMerchantItems") }}}</h4>
+      <template x-for="item in npcItems" :key="item.id">
+        <label class="condition">
+          <input
+            type="checkbox"
+            :checked="draft.npcIds.includes(item.id)"
+            :data-testid="'npc-buy-pick-' + item.id"
+            @change="toggle('npc', item.id)"
+          />
+          <span x-text="item.name + ' (' + (item.value ?? 0) + ' Gold)'"></span>
+        </label>
+      </template>
+    </div>
+  </div>
+  <div
+    class="muted"
+    data-testid="npc-trade-summary"
+    x-text="t('worlds.npcYouGive') + ': ' + summary().playerValue + ' / ' + t('worlds.npcYouGet') + ': ' + summary().npcValue"
+  >
+  </div>
+  <div class="trade-window-actions">
+    <button
+      class="btn btn-primary btn-sm"
+      @click="sellToNpc()"
+      :disabled="busy || draft.playerIds.length === 0"
+      data-testid="npc-sell"
+      x-text="t('worlds.npcSell')"
+    >
+    </button>
+    <button
+      class="btn btn-primary btn-sm"
+      @click="buyFromNpc()"
+      :disabled="busy || draft.npcIds.length === 0"
+      data-testid="npc-buy"
+      x-text="t('worlds.npcBuy')"
+    >
+    </button>
+    <button
+      class="btn btn-secondary btn-sm"
+      @click="confirm()"
+      :disabled="busy || (draft.playerIds.length === 0 && draft.npcIds.length === 0)"
+      data-testid="npc-confirm"
+      x-text="t('worlds.npcConfirm')"
+    >
+    </button>
+    <button
+      class="btn btn-secondary btn-sm"
+      @click="clearDraft()"
+      data-testid="npc-clear"
+      x-text="t('worlds.npcClear')"
+    >
+    </button>
+  </div>
+  <div x-show="error" class="muted" role="alert" x-text="error"></div>
+  <div x-show="message" class="muted" x-text="message"></div>
+</section>
