@@ -28,6 +28,8 @@ interface AvatarCtx {
   _mood: { currentMood: string } | null;
   _emotionAvatarsLoading: boolean;
   _emotionAvatars: EmotionAvatar[];
+  _emotionAvatarsByActor: Record<string, EmotionAvatar[]>;
+  _actorBaseAvatars: Record<string, string>;
   _currentEmotionAvatar: string | null;
   _emotionGenRunning: boolean;
   _emotionGenStatus: string;
@@ -43,6 +45,8 @@ function buildCtx(overrides?: Partial<AvatarCtx>,): AvatarCtx {
     _mood: null,
     _emotionAvatarsLoading: false,
     _emotionAvatars: [] as EmotionAvatar[],
+    _emotionAvatarsByActor: {} as Record<string, EmotionAvatar[]>,
+    _actorBaseAvatars: {} as Record<string, string>,
     _currentEmotionAvatar: null,
     _emotionGenRunning: false,
     _emotionGenStatus: "",
@@ -53,17 +57,24 @@ function buildCtx(overrides?: Partial<AvatarCtx>,): AvatarCtx {
   return ctx as unknown as AvatarCtx;
 }
 
-const npcParticipants = [{ role_in_chat: "member", actor_type: "npc", actor_id: "actor-9", },];
+const npcParticipants = [{
+  role_in_chat: "member",
+  actor_type: "npc",
+  actor_id: "actor-9",
+  avatar_asset_id: "base-9",
+},];
+
 const avatarRows = [
-  { id: "av-happy", asset_id: "as-happy", tags: { emotion: "happy", }, },
-  { id: "av-plain", asset_id: "as-plain", tags: {}, },
-  { id: "av-neutral", asset_id: "as-neutral", tags: { emotion: "neutral", }, },
+  { id: "av-happy", assetId: "as-happy", tags: { emotion: "happy", }, },
+  { id: "av-plain", assetId: "as-plain", tags: {}, },
+  { id: "av-neutral", assetId: "as-neutral", tags: { emotion: "neutral", }, },
 ];
 
 /** Route participant + avatar + generation endpoints; unhandled 404. */
 function routeResponses(opts?: {
   participants?: unknown;
   avatars?: unknown;
+  avatarsByActor?: Record<string, unknown>;
   participantsStatus?: number;
   avatarsStatus?: number;
   generation?: Response;
@@ -77,10 +88,12 @@ function routeResponses(opts?: {
         : Response.json(opts?.participants ?? npcParticipants,);
     }
 
-    if (url === "/api/v1/actors/actor-9/avatars") {
+    const avatarsMatch = url.match(/\/api\/v1\/actors\/([^/]+)\/avatars$/,);
+    if (avatarsMatch) {
+      const perActor = opts?.avatarsByActor?.[avatarsMatch[1] as string];
       return opts?.avatarsStatus
         ? new Response("", { status: opts.avatarsStatus, },)
-        : Response.json(opts?.avatars ?? avatarRows,);
+        : Response.json(perActor ?? opts?.avatars ?? avatarRows,);
     }
 
     if (url === "/api/v1/actors/actor-9/emotion-avatars") {
@@ -126,6 +139,16 @@ describeOrSkip("moodStateAvatars.loadEmotionAvatars", () => {
 
     expect(ctx._currentEmotionAvatar,).toBe("as-neutral",);
     expect(ctx._emotionAvatarsLoading,).toBe(false,);
+    // Per-actor maps carry the same rows, keyed by author actor id, with the
+    // participant row's base portrait as the variant-less fallback.
+    expect(ctx._emotionAvatarsByActor,).toEqual({
+      "actor-9": [
+        { emotion: "happy", avatarId: "av-happy", assetId: "as-happy", },
+        { emotion: "neutral", avatarId: "av-neutral", assetId: "as-neutral", },
+      ],
+    },);
+
+    expect(ctx._actorBaseAvatars,).toEqual({ "actor-9": "base-9", },);
   });
 
   test("keeps avatars but skips selection when no mood is loaded", async () => {
@@ -144,6 +167,35 @@ describeOrSkip("moodStateAvatars.loadEmotionAvatars", () => {
     routeResponses({ rejectParticipants: true, },);
     await moodStateAvatars.loadEmotionAvatars!.call(ctx as never,);
     expect(ctx._emotionAvatarsLoading,).toBe(false,);
+  });
+
+  test("loads every non-user participant's variants for group chats", async () => {
+    const ctx = buildCtx();
+    routeResponses({
+      participants: [
+        { role_in_chat: "member", actor_type: "user", actor_id: "user-1", },
+        { role_in_chat: "member", actor_type: "npc", actor_id: "actor-luna", avatar_asset_id: "base-luna", },
+        { role_in_chat: "member", actor_type: "npc", actor_id: "actor-max", avatar_asset_id: "base-max", },
+      ],
+      avatarsByActor: {
+        "actor-luna": [{ id: "av-luna-happy", assetId: "as-luna-happy", tags: { emotion: "happy", }, },],
+        "actor-max": [],
+      },
+    },);
+
+    await moodStateAvatars.loadEmotionAvatars!.call(ctx as never,);
+    // Flat list still follows the first npc (direct-chat areas unchanged)…
+    expect(ctx._emotionAvatars,).toEqual([
+      { emotion: "happy", avatarId: "av-luna-happy", assetId: "as-luna-happy", },
+    ],);
+
+    // …while the per-actor map covers both speakers, users excluded.
+    expect(ctx._emotionAvatarsByActor,).toEqual({
+      "actor-luna": [{ emotion: "happy", avatarId: "av-luna-happy", assetId: "as-luna-happy", },],
+      "actor-max": [],
+    },);
+
+    expect(ctx._actorBaseAvatars,).toEqual({ "actor-luna": "base-luna", "actor-max": "base-max", },);
   });
 },);
 
