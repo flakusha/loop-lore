@@ -30,4 +30,8 @@ export {
   type SeedOutcome,
   seedWorkflowLibrary,
 } from "./seed";
-export { validateWorkflowPayload, type ValidationResult, } from "./validate";
+export {
+  type ValidateWorkflowOptions,
+  validateWorkflowPayload,
+  type ValidationResult,
+} from "./validate";

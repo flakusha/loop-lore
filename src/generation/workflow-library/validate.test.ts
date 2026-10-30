@@ -155,3 +155,53 @@ describe("validateWorkflowPayload", () => {
     expect(validateWorkflowPayload([],).ok,).toBe(false,);
   });
 });
+
+describe("validateWorkflowPayload converted mode", () => {
+  it("exempts converter-reported control ids but still rejects a smuggled dead node", () => {
+    const payload = {
+      ...BASE,
+      body: {
+        ...GOOD_GRAPH,
+        "9": { class_type: "DaSiWa_NodeStatusSwitch", inputs: { enabled: true, }, },
+        "10": { class_type: "CLIPLoader", inputs: { clip_name: "x", }, },
+      },
+    };
+
+    expect(validateWorkflowPayload(payload,).ok,).toBe(false,);
+    const converted = validateWorkflowPayload(payload, { unreferencedLive: ["9",], },);
+    expect(converted.ok,).toBe(false,);
+    if (!converted.ok) {
+      expect(converted.errors.join(" ",),).toContain("10",);
+      expect(converted.errors.join(" ",),).not.toContain("9",);
+    }
+  });
+
+  it("accepts a converted graph whose dead set equals the report set", () => {
+    const payload = {
+      ...BASE,
+      body: {
+        ...GOOD_GRAPH,
+        "9": { class_type: "ResolutionSelector", inputs: { aspect_ratio: "1:1", }, },
+      },
+    };
+
+    expect(validateWorkflowPayload(payload,).ok,).toBe(false,);
+    expect(validateWorkflowPayload(payload, { unreferencedLive: ["9",], },).ok,).toBe(true,);
+  });
+
+  it("rejects a listed id whose class is not allowlisted", () => {
+    const payload = {
+      ...BASE,
+      body: {
+        ...GOOD_GRAPH,
+        "9": { class_type: "CLIPLoader", inputs: { clip_name: "x", }, },
+      },
+    };
+
+    const result = validateWorkflowPayload(payload, { unreferencedLive: ["9",], },);
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) {
+      expect(result.errors.join(" ",),).toContain("9",);
+    }
+  });
+});
