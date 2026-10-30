@@ -7671,6 +7671,23 @@
     "title": "nsfwRuntimeConfig singleton leaks across test files",
     "type": "BUG"
   },
+  "BUG-NSFW-WRITE-ROUTES-AUTHORIZE-ACTOR-BUT-NOT-TARGET": {
+    "hash": "5da1d4c",
+    "git_issue": "5da1d4c",
+    "extid": "BUG-NSFW-WRITE-ROUTES-AUTHORIZE-ACTOR-BUT-NOT-TARGET",
+    "type": "BUG",
+    "title": "NSFW write routes authorize actor but not target",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-nsfw-capabilities",
+    "tags": [
+      "security",
+      "nsfw",
+      "authorization"
+    ],
+    "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md",
+    "status": "Not Started"
+  },
   "BUG-NSFWMODERATIONSERVICE-MISSING-GETORCREATEOWN-WIRING-BLOCK-BA": {
     "epic": "epic-nsfw-moderation-priority",
     "extid": "BUG-NSFWMODERATIONSERVICE-MISSING-GETORCREATEOWN-WIRING-BLOCK-BA",
@@ -48777,6 +48794,23 @@
     "title": "NSFW Body State Widget",
     "type": "TASK"
   },
+  "TASK-NSFW-CONSENT-GRANT-ROUTE-MISSING": {
+    "hash": "3352640",
+    "git_issue": "3352640",
+    "extid": "TASK-NSFW-CONSENT-GRANT-ROUTE-MISSING",
+    "type": "TASK",
+    "title": "NSFW consent-grant route missing",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-nsfw-ui",
+    "tags": [
+      "nsfw",
+      "consent",
+      "gate"
+    ],
+    "source": ".plan/tickets/TASK-nsfw-consent-grant-route-missing.md",
+    "status": "Not Started"
+  },
   "TASK-NSFW-CONSENT-INTEGRATION": {
     "epic": "epic-nsfw-integration-gaps",
     "extid": "TASK-NSFW-CONSENT-INTEGRATION",
@@ -49169,6 +49203,18 @@
     ],
     "title": "NSFW Rating Schema & Consent State Machine",
     "type": "TASK"
+  },
+  "TASK-NSFW-READ-ONLY-STATUS-PANEL": {
+    "hash": "pending",
+    "extid": "TASK-NSFW-READ-ONLY-STATUS-PANEL",
+    "type": "TASK",
+    "title": "NSFW read-only status panel",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-nsfw-ui",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nsfw-read-only-status-panel.md",
+    "status": "done"
   },
   "TASK-NSFW-REPUTATION-CONSEQUENCES": {
     "epic": "epic-nsfw-game-mechanics",
