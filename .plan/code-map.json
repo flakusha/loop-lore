@@ -6323,10 +6323,6 @@
   ],
   "src/autonomy/rng": [
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/rarity.md"
     }
@@ -21170,10 +21166,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-task-i18n-workflow-hardening.md"
     },
     {
@@ -35553,10 +35545,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rarity-extensions.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
     }
   ],
   "src/items/seed/index.ts": [
@@ -51720,10 +51708,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-item-types.md"
     }
   ],
@@ -51739,10 +51723,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-054.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
     },
     {
       "kind": "spec",
@@ -55909,10 +55889,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rarity-extensions.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-rarity-extended-event-distribution.md"
     },
     {
       "kind": "spec",
