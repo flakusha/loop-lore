@@ -2,12 +2,74 @@
 # Filters here override user-global and built-in filters.
 # Docs: https://github.com/rtk-ai/rtk#custom-filters
 schema_version = 1
+# `bun test` emits one `(node:PID) Warning:` line per fixture/migration-cleanup
+# event — dozens per run (captured 2026-10-30: 17 warning lines vs a 4-line
+# summary on `bun test src/db/`). Strip those and blank lines; keep failures,
+# [ERROR] rows, and the pass/fail summary. Inline tests run under `rtk verify`.
+[filters.bun-test]
+description = "Compact bun test output — strip per-process fixture warnings, keep summary"
+match_command = "^bun\\s+test\\b"
+strip_ansi = true
+strip_lines_matching = [
+  "^\\s*$",
+  "^\\(node:\\d+\\) Warning: ",
+  "^\\(Use `bun --trace-warnings ...` to show where the warning was created\\)$",
+]
+max_lines = 30
 
-# Example: suppress build noise from a custom tool
-# [filters.my-tool]
-# description = "Compact my-tool output"
-# match_command = "^my-tool\\s+build"
-# strip_ansi = true
-# strip_lines_matching = ["^\\s*$", "^Downloading", "^Installing"]
-# max_lines = 30
-# on_empty = "my-tool: ok"
+[[tests.bun-test]]
+name = "strips node warnings and blank lines, keeps summary"
+input = """
+bun test v1.4.4 (38afee6c8)
+(node:2926766) Warning: [020_assets_content_hash_unique] owner owner-1 has 2 rows with identical content at tier encrypted; collapsing to the oldest.
+(node:2926766) Warning: [foreign-emitter] background tick 0
+(Use `bun --trace-warnings ...` to show where the warning was created)
+
+ 546 pass
+ 0 fail
+ 3341 expect() calls
+Ran 546 tests across 34 files. [33.78s]
+"""
+expected = "bun test v1.4.4 (38afee6c8)\n 546 pass\n 0 fail\n 3341 expect() calls\nRan 546 tests across 34 files. [33.78s]"
+
+[[tests.bun-test]]
+name = "keeps failure and ERROR rows verbatim"
+input = """
+bun test v1.4.4 (38afee6c8)
+(node:1) Warning: noisy fixture line
+[2026-10-30T13:53:23.130+00:00] [ERROR] [migrate] Stale migrations detected: 1 applied migration(s) no longer exist in src/db/migrations/
+(x) fail
+Ran 5 tests across 1 file. [0.12s]
+"""
+expected = "bun test v1.4.4 (38afee6c8)\n[2026-10-30T13:53:23.130+00:00] [ERROR] [migrate] Stale migrations detected: 1 applied migration(s) no longer exist in src/db/migrations/\n(x) fail\nRan 5 tests across 1 file. [0.12s]"
+
+# `eslint` is lint-clean today (2026-10-30 sweep: src/harness, src/plugins,
+# src/tui all exit 0 with empty stdout), so this filter must be a harmless
+# pass-through on clean output. When violations appear they are stylish blocks
+# (`path` header + `line:col  severity  message  rule`) + a `✖ N problems`
+# footer — every line is signal, so only de-ANSI, drop blanks, and cap.
+[filters.eslint]
+description = "Compact eslint stylish output — de-ANSI, drop blanks, cap length"
+match_command = "^(?:bunx\\s+)?eslint\\b"
+strip_ansi = true
+strip_lines_matching = [
+  "^\\s*$",
+]
+max_lines = 40
+
+[[tests.eslint]]
+name = "keeps stylish violations and problem footer, drops blanks"
+input = """
+/home/repo/src/foo.ts
+  12:5  error  Missing JSDoc comment  jsdoc/require-jsdoc
+
+  15:3  warning  Unexpected any  @typescript-eslint/no-explicit-any
+
+✖ 2 problems (1 error, 1 warning)
+"""
+expected = "/home/repo/src/foo.ts\n  12:5  error  Missing JSDoc comment  jsdoc/require-jsdoc\n  15:3  warning  Unexpected any  @typescript-eslint/no-explicit-any\n✖ 2 problems (1 error, 1 warning)"
+
+[[tests.eslint]]
+name = "clean run passes through unchanged"
+input = ""
+expected = ""
