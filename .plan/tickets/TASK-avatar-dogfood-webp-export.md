@@ -34,3 +34,5 @@ the `file` hook already resolves webp via `mimeFromExtension`.
 
 
 git issue: b1b252a
+
+**Resolved:** 2026-10-30 registry-driven close: git issue b1b252a (registry tip: fbf720843 Konstantin Fedotov Close issue)

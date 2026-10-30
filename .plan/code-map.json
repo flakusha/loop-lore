@@ -2731,6 +2731,12 @@
       "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
     }
   ],
+  "src/assistant/commands/avatar.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-dogfood-assistant-generation.md"
+    }
+  ],
   "src/assistant/commands/battle.integration.test.ts": [
     {
       "kind": "ticket",
@@ -8179,6 +8185,18 @@
       "source": ".plan/tickets/TASK-npc-character-edit-stack-parity.md"
     }
   ],
+  "src/characters/seed/master-export.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-dogfood-webp-export.md"
+    }
+  ],
+  "src/characters/seed/promote.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-dogfood-webp-export.md"
+    }
+  ],
   "src/characters/seed/templates.ts": [
     {
       "kind": "epic",
@@ -8341,6 +8359,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md"
+    }
+  ],
+  "src/characters/services/avatar-service/generated.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-dogfood-assistant-generation.md"
     }
   ],
   "src/characters/services/avatar-service/selection.ts": [
@@ -24063,6 +24087,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-dogfood-assistant-generation.md"
     },
     {
       "kind": "ticket",

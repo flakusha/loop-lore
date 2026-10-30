@@ -121,7 +121,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | asset | 7 | 1 | 0 | 6 | 0 | 0 | 0 |
 | asset-persistence | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | asset-search | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| assets | 65 | 8 | 2 | 6 | 3 | 0 | 46 |
+| assets | 65 | 9 | 2 | 6 | 3 | 0 | 45 |
 | assistant | 63 | 15 | 5 | 11 | 3 | 0 | 29 |
 | assistant-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | assistant-flows | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -153,7 +153,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | aux-llm-judge | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | aux-pipeline | 4 | 1 | 1 | 0 | 0 | 0 | 2 |
 | availability | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| avatar | 25 | 9 | 2 | 5 | 0 | 0 | 9 |
+| avatar | 25 | 10 | 2 | 5 | 0 | 0 | 8 |
 | avatar-emotions | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | avatar-matting | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | avoid | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -500,7 +500,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | document-processing | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | documentation | 3 | 0 | 1 | 1 | 0 | 0 | 1 |
 | documents | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| dogfood | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| dogfood | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | domain-separation | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | dos | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | dota-style | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -692,7 +692,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | gaussian-splatting | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | gc | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | gdpr | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
-| generation | 41 | 10 | 1 | 14 | 2 | 0 | 14 |
+| generation | 41 | 11 | 1 | 14 | 2 | 0 | 13 |
 | generation-flow-control | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | generational | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | geography | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
@@ -1404,7 +1404,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | sectioning | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | security | 41 | 16 | 3 | 8 | 0 | 0 | 14 |
 | seed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| seeding | 12 | 1 | 0 | 8 | 0 | 0 | 3 |
+| seeding | 12 | 2 | 0 | 8 | 0 | 0 | 2 |
 | seen | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
 | segmentation | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
 | selection | 4 | 2 | 0 | 1 | 0 | 0 | 1 |
@@ -1752,7 +1752,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2837 | 1257 | 48 | 890 | 30 | 0 | 612 |
+| (untagged) | 2837 | 1260 | 48 | 890 | 30 | 0 | 609 |
 
 ## By epic × status
 
@@ -1812,7 +1812,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | epic-authoring-creation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-aux-enrichment-pipeline | 20 | 6 | 4 | 5 | 0 | 0 | 5 |
 | epic-avatar-alpha-vn-layering | 13 | 5 | 0 | 7 | 0 | 0 | 1 |
-| epic-avatar-dogfood | 4 | 0 | 1 | 0 | 0 | 0 | 3 |
+| epic-avatar-dogfood | 4 | 3 | 1 | 0 | 0 | 0 | 0 |
 | epic-avatar-regeneration-control | 10 | 4 | 0 | 4 | 0 | 0 | 2 |
 | epic-battle-action-systems | 19 | 7 | 0 | 12 | 0 | 0 | 0 |
 | epic-battle-integration-gaps | 7 | 7 | 0 | 0 | 0 | 0 | 0 |
@@ -2098,7 +2098,7 @@ Total tickets: **4190** — untagged: **2837** — unbound to epic: **1049**
 | epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
 | epic-world-travel-time | 6 | 3 | 0 | 1 | 0 | 0 | 2 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| (unbound) | 1049 | 666 | 48 | 33 | 43 | 0 | 259 |
+| (unbound) | 1049 | 667 | 48 | 33 | 43 | 0 | 258 |
 
 ## Ticket detail
 
