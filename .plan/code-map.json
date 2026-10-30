@@ -10378,6 +10378,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-sweep-remaining-route-creator-checks.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
     },
     {
@@ -10555,6 +10559,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-choice-opt-in.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/chat-privacy.md"
     }
   ],
   "src/chat/service/ask": [
@@ -11171,6 +11179,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-nsfw-moderation-priority.md"
+    }
+  ],
+  "src/chat/service/owners-core.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/chat-privacy.md"
+    }
+  ],
+  "src/chat/service/owners.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-service-owners-set-ops-generalizing-transfer.md"
     }
   ],
   "src/chat/service/ownership.test.ts": [
@@ -17287,6 +17307,12 @@
       "source": ".plan/tickets/BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows.md"
     }
   ],
+  "src/db/082_chat_owners.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-schema-and-backfill.md"
+    }
+  ],
   "src/db/__tests__/schema-roundtrip.test.ts": [
     {
       "kind": "epic",
@@ -18640,6 +18666,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-schema-and-backfill.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comic-page-composition-strategy.md"
     },
     {
@@ -18765,6 +18795,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-schema-and-backfill.md"
     },
     {
       "kind": "ticket",
@@ -19749,6 +19783,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-migration-076-harden-against-malformed-gm-config-json.md"
+    }
+  ],
+  "src/db/migrations/082_chat_owners.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-schema-and-backfill.md"
     }
   ],
   "src/db/migrations/0XX_audio_templates.ts": [
@@ -21811,6 +21851,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-char-growth-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-schema-and-backfill.md"
     },
     {
       "kind": "ticket",
@@ -24975,6 +25019,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-backlog-size-strict-regression-recovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-sweep-remaining-route-creator-checks.md"
     }
   ],
   "src/frontend/alpine/chat-types/gm.ts": [
@@ -43275,6 +43323,12 @@
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
     }
   ],
+  "src/routes/chat-sections/access.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-sweep-remaining-route-creator-checks.md"
+    }
+  ],
   "src/routes/chats.test.ts": [
     {
       "kind": "ticket",
@@ -43759,6 +43813,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/access-model-clarification.md"
+    }
+  ],
+  "src/routes/chats/owners.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-routes-and-compat-transfer-endpoint.md"
     }
   ],
   "src/routes/chats/ownership.test.ts": [
@@ -45197,6 +45257,16 @@
       "source": ".plan/tickets/TASK-invite-code-generation.md"
     }
   ],
+  "src/routes/invites.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-sweep-remaining-route-creator-checks.md"
+    }
+  ],
   "src/routes/items-extended.ts": [
     {
       "kind": "epic",
@@ -45651,6 +45721,10 @@
       "source": ".plan/epics/epic-archival-workflow.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-archive-retention-hardcoded-30-days-should-be-configurable-9.md"
     },
@@ -45669,6 +45743,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-archival-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-sweep-remaining-route-creator-checks.md"
     }
   ],
   "src/routes/messages/attach.test.ts": [
@@ -47461,6 +47539,16 @@
       "source": ".plan/tickets/FEAT-progression-api-and-character-menu-surface-for-xp-level-and-.md"
     }
   ],
+  "src/routes/rpg/questions.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-sweep-remaining-route-creator-checks.md"
+    }
+  ],
   "src/routes/rpg/replayability.ts": [
     {
       "kind": "epic",
@@ -47873,12 +47961,20 @@
   ],
   "src/routes/story-orchestration/index.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-2025-001-missing-data-id-start-chat-button.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-sweep-remaining-route-creator-checks.md"
     }
   ],
   "src/routes/story-states/handlers.ts": [
@@ -47912,11 +48008,19 @@
   "src/routes/story-turns.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-chat-multi-ownership.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-owners-sweep-remaining-route-creator-checks.md"
     },
     {
       "kind": "ticket",

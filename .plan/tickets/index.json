@@ -12807,6 +12807,24 @@
     "title": "Chat Lifecycle, Transitions & Moderation",
     "type": "EPIC"
   },
+  "EPIC-CHAT-MULTI-OWNERSHIP": {
+    "hash": "pending",
+    "extid": "EPIC-CHAT-MULTI-OWNERSHIP",
+    "type": "EPIC",
+    "title": "Chat Multi-Ownership",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "chat",
+      "ownership",
+      "access-control",
+      "moderation",
+      "audit"
+    ],
+    "source": ".plan/tickets/epic-chat-multi-ownership.md",
+    "status": "in_progress"
+  },
   "EPIC-CHAT-PRIVACY": {
     "epic": "",
     "extid": "EPIC-CHAT-PRIVACY",
@@ -32714,6 +32732,104 @@
     "tags": [],
     "title": "Chat-only world channels (invite-driven membership)",
     "type": "TASK"
+  },
+  "TASK-CHAT-OWNERS-CHECK-SWEEP-ACROSS-SINGLE-OWNER-CALL-SITES": {
+    "hash": "4da081b",
+    "git_issue": "4da081b",
+    "extid": "TASK-CHAT-OWNERS-CHECK-SWEEP-ACROSS-SINGLE-OWNER-CALL-SITES",
+    "type": "TASK",
+    "title": "Chat owners check sweep across single-owner call sites",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-multi-ownership",
+    "tags": [
+      "chat",
+      "ownership",
+      "access-control"
+    ],
+    "source": ".plan/tickets/TASK-chat-owners-check-sweep-across-single-owner-call-sites.md",
+    "status": "done"
+  },
+  "TASK-CHAT-OWNERS-FRONTEND-IN-CHAT-SETTINGS": {
+    "hash": "f3f6ff1",
+    "git_issue": "f3f6ff1",
+    "extid": "TASK-CHAT-OWNERS-FRONTEND-IN-CHAT-SETTINGS",
+    "type": "TASK",
+    "title": "Chat owners frontend in chat settings",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-multi-ownership",
+    "tags": [
+      "chat",
+      "ownership",
+      "frontend"
+    ],
+    "source": ".plan/tickets/TASK-chat-owners-frontend-in-chat-settings.md",
+    "status": "done"
+  },
+  "TASK-CHAT-OWNERS-ROUTES-AND-COMPAT-TRANSFER-ENDPOINT": {
+    "hash": "36f9558",
+    "git_issue": "36f9558",
+    "extid": "TASK-CHAT-OWNERS-ROUTES-AND-COMPAT-TRANSFER-ENDPOINT",
+    "type": "TASK",
+    "title": "Chat owners routes and compat transfer endpoint",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-multi-ownership",
+    "tags": [
+      "chat",
+      "ownership",
+      "routes"
+    ],
+    "source": ".plan/tickets/TASK-chat-owners-routes-and-compat-transfer-endpoint.md",
+    "status": "done"
+  },
+  "TASK-CHAT-OWNERS-SCHEMA-AND-BACKFILL": {
+    "hash": "9a9d511",
+    "git_issue": "9a9d511",
+    "extid": "TASK-CHAT-OWNERS-SCHEMA-AND-BACKFILL",
+    "type": "TASK",
+    "title": "Chat owners schema and backfill",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-chat-multi-ownership",
+    "tags": [
+      "chat",
+      "ownership",
+      "db"
+    ],
+    "source": ".plan/tickets/TASK-chat-owners-schema-and-backfill.md",
+    "status": "done"
+  },
+  "TASK-CHAT-OWNERS-SERVICE-OWNERS-SET-OPS-GENERALIZING-TRANSFER": {
+    "hash": "8b5d293",
+    "git_issue": "8b5d293",
+    "extid": "TASK-CHAT-OWNERS-SERVICE-OWNERS-SET-OPS-GENERALIZING-TRANSFER",
+    "type": "TASK",
+    "title": "Chat owners service: owners-set ops generalizing transfer",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-chat-multi-ownership",
+    "tags": [
+      "chat",
+      "ownership",
+      "audit"
+    ],
+    "source": ".plan/tickets/TASK-chat-owners-service-owners-set-ops-generalizing-transfer.md",
+    "status": "done"
+  },
+  "TASK-CHAT-OWNERS-SWEEP-REMAINING-ROUTE-CREATOR-CHECKS": {
+    "hash": "cad78d6",
+    "git_issue": "cad78d6",
+    "extid": "TASK-CHAT-OWNERS-SWEEP-REMAINING-ROUTE-CREATOR-CHECKS",
+    "type": "TASK",
+    "title": "Chat owners: sweep remaining route creator-checks",
+    "label": "task",
+    "priority": "medium",
+    "epic": "chat-multi-ownership",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-owners-sweep-remaining-route-creator-checks.md",
+    "status": "done"
   },
   "TASK-CHAT-PINS-FRONTEND": {
     "epic": "epic-frontend-backend-integration",
