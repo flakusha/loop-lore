@@ -33385,6 +33385,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-parameter-map-derivation-from-marked-workflows.md"
     }
   ],
   "src/generation/workflow-library/seed.ts": [

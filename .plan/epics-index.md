@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 353 epics
+**Total:** 354 epics
 
 ## Summary
 
@@ -346,6 +346,7 @@
 | In Progress | Testing & Quality Assurance (Permanently Ongoing) | High | Continuous | 0 | [epic-testing-qa.md](/.plan/epics/epic-testing-qa.md) |
 | In Progress | Testing, Benchmarking & Performance | High | Very High (split into 7 sub-epics) | 0 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
 | In Progress | Tooling Support & Improvement (Permanently Ongoing) | Medium | Continuous | 0 | [epic-tooling-improvement.md](/.plan/epics/epic-tooling-improvement.md) |
+| Not Started | Training / Finetune + Dataset Curation | High | Large | 0 | [epic-training-finetune-datasets.md](/.plan/epics/epic-training-finetune-datasets.md) |
 | Not Started | Transport Layer Expansion | Low | Medium | 0 | [epic-transport-layer-expansion.md](/.plan/epics/epic-transport-layer-expansion.md) |
 | In Progress | Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport) | Medium | Medium (remaining gaps only) | 0 | [epic-transport-expansion.md](/.plan/epics/epic-transport-expansion.md) |
 | Not Started | Two-Factor / Multi-Factor Authentication | Medium | Medium | 0 | [epic-two-factor-auth.md](/.plan/epics/epic-two-factor-auth.md) |
@@ -3555,6 +3556,15 @@ Three capabilities, layered:
 - **Type:** Ongoing Epic
 - **Tags:** tooling, ci, workflow, agent, docs
 - **File:** `.plan/epics/epic-tooling-improvement.md`
+
+### Training / Finetune + Dataset Curation
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** epic
+- **Tags:** training, finetune, datasets, lora, registry, licensing
+- **File:** `.plan/epics/epic-training-finetune-datasets.md`
 
 ### Transport Layer Expansion
 
