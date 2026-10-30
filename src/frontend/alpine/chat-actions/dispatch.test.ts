@@ -152,8 +152,51 @@ describeOrSkip("dispatch: char-update", () => {
   });
 },);
 
-describeOrSkip("dispatch: item-update", () => {
-  test("PUTs the real world-item route and toasts success", async () => {
+describeOrSkip("dispatch: generate-emotion-avatars", () => {
+  const PAYLOAD = { actorId: "actor-9", baseAvatarId: "av-base", emotions: ["happy",], jobId: null, };
+
+  test("POSTs the regenerate route with slot replace and polls the job", async () => {
+    const ctx = buildCtx();
+    const seen: string[] = [];
+    handler = async (url: string,) => {
+      seen.push(url,);
+      if (url.endsWith("/regenerate",)) { return Response.json({ jobId: "job-r1", },); }
+      return Response.json({ status: "completed", },);
+    };
+
+    await dispatch.dispatchCommandAction!.call(ctx as never, "generate-emotion-avatars", PAYLOAD, "chat-1",);
+
+    expect(seen[0],).toBe("/api/v1/actors/actor-9/emotion-avatars/regenerate",);
+    expect(JSON.parse(calls[0]!.opts.body as string,),).toEqual({
+      baseAvatarId: "av-base",
+      emotions: ["happy",],
+      replace: "slot",
+    },);
+
+    expect(seen.some((url,) => url.endsWith("/jobs/job-r1",)),).toBe(true,);
+    expect(ctx.toasts[0],).toEqual({ type: "info", message: expect.any(String,), },);
+  });
+
+  test("no-ops when the payload is missing required fields", async () => {
+    const ctx = buildCtx();
+    await dispatch.dispatchCommandAction!.call(ctx as never, "generate-emotion-avatars", { actorId: "a", }, "chat-1",);
+    await dispatch.dispatchCommandAction!.call(ctx as never, "generate-emotion-avatars", null, "chat-1",);
+
+    expect(calls,).toEqual([],);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("toasts failure on an HTTP error status", async () => {
+    const ctx = buildCtx();
+    handler = async () => Response.json({ message: "queue full", }, { status: 503, },);
+    await dispatch.dispatchCommandAction!.call(ctx as never, "generate-emotion-avatars", PAYLOAD, "chat-1",);
+
+    expect(ctx.toasts,).toEqual([{ type: "error", message: expect.any(String,), },],);
+  });
+},);
+
+describeOrSkip("dispatch: item-update (restored)", () => {
+  test("PUTs the real world-item route and toasts success (restored)", async () => {
     const ctx = buildCtx();
     handler = async () => Response.json({ id: "item-1", name: "Iron Sword Mk2", },);
     await withConfirm(
