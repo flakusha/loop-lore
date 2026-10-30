@@ -22,7 +22,7 @@ Group 0 — Entity copy/adapt (handlers already exist, only initiating buttons m
 - /clone src/assistant/commands/clone.ts:24
 - /duplicate src/assistant/commands/duplicate.ts:47
 - /adapt src/assistant/commands/adapt.ts:219
-  The confirm handlers exist (src/frontend/alpine/chat-actions/entity-copy.ts:28,57) but are only server→FE sinks for the commands' own responses — no markup invokes them. Add per-entity Duplicate/Adapt buttons that drive the existing handlers.
+  The confirm handlers exist (src/frontend/alpine/chat-actions/entity-copy.ts:28,57) and are user-reachable today — the /clone, /duplicate and /adapt slash commands dispatch them through chat-send.ts:232-233 → dispatch.ts:70. The gap is specifically the absence of a BUTTON (no markup initiates the flow). Add per-entity Duplicate/Adapt buttons in entity panels that drive the same handlers.
 
 Group 1 — GM / generation authoring
 
@@ -53,7 +53,7 @@ Group 4 — Harness / workflow
 
 Group 5 — Agency
 
-- /agency src/assistant/commands/agency.ts:41 — story-points chip (src/components/chat/story-points-chip.html) is read-only; earn/spend/cap have no UI.
+- /agency src/assistant/commands/agency.ts:41 — story-points chip (src/components/chat/story-points-chip.html:8-9, the 'spend menu deferred' comment) is read-only; earn/spend/cap have no UI.
 
 Group 6 — Import & misc
 
@@ -65,7 +65,7 @@ Group 6 — Import & misc
 - /image image.ts:47, /music music.ts:15, /video video.ts:12, /sfx + /sound sfx.ts:36,41 — toolbar pre-fill only; music/video/sfx are available:false stubs (lowest value)
 
 EGUI (umbrella)
-The egui/WASM frontend (native/loop-lore-egui) has ZERO chat-action buttons: app.rs:573,630,652,764,956 (Upload/Attach/Load more/Back to htmx/Send) are the only five. Every registered command is therefore an egui gap. Recommended slice: mirror web Groups 0–2 first. Note: /split and /reunite egui parity is separately tracked (see exclusions).
+The egui/WASM frontend (native/loop-lore-egui) has ZERO chat-action buttons: app.rs:573,630,652,764,956 (Upload/Attach/Load more/Back to htmx/Send) are the only five ui.button sites. Beyond them, non-action interactive sites exist (gallery combos app.rs:554/566, nav labels :772/:775/:792, emoji picker :945) but none dispatch chat actions or hit split/reunite endpoints — the zero-chat-action-buttons conclusion stands. Every registered command is therefore an egui gap. Recommended slice: mirror web Groups 0–2 first. Note: /split and /reunite egui parity is separately tracked (see exclusions).
 
 EXCLUSIONS
 
