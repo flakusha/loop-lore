@@ -3,7 +3,7 @@
 
 # TASK: O(1) plugin route dispatch index
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-plugin-system
@@ -46,6 +46,22 @@ invalidation across the store — more invasive than candidates-at-dispatch).
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — `RegistryStore.routeIndex` (private
+      `"METHOD path"` → ordered candidates, plugin-grouped registration order)
+      maintained at every routes mutation point (`appendRoutes`,
+      `removePlugin`, `clear`) via `reindexRoutes()`; `registry.getRouteCandidates`
+      exposes the read-only lookup; `dispatchPluginRoute` (src/plugins/loader.ts:408)
+      now does an O(1) bucket lookup and picks the first ENABLED candidate at
+      dispatch time. `findRoute`'s first-registered contract and
+      `normalizePluginRoutePath` semantics unchanged. Commit `cdb751135` on
+      `feat-plugin-route-index`.
+- [x] Tests passing — pre-index pin run: 16 pass / 0 fail
+      (src/plugins/loader-dispatch.test.ts); post-change full plugin suites:
+      166 pass / 0 fail across 13 files (src/plugins/). New "O(1) route dispatch
+      index" tests pin first-enabled-wins across disable/re-enable,
+      manifest+onLoad append coexistence, plugin-grouped ordering beating global
+      append order, method+path miss correctness, trailing-slash normalization
+      parity. Gates `typecheck - backend`, `lint - eslint`, `format - dprint`: PASS.
+- [x] Documentation updated — epic-plugin-system.md gap-audit E6 box ticked
+      with evidence; `plan gen-docs` + `plan links --write` + `sync` rerun in
+      the worktree.

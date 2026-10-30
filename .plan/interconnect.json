@@ -37991,6 +37991,15 @@
       "related": []
     },
     {
+      "id": "TASK-o-1-plugin-route-dispatch-index",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-o-1-plugin-route-dispatch-index.md",
+      "title": "O(1) plugin route dispatch index",
+      "status": "done",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-observability-config-section",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-observability-config-section.md",
@@ -102663,6 +102672,11 @@
       "from": "epic-plugin-system",
       "kind": "owns",
       "to": "TASK-human-in-the-loop-tool-approval-gates"
+    },
+    {
+      "from": "epic-plugin-system",
+      "kind": "owns",
+      "to": "TASK-o-1-plugin-route-dispatch-index"
     },
     {
       "from": "epic-plugin-system",

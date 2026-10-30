@@ -38829,8 +38829,16 @@
   ],
   "src/plugins/loader-dispatch.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-plugin-system.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-plugins-define-plugin-route-matching-semantics.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-o-1-plugin-route-dispatch-index.md"
     }
   ],
   "src/plugins/loader.discovery-failures.test.ts": [
@@ -38934,6 +38942,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-o-1-plugin-route-dispatch-index.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-auth-runtime-seed.md"
     },
     {
@@ -39007,6 +39019,10 @@
   ],
   "src/plugins/registry-store.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-plugin-system.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-a-community-plugin-named-core-disables-all-five-built-in-too.md"
     },
@@ -39021,6 +39037,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-per-plugin-unload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-o-1-plugin-route-dispatch-index.md"
     }
   ],
   "src/plugins/registry.ts": [
