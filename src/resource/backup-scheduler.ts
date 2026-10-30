@@ -17,12 +17,13 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getChildLogger, } from "../logger";
-import { jsonStringifyOr, } from "../utils";
+import { jsonStringifyOr, safeJsonParse, } from "../utils";
 import {
   backupHooks,
   type BackupTrigger,
   listStorageResources,
   persistBackupHook,
+  pruneBackups,
   registerBackupHook,
 } from "./external-storage";
 
@@ -92,6 +93,30 @@ async function schedule(
     if (!config.enabled) { return { scheduled: false, reason: "disabled", }; }
     if (!triggerEnabled) { return { scheduled: false, reason: "trigger-disabled", }; }
 
+    // Owner opt-out: users.settings JSON carrying backupEnabled:false skips
+    // the schedule. Missing row / unparseable settings fail open (schedule
+    // as today); a settings-read error never throws into the host flow.
+    try {
+      const owner = await db
+        .selectFrom("users",)
+        .select("settings",)
+        .where("id", "=", trigger.ownerId,)
+        .executeTakeFirst();
+
+      if (owner) {
+        const parsed = safeJsonParse<{ backupEnabled?: unknown }>(owner.settings,);
+        if (parsed.ok && parsed.value?.backupEnabled === false) {
+          return { scheduled: false, reason: "disabled", };
+        }
+      }
+    } catch (error: unknown) {
+      logWarn("backup schedule: owner opt-out lookup failed, failing open", {
+        ownerId: trigger.ownerId,
+        resourceType: trigger.resourceType,
+        error: error instanceof Error ? error.message : String(error,),
+      },);
+    }
+
     let provisioned = false;
     try {
       const stores = await listStorageResources(db, trigger.ownerId,);
@@ -109,6 +134,16 @@ async function schedule(
     if (!provisioned) { return { scheduled: false, reason: "no-storage", }; }
 
     await backupHooks[hook](db, trigger,);
+    try {
+      await pruneBackups(db, { ownerId: trigger.ownerId, resourceType: trigger.resourceType, },);
+    } catch (error: unknown) {
+      logWarn("backup prune skipped", {
+        ownerId: trigger.ownerId,
+        resourceType: trigger.resourceType,
+        error: error instanceof Error ? error.message : String(error,),
+      },);
+    }
+
     return { scheduled: true, };
   } catch (error: unknown) {
     logWarn("backup schedule skipped: hook failed", {
@@ -122,28 +157,86 @@ async function schedule(
   }
 }
 
-/** Chat-end trigger: call after a chat closes/archives with the owner's id. */
+/**
+ * Chat-end trigger: call after a chat closes/archives with the owner's id.
+ * Payload carries the chat's messages (not just the id) so the backup is
+ * restorable without re-reading the live tables.
+ */
 export async function scheduleChatEndBackup(
   db: Kysely<DB>,
-  input: ScheduleInput & { chatId: string },
+  input: ScheduleInput & { chatId: string; messages?: unknown },
 ): Promise<ScheduleResult> {
+  let messages = input.messages;
+  if (messages === undefined) {
+    try {
+      messages = await db
+        .selectFrom("messages",)
+        .select(["id", "actor_id", "role", "content", "created_at",],)
+        .where("chat_id", "=", input.chatId,)
+        .orderBy("created_at", "asc",)
+        .execute();
+    } catch {
+      messages = [];
+    }
+  }
+
   return schedule(db, "onChatEnd", config.onChatEnd, {
     ownerId: input.ownerId,
     resourceType: "chat",
-    payload: jsonStringifyOr({ chatId: input.chatId, },),
+    payload: jsonStringifyOr({ chatId: input.chatId, messages: messages ?? [], },),
     ...(input.storageQuotaBytes !== undefined ? { storageQuotaBytes: input.storageQuotaBytes, } : {}),
   },);
 }
 
-/** Asset-upload trigger: call after an asset row commits. */
+/**
+ * Asset-upload trigger: call after an asset row commits. The payload carries
+ * the assetId + contentHash resolve keys plus the row ref (storagePath,
+ * mimeType, filename, sizeBytes) so restore can locate the bytes; messageId
+ * links the upload back to the chat message that attached it when known.
+ */
 export async function scheduleAssetUploadBackup(
   db: Kysely<DB>,
-  input: ScheduleInput & { assetId: string; contentHash: string },
+  input: ScheduleInput & {
+    assetId: string;
+    contentHash: string;
+    storagePath?: string;
+    mimeType?: string;
+    filename?: string;
+    sizeBytes?: number;
+    messageId?: string;
+  },
 ): Promise<ScheduleResult> {
+  let ref: Record<string, unknown> = {
+    ...(input.storagePath !== undefined ? { storagePath: input.storagePath, } : {}),
+    ...(input.mimeType !== undefined ? { mimeType: input.mimeType, } : {}),
+    ...(input.filename !== undefined ? { filename: input.filename, } : {}),
+    ...(input.sizeBytes !== undefined ? { sizeBytes: input.sizeBytes, } : {}),
+    ...(input.messageId !== undefined ? { messageId: input.messageId, } : {}),
+  };
+
+  if (Object.keys(ref,).length === 0) {
+    try {
+      const row = await db
+        .selectFrom("assets",)
+        .select(["storage_path", "mime_type", "filename", "size_bytes",],)
+        .where("id", "=", input.assetId,)
+        .executeTakeFirst();
+
+      if (row) {
+        ref = {
+          storagePath: row.storage_path,
+          mimeType: row.mime_type,
+          filename: row.filename,
+          sizeBytes: row.size_bytes,
+        };
+      }
+    } catch { /* fail-open: keys alone still resolve via backupResourceId */ }
+  }
+
   return schedule(db, "onAssetUpload", config.onAssetUpload, {
     ownerId: input.ownerId,
     resourceType: "asset",
-    payload: jsonStringifyOr({ assetId: input.assetId, contentHash: input.contentHash, },),
+    payload: jsonStringifyOr({ assetId: input.assetId, contentHash: input.contentHash, ...ref, },),
     ...(input.storageQuotaBytes !== undefined ? { storageQuotaBytes: input.storageQuotaBytes, } : {}),
   },);
 }

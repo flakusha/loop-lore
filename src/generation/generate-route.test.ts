@@ -25,6 +25,7 @@ import { buildGenerationResult, } from "./generate-route/persist";
 import { executeToolCalls, } from "./generate-route/tool-execution";
 import { callWithFailover, } from "./providers/call-with-failover";
 import { getProvider, registerProvider, unregisterProvider, } from "./providers/registry";
+import { bindSharedQuotaEngine, getQuotaEngine, } from "./quota-engine";
 
 // Bun's mock.module is process-global and cannot be unmocked: without
 // --isolate, earlier files (e.g. generate-route/non-stream.test.ts) may have
@@ -435,6 +436,127 @@ describe("gatePluginToolsByRole", () => {
 
     const tools = gatePluginToolsByRole("card-battler",);
     expect(tools,).toEqual([],);
+  });
+});
+
+describe("handleGenerate — provisioned resource", () => {
+  test("quota-exhausted resource returns 429 without a provider call", async () => {
+    const chatId = await seedChat(testDb, { id: "chat-prov-quota", },);
+    await seedActor(testDb, { id: "actor-1", },);
+    await testDb
+      .insertInto("chat_participants",)
+      .values({ chat_id: chatId, actor_id: "actor-1", },)
+      .execute();
+
+    await testDb
+      .insertInto("resource_records",)
+      .values({
+        id: "res-prov-exhausted",
+        owner_id: "user-1",
+        type: "inference",
+        provider: "mock-provider",
+        endpoint: "http://localhost:8080/v1",
+        credential_ref: "sha256:abc",
+        quota: JSON.stringify({ requestsPerMinute: 1, },),
+        status: "active",
+      },)
+      .execute();
+
+    // Exhaust the single-request window through the shared engine the
+    // handler passes to the facade (bound to the fixture DB, as startup
+    // binds it to the app DB in production).
+    bindSharedQuotaEngine(testDb,);
+    const quota = getQuotaEngine();
+    await quota.consumeRequest("res-prov-exhausted", { requestsPerMinute: 1, },);
+    // Unbind: the in-memory count survives (that is the bug being guarded
+    // against), the DB row proves the window is genuinely spent.
+    bindSharedQuotaEngine(null,);
+
+    // Patch the facade's provider call: the guard must reject first.
+    const provider = getProvider("mock-provider",) as MockLLMProvider;
+    let calls = 0;
+    const originalComplete = provider.complete;
+    provider.complete = async (req,) => {
+      calls += 1;
+      return originalComplete.call(provider, req,);
+    };
+
+    try {
+      const config = makeConfig();
+      const body = makeRequest({ chatId, resourceId: "res-prov-exhausted", },);
+      const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
+      expect(res.status,).toBe(429,);
+      expect(calls,).toBe(0,);
+    } finally {
+      provider.complete = originalComplete;
+      quota.invalidate("res-prov-exhausted",);
+    }
+  });
+
+  test("fresh provisioned resource routes to the provider", async () => {
+    const chatId = await seedChat(testDb, { id: "chat-prov-fresh", },);
+    await seedActor(testDb, { id: "actor-1", },);
+    await testDb
+      .insertInto("chat_participants",)
+      .values({ chat_id: chatId, actor_id: "actor-1", },)
+      .execute();
+
+    await testDb
+      .insertInto("resource_records",)
+      .values({
+        id: "res-prov-fresh",
+        owner_id: "user-1",
+        type: "inference",
+        provider: "mock-provider",
+        endpoint: "http://localhost:8080/v1",
+        credential_ref: "sha256:abc",
+        quota: JSON.stringify({ requestsPerMinute: 5, },),
+        status: "active",
+      },)
+      .execute();
+
+    const config = makeConfig();
+    const body = makeRequest({
+      chatId,
+      resourceId: "res-prov-fresh",
+      prompt: [{ role: "user" as const, content: "Hi", },],
+    },);
+
+    const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
+    expect(res.status,).toBe(200,);
+    const data = (await res.json()) as Record<string, unknown>;
+    expect(data.ok,).toBe(true,);
+    expect(data.content,).toBe("Mock response content",);
+  });
+
+  test("unknown provisioned resource returns 422, not 500", async () => {
+    const chatId = await seedChat(testDb, { id: "chat-prov-unknown", },);
+    await seedActor(testDb, { id: "actor-1", },);
+    await testDb
+      .insertInto("chat_participants",)
+      .values({ chat_id: chatId, actor_id: "actor-1", },)
+      .execute();
+
+    const config = makeConfig();
+    const body = makeRequest({ chatId, resourceId: "res-prov-nope", },);
+    const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
+    expect(res.status,).toBe(422,);
+    const data = (await res.json()) as Record<string, unknown>;
+    expect(data.error,).toContain("Provider resolution failed",);
+  });
+
+  test("malformed resourceId is rejected with 400", async () => {
+    const chatId = await seedChat(testDb, { id: "chat-prov-malformed", },);
+    await seedActor(testDb, { id: "actor-1", },);
+    await testDb
+      .insertInto("chat_participants",)
+      .values({ chat_id: chatId, actor_id: "actor-1", },)
+      .execute();
+
+    const config = makeConfig();
+    const body = makeRequest({ chatId, resourceId: 123 as unknown as string, },);
+    const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
+    expect(res.status,).toBe(400,);
   });
 });
 

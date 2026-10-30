@@ -87,4 +87,6 @@ export interface GenerateRequest {
   /** Structured-output schema (llama-server `response_format`) */
   responseFormat?: Record<string, unknown>;
   stop?: string[];
+  /** Provisioned resource to dispatch through (quota-guarded facade path). */
+  resourceId?: string;
 }

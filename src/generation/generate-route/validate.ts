@@ -144,5 +144,9 @@ export async function validateGenerateRequest({
     return jsonError({ message: "format must be a string", status: 400, },);
   }
 
+  if (input.resourceId !== undefined && (typeof input.resourceId !== "string" || !input.resourceId)) {
+    return jsonError({ message: "resourceId must be a non-empty string", status: 400, },);
+  }
+
   return null;
 }
