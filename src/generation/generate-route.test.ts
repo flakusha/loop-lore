@@ -100,6 +100,12 @@ async function seedChat(testDb: Kysely<DB>, overrides?: Partial<Record<string, u
     },)
     .execute();
 
+  // Owners set is the authority source — mirror the production create path.
+  await testDb
+    .insertInto("chat_owners",)
+    .values({ chat_id: id, user_id: "user-1", },)
+    .execute();
+
   return id;
 }
 
