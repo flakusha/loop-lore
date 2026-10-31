@@ -6,14 +6,15 @@
  * guard that prevents cross-user NSFW state mutation via
  * `targetActorId`/`targetId`/`participants` body fields.
  *
- * Decision table under test:
+ * Decision table under test (post-306176c06: chatId == null = world-scoped
+ * mutation, allowed by design; chatId set = participant/owner required):
  * - empty targetActor        → allowed (nothing to check)
  * - caller owns the actor    → allowed
  * - admin role, any actor    → allowed (admin.character capability)
- * - non-owner, no chatId     → REJECTED (the cross-user mutation guard)
+ * - non-owner, no chatId     → allowed (world-scoped mutation)
  * - non-owner, chat participant actor → allowed
  * - non-owner, actor absent from the chat → REJECTED
- * - nonexistent actor        → REJECTED
+ * - nonexistent actor with chatId → REJECTED; without chatId → allowed
  *
  * RESOURCE CONTRACT — what each call owns:
  * - DISK: one in-memory SQLite via createTestDb() per FILE (beforeAll), like
@@ -109,10 +110,12 @@ describe("checkNsfwTargetAccess", () => {
     ).toBe(true,);
   });
 
-  test("non-owner without chatId is rejected (cross-user guard)", async () => {
+  // 306176c06: chatId == null means world-scoped mutation — allowed by design
+  // (consent/ownership gates on the source actor already authorize it).
+  test("non-owner without chatId is allowed (world-scoped mutation)", async () => {
     expect(
       await checkNsfwTargetAccess(db, FOREIGN_ACTOR, OWNER_ID, "user", null,),
-    ).toBe(false,);
+    ).toBe(true,);
   });
 
   test("non-owner actor participating in the chat is allowed", async () => {
@@ -127,13 +130,15 @@ describe("checkNsfwTargetAccess", () => {
     ).toBe(false,);
   });
 
-  test("nonexistent actor is rejected", async () => {
+  test("nonexistent actor with chatId is rejected", async () => {
     expect(
       await checkNsfwTargetAccess(db, "nsfw-shared-actor-ghost", OWNER_ID, "user", CHAT_ID,),
     ).toBe(false,);
+  });
 
+  test("nonexistent actor without chatId is allowed (world-scoped mutation)", async () => {
     expect(
       await checkNsfwTargetAccess(db, "nsfw-shared-actor-ghost", OWNER_ID, "user", null,),
-    ).toBe(false,);
+    ).toBe(true,);
   });
 });
