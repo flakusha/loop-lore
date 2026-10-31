@@ -81,7 +81,7 @@ the `prime` slug even when the prime branch row has a uuid id.
 - A manifestation roll reads the pending row, flips it to manifested, and appends the timeline event in one transaction — concurrent rolls cannot double-manifest, and a manifest is never recorded without its event
 - Red herrings (`may_manifest=0`) never manifest on roll
 
-Not built: per-timeline rarity multipliers (epic-rarity-extensions) are backlog — no UI or API for them yet. Memories are already timeline-scoped: injection filters to the chat's timeline (timeline-agnostic rows plus rows bound to the chat's branch; `src/assistant/prompt/sections/memories-helpers.ts`).
+Not built: timeline-aware memory injection (epic-memory-propagation) and per-timeline rarity multipliers (epic-rarity-extensions) are backlog — no UI or API for them yet. (Memory-row `actor_memories.timeline_id` storage/filtering exists underneath at `src/assistant/prompt/sections/memories-helpers.ts`, but the ticket's shareability flag and isolation tests are still open.)
 
 **Lore section** (textarea, rendered as formatted text):
 
