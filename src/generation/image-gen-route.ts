@@ -288,7 +288,7 @@ export async function handleImageGeneration(
 
   const assets = persisted.map(({ asset, }, index,) => ({
     id: asset.id,
-    url: `/api/assets/${asset.id}/raw`,
+    url: `/api/v1/assets/${asset.id}/raw`,
     filename: asset.filename,
     mimeType: asset.mime_type,
     avatarId: avatarIds[index] ?? null,

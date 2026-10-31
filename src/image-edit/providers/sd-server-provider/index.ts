@@ -233,7 +233,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
       results.push({
         id: asset.id,
         filename: asset.filename,
-        url: `/api/assets/${asset.id}/raw`,
+        url: `/api/v1/assets/${asset.id}/raw`,
         mimeType: asset.mime_type,
       },);
     }

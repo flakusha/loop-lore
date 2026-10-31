@@ -302,7 +302,7 @@ describe("per-modality template routes", () => {
 
     expect(res.status,).toBe(200,);
     const payload = (await res.json()) as { data: { url: string; layers: { tag: string }[] } };
-    expect(payload.data.url,).toContain("/api/assets/",);
+    expect(payload.data.url,).toContain("/api/v1/assets/",);
     expect(payload.data.layers.map((l,) => l.tag),).toContain("rainy forest",);
   });
 

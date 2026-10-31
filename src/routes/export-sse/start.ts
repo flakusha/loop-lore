@@ -139,7 +139,7 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
               safeEnqueue(encoder.encode(sseData({
                 type: "completed",
                 jobId,
-                downloadUrl: `/api/export/download/${jobId}`,
+                downloadUrl: `/api/v1/export/download/${jobId}`,
                 totalItems: currentJob.total,
                 completedAt: currentJob.completedAt?.toISOString(),
               },),),);
