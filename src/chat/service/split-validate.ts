@@ -54,28 +54,34 @@ export async function validateBranchSpecs(
     }
   }
 
-  if (!worldId) {
+  const locationIds = Array.from(new Set(Array.from(branches, b => b.locationId,),),).filter(id => id !== "");
+
+  // A world is only required when at least one branch names a destination
+  // location; an empty locationId means "no destination" (the branch chat
+  // inherits the source's current location).
+  if (locationIds.length > 0 && !worldId) {
     return {
       code: "bad_request",
       message: "Chat has no world assigned; branch destinations require one",
     };
   }
 
-  const locationIds = Array.from(new Set(Array.from(branches, b => b.locationId,),),);
-  const foundLocations = await database
-    .selectFrom("locations",)
-    .select("id",)
-    .where("id", "in", locationIds,)
-    .where("world_id", "=", worldId,)
-    .execute();
+  if (locationIds.length > 0) {
+    const foundLocations = await database
+      .selectFrom("locations",)
+      .select("id",)
+      .where("id", "in", locationIds,)
+      .where("world_id", "=", worldId as string,)
+      .execute();
 
-  const foundLocationIds = new Set(Array.from(foundLocations, row => row.id,),);
-  const missingLocations = locationIds.filter(id => !foundLocationIds.has(id,));
-  if (missingLocations.length > 0) {
-    return {
-      code: "bad_request",
-      message: `Locations not found in this chat's world: ${missingLocations.join(", ",)}`,
-    };
+    const foundLocationIds = new Set(Array.from(foundLocations, row => row.id,),);
+    const missingLocations = locationIds.filter(id => !foundLocationIds.has(id,));
+    if (missingLocations.length > 0) {
+      return {
+        code: "bad_request",
+        message: `Locations not found in this chat's world: ${missingLocations.join(", ",)}`,
+      };
+    }
   }
 
   const actorIds = Array.from(new Set(branches.flatMap(branch => branch.actorIds),),);

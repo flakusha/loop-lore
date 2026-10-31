@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 357 epics
+**Total:** 358 epics
 
 ## Summary
 
@@ -128,7 +128,7 @@
 | Not Started | EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution | medium | Large (multiple sub-tickets, see Sub-systems) | 0 | [epic-math-resolution.md](/.plan/epics/epic-math-resolution.md) |
 | Done | Epic: Achievements | Medium | Medium | 0 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | In Progress | Epic: Ambient, Music & Sound Effects | Medium | High | 0 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
-| Not Started | Epic: Analytics & Observability | High | Medium | 0 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
+| In Progress | Epic: Analytics & Observability | High | Medium | 0 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | Not Started | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
 | Not Started | Epic: API OpenAPI Specification | High | Medium | 0 | [epic-api-openapi.md](/.plan/epics/epic-api-openapi.md) |
 | Done | Epic: API Rate Limiting | High | Medium | 0 | [epic-api-rate-limiting.md](/.plan/epics/epic-api-rate-limiting.md) |
@@ -199,6 +199,7 @@
 | In Progress | Experimental egui Frontend (adoption decision + client-agnostic view-model layer) | Low | Medium | 0/10 | [epic-experimental-egui-frontend.md](/.plan/epics/epic-experimental-egui-frontend.md) |
 | In Progress | Exploration & Discovery Systems | Medium | High | 0 | [epic-exploration-discovery.md](/.plan/epics/epic-exploration-discovery.md) |
 | Not Started | External Creative Tool Bridge (MCP) | High | Very High | 0 | [epic-external-creative-tool-bridge.md](/.plan/epics/epic-external-creative-tool-bridge.md) |
+| Not Started | External Harness Integration (ACP) | High | High | 0 | [epic-external-harness-acp.md](/.plan/epics/epic-external-harness-acp.md) |
 | Not Started | External Search Providers & Context Enrichment | Medium | Low | 0 | [epic-rag-context-sources.md](/.plan/epics/epic-rag-context-sources.md) |
 | Not Started | External tooling build CLI (llama.cpp, stable-diffusion.cpp, llama-swap) | medium | Large | 0 | [epic-external-tooling-build.md](/.plan/epics/epic-external-tooling-build.md) |
 | In Progress | Factions, Reputation & Persistent Consequences | High | High | 0 | [epic-faction-reputation.md](/.plan/epics/epic-faction-reputation.md) |
@@ -238,7 +239,7 @@
 | In Progress | Integrations Core | Medium | Medium | 0 | [epic-integrations-core.md](/.plan/epics/epic-integrations-core.md) |
 | Not Started | Interaction Surfaces Audit — Headless CLI + Surface Parity | High | Large | 0 | [epic-interaction-surfaces-audit.md](/.plan/epics/epic-interaction-surfaces-audit.md) |
 | Not Started | Internationalization (i18n) | Medium | Medium | 0 | [epic-frontend-internationalization.md](/.plan/epics/epic-frontend-internationalization.md) |
-| Not Started | Inventory & Trading UI | P1 — High | Medium | 0 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
+| Done | Inventory & Trading UI | P1 — High | Medium | 0 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
 | Not Started | Inventory System (Hub) | High | High | 0 | [epic-inventory-system.md](/.plan/epics/epic-inventory-system.md) |
 | Not Started | Item System Extensions | High | High | 0 | [epic-item-system-extensions.md](/.plan/epics/epic-item-system-extensions.md) |
 | In Progress | Item Systems Unification & Gap Closure | High | High | 0 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
@@ -1474,7 +1475,7 @@ One coherent scene-audio domain: location-based ambient sound, scene-aware
 
 ### Epic: Analytics & Observability
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -2183,6 +2184,15 @@ Exploration and discovery mechanics — map exploration, fog of war, discovery r
 - **Tags:** mcp, external-tools, creative-studio, plugins, async-jobs, security
 - **File:** `.plan/epics/epic-external-creative-tool-bridge.md`
 
+### External Harness Integration (ACP)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** acp, harness, external-harness, opencode, omp, permissions, model-discovery, message-persistence, isolation, testing
+- **File:** `.plan/epics/epic-external-harness-acp.md`
+
 ### External Search Providers & Context Enrichment
 
 - **Status:** Not Started
@@ -2550,7 +2560,7 @@ loop-lore can store video assets, compose video prompts, and walk a user
 
 ### Inventory & Trading UI
 
-- **Status:** Not Started
+- **Status:** Done
 - **Priority:** P1 — High
 - **Effort:** Medium
 - **Type:** Feature Epic
