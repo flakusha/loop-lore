@@ -3,7 +3,8 @@
 
 # EPIC: Browser-Side Terminal `$EDITOR` Support
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Slices C (sandbox file tree, `3a0aead8b`) and B (PTY terminal route, `093ccc1f4`) landed on dev — route + tests present (`src/routes/harness/files.ts`, `src/utils/is-within.ts`, `src/server/terminal-ws.ts`); approach-A URI-scheme links, config section, and PTY audit-logging slices remain open per Linked Tasks below.
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic

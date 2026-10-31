@@ -16633,7 +16633,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-acp-profile-aware-model-selection.md",
       "title": "ACP profile-aware model selection",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/usage.ts"
       ],
@@ -23562,11 +23562,11 @@
       "title": "Chat owners schema and backfill",
       "status": "done",
       "srcRefs": [
-        "src/db/082_chat_owners.test.ts",
+        "src/db/087_chat_owners.test.ts",
         "src/db/migration-roundtrip.test.ts",
         "src/db/migrations",
         "src/db/migrations.test.ts",
-        "src/db/migrations/082_chat_owners.ts",
+        "src/db/migrations/087_chat_owners.ts",
         "src/db/schema-sync.test.ts"
       ],
       "related": []
@@ -32692,8 +32692,9 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-harness-worktree-scope-guard.md",
       "title": "Harness worktree scope guard",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/harness/worktree-scope.test.ts",
         "src/harness/worktree-scope.ts"
       ],
       "related": []
@@ -42319,6 +42320,7 @@
       "title": "Quota Engine & Counter Service",
       "status": "done",
       "srcRefs": [
+        "src/generation/quota-engine.test.ts",
         "src/generation/quota-engine.ts"
       ],
       "related": [
@@ -49753,7 +49755,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-browser-editor-support.md",
       "title": "Browser-Side Terminal `$EDITOR` Support",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/async/offload.ts",
         "src/async/spill.ts",
@@ -49766,10 +49768,13 @@
         "src/partials/characters/create-modal.html",
         "src/routes/build-id.ts",
         "src/routes/config-menu.ts",
+        "src/routes/harness/files.ts",
         "src/routes/views/character-edit-form.ts",
         "src/routes/views/layout.ts",
         "src/server/start.ts",
+        "src/server/terminal-ws.ts",
         "src/transport/ws.ts",
+        "src/utils/is-within.ts",
         "src/views/blog.html",
         "src/views/layout.html"
       ],
@@ -51522,7 +51527,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-external-harness-acp.md",
       "title": "External Harness Integration (ACP)",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/integrations/registry",
         "src/native/loader.ts"
@@ -54104,7 +54109,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-resource-provision.md",
       "title": "Resource Provision",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/backup/browser-backup.ts",
         "src/backup/reconciliation.ts",
@@ -65117,7 +65122,7 @@
       ]
     },
     {
-      "path": "src/db/082_chat_owners.test.ts",
+      "path": "src/db/087_chat_owners.test.ts",
       "owners": [
         "TASK-chat-owners-schema-and-backfill"
       ]
@@ -66388,7 +66393,7 @@
       ]
     },
     {
-      "path": "src/db/migrations/082_chat_owners.ts",
+      "path": "src/db/migrations/087_chat_owners.ts",
       "owners": [
         "TASK-chat-owners-schema-and-backfill"
       ]
@@ -74185,6 +74190,12 @@
       ]
     },
     {
+      "path": "src/generation/quota-engine.test.ts",
+      "owners": [
+        "TASK-resource-provision-quota-engine"
+      ]
+    },
+    {
       "path": "src/generation/quota-engine.ts",
       "owners": [
         "TASK-resource-provision-quota-engine",
@@ -74709,6 +74720,12 @@
       "path": "src/harness/types.ts",
       "owners": [
         "TASK-comparison-metric-collection-and-charts"
+      ]
+    },
+    {
+      "path": "src/harness/worktree-scope.test.ts",
+      "owners": [
+        "TASK-harness-worktree-scope-guard"
       ]
     },
     {
@@ -81082,7 +81099,8 @@
     {
       "path": "src/routes/harness/files.ts",
       "owners": [
-        "TASK-web-editor-harness-sandbox-file-tree-approach-c"
+        "TASK-web-editor-harness-sandbox-file-tree-approach-c",
+        "epic-browser-editor-support"
       ]
     },
     {
@@ -87209,7 +87227,8 @@
     {
       "path": "src/server/terminal-ws.ts",
       "owners": [
-        "TASK-web-editor-pty-terminal-route-approach-b"
+        "TASK-web-editor-pty-terminal-route-approach-b",
+        "epic-browser-editor-support"
       ]
     },
     {
@@ -89370,7 +89389,8 @@
       "path": "src/utils/is-within.ts",
       "owners": [
         "TASK-web-editor-harness-sandbox-file-tree-approach-c",
-        "TASK-web-editor-pty-terminal-route-approach-b"
+        "TASK-web-editor-pty-terminal-route-approach-b",
+        "epic-browser-editor-support"
       ]
     },
     {
@@ -131460,7 +131480,7 @@
     {
       "from": "TASK-chat-owners-schema-and-backfill",
       "kind": "produces",
-      "to": "src/db/082_chat_owners.test.ts"
+      "to": "src/db/087_chat_owners.test.ts"
     },
     {
       "from": "TASK-chat-owners-schema-and-backfill",
@@ -131475,7 +131495,7 @@
     {
       "from": "TASK-chat-owners-schema-and-backfill",
       "kind": "produces",
-      "to": "src/db/migrations/082_chat_owners.ts"
+      "to": "src/db/migrations/087_chat_owners.ts"
     },
     {
       "from": "TASK-chat-owners-schema-and-backfill",
@@ -141010,6 +141030,11 @@
     {
       "from": "TASK-harness-worktree-scope-guard",
       "kind": "produces",
+      "to": "src/harness/worktree-scope.test.ts"
+    },
+    {
+      "from": "TASK-harness-worktree-scope-guard",
+      "kind": "produces",
       "to": "src/harness/worktree-scope.ts"
     },
     {
@@ -149460,6 +149485,11 @@
     {
       "from": "TASK-resource-provision-quota-engine",
       "kind": "produces",
+      "to": "src/generation/quota-engine.test.ts"
+    },
+    {
+      "from": "TASK-resource-provision-quota-engine",
+      "kind": "produces",
       "to": "src/generation/quota-engine.ts"
     },
     {
@@ -157745,6 +157775,11 @@
     {
       "from": "epic-browser-editor-support",
       "kind": "produces",
+      "to": "src/routes/harness/files.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
       "to": "src/routes/views/character-edit-form.ts"
     },
     {
@@ -157760,7 +157795,17 @@
     {
       "from": "epic-browser-editor-support",
       "kind": "produces",
+      "to": "src/server/terminal-ws.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
       "to": "src/transport/ws.ts"
+    },
+    {
+      "from": "epic-browser-editor-support",
+      "kind": "produces",
+      "to": "src/utils/is-within.ts"
     },
     {
       "from": "epic-browser-editor-support",
@@ -391009,6 +391054,12 @@
       "via": "src/utils/is-within.test.ts; src/utils/is-within.ts"
     },
     {
+      "from": "TASK-web-editor-harness-sandbox-file-tree-approach-c",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/routes/harness/files.ts; src/utils/is-within.ts"
+    },
+    {
       "from": "TASK-web-editor-open-in-editor-uri-scheme-links-approach-a",
       "kind": "sibling",
       "to": "TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log",
@@ -391103,6 +391154,12 @@
       "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/views/blog.html"
+    },
+    {
+      "from": "TASK-web-editor-pty-terminal-route-approach-b",
+      "kind": "sibling",
+      "to": "epic-browser-editor-support",
+      "via": "src/server/terminal-ws.ts; src/utils/is-within.ts"
     },
     {
       "from": "TASK-web-lazy-slash-command-hint-bar-port-of-commandcompleter",

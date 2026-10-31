@@ -17431,7 +17431,7 @@
       "source": ".plan/tickets/BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows.md"
     }
   ],
-  "src/db/082_chat_owners.test.ts": [
+  "src/db/087_chat_owners.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-owners-schema-and-backfill.md"
@@ -19921,7 +19921,7 @@
       "source": ".plan/tickets/TASK-migration-076-harden-against-malformed-gm-config-json.md"
     }
   ],
-  "src/db/migrations/082_chat_owners.ts": [
+  "src/db/migrations/087_chat_owners.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-owners-schema-and-backfill.md"
@@ -33603,6 +33603,12 @@
       "source": ".plan/tickets/FEAT-062.md"
     }
   ],
+  "src/generation/quota-engine.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-quota-engine.md"
+    }
+  ],
   "src/generation/quota-engine.ts": [
     {
       "kind": "epic",
@@ -34503,6 +34509,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
+    }
+  ],
+  "src/harness/worktree-scope.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-worktree-scope-guard.md"
     }
   ],
   "src/harness/worktree-scope.ts": [
@@ -45285,6 +45297,10 @@
   ],
   "src/routes/harness/files.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md"
     }
@@ -55339,6 +55355,10 @@
   ],
   "src/server/terminal-ws.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-web-editor-pty-terminal-route-approach-b.md"
     }
@@ -59116,6 +59136,10 @@
     }
   ],
   "src/utils/is-within.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-browser-editor-support.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-web-editor-harness-sandbox-file-tree-approach-c.md"

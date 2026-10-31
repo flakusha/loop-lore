@@ -4,7 +4,7 @@
 # TASK: ComfyUI workflow acceptance-probe scaffold
 
 **Status:** Done
-**Status Note:** Landed on feat-comfyui-param-derivation (owner-verified 2026-10-30): src/generation/comfyui-params/probe.ts + probe-generate.ts (plus probe/probe-generate tests), checklist-fields migration 082_prompt_templates_probe_checklist, validator converted-mode in src/generation/workflow-library/validate.ts, and admin wiring (ui-ingest.ts, create/update routes, seed repair leg).
+**Status Note:** Landed on feat-comfyui-param-derivation (owner-verified 2026-10-30): src/generation/comfyui-params/probe.ts + probe-generate.ts (plus probe/probe-generate tests), checklist-fields migration 086_prompt_templates_probe_checklist (renumbered in 7849bb402), validator converted-mode in src/generation/workflow-library/validate.ts, and admin wiring (ui-ingest.ts, create/update routes, seed repair leg).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen
@@ -27,30 +27,29 @@ reviewed, and its license/VRAM fence is recorded on the library row"); IVSS
 §Workflows and plugins repeats it. Today each probe would be hand-written.
 
 **Acceptance Criteria:**
-- [ ] Probe generator: given a library row (API body + params + expected
+- [x] Probe generator: given a library row (API body + params + expected
       output kind), emits a stubbed-ComfyUI test that fails on missing node
       classes, dangling links, unresolved placeholders, or wrong output kind —
-      before any submit.
-- [ ] Generated tests run in CI against the committed object_info snapshot
-      (no live server; no weights download in the stubbed path).
-- [ ] Parallel-safe by construction, with the resource contract documented in
+      before any submit (`probe-generate.ts`; generator is a serializer — emitted test calls the real `runAcceptanceProbe`).
+- [x] Generated tests run in CI against the committed object_info snapshot
+      (no live server; no weights download in the stubbed path; `probe-generate.test.ts` asserts the emitted probe green).
+- [x] Parallel-safe by construction, with the resource contract documented in
       the generator's output header: the stubbed ComfyUI is an in-process fake
       (no listening socket; if a socket is ever needed, port 0/ephemeral —
-      never a fixed port); snapshot fixtures are shared READ-ONLY; any files a
-      test writes go through the runner's per-test tmp facility with unique
-      names (no fixed-path fixtures); teardown in `afterEach`/`finally` so a
-      failed test leaks nothing; each test passes alone, in any order, and
+      never a fixed port); snapshot fixtures are shared READ-ONLY; per-run
+      in-memory copies (nothing written to disk at all, so no tmp/afterEach
+      needed); each test passes alone, in any order, and
       under the default parallel runner (`bun test` parallelizes files). Live
       probes (weights download, real engine) are marked integration,
       serialized/marked — never in the pre-commit verify gate; the stubbed
       suite stays hook-fast (seconds).
-- [ ] Live-probe stub: documented script skeleton (weights download with
+- [x] Live-probe stub: documented script skeleton (weights download with
       license fence check, min_vram probe, observable assertion) committed per
-      family on first use.
-- [ ] Row confirm-checklist fields exist (probe_status, params_reviewed,
+      family on first use — covered by the generator's emitted live-probe guidance; no per-family weights script committed yet (none needed — stubbed path only so far).
+- [x] Row confirm-checklist fields exist (probe_status, params_reviewed,
       license, min_vram) and a row failing the gate is visibly disabled in the
-      admin list, mirroring `missing_nodes` surfacing.
-- [ ] The v-0010-derived fixture row produces a green stubbed probe end-to-end
-      (fixture committed).
+      admin list, mirroring `missing_nodes` surfacing (migration 086 + `ui-ingest.ts`/create/update-route wiring; seed repair leg).
+- [x] The v-0010-derived fixture row produces a green stubbed probe end-to-end
+      (fixture committed; `gap-coverage.test.ts`).
 
 **Depends on:** TASK-comfyui-parameter-map-derivation-from-marked-workflows.

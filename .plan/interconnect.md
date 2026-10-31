@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3899
 - epics: 361
-- src paths owned: 4613
-- edges: produces 12306, consumes 406, sibling 38520, owns 2874, related 1196
+- src paths owned: 4615
+- edges: produces 12311, consumes 406, sibling 38522, owns 2874, related 1196
 
 ## Shared src hubs
 
@@ -1514,6 +1514,7 @@ output is byte-identical for identical inputs.
 | `src/routes/gm-notes.ts` | `BUG-gm-notes-get-500-sql-syntax-error`, `TASK-gm-shadow-notes`, `TASK-gm-whitenotes` |
 | `src/routes/gm-notes/schemas.ts` | `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `BUG-whitenote-ui-types-rejected-422` |
 | `src/routes/gm-notes/shadow.ts` | `BUG-gm-shadow-note-revealed-to-reveal-is-a-read-modify-write-wit`, `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `BUG-shadow-and-whitenote-crud-open-to-any-chat-participant`, `TASK-019-enforce-state-machine-validators-at-write`, `epic-gm-shadow-notes` |
+| `src/routes/harness/files.ts` | `TASK-web-editor-harness-sandbox-file-tree-approach-c`, `epic-browser-editor-support` |
 | `src/routes/harness/index.ts` | `TASK-harness-frontend-consolidation`, `TASK-tui-api-contract-smoke-tests`, `TASK-web-editor-harness-sandbox-file-tree-approach-c` |
 | `src/routes/health.ts` | `FEAT-liveness-readiness-endpoints-opt-in-config`, `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h`, `epic-deployment-topologies`, `epic-multi-instance-reconciliation` |
 | `src/routes/housing.ts` | `epic-housing`, `epic-housing-base-building` |
@@ -1864,6 +1865,7 @@ output is byte-identical for identical inputs.
 | `src/server/static-files.ts` | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-`, `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra`, `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e`, `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc`, `TASK-cross-platform-portability`, `TASK-cross-platform-single-binary`, `TASK-docs-ui-endpoint-linkage`, `TASK-guest-public-functionality-surface-feed-templates-docs`, `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto`, `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w`, `epic-cross-platform-portability`, `epic-docs-reconciliation`, `epic-guest-access`, `epic-http-protocol-features` |
 | `src/server/static-mime.ts` | `BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` |
 | `src/server/terminal-ws.test.ts` | `TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log`, `TASK-web-editor-pty-terminal-route-approach-b` |
+| `src/server/terminal-ws.ts` | `TASK-web-editor-pty-terminal-route-approach-b`, `epic-browser-editor-support` |
 | `src/server/watchdog/cli.ts` | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn`, `epic-recursive-self-improvement` |
 | `src/server/watchdog/events.ts` | `TASK-recursive-self-improvement-watchdog-events-table-and-telemet`, `epic-recursive-self-improvement` |
 | `src/server/watchdog/state.ts` | `TASK-recursive-self-improvement-watchdog-state-machine-and-restar`, `TASK-recursive-self-improvement-watchdog-to-heavy-gate-webhook-tr`, `epic-recursive-self-improvement` |
@@ -2009,7 +2011,7 @@ output is byte-identical for identical inputs.
 | `src/utils/content-hash.ts` | `TASK-optique-cli-tooling-integration`, `epic-hidden-carriage-context` |
 | `src/utils/date.ts` | `BUG-date-parse-results-unchecked-for-nan-10-sites`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-untrusted-new-date-parse-without-invalid-date-guard`, `FEAT-unified-date-representation-util-locale-region-iana-timezone`, `TASK-consolidate-unsafe-date-buffer-json-usage-into-shared-utils` |
 | `src/utils/is-within.test.ts` | `TASK-web-editor-harness-sandbox-file-tree-approach-c`, `TASK-web-editor-pty-terminal-route-approach-b` |
-| `src/utils/is-within.ts` | `TASK-web-editor-harness-sandbox-file-tree-approach-c`, `TASK-web-editor-pty-terminal-route-approach-b` |
+| `src/utils/is-within.ts` | `TASK-web-editor-harness-sandbox-file-tree-approach-c`, `TASK-web-editor-pty-terminal-route-approach-b`, `epic-browser-editor-support` |
 | `src/utils/safe-buffer` | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros`, `TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress` |
 | `src/utils/safe-buffer/compression.ts` | `BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10`, `FEAT-transport-compression-wire-receive-side-decompression-with-l`, `TASK-adopt-bun-gzipsync-for-compression-standardization` |
 | `src/utils/safe-fetch/fetch.ts` | `BUG-module-level-in-memory-state-grows-without-eviction`, `BUG-spki-pin-gate-is-not-enforced-across-http-redirects`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra`, `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature` |
@@ -10184,10 +10186,10 @@ output is byte-identical for identical inputs.
 | `TASK-chat-owners-frontend-in-chat-settings` | produces | `src/components/chat/chat-settings-modal.html` | - |
 | `TASK-chat-owners-frontend-in-chat-settings` | produces | `src/frontend/alpine/chat-settings/ownership.ts` | - |
 | `TASK-chat-owners-routes-and-compat-transfer-endpoint` | produces | `src/routes/chats/owners.ts` | - |
-| `TASK-chat-owners-schema-and-backfill` | produces | `src/db/082_chat_owners.test.ts` | - |
+| `TASK-chat-owners-schema-and-backfill` | produces | `src/db/087_chat_owners.test.ts` | - |
 | `TASK-chat-owners-schema-and-backfill` | produces | `src/db/migration-roundtrip.test.ts` | - |
 | `TASK-chat-owners-schema-and-backfill` | produces | `src/db/migrations.test.ts` | - |
-| `TASK-chat-owners-schema-and-backfill` | produces | `src/db/migrations/082_chat_owners.ts` | - |
+| `TASK-chat-owners-schema-and-backfill` | produces | `src/db/migrations/087_chat_owners.ts` | - |
 | `TASK-chat-owners-schema-and-backfill` | produces | `src/db/migrations` | - |
 | `TASK-chat-owners-schema-and-backfill` | produces | `src/db/schema-sync.test.ts` | - |
 | `TASK-chat-owners-service-owners-set-ops-generalizing-transfer` | produces | `src/chat/service/owners.ts` | - |
@@ -12094,6 +12096,7 @@ output is byte-identical for identical inputs.
 | `TASK-harness-work-topics` | produces | `src/assistant/workflow-routing.ts` | - |
 | `TASK-harness-work-topics` | produces | `src/memory/types.ts` | - |
 | `TASK-harness-work-topics` | produces | `src/regex/intent.ts` | - |
+| `TASK-harness-worktree-scope-guard` | produces | `src/harness/worktree-scope.test.ts` | - |
 | `TASK-harness-worktree-scope-guard` | produces | `src/harness/worktree-scope.ts` | - |
 | `TASK-headers-additional-useful-response-headers` | produces | `src/middleware/response-headers.ts` | - |
 | `TASK-headers-additional-useful-response-headers` | produces | `src/routes/middleware/deprecation-headers.ts` | - |
@@ -13784,6 +13787,7 @@ output is byte-identical for identical inputs.
 | `TASK-resource-provision-browser-backup` | produces | `src/backup/browser-backup.ts` | - |
 | `TASK-resource-provision-credential-store` | produces | `src/crypto/byok.ts` | - |
 | `TASK-resource-provision-credential-store` | produces | `src/resource/credential-store.ts` | - |
+| `TASK-resource-provision-quota-engine` | produces | `src/generation/quota-engine.test.ts` | - |
 | `TASK-resource-provision-quota-engine` | produces | `src/generation/quota-engine.ts` | - |
 | `TASK-resource-provision-quota-ui` | produces | `src/frontend/settings/resource-provision.ts` | - |
 | `TASK-resource-provision-reconciliation` | produces | `src/backup/reconciliation.ts` | - |
@@ -15441,10 +15445,13 @@ output is byte-identical for identical inputs.
 | `epic-browser-editor-support` | produces | `src/partials/characters/create-modal.html` | - |
 | `epic-browser-editor-support` | produces | `src/routes/build-id.ts` | - |
 | `epic-browser-editor-support` | produces | `src/routes/config-menu.ts` | - |
+| `epic-browser-editor-support` | produces | `src/routes/harness/files.ts` | - |
 | `epic-browser-editor-support` | produces | `src/routes/views/character-edit-form.ts` | - |
 | `epic-browser-editor-support` | produces | `src/routes/views/layout.ts` | - |
 | `epic-browser-editor-support` | produces | `src/server/start.ts` | - |
+| `epic-browser-editor-support` | produces | `src/server/terminal-ws.ts` | - |
 | `epic-browser-editor-support` | produces | `src/transport/ws.ts` | - |
+| `epic-browser-editor-support` | produces | `src/utils/is-within.ts` | - |
 | `epic-browser-editor-support` | produces | `src/views/blog.html` | - |
 | `epic-browser-editor-support` | produces | `src/views/layout.html` | - |
 | `epic-byok-api-keys` | produces | `src/config/load/load.ts` | - |
@@ -54888,6 +54895,7 @@ output is byte-identical for identical inputs.
 | `TASK-web-editor-config-section-plus-bun-floor-web-editor-web-term` | sibling | `epic-browser-editor-support` | `src/config/sections/web.ts` |
 | `TASK-web-editor-harness-sandbox-file-tree-approach-c` | sibling | `TASK-web-editor-open-in-editor-uri-scheme-links-approach-a` | `src/frontend/open-in-editor.test.ts` |
 | `TASK-web-editor-harness-sandbox-file-tree-approach-c` | sibling | `TASK-web-editor-pty-terminal-route-approach-b` | `src/utils/is-within.test.ts; src/utils/is-within.ts` |
+| `TASK-web-editor-harness-sandbox-file-tree-approach-c` | sibling | `epic-browser-editor-support` | `src/routes/harness/files.ts; src/utils/is-within.ts` |
 | `TASK-web-editor-open-in-editor-uri-scheme-links-approach-a` | sibling | `TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log` | `src/views/blog.html` |
 | `TASK-web-editor-open-in-editor-uri-scheme-links-approach-a` | sibling | `TASK-widen-import-export-io-for-publications` | `src/components/modals/settings.html` |
 | `TASK-web-editor-open-in-editor-uri-scheme-links-approach-a` | sibling | `epic-blog-system` | `src/views/blog.html` |
@@ -54904,6 +54912,7 @@ output is byte-identical for identical inputs.
 | `TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log` | sibling | `epic-blog-system` | `src/views/blog.html` |
 | `TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log` | sibling | `epic-browser-editor-support` | `src/harness/exec-log.ts; src/views/blog.html` |
 | `TASK-web-editor-pty-spawn-audit-logging-to-harness-exec-log` | sibling | `epic-terminal-ui` | `src/views/blog.html` |
+| `TASK-web-editor-pty-terminal-route-approach-b` | sibling | `epic-browser-editor-support` | `src/server/terminal-ws.ts; src/utils/is-within.ts` |
 | `TASK-web-lazy-slash-command-hint-bar-port-of-commandcompleter` | sibling | `epic-harness-integration` | `src/tui/chat/api.ts` |
 | `TASK-web-lazy-slash-command-hint-bar-port-of-commandcompleter` | sibling | `epic-terminal-ui` | `src/tui/chat/api.ts` |
 | `TASK-web-preserve-error-bodies-plus-per-chat-send-timeout-plus-st` | sibling | `epic-terminal-ui` | `src/tui/chat/types.ts; src/tui/harness/api.ts` |

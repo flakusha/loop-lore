@@ -1761,7 +1761,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2874 | 1291 | 47 | 876 | 29 | 0 | 631 |
+| (untagged) | 2874 | 1293 | 47 | 876 | 29 | 0 | 629 |
 
 ## By epic × status
 
@@ -1912,7 +1912,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | epic-experimental-egui-frontend | 14 | 11 | 0 | 0 | 0 | 0 | 3 |
 | epic-exploration-discovery | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
 | epic-external-creative-tool-bridge | 15 | 0 | 0 | 3 | 0 | 0 | 12 |
-| epic-external-harness-acp | 12 | 0 | 0 | 0 | 0 | 0 | 12 |
+| epic-external-harness-acp | 12 | 1 | 0 | 0 | 0 | 0 | 11 |
 | epic-external-tooling-build | 8 | 0 | 0 | 0 | 0 | 0 | 8 |
 | epic-faction-reputation | 7 | 3 | 0 | 1 | 0 | 0 | 3 |
 | epic-fe-be-harmonization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
@@ -1947,7 +1947,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | epic-gm-shadow-notes | 12 | 5 | 0 | 1 | 0 | 0 | 6 |
 | epic-group-chat | 10 | 5 | 0 | 0 | 0 | 0 | 5 |
 | epic-guest-access | 6 | 6 | 0 | 0 | 0 | 0 | 0 |
-| epic-harness-integration | 43 | 0 | 0 | 0 | 0 | 0 | 43 |
+| epic-harness-integration | 43 | 1 | 0 | 0 | 0 | 0 | 42 |
 | epic-headless-alternative-frontends | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
 | epic-hidden-carriage-context | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-housing | 6 | 0 | 0 | 6 | 0 | 0 | 0 |

@@ -52,7 +52,7 @@
 | In Progress | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High | High | 0 | [epic-battle-integration-gaps.md](/.plan/epics/epic-battle-integration-gaps.md) |
 | In Progress | Benchmark CI & Performance Regression Detection | High | High | 0 | [epic-benchmark-ci-regression.md](/.plan/epics/epic-benchmark-ci-regression.md) |
 | In Progress | Blog System | Medium | High | 0 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
-| Not Started | Browser-Side Terminal `$EDITOR` Support | Medium | Medium | 0 | [epic-browser-editor-support.md](/.plan/epics/epic-browser-editor-support.md) |
+| In Progress | Browser-Side Terminal `$EDITOR` Support | Medium | Medium | 0 | [epic-browser-editor-support.md](/.plan/epics/epic-browser-editor-support.md) |
 | Not Started | BYOK API Keys (Bring Your Own Key) | high | Large | 0 | [epic-byok-api-keys.md](/.plan/epics/epic-byok-api-keys.md) |
 | Not Started | BYOK Local Models (Bring Your Own Model) | High | Large | 0 | [epic-byok-local-models.md](/.plan/epics/epic-byok-local-models.md) |
 | In Progress | Certificate & TLS Management | High | Large | 0 | [epic-certificate-and-tls-management.md](/.plan/epics/epic-certificate-and-tls-management.md) |
@@ -199,7 +199,7 @@
 | In Progress | Experimental egui Frontend (adoption decision + client-agnostic view-model layer) | Low | Medium | 0/10 | [epic-experimental-egui-frontend.md](/.plan/epics/epic-experimental-egui-frontend.md) |
 | In Progress | Exploration & Discovery Systems | Medium | High | 0 | [epic-exploration-discovery.md](/.plan/epics/epic-exploration-discovery.md) |
 | Not Started | External Creative Tool Bridge (MCP) | High | Very High | 0 | [epic-external-creative-tool-bridge.md](/.plan/epics/epic-external-creative-tool-bridge.md) |
-| Not Started | External Harness Integration (ACP) | High | High | 0 | [epic-external-harness-acp.md](/.plan/epics/epic-external-harness-acp.md) |
+| In Progress | External Harness Integration (ACP) | High | High | 0 | [epic-external-harness-acp.md](/.plan/epics/epic-external-harness-acp.md) |
 | Not Started | External Search Providers & Context Enrichment | Medium | Low | 0 | [epic-rag-context-sources.md](/.plan/epics/epic-rag-context-sources.md) |
 | Not Started | External tooling build CLI (llama.cpp, stable-diffusion.cpp, llama-swap) | medium | Large | 0 | [epic-external-tooling-build.md](/.plan/epics/epic-external-tooling-build.md) |
 | In Progress | Factions, Reputation & Persistent Consequences | High | High | 0 | [epic-faction-reputation.md](/.plan/epics/epic-faction-reputation.md) |
@@ -318,7 +318,7 @@
 | Not Started | Relation Graph Canvas | P2 | Large | 0 | [epic-relation-graph-canvas.md](/.plan/epics/epic-relation-graph-canvas.md) |
 | In Progress | Release 0.1.0 | High | Medium | 0 | [epic-release-010.md](/.plan/epics/epic-release-010.md) |
 | Not Started | Resolution System & Ruleset Family | High | Medium | 0 | [epic-resolution-system.md](/.plan/epics/epic-resolution-system.md) |
-| Not Started | Resource Provision | High | Large | 0 | [epic-resource-provision.md](/.plan/epics/epic-resource-provision.md) |
+| In Progress | Resource Provision | High | Large | 0 | [epic-resource-provision.md](/.plan/epics/epic-resource-provision.md) |
 | Not Started | RPG Content Systems — Quests, Achievements & RPG Chat | Medium | High | 0 | [epic-rpg-content-systems.md](/.plan/epics/epic-rpg-content-systems.md) |
 | In Progress | RPG Core Wiring & Registry | Medium | High | 0 | [epic-rpg-core-wiring.md](/.plan/epics/epic-rpg-core-wiring.md) |
 | Not Started | RPG Items, Economy & Crafting | Medium | Very High | 0 | [epic-items-economy-crafting.md](/.plan/epics/epic-items-economy-crafting.md) |
@@ -757,7 +757,7 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Browser-Side Terminal `$EDITOR` Support
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -2186,7 +2186,7 @@ Exploration and discovery mechanics — map exploration, fog of war, discovery r
 
 ### External Harness Integration (ACP)
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -3295,7 +3295,7 @@ Reference-based generation and editing — "change this, keep that" driven by on
 
 ### Resource Provision
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** Large
 - **Type:** Feature Epic

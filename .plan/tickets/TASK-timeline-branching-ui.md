@@ -33,7 +33,7 @@ Core UX for timeline system. Without this, players cannot interact with branchin
 - [x] HTMX-powered (no full page reload) (hx-get + hx-swap innerHTML fragment swap, world-detail.html:125-131; htmx.ajax fragment at plugin-dynamic.ts:223-241)
 - [x] Mobile-responsive (timeline-bar/event block responsive rules src/public/css/app.css)
 
-**Status Note:** Implemented on branch g2-timeline-branching commit faa6f1044; pending finalize/merge.
+**Status Note:** Landed on dev (`5883881c0` world-detail timeline UI; original branch commit `faa6f1044` merged via finalize) — see Resolved footer; remaining open item for the epic is the `docs/frontend/worlds.md` docs page.
 
 ## Dependencies
 
