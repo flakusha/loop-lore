@@ -91,7 +91,7 @@ async function checkChatUpdateLock(
         "This chat is online and its key mechanics are locked. To change mode, turn strategy, world, or GM execution, migrate to a new chat.",
       details: {
         fields: [...attemptedMechanics,],
-        migrateEndpoint: `/api/chats/${chatId}/migrate`,
+        chatId,
       },
     };
   }

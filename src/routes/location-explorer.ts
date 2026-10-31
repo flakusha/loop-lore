@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/routes/location-explorer.ts
-//
 // Location explorer + detail — read-only data feeds for the world location
-// browser UI. Reuses the existing `locations` + `location_states` tables and the
+// browser UI, mounted ONLY from the v1 barrel
+// (`src/routes/v1/standalone-surface.ts`), which passes `/api/v1`.
+// Reuses the existing `locations` + `location_states` tables and the
 // existing location CRUD in routes/worlds.ts; this module only exposes the full
 // (unpaginated) tree data + enriched detail the explorer/detail panels need.
 import { Elysia, t, } from "elysia";

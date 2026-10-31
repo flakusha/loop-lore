@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * /api/agency/earn — authz + happy-path coverage.
+ * /api/v1/agency/earn — authz + happy-path coverage.
  *
  * The endpoint trusts body.actor_id for which actor's balance to credit.
  * Without an authz check the request is trivial to abuse — any session
@@ -26,12 +26,12 @@ import { agencyEarnRoute, } from "./earn";
 function makeApp(db: Kysely<DB>, userId?: string,): Elysia {
   const app = new Elysia({ name: "test-agency-earn", },);
   if (userId !== undefined) { app.derive(() => ({ userId, })); }
-  return app.use(agencyEarnRoute({ database: db, }, "/api",),);
+  return app.use(agencyEarnRoute({ database: db, },),);
 }
 
 async function postEarn(app: Elysia, body: Record<string, unknown>,): Promise<Response> {
   return app.handle(
-    new Request("http://localhost/api/agency/earn", {
+    new Request("http://localhost/api/v1/agency/earn", {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify(body,),
@@ -39,7 +39,7 @@ async function postEarn(app: Elysia, body: Record<string, unknown>,): Promise<Re
   );
 }
 
-describe("POST /api/agency/earn — authz", () => {
+describe("POST /api/v1/agency/earn — authz", () => {
   test("401 when the session is unauthenticated", async () => {
     const { db, } = await createTestDb();
     await insertUsers(db, "user-1", "User One",);

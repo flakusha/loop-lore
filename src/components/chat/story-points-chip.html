@@ -3,7 +3,7 @@
 
 <!--
   Story points chip — shows the calling actor's current story-point balance
-  next to the /agency affordance. Reads GET /api/agency/balance (auth-scoped:
+  next to the /agency affordance. Reads GET /api/v1/agency/balance (auth-scoped:
   the actor is always the session user). This component owns read + display only;
   the spend menu is deferred (see TASK-story-points-prototype — earn hooks +
   spend menu are unchecked acceptance items).
@@ -20,7 +20,7 @@
     async refresh() {
       const worldId = this.$store?.chat?.activeChat?.world_id || null;
       const qs = worldId ? `?world_id=${encodeURIComponent(worldId)}` : '';
-      const res = await fetch(`/api/agency/balance${qs}`, { credentials: 'include' })
+      const res = await fetch(`/api/v1/agency/balance${qs}`, { credentials: 'include' })
         .catch(() => null);
       if (!res || !res.ok) { return; }
       const data = await res.json().catch(() => null);

@@ -28,7 +28,8 @@ export interface KeyMechanicConflictError {
   message: string;
   details: {
     fields: string[];
-    migrateEndpoint: string;
+    /** Chat to migrate — the route layer formats the versioned migrate URL. */
+    chatId: string;
   };
 }
 

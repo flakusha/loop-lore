@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * GET /api/agency/balance — the read side of the composer chip.
+ * GET /api/v1/agency/balance — the read side of the composer chip.
  *
  * The route is auth-scoped: it reads the session user, never a client-supplied
  * actor id, so a caller can only ever see their own balance. Pinned here:
@@ -23,14 +23,14 @@ import { agencyBalanceRoute, } from "./balance";
 function makeApp(db: Kysely<DB>, userId?: string,): Elysia {
   const app = new Elysia({ name: "test-agency-balance", },);
   if (userId !== undefined) { app.derive(() => ({ userId, })); }
-  return app.use(agencyBalanceRoute({ database: db, }, "/api",),);
+  return app.use(agencyBalanceRoute({ database: db, },),);
 }
 
 function getBalance(app: Elysia, query = "",): Promise<Response> {
-  return app.handle(new Request(`http://localhost/api/agency/balance${query}`,),);
+  return app.handle(new Request(`http://localhost/api/v1/agency/balance${query}`,),);
 }
 
-describe("GET /api/agency/balance", () => {
+describe("GET /api/v1/agency/balance", () => {
   test("401 when the session is unauthenticated", async () => {
     const { db, } = await createTestDb();
     await insertUsers(db, "user-1", "User One",);

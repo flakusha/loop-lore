@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * /api/agency/earn — POST endpoint that credits story points to the
+ * /api/v1/agency/earn — POST endpoint that credits story points to the
  * calling actor. Mounted from `src/routes/agency/index.ts` and registered
- * via `register-plugins.ts`.
+ * via the v1 barrel (`src/routes/v1/standalone-surface.ts`).
  *
  * Body: { actor_id: string, amount: number, reason?: string, world_id?: string|null }
  * Response: StoryPointLedger JSON (or 400 on cap exceeded / invalid amount).
@@ -24,10 +24,10 @@ import {
   requireUserId,
 } from "../http-utils";
 
-/** POST /api/agency/earn — credit story points to the authenticated actor. */
+/** POST /api/v1/agency/earn — credit story points to the authenticated actor. */
 export function agencyEarnRoute(
   opts: { database: Kysely<DB> },
-  prefix = "/api",
+  prefix = "/api/v1",
 ) {
   const { database, } = opts;
   return new Elysia({ name: "agency-earn", },)

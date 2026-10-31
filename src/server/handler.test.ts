@@ -2,14 +2,17 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Regression tests for the plugin dispatch fallback in `src/server/handler.ts`.
+ * Regression tests for plugin dispatch in `src/server/handler.ts`.
  *
- * - SUR-3: a plugin registers its route with its own `/api` prefix
- *   (`/api/card-battle/start`) while the version redirect consumes one `/api`
- *   segment of the request path, so the versioned URL the assistant is told to
- *   call (`/api/v1/card-battle/start`) answered 404 for EVERY plugin route.
- * - SUR-5: the governance limiter was charged once per dispatch attempt, so
- *   every `/api/v1/*` request consumed two tokens instead of one.
+ * The `/api/v1` strip-prefix fallback is retired: versioned `/api/v1/*`
+ * requests are served ONLY by the v1 barrel, and unmatched versioned paths
+ * 404. Plugin routes keep their own versioned paths and pass through the
+ * same governance guard (per-user rate limit + request metrics) and
+ * deprecation-header envelope as v1-barrel routes. Pinned here:
+ * - a versioned plugin path dispatches directly (no fallback hop);
+ * - an unmatched `/api/v1/*` path 404s instead of falling back;
+ * - the governance limiter is charged exactly once per request;
+ * - the assistant-facing card-battle tool copy names the URL that resolves.
  *
  * Resource contract: the plugin registry is process-wide, so this file
  * registers its `handler-fixture` plugin before every test (a sibling suite may
@@ -34,12 +37,10 @@ import { registry, } from "../plugins";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { handleApiRequest, } from "./handler";
 
-/** Registered with its own `/api` prefix — the shape every shipped plugin uses. */
-const API_PREFIXED_PATH = "/api/handler-fixture/thing";
+/** Registered with its versioned path — the shape plugin routes keep. */
+const VERSIONED_PATH = "/api/v1/handler-fixture/thing";
 /** POST route of the same plugin (own path, so the two never share a key). */
-const POST_PATH = "/api/handler-fixture/post";
-/** Registered without the prefix — the shape the auth-wiring fixture uses. */
-const BARE_PATH = "/handler-fixture/bare";
+const POST_PATH = "/api/v1/handler-fixture/post";
 
 let db: Kysely<DB>;
 let config: Config;
@@ -63,10 +64,10 @@ function registerFixture(): void {
   registry.addRoutes("handler-fixture", [
     {
       method: "GET",
-      path: API_PREFIXED_PATH,
+      path: VERSIONED_PATH,
       handler: async () => {
-        calls.push("api-prefixed",);
-        return new Response("api-prefixed",);
+        calls.push("versioned",);
+        return new Response("versioned",);
       },
     },
     {
@@ -76,14 +77,6 @@ function registerFixture(): void {
         const body = await request.text();
         calls.push(`post:${body}`,);
         return new Response("posted",);
-      },
-    },
-    {
-      method: "GET",
-      path: BARE_PATH,
-      handler: async () => {
-        calls.push("bare",);
-        return new Response("bare",);
       },
     },
   ],);
@@ -113,29 +106,21 @@ afterAll(async () => {
   await db.destroy();
 },);
 
-describe("plugin route resolution (SUR-3)", () => {
-  test("the versioned URL reaches a route registered with its own /api prefix", async () => {
+describe("plugin route resolution", () => {
+  test("a versioned plugin path dispatches directly", async () => {
     const res = await app.handle(new Request("http://localhost/api/v1/handler-fixture/thing",),);
 
     expect(res.status,).toBe(200,);
-    expect(await res.text(),).toBe("api-prefixed",);
+    expect(await res.text(),).toBe("versioned",);
   });
 
-  test("the double-prefixed versioned URL still resolves", async () => {
-    const res = await app.handle(new Request("http://localhost/api/v1/api/handler-fixture/thing",),);
+  test("an unmatched versioned path 404s (no strip-prefix fallback)", async () => {
+    const res = await app.handle(new Request("http://localhost/api/v1/handler-fixture/nope",),);
 
-    expect(res.status,).toBe(200,);
-    expect(await res.text(),).toBe("api-prefixed",);
+    expect(res.status,).toBe(404,);
   });
 
-  test("a route registered without the /api prefix still resolves", async () => {
-    const res = await app.handle(new Request("http://localhost/api/v1/handler-fixture/bare",),);
-
-    expect(res.status,).toBe(200,);
-    expect(await res.text(),).toBe("bare",);
-  });
-
-  test("the fallback re-dispatches the request body when it is still readable", async () => {
+  test("dispatch preserves the request body when it is still readable", async () => {
     const res = await handleApiRequest({
       request: new Request("http://localhost/api/v1/handler-fixture/post", {
         method: "POST",
@@ -164,7 +149,7 @@ describe("plugin route resolution (SUR-3)", () => {
   });
 });
 
-describe("governance charging (SUR-5)", () => {
+describe("governance charging", () => {
   test("a versioned request that matches no route costs exactly one token", async () => {
     const path = "/api/v1/handler-fixture/missing";
     const policy = policyForRoute(path,);

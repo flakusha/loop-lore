@@ -8,11 +8,11 @@
  * invokes the action methods, asserts on state transitions + API call shape.
  *
  * Pins the contract:
- *   - loadChatOwners: GETs `/api/chats/:id/owners`, adopts `owners`
- *   - submitAddOwner: POSTs `/api/chats/:id/owners` { actorId, reason? };
+ *   - loadChatOwners: GETs `/api/v1/chats/:id/owners`, adopts `owners`
+ *   - submitAddOwner: POSTs `/api/v1/chats/:id/owners` { actorId, reason? };
  *     on success adopts returned owners + reloads participants; on error
  *     surfaces the server envelope message
- *   - submitRemoveOwner: DELETEs `/api/chats/:id/owners/:userId?reason=`;
+ *   - submitRemoveOwner: DELETEs `/api/v1/chats/:id/owners/:userId?reason=`;
  *     resign is just removal of self
  *   - ownerCapReached / ownerName / addableParticipants helpers
  */
@@ -73,7 +73,7 @@ describeOrSkip("ownersActions.loadChatOwners", () => {
     await ownersActions.loadChatOwners!.call(ctx,);
 
     expect(fetchCalls,).toHaveLength(1,);
-    expect(fetchCalls[0]!.url,).toBe("/api/chats/chat-1/owners",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/chat-1/owners",);
     expect(ctx._owners,).toEqual(["user-1", "user-2",],);
     expect(ctx._ownersError,).toBe("",);
     expect(ctx._ownersLoading,).toBe(false,);
@@ -212,7 +212,7 @@ describeOrSkip("ownersActions.submitAddOwner", () => {
 
     expect(fetchCalls,).toHaveLength(1,);
     const call = fetchCalls[0]!;
-    expect(call.url,).toBe("/api/chats/chat-1/owners",);
+    expect(call.url,).toBe("/api/v1/chats/chat-1/owners",);
     expect(call.opts.method,).toBe("POST",);
     expect(JSON.parse(call.opts.body as string,),).toEqual({ actorId: "u2", reason: "helping moderate", },);
 
@@ -322,7 +322,7 @@ describeOrSkip("ownersActions.submitRemoveOwner", () => {
 
     expect(fetchCalls,).toHaveLength(1,);
     const call = fetchCalls[0]!;
-    expect(call.url,).toBe("/api/chats/chat-1/owners/u2?reason=left%20the%20project",);
+    expect(call.url,).toBe("/api/v1/chats/chat-1/owners/u2?reason=left%20the%20project",);
     expect(call.opts.method,).toBe("DELETE",);
 
     expect(ctx._owners,).toEqual(["u1",],);
@@ -336,7 +336,7 @@ describeOrSkip("ownersActions.submitRemoveOwner", () => {
     const ctx = ownersCtx({ _removeOwnerId: "u2", _removeOwnerReason: "  ", },);
 
     await ownersActions.submitRemoveOwner!.call(ctx,);
-    expect(fetchCalls[0]!.url,).toBe("/api/chats/chat-1/owners/u2",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/chat-1/owners/u2",);
   });
 
   test("surfaces 403 server error message", async () => {

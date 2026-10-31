@@ -10,9 +10,9 @@
  * `handleApiRequest`, because the thing under test is exactly that seam: the
  * derive resolves identity without rejecting, and the catch-all must hand it on.
  *
- * Requests use the `/api/v1/*` prefix because the catch-all 308-redirects any
- * unversioned `/api/*`; `handleApiRequest` then strips the prefix on its second
- * dispatch hop — the hop that must also carry the caller.
+ * Requests use versioned plugin paths (`/api/v1/*`) because the catch-all
+ * 308-redirects any unversioned `/api/*`; dispatch then serves the versioned
+ * path directly — the hop that must also carry the caller.
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
@@ -25,10 +25,10 @@ import { registry, } from "./index";
 import { handleApiRequest, } from "../server";
 import { createTestDb, } from "../test-utils/create-test-db";
 
-/** Registered by the fixture below; the v1 hop strips the `/api/v1` prefix. */
-const SECRET_PATH = "/plugin-wiring/secret";
+/** Registered versioned plugin path served directly by dispatch. */
+const SECRET_PATH = "/api/v1/plugin-wiring/secret";
 /** Same shape, no access fields — must stay public. */
-const OPEN_PATH = "/plugin-wiring/open";
+const OPEN_PATH = "/api/v1/plugin-wiring/open";
 
 let db: Kysely<DB>;
 let config: Config;
@@ -80,7 +80,7 @@ afterAll(async () => {
 
 /** GET a plugin route through the full app chain. */
 function get(path: string,): Promise<Response> {
-  return app.handle(new Request(`http://localhost/api/v1${path}`,),);
+  return app.handle(new Request(`http://localhost${path}`,),);
 }
 
 describe("auth required, no token", () => {

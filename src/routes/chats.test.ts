@@ -595,8 +595,10 @@ describe("chatsRoutes", () => {
     );
 
     expect(res.status,).toBe(409,);
-    const body = (await res.json()) as { code: string };
+    const body = (await res.json()) as { code: string; data?: { fields: string[]; migrateEndpoint: string } };
     expect(body.code,).toBe("key_mechanic_conflict",);
+    expect(body.data?.fields,).toContain("mode",);
+    expect(body.data?.migrateEndpoint,).toBe(`/api/v1/chats/${id}/migrate`,);
   });
 
   test("online chat still allows session-state mutation", async () => {
