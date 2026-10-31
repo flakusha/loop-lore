@@ -4,6 +4,7 @@
 import { Elysia, } from "elysia";
 import { SeductionService, } from "../../rpg/seduction/service";
 import type { ReputationTier, } from "../../schemas";
+import { NsfwSeductionAttemptBody, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import {
   checkNsfwTargetAccess,
@@ -90,7 +91,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
           try {
             const userId = requireUserId(ctx,);
             if (typeof userId !== "string") { return userId; }
-            const body = ctx.body as Record<string, unknown>;
+            const body = ctx.body;
             const chatId = (body.chatId as string) ?? null;
             const actorId = (body.actorId as string) ?? "";
             const targetId = (body.targetId as string) ?? "";
@@ -125,6 +126,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
             return jsonError("Internal server error", 500,);
           }
         },
+        { body: NsfwSeductionAttemptBody, },
       )
       .get(
         `${prefix}/nsfw/arousal/:actorId`,
