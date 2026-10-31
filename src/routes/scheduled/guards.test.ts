@@ -122,7 +122,7 @@ describe("withChat", () => {
   });
 
   test("authorized caller reaches the handler", async () => {
-    const wrapped = withChat(db, async (_ctx, chatId, caller,) => {
+    const wrapped = withChat(db, async (_ctx, _chatId, _caller,) => {
       return respond({ ok: true, },);
     },);
 
