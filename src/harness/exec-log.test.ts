@@ -43,6 +43,9 @@ function sample(overrides: Partial<HarnessRunRecord> = {},): HarnessRunRecord {
     gitSha: "abc1234",
     msg: null,
     turnId: "turn-1",
+    profile: null,
+    tier: null,
+    acpSessionId: null,
     ...overrides,
   };
 }
@@ -57,6 +60,7 @@ describe("harness types", () => {
   it("serializes to snake_case so the JSONL greps like the ledger", () => {
     const wire = serializeRun(sample(),);
     expect(Object.keys(wire,).sort(),).toEqual([
+      "acp_session_id",
       "branch",
       "cost_usd",
       "error",
@@ -66,11 +70,13 @@ describe("harness types", () => {
       "pattern",
       "pattern_detail",
       "pid",
+      "profile",
       "result",
       "run_id",
       "run_ms",
       "task",
       "task_type",
+      "tier",
       "tokens_in",
       "tokens_out",
       "tool_count",

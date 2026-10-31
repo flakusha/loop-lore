@@ -11,12 +11,12 @@
  * existing `from "./types"` imports keep working.
  */
 import type { HarnessRunDetail, HarnessRunSummary, } from "./read-models";
-import type { HarnessTaskType, } from "./types-wire";
+import type { HarnessTaskType, HarnessTier, } from "./types-wire";
 
 // Wire-side names re-exported from ./types-wire so existing
 // `from "./types"` imports keep working.
 export { deserializeRun, HARNESS_TASK_TYPES, serializeRun, } from "./types-wire";
-export type { HarnessTaskType, } from "./types-wire";
+export type { HarnessTaskType, HarnessTier, } from "./types-wire";
 
 /** How the run ended. `"error"` is the only failure value, so `jq` can count it. */
 export type HarnessResult = "ok" | "error" | "timeout" | "cancelled";
@@ -57,6 +57,12 @@ export interface HarnessRunRecord {
    * one node. Null on a line written before turns were correlated.
    */
   turnId: string | null;
+  /** External-harness profile name; null for internal provider dispatches. */
+  profile?: string | null;
+  /** Harness tier (`good`/`fast`); null when absent or unrecognizable. */
+  tier?: HarnessTier | null;
+  /** ACP session id reported by the harness, when any. */
+  acpSessionId?: string | null;
 }
 
 // Read-model shapes (summaries, filters, stats rollups) live in ./read-models
