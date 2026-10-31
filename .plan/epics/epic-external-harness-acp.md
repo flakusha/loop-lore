@@ -5,7 +5,8 @@
 
 **Overview:** (see sections below)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Core profile-aware selection landed on dev (`c4f23fa56` profile selector/registry/ledger/breaker + `7082da5da` omp integration, both in ancestry; `harness.acp.profiles[]` config; TASK-acp-profile-aware-model-selection Done): adapter matrix stays open — opencode/claude-code adapters live in TASK-acp-profile-harness-adapters (Not Started).
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic

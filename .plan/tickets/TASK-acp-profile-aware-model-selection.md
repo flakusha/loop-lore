@@ -3,7 +3,8 @@
 
 # TASK: ACP profile-aware model selection
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Landed on dev (`c4f23fa56` feat(harness): ACP profile-aware model selection, in ancestry): `src/integrations/harness/{omp,profile-selector,profile-registry,usage-ledger,profile-breaker}.ts` + tests, `harness.acp.profiles[]` config; all 8 ACs ticked. Follow-up adapter slice stays open in TASK-acp-profile-harness-adapters (Not Started — correct).
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-external-harness-acp

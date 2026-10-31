@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Backend slices landed on dev (`09225d04e` schema + credential store + facade + quota, `75b0d25d7` durable quota engine, migration 089 `resource_records`/`backup_records`/`resource_quota_counters`; quota-engine ticket closed with cumulative/storage/compute scope unlanded — see its Status Note): 12/12 provision tickets read Done via registry-driven close, but browser-backup/reconciliation/recovery UI + e2e round-trip remain unverified against the tree.
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic

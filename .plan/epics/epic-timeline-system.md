@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Branching UI + selection landed on `dev` (5883881c0, 11563c760, 2026-10-30); steering/lore-injection//timeline-command ticks pending on un-finalized `feat-timeline-remainder` — mark Done after that branch finalizes.
+**Status Note:** Branching UI + selection landed on `dev` (`5883881c0`, `11563c760`, 2026-10-30); `feat-timeline-remainder` finalized and its steering (`6a09514c6`), selection, and /timeline-command tickets are Done — remaining open item is the branching-UI docs page (`docs/frontend/worlds.md`, see TASK-timeline-branching-ui).
 **Priority:** High\
 **Effort:** High\
 **Type:** Feature Epic\
