@@ -6,15 +6,12 @@
  * own mkdtemp fixture and cleans it in afterEach, including failure paths.
  *
  * Resource contract: per-test mkdtemp dirs under tmpdir (removed in
- * afterEach on all paths); the module-global escalation log source is the
- * only shared seam — set only inside the one escalation test, restored via
- * `resetScopeLogSourceForTests()` in its finally AND in a describe-level
- * afterEach safety net, so the default child logger survives the suite. The
- * root-detection suite additionally chdirs (restored in finally) and resets
- * the memoized detected root via `resetScopeRootForTests()` in a
- * describe-level afterEach net; bun runs each test file in its own process
- * and tests in-file serially, so the process-global chdir cannot cross
- * suites.
+ * afterEach on all paths); the module-global escalation log source and the
+ * default-root detector are the only shared seams — each is set only inside
+ * the one test that needs it and restored in that test's finally AND in a
+ * describe-level afterEach safety net, so the defaults survive the suite.
+ * bun runs each test file in its own process and tests in-file serially, so
+ * the module-global seams cannot race across files.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync, } from "node:fs";
@@ -29,6 +26,7 @@ import {
   resetScopeRootForTests,
   resolveWithinScope,
   setScopeLogSourceForTests,
+  setScopeRootDetectorForTests,
 } from "./worktree-scope";
 
 interface WarnRecord {
@@ -232,20 +230,26 @@ describe("assertParamsWithinScope", () => {
 });
 
 describe("detectScopeRoot (default root detection)", () => {
-  // Safety net: the memoized detected root and the one-shot warn flag must
-  // never leak between tests, whatever a test's own failure path does.
+  // Safety net: the memoized detected root, the one-shot warn flag, and the
+  // active detector must never leak between tests, whatever a test's own
+  // failure path does.
   afterEach(() => {
     resetScopeRootForTests();
+    setScopeRootDetectorForTests(null,);
   },);
 
   test("detects the enclosing worktree root when no root is passed", async () => {
     resetScopeRootForTests();
-    // bun test runs at a checkout root, so the detected `git rev-parse
-    // --show-toplevel` is cwd or an ancestor of it — a fixture under
-    // <cwd>/.tmp (gitignored scratch) is always inside the detected root.
+    // REAL detector, no injection. bun test runs at a checkout root, so the
+    // detected `git rev-parse --show-toplevel` is cwd or an ancestor of it:
+    // a fixture under <cwd>/.tmp (gitignored scratch) is inside the detected
+    // root. If detection fails (no checkout), the cwd fallback keeps the
+    // SAME fixture inside scope — so both outcomes allow the create path and
+    // refuse tmpdir, making this test independent of the environment.
     const scratch = join(process.cwd(), ".tmp",);
     mkdirSync(scratch, { recursive: true, },);
     const inside = mkdtempSync(join(scratch, "scope-detect-",),);
+    const outside = mkdtempSync(join(tmpdir(), "scope-detect-out-",),);
     try {
       // Create case: the file does not exist yet; nearest-existing-ancestor
       // resolution against the DETECTED root must allow it.
@@ -254,60 +258,88 @@ describe("detectScopeRoot (default root detection)", () => {
         params: { path: join(inside, "created-by-tool.txt",), },
       },);
 
-      const outside = mkdtempSync(join(tmpdir(), "scope-detect-out-",),);
       try {
-        try {
-          await assertParamsWithinScope({
-            toolName: "t",
-            params: { path: join(outside, "x.txt",), },
-          },);
+        await assertParamsWithinScope({
+          toolName: "t",
+          params: { path: join(outside, "x.txt",), },
+        },);
 
-          expect.unreachable();
-        } catch (error) {
-          expect(error instanceof PathOutsideScopeError,).toBe(true,);
-        }
-      } finally {
-        rmSync(outside, { recursive: true, force: true, },);
+        expect.unreachable();
+      } catch (error) {
+        expect(error instanceof PathOutsideScopeError,).toBe(true,);
       }
     } finally {
       rmSync(inside, { recursive: true, force: true, },);
+      rmSync(outside, { recursive: true, force: true, },);
     }
   });
 
-  test("falls back to process.cwd() and warns once when detection fails", async () => {
+  test("warns once and falls back to process.cwd() when detection fails", async () => {
     resetScopeRootForTests();
-    const outside = mkdtempSync(join(tmpdir(), "scope-detect-norepo-",),);
+    // Injected failure ("" = not detected): deterministic, no chdir needed.
+    setScopeRootDetectorForTests(() => "");
     const warns: WarnRecord[] = [];
     setScopeLogSourceForTests(() => makeRecordingLogger(warns,));
-    const originalCwd = process.cwd();
+    const scratch = join(process.cwd(), ".tmp",);
+    mkdirSync(scratch, { recursive: true, },);
+    const insideCwd = mkdtempSync(join(scratch, "scope-detect-cwd-",),);
+    const outside = mkdtempSync(join(tmpdir(), "scope-detect-fail-",),);
     try {
-      // tmpdir is not inside any git checkout: detection must fail.
-      process.chdir(outside,);
-
-      // Fallback root = cwd (= the fixture dir): a create-path under cwd is
-      // allowed...
+      // Fallback root = cwd: a create-path under <cwd>/.tmp is allowed...
       await assertParamsWithinScope({
         toolName: "t",
-        params: { path: join(outside, "local.txt",), },
+        params: { path: join(insideCwd, "local.txt",), },
       },);
 
-      // ...and a path outside cwd escalates. Two calls, but exactly ONE
+      // ...and a tmpdir path is refused. Two calls, but exactly ONE
       // detection warn — the warn-once contract.
+      try {
+        await assertParamsWithinScope({
+          toolName: "t",
+          params: { path: join(outside, "x.txt",), },
+        },);
+
+        expect.unreachable();
+      } catch (error) {
+        expect(error instanceof PathOutsideScopeError,).toBe(true,);
+      }
+
+      expect(warns.length,).toBe(1,);
+      expect(warns[0]!.message,).toContain("detection failed",);
+      expect(warns[0]!.meta,).toEqual({ cwd: process.cwd(), },);
+    } finally {
+      setScopeRootDetectorForTests(null,);
+      resetScopeLogSourceForTests();
+      rmSync(insideCwd, { recursive: true, force: true, },);
+      rmSync(outside, { recursive: true, force: true, },);
+    }
+  });
+
+  test("memoizes the detected root across guarded calls", async () => {
+    resetScopeRootForTests();
+    const injected = mkdtempSync(join(tmpdir(), "scope-detect-memo-",),);
+    let calls = 0;
+    setScopeRootDetectorForTests(() => {
+      calls += 1;
+
+      return injected;
+    },);
+
+    try {
       await assertParamsWithinScope({
         toolName: "t",
-        params: { file: join(originalCwd, "elsewhere.txt",), },
-        requestRootChange: true,
+        params: { path: join(injected, "a.txt",), },
       },);
 
-      expect(warns.length,).toBe(2,);
-      expect(warns[0]!.message,).toContain("detection failed",);
-      expect(warns[0]!.meta,).toEqual({ cwd: outside, },);
-      expect(warns[1]!.message,).toContain("requestRootChange",);
+      await assertParamsWithinScope({
+        toolName: "t",
+        params: { path: join(injected, "b.txt",), },
+      },);
+
+      // The detector runs once; the second call reuses the memo.
+      expect(calls,).toBe(1,);
     } finally {
-      process.chdir(originalCwd,);
-      resetScopeRootForTests();
-      resetScopeLogSourceForTests();
-      rmSync(outside, { recursive: true, force: true, },);
+      rmSync(injected, { recursive: true, force: true, },);
     }
   });
 });
