@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 084_resource_provision
+ * 089_resource_provision
  *
  * Foundation tables for epic-resource-provision: provisioned external
  * resources (`resource_records`), opt-in browser-backup blobs

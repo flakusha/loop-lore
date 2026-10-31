@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Migration 084 — `chat_owners` co-owners table + creator backfill
+ * Migration 087 — `chat_owners` co-owners table + creator backfill
  * (TASK-chat-owners-schema-and-backfill, epic-chat-multi-ownership).
  *
  * Pins the ticket ACs directly: backfill exactness (one row per chat,
  * user = created_by, granted_by null), UNIQUE(chat_id, user_id)
  * enforcement at the database, the reason ≤ 500 CHECK, FK cascades, and
- * `down()` restoring the pre-084 shape (no table, backfilled rows gone).
+ * `down()` restoring the pre-087 shape (no table, backfilled rows gone).
  *
  * Mirrors src/db/078_user_api_keys_unique.test.ts and, like it, lives in
  * `src/db/` NOT `src/db/migrations/` (getMigrationFiles would register the
@@ -24,10 +24,10 @@ import { type Kysely, sql, } from "kysely";
 
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
-import { down, up, } from "./migrations/084_chat_owners";
+import { down, up, } from "./migrations/087_chat_owners";
 import type { DB, } from "./schema";
 
-const MIGRATION = "084_chat_owners";
+const MIGRATION = "087_chat_owners";
 
 /** `up`/`down` are typed against the untyped handle the migrator passes them. */
 type UntypedDb = Kysely<unknown>;
@@ -90,7 +90,7 @@ describe(MIGRATION, () => {
     const { db, sqlite, } = await createTestDb();
     try {
       // insertChats needs the table (it seeds the creator row), so build
-      // chats first, then drop to the pre-084 shape and let `up` backfill
+      // chats first, then drop to the pre-087 shape and let `up` backfill
       // from chats.created_by alone.
       const u1 = await insertUsers(db, `co-u1-${crypto.randomUUID()}`, "U1",);
       const u2 = await insertUsers(db, `co-u2-${crypto.randomUUID()}`, "U2",);
@@ -206,20 +206,20 @@ describe(MIGRATION, () => {
     }
   });
 
-  test("down() restores the pre-084 shape, backfilled rows included", async () => {
+  test("down() restores the pre-087 shape, backfilled rows included", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
       const u = await insertUsers(db, `co-down-${crypto.randomUUID()}`, "Down",);
       await insertChats(db, "Down Chat", u,);
 
-      // Re-run 084 against this chat: down() first (pre-084 shape), then up()
+      // Re-run 084 against this chat: down() first (pre-087 shape), then up()
       // whose backfill creates exactly one row for it.
       await down(db as unknown as UntypedDb,);
       expect(await hasTable(db,),).toBe(false,);
       await up(db as unknown as UntypedDb,);
       expect((await ownerRows(db,)).length,).toBe(1,);
 
-      // down() again drops the table WITH the backfilled row — the pre-084
+      // down() again drops the table WITH the backfilled row — the pre-087
       // shape is exactly "no table".
       await down(db as unknown as UntypedDb,);
       expect(await hasTable(db,),).toBe(false,);

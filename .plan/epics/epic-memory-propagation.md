@@ -35,7 +35,7 @@ Defines rules for memory sharing/propagation across timelines and chats. Impleme
 
 ## Acceptance Criteria
 
-- [x] Memory scope enum implemented in `src/memory/types.ts` (party + timeline added; persisted as the plain-text `actor_memories.scope` column from `001_init.ts` — no CHECK constraint, so no enum migration was needed; new `timeline_id` column via `084_actor_memories_timeline_id.ts`)
+- [x] Memory scope enum implemented in `src/memory/types.ts` (party + timeline added; persisted as the plain-text `actor_memories.scope` column from `001_init.ts` — no CHECK constraint, so no enum migration was needed; new `timeline_id` column via `085_actor_memories_timeline_id.ts`)
 - [x] Timeline-aware memory injection in `src/assistant/prompt/sections/memories.ts` + `memories-helpers.ts` (fetch filter `timeline_id IS NULL OR = :chatTimelineId`, 'prime' fallback; scope enforcement in `src/memory/provision.ts`)
 - [x] Cross-chat event propagation logic in `src/story/timeline/world-timeline.ts` (`orderAcrossSessions`, `detectEventConflicts`, `mergeTimelineEvents`)
 - [x] Memory isolation boundaries documented in `docs/spec/memory-system.md`
@@ -61,4 +61,4 @@ Defines rules for memory sharing/propagation across timelines and chats. Impleme
 
 ---
 
-_Notes: Extends existing `src/memory/` and `src/story/timeline/` infrastructure. Timeline storage lives in `001_init.ts` (`world_timeline_events.timeline_id`) and `chats.timeline_id` (`048_chats_timeline_id.ts`); memory timeline binding in `084_actor_memories_timeline_id.ts`. Does NOT define memory tiers — that's Memory & Knowledge's domain._
+_Notes: Extends existing `src/memory/` and `src/story/timeline/` infrastructure. Timeline storage lives in `001_init.ts` (`world_timeline_events.timeline_id`) and `chats.timeline_id` (`048_chats_timeline_id.ts`); memory timeline binding in `085_actor_memories_timeline_id.ts`. Does NOT define memory tiers — that's Memory & Knowledge's domain._

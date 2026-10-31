@@ -22,7 +22,13 @@ import { afterEach, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import { rmSync, } from "node:fs";
 import path from "node:path";
-import { createSqliteDialect, getDatabase, getSqliteDatabase, setTestDatabase, } from "./index";
+import {
+  createSqliteDialect,
+  getDatabase,
+  getSqliteDatabase,
+  resetDatabaseSingleton,
+  setTestDatabase,
+} from "./index";
 import type { DB, } from "./schema";
 
 /** Unique per test-run id — keeps the probe DB path collision-free even when
@@ -51,8 +57,11 @@ function restoreDbPathEnv(): void {
   priorDbPath = undefined;
 }
 
-afterEach(() => {
+afterEach(async () => {
   setTestDatabase(null,);
+  // A destroyed-but-still-bound singleton poisons every later DB consumer in
+  // this process (quota storage hits the deleted probe file) — reset owns it.
+  await resetDatabaseSingleton();
   restoreDbPathEnv();
   if (tmpDbPath) {
     rmSync(tmpDbPath, { force: true, },);
@@ -67,7 +76,10 @@ function overrideWith(sqlite?: Database,): Kysely<DB> {
 }
 
 describe("getSqliteDatabase", () => {
-  test("returns null before anything materializes — never creates a DB", () => {
+  test("returns null before anything materializes — never creates a DB", async () => {
+    // A sibling file may have materialized the singleton earlier in this
+    // process; reset it so the assertion covers THIS file's state, not order.
+    await resetDatabaseSingleton();
     expect(getSqliteDatabase(),).toBeNull();
   });
 
@@ -84,7 +96,7 @@ describe("getSqliteDatabase", () => {
     void db.destroy();
   });
 
-  test("returns the production singleton's handle once getDatabase() runs", () => {
+  test("returns the production singleton's handle once getDatabase() runs", async () => {
     priorDbPath = process.env.LOOP_LORE_DB_PATH;
     dbPathOverridden = true;
     // pid + per-run id: unique across parallel runner processes AND across
@@ -92,11 +104,12 @@ describe("getSqliteDatabase", () => {
     tmpDbPath = path.join(import.meta.dir, "../../.tmp", `sqlite-handle-probe-${process.pid}-${RUN_ID}.db`,);
     process.env.LOOP_LORE_DB_PATH = tmpDbPath;
     try {
-      const singleton = getDatabase();
+      getDatabase();
       const handle = getSqliteDatabase();
       expect(handle,).not.toBeNull();
       expect(handle!.query("SELECT 1 AS one",).get(),).toEqual({ one: 1, },);
-      void singleton.destroy();
+      // Unbind instead of destroying: a bare destroy leaves the handle bound.
+      await resetDatabaseSingleton();
     } finally {
       // Restored HERE, not only in afterEach: the path is needed just for the
       // synchronous singleton creation, and leaving a mutated process-global
