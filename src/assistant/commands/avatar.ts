@@ -37,4 +37,7 @@ const avatarCommandHandler = (args: string[], ctx: { currentCharacter?: { id: st
   };
 };
 
-registerCommand("avatar", avatarCommandHandler, { available: resolveImageCommandAvailability(), capabilities: ["write-asset", "network",], },);
+registerCommand("avatar", avatarCommandHandler, {
+  available: resolveImageCommandAvailability(),
+  capabilities: ["write-asset", "network",],
+},);
