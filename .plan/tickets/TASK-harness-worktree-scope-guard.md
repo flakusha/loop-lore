@@ -3,7 +3,8 @@
 
 # TASK: Harness worktree scope guard
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Landed on dev (`a126ab26e` confine plugin-tool path args to the worktree root + `2db1c471c` symlink-escape close, both in ancestry): `src/harness/worktree-scope.ts` + `worktree-scope.test.ts`. Path-param guard + escalation shipped as the harness slice.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-harness-integration
@@ -19,6 +20,6 @@ Proposed src/harness/worktree-scope.ts plus an executePluginTool path-param guar
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete (`src/harness/worktree-scope.ts`; path-param guard + `request_root_change` escalation)
+- [x] Tests passing (`src/harness/worktree-scope.test.ts`)
+- [x] Documentation updated (Status Note records landing commits; guard semantics per ticket summary)

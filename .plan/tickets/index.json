@@ -24929,7 +24929,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-profile-aware-model-selection.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-ACP-PROFILE-HARNESS-ADAPTERS": {
     "hash": "47e8bae",
@@ -42913,7 +42913,7 @@
     "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-worktree-scope-guard.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-HASH-MENTION-RETRIEVAL-UX-FOR-CHAT-CONTEXT": {
     "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
