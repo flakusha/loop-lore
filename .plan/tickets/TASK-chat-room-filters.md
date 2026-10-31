@@ -8,7 +8,20 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** In Progress — coverage gap closed
+
+**Status Note (2026-10-31):** Review of the code found the ticket's Phases 1–3
+and the v1 slice of Phase 4 ALREADY implemented on dev: the filter bar + chips
+live in `src/components/chat/chat-list-panel.html`, filter state/persistence in
+`src/frontend/alpine/chat-filters.ts` (localStorage `chat-sidebar-filters`),
+and server-side AND-composed filter params (`type`, `archived`, `world`,
+`minMessages`, `maxMessages`, `updatedSince`, `sort`) in
+`src/routes/chats/list.ts` — no `room_filter` rows by design; the ticket's own
+§API specifies query params, not a table. The remaining gap was zero test
+coverage of the server-side filter params; this branch adds the
+"filter dimensions" suite in `src/routes/chats/list.test.ts`. Not implemented
+(by design, deferred per ticket §Combined Filter Support): tags,
+participantCount, hasAttachments, pinned, hasWorld dimensions — Epic 24 infra.
 **Priority:** Medium
 **Effort:** Med
 **Epic:** epic-chat-lifecycle-moderation
@@ -156,14 +169,14 @@ server-side combined filters. For v1:
 
 ## Acceptance Criteria
 
-- [ ] Filter chips render in sidebar below search
-- [ ] Selecting a filter narrows chat list instantly
-- [ ] Multiple filters compose (AND logic)
-- [ ] Active filters shown as removable chips
-- [ ] Filter state persists across page reloads
-- [ ] "Clear all" resets all filters
-- [ ] Server-side filtering works for type and world
-- [ ] Responsive: chips wrap on narrow screens
+- [x] Filter chips render in sidebar below search
+- [x] Selecting a filter narrows chat list instantly
+- [x] Multiple filters compose (AND logic)
+- [x] Active filters shown as removable chips
+- [x] Filter state persists across page reloads
+- [x] "Clear all" resets all filters
+- [x] Server-side filtering works for type and world
+- [x] Responsive: chips wrap on narrow screens
 
 ## Risk
 
