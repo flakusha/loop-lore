@@ -114,6 +114,11 @@
     // Imported by src/routes/v1/openapi.ts; the OpenAPI document is attached
     // to the app via Elysia's plugin chain, not a static edge from src/server.
     "@elysia/openapi",
+    // Imported by src/frontend/terminal-xterm.ts:14-15 (lazy-loaded xterm
+    // terminal panel, a browser bundle chunk) — src-only, so pass 1 cannot see
+    // the edge.
+    "@xterm/xterm",
+    "@xterm/addon-fit",
     "@markuplint/html-spec", // referenced by .markuplintrc.json (config), not imported in code
     "@markuplint/mustache-parser",
     // Type-only companions of packages imported above; no runtime import edge
