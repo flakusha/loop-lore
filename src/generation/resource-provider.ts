@@ -86,6 +86,10 @@ export async function callWithResource(
     throw new Error(`Resource "${resourceId}" is ${record.status}`,);
   }
 
+  if (record.ownerId && opts.userId && record.ownerId !== opts.userId) {
+    throw new Error(`Resource "${resourceId}" forbidden`,);
+  }
+
   const quota = opts.quota ?? new QuotaEngine({ db: opts.db ?? null, },);
   await quota.consumeRequest(record.id, record.quota,);
   const resolved = await resolveProvider({
