@@ -6,6 +6,7 @@ import { SeductionService, } from "../../rpg/seduction/service";
 import type { ReputationTier, } from "../../schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import {
+  checkNsfwTargetAccess,
   log,
   nsfwAccessErrorResponse,
   requireNsfwActorAccess,
@@ -96,6 +97,10 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             const ownership = await requireNsfwActorAccess(database, actorId, ctx,);
             if (typeof ownership !== "string") { return ownership; }
+
+            if (targetId && !(await checkNsfwTargetAccess(database, targetId, userId, ctx.userRole ?? null, chatId,))) {
+              return jsonError("Forbidden", 403,);
+            }
 
             const consent = await requireNsfwRouteAccess(database, config, userId, {
               chatId,

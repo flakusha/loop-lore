@@ -6,6 +6,7 @@ import { EncounterService, } from "../../rpg/encounters/service";
 import { LocationNsfwService, } from "../../rpg/location-nsfw/service";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import {
+  checkNsfwTargetAccess,
   log,
   nsfwAccessErrorResponse,
   requireNsfwActorAccess,
@@ -38,6 +39,13 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             const ownership = await requireNsfwActorAccess(database, actorId, ctx,);
             if (typeof ownership !== "string") { return ownership; }
+
+            const participants = Array.isArray(body.participants,) ? (body.participants as string[]) : [];
+            for (const p of participants) {
+              if (!(await checkNsfwTargetAccess(database, p, userId, ctx.userRole ?? null, chatId,))) {
+                return jsonError("Forbidden", 403,);
+              }
+            }
 
             const access = await requireNsfwRouteAccess(database, config, userId, {
               chatId,

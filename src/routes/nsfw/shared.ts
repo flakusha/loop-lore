@@ -120,6 +120,45 @@ export async function requireNsfwRouteAccess(
 }
 
 /**
+ * Verify the caller may mutate the given NSFW target actor. A target is
+ * allowed when it is owned by the caller (or admin/solo/tester via
+ * `checkActorOwnership`) OR, when a `chatId` is supplied, it is a
+ * participant in that chat. Prevents cross-user state mutation via
+ * `targetActorId`/`targetId`/`participants` body fields.
+ * @param database
+ * @param targetActor
+ * @param userId
+ * @param userRole
+ * @param chatId
+ * @returns {Promise<boolean>}
+ */
+export async function checkNsfwTargetAccess(
+  database: Kysely<DB>,
+  targetActor: string,
+  userId: string,
+  userRole: string | null,
+  chatId: string | null,
+): Promise<boolean> {
+  if (!targetActor) { return true; }
+  if (await checkActorOwnership(database, targetActor, userId, userRole,)) {
+    return true;
+  }
+
+  if (chatId) {
+    const row = await database
+      .selectFrom("chat_participants",)
+      .select("actor_id",)
+      .where("chat_id", "=", chatId,)
+      .where("actor_id", "=", targetActor,)
+      .executeTakeFirst();
+
+    if (row) { return true; }
+  }
+
+  return false;
+}
+
+/**
  * Convert a {@link NsfwRouteAccessFailure} into an HTTP response.
  * @param reason
  * @returns {Response}
