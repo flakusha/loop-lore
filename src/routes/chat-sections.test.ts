@@ -344,6 +344,24 @@ describe("chatSectionsRoutes", () => {
     expect(row?.section_id,).toBe(sectionId,);
   });
 
+  test("create normalizes an empty locationId to null", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ label: "Empty Id", locationId: "", },),
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
+    const sectionId = ((await res.json()) as { id: string }).id;
+    const row = await db.selectFrom("chat_sections",).select("location_id",)
+      .where("id", "=", sectionId,).executeTakeFirst();
+
+    expect(row?.location_id,).toBeNull();
+  });
+
   // ── Multi-location binding: locationId must resolve inside the chat's world ──
 
   test("create rejects a foreign-world location with 404", async () => {
