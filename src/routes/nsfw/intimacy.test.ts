@@ -178,7 +178,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
 
   test("owner applies action → 200", async () => {
     const { userId, actorId, } = await seedAuthorized("put",);
-    const targetId = await seedTarget("put",);
+    await seedTarget("put",);
     const res = await makeApp(userId,).handle(
       new Request("http://localhost/api/nsfw/intimacy/action", {
         method: "POST",
