@@ -25,6 +25,7 @@ import { ENCRYPTION_DEFAULTS, } from "./encryption";
 import { FEDERATION_DEFAULTS, } from "./federation";
 import { FRONTEND_DEFAULTS, } from "./frontend";
 import { GENERATION_DEFAULTS, } from "./generation";
+import { HARNESS_DEFAULTS, } from "./harness";
 import { HEADERS_SECTION_DEFAULTS, } from "./headers";
 import { HOOKS_DEFAULTS, } from "./hooks";
 import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
@@ -91,6 +92,7 @@ export const createConfigSchema = () => {
     seeding: deepClone(SEEDING_DEFAULTS,),
     cron: deepClone(CRON_DEFAULTS,),
     integrations: deepClone(INTEGRATIONS_DEFAULTS,),
+    harness: deepClone(HARNESS_DEFAULTS,),
     templates: deepClone(TEMPLATES_DEFAULTS,),
     characters: deepClone(CHARACTERS_DEFAULTS,),
     web: deepClone(WEB_DEFAULTS,),
@@ -124,6 +126,7 @@ export const createConfigSchema = () => {
         federation: sections.federation,
         seeding: sections.seeding,
         cron: sections.cron,
+        harness: sections.harness,
         templates: sections.templates,
         characters: sections.characters,
         integrations: sections.integrations,

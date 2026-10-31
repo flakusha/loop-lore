@@ -39,6 +39,24 @@ export const HARNESS_TASK_TYPES = [
   "other",
 ] as const;
 
+/** Harness tiers recorded on ACP-dispatched runs; unknown values coerce to null. */
+export const HARNESS_TIERS = ["good", "fast",] as const;
+
+/** A harness tier as carried by run records. */
+export type HarnessTier = (typeof HARNESS_TIERS)[number];
+
+/** Runtime membership test for the tier union. */
+const TIER_SET: ReadonlySet<string> = new Set<string>(HARNESS_TIERS,);
+
+/**
+ * Coerce an untrusted wire value to a known harness tier.
+ * @param v - the raw `tier` from the JSONL
+ * @returns the value when it is a union member, otherwise null.
+ */
+function toTier(v: unknown,): HarnessTier | null {
+  return typeof v === "string" && TIER_SET.has(v,) ? (v as HarnessTier) : null;
+}
+
 /** What a run was doing, independent of the model. */
 export type HarnessTaskType = (typeof HARNESS_TASK_TYPES)[number];
 
@@ -81,6 +99,12 @@ interface HarnessRunWire {
    * parser must tolerate the key being missing entirely — not just null.
    */
   turn_id?: string | null;
+  /** External-harness profile name; null for internal provider dispatches. */
+  profile?: string | null;
+  /** Harness tier of the run; unknown values deserialize to null. */
+  tier?: string | null;
+  /** ACP session id reported by the harness, when any. */
+  acp_session_id?: string | null;
 }
 
 /**
@@ -111,6 +135,9 @@ export function serializeRun(record: HarnessRunRecord,): HarnessRunWire {
     git_sha: record.gitSha,
     msg: record.msg,
     turn_id: record.turnId,
+    profile: record.profile,
+    tier: record.tier,
+    acp_session_id: record.acpSessionId,
   };
 }
 
@@ -160,5 +187,10 @@ export function deserializeRun(line: string,): HarnessRunRecord | null {
     // a hand-written one may carry anything: both mean "no turn", so neither
     // may fabricate an id or cost the whole line.
     turnId: typeof w.turn_id === "string" ? w.turn_id : null,
+    profile: typeof w.profile === "string" ? w.profile : null,
+    // An unknown tier string coerces to null exactly like taskType coerces to
+    // "other": a hand-written tier must not leak into selector logic.
+    tier: toTier(w.tier,),
+    acpSessionId: typeof w.acp_session_id === "string" ? w.acp_session_id : null,
   };
 }
