@@ -17,6 +17,7 @@ import { encryption, } from "./encryption";
 import { federation, } from "./federation";
 import { frontend, } from "./frontend";
 import { generation, } from "./generation";
+import { harness, } from "./harness";
 import { headers, } from "./headers";
 import { hooks, } from "./hooks";
 import { idempotency, } from "./idempotency";
@@ -89,6 +90,7 @@ export const jsonSchema = (): JSONSchema => {
       characters,
       cron,
       integrations,
+      harness,
       web,
     },
     required: [
