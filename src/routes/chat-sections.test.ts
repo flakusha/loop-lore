@@ -343,4 +343,102 @@ describe("chatSectionsRoutes", () => {
     expect(row?.content,).toBe("The party rides north.",);
     expect(row?.section_id,).toBe(sectionId,);
   });
+
+  // ── Multi-location binding: locationId must resolve inside the chat's world ──
+
+  test("create rejects a foreign-world location with 404", async () => {
+    const otherWorldId = uid();
+    await insertWorlds(db, userId, `Foreign World ${otherWorldId}`, { id: otherWorldId, },);
+    const foreignLocId = uid();
+    await insertLocations(db, otherWorldId, "Foreign Tavern", { id: foreignLocId, },);
+
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ label: "Impossible Section", locationId: foreignLocId, },),
+      },),
+    );
+
+    expect(res.status,).toBe(404,);
+    const listed = await app.handle(new Request(`http://localhost/api/chats/${chatId}/sections`,),);
+    const labels = ((await listed.json()).data as { label: string }[]).map((s,) => s.label);
+    expect(labels,).not.toContain("Impossible Section",);
+  });
+
+  test("create rejects a location on a world-less chat with 400", async () => {
+    const worldlessChat = uid();
+    await insertChats(db, "Worldless Section Chat", userId, { id: worldlessChat, },);
+
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${worldlessChat}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ label: "Nowhere", locationId: locId, },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("patch rejects a foreign-world location with 404", async () => {
+    const app = createApp(db, userId,);
+    const created = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ label: "Patch Target", },),
+      },),
+    );
+
+    const sectionId = ((await created.json()) as { id: string }).id;
+
+    const otherWorldId = uid();
+    await insertWorlds(db, userId, `Patch Foreign World ${otherWorldId}`, { id: otherWorldId, },);
+    const foreignLocId = uid();
+    await insertLocations(db, otherWorldId, "Foreign Cave", { id: foreignLocId, },);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections/${sectionId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: foreignLocId, },),
+      },),
+    );
+
+    expect(res.status,).toBe(404,);
+    const row = await db.selectFrom("chat_sections",).select("location_id",)
+      .where("id", "=", sectionId,).executeTakeFirst();
+
+    expect(row?.location_id,).toBeNull();
+  });
+
+  test("patch with locationId null clears the binding", async () => {
+    const app = createApp(db, userId,);
+    const created = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ label: "To Be Cleared", locationId: locId, },),
+      },),
+    );
+
+    const sectionId = ((await created.json()) as { id: string }).id;
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/sections/${sectionId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: null, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const row = await db.selectFrom("chat_sections",).select("location_id",)
+      .where("id", "=", sectionId,).executeTakeFirst();
+
+    expect(row?.location_id,).toBeNull();
+  });
 });
