@@ -10,9 +10,18 @@
  * emitted after it became markup. The fix escapes `<`, `>` and `&` as JSON
  * `\\uXXXX` sequences, which JSON.parse decodes back to the original text.
  */
-import { describe, expect, test, } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
+import { createLogger, } from "../../logger";
 import { escapeJsonForScript, } from "./escape-html";
 import { respond, } from "./layout";
+
+beforeAll(() => {
+  // layout.wrapWithLayout → editorBootstrap → loadConfig → template expansion
+  // calls getLogger(), which throws unless a root logger exists. Other tests
+  // initialize it as a module side effect; --isolate processes skip that, so
+  // init here explicitly.
+  createLogger({ level: "error", },);
+},);
 
 describe("escapeJsonForScript", () => {
   test("a closing script tag in a value cannot terminate the block", () => {
