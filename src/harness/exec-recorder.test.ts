@@ -17,6 +17,7 @@ import { resetExecLogPath, setExecLogPath, } from "./exec-log";
 import { buildRunRecord, computeCostUsd, recordExecRun, } from "./exec-recorder";
 import { getRun, listRuns, } from "./query";
 import { LOG_PID, resetGitContext, } from "./run-context";
+import * as typesWire from "./types-wire";
 
 const TMP_ROOT = ".tmp/harness-recorder";
 
@@ -201,6 +202,53 @@ describe("harness exec recorder", () => {
       const raw = readFileSync(log, "utf8",).trim();
       expect(raw.includes('"run_id":',),).toBe(true,);
       expect(raw.includes('"tokens_in":',),).toBe(true,);
+    });
+
+    it("round-trips profile/tier/acp_session_id through the wire format", () => {
+      const { serializeRun, deserializeRun, } = typesWire;
+      const record = buildRunRecord({
+        taskType: "harness",
+        model: "zai/glm-5.3",
+        runMs: 5,
+        result: "ok",
+        usage: { promptTokens: 10, completionTokens: 5, },
+        profile: "glm",
+        tier: "good",
+        acpSessionId: "sess-42",
+      },);
+
+      const line = JSON.stringify(serializeRun(record,),);
+      const parsed = deserializeRun(line,);
+      expect(parsed?.profile,).toBe("glm",);
+      expect(parsed?.tier,).toBe("good",);
+      expect(parsed?.acpSessionId,).toBe("sess-42",);
+      // Snake_case on disk.
+      expect(line.includes('"acp_session_id":"sess-42"',),).toBe(true,);
+    });
+
+    it("coalesces missing/unknown profile fields to null like turnId", () => {
+      const { serializeRun, deserializeRun, } = typesWire;
+      const record = buildRunRecord({
+        taskType: "chat",
+        model: "m",
+        runMs: 1,
+        result: "ok",
+      },);
+
+      const line = JSON.stringify(serializeRun(record,),);
+      const parsed = deserializeRun(line,);
+      expect(parsed?.profile,).toBeNull();
+      expect(parsed?.tier,).toBeNull();
+      expect(parsed?.acpSessionId,).toBeNull();
+      // A hand-written unknown tier coerces to null, like taskType → "other".
+      const legacy = JSON.parse(line,) as Record<string, unknown>;
+      legacy.tier = "mystery";
+      legacy.profile = "old-profile";
+      legacy.acp_session_id = 123;
+      const fromWire = deserializeRun(JSON.stringify(legacy,),);
+      expect(fromWire?.tier,).toBeNull();
+      expect(fromWire?.profile,).toBe("old-profile",);
+      expect(fromWire?.acpSessionId,).toBeNull();
     });
 
     it("never throws when the log path is unwritable", () => {

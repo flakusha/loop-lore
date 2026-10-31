@@ -3,6 +3,7 @@
 
 // src/config/schema-class/validate.ts — config validation
 import type { Config, } from "../schema";
+import { validateAcpProfiles, } from "../sections/harness";
 
 /**
  * @param config - Fully merged config to check, after defaults are applied.
@@ -113,4 +114,8 @@ export const validate = (config: Config,): void => {
   if (typeof config.web.editor !== "string" || config.web.editor.trim() === "") {
     throw new Error(`Invalid web.editor: "${config.web.editor}"`,);
   }
+
+  // External harness profiles: duplicate names, unknown tier keys, and
+  // non-`provider/id` models are config rot — reject at load, not at dispatch.
+  validateAcpProfiles(config.harness.acp,);
 };

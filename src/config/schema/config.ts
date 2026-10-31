@@ -22,6 +22,7 @@ import type { EncryptionConfig, } from "./encryption";
 import type { FederationConfig, } from "./federation";
 import type { FrontendConfig, } from "./frontend";
 import type { GenerationConfig, } from "./generation";
+import type { HarnessConfig, } from "./harness";
 import type { HeadersConfig, } from "./headers";
 import type { HooksConfig, } from "./hooks";
 import type { IdempotencyConfig, } from "./idempotency";
@@ -68,4 +69,5 @@ export interface Config {
   cron: CronConfig;
   federation: FederationConfig;
   integrations: IntegrationsConfig;
+  harness: HarnessConfig;
 }

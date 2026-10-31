@@ -22,6 +22,7 @@ export * from "./encryption";
 export * from "./federation";
 export * from "./frontend";
 export * from "./generation";
+export * from "./harness";
 export * from "./headers";
 export * from "./hooks";
 export * from "./integrations";

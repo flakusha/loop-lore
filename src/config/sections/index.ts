@@ -18,6 +18,13 @@ export { DOCS_DEFAULTS, docsMeta, DocsSection, } from "./docs";
 export { DYNAMIC_RESPONSE_DEFAULTS, dynamicResponseMeta, DynamicResponseSection, } from "./dynamic-response";
 export { ENCRYPTION_DEFAULTS, encryptionMeta, EncryptionSection, } from "./encryption";
 export { GENERATION_DEFAULTS, generationMeta, GenerationSection, } from "./generation";
+export {
+  HARNESS_DEFAULTS,
+  harnessMeta,
+  HarnessSection,
+  isConcreteModelId,
+  validateAcpProfiles,
+} from "./harness";
 export { CSP_DEFAULTS, HEADERS_DEFAULTS, headersMeta, HeadersSection, } from "./headers";
 export {
   INTEGRATIONS_DEFAULTS,

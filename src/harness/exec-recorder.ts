@@ -9,7 +9,7 @@
  */
 import { appendExecLog, } from "./exec-log";
 import { getGitContext, LOG_PID, newRunId, } from "./run-context";
-import type { HarnessResult, HarnessRunRecord, HarnessTaskType, } from "./types";
+import type { HarnessResult, HarnessRunRecord, HarnessTaskType, HarnessTier, } from "./types";
 
 /** Token usage reported by a provider response. */
 export interface ExecUsage {
@@ -44,6 +44,15 @@ export interface ExecRunInput {
    * in scope; the record then carries null, never a fabricated id.
    */
   turnId?: string | null;
+  /**
+   * External-harness profile name when the call went through an ACP profile
+   * (e.g. the omp adapter). Null/omitted for internal provider dispatches.
+   */
+  profile?: string | null;
+  /** Harness tier of the selected profile model (`good`/`fast`). */
+  tier?: HarnessTier | null;
+  /** ACP session id of the turn, when the harness reported one. */
+  acpSessionId?: string | null;
 }
 
 /**
@@ -113,6 +122,9 @@ export function buildRunRecord(input: ExecRunInput,): HarnessRunRecord {
     pid: LOG_PID,
     msg: input.msg ?? null,
     turnId: input.turnId ?? null,
+    profile: input.profile ?? null,
+    tier: input.tier ?? null,
+    acpSessionId: input.acpSessionId ?? null,
   };
 }
 
