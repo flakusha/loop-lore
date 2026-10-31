@@ -6088,23 +6088,7 @@ export async function insertAssistantQuotaUsage(
   } as any,).execute();
   return (restOpts as Record<string, unknown>).user_id as string;
 }
-/** Insert a chat_owners row. */
-export async function insertChatOwners(
-  db: Db,
-  chat_id: string,
-  user_id: string,
-  opts?: { id?: string; granted_by?: string | null; granted_at?: string; reason?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("chat_owners",).values({
-    id,
-    chat_id,
-    user_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
+
 /** Insert a immersion_failed_checks row. */
 export async function insertImmersionFailedChecks(
   db: Db,
@@ -6156,98 +6140,38 @@ export async function insertImmersionDecisionLog(
   return id;
 }
 
-/** Insert a tool_call_audit row. */
-export async function insertToolCallAudit(
+/** Insert a chat_owners row. */
+export async function insertChatOwners(
   db: Db,
-  tool: string,
-  verdict: string,
-  opts?: {
-    id?: string;
-    chat_id?: string;
-    user_id?: string;
-    rationale?: string;
-    escalation_attempt?: number;
-    required_role?: string | null;
-    tags?: string;
-    duration_ms?: number;
-    created_at?: string;
-  },
+  chat_id: string,
+  user_id: string,
+  opts?: { id?: string; granted_by?: string | null; granted_at?: string; reason?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("tool_call_audit",).values({
+  await db.insertInto("chat_owners",).values({
     id,
-    tool,
-    verdict,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-/** Insert a model_rankings row. */
-export async function insertModelRankings(
-  db: Db,
-  scope: string,
-  subject_key: string,
-  metric: string,
-  value: number,
-  basis: string,
-  source: string,
-  observed_at: string,
-  opts?: {
-    id?: string;
-    scope_key?: string;
-    unit?: string | null;
-    source_version?: string | null;
-    source_ref?: string | null;
-    expires_at?: string | null;
-    meta?: string;
-    created_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("model_rankings",).values({
-    id,
-    scope,
-    subject_key,
-    metric,
-    value,
-    basis,
-    source,
-    observed_at,
+    chat_id,
+    user_id,
     ...restOpts,
   } as any,).execute();
   return id;
 }
 
-/** Insert a ranking_snapshots row. */
-export async function insertRankingSnapshots(
+/** Insert a world_timeline_selections row. */
+export async function insertWorldTimelineSelections(
   db: Db,
-  source: string,
-  version: string,
-  next_refresh_after: string,
-  opts?: {
-    id?: string;
-    source_key?: string;
-    checksum?: string | null;
-    fetched_at?: string;
-    row_count?: number | null;
-    payload?: string;
-    status?: string;
-    last_error?: string | null;
-    meta?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("ranking_snapshots",).values({
-    id,
-    source,
-    version,
-    next_refresh_after,
-    ...restOpts,
+  user_id: string,
+  world_id: string,
+  timeline_id: string,
+  selected_at: string,
+): Promise<void> {
+  await db.insertInto("world_timeline_selections",).values({
+    user_id,
+    world_id,
+    timeline_id,
+    selected_at,
   } as any,).execute();
-  return id;
 }
 
 /** Insert a resource_records row. */
@@ -6316,18 +6240,97 @@ export async function insertResourceQuotaCounters(
   return (restOpts as Record<string, unknown>).resource_id as string;
 }
 
-/** Insert a world_timeline_selections row. */
-export async function insertWorldTimelineSelections(
+/** Insert a model_rankings row. */
+export async function insertModelRankings(
   db: Db,
-  user_id: string,
-  world_id: string,
-  timeline_id: string,
-  selected_at: string,
-): Promise<void> {
-  await db.insertInto("world_timeline_selections",).values({
-    user_id,
-    world_id,
-    timeline_id,
-    selected_at,
+  scope: string,
+  subject_key: string,
+  metric: string,
+  value: number,
+  basis: string,
+  source: string,
+  observed_at: string,
+  opts?: {
+    id?: string;
+    scope_key?: string;
+    unit?: string | null;
+    source_version?: string | null;
+    source_ref?: string | null;
+    expires_at?: string | null;
+    meta?: string;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("model_rankings",).values({
+    id,
+    scope,
+    subject_key,
+    metric,
+    value,
+    basis,
+    source,
+    observed_at,
+    ...restOpts,
   } as any,).execute();
+  return id;
+}
+
+/** Insert a ranking_snapshots row. */
+export async function insertRankingSnapshots(
+  db: Db,
+  source: string,
+  version: string,
+  next_refresh_after: string,
+  opts?: {
+    id?: string;
+    source_key?: string;
+    checksum?: string | null;
+    fetched_at?: string;
+    row_count?: number | null;
+    payload?: string;
+    status?: string;
+    last_error?: string | null;
+    meta?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("ranking_snapshots",).values({
+    id,
+    source,
+    version,
+    next_refresh_after,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a tool_call_audit row. */
+export async function insertToolCallAudit(
+  db: Db,
+  tool: string,
+  verdict: string,
+  opts?: {
+    id?: string;
+    chat_id?: string;
+    user_id?: string;
+    rationale?: string;
+    escalation_attempt?: number;
+    required_role?: string | null;
+    tags?: string;
+    duration_ms?: number;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("tool_call_audit",).values({
+    id,
+    tool,
+    verdict,
+    ...restOpts,
+  } as any,).execute();
+  return id;
 }
