@@ -137,6 +137,7 @@ export function satisfiesRole(actual: ChatParticipantRole, required: ChatPartici
  * @param handler - Handler function
  * @param opts - Optional registration options (e.g. `requiredRole`)
  * @returns {void}
+ * @throws {Error} when capabilities missing/empty
  */
 export function registerCommand(
   name: string,
@@ -144,8 +145,11 @@ export function registerCommand(
   opts?: CommandOptions,
 ): void {
   if (!opts?.capabilities || opts.capabilities.length === 0) {
-    throw new Error(`registerCommand("${name}"): missing or empty capabilities — every command must declare at least one capability tag.`);
+    throw new Error(
+      `registerCommand("${name}"): missing or empty capabilities — every command must declare at least one capability tag.`,
+    );
   }
+
   handlers.set(name.toLowerCase(), {
     ...opts,
     handler,
