@@ -216,6 +216,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-model-discovery-capability-enrichment.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
     },
     {
@@ -35687,6 +35691,12 @@
       "source": ".plan/tickets/TASK-integration-infrastructure.md"
     }
   ],
+  "src/integrations/registry": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-acp-driver-module.md"
+    }
+  ],
   "src/integrations/secrets.ts": [
     {
       "kind": "ticket",
@@ -38169,6 +38179,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-plugin-runtime.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-optional-dep-packaging.md"
     }
   ],
   "src/native/modules/compression.ts": [
