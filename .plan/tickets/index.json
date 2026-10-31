@@ -32146,7 +32146,7 @@
     "label": "task",
     "priority": "Low",
     "source": ".plan/tickets/TASK-chat-backgrounds-location-sync.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Chat Backgrounds — Static/Dynamic with Location Sync",
     "type": "TASK"
@@ -32282,7 +32282,7 @@
     "label": "task",
     "priority": "Low",
     "source": ".plan/tickets/TASK-chat-external-music-linking.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Chat External Music Linking",
     "type": "TASK"
