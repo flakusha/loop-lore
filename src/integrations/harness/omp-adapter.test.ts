@@ -92,7 +92,7 @@ describe("OmpAcpAdapter (fake ACP fixture)", () => {
       },],),
     },);
 
-    const adapter = new OmpAcpAdapter({ command: withReports.argv, },);
+    const adapter = makeAdapter({ command: withReports.argv, },);
     const reports = await adapter.fetchUsageReports();
     expect(reports,).toEqual([
       { providerId: "zai", status: "exhausted", remainingFraction: 0, resetsAt: "2030-01-01T00:00:00Z", },
