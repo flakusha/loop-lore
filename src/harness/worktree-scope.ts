@@ -164,7 +164,8 @@ function logEscalation(toolName: string, key: string, value: string,): void {
  * a transport added to the root mid-suite never sees a pre-existing child's
  * entries.
  */
-let logSource: () => Logger | null = () => getChildLogger("harness/worktree-scope",);
+const defaultLogSource: () => Logger | null = () => getChildLogger("harness/worktree-scope",);
+let logSource: () => Logger | null = defaultLogSource;
 
 /**
  * Replace the escalation logger source. Test-only seam.
@@ -172,4 +173,15 @@ let logSource: () => Logger | null = () => getChildLogger("harness/worktree-scop
  */
 export function setScopeLogSourceForTests(source: () => Logger | null,): void {
   logSource = source;
+}
+
+/**
+ * Reinstate the default escalation logger source. Test-only seam: suites
+ * that replace the source via {@link setScopeLogSourceForTests} call this in
+ * `afterEach`/`finally` so the module never stays silenced for the rest of
+ * the process (parallel-safe contract — the module default must survive
+ * tests, not be left as a permanently null-returning stub).
+ */
+export function resetScopeLogSourceForTests(): void {
+  logSource = defaultLogSource;
 }

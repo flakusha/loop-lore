@@ -4,6 +4,12 @@
 /**
  * Tests for the worktree scope guard. Parallel-safe: every test builds its
  * own mkdtemp fixture and cleans it in afterEach, including failure paths.
+ *
+ * Resource contract: per-test mkdtemp dirs under tmpdir (removed in
+ * afterEach on all paths); the module-global escalation log source is the
+ * only shared seam — set only inside the one escalation test, restored via
+ * `resetScopeLogSourceForTests()` in its finally AND in a describe-level
+ * afterEach safety net, so the default child logger survives the suite.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdtempSync, rmSync, symlinkSync, writeFileSync, } from "node:fs";
@@ -14,6 +20,7 @@ import {
   assertParamsWithinScope,
   isWithinScope,
   PathOutsideScopeError,
+  resetScopeLogSourceForTests,
   resolveWithinScope,
   setScopeLogSourceForTests,
 } from "./worktree-scope";
@@ -119,6 +126,12 @@ describe("assertParamsWithinScope", () => {
   let outside = "";
   let created: string[] = [];
 
+  // Safety net: even if an assertion throws before the test's own finally
+  // runs, the module-global escalation log source must not stay silenced.
+  afterEach(() => {
+    resetScopeLogSourceForTests();
+  },);
+
   beforeEach(() => {
     root = mkdtempSync(join(tmpdir(), "scope-params-",),);
     outside = mkdtempSync(join(tmpdir(), "scope-params-out-",),);
@@ -170,7 +183,9 @@ describe("assertParamsWithinScope", () => {
         root: process.cwd(),
       },);
     } finally {
-      setScopeLogSourceForTests(() => null);
+      // Reinstate the module default — `() => null` would permanently
+      // silence escalation logging for the rest of the process.
+      resetScopeLogSourceForTests();
     }
   });
 });
