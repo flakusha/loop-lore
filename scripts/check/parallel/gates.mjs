@@ -198,7 +198,12 @@ function subsystemTestTargets(files,) {
     const segments = f.split("/",);
     targets.add(segments.length > 2 ? `${segments[0]}/${segments[1]}/` : f,);
   }
-  return [...targets,].sort();
+  // A target dir without a single *.test.ts makes `bun test` fail with
+  // "filters did not match any test files" (reproduced with a diff touching
+  // only src/views/settings.html: companion filter src/views/ found nothing
+  // and exited 1). Drop such targets so a diff with no testable modules
+  // reports skipped/no-op instead of failing the coverage gate.
+  return [...targets,].sort().filter((t,) => walkTestFiles(PROJECT_ROOT, t,).length > 0);
 }
 
 checks["coverage - per-module line %"] = coverageCommand();
