@@ -209,4 +209,60 @@ describe("settings backup mixin", () => {
     await host.recoverBackup("b1",);
     expect(host.backupNotice,).toBe("backupRecoverFailed",);
   });
+
+  test("restore network error reports backupRecoverFailed", async () => {
+    handler = async () => {
+      throw new Error("offline",);
+    };
+
+    const host = freshHost();
+    await host.recoverBackup("b1",);
+    expect(host.backupNotice,).toBe("backupRecoverFailed",);
+  });
+
+  test("loadBackupPrefs merges server settings over defaults", async () => {
+    handler = async (url: string,) => {
+      if (url === "/api/v1/settings") {
+        return Response.json({ backupEnabled: true, backupTypes: { chat: true, }, },);
+      }
+
+      return Response.json({},);
+    };
+
+    const host = freshHost();
+    await host.loadBackupPrefs();
+    expect(host.backupEnabled,).toBe(true,);
+    expect(host.backupTypes["chat"],).toBe(true,);
+    expect(host.backupTypes["world"],).toBe(false,);
+  });
+
+  test("loadBackupPrefs falls back to the localStorage mirror", async () => {
+    handler = async () => new Response("offline", { status: 500, },);
+    store["backup-prefs"] = JSON.stringify({ enabled: true, types: { lore: true, }, },);
+    const host = freshHost();
+    await host.loadBackupPrefs();
+    expect(host.backupEnabled,).toBe(true,);
+    expect(host.backupTypes["lore"],).toBe(true,);
+  });
+
+  test("loadBackupPrefs ignores malformed mirror json", async () => {
+    store["backup-prefs"] = "{not json";
+    const host = freshHost();
+    await host.loadBackupPrefs();
+    expect(host.backupEnabled,).toBe(false,);
+  });
+
+  test("saveBackupPrefs survives a throwing localStorage mirror", async () => {
+    globals.localStorage = {
+      getItem: () => null,
+      setItem: () => {
+        throw new Error("quota",);
+      },
+      removeItem: () => {},
+    };
+
+    const host = freshHost();
+    await host.saveBackupPrefs();
+    expect(persisted[0]?.["backupEnabled"],).toBe(false,);
+  });
 });
