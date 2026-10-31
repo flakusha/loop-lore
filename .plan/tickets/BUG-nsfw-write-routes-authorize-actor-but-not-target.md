@@ -3,7 +3,7 @@
 
 # BUG: NSFW write routes authorize actor but not target
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-nsfw-capabilities
