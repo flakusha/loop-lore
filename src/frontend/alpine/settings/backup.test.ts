@@ -194,15 +194,16 @@ describe("settings backup mixin", () => {
     expect(calls.length,).toBe(0,);
   });
 
-  test("confirmed recovery verifies then reports restore", async () => {
+  test("confirmed recovery calls the restore endpoint directly", async () => {
     handler = async () => Response.json({ ok: true, },);
     const host = freshHost();
     await host.recoverBackup("b1",);
-    expect(calls[0]?.url,).toBe("/api/admin/resources/backups/b1/verify",);
+    expect(calls.length,).toBe(1,);
+    expect(calls[0]?.url,).toBe("/api/v1/settings/backups/b1/restore",);
     expect(host.backupNotice,).toBe("backupRestored",);
   });
 
-  test("failed verification fails safe", async () => {
+  test("failed restore reports backupRecoverFailed", async () => {
     handler = async () => new Response("tampered", { status: 409, },);
     const host = freshHost();
     await host.recoverBackup("b1",);
