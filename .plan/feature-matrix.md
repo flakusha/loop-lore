@@ -1761,7 +1761,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2874 | 1293 | 47 | 876 | 29 | 0 | 629 |
+| (untagged) | 2874 | 1295 | 47 | 874 | 29 | 0 | 629 |
 
 ## By epic × status
 
@@ -1846,14 +1846,14 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | epic-chat-composer-flows | 10 | 9 | 0 | 0 | 0 | 0 | 1 |
 | epic-chat-context-optimization | 26 | 4 | 0 | 17 | 1 | 0 | 4 |
 | epic-chat-context-optimization, epic-group-chat | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-chat-lifecycle-moderation | 53 | 25 | 1 | 20 | 0 | 0 | 7 |
+| epic-chat-lifecycle-moderation | 53 | 26 | 1 | 19 | 0 | 0 | 7 |
 | epic-chat-lifecycle-moderation, epic-assistant-gm-flows | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-lifecycle-moderation, epic-group-chat | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-multi-ownership | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-privacy | 3 | 0 | 0 | 2 | 0 | 0 | 1 |
 | epic-chat-product-features | 37 | 11 | 0 | 23 | 0 | 0 | 3 |
 | epic-chat-rich-engagement | 6 | 5 | 0 | 0 | 0 | 0 | 1 |
-| epic-chat-transfer-location | 12 | 4 | 2 | 4 | 1 | 0 | 1 |
+| epic-chat-transfer-location | 12 | 5 | 2 | 3 | 1 | 0 | 1 |
 | epic-chat-variants-taxonomy | 14 | 14 | 0 | 0 | 0 | 0 | 0 |
 | epic-cicd-pipeline | 9 | 8 | 0 | 1 | 0 | 0 | 0 |
 | epic-classifier-template-packs | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
