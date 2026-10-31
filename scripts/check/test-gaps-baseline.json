@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-31T14:04:49.820Z",
-  "count": 1469,
+  "generatedAt": "2026-10-31T14:10:07.551Z",
+  "count": 1468,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -1099,7 +1099,6 @@
     "src/routes/nsfw-moderation/shared.ts#requireModerationReview",
     "src/routes/nsfw-moderation/shared.ts#requireOwnOrAdmin",
     "src/routes/nsfw/shared.ts#log",
-    "src/routes/nsfw/shared.ts#nsfwAccessErrorResponse",
     "src/routes/nsfw/shared.ts#requireNsfwActorAccess",
     "src/routes/plugins/config.ts#pluginConfigRoutes",
     "src/routes/proactive-messaging/auth.ts#authorizeProactiveTarget",

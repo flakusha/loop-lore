@@ -516,8 +516,10 @@ describe("checkForcedSkipAuthority (export gap: GM-override denial matrix)", () 
   });
 
   test("self-skip is allowed without a settings lookup", async () => {
+    // Nonexistent chat: any settings lookup would deny, so null proves the
+    // self-skip short-circuit runs before checkChatSettingsAccess.
     const denial = await checkForcedSkipAuthority(db, {
-      chatId: CHAT_ID,
+      chatId: crypto.randomUUID(),
       userId: MEMBER_ID,
       userRole: null,
       actorId: MEMBER_ID,
