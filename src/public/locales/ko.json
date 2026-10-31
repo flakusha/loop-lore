@@ -1908,7 +1908,9 @@
     "world-get": "Show a world's details (/world-get <world-id>)",
     "world-list": "List worlds",
     "world-update": "Update a world's fields (/world-update <world-id> key=value …)",
-    "reroll-emotion": "Re-roll a character's emotion-avatar slots (/reroll-emotion [@Name] [emotion...])"
+    "reroll-emotion": "Re-roll a character's emotion-avatar slots (/reroll-emotion [@Name] [emotion...])",
+    "reunite": "Merge a split branch chat back into this chat (/reunite <secondaryChatId>)",
+    "split": "Branch the party into per-location chats (/split <locationId>:<actorId[,actorId...]> ...)"
   },
   "participants": {
     "title": "Participants",

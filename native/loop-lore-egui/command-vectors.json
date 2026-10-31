@@ -239,7 +239,15 @@
       "name": "reroll-emotion"
     },
     {
+      "name": "reunite",
+      "requiredRole": "owner"
+    },
+    {
       "name": "review"
+    },
+    {
+      "name": "split",
+      "requiredRole": "owner"
     },
     {
       "name": "stats"
@@ -389,7 +397,9 @@
         "rewrite",
         "regen",
         "reroll-emotion",
+        "reunite",
         "review",
+        "split",
         "stats",
         "summarize",
         "timeline",
