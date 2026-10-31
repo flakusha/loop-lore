@@ -83,9 +83,8 @@ export const nsfwPanelState: Partial<ChatState> & ThisType<ChatState> = {
   async loadNsfwPanel() {
     const chatId = this.activeChat;
     if (!chatId) {
-      // A load captured for a chat that is no longer active must not clobber
-      // the now-active chat's panel state.
-      if (this.activeChat !== chatId) { return; }
+      // No active chat: reset the panel so stale state is not shown for a
+      // chat that has already been closed.
       this._nsfwIntimacy = null;
       this._nsfwBody = null;
       this._nsfwUnavailable = false;

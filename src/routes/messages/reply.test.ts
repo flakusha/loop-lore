@@ -276,7 +276,7 @@ describeReal("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-dis
       fail() {/* noop */},
       read: async () => null,
       flush: async () => undefined,
-      config: { offloadThresholdBytes: 0, baseDir: "/tmp/async-store-test", },
+      config: { offloadThresholdBytes: 0, },
     } as unknown as AsyncStore & {
       tracks: Array<{ id: string; method: string; routePattern: string; userId: string | null }>;
     };
@@ -733,7 +733,7 @@ describeReal("maybeAutoReply — initial job_status row (TASK-harness-inflight-j
       fail() {},
       read: async () => null,
       flush: async () => undefined,
-      config: { offloadThresholdBytes: 0, baseDir: "/tmp/async-store-test", },
+      config: { offloadThresholdBytes: 0, },
     } as unknown as AsyncStore;
   }
 
