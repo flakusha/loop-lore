@@ -3,7 +3,7 @@
 
 # TASK: ACP profile harness adapters
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-external-harness-acp
