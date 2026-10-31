@@ -251,6 +251,7 @@ describe("invocation audit", () => {
       expect(events[0]!.command,).toBe("audit-throw-probe",);
       expect(events[0]!.outputHash,).toMatch(/^[0-9a-f]{64}$/,);
     } finally {
+      __unregisterCommandForTests("audit-throw-probe",);
       if (priorLogger) { setGlobalLogger(priorLogger,); }
     }
   });
