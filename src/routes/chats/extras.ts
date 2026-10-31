@@ -4,6 +4,7 @@
 import { Elysia, } from "elysia";
 import { isChatOwner, updateImpersonation, } from "../../chat/service";
 import { recordLocationChange, } from "../../chat/service/location-events";
+import { ensureSectionForLocation, } from "../../chat/service/section-transition";
 import { can, } from "../../users/permissions";
 import {
   ChatIdParams,
@@ -105,6 +106,14 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
               fromLocationId: fullChat.current_location_id,
               toLocationId: locationId,
               source: "manual",
+            },);
+
+            // Multi-location spanning: the destination gets a journey section
+            // (no-op when the latest section already covers it).
+            await ensureSectionForLocation(tx, {
+              chatId: id,
+              locationId,
+              label: location.name,
             },);
 
             // Location-scoped background auto-sync (additive; doesn't move the

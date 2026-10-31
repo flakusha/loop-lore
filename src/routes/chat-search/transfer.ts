@@ -4,6 +4,7 @@
 import { Elysia, t, } from "elysia";
 import { checkChatAccess, } from "../../chat/service";
 import { recordLocationChange, } from "../../chat/service/location-events";
+import { ensureSectionForLocation, } from "../../chat/service/section-transition";
 import { autoSyncChatBackground, } from "../chat-backgrounds";
 import { forbiddenResponse as forbidden, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
@@ -78,6 +79,14 @@ export function transferRoutes(opts: HandlerOpts, prefix = "/api",) {
               fromLocationId: chat.current_location_id,
               toLocationId: body.locationId,
               source: "manual",
+            },);
+
+            // Multi-location spanning: the destination gets a journey section
+            // (no-op when the latest section already covers it).
+            await ensureSectionForLocation(tx, {
+              chatId,
+              locationId: body.locationId,
+              label: location.name,
             },);
 
             await autoSyncChatBackground(tx, chatId, body.locationId,);

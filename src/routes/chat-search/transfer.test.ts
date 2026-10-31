@@ -164,4 +164,59 @@ describe("chat-search transfer", () => {
 
     expect(assignments,).toHaveLength(0,);
   });
+
+  test("transfer creates a journey section bound to the destination", async () => {
+    const sectionChatId = crypto.randomUUID();
+    await insertChats(db, "Sectioning Chat", userId, { id: sectionChatId, world_id: worldId, } as never,);
+
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${sectionChatId}/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: locationA, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const sections = await db
+      .selectFrom("chat_sections",)
+      .select(["label", "location_id", "sort_index",],)
+      .where("chat_id", "=", sectionChatId,)
+      .orderBy("sort_index", "asc",)
+      .execute();
+
+    expect(sections,).toHaveLength(1,);
+    expect(sections[0],).toMatchObject({ label: "Location A", location_id: locationA, sort_index: 1, },);
+  });
+
+  test("repeat transfer to the latest section's location does not duplicate sections", async () => {
+    const sectionChatId = crypto.randomUUID();
+    await insertChats(db, "Dedupe Chat", userId, { id: sectionChatId, world_id: worldId, } as never,);
+
+    const app = createApp(db, userId,);
+    for (const locationId of [locationB, locationA, locationA,]) {
+      const res = await app.handle(
+        new Request(`http://localhost/api/chats/${sectionChatId}/transfer`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ locationId, },),
+        },),
+      );
+
+      expect(res.status,).toBe(200,);
+    }
+
+    const sections = await db
+      .selectFrom("chat_sections",)
+      .select(["label", "location_id", "sort_index",],)
+      .where("chat_id", "=", sectionChatId,)
+      .orderBy("sort_index", "asc",)
+      .execute();
+
+    // B → A → A: the second transfer to A is covered by the latest section.
+    expect(sections,).toHaveLength(2,);
+    expect(sections.map((s,) => s.location_id),).toEqual([locationB, locationA,],);
+  });
 });
