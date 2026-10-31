@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started — no inventory frontend directory exists (`src/frontend/inventory/` and `src/partials/inventory/` are absent). The trade backend ships (`src/routes/trade/`, `src/services/trade/`) and item CRUD ships (`src/routes/actor-items.ts`, `src/routes/story-items/`), so every capability below is frontend work with a backend to consume.
+**Status:** Done
+**Status Note:** Shipped Phases 1–4 + world-detail mounts + dead-renderer prune (live: alpine scopes + trade-panel/trade-offers logic + two partials); remaining gaps: weight/encumbrance (no backend), mobile-responsive, a11y criteria.
 **Priority:** P1 — High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -238,13 +238,13 @@ Complete inventory management and trading interface, including item grid/list vi
 
 ## Tasks
 
-| Task                      | Priority | Status         |
-| ------------------------- | -------- | -------------- |
-| TASK-inventory-grid.md    | P0       | ⬜ Not Started |
-| TASK-equipment-slots.md   | P0       | ⬜ Not Started |
-| TASK-item-details.md      | P0       | ⬜ Not Started |
-| TASK-trading-interface.md | P0       | ⬜ Not Started |
-| TASK-inventory-alpine.md  | P0       | ⬜ Not Started |
+| Task                      | Priority | Status    |
+| ------------------------- | -------- | --------- |
+| TASK-inventory-grid.md    | P0       | ✅ Done    |
+| TASK-equipment-slots.md   | P0       | ✅ Done    |
+| TASK-item-details.md      | P0       | ✅ Done    |
+| TASK-trading-interface.md | P0       | ✅ Done    |
+| TASK-inventory-alpine.md  | P0       | ✅ Done    |
 
 ## Backend Surfaces Consumed
 
@@ -259,13 +259,22 @@ backend surfaces:
 
 ## Files to Create
 
-Planned, does not exist yet:
+Shipped (exist):
 
-- `src/frontend/inventory/inventory-grid.ts` — Inventory display
-- `src/frontend/inventory/equipment-slots.ts` — Equipment loadout
-- `src/frontend/inventory/item-details.ts` — Item details panel
-- `src/frontend/inventory/trading-interface.ts` — Trading UI
-- `src/frontend/alpine/inventory.ts` — Alpine.js inventory logic
+- `src/frontend/inventory/inventory-grid.ts` — Inventory display (pure helpers)
+- `src/frontend/inventory/trade-panel.ts` — NPC trade logic (pure)
+- `src/frontend/inventory/trade-offers.ts` — P2P offer predicates/types
+- `src/frontend/alpine/inventory.ts` — Alpine inventory scope (incl. equip/unequip)
+- `src/frontend/alpine/inventory-trading.ts` — Alpine NPC-trading scope
+- `src/frontend/alpine/inventory-offers.ts` — Alpine P2P-offers scope
+- `src/components/inventory-panels.html` — inventory/equipment partial
+- `src/components/trade-window-panel.html` — P2P trade window partial
+
+Pruned as dead (`1e5d648f3`) — the logic lives in the Alpine scopes above:
+
+- `src/frontend/inventory/equipment-slots.ts` — Equipment loadout (pruned)
+- `src/frontend/inventory/item-details.ts` — Item details panel (pruned)
+- `src/frontend/inventory/trading-interface.ts` — Trading UI (pruned)
 
 ## Related Epics
 
