@@ -15,7 +15,7 @@
  */
 
 // oxlint-disable-next-line import/no-nodejs-modules
-import { existsSync, readdirSync, } from "node:fs";
+import { existsSync, readdirSync, statSync, } from "node:fs";
 // oxlint-disable-next-line import/no-nodejs-modules
 import path from "node:path";
 import { jscpdScanCommand, } from "../jscpd-scan.mjs";
@@ -163,6 +163,8 @@ function walkTestFiles(root, dir,) {
   const out = [];
   const abs = path.resolve(root, dir,);
   if (!existsSync(abs,)) { return out; }
+  // Diff-derived targets can be files (e.g. root-level src/*.ts) — only walk dirs.
+  if (!statSync(abs,).isDirectory()) { return abs.endsWith(".test.ts",) ? [dir,] : out; }
   const stack = [abs,];
   while (stack.length > 0) {
     const cur = stack.pop();
