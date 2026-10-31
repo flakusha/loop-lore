@@ -11,7 +11,7 @@
 **Epic:** epic-chat-lifecycle-moderation
 **Priority:** Low
 **Effort:** Medium
-**Status:** Not Started
+**Status:** Done
 **Source:** `.tmp/loop-lore-ideas.md` — Chat Atmosphere: linkable music
 
 ## Summary
