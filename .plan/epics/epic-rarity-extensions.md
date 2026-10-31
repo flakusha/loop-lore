@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Boxes 2–6 implemented on `feat-rarity-extensions` (ticket TASK-rarity-extended-event-distribution, issue 46d76f4): shared scale + distribution roll + weighted selection in `src/story/events/rarity.ts`, rarity→priority promotion in `src/story/events/promote-lore.ts`, spec in `docs/spec/rarity.md`, tests in `rarity.test.ts` + `promote-lore.test.ts`. Box 3 deviation: `src/db/schema-core.ts` is GENERATED — the unified schema is delivered as the shared TS value-object module with rarity riding in events' `data` JSON; the schema-level column is box 1. Box 1 (`rarity_multiplier` migration on `world_timeline_events`) intentionally NOT done here — owned by `TASK-timeline-rarity-multiplier` (timeline family).\
+**Status Note:** Boxes 2–6 implemented on `feat-rarity-extensions` (issue 46d76f4): shared scale + distribution roll + weighted selection in `src/story/events/rarity.ts`, rarity→priority promotion in `src/story/events/promote-lore.ts`, spec in `docs/spec/rarity.md`, tests in `rarity.test.ts` + `promote-lore.test.ts`. Box 3 deviation: `src/db/schema-core.ts` is GENERATED — the unified schema is delivered as the shared TS value-object module with rarity riding in events' `data` JSON; the schema-level column is box 1. Box 1 (`rarity_multiplier` migration on `world_timeline_events`) intentionally NOT done here — owned by `TASK-timeline-rarity-multiplier` (timeline family).\
 **Priority:** High\
 **Effort:** Medium\
 **Type:** Feature Epic\
