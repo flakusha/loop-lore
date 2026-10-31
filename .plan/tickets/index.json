@@ -24918,6 +24918,32 @@
     "source": ".plan/tickets/TASK-acp-driver-module.md",
     "status": "Not Started"
   },
+  "TASK-ACP-PROFILE-AWARE-MODEL-SELECTION": {
+    "hash": "9b543e6",
+    "git_issue": "9b543e6",
+    "extid": "TASK-ACP-PROFILE-AWARE-MODEL-SELECTION",
+    "type": "TASK",
+    "title": "ACP profile-aware model selection",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-profile-aware-model-selection.md",
+    "status": "Not Started"
+  },
+  "TASK-ACP-PROFILE-HARNESS-ADAPTERS": {
+    "hash": "47e8bae",
+    "git_issue": "47e8bae",
+    "extid": "TASK-ACP-PROFILE-HARNESS-ADAPTERS",
+    "type": "TASK",
+    "title": "ACP profile harness adapters",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-profile-harness-adapters.md",
+    "status": "Not Started"
+  },
   "TASK-ACTION-APPLICABILITY-GATE": {
     "epic": "epic-immersion-consistency-gate",
     "extid": "TASK-ACTION-APPLICABILITY-GATE",
