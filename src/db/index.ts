@@ -151,6 +151,22 @@ export function getDatabase(_databasePath?: string,): Kysely<DB> {
   return database;
 }
 
+/**
+ * Tear the lazily-created production singleton down and restore the
+ * pre-materialization state, so the NEXT getDatabase() call opens whatever
+ * path is current. Tests call this to stop module state leaking into sibling
+ * files: destroying the Kysely handle alone leaves `singletonSqlite` bound to
+ * a deleted probe DB, and every later DB-backed consumer then fails with
+ * "no such table".
+ * @returns resolves once the Kysely handle is destroyed
+ */
+export async function resetDatabaseSingleton(): Promise<void> {
+  const current = database;
+  database = null;
+  singletonSqlite = null;
+  if (current) { await current.destroy(); }
+}
+
 /** */
 export type Db = Kysely<DB>;
 

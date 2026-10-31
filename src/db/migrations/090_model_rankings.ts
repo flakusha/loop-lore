@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 084_model_rankings
+ * 090_model_rankings
  *
  * Append-only history for model measurements: fit verdicts (llmfit),
  * board quality scores, and local experience grades. Append-only is the

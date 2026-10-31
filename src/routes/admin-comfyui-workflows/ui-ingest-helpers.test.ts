@@ -50,7 +50,7 @@ describe("ui-ingest route helpers", () => {
 
     expect(Object.keys(snapshot,),).toEqual(["KSampler",],);
 
-    expect(snapshot.KSampler.input_order.required,).toEqual(["seed",],);
+    expect(snapshot.KSampler?.input_order?.required,).toEqual(["seed",],);
   });
 
   it("returns red diagnostics (no row) for an empty upload", () => {

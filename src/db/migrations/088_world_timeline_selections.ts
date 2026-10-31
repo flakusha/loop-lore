@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 084_world_timeline_selections
+ * 088_world_timeline_selections
  *
  * Per-user selected timeline branch per world (TASK-timeline-selection-api:
  * "Session stores selected timeline per world"). One row per (user_id,

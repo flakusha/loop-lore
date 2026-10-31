@@ -107,7 +107,6 @@ export function resourceRoutes(opts: HandleOpts, prefix = "/api",) {
           locationId: t.String({ minLength: 1, },),
           nodeInstanceId: t.String({ minLength: 1, },),
           /**
-// hint: Logic changed on both sides. Requires understanding intent of each change.
            * Skill/profession bonus applied to the DC before the roll. Bounded to
            * [0, MAX_ABILITY_BONUS]: an unbounded bonus is subtracted from the DC,
            * so `abilityBonus: 1000` would clamp every node to difficulty 1 — a

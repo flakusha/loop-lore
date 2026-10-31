@@ -19927,7 +19927,7 @@
       "source": ".plan/tickets/TASK-chat-owners-schema-and-backfill.md"
     }
   ],
-  "src/db/migrations/085_tool_call_audit.ts": [
+  "src/db/migrations/092_tool_call_audit.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
@@ -35693,6 +35693,10 @@
   ],
   "src/integrations/registry": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-external-harness-acp.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-acp-driver-module.md"
     }
@@ -38168,6 +38172,10 @@
     }
   ],
   "src/native/loader.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-external-harness-acp.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-harness-integration.md"

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Guard audit trail — persistence for `tool_call_audit` (migration 085).
+ * Guard audit trail — persistence for `tool_call_audit` (migration 092).
  *
  * One row per guarded tool call, written for every outcome: allowed,
  * reviewed (judge approved), and denied. Best-effort: an audit failure is

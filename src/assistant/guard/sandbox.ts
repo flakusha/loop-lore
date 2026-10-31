@@ -220,8 +220,13 @@ function resolveReal(input: string,): string | null {
     while (true) {
       const parent = dirname(current,);
       if (parent === current) {
-        try { return nativeRealpathSync(current,); } catch { return null; }
+        try {
+          return nativeRealpathSync(current,);
+        } catch {
+          return null;
+        }
       }
+
       tail.unshift(basename(current,),);
       current = parent;
       try {
@@ -242,7 +247,7 @@ function pathAllowed(path: string, allowed: string[],): boolean {
     const dirReal = resolveReal(dir,);
     if (dirReal === null) { return false; }
     return targetReal === dirReal || targetReal.startsWith(`${dirReal}${sep}`,);
-  });
+  },);
 }
 
 /**
@@ -407,7 +412,8 @@ function installInterceptors(): void {
 }
 
 /** Unpatched realpathSync, captured before the fs interceptors are installed. */
-const nativeRealpathSync = (createRequire(import.meta.url)("node:fs") as { realpathSync: (p: string) => string; }).realpathSync;
+const nativeRealpathSync =
+  (createRequire(import.meta.url,)("node:fs",) as { realpathSync: (p: string,) => string }).realpathSync;
 
 installInterceptors();
 
