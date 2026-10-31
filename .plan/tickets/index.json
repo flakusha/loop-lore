@@ -32939,7 +32939,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-chat-room-filters.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "filter",
