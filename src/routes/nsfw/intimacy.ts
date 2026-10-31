@@ -5,6 +5,7 @@ import { Elysia, } from "elysia";
 import { IntimacyService, } from "../../rpg/intimacy/service";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import {
+  checkNsfwTargetAccess,
   log,
   nsfwAccessErrorResponse,
   requireNsfwActorAccess,
@@ -83,6 +84,13 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             const ownership = await requireNsfwActorAccess(database, actorId, ctx,);
             if (typeof ownership !== "string") { return ownership; }
+
+            if (
+              targetActorId &&
+              !(await checkNsfwTargetAccess(database, targetActorId, userId, ctx.userRole ?? null, chatId,))
+            ) {
+              return jsonError("Forbidden", 403,);
+            }
 
             const consent = await requireNsfwRouteAccess(database, config, userId, {
               chatId,
