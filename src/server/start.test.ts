@@ -78,6 +78,10 @@ if (ISOLATED) {
   mock.module("../logger", () => ({
     createLogger: () => fakeLogger,
     getLogger: () => fakeLogger,
+    // 60+ modules import getChildLogger (several in this graph — assets,
+    // guard pipeline, generation). A mock without it breaks module linking
+    // for every importer under --isolate (SyntaxError: export not found).
+    getChildLogger: () => fakeLogger,
     setGlobalLogger: () => {},
   }),);
 
