@@ -184,8 +184,8 @@ export function backup(): Partial<SettingsState> & ThisType<SettingsState> {
 
     /**
      * One-click recovery: refuses without explicit user confirmation,
-     * then restores through the user-scoped restore endpoint (which
-     * verifies integrity and applies the payload).
+     * then restores through the user-scoped restore endpoint (restore
+     * self-verifies integrity server-side and applies the payload).
      * @param backupId server backup id (threaded through BackupDashboardEntry.backupId)
      * @returns {Promise<void>}
      */
@@ -196,16 +196,6 @@ export function backup(): Partial<SettingsState> & ThisType<SettingsState> {
       }
 
       try {
-        const verify = await apiFetch(`/api/admin/resources/backups/${backupId}/verify`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json", },
-        },);
-
-        if (!verify.ok) {
-          this.backupNotice = "backupRecoverFailed";
-          return;
-        }
-
         const res = await apiFetch(`/api/v1/settings/backups/${backupId}/restore`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json", },
