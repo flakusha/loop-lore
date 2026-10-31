@@ -22831,7 +22831,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-backgrounds-location-sync.md",
       "title": "Chat Backgrounds — Static/Dynamic with Location Sync",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/components/chat/background-panel.html",
         "src/db/schema-backgrounds.ts",
@@ -22980,7 +22980,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-external-music-linking.md",
       "title": "Chat External Music Linking",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/music-links.ts",
         "src/components/chat/message-list.html",
@@ -23618,14 +23618,17 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-room-filters.md",
       "title": "Chat Room Filters",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/components/chat/chat-list-panel.html",
         "src/components/filter-bar.html",
         "src/components/filter-chips.html",
         "src/frontend/alpine/chat-filters.ts",
         "src/frontend/alpine/sidebar.ts",
         "src/public/css/app.css",
         "src/routes/chats.ts",
+        "src/routes/chats/list.test.ts",
+        "src/routes/chats/list.ts",
         "src/views/chat-list-panel.html"
       ],
       "related": []
@@ -23674,7 +23677,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-sectioning-multi-location.md",
       "title": "Chat Sectioning — Multi-Location Chat Spanning",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/components/section-divider.html",
         "src/db/schema-chats.ts",
@@ -62737,7 +62740,8 @@
     {
       "path": "src/components/chat/chat-list-panel.html",
       "owners": [
-        "FEAT-world-template-chat-lifecycle"
+        "FEAT-world-template-chat-lifecycle",
+        "TASK-chat-room-filters"
       ]
     },
     {
@@ -80358,10 +80362,17 @@
       ]
     },
     {
+      "path": "src/routes/chats/list.test.ts",
+      "owners": [
+        "TASK-chat-room-filters"
+      ]
+    },
+    {
       "path": "src/routes/chats/list.ts",
       "owners": [
         "BUG-characters-list-and-chats-list-bypass-parsepagination-valida",
         "TASK-archival-workflow",
+        "TASK-chat-room-filters",
         "TASK-guest-chat-public-reads-visibility-aware-chat-access",
         "TASK-server-side-room-filter-enforcement",
         "epic-archival-workflow",
@@ -131570,6 +131581,11 @@
     {
       "from": "TASK-chat-room-filters",
       "kind": "produces",
+      "to": "src/components/chat/chat-list-panel.html"
+    },
+    {
+      "from": "TASK-chat-room-filters",
+      "kind": "produces",
       "to": "src/components/filter-bar.html"
     },
     {
@@ -131596,6 +131612,16 @@
       "from": "TASK-chat-room-filters",
       "kind": "produces",
       "to": "src/routes/chats.ts"
+    },
+    {
+      "from": "TASK-chat-room-filters",
+      "kind": "produces",
+      "to": "src/routes/chats/list.test.ts"
+    },
+    {
+      "from": "TASK-chat-room-filters",
+      "kind": "produces",
+      "to": "src/routes/chats/list.ts"
     },
     {
       "from": "TASK-chat-room-filters",
@@ -194827,6 +194853,12 @@
       "from": "BUG-characters-list-and-chats-list-bypass-parsepagination-valida",
       "kind": "sibling",
       "to": "TASK-archival-workflow",
+      "via": "src/routes/chats/list.ts"
+    },
+    {
+      "from": "BUG-characters-list-and-chats-list-bypass-parsepagination-valida",
+      "kind": "sibling",
+      "to": "TASK-chat-room-filters",
       "via": "src/routes/chats/list.ts"
     },
     {
@@ -273060,6 +273092,12 @@
     {
       "from": "FEAT-world-template-chat-lifecycle",
       "kind": "sibling",
+      "to": "TASK-chat-room-filters",
+      "via": "src/components/chat/chat-list-panel.html"
+    },
+    {
+      "from": "FEAT-world-template-chat-lifecycle",
+      "kind": "sibling",
       "to": "TASK-chat-variant-behavioral-wiring",
       "via": "src/chat/service/types.ts; src/routes/chats/create.ts"
     },
@@ -292172,6 +292210,12 @@
       "kind": "sibling",
       "to": "TASK-chat-owners-sweep-remaining-route-creator-checks",
       "via": "src/routes/messages/archiving.ts"
+    },
+    {
+      "from": "TASK-archival-workflow",
+      "kind": "sibling",
+      "to": "TASK-chat-room-filters",
+      "via": "src/routes/chats/list.ts"
     },
     {
       "from": "TASK-archival-workflow",
@@ -319728,6 +319772,12 @@
     {
       "from": "TASK-chat-room-filters",
       "kind": "sibling",
+      "to": "TASK-guest-chat-public-reads-visibility-aware-chat-access",
+      "via": "src/routes/chats/list.ts"
+    },
+    {
+      "from": "TASK-chat-room-filters",
+      "kind": "sibling",
       "to": "TASK-location-explorer",
       "via": "src/public/css/app.css"
     },
@@ -319741,7 +319791,7 @@
       "from": "TASK-chat-room-filters",
       "kind": "sibling",
       "to": "TASK-server-side-room-filter-enforcement",
-      "via": "src/frontend/alpine/chat-filters.ts"
+      "via": "src/frontend/alpine/chat-filters.ts; src/routes/chats/list.ts"
     },
     {
       "from": "TASK-chat-room-filters",
@@ -319783,7 +319833,7 @@
       "from": "TASK-chat-room-filters",
       "kind": "sibling",
       "to": "epic-archival-workflow",
-      "via": "src/routes/chats.ts"
+      "via": "src/routes/chats.ts; src/routes/chats/list.ts"
     },
     {
       "from": "TASK-chat-room-filters",
@@ -319808,6 +319858,12 @@
       "kind": "sibling",
       "to": "epic-file-splitting",
       "via": "src/routes/chats.ts"
+    },
+    {
+      "from": "TASK-chat-room-filters",
+      "kind": "sibling",
+      "to": "epic-guest-access",
+      "via": "src/routes/chats/list.ts"
     },
     {
       "from": "TASK-chat-room-filters",

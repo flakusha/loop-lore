@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3899
 - epics: 361
-- src paths owned: 4615
-- edges: produces 12311, consumes 406, sibling 38522, owns 2874, related 1196
+- src paths owned: 4616
+- edges: produces 12314, consumes 406, sibling 38527, owns 2874, related 1196
 
 ## Shared src hubs
 
@@ -461,6 +461,7 @@ output is byte-identical for identical inputs.
 | `src/components/chat/branch-merge-modal.html` | `TASK-branch-merge-frontend-wizard-ui`, `TASK-web-ui-buttons-for-party-split-reunite-parity-with-split-reu`, `epic-conversation-branching` |
 | `src/components/chat/character-info-panel.html` | `TASK-equipment-stat-preview`, `TASK-nsfw-read-only-status-panel`, `TASK-rpg-stats-frontend-wiring`, `TASK-skills-frontend` |
 | `src/components/chat/chat-header.html` | `TASK-i18n-template-strings`, `TASK-web-ui-buttons-for-party-split-reunite-parity-with-split-reu`, `epic-chat-lifecycle-moderation` |
+| `src/components/chat/chat-list-panel.html` | `FEAT-world-template-chat-lifecycle`, `TASK-chat-room-filters` |
 | `src/components/chat/chat-settings-modal.html` | `BUG-chat-settings-modal-invalid-mode`, `BUG-ownership-transfer-button-is-shown-to-every-non-owner-who-th`, `FEAT-chat-settings-modal-output-styling-control`, `FEAT-chat-template-config-lifecycle`, `TASK-chat-feature-ownership-transfer`, `TASK-chat-owners-frontend-in-chat-settings`, `TASK-epic11-admin-settings-reconciliation`, `TASK-visual-novel-mode`, `TASK-vn-scene-template-system`, `TASK-vn-template-actions`, `TASK-web-editor-open-in-editor-uri-scheme-links-approach-a`, `epic-browser-editor-support`, `epic-chat-lifecycle-moderation`, `epic-chat-multi-ownership`, `epic-config-templates`, `epic-hidden-carriage-context` |
 | `src/components/chat/gallery-sidebar.html` | `FEAT-in-chat-asset-preview-linkage-side-panel`, `TASK-gallery-fuzzy-search-pagination`, `epic-assistant-creative-studio-workflows`, `epic-frontend-gallery`, `epic-gallery-batch-operations` |
 | `src/components/chat/game-canvas.html` | `FEAT-2d-interactive-game-canvas-for-chat-scenes`, `FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas`, `epic-scene-environment-world-generation` |
@@ -1467,7 +1468,7 @@ output is byte-identical for identical inputs.
 | `src/routes/chats/create.ts` | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c`, `BUG-encryption-tier-not-enforced`, `BUG-generate-route-authorizes-chatid-but-not-actorid`, `BUG-turn-skip-fires-generation-without-catch-and-on-deduped-adva`, `BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k`, `FEAT-world-template-chat-lifecycle`, `TASK-024`, `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r`, `TASK-chat-variant-behavioral-wiring`, `TASK-server-enforce-age-nsfw-consent-on-send-and-on-participant-a`, `TASK-typescript-7-migration-typecheck-failures`, `epic-chat-variants-taxonomy` |
 | `src/routes/chats/extras.ts` | `FEAT-chat-transfer-location-change`, `TASK-chat-branch-merge`, `TASK-chat-location-change-event-log`, `TASK-chat-locations-worlds-finalize-current-implementation`, `TASK-chat-transfer-location`, `WIRE-extras-impersonateactorid-schema-validation`, `epic-chat-transfer-location`, `epic-impersonation` |
 | `src/routes/chats/index.ts` | `TASK-per-chat-auto-translation-layer`, `TASK-tui-branch-split-side-channel-slash-commands`, `TASK-tui-vn-choice-question-prompts-inline`, `TASK-vn-branching-choices`, `epic-visual-novel-mode` |
-| `src/routes/chats/list.ts` | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida`, `TASK-archival-workflow`, `TASK-guest-chat-public-reads-visibility-aware-chat-access`, `TASK-server-side-room-filter-enforcement`, `epic-archival-workflow`, `epic-guest-access` |
+| `src/routes/chats/list.ts` | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida`, `TASK-archival-workflow`, `TASK-chat-room-filters`, `TASK-guest-chat-public-reads-visibility-aware-chat-access`, `TASK-server-side-room-filter-enforcement`, `epic-archival-workflow`, `epic-guest-access` |
 | `src/routes/chats/manage.ts` | `BUG-chat-prompt-override-bypass-on-reply`, `BUG-delete-chat-gated-only-at-participant-level`, `BUG-no-role-restriction-for-changing-chat-settings`, `FEAT-chat-template-config-lifecycle`, `TASK-backlog-size-strict-regression-recovery`, `TASK-frontend-chat-rename-and-migrate`, `TASK-guest-chat-public-reads-visibility-aware-chat-access`, `TASK-typescript-7-migration-typecheck-failures`, `epic-guest-access` |
 | `src/routes/chats/moderation.ts` | `TASK-chat-feature-moderation`, `TASK-fb12-admin-role-change-notifies-affected-user-admxntf`, `TASK-frontend-chat-moderate-action`, `TASK-moderation-report-endpoint`, `TASK-server-enforce-age-nsfw-consent-on-send-and-on-participant-a` |
 | `src/routes/chats/ownership.ts` | `BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-`, `TASK-chat-feature-ownership-transfer`, `epic-chat-multi-ownership` |
@@ -10204,12 +10205,15 @@ output is byte-identical for identical inputs.
 | `TASK-chat-owners-sweep-remaining-route-creator-checks` | produces | `src/routes/story-turns.ts` | - |
 | `TASK-chat-pins-frontend` | produces | `src/components/chat/pins-panel.html` | - |
 | `TASK-chat-pins-frontend` | produces | `src/frontend/alpine/chat-pins.ts` | - |
+| `TASK-chat-room-filters` | produces | `src/components/chat/chat-list-panel.html` | - |
 | `TASK-chat-room-filters` | produces | `src/components/filter-bar.html` | - |
 | `TASK-chat-room-filters` | produces | `src/components/filter-chips.html` | - |
 | `TASK-chat-room-filters` | produces | `src/frontend/alpine/chat-filters.ts` | - |
 | `TASK-chat-room-filters` | produces | `src/frontend/alpine/sidebar.ts` | - |
 | `TASK-chat-room-filters` | produces | `src/public/css/app.css` | - |
 | `TASK-chat-room-filters` | produces | `src/routes/chats.ts` | - |
+| `TASK-chat-room-filters` | produces | `src/routes/chats/list.test.ts` | - |
+| `TASK-chat-room-filters` | produces | `src/routes/chats/list.ts` | - |
 | `TASK-chat-room-filters` | produces | `src/views/chat-list-panel.html` | - |
 | `TASK-chat-room-search-join` | produces | `src/db/schema-chats.ts` | - |
 | `TASK-chat-room-search-join` | produces | `src/elysia-app.ts` | - |
@@ -22191,6 +22195,7 @@ output is byte-identical for identical inputs.
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `BUG-three-pagination-sites-still-parse-a-limit-by-hand-so-limit-` | `src/routes/http-utils/parse.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `EPIC-2026-24` | `src/routes/http-utils/parse.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `TASK-archival-workflow` | `src/routes/chats/list.ts` |
+| `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `TASK-chat-room-filters` | `src/routes/chats/list.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | `src/routes/chats/list.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/characters/list.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `TASK-server-side-room-filter-enforcement` | `src/routes/chats/list.ts` |
@@ -35229,6 +35234,7 @@ output is byte-identical for identical inputs.
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-branch-merge-service-and-criteria-engine` | `src/chat/service/types.ts` |
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-chat-feature-settings-templates-compat-matrix` | `src/chat/service/templates.ts` |
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-chat-locations-worlds-finalize-current-implementation` | `src/chat/service/crud/create.ts` |
+| `FEAT-world-template-chat-lifecycle` | sibling | `TASK-chat-room-filters` | `src/components/chat/chat-list-panel.html` |
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-chat-variant-behavioral-wiring` | `src/chat/service/types.ts; src/routes/chats/create.ts` |
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-chat-variant-legacy-backfill` | `src/chat/service/crud/create.ts` |
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-cleanup-banned-types-console-logging-magic-strings` | `src/prompts/registry.ts` |
@@ -38415,6 +38421,7 @@ output is byte-identical for identical inputs.
 | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | sibling | `epic-worlds-extension` | `src/db/schema.ts` |
 | `TASK-archival-workflow` | sibling | `TASK-chat-feature-archive-deletion-search` | `src/chat/service/visibility.ts` |
 | `TASK-archival-workflow` | sibling | `TASK-chat-owners-sweep-remaining-route-creator-checks` | `src/routes/messages/archiving.ts` |
+| `TASK-archival-workflow` | sibling | `TASK-chat-room-filters` | `src/routes/chats/list.ts` |
 | `TASK-archival-workflow` | sibling | `TASK-chat-transfer-location` | `src/db/migrations/001_init.ts` |
 | `TASK-archival-workflow` | sibling | `TASK-comic-page-composition-strategy` | `src/db/migrations/001_init.ts` |
 | `TASK-archival-workflow` | sibling | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | `src/routes/chats/list.ts` |
@@ -43007,20 +43014,22 @@ output is byte-identical for identical inputs.
 | `TASK-chat-room-filters` | sibling | `TASK-encryption-wire-message-pipeline` | `src/routes/chats.ts` |
 | `TASK-chat-room-filters` | sibling | `TASK-extract-chat-route-business-logic` | `src/routes/chats.ts` |
 | `TASK-chat-room-filters` | sibling | `TASK-frontend-touch-gestures` | `src/frontend/alpine/sidebar.ts` |
+| `TASK-chat-room-filters` | sibling | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | `src/routes/chats/list.ts` |
 | `TASK-chat-room-filters` | sibling | `TASK-location-explorer` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `TASK-nsfw-read-only-status-panel` | `src/public/css/app.css` |
-| `TASK-chat-room-filters` | sibling | `TASK-server-side-room-filter-enforcement` | `src/frontend/alpine/chat-filters.ts` |
+| `TASK-chat-room-filters` | sibling | `TASK-server-side-room-filter-enforcement` | `src/frontend/alpine/chat-filters.ts; src/routes/chats/list.ts` |
 | `TASK-chat-room-filters` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `TASK-timeline-branching-ui` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/frontend/alpine/sidebar.ts; src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/sidebar.ts; src/public/css/app.css` |
-| `TASK-chat-room-filters` | sibling | `epic-archival-workflow` | `src/routes/chats.ts` |
+| `TASK-chat-room-filters` | sibling | `epic-archival-workflow` | `src/routes/chats.ts; src/routes/chats/list.ts` |
 | `TASK-chat-room-filters` | sibling | `epic-chat-lifecycle-moderation` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `epic-config-templates` | `src/routes/chats.ts` |
 | `TASK-chat-room-filters` | sibling | `epic-crafting-professions` | `src/routes/chats.ts` |
 | `TASK-chat-room-filters` | sibling | `epic-file-splitting` | `src/routes/chats.ts` |
+| `TASK-chat-room-filters` | sibling | `epic-guest-access` | `src/routes/chats/list.ts` |
 | `TASK-chat-room-filters` | sibling | `epic-logic-reconciliation` | `src/routes/chats.ts` |
 | `TASK-chat-room-filters` | sibling | `epic-world-chat-channels-invites` | `src/routes/chats.ts` |
 | `TASK-chat-room-search-join` | sibling | `TASK-chat-sectioning-multi-location` | `src/db/schema-chats.ts; src/frontend/alpine/chat.ts` |
