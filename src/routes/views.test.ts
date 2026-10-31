@@ -1,11 +1,20 @@
 /**
  * Tests for view serving routes - redirect and layout wrapping behavior.
  */
-import { describe, expect, test, } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
+import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import { applyI18n, viewRoutes, } from "./views";
+
+beforeAll(() => {
+  // The layout-wrapped views call wrapWithLayout → editorBootstrap →
+  // loadConfig → template expansion, which calls getLogger() — it throws
+  // unless a root logger exists. Other tests initialize it as a module side
+  // effect; --isolate processes skip that, so init here explicitly.
+  createLogger({ level: "error", },);
+},);
 
 const mockDb = {} as never;
 
