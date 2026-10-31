@@ -4,6 +4,7 @@
 import { Elysia, } from "elysia";
 import { EncounterService, } from "../../rpg/encounters/service";
 import { LocationNsfwService, } from "../../rpg/location-nsfw/service";
+import { NsfwEncounterCreateBody, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import {
   checkNsfwTargetAccess,
@@ -32,7 +33,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           try {
-            const body = ctx.body as Record<string, unknown>;
+            const body = ctx.body;
             const actorId = (body.actorId as string) ?? "";
             const chatId = (body.chatId as string) ?? null;
             const locationId = (body.locationId as string) ?? null;
@@ -79,6 +80,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
             return jsonError("Internal server error", 500,);
           }
         },
+        { body: NsfwEncounterCreateBody, },
       )
       .get(
         `${prefix}/nsfw/encounters/:id`,

@@ -3,6 +3,7 @@
 
 import { Elysia, } from "elysia";
 import { IntimacyService, } from "../../rpg/intimacy/service";
+import { NsfwIntimacyActionBody, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import {
   checkNsfwTargetAccess,
@@ -77,7 +78,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
           try {
             const userId = requireUserId(ctx,);
             if (typeof userId !== "string") { return userId; }
-            const body = ctx.body as Record<string, unknown>;
+            const body = ctx.body;
             const chatId = (body.chatId as string) ?? null;
             const actorId = (body.actorId as string) ?? "";
             const targetActorId = (body.targetActorId as string) ?? "";
@@ -121,6 +122,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
             return jsonError("Internal server error", 500,);
           }
         },
+        { body: NsfwIntimacyActionBody, },
       )
   );
 }
