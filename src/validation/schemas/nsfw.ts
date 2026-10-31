@@ -12,7 +12,7 @@ import {
 import { Id, NullableId, } from "./primitives";
 
 export const NsfwIntimacyActionBody = t.Object({
-  chatId: Id,
+  chatId: t.Optional(NullableId,),
   actorId: Id,
   targetActorId: Id,
   worldId: t.Optional(NullableId,),
@@ -26,7 +26,7 @@ export const NsfwIntimacyActionBody = t.Object({
 },);
 
 export const NsfwSeductionAttemptBody = t.Object({
-  chatId: Id,
+  chatId: t.Optional(NullableId,),
   actorId: Id,
   targetId: Id,
   skillCategory: SeductionSkillCategorySchema,
@@ -38,13 +38,13 @@ export const NsfwSeductionAttemptBody = t.Object({
 },);
 
 export const NsfwEncounterCreateBody = t.Object({
-  chatId: Id,
+  chatId: t.Optional(NullableId,),
   actorId: Id,
   worldId: t.Optional(NullableId,),
   locationId: t.Optional(NullableId,),
   encounterType: NsfwEncounterTypeSchema,
-  intensity: ContentIntensitySchema,
-  narrativeStyle: NarrativeStyleSchema,
+  intensity: t.Optional(ContentIntensitySchema,),
+  narrativeStyle: t.Optional(NarrativeStyleSchema,),
   participants: t.Array(Id, { minItems: 1, maxItems: 16, },),
   contentTags: t.Optional(t.Array(t.String({ minLength: 1, maxLength: 64, },), { maxItems: 32, },),),
 },);
