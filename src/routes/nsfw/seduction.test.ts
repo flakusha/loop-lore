@@ -256,7 +256,7 @@ describe("seduction routes — POST /api/nsfw/seduction/attempt", () => {
         body: JSON.stringify({
           actorId,
           targetId,
-          skillCategory: "seduction",
+          skillCategory: "foreplay",
           approach: "a warm compliment",
         },),
       },),

@@ -117,7 +117,7 @@ describe("encounter routes — GET /api/nsfw/encounters/:id", () => {
         body: JSON.stringify({
           actorId,
           worldId,
-          encounterType: "intimate",
+          encounterType: "romantic",
           participants: [actorId,],
         },),
       },),
@@ -175,7 +175,7 @@ describe("encounter routes — POST /api/nsfw/encounters/:id/advance", () => {
         body: JSON.stringify({
           actorId,
           worldId,
-          encounterType: "intimate",
+          encounterType: "romantic",
           participants: [actorId,],
         },),
       },),
@@ -247,7 +247,7 @@ describe("encounter routes — GET /api/nsfw/encounters/world/:worldId", () => {
     const { userId, actorId, worldId, } = await seedAuthorized("listworld",);
     const app = makeApp(userId,);
     // Create two encounters in the world.
-    for (const type of ["intimate", "casual",]) {
+    for (const type of ["romantic", "passionate",]) {
       const createRes = await app.handle(
         new Request("http://localhost/api/nsfw/encounters", {
           method: "POST",
