@@ -51,6 +51,38 @@ Zero worlds: empty state with "No worlds yet. Create a world to build a shared s
   owner only): name (required, ≤200), description (≤1000)
 - Mobile: stacks vertically ≤768px, 44px touch targets
 
+**Branch selection API** (`src/routes/worlds/timelines.ts`, prefix `/api/v1`):
+
+| Method & path | Who | Behavior |
+| ------------- | --- | -------- |
+| `GET /worlds/:id/timelines` | any world member | list branches with name, event count, created date |
+| `POST /worlds/:id/timelines` | owner only | create a branch (name required ≤200, description ≤1000) |
+| `GET /worlds/:id/timelines/:tid` | any world member | one branch, 404 when unknown |
+| `PUT /worlds/:id/timelines/:tid` | owner only | partial update of name/description; empty body is 400 |
+| `DELETE /worlds/:id/timelines/:tid` | owner only | delete a fork; the prime branch is protected (400) |
+| `POST /worlds/:id/timelines/:tid/select` | any world member | persist the *caller's own* active branch per world (upsert into `world_timeline_selections`); a personal view preference, not a world mutation |
+
+Branch resolution for the detail fragment, in order: explicit
+`?timeline=` wins, then the caller's persisted selection, then prime.
+Unknown or foreign ids fall back to prime silently — a fragment must not
+404, and a foreign id must not leak branch existence. Prime events carry
+the `prime` slug even when the prime branch row has a uuid id.
+
+**In-chat `/timeline` command** (`src/assistant/commands/timeline.ts`):
+
+- `list` — any world member; prime-first branch list marking the chat's active branch
+- `fork [label]` — owner only; forks the chat's current branch (defaults to today's date as label)
+- `switch <id>` — owner only; moves the *shared* chat branch (`chats.timeline_id`), unlike the per-user `select` endpoint above
+- Fails closed when the chat has no bound world; unknown ids are rejected
+
+**GM event steering** (`src/story/timeline/event-steering.ts`):
+
+- Pending steerings surface as audience-scoped foreshadowing in prompt assembly
+- A manifestation roll reads the pending row, flips it to manifested, and appends the timeline event in one transaction — concurrent rolls cannot double-manifest, and a manifest is never recorded without its event
+- Red herrings (`may_manifest=0`) never manifest on roll
+
+Not built: timeline-aware memory injection (epic-memory-propagation) and per-timeline rarity multipliers (epic-rarity-extensions) are backlog — no UI or API for them yet.
+
 **Lore section** (textarea, rendered as formatted text):
 
 - Full lore description
