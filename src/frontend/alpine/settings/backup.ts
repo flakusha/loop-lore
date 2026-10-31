@@ -196,6 +196,16 @@ export function backup(): Partial<SettingsState> & ThisType<SettingsState> {
       }
 
       try {
+        const verify = await apiFetch(`/api/admin/resources/backups/${backupId}/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json", },
+        },);
+
+        if (!verify.ok) {
+          this.backupNotice = "backupRecoverFailed";
+          return;
+        }
+
         const res = await apiFetch(`/api/v1/settings/backups/${backupId}/restore`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json", },

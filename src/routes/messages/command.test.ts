@@ -8,10 +8,10 @@
  * execution, system-message persistence, unhandled passthrough) plus the
  * shared chat-context helpers used by both the slash and GM tool paths.
  */
-import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { parseCommand, } from "../../assistant/command-parser";
-import { registerCommand, } from "../../assistant/commands/registry";
+import { __unregisterCommandForTests, registerCommand, } from "../../assistant/commands/registry";
 import type { Config, } from "../../config/schema";
 import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -98,6 +98,10 @@ describe("commandActiveChat", () => {
 });
 
 describe("dispatchCommand", () => {
+  afterEach(() => {
+    __unregisterCommandForTests("guard-denied-probe",);
+  },);
+
   it("handles a slash command and persists its system message", async () => {
     const { db, chatId, userId, } = await setup();
     const outcome = await dispatchCommand(db, config, userId, chatId, "/narrate The sky darkens.",);
