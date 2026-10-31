@@ -168,6 +168,18 @@ let detectedRoot: string | null = null;
 let detectionWarned = false;
 
 /**
+ * Detector for the default scope root. Returning "" or throwing signals
+ * detection failure (the caller warns once and falls back to cwd).
+ */
+type ScopeRootDetector = () => string;
+
+/** The real detector: the enclosing git worktree root, "" when git fails. */
+const defaultScopeRootDetector: ScopeRootDetector = () => runGit(["rev-parse", "--show-toplevel",],);
+
+/** Active detector. Test-only seam replaces it; null restores the default. */
+let scopeRootDetector: ScopeRootDetector = defaultScopeRootDetector;
+
+/**
  * Scope root for calls that do not pass one explicitly: the enclosing git
  * worktree root, not the raw process cwd — a harness launched from a
  * subdirectory must still have its paths judged against the worktree, and
@@ -178,15 +190,18 @@ let detectionWarned = false;
  */
 function detectScopeRoot(): string {
   if (detectedRoot !== null) { return detectedRoot; }
-  try {
-    const toplevel = runGit(["rev-parse", "--show-toplevel",],);
-    if (toplevel !== "") {
-      detectedRoot = toplevel;
 
-      return detectedRoot;
-    }
+  let detected = "";
+  try {
+    detected = scopeRootDetector();
   } catch {
     // No checkout / no git — fall through to the cwd fallback.
+  }
+
+  if (detected !== "") {
+    detectedRoot = detected;
+
+    return detectedRoot;
   }
 
   if (!detectionWarned) {
@@ -248,4 +263,15 @@ export function resetScopeLogSourceForTests(): void {
 export function resetScopeRootForTests(): void {
   detectedRoot = null;
   detectionWarned = false;
+}
+
+/**
+ * Replace the default-root detector. Test-only seam (mirrors
+ * {@link setScopeLogSourceForTests}): lets suites force detection success or
+ * failure WITHOUT process-global tricks like chdir. Passing null reinstates
+ * the real `git rev-parse --show-toplevel` detector.
+ * @param detector - Replacement detector, or null for the default.
+ */
+export function setScopeRootDetectorForTests(detector: (() => string) | null,): void {
+  scopeRootDetector = detector ?? defaultScopeRootDetector;
 }
