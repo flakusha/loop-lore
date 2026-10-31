@@ -53,9 +53,9 @@ export type {
   StandingTier,
 } from "./npc";
 export type { ChatNpcState, } from "./npc-state";
+export type { ChatNsfwState, NsfwBodyStatsView, NsfwIntimacyPairView, } from "./nsfw-state";
 export type { ChatCoreOutputStyleState, } from "./output-style-state";
 export type { ChatCoreOwnersState, } from "./owners-state";
-export type { ChatNsfwState, NsfwBodyStatsView, NsfwIntimacyPairView, } from "./nsfw-state";
 export type { ChatParticipantsState, } from "./participants-state";
 export type { ChatPinRow, ChatPinsState, } from "./pins-state";
 export type { ChatCoreProactiveState, } from "./proactive-state";
