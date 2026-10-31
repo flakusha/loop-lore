@@ -22,6 +22,7 @@ import {
   persistBackupHook,
   pruneBackups,
   registerBackupHook,
+  restoreBackupForOwner,
   revokeStorageResource,
   testStorageResource,
   verifyBackupIntegrity,
@@ -195,6 +196,101 @@ describe("external-storage", () => {
     expect(deleted,).toBe(3,);
     const rows = await listBackups(testDb, "prune-user", "chat",);
     expect(rows.map((r,) => r.id).sort(),).toEqual(["prune-3", "prune-4",],);
+  });
+
+  test("restoreBackupForOwner: non-owner is refused with zero applies", async () => {
+    const written = await writeBackup(testDb, {
+      id: "restore-owner-1",
+      resourceType: "chat",
+      ownerId: "restore-owner",
+      payload: JSON.stringify({ chatId: "chat-1", save: 1, },),
+    },);
+
+    let applies = 0;
+    const res = await restoreBackupForOwner(testDb, "restore-stranger", written.id, true, {
+      applyPayload: () => {
+        applies += 1;
+      },
+    },);
+
+    expect(res.restored,).toBe(false,);
+    expect(res.reason,).toBe("not owner",);
+    expect(applies,).toBe(0,);
+  });
+
+  test("restoreBackupForOwner: unconfirmed restore is refused with zero applies", async () => {
+    const written = await writeBackup(testDb, {
+      id: "restore-unconfirmed-1",
+      resourceType: "chat",
+      ownerId: "restore-confirmer",
+      payload: JSON.stringify({ chatId: "chat-2", save: 1, },),
+    },);
+
+    let applies = 0;
+    const res = await restoreBackupForOwner(testDb, "restore-confirmer", written.id, false, {
+      applyPayload: () => {
+        applies += 1;
+      },
+    },);
+
+    expect(res.restored,).toBe(false,);
+    expect(res.reason,).toBe("recovery requires explicit user confirmation",);
+    expect(applies,).toBe(0,);
+  });
+
+  test("restoreBackupForOwner: tampered payload is an integrity refusal", async () => {
+    const written = await writeBackup(testDb, {
+      id: "restore-tamper-1",
+      resourceType: "world",
+      ownerId: "restore-tamper-owner",
+      payload: JSON.stringify({ save: 1, },),
+    },);
+
+    await testDb
+      .updateTable("backup_records",)
+      .set({ payload: JSON.stringify({ save: 2, },), },)
+      .where("id", "=", written.id,)
+      .execute();
+
+    let applies = 0;
+    const res = await restoreBackupForOwner(testDb, "restore-tamper-owner", written.id, true, {
+      applyPayload: () => {
+        applies += 1;
+      },
+    },);
+
+    expect(res.restored,).toBe(false,);
+    expect(applies,).toBe(0,);
+  });
+
+  test("restoreBackupForOwner: happy path applies once and writes one audit row", async () => {
+    const ownerId = "restore-happy-owner";
+    const written = await writeBackup(testDb, {
+      id: "restore-happy-1",
+      resourceType: "chat",
+      ownerId,
+      payload: JSON.stringify({ chatId: "chat-happy", save: 1, },),
+    },);
+
+    const applied: Array<{ resourceId: string; data: unknown }> = [];
+    const res = await restoreBackupForOwner(testDb, ownerId, written.id, true, {
+      applyPayload: (resourceId, data,) => {
+        applied.push({ resourceId, data, },);
+      },
+    },);
+
+    expect(res.restored,).toBe(true,);
+    expect(applied,).toHaveLength(1,);
+    expect(applied[0]!.resourceId,).toBe("chat-happy",);
+    expect(applied[0]!.data,).toEqual({ chatId: "chat-happy", save: 1, },);
+
+    const rows = await listBackups(testDb, ownerId, "chat",);
+    expect(rows,).toHaveLength(2,);
+    const audit = rows.find((r,) => r.id !== written.id)!;
+    expect(JSON.parse(audit.payload,) as Record<string, unknown>,).toMatchObject({
+      restoredFrom: written.id,
+      resourceId: "chat-happy",
+    },);
   });
 
   test("backupHooks register and invoke", async () => {

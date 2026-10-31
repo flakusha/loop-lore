@@ -25,6 +25,7 @@ import {
   insertUsers,
 } from "../../../test-utils/insert-helpers";
 import { countTurnSkipsForActor, recordTurnSkip, } from "./turn-skip";
+import { checkForcedSkipAuthority, } from "./turn-skip-forced";
 describe("recordTurnSkip", () => {
   let db: Kysely<DB>;
   const OWNER_ID = crypto.randomUUID();
@@ -449,5 +450,79 @@ describe("GM-forced skip overrides (TASK-chat-feature-turn-talkativity-skip AC5)
     const state = await readStoryState();
     const forced = state.forcedSkips as Array<unknown> | undefined;
     expect(forced ?? [],).toHaveLength(0,);
+  });
+});
+
+describe("checkForcedSkipAuthority (export gap: GM-override denial matrix)", () => {
+  let db: Kysely<DB>;
+  const OWNER_ID = crypto.randomUUID();
+  const GM_ID = crypto.randomUUID();
+  const MEMBER_ID = crypto.randomUUID();
+  const CHAT_ID = crypto.randomUUID();
+
+  beforeEach(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+    for (const [name, id,] of [["owner", OWNER_ID,], ["gm", GM_ID,], ["member", MEMBER_ID,],] as const) {
+      await insertUsers(db, name, name, { id, } as never,);
+      await insertActors(db, name, { id, user_id: id, owner_id: id, } as never,);
+    }
+
+    await insertChats(db, "Authority Chat", OWNER_ID, { id: CHAT_ID, } as never,);
+    await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", },);
+    await insertChatParticipants(db, CHAT_ID, GM_ID, { role_in_chat: "gm", },);
+    await insertChatParticipants(db, CHAT_ID, MEMBER_ID, { role_in_chat: "member", },);
+  },);
+
+  afterEach(async () => {
+    await db.destroy();
+  },);
+
+  test("chat creator forcing another's beat proceeds (null)", async () => {
+    const denial = await checkForcedSkipAuthority(db, {
+      chatId: CHAT_ID,
+      userId: OWNER_ID,
+      userRole: null,
+      actorId: MEMBER_ID,
+    },);
+
+    expect(denial,).toBeNull();
+  });
+
+  test("GM participant forcing another's beat proceeds (null)", async () => {
+    const denial = await checkForcedSkipAuthority(db, {
+      chatId: CHAT_ID,
+      userId: GM_ID,
+      userRole: null,
+      actorId: MEMBER_ID,
+    },);
+
+    expect(denial,).toBeNull();
+  });
+
+  test("plain member forcing another's beat is denied (forbidden)", async () => {
+    const denial = await checkForcedSkipAuthority(db, {
+      chatId: CHAT_ID,
+      userId: MEMBER_ID,
+      userRole: null,
+      actorId: OWNER_ID,
+    },);
+
+    expect(denial,).toEqual({
+      ok: false,
+      code: "forbidden",
+      message: "Only the chat GM/owner can skip another participant's turn",
+    },);
+  });
+
+  test("self-skip is allowed without a settings lookup", async () => {
+    const denial = await checkForcedSkipAuthority(db, {
+      chatId: CHAT_ID,
+      userId: MEMBER_ID,
+      userRole: null,
+      actorId: MEMBER_ID,
+    },);
+
+    expect(denial,).toBeNull();
   });
 });
