@@ -114,7 +114,7 @@ export function generateProbeTest(options: GenerateProbeOptions,): string {
  * pre-commit verify gate.
  */
 import { describe, expect, it, } from "bun:test";
-import { readFileSync, } from "node:fs";
+import fs from "node:fs";
 import { convertWorkflow, } from ${jsonStringifyOr(`${moduleDir}/../comfyui-converter/index`,)};
 import type { ObjectInfoSnapshot, UiWorkflow, } from ${jsonStringifyOr(`${moduleDir}/../comfyui-converter/types`,)};
 import { deriveParameters, } from ${jsonStringifyOr(`${moduleDir}/derive`,)};
@@ -122,13 +122,13 @@ import { runAcceptanceProbe, } from ${jsonStringifyOr(`${moduleDir}/probe`,)};
 
 describe("generated probe ${workflowId}", () => {
   it("runs the stubbed probe green", () => {
-    const raw = JSON.parse(readFileSync(${jsonStringifyOr(fixtureFile,)}, "utf8",),) as UiWorkflow;
+    const raw = JSON.parse(fs.readFileSync(${jsonStringifyOr(fixtureFile,)}, "utf8",),) as UiWorkflow;
     const workflow: UiWorkflow = {
       ...raw,
       nodes: (raw.nodes ?? []).map((node,) =>
         node.id === ${String(markedNodeId,)} ? { ...node, title: "[p] Settings", } : node),
     };
-    const snapshot = JSON.parse(readFileSync(${jsonStringifyOr(snapshotFile,)}, "utf8",),) as ObjectInfoSnapshot;
+    const snapshot = JSON.parse(fs.readFileSync(${jsonStringifyOr(snapshotFile,)}, "utf8",),) as ObjectInfoSnapshot;
     const graph = convertWorkflow(workflow, snapshot,).graph;
     const derived = deriveParameters({ workflow, converted: graph, workflowId: ${
     jsonStringifyOr(workflowId,)

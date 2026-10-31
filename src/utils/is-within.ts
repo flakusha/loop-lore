@@ -4,7 +4,7 @@
 // src/utils/is-within.ts — filesystem containment guard
 // (epic-browser-editor-support; no path guard existed in src/ before this).
 
-import { realpathSync, } from "node:fs";
+import fs from "node:fs";
 import { resolve, sep, } from "node:path";
 
 /**
@@ -16,7 +16,7 @@ import { resolve, sep, } from "node:path";
  */
 function resolveForContainment(p: string,): string {
   try {
-    return realpathSync(p,);
+    return fs.realpathSync(p,);
   } catch {
     // Not on disk (yet) — lexical resolution is the best available truth.
     return resolve(p,);
