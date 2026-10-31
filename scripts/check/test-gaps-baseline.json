@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-31T11:34:35.754Z",
-  "count": 1481,
+  "generatedAt": "2026-10-31T11:55:57.809Z",
+  "count": 1478,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -1447,9 +1447,6 @@
     "src/utils/safe-buffer/types.ts#unwrapGuard",
     "src/validation/prompt-injection.ts#confirmInjectionWithLlm",
     "src/validation/schemas/admin.ts#ADMIN_ROLES",
-    "src/validation/schemas/nsfw.ts#NsfwEncounterCreateBody",
-    "src/validation/schemas/nsfw.ts#NsfwIntimacyActionBody",
-    "src/validation/schemas/nsfw.ts#NsfwSeductionAttemptBody",
     "src/validation/schemas/primitives.ts#ListResponse",
     "src/validation/schemas/responses-admin.ts#AdminPaginatedEnvelope",
     "src/validation/schemas/responses.ts#DataEnvelope",
