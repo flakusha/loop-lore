@@ -3637,6 +3637,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-timeline-in-chat-command.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/worlds.md"
     }
   ],
   "src/assistant/commands/translate.test.ts": [
@@ -4902,6 +4906,10 @@
     }
   ],
   "src/assistant/prompt/sections/memories-helpers.ts": [
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/worlds.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/memory-system.md"
@@ -50243,6 +50251,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-timeline-selection-api.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/worlds.md"
     }
   ],
   "src/routes/worlds/world-rpg-flags.ts": [
@@ -57035,6 +57047,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-state-motivation-context.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/worlds.md"
     },
     {
       "kind": "spec",
