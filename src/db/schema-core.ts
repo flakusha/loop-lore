@@ -2128,7 +2128,6 @@ export interface ImmersionDecisionLog {
   created_at: Generated<string>;
 }
 
-
 // ── chat_owners ────────────────────────────────────────────
 export interface ChatOwners {
   id: Generated<string>;
