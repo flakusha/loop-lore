@@ -54,7 +54,7 @@ describe("enrichAttachments voice notes", () => {
     expect(first.durationSecs,).toBe(42.5,);
     expect(first.mimeType,).toBe("audio/ogg",);
     expect(first.type,).toBe("audio",);
-    expect(first.url,).toBe(`/api/assets/${voiceAsset}/raw`,);
+    expect(first.url,).toBe(`/api/v1/assets/${voiceAsset}/raw`,);
   });
 
   test("returns null for empty payloads", async () => {
