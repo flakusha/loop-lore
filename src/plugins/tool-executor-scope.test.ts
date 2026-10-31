@@ -5,6 +5,11 @@
  * Enforcement test: `executePluginTool` guards path-bearing arguments against
  * the harness worktree scope (`src/harness/worktree-scope.ts`). Parallel-safe:
  * per-test tmpdir fixtures with afterEach cleanup.
+ *
+ * Resource contract: per-test mkdtemp dirs under `.tmp` + tmpdir (removed in
+ * afterEach) and a private in-memory DB from `createTestDb()` (created only
+ * in the escalation test, destroyed in afterEach, never installed as the
+ * process-global override) — no ports, no fixed paths, no shared globals.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
@@ -24,10 +29,13 @@ describe("executePluginTool worktree scope guard", () => {
     outside = mkdtempSync(join(tmpdir(), "executor-out-",),);
   },);
 
-  afterEach(() => {
+  afterEach(async () => {
+    // Destroy the fixture DB before dropping the reference — a leaked
+    // in-memory handle otherwise survives the test on failure paths too.
+    if (fixture) { await fixture.db.destroy(); }
+    fixture = null;
     rmSync(root, { recursive: true, force: true, },);
     rmSync(outside, { recursive: true, force: true, },);
-    fixture = null;
   },);
 
   test("an outside-scope path arg is refused before the handler runs", async () => {
