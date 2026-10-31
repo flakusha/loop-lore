@@ -127,12 +127,12 @@ describe("dispatchCommand", () => {
 
   it("denies a command the capability guard rejects, without running the handler", async () => {
     let handlerRan = false;
-    // No capability declaration: the guard fails closed on an undeclared
-    // command, so the handler must never run.
+    // A capability the caller's privileges do not cover: the guard denies it,
+    // so the handler must never run.
     registerCommand("guard-denied-probe", async () => {
       handlerRan = true;
       return { handled: true, systemMessage: "probe-ran", };
-    },);
+    }, { capabilities: ["admin-only",], },);
 
     const { db, chatId, userId, } = await setup();
     const outcome = await dispatchCommand(db, config, userId, chatId, "/guard-denied-probe",);

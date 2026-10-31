@@ -82,10 +82,10 @@ function registerProbes(): void {
     return { handled: true, systemMessage: "reviewed", };
   }, { capabilities: ["write-chat",], },);
 
-  registerCommand("guard-undeclared-test", async () => {
+  registerCommand("guard-deny-test", async () => {
     handlerRan = true;
-    return { handled: true, systemMessage: "undeclared", };
-  },);
+    return { handled: true, systemMessage: "denied", };
+  }, { capabilities: ["admin-only",], },);
 
   registerCommand("guard-throw-test", async () => {
     handlerRan = true;
@@ -117,7 +117,7 @@ beforeEach(async () => {
 afterEach(() => {
   __unregisterCommandForTests("guard-allow-test",);
   __unregisterCommandForTests("guard-review-test",);
-  __unregisterCommandForTests("guard-undeclared-test",);
+  __unregisterCommandForTests("guard-deny-test",);
   __unregisterCommandForTests("guard-throw-test",);
   __unregisterCommandForTests("guard-limits-test",);
   __unregisterCommandForTests("guard-hosts-test",);
@@ -299,10 +299,17 @@ describe("runGuardedToolCall — allow tier", () => {
   });
 });
 
+describe("command registration — capabilities are mandatory", () => {
+  it("refuses to register a command that declares no capabilities", () => {
+    expect(() => registerCommand("guard-undeclared-test", async () => ({ handled: true, }),))
+      .toThrow(/missing or empty capabilities/,);
+  });
+});
+
 describe("runGuardedToolCall — deny tier", () => {
-  it("denies a command that declares no capabilities and never runs it", async () => {
+  it("denies a command the caller's privileges do not cover and never runs it", async () => {
     const outcome = await runGuardedToolCall({
-      tool: "guard-undeclared-test",
+      tool: "guard-deny-test",
       args: [],
       ctx: context(),
       origin: "slash-command",
@@ -312,10 +319,10 @@ describe("runGuardedToolCall — deny tier", () => {
     expect(outcome.result,).toBeUndefined();
     expect(handlerRan,).toBe(false,);
 
-    const rows = await auditRows("guard-undeclared-test",);
+    const rows = await auditRows("guard-deny-test",);
     expect(rows.length,).toBe(1,);
     expect(rows[0]?.verdict,).toBe("denied",);
-    expect(rows[0]?.rationale,).toContain("declares no capabilities",);
+    expect(rows[0]?.rationale,).toContain("requires site administrator",);
   });
 });
 

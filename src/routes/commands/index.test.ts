@@ -29,11 +29,11 @@ function makeApp(userId: string | null,) {
 describe("GET /api/commands", () => {
   beforeEach(() => {
     if (!listCommands().includes(TEST_COMMAND,)) {
-      registerCommand(TEST_COMMAND, () => ({ handled: true, }),);
+      registerCommand(TEST_COMMAND, () => ({ handled: true, }), { capabilities: ["read-chat",], },);
     }
 
     if (!listCommands().includes(OTHER_TEST_COMMAND,)) {
-      registerCommand(OTHER_TEST_COMMAND, () => ({ handled: true, }),);
+      registerCommand(OTHER_TEST_COMMAND, () => ({ handled: true, }), { capabilities: ["read-chat",], },);
     }
   },);
 
@@ -68,7 +68,7 @@ describe("GET /api/commands", () => {
   it("includes new commands without an FE rebuild", async () => {
     const app = makeApp("user-1",);
     const freshName = `fresh-cmd-${Date.now()}`;
-    registerCommand(freshName, () => ({ handled: true, }),);
+    registerCommand(freshName, () => ({ handled: true, }), { capabilities: ["read-chat",], },);
     const res = await app.handle(new Request("http://localhost/api/commands",),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { name: string; descriptionKey: string }[] };
@@ -78,7 +78,7 @@ describe("GET /api/commands", () => {
   it("excludes stub commands registered with available:false", async () => {
     const app = makeApp("user-1",);
     const stubName = `stub-cmd-${Date.now()}`;
-    registerCommand(stubName, () => ({ handled: true, }), { available: false, },);
+    registerCommand(stubName, () => ({ handled: true, }), { available: false, capabilities: ["read-chat",], },);
     const res = await app.handle(new Request("http://localhost/api/commands",),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { name: string; descriptionKey: string }[] };
@@ -100,7 +100,10 @@ describe("GET /api/commands", () => {
       await insertChatParticipants(tdb.db, chatId, ownerId, { role_in_chat: ChatParticipantRole.Owner, } as never,);
       await insertChatParticipants(tdb.db, chatId, memberId, { role_in_chat: ChatParticipantRole.Member, } as never,);
       const ownerGated = `owner-gated-${Date.now()}`;
-      registerCommand(ownerGated, () => ({ handled: true, }), { requiredRole: ChatParticipantRole.Owner, },);
+      registerCommand(ownerGated, () => ({ handled: true, }), {
+        requiredRole: ChatParticipantRole.Owner,
+        capabilities: ["read-chat",],
+      },);
 
       const app = new Elysia({ name: "test-commands-scoped", },)
         .derive(() => ({ userId: memberId, userRole: "member", }))
