@@ -15,6 +15,7 @@ import type { Config, } from "../../config/schema/config";
 import { NsfwSection, } from "../../config/sections";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { recordNsfwConsent, } from "../../middleware/nsfw-gate/consent-ledger";
 import { resetNsfwRuntimeConfig, } from "../../nsfw/runtime-config";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
@@ -291,5 +292,87 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.applied,).toBe(true,);
+  });
+});
+
+describe("intimacy routes — consent ledger matrix at the route layer", () => {
+  /** @param userId @param actorId @param targetId */
+  async function postAction(
+    userId: string,
+    chatId: string,
+    actorId: string,
+    targetId: string,
+  ) {
+    return makeApp(userId,).handle(
+      new Request("http://localhost/api/nsfw/intimacy/action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          chatId,
+          actorId,
+          targetActorId: targetId,
+          actionId: "act-touch",
+          actionName: "Touch",
+          actionType: "physical",
+          delta: 10,
+          minIntimacy: 0,
+          requiresConsent: true,
+        },),
+      },),
+    );
+  }
+
+  /** @param tag */
+  async function seedChat(tag: string,) {
+    const { userId, actorId, } = await seedAuthorized(tag,);
+    const targetId = await seedTarget(tag,);
+    const chatId = `intimacy-chat-ledger-${tag}`;
+    await insertChats(db, "Intimacy Ledger Chat", userId, { id: chatId as never, },);
+    await insertChatParticipants(db, chatId, actorId,);
+    await insertChatParticipants(db, chatId, targetId,);
+    return { userId, actorId, targetId, chatId, };
+  }
+
+  test("requiresConsent + no ledger row → 403 consent_required", async () => {
+    const { userId, actorId, targetId, chatId, } = await seedChat("noconsentrow",);
+    const res = await postAction(userId, chatId, actorId, targetId,);
+
+    expect(res.status,).toBe(403,);
+    const body = await res.json() as Record<string, unknown>;
+    expect(String(body.error ?? "",),).toContain("consent_required",);
+  });
+
+  test("recordNsfwConsent given → 200 (ledger, not raw insert)", async () => {
+    const { userId, actorId, targetId, chatId, } = await seedChat("ledgergiven",);
+    await recordNsfwConsent({ database: db, chatId, userId, action: "given", },);
+    const res = await postAction(userId, chatId, actorId, targetId,);
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as Record<string, unknown>;
+    expect(body.applied,).toBe(true,);
+  });
+
+  test("recordNsfwConsent given then revoked → 403 consent_revoked", async () => {
+    const { userId, actorId, targetId, chatId, } = await seedChat("ledgerrevoked",);
+    await recordNsfwConsent({ database: db, chatId, userId, action: "given", },);
+    await recordNsfwConsent({ database: db, chatId, userId, action: "revoked", },);
+    const res = await postAction(userId, chatId, actorId, targetId,);
+
+    expect(res.status,).toBe(403,);
+    const body = await res.json() as Record<string, unknown>;
+    expect(String(body.error ?? "",),).toContain("consent_revoked",);
+  });
+
+  test("revoke closes the prior open row (single source of truth)", async () => {
+    const { userId, chatId, } = await seedChat("ledgerclose",);
+    await recordNsfwConsent({ database: db, chatId, userId, action: "given", },);
+    await recordNsfwConsent({ database: db, chatId, userId, action: "revoked", },);
+
+    const rows = await db.selectFrom("nsfw_consent_state",).select(["action", "revoked_at",],)
+      .where("user_id", "=", userId,).where("chat_id", "=", chatId,).execute();
+
+    const givens = rows.filter((r,) => r.action === "given");
+    expect(givens.length,).toBeGreaterThanOrEqual(1,);
+    for (const row of givens) { expect(row.revoked_at,).not.toBeNull(); }
   });
 });
