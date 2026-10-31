@@ -23,13 +23,15 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { standaloneSurface, } from "./standalone-surface";
 
-async function withApp<T,>(fn: (app: Elysia,) => Promise<T>,): Promise<T> {
+async function withApp<T,>(fn: (app: { handle(request: Request,): Promise<Response> },) => Promise<T>,): Promise<T> {
   const { db, }: { db: Kysely<DB> } = await createTestDb();
   try {
     await insertUsers(db, "surface-user", "Surface User",);
     const app = new Elysia({ name: "test-standalone-surface", },)
       .derive(() => ({ userId: "surface-user", }))
-      .use(standaloneSurface({ database: db, } as RegisterPluginsOpts,),);
+      .use(standaloneSurface({ database: db, } as RegisterPluginsOpts,),) as unknown as {
+        handle(request: Request,): Promise<Response>;
+      };
 
     return await fn(app,);
   } finally {
