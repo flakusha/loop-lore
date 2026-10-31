@@ -11,6 +11,7 @@
 import { describe, expect, it, } from "bun:test";
 import { ChatParticipantRole, } from "../../db/enums";
 import { CAPABILITY_POLICY, DEFAULT_LIMITS, } from "../capabilities";
+import type { CapabilityTag, } from "../capabilities";
 import { evaluateCapabilities, } from "./matrix";
 
 describe("evaluateCapabilities — fail closed", () => {
@@ -37,6 +38,18 @@ describe("evaluateCapabilities — fail closed", () => {
 
     expect(decision.allowed,).toBe(false,);
     expect(decision.reason,).toContain("declares no capabilities",);
+  });
+
+  it("denies an unrecognized capability tag (default-deny)", () => {
+    const decision = evaluateCapabilities({
+      tool: "bogus",
+      tags: ["bogus-tag" as unknown as CapabilityTag,],
+      roleInChat: ChatParticipantRole.Owner,
+      userRole: "admin",
+    },);
+
+    expect(decision.allowed,).toBe(false,);
+    expect(decision.reason,).toContain("elevated privileges",);
   });
 });
 
