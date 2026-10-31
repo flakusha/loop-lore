@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 084_chat_owners (TASK-chat-owners-schema-and-backfill,
- * epic-chat-multi-ownership) — numbered 084: dev holds 082
- * (immersion_failed_checks) and 083 (immersion_decision_log).
+ * 087_chat_owners (TASK-chat-owners-schema-and-backfill,
+ * epic-chat-multi-ownership) — numbered 087 on the duplicate-prefix
+ * reconciliation (084-086 were taken on dev).
  *
  * Co-owners table: the SET of users holding owner authority over a chat.
  * `chats.created_by` is retained unchanged as the creator (append-only);
@@ -16,7 +16,7 @@
  * same owner twice"; `idx_chat_owners_user` serves the reverse lookup
  * ("which chats does this user own") the same way `idx_chats_created_by`
  * serves it for the creator column. `down()` drops the table, which also
- * removes the backfilled rows — the pre-084 shape is exactly "no table".
+ * removes the backfilled rows — the pre-087 shape is exactly "no table".
  */
 import { type Kysely, sql, } from "kysely";
 

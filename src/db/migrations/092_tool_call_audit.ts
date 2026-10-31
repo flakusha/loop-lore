@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 085_tool_call_audit
+ * 092_tool_call_audit
  *
  * Append-only audit trail for the assistant tool guard: one row per guarded
  * tool call — the tool, the caller, the guard's verdict, the judge's

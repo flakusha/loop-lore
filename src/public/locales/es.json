@@ -276,10 +276,9 @@
     "localInference": "Browser-side inference (opt-in)",
     "templates": "Templates",
     "contentLanguage": "Idioma del contenido",
-// hint: Logic changed on both sides. Requires understanding intent of each change.
     "sessions": "Sessions",
     "sessionsTitle": "Active Sessions",
-    "sessionsDescription": "Devices currently signed in to your account. Revoke anything you do not recognize; switching moves your active login to that device."
+    "sessionsDescription": "Devices currently signed in to your account. Revoke anything you do not recognize; switching moves your active login to that device.",
     "quota": "Quota",
     "quotaExhausted": "Quota exhausted.",
     "quotaFallbackNote": "Requests fall back to the next provider or queue until the window resets.",

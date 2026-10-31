@@ -180,6 +180,7 @@ describe("runInSandbox — filesystem", () => {
         context({ allowedFsReadPaths: [dir,], allowedFsWritePaths: [dir,], },),
         async () => fs.readFileSync(link, "utf8",),
       ),);
+
       expect(message,).toContain("403 Forbidden in sandbox",);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true, },);

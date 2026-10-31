@@ -271,13 +271,11 @@ describe("migration numbering is sequential from 001", () => {
     // renumbered to 073/074 to avoid colliding with those claims. 081 is
     // parked on an unmerged sibling branch (observed there as `081_*`
     // during the immersion-gate work); 082 onwards were numbered past it
-    // so no two branches collide. 084 is parked on the unmerged
-    // `feat-lore-knowledge` branch (`084_lore_reveal_condition_timeline_rarity`,
-    // authored first); the memory-propagation branch took 085 to avoid the
-    // collision. The `feat-model-rankings` branch (`084_model_rankings.ts`)
-    // also claims 084; the tool-call audit migration is numbered 085 so the
-    // two branches do not collide. Only numbers
-    // listed here may be absent; any other gap still fails below.
+    // so no two branches collide. The 2026-10-31 wave landed five 084 and
+    // three 085 files; they were renumbered to 087-092 (084 lore_reveal and
+    // 085 actor_memories_timeline_id kept their numbers) so applied order is
+    // deterministic again. Only numbers listed here may be absent; any other
+    // gap still fails below.
     const PARKED = [58, 66, 71, 72, 81, 84,];
     const parkedMissing = PARKED.filter((n,) => !prefixes.includes(n,));
     const expected = Array.from(
@@ -562,15 +560,15 @@ describe("migration loader excludes colocated *.test.ts", () => {
   });
 });
 
-// ── 085_chat_variant_backfill — legacy chat classification ───
+// ── 091_chat_variant_backfill — legacy chat classification ───
 
 /**
  * Fixture-backed classification tests for the legacy-chat taxonomy backfill
  * (spec: .plan/tickets/TASK-chat-variant-legacy-backfill.md).
  *
  * Mirrors migration-rename-upgrade.test.ts: a fresh in-memory DB migrates to
- * the pre-backfill tail (084), legacy-shaped chats are seeded, and the REAL
- * Migrator then applies (and later rolls back / re-applies) 085 — through
+ * the pre-backfill tail (090), legacy-shaped chats are seeded, and the REAL
+ * Migrator then applies (and later rolls back / re-applies) 091 — through
  * migrateTo()/migrateToLatest()/migrateDown(), so transactional behavior
  * matches a real upgrade rather than a direct up()/down() call.
  *
@@ -588,9 +586,9 @@ describe("migration loader excludes colocated *.test.ts", () => {
  *   read-only, never mutated; each import gets Bun's per-process module
  *   cache.
  */
-describe("085_chat_variant_backfill — legacy chat classification", () => {
+describe("091_chat_variant_backfill — legacy chat classification", () => {
   /** Last migration before the backfill. */
-  const BEFORE_BACKFILL = "084_lore_reveal_condition_timeline_rarity";
+  const BEFORE_BACKFILL = "090_model_rankings";
 
   interface LegacyFixture {
     name: string;
@@ -678,7 +676,7 @@ describe("085_chat_variant_backfill — legacy chat classification", () => {
 
   /**
    * Migrate to the pre-backfill tail, seed one user + world + the fixture
-   * chats, and hand back the DB before 085 has run.
+   * chats, and hand back the DB before 091 has run.
    */
   async function seededLegacyDb() {
     const sqlite = new Database(":memory:",);
@@ -783,7 +781,9 @@ describe("085_chat_variant_backfill — legacy chat classification", () => {
       try {
         await migrator.migrateToLatest();
 
-        const rolledBack = await migrator.migrateDown();
+        // Roll back to the pre-backfill tail rather than one step: whatever
+        // migrations land above the backfill must not shadow its down() here.
+        const rolledBack = await migrator.migrateTo(BEFORE_BACKFILL,);
         expect(rolledBack.error, "rolling the backfill back should not error",).toBeUndefined();
 
         const afterDown = await purposeByName(db,);
