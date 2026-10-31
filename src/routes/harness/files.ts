@@ -8,8 +8,8 @@
 // escapes is skipped from listings rather than leaked. Writes never happen
 // here — the editor (approach B) owns writes.
 
-import { statSync, } from "node:fs";
-import { readdir, stat, } from "node:fs/promises";
+import fs from "node:fs";
+import fsPromises from "node:fs/promises";
 import { isAbsolute, join, relative, resolve, sep, } from "node:path";
 
 import type { HarnessRunRecord, } from "../../harness/types";
@@ -61,7 +61,7 @@ export function sandboxRootForRun(record: HarnessRunRecord, repoRoot: string,): 
   if (candidate === treeRoot || !isWithin(treeRoot, candidate,)) { return null; }
 
   try {
-    return statSync(candidate,).isDirectory() ? candidate : null;
+    return fs.statSync(candidate,).isDirectory() ? candidate : null;
   } catch {
     return null;
   }
@@ -88,7 +88,7 @@ export async function listSandboxDir(
 
   let dirents;
   try {
-    dirents = await readdir(dir, { withFileTypes: true, },);
+    dirents = await fsPromises.readdir(dir, { withFileTypes: true, },);
   } catch (error: unknown) {
     if (error instanceof Error && (error as NodeJS.ErrnoException).code === "ENOENT") {
       return { kind: "not-found", };
@@ -111,7 +111,7 @@ export async function listSandboxDir(
 
     let info;
     try {
-      info = await stat(abs,);
+      info = await fsPromises.stat(abs,);
     } catch {
       // Raced away (deleted between readdir and stat) — skip it.
       continue;
