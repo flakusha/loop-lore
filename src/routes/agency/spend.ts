@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * /api/agency/spend — POST endpoint that debits story points for the
+ * /api/v1/agency/spend — POST endpoint that debits story points for the
  * calling actor. Mounted from `src/routes/agency/index.ts` and registered
- * via `register-plugins.ts`.
+ * via the v1 barrel (`src/routes/v1/standalone-surface.ts`).
  *
  * Body: { actor_id: string, amount: number, reason?: string, world_id?: string|null }
  * Response: StoryPointLedger JSON (or 400 on insufficient / invalid amount).
@@ -29,7 +29,7 @@ import {
  */
 export function agencySpendRoute(
   opts: { database: import("kysely").Kysely<import("../../db/schema").DB> },
-  prefix = "/api",
+  prefix = "/api/v1",
 ) {
   const { database, } = opts;
   return new Elysia({ name: "agency-spend", },)

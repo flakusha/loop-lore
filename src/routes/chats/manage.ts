@@ -141,6 +141,18 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             };
 
             const status = statusMap[result.code] ?? HttpStatus.BadRequest;
+            if (result.code === "key_mechanic_conflict") {
+              return jsonError({
+                message: result.message,
+                status,
+                code: result.code as never,
+                data: {
+                  fields: result.details.fields,
+                  migrateEndpoint: `/api/v1/chats/${id}/migrate`,
+                },
+              },);
+            }
+
             return jsonError(result.message, status, result.code as never,);
           }
 

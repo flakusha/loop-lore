@@ -5,9 +5,9 @@
  * Chat co-ownership management for the chat settings modal.
  *
  * Backend contract (src/routes/chats/owners.ts):
- *   GET    /api/chats/:id/owners            → { chatId, owners }
- *   POST   /api/chats/:id/owners            { actorId, reason? } → { ok, chatId, userId, autoInvited, owners }
- *   DELETE /api/chats/:id/owners/:userId    ?reason= → { ok, chatId, userId, owners }
+ *   GET    /api/v1/chats/:id/owners            → { chatId, owners }
+ *   POST   /api/v1/chats/:id/owners            { actorId, reason? } → { ok, chatId, userId, autoInvited, owners }
+ *   DELETE /api/v1/chats/:id/owners/:userId    ?reason= → { ok, chatId, userId, owners }
  *
  * Removing your own user id resigns ownership (server decides); the confirm
  * modal shows distinct copy for that case. The server enforces the 3-owner
@@ -53,7 +53,7 @@ export const ownersActions: Partial<ChatState> & ThisType<ChatState> = {
   _removeOwnerResign: false,
 
   /**
-   * Fetch the chat's owner ids from `GET /api/chats/:id/owners`.
+   * Fetch the chat's owner ids from `GET /api/v1/chats/:id/owners`.
    * Called when the chat settings modal opens.
    */
   async loadChatOwners() {
@@ -62,7 +62,7 @@ export const ownersActions: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat) { return; }
     this._ownersLoading = true;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/owners`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/owners`,);
       if (res.ok) {
         const data = await res.json() as { owners?: string[] };
         this._owners = data.owners ?? [];
@@ -135,7 +135,7 @@ export const ownersActions: Partial<ChatState> & ThisType<ChatState> = {
     this._addOwnerError = "";
 
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/owners`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/owners`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
@@ -209,7 +209,7 @@ export const ownersActions: Partial<ChatState> & ThisType<ChatState> = {
     this._removeOwnerError = "";
 
     try {
-      let url = `/api/chats/${this.activeChat}/owners/${encodeURIComponent(this._removeOwnerId,)}`;
+      let url = `/api/v1/chats/${this.activeChat}/owners/${encodeURIComponent(this._removeOwnerId,)}`;
       if (reason) { url += `?reason=${encodeURIComponent(reason,)}`; }
 
       const res = await apiFetch(url, { method: "DELETE", },);

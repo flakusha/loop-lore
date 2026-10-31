@@ -223,9 +223,9 @@ describe("updateChat online key-mechanic guard (presentation vs GM-execution)", 
     },);
 
     expect(res,).toMatchObject({ code: "key_mechanic_conflict", },);
-    const details = (res as { details?: { fields: string[]; migrateEndpoint: string } }).details;
+    const details = (res as { details?: { fields: string[]; chatId: string } }).details;
     expect(details?.fields,).toContain("gmConfig.llmConfig",);
-    expect(details?.migrateEndpoint,).toBe(`/api/chats/${chatId}/migrate`,);
+    expect(details?.chatId,).toBe(chatId,);
   });
 
   it("still rejects top-level key-mechanic fields once online", async () => {
