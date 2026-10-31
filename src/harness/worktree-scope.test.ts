@@ -12,7 +12,7 @@
  * afterEach safety net, so the default child logger survives the suite.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { mkdtempSync, rmSync, symlinkSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { type Logger, } from "../logger";
@@ -103,6 +103,28 @@ describe("resolveWithinScope", () => {
     expect(resolved,).toBe(join(root, "real.txt",),);
   });
 
+  test("rejects an intermediate dir-symlink with a missing final component", async () => {
+    symlinkSync(outside, join(root, "link",),);
+    try {
+      await resolveWithinScope(root, join("link", "escape.txt",),);
+      expect.unreachable();
+    } catch (error) {
+      expect(error instanceof PathOutsideScopeError,).toBe(true,);
+    }
+  });
+
+  test("still allows a symlink inside the root with a missing final component", async () => {
+    mkdirSync(join(root, "real-dir",),);
+    symlinkSync(join(root, "real-dir",), join(root, "alias",),);
+    const resolved = await resolveWithinScope(root, join("alias", "new.txt",),);
+    expect(resolved,).toBe(join(root, "real-dir", "new.txt",),);
+  });
+
+  test("allows a deep not-yet-existing path with no existing components", async () => {
+    const resolved = await resolveWithinScope(root, join("a", "b", "c.txt",),);
+    expect(resolved,).toBe(join(root, "a", "b", "c.txt",),);
+  });
+
   test("accepts a not-yet-existing path inside the root lexically", async () => {
     const resolved = await resolveWithinScope(root, join("new", "file.txt",),);
     expect(resolved,).toBe(join(root, "new", "file.txt",),);
@@ -117,6 +139,19 @@ describe("isWithinScope", () => {
       expect(await isWithinScope(root, join(root, "..",),),).toBe(false,);
     } finally {
       rmSync(root, { recursive: true, force: true, },);
+    }
+  });
+
+  test("rejects the same intermediate dir-symlink escape as a boolean", async () => {
+    const root = mkdtempSync(join(tmpdir(), "scope-bool-link-",),);
+    const outside = mkdtempSync(join(tmpdir(), "scope-bool-link-out-",),);
+    try {
+      symlinkSync(outside, join(root, "link",),);
+      expect(await isWithinScope(root, join("link", "escape.txt",),),).toBe(false,);
+      expect(await isWithinScope(root, join("inside-ok.txt",),),).toBe(true,);
+    } finally {
+      rmSync(root, { recursive: true, force: true, },);
+      rmSync(outside, { recursive: true, force: true, },);
     }
   });
 });
