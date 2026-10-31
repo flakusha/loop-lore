@@ -85,8 +85,12 @@ export class PathOutsideScopeError extends Error {
  */
 export async function resolveWithinScope(root: string, target: string,): Promise<string> {
   const joined = resolve(root, target,);
-  const realRoot = await realpath(root,);
+  // Kick the root realpath off FIRST so its syscall overlaps the synchronous
+  // nearest-existing-ancestor walk of the target — the two resolutions are
+  // independent (the walk works on the lexical `joined`, not on `realRoot`).
+  const realRootPromise = realpath(root,);
   const realTarget = resolveReal(joined,);
+  const realRoot = await realRootPromise;
 
   if (realTarget === null) {
     // Unreachable while `root` exists: the ancestor walk always reaches the
@@ -146,6 +150,9 @@ export interface ScopeGuardInput {
  */
 export async function assertParamsWithinScope(input: ScopeGuardInput,): Promise<void> {
   const root = input.root ?? detectScopeRoot();
+  // Sequential BY DESIGN (not an async-parallelism miss): the FIRST offending
+  // path must be the one reported, and escalation warnings keep their
+  // parameter order — parallel rejections would make both nondeterministic.
   for (const [key, value,] of Object.entries(input.params,)) {
     if (PATH_PARAM_KEYS[key.toLowerCase()] !== true || typeof value !== "string") { continue; }
     try {
