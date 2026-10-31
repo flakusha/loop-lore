@@ -23,6 +23,7 @@ import { safeJsonStringify, } from "../../utils";
 /** The fake server script, as it runs in the child. */
 const SCRIPT = String.raw`
 const models = (process.env.FAKE_MODELS ?? "").split(",").filter(Boolean);
+const configId = process.env.FAKE_CONFIG_ID ?? "MODEL_CONFIG_ID";
 const rejectModel = process.env.FAKE_REJECT_MODEL ?? "";
 let buf = "";
 const send = (o) => process.stdout.write(JSON.stringify(o) + "\n");
@@ -39,9 +40,13 @@ process.stdin.on("data", (c) => {
     if (m.method === "initialize") {
       send({ jsonrpc: "2.0", id: m.id, result: { protocolVersion: 1, agentInfo: { name: "fake" } } });
     } else if (m.method === "session/new") {
+      if (process.env.FAKE_NO_SESSION) {
+        send({ jsonrpc: "2.0", id: m.id, result: {} });
+        continue;
+      }
       send({ jsonrpc: "2.0", id: m.id, result: {
         sessionId: "fake-session-1",
-        configOptions: [{ id: "MODEL_CONFIG_ID", type: "select", currentValue: models[0] ?? "", options: models.map((v) => ({ value: v })) }],
+        configOptions: [{ id: configId, type: "select", currentValue: models[0] ?? "", options: models.map((v) => ({ value: v })) }],
       } });
     } else if (m.method === "session/set_config_option") {
       if (rejectModel && m.params.value === rejectModel) {
@@ -79,6 +84,10 @@ export interface FakeAcpEnv {
   FAKE_STOP?: string;
   /** JSON array of usage reports for `_omp/usage`. */
   FAKE_USAGE?: string;
+  /** Config option id of the model select (default omp's `MODEL_CONFIG_ID`). */
+  FAKE_CONFIG_ID?: string;
+  /** When set, session/new answers without a sessionId. */
+  FAKE_NO_SESSION?: string;
 }
 
 /** A started fake server; `argv` feeds a profile command, `stop()` reaps it. */
