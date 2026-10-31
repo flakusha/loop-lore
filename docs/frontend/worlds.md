@@ -71,7 +71,7 @@ the `prime` slug even when the prime branch row has a uuid id.
 **In-chat `/timeline` command** (`src/assistant/commands/timeline.ts`):
 
 - `list` — any world member; prime-first branch list marking the chat's active branch
-- `fork [label]` — owner only; forks the chat's current branch (defaults to today's date as label)
+- `fork [label]` — owner only; forks the chat's current branch (default label `Fork <today's date>`)
 - `switch <id>` — owner only; moves the *shared* chat branch (`chats.timeline_id`), unlike the per-user `select` endpoint above
 - Fails closed when the chat has no bound world; unknown ids are rejected
 
@@ -81,7 +81,7 @@ the `prime` slug even when the prime branch row has a uuid id.
 - A manifestation roll reads the pending row, flips it to manifested, and appends the timeline event in one transaction — concurrent rolls cannot double-manifest, and a manifest is never recorded without its event
 - Red herrings (`may_manifest=0`) never manifest on roll
 
-Not built: timeline-aware memory injection (epic-memory-propagation) and per-timeline rarity multipliers (epic-rarity-extensions) are backlog — no UI or API for them yet.
+Not built: per-timeline rarity multipliers (epic-rarity-extensions) are backlog — no UI or API for them yet. Memories are already timeline-scoped: injection filters to the chat's timeline (timeline-agnostic rows plus rows bound to the chat's branch; `src/assistant/prompt/sections/memories-helpers.ts`).
 
 **Lore section** (textarea, rendered as formatted text):
 
