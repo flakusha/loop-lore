@@ -11155,11 +11155,18 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-062.md",
       "title": "# FEAT-062: Generation quality metrics",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/context-stats.ts",
         "src/frontend/alpine/context-window.ts",
-        "src/generation/quality-metrics.ts"
+        "src/generation/auto-gen/store-message.ts",
+        "src/generation/generate-route/persist.ts",
+        "src/generation/quality-metrics.ts",
+        "src/generation/quality/aggregate.ts",
+        "src/generation/quality/metadata.ts",
+        "src/generation/quality/repetition-rate.ts",
+        "src/routes/analytics/chats.ts",
+        "src/routes/analytics/quality.ts"
       ],
       "related": []
     },
@@ -16611,6 +16618,39 @@
       "related": []
     },
     {
+      "id": "TASK-acp-driver-module",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-acp-driver-module.md",
+      "title": "ACP driver module",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/integrations/registry"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-acp-profile-aware-model-selection",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-acp-profile-aware-model-selection.md",
+      "title": "ACP profile-aware model selection",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/usage.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-acp-profile-harness-adapters",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-acp-profile-harness-adapters.md",
+      "title": "ACP profile harness adapters",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/integrations/harness/adapter-types.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-action-applicability-gate",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-action-applicability-gate.md",
@@ -19541,21 +19581,22 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-tool-injection-guard.md",
       "title": "Assistant Tool Capability Matrix + 2+ Level Prompt-Injection Guard",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/capabilities.ts",
-        "src/assistant/commands/index.ts",
+        "src/assistant/commands/capability-coverage.test.ts",
         "src/assistant/commands/registry.ts",
         "src/assistant/gm-tool-detection.ts",
-        "src/assistant/guard/judge.test.ts",
+        "src/assistant/gm-tool-execution.ts",
+        "src/assistant/guard/audit.ts",
+        "src/assistant/guard/fs-import-ratchet.test.ts",
         "src/assistant/guard/judge.ts",
         "src/assistant/guard/matrix.test.ts",
         "src/assistant/guard/matrix.ts",
-        "src/assistant/guard/pipeline.test.ts",
         "src/assistant/guard/pipeline.ts",
-        "src/assistant/guard/sandbox.test.ts",
         "src/assistant/guard/sandbox.ts",
-        "src/db/migrations/parts/NNN_tool_audit.ts"
+        "src/db/migrations/092_tool_call_audit.ts",
+        "src/routes/messages/command.ts"
       ],
       "related": []
     },
@@ -24492,7 +24533,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-comfyui-parameter-map-derivation-from-marked-workflows.md",
       "title": "ComfyUI parameter-map derivation from marked workflows",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/generation/workflow-library/seed-parameters.ts"
       ],
@@ -24574,8 +24615,11 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-comfyui-workflow-acceptance-probe-scaffold.md",
       "title": "ComfyUI workflow acceptance-probe scaffold",
-      "status": "Not Started",
-      "srcRefs": [],
+      "status": "done",
+      "srcRefs": [
+        "src/generation/comfyui-params/probe.ts",
+        "src/generation/workflow-library/validate.ts"
+      ],
       "related": []
     },
     {
@@ -27661,6 +27705,15 @@
       "related": []
     },
     {
+      "id": "TASK-e2e-env-gated-scenario",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-e2e-env-gated-scenario.md",
+      "title": "e2e env-gated scenario",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-e2e-nsfw-appeals-audit-routes-coverage",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-e2e-nsfw-appeals-audit-routes-coverage.md",
@@ -28826,8 +28879,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-equipment-slots.md",
       "title": "Equipment Slots",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/components/inventory-panels.html",
+        "src/frontend/alpine/inventory.ts",
         "src/frontend/inventory/equipment-slot.ts",
         "src/frontend/inventory/equipment-slots.ts"
       ],
@@ -29308,6 +29363,15 @@
         "src/server/start.ts",
         "src/trade/index.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-fake-acp-server-test-fixture",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-fake-acp-server-test-fixture.md",
+      "title": "fake ACP server test fixture",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -36340,6 +36404,15 @@
       "related": []
     },
     {
+      "id": "TASK-message-persistence-mapping",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-message-persistence-mapping.md",
+      "title": "message persistence mapping",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-message-polls-votes",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-message-polls-votes.md",
@@ -36898,6 +36971,17 @@
       "status": "Not Started",
       "srcRefs": [
         "src/routes/model-comparisons.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-model-discovery-capability-enrichment",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-model-discovery-capability-enrichment.md",
+      "title": "model discovery capability enrichment",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/admin/model-capabilities.ts"
       ],
       "related": []
     },
@@ -38451,6 +38535,15 @@
       "related": []
     },
     {
+      "id": "TASK-omp-adapter",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-omp-adapter.md",
+      "title": "omp adapter",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-open-in-editor-handoff",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-open-in-editor-handoff.md",
@@ -38494,6 +38587,15 @@
       "related": []
     },
     {
+      "id": "TASK-opencode-adapter",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-opencode-adapter.md",
+      "title": "opencode adapter",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-openscad-parametric-render-via-cli-allowlist",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-openscad-parametric-render-via-cli-allowlist.md",
@@ -38509,6 +38611,17 @@
       "title": "Operator Platform Credential Store",
       "status": "Not Started",
       "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-optional-dep-packaging",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-optional-dep-packaging.md",
+      "title": "optional-dep packaging",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/native/loader.ts"
+      ],
       "related": []
     },
     {
@@ -38932,6 +39045,15 @@
       "related": []
     },
     {
+      "id": "TASK-per-user-isolation-gate",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-per-user-isolation-gate.md",
+      "title": "per-user isolation gate",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-perf-server-no-cache-html-entry-points-stream-static-files-w",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-perf-server-no-cache-html-entry-points-stream-static-files-w.md",
@@ -38948,6 +39070,15 @@
       "path": ".plan/tickets/TASK-performance-dashboard-slos.md",
       "title": "Performance Dashboard & SLOs",
       "status": "done",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-permission-approval-flow",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-permission-approval-flow.md",
+      "title": "permission approval flow",
+      "status": "Not Started",
       "srcRefs": [],
       "related": []
     },
@@ -45682,8 +45813,12 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-trading-interface.md",
       "title": "Trading Interface",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/components/trade-window-panel.html",
+        "src/frontend/alpine/inventory-offers.ts",
+        "src/frontend/alpine/inventory-trading.ts",
+        "src/frontend/inventory/trade-offers.ts",
         "src/frontend/inventory/trade-panel.ts",
         "src/frontend/inventory/trading-interface.ts"
       ],
@@ -47937,8 +48072,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-workflow-library-ui-format-ingest.md",
       "title": "Workflow library UI-format ingest",
-      "status": "Not Started",
-      "srcRefs": [],
+      "status": "done",
+      "srcRefs": [
+        "src/generation/comfyui-params/ingest.ts"
+      ],
       "related": []
     },
     {
@@ -48871,11 +49008,12 @@
       "kind": "epic",
       "path": ".plan/epics/epic-analytics-observability.md",
       "title": "Analytics & Observability",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/elysia-app.ts",
         "src/routes/analytics.test.ts",
         "src/routes/analytics.ts",
+        "src/routes/analytics/quality.ts",
         "src/routes/model-comparisons.test.ts",
         "src/routes/model-comparisons.ts"
       ],
@@ -51380,6 +51518,18 @@
       "related": []
     },
     {
+      "id": "epic-external-harness-acp",
+      "kind": "epic",
+      "path": ".plan/epics/epic-external-harness-acp.md",
+      "title": "External Harness Integration (ACP)",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/integrations/registry",
+        "src/native/loader.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "epic-external-tooling-build",
       "kind": "epic",
       "path": ".plan/epics/epic-external-tooling-build.md",
@@ -52300,12 +52450,18 @@
       "kind": "epic",
       "path": ".plan/epics/epic-inventory-ui.md",
       "title": "Inventory & Trading UI",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/components/inventory-panels.html",
+        "src/components/trade-window-panel.html",
+        "src/frontend/alpine/inventory-offers.ts",
+        "src/frontend/alpine/inventory-trading.ts",
         "src/frontend/alpine/inventory.ts",
         "src/frontend/inventory/equipment-slots.ts",
         "src/frontend/inventory/inventory-grid.ts",
         "src/frontend/inventory/item-details.ts",
+        "src/frontend/inventory/trade-offers.ts",
+        "src/frontend/inventory/trade-panel.ts",
         "src/frontend/inventory/trading-interface.ts",
         "src/routes/actor-items.ts",
         "src/services/actor-items/equip.ts"
@@ -55102,6 +55258,7 @@
         "FEAT-model-native-locale-config",
         "FEAT-multimodal-input-image-voice-character-reacts",
         "TASK-adopt-bun-randomuuidv7-for-time-sortable-ids",
+        "TASK-model-discovery-capability-enrichment",
         "TASK-per-model-per-provider-cost-attribution-for-llm-execution-st",
         "TASK-task-chat-recommended-context-window-rotation",
         "epic-local-model-file-discovery"
@@ -56590,6 +56747,12 @@
       ]
     },
     {
+      "path": "src/assistant/commands/capability-coverage.test.ts",
+      "owners": [
+        "TASK-assistant-tool-injection-guard"
+      ]
+    },
+    {
       "path": "src/assistant/commands/caption.ts",
       "owners": [
         "epic-assistant-generation-extensions"
@@ -56850,7 +57013,6 @@
         "TASK-assistant-entity-access-batch-rag-asset",
         "TASK-assistant-entity-access-world-location-access",
         "TASK-assistant-server-side-branch-command",
-        "TASK-assistant-tool-injection-guard",
         "epic-assistant-entity-access"
       ]
     },
@@ -57226,11 +57388,18 @@
       "path": "src/assistant/gm-tool-execution.ts",
       "owners": [
         "BUG-assistant-and-group-chat-correctness-defects",
+        "TASK-assistant-tool-injection-guard",
         "TASK-document-dual-assistant-role-gates"
       ]
     },
     {
-      "path": "src/assistant/guard/judge.test.ts",
+      "path": "src/assistant/guard/audit.ts",
+      "owners": [
+        "TASK-assistant-tool-injection-guard"
+      ]
+    },
+    {
+      "path": "src/assistant/guard/fs-import-ratchet.test.ts",
       "owners": [
         "TASK-assistant-tool-injection-guard"
       ]
@@ -57254,19 +57423,7 @@
       ]
     },
     {
-      "path": "src/assistant/guard/pipeline.test.ts",
-      "owners": [
-        "TASK-assistant-tool-injection-guard"
-      ]
-    },
-    {
       "path": "src/assistant/guard/pipeline.ts",
-      "owners": [
-        "TASK-assistant-tool-injection-guard"
-      ]
-    },
-    {
-      "path": "src/assistant/guard/sandbox.test.ts",
       "owners": [
         "TASK-assistant-tool-injection-guard"
       ]
@@ -62937,6 +63094,13 @@
       ]
     },
     {
+      "path": "src/components/inventory-panels.html",
+      "owners": [
+        "TASK-equipment-slots",
+        "epic-inventory-ui"
+      ]
+    },
+    {
       "path": "src/components/key-management.html",
       "owners": [
         "TASK-encryption-key-management-ui",
@@ -63080,6 +63244,13 @@
       "owners": [
         "TASK-shared-text-surface-toolbar",
         "epic-browser-editor-support"
+      ]
+    },
+    {
+      "path": "src/components/trade-window-panel.html",
+      "owners": [
+        "TASK-trading-interface",
+        "epic-inventory-ui"
       ]
     },
     {
@@ -66223,6 +66394,12 @@
       ]
     },
     {
+      "path": "src/db/migrations/092_tool_call_audit.ts",
+      "owners": [
+        "TASK-assistant-tool-injection-guard"
+      ]
+    },
+    {
       "path": "src/db/migrations/0XX_audio_templates.ts",
       "owners": [
         "FEAT-065-sub-audio"
@@ -66529,12 +66706,6 @@
       "path": "src/db/migrations/parts/NNN_templates.ts",
       "owners": [
         "FEAT-065-template-system"
-      ]
-    },
-    {
-      "path": "src/db/migrations/parts/NNN_tool_audit.ts",
-      "owners": [
-        "TASK-assistant-tool-injection-guard"
       ]
     },
     {
@@ -69613,8 +69784,23 @@
       ]
     },
     {
+      "path": "src/frontend/alpine/inventory-offers.ts",
+      "owners": [
+        "TASK-trading-interface",
+        "epic-inventory-ui"
+      ]
+    },
+    {
+      "path": "src/frontend/alpine/inventory-trading.ts",
+      "owners": [
+        "TASK-trading-interface",
+        "epic-inventory-ui"
+      ]
+    },
+    {
       "path": "src/frontend/alpine/inventory.ts",
       "owners": [
+        "TASK-equipment-slots",
         "TASK-equipment-stat-preview",
         "TASK-inventory-alpine",
         "epic-inventory-ui"
@@ -71098,9 +71284,17 @@
       ]
     },
     {
+      "path": "src/frontend/inventory/trade-offers.ts",
+      "owners": [
+        "TASK-trading-interface",
+        "epic-inventory-ui"
+      ]
+    },
+    {
       "path": "src/frontend/inventory/trade-panel.ts",
       "owners": [
-        "TASK-trading-interface"
+        "TASK-trading-interface",
+        "epic-inventory-ui"
       ]
     },
     {
@@ -72602,6 +72796,7 @@
         "BUG-bug-assistant-message-swipe-index-read-modify-write-is-not-a",
         "BUG-regex-transform-runs-at-store-time-not-render-time",
         "BUG-stale-audit-claim-aux-emotion-mood-task-tables",
+        "FEAT-062",
         "FEAT-game-state-extraction-and-analysis-pipeline",
         "TASK-messages-outfit-id-column",
         "TEST-emotion-hook-to-avatarForMessage-integration",
@@ -72737,6 +72932,18 @@
       "path": "src/generation/comfyui-converter/fixtures/README.md",
       "owners": [
         "TASK-ui-api-workflow-converter"
+      ]
+    },
+    {
+      "path": "src/generation/comfyui-params/ingest.ts",
+      "owners": [
+        "TASK-workflow-library-ui-format-ingest"
+      ]
+    },
+    {
+      "path": "src/generation/comfyui-params/probe.ts",
+      "owners": [
+        "TASK-comfyui-workflow-acceptance-probe-scaffold"
       ]
     },
     {
@@ -72944,7 +73151,8 @@
     {
       "path": "src/generation/generate-route/persist.ts",
       "owners": [
-        "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just"
+        "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
+        "FEAT-062"
       ]
     },
     {
@@ -73959,6 +74167,24 @@
       ]
     },
     {
+      "path": "src/generation/quality/aggregate.ts",
+      "owners": [
+        "FEAT-062"
+      ]
+    },
+    {
+      "path": "src/generation/quality/metadata.ts",
+      "owners": [
+        "FEAT-062"
+      ]
+    },
+    {
+      "path": "src/generation/quality/repetition-rate.ts",
+      "owners": [
+        "FEAT-062"
+      ]
+    },
+    {
       "path": "src/generation/quota-engine.ts",
       "owners": [
         "TASK-resource-provision-quota-engine",
@@ -74277,6 +74503,7 @@
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
         "BUG-workflow-library-img2img-row-has-no-parameters",
         "TASK-comfyui-node-discovery-template-autofilter",
+        "TASK-comfyui-workflow-acceptance-probe-scaffold",
         "TASK-external-comfyui-plugin-repo-integration-contract"
       ]
     },
@@ -75040,6 +75267,12 @@
       ]
     },
     {
+      "path": "src/integrations/harness/adapter-types.ts",
+      "owners": [
+        "TASK-acp-profile-harness-adapters"
+      ]
+    },
+    {
       "path": "src/integrations/health.test.ts",
       "owners": [
         "BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-"
@@ -75162,6 +75395,13 @@
       "path": "src/integrations/protocols/types.ts",
       "owners": [
         "TASK-integration-infrastructure"
+      ]
+    },
+    {
+      "path": "src/integrations/registry",
+      "owners": [
+        "TASK-acp-driver-module",
+        "epic-external-harness-acp"
       ]
     },
     {
@@ -76504,6 +76744,8 @@
       "path": "src/native/loader.ts",
       "owners": [
         "TASK-harness-plugin-runtime",
+        "TASK-optional-dep-packaging",
+        "epic-external-harness-acp",
         "epic-harness-integration",
         "epic-precompiled-hot-binaries"
       ]
@@ -79044,6 +79286,12 @@
       ]
     },
     {
+      "path": "src/routes/analytics/chats.ts",
+      "owners": [
+        "FEAT-062"
+      ]
+    },
+    {
       "path": "src/routes/analytics/knowledge-graph.ts",
       "owners": [
         "TASK-task-memory-kg-recall-datalog-rules"
@@ -79053,6 +79301,13 @@
       "path": "src/routes/analytics/overview.ts",
       "owners": [
         "TASK-comparison-metric-collection-and-charts"
+      ]
+    },
+    {
+      "path": "src/routes/analytics/quality.ts",
+      "owners": [
+        "FEAT-062",
+        "epic-analytics-observability"
       ]
     },
     {
@@ -81308,6 +81563,7 @@
         "PERF-chat-dispatch-command-three-sequential-queries",
         "TASK-action-applicability-gate",
         "TASK-assistant-entity-access-tests",
+        "TASK-assistant-tool-injection-guard",
         "TASK-book-outline-generation-workflow",
         "TASK-chat-branch-merge",
         "TASK-comparison-workflow-template-and-command",
@@ -88934,6 +89190,12 @@
       "owners": [
         "TASK-lorebook-unified-search-index",
         "TASK-search-rag-coverage-bridge"
+      ]
+    },
+    {
+      "path": "src/usage.ts",
+      "owners": [
+        "TASK-acp-profile-aware-model-selection"
       ]
     },
     {
@@ -98844,6 +99106,66 @@
       "from": "epic-external-creative-tool-bridge",
       "kind": "owns",
       "to": "TASK-workspace-mcp-bridge-on-openclaw-serve-registry-pattern"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-acp-driver-module"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-acp-profile-aware-model-selection"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-acp-profile-harness-adapters"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-e2e-env-gated-scenario"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-fake-acp-server-test-fixture"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-message-persistence-mapping"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-model-discovery-capability-enrichment"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-omp-adapter"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-opencode-adapter"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-optional-dep-packaging"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-per-user-isolation-gate"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "owns",
+      "to": "TASK-permission-approval-flow"
     },
     {
       "from": "epic-external-tooling-build",
@@ -118453,7 +118775,42 @@
     {
       "from": "FEAT-062",
       "kind": "produces",
+      "to": "src/generation/auto-gen/store-message.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "produces",
+      "to": "src/generation/generate-route/persist.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "produces",
       "to": "src/generation/quality-metrics.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "produces",
+      "to": "src/generation/quality/aggregate.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "produces",
+      "to": "src/generation/quality/metadata.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "produces",
+      "to": "src/generation/quality/repetition-rate.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "produces",
+      "to": "src/routes/analytics/chats.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "produces",
+      "to": "src/routes/analytics/quality.ts"
     },
     {
       "from": "FEAT-065-prompt-library-expanded",
@@ -123646,6 +124003,21 @@
       "to": "src/test-utils/insert-helpers.ts"
     },
     {
+      "from": "TASK-acp-driver-module",
+      "kind": "produces",
+      "to": "src/integrations/registry"
+    },
+    {
+      "from": "TASK-acp-profile-aware-model-selection",
+      "kind": "produces",
+      "to": "src/usage.ts"
+    },
+    {
+      "from": "TASK-acp-profile-harness-adapters",
+      "kind": "produces",
+      "to": "src/integrations/harness/adapter-types.ts"
+    },
+    {
       "from": "TASK-action-applicability-gate",
       "kind": "produces",
       "to": "src/assistant/commands/registry.ts"
@@ -126503,7 +126875,7 @@
     {
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "produces",
-      "to": "src/assistant/commands/index.ts"
+      "to": "src/assistant/commands/capability-coverage.test.ts"
     },
     {
       "from": "TASK-assistant-tool-injection-guard",
@@ -126518,7 +126890,17 @@
     {
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "produces",
-      "to": "src/assistant/guard/judge.test.ts"
+      "to": "src/assistant/gm-tool-execution.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "produces",
+      "to": "src/assistant/guard/audit.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "produces",
+      "to": "src/assistant/guard/fs-import-ratchet.test.ts"
     },
     {
       "from": "TASK-assistant-tool-injection-guard",
@@ -126538,17 +126920,7 @@
     {
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "produces",
-      "to": "src/assistant/guard/pipeline.test.ts"
-    },
-    {
-      "from": "TASK-assistant-tool-injection-guard",
-      "kind": "produces",
       "to": "src/assistant/guard/pipeline.ts"
-    },
-    {
-      "from": "TASK-assistant-tool-injection-guard",
-      "kind": "produces",
-      "to": "src/assistant/guard/sandbox.test.ts"
     },
     {
       "from": "TASK-assistant-tool-injection-guard",
@@ -126558,7 +126930,12 @@
     {
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "produces",
-      "to": "src/db/migrations/parts/NNN_tool_audit.ts"
+      "to": "src/db/migrations/092_tool_call_audit.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "produces",
+      "to": "src/routes/messages/command.ts"
     },
     {
       "from": "TASK-asymmetric-key-pairs-followup",
@@ -132106,6 +132483,16 @@
       "to": "src/generation/providers/comfyui.ts"
     },
     {
+      "from": "TASK-comfyui-workflow-acceptance-probe-scaffold",
+      "kind": "produces",
+      "to": "src/generation/comfyui-params/probe.ts"
+    },
+    {
+      "from": "TASK-comfyui-workflow-acceptance-probe-scaffold",
+      "kind": "produces",
+      "to": "src/generation/workflow-library/validate.ts"
+    },
+    {
       "from": "TASK-comfyui-workflow-parameterization",
       "kind": "produces",
       "to": "src/generation/lora/discovery-comfyui.ts"
@@ -136929,6 +137316,16 @@
       "from": "TASK-equipment-market-demand-feedback",
       "kind": "produces",
       "to": "src/services"
+    },
+    {
+      "from": "TASK-equipment-slots",
+      "kind": "produces",
+      "to": "src/components/inventory-panels.html"
+    },
+    {
+      "from": "TASK-equipment-slots",
+      "kind": "produces",
+      "to": "src/frontend/alpine/inventory.ts"
     },
     {
       "from": "TASK-equipment-slots",
@@ -144541,6 +144938,11 @@
       "to": "src/routes/model-comparisons.ts"
     },
     {
+      "from": "TASK-model-discovery-capability-enrichment",
+      "kind": "produces",
+      "to": "src/admin/model-capabilities.ts"
+    },
+    {
       "from": "TASK-model-weight-sniffing-fallback-detect-from-weights",
       "kind": "produces",
       "to": "src/model_loader.cpp"
@@ -145829,6 +146231,11 @@
       "from": "TASK-openapi-specification",
       "kind": "produces",
       "to": "src/api-governance/openapi/validator.ts"
+    },
+    {
+      "from": "TASK-optional-dep-packaging",
+      "kind": "produces",
+      "to": "src/native/loader.ts"
     },
     {
       "from": "TASK-optique-cli-tooling-integration",
@@ -151973,6 +152380,26 @@
     {
       "from": "TASK-trading-interface",
       "kind": "produces",
+      "to": "src/components/trade-window-panel.html"
+    },
+    {
+      "from": "TASK-trading-interface",
+      "kind": "produces",
+      "to": "src/frontend/alpine/inventory-offers.ts"
+    },
+    {
+      "from": "TASK-trading-interface",
+      "kind": "produces",
+      "to": "src/frontend/alpine/inventory-trading.ts"
+    },
+    {
+      "from": "TASK-trading-interface",
+      "kind": "produces",
+      "to": "src/frontend/inventory/trade-offers.ts"
+    },
+    {
+      "from": "TASK-trading-interface",
+      "kind": "produces",
       "to": "src/frontend/inventory/trade-panel.ts"
     },
     {
@@ -154341,6 +154768,11 @@
       "to": "src/config/workflow-templates.test.ts"
     },
     {
+      "from": "TASK-workflow-library-ui-format-ingest",
+      "kind": "produces",
+      "to": "src/generation/comfyui-params/ingest.ts"
+    },
+    {
       "from": "TASK-workflow-persist-run-sessions-beyond-process-memory",
       "kind": "produces",
       "to": "src/assistant/workflow-session-store.ts"
@@ -155529,6 +155961,11 @@
       "from": "epic-analytics-observability",
       "kind": "produces",
       "to": "src/routes/analytics.ts"
+    },
+    {
+      "from": "epic-analytics-observability",
+      "kind": "produces",
+      "to": "src/routes/analytics/quality.ts"
     },
     {
       "from": "epic-analytics-observability",
@@ -161926,6 +162363,16 @@
       "to": "src/plugins/types.ts"
     },
     {
+      "from": "epic-external-harness-acp",
+      "kind": "produces",
+      "to": "src/integrations/registry"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "produces",
+      "to": "src/native/loader.ts"
+    },
+    {
       "from": "epic-faction-reputation",
       "kind": "produces",
       "to": "src/assistant/commands/interaction.ts"
@@ -163643,6 +164090,26 @@
     {
       "from": "epic-inventory-ui",
       "kind": "produces",
+      "to": "src/components/inventory-panels.html"
+    },
+    {
+      "from": "epic-inventory-ui",
+      "kind": "produces",
+      "to": "src/components/trade-window-panel.html"
+    },
+    {
+      "from": "epic-inventory-ui",
+      "kind": "produces",
+      "to": "src/frontend/alpine/inventory-offers.ts"
+    },
+    {
+      "from": "epic-inventory-ui",
+      "kind": "produces",
+      "to": "src/frontend/alpine/inventory-trading.ts"
+    },
+    {
+      "from": "epic-inventory-ui",
+      "kind": "produces",
       "to": "src/frontend/alpine/inventory.ts"
     },
     {
@@ -163659,6 +164126,16 @@
       "from": "epic-inventory-ui",
       "kind": "produces",
       "to": "src/frontend/inventory/item-details.ts"
+    },
+    {
+      "from": "epic-inventory-ui",
+      "kind": "produces",
+      "to": "src/frontend/inventory/trade-offers.ts"
+    },
+    {
+      "from": "epic-inventory-ui",
+      "kind": "produces",
+      "to": "src/frontend/inventory/trade-panel.ts"
     },
     {
       "from": "epic-inventory-ui",
@@ -184596,6 +185073,12 @@
     {
       "from": "BUG-assistant-and-group-chat-correctness-defects",
       "kind": "sibling",
+      "to": "TASK-assistant-tool-injection-guard",
+      "via": "src/assistant/gm-tool-execution.ts; src/routes/messages/command.ts"
+    },
+    {
+      "from": "BUG-assistant-and-group-chat-correctness-defects",
+      "kind": "sibling",
       "to": "TASK-aux-emotion-avatar",
       "via": "src/assistant/intent.ts"
     },
@@ -186145,6 +186628,12 @@
       "from": "BUG-assistant-intent-regexes-hijack-normal-chat-messages",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-tests",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "BUG-assistant-intent-regexes-hijack-normal-chat-messages",
+      "kind": "sibling",
+      "to": "TASK-assistant-tool-injection-guard",
       "via": "src/routes/messages/command.ts"
     },
     {
@@ -189289,6 +189778,12 @@
       "from": "BUG-bug-assistant-message-swipe-index-read-modify-write-is-not-a",
       "kind": "sibling",
       "to": "BUG-stale-audit-claim-aux-emotion-mood-task-tables",
+      "via": "src/generation/auto-gen/store-message.ts"
+    },
+    {
+      "from": "BUG-bug-assistant-message-swipe-index-read-modify-write-is-not-a",
+      "kind": "sibling",
+      "to": "FEAT-062",
       "via": "src/generation/auto-gen/store-message.ts"
     },
     {
@@ -196920,6 +197415,12 @@
     {
       "from": "BUG-chat-prompt-override-bypass-on-reply",
       "kind": "sibling",
+      "to": "TASK-assistant-tool-injection-guard",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "BUG-chat-prompt-override-bypass-on-reply",
+      "kind": "sibling",
       "to": "TASK-async-request-response-result-store-separate-table-offload",
       "via": "src/routes/messages/reply.ts"
     },
@@ -199669,7 +200170,7 @@
       "from": "BUG-command-dispatch-async-handler-uncaught",
       "kind": "sibling",
       "to": "TASK-assistant-tool-injection-guard",
-      "via": "src/assistant/commands/registry.ts"
+      "via": "src/assistant/commands/registry.ts; src/routes/messages/command.ts"
     },
     {
       "from": "BUG-command-dispatch-async-handler-uncaught",
@@ -220320,6 +220821,12 @@
     {
       "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
       "kind": "sibling",
+      "to": "FEAT-062",
+      "via": "src/generation/generate-route/persist.ts"
+    },
+    {
+      "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
+      "kind": "sibling",
       "to": "FEAT-065-template-system",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -223154,6 +223661,12 @@
       "kind": "sibling",
       "to": "TASK-comfyui-template-registry",
       "via": "src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "sibling",
+      "to": "TASK-comfyui-workflow-acceptance-probe-scaffold",
+      "via": "src/generation/workflow-library/validate.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -239994,6 +240507,12 @@
     {
       "from": "BUG-regex-transform-runs-at-store-time-not-render-time",
       "kind": "sibling",
+      "to": "FEAT-062",
+      "via": "src/generation/auto-gen/store-message.ts"
+    },
+    {
+      "from": "BUG-regex-transform-runs-at-store-time-not-render-time",
+      "kind": "sibling",
       "to": "FEAT-game-state-extraction-and-analysis-pipeline",
       "via": "src/generation/auto-gen/store-message.ts"
     },
@@ -247254,6 +247773,12 @@
     {
       "from": "BUG-stale-audit-claim-aux-emotion-mood-task-tables",
       "kind": "sibling",
+      "to": "FEAT-062",
+      "via": "src/generation/auto-gen/store-message.ts"
+    },
+    {
+      "from": "BUG-stale-audit-claim-aux-emotion-mood-task-tables",
+      "kind": "sibling",
       "to": "FEAT-game-state-extraction-and-analysis-pipeline",
       "via": "src/generation/auto-gen/store-message.ts"
     },
@@ -253920,6 +254445,12 @@
     {
       "from": "BUG-workflow-library-img2img-row-has-no-parameters",
       "kind": "sibling",
+      "to": "TASK-comfyui-workflow-acceptance-probe-scaffold",
+      "via": "src/generation/workflow-library/validate.ts"
+    },
+    {
+      "from": "BUG-workflow-library-img2img-row-has-no-parameters",
+      "kind": "sibling",
       "to": "TASK-comfyui-workflow-parameterization",
       "via": "src/generation/workflow-substitutor.ts; src/image-edit/routes.ts"
     },
@@ -256410,6 +256941,12 @@
     {
       "from": "FEAT-062",
       "kind": "sibling",
+      "to": "FEAT-game-state-extraction-and-analysis-pipeline",
+      "via": "src/generation/auto-gen/store-message.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "sibling",
       "to": "TASK-chat-context-preference-per-scope",
       "via": "src/frontend/alpine/context-window.ts"
     },
@@ -256428,8 +256965,26 @@
     {
       "from": "FEAT-062",
       "kind": "sibling",
+      "to": "TASK-messages-outfit-id-column",
+      "via": "src/generation/auto-gen/store-message.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "sibling",
       "to": "TASK-prompt-dry-run-inspection",
       "via": "src/chat/context-stats.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "sibling",
+      "to": "TEST-emotion-hook-to-avatarForMessage-integration",
+      "via": "src/generation/auto-gen/store-message.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "sibling",
+      "to": "epic-analytics-observability",
+      "via": "src/routes/analytics/quality.ts"
     },
     {
       "from": "FEAT-062",
@@ -256448,6 +257003,12 @@
       "kind": "sibling",
       "to": "epic-llm-request-scheduler",
       "via": "src/chat/context-stats.ts"
+    },
+    {
+      "from": "FEAT-062",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/generation/auto-gen/store-message.ts"
     },
     {
       "from": "FEAT-065-prompt-library-expanded",
@@ -270156,6 +270717,12 @@
     {
       "from": "FEAT-model-native-locale-config",
       "kind": "sibling",
+      "to": "TASK-model-discovery-capability-enrichment",
+      "via": "src/admin/model-capabilities.ts"
+    },
+    {
+      "from": "FEAT-model-native-locale-config",
+      "kind": "sibling",
       "to": "TASK-per-chat-auto-translation-layer",
       "via": "src/chat/auto-translate.ts"
     },
@@ -270235,6 +270802,12 @@
       "from": "FEAT-multimodal-input-image-voice-character-reacts",
       "kind": "sibling",
       "to": "TASK-adopt-bun-randomuuidv7-for-time-sortable-ids",
+      "via": "src/admin/model-capabilities.ts"
+    },
+    {
+      "from": "FEAT-multimodal-input-image-voice-character-reacts",
+      "kind": "sibling",
+      "to": "TASK-model-discovery-capability-enrichment",
       "via": "src/admin/model-capabilities.ts"
     },
     {
@@ -273955,6 +274528,12 @@
       "from": "PERF-chat-dispatch-command-three-sequential-queries",
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-tests",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "PERF-chat-dispatch-command-three-sequential-queries",
+      "kind": "sibling",
+      "to": "TASK-assistant-tool-injection-guard",
       "via": "src/routes/messages/command.ts"
     },
     {
@@ -284158,6 +284737,12 @@
       "via": "src/db/schema-core.ts"
     },
     {
+      "from": "TASK-acp-driver-module",
+      "kind": "sibling",
+      "to": "epic-external-harness-acp",
+      "via": "src/integrations/registry"
+    },
+    {
       "from": "TASK-action-applicability-gate",
       "kind": "sibling",
       "to": "TASK-assistant-capability-disclosure",
@@ -284185,7 +284770,7 @@
       "from": "TASK-action-applicability-gate",
       "kind": "sibling",
       "to": "TASK-assistant-tool-injection-guard",
-      "via": "src/assistant/commands/registry.ts"
+      "via": "src/assistant/commands/registry.ts; src/routes/messages/command.ts"
     },
     {
       "from": "TASK-action-applicability-gate",
@@ -289418,6 +290003,12 @@
       "kind": "sibling",
       "to": "TASK-middleware-request-id-elysia-derive",
       "via": "src/middleware/request-id.integration.test.ts"
+    },
+    {
+      "from": "TASK-adopt-bun-randomuuidv7-for-time-sortable-ids",
+      "kind": "sibling",
+      "to": "TASK-model-discovery-capability-enrichment",
+      "via": "src/admin/model-capabilities.ts"
     },
     {
       "from": "TASK-adopt-bun-randomuuidv7-for-time-sortable-ids",
@@ -296700,12 +297291,6 @@
     {
       "from": "TASK-assistant-entity-access-asset-access",
       "kind": "sibling",
-      "to": "TASK-assistant-tool-injection-guard",
-      "via": "src/assistant/commands/index.ts"
-    },
-    {
-      "from": "TASK-assistant-entity-access-asset-access",
-      "kind": "sibling",
       "to": "TASK-avatar-dogfood-assistant-generation",
       "via": "src/frontend/alpine/chat-actions/dispatch.ts"
     },
@@ -296779,12 +297364,6 @@
       "from": "TASK-assistant-entity-access-batch-rag-asset",
       "kind": "sibling",
       "to": "TASK-assistant-server-side-branch-command",
-      "via": "src/assistant/commands/index.ts"
-    },
-    {
-      "from": "TASK-assistant-entity-access-batch-rag-asset",
-      "kind": "sibling",
-      "to": "TASK-assistant-tool-injection-guard",
       "via": "src/assistant/commands/index.ts"
     },
     {
@@ -297234,6 +297813,12 @@
     {
       "from": "TASK-assistant-entity-access-tests",
       "kind": "sibling",
+      "to": "TASK-assistant-tool-injection-guard",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-tests",
+      "kind": "sibling",
       "to": "TASK-book-outline-generation-workflow",
       "via": "src/routes/messages/command.ts"
     },
@@ -297349,12 +297934,6 @@
       "from": "TASK-assistant-entity-access-world-location-access",
       "kind": "sibling",
       "to": "TASK-assistant-server-side-branch-command",
-      "via": "src/assistant/commands/index.ts"
-    },
-    {
-      "from": "TASK-assistant-entity-access-world-location-access",
-      "kind": "sibling",
-      "to": "TASK-assistant-tool-injection-guard",
       "via": "src/assistant/commands/index.ts"
     },
     {
@@ -298152,12 +298731,6 @@
     {
       "from": "TASK-assistant-server-side-branch-command",
       "kind": "sibling",
-      "to": "TASK-assistant-tool-injection-guard",
-      "via": "src/assistant/commands/index.ts"
-    },
-    {
-      "from": "TASK-assistant-server-side-branch-command",
-      "kind": "sibling",
       "to": "TASK-branch-merge-continuation-semantics",
       "via": "src/chat/service/branches.ts"
     },
@@ -298662,14 +299235,32 @@
     {
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "sibling",
+      "to": "TASK-book-outline-generation-workflow",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "sibling",
+      "to": "TASK-chat-branch-merge",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "sibling",
       "to": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
       "via": "src/assistant/gm-tool-detection.ts"
     },
     {
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "sibling",
+      "to": "TASK-comparison-workflow-template-and-command",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "sibling",
       "to": "TASK-document-dual-assistant-role-gates",
-      "via": "src/assistant/commands/registry.ts"
+      "via": "src/assistant/commands/registry.ts; src/assistant/gm-tool-execution.ts; src/routes/messages/command.ts"
     },
     {
       "from": "TASK-assistant-tool-injection-guard",
@@ -298687,19 +299278,31 @@
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "sibling",
       "to": "TASK-harness-frontend-consolidation",
-      "via": "src/assistant/commands/registry.ts"
+      "via": "src/assistant/commands/registry.ts; src/routes/messages/command.ts"
     },
     {
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "sibling",
       "to": "TASK-interaction-service-foundation",
-      "via": "src/assistant/commands/registry.ts"
+      "via": "src/assistant/commands/registry.ts; src/routes/messages/command.ts"
     },
     {
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "sibling",
       "to": "TASK-slash-commands-chat-group-assistant",
       "via": "src/assistant/commands/registry.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "sibling",
+      "to": "TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "sibling",
+      "to": "TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc",
+      "via": "src/routes/messages/command.ts"
     },
     {
       "from": "TASK-assistant-tool-injection-guard",
@@ -298711,19 +299314,37 @@
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "sibling",
       "to": "epic-assistant-creative-studio-workflows",
-      "via": "src/assistant/commands/registry.ts"
+      "via": "src/assistant/commands/registry.ts; src/routes/messages/command.ts"
     },
     {
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "sibling",
       "to": "epic-assistant-entity-access",
-      "via": "src/assistant/commands/index.ts; src/assistant/commands/registry.ts"
+      "via": "src/assistant/commands/registry.ts"
     },
     {
       "from": "TASK-assistant-tool-injection-guard",
       "kind": "sibling",
       "to": "epic-assistant-generation-extensions",
       "via": "src/assistant/commands/registry.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "sibling",
+      "to": "epic-assistant-gm-flows",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "sibling",
+      "to": "epic-entity-generation-workflows",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-assistant-tool-injection-guard",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/routes/messages/command.ts"
     },
     {
       "from": "TASK-asymmetric-key-pairs-followup",
@@ -324486,6 +325107,12 @@
     {
       "from": "TASK-comfyui-node-discovery-template-autofilter",
       "kind": "sibling",
+      "to": "TASK-comfyui-workflow-acceptance-probe-scaffold",
+      "via": "src/generation/workflow-library/validate.ts"
+    },
+    {
+      "from": "TASK-comfyui-node-discovery-template-autofilter",
+      "kind": "sibling",
       "to": "TASK-comfyui-workflow-parameterization",
       "via": "src/image-edit/routes.ts"
     },
@@ -325280,6 +325907,12 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "TASK-comfyui-workflow-acceptance-probe-scaffold",
+      "kind": "sibling",
+      "to": "TASK-external-comfyui-plugin-repo-integration-contract",
+      "via": "src/generation/workflow-library/validate.ts"
     },
     {
       "from": "TASK-comfyui-workflow-parameterization",
@@ -345156,8 +345789,20 @@
     {
       "from": "TASK-equipment-slots",
       "kind": "sibling",
+      "to": "TASK-equipment-stat-preview",
+      "via": "src/frontend/alpine/inventory.ts"
+    },
+    {
+      "from": "TASK-equipment-slots",
+      "kind": "sibling",
+      "to": "TASK-inventory-alpine",
+      "via": "src/frontend/alpine/inventory.ts"
+    },
+    {
+      "from": "TASK-equipment-slots",
+      "kind": "sibling",
       "to": "epic-inventory-ui",
-      "via": "src/frontend/inventory/equipment-slots.ts"
+      "via": "src/components/inventory-panels.html; src/frontend/alpine/inventory.ts; src/frontend/inventory/equipment-slots.ts"
     },
     {
       "from": "TASK-equipment-stat-preview",
@@ -357336,6 +357981,12 @@
     {
       "from": "TASK-harness-plugin-runtime",
       "kind": "sibling",
+      "to": "TASK-optional-dep-packaging",
+      "via": "src/native/loader.ts"
+    },
+    {
+      "from": "TASK-harness-plugin-runtime",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/types.ts"
     },
@@ -357356,6 +358007,12 @@
       "kind": "sibling",
       "to": "epic-external-creative-tool-bridge",
       "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-harness-plugin-runtime",
+      "kind": "sibling",
+      "to": "epic-external-harness-acp",
+      "via": "src/native/loader.ts"
     },
     {
       "from": "TASK-harness-plugin-runtime",
@@ -370948,6 +371605,24 @@
       "via": "src/routes/model-comparisons.ts"
     },
     {
+      "from": "TASK-model-discovery-capability-enrichment",
+      "kind": "sibling",
+      "to": "TASK-per-model-per-provider-cost-attribution-for-llm-execution-st",
+      "via": "src/admin/model-capabilities.ts"
+    },
+    {
+      "from": "TASK-model-discovery-capability-enrichment",
+      "kind": "sibling",
+      "to": "TASK-task-chat-recommended-context-window-rotation",
+      "via": "src/admin/model-capabilities.ts"
+    },
+    {
+      "from": "TASK-model-discovery-capability-enrichment",
+      "kind": "sibling",
+      "to": "epic-local-model-file-discovery",
+      "via": "src/admin/model-capabilities.ts"
+    },
+    {
       "from": "TASK-moderation-domain-service-consolidate-audit-writes-shared-sc",
       "kind": "sibling",
       "to": "TASK-moderation-privacy-first-foundation",
@@ -373088,6 +373763,24 @@
       "kind": "sibling",
       "to": "epic-api-openapi",
       "via": "src/api-governance/openapi/diff.ts; src/api-governance/openapi/docs.ts; src/api-governance/openapi/generator.ts; src/api-governance/openapi/validator.ts"
+    },
+    {
+      "from": "TASK-optional-dep-packaging",
+      "kind": "sibling",
+      "to": "epic-external-harness-acp",
+      "via": "src/native/loader.ts"
+    },
+    {
+      "from": "TASK-optional-dep-packaging",
+      "kind": "sibling",
+      "to": "epic-harness-integration",
+      "via": "src/native/loader.ts"
+    },
+    {
+      "from": "TASK-optional-dep-packaging",
+      "kind": "sibling",
+      "to": "epic-precompiled-hot-binaries",
+      "via": "src/native/loader.ts"
     },
     {
       "from": "TASK-optique-cli-tooling-integration",
@@ -387259,7 +387952,7 @@
       "from": "TASK-trading-interface",
       "kind": "sibling",
       "to": "epic-inventory-ui",
-      "via": "src/frontend/inventory/trading-interface.ts"
+      "via": "src/components/trade-window-panel.html; src/frontend/alpine/inventory-offers.ts; src/frontend/alpine/inventory-trading.ts; src/frontend/inventory/trade-offers.ts; src/frontend/inventory/trade-panel.ts; src/frontend/inventory/trading-interface.ts"
     },
     {
       "from": "TASK-transition-aux-llm-fallback",
@@ -402206,6 +402899,18 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "sibling",
+      "to": "epic-harness-integration",
+      "via": "src/native/loader.ts"
+    },
+    {
+      "from": "epic-external-harness-acp",
+      "kind": "sibling",
+      "to": "epic-precompiled-hot-binaries",
+      "via": "src/native/loader.ts"
     },
     {
       "from": "epic-faction-reputation",
