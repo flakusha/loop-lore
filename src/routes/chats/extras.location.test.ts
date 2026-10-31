@@ -9,7 +9,9 @@
  * the transfer route. Clearing the location creates nothing.
  *
  * Parallel-safety: every test builds its own private DB via createTestDb()
- * and destroys it before returning; ids are file-scoped random UUIDs.
+ * and destroys it in a `finally` block; ids are file-scoped random UUIDs, so
+ * tests are order-independent, pass alone, and are safe to run concurrently
+ * with other files.
  */
 import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -87,37 +89,43 @@ async function sectionLocations(db: Kysely<DB>,): Promise<(string | null)[]> {
 describe("extrasRoutes — PUT /location section creation (multi-location sectioning)", () => {
   test("creates a journey section bound to the destination", async () => {
     const { db, } = await createTestDb();
-    await seed(db,);
+    try {
+      await seed(db,);
 
-    const res = await putLocation(db, { locationId: TAVERN_ID, },);
-    expect(res.status,).toBe(200,);
-    expect(await sectionLocations(db,),).toEqual([TAVERN_ID,],);
-
-    await db.destroy();
+      const res = await putLocation(db, { locationId: TAVERN_ID, },);
+      expect(res.status,).toBe(200,);
+      expect(await sectionLocations(db,),).toEqual([TAVERN_ID,],);
+    } finally {
+      await db.destroy();
+    }
   });
 
   test("moves append sections in order and dedupe the latest location", async () => {
     const { db, } = await createTestDb();
-    await seed(db,);
+    try {
+      await seed(db,);
 
-    await putLocationExpect(db, { locationId: TAVERN_ID, }, 200,);
-    await putLocationExpect(db, { locationId: FOREST_ID, }, 200,);
-    await putLocationExpect(db, { locationId: FOREST_ID, }, 200,);
+      await putLocationExpect(db, { locationId: TAVERN_ID, }, 200,);
+      await putLocationExpect(db, { locationId: FOREST_ID, }, 200,);
+      await putLocationExpect(db, { locationId: FOREST_ID, }, 200,);
 
-    expect(await sectionLocations(db,),).toEqual([TAVERN_ID, FOREST_ID,],);
-
-    await db.destroy();
+      expect(await sectionLocations(db,),).toEqual([TAVERN_ID, FOREST_ID,],);
+    } finally {
+      await db.destroy();
+    }
   });
 
   test("clearing the location creates no section", async () => {
     const { db, } = await createTestDb();
-    await seed(db,);
+    try {
+      await seed(db,);
 
-    await putLocationExpect(db, { locationId: TAVERN_ID, }, 200,);
-    await putLocationExpect(db, { locationId: null, }, 200,);
+      await putLocationExpect(db, { locationId: TAVERN_ID, }, 200,);
+      await putLocationExpect(db, { locationId: null, }, 200,);
 
-    expect(await sectionLocations(db,),).toEqual([TAVERN_ID,],);
-
-    await db.destroy();
+      expect(await sectionLocations(db,),).toEqual([TAVERN_ID,],);
+    } finally {
+      await db.destroy();
+    }
   });
 });
