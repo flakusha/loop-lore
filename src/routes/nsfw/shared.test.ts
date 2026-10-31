@@ -34,7 +34,7 @@ import {
   insertChats,
   insertUsers,
 } from "../../test-utils/insert-helpers";
-import { checkNsfwTargetAccess, } from "./shared";
+import { checkNsfwTargetAccess, nsfwAccessErrorResponse, } from "./shared";
 
 let db: Kysely<DB>;
 
@@ -138,5 +138,29 @@ describe("checkNsfwTargetAccess", () => {
     expect(
       await checkNsfwTargetAccess(db, "nsfw-shared-actor-ghost", OWNER_ID, "user", null,),
     ).toBe(false,);
+  });
+});
+
+describe("nsfwAccessErrorResponse (export gap: consent mapping at the route layer)", () => {
+  test("auth_required → 401", async () => {
+    const res = nsfwAccessErrorResponse("auth_required",);
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("consent_required → 403 with the reason in the body", async () => {
+    const res = nsfwAccessErrorResponse("consent_required",);
+
+    expect(res.status,).toBe(403,);
+    const body = await res.json() as Record<string, unknown>;
+    expect(String(body.error ?? "",),).toContain("consent_required",);
+  });
+
+  test("consent_revoked → 403 with the reason in the body", async () => {
+    const res = nsfwAccessErrorResponse("consent_revoked",);
+
+    expect(res.status,).toBe(403,);
+    const body = await res.json() as Record<string, unknown>;
+    expect(String(body.error ?? "",),).toContain("consent_revoked",);
   });
 });
