@@ -20,6 +20,10 @@
     "src/frontend/locale-init.ts",
     "src/frontend/egui-bridge.ts",
     "src/frontend/wasm-loader.ts",
+    // Lazy xterm chunk: built by scripts/build-frontend.mjs:75 as its own
+    // ESM file and loaded at runtime via import("/terminal-xterm.js") from
+    // terminal-panel.ts — the specifier is a joined string, so knip sees no edge.
+    "src/frontend/terminal-xterm.ts",
     "src/frontend/alpine/local-engine.worker.ts",
     "src/frontend/alpine/wllama-engine.worker.ts",
     // Plugin roots, discovered at runtime by the manifest loader
