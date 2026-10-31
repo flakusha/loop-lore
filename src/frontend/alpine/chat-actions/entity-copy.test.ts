@@ -82,7 +82,7 @@ describeOrSkip("entity-copy: duplicate-entity", () => {
     );
 
     expect(calls,).toHaveLength(1,);
-    expect(calls[0]!.url,).toBe("/api/chats/chat-1/create-entity",);
+    expect(calls[0]!.url,).toBe("/api/v1/chats/chat-1/create-entity",);
     expect(calls[0]!.opts.method,).toBe("POST",);
     expect(JSON.parse(calls[0]!.opts.body as string,),).toEqual({
       kind: "character",
@@ -163,7 +163,7 @@ describeOrSkip("entity-copy: adapt-entity", () => {
     );
 
     expect(calls,).toHaveLength(1,);
-    expect(calls[0]!.url,).toBe("/api/chats/chat-1/create-entity",);
+    expect(calls[0]!.url,).toBe("/api/v1/chats/chat-1/create-entity",);
     expect(calls[0]!.opts.method,).toBe("POST",);
     expect(JSON.parse(calls[0]!.opts.body as string,),).toEqual({
       kind: "location",

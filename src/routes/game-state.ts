@@ -2,10 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Game State Routes
+ * Game State Routes — mounted ONLY from the v1 barrel
+ * (`src/routes/v1/standalone-surface.ts`), which passes `/api/v1`.
  *
- *   GET /api/chats/:id/game-state   — latest persisted game state + diff
- *   GET /api/chats/:id/game-states  — persisted game-state history
+ *   GET /api/v1/chats/:id/game-state   — latest persisted game state + diff
+ *   GET /api/v1/chats/:id/game-states  — persisted game-state history
  *
  * Serves the 2D game canvas: the spatial snapshot extracted from
  * ```game-state fenced blocks, plus a movement diff against the

@@ -327,9 +327,11 @@ export function createApp(deps: AppDeps,) {
     const url = new URL(request.url,);
 
     if (url.pathname.startsWith("/api/",)) {
-      // Redirect unversioned /api/{resource} → /api/v1/{resource}.
-      // Already-versioned /api/v1/* must NOT be redirected (would
-      // double-prefix); they fall through to legacy dispatch below.
+      // Redirect unversioned /api/{resource} → /api/v1/{resource} (N-1 rule:
+      // keep this shim one full release after v1 ships; see
+      // docs/spec/api-versioning.md). Already-versioned /api/v1/* must NOT
+      // be redirected (would double-prefix); they fall through to plugin
+      // dispatch below, which 404s unless the v1 barrel serves the path.
       // /api/views/* stays unversioned (embedded HTML, not JSON API).
       if (!url.pathname.startsWith("/api/v1/",) && !url.pathname.startsWith("/api/views/",)) {
         return versionRedirect("v1",)({ request, },);

@@ -39,7 +39,7 @@ export const entityCopyActionHandlers: Record<string, EntityCopyActionHandler> =
     // (normalizeEntity + validateEntitySchema) before insertGeneratedEntity.
     if (!confirm(t("toasts.confirmDuplicateEntity", { name, },),)) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${chatId}/create-entity`, {
+      const res = await apiFetch(`/api/v1/chats/${chatId}/create-entity`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ kind, data: fields, worldId, },),
@@ -69,7 +69,7 @@ export const entityCopyActionHandlers: Record<string, EntityCopyActionHandler> =
     // TARGET world (world ownership is re-checked there).
     if (!confirm(t("toasts.confirmAdaptEntity", { name: sourceName, },),)) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${chatId}/create-entity`, {
+      const res = await apiFetch(`/api/v1/chats/${chatId}/create-entity`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ kind, data: fields, worldId: targetWorldId, },),

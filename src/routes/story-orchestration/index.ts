@@ -2,18 +2,19 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Story Orchestration Routes
+ * Story Orchestration Routes — mounted ONLY from the v1 barrel
+ * (`src/routes/v1/standalone-surface.ts`), which passes `/api/v1`.
  *
  * Wires the story-engine surface into the HTTP API per
  * docs/frontend/chat/multi-llm-story.md § API Endpoints:
  *
- *   GET  /api/chats/:id/story/state      — turn state snapshot
- *   POST /api/chats/:id/story/pause      — pause generation
- *   POST /api/chats/:id/story/resume     — resume generation
- *   POST /api/chats/:id/story/step       — execute a single GM turn
- *   POST /api/chats/:id/story/configure  — strategy/maxTurns/thresholds
- *   POST /api/chats/:id/story/narration  — inject a narration beat
- *   POST /api/chats/:id/gm/escalate      — escalate the latest open turn
+ *   GET  /api/v1/chats/:id/story/state      — turn state snapshot
+ *   POST /api/v1/chats/:id/story/pause      — pause generation
+ *   POST /api/v1/chats/:id/story/resume     — resume generation
+ *   POST /api/v1/chats/:id/story/step       — execute a single GM turn
+ *   POST /api/v1/chats/:id/story/configure  — strategy/maxTurns/thresholds
+ *   POST /api/v1/chats/:id/story/narration  — inject a narration beat
+ *   POST /api/v1/chats/:id/gm/escalate      — escalate the latest open turn
  */
 import { Elysia, t, } from "elysia";
 import { isChatOwner, } from "../../chat/service";
