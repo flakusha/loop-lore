@@ -10,7 +10,10 @@
  * path-bearing arguments a tool receives: every such argument is resolved
  * against the harness worktree root and verified — through `fs.realpath` on
  * both sides — to actually land inside it. A symlink that points outside, or
- * a `../` traversal, is rejected rather than silently honoured.
+ * a `../` traversal, is rejected rather than silently honoured. A path whose
+ * final component does not exist yet is judged through its nearest EXISTING
+ * ancestor (realpath'd, missing tail re-appended), so an intermediate
+ * directory symlink cannot smuggle a create-path outside the root either.
  *
  * Cross-scope access is never silently denied to a caller that asked for it:
  * a tool context carrying `requestRootChange: true` opts into escalation, and
@@ -19,8 +22,9 @@
  * @module worktree-scope
  */
 import { realpath, } from "node:fs/promises";
-import { resolve, sep, } from "node:path";
+import { basename, dirname, join, resolve, sep, } from "node:path";
 import { getChildLogger, type Logger, } from "../logger";
+import { runGit, } from "./run-context";
 
 /** Parameter keys whose string values are treated as filesystem paths. */
 const PATH_PARAM_KEYS: Record<string, true> = {
@@ -67,8 +71,12 @@ export class PathOutsideScopeError extends Error {
  * the root both throw; a symlink that stays inside is accepted.
  *
  * A target whose final component does not exist yet (the common create case)
- * falls back to a lexical containment check against the real root, so a
- * not-yet-written path is judged on its spelling rather than failing outright.
+ * is resolved through its nearest EXISTING ancestor: that ancestor is
+ * realpath'd and the missing tail re-appended lexically. An intermediate
+ * directory symlink therefore cannot smuggle the target outside the root —
+ * the ancestor walk lands on the symlinked directory and resolves it — while
+ * a legitimately not-yet-created path inside the root stays allowed. Tail
+ * components cannot themselves be symlinks: they do not exist.
  * @param root - Scope root (an existing directory).
  * @param target - Path to resolve; absolute or relative to the root.
  * @returns The realpath'd target path, for callers that want to use it.
@@ -77,22 +85,52 @@ export class PathOutsideScopeError extends Error {
 export async function resolveWithinScope(root: string, target: string,): Promise<string> {
   const joined = resolve(root, target,);
   const realRoot = await realpath(root,);
-  const realTarget = await realpath(joined,).catch((): string | null => null);
+  const realTarget = await resolveNearestExistingReal(joined,);
 
-  if (realTarget !== null) {
-    assertInside(realRoot, realTarget,);
-    return realTarget;
+  if (realTarget === null) {
+    // Unreachable while `root` exists: the ancestor walk always reaches the
+    // root, and `realpath(root)` above has already thrown otherwise. Fail
+    // closed rather than guessing.
+    throw new PathOutsideScopeError(realRoot, joined,);
   }
 
-  assertInside(realRoot, joined,);
-  return joined;
+  assertInside(realRoot, realTarget,);
+  return realTarget;
+}
+
+/**
+ * Realpath a path through its nearest EXISTING ancestor: the path itself
+ * when it exists, otherwise the closest existing ancestor realpath'd with
+ * the still-missing tail re-appended lexically.
+ * @param absolute - Absolute path to resolve.
+ * @returns The real absolute path, or null when no ancestor resolves.
+ */
+async function resolveNearestExistingReal(absolute: string,): Promise<string | null> {
+  try {
+    return await realpath(absolute,);
+  } catch {
+    let current = absolute;
+    const tail: string[] = [];
+    while (true) {
+      const parent = dirname(current,);
+      if (parent === current) { return null; }
+      tail.unshift(basename(current,),);
+      current = parent;
+      try {
+        return join(await realpath(current,), ...tail,);
+      } catch {
+        // keep walking up
+      }
+    }
+  }
 }
 
 /**
  * Boolean convenience around {@link resolveWithinScope}.
  * @param root - Scope root.
  * @param target - Path to check.
- * @returns True when the target is (or lexically resolves) inside the root.
+ * @returns True when the target resolves inside the root (nearest-existing-
+ *   ancestor realpath on both sides).
  */
 export async function isWithinScope(root: string, target: string,): Promise<boolean> {
   try {
@@ -117,7 +155,9 @@ export interface ScopeGuardInput {
   toolName: string;
   /** Handler parameters; only path-named string values are inspected. */
   params: Record<string, unknown>;
-  /** Scope root. Defaults to the harness process working directory. */
+  /** Scope root. Defaults to the detected git worktree root; when detection
+   * fails (no checkout, git unavailable) it falls back to the process cwd,
+   * warning once. */
   root?: string;
   /** Explicit escalation: allow outside-scope paths and log the crossing. */
   requestRootChange?: boolean;
@@ -131,7 +171,7 @@ export interface ScopeGuardInput {
  *   did not set `requestRootChange`.
  */
 export async function assertParamsWithinScope(input: ScopeGuardInput,): Promise<void> {
-  const root = input.root ?? process.cwd();
+  const root = input.root ?? detectScopeRoot();
   for (const [key, value,] of Object.entries(input.params,)) {
     if (PATH_PARAM_KEYS[key.toLowerCase()] !== true || typeof value !== "string") { continue; }
     try {
@@ -145,6 +185,45 @@ export async function assertParamsWithinScope(input: ScopeGuardInput,): Promise<
       throw error;
     }
   }
+}
+
+/** Memoized detected worktree root — the process never changes repos mid-run. */
+let detectedRoot: string | null = null;
+
+/** Set after the first detection failure so the fallback warns only once. */
+let detectionWarned = false;
+
+/**
+ * Scope root for calls that do not pass one explicitly: the enclosing git
+ * worktree root, not the raw process cwd — a harness launched from a
+ * subdirectory must still have its paths judged against the worktree, and
+ * one launched outside any checkout must not silently gain `$HOME` as its
+ * scope. Detection failure falls back to the process cwd (the historical
+ * behavior) with a single warning through the escalation logger seam.
+ * @returns Absolute scope root.
+ */
+function detectScopeRoot(): string {
+  if (detectedRoot !== null) { return detectedRoot; }
+  try {
+    const toplevel = runGit(["rev-parse", "--show-toplevel",],);
+    if (toplevel !== "") {
+      detectedRoot = toplevel;
+
+      return detectedRoot;
+    }
+  } catch {
+    // No checkout / no git — fall through to the cwd fallback.
+  }
+
+  if (!detectionWarned) {
+    detectionWarned = true;
+    const log = logSource();
+    log?.warn("worktree scope root detection failed; confining paths to process.cwd()", {
+      cwd: process.cwd(),
+    },);
+  }
+
+  return process.cwd();
 }
 
 /** One structured warn per escalated path. Never console — the app logger. */
@@ -184,4 +263,15 @@ export function setScopeLogSourceForTests(source: () => Logger | null,): void {
  */
 export function resetScopeLogSourceForTests(): void {
   logSource = defaultLogSource;
+}
+
+/**
+ * Forget the detected scope root and the one-shot detection-failure warning.
+ * Test-only seam: suites exercising root detection reset between tests so a
+ * memoized root (or a silenced warning) cannot leak across tests in one
+ * process (parallel-safe contract).
+ */
+export function resetScopeRootForTests(): void {
+  detectedRoot = null;
+  detectionWarned = false;
 }
