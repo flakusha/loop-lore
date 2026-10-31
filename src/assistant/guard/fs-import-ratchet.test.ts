@@ -111,8 +111,15 @@ const BASELINE = [
   "src/generation/workflow-library/seed.ts",
   "src/generation/workflow-loader/loader.ts",
   "src/harness/query.ts",
+  // Containment guard: its realpath must observe the REAL filesystem even
+  // inside an active sandbox scope — a policed realpath would make the guard
+  // judge the sandbox allowlist (and recurse through the interceptor) instead
+  // of resolving actual symlinks.
   "src/harness/worktree-scope.ts",
   "src/i18n/locale-loader.ts",
+  // Test-only fake ACP server (never reachable from a command handler): it
+  // writes the ephemeral spawn script under an mkdtemp tmpdir and rmSync's
+  // it in its own teardown — it never touches user paths.
   "src/integrations/harness/fake-acp-server.ts",
   "src/native/loader.ts",
   "src/plugins/loader.ts",
@@ -129,6 +136,11 @@ const BASELINE = [
   "src/services/server-external-manager/start-llama.ts",
   "src/test-utils/isolate-only.ts",
   "src/utils/package-json.ts",
+  // Shared containment primitive behind the guards above: the named import is
+  // the deliberate interception-proof form (see the module docstring) — the
+  // sandbox's own allowlist checks resolve through it, so a policed realpath
+  // here would recurse into the interceptor it is deciding for.
+  "src/utils/realpath-within.ts",
 ];
 
 /**

@@ -9,7 +9,12 @@
  * afterEach on all paths); the module-global escalation log source is the
  * only shared seam — set only inside the one escalation test, restored via
  * `resetScopeLogSourceForTests()` in its finally AND in a describe-level
- * afterEach safety net, so the default child logger survives the suite.
+ * afterEach safety net, so the default child logger survives the suite. The
+ * root-detection suite additionally chdirs (restored in finally) and resets
+ * the memoized detected root via `resetScopeRootForTests()` in a
+ * describe-level afterEach net; bun runs each test file in its own process
+ * and tests in-file serially, so the process-global chdir cannot cross
+ * suites.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync, } from "node:fs";
@@ -21,6 +26,7 @@ import {
   isWithinScope,
   PathOutsideScopeError,
   resetScopeLogSourceForTests,
+  resetScopeRootForTests,
   resolveWithinScope,
   setScopeLogSourceForTests,
 } from "./worktree-scope";
@@ -221,6 +227,87 @@ describe("assertParamsWithinScope", () => {
       // Reinstate the module default — `() => null` would permanently
       // silence escalation logging for the rest of the process.
       resetScopeLogSourceForTests();
+    }
+  });
+});
+
+describe("detectScopeRoot (default root detection)", () => {
+  // Safety net: the memoized detected root and the one-shot warn flag must
+  // never leak between tests, whatever a test's own failure path does.
+  afterEach(() => {
+    resetScopeRootForTests();
+  },);
+
+  test("detects the enclosing worktree root when no root is passed", async () => {
+    resetScopeRootForTests();
+    // bun test runs at a checkout root, so the detected `git rev-parse
+    // --show-toplevel` is cwd or an ancestor of it — a fixture under
+    // <cwd>/.tmp (gitignored scratch) is always inside the detected root.
+    const scratch = join(process.cwd(), ".tmp",);
+    mkdirSync(scratch, { recursive: true, },);
+    const inside = mkdtempSync(join(scratch, "scope-detect-",),);
+    try {
+      // Create case: the file does not exist yet; nearest-existing-ancestor
+      // resolution against the DETECTED root must allow it.
+      await assertParamsWithinScope({
+        toolName: "t",
+        params: { path: join(inside, "created-by-tool.txt",), },
+      },);
+
+      const outside = mkdtempSync(join(tmpdir(), "scope-detect-out-",),);
+      try {
+        try {
+          await assertParamsWithinScope({
+            toolName: "t",
+            params: { path: join(outside, "x.txt",), },
+          },);
+
+          expect.unreachable();
+        } catch (error) {
+          expect(error instanceof PathOutsideScopeError,).toBe(true,);
+        }
+      } finally {
+        rmSync(outside, { recursive: true, force: true, },);
+      }
+    } finally {
+      rmSync(inside, { recursive: true, force: true, },);
+    }
+  });
+
+  test("falls back to process.cwd() and warns once when detection fails", async () => {
+    resetScopeRootForTests();
+    const outside = mkdtempSync(join(tmpdir(), "scope-detect-norepo-",),);
+    const warns: WarnRecord[] = [];
+    setScopeLogSourceForTests(() => makeRecordingLogger(warns,));
+    const originalCwd = process.cwd();
+    try {
+      // tmpdir is not inside any git checkout: detection must fail.
+      process.chdir(outside,);
+
+      // Fallback root = cwd (= the fixture dir): a create-path under cwd is
+      // allowed...
+      await assertParamsWithinScope({
+        toolName: "t",
+        params: { path: join(outside, "local.txt",), },
+      },);
+
+      // ...and a path outside cwd escalates. Two calls, but exactly ONE
+      // detection warn — the warn-once contract.
+      await assertParamsWithinScope({
+        toolName: "t",
+        params: { file: join(originalCwd, "elsewhere.txt",), },
+        requestRootChange: true,
+      },);
+
+      expect(warns.length,).toBe(2,);
+      expect(warns[0]!.message,).toContain("detection failed",);
+      expect(warns[0]!.meta,).toEqual({ cwd: outside, },);
+      expect(warns[1]!.message,).toContain("requestRootChange",);
+    } finally {
+      process.chdir(originalCwd,);
+      resetScopeRootForTests();
+      resetScopeLogSourceForTests();
+      rmSync(outside, { recursive: true, force: true, },);
     }
   });
 });
