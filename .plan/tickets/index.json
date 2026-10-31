@@ -7686,7 +7686,7 @@
       "authorization"
     ],
     "source": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-NSFWMODERATIONSERVICE-MISSING-GETORCREATEOWN-WIRING-BLOCK-BA": {
     "epic": "epic-nsfw-moderation-priority",

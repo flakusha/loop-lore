@@ -207,3 +207,5 @@ anywhere in `src/routes/nsfw/`.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-31 registry-driven close: git issue 5da1d4c (registry tip: ca517932f Konstantin Fedotov Auto-closed: appended .md marker marks BUG-NSFW-WRITE-ROUTES-AUTHORIZE-)

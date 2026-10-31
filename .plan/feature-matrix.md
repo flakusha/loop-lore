@@ -141,7 +141,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | authentication | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | author-note | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | authoring | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
-| authorization | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| authorization | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | authz | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | auto-start | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | auto-update | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1043,7 +1043,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | npc-simulation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | npcs | 3 | 0 | 0 | 0 | 1 | 0 | 2 |
 | npm | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| nsfw | 40 | 19 | 0 | 11 | 1 | 0 | 9 |
+| nsfw | 40 | 20 | 0 | 11 | 1 | 0 | 8 |
 | nuxt | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | object-info | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | objects | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -1411,7 +1411,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | seasons | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | secrets | 5 | 0 | 0 | 0 | 1 | 0 | 4 |
 | sectioning | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| security | 42 | 17 | 3 | 7 | 0 | 0 | 15 |
+| security | 42 | 18 | 3 | 7 | 0 | 0 | 14 |
 | seed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | seeding | 12 | 2 | 0 | 8 | 0 | 0 | 2 |
 | seen | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
@@ -2011,7 +2011,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | epic-non-standard-browser-crypto | 3 | 0 | 1 | 2 | 0 | 0 | 0 |
 | epic-npc-navigation | 5 | 2 | 1 | 2 | 0 | 0 | 0 |
 | epic-npcs | 10 | 0 | 0 | 4 | 1 | 0 | 5 |
-| epic-nsfw-capabilities | 5 | 1 | 0 | 1 | 0 | 0 | 3 |
+| epic-nsfw-capabilities | 5 | 2 | 0 | 1 | 0 | 0 | 2 |
 | epic-nsfw-game-mechanics | 36 | 14 | 0 | 20 | 0 | 0 | 2 |
 | epic-nsfw-game-mechanics, epic-social-interaction | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-nsfw-game-mechanics, epic-weather-environment | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
