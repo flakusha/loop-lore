@@ -3806,7 +3806,6 @@ export const ImmersionDecisionLogSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
-
 // ── chat_owners ────────────────────────────────────────────
 export const ChatOwnersSchema = t.Object({
   chat_id: t.String(),
@@ -3816,37 +3815,12 @@ export const ChatOwnersSchema = t.Object({
   reason: t.Optional(t.String(),),
 },);
 
-// ── model_rankings ────────────────────────────────────────────
-export const ModelRankingsSchema = t.Object({
-  scope: t.String(),
-  subject_key: t.String(),
-  metric: t.String(),
-  value: t.Number(),
-  basis: t.String(),
-  source: t.String(),
-  observed_at: t.String(),
-  scope_key: t.Optional(t.String(),),
-  unit: t.Optional(t.String(),),
-  source_version: t.Optional(t.String(),),
-  source_ref: t.Optional(t.String(),),
-  expires_at: t.Optional(t.String(),),
-  meta: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── ranking_snapshots ────────────────────────────────────────────
-export const RankingSnapshotsSchema = t.Object({
-  source: t.String(),
-  version: t.String(),
-  next_refresh_after: t.String(),
-  source_key: t.Optional(t.String(),),
-  checksum: t.Optional(t.String(),),
-  fetched_at: t.Optional(t.String(),),
-  row_count: t.Optional(t.Number(),),
-  payload: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  last_error: t.Optional(t.String(),),
-  meta: t.Optional(t.String(),),
+// ── world_timeline_selections ────────────────────────────────────────────
+export const WorldTimelineSelectionsSchema = t.Object({
+  user_id: t.String(),
+  world_id: t.String(),
+  timeline_id: t.String(),
+  selected_at: t.String(),
 },);
 
 // ── resource_records ────────────────────────────────────────────
@@ -3883,12 +3857,37 @@ export const ResourceQuotaCountersSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
-// ── world_timeline_selections ────────────────────────────────────────────
-export const WorldTimelineSelectionsSchema = t.Object({
-  user_id: t.String(),
-  world_id: t.String(),
-  timeline_id: t.String(),
-  selected_at: t.String(),
+// ── model_rankings ────────────────────────────────────────────
+export const ModelRankingsSchema = t.Object({
+  scope: t.String(),
+  subject_key: t.String(),
+  metric: t.String(),
+  value: t.Number(),
+  basis: t.String(),
+  source: t.String(),
+  observed_at: t.String(),
+  scope_key: t.Optional(t.String(),),
+  unit: t.Optional(t.String(),),
+  source_version: t.Optional(t.String(),),
+  source_ref: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+  meta: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── ranking_snapshots ────────────────────────────────────────────
+export const RankingSnapshotsSchema = t.Object({
+  source: t.String(),
+  version: t.String(),
+  next_refresh_after: t.String(),
+  source_key: t.Optional(t.String(),),
+  checksum: t.Optional(t.String(),),
+  fetched_at: t.Optional(t.String(),),
+  row_count: t.Optional(t.Number(),),
+  payload: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  last_error: t.Optional(t.String(),),
+  meta: t.Optional(t.String(),),
 },);
 
 // ── tool_call_audit ────────────────────────────────────────────
