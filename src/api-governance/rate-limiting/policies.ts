@@ -113,6 +113,7 @@ export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: 
   ["/story/resume", generationPolicy, "suffix",],
   ["/vn/generate-story", generationPolicy, "suffix",],
   ["/vn/generate-choices", generationPolicy, "suffix",],
+  ["/vn/generate-questions", generationPolicy, "suffix",],
   // BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy: batch
   // avatar generation is POST /api/v1/actors/:actorId/emotion-avatars (and the
   // wardrobe variant) — nested under an id, so no prefix rule ever reached it
