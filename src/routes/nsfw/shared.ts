@@ -144,7 +144,14 @@ export async function checkNsfwTargetAccess(
     return true;
   }
 
-  if (chatId) {
+  // World-scoped mutation (no chat): acting on another user's actor is the
+  // point of intimacy/seduction/encounters; the pre-existing consent and
+  // ownership gates on the source actor already authorize the caller here.
+  // The target check only guards chat-scoped routes against injecting an
+  // actor that is not a participant of the given chat.
+  if (!chatId) { return true; }
+
+  {
     const row = await database
       .selectFrom("chat_participants",)
       .select("actor_id",)
