@@ -52,6 +52,12 @@ import { createRequire, } from "node:module";
 import { basename, dirname, join, resolve, sep, } from "node:path";
 import { fileURLToPath, } from "node:url";
 import type { ToolLimits, } from "../capabilities";
+import {
+  FS_READ_MEMBERS,
+  FS_TWO_PATH_MEMBERS,
+  FS_WRITE_MEMBERS,
+} from "./sandbox-members";
+import type { FsModule, FsScope, } from "./sandbox-members";
 
 /** The sandbox context of one tool call. */
 export interface SandboxContext {
@@ -80,87 +86,6 @@ interface SandboxStore {
 
 /** Active scope, or undefined outside a sandboxed call. */
 const sandboxScope = new AsyncLocalStorage<SandboxStore>();
-
-/** Which side of the filesystem policy a call falls under. */
-type FsScope = "read" | "write";
-
-/**
- * A loose view over an fs module object: every member is an unknown callable.
- * The sandbox only ever calls a member it wrapped itself, so the loose type
- * is honest about what it touches.
- */
-type FsModule = Record<string, ((...args: unknown[]) => unknown) | undefined>;
-
-/**
- * The `node:fs` / `node:fs/promises` members the sandbox intercepts as reads.
- */
-const FS_READ_MEMBERS = [
-  "readFileSync",
-  "readFile",
-  "existsSync",
-  "exists",
-  "accessSync",
-  "access",
-  "statSync",
-  "stat",
-  "lstatSync",
-  "lstat",
-  "readdirSync",
-  "readdir",
-  "realpathSync",
-  "realpath",
-  "createReadStream",
-] as const;
-
-/**
- * The `node:fs` / `node:fs/promises` members the sandbox intercepts as writes.
- */
-const FS_WRITE_MEMBERS = [
-  "writeFileSync",
-  "writeFile",
-  "appendFileSync",
-  "appendFile",
-  "mkdirSync",
-  "mkdir",
-  "unlinkSync",
-  "unlink",
-  "rmSync",
-  "rm",
-  "rmdirSync",
-  "rmdir",
-  "renameSync",
-  "rename",
-  "copyFileSync",
-  "copyFile",
-  "truncateSync",
-  "truncate",
-  "chmodSync",
-  "chmod",
-  "chownSync",
-  "chown",
-  "utimesSync",
-  "utimes",
-  "createWriteStream",
-  "openSync",
-  "open",
-] as const;
-
-/**
- * A member the sandbox patches. Derived from the two lists above, so the type
- * and the runtime sets cannot drift.
- */
-type FsMember = typeof FS_READ_MEMBERS[number] | typeof FS_WRITE_MEMBERS[number];
-
-/**
- * Members whose first TWO arguments are paths (source and destination).
- * A subset of {@link FS_WRITE_MEMBERS}; membership decides the path count.
- */
-const FS_TWO_PATH_MEMBERS: ReadonlySet<FsMember> = new Set([
-  "renameSync",
-  "rename",
-  "copyFileSync",
-  "copyFile",
-],);
 
 /**
  * Normalize a host or URL to a bare lowercase hostname.
@@ -191,15 +116,6 @@ function hostAllowed(host: string, allowed: string[],): boolean {
   return allowed.some((entry,) => host === entry || host.endsWith(`.${entry}`,));
 }
 
-/**
- * Whether a path lies inside one of the allowed directories.
- *
- * An empty allowlist allows nothing: a call with no permitted directory
- * touches no file at all.
- * @param path - Path to check
- * @param allowed - Allowed directories (already resolved)
- * @returns true when the path may be touched
- */
 /**
  * Resolve a path to its real (symlink-free) absolute form.
  *
@@ -239,6 +155,15 @@ function resolveReal(input: string,): string | null {
   }
 }
 
+/**
+ * Whether a path lies inside one of the allowed directories.
+ *
+ * An empty allowlist allows nothing: a call with no permitted directory
+ * touches no file at all.
+ * @param path - Path to check
+ * @param allowed - Allowed directories (already resolved)
+ * @returns true when the path may be touched
+ */
 function pathAllowed(path: string, allowed: string[],): boolean {
   if (allowed.length === 0) { return false; }
   const targetReal = resolveReal(path,);
