@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done (location-sync scope)
 **Priority:** Low
 **Effort:** Med–High
 **Epic:** epic-chat-transfer-location
