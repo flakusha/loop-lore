@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { Elysia, } from "elysia";
 import { randomUUID, } from "node:crypto";
 import {
+  __unregisterCommandForTests,
   listCommands,
   registerCommand,
 } from "../../assistant/commands/registry";
@@ -38,9 +39,13 @@ describe("GET /api/commands", () => {
   },);
 
   afterEach(() => {
-    // Tests only assert on command *list membership* via name/descriptionKey;
-    // any registration done by a prior test that we don't want to leak can
-    // be left in the registry — the route returns whatever is registered.
+    __unregisterCommandForTests(TEST_COMMAND,);
+    __unregisterCommandForTests(OTHER_TEST_COMMAND,);
+    for (const name of listCommands()) {
+      if (name.startsWith("fresh-cmd-",) || name.startsWith("stub-cmd-",) || name.startsWith("owner-gated-",)) {
+        __unregisterCommandForTests(name,);
+      }
+    }
   },);
 
   it("requires authentication", async () => {
