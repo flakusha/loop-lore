@@ -120,15 +120,9 @@
           @click="activeTab = 'sessions'"
           data-testid="settings-tab-sessions"
         >
-          {{{t("settings.sessions") || "Sessions"}}}
-          :class="{ active: activeTab === 'quota' }"
-          @click="activeTab = 'quota'; loadQuotaState()"
-          role="tab"
-          :aria-selected="activeTab === 'quota'"
-          id="tab-quota"
-          data-testid="settings-tab-quota"
-        >
-          {{{t("settings.quota")}}}
+          {{{t("settings.sessions") || "Sessions"}}} :class="{ active: activeTab === 'quota' }" @click="activeTab =
+          'quota'; loadQuotaState()" role="tab" :aria-selected="activeTab === 'quota'" id="tab-quota"
+          data-testid="settings-tab-quota" > {{{t("settings.quota")}}}
         </button>
         <button
           class="world-edit-tab"
