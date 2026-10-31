@@ -3,7 +3,6 @@
 
 # TASK: Assistant Tool Capability Matrix + 2+ Level Prompt-Injection Guard
 
-// hint: Renamed and reformatted. Prefer the structural change, verify formatting.
 **Summary:** Three-layer guard for every assistant tool execution — capability matrix, aux-LLM judge, per-call sandbox.
 **Context:** Commands ran with no capability check, no resource limits, and no FS/network scope; a wrapped natural-language request flowed through the same path as a legitimate slash command.
 **Acceptance Criteria:** see the acceptance criteria list below.
@@ -157,7 +156,7 @@ User message → Assistant intent parse → ToolCallRequest
 - `src/assistant/guard/audit.ts` — `tool_call_audit` row writer
 - `src/assistant/commands/registry.ts` — `registerCommand` accepts `capabilities` + `limits` + `allowedNetworkHosts`; exports `getCommandCapabilities` / `getCommandLimits` / `getCommandNetworkHosts` / `listAllCommands`
 - `src/assistant/commands/capability-coverage.test.ts` — asserts every registration declares capabilities
-- `src/db/migrations/085_tool_call_audit.ts` — `tool_call_audit` table (verdict, rationale, duration)
+- `src/db/migrations/092_tool_call_audit.ts` — `tool_call_audit` table (verdict, rationale, duration)
 - `src/routes/messages/command.ts` — slash-command path wired through the guard
 - `src/assistant/gm-tool-execution.ts` — natural-language GM-tool path wired through the guard
 - `src/assistant/guard/matrix.test.ts`, `judge.test.ts`, `sandbox.test.ts`, `pipeline.test.ts`, `fs-import-ratchet.test.ts` — guard test files
@@ -183,4 +182,4 @@ The capability tags live at each `registerCommand(...)` call site in the individ
 - Builds on: `src/assistant/commands/registry.ts:requiredRole`
 - Enables: `TASK-assistant-capability-disclosure.md` (capability lookup depends on matrix)
 
-**Resolved:** 2026-10-30 registry-driven close: git issue be41fae (registry tip: cd603290d Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-30 registry-driven close: git issue be41fae (registry tip: 36d03ef88 Konstantin Fedotov Close issue)
