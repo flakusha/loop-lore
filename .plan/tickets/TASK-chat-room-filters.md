@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress — coverage gap closed
+**Status:** Done
 
 **Status Note (2026-10-31):** Review of the code found the ticket's Phases 1–3
 and the v1 slice of Phase 4 ALREADY implemented on dev: the filter bar + chips
@@ -183,3 +183,5 @@ server-side combined filters. For v1:
 Low — mostly UI work reusing existing filter components. Server-side
 filtering is straightforward query building. The Epic 24 gap means
 some filters are client-side only in v1.
+
+**Resolved:** 2026-10-31 registry-driven close: git issue db8aa55 (registry tip: 4a4721762 Konstantin Fedotov Close issue)

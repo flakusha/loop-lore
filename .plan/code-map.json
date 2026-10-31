@@ -13001,6 +13001,10 @@
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-room-filters.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/chat/search-and-filter.md"
     }
@@ -44103,6 +44107,12 @@
       "source": ".plan/tickets/TASK-vn-branching-choices.md"
     }
   ],
+  "src/routes/chats/list.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-room-filters.md"
+    }
+  ],
   "src/routes/chats/list.ts": [
     {
       "kind": "epic",
@@ -44119,6 +44129,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-archival-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-room-filters.md"
     },
     {
       "kind": "ticket",

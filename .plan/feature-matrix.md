@@ -278,7 +278,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | character-traits | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | characters | 19 | 8 | 2 | 6 | 3 | 0 | 0 |
 | charts | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| chat | 87 | 45 | 8 | 18 | 1 | 0 | 15 |
+| chat | 87 | 46 | 8 | 17 | 1 | 0 | 15 |
 | chat-branches | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | chat-mode | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
 | chat-purpose | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -641,7 +641,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | file-indexing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | file-split | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | filesystem | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| filter | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
+| filter | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | filterPassedActors | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | filters | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | finalize | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
@@ -1443,7 +1443,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | shutdown | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | side-effect | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | side-effects | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| sidebar | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| sidebar | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | sidecar | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | signal | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | silent-regression | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1677,7 +1677,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | users | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | utility-ai | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | uv | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| ux | 26 | 11 | 0 | 11 | 1 | 0 | 3 |
+| ux | 26 | 12 | 0 | 10 | 1 | 0 | 3 |
 | vae | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | validation | 24 | 7 | 2 | 4 | 0 | 0 | 11 |
 | validator | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
@@ -1846,7 +1846,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | epic-chat-composer-flows | 10 | 9 | 0 | 0 | 0 | 0 | 1 |
 | epic-chat-context-optimization | 26 | 4 | 0 | 17 | 1 | 0 | 4 |
 | epic-chat-context-optimization, epic-group-chat | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-chat-lifecycle-moderation | 53 | 26 | 1 | 19 | 0 | 0 | 7 |
+| epic-chat-lifecycle-moderation | 53 | 27 | 1 | 18 | 0 | 0 | 7 |
 | epic-chat-lifecycle-moderation, epic-assistant-gm-flows | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-lifecycle-moderation, epic-group-chat | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-multi-ownership | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
