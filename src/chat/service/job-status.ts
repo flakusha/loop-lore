@@ -152,6 +152,8 @@ export async function appendJobStatus(input: JobStatusInput,): Promise<void> {
         content: line,
         content_plaintext: line,
         content_type: MessageContentType.JobStatus,
+        // Plain one-liner text (rendered via x-text); Markdown is the only
+        // MessageContentFormat member today.
         content_format: MessageContentFormat.Markdown,
         content_encoding: ContentEncoding.Identity,
         status: MessageStatus.Confirmed,
