@@ -3,35 +3,24 @@
 
 // src/utils/is-within.ts — filesystem containment guard
 // (epic-browser-editor-support; no path guard existed in src/ before this).
+//
+// Resolution is delegated to the shared nearest-existing-ancestor realpath
+// helper (`./realpath-within`) — one algorithm serves the harness scope
+// guard (`src/harness/worktree-scope.ts`), the assistant sandbox, and this
+// route-level check.
 
-import fs from "node:fs";
-import { resolve, sep, } from "node:path";
-
-/**
- * Resolve a path for containment checks: the real path when it exists (so a
- * symlink inside the root that points outside fails), the lexical absolute
- * path otherwise (new files have no realpath yet).
- * @param p - candidate path.
- * @returns the resolved path.
- */
-function resolveForContainment(p: string,): string {
-  try {
-    return fs.realpathSync(p,);
-  } catch {
-    // Not on disk (yet) — lexical resolution is the best available truth.
-    return resolve(p,);
-  }
-}
+import { isWithinReal, } from "./realpath-within";
 
 /**
- * True when `candidate` is `root` itself or lies underneath it. Symlinks are
- * resolved when they exist, so a link inside the root that escapes it fails;
- * `..` segments and absolute candidates are normalized before the check.
- * @param root - absolute root directory.
+ * True when `candidate` is `root` itself or lies underneath it. Both paths
+ * are judged through their nearest-existing-ancestor realpath, so a symlink
+ * inside the root that escapes it fails, and an intermediate directory
+ * symlink is caught even when the candidate's final component does not
+ * exist yet. `..` segments and absolute candidates are normalized before
+ * the check; a path that cannot be resolved at all fails closed.
+ * @param root - absolute root directory (expected to exist).
  * @param candidate - path to test (absolute or relative to cwd).
  */
 export function isWithin(root: string, candidate: string,): boolean {
-  const resolvedRoot = resolveForContainment(root,);
-  const resolved = resolveForContainment(candidate,);
-  return resolved === resolvedRoot || resolved.startsWith(resolvedRoot + sep,);
+  return isWithinReal(root, candidate,);
 }

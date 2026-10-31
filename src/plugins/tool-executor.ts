@@ -46,6 +46,12 @@ export async function executePluginTool(
   const timeoutMs = tool.timeoutMs ?? DEFAULT_TOOL_TIMEOUT_MS;
   try {
     assertToolPolicySatisfied(tool,);
+    // Residual TOCTOU (accepted): the guard validates the params as passed,
+    // but the handler below receives the same original (unresolved) params
+    // and opens paths itself — a path component swapped between this check
+    // and the handler's open is not re-validated. Closing it fully needs
+    // resolve-beneath-style opens (openat2/RESOLVE_BENEATH) or passing the
+    // realpath'd targets to the handler.
     await assertParamsWithinScope({
       toolName: tool.name,
       params,

@@ -22,8 +22,9 @@
  * @module worktree-scope
  */
 import { realpath, } from "node:fs/promises";
-import { basename, dirname, join, resolve, sep, } from "node:path";
+import { resolve, sep, } from "node:path";
 import { getChildLogger, type Logger, } from "../logger";
+import { resolveReal, } from "../utils/realpath-within";
 import { runGit, } from "./run-context";
 
 /** Parameter keys whose string values are treated as filesystem paths. */
@@ -85,7 +86,7 @@ export class PathOutsideScopeError extends Error {
 export async function resolveWithinScope(root: string, target: string,): Promise<string> {
   const joined = resolve(root, target,);
   const realRoot = await realpath(root,);
-  const realTarget = await resolveNearestExistingReal(joined,);
+  const realTarget = resolveReal(joined,);
 
   if (realTarget === null) {
     // Unreachable while `root` exists: the ancestor walk always reaches the
@@ -96,33 +97,6 @@ export async function resolveWithinScope(root: string, target: string,): Promise
 
   assertInside(realRoot, realTarget,);
   return realTarget;
-}
-
-/**
- * Realpath a path through its nearest EXISTING ancestor: the path itself
- * when it exists, otherwise the closest existing ancestor realpath'd with
- * the still-missing tail re-appended lexically.
- * @param absolute - Absolute path to resolve.
- * @returns The real absolute path, or null when no ancestor resolves.
- */
-async function resolveNearestExistingReal(absolute: string,): Promise<string | null> {
-  try {
-    return await realpath(absolute,);
-  } catch {
-    let current = absolute;
-    const tail: string[] = [];
-    while (true) {
-      const parent = dirname(current,);
-      if (parent === current) { return null; }
-      tail.unshift(basename(current,),);
-      current = parent;
-      try {
-        return join(await realpath(current,), ...tail,);
-      } catch {
-        // keep walking up
-      }
-    }
-  }
 }
 
 /**

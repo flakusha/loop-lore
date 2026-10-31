@@ -49,8 +49,9 @@
  */
 import { AsyncLocalStorage, } from "node:async_hooks";
 import { createRequire, } from "node:module";
-import { basename, dirname, join, resolve, sep, } from "node:path";
+import { resolve, sep, } from "node:path";
 import { fileURLToPath, } from "node:url";
+import { resolveReal, } from "../../utils/realpath-within";
 import type { ToolLimits, } from "../capabilities";
 import {
   FS_READ_MEMBERS,
@@ -114,45 +115,6 @@ function normalizeHost(value: string,): string {
 function hostAllowed(host: string, allowed: string[],): boolean {
   if (allowed.length === 0) { return false; }
   return allowed.some((entry,) => host === entry || host.endsWith(`.${entry}`,));
-}
-
-/**
- * Resolve a path to its real (symlink-free) absolute form.
- *
- * Returns null when the path (or any existing ancestor) cannot be resolved,
- * so callers can treat resolution failure as DENY.
- * @param input - Path to resolve
- * @returns The real absolute path, or null on failure
- */
-function resolveReal(input: string,): string | null {
-  const absolute = resolve(input,);
-  try {
-    return nativeRealpathSync(absolute,);
-  } catch {
-    // Walk up to the nearest existing ancestor, realpath it, then re-append
-    // the (still-missing) tail. Any resolution error denies.
-    let current = absolute;
-    const tail: string[] = [];
-    while (true) {
-      const parent = dirname(current,);
-      if (parent === current) {
-        try {
-          return nativeRealpathSync(current,);
-        } catch {
-          return null;
-        }
-      }
-
-      tail.unshift(basename(current,),);
-      current = parent;
-      try {
-        const realParent = nativeRealpathSync(current,);
-        return tail.length === 0 ? realParent : join(realParent, ...tail,);
-      } catch {
-        // keep walking up
-      }
-    }
-  }
 }
 
 /**
@@ -335,10 +297,6 @@ function installInterceptors(): void {
     installFsInterceptors(moduleObject,);
   }
 }
-
-/** Unpatched realpathSync, captured before the fs interceptors are installed. */
-const nativeRealpathSync =
-  (createRequire(import.meta.url,)("node:fs",) as { realpathSync: (p: string,) => string }).realpathSync;
 
 installInterceptors();
 
