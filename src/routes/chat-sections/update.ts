@@ -6,6 +6,7 @@ import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
 import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
+import { validateSectionLocation, } from "./location-validation";
 import { ChatSectionUpdateBody, type HandlerOpts, } from "./types";
 
 /**
@@ -40,10 +41,26 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           if (!section) { return notFound("Section not found",); }
 
+          if (body.locationId) {
+            const chat = await database
+              .selectFrom("chats",)
+              .select("world_id",)
+              .where("id", "=", chatId,)
+              .executeTakeFirst();
+
+            const resolved = chat
+              ? await validateSectionLocation(database, chat, body.locationId,)
+              : null;
+
+            if (!resolved?.ok) {
+              return resolved?.response ?? notFound("Chat not found",);
+            }
+          }
+
           const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), };
           if (typeof body.label === "string" && body.label.trim()) { updates.label = body.label.trim(); }
           if (typeof body.description === "string") { updates.description = body.description; }
-          if (body.locationId !== undefined) { updates.location_id = body.locationId ?? null; }
+          if (body.locationId !== undefined) { updates.location_id = body.locationId || null; }
 
           await database
             .updateTable("chat_sections",)

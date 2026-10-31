@@ -7,6 +7,7 @@ import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
 import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
+import { validateSectionLocation, } from "./location-validation";
 import { ChatSectionCreateBody, type HandlerOpts, } from "./types";
 
 /**
@@ -30,9 +31,26 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             return notFound("Chat not found",);
           }
 
-          const body = ctx.body as { label: string; description?: string; locationId?: string };
+          const body = ctx.body as { label: string; description?: string; locationId?: string | null };
           const label = (body.label ?? "").trim();
           if (!label) { return jsonResponse({ error: "label is required", }, 400,); }
+
+          const locationId = body.locationId || null;
+          if (locationId) {
+            const chat = await database
+              .selectFrom("chats",)
+              .select("world_id",)
+              .where("id", "=", chatId,)
+              .executeTakeFirst();
+
+            const resolved = chat
+              ? await validateSectionLocation(database, chat, locationId,)
+              : null;
+
+            if (!resolved?.ok) {
+              return resolved?.response ?? notFound("Chat not found",);
+            }
+          }
 
           const maxIndex = await database
             .selectFrom("chat_sections",)
@@ -49,7 +67,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
               chat_id: chatId,
               label,
               description: body.description ?? null,
-              location_id: body.locationId ?? null,
+              location_id: locationId,
               sort_index: sortIndex,
             },)
             .execute();
