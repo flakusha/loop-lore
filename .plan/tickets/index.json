@@ -14102,6 +14102,29 @@
     "source": ".plan/epics/epic-external-creative-tool-bridge.md",
     "status": "Not Started"
   },
+  "EPIC-EXTERNAL-HARNESS-ACP": {
+    "hash": "pending",
+    "extid": "EPIC-EXTERNAL-HARNESS-ACP",
+    "type": "EPIC",
+    "title": "External Harness Integration (ACP)",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "acp",
+      "harness",
+      "external-harness",
+      "opencode",
+      "omp",
+      "permissions",
+      "model-discovery",
+      "message-persistence",
+      "isolation",
+      "testing"
+    ],
+    "source": ".plan/tickets/epic-external-harness-acp.md",
+    "status": "Not Started"
+  },
   "EPIC-EXTERNAL-TOOLING-BUILD": {
     "hash": "d948bd9",
     "git_issue": "d948bd9",
@@ -15209,7 +15232,7 @@
     "label": "epic",
     "priority": "P1 — High",
     "source": ".plan/epics/epic-inventory-ui.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "inventory",
       "trading",
@@ -24881,6 +24904,19 @@
     ],
     "title": "Achievements enum revival — promote service-layer to db barrel",
     "type": "TASK"
+  },
+  "TASK-ACP-DRIVER-MODULE": {
+    "hash": "a727ddb",
+    "git_issue": "a727ddb",
+    "extid": "TASK-ACP-DRIVER-MODULE",
+    "type": "TASK",
+    "title": "ACP driver module",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-driver-module.md",
+    "status": "Not Started"
   },
   "TASK-ACTION-APPLICABILITY-GATE": {
     "epic": "epic-immersion-consistency-gate",
@@ -37368,6 +37404,19 @@
     "title": "E2E browser reliability hardening",
     "type": "TASK"
   },
+  "TASK-E2E-ENV-GATED-SCENARIO": {
+    "hash": "e8e777f",
+    "git_issue": "e8e777f",
+    "extid": "TASK-E2E-ENV-GATED-SCENARIO",
+    "type": "TASK",
+    "title": "e2e env-gated scenario",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-env-gated-scenario.md",
+    "status": "Not Started"
+  },
   "TASK-E2E-NSFW-APPEALS-AUDIT-ROUTES-COVERAGE": {
     "hash": "00cf1da",
     "git_issue": "00cf1da",
@@ -38689,7 +38738,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-equipment-slots.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "inventory",
       "frontend",
@@ -39299,6 +39348,19 @@
     "tags": [],
     "title": "Fail-Safe Execution & Work Safety",
     "type": "TASK"
+  },
+  "TASK-FAKE-ACP-SERVER-TEST-FIXTURE": {
+    "hash": "ab6a8ac",
+    "git_issue": "ab6a8ac",
+    "extid": "TASK-FAKE-ACP-SERVER-TEST-FIXTURE",
+    "type": "TASK",
+    "title": "fake ACP server test fixture",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fake-acp-server-test-fixture.md",
+    "status": "Not Started"
   },
   "TASK-FALSE-REPORT-PROTECTION": {
     "hash": "e2d659b",
@@ -47423,6 +47485,19 @@
     "status": "Not Started",
     "git_issue": "578b57f"
   },
+  "TASK-MESSAGE-PERSISTENCE-MAPPING": {
+    "hash": "caaa1f2",
+    "git_issue": "caaa1f2",
+    "extid": "TASK-MESSAGE-PERSISTENCE-MAPPING",
+    "type": "TASK",
+    "title": "message persistence mapping",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-persistence-mapping.md",
+    "status": "Not Started"
+  },
   "TASK-MESSAGE-POLLS-VOTES": {
     "epic": "epic-chat-rich-engagement",
     "extid": "TASK-MESSAGE-POLLS-VOTES",
@@ -47971,6 +48046,19 @@
     "tags": [],
     "title": "Model Comparison Reactions",
     "type": "TASK"
+  },
+  "TASK-MODEL-DISCOVERY-CAPABILITY-ENRICHMENT": {
+    "hash": "a78f091",
+    "git_issue": "a78f091",
+    "extid": "TASK-MODEL-DISCOVERY-CAPABILITY-ENRICHMENT",
+    "type": "TASK",
+    "title": "model discovery capability enrichment",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-model-discovery-capability-enrichment.md",
+    "status": "Not Started"
   },
   "TASK-MODEL-METADATA-SIDECAR-CACHE-AND-HASH-LOOKUP-CASCADE": {
     "hash": "257ba0e",
@@ -49846,6 +49934,19 @@
     "title": "Ollama Native Provider",
     "type": "TASK"
   },
+  "TASK-OMP-ADAPTER": {
+    "hash": "1b84126",
+    "git_issue": "1b84126",
+    "extid": "TASK-OMP-ADAPTER",
+    "type": "TASK",
+    "title": "omp adapter",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-omp-adapter.md",
+    "status": "Not Started"
+  },
   "TASK-OPEN-IN-EDITOR-HANDOFF": {
     "hash": "1358401",
     "git_issue": "1358401",
@@ -49901,6 +50002,19 @@
     "title": "OpenAPI Specification",
     "type": "TASK"
   },
+  "TASK-OPENCODE-ADAPTER": {
+    "hash": "cc368ce",
+    "git_issue": "cc368ce",
+    "extid": "TASK-OPENCODE-ADAPTER",
+    "type": "TASK",
+    "title": "opencode adapter",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-opencode-adapter.md",
+    "status": "Not Started"
+  },
   "TASK-OPENSCAD-PARAMETRIC-RENDER-VIA-CLI-ALLOWLIST": {
     "hash": "57326b4",
     "git_issue": "57326b4",
@@ -49926,6 +50040,19 @@
     "tags": [],
     "title": "Operator Platform Credential Store",
     "type": "TASK"
+  },
+  "TASK-OPTIONAL-DEP-PACKAGING": {
+    "hash": "a9c13bd",
+    "git_issue": "a9c13bd",
+    "extid": "TASK-OPTIONAL-DEP-PACKAGING",
+    "type": "TASK",
+    "title": "optional-dep packaging",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-optional-dep-packaging.md",
+    "status": "Not Started"
   },
   "TASK-OPTIQUE-CLI-TOOLING-INTEGRATION": {
     "epic": "epic-cli-tooling-optique",
@@ -50404,6 +50531,19 @@
     "source": ".plan/tickets/TASK-per-target-fuzzing-harnesses-auth-asset-chat-llm-admin-ipc.md",
     "status": "Not Started"
   },
+  "TASK-PER-USER-ISOLATION-GATE": {
+    "hash": "e5ed173",
+    "git_issue": "e5ed173",
+    "extid": "TASK-PER-USER-ISOLATION-GATE",
+    "type": "TASK",
+    "title": "per-user isolation gate",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-per-user-isolation-gate.md",
+    "status": "Not Started"
+  },
   "TASK-PERF-SERVER-NO-CACHE-HTML-ENTRY-POINTS-STREAM-STATIC-FILES-W": {
     "hash": "91d9c92",
     "git_issue": "91d9c92",
@@ -50432,6 +50572,19 @@
     ],
     "title": "Performance Dashboard & SLOs",
     "type": "TASK"
+  },
+  "TASK-PERMISSION-APPROVAL-FLOW": {
+    "hash": "d2a2938",
+    "git_issue": "d2a2938",
+    "extid": "TASK-PERMISSION-APPROVAL-FLOW",
+    "type": "TASK",
+    "title": "permission approval flow",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-permission-approval-flow.md",
+    "status": "Not Started"
   },
   "TASK-PERSIST-CHAT-PURPOSE-ON-CREATION": {
     "epic": "(none — hygiene/self-contained)",
@@ -58518,7 +58671,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-trading-interface.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "inventory",
       "frontend",

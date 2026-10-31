@@ -308,3 +308,5 @@ Pruned as dead (`1e5d648f3`) — the logic lives in the Alpine scopes above:
 - `TASK-item-details.md`
 - `TASK-trading-interface.md`
 - `TASK-inventory-alpine.md`
+
+**Resolved:** 2026-10-31 registry-driven close: git issue d767e63 (registry tip: a7d8a45fb Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-INVENTORY-UI done)
