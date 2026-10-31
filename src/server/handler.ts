@@ -152,11 +152,13 @@ const FALLBACK_DEPRECATION = {
 /**
  * API request handler — dispatches to plugin routes.
  *
- * Both the direct dispatch and the /api/v1 strip-prefix fallback pass through
- * the SAME governance guard (per-user rate limit + request metrics) and
- * deprecation-header envelope as v1-barrel routes — the fallback used to be a
- * bare dispatch that shipped a deprecated-but-unannounced, unthrottled v1
- * surface (BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa).
+ * Versioned `/api/v1/*` requests are served ONLY by the v1 barrel — there is
+ * no strip-prefix fallback (retired with the legacy dispatch tail). An
+ * unmatched `/api/v1/*` path 404s here; unversioned `/api/*` never reaches
+ * this handler (the catch-all 308-redirects it to `/api/v1/*`, kept per the
+ * N-1 removal rule). Plugin routes keep their own versioned paths and pass
+ * through the SAME governance guard (per-user rate limit + request metrics)
+ * and deprecation-header envelope as v1-barrel routes.
  * @param root0 - options object
  * @param root0.request - incoming `Request` to dispatch
  * @param root0.caller - identity used to enforce plugin route `requiresAuth` / `permissions`
@@ -171,9 +173,6 @@ export async function handleApiRequest(
   const govBefore = governanceBeforeHook(enabled,);
   const govAfter = governanceAfterHook(enabled,);
 
-  // The governance guard is charged ONCE per HTTP request. The versioned
-  // fallback below dispatches a second time, and charging per attempt made
-  // every /api/v1/* request cost two tokens (SUR-5).
   const gctx: Record<string, unknown> = {
     request,
     userId: caller?.userId ?? null,
@@ -182,48 +181,11 @@ export async function handleApiRequest(
   const denial = govBefore(gctx,);
   if (denial) { return denial; }
 
-  const dispatch = async (dispatchRequest: Request,): Promise<Response | null> => {
-    const result = await dispatchPluginRoute({ request: dispatchRequest, caller, t, },);
-    if (!result) { return null; }
-
-    govAfter({ ...gctx, response: result, },);
-    return applyDeprecationHeaders(result, FALLBACK_DEPRECATION,);
-  };
-
-  let pluginResult = await dispatch(request,);
-  if (pluginResult) { return pluginResult; }
-
-  // Versioned fallback: the v1 barrel doesn't cover every route module yet.
-  // Strip the /api/v1 prefix so legacy plugin routes still serve versioned
-  // requests during the migration ("breaking changes never break clients").
-  const url = new URL(request.url,);
-  if (url.pathname.startsWith("/api/v1/",)) {
-    const stripped = url.pathname.slice("/api/v1".length,);
-    for (const candidate of pluginPathCandidates(stripped,)) {
-      const candidateUrl = new URL(candidate + url.search, url,);
-      const candidateRequest = new Request(candidateUrl, request,);
-      pluginResult = await dispatch(candidateRequest,);
-      if (pluginResult) { return pluginResult; }
-    }
+  const pluginResult = await dispatchPluginRoute({ request, caller, t, },);
+  if (pluginResult) {
+    govAfter({ ...gctx, response: pluginResult, },);
+    return applyDeprecationHeaders(pluginResult, FALLBACK_DEPRECATION,);
   }
 
   return new Response("Not found", { status: 404, },);
-}
-
-/**
- * Candidate plugin paths for a versioned request path.
- *
- * A plugin registers its route with its OWN `/api` prefix
- * (`/api/card-battle/start`), while the version redirect consumes one `/api`
- * segment of the request path (`/api/v1/card-battle/start`). Both spellings
- * must therefore be tried: the stripped path for plugins that register
- * without the prefix, and the stripped path with the prefix restored for the
- * ones that register with it (SUR-3).
- * @param stripped - request path with the `/api/v1` prefix removed
- * @returns the candidate paths, in dispatch order
- */
-function pluginPathCandidates(stripped: string,): string[] {
-  const withPrefix = `/api${stripped}`;
-
-  return withPrefix === stripped ? [stripped,] : [stripped, withPrefix,];
 }

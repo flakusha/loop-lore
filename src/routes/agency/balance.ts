@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * /api/agency/balance — read the calling actor's story-point balance.
+ * /api/v1/agency/balance — read the calling actor's story-point balance.
  *
  * Backs the story-points chip in the chat composer. `world_id` is optional:
  * omit it for the cross-world global balance, pass the active chat's world to
@@ -21,7 +21,7 @@ import { jsonResponse, requireUserId, } from "../http-utils";
  */
 export function agencyBalanceRoute(
   opts: { database: import("kysely").Kysely<import("../../db/schema").DB> },
-  prefix = "/api",
+  prefix = "/api/v1",
 ) {
   const { database, } = opts;
   return new Elysia({ name: "agency-balance", },)

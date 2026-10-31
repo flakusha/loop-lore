@@ -30,6 +30,7 @@ import { chatsSurface, } from "./chats-surface";
 import { contentSurface, } from "./content-surface";
 import { governanceEndpoints, governanceGuard, } from "./governance";
 import { integrationsSurface, } from "./integrations-surface";
+import { standaloneSurface, } from "./standalone-surface";
 
 /**
  * Create v1 versioned routes.
@@ -62,5 +63,6 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
     .use(contentSurface(opts,),)
     .use(adminSurface(opts,),)
     .use(integrationsSurface(opts,),)
+    .use(standaloneSurface(opts,),)
     .use(governanceEndpoints(),);
 }

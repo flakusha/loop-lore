@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * /api/agency/spend -- authz coverage.
+ * /api/v1/agency/spend -- authz coverage.
  *
  * The endpoint trusts body.actor_id for which actor's balance to debit.
  * Without an authz check the request is trivial to abuse -- any session
@@ -27,12 +27,12 @@ import { agencySpendRoute, } from "./spend";
 function makeApp(db: Kysely<DB>, userId?: string,): Elysia {
   const app = new Elysia({ name: "test-agency-spend", },);
   if (userId !== undefined) { app.derive(() => ({ userId, })); }
-  return app.use(agencySpendRoute({ database: db, }, "/api",),);
+  return app.use(agencySpendRoute({ database: db, },),);
 }
 
 async function postSpend(app: Elysia, body: Record<string, unknown>,): Promise<Response> {
   return app.handle(
-    new Request("http://localhost/api/agency/spend", {
+    new Request("http://localhost/api/v1/agency/spend", {
       method: "POST",
       headers: { "content-type": "application/json", },
       body: JSON.stringify(body,),
@@ -40,7 +40,7 @@ async function postSpend(app: Elysia, body: Record<string, unknown>,): Promise<R
   );
 }
 
-describe("POST /api/agency/spend -- authz", () => {
+describe("POST /api/v1/agency/spend -- authz", () => {
   test("401 when the session is unauthenticated", async () => {
     const { db, } = await createTestDb();
     await insertUsers(db, "user-1", "User One",);

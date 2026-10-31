@@ -3,12 +3,12 @@
 
 /**
  * Agency routes barrel — assembles the story-point HTTP surface from
- * domain sub-plugins. Registration point/name is preserved so the
- * `register-plugins.ts` wiring is unchanged.
+ * domain sub-plugins. Mounted from the v1 barrel
+ * (`src/routes/v1/standalone-surface.ts`), which passes the `/api/v1` prefix.
  *
- *   GET  /api/agency/balance — read the caller's balance (composer chip)
- *   POST /api/agency/earn   — credit story points
- *   POST /api/agency/spend  — debit story points
+ *   GET  /api/v1/agency/balance — read the caller's balance (composer chip)
+ *   POST /api/v1/agency/earn   — credit story points
+ *   POST /api/v1/agency/spend  — debit story points
  */
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";

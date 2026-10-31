@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Config Menu Routes
+ * Config Menu Routes — mounted ONLY from the v1 barrel
+ * (`src/routes/v1/standalone-surface.ts`), which passes `/api/v1`.
  *
  * GET  /api/v1/config-menu  — role-filtered config catalog
  * PATCH /api/v1/config-menu — write a config value (admin: system_config, user: settings)
