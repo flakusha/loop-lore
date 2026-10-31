@@ -9,13 +9,13 @@ import {
   NsfwEncounterTypeSchema,
   SeductionSkillCategorySchema,
 } from "../db-schemas";
-import { Id, NullableId, } from "./primitives";
+
 
 export const NsfwIntimacyActionBody = t.Object({
-  chatId: t.Optional(NullableId,),
-  actorId: Id,
-  targetActorId: Id,
-  worldId: t.Optional(NullableId,),
+  chatId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
+  actorId: t.String({ minLength: 1, },),
+  targetActorId: t.String({ minLength: 1, },),
+  worldId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
   actionId: t.String({ minLength: 1, maxLength: 128, },),
   actionName: t.String({ minLength: 1, maxLength: 128, },),
   actionType: IntimacyActionTypeSchema,
@@ -26,25 +26,25 @@ export const NsfwIntimacyActionBody = t.Object({
 },);
 
 export const NsfwSeductionAttemptBody = t.Object({
-  chatId: t.Optional(NullableId,),
-  actorId: Id,
-  targetId: Id,
+  chatId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
+  actorId: t.String({ minLength: 1, },),
+  targetId: t.String({ minLength: 1, },),
   skillCategory: SeductionSkillCategorySchema,
   approach: t.String({ minLength: 1, maxLength: 512, },),
-  worldId: t.Optional(NullableId,),
+  worldId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
   reputationTier: t.Optional(t.String({ maxLength: 64, },),),
   delta: t.Optional(t.Number(),),
   source: t.Optional(t.String({ maxLength: 128, },),),
 },);
 
 export const NsfwEncounterCreateBody = t.Object({
-  chatId: t.Optional(NullableId,),
-  actorId: Id,
-  worldId: t.Optional(NullableId,),
-  locationId: t.Optional(NullableId,),
-  encounterType: NsfwEncounterTypeSchema,
+  chatId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
+  actorId: t.String({ minLength: 1, },),
+  worldId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
+  locationId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
+  encounterType: t.Optional(NsfwEncounterTypeSchema,),
   intensity: t.Optional(ContentIntensitySchema,),
   narrativeStyle: t.Optional(NarrativeStyleSchema,),
-  participants: t.Array(Id, { minItems: 1, maxItems: 16, },),
+  participants: t.Array(t.String({ minLength: 1, },), { minItems: 1, maxItems: 16, },),
   contentTags: t.Optional(t.Array(t.String({ minLength: 1, maxLength: 64, },), { maxItems: 32, },),),
 },);
