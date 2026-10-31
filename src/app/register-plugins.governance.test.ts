@@ -2,16 +2,15 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * registerPlugins governance WIRING test (epic-api-governance-perimeter, S-6).
+ * registerPlugins governance topology test (epic-api-governance-perimeter, S-6).
  *
- * The v1 barrel's guard is proven by governance-integration.test.ts, but the
- * migrated modules (story-orchestration, agency, location-explorer, game-state,
- * config-menu) are mounted on the ROOT app in register-plugins.ts — outside
- * the barrel. Before the `governed()` wrapper the guard never ran on them, so
- * the /story/step + /story/resume generation rules could never fire where the
- * guard executes. Every 429 here can ONLY come from that wrapper: this test
- * app has no catch-all, no handler.ts dispatcher, and no other governance
- * application point, and only governance.ts sets `x-ratelimit-hit`.
+ * Nothing versioned mounts here anymore: the five former `migrated-v1`
+ * standalones (story-orchestration, agency, location-explorer, game-state,
+ * config-menu) moved into the v1 barrel (`standalone-surface.ts`), which owns
+ * the governance guard. Pinned here: registerPlugins mounts NO versioned
+ * surface, so versioned generation traffic can only be throttled by the
+ * barrel guard (proven by governance-integration.test.ts), never by a second
+ * root-level guard instance that would double-charge every request.
  *
  * Resource contract (parallel-safe): own `:memory:` SQLite; env owns nothing
  * (predicate injected); `metrics` + `governanceRateLimiter` singletons reset
@@ -28,6 +27,7 @@ import { createConfigSchema, } from "../config/schema-class";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { storyOrchestrationRoutes, } from "../routes/story-orchestration";
+import { v1Routes, } from "../routes/v1";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { registerPlugins, } from "./register-plugins";
@@ -112,10 +112,31 @@ describe("registerPlugins wires the governance guard onto root-mounted surfaces"
     governanceRateLimiter.destroy();
   },);
 
-  test("story/step 429s under the generation policy through the real registerPlugins mount (S-6)", async () => {
+  test("story/step 429s under the generation policy through the v1 barrel (S-6)", async () => {
+    // The barrel owns the guard now that the standalones moved into it: the
+    // same registerPlugins config object feeds the barrel, so the predicate
+    // wiring is still exercised end to end.
+    const barrel = new Elysia({ name: "test-barrel-governance", },)
+      .derive(() => ({
+        userId,
+        userRole: "user",
+        sessionId: null,
+        locale: "en",
+        t: (k: string,) => k,
+      })) as unknown as Elysia;
+
+    barrel.use(
+      v1Routes({
+        database: db,
+        config: structuredClone(createConfigSchema().defaults,) as Config,
+        asyncStore: stubAsyncStore(),
+        governanceEnabled: () => true,
+      },),
+    );
+
     const statuses: number[] = [];
     for (let i = 0; i < 8; i++) {
-      statuses.push((await app.handle(stepRequest(),)).status,);
+      statuses.push((await barrel.handle(stepRequest(),)).status,);
     }
 
     // The route handler answered (404 for the unknown chat — never 429): the
@@ -124,10 +145,18 @@ describe("registerPlugins wires the governance guard onto root-mounted surfaces"
     // generationPolicy: 20/min with burst 5 — request 6 is the first refusal.
     expect(statuses.slice(5,).every((s,) => s === 429),).toBe(true,);
     // Only governance.ts sets this header, and in this app the ONLY governance
-    // hook instance is the registerPlugins `governed()` wrapper.
-    const throttled = await app.handle(stepRequest(),);
+    // hook instance is the barrel guard mounted above.
+    const throttled = await barrel.handle(stepRequest(),);
     expect(throttled.status,).toBe(429,);
     expect(throttled.headers.get("x-ratelimit-hit",),).toBe("1",);
+  });
+
+  test("registerPlugins mounts no versioned surface (no second guard)", async () => {
+    // Double-mounting a versioned module here AND in the barrel would
+    // duplicate the routes and defeat the 308 version redirect. A versioned
+    // story path through the registerPlugins-only app must therefore 404.
+    const res = await app.handle(stepRequest(),);
+    expect(res.status,).toBe(404,);
   });
 
   test("control: the bare story plugin without registerPlugins is never throttled", async () => {
