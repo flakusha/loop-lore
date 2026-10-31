@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 355 epics
+**Total:** 357 epics
 
 ## Summary
 
@@ -65,7 +65,7 @@
 | In Progress | Character XP, Leveling & Stat Progression in World | High | High | 0 | [epic-character-xp-leveling.md](/.plan/epics/epic-character-xp-leveling.md) |
 | Done | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
 | Done | Chat Lifecycle, Transitions & Moderation | High | High | 0 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
-| Not Started | Chat Multi-Ownership | High | Medium | 0 | [epic-chat-multi-ownership.md](/.plan/epics/epic-chat-multi-ownership.md) |
+| In Progress | Chat Multi-Ownership | High | Medium | 0 | [epic-chat-multi-ownership.md](/.plan/epics/epic-chat-multi-ownership.md) |
 | Not Started | Chat Product Features | High | High | 0 | [epic-chat-product-features.md](/.plan/epics/epic-chat-product-features.md) |
 | Not Started | Chat Rich Engagement (draft for new worktree) | Medium — messenger/AI parity gap | Medium | 0 | [epic-chat-rich-engagement.md](/.plan/epics/epic-chat-rich-engagement.md) |
 | Done | Chat Variants Taxonomy | High | Medium | 0 | [epic-chat-variants-taxonomy.md](/.plan/epics/epic-chat-variants-taxonomy.md) |
@@ -128,7 +128,7 @@
 | Not Started | EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution | medium | Large (multiple sub-tickets, see Sub-systems) | 0 | [epic-math-resolution.md](/.plan/epics/epic-math-resolution.md) |
 | Done | Epic: Achievements | Medium | Medium | 0 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | In Progress | Epic: Ambient, Music & Sound Effects | Medium | High | 0 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
-| Not Started | Epic: Analytics & Observability | High | Medium | 0 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
+| In Progress | Epic: Analytics & Observability | High | Medium | 0 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | Not Started | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
 | Not Started | Epic: API OpenAPI Specification | High | Medium | 0 | [epic-api-openapi.md](/.plan/epics/epic-api-openapi.md) |
 | Done | Epic: API Rate Limiting | High | Medium | 0 | [epic-api-rate-limiting.md](/.plan/epics/epic-api-rate-limiting.md) |
@@ -166,9 +166,9 @@
 | In Progress | Epic: Inventory | High | High | 0 | [epic-inventory.md](/.plan/epics/epic-inventory.md) |
 | In Progress | Epic: Items | High | High | 0 | [epic-items.md](/.plan/epics/epic-items.md) |
 | Not Started | Epic: Locations | High | High | 0 | [epic-locations.md](/.plan/epics/epic-locations.md) |
-| Not Started | Epic: Lore Knowledge System | High\ | Medium\ | 0 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
+| In Progress | Epic: Lore Knowledge System | High\ | Medium\ | 0 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
 | In Progress | Epic: Memory & Knowledge Systems | High | High | 0 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
-| Not Started | Epic: Memory Propagation | High\ | Medium\ | 0 | [epic-memory-propagation.md](/.plan/epics/epic-memory-propagation.md) |
+| In Progress (first slice landed) | Epic: Memory Propagation | High\ | Medium\ | 0 | [epic-memory-propagation.md](/.plan/epics/epic-memory-propagation.md) |
 | Not Started | Epic: Mini-Games & Interactive Mechanics | Medium | High | 0 | [epic-mini-games.md](/.plan/epics/epic-mini-games.md) |
 | Not Started | Epic: Mobile App | Low | High | 0 | [epic-mobile-app.md](/.plan/epics/epic-mobile-app.md) |
 | Not Started | Epic: Model Family Presets | High (MVP scoped, post-Gate C) | Medium | 0 | [epic-model-family-presets.md](/.plan/epics/epic-model-family-presets.md) |
@@ -238,7 +238,7 @@
 | In Progress | Integrations Core | Medium | Medium | 0 | [epic-integrations-core.md](/.plan/epics/epic-integrations-core.md) |
 | Not Started | Interaction Surfaces Audit — Headless CLI + Surface Parity | High | Large | 0 | [epic-interaction-surfaces-audit.md](/.plan/epics/epic-interaction-surfaces-audit.md) |
 | Not Started | Internationalization (i18n) | Medium | Medium | 0 | [epic-frontend-internationalization.md](/.plan/epics/epic-frontend-internationalization.md) |
-| Not Started | Inventory & Trading UI | P1 — High | Medium | 0 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
+| Done | Inventory & Trading UI | P1 — High | Medium | 0 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
 | Not Started | Inventory System (Hub) | High | High | 0 | [epic-inventory-system.md](/.plan/epics/epic-inventory-system.md) |
 | Not Started | Item System Extensions | High | High | 0 | [epic-item-system-extensions.md](/.plan/epics/epic-item-system-extensions.md) |
 | In Progress | Item Systems Unification & Gap Closure | High | High | 0 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
@@ -268,6 +268,7 @@
 | Not Started | Mini-Games: UI Components & API Contracts | medium | Medium | 0 | [epic-mini-games-ui-api.md](/.plan/epics/epic-mini-games-ui-api.md) |
 | Not Started | Model Info Frontend (Cards, Tags, Filters) | Medium | Medium | 0/2 | [epic-model-info-frontend.md](/.plan/epics/epic-model-info-frontend.md) |
 | Not Started | Model Metadata Read (Headers, Hashing, Classification) | High | Large | 0/7 | [epic-model-metadata-read.md](/.plan/epics/epic-model-metadata-read.md) |
+| Not Started | Model Rankings History, Fit Scoring, News & Local Grading | High | Large | 0 | [epic-model-rankings-history.md](/.plan/epics/epic-model-rankings-history.md) |
 | Done | Multi-Session Support | Medium | Med | 0 | [epic-multi-session.md](/.plan/epics/epic-multi-session.md) |
 | Not Started | Multilingual Carriage — Hidden Per-Message Language/Context Carriage | Medium | Medium | 0 | [epic-multilingual-carriage.md](/.plan/epics/epic-multilingual-carriage.md) |
 | Not Started | Narration / Actor Separation | High | Medium–Large | 0 | [epic-narration-actor-separation.md](/.plan/epics/epic-narration-actor-separation.md) |
@@ -731,8 +732,6 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Current State Assessment
 
-### Current State Assessment
-
 ### Benchmark CI & Performance Regression Detection
 
 - **Status:** In Progress
@@ -874,10 +873,9 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 Covers the full chat lifecycle beyond raw message exchange: context management
 
-
 ### Chat Multi-Ownership
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -1476,7 +1474,7 @@ One coherent scene-audio domain: location-based ambient sound, scene-aware
 
 ### Epic: Analytics & Observability
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -1846,7 +1844,7 @@ Locations specification — covers world locations, travel mechanics, place prop
 
 ### Epic: Lore Knowledge System
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High\
 - **Effort:** Medium\
 - **Type:** Feature Epic\
@@ -1868,7 +1866,7 @@ Three-tier memory system — episodic, semantic, and procedural memory. Covers m
 
 ### Epic: Memory Propagation
 
-- **Status:** Not Started
+- **Status:** In Progress (first slice landed)
 - **Priority:** High\
 - **Effort:** Medium\
 - **Type:** Feature Epic\
@@ -2552,7 +2550,7 @@ loop-lore can store video assets, compose video prompts, and walk a user
 
 ### Inventory & Trading UI
 
-- **Status:** Not Started
+- **Status:** Done
 - **Priority:** P1 — High
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -2828,6 +2826,15 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Tags:** models, metadata, safetensors, gguf, hashing, blake3, classification, dedup
 - **File:** `.plan/epics/epic-model-metadata-read.md`
 
+### Model Rankings History, Fit Scoring, News & Local Grading
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** models, rankings, llmfit, hardware-fit, news, admin, local-grading
+- **File:** `.plan/epics/epic-model-rankings-history.md`
+
 ### Multi-Session Support
 
 - **Status:** Done
@@ -2921,8 +2928,6 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Type:** Feature Epic
 - **Tags:** nsfw, integration, housing, weather, social, disease, cross-system
 - **File:** `.plan/epics/epic-nsfw-integration-gaps.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -3457,8 +3462,6 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
-### Current State Assessment
-
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3776,3 +3779,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+

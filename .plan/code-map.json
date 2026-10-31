@@ -13595,6 +13595,16 @@
       "source": ".plan/tickets/TASK-info-bubbles.md"
     }
   ],
+  "src/components/inventory-panels.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-inventory-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-equipment-slots.md"
+    }
+  ],
   "src/components/key-management.html": [
     {
       "kind": "epic",
@@ -13787,6 +13797,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-shared-text-surface-toolbar.md"
+    }
+  ],
+  "src/components/trade-window-panel.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-inventory-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-trading-interface.md"
     }
   ],
   "src/components/transfer-dialog.html": [
@@ -26193,10 +26213,34 @@
       "source": ".plan/tickets/TASK-integration-infrastructure.md"
     }
   ],
+  "src/frontend/alpine/inventory-offers.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-inventory-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-trading-interface.md"
+    }
+  ],
+  "src/frontend/alpine/inventory-trading.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-inventory-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-trading-interface.md"
+    }
+  ],
   "src/frontend/alpine/inventory.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-inventory-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-equipment-slots.md"
     },
     {
       "kind": "ticket",
@@ -28335,7 +28379,21 @@
       "source": ".plan/tickets/TASK-item-details.md"
     }
   ],
+  "src/frontend/inventory/trade-offers.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-inventory-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-trading-interface.md"
+    }
+  ],
   "src/frontend/inventory/trade-panel.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-inventory-ui.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-trading-interface.md"
