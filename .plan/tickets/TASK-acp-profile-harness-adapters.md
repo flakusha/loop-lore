@@ -3,7 +3,8 @@
 
 # TASK: ACP profile harness adapters
 
-**Status:** In Progress
+**Status:** Done
+**Status Note:** Landed on branch feat-acp-harness-adapters (worktree slice, pending finalize): opencode + codex adapters on the shared `GenericAcpAdapter` engine (`src/integrations/harness/generic-acp.ts`), omp.ts migrated onto the engine (public API unchanged), fake fixture extended with `FAKE_CONFIG_ID`/`FAKE_NO_SESSION` flavors, suites for both new adapters mirroring the omp suite. Deviation per AC 3: claude-code split out to TASK-acp-claude-code-adapter — its adapter (`@agentclientprotocol/claude-agent-acp`) exposes model selection only through a non-standard `models` session/new field plus the `unstable_setSessionModel` extension method (no stable v1 config-option select), so implementing it would require guessing wire casing, which the caveat forbids. Second deviation: codex advertises bare model-preset ids (no provider prefix), so its adapter namespaces them as `codex/<preset>` to preserve the core's `provider/id` contract — no core changes needed.
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-external-harness-acp
@@ -31,17 +32,26 @@ inside per-harness files.
 
 **Acceptance Criteria:**
 
-- [ ] opencode adapter passes the same fake-fixture test suite as the omp
+- [x] opencode adapter passes the same fake-fixture test suite as the omp
       adapter, using a canned opencode-flavored fixture
+      (`opencode-adapter.test.ts` on `FAKE_CONFIG_ID: "model"`)
 
-- [ ] opencode profile/config enumeration maps onto `harness.acp.profiles[]`
-      semantics (argv spawn, tier model ids, advertised-model probe)
+- [x] opencode profile/config enumeration maps onto `harness.acp.profiles[]`
+      semantics (argv spawn, tier model ids, advertised-model probe) —
+      `opencode acp` advertises a `model` select with `providerID/modelID`
+      values, consumed verbatim by the registry probe
 
-- [ ] codex / claude-code adapters implemented over their generic ACP
-      surfaces (or explicitly split out if their surfaces diverge)
+- [x] codex adapter implemented over its generic ACP surface
+      (`session/set_config_option`, configId `model`; bare preset ids
+      namespaced `codex/<preset>`); claude-code explicitly split out to
+      TASK-acp-claude-code-adapter (see Status Note)
 
-- [ ] No omp-specific imports or assumptions outside `omp.ts`
-- [ ] `bun test src/integrations/harness/` green with the new suites
+- [x] No omp-specific imports or assumptions outside `omp.ts` — the shared
+      engine (`generic-acp.ts`) contains no omp references; omp's
+      `MODEL_CONFIG_ID`/`_omp/usage` mapping stayed inside omp.ts
+
+- [x] `bun test src/integrations/harness/` green with the new suites
+      (serial-isolated run, all files)
 
 **Caveats:**
 
