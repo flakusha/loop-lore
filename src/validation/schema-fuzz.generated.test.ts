@@ -79,6 +79,7 @@ import * as validation_lore from "@/validation/schemas/lore";
 import * as validation_messages from "@/validation/schemas/messages";
 import * as validation_musicLinks from "@/validation/schemas/music-links";
 import * as validation_notifications from "@/validation/schemas/notifications";
+import * as validation_nsfw from "@/validation/schemas/nsfw";
 import * as validation_primitives from "@/validation/schemas/primitives";
 import * as validation_quests from "@/validation/schemas/quests";
 import * as validation_responses from "@/validation/schemas/responses";
@@ -1867,6 +1868,24 @@ describe("NpcStateBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_worldState.NpcStateBody,));
 });
 
+describe("NsfwEncounterCreateBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_nsfw.NsfwEncounterCreateBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_nsfw.NsfwEncounterCreateBody,));
+});
+
+describe("NsfwIntimacyActionBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_nsfw.NsfwIntimacyActionBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_nsfw.NsfwIntimacyActionBody,));
+});
+
+describe("NsfwSeductionAttemptBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_nsfw.NsfwSeductionAttemptBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_nsfw.NsfwSeductionAttemptBody,));
+});
+
 describe("NullableChatRenderingOverrideSchema", () => {
   test("accepts generated values", () => checkAllValid(validation_primitives.NullableChatRenderingOverrideSchema,));
 
@@ -2716,4 +2735,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 430 schemas discovered across 530 module(s).
+// 433 schemas discovered across 531 module(s).

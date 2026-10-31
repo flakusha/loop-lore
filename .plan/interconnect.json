@@ -7315,7 +7315,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-nsfw-write-routes-authorize-actor-but-not-target.md",
       "title": "NSFW write routes authorize actor but not target",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/enums-character/nsfw.ts",
         "src/routes/actor-auth.ts",
