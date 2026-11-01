@@ -18,7 +18,7 @@ Battle chat-setup template selection exists in web; TUI lacks parity. Implement 
 
 **Context:**
 
-Web parity reference: `src/frontend/pages/new-chat/index.ts:30-63` (template list load + `#chat-template` picker), `submit.ts:77,96,115` (templateId POST + renderingOverride), `state.ts:14-29` (ChatTemplateMeta). In-flight (uncommitted dev dirt, no branch): `src/tui/chat-create-api.ts:27-28,55` already sends templateId; `src/tui/chat-picker.ts:73-80` adds ChatSetupTemplate + CREATE_TEMPLATE_STATUS — but the create call site (`chat-picker.ts:339`) still passes name only and no template-fetch/pick step exists. Remaining work is the picker UI step + threading the selection through.
+Web parity reference: `src/frontend/pages/new-chat/index.ts:30-63` (template list load + `#chat-template` picker), `submit.ts:77,96,115` (templateId POST + renderingOverride), `state.ts:14-29` (ChatTemplateMeta). In-flight (uncommitted dev dirt, no branch): `src/tui/chat-create-api.ts:27-28,55` already sends templateId; `src/tui/chat-picker.ts:73-80` adds ChatSetupTemplate + CREATE_TEMPLATE_STATUS — but the create call site (`chat-picker.ts:376`) still passes name only and no template-fetch/pick step exists. Remaining work is the picker UI step + threading the selection through.
 
 **Acceptance Criteria:**
 
