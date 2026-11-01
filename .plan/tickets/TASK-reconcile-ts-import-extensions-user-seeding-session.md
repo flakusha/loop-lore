@@ -8,8 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
-**Status Note:** Open — follow-up for a future session
+**Status:** Postponed
+**Status Note:** Postponed — deno support deferred; revisit when deno adoption is pursued
 **Priority:** Low
 **Effort:** Small
 **Epic:** epic-deno-support

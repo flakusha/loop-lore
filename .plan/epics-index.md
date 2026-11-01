@@ -95,7 +95,7 @@
 | Not Started | DB & Asset Snapshot Recovery | High | High | 0 | [epic-db-asset-snapshot-recovery.md](/.plan/epics/epic-db-asset-snapshot-recovery.md) |
 | Not Started | DB Migration Compaction — final-form single migration (Path B) | Medium (maintainability; no runtime behavior change on a fresh DB) | High | 0 | [epic-db-migration-compaction.md](/.plan/epics/epic-db-migration-compaction.md) |
 | Not Started | Dead-Code & Cutover-Debris Sweep + Gate Blind Spots (2026-10-25 review round E-3) | Medium | Medium | 0 | [epic-review-20261025-dead-code-sweep.md](/.plan/epics/epic-review-20261025-dead-code-sweep.md) |
-| Not Started | Deno Support (Possible Node) | Low | Medium | 0 | [epic-deno-support.md](/.plan/epics/epic-deno-support.md) |
+| Postponed | Deno Support (Possible Node) | Low | Medium | 0 | [epic-deno-support.md](/.plan/epics/epic-deno-support.md) |
 | Not Started | Derived-Map Generation — Depth, Textures, Multi-Mask, Provenance | Low | High | 0 | [epic-derived-map-generation.md](/.plan/epics/epic-derived-map-generation.md) |
 | Not Started | Design: Memory Knowledge Isolation and World Timeline | Low | Large | 0 | [epic-memory-isolation-design.md](/.plan/epics/epic-memory-isolation-design.md) |
 | Not Started | Deterministic-First Decision Gates for the Message Hot Path | High | Small | 0 | [epic-deterministic-first-gates.md](/.plan/epics/epic-deterministic-first-gates.md) |
@@ -1172,7 +1172,7 @@ Unit, integration, E2E, performance-load, and security test framework architectu
 
 ### Deno Support (Possible Node)
 
-- **Status:** Not Started
+- **Status:** Postponed
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** Research Epic

@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3908
+- tickets: 3909
 - epics: 369
 - src paths owned: 4622
-- edges: produces 12361, consumes 406, sibling 39027, owns 2882, related 1196
+- edges: produces 12362, consumes 406, sibling 39033, owns 2882, related 1196
 
 ## Shared src hubs
 
@@ -1506,7 +1506,7 @@ output is byte-identical for identical inputs.
 | `src/routes/export-sse` | `TASK-frontend-client-contract-doc`, `epic-experimental-egui-frontend` |
 | `src/routes/export-sse.ts` | `TASK-collapse-duplicate-markdown-exporter`, `TASK-fix-eslint-errors`, `epic-continuous-improvement`, `epic-import-export-io` |
 | `src/routes/export-sse/jobs.ts` | `BUG-community-share-missing-lorebook-export`, `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai`, `TASK-task-generic-event-outbox-dlq-projections` |
-| `src/routes/export-sse/start.ts` | `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo`, `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai`, `BUG-export-sse-start-throws-controller-is-already-closed-on-clie`, `BUG-export-status-download-endpoints-leak-other-users-jobs-via-u`, `BUG-resolveuseridfromrequest-missing-user-status-check`, `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` |
+| `src/routes/export-sse/start.ts` | `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo`, `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai`, `BUG-export-sse-start-throws-controller-is-already-closed-on-clie`, `BUG-export-status-download-endpoints-leak-other-users-jobs-via-u`, `BUG-resolveuseridfromrequest-missing-user-status-check`, `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-`, `TASK-cover-export-sse-start-ts-poll-loop-branches` |
 | `src/routes/export.ts` | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su`, `BUG-community-share-missing-lorebook-export`, `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo`, `BUG-resolveuseridfromrequest-missing-user-status-check`, `FEAT-gdpr-user-data-rights`, `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-`, `TASK-epic14-import-export-reconciliation`, `TASK-import-export-io`, `epic-import-export-io` |
 | `src/routes/federation-mesh-retract.ts` | `TASK-fanout-chatid-default-deny`, `TASK-licensing-publish-authorization-predicate` |
 | `src/routes/federation-mesh.test.ts` | `TASK-federation-peer-workload-wire-endpoints`, `TASK-federation-same-host-loopback-peer-auth` |
@@ -10645,6 +10645,7 @@ output is byte-identical for identical inputs.
 | `TASK-cors-middleware` | produces | `src/middleware/response-headers.ts` | - |
 | `TASK-cors-middleware` | produces | `src/server/handler.ts` | - |
 | `TASK-cors-middleware` | produces | `src/utils/safe-fetch/headers.ts` | - |
+| `TASK-cover-export-sse-start-ts-poll-loop-branches` | produces | `src/routes/export-sse/start.ts` | - |
 | `TASK-cover-frontend-vn-pages-new-chat-quests-worlds` | produces | `src/frontend/tests/vn-fake-dom.ts` | - |
 | `TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-` | produces | `src/routes/battle/equipment.ts` | - |
 | `TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-` | produces | `src/routes/comparisons-export.ts` | - |
@@ -24740,6 +24741,7 @@ output is byte-identical for identical inputs.
 | `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo` | sibling | `FEAT-gdpr-user-data-rights` | `src/routes/export.ts` |
 | `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo` | sibling | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | `src/middleware/auth/token.ts` |
 | `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo` | sibling | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | `src/routes/export-sse/start.ts; src/routes/export.ts` |
+| `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo` | sibling | `TASK-cover-export-sse-start-ts-poll-loop-branches` | `src/routes/export-sse/start.ts` |
 | `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo` | sibling | `TASK-epic14-import-export-reconciliation` | `src/routes/export.ts` |
 | `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo` | sibling | `TASK-import-export-io` | `src/routes/export.ts` |
 | `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo` | sibling | `TASK-input-hardening-batch` | `src/middleware/auth/token.ts` |
@@ -24752,6 +24754,7 @@ output is byte-identical for identical inputs.
 | `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai` | sibling | `BUG-resolveuseridfromrequest-missing-user-status-check` | `src/routes/export-sse/start.ts` |
 | `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai` | sibling | `BUG-settings-export-endpoint-has-no-rate-limiting` | `src/routes/settings.ts` |
 | `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai` | sibling | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | `src/routes/export-sse/start.ts` |
+| `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai` | sibling | `TASK-cover-export-sse-start-ts-poll-loop-branches` | `src/routes/export-sse/start.ts` |
 | `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai` | sibling | `TASK-format-version-migration` | `src/routes/settings.ts` |
 | `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai` | sibling | `TASK-response-length-control` | `src/routes/settings.ts` |
 | `BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai` | sibling | `TASK-settings-patch-uses-t-any-body-allowing-mass-assignment` | `src/routes/settings.ts` |
@@ -24760,8 +24763,10 @@ output is byte-identical for identical inputs.
 | `BUG-export-sse-start-throws-controller-is-already-closed-on-clie` | sibling | `BUG-export-status-download-endpoints-leak-other-users-jobs-via-u` | `src/routes/export-sse/start.ts` |
 | `BUG-export-sse-start-throws-controller-is-already-closed-on-clie` | sibling | `BUG-resolveuseridfromrequest-missing-user-status-check` | `src/routes/export-sse/start.ts` |
 | `BUG-export-sse-start-throws-controller-is-already-closed-on-clie` | sibling | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | `src/routes/export-sse/start.ts` |
+| `BUG-export-sse-start-throws-controller-is-already-closed-on-clie` | sibling | `TASK-cover-export-sse-start-ts-poll-loop-branches` | `src/routes/export-sse/start.ts` |
 | `BUG-export-status-download-endpoints-leak-other-users-jobs-via-u` | sibling | `BUG-resolveuseridfromrequest-missing-user-status-check` | `src/routes/export-sse/start.ts` |
 | `BUG-export-status-download-endpoints-leak-other-users-jobs-via-u` | sibling | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | `src/routes/export-sse/start.ts` |
+| `BUG-export-status-download-endpoints-leak-other-users-jobs-via-u` | sibling | `TASK-cover-export-sse-start-ts-poll-loop-branches` | `src/routes/export-sse/start.ts` |
 | `BUG-extractjsonobject-slices-an-unbounded-llm-response-before-js` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/turning/classifier-selection.ts` |
 | `BUG-factory-reset-deletes-tables-without-transaction-silent-per-` | sibling | `BUG-telemetry-purge-unbounded-days` | `src/routes/admin/danger-zone.ts` |
 | `BUG-factory-reset-deletes-tables-without-transaction-silent-per-` | sibling | `TASK-admin-danger-zone` | `src/routes/admin/danger-zone.ts` |
@@ -30037,6 +30042,7 @@ output is byte-identical for identical inputs.
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | sibling | `FEAT-gdpr-user-data-rights` | `src/routes/export.ts` |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | sibling | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | `src/middleware/auth/token.ts` |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | sibling | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | `src/routes/export-sse/start.ts; src/routes/export.ts` |
+| `BUG-resolveuseridfromrequest-missing-user-status-check` | sibling | `TASK-cover-export-sse-start-ts-poll-loop-branches` | `src/routes/export-sse/start.ts` |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | sibling | `TASK-epic14-import-export-reconciliation` | `src/routes/export.ts` |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | sibling | `TASK-import-export-io` | `src/routes/export.ts` |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | sibling | `TASK-input-hardening-batch` | `src/middleware/auth/token.ts` |
@@ -40251,6 +40257,7 @@ output is byte-identical for identical inputs.
 | `TASK-async-store-tests-per-test-tmpdir` | sibling | `TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase` | `src/async/offload.test.ts; src/async/spill.test.ts; src/async/spill.ts` |
 | `TASK-async-store-tests-per-test-tmpdir` | sibling | `TASK-middleware-distributed-healing-revalidation-backups` | `src/async/offload.test.ts` |
 | `TASK-async-store-tests-per-test-tmpdir` | sibling | `epic-browser-editor-support` | `src/async/spill.ts` |
+| `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | sibling | `TASK-cover-export-sse-start-ts-poll-loop-branches` | `src/routes/export-sse/start.ts` |
 | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | sibling | `TASK-epic14-import-export-reconciliation` | `src/routes/export.ts` |
 | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | sibling | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | `src/middleware/auth.test.ts` |
 | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | sibling | `TASK-import-export-io` | `src/routes/export.ts` |

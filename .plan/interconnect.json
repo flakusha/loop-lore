@@ -25602,6 +25602,17 @@
       "related": []
     },
     {
+      "id": "TASK-cover-export-sse-start-ts-poll-loop-branches",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-cover-export-sse-start-ts-poll-loop-branches.md",
+      "title": "Cover export-sse start.ts poll-loop branches",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/routes/export-sse/start.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-cover-frontend-vn-pages-new-chat-quests-worlds",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-cover-frontend-vn-pages-new-chat-quests-worlds.md",
@@ -27253,7 +27264,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-deno-support.md",
       "title": "EPIC: Deno Support (Possible Node)",
-      "status": "Not Started",
+      "status": "Postponed",
       "srcRefs": [],
       "related": []
     },
@@ -41135,7 +41146,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md",
       "title": "Reconcile `*.ts` import extensions (user-seeding session)",
-      "status": "Not Started",
+      "status": "Postponed",
       "srcRefs": [
         "src/config/schema/seeding.ts",
         "src/seeding/index.ts",
@@ -51206,7 +51217,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-deno-support.md",
       "title": "Deno Support (Possible Node)",
-      "status": "Not Started",
+      "status": "Postponed",
       "srcRefs": [
         "src/db/index.ts",
         "src/runtime/deno/fresh.ts",
@@ -81154,7 +81165,8 @@
         "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
         "BUG-export-status-download-endpoints-leak-other-users-jobs-via-u",
         "BUG-resolveuseridfromrequest-missing-user-status-check",
-        "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-"
+        "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
+        "TASK-cover-export-sse-start-ts-poll-loop-branches"
       ]
     },
     {
@@ -134030,6 +134042,11 @@
       "from": "TASK-cors-middleware",
       "kind": "produces",
       "to": "src/utils/safe-fetch/headers.ts"
+    },
+    {
+      "from": "TASK-cover-export-sse-start-ts-poll-loop-branches",
+      "kind": "produces",
+      "to": "src/routes/export-sse/start.ts"
     },
     {
       "from": "TASK-cover-frontend-vn-pages-new-chat-quests-worlds",
@@ -210318,6 +210335,12 @@
     {
       "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
       "kind": "sibling",
+      "to": "TASK-cover-export-sse-start-ts-poll-loop-branches",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
       "to": "TASK-epic14-import-export-reconciliation",
       "via": "src/routes/export.ts"
     },
@@ -210390,6 +210413,12 @@
     {
       "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
       "kind": "sibling",
+      "to": "TASK-cover-export-sse-start-ts-poll-loop-branches",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
       "to": "TASK-format-version-migration",
       "via": "src/routes/settings.ts"
     },
@@ -210436,6 +210465,12 @@
       "via": "src/routes/export-sse/start.ts"
     },
     {
+      "from": "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
+      "kind": "sibling",
+      "to": "TASK-cover-export-sse-start-ts-poll-loop-branches",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
       "from": "BUG-export-status-download-endpoints-leak-other-users-jobs-via-u",
       "kind": "sibling",
       "to": "BUG-resolveuseridfromrequest-missing-user-status-check",
@@ -210445,6 +210480,12 @@
       "from": "BUG-export-status-download-endpoints-leak-other-users-jobs-via-u",
       "kind": "sibling",
       "to": "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-status-download-endpoints-leak-other-users-jobs-via-u",
+      "kind": "sibling",
+      "to": "TASK-cover-export-sse-start-ts-poll-loop-branches",
       "via": "src/routes/export-sse/start.ts"
     },
     {
@@ -242096,6 +242137,12 @@
       "kind": "sibling",
       "to": "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
       "via": "src/routes/export-sse/start.ts; src/routes/export.ts"
+    },
+    {
+      "from": "BUG-resolveuseridfromrequest-missing-user-status-check",
+      "kind": "sibling",
+      "to": "TASK-cover-export-sse-start-ts-poll-loop-branches",
+      "via": "src/routes/export-sse/start.ts"
     },
     {
       "from": "BUG-resolveuseridfromrequest-missing-user-status-check",
@@ -303380,6 +303427,12 @@
       "kind": "sibling",
       "to": "epic-browser-editor-support",
       "via": "src/async/spill.ts"
+    },
+    {
+      "from": "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
+      "kind": "sibling",
+      "to": "TASK-cover-export-sse-start-ts-poll-loop-branches",
+      "via": "src/routes/export-sse/start.ts"
     },
     {
       "from": "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
