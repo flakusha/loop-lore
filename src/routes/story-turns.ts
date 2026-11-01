@@ -16,7 +16,7 @@ import type { Db, } from "../db";
 import { can, } from "../users/permissions";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { HttpStatus, jsonPaginated, jsonResponse, parsePaginationParams, } from "./http-utils";
+import { HttpStatus, jsonError, jsonPaginated, jsonResponse, parsePaginationParams, } from "./http-utils";
 
 /**
  * Chat ownership (owners set) or admin check; returns true when allowed.
@@ -52,7 +52,7 @@ async function checkChatOwnership(
 export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return new Elysia({ name: "story-turns", },)
     .get(`${prefix}/chats/:id/story-turns`, async (ctx: any,) => {
-      const { params, userId, userRole, error, request, } = ctx;
+      const { params, userId, userRole, request, } = ctx;
       const chatId = params.id as string;
 
       const hasAccess = await checkChatOwnership(
@@ -63,7 +63,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
       );
 
       if (!hasAccess) {
-        return error(HttpStatus.NotFound, { message: ctx.t?.("chats.chatNotFound",) ?? "Chat not found", },);
+        return jsonError(ctx.t?.("chats.chatNotFound",) ?? "Chat not found", HttpStatus.NotFound,);
       }
 
       const searchParams = new URL(request.url,).searchParams;
@@ -110,7 +110,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
       },
     },)
     .get(`${prefix}/chats/:id/story-turns/:turnId`, async (ctx: any,) => {
-      const { params, userId, userRole, error, } = ctx;
+      const { params, userId, userRole, } = ctx;
       const chatId = params.id as string;
       const turnId = params.turnId as string;
 
@@ -122,9 +122,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
       );
 
       if (!hasAccess) {
-        return error(HttpStatus.NotFound, {
-          message: ctx.t?.("story.storyTurnNotFound",) ?? "Story turn not found",
-        },);
+        return jsonError(ctx.t?.("story.storyTurnNotFound",) ?? "Story turn not found", HttpStatus.NotFound,);
       }
 
       const turn = await opts.database
