@@ -15,7 +15,7 @@
 
 ## Summary
 
-src/routes/settings.ts:133 declares body: t.Any() and merges arbitrary fields into user settings. Fix: attach strict SettingsUpdateBody schema. Tracked in .plan/backlog/security-review-2026-08-25.md.
+src/routes/settings.ts:133 declares body: t.Any() and merges arbitrary fields into user settings. Fix: attach strict SettingsUpdateBody schema. Tracked in .plan/backlog-archive.md.
 
 ## Acceptance Criteria
 

@@ -15,9 +15,7 @@
 
 ## Summary
 
-Consolidate the "Road to Happy 0.1.0" workstack (previously scattered across
-`../backlog/priority.md` "Open → close" + "Hardening" + `../backlog/open.md` § Release
-hardening) into one tracked epic so a single agent can drive the release. `package.json`
+Consolidate the "Road to Happy 0.1.0" workstack (previously scattered across the backlog tier files — now archived in `.plan/backlog-archive.md`) into one tracked epic so a single agent can drive the release. `package.json`
 already declares `version: 0.1.0`.
 
 ## Current State (verified 2026-08-15)
@@ -45,7 +43,7 @@ already declares `version: 0.1.0`.
 | `TASK-PLAN-SIZE-STRICT-DEBT.md` | Size-strict promotion AC | ✅ closed 2026-08-12 |
 | `TASK-docs-reconcile-implementation.md` | Docs/API-reference vs `src/` audit (release-facing docs) | 🟡 open — audit; worktree merged |
 
-## Pre-release gate (land-order, mirrors `../backlog/open.md` rows W1–W4)
+## Pre-release gate (land-order, mirrors `.plan/backlog-archive.md` § open.md rows W1–W4)
 
 1. W4 — SSE refactor committed ✅ (`082c20cf`)
 2. W1 — `rpg-wire-routes` merged ✅ (2026-08-14)
@@ -58,7 +56,7 @@ already declares `version: 0.1.0`.
 
 ## Hardening (non-blocking before tag)
 
-- ~~AUX M6 telemetry~~ ✅ done 2026-08-18 (`F3` in `../backlog/open.md`)
+- ~~AUX M6 telemetry~~ ✅ done 2026-08-18 (`F3` in `.plan/backlog-archive.md` § open.md)
 - World timeline §5.3/§5.4 (cluster B)
 - Frontend gaps: music linking, party join/leave, unified GM↔assistant view, creation wizards, avatar-gallery visibility inheritance
 

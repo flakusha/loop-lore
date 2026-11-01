@@ -25,7 +25,7 @@ Loop-lore has a substantial spec surface that **already works**, but it is hand-
 
 - 281 epics, ~2100 tickets spread across 9 prefix types (`TASK 1526`, `BUG 354`, `FEAT 138`, `EPIC 43`, `TEST 12`, `WIRE 11`, `IDEA 9`, `PERF 2`, `IMPROVE 1`)
 - Each ticket is a free-form `*.md` with prose `Status`/`Priority`/`Epic` headers, sometimes SPDX comment, often nothing
-- 8 backlog bucket files (`.plan/backlog/priority*.md`, `open*.md`) re-summarize the same data by hand
+- 8 backlog bucket files (`.plan/backlog-archive.md`, `open*.md`) re-summarize the same data by hand
 - Existing tooling: `scripts/worktree/` (commits/finalize/ticket) + `scripts/gen-plan-docs.ts` (regenerates `epics-index.md`) + `bun run plan:sync:fix` (rewrites `tickets/index.json` from `.plan/tickets/*.md`)
 - AI agents reading `.plan/` must parse prose; agents writing tickets invent their own shape; nothing cross-checks
 

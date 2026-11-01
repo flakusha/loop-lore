@@ -32,7 +32,6 @@ Quick CLI reference for loop-lore. See `.agents/references/recommendations.md` f
 | `bun run plan:validate`        | Comprehensive `.plan/` validation (12 gates: format, linkage, backlog, tickets, code-map, links, spdx, naming, epics-doc, status-vocab, matrix, interconnect) |
 | `bun run plan:validate:fix`    | Apply auto-fixable plan-validate findings (`giwt plan validate --fix`)                                                                                        |
 | `bun run plan:status`          | Plan health summary (giwt plan status)                                                                                                                        |
-| `bun run plan:backlog:sync`    | Backlog tier-file reconciliation                                                                                                                              |
 | `bun run plan:map`             | Build reverse code→plan index (`.plan/code-map.json`)                                                                                                         |
 | `bun run plan:map:check`       | Verify `.plan/code-map.json` is fresh (CI gate)                                                                                                               |
 | `bun run plan:find`            | Query owners of a `src/` path                                                                                                                                 |

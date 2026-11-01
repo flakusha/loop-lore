@@ -81,4 +81,4 @@ cost)**.
 - Time-to-first-agent: from install to a working research/KB agent
 
 _Reintegrate as: input to `.plan/epics/epic-architecture.md` (new "Agentic / Business" track)
-and `.plan/backlog/`._
+and `.plan/backlog-archive.md`._

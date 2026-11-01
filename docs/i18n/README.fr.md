@@ -43,7 +43,7 @@ deviendront obsolètes en quelques jours.
 
 L'état des fonctionnalités vit dans
 [`.plan/epics-index.md`](../../.plan/epics-index.md) et le travail actif dans
-[`.plan/backlog/open.md`](../../.plan/backlog/open.md) — les statuts ne sont
+[`.plan/priority-matrix.md`](../../.plan/priority-matrix.md) — les statuts ne sont
 pas dupliqués ici.
 
 ---

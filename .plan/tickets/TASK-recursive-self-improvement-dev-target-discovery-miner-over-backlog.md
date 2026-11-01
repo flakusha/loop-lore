@@ -14,7 +14,7 @@
 **Tags:** agent, backlog, discovery, rsi, automation
 **Epic:** epic-recursive-self-improvement
 
-Automated dev-target discovery: miner scores `.plan/backlog/` tasks for RSI-suitability (self-contained, testable, small blast radius) and surfaces a ranked queue the agent loop pulls from — closes the loop's input side (agent always has a next safe task).
+Automated dev-target discovery: miner scores `.plan/backlog-archive.md` tasks for RSI-suitability (self-contained, testable, small blast radius) and surfaces a ranked queue the agent loop pulls from — closes the loop's input side (agent always has a next safe task).
 
 ## Core Features
 
@@ -24,7 +24,7 @@ Automated dev-target discovery: miner scores `.plan/backlog/` tasks for RSI-suit
 
 ## Acceptance Criteria
 
-- [ ] Miner scores real `.plan/backlog/` and top-5 are manually judged RSI-suitable on spot check
+- [ ] Miner scores real `.plan/backlog-archive.md` and top-5 are manually judged RSI-suitable on spot check
 - [ ] Unsafe tasks (migrations, auth, secrets) never auto-filed; flagged for human instead
 - [ ] Queue integration: drained queue pulls next miner-ranked task without human step
 - [ ] Unit tests for scoring weights; golden test on fixture backlog
@@ -33,7 +33,7 @@ Automated dev-target discovery: miner scores `.plan/backlog/` tasks for RSI-suit
 
 - `scripts/rsi-target-miner.ts` — new
 - `scripts/rsi-target-miner.test.ts` — new
-- `.plan/backlog/` — read-only input (never writes back)
+- `.plan/backlog-archive.md` — read-only input (never writes back)
 - `src/agent/api/tickets.ts` — consume ranked targets (extends ticket-ops)
 
 ## Notes / Verification
