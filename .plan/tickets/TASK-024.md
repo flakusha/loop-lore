@@ -14,7 +14,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-visual-novel-mode
 **Related**:
 
 Git issue: `70f8e8d`

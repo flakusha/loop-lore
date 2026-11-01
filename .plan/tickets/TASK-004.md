@@ -14,7 +14,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-chat-product-features
 **Related**:
 
 Git issue: `bd70e0f`

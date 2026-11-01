@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-schema
 **Related**:
 
 Git issue: `4a5d79f`

@@ -15,7 +15,7 @@
 **Priority**: high
 **Tags**: byok, api-keys, llm, providers, privacy
 **Assignee**:
-**Epic**: EPIC-byok-api-keys
+**Epic:** epic-byok-api-keys
 **Related**: epic-assistant-generation-extensions.md, epic-llm-queue.md
 
 ---

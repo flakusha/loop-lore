@@ -15,7 +15,7 @@
 **Priority**: low
 **Tags**: generation, video, prompts, templates
 **Assignee**:
-**Epic**: EPIC-38 (Output Control & Transforms)
+**Epic:** epic-config-templates
 **Parent**: FEAT-065 (Prompt Library)
 **Related**: (future) Video provider features
 

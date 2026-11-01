@@ -15,7 +15,7 @@
 **Priority**: high
 **Tags**: byok, local-models, wasm, inference, llama, browser, offline
 **Assignee**:
-**Epic**: EPIC-byok-local-models
+**Epic:** epic-byok-local-models
 **Related**: epic-byok-api-keys.md, epic-assistant-generation-extensions.md
 
 ---

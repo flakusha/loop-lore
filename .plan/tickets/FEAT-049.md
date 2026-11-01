@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-plugin-system
 **Related**:
 
 Git issue: `efe280a`

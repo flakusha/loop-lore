@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: feature, characters, config
 **Assignee**:
-**Epic**: EPIC-059 (Creative Studio)
+**Epic:** epic-creative-studio
 **Related**: configs/characters/*.yaml, src/config/character-loader.ts
 
 ## Description

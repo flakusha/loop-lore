@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-weather-environment
 **Related**: TASK-world-dashboard.md
 
 ## Summary

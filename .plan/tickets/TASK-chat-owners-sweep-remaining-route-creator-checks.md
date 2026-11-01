@@ -6,7 +6,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** chat-multi-ownership
+**Epic:** epic-chat-multi-ownership
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 **Summary:**

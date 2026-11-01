@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-file-splitting
 **Related**:
 
 Git issue: `d6d7e83`
