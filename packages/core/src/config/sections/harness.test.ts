@@ -89,7 +89,7 @@ describe("harness.acp config section", () => {
   });
 
   it("rejects an unknown harness flavor", () => {
-    expect(() => validateAcpProfiles(acp([profile({ harness: "claude-code", },),],),)).toThrow(
+    expect(() => validateAcpProfiles(acp([profile({ harness: "bedrock", },),],),)).toThrow(
       /unknown harness flavor/,
     );
   });

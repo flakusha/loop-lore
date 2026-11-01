@@ -14,6 +14,7 @@
 
 import { type HarnessFlavor, } from "../../config/schema/harness";
 import { type HarnessAdapterFactory, } from "./adapter-types";
+import { createClaudeCodeAdapter, } from "./claude-code";
 import { createCodexAdapter, } from "./codex";
 import { createOmpAdapter, } from "./omp";
 import { createOpenCodeAdapter, } from "./opencode";
@@ -26,6 +27,7 @@ export const HARNESS_ADAPTER_FACTORIES: Record<HarnessFlavor, HarnessAdapterFact
   omp: createOmpAdapter,
   opencode: createOpenCodeAdapter,
   codex: createCodexAdapter,
+  "claude-code": createClaudeCodeAdapter,
 };
 
 /**

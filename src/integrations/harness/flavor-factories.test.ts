@@ -8,6 +8,7 @@
  */
 import { describe, expect, it, } from "bun:test";
 import { HARNESS_FLAVORS, } from "../../config/schema/harness";
+import { ClaudeCodeAcpAdapter, } from "./claude-code";
 import { CodexAcpAdapter, } from "./codex";
 import {
   DEFAULT_HARNESS_FLAVOR,
@@ -26,12 +27,14 @@ describe("harness adapter flavor dispatch", () => {
     expect(HARNESS_ADAPTER_FACTORIES.omp("p", CMD,),).toBeInstanceOf(OmpAcpAdapter,);
     expect(HARNESS_ADAPTER_FACTORIES.opencode("p", CMD,),).toBeInstanceOf(OpenCodeAcpAdapter,);
     expect(HARNESS_ADAPTER_FACTORIES.codex("p", CMD,),).toBeInstanceOf(CodexAcpAdapter,);
+    expect(HARNESS_ADAPTER_FACTORIES["claude-code"]("p", CMD,),).toBeInstanceOf(ClaudeCodeAcpAdapter,);
   });
 
   it("resolves each flavor via resolveAdapterFactory", () => {
     expect(resolveAdapterFactory("omp",)("p", CMD,),).toBeInstanceOf(OmpAcpAdapter,);
     expect(resolveAdapterFactory("opencode",)("p", CMD,),).toBeInstanceOf(OpenCodeAcpAdapter,);
     expect(resolveAdapterFactory("codex",)("p", CMD,),).toBeInstanceOf(CodexAcpAdapter,);
+    expect(resolveAdapterFactory("claude-code",)("p", CMD,),).toBeInstanceOf(ClaudeCodeAcpAdapter,);
   });
 
   it("defaults an omitted flavor to omp", () => {
@@ -40,6 +43,6 @@ describe("harness adapter flavor dispatch", () => {
   });
 
   it("rejects a flavor with no shipped adapter", () => {
-    expect(() => resolveAdapterFactory("claude-code",)).toThrow(/no ACP adapter factory/,);
+    expect(() => resolveAdapterFactory("bedrock",)).toThrow(/no ACP adapter factory/,);
   });
 });

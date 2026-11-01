@@ -21,7 +21,7 @@ export const HARNESS_CAPABILITIES = ["tools", "thinking",] as const;
 export type HarnessCapability = (typeof HARNESS_CAPABILITIES)[number];
 
 /** ACP harness flavors loop-lore ships adapters for (runtime list: wire/validation cannot drift). */
-export const HARNESS_FLAVORS = ["omp", "opencode", "codex",] as const;
+export const HARNESS_FLAVORS = ["omp", "opencode", "codex", "claude-code",] as const;
 
 /** Which shipped adapter speaks a profile's wire. */
 export type HarnessFlavor = (typeof HARNESS_FLAVORS)[number];
