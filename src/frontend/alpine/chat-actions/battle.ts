@@ -14,6 +14,7 @@ import type {
   BattleItemView,
   BattleLogEntryView,
   BattleView,
+  EnvironmentalEffect,
 } from "../../battle/panel";
 
 import type { ActionHandler, } from "./dispatch";
@@ -41,11 +42,18 @@ function renderBattleFromPayload(
       maxHp: c.maxHp,
       initiative: c.initiative,
       conditions: Array.isArray(c.conditions,) ? c.conditions.filter(isConditionShape,) : [],
+      actions: typeof c.actions === "number" ? c.actions : undefined,
+      bonusActions: typeof c.bonusActions === "number" ? c.bonusActions : undefined,
+      reactions: typeof c.reactions === "number" ? c.reactions : undefined,
     },);
   }
 
   const log: BattleLogEntryView[] = Array.isArray(raw.log,)
     ? raw.log.filter(isLogEntryShape,)
+    : [];
+
+  const environmentalEffects: EnvironmentalEffect[] = Array.isArray(raw.environmentalEffects,)
+    ? raw.environmentalEffects.filter(isEffectShape,)
     : [];
 
   const view: BattleView = {
@@ -56,6 +64,7 @@ function renderBattleFromPayload(
     combatants,
     items: Array.isArray(raw.items,) ? raw.items.filter(isItemShape,) : [],
     log,
+    environmentalEffects,
   };
 
   const panel = ctx as { renderBattlePanel(view: BattleView,): void } | null;
@@ -123,6 +132,15 @@ function isItemShape(value: unknown,): value is BattleItemView {
  */
 function isConditionShape(value: unknown,): value is string {
   return typeof value === "string" && value.length > 0;
+}
+
+/**
+ * @param value
+ * @returns true when `value` has an environmental-effect shape.
+ */
+function isEffectShape(value: unknown,): value is EnvironmentalEffect {
+  if (!value || typeof value !== "object") { return false; }
+  return typeof (value as Record<string, unknown>).name === "string";
 }
 
 /**

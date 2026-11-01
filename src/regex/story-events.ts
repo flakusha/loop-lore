@@ -57,6 +57,20 @@ export const COMBAT_ACTION =
 export const COMBAT_DAMAGE =
   /(?:takes?\s+\d+\s+(?:damage|hits?)|loses?\s+\d+\s+hp|health\s+(?:drops?|falls?)\s+to\s+\d+)/i;
 
+/**
+ * B1 combat-intent signal from a skill-check-shaped consequence.
+ *
+ * A check that fails a combat-flavored DC (or critically succeeds one)
+ * escalates: the consequence text is scanned for combat language and the
+ * caller decides whether to propose `/battle start` (never auto-start —
+ * D1-A manual-only stands; the classifier path of D1-C may consume this).
+ * @param consequenceText Consequence narration to scan
+ * @returns True when the text carries combat language
+ */
+export function combatIntentFromConsequence(consequenceText: string,): boolean {
+  return COMBAT_ACTION.test(consequenceText,) || COMBAT_DAMAGE.test(consequenceText,);
+}
+
 // ── NPC State Change Patterns ─────────────────────────────────
 
 /** Matches NPC emotional states: "looks calm", "becomes more friendly", etc. */

@@ -180,6 +180,15 @@ export async function checkMechanicEnabled(
  * handler should send with `handled: true` — the mechanic never runs
  * and no game state is written.
  *
+ * D1-A: manual-only battle triggers — combat starts solely via explicit
+ * `/battle start` / `/attack`; no classifier auto-starts a battle.
+ * TODO(D1-C): classification-based battle start with world/chat ruleset
+ * applied (story intent → opt-in-gated auto-trigger).
+ *
+ * D2-A: the denial reply IS the guard — no failed-trigger bookkeeping.
+ * TODO(D2-B): correct handling of world/character/NPC interactions on
+ * denied or abandoned triggers (standings, reputation, cleanup).
+ *
  * @param database - Kysely handle, or undefined when the caller has none.
  * @param worldId - Resolved world id, or undefined outside a world chat.
  * @param mechanic - Mechanic under test (see `RpgMechanic`).
