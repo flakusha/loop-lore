@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** 2026-10-04 audit — core wiring landed: `loadRpgStats()` calls `/api/v1/rpg/stats/:actorId` (`src/frontend/alpine/rpg-stats.ts:45`), rendered in `character-info-panel.html`; the mock-data claim above is stale. Equipment-slot display and status-effect badges unverified — kept In Progress.
 **Priority:** P0
 **Effort:** Medium
@@ -61,3 +61,5 @@ Wire the existing `rpg-stats.ts` mock data component to real backend API endpoin
 
 - `TASK-character-rpg-stats.md` — Backend RPG stats system
 - `epic-rpg-mechanics.md` — RPG mechanics epic
+
+**Resolved:** 2026-11-01 registry-driven close: git issue d903c24 (registry tip: a74e64759 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-RPG-STATS-FRONTEND-WIRING d)
