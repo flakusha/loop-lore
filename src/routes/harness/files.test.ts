@@ -13,7 +13,7 @@ import { Elysia, } from "elysia";
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
 import { setExecLogPath, } from "../../harness/exec-log";
-import { getRun, } from "../../harness/query";
+import * as realQuery from "../../harness/query";
 import type { HarnessRunRecord, } from "../../harness/types";
 import { harnessRunFiles, } from "./files";
 import { harnessRoutes, } from "./index";
@@ -61,7 +61,12 @@ function get(role: string | null, path: string,): Promise<Response> {
   return app(role,).handle(new Request(`http://localhost${path}`,),);
 }
 
-const REAL_QUERY = { getRun, };
+/**
+ * The REAL query module as a plain value snapshot, taken before any
+ * `mock.module` call: bun rewrites the captured namespace too, so restoring
+ * the bare namespace later would hand later files the stub.
+ */
+const REAL_QUERY: Record<string, unknown> = { ...realQuery, };
 
 function withRun(record: HarnessRunRecord | null,): void {
   mock.module("../../harness/query", () => ({
@@ -90,7 +95,11 @@ beforeEach(() => {
 afterEach(() => {
   rmSync(sandboxRoot, { recursive: true, force: true, },);
   setExecLogPath(null,);
-  withRun(RECORD,);
+  // `mock.module` is permanent and process-global: a stub left installed would
+  // poison every later file of a non-isolated run — this exact leak let this
+  // file's getRun stub flow into index.test.ts's import-time snapshot. Give
+  // the process its real reader back.
+  mock.module("../../harness/query", () => REAL_QUERY,);
 },);
 
 describe("GET /harness/runs/:runId/files", () => {
