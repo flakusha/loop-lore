@@ -645,6 +645,7 @@
                   class="form-input"
                   type="text"
                   placeholder="Search by name or description…"
+                  aria-label="Search locations by name or description"
                   x-model="search"
                   data-testid="loc-explorer-search"
                   style="flex: 1 1 200px; min-width: 0"
@@ -652,6 +653,7 @@
                 <select
                   class="form-input"
                   x-model="filterStatus"
+                  aria-label="Filter by publication status"
                   data-testid="loc-explorer-status"
                   style="flex: 0 1 140px"
                 >
@@ -660,7 +662,12 @@
                     <option :value="s" x-text="s"></option>
                   </template>
                 </select>
-                <select class="form-input" x-model="filterHasState" style="flex: 0 1 130px">
+                <select
+                  class="form-input"
+                  x-model="filterHasState"
+                  aria-label="Filter by state presence"
+                  style="flex: 0 1 130px"
+                >
                   <option value="">State: any</option>
                   <option value="yes">Has state</option>
                   <option value="no">No state</option>
@@ -668,6 +675,7 @@
                 <select
                   class="form-input"
                   x-model="filterAtmosphere"
+                  aria-label="Filter by atmosphere"
                   style="flex: 0 1 140px"
                   :disabled="atmosphereOptions.length === 0"
                 >
@@ -679,6 +687,7 @@
                 <select
                   class="form-input"
                   x-model="filterWeather"
+                  aria-label="Filter by weather"
                   style="flex: 0 1 130px"
                   :disabled="weatherOptions.length === 0"
                 >
@@ -690,6 +699,7 @@
                 <select
                   class="form-input"
                   x-model="filterTimeOfDay"
+                  aria-label="Filter by time of day"
                   style="flex: 0 1 130px"
                   :disabled="timeOfDayOptions.length === 0"
                 >
@@ -796,6 +806,7 @@
                       :class="{ 'active-section': selectedLocId === loc.id }"
                       :data-loc-id="loc.id"
                       :aria-pressed="selectedLocId === loc.id ? 'true' : 'false'"
+                      :aria-current="selectedLocId === loc.id ? 'true' : null"
                     >
                       <span style="font-weight: 600" x-text="loc.name"></span>
                       <span

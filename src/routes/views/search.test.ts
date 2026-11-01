@@ -332,6 +332,19 @@ describe("views/search — worlds", () => {
     expect(html,).not.toContain("world-card-world-elm",);
   });
 
+  test("query filters by description as well as name", async () => {
+    const res = await serveWorldsSearch(db, new URLSearchParams({ q: "forest", },), "alice", "user",);
+    const html = await res.text();
+    expect(html,).toContain("world-card-world-elm",);
+    expect(html,).not.toContain("world-card-world-ash",);
+  });
+
+  test("LIKE wildcards in the query are matched literally", async () => {
+    const res = await serveWorldsSearch(db, new URLSearchParams({ q: "%", },), "alice", "user",);
+    const html = await res.text();
+    expect(html,).toContain("No worlds match your search",);
+  });
+
   test("no matches renders empty state", async () => {
     const res = await serveWorldsSearch(db, new URLSearchParams({ q: "void", },), "alice", "user",);
     const html = await res.text();
