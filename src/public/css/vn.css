@@ -858,7 +858,7 @@
   padding: var(--space-3, 0.75rem);
 }
 
-.battle-panel-content:focus {
+.battle-panel-content:focus:not(:focus-visible) {
   outline: none;
 }
 
@@ -1041,6 +1041,42 @@
 
 .battle-log-text {
   color: var(--text-primary);
+}
+
+/* Action economy line on each combatant tile. */
+.battle-action-economy {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-top: var(--space-1, 0.25rem);
+}
+
+/* Environmental effect badges (world weather/season in the panel header). */
+.battle-environmental-effects {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-1, 0.25rem);
+  margin-left: auto;
+}
+
+.battle-environmental-badge {
+  padding: 0.05rem var(--space-2, 0.5rem);
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+@media (pointer: coarse) {
+  .battle-action,
+  .battle-combatant,
+  .battle-item,
+  .battle-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 .battle-actions {

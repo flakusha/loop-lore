@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { type FakeEl, installBattleDom, } from "../tests/battle-fake-dom";
 import { view, } from "../tests/battle-fake-mount";
 import { SOCIAL_ACTIONS, } from "./commands";
-import { renderItems, } from "./render";
+import { renderHeader, renderItems, renderRoster, } from "./render";
 
 let restoreDom: () => void;
 
@@ -72,5 +72,96 @@ describe("SOCIAL_ACTIONS contract", () => {
       "social-negotiate",
       "social-surrender",
     ],);
+  });
+});
+
+describe("action economy + environment", () => {
+  function findByClass(
+    root: { children: { className: string; children: never[] }[] },
+    name: string,
+  ): { textContent: string; children: { className: string; children: never[] }[] } | null {
+    const stack = [...root.children,];
+    while (stack.length > 0) {
+      const el = stack.pop()!;
+      if (el.className.split(/\s+/,).includes(name,)) {
+        return el as { textContent: string; children: { className: string; children: never[] }[] };
+      }
+
+      stack.push(...el.children,);
+    }
+
+    return null;
+  }
+
+  it("renders the economy line when the backend delivers counters", () => {
+    const roster = renderRoster(
+      view({
+        combatants: [
+          {
+            id: "alice",
+            name: "Alice",
+            hp: 25,
+            maxHp: 30,
+            initiative: 18,
+            conditions: [],
+            actions: 1,
+            bonusActions: 0,
+            reactions: 1,
+          },
+        ],
+      },),
+      null,
+      noopCallbacks,
+    );
+
+    const economy = findByClass(roster, "battle-action-economy",)!;
+    expect(economy.textContent,).toContain("1 action",);
+    expect(economy.textContent,).toContain("0 bonus",);
+    expect(economy.textContent,).toContain("1 reaction",);
+  });
+
+  it("omits the economy line when the backend delivers no counters", () => {
+    const roster = renderRoster(view(), null, noopCallbacks,);
+    expect(findByClass(roster, "battle-action-economy",),).toBeNull();
+  });
+
+  it("marks the roster tiles with pressed state", () => {
+    const roster = renderRoster(view(), "orc", noopCallbacks,);
+    const orc = roster.querySelector('[data-battle-id="orc"]',)!;
+    expect(orc.getAttribute("aria-pressed",),).toBe("true",);
+  });
+
+  it("renders environmental badges in the header when delivered", () => {
+    const header = renderHeader(view({ environmentalEffects: [{ name: "Weather: rain", },], },),);
+    const badge = findByClass(header, "battle-environmental-badge",)!;
+    expect(badge.textContent,).toBe("Weather: rain",);
+  });
+
+  it("renders no environmental row when none delivered", () => {
+    const header = renderHeader(view(),);
+    expect(findByClass(header, "battle-environmental-badge",),).toBeNull();
+  });
+
+  it("exposes the roster as a labeled toggle-button group", () => {
+    const roster = renderRoster(view(), "orc", noopCallbacks,);
+    expect(roster.getAttribute("role",),).toBe("group",);
+    expect(roster.getAttribute("aria-label",),).toBe("Target selection",);
+    const orc = roster.querySelector('[data-battle-id="orc"]',)!;
+    expect(orc.getAttribute("role",),).toBeNull();
+    expect(orc.getAttribute("aria-pressed",),).toBe("true",);
+    expect(orc.getAttribute("aria-selected",),).toBeNull();
+  });
+
+  it("exposes the item menu as a button group", () => {
+    const list = renderItems(
+      view({
+        items: [{ id: "potion", name: "Healing Draught", quantity: 2, },],
+      },),
+      noopCallbacks,
+    )!;
+
+    expect(list.getAttribute("role",),).toBe("group",);
+    const row = list.querySelector('[data-battle-item="potion"]',)!;
+    expect(row.getAttribute("role",),).toBeNull();
   });
 });

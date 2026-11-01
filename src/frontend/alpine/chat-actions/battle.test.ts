@@ -47,6 +47,7 @@ describe("battleActionHandlers rendering actions", () => {
       ],
       items: [],
       log: [],
+      environmentalEffects: [],
     },],);
   });
 
@@ -175,5 +176,57 @@ describe("battleActionHandlers rendering actions", () => {
     const ctx = buildCtx();
     battleActionHandlers["battle-ended"]!(ctx, null, "chat-1",);
     expect(ctx.rendered,).toEqual([null,],);
+  });
+
+  test("forwards action economy when the backend delivers counters", () => {
+    const ctx = buildCtx();
+    battleActionHandlers["battle-started"]!(ctx, {
+      battle: {
+        ...validBattle.battle,
+        combatants: [
+          { ...validBattle.battle.combatants[0], actions: 1, bonusActions: 0, reactions: 1, },
+        ],
+      },
+    }, "chat-1",);
+
+    const view = ctx.rendered[0] as { combatants: Record<string, unknown>[] };
+    expect(view.combatants[0],).toMatchObject({ actions: 1, bonusActions: 0, reactions: 1, },);
+  });
+
+  test("drops non-numeric economy counters", () => {
+    const ctx = buildCtx();
+    battleActionHandlers["battle-started"]!(ctx, {
+      battle: {
+        ...validBattle.battle,
+        combatants: [
+          { ...validBattle.battle.combatants[0], actions: "1", bonusActions: null, },
+        ],
+      },
+    }, "chat-1",);
+
+    const view = ctx.rendered[0] as { combatants: Record<string, unknown>[] };
+    expect(view.combatants[0]?.actions,).toBeUndefined();
+    expect(view.combatants[0]?.bonusActions,).toBeUndefined();
+  });
+
+  test("delivers environmental effects and drops malformed entries", () => {
+    const ctx = buildCtx();
+    battleActionHandlers["battle-started"]!(ctx, {
+      battle: {
+        ...validBattle.battle,
+        environmentalEffects: [{ name: "Weather: rain", }, "junk", null, { label: 42, },],
+      },
+    }, "chat-1",);
+
+    const view = ctx.rendered[0] as { environmentalEffects: unknown[] };
+    expect(view.environmentalEffects,).toEqual([{ name: "Weather: rain", },],);
+  });
+
+  test("defaults missing environmental effects to an empty list", () => {
+    const ctx = buildCtx();
+    battleActionHandlers["battle-started"]!(ctx, validBattle, "chat-1",);
+
+    const view = ctx.rendered[0] as { environmentalEffects: unknown[] };
+    expect(view.environmentalEffects,).toEqual([],);
   });
 });

@@ -10,6 +10,10 @@
  * the same for Item-group rows. Pure + unit-tested in panel.test.ts.
  */
 
+import type { EnvironmentalEffect, } from "./environmental-effects.js";
+
+export type { EnvironmentalEffect, };
+
 /** */
 export interface BattleCombatantView {
   id: string;
@@ -19,6 +23,12 @@ export interface BattleCombatantView {
   initiative: number;
   /** Active conditions delivered by the backend (e.g. "stunned"). */
   conditions: string[];
+  /** Actions remaining this turn (delivered only when the backend tracks them). */
+  actions?: number;
+  /** Bonus actions remaining this turn. */
+  bonusActions?: number;
+  /** Reactions remaining this round. */
+  reactions?: number;
 }
 
 /** One battle-log entry delivered by the backend payload. */
@@ -54,6 +64,8 @@ export interface BattleView {
   items: BattleItemView[];
   /** Battle history delivered by the backend (empty when nothing has happened). */
   log: BattleLogEntryView[];
+  /** Active world-conditions labels (empty when the battle has no world or none apply). */
+  environmentalEffects?: EnvironmentalEffect[];
 }
 
 /** */

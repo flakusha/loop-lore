@@ -152,7 +152,7 @@
     "health": "Health",
     "statusEffects": "Status effects",
     "log": "Battle log",
-    "environmentalEffects": "Environmental effects"
+    "environmentalEffects": "Environmental effects",
   },
   "chat": {
     "sendMessage": "Send Message",

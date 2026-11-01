@@ -13,11 +13,13 @@ import {
   actionAvailable,
   ACTIONS,
   type BattleActionKind,
+  type BattleCombatantView,
   type BattleItemView,
   type BattleView,
   escapeHtml,
   SOCIAL_ACTIONS,
 } from "./commands.js";
+import { renderEnvironmentalEffects, } from "./environmental-effects.js";
 import { renderHealthBar, } from "./health-bar.js";
 import { renderStatusEffects, } from "./status-effects.js";
 
@@ -44,7 +46,27 @@ export function renderHeader(battle: BattleView,): HTMLElement {
     escapeHtml(battle.status,)
   }</span>`;
 
+  const effects = renderEnvironmentalEffects(battle.environmentalEffects ?? [],);
+  if (effects) { h.append(effects,); }
+
   return h;
+}
+
+/**
+ * Render the acting combatant's remaining action economy.
+ * @param c Combatant view (economy fields delivered only when the backend tracks them)
+ * @returns The economy line, or null when the backend delivered no economy fields
+ */
+function renderActionEconomy(c: BattleCombatantView,): HTMLElement | null {
+  if (c.actions === undefined && c.bonusActions === undefined && c.reactions === undefined) { return null; }
+  const line = document.createElement("span",);
+  line.className = "battle-action-economy";
+  const parts: string[] = [];
+  if (c.actions !== undefined) { parts.push(`${c.actions} action${c.actions === 1 ? "" : "s"}`,); }
+  if (c.bonusActions !== undefined) { parts.push(`${c.bonusActions} bonus`,); }
+  if (c.reactions !== undefined) { parts.push(`${c.reactions} reaction${c.reactions === 1 ? "" : "s"}`,); }
+  line.textContent = parts.join(" \u00b7 ",);
+  return line;
 }
 
 /**
@@ -60,7 +82,8 @@ export function renderRoster(
 ): HTMLElement {
   const list = document.createElement("div",);
   list.className = "battle-roster";
-  list.setAttribute("role", "list",);
+  list.setAttribute("role", "group",);
+  list.setAttribute("aria-label", "Target selection",);
 
   let i = 0;
   for (const c of battle.combatants) {
@@ -77,7 +100,7 @@ export function renderRoster(
 
     tile.className = classNameParts.join(" ",);
     tile.dataset.battleId = c.id;
-    tile.setAttribute("role", "listitem",);
+    tile.setAttribute("aria-pressed", String(selectedTargetId === c.id,),);
     if (acting) { tile.setAttribute("aria-current", "true",); }
     tile.disabled = dead;
 
@@ -89,6 +112,8 @@ export function renderRoster(
     tile.append(renderHealthBar(c.hp, c.maxHp,),);
     const badges = renderStatusEffects(c.conditions,);
     if (badges) { tile.append(badges,); }
+    const economy = renderActionEconomy(c,);
+    if (economy) { tile.append(economy,); }
 
     tile.addEventListener("click", () => {
       if (dead) { return; }
@@ -185,7 +210,7 @@ export function renderItems(
 
   const list = document.createElement("div",);
   list.className = "battle-items";
-  list.setAttribute("role", "list",);
+  list.setAttribute("role", "group",);
   list.setAttribute("aria-label", "Battle items",);
 
   for (const item of battle.items) {
@@ -193,7 +218,6 @@ export function renderItems(
     row.type = "button";
     row.className = "battle-action battle-item";
     row.dataset.battleItem = item.id;
-    row.setAttribute("role", "listitem",);
     row.textContent = `${item.name} ×${item.quantity}`;
     row.disabled = battle.status !== "active";
     row.addEventListener("click", () => {

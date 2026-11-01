@@ -17,7 +17,9 @@ import {
 import { log, } from "../log.js";
 import type { RpgServiceDeps, } from "../types.js";
 import { persistBattle, requireActiveBattle, } from "./persistence.js";
+import { readLiveWearAccrual, reconcileBattleWear, } from "./reconciliation.js";
 import { applyVictoryXpLeg, } from "./rewards.js";
+import { buildBattleSummary, } from "./summary.js";
 import type { AttackParams, BattleWithRoster, HealParams, ResolvedAttack, ResolvedHeal, } from "./types.js";
 import { BattleStatus, } from "./types.js";
 /**
@@ -89,6 +91,29 @@ export async function performAttack(
 
   if (over) {
     log().info("Battle completed", { battleId: battle.id, winner, },);
+    const finished: BattleWithRoster = {
+      ...battle,
+      status: BattleStatus.Completed,
+      combatants: updated,
+      log: [...battle.log, action,],
+    };
+
+    const summary = buildBattleSummary(finished, winner,);
+    action.description = `${attack.narration}\n\n${summary.lines.join("\n",)}`;
+    const damageByActor = readLiveWearAccrual(finished.log,);
+    const roundsSurvived = new Map<string, number>();
+    const seenRound = new Set<string>();
+    for (const [index, entry,] of finished.log.entries()) {
+      const round = Math.floor(index / Math.max(1, finished.combatants.length,),);
+      const key = `${entry.actorId}:${round}`;
+      if (!seenRound.has(key,)) {
+        seenRound.add(key,);
+        roundsSurvived.set(entry.actorId, (roundsSurvived.get(entry.actorId,) ?? 0) + 1,);
+      }
+    }
+
+    // D5-B post-battle settlement (best-effort; never fails resolution).
+    await reconcileBattleWear(deps.database, updated, damageByActor, roundsSurvived,);
     if (winner === "player") {
       await applyVictoryXpLeg(deps.database, {
         battleId: battle.id,

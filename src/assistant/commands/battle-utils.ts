@@ -11,12 +11,15 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema.js";
+import type { EnvironmentalEffect, } from "../../frontend/battle/environmental-effects.js";
 import type { Combatant, } from "../../rpg/combat.js";
 import {
   type BattleItemView,
   type BattleWithRoster,
   buildCombatant,
 } from "../../rpg/service/battles.js";
+import { log, } from "../../rpg/service/log.js";
+import { getConditions, } from "../../worlds/conditions.js";
 
 /** */
 export interface ResolvedRosterItem {
@@ -178,11 +181,13 @@ export interface SerializedLogEntry {
  * combatant's active conditions, and the battle log.
  * @param battle - The battle to serialize
  * @param usableItems - The acting combatant's battle-usable items
+ * @param environmentalEffects - World-conditions labels (empty when none apply)
  * @returns The panel `BattleView` payload
  */
 export function serializeBattle(
   battle: BattleWithRoster,
   usableItems: BattleItemView[] = [],
+  environmentalEffects: EnvironmentalEffect[] = [],
 ): {
   id: string;
   status: string;
@@ -196,8 +201,12 @@ export function serializeBattle(
     maxHp: number;
     initiative: number;
     conditions: string[];
+    actions: number;
+    bonusActions: number;
+    reactions: number;
   }[];
   log: SerializedLogEntry[];
+  environmentalEffects: EnvironmentalEffect[];
 } {
   const combatants = Array.from(battle.combatants, (c,) => ({
     id: c.id,
@@ -206,6 +215,9 @@ export function serializeBattle(
     maxHp: c.maxHp,
     initiative: c.initiative,
     conditions: c.conditions,
+    actions: c.actions,
+    bonusActions: c.bonusActions,
+    reactions: c.reactions,
   }),);
 
   const log = Array.from(battle.log, (entry,) => {
@@ -228,5 +240,34 @@ export function serializeBattle(
     items: usableItems,
     combatants,
     log,
+    environmentalEffects,
   };
+}
+
+/**
+ * Load the battle world's current conditions as panel effect labels.
+ * Best-effort: empty when the battle has no world or conditions are unreadable.
+ * @param db - Database handle
+ * @param worldId - Battle world id (null when the battle is world-less)
+ * @returns Environment effect labels for the panel header
+ */
+export async function loadBattleEnvironment(
+  db: Kysely<DB>,
+  worldId: string | null,
+): Promise<EnvironmentalEffect[]> {
+  if (!worldId) { return []; }
+  try {
+    const snapshot = await getConditions({ db, worldId, },);
+    return [
+      { name: `Weather: ${snapshot.weather}`, },
+      { name: `Season: ${snapshot.season}`, },
+    ];
+  } catch (cause) {
+    log().warn("Battle environment lookup skipped", {
+      worldId,
+      cause: cause instanceof Error ? cause.message : String(cause,),
+    },);
+
+    return [];
+  }
 }

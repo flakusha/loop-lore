@@ -37,12 +37,13 @@ export interface BattleWithRoster {
   endedAt: string | null;
 }
 
-/** */
+/** Battle start parameters. `ambush` skips the prep beat. */
 export interface StartBattleParams {
   chatId: string;
   worldId?: string | null;
   createdBy: string;
   combatants: Combatant[];
+  ambush?: boolean;
 }
 
 /** */

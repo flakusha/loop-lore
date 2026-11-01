@@ -246,9 +246,29 @@ describe("battle item helpers (pure)", () => {
       maxHp: 12,
       initiative: view.combatants[0]!.initiative,
       conditions: [],
+      actions: view.combatants[0]!.actions,
+      bonusActions: view.combatants[0]!.bonusActions,
+      reactions: view.combatants[0]!.reactions,
     },);
 
     expect(view.log,).toEqual([],);
+    expect(view.environmentalEffects,).toEqual([],);
+  });
+
+  it("serializeBattle delivers action economy and environmental effects", () => {
+    const alice = makeCombatant("alice", "Alice", false, 12,);
+    const battle = {
+      id: "b3",
+      status: "active",
+      round: 1,
+      turnIndex: 0,
+      combatants: [alice,],
+      log: [],
+    } as unknown as Parameters<typeof serializeBattle>[0];
+
+    const view = serializeBattle(battle, [], [{ name: "Weather: rain", },],);
+    expect(view.combatants[0],).toMatchObject({ actions: 1, bonusActions: 1, reactions: 1, },);
+    expect(view.environmentalEffects,).toEqual([{ name: "Weather: rain", },],);
   });
 
   it("serializeBattle delivers combatant conditions and the battle log", () => {

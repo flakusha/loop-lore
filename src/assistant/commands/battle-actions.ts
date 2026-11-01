@@ -29,6 +29,7 @@ import {
   actingCombatant,
   findCombatant,
   formatBattle,
+  loadBattleEnvironment,
   serializeBattle,
 } from "./battle-utils";
 import type { CommandContext, CommandResult, } from "./registry";
@@ -124,7 +125,10 @@ export async function handleBattleUse(args: string[], ctx: CommandContext,): Pro
     return {
       systemMessage: lines.join("\n",),
       action: "battle-updated",
-      actionPayload: { battleId: active.id, battle: serializeBattle(battleAfter, itemsAfter,), },
+      actionPayload: {
+        battleId: active.id,
+        battle: serializeBattle(battleAfter, itemsAfter, await loadBattleEnvironment(db, active.worldId,),),
+      },
       handled: true,
     };
   } catch (error) {
@@ -202,7 +206,11 @@ export async function handleBattleSocial(
       action: "battle-updated",
       actionPayload: {
         battleId: active.id,
-        battle: serializeBattle(active, await listUsableBattleItems({ database: db, }, actor.id,),),
+        battle: serializeBattle(
+          active,
+          await listUsableBattleItems({ database: db, }, actor.id,),
+          await loadBattleEnvironment(db, active.worldId,),
+        ),
       },
       handled: true,
     };

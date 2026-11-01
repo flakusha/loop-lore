@@ -53,8 +53,7 @@ export {
   type BattleItemView,
   type BattleLogEntryView,
   type BattleView,
-} from "./commands.js";
-
+  type EnvironmentalEffect,
 /** Bridge the battle panel to the host chat component. */
 export interface BattlePanelContext {
   /** Send a slash command through the chat's message path. */
