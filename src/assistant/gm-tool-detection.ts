@@ -22,7 +22,49 @@ import { resolveClassifierPrompt, } from "../aux-pipeline/class-template-resolve
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
+import { recordRegexCall, } from "../regex/telemetry";
 import { clampUnit, jsonParseOr, } from "../utils";
+
+/** Verdict returned by the GM-tool keyword pre-gate. */
+export type GmToolGateVerdict = "candidate" | "skip";
+
+/**
+ * Keyword pre-gate for GM-tool detection.
+ */
+export function gmToolKeywordGate(content: string,): GmToolGateVerdict {
+  const text = typeof content === "string" ? content : "";
+  const patterns: RegExp[] = [
+    /\broll\b/i,
+    /\bstats\b/i,
+    /\bcheck\s+(my|your|the)?\s*(stats|inventory|hp|health)\b/i,
+    /\bgenerate\s+(an?\s+)?(npc|item|character|event|location)\b/i,
+    /\bcreate\s+(an?\s+)?(npc|item|character|event|location)\b/i,
+    /\bmodify\s+(the\s+)?world\b/i,
+    /\btrigger\s+(an?\s+)?event\b/i,
+    /\bsummarize\b/i,
+  ];
+
+  return patterns.some((p,) => p.test(text,)) ? "candidate" : "skip";
+}
+
+function isGmToolKeywordGateEnabled(config: Config,): boolean {
+  try {
+    const c = config as unknown as Record<string, unknown>;
+    if (typeof c?.gmToolKeywordGate === "boolean") { return c.gmToolKeywordGate as boolean; }
+    if (typeof c?.gmToolKeywordPreGate === "boolean") { return c.gmToolKeywordPreGate as boolean; }
+    const assistant = c?.assistant as Record<string, unknown> | undefined;
+    if (typeof assistant?.gmToolKeywordGate === "boolean") { return assistant.gmToolKeywordGate as boolean; }
+    if (typeof assistant?.gmToolKeywordPreGate === "boolean") { return assistant.gmToolKeywordPreGate as boolean; }
+    const features = c?.features as Record<string, unknown> | undefined;
+    if (typeof features?.gmToolKeywordGate === "boolean") { return features.gmToolKeywordGate as boolean; }
+    if (typeof features?.gmToolKeywordPreGate === "boolean") { return features.gmToolKeywordPreGate as boolean; }
+    return true;
+  } catch {
+    return true;
+  }
+}
+
+export { isGmToolKeywordGateEnabled, };
 
 /** GM tool names the detector may resolve to. */
 export const GM_TOOL_NAMES = [
@@ -108,7 +150,18 @@ export async function detectGmTool(
   userId?: string,
   chatId?: string,
 ): Promise<GmToolDetection | null> {
+  // Keyword pre-gate (fail-open).
+  try {
+    if (isGmToolKeywordGateEnabled(config,)) {
+      const verdict = gmToolKeywordGate(content,);
+      recordRegexCall("gm-tool:keyword-gate", verdict === "candidate",);
+      if (verdict === "skip") { return null; }
+    }
+  } catch {
+    // fail-open: proceed to AUX
+  }
   // Pack template > systemPrompts.gmTool override > code default.
+
   const { prompt, params, } = await resolveClassifierPrompt({
     config,
     db,
