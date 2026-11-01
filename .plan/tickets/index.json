@@ -3193,6 +3193,19 @@
     "source": ".plan/tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md",
     "status": "done"
   },
+  "BUG-CREDIT-DEBIT-SELECT-THEN-UPDATE-RACE-IN-SRC-SERVICES-TRADE-B": {
+    "hash": "2cda5f0",
+    "git_issue": "2cda5f0",
+    "extid": "BUG-CREDIT-DEBIT-SELECT-THEN-UPDATE-RACE-IN-SRC-SERVICES-TRADE-B",
+    "type": "BUG",
+    "title": "credit/debit SELECT-then-UPDATE race in src/services/trade/balance.ts:102-158 loses concurrent updates; ensureBalanceRow re-read has no pre-image predicate so overlapping credit/debit pairs clobber. Add a conditional-write guard with a lost-race retry-or-fail contract plus a race test.",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-CREDIT-DEBIT-SELECT-THEN-UPDATE-RACE-IN-SRC-SERVICES-TRADE-B.md",
+    "status": "open"
+  },
   "BUG-CRITICAL-HIT-ROLLS-IGNORE-ADVANTAGE": {
     "epic": "",
     "extid": "BUG-CRITICAL-HIT-ROLLS-IGNORE-ADVANTAGE",
@@ -4767,6 +4780,19 @@
     "title": "frontend regenerateVariant does not pass style to API",
     "type": "BUG"
   },
+  "BUG-FULL-SUITE-FAILURE-COUNT-STABLE-FAILING-SET-NOT": {
+    "hash": "37c94f9",
+    "git_issue": "37c94f9",
+    "extid": "BUG-FULL-SUITE-FAILURE-COUNT-STABLE-FAILING-SET-NOT",
+    "type": "BUG",
+    "title": "full-suite failure COUNT is stable while the failing SET is not, so counts cannot compare branches",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-FULL-SUITE-FAILURE-COUNT-STABLE-FAILING-SET-NOT.md",
+    "status": "open"
+  },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "closed_at": "2026-08-22",
     "epic": "",
@@ -5575,6 +5601,19 @@
     "tags": [],
     "title": "hashReporterId uses hardcoded default secret in production — breaks PII pseudonymous projection",
     "type": "BUG"
+  },
+  "BUG-HELP": {
+    "hash": "ba6627e",
+    "git_issue": "ba6627e",
+    "extid": "BUG-HELP",
+    "type": "BUG",
+    "title": "--help",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-HELP.md",
+    "status": "open"
   },
   "BUG-HOT-RELOAD-TEST-TS-ASSERTS-TRIVIALLY-TRUE-ON-EMFILE-ENOENT-C": {
     "epic": "",
@@ -6446,6 +6485,19 @@
     "tags": [],
     "title": "Logout deletes session without signature or ownership check",
     "type": "BUG"
+  },
+  "BUG-LORA-DISCOVER-MANAGE-ROUTES-LACK-ADMIN-GUARD": {
+    "hash": "9310882",
+    "git_issue": "9310882",
+    "extid": "BUG-LORA-DISCOVER-MANAGE-ROUTES-LACK-ADMIN-GUARD",
+    "type": "BUG",
+    "title": "LoRA discover/manage routes lack admin guard",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-LORA-DISCOVER-MANAGE-ROUTES-LACK-ADMIN-GUARD.md",
+    "status": "open"
   },
   "BUG-LORE-CONSISTENCY-SCORER-ENTITY-MATCHING-BRANCH-UNREACHABLE-D": {
     "hash": "9f7d4ef",
@@ -8462,6 +8514,19 @@
     "source": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md",
     "status": "done"
   },
+  "BUG-RECEIPT-CARRY-SILENTLY-DELETES-JOB-ENTRIES-WHOSE-FIRST-KEY-I": {
+    "hash": "1df5e25",
+    "git_issue": "1df5e25",
+    "extid": "BUG-RECEIPT-CARRY-SILENTLY-DELETES-JOB-ENTRIES-WHOSE-FIRST-KEY-I",
+    "type": "BUG",
+    "title": "receipt carry silently deletes job entries whose first key is quoted or dotted",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-RECEIPT-CARRY-SILENTLY-DELETES-JOB-ENTRIES-WHOSE-FIRST-KEY-I.md",
+    "status": "open"
+  },
   "BUG-RECORDSECRETFOUND-READ-MODIFY-WRITE-LOSES-CONCURRENT-SECRETS": {
     "hash": "b9235db",
     "git_issue": "b9235db",
@@ -9003,6 +9068,19 @@
     "tags": [],
     "title": "Security/auth merge wrapper `3ab26ccd` breaks the backend build",
     "type": "BUG"
+  },
+  "BUG-SEED-ADOPTION-CAN-ADOPT-A-USER-S-OWN-ACTOR-ROW": {
+    "hash": "a8701e3",
+    "git_issue": "a8701e3",
+    "extid": "BUG-SEED-ADOPTION-CAN-ADOPT-A-USER-S-OWN-ACTOR-ROW",
+    "type": "BUG",
+    "title": "Seed adoption can adopt a user's own actor row",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-SEED-ADOPTION-CAN-ADOPT-A-USER-S-OWN-ACTOR-ROW.md",
+    "status": "open"
   },
   "BUG-SEEDED-USER-CONFIG-OPTION-SEEDACTOR-IS-NEVER-READ-SO-THE-MIR": {
     "hash": "d71ac02",
@@ -9562,6 +9640,19 @@
     "tags": [],
     "title": "story-mode.ts stores `turnResult.prompt` as the message content — `gmDecision.turnPrompt` is the prompt to LLM, not the user-visible AI response",
     "type": "BUG"
+  },
+  "BUG-STORY-POINT-EARN-SPEND-API-RETURNS-BOGUS-LEDGER-ID": {
+    "hash": "503785b",
+    "git_issue": "503785b",
+    "extid": "BUG-STORY-POINT-EARN-SPEND-API-RETURNS-BOGUS-LEDGER-ID",
+    "type": "BUG",
+    "title": "Story-point earn/spend API returns bogus ledger_id",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-STORY-POINT-EARN-SPEND-API-RETURNS-BOGUS-LEDGER-ID.md",
+    "status": "open"
   },
   "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES": {
     "hash": "9e05192",
@@ -12085,6 +12176,19 @@
     ],
     "title": "Asset Transform Editing + Metadata",
     "type": "EPIC"
+  },
+  "EPIC-ASSET-VISUAL-SIMILARITY": {
+    "hash": "4d07335",
+    "git_issue": "4d07335",
+    "extid": "EPIC-ASSET-VISUAL-SIMILARITY",
+    "type": "EPIC",
+    "title": "Asset Visual Similarity — Local Find-Similar (Gated)",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-ASSET-VISUAL-SIMILARITY.md",
+    "status": "open"
   },
   "EPIC-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS": {
     "epic": "",
@@ -15541,6 +15645,19 @@
     "source": ".plan/epics/epic-local-model-file-discovery.md",
     "status": "Not Started",
     "git_issue": "ae64753"
+  },
+  "EPIC-LOCAL-MULTI-INSTANCE-FEDERATION": {
+    "hash": "61f4a4d",
+    "git_issue": "61f4a4d",
+    "extid": "EPIC-LOCAL-MULTI-INSTANCE-FEDERATION",
+    "type": "EPIC",
+    "title": "Local Multi-Instance Federation — Sender Wiring & Dev Harness",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/EPIC-LOCAL-MULTI-INSTANCE-FEDERATION.md",
+    "status": "open"
   },
   "EPIC-LOCAL-PROCESS-SWARM": {
     "epic": "",
@@ -19941,6 +20058,58 @@
     "title": "Admin analytics — latency p50/p95/p99 trends, SSE live push, Chart.js widgets",
     "type": "FEAT"
   },
+  "FEAT-ASSET-EMBEDDING-RESUMABLE-BACKFILL": {
+    "hash": "1ac2896",
+    "git_issue": "1ac2896",
+    "extid": "FEAT-ASSET-EMBEDDING-RESUMABLE-BACKFILL",
+    "type": "FEAT",
+    "title": "Asset embedding resumable backfill",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-ASSET-EMBEDDING-RESUMABLE-BACKFILL.md",
+    "status": "open"
+  },
+  "FEAT-ASSET-EMBEDDING-STORE-INT8-QUANTIZED": {
+    "hash": "60aea6d",
+    "git_issue": "60aea6d",
+    "extid": "FEAT-ASSET-EMBEDDING-STORE-INT8-QUANTIZED",
+    "type": "FEAT",
+    "title": "Asset embedding store int8 quantized",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-ASSET-EMBEDDING-STORE-INT8-QUANTIZED.md",
+    "status": "open"
+  },
+  "FEAT-ASSET-LINK-KIND-VOCABULARY": {
+    "hash": "d28c631",
+    "git_issue": "d28c631",
+    "extid": "FEAT-ASSET-LINK-KIND-VOCABULARY",
+    "type": "FEAT",
+    "title": "Asset link kind vocabulary",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-ASSET-LINK-KIND-VOCABULARY.md",
+    "status": "open"
+  },
+  "FEAT-ASSET-METADATA-SHADOW-OVERRIDES": {
+    "hash": "4cbd66f",
+    "git_issue": "4cbd66f",
+    "extid": "FEAT-ASSET-METADATA-SHADOW-OVERRIDES",
+    "type": "FEAT",
+    "title": "Asset metadata shadow overrides",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-ASSET-METADATA-SHADOW-OVERRIDES.md",
+    "status": "open"
+  },
   "FEAT-ASSET-SUPPORT-EXPANSION": {
     "epic": "(none — proposed epic never materialized)",
     "extid": "FEAT-ASSET-SUPPORT-EXPANSION",
@@ -20524,6 +20693,32 @@
     "title": "Co-authoring Presence (live cursors, typing indicators)",
     "type": "FEAT"
   },
+  "FEAT-COMFYUI-EXTERNAL-QUEUE-ADOPTION": {
+    "hash": "25af4be",
+    "git_issue": "25af4be",
+    "extid": "FEAT-COMFYUI-EXTERNAL-QUEUE-ADOPTION",
+    "type": "FEAT",
+    "title": "ComfyUI external queue adoption",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-COMFYUI-EXTERNAL-QUEUE-ADOPTION.md",
+    "status": "open"
+  },
+  "FEAT-COMFYUI-INSTALL-DISCOVERY-CONFIG-AND-CUSTOM-NODES": {
+    "hash": "40806af",
+    "git_issue": "40806af",
+    "extid": "FEAT-COMFYUI-INSTALL-DISCOVERY-CONFIG-AND-CUSTOM-NODES",
+    "type": "FEAT",
+    "title": "ComfyUI install discovery config and custom nodes",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-COMFYUI-INSTALL-DISCOVERY-CONFIG-AND-CUSTOM-NODES.md",
+    "status": "open"
+  },
   "FEAT-COMFYUI-PLUGIN-WORKFLOW-TEMPLATES": {
     "epic": "epic-comfyui-plugin",
     "extid": "FEAT-COMFYUI-PLUGIN-WORKFLOW-TEMPLATES",
@@ -20536,6 +20731,84 @@
     "tags": [],
     "title": "ComfyUI Plugin & Workflow Templates",
     "type": "FEAT"
+  },
+  "FEAT-COMFYUI-SEED-STRING-STORAGE": {
+    "hash": "6f2a145",
+    "git_issue": "6f2a145",
+    "extid": "FEAT-COMFYUI-SEED-STRING-STORAGE",
+    "type": "FEAT",
+    "title": "ComfyUI seed string storage",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-COMFYUI-SEED-STRING-STORAGE.md",
+    "status": "open"
+  },
+  "FEAT-COMFYUI-TYPE-PRESERVING-SUBSTITUTION": {
+    "hash": "9ca4033",
+    "git_issue": "9ca4033",
+    "extid": "FEAT-COMFYUI-TYPE-PRESERVING-SUBSTITUTION",
+    "type": "FEAT",
+    "title": "ComfyUI type preserving substitution",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-COMFYUI-TYPE-PRESERVING-SUBSTITUTION.md",
+    "status": "open"
+  },
+  "FEAT-COMFYUI-WEBSOCKET-PROGRESS-CLIENT": {
+    "hash": "b231882",
+    "git_issue": "b231882",
+    "extid": "FEAT-COMFYUI-WEBSOCKET-PROGRESS-CLIENT",
+    "type": "FEAT",
+    "title": "ComfyUI websocket progress client",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-COMFYUI-WEBSOCKET-PROGRESS-CLIENT.md",
+    "status": "open"
+  },
+  "FEAT-COMFYUI-WORKFLOW-PATCH-ORIGINAL-MODE": {
+    "hash": "34631bf",
+    "git_issue": "34631bf",
+    "extid": "FEAT-COMFYUI-WORKFLOW-PATCH-ORIGINAL-MODE",
+    "type": "FEAT",
+    "title": "ComfyUI workflow patch original mode",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-COMFYUI-WORKFLOW-PATCH-ORIGINAL-MODE.md",
+    "status": "open"
+  },
+  "FEAT-COMFYUI-WORKFLOW-REVISION-DRIFT-DETECTION": {
+    "hash": "f599ddf",
+    "git_issue": "f599ddf",
+    "extid": "FEAT-COMFYUI-WORKFLOW-REVISION-DRIFT-DETECTION",
+    "type": "FEAT",
+    "title": "ComfyUI workflow revision drift detection",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-COMFYUI-WORKFLOW-REVISION-DRIFT-DETECTION.md",
+    "status": "open"
+  },
+  "FEAT-COMFYUI-WORKFLOW-TARGET-MAP-ANALYSIS": {
+    "hash": "ed64082",
+    "git_issue": "ed64082",
+    "extid": "FEAT-COMFYUI-WORKFLOW-TARGET-MAP-ANALYSIS",
+    "type": "FEAT",
+    "title": "ComfyUI workflow target map analysis",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-COMFYUI-WORKFLOW-TARGET-MAP-ANALYSIS.md",
+    "status": "open"
   },
   "FEAT-COMMUNITY-TEMPLATE-WORLD-SHARE-EXPORT-IMPORT": {
     "epic": "epic-import-export-io",
@@ -20733,6 +21006,19 @@
     ],
     "title": "Director's Mode (Camera/Scene-cut/Music Metadata)",
     "type": "FEAT"
+  },
+  "FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING": {
+    "hash": "410c2da",
+    "git_issue": "410c2da",
+    "extid": "FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING",
+    "type": "FEAT",
+    "title": "Director timeline scene mapping",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING.md",
+    "status": "open"
   },
   "FEAT-DISABLE-OR-HIDE-CHARACTERS-FROM-THE-DB": {
     "hash": "3ad9837",
@@ -21109,6 +21395,19 @@
     "title": "Filtering & Pagination",
     "type": "FEAT"
   },
+  "FEAT-FIND-SIMILAR-SEARCH-SERVICE": {
+    "hash": "878d971",
+    "git_issue": "878d971",
+    "extid": "FEAT-FIND-SIMILAR-SEARCH-SERVICE",
+    "type": "FEAT",
+    "title": "Find similar search service",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-FIND-SIMILAR-SEARCH-SERVICE.md",
+    "status": "open"
+  },
   "FEAT-FIXTURE-DRIVEN-PROMPT-EVAL-HARNESS-FOR-AUX-CLASSIFICATION-TA": {
     "hash": "5fe4c12",
     "git_issue": "5fe4c12",
@@ -21138,6 +21437,19 @@
     ],
     "title": "Forge Engine Energy Pool (SAGE Action Economy)",
     "type": "FEAT"
+  },
+  "FEAT-FRONTEND-JSONL-FILE-SUPPORT-LEDGER-VIEWER": {
+    "hash": "f5d3d95",
+    "git_issue": "f5d3d95",
+    "extid": "FEAT-FRONTEND-JSONL-FILE-SUPPORT-LEDGER-VIEWER",
+    "type": "FEAT",
+    "title": "frontend jsonl file support ledger viewer",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-FRONTEND-JSONL-FILE-SUPPORT-LEDGER-VIEWER.md",
+    "status": "open"
   },
   "FEAT-FRONTEND-MODE-CONFIG-ACCEPT-HEADER-CONTENT-NEGOTIATION-CORS": {
     "epic": "epic-api-first-foundation",
@@ -21171,6 +21483,58 @@
     ],
     "title": "Full Moderation System (Review Queue, Reports, Mod Role)",
     "type": "FEAT"
+  },
+  "FEAT-GALLERY-DUPLICATE-SUGGESTIONS": {
+    "hash": "c33f9b0",
+    "git_issue": "c33f9b0",
+    "extid": "FEAT-GALLERY-DUPLICATE-SUGGESTIONS",
+    "type": "FEAT",
+    "title": "Gallery duplicate suggestions",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-GALLERY-DUPLICATE-SUGGESTIONS.md",
+    "status": "open"
+  },
+  "FEAT-GALLERY-FACET-ENGINE": {
+    "hash": "d547dc9",
+    "git_issue": "d547dc9",
+    "extid": "FEAT-GALLERY-FACET-ENGINE",
+    "type": "FEAT",
+    "title": "Gallery facet engine",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-GALLERY-FACET-ENGINE.md",
+    "status": "open"
+  },
+  "FEAT-GALLERY-FIND-SIMILAR-UI": {
+    "hash": "225e802",
+    "git_issue": "225e802",
+    "extid": "FEAT-GALLERY-FIND-SIMILAR-UI",
+    "type": "FEAT",
+    "title": "Gallery find similar UI",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-GALLERY-FIND-SIMILAR-UI.md",
+    "status": "open"
+  },
+  "FEAT-GALLERY-TFIDF-AUTO-TAGS": {
+    "hash": "3fad34f",
+    "git_issue": "3fad34f",
+    "extid": "FEAT-GALLERY-TFIDF-AUTO-TAGS",
+    "type": "FEAT",
+    "title": "Gallery tfidf auto tags",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-GALLERY-TFIDF-AUTO-TAGS.md",
+    "status": "open"
   },
   "FEAT-GAME-STATE-EXTRACTION-AND-ANALYSIS-PIPELINE": {
     "hash": "83cc0ad",
@@ -21230,6 +21594,45 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-generated-frontend-reference-docs-typedoc-to-vitepress.md",
     "status": "Not Started"
+  },
+  "FEAT-GENERATION-FACT-CAPTURE-IN-COMFYUI-PROVIDER": {
+    "hash": "8e5ee2c",
+    "git_issue": "8e5ee2c",
+    "extid": "FEAT-GENERATION-FACT-CAPTURE-IN-COMFYUI-PROVIDER",
+    "type": "FEAT",
+    "title": "Generation fact capture in comfyui provider",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-GENERATION-FACT-CAPTURE-IN-COMFYUI-PROVIDER.md",
+    "status": "open"
+  },
+  "FEAT-GENERATION-JOBS-TABLE": {
+    "hash": "6214827",
+    "git_issue": "6214827",
+    "extid": "FEAT-GENERATION-JOBS-TABLE",
+    "type": "FEAT",
+    "title": "Generation jobs table",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-GENERATION-JOBS-TABLE.md",
+    "status": "open"
+  },
+  "FEAT-GENERATION-USAGE-ANALYTICS": {
+    "hash": "e98da94",
+    "git_issue": "e98da94",
+    "extid": "FEAT-GENERATION-USAGE-ANALYTICS",
+    "type": "FEAT",
+    "title": "Generation usage analytics",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-GENERATION-USAGE-ANALYTICS.md",
+    "status": "open"
   },
   "FEAT-GENERIC-2D-GRAPH-CANVAS-RENDERER-REUSING-GAME-CANVAS": {
     "hash": "4dbc02d",
@@ -21391,6 +21794,19 @@
     ],
     "title": "Immersive Scene View (first/third-person + ambient audio)",
     "type": "FEAT"
+  },
+  "FEAT-IMPORTED-GENERATION-METADATA-TIERED-PARSER": {
+    "hash": "4659f81",
+    "git_issue": "4659f81",
+    "extid": "FEAT-IMPORTED-GENERATION-METADATA-TIERED-PARSER",
+    "type": "FEAT",
+    "title": "Imported generation metadata tiered parser",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-IMPORTED-GENERATION-METADATA-TIERED-PARSER.md",
+    "status": "open"
   },
   "FEAT-IN-CHAT-ASSET-PREVIEW-LINKAGE-SIDE-PANEL": {
     "epic": "(none — proposed epic never materialized)",
@@ -21593,6 +22009,19 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md",
     "status": "done"
+  },
+  "FEAT-LINEAGE-QUERY-AND-GALLERY-UI": {
+    "hash": "0f6a9ee",
+    "git_issue": "0f6a9ee",
+    "extid": "FEAT-LINEAGE-QUERY-AND-GALLERY-UI",
+    "type": "FEAT",
+    "title": "Lineage query and gallery UI",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-LINEAGE-QUERY-AND-GALLERY-UI.md",
+    "status": "open"
   },
   "FEAT-LIVENESS-READINESS-ENDPOINTS-OPT-IN-CONFIG": {
     "epic": "epic-api-telemetry",
@@ -22002,6 +22431,32 @@
     "source": ".plan/tickets/FEAT-model-tags-search-and-filter-over-local-index.md",
     "status": "Not Started"
   },
+  "FEAT-MODEL-TRIGGER-WORDS": {
+    "hash": "b984ed2",
+    "git_issue": "b984ed2",
+    "extid": "FEAT-MODEL-TRIGGER-WORDS",
+    "type": "FEAT",
+    "title": "Model trigger words",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-MODEL-TRIGGER-WORDS.md",
+    "status": "open"
+  },
+  "FEAT-MODEL-UPDATE-WATCH-CIVITAI-HUGGINGFACE": {
+    "hash": "4d3f9f8",
+    "git_issue": "4d3f9f8",
+    "extid": "FEAT-MODEL-UPDATE-WATCH-CIVITAI-HUGGINGFACE",
+    "type": "FEAT",
+    "title": "Model update watch civitai huggingface",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-MODEL-UPDATE-WATCH-CIVITAI-HUGGINGFACE.md",
+    "status": "open"
+  },
   "FEAT-MULTI-INSTANCE-RECONCILIATION": {
     "epic": "epic-multi-instance-reconciliation",
     "extid": "FEAT-MULTI-INSTANCE-RECONCILIATION",
@@ -22046,6 +22501,19 @@
     ],
     "title": "Multimodal Input (image/voice -> character reacts)",
     "type": "FEAT"
+  },
+  "FEAT-NOTE-PLANNING-PROVIDER-INTERFACE-NB-SH-NOTEBOOK-PROVIDER-ADA": {
+    "hash": "5435d99",
+    "git_issue": "5435d99",
+    "extid": "FEAT-NOTE-PLANNING-PROVIDER-INTERFACE-NB-SH-NOTEBOOK-PROVIDER-ADA",
+    "type": "FEAT",
+    "title": "note planning provider interface nb-sh notebook provider adapter",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-NOTE-PLANNING-PROVIDER-INTERFACE-NB-SH-NOTEBOOK-PROVIDER-ADA.md",
+    "status": "open"
   },
   "FEAT-NOTIFICATION-EXPANSION": {
     "epic": "(none — proposed epic never materialized)",
@@ -22269,6 +22737,32 @@
     "source": ".plan/tickets/FEAT-progression-api-and-character-menu-surface-for-xp-level-and-.md",
     "status": "done"
   },
+  "FEAT-PROMPT-COMPOSITION-BLOCK-SNAPSHOTS": {
+    "hash": "93b8889",
+    "git_issue": "93b8889",
+    "extid": "FEAT-PROMPT-COMPOSITION-BLOCK-SNAPSHOTS",
+    "type": "FEAT",
+    "title": "Prompt composition block snapshots",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-PROMPT-COMPOSITION-BLOCK-SNAPSHOTS.md",
+    "status": "open"
+  },
+  "FEAT-PROMPT-LIBRARY-IMPORT-EXPORT-FORMATS": {
+    "hash": "59c7c10",
+    "git_issue": "59c7c10",
+    "extid": "FEAT-PROMPT-LIBRARY-IMPORT-EXPORT-FORMATS",
+    "type": "FEAT",
+    "title": "Prompt library import export formats",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-PROMPT-LIBRARY-IMPORT-EXPORT-FORMATS.md",
+    "status": "open"
+  },
   "FEAT-PROMPT-LOREBOOK-MARKETPLACE-COMMUNITY-SHARED": {
     "epic": "(none — proposed epic never materialized)",
     "extid": "FEAT-PROMPT-LOREBOOK-MARKETPLACE-COMMUNITY-SHARED",
@@ -22284,6 +22778,19 @@
     ],
     "title": "Prompt/Lorebook Marketplace (Community-shared)",
     "type": "FEAT"
+  },
+  "FEAT-PROMPT-TEMPLATE-FILLABLE-FIELDS": {
+    "hash": "110485e",
+    "git_issue": "110485e",
+    "extid": "FEAT-PROMPT-TEMPLATE-FILLABLE-FIELDS",
+    "type": "FEAT",
+    "title": "Prompt template fillable fields",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-PROMPT-TEMPLATE-FILLABLE-FIELDS.md",
+    "status": "open"
   },
   "FEAT-PROMPT-TEMPLATE-SEARCH-AND-TAGS": {
     "hash": "24c3896",
@@ -26098,6 +26605,19 @@
     "title": "Admin handlers lack explicit requireUserId (fail-open structural risk)",
     "type": "TASK"
   },
+  "TASK-ADMIN-LEDGER-SYNC-BACKUP-PROCESS-VISIBILITY": {
+    "hash": "f9af3ab",
+    "git_issue": "f9af3ab",
+    "extid": "TASK-ADMIN-LEDGER-SYNC-BACKUP-PROCESS-VISIBILITY",
+    "type": "TASK",
+    "title": "admin ledger sync backup process visibility",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ADMIN-LEDGER-SYNC-BACKUP-PROCESS-VISIBILITY.md",
+    "status": "open"
+  },
   "TASK-ADMIN-LLM-EXECUTION-ANALYTICS-PER-MODEL-PER-PROVIDER-ROLLUPS": {
     "epic": "epic-analytics-observability",
     "extid": "TASK-ADMIN-LLM-EXECUTION-ANALYTICS-PER-MODEL-PER-PROVIDER-ROLLUPS",
@@ -26110,6 +26630,19 @@
     "tags": [],
     "title": "Admin LLM execution analytics — per-model/per-provider tokens, latency, cost rollups",
     "type": "TASK"
+  },
+  "TASK-ADMIN-LOCAL-PROCESS-STATUS-PANEL-CONTROL-ACTIONS-START-STOP-": {
+    "hash": "4f65de9",
+    "git_issue": "4f65de9",
+    "extid": "TASK-ADMIN-LOCAL-PROCESS-STATUS-PANEL-CONTROL-ACTIONS-START-STOP-",
+    "type": "TASK",
+    "title": "admin local-process status panel control actions start stop restart",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ADMIN-LOCAL-PROCESS-STATUS-PANEL-CONTROL-ACTIONS-START-STOP-.md",
+    "status": "open"
   },
   "TASK-ADMIN-MODULE-CLEANUP-INDEX-TS-EXPORTS-CONSISTENT-ERROR-HANDL": {
     "epic": "epic-frontend-admin",
@@ -26721,6 +27254,19 @@
     "tags": [],
     "title": "Adopt Hermes 5-category tool surface into agentic workspace epic",
     "type": "TASK"
+  },
+  "TASK-ADOPT-IMAGEMETAHUB-PROCESS-CONVENTIONS": {
+    "hash": "ec53246",
+    "git_issue": "ec53246",
+    "extid": "TASK-ADOPT-IMAGEMETAHUB-PROCESS-CONVENTIONS",
+    "type": "TASK",
+    "title": "Adopt imagemetahub process conventions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ADOPT-IMAGEMETAHUB-PROCESS-CONVENTIONS.md",
+    "status": "open"
   },
   "TASK-ADOPT-INTERSECTION-OBSERVER-FOR-LAZY-LOADING": {
     "epic": "epic-platform-api-adoption",
@@ -34600,6 +35146,19 @@
     "source": ".plan/tickets/TASK-comfyui-workflow-acceptance-probe-scaffold.md",
     "status": "done"
   },
+  "TASK-COMFYUI-WORKFLOW-PAIRS-FIXTURES": {
+    "hash": "597266c",
+    "git_issue": "597266c",
+    "extid": "TASK-COMFYUI-WORKFLOW-PAIRS-FIXTURES",
+    "type": "TASK",
+    "title": "ComfyUI workflow pairs fixtures",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-COMFYUI-WORKFLOW-PAIRS-FIXTURES.md",
+    "status": "open"
+  },
   "TASK-COMFYUI-WORKFLOW-PARAMETERIZATION": {
     "hash": "cefeb42",
     "extid": "TASK-COMFYUI-WORKFLOW-PARAMETERIZATION",
@@ -36457,6 +37016,19 @@
     "title": "Ctx Token Accuracy",
     "type": "TASK"
   },
+  "TASK-DALL-E-3-IMAGE-PROVIDER-IMPLEMENTATION": {
+    "hash": "8daa102",
+    "git_issue": "8daa102",
+    "extid": "TASK-DALL-E-3-IMAGE-PROVIDER-IMPLEMENTATION",
+    "type": "TASK",
+    "title": "DALL-E 3 image provider implementation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-DALL-E-3-IMAGE-PROVIDER-IMPLEMENTATION.md",
+    "status": "open"
+  },
   "TASK-DASHBOARD-INTEGRATION-COVERAGE-CRASHES-CORPUS-PERFORMANCE-RO": {
     "hash": "5763142",
     "git_issue": "5763142",
@@ -36534,6 +37106,19 @@
     "tags": [],
     "title": "Data migrations atomicity and concurrency guard",
     "type": "TASK"
+  },
+  "TASK-DATASET-EXPORT-LAYER-SFT-DPO-IMAGE-AUDIO": {
+    "hash": "64d38ce",
+    "git_issue": "64d38ce",
+    "extid": "TASK-DATASET-EXPORT-LAYER-SFT-DPO-IMAGE-AUDIO",
+    "type": "TASK",
+    "title": "dataset export layer SFT DPO image audio",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-DATASET-EXPORT-LAYER-SFT-DPO-IMAGE-AUDIO.md",
+    "status": "open"
   },
   "TASK-DB-ADD-CREATED-AT-UPDATED-AT-METADATA-TO-ACTOR-AND-CHARACTER": {
     "epic": "(none — hygiene/self-contained)",
@@ -38331,6 +38916,19 @@
     "status": "done",
     "git_issue": "8955d7b"
   },
+  "TASK-ELEVENLABS-TTS-PROVIDER-FEAT-089": {
+    "hash": "318e12e",
+    "git_issue": "318e12e",
+    "extid": "TASK-ELEVENLABS-TTS-PROVIDER-FEAT-089",
+    "type": "TASK",
+    "title": "ElevenLabs TTS provider (FEAT-089)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ELEVENLABS-TTS-PROVIDER-FEAT-089.md",
+    "status": "open"
+  },
   "TASK-EMAIL-DELIVERABILITY-SPF-DKIM-DMARC-AND-INBOUND-SPAM-GATE": {
     "hash": "89f510b",
     "git_issue": "89f510b",
@@ -38441,6 +39039,19 @@
     "title": "Embedding and telemetry retention policies",
     "type": "TASK"
   },
+  "TASK-EMBEDDING-KNN-ZERO-SHOT-CLASSIFIER-EXAMPLE-BANK": {
+    "hash": "a850d57",
+    "git_issue": "a850d57",
+    "extid": "TASK-EMBEDDING-KNN-ZERO-SHOT-CLASSIFIER-EXAMPLE-BANK",
+    "type": "TASK",
+    "title": "embedding kNN zero-shot classifier example bank",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-EMBEDDING-KNN-ZERO-SHOT-CLASSIFIER-EXAMPLE-BANK.md",
+    "status": "open"
+  },
   "TASK-EMBEDDING-VECTOR-STORE": {
     "epic": "epic-rag-document-processing",
     "extid": "TASK-EMBEDDING-VECTOR-STORE",
@@ -38453,6 +39064,19 @@
     "tags": [],
     "title": "Embedding & Vector Store",
     "type": "TASK"
+  },
+  "TASK-EMBEDDINGPROVIDER-INTERFACE-OPENAI-CLOUD-EMBEDDINGS": {
+    "hash": "514ec17",
+    "git_issue": "514ec17",
+    "extid": "TASK-EMBEDDINGPROVIDER-INTERFACE-OPENAI-CLOUD-EMBEDDINGS",
+    "type": "TASK",
+    "title": "EmbeddingProvider interface + OpenAI cloud embeddings",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-EMBEDDINGPROVIDER-INTERFACE-OPENAI-CLOUD-EMBEDDINGS.md",
+    "status": "open"
   },
   "TASK-EMERGENT-NARRATIVE-DESIGN": {
     "epic": "epic-emergent-narrative-design",
@@ -39493,6 +40117,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-external-process-survivability-pause-and-restart-on-crash.md",
     "status": "Not Started"
+  },
+  "TASK-EXTERNAL-SERVER-SUPERVISION-HARDENING-ONEXIT-RESTART-WITH-BA": {
+    "hash": "7e1f5c8",
+    "git_issue": "7e1f5c8",
+    "extid": "TASK-EXTERNAL-SERVER-SUPERVISION-HARDENING-ONEXIT-RESTART-WITH-BA",
+    "type": "TASK",
+    "title": "external server supervision hardening onExit restart-with-backoff dead-fast-fail cgroup",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-EXTERNAL-SERVER-SUPERVISION-HARDENING-ONEXIT-RESTART-WITH-BA.md",
+    "status": "open"
   },
   "TASK-EXTRACT-APPLICATION-SERVICES-PER-CONTEXT-ROUTES-TO-THIN-ADAP": {
     "hash": "4c9db04",
@@ -43126,6 +43763,19 @@
     "status": "Not Started",
     "git_issue": "9ab6eea"
   },
+  "TASK-HARNESS-LEDGER-SURFACING-USER-SIDE-RECURSIVE-SELF-IMPROVEMEN": {
+    "hash": "5321999",
+    "git_issue": "5321999",
+    "extid": "TASK-HARNESS-LEDGER-SURFACING-USER-SIDE-RECURSIVE-SELF-IMPROVEMEN",
+    "type": "TASK",
+    "title": "harness ledger surfacing user side recursive self improvement",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-HARNESS-LEDGER-SURFACING-USER-SIDE-RECURSIVE-SELF-IMPROVEMEN.md",
+    "status": "open"
+  },
   "TASK-HARNESS-MCP-CALL-AUDIT": {
     "hash": "1710a00",
     "extid": "TASK-HARNESS-MCP-CALL-AUDIT",
@@ -43563,6 +44213,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md",
     "status": "Not Started"
+  },
+  "TASK-HELP": {
+    "hash": "3193518",
+    "git_issue": "3193518",
+    "extid": "TASK-HELP",
+    "type": "TASK",
+    "title": "--help",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-HELP.md",
+    "status": "open"
   },
   "TASK-HELP-FULL-COMMAND-LIST-WITH-DESCRIPTIONS": {
     "epic": "epic-frontend-chat-commands",
@@ -44198,6 +44861,19 @@
     "source": ".plan/tickets/TASK-image-edit-workflows-dedicated.md",
     "status": "Not Started",
     "git_issue": "439ff25"
+  },
+  "TASK-IMAGEAPIFAMILY-CLOUD-FAMILIES-EXTEND-ENUM-PROVIDER-CONFIG-SC": {
+    "hash": "975a1c6",
+    "git_issue": "975a1c6",
+    "extid": "TASK-IMAGEAPIFAMILY-CLOUD-FAMILIES-EXTEND-ENUM-PROVIDER-CONFIG-SC",
+    "type": "TASK",
+    "title": "ImageApiFamily cloud families: extend enum + provider config schema",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-IMAGEAPIFAMILY-CLOUD-FAMILIES-EXTEND-ENUM-PROVIDER-CONFIG-SC.md",
+    "status": "open"
   },
   "TASK-IMG2IMG-INIT-IMAGE-PLUMBING": {
     "hash": "e45d155",
@@ -45945,6 +46621,19 @@
     "source": ".plan/tickets/TASK-lineage-content-hash-anchors.md",
     "status": "Not Started"
   },
+  "TASK-LINEAGE-HASH-ANCHORS-ON-CONTENT-HASH": {
+    "hash": "ab17469",
+    "git_issue": "ab17469",
+    "extid": "TASK-LINEAGE-HASH-ANCHORS-ON-CONTENT-HASH",
+    "type": "TASK",
+    "title": "Lineage hash anchors on content hash",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-LINEAGE-HASH-ANCHORS-ON-CONTENT-HASH.md",
+    "status": "open"
+  },
   "TASK-LINEAGE-PROPAGATION-POLICY": {
     "hash": "4d669b2",
     "git_issue": "4d669b2",
@@ -46104,6 +46793,19 @@
     "tags": [],
     "title": "llama-swap /comfyui endpoint support (comfyui_auto + workarounds)",
     "type": "TASK"
+  },
+  "TASK-LLAMA-SWAP-FIRST-OPT-IN-PROFILE-GENERATED-MANAGED-YAML-SINGL": {
+    "hash": "ea6ec03",
+    "git_issue": "ea6ec03",
+    "extid": "TASK-LLAMA-SWAP-FIRST-OPT-IN-PROFILE-GENERATED-MANAGED-YAML-SINGL",
+    "type": "TASK",
+    "title": "llama-swap-first opt-in profile generated managed yaml single-hub routing",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-LLAMA-SWAP-FIRST-OPT-IN-PROFILE-GENERATED-MANAGED-YAML-SINGL.md",
+    "status": "open"
   },
   "TASK-LLAMA-SWAP-NATIVE-SUPPORT-CPU-RESIDENT-CLASSIFIER-MODEL-RECI": {
     "epic": "epic-llama-swap",
@@ -46287,6 +46989,19 @@
     "source": ".plan/tickets/TASK-llmfit-fit-service-via-shell-out.md",
     "status": "Not Started"
   },
+  "TASK-LOCAL-ARTIFACT-IMPORT-USER-MODEL-REGISTRY-GGUF-LORA-ONNX": {
+    "hash": "b83e4f4",
+    "git_issue": "b83e4f4",
+    "extid": "TASK-LOCAL-ARTIFACT-IMPORT-USER-MODEL-REGISTRY-GGUF-LORA-ONNX",
+    "type": "TASK",
+    "title": "local artifact import user model registry gguf lora onnx",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-LOCAL-ARTIFACT-IMPORT-USER-MODEL-REGISTRY-GGUF-LORA-ONNX.md",
+    "status": "open"
+  },
   "TASK-LOCAL-IMAGE-GENERATION-QUEUE": {
     "epic": "epic-llm-queue",
     "extid": "TASK-LOCAL-IMAGE-GENERATION-QUEUE",
@@ -46338,6 +47053,19 @@
     "tags": [],
     "title": "Local Swarm Router — in-host process manage/filter/balance",
     "type": "TASK"
+  },
+  "TASK-LOCAL-VOICE-PROVIDERS-PIPER-TTS-FASTER-WHISPER-STT-FEAT-091": {
+    "hash": "0222182",
+    "git_issue": "0222182",
+    "extid": "TASK-LOCAL-VOICE-PROVIDERS-PIPER-TTS-FASTER-WHISPER-STT-FEAT-091",
+    "type": "TASK",
+    "title": "Local voice providers: Piper TTS + faster-whisper STT (FEAT-091)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-LOCAL-VOICE-PROVIDERS-PIPER-TTS-FASTER-WHISPER-STT-FEAT-091.md",
+    "status": "open"
   },
   "TASK-LOCAL-WORKER-POOL-SDK-OVER-SHIPPED-BROWSER-ENGINES": {
     "hash": "287b3d8",
@@ -46721,6 +47449,19 @@
     "title": "Logging System (Structured JSONL)",
     "type": "TASK"
   },
+  "TASK-LOOP-LORE-BACKUP-EXPORT-CONTRACT-SNAPSHOT-PRODUCER-ASSETS-MA": {
+    "hash": "f2df1ce",
+    "git_issue": "f2df1ce",
+    "extid": "TASK-LOOP-LORE-BACKUP-EXPORT-CONTRACT-SNAPSHOT-PRODUCER-ASSETS-MA",
+    "type": "TASK",
+    "title": "loop-lore backup export contract snapshot producer assets manifest",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-LOOP-LORE-BACKUP-EXPORT-CONTRACT-SNAPSHOT-PRODUCER-ASSETS-MA.md",
+    "status": "open"
+  },
   "TASK-LOOT-BUDGET-AFFORDANCE-GATE": {
     "epic": "epic-items-economy-crafting",
     "extid": "TASK-LOOT-BUDGET-AFFORDANCE-GATE",
@@ -47013,6 +47754,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-make-world-item-transfer-atomic-when-the-destination-actor-i.md",
     "status": "Not Started"
+  },
+  "TASK-MANAGED-BINARY-ACQUISITION-VERSION-PINS-SHA256-FOR-SPAWNED-E": {
+    "hash": "015b7f5",
+    "git_issue": "015b7f5",
+    "extid": "TASK-MANAGED-BINARY-ACQUISITION-VERSION-PINS-SHA256-FOR-SPAWNED-E",
+    "type": "TASK",
+    "title": "managed binary acquisition version pins sha256 for spawned external servers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-MANAGED-BINARY-ACQUISITION-VERSION-PINS-SHA256-FOR-SPAWNED-E.md",
+    "status": "open"
   },
   "TASK-MANAGEMENT-INTEGRATION": {
     "epic": "epic-task-management-integration",
@@ -47650,6 +48404,19 @@
     ],
     "source": ".plan/tickets/TASK-mcp-tool-set-v1-from-facade-registry.md",
     "status": "Not Started"
+  },
+  "TASK-MEDIA-FFPROBE-METADATA-EXTRACTION": {
+    "hash": "cdff699",
+    "git_issue": "cdff699",
+    "extid": "TASK-MEDIA-FFPROBE-METADATA-EXTRACTION",
+    "type": "TASK",
+    "title": "Media ffprobe metadata extraction",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-MEDIA-FFPROBE-METADATA-EXTRACTION.md",
+    "status": "open"
   },
   "TASK-MEMORY-CHARACTER-INTEGRATION": {
     "epic": "epic-memory-knowledge-systems",
@@ -48741,6 +49508,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-model-rankings-storage-foundation.md",
     "status": "Not Started"
+  },
+  "TASK-MODEL-STORAGE-DUPLICATE-REVIEW": {
+    "hash": "5a28d20",
+    "git_issue": "5a28d20",
+    "extid": "TASK-MODEL-STORAGE-DUPLICATE-REVIEW",
+    "type": "TASK",
+    "title": "Model storage duplicate review",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-MODEL-STORAGE-DUPLICATE-REVIEW.md",
+    "status": "open"
   },
   "TASK-MODEL-WEIGHT-SNIFFING-FALLBACK-DETECT-FROM-WEIGHTS": {
     "hash": "7e0ca3e",
@@ -50589,6 +51369,19 @@
     "source": ".plan/tickets/TASK-open-in-editor-handoff.md",
     "status": "Not Started"
   },
+  "TASK-OPENAI-TTS-WHISPER-STT-PROVIDER-FEAT-090": {
+    "hash": "4873a99",
+    "git_issue": "4873a99",
+    "extid": "TASK-OPENAI-TTS-WHISPER-STT-PROVIDER-FEAT-090",
+    "type": "TASK",
+    "title": "OpenAI TTS + Whisper STT provider (FEAT-090)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-OPENAI-TTS-WHISPER-STT-PROVIDER-FEAT-090.md",
+    "status": "open"
+  },
   "TASK-OPENAPI-DRIVEN-API-REFERENCE": {
     "epic": "epic-openapi-reference",
     "extid": "TASK-OPENAPI-DRIVEN-API-REFERENCE",
@@ -51352,6 +52145,19 @@
     "tags": [],
     "title": "Pipe operator chaining slash commands",
     "type": "TASK"
+  },
+  "TASK-PIPER-VOICE-FINETUNE-PIPELINE-PIPER-TRAIN-ONNX-EXPORT": {
+    "hash": "c58bb5c",
+    "git_issue": "c58bb5c",
+    "extid": "TASK-PIPER-VOICE-FINETUNE-PIPELINE-PIPER-TRAIN-ONNX-EXPORT",
+    "type": "TASK",
+    "title": "Piper voice finetune pipeline piper_train onnx export",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-PIPER-VOICE-FINETUNE-PIPELINE-PIPER-TRAIN-ONNX-EXPORT.md",
+    "status": "open"
   },
   "TASK-PLAN-E2E-STABILIZATION": {
     "epic": ":",
@@ -52549,6 +53355,19 @@
     "source": ".plan/tickets/TASK-provenance-summary.md",
     "status": "Not Started"
   },
+  "TASK-PROVENANCE-SUMMARY-EVIDENCE-TYPING": {
+    "hash": "b36e0e7",
+    "git_issue": "b36e0e7",
+    "extid": "TASK-PROVENANCE-SUMMARY-EVIDENCE-TYPING",
+    "type": "TASK",
+    "title": "Provenance summary evidence typing",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-PROVENANCE-SUMMARY-EVIDENCE-TYPING.md",
+    "status": "open"
+  },
   "TASK-PROVIDE-SMK-SECRET-IN-BROWSER-TEST-SERVER-CONFIG-SO-KEY-GENE": {
     "hash": "016d3f9",
     "git_issue": "016d3f9",
@@ -52652,6 +53471,19 @@
     "source": ".plan/tickets/TASK-publication-artifact-schema.md",
     "status": "Not Started",
     "git_issue": "b0fcee3"
+  },
+  "TASK-PUBLICATION-ARTIFACT-SCHEMA-PUBLICATIONS-UNITS-PANELS": {
+    "hash": "d38c0de",
+    "git_issue": "d38c0de",
+    "extid": "TASK-PUBLICATION-ARTIFACT-SCHEMA-PUBLICATIONS-UNITS-PANELS",
+    "type": "TASK",
+    "title": "publication artifact schema (publications/units/panels)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-PUBLICATION-ARTIFACT-SCHEMA-PUBLICATIONS-UNITS-PANELS.md",
+    "status": "open"
   },
   "TASK-PUBLICATION-ARTIFACT-VERSIONING": {
     "hash": "c822cc7",
@@ -53364,6 +54196,32 @@
     ],
     "title": "Random Encounters & Random Events Generation",
     "type": "TASK"
+  },
+  "TASK-RANKPROVIDER-INTERFACE-EXTRACT-RERANKVIALLAMACPP-BEHIND-PROV": {
+    "hash": "b7e2555",
+    "git_issue": "b7e2555",
+    "extid": "TASK-RANKPROVIDER-INTERFACE-EXTRACT-RERANKVIALLAMACPP-BEHIND-PROV",
+    "type": "TASK",
+    "title": "RankProvider interface: extract rerankViaLlamaCpp behind provider abstraction",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-RANKPROVIDER-INTERFACE-EXTRACT-RERANKVIALLAMACPP-BEHIND-PROV.md",
+    "status": "open"
+  },
+  "TASK-RARITY-EXTENDED-EVENT-DISTRIBUTION": {
+    "hash": "46d76f4",
+    "git_issue": "46d76f4",
+    "extid": "TASK-RARITY-EXTENDED-EVENT-DISTRIBUTION",
+    "type": "TASK",
+    "title": "Rarity-extended event distribution",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-RARITY-EXTENDED-EVENT-DISTRIBUTION.md",
+    "status": "open"
   },
   "TASK-RATE-LIMIT-COVERAGE-EXPANSION": {
     "epic": "epic-api-governance",
@@ -54987,6 +55845,32 @@
     "title": "Replayability (Session-Seeded Random Tables)",
     "type": "TASK"
   },
+  "TASK-REPLICATE-IMAGE-LORA-TRAININGS": {
+    "hash": "9dca720",
+    "git_issue": "9dca720",
+    "extid": "TASK-REPLICATE-IMAGE-LORA-TRAININGS",
+    "type": "TASK",
+    "title": "Replicate image LoRA trainings",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-REPLICATE-IMAGE-LORA-TRAININGS.md",
+    "status": "open"
+  },
+  "TASK-REPLICATE-IMAGE-PROVIDER-IMPLEMENTATION-ASYNC-PREDICTIONS": {
+    "hash": "90265b0",
+    "git_issue": "90265b0",
+    "extid": "TASK-REPLICATE-IMAGE-PROVIDER-IMPLEMENTATION-ASYNC-PREDICTIONS",
+    "type": "TASK",
+    "title": "Replicate image provider implementation (async predictions)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-REPLICATE-IMAGE-PROVIDER-IMPLEMENTATION-ASYNC-PREDICTIONS.md",
+    "status": "open"
+  },
   "TASK-REPURPOSE-DEAD-SANDBOXED-FIELD-INTO-A-STRICT-MODE-POLICY-TAG": {
     "hash": "94a4e81",
     "git_issue": "94a4e81",
@@ -55434,6 +56318,19 @@
     "tags": [],
     "title": "Restart-required indicator on system_config changes",
     "type": "TASK"
+  },
+  "TASK-RESTORE-ACCEPTANCE-EXTERNAL-ARCHIVES-ROW-COUNT-TABLE-PRESENC": {
+    "hash": "a329812",
+    "git_issue": "a329812",
+    "extid": "TASK-RESTORE-ACCEPTANCE-EXTERNAL-ARCHIVES-ROW-COUNT-TABLE-PRESENC",
+    "type": "TASK",
+    "title": "restore acceptance external archives row-count table-presence assertions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-RESTORE-ACCEPTANCE-EXTERNAL-ARCHIVES-ROW-COUNT-TABLE-PRESENC.md",
+    "status": "open"
   },
   "TASK-RESULT-GRADE-PERSISTENCE": {
     "hash": "b5fb1b1",
@@ -57046,6 +57943,19 @@
     "source": ".plan/tickets/TASK-server-enforce-age-nsfw-consent-on-send-and-on-participant-a.md",
     "status": "Not Started"
   },
+  "TASK-SERVER-EXTERNAL-MANAGER-INSTANCE-KIND-EXTENSION-COMFYUI-AUDI": {
+    "hash": "62ee39d",
+    "git_issue": "62ee39d",
+    "extid": "TASK-SERVER-EXTERNAL-MANAGER-INSTANCE-KIND-EXTENSION-COMFYUI-AUDI",
+    "type": "TASK",
+    "title": "server-external-manager instance-kind extension comfyui audio-cpp ollama sidecar remote-host probes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-SERVER-EXTERNAL-MANAGER-INSTANCE-KIND-EXTENSION-COMFYUI-AUDI.md",
+    "status": "open"
+  },
   "TASK-SERVER-SIDE-I18N-MIDDLEWARE": {
     "epic": "epic-i18n, epic-logging-telemetry",
     "extid": "TASK-SERVER-SIDE-I18N-MIDDLEWARE",
@@ -57259,6 +58169,32 @@
     "status": "Not Started",
     "git_issue": "9bde045"
   },
+  "TASK-SIDECAR-GAINS-A-REAL-INSTALLER-AND-NODE-REGISTRATION": {
+    "hash": "dba938a",
+    "git_issue": "dba938a",
+    "extid": "TASK-SIDECAR-GAINS-A-REAL-INSTALLER-AND-NODE-REGISTRATION",
+    "type": "TASK",
+    "title": "Sidecar gains a real installer and node registration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-SIDECAR-GAINS-A-REAL-INSTALLER-AND-NODE-REGISTRATION.md",
+    "status": "open"
+  },
+  "TASK-SIDECAR-HARDCODED-LITERALS-BECOME-CONFIGURABLE-DEFAULTS": {
+    "hash": "5111f5b",
+    "git_issue": "5111f5b",
+    "extid": "TASK-SIDECAR-HARDCODED-LITERALS-BECOME-CONFIGURABLE-DEFAULTS",
+    "type": "TASK",
+    "title": "Sidecar hardcoded literals become configurable defaults",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-SIDECAR-HARDCODED-LITERALS-BECOME-CONFIGURABLE-DEFAULTS.md",
+    "status": "open"
+  },
   "TASK-SIDECAR-HARDCODED-LITERALS-CONFIGURABLE-DEFAULTS": {
     "hash": "22051e0",
     "extid": "TASK-SIDECAR-HARDCODED-LITERALS-CONFIGURABLE-DEFAULTS",
@@ -57284,6 +58220,19 @@
     "source": ".plan/tickets/TASK-sidecar-installer-node-registration.md",
     "status": "Blocked",
     "git_issue": "17c9de6"
+  },
+  "TASK-SIDECAR-REVEAL-ACTION-STOPS-SHELLING-OUT-TO-EXPLORER-EXE": {
+    "hash": "fb6427e",
+    "git_issue": "fb6427e",
+    "extid": "TASK-SIDECAR-REVEAL-ACTION-STOPS-SHELLING-OUT-TO-EXPLORER-EXE",
+    "type": "TASK",
+    "title": "Sidecar reveal action stops shelling out to explorer.exe",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-SIDECAR-REVEAL-ACTION-STOPS-SHELLING-OUT-TO-EXPLORER-EXE.md",
+    "status": "open"
   },
   "TASK-SIDECAR-REVEAL-CROSS-PLATFORM": {
     "hash": "cca0cb4",
@@ -57869,6 +58818,19 @@
     ],
     "source": ".plan/tickets/TASK-sse-live-model-status-and-in-flight-tracking.md",
     "status": "Not Started"
+  },
+  "TASK-STABILITY-AI-IMAGE-PROVIDER-IMPLEMENTATION": {
+    "hash": "1f5978b",
+    "git_issue": "1f5978b",
+    "extid": "TASK-STABILITY-AI-IMAGE-PROVIDER-IMPLEMENTATION",
+    "type": "TASK",
+    "title": "Stability AI image provider implementation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-STABILITY-AI-IMAGE-PROVIDER-IMPLEMENTATION.md",
+    "status": "open"
   },
   "TASK-STABLE-STORED-CHAT-KEY-FUTURE": {
     "epic": "(none — proposed epic never materialized)",
@@ -58817,6 +59779,19 @@
     "title": "Test Pg Pitfalls",
     "type": "TASK"
   },
+  "TASK-TEST-PROBE-TICKET": {
+    "hash": "536bd5d",
+    "git_issue": "536bd5d",
+    "extid": "TASK-TEST-PROBE-TICKET",
+    "type": "TASK",
+    "title": "test-probe-ticket",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-TEST-PROBE-TICKET.md",
+    "status": "open"
+  },
   "TASK-TEST-RUNTIME-COVERAGE": {
     "epic": "epic-testing-qa",
     "extid": "TASK-TEST-RUNTIME-COVERAGE",
@@ -59030,6 +60005,19 @@
     "tags": [],
     "title": "Tier-1 OpenAI-Compatible Platform Catalog",
     "type": "TASK"
+  },
+  "TASK-TIER-1-PLATFORM-CONFIG-EXAMPLES-GROQ-MISTRAL-DEEPSEEK-OPENRO": {
+    "hash": "ab48ac7",
+    "git_issue": "ab48ac7",
+    "extid": "TASK-TIER-1-PLATFORM-CONFIG-EXAMPLES-GROQ-MISTRAL-DEEPSEEK-OPENRO",
+    "type": "TASK",
+    "title": "Tier-1 platform config examples (Groq, Mistral, DeepSeek, OpenRouter)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-TIER-1-PLATFORM-CONFIG-EXAMPLES-GROQ-MISTRAL-DEEPSEEK-OPENRO.md",
+    "status": "open"
   },
   "TASK-TIGHTEN-SAFEPARSEINT-TO-STRICT-BASE-10-CONTRACT": {
     "epic": "(none — hygiene/self-contained)",
@@ -59248,6 +60236,19 @@
     "tags": [],
     "title": ".tmp janitor gate + verified-at staleness markers",
     "type": "TASK"
+  },
+  "TASK-TOGETHER-AI-FINETUNE-PROVIDER-AND-EXAMPLE-CONFIG": {
+    "hash": "3f57ed6",
+    "git_issue": "3f57ed6",
+    "extid": "TASK-TOGETHER-AI-FINETUNE-PROVIDER-AND-EXAMPLE-CONFIG",
+    "type": "TASK",
+    "title": "Together AI finetune provider and example config",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-TOGETHER-AI-FINETUNE-PROVIDER-AND-EXAMPLE-CONFIG.md",
+    "status": "open"
   },
   "TASK-TOOL-CALL-USER-TEXT-SANITIZATION": {
     "epic": "epic-security-sandboxing",
@@ -59518,6 +60519,32 @@
     "title": "Trading Interface",
     "type": "TASK"
   },
+  "TASK-TRAINING-SIDECAR-SUPERVISOR-WIRED-INTO-GENERATION-JOBS": {
+    "hash": "6f1a058",
+    "git_issue": "6f1a058",
+    "extid": "TASK-TRAINING-SIDECAR-SUPERVISOR-WIRED-INTO-GENERATION-JOBS",
+    "type": "TASK",
+    "title": "training sidecar supervisor wired into generation_jobs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-TRAINING-SIDECAR-SUPERVISOR-WIRED-INTO-GENERATION-JOBS.md",
+    "status": "open"
+  },
+  "TASK-TRAININGPROVIDER-ABSTRACTION-TRAINING-JOB-RECORDS-FORWARD-MI": {
+    "hash": "c0def4e",
+    "git_issue": "c0def4e",
+    "extid": "TASK-TRAININGPROVIDER-ABSTRACTION-TRAINING-JOB-RECORDS-FORWARD-MI",
+    "type": "TASK",
+    "title": "TrainingProvider abstraction training job records forward migration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-TRAININGPROVIDER-ABSTRACTION-TRAINING-JOB-RECORDS-FORWARD-MI.md",
+    "status": "open"
+  },
   "TASK-TRAITS-VOICE-PRIORITY-DECISION": {
     "hash": "0815b98",
     "git_issue": "0815b98",
@@ -59601,6 +60628,19 @@
     ],
     "title": "AUX LLM Fallback for Transition Intent Detection",
     "type": "TASK"
+  },
+  "TASK-TRANSLATE-NON-EN-LOCALE-VALUE-PARITY-KEY-PARITY-100-VALUE-PA": {
+    "hash": "1c4d770",
+    "git_issue": "1c4d770",
+    "extid": "TASK-TRANSLATE-NON-EN-LOCALE-VALUE-PARITY-KEY-PARITY-100-VALUE-PA",
+    "type": "TASK",
+    "title": "Translate non-en locale value parity (key parity 100%, value parity 44-46%)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-TRANSLATE-NON-EN-LOCALE-VALUE-PARITY-KEY-PARITY-100-VALUE-PA.md",
+    "status": "open"
   },
   "TASK-TRANSLATOR-MODEL-ROLE-WITH-GENERAL-MODEL-FALLBACK": {
     "hash": "fccc8f5",
@@ -61570,6 +62610,19 @@
     ],
     "source": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md",
     "status": "Not Started"
+  },
+  "TASK-WHISPER-STT-FINETUNE-CTRANSLATE2-EXPORT": {
+    "hash": "a451c37",
+    "git_issue": "a451c37",
+    "extid": "TASK-WHISPER-STT-FINETUNE-CTRANSLATE2-EXPORT",
+    "type": "TASK",
+    "title": "Whisper STT finetune ctranslate2 export",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-WHISPER-STT-FINETUNE-CTRANSLATE2-EXPORT.md",
+    "status": "open"
   },
   "TASK-WIDEN-IMPORT-EXPORT-IO-FOR-PUBLICATIONS": {
     "hash": "1ca3d84",
