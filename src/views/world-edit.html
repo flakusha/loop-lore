@@ -783,15 +783,12 @@
                   class="loc-explorer-grid"
                   x-show="viewMode === 'grid'"
                   style="flex: 1 1 40%; min-width: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-2); align-content: start"
-                  role="list"
-                  aria-label="Locations grid"
                   data-testid="loc-explorer-grid"
                 >
                   <template x-for="loc in filteredLocations" :key="loc.id">
                     <button
                       type="button"
                       class="panel-item"
-                      role="listitem"
                       style="cursor: pointer; display: flex; flex-direction: column; gap: var(--space-1); align-items: flex-start; text-align: left"
                       @click="selectLoc(loc.id)"
                       @mouseenter="hoverLoc(loc.id)"
