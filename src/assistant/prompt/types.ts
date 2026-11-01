@@ -268,3 +268,51 @@ export const PRIORITY = {
   "output-style": 2,
   customInstructions: 0,
 } as const;
+
+/** Losslessness tier of a prompt section (epic-chat-context-optimization). */
+export type Losslessness = "lossless" | "lossy";
+
+/**
+ * Per-section losslessness contract.
+ *
+ * - `lossless` — never summarized; dropped only as a last resort (after
+ *   every lossy tier has exhausted its slack).
+ * - `lossy` — selection is lossy by design (importance caps, budgets);
+ *   these sections drop FIRST under budget pressure.
+ *
+ * Rank-0 sections remain immune from dropping entirely (the `> 0` gate in
+ * `dropOverBudgetSections`), so the tier only re-orders rank > 0 sections
+ * relative to each other.
+ */
+export const SECTION_LOSSLESSNESS = {
+  system: "lossless",
+  taskClarification: "lossless",
+  actorHeader: "lossless",
+  authorNote: "lossless",
+  groupParticipants: "lossless",
+  groupTalkativity: "lossless",
+  userPersona: "lossless",
+  emotionAvatar: "lossless",
+  outfitContext: "lossless",
+  internalTraits: "lossless",
+  actorGrowth: "lossless",
+  pluginAgentRole: "lossless",
+  assistantPersonality: "lossless",
+  chatHistory: "lossless",
+  storyContext: "lossless",
+  travelPrompts: "lossless",
+  gmNotes: "lossless",
+  carriage: "lossless",
+  turnSkipAbsence: "lossless",
+  lore: "lossy",
+  memories: "lossy",
+  dynamicContext: "lossless",
+  recentEvents: "lossy",
+  interactionContext: "lossless",
+  postHistory: "lossless",
+  examples: "lossless",
+  nsfwPolicy: "lossless",
+  nsfwContext: "lossless",
+  "output-style": "lossless",
+  customInstructions: "lossless",
+} as const satisfies Record<keyof typeof PRIORITY, Losslessness>;

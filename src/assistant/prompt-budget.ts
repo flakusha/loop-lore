@@ -11,8 +11,8 @@
 
 import { ContextCompactor, } from "../generation/context-compactor";
 import type { GenerationMessage, } from "../generation/gen-types-options";
-import { PRIORITY, } from "./prompt/types";
-import type { PromptSectionReport, } from "./prompt/types";
+import { PRIORITY, SECTION_LOSSLESSNESS, } from "./prompt/types";
+import type { Losslessness, PromptSectionReport, } from "./prompt/types";
 
 /**
  * Compact conversation history when prompt exceeds token budget.
@@ -47,16 +47,19 @@ export async function compactPromptHistory(
 }
 
 /**
- * Drop lowest-priority sections until the assembled prompt fits the budget.
+ * Drop sections until the assembled prompt fits the budget.
  *
- * Sections are dropped in descending priority order (lowest first); the
- * updated total token count is returned.
+ * Lossy-tier sections drop FIRST, then lossless ones — within each tier,
+ * in descending priority order. Rank-0 and unknown-name sections stay
+ * immune from dropping entirely.
  * @param sections
  * @param tokenBudget
  * @param totalTokens
  * @param priorityOf - priority lookup by section name (unknown names score
  *   `?? 0`, fail the `> 0` gate, and stay immune from dropping per
  *   the prompt-budget.test.ts contract)
+ * @param losslessnessOf - tier lookup by section name (defaults to the
+ *   SECTION_LOSSLESSNESS contract; unknown names default to `lossless`)
  * @returns the remaining token total after dropping
  */
 export function dropOverBudgetSections(
@@ -68,6 +71,8 @@ export function dropOverBudgetSections(
   // template-library refactor briefly defaulted to 99, which made any
   // unknown/renamed section name drop FIRST.
   priorityOf: (name: string,) => number = (name,) => PRIORITY[name as keyof typeof PRIORITY] ?? 0,
+  losslessnessOf: (name: string,) => Losslessness = (name,) =>
+    SECTION_LOSSLESSNESS[name as keyof typeof SECTION_LOSSLESSNESS] ?? "lossless",
 ): number {
   const ordered: (PromptSectionReport & { index: number })[] = [];
   for (const [si, s,] of sections.entries()) {
@@ -77,7 +82,14 @@ export function dropOverBudgetSections(
     }
   }
 
-  ordered.sort((a, b,) => priorityOf(b.name,) - priorityOf(a.name,));
+  // Tier contract: lossy tiers exhaust their slack before any lossless tier
+  // loses a member; within a tier, higher rank (= more disposable) drops first.
+  const dropOrder: Record<Losslessness, number> = { lossy: 0, lossless: 1, };
+  ordered.sort((a, b,) => {
+    const tierDiff = dropOrder[losslessnessOf(a.name,)] - dropOrder[losslessnessOf(b.name,)];
+    if (tierDiff !== 0) { return tierDiff; }
+    return priorityOf(b.name,) - priorityOf(a.name,);
+  },);
 
   let remaining = totalTokens;
   for (const section of ordered) {

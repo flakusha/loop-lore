@@ -4,9 +4,9 @@
 /**
  * Tests for prompt token-budget trimming and message reordering.
  *
- * `dropOverBudgetSections` drops lowest-priority sections first, never
- * drops priority-0 sections, and keeps messages 1:1 with kept sections.
- * `compactPromptHistory` is local (extractive summary, no LLM).
+ * `dropOverBudgetSections` drops lossy-tier sections first (then lossless
+ * by rank), never drops priority-0 sections, and keeps messages 1:1 with
+ * kept sections. `compactPromptHistory` is local (extractive summary, no LLM).
  */
 import { describe, expect, test, } from "bun:test";
 import type { GenerationMessage, } from "../generation/gen-types-options";
@@ -27,7 +27,7 @@ function section(name: string, tokens: number, dropped = false,): PromptSectionR
 
 // Mutates `dropped` flags in place; returns the updated total.
 describe("dropOverBudgetSections", () => {
-  test("drops lowest priority first until under budget", () => {
+  test("drops lossy tiers first, then lossless by rank, until under budget", () => {
     const sections = [
       section("system", 100,),
       section("lore", 50,),
@@ -36,10 +36,26 @@ describe("dropOverBudgetSections", () => {
       section("examples", 200,),
     ];
 
-    // Total 530, budget 300: drop examples (330 still over) then postHistory.
+    // Total 530, budget 300: lossy tier exhausts first (memories 100 → lore
+    // 50), then lossless by rank (examples 200) — 180 ≤ 300, postHistory kept.
     const remaining = dropOverBudgetSections(sections, 300, 530,);
-    expect(remaining,).toBe(250,);
-    expect(sections.map((s,) => s.dropped),).toEqual([false, false, false, true, true,],);
+    expect(remaining,).toBe(180,);
+    expect(sections.map((s,) => s.dropped),).toEqual([false, true, true, false, true,],);
+  });
+
+  test("lossless sections survive while lossy tiers still have slack", () => {
+    const sections = [
+      section("memories", 60,),
+      section("lore", 60,),
+      section("postHistory", 80,),
+    ];
+
+    // Total 200, budget 100: both lossy sections drop (200→80) before any
+    // lossless candidate — postHistory (lossless) is never touched.
+    const remaining = dropOverBudgetSections(sections, 100, 200,);
+    expect(remaining,).toBe(80,);
+    expect(sections.map((s,) => s.dropped),).toEqual([true, true, false,],);
+    expect(sections[2]?.dropped,).toBe(false,);
   });
 
   test("priority-0 sections are never dropped, even over budget", () => {
