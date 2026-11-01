@@ -77,3 +77,6 @@ line classification is shared and the engine-side fix is smaller and adapter-sco
 (v1 or released v2) ACP method — config-option select with `session/set_config_option`,
 or a stabilized `setSessionModel` — verified against the adapter's published source, not
 assumed.
+
+
+git issue: 44122d6

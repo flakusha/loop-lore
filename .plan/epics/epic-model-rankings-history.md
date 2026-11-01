@@ -84,3 +84,5 @@ Decision record (research-only, gitignored scratchpad, not merged): `.tmp/resear
 - [ ] News tab renders the three feed families as a triage queue (acknowledge/dismiss); a weight change is confirmed via `/commits/main`, not by catalog churn
 - [ ] Local reaction grades publish only at G ≥ 30 with the `unranked — N samples` state below; reaction prereq defects fixed first
 - [ ] No user config file is written; no key-gated or ToS-forbidden source is ingested by default
+
+git issue: b805fb9

@@ -35,3 +35,6 @@ ST-style inclusion groups for lorebooks: mutually exclusive entries where only o
 ## Open Questions
 
 None — the research doc lists no blocking questions for this epic (the `key_groups` confusion was resolved in review: it is selective logic, not inclusion groups).
+
+
+git issue: eb61541

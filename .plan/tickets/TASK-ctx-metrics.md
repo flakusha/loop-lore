@@ -3,7 +3,7 @@
 
 # TASK: Ctx Metrics
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -25,3 +25,5 @@ Emit compression metadata (original/compressed tokens, count, section drops, per
 ## Acceptance
 
 - [ ] Complete
+
+**Resolved:** 2026-11-01 registry-driven close: git issue f4e7f7b (registry tip: ba528d7c6 Konstantin Fedotov Close issue)

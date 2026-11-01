@@ -3,7 +3,7 @@
 
 # TASK: Consolidate duplicated token estimation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Epic:** epic-chat-context-optimization
 **Effort:** Medium
@@ -40,3 +40,5 @@ The shared helper that already exists: `src/chat/token-utils.ts:23` `estimateTok
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-01 registry-driven close: git issue fb79f57 (registry tip: d4bd6f2b9 Konstantin Fedotov Close issue)

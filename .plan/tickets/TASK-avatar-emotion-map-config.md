@@ -22,3 +22,4 @@ Per-character liveAvatarConfig JSON (rigType, emotion-to-expression/gesture/came
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+

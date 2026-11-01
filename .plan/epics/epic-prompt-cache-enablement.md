@@ -37,3 +37,6 @@ The cache principle is half-implemented by accident: prompt assembly is stable-p
 ## Open Questions
 
 - Default-on vs opt-in for `cachePromptDefault` — decision deliberately deferred to inside the epic (research doc: "opt-in first, default-on decision inside the epic").
+
+
+git issue: 06ce352

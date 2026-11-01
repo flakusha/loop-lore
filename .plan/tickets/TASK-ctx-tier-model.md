@@ -3,7 +3,7 @@
 
 # TASK: Ctx Tier Model
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -25,3 +25,5 @@ Add per-section `losslessness` flag to section specs; enforce lossless-last in b
 ## Acceptance
 
 - [ ] Complete
+
+**Resolved:** 2026-11-01 registry-driven close: git issue 5a6d802 (registry tip: c207b5606 Konstantin Fedotov Close issue)

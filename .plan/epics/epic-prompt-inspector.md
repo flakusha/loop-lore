@@ -37,3 +37,6 @@ A read view of the *final assembled prompt* (all lore injections, memory blocks,
 ## Open Questions
 
 - Does `81c71d2`'s scope absorb the inspector fully, or should the edit-half become its own ticket after it ships? (Decision deferred to epic start; recorded because the research doc's "zero coverage" claim did not hold.)
+
+
+git issue: 38d2838

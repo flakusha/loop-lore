@@ -3,7 +3,7 @@
 
 # TASK: Ctx Dead Code
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -25,3 +25,5 @@ Delete PATH B — `service/context.ts` + `getChatContext` done 2026-08-14; remai
 ## Acceptance
 
 - [ ] Complete
+
+**Resolved:** 2026-11-01 registry-driven close: git issue 2436e98 (registry tip: 75df13508 Konstantin Fedotov Close issue)

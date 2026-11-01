@@ -38,3 +38,6 @@ Every ticketed training lane ends at "artifact exists": `c0def4e` stores *traini
 - **B1 (blocking):** E2E-encrypted chats are unreadable server-side (`messages.key_id` `:790`, `e2e_payload` `:819`, `src/crypto/chat-keys.ts`) — `buildChatSFT` silently excludes them or needs a client-side decrypt opt-in. Decide before implementing `64d38ce`; affects the whole track-(a) data-volume claim.
 - **B3 (blocking for the hosted track-(b) lane only):** whether mainstream hosted image trainers' current ToS accept adult-content training data is unverified — the local-first recommendation does not depend on it, but ticket `9dca720` (Replicate lane) must carry this check before any NSFW dataset upload.
 - **N4 (nit):** hosted-text-trainer ToS on adult *text* content likewise unverified; the consent gate is in scope, the ToS check is not yet ticketed.
+
+
+git issue: 04b9310

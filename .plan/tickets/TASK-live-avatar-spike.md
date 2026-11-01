@@ -22,3 +22,4 @@ Spike a live 2D/3D web-canvas avatar driven by LLM emotion tags + TTS visemes (w
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+

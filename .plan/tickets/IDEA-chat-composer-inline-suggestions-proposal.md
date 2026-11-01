@@ -19,6 +19,8 @@
 - [ ] Tests cover: prefix matching, accept/dismiss keyboard paths, debounce coalescing, opt-out persistence, NSFW-chat default-off
 **Related:** `IDEA-chat-composer-predictive-inline-text-suggestions.md` (original), `src/chat/proactive/` (existing server-event timing, not autocomplete), `TASK-chat-composer-tab-complete-for-commands-mentions-emoji.md` (sibling: structural completions for `/commands` `@mentions` `:emoji:`).
 
+git issue: 14f1f1d
+
 ---
 
 ## Problem

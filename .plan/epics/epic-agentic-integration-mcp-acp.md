@@ -76,3 +76,6 @@ Depends on `epic-principal-scoped-credentials.md` (principal kinds + scoped cred
 - §5 Q4 credentials story (scoped admin-issued tokens vs OAuth-style): OPEN.
 - §5 Q7 protocol SDK deps: adopted (provisional).
 - §B8 docs wiring from the op registry: proposal; single-source requirement stands.
+
+
+git issue: f3a6d8e
