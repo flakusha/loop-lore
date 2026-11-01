@@ -51,6 +51,12 @@ export function handlePanelKey(e: KeyboardEvent, deps: PanelFocusDeps,): void {
     return;
   }
 
+  // The battle log is a native scroll box: a keydown originating inside it
+  // must keep the browser's arrow-key scrolling and must not cycle/activate
+  // the combatant/action focus target under the user's reading position.
+  const logTarget = (e.target as { classList?: { contains(name: string,): boolean } } | null)?.classList;
+  if (logTarget?.contains("battle-log",)) { return; }
+
   if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown",].includes(e.key,)) {
     e.preventDefault();
     const dir = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : -1;

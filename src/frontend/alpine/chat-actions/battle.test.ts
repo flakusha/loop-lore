@@ -98,7 +98,7 @@ describe("battleActionHandlers rendering actions", () => {
       battle: {
         ...validBattle.battle,
         combatants: [
-          { ...validBattle.battle.combatants[0], conditions: ["stunned", 42, null, "poisoned",], },
+          { ...validBattle.battle.combatants[0], conditions: ["stunned", "", 42, null, "poisoned",], },
         ],
       },
     }, "chat-1",);
