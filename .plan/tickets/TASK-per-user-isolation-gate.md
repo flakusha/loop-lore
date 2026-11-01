@@ -3,7 +3,7 @@
 
 # TASK: per-user isolation gate
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Per-user isolation gate for external harness execution (TASK-per-user-isolation-gate)
 **Priority:** high
 **Effort:** Medium
@@ -23,3 +23,5 @@ The harness modules (ProfileRegistry/ProfileSelector/driver) had no principal ga
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-11-01 registry-driven close: git issue e5ed173 (registry tip: 3d9a38c2f Konstantin Fedotov Close issue)
