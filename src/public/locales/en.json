@@ -157,7 +157,9 @@
     "battleActions": "Battle actions",
     "battleItems": "Battle items",
     "battleControls": "Battle controls",
-    "battleSummary": "Battle summary"
+    "battleSummary": "Battle summary",
+    "showLog": "Show full log ({count})",
+    "hideLog": "Hide full log"
   },
   "chat": {
     "sendMessage": "Send Message",
