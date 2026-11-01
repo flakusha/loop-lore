@@ -2,8 +2,10 @@
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 <header id="header-slot" class="main-header" data-page="chat-list">
-  <button class="hamburger" x-on:click="window.toggleSidebar()">☰</button>
-  <span class="title" id="page-title">{{{t("chats.title")}}}</span>
+  <button class="hamburger" x-on:click="window.toggleSidebar()" aria-label="{{{t('accessibility.toggleSidebar')}}}">
+    ☰
+  </button>
+  <h1 class="title" id="page-title">{{{t("chats.title")}}}</h1>
   <div class="actions">
     <a
       class="btn btn-primary"

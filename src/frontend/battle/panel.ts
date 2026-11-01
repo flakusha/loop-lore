@@ -32,6 +32,12 @@ import {
 import { renderBattleLog, } from "./battle-log.js";
 import { buildFocusTargets, handlePanelKey, type PanelFocusDeps, rebuildFocus, } from "./panel-focus.js";
 import {
+  announceBattle,
+  type BattleAnnouncer,
+  createBattleAnnouncer,
+  registerBattleSlotHandlers,
+} from "./panel-live.js";
+import {
   type BattleRenderCallbacks,
   renderActions,
   renderHeader,
@@ -59,6 +65,11 @@ let container: HTMLElement | null = null;
 let ctx: BattlePanelContext | null = null;
 let keyHandler: ((e: KeyboardEvent,) => void) | null = null;
 
+/** Live-region announcer; null while no panel is mounted. */
+let announcer: BattleAnnouncer | null = null;
+
+/** Unregisters the battle-slot keynav handlers (null while unmounted). */
+let unregisterSlots: (() => void) | null = null;
 /** Panel state + actions, shared with the keyboard-focus module. */
 const deps: PanelFocusDeps = {
   selectedTargetId: null,
@@ -87,6 +98,8 @@ export function mountBattlePanel(
   container.classList.add("battle-panel",);
   keyHandler = (e: KeyboardEvent,) => handlePanelKey(e, deps,);
   container.addEventListener("keydown", keyHandler,);
+  announcer = createBattleAnnouncer();
+  unregisterSlots = registerBattleSlotHandlers(deps,);
   render();
 }
 
@@ -99,6 +112,9 @@ export function destroyBattlePanel(): void {
     container.removeEventListener("keydown", keyHandler,);
   }
 
+  if (unregisterSlots) { unregisterSlots(); }
+  unregisterSlots = null;
+  announcer = null;
   container = null;
   ctx = null;
   deps.battle = null;
@@ -142,6 +158,13 @@ function render(): void {
   if (!container) { return; }
 
   container.replaceChildren();
+
+  // Re-append the persistent live region so announcements survive the wipe;
+  // announceBattle only touches the text on real state changes.
+  if (announcer) {
+    container.append(announcer.node,);
+    announceBattle(announcer, deps.battle,);
+  }
 
   if (!deps.battle) {
     const hint = document.createElement("div",);

@@ -121,6 +121,50 @@ export function actionAvailable(
 }
 
 /**
+ * The action buttons the panel renders enabled, in battle-action-bar order:
+ * ACTIONS entries, then Item, then the social verbs. Drives the 1-9 action
+ * slots (panel-live.ts) — slot N maps to the Nth entry here.
+ * @param battle - Current battle view
+ * @param selectedTargetId - Selected target id (null = none)
+ * @returns Enabled action kinds, in bar order
+ */
+export function enabledActionSlots(
+  battle: BattleView,
+  selectedTargetId: string | null,
+): BattleActionKind[] {
+  const availability: ActionAvailabilityState = {
+    battleActive: battle.status === "active",
+    hasTarget: selectedTargetId !== null,
+    itemCount: battle.items.length,
+  };
+
+  const slots: BattleActionKind[] = [];
+  for (const action of ACTIONS) {
+    if (actionAvailable(action.kind, availability,)) { slots.push(action.kind,); }
+  }
+
+  if (actionAvailable("item", availability,)) { slots.push("item",); }
+  for (const social of SOCIAL_ACTIONS) {
+    if (actionAvailable(social.kind, availability,)) { slots.push(social.kind,); }
+  }
+
+  return slots;
+}
+
+/**
+ * Screen-reader announcement for a battle state, rendered into the panel's
+ * aria-live region. Empty when no battle is mounted. English-only by
+ * convention: the whole battle surface (headers, action labels) is.
+ * @param battle - Current battle view or null
+ * @returns Announcement text
+ */
+export function battleAnnouncement(battle: BattleView | null,): string {
+  if (!battle) { return ""; }
+  if (battle.status !== "active") { return `Battle ${battle.status}`; }
+  const acting = battle.combatants[battle.turnIndex];
+  return `Round ${battle.round}: ${acting ? `${acting.name}'s turn` : "no active combatant"}`;
+}
+/**
  * @param kind
  * @param targetId
  * @param combatants

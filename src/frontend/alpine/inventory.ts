@@ -58,6 +58,14 @@ export interface InventoryState {
   selectedItem(): InventoryItem | null;
   /** Select a row by id (no-op when the id is unknown). */
   select(itemId: string,): void;
+  /**
+   * Move the row selection `delta` rows within the visible list (epic
+   * Phase 3 inventory ↑/↓ navigation). Wraps nothing: clamps at both ends;
+   * with no selection yet, ↓ picks the first row and ↑ the last. When the
+   * panel element is given, focuses the new row's details button so
+   * keyboard and screen-reader focus follow the selection.
+   */
+  moveSelection(delta: number, panel?: ParentNode,): void;
   /** Reload rows from the server. */
   load(): Promise<void>;
   /** Equip the row, then reload. */
@@ -168,6 +176,25 @@ export const stateFromActor = (actorId: string | null = null,): InventoryState =
 
   select(itemId: string,) {
     if (this.items.some((item,) => item.id === itemId)) { this.selectedId = itemId; }
+  },
+
+  moveSelection(delta: number, panel?: ParentNode,) {
+    const rows = this.visibleItems();
+    if (rows.length === 0) { return; }
+
+    const current = rows.findIndex((row,) => row.id === this.selectedId);
+    const index = current === -1
+      ? (delta > 0 ? 0 : rows.length - 1)
+      : Math.min(rows.length - 1, Math.max(0, current + delta,),);
+
+    const next = rows[index];
+    if (!next) { return; }
+    this.select(next.id,);
+
+    if (panel) {
+      const row = panel.querySelector(`[data-item-id="${next.id}"]`,);
+      row?.querySelector<HTMLElement>("button",)?.focus();
+    }
   },
 
   async load() {

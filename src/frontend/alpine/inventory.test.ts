@@ -189,6 +189,54 @@ describeOrSkip("inventory state", () => {
     state.setActorId("actor-2",);
     expect(state.equipped,).toEqual([],);
   });
+
+  test("moveSelection walks the visible list, clamps, seeds from ends, and focuses the row", () => {
+    const state = stateFromActor("actor-1",);
+    state.items = [sword(), potion(),];
+    state.sort = "rarity"; // visible order: potion, sword
+    let focusedId = "";
+    const panel = {
+      querySelector: (selector: string,) =>
+        selector.includes("potion",) || selector.includes("sword",)
+          ? {
+            querySelector: () => ({
+              focus: () => {
+                focusedId = selector;
+              },
+            }),
+          }
+          : null,
+    };
+
+    // No selection yet: ↓ picks the first visible row, ↑ the last.
+    state.moveSelection(1, panel as unknown as ParentNode,);
+    expect(state.selectedId,).toBe("potion",);
+    expect(focusedId,).toContain("potion",);
+
+    state.moveSelection(1, panel as unknown as ParentNode,);
+    expect(state.selectedId,).toBe("sword",);
+    expect(focusedId,).toContain("sword",);
+
+    // Clamps at the end of the list.
+    state.moveSelection(1, panel as unknown as ParentNode,);
+    expect(state.selectedId,).toBe("sword",);
+
+    state.moveSelection(-1, panel as unknown as ParentNode,);
+    expect(state.selectedId,).toBe("potion",);
+    state.moveSelection(-1, panel as unknown as ParentNode,);
+    expect(state.selectedId,).toBe("potion",);
+
+    // Selection outside the visible set (filtered out) restarts from the ends.
+    state.items = [sword(),];
+    state.selectedId = "potion";
+    state.moveSelection(-1,);
+    expect(state.selectedId,).toBe("sword",);
+
+    // Empty list is a no-op.
+    state.items = [];
+    state.moveSelection(1,);
+    expect(state.selectedId,).toBeNull();
+  });
 },);
 
 describe("inventory scope", () => {

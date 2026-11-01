@@ -358,6 +358,40 @@ knip files pass — all green; the unit suite exercises snapshot
 construction, degradation without/with a throwing `matchMedia`, pointer
 class switching, change notification, and `stop()` teardown.
 
+
+## Implementation Notes (branch p0-a11y-responsive, 2026-11-01)
+
+Breakpoint-audit follow-up closed the remaining tier gaps; all ACs above
+stay checked and the epic AC "Responsive design at all breakpoints" is now
+checked too. Shipped:
+
+- `<480px` bottom sheets: `.modal` goes full-width, bottom-docked with a
+  `sheetIn` animation inside the new `@media (width <= 479px)` block
+  (`app.css`, after the base `.modal` rule); `.modal-overlay.open` aligns
+  items to `flex-end` on that tier.
+- 44px targets on touch (`app.css` coarse-pointer block): `.hamburger`,
+  `.battle-action`, `.battle-combatant` joined the list; the mobile sticky
+  composer input/send rose from 36px to 44px (`mobile-keynav.css` — the
+  surface renders only when `isMobile` is truthy, so it is 44px everywhere).
+- Battle panel (`vn.css`): `.battle-actions` gains `flex-wrap: wrap` and
+  `.battle-combatant` becomes `flex: 1 1 8rem` so the roster and action bar
+  reflow on phone widths; the panel otherwise inherits the chat area's
+  `<=(768/480)px` blocks.
+- NPC trade window: first real styles — `>=768px` two-pane grid
+  (`.trade-window` / `.trade-window-pane`), stacked single-column below
+  (`app.css`, next to `.world-page-columns`).
+- `.world-page-columns` collapse moved from the off-tier `<=900px` to
+  `<=767px`, matching the epic's 768px desktop boundary.
+- Intentional, documented deviations (kept): the drawer sidebar overlays on
+  every tier and the right panel is an overlay that never pushes content
+  (`docs/frontend/chat/layout.md`); the 480-768 tablet tier is covered by
+  the shared `<=768px` blocks in `app.css` rather than range-specific rules.
+
+Gates: `bun run lint:css`, `markuplint` on touched markup, scoped
+`eslint`/`dprint`, `bun run typecheck:frontend`, and the battle/shortcuts/
+inventory/world unit suites — all green; full `bun run check --diff-base
+dev` recorded in the worktree.
+
 ## Related Tasks
 
 - TASK-keyboard-navigation.md

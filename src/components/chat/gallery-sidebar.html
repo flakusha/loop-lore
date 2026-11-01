@@ -14,9 +14,15 @@
   class="gallery-sidebar"
   :style="{ display: $store?.ui?.showGallery ? 'flex' : 'none' }"
   x-cloak
+  :aria-label="t('chats.chatAssets')"
   data-testid="gallery-sidebar"
 >
-  <button class="btn-icon" @click="$store.ui.showGallery = false" x-bind:title="t('common.close')">
+  <button
+    class="btn-icon"
+    @click="$store.ui.showGallery = false"
+    x-bind:title="t('common.close')"
+    x-bind:aria-label="t('common.close')"
+  >
     &times;
   </button>
   <div class="nav-section-title" style="margin-bottom: var(--space-3)">{{{t("chats.chatAssets")}}}</div>

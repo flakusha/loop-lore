@@ -3,8 +3,15 @@
 
 <!-- World Edit Page -->
 <header id="header-slot" class="main-header" data-testid="world-edit-header">
-  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title">{{{t("worlds.editTitle")}}}</span>
+  <button
+    class="hamburger"
+    x-on:click="window.toggleSidebar()"
+    data-testid="hamburger"
+    aria-label="{{{t('accessibility.toggleSidebar')}}}"
+  >
+    ☰
+  </button>
+  <h1 class="title">{{{t("worlds.editTitle")}}}</h1>
   <div class="actions">
     <a href="/worlds/{{worldId}}" class="btn btn-ghost" data-testid="back-to-world">{{{t("common.back")}}}</a>
   </div>

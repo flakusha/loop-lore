@@ -4,8 +4,15 @@
 <!-- Quests Page (world-scoped) -->
 <div x-data="questsPage()" x-init="init()">
   <header id="header-slot" class="main-header" data-page="quests" data-testid="quests-header">
-    <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-    <span class="title">{{{t("quests.title")}}}</span>
+    <button
+      class="hamburger"
+      x-on:click="window.toggleSidebar()"
+      data-testid="hamburger"
+      aria-label="{{{t('accessibility.toggleSidebar')}}}"
+    >
+      ☰
+    </button>
+    <h1 class="title">{{{t("quests.title")}}}</h1>
     <div class="actions">
       <template x-if="worldId">
         <a :href="'/worlds/' + worldId" class="btn btn-secondary btn-sm">{{{t("quests.backToWorld")}}}</a>

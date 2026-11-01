@@ -146,15 +146,17 @@ describe("mountBattlePanel", () => {
   it("adds the panel class and shows the empty-state hint", () => {
     const { container, } = mountBattle(null,);
     expect(container.classList.contains("battle-panel",),).toBe(true,);
-    expect(container.children.length,).toBe(1,);
-    const hint = container.children[0]!;
+    // children[0] is the persistent aria-live announcer (panel-live.ts).
+    expect(container.children.length,).toBe(2,);
+    const hint = container.children[1]!;
     expect(hint.className,).toBe("battle-panel-empty",);
     expect(hint.textContent,).toBe("No active battle. Start one with /battle start.",);
   });
 
   it("renders header, turn order, roster and action bar for an active battle", () => {
     const { container, } = mountBattle(view(),);
-    const overlay = container.children[0]!;
+    // children[0] is the persistent aria-live announcer (panel-live.ts).
+    const overlay = container.children[1]!;
     expect(overlay.className,).toBe("battle-panel-content",);
     expect(overlay.getAttribute("role",),).toBe("group",);
     expect(overlay.getAttribute("aria-label",),).toBe("Battle controls",);
@@ -170,7 +172,7 @@ describe("mountBattlePanel", () => {
 
   it("omits the turn-order strip once the battle is no longer active", () => {
     const { container, } = mountBattle(view({ status: "completed", },),);
-    const overlay = container.children[0]!;
+    const overlay = container.children[1]!;
     expect(overlay.children.map((el,) => el.className),).toEqual([
       "battle-panel-header",
       "battle-roster",
@@ -206,10 +208,10 @@ describe("mountBattlePanel", () => {
   it("refreshBattle re-renders the last rendered state", () => {
     const { container, } = mountBattle(null,);
     refreshBattle();
-    expect(container.children[0]!.className,).toBe("battle-panel-empty",);
+    expect(container.children[1]!.className,).toBe("battle-panel-empty",);
     renderBattle(view(),);
     refreshBattle();
-    expect(container.children[0]!.className,).toBe("battle-panel-content",);
+    expect(container.children[1]!.className,).toBe("battle-panel-content",);
   });
 });
 
