@@ -4,6 +4,7 @@
 # TASK: Harness delegated permission grants
 
 **Status:** Not Started
+**Status Note:** SUPERSEDED by `TASK-capability-grant-model-on-chat-branches` (epic-harness-rsi-repo-access, amendment A4 — one owner for the chat_branches migration surface; no work here).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-harness-integration
