@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, SelectQueryBuilder, } from "kysely";
+import { nsfwFlaggedAssetIds, } from "../../assets/service";
 import { visibleGalleryAssetFilter, } from "../../assets/service/read";
 import { visibleTagNames, } from "../../assets/service/tag-facets";
 import { ActorType, ActorVisibility, AssetLinkEntity, AssetTagScope, } from "../../db/enums";
@@ -13,7 +14,6 @@ import {
   buildGalleryGridViewModel,
   type GalleryGridViewModel,
 } from "./view-models/gallery-grid";
-
 export const GRID_PAGE_SIZE = 200;
 
 /** Filter inputs shared by the gallery grid and the gallery search. */
@@ -198,9 +198,16 @@ export async function loadGalleryGridViewModel(
   }
 
   const tagMap = await visibleTagNames(database, Array.from(visible, (a,) => a.id,), actorId ?? null,);
+  const nsfwIds = await nsfwFlaggedAssetIds(database, Array.from(visible, (a,) => a.id,),);
   return {
     ok: true,
-    viewModel: buildGalleryGridViewModel({ rows: visible, tagMap, page, pageSize: GRID_PAGE_SIZE, },),
+    viewModel: buildGalleryGridViewModel({
+      rows: visible,
+      tagMap,
+      nsfwIds,
+      page,
+      pageSize: GRID_PAGE_SIZE,
+    },),
   };
 }
 

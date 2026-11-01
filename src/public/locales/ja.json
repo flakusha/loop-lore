@@ -258,6 +258,7 @@
     "nsfwBanned": "バン中",
     "nsfwShadow": "シャドウ制限中",
     "nsfwConsentUnavailable": "NSFW同意状態を読み込めませんでした。",
+    "nsfwBlurMedia": "センシティブ（NSFW）メディアをぼかす",
     "models": "Models",
     "browserModels": "Browser Models",
     "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
@@ -1053,6 +1054,7 @@
   },
 
   "nsfw": {
+    "blurReveal": "表示",
     "bodyState": {
       "title": "身体状態",
       "health": "健康",
@@ -1077,6 +1079,7 @@
       "enterToSend": "有効にすると、Enterキーでメッセージが送信されます。Shiftキーで改行します。",
       "autoScroll": "新しいコンテンツが到着した際に、最新メッセージに自動スクロールします。",
       "inlinePreview": "画像リンクではなく、チャット内に画像プレビューを直接表示します。",
+      "nsfwBlurMedia": "NSFWフラグ付きの画像をぼかして覆い、クリックで表示できます。表示しても既存のアクセス権を再確認しません。",
       "detailLevel": "基本はメッセージのみ、詳細はタイムスタンプとメタデータを表示します。",
       "generationLanguage": "AIが応答する言語を制御します。",
       "provider": "AIプロバイダーを選択します。プロバイダーによってモデルと料金が異なります。",

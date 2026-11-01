@@ -32,8 +32,28 @@ export function renderGalleryCards(viewModel: GalleryGridViewModel | GallerySear
     const filename = escapeHtml(a.filename,);
     const size = formatSize(a.sizeBytes,);
     const tags = escapeHtml(a.tags.join(",",),);
+    // NSFW-flagged cards render behind a client-side blur: an Alpine scope per
+    // thumb owns the `revealed` toggle, so a click reveals without any server
+    // round-trip (permission was established before the card was served).
+    const blurScope = a.nsfw
+      ? ` x-data="{ revealed: false }" :class="{ 'nsfw-blur': nsfwBlurWanted() && !revealed }"`
+      : "";
+
+    const revealButton = a.nsfw
+      ? `
+        <button
+          type="button"
+          class="nsfw-reveal-btn"
+          x-show="nsfwBlurWanted() && !revealed"
+          x-on:click.stop="revealed = true"
+          :aria-label="t('nsfw.blurReveal')"
+          x-text="t('nsfw.blurReveal')"
+          data-testid="nsfw-reveal-${a.id}"
+        ></button>`
+      : "";
+
     return `<div class="asset-card" data-tags="${tags}" tabindex="0" role="button" x-on:click="window.openAssetPreviewById('${a.id}')" x-on:keydown.enter.prevent="window.openAssetPreviewById('${a.id}')" x-on:keydown.space.prevent="window.openAssetPreviewById('${a.id}')" data-testid="asset-card-${a.id}">
-      <div class="thumb">${thumbForAsset(a,)}</div>
+      <div class="thumb${a.nsfw ? " nsfw-coverable" : ""}"${blurScope}>${thumbForAsset(a,)}${revealButton}</div>
       <div class="details">
         <span class="name">${filename}</span>
         <span class="type">${size}</span>

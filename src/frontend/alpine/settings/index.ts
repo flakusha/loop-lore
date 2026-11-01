@@ -46,6 +46,7 @@ settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
       maxRating: string;
       accessStatus: string;
       shadowNsfw: boolean;
+      nsfwBlurMedia: boolean;
       blockReason: string | null;
     },
     pendingRestartKeys: [],

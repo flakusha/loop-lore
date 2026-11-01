@@ -134,8 +134,14 @@
           >
             <img
               class="avatar"
+              :class="{ 'nsfw-blur': nsfwBlurOn(msg.avatar_nsfw, 'avatar-' + msg.id) }"
               :src="`/api/v1/assets/${avatarForMessage(msg) || currentCharacter?.avatar_asset_id}/thumb`"
               :alt="displayName(msg)"
+              :role="nsfwBlurOn(msg.avatar_nsfw, 'avatar-' + msg.id) ? 'button' : null"
+              :tabindex="nsfwBlurOn(msg.avatar_nsfw, 'avatar-' + msg.id) ? 0 : null"
+              :aria-label="nsfwBlurOn(msg.avatar_nsfw, 'avatar-' + msg.id) ? t('nsfw.blurReveal') : null"
+              x-on:click="nsfwBlurOn(msg.avatar_nsfw, 'avatar-' + msg.id) && revealNsfw('avatar-' + msg.id)"
+              x-on:keydown.enter.prevent="nsfwBlurOn(msg.avatar_nsfw, 'avatar-' + msg.id) && revealNsfw('avatar-' + msg.id)"
               data-testid="message-avatar"
             />
           </template>
@@ -254,7 +260,10 @@
                 <template x-for="(asset, aIdx) in msg.attachments" :key="asset.assetId">
                   <div
                     class="media-item"
-                    :class="(asset.type === 'image' ? 'media-image' : 'media-file') + (asset.label === 'voice-note' ? ' media-voice' : '')"
+                    :class="[
+                      (asset.type === 'image' ? 'media-image' : 'media-file') + (asset.label === 'voice-note' ? ' media-voice' : ''),
+                      { 'nsfw-blur nsfw-coverable': nsfwBlurOn(asset.nsfw, asset.assetId) },
+                    ]"
                     :style="getMediaStyle(asset, msg.attachments.length)"
                   >
                     <template x-if="asset.type === 'image'">
@@ -262,7 +271,7 @@
                         :src="asset.url"
                         :alt="asset.caption || asset.filename"
                         loading="lazy"
-                        @click="openMediaPreview(asset)"
+                        @click="nsfwBlurOn(asset.nsfw, asset.assetId) ? revealNsfw(asset.assetId) : openMediaPreview(asset)"
                       />
                     </template>
                     <template x-if="asset.type === 'audio'">
@@ -270,6 +279,17 @@
                     </template>
                     <template x-if="asset.type === 'video'">
                       <video controls :src="asset.url"></video>
+                    </template>
+                    <template x-if="nsfwBlurOn(asset.nsfw, asset.assetId)">
+                      <button
+                        type="button"
+                        class="nsfw-reveal-btn"
+                        x-on:click="revealNsfw(asset.assetId)"
+                        :aria-label="t('nsfw.blurReveal')"
+                        x-text="t('nsfw.blurReveal')"
+                        data-testid="nsfw-reveal"
+                      >
+                      </button>
                     </template>
                     <template x-if="asset.caption">
                       <div class="media-caption" x-text="asset.caption"></div>

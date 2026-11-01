@@ -20,8 +20,10 @@
  * "field absent" so the client keeps rendering.
  */
 import type { Kysely, } from "kysely";
+import type { ContentRating, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { getChildLogger, } from "../../../logger";
+import { isNsfwRating, } from "../../../middleware/nsfw-gate/constants";
 import { AvatarService, } from "../avatar-service";
 import { resolveOutfit, } from "./resolve";
 
@@ -100,6 +102,13 @@ async function loadChatContext(database: Kysely<DB>, chatId: string,): Promise<C
  * override and the base portrait are all keyed by that actor id, so a message
  * can never resolve another actor's asset.
  *
+ * Rows whose actor is NSFW-rated additionally carry `avatar_nsfw: true` so a
+ * client blur preference can cover the portrait (whatever render path draws
+ * it — outfit-aware asset or the client's emotion walk). Ratings load in one
+ * query for the page's distinct eligible actors; on failure the flag is left
+ * absent (fail-open render, never a permission decision — NSFW access is
+ * gated elsewhere).
+ *
  * Two memos, because outfit resolution does not depend on emotion while the
  * avatar does, and BOTH depend on location: two messages from the same actor
  * in sections with different locations must resolve to different outfits.
@@ -126,6 +135,36 @@ export async function attachMessageAvatars(opts: AttachMessageAvatarsOpts,): Pro
     );
   }
 
+  // NSFW actor ratings for the blur preference — one query per page.
+  const eligibleActorIds = new Set<string>();
+  for (const msg of messages) {
+    const actorId = msg.actor_id;
+    if (typeof actorId === "string" && actorId && typeof msg.role === "string" && AVATAR_ROLE[msg.role]) {
+      eligibleActorIds.add(actorId,);
+    }
+  }
+
+  const nsfwActors = new Set<string>();
+  if (eligibleActorIds.size > 0) {
+    try {
+      const ratingRows = await database
+        .selectFrom("actors",)
+        .select(["id", "content_rating",],)
+        .where("id", "in", [...eligibleActorIds,],)
+        .execute();
+
+      for (const row of ratingRows) {
+        if (isNsfwRating(row.content_rating as ContentRating,)) { nsfwActors.add(row.id,); }
+      }
+    } catch (error) {
+      log?.error(
+        "Failed to load actor ratings for message avatars",
+        error instanceof Error ? error : undefined,
+        { chatId, },
+      );
+    }
+  }
+
   const avatars = new AvatarService(database,);
   const outfitCache = new Map<string, string | null>();
   const assetCache = new Map<string, string | null>();
@@ -133,10 +172,15 @@ export async function attachMessageAvatars(opts: AttachMessageAvatarsOpts,): Pro
   for (const msg of messages) {
     // Never leave a stale asset from a previous pass on the row.
     delete msg.avatar_asset_id;
+    delete msg.avatar_nsfw;
 
     const actorId = msg.actor_id;
     if (typeof actorId !== "string" || !actorId) { continue; }
     if (typeof msg.role !== "string" || !AVATAR_ROLE[msg.role]) { continue; }
+
+    // Blur preference flag: NSFW-rated actor → the portrait the client draws
+    // (server-resolved asset or emotion walk) is coverable.
+    if (nsfwActors.has(actorId,)) { msg.avatar_nsfw = true; }
 
     try {
       const sectionLocation = typeof msg.section_id === "string"

@@ -2505,6 +2505,7 @@ export const SCHEMA = new SchemaManifest()
     banned_by: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    nsfw_blur_media: col("integer", { notNull: true, hasDefault: true, },),
   },)
   // ── World & RPG ──────────────────────────────────────────────
   .table("items", {

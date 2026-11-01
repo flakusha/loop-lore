@@ -34,14 +34,12 @@ import { Elysia, } from "elysia";
 import JSZip from "jszip";
 import type { Kysely, } from "kysely";
 import { existsSync, readFileSync, } from "node:fs";
-import { canAccessAsset, deleteAsset, getAsset, getAssetFilePath, } from "../assets/service";
+import { canAccessAsset, deleteAsset, getAsset, getAssetFilePath, nsfwFlaggedAssetIds, } from "../assets/service";
 import type { AssetRecord, } from "../assets/service";
 import type { Config, } from "../config/schema";
-import { AssetLinkEntity, } from "../db/enums";
-import type { ContentRating, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { canAccessNsfw, isNsfwRating, } from "../middleware/nsfw-gate";
+import { canAccessNsfw, } from "../middleware/nsfw-gate";
 import { AssetBatchDeleteResponse, AssetBatchIdsBody, ErrorResponse, } from "../validation/schemas";
 import {
   forbiddenResponse,
@@ -59,33 +57,6 @@ export interface AssetsBatchOpts {
 /** Auth-derived fields the batch handlers read (populated by createApp). */
 interface BatchAuthContext {
   userRole: string | null;
-}
-
-/**
- * Resolve the ids of assets linked to an NSFW-rated actor, in ONE query.
- * @param database
- * @param ids Candidate asset ids.
- * @returns {Promise<Set<string>>}
- */
-async function nsfwFlaggedAssetIds(database: Kysely<DB>, ids: string[],): Promise<Set<string>> {
-  const flagged = new Set<string>();
-  if (ids.length === 0) { return flagged; }
-
-  const rows = await database
-    .selectFrom("asset_links as al",)
-    .innerJoin("actors as act", "act.id", "al.entity_id",)
-    .select(["al.asset_id", "act.content_rating",],)
-    .where("al.entity_type", "=", AssetLinkEntity.Actor,)
-    .where("al.asset_id", "in", ids,)
-    .execute();
-
-  for (const row of rows) {
-    if (isNsfwRating(row.content_rating as ContentRating,)) {
-      flagged.add(row.asset_id,);
-    }
-  }
-
-  return flagged;
 }
 
 /**
