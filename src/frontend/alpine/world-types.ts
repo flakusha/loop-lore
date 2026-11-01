@@ -129,9 +129,18 @@ export interface WorldSummary {
 export interface WorldConditionsSnapshot {
   timeOfDay: string | null;
   weather: string | null;
-  sampledLocationId: string | null;
-  sampledLocationName: string | null;
-  sampledAt: string | null;
+  season: string | null;
+  temperature: number | null;
+  day: number | null;
+  forecast: WorldForecastEntry[];
+}
+
+/** One forecast day of the SSE `conditions` event payload. */
+export interface WorldForecastEntry {
+  day: number;
+  weather: string;
+  season: string;
+  temperature: number;
 }
 
 /** A location row as the world page list needs it. */
@@ -248,18 +257,18 @@ export interface WorldPageState {
   // ── time/weather widget (time-weather.ts) ──
   timeOfDay: string | null;
   weather: string | null;
-  /** Season slot — no schema column backs it yet, so always null today. */
   season: string | null;
-  conditionsLocationName: string | null;
-  conditionsAt: string | null;
+  temperature: number | null;
+  /** 1-based world-day the snapshot describes. */
+  conditionsDay: number | null;
+  forecast: WorldForecastEntry[];
   readonly hasConditions: boolean;
   readonly timeIcon: string;
   readonly weatherIcon: string;
-  readonly dayNightLabel: string;
+  readonly seasonIcon: string;
+  readonly isNightNow: boolean;
   readonly forecastAvailable: boolean;
   readonly hasSeason: boolean;
-  /** Conditions are author-set labels, not simulated — shown in the UI. */
-  readonly conditionsAreAuthorSet: boolean;
 
   // ── location details (location-details.ts) ──
   selectedLocationId: string;

@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Partially shipped — world list/detail/edit pages, location explorer (TASK-location-explorer ✅ Done, verified 2026-10-08), world edit/items/invites/channels/admin-worlds UIs. Travel interface, time/weather widget, and world creation wizard not present.
+**Status Note:** Partially shipped — world list/detail/edit pages, location explorer (TASK-location-explorer ✅ Done, verified 2026-10-08), world edit/items/invites/channels/admin-worlds UIs, and the time/weather widget (TASK-time-weather ✅ Done — engine-backed conditions snapshot with season, temperature, world-day and a seeded 3-day forecast, rendered on world detail via the world conditions SSE stream). Travel interface and world creation wizard still not present — note the create-wizard partial (`src/partials/worlds/create-wizard.html`) exists but remains incomplete.
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
@@ -97,7 +97,7 @@ Complete world and location management interface, including world CRUD, location
 
 - [ ] World list with previews and search
 - [ ] Create new world wizard
-- [ ] World conditions display (weather, time, season)
+- [x] World conditions display (weather, time, season) — engine-backed, TASK-time-weather
 - [ ] Location explorer (list/grid views)
 - [ ] Location details panel with connections
 - [ ] Travel interface with route selection
@@ -105,7 +105,7 @@ Complete world and location management interface, including world CRUD, location
 - [ ] Travel progress indicator
 - [ ] Travel hazards display
 - [ ] Fast travel unlock status
-- [ ] Time/weather display widget
+- [x] Time/weather display widget — TASK-time-weather
 - [ ] Mobile responsive
 - [ ] Keyboard shortcuts
 - [ ] Accessibility (ARIA labels)

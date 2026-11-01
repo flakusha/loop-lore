@@ -12,16 +12,14 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import {
-  insertLocations,
-  insertLocationStates,
-  insertWorlds,
-} from "../../test-utils/insert-helpers";
+import { insertWorldConditions, insertWorlds, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
+import { MINUTES_PER_DAY, seasonAt, weatherAt, } from "../../worlds/conditions-rules";
 import type { HandleOpts, } from "./types";
 import {
   CONDITIONS_KEEPALIVE_MS,
   CONDITIONS_POLL_INTERVAL_MS,
+  FORECAST_DAYS,
   loadWorldConditions,
   WorldConditionsStreamer,
   worldStreamRoutes,
@@ -87,7 +85,6 @@ describe("WorldConditionsStreamer", () => {
   let db: Kysely<DB>;
   let ownerId: string;
   let worldId: string;
-  let tavernId: string;
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
@@ -108,35 +105,45 @@ describe("WorldConditionsStreamer", () => {
 
     worldId = uid();
     await insertWorlds(db, ownerId, "Stream World", { id: worldId, } as never,);
-    tavernId = await insertLocations(db, worldId, "Tavern",);
   },);
 
-  test("loadWorldConditions resolves to the empty snapshot for a world without states", async () => {
-    const snap = await loadWorldConditions(db, worldId,);
+  test("loadWorldConditions resolves to the empty snapshot for an unknown world", async () => {
+    const snap = await loadWorldConditions(db, "no-such-world",);
     expect(snap.timeOfDay,).toBeNull();
     expect(snap.weather,).toBeNull();
-    expect(snap.sampledLocationId,).toBeNull();
+    expect(snap.season,).toBeNull();
+    expect(snap.forecast,).toEqual([],);
   });
 
-  test("loadWorldConditions samples the most recently updated location_state", async () => {
-    const caveId = await insertLocations(db, worldId, "Cave",);
-    await insertLocationStates(db, tavernId, worldId, {
-      time_of_day: "morning",
-      weather: "clear",
-      updated_at: "2026-01-01T00:00:00.000Z",
-    },);
-
-    await insertLocationStates(db, caveId, worldId, {
+  test("loadWorldConditions reads the engine snapshot and derives a seeded forecast", async () => {
+    await insertWorldConditions(db, {
+      world_id: worldId,
+      weather: "rain",
       time_of_day: "night",
-      weather: "rainy",
-      updated_at: "2026-01-02T00:00:00.000Z",
-    },);
+      season: "winter",
+      temperature: -3,
+      weather_seed: 12345,
+      mode: "tick",
+      tick_interval_minutes: 60,
+    } as never,);
 
     const snap = await loadWorldConditions(db, worldId,);
     expect(snap.timeOfDay,).toBe("night",);
-    expect(snap.weather,).toBe("rainy",);
-    expect(snap.sampledLocationId,).toBe(caveId,);
-    expect(snap.sampledLocationName,).toBe("Cave",);
+    expect(snap.weather,).toBe("rain",);
+    expect(snap.season,).toBe("winter",);
+    expect(snap.temperature,).toBe(-3,);
+    expect(snap.day,).toBeGreaterThan(0,);
+
+    // Forecast: the next three world-days, weather a pure function of the seed.
+    expect(FORECAST_DAYS,).toBe(3,);
+    expect(snap.forecast,).toHaveLength(FORECAST_DAYS,);
+    const firstDay = (snap.day ?? 1) + 1;
+    snap.forecast.forEach((entry, i,) => {
+      const day = firstDay + i;
+      expect(entry.day,).toBe(day,);
+      expect(entry.weather,).toBe(weatherAt(12345, day,),);
+      expect(entry.season,).toBe(seasonAt((day - 1) * MINUTES_PER_DAY,),);
+    },);
   });
 
   test("opens an SSE response with the right headers", () => {
@@ -175,15 +182,15 @@ describe("WorldConditionsStreamer", () => {
       for (let i = seen; i < all.length; i += 1) { frames.push(all[i]!,); }
       seen = all.length;
 
-      // Change the world's weather AFTER the initial frame; the next poll
-      // tick must emit a second `conditions` frame with the new values.
+      // Change the world's engine weather AFTER the initial frame; the next
+      // poll tick must emit a second `conditions` frame with the new value.
       if (frames.length >= 1 && !mutated) {
         mutated = true;
-        await insertLocationStates(db, tavernId, worldId, {
-          time_of_day: "dusk",
-          weather: "storm",
-          updated_at: "2026-01-03T00:00:00.000Z",
-        },);
+        await db
+          .updateTable("world_conditions",)
+          .set({ weather: "storm", },)
+          .where("world_id", "=", worldId,)
+          .execute();
       }
     }
 
