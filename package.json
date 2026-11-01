@@ -65,7 +65,7 @@
     "check:fix": "bun run check:parallel --fix",
     "check:report-ls": "bun run check:parallel --report-ls",
     "check:fast": "bun run check:parallel --gates 'typecheck - backend,typecheck - bun,typecheck - frontend,typecheck - scripts,lint - eslint,wiring - check,changelog - gate,db - schema gate,migrations - ordering,size - check,size - strict,no - shell - refs,frontend - template preflight,frontend - innerHTML xss'",
-    "check:default": "bun run check:parallel --skip-gates 'coverage - per-module line %,plan - validate,format - dprint,md - lint,dead - code (knip)'",
+    "check:default": "bun run check:parallel --skip-gates 'coverage - per-module line %,tests - unit (src),tests - e2e (inproc),tests - plugins,tests - scripts (colocated),plan - validate,format - dprint,md - lint,dead - code (knip)'",
     "check:full": "bun run build:frontend && bun run check",
     "ci": "bun run check:ci && bun run test:unit && E2E_SAFEGUARD=1 bun run test:e2e && E2E_SAFEGUARD=1 bun run test:e2e:browser && bun run build",
     "wiring:check": "bun run scripts/check-wiring.ts",

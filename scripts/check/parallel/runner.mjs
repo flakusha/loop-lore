@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 261
+// size-allow: 280
 
 /**
  * Gate execution for the parallel check runner: concurrency cap resolution,
@@ -11,9 +11,9 @@
  */
 
 import { DEFAULT_GATE_TIMEOUT_MS, runGateWithTimeout, } from "../gate-timeout.mjs";
-import { MAX_OUTPUT_CHARS, PROJECT_ROOT, } from "./config.mjs";
+import { MAX_OUTPUT_CHARS, PROJECT_ROOT, TEST_POOL, } from "./config.mjs";
 import { noopReason, } from "./context.mjs";
-import { ADVISORY_GATES, checks, } from "./gates.mjs";
+import { ADVISORY_GATES, checks, TEST_CHUNK_GATE_NAMES, } from "./gates.mjs";
 
 // ── Concurrency cap ────────────────────────────────────────────
 // Resolve the per-run concurrency cap with priority: --jobs flag > CHECK_JOBS
@@ -101,6 +101,11 @@ const COULD_NOT_START_EXIT_CODES = new Set([126, 127,],);
 // widening this table gate by gate.
 const GATE_TIMEOUT_MS = {
   "coverage - per-module line %": 30 * 60 * 1000,
+  // The unit chunk IS the former mega gate's runtime (~97% of its test
+  // files); it inherits the same 30-minute budget. The other chunk gates
+  // measure 13-20s (e2e), 1s (plugins) and 35s (scripts) — the 15-minute
+  // default is generous headroom for a loaded host.
+  "tests - unit (src)": 30 * 60 * 1000,
   "e2e - browser (baseline)": 45 * 60 * 1000,
   "md - lint": 1200 * 1000,
 };
@@ -211,87 +216,107 @@ export async function runCheck(name, command,) {
   }
 }
 
-// Heavy gates (bun test processes: unit/e2e/coverage) each peak at multiple
-// GB RSS. Two of them co-scheduled in one JOBS chunk OOM-kills the runner
-// (observed: `test - unit` dying after ~300 bytes of output when chunked
-// alongside the coverage run). They are therefore pulled out of the chunked
-// pool and run strictly one-at-a-time after the light gates.
+// Three scheduling pools, by measured footprint (see AGENTS.md Verification
+// Gates for the numbers behind each line):
 //
-// `plan - ticket index (sync)` also rides the serial tail: its giwt ticket
-// scan takes the index lock while `plan - validate` runs the same scan
-// internally. Chunked together, the loser's scan dies under lock contention
-// and reports a false "index out of sync" / truncated ticket-set (observed
-// deterministically across three consecutive runs).
+// LIGHT pool — everything that is not a bun test and not a memory monster:
+// chunked by a work queue at JOBS slots (default 4; peak measured ~9.4 GiB).
+// A slot that frees starts the next gate immediately, so a slow gate no
+// longer drags three fast chunk-mates down with it the way the old fixed
+// chunks of JOBS did.
 //
-// `lint - eslint` joins them on footprint, not on measured causation: a cold
-// full-corpus run peaks at 19.4 GB and stays 12.4 GB with `--cache`
-// (`--concurrency=4`, package.json) — by far the largest gate on either side
-// of the heavy line. Moving it here removes that exposure; it is not evidence
-// that eslint caused any specific kill.
-const HEAVY_NAMES = new Set([
+// TEST pool — the four `bun test` chunk gates carved out of the former
+// coverage mega gate (unit/e2e/plugins/scripts). Each peaks multi-GB; at
+// most TEST_POOL of them (default 2) are ever alive at once, so the total
+// bun-test worker count stays a single knob away from the documented OOM
+// shape (two FULL suites co-scheduled). Ordered longest-first: the unit
+// chunk saturates its workers for the whole phase while the small chunks
+// overlap its ramp-up and drain. In scoped (finalize) mode all four are
+// skip-markers, so the pool drains instantly.
+//
+// SOLO tail — strictly one-at-a-time after both pools:
+// coverage - per-module line %   merge+floor in plain mode; the scoped bun
+//                                test run in finalize mode (the last bun
+//                                test standing, never co-scheduled)
+// lint - eslint                  19.4 GB peak cold — the largest gate on
+//                                either side of the heavy line
+// e2e - browser (baseline)       drives the whole Playwright surface; its
+//                                spec-level pool (BROWSER_JOBS) launches
+//                                real browsers, so it never shares the box
+//                                with a bun-test worker
+// plan - ticket index (sync)     takes the giwt index lock that
+//                                `plan - validate` (light pool) also grabs;
+//                                co-scheduling both is a measured false red
+//
+// Historical note (why serial at all): two bun-test gates co-scheduled in
+// one JOBS chunk OOM-killed the runner (observed: `test - unit` dying after
+// ~300 bytes of output when chunked alongside the coverage run). The pools
+// preserve that invariant by construction: at most TEST_POOL bun-test
+// processes exist, and everything else waits for them.
+const TEST_POOL_NAMES = new Set(TEST_CHUNK_GATE_NAMES,);
+const SOLO_GATE_NAMES = [
   "coverage - per-module line %",
+  "lint - eslint",
   "e2e - browser (baseline)",
   "plan - ticket index (sync)",
-  "lint - eslint",
-],);
+];
+const SOLO_GATE_SET = new Set(SOLO_GATE_NAMES,);
+
+/**
+ * Run `entries` with a bounded work queue: up to `slots` gates in flight,
+ * the next starting the moment a slot frees. Results keep the ENTRIES'
+ * order (never completion order), so the report stays comparable across
+ * runs regardless of scheduling.
+ */
+async function runPool(entries, slots,) {
+  const results = new Array(entries.length,);
+  let next = 0;
+  const worker = async () => {
+    while (next < entries.length) {
+      const i = next++;
+      const [name, command,] = entries[i];
+      results[i] = await runCheck(name, command,);
+    }
+  };
+  await Promise.all(
+    Array.from({ length: Math.min(slots, entries.length,), }, () => worker(),),
+  );
+  return results;
+}
 
 export async function runAllChecks() {
   const allEntries = Object.entries(checks,);
-  const entries = allEntries.filter(([name,],) => !HEAVY_NAMES.has(name,));
-  const heavyEntries = allEntries.filter(([name,],) => HEAVY_NAMES.has(name,));
+  const lightEntries = allEntries.filter(([name,],) => !TEST_POOL_NAMES.has(name,) && !SOLO_GATE_SET.has(name,));
+  const testEntries = allEntries.filter(([name,],) => TEST_POOL_NAMES.has(name,));
+  // SOLO order is the declared array, not registry order: the floor signal
+  // lands before the browser suite, whatever order the table grew in.
+  const soloEntries = SOLO_GATE_NAMES
+    .filter((name,) => checks[name] !== undefined)
+    .map((name,) => [name, checks[name],]);
   const total = allEntries.length;
   console.log("=== loop-lore parallel check runner ===",);
   console.log(
-    `Running ${total} checks with concurrency=${JOBS} (override via --jobs N or CHECK_JOBS=N)...\n`,
+    `Running ${total} checks: light pool concurrency=${JOBS}, test pool concurrency=${TEST_POOL}, then ${soloEntries.length} solo gate(s) (override: --jobs N / CHECK_JOBS=N, CHECK_TEST_POOL=N)...\n`,
   );
-  // Cap the number of in-flight light checks at JOBS. We schedule chunks of
-  // size JOBS and await each chunk before starting the next; this keeps peak
-  // RSS roughly bounded at JOBS × max-check-RSS instead of total × max-check-RSS.
-  // Order is preserved per chunk so the report's per-check duration numbers
-  // remain comparable across runs (the slowest check sits in the final chunk).
-  //
-  // We use `Promise.allSettled` rather than `Promise.all`: `runCheck` already
-  // catches every check-level error into a `{ passed: false, output, ... }`
-  // result object, so no promise should reject — but `allSettled` keeps the
-  // chunk resilient to any future check that forgets its try/catch, and
-  // makes the per-chunk invariant explicit (collect every result, no early
-  // short-circuit on a single failure).
-  const results = [];
-  for (let offset = 0; offset < entries.length; offset += JOBS) {
-    const chunk = entries.slice(offset, offset + JOBS,);
-    const chunkResults = await Promise.allSettled(
-      chunk.map(([name, command,],) => runCheck(name, command,)),
-    );
-    for (const settled of chunkResults) {
-      if (settled.status === "fulfilled") {
-        results.push(settled.value,);
-        continue;
-      }
-      // `rejected` branch: `runCheck` catches every check-level error into
-      // a `{ passed: false, output, ... }` result, so a rejection here means
-      // a bug in `runCheck` itself (uncaught throw from `Bun.spawn` setup,
-      // stream read, etc.). Synthesize a failing result so the rest of the
-      // run can complete and the report still shows the anomaly.
-      const reason = settled.reason;
-      const message = reason instanceof Error
-        ? `${reason.message}\n${reason.stack ?? ""}`
-        : String(reason,);
-      results.push({
-        name: "(runner error)",
-        command: "(see stack trace)",
-        passed: false,
-        exitCode: 1,
-        output: message,
-        durationMs: 0,
-        truncated: false,
-        timedOut: false,
-      },);
+  const lightResults = await runPool(lightEntries, JOBS,);
+  const testResults = await runPool(testEntries, TEST_POOL,);
+  const soloResults = [];
+  for (const [name, command,] of soloEntries) {
+    soloResults.push(await runCheck(name, command,),);
+  }
+  // Reassemble in registry order so the report's row order is stable across
+  // runs; a runner-level error result (runCheck always catches into a result
+  // object, so these should not exist) is appended rather than dropped.
+  const byName = new Map(
+    [...lightResults, ...testResults, ...soloResults,].map((r,) => [r.name, r,]),
+  );
+  const ordered = [];
+  for (const [name,] of allEntries) {
+    const r = byName.get(name,);
+    if (r !== undefined) {
+      ordered.push(r,);
+      byName.delete(name,);
     }
   }
-  // Heavy gates strictly serial: each is a multi-GB bun test process; even
-  // two concurrently can OOM (see HEAVY_NAMES above).
-  for (const [name, command,] of heavyEntries) {
-    results.push(await runCheck(name, command,),);
-  }
-  return results;
+  return [...ordered, ...byName.values(),];
 }

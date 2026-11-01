@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 300
+// size-allow: 367
 // One command-assembly pass: the coverage builder, the scope filters and the
 // per-gate command bodies all read the same run context (DIFF_BASE, changed
 // files, skip patterns), so splitting them would thread that context through
@@ -24,6 +24,8 @@ import {
   JSCPD_DIR_RELATIVE,
   JSCPD_REPORT_RELATIVE,
   PROJECT_ROOT,
+  RUN_TMP_DIR_RELATIVE,
+  SRC_TEST_JOBS,
   TEST_JOBS,
 } from "./config.mjs";
 import {
@@ -43,21 +45,127 @@ import { filterPaths, SKIP_PATTERNS, } from "./test-skip.mjs";
 export { ADVISORY_GATES, checks, };
 
 /**
+ * Per-chunk lcov destinations under the per-RUN scratch dir. Each chunk gate
+ * writes `lcov.info` into its own dir (concurrent bun test runs must never
+ * share a coverage output — bun would clobber the sibling chunk); the
+ * coverage gate merges the chunks back into `${COVERAGE_DIR_RELATIVE}/lcov.info`,
+ * the path `CHECK_REPORT_COVERAGE_LCOV` has always pointed at.
+ */
+const CHUNK_COVERAGE_DIRS = {
+  e2e: `${RUN_TMP_DIR_RELATIVE}/coverage-e2e`,
+  plugins: `${RUN_TMP_DIR_RELATIVE}/coverage-plugins`,
+  src: `${RUN_TMP_DIR_RELATIVE}/coverage-src`,
+};
+
+/**
+ * Registry names of the test chunk gates, in test-pool scheduling order:
+ * the long unit chunk first (its workers saturate for the whole phase),
+ * then the short chunks that overlap its ramp-up and drain.
+ */
+export const TEST_CHUNK_GATE_NAMES = [
+  "tests - unit (src)",
+  "tests - e2e (inproc)",
+  "tests - plugins",
+  "tests - scripts (colocated)",
+];
+
+/**
+ * Build one test chunk gate command (plain mode): the cache-wrapped
+ * `bun test --coverage` run writing its lcov chunk into the per-RUN dir.
+ * The wrapper (scripts/check/test-suite-cache.mjs) replays a cached lcov
+ * when every byte the suite can observe is unchanged, and only caches
+ * PASSING runs, so a replay can never launder a red.
+ */
+function testChunkCommand({ suite, coverageDirRel, files, jobs, },) {
+  return `E2E_SAFEGUARD=1 bun run scripts/check/test-suite-cache.mjs --suite=${suite} --coverage-dir=${coverageDirRel} -- bun test --parallel=${jobs} ${
+    files.join(" ",)
+  } --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${coverageDirRel}`;
+}
+
+/**
+ * Register the four test chunk gates. Plain mode executes the suite as
+ * four independent, individually-reported gates — individually skippable,
+ * individually cached, individually scheduled in the runner's test pool.
+ * Scoped (`--diff-base`) mode skips them all: the scoped branch of the
+ * coverage gate runs exactly the diff's tests, as it always has, and a
+ * full-suite rerun inside a finalize would be pure waste.
+ */
+function registerTestChunkGates(checks,) {
+  // Scoped mode's skip reason names the mechanism; a PLAIN-mode empty tree
+  // (no *.test.ts matched, e.g. a stripped-down checkout) must NOT claim the
+  // diff-scoped mechanism — name what actually matched instead.
+  const scopedReason = noopSkip(
+    "diff-scoped: the scoped coverage gate runs exactly the diff's tests",
+  );
+  const emptyReason = (tree,) => noopSkip(`no *.test.ts files matched under ${tree}/`,);
+  const srcTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, "src",),);
+  const pluginTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, "plugins",),);
+  const scriptTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, "scripts",),);
+  checks[TEST_CHUNK_GATE_NAMES[0]] = srcTests.length > 0
+    ? testChunkCommand({
+      coverageDirRel: CHUNK_COVERAGE_DIRS.src,
+      files: srcTests,
+      jobs: SRC_TEST_JOBS,
+      suite: "src",
+    },)
+    : (DIFF_BASE ? scopedReason : emptyReason("src",));
+  // tests/e2e/ stays a DIRECTORY argument exactly like the former mega gate:
+  // bun discovers `*.test.ts` under it (the `*.browser.ts` specs are not
+  // test files and never ran there).
+  checks[TEST_CHUNK_GATE_NAMES[1]] = DIFF_BASE
+    ? scopedReason
+    : testChunkCommand({
+      coverageDirRel: CHUNK_COVERAGE_DIRS.e2e,
+      files: ["tests/e2e/",],
+      jobs: TEST_JOBS,
+      suite: "e2e",
+    },);
+  // plugins/** carries the bundled plugin engines' own *.test.ts. They sit
+  // OUTSIDE src/, so the src walk never found them and the coverage run
+  // measured the plugin engines at ~4% — the tests existed but were never
+  // executed. In-process unit tests (no subprocess), so they belong inside
+  // the --coverage invocation, unlike scripts/** below.
+  checks[TEST_CHUNK_GATE_NAMES[2]] = pluginTests.length > 0
+    ? testChunkCommand({
+      coverageDirRel: CHUNK_COVERAGE_DIRS.plugins,
+      files: pluginTests,
+      jobs: TEST_JOBS,
+      suite: "plugins",
+    },)
+    : (DIFF_BASE ? scopedReason : emptyReason("plugins",));
+  // scripts/** colocated tests drive their subject in a SUBPROCESS
+  // (spawnSync / Bun.spawn), so the parent run's lcov only ever records
+  // module-load side effects — flooring that partial number is a false red
+  // (coverage.mjs's header names scripts/ as the never-loaded-in-process
+  // case). No coverage, no cache: always fresh. Measured 34.6s in the
+  // first split run — it overlaps the unit chunk in the test pool, so it
+  // adds no serial wall. A failing scripts test still fails this gate.
+  checks[TEST_CHUNK_GATE_NAMES[3]] = scriptTests.length > 0
+    ? `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${scriptTests.join(" ",)} --isolate`
+    : (DIFF_BASE ? scopedReason : emptyReason("scripts",));
+}
+
+/**
  * Build the coverage gate command. Reads both the diff-scope results
  * (`SCOPED_*`, from context.mjs) and the per-RUN scratch paths
  * (`COVERAGE_DIR_RELATIVE`, from config.mjs), so it cannot live in the static
  * registry. `gate-table.mjs` carries a NOOP placeholder for this gate; the
  * assignment below is the "replaced before run" step promised there.
  *
- * Both modes write lcov into the per-RUN coverage dir so concurrent and
- * successive runs never clobber each other, and so the stdout contract can
- * emit `CHECK_REPORT_COVERAGE_LCOV` pointing at this run's file. The scoped
- * invocation must pass the same lcov reporter flags as `test:coverage` —
- * bare `--coverage` emits no lcov.info and the floor check always failed.
- * Scoped test set is every test under each touched top-level `src/` module
- * (adjacent test files alone cover too little to floor anything). Since
- * BUG-37a3763 the scoped gate floors each diff-touched src file
- * individually (`--files=`) instead of whole modules: a scoped lcov only
+ * Plain mode no longer runs the suite itself: the four chunk gates do, each
+ * into its own lcov chunk, and this gate merges the chunks into the canonical
+ * per-RUN lcov (`coverage-merge.mjs`) before flooring every module at 80% —
+ * the same artifact the former single `bun test` produced, so floor
+ * semantics, waivers and the `CHECK_REPORT_COVERAGE_LCOV` contract are
+ * unchanged. `coverage-merge.mjs` exits non-zero if a required chunk is
+ * missing, so `--skip-gates`-ing a chunk gate can never fake a green floor.
+ *
+ * The scoped invocation must pass the same lcov reporter flags as
+ * `test:coverage` — bare `--coverage` emits no lcov.info and the floor check
+ * always failed. Scoped test set is every test under each touched top-level
+ * `src/` module (adjacent test files alone cover too little to floor
+ * anything). Since BUG-37a3763 the scoped gate floors each diff-touched src
+ * file individually (`--files=`) instead of whole modules: a scoped lcov only
  * contains files the scoped tests loaded, so module aggregates were
  * structurally unpassable. Files never loaded are SKIPped as unmeasured.
  *
@@ -70,44 +178,21 @@ function coverageCommand() {
     ? ` # skip: ${SKIP_PATTERNS.join(", ",)}`
     : "";
   if (!DIFF_BASE) {
-    // Plain mode: same flags and test set as `bun run test:coverage`
-    // (e2e safeguard included), but into the per-RUN dir. The plain
-    // branch needs the full path list expanded (no directory arg)
-    // so the skip patterns actually filter — bun recurses into `src/`
-    // and would discover the heavy tests otherwise. `tests/e2e/` and
-    // `src/**/*.test.ts` are both flattened here.
-    const srcTests = filterPaths(walkTestFiles(PROJECT_ROOT, "src",),);
-    // plugins/** carries the bundled plugin engines' own *.test.ts. They sit
-    // OUTSIDE src/, so the src/ walk above never found them and the coverage
-    // run measured the plugin engines at ~4% — the tests existed but were
-    // never executed. They are in-process unit tests (no subprocess), so they
-    // belong inside the --coverage invocation, unlike scripts/** below.
-    const pluginTests = filterPaths(walkTestFiles(PROJECT_ROOT, "plugins",),);
-    // scripts/** carries colocated *.test.ts (coverage.mjs, the parallel
-    // runner's config/context, src-refs, migration-parser, among others).
-    // They previously ran only under bare `bun test`, never under any gate —
-    // a change to scripts/check/parallel/ could land untested.
-    //
-    // They run OUTSIDE the --coverage invocation on purpose. These are CLI
-    // smoke tests that drive their subject in a SUBPROCESS (spawnSync /
-    // Bun.spawn), so the parent run's lcov only ever records module-load
-    // side effects: generate-schema-fuzz.ts measured 18% with a full
-    // colocated test suite. Flooring that partial number is a false red, and
-    // coverage.mjs's own header names `scripts/` as the never-loaded-
-    // in-process case that is meant to be reported unmeasured, not floored.
-    // A failing scripts test still fails this gate — it is a second
-    // `bun test` in the same && chain, not a demotion to advisory.
-    //
-    // The scoped branch below keeps excluding non-src trees for the same
-    // reason: a scoped lcov holds only what the scoped tests loaded.
-    const scriptTests = filterPaths(walkTestFiles(PROJECT_ROOT, "scripts",),);
-    if (srcTests.length === 0 && pluginTests.length === 0 && scriptTests.length === 0) { return NOOP_OK; }
-    const scriptsRun = scriptTests.length > 0
-      ? `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${scriptTests.join(" ",)} --isolate && `
-      : "";
-    return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${
-      ["tests/e2e/", ...srcTests, ...pluginTests,].join(" ",)
-    } --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && ${scriptsRun}bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${skipNote}`;
+    // Plain mode: merge the chunk lcovs, then floor. Only chunks with a
+    // non-empty test set (registered by registerTestChunkGates above the
+    // call site) are required — an empty plugins/ tree legitimately has no
+    // chunk, and tests/e2e/ always exists.
+    const chunks = [];
+    if (filterPaths(walkTestFiles(PROJECT_ROOT, "src",),).length > 0) {
+      chunks.push(`${CHUNK_COVERAGE_DIRS.src}/lcov.info`,);
+    }
+    if (filterPaths(walkTestFiles(PROJECT_ROOT, "plugins",),).length > 0) {
+      chunks.push(`${CHUNK_COVERAGE_DIRS.plugins}/lcov.info`,);
+    }
+    chunks.push(`${CHUNK_COVERAGE_DIRS.e2e}/lcov.info`,);
+    return `bun run scripts/check/coverage-merge.mjs --chunks=${
+      chunks.join(",",)
+    } --out=${COVERAGE_DIR_RELATIVE}/lcov.info && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${skipNote}`;
   }
   if (SCOPED_COVERAGE_PATHS.length === 0) { return NOOP_OK; }
   // BUG-2d6dcf3 companion: the scoped run below executes each diff test file
@@ -207,6 +292,8 @@ function subsystemTestTargets(files,) {
   // reports skipped/no-op instead of failing the coverage gate.
   return [...targets,].sort().filter((t,) => walkTestFiles(PROJECT_ROOT, t,).length > 0);
 }
+
+registerTestChunkGates(checks,);
 
 checks["coverage - per-module line %"] = coverageCommand();
 

@@ -73,4 +73,23 @@ export const PROJECT_ROOT = path.resolve(import.meta.dir, "../../..",),
   // smaller, but 4-way bounds peak memory on multi-worktree hosts.
   // Override with CHECK_TEST_JOBS=N.
   TEST_JOBS = process.env.CHECK_TEST_JOBS ?? "4",
+  // Worker count for the heavy `tests - unit (src)` chunk gate specifically.
+  // The unit chunk carries ~97% of the former single mega-gate's test files,
+  // so its internal parallelism IS the wall time of the whole test phase:
+  // measured on the 32-core dev host, the src suite alone takes ~435s at 4
+  // workers and ~200s at 12 (box-wide peak RSS reached ~47GB WITH a second
+  // lane's concurrent test runs; tree-isolated estimate ~30GB). Default is
+  // measured-safe for a 61GiB host running ONE check; drop it (and
+  // CHECK_TEST_POOL below) when finalizing beside two other concurrent runs.
+  // Override with CHECK_SRC_TEST_JOBS=N.
+  SRC_TEST_JOBS = process.env.CHECK_SRC_TEST_JOBS ?? "12",
+  // How many of the test chunk gates (`tests - unit (src)`, `tests - e2e
+  // (inproc)`, `tests - plugins`, `tests - scripts (colocated)`) may run
+  // CONCURRENTLY in the runner's test pool. They are scheduled after the
+  // light pool drains and before the solo tail, so at most TEST_POOL
+  // bun-test processes are ever alive at once (each is multi-GB; two FULL
+  // suites co-scheduled is the documented OOM shape). The chunk file sets
+  // are disjoint, so pool concurrency only overlaps startup/drain of the
+  // small chunks around the long unit chunk. Override with CHECK_TEST_POOL=N.
+  TEST_POOL = Math.max(1, Number.parseInt(process.env.CHECK_TEST_POOL ?? "2", 10,) || 2,),
   IS_REPORT_LS = process.argv.includes("--report-ls",);
