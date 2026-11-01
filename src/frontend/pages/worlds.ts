@@ -9,7 +9,6 @@ import { eventTarget, } from "../dom";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import type { ChatTemplateMeta, } from "./new-chat/state";
-import { filterCards, } from "./shared";
 
 const pageLog = rootLog.child({ module: "worlds", },);
 
@@ -19,19 +18,6 @@ interface LocationData {
   description: string | null;
   world_id: string;
 }
-
-globalThis.filterWorlds = function() {
-  const query = document.querySelector<HTMLInputElement>("#world-search",)?.value ?? "";
-  filterCards({
-    containerId: "#world-list",
-    cardSelector: ".world-card",
-    nameSelector: ".world-name",
-    descSelector: ".world-description",
-    query,
-    emptyIcon: "🌍",
-    emptyTitle: "No worlds match your search",
-  },);
-};
 
 globalThis.createWorld = async function(event: Event,) {
   event.preventDefault();
