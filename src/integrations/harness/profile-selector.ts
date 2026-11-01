@@ -10,11 +10,19 @@
  *   3. health — instance-owned ProfileBreaker skips open profiles
  *   4. cost — cheapest `costPer1kTokens` first among the survivors
  *
+ * Candidate admission also carries the ToS acknowledgement guard
+ * (TASK-harness-tos-acknowledgement-dispatch-guard): until the usage-class
+ * matrix (TASK-harness-provider-tos-usage-class-matrix) lands there is no
+ * static subscription-backed metadata, so the guard applies to every
+ * profile — one lacking `tosGrayzoneAcknowledged: true` is not a selectable
+ * candidate and is denied with the distinct `tos_unacknowledged` skip code.
+ *
  * Only the `failover` strategy exists in this slice: `runTurn` walks the
  * ordered candidates and rotates to the next (profile, tier) on failure.
  */
 
 import type { HarnessCapability, HarnessTierId, } from "../../config/schema/harness";
+import { getChildLogger, } from "../../logger";
 import { safeJsonStringify, } from "../../utils";
 import {
   HarnessAcpError,
@@ -24,6 +32,23 @@ import {
 import { ProfileBreaker, } from "./profile-breaker";
 import { type ProfileRegistry, } from "./profile-registry";
 import { type UsageLedger, } from "./usage-ledger";
+
+/** Logger; null-safe — the selector must work before logger init. */
+const log = (): ReturnType<typeof getChildLogger> => getChildLogger("harness-acp",);
+
+/** Skip code for a profile denied because its ToS greyzone acknowledgement is absent. */
+export type HarnessDispatchSkipCode = "tos_unacknowledged";
+
+/** The ToS acknowledgement skip code (stable, surfaced in zero-candidate errors). */
+export const HARNESS_TOS_UNACKNOWLEDGED: HarnessDispatchSkipCode = "tos_unacknowledged";
+
+/** One profile excluded from candidate admission, with the machine-readable why. */
+export interface DispatchSkip {
+  /** Denied profile name. */
+  profile: string;
+  /** Machine-readable denial reason (distinct from capability/limit/breaker skips). */
+  code: HarnessDispatchSkipCode;
+}
 
 /** Task types that default to the `good` tier; everything else goes `fast`. */
 const GOOD_TIER_TASK_TYPES = new Set(["planning", "design", "review",],);
@@ -91,15 +116,39 @@ export class ProfileSelector {
    * @returns ordered candidates (possibly empty).
    */
   async select(requirement: TurnRequirement,): Promise<TurnCandidate[]> {
+    return (await this.walk(requirement,)).candidates;
+  }
+
+  /**
+   * Walk every configured profile and split admission into survivors and
+   * ToS denials, so `runTurn` can attribute an empty candidate list to its
+   * cause.
+   * @param requirement - what the turn needs
+   * @returns ordered candidates plus the ToS acknowledgement denials.
+   */
+  private async walk(
+    requirement: TurnRequirement,
+  ): Promise<{ candidates: TurnCandidate[]; skips: DispatchSkip[] }> {
     const wantedTier = requirement.preferredTier ??
       (GOOD_TIER_TASK_TYPES.has(requirement.taskType,) ? "good" : "fast");
 
     const candidates: TurnCandidate[] = [];
+    const skips: DispatchSkip[] = [];
     for (const name of this.registry.names()) {
       const probe = await this.registry.ensureProbed(name,);
       if (probe.state !== "healthy") { continue; }
       const cfg = this.registry.config(name,);
       if (!cfg) { continue; }
+      if (cfg.tosGrayzoneAcknowledged !== true) {
+        skips.push({ profile: name, code: HARNESS_TOS_UNACKNOWLEDGED, },);
+        log()?.warn(
+          "harness profile denied — ToS greyzone not acknowledged",
+          { profile: name, code: HARNESS_TOS_UNACKNOWLEDGED, },
+        );
+
+        continue;
+      }
+
       const tier = cfg.tiers[wantedTier];
       const probedTier = probe.tiers.find((t,) => t.tier === wantedTier);
       if (!tier || !probedTier?.advertised) { continue; }
@@ -110,7 +159,8 @@ export class ProfileSelector {
       candidates.push({ profile: name, tier: wantedTier, model: tier.model, },);
     }
 
-    return candidates.sort((a, b,) => (this.costs.get(a.model,) ?? Infinity) - (this.costs.get(b.model,) ?? Infinity));
+    candidates.sort((a, b,) => (this.costs.get(a.model,) ?? Infinity) - (this.costs.get(b.model,) ?? Infinity));
+    return { candidates, skips, };
   }
 
   /**
@@ -120,17 +170,25 @@ export class ProfileSelector {
    * @param prompt - the prompt text
    * @param factory - adapter factory for candidates not yet connected
    * @returns the attributed turn result.
-   * @throws {HarnessAcpError} kind `prompt` when every candidate failed.
+   * @throws {HarnessAcpError} kind `prompt` when every candidate failed; the
+   * message names `tos_unacknowledged` when ToS denial emptied the list.
    */
   async runTurn(
     requirement: TurnRequirement,
     prompt: string,
     factory: HarnessAdapterFactory,
   ): Promise<AttributedTurn> {
-    const candidates = await this.select(requirement,);
+    const { candidates, skips, } = await this.walk(requirement,);
     if (candidates.length === 0) {
       const shown = safeJsonStringify(requirement,);
-      throw new HarnessAcpError("prompt", `no harness profile satisfies ${shown.ok ? shown.value : "?"}`,);
+      const tosNote = skips.length > 0
+        ? ` [${skips.map((s,) => `${s.code}:${s.profile}`).join(", ",)}]`
+        : "";
+
+      throw new HarnessAcpError(
+        "prompt",
+        `no harness profile satisfies ${shown.ok ? shown.value : "?"}${tosNote}`,
+      );
     }
 
     let lastError: HarnessAcpError | null = null;
