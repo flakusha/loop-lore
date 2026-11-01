@@ -3,9 +3,16 @@
 
 /**
  * GenericAcpAdapter negative-path tests: malformed NDJSON, handshake hangs,
- * mid-prompt child exits, and respawn after a dead child. All against the
- * fake ACP fixture (one subprocess pair per test, afterEach hard-kill);
- * short requestTimeoutMs keeps hangs out of the suite.
+ * mid-prompt child exits, and respawn after a dead child.
+ *
+ * Resource contract (parallel-safe): EVERY test owns a fresh fixture
+ * subprocess (startFakeAcp: unique mkdtemp dir, no ports) AND a fresh
+ * adapter client subprocess; both are hard-killed in afterEach, including
+ * failure paths. No shared globals, no fixed paths, no ordering
+ * dependence — any test passes alone or in any order. requestTimeoutMs is
+ * per-test: hang-assertion tests pin a SHORT budget so the dead handshake
+ * rejects fast; success-path tests (respawn) use a GENEROUS budget so a
+ * loaded runner never times out a legitimate round trip.
  */
 import { afterEach, describe, expect, it, } from "bun:test";
 import { type FakeAcpServer, startFakeAcp, } from "./fake-acp-server";
@@ -16,6 +23,11 @@ const live: FakeAcpServer[] = [];
 /** Adapters created by the current test; reaped after each. */
 const adapters: OpenCodeAcpAdapter[] = [];
 
+/** Per-request timeout for hang-assertion tests (dead handshake rejects fast). */
+const HANG_TIMEOUT_MS = 250;
+/** Per-request timeout for success-path tests (survives loaded parallel runners). */
+const LIVE_TIMEOUT_MS = 4000;
+
 /** Start a fixture and register it for teardown. */
 function serve(env: Parameters<typeof startFakeAcp>[0],): FakeAcpServer {
   const server = startFakeAcp(env,);
@@ -23,9 +35,9 @@ function serve(env: Parameters<typeof startFakeAcp>[0],): FakeAcpServer {
   return server;
 }
 
-/** Create an adapter with a short timeout and register it for teardown. */
-function makeAdapter(server: FakeAcpServer,): OpenCodeAcpAdapter {
-  const adapter = new OpenCodeAcpAdapter({ command: server.argv, requestTimeoutMs: 250, },);
+/** Create an adapter with the given per-test timeout; register for teardown. */
+function makeAdapter(server: FakeAcpServer, requestTimeoutMs: number,): OpenCodeAcpAdapter {
+  const adapter = new OpenCodeAcpAdapter({ command: server.argv, requestTimeoutMs, },);
   adapters.push(adapter,);
   return adapter;
 }
@@ -48,7 +60,7 @@ afterEach(async () => {
 describe("GenericAcpAdapter negative paths (fake ACP fixture)", () => {
   it("malformed NDJSON noise does not crash the handshake — typed timeout", async () => {
     const server = serve({ FAKE_MALFORMED: "1", FAKE_MODELS: "m", },);
-    const adapter = makeAdapter(server,);
+    const adapter = makeAdapter(server, HANG_TIMEOUT_MS,);
     await expect(adapter.enumerateModels(),).rejects.toMatchObject({
       name: "HarnessAcpError",
       kind: "initialize",
@@ -60,7 +72,7 @@ describe("GenericAcpAdapter negative paths (fake ACP fixture)", () => {
 
   it("handshake hang rejects initialize as a typed timeout", async () => {
     const server = serve({ FAKE_HANG: "1", FAKE_MODELS: "m", },);
-    const adapter = makeAdapter(server,);
+    const adapter = makeAdapter(server, HANG_TIMEOUT_MS,);
     await expect(adapter.enumerateModels(),).rejects.toMatchObject({
       name: "HarnessAcpError",
       kind: "initialize",
@@ -72,7 +84,7 @@ describe("GenericAcpAdapter negative paths (fake ACP fixture)", () => {
 
   it("mid-prompt child exit fails the turn with the exit code, then respawns", async () => {
     const server = serve({ FAKE_EXIT_ON_PROMPT: "crash me", FAKE_MODELS: "m", FAKE_REPLY: "second try", },);
-    const adapter = makeAdapter(server,);
+    const adapter = makeAdapter(server, LIVE_TIMEOUT_MS,);
     await adapter.enumerateModels();
     await expect(adapter.prompt("crash me",),).rejects.toMatchObject({
       name: "HarnessAcpError",
