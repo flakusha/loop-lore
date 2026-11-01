@@ -325,10 +325,14 @@ if (typeof document.addEventListener === "function") {
     const target = e.target as HTMLElement;
     const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
 
-    // Ctrl+B — toggle sidebar (works everywhere)
+    // Ctrl+B — toggle sidebar (works everywhere). Typed optional lookup:
+    // ui.ts assigns the helper onto globalThis at load, and the listener
+    // tests stub it there; this module is also pulled into the backend
+    // typecheck program via the battle panel chain, where the Window
+    // augmentation is not visible.
     if (e.ctrlKey && e.key === "b") {
       e.preventDefault();
-      globalThis.toggleSidebar();
+      (globalThis as { toggleSidebar?: () => void }).toggleSidebar?.();
       return;
     }
 
