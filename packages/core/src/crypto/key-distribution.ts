@@ -1,0 +1,291 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Key Distribution — Stable Per-Chat Random Keys
+ *
+ * Design (per BUG-chat-key-history-loss-join-leave fix):
+ * - Each chat has one stable random key in `chat_keys` (SMK-encrypted).
+ *   Derived once, reused forever. Join/leave does NOT change it.
+ * - `distributeKeysOnJoin`: ensure new participant has an actor key.
+ *   The chat key is already stable — no re-encrypt needed.
+ * - `rotateKeyOnLeave`: generate a new random chat key, re-encrypt all
+ *   messages AND assets OLD→NEW in one transaction. Old key is replaced
+ *   (forward secrecy). On any failure, the entire rotation is rolled back.
+ * - `getChatKey` / `resolveChatKey`: delegates to `deriveChatKeyForChat`
+ *   which loads (or creates lazily) the stable chat key.
+ */
+
+import type { DB, } from "@/db/schema";
+import { getLogger, } from "@/logger";
+import type { Logger, } from "@/logger";
+import type { Kysely, } from "kysely";
+import fs from "node:fs";
+import { encryptBytes, } from "./actor-key-bytes";
+import { ensureActorKey, } from "./actor-keys";
+import { type ChatKey, deriveChatKeyForChat, } from "./chat-keys";
+import { reEncryptChatAssets, reEncryptWithKeys, } from "./key-rotation/re-encrypt";
+import { recordRotationAuditLeave, } from "./key-rotation/rotation-history";
+import { getSmk, } from "./smk";
+
+// Unified re-encrypt limit: re-encrypt ALL messages (no cap) to prevent
+// stranded rows under expired keys.
+const RE_ENCRYPT_LIMIT = Number.MAX_SAFE_INTEGER;
+
+// ─── Concurrent rotation coalescing (AC5, AC6) ──────────────────
+// Single-process in-memory tracking of in-flight rotations per chat so
+// concurrent leave/join requests collapse to ONE re-encrypt event (AC5)
+// and concurrent send-encryptions block until any in-flight rotation
+// commits, observing the post-rotation key — never a stale one (AC6).
+// `rotationEventCount` counts actual rotation bodies that ran (coalesced
+// no-op waits do NOT count). Read via `getRotationEventCount`.
+const inflightRotations = new Map<string, Promise<ChatKey>>();
+let rotationEventCount = 0;
+
+export function getRotationEventCount(): number {
+  return rotationEventCount;
+}
+
+export function resetRotationEventCount(): void {
+  rotationEventCount = 0;
+  inflightRotations.clear();
+}
+
+/**
+ * Delete staged re-encrypted asset temp files after a failed rotation.
+ * Best-effort: a leftover temp file must not mask the original error.
+ * @param staged - temp paths produced by {@link reEncryptChatAssets}
+ */
+function discardStagedAssets(staged: { tmpPath: string; finalPath: string }[],): void {
+  for (const { tmpPath, } of staged) {
+    try {
+      fs.rmSync(tmpPath, { force: true, },);
+    } catch (error) {
+      log().warn("Failed to remove staged re-encrypt temp file", {
+        tmpPath,
+        error: (error as Error).message,
+      },);
+    }
+  }
+}
+
+/**
+ * @param chatId
+ * @returns nothing once the in-flight rotation for `chatId` settles
+ * @throws When the in-flight rotation rejects — callers must fail closed.
+ */
+export async function awaitChatKeyLock(chatId: string,): Promise<void> {
+  const inflight = inflightRotations.get(chatId,);
+  if (!inflight) { return; }
+  await inflight;
+}
+
+function log(): Logger {
+  return getLogger().child({ module: "key-distribution", },);
+}
+
+/**
+ * @param database
+ * @param chatId
+ * @returns the chat's AES-GCM key as imported `key`, `rawKey` and `keyId`; reused
+ *   from the chat's stored row, generated on first use
+ * @throws {Error} When encryption is not configured.
+ */
+export async function getChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
+  const smk = getSmk();
+  if (!smk) { throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",); }
+  return deriveChatKeyForChat(database, chatId, smk,);
+}
+
+/**
+ * @param database
+ * @param chatId
+ * @param newParticipantId
+ * @returns the chat key the joiner derives from their own actor key — the chat key is
+ *   not re-encrypted, only the participant's access to it is added
+ * @throws {Error} When encryption is not configured.
+ */
+export async function distributeKeysOnJoin(
+  database: Kysely<DB>,
+  chatId: string,
+  newParticipantId: string,
+): Promise<ChatKey> {
+  const smk = getSmk();
+  if (!smk) { throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",); }
+  await ensureActorKey({ database, actorId: newParticipantId, smk, },);
+  const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
+  log().info("Distributed chat key to new participant (stable, no re-encrypt)", {
+    chatId,
+    newParticipantId,
+    keyId: chatKey.keyId,
+  },);
+
+  return chatKey;
+}
+
+/**
+ * @param database
+ * @param chatId
+ * @param departedParticipantId
+ * @returns the freshly re-encrypted chat key; concurrent callers for the same chat
+ *   share the one in-flight rotation
+ * @throws When no participants remain or any re-encrypt step fails.
+ */
+export async function rotateKeyOnLeave(
+  database: Kysely<DB>,
+  chatId: string,
+  departedParticipantId: string,
+): Promise<ChatKey> {
+  // Coalesce concurrent rotateKeyOnLeave calls per chat (AC5). The first
+  // caller runs the rotation; subsequent callers await the in-flight
+  // promise and return the same ChatKey. The counter increments only
+  // when the rotation body actually runs.
+  const existing = inflightRotations.get(chatId,);
+  if (existing) { return existing; }
+  const promise = doRotate(database, chatId, departedParticipantId,).finally(() => {
+    if (inflightRotations.get(chatId,) === promise) { inflightRotations.delete(chatId,); }
+  },);
+
+  inflightRotations.set(chatId, promise,);
+  return promise;
+}
+
+/**
+ * @param database
+ * @param chatId
+ * @param departedParticipantId
+ * @throws When validation or any re-encrypt step fails; DB txn rolls back.
+ */
+async function doRotate(
+  database: Kysely<DB>,
+  chatId: string,
+  departedParticipantId: string,
+): Promise<ChatKey> {
+  const smk = getSmk();
+  if (!smk) { throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",); }
+
+  const oldChatKey = await deriveChatKeyForChat(database, chatId, smk,);
+
+  const allActorIds = await database
+    .selectFrom("chat_participants",)
+    .select("actor_id",)
+    .where("chat_id", "=", chatId,)
+    .execute();
+
+  const remainingActors = allActorIds
+    .map((r,) => r.actor_id)
+    .filter((id,) => id !== departedParticipantId);
+
+  if (remainingActors.length === 0) {
+    throw new Error("Cannot rotate key: no remaining participants",);
+  }
+
+  rotationEventCount++;
+  const newId = crypto.randomUUID();
+  const newRawKey = crypto.getRandomValues(new Uint8Array(32,),);
+  const newEncryptedKey = await encryptBytes(smk, newRawKey,);
+  const newKey = await crypto.subtle.importKey(
+    "raw",
+    newRawKey,
+    "AES-GCM",
+    true,
+    ["encrypt", "decrypt",],
+  );
+
+  const newChatKey: ChatKey = { key: newKey, keyId: newId, rawKey: newRawKey, };
+
+  // Re-encrypt asset files BEFORE opening the transaction, but STAGE the
+  // re-encrypted blobs at temp paths. If the DB txn rolls back, the staged
+  // files are deleted and the original (old-key) files remain consistent
+  // with the reverted database — in-place writes here would leave new-key
+  // ciphertext on disk under the old key, permanently destroying the assets
+  // (BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans).
+  const assetResult = await reEncryptChatAssets(
+    database,
+    chatId,
+    process.env["UPLOAD_DIR"] ?? "./uploads",
+    { algorithm: "zstd", threshold: 1024, },
+    oldChatKey,
+    newChatKey,
+  );
+
+  if (assetResult.failures.length > 0) {
+    discardStagedAssets(assetResult.staged,);
+    throw new Error(
+      `rotateKeyOnLeave: ${assetResult.failures.length} asset(s) failed to re-encrypt: ${
+        assetResult.failures[0]!.reason
+      }`,
+    );
+  }
+
+  // Wrap message re-encryption + key swap in a single transaction.
+  // On any failure, the entire rotation is rolled back and the staged asset
+  // files are discarded — no mixed key state.
+  // Declared `let` so the post-transaction audit block can read the count.
+  let reEncrypted = 0;
+
+  let failures: { id: string; reason: string }[] = [];
+
+  try {
+    await database.transaction().execute(async (trx,) => {
+      // Re-encrypt all messages (visible + non-visible) OLD→NEW.
+      const result = await reEncryptWithKeys(
+        trx,
+        chatId,
+        oldChatKey,
+        newChatKey,
+        RE_ENCRYPT_LIMIT,
+        { includeAll: true, },
+      );
+
+      reEncrypted = result.reEncrypted;
+      failures = result.failures;
+
+      if (failures.length > 0) {
+        throw new Error(
+          `rotateKeyOnLeave: ${failures.length} message(s) failed to re-encrypt: ${failures[0]!.reason}`,
+        );
+      }
+
+      // Swap the chat key row ONLY after all re-encryption succeeds.
+      await trx
+        .updateTable("chat_keys",)
+        .set({ id: newId, encrypted_chat_key: newEncryptedKey, expires_at: null, },)
+        .where("chat_id", "=", chatId,)
+        .execute();
+
+      log().info("Rotated chat key on participant leave (forward secrecy)", {
+        chatId,
+        departedParticipantId,
+        oldKeyId: oldChatKey.keyId,
+        newKeyId: newId,
+        messagesReEncrypted: reEncrypted,
+        assetsReEncrypted: assetResult.reEncrypted,
+      },);
+    },);
+  } catch (error) {
+    // The transaction rolled back — discard the staged blobs so the
+    // old-key files on disk stay consistent with the reverted DB.
+    discardStagedAssets(assetResult.staged,);
+    throw error;
+  }
+
+  // The key swap is committed and durable — now swap the file bytes in.
+  for (const { tmpPath, finalPath, } of assetResult.staged) {
+    fs.renameSync(tmpPath, finalPath,);
+  }
+
+  await recordRotationAuditLeave(database, {
+    chatId,
+    actorId: departedParticipantId,
+    oldKeyId: oldChatKey.keyId,
+    newKeyId: newId,
+    messagesReEncrypted: reEncrypted + assetResult.reEncrypted,
+  },);
+
+  return newChatKey;
+}
+
+export async function resolveChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
+  return getChatKey(database, chatId,);
+}
