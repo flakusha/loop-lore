@@ -265,6 +265,8 @@ export interface WorldPageState {
   readonly hasConditions: boolean;
   readonly timeIcon: string;
   readonly weatherIcon: string;
+  /** Icon for an arbitrary (forecast) weather value. */
+  iconForWeather(value: string | null,): string;
   readonly seasonIcon: string;
   readonly isNightNow: boolean;
   readonly forecastAvailable: boolean;

@@ -51,6 +51,7 @@
     <span
       class="condition"
       data-testid="condition-day-night"
+      x-show="timeOfDay"
       :aria-label="t('worlds.conditionDayNight')"
       x-text="t(isNightNow ? 'worlds.nightLabel' : 'worlds.dayLabel')"
     ></span>
@@ -67,7 +68,7 @@
       <span
         class="condition forecast-day"
         :aria-label="t('worlds.forecastTitle')"
-        x-text="`${weatherIcon(f.weather)} ${f.weather} · ${t('worlds.conditionsDayLabel')} ${f.day} · ${f.temperature}°`"
+        x-text="`${iconForWeather(f.weather)} ${f.weather} · ${t('worlds.conditionsDayLabel')} ${f.day} · ${f.temperature}°`"
       ></span>
     </template>
   </div>
