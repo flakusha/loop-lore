@@ -26,6 +26,13 @@ does not expose model selection through stable ACP v1 `configOptions`:
 This is exactly the divergence the parent ticket's caveat calls out: do not guess wire
 casing — split out until the surface stabilizes.
 
+**Context:**
+
+Split out of `TASK-acp-profile-harness-adapters` after that ticket's wire-casing
+caveat flagged Claude Code's non-standard model surface; tracked separately so the
+shared `GenericAcpAdapter` engine does not grow special cases for an `unstable_`
+upstream API that can still change.
+
 **Acceptance Criteria:**
 
 - [x] claude-code adapter (`src/integrations/harness/claude-code.ts`) on the

@@ -14,18 +14,24 @@ import {
 } from "./commands";
 
 function battle(overrides: Partial<BattleView> = {},): BattleView {
-  return {
-    id: "b1",
-    status: "active",
-    round: 3,
-    turnIndex: 0,
-    combatants: [
-      { id: "c1", name: "Aria", hp: 10, maxHp: 20, initiative: 2, },
-      { id: "c2", name: "Ogre", hp: 30, maxHp: 30, initiative: 1, },
-    ],
-    items: [],
-    ...overrides,
-  };
+  // Object.assign keeps the required `log` field non-optional in the result
+  // type, which a plain `{ base, ...overrides }` spread would widen to
+  // `BattleLogEntryView[] | undefined`.
+  return Object.assign(
+    {
+      id: "b1",
+      status: "active",
+      round: 3,
+      turnIndex: 0,
+      combatants: [
+        { id: "c1", name: "Aria", hp: 10, maxHp: 20, initiative: 2, conditions: [], },
+        { id: "c2", name: "Ogre", hp: 30, maxHp: 30, initiative: 1, conditions: [], },
+      ],
+      items: [],
+      log: [],
+    } as BattleView,
+    overrides,
+  );
 }
 
 describe("enabledActionSlots", () => {
