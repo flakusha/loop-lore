@@ -29,22 +29,23 @@ Battle log component showing combat events, actions, and results.
 
 ## Acceptance Criteria
 
-- [ ] Battle log with scrollable container
-- [ ] Action type indicators with colors
-- [ ] Critical hit/damage highlighting
-- [ ] Turn separators
-- [ ] Auto-scroll to latest events
-- [ ] Mobile responsive
+- [x] Battle log with scrollable container
+- [x] Action type indicators with colors
+- [x] Critical hit/damage highlighting
+- [ ] Turn separators (the payload's log entries carry no round/turn markers — `CombatAction` has none; adding them needs backend payload data, not client-side inference)
+- [x] Auto-scroll to latest events
+- [x] Mobile responsive
 
 ## Implementation Notes
 
 - Use htmx + Alpine.js
-- Log data from SSE stream
+- Log data is delivered in the `battle-*` command action payload: `serializeBattle` (`src/assistant/commands/battle-utils.ts`) maps `battle.log` to lean entries (type, damage, critical, description)
 
-## Files to Create
 
-- `src/frontend/battle/battle-log.ts`
-- `src/frontend/battle/battle-log-entry.ts`
+## Files
+
+- `src/frontend/battle/battle-log.ts` (entry rendering included — no separate `battle-log-entry.ts` needed)
+- Panel wiring in `src/frontend/battle/panel.ts`
 
 ## Related Tasks
 

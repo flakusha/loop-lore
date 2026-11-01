@@ -65,8 +65,8 @@ describe("turnQueue", () => {
   it("flags downed combatants", () => {
     const withDead = view({
       combatants: [
-        { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, },
-        { id: "ghost", name: "Ghost", hp: 0, maxHp: 10, initiative: 9, },
+        { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, conditions: [], },
+        { id: "ghost", name: "Ghost", hp: 0, maxHp: 10, initiative: 9, conditions: [], },
       ],
     },);
 
@@ -116,8 +116,8 @@ describe("renderTurnOrder", () => {
   it("marks downed combatant chips with is-dead", () => {
     const withDead = view({
       combatants: [
-        { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, },
-        { id: "ghost", name: "Ghost", hp: 0, maxHp: 10, initiative: 9, },
+        { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, conditions: [], },
+        { id: "ghost", name: "Ghost", hp: 0, maxHp: 10, initiative: 9, conditions: [], },
       ],
     },);
 

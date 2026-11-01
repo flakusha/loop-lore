@@ -46,8 +46,8 @@ afterEach(() => {
 },);
 
 const roster: BattleCombatantView[] = [
-  { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, },
-  { id: "orc", name: "Orc Grunt", hp: 8, maxHp: 20, initiative: 5, },
+  { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, conditions: [], },
+  { id: "orc", name: "Orc Grunt", hp: 8, maxHp: 20, initiative: 5, conditions: [], },
 ];
 
 describe("battleCommandFor", () => {
@@ -56,7 +56,7 @@ describe("battleCommandFor", () => {
   });
 
   it("attack does not quote a single-word target name", () => {
-    const singleWord = [{ id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, },];
+    const singleWord = [{ id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, conditions: [], },];
     expect(battleCommandFor("attack", "alice", singleWord,),).toBe("/attack Alice",);
   });
 

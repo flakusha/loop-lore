@@ -160,9 +160,22 @@ export function actingCombatant(battle: BattleWithRoster,): Combatant | null {
   return battle.combatants.find((c,) => !c.isNpc) ?? battle.combatants[0] ?? null;
 }
 
+/** One battle-log entry as rendered by the panel's log viewer. */
+export interface SerializedLogEntry {
+  /** Combat action type (the log entry's indicator class). */
+  type: string;
+  /** Damage dealt / HP restored when the action moved HP (omitted otherwise). */
+  damage?: number;
+  /** Natural-20 attack (drives the entry's critical highlighting). */
+  critical: boolean;
+  /** Narration line for the entry. */
+  description: string;
+}
+
 /**
  * Serialize the battle for a frontend action payload, including the acting
- * combatant's battle-usable items for the panel's Item group.
+ * combatant's battle-usable items for the panel's Item group, each
+ * combatant's active conditions, and the battle log.
  * @param battle - The battle to serialize
  * @param usableItems - The acting combatant's battle-usable items
  * @returns The panel `BattleView` payload
@@ -176,7 +189,15 @@ export function serializeBattle(
   round: number;
   turnIndex: number;
   items: BattleItemView[];
-  combatants: { id: string; name: string; hp: number; maxHp: number; initiative: number }[];
+  combatants: {
+    id: string;
+    name: string;
+    hp: number;
+    maxHp: number;
+    initiative: number;
+    conditions: string[];
+  }[];
+  log: SerializedLogEntry[];
 } {
   const combatants = Array.from(battle.combatants, (c,) => ({
     id: c.id,
@@ -184,7 +205,20 @@ export function serializeBattle(
     hp: Math.max(0, c.hp,),
     maxHp: c.maxHp,
     initiative: c.initiative,
+    conditions: c.conditions,
   }),);
+
+  const log = Array.from(battle.log, (entry,) => {
+    const serialized: SerializedLogEntry = {
+      type: entry.type,
+      critical: entry.attack?.criticalHit ?? false,
+      description: entry.description,
+    };
+
+    if (entry.damage !== undefined) { serialized.damage = entry.damage; }
+
+    return serialized;
+  },);
 
   return {
     id: battle.id,
@@ -193,5 +227,6 @@ export function serializeBattle(
     turnIndex: battle.turnIndex,
     items: usableItems,
     combatants,
+    log,
   };
 }

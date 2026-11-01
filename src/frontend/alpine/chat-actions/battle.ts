@@ -9,7 +9,12 @@
  * chat-action router) so each file stays under 250L.
  */
 
-import type { BattleCombatantView, BattleItemView, BattleView, } from "../../battle/panel";
+import type {
+  BattleCombatantView,
+  BattleItemView,
+  BattleLogEntryView,
+  BattleView,
+} from "../../battle/panel";
 
 import type { ActionHandler, } from "./dispatch";
 
@@ -35,8 +40,13 @@ function renderBattleFromPayload(
       hp: c.hp,
       maxHp: c.maxHp,
       initiative: c.initiative,
+      conditions: Array.isArray(c.conditions,) ? c.conditions.filter(isConditionShape,) : [],
     },);
   }
+
+  const log: BattleLogEntryView[] = Array.isArray(raw.log,)
+    ? raw.log.filter(isLogEntryShape,)
+    : [];
 
   const view: BattleView = {
     id: raw.id,
@@ -45,6 +55,7 @@ function renderBattleFromPayload(
     turnIndex: raw.turnIndex,
     combatants,
     items: Array.isArray(raw.items,) ? raw.items.filter(isItemShape,) : [],
+    log,
   };
 
   const panel = ctx as { renderBattlePanel(view: BattleView,): void } | null;
@@ -62,6 +73,7 @@ function isBattleViewShape(value: unknown,): value is {
   turnIndex: number;
   combatants: unknown[];
   items?: unknown;
+  log?: unknown;
 } {
   if (!value || typeof value !== "object") { return false; }
   const v = value as Record<string, unknown>;
@@ -102,6 +114,29 @@ function isItemShape(value: unknown,): value is BattleItemView {
     typeof v.id === "string" &&
     typeof v.name === "string" &&
     typeof v.quantity === "number"
+  );
+}
+
+/**
+ * @param value
+ * @returns true when `value` is a condition string.
+ */
+function isConditionShape(value: unknown,): value is string {
+  return typeof value === "string";
+}
+
+/**
+ * @param value
+ * @returns true when `value` has a battle-log entry shape.
+ */
+function isLogEntryShape(value: unknown,): value is BattleLogEntryView {
+  if (!value || typeof value !== "object") { return false; }
+  const v = value as Record<string, unknown>;
+  const damageOk = v.damage === undefined || typeof v.damage === "number";
+  return (
+    typeof v.type === "string" &&
+    damageOk &&
+    typeof v.description === "string"
   );
 }
 

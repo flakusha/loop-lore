@@ -30,10 +30,11 @@ export function view(overrides: Partial<BattleView> = {},): BattleView {
     round: 2,
     turnIndex: 0,
     combatants: [
-      { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, },
-      { id: "orc", name: "Orc Grunt", hp: 8, maxHp: 20, initiative: 5, },
+      { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, conditions: [], },
+      { id: "orc", name: "Orc Grunt", hp: 8, maxHp: 20, initiative: 5, conditions: [], },
     ],
     items: [],
+    log: [],
     ...overrides,
   };
 }
@@ -95,5 +96,5 @@ export function actionButton(container: FakeEl, kind: string,): FakeEl {
  * @returns a BattleCombatantView with 0 hp.
  */
 export function deadCombatant(id = "ghost",): BattleCombatantView {
-  return { id, name: "Ghost", hp: 0, maxHp: 10, initiative: 1, };
+  return { id, name: "Ghost", hp: 0, maxHp: 10, initiative: 1, conditions: [], };
 }
