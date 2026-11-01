@@ -98,6 +98,22 @@ export interface PromptSectionReport {
   dropped: boolean;
 }
 
+/**
+ * Compression metadata for one assembly (TASK-ctx-metrics): what the budget
+ * enforcement and history compaction removed, surfaced to telemetry and the
+ * generate response.
+ */
+export interface CompressionMetadata {
+  /** Tokens removed by whole-section drops before compaction. */
+  droppedTokens: number;
+  /** Section names dropped for budget (lossy tiers first). */
+  droppedSections: string[];
+  /** Whether ContextCompactor replaced older history with a summary. */
+  compacted: boolean;
+  /** Tokens carried by the messages the compactor summarized away. */
+  compactedTokens: number;
+}
+
 /** */
 export interface AssembledPrompt {
   /** Messages array for LLM request */
@@ -112,6 +128,8 @@ export interface AssembledPrompt {
   sections: PromptSectionReport[];
   /** Resolved response-length config (wires buildLengthConfig into assembly). */
   responseLength?: ResponseLengthConfig | null;
+  /** What budget enforcement and compaction removed (TASK-ctx-metrics). */
+  compression?: CompressionMetadata;
   /**
    * Injection gate provenance (epic-hidden-carriage-context): the assembly
    * role plus dropped duplicates and suppressed entries for the debug `?`

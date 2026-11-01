@@ -25,7 +25,7 @@ import type { DB, } from "../db/schema";
 import { defaultTokenCount, } from "../generation/context-window-config";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
-import { dropOverBudgetSections, reorderPromptMessages, } from "./prompt-budget";
+import { applyBudgetDrops, reorderPromptMessages, } from "./prompt-budget";
 import { withResolvedOutfit, } from "./prompt-outfit";
 import { withResolvedPersonality, } from "./prompt-personality";
 import { loadUserPromptPreferences, } from "./prompt-user-preferences";
@@ -38,6 +38,7 @@ import type {
   AssembleChat,
   AssembleContext,
   AssembledPrompt,
+  CompressionMetadata,
   PromptParams,
   PromptSectionReport,
 } from "./prompt/types";
@@ -88,9 +89,14 @@ export class PromptAssembler {
     let totalTokens = 0;
     for (const s of sections) { if (!s.dropped) { totalTokens += s.tokens; } }
 
-    if (totalTokens > ctx.tokenBudget) {
-      totalTokens = dropOverBudgetSections(sections, ctx.tokenBudget, totalTokens,);
-    }
+    const drops = applyBudgetDrops(sections, ctx.tokenBudget, totalTokens,);
+    const compression: CompressionMetadata = {
+      ...drops,
+      compacted: false,
+      compactedTokens: 0,
+    };
+
+    totalTokens = drops.totalTokens;
 
     const finalMessages = reorderPromptMessages(messages, sections,);
 
@@ -101,6 +107,7 @@ export class PromptAssembler {
       tokenBudget: ctx.tokenBudget,
       sections,
       responseLength: resolvedResponseLength,
+      compression,
       // Debug `?` provenance — only when the gate ran.
       ...(ctx.injectables ? { injectables: ctx.injectables.report(), } : {}),
     };
