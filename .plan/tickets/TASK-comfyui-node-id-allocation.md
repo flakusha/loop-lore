@@ -123,3 +123,5 @@ on ids.
 
 
 git issue: 7fe2a33
+
+**Resolved:** 2026-11-01 registry-driven close: git issue 7fe2a33 (registry tip: ff6285823 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-COMFYUI-NODE-ID-ALLOCATION )
