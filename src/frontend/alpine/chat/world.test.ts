@@ -136,6 +136,7 @@ function makeSelectCtx(overrides: Record<string, unknown> = {},): Record<string,
     loadTurnOrder: noop,
     loadAvailableActors: noop,
     loadNsfwPanel: noop,
+    loadBodyState: noop,
     ...overrides,
   },);
 }
@@ -545,6 +546,23 @@ describeOrSkip("chatWorld._selectChatInner happy path", () => {
 
     await chatWorld._selectChatInner!.call(ctx, "c1",);
     expect(calls,).toEqual(["participants", "nsfw",],);
+  });
+
+  test("loads body state after the NSFW panel on chat selection", async () => {
+    const calls: string[] = [];
+    const ctx = makeSelectCtx({
+      loadNsfwPanel: () => {
+        calls.push("nsfw",);
+        return Promise.resolve();
+      },
+      loadBodyState: () => {
+        calls.push("bodyState",);
+        return Promise.resolve();
+      },
+    },);
+
+    await chatWorld._selectChatInner!.call(ctx, "c1",);
+    expect(calls,).toEqual(["nsfw", "bodyState",],);
   });
 },);
 

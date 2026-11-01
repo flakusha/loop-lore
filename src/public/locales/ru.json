@@ -1051,6 +1051,23 @@
   "mood": {
     "adjustHappiness": "Настроить уровень счастья"
   },
+
+  "nsfw": {
+    "bodyState": {
+      "title": "Состояние тела",
+      "health": "Здоровье",
+      "arousal": "Возбуждение",
+      "conditions": "Состояния",
+      "noConditions": "Нет активных состояний",
+      "source": "Источник: {source}",
+      "turnsLeft": "Осталось ходов: {count}",
+      "arousalCalm": "Спокойствие",
+      "arousalMild": "Слегка возбуждён",
+      "arousalActive": "Возбуждён",
+      "arousalHigh": "Сильно возбуждён",
+      "arousalDesperate": "В отчаянии"
+    }
+  },
   "help": {
     "settings": {
       "theme": "Выберите цветовую схему. Изменения применяются немедленно.",

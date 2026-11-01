@@ -1569,6 +1569,23 @@
   "mood": {
     "adjustHappiness": "Adjust Happiness"
   },
+
+  "nsfw": {
+    "bodyState": {
+      "title": "Body State",
+      "health": "Health",
+      "arousal": "Arousal",
+      "conditions": "Conditions",
+      "noConditions": "No active conditions",
+      "source": "Source: {source}",
+      "turnsLeft": "Turns left: {count}",
+      "arousalCalm": "Calm",
+      "arousalMild": "Mildly Aroused",
+      "arousalActive": "Aroused",
+      "arousalHigh": "Highly Aroused",
+      "arousalDesperate": "Desperate"
+    }
+  },
   "help": {
     "settings": {
       "theme": "Choose a color scheme. Changes apply immediately.",
