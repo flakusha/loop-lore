@@ -57037,7 +57037,7 @@
     "label": "task",
     "priority": "P0",
     "source": ".plan/tickets/TASK-rpg-stats-frontend-wiring.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "rpg",
       "frontend",
