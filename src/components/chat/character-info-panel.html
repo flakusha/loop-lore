@@ -121,6 +121,37 @@
               </div>
             </template>
 
+            <!-- Status effects: conditions + buff/debuff badges -->
+            <template x-if="statusEffects && statusEffects.length > 0">
+              <div class="rpg-status-section" data-testid="rpg-status-section">
+                <div class="rpg-stat-label">Status Effects</div>
+                <div class="rpg-status-badges">
+                  <template x-for="fx in statusEffects" :key="fx.id">
+                    <span
+                      class="rpg-status-badge"
+                      :title="fx.description + (fx.duration >= 0 ? ` (${fx.duration} rounds)` : '')"
+                      data-testid="rpg-status-badge"
+                    ><span x-text="fx.name"></span><span x-show="fx.duration >= 0" x-text="` ${fx.duration}r`"></span></span>
+                  </template>
+                </div>
+              </div>
+            </template>
+
+            <!-- Equipment: equipped actor-items by slot -->
+            <template x-if="equipment && equipment.length > 0">
+            <div class="rpg-equip-section" data-testid="rpg-equip-section">
+              <div class="rpg-stat-label">Equipment</div>
+              <div class="rpg-core-stats">
+                <template x-for="slot in equipment" :key="slot.slot">
+                  <div class="rpg-stat-row">
+                    <span class="rpg-stat-name" x-text="slot.slot.toUpperCase()"></span>
+                    <span x-text="slot.itemName || '—'"></span>
+                  </div>
+                </template>
+              </div>
+            </div>
+            </template>
+
             <!-- Core Stats -->
             <div class="rpg-core-stats">
               <div class="rpg-stat-row">
