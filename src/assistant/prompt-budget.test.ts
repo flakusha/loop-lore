@@ -16,6 +16,7 @@ import {
   dropOverBudgetSections,
   reorderPromptMessages,
 } from "./prompt-budget";
+import { SECTION_LOSSLESSNESS, } from "./prompt/types";
 import type { PromptSectionReport, } from "./prompt/types";
 
 function msg(role: GenerationMessage["role"], content: string,): GenerationMessage {
@@ -25,6 +26,22 @@ function msg(role: GenerationMessage["role"], content: string,): GenerationMessa
 function section(name: string, tokens: number, dropped = false,): PromptSectionReport {
   return { name, chars: tokens * 4, tokens, dropped, };
 }
+
+// TASK-ctx-tier-model: the lossless/lossy contract every section is tagged with.
+describe("SECTION_LOSSLESSNESS", () => {
+  test("lossy tiers are exactly the selection-capped sections", () => {
+    expect(SECTION_LOSSLESSNESS.lore,).toBe("lossy",);
+    expect(SECTION_LOSSLESSNESS.memories,).toBe("lossy",);
+    expect(SECTION_LOSSLESSNESS.recentEvents,).toBe("lossy",);
+  });
+
+  test("recent chat history and behavior-critical sections are lossless", () => {
+    expect(SECTION_LOSSLESSNESS.chatHistory,).toBe("lossless",);
+    expect(SECTION_LOSSLESSNESS.system,).toBe("lossless",);
+    expect(SECTION_LOSSLESSNESS.storyContext,).toBe("lossless",);
+    expect(SECTION_LOSSLESSNESS.authorNote,).toBe("lossless",);
+  });
+});
 
 // TASK-ctx-metrics: drop accounting for compression metadata.
 describe("applyBudgetDrops", () => {

@@ -33,7 +33,7 @@ import {
   insertWorldTimelineEvents,
 } from "../../../test-utils/insert-helpers";
 import type { AssembleContext, } from "../types";
-import { loreSection, MAX_CONVERGENT_EVENTS, MAX_PROMPT_STEERINGS, } from "./lore";
+import { loreSection, MAX_CONVERGENT_EVENTS, MAX_LORE_TOKENS, MAX_PROMPT_STEERINGS, } from "./lore";
 
 describe("loreSection — audience-constrained world-lore injection", () => {
   const elfLore = "The underground castle was abandoned centuries ago.";
@@ -908,6 +908,10 @@ describe("loreSection — token budget cap", () => {
 
   /** 3000 chars → ~750 estimated tokens per entry (chars / 4). */
   const HEAVY = 3000;
+
+  test("MAX_LORE_TOKENS pins the cap the budget fixture relies on", () => {
+    expect(MAX_LORE_TOKENS,).toBe(1024,);
+  });
 
   test("low-priority entries drop when activations exceed MAX_LORE_TOKENS", async () => {
     const { db, sqlite, } = await createTestDb();
