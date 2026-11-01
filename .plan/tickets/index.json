@@ -43918,6 +43918,19 @@
     "status": "Not Started",
     "git_issue": "a893dc4"
   },
+  "TASK-HARNESS-PROVIDER-TOS-USAGE-CLASS-MATRIX": {
+    "hash": "c311702",
+    "git_issue": "c311702",
+    "extid": "TASK-HARNESS-PROVIDER-TOS-USAGE-CLASS-MATRIX",
+    "type": "TASK",
+    "title": "Harness provider ToS usage-class matrix",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-provider-tos-usage-class-matrix.md",
+    "status": "Not Started"
+  },
   "TASK-HARNESS-REUSABLE-CHAT-ROUTE-FILES-FROM-THE-GENERATE-ROUTE-PA": {
     "hash": "bc92e99",
     "git_issue": "bc92e99",
@@ -44069,6 +44082,45 @@
       "tui"
     ],
     "source": ".plan/tickets/TASK-harness-topic-tui-surface.md",
+    "status": "Not Started"
+  },
+  "TASK-HARNESS-TOS-ACKNOWLEDGEMENT-CONFIG-FLAG": {
+    "hash": "fe22c91",
+    "git_issue": "fe22c91",
+    "extid": "TASK-HARNESS-TOS-ACKNOWLEDGEMENT-CONFIG-FLAG",
+    "type": "TASK",
+    "title": "Harness ToS acknowledgement config flag",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-tos-acknowledgement-config-flag.md",
+    "status": "Not Started"
+  },
+  "TASK-HARNESS-TOS-ACKNOWLEDGEMENT-DISPATCH-GUARD": {
+    "hash": "c177368",
+    "git_issue": "c177368",
+    "extid": "TASK-HARNESS-TOS-ACKNOWLEDGEMENT-DISPATCH-GUARD",
+    "type": "TASK",
+    "title": "Harness ToS acknowledgement dispatch guard",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-tos-acknowledgement-dispatch-guard.md",
+    "status": "Not Started"
+  },
+  "TASK-HARNESS-TOS-ACKNOWLEDGEMENT-FRONTEND-CONFIRMATION": {
+    "hash": "bc45824",
+    "git_issue": "bc45824",
+    "extid": "TASK-HARNESS-TOS-ACKNOWLEDGEMENT-FRONTEND-CONFIRMATION",
+    "type": "TASK",
+    "title": "Harness ToS acknowledgement frontend confirmation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-tos-acknowledgement-frontend-confirmation.md",
     "status": "Not Started"
   },
   "TASK-HARNESS-WORK-TOPICS": {
