@@ -3,7 +3,7 @@
 
 # TASK: Harness ToS acknowledgement config flag
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
@@ -25,19 +25,28 @@ Policy frame (binding): gating applies to harness-as-provider dispatch ONLY. Loc
 
 ## Acceptance Criteria
 
-- [ ] `AcpProfileConfig.tosGrayzoneAcknowledged?: boolean`, absent/false by default (`HARNESS_DEFAULTS`, `packages/core/src/config/sections/harness.ts:19-25`, unchanged).
-- [ ] `validateProfile` rejects non-boolean values for the flag; absent stays false after defaults application.
-- [ ] `harnessMeta` schema description for the flag carries the warning: enabling permits harness-as-provider usage of a subscription-backed provider account, which may conflict with provider ToS.
-- [ ] No gating behavior change in this ticket — runtime enforcement is TASK-harness-tos-acknowledgement-dispatch-guard.
+- [x] `AcpProfileConfig.tosGrayzoneAcknowledged?: boolean`, absent/false by default (`HARNESS_DEFAULTS`, `packages/core/src/config/sections/harness.ts:19-25`, unchanged).
+- [x] `validateProfile` rejects non-boolean values for the flag; absent stays false after defaults application.
+- [x] `harnessMeta` schema description for the flag carries the warning: enabling permits harness-as-provider usage of a subscription-backed provider account, which may conflict with provider ToS.
+- [x] No gating behavior change in this ticket — runtime enforcement is TASK-harness-tos-acknowledgement-dispatch-guard.
 
 **Dependencies:** none; blocks TASK-harness-tos-acknowledgement-dispatch-guard (runtime guard) and TASK-harness-tos-acknowledgement-frontend-confirmation (toggle persists this flag).
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The flag records explicit per-profile user consent for harness-as-provider use of a
+subscription-backed account (grayzone warning lives in the schema description).
+Placement on `AcpProfileConfig` (not `HarnessAcpConfig`) keeps acknowledgement granular,
+matching how `limits`/`health` are scoped. Policy frame: local execution and direct API
+access stay ungated; with the flag absent/false every profile flows exactly as today —
+no runtime gating in this ticket (that is TASK-harness-tos-acknowledgement-dispatch-guard).
+No generated schema artifact embeds `harnessMeta` — `harnessMeta` in
+`packages/core/src/config/sections/harness.ts` is the single source (re-exported verbatim
+by `packages/core/src/config/schema-class/json-schema/harness.ts`), so no regen script run
+was needed.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing (`bun test packages/core/src/config/ --isolate`: 486 pass; `bun test src/integrations/harness/ --isolate`: 104 pass; `bun run check --diff-base dev` green after a dprint fix and one unrelated flaky browser spec re-verified passing standalone)
+- [x] Documentation updated (schema description carries the ToS warning + policy frame; no separate doc page exists for this section)

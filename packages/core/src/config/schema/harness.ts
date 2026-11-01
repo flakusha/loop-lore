@@ -73,6 +73,13 @@ export interface AcpProfileConfig {
   limits?: AcpProfileLimits;
   /** Optional breaker thresholds. */
   health?: AcpProfileHealth;
+  /**
+   * Explicit user acknowledgement that driving this profile for RPG/other
+   * non-chat functionalities may conflict with the provider's ToS when the
+   * profile is subscription-backed. Absent/false by default; records consent
+   * only — it does not gate dispatch (see the dispatch-guard ticket).
+   */
+  tosGrayzoneAcknowledged?: boolean;
 }
 
 /** `harness.acp` sub-config. */

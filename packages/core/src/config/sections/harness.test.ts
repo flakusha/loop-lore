@@ -114,6 +114,48 @@ describe("harness.acp config section", () => {
     expect(() => validateAcpProfiles(acp([profile({ limits: { rpm: 0, }, },),],),)).toThrow(/limits\.rpm/,);
   });
 
+  it("tosGrayzoneAcknowledged is absent by default (defaults unchanged)", () => {
+    expect(HARNESS_DEFAULTS.acp.profiles,).toEqual([],);
+    const p = profile() as { tosGrayzoneAcknowledged?: unknown };
+    expect("tosGrayzoneAcknowledged" in p ? p.tosGrayzoneAcknowledged : undefined,).toBeUndefined();
+    expect(() => validateAcpProfiles(acp([profile(),],),)).not.toThrow();
+  });
+
+  it("accepts tosGrayzoneAcknowledged true", () => {
+    expect(() => validateAcpProfiles(acp([profile({ tosGrayzoneAcknowledged: true, },),],),)).not.toThrow();
+  });
+
+  it("accepts tosGrayzoneAcknowledged false", () => {
+    expect(() => validateAcpProfiles(acp([profile({ tosGrayzoneAcknowledged: false, },),],),)).not.toThrow();
+  });
+
+  it("rejects a non-boolean tosGrayzoneAcknowledged", () => {
+    expect(() => validateAcpProfiles(acp([profile({ tosGrayzoneAcknowledged: "yes", },),],),)).toThrow(
+      /tosGrayzoneAcknowledged must be a boolean/,
+    );
+    expect(() => validateAcpProfiles(acp([profile({ tosGrayzoneAcknowledged: 1, },),],),)).toThrow(
+      /tosGrayzoneAcknowledged must be a boolean/,
+    );
+    expect(() => validateAcpProfiles(acp([profile({ tosGrayzoneAcknowledged: null, },),],),)).toThrow(
+      /tosGrayzoneAcknowledged must be a boolean/,
+    );
+  });
+
+  it("tosGrayzoneAcknowledged is scoped per profile", () => {
+    const flagged = profile({ name: "flagged", tosGrayzoneAcknowledged: true, },);
+    const plain = profile({ name: "plain", },);
+    expect(() => validateAcpProfiles(acp([flagged, plain,],),)).not.toThrow();
+    expect((flagged as { tosGrayzoneAcknowledged?: boolean }).tosGrayzoneAcknowledged,).toBe(true,);
+    expect((plain as { tosGrayzoneAcknowledged?: boolean }).tosGrayzoneAcknowledged,).toBeUndefined();
+  });
+
+  it("json-schema meta documents tosGrayzoneAcknowledged with the ToS warning", () => {
+    const prop = harnessMeta.properties.acp.properties.profiles.items.properties.tosGrayzoneAcknowledged;
+    expect(prop.type,).toBe("boolean",);
+    expect(prop.default,).toBe(false,);
+    expect(prop.description,).toMatch(/may conflict with the provider's ToS/,);
+  });
+
   it("jsonSchema includes the harness section", () => {
     const schema = jsonSchema();
     const props = schema.properties as Record<string, { properties?: Record<string, unknown> }>;

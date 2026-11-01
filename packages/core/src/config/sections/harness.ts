@@ -56,8 +56,8 @@ export function isConcreteModelId(model: string,): boolean {
  * Validate the `harness.acp.profiles` list after defaults are applied.
  * @param acp - the `harness.acp` sub-config to check
  * @throws {Error} If any profile is malformed: duplicate name, empty command,
- * unknown tier key, missing/invalid tier model, unknown capability, or a
- * non-numeric limit.
+ * unknown tier key, missing/invalid tier model, unknown capability, a
+ * non-numeric limit, or a non-boolean ToS acknowledgement flag.
  */
 export function validateAcpProfiles(acp: HarnessConfig["acp"],): void {
   if (!acp.enabled) { return; }
@@ -111,6 +111,12 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
   }
 
   if (p.limits !== undefined) { validateLimits(p.name, p.limits,); }
+
+  if (p.tosGrayzoneAcknowledged !== undefined && typeof p.tosGrayzoneAcknowledged !== "boolean") {
+    throw new Error(
+      `harness.acp.profiles["${p.name}"].tosGrayzoneAcknowledged must be a boolean`,
+    );
+  }
 }
 
 /**
@@ -200,6 +206,12 @@ export const harnessMeta = {
                   rpm: { type: "integer", description: "Max dispatches per rolling 60s", },
                   tokensPerDay: { type: "integer", description: "Max tokens per rolling 24h", },
                 },
+              },
+              tosGrayzoneAcknowledged: {
+                type: "boolean",
+                default: false,
+                description:
+                  "Explicit acknowledgement that harness-as-provider use of this profile for RPG/other non-chat functionalities may conflict with the provider's ToS when the profile is subscription-backed. Local execution and direct API access are unaffected. Absent/false: the profile keeps flowing exactly as today (this flag records consent only; runtime gating lives in the dispatch guard)",
               },
               health: {
                 type: "object",
