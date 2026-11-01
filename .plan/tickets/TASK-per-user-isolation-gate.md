@@ -3,7 +3,8 @@
 
 # TASK: per-user isolation gate
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Per-user isolation gate for external harness execution (TASK-per-user-isolation-gate)
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
