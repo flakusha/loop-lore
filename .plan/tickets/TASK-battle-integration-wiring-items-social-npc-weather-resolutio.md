@@ -21,7 +21,7 @@
 Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
 
 - epic-battle-integration-gaps.md (exact scope, 7 tasks)
-- backlog/priority-p6.md P6-A
+- backlog/backlog-archive.md § priority-p6 P6-A
 
 ## Acceptance Criteria
 

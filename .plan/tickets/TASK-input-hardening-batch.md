@@ -51,5 +51,5 @@ flushing them together to reduce the input-trust surface.
 - [ ] Each listed git issue either fixed or explicitly closed as wontfix with reason
 - [ ] Each fix has a regression test that fails on the unfixed code
 - [ ] `bun run check` 22/22 green (target); `bun test src/` passes for affected modules
-- [ ] `bun run plan:sync` reports the issues removed from `open-untriaged.md`
+- [x] `bun run plan:sync` reports the issues removed from the open queue — done: the wave rows left the live queue when `open-untriaged.md` was dropped; content archived in `.plan/backlog-archive.md` § open-untriaged, and all 8 git issues are synced to the ticket index.
 - [ ] Each commit references the git issue hash in the subject (`fix(<scope>): ... (#<issue>)`)

@@ -61,4 +61,4 @@ Tooling support and improvement — repo worktree management, agent support, IO,
 
 ## Docs-Gap Audit Remainders (2026-09-19)
 
-- [ ] [gap-audit E3] Cognitive-complexity explicit cap rule + file-split plan (68-file lint debt — formerly tracked in `.plan/immediate.md`, retired 2026-09-25; tracked here + via `TASK-cognitive-complexity-cap-refactor.md` + `TASK-PLAN-LINT-TS-DEBT.md`)
+- [ ] [gap-audit E3] Cognitive-complexity explicit cap rule + file-split plan (68-file lint debt — formerly tracked in `.plan/backlog-archive.md` § immediate (retired 2026-09-25); tracked here + via `TASK-cognitive-complexity-cap-refactor.md` + `TASK-PLAN-LINT-TS-DEBT.md`)

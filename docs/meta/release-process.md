@@ -97,7 +97,7 @@ single source; missing section fails the release.
 
 ### 7. Post-release
 
-- Create the next epic/ticket batch from `priority.md` open items.
+- Create the next epic/ticket batch from `.plan/backlog-archive.md` open items.
 - Optionally snapshot a worktree at the tag for patch line: `git worktree add ../tree/0.2.x 0.2.0 -b 0.2.x`.
 
 ## Signing

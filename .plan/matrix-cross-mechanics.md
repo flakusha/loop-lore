@@ -13,7 +13,7 @@
 > - **G6 NSFW↔Housing**, **G7 NSFW↔Weather**, **G8 NSFW↔Social** (seduction/reputation prerequisite) — blocked on their P6+ peers; do NOT gate 0.1.0. NSFW's standalone runtime config + live enforcement is already shipped (P0/P1).
 > - **G9 NSFW↔Disease** (reproductive health) — P6+, not 0.1.0.
 >
-> **What does block P3–P5 (0.1.0 cross-integrations, outside this RPG matrix)** — these are tracked in `backlog/priority-p3-p5.md` P4/P5 (formerly `immediate.md` P4/P5; retired 2026-09-25 — content migrated into the priority tier files):
+> **What does block P3–P5 (0.1.0 cross-integrations, outside this RPG matrix)** — these are tracked in `.plan/backlog-archive.md § priority-p3-p5` P4/P5 (formerly `immediate.md` P4/P5; retired 2026-09-25 — content migrated into the priority tier files):
 >
 > - NSFW × chat (opt-in + sfw/nsfw capability toggles at chat/generation boundary)
 > - gallery/assets × chat (in-chat asset preview + linkage side panel, P4/P5)
@@ -61,7 +61,7 @@ Legend:
 > **Doc-level status 2026-08-15:** G1–G5 integration **sections** now exist in the target
 > epics (`epic-battle-action-systems.md`, `epic-resolution-system.md`). The remaining work
 > is **implementation** (runtime cross-links), tracked P6-A (battle hub) + P6-0 (resolution)
-> in `backlog/priority.md`. Rows below keep the original audit text for history.
+> in `.plan/backlog-archive.md` § priority. Rows below keep the original audit text for history.
 
 | #  | System A       | System B                    | Current State                                                                                                                                                               | Recommended Action                                                                                              |
 | -- | -------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -78,7 +78,7 @@ Legend:
 > `ReputationScore`/`Relationship`). G10 covered by Companion Integration Points (Housing).
 > G11 (Crafting↔Magic enchanting) doc-resolved 2026-08-15 — Crafting Integration Points
 > depend on Magic + subscribe `magic.enchantment_applied`. Remaining work is implementation,
-> tracked P6-B (NSFW) + P6-C (housing/crafting) in `backlog/priority.md`.
+> tracked P6-B (NSFW) + P6-C (housing/crafting) in `.plan/backlog-archive.md` § priority.
 
 | #   | System A     | System B      | Current State                                                                                                         | Recommended Action                                                                                           |
 | --- | ------------ | ------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -197,7 +197,7 @@ Every epic file should have this section. Copy-paste and customize:
 | G23 | **Dynamic memory/messages** (assistant writes memory notes mid-response; multi-message) | CharCore, Memory, Narrative | RisuAI | Extend the shipped tool-call SSE toward durable in-chat memory writes — 0.1.0 quick-win candidate. | 🟢 Low |
 
 **0.1.0 note:** G21, G22, G23 are the only rows with **no P6+ blocker** — they are the
-emergent-sweep quick wins achievable during 0.1.0 (see `backlog/priority.md` quick-win
+emergent-sweep quick wins achievable during 0.1.0 (see `.plan/backlog-archive.md` § priority quick-win
 section). G18–G20 are P6+ cross-enhancements with deferred siblings.
 
 ---
@@ -251,7 +251,7 @@ Integration points for non-RPG domains once co-located in this file now live in 
 > **0.1.0 note for G38–G42:** **G38–G40 pulled forward to 0.1.0 Quick Wins (2026-08-15)**
 > per the agentic-features addendum below ("Quick win (0.1.0)") — proactive messaging,
 > quiet hours, keyphrase recall all have tickets and build on shipped memory/notification
-> infra; tracked in `backlog/priority.md` § 0.1.0 Quick Wins items 13–14. **G41 (inner
+> infra; tracked in `.plan/backlog-archive.md` § priority § 0.1.0 Quick Wins items 13–14. **G41 (inner
 > monologue) + G42 (tool-calling) remain P6+ deferred** — they depend on completed
 > memory/assistant architecture. G42 has the broadest impact (touches all systems) and
 > should be revisited first when P6+ agentic work begins. G31 emotional-pattern tracking

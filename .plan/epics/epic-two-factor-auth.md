@@ -23,7 +23,7 @@ The surrounding **provisioning semantics** (which channel may grant login/unlock
 ## Current State (reviewed 2026-09-02)
 
 - No implementation: no TOTP/WebAuthn/backup-code symbols in `src/`; `src/auth/` holds `jwt.ts` only; no factor/challenge tables in migrations; `UserStatus` has no lockout state.
-- Recorded deferral: "MFA (TOTP) deferred to P6+ (2026-08-05, local-only auth)" (`open-deferred.md` #7). This planning bundle reopens design; scheduling remains a human re-triage decision.
+- Recorded deferral: "MFA (TOTP) deferred to P6+ (2026-08-05, local-only auth)" (`.plan/backlog-archive.md § open-deferred` #7). This planning bundle reopens design; scheduling remains a human re-triage decision.
 - Duplicate tickets `TASK-2fa-mfa.md` / `TASK-two-factor-multi-factor-auth.md` reconciled in `matrix-authentication-channels.md` (fold the former into the latter).
 
 ## Scope (factor mechanisms)
