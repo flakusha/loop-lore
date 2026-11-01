@@ -62,6 +62,7 @@ globalThis.locationExplorerState = function(worldId: string,) {
     loaded: false,
     error: false,
     search: "",
+    viewMode: "tree",
     selectedLocId: "" as string | null,
     detail: null as ExplorerDetail | null,
     expandedIds: {} as Record<string, boolean>,

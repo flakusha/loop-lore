@@ -713,11 +713,33 @@
                 >
                   Clear filters
                 </button>
+                <div role="group" aria-label="Explorer view" style="display: flex; gap: var(--space-1)">
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm"
+                    :class="{ 'btn-primary': viewMode === 'tree' }"
+                    @click="setViewMode('tree')"
+                    :aria-pressed="viewMode === 'tree' ? 'true' : 'false'"
+                    data-testid="loc-explorer-view-tree"
+                  >
+                    Tree
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm"
+                    :class="{ 'btn-primary': viewMode === 'grid' }"
+                    @click="setViewMode('grid')"
+                    :aria-pressed="viewMode === 'grid' ? 'true' : 'false'"
+                    data-testid="loc-explorer-view-grid"
+                  >
+                    Grid
+                  </button>
+                </div>
               </div>
 
               <div class="loc-explorer-layout" style="display: flex; gap: var(--space-4)">
                 <!-- Tree / browse column -->
-                <div class="loc-explorer-tree" style="flex: 1 1 40%; min-width: 0">
+                <div class="loc-explorer-tree" x-show="viewMode === 'tree'" style="flex: 1 1 40%; min-width: 0">
                   <div x-show="loading" class="empty-state" style="padding: var(--space-6)">
                     <div class="icon">⏳</div>
                     <div class="title">Loading…</div>
@@ -753,6 +775,47 @@
                     >
                       No matching locations.
                     </div>
+                  </div>
+                </div>
+
+                <!-- Grid / card column -->
+                <div
+                  class="loc-explorer-grid"
+                  x-show="viewMode === 'grid'"
+                  style="flex: 1 1 40%; min-width: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-2); align-content: start"
+                  role="list"
+                  aria-label="Locations grid"
+                  data-testid="loc-explorer-grid"
+                >
+                  <template x-for="loc in filteredLocations" :key="loc.id">
+                    <button
+                      type="button"
+                      class="panel-item"
+                      role="listitem"
+                      style="cursor: pointer; display: flex; flex-direction: column; gap: var(--space-1); align-items: flex-start; text-align: left"
+                      @click="selectLoc(loc.id)"
+                      @mouseenter="hoverLoc(loc.id)"
+                      @mouseleave="leaveLoc()"
+                      :class="{ 'active-section': selectedLocId === loc.id }"
+                      :data-loc-id="loc.id"
+                      :aria-pressed="selectedLocId === loc.id ? 'true' : 'false'"
+                    >
+                      <span style="font-weight: 600" x-text="loc.name"></span>
+                      <span
+                        style="font-size: 11px; color: var(--text-secondary)"
+                        x-text="loc.publication_status"
+                      ></span>
+                      <span
+                        style="font-size: 11px; color: var(--text-secondary)"
+                        x-text="connectionNames(loc)"
+                      ></span>
+                    </button>
+                  </template>
+                  <div
+                    x-show="!loading && loaded && filteredLocations.length === 0"
+                    style="font-size: 12px; color: var(--text-secondary)"
+                  >
+                    No matching locations.
                   </div>
                 </div>
 

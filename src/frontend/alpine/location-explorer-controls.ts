@@ -19,6 +19,7 @@ interface ExplorerControlState {
   locations: ExplorerLocation[];
   states: ExplorerLocationState[];
   search: string;
+  viewMode: string;
   filterStatus: string;
   filterHasState: "" | "yes" | "no";
   filterAtmosphere: string;
@@ -34,6 +35,16 @@ interface ExplorerControlState {
 }
 
 export const locationExplorerControls = {
+  // ── View mode (tree vs. grid cards) ──────────────────────
+  /**
+   * @param {ExplorerControlState} this
+   * @param {string} mode
+   * @returns {void}
+   */
+  setViewMode(this: ExplorerControlState, mode: string,) {
+    if (mode === "tree" || mode === "grid") { this.viewMode = mode; }
+  },
+
   // ── Filter option refresh ───────────────────────────────
   // Distinct non-null values from loaded location_states, used to
   // Populate the dropdown options. Sorted for stable UI order.
