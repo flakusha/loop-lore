@@ -1,0 +1,91 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Self-signed TLS certificate generation.
+ *
+ * On first run (or when cert files are missing), generates ephemeral
+ * development certificates using OpenSSL. Returns null when the
+ * certificates cannot be provisioned — the caller decides whether to
+ * continue without HTTPS.
+ *
+ * Certificates are valid for 365 days and stored at the configured paths.
+ */
+
+import { getLogger, } from "@/logger";
+import { existsSync, mkdirSync, } from "node:fs";
+import { dirname, } from "node:path";
+import { platform, } from "node:process";
+import type { TlsConfig, } from "./schema";
+
+/** */
+export type TlsFiles = TlsConfig;
+
+let tlsLog: ReturnType<ReturnType<typeof getLogger>["child"]> | null = null;
+
+/** */
+function getTlsLog(): ReturnType<ReturnType<typeof getLogger>["child"]> {
+  tlsLog ??= getLogger().child({ module: "tls", },);
+  return tlsLog;
+}
+
+/**
+ * Ensure TLS key + cert exist. Auto-generates self-signed if missing.
+ * @param configPath
+ * @returns TlsFiles paths if available, null if TLS is unavailable.
+ */
+export function ensureTlsCerts(configPath: TlsFiles,): TlsFiles | null {
+  // Both exist — use as-is
+  if (existsSync(configPath.key,) && existsSync(configPath.cert,)) {
+    return configPath;
+  }
+
+  // Ensure parent directory exists
+  mkdirSync(dirname(configPath.key,), { recursive: true, },);
+  mkdirSync(dirname(configPath.cert,), { recursive: true, },);
+
+  // Generate self-signed cert
+  getTlsLog().info("Generating self-signed development certificate...",);
+
+  // On Windows, try openssl.exe as well
+  const opensslBin = platform === "win32" ? ["openssl.exe", "openssl",] : ["openssl",];
+
+  for (const bin of opensslBin) {
+    try {
+      const result = Bun.spawnSync([
+        bin,
+        "req",
+        "-x509",
+        "-nodes",
+        "-days",
+        "365",
+        "-newkey",
+        "rsa:2048",
+        "-keyout",
+        configPath.key,
+        "-out",
+        configPath.cert,
+        "-subj",
+        "/C=XX/ST=Development/L=Local/O=loop-lore/CN=localhost",
+        "-addext",
+        "subjectAltName=DNS:localhost,IP:127.0.0.1",
+      ],);
+
+      if (result.success) {
+        getTlsLog().info(`Certificate generated: ${configPath.cert}`,);
+        return configPath;
+      }
+    } catch {
+      // Try next binary
+    }
+  }
+
+  const platformHint = platform === "win32"
+    ? "Install OpenSSL for Windows (https://slproweb.com/products/Win32OpenSSL.html) or configure certs manually."
+    : "Install OpenSSL or configure certs manually.";
+
+  getTlsLog().warn(`Failed to generate certificate. ${platformHint}`,);
+  getTlsLog().warn("TLS certificates unavailable — HTTPS cannot be served.",);
+
+  return null;
+}
