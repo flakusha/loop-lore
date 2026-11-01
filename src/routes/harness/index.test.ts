@@ -18,7 +18,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { setExecLogPath, } from "../../harness/exec-log";
 import { buildRunRecord, } from "../../harness/exec-recorder";
-import { getRun, listRuns, stats as queryStats, } from "../../harness/query";
+import * as realQuery from "../../harness/query";
 import type { HarnessRunRecord, HarnessRunSummary, HarnessStats, } from "../../harness/types";
 import { serializeRun, toSummary, } from "../../harness/types";
 import { harnessRoutes, } from "./index";
@@ -90,17 +90,19 @@ function get(role: string | null, path: string,): Promise<Response> {
 }
 
 /**
- * The REAL query functions, captured at import time.
+ * The REAL query module, captured at import time as a plain value snapshot.
  *
  * `mock.module` in bun is permanent and process-global: it rewrites the module
  * registry, so every later import — including this file's own named imports —
  * resolves to the stub, and `mock.restore()` does not put the original back.
- * Spreading the live `getRun`/`listRuns` here would therefore hand a previous
- * test's stub to the next one. Snapshotting before any `mock.module` call is
- * what lets `withQuery({})` mean "give the route the real reader again", which
- * is the only way the tests below can reach the real record-to-DTO mappers.
+ * Snapshotting before any `mock.module` call is what lets `withQuery({})`
+ * mean "give the route the real reader again", which is the only way the
+ * tests below can reach the real record-to-DTO mappers. The snapshot covers
+ * the FULL namespace, so the restore in the file-level `afterEach` also keeps
+ * non-endpoint exports (`MAX_LINES`, `DEFAULT_LIMIT`, …) real for later
+ * importers in a non-isolated run.
  */
-const REAL_QUERY = { getRun, listRuns, stats: queryStats, };
+const REAL_QUERY: Record<string, unknown> = { ...realQuery, };
 
 /**
  * Point the query module at `overrides` on top of the real functions. Call with
@@ -110,6 +112,13 @@ const REAL_QUERY = { getRun, listRuns, stats: queryStats, };
 function withQuery(overrides: Record<string, unknown>,): void {
   mock.module("../../harness/query", () => ({ ...REAL_QUERY, ...overrides, }),);
 }
+
+afterEach(() => {
+  // A stub left installed outlives this file: mock.module is process-global,
+  // so every later file of a non-isolated run would import it (see the
+  // mirror-image restore in files.test.ts).
+  mock.module("../../harness/query", () => REAL_QUERY,);
+},);
 
 describe("harnessRoutes", () => {
   describe("authz", () => {
