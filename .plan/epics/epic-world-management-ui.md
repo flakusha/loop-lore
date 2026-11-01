@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Partially shipped — world list/detail/edit pages, location explorer (TASK-location-explorer ✅ Done, verified 2026-10-08), world edit/items/invites/channels/admin-worlds UIs, and the time/weather widget (TASK-time-weather ✅ Done — engine-backed conditions snapshot with season, temperature, world-day and a seeded 3-day forecast, rendered on world detail via the world conditions SSE stream). Travel interface and world creation wizard still not present — note the create-wizard partial (`src/partials/worlds/create-wizard.html`) exists but remains incomplete.
+**Status Note:** Partially shipped — world list/detail/edit pages, location explorer with search + status/state/atmosphere/weather/time filters (TASK-location-explorer Done), travel interface with origin/destination + walk/ride/fly/teleport + ETA + confirm dialog + real-time transport progress/hazards + party status (TASK-travel-interface Done), world creation wizard with 4-step basics → conditions → locations → review flow, world edit/items/invites/channels/admin-worlds UIs, and the time/weather widget (TASK-time-weather Done). Remaining: explorer grid/card view toggle, wizard edit-prefill mode, mobile responsive/keyboard/a11y pass (world-mgmt-gaps worktree, 2026-11-02).
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
