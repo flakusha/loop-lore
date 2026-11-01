@@ -17,6 +17,8 @@ import {
   HarnessAcpError,
   type HarnessTurnResult,
   type HarnessUsageReport,
+  type PendingPermission,
+  type PermissionOutcome,
 } from "./adapter-types";
 import { JsonRpcProcess, JsonRpcRequestError, } from "./jsonrpc-process";
 
@@ -31,6 +33,10 @@ export interface GenericAcpOptions {
   cwd?: string;
   /** Per-request timeout in ms. */
   requestTimeoutMs?: number;
+  /** Serves server-originated `fs/read_text_file` asks; without one they answer as unsupported. */
+  readTextFile?: (path: string,) => Promise<string>;
+  /** Called once per open permission request, so hosts can prompt a human. */
+  onPermissionRequest?: (pending: PendingPermission,) => void;
 }
 
 /** Map a transport error to the adapter's typed error. */
@@ -70,6 +76,13 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   private readonly opts: GenericAcpOptions;
   /** agent_message_chunk text accumulated during the in-flight prompt. */
   private chunks: string[] = [];
+  /** Open server-originated permission request, when one awaits an outcome. */
+  private permission: {
+    pending: PendingPermission;
+    respond: (result: unknown,) => void;
+  } | null = null;
+  /** Resolves once the in-flight prompt request has been written to the wire; `cancel` orders on it. */
+  private promptDispatched: Promise<void> = Promise.resolve();
 
   /**
    * @param options - spawn argv + cwd; the handshake is lazy (typed probe failure).
@@ -166,13 +179,18 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
    * @throws {HarnessAcpError} kind `prompt` on failure
    */
   async prompt(prompt: string,): Promise<HarnessTurnResult> {
+    const dispatched = Promise.withResolvers<void>();
+    this.promptDispatched = dispatched.promise;
     try {
       const sessionId = (await this.ensureSession()).sessionId;
       this.chunks = [];
-      const response = await this.rpc!.request("session/prompt", {
+      const requestPromise = this.rpc!.request("session/prompt", {
         sessionId,
         prompt: [{ type: "text", text: prompt, },],
-      },) as { stopReason?: unknown; usage?: RawUsage | null };
+      },);
+
+      dispatched.resolve();
+      const response = await requestPromise as { stopReason?: unknown; usage?: RawUsage | null };
 
       return {
         text: this.chunks.join("",),
@@ -181,8 +199,42 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
         acpSessionId: sessionId,
       };
     } catch (error) {
+      dispatched.resolve();
       throw toAcpError("prompt", error,);
     }
+  }
+
+  /**
+   * Cancel the in-flight prompt turn via the `session/cancel` notification.
+   * @throws {HarnessAcpError} kind `session` when no live session exists
+   */
+  async cancel(): Promise<void> {
+    if (!this.rpc || !this.session) {
+      throw new HarnessAcpError("session", "no live ACP session to cancel",);
+    }
+
+    await this.promptDispatched;
+    this.rpc.notify("session/cancel", { sessionId: this.session.sessionId, },);
+  }
+
+  /** The open server-originated permission request, when one awaits an outcome. */
+  pendingPermission(): PendingPermission | null {
+    return this.permission?.pending ?? null;
+  }
+
+  /**
+   * Answer the open permission request.
+   * @param outcome - the client's choice among the harness's options
+   * @throws {HarnessAcpError} kind `session` when nothing is pending
+   */
+  respondPermission(outcome: PermissionOutcome,): void {
+    const open = this.permission;
+    if (!open) {
+      throw new HarnessAcpError("session", "no pending permission request",);
+    }
+
+    this.permission = null;
+    open.respond({ outcome, },);
   }
 
   /**
@@ -203,6 +255,7 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     this.rpc?.close();
     this.rpc = null;
     this.session = null;
+    this.permission = null;
   }
 
   /**
@@ -224,7 +277,9 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
         // "connection closed" forever.
         this.rpc = null;
         this.session = null;
+        this.permission = null;
       },
+      onRequest: (method, params,) => this.handleServerRequest(method, params,),
       onNotification: (method, params,) => {
         if (method !== "session/update") { return; }
         const p = params as SessionUpdateParams;
@@ -264,6 +319,47 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       this.close();
       throw toAcpError(kind, error,);
     }
+  }
+
+  /**
+   * Serve one server-originated request: permission asks park on the engine
+   * until `respondPermission`, fs-read asks go through the injected reader,
+   * anything else answers unsupported.
+   * @param method - wire method the harness invoked
+   * @param params - raw request params
+   * @returns the response result payload.
+   */
+  private handleServerRequest(method: string, params: unknown,): Promise<unknown> {
+    if (method === "session/request_permission") {
+      const p = params as { kind?: unknown } | null;
+      if (this.permission) {
+        return Promise.reject(new JsonRpcRequestError("permission request already pending", -32601,),);
+      }
+
+      return new Promise<unknown>((resolve,) => {
+        const pending: PendingPermission = {
+          params,
+          kind: typeof p?.kind === "string" ? p.kind : null,
+        };
+
+        this.permission = { pending, respond: resolve, };
+        this.opts.onPermissionRequest?.(pending,);
+      },);
+    }
+
+    if (method === "fs/read_text_file") {
+      const reader = this.opts.readTextFile;
+      if (!reader) {
+        return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
+      }
+
+      const path = (params as { path?: unknown } | null)?.path;
+      return typeof path === "string"
+        ? reader(path,).then((content,) => ({ content, }))
+        : Promise.reject(new JsonRpcRequestError("fs/read_text_file missing path", -32602,),);
+    }
+
+    return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
   }
 
   /**

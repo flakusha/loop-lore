@@ -13,7 +13,7 @@
  * null (the generic engine's default).
  */
 
-import { type HarnessAcpAdapter, } from "./adapter-types";
+import { type HarnessAcpAdapter, type HarnessAdapterCommandOptions, } from "./adapter-types";
 import { GenericAcpAdapter, type GenericAcpOptions, } from "./generic-acp";
 
 /** Config option id opencode uses for its model select. */
@@ -38,6 +38,10 @@ export class OpenCodeAcpAdapter extends GenericAcpAdapter {
  * @param command - the profile's spawn argv (e.g. `["opencode", "acp"]`)
  * @returns the opencode adapter.
  */
-export function createOpenCodeAdapter(_profile: string, command: string[],): HarnessAcpAdapter {
-  return new OpenCodeAcpAdapter({ command, },);
+export function createOpenCodeAdapter(
+  _profile: string,
+  command: string[],
+  options?: HarnessAdapterCommandOptions,
+): HarnessAcpAdapter {
+  return new OpenCodeAcpAdapter({ command, ...options, },);
 }

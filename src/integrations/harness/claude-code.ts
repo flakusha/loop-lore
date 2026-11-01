@@ -22,7 +22,7 @@
  * surface over ACP → fetchUsageReports resolves null.
  */
 
-import { type HarnessAcpAdapter, } from "./adapter-types";
+import { type HarnessAcpAdapter, type HarnessAdapterCommandOptions, } from "./adapter-types";
 import { GenericAcpAdapter, type GenericAcpOptions, } from "./generic-acp";
 
 /** Ext method claude-agent-acp answers model switches with (unstable name, verified casing). */
@@ -87,6 +87,10 @@ export class ClaudeCodeAcpAdapter extends GenericAcpAdapter {
  * @param command - the profile's spawn argv (e.g. `["claude-agent-acp"]`)
  * @returns the claude-code adapter.
  */
-export function createClaudeCodeAdapter(_profile: string, command: string[],): HarnessAcpAdapter {
-  return new ClaudeCodeAcpAdapter({ command, },);
+export function createClaudeCodeAdapter(
+  _profile: string,
+  command: string[],
+  options?: HarnessAdapterCommandOptions,
+): HarnessAcpAdapter {
+  return new ClaudeCodeAcpAdapter({ command, ...options, },);
 }
