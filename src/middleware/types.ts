@@ -10,59 +10,34 @@
 
 import type { Locale, TranslatorFn, } from "../i18n/types";
 
-/**
- * Per-request context extracted/auth'd by middleware pipeline.
- * Passed to all route dispatch functions.
- */
+export type PrincipalKind = "user" | "user-worktree" | "internal-service" | "external-agent";
+
 export interface RequestContext {
-  /** Authenticated user ID. null in solo/demo mode (implicit solo user). */
   userId: string | null;
-  /** User role from users table. null before auth, "solo" in demo mode. */
   userRole: string | null;
-  /** Active session ID. null in solo/demo mode. */
   sessionId: string | null;
-  /** Detected locale for this request. Defaults to "en" if not set. */
+  principalKind: PrincipalKind;
   locale: Locale;
-  /** Translator function for this request's locale. Returns key as-is if not set. */
   t: TranslatorFn;
-  /** Resolved request id for this request (set by requestIdMiddleware). Empty string when unavailable. */
   requestId: string;
 }
 
-/**
- * Create a minimal RequestContext with default locale/t.
- * Use when creating context outside the middleware pipeline.
- * @param partial
- * @returns {RequestContext}
- */
 export function createRequestContext(
-  partial: Pick<RequestContext, "userId" | "userRole" | "sessionId">,
+  partial: Pick<RequestContext, "userId" | "userRole" | "sessionId"> & { principalKind?: PrincipalKind },
 ): RequestContext {
   return {
     ...partial,
+    principalKind: partial.principalKind ?? "user",
     locale: "en",
     t: (key: string,) => key,
     requestId: "",
   };
 }
 
-/**
- * Middleware function signature.
- *
- * Each middleware inspects/modifies context, then either:
- *   - short-circuits by returning a Response (auth failure, 403, etc.)
- *   - calls next() to continue the chain with (potentially enriched) context
- *
- * Errors should be caught and returned as error Responses, not thrown.
- */
 export type Middleware = (
   request: Request,
   context: RequestContext,
   next: () => Promise<Response>,
 ) => Promise<Response>;
 
-/**
- * Final handler in the chain — receives enriched context,
- * dispatches to the appropriate route controller.
- */
 export type RouteHandler = (request: Request, context: RequestContext,) => Promise<Response> | Response;
