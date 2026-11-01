@@ -24,6 +24,8 @@ export interface CreateChatOptions {
   name: string;
   /** Bearer token; omit to run anonymous. */
   sessionToken?: string;
+  /** Setup template id; omit for a blank chat. */
+  templateId?: string;
 }
 
 /**
@@ -34,12 +36,12 @@ export interface CreateChatOptions {
  * (src/utils/safe-fetch/fetch.ts:175-182), which would lose the age-gate and
  * NSFW-participant 403 messages.
  *
- * @param options - chat name and optional session token
+ * @param options - chat name, optional template id, optional session token
  * @returns the new chat id, or an error message to render
  * @throws never — all errors are captured in the result union
  */
 export async function createChat(options: CreateChatOptions,): Promise<ChatCreateResult> {
-  const { name, sessionToken, } = options;
+  const { name, sessionToken, templateId, } = options;
 
   let response: Response;
   try {
@@ -50,7 +52,7 @@ export async function createChat(options: CreateChatOptions,): Promise<ChatCreat
         "Content-Type": "application/json",
         ...(sessionToken ? { Authorization: `Bearer ${sessionToken}`, } : {}),
       },
-      body: jsonStringifyOr({ name, },),
+      body: jsonStringifyOr(templateId ? { name, templateId, } : { name, },),
       signal: AbortSignal.timeout(30000,),
     },);
   } catch (error: unknown) {
