@@ -56390,6 +56390,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-CREDIT-DEBIT-SELECT-THEN-UPDATE-RACE-IN-SRC-SERVICES-TRADE-B.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md"
     },
     {
