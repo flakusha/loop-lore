@@ -54,20 +54,34 @@ describe("buildWorldPageState", () => {
 describe("timeWeatherWidget getters", () => {
   const ctx = asState(timeWeatherWidget, { timeOfDay: "midnight", weather: "storm", },);
   const empty = asState(timeWeatherWidget, {},);
+  const seasonCtx = asState(timeWeatherWidget, { season: "winter", },);
+  const forecastCtx = asState(timeWeatherWidget, {
+    season: "spring",
+    temperature: 15,
+    conditionsDay: 2,
+    forecast: [{ day: 3, weather: "rain", season: "spring", temperature: 12, },],
+  },);
 
   test("hasConditions tracks any recorded condition", () => {
     expect(ctx.hasConditions,).toBe(true,);
     expect(empty.hasConditions,).toBe(false,);
   });
 
-  test("dayNightLabel classifies night times", () => {
-    expect(ctx.dayNightLabel,).toBe("Night",);
-    expect(empty.dayNightLabel,).toBe("—",);
+  test("isNightNow classifies night times", () => {
+    expect(ctx.isNightNow,).toBe(true,);
+    expect(empty.isNightNow,).toBe(false,);
   });
 
   test("icons resolve through the icon maps", () => {
     expect(ctx.timeIcon,).not.toBe("",);
     expect(ctx.weatherIcon,).not.toBe("",);
+    expect(seasonCtx.seasonIcon,).toBe("❄️",);
+  });
+
+  test("forecastAvailable follows the forecast array", () => {
+    expect(empty.forecastAvailable,).toBe(false,);
+    expect(forecastCtx.forecastAvailable,).toBe(true,);
+    expect(forecastCtx.hasSeason,).toBe(true,);
   });
 });
 
@@ -386,15 +400,19 @@ describe("coreState.applyConditions", () => {
     s.applyConditions({
       timeOfDay: "dusk",
       weather: "rain",
-      sampledLocationId: "l1",
-      sampledLocationName: "Town",
-      sampledAt: "2026-01-01T00:00:00Z",
+      season: "autumn",
+      temperature: 9,
+      day: 4,
+      forecast: [{ day: 5, weather: "clear", season: "autumn", temperature: 11, },],
     },);
 
     expect(s.timeOfDay,).toBe("dusk",);
     expect(s.weather,).toBe("rain",);
-    expect(s.conditionsLocationName,).toBe("Town",);
-    expect(s.conditionsAt,).toBe("2026-01-01T00:00:00Z",);
+    expect(s.season,).toBe("autumn",);
+    expect(s.temperature,).toBe(9,);
+    expect(s.conditionsDay,).toBe(4,);
+    expect(s.forecast,).toEqual([{ day: 5, weather: "clear", season: "autumn", temperature: 11, },],);
+    expect(s.forecastAvailable,).toBe(true,);
   });
 });
 
@@ -431,9 +449,10 @@ describe("coreState.connectConditionsStream", () => {
       data: JSON.stringify({
         timeOfDay: "night",
         weather: "storm",
-        sampledLocationId: "l1",
-        sampledLocationName: "Keep",
-        sampledAt: "2026-01-01T00:00:00Z",
+        season: "winter",
+        temperature: -2,
+        day: 3,
+        forecast: [],
       },),
     },);
 
@@ -441,7 +460,9 @@ describe("coreState.connectConditionsStream", () => {
 
     expect(s.timeOfDay,).toBe("night",);
     expect(s.weather,).toBe("storm",);
-    expect(s.conditionsLocationName,).toBe("Keep",);
+    expect(s.season,).toBe("winter",);
+    expect(s.temperature,).toBe(-2,);
+    expect(s.conditionsDay,).toBe(3,);
     expect(s.travelStatus,).toEqual({ transports: [], parties: [], },);
   });
 

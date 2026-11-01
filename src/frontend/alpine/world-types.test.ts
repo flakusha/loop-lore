@@ -12,6 +12,7 @@ import type {
   WorldConditionsSnapshot,
   WorldEdgeLink,
   WorldEditState,
+  WorldForecastEntry,
   WorldInviteRow,
   WorldLocationDetail,
   WorldLocationLite,
@@ -50,12 +51,20 @@ describe("world-types row shapes", () => {
     expectTypeOf<WorldSummary["kind"]>().toEqualTypeOf<string>();
   });
 
-  test("WorldConditionsSnapshot is all-nullable", () => {
+  test("WorldConditionsSnapshot condition fields are all-nullable", () => {
     expectTypeOf<WorldConditionsSnapshot["timeOfDay"]>().toEqualTypeOf<string | null>();
     expectTypeOf<WorldConditionsSnapshot["weather"]>().toEqualTypeOf<string | null>();
-    expectTypeOf<WorldConditionsSnapshot["sampledLocationId"]>().toEqualTypeOf<string | null>();
-    expectTypeOf<WorldConditionsSnapshot["sampledLocationName"]>().toEqualTypeOf<string | null>();
-    expectTypeOf<WorldConditionsSnapshot["sampledAt"]>().toEqualTypeOf<string | null>();
+    expectTypeOf<WorldConditionsSnapshot["season"]>().toEqualTypeOf<string | null>();
+    expectTypeOf<WorldConditionsSnapshot["temperature"]>().toEqualTypeOf<number | null>();
+    expectTypeOf<WorldConditionsSnapshot["day"]>().toEqualTypeOf<number | null>();
+  });
+
+  test("WorldConditionsSnapshot forecast and WorldPageState widget fields", () => {
+    expectTypeOf<WorldConditionsSnapshot["forecast"]>().toEqualTypeOf<WorldForecastEntry[]>();
+    expectTypeOf<WorldForecastEntry["day"]>().toEqualTypeOf<number>();
+    expectTypeOf<WorldForecastEntry["weather"]>().toEqualTypeOf<string>();
+    expectTypeOf<WorldForecastEntry["season"]>().toEqualTypeOf<string>();
+    expectTypeOf<WorldForecastEntry["temperature"]>().toEqualTypeOf<number>();
   });
 
   test("WorldLocationLite / WorldLocationDetail keep the snake_case wire keys", () => {
@@ -139,10 +148,9 @@ describe("world-types page state", () => {
     expectTypeOf<WorldPageState["hasConditions"]>().toEqualTypeOf<boolean>();
     expectTypeOf<WorldPageState["timeIcon"]>().toEqualTypeOf<string>();
     expectTypeOf<WorldPageState["weatherIcon"]>().toEqualTypeOf<string>();
-    expectTypeOf<WorldPageState["dayNightLabel"]>().toEqualTypeOf<string>();
+    expectTypeOf<WorldPageState["isNightNow"]>().toEqualTypeOf<boolean>();
     expectTypeOf<WorldPageState["forecastAvailable"]>().toEqualTypeOf<boolean>();
     expectTypeOf<WorldPageState["hasSeason"]>().toEqualTypeOf<boolean>();
-    expectTypeOf<WorldPageState["conditionsAreAuthorSet"]>().toEqualTypeOf<boolean>();
     expectTypeOf<WorldPageState["detailHazards"]>().toEqualTypeOf<string[]>();
     expectTypeOf<WorldPageState["detailItems"]>().toEqualTypeOf<string[]>();
     expectTypeOf<WorldPageState["resourcesAvailable"]>().toEqualTypeOf<boolean>();

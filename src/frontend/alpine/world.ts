@@ -35,17 +35,24 @@ import type {
 const ConditionsEvent = Type.Object({
   timeOfDay: Type.Union([Type.String(), Type.Null(),],),
   weather: Type.Union([Type.String(), Type.Null(),],),
-  sampledLocationId: Type.Union([Type.String(), Type.Null(),],),
-  sampledLocationName: Type.Union([Type.String(), Type.Null(),],),
-  sampledAt: Type.Union([Type.String(), Type.Null(),],),
+  season: Type.Union([Type.String(), Type.Null(),],),
+  temperature: Type.Union([Type.Number(), Type.Null(),],),
+  day: Type.Union([Type.Number(), Type.Null(),],),
+  forecast: Type.Array(Type.Object({
+    day: Type.Number(),
+    weather: Type.String(),
+    season: Type.String(),
+    temperature: Type.Number(),
+  },),),
 },);
 
 const EMPTY_CONDITIONS: WorldConditionsSnapshot = {
   timeOfDay: null,
   weather: null,
-  sampledLocationId: null,
-  sampledLocationName: null,
-  sampledAt: null,
+  season: null,
+  temperature: null,
+  day: null,
+  forecast: [],
 };
 
 /**
@@ -189,8 +196,10 @@ function coreState(worldId: string,): WorldPageState {
     applyConditions(this: WorldPageState, snapshot: WorldConditionsSnapshot,) {
       this.timeOfDay = snapshot.timeOfDay;
       this.weather = snapshot.weather;
-      this.conditionsLocationName = snapshot.sampledLocationName;
-      this.conditionsAt = snapshot.sampledAt;
+      this.season = snapshot.season;
+      this.temperature = snapshot.temperature;
+      this.conditionsDay = snapshot.day;
+      this.forecast = [...snapshot.forecast,];
     },
 
     /**
