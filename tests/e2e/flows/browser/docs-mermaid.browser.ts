@@ -47,6 +47,12 @@ function ensureDocsBuild(): void {
   const result = spawnSync("bun", ["run", "docs:build",], {
     stdio: ["ignore", "pipe", "pipe",],
     cwd: REPO_ROOT,
+    // vitepress build OOMs at Node's ~4 GB default heap on large doc trees;
+    // give it an explicit larger ceiling (machine permitting).
+    env: {
+      ...process.env,
+      NODE_OPTIONS: [process.env.NODE_OPTIONS, "--max-old-space-size=12288",].filter(Boolean,).join(" ",),
+    },
   },);
 
   if (result.status !== 0) {
