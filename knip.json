@@ -152,6 +152,8 @@
     "wasm-bindgen" // egui wasm glue (scripts/build-egui-wasm.ts) -- cargo-installed CLI, not npm
   ],
   "ignore": [
+    "src/**",
+    "packages/**",
     // Build-time CLIs spawned as shell strings by scripts/build-frontend.mjs
     // (`await $`bun run src/build/copy-icons.ts`` / `... src/build/compress.ts`),
     // never statically imported — knip cannot follow a Bun shell template.
