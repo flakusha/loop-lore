@@ -258,6 +258,7 @@
     "nsfwBanned": "Banni",
     "nsfwShadow": "Restreint silencieusement",
     "nsfwConsentUnavailable": "Impossible de charger l'état de consentement NSFW.",
+    "nsfwBlurMedia": "Flouter les médias sensibles (NSFW)",
     "models": "Models",
     "browserModels": "Browser Models",
     "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
@@ -1053,6 +1054,7 @@
   },
 
   "nsfw": {
+    "blurReveal": "Afficher",
     "bodyState": {
       "title": "État du corps",
       "health": "Santé",
@@ -1077,6 +1079,7 @@
       "enterToSend": "Lorsque activé, Entrée envoie votre message. Maintenez Shift pour les sauts de ligne.",
       "autoScroll": "Défiler automatiquement vers le dernier message lorsque du nouveau contenu arrive.",
       "inlinePreview": "Afficher l'aperçu des images directement dans le chat au lieu de liens.",
+      "nsfwBlurMedia": "Masque les images marquées NSFW derrière un flou avec un bouton de révélation en un clic. Révéler ne revérifie pas votre accès existant.",
       "detailLevel": "Basique affiche uniquement les messages; Détaillé affiche les horodatages et métadonnées.",
       "generationLanguage": "Contrôle dans quelle langue l'IA répond.",
       "provider": "Choisissez votre fournisseur IA. Chacun a différents modèles et tarifs.",

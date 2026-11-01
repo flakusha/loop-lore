@@ -99,6 +99,27 @@ describe("updatePreferences", () => {
 
     expect(prefs.nsfwEnabled,).toBe(true,);
   });
+
+  test("persists the blur-media preference (default OFF → on → off)", async () => {
+    const created = await getOrCreateOwn({ thisL: makeCtx(), userId: "blur-user", },);
+    expect(created.nsfwBlurMedia,).toBe(false,);
+
+    const on = await updatePreferences({
+      thisL: makeCtx(),
+      userId: "blur-user",
+      updates: { nsfwBlurMedia: true, },
+    },);
+
+    expect(on.nsfwBlurMedia,).toBe(true,);
+
+    const off = await updatePreferences({
+      thisL: makeCtx(),
+      userId: "blur-user",
+      updates: { nsfwBlurMedia: false, },
+    },);
+
+    expect(off.nsfwBlurMedia,).toBe(false,);
+  });
 });
 
 describe("NsfwModerationService.getOrCreateOwn wiring", () => {

@@ -4010,6 +4010,7 @@ export async function insertNsfwUserPreferences(
     banned_by?: string | null;
     created_at?: string;
     updated_at?: string;
+    nsfw_blur_media?: number;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

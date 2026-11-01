@@ -258,6 +258,7 @@
     "nsfwBanned": "Gesperrt",
     "nsfwShadow": "Stumm eingeschränkt",
     "nsfwConsentUnavailable": "NSFW-Zustimmungsstatus konnte nicht geladen werden.",
+    "nsfwBlurMedia": "Heikle (NSFW-)Medien verwischen",
     "models": "Models",
     "browserModels": "Browser Models",
     "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
@@ -1053,6 +1054,7 @@
   },
 
   "nsfw": {
+    "blurReveal": "Anzeigen",
     "bodyState": {
       "title": "Körperzustand",
       "health": "Gesundheit",
@@ -1077,6 +1079,7 @@
       "enterToSend": "Wenn aktiviert, sendet Enter Ihre Nachricht. Halten Sie Shift für Zeilenumbrüche.",
       "autoScroll": "Automatisch zur neuesten Nachricht scrollen, wenn neue Inhalte ankommen.",
       "inlinePreview": "Bildvorschau direkt im Chat anzeigen, anstatt als Links.",
+      "nsfwBlurMedia": "NSFW-markierte Bilder hinter einer Weichzeichnung verbergen; ein Klick zeigt sie. Das Aufdecken prüft Ihre bestehende Berechtigung nicht erneut.",
       "detailLevel": "Basis zeigt nur Nachrichten; Detailliert zeigt Zeitstempel und Metadaten.",
       "generationLanguage": "Steuert, in welcher Sprache die KI antwortet.",
       "provider": "Wählen Sie Ihren KI-Anbieter. Jeder hat verschiedene Modelle und Preise.",

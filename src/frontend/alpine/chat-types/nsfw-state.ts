@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { NsfwRevealMap, } from "../chat-utils/nsfw-blur";
+
 // ── NSFW Panel ──────────────────────────────────────────────
 
 /** One intimacy pair as rendered by the panel (subset of the backend row). */
@@ -37,4 +39,16 @@ export interface ChatNsfwState {
   _nsfwUnavailable: boolean;
   /** Load intimacy + body state for the active chat's character. */
   loadNsfwPanel(): Promise<void>;
+}
+
+/** Blur-preference + click-to-reveal slice (user preference, default OFF). */
+export interface ChatNsfwBlurState {
+  /** Whether NSFW-flagged media renders covered; mirrored from server prefs. */
+  nsfwBlurEnabled: boolean;
+  /** Per-media reveal state — attachment asset ids and `avatar-<messageId>`. */
+  _nsfwRevealed: NsfwRevealMap;
+  /** Whether a flagged piece of media should render covered right now. */
+  nsfwBlurOn(nsfw: boolean | undefined, key: string,): boolean;
+  /** Reveal one covered item (client-side only; no server re-check). */
+  revealNsfw(key: string,): void;
 }

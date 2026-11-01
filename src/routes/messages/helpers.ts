@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { nsfwFlaggedAssetIds, } from "../../assets/service";
 import type { ServiceError, } from "../../chat/service";
 import type { RegexTransform, } from "../../config/schema";
 import { decodeContent, } from "../../content/decode";
@@ -115,6 +116,9 @@ export async function enrichAttachments(
     .execute();
 
   const assetMap = new Map(Array.from(assets, (a,) => [a.id, a,],),);
+  // v1 NSFW rating signal (asset_links → actors.content_rating): surfaced so
+  // a user-level blur preference can cover permitted NSFW media client-side.
+  const nsfwIds = await nsfwFlaggedAssetIds(database, assetIds,);
 
   return Array.from(attachData, (a,) => {
     const asset = assetMap.get(a.assetId,);
@@ -132,6 +136,7 @@ export async function enrichAttachments(
       durationSecs: asset?.duration_secs ?? 0,
       width: asset?.width ?? 0,
       height: asset?.height ?? 0,
+      nsfw: nsfwIds.has(a.assetId,),
     };
   },);
 }

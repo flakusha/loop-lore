@@ -21,6 +21,7 @@ interface Consent {
   maxRating: string;
   accessStatus: string;
   shadowNsfw: boolean;
+  nsfwBlurMedia: boolean;
   blockReason: string | null;
 }
 
@@ -52,6 +53,7 @@ interface Host {
   loadProviders(): Promise<void>;
   loadNsfwConsent(): Promise<void>;
   nsfwRestrictionText(): string;
+  onNsfwBlurChange(): Promise<void>;
   saveGeneral(): Promise<void>;
   onLocaleChange(): Promise<void>;
   exportAllData(): Promise<void>;
@@ -461,6 +463,7 @@ describe("settings general loadNsfwConsent", () => {
           maxRating: "pg13",
           accessStatus: "blocked",
           shadowNsfw: true,
+          nsfwBlurMedia: true,
           blockReason: "policy",
         },
       },);
@@ -473,6 +476,7 @@ describe("settings general loadNsfwConsent", () => {
     expect(host.nsfwConsent?.maxRating,).toBe("pg13",);
     expect(host.nsfwConsent?.accessStatus,).toBe("blocked",);
     expect(host.nsfwConsent?.shadowNsfw,).toBe(true,);
+    expect(host.nsfwConsent?.nsfwBlurMedia,).toBe(true,);
     expect(host.nsfwConsent?.blockReason,).toBe("policy",);
   });
 
@@ -497,6 +501,7 @@ describe("settings general loadNsfwConsent", () => {
     expect(host.nsfwConsent?.maxRating,).toBe("",);
     expect(host.nsfwConsent?.accessStatus,).toBe("clear",);
     expect(host.nsfwConsent?.shadowNsfw,).toBe(false,);
+    expect(host.nsfwConsent?.nsfwBlurMedia,).toBe(false,);
     expect(host.nsfwConsent?.blockReason,).toBeNull();
   });
 
@@ -508,6 +513,75 @@ describe("settings general loadNsfwConsent", () => {
     await host.loadNsfwConsent();
 
     expect(host.nsfwConsent,).toBeNull();
+  });
+});
+
+// ── onNsfwBlurChange ─────────────────────────────────────────────────
+
+describe("settings general onNsfwBlurChange", () => {
+  test("PUTs the flag and mirrors it to localStorage", async () => {
+    globalThis.__USER_ID = "user-1";
+    installStorage();
+    handler = async () => Response.json({ data: {}, },);
+
+    const host = freshHost();
+    host.nsfwConsent = {
+      nsfwEnabled: true,
+      maxRating: "",
+      accessStatus: "clear",
+      shadowNsfw: false,
+      nsfwBlurMedia: true,
+      blockReason: null,
+    };
+
+    await host.onNsfwBlurChange();
+
+    expect(calls,).toHaveLength(1,);
+    expect(calls[0]?.url,).toBe("/api/v1/nsfw/moderation/preferences/user-1",);
+    expect(calls[0]?.opts?.method,).toBe("PUT",);
+    expect(JSON.parse(String(calls[0]?.opts?.body,),),).toEqual({ nsfwBlurMedia: true, },);
+    expect(storage.get("nsfw-blur-media",),).toBe("1",);
+  });
+
+  test("mirrors OFF without contacting the server when signed out", async () => {
+    globalThis.__USER_ID = undefined;
+    installStorage();
+
+    const host = freshHost();
+    host.nsfwConsent = {
+      nsfwEnabled: true,
+      maxRating: "",
+      accessStatus: "clear",
+      shadowNsfw: false,
+      nsfwBlurMedia: false,
+      blockReason: null,
+    };
+
+    await host.onNsfwBlurChange();
+
+    expect(calls,).toHaveLength(0,);
+    expect(storage.get("nsfw-blur-media",),).toBe("0",);
+  });
+
+  test("a failing PUT still leaves the mirror written (warn only)", async () => {
+    globalThis.__USER_ID = "user-1";
+    installStorage();
+    handler = async () => new Response("{}", { status: 500, },);
+
+    const host = freshHost();
+    host.nsfwConsent = {
+      nsfwEnabled: true,
+      maxRating: "",
+      accessStatus: "clear",
+      shadowNsfw: false,
+      nsfwBlurMedia: true,
+      blockReason: null,
+    };
+
+    await host.onNsfwBlurChange();
+
+    expect(calls,).toHaveLength(1,);
+    expect(storage.get("nsfw-blur-media",),).toBe("1",);
   });
 });
 
@@ -526,6 +600,7 @@ describe("settings general nsfwRestrictionText", () => {
       maxRating: "",
       accessStatus: "blocked",
       shadowNsfw: false,
+      nsfwBlurMedia: false,
       blockReason: null,
     };
 
@@ -539,6 +614,7 @@ describe("settings general nsfwRestrictionText", () => {
       maxRating: "",
       accessStatus: "banned",
       shadowNsfw: false,
+      nsfwBlurMedia: false,
       blockReason: null,
     };
 
@@ -552,6 +628,7 @@ describe("settings general nsfwRestrictionText", () => {
       maxRating: "",
       accessStatus: "clear",
       shadowNsfw: true,
+      nsfwBlurMedia: false,
       blockReason: null,
     };
 
@@ -565,6 +642,7 @@ describe("settings general nsfwRestrictionText", () => {
       maxRating: "",
       accessStatus: "blocked",
       shadowNsfw: true,
+      nsfwBlurMedia: false,
       blockReason: "policy",
     };
 
