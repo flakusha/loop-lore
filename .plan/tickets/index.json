@@ -35097,6 +35097,19 @@
     "title": "Cover alpine admin/npc/settings clusters and DOM-bound waiver track",
     "type": "TASK"
   },
+  "TASK-COVER-EXPORT-SSE-START-TS-POLL-LOOP-BRANCHES": {
+    "hash": "f4b45b0",
+    "git_issue": "f4b45b0",
+    "extid": "TASK-COVER-EXPORT-SSE-START-TS-POLL-LOOP-BRANCHES",
+    "type": "TASK",
+    "title": "Cover export-sse start.ts poll-loop branches",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cover-export-sse-start-ts-poll-loop-branches.md",
+    "status": "Not Started"
+  },
   "TASK-COVER-FRONTEND-VN-PAGES-NEW-CHAT-QUESTS-WORLDS": {
     "epic": "epic-testing-qa",
     "extid": "TASK-COVER-FRONTEND-VN-PAGES-NEW-CHAT-QUESTS-WORLDS",
