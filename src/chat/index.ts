@@ -15,10 +15,7 @@ export type { MessageRef, } from "./types";
 export { availableTokens, computeContextStats, computeSections, } from "./context-stats";
 export type { BudgetStats, ContextSection, ContextStats, } from "./context-stats";
 export {
-  computeContextWindow,
   getThresholdState,
-  injectEvents,
-  injectMemories,
 } from "./context-window";
 export { estimateTokens, } from "./token-utils";
 

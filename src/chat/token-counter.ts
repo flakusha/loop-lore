@@ -4,9 +4,8 @@
 /**
  * Token Counter — estimates token usage for chat context window monitoring.
  *
- * Uses the same char→token heuristic as the existing context-compactor
- * (~0.3 tokens/char) for consistency. Re-exported from
- * `src/generation/context-window-config` for the default estimate.
+ * Delegates the char→token heuristic to the shared estimator
+ * (`src/chat/token-utils.ts`) via `defaultTokenCount`.
  */
 
 import { defaultTokenCount, type TokenCountFn, } from "../generation/context-window-config";
@@ -67,30 +66,4 @@ export function getStatus(percentage: number,): ContextStatus {
   if (percentage >= THRESHOLDS.critical) { return "critical"; }
   if (percentage >= THRESHOLDS.warning) { return "warning"; }
   return "ok";
-}
-
-/**
- * Compute the full context window state for a chat.
- * @param messages - Current message history
- * @param maxTokens - Model context window size (default: 32000)
- * @param threshold - Critical threshold override (default: 0.85)
- * @param tokenCountFn
- * @returns Token count result with status
- */
-export function computeContextWindow(
-  messages: CountableMessage[],
-  maxTokens = 32_000,
-  threshold: number = THRESHOLDS.critical,
-  tokenCountFn: TokenCountFn = defaultTokenCount,
-): TokenCountResult {
-  const currentTokens = countMessageTokens(messages, tokenCountFn,);
-  const percentage = maxTokens > 0 ? currentTokens / maxTokens : 0;
-
-  return {
-    currentTokens,
-    maxTokens,
-    percentage,
-    status: getStatus(percentage,),
-    threshold,
-  };
 }
