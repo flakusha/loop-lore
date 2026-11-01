@@ -25676,7 +25676,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-driver-module.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-ACP-PROFILE-AWARE-MODEL-SELECTION": {
     "hash": "9b543e6",
@@ -40520,7 +40520,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-fake-acp-server-test-fixture.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-FALSE-REPORT-PROTECTION": {
     "hash": "e2d659b",

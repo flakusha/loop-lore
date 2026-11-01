@@ -3,7 +3,8 @@
 
 # TASK: fake ACP server test fixture
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Landed in 6ba944b5a (fake ACP server speaks session/cancel, session/request_permission, fs/read_text_file + createHarnessFixture).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-harness-acp

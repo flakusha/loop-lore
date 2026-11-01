@@ -3,7 +3,8 @@
 
 # TASK: ACP driver module
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Landed in 34a018b09 (HarnessDriver driver.ts + session/cancel wire verb + jsonrpc-process onRequest).
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-external-harness-acp
