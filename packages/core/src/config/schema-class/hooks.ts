@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+// src/config/schema-class/hooks.ts — hooks section defaults
+import type { HooksConfig, } from "../schema";
+
+export const HOOKS_DEFAULTS = {
+  enableMoodHooks: true,
+  enableEmotionHooks: true,
+  enableNsfwHooks: true,
+  enableModerationHooks: true,
+  enableModerationLlmClassifier: true,
+  enableImmersionGate: true,
+  // Opt-in LLM audit of immersion verdicts: DEFAULT OFF (epic truth — the
+  // default path stays deterministic and fast).
+  enableImmersionLlmClassifier: false,
+} satisfies HooksConfig;
