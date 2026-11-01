@@ -243,11 +243,23 @@
                 <span x-text="source.tipMessageId.slice(0, 8)"></span>
               </div>
               <div class="merge-source-actions">
-                <button class="btn-icon btn-xs" @click="reorderSource(idx, -1)" :disabled="idx === 0">↑</button>
-                <button class="btn-icon btn-xs" @click="reorderSource(idx, 1)" :disabled="idx === sources.length - 1">
+                <button
+                  class="btn-icon btn-xs"
+                  @click="reorderSource(idx, -1)"
+                  :aria-label="t('branches.moveUp')"
+                  :disabled="idx === 0"
+                >
+                  ↑
+                </button>
+                <button
+                  class="btn-icon btn-xs"
+                  @click="reorderSource(idx, 1)"
+                  :aria-label="t('branches.moveDown')"
+                  :disabled="idx === sources.length - 1"
+                >
                   ↓
                 </button>
-                <button class="btn-icon btn-xs" @click="removeSource(idx)">✕</button>
+                <button class="btn-icon btn-xs" @click="removeSource(idx)" :aria-label="t('common.remove')">✕</button>
               </div>
             </div>
           </template>

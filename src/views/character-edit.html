@@ -3,8 +3,15 @@
 
 <!-- Character Edit Page (skeleton — form loaded via htmx) -->
 <header id="header-slot" class="main-header" data-page="character-edit" data-testid="character-edit-header">
-  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title" id="page-title">{{{t("characters.editCharacter")}}}</span>
+  <button
+    class="hamburger"
+    x-on:click="window.toggleSidebar()"
+    data-testid="hamburger"
+    aria-label="{{{t('accessibility.toggleSidebar')}}}"
+  >
+    ☰
+  </button>
+  <h1 class="title" id="page-title">{{{t("characters.editCharacter")}}}</h1>
 </header>
 
 <div class="app-layout">

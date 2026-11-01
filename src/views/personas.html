@@ -3,8 +3,15 @@
 
 <!-- Personas List Page -->
 <header id="header-slot" class="main-header" data-page="personas" data-testid="personas-header">
-  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title">{{{t("personas.title")}}}</span>
+  <button
+    class="hamburger"
+    x-on:click="window.toggleSidebar()"
+    data-testid="hamburger"
+    aria-label="{{{t('accessibility.toggleSidebar')}}}"
+  >
+    ☰
+  </button>
+  <h1 class="title">{{{t("personas.title")}}}</h1>
   <div class="actions">
     <button
       class="btn btn-primary"
