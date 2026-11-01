@@ -8,6 +8,7 @@
  * latencyMs (not the old hardcoded 0).
  */
 import { afterEach, describe, expect, it, mock, } from "bun:test";
+import type { CompressionMetadata, } from "../../assistant/prompt/types";
 import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../../test-utils/isolate-only";
 import type { GenerationMessage, } from "../types";
 
@@ -395,6 +396,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
       tokenUsage: { promptTokens: number; completionTokens: number; totalTokens: number };
       finishReason: string;
       meta: { api_version: string };
+      compression: CompressionMetadata;
     };
 
     expect(body,).toEqual({
@@ -405,6 +407,12 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
       thinking: null,
       tokenUsage: { promptTokens: 10, completionTokens: 5, totalTokens: 15, },
       finishReason: "stop",
+      compression: {
+        droppedTokens: 0,
+        droppedSections: [],
+        compacted: false,
+        compactedTokens: 0,
+      },
       meta: { api_version: expect.any(String,), },
     },);
   });
