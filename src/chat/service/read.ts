@@ -49,7 +49,11 @@ export async function getMessageWithAccess(
     return { code: "not_found", message: "Message not found", };
   }
 
-  if (can(userRole, "admin.chat",) || (userId !== null && await isChatOwner(database, message.chat_id, userId,))) {
+  if (
+    can(userRole, "admin.chat",) ||
+    (userId !== null && await isChatOwner(database, message.chat_id, userId,)) ||
+    (userId !== null && message.actor_id === userId)
+  ) {
     return message;
   }
 
