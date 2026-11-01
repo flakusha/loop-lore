@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Epic:** epic-accessibility-input
@@ -363,3 +363,5 @@ class switching, change notification, and `stop()` teardown.
 - TASK-keyboard-navigation.md
 - TASK-mobile-touch-gestures.md
 - TASK-screen-reader-support.md
+
+**Resolved:** 2026-11-01 registry-driven close: git issue 121a09b (registry tip: da48299db Konstantin Fedotov Auto-closed: appended .md marker marks TASK-RESPONSIVE-DESIGN done)
