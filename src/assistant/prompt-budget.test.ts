@@ -11,6 +11,7 @@
 import { describe, expect, test, } from "bun:test";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import {
+  applyBudgetDrops,
   compactPromptHistory,
   dropOverBudgetSections,
   reorderPromptMessages,
@@ -24,6 +25,30 @@ function msg(role: GenerationMessage["role"], content: string,): GenerationMessa
 function section(name: string, tokens: number, dropped = false,): PromptSectionReport {
   return { name, chars: tokens * 4, tokens, dropped, };
 }
+
+// TASK-ctx-metrics: drop accounting for compression metadata.
+describe("applyBudgetDrops", () => {
+  test("reports dropped tokens and lossy-first section order", () => {
+    const sections = [
+      section("system", 100,),
+      section("memories", 100,),
+      section("lore", 50,),
+      section("examples", 200,),
+    ];
+
+    // Total 450, budget 300: lossy tier drops (memories, lore) — 300 ≤ 300.
+    const res = applyBudgetDrops(sections, 300, 450,);
+    expect(res.totalTokens,).toBe(300,);
+    expect(res.droppedTokens,).toBe(150,);
+    expect(res.droppedSections,).toEqual(["memories", "lore",],);
+  });
+
+  test("under budget reports zero drops", () => {
+    const sections = [section("system", 10,),];
+    const res = applyBudgetDrops(sections, 100, 10,);
+    expect(res,).toEqual({ totalTokens: 10, droppedTokens: 0, droppedSections: [], },);
+  });
+});
 
 // Mutates `dropped` flags in place; returns the updated total.
 describe("dropOverBudgetSections", () => {

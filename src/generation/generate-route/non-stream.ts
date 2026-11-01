@@ -26,6 +26,7 @@
  */
 
 import type { Kysely, } from "kysely";
+import type { CompressionMetadata, } from "../../assistant/prompt/types";
 import { authorCarriageIfEnabled, } from "../../chat/service/carriage-authoring";
 import type { Config, } from "../../config/schema";
 import { CancelReason, } from "../../db/enums";
@@ -55,9 +56,19 @@ export interface RunNonStreamingOpts {
   providerName: string;
   providerReq: ProviderRequest;
   failoverList: { name: string; provider: LLMProvider }[];
+  /** Compression metadata from prompt assembly (TASK-ctx-metrics); zeroed when omitted (tests). */
+  compression?: CompressionMetadata;
   /** Scheduler override (tests); production uses the process-wide manager. */
   scheduler?: ResourceManager;
 }
+
+/** Zero compression baseline when the caller omits metadata (tests). */
+const NO_COMPRESSION: CompressionMetadata = {
+  droppedTokens: 0,
+  droppedSections: [],
+  compacted: false,
+  compactedTokens: 0,
+};
 
 /**
  * @param root0
@@ -87,6 +98,7 @@ export async function runNonStreaming({
   providerName,
   providerReq,
   failoverList,
+  compression = NO_COMPRESSION,
   scheduler,
 }: RunNonStreamingOpts,): Promise<Response> {
   const log = getLogger().child({ module: "generate-route", },);
@@ -199,6 +211,7 @@ export async function runNonStreaming({
           provider: providerName,
           finishReason: finalResponse.finishReason,
           deliveryConfirmed: true,
+          compression: { ...compression, },
         },
       },).catch((error: unknown,) => {
         log.error("Telemetry record failed", error instanceof Error ? error : undefined,);
@@ -239,6 +252,8 @@ export async function runNonStreaming({
       thinking: result.thinking,
       tokenUsage: result.tokenUsage,
       finishReason: finalResponse.finishReason,
+      // TASK-ctx-metrics: what budget enforcement + compaction removed.
+      compression,
     },);
   } catch (error) {
     const errMsg = (error as Error).message;

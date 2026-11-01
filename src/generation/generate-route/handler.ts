@@ -142,6 +142,7 @@ export async function handleGenerate({
 
   let messages: GenerationMessage[];
   let systemPrompt: string | undefined;
+  let compression: CompressionMetadata;
   try {
     const built = await buildPrompt({
       input,
@@ -155,6 +156,7 @@ export async function handleGenerate({
 
     messages = built.messages;
     systemPrompt = built.systemPrompt;
+    compression = built.compression;
   } catch (error) {
     return jsonError({ message: `Prompt assembly failed: ${(error as Error).message}`, status: 422, },);
   }
@@ -231,6 +233,7 @@ export async function handleGenerate({
       providerName: resolved.resolvedProviderName,
       providerReq: providerReqWithHarness,
       failoverList,
+      compression,
     },);
   }
 
@@ -245,5 +248,6 @@ export async function handleGenerate({
     providerName: resolved.resolvedProviderName,
     providerReq: providerReqWithHarness,
     failoverList,
+    compression,
   },);
 }

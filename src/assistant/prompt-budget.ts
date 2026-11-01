@@ -47,6 +47,38 @@ export async function compactPromptHistory(
 }
 
 /**
+ * Drop sections until the assembled prompt fits the budget and report what
+ * was removed (TASK-ctx-metrics compression metadata).
+ * @param sections
+ * @param tokenBudget
+ * @param totalTokens
+ * @returns The remaining token total plus drop accounting
+ */
+export function applyBudgetDrops(
+  sections: PromptSectionReport[],
+  tokenBudget: number,
+  totalTokens: number,
+): { totalTokens: number; droppedTokens: number; droppedSections: string[] } {
+  const droppedSections: string[] = [];
+  let remaining = totalTokens;
+  if (totalTokens > tokenBudget) {
+    const beforeDrop = totalTokens;
+    remaining = dropOverBudgetSections(sections, tokenBudget, totalTokens,);
+    for (const s of sections) {
+      if (s.dropped) { droppedSections.push(s.name,); }
+    }
+
+    return {
+      totalTokens: remaining,
+      droppedTokens: beforeDrop - remaining,
+      droppedSections,
+    };
+  }
+
+  return { totalTokens: remaining, droppedTokens: 0, droppedSections, };
+}
+
+/**
  * Drop sections until the assembled prompt fits the budget.
  *
  * Lossy-tier sections drop FIRST, then lossless ones — within each tier,

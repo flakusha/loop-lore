@@ -12,6 +12,7 @@
 
 import type { Kysely, } from "kysely";
 import { PromptAssembler, } from "../../assistant/prompt-assembler";
+import type { CompressionMetadata, } from "../../assistant/prompt/types";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { resolveSystemPrompt, } from "../../prompts";
@@ -67,9 +68,18 @@ export async function buildPrompt({
   userId,
   groupParticipantIds,
   includeExamples,
-}: BuildPromptOpts,): Promise<{ messages: GenerationMessage[]; systemPrompt: string | undefined }> {
+}: BuildPromptOpts,): Promise<{
+  messages: GenerationMessage[];
+  systemPrompt: string | undefined;
+  /** What budget drops + compaction removed (TASK-ctx-metrics). */
+  compression: CompressionMetadata;
+}> {
   if (input.prompt && input.prompt.length > 0) {
-    return { messages: input.prompt, systemPrompt: input.systemPrompt, };
+    return {
+      messages: input.prompt,
+      systemPrompt: input.systemPrompt,
+      compression: { droppedTokens: 0, droppedSections: [], compacted: false, compactedTokens: 0, },
+    };
   }
 
   const assembler = new PromptAssembler(database,);
@@ -93,22 +103,26 @@ export async function buildPrompt({
 
   let messages = assembled.messages;
   const systemPrompt = assembled.systemPrompt;
+  const compression: CompressionMetadata = assembled.compression ??
+    { droppedTokens: 0, droppedSections: [], compacted: false, compactedTokens: 0, };
 
   if (assembled.tokenCount > assembled.tokenBudget * 0.85) {
     try {
       const compactor = new ContextCompactor({ threshold: 0.85, keepLast: 10, },);
-      const { messages: compacted, compacted: didCompact, } = await compactor.compact(
+      const { messages: compacted, compacted: didCompact, droppedTokens, } = await compactor.compact(
         messages,
         assembled.tokenBudget,
       );
 
       if (didCompact) {
         messages = compacted;
+        compression.compacted = true;
+        compression.compactedTokens = droppedTokens;
       }
     } catch {
       /* compaction is best-effort; proceed with full context on failure */
     }
   }
 
-  return { messages, systemPrompt, };
+  return { messages, systemPrompt, compression, };
 }
