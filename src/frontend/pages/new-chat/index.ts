@@ -16,8 +16,34 @@ import { bindSubmitHandler, } from "./submit";
  */
 const WORLD_REQUIRED_VARIANTS = new Set(["rpg", "rpg_group",],);
 
+/**
+ * htmx:after:init can fire for several nodes of one swap, re-triggering the
+ * page loader while a previous run is still awaiting its fetches. A late
+ * re-entry rebuilds the world select and wipes the user's picked world, so
+ * the required select blocks submit silently. Only one load may run per
+ * mounted form.
+ */
+let loadInFlight = false;
+
 globalThis.loadNewChatPage = async function(): Promise<void> {
+  if (loadInFlight) { return; }
+  loadInFlight = true;
+  try {
+    await loadNewChatPageInner();
+  } finally {
+    loadInFlight = false;
+  }
+};
+
+/** Fetch page data, populate selects, and bind handlers for the form. */
+async function loadNewChatPageInner(): Promise<void> {
   const ctx: NewChatCtx = createCtx();
+
+  // Bind submit before any await: a stalled fetch in this loader must never
+  // leave the form without its submit handler, which would turn the button
+  // into a silent native submit (no POST, no error).
+  ctx.form = $<HTMLFormElement>("#create-chat-form",);
+  bindSubmitHandler(ctx,);
 
   try {
     const res = await feFetch("/api/v1/actors?pageSize=200",);
@@ -210,5 +236,4 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
 
   bindMemoryHandlers(ctx,);
   bindSelectionHandlers(ctx,);
-  bindSubmitHandler(ctx,);
-};
+}

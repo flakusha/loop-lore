@@ -8,12 +8,17 @@ import { showToast, } from "../../ui";
 import { getErrorMessage, } from "../shared";
 import type { NewChatCtx, } from "./state";
 
+/** Forms already carrying a submit listener; htmx re-entry re-runs the page loader. */
+const boundForms = new WeakSet<HTMLFormElement>();
+
 /**
  * @param ctx
  * @returns {void}
  */
 export function bindSubmitHandler(ctx: NewChatCtx,): void {
-  ctx.form!.addEventListener("submit", async function(e: Event,) {
+  if (!ctx.form || boundForms.has(ctx.form,)) { return; }
+  boundForms.add(ctx.form,);
+  ctx.form.addEventListener("submit", async function(e: Event,) {
     e.preventDefault();
     const nameInput = ctx.form!.querySelector<HTMLInputElement>('[name="name"]',);
     if (!nameInput) { return; }
@@ -105,7 +110,7 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
 
   return {
     name,
-    type: isVariant ? undefined : ctx.chatType!.value,
+    type: isVariant ? undefined : ctx.chatType?.value ?? "direct",
     mode: isVariant ? undefined : (gmGuided ? "story" : mode),
     participantIds: Array.from(ctx.selected, (a: any,) => a.id,),
     personaId,
