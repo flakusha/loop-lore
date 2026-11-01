@@ -12,7 +12,7 @@
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** (none — hygiene/self-contained)
-**Related:** .plan/backlog/open-untriaged.md (advisory orphans)
+**Related:** .plan/backlog-archive.md (advisory orphans)
 
 ## Summary
 

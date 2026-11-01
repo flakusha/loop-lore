@@ -35,7 +35,7 @@ All 10 locales complete at 1070 keys. Template adoption finished (layout `User` 
 wired to `common.user`). Frontend component strings closed: ~105 hardcoded toast/status/notification
 strings across 31 Alpine components now resolve through `t()` against `__localeStrings`
 (toasts._, status._, commands._, notifications.type_ namespaces + 207 new keys × 9 locales
-translated). See `.plan/backlog/open.md` row 8.
+translated). See `.plan/backlog-archive.md` row 8.
 
 ## Acceptance Criteria
 

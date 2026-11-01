@@ -37,7 +37,7 @@
 # Filing batch notes — 2026-09-26 (v2: plan-expansion)
 
 Branch: `plan-expansion-2026-09-26-v2`. Worktree: `tree/plan-expansion-2026-09-26-v2/`.
-Source backlog / matrix / epic triage driven by `.plan/backlog/open-*.md`,
+Source backlog / matrix / epic triage driven by `.plan/backlog-archive.md`,
 `.plan/matrix-*.md`, `.plan/epics/`.
 
 ## Backlog triage (Subagent A — DomesticMoth)

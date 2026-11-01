@@ -177,7 +177,7 @@ All 41 keys in `src/cli-registry.ts:57-226`; purposes are the registry `descript
 | Command | Purpose | Flags |
 |---|---|---|
 | `plan` | `.plan/` tooling | `code-map` (`--check --find <path>`), `gen-docs` (`--check`), `check-links`, `validate` (`--gates/--skip-gates/--fix/--diff-base/--json`), `status` (`--tickets`), `matrix` (`--check --json --cooccurrence`) (`:56-57`, `AGENTS.md:29`) |
-| `backlog` | `.plan/backlog/` index ↔ tier files | `sync [--fix] [--verbose]` (`:16`) |
+| `backlog` | backlog index ↔ tier files (giwt upstream surface; unused by loop-lore since the 2026-11-01 tier drop) | `sync [--fix] [--verbose]` (`:16`) |
 | `docs` | List / show / search / dump / **sync-agents** the repo markdown corpus | `--dir <path>`, `--json\|--toml\|--emoji` (`:23-24`, `docs.ts:40-45`) |
 | `doctor` | Setup dev tooling, or `check` repo health, or `scratchpad` report | `[--apply] [--tool <csv>] [--root <dir>]` / `check [--json] [--checks <csv>] [--jobs <n>] [--timeout <ms>]` / `scratchpad [--json]` (`:33-34`) |
 

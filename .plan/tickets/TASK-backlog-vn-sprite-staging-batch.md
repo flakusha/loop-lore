@@ -30,7 +30,7 @@
 - [ ] bun test src/story/ green; gallery-in-scene inheritance verified separately under TASK-visual-novel-mode.md (already ✅).
 
 **Tags:** vn, sprite, staging, alpha-matting, emotion
-**Related:** .plan/backlog/open-untriaged.md § New clusters, .plan/backlog/priority-p0-p2.md § P2-A, .plan/tickets/TASK-visual-novel-mode.md
+**Related:** .plan/backlog-archive.md § New clusters, .plan/backlog-archive.md § P2-A, .plan/tickets/TASK-visual-novel-mode.md
 
 
 git issue: d13502f

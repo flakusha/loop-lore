@@ -11,71 +11,46 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 | --------------------- | ------- |
 | `tickets/`            | Task specs (authoring, review, iteration) |
 | `epics/`              | Epic definitions (major initiatives, includes merged design/roadmaps/ideas/research/features) |
-| `backlog/`            | **Status queue (index + tier files, split 2026-08-15)** |
-| `backlog/priority.md` | Priority index — file map + status header + milestone gates |
-| `backlog/open.md`     | Open index — file map + status header + next actions |
 | `epics-index.md`      | Epic registry index (generated; `giwt plan gen-docs`); replaces the retired `.plan/epics.md` snapshot |
+| `priority-matrix.md`  | Generated priority × status view (`bun run plan:priority`; advisory `plan - priority` freshness gate) |
+| `backlog-archive.md`  | Historical archive of the dropped hand-maintained backlog tier files (2026-11-01) |
 
-## Backlog Categories (`backlog/`)
+## Backlog tier files (dropped 2026-11-01)
 
-The former monolithic `immediate.md` / `backlog.md` / `open-items.md` were split into
-small single-purpose files, then re-consolidated (2026-08-08) into **two** backlog files
-to cut duplication, then **re-split by priority/phasing (2026-08-15)** into index + tier
-files. Indexes (`priority.md`, `open.md`) hold file maps + status; tier files hold detail.
+The hand-maintained backlog tier files (`priority*.md`, `open*.md`,
+`security-review-2026-08-25.md`, …) were removed: they duplicated ticket/epic
+metadata in a second, manual shape and had drifted from the ticket index.
+Historical content is preserved verbatim in
+[`backlog-archive.md`](./backlog-archive.md).
 
-> **Retired (2026-09-25)**: `.plan/immediate.md` (P0–P6 decision queue + per-tier status
-> duplicates; merged into `priority-p{0-p2,p3-p5,p6}-*.md` + `priority-release-010.md`)
-> and `.plan/epics.md` (2026-07-28 stale snapshot of 122 epics; replaced by
-> `epics-index.md` regenerated via `giwt plan gen-docs`). Priority + complexity now live
-> in actual tickets; cross-connections live in `matrix-*.md`.
-
-| File                 | Holds                                                                                 | Reads-when                      |
-| -------------------- | ------------------------------------------------------------------------------------- | ------------------------------- |
-| `priority.md`        | **Index** — status header, file map, milestone gates                                  | Working on priority / release   |
-| `priority-p0-p2.md`  | P0–P2 — critical path, high priority, accessibility, core workstream + tier details   | Current work                    |
-| `priority-p3-p5.md`  | P3–P5 — 0.1.0 core foundation value tiers, experience, wiring/search/polish           | 0.1.0 value tiers               |
-| `priority-p6.md`     | P6+ — post-0.1.0 systems (RPG, Memory, Agentic), waves P6-0…P6-H, sequencing          | Deferred systems                |
-| `priority-release-010.md` | Post-P3 road to happy 0.1.0, release artifacts, hardening, 0.1.0 Quick Wins       | Release prep                    |
-| `open.md`            | **Index** — status header, file map, open/next actions, preserved notes               | Auditing what's open / deciding |
-| `open-inflight.md`   | In-flight / decision queue (rows needing finalize-vs-defer call) + next actions       | Current decisions               |
-| `open-debt.md`       | Dead/unwired code, schema drift / latent bugs, release hardening                       | Debt audit                      |
-| `open-deferred.md`   | Item-systems deferred follow-ups (IS1–IS7), hardening / deferred clusters             | Deferred work                   |
-| `open-closed.md`     | Closed (reference) — recent wiring log, security closed, resolved, preserved notes    | History / audit                 |
-
-**Rules:**
-
-- **One home per item.** Every item lives in exactly one backlog file; rows are moved
-  (not mirrored) between files as they transition open → in-flight → priority/high-value.
-- **Dedup:** `open-*.md` removes rows that mirror a `priority-*.md` tier; `priority-*.md`
-  does not restate `open-*.md` debt.
-- **Index integrity enforced by gate.** `bun run plan:backlog:sync` checks that every
-  tier file appears in exactly one index file map (no orphans, no phantoms, no outside
-  targets); `--fix` re-registers missing rows. Registered in `bun run check`
-  (`backlog - index` gate).
-- **Detail lives in `tickets/` + `epics/`**; category files are status views, not specs.
-- **Active items** referenced by git issues point at their `.plan/backlog/*.md` source.
+- **Status** — `.plan/tickets/index.json` (synced with git issues by
+  `bun run plan:sync`; validated by `plan - validate`).
+- **Priority** — ticket `**Priority:**` frontmatter + epic `**Priority:**`;
+  the generated view is [`priority-matrix.md`](./priority-matrix.md)
+  (`bun run plan:priority`, freshness `bun run plan:priority:check`, advisory
+  `plan - priority` gate). It reads the ticket index through the same pinned
+  giwt machinery as `plan:matrix`, so it cannot drift from the index format.
 
 ## Ticket Priority (`/find-work` contract)
 
-`/find-work` (omp-plugins) resolves a ticket's priority via a three-step chain:
+`/find-work` (omp-plugins) resolves a ticket's priority via a two-step chain:
 
 1. **Explicit label** — frontmatter `labels:` or a `**Labels:**`/`**Tags:**` header
    line carrying `p0`–`p6`, `priority: pN`, or a severity word
    (`critical`/`blocker`→P0, `high`/`urgent`→P1, `medium`/`normal`→P2,
    `low`/`minor`/`trivial`→P3).
-2. **Backlog tier placement** — when no label carries a priority, the ticket's
-   listing in a `backlog/priority-*.md` tier file decides: the `## P<n>` section
-   (sub-tiers like `P1.5`/`P2-A` round to the integer part) sets the priority.
-   Tickets referenced in multiple tier files take the FIRST file's tier
-   (sorted: `p0-p2` before `p3-p5` before `p6` before `release-010`).
-3. **Default** — otherwise `P3`.
+2. **Default** — otherwise `P3`.
 
-**Convention:** keep tier files authoritative — place a ticket in the right
-`priority-*.md` section and you are done. Add an explicit `pN`/severity label
-only to OVERRIDE tier placement (e.g. a hotfix riding in a P3 tier file).
-Ticket refs in tier files must use the exact spec filename form
-`` `TASK-<slug>.md` `` (also `BUG-`/`FEAT-`/`EPIC-`/`WIRE-`/`AUX-`) — that is
-what the tier parser keys on.
+**Priority ordering input (2026-11-01):** the backlog tier files were dropped.
+Set the ticket's own `**Priority:**` frontmatter (`High`, `P1 — Critical`, … —
+the ticket-index canon): `bun run plan:priority` projects ticket + epic
+priorities into `.plan/priority-matrix.md`, the generated priority × status
+view. Add an explicit `pN`/severity label when you need `/find-work` itself to
+rank a ticket above the `P3` default (e.g. a hotfix).
+
+> Until 2026-11-01 a middle step resolved priority from `backlog/priority-*.md`
+> tier placement when no label carried one; that resolver is gone with the tier
+> files (archived in [`backlog-archive.md`](./backlog-archive.md)).
 
 ## Git Issue Integration
 

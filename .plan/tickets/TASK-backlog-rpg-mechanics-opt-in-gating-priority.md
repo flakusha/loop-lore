@@ -36,7 +36,7 @@
 - [ ] Suggested home documented in epic-mechanics-governance.md § Execution order.
 
 **Tags:** rpg, mechanics, opt-in, gating, safety
-**Related:** .plan/backlog/open-untriaged.md § New clusters, .plan/epics/epic-mechanics-governance.md, .plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md
+**Related:** .plan/backlog-archive.md § New clusters, .plan/epics/epic-mechanics-governance.md, .plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md
 
 
 git issue: aadf424

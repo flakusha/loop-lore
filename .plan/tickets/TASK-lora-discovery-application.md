@@ -35,6 +35,17 @@ LoRA discovery (auto-detect available models from sd.cpp/ComfyUI) and applicatio
 
 **TSC status:** Zero lora-specific typecheck errors on current `dev`. Pre-existing errors are from other subsystems (schema-core, enums-core, frontend mood).
 
+## Wiring note (migrated 2026-11-01)
+
+`scripts/check-wiring.ts` carried `loraRoutes` in its `DEFERRED` set with the
+note "LoRA gated 'when feature is ready for production'" (provenance: the
+"Dead / unwired code" section of the hand-maintained backlog `open.md`, which
+was dropped 2026-11-01 and archived in `.plan/backlog-archive.md`). The
+deferral ended 2026-08-18 (A8 unwired close-out, `0e2bc6db`): the routes are
+mounted in `register-plugins.ts` and, since the v1 surface split, also via
+`src/routes/v1/content-surface.ts`. The stale `DEFERRED` entry was removed and
+the wiring check now verifies `loraRoutes` like any other route factory.
+
 ## Acceptance Criteria
 
 ### Phase 1: Core LoRA System (MVP) ✅ COMPLETE

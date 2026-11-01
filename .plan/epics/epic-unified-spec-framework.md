@@ -113,7 +113,7 @@ loop-lore keeps one source of truth for that file.
 
 - `.plan/tickets/index.json` (existing; canonical schema; preserve always)
 - `.plan/epics-index.md` (existing; `scripts/gen-plan-docs.ts` regenerates)
-- `.plan/backlog/priority*.md` (existing backlog summaries)
+- `.plan/backlog-archive.md` (existing backlog summaries)
 - `scripts/worktree/sync.ts` (existing canonical writer; delegate, do not fork)
 - `scripts/gen-plan-docs.ts` (existing epic-index regenerator; consume new frontmatter first)
 

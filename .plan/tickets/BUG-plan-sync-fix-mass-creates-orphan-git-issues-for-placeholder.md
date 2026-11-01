@@ -56,7 +56,7 @@ Placeholder hashes now log `...: SKIPPED placeholder fix ...` and `continue;` pa
 
 Diff: `+6 / -20` lines in `scripts/sync-ticket-index.ts` (commit `4a1f56b8`).
 
-Bucket X close-out history: `.plan/backlog/open-closed.md` (section Retired 2026-09-18); the standalone close-out doc was pruned 2026-09-26.
+Bucket X close-out history: `.plan/backlog-archive.md` (section Retired 2026-09-18); the standalone close-out doc was pruned 2026-09-26.
 
 ## Acceptance Criteria
 
@@ -66,5 +66,5 @@ Bucket X close-out history: `.plan/backlog/open-closed.md` (section Retired 2026
 
 ## Related
 
-- `.plan/backlog/open-closed.md` — cluster history (the retired cluster parent doc was pruned 2026-09-26)
+- `.plan/backlog-archive.md` — cluster history (the retired cluster parent doc was pruned 2026-09-26)
 - git issue `49dd182` / `2c747e0` / `7bb2bdf` — sibling build-integrity tsc errors

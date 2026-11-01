@@ -28,7 +28,7 @@
 - [ ] Verification log captured in ticket log.
 
 **Tags:** size-strict, regression, refactor, release-010, a9
-**Related:** .plan/backlog/open-debt.md § Release hardening, .plan/tickets/TASK-size-strict-debt.md, .plan/backlog/priority-release-010.md
+**Related:** .plan/backlog-archive.md § Release hardening, .plan/tickets/TASK-size-strict-debt.md, .plan/backlog-archive.md
 
 
 git issue: d5ffa23

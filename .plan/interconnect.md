@@ -11,7 +11,7 @@ output is byte-identical for identical inputs.
 - tickets: 3938
 - epics: 374
 - src paths owned: 4627
-- edges: produces 12408, consumes 406, sibling 39362, owns 2908, related 1196
+- edges: produces 12409, consumes 406, sibling 39371, owns 2908, related 1196
 
 ## Shared src hubs
 
@@ -1661,7 +1661,7 @@ output is byte-identical for identical inputs.
 | `src/routes/v1/admin-surface.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-frontend-client-contract-doc`, `epic-experimental-egui-frontend`, `epic-frontend-chat-commands` |
 | `src/routes/v1/base-surface.ts` | `BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-`, `TASK-delete-unreferenced-platform-service-util-modules-dead-barre`, `epic-assistant-step-planning`, `epic-auth-access`, `epic-frontend-settings`, `epic-research-agency-decision` |
 | `src/routes/v1/chats-surface.ts` | `BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-`, `epic-frontend-emoji-reactions`, `epic-visual-novel-mode` |
-| `src/routes/v1/content-surface.ts` | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty`, `FEAT-065-template-system`, `FEAT-memory-visualizer-knowledge-graph-over-asset-links`, `TASK-analytics-observability`, `TASK-blog-publish-unit-to-post-bridge`, `TASK-blog-rss-atom-sitemap`, `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-docs-spec-analytics-observability`, `TASK-public-templates-routes`, `epic-blog-system`, `epic-technical-comparison-charts` |
+| `src/routes/v1/content-surface.ts` | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty`, `FEAT-065-template-system`, `FEAT-memory-visualizer-knowledge-graph-over-asset-links`, `TASK-analytics-observability`, `TASK-blog-publish-unit-to-post-bridge`, `TASK-blog-rss-atom-sitemap`, `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-docs-spec-analytics-observability`, `TASK-lora-discovery-application`, `TASK-public-templates-routes`, `epic-blog-system`, `epic-technical-comparison-charts` |
 | `src/routes/v1/governance.test.ts` | `BUG-governance-429-responses-missing-ratelimit-retry-after-heade`, `BUG-governance-429s-double-counted-in-telemetry`, `BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua` |
 | `src/routes/v1/governance.ts` | `BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua`, `FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard`, `TASK-docs-api-disambiguate-infra-metrics-from-governance-api-v1-m` |
 | `src/routes/v1/index.ts` | `BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa`, `BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not`, `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance`, `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und`, `BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua`, `BUG-test-e2e-env-default-mismatch`, `BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-`, `BUG-v1-route-chain-exceeds-ts-instantiation-depth`, `BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels`, `FEAT-035`, `FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal`, `TASK-integrations-inbound-webhook-ingestion-endpoint`, `epic-api-routes`, `epic-api-versioning`, `epic-assistant-step-planning`, `epic-character-core-system` |
@@ -12657,6 +12657,7 @@ output is byte-identical for identical inputs.
 | `TASK-lora-discovery-application` | produces | `src/generation/lora/routes.ts` | - |
 | `TASK-lora-discovery-application` | produces | `src/generation/lora/types.ts` | - |
 | `TASK-lora-discovery-application` | produces | `src/generation/lora/validation.ts` | - |
+| `TASK-lora-discovery-application` | produces | `src/routes/v1/content-surface.ts` | - |
 | `TASK-lore-persona-traits-placed-as-system-messages-semantic-injec` | produces | `src/assistant/prompt/sections/lore.ts` | - |
 | `TASK-lorebook-export` | produces | `src/routes/characters.ts` | - |
 | `TASK-lorebook-export` | produces | `src/routes/import.test.ts` | - |
@@ -27387,6 +27388,7 @@ output is byte-identical for identical inputs.
 | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | sibling | `TASK-docs-spec-analytics-observability` | `src/routes/v1/content-surface.ts` |
 | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | sibling | `TASK-held-item-axis-data-model` | `src/generation/matting/service.ts` |
 | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | sibling | `TASK-live-avatar-spike` | `src/assets/service/delete.ts` |
+| `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | sibling | `TASK-lora-discovery-application` | `src/routes/v1/content-surface.ts` |
 | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | sibling | `TASK-multi-concept-segmentation-masks` | `src/generation/matting/service.ts` |
 | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | sibling | `TASK-public-templates-routes` | `src/routes/v1/content-surface.ts` |
 | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | sibling | `TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste` | `src/generation/image-edit-service/apply.ts` |
@@ -33100,7 +33102,7 @@ output is byte-identical for identical inputs.
 | `FEAT-065-template-system` | sibling | `TASK-llm-markdown-document-prompts` | `src/prompts/registry.ts` |
 | `FEAT-065-template-system` | sibling | `TASK-local-image-generation-queue` | `src/generation/image-gen-route.ts` |
 | `FEAT-065-template-system` | sibling | `TASK-location-crud-tree-connections` | `src/db/migrations/001_init.ts` |
-| `FEAT-065-template-system` | sibling | `TASK-lora-discovery-application` | `src/generation/image-gen-route.ts` |
+| `FEAT-065-template-system` | sibling | `TASK-lora-discovery-application` | `src/generation/image-gen-route.ts; src/routes/v1/content-surface.ts` |
 | `FEAT-065-template-system` | sibling | `TASK-lorebook-inclusion-groups-schema-column-admission-gate-group` | `src/db/migrations/001_init.ts` |
 | `FEAT-065-template-system` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/001_init.ts` |
 | `FEAT-065-template-system` | sibling | `TASK-prompt-feature-flags-conditional-injection` | `src/assistant/prompt/registry.ts` |
@@ -34987,7 +34989,7 @@ output is byte-identical for identical inputs.
 | `FEAT-memory-visualizer-knowledge-graph-over-asset-links` | sibling | `TASK-harness-stats-dashboard` | `src/views/admin.html` |
 | `FEAT-memory-visualizer-knowledge-graph-over-asset-links` | sibling | `TASK-i18n-template-strings` | `src/views/admin.html` |
 | `FEAT-memory-visualizer-knowledge-graph-over-asset-links` | sibling | `TASK-location-crud-tree-connections` | `src/db/migrations/001_init.ts` |
-| `FEAT-memory-visualizer-knowledge-graph-over-asset-links` | sibling | `TASK-lora-discovery-application` | `src/app/register-plugins.ts` |
+| `FEAT-memory-visualizer-knowledge-graph-over-asset-links` | sibling | `TASK-lora-discovery-application` | `src/app/register-plugins.ts; src/routes/v1/content-surface.ts` |
 | `FEAT-memory-visualizer-knowledge-graph-over-asset-links` | sibling | `TASK-lorebook-inclusion-groups-schema-column-admission-gate-group` | `src/db/migrations/001_init.ts` |
 | `FEAT-memory-visualizer-knowledge-graph-over-asset-links` | sibling | `TASK-middleware-global-idempotency-replay-for-re-fired-requests` | `src/app/register-plugins.ts` |
 | `FEAT-memory-visualizer-knowledge-graph-over-asset-links` | sibling | `TASK-middleware-idempotency-wire-into-elysia` | `src/app/register-plugins.ts` |
@@ -38656,6 +38658,7 @@ output is byte-identical for identical inputs.
 | `TASK-analytics-observability` | sibling | `TASK-comparison-set-variant-data-model` | `src/routes/model-comparisons.ts` |
 | `TASK-analytics-observability` | sibling | `TASK-docs-spec-analytics-observability` | `src/routes/analytics.test.ts; src/routes/analytics.ts; src/routes/model-comparisons.test.ts; src/routes/model-comparisons.ts; src/routes/v1/content-surface.ts` |
 | `TASK-analytics-observability` | sibling | `TASK-fix-eslint-errors` | `src/routes/model-comparisons.test.ts; src/routes/model-comparisons.ts` |
+| `TASK-analytics-observability` | sibling | `TASK-lora-discovery-application` | `src/routes/v1/content-surface.ts` |
 | `TASK-analytics-observability` | sibling | `TASK-model-comparison-reactions` | `src/routes/model-comparisons.ts` |
 | `TASK-analytics-observability` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/routes/analytics.test.ts; src/routes/analytics.ts` |
 | `TASK-analytics-observability` | sibling | `TASK-public-templates-routes` | `src/routes/v1/content-surface.ts` |
@@ -41567,6 +41570,7 @@ output is byte-identical for identical inputs.
 | `TASK-blog-publish-unit-to-post-bridge` | sibling | `TASK-licensing-asset-license-columns-migration` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts; src/db/migrations/056_xp_ledger_dedupe_unique.ts; src/db/migrations/NNN_; src/db/migrations/README.md` |
 | `TASK-blog-publish-unit-to-post-bridge` | sibling | `TASK-llm-markdown-document-prompts` | `src/frontend/alpine/chat-utils/sanitize.ts; src/frontend/chat-vendor.ts` |
 | `TASK-blog-publish-unit-to-post-bridge` | sibling | `TASK-locations-fractal-migration` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts; src/db/migrations/README.md` |
+| `TASK-blog-publish-unit-to-post-bridge` | sibling | `TASK-lora-discovery-application` | `src/routes/v1/content-surface.ts` |
 | `TASK-blog-publish-unit-to-post-bridge` | sibling | `TASK-markdown-derive-other-formats` | `src/frontend/alpine/chat-utils/sanitize.ts` |
 | `TASK-blog-publish-unit-to-post-bridge` | sibling | `TASK-markdown-heading-parse-and-import` | `src/frontend/chat-vendor.ts` |
 | `TASK-blog-publish-unit-to-post-bridge` | sibling | `TASK-memory-history-search-bind-message-chain-reconstructable-con` | `src/db/migration-roundtrip.test.ts; src/db/migrations/README.md` |
@@ -41601,6 +41605,7 @@ output is byte-identical for identical inputs.
 | `TASK-blog-rss-atom-sitemap` | sibling | `TASK-frontend-lazy-vendor` | `src/frontend/chat-vendor.ts` |
 | `TASK-blog-rss-atom-sitemap` | sibling | `TASK-inline-markdown-suggestion-model` | `src/frontend/alpine/chat-utils/sanitize.ts; src/frontend/chat-vendor.ts` |
 | `TASK-blog-rss-atom-sitemap` | sibling | `TASK-llm-markdown-document-prompts` | `src/frontend/alpine/chat-utils/sanitize.ts; src/frontend/chat-vendor.ts` |
+| `TASK-blog-rss-atom-sitemap` | sibling | `TASK-lora-discovery-application` | `src/routes/v1/content-surface.ts` |
 | `TASK-blog-rss-atom-sitemap` | sibling | `TASK-markdown-canonical-intermediate-contract` | `src/frontend/alpine/chat-utils/sanitize.ts; src/frontend/chat-vendor.ts` |
 | `TASK-blog-rss-atom-sitemap` | sibling | `TASK-markdown-derive-other-formats` | `src/frontend/alpine/chat-utils/sanitize.ts` |
 | `TASK-blog-rss-atom-sitemap` | sibling | `TASK-markdown-heading-parse-and-import` | `src/frontend/chat-vendor.ts` |
@@ -44181,6 +44186,7 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va` | sibling | `TASK-image-edit-run-authz-error-shape-regression` | `src/image-edit/routes.ts` |
 | `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va` | sibling | `TASK-img2img-init-image-plumbing` | `src/image-edit/routes.ts` |
 | `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va` | sibling | `TASK-imgedit-in-chat-command` | `src/image-edit/routes.ts` |
+| `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va` | sibling | `TASK-lora-discovery-application` | `src/routes/v1/content-surface.ts` |
 | `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/image-edit/routes.ts` |
 | `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va` | sibling | `TASK-public-templates-routes` | `src/routes/v1/content-surface.ts` |
 | `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va` | sibling | `epic-blog-system` | `src/routes/v1/content-surface.ts` |
@@ -44916,6 +44922,7 @@ output is byte-identical for identical inputs.
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-item-asset-avatar-display-in-inventory-trading-and-provision` | `src/assets/service/links.ts` |
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-item-generation` | `src/regex/intent.ts` |
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-llm-scheduler-observability` | `src/generation/controller.ts` |
+| `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-lora-discovery-application` | `src/routes/v1/content-surface.ts` |
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-middleware-content-assets-gallery-hashing-validation` | `src/assets/service/create.ts` |
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/assets/service/create.ts` |
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/image-edit/routes.ts` |
@@ -46937,6 +46944,7 @@ output is byte-identical for identical inputs.
 | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | sibling | `epic-runtime-integrity-fail-safes` | `src/server/start.ts` |
 | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | sibling | `epic-skills-professions-config` | `src/server/start.ts` |
 | `TASK-docs-spec-analytics-observability` | sibling | `TASK-fix-eslint-errors` | `src/routes/model-comparisons.test.ts; src/routes/model-comparisons.ts` |
+| `TASK-docs-spec-analytics-observability` | sibling | `TASK-lora-discovery-application` | `src/routes/v1/content-surface.ts` |
 | `TASK-docs-spec-analytics-observability` | sibling | `TASK-model-comparison-reactions` | `src/routes/model-comparisons.ts` |
 | `TASK-docs-spec-analytics-observability` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/routes/analytics.test.ts; src/routes/analytics.ts` |
 | `TASK-docs-spec-analytics-observability` | sibling | `TASK-public-templates-routes` | `src/routes/v1/content-surface.ts` |
@@ -51430,6 +51438,7 @@ output is byte-identical for identical inputs.
 | `TASK-lora-discovery-application` | sibling | `TASK-middleware-global-idempotency-replay-for-re-fired-requests` | `src/app/register-plugins.ts` |
 | `TASK-lora-discovery-application` | sibling | `TASK-middleware-idempotency-wire-into-elysia` | `src/app/register-plugins.ts` |
 | `TASK-lora-discovery-application` | sibling | `TASK-middleware-in-progress-status-endpoint-for-long-running-requ` | `src/app/register-plugins.ts` |
+| `TASK-lora-discovery-application` | sibling | `TASK-public-templates-routes` | `src/routes/v1/content-surface.ts` |
 | `TASK-lora-discovery-application` | sibling | `TASK-sd-cpp-provider` | `src/generation/image-gen-route.ts` |
 | `TASK-lora-discovery-application` | sibling | `TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste` | `src/generation/image-gen-route.ts` |
 | `TASK-lora-discovery-application` | sibling | `TASK-skills-routes` | `src/app/register-plugins.ts` |
@@ -51439,6 +51448,7 @@ output is byte-identical for identical inputs.
 | `TASK-lora-discovery-application` | sibling | `TASK-video-gen-route` | `src/generation/image-gen-route.ts` |
 | `TASK-lora-discovery-application` | sibling | `epic-agency-story-points` | `src/app/register-plugins.ts` |
 | `TASK-lora-discovery-application` | sibling | `epic-audio-video-sound` | `src/generation/image-gen-route.ts` |
+| `TASK-lora-discovery-application` | sibling | `epic-blog-system` | `src/routes/v1/content-surface.ts` |
 | `TASK-lora-discovery-application` | sibling | `epic-byok-api-keys` | `src/generation/image-gen-route.ts` |
 | `TASK-lora-discovery-application` | sibling | `epic-character-growth` | `src/app/register-plugins.ts` |
 | `TASK-lora-discovery-application` | sibling | `epic-comfyui-first-class-citizen` | `src/generation/image-gen-route.ts; src/generation/lora/discovery-comfyui.ts; src/generation/lora/discovery.test.ts` |
@@ -51449,7 +51459,7 @@ output is byte-identical for identical inputs.
 | `TASK-lora-discovery-application` | sibling | `epic-file-splitting` | `src/app/register-plugins.ts` |
 | `TASK-lora-discovery-application` | sibling | `epic-lora-discovery-application` | `src/generation/image-gen-route.ts; src/generation/lora/discovery-comfyui.ts; src/generation/lora/discovery-sdserver.ts; src/generation/lora/discovery.test.ts; src/generation/lora/discovery.ts; src/generation/lora/lora.test.ts; src/generation/lora/types.ts; src/generation/lora/validation.ts` |
 | `TASK-lora-discovery-application` | sibling | `epic-review-20261025-api-governance-perimeter` | `src/app/register-plugins.ts` |
-| `TASK-lora-discovery-application` | sibling | `epic-technical-comparison-charts` | `src/generation/image-gen-route.ts` |
+| `TASK-lora-discovery-application` | sibling | `epic-technical-comparison-charts` | `src/generation/image-gen-route.ts; src/routes/v1/content-surface.ts` |
 | `TASK-lora-discovery-application` | sibling | `epic-vector-graphics-generation` | `src/generation/image-gen-route.ts` |
 | `TASK-lore-persona-traits-placed-as-system-messages-semantic-injec` | sibling | `TASK-lorebook-inclusion-groups-schema-column-admission-gate-group` | `src/assistant/prompt/sections/lore.ts` |
 | `TASK-lore-persona-traits-placed-as-system-messages-semantic-injec` | sibling | `TASK-world-lore-lifecycle-confidence-decay-distortion` | `src/assistant/prompt/sections/lore.ts` |

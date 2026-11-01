@@ -299,7 +299,7 @@ bun run check        # parallel gate runner. The authoritative gate list is
 #                     #   dead - code (knip), dead - code (src files)
 #                     #   wiring - check, fe-be - harmony, api - doc drift,
 #                     #   changelog - gate, db - schema gate, migrations - ordering,
-#                     #   conflict - markers, backlog - index, size - check,
+#                     #   conflict - markers, size - check,
 #                     #   size - strict, context - weight, no - shell - refs,
 #                     #   fuzz - generated tests, i18n - reconcile,
 #                     #   i18n - static keys, tests - coverage gaps (see below),
@@ -310,7 +310,7 @@ bun run check        # parallel gate runner. The authoritative gate list is
 #                     # scripts/check/parallel/gate-table.mjs) run and report like
 #                     # any other gate but a failure does NOT fail the run:
 #                     #   plan - validate, plan - ticket index (sync),
-#                     #   code-map - freshness, plan - matrix, jscpd ratchet,
+#                     #   code-map - freshness, plan - matrix, plan - priority, jscpd ratchet,
 #                     #   branches - audit.
 #                     # They are generated-artifact/branch-topology freshness checks
 #                     # that drift from concurrent dev-side merges and are
@@ -434,7 +434,7 @@ giwt rebase feature-name
 
 # Finalize (checks + signed merge + cleanup; --force skips gates)
 giwt finalize feature-name [--gates <csv>] [--skip-gates <csv>]
-# Plan-only branches (tickets/epics/backlog/index + generated matrix/code-map):
+# Plan-only branches (tickets/epics/index + generated matrix/priority/code-map):
 # prefer squash — one merge instead of a per-commit rebase replay:
 giwt finalize plan-branch --merge-strategy squash
 
@@ -562,9 +562,9 @@ bun run plan:validate                 # check — exits non-zero on findings
 bun run plan:validate:fix             # apply auto-fixable findings (giwt plan validate --fix)
 bun run plan:status                   # health summary (open/closed counts, gate pass/fail)
 
-# Backlog index reconciliation (.plan/backlog/ index rows ↔ tier files)
-bun run plan:backlog:sync             # check — exits non-zero on orphans/phantoms/outside rows
-bun run plan:backlog:sync:fix         # add orphans, drop phantoms
+# Priority matrix (.plan/priority-matrix.md, generated from the ticket index + epics)
+bun run plan:priority                 # regenerate
+bun run plan:priority:check           # freshness gate — committed matrix vs fresh rebuild
 
 # Feature matrix (.plan/feature-matrix.md, generated from the ticket index)
 bun run plan:matrix                   # regenerate
@@ -579,7 +579,7 @@ giwt gi <command>
 - **`.plan/epics/`** — epic definitions (includes merged design/roadmaps/ideas/research/features content)
 - **`.plan/tickets/`** — task tickets
 - **`.plan/epics-index.md`** — consolidated epic status (auto-generated from `.plan/epics/`)
-- **`.plan/backlog/`** — priority workstack and open/deferred items
+- **`.plan/priority-matrix.md`** — generated priority × status view (`bun run plan:priority`; backlog tier files dropped 2026-11-01, archived in `.plan/backlog-archive.md`)
 - **`.plan/feature-matrix.md`** — feature matrix generated from the ticket index (auto-generated)
 
 **`.plan/` is source of truth**; `docs/meta/` is reference only.

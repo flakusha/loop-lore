@@ -20,7 +20,7 @@ This ticket adds a **drift detector** that runs alongside `bun run check` and em
 
 ## Why
 
-Three observed drift classes in Sep-2026 weekly sweeps (`tree/` log, `.plan/backlog/`):
+Three observed drift classes in Sep-2026 weekly sweeps (`tree/` log, `.plan/backlog-archive.md`):
 
 - **Flake inflation** — `tests/e2e/flows/browser/` has recurring `page.waitForTimeout` sleeps; nightly flake rate silently >5%; no alarm.
 - **Coverage regression creep** — `TASK-license-compliance-gate` done but per-module coverage floor offenders accumulating; one-off waiver tickets pile up.

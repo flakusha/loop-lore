@@ -35644,7 +35644,8 @@
         "src/generation/lora/lora.test.ts",
         "src/generation/lora/routes.ts",
         "src/generation/lora/types.ts",
-        "src/generation/lora/validation.ts"
+        "src/generation/lora/validation.ts",
+        "src/routes/v1/content-surface.ts"
       ],
       "related": []
     },
@@ -83825,6 +83826,7 @@
         "TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va",
         "TASK-comic-storyboard-panel-generation-workflow",
         "TASK-docs-spec-analytics-observability",
+        "TASK-lora-discovery-application",
         "TASK-public-templates-routes",
         "epic-blog-system",
         "epic-technical-comparison-charts"
@@ -144515,6 +144517,11 @@
       "from": "TASK-lora-discovery-application",
       "kind": "produces",
       "to": "src/generation/lora/validation.ts"
+    },
+    {
+      "from": "TASK-lora-discovery-application",
+      "kind": "produces",
+      "to": "src/routes/v1/content-surface.ts"
     },
     {
       "from": "TASK-lore-persona-traits-placed-as-system-messages-semantic-injec",
@@ -226547,6 +226554,12 @@
     {
       "from": "BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty",
       "kind": "sibling",
+      "to": "TASK-lora-discovery-application",
+      "via": "src/routes/v1/content-surface.ts"
+    },
+    {
+      "from": "BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty",
+      "kind": "sibling",
       "to": "TASK-multi-concept-segmentation-masks",
       "via": "src/generation/matting/service.ts"
     },
@@ -260826,7 +260839,7 @@
       "from": "FEAT-065-template-system",
       "kind": "sibling",
       "to": "TASK-lora-discovery-application",
-      "via": "src/generation/image-gen-route.ts"
+      "via": "src/generation/image-gen-route.ts; src/routes/v1/content-surface.ts"
     },
     {
       "from": "FEAT-065-template-system",
@@ -272148,7 +272161,7 @@
       "from": "FEAT-memory-visualizer-knowledge-graph-over-asset-links",
       "kind": "sibling",
       "to": "TASK-lora-discovery-application",
-      "via": "src/app/register-plugins.ts"
+      "via": "src/app/register-plugins.ts; src/routes/v1/content-surface.ts"
     },
     {
       "from": "FEAT-memory-visualizer-knowledge-graph-over-asset-links",
@@ -294161,6 +294174,12 @@
     {
       "from": "TASK-analytics-observability",
       "kind": "sibling",
+      "to": "TASK-lora-discovery-application",
+      "via": "src/routes/v1/content-surface.ts"
+    },
+    {
+      "from": "TASK-analytics-observability",
+      "kind": "sibling",
       "to": "TASK-model-comparison-reactions",
       "via": "src/routes/model-comparisons.ts"
     },
@@ -311627,6 +311646,12 @@
     {
       "from": "TASK-blog-publish-unit-to-post-bridge",
       "kind": "sibling",
+      "to": "TASK-lora-discovery-application",
+      "via": "src/routes/v1/content-surface.ts"
+    },
+    {
+      "from": "TASK-blog-publish-unit-to-post-bridge",
+      "kind": "sibling",
       "to": "TASK-markdown-derive-other-formats",
       "via": "src/frontend/alpine/chat-utils/sanitize.ts"
     },
@@ -311827,6 +311852,12 @@
       "kind": "sibling",
       "to": "TASK-llm-markdown-document-prompts",
       "via": "src/frontend/alpine/chat-utils/sanitize.ts; src/frontend/chat-vendor.ts"
+    },
+    {
+      "from": "TASK-blog-rss-atom-sitemap",
+      "kind": "sibling",
+      "to": "TASK-lora-discovery-application",
+      "via": "src/routes/v1/content-surface.ts"
     },
     {
       "from": "TASK-blog-rss-atom-sitemap",
@@ -327311,6 +327342,12 @@
     {
       "from": "TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va",
       "kind": "sibling",
+      "to": "TASK-lora-discovery-application",
+      "via": "src/routes/v1/content-surface.ts"
+    },
+    {
+      "from": "TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va",
+      "kind": "sibling",
       "to": "TASK-outfit-narrative-extractor-regex-prefilter",
       "via": "src/image-edit/routes.ts"
     },
@@ -331717,6 +331754,12 @@
       "kind": "sibling",
       "to": "TASK-llm-scheduler-observability",
       "via": "src/generation/controller.ts"
+    },
+    {
+      "from": "TASK-comic-storyboard-panel-generation-workflow",
+      "kind": "sibling",
+      "to": "TASK-lora-discovery-application",
+      "via": "src/routes/v1/content-surface.ts"
     },
     {
       "from": "TASK-comic-storyboard-panel-generation-workflow",
@@ -343843,6 +343886,12 @@
       "kind": "sibling",
       "to": "TASK-fix-eslint-errors",
       "via": "src/routes/model-comparisons.test.ts; src/routes/model-comparisons.ts"
+    },
+    {
+      "from": "TASK-docs-spec-analytics-observability",
+      "kind": "sibling",
+      "to": "TASK-lora-discovery-application",
+      "via": "src/routes/v1/content-surface.ts"
     },
     {
       "from": "TASK-docs-spec-analytics-observability",
@@ -370805,6 +370854,12 @@
     {
       "from": "TASK-lora-discovery-application",
       "kind": "sibling",
+      "to": "TASK-public-templates-routes",
+      "via": "src/routes/v1/content-surface.ts"
+    },
+    {
+      "from": "TASK-lora-discovery-application",
+      "kind": "sibling",
       "to": "TASK-sd-cpp-provider",
       "via": "src/generation/image-gen-route.ts"
     },
@@ -370855,6 +370910,12 @@
       "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/generation/image-gen-route.ts"
+    },
+    {
+      "from": "TASK-lora-discovery-application",
+      "kind": "sibling",
+      "to": "epic-blog-system",
+      "via": "src/routes/v1/content-surface.ts"
     },
     {
       "from": "TASK-lora-discovery-application",
@@ -370920,7 +370981,7 @@
       "from": "TASK-lora-discovery-application",
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
-      "via": "src/generation/image-gen-route.ts"
+      "via": "src/generation/image-gen-route.ts; src/routes/v1/content-surface.ts"
     },
     {
       "from": "TASK-lora-discovery-application",

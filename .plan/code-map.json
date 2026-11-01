@@ -49270,6 +49270,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-lora-discovery-application.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-public-templates-routes.md"
     }
   ],

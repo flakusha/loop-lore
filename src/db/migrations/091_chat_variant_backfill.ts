@@ -6,7 +6,7 @@
  *
  * Backfills the chat-variants taxonomy onto legacy (taxonomy-blind) chats —
  * the cross-cutting "migration of legacy chats into the taxonomy" row of the
- * Chat Variants cluster (.plan/backlog/priority-p3-p5.md), closing the gap
+ * Chat Variants cluster (.plan/backlog-archive.md), closing the gap
  * 044_chat_purpose left: `chats.purpose` shipped nullable with NO backfill
  * ("null = no specific purpose"), and only variant-driven creates
  * (`resolveVariantOverrides` in src/routes/chats/create) ever write it. So

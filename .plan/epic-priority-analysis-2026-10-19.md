@@ -7,7 +7,7 @@ Analysis of which epic to tackle next, conducted 2026-10-19 against the
 `character-outfit-wardrobe` worktree. Read-only record; no code changes.
 
 Scope: all epics with `Not Started` status in `.plan/epics/`, evaluated against
-live `src/` and `.plan/backlog/` state.
+live `src/` and `.plan/backlog-archive.md` state.
 
 ## A. The plan cannot rank itself — three independent reasons
 

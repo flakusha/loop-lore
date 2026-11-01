@@ -37,7 +37,7 @@ loop-lore перестраивает ядро — персонажей, чаты
 — перечни каталогов в этом README устаревают за несколько дней.
 
 Статус функций — в [`.plan/epics-index.md`](../../.plan/epics-index.md),
-активная работа — в [`.plan/backlog/open.md`](../../.plan/backlog/open.md) —
+активная работа — в [`.plan/priority-matrix.md`](../../.plan/priority-matrix.md) —
 статусы здесь не дублируются.
 
 ---

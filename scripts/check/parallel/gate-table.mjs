@@ -148,9 +148,6 @@ export const checks = {
   // suite noticed.
   "conflict - markers": "bun run scripts/check/conflict-markers.mjs",
 
-  // Backlog index reconciliation (file-map rows ↔ tier files; orphans/phantoms)
-  "backlog - index": "bun run plan:backlog:sync",
-
   // Reverse code→plan index freshness (code-map.json matches a fresh rebuild)
   "code-map - freshness": "bun run plan:map:check",
 
@@ -163,6 +160,9 @@ export const checks = {
 
   // Feature matrix freshness (.plan/feature-matrix.md vs a fresh rebuild)
   "plan - matrix": "bun run plan:matrix:check",
+
+  // Priority matrix freshness (.plan/priority-matrix.md vs a fresh rebuild)
+  "plan - priority": "bun run plan:priority:check",
 
   // Size check
   "size - check": "bun run scripts/check-file-size.ts",
@@ -256,6 +256,9 @@ export const ADVISORY_GATES = new Set([
   // Feature matrix freshness: .plan/feature-matrix.md vs a fresh rebuild —
   // drifts when dev merges plan changes concurrently.
   "plan - matrix",
+  // Priority matrix freshness: .plan/priority-matrix.md vs a fresh rebuild —
+  // same ticket-index drift profile as the feature matrix.
+  "plan - priority",
   // jscpd ratchet: clone count vs committed baseline — drifts when dev
   // merges add or remove clones concurrently.
   "jscpd ratchet",

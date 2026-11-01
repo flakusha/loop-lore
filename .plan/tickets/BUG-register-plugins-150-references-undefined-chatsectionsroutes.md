@@ -37,7 +37,7 @@ A dprint follow-up in commit `1cddba36` corrected the import-order drift introdu
 
 `src/app/register-plugins.ts:150` now references the imported route handler and `bunx tsc --noEmit -p tsconfig.backend.json` no longer flags the file.
 
-Bucket X close-out history: `.plan/backlog/open-closed.md` (section Retired 2026-09-18); the standalone close-out doc was pruned 2026-09-26.
+Bucket X close-out history: `.plan/backlog-archive.md` (section Retired 2026-09-18); the standalone close-out doc was pruned 2026-09-26.
 
 git issue: 0b9a09b
 

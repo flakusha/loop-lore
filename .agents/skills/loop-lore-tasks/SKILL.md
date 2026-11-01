@@ -21,24 +21,24 @@ metadata:
 
 Before touching any feature, read the relevant spec in `docs/`:
 
-| Feature            | Doc File                                 |
-| ------------------ | ---------------------------------------- |
-| DB schema (all)    | `docs/spec/schema.md`                    |
-| Messages           | `docs/spec/messages.md`                  |
-| Users/sessions     | `docs/spec/users-sessions.md`            |
-| Assets             | `docs/spec/assets.md`                    |
-| Actors             | `docs/spec/actors.md`                    |
-| Characters/persona | `docs/spec/character-spec.md`            |
-| RPG mechanics      | `docs/spec/rpg-mechanics.md`             |
-| Architecture       | `docs/spec/architecture.md`              |
-| Build/deploy       | `docs/spec/build-deploy.md`              |
-| Implementation     | `docs/spec/implementation.md`            |
-| TUI                | `docs/spec/terminal-ui.md`               |
-| Plugin system      | `docs/spec/plugin-system.md`             |
-| Memory system      | `docs/spec/memory-system.md`             |
-| Artifacts system   | `docs/spec/artifacts-system.md`          |
-| Plan / tasks       | `.plan/epics-index.md`, `.plan/backlog/` |
-| Frontend UX        | `docs/frontend/overview.md`              |
+| Feature            | Doc File                                                                       |
+| ------------------ | ------------------------------------------------------------------------------ |
+| DB schema (all)    | `docs/spec/schema.md`                                                          |
+| Messages           | `docs/spec/messages.md`                                                        |
+| Users/sessions     | `docs/spec/users-sessions.md`                                                  |
+| Assets             | `docs/spec/assets.md`                                                          |
+| Actors             | `docs/spec/actors.md`                                                          |
+| Characters/persona | `docs/spec/character-spec.md`                                                  |
+| RPG mechanics      | `docs/spec/rpg-mechanics.md`                                                   |
+| Architecture       | `docs/spec/architecture.md`                                                    |
+| Build/deploy       | `docs/spec/build-deploy.md`                                                    |
+| Implementation     | `docs/spec/implementation.md`                                                  |
+| TUI                | `docs/spec/terminal-ui.md`                                                     |
+| Plugin system      | `docs/spec/plugin-system.md`                                                   |
+| Memory system      | `docs/spec/memory-system.md`                                                   |
+| Artifacts system   | `docs/spec/artifacts-system.md`                                                |
+| Plan / tasks       | `.plan/epics-index.md`, `.plan/tickets/index.json`, `.plan/priority-matrix.md` |
+| Frontend UX        | `docs/frontend/overview.md`                                                    |
 
 ## 2. Explore Existing Code
 
@@ -56,7 +56,7 @@ bun test --coverage                    # See what's tested
 - What files change? (create/modify/delete)
 - What tests need updating?
 - Any side effects (migrations, config changes, docs updates)?
-- Check `.plan/backlog/` (priority workstack) and `.plan/epics-index.md` if this is part of a planned epic
+- Check `.plan/priority-matrix.md` (generated priority view) and `.plan/epics-index.md` if this is part of a planned epic
 
 ## 4. Implement
 
