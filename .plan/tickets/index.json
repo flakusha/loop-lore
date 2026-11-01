@@ -11541,7 +11541,7 @@
     "type": "EPIC"
   },
   "EPIC-2026-23": {
-    "epic": "epic-assistant-generation-extensions, epic-assistant-gm-flows, epic-image-edit",
+    "epic": "epic-assistant-generation-extensions, epic-assistant-gm-flows",
     "extid": "EPIC-2026-23",
     "git_issue": "8c07e16",
     "hash": "8c07e16",
@@ -11557,7 +11557,7 @@
     "type": "EPIC"
   },
   "EPIC-2026-24": {
-    "epic": ":",
+    "epic": "",
     "extid": "EPIC-2026-24",
     "git_issue": "96970f5",
     "hash": "96970f5",
@@ -19011,7 +19011,7 @@
     "type": "FEAT"
   },
   "FEAT-040": {
-    "epic": ":",
+    "epic": "epic-schema",
     "extid": "FEAT-040",
     "git_issue": "4a5d79f",
     "hash": "4a5d79f",
@@ -19024,7 +19024,7 @@
     "type": "FEAT"
   },
   "FEAT-041": {
-    "epic": ":",
+    "epic": "epic-db-migration-compaction",
     "extid": "FEAT-041",
     "git_issue": "312e315",
     "hash": "312e315",
@@ -19037,7 +19037,7 @@
     "type": "FEAT"
   },
   "FEAT-042": {
-    "epic": ":",
+    "epic": "epic-db-content-versioning",
     "extid": "FEAT-042",
     "git_issue": "4538afb",
     "hash": "4538afb",
@@ -19050,7 +19050,7 @@
     "type": "FEAT"
   },
   "FEAT-043": {
-    "epic": ":",
+    "epic": "epic-db-migration-compaction",
     "extid": "FEAT-043",
     "git_issue": "f77863b",
     "hash": "f77863b",
@@ -19063,7 +19063,7 @@
     "type": "FEAT"
   },
   "FEAT-044": {
-    "epic": ":",
+    "epic": "epic-db-migration-compaction",
     "extid": "FEAT-044",
     "git_issue": "f458e3d",
     "hash": "f458e3d",
@@ -19115,7 +19115,7 @@
     "type": "FEAT"
   },
   "FEAT-048": {
-    "epic": ":",
+    "epic": "epic-plugin-system",
     "extid": "FEAT-048",
     "git_issue": "bbd1623",
     "hash": "bbd1623",
@@ -19128,7 +19128,7 @@
     "type": "FEAT"
   },
   "FEAT-049": {
-    "epic": ":",
+    "epic": "epic-plugin-system",
     "extid": "FEAT-049",
     "git_issue": "efe280a",
     "hash": "efe280a",
@@ -19141,7 +19141,7 @@
     "type": "FEAT"
   },
   "FEAT-050": {
-    "epic": ":",
+    "epic": "epic-plugin-extension-points",
     "extid": "FEAT-050",
     "git_issue": "2d4b07d",
     "hash": "2d4b07d",
@@ -19154,7 +19154,7 @@
     "type": "FEAT"
   },
   "FEAT-051": {
-    "epic": ":",
+    "epic": "epic-config-extensions",
     "extid": "FEAT-051",
     "git_issue": "94a9e5f",
     "hash": "94a9e5f",
@@ -19180,7 +19180,7 @@
     "type": "FEAT"
   },
   "FEAT-056": {
-    "epic": ":",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "FEAT-056",
     "git_issue": "455a593",
     "hash": "455a593",
@@ -19219,7 +19219,7 @@
     "type": "FEAT"
   },
   "FEAT-061": {
-    "epic": ":",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "FEAT-061",
     "git_issue": "3ec3a73",
     "hash": "3ec3a73",
@@ -19245,7 +19245,7 @@
     "type": "FEAT"
   },
   "FEAT-065": {
-    "epic": "",
+    "epic": "epic-config-templates",
     "extid": "FEAT-065",
     "git_issue": "3b6041a",
     "hash": "3b6041a",
@@ -19258,7 +19258,7 @@
     "type": "FEAT"
   },
   "FEAT-065-PROMPT-LIBRARY-EXPANDED": {
-    "epic": "EPIC-38 (Output Control & Transforms) — _proposed split: new EPIC-Generation-Templates_",
+    "epic": "epic-config-templates",
     "extid": "FEAT-065-PROMPT-LIBRARY-EXPANDED",
     "git_issue": "a966aa0",
     "hash": "a966aa0",
@@ -19275,7 +19275,7 @@
     "type": "FEAT"
   },
   "FEAT-065-SUB-AUDIO": {
-    "epic": "EPIC-38 (Output Control & Transforms)",
+    "epic": "epic-config-templates",
     "extid": "FEAT-065-SUB-AUDIO",
     "git_issue": "3d31188",
     "hash": "3d31188",
@@ -19330,7 +19330,7 @@
     "type": "FEAT"
   },
   "FEAT-065-SUB-VIDEO": {
-    "epic": "EPIC-38 (Output Control & Transforms)",
+    "epic": "epic-config-templates",
     "extid": "FEAT-065-SUB-VIDEO",
     "git_issue": "8f9281e",
     "hash": "8f9281e",
@@ -19348,7 +19348,7 @@
     "type": "FEAT"
   },
   "FEAT-065-TEMPLATE-SYSTEM": {
-    "epic": "",
+    "epic": "epic-config-templates",
     "extid": "FEAT-065-TEMPLATE-SYSTEM",
     "git_issue": "dc95659",
     "hash": "dc95659",
@@ -19413,7 +19413,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-001": {
-    "epic": ":",
+    "epic": "epic-import-export-io",
     "extid": "FEAT-2026-001",
     "git_issue": "e5e2faa",
     "hash": "e5e2faa",
@@ -19426,7 +19426,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-002": {
-    "epic": ":",
+    "epic": "epic-impersonation",
     "extid": "FEAT-2026-002",
     "git_issue": "bfd09bc",
     "hash": "bfd09bc",
@@ -19439,7 +19439,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-003": {
-    "epic": ":",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "FEAT-2026-003",
     "git_issue": "47c2780",
     "hash": "47c2780",
@@ -19452,7 +19452,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-004": {
-    "epic": ":",
+    "epic": "epic-asset-platform-capabilities",
     "extid": "FEAT-2026-004",
     "git_issue": "814a41c",
     "hash": "814a41c",
@@ -19465,7 +19465,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-005": {
-    "epic": ":",
+    "epic": "epic-use-case-agentic-workspace",
     "extid": "FEAT-2026-005",
     "git_issue": "9858f26",
     "hash": "9858f26",
@@ -19478,7 +19478,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-006": {
-    "epic": ":",
+    "epic": "epic-story-mode-ui",
     "extid": "FEAT-2026-006",
     "git_issue": "77d8aa4",
     "hash": "77d8aa4",
@@ -19491,7 +19491,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-007": {
-    "epic": ":",
+    "epic": "epic-archival-workflow",
     "extid": "FEAT-2026-007",
     "git_issue": "3a92e1e",
     "hash": "3a92e1e",
@@ -19504,7 +19504,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-008": {
-    "epic": ":",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "FEAT-2026-008",
     "git_issue": "8039c98",
     "hash": "8039c98",
@@ -19517,7 +19517,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-009": {
-    "epic": ":",
+    "epic": "epic-i18n",
     "extid": "FEAT-2026-009",
     "git_issue": "080ef97",
     "hash": "080ef97",
@@ -19530,7 +19530,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-010": {
-    "epic": ":",
+    "epic": "epic-provider-plugin-ecosystem",
     "extid": "FEAT-2026-010",
     "git_issue": "47de52c",
     "hash": "47de52c",
@@ -19543,7 +19543,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-011": {
-    "epic": ":",
+    "epic": "epic-plugin-system",
     "extid": "FEAT-2026-011",
     "git_issue": "d80b0c8",
     "hash": "d80b0c8",
@@ -19556,7 +19556,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-012": {
-    "epic": ":",
+    "epic": "epic-security-sandboxing",
     "extid": "FEAT-2026-012",
     "git_issue": "afa47aa",
     "hash": "6b4e1ab4",
@@ -19569,7 +19569,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-013": {
-    "epic": ":",
+    "epic": "epic-output-control-transforms",
     "extid": "FEAT-2026-013",
     "git_issue": "f2653c5",
     "hash": "f2653c5",
@@ -19582,7 +19582,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-014": {
-    "epic": ":",
+    "epic": "epic-output-control-transforms",
     "extid": "FEAT-2026-014",
     "git_issue": "77bc0db",
     "hash": "77bc0db",
@@ -19595,7 +19595,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-016": {
-    "epic": ":",
+    "epic": "epic-i18n",
     "extid": "FEAT-2026-016",
     "git_issue": "e6adb7b",
     "hash": "e6adb7b",
@@ -19608,7 +19608,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-018": {
-    "epic": ":",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "FEAT-2026-018",
     "git_issue": "2b2ef12",
     "hash": "2b2ef12",
@@ -19621,7 +19621,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-019": {
-    "epic": ":",
+    "epic": "epic-cross-platform-portability",
     "extid": "FEAT-2026-019",
     "git_issue": "1b1bef7",
     "hash": "1b1bef7",
@@ -19634,7 +19634,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-020": {
-    "epic": ":",
+    "epic": "epic-mobile-app",
     "extid": "FEAT-2026-020",
     "git_issue": "26e0ccd",
     "hash": "26e0ccd",
@@ -19647,7 +19647,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-021": {
-    "epic": ":",
+    "epic": "epic-testing-benchmarking",
     "extid": "FEAT-2026-021",
     "git_issue": "283dd01",
     "hash": "283dd01",
@@ -19660,7 +19660,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-022": {
-    "epic": ":",
+    "epic": "epic-testing-qa",
     "extid": "FEAT-2026-022",
     "git_issue": "279e1da",
     "hash": "279e1da",
@@ -19673,7 +19673,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-023": {
-    "epic": ":",
+    "epic": "epic-frontend-component-architecture",
     "extid": "FEAT-2026-023",
     "git_issue": "d9af827",
     "hash": "d9af827",
@@ -19686,7 +19686,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-024": {
-    "epic": ":",
+    "epic": "epic-immersion-consistency-gate",
     "extid": "FEAT-2026-024",
     "git_issue": "8f59147",
     "hash": "8f59147",
@@ -19699,7 +19699,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-025": {
-    "epic": ":",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "FEAT-2026-025",
     "git_issue": "1329af0",
     "hash": "1329af0",
@@ -19712,7 +19712,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-026": {
-    "epic": ":",
+    "epic": "epic-mobile-app",
     "extid": "FEAT-2026-026",
     "git_issue": "082ae24",
     "hash": "082ae24",
@@ -19725,7 +19725,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-027": {
-    "epic": ":",
+    "epic": "epic-multimodal-asset-reuse",
     "extid": "FEAT-2026-027",
     "git_issue": "314ae9a",
     "hash": "314ae9a",
@@ -19738,7 +19738,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-028": {
-    "epic": ":",
+    "epic": "epic-emergent-narrative-design",
     "extid": "FEAT-2026-028",
     "git_issue": "9adcaa3",
     "hash": "9adcaa3",
@@ -19751,7 +19751,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-030": {
-    "epic": ":",
+    "epic": "epic-actor-autonomy-story-drive",
     "extid": "FEAT-2026-030",
     "git_issue": "0fa0d3d",
     "hash": "0fa0d3d",
@@ -19764,7 +19764,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-031": {
-    "epic": ":",
+    "epic": "epic-entity-generation-workflows",
     "extid": "FEAT-2026-031",
     "git_issue": "b9f6fe2",
     "hash": "b9f6fe2",
@@ -19777,7 +19777,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-032": {
-    "epic": ":",
+    "epic": "epic-security-sandboxing",
     "extid": "FEAT-2026-032",
     "git_issue": "caadeb8",
     "hash": "caadeb8",
@@ -19790,7 +19790,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-033": {
-    "epic": ":",
+    "epic": "epic-instance-federation",
     "extid": "FEAT-2026-033",
     "git_issue": "c333e6e",
     "hash": "c333e6e",
@@ -19803,7 +19803,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-034": {
-    "epic": ":",
+    "epic": "epic-model-metadata-read",
     "extid": "FEAT-2026-034",
     "git_issue": "4d75724",
     "hash": "51a1d8f",
@@ -19816,7 +19816,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-051": {
-    "epic": ":",
+    "epic": "epic-config-file-separation",
     "extid": "FEAT-2026-051",
     "git_issue": "77d0b20",
     "hash": "77d0b20",
@@ -20392,7 +20392,7 @@
     "type": "FEAT"
   },
   "FEAT-BYOK-API-KEYS": {
-    "epic": "EPIC-byok-api-keys",
+    "epic": "epic-byok-api-keys",
     "extid": "FEAT-BYOK-API-KEYS",
     "git_issue": "412e543",
     "hash": "412e543",
@@ -20411,7 +20411,7 @@
     "type": "FEAT"
   },
   "FEAT-BYOK-LOCAL-MODELS": {
-    "epic": "EPIC-byok-local-models",
+    "epic": "epic-byok-local-models",
     "extid": "FEAT-BYOK-LOCAL-MODELS",
     "git_issue": "6d42781",
     "hash": "6d42781",
@@ -20659,7 +20659,7 @@
     "title": "classifier tag vocabulary admin UI",
     "label": "feat",
     "priority": "medium",
-    "epic": "classifier-template-packs",
+    "epic": "epic-classifier-template-packs",
     "tags": [],
     "source": ".plan/tickets/FEAT-classifier-tag-vocabulary-admin-ui.md",
     "status": "Not Started"
@@ -23763,7 +23763,7 @@
     "type": "TASK"
   },
   "TASK-002": {
-    "epic": ":",
+    "epic": "epic-world-chat-channels-invites",
     "extid": "TASK-002",
     "git_issue": "20c7472",
     "hash": "20c7472",
@@ -23875,7 +23875,7 @@
     "project": "loop-lore (RPG chat application)"
   },
   "TASK-004": {
-    "epic": ":",
+    "epic": "epic-chat-product-features",
     "extid": "TASK-004",
     "git_issue": "bd70e0f",
     "hash": "bd70e0f",
@@ -23888,7 +23888,7 @@
     "type": "TASK"
   },
   "TASK-005": {
-    "epic": ":",
+    "epic": "epic-chat-product-features",
     "extid": "TASK-005",
     "git_issue": "dae84ed",
     "hash": "dae84ed",
@@ -24018,7 +24018,7 @@
     "type": "TASK"
   },
   "TASK-024": {
-    "epic": ":",
+    "epic": "epic-visual-novel-mode",
     "extid": "TASK-024",
     "git_issue": "70f8e8d",
     "hash": "70f8e8d",
@@ -24049,7 +24049,7 @@
     "type": "TASK"
   },
   "TASK-026": {
-    "epic": ":",
+    "epic": "epic-quests-encounters",
     "extid": "TASK-026",
     "git_issue": "4da10d6",
     "hash": "4da10d6",
@@ -24062,7 +24062,7 @@
     "type": "TASK"
   },
   "TASK-027": {
-    "epic": ":",
+    "epic": "epic-crafting-professions",
     "extid": "TASK-027",
     "git_issue": "dd2d5e7",
     "hash": "dd2d5e7",
@@ -24075,7 +24075,7 @@
     "type": "TASK"
   },
   "TASK-028": {
-    "epic": ":",
+    "epic": "epic-items",
     "extid": "TASK-028",
     "git_issue": "cbf7fb9",
     "hash": "cbf7fb9",
@@ -30681,7 +30681,7 @@
     "title": "Battle panel health-bar widget + turn-order strip",
     "label": "task",
     "priority": "high",
-    "epic": "battle-ui",
+    "epic": "epic-battle-ui",
     "tags": [
       "battle-ui"
     ],
@@ -32795,7 +32795,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-RELATIONSHIPS": {
-    "epic": "EPIC-059 (Creative Studio)",
+    "epic": "epic-relationships",
     "extid": "TASK-CHARACTER-RELATIONSHIPS",
     "git_issue": "71a3535",
     "hash": "71a3535",
@@ -32922,7 +32922,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-TEMPLATE-SEEDING": {
-    "epic": "EPIC-059 (Creative Studio)",
+    "epic": "epic-creative-studio",
     "extid": "TASK-CHARACTER-TEMPLATE-SEEDING",
     "git_issue": "e9ac22b",
     "hash": "e9ac22b",
@@ -33860,7 +33860,7 @@
     "title": "Chat owners: sweep remaining route creator-checks",
     "label": "task",
     "priority": "medium",
-    "epic": "chat-multi-ownership",
+    "epic": "epic-chat-multi-ownership",
     "tags": [],
     "source": ".plan/tickets/TASK-chat-owners-sweep-remaining-route-creator-checks.md",
     "status": "done"
@@ -38458,7 +38458,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-e2e-env-gated-scenario.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-E2E-NSFW-APPEALS-AUDIT-ROUTES-COVERAGE": {
     "hash": "00cf1da",
@@ -41100,6 +41100,20 @@
     "tags": [],
     "title": "Finalize notification bell header wiring",
     "type": "TASK"
+  },
+  "TASK-FINALIZE-PHASE-2-UNIT-SUITE-FLAKES-ON-HARD-5000MS-BUDGETS-UN": {
+    "hash": "ac0196f",
+    "git_issue": "ac0196f",
+    "extid": "TASK-FINALIZE-PHASE-2-UNIT-SUITE-FLAKES-ON-HARD-5000MS-BUDGETS-UN",
+    "type": "TASK",
+    "title": "finalize phase-2 unit suite flakes on hard 5000ms budgets under parallel load",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-finalize-phase-2-unit-suite-flakes-on-hard-5000ms-budgets-un.md",
+    "status": "open"
   },
   "TASK-FIT-COLUMN-ON-PROVIDERS-ADMIN-SURFACE": {
     "hash": "e2696e1",
@@ -44109,7 +44123,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-tos-acknowledgement-dispatch-guard.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-HARNESS-TOS-ACKNOWLEDGEMENT-FRONTEND-CONFIRMATION": {
     "hash": "bc45824",
@@ -52225,7 +52239,7 @@
     "status": "open"
   },
   "TASK-PLAN-E2E-STABILIZATION": {
-    "epic": ":",
+    "epic": "epic-e2e-integration-testing",
     "extid": "TASK-PLAN-E2E-STABILIZATION",
     "git_issue": "5fb353d",
     "hash": "5fb353d",
@@ -52311,7 +52325,7 @@
     "type": "TASK"
   },
   "TASK-PLAN-LINT-TS-DEBT": {
-    "epic": ":",
+    "epic": "epic-code-quality",
     "extid": "TASK-PLAN-LINT-TS-DEBT",
     "git_issue": "cbb3073",
     "hash": "cbb3073",
@@ -52367,7 +52381,7 @@
     "type": "TASK"
   },
   "TASK-PLAN-PROMPT-REGISTRY": {
-    "epic": ":",
+    "epic": "epic-config-templates",
     "extid": "TASK-PLAN-PROMPT-REGISTRY",
     "git_issue": "9bf0039",
     "hash": "9bf0039",
@@ -52380,7 +52394,7 @@
     "type": "TASK"
   },
   "TASK-PLAN-REGISTER-PAGE": {
-    "epic": ":",
+    "epic": "epic-frontend-login",
     "extid": "TASK-PLAN-REGISTER-PAGE",
     "git_issue": "2c14237",
     "hash": "2c14237",
@@ -52406,7 +52420,7 @@
     "type": "TASK"
   },
   "TASK-PLAN-SIZE-STRICT-DEBT": {
-    "epic": ":",
+    "epic": "epic-file-splitting",
     "extid": "TASK-PLAN-SIZE-STRICT-DEBT",
     "git_issue": "d6d7e83",
     "hash": "d6d7e83",
@@ -52445,7 +52459,7 @@
     "type": "TASK"
   },
   "TASK-PLAN-UNWIRED-CODEOUT": {
-    "epic": ":",
+    "epic": "epic-code-quality",
     "extid": "TASK-PLAN-UNWIRED-CODEOUT",
     "git_issue": "fea7fe2",
     "hash": "fea7fe2",
@@ -60147,7 +60161,7 @@
     "type": "TASK"
   },
   "TASK-TIME-WEATHER-WIDGET": {
-    "epic": ":",
+    "epic": "epic-weather-environment",
     "extid": "TASK-TIME-WEATHER-WIDGET",
     "git_issue": "e5a9d1f",
     "hash": "e5a9d1f",

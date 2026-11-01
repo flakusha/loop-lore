@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-plugin-extension-points
 **Related**:
 
 Git issue: `2d4b07d`

@@ -14,7 +14,7 @@
 **Priority:** medium
 **Tags:** unwired, routes, lora, crafting, battle
 **Assignee**:
-**Epic**:
+**Epic:** epic-code-quality
 **Related:** TASK-crafting-stations-execution.md, TASK-wire-crafting-routes.md, TASK-battle-equipment-integration.md, TASK-lora-discovery-application.md
 
 Git issue: `fea7fe2`

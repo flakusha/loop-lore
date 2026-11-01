@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-db-migration-compaction
 **Related**:
 
 Git issue: `312e315`

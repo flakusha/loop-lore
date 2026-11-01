@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-config-templates
 **Related**:
 
 Git issue: `9bf0039`

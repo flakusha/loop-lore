@@ -18,7 +18,7 @@
 **Priority**: medium
 **Tags**: generation, image, prompts, templates
 **Assignee**:
-**Epic**: EPIC-38 (Output Control & Transforms)
+**Epic:** epic-config-templates
 **Parent**: FEAT-065 (Prompt Library)
 
 ---

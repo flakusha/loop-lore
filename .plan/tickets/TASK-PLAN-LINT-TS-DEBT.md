@@ -15,7 +15,7 @@
 **Priority**: high (release-blocking — last red gate)
 **Tags**: lint, quality, release-closeout
 **Assignee**:
-**Epic**:
+**Epic:** epic-code-quality
 **Related**: `TASK-fix-eslint-errors.md` (✅ 2026-08-07), `TASK-epic-36-lint-fix-array-method-warnings.md`
 
 Git issue: `cbb3073`

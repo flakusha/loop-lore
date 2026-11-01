@@ -14,7 +14,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-quests-encounters
 **Related**:
 
 Git issue: `4da10d6`

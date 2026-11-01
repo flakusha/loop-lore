@@ -6,7 +6,7 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
-**Epic:** battle-ui
+**Epic:** epic-battle-ui
 **Tags:** battle-ui
 
 **Summary:**

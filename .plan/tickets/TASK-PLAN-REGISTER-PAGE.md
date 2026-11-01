@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-frontend-login
 **Related**:
 
 Git issue: `2c14237`

@@ -16,7 +16,7 @@
 **Priority**: low
 **Tags**: feature, characters, licensing
 **Assignee**:
-**Epic**: EPIC-059 (Creative Studio)
+**Epic:** epic-licensing
 
 ## Description
 

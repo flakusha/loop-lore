@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-config-extensions
 **Related**:
 
 Git issue: `94a9e5f`

@@ -8,6 +8,7 @@
 
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-config-templates
 **Summary:** Unified prompt template system across LLM/Image/Video/Audio modalities — shared `TemplateRegistry` interface, DB-backed user templates, per-modality registries, model→template auto-matching.
 **Context:** Reconciliation passes 2026-09-13, 2026-09-23, 2026-09-27, 2026-10-01 — bookkeeping; sibling TASK tickets cross-linked below.
 **Acceptance Criteria:** LLM + image modality registries + per-modality `{{var}}` substitution shipped; DB-backed `prompt_templates` shipped (JSON payload, not separate variables table); admin `/api/admin/templates` CRUD shipped; public `/api/v1/templates` routes shipped; video/audio scaffolds shipped 2026-10-01. Remaining: LLM config-layer `{{var}}` substitution (TASK-template-unified-variable-engine.md).

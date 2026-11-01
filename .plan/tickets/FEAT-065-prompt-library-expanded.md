@@ -16,7 +16,7 @@
 **Priority**: high
 **Tags**: generation, prompts, templates
 **Assignee**:
-**Epic**: EPIC-38 (Output Control & Transforms) — _proposed split: new EPIC-Generation-Templates_
+**Epic:** epic-config-templates
 
 ---
 

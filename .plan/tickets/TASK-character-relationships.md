@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: feature, characters, relationships
 **Assignee**:
-**Epic**: EPIC-059 (Creative Studio)
+**Epic:** epic-relationships
 
 ## Description
 

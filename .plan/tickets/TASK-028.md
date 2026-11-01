@@ -14,7 +14,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-items
 **Related**:
 
 Git issue: `cbf7fb9`

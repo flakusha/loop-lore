@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-memory-knowledge-systems
 **Related**: FEAT-2026-008 (duplicate intent; this ticket is the canonical record)
 
 Git issue: `455a593`

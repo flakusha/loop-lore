@@ -18,7 +18,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-db-content-versioning
 **Related**:
 
 Git issue: `4538afb`
