@@ -3,7 +3,7 @@
 
 # TASK: Harness ToS acknowledgement dispatch guard
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
