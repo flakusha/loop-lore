@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 358 epics
+**Total:** 366 epics
 
 ## Summary
 
@@ -98,6 +98,7 @@
 | Not Started | Deno Support (Possible Node) | Low | Medium | 0 | [epic-deno-support.md](/.plan/epics/epic-deno-support.md) |
 | Not Started | Derived-Map Generation — Depth, Textures, Multi-Mask, Provenance | Low | High | 0 | [epic-derived-map-generation.md](/.plan/epics/epic-derived-map-generation.md) |
 | Not Started | Design: Memory Knowledge Isolation and World Timeline | Low | Large | 0 | [epic-memory-isolation-design.md](/.plan/epics/epic-memory-isolation-design.md) |
+| Not Started | Deterministic-First Decision Gates for the Message Hot Path | High | Small | 0 | [epic-deterministic-first-gates.md](/.plan/epics/epic-deterministic-first-gates.md) |
 | Not Started | Disease & Poison Systems | Medium | High | 0 | [epic-disease-poison.md](/.plan/epics/epic-disease-poison.md) |
 | Done | Distributed Computing & Sharing (Contributor Compute Network) | Medium | Very High | 0 | [epic-distributed-compute-sharing.md](/.plan/epics/epic-distributed-compute-sharing.md) |
 | In Progress | Documentation Reconciliation & UX | Medium | Medium | 0 | [epic-docs-reconciliation.md](/.plan/epics/epic-docs-reconciliation.md) |
@@ -206,6 +207,7 @@
 | In Progress | FE-BE Harmonization — Epic | High | Small (one check script + gate) | 0 | [epic-fe-be-harmonization.md](/.plan/epics/epic-fe-be-harmonization.md) |
 | Not Started | Federated Workload Offload & Instance Quotas | High | Very High | 0 | [epic-federation-offload-quotas.md](/.plan/epics/epic-federation-offload-quotas.md) |
 | Done | File Splitting & God-Module Refactor | High | Very High | 0 | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md) |
+| Not Started | Fine-tune Evaluation & Promotion Gate | High | Medium | 0 | [epic-finetune-eval-promotion-gate.md](/.plan/epics/epic-finetune-eval-promotion-gate.md) |
 | Not Started | Flexible RPG Patterns | Medium | Medium | 0 | [epic-rpg-patterns.md](/.plan/epics/epic-rpg-patterns.md) |
 | Not Started | Fractal Locations — Recursive Containment + Mobile Transports | High | High | 0 | [epic-fractal-locations.md](/.plan/epics/epic-fractal-locations.md) |
 | Not Started | Framework SDKs | Medium | High | 0 | [epic-framework-sdks.md](/.plan/epics/epic-framework-sdks.md) |
@@ -254,6 +256,8 @@
 | In Progress | Logic Reconciliation (Permanently Ongoing) | High | Continuous | 0 | [epic-logic-reconciliation.md](/.plan/epics/epic-logic-reconciliation.md) |
 | Not Started | Login & Authentication UI | Medium | Medium | 0 | [epic-frontend-login.md](/.plan/epics/epic-frontend-login.md) |
 | Done | LoRA Discovery & Application | High | Medium | 0 | [epic-lora-discovery-application.md](/.plan/epics/epic-lora-discovery-application.md) |
+| Not Started | Lorebook Inclusion Groups + Group Scoring | High | Small | 0 | [epic-lorebook-inclusion-groups.md](/.plan/epics/epic-lorebook-inclusion-groups.md) |
+| Not Started | Lorebook Recursive World-Info Scanning | Medium | Medium | 0 | [epic-lorebook-recursive-scanning.md](/.plan/epics/epic-lorebook-recursive-scanning.md) |
 | Not Started | Magic & Spell Systems | Medium | Very High | 0 | [epic-magic-spell-systems.md](/.plan/epics/epic-magic-spell-systems.md) |
 | Not Started | Matrix Integration | Medium | High | 0 | [epic-matrix-integration.md](/.plan/epics/epic-matrix-integration.md) |
 | Not Started | Mechanics Governance — Per-World Config, Control Levels & Plugin API | Medium | Medium | 0 | [epic-mechanics-governance.md](/.plan/epics/epic-mechanics-governance.md) |
@@ -299,7 +303,9 @@
 | Not Started | Project Spaces — World-Like Business Project Isolation + Cross-Space Linking | High | Large | 0 | [epic-project-spaces-pm-integration.md](/.plan/epics/epic-project-spaces-pm-integration.md) |
 | Not Started | Prompt & Output Control | Medium | Medium | 0 | [epic-output-control-transforms.md](/.plan/epics/epic-output-control-transforms.md) |
 | In Progress | Prompt Improvement — Unified Text Enhancement | High | Medium | 0 | [epic-prompt-improvement.md](/.plan/epics/epic-prompt-improvement.md) |
+| Not Started | Prompt Inspector — Pre-Send Assembled-Prompt View | Medium | Small | 0 | [epic-prompt-inspector.md](/.plan/epics/epic-prompt-inspector.md) |
 | In Progress | Provider & Plugin Ecosystem | Medium | Large | 0 | [epic-provider-plugin-ecosystem.md](/.plan/epics/epic-provider-plugin-ecosystem.md) |
+| Not Started | Provider Prompt-Cache Enablement + Cache-Token Observability | Medium | Small | 0 | [epic-prompt-cache-enablement.md](/.plan/epics/epic-prompt-cache-enablement.md) |
 | Not Started | Publication Content Translation (Books & Comics) | Medium | Large | 0 | [epic-publication-i18n.md](/.plan/epics/epic-publication-i18n.md) |
 | Not Started | RAG & Document Processing | High | Very High (split into 5 sub-epics) | 0 | [epic-rag-document-processing.md](/.plan/epics/epic-rag-document-processing.md) |
 | Not Started | RAG & Document Processing — Quick Reference | High | High | 0 | [epic-rag-document-processing-quickref.md](/.plan/epics/epic-rag-document-processing-quickref.md) |
@@ -342,6 +348,8 @@
 | Not Started | Social Interaction Systems | Medium | High | 0 | [epic-social-interaction.md](/.plan/epics/epic-social-interaction.md) |
 | Not Started | Stealth & Crime Systems | Medium | High | 0 | [epic-stealth-crime.md](/.plan/epics/epic-stealth-crime.md) |
 | In Progress | Story Mode UI | P1 — High | Medium | 0 | [epic-story-mode-ui.md](/.plan/epics/epic-story-mode-ui.md) |
+| Not Started | Swipe Preference-Pair Capture (DPO Groundwork) | Medium | Small | 0 | [epic-swipe-preference-pairs.md](/.plan/epics/epic-swipe-preference-pairs.md) |
+| Not Started | Synthetic QA Capture — Wire or Remove | Low | Small | 0 | [epic-synthetic-capture-wire-or-remove.md](/.plan/epics/epic-synthetic-capture-wire-or-remove.md) |
 | Done | Task Management Integration | Medium | Medium | 0 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
 | Done | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
 | Not Started | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 0 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
@@ -1190,6 +1198,15 @@ Second-order generation derivatives on top of an image: **depth maps**, **PBR
 - **Type:** Design
 - **Tags:** memory, isolation, timeline
 - **File:** `.plan/epics/epic-memory-isolation-design.md`
+
+### Deterministic-First Decision Gates for the Message Hot Path
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Small
+- **Type:** epic
+- **Tags:** classifier, aux, deterministic-first, latency, caching
+- **File:** `.plan/epics/epic-deterministic-first-gates.md`
 
 ### Disease & Poison Systems
 
@@ -2251,6 +2268,15 @@ One automated gate that cross-checks every frontend API call against the backend
 
 Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-file-size.ts`),
 
+### Fine-tune Evaluation & Promotion Gate
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** epic
+- **Tags:** training, finetune, evaluation, promotion-gate, datasets
+- **File:** `.plan/epics/epic-finetune-eval-promotion-gate.md`
+
 ### Flexible RPG Patterns
 
 - **Status:** Not Started
@@ -2697,6 +2723,24 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 
 LoRA (Low-Rank Adaptation) enables character-specific and style-specific visual consistency across generations. This epic implements LoRA discovery (auto-detect available models) and application (inject into workflows) for both ComfyUI and sd.cpp backends.
 
+### Lorebook Inclusion Groups + Group Scoring
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Small
+- **Type:** epic
+- **Tags:** lorebook, world-info, activation, sillytavern-parity
+- **File:** `.plan/epics/epic-lorebook-inclusion-groups.md`
+
+### Lorebook Recursive World-Info Scanning
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** epic
+- **Tags:** lorebook, world-info, activation, sillytavern-parity
+- **File:** `.plan/epics/epic-lorebook-recursive-scanning.md`
+
 ### Magic & Spell Systems
 
 - **Status:** Not Started
@@ -3118,6 +3162,15 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Tags:** frontend, aux-pipeline, composer, prompt, security
 - **File:** `.plan/epics/epic-prompt-improvement.md`
 
+### Prompt Inspector — Pre-Send Assembled-Prompt View
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Small
+- **Type:** epic
+- **Tags:** prompt, inspection, debugging, sillytavern-parity
+- **File:** `.plan/epics/epic-prompt-inspector.md`
+
 ### Provider & Plugin Ecosystem
 
 - **Status:** In Progress
@@ -3126,6 +3179,15 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Type:** Feature Epic
 - **Tags:** providers, anthropic, ollama, bedrock, plugin-management, byok
 - **File:** `.plan/epics/epic-provider-plugin-ecosystem.md`
+
+### Provider Prompt-Cache Enablement + Cache-Token Observability
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Small
+- **Type:** epic
+- **Tags:** generation, prompt-cache, observability, cost
+- **File:** `.plan/epics/epic-prompt-cache-enablement.md`
 
 ### Publication Content Translation (Books & Comics)
 
@@ -3522,6 +3584,24 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Type:** Feature Epic
 - **Tags:** story, gm, quest, ui, frontend
 - **File:** `.plan/epics/epic-story-mode-ui.md`
+
+### Swipe Preference-Pair Capture (DPO Groundwork)
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Small
+- **Type:** epic
+- **Tags:** training, dpo, preferences, swipes, datasets
+- **File:** `.plan/epics/epic-swipe-preference-pairs.md`
+
+### Synthetic QA Capture — Wire or Remove
+
+- **Status:** Not Started
+- **Priority:** Low
+- **Effort:** Small
+- **Type:** epic
+- **Tags:** eval, ground-truth, synthetic-data, decision
+- **File:** `.plan/epics/epic-synthetic-capture-wire-or-remove.md`
 
 ### Task Management Integration
 

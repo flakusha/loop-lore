@@ -3283,6 +3283,12 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md"
     }
   ],
+  "src/assistant/commands/link.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mid-message-checkpoint-retry-retry-continue-inside-swipe-rep.md"
+    }
+  ],
   "src/assistant/commands/locations-update.ts": [
     {
       "kind": "epic",
@@ -3419,6 +3425,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-guided-regen-action-menu-on-assistant-messages.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mid-message-checkpoint-retry-retry-continue-inside-swipe-rep.md"
     },
     {
       "kind": "ticket",
@@ -3709,6 +3719,10 @@
       "source": ".plan/epics/epic-narrative-publishing-workflows.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-prompt-inspector.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-workflow-confirm-session-treats-optional-steps-as-required.md"
     },
@@ -3813,6 +3827,10 @@
   ],
   "src/assistant/gm-tool-detection.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-deterministic-first-gates.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
     },
@@ -3835,6 +3853,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-tool-aux-task-has-no-production-consumer-wire-or-remove.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-tool-keyword-pre-gate-behind-config-flag-fail-open.md"
     }
   ],
   "src/assistant/gm-tool-execution.ts": [
@@ -4061,6 +4083,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-lore-knowledge.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-lorebook-recursive-scanning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-world-info-scanning-entry-content-triggers-entries.md"
     },
     {
       "kind": "spec",
@@ -4323,8 +4353,16 @@
   ],
   "src/assistant/prompt/keywords.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-lorebook-inclusion-groups.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-055.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-lorebook-inclusion-groups-schema-column-admission-gate-group.md"
     }
   ],
   "src/assistant/prompt/presets.ts": [
@@ -4367,6 +4405,10 @@
       "source": ".plan/epics/epic-hidden-carriage-context.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-prompt-cache-enablement.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md"
     },
@@ -4397,6 +4439,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-personality-composer-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cache-token-propagation-into-execusage-exec-log-and-aux-call.md"
     },
     {
       "kind": "ticket",
@@ -4777,12 +4823,20 @@
   ],
   "src/assistant/prompt/sections/lore-activation.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-lorebook-inclusion-groups.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-055.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-lorebook-inclusion-groups-schema-column-admission-gate-group.md"
     },
     {
       "kind": "ticket",
@@ -4842,6 +4896,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-lorebook-inclusion-groups.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-timeline-system.md"
     },
     {
@@ -4895,6 +4953,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-lore-persona-traits-placed-as-system-messages-semantic-injec.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-lorebook-inclusion-groups-schema-column-admission-gate-group.md"
     },
     {
       "kind": "ticket",
@@ -6529,10 +6591,20 @@
       "source": ".plan/epics/epic-cli-tooling-optique.md"
     }
   ],
+  "src/aux-pipeline/eval/corpus.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-tool-keyword-pre-gate-behind-config-flag-fail-open.md"
+    }
+  ],
   "src/aux-pipeline/eval/env.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-generation-story-assistant-and-chat-code.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-synthetic-qa-capture-wire-or-remove-decision-admin-gated-cap.md"
     }
   ],
   "src/aux-pipeline/eval/score.ts": [
@@ -6681,6 +6753,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cache-token-propagation-into-execusage-exec-log-and-aux-call.md"
     },
     {
       "kind": "ticket",
@@ -8679,6 +8755,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-identity-lora-flywheel-avatar-dataset-assembly-and.md"
     }
   ],
   "src/characters/services/emotion-avatar-service/job-store.ts": [
@@ -9891,6 +9971,16 @@
       "source": "docs/spec/chat-lifecycle-moderation.md"
     }
   ],
+  "src/chat/crud/delete.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-synthetic-capture-wire-or-remove.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-synthetic-qa-capture-wire-or-remove-decision-admin-gated-cap.md"
+    }
+  ],
   "src/chat/export/formats.test.ts": [
     {
       "kind": "ticket",
@@ -10709,6 +10799,10 @@
   ],
   "src/chat/service/batch.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-synthetic-capture-wire-or-remove.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-batch-chat-delete-lacks-transaction-orphaned-rows-on-partial.md"
     },
@@ -10719,6 +10813,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-synthetic-qa-capture-wire-or-remove-decision-admin-gated-cap.md"
     }
   ],
   "src/chat/service/branch-crud.ts": [
@@ -12026,6 +12124,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-deterministic-first-gates.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-perspective-narration-voice.md"
     },
     {
@@ -12047,6 +12149,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-tool-keyword-pre-gate-behind-config-flag-fail-open.md"
     },
     {
       "kind": "ticket",
@@ -16593,6 +16699,10 @@
       "source": ".plan/epics/epic-encryption-workflow.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-finetune-eval-promotion-gate.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
     },
@@ -18421,7 +18531,21 @@
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
     }
   ],
+  "src/db/enums-story/synthetic.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-synthetic-capture-wire-or-remove.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-synthetic-qa-capture-wire-or-remove-decision-admin-gated-cap.md"
+    }
+  ],
   "src/db/enums-story/turns.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-synthetic-capture-wire-or-remove.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
@@ -18429,6 +18553,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-property-test-the-status-machines-and-composite-validators.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-synthetic-qa-capture-wire-or-remove-decision-admin-gated-cap.md"
     }
   ],
   "src/db/enums-story/world.ts": [
@@ -19228,6 +19356,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-lorebook-inclusion-groups-schema-column-admission-gate-group.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
     },
     {
@@ -19241,6 +19373,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-review-thread-comment-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-synthetic-qa-capture-wire-or-remove-decision-admin-gated-cap.md"
     },
     {
       "kind": "ticket",
@@ -20850,6 +20986,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-identity-lora-flywheel-avatar-dataset-assembly-and.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
     },
     {
@@ -20973,6 +21113,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-identity-lora-flywheel-avatar-dataset-assembly-and.md"
     },
     {
       "kind": "ticket",
@@ -21306,6 +21450,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-swipe-preference-pair-extraction-dpo-groundwork.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-task-i18n-workflow-hardening.md"
     },
     {
@@ -21471,6 +21619,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-swipe-preference-pair-extraction-dpo-groundwork.md"
     },
     {
       "kind": "spec",
@@ -22730,6 +22882,10 @@
     }
   ],
   "src/eval/judge.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-finetune-eval-promotion-gate.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-eval-rubric-judge-tiered-runner.md"
@@ -30378,6 +30534,10 @@
   "src/generation/auto-gen/call-llm.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-deterministic-first-gates.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-federation-offload-quotas.md"
     },
     {
@@ -32294,6 +32454,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-identity-lora-flywheel-avatar-dataset-assembly-and.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
     },
     {
@@ -32535,6 +32699,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-lora-discovery-application.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-identity-lora-flywheel-avatar-dataset-assembly-and.md"
     },
     {
       "kind": "ticket",
@@ -34480,6 +34648,10 @@
     }
   ],
   "src/harness/exec-recorder.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cache-token-propagation-into-execusage-exec-log-and-aux-call.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-canonical-usage.md"
@@ -38197,6 +38369,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-val-split-and-blake3-dataset-fingerprint-at-export.md"
     }
   ],
   "src/native/hot-reload.ts": [
@@ -41021,6 +41197,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mid-message-checkpoint-retry-retry-continue-inside-swipe-rep.md"
     }
   ],
   "src/regex/html-sanitize.property.test.ts": [
@@ -41319,6 +41499,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
+    }
+  ],
+  "src/regex/telemetry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-tool-keyword-pre-gate-behind-config-flag-fail-open.md"
     }
   ],
   "src/regex/transforms.ts": [
@@ -46354,6 +46540,10 @@
   "src/routes/messages/create.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-deterministic-first-gates.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-multilingual-carriage.md"
     },
     {
@@ -46403,6 +46593,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-server-side-branch-command.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-tool-keyword-pre-gate-behind-config-flag-fail-open.md"
     },
     {
       "kind": "ticket",
@@ -57023,6 +57217,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-human-hybrid-gm-config-authoring-d3.md"
+    }
+  ],
+  "src/story/synthetic/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-synthetic-qa-capture-wire-or-remove-decision-admin-gated-cap.md"
     }
   ],
   "src/story/timeline/event-steering.test.ts": [
