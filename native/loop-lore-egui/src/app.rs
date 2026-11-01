@@ -869,8 +869,11 @@ impl App for EguiApp {
         );
         // Owned up front: the picker closure below borrows the selection
         // mutably, so it cannot also borrow `self.templates`.
-        let options: Vec<(String, String)> =
-          self.templates.iter().map(|template| (template.id.clone(), template.label())).collect();
+        let options: Vec<(String, String)> = self
+          .templates
+          .iter()
+          .map(|template| (template.id.clone(), template.label()))
+          .collect();
         let selected_label = self
           .new_chat_template
           .as_ref()
