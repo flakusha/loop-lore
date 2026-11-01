@@ -6,7 +6,12 @@
  */
 import { beforeAll, describe, expect, it, } from "bun:test";
 import { createLogger, } from "../logger";
-import { detectGmTool, parseGmToolDetection, } from "./gm-tool-detection";
+import {
+  detectGmTool,
+  gmToolKeywordGate,
+  isGmToolKeywordGateEnabled,
+  parseGmToolDetection,
+} from "./gm-tool-detection";
 
 // ─── Setup ────────────────────────────────────────────────────
 
@@ -122,5 +127,35 @@ describe("detectGmTool", () => {
     const result = await detectGmTool("", mockConfig, mockDb,);
 
     expect(result,).toBeNull();
+  });
+});
+
+// ─── Keyword Pre-Gate ───────────────────────────────────────────
+
+describe("gmToolKeywordGate", () => {
+  it("marks tool-like content as a candidate", () => {
+    expect(gmToolKeywordGate("Roll a d20 for me",),).toBe("candidate",);
+  });
+
+  it("skips content with no tool keywords", () => {
+    expect(gmToolKeywordGate("hello world, how are you?",),).toBe("skip",);
+  });
+
+  it("skips empty content", () => {
+    expect(gmToolKeywordGate("",),).toBe("skip",);
+  });
+});
+
+describe("isGmToolKeywordGateEnabled", () => {
+  it("defaults to enabled when unconfigured", () => {
+    expect(isGmToolKeywordGateEnabled({ ...mockConfig, },),).toBe(true,);
+  });
+
+  it("honours an explicit opt-out", () => {
+    expect(isGmToolKeywordGateEnabled({ ...mockConfig, gmToolKeywordGate: false, },),).toBe(false,);
+  });
+
+  it("honours the legacy pre-gate key", () => {
+    expect(isGmToolKeywordGateEnabled({ ...mockConfig, gmToolKeywordPreGate: false, },),).toBe(false,);
   });
 });
