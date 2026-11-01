@@ -79,3 +79,6 @@ Depends on `epic-principal-scoped-credentials.md` (PrincipalKind + credential se
 - §5 Q4 credentials story: OPEN.
 - §5 Q5 project-spaces sequencing: pass-through-until-spaces adopted (provisional).
 - §5 Q6 approval-queue surface (admin UI vs notifications): OPEN.
+
+
+git issue: 6a37972

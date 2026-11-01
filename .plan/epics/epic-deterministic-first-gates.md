@@ -37,3 +37,6 @@ The one principle loop-lore genuinely violates today: two unconditional AUX LLM 
 ## Open Questions
 
 None blocking from the research doc (gate false-negatives fail open by design; worst case is today's behavior).
+
+
+git issue: 23fc56b

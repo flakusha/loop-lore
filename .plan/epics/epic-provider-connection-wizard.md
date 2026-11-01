@@ -43,3 +43,6 @@ No Jellyfin-length multi-screen funnel: two screens max. Skippable at every poin
 1. **Wizard entry point on fresh installs:** auto-open on first admin visit vs a settings-page banner only (setup-state `ok:false` checks make either triggerable; decide at implementation).
 2. **Model-role defaults step:** fully automated best-guess roles after the connection test vs a confirmation screen — must stay within the 2-screen budget.
 3. **`4293058` disposition:** close it as absorbed when the wizard core lands, or keep it open tracking only the standalone import polish (decide at merge time; until then this epic is its canonical home).
+
+
+git issue: 54b13af

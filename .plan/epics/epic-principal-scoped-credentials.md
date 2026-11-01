@@ -56,3 +56,6 @@ None — this is the shared primitive both sibling epics consume.
 - §5 Q1 split ratification: this epic IS the recommended split (provisional until ratified).
 - §5 Q2 internal-service runtime shape: OPEN (affects credential storage).
 - §5 Q4 credentials story (scoped admin-issued tokens vs OAuth-style): OPEN.
+
+
+git issue: e23cb34

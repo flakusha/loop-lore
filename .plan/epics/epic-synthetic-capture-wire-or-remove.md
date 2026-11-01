@@ -36,3 +36,6 @@ Decision epic: wire vs remove the orphaned synthetic QA pipeline. The repo conta
 ## Open Questions
 
 - Wire vs remove itself — the blocking decision this epic exists to record (recommendation due in the first ticket).
+
+
+git issue: 00f356a

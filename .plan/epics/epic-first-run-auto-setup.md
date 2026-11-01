@@ -54,3 +54,6 @@ Recorded once here from approaches §7 (what NOT to build):
 1. **Boot-gate fix option:** promoted-random-PII-secrets path vs `NODE_ENV=development` default in the `start`/`dev` scripts — the first ticket picks one and documents the other (approaches §7 C1 leaves both viable).
 2. **Promoted-secret file flavor:** `config.local.yaml` vs `env.yaml` for the generated PII values (acceptance criteria allow either; decide at implementation time).
 3. **Anonymous booleans mode config knob:** which config section owns the opt-in flag for unauthenticated setup-state access (observability vs server), decided alongside the endpoint implementation.
+
+
+git issue: e742136
