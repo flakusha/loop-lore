@@ -1,5 +1,9 @@
 /**
  * Unit tests for story-turns routes (Elysia plugin)
+ *
+ * Resource contract: each describe owns an isolated in-memory SQLite DB
+ * (createTestDb) destroyed in afterAll; routes are exercised in-process via
+ * app.handle — no ports, files, or shared globals.
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -128,5 +132,22 @@ describe("storyTurnsRoutes — pagination", () => {
     const res = await app.handle(new Request("http://localhost/api/chats/" + CHAT + "/story-turns",),);
 
     expect(res.status,).toBe(200,);
+  });
+
+  test("unauthorized request gets a proper 404 envelope, not a handler TypeError", async () => {
+    // Regression: the handlers destructured `error` from ctx but the module
+    // never imported it — the no-access path threw TypeError and surfaced 500.
+    const app = makeApp(null as unknown as string,);
+    const res = await app.handle(new Request("http://localhost/api/chats/" + CHAT + "/story-turns",),);
+
+    expect(res.status,).toBe(404,);
+    const body = await res.json() as { error: string };
+    expect(body.error,).toBe("Chat not found",);
+
+    const single = await app.handle(
+      new Request("http://localhost/api/chats/" + CHAT + "/story-turns/00000000-0000-4000-8000-0000000000ef",),
+    );
+
+    expect(single.status,).toBe(404,);
   });
 });

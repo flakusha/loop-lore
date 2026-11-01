@@ -3,8 +3,8 @@
  *
  * Validates the NSFW gate + moderation endpoints as the full HTTP surface.
  * Mirrors the actual server contract:
- *   - moderation.action is gated BEFORE user auth — anon gets 403, not 401
- *     (the route checks `can(userRole, "moderation.action")` via requireModerationAction)
+ *   - moderation.action is gated by auth — anon gets the canonical 401 (the
+ *     central auth guard runs before route handlers; see elysia-app.ts)
  *   - write endpoints require `{ targetUserId, reason }` (modBody schema); omit either → 422
  *   - admin role satisfies admin.system → 200
  *
@@ -15,6 +15,11 @@
  *   - admin shadow -> unshadow round-trip
  *   - missing body field → 422 (Elysia schema validation)
  *   - flags list reachable for admin
+ *
+ * Resource contract: this suite owns one createTestServer instance — port 0
+ * (OS-assigned), unique UUID tmp upload dir, isolated in-memory SQLite DB —
+ * torn down deterministically in afterAll (server.close). No fixed paths,
+ * no cross-file shared state; passes alone and in any order.
  */
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -58,13 +63,13 @@ describe("NSFW E2E", () => {
   });
 
   test("POST /api/v1/nsfw/moderation/block is gated before reaching the moderation role check", async () => {
-    // Without an established session, the global CSRF beforeHandle fires
-    // first and rejects unsafe methods with 403 csrf_verification_failed.
-    // This is the correct order — a forged session can't reach the role gate.
+    // Unauthenticated unsafe requests never reach a handler: the central
+    // auth guard (registered before CSRF/idempotency, see elysia-app.ts)
+    // fail-closes with the canonical 401 body.
     const anon = createClient(server.url,);
     const res = await anon.post("/api/v1/nsfw/moderation/block", blockBody(SEED.user.id,),);
-    expect(res.status,).toBe(403,);
-    expect(res.error ?? "",).toContain("csrf",);
+    expect(res.status,).toBe(401,);
+    expect(res.code,).toBe("UNAUTHORIZED",);
   });
 
   test("POST /api/v1/nsfw/moderation/block returns 403 for regular user", async () => {

@@ -6,6 +6,10 @@
  *
  * Populates a test database with demo users, characters, and chats.
  * All IDs are deterministic for cross-flow reference.
+ *
+ * Resource contract: helpers write ONLY to the Kysely instance passed by the
+ * caller (each e2e suite's own isolated in-memory DB); no files, ports, or
+ * module globals are touched, so concurrent suites never collide.
  */
 
 import {
@@ -211,6 +215,14 @@ export async function seedChat(db: Kysely<DB>,): Promise<void> {
       created_by: SEED.user.id,
     },)
     .onConflict((oc,) => oc.column("id",).doNothing())
+    .execute();
+
+  // Owners-set cutover: owner authority is rows-only (chat_owners); mirror
+  // production createChat by materializing the creator baseline row.
+  await db
+    .insertInto("chat_owners",)
+    .values({ chat_id: SEED.chat.id, user_id: SEED.user.id, },)
+    .onConflict((oc,) => oc.columns(["chat_id", "user_id",],).doNothing())
     .execute();
 
   // Add creator as participant
@@ -426,6 +438,13 @@ export async function seedSolo(db: Kysely<DB>,): Promise<void> {
       created_by: SEED.solo.id,
     },)
     .onConflict((oc,) => oc.column("id",).doNothing())
+    .execute();
+
+  // Owners-set cutover: mirror production createChat for the solo chat too.
+  await db
+    .insertInto("chat_owners",)
+    .values({ chat_id: SEED.soloChat.id, user_id: SEED.solo.id, },)
+    .onConflict((oc,) => oc.columns(["chat_id", "user_id",],).doNothing())
     .execute();
 
   await db

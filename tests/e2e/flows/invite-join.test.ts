@@ -10,6 +10,11 @@
  *   - Cross-tenant isolation: a user cannot join a chat they weren't invited to
  *
  * Uses the test server + seeded users/chats.
+ *
+ * Resource contract: this suite owns one createTestServer instance — port 0
+ * (OS-assigned), unique UUID tmp upload dir, isolated in-memory SQLite DB —
+ * torn down deterministically in afterAll (server.close). No fixed paths,
+ * no cross-file shared state; passes alone and in any order.
  */
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
