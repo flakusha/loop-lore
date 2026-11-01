@@ -9,7 +9,8 @@
 **Acceptance Criteria:** One `allocateNodeId` helper; both call sites use it; regression tests for both failure modes.
 
 **Priority:** P0 — Critical
-**Status:** In Progress
+**Status:** Done
+**Status Note:** Landed in 4f1f51558; re-verified 48/0 + tsc clean on dev ca33af8c2.
 **Epic:** epic-comfyui-first-class-citizen
 **Depends on:** none
 
