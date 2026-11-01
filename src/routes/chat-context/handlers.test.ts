@@ -20,7 +20,7 @@ import { DEFAULT_CONTEXT_WINDOW, } from "../../generation/context-window-config"
 import type { ModelInfo, } from "../../generation/providers/types";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
-import { handleGetContext, handleRegenerateMessage, } from "./handlers";
+import { handleGetContext, handleRegenerateMessage, validateRegenerateBody, } from "./handlers";
 
 /** */
 function makeConfig(): Config {
@@ -231,6 +231,112 @@ describe("handleGetContext/handleRegenerateMessage — owners-set authority (epi
 
     const res = await handleRegenerateMessage(db, chatId, messageId, undefined, outsiderId, "user",);
     expect(res.status,).toBe(404,);
+
+    sqlite.close();
+    await db.destroy();
+  });
+});
+
+describe("chat-context handler edge branches", () => {
+  test("validateRegenerateBody accepts chat/message ids with optional fields", () => {
+    expect(validateRegenerateBody({ chatId: "c1", messageId: "m1", },),).toEqual({
+      chatId: "c1",
+      messageId: "m1",
+      parentId: undefined,
+      style: null,
+    },);
+
+    expect(
+      validateRegenerateBody({ chatId: "c1", messageId: "m1", parentId: "p", style: "shorter", },),
+    ).toEqual({ chatId: "c1", messageId: "m1", parentId: "p", style: "shorter", },);
+
+    expect(validateRegenerateBody({ chatId: "c1", messageId: "m1", style: "bogus-style", },),).toBeNull();
+  });
+
+  test("validateRegenerateBody rejects non-objects and missing ids", () => {
+    expect(validateRegenerateBody(null,),).toBeNull();
+    expect(validateRegenerateBody("x",),).toBeNull();
+    expect(validateRegenerateBody({},),).toBeNull();
+    expect(validateRegenerateBody({ chatId: "c1", },),).toBeNull();
+  });
+
+  test("handleGetContext 404s when the chat does not exist", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const res = await handleGetContext(db, "missing-chat", null, null, makeConfig(),);
+    expect(res.status,).toBe(404,);
+    sqlite.close();
+    await db.destroy();
+  });
+
+  test("handleGetContext admits admins without an owners row", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const ownerId = await insertUsers(db, `owner-${crypto.randomUUID()}`, "Owner",);
+    const chatId = await insertChats(db, "Party", ownerId,);
+
+    const res = await handleGetContext(db, chatId, null, "admin", makeConfig(),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { chatId: string };
+    expect(body.chatId,).toBe(chatId,);
+
+    sqlite.close();
+    await db.destroy();
+  });
+
+  test("handleRegenerateMessage 401s without a user", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const res = await handleRegenerateMessage(db, "c", "m", undefined, null, null,);
+    expect(res.status,).toBe(401,);
+    sqlite.close();
+    await db.destroy();
+  });
+
+  test("handleRegenerateMessage 404s when the chat is missing", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const ownerId = await insertUsers(db, `owner-${crypto.randomUUID()}`, "Owner",);
+    const res = await handleRegenerateMessage(db, "missing-chat", "m", undefined, ownerId, "user",);
+    expect(res.status,).toBe(404,);
+    sqlite.close();
+    await db.destroy();
+  });
+
+  test("handleRegenerateMessage 404s when the message is not in the chat", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const ownerId = await insertUsers(db, `owner-${crypto.randomUUID()}`, "Owner",);
+    const chatId = await insertChats(db, "Party", ownerId,);
+
+    const res = await handleRegenerateMessage(db, chatId, "missing-msg", undefined, ownerId, "user",);
+    expect(res.status,).toBe(404,);
+
+    sqlite.close();
+    await db.destroy();
+  });
+
+  test("handleRegenerateMessage acknowledges a valid regeneration request", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const ownerId = await insertUsers(db, `owner-${crypto.randomUUID()}`, "Owner",);
+    const actorId = await insertActors(db, "Speaker", { owner_id: ownerId, } as never,);
+    const chatId = await insertChats(db, "Party", ownerId,);
+    const messageId = await insertMessages(db, chatId, actorId, "assistant", "Hello",);
+
+    const res = await handleRegenerateMessage(db, chatId, messageId, "parent-1", ownerId, "user", "concise",);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as {
+      ok: boolean;
+      chatId: string;
+      messageId: string;
+      parentId: string;
+      cancelled: boolean;
+      ready: boolean;
+      style: string;
+    };
+
+    expect(body.ok,).toBe(true,);
+    expect(body.chatId,).toBe(chatId,);
+    expect(body.messageId,).toBe(messageId,);
+    expect(body.parentId,).toBe("parent-1",);
+    expect(body.cancelled,).toBe(false,);
+    expect(body.ready,).toBe(true,);
+    expect(body.style,).toBe("concise",);
 
     sqlite.close();
     await db.destroy();

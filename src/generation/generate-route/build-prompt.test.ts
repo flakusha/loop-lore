@@ -13,7 +13,7 @@
  */
 import { afterEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import type { AssembledPrompt, } from "../../assistant/prompt/types";
+import type { AssembledPrompt, CompressionMetadata, } from "../../assistant/prompt/types";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../../test-utils/isolate-only";
@@ -142,7 +142,7 @@ const baseInput = {
 async function run(
   overrides: Partial<GenerateRequest> = {},
   opts: { userId?: string; groupParticipantIds?: string[]; includeExamples?: boolean } = {},
-): Promise<{ messages: GenerationMessage[]; systemPrompt: string | undefined }> {
+): Promise<{ messages: GenerationMessage[]; systemPrompt: string | undefined; compression: CompressionMetadata }> {
   return buildPrompt({
     input: { ...baseInput, ...overrides, },
     database: {} as Kysely<DB>,
@@ -163,10 +163,16 @@ describeSelf("buildPrompt — explicit prompt passthrough", () => {
       { role: "assistant", content: "réponse", },
     ];
 
-    const { messages, systemPrompt, } = await run({ prompt, systemPrompt: "custom sys", },);
+    const { messages, systemPrompt, compression, } = await run({ prompt, systemPrompt: "custom sys", },);
     expect(messages,).toBe(prompt,);
     expect(systemPrompt,).toBe("custom sys",);
     expect(assembleCalls.length,).toBe(0,);
+    expect(compression,).toEqual({
+      droppedTokens: 0,
+      droppedSections: [],
+      compacted: false,
+      compactedTokens: 0,
+    },);
   });
 
   test("falls through to the assembler when the prompt list is empty", async () => {
@@ -201,10 +207,13 @@ describeSelf("buildPrompt — 85% compaction threshold", () => {
   test("compacts when tokenCount exceeds 85% of the budget", async () => {
     compactCalls.length = 0;
     assembleResult = { ...assembleResult, tokenCount: 851, tokenBudget: 1000, };
-    const { messages, } = await run({}, {},);
+    const { messages, compression, } = await run({}, {},);
     expect(compactCalls.length,).toBe(1,);
     expect(compactCalls[0]!.budget,).toBe(1000,);
     expect(messages,).toBe(compactResult.messages,);
+    // TASK-ctx-metrics: compaction outcome lands in the compression metadata.
+    expect(compression.compacted,).toBe(true,);
+    expect(compression.compactedTokens,).toBe(compactResult.droppedTokens,);
   });
 
   test("skips compaction at exactly 85% of the budget (strict >)", async () => {

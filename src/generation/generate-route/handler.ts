@@ -13,6 +13,7 @@
  */
 
 import type { Kysely, } from "kysely";
+import type { CompressionMetadata, } from "../../assistant/prompt/types";
 import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
