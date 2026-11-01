@@ -33005,7 +33005,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-chat-sectioning-multi-location.md",
-    "status": "⬜ Research Needed",
+    "status": "done",
     "tags": [],
     "title": "Chat Sectioning — Multi-Location Chat Spanning",
     "type": "TASK"
