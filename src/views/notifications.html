@@ -9,10 +9,15 @@
     data-page="notifications"
     data-testid="notifications-header"
   >
-    <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger" aria-label="Toggle sidebar">
+    <button
+      class="hamburger"
+      x-on:click="window.toggleSidebar()"
+      data-testid="hamburger"
+      aria-label="{{{t('accessibility.toggleSidebar')}}}"
+    >
       ☰
     </button>
-    <span class="title">{{{t("notifications.title")}}}</span>
+    <h1 class="title">{{{t("notifications.title")}}}</h1>
     <div class="actions">
       <button
         class="btn btn-secondary"

@@ -79,20 +79,33 @@
 
   <h5>{{{ t("worlds.inventoryItemsLabel") }}}</h5>
   <div x-show="loading" class="muted">{{{ t("common.loading") }}}</div>
-  <template x-for="item in visibleItems()" :key="item.id">
-    <div class="trade-offer-row" :data-item-id="item.id">
-      <span x-text="item.name + (item.quantity ? ' × ' + item.quantity : '')"></span>
-      <span class="tag" x-text="item.itemType"></span>
-      <span class="muted" x-text="(item.value ?? 0) + ' Gold'"></span>
-      <button
-        class="btn btn-secondary btn-sm"
-        @click="select(item.id)"
-        :data-testid="'inventory-select-' + item.id"
-        x-text="t('worlds.inventoryDetailsLabel')"
-      >
-      </button>
-    </div>
-  </template>
+  <!--
+    ↑/↓ move the row selection (epic Phase 3 list navigation); the keys
+    are handled only while focus is inside this list, so typing in the
+    filters is unaffected.
+  -->
+  <div
+    class="inventory-item-list"
+    role="list"
+    :aria-label="t('worlds.inventoryItemsLabel')"
+    @keydown.down.prevent="moveSelection(1, $el)"
+    @keydown.up.prevent="moveSelection(-1, $el)"
+  >
+    <template x-for="item in visibleItems()" :key="item.id">
+      <div class="trade-offer-row" role="listitem" :data-item-id="item.id">
+        <span x-text="item.name + (item.quantity ? ' × ' + item.quantity : '')"></span>
+        <span class="tag" x-text="item.itemType"></span>
+        <span class="muted" x-text="(item.value ?? 0) + ' Gold'"></span>
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="select(item.id)"
+          :data-testid="'inventory-select-' + item.id"
+          x-text="t('worlds.inventoryDetailsLabel')"
+        >
+        </button>
+      </div>
+    </template>
+  </div>
   <div x-show="!loading && visibleItems().length === 0" class="muted">{{{ t("worlds.inventoryEmpty") }}}</div>
 
   <template x-if="selectedItem()">

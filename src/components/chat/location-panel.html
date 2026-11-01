@@ -13,9 +13,15 @@
   class="right-panel"
   :style="{ display: $store?.ui?.showLocationPanel ? 'flex' : 'none' }"
   x-cloak
+  :aria-label="t('Location')"
   data-testid="location-panel"
 >
-  <button class="btn-icon" @click="$store.ui.showLocationPanel = false" x-bind:title="t('common.close')">
+  <button
+    class="btn-icon"
+    @click="$store.ui.showLocationPanel = false"
+    x-bind:title="t('common.close')"
+    x-bind:aria-label="t('common.close')"
+  >
     &times;
   </button>
   <div class="panel-content">

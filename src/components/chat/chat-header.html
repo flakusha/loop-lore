@@ -2,8 +2,15 @@
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 <header id="header-slot" class="main-header" data-testid="chat-header">
-  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title" id="page-title">{{{t("tooltips.viewChats")}}}</span>
+  <button
+    class="hamburger"
+    x-on:click="window.toggleSidebar()"
+    data-testid="hamburger"
+    aria-label="{{{t('accessibility.toggleSidebar')}}}"
+  >
+    ☰
+  </button>
+  <h1 class="title" id="page-title">{{{t("tooltips.viewChats")}}}</h1>
   <div class="actions">
     <!--
       htmx ↔ egui handoff: window.loopLoreEgui (egui-bridge.ts) reads the
@@ -493,6 +500,7 @@
             <button
               class="btn-icon-sm"
               x-bind:title="t('chats.dismiss')"
+              x-bind:aria-label="t('chats.dismiss')"
               @click.stop="dismiss(n.id)"
               :data-testid="'notifications-bell-dismiss-' + n.id"
             >
@@ -501,6 +509,7 @@
             <button
               class="btn-icon-sm"
               x-bind:title="t('chats.markRead')"
+              x-bind:aria-label="t('chats.markRead')"
               x-show="!n.read"
               @click.stop="markRead(n.id)"
               :data-testid="'notifications-bell-mark-read-' + n.id"

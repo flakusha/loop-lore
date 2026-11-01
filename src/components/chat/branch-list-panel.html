@@ -14,8 +14,21 @@
   data-testid="branch-panel"
 >
   <div class="panel-backdrop" x-show="open" @click="open = false" x-cloak></div>
-  <aside class="right-panel" :style="{ display: open ? 'flex' : 'none' }" x-cloak data-testid="branch-list-panel">
-    <button class="btn-icon" @click="open = false" x-bind:title="t('common.close')">&times;</button>
+  <aside
+    class="right-panel"
+    :style="{ display: open ? 'flex' : 'none' }"
+    x-cloak
+    :aria-label="t('branches.title')"
+    data-testid="branch-list-panel"
+  >
+    <button
+      class="btn-icon"
+      @click="open = false"
+      x-bind:title="t('common.close')"
+      x-bind:aria-label="t('common.close')"
+    >
+      &times;
+    </button>
     <div class="panel-content">
       <div class="nav-section-title">{{{t("branches.title")}}}</div>
       <div class="side-channel-empty" x-show="$store.ui.branches.length === 0" data-testid="branch-panel-empty">

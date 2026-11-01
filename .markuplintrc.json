@@ -74,6 +74,31 @@
   ],
   "overrideMode": "merge",
   "overrides": {
+    "src/views/admin.html": {
+      "nodeRules": [
+        {
+          "selector": "a[x-show]",
+          "rules": {
+            "no-disallowed-attr": {
+              "severity": "off",
+              "reason": "The href is Alpine-bound (:href) and toggled with x-show, invisible to the static parser — the linter sees an <a> without href, where target/rel are disallowed. At runtime the anchor only renders when item.url is truthy and carries that external href."
+            }
+          }
+        }
+      ]
+    },
+    "src/components/inventory-panels.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        },
+        "require-parent-role": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
     "src/components/{asset-preview-modal,autonomy-panel,edge-mode-options,filter-bar,filter-chips,key-management,location-options}.html": {
       "rules": {
         "require-owned-elements": {

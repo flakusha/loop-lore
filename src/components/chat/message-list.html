@@ -55,13 +55,20 @@
       ></span>
     </div>
     <div class="location-header-actions">
-      <button class="btn-icon btn-xs" @click="toggleStoryMap()" title="Story map" data-testid="location-header-map">
+      <button
+        class="btn-icon btn-xs"
+        @click="toggleStoryMap()"
+        title="Story map"
+        aria-label="Story map"
+        data-testid="location-header-map"
+      >
         🗺️
       </button>
       <button
         class="btn-icon btn-xs"
         @click="transferToSection(_currentSectionId)"
         title="Transfer here"
+        aria-label="Transfer here"
         data-testid="location-header-transfer"
       >
         ⤵
@@ -437,15 +444,28 @@
             </div>
             <!-- Detailed (nerd) mode: full button row + stats -->
             <div class="actions-full" x-show="detailLevel === 'Detailed'" :data-detail="detailLevel">
-              <button class="btn-icon-action" @click="copyMessage(msg.id, $event)" x-bind:title="t('chats.copy')">
+              <button
+                class="btn-icon-action"
+                @click="copyMessage(msg.id, $event)"
+                x-bind:title="t('chats.copy')"
+                x-bind:aria-label="t('chats.copy')"
+              >
                 📋
               </button>
-              <button class="btn-icon-action" @click="startEdit(msg.id)" x-bind:title="t('common.edit')">✏️</button>
+              <button
+                class="btn-icon-action"
+                @click="startEdit(msg.id)"
+                x-bind:title="t('common.edit')"
+                x-bind:aria-label="t('common.edit')"
+              >
+                ✏️
+              </button>
               <!-- Poll trigger: open the inline poll composer (TASK-message-polls-votes) -->
               <button
                 class="btn-icon-action"
                 @click="openPollComposer(msg.id)"
                 x-bind:title="t('chats.createPoll')"
+                x-bind:aria-label="t('chats.createPoll')"
                 data-testid="poll-add"
               >
                 📊
@@ -457,6 +477,7 @@
                   @click="improveMessage(msg.id)"
                   :disabled="_improvingMessageId === msg.id"
                   x-bind:title="t('chats.improveMessage')"
+                  x-bind:aria-label="t('chats.improveMessage')"
                   data-testid="improve-message"
                 >
                   ✨
@@ -466,6 +487,7 @@
                 class="btn-icon-action"
                 @click="openAssetPicker(msg.id)"
                 x-bind:title="t('chats.attachAsset')"
+                x-bind:aria-label="t('chats.attachAsset')"
                 data-testid="attach-asset"
               >
                 📎
@@ -474,6 +496,7 @@
                 class="btn-icon-action"
                 @click="rememberMessage(msg.id, msg.content)"
                 x-bind:title="t('chats.rememberThis')"
+                x-bind:aria-label="t('chats.rememberThis')"
               >
                 🧠
               </button>
@@ -488,7 +511,12 @@
                 🌐
               </button>
               <template x-if="msg.role === 'assistant'">
-                <button class="btn-icon-action" x-bind:title="t('chats.regenerate')" @click="regenerateVariant(msg.id)">
+                <button
+                  class="btn-icon-action"
+                  x-bind:title="t('chats.regenerate')"
+                  x-bind:aria-label="t('chats.regenerate')"
+                  @click="regenerateVariant(msg.id)"
+                >
                   ♻
                 </button>
               </template>
@@ -508,6 +536,7 @@
                   <button
                     class="btn-icon-action"
                     x-bind:title="t('common.previous')"
+                    x-bind:aria-label="t('common.previous')"
                     @click="switchVariant(msg.id, -1)"
                   >
                     ◀
@@ -516,7 +545,12 @@
                     class="variant-counter"
                     x-text="(msg.variantIndex ?? 0) + 1 + '/' + msg.totalVariants"
                   ></span>
-                  <button class="btn-icon-action" x-bind:title="t('common.next')" @click="switchVariant(msg.id, 1)">
+                  <button
+                    class="btn-icon-action"
+                    x-bind:title="t('common.next')"
+                    x-bind:aria-label="t('common.next')"
+                    @click="switchVariant(msg.id, 1)"
+                  >
                     ▶
                   </button>
                 </span>
@@ -525,6 +559,7 @@
                 <button
                   class="btn-icon-action action-continue"
                   x-bind:title="t('chats.continueAction')"
+                  x-bind:aria-label="t('chats.continueAction')"
                   @click="continueMessage(msg.id)"
                 >
                   ↳
@@ -536,6 +571,7 @@
                   :class="impersonationActive ? 'action-active' : ''"
                   @click="toggleImpersonate()"
                   :title="impersonationActive ? 'Stop playing as character' : 'Play as character'"
+                  :aria-label="impersonationActive ? 'Stop playing as character' : 'Play as character'"
                 >
                   🎭
                 </button>
@@ -544,11 +580,17 @@
                 class="btn-icon-action"
                 @click="generateImageFromMessage(msg.id)"
                 x-bind:title="t('chats.generateImage')"
+                x-bind:aria-label="t('chats.generateImage')"
               >
                 🖼
               </button>
               <template x-if="msg.attachments && msg.attachments.length > 0">
-                <button class="btn-icon-action" @click="captionMessage(msg.id)" x-bind:title="t('chats.captionImages')">
+                <button
+                  class="btn-icon-action"
+                  @click="captionMessage(msg.id)"
+                  x-bind:title="t('chats.captionImages')"
+                  x-bind:aria-label="t('chats.captionImages')"
+                >
                   💬
                 </button>
               </template>

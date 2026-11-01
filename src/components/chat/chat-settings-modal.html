@@ -14,7 +14,9 @@
   <div class="modal" style="max-width: 420px">
     <div class="modal-header">
       <span class="title">Chat Settings</span>
-      <button class="btn-icon" @click="$store.ui.showChatSettings = false">&times;</button>
+      <button class="btn-icon" @click="$store.ui.showChatSettings = false" x-bind:aria-label="t('common.close')">
+        &times;
+      </button>
     </div>
     <div class="modal-body">
       <div class="form-group">
@@ -958,7 +960,12 @@
   <div class="modal" style="max-width: 380px">
     <div class="modal-header">
       <span class="title">Transfer Chat Ownership</span>
-      <button class="btn-icon" @click="closeOwnershipTransferModal()" data-testid="ownership-transfer-close">
+      <button
+        class="btn-icon"
+        @click="closeOwnershipTransferModal()"
+        x-bind:aria-label="t('common.close')"
+        data-testid="ownership-transfer-close"
+      >
         &times;
       </button>
     </div>
@@ -1037,7 +1044,12 @@
   <div class="modal" style="max-width: 380px">
     <div class="modal-header">
       <span class="title">{{{t("chat.owners.addTitle")}}}</span>
-      <button class="btn-icon" @click="closeAddOwnerModal()" data-testid="add-owner-close">
+      <button
+        class="btn-icon"
+        @click="closeAddOwnerModal()"
+        x-bind:aria-label="t('common.close')"
+        data-testid="add-owner-close"
+      >
         &times;
       </button>
     </div>

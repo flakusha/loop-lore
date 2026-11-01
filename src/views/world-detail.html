@@ -3,8 +3,15 @@
 
 <!-- World Detail Page (skeleton — detail + modal lazy-loaded) -->
 <header id="header-slot" class="main-header" data-page="world-detail" data-testid="world-detail-header">
-  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title" id="page-title">{{{t("worlds.worldDetails")}}}</span>
+  <button
+    class="hamburger"
+    x-on:click="window.toggleSidebar()"
+    data-testid="hamburger"
+    aria-label="{{{t('accessibility.toggleSidebar')}}}"
+  >
+    ☰
+  </button>
+  <h1 class="title" id="page-title">{{{t("worlds.worldDetails")}}}</h1>
   <div class="actions">
     <button
       class="btn btn-secondary"

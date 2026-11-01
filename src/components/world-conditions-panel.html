@@ -14,7 +14,11 @@
 >
   <h3 id="conditions-heading">{{{ t("worlds.conditionsTitle") }}}</h3>
   <div x-show="!hasConditions" class="muted">{{{ t("worlds.conditionsNone") }}}</div>
-  <div x-show="hasConditions" class="conditions-row">
+  <!--
+    Live region: SSE pushes swap the values in place; polite so the
+    change is announced without interrupting screen-reader output.
+  -->
+  <div x-show="hasConditions" class="conditions-row" aria-live="polite" aria-atomic="false">
     <span
       class="condition"
       data-testid="condition-time"

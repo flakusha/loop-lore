@@ -14,9 +14,17 @@
   class="right-panel"
   :style="{ display: $store?.ui?.showMemoryPanel ? 'flex' : 'none' }"
   x-cloak
+  :aria-label="t('chats.memories')"
   data-testid="memory-panel"
 >
-  <button class="btn-icon" @click="$store.ui.showMemoryPanel = false" x-bind:title="t('common.close')">&times;</button>
+  <button
+    class="btn-icon"
+    @click="$store.ui.showMemoryPanel = false"
+    x-bind:title="t('common.close')"
+    x-bind:aria-label="t('common.close')"
+  >
+    &times;
+  </button>
   <div class="panel-content">
     <div class="nav-section-title">{{{t("chats.memories")}}}</div>
 
@@ -146,6 +154,7 @@
                       x-show="_canWriteActiveTab()"
                       @click="startEditMemory(mem)"
                       x-bind:title="t('common.edit')"
+                      x-bind:aria-label="t('common.edit')"
                     >
                       ✏️
                     </button>
@@ -155,6 +164,7 @@
                       :class="{'text-warning': mem.pinned}"
                       @click="toggleMemoryPin(mem.id)"
                       x-bind:title="t('chats.pin')"
+                      x-bind:aria-label="t('chats.pin')"
                     >
                       📌
                     </button>
@@ -163,6 +173,7 @@
                       x-show="memoryPanel.activeTab === 'character'"
                       @click="toggleMemoryInChat(mem)"
                       x-bind:title="t('chats.inThisChat')"
+                      x-bind:aria-label="t('chats.inThisChat')"
                       x-text="_isInChat(mem) ? '✅' : '⭕'"
                     >
                     </button>
@@ -171,6 +182,7 @@
                       x-show="_canWriteActiveTab()"
                       @click="deleteMemory(mem.id)"
                       x-bind:title="t('common.delete')"
+                      x-bind:aria-label="t('common.delete')"
                     >
                       🗑
                     </button>
@@ -213,6 +225,7 @@
                     style="font-size: 10px"
                     @click="jumpToMemorySource(mem.sourceMessageId)"
                     x-bind:title="t('chats.viewSource')"
+                    x-bind:aria-label="t('chats.viewSource')"
                   >
                     🔗
                   </button>

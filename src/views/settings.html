@@ -12,10 +12,15 @@
     it (BUG-bug-header-slot-hoist-breaks-alpine-scope).
   -->
   <header class="main-header" data-page="settings" data-testid="settings-header">
-    <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger" aria-label="Toggle sidebar">
+    <button
+      class="hamburger"
+      x-on:click="window.toggleSidebar()"
+      data-testid="hamburger"
+      aria-label="{{{t('accessibility.toggleSidebar')}}}"
+    >
       ☰
     </button>
-    <span class="title" x-text="t('settings.title')"></span>
+    <h1 class="title" x-text="t('settings.title')"></h1>
     <div class="actions">
       <template x-if="activeTab === 'general'">
         <button

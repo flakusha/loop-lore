@@ -21,9 +21,9 @@ Implement screen reader support with ARIA labels, live regions, semantic HTML, a
 
 - [x] ARIA labels on all interactive elements
 - [x] Live regions for dynamic content
-- [ ] Semantic HTML structure
-- [ ] Alt text for images/icons
-- [ ] Screen reader announcements for state changes
+- [x] Semantic HTML structure
+- [x] Alt text for images/icons
+- [x] Screen reader announcements for state changes
 - [ ] Proper heading hierarchy
 - [x] Landmark regions
 
@@ -204,6 +204,52 @@ export class ScreenReaderManager {
 - `src/frontend/a11y/screen-reader.ts`
 - `src/frontend/a11y/aria-labels.ts`
 - `src/frontend/a11y/sr-only.css`
+
+## Implementation Notes (branch p0-a11y-responsive, 2026-11-01)
+
+Landed the core screen-reader navigation slice; four of five open ACs are
+closed. What shipped, by AC:
+
+- **Semantic HTML structure** — every main view header now renders its page
+  title as a real `<h1 class="title">` (was `<span>`; 18 headers + the chat
+  header, `.main-header .title` gained `margin: 0` so layout is unchanged).
+  The nested-main bug is gone: `#app-root` dropped `role="main"`, so each
+  view's single `<main class="main-content">` is the page's only main
+  landmark (`ui.ts` / `focus.ts` fallback selectors already match
+  `#app-root`, so focus restoration is unaffected). Landmarks verified:
+  `<aside aria-label>` sidebar + `<nav aria-label>` + per-view `<main>` +
+  skip link (`#app-root`, first focusable element; hidden only in print).
+- **Alt text for images/icons** — all icon-only buttons now carry accessible
+  names: hamburgers (`accessibility.toggleSidebar`, all 15 header files,
+  replacing three hardcoded English labels), sidebar settings gear,
+  message-action buttons (title mirrored into `aria-label`), panel/modal
+  close buttons (`common.close` / `common.remove`), branch-merge
+  up/down/remove (new `branches.moveUp`/`branches.moveDown` keys),
+  notification dismiss/mark-read, chat-list rename/pin/unarchive/delete,
+  memory-panel edit/pin/jump, and `aria-label`s on the nine unnamed
+  right-panel `<aside>`s (reusing each panel's own heading key). Avatars
+  already carried `alt` (`accessibility.userAvatar`).
+- **Screen reader announcements for state changes** — the battle panel now
+  renders a persistent `aria-live="polite" aria-atomic="true"` `.sr-only`
+  announcer (`battle/panel-live.ts`, survives the full re-render wipes and
+  only rewrites text when round/turn/status actually change; announces
+  "Round N: X's turn" and "Battle ended"). The SSE-driven world conditions
+  strip is a polite live region. Toast container, banner and ticker live
+  regions pre-existed.
+- **Proper heading hierarchy** — partial, intentionally left unchecked: the
+  per-page `<h1>` landed, but settings/admin sections still start at `h3`
+  under the `h1` (h2 level skipped). Fixing those section levels is the
+  remaining polish; deep admin screens are out of this slice's scope.
+
+Also in this slice (keyboard side of navigation): battle `1-9` action slots,
+world-page `g i`/`g l`/`g t` focus jumps, and ↑/↓ selection with focus
+follow in the inventory item list — see the epic Phase 3/4 notes.
+
+Unit coverage: `battle/panel-live.test.ts` (slot dispatch, announcements,
+live-region persistence), `inventory.test.ts` (`moveSelection`). Gates:
+`bun run typecheck:frontend`, scoped `eslint`/`dprint`, `lint:css`,
+`markuplint`, `bun run i18n:check` (9/9 locales), battle + shortcuts +
+inventory + world suites — all green.
 
 ## Related Tasks
 

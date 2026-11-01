@@ -42,6 +42,21 @@ export const DEFAULT_KEYMAP: ShortcutEntry[] = [
   { combo: "]", action: "next-chat", ignoreInInput: true, },
   { combo: "j", action: "scroll-down", ignoreInInput: true, },
   { combo: "k", action: "scroll-up", ignoreInInput: true, },
+  // Context-specific actions (epic Phase 3): their handlers are registered
+  // per page — battle slots on battle-panel mount, the focus-* keys from the
+  // world page init — so they dispatch nowhere elsewhere.
+  { combo: "1", action: "battle-slot-1", ignoreInInput: true, },
+  { combo: "2", action: "battle-slot-2", ignoreInInput: true, },
+  { combo: "3", action: "battle-slot-3", ignoreInInput: true, },
+  { combo: "4", action: "battle-slot-4", ignoreInInput: true, },
+  { combo: "5", action: "battle-slot-5", ignoreInInput: true, },
+  { combo: "6", action: "battle-slot-6", ignoreInInput: true, },
+  { combo: "7", action: "battle-slot-7", ignoreInInput: true, },
+  { combo: "8", action: "battle-slot-8", ignoreInInput: true, },
+  { combo: "9", action: "battle-slot-9", ignoreInInput: true, },
+  { combo: "g i", action: "focus-inventory", },
+  { combo: "g l", action: "focus-locations", },
+  { combo: "g t", action: "focus-travel", },
 ];
 
 const KEYNAV_FLAG = "keynav";

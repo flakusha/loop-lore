@@ -270,6 +270,7 @@
             hx-push-url="true"
             x-on:click="window.closeSidebar()"
             title="{{{t("navigation.settings")}}}"
+            aria-label="{{{t("navigation.settings")}}}"
             data-testid="nav-settings"
           >
             ⚙
@@ -391,12 +392,14 @@
       </div>
     </div>
 
-    <!-- Main content rendered by htmx swaps -->
+    <!-- Main content rendered by htmx swaps. Not role="main" itself: every
+       view renders exactly one <main class="main-content"> inside, and
+       nested main landmarks confuse screen readers. Skip-link and focus
+       fallbacks target this id (ui.ts / focus.ts selectors match #app-root). -->
     <div
       id="app-root"
       data-testid="app-root"
       hx-target-error="#toast-container"
-      role="main"
       tabindex="-1"
     >
       {{{content}}}

@@ -3,8 +3,15 @@
 
 <!-- NSFW Moderation Audit View (admin-only) -->
 <header id="header-slot" class="main-header" data-testid="nsfw-moderation-header">
-  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title">NSFW Moderation Audit</span>
+  <button
+    class="hamburger"
+    x-on:click="window.toggleSidebar()"
+    data-testid="hamburger"
+    aria-label="{{{t('accessibility.toggleSidebar')}}}"
+  >
+    ☰
+  </button>
+  <h1 class="title">NSFW Moderation Audit</h1>
 </header>
 
 <div class="app-layout">

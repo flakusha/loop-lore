@@ -14,9 +14,10 @@
   class="right-panel"
   :style="{ display: $store?.ui?.showCharacterInfo ? 'flex' : 'none' }"
   x-cloak
+  :aria-label="t('Character Info')"
   data-testid="character-info-panel"
 >
-  <button class="btn-icon" @click="$store.ui.showCharacterInfo = false" title="Close">&times;</button>
+  <button class="btn-icon" @click="$store.ui.showCharacterInfo = false" title="Close" aria-label="Close">&times;</button>
   <div class="panel-content">
     <div class="nav-section-title">Character Info</div>
     <template x-if="currentCharacter">

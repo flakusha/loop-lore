@@ -3,8 +3,8 @@
 
 <!-- Blog View: post list + detail with threaded comments -->
 <header id="header-slot" class="main-header" data-page="blog" data-testid="blog-header">
-  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title">{{{t("blog.title")}}}</span>
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger" aria-label="{{{t('accessibility.toggleSidebar')}}}">☰</button>
+  <h1 class="title">{{{t("blog.title")}}}</h1>
 </header>
 
 <div class="app-layout" x-data="blogPage()" x-init="init()">

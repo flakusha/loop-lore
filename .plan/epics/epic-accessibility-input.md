@@ -7,6 +7,7 @@
 
 
 **Status:** In Progress
+**Status Note (2026-11-01, `p0-a11y-responsive`):** all 13 acceptance criteria now checked — the responsive-breakpoint slice (bottom sheets, trade grid, tier realignment, 44px targets) and the screen-reader navigation slice (live regions, h1 titles, single-main landmark, icon-button/asides labels, battle 1-9 + world focus + inventory arrow keynav) landed and are verified at the code level; what remains open is Phase 5 real-device/screen-reader testing, the help-overlay focus trap, chat-page keynav consumers (j/k, [/], goto-*), and the touch-gesture ticket scope. Status stays In Progress for those.
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
@@ -218,12 +219,12 @@ flowchart TD
 - [x] Visible focus indicators on all focusable elements
 - [x] Tab order logical and predictable
 - [x] Escape closes all modals/popups
-- [ ] Screen reader can navigate entire application
+- [x] Screen reader can navigate entire application
 - [x] ARIA labels on all interactive elements
 - [x] Live regions for dynamic content
 - [x] Mobile touch targets 44x44px minimum
 - [x] Swipe gestures for common actions
-- [ ] Responsive design at all breakpoints
+- [x] Responsive design at all breakpoints
 - [x] Reduced motion support
 - [x] High contrast mode support
 - [x] No keyboard traps
@@ -242,7 +243,7 @@ flowchart TD
 
 - Touch gesture system — **wired into the chat message list (2026-10-25)**. `src/frontend/alpine/chat-touch-gestures.ts` attaches `src/frontend/touch.ts` (`onSwipe` / `onLongPress`) to `#message-list` with event delegation: swipe left → archive-confirm dialog, swipe right → edit, long-press → message context menu. Gestures dispatch the same actions the visible buttons use, attach only on touch-capable devices (pointer-coarse guard), no-op on buttons/inputs, and tear down cleanly across htmx swaps. Unit tests: `src/frontend/touch.test.ts`, `src/frontend/alpine/chat-touch-gestures.test.ts`. Remaining Phase 2 surface work (composer/sidebar gestures, pull-to-refresh, pinch zoom) stays tracked by `TASK-touch-gestures.md` and `WIRE-frontend-touch-swipe-gestures.md`.
 - Input-mode tracker (`src/frontend/a11y/responsive.ts` — wired 2026-10-25 on branch `a11y-tracker-wiring`: started once per page load from `alpine/app.ts` init(), `body.touch-user`/`body.mouse-user` classes consumed by `responsive.css` hover-reveal overrides).
-- Responsive breakpoints (partial)
+- Responsive breakpoints (complete 2026-11-01, `p0-a11y-responsive`: modal bottom sheets <480px, trade-window two-pane grid >=768px, `.world-page-columns` collapse realigned to the 768px tier, coarse-pointer 44px block extended to `.hamburger`/`.battle-action`/`.battle-combatant`, mobile-composer controls raised to 44px; the drawer sidebar and overlay right panel remain the documented intentional pattern on every tier — see `docs/frontend/chat/layout.md`)
 - Mobile-specific patterns
 - Touch target sizing (44px CSS in `app.css`)
 
@@ -255,12 +256,12 @@ audit found it built-but-unwired instead.
 - Shortcut system — **existed, already wired** (corrected): `src/frontend/alpine/shortcuts.ts` registers a document keydown listener at bundle load (`src/frontend/alpine/index.ts` import chain), opt-in via the `keynav` localStorage flag; Ctrl+B/N/L/K always on, single-key + `g <key>` sequences dispatch `keynav:action` / `keynav:toggle-help` and feed `registerKeynavHandler`. Covered by `shortcuts.test.ts` + `shortcuts-listener.test.ts`.
 - Shortcut help overlay — **existed but unwired; WIRED 2026-10-25**: `keynavHelp()` was registered nowhere and `src/components/chat/keynav-help.html` was included by no view (knip `epic-frontend-keynav-mobile` ignore). Now the overlay markup lives inline in `src/views/layout.html` inside the sidebar footer (the `{{> }}` include resolver only runs on view content, not the layout, so the include directive could not be used — the redundant partial was removed), with an aria-labelled help button gated on the `keynav` flag; Escape closes; `mobile-keynav.css` (previously referenced by nothing) is now linked from the layout. Component registered in the Alpine bundle and `window-types.ts`.
 - Shortcut editor UI — **added 2026-10-25**: Settings → Keyboard tab (`settings/keynav.ts` submodule composed into `settingsPage()`), with the opt-in **toggle** (`setKeyboardNavEnabled` writes/clears the `keynav` localStorage flag — review finding: nothing had ever set the flag, leaving the surface unreachable; with the flag off the editor stays visible but inert), rebinding single-key/`g <key>`-pair combos, persisted to localStorage `keynav.keymap`, validated (`validateKeymapCombo`: no duplicates, no bare modifiers, `?`/`Escape`/`g` reserved, `g`-prefixed pairs only), reset-to-defaults; `getKeymap()` merges stored overrides over `DEFAULT_KEYMAP` and the keydown listener consumes the merged map. Action labels resolve through the alpine i18n module (`import { t } from "./i18n"`). Unit coverage: `shortcuts-overrides.test.ts`, `settings/keynav.test.ts`, `keynav-help.test.ts`.
-- Context-specific shortcuts — **still open**: the global map already covers chat-page scroll (j/k) and chat switching ([/]); per-page keymaps (battle/inventory/world) have no consumers yet. Plan: register `registerKeynavHandler` actions inside each page's existing Alpine init — do not widen the global listener.
+- Context-specific shortcuts — **battle/inventory/world wired 2026-11-01** (`p0-a11y-responsive`): keymap grew `battle-slot-1..9` (digit keys, inert in inputs) whose handlers are registered on battle-panel mount and removed on destroy (`battle/panel-live.ts` selects the Nth enabled action-bar slot), plus `focus-inventory`/`focus-locations`/`focus-travel` (`g i`/`g l`/`g t`) registered in the world page's `init()` with cleanup; labels added for all 10 locales. Still open: chat-page actions have dispatch but no consumers — `scroll-down`/`scroll-up` (j/k), `prev-chat`/`next-chat` ([/]) and the `goto-*` navigation actions need `registerKeynavHandler` wiring in the chat page / root Alpine init (the global listener stays unwidened).
 - Editor i18n for non-en locales — **complete 2026-10-25**: all `frontend.keynav.*` + `common.actions` keys translated in ar/de/es/fr/ja/ko/pt/ru/zh; `bun run i18n:check` reports 9/9 locales complete.
 
 ### Phase 4: Advanced Features
 
-- Screen reader optimizations (ARIA live regions done; full navigation pending — tracked by `TASK-screen-reader-support.md`)
+- Screen reader optimizations — **landed 2026-11-01** (`p0-a11y-responsive`, closes TASK-screen-reader-support): persistent aria-live battle announcer (new `.sr-only` utility + `battle/panel-live.ts`, announces round/turn/battle end), polite live region on the SSE-driven world conditions strip, page-level `<h1>` titles on every main view header (was `<span class="title">`), nested-main fixed (`#app-root` no longer `role="main"` — each view's single `<main>` is the landmark), `aria-label`s mirrored onto icon-only header/sidebar/panel/message-action buttons and the nine unnamed right-panel asides, inventory item list keyboard navigation (up/down arrows with focus follow). Verified by code audit (landmarks, skip link, labels, live regions) — no real screen-reader pass yet (Phase 5)
 - Keyboard shortcuts for power users — partially delivered by the Phase 3 rebind editor (2026-10-25); user-defined macro/context shortcuts remain open
 - Help-overlay focus trap: the markup is keyboard-accessible (Escape close, Tab reaches controls) but `@alpinejs/focus` is not loaded, so the `x-trap` from the original WIRE design is not in effect — full focus trap + focus restore stays open under `WIRE-frontend-keyboard-help-overlay.md`
 
@@ -293,8 +294,8 @@ audit found it built-but-unwired instead.
 | ----- | ------ | ------ |
 | 1 — Core a11y (shipped 2026-07-31) | (folded into `src/frontend/alpine/focus.ts`) | shipped |
 | 2 — Touch gestures | `TASK-touch-gestures.md` (also `TASK-frontend-touch-gestures.md` — done, `TASK-mobile-touch-gestures.md`, `WIRE-frontend-touch-swipe-gestures.md`) | chat message list wired 2026-10-25; composer/pinch/pull-to-refresh open |
-| 2 — Mobile responsive breakpoints | `TASK-responsive-design.md` | open |
-| 3 — Keyboard shortcuts | `TASK-keyboard-navigation.md` (core system done); overlay wired + rebind editor added 2026-10-25 via `a11y-keynav-phase3`; context-specific shortcuts open | partially done — overlay/editor shipped, per-page keymaps open |
-| 4 — Screen reader optimizations | `TASK-screen-reader-support.md` | open (in progress) |
+| 2 — Mobile responsive breakpoints | `TASK-responsive-design.md` | done (breakpoint slice completed 2026-11-01) |
+| 3 — Keyboard shortcuts | `TASK-keyboard-navigation.md` (core system done); overlay wired + rebind editor added 2026-10-25 via `a11y-keynav-phase3`; battle/inventory/world per-page keymaps wired 2026-11-01 (`p0-a11y-responsive`); chat-page action consumers open | partially done — chat-page consumers remain |
+| 4 — Screen reader optimizations | `TASK-screen-reader-support.md` | done (core surfaces landed 2026-11-01; deep heading-level polish in settings/admin remains) |
 
 **Gap (2026-09-23, resolved):** the then-open question of whether to file a touch-gesture ticket is moot — `TASK-touch-gestures.md` and three sibling tickets exist. The former wiring gap (`src/frontend/touch.ts` unimported, untested) was closed on the chat message list 2026-10-25 (see Phase 2); composer/sidebar gestures and pinch/pull-to-refresh remain open under the tickets above.

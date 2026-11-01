@@ -13,9 +13,10 @@
   class="right-panel"
   :style="{ display: _pinsOpen ? 'flex' : 'none' }"
   x-cloak
+  :aria-label="t('Pinned Messages')"
   data-testid="pins-panel"
 >
-  <button class="btn-icon" @click="_pinsOpen = false">&times;</button>
+  <button class="btn-icon" @click="_pinsOpen = false" x-bind:aria-label="t('common.close')">&times;</button>
   <div class="panel-content">
     <div class="nav-section-title">Pinned Messages</div>
     <div x-show="_pinsLoading" style="color: var(--text-secondary); font-size: 12px">

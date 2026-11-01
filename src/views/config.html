@@ -4,10 +4,15 @@
 <!-- Config Menu Page — one panel per catalog section, grouped into tabs. -->
 <div class="app-layout" x-data="configMenu()" x-init="init()">
   <header class="main-header" data-page="config" data-testid="config-header">
-    <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger" aria-label="Toggle sidebar">
+    <button
+      class="hamburger"
+      x-on:click="window.toggleSidebar()"
+      data-testid="hamburger"
+      aria-label="{{{t('accessibility.toggleSidebar')}}}"
+    >
       ☰
     </button>
-    <span class="title" data-testid="config-title" x-text="role === 'admin' ? 'Configuration' : 'Preferences'"></span>
+    <h1 class="title" data-testid="config-title" x-text="role === 'admin' ? 'Configuration' : 'Preferences'"></h1>
     <div class="actions">
       <span
         x-show="saveState === 'saved'"

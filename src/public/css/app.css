@@ -226,6 +226,7 @@ body {
 
 .main-header .title {
   flex: 1;
+  margin: 0;
   font-size: 16px;
   font-weight: 600;
 }
@@ -1923,6 +1924,35 @@ body {
   animation: modalIn 0.2s ease-out;
 }
 
+/* Mobile tier (<480px, epic breakpoint table): modals become bottom
+   sheets — full-width, docked to the bottom edge, thumb-reachable. */
+@media (width <= 479px) {
+  .modal-overlay.open {
+    align-items: flex-end;
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 90dvh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none;
+    animation: sheetIn 0.2s ease-out;
+  }
+}
+
+@keyframes sheetIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes modalIn {
   from {
     opacity: 0;
@@ -2557,12 +2587,15 @@ html {
 @media (hover: none) and (pointer: coarse) {
   .btn,
   .btn-icon,
+  .hamburger,
   .nav-item,
   .nav-item .btn-xs,
   .toggle,
   .form-input,
   .form-select,
-  .list-item {
+  .list-item,
+  .battle-action,
+  .battle-combatant {
     min-height: 44px;
   }
   .nav-item {
@@ -2680,6 +2713,21 @@ html {
 .skip-to-content:focus {
   left: var(--space-2);
   top: var(--space-2);
+}
+
+/* ── Screen-reader-only utility (TASK-screen-reader-support) ─
+   Visually hidden, still announced; used for live regions that
+   carry dynamic announcements (battle panel state changes). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ── List toolbar (search + sort/filter) ─────────────────── */
@@ -4270,7 +4318,22 @@ html {
   gap: var(--space-4);
 }
 
-@media (width <= 900px) {
+/* NPC trade window (trade-window-panel.html): two panes side by side on
+   desktop tiers (768-1200px, >1200px), stacked single-column below the
+   768px tier — the panes have no width-driven styles of their own. */
+@media (width >= 768px) {
+  .trade-window {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+
+  .trade-window-pane {
+    min-width: 0;
+  }
+}
+
+@media (width <= 767px) {
   .world-page-columns {
     grid-template-columns: 1fr;
   }

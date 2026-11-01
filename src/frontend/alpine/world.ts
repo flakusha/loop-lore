@@ -19,6 +19,7 @@ import { Type, } from "@sinclair/typebox";
 import { jsonParseOr, parseJsonList, } from "../../utils";
 import { locationActions, } from "./location-actions";
 import { locationDetails, } from "./location-details";
+import { registerKeynavHandler, } from "./shortcuts";
 import { timeWeatherWidget, } from "./time-weather";
 import { travelInterface, } from "./travel-interface";
 import { parseOr, } from "./validation";
@@ -104,9 +105,24 @@ function coreState(worldId: string,): WorldPageState {
       void this.loadLore();
       this.connectConditionsStream();
 
+      // Opt-in keynav (epic Phase 3 per-page shortcuts): jump focus to the
+      // page's main panels. Handlers live only while this page is mounted.
+      const unregisterKeynav = [
+        ["focus-locations", "details-select",],
+        ["focus-travel", "travel-origin",],
+        ["focus-inventory", "inventory-actor",],
+      ] as const;
+
+      const keynavUnsubs = unregisterKeynav.map(([action, elementId,],) =>
+        registerKeynavHandler(action, () => {
+          document.getElementById(elementId,)?.focus();
+        },)
+      );
+
       return () => {
         this._conditionsSse?.close();
         this._conditionsSse = null;
+        for (const unsub of keynavUnsubs) { unsub(); }
       };
     },
 

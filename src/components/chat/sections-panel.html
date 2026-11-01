@@ -13,9 +13,15 @@
   class="right-panel"
   :style="{ display: $store?.ui?.showSectionsPanel ? 'flex' : 'none' }"
   x-cloak
+  :aria-label="t('Sections')"
   data-testid="sections-panel"
 >
-  <button class="btn-icon" @click="$store.ui.showSectionsPanel = false" x-bind:title="t('common.close')">
+  <button
+    class="btn-icon"
+    @click="$store.ui.showSectionsPanel = false"
+    x-bind:title="t('common.close')"
+    x-bind:aria-label="t('common.close')"
+  >
     &times;
   </button>
   <div class="panel-content">
