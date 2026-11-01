@@ -33,6 +33,18 @@ export interface WizardLocation {
   name: string;
 }
 
+/** Prefill payload for edit mode (subset of the world JSON row). */
+export interface WizardPrefill {
+  name?: unknown;
+  description?: unknown;
+  kind?: unknown;
+  style?: unknown;
+  visibility?: unknown;
+  rpgEnabled?: unknown;
+  rpgXp?: unknown;
+  rpgSkills?: unknown;
+}
+
 /** World creation wizard state. */
 export interface WorldCreateWizardState {
   step: number;
@@ -50,11 +62,25 @@ export interface WorldCreateWizardState {
   locationName: string;
   busy: boolean;
   error: string;
+  /** World id when the wizard edits an existing world (null = create). */
+  editWorldId: string | null;
   next(): void;
   back(): void;
   addLocation(): void;
   removeLocation(index: number,): void;
   create(): Promise<void>;
+  /**
+   * Fill basics from an existing world row for edit mode.
+   * @param worldId id saved for the later save()
+   * @param world raw world JSON (fields read defensively)
+   * @returns {void}
+   */
+  prefill(worldId: string, world: WizardPrefill,): void;
+  /**
+   * Persist basics back to an existing world (prefill must have run).
+   * @returns {Promise<void>}
+   */
+  save(): Promise<void>;
 }
 
 /**
@@ -103,6 +129,35 @@ export function buildWorldCreateWizard(): WorldCreateWizardState {
     locationName: "",
     busy: false,
     error: "",
+    editWorldId: null,
+
+    /**
+     * Fill basics from an existing world row for edit mode.
+     * @param worldId id saved for the later save()
+     * @param {WizardPrefill} world raw world JSON (fields read defensively)
+     * @returns {void}
+     */
+    prefill(worldId: string, world: WizardPrefill,) {
+      const str = (value: unknown, fallback: string,): string =>
+        typeof value === "string" && value !== "" ? value : fallback;
+
+      const bool = (value: unknown, fallback: boolean,): boolean =>
+        typeof value === "boolean" ? value : typeof value === "number" ? value !== 0 : fallback;
+
+      this.editWorldId = worldId;
+      this.name = str(world.name, "",);
+      this.description = str(world.description, "",);
+      const kind = str(world.kind, "rpg",);
+      this.kind = kind === "chat" ? "chat" : "rpg";
+      this.style = str(world.style, "fantasy",);
+      const visibility = str(world.visibility, "private",);
+      this.visibility = visibility === "public" || visibility === "unlisted" ? visibility : "private";
+      this.rpgEnabled = bool(world.rpgEnabled, true,);
+      this.rpgXp = bool(world.rpgXp, true,);
+      this.rpgSkills = bool(world.rpgSkills, true,);
+      this.step = 0;
+      this.error = "";
+    },
 
     /** @returns {void} */
     next() {
@@ -188,6 +243,49 @@ export function buildWorldCreateWizard(): WorldCreateWizardState {
         globalThis.location.assign(`/worlds/${worldId}/edit`,);
       } catch (error) {
         log.warn("wizard world create failed", { error: String(error,), },);
+        this.error = t("worlds.wizardFailed",);
+      } finally {
+        this.busy = false;
+      }
+    },
+    /**
+     * Persist basics back to an existing world (prefill must have run).
+     * @returns {Promise<void>}
+     */
+    async save() {
+      if (!this.editWorldId) {
+        this.error = t("worlds.wizardFailed",);
+        return;
+      }
+
+      if (!this.name.trim()) {
+        this.error = t("worlds.wizardNameRequired",);
+        this.step = 0;
+        return;
+      }
+
+      this.busy = true;
+      this.error = "";
+      try {
+        const res = await apiFetch(`/api/v1/worlds/${this.editWorldId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({
+            name: this.name.trim(),
+            description: this.description,
+            kind: this.kind,
+            visibility: this.visibility,
+            rpgEnabled: this.kind === "rpg" && this.rpgEnabled,
+            rpgXp: this.kind === "rpg" && this.rpgEnabled && this.rpgXp,
+            rpgSkills: this.kind === "rpg" && this.rpgEnabled && this.rpgSkills,
+          },),
+        },);
+
+        if (!res.ok) {
+          this.error = readString(await res.json().catch(() => null), "error",) ?? t("worlds.wizardFailed",);
+        }
+      } catch (error) {
+        log.warn("wizard world save failed", { error: String(error,), },);
         this.error = t("worlds.wizardFailed",);
       } finally {
         this.busy = false;

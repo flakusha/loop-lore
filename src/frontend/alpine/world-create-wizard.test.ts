@@ -166,6 +166,46 @@ describeOrSkip("world creation wizard", () => {
     expect(calls.length,).toBe(0,);
   });
 
+  test("prefill fills basics defensively and save PUTs to the world id", async () => {
+    const w = buildWorldCreateWizard();
+    w.prefill("w-1", {
+      name: "Old Name",
+      description: "Old desc",
+      kind: "chat",
+      style: "horror",
+      visibility: "bogus",
+      rpgEnabled: 0,
+      rpgXp: 1,
+      rpgSkills: false,
+    },);
+
+    expect(w.editWorldId,).toBe("w-1",);
+    expect(w.name,).toBe("Old Name",);
+    expect(w.kind,).toBe("chat",);
+    expect(w.visibility,).toBe("private",);
+    expect(w.rpgEnabled,).toBe(false,);
+    expect(w.rpgXp,).toBe(true,);
+    expect(w.rpgSkills,).toBe(false,);
+
+    w.name = "New Name";
+    await w.save();
+    expect(calls.map((c,) => c.url),).toEqual(["/api/v1/worlds/w-1",],);
+    const [put,] = calls;
+    if (!put) { throw new Error("no world PUT recorded",); }
+    expect(put.opts.method,).toBe("PUT",);
+    expect(String(put.opts.body ?? "",),).toContain(`"name":"New Name"`,);
+    expect(w.error,).toBe("",);
+    expect(w.busy,).toBe(false,);
+  });
+
+  test("save without prefill reports failure and sends nothing", async () => {
+    const w = buildWorldCreateWizard();
+    w.name = "Name";
+    await w.save();
+    expect(w.error,).not.toBe("",);
+    expect(calls.length,).toBe(0,);
+  });
+
   test("stepLabel resolves each step and is empty past the last", () => {
     expect(stepLabel(0,),).toBe("Name & style",);
     expect(stepLabel(1,),).toBe("Conditions",);

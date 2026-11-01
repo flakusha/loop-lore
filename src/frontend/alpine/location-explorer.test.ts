@@ -31,6 +31,8 @@ interface ExplorerState {
   locations: ExplorerLocation[];
   states: ExplorerLocationState[];
   search: string;
+  viewMode: string;
+  setViewMode(mode: string,): void;
   filterStatus: string;
   filterHasState: "" | "yes" | "no";
   filterAtmosphere: string;
@@ -277,6 +279,17 @@ describe("locationExplorerState", () => {
       expect(state.isExpanded("loc-1",),).toBe(true,);
       state.toggleExpand("loc-1",);
       expect(state.isExpanded("loc-1",),).toBe(false,);
+    });
+  });
+
+  describe("view mode", () => {
+    test("defaults to tree and only accepts tree/grid", () => {
+      const state = makeState();
+      expect(state.viewMode,).toBe("tree",);
+      state.setViewMode("grid",);
+      expect(state.viewMode,).toBe("grid",);
+      state.setViewMode("bogus",);
+      expect(state.viewMode,).toBe("grid",);
     });
   });
 });
