@@ -28,15 +28,15 @@ Status effect badges displaying active effects on entities.
 
 ## Acceptance Criteria
 
-- [ ] Status effect badges with icons
-- [ ] Duration countdown display
-- [ ] Stack count for stacking effects
-- [ ] Tooltip showing effect details
-- [ ] Mobile responsive
+- [x] Status effect badges with icons (text badges — conditions are plain strings in the payload, so no icon set is rendered yet)
+- [ ] Duration countdown display (conditions carry no duration data — adding it needs backend payload work, not client-side inference)
+- [ ] Stack count for stacking effects (conditions are plain strings with no stack counts)
+- [x] Tooltip showing effect details
+- [x] Mobile responsive
 
-## Files to Create
+## Files
 
-- `src/frontend/battle/status-effects.ts`
-- `src/frontend/battle/status-badge.ts`
+- `src/frontend/battle/status-effects.ts` (badge row only — no separate `status-badge.ts` needed)
+- Roster integration in `src/frontend/battle/render.ts`
 
 **Resolved:** 2026-11-01 registry-driven close: git issue e339f33 (registry tip: 38b4160a6 Konstantin Fedotov Close issue)
