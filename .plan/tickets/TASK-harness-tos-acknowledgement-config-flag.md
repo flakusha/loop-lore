@@ -50,3 +50,5 @@ was needed.
 - [x] Implementation complete
 - [x] Tests passing (`bun test packages/core/src/config/ --isolate`: 486 pass; `bun test src/integrations/harness/ --isolate`: 104 pass; `bun run check --diff-base dev` green after a dprint fix and one unrelated flaky browser spec re-verified passing standalone)
 - [x] Documentation updated (schema description carries the ToS warning + policy frame; no separate doc page exists for this section)
+
+**Resolved:** 2026-11-01 registry-driven close: git issue fe22c91 (registry tip: 14830fa0c Konstantin Fedotov Close issue)

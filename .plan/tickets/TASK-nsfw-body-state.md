@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task
@@ -38,3 +38,5 @@ Body state display for character physical state.
 
 - `src/frontend/nsfw/body-state.ts`
 - `src/frontend/nsfw/body-region.ts`
+
+**Resolved:** 2026-11-01 registry-driven close: git issue d0a78d3 (registry tip: e14f0d203 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-NSFW-BODY-STATE done)

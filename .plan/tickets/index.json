@@ -44095,7 +44095,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-tos-acknowledgement-config-flag.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-HARNESS-TOS-ACKNOWLEDGEMENT-DISPATCH-GUARD": {
     "hash": "c177368",
@@ -50634,7 +50634,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-nsfw-body-state.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "nsfw",
       "frontend",
@@ -56352,7 +56352,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-responsive-design.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Responsive Design System",
     "type": "TASK"
