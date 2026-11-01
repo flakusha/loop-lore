@@ -126,6 +126,15 @@ describe("activity-stream routes", () => {
       | { done: true; value?: undefined };
   }
 
+  /**
+   * Drain in-flight beats before a test closes its sqlite handle: bun:sqlite
+   * executes a query synchronously once its pending await resumes, so one
+   * macrotask turn lets a beat dispatched before cancel() finish or fail.
+   */
+  async function settle() {
+    await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
+  }
+
   test("ActivityStreamer tick emits when the snapshot changes", async () => {
     const { db: freshDb, sqlite, } = await makeStreamDb();
     const streamer = new ActivityStreamer(freshDb, "user1", 20,);
@@ -145,6 +154,7 @@ describe("activity-stream routes", () => {
     expect(payload.chats["chat-a"]?.unseenCount,).toBe(2,);
 
     reader.cancel();
+    await settle();
     sqlite.close();
   });
 
@@ -161,6 +171,7 @@ describe("activity-stream routes", () => {
     expect(second.done,).toBe(true,); // timed out, no chunk
 
     reader.cancel();
+    await settle();
     sqlite.close();
   });
 
@@ -195,6 +206,7 @@ describe("activity-stream routes", () => {
     expect(typeof payload.t,).toBe("number",);
 
     reader.cancel();
+    await settle();
     sqlite.close();
   }, 15_000,);
 
