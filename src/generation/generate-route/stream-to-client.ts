@@ -17,6 +17,7 @@
  */
 
 import type { Kysely, } from "kysely";
+import type { CompressionMetadata, } from "../../assistant/prompt/types";
 import { authorCarriageIfEnabled, } from "../../chat/service/carriage-authoring";
 import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
@@ -62,9 +63,19 @@ export interface StreamToClientOpts {
   providerName: string;
   providerReq: ProviderRequest;
   failoverList: { name: string; provider: LLMProvider }[];
+  /** Compression metadata from prompt assembly (TASK-ctx-metrics); zeroed when omitted (tests). */
+  compression?: CompressionMetadata;
   /** Scheduler override (tests); production uses the process-wide manager. */
   scheduler?: ResourceManager;
 }
+
+/** Zero compression baseline when the caller omits metadata (tests). */
+const NO_COMPRESSION: CompressionMetadata = {
+  droppedTokens: 0,
+  droppedSections: [],
+  compacted: false,
+  compactedTokens: 0,
+};
 
 /**
  * @param root0
@@ -94,6 +105,7 @@ export function streamToClient({
   providerName,
   providerReq,
   failoverList,
+  compression = NO_COMPRESSION,
   scheduler,
 }: StreamToClientOpts,): Response {
   let streamError: string | undefined;
@@ -303,6 +315,7 @@ export function streamToClient({
               finishReason: finalResponse.finishReason,
               lastRenderedChunkIndex: activeForDone.lastRenderedChunkIndex,
               deliveryConfirmed: true,
+              compression: { ...compression, },
             },
           },).catch((error: unknown,) => {
             log.error("Telemetry record failed", error instanceof Error ? error : undefined,);
