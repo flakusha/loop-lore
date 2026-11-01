@@ -20,7 +20,12 @@ beforeEach(() => {
   hasSavedLocaleStrings = true;
   // Seed the alpine i18n catalog the summary card resolves its label from.
   localeStringsHost.__localeStrings = {
-    battle: { battleSummary: "Battle summary", log: "Battle log", },
+    battle: {
+      battleSummary: "Battle summary",
+      hideLog: "Hide full log",
+      log: "Battle log",
+      showLog: "Show full log ({count})",
+    },
   };
 },);
 
@@ -59,10 +64,12 @@ describe("renderBattleSummary", () => {
     const [headline, meta, toggle, log,] = card.children;
     expect(headline!.textContent,).toBe("**Combat over — the party win!**",);
     expect(meta!.className,).toBe("battle-summary-meta",);
+    expect(toggle!.textContent,).toBe("Show full log (1)",);
     expect(toggle!.getAttribute("aria-expanded",),).toBe("false",);
     expect((log as FakeEl & { hidden: boolean }).hidden,).toBe(true,);
     toggle!.click();
     expect(toggle!.getAttribute("aria-expanded",),).toBe("true",);
+    expect(toggle!.textContent,).toBe("Hide full log",);
     expect((log as FakeEl & { hidden: boolean }).hidden,).toBe(false,);
   });
 

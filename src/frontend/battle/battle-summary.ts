@@ -41,7 +41,7 @@ export function renderBattleSummary(summary: BattleSummary, log: BattleLogEntryV
   const toggle = document.createElement("button",);
   toggle.type = "button";
   toggle.className = "battle-summary-toggle";
-  toggle.textContent = `Show full log (${log.length})`;
+  toggle.textContent = t("battle.showLog", { count: log.length, },);
   toggle.setAttribute("aria-expanded", "false",);
 
   const expanded = renderBattleLog(log,);
@@ -51,7 +51,7 @@ export function renderBattleSummary(summary: BattleSummary, log: BattleLogEntryV
       const open = expanded.hidden;
       expanded.hidden = !open;
       toggle.setAttribute("aria-expanded", String(open,),);
-      toggle.textContent = open ? "Hide full log" : `Show full log (${log.length})`;
+      toggle.textContent = open ? t("battle.hideLog",) : t("battle.showLog", { count: log.length, },);
     },);
 
     card.append(toggle, expanded,);
