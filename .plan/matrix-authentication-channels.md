@@ -52,7 +52,7 @@ auth-infrastructure epics.
 ## Post-land Bookkeeping Checklist (for whoever implements / maintains `.plan/`)
 
 - [x] After finalize: execution tickets F1–F10 created with git issues + linked from epic work items (2026-09-02, `plan-bookkeeping-2fa-emotion`).
-- [ ] Reconcile `open-deferred.md` #7 row (MFA deferral) once implementation is scheduled — decision is human re-triage; planning bundle only records the reopen.
+- [ ] Reconcile `.plan/backlog-archive.md § open-deferred` #7 row (MFA deferral) once implementation is scheduled — decision is human re-triage; planning bundle only records the reopen.
 - [ ] Resolve `[WAC1..4]` open decisions as their counterpart epics (integrations-core capability registry, matrix inbound) land; update rows in place.
 - [ ] When first messenger factor ships, add an e2e flows spec (`tests/e2e/flows/auth-factors.test.ts`) and update this matrix AC4/AC7 rows with real adapter names.
 - [x] `plan:sync:fix` + `plan:docs` regeneration — executed in the 2026-09-02 bookkeeping pass (8 advisory orphan git issues remain from a concurrent wardrobe batch — owner session should reconcile or `plan:sync:fix`).

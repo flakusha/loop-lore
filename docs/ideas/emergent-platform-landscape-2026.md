@@ -102,5 +102,5 @@ approach validates loop-lore's existing RPG backend as a differentiator.
 ## Open questions
 
 1. **Agentic-NPC epic**: build first-class or defer behind existing `actors`/`npcs`? Recommend **defer P6+** and fold into existing actor/NPC epics (no new epic now).
-2. **Which quick wins land in 0.1.0**: E6 (Quick Replies) and E7 (dynamic memory/messages) are cheap and on-theme — see `backlog/priority.md` quick-win section.
+2. **Which quick wins land in 0.1.0**: E6 (Quick Replies) and E7 (dynamic memory/messages) are cheap and on-theme — see `.plan/backlog-archive.md` § priority quick-win section.
 3. Re-visit when web search providers are credentialed — many platform feature pages unreadable from datacenter IP.

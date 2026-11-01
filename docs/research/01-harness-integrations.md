@@ -181,7 +181,7 @@ The on-disk plan tree is large and generated (`.plan/`):
 - `tickets/` — one markdown file per ticket plus `index.json` (1.4MB); ticket count exceeds 3000
   (directory listing shows "… 3014 more" after 11 entries).
 - `epics/` — "… 307 more" after 11 entries; plus `epics-index.md` (139.7K).
-- `backlog/` — `open-untriaged.md`, `priority.md`, `security-review-2026-08-25.md`, etc.
+- `backlog/` tier files (dropped 2026-11-01) — archived as `.plan/backlog-archive.md` (`open-untriaged.md`, `priority.md`, `security-review-2026-08-25.md`, etc.)
 - Generated artifacts: `code-map.json` (1.1MB), `feature-matrix.md` (449.5KB), several
   `matrix-*.md` cross-cutting views.
 - `giwt sync` regenerates the ticket index; `giwt plan validate --fix` enforces the status

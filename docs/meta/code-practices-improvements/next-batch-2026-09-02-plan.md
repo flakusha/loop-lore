@@ -115,7 +115,7 @@ Listed for completeness; do **not** re-open:
    (test coverage only, lower risk).
 5. **Followup** — Alpine chat-view init crash (`BUG-alpine-init-crash-chat-view-store-undefined`)
    if a reproducible browser log becomes available; otherwise leave in
-   `open-untriaged.md`.
+   `.plan/backlog-archive.md § open-untriaged`.
 
 ## Tools / handoff
 

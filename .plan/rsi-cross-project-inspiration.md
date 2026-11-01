@@ -77,10 +77,10 @@ Legend: ticket-worthy = maps to an RSI ticket or a concrete new ticket; y/n with
 
 ## Top-5 ranked backlog-derived targets
 
-1. **Size-strict ceiling auto-ticket (`TASK-promote-size-check-to-ci`)** — watchdog blocks regrowing PRs + agent files `TASK-split-*`; debt already regressed once (`open-debt.md` release-hardening section). Exercises A→B→C end to end.
-2. **Telemetry PII sweep (`BUG-telemetry-stores-raw-client-body`)** — `telemetry_hash_drift` alert → regression test + `trackTelemetry()` patch; Hermes denylist pattern (`open-untriaged.md` security-hardening wave).
-3. **Unsafe date/buffer/JSON consolidation (`TASK-CONSOLIDATE-…-INTO-SHARED-UTILS` + `65c87b5`/`e72f484`/`02a9092`/`2984874`)** — root-cause-once fix across all callers; ideal N-version arena maiden task (`open-untriaged.md` date-handling + security-hardening rows).
-4. **Browser e2e flake migration (`TASK-browser-tests-weak-interaction-coverage`, stale-fixture `30d0e69`, order-dependent `89f26c8`)** — nightly flake-rate trigger → web-first polling migration; evaluator-drift detector's first consumer (`open-untriaged.md` hardening rows).
-5. **Coverage below-floor lift tickets (`be72331`/`b4789c2` + frontend batches `78c179f`/`55f201f`)** — per-commit coverage report → auto-filed per-module lift tickets; merge-readiness pack gates them (`open-untriaged.md` coverage-waiver cluster).
+1. **Size-strict ceiling auto-ticket (`TASK-promote-size-check-to-ci`)** — watchdog blocks regrowing PRs + agent files `TASK-split-*`; debt already regressed once (`.plan/backlog-archive.md § open-debt` release-hardening section). Exercises A→B→C end to end.
+2. **Telemetry PII sweep (`BUG-telemetry-stores-raw-client-body`)** — `telemetry_hash_drift` alert → regression test + `trackTelemetry()` patch; Hermes denylist pattern (`.plan/backlog-archive.md § open-untriaged` security-hardening wave).
+3. **Unsafe date/buffer/JSON consolidation (`TASK-CONSOLIDATE-…-INTO-SHARED-UTILS` + `65c87b5`/`e72f484`/`02a9092`/`2984874`)** — root-cause-once fix across all callers; ideal N-version arena maiden task (`.plan/backlog-archive.md § open-untriaged` date-handling + security-hardening rows).
+4. **Browser e2e flake migration (`TASK-browser-tests-weak-interaction-coverage`, stale-fixture `30d0e69`, order-dependent `89f26c8`)** — nightly flake-rate trigger → web-first polling migration; evaluator-drift detector's first consumer (`.plan/backlog-archive.md § open-untriaged` hardening rows).
+5. **Coverage below-floor lift tickets (`be72331`/`b4789c2` + frontend batches `78c179f`/`55f201f`)** — per-commit coverage report → auto-filed per-module lift tickets; merge-readiness pack gates them (`.plan/backlog-archive.md § open-untriaged` coverage-waiver cluster).
 
 Skipped: transport-module wiring + music/SFX stubs (product decisions, not agent-loop wins); A9 tag/push (human-only by policy); RPG/mesh/VN batches (need owners first, no RSI leverage yet).

@@ -22,7 +22,7 @@
 Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
 
 - src/routes/proactive-messaging/
-- backlog/priority-release-010.md item 13 (quiet hours, backoff)
+- backlog/backlog-archive.md § priority-release-010 item 13 (quiet hours, backoff)
 
 ## Acceptance Criteria
 

@@ -42,6 +42,6 @@ Applied by migration `091_chat_variant_backfill` as ONE single-pass UPDATE per d
 - [x] Rows that already carry a taxonomy purpose (variant-era creates) are never modified.
 - [x] `down()` restores the pre-backfill state deterministically (recompute: same classifier shapes reset `purpose` to NULL); roundtrip up→down→up is stable.
 - [x] Fixture tests: plain 1:1 (stays NULL), group social (stays NULL), VN chat (stays NULL), battle/validation direct+group (→ validation), rpg with world binding direct+group (→ rpg), battle group with world (→ rpg, R1 precedence), gm_config validation block (→ validation), GM-role chat (stays NULL), corrupted gm_config (stays NULL, no throw), pre-purposed variant rows (untouched).
-- [x] Backlog row (priority-p3-p5.md Chat Variants cluster, cross-cutting) updated to shipped.
+- [x] Backlog row (backlog-archive.md § priority-p3-p5 Chat Variants cluster, cross-cutting) updated to shipped.
 
 **Related:** .plan/backlog-archive.md (Chat Variants Taxonomy cluster, cross-cutting row), src/routes/chats/create-variant.ts, src/chat/types/variants.ts, src/db/migrations/044_chat_purpose.ts
