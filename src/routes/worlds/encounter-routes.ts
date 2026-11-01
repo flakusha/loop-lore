@@ -57,8 +57,13 @@ const RollBody = t.Object({
   travelPhase: t.Optional(EncounterTravelPhaseSchema,),
 },);
 
-/** Body of the outcome POST. */
-const OutcomeBody = t.Object({ outcome: t.Record(t.String(), t.Unknown(),), },);
+/** Body of the outcome POST. `chatId` converts a combat outcome into a battle. */
+const OutcomeBody = t.Object({
+  outcome: t.Record(t.String(), t.Unknown(),),
+  chatId: t.Optional(t.String(),),
+  createdBy: t.Optional(t.String(),),
+  ambush: t.Optional(t.Boolean(),),
+},);
 
 /** Query of the context GET. */
 const ContextQuery = t.Object({ templateId: t.String(), locationId: t.Optional(t.String(),), },);
@@ -198,14 +203,41 @@ export function encounterRoutes(opts: HandleOpts, prefix = "/api",) {
         if (worldErr) { return worldErr; }
 
         try {
-          return jsonResponse({
-            data: await recordEncounterOutcome({
-              db: database,
-              worldId: ctx.params.worldId,
-              rollId: ctx.params.rollId,
-              outcome: ctx.body.outcome,
-            },),
+          const recorded = await recordEncounterOutcome({
+            db: database,
+            worldId: ctx.params.worldId,
+            rollId: ctx.params.rollId,
+            outcome: (ctx.body as typeof OutcomeBody.static).outcome,
           },);
+
+          // B1: combat-outcome → battle conversion (opt-in per call).
+          const body = ctx.body as typeof OutcomeBody.static;
+          let converted: { battleId: string | null; reason?: string } | undefined;
+          if (body.chatId) {
+            const { startBattleFromEncounter, } = await import("../../rpg/service/battles/triggers.js");
+            const template = await database
+              .selectFrom("encounter_templates",)
+              .selectAll()
+              .where("id", "=", recorded.template_id,)
+              .executeTakeFirst();
+
+            if (template) {
+              const started = await startBattleFromEncounter({
+                db: database,
+                chatId: body.chatId,
+                worldId: ctx.params.worldId,
+                createdBy: body.createdBy ?? userId ?? "",
+                template,
+                ambush: body.ambush ?? false,
+              },);
+
+              converted = started.battle
+                ? { battleId: started.battle.id, }
+                : { battleId: null, reason: started.reason, };
+            }
+          }
+
+          return jsonResponse({ data: { ...recorded, converted, }, },);
         } catch (error) {
           if (error instanceof EncounterError) { return encounterError(error,); }
           throw error;

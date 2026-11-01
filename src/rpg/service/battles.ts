@@ -18,6 +18,7 @@ import {
 } from "../../rpg/combat.js";
 import { safeJsonStringify, } from "../../utils.js";
 import { getActiveBattle, getBattle, } from "./battles/persistence.js";
+import { snapshotBattlePrep, } from "./battles/reconciliation.js";
 import { BattleStatus, type BattleWithRoster, type StartBattleParams, } from "./battles/types.js";
 import { log, } from "./log.js";
 import type { RpgServiceDeps, } from "./types.js";
@@ -25,7 +26,10 @@ import type { RpgServiceDeps, } from "./types.js";
 export * from "./battles/actions.js";
 export * from "./battles/items.js";
 export * from "./battles/persistence.js";
+export * from "./battles/reconciliation.js";
 export * from "./battles/social.js";
+export * from "./battles/summary.js";
+export * from "./battles/triggers.js";
 export * from "./battles/types.js";
 /**
  * @param deps
@@ -70,6 +74,17 @@ export async function startBattle(
     .execute();
 
   log().debug("Started battle", { id, chatId: params.chatId, },);
+  // D5-A pre-battle preparation snapshot (best-effort; informs settlement).
+  // Ambush battles skip the prep beat (B3: defenders start surprised).
+  await snapshotBattlePrep(deps.database, withInitiative.map((c,) => c.id), params.ambush ?? false,).catch(
+    (cause: unknown,) => {
+      log().warn("Battle prep snapshot skipped", {
+        battleId: id,
+        cause: cause instanceof Error ? cause.message : String(cause,),
+      },);
+    },
+  );
+
   return {
     id,
     chatId: params.chatId,

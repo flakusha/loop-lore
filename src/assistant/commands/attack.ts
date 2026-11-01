@@ -12,10 +12,15 @@
  *
  * Requires an active battle (see /battle start). The attacking combatant is
  * the command's caller; the target is resolved by name/id from the roster.
+ *
+ * D3-A: no separate sneak-attack path — an opening strike is a regular
+ * `/attack` inside a battle the owner starts first (advantage via the
+ * normal attack roll, then the battle proceeds).
  */
 import { ChatParticipantRole, } from "../../db/enums";
 import type { DiceSides, } from "../../rpg/dice";
 import {
+  buildBattleSummary,
   getActiveBattle,
   performAttack,
 } from "../../rpg/service/battles";
@@ -98,8 +103,14 @@ registerCommand("attack", async (args, ctx,): Promise<CommandResult> => {
     const lines = [result.attack.narration, "", formatBattle(updatedBattle,),];
 
     if (result.over) {
-      const side = result.winner === "enemy" ? "the enemies" : "the party";
-      lines.push("", `**Combat over — ${side} win!**`,);
+      const finished = {
+        ...active,
+        status: "completed" as const,
+        combatants: result.combatants,
+        log: active.log,
+      };
+
+      lines.push("", ...buildBattleSummary(finished, result.winner,).lines,);
     }
 
     return {

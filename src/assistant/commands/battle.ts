@@ -12,6 +12,21 @@
  *
  * Backed by the durable battles service (src/rpg/service/battles.ts); the
  * combat engine (src/rpg/combat) resolves each action.
+ *
+ * B1 trigger map (all wired):
+ * - Manual: `/battle start` + `/attack` (D1-A manual-only; never auto-start).
+ * - Encounter roll: `POST /worlds/:id/encounters/:rollId/outcome` with
+ *   `chatId` converts a fired `combat` template via `startBattleFromEncounter`
+ *   (opt-in per call; non-combat templates pass through to GM narration).
+ * - Skill-check consequence: `combatIntentFromConsequence` scans consequence
+ *   narration for combat language; the caller proposes `/battle start`,
+ *   never auto-starts. The D1-C classifier path may consume this signal.
+ * - GM story beat: convention — the GM narrates the beat then runs
+ *   `/battle start`; no code path (a beat is indistinguishable from a
+ *   manual start by design).
+ * - Sneak threshold: no separate skirmish row — a successful sneak is the
+ *   opening `/attack` of the battle it starts (D3-A). An `ambush` outcome
+ *   shortens the prep beat (B3): defenders skip preparation.
  */
 import type { Kysely, } from "kysely";
 import { ChatParticipantRole, } from "../../db/enums";
@@ -20,6 +35,7 @@ import {
   type BattleItemView,
   BattleStatus,
   type BattleWithRoster,
+  buildBattleSummary,
   endBattle,
   getActiveBattle,
   listUsableBattleItems,
@@ -33,6 +49,7 @@ import {
   findCombatant,
   formatBattle,
   formatRosterNames,
+  loadBattleEnvironment,
   resolveBattleRoster,
   serializeBattle,
 } from "./battle-utils";
@@ -71,6 +88,7 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
         battle: serializeBattle(
           active,
           await payloadItems(db, active,),
+          await loadBattleEnvironment(db, active.worldId,),
         ),
       },
       handled: true,
@@ -107,6 +125,7 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
           battle: serializeBattle(
             battle,
             await payloadItems(db, battle,),
+            await loadBattleEnvironment(db, battle.worldId,),
           ),
         },
         handled: true,
@@ -127,8 +146,16 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
     }
 
     await endBattle({ database: db, }, active.id, BattleStatus.Abandoned,);
+    const abandoned: BattleWithRoster = {
+      ...active,
+      status: BattleStatus.Abandoned,
+      endedAt: new Date().toISOString(),
+    };
+
+    // TODO(D4-B): LLM prose summary of battle.log. TODO(D4-C): expandable card + VN result overlay.
+    const summary = buildBattleSummary(abandoned, null,);
     return {
-      systemMessage: "**Battle ended.**",
+      systemMessage: summary.lines.join("\n",),
       action: "battle-ended",
       actionPayload: { battleId: active.id, },
       handled: true,
