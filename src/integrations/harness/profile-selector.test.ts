@@ -11,7 +11,7 @@ import type { AcpProfileConfig, } from "../../config/schema/harness";
 import { fakeFactory, } from "./fakes";
 import { ProfileBreaker, } from "./profile-breaker";
 import { ProfileRegistry, } from "./profile-registry";
-import { ProfileSelector, } from "./profile-selector";
+import { HARNESS_TOS_UNACKNOWLEDGED, ProfileSelector, } from "./profile-selector";
 import { UsageLedger, } from "./usage-ledger";
 
 /** Build a profile config. */
@@ -181,7 +181,9 @@ describe("ProfileSelector.runTurn", () => {
 
     await expect(
       selector.runTurn({ taskType: "mechanical", needsCapabilities: [], }, "hi", factory,),
-    ).rejects.toThrow(/tos_unacknowledged:a.*tos_unacknowledged:b/s,);
+    ).rejects.toThrow(
+      new RegExp(`${HARNESS_TOS_UNACKNOWLEDGED}:a.*${HARNESS_TOS_UNACKNOWLEDGED}:b`, "s",),
+    );
   });
 
   it("feeds usage into the ledger from the recorded run", async () => {
