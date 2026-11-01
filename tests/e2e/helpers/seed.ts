@@ -223,6 +223,13 @@ export async function seedChat(db: Kysely<DB>,): Promise<void> {
     },)
     .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doNothing())
     .execute();
+
+  // Seed creator as chat owner (epic-chat-multi-ownership)
+  await db
+    .insertInto("chat_owners",)
+    .values({ chat_id: SEED.chat.id, user_id: SEED.user.id, },)
+    .onConflict((oc,) => oc.columns(["chat_id", "user_id",],).doNothing())
+    .execute();
 }
 
 export async function seedMessage(db: Kysely<DB>,): Promise<void> {
@@ -429,5 +436,12 @@ export async function seedSolo(db: Kysely<DB>,): Promise<void> {
       role_in_chat: "owner",
     },)
     .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doNothing())
+    .execute();
+
+  // Seed creator as chat owner (epic-chat-multi-ownership)
+  await db
+    .insertInto("chat_owners",)
+    .values({ chat_id: SEED.soloChat.id, user_id: SEED.solo.id, },)
+    .onConflict((oc,) => oc.columns(["chat_id", "user_id",],).doNothing())
     .execute();
 }
