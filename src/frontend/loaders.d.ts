@@ -82,7 +82,6 @@ declare global {
   var loadNewChatPage: () => Promise<void>;
   var removeParticipant: (id: string,) => void;
   var selectActorFromList: (id: string,) => void;
-  var filterWorlds: () => void;
   var createWorld: (event: Event,) => Promise<void>;
   var importWorld: (event: Event,) => Promise<void>;
   var exportWorld: (worldId: string,) => void;
