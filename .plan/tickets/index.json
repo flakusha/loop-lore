@@ -11652,6 +11652,27 @@
     "title": "Player Agency — Story Points",
     "type": "EPIC"
   },
+  "EPIC-AGENTIC-INTEGRATION-MCP-ACP": {
+    "hash": "pending",
+    "extid": "EPIC-AGENTIC-INTEGRATION-MCP-ACP",
+    "type": "EPIC",
+    "title": "Agentic integration surface (MCP + ACP + scoped REST)",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "mcp",
+      "acp",
+      "agentic",
+      "facade",
+      "api-keys",
+      "streamable-http",
+      "capability-manifest",
+      "integration-tests"
+    ],
+    "source": ".plan/tickets/epic-agentic-integration-mcp-acp.md",
+    "status": "Not Started"
+  },
   "EPIC-AMBIENT-MUSIC-SFX": {
     "epic": "",
     "extid": "EPIC-AMBIENT-MUSIC-SFX",
@@ -14895,6 +14916,27 @@
     "status": "draft",
     "git_issue": "9085399"
   },
+  "EPIC-HARNESS-RSI-REPO-ACCESS": {
+    "hash": "pending",
+    "extid": "EPIC-HARNESS-RSI-REPO-ACCESS",
+    "type": "EPIC",
+    "title": "Harness RSI repo-root access tier",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "rsi",
+      "repo-access",
+      "principal",
+      "scope-guard",
+      "capability-grants",
+      "escalation",
+      "audit",
+      "internal-service"
+    ],
+    "source": ".plan/tickets/epic-harness-rsi-repo-access.md",
+    "status": "Not Started"
+  },
   "EPIC-HEADLESS-ALTERNATIVE-FRONTENDS": {
     "epic": "",
     "extid": "EPIC-HEADLESS-ALTERNATIVE-FRONTENDS",
@@ -16792,6 +16834,26 @@
     ],
     "title": "Pre-Compiled Hot Binary Modules",
     "type": "EPIC"
+  },
+  "EPIC-PRINCIPAL-SCOPED-CREDENTIALS": {
+    "hash": "pending",
+    "extid": "EPIC-PRINCIPAL-SCOPED-CREDENTIALS",
+    "type": "EPIC",
+    "title": "Principal + scoped credentials (shared primitive)",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "principal",
+      "credentials",
+      "api-keys",
+      "auth-seam",
+      "fail-closed",
+      "security",
+      "shared-primitive"
+    ],
+    "source": ".plan/tickets/epic-principal-scoped-credentials.md",
+    "status": "Not Started"
   },
   "EPIC-PROJECT-SPACES-PM-INTEGRATION": {
     "hash": "1b4c1bc",
@@ -25123,6 +25185,22 @@
     "source": ".plan/tickets/TASK-acp-profile-harness-adapters.md",
     "status": "Not Started"
   },
+  "TASK-ACP-STDIO-SERVER-OVER-EXISTING-CHAT-SESSIONS": {
+    "hash": "6297321",
+    "git_issue": "6297321",
+    "extid": "TASK-ACP-STDIO-SERVER-OVER-EXISTING-CHAT-SESSIONS",
+    "type": "TASK",
+    "title": "ACP stdio server over existing chat sessions",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "tags": [
+      "acp",
+      "stdio"
+    ],
+    "source": ".plan/tickets/TASK-acp-stdio-server-over-existing-chat-sessions.md",
+    "status": "Not Started"
+  },
   "TASK-ACTION-APPLICABILITY-GATE": {
     "epic": "epic-immersion-consistency-gate",
     "extid": "TASK-ACTION-APPLICABILITY-GATE",
@@ -26881,6 +26959,23 @@
     "title": "# TASK-agency-utility-scorer: Wire personality traits as utility weights for NPC reaction step",
     "type": "TASK"
   },
+  "TASK-AGENT-API-BOUNDARY-CAPABILITY-ENFORCEMENT": {
+    "hash": "abeeb77",
+    "git_issue": "abeeb77",
+    "extid": "TASK-AGENT-API-BOUNDARY-CAPABILITY-ENFORCEMENT",
+    "type": "TASK",
+    "title": "Agent API boundary capability enforcement",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-rsi-repo-access",
+    "tags": [
+      "rsi",
+      "agent-api",
+      "authorization"
+    ],
+    "source": ".plan/tickets/TASK-agent-api-boundary-capability-enforcement.md",
+    "status": "Not Started"
+  },
   "TASK-AGENT-MEMORY-SCORING": {
     "epic": "epic-memory-knowledge-systems",
     "extid": "TASK-AGENT-MEMORY-SCORING",
@@ -26919,6 +27014,23 @@
     ],
     "title": "Agentic Coding Sandbox — Per-Project `.git` Repo + External Coding Agents + Community Plugins",
     "type": "TASK"
+  },
+  "TASK-AGENTIC-INTEGRATION-TESTS": {
+    "hash": "fc41168",
+    "git_issue": "fc41168",
+    "extid": "TASK-AGENTIC-INTEGRATION-TESTS",
+    "type": "TASK",
+    "title": "Agentic integration tests",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "tags": [
+      "mcp",
+      "acp",
+      "testing"
+    ],
+    "source": ".plan/tickets/TASK-agentic-integration-tests.md",
+    "status": "Not Started"
   },
   "TASK-AGENTIC-WORKSPACE-MODE": {
     "epic": "epic-use-case-agentic-workspace",
@@ -27294,6 +27406,23 @@
     "tags": [],
     "title": "API key authentication middleware",
     "type": "TASK"
+  },
+  "TASK-API-KEY-AUTH-MIDDLEWARE-FOR-EXTERNAL-AGENTS": {
+    "hash": "65a85e1",
+    "git_issue": "65a85e1",
+    "extid": "TASK-API-KEY-AUTH-MIDDLEWARE-FOR-EXTERNAL-AGENTS",
+    "type": "TASK",
+    "title": "API-key auth middleware for external agents",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "tags": [
+      "mcp",
+      "auth",
+      "api-keys"
+    ],
+    "source": ".plan/tickets/TASK-api-key-auth-middleware-for-external-agents.md",
+    "status": "Not Started"
   },
   "TASK-API-ROUTES": {
     "epic": "epic-api-routes",
@@ -31130,6 +31259,39 @@
     "tags": [],
     "title": "Capability disclosure lore ceiling",
     "type": "TASK"
+  },
+  "TASK-CAPABILITY-GRANT-MODEL-ON-CHAT-BRANCHES": {
+    "hash": "e36f943",
+    "git_issue": "e36f943",
+    "extid": "TASK-CAPABILITY-GRANT-MODEL-ON-CHAT-BRANCHES",
+    "type": "TASK",
+    "title": "Capability grant model on chat branches",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-rsi-repo-access",
+    "tags": [
+      "rsi",
+      "capability-grants",
+      "db"
+    ],
+    "source": ".plan/tickets/TASK-capability-grant-model-on-chat-branches.md",
+    "status": "Not Started"
+  },
+  "TASK-CAPABILITY-MANIFEST-AND-GENERATED-DOCS": {
+    "hash": "0e74dd7",
+    "git_issue": "0e74dd7",
+    "extid": "TASK-CAPABILITY-MANIFEST-AND-GENERATED-DOCS",
+    "type": "TASK",
+    "title": "Capability manifest and generated docs",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "tags": [
+      "mcp",
+      "docs"
+    ],
+    "source": ".plan/tickets/TASK-capability-manifest-and-generated-docs.md",
+    "status": "Not Started"
   },
   "TASK-CAPTION-VARIANTS-CREATE-RECREATE-PICK-BEST-SCENARIO": {
     "epic": "epic-asset-platform-capabilities",
@@ -39064,6 +39226,23 @@
     "title": "Error Envelope & Error Handling",
     "type": "TASK"
   },
+  "TASK-ESCALATION-AUDIT-QUEUE-WITH-NO-AUTO-APPROVE": {
+    "hash": "da9349c",
+    "git_issue": "da9349c",
+    "extid": "TASK-ESCALATION-AUDIT-QUEUE-WITH-NO-AUTO-APPROVE",
+    "type": "TASK",
+    "title": "Escalation audit queue with no auto-approve",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-rsi-repo-access",
+    "tags": [
+      "rsi",
+      "escalation",
+      "audit"
+    ],
+    "source": ".plan/tickets/TASK-escalation-audit-queue-with-no-auto-approve.md",
+    "status": "Not Started"
+  },
   "TASK-ETL-DAG-WRAPPED-INGEST-WITH-IDEMPOTENCY-AND-DLQ": {
     "hash": "f894c92",
     "git_issue": "f894c92",
@@ -39484,6 +39663,39 @@
     "title": "F9 factor management and recovery UI",
     "type": "TASK"
   },
+  "TASK-FACADE-SLICE-CHAT-AND-GENERATION-OPS": {
+    "hash": "e61585b",
+    "git_issue": "e61585b",
+    "extid": "TASK-FACADE-SLICE-CHAT-AND-GENERATION-OPS",
+    "type": "TASK",
+    "title": "Facade slice: chat and generation ops",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "tags": [
+      "mcp",
+      "facade",
+      "authorization"
+    ],
+    "source": ".plan/tickets/TASK-facade-slice-chat-and-generation-ops.md",
+    "status": "Not Started"
+  },
+  "TASK-FACADE-SLICE-REMAINING-DOMAINS": {
+    "hash": "ef2d224",
+    "git_issue": "ef2d224",
+    "extid": "TASK-FACADE-SLICE-REMAINING-DOMAINS",
+    "type": "TASK",
+    "title": "Facade slice: remaining domains",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "tags": [
+      "mcp",
+      "facade"
+    ],
+    "source": ".plan/tickets/TASK-facade-slice-remaining-domains.md",
+    "status": "Not Started"
+  },
   "TASK-FACE-DETAILER-REFINEMENT-TIER": {
     "hash": "ec05023",
     "git_issue": "ec05023",
@@ -39618,6 +39830,22 @@
     "tags": [],
     "title": "Faction Standing Schema",
     "type": "TASK"
+  },
+  "TASK-FAIL-CLOSED-CREDENTIAL-VERIFICATION-IN-THE-AUTH-SEAM": {
+    "hash": "bbc2ab6",
+    "git_issue": "bbc2ab6",
+    "extid": "TASK-FAIL-CLOSED-CREDENTIAL-VERIFICATION-IN-THE-AUTH-SEAM",
+    "type": "TASK",
+    "title": "Fail-closed credential verification in the auth seam",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-principal-scoped-credentials",
+    "tags": [
+      "security",
+      "auth"
+    ],
+    "source": ".plan/tickets/TASK-fail-closed-credential-verification-in-the-auth-seam.md",
+    "status": "Not Started"
   },
   "TASK-FAIL-SAFE-EXECUTION-WORK-SAFETY": {
     "epic": "epic-runtime-integrity-fail-safes",
@@ -44698,6 +44926,23 @@
     "title": "Internal & External Flagging",
     "type": "TASK"
   },
+  "TASK-INTERNAL-SERVICE-BOOTSTRAP-PRINCIPAL": {
+    "hash": "b1cf633",
+    "git_issue": "b1cf633",
+    "extid": "TASK-INTERNAL-SERVICE-BOOTSTRAP-PRINCIPAL",
+    "type": "TASK",
+    "title": "Internal-service bootstrap principal",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-rsi-repo-access",
+    "tags": [
+      "rsi",
+      "principal",
+      "security"
+    ],
+    "source": ".plan/tickets/TASK-internal-service-bootstrap-principal.md",
+    "status": "Not Started"
+  },
   "TASK-INTERNAL-TRAITS-VISIBILITY-TIERS": {
     "epic": "epic-character-internal-traits",
     "extid": "TASK-INTERNAL-TRAITS-VISIBILITY-TIERS",
@@ -47347,6 +47592,23 @@
     "source": ".plan/tickets/TASK-mcp-client-over-stdio-and-streamable-http.md",
     "status": "Not Started"
   },
+  "TASK-MCP-STDIO-SERVER-VIA-TYPESCRIPT-SDK": {
+    "hash": "93a1ef8",
+    "git_issue": "93a1ef8",
+    "extid": "TASK-MCP-STDIO-SERVER-VIA-TYPESCRIPT-SDK",
+    "type": "TASK",
+    "title": "MCP stdio server via TypeScript SDK",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "tags": [
+      "mcp",
+      "stdio",
+      "security"
+    ],
+    "source": ".plan/tickets/TASK-mcp-stdio-server-via-typescript-sdk.md",
+    "status": "Not Started"
+  },
   "TASK-MCP-TASKS-EXTENSION-AS-LONG-OPERATION-STATE-MACHINE": {
     "hash": "84db321",
     "git_issue": "84db321",
@@ -47371,6 +47633,22 @@
     "epic": "epic-external-creative-tool-bridge",
     "tags": [],
     "source": ".plan/tickets/TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge.md",
+    "status": "Not Started"
+  },
+  "TASK-MCP-TOOL-SET-V1-FROM-FACADE-REGISTRY": {
+    "hash": "5b2d738",
+    "git_issue": "5b2d738",
+    "extid": "TASK-MCP-TOOL-SET-V1-FROM-FACADE-REGISTRY",
+    "type": "TASK",
+    "title": "MCP tool set v1 from facade registry",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "tags": [
+      "mcp",
+      "tools"
+    ],
+    "source": ".plan/tickets/TASK-mcp-tool-set-v1-from-facade-registry.md",
     "status": "Not Started"
   },
   "TASK-MEMORY-CHARACTER-INTEGRATION": {
@@ -51504,6 +51782,22 @@
     "title": "Plugin Configuration",
     "type": "TASK"
   },
+  "TASK-PLUGIN-CONTRIBUTED-MCP-TOOLS": {
+    "hash": "6d1b95a",
+    "git_issue": "6d1b95a",
+    "extid": "TASK-PLUGIN-CONTRIBUTED-MCP-TOOLS",
+    "type": "TASK",
+    "title": "Plugin-contributed MCP tools",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "tags": [
+      "mcp",
+      "plugins"
+    ],
+    "source": ".plan/tickets/TASK-plugin-contributed-mcp-tools.md",
+    "status": "Not Started"
+  },
   "TASK-PLUGIN-DETAILS": {
     "epic": "epic-plugin-management-ui",
     "extid": "TASK-PLUGIN-DETAILS",
@@ -51775,6 +52069,39 @@
     "source": ".plan/tickets/TASK-preview-dispatch-for-non-image-asset-types.md",
     "status": "Not Started"
   },
+  "TASK-PRINCIPAL-AWARE-WORKTREE-SCOPE-GUARD": {
+    "hash": "3e37cbc",
+    "git_issue": "3e37cbc",
+    "extid": "TASK-PRINCIPAL-AWARE-WORKTREE-SCOPE-GUARD",
+    "type": "TASK",
+    "title": "Principal-aware worktree scope guard",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-rsi-repo-access",
+    "tags": [
+      "rsi",
+      "scope-guard",
+      "security"
+    ],
+    "source": ".plan/tickets/TASK-principal-aware-worktree-scope-guard.md",
+    "status": "Not Started"
+  },
+  "TASK-PRINCIPAL-KIND-MODEL-AND-SERVER-SIDE-RESOLUTION": {
+    "hash": "c9d4cb0",
+    "git_issue": "c9d4cb0",
+    "extid": "TASK-PRINCIPAL-KIND-MODEL-AND-SERVER-SIDE-RESOLUTION",
+    "type": "TASK",
+    "title": "Principal kind model and server-side resolution",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-principal-scoped-credentials",
+    "tags": [
+      "security",
+      "auth"
+    ],
+    "source": ".plan/tickets/TASK-principal-kind-model-and-server-side-resolution.md",
+    "status": "Not Started"
+  },
   "TASK-PROACTIVE-MESSAGING": {
     "epic": "",
     "extid": "TASK-PROACTIVE-MESSAGING",
@@ -51886,6 +52213,22 @@
       "worlds"
     ],
     "source": ".plan/tickets/TASK-project-space-kind-worldkind-project-scoping-contract.md",
+    "status": "Not Started"
+  },
+  "TASK-PROJECT-SPACE-ROOT-RESOLVER-FOR-USER-PRINCIPALS": {
+    "hash": "1f08474",
+    "git_issue": "1f08474",
+    "extid": "TASK-PROJECT-SPACE-ROOT-RESOLVER-FOR-USER-PRINCIPALS",
+    "type": "TASK",
+    "title": "Project-space root resolver for user principals",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-rsi-repo-access",
+    "tags": [
+      "rsi",
+      "project-spaces"
+    ],
+    "source": ".plan/tickets/TASK-project-space-root-resolver-for-user-principals.md",
     "status": "Not Started"
   },
   "TASK-PROMETHEUS-METRICS-ENDPOINT-OPT-IN": {
@@ -55821,6 +56164,54 @@
     "title": "RPG XP/intimacy read-modify-write lost updates under concurrency",
     "type": "TASK"
   },
+  "TASK-RSI-ISOLATION-TEST-MATRIX": {
+    "hash": "5746885",
+    "git_issue": "5746885",
+    "extid": "TASK-RSI-ISOLATION-TEST-MATRIX",
+    "type": "TASK",
+    "title": "RSI isolation test matrix",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-rsi-repo-access",
+    "tags": [
+      "rsi",
+      "testing"
+    ],
+    "source": ".plan/tickets/TASK-rsi-isolation-test-matrix.md",
+    "status": "Not Started"
+  },
+  "TASK-RSI-OPS-DOC-AND-TYPED-CAPABILITY-CONSTANTS": {
+    "hash": "4f118b7",
+    "git_issue": "4f118b7",
+    "extid": "TASK-RSI-OPS-DOC-AND-TYPED-CAPABILITY-CONSTANTS",
+    "type": "TASK",
+    "title": "RSI ops doc and typed capability constants",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-harness-rsi-repo-access",
+    "tags": [
+      "rsi",
+      "docs"
+    ],
+    "source": ".plan/tickets/TASK-rsi-ops-doc-and-typed-capability-constants.md",
+    "status": "Not Started"
+  },
+  "TASK-RSI-SCOPE-RESOLVER-PER-PRINCIPAL-KIND": {
+    "hash": "981df15",
+    "git_issue": "981df15",
+    "extid": "TASK-RSI-SCOPE-RESOLVER-PER-PRINCIPAL-KIND",
+    "type": "TASK",
+    "title": "RSI scope resolver per principal kind",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-rsi-repo-access",
+    "tags": [
+      "rsi",
+      "scope-guard"
+    ],
+    "source": ".plan/tickets/TASK-rsi-scope-resolver-per-principal-kind.md",
+    "status": "Not Started"
+  },
   "TASK-RUNTIME-ABSTRACTION-LAYER": {
     "epic": "epic-api-library-distribution",
     "extid": "TASK-RUNTIME-ABSTRACTION-LAYER",
@@ -56358,6 +56749,22 @@
     ],
     "title": "Shared Schema Validation",
     "type": "TASK"
+  },
+  "TASK-SCOPED-CREDENTIAL-MODEL-AND-API-KEY-TABLE": {
+    "hash": "3b95e8b",
+    "git_issue": "3b95e8b",
+    "extid": "TASK-SCOPED-CREDENTIAL-MODEL-AND-API-KEY-TABLE",
+    "type": "TASK",
+    "title": "Scoped credential model and API-key table",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-principal-scoped-credentials",
+    "tags": [
+      "security",
+      "db"
+    ],
+    "source": ".plan/tickets/TASK-scoped-credential-model-and-api-key-table.md",
+    "status": "Not Started"
   },
   "TASK-SCREEN-READER-SUPPORT": {
     "epic": "epic-accessibility-input",
@@ -57765,6 +58172,23 @@
     "epic": "epic-agency-story-points",
     "tags": [],
     "source": ".plan/tickets/TASK-storypoints-acceptance.md",
+    "status": "Not Started"
+  },
+  "TASK-STREAMABLE-HTTP-MCP-TRANSPORT-BEHIND-CENTRAL-GUARD": {
+    "hash": "af72c17",
+    "git_issue": "af72c17",
+    "extid": "TASK-STREAMABLE-HTTP-MCP-TRANSPORT-BEHIND-CENTRAL-GUARD",
+    "type": "TASK",
+    "title": "Streamable HTTP MCP transport behind central guard",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "tags": [
+      "mcp",
+      "http",
+      "security"
+    ],
+    "source": ".plan/tickets/TASK-streamable-http-mcp-transport-behind-central-guard.md",
     "status": "Not Started"
   },
   "TASK-STRUCTURED-LLM-OUTPUT-HEALING-UTILS": {
