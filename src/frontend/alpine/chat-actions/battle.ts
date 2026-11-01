@@ -119,10 +119,10 @@ function isItemShape(value: unknown,): value is BattleItemView {
 
 /**
  * @param value
- * @returns true when `value` is a condition string.
+ * @returns true when `value` is a non-empty condition string.
  */
 function isConditionShape(value: unknown,): value is string {
-  return typeof value === "string";
+  return typeof value === "string" && value.length > 0;
 }
 
 /**
