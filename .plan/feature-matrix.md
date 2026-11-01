@@ -1761,7 +1761,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2874 | 1295 | 47 | 874 | 29 | 0 | 629 |
+| (untagged) | 2874 | 1296 | 47 | 873 | 29 | 0 | 629 |
 
 ## By epic × status
 
@@ -1853,7 +1853,7 @@ Total tickets: **4237** — untagged: **2874** — unbound to epic: **1052**
 | epic-chat-privacy | 3 | 0 | 0 | 2 | 0 | 0 | 1 |
 | epic-chat-product-features | 37 | 11 | 0 | 23 | 0 | 0 | 3 |
 | epic-chat-rich-engagement | 6 | 5 | 0 | 0 | 0 | 0 | 1 |
-| epic-chat-transfer-location | 12 | 5 | 2 | 3 | 1 | 0 | 1 |
+| epic-chat-transfer-location | 12 | 6 | 2 | 2 | 1 | 0 | 1 |
 | epic-chat-variants-taxonomy | 14 | 14 | 0 | 0 | 0 | 0 | 0 |
 | epic-cicd-pipeline | 9 | 8 | 0 | 1 | 0 | 0 | 0 |
 | epic-classifier-template-packs | 4 | 0 | 0 | 0 | 0 | 0 | 4 |

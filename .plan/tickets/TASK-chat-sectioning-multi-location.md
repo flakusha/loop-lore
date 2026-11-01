@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Needed
 **Priority:** Medium
 **Effort:** High
@@ -193,3 +193,5 @@ High — significant schema change, affects all message queries, group chat comp
 ## Recommendation
 
 Start with research phase — understand current schema constraints before committing to design. This task may reshape how chats work fundamentally.
+
+**Resolved:** 2026-11-01 registry-driven close: git issue 802a74b (registry tip: dacfe95bd Konstantin Fedotov Close issue)
