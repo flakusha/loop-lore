@@ -7,8 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** Postponed
+**Status Note:** Postponed — not manageable to implement alongside current scope; revisit after monorepo workspace cutting lands.
 **Priority:** Low
 **Effort:** Medium
 **Issue:** `821ab24`
