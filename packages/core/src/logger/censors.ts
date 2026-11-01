@@ -1,0 +1,172 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * PII censoring engine — field-name pattern matching with recursive walk.
+ */
+
+import type { CensorRule, } from "./types";
+
+/** Built-in default rules active when censoring enabled */
+export const DEFAULT_RULES: CensorRule[] = [
+  { field: "*key*", },
+  { field: "*token*", },
+  { field: "*secret*", },
+  { field: "*password*", },
+  { field: "*authorization*", },
+  { field: "*credential*", },
+  { field: "*cookie*", },
+  { field: "*session*", },
+  { field: "*bearer*", },
+  { field: "*auth*", },
+  { field: "email", },
+  { field: "ssn", },
+  { field: "phone", },
+  { field: "*api*key*", },
+];
+
+const PLACEHOLDER = "[REDACTED]";
+
+/**
+ * Simple glob match (case-insensitive).
+ * Supports: "exact", "prefix*", "*suffix", "*contains*"
+ * @param pattern
+ * @param value
+ */
+function isGlobMatch(pattern: string, value: string,): boolean {
+  const lowerPattern = pattern.toLowerCase();
+  const lowerValue = value.toLowerCase();
+
+  if (lowerPattern.startsWith("*",) && lowerPattern.endsWith("*",)) {
+    return lowerValue.includes(lowerPattern.slice(1, -1,),);
+  }
+
+  if (lowerPattern.startsWith("*",)) {
+    return lowerValue.endsWith(lowerPattern.slice(1,),);
+  }
+
+  if (lowerPattern.endsWith("*",)) {
+    return lowerValue.startsWith(lowerPattern.slice(0, -1,),);
+  }
+
+  return lowerValue === lowerPattern;
+}
+
+/**
+ * Check if a key matches any censor rule.
+ * Returns the matching rule or undefined.
+ * @param key
+ * @param rules
+ */
+function matchRule(key: string, rules: CensorRule[],): CensorRule | undefined {
+  return rules.find((r,) => isGlobMatch(r.field, key,));
+}
+
+/**
+ * Recursively walk a value and censor matching fields.
+ * @param val
+ * @param rule
+ */
+function censorScalar(val: unknown, rule: CensorRule,): unknown {
+  if (typeof val === "string" && rule.pattern) {
+    return rule.pattern.test(val,) ? (rule.replacement ?? PLACEHOLDER) : val;
+  }
+
+  return rule.replacement ?? PLACEHOLDER;
+}
+
+/**
+ * @param obj
+ * @param rules
+ * @param depth
+ * @param maxDepth
+ */
+function censorObject(
+  obj: Record<string, unknown>,
+  rules: CensorRule[],
+  depth: number,
+  maxDepth: number,
+): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [key, val,] of Object.entries(obj,)) {
+    const rule = matchRule(key, rules,);
+    if (rule) {
+      result[key] = censorScalar(val, rule,);
+    } else if (val !== null && typeof val === "object" && !Array.isArray(val,)) {
+      // At the depth cap we can no longer crawl; redact the whole subtree
+      // rather than returning it untouched (nested secrets bypass the
+      // denylist when deep — BUG-logger-censor-depth-cutoff).
+      result[key] = depth + 1 > maxDepth
+        ? PLACEHOLDER
+        : censorObject(val as Record<string, unknown>, rules, depth + 1, maxDepth,);
+    } else if (Array.isArray(val,)) {
+      result[key] = depth + 1 > maxDepth
+        ? PLACEHOLDER
+        : Array.from(val, (item: unknown,) =>
+          typeof item === "object" && item !== null
+            ? censorObject(item as Record<string, unknown>, rules, depth + 1, maxDepth,)
+            : item,);
+    } else {
+      result[key] = val;
+    }
+  }
+
+  return result;
+}
+
+/**
+ * @param value
+ * @param rules
+ * @param depth
+ * @param maxDepth
+ */
+function censorValue(value: unknown, rules: CensorRule[], depth: number, maxDepth: number,): unknown {
+  if (value === null || value === undefined) { return value; }
+
+  if (depth > maxDepth) { return PLACEHOLDER; }
+
+  if (Array.isArray(value,)) {
+    return Array.from(value, (item: unknown,) => censorValue(item, rules, depth, maxDepth,),);
+  }
+
+  if (typeof value === "object") {
+    return censorObject(value as Record<string, unknown>, rules, depth, maxDepth,);
+  }
+
+  return value;
+}
+
+/** */
+export interface CensorMetaOpts {
+  meta: Record<string, unknown> | undefined;
+  extraRules?: CensorRule[];
+  maxDepth?: number;
+}
+
+/**
+ * Censor PII in a metadata object.
+ * Returns a new object, does not mutate input.
+ * @param root0
+ * @param root0.meta
+ * @param root0.extraRules
+ * @param root0.maxDepth
+ * @returns {Record<string, unknown> | undefined}
+ */
+export function censorMeta({
+  meta,
+  extraRules,
+  maxDepth = 5,
+}: CensorMetaOpts,): Record<string, unknown> | undefined {
+  if (!meta) { return meta; }
+  const rules = extraRules?.length ? [...DEFAULT_RULES, ...extraRules,] : DEFAULT_RULES;
+  return censorValue(meta, rules, 0, maxDepth,) as Record<string, unknown>;
+}
+
+/**
+ * Convert extra field name strings to CensorRule objects.
+ * @param fields
+ * @returns {CensorRule[]}
+ */
+export function fieldNamesToRules(fields: string[],): CensorRule[] {
+  return Array.from(fields, (f,) => ({ field: f, }),);
+}
