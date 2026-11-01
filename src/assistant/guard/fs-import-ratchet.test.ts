@@ -93,14 +93,6 @@ const BASELINE = [
   "src/build/identity.ts",
   "src/characters/seed/avatar.ts",
   "src/characters/seed/promote.ts",
-  "src/config/cert.ts",
-  "src/config/generate-character-schema/index.ts",
-  "src/config/generate-domain-schemas.ts",
-  "src/config/generate-env-schema.ts",
-  "src/config/generate-schema.ts",
-  "src/config/generate-toml-schema.ts",
-  "src/config/hot-reload.ts",
-  "src/config/template-expansion/discovery.ts",
   "src/content/hash-injection.ts",
   "src/db/migrate.ts",
   "src/db/reinit-archive.ts",
@@ -121,7 +113,6 @@ const BASELINE = [
   // writes the ephemeral spawn script under an mkdtemp tmpdir and rmSync's
   // it in its own teardown — it never touches user paths.
   "src/integrations/harness/fake-acp-server.ts",
-  "src/native/loader.ts",
   "src/plugins/loader.ts",
   "src/routes/assets.ts",
   "src/routes/characters/export.ts",
@@ -135,12 +126,10 @@ const BASELINE = [
   "src/server/static-mime.ts",
   "src/services/server-external-manager/start-llama.ts",
   "src/test-utils/isolate-only.ts",
-  "src/utils/package-json.ts",
   // Shared containment primitive behind the guards above: the named import is
   // the deliberate interception-proof form (see the module docstring) — the
   // sandbox's own allowlist checks resolve through it, so a policed realpath
   // here would recurse into the interceptor it is deciding for.
-  "src/utils/realpath-within.ts",
   "src/harness/project-metadata/items.ts",
   "src/harness/project-metadata/load.ts",
 ];
