@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { estimateTokens, } from "../token-utils";
 import { DEFAULT_PRUNING_CONFIG, } from "./constants";
 import { scoreMessage, } from "./score";
 import type { MessageScore, PruneResult, PruningConfig, ScorableMessage, } from "./types";
@@ -28,7 +29,7 @@ function selectMessagesToPrune(
 ): Set<number> {
   const toPrune = new Set<number>();
   let currentTokens = 0;
-  for (const msg of messages) { currentTokens += Math.ceil(msg.content.length * 0.3,); }
+  for (const msg of messages) { currentTokens += estimateTokens(msg.content,); }
 
   for (const idx of sortedIndices) {
     if (currentTokens <= config.targetTokens) { break; }
@@ -37,7 +38,7 @@ function selectMessagesToPrune(
     const msg = messages[idx];
     if (!score || !msg) { continue; }
 
-    const msgTokens = Math.ceil(msg.content.length * 0.3,);
+    const msgTokens = estimateTokens(msg.content,);
     // Never prune if it would drop below target
     if (currentTokens - msgTokens < config.targetTokens * 0.8) { break; }
 
@@ -118,7 +119,7 @@ export function pruneMessages(
   }
 
   let tokensSaved = 0;
-  for (const msg of pruned) { tokensSaved += Math.ceil(msg.content.length * 0.3,); }
+  for (const msg of pruned) { tokensSaved += estimateTokens(msg.content,); }
 
   return {
     kept,
