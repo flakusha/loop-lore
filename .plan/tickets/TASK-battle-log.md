@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Small
 **Type:** Feature Task
@@ -50,3 +50,5 @@ Battle log component showing combat events, actions, and results.
 
 - TASK-battle-state-display.md
 - TASK-battle-action-selector.md
+
+**Resolved:** 2026-11-01 registry-driven close: git issue 611b7f7 (registry tip: f3af92fdc Konstantin Fedotov Close issue)
