@@ -54,6 +54,18 @@ the method, only `claude-code.ts` constants change. Core-facing ids are namespac
 `claude/<modelId>`; slash-containing wire ids pass through verbatim. No quota surface
 over ACP → `fetchUsageReports` resolves null (fixture-verified).
 
+**Negative-path follow-ups (same branch, second commit):** fixture gained
+`FAKE_MALFORMED` (garbage NDJSON before a never-answered initialize), `FAKE_HANG`
+(unanswered initialize), and `FAKE_EXIT_ON_PROMPT` (child exits code=1 on a matching
+prompt text). `generic-acp-negative.test.ts` asserts: malformed noise → typed
+`initialize` timeout (no crash, no hang); handshake hang → typed `initialize` timeout
+(`/initialize timed out/`); mid-prompt child exit → typed `prompt` error whose message
+carries `code=1` (transport detail), then a fresh prompt respawns a new child and
+succeeds. The respawn case closed the zombie-session gap in `GenericAcpAdapter`: the
+transport `onExit` now clears the memoized session/rpc so a dead child can never pin
+"connection closed" onto later calls. `JsonRpcProcess` itself was left untouched —
+line classification is shared and the engine-side fix is smaller and adapter-scoped.
+
 **Dependency:** unblock when claude-agent-acp serves model selection through a stable
 (v1 or released v2) ACP method — config-option select with `session/set_config_option`,
 or a stabilized `setSessionModel` — verified against the adapter's published source, not

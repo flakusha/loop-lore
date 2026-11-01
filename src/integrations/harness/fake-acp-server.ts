@@ -38,6 +38,8 @@ process.stdin.on("data", (c) => {
     let m;
     try { m = JSON.parse(line); } catch { continue; }
     if (m.method === "initialize") {
+      if (process.env.FAKE_HANG) { continue; }
+      if (process.env.FAKE_MALFORMED) { process.stdout.write("this is not json\n{broken\n"); continue; }
       send({ jsonrpc: "2.0", id: m.id, result: { protocolVersion: 1, agentInfo: { name: "fake" } } });
     } else if (m.method === "session/new") {
       if (process.env.FAKE_NO_SESSION) {
@@ -68,6 +70,9 @@ process.stdin.on("data", (c) => {
         send({ jsonrpc: "2.0", id: m.id, result: { configOptions: [] } });
       }
     } else if (m.method === "session/prompt") {
+      if (process.env.FAKE_EXIT_ON_PROMPT && m.params.prompt?.[0]?.text === process.env.FAKE_EXIT_ON_PROMPT) {
+        process.exit(1);
+      }
       send({ jsonrpc: "2.0", method: "session/update", params: {
         sessionId: "fake-session-1",
         update: { sessionUpdate: "agent_message_chunk", content: { type: "text", text: process.env.FAKE_REPLY ?? "ok" } },
@@ -103,6 +108,12 @@ export interface FakeAcpEnv {
   FAKE_NO_SESSION?: string;
   /** claude-code flavor: session/new carries the non-standard `models` field. */
   FAKE_MODELS_FIELD?: string;
+  /** When set, initialize is never answered (requests hang until timeout). */
+  FAKE_HANG?: string;
+  /** When set, garbage lines precede a never-answered initialize. */
+  FAKE_MALFORMED?: string;
+  /** Prompt TEXT that makes the child exit code=1 (matching prompts only). */
+  FAKE_EXIT_ON_PROMPT?: string;
 }
 
 /** A started fake server; `argv` feeds a profile command, `stop()` reaps it. */

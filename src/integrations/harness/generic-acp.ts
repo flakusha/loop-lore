@@ -217,6 +217,14 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       command: this.opts.command,
       cwd: this.opts.cwd,
       requestTimeoutMs: this.opts.requestTimeoutMs,
+      onExit: () => {
+        // Zombie-session gap: a child dying mid-session must not leave the
+        // memoized session bound to a dead transport — the next adapter call
+        // respawns a fresh child and session instead of surfacing
+        // "connection closed" forever.
+        this.rpc = null;
+        this.session = null;
+      },
       onNotification: (method, params,) => {
         if (method !== "session/update") { return; }
         const p = params as SessionUpdateParams;
