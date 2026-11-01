@@ -164,6 +164,7 @@ export function battleAnnouncement(battle: BattleView | null,): string {
   const acting = battle.combatants[battle.turnIndex];
   return `Round ${battle.round}: ${acting ? `${acting.name}'s turn` : "no active combatant"}`;
 }
+
 /**
  * @param kind
  * @param targetId

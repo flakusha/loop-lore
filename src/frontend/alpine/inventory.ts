@@ -180,7 +180,12 @@ export const stateFromActor = (actorId: string | null = null,): InventoryState =
 
   moveSelection(delta: number, panel?: ParentNode,) {
     const rows = this.visibleItems();
-    if (rows.length === 0) { return; }
+    if (rows.length === 0) {
+      // Nothing visible: drop the stale selection so the details panel does
+      // not keep showing a filtered-out or deleted item.
+      this.selectedId = null;
+      return;
+    }
 
     const current = rows.findIndex((row,) => row.id === this.selectedId);
     const index = current === -1
