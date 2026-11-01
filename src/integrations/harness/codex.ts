@@ -16,7 +16,7 @@
  * quota), so fetchUsageReports resolves null.
  */
 
-import { type HarnessAcpAdapter, } from "./adapter-types";
+import { type HarnessAcpAdapter, type HarnessAdapterCommandOptions, } from "./adapter-types";
 import { GenericAcpAdapter, type GenericAcpOptions, } from "./generic-acp";
 
 /** Config option id the Codex ACP agent uses for its model select. */
@@ -58,6 +58,10 @@ export class CodexAcpAdapter extends GenericAcpAdapter {
  * @param command - the profile's spawn argv (e.g. `["codex-acp"]`)
  * @returns the codex adapter.
  */
-export function createCodexAdapter(_profile: string, command: string[],): HarnessAcpAdapter {
-  return new CodexAcpAdapter({ command, },);
+export function createCodexAdapter(
+  _profile: string,
+  command: string[],
+  options?: HarnessAdapterCommandOptions,
+): HarnessAcpAdapter {
+  return new CodexAcpAdapter({ command, ...options, },);
 }

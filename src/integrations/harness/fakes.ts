@@ -12,6 +12,7 @@ import {
   type HarnessAdapterFactory,
   type HarnessTurnResult,
   type HarnessUsageReport,
+  type PermissionOutcome,
 } from "./adapter-types";
 
 /** Knobs for one fake profile connection. */
@@ -34,11 +35,15 @@ export interface FakeAdapterSpec {
 export interface FakeAdapterLog {
   setModels: string[];
   prompts: string[];
+  /** Outcomes handed to respondPermission. */
+  permissions: PermissionOutcome[];
+  /** How many times cancel() was called. */
+  cancels: number;
 }
 
 /** Build an adapter + its call log for one spec. */
 export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapter; log: FakeAdapterLog } {
-  const log: FakeAdapterLog = { setModels: [], prompts: [], };
+  const log: FakeAdapterLog = { setModels: [], prompts: [], permissions: [], cancels: 0, };
   const adapter: HarnessAcpAdapter = {
     enumerateModels: () => {
       if (spec.failProbe) { return Promise.reject(new HarnessAcpError("spawn", "spawn boom",),); }
@@ -67,7 +72,15 @@ export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapte
 
       return Promise.resolve(result,);
     },
+    cancel: () => {
+      log.cancels += 1;
+      return Promise.resolve();
+    },
     fetchUsageReports: () => Promise.resolve(spec.usageReports ?? null,),
+    pendingPermission: () => null,
+    respondPermission: (outcome,) => {
+      log.permissions.push(outcome,);
+    },
     close: () => undefined,
   };
 

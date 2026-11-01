@@ -7,13 +7,15 @@
  * Everything outside `omp.ts` (registry, selector, ledger, breaker,
  * telemetry) consumes THIS interface; omp-specific wire details stay inside
  * the omp reference implementation. A future opencode/codex/claude-code
- * adapter implements the same four verbs over its own harness flavor.
+ * adapter implements the same verbs over its own harness flavor.
  *
  * Wire facts (verified against the vendored ACP protocol,
  * oh-my-pi packages/utils/src/acp/connection.ts:223-287): JSON-RPC 2.0 over
- * stdio, newline-delimited; methods `initialize`, `session/new`,
- * `session/set_config_option`, `session/prompt`; notifications
- * `session/update`, `session/request_permission`.
+ * stdio, newline-delimited; client methods `initialize`, `session/new`,
+ * `session/set_config_option`, `session/prompt`; client notification
+ * `session/cancel`; server-originated requests `session/request_permission`,
+ * `fs/read_text_file`; notifications `session/update`, `_omp/usage`-style
+ * reports.
  */
 
 /** Quota report status, as published by harness `_omp/usage`-style reports. */
@@ -93,12 +95,53 @@ export interface HarnessAcpAdapter {
    */
   prompt(prompt: string,): Promise<HarnessTurnResult>;
   /**
+   * Cancel the in-flight prompt turn via the `session/cancel` notification.
+   * @throws {HarnessAcpError} kind `session` when no live session exists
+   */
+  cancel(): Promise<void>;
+  /**
    * Quota reports, when the harness publishes them.
    * @returns reports, or null when the harness has no quota surface.
    */
   fetchUsageReports(): Promise<HarnessUsageReport[] | null>;
+  /** The open server-originated permission request, when one awaits an outcome. */
+  pendingPermission(): PendingPermission | null;
+  /**
+   * Answer the open permission request.
+   * @param outcome - the client's choice among the harness's options
+   * @throws {HarnessAcpError} kind `session` when nothing is pending
+   */
+  respondPermission(outcome: PermissionOutcome,): void;
   /** Terminate the underlying process/connection. Idempotent. */
   close(): void;
+}
+
+/** The client's answer to a server-originated `session/request_permission`. */
+export interface PermissionOutcome {
+  /** ACP outcome verbs the protocol defines. */
+  outcome: "allow_once" | "allow_always" | "reject_once" | "reject_always" | "cancelled";
+  /** Chosen option id, when the harness's permission options carry ids. */
+  optionId?: string;
+}
+
+/** A server-originated permission request awaiting the client's outcome. */
+export interface PendingPermission {
+  /** Raw `session/request_permission` params (options, tool call, ...). */
+  params: unknown;
+  /** The tool-call kind the harness asked about, when given. */
+  kind: string | null;
+}
+
+/** Optional per-connection knobs a flavor factory may pass through. */
+export interface HarnessAdapterCommandOptions {
+  /** Working directory for session/new. */
+  cwd?: string;
+  /** Per-request timeout in ms. */
+  requestTimeoutMs?: number;
+  /** Serves server-originated `fs/read_text_file` asks; without one the adapter answers them as unsupported. */
+  readTextFile?: (path: string,) => Promise<string>;
+  /** Called once per open permission request, so hosts can prompt a human. */
+  onPermissionRequest?: (pending: PendingPermission,) => void;
 }
 
 /**
@@ -107,8 +150,10 @@ export interface HarnessAcpAdapter {
  * reported through the first adapter call rejecting.
  * @param profile - profile name being connected
  * @param command - spawn argv from the profile config
+ * @param options - optional cwd/timeout/read-file/permission knobs
  */
 export type HarnessAdapterFactory = (
   profile: string,
   command: string[],
+  options?: HarnessAdapterCommandOptions,
 ) => PromiseLike<HarnessAcpAdapter> | HarnessAcpAdapter;
