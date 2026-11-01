@@ -6,8 +6,10 @@
  *
  * Standalone types for context compression, token budget
  * enforcement, and LLM-based summarization/extraction callbacks.
- * Zero imports from other generation modules.
+ * Only import is the shared token estimator (no generation-module deps).
  */
+
+import { estimateTokens, } from "../chat/token-utils";
 
 // ── Message shape (compatible with GenerationMessage) ───────
 
@@ -59,10 +61,11 @@ export const DEFAULT_CONTEXT_WINDOW: ContextWindowConfig = {
 };
 
 /**
- * Rough token estimate: ~4 characters per token (English-optimized)
+ * Rough token estimate, delegated to the shared heuristic
+ * (`src/chat/token-utils.ts` — ~4 characters per token, English-optimized).
  * @param text
  * @returns {number}
  */
 export function defaultTokenCount(text: string,): number {
-  return Math.ceil(text.length / 4,);
+  return estimateTokens(text,);
 }

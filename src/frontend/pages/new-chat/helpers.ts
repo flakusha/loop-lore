@@ -2,10 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Estimate tokens from content length (~4 chars per token).
- * @param content
- * @returns {number}
+ * Token estimation for the new-chat flow, re-exported from the shared
+ * frontend estimator (single source of truth for the ~4 chars/token rule).
  */
-export function estimateTokens(content: string,): number {
-  return Math.ceil(content.length / 4,);
-}
+export { estimateTokens, } from "../../token-estimate";

@@ -11,17 +11,11 @@
  */
 
 import { toDate, } from "../../../utils/date";
+import { estimateTokens, } from "../../token-estimate";
 import { jsonParseOr, } from "../json";
 import type { MemoryEntry, MemoryPanelState, } from "../types";
 
-/**
- * Estimate tokens from content length (~4 chars per token).
- * @param content
- * @returns estimated token count
- */
-export function estimateTokens(content: string,): number {
-  return Math.ceil(content.length / 4,);
-}
+export { estimateTokens, };
 
 /** Raw memory row as returned by the actors/memories CRUD API. */
 export interface MemoryApiRow {

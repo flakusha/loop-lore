@@ -13,16 +13,8 @@
 // default an extractive fallback (no network) keeps the feature usable
 // without external dependencies.
 
+import { estimateTokens, } from "../chat/token-utils";
 import type { GenerationMessage, } from "./gen-types-options";
-
-/**
- * char→token heuristic (plan: chars * 0.3)
- * @param text
- * @returns {number}
- */
-export function estimateTokens(text: string,): number {
-  return Math.ceil(text.length * 0.3,);
-}
 
 /** */
 export interface CompactResult {

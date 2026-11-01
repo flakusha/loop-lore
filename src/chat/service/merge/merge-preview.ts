@@ -8,6 +8,7 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../../config/schema";
 import type { DB, } from "../../../db/schema";
+import { estimateTokens, } from "../../token-utils";
 import { checkChatAccess, } from "../access";
 import {
   baseOrdinal,
@@ -181,7 +182,7 @@ export async function buildPreview(options: BuildPreviewOptions,): Promise<Build
 
   const truncatedVersions = versionLines.map((lines, i,) => {
     const tokens = budget.perSource[i] ?? 0;
-    const full = lines.reduce((sum, l,) => sum + Math.ceil(l.length / 4,), 0,);
+    const full = lines.reduce((sum, l,) => sum + estimateTokens(l,), 0,);
     return full > tokens ? truncateLines(lines, tokens,) : lines;
   },);
 

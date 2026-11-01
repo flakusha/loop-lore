@@ -13,6 +13,7 @@ import {
   type MessageRef,
   promoteMessagesToMemories,
 } from "../../chat";
+import { estimateTokens, } from "../../chat/token-utils";
 import type { TransitionSource, } from "../../chat/types/transitions";
 import type { DB, } from "../../db/schema";
 import { toErrorMessage, } from "../../utils";
@@ -76,7 +77,7 @@ export async function applyContextCut(
       messageId: m.id,
       role: m.role,
       content: m.content ?? "",
-      tokenCount: Math.ceil((m.content ?? "").length * 0.3,),
+      tokenCount: estimateTokens(m.content ?? "",),
       createdAt: m.created_at,
     }),);
 

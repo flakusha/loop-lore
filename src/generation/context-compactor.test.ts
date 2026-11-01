@@ -1,5 +1,6 @@
 import { describe, expect, it, } from "bun:test";
-import { ContextCompactor, estimateTokens, } from "./context-compactor";
+import { estimateTokens, } from "../chat/token-utils";
+import { ContextCompactor, } from "./context-compactor";
 import type { GenerationMessage, } from "./gen-types-options";
 
 /**
@@ -11,8 +12,9 @@ function msg(role: string, len: number,): GenerationMessage {
 }
 
 describe("ContextCompactor", () => {
-  it("estimateTokens uses chars * 0.3", () => {
-    expect(estimateTokens("a".repeat(100,),),).toBe(30,);
+  it("estimateTokens uses the shared ~4 chars-per-token heuristic", () => {
+    expect(estimateTokens("a".repeat(100,),),).toBe(25,);
+    expect(estimateTokens("",),).toBe(0,);
   });
 
   it("returns input unchanged when under threshold", async () => {
