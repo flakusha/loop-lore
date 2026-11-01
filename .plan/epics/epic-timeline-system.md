@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Branching UI + selection landed on `dev` (`5883881c0`, `11563c760`, 2026-10-30); `feat-timeline-remainder` finalized and its steering (`6a09514c6`), selection, and /timeline-command tickets are Done — remaining open item is the branching-UI docs page (`docs/frontend/worlds.md`, see TASK-timeline-branching-ui).
 **Priority:** High\
 **Effort:** High\
@@ -68,3 +68,5 @@ Extends the time scale system (epic-time-scale.md) to manage branching world tim
 ---
 
 _Notes: Builds upon migration `030_world_timeline_events.ts` and service `src/story/timeline/world-timeline.ts`. Timeline selection UI reuses existing world detail page patterns. This is the foundational epic — all other timeline-aware epics depend on this._
+
+**Resolved:** 2026-11-01 registry-driven close: git issue 21350af (registry tip: d8383dca3 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-TIMELINE-SYSTEM done)
