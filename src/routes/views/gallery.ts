@@ -16,6 +16,25 @@ import {
 } from "./view-models/gallery-grid";
 export const GRID_PAGE_SIZE = 200;
 
+/**
+ * Tag names + NSFW flags for one page of visible asset rows — the shared
+ * media context behind the gallery grid and search loaders.
+ * @param database Kysely handle
+ * @param visible already-visible asset rows (only `id` is read)
+ * @param actorId viewer id for user-scoped tag facets (null = anonymous)
+ * @returns {Promise<{tagMap: ReadonlyMap<string, string[]>; nsfwIds: ReadonlySet<string>}>} tag names plus the v1 NSFW rating signal per asset
+ */
+export async function galleryMediaContext(
+  database: Kysely<DB>,
+  visible: ReadonlyArray<{ id: string }>,
+  actorId: string | null,
+): Promise<{ tagMap: ReadonlyMap<string, string[]>; nsfwIds: ReadonlySet<string> }> {
+  const ids = Array.from(visible, (a,) => a.id,);
+  const tagMap = await visibleTagNames(database, ids, actorId,);
+  const nsfwIds = await nsfwFlaggedAssetIds(database, ids,);
+  return { tagMap, nsfwIds, };
+}
+
 /** Filter inputs shared by the gallery grid and the gallery search. */
 export interface GalleryAssetFilters {
   /** Viewer actor id (empty when anonymous). */
@@ -197,17 +216,10 @@ export async function loadGalleryGridViewModel(
     }
   }
 
-  const tagMap = await visibleTagNames(database, Array.from(visible, (a,) => a.id,), actorId ?? null,);
-  const nsfwIds = await nsfwFlaggedAssetIds(database, Array.from(visible, (a,) => a.id,),);
+  const { tagMap, nsfwIds, } = await galleryMediaContext(database, visible, actorId ?? null,);
   return {
     ok: true,
-    viewModel: buildGalleryGridViewModel({
-      rows: visible,
-      tagMap,
-      nsfwIds,
-      page,
-      pageSize: GRID_PAGE_SIZE,
-    },),
+    viewModel: buildGalleryGridViewModel({ rows: visible, tagMap, nsfwIds, page, pageSize: GRID_PAGE_SIZE, },),
   };
 }
 

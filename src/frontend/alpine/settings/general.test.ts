@@ -164,6 +164,7 @@ function freshHost(): Host {
     loadProviders: async () => {},
     loadNsfwConsent: async () => {},
     nsfwRestrictionText: () => "",
+    onNsfwBlurChange: async () => {},
     saveGeneral: async () => {},
     onLocaleChange: async () => {},
     exportAllData: async () => {},
@@ -656,6 +657,7 @@ describe("settings general nsfwRestrictionText", () => {
       maxRating: "",
       accessStatus: "clear",
       shadowNsfw: false,
+      nsfwBlurMedia: false,
       blockReason: null,
     };
 

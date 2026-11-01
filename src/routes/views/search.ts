@@ -2,13 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { nsfwFlaggedAssetIds, } from "../../assets/service";
-import { visibleTagNames, } from "../../assets/service/tag-facets";
 import { ActorType, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { type ViewsViewer, visibleCharactersTo, } from "./access";
-import { applyGalleryAssetFilters, GRID_PAGE_SIZE, inheritedHiddenAssetIds, } from "./gallery";
+import { applyGalleryAssetFilters, galleryMediaContext, GRID_PAGE_SIZE, inheritedHiddenAssetIds, } from "./gallery";
 import { renderGalleryCards, renderGalleryEmptyState, } from "./gallery-cards";
 import { escapeHtml, htmlResponse, } from "./layout";
 import { buildGallerySearchViewModel, type GallerySearchViewModel, } from "./view-models/gallery-grid";
@@ -69,8 +67,7 @@ export async function loadGallerySearchViewModel(
     }
   }
 
-  const tagMap = await visibleTagNames(database, Array.from(visible, (a,) => a.id,), actorId ?? null,);
-  const nsfwIds = await nsfwFlaggedAssetIds(database, Array.from(visible, (a,) => a.id,),);
+  const { tagMap, nsfwIds, } = await galleryMediaContext(database, visible, actorId ?? null,);
   return buildGallerySearchViewModel({ rows: visible, tagMap, nsfwIds, page, pageSize: GRID_PAGE_SIZE, },);
 }
 
