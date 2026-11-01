@@ -13,13 +13,14 @@ import { createChat, } from "./chat-create-api";
 import {
   ChatPicker,
   CREATE_STATUS,
+  CREATE_TEMPLATE_STATUS,
   CREATING_STATUS,
   loadChats,
   NO_CHATS_MESSAGE,
   setCreateChat,
   setFetch,
 } from "./chat-picker";
-import type { ChatSummary, } from "./chat-picker";
+import type { ChatPickerTemplate, ChatSummary, } from "./chat-picker";
 import { stripRows, tick, } from "./test-support";
 
 const CHATS: ChatSummary[] = [
@@ -27,15 +28,30 @@ const CHATS: ChatSummary[] = [
   { id: "22222222-2222-2222-2222-222222222222", name: "Beta", is_pinned: "archived", },
 ];
 
-function stubChats(chats: ChatSummary[],): void {
-  setFetch(<T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
+const TEMPLATES: ChatPickerTemplate[] = [
+  { id: "tmpl-battle", name: "Battle", },
+  { id: "tmpl-vn", name: "Visual Novel", },
+];
+
+function stubFetch(chats: ChatSummary[], templates: ChatPickerTemplate[] | null,): void {
+  setFetch(<T,>(url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
     Promise.resolve({
       ok: true,
-      data: { data: chats, } as T,
+      data: (url.endsWith("/api/v1/chat-setup-templates",)
+        ? templates ?? []
+        : { data: chats, }) as T,
       status: 200,
       headers: new Headers(),
     },)
   );
+}
+
+function stubChats(chats: ChatSummary[],): void {
+  stubFetch(chats, null,);
+}
+
+function stubChatsAndTemplates(chats: ChatSummary[], templates: ChatPickerTemplate[],): void {
+  stubFetch(chats, templates,);
 }
 
 afterEach(() => {
@@ -246,5 +262,101 @@ describe("ChatPicker", () => {
     resolve();
     await tick(4,);
     expect(picked,).toEqual(["new-1",],);
+  });
+
+  it("name -> template list -> Enter creates with the template id", async () => {
+    stubChatsAndTemplates(CHATS, TEMPLATES,);
+    const seen: { name: string; templateId?: string }[] = [];
+    const picked: string[] = [];
+    const picker = build((chatId,) => picked.push(chatId,));
+    picker.show();
+    await tick(2,);
+
+    picker.handleInput("c",);
+    picker.handleInput("a",);
+    picker.handleInput("b",);
+    setCreateChat(async (options,) => {
+      seen.push({ name: options.name, templateId: options.templateId, },);
+      return { ok: true, chatId: "new-tmpl", };
+    },);
+
+    picker.handleInput("\r",);
+    await tick();
+
+    expect(picker.isTemplateStepOpen(),).toBe(true,);
+    expect(stripRows(picker.render(60,),).join("\n",),).toContain(CREATE_TEMPLATE_STATUS,);
+
+    picker.handleInput("\x1b[B",); // down to Visual Novel
+    picker.handleInput("\r",);
+    await tick(2,);
+
+    expect(seen,).toEqual([{ name: "ab", templateId: "tmpl-vn", },],);
+    expect(picked,).toEqual(["new-tmpl",],);
+    expect(picker.isTemplateStepOpen(),).toBe(false,);
+  });
+
+  it("Esc at the template step creates without a template", async () => {
+    stubChatsAndTemplates(CHATS, TEMPLATES,);
+    const seen: { name: string; templateId?: string }[] = [];
+    const picker = build();
+    picker.show();
+    await tick(2,);
+
+    picker.handleInput("c",);
+    picker.handleInput("z",);
+    setCreateChat(async (options,) => {
+      seen.push({ name: options.name, templateId: options.templateId, },);
+      return { ok: true, chatId: "new-plain", };
+    },);
+
+    picker.handleInput("\r",);
+    await tick();
+
+    expect(picker.isTemplateStepOpen(),).toBe(true,);
+    picker.handleInput("\x1b",);
+    await tick(2,);
+
+    expect(seen,).toEqual([{ name: "z", templateId: undefined, },],);
+    expect(picker.isTemplateStepOpen(),).toBe(false,);
+  });
+
+  it("template fetch failure still creates by name", async () => {
+    setFetch(<T,>(url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
+      if (url.endsWith("/api/v1/chat-setup-templates",)) {
+        return Promise.resolve({
+          ok: false,
+          error: new Error("boom",),
+          status: 500,
+          headers: new Headers(),
+        },);
+      }
+
+      return Promise.resolve({
+        ok: true,
+        data: { data: CHATS, } as T,
+        status: 200,
+        headers: new Headers(),
+      },);
+    },);
+
+    const seen: { name: string; templateId?: string }[] = [];
+    const picked: string[] = [];
+    const picker = build((chatId,) => picked.push(chatId,));
+    picker.show();
+    await tick(2,);
+
+    picker.handleInput("c",);
+    picker.handleInput("q",);
+    setCreateChat(async (options,) => {
+      seen.push({ name: options.name, templateId: options.templateId, },);
+      return { ok: true, chatId: "new-fallback", };
+    },);
+
+    picker.handleInput("\r",);
+    await tick(2,);
+
+    expect(picker.isTemplateStepOpen(),).toBe(false,);
+    expect(seen,).toEqual([{ name: "q", templateId: undefined, },],);
+    expect(picked,).toEqual(["new-fallback",],);
   });
 });

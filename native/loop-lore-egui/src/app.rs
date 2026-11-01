@@ -13,7 +13,7 @@ use eframe::{App, CreationContext};
 use egui::text::{CCursor, CCursorRange};
 use egui::{Align, CentralPanel, Key, Layout, Modifiers, Panel, ScrollArea, TextEdit};
 
-use crate::api::{self, ChatMessage, ChatSummary, CommandEntry, SentMessage};
+use crate::api::{self, ChatMessage, ChatSetupTemplate, ChatSummary, CommandEntry, SentMessage};
 use crate::client;
 use crate::command;
 use crate::context::FrontendContext;
@@ -52,6 +52,10 @@ enum FetchEvent {
   },
   /// Emoji registry resolved.
   EmojiRegistry(Result<Vec<(String, String)>, String>),
+  /// Template list resolved.
+  Templates(Result<Vec<ChatSetupTemplate>, String>),
+  /// Chat creation resolved with the new chat's id.
+  Created(Result<String, String>),
   /// Command list resolved for `chat_id` (`None` = no chat, so not scoped).
   CommandList {
     chat_id: Option<String>,
@@ -130,6 +134,14 @@ pub struct EguiApp {
   gallery_sort: String,
   /// Gallery tab open flag (toggled from the top bar).
   gallery_open: bool,
+  /// Chat-setup templates for the create-chat picker.
+  templates: Vec<ChatSetupTemplate>,
+  /// New-chat form visibility.
+  create_open: bool,
+  /// New-chat name draft.
+  new_chat_name: String,
+  /// Selected template id; `None` creates a plain chat (web default).
+  new_chat_template: Option<String>,
 }
 
 impl EguiApp {
@@ -161,6 +173,10 @@ impl EguiApp {
       gallery_type: String::from("all"),
       gallery_sort: String::from("name"),
       gallery_open: false,
+      templates: Vec::new(),
+      create_open: false,
+      new_chat_name: String::new(),
+      new_chat_template: None,
     }
   }
 
@@ -201,6 +217,39 @@ impl EguiApp {
         .await
         .and_then(|raw| api::parse_chats_page(&raw));
       events.borrow_mut().push(FetchEvent::Chats(result));
+      ctx.request_repaint();
+    });
+  }
+
+  /// Spawn a one-shot fetch of the chat-setup template list.
+  fn reload_templates(&self, ctx: &egui::Context) {
+    let events = Rc::clone(&self.events);
+    let ctx = ctx.clone();
+    client::spawn(async move {
+      let result = client::get_json(api::templates_list_url())
+        .await
+        .and_then(|raw| api::parse_templates_page(&raw));
+      events.borrow_mut().push(FetchEvent::Templates(result));
+      ctx.request_repaint();
+    });
+  }
+
+  /// Create a chat with the selected template (if any), then open it.
+  fn create_chat(&mut self, ctx: &egui::Context) {
+    let name = self.new_chat_name.trim().to_string();
+    if name.is_empty() {
+      self.status = String::from("name the chat first");
+      return;
+    }
+    self.status = String::from("creating chat");
+    let body = api::create_chat_body(&name, self.new_chat_template.as_deref());
+    let events = Rc::clone(&self.events);
+    let ctx = ctx.clone();
+    client::spawn(async move {
+      let result = client::post_json(api::create_chat_url(), &body)
+        .await
+        .and_then(|raw| api::parse_created_chat(&raw));
+      events.borrow_mut().push(FetchEvent::Created(result));
       ctx.request_repaint();
     });
   }
@@ -399,7 +448,7 @@ impl EguiApp {
   }
 
   /// Apply every fetch result queued since the last frame.
-  fn drain_events(&mut self) {
+  fn drain_events(&mut self, ctx: &egui::Context) {
     let drained: Vec<FetchEvent> = self.events.borrow_mut().drain(..).collect();
     let active = self.context.active_chat_id.clone();
     for event in drained {
@@ -442,6 +491,26 @@ impl EguiApp {
         // `:shortcode:` text and the popup stays empty — never a hard error.
         FetchEvent::EmojiRegistry(Ok(registry)) => self.emoji_registry = registry,
         FetchEvent::EmojiRegistry(Err(_)) => {}
+        FetchEvent::Templates(Ok(templates)) => {
+          // Prune a selection whose template vanished between loads: posting
+          // a stale id would 404, and the picker already shows "None".
+          if let Some(selected) = self.new_chat_template.as_deref() {
+            if !templates.iter().any(|template| template.id == selected) {
+              self.new_chat_template = None;
+            }
+          }
+          self.templates = templates;
+        }
+        FetchEvent::Templates(Err(e)) => self.status = format!("templates failed: {e}"),
+        FetchEvent::Created(Err(e)) => self.status = format!("create failed: {e}"),
+        FetchEvent::Created(Ok(id)) => {
+          self.create_open = false;
+          self.new_chat_name.clear();
+          self.new_chat_template = None;
+          self.status = String::from("chat created");
+          self.reload_chats(ctx);
+          self.open_chat(&id, ctx);
+        }
         FetchEvent::CommandList { chat_id, result } => {
           if chat_id != active {
             continue;
@@ -738,7 +807,7 @@ impl EguiApp {
 
 impl App for EguiApp {
   fn logic(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-    self.drain_events();
+    self.drain_events(ctx);
     self.drain_stream_events(ctx);
     if self.gallery_open {
       self.drain_gallery_bridge(ctx);
@@ -783,8 +852,42 @@ impl App for EguiApp {
       });
     });
 
+    let mut toggle_create = false;
+    let mut do_create = false;
     Panel::left("chats").resizable(true).default_size(200.0).show(ui, |ui| {
-      ui.heading("Chats");
+      ui.horizontal(|ui| {
+        ui.heading("Chats");
+        if ui.button("+ New").clicked() {
+          toggle_create = true;
+        }
+      });
+      if self.create_open {
+        ui.add(
+          TextEdit::singleline(&mut self.new_chat_name)
+            .id_salt("new-chat-name")
+            .hint_text("Chat name"),
+        );
+        // Owned up front: the picker closure below borrows the selection
+        // mutably, so it cannot also borrow `self.templates`.
+        let options: Vec<(String, String)> =
+          self.templates.iter().map(|template| (template.id.clone(), template.label())).collect();
+        let selected_label = self
+          .new_chat_template
+          .as_ref()
+          .and_then(|id| options.iter().find(|(option_id, _)| option_id == id))
+          .map_or_else(|| String::from("None"), |(_, label)| label.clone());
+        egui::ComboBox::from_id_salt("new-chat-template")
+          .selected_text(selected_label)
+          .show_ui(ui, |ui| {
+            let _ = ui.selectable_value(&mut self.new_chat_template, None, "None");
+            for (id, label) in &options {
+              let _ = ui.selectable_value(&mut self.new_chat_template, Some(id.clone()), label);
+            }
+          });
+        if ui.button("Create").clicked() {
+          do_create = true;
+        }
+      }
       let mut clicked = None;
       ScrollArea::vertical().show(ui, |ui| {
         for chat in &self.chats {
@@ -798,6 +901,16 @@ impl App for EguiApp {
         self.open_chat(&id, &ctx);
       }
     });
+    if toggle_create {
+      self.create_open = !self.create_open;
+      // Lazy load: one extra GET only when the form is ever opened.
+      if self.create_open && self.templates.is_empty() {
+        self.reload_templates(&ctx);
+      }
+    }
+    if do_create {
+      self.create_chat(&ctx);
+    }
 
     CentralPanel::default().show(ui, |ui| {
       if self.gallery_open {

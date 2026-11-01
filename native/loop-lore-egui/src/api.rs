@@ -174,6 +174,102 @@ pub fn send_message_body(content: &str) -> String {
     .unwrap_or_else(|_| String::from("{\"content\":\"\",\"role\":\"user\"}"))
 }
 
+/// One chat-setup template as the create-chat picker needs it.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ChatSetupTemplate {
+  /// Template id — the value POSTed as `templateId` (slugs work too).
+  pub id: String,
+  /// URL slug, shown beside the name.
+  pub slug: String,
+  /// Display name.
+  pub name: String,
+}
+
+impl ChatSetupTemplate {
+  /// Display label for the egui picker: `name (slug)`.
+  ///
+  /// The web picker shows the bare name; the slug is added here to tell
+  /// same-named templates (e.g. battle variants) apart in a ComboBox.
+  pub fn label(&self) -> String {
+    if self.name.is_empty() || self.name == self.slug {
+      self.slug.clone()
+    } else {
+      format!("{} ({})", self.name, self.slug)
+    }
+  }
+}
+
+/// URL for the chat-setup template list.
+pub fn templates_list_url() -> &'static str {
+  "/api/v1/chat-setup-templates"
+}
+
+/// Parse `GET /api/v1/chat-setup-templates` into template rows, preserving order.
+///
+/// The route answers a bare array (`jsonResponse` passes arrays through), not
+/// the `{data}` envelope the chat list uses.
+pub fn parse_templates_page(raw: &str) -> Result<Vec<ChatSetupTemplate>, String> {
+  let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
+  let data = value.as_array().ok_or("missing template array")?;
+  let mut templates = Vec::with_capacity(data.len());
+  for row in data {
+    let (Some(id), Some(slug)) = (
+      row.get("id").and_then(serde_json::Value::as_str),
+      row.get("slug").and_then(serde_json::Value::as_str),
+    ) else {
+      continue;
+    };
+    templates.push(ChatSetupTemplate {
+      id: id.to_string(),
+      slug: slug.to_string(),
+      name: row
+        .get("name")
+        .and_then(serde_json::Value::as_str)
+        .filter(|name| !name.is_empty())
+        .unwrap_or(slug)
+        .to_string(),
+    });
+  }
+  Ok(templates)
+}
+
+/// URL for the chat-create endpoint.
+pub fn create_chat_url() -> &'static str {
+  "/api/v1/chats"
+}
+
+/// Body for `POST /api/v1/chats`; `serde_json` performs the escaping.
+///
+/// No template means no `templateId` key at all — mirroring the web new-chat
+/// page, where the key is only sent when a template is picked.
+///
+/// # Panics
+///
+/// Never — serializing this fixed shape cannot fail.
+pub fn create_chat_body(name: &str, template_id: Option<&str>) -> String {
+  #[derive(Serialize)]
+  struct Body<'a> {
+    name: &'a str,
+    #[serde(rename = "templateId", skip_serializing_if = "Option::is_none")]
+    template_id: Option<&'a str>,
+  }
+  let template_id = template_id.filter(|id| !id.is_empty());
+  serde_json::to_string(&Body { name, template_id })
+    .unwrap_or_else(|_| String::from("{\"name\":\"\"}"))
+}
+
+/// Parse `POST /api/v1/chats` into the new chat's id.
+///
+/// The 201 envelope (`jsonCreated`) spreads the payload flat (`{id, meta}`).
+pub fn parse_created_chat(raw: &str) -> Result<String, String> {
+  let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
+  value
+    .get("id")
+    .and_then(serde_json::Value::as_str)
+    .map(String::from)
+    .ok_or_else(|| String::from("create response missing id"))
+}
+
 /// Extract the CSRF token from a `Cookie` header value.
 ///
 /// The first `csrf_token=` segment wins; surrounding whitespace is ignored.
@@ -892,5 +988,52 @@ mod tests {
     // A nonsense window falls back to the server's grid page size.
     let no_size = parse_gallery_page(r#"{"assets":[{"id":"a1"}],"pageSize":0}"#, 1).unwrap();
     assert_eq!(no_size.page_size, GALLERY_PAGE_SIZE);
+  }
+
+  #[test]
+  fn templates_page_parses_rows_in_order() {
+    let raw = r#"[{"id":"t1","slug":"battle","name":"Battle"},{"id":"t2","slug":"vn","name":"Visual Novel"}]"#;
+    let templates = parse_templates_page(raw).unwrap();
+    assert_eq!(templates.len(), 2);
+    assert_eq!(templates[0].id, "t1");
+    assert_eq!(templates[0].label(), "Battle (battle)");
+    assert_eq!(templates[1].label(), "Visual Novel (vn)");
+    assert_eq!(templates_list_url(), "/api/v1/chat-setup-templates");
+  }
+
+  #[test]
+  fn templates_page_rejects_non_array_and_skips_idless_rows() {
+    assert!(parse_templates_page("nope").is_err());
+    assert!(parse_templates_page("{\"data\":[]}").is_err());
+    let raw = r#"[{"id":"t1"},{"slug":"s2"},{"id":"t3","slug":"s3","name":"Three"}]"#;
+    let templates = parse_templates_page(raw).unwrap();
+    assert_eq!(templates.len(), 1);
+    assert_eq!(templates[0].id, "t3");
+    assert_eq!(templates[0].label(), "Three (s3)");
+  }
+
+  #[test]
+  fn create_body_omits_template_key_without_template() {
+    assert_eq!(create_chat_url(), "/api/v1/chats");
+    for body in [create_chat_body("My chat", None), create_chat_body("My chat", Some(""))] {
+      let value: serde_json::Value = serde_json::from_str(&body).unwrap();
+      assert_eq!(value["name"], "My chat");
+      assert!(value.get("templateId").is_none(), "no key without a template: {body}");
+    }
+  }
+
+  #[test]
+  fn create_body_carries_template_id_when_picked() {
+    let body = create_chat_body("Battle chat", Some("template-battle"));
+    let value: serde_json::Value = serde_json::from_str(&body).unwrap();
+    assert_eq!(value["name"], "Battle chat");
+    assert_eq!(value["templateId"], "template-battle");
+  }
+
+  #[test]
+  fn created_chat_parses_flat_id() {
+    assert_eq!(parse_created_chat("{\"id\":\"c1\",\"meta\":{}}").unwrap(), "c1");
+    assert!(parse_created_chat("{\"meta\":{}}").is_err());
+    assert!(parse_created_chat("nope").is_err());
   }
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 340
+// size-allow: 410
 
 /**
  * TUI Chat Picker (pi-tui)
@@ -69,6 +69,15 @@ export const CREATE_STATUS = "New chat name | Enter: create | Esc: cancel";
 
 /** Status line for a commit already in flight; the prompt is gone. */
 export const CREATING_STATUS = "Creating…";
+
+/** Status line on the template step; Enter uses the highlight, Esc skips it. */
+export const CREATE_TEMPLATE_STATUS = "Template | Enter: use | Esc: skip";
+
+/** One row of GET /api/v1/chat-setup-templates, narrowed to the picker. */
+export interface ChatPickerTemplate {
+  id: string;
+  name: string;
+}
 
 let _fetch = safeFetch;
 let _createChat = createChat;
@@ -143,9 +152,15 @@ export class ChatPicker implements Component, Focusable {
   private visibleFlag = false;
   private creating = false;
   private prompt: ChatInputField | null = null;
+  /** Name committed from the prompt while the template step is open. */
+  private pendingName: string | null = null;
+  /** Setup templates for the create flow; [] degrades to plain creation. */
+  private templates: ChatPickerTemplate[] = [];
+  private templateRows: string[] = [];
   private sessionToken: string | undefined;
   private footer = "Enter: bind chat | Esc: close";
   private readonly menu: MenuList;
+  private readonly templateMenu: MenuList;
   private readonly onSelect: (chatId: string,) => void;
   private readonly onHide: (() => void) | undefined;
   private readonly requestRender: () => void;
@@ -171,16 +186,31 @@ export class ChatPicker implements Component, Focusable {
       },
       vi: true,
     },);
+
+    this.templateMenu = new MenuList({
+      rows: () => this.templateRows,
+      onSelect: (index,) => {
+        const template = this.templates[index];
+        const name = this.pendingName;
+        this.pendingName = null;
+        if (name !== null) { void this.commitCreate(name, template?.id,); }
+      },
+      vi: true,
+    },);
   }
 
   /** @param width */
   render(width: number,): readonly string[] {
     const viewport = Math.max(8, this.getViewportRows(),);
     const bodyHeight = Math.max(1, viewport - 3,); // top/bottom border + footer
+    const templateOpen = this.pendingName !== null;
     this.menu.setHeight(bodyHeight - (this.prompt ? 2 : 0),);
+    this.templateMenu.setHeight(Math.max(1, bodyHeight - 2,),);
 
     const body: string[] = [];
-    if (this.failure) {
+    if (templateOpen) {
+      body.push("Select a template:", "", ...this.templateMenu.render(width - 2,),);
+    } else if (this.failure) {
       body.push(`{red-fg}${this.failure}{/red-fg}`,);
     } else if (this.rows.length === 0) {
       body.push(this.footer === NO_CHATS_MESSAGE ? NO_CHATS_MESSAGE : "",);
@@ -207,13 +237,26 @@ export class ChatPicker implements Component, Focusable {
    * @returns whether this overlay claims the key
    */
   capturesInput(data: string,): boolean {
-    if (!this.visibleFlag || !this.prompt) { return false; }
+    if (!this.visibleFlag || (!this.prompt && this.pendingName === null)) { return false; }
     return !isShellKey(data,);
   }
 
   /** @param data - raw key data from pi-tui */
   handleInput(data: string,): void {
     if (!this.visibleFlag) { return; }
+
+    const pendingName = this.pendingName;
+    if (pendingName !== null) {
+      if (matchesKey(data, "escape",)) {
+        this.pendingName = null;
+        void this.commitCreate(pendingName,);
+        return;
+      }
+
+      this.templateMenu.handleInput(data,);
+      this.requestRender();
+      return;
+    }
 
     const prompt = this.prompt;
     if (prompt) {
@@ -224,8 +267,8 @@ export class ChatPicker implements Component, Focusable {
 
       if (matchesKey(data, "enter",)) {
         const value = prompt.getValue();
-        this.cancelCreate();
-        void this.commitCreate(value,);
+        this.prompt = null;
+        this.enterTemplateStep(value,);
         return;
       }
 
@@ -248,11 +291,13 @@ export class ChatPicker implements Component, Focusable {
     this.visibleFlag = true;
     this.requestRender();
     void this.refresh();
+    void this.loadTemplates().then(() => this.requestRender());
   }
 
   /** Hide the overlay without touching the bound chat. */
   hide(): void {
     this.visibleFlag = false;
+    this.pendingName = null;
     this.cancelCreate();
     this.requestRender();
     this.onHide?.();
@@ -268,6 +313,53 @@ export class ChatPicker implements Component, Focusable {
     if (!this.visibleFlag) { return false; }
     this.hide();
     return true;
+  }
+
+  /**
+   * Fetch the setup templates for the create flow. Failure degrades to
+   * plain name-only creation, never blocking the prompt.
+   */
+  private async loadTemplates(): Promise<void> {
+    try {
+      const result = await _fetch<ChatPickerTemplate[]>(`${API_BASE}/api/v1/chat-setup-templates`, {
+        auth: this.sessionToken ? { sessionToken: this.sessionToken, } : undefined,
+        handle401: false,
+      },);
+
+      if (!result.ok) { return; }
+      this.templates = Array.isArray(result.data,) ? result.data : [];
+      this.templateRows = this.templates.map((template,) => escapeMarkup(template.name,) || "(unnamed)");
+      this.templateMenu.resetCursor();
+    } catch {
+      /* ignore — creation still works without templates */
+    }
+  }
+
+  /**
+   * Move to the template step after the name prompt commits. Commits
+   * plainly when templates never loaded; blank names stay local.
+   * @param rawName - the committed name from the prompt
+   */
+  private enterTemplateStep(rawName: string,): void {
+    if (rawName.trim() === "") {
+      this.footer = this.chats.length > 0
+        ? `${this.chats.length} chat(s) | Enter: bind chat | Esc: close`
+        : NO_CHATS_MESSAGE;
+
+      this.requestRender();
+
+      return;
+    }
+
+    if (this.templates.length === 0) {
+      void this.commitCreate(rawName,);
+
+      return;
+    }
+
+    this.pendingName = rawName.trim();
+    this.footer = CREATE_TEMPLATE_STATUS;
+    this.requestRender();
   }
 
   /**
@@ -308,9 +400,10 @@ export class ChatPicker implements Component, Focusable {
    * — 1-255 chars — so a blank line is rejected locally rather than round-tripped
    * into a 400 the user cannot act on.
    * @param name - the typed chat name
+   * @param templateId - setup template id; omit for a blank chat
    * @throws never — failures land on the footer
    */
-  async commitCreate(name: string,): Promise<void> {
+  async commitCreate(name: string, templateId?: string,): Promise<void> {
     const trimmed = name.trim();
     if (!trimmed) {
       this.cancelCreate();
@@ -327,7 +420,7 @@ export class ChatPicker implements Component, Focusable {
     this.requestRender();
 
     try {
-      const result = await _createChat({ name: trimmed, sessionToken: this.sessionToken, },);
+      const result = await _createChat({ name: trimmed, templateId, sessionToken: this.sessionToken, },);
 
       if (!result.ok) {
         // The prompt is gone by now, so the error lands on the footer — the
@@ -351,6 +444,13 @@ export class ChatPicker implements Component, Focusable {
   }
 
   /**
+   * @returns whether the template step is open
+   */
+  isTemplateStepOpen(): boolean {
+    return this.pendingName !== null;
+  }
+
+  /**
    * @returns whether a create commit is in flight
    */
   isCreating(): boolean {
@@ -364,7 +464,10 @@ export class ChatPicker implements Component, Focusable {
     return this.visibleFlag;
   }
 
-  /** Reload chats from the API and re-render the list. */
+  /**
+   * Reload chats from the API and re-render the list. Never clears a
+   * create flow already in progress.
+   */
   async refresh(): Promise<void> {
     const result = await loadChats(this.sessionToken,);
 
@@ -372,8 +475,12 @@ export class ChatPicker implements Component, Focusable {
       this.chats = [];
       this.rows = [];
       this.failure = `Failed to load chats: ${result.error}`;
-      this.footer = "Esc: close";
+      if (this.pendingName === null && this.prompt === null && !this.creating) {
+        this.footer = "Esc: close";
+      }
+
       this.requestRender();
+
       return;
     }
 
@@ -381,7 +488,9 @@ export class ChatPicker implements Component, Focusable {
     this.chats = result.data;
     if (this.chats.length === 0) {
       this.rows = [];
-      this.footer = NO_CHATS_MESSAGE;
+      if (this.pendingName === null && this.prompt === null && !this.creating) {
+        this.footer = NO_CHATS_MESSAGE;
+      }
     } else {
       this.rows = this.chats.map((chat,) =>
         `${pinnedTag(chat.is_pinned,)}${escapeMarkup(chat.name,) || "(unnamed)"}  {gray}(${
@@ -389,7 +498,9 @@ export class ChatPicker implements Component, Focusable {
         }…){/gray}`
       );
 
-      this.footer = `${this.chats.length} chat(s) | Enter: bind chat | Esc: close`;
+      if (this.pendingName === null && this.prompt === null && !this.creating) {
+        this.footer = `${this.chats.length} chat(s) | Enter: bind chat | Esc: close`;
+      }
     }
 
     this.requestRender();
