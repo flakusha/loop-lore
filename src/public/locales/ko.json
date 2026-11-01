@@ -2279,7 +2279,8 @@
     "turnOrder": "Turn order",
     "health": "Health",
     "statusEffects": "Status effects",
-    "log": "Battle log"
+    "log": "Battle log",
+    "environmentalEffects": "Environmental effects"
   },
   "frontend": {
     "keynav": {
