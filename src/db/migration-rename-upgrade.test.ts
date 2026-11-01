@@ -12,7 +12,7 @@
  * survived the move. `migrateToLatest()` is what a real upgrade runs.
  */
 import { Database, } from "bun:sqlite";
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
@@ -197,6 +197,16 @@ async function upgradeSeededDb() {
 }
 
 describe("column rename upgrade path", () => {
+  // upgradeSeededDb() and the inline setup tests install the process-global
+  // test override; every caller destroys its own handle, so after each test
+  // the override would point at a DESTROYED database and poison every later
+  // suite that resolves getDatabase()/getSqliteDatabase() in a shared
+  // non-isolated run (BUG-settestdatabase-global-leak-on-test-throw). Clear it
+  // per-test like migrations.test.ts — afterEach runs even when a test throws.
+  afterEach(() => {
+    setTestDatabase(null,);
+  },);
+
   test("the pre-rename migration really does use the old column names", async () => {
     // Guards the premise of every assertion below: if 056 already carried the
     // new names, this file would pass while testing nothing.
