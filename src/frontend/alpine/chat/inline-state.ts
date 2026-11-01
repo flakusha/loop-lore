@@ -8,6 +8,7 @@ import { DEFAULT_QUICK_EMOJIS, } from "../chat-utils/emoji";
 import { t, } from "../i18n";
 import { memoryPanel, } from "../memory-panel";
 import { moodState, } from "../mood";
+import { bodyStateState, } from "../nsfw-body";
 import { nsfwPanelState, } from "../nsfw-panel";
 import { rpgQuestions, } from "../rpg-questions";
 import { rpgStats, } from "../rpg-stats";
@@ -196,4 +197,7 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
 
   // ── NSFW Panel State (read-only status) ──
   ...nsfwPanelState,
+
+  // ── NSFW Body State (health / conditions / arousal) ──
+  ...bodyStateState,
 };

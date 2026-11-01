@@ -1051,6 +1051,23 @@
   "mood": {
     "adjustHappiness": "행복도 조절"
   },
+
+  "nsfw": {
+    "bodyState": {
+      "title": "신체 상태",
+      "health": "건강",
+      "arousal": "흥분",
+      "conditions": "상태",
+      "noConditions": "활성 상태 없음",
+      "source": "출처: {source}",
+      "turnsLeft": "남은 턴: {count}",
+      "arousalCalm": "침착함",
+      "arousalMild": "약간 흥분",
+      "arousalActive": "흥분",
+      "arousalHigh": "매우 흥분",
+      "arousalDesperate": "절실함"
+    }
+  },
   "help": {
     "settings": {
       "theme": "색 구성표를 선택하세요. 변경 사항은 즉시 적용됩니다.",

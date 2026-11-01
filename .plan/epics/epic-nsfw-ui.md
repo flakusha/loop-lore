@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Read-only status panel shipped 2026-10-30 (`TASK-nsfw-read-only-status-panel.md`); mutating surfaces (action selection, consent dialogs, partner selection, housing) still open.
+**Status Note:** Read-only status panel shipped 2026-10-30 (`TASK-nsfw-read-only-status-panel.md`); body-state widget shipped 2026-11-01 (`TASK-nsfw-body-state.md` — health bar, condition list and arousal meter on the shared battle health-bar widget; body-region display blocked, no backend data source). Mutating surfaces (action selection, consent dialogs, partner selection, housing) still open.
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Epic
@@ -123,7 +123,7 @@ Complete NSFW interaction interface for intimacy system, body state display, hea
 | Task                            | Priority | Status         |
 | ------------------------------- | -------- | -------------- |
 | TASK-nsfw-intimacy-interface.md | P0       | ⬜ Not Started |
-| TASK-nsfw-body-state.md         | P0       | ⬜ Not Started |
+| TASK-nsfw-body-state.md         | P0       | Done           |
 | TASK-nsfw-housing-management.md | P0       | ⬜ Not Started |
 | TASK-nsfw-alpine.md             | P0       | ⬜ Not Started |
 | TASK-nsfw-read-only-status-panel.md | P0   | ✅ Done        |

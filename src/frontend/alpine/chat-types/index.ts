@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 export type { ChatArchiveState, } from "./archive-state";
+export type { ChatBodyStateState, } from "./body-state";
 export type { ChatBranchesState, ChatBranchRow, } from "./branches-state";
 export type { ChatState, } from "./chat-state";
 export type { ChatCoreChatThreadState, } from "./chat-thread-state";

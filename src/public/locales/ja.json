@@ -1051,6 +1051,23 @@
   "mood": {
     "adjustHappiness": "幸福感を調整"
   },
+
+  "nsfw": {
+    "bodyState": {
+      "title": "身体状態",
+      "health": "健康",
+      "arousal": "興奮",
+      "conditions": "状態",
+      "noConditions": "アクティブな状態なし",
+      "source": "ソース: {source}",
+      "turnsLeft": "残りターン: {count}",
+      "arousalCalm": "落ち着いている",
+      "arousalMild": "わずかに興奮",
+      "arousalActive": "興奮",
+      "arousalHigh": "高度に興奮",
+      "arousalDesperate": "激しく欲している"
+    }
+  },
   "help": {
     "settings": {
       "theme": "カラースキームを選択します。変更は即座に適用されます。",

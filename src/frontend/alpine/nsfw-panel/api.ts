@@ -38,10 +38,13 @@ export interface NsfwBodyProfileRow {
 
 /**
  * Classify a response into the panel's outcome vocabulary.
+ *
+ * Shared with `src/frontend/alpine/nsfw-body` (the body-state widget), which
+ * consumes the same denied/failed/ok contract for its own endpoints.
  * @param res - the fetch response
  * @returns {Promise<NsfwFetchResult<T>>}
  */
-async function toResult<T,>(res: Response,): Promise<NsfwFetchResult<T>> {
+export async function toResult<T,>(res: Response,): Promise<NsfwFetchResult<T>> {
   if (res.status === 403) { return { status: "denied", }; }
   if (!res.ok) { return { status: "failed", }; }
   try {

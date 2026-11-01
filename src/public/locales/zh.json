@@ -1051,6 +1051,23 @@
   "mood": {
     "adjustHappiness": "调整幸福感"
   },
+
+  "nsfw": {
+    "bodyState": {
+      "title": "身体状态",
+      "health": "健康",
+      "arousal": "兴奋",
+      "conditions": "状态",
+      "noConditions": "无激活状态",
+      "source": "来源：{source}",
+      "turnsLeft": "剩余回合：{count}",
+      "arousalCalm": "平静",
+      "arousalMild": "轻微兴奋",
+      "arousalActive": "兴奋",
+      "arousalHigh": "高度兴奋",
+      "arousalDesperate": "难以自持"
+    }
+  },
   "help": {
     "settings": {
       "theme": "选择配色方案。更改将立即生效。",
