@@ -11,6 +11,7 @@
 
 import {
   type HarnessAcpAdapter,
+  type HarnessAdapterCommandOptions,
   type HarnessUsageReport,
 } from "./adapter-types";
 import { GenericAcpAdapter, type GenericAcpOptions, } from "./generic-acp";
@@ -67,6 +68,10 @@ export class OmpAcpAdapter extends GenericAcpAdapter {
  * @param command - the profile's spawn argv
  * @returns the omp adapter.
  */
-export function createOmpAdapter(_profile: string, command: string[],): HarnessAcpAdapter {
-  return new OmpAcpAdapter({ command, },);
+export function createOmpAdapter(
+  _profile: string,
+  command: string[],
+  options?: HarnessAdapterCommandOptions,
+): HarnessAcpAdapter {
+  return new OmpAcpAdapter({ command, ...options, },);
 }

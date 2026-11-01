@@ -24,6 +24,13 @@ export interface JsonRpcProcessOptions {
   onExit?: (detail: string,) => void;
   /** Called for inbound JSON-RPC notifications (no id). */
   onNotification?: (method: string, params: unknown,) => void;
+  /**
+   * Serves server-originated requests (a numeric id the client never sent).
+   * The resolved value becomes the success result; a rejection becomes an
+   * error payload (code preserved from {@link JsonRpcRequestError}, else
+   * -32603). Without a handler every server request answers -32601.
+   */
+  onRequest?: (method: string, params: unknown,) => Promise<unknown>;
 }
 
 /** A JSON-RPC error payload surfaced as an exception value. */
@@ -104,6 +111,32 @@ export class JsonRpcProcess {
           reject(new JsonRpcRequestError(`write failed: ${err.message}`,),);
         }
       },);
+    },);
+  }
+
+  /**
+   * Send a notification — no id, no response tracked.
+   * @param method - wire method name (verified casing per ACP protocol)
+   * @param params - notification params object
+   */
+  notify(method: string, params: Record<string, unknown>,): void {
+    this.write({ jsonrpc: "2.0", method, params, },);
+  }
+
+  /** Write one raw wire object; a dead pipe or unserializable payload tears the transport down via `onExit`. */
+  private write(msg: Record<string, unknown>,): void {
+    const serialized = safeJsonStringify(msg,);
+    if (!serialized.ok) {
+      this.failAll(`unserializable outbound message: ${serialized.error}`,);
+      this.opts.onExit?.(`unserializable outbound message: ${serialized.error}`,);
+      return;
+    }
+
+    this.child?.stdin.write(serialized.value + "\n", (err,) => {
+      if (err) {
+        this.failAll(`write failed: ${err.message}`,);
+        this.opts.onExit?.(`write failed: ${err.message}`,);
+      }
     },);
   }
 
@@ -204,7 +237,14 @@ export class JsonRpcProcess {
     }
 
     const p = this.pending.get(msg.id,);
-    if (!p) { return; }
+    if (!p) {
+      if (typeof msg.method === "string") {
+        this.handleServerRequest(msg.id, msg.method, msg.params,);
+      }
+
+      return;
+    }
+
     this.pending.delete(msg.id,);
     clearTimeout(p.timer,);
     if (msg.error) {
@@ -212,5 +252,25 @@ export class JsonRpcProcess {
     } else {
       p.resolve(msg.result,);
     }
+  }
+
+  /** Answer a server-originated request through the `onRequest` handler. */
+  private handleServerRequest(id: number, method: string, params: unknown,): void {
+    const handler = this.opts.onRequest;
+    if (!handler) {
+      this.write({ jsonrpc: "2.0", id, error: { code: -32601, message: `method not found: ${method}`, }, },);
+      return;
+    }
+
+    Promise.resolve(handler(method, params,),).then(
+      (result,) => {
+        this.write({ jsonrpc: "2.0", id, result, },);
+      },
+      (cause: unknown,) => {
+        const code = cause instanceof JsonRpcRequestError && typeof cause.code === "number" ? cause.code : -32603;
+        const message = cause instanceof Error ? cause.message : "internal error";
+        this.write({ jsonrpc: "2.0", id, error: { code, message, }, },);
+      },
+    );
   }
 }
