@@ -3,7 +3,8 @@
 
 # TASK: Synthetic QA capture: wire-or-remove decision, admin-gated capture endpoint + export
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** epic-synthetic-capture-wire-or-remove
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-synthetic-capture-wire-or-remove
