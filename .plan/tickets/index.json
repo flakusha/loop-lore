@@ -35020,7 +35020,7 @@
     "epic": "epic-comfyui-first-class-citizen",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-node-id-allocation.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "7fe2a33"
   },
   "TASK-COMFYUI-OUTPUT-DIRECTORY-CONFIG": {
