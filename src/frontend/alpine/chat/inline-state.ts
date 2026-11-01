@@ -5,6 +5,12 @@
 // questions) spread into chatState(). Extracted from bootstrap.ts.
 import { type AssistantToolCall, collectAssistantToolCalls, } from "../chat-panels";
 import { DEFAULT_QUICK_EMOJIS, } from "../chat-utils/emoji";
+import {
+  isNsfwRevealed,
+  type NsfwRevealMap,
+  shouldBlurNsfw,
+  toggleNsfwReveal,
+} from "../chat-utils/nsfw-blur";
 import { t, } from "../i18n";
 import { memoryPanel, } from "../memory-panel";
 import { moodState, } from "../mood";
@@ -44,6 +50,8 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
     actor_name?: string;
     totalVariants?: number;
     variantIndex?: number;
+    /** Actor is NSFW-rated — the drawn portrait is coverable by the blur pref. */
+    avatar_nsfw?: boolean;
     attachments?: {
       assetId: string;
       order: number;
@@ -57,6 +65,8 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
       width: number;
       height: number;
       durationSecs?: number;
+      /** v1 rating signal (asset_links → actors) — coverable by the blur pref. */
+      nsfw?: boolean;
     }[];
   }[],
   loadingMessages: false,
@@ -128,6 +138,34 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
   _contextMenu: { visible: false, messageId: null, x: 0, y: 0, },
   _reactionPicker: { visible: false, messageId: "", x: 0, y: 0, },
   _reactionActiveIndex: 0,
+  // ── NSFW blur preference (default OFF — no behavior change until the user
+  // opts in from settings; lifecycle.init() reads the localStorage mirror). ──
+  nsfwBlurEnabled: false,
+  _nsfwRevealed: {} as NsfwRevealMap,
+
+  /**
+   * Whether an NSFW-flagged piece of media should render covered right now.
+   * @param nsfw - the payload's NSFW flag (undefined = not flagged)
+   * @param key - media key: attachment asset id, or `avatar-<messageId>`
+   * @returns {boolean} true when the item must render blurred/covered
+   */
+  nsfwBlurOn(nsfw: boolean | undefined, key: string,): boolean {
+    return shouldBlurNsfw({
+      nsfw,
+      blurEnabled: this.nsfwBlurEnabled,
+      revealed: isNsfwRevealed(this._nsfwRevealed, key,),
+    },);
+  },
+
+  /**
+   * Reveal one covered item. Client-side only — permission was established
+   * before the content was served, so nothing is re-checked server-side.
+   * @param key - media key to reveal
+   * @returns {void}
+   */
+  revealNsfw(key: string,): void {
+    this._nsfwRevealed = toggleNsfwReveal(this._nsfwRevealed, key,);
+  },
   _flagDialog: { open: false, contentType: "message", contentId: null, chatId: null, },
   _flagReason: "",
   _flagOther: "",

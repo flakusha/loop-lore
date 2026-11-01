@@ -348,6 +348,7 @@
     "nsfwBanned": "Banned",
     "nsfwShadow": "Shadow-restricted",
     "nsfwConsentUnavailable": "Could not load NSFW consent state.",
+    "nsfwBlurMedia": "Blur sensitive (NSFW) media",
     "templates": "Templates",
     "contentLanguage": "Content language",
     "quota": "Quota",
@@ -1583,6 +1584,7 @@
   },
 
   "nsfw": {
+    "blurReveal": "Reveal",
     "bodyState": {
       "title": "Body State",
       "health": "Health",
@@ -1607,6 +1609,7 @@
       "enterToSend": "When enabled, pressing Enter sends your message. Hold Shift for newlines.",
       "autoScroll": "Automatically scroll to the latest message when new content arrives.",
       "inlinePreview": "Show image previews directly in the chat instead of as links.",
+      "nsfwBlurMedia": "Cover NSFW-flagged images behind a blur with a click-to-reveal button. Revealing never re-checks your existing access.",
       "localInference": "Run eligible helper tasks in your browser so drafts never reach the server.",
       "detailLevel": "Basic shows only messages; Detailed shows timestamps and metadata.",
       "generationLanguage": "Controls what language the AI responds in.",

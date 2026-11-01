@@ -29,6 +29,7 @@ export interface NsfwConsent {
   maxRating: string;
   accessStatus: string;
   shadowNsfw: boolean;
+  nsfwBlurMedia: boolean;
   blockReason: string | null;
 }
 
@@ -96,6 +97,7 @@ export interface SettingsState {
   loadProviders(): Promise<void>;
   loadNsfwConsent(): Promise<void>;
   nsfwRestrictionText(): string;
+  onNsfwBlurChange(): Promise<void>;
   saveGeneral(): Promise<void>;
   onLocaleChange(): Promise<void>;
   onContentLocaleChange(): Promise<void>;

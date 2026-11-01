@@ -119,6 +119,7 @@ export const userIdParam = t.Object({ userId: t.String(), },);
 export const updatePrefsBody = t.Object({
   nsfwEnabled: t.Optional(t.Boolean(),),
   maxRating: t.Optional(t.String(),),
+  nsfwBlurMedia: t.Optional(t.Boolean(),),
 },);
 export const blockBody = t.Object({
   targetUserId: t.String(),

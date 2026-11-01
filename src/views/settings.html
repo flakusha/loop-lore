@@ -597,6 +597,19 @@
                 <div style="font-size: 13px" x-text="nsfwConsent.maxRating"></div>
                 <div style="font-size: 13px; font-weight: 500">{{{t("settings.nsfwRestrictions")}}}</div>
                 <div style="font-size: 13px" x-text="nsfwRestrictionText()"></div>
+                <div class="form-group" style="grid-column: 1 / -1; margin-top: var(--space-2)">
+                  <span class="form-label">{{{t("settings.nsfwBlurMedia")}}}</span>
+                  <label class="toggle">
+                    <input
+                      type="checkbox"
+                      x-model="nsfwConsent.nsfwBlurMedia"
+                      @change="onNsfwBlurChange()"
+                      data-testid="nsfw-blur-toggle"
+                    />
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <p class="zone-description">{{{t("help.settings.nsfwBlurMedia")}}}</p>
+                </div>
               </div>
             </template>
             <template x-if="!nsfwConsent">

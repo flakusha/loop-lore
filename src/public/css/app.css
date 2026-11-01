@@ -4667,3 +4667,42 @@ html {
     transition: none;
   }
 }
+
+/* ── NSFW blur preference (user-level, default OFF) ───────────────────
+   Permitted NSFW-flagged media renders covered until the user reveals it.
+   The class is only bound when the preference is on AND the payload flags
+   the media NSFW; reveal is a client-side toggle (no server re-check). */
+img.nsfw-blur,
+.nsfw-blur img {
+  filter: blur(18px) saturate(0.6);
+  transform: scale(1.03);
+}
+
+img.nsfw-blur {
+  cursor: pointer;
+}
+
+.nsfw-coverable {
+  position: relative;
+}
+
+.nsfw-reveal-btn {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border: none;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--bg-primary) 55%, transparent);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nsfw-reveal-btn:hover {
+  background: color-mix(in srgb, var(--bg-primary) 70%, transparent);
+}

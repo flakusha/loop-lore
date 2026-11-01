@@ -34,6 +34,7 @@ function defaultPrefs(userId: string,): NsfwUserPrefs {
     maxRating: "nsfw_mild",
     accessStatus: "clear",
     shadowNsfw: false,
+    nsfwBlurMedia: false,
     blockReason: null,
     bannedAt: null,
     bannedBy: null,

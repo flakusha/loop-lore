@@ -4,6 +4,7 @@
 import { ChatListResponse, } from "../../../validation/schemas/responses";
 import { destroyVnRenderer, } from "../../vn";
 import { DEFAULT_QUICK_EMOJIS, } from "../chat-utils/emoji";
+import { isNsfwBlurPrefOn, } from "../chat-utils/nsfw-blur";
 import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
 import { log, } from "../logger";
@@ -66,6 +67,11 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     if (storedDetail === "Basic" || storedDetail === "Detailed") {
       this.detailLevel = storedDetail;
     }
+
+    // NSFW blur preference (default OFF): read the mirror written by the
+    // settings save path. Re-read per mount so a settings change followed by
+    // a chat re-mount is honored without cross-component wiring.
+    this.nsfwBlurEnabled = isNsfwBlurPrefOn();
 
     this._storageHandler = (e: StorageEvent,) => {
       if (e.key !== "chat-detail-level" || !e.newValue) { return; }

@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { storageGet, } from "../../storage";
+import { storageGet, storageSet, } from "../../storage";
+import { NSFW_BLUR_STORAGE_KEY, } from "../chat-utils/nsfw-blur";
+import { jsonBody, } from "../json";
 import { isLocalInferenceOptedIn, } from "../local-inference";
 import { log as rootLog, } from "../logger";
 import type { LocaleInfoArray, SettingsState, } from "./types";
@@ -127,6 +129,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
               maxRating: typeof d.maxRating === "string" ? d.maxRating : "",
               accessStatus: typeof d.accessStatus === "string" ? d.accessStatus : "clear",
               shadowNsfw: d.shadowNsfw === true,
+              nsfwBlurMedia: d.nsfwBlurMedia === true,
               blockReason: typeof d.blockReason === "string" ? d.blockReason : null,
             };
           }
@@ -154,6 +157,34 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       }
 
       return t("settings.nsfwNone",);
+    },
+
+    /**
+     * Persist the NSFW blur preference. The server column
+     * (`nsfw_user_preferences.nsfw_blur_media`, via the NSFW preferences API)
+     * is the source of truth; the localStorage mirror is what the chat and
+     * gallery render paths read (same dual persistence as the chat display
+     * flags). Default OFF — the mirror is only written here.
+     * @returns {Promise<void>}
+     */
+    async onNsfwBlurChange() {
+      const userId = __USER_ID as string | undefined;
+      const value = this.nsfwConsent?.nsfwBlurMedia === true;
+      storageSet("local", NSFW_BLUR_STORAGE_KEY, value ? "1" : "0",);
+      if (!userId) { return; }
+      try {
+        const res = await apiFetch(`/api/v1/nsfw/moderation/preferences/${encodeURIComponent(userId,)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Accept: "application/json", },
+          body: jsonBody({ nsfwBlurMedia: value, },),
+        },);
+
+        if (!res.ok) {
+          log.warn("nsfw blur preference save failed", { status: res.status, },);
+        }
+      } catch (error) {
+        log.warn("nsfw blur preference save failed", { error: String(error,), },);
+      }
     },
 
     /**

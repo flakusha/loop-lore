@@ -113,6 +113,7 @@ async function serveNsfwModerationAudit(
     maxRating: "nsfw_mild",
     accessStatus: "clear",
     shadowNsfw: false,
+    nsfwBlurMedia: false,
     blockReason: null,
     bannedAt: null,
     bannedBy: null,

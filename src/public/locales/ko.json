@@ -258,6 +258,7 @@
     "nsfwBanned": "밴됨",
     "nsfwShadow": "섀도우 제한",
     "nsfwConsentUnavailable": "NSFW 동의 상태를 불러올 수 없습니다.",
+    "nsfwBlurMedia": "민감한(NSFW) 미디어 흐리게",
     "models": "Models",
     "browserModels": "Browser Models",
     "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
@@ -1053,6 +1054,7 @@
   },
 
   "nsfw": {
+    "blurReveal": "표시",
     "bodyState": {
       "title": "신체 상태",
       "health": "건강",
@@ -1077,6 +1079,7 @@
       "enterToSend": "활성화하면 Enter로 메시지를 전송합니다. 줄바꿈은 Shift를 누르세요.",
       "autoScroll": "새 콘텐츠가 도착하면 최신 메시지로 자동 스크롤합니다.",
       "inlinePreview": "링크 대신 채팅에서 이미지 미리보기를 직접 표시합니다.",
+      "nsfwBlurMedia": "NSFW 표시된 이미지를 흐림으로 가리고 클릭 한 번으로 표시합니다. 표시해도 기존 접근 권한을 다시 확인하지 않습니다.",
       "detailLevel": "기본은 메시지만 표시; 상세는 타임스탬프와 메타데이터를 표시합니다.",
       "generationLanguage": "AI가 응답하는 언어를 제어합니다.",
       "provider": "AI 제공자를 선택하세요. 각각 다른 모델과 가격이 있습니다.",

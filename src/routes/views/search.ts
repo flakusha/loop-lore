@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { nsfwFlaggedAssetIds, } from "../../assets/service";
 import { visibleTagNames, } from "../../assets/service/tag-facets";
 import { ActorType, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -69,7 +70,8 @@ export async function loadGallerySearchViewModel(
   }
 
   const tagMap = await visibleTagNames(database, Array.from(visible, (a,) => a.id,), actorId ?? null,);
-  return buildGallerySearchViewModel({ rows: visible, tagMap, page, pageSize: GRID_PAGE_SIZE, },);
+  const nsfwIds = await nsfwFlaggedAssetIds(database, Array.from(visible, (a,) => a.id,),);
+  return buildGallerySearchViewModel({ rows: visible, tagMap, nsfwIds, page, pageSize: GRID_PAGE_SIZE, },);
 }
 
 /**

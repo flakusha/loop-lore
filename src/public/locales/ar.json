@@ -258,6 +258,7 @@
     "nsfwBanned": "ممنوع",
     "nsfwShadow": "تقييد غير مرئي",
     "nsfwConsentUnavailable": "تعذر تحميل حالة موافقة NSFW.",
+    "nsfwBlurMedia": "طمس الوسائط الحساسة (NSFW)",
     "models": "Models",
     "browserModels": "Browser Models",
     "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
@@ -1053,6 +1054,7 @@
   },
 
   "nsfw": {
+    "blurReveal": "كشف",
     "bodyState": {
       "title": "حالة الجسد",
       "health": "الصحة",
@@ -1077,6 +1079,7 @@
       "enterToSend": "عند التفعيل، يُرسل Enter رسالتك. اضغط Shift للسطر الجديد.",
       "autoScroll": "التمرير تلقائياً إلى أحدث رسالة عند وصول محتوى جديد.",
       "inlinePreview": "عرض معاينة الصور مباشرة في المحادثة بدلاً من الروابط.",
+      "nsfwBlurMedia": "تغطية الصور المعلّمة كمحتوى للبالغين بضبابية مع زر للكشف بنقرة واحدة. الكشف لا يعيد التحقق من صلاحيتك الحالية.",
       "detailLevel": "الأساسي يعرض الرسائل فقط؛ المفصل يعرض الطوابع الزمنية والبيانات الوصفية.",
       "generationLanguage": "يتحكم في اللغة التي يرد بها الذكاء الاصطناعي.",
       "provider": "اختر مزوّد الذكاء الاصطناعي. لكل منهم نماذج وأسعار مختلفة.",

@@ -75,6 +75,7 @@ export async function getOrCreateOwn({ thisL, userId, }: GetOrCreateOwnArgs,): P
       max_rating: "nsfw_mild",
       access_status: "clear",
       shadow_nsfw: 0,
+      nsfw_blur_media: 0,
       created_at: now,
       updated_at: now,
     },)
@@ -87,6 +88,7 @@ export async function getOrCreateOwn({ thisL, userId, }: GetOrCreateOwnArgs,): P
     maxRating: "nsfw_mild",
     accessStatus: "clear",
     shadowNsfw: false,
+    nsfwBlurMedia: false,
     blockReason: null,
     bannedAt: null,
     bannedBy: null,
@@ -99,7 +101,7 @@ export async function getOrCreateOwn({ thisL, userId, }: GetOrCreateOwnArgs,): P
 export interface UpdatePreferencesArgs {
   thisL: NsfwModerationServiceContext;
   userId: string;
-  updates: Partial<Pick<NsfwUserPrefs, "nsfwEnabled" | "maxRating">>;
+  updates: Partial<Pick<NsfwUserPrefs, "nsfwEnabled" | "maxRating" | "nsfwBlurMedia">>;
 }
 
 /**
@@ -118,6 +120,7 @@ export async function updatePreferences({ thisL, userId, updates, }: UpdatePrefe
   const sets: Record<string, unknown> = { updated_at: now, };
   if (updates.nsfwEnabled !== undefined) { sets.nsfw_enabled = updates.nsfwEnabled ? 1 : 0; }
   if (updates.maxRating !== undefined) { sets.max_rating = updates.maxRating; }
+  if (updates.nsfwBlurMedia !== undefined) { sets.nsfw_blur_media = updates.nsfwBlurMedia ? 1 : 0; }
   await thisL.db.updateTable("nsfw_user_preferences",).set(sets,).where("user_id", "=", userId,).execute();
   // Read back (non-creating) — we just upserted so the row exists
   return (await get({ thisL, userId, },))!;
@@ -132,6 +135,7 @@ export async function updatePreferences({ thisL, userId, updates, }: UpdatePrefe
  * @param row.max_rating
  * @param row.access_status
  * @param row.shadow_nsfw
+ * @param row.nsfw_blur_media
  * @param row.block_reason
  * @param row.banned_at
  * @param row.banned_by
@@ -147,6 +151,7 @@ export function mapPrefs(
     max_rating: string;
     access_status: NsfwAccessStatus;
     shadow_nsfw: number;
+    nsfw_blur_media: number;
     block_reason: string | null;
     banned_at: string | null;
     banned_by: string | null;
@@ -161,6 +166,7 @@ export function mapPrefs(
     maxRating: row.max_rating,
     accessStatus: row.access_status,
     shadowNsfw: row.shadow_nsfw === 1,
+    nsfwBlurMedia: row.nsfw_blur_media === 1,
     blockReason: row.block_reason,
     bannedAt: row.banned_at,
     bannedBy: row.banned_by,

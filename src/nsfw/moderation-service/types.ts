@@ -21,6 +21,8 @@ export interface NsfwUserPrefs {
   maxRating: string;
   accessStatus: NsfwAccessStatus;
   shadowNsfw: boolean;
+  /** Blur NSFW-flagged media at render time even when access is granted. */
+  nsfwBlurMedia: boolean;
   blockReason: string | null;
   bannedAt: string | null;
   bannedBy: string | null;
@@ -82,7 +84,7 @@ export interface NsfwModerationService {
   getOrCreateOwn(userId: string,): Promise<NsfwUserPrefs>;
   updatePreferences(
     userId: string,
-    updates: Partial<Pick<NsfwUserPrefs, "nsfwEnabled" | "maxRating">>,
+    updates: Partial<Pick<NsfwUserPrefs, "nsfwEnabled" | "maxRating" | "nsfwBlurMedia">>,
   ): Promise<NsfwUserPrefs>;
   blockUser(targetUserId: string, performedBy: string, reason: string,): Promise<ModAction>;
   unblockUser(targetUserId: string, performedBy: string, reason: string,): Promise<ModAction>;

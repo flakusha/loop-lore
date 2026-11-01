@@ -2763,6 +2763,7 @@ export const NsfwUserPreferencesSchema = t.Object({
   banned_by: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  nsfw_blur_media: t.Optional(t.Number(),),
 },);
 
 // ── e2e_group_wraps ────────────────────────────────────────────

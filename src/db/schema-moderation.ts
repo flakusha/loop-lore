@@ -80,4 +80,5 @@ export interface NsfwUserPreferences {
   banned_by: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  nsfw_blur_media: Generated<number>;
 }

@@ -33,6 +33,8 @@ export interface GalleryAssetItem {
   thumbUrl: string | null;
   /** Visible tag names — global plus the viewer's own user-scoped tags. */
   tags: string[];
+  /** v1 rating signal: linked to an NSFW-rated actor (coverable by the user blur preference). */
+  nsfw: boolean;
 }
 
 /** The paginated grid. `page`/`pageSize` echo the request the rows came from. */
@@ -53,10 +55,15 @@ export interface GallerySearchViewModel {
  * Project fetched asset rows into gallery rows, attaching visible tag names.
  * @param rows - already-fetched, already-filtered, already-ordered asset rows
  * @param tagMap - asset id → visible tag names (empty when a row has none)
+ * @param nsfwIds - asset ids linked to an NSFW-rated actor (the v1 rating signal)
  * @returns the shared JSON-able projection
  */
 export function buildGalleryAssetItems(
-  { rows, tagMap, }: { rows: readonly GalleryAssetRow[]; tagMap: ReadonlyMap<string, string[]> },
+  { rows, tagMap, nsfwIds, }: {
+    rows: readonly GalleryAssetRow[];
+    tagMap: ReadonlyMap<string, string[]>;
+    nsfwIds: ReadonlySet<string>;
+  },
 ): GalleryAssetItem[] {
   return Array.from(rows, (row,) => ({
     id: row.id,
@@ -66,6 +73,7 @@ export function buildGalleryAssetItems(
     createdAt: row.created_at,
     thumbUrl: row.asset_type === "image" ? `/api/v1/assets/${row.id}/thumb` : null,
     tags: [...(tagMap.get(row.id,) ?? []),],
+    nsfw: nsfwIds.has(row.id,),
   }),);
 }
 
@@ -73,36 +81,40 @@ export function buildGalleryAssetItems(
  * Project fetched rows into the gallery grid view-model.
  * @param rows - the page of asset rows in display order
  * @param tagMap - asset id → visible tag names
+ * @param nsfwIds - asset ids linked to an NSFW-rated actor (the v1 rating signal)
  * @param page - the 1-based page the rows came from
  * @param pageSize - the page size the query used
  * @returns the view-model the HTML card renderer and the JSON branch share
  */
 export function buildGalleryGridViewModel(
-  { rows, tagMap, page, pageSize, }: {
+  { rows, tagMap, nsfwIds, page, pageSize, }: {
     rows: readonly GalleryAssetRow[];
     tagMap: ReadonlyMap<string, string[]>;
+    nsfwIds: ReadonlySet<string>;
     page: number;
     pageSize: number;
   },
 ): GalleryGridViewModel {
-  return { assets: buildGalleryAssetItems({ rows, tagMap, },), page, pageSize, };
+  return { assets: buildGalleryAssetItems({ rows, tagMap, nsfwIds, },), page, pageSize, };
 }
 
 /**
  * Project fetched rows into the gallery search view-model.
  * @param rows - the matching asset rows in display order
  * @param tagMap - asset id → visible tag names
+ * @param nsfwIds - asset ids linked to an NSFW-rated actor (the v1 rating signal)
  * @param page - the 1-based page the rows came from
  * @param pageSize - the page size the query used
  * @returns the view-model the HTML card renderer and the JSON branch share
  */
 export function buildGallerySearchViewModel(
-  { rows, tagMap, page, pageSize, }: {
+  { rows, tagMap, nsfwIds, page, pageSize, }: {
     rows: readonly GalleryAssetRow[];
     tagMap: ReadonlyMap<string, string[]>;
+    nsfwIds: ReadonlySet<string>;
     page: number;
     pageSize: number;
   },
 ): GallerySearchViewModel {
-  return { assets: buildGalleryAssetItems({ rows, tagMap, },), page, pageSize, };
+  return { assets: buildGalleryAssetItems({ rows, tagMap, nsfwIds, },), page, pageSize, };
 }

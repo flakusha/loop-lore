@@ -258,6 +258,7 @@
     "nsfwBanned": "Забанено",
     "nsfwShadow": "Скрытое ограничение",
     "nsfwConsentUnavailable": "Не удалось загрузить состояние согласия NSFW.",
+    "nsfwBlurMedia": "Размывать чувствительный (NSFW) контент",
     "models": "Models",
     "browserModels": "Browser Models",
     "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
@@ -1053,6 +1054,7 @@
   },
 
   "nsfw": {
+    "blurReveal": "Показать",
     "bodyState": {
       "title": "Состояние тела",
       "health": "Здоровье",
@@ -1077,6 +1079,7 @@
       "enterToSend": "При включении Enter отправляет ваше сообщение. Удерживайте Shift для переноса строк.",
       "autoScroll": "Автоматически прокручивать к последнему сообщению при появлении нового контента.",
       "inlinePreview": "Показывать предпросмотр изображений прямо в чате вместо ссылок.",
+      "nsfwBlurMedia": "Скрывает изображения с пометкой NSFW за размытием с кнопкой показа по клику. Показ не проверяет ваш доступ повторно.",
       "detailLevel": "Базовый показывает только сообщения; Детальный показывает временные метки и метаданные.",
       "generationLanguage": "Контролирует, на каком языке ИИ отвечает.",
       "provider": "Выберите вашего поставщика ИИ. У каждого разные модели и цены.",

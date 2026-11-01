@@ -258,6 +258,7 @@
     "nsfwBanned": "已封禁",
     "nsfwShadow": "影子限制",
     "nsfwConsentUnavailable": "无法加载 NSFW 同意状态。",
+    "nsfwBlurMedia": "模糊敏感（NSFW）媒体",
     "models": "Models",
     "browserModels": "Browser Models",
     "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
@@ -1053,6 +1054,7 @@
   },
 
   "nsfw": {
+    "blurReveal": "显示",
     "bodyState": {
       "title": "身体状态",
       "health": "健康",
@@ -1077,6 +1079,7 @@
       "enterToSend": "启用后，按Enter发送消息。按Shift换行。",
       "autoScroll": "新内容到达时自动滚动到最新消息。",
       "inlinePreview": "在聊天中直接显示图片预览，而不是链接。",
+      "nsfwBlurMedia": "将标记为 NSFW 的图片模糊遮盖，并提供一键显示按钮。显示不会重新检查您的现有访问权限。",
       "detailLevel": "基础仅显示消息；详细显示时间戳和元数据。",
       "generationLanguage": "控制AI回复的语言。",
       "provider": "选择AI提供者。每个提供者有不同的模型和定价。",
