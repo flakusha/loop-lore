@@ -6,8 +6,9 @@
  * (TASK-world-dashboard). Loads per-world location/NPC counts and the
  * current conditions (weather, time of day sampled from the world's
  * freshest location_state) in a fixed number of queries, and renders the
- * world cards. Conditions are read-only display: the same sampled snapshot
- * the world SSE stream pushes (routes/worlds/world-stream.ts).
+ * world cards. The world detail page's time/weather widget uses the richer
+ * engine-backed SSE stream (routes/worlds/world-stream.ts); the list keeps
+ * this cheap read-only sample so one dashboard render stays O(1) queries.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
@@ -98,7 +99,8 @@ export async function loadWorldListCards(
   return worlds.map((w,) => {
     const worldStates = statesByWorld.get(w.id,) ?? [];
     // States were ordered ascending by updated_at, so the last one is the
-    // freshest — the same sample the conditions SSE stream would push.
+    // freshest location-level sample; the world conditions engine holds the
+    // world-scoped values the detail page widget displays.
     const freshest = worldStates[worldStates.length - 1];
     return {
       id: w.id,

@@ -4194,6 +4194,23 @@ html {
   color: var(--text-tertiary, #999);
 }
 
+.conditions-forecast {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  margin-top: var(--space-2);
+}
+
+.conditions-forecast-title {
+  font-size: var(--fs-xs, 12px);
+  font-weight: 600;
+}
+
+.forecast-day {
+  font-variant-numeric: tabular-nums;
+}
+
 .detail-list {
   margin: 0;
   padding-left: 1.25rem;

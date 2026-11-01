@@ -59,8 +59,18 @@ export const NIGHT_TIME_OF_DAY: ReadonlySet<string> = new Set([
   "late night",
 ],);
 
+/** Season value → icon. Unrecognized values fall back to 🌀. */
+export const SEASON_ICONS: Record<string, string> = {
+  spring: "🌸",
+  summer: "☀️",
+  autumn: "🍂",
+  fall: "🍂",
+  winter: "❄️",
+};
+
 const WEATHER_FALLBACK = "🌡️";
 const TIME_FALLBACK = "🕑";
+const SEASON_FALLBACK = "🌀";
 
 /**
  * @param weather raw location_states.weather value
@@ -87,4 +97,13 @@ export function timeOfDayIcon(timeOfDay: string | null,): string {
 export function isNight(timeOfDay: string | null,): boolean {
   if (!timeOfDay) { return false; }
   return NIGHT_TIME_OF_DAY.has(timeOfDay.trim().toLowerCase(),);
+}
+
+/**
+ * @param season raw season value (engine vocab: spring/summer/autumn/winter)
+ * @returns icon for the season, empty string when not set
+ */
+export function seasonIcon(season: string | null,): string {
+  if (!season) { return ""; }
+  return SEASON_ICONS[season.trim().toLowerCase()] ?? SEASON_FALLBACK;
 }

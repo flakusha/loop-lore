@@ -5,6 +5,8 @@ import { describe, expect, test, } from "bun:test";
 import {
   isNight,
   NIGHT_TIME_OF_DAY,
+  SEASON_ICONS,
+  seasonIcon,
   TIME_OF_DAY_ICONS,
   timeOfDayIcon,
   WEATHER_ICONS,
@@ -58,6 +60,21 @@ describe("isNight", () => {
   });
 });
 
+describe("seasonIcon", () => {
+  test("maps the engine season vocabulary", () => {
+    expect(seasonIcon("spring",),).toBe("🌸",);
+    expect(seasonIcon("summer",),).toBe("☀️",);
+    expect(seasonIcon("autumn",),).toBe("🍂",);
+    expect(seasonIcon("winter",),).toBe("❄️",);
+  });
+
+  test("falls back for unknown values and empty input", () => {
+    expect(seasonIcon("thelongnight",),).not.toBe("",);
+    expect(seasonIcon(null,),).toBe("",);
+    expect(seasonIcon("",),).toBe("",);
+  });
+});
+
 describe("icon map tables", () => {
   test("night set entries with icons map to non-empty icons", () => {
     expect(NIGHT_TIME_OF_DAY.size,).toBeGreaterThan(0,);
@@ -74,6 +91,13 @@ describe("icon map tables", () => {
 
   test("every mapped weather value renders a non-empty icon", () => {
     for (const icon of Object.values(WEATHER_ICONS,)) {
+      expect(icon.length,).toBeGreaterThan(0,);
+    }
+  });
+
+  test("every mapped season value renders a non-empty icon", () => {
+    expect(SEASON_ICONS,).toContainKey("spring",);
+    for (const icon of Object.values(SEASON_ICONS,)) {
       expect(icon.length,).toBeGreaterThan(0,);
     }
   });

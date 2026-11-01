@@ -2,10 +2,10 @@
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 <!--
-  Conditions strip: time/weather widget (TASK-time-weather). Values are
-  author-set labels read from the location_states columns — this build has no
-  weather or clock engine, so the panel says so instead of implying
-  simulation. Host scope: worldState(worldId).
+  Conditions strip: time/weather widget (TASK-time-weather). Values come
+  from the world conditions engine via the SSE `conditions` event —
+  weather / time_of_day / season / temperature on the world clock, plus a
+  seeded three-day forecast. Host scope: worldState(worldId).
 -->
 <section
   class="panel world-conditions-panel"
@@ -32,17 +32,28 @@
       data-testid="condition-season"
       x-show="hasSeason"
       :aria-label="t('worlds.conditionSeason')"
-      x-text="season"
+      x-text="`${seasonIcon} ${season}`"
     ></span>
     <span
-      class="condition muted"
-      data-testid="condition-season-empty"
-      x-show="!hasSeason"
-      :aria-label="t('worlds.conditionSeason')"
-      x-text="t('worlds.conditionSeasonUnavailable')"
+      class="condition"
+      data-testid="condition-temperature"
+      x-show="temperature !== null"
+      :aria-label="t('worlds.conditionTemperature')"
+      x-text="`${temperature}°`"
     ></span>
-    <span class="condition" data-testid="condition-day-night" x-text="dayNightLabel"></span>
-    <span class="condition muted" x-show="conditionsLocationName" x-text="conditionsLocationName"></span>
+    <span
+      class="condition"
+      data-testid="condition-world-day"
+      x-show="conditionsDay !== null"
+      :aria-label="t('worlds.conditionsDayLabel')"
+      x-text="`${t('worlds.conditionsDayLabel')} ${conditionsDay}`"
+    ></span>
+    <span
+      class="condition"
+      data-testid="condition-day-night"
+      :aria-label="t('worlds.conditionDayNight')"
+      x-text="t(isNightNow ? 'worlds.nightLabel' : 'worlds.dayLabel')"
+    ></span>
     <span
       class="sse-dot"
       :class="sseConnected ? 'on' : 'off'"
@@ -50,8 +61,14 @@
       x-text="sseConnected ? t('worlds.conditionLive') : t('worlds.conditionOffline')"
     ></span>
   </div>
-  <div x-show="conditionsAreAuthorSet" class="muted" data-testid="conditions-author-set">
-    {{{ t("worlds.conditionsAuthorSet") }}}
+  <div x-show="forecastAvailable" class="conditions-forecast" data-testid="conditions-forecast">
+    <span class="conditions-forecast-title">{{{ t("worlds.forecastTitle") }}}</span>
+    <template x-for="f in forecast" :key="f.day">
+      <span
+        class="condition forecast-day"
+        :aria-label="t('worlds.forecastTitle')"
+        x-text="`${weatherIcon(f.weather)} ${f.weather} · ${t('worlds.conditionsDayLabel')} ${f.day} · ${f.temperature}°`"
+      ></span>
+    </template>
   </div>
-  <div x-show="!forecastAvailable" class="muted">{{{ t("worlds.forecastUnavailable") }}}</div>
 </section>

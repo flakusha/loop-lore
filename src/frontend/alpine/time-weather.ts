@@ -3,28 +3,25 @@
 
 /**
  * Time/weather widget mixin for the world page (TASK-time-weather). Reads
- * the conditions snapshot the world SSE stream pushes (routes/worlds/
- * world-stream.ts) — display only.
+ * the engine-backed conditions snapshot the world SSE stream pushes
+ * (routes/worlds/world-stream.ts) — display only.
  *
- * HARD SCOPE: no GM time-progression controls, no world clock engine. There
- * is no forecast source in the data model yet, so `forecastAvailable` is
- * always false and the UI shows an explicit empty state instead of a
- * fabricated forecast. Likewise no season field exists in location_states or
- * world_states (checked against the whole schema), so `season` stays null
- * and the widget renders the same explicit empty state rather than guessing
- * one from the time of day.
+ * HARD SCOPE: no GM time-progression controls. There is no forecast source
+ * beyond the three-day seeded forecast the stream already derives, so the
+ * widget renders exactly what arrives and shows an explicit empty state
+ * rather than fabricating data.
  */
-import { isNight, timeOfDayIcon, weatherIcon, } from "./weather-icons";
+import { isNight, seasonIcon, timeOfDayIcon, weatherIcon, } from "./weather-icons";
 import type { WorldPageState, } from "./world-types";
 
 /** Condition display state for the world page widget. */
 export const timeWeatherWidget: Partial<WorldPageState> & ThisType<WorldPageState> = {
   timeOfDay: null,
   weather: null,
-  /** No season column exists in the schema — always null, kept as a slot. */
   season: null,
-  conditionsLocationName: null,
-  conditionsAt: null,
+  temperature: null,
+  conditionsDay: null,
+  forecast: [],
 
   /** @returns {boolean} */
   get hasConditions(): boolean {
@@ -41,31 +38,25 @@ export const timeWeatherWidget: Partial<WorldPageState> & ThisType<WorldPageStat
     return weatherIcon(this.weather,);
   },
 
-  /** Day/night cycle indicator derived from the time-of-day value. */
   /** @returns {string} */
-  get dayNightLabel(): string {
-    if (!this.timeOfDay) { return "—"; }
-    return isNight(this.timeOfDay,) ? "Night" : "Day";
+  get seasonIcon(): string {
+    return seasonIcon(this.season,);
+  },
+
+  /** Day/night cycle indicator derived from the time-of-day value. */
+  /** @returns {boolean} */
+  get isNightNow(): boolean {
+    return isNight(this.timeOfDay,);
   },
 
   /** @returns {boolean} */
   get forecastAvailable(): boolean {
-    return false;
+    return this.forecast.length > 0;
   },
 
-  /** True only once a season value is author-set on a location state. */
+  /** True only once an engine season value has arrived. */
   /** @returns {boolean} */
   get hasSeason(): boolean {
     return this.season !== null;
-  },
-
-  /**
-   * Conditions in this build are author-set labels copied from the
-   * location_states columns — there is no weather or clock engine here, so
-   * the widget must not present them as simulated.
-   * @returns {boolean}
-   */
-  get conditionsAreAuthorSet(): boolean {
-    return true;
   },
 };
