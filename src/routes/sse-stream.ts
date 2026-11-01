@@ -12,7 +12,10 @@ export type SseSend = (event: string, data: unknown,) => void;
  * the ReadableStream, the poll timer, the keepalive pings, the response
  * headers, and cleanup on cancel.
  * @param onTick called once immediately, then every intervalMs; a rejection
- *   is swallowed so a transient failure skips the beat but keeps the stream
+ *   is swallowed so a transient failure skips the beat but keeps the stream.
+ *   When `onStart` is set it IS the first beat and the immediate `onTick` is
+ *   skipped — firing both would run two concurrent first queries against the
+ *   same database and race stream teardown into a closed connection.
  * @param opts
  * @param opts.intervalMs poll interval in ms
  * @param opts.keepaliveMs keepalive ping interval (must beat Bun.serve's
@@ -48,8 +51,8 @@ export function sseStream(
   const stream = new ReadableStream({
     start: (controller,) => {
       controllerRef = controller;
-      if (opts.onStart) { void opts.onStart(send,); }
-      onTick(send,).catch(() => {
+      const firstBeat = opts.onStart ?? onTick;
+      void firstBeat(send,).catch(() => {
         // a throwing first beat must not kill the stream or leak rejections
       },);
 

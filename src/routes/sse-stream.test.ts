@@ -52,12 +52,12 @@ describe("sseStream", () => {
     expect(seen,).toContain("event: ok",);
   });
 
-  test("onStart runs before the first tick", async () => {
+  test("onStart is the first beat; the immediate tick is skipped with it", async () => {
     const order: string[] = [];
     const res = sseStream(async () => {
       order.push("tick",);
     }, {
-      intervalMs: 60_000,
+      intervalMs: 10,
       keepaliveMs: 60_000,
       onStart: async (send,) => {
         order.push("start",);
@@ -69,9 +69,15 @@ describe("sseStream", () => {
     const decoder = new TextDecoder();
     const { value, } = await reader.read();
     const first = decoder.decode(value,);
-    await reader.cancel();
 
-    expect(order,).toEqual(["start", "tick",],);
+    // onStart ran alone — no concurrent immediate tick racing the first query.
+    expect(order,).toEqual(["start",],);
     expect(first,).toContain("event: initial",);
+
+    // The interval still ticks after the onStart beat.
+    await new Promise<void>((resolve,) => setTimeout(resolve, 50,));
+    expect(order[0],).toBe("start",);
+    expect(order.length,).toBeGreaterThan(1,);
+    await reader.cancel();
   });
 });
