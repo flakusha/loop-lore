@@ -13700,6 +13700,24 @@
     "title": "Desktop App",
     "type": "EPIC"
   },
+  "EPIC-DETERMINISTIC-FIRST-GATES": {
+    "hash": "pending",
+    "extid": "EPIC-DETERMINISTIC-FIRST-GATES",
+    "type": "EPIC",
+    "title": "Deterministic-First Decision Gates for the Message Hot Path",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "classifier",
+      "aux",
+      "deterministic-first",
+      "latency",
+      "caching"
+    ],
+    "source": ".plan/tickets/epic-deterministic-first-gates.md",
+    "status": "Not Started"
+  },
   "EPIC-DISEASE-POISON": {
     "epic": "",
     "extid": "EPIC-DISEASE-POISON",
@@ -14240,6 +14258,44 @@
     ],
     "title": "File Splitting & God-Module Refactor",
     "type": "EPIC"
+  },
+  "EPIC-FINETUNE-EVAL-PROMOTION-GATE": {
+    "hash": "pending",
+    "extid": "EPIC-FINETUNE-EVAL-PROMOTION-GATE",
+    "type": "EPIC",
+    "title": "Fine-tune Evaluation & Promotion Gate",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "training",
+      "finetune",
+      "evaluation",
+      "promotion-gate",
+      "datasets"
+    ],
+    "source": ".plan/tickets/epic-finetune-eval-promotion-gate.md",
+    "status": "Not Started"
+  },
+  "EPIC-FIRST-RUN-AUTO-SETUP": {
+    "hash": "pending",
+    "extid": "EPIC-FIRST-RUN-AUTO-SETUP",
+    "type": "EPIC",
+    "title": "First-Run Auto-Setup (L0 Completion)",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "setup",
+      "first-run",
+      "config",
+      "bootstrap",
+      "onboarding",
+      "pii",
+      "observability"
+    ],
+    "source": ".plan/tickets/epic-first-run-auto-setup.md",
+    "status": "Not Started"
   },
   "EPIC-FRACTAL-LOCATIONS": {
     "epic": "",
@@ -15585,6 +15641,40 @@
     "title": "Lore Knowledge System",
     "type": "EPIC"
   },
+  "EPIC-LOREBOOK-INCLUSION-GROUPS": {
+    "hash": "pending",
+    "extid": "EPIC-LOREBOOK-INCLUSION-GROUPS",
+    "type": "EPIC",
+    "title": "Lorebook Inclusion Groups + Group Scoring",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "lorebook",
+      "world-info",
+      "activation",
+      "sillytavern-parity"
+    ],
+    "source": ".plan/tickets/epic-lorebook-inclusion-groups.md",
+    "status": "Not Started"
+  },
+  "EPIC-LOREBOOK-RECURSIVE-SCANNING": {
+    "hash": "pending",
+    "extid": "EPIC-LOREBOOK-RECURSIVE-SCANNING",
+    "type": "EPIC",
+    "title": "Lorebook Recursive World-Info Scanning",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "lorebook",
+      "world-info",
+      "activation",
+      "sillytavern-parity"
+    ],
+    "source": ".plan/tickets/epic-lorebook-recursive-scanning.md",
+    "status": "Not Started"
+  },
   "EPIC-MAGIC-SPELL-SYSTEMS": {
     "epic": "",
     "extid": "EPIC-MAGIC-SPELL-SYSTEMS",
@@ -16725,6 +16815,23 @@
     "status": "Not Started",
     "git_issue": "1b4c1bc"
   },
+  "EPIC-PROMPT-CACHE-ENABLEMENT": {
+    "hash": "pending",
+    "extid": "EPIC-PROMPT-CACHE-ENABLEMENT",
+    "type": "EPIC",
+    "title": "Provider Prompt-Cache Enablement + Cache-Token Observability",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "generation",
+      "prompt-cache",
+      "observability",
+      "cost"
+    ],
+    "source": ".plan/tickets/epic-prompt-cache-enablement.md",
+    "status": "Not Started"
+  },
   "EPIC-PROMPT-IMPROVEMENT": {
     "epic": "",
     "extid": "EPIC-PROMPT-IMPROVEMENT",
@@ -16743,6 +16850,43 @@
     ],
     "title": "Prompt Improvement — Unified Text Enhancement",
     "type": "EPIC"
+  },
+  "EPIC-PROMPT-INSPECTOR": {
+    "hash": "pending",
+    "extid": "EPIC-PROMPT-INSPECTOR",
+    "type": "EPIC",
+    "title": "Prompt Inspector — Pre-Send Assembled-Prompt View",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "prompt",
+      "inspection",
+      "debugging",
+      "sillytavern-parity"
+    ],
+    "source": ".plan/tickets/epic-prompt-inspector.md",
+    "status": "Not Started"
+  },
+  "EPIC-PROVIDER-CONNECTION-WIZARD": {
+    "hash": "pending",
+    "extid": "EPIC-PROVIDER-CONNECTION-WIZARD",
+    "type": "EPIC",
+    "title": "Provider Connection Wizard (L1)",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "setup",
+      "wizard",
+      "providers",
+      "onboarding",
+      "frontend",
+      "byok",
+      "config-import"
+    ],
+    "source": ".plan/tickets/epic-provider-connection-wizard.md",
+    "status": "Not Started"
   },
   "EPIC-PROVIDER-PLUGIN-ECOSYSTEM": {
     "epic": "",
@@ -17924,6 +18068,41 @@
     ],
     "title": "Story Mode UI",
     "type": "EPIC"
+  },
+  "EPIC-SWIPE-PREFERENCE-PAIRS": {
+    "hash": "pending",
+    "extid": "EPIC-SWIPE-PREFERENCE-PAIRS",
+    "type": "EPIC",
+    "title": "Swipe Preference-Pair Capture (DPO Groundwork)",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "training",
+      "dpo",
+      "preferences",
+      "swipes",
+      "datasets"
+    ],
+    "source": ".plan/tickets/epic-swipe-preference-pairs.md",
+    "status": "Not Started"
+  },
+  "EPIC-SYNTHETIC-CAPTURE-WIRE-OR-REMOVE": {
+    "hash": "pending",
+    "extid": "EPIC-SYNTHETIC-CAPTURE-WIRE-OR-REMOVE",
+    "type": "EPIC",
+    "title": "Synthetic QA Capture — Wire or Remove",
+    "label": "epic",
+    "priority": "Low",
+    "epic": "",
+    "tags": [
+      "eval",
+      "ground-truth",
+      "synthetic-data",
+      "decision"
+    ],
+    "source": ".plan/tickets/epic-synthetic-capture-wire-or-remove.md",
+    "status": "Not Started"
   },
   "EPIC-TASK-MANAGEMENT-INTEGRATION": {
     "epic": "",
@@ -27778,6 +27957,19 @@
     "title": "Assistant Creative Studio — Workflow Templates",
     "type": "TASK"
   },
+  "TASK-ASSISTANT-DOCTOR-COMMAND-RENDERING-SETUP-STATE-CHECKS": {
+    "hash": "828b184",
+    "git_issue": "828b184",
+    "extid": "TASK-ASSISTANT-DOCTOR-COMMAND-RENDERING-SETUP-STATE-CHECKS",
+    "type": "TASK",
+    "title": "assistant /doctor command rendering setup-state checks",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-doctor-command-rendering-setup-state-checks.md",
+    "status": "Not Started"
+  },
   "TASK-ASSISTANT-ENTITY-ACCESS-ADAPTATION": {
     "epic": "epic-assistant-entity-access",
     "extid": "TASK-ASSISTANT-ENTITY-ACCESS-ADAPTATION",
@@ -30298,6 +30490,19 @@
     "title": "chat-bugfix-batch-1 scope discovery (2 of 3 stale)",
     "type": "TASK"
   },
+  "TASK-BOOT-READINESS-SUMMARY-OFF-CAPABILITIES-LOG-LINE-AT-READY-TR": {
+    "hash": "83b7049",
+    "git_issue": "83b7049",
+    "extid": "TASK-BOOT-READINESS-SUMMARY-OFF-CAPABILITIES-LOG-LINE-AT-READY-TR",
+    "type": "TASK",
+    "title": "boot readiness summary: off-capabilities log line at ready=true",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-first-run-auto-setup",
+    "tags": [],
+    "source": ".plan/tickets/TASK-boot-readiness-summary-off-capabilities-log-line-at-ready-tr.md",
+    "status": "Not Started"
+  },
   "TASK-BOOTSTRAP-MESH-PEERS-FROM-CONFIG-FEDERATION-PEERS-AT-BOOT": {
     "hash": "e583784",
     "git_issue": "e583784",
@@ -30885,6 +31090,19 @@
       "matrix-c7"
     ],
     "source": ".plan/tickets/TASK-c7-throttled-login-plus-role-change-security-digest.md",
+    "status": "Not Started"
+  },
+  "TASK-CACHE-TOKEN-PROPAGATION-INTO-EXECUSAGE-EXEC-LOG-AND-AUX-CALL": {
+    "hash": "962f2e9",
+    "git_issue": "962f2e9",
+    "extid": "TASK-CACHE-TOKEN-PROPAGATION-INTO-EXECUSAGE-EXEC-LOG-AND-AUX-CALL",
+    "type": "TASK",
+    "title": "Cache-token propagation into ExecUsage, exec log and aux.call telemetry",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-prompt-cache-enablement",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cache-token-propagation-into-execusage-exec-log-and-aux-call.md",
     "status": "Not Started"
   },
   "TASK-CADDY-TLS-TERMINATION-WITH-AUTOMATIC-HTTPS": {
@@ -31644,6 +31862,19 @@
     "tags": [],
     "title": "Character growth milestones",
     "type": "TASK"
+  },
+  "TASK-CHARACTER-IDENTITY-LORA-FLYWHEEL-AVATAR-DATASET-ASSEMBLY-AND": {
+    "hash": "cce0386",
+    "git_issue": "cce0386",
+    "extid": "TASK-CHARACTER-IDENTITY-LORA-FLYWHEEL-AVATAR-DATASET-ASSEMBLY-AND",
+    "type": "TASK",
+    "title": "Character-identity LoRA flywheel: avatar dataset assembly and auto-apply",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-training-finetune-datasets",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-identity-lora-flywheel-avatar-dataset-assembly-and.md",
+    "status": "Not Started"
   },
   "TASK-CHARACTER-INTERACTION-OUTCOMES": {
     "epic": "epic-social-interaction",
@@ -34771,6 +35002,19 @@
     "tags": [],
     "title": "Per-Domain Config Hot-Reload",
     "type": "TASK"
+  },
+  "TASK-CONFIG-INIT-CLOSE-PII-NODE-ENV-BOOT-GATE-PROMOTE-DEFAULTS-TO": {
+    "hash": "183003a",
+    "git_issue": "183003a",
+    "extid": "TASK-CONFIG-INIT-CLOSE-PII-NODE-ENV-BOOT-GATE-PROMOTE-DEFAULTS-TO",
+    "type": "TASK",
+    "title": "config-init: close PII/NODE_ENV boot gate + promote defaults to config.local.yaml on first boot",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-first-run-auto-setup",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-init-close-pii-node-env-boot-gate-promote-defaults-to.md",
+    "status": "Not Started"
   },
   "TASK-CONFIG-MIGRATION-TOOL": {
     "epic": "epic-config-file-separation",
@@ -40383,6 +40627,19 @@
     "title": "Fractal locations migration (013_locations_fractal.ts)",
     "type": "TASK"
   },
+  "TASK-FRIENDLY-PORT-CONFLICT-ERROR-ON-BOOT-EADDRINUSE": {
+    "hash": "4d06224",
+    "git_issue": "4d06224",
+    "extid": "TASK-FRIENDLY-PORT-CONFLICT-ERROR-ON-BOOT-EADDRINUSE",
+    "type": "TASK",
+    "title": "friendly port-conflict error on boot (EADDRINUSE)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-friendly-port-conflict-error-on-boot-eaddrinuse.md",
+    "status": "Not Started"
+  },
   "TASK-FROM-ASSET-I2V-FLOW": {
     "hash": "acf8887",
     "git_issue": "acf8887",
@@ -41046,6 +41303,19 @@
     "tags": [],
     "title": "FTS5 cross-session recall and summarization for RAG-unified memory",
     "type": "TASK"
+  },
+  "TASK-FULL-EFFECTIVE-CONFIG-EXPORT-WITH-OMIT-ON-UNOPENABLE-ENVELOP": {
+    "hash": "a3a2dea",
+    "git_issue": "a3a2dea",
+    "extid": "TASK-FULL-EFFECTIVE-CONFIG-EXPORT-WITH-OMIT-ON-UNOPENABLE-ENVELOP",
+    "type": "TASK",
+    "title": "full effective-config export with omit-on-unopenable-envelope redaction",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-full-effective-config-export-with-omit-on-unopenable-envelop.md",
+    "status": "Not Started"
   },
   "TASK-FUZZING-INFRASTRUCTURE-HARNESS-RUNNER-CORPUS-MANAGER-CRASH-D": {
     "hash": "3fa2ca2",
@@ -41929,6 +42199,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-gm-tool-aux-task-has-no-production-consumer-wire-or-remove.md",
     "status": "done"
+  },
+  "TASK-GM-TOOL-KEYWORD-PRE-GATE-BEHIND-CONFIG-FLAG-FAIL-OPEN": {
+    "hash": "d42f8a3",
+    "git_issue": "d42f8a3",
+    "extid": "TASK-GM-TOOL-KEYWORD-PRE-GATE-BEHIND-CONFIG-FLAG-FAIL-OPEN",
+    "type": "TASK",
+    "title": "gm-tool keyword pre-gate behind config flag (fail-open)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-deterministic-first-gates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gm-tool-keyword-pre-gate-behind-config-flag-fail-open.md",
+    "status": "Not Started"
   },
   "TASK-GM-TRIGGER-AND-TIMELINE-BACKFILL-PROPAGATION": {
     "epic": "epic-gm-shadow-notes",
@@ -46382,6 +46665,19 @@
     "title": "Lorebook Export — Round-Trip Fidelity",
     "type": "TASK"
   },
+  "TASK-LOREBOOK-INCLUSION-GROUPS-SCHEMA-COLUMN-ADMISSION-GATE-GROUP": {
+    "hash": "6bad0ee",
+    "git_issue": "6bad0ee",
+    "extid": "TASK-LOREBOOK-INCLUSION-GROUPS-SCHEMA-COLUMN-ADMISSION-GATE-GROUP",
+    "type": "TASK",
+    "title": "Lorebook inclusion groups: schema column, admission gate, group scoring",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-lorebook-inclusion-groups",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lorebook-inclusion-groups-schema-column-admission-gate-group.md",
+    "status": "Not Started"
+  },
   "TASK-LOREBOOK-TEMPLATE-SEEDING": {
     "epic": "epic-character-core-system",
     "extid": "TASK-LOREBOOK-TEMPLATE-SEEDING",
@@ -47730,6 +48026,19 @@
       "metadata"
     ],
     "source": ".plan/tickets/TASK-metadata-detection-provenance-stamping.md",
+    "status": "Not Started"
+  },
+  "TASK-MID-MESSAGE-CHECKPOINT-RETRY-RETRY-CONTINUE-INSIDE-SWIPE-REP": {
+    "hash": "afe18a4",
+    "git_issue": "afe18a4",
+    "extid": "TASK-MID-MESSAGE-CHECKPOINT-RETRY-RETRY-CONTINUE-INSIDE-SWIPE-REP",
+    "type": "TASK",
+    "title": "Mid-message checkpoint retry (retry-continue) inside swipe replay branch",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mid-message-checkpoint-retry-retry-continue-inside-swipe-rep.md",
     "status": "Not Started"
   },
   "TASK-MIDDLEWARE-ACCEPT-FRONTEND-SUPPLIED-REQUEST-ID-UUID-WITH-SER": {
@@ -51910,6 +52219,19 @@
     "source": ".plan/tickets/TASK-provide-smk-secret-in-browser-test-server-config-so-key-gene.md",
     "status": "Not Started"
   },
+  "TASK-PROVIDER-CONNECTION-WIZARD-CORE-FIRST-RUN-PROVIDER-CONNECTIO": {
+    "hash": "bf6c766",
+    "git_issue": "bf6c766",
+    "extid": "TASK-PROVIDER-CONNECTION-WIZARD-CORE-FIRST-RUN-PROVIDER-CONNECTIO",
+    "type": "TASK",
+    "title": "provider-connection-wizard core: first-run provider connection flow",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-provider-connection-wizard",
+    "tags": [],
+    "source": ".plan/tickets/TASK-provider-connection-wizard-core-first-run-provider-connectio.md",
+    "status": "Not Started"
+  },
   "TASK-PROVIDER-CONTRIBUTIONS-VIA-PLUGIN-SYSTEM": {
     "epic": "epic-plugin-system",
     "extid": "TASK-PROVIDER-CONTRIBUTIONS-VIA-PLUGIN-SYSTEM",
@@ -53597,6 +53919,19 @@
     "source": ".plan/tickets/TASK-recursive-self-improvement-weekly-failure-cluster-mining-cron.md",
     "status": "Not Started",
     "git_issue": "7b76f23"
+  },
+  "TASK-RECURSIVE-WORLD-INFO-SCANNING-ENTRY-CONTENT-TRIGGERS-ENTRIES": {
+    "hash": "a0446cf",
+    "git_issue": "a0446cf",
+    "extid": "TASK-RECURSIVE-WORLD-INFO-SCANNING-ENTRY-CONTENT-TRIGGERS-ENTRIES",
+    "type": "TASK",
+    "title": "Recursive world-info scanning: entry-content triggers entries with bounded depth",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-lorebook-recursive-scanning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-recursive-world-info-scanning-entry-content-triggers-entries.md",
+    "status": "Not Started"
   },
   "TASK-REDO-OPTIONS-OBJECT-PARAMS-REFACTOR-INCREMENTALLY": {
     "hash": "37d451c",
@@ -56369,6 +56704,19 @@
     "title": "Settings PATCH uses t.Any body allowing mass assignment",
     "type": "TASK"
   },
+  "TASK-SETUP-STATE-ENDPOINT-GET-API-V1-SETUP-STATE-CHECKS-ID-OK-HIN": {
+    "hash": "205978b",
+    "git_issue": "205978b",
+    "extid": "TASK-SETUP-STATE-ENDPOINT-GET-API-V1-SETUP-STATE-CHECKS-ID-OK-HIN",
+    "type": "TASK",
+    "title": "setup-state endpoint: GET /api/v1/setup/state {checks:[{id,ok,hint}]}",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-first-run-auto-setup",
+    "tags": [],
+    "source": ".plan/tickets/TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin.md",
+    "status": "Not Started"
+  },
   "TASK-SFX-TRIGGER-DETECTION-AND-LIBRARY-AMBIENT-MUSIC-SFX-EPIC-PHA": {
     "hash": "6477a8f",
     "git_issue": "6477a8f",
@@ -57564,6 +57912,32 @@
     "epic": "epic-multi-instance-reconciliation",
     "tags": [],
     "source": ".plan/tickets/TASK-swarm-vs-leader-write-domain-partition-and-cross-topology-co.md",
+    "status": "Not Started"
+  },
+  "TASK-SWIPE-PREFERENCE-PAIR-EXTRACTION-DPO-GROUNDWORK": {
+    "hash": "6d11244",
+    "git_issue": "6d11244",
+    "extid": "TASK-SWIPE-PREFERENCE-PAIR-EXTRACTION-DPO-GROUNDWORK",
+    "type": "TASK",
+    "title": "Swipe preference-pair extraction (DPO groundwork)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-swipe-preference-pairs",
+    "tags": [],
+    "source": ".plan/tickets/TASK-swipe-preference-pair-extraction-dpo-groundwork.md",
+    "status": "Not Started"
+  },
+  "TASK-SYNTHETIC-QA-CAPTURE-WIRE-OR-REMOVE-DECISION-ADMIN-GATED-CAP": {
+    "hash": "de50ac4",
+    "git_issue": "de50ac4",
+    "extid": "TASK-SYNTHETIC-QA-CAPTURE-WIRE-OR-REMOVE-DECISION-ADMIN-GATED-CAP",
+    "type": "TASK",
+    "title": "Synthetic QA capture: wire-or-remove decision, admin-gated capture endpoint + export",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-synthetic-capture-wire-or-remove",
+    "tags": [],
+    "source": ".plan/tickets/TASK-synthetic-qa-capture-wire-or-remove-decision-admin-gated-cap.md",
     "status": "Not Started"
   },
   "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY": {
@@ -59828,6 +60202,19 @@
       "degrid"
     ],
     "source": ".plan/tickets/TASK-vaedegrid-post-decode-cleanup-stage.md",
+    "status": "Not Started"
+  },
+  "TASK-VAL-SPLIT-AND-BLAKE3-DATASET-FINGERPRINT-AT-EXPORT": {
+    "hash": "b03de66",
+    "git_issue": "b03de66",
+    "extid": "TASK-VAL-SPLIT-AND-BLAKE3-DATASET-FINGERPRINT-AT-EXPORT",
+    "type": "TASK",
+    "title": "Val split and BLAKE3 dataset fingerprint at export",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-finetune-eval-promotion-gate",
+    "tags": [],
+    "source": ".plan/tickets/TASK-val-split-and-blake3-dataset-fingerprint-at-export.md",
     "status": "Not Started"
   },
   "TASK-VALIDATE-AND-FIX-FE-BE-DB-GAPS-FOR-CHAT-VN-SETTINGS": {
