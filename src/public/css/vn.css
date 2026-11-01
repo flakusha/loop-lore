@@ -1168,3 +1168,24 @@
     animation: none;
   }
 }
+
+/* Battle panel — mobile responsive (touch-friendly) */
+@media (width <= 640px) {
+  .battle-panel,
+  .battle-panel-content {
+    font-size: 14px;
+  }
+  .battle-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .battle-action,
+  .battle-combatant {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 12px;
+  }
+  .battle-roster {
+    flex-direction: column;
+  }
+}
