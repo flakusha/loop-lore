@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Small
 **Type:** Feature Task
@@ -38,3 +38,5 @@ Status effect badges displaying active effects on entities.
 
 - `src/frontend/battle/status-effects.ts`
 - `src/frontend/battle/status-badge.ts`
+
+**Resolved:** 2026-11-01 registry-driven close: git issue e339f33 (registry tip: 38b4160a6 Konstantin Fedotov Close issue)
