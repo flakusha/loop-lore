@@ -40,6 +40,7 @@
  *
  * Included entries are ordered by `priority` (high first) then insertion order.
  */
+import { selectWithinBudget, } from "../../../memory/budget";
 import { getConvergentEvents, } from "../../../story/timeline/convergence";
 import { listPendingSteerings, } from "../../../story/timeline/event-steering";
 import { isLoreVisibleTo, parseLoreScope, } from "../../lore/audience";
@@ -171,6 +172,25 @@ export const loreSection: SectionBuilder = {
     // ties keep stable insertion order (position asc from the query).
     relevantEntries.sort((a, b,) => b.priority - a.priority);
 
+    // Token-budget cap (TASK-ctx-lore-budget): the lore section was
+    // historically never budgeted — a large lorebook could dominate the whole
+    // window. Admit entries within `MAX_LORE_TOKENS` via the shared budget
+    // selector: constant entries are pinned (never dropped), the rest compete
+    // by priority in the section's existing order.
+    const budgeted = selectWithinBudget(
+      Array.from(relevantEntries, (entry,) => ({
+        entry,
+        content: entry.content,
+        confidence: 1,
+        importance: entry.priority,
+        pinned: Boolean(entry.constant,),
+      }),),
+      { maxTokens: MAX_LORE_TOKENS, },
+    ).map((m,) => m.entry);
+
+    relevantEntries.length = 0;
+    relevantEntries.push(...budgeted,);
+
     // Update activation timestamps for entries that were included.
     //
     // Two tables own lore rows: `actor_lore_entries` (per-character) and
@@ -273,3 +293,10 @@ export const MAX_PROMPT_STEERINGS = 5;
 
 /** Cap on sibling-story convergent events injected per prompt. */
 export const MAX_CONVERGENT_EVENTS = 10;
+
+/**
+ * Token budget for the admitted lore section (TASK-ctx-lore-budget).
+ * Constant entries are pinned inside the cap; everything else competes by
+ * priority. Kept in one place so tests and future config wiring agree.
+ */
+export const MAX_LORE_TOKENS = 1024;
