@@ -104,18 +104,31 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
 
   /**
    * Enumerate the advertised model list.
-   * @returns core-facing model ids from the session/new model select.
+   * @returns core-facing model ids from the session's advertised models.
    * @throws {HarnessAcpError} kind `spawn`/`initialize`/`session` on failure
    */
   async enumerateModels(): Promise<string[]> {
-    const { options, } = await this.ensureSession();
-    const select = (options as Array<{ id?: unknown; options?: Array<{ value?: unknown }> }> | null)
-      ?.find((o,) => o.id === this.modelConfigId);
-
-    return (select?.options ?? [])
-      .map((o,) => String(o.value ?? "",))
+    return this.advertisedModelIds(await this.ensureSession(),)
       .filter((v,) => v.length > 0)
       .map((v,) => this.toCoreModelId(v,));
+  }
+
+  /**
+   * Advertised wire model values for the established session. Default: the
+   * select configOption named by modelConfigId (stable ACP v1). Override for
+   * non-standard surfaces — claude-agent-acp instead returns a `models`
+   * session field (SessionModelState.availableModels[].modelId), which is
+   * not a configOption at all.
+   * @param session - established session state (id + session/new response)
+   * @returns raw wire model values, unfiltered.
+   */
+  protected advertisedModelIds(session: { sessionId: string; options: unknown },): string[] {
+    const select = ((session.options as { configOptions?: unknown } | null)?.configOptions as
+      | Array<{ id?: unknown; options?: Array<{ value?: unknown }> }>
+      | null)
+      ?.find((o,) => o.id === this.modelConfigId);
+
+    return (select?.options ?? []).map((o,) => String(o.value ?? "",));
   }
 
   /**
@@ -125,14 +138,27 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   async setModel(modelId: string,): Promise<void> {
     try {
       const sessionId = (await this.ensureSession()).sessionId;
-      await this.rpc!.request("session/set_config_option", {
-        sessionId,
-        configId: this.modelConfigId,
-        value: this.toWireModelId(modelId,),
-      },);
+      await this.applySessionModel(sessionId, this.toWireModelId(modelId,),);
     } catch (error) {
       throw toAcpError("model", error,);
     }
+  }
+
+  /**
+   * Apply a wire model value to the session. Default: session/set_config_option
+   * (stable ACP v1). Override for extension methods — claude-agent-acp
+   * switches via its `unstable_setSessionModel` ({sessionId, modelId})
+   * extension instead.
+   * @param sessionId - established session id
+   * @param wireModelId - the translated wire model value
+   * @throws {JsonRpcRequestError} when the harness rejects the call
+   */
+  protected async applySessionModel(sessionId: string, wireModelId: string,): Promise<void> {
+    await this.rpc!.request("session/set_config_option", {
+      sessionId,
+      configId: this.modelConfigId,
+      value: wireModelId,
+    },);
   }
 
   /**
@@ -211,14 +237,13 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
 
       const session = await this.rpc.request("session/new", { cwd: this.opts.cwd ?? process.cwd(), },) as {
         sessionId?: unknown;
-        configOptions?: unknown;
       };
 
       if (typeof session.sessionId !== "string" || session.sessionId === "") {
         throw new HarnessAcpError("session", "session/new returned no sessionId",);
       }
 
-      this.session = { sessionId: session.sessionId, options: session.configOptions, };
+      this.session = { sessionId: session.sessionId as string, options: session, };
       return this.session;
     } catch (error) {
       const kind = error instanceof JsonRpcRequestError &&

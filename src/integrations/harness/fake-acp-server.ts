@@ -44,10 +44,23 @@ process.stdin.on("data", (c) => {
         send({ jsonrpc: "2.0", id: m.id, result: {} });
         continue;
       }
+      if (process.env.FAKE_MODELS_FIELD) {
+        send({ jsonrpc: "2.0", id: m.id, result: {
+          sessionId: "fake-session-1",
+          models: { availableModels: models.map((v) => ({ modelId: v, name: v })), currentModelId: models[0] ?? "" },
+        } });
+        continue;
+      }
       send({ jsonrpc: "2.0", id: m.id, result: {
         sessionId: "fake-session-1",
         configOptions: [{ id: configId, type: "select", currentValue: models[0] ?? "", options: models.map((v) => ({ value: v })) }],
       } });
+    } else if (m.method === "unstable_setSessionModel") {
+      if (rejectModel && m.params.modelId === rejectModel) {
+        send({ jsonrpc: "2.0", id: m.id, error: { code: -32602, message: "Unknown model " + m.params.modelId } });
+      } else {
+        send({ jsonrpc: "2.0", id: m.id, result: {} });
+      }
     } else if (m.method === "session/set_config_option") {
       if (rejectModel && m.params.value === rejectModel) {
         send({ jsonrpc: "2.0", id: m.id, error: { code: -32602, message: "Unknown ACP model " + m.params.value } });
@@ -88,6 +101,8 @@ export interface FakeAcpEnv {
   FAKE_CONFIG_ID?: string;
   /** When set, session/new answers without a sessionId. */
   FAKE_NO_SESSION?: string;
+  /** claude-code flavor: session/new carries the non-standard `models` field. */
+  FAKE_MODELS_FIELD?: string;
 }
 
 /** A started fake server; `argv` feeds a profile command, `stop()` reaps it. */
