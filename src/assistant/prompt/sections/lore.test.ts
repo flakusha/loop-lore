@@ -893,3 +893,93 @@ describe("loreSection — timeline foreshadowing + convergence injection", () =>
     }
   });
 });
+
+/**
+ * loreSection token-budget cap (TASK-ctx-lore-budget).
+ *
+ * The lore section was historically never budgeted — an over-1024-token
+ * activation set must trim low-priority entries while constant entries
+ * (pinned in the shared selector) always survive.
+ */
+describe("loreSection — token budget cap", () => {
+  const enabled = LoreEntryStatus.Enabled;
+  const beforeChar = LorePosition.BeforeChar;
+  const noCooldown = 0;
+
+  /** 3000 chars → ~750 estimated tokens per entry (chars / 4). */
+  const HEAVY = 3000;
+
+  test("low-priority entries drop when activations exceed MAX_LORE_TOKENS", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertUsers(db, "gm", "GM",);
+      const user = await db.selectFrom("users",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+      await insertActors(db, "Speaker",);
+      const actor = await db.selectFrom("actors",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+      await insertWorlds(db, user.id, "Budget World",);
+      const world = await db.selectFrom("worlds",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+
+      // Constant entry — pinned, must survive regardless of budget pressure.
+      await insertWorldLoreEntries(db, world.id, "CONSTANT-PIN", {
+        enabled,
+        constant: 1,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+      },);
+
+      // Three heavy non-constant entries (750 tokens each): only ~1024/750 →
+      // one fits beside the pinned entry; priority decides which.
+      await insertWorldLoreEntries(db, world.id, `LOW-${"y".repeat(HEAVY,)}`, {
+        enabled,
+        constant: 0,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        priority: 1,
+      },);
+
+      await insertWorldLoreEntries(db, world.id, `MID-${"y".repeat(HEAVY,)}`, {
+        enabled,
+        constant: 0,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        priority: 5,
+      },);
+
+      await insertWorldLoreEntries(db, world.id, `HIGH-${"y".repeat(HEAVY,)}`, {
+        enabled,
+        constant: 0,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        priority: 10,
+      },);
+
+      const ctx: AssembleContext = {
+        db,
+        actor: {
+          id: actor.id,
+          display_name: "Speaker",
+          system_prompt: null,
+          description: null,
+          personality: null,
+          scenario: null,
+          post_history_instructions: null,
+          mes_example: null,
+          agent_role: null,
+        },
+        chat: { id: "chat-lore-budget", mode: "story", world_id: world.id, current_location_id: null, },
+        params: { actorId: actor.id, chatId: "chat-lore-budget", modelId: "test-model", selectiveKeys: [], },
+        isStory: true,
+        tokenBudget: 8000,
+      };
+
+      const text = (await loreSection.build(ctx,)).map((m,) => m.content).join("\n",);
+
+      expect(text,).toContain("CONSTANT-PIN",);
+      expect(text,).toContain("HIGH-",);
+      expect(text,).not.toContain("MID-",);
+      expect(text,).not.toContain("LOW-",);
+    } finally {
+      await sqlite.close();
+    }
+  });
+});
