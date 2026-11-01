@@ -14,8 +14,8 @@
  * This module is intentionally side-effect free: it does not touch the DB.
  * The caller is responsible for any persistence (planned for the
  * `chat_random_events` table per `TASK-random-encounters-events`) and for
- * routing the resulting `EventRef` into the prompt context window via
- * `injectEvents` on the next turn.
+ * routing the resulting `EventRef` into the prompt's events section
+ * (`src/assistant/prompt/sections/events.ts`) on the next turn.
  */
 import { uid, } from "../utils";
 import { EVENT_POOL, NPC_OPTIONS, SCENT_OPTIONS, SOUND_OPTIONS, WEATHER_OPTIONS, } from "./random-events-pool";
@@ -193,13 +193,13 @@ function pickRandom<T,>(arr: readonly T[],): T {
 }
 
 /**
- * Convert a `RandomEvent` to an `EventRef` for context-window injection.
+ * Convert a `RandomEvent` to an `EventRef`.
  *
- * Pure utility — does NOT mutate the context window. Pair with
- * `injectEvents` (from `chat/context-window`) on the next prompt build to
- * surface the event in the LLM's context.
+ * Pure utility. Pair with the prompt assembler's events section
+ * (`src/assistant/prompt/sections/events.ts`) to surface the event in the
+ * LLM's context.
  * @param event - The random event to convert
- * @returns EventRef compatible with `injectEvents()`
+ * @returns EventRef for prompt-assembly consumption
  */
 export const randomEventToEventRef = (event: RandomEvent,): EventRef => ({
   content: event.content,

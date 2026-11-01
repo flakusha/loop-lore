@@ -15,11 +15,13 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
 import { checkAndPruneContext, } from "./context-pruning";
 
-// 4 messages × 21_000 chars ≈ 25_200 tokens by the prune estimator
-// (content.length * 0.3) — above DEFAULT_PRUNING_CONFIG.targetTokens (20_000),
-// and token_count_total (32_000 each, below MAX_TOKENS × 0.95) pins the
+// 4 messages × 24_000 chars ≈ 24_000 tokens by the shared estimator
+// (chars / 4, `src/chat/token-utils.ts`) — above
+// DEFAULT_PRUNING_CONFIG.targetTokens (20_000) with room for one prune
+// before the 0.8-floor guard (24_000 − 6_000 = 18_000 ≥ 16_000), and
+// token_count_total (32_000 each, below MAX_TOKENS × 0.95) pins the
 // context threshold into "critical".
-const CHUNK = "x".repeat(21_000,);
+const CHUNK = "x".repeat(24_000,);
 const MESSAGE_COUNT = 4;
 
 describe("checkAndPruneContext — persists pruning decisions", () => {

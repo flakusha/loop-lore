@@ -6,8 +6,7 @@
  */
 import type { Kysely, } from "kysely";
 import { getContextWindowForModel, } from "../../admin/model-capabilities";
-import { computeContextWindow, estimateTokens, } from "../../chat";
-import type { MessageRef, } from "../../chat";
+import { estimateTokens, } from "../../chat";
 import { isChatOwner, } from "../../chat/service";
 import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
@@ -143,15 +142,8 @@ export async function handleGetContext(
     .limit(100,)
     .execute();
 
-  const messageRefs: MessageRef[] = Array.from(recent, (m,) => ({
-    messageId: m.id,
-    role: m.role,
-    content: m.content,
-    tokenCount: estimateTokens(m.content,),
-    createdAt: m.created_at,
-  }),);
-
-  const fallbackUsedTokens = computeContextWindow(messageRefs, maxTokens,).totalTokens;
+  let fallbackUsedTokens = 0;
+  for (const m of recent) { fallbackUsedTokens += estimateTokens(m.content,); }
 
   const result = await computeBudgetResult(
     database,
