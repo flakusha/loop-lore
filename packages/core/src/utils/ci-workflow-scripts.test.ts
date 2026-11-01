@@ -4,7 +4,7 @@
 import { expect, test, } from "bun:test";
 import { readdirSync, readFileSync, } from "node:fs";
 import { join, } from "node:path";
-import pkg from "../../package.json" with { type: "json", };
+import pkg from "../../../../package.json" with { type: "json", };
 
 /**
  * Pin for the BUG where `.github/workflows/*` steps invoked `bun run <script>`
@@ -22,7 +22,7 @@ import pkg from "../../package.json" with { type: "json", };
  * backtracks, so a bare `(?!\/)` would re-match "script" out of "scripts").
  */
 
-const WORKFLOWS_DIR = join(import.meta.dir, "..", "..", ".github", "workflows",);
+const WORKFLOWS_DIR = join(import.meta.dir, "..", "..", "..", "..", ".github", "workflows",);
 
 /** Captures the script name of a `bun run <script>` invocation. */
 const RUN_SCRIPT = /\bbun run ([a-zA-Z0-9:_-]+)(?![a-zA-Z0-9:_\/-])/gu;

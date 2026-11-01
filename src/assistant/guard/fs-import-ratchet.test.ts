@@ -141,6 +141,8 @@ const BASELINE = [
   // sandbox's own allowlist checks resolve through it, so a policed realpath
   // here would recurse into the interceptor it is deciding for.
   "src/utils/realpath-within.ts",
+  "src/harness/project-metadata/items.ts",
+  "src/harness/project-metadata/load.ts",
 ];
 
 /**
