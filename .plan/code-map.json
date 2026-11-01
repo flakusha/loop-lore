@@ -44919,6 +44919,10 @@
       "source": ".plan/tickets/TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cover-export-sse-start-ts-poll-loop-branches.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/client-contract.md"
     }
