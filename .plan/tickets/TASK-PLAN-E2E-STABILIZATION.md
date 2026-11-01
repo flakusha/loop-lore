@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: e2e, test-infra, release-closeout
 **Assignee**:
-**Epic**:
+**Epic:** epic-e2e-integration-testing
 **Related**: `TASK-e2e-browser-reliability-hardening`, `BUG-e2e-test-infrastructure-fixes`
 
 Git issue: `5fb353d`

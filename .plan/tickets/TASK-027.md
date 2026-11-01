@@ -14,7 +14,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-crafting-professions
 **Related**:
 
 Git issue: `dd2d5e7`

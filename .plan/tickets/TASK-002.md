@@ -14,7 +14,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-world-chat-channels-invites
 **Related**:
 
 Git issue: `20c7472`

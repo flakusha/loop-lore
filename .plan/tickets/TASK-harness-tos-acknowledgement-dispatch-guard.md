@@ -3,7 +3,7 @@
 
 # TASK: Harness ToS acknowledgement dispatch guard
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
@@ -41,3 +41,5 @@ The config flag (`tosGrayzoneAcknowledged` on `AcpProfileConfig`) landed first (
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-11-01 registry-driven close: git issue c177368 (registry tip: e66782308 Konstantin Fedotov Close issue)
