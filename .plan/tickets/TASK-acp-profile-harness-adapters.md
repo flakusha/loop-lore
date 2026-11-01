@@ -5,6 +5,19 @@
 
 **Status:** Done
 **Status Note:** Landed on branch feat-acp-harness-adapters (worktree slice, pending finalize): opencode + codex adapters on the shared `GenericAcpAdapter` engine (`src/integrations/harness/generic-acp.ts`), omp.ts migrated onto the engine (public API unchanged), fake fixture extended with `FAKE_CONFIG_ID`/`FAKE_NO_SESSION` flavors, suites for both new adapters mirroring the omp suite. Deviation per AC 3: claude-code split out to TASK-acp-claude-code-adapter — its adapter (`@agentclientprotocol/claude-agent-acp`) exposes model selection only through a non-standard `models` session/new field plus the `unstable_setSessionModel` extension method (no stable v1 config-option select), so implementing it would require guessing wire casing, which the caveat forbids. Second deviation: codex advertises bare model-preset ids (no provider prefix), so its adapter namespaces them as `codex/<preset>` to preserve the core's `provider/id` contract — no core changes needed.
+
+Follow-up slice (same branch): profile flavor selection — `AcpProfileConfig.harness`
+(`"omp" | "opencode" | "codex"`, optional, default `"omp"`), runtime list
+`HARNESS_FLAVORS` (schema/harness.ts), validation rejects unknown flavors, JSON-schema
+meta exposes the enum, and `src/integrations/harness/flavor-factories.ts` maps flavor →
+adapter factory (`resolveAdapterFactory(profile.harness)`). Reviewer F1 note: dev has NO
+composition root yet — `ProfileRegistry` is only constructed in tests, so the factory is
+still injected by the caller; the wiring slice that builds a production registry must
+consume `resolveAdapterFactory` (this module is deliberately the one flavor-aware
+extension point). Also fixed on review: spawn failures now classify as error kind
+`spawn` (was mislabeled `initialize` — the jsonrpc transport message lacks the word
+"spawn"), and the unreachable `"closed"` HarnessAcpErrorKind was dropped (no consumer
+matched it).
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-external-harness-acp

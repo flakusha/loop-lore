@@ -20,6 +20,12 @@ export const HARNESS_CAPABILITIES = ["tools", "thinking",] as const;
 /** Capability flag name. */
 export type HarnessCapability = (typeof HARNESS_CAPABILITIES)[number];
 
+/** ACP harness flavors loop-lore ships adapters for (runtime list: wire/validation cannot drift). */
+export const HARNESS_FLAVORS = ["omp", "opencode", "codex",] as const;
+
+/** Which shipped adapter speaks a profile's wire. */
+export type HarnessFlavor = (typeof HARNESS_FLAVORS)[number];
+
 /** One tier: the concrete model id plus what it is trusted to do. */
 export interface AcpTierConfig {
   /**
@@ -61,6 +67,8 @@ export interface AcpProfileConfig {
   tiers: Partial<Record<HarnessTierId, AcpTierConfig>>;
   /** Selection strategy: only `failover` is implemented in this slice. */
   strategy?: "failover" | "best-of" | "split";
+  /** Which shipped adapter speaks this profile's wire. Default: `"omp"`. */
+  harness?: HarnessFlavor;
   /** Optional usage caps (rpm / tokensPerDay). */
   limits?: AcpProfileLimits;
   /** Optional breaker thresholds. */
