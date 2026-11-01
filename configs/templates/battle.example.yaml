@@ -1,0 +1,7 @@
+# Battle chat setup template example
+slug: battle
+name: Battle
+mode: battle
+features:
+  - battle
+  - skill_check

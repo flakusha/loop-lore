@@ -1,0 +1,7 @@
+# Battle configuration example
+# Domain: battle — turn-based combat UI
+
+[battle]
+enabled = true
+skillChecks = true
+environmentalEffects = true
