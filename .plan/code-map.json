@@ -36895,6 +36895,10 @@
       "source": ".plan/tickets/TASK-task-memory-kg-recall-datalog-rules.md"
     },
     {
+      "kind": "frontend",
+      "source": "docs/frontend/worlds.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/memory-system.md"
     }
