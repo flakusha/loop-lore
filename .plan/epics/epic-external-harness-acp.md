@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 **Status:** In Progress
-**Status Note:** Core profile-aware selection landed on dev (`c4f23fa56` profile selector/registry/ledger/breaker + `7082da5da` omp integration, both in ancestry; `harness.acp.profiles[]` config; TASK-acp-profile-aware-model-selection Done): adapter matrix stays open — opencode/claude-code adapters live in TASK-acp-profile-harness-adapters (Not Started).
+**Status Note:** Landed on dev: ACP driver module (`34a018b09` HarnessDriver + session/cancel + permission approval), opencode adapter (`410954c39`, plus codex on the shared `GenericAcpAdapter` engine), omp adapter (original adapter in ancestry of `src/integrations/harness/omp.ts`; migrated onto the generic engine by `410954c39`), claude-code adapter (`516ecb808`), fake ACP server test fixture (fixture landed through `6ba944b5a` and earlier fixture commits), profile-aware model selection (`c4f23fa56` + `7082da5da`), and the per-user isolation gate (`84b4ad10`). TASK-acp-driver-module, TASK-acp-profile-harness-adapters, TASK-acp-claude-code-adapter, TASK-fake-acp-server-test-fixture Done; TASK-per-user-isolation-gate landed. Open: permission/approval flow (TASK-permission-approval-flow), model discovery + capability enrichment (TASK-model-discovery-capability-enrichment), message persistence mapping (TASK-message-persistence-mapping), optional-dep packaging (TASK-optional-dep-packaging), e2e env-gated scenario (TASK-e2e-env-gated-scenario), plus four ToS acknowledgement tickets (TASK-harness-tos-acknowledgement-config-flag, TASK-harness-tos-acknowledgement-dispatch-guard, TASK-harness-tos-acknowledgement-frontend-confirmation, TASK-harness-provider-tos-usage-class-matrix — all Not Started).
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -52,15 +52,15 @@ Spawn official binary only; never extract credentials; single-user/single-machin
 
 ## Tasks
 
-- [ ] ACP driver module
-- [ ] opencode adapter
-- [ ] omp adapter
+- [x] ACP driver module
+- [x] opencode adapter
+- [x] omp adapter
 - [ ] permission/approval flow
 - [ ] model discovery + capability enrichment
 - [ ] message persistence mapping
-- [ ] per-user isolation gate
+- [x] per-user isolation gate
 - [ ] optional-dep packaging
-- [ ] fake ACP server test fixture
+- [x] fake ACP server test fixture
 - [ ] e2e env-gated scenario
 
 ## Dependencies
