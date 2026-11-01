@@ -31,7 +31,10 @@ Training data loop for loop-lore: where training sets come from (asset/caption e
 - `epic-asset-lineage-provenance.md` — license-safe curation + provenance
 - `epic-rag-assets-unified-storage-and-assistant-flows.md` — decomposition as dataset source
 - `epic-recursive-self-improvement.md` — RSI dataset feed consumer
+- `epic-finetune-eval-promotion-gate.md` — eval + promotion gate for trained artifacts (consumes this epic's exports)
 
 ## Tickets
 
-_TBD — create implementation tickets._
+- `TASK-generation-fact-capture-at-queue-time` (`31df5ce`, High, pre-existing) — capture rendered prompt + sampler params + seed at generation-queue time; fixes the B2 gap (emotion-avatar job records lack the rendered prompt).
+- `TASK-character-identity-lora-flywheel-avatar-dataset-assembly-and` (`cce0386`, High) — per-character ai-toolkit dataset assembly from `character_avatars` + `asset_links`; depends on `31df5ce`.
+- Eval/promotion-gate ticket owned by `epic-finetune-eval-promotion-gate.md`: `TASK-val-split-and-blake3-dataset-fingerprint-at-export` (`b03de66`, High).
