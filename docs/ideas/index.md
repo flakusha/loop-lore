@@ -7,7 +7,7 @@ Research-driven feature proposals for loop-lore, derived from a deep-dive of `do
 plus analysis of community projects (SillyTavern, RisuAI, Agnai) and community
 feature requests. Each theme is broken into its own document and linked below.
 
-> These are **proposals** — not yet scheduled in `.plan/backlog/` or
+> These are **proposals** — not yet scheduled in `.plan/tickets/` or
 > `.plan/epics/epic-architecture.md`. Approved for drafting 2026-07-18; docs may be reorganized
 > later.
 
@@ -58,7 +58,7 @@ matrix: `.plan/tickets/TASK-cross-tool-data-portability-review.md`.
 > competitors — see:
 > **[emergent-platform-landscape-2026.md](./emergent-platform-landscape-2026.md)** —
 > Bucket A/B/C feature lists + loop-lore gap synthesis (E1–E8) mapped to existing epics.
-> Feed it into `../.plan/epics/epic-platform-research.md` and `../.plan/backlog/priority.md`.
+> Feed it into `../.plan/epics/epic-platform-research.md` (the priority ladder it fed is archived in `../.plan/backlog-archive.md`).
 >
 > **Refresh sweeps:** [emergent-platform-landscape-2026b.md](./emergent-platform-landscape-2026b.md)
 > (2026-08-31, VN/world-builder studios, E9–E16) and

@@ -96,7 +96,7 @@ confirmable, template-driven prompt + dispatch plan.
 | `SDRequest` / `generateImage`              | ✅ Removed 2026-08-14 | `src/assistant/sd.ts` deleted (dead stub, zero imports)               |
 | `ScenarioSource` store + bridge            | ✅ Removed 2026-08-14 | `src/assistant/scenario-source.ts` deleted (dead stub, zero imports)  |
 | `/image` command                           | 🟡 Action dispatch only | `src/assistant/commands/image.ts` (832 bytes)                       |
-| Dead `detectIntent()`                      | ✅ Removed 2026-08-07 | `src/assistant/intent.ts` (see `.plan/backlog/open.md` row 4)         |
+| Dead `detectIntent()`                      | ✅ Removed 2026-08-07 | `src/assistant/intent.ts` (see `.plan/backlog-archive.md` row 4)         |
 
 ### What needs building
 
@@ -469,7 +469,7 @@ workflow and no create backend.
 - `configs/templates/llm.example.yaml`, `sd.example.yaml`, `avatar.example.yaml`,
   `image-edit.example.yaml`, `character.example.yaml`, `expansion.example.yaml` —
   existing template example files (pattern to follow)
-- `.plan/backlog/open.md` § Dead / unwired code — `detectIntent` removal (row 4),
+- `.plan/backlog-archive.md` § Dead / unwired code — `detectIntent` removal (row 4),
   `scenario-source.ts` + `sd.ts` dead stubs (row 10 — DELETED 2026-08-14)
 - `.plan/epics/epic-config-templates.md` — template system design doc
 

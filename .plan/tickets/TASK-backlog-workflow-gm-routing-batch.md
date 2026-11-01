@@ -30,7 +30,7 @@
 - [ ] index.json updated via plan:sync:fix; no duplicate epic created.
 
 **Tags:** workflow, gm-routing, runner, assistant-gm, shadow-notes
-**Related:** .plan/backlog/open-untriaged.md § New clusters, .plan/epics/epic-workflow-engine.md, .plan/epics/epic-assistant-gm-flows.md
+**Related:** .plan/backlog-archive.md § New clusters, .plan/epics/epic-workflow-engine.md, .plan/epics/epic-assistant-gm-flows.md
 
 
 git issue: f4ff46f

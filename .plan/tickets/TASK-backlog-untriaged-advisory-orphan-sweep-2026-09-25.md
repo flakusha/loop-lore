@@ -26,7 +26,7 @@
 - [ ] bun run plan:sync reports zero orphans for the 2026-09-25 review set.
 
 **Tags:** plan-sync, untriaged, advisory-orphan, epic-linkage, bookkeeping
-**Related:** .plan/backlog/open-untriaged.md § 2026-09-25, scripts/plan/sync.ts, .plan/tickets/index.json
+**Related:** .plan/backlog-archive.md § 2026-09-25, scripts/plan/sync.ts, .plan/tickets/index.json
 
 
 git issue: c7448b3

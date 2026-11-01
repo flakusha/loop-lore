@@ -3,6 +3,16 @@
 
 # EPIC: Native/WASM Module Performance Benchmarks
 
+> **Note (2026-11-01, backlog tier drop):** this epic is unbound — no ticket in
+> `.plan/tickets/index.json` names it in its `Epic:` field, so per-ticket
+> ranking cannot see it. Its remaining work lives in the unchecked `## Tasks`
+> items below. Candidate tickets to re-bind via `giwt sync` (do not hand-edit
+> `index.json`): `FEAT-e2e-performance-benchmarks.md` and
+> `TASK-testing-benchmarking.md` (both open, carry this epic's FFI-vs-WASM-vs-JS
+> acceptance blocks, currently bound to the hub epic-testing-benchmarking) and
+> `TASK-003-gpu-requirements.md` (scope references this epic; currently bound to
+> epic-deployment-infrastructure).
+
 **Overview:** (see sections below)
 
 

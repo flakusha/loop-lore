@@ -27,7 +27,7 @@
 - [ ] bun run check exits 0; size-strict gate green (size regression is a separate ticket — see TASK-backlog-size-strict-regression-recovery).
 
 **Tags:** build-integrity, typecheck, plan-sync, retirement, release-010
-**Related:** .plan/backlog/open-build-integrity.md, .plan/backlog/open-inflight.md § 2026-09-11, .plan/tickets/index.json, scripts/plan/sync.ts
+**Related:** .plan/backlog-archive.md, .plan/backlog-archive.md § 2026-09-11, .plan/tickets/index.json, scripts/plan/sync.ts
 
 
 git issue: 332c1aa

@@ -5,8 +5,10 @@
  * Wiring + dead-code check gate.
  *
  * Verifies the HTTP surface is actually wired to production and no
- * code-complete service is orphaned. Mirrors the "Dead / unwired code"
- * backlog section of `.plan/backlog/open.md`.
+ * code-complete service is orphaned. Unwired findings are tracked as tickets
+ * (e.g. `TASK-transport-server-wiring`); the historical "Dead / unwired code"
+ * backlog records live in `.plan/backlog-archive.md` (tier format dropped
+ * 2026-11-01).
  *
  * Checks:
  *  1. Route factories: every `*Routes` factory exported from a top-level
@@ -25,8 +27,10 @@
  *  4. Route-test coverage: every mounted route factory has a matching
  *     `*.test.ts` exercising it.
  *
- * Documented deferrals (intentionally unwired — see backlog):
- *  - `loraRoutes` — LoRA gated "when feature is ready for production".
+ * Documented deferrals (intentionally unwired): none. The former `loraRoutes`
+ * deferral (LoRA gated "when feature is ready for production") ended when the
+ * LoRA routes were wired 2026-08-18 (A8 close-out) — the note migrated to
+ * `.plan/tickets/TASK-lora-discovery-application.md`.
  *
  * Usage: `bun run scripts/check-wiring.ts`
  * Exit 1 on any violation.
@@ -88,16 +92,10 @@ const NON_MOUNT_POINTS = new Set([
   "memoryAuditRoutes",
 ],);
 
-// Documented deferrals — intentionally not mounted.
-const DEFERRED = new Set([
-  "loraRoutes",
-],);
-
 await collectRouteFactories();
 
 for (const factory of routeFactories) {
   if (NON_MOUNT_POINTS.has(factory,)) { continue; }
-  if (DEFERRED.has(factory,)) { continue; }
   // Mounted if the factory name appears as `.use(<factory>(` in mount source.
   const mounted = new RegExp(`\\.use\\(\\s*${factory}\\s*\\(`,).test(mountSource,);
   if (!mounted) {
@@ -189,7 +187,7 @@ for await (const f of testGlob.scan({ cwd: ROOT, },)) { testFiles.add(f,); }
 
 const warnings: string[] = [];
 for (const factory of routeFactories) {
-  if (NON_MOUNT_POINTS.has(factory,) || DEFERRED.has(factory,)) { continue; }
+  if (NON_MOUNT_POINTS.has(factory,)) { continue; }
   // A route module has coverage if any test file references the factory.
   let covered = false;
   for (const testFile of testFiles) {

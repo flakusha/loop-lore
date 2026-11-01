@@ -37,7 +37,7 @@ loop-lore 는 핵심 기능 — 캐릭터, 채팅, 로어북, 멀티 백엔드 L
 — 이 README 의 디렉터리 목록은 며칠 내에 오래됩니다.
 
 기능 상태는 [`.plan/epics-index.md`](../../.plan/epics-index.md), 진행 중인
-작업은 [`.plan/backlog/open.md`](../../.plan/backlog/open.md) 에 있습니다 —
+작업은 [`.plan/priority-matrix.md`](../../.plan/priority-matrix.md) 에 있습니다 —
 상태는 여기에 중복하지 않습니다.
 
 ---

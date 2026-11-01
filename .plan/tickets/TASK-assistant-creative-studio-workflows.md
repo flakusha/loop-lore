@@ -40,7 +40,7 @@ merge: `replace` | `extend` | `override`) and the `AssistantIntent` taxonomy
 | `SDRequest` / `generateImage` | ✅ Removed 2026-08-14 | deleted (dead stub, zero imports; reimplement from scratch) |
 | `ScenarioSource`              | ✅ Removed 2026-08-14 | deleted (dead stub, zero imports; reimplement from scratch) |
 | `/image` command              | 🟡 Action dispatch    | `src/assistant/commands/image.ts`  |
-| `detectIntent()`              | ✅ Removed 2026-08-07 | see `.plan/backlog/open.md` row 4  |
+| `detectIntent()`              | ✅ Removed 2026-08-07 | see `.plan/backlog-archive.md` row 4  |
 
 ## Design
 

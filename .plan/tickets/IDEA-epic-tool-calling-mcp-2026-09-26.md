@@ -86,6 +86,6 @@ Without this epic, every consumer (`epic-assistant-gm-flows.md`, `epic-actor-aut
 7. **Conflict with `epic-platform-integrations.md`** — the provider adapter epic is the natural neighbor. Should the tool-calling epic be a sibling or a sub-epic of platform-integrations?
 
 **Tags:** idea, matrix-gap, g42, tool-calling, mcp, cross-cutting
-**Related:** .plan/matrix-cross-mechanics.md (G42), .plan/epics/epic-platform-integrations.md, .plan/epics/epic-workflow-engine.md, .plan/epics/epic-assistant-gm-flows.md, .plan/epics/epic-plugin-system.md, .plan/backlog/open-untriaged.md
+**Related:** .plan/matrix-cross-mechanics.md (G42), .plan/epics/epic-platform-integrations.md, .plan/epics/epic-workflow-engine.md, .plan/epics/epic-assistant-gm-flows.md, .plan/epics/epic-plugin-system.md, .plan/backlog-archive.md
 
 git issue: 00000000

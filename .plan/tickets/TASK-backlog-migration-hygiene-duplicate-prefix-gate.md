@@ -78,7 +78,7 @@ Only the ghost-pointer half is outstanding. Steps 1a, 1b and 2 below are already
 - [x] No impact on existing migration runs — the renumber was applied against a database with nothing at `02x` applied (see ## RESOLVED).
 
 **Tags:** migration, hygiene, gate, code-map, schema-drift
-**Related:** .plan/backlog/open-debt.md § Migration hygiene, .plan/code-map.json, src/db/migrations/README.md, scripts/check-migration-ordering.ts
+**Related:** .plan/backlog-archive.md § Migration hygiene, .plan/code-map.json, src/db/migrations/README.md, scripts/check-migration-ordering.ts
 
 
 git issue: 94870aa

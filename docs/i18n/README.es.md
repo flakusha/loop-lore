@@ -38,7 +38,7 @@ quedarían obsoletos en pocos días.
 
 El estado de las funcionalidades vive en
 [`.plan/epics-index.md`](../../.plan/epics-index.md) y el trabajo activo en
-[`.plan/backlog/open.md`](../../.plan/backlog/open.md) — los estados no se
+[`.plan/priority-matrix.md`](../../.plan/priority-matrix.md) — los estados no se
 duplican aquí.
 
 ---

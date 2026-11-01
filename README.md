@@ -36,8 +36,8 @@ layers, design principles, and key decisions. The authoritative source for
 project structure is `src/` and [`AGENTS.md`](AGENTS.md) — directory
 listings in this README would go stale within days.
 
-Feature status lives in [`.plan/epics-index.md`](.plan/epics-index.md) and
-active work in [`.plan/backlog/open.md`](.plan/backlog/open.md) — statuses
+Feature status lives in [`.plan/epics-index.md`](.plan/epics-index.md); the
+active workstack is the generated [`.plan/priority-matrix.md`](.plan/priority-matrix.md) — statuses
 are not duplicated here.
 
 ---

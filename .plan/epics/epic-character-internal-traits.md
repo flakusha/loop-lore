@@ -692,7 +692,7 @@ No dedicated spec doc covers D7–D9 (coping, approach, autonomy). `docs/spec/ch
 **Rationale:** Project already has mature task management via:
 - `.plan/tickets/` — ticket files
 - `git issues` via `worktree.sh` — distributed, Git-embedded issues
-- `.plan/backlog/` — priority tracking
+- `.plan/backlog-archive.md` — priority tracking
 
 The task-management skill is better suited for projects without existing task infrastructure.
 

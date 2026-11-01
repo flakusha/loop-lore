@@ -38,7 +38,7 @@ LLM — を健全な基盤の上に再構築します:
 で古くなります。
 
 機能ステータスは [`.plan/epics-index.md`](../../.plan/epics-index.md)、
-進行中の作業は [`.plan/backlog/open.md`](../../.plan/backlog/open.md) に
+進行中の作業は [`.plan/priority-matrix.md`](../../.plan/priority-matrix.md) に
 あります — ここでは重複させません。
 
 ---

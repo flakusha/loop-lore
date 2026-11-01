@@ -32,7 +32,7 @@ loop-lore 重建核心功能 — 角色、聊天、世界书、多后端 LLM —
 系统分层、设计原则与关键决策请参阅 [`docs/spec/architecture.md`](../../docs/spec/architecture.md)。项目结构以 `src/` 和 [`AGENTS.md`](../../AGENTS.md) 为准 — 本 README 的目录列表很快就会过时。
 
 功能状态见 [`.plan/epics-index.md`](../../.plan/epics-index.md)，活跃工作见
-[`.plan/backlog/open.md`](../../.plan/backlog/open.md) — 状态此处不再重复。
+[`.plan/priority-matrix.md`](../../.plan/priority-matrix.md) — 状态此处不再重复。
 
 ---
 

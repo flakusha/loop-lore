@@ -15,7 +15,7 @@
 
 ## Summary
 
-19 validation schemas in src/validation/schemas never referenced; validateGeneratedEntity, checkConsistency, validateFeatureFlags, validateProviderUrls, validateDomainConfig, assertRowUpdated, assertRowDeleted exported but never called; config flags in src/config/sections/messages.ts never read. Fix: attach schemas to routes or delete; wire or remove dead validators/config. Tracked in .plan/backlog/security-review-2026-08-25.md.
+19 validation schemas in src/validation/schemas never referenced; validateGeneratedEntity, checkConsistency, validateFeatureFlags, validateProviderUrls, validateDomainConfig, assertRowUpdated, assertRowDeleted exported but never called; config flags in src/config/sections/messages.ts never read. Fix: attach schemas to routes or delete; wire or remove dead validators/config. Tracked in .plan/backlog-archive.md.
 
 ## Acceptance Criteria
 

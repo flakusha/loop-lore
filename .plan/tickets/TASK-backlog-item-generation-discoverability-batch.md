@@ -29,7 +29,7 @@
 - [ ] index.json updated via plan:sync:fix.
 
 **Tags:** item-generation, assistant, subcommands, draft-store, p2-c
-**Related:** .plan/backlog/open-untriaged.md § New clusters, .plan/epics/epic-entity-generation-workflows.md, .plan/epics/epic-conversation-branching.md
+**Related:** .plan/backlog-archive.md § New clusters, .plan/epics/epic-entity-generation-workflows.md, .plan/epics/epic-conversation-branching.md
 
 
 git issue: 9f9e158

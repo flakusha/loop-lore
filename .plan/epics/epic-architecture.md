@@ -37,8 +37,8 @@ _TBD — create implementation tickets._
 
 Current status of feature areas. Checkmarks = code exists in `src/`.
 
-> **Task tracking lives in `.plan/`** — `backlog/` (priority/high-value/active/open), `epics/`, and `tickets/` are the source of truth.
-> This file is the high-level vision and status overview. For detailed task queues, see `.plan/backlog/`.
+> **Task tracking lives in `.plan/`** — `epics/` and `tickets/` are the source of truth; priority is the generated `.plan/priority-matrix.md`.
+> This file is the high-level vision and status overview. For detailed task queues, see `.plan/tickets/`.
 
 ## ✅ Core Infrastructure (Built)
 
@@ -76,7 +76,7 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 
 ## 🏗 v0.1 MVP — Active Development
 
-> **Detailed task breakdown:** `.plan/implementation-plan.md` (completed epics) and `.plan/backlog/` (active queue).
+> **Detailed task breakdown:** `.plan/implementation-plan.md` (completed epics) and `.plan/backlog-archive.md` (active queue).
 
 | Epic | Feature                                                       | Status             |
 | ---- | ------------------------------------------------------------- | ------------------ |
@@ -93,12 +93,12 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 
 ### Quick Wins
 
-See `.plan/backlog/` § Quick Wins for the full queue (Q1–Q5).
+See `.plan/backlog-archive.md` § Quick Wins for the full queue (Q1–Q5).
 
 ## 🎯 Planned Features
 
 > **Detailed specs:** Individual docs in `docs/spec/` and `docs/frontend/`.
-> **Task queue:** `.plan/backlog/` (P1–P3).
+> **Task queue:** `.plan/backlog-archive.md` (P1–P3).
 
 ### User-Facing Features
 
@@ -119,11 +119,11 @@ See `.plan/backlog/` § Quick Wins for the full queue (Q1–Q5).
 ### Infrastructure
 
 - Asset system service, Age gate enforcement, Profanity filter — see `docs/spec/assets.md`, `docs/spec/architecture.md`
-- Event Bus, Provider Registry, Agentic Workspace — see `.plan/backlog/` P2
+- Event Bus, Provider Registry, Agentic Workspace — see `.plan/backlog-archive.md` P2
 
 ### Advanced AI
 
-Tool Use, RAG, Model Comparison, Multi-Agent, Structured Output, Prompt Chaining — see `.plan/backlog/` P2.
+Tool Use, RAG, Model Comparison, Multi-Agent, Structured Output, Prompt Chaining — see `.plan/backlog-archive.md` P2.
 
 ### Browser Hardening (Response Headers)
 
@@ -131,15 +131,15 @@ Policy engine built (`src/middleware/response-headers.ts`); dynamic-response pol
 
 ### Administrative
 
-Admin Dashboard, User Management, Backup, Audit Logging, Rate Limiting, API Versioning, Health Checks — see `.plan/backlog/` P2.
+Admin Dashboard, User Management, Backup, Audit Logging, Rate Limiting, API Versioning, Health Checks — see `.plan/backlog-archive.md` P2.
 
 ### P3: Enterprise & Scale
 
-Database peripherals, storage abstraction, observability, horizontal scaling, build system, migration tools, webhooks, OAuth/LDAP, vector DB, plugin marketplace — see `.plan/backlog/` P3.
+Database peripherals, storage abstraction, observability, horizontal scaling, build system, migration tools, webhooks, OAuth/LDAP, vector DB, plugin marketplace — see `.plan/backlog-archive.md` P3.
 
 ## Deferred Concepts
 
-Tracked in `.plan/backlog/` P3 section. Includes: Tool/Function Calling, BYOK, BYOR, 3D World, Cross-Chat Autonomous Messages, Dual Runtime, LLM native providers, Image/Video Generation, Full i18n.
+Tracked in `.plan/backlog-archive.md` P3 section. Includes: Tool/Function Calling, BYOK, BYOR, 3D World, Cross-Chat Autonomous Messages, Dual Runtime, LLM native providers, Image/Video Generation, Full i18n.
 
 ## Dual-Use Architecture
 
@@ -161,7 +161,7 @@ Research-driven feature proposals, separated by theme and linked from a hub. Der
 
 ## Timeline
 
-See `.plan/implementation-plan.md` for completed epics, `.plan/backlog/` for active queue, `.plan/epics/` for detailed plans.
+See `.plan/implementation-plan.md` for completed epics, `.plan/backlog-archive.md` for active queue, `.plan/epics/` for detailed plans.
 
 <!-- ISSUE-MAP-START -->
 
@@ -171,11 +171,11 @@ See `.plan/implementation-plan.md` for completed epics, `.plan/backlog/` for act
 
 | Issue                                        | Title                   | Priority | Source           |
 | -------------------------------------------- | ----------------------- | -------- | ---------------- |
-| [EPIC-2026-21](/meta/issues/#epic-2026-21)   | Notification Expansion  | medium   | `.plan/backlog/` |
-| [EPIC-2026-22](/meta/issues/#epic-2026-22)   | RPG Mechanics Core      | medium   | `.plan/backlog/` |
-| [EPIC-2026-23](/meta/issues/#epic-2026-23)   | Assistant Commands      | low      | `.plan/backlog/` |
-| [EPIC-2026-24](/meta/issues/#epic-2026-24)   | Filtering & Pagination  | low      | `.plan/backlog/` |
-| [FEAT-2026-013](/meta/issues/#feat-2026-013) | Regex output transforms | low      | `.plan/backlog/` |
-| [FEAT-2026-014](/meta/issues/#feat-2026-014) | Smart-regen transforms  | low      | `.plan/backlog/` |
+| [EPIC-2026-21](/meta/issues/#epic-2026-21)   | Notification Expansion  | medium   | `.plan/backlog-archive.md` |
+| [EPIC-2026-22](/meta/issues/#epic-2026-22)   | RPG Mechanics Core      | medium   | `.plan/backlog-archive.md` |
+| [EPIC-2026-23](/meta/issues/#epic-2026-23)   | Assistant Commands      | low      | `.plan/backlog-archive.md` |
+| [EPIC-2026-24](/meta/issues/#epic-2026-24)   | Filtering & Pagination  | low      | `.plan/backlog-archive.md` |
+| [FEAT-2026-013](/meta/issues/#feat-2026-013) | Regex output transforms | low      | `.plan/backlog-archive.md` |
+| [FEAT-2026-014](/meta/issues/#feat-2026-014) | Smart-regen transforms  | low      | `.plan/backlog-archive.md` |
 
 <!-- ISSUE-MAP-END -->

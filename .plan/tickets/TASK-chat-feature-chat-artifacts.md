@@ -17,7 +17,7 @@
 
 ## Summary
 
-First-class chat artifacts: rich generated content (documents, tables, UI snippets, visualizations) produced by the LLM inside a conversation and rendered as a dedicated surface linked to its message — the LLM-industry "artifact" pattern (Anthropic-style), today only a P6+ umbrella entry in `.plan/backlog/open-deferred.md` with no owning ticket. Distinct from media assets (owned by the asset platform) and from scene art (`TASK-chat-feature-scene-art-generation`): artifacts are **structured/interactive content**, not images.
+First-class chat artifacts: rich generated content (documents, tables, UI snippets, visualizations) produced by the LLM inside a conversation and rendered as a dedicated surface linked to its message — the LLM-industry "artifact" pattern (Anthropic-style), today only a P6+ umbrella entry in `.plan/backlog-archive.md` with no owning ticket. Distinct from media assets (owned by the asset platform) and from scene art (`TASK-chat-feature-scene-art-generation`): artifacts are **structured/interactive content**, not images.
 
 ## Acceptance Criteria
 
@@ -35,7 +35,7 @@ First-class chat artifacts: rich generated content (documents, tables, UI snippe
 - `epic-asset-platform-capabilities` — storage/rendition primitives to reuse
 - `TASK-chat-feature-message-edit-resubmit-branch` — versioning on fork
 - `TASK-chat-feature-share-links-export-formats` — export posture
-- `.plan/backlog/open-deferred.md` P6+ umbrella entry — this ticket gives it an owner
+- `.plan/backlog-archive.md` P6+ umbrella entry — this ticket gives it an owner
 
 ## Files
 

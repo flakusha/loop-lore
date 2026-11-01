@@ -28,7 +28,7 @@
 - [ ] index.json updated via plan:sync:fix.
 
 **Tags:** coverage, waivers, frontend, alpine, testing-qa
-**Related:** .plan/backlog/open-untriaged.md § New clusters, .plan/epics/epic-testing-qa.md, .plan/tickets/TASK-waiver-coverage-floor-below-80-for-plugins-frontend-native-i.md
+**Related:** .plan/backlog-archive.md § New clusters, .plan/epics/epic-testing-qa.md, .plan/tickets/TASK-waiver-coverage-floor-below-80-for-plugins-frontend-native-i.md
 
 
 git issue: 04475df

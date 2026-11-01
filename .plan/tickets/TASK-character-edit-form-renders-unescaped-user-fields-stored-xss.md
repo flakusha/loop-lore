@@ -14,7 +14,7 @@
 
 ## Summary
 
-src/routes/views/character-edit-form.ts:125,127 interpolates v.name/v.desc into value=/textarea without escapeHtml; imported character cards render attacker content in victim browser. Fix: wrap all v.* in escapeHtml. Tracked in .plan/backlog/security-review-2026-08-25.md.
+src/routes/views/character-edit-form.ts:125,127 interpolates v.name/v.desc into value=/textarea without escapeHtml; imported character cards render attacker content in victim browser. Fix: wrap all v.* in escapeHtml. Tracked in .plan/backlog-archive.md.
 
 ## Acceptance Criteria
 
