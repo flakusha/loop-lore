@@ -105,6 +105,16 @@ async function verifyTokenContext(
     return null;
   }
 
+  // Server-side principal resolution (never caller-supplied): an actors row
+  // with actor_type 'system' maps to internal-service; everything else is a user.
+  const actor = await database
+    .selectFrom("actors",)
+    .select("actor_type",)
+    .where("id", "=", payload.sub,)
+    .executeTakeFirst();
+
+  const principalKind = actor?.actor_type === "system" ? "internal-service" : "user";
+
   // Update last activity (throttled: at most once per 5 minutes)
   try {
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000,).toISOString();
@@ -122,6 +132,7 @@ async function verifyTokenContext(
     userId: payload.sub,
     userRole: user.role,
     sessionId: payload.sid,
+    principalKind,
   },);
 }
 
