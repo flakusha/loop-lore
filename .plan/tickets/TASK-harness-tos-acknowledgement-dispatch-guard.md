@@ -25,19 +25,19 @@ Policy frame (binding): harness-as-provider for RPG/other functionalities is per
 
 ## Acceptance Criteria
 
-- [ ] A subscription-backed profile without `tosGrayzoneAcknowledged: true` is never selected nor dispatched (unit-tested at the `select`/`runTurn` level, mirroring `profile-selector.test.ts`).
-- [ ] Local and api profiles need no flag and flow unchanged; the guard never consults their acknowledgement.
-- [ ] Denial is observable: distinct error kind/code (e.g. a `HarnessAcpError` variant or skip reason) plus a structured log naming the profile and the missing acknowledgement.
-- [ ] Default-off posture preserved: with the flag absent, only subscription-backed profiles change behavior.
+- [x] A subscription-backed profile without `tosGrayzoneAcknowledged: true` is never selected nor dispatched (unit-tested at the `select`/`runTurn` level, mirroring `profile-selector.test.ts`).
+- [x] Local and api profiles need no flag and flow unchanged; the guard never consults their acknowledgement.
+- [x] Denial is observable: distinct error kind/code (e.g. a `HarnessAcpError` variant or skip reason) plus a structured log naming the profile and the missing acknowledgement.
+- [x] Default-off posture preserved: with the flag absent, only subscription-backed profiles change behavior.
 
 **Dependencies:** blocked by TASK-harness-tos-acknowledgement-config-flag (flag + validation must land first); consumes TASK-harness-provider-tos-usage-class-matrix usage classes.
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The config flag (`tosGrayzoneAcknowledged` on `AcpProfileConfig`) landed first (TASK-harness-tos-acknowledgement-config-flag); this ticket adds the runtime gate. The usage-class matrix (TASK-harness-provider-tos-usage-class-matrix) that would statically mark flavors subscription-backed has NOT landed, so no subscription detection is invented here: until it lands, candidate admission applies the acknowledgement rule to every profile, and the local/api exemption arrives with the matrix. The guard lives in `ProfileSelector`'s candidate walk (`walk()`): a profile lacking `tosGrayzoneAcknowledged: true` is denied with the distinct `tos_unacknowledged` skip code, logged on the `harness-acp` child logger with the profile name, and a zero-candidate `runTurn` names the code and denied profiles in its error message — clearly distinct from capability/limit/breaker skips.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
