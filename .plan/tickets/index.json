@@ -25653,6 +25653,18 @@
     "title": "Achievements enum revival — promote service-layer to db barrel",
     "type": "TASK"
   },
+  "TASK-ACP-CLAUDE-CODE-ADAPTER": {
+    "hash": "pending",
+    "extid": "TASK-ACP-CLAUDE-CODE-ADAPTER",
+    "type": "TASK",
+    "title": "claude-code ACP adapter",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-claude-code-adapter.md",
+    "status": "done"
+  },
   "TASK-ACP-DRIVER-MODULE": {
     "hash": "a727ddb",
     "git_issue": "a727ddb",
@@ -25690,7 +25702,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-profile-harness-adapters.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-ACP-STDIO-SERVER-OVER-EXISTING-CHAT-SESSIONS": {
     "hash": "6297321",

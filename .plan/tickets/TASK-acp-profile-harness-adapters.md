@@ -79,3 +79,5 @@ inside per-harness files.
 
 - Dependency: if codex/claude-code lack stable ACP method names, split those
   two into a follow-up rather than guessing wire casing.
+
+**Resolved:** 2026-11-01 registry-driven close: git issue 47e8bae (registry tip: 7be75e59b Konstantin Fedotov Close issue)
