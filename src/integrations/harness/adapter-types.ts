@@ -54,8 +54,7 @@ export type HarnessAcpErrorKind =
   | "initialize"
   | "session"
   | "model"
-  | "prompt"
-  | "closed";
+  | "prompt";
 
 /** Error raised (via promise rejection) by an adapter call. */
 export class HarnessAcpError extends Error {
@@ -90,7 +89,7 @@ export interface HarnessAcpAdapter {
   /**
    * Run one prompt turn and collect the response.
    * @param prompt - the user prompt text
-   * @throws {HarnessAcpError} kind `prompt`/`closed` on failure
+   * @throws {HarnessAcpError} kind `prompt` on failure
    */
   prompt(prompt: string,): Promise<HarnessTurnResult>;
   /**
