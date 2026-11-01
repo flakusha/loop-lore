@@ -1,19 +1,39 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { BattleSummary, } from "../../rpg/service/battles/summary.js";
 import { type FakeEl, installBattleDom, } from "../tests/battle-fake-dom";
 import { renderBattleSummary, } from "./battle-summary.js";
 
 let restoreDom: () => void;
 
+// Pre-file catalog state: whatever earlier files in this worker left in place.
+const localeStringsHost = globalThis as { __localeStrings?: unknown };
+const initialLocaleStrings = localeStringsHost.__localeStrings;
+let savedLocaleStrings: unknown;
+let hasSavedLocaleStrings = false;
+
 beforeEach(() => {
   restoreDom = installBattleDom();
+  savedLocaleStrings = localeStringsHost.__localeStrings;
+  hasSavedLocaleStrings = true;
+  // Seed the alpine i18n catalog the summary card resolves its label from.
+  localeStringsHost.__localeStrings = {
+    battle: { battleSummary: "Battle summary", log: "Battle log", },
+  };
 },);
 
 afterEach(() => {
   restoreDom();
+  if (hasSavedLocaleStrings) {
+    localeStringsHost.__localeStrings = savedLocaleStrings;
+    hasSavedLocaleStrings = false;
+  }
+},);
+
+afterAll(() => {
+  localeStringsHost.__localeStrings = initialLocaleStrings;
 },);
 
 function summary(): BattleSummary {
@@ -49,5 +69,16 @@ describe("renderBattleSummary", () => {
   it("omits the toggle when the log is empty", () => {
     const card = renderBattleSummary(summary(), [],) as unknown as FakeEl;
     expect(card.children,).toHaveLength(2,);
+  });
+
+  it("labels the card from the i18n catalog", () => {
+    const card = renderBattleSummary(summary(), [],) as unknown as FakeEl;
+    expect(card.getAttribute("aria-label",),).toBe("Battle summary",);
+  });
+
+  it("falls back to the i18n key when the catalog is empty", () => {
+    localeStringsHost.__localeStrings = {};
+    const card = renderBattleSummary(summary(), [],) as unknown as FakeEl;
+    expect(card.getAttribute("aria-label",),).toBe("battle.battleSummary",);
   });
 });

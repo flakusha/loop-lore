@@ -7,7 +7,7 @@
  * `executeItem` callback. Also pins the SOCIAL_ACTIONS bar contract the item
  * cycle relies on.
  */
-import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { type FakeEl, installBattleDom, } from "../tests/battle-fake-dom";
 import { view, } from "../tests/battle-fake-mount";
 import { SOCIAL_ACTIONS, } from "./commands";
@@ -15,12 +15,40 @@ import { renderHeader, renderItems, renderRoster, } from "./render";
 
 let restoreDom: () => void;
 
+// Pre-file catalog state: whatever earlier files in this worker left in place.
+const localeStringsHost = globalThis as { __localeStrings?: unknown };
+const initialLocaleStrings = localeStringsHost.__localeStrings;
+let savedLocaleStrings: unknown;
+let hasSavedLocaleStrings = false;
+
 beforeEach(() => {
   restoreDom = installBattleDom();
+  savedLocaleStrings = localeStringsHost.__localeStrings;
+  hasSavedLocaleStrings = true;
+  // Seed the alpine i18n catalog the roster/item labels resolve from.
+  localeStringsHost.__localeStrings = {
+    battle: {
+      battleActions: "Battle actions",
+      battleItems: "Battle items",
+      environmentalEffects: "Environmental effects",
+      health: "Health",
+      log: "Battle log",
+      statusEffects: "Status effects",
+      targetSelection: "Target selection",
+    },
+  };
 },);
 
 afterEach(() => {
   restoreDom();
+  if (hasSavedLocaleStrings) {
+    localeStringsHost.__localeStrings = savedLocaleStrings;
+    hasSavedLocaleStrings = false;
+  }
+},);
+
+afterAll(() => {
+  localeStringsHost.__localeStrings = initialLocaleStrings;
 },);
 
 const noopCallbacks = {
@@ -161,7 +189,22 @@ describe("action economy + environment", () => {
     )!;
 
     expect(list.getAttribute("role",),).toBe("group",);
+    expect(list.getAttribute("aria-label",),).toBe("Battle items",);
     const row = list.querySelector('[data-battle-item="potion"]',)!;
     expect(row.getAttribute("role",),).toBeNull();
+  });
+
+  it("falls back to i18n keys when the catalog is empty", () => {
+    localeStringsHost.__localeStrings = {};
+    const roster = renderRoster(view(), null, noopCallbacks,);
+    expect(roster.getAttribute("aria-label",),).toBe("battle.targetSelection",);
+    const list = renderItems(
+      view({
+        items: [{ id: "potion", name: "Healing Draught", quantity: 2, },],
+      },),
+      noopCallbacks,
+    )!;
+
+    expect(list.getAttribute("aria-label",),).toBe("battle.battleItems",);
   });
 });

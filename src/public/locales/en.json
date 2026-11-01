@@ -153,6 +153,11 @@
     "statusEffects": "Status effects",
     "log": "Battle log",
     "environmentalEffects": "Environmental effects",
+    "targetSelection": "Target selection",
+    "battleActions": "Battle actions",
+    "battleItems": "Battle items",
+    "battleControls": "Battle controls",
+    "battleSummary": "Battle summary"
   },
   "chat": {
     "sendMessage": "Send Message",

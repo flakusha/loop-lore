@@ -9,6 +9,7 @@
  * `panel.ts` (mount/state/keyboard) so each file stays under 250L.
  */
 
+import { t, } from "../alpine/i18n";
 import {
   actionAvailable,
   ACTIONS,
@@ -83,7 +84,7 @@ export function renderRoster(
   const list = document.createElement("div",);
   list.className = "battle-roster";
   list.setAttribute("role", "group",);
-  list.setAttribute("aria-label", "Target selection",);
+  list.setAttribute("aria-label", t("battle.targetSelection",),);
 
   let i = 0;
   for (const c of battle.combatants) {
@@ -143,7 +144,7 @@ export function renderActions(
   const bar = document.createElement("div",);
   bar.className = "battle-actions";
   bar.setAttribute("role", "toolbar",);
-  bar.setAttribute("aria-label", "Battle actions",);
+  bar.setAttribute("aria-label", t("battle.battleActions",),);
 
   const availability = {
     battleActive: battle.status === "active",
@@ -211,7 +212,7 @@ export function renderItems(
   const list = document.createElement("div",);
   list.className = "battle-items";
   list.setAttribute("role", "group",);
-  list.setAttribute("aria-label", "Battle items",);
+  list.setAttribute("aria-label", t("battle.battleItems",),);
 
   for (const item of battle.items) {
     const row = document.createElement("button",);
