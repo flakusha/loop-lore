@@ -153,7 +153,7 @@ describe("activity-stream routes", () => {
     const payload = JSON.parse(dataLine!.slice(5,),) as { chats: Record<string, { unseenCount: number }> };
     expect(payload.chats["chat-a"]?.unseenCount,).toBe(2,);
 
-    reader.cancel();
+    await reader.cancel();
     await settle();
     sqlite.close();
   });
@@ -170,7 +170,7 @@ describe("activity-stream routes", () => {
     const second = await readChunkWithTimeout(reader, 100,);
     expect(second.done,).toBe(true,); // timed out, no chunk
 
-    reader.cancel();
+    await reader.cancel();
     await settle();
     sqlite.close();
   });
@@ -205,7 +205,7 @@ describe("activity-stream routes", () => {
     const payload = JSON.parse(dataLine!.slice(5,),) as { t: number };
     expect(typeof payload.t,).toBe("number",);
 
-    reader.cancel();
+    await reader.cancel();
     await settle();
     sqlite.close();
   }, 15_000,);

@@ -54,10 +54,11 @@ describe("sseStream", () => {
 
   test("onStart is the first beat; the immediate tick is skipped with it", async () => {
     const order: string[] = [];
-    const res = sseStream(async () => {
+    const res = sseStream(async (send,) => {
       order.push("tick",);
+      send("tick", { n: order.length, },);
     }, {
-      intervalMs: 10,
+      intervalMs: 5,
       keepaliveMs: 60_000,
       onStart: async (send,) => {
         order.push("start",);
@@ -74,10 +75,21 @@ describe("sseStream", () => {
     expect(order,).toEqual(["start",],);
     expect(first,).toContain("event: initial",);
 
-    // The interval still ticks after the onStart beat.
-    await new Promise<void>((resolve,) => setTimeout(resolve, 50,));
+    // Resource contract: this test owns its stream and asserts via bounded
+    // reads, never via wall-clock sleeps, so it stays order- and load-safe.
+    // The interval still ticks after the onStart beat: wait for the first
+    // interval event instead of assuming a duration.
+    let seen = "";
+    const deadline = Date.now() + 2_000;
+    while (!seen.includes("event: tick",) && Date.now() < deadline) {
+      const { value: chunk, done, } = await reader.read();
+      if (done) { break; }
+      seen += decoder.decode(chunk,);
+    }
+
     expect(order[0],).toBe("start",);
     expect(order.length,).toBeGreaterThan(1,);
+    expect(seen,).toContain("event: tick",);
     await reader.cancel();
   });
 });
