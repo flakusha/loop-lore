@@ -193,4 +193,15 @@ export const WAIVERS = {
     reason:
       "pre-existing debt surfaced by JSDoc-only documentation; 63.8 measured under diff-files (unchanged on dev); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
   },
+  // Gate pass: a one-line downloadUrl versioning (/api/export/download/ ->
+  // /api/v1/export/download/) pulled start.ts into the diff-scoped per-file
+  // floor, exposing pre-existing poll-loop debt (76.9 measured: 401 branch
+  // unreachable in solo-mode tests, bg-catch log, teardown/safeEnqueue
+  // early-returns, failed-event frame). Owning ticket:
+  // .plan/tickets/TASK-cover-export-sse-start-ts-poll-loop-branches.md
+  "routes:src/routes/export-sse/start.ts": {
+    floor: 76,
+    reason:
+      "one-line downloadUrl versioning pulled file into diff-scoped floor; poll-loop/teardown branches need injection seam; 76.9 measured; TASK-cover-export-sse-start-ts-poll-loop-branches",
+  },
 };
