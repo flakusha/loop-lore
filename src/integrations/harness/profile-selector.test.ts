@@ -28,6 +28,7 @@ function cfg(
       good: { model: good, capabilities: ["tools", "thinking",], },
       fast: { model: fast, capabilities: ["tools",], },
     },
+    tosGrayzoneAcknowledged: true,
     ...extra,
   };
 }
@@ -112,6 +113,26 @@ describe("ProfileSelector.select", () => {
     expect(recovered,).toHaveLength(1,);
   });
 
+  it("excludes profiles without tosGrayzoneAcknowledged: true (tos_unacknowledged)", async () => {
+    const denied = cfg("denied", "d/good", "d/fast", { tosGrayzoneAcknowledged: undefined, },);
+    const ok = cfg("ok", "o/good", "o/fast",);
+    const { selector, } = makeSelector([denied, ok,], {
+      denied: { models: ["d/good", "d/fast",], },
+      ok: { models: ["o/good", "o/fast",], },
+    },);
+
+    const picks = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
+    expect(picks.map((c,) => c.profile),).toEqual(["ok",],);
+  });
+
+  it("runs an acknowledged profile through dispatch unchanged", async () => {
+    const p = cfg("p", "zai/glm", "zai/flash",);
+    const { selector, factory, } = makeSelector([p,], { p: { models: ["zai/glm", "zai/flash",], }, },);
+    const turn = await selector.runTurn({ taskType: "mechanical", needsCapabilities: [], }, "hi", factory,);
+    expect(turn.profile,).toBe("p",);
+    expect(turn.result.text,).toBe("ok",);
+  });
+
   it("cost tiebreak orders equal-capability candidates cheapest-first", async () => {
     const a = cfg("a", "a/good", "a/cheap",);
     const b = cfg("b", "b/good", "b/pricey",);
@@ -148,6 +169,19 @@ describe("ProfileSelector.runTurn", () => {
     await expect(
       selector.runTurn({ taskType: "mechanical", needsCapabilities: [], }, "hi", fakeFactory({},).factory,),
     ).rejects.toThrow(/no harness profile satisfies/,);
+  });
+
+  it("names tos_unacknowledged when ToS denial emptied the candidate list", async () => {
+    const a = cfg("a", "a/good", "a/fast", { tosGrayzoneAcknowledged: false, },);
+    const b = cfg("b", "b/good", "b/fast", { tosGrayzoneAcknowledged: undefined, },);
+    const { selector, factory, } = makeSelector([a, b,], {
+      a: { models: ["a/good", "a/fast",], },
+      b: { models: ["b/good", "b/fast",], },
+    },);
+
+    await expect(
+      selector.runTurn({ taskType: "mechanical", needsCapabilities: [], }, "hi", factory,),
+    ).rejects.toThrow(/tos_unacknowledged:a.*tos_unacknowledged:b/s,);
   });
 
   it("feeds usage into the ledger from the recorded run", async () => {
