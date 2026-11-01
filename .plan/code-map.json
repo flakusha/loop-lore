@@ -117,6 +117,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-full-effective-config-export-with-omit-on-unopenable-envelop.md"
     }
   ],
   "src/admin/config-secrets.test.ts": [
@@ -129,6 +133,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-full-effective-config-export-with-omit-on-unopenable-envelop.md"
     }
   ],
   "src/admin/config.test.ts": [
@@ -146,6 +154,10 @@
     }
   ],
   "src/admin/config.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-provider-connection-wizard.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-recursive-self-improvement.md"
@@ -177,6 +189,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-rate-governor-for-llm-actors.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-full-effective-config-export-with-omit-on-unopenable-envelop.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-provider-connection-wizard-core-first-run-provider-connectio.md"
     },
     {
       "kind": "ticket",
@@ -244,6 +264,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-provider-connection-wizard.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
     },
     {
@@ -285,6 +309,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-provider-connection-wizard-core-first-run-provider-connectio.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin.md"
     },
     {
       "kind": "ticket",
@@ -361,6 +393,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-admin-ui-page-get-api.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin.md"
     }
   ],
   "src/age-gate": [
@@ -3009,6 +3045,12 @@
       "source": ".plan/tickets/TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history.md"
     }
   ],
+  "src/assistant/commands/doctor.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-doctor-command-rendering-setup-state-checks.md"
+    }
+  ],
   "src/assistant/commands/duplicate.test.ts": [
     {
       "kind": "ticket",
@@ -4435,6 +4477,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-doctor-command-rendering-setup-state-checks.md"
     },
     {
       "kind": "ticket",
@@ -12475,12 +12521,20 @@
   ],
   "src/cli/headless.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-first-run-auto-setup.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-headless-cli-assets-characters.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-headless-cli-chat-generate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin.md"
     }
   ],
   "src/cli/import.ts": [
@@ -14193,8 +14247,16 @@
       "source": ".plan/epics/epic-continuous-improvement.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-first-run-auto-setup.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-config-init-close-pii-node-env-boot-gate-promote-defaults-to.md"
     },
     {
       "kind": "ticket",
@@ -14299,6 +14361,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-config-examples-and-domain-file-support-for-uncovered-sectio.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-config-init-close-pii-node-env-boot-gate-promote-defaults-to.md"
     }
   ],
   "src/config/load/domain.ts": [
@@ -14359,12 +14425,20 @@
       "source": ".plan/epics/epic-configs-path-resolution.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-first-run-auto-setup.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-config-init-close-pii-node-env-boot-gate-promote-defaults-to.md"
     },
     {
       "kind": "ticket",
@@ -14394,6 +14468,14 @@
     }
   ],
   "src/config/load/pii-safety.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-first-run-auto-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-config-init-close-pii-node-env-boot-gate-promote-defaults-to.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
@@ -15217,6 +15299,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-config-init-close-pii-node-env-boot-gate-promote-defaults-to.md"
     },
     {
       "kind": "ticket",
@@ -17441,6 +17527,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic17-encryption-e2e-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin.md"
     },
     {
       "kind": "frontend",
@@ -38388,6 +38478,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-first-run-auto-setup.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-harness-integration.md"
     },
     {
@@ -38401,6 +38495,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-optional-dep-packaging.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin.md"
     }
   ],
   "src/native/modules/compression.ts": [
@@ -42161,6 +42259,10 @@
       "source": ".plan/epics/epic-frontend-admin.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-provider-connection-wizard.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-056.md"
     },
@@ -42231,12 +42333,24 @@
       "source": ".plan/epics/epic-frontend-admin.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-provider-connection-wizard.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-providers-list-endpoint-is-public.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-doctor-command-rendering-setup-state-checks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-provider-connection-wizard-core-first-run-provider-connectio.md"
     },
     {
       "kind": "ticket",
@@ -42309,6 +42423,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-admin-peer-and-quota-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-full-effective-config-export-with-omit-on-unopenable-envelop.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin.md"
     }
   ],
   "src/routes/admin/templates.ts": [
@@ -45551,6 +45673,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin.md"
     }
   ],
   "src/routes/housing.ts": [
@@ -55191,6 +55317,10 @@
       "source": ".plan/tickets/TASK-cross-platform-single-binary.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-friendly-port-conflict-error-on-boot-eaddrinuse.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/build-deploy.md"
     }
@@ -55367,6 +55497,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-boot-readiness-summary-off-capabilities-log-line-at-ready-tr.md"
     },
     {
       "kind": "ticket",
@@ -58516,6 +58650,10 @@
   "src/tui/chat/commands.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-doctor-command-rendering-setup-state-checks.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-slash-command-completion.md"
     },
     {
@@ -60681,6 +60819,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-doctor-command-rendering-setup-state-checks.md"
     },
     {
       "kind": "ticket",

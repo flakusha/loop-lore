@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 366 epics
+**Total:** 368 epics
 
 ## Summary
 
@@ -208,6 +208,7 @@
 | Not Started | Federated Workload Offload & Instance Quotas | High | Very High | 0 | [epic-federation-offload-quotas.md](/.plan/epics/epic-federation-offload-quotas.md) |
 | Done | File Splitting & God-Module Refactor | High | Very High | 0 | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md) |
 | Not Started | Fine-tune Evaluation & Promotion Gate | High | Medium | 0 | [epic-finetune-eval-promotion-gate.md](/.plan/epics/epic-finetune-eval-promotion-gate.md) |
+| Not Started | First-Run Auto-Setup (L0 Completion) | High | Medium | 0 | [epic-first-run-auto-setup.md](/.plan/epics/epic-first-run-auto-setup.md) |
 | Not Started | Flexible RPG Patterns | Medium | Medium | 0 | [epic-rpg-patterns.md](/.plan/epics/epic-rpg-patterns.md) |
 | Not Started | Fractal Locations — Recursive Containment + Mobile Transports | High | High | 0 | [epic-fractal-locations.md](/.plan/epics/epic-fractal-locations.md) |
 | Not Started | Framework SDKs | Medium | High | 0 | [epic-framework-sdks.md](/.plan/epics/epic-framework-sdks.md) |
@@ -305,6 +306,7 @@
 | In Progress | Prompt Improvement — Unified Text Enhancement | High | Medium | 0 | [epic-prompt-improvement.md](/.plan/epics/epic-prompt-improvement.md) |
 | Not Started | Prompt Inspector — Pre-Send Assembled-Prompt View | Medium | Small | 0 | [epic-prompt-inspector.md](/.plan/epics/epic-prompt-inspector.md) |
 | In Progress | Provider & Plugin Ecosystem | Medium | Large | 0 | [epic-provider-plugin-ecosystem.md](/.plan/epics/epic-provider-plugin-ecosystem.md) |
+| Not Started | Provider Connection Wizard (L1) | High | Medium | 0 | [epic-provider-connection-wizard.md](/.plan/epics/epic-provider-connection-wizard.md) |
 | Not Started | Provider Prompt-Cache Enablement + Cache-Token Observability | Medium | Small | 0 | [epic-prompt-cache-enablement.md](/.plan/epics/epic-prompt-cache-enablement.md) |
 | Not Started | Publication Content Translation (Books & Comics) | Medium | Large | 0 | [epic-publication-i18n.md](/.plan/epics/epic-publication-i18n.md) |
 | Not Started | RAG & Document Processing | High | Very High (split into 5 sub-epics) | 0 | [epic-rag-document-processing.md](/.plan/epics/epic-rag-document-processing.md) |
@@ -2277,6 +2279,15 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Tags:** training, finetune, evaluation, promotion-gate, datasets
 - **File:** `.plan/epics/epic-finetune-eval-promotion-gate.md`
 
+### First-Run Auto-Setup (L0 Completion)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** setup, first-run, config, bootstrap, onboarding, pii, observability
+- **File:** `.plan/epics/epic-first-run-auto-setup.md`
+
 ### Flexible RPG Patterns
 
 - **Status:** Not Started
@@ -3179,6 +3190,15 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Type:** Feature Epic
 - **Tags:** providers, anthropic, ollama, bedrock, plugin-management, byok
 - **File:** `.plan/epics/epic-provider-plugin-ecosystem.md`
+
+### Provider Connection Wizard (L1)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** setup, wizard, providers, onboarding, frontend, byok, config-import
+- **File:** `.plan/epics/epic-provider-connection-wizard.md`
 
 ### Provider Prompt-Cache Enablement + Cache-Token Observability
 
