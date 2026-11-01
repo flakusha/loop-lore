@@ -23871,7 +23871,8 @@
       "cost-analysis"
     ],
     "title": "# Hosting Provider Comparison for Loop-Lore Deployment",
-    "type": "TASK"
+    "type": "TASK",
+    "project": "loop-lore (RPG chat application)"
   },
   "TASK-004": {
     "epic": ":",
