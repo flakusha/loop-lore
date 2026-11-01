@@ -19,12 +19,19 @@
  * a tool context carrying `requestRootChange: true` opts into escalation, and
  * every escalation is written to the structured logger.
  *
+ * After root detection, the project metadata manifest is loaded once per root
+ * and its audit events are emitted (observability only; see
+ * `src/harness/project-metadata/`). Metadata-based guard ENFORCEMENT
+ * (shareability ceilings gating scope changes) is NOT wired here — it depends
+ * on the out-of-band approvals store (spec §5.1/§5.2).
+ *
  * @module worktree-scope
  */
 import { realpath, } from "node:fs/promises";
 import { resolve, sep, } from "node:path";
 import { getChildLogger, type Logger, } from "../logger";
 import { resolveReal, } from "../utils/realpath-within";
+import { notifyScopeRootMetadata, resetMetadataHookForTests, } from "./project-metadata/audit";
 import { runGit, } from "./run-context";
 
 /** Parameter keys whose string values are treated as filesystem paths. */
@@ -207,6 +214,11 @@ function detectScopeRoot(): string {
 
   if (detected !== "") {
     detectedRoot = detected;
+    // H1 metadata hook (spec §6.2): audit-only — loads `.metadata.toml` once
+    // and emits structured events; never affects guard decisions. Guard
+    // ENFORCEMENT (shareability ceilings gating scope changes) is deferred
+    // until the out-of-band approvals store exists (spec §5.1/§5.2).
+    notifyScopeRootMetadata(detectedRoot,);
 
     return detectedRoot;
   }
@@ -270,6 +282,7 @@ export function resetScopeLogSourceForTests(): void {
 export function resetScopeRootForTests(): void {
   detectedRoot = null;
   detectionWarned = false;
+  resetMetadataHookForTests();
 }
 
 /**
