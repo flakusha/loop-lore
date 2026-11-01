@@ -177,7 +177,7 @@ pub fn send_message_body(content: &str) -> String {
 /// One chat-setup template as the create-chat picker needs it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChatSetupTemplate {
-  /// Template id — the value POSTed as `templateId` (slugs work too).
+  /// Template id — the value `POSTed` as `templateId` (slugs work too).
   pub id: String,
   /// URL slug, shown beside the name.
   pub slug: String,
@@ -189,7 +189,7 @@ impl ChatSetupTemplate {
   /// Display label for the egui picker: `name (slug)`.
   ///
   /// The web picker shows the bare name; the slug is added here to tell
-  /// same-named templates (e.g. battle variants) apart in a ComboBox.
+  /// same-named templates (e.g. battle variants) apart in a `ComboBox`.
   pub fn label(&self) -> String {
     if self.name.is_empty() || self.name == self.slug {
       self.slug.clone()
@@ -254,8 +254,7 @@ pub fn create_chat_body(name: &str, template_id: Option<&str>) -> String {
     template_id: Option<&'a str>,
   }
   let template_id = template_id.filter(|id| !id.is_empty());
-  serde_json::to_string(&Body { name, template_id })
-    .unwrap_or_else(|_| String::from("{\"name\":\"\"}"))
+  serde_json::to_string(&Body { name, template_id }).unwrap_or_else(|_| String::from("{\"name\":\"\"}"))
 }
 
 /// Parse `POST /api/v1/chats` into the new chat's id.
