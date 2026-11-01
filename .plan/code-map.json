@@ -15051,6 +15051,12 @@
       "source": "docs/spec/generation-scheduler.md"
     }
   ],
+  "src/config/schema/harness.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-capability-grant-model-on-chat-branches.md"
+    }
+  ],
   "src/config/schema/headers.ts": [
     {
       "kind": "ticket",
@@ -34793,6 +34799,10 @@
   ],
   "src/harness/worktree-scope.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-harness-rsi-repo-access.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-worktree-scope-guard.md"
     }
@@ -35551,6 +35561,12 @@
       "source": ".plan/tickets/FEAT-byok-local-models.md"
     }
   ],
+  "src/integrations/acp/server.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agentic-integration-mcp-acp.md"
+    }
+  ],
   "src/integrations/activitypub/adapter.ts": [
     {
       "kind": "spec",
@@ -35893,6 +35909,16 @@
       "source": "docs/spec/federation-messenger-channels.md"
     }
   ],
+  "src/integrations/loop-lore-facade.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agentic-integration-mcp-acp.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-facade-slice-chat-and-generation-ops.md"
+    }
+  ],
   "src/integrations/matrix/adapter.ts": [
     {
       "kind": "spec",
@@ -35947,6 +35973,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mcp-client-over-stdio-and-streamable-http.md"
+    }
+  ],
+  "src/integrations/mcp/server.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agentic-integration-mcp-acp.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mcp-stdio-server-via-typescript-sdk.md"
     }
   ],
   "src/integrations/monitor.ts": [
@@ -40069,6 +40105,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-enforce-plugin-origin-at-request-time.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-facade-slice-chat-and-generation-ops.md"
     },
     {
       "kind": "ticket",
@@ -59977,6 +60017,10 @@
   ],
   "src/validation/schemas": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agentic-integration-mcp-acp.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md"
     },
@@ -59995,6 +60039,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-facade-slice-chat-and-generation-ops.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-facade-slice-remaining-domains.md"
     }
   ],
   "src/validation/schemas.ts": [

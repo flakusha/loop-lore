@@ -16651,6 +16651,15 @@
       "related": []
     },
     {
+      "id": "TASK-acp-stdio-server-over-existing-chat-sessions",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-acp-stdio-server-over-existing-chat-sessions.md",
+      "title": "ACP stdio server over existing chat sessions",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-action-applicability-gate",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-action-applicability-gate.md",
@@ -18141,6 +18150,15 @@
       ]
     },
     {
+      "id": "TASK-agent-api-boundary-capability-enforcement",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-agent-api-boundary-capability-enforcement.md",
+      "title": "Agent API boundary capability enforcement",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-agent-memory-scoring",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-agent-memory-scoring.md",
@@ -18172,6 +18190,15 @@
         "src/frontend/pages/epic-agentic-workspace.ts",
         "src/routes/epics/agentic-workspace.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-agentic-integration-tests",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-agentic-integration-tests.md",
+      "title": "Agentic integration tests",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -18484,6 +18511,15 @@
         "TASK-cors-middleware",
         "epic-headless-alternative-frontends"
       ]
+    },
+    {
+      "id": "TASK-api-key-auth-middleware-for-external-agents",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-api-key-auth-middleware-for-external-agents.md",
+      "title": "API-key auth middleware for external agents",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
     },
     {
       "id": "TASK-api-routes",
@@ -21827,6 +21863,26 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-capability-disclosure-lore-ceiling.md",
       "title": "Capability disclosure lore ceiling",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-capability-grant-model-on-chat-branches",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-capability-grant-model-on-chat-branches.md",
+      "title": "Capability grant model on chat branches",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/config/schema/harness.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-capability-manifest-and-generated-docs",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-capability-manifest-and-generated-docs.md",
+      "title": "Capability manifest and generated docs",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -28998,6 +29054,15 @@
       "related": []
     },
     {
+      "id": "TASK-escalation-audit-queue-with-no-auto-approve",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-escalation-audit-queue-with-no-auto-approve.md",
+      "title": "Escalation audit queue with no auto-approve",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-etl-dag-wrapped-ingest-with-idempotency-and-dlq",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-etl-dag-wrapped-ingest-with-idempotency-and-dlq.md",
@@ -29341,6 +29406,30 @@
       "related": []
     },
     {
+      "id": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-facade-slice-chat-and-generation-ops.md",
+      "title": "Facade slice: chat and generation ops",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/integrations/loop-lore-facade.ts",
+        "src/plugins/types.ts",
+        "src/validation/schemas"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-facade-slice-remaining-domains",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-facade-slice-remaining-domains.md",
+      "title": "Facade slice: remaining domains",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/validation/schemas"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-face-detailer-refinement-tier",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-face-detailer-refinement-tier.md",
@@ -29433,6 +29522,15 @@
         "epic-social-interaction",
         "epic-worlds-extension"
       ]
+    },
+    {
+      "id": "TASK-fail-closed-credential-verification-in-the-auth-seam",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-fail-closed-credential-verification-in-the-auth-seam.md",
+      "title": "Fail-closed credential verification in the auth seam",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
     },
     {
       "id": "TASK-fail-safe-execution-work-safety",
@@ -34056,6 +34154,15 @@
       "related": []
     },
     {
+      "id": "TASK-internal-service-bootstrap-principal",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-internal-service-bootstrap-principal.md",
+      "title": "Internal-service bootstrap principal",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-internal-traits-visibility-tiers",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-internal-traits-visibility-tiers.md",
@@ -36133,6 +36240,17 @@
       "related": []
     },
     {
+      "id": "TASK-mcp-stdio-server-via-typescript-sdk",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-mcp-stdio-server-via-typescript-sdk.md",
+      "title": "MCP stdio server via TypeScript SDK",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/integrations/mcp/server.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-mcp-tasks-extension-as-long-operation-state-machine",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-mcp-tasks-extension-as-long-operation-state-machine.md",
@@ -36151,6 +36269,15 @@
         "src/plugins/tool-executor.ts",
         "src/plugins/types.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-mcp-tool-set-v1-from-facade-registry",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-mcp-tool-set-v1-from-facade-registry.md",
+      "title": "MCP tool set v1 from facade registry",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -39557,6 +39684,15 @@
       "related": []
     },
     {
+      "id": "TASK-plugin-contributed-mcp-tools",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-plugin-contributed-mcp-tools.md",
+      "title": "Plugin-contributed MCP tools",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-plugin-details",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-plugin-details.md",
@@ -39769,6 +39905,24 @@
       "related": []
     },
     {
+      "id": "TASK-principal-aware-worktree-scope-guard",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-principal-aware-worktree-scope-guard.md",
+      "title": "Principal-aware worktree scope guard",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-principal-kind-model-and-server-side-resolution",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-principal-kind-model-and-server-side-resolution.md",
+      "title": "Principal kind model and server-side resolution",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-proactive-messaging",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-proactive-messaging.md",
@@ -39862,6 +40016,15 @@
       "srcRefs": [
         "src/db/enums-story/world.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "TASK-project-space-root-resolver-for-user-principals",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-project-space-root-resolver-for-user-principals.md",
+      "title": "Project-space root resolver for user principals",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -43298,6 +43461,33 @@
       "related": []
     },
     {
+      "id": "TASK-rsi-isolation-test-matrix",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-rsi-isolation-test-matrix.md",
+      "title": "RSI isolation test matrix",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-rsi-ops-doc-and-typed-capability-constants",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-rsi-ops-doc-and-typed-capability-constants.md",
+      "title": "RSI ops doc and typed capability constants",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-rsi-scope-resolver-per-principal-kind",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-rsi-scope-resolver-per-principal-kind.md",
+      "title": "RSI scope resolver per principal kind",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-runtime-abstraction-layer",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-runtime-abstraction-layer.md",
@@ -43728,6 +43918,15 @@
       "related": [
         "TASK-schema-migration"
       ]
+    },
+    {
+      "id": "TASK-scoped-credential-model-and-api-key-table",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-scoped-credential-model-and-api-key-table.md",
+      "title": "Scoped credential model and API-key table",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
     },
     {
       "id": "TASK-screen-reader-support",
@@ -44997,6 +45196,15 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-storypoints-acceptance.md",
       "title": "storypoints-acceptance",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-streamable-http-mcp-transport-behind-central-guard",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-streamable-http-mcp-transport-behind-central-guard.md",
+      "title": "Streamable HTTP MCP transport behind central guard",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -49211,6 +49419,20 @@
       "related": []
     },
     {
+      "id": "epic-agentic-integration-mcp-acp",
+      "kind": "epic",
+      "path": ".plan/epics/epic-agentic-integration-mcp-acp.md",
+      "title": "Agentic integration surface (MCP + ACP + scoped REST)",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/integrations/acp/server.ts",
+        "src/integrations/loop-lore-facade.ts",
+        "src/integrations/mcp/server.ts",
+        "src/validation/schemas"
+      ],
+      "related": []
+    },
+    {
       "id": "epic-ambient-music-sfx",
       "kind": "epic",
       "path": ".plan/epics/epic-ambient-music-sfx.md",
@@ -52407,6 +52629,17 @@
       "related": []
     },
     {
+      "id": "epic-harness-rsi-repo-access",
+      "kind": "epic",
+      "path": ".plan/epics/epic-harness-rsi-repo-access.md",
+      "title": "Harness RSI repo-root access tier",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/harness/worktree-scope.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "epic-headless-alternative-frontends",
       "kind": "epic",
       "path": ".plan/epics/epic-headless-alternative-frontends.md",
@@ -53874,6 +54107,15 @@
         "src/native/security.test.ts",
         "src/native/security.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "epic-principal-scoped-credentials",
+      "kind": "epic",
+      "path": ".plan/epics/epic-principal-scoped-credentials.md",
+      "title": "Principal + scoped credentials (shared primitive)",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -64202,6 +64444,12 @@
         "TASK-outfit-narrative-extractor-regex-prefilter",
         "epic-harness-integration",
         "epic-llm-request-scheduler"
+      ]
+    },
+    {
+      "path": "src/config/schema/harness.ts",
+      "owners": [
+        "TASK-capability-grant-model-on-chat-branches"
       ]
     },
     {
@@ -75175,7 +75423,8 @@
     {
       "path": "src/harness/worktree-scope.ts",
       "owners": [
-        "TASK-harness-worktree-scope-guard"
+        "TASK-harness-worktree-scope-guard",
+        "epic-harness-rsi-repo-access"
       ]
     },
     {
@@ -75579,6 +75828,12 @@
       ]
     },
     {
+      "path": "src/integrations/acp/server.ts",
+      "owners": [
+        "epic-agentic-integration-mcp-acp"
+      ]
+    },
+    {
       "path": "src/integrations/adapter.test.ts",
       "owners": [
         "TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle",
@@ -75790,6 +76045,13 @@
       ]
     },
     {
+      "path": "src/integrations/loop-lore-facade.ts",
+      "owners": [
+        "TASK-facade-slice-chat-and-generation-ops",
+        "epic-agentic-integration-mcp-acp"
+      ]
+    },
+    {
       "path": "src/integrations/matrix/auth.ts",
       "owners": [
         "TASK-matrix-integration"
@@ -75831,6 +76093,13 @@
         "TASK-harness-mcp-client-wrapper",
         "TASK-mcp-client-over-stdio-and-streamable-http",
         "epic-external-creative-tool-bridge"
+      ]
+    },
+    {
+      "path": "src/integrations/mcp/server.ts",
+      "owners": [
+        "TASK-mcp-stdio-server-via-typescript-sdk",
+        "epic-agentic-integration-mcp-acp"
       ]
     },
     {
@@ -78108,6 +78377,7 @@
         "TASK-047",
         "TASK-048",
         "TASK-enforce-plugin-origin-at-request-time",
+        "TASK-facade-slice-chat-and-generation-ops",
         "TASK-harness-hook-contract",
         "TASK-harness-lean-ctx-tools",
         "TASK-harness-plugin-runtime",
@@ -90133,7 +90403,10 @@
         "TASK-comparison-set-routes-crud-ownership-validation",
         "TASK-define-and-document-the-src-programmatic-api-surface",
         "TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida",
-        "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas"
+        "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
+        "TASK-facade-slice-chat-and-generation-ops",
+        "TASK-facade-slice-remaining-domains",
+        "epic-agentic-integration-mcp-acp"
       ]
     },
     {
@@ -93872,6 +94145,56 @@
       "from": "epic-agency-story-points",
       "kind": "owns",
       "to": "TASK-storypoints-acceptance"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "owns",
+      "to": "TASK-acp-stdio-server-over-existing-chat-sessions"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "owns",
+      "to": "TASK-agentic-integration-tests"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "owns",
+      "to": "TASK-api-key-auth-middleware-for-external-agents"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "owns",
+      "to": "TASK-capability-manifest-and-generated-docs"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "owns",
+      "to": "TASK-facade-slice-chat-and-generation-ops"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "owns",
+      "to": "TASK-facade-slice-remaining-domains"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "owns",
+      "to": "TASK-mcp-stdio-server-via-typescript-sdk"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "owns",
+      "to": "TASK-mcp-tool-set-v1-from-facade-registry"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "owns",
+      "to": "TASK-plugin-contributed-mcp-tools"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "owns",
+      "to": "TASK-streamable-http-mcp-transport-behind-central-guard"
     },
     {
       "from": "epic-ambient-music-sfx",
@@ -101169,6 +101492,51 @@
       "to": "TASK-harness-worktree-scope-guard"
     },
     {
+      "from": "epic-harness-rsi-repo-access",
+      "kind": "owns",
+      "to": "TASK-agent-api-boundary-capability-enforcement"
+    },
+    {
+      "from": "epic-harness-rsi-repo-access",
+      "kind": "owns",
+      "to": "TASK-capability-grant-model-on-chat-branches"
+    },
+    {
+      "from": "epic-harness-rsi-repo-access",
+      "kind": "owns",
+      "to": "TASK-escalation-audit-queue-with-no-auto-approve"
+    },
+    {
+      "from": "epic-harness-rsi-repo-access",
+      "kind": "owns",
+      "to": "TASK-internal-service-bootstrap-principal"
+    },
+    {
+      "from": "epic-harness-rsi-repo-access",
+      "kind": "owns",
+      "to": "TASK-principal-aware-worktree-scope-guard"
+    },
+    {
+      "from": "epic-harness-rsi-repo-access",
+      "kind": "owns",
+      "to": "TASK-project-space-root-resolver-for-user-principals"
+    },
+    {
+      "from": "epic-harness-rsi-repo-access",
+      "kind": "owns",
+      "to": "TASK-rsi-isolation-test-matrix"
+    },
+    {
+      "from": "epic-harness-rsi-repo-access",
+      "kind": "owns",
+      "to": "TASK-rsi-ops-doc-and-typed-capability-constants"
+    },
+    {
+      "from": "epic-harness-rsi-repo-access",
+      "kind": "owns",
+      "to": "TASK-rsi-scope-resolver-per-principal-kind"
+    },
+    {
       "from": "epic-headless-alternative-frontends",
       "kind": "owns",
       "to": "TASK-api-key-auth-middleware"
@@ -104577,6 +104945,21 @@
       "from": "epic-precompiled-hot-binaries",
       "kind": "owns",
       "to": "TASK-precompiled-hot-binaries"
+    },
+    {
+      "from": "epic-principal-scoped-credentials",
+      "kind": "owns",
+      "to": "TASK-fail-closed-credential-verification-in-the-auth-seam"
+    },
+    {
+      "from": "epic-principal-scoped-credentials",
+      "kind": "owns",
+      "to": "TASK-principal-kind-model-and-server-side-resolution"
+    },
+    {
+      "from": "epic-principal-scoped-credentials",
+      "kind": "owns",
+      "to": "TASK-scoped-credential-model-and-api-key-table"
     },
     {
       "from": "epic-project-spaces-pm-integration",
@@ -129894,6 +130277,11 @@
       "to": "src/config/cert.ts"
     },
     {
+      "from": "TASK-capability-grant-model-on-chat-branches",
+      "kind": "produces",
+      "to": "src/config/schema/harness.ts"
+    },
+    {
       "from": "TASK-certificate-lifecycle-expiry-monitoring-and-health-verdicts",
       "kind": "produces",
       "to": "src/config/cert.ts"
@@ -138254,6 +138642,26 @@
       "to": "src/routes/messages/reply.ts"
     },
     {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "produces",
+      "to": "src/integrations/loop-lore-facade.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "produces",
+      "to": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "produces",
+      "to": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-facade-slice-remaining-domains",
+      "kind": "produces",
+      "to": "src/validation/schemas"
+    },
+    {
       "from": "TASK-faction-leaders-and-cadre-generation",
       "kind": "produces",
       "to": "src/characters"
@@ -144542,6 +144950,11 @@
       "from": "TASK-mcp-client-over-stdio-and-streamable-http",
       "kind": "produces",
       "to": "src/integrations/mcp/client.ts"
+    },
+    {
+      "from": "TASK-mcp-stdio-server-via-typescript-sdk",
+      "kind": "produces",
+      "to": "src/integrations/mcp/server.ts"
     },
     {
       "from": "TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge",
@@ -156744,6 +157157,26 @@
       "to": "src/views/chat.html"
     },
     {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "produces",
+      "to": "src/integrations/acp/server.ts"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "produces",
+      "to": "src/integrations/loop-lore-facade.ts"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "produces",
+      "to": "src/integrations/mcp/server.ts"
+    },
+    {
+      "from": "epic-agentic-integration-mcp-acp",
+      "kind": "produces",
+      "to": "src/validation/schemas"
+    },
+    {
       "from": "epic-ambient-music-sfx",
       "kind": "produces",
       "to": "src/assistant/commands/sfx.ts"
@@ -164502,6 +164935,11 @@
       "from": "epic-harness-integration",
       "kind": "produces",
       "to": "src/views/admin.html"
+    },
+    {
+      "from": "epic-harness-rsi-repo-access",
+      "kind": "produces",
+      "to": "src/harness/worktree-scope.ts"
     },
     {
       "from": "epic-headless-alternative-frontends",
@@ -196847,6 +197285,18 @@
     {
       "from": "BUG-chat-idempotency-not-enforced",
       "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "BUG-chat-idempotency-not-enforced",
+      "kind": "sibling",
+      "to": "TASK-facade-slice-remaining-domains",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "BUG-chat-idempotency-not-enforced",
+      "kind": "sibling",
       "to": "TASK-gm-tool-keyword-pre-gate-behind-config-flag-fail-open",
       "via": "src/routes/messages/create.ts"
     },
@@ -196915,6 +197365,12 @@
       "kind": "sibling",
       "to": "TASK-turn-send-gate",
       "via": "src/routes/messages/create.ts"
+    },
+    {
+      "from": "BUG-chat-idempotency-not-enforced",
+      "kind": "sibling",
+      "to": "epic-agentic-integration-mcp-acp",
+      "via": "src/validation/schemas"
     },
     {
       "from": "BUG-chat-idempotency-not-enforced",
@@ -236699,6 +237155,12 @@
     {
       "from": "BUG-nsfw-cards-ships-ungated-post-routes",
       "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "BUG-nsfw-cards-ships-ungated-post-routes",
+      "kind": "sibling",
       "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/users/permissions.ts"
     },
@@ -239675,6 +240137,12 @@
     {
       "from": "BUG-plugin-route-registry-lacks-ownership-enforcement-idor",
       "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "BUG-plugin-route-registry-lacks-ownership-enforcement-idor",
+      "kind": "sibling",
       "to": "TASK-harness-hook-contract",
       "via": "src/plugins/types.ts"
     },
@@ -240103,6 +240571,12 @@
       "kind": "sibling",
       "to": "TASK-enforce-plugin-origin-at-request-time",
       "via": "src/plugins/route-access.ts; src/plugins/types.ts"
+    },
+    {
+      "from": "BUG-plugin-tool-authorization-fails-open",
+      "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/plugins/types.ts"
     },
     {
       "from": "BUG-plugin-tool-authorization-fails-open",
@@ -281699,6 +282173,12 @@
     {
       "from": "TASK-046",
       "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-046",
+      "kind": "sibling",
       "to": "TASK-harness-hook-contract",
       "via": "src/plugins/types.ts"
     },
@@ -281885,6 +282365,12 @@
     {
       "from": "TASK-047",
       "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-047",
+      "kind": "sibling",
       "to": "TASK-harness-hook-contract",
       "via": "src/plugins/event-bus.ts; src/plugins/types.ts"
     },
@@ -282067,6 +282553,12 @@
       "kind": "sibling",
       "to": "TASK-eventbus-toolregistry-core-wiring",
       "via": "src/plugins/event-bus.ts; src/plugins/tool-executor.ts"
+    },
+    {
+      "from": "TASK-048",
+      "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/plugins/types.ts"
     },
     {
       "from": "TASK-048",
@@ -333023,6 +333515,18 @@
     {
       "from": "TASK-comparison-set-routes-crud-ownership-validation",
       "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-comparison-set-routes-crud-ownership-validation",
+      "kind": "sibling",
+      "to": "TASK-facade-slice-remaining-domains",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-comparison-set-routes-crud-ownership-validation",
+      "kind": "sibling",
       "to": "TASK-fix-eslint-errors",
       "via": "src/routes/model-comparisons.ts"
     },
@@ -333103,6 +333607,12 @@
       "kind": "sibling",
       "to": "TASK-video-gen-route",
       "via": "src/chat/service; src/generation/image-gen-route.ts"
+    },
+    {
+      "from": "TASK-comparison-set-routes-crud-ownership-validation",
+      "kind": "sibling",
+      "to": "epic-agentic-integration-mcp-acp",
+      "via": "src/validation/schemas"
     },
     {
       "from": "TASK-comparison-set-routes-crud-ownership-validation",
@@ -340011,6 +340521,24 @@
       "via": "src/validation/schemas"
     },
     {
+      "from": "TASK-define-and-document-the-src-programmatic-api-surface",
+      "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-define-and-document-the-src-programmatic-api-surface",
+      "kind": "sibling",
+      "to": "TASK-facade-slice-remaining-domains",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-define-and-document-the-src-programmatic-api-surface",
+      "kind": "sibling",
+      "to": "epic-agentic-integration-mcp-acp",
+      "via": "src/validation/schemas"
+    },
+    {
       "from": "TASK-define-shared-nav-state-contract-between-client-side-routing",
       "kind": "sibling",
       "to": "TASK-docs-ui-endpoint-linkage",
@@ -340104,6 +340632,24 @@
       "from": "TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida",
       "kind": "sibling",
       "to": "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida",
+      "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida",
+      "kind": "sibling",
+      "to": "TASK-facade-slice-remaining-domains",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida",
+      "kind": "sibling",
+      "to": "epic-agentic-integration-mcp-acp",
       "via": "src/validation/schemas"
     },
     {
@@ -349019,6 +349565,12 @@
     {
       "from": "TASK-enforce-plugin-origin-at-request-time",
       "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-enforce-plugin-origin-at-request-time",
+      "kind": "sibling",
       "to": "TASK-harness-hook-contract",
       "via": "src/plugins/types.ts"
     },
@@ -350351,6 +350903,18 @@
     {
       "from": "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
       "kind": "sibling",
+      "to": "TASK-facade-slice-chat-and-generation-ops",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
+      "kind": "sibling",
+      "to": "TASK-facade-slice-remaining-domains",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
+      "kind": "sibling",
       "to": "TASK-middleware-idempotency-wire-into-elysia",
       "via": "src/config/schema.ts"
     },
@@ -350413,6 +350977,12 @@
       "kind": "sibling",
       "to": "TASK-split-config-schema",
       "via": "src/config/schema.ts"
+    },
+    {
+      "from": "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
+      "kind": "sibling",
+      "to": "epic-agentic-integration-mcp-acp",
+      "via": "src/validation/schemas"
     },
     {
       "from": "TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas",
@@ -350905,6 +351475,84 @@
       "kind": "sibling",
       "to": "epic-middleware-request-lifecycle",
       "via": "src/routes/messages/reply.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "TASK-facade-slice-remaining-domains",
+      "via": "src/validation/schemas"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "TASK-harness-hook-contract",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "TASK-harness-lean-ctx-tools",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "TASK-harness-plugin-runtime",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "TASK-plugin-management-api",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "epic-agentic-integration-mcp-acp",
+      "via": "src/integrations/loop-lore-facade.ts; src/validation/schemas"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "epic-external-creative-tool-bridge",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "epic-mini-games",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-chat-and-generation-ops",
+      "kind": "sibling",
+      "to": "epic-plugin-extension-points",
+      "via": "src/plugins/types.ts"
+    },
+    {
+      "from": "TASK-facade-slice-remaining-domains",
+      "kind": "sibling",
+      "to": "epic-agentic-integration-mcp-acp",
+      "via": "src/validation/schemas"
     },
     {
       "from": "TASK-faction-leaders-and-cadre-generation",
@@ -363363,6 +364011,12 @@
       "via": "src/assistant/workflow-routing.ts; src/regex/intent.ts"
     },
     {
+      "from": "TASK-harness-worktree-scope-guard",
+      "kind": "sibling",
+      "to": "epic-harness-rsi-repo-access",
+      "via": "src/harness/worktree-scope.ts"
+    },
+    {
       "from": "TASK-headers-additional-useful-response-headers",
       "kind": "sibling",
       "to": "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
@@ -371779,6 +372433,12 @@
       "kind": "sibling",
       "to": "epic-external-creative-tool-bridge",
       "via": "src/integrations/mcp/client.ts"
+    },
+    {
+      "from": "TASK-mcp-stdio-server-via-typescript-sdk",
+      "kind": "sibling",
+      "to": "epic-agentic-integration-mcp-acp",
+      "via": "src/integrations/mcp/server.ts"
     },
     {
       "from": "TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge",

@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3916
-- epics: 371
-- src paths owned: 4623
-- edges: produces 12397, consumes 406, sibling 39325, owns 2886, related 1196
+- tickets: 3938
+- epics: 374
+- src paths owned: 4627
+- edges: produces 12408, consumes 406, sibling 39362, owns 2908, related 1196
 
 ## Shared src hubs
 
@@ -1138,6 +1138,7 @@ output is byte-identical for identical inputs.
 | `src/harness/exec-recorder.ts` | `TASK-cache-token-propagation-into-execusage-exec-log-and-aux-call`, `TASK-harness-canonical-usage` |
 | `src/harness/stats.ts` | `TASK-comparison-metric-collection-and-charts`, `TASK-harness-canonical-usage` |
 | `src/harness/types-wire.ts` | `TASK-comparison-metric-collection-and-charts`, `TASK-harness-executions-jsonl-query-sidecar-offset-index-behind-e` |
+| `src/harness/worktree-scope.ts` | `TASK-harness-worktree-scope-guard`, `epic-harness-rsi-repo-access` |
 | `src/hash/record-hash.ts` | `TASK-middleware-fe-be-db-record-content-hashing`, `epic-content-hashing-distributed-integrity`, `epic-view-set-generation` |
 | `src/i18n/index.ts` | `TASK-delete-unreferenced-platform-service-util-modules-dead-barre`, `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un` |
 | `src/i18n/locale-loader.ts` | `TASK-i18n-reconciliation-script`, `epic-publication-i18n` |
@@ -1175,7 +1176,9 @@ output is byte-identical for identical inputs.
 | `src/integrations/email/spam-gate.ts` | `BUG-email-token-bucket-discards-fractional-refill-credit-permane`, `BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-`, `BUG-spam-gate-sender-identity-ignores-plus-tag-subaddressing-blo`, `TASK-email-deliverability-spf-dkim-dmarc-and-inbound-spam-gate` |
 | `src/integrations/encryption.ts` | `TASK-integrations-shared-seams-encryptionprovider-messagebridge-b`, `epic-integrations-core` |
 | `src/integrations/health.ts` | `BUG-email-token-bucket-discards-fractional-refill-credit-permane`, `BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-`, `TASK-adapter-health-monitoring-and-per-protocol-rate-limiting` |
+| `src/integrations/loop-lore-facade.ts` | `TASK-facade-slice-chat-and-generation-ops`, `epic-agentic-integration-mcp-acp` |
 | `src/integrations/mcp/client.ts` | `TASK-harness-mcp-client-wrapper`, `TASK-mcp-client-over-stdio-and-streamable-http`, `epic-external-creative-tool-bridge` |
+| `src/integrations/mcp/server.ts` | `TASK-mcp-stdio-server-via-typescript-sdk`, `epic-agentic-integration-mcp-acp` |
 | `src/integrations/protocols/adapter.ts` | `TASK-integration-infrastructure`, `epic-integrations-core` |
 | `src/integrations/registry` | `TASK-acp-driver-module`, `epic-external-harness-acp` |
 | `src/integrations/secrets.ts` | `BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-`, `BUG-admin-set-secrets-stored-plaintext-in-system-config`, `FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal`, `TASK-adapter-secret-storage-encrypted-credential-envelope` |
@@ -1319,7 +1322,7 @@ output is byte-identical for identical inputs.
 | `src/plugins/tool-executor.ts` | `TASK-047`, `TASK-048`, `TASK-eventbus-toolregistry-core-wiring`, `TASK-harness-subagent-delegation`, `TASK-harness-tool-sandbox`, `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge`, `TASK-plugin-and-tool-runtime-residual-defects`, `TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-external-creative-tool-bridge` |
 | `src/plugins/tool-policy.ts` | `TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag`, `epic-security-sandboxing` |
 | `src/plugins/tools.ts` | `TASK-eventbus-toolregistry-core-wiring`, `epic-plugin-extension-points` |
-| `src/plugins/types.ts` | `BUG-nsfw-cards-ships-ungated-post-routes`, `BUG-plugin-route-registry-lacks-ownership-enforcement-idor`, `BUG-plugin-tool-authorization-fails-open`, `TASK-046`, `TASK-047`, `TASK-048`, `TASK-enforce-plugin-origin-at-request-time`, `TASK-harness-hook-contract`, `TASK-harness-lean-ctx-tools`, `TASK-harness-plugin-runtime`, `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge`, `TASK-plugin-host-contract-for-third-party-integration-plugins`, `TASK-plugin-management-api`, `TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag`, `epic-external-creative-tool-bridge`, `epic-mini-games`, `epic-plugin-extension-points` |
+| `src/plugins/types.ts` | `BUG-nsfw-cards-ships-ungated-post-routes`, `BUG-plugin-route-registry-lacks-ownership-enforcement-idor`, `BUG-plugin-tool-authorization-fails-open`, `TASK-046`, `TASK-047`, `TASK-048`, `TASK-enforce-plugin-origin-at-request-time`, `TASK-facade-slice-chat-and-generation-ops`, `TASK-harness-hook-contract`, `TASK-harness-lean-ctx-tools`, `TASK-harness-plugin-runtime`, `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge`, `TASK-plugin-host-contract-for-third-party-integration-plugins`, `TASK-plugin-management-api`, `TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag`, `epic-external-creative-tool-bridge`, `epic-mini-games`, `epic-plugin-extension-points` |
 | `src/profanity/service.ts` | `TASK-chat-feature-moderation`, `TASK-doc-spec-profanity-filter`, `TASK-profanity-filter-hot-reload-per-chat-sensitivity`, `TASK-profanity-filter-runtime-per-chat`, `TEST-profanity-containsprofanity-edge-cases-untested`, `epic-chat-product-features` |
 | `src/prompt-improve/service.ts` | `FEAT-aux-classification-template-registry`, `TASK-assistant-analyze-slash-command-over-prompt-analysis-service`, `epic-assistant-generation-extensions`, `epic-classifier-template-packs` |
 | `src/prompts/purposes.ts` | `FEAT-065`, `FEAT-aux-classification-template-registry`, `TASK-decide-llm-image-prompt-writer-fate`, `TASK-harness-context-templates`, `TASK-prompt-template-registry`, `TASK-vn-dynamic-generation`, `epic-classifier-template-packs`, `epic-config-templates` |
@@ -2036,7 +2039,7 @@ output is byte-identical for identical inputs.
 | `src/validation/middleware.ts` | `BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso`, `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `BUG-modality-template-patch-classifies-db-read-failures-as-400-w`, `BUG-nsfw-write-routes-authorize-actor-but-not-target`, `BUG-validation-middleware-leaks-raw-err-message-in-500-envelope`, `FEAT-036`, `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an`, `TASK-nsfw-consent-grant-route-missing`, `TASK-server-edge-error-handling-gaps-in-routes-layer` |
 | `src/validation/prompt-injection.ts` | `FEAT-aux-classification-template-registry`, `FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-`, `TASK-ai-guardrails-input-sanitization-content-filtering-output-va`, `TASK-golden-corpus-and-scoring-ratchet-for-prompt-injection-signa`, `epic-classifier-template-packs`, `epic-security-sandboxing-quickref` |
 | `src/validation/schema-fuzz.generated.test.ts` | `BUG-story-states-npc-location-put-schema-drift-silent-no-op-with`, `TASK-frontend-view-model-extraction`, `TASK-fuzzing-infrastructure-harness-runner-corpus-manager-crash-d`, `epic-fuzzing-infrastructure` |
-| `src/validation/schemas` | `BUG-chat-idempotency-not-enforced`, `TASK-comparison-set-routes-crud-ownership-validation`, `TASK-define-and-document-the-src-programmatic-api-surface`, `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida`, `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` |
+| `src/validation/schemas` | `BUG-chat-idempotency-not-enforced`, `TASK-comparison-set-routes-crud-ownership-validation`, `TASK-define-and-document-the-src-programmatic-api-surface`, `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida`, `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas`, `TASK-facade-slice-chat-and-generation-ops`, `TASK-facade-slice-remaining-domains`, `epic-agentic-integration-mcp-acp` |
 | `src/validation/schemas.ts` | `BUG-chat-settings-modal-invalid-mode`, `BUG-e2e-test-infrastructure-fixes`, `EPIC-2026-24`, `FEAT-065-sub-llm`, `FEAT-chat-template-config-lifecycle`, `FEAT-lore-structured-generation-via-assistant`, `FEAT-origin-capture-generation-seeding`, `FEAT-race-origin-lore-identity-model`, `IDEA-chat-setup-templates`, `TASK-actors-api-routes`, `TASK-add-response-schemas-remaining-routes`, `TASK-admin-assistant-tooling-allowlist`, `TASK-assistant-capability-disclosure`, `TASK-bestiary-crud-routes-admin-gm`, `TASK-character-rpg-stats`, `TASK-consent-schema`, `TASK-gallery-fuzzy-search-pagination`, `TASK-nsfw-rating-schema`, `TASK-reputation-schema`, `TASK-schema-validation`, `TASK-wardrobe-routes-validation-crud-outfit-override-endpoints`, `epic-auth-channel-provisioning`, `epic-character-core-system`, `epic-chat-lifecycle-moderation`, `epic-config-templates`, `epic-cross-layer-reconciliation`, `epic-effect-v4-adoption-evaluation`, `epic-file-splitting`, `epic-openapi-reference`, `epic-shared-schemas` |
 | `src/validation/schemas/actors.ts` | `BUG-character-create-silently-drops-personality-scenario-welcome`, `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc`, `BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d`, `TASK-affordance-lookup-table`, `TASK-growth-epic-reconciliation`, `TASK-nsfw-rating-enforcement` |
 | `src/validation/schemas/character-systems.ts` | `BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500`, `TASK-character-domain-residual-defects` |
@@ -2580,6 +2583,16 @@ output is byte-identical for identical inputs.
 | `epic-agency-story-points` | owns | `TASK-rpg-player-agency-story-points` | - |
 | `epic-agency-story-points` | owns | `TASK-story-points-prototype` | - |
 | `epic-agency-story-points` | owns | `TASK-storypoints-acceptance` | - |
+| `epic-agentic-integration-mcp-acp` | owns | `TASK-acp-stdio-server-over-existing-chat-sessions` | - |
+| `epic-agentic-integration-mcp-acp` | owns | `TASK-agentic-integration-tests` | - |
+| `epic-agentic-integration-mcp-acp` | owns | `TASK-api-key-auth-middleware-for-external-agents` | - |
+| `epic-agentic-integration-mcp-acp` | owns | `TASK-capability-manifest-and-generated-docs` | - |
+| `epic-agentic-integration-mcp-acp` | owns | `TASK-facade-slice-chat-and-generation-ops` | - |
+| `epic-agentic-integration-mcp-acp` | owns | `TASK-facade-slice-remaining-domains` | - |
+| `epic-agentic-integration-mcp-acp` | owns | `TASK-mcp-stdio-server-via-typescript-sdk` | - |
+| `epic-agentic-integration-mcp-acp` | owns | `TASK-mcp-tool-set-v1-from-facade-registry` | - |
+| `epic-agentic-integration-mcp-acp` | owns | `TASK-plugin-contributed-mcp-tools` | - |
+| `epic-agentic-integration-mcp-acp` | owns | `TASK-streamable-http-mcp-transport-behind-central-guard` | - |
 | `epic-ambient-music-sfx` | owns | `TASK-frontend-chat-music-links` | - |
 | `epic-ambient-music-sfx` | owns | `TASK-scene-aware-music-generation-ambient-music-sfx-epic-phase-2` | - |
 | `epic-ambient-music-sfx` | owns | `TASK-sfx-trigger-detection-and-library-ambient-music-sfx-epic-pha` | - |
@@ -4039,6 +4052,15 @@ output is byte-identical for identical inputs.
 | `epic-harness-integration` | owns | `TASK-harness-topic-tui-surface` | - |
 | `epic-harness-integration` | owns | `TASK-harness-work-topics` | - |
 | `epic-harness-integration` | owns | `TASK-harness-worktree-scope-guard` | - |
+| `epic-harness-rsi-repo-access` | owns | `TASK-agent-api-boundary-capability-enforcement` | - |
+| `epic-harness-rsi-repo-access` | owns | `TASK-capability-grant-model-on-chat-branches` | - |
+| `epic-harness-rsi-repo-access` | owns | `TASK-escalation-audit-queue-with-no-auto-approve` | - |
+| `epic-harness-rsi-repo-access` | owns | `TASK-internal-service-bootstrap-principal` | - |
+| `epic-harness-rsi-repo-access` | owns | `TASK-principal-aware-worktree-scope-guard` | - |
+| `epic-harness-rsi-repo-access` | owns | `TASK-project-space-root-resolver-for-user-principals` | - |
+| `epic-harness-rsi-repo-access` | owns | `TASK-rsi-isolation-test-matrix` | - |
+| `epic-harness-rsi-repo-access` | owns | `TASK-rsi-ops-doc-and-typed-capability-constants` | - |
+| `epic-harness-rsi-repo-access` | owns | `TASK-rsi-scope-resolver-per-principal-kind` | - |
 | `epic-headless-alternative-frontends` | owns | `TASK-api-key-auth-middleware` | - |
 | `epic-headless-alternative-frontends` | owns | `TASK-cors-middleware` | - |
 | `epic-headless-alternative-frontends` | owns | `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a` | - |
@@ -4721,6 +4743,9 @@ output is byte-identical for identical inputs.
 | `epic-plugin-system` | owns | `TASK-plugin-system` | - |
 | `epic-plugin-system` | owns | `TASK-provider-contributions-via-plugin-system` | - |
 | `epic-precompiled-hot-binaries` | owns | `TASK-precompiled-hot-binaries` | - |
+| `epic-principal-scoped-credentials` | owns | `TASK-fail-closed-credential-verification-in-the-auth-seam` | - |
+| `epic-principal-scoped-credentials` | owns | `TASK-principal-kind-model-and-server-side-resolution` | - |
+| `epic-principal-scoped-credentials` | owns | `TASK-scoped-credential-model-and-api-key-table` | - |
 | `epic-project-spaces-pm-integration` | owns | `TASK-assistant-pm-workflow-templates-pm-space-create-pm-triage-pm` | - |
 | `epic-project-spaces-pm-integration` | owns | `TASK-cross-space-memory-carry-explicit-shared-entry-with-provenan` | - |
 | `epic-project-spaces-pm-integration` | owns | `TASK-cross-space-references-links-visibility-checked-graph-expans` | - |
@@ -9784,6 +9809,7 @@ output is byte-identical for identical inputs.
 | `TASK-cache-token-propagation-into-execusage-exec-log-and-aux-call` | produces | `src/aux-pipeline/runner.ts` | - |
 | `TASK-cache-token-propagation-into-execusage-exec-log-and-aux-call` | produces | `src/harness/exec-recorder.ts` | - |
 | `TASK-caddy-tls-termination-with-automatic-https` | produces | `src/config/cert.ts` | - |
+| `TASK-capability-grant-model-on-chat-branches` | produces | `src/config/schema/harness.ts` | - |
 | `TASK-certificate-lifecycle-expiry-monitoring-and-health-verdicts` | produces | `src/config/cert.ts` | - |
 | `TASK-char-editor-db-storage-sync` | produces | `src/db/schema-character.ts` | - |
 | `TASK-char-editor-db-storage-sync` | produces | `src/routes/character-relationships.ts` | - |
@@ -11456,6 +11482,10 @@ output is byte-identical for identical inputs.
 | `TASK-extract-story-turns-ownership-check-into-chat-service` | produces | `src/routes/story-turns.ts` | - |
 | `TASK-extract-turn-skip-orchestration-into-application-service` | produces | `src/routes/chats/turn-skip-routes.ts` | - |
 | `TASK-extract-turn-skip-orchestration-into-application-service` | produces | `src/routes/messages/reply.ts` | - |
+| `TASK-facade-slice-chat-and-generation-ops` | produces | `src/integrations/loop-lore-facade.ts` | - |
+| `TASK-facade-slice-chat-and-generation-ops` | produces | `src/plugins/types.ts` | - |
+| `TASK-facade-slice-chat-and-generation-ops` | produces | `src/validation/schemas` | - |
+| `TASK-facade-slice-remaining-domains` | produces | `src/validation/schemas` | - |
 | `TASK-faction-leaders-and-cadre-generation` | produces | `src/characters` | - |
 | `TASK-faction-politics-coups-and-expansion-engine` | produces | `src/factions/politics.ts` | - |
 | `TASK-faction-relation-graph-on-2d-canvas-backend-first` | produces | `src/db` | - |
@@ -12714,6 +12744,7 @@ output is byte-identical for identical inputs.
 | `TASK-matrix-story-coherence-perspective-aware-draft-set-perspecti` | produces | `src/memory/provision.ts` | - |
 | `TASK-matting-concept-prompt-contract` | produces | `src/generation/matting/types.ts` | - |
 | `TASK-mcp-client-over-stdio-and-streamable-http` | produces | `src/integrations/mcp/client.ts` | - |
+| `TASK-mcp-stdio-server-via-typescript-sdk` | produces | `src/integrations/mcp/server.ts` | - |
 | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | produces | `src/plugins/tool-executor.ts` | - |
 | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | produces | `src/plugins/types.ts` | - |
 | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | produces | `src/assets/controller.ts` | - |
@@ -15154,6 +15185,10 @@ output is byte-identical for identical inputs.
 | `epic-agency-story-points` | produces | `src/services/agency/spend-helpers.ts` | - |
 | `epic-agency-story-points` | produces | `src/services/agency/story-points.test.ts` | - |
 | `epic-agency-story-points` | produces | `src/views/chat.html` | - |
+| `epic-agentic-integration-mcp-acp` | produces | `src/integrations/acp/server.ts` | - |
+| `epic-agentic-integration-mcp-acp` | produces | `src/integrations/loop-lore-facade.ts` | - |
+| `epic-agentic-integration-mcp-acp` | produces | `src/integrations/mcp/server.ts` | - |
+| `epic-agentic-integration-mcp-acp` | produces | `src/validation/schemas` | - |
 | `epic-ambient-music-sfx` | produces | `src/assistant/commands/sfx.ts` | - |
 | `epic-ambient-music-sfx` | produces | `src/generation/audio-gen-route.ts` | - |
 | `epic-ambient-music-sfx` | produces | `src/generation/audio-prompt-profiles.ts` | - |
@@ -16706,6 +16741,7 @@ output is byte-identical for identical inputs.
 | `epic-harness-integration` | produces | `src/tui/chat/api.ts` | - |
 | `epic-harness-integration` | produces | `src/validation/schemas/entities.ts` | - |
 | `epic-harness-integration` | produces | `src/views/admin.html` | - |
+| `epic-harness-rsi-repo-access` | produces | `src/harness/worktree-scope.ts` | - |
 | `epic-headless-alternative-frontends` | produces | `src/elysia-app.ts` | - |
 | `epic-hidden-carriage-context` | produces | `src/assistant/prompt/carriage-isolation.test.ts` | - |
 | `epic-hidden-carriage-context` | produces | `src/assistant/prompt/carriage-isolation.ts` | - |
@@ -22474,6 +22510,8 @@ output is byte-identical for identical inputs.
 | `BUG-chat-idempotency-not-enforced` | sibling | `TASK-define-and-document-the-src-programmatic-api-surface` | `src/validation/schemas` |
 | `BUG-chat-idempotency-not-enforced` | sibling | `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida` | `src/validation/schemas` |
 | `BUG-chat-idempotency-not-enforced` | sibling | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | `src/validation/schemas` |
+| `BUG-chat-idempotency-not-enforced` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/validation/schemas` |
+| `BUG-chat-idempotency-not-enforced` | sibling | `TASK-facade-slice-remaining-domains` | `src/validation/schemas` |
 | `BUG-chat-idempotency-not-enforced` | sibling | `TASK-gm-tool-keyword-pre-gate-behind-config-flag-fail-open` | `src/routes/messages/create.ts` |
 | `BUG-chat-idempotency-not-enforced` | sibling | `TASK-message-carriage-fill-path-detection` | `src/routes/messages/create.ts` |
 | `BUG-chat-idempotency-not-enforced` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/routes/messages/create.ts` |
@@ -22486,6 +22524,7 @@ output is byte-identical for identical inputs.
 | `BUG-chat-idempotency-not-enforced` | sibling | `TASK-server-enforce-age-nsfw-consent-on-send-and-on-participant-a` | `src/routes/messages/create.ts` |
 | `BUG-chat-idempotency-not-enforced` | sibling | `TASK-tui-slash-command-completion` | `src/routes/messages/create.ts` |
 | `BUG-chat-idempotency-not-enforced` | sibling | `TASK-turn-send-gate` | `src/routes/messages/create.ts` |
+| `BUG-chat-idempotency-not-enforced` | sibling | `epic-agentic-integration-mcp-acp` | `src/validation/schemas` |
 | `BUG-chat-idempotency-not-enforced` | sibling | `epic-deterministic-first-gates` | `src/routes/messages/create.ts` |
 | `BUG-chat-idempotency-not-enforced` | sibling | `epic-middleware-request-lifecycle` | `src/routes/messages/swipe-race-insert.ts` |
 | `BUG-chat-idempotency-not-enforced` | sibling | `epic-multilingual-carriage` | `src/routes/messages/create.ts` |
@@ -29116,6 +29155,7 @@ output is byte-identical for identical inputs.
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-055` | `src/plugins/loader.ts` |
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts` |
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts; src/plugins/types.ts` |
+| `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/plugins/types.ts` |
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/users/permissions.ts` |
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-harness-hook-contract` | `src/plugins/types.ts` |
 | `BUG-nsfw-cards-ships-ungated-post-routes` | sibling | `TASK-harness-lean-ctx-tools` | `src/plugins/types.ts` |
@@ -29612,6 +29652,7 @@ output is byte-identical for identical inputs.
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-055` | `src/plugins/loader.ts` |
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts` |
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts; src/plugins/route-access.ts; src/plugins/types.ts` |
+| `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/plugins/types.ts` |
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-harness-hook-contract` | `src/plugins/types.ts` |
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-harness-lean-ctx-tools` | `src/plugins/types.ts` |
 | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | sibling | `TASK-harness-plugin-runtime` | `src/plugins/types.ts` |
@@ -29684,6 +29725,7 @@ output is byte-identical for identical inputs.
 | `BUG-plugin-tool-authorization-fails-open` | sibling | `TASK-comic-page-composition-strategy` | `src/db/migrations/001_init.ts` |
 | `BUG-plugin-tool-authorization-fails-open` | sibling | `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` | `src/generation/generate-route/tool-execution.ts` |
 | `BUG-plugin-tool-authorization-fails-open` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/route-access.ts; src/plugins/types.ts` |
+| `BUG-plugin-tool-authorization-fails-open` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/plugins/types.ts` |
 | `BUG-plugin-tool-authorization-fails-open` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/users/permissions.ts` |
 | `BUG-plugin-tool-authorization-fails-open` | sibling | `TASK-harness-hook-contract` | `src/plugins/types.ts` |
 | `BUG-plugin-tool-authorization-fails-open` | sibling | `TASK-harness-lean-ctx-tools` | `src/generation/generate-route/tool-execution.ts; src/plugins/types.ts` |
@@ -36616,6 +36658,7 @@ output is byte-identical for identical inputs.
 | `TASK-046` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts; src/plugins/types.ts` |
 | `TASK-046` | sibling | `TASK-engine-docs-search` | `src/plugins/registry.ts` |
 | `TASK-046` | sibling | `TASK-engine-feedback-loop` | `src/plugins/registry.ts` |
+| `TASK-046` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/plugins/types.ts` |
 | `TASK-046` | sibling | `TASK-harness-hook-contract` | `src/plugins/types.ts` |
 | `TASK-046` | sibling | `TASK-harness-lean-ctx-tools` | `src/plugins/types.ts` |
 | `TASK-046` | sibling | `TASK-harness-plugin-runtime` | `src/plugins/types.ts` |
@@ -36647,6 +36690,7 @@ output is byte-identical for identical inputs.
 | `TASK-047` | sibling | `TASK-engine-docs-search` | `src/plugins/registry.ts` |
 | `TASK-047` | sibling | `TASK-engine-feedback-loop` | `src/plugins/registry.ts` |
 | `TASK-047` | sibling | `TASK-eventbus-toolregistry-core-wiring` | `src/plugins/event-bus.ts; src/plugins/tool-executor.ts` |
+| `TASK-047` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/plugins/types.ts` |
 | `TASK-047` | sibling | `TASK-harness-hook-contract` | `src/plugins/event-bus.ts; src/plugins/types.ts` |
 | `TASK-047` | sibling | `TASK-harness-lean-ctx-tools` | `src/plugins/types.ts` |
 | `TASK-047` | sibling | `TASK-harness-plugin-runtime` | `src/plugins/types.ts` |
@@ -36678,6 +36722,7 @@ output is byte-identical for identical inputs.
 | `TASK-048` | sibling | `TASK-add-per-plugin-unload` | `src/plugins/loader.ts` |
 | `TASK-048` | sibling | `TASK-enforce-plugin-origin-at-request-time` | `src/plugins/loader.ts; src/plugins/types.ts` |
 | `TASK-048` | sibling | `TASK-eventbus-toolregistry-core-wiring` | `src/plugins/event-bus.ts; src/plugins/tool-executor.ts` |
+| `TASK-048` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/plugins/types.ts` |
 | `TASK-048` | sibling | `TASK-harness-hook-contract` | `src/plugins/event-bus.ts; src/plugins/types.ts` |
 | `TASK-048` | sibling | `TASK-harness-lean-ctx-tools` | `src/plugins/types.ts` |
 | `TASK-048` | sibling | `TASK-harness-plugin-runtime` | `src/plugins/types.ts` |
@@ -45170,6 +45215,8 @@ output is byte-identical for identical inputs.
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-emotions-avatar-edit-model` | `src/generation/image-gen-route.ts` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | `src/validation/schemas` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-extract-application-services-per-context-routes-to-thin-adap` | `src/chat/service` |
+| `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/validation/schemas` |
+| `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-facade-slice-remaining-domains` | `src/validation/schemas` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-fix-eslint-errors` | `src/routes/model-comparisons.ts` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-image-backends-x-access-authz-parity-audit-across-image-surf` | `src/generation/image-gen-route.ts` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-local-image-generation-queue` | `src/generation/image-gen-route.ts` |
@@ -45184,6 +45231,7 @@ output is byte-identical for identical inputs.
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-vector-gen-animated-raster` | `src/generation/image-engine/index.ts; src/generation/image-gen-route.ts` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-vector-gen-llm-svg-pipeline` | `src/generation/image-engine/index.ts; src/generation/image-gen-route.ts` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-video-gen-route` | `src/chat/service; src/generation/image-gen-route.ts` |
+| `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `epic-agentic-integration-mcp-acp` | `src/validation/schemas` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `epic-analytics-observability` | `src/routes/model-comparisons.ts` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `epic-architecture` | `src/routes/http-utils.ts` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `epic-audio-video-sound` | `src/generation/image-gen-route.ts` |
@@ -46335,6 +46383,9 @@ output is byte-identical for identical inputs.
 | `TASK-dedupe-sse-activity-stream` | sibling | `epic-world-chat-channels-invites` | `src/frontend/alpine/chat-activity.ts` |
 | `TASK-define-and-document-the-src-programmatic-api-surface` | sibling | `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida` | `src/validation/schemas` |
 | `TASK-define-and-document-the-src-programmatic-api-surface` | sibling | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | `src/validation/schemas` |
+| `TASK-define-and-document-the-src-programmatic-api-surface` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/validation/schemas` |
+| `TASK-define-and-document-the-src-programmatic-api-surface` | sibling | `TASK-facade-slice-remaining-domains` | `src/validation/schemas` |
+| `TASK-define-and-document-the-src-programmatic-api-surface` | sibling | `epic-agentic-integration-mcp-acp` | `src/validation/schemas` |
 | `TASK-define-shared-nav-state-contract-between-client-side-routing` | sibling | `TASK-docs-ui-endpoint-linkage` | `src/views/layout.html` |
 | `TASK-define-shared-nav-state-contract-between-client-side-routing` | sibling | `TASK-fb3-frontend-hub-index-ovr-subsystems` | `src/views/layout.html` |
 | `TASK-define-shared-nav-state-contract-between-client-side-routing` | sibling | `TASK-i18n-alpine-client` | `src/views/layout.html` |
@@ -46351,6 +46402,9 @@ output is byte-identical for identical inputs.
 | `TASK-define-shared-nav-state-contract-between-client-side-routing` | sibling | `epic-frontend-headers-management` | `src/components/header.html; src/views/layout.html` |
 | `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida` | sibling | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | `src/config/sections/messages.ts` |
 | `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida` | sibling | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | `src/validation/schemas` |
+| `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/validation/schemas` |
+| `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida` | sibling | `TASK-facade-slice-remaining-domains` | `src/validation/schemas` |
+| `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida` | sibling | `epic-agentic-integration-mcp-acp` | `src/validation/schemas` |
 | `TASK-delete-69-dead-src-files-reported-by-knip` | sibling | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep` | `src/build/copy-icons.ts` |
 | `TASK-delete-dead-migration-helpers-ts-booltoenum` | sibling | `TASK-epic-db-migration-compaction-stale-premise-reconcile` | `src/db/migrations/README.md` |
 | `TASK-delete-dead-migration-helpers-ts-booltoenum` | sibling | `TASK-external-comfyui-plugin-repo-integration-contract` | `src/db/migrations/README.md` |
@@ -47836,6 +47890,7 @@ output is byte-identical for identical inputs.
 | `TASK-encryption-wire-message-pipeline` | sibling | `epic-finetune-eval-promotion-gate` | `src/crypto/chat-keys.ts` |
 | `TASK-encryption-wire-message-pipeline` | sibling | `epic-logic-reconciliation` | `src/routes/chats.ts` |
 | `TASK-encryption-wire-message-pipeline` | sibling | `epic-world-chat-channels-invites` | `src/routes/chats.ts` |
+| `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/plugins/types.ts` |
 | `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-harness-hook-contract` | `src/plugins/types.ts` |
 | `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-harness-lean-ctx-tools` | `src/plugins/types.ts` |
 | `TASK-enforce-plugin-origin-at-request-time` | sibling | `TASK-harness-plugin-runtime` | `src/plugins/types.ts` |
@@ -48058,6 +48113,8 @@ output is byte-identical for identical inputs.
 | `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a` | sibling | `TASK-frontend-client-contract-doc` | `src/routes/v1/openapi.ts` |
 | `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/routes/v1/openapi.ts` |
 | `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a` | sibling | `epic-experimental-egui-frontend` | `src/routes/v1/openapi.ts` |
+| `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `TASK-facade-slice-chat-and-generation-ops` | `src/validation/schemas` |
+| `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `TASK-facade-slice-remaining-domains` | `src/validation/schemas` |
 | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `TASK-middleware-idempotency-wire-into-elysia` | `src/config/schema.ts` |
 | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `TASK-nsfw-consent-grant-route-missing` | `src/validation/schemas/index.ts` |
 | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `TASK-prompt-template-registry` | `src/config/schema.ts` |
@@ -48069,6 +48126,7 @@ output is byte-identical for identical inputs.
 | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `TASK-recursive-self-improvement-evaluator-reliability-drift-detec` | `src/config/schema.ts` |
 | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `TASK-recursive-self-improvement-sidecar-python-provider-for-custo` | `src/config/schema.ts` |
 | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `TASK-split-config-schema` | `src/config/schema.ts` |
+| `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `epic-agentic-integration-mcp-acp` | `src/validation/schemas` |
 | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `epic-character-core-system` | `src/config/schema.ts` |
 | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `epic-config-extensions` | `src/config/schema.ts` |
 | `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` | sibling | `epic-config-file-separation` | `src/config/schema.ts` |
@@ -48151,6 +48209,19 @@ output is byte-identical for identical inputs.
 | `TASK-extract-turn-skip-orchestration-into-application-service` | sibling | `TASK-per-chat-auto-translation-layer` | `src/routes/messages/reply.ts` |
 | `TASK-extract-turn-skip-orchestration-into-application-service` | sibling | `epic-chat-composer-flows` | `src/routes/messages/reply.ts` |
 | `TASK-extract-turn-skip-orchestration-into-application-service` | sibling | `epic-middleware-request-lifecycle` | `src/routes/messages/reply.ts` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `TASK-facade-slice-remaining-domains` | `src/validation/schemas` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `TASK-harness-hook-contract` | `src/plugins/types.ts` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `TASK-harness-lean-ctx-tools` | `src/plugins/types.ts` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `TASK-harness-plugin-runtime` | `src/plugins/types.ts` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | `src/plugins/types.ts` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/types.ts` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `TASK-plugin-management-api` | `src/plugins/types.ts` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag` | `src/plugins/types.ts` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `epic-agentic-integration-mcp-acp` | `src/integrations/loop-lore-facade.ts; src/validation/schemas` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `epic-external-creative-tool-bridge` | `src/plugins/types.ts` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `epic-mini-games` | `src/plugins/types.ts` |
+| `TASK-facade-slice-chat-and-generation-ops` | sibling | `epic-plugin-extension-points` | `src/plugins/types.ts` |
+| `TASK-facade-slice-remaining-domains` | sibling | `epic-agentic-integration-mcp-acp` | `src/validation/schemas` |
 | `TASK-faction-leaders-and-cadre-generation` | sibling | `epic-rpg-patterns` | `src/characters` |
 | `TASK-faction-politics-coups-and-expansion-engine` | sibling | `epic-faction-reputation` | `src/factions/politics.ts` |
 | `TASK-faction-relation-graph-on-2d-canvas-backend-first` | sibling | `TASK-gate-branches-display-invariant-item-instance-state` | `src/db` |
@@ -50227,6 +50298,7 @@ output is byte-identical for identical inputs.
 | `TASK-harness-work-topics` | sibling | `epic-research-agency-affordance` | `src/regex/intent.ts` |
 | `TASK-harness-work-topics` | sibling | `epic-technical-comparison-charts` | `src/assistant/workflow-routing.ts` |
 | `TASK-harness-work-topics` | sibling | `epic-workflow-engine` | `src/assistant/workflow-routing.ts; src/regex/intent.ts` |
+| `TASK-harness-worktree-scope-guard` | sibling | `epic-harness-rsi-repo-access` | `src/harness/worktree-scope.ts` |
 | `TASK-headers-additional-useful-response-headers` | sibling | `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser` | `src/server/handler.ts` |
 | `TASK-headers-additional-useful-response-headers` | sibling | `TASK-middleware-in-progress-status-endpoint-for-long-running-requ` | `src/server/handler.ts` |
 | `TASK-headers-additional-useful-response-headers` | sibling | `TASK-middleware-request-id-elysia-derive` | `src/server/handler.ts` |
@@ -51630,6 +51702,7 @@ output is byte-identical for identical inputs.
 | `TASK-matting-concept-prompt-contract` | sibling | `epic-derived-map-generation` | `src/generation/matting/types.ts` |
 | `TASK-matting-concept-prompt-contract` | sibling | `epic-sam3-segmentation-integration` | `src/generation/matting/types.ts` |
 | `TASK-mcp-client-over-stdio-and-streamable-http` | sibling | `epic-external-creative-tool-bridge` | `src/integrations/mcp/client.ts` |
+| `TASK-mcp-stdio-server-via-typescript-sdk` | sibling | `epic-agentic-integration-mcp-acp` | `src/integrations/mcp/server.ts` |
 | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | sibling | `TASK-plugin-and-tool-runtime-residual-defects` | `src/plugins/tool-executor.ts` |
 | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | sibling | `TASK-plugin-host-contract-for-third-party-integration-plugins` | `src/plugins/types.ts` |
 | `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge` | sibling | `TASK-plugin-management-api` | `src/plugins/types.ts` |

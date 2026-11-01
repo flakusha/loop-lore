@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 368 epics
+**Total:** 371 epics
 
 ## Summary
 
@@ -20,6 +20,7 @@
 | Done | Actors & Entity System | High | High | 0 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | Done | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | Done | Age Gate & Content Warnings | Medium | Medium | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
+| Not Started | Agentic integration surface (MCP + ACP + scoped REST) | High | High | 0 | [epic-agentic-integration-mcp-acp.md](/.plan/epics/epic-agentic-integration-mcp-acp.md) |
 | Not Started | Anonymity & Decentralization — Epic | medium | Medium | 0 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Not Started | API Governance — Epic | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance.md](/.plan/epics/epic-api-governance.md) |
@@ -226,6 +227,7 @@
 | In Progress | GM/Assistant Story Whitenotes & Shadow Notes | High | Medium | 0 | [epic-gm-shadow-notes.md](/.plan/epics/epic-gm-shadow-notes.md) |
 | In Progress | Group Chat | High | Medium | 0 | [epic-group-chat.md](/.plan/epics/epic-group-chat.md) |
 | In Progress | Guest Access — Unauthenticated Public Browsing (draft for new worktree) | High — public reach / demo-ability gap | Large | 0 | [epic-guest-access.md](/.plan/epics/epic-guest-access.md) |
+| Not Started | Harness RSI repo-root access tier | High | High | 0 | [epic-harness-rsi-repo-access.md](/.plan/epics/epic-harness-rsi-repo-access.md) |
 | Not Started | Headers & Navigation Management | Medium | Medium | 0 | [epic-frontend-headers-management.md](/.plan/epics/epic-frontend-headers-management.md) |
 | Not Started | Headless Mode & Alternative Frontends | Medium | High (split into 5 sub-epics) | 0 | [epic-headless-alternative-frontends.md](/.plan/epics/epic-headless-alternative-frontends.md) |
 | In Progress | Hidden Carriage — Chat-Includeable Structured Memory Context | Medium | Medium | 0 | [epic-hidden-carriage-context.md](/.plan/epics/epic-hidden-carriage-context.md) |
@@ -301,6 +303,7 @@
 | Not Started | Plugin Management UI | P2 — Medium | Medium | 0 | [epic-plugin-management-ui.md](/.plan/epics/epic-plugin-management-ui.md) |
 | Not Started | Plugin System & Extensibility | High | Very High | 0 | [epic-plugin-system.md](/.plan/epics/epic-plugin-system.md) |
 | In Progress | Pre-Compiled Hot Binary Modules | Medium | High | 0 | [epic-precompiled-hot-binaries.md](/.plan/epics/epic-precompiled-hot-binaries.md) |
+| Not Started | Principal + scoped credentials (shared primitive) | High | Medium | 0 | [epic-principal-scoped-credentials.md](/.plan/epics/epic-principal-scoped-credentials.md) |
 | Not Started | Project Spaces — World-Like Business Project Isolation + Cross-Space Linking | High | Large | 0 | [epic-project-spaces-pm-integration.md](/.plan/epics/epic-project-spaces-pm-integration.md) |
 | Not Started | Prompt & Output Control | Medium | Medium | 0 | [epic-output-control-transforms.md](/.plan/epics/epic-output-control-transforms.md) |
 | In Progress | Prompt Improvement — Unified Text Enhancement | High | Medium | 0 | [epic-prompt-improvement.md](/.plan/epics/epic-prompt-improvement.md) |
@@ -458,6 +461,15 @@ The superseded stub's plan predates the current landscape: ComfyUI now
 - **Type:** epic
 - **Tags:** frontend, security, privacy
 - **File:** `.plan/epics/epic-frontend-age-gate.md`
+
+### Agentic integration surface (MCP + ACP + scoped REST)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** mcp, acp, agentic, facade, api-keys, streamable-http, capability-manifest, integration-tests
+- **File:** `.plan/epics/epic-agentic-integration-mcp-acp.md`
 
 ### Anonymity & Decentralization — Epic
 
@@ -2447,6 +2459,15 @@ Group chat lets multiple characters participate in one conversation. The runtime
 - **Tags:** auth, access, guest, public, visibility, read-only
 - **File:** `.plan/epics/epic-guest-access.md`
 
+### Harness RSI repo-root access tier
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** rsi, repo-access, principal, scope-guard, capability-grants, escalation, audit, internal-service
+- **File:** `.plan/epics/epic-harness-rsi-repo-access.md`
+
 ### Headers & Navigation Management
 
 - **Status:** Not Started
@@ -3145,6 +3166,15 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Type:** Infrastructure Epic
 - **Tags:** native-modules, ffi, hot-reload, performance, binary-distribution
 - **File:** `.plan/epics/epic-precompiled-hot-binaries.md`
+
+### Principal + scoped credentials (shared primitive)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** principal, credentials, api-keys, auth-seam, fail-closed, security, shared-primitive
+- **File:** `.plan/epics/epic-principal-scoped-credentials.md`
 
 ### Project Spaces — World-Like Business Project Isolation + Cross-Space Linking
 
