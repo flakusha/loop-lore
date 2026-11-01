@@ -31,3 +31,5 @@ the inproc `bun test` e2e pool is the correct runner.
 - [x] Implementation complete
 - [x] Tests passing — HARNESSE2E=1: 5 pass / 0 fail; without marker: 5 skip / 0 fail
 - [x] Documentation updated — N/A, test-only change (ticket Context documents the design)
+
+**Resolved:** 2026-11-01 registry-driven close: git issue e8e777f (registry tip: 6e760817a Konstantin Fedotov Auto-closed: appended .md marker marks TASK-E2E-ENV-GATED-SCENARIO done)
