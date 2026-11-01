@@ -18411,7 +18411,7 @@
     "label": "epic",
     "priority": "High\\",
     "source": ".plan/epics/epic-timeline-system.md",
-    "status": "draft",
+    "status": "done",
     "tags": [
       "timeline",
       "branching",
