@@ -17,13 +17,18 @@ import { afterEach, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { rmSync, } from "node:fs";
-import { createSqliteDialect, getDatabase, setTestDatabase, } from "./index";
+import { createSqliteDialect, getDatabase, resetDatabaseSingleton, setTestDatabase, } from "./index";
 import type { DB, } from "./schema";
 
 describe("setTestDatabase global clear", () => {
-  afterEach(() => {
+  afterEach(async () => {
     // Ensure no leakage into the next describe
     setTestDatabase(null,);
+    // The sentinel-path test below calls getDatabase() with no override and
+    // materializes the production singleton; a bound-but-empty singleton
+    // poisons every later DB consumer in a shared non-isolated run (quota
+    // storage hits "no such table") — reset owns it, like sqlite-handle.
+    await resetDatabaseSingleton();
   },);
 
   test("getDatabase returns the override while it is set", () => {
@@ -85,8 +90,9 @@ describe("sqliteInMemory pragma behavior", () => {
 });
 
 describe("lazy production singleton", () => {
-  afterEach(() => {
+  afterEach(async () => {
     setTestDatabase(null,);
+    await resetDatabaseSingleton();
   },);
 
   test("getDatabase() does not touch disk when an override is set", () => {
