@@ -17,6 +17,20 @@ export interface BattleCombatantView {
   hp: number;
   maxHp: number;
   initiative: number;
+  /** Active conditions delivered by the backend (e.g. "stunned"). */
+  conditions: string[];
+}
+
+/** One battle-log entry delivered by the backend payload. */
+export interface BattleLogEntryView {
+  /** Combat action type (drives the entry's indicator class). */
+  type: string;
+  /** Damage dealt / HP restored when the action moved HP (omitted otherwise). */
+  damage?: number;
+  /** Natural-20 attack (drives the entry's critical highlighting). */
+  critical: boolean;
+  /** Narration line for the entry. */
+  description: string;
 }
 
 /** A battle-usable item offered by the panel's Item group. */
@@ -38,6 +52,8 @@ export interface BattleView {
   combatants: BattleCombatantView[];
   /** The acting combatant's battle-usable items (empty when none). */
   items: BattleItemView[];
+  /** Battle history delivered by the backend (empty when nothing has happened). */
+  log: BattleLogEntryView[];
 }
 
 /** */

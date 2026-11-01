@@ -233,7 +233,8 @@ describe("battle item helpers (pure)", () => {
       round: 1,
       turnIndex: 0,
       combatants: [makeCombatant("alice", "Alice", false, 12,),],
-    } as Parameters<typeof serializeBattle>[0];
+      log: [],
+    } as unknown as Parameters<typeof serializeBattle>[0];
 
     const view = serializeBattle(battle, [{ id: "i1", name: "Draught", quantity: 2, },],);
     expect(view,).toMatchObject({ id: "b1", round: 1, turnIndex: 0, status: "active", },);
@@ -244,7 +245,71 @@ describe("battle item helpers (pure)", () => {
       hp: 12,
       maxHp: 12,
       initiative: view.combatants[0]!.initiative,
+      conditions: [],
     },);
+
+    expect(view.log,).toEqual([],);
+  });
+
+  it("serializeBattle delivers combatant conditions and the battle log", () => {
+    const alice = makeCombatant("alice", "Alice", false, 12,);
+    alice.conditions = ["stunned", "poisoned",];
+    const battle = {
+      id: "b2",
+      status: "active",
+      round: 2,
+      turnIndex: 1,
+      combatants: [alice,],
+      log: [
+        {
+          actorId: "alice",
+          type: "attack",
+          targetId: "orc",
+          attack: {
+            roll: { dice: [20,], modifier: 3, total: 23, },
+            total: 23,
+            hit: true,
+            criticalHit: true,
+            criticalMiss: false,
+            damage: {
+              baseDice: { dice: [6,], modifier: 2, total: 8, },
+              abilityMod: 2,
+              flatBonus: 0,
+              totalBeforeResist: 8,
+              finalDamage: 8,
+              damageType: "physical",
+              isCritical: true,
+            },
+            narration: "Alice crushes the orc for 8 damage.",
+          },
+          damage: 8,
+          description: "Alice crushes the orc for 8 damage.",
+        },
+        {
+          actorId: "alice",
+          type: "bonus_action",
+          targetId: "alice",
+          damage: 3,
+          description: "Alice recovers 3 HP.",
+        },
+        {
+          actorId: "alice",
+          type: "bonus_action",
+          targetId: "orc",
+          description: "Alice (negotiate → Orc): the orc hesitates.",
+        },
+      ],
+    } as Parameters<typeof serializeBattle>[0];
+
+    const view = serializeBattle(battle,);
+    expect(view.combatants[0]?.conditions,).toEqual(["stunned", "poisoned",],);
+
+    // Lean payload: narration + indicator fields only, never the raw attack roll.
+    expect(view.log,).toEqual([
+      { type: "attack", damage: 8, critical: true, description: "Alice crushes the orc for 8 damage.", },
+      { type: "bonus_action", damage: 3, critical: false, description: "Alice recovers 3 HP.", },
+      { type: "bonus_action", critical: false, description: "Alice (negotiate → Orc): the orc hesitates.", },
+    ],);
   });
 });
 

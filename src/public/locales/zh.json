@@ -2215,7 +2215,9 @@
   },
   "battle": {
     "turnOrder": "Turn order",
-    "health": "Health"
+    "health": "Health",
+    "statusEffects": "Status effects",
+    "log": "Battle log"
   },
   "frontend": {
     "keynav": {

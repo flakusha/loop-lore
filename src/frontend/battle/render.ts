@@ -19,6 +19,7 @@ import {
   SOCIAL_ACTIONS,
 } from "./commands.js";
 import { renderHealthBar, } from "./health-bar.js";
+import { renderStatusEffects, } from "./status-effects.js";
 
 /** */
 export interface BattleRenderCallbacks {
@@ -86,6 +87,8 @@ export function renderRoster(
     `;
 
     tile.append(renderHealthBar(c.hp, c.maxHp,),);
+    const badges = renderStatusEffects(c.conditions,);
+    if (badges) { tile.append(badges,); }
 
     tile.addEventListener("click", () => {
       if (dead) { return; }

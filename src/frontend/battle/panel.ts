@@ -29,6 +29,7 @@ import {
   type BattleView,
 } from "./commands.js";
 
+import { renderBattleLog, } from "./battle-log.js";
 import { buildFocusTargets, handlePanelKey, type PanelFocusDeps, rebuildFocus, } from "./panel-focus.js";
 import {
   type BattleRenderCallbacks,
@@ -44,6 +45,7 @@ export {
   type BattleCombatantView,
   battleCommandFor,
   type BattleItemView,
+  type BattleLogEntryView,
   type BattleView,
 } from "./commands.js";
 
@@ -185,6 +187,10 @@ function render(): void {
     const items = renderItems(deps.battle, callbacks,);
     if (items) { overlay.append(items,); }
   }
+
+  // The battle log is only meaningful once the backend has delivered history.
+  const log = renderBattleLog(deps.battle.log,);
+  if (log) { overlay.append(log,); }
 
   // Focus the current cycle target once mounted.
   const active = deps.focusTargets[deps.focusedIndex];

@@ -981,6 +981,67 @@
   text-decoration: line-through;
 }
 
+/* Status-effect badges (delivered per-combatant conditions). */
+.battle-status-effects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1, 0.25rem);
+  margin-top: var(--space-1, 0.25rem);
+}
+
+.battle-status-badge {
+  padding: 0.05rem var(--space-2, 0.5rem);
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+/* Battle log (delivered history; keyboard-focusable scroll box). */
+.battle-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  max-height: 10rem;
+  overflow-y: auto;
+  margin-top: var(--space-3, 0.75rem);
+  padding: var(--space-2, 0.5rem);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  font-size: 0.8rem;
+}
+
+.battle-log:focus-visible {
+  border-color: var(--accent-primary);
+}
+
+.battle-log-entry {
+  color: var(--text-secondary);
+}
+
+.battle-log-entry.is-critical {
+  color: var(--accent-primary);
+}
+
+.battle-log-crit {
+  margin-right: var(--space-1, 0.25rem);
+}
+
+.battle-log-damage {
+  margin-right: var(--space-1, 0.25rem);
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-primary) 25%, transparent);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.battle-log-text {
+  color: var(--text-primary);
+}
+
 .battle-actions {
   display: flex;
   gap: var(--space-2, 0.5rem);
