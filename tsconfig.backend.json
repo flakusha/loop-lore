@@ -8,7 +8,9 @@
     "moduleDetection": "force",
     "allowJs": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@loop-lore/core": ["./packages/core/src/index.ts"],
+      "@loop-lore/core/*": ["./packages/core/src/*"]
     },
     "types": ["bun"],
     "strict": true,
