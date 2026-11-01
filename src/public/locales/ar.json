@@ -1051,6 +1051,23 @@
   "mood": {
     "adjustHappiness": "ضبط مستوى السعادة"
   },
+
+  "nsfw": {
+    "bodyState": {
+      "title": "حالة الجسد",
+      "health": "الصحة",
+      "arousal": "الإثارة",
+      "conditions": "الحالات",
+      "noConditions": "لا حالات نشطة",
+      "source": "المصدر: {source}",
+      "turnsLeft": "الأدوار المتبقية: {count}",
+      "arousalCalm": "هادئ",
+      "arousalMild": "إثارة خفيفة",
+      "arousalActive": "مثار",
+      "arousalHigh": "مثار بشدة",
+      "arousalDesperate": "يائس"
+    }
+  },
   "help": {
     "settings": {
       "theme": "اختر نظام ألوان. تُطبق التغييرات فوراً.",

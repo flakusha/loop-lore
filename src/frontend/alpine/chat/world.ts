@@ -211,6 +211,9 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     // NSFW panel loads AFTER participants so the intimacy pair targets can be
     // resolved to display names. It never rejects (denied → hidden).
     await this.loadNsfwPanel();
+    // Body state (health / conditions / arousal) reuses the same resolved
+    // chat character; it also never rejects (denied sections render empty).
+    await this.loadBodyState();
   },
 
   /**

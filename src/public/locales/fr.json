@@ -1051,6 +1051,23 @@
   "mood": {
     "adjustHappiness": "Ajuster le bonheur"
   },
+
+  "nsfw": {
+    "bodyState": {
+      "title": "État du corps",
+      "health": "Santé",
+      "arousal": "Excitation",
+      "conditions": "États",
+      "noConditions": "Aucun état actif",
+      "source": "Source : {source}",
+      "turnsLeft": "Tours restants : {count}",
+      "arousalCalm": "Calme",
+      "arousalMild": "Légèrement excité",
+      "arousalActive": "Excité",
+      "arousalHigh": "Très excité",
+      "arousalDesperate": "Désespéré"
+    }
+  },
   "help": {
     "settings": {
       "theme": "Choisissez un jeu de couleurs. Les changements s'appliquent immédiatement.",

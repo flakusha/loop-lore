@@ -3,6 +3,7 @@
 
 import type { ChatArchiveState, } from "./archive-state";
 import type { ChatBattleState, } from "./battle-state";
+import type { ChatBodyStateState, } from "./body-state";
 import type { ChatBranchesState, } from "./branches-state";
 import type { ChatComposerPreSendState, } from "./composer-pre-send-state";
 import type { ChatCoreState, } from "./core";
@@ -36,6 +37,7 @@ export interface ChatState
     ChatCoreState,
     ChatGalleryBatchState,
     ChatBattleState,
+    ChatBodyStateState,
     ChatBranchesState,
     ChatMergeState,
     ChatRpgState,
