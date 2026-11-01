@@ -11,6 +11,7 @@
  * the default so long logs never ambush the layout.
  */
 import type { BattleSummary, } from "../../rpg/service/battles/summary.js";
+import { t, } from "../alpine/i18n";
 import { renderBattleLog, } from "./battle-log.js";
 import type { BattleLogEntryView, } from "./commands.js";
 
@@ -23,7 +24,7 @@ import type { BattleLogEntryView, } from "./commands.js";
 export function renderBattleSummary(summary: BattleSummary, log: BattleLogEntryView[],): HTMLElement {
   const card = document.createElement("section",);
   card.className = "battle-summary";
-  card.setAttribute("aria-label", "Battle summary",);
+  card.setAttribute("aria-label", t("battle.battleSummary",),);
 
   const headline = document.createElement("p",);
   headline.className = "battle-summary-headline";
