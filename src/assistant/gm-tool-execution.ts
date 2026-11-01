@@ -18,12 +18,13 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
+import { recordRegexCall, } from "../regex/telemetry";
 import { jsonResponse, } from "../routes/http-utils";
 import { commandActiveChat, fetchChatAndRole, insertCommandSystemMessage, } from "../routes/messages/command";
 import { jsonParseOr, toErrorMessage, } from "../utils";
 import type { CommandContext, CommandResult, } from "./commands/registry";
 import { getCommand, getCommandRequirement, satisfiesRole, } from "./commands/registry";
-import { detectGmTool, GM_TOOL_NAMES, } from "./gm-tool-detection";
+import { detectGmTool, GM_TOOL_NAMES, gmToolKeywordGate, isGmToolKeywordGateEnabled, } from "./gm-tool-detection";
 import type { GmToolDetection, GmToolName, } from "./gm-tool-detection";
 import { runGuardedToolCall, } from "./guard/pipeline";
 
@@ -142,6 +143,21 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
     logger.debug("GM tool request from a non-user actor; skipping", { actorId, },);
     return noop;
   }
+
+  // Keyword pre-gate (fail-open): avoid the AUX call when the message does
+  // not plausibly request a GM tool. Skips the detect seam entirely.
+  let gatedSkip = false;
+  try {
+    if (isGmToolKeywordGateEnabled(config,)) {
+      const verdict = gmToolKeywordGate(content,);
+      recordRegexCall("gm-tool:keyword-gate", verdict === "candidate",);
+      gatedSkip = verdict === "skip";
+    }
+  } catch {
+    gatedSkip = false;
+  }
+
+  if (gatedSkip) { return noop; }
 
   let detection: GmToolDetection | null = null;
   try {
