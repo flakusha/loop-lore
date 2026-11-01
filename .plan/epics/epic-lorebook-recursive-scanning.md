@@ -35,3 +35,6 @@ ST-style recursive World Info scanning: entry content itself triggers other entr
 ## Open Questions
 
 None listed by the research doc.
+
+
+git issue: df96d5e

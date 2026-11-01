@@ -34,3 +34,6 @@ Epic-lite: capture swipe/regenerate chosen-vs-rejected pairs as DPO groundwork. 
 ## Open Questions
 
 None blocking from the research doc. (Running DPO *training* jobs is an explicit non-goal — export pairs only until the SFT lane is validated.)
+
+
+git issue: 1d203db

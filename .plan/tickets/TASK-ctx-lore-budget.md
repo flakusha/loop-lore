@@ -3,7 +3,7 @@
 
 # TASK: Ctx Lore Budget
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -25,3 +25,5 @@ Cap unbounded lore section with a token budget (currently never budgeted)
 ## Acceptance
 
 - [ ] Complete
+
+**Resolved:** 2026-11-01 registry-driven close: git issue 0f6b3f8 (registry tip: eaa3cde03 Konstantin Fedotov Close issue)
