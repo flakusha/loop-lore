@@ -65,6 +65,15 @@ function press(deps: PanelFocusDeps, key: string,): void {
   handlePanelKey({ key, preventDefault: () => {}, } as KeyboardEvent, deps,);
 }
 
+/** Keydown helper with a synthetic event target class (bubbled from a child). */
+function pressOn(deps: PanelFocusDeps, key: string, targetClass: string,): void {
+  handlePanelKey({
+    key,
+    preventDefault: () => {},
+    target: { classList: { contains: (name: string,) => name === targetClass, }, },
+  } as unknown as KeyboardEvent, deps,);
+}
+
 describe("buildFocusTargets", () => {
   it("orders alive combatants, then actions, then open item rows", () => {
     const deps = makeDeps({ itemsOpen: true, },);
@@ -164,6 +173,31 @@ describe("handlePanelKey", () => {
     } as KeyboardEvent, deps,);
 
     expect(prevented,).toBe(true,);
+  });
+
+  it("arrows inside the battle log scroll natively instead of cycling", () => {
+    const deps = makeDeps();
+    buildFocusTargets(deps,);
+    deps.focusedIndex = 0;
+    pressOn(deps, "ArrowDown", "battle-log",);
+    expect(deps.focusedIndex,).toBe(0,);
+    expect(deps.events,).toEqual([],);
+  });
+
+  it("enter inside the battle log does not activate the cycle target", () => {
+    const deps = makeDeps();
+    buildFocusTargets(deps,);
+    deps.focusedIndex = 0; // alice
+    pressOn(deps, "Enter", "battle-log",);
+    expect(deps.selectedTargetId,).toBeNull();
+    expect(deps.events,).toEqual([],);
+  });
+
+  it("escape still clears the selection from inside the battle log", () => {
+    const deps = makeDeps({ selectedTargetId: "alice", },);
+    buildFocusTargets(deps,);
+    pressOn(deps, "Escape", "battle-log",);
+    expect(deps.selectedTargetId,).toBeNull();
   });
 });
 
