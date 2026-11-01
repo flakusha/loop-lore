@@ -32,22 +32,46 @@ bun run check && bun run test:unit
 # - Generated artifacts (`.tmp/coverage/`) are scratchpad; never commit
 #
 # Check runner modes (`scripts/check-parallel.mjs`):
-# - Heavy test gates (e2e, coverage, plan-sync, eslint) always run serialized
-#   after the light gates, in an `await` loop that never reads the concurrency
-#   cap — so no `--jobs` value can start two bun-test processes.
-# - Gate concurrency defaults to 4, and it bounds the light pool only. The
-#   default was raised from 1 after measuring a real finalize at JOBS=1: peak
-#   11.93 GB total / 2.79 GB single process on 52.3 GiB available, while the
-#   light pool's four heaviest gates at jobs=4 sum to ~9.4 GiB — less than
-#   JOBS=1 already reached. It buys headroom symmetry, not wall time: the run
-#   is dominated by the serialized heavy tail. Pass `--jobs N` (or
-#   `CHECK_JOBS=N`) to change it, and drop to 1 when a finalize would run
-#   beside two other finalizations.
+# - The suite runs in THREE pools, by measured memory footprint:
+#   1. LIGHT pool — every non-test gate, a work queue at `--jobs` slots
+#      (default 4, CHECK_JOBS=N): a slot that frees starts the next gate
+#      immediately.
+#   2. TEST pool — the four `bun test` chunk gates the former coverage mega
+#      gate was split into (`tests - unit (src)` ~97% of its runtime,
+#      `tests - e2e (inproc)`, `tests - plugins`, `tests - scripts
+#      (colocated)`), up to CHECK_TEST_POOL (default 2) alive at once.
+#      The unit chunk runs the src suite at CHECK_SRC_TEST_JOBS workers
+#      (default 12): measured 435s at 4 workers -> ~200s at 12 on the
+#      32-core/61GiB dev host, box-wide peak ~47GB WITH a second lane
+#      running tests concurrently. Drop both knobs (e.g.
+#      `CHECK_SRC_TEST_JOBS=4 CHECK_TEST_POOL=1`) when finalizing beside
+#      two other concurrent runs — serialization is explicit, not hidden.
+#   3. SOLO tail — strictly one-at-a-time after both pools:
+#      `coverage - per-module line %` (plain mode: merges the chunk lcovs
+#      via scripts/check/coverage-merge.mjs, then floors every module at
+#      80% — the same artifact the old single `bun test` produced;
+#      scoped mode: the diff's own test run), `lint - eslint` (19.4 GB
+#      cold peak), `e2e - browser (baseline)` (Playwright surface; specs
+#      run through its own BROWSER_JOBS pool, default 3 — each spec is
+#      parallel-safe: ephemeral port, per-file in-memory DB, locked
+#      hash-named frontend build; default BROWSER_JOBS=2 — at 3, a loaded
+#      box starved a spec's 15s waitForRequest into a flake),
+#      `plan - ticket index (sync)` (shares
+#      the giwt index lock with `plan - validate`).
+# - The chunk lcovs are cached green-only (scripts/check/
+#   test-suite-cache.mjs): the cache key hashes the content of every file
+#   under src/ plugins/ scripts/ tests/ packages/ native/ plus root
+#   configs, bun.lock, the bun version and the exact command line, so any
+#   change to anything a test can observe invalidates it. Only PASSING
+#   runs are cached — a cached replay can only reproduce a green, never
+#   launder a red. `CHECK_TEST_CACHE=0` disables (e.g. after a native
+#   rebuild whose sources did not change).
 # - `bun run check --diff-base <ref>` scopes the COVERAGE gate to the diff
 #   between `<ref>` and HEAD, plus uncommitted working-tree changes: each
 #   diff-touched `src/` file is floored individually against a test run covering
-#   the modules it lives in. No other gate is scoped (the registry has no
-#   `test - unit` entry). A file holding identical content on both sides is NOT
+#   the modules it lives in. The four chunk gates are skip-markers in this
+#   mode (the scoped coverage run IS the diff's test set; a full-suite
+#   rerun would be pure waste). A file holding identical content on both sides is NOT
 #   scoped in, even when the branch edited it earlier and `<ref>` has since
 #   reproduced the same content — landing the branch would not change it. The
 #   list is a superset of the merge, never a subset: rename-only and mode-only
@@ -303,6 +327,11 @@ bun run check        # parallel gate runner. The authoritative gate list is
 #                     #   size - strict, context - weight, no - shell - refs,
 #                     #   fuzz - generated tests, i18n - reconcile,
 #                     #   i18n - static keys, tests - coverage gaps (see below),
+#                     #   tests - unit (src), tests - e2e (inproc),
+#                     #     tests - plugins, tests - scripts (colocated)
+#                     #     (the four chunk gates that replaced the single
+#                     #     in-coverage-gate suite run; scoped mode skip-marks
+#                     #     them — the scoped coverage run IS the diff's tests),
 #                     #   coverage - per-module line % (see Coverage gate below),
 #                     #   frontend - template preflight, frontend - innerHTML xss,
 #                     #   e2e - browser (baseline)
