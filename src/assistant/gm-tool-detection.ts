@@ -42,6 +42,7 @@ export function gmToolKeywordGate(content: string,): GmToolGateVerdict {
     /\bmodify\s+(the\s+)?world\b/i,
     /\btrigger\s+(an?\s+)?event\b/i,
     /\bsummarize\b/i,
+    /\b(npc|merchant|item|character|location|event)\b/i,
   ];
 
   return patterns.some((p,) => p.test(text,)) ? "candidate" : "skip";
