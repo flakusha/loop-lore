@@ -28,12 +28,12 @@ Codifies the workflow for **closing out a batch of stale or duplicate BUG
 tickets** that prior commits/merges on `dev` have already resolved. Used 3
 times in 2026-09-02/03 sessions (Bucket B: 6 P2/P3 BUGs, Bucket C: 3
 worktree/scripts BUGs, Bucket D: 3 build-breaker BUGs). Pattern recurs
-whenever the curated-hot-list in `.plan/backlog/` shrinks faster than new
+whenever the curated open-ticket list shrinks faster than new
 tickets are filed.
 
 ## When to Use
 
-- Auditing a curated list of BUG tickets from `.plan/backlog/` or the orphan
+- Auditing a curated list of BUG tickets from `.plan/tickets/` or the orphan
   list at the bottom of `bun run plan:sync`.
 - Closing out a bucket of work where many tickets were already resolved by
   parallel sessions (Bucket A/B/C/D pattern).

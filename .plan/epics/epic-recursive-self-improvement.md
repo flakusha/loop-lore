@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 **Status:** Not Started
-**Status Note:** Filed 2026-09-27 from a one-week sweep of `dev` commits (2026-09-20 -> 2026-09-27), `.plan/backlog/*` open queues, and recurring failure clusters surfaced in the worktree log. Cross-references the existing `epic-resource-provision.md` (programmatic compute), `epic-testing-qa.md` (failure modes), `epic-code-quality.md` (size-debt cycle), and `epic-benchmark-ci-regression.md` (perf gates). No overlap with `epic-resource-provision.md` — that epic provisions **external** compute/credentials; this epic covers the **internal** watchdog + agent development loop that operates on `loop-lore` itself.
+**Status Note:** Filed 2026-09-27 from a one-week sweep of `dev` commits (2026-09-20 -> 2026-09-27), `.plan/backlog-archive.md` open queues, and recurring failure clusters surfaced in the worktree log. Cross-references the existing `epic-resource-provision.md` (programmatic compute), `epic-testing-qa.md` (failure modes), `epic-code-quality.md` (size-debt cycle), and `epic-benchmark-ci-regression.md` (perf gates). No overlap with `epic-resource-provision.md` — that epic provisions **external** compute/credentials; this epic covers the **internal** watchdog + agent development loop that operates on `loop-lore` itself.
 
 **Priority:** High
 **Effort:** Very High
@@ -29,7 +29,7 @@ Reference external patterns surveyed 2026-09-27: **OpenClaw** (open-source agent
 
 ## Why now
 
-Sep-2026 weekly sweep (`.plan/backlog/open.md`, `.plan/backlog/open-untriaged.md`, worktree log `tree/`) shows the same classes of bug recurring every week:
+Sep-2026 weekly sweep (`.plan/backlog-archive.md`, `.plan/backlog-archive.md`, worktree log `tree/`) shows the same classes of bug recurring every week:
 
 | Pattern                              | Recent examples (Sep-2026)                                                                                                                                                              | Watchdog/agent fix                                                                                                                       |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |

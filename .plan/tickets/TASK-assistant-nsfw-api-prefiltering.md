@@ -37,7 +37,7 @@ and route to a fallback if the backend rejects.
   content rating).
 - No integration with third-party API dispatch — the workflow system has no NSFW policy
   field or prefilter step.
-- 5-tier character NSFW rating UI is open (`.plan/backlog/open.md` row C2).
+- 5-tier character NSFW rating UI is open (`.plan/backlog-archive.md` row C2).
 
 ## Design
 
@@ -107,7 +107,7 @@ Workflow confirmation → User confirms
 ### Non-goals
 
 - Implementing new NSFW detection models (reuse `src/nsfw/`)
-- The 5-tier character NSFW rating UI (separate `.plan/backlog/open.md` row C2)
+- The 5-tier character NSFW rating UI (separate `.plan/backlog-archive.md` row C2)
 - Changing the NSFW moderation service itself (that's `epic-nsfw-moderation-priority.md`)
 
 ## Tasks

@@ -188,7 +188,7 @@ Technical specs for systems. Cross-referenced with `.plan/` epics for implementa
 
 Exploration docs and creative research merged into `.plan/epics/`.
 
-> **Precedence:** `AGENTS.md > .plan/epics+tickets > src/ > docs/spec > .plan/backlog`
+> **Precedence:** `AGENTS.md > .plan/epics+tickets > src/ > docs/spec`
 
 ### Ideas
 
@@ -285,9 +285,9 @@ Operator runbooks for on-prem / dedicated-server deployment. Pair with `spec/bui
 
 Project planning, reviews, analysis, and research.
 
-> In-repo planning now lives under `.plan/` — see `.plan/backlog/`,
-> `.plan/backlog/open.md`, `.plan/epics/epic-architecture.md`, and
-> `.plan/epics-index.md`.
+> In-repo planning now lives under `.plan/` — see `.plan/tickets/`,
+> `.plan/epics/epic-architecture.md`, `.plan/epics-index.md`, and
+> `.plan/priority-matrix.md`.
 
 ### Reviews (`meta/reviews/`)
 

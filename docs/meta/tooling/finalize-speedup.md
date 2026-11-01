@@ -335,7 +335,7 @@ worktree:
 
 | post-merge step | can it move pre-merge? | why |
 | --- | --- | --- |
-| plan reconciliation (`plan - validate`, `plan - sync`, `plan - matrix`, `code-map - freshness`, `backlog - index`) | **no** | they reconcile `.plan/` against the git issue CLI and against generated artefacts of the MERGED tree. Pre-merge they would reconcile the branch's view and then go stale at the merge — which is exactly why all five are already in `ADVISORY_GATES` (`gate-table.mjs:164-197`) and reconciled after. |
+| plan reconciliation (`plan - validate`, `plan - ticket index (sync)`, `plan - matrix`, `plan - priority`, `code-map - freshness`) | **no** | they reconcile `.plan/` against the git issue CLI and against generated artefacts of the MERGED tree. Pre-merge they would reconcile the branch's view and then go stale at the merge — which is exactly why all five are already in `ADVISORY_GATES` (`gate-table.mjs:164-197`) and reconciled after. |
 | jscpd ratchet | **no** | clone count is a project-wide number over the merged `src/`; already ADVISORY for the same reason. |
 | `dead - code (src files)` | **no** | knip reachability changes at merge time; already ADVISORY, and per `gate-table.mjs:183-195` currently red. |
 | api-doc drift, db schema gate, fuzz-generated, i18n reconcile | **no** | each regenerates from the merged sources and diffs against the committed artefact; the artefact can only be final once the merge is. |

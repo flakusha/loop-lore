@@ -92,22 +92,22 @@ This ticket **does not** introduce a new epic. The recommendation is to extend t
 
 ## Acceptance Criteria
 
-- [ ] This ticket records the no-new-epic decision in `.plan/backlog/`
+- [ ] This ticket records the no-new-epic decision in `.plan/backlog-archive.md`
 - [ ] Shared types live in `src/types/search.ts` and are imported (not redefined) by all 6 tickets
 - [ ] Migration order is documented; `001_init.ts` registers each in sequence
-- [ ] Order-of-execution is reflected in `.plan/backlog/priority.md` (or equivalent)
+- [ ] Order-of-execution is reflected in `.plan/backlog-archive.md` (or equivalent)
 - [ ] No code shipped; this is planning-only
 
 ## Files
 
-- `.plan/backlog/recommendation-search-rag-capabilities-no-new-epic.md` — this decision
+- `.plan/backlog-archive.md` — this decision
 - `src/types/search.ts` — shared types (added when TASK-search-service-unified lands)
 - Updates to: `epic-rag-assets-unified-storage-and-assistant-flows.md` "Related Epics" + "Bridges" sections to point at the 6 new tickets
 
 ## Dependencies
 
 - Reads: all 6 new tickets in this worktree
-- Writes: `.plan/backlog/recommendation-search-rag-capabilities-no-new-epic.md`
+- Writes: `.plan/backlog-archive.md`
 - Enables: consistent execution order across the worktree batches
 
 
@@ -130,7 +130,7 @@ Acceptance check against ticket's own Acceptance Criteria:
 - [x] Recommendation recorded: see Status (✅ Done).
 - [ ] Shared types live in `src/types/search.ts`: NOT YET — `src/types/search.ts` is added when `TASK-search-service-unified` lands. Still open.
 - [ ] Migration order documented in `001_init.ts`: NOT YET — added as part of the migrations when each ticket lands. Still open.
-- [ ] Order-of-execution reflected in `.plan/backlog/priority.md`: NOT YET — pending.
+- [ ] Order-of-execution reflected in `.plan/backlog-archive.md`: NOT YET — pending.
 
 **Status verdict (2026-09-23):** Planning deliverable = DONE. Implementation tickets = open, work continues under each. This ticket closes; downstream tickets carry the rest.
 

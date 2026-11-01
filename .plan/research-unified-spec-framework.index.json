@@ -100,14 +100,7 @@
       "IMPROVE": 1
     },
     "backlog_buckets": [
-      ".plan/backlog/open.md",
-      ".plan/backlog/open-untriaged.md",
-      ".plan/backlog/open-inflight.md",
-      ".plan/backlog/open-debt.md",
-      ".plan/backlog/priority.md",
-      ".plan/backlog/priority-p0-p2.md",
-      ".plan/backlog/priority-p3-p5.md",
-      ".plan/backlog/priority-release-010.md"
+      ".plan/backlog-archive.md",
     ],
     "index_files": [".plan/tickets/index.json", ".plan/epics-index.md"],
     "existing_tools": [

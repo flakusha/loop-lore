@@ -8,8 +8,8 @@ How loop-lore ships a version. Applies from `0.1.0` onward.
 ## Prerequisites
 
 - `bun run check` green on `dev` (parallel gate: typecheck ×4, lint ts/css/html/html-scripts/chaining, dprint, md-lint, db schema, size, context-weight, unit + e2e tests).
-- Release blockers from `.plan/backlog/open.md` closed (A8 unwired-code close-out, A9 release artifacts).
-- `.plan/backlog/open.md` + `priority.md` reflect the release state (docs commits).
+- Release blocker tickets closed (A8 unwired-code close-out, A9 release artifacts) — see `.plan/priority-matrix.md`.
+- `.plan/priority-matrix.md` reflects the release state (docs commits).
 - All worktrees finalized into `dev`; `dev` clean.
 
 ## Steps
@@ -51,7 +51,7 @@ git log --oneline 0.1.0..dev
 ### 3. Docs
 
 - `docs/meta/release-process.md` — update if the process changed (this file).
-- `.plan/backlog/open.md` — mark A9 done, refresh `dev`-ahead state, close rows.
+- Ticket statuses + `.plan/priority-matrix.md` — mark A9 done, refresh `dev`-ahead state, close rows.
 
 ### 4. Commit + sign
 

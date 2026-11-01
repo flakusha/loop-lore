@@ -44,4 +44,4 @@ will drift further over time.
 
 ## Resolution
 
-Deleted `src/middleware/elysia-auth.ts` and `src/middleware/elysia-auth.test.ts`; updated cross-references in `docs/spec/auth-middleware.md`, `.plan/epics/epic-architecture.md`, `.plan/backlog/security-review-2026-08-25.md`, and `.plan/tickets/TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt.md` to point at the deletion.
+Deleted `src/middleware/elysia-auth.ts` and `src/middleware/elysia-auth.test.ts`; updated cross-references in `docs/spec/auth-middleware.md`, `.plan/epics/epic-architecture.md`, `.plan/backlog-archive.md`, and `.plan/tickets/TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt.md` to point at the deletion.

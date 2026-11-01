@@ -32,7 +32,7 @@
 - [ ] No duplicate epic created (open-untriaged.md § 2026-09-25 explicitly forbids).
 
 **Tags:** federation, mesh, swarm, observability, tls, certificate
-**Related:** .plan/backlog/open-untriaged.md § New clusters, .plan/epics/epic-federation-swarm-sync.md, .plan/epics/epic-mesh-federation-content-sharing.md, .plan/epics/epic-certificate-and-tls-management.md
+**Related:** .plan/backlog-archive.md § New clusters, .plan/epics/epic-federation-swarm-sync.md, .plan/epics/epic-mesh-federation-content-sharing.md, .plan/epics/epic-certificate-and-tls-management.md
 
 
 git issue: efca0be

@@ -5,7 +5,7 @@
 
 **Worktree**: `tree/feat-bug-triage-batch-2` (branch `feat-bug-triage-batch-2`)
 **Base**: dev `17d261e3`
-**Goal**: Triage and resolve the next batch of BUG tickets from `.plan/backlog/open-unbugged.md` and the categorized `.tmp/ticket-categorization.json`.
+**Goal**: Triage and resolve the next batch of BUG tickets from `.plan/backlog-archive.md` and the categorized `.tmp/ticket-categorization.json`.
 
 ## Available triage data
 
