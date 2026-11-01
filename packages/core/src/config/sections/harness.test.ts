@@ -8,6 +8,7 @@
 import { describe, expect, it, } from "bun:test";
 import { jsonSchema, } from "../schema-class/json-schema";
 import type { HarnessAcpConfig, } from "../schema/harness";
+import { HARNESS_FLAVORS, } from "../schema/harness";
 import {
   HARNESS_DEFAULT_COOLDOWN_MS,
   HARNESS_DEFAULT_MAX_CONSECUTIVE_FAILURES,
@@ -85,6 +86,28 @@ describe("harness.acp config section", () => {
 
   it("rejects an empty command argv", () => {
     expect(() => validateAcpProfiles(acp([profile({ command: [], },),],),)).toThrow(/command/,);
+  });
+
+  it("rejects an unknown harness flavor", () => {
+    expect(() => validateAcpProfiles(acp([profile({ harness: "claude-code", },),],),)).toThrow(
+      /unknown harness flavor/,
+    );
+  });
+
+  it("accepts a known harness flavor and omits-defaults to omp", () => {
+    expect(() => validateAcpProfiles(acp([profile({ harness: "opencode", },), profile({ name: "p2", },),],),)).not
+      .toThrow();
+  });
+
+  it("json-schema meta exposes the harness flavor enum", () => {
+    const section = harnessMeta.properties.acp as { properties?: Record<string, unknown> };
+    const profiles = section.properties?.profiles as
+      | { items?: { properties?: Record<string, { enum?: string[]; default?: string }> } }
+      | undefined;
+
+    const flavor = profiles?.items?.properties?.harness;
+    expect(flavor?.enum,).toEqual([...HARNESS_FLAVORS,],);
+    expect(flavor?.default,).toBe("omp",);
   });
 
   it("rejects non-positive limits", () => {

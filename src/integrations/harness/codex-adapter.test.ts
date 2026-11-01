@@ -131,7 +131,7 @@ describe("CodexAcpAdapter (fake ACP fixture, codex flavor)", () => {
   it("marks spawn failure typed and memoizes the closed state", async () => {
     const adapter = createCodexAdapter("prof", ["definitely-not-a-real-binary-xyz",],) as CodexAcpAdapter;
     adapters.push(adapter,);
-    await expect(adapter.enumerateModels(),).rejects.toMatchObject({ name: "HarnessAcpError", },);
+    await expect(adapter.enumerateModels(),).rejects.toMatchObject({ name: "HarnessAcpError", kind: "spawn", },);
     adapter.close();
   });
 

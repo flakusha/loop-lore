@@ -10,6 +10,7 @@
 import {
   type AcpProfileConfig,
   HARNESS_CAPABILITIES,
+  HARNESS_FLAVORS,
   HARNESS_TIERS,
   type HarnessConfig,
   type HarnessTierId,
@@ -80,6 +81,14 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
   }
 
   seen.add(p.name,);
+  if (p.harness !== undefined && !HARNESS_FLAVORS.includes(p.harness,)) {
+    throw new Error(
+      `harness.acp.profiles["${p.name}"]: unknown harness flavor "${p.harness}" (allowed: ${
+        HARNESS_FLAVORS.join(", ",)
+      })`,
+    );
+  }
+
   if (
     !Array.isArray(p.command,) || p.command.length === 0 || p.command.some((c,) => typeof c !== "string" || c === "")
   ) {
@@ -160,6 +169,12 @@ export const harnessMeta = {
             type: "object",
             properties: {
               name: { type: "string", description: "loop-lore-local profile id (unique)", },
+              harness: {
+                type: "string",
+                enum: [...HARNESS_FLAVORS,],
+                default: "omp",
+                description: "Which shipped ACP adapter speaks this profile (default omp)",
+              },
               command: {
                 type: "array",
                 items: { type: "string", },

@@ -103,7 +103,7 @@ describe("OmpAcpAdapter (fake ACP fixture)", () => {
 
   it("marks spawn failure typed and memoizes the closed state", async () => {
     const adapter = makeAdapter({ command: ["definitely-not-a-real-binary-xyz",], },);
-    await expect(adapter.enumerateModels(),).rejects.toMatchObject({ name: "HarnessAcpError", },);
+    await expect(adapter.enumerateModels(),).rejects.toMatchObject({ name: "HarnessAcpError", kind: "spawn", },);
     adapter.close();
   });
 

@@ -221,7 +221,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       this.session = { sessionId: session.sessionId, options: session.configOptions, };
       return this.session;
     } catch (error) {
-      const kind = error instanceof JsonRpcRequestError && error.message.includes("spawn",)
+      const kind = error instanceof JsonRpcRequestError &&
+          (error.message.includes("spawn",) || error.message.includes("Executable not found",))
         ? "spawn"
         : error instanceof HarnessAcpError
         ? error.kind
