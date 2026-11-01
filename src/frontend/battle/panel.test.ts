@@ -10,7 +10,7 @@
  * classes/aria, selection toggling, and destroy semantics. Keyboard cycling
  * and command dispatch live in panel-actions.test.ts.
  */
-import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import {
   clearFocusLog,
   installBattleDom,
@@ -35,14 +35,40 @@ import {
 
 let restoreDom: () => void;
 
+// Pre-file catalog state: whatever earlier files in this worker left in place.
+const localeStringsHost = globalThis as { __localeStrings?: unknown };
+const initialLocaleStrings = localeStringsHost.__localeStrings;
+let savedLocaleStrings: unknown;
+let hasSavedLocaleStrings = false;
+
 beforeEach(() => {
   restoreDom = installBattleDom();
   clearFocusLog();
+  savedLocaleStrings = localeStringsHost.__localeStrings;
+  hasSavedLocaleStrings = true;
+  // Seed the alpine i18n catalog the panel labels resolve from.
+  localeStringsHost.__localeStrings = {
+    battle: {
+      battleActions: "Battle actions",
+      battleControls: "Battle controls",
+      battleItems: "Battle items",
+      environmentalEffects: "Environmental effects",
+      health: "Health",
+      log: "Battle log",
+      statusEffects: "Status effects",
+      targetSelection: "Target selection",
+      turnOrder: "Turn order",
+    },
+  };
 },);
 
 afterEach(() => {
   destroyBattlePanel();
   restoreDom();
+  if (hasSavedLocaleStrings) {
+    localeStringsHost.__localeStrings = savedLocaleStrings;
+    hasSavedLocaleStrings = false;
+  }
 },);
 
 const roster: BattleCombatantView[] = [
@@ -270,5 +296,18 @@ describe("destroyBattlePanel", () => {
     expect(container.children.length,).toBe(frozenChildren,);
     expect(lastFocus(),).toBe(focusBefore,);
     expect(() => destroyBattlePanel()).not.toThrow();
+  });
+});
+
+afterAll(() => {
+  localeStringsHost.__localeStrings = initialLocaleStrings;
+},);
+
+describe("panel i18n labels", () => {
+  it("falls back to the i18n key when the catalog is empty", () => {
+    localeStringsHost.__localeStrings = {};
+    const { container, } = mountBattle(view(),);
+    const overlay = container.children[0]!;
+    expect(overlay.getAttribute("aria-label",),).toBe("battle.battleControls",);
   });
 });

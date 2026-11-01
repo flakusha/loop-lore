@@ -29,6 +29,7 @@ import {
   type BattleView,
 } from "./commands.js";
 
+import { t, } from "../alpine/i18n";
 import { renderBattleLog, } from "./battle-log.js";
 import { buildFocusTargets, handlePanelKey, type PanelFocusDeps, rebuildFocus, } from "./panel-focus.js";
 import {
@@ -177,7 +178,7 @@ function render(): void {
   overlay.className = "battle-panel-content";
   overlay.tabIndex = 0; // make the panel focusable for keyboard nav
   overlay.setAttribute("role", "group",);
-  overlay.setAttribute("aria-label", "Battle controls",);
+  overlay.setAttribute("aria-label", t("battle.battleControls",),);
 
   const callbacks: BattleRenderCallbacks = {
     select: (id,) => {
