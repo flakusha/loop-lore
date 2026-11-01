@@ -3357,6 +3357,31 @@ html {
   justify-content: space-between;
 }
 
+.rpg-status-section,
+.rpg-equip-section {
+  margin-top: var(--space-2);
+  font-size: 12px;
+}
+
+.rpg-status-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: 2px;
+}
+
+.rpg-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 8px;
+  border: 1px solid var(--border-default, #e9ecef);
+  border-radius: var(--radius-full, 999px);
+  background: var(--bg-secondary, #f8f9fa);
+  font-size: 11px;
+  cursor: help;
+}
+
 /* ── Mood Panel Styles ─────────────────────────────────────── */
 
 .mood-section {

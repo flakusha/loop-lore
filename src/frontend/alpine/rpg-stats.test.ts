@@ -78,11 +78,15 @@ const STATS_PAYLOAD = {
   activeEffects: "[]",
 };
 
-/** Route each apiFetch call by URL: chats lookup, then the payload. */
-function mockLoad(payload: unknown = STATS_PAYLOAD,): void {
+/** Route each apiFetch call by URL: chats lookup, equipped rows, then the payload. */
+function mockLoad(payload: unknown = STATS_PAYLOAD, equipped: unknown = [],): void {
   fetchHandler = (url,) => {
     if (url === "/api/v1/chats/chat-1") {
       return Response.json({ character_id: "actor-1", }, { status: 200, },);
+    }
+
+    if (url === "/api/v1/actors/actor-1/items/equipped") {
+      return Response.json(equipped, { status: 200, },);
     }
 
     return Response.json(payload, { status: 200, },);
@@ -350,10 +354,76 @@ describeOrSkip("rpgStats payload mapping", () => {
     mockLoad({
       conditions: "[]",
       activeEffects: JSON.stringify([
-        { name: "Haste", type: "buff", },
+        { name: "Haste", type: "buff", stat_modifier: { dex: 2, }, duration_rounds: 3, },
         { name: "Slow", type: "debuff", },
       ],),
     },);
+
+    const ctx = buildCtx();
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.equipment,).toHaveLength(8,);
+    expect(ctx.equipment.every((slot,) => slot.itemId === null),).toBe(true,);
+    // Buff/debuff entries surface as status badges with modifiers attached.
+    expect(ctx.statusEffects,).toHaveLength(2,);
+    expect(ctx.statusEffects[0]?.id,).toBe("buff_haste",);
+    expect(ctx.statusEffects[0]?.name,).toBe("⬆ Haste",);
+    expect(ctx.statusEffects[0]?.duration,).toBe(3,);
+    expect(ctx.statusEffects[0]?.modifier,).toEqual({ dex: 2, },);
+    expect(ctx.statusEffects[1]?.id,).toBe("debuff_slow",);
+    expect(ctx.statusEffects[1]?.name,).toBe("⬇ Slow",);
+  });
+
+  test("fills equipment slots from the equipped-items endpoint", async () => {
+    mockLoad({ ...STATS_PAYLOAD, }, [
+      { id: "itm-sword", name: "Iron Sword", item_type: "weapon", equipped: "equipped", },
+      { id: "itm-plate", name: "Plate", item_type: "armor", equipped: "equipped", },
+      { id: "itm-potion", name: "Potion", item_type: "consumable", equipped: "unequipped", },
+    ],);
+
+    const ctx = buildCtx();
+    await rpgStats.loadRpgStats!.call(ctx,);
+    const bySlot = Object.fromEntries(ctx.equipment.map((slot,) => [slot.slot, slot,]),);
+    expect(bySlot["weapon"]?.itemId,).toBe("itm-sword",);
+    expect(bySlot["weapon"]?.itemName,).toBe("Iron Sword",);
+    expect(bySlot["chest"]?.itemId,).toBe("itm-plate",);
+    expect(bySlot["head"]?.itemId,).toBeNull();
+  });
+
+  test("skips equipped rows with missing ids or malformed slots", async () => {
+    mockLoad({ ...STATS_PAYLOAD, }, [
+      { name: "Nameless Blade", item_type: "weapon", },
+      { id: 42, name: "Numeric", item_type: "weapon", },
+      { id: "itm-odd", name: "Odd", item_type: 7, },
+      { id: "itm-sword", name: "Iron Sword", item_type: "weapon", },
+      { id: "itm-sword-2", name: "Second Sword", item_type: "weapon", },
+    ],);
+
+    const ctx = buildCtx();
+    await rpgStats.loadRpgStats!.call(ctx,);
+    const bySlot = Object.fromEntries(ctx.equipment.map((slot,) => [slot.slot, slot,]),);
+    expect(bySlot["weapon"]?.itemId,).toBe("itm-sword",);
+    expect(bySlot["accessory"]?.itemId,).toBeNull();
+  });
+
+  test("encodes actor ids in request URLs", async () => {
+    mockLoad();
+    const ctx = buildCtx({ activeChat: "chat/1", },);
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat%2F1",);
+  });
+
+  test("keeps the empty grid when the equipped endpoint fails", async () => {
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") {
+        return Response.json({ character_id: "actor-1", }, { status: 200, },);
+      }
+
+      if (url === "/api/v1/actors/actor-1/items/equipped") {
+        return new Response("nope", { status: 403, },);
+      }
+
+      return Response.json(STATS_PAYLOAD, { status: 200, },);
+    };
 
     const ctx = buildCtx();
     await rpgStats.loadRpgStats!.call(ctx,);
