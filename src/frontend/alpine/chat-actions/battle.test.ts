@@ -42,10 +42,11 @@ describe("battleActionHandlers rendering actions", () => {
       round: 3,
       turnIndex: 1,
       combatants: [
-        { id: "c1", name: "Hero", hp: 80, maxHp: 100, initiative: 12, },
-        { id: "c2", name: "Ogre", hp: 150, maxHp: 150, initiative: 6, },
+        { id: "c1", name: "Hero", hp: 80, maxHp: 100, initiative: 12, conditions: [], },
+        { id: "c2", name: "Ogre", hp: 150, maxHp: 150, initiative: 6, conditions: [], },
       ],
       items: [],
+      log: [],
     },],);
   });
 
@@ -88,7 +89,63 @@ describe("battleActionHandlers rendering actions", () => {
     }, "chat-1",);
 
     const view = ctx.rendered[0] as { combatants: unknown[] };
-    expect(view.combatants,).toEqual([{ id: "ok", name: "Fine", hp: 1, maxHp: 2, initiative: 0, },],);
+    expect(view.combatants,).toEqual([{ id: "ok", name: "Fine", hp: 1, maxHp: 2, initiative: 0, conditions: [], },],);
+  });
+
+  test("delivers conditions and filters non-string condition entries", () => {
+    const ctx = buildCtx();
+    battleActionHandlers["battle-started"]!(ctx, {
+      battle: {
+        ...validBattle.battle,
+        combatants: [
+          { ...validBattle.battle.combatants[0], conditions: ["stunned", 42, null, "poisoned",], },
+        ],
+      },
+    }, "chat-1",);
+
+    const view = ctx.rendered[0] as { combatants: { conditions: unknown[] }[] };
+    expect(view.combatants[0]?.conditions,).toEqual(["stunned", "poisoned",],);
+  });
+
+  test("defaults missing combatant conditions to an empty list", () => {
+    const ctx = buildCtx();
+    battleActionHandlers["battle-started"]!(ctx, validBattle, "chat-1",);
+
+    const view = ctx.rendered[0] as { combatants: { conditions: unknown[] }[] };
+    expect(view.combatants[0]?.conditions,).toEqual([],);
+  });
+
+  test("delivers the battle log and drops malformed log entries", () => {
+    const ctx = buildCtx();
+    battleActionHandlers["battle-updated"]!(ctx, {
+      battle: {
+        ...validBattle.battle,
+        log: [
+          { type: "attack", damage: 7, critical: true, description: "Alice hits!", },
+          { type: "bonus_action", description: "Alice recovers 3 HP.", },
+          "junk",
+          null,
+          { type: 42, description: "no", },
+          { type: "attack", damage: "seven", description: "no", },
+          { type: "attack", damage: 1, description: 42, },
+          { description: "missing type", },
+        ],
+      },
+    }, "chat-1",);
+
+    const view = ctx.rendered[0] as { log: unknown[] };
+    expect(view.log,).toEqual([
+      { type: "attack", damage: 7, critical: true, description: "Alice hits!", },
+      { type: "bonus_action", description: "Alice recovers 3 HP.", },
+    ],);
+  });
+
+  test("defaults a missing battle log to an empty list", () => {
+    const ctx = buildCtx();
+    battleActionHandlers["battle-started"]!(ctx, validBattle, "chat-1",);
+
+    const view = ctx.rendered[0] as { log: unknown[] };
+    expect(view.log,).toEqual([],);
   });
 
   test("ignores payloads with an invalid battle shape", () => {

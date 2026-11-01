@@ -100,8 +100,8 @@ describe("arrow key focus cycle", () => {
     advance(container, "orc",);
     renderBattle(view({
       combatants: [
-        { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, },
-        { id: "orc", name: "Orc Grunt", hp: 0, maxHp: 20, initiative: 5, },
+        { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, conditions: [], },
+        { id: "orc", name: "Orc Grunt", hp: 0, maxHp: 20, initiative: 5, conditions: [], },
       ],
     },),);
 
