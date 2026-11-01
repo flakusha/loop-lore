@@ -77,44 +77,36 @@ export function buildGalleryAssetItems(
   }),);
 }
 
-/**
- * Project fetched rows into the gallery grid view-model.
- * @param rows - the page of asset rows in display order
- * @param tagMap - asset id → visible tag names
- * @param nsfwIds - asset ids linked to an NSFW-rated actor (the v1 rating signal)
- * @param page - the 1-based page the rows came from
- * @param pageSize - the page size the query used
- * @returns the view-model the HTML card renderer and the JSON branch share
- */
-export function buildGalleryGridViewModel(
-  { rows, tagMap, nsfwIds, page, pageSize, }: {
-    rows: readonly GalleryAssetRow[];
-    tagMap: ReadonlyMap<string, string[]>;
-    nsfwIds: ReadonlySet<string>;
-    page: number;
-    pageSize: number;
-  },
-): GalleryGridViewModel {
-  return { assets: buildGalleryAssetItems({ rows, tagMap, nsfwIds, },), page, pageSize, };
+/** Shared projection inputs for the grid and search builders. */
+export interface GalleryBuilderArgs {
+  /** The page of asset rows in display order. */
+  rows: readonly GalleryAssetRow[];
+  /** Asset id → visible tag names. */
+  tagMap: ReadonlyMap<string, string[]>;
+  /** Asset ids linked to an NSFW-rated actor (the v1 rating signal). */
+  nsfwIds: ReadonlySet<string>;
+  /** The 1-based page the rows came from. */
+  page: number;
+  /** The page size the query used. */
+  pageSize: number;
 }
 
 /**
- * Project fetched rows into the gallery search view-model.
- * @param rows - the matching asset rows in display order
- * @param tagMap - asset id → visible tag names
- * @param nsfwIds - asset ids linked to an NSFW-rated actor (the v1 rating signal)
- * @param page - the 1-based page the rows came from
- * @param pageSize - the page size the query used
- * @returns the view-model the HTML card renderer and the JSON branch share
+ * Project fetched rows into the gallery grid view-model — the view-model the
+ * HTML card renderer and the JSON branch share.
+ * @param args - rows, tag names, NSFW ids, and the request's page echo
+ * @returns {GalleryGridViewModel}
  */
-export function buildGallerySearchViewModel(
-  { rows, tagMap, nsfwIds, page, pageSize, }: {
-    rows: readonly GalleryAssetRow[];
-    tagMap: ReadonlyMap<string, string[]>;
-    nsfwIds: ReadonlySet<string>;
-    page: number;
-    pageSize: number;
-  },
-): GallerySearchViewModel {
-  return { assets: buildGalleryAssetItems({ rows, tagMap, nsfwIds, },), page, pageSize, };
+export function buildGalleryGridViewModel(args: GalleryBuilderArgs,): GalleryGridViewModel {
+  return { assets: buildGalleryAssetItems(args,), page: args.page, pageSize: args.pageSize, };
+}
+
+/**
+ * Project fetched rows into the gallery search view-model — same projection
+ * as the grid builder; the two result types are structurally identical.
+ * @param args - rows, tag names, NSFW ids, and the request's page echo
+ * @returns {GallerySearchViewModel}
+ */
+export function buildGallerySearchViewModel(args: GalleryBuilderArgs,): GallerySearchViewModel {
+  return buildGalleryGridViewModel(args,);
 }

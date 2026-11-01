@@ -9,10 +9,17 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { renameAssetTag, } from "../../assets/service/tags";
+import { AssetLinkEntity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertAssets, insertAssetTags, insertUsers, } from "../../test-utils/insert-helpers";
-import { inheritedHiddenAssetIds, serveGalleryGrid, } from "./gallery";
+import {
+  insertActors,
+  insertAssetLinks,
+  insertAssets,
+  insertAssetTags,
+  insertUsers,
+} from "../../test-utils/insert-helpers";
+import { galleryMediaContext, inheritedHiddenAssetIds, serveGalleryGrid, } from "./gallery";
 import { formatSize, renderGalleryCards, renderGalleryErrorCard, } from "./gallery-cards";
 import type { GalleryAssetItem, } from "./view-models/gallery-grid";
 
@@ -205,5 +212,63 @@ describe("views/gallery — tag facets", () => {
     expect(await fresh.text(),).toContain("asset-card-pg1",);
     const grid = await serveGalleryGrid(db2, undefined, "towner", "user",);
     expect(await grid.text(),).toContain("homely",);
+  });
+});
+
+describe("views/gallery — galleryMediaContext", () => {
+  let db3: Kysely<DB>;
+  let sqlite3: Database;
+
+  beforeAll(async () => {
+    ({ db: db3, sqlite: sqlite3, } = await createTestDb());
+    await insertUsers(db3, "mowner", "Media Owner", { id: "mowner" as never, },);
+  },);
+
+  afterAll(() => sqlite3.close());
+
+  /** One asset linked to a fresh actor carrying the given rating. */
+  async function assetLinkedTo(contentRating: string,): Promise<string> {
+    const assetId = await insertAssets(
+      db3,
+      "mowner",
+      `${contentRating}-${crypto.randomUUID()}.png`,
+      "image/png",
+      "image" as never,
+      10,
+      "raw/x.png",
+    );
+
+    const actorId = await insertActors(
+      db3,
+      `Actor ${contentRating}`,
+      { content_rating: contentRating, user_id: "mowner", } as never,
+    );
+
+    await insertAssetLinks(db3, assetId, AssetLinkEntity.Actor, actorId,);
+    return assetId;
+  }
+
+  test("returns empty tag map and empty nsfw set with no rows", async () => {
+    const ctx = await galleryMediaContext(db3, [], null,);
+    expect(ctx.tagMap.size,).toBe(0,);
+    expect(ctx.nsfwIds.size,).toBe(0,);
+  });
+
+  test("flags rows linked to NSFW-rated actors, skips SFW ones", async () => {
+    const flagged = await assetLinkedTo("nsfw_moderate",);
+    const sfw = await assetLinkedTo("sfw",);
+
+    const ctx = await galleryMediaContext(db3, [{ id: flagged, }, { id: sfw, },], null,);
+
+    expect(ctx.nsfwIds.has(flagged,),).toBe(true,);
+    expect(ctx.nsfwIds.has(sfw,),).toBe(false,);
+    // Untagged rows are absent from the map (callers default to []).
+    expect(ctx.tagMap.get(flagged,) ?? [],).toEqual([],);
+  });
+
+  test("empty input answers without touching the database", async () => {
+    const ctx = await galleryMediaContext(db3, [], "mowner",);
+    expect(ctx.tagMap.size,).toBe(0,);
+    expect(ctx.nsfwIds.size,).toBe(0,);
   });
 });
