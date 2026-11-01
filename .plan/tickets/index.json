@@ -60134,7 +60134,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-time-weather.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "world",
       "frontend",
