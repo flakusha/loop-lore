@@ -4,11 +4,13 @@
 // src/characters/services/emotion-avatar-service/generation.ts — Batch generation logic
 
 import type { Kysely, } from "kysely";
+import { unlinkAsset, } from "../../../assets/service";
 import { loadConfig, } from "../../../config/load";
 import { pickSdProvider, } from "../../../config/schema";
 import type { ImageProviderConfig, } from "../../../config/schema";
 import type { EmotionEntry, } from "../../../config/sections/templates";
 import { EmotionType, } from "../../../db/enums";
+import { AssetLinkEntity, } from "../../../db/enums-content";
 import type { DB, } from "../../../db/schema";
 import type { MattingProvider, } from "../../../generation/matting/types";
 import { getLogger, } from "../../../logger";
@@ -72,13 +74,26 @@ export async function deleteOutfitEmotionVariants(
   opts: { actorId: string; emotion: string; outfitId?: string; exceptAvatarId: string },
 ): Promise<void> {
   const avatars = await svc.avatarService.getAvatars(opts.actorId,);
-  for (const avatar of avatars) {
-    if (avatar.id === opts.exceptAvatarId) { continue; }
-    if (avatar.tags.emotion?.toLowerCase() !== opts.emotion.toLowerCase()) { continue; }
-    const sameScope = (avatar.outfitId ?? undefined) === opts.outfitId;
-    if (!sameScope) { continue; }
-    await svc.avatarService.deleteAvatar(avatar.id,);
-  }
+  const targets = avatars.filter((avatar,) =>
+    avatar.id !== opts.exceptAvatarId &&
+    avatar.tags.emotion?.toLowerCase() === opts.emotion.toLowerCase() &&
+    (avatar.outfitId ?? undefined) === opts.outfitId
+  );
+  // Transactional slot replace: delete all prior variants for this exact
+  // (emotion, outfit) slot in one commit so a failure cannot leave a
+  // half-replaced slot.
+
+  await svc.db.transaction().execute(async (trx,) => {
+    for (const avatar of targets) {
+      await trx.deleteFrom("character_avatars",).where("id", "=", avatar.id,).execute();
+      await unlinkAsset({
+        database: trx,
+        assetId: avatar.assetId,
+        entityType: AssetLinkEntity.Actor,
+        entityId: avatar.actorId,
+      },);
+    }
+  },);
 }
 
 /**
