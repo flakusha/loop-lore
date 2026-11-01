@@ -321,6 +321,43 @@ describe("export-sse routes", () => {
     jobs.delete(jobId,);
   }, 30000,);
 
+  test("failed jobs carry the error the SSE poll loop frames as the failed event", async () => {
+    // Pins the failed-event payload (type + jobId + error) the poll loop
+    // in start.ts frames when processExport marks the job failed. The live
+    // route's void processExport wins the race (it marks the fresh job
+    // completed before the test can flip it), so the payload is framed
+    // through the shared sseData helper over a staged failed job instead.
+    // NOTE: sseData framing only — does not execute start.ts's branches.
+    const failedId = `cov-fail-${uid()}`;
+    jobs.set(failedId, {
+      id: failedId,
+      userId: "cov-user",
+      status: "failed",
+      progress: 0,
+      total: 0,
+      currentStep: "Queued...",
+      createdAt: new Date(),
+      error: "boom",
+    },);
+
+    try {
+      const job = jobs.get(failedId,);
+
+      expect(job?.status,).toBe("failed",);
+      const line = sseData({
+        type: "failed",
+        jobId: failedId,
+        error: job?.error,
+      },);
+
+      expect(line,).toContain('"type":"failed"',);
+      expect(line,).toContain(failedId,);
+      expect(line,).toContain('"error":"boom"',);
+    } finally {
+      jobs.delete(failedId,);
+    }
+  });
+
   test("status and download 404 unknown jobs", async () => {
     const status = await app.handle(
       new Request(`http://localhost/api/export/status/${uid()}`,),
