@@ -83,6 +83,11 @@ describe("timeWeatherWidget getters", () => {
     expect(forecastCtx.forecastAvailable,).toBe(true,);
     expect(forecastCtx.hasSeason,).toBe(true,);
   });
+
+  test("iconForWeather maps forecast values without touching the live getter", () => {
+    expect(forecastCtx.iconForWeather("rain",),).toBe("🌧️",);
+    expect(empty.iconForWeather(null,),).toBe("",);
+  });
 });
 
 describe("travelInterface getters", () => {

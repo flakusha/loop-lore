@@ -38,6 +38,16 @@ export const timeWeatherWidget: Partial<WorldPageState> & ThisType<WorldPageStat
     return weatherIcon(this.weather,);
   },
 
+  /**
+   * Icon for an arbitrary (forecast) weather value — the `weatherIcon`
+   * getter is the live snapshot's icon and cannot take an argument.
+   * @param {string | null} value raw weather value
+   * @returns {string}
+   */
+  iconForWeather(value: string | null,): string {
+    return weatherIcon(value,);
+  },
+
   /** @returns {string} */
   get seasonIcon(): string {
     return seasonIcon(this.season,);
