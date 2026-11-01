@@ -32,7 +32,7 @@ and route to a fallback if the backend rejects.
 
 - NSFW moderation service exists: `src/nsfw/` — runtime config + live enforcement shipped
   (2026-08-03), audit-log UI + consent display shipped (2026-08-06). See
-  `epic-nsfw-moderation-priority.md` and `priority.md` P0 NSFW row.
+  `epic-nsfw-moderation-priority.md` and `.plan/backlog-archive.md` § priority P0 NSFW row.
 - NSFW content rating shared schema exists: `src/schemas/` (reputation, consent, NSFW
   content rating).
 - No integration with third-party API dispatch — the workflow system has no NSFW policy
@@ -148,5 +148,5 @@ Workflow confirmation → User confirms
 - **Task:** `TASK-assistant-third-party-api-integration.md` — third-party dispatch (depends on this for NSFW-aware payload)
 - **Task:** `TASK-assistant-creative-studio-workflows.md` — workflow runner
 - **NSFW Moderation Priority:** `epic-nsfw-moderation-priority.md` — NSFW moderation infrastructure, consent gate, 5-tier rating
-- `priority.md` P0 NSFW row — runtime config + live enforcement shipped (2026-08-03)
+- `.plan/backlog-archive.md` § priority P0 NSFW row — runtime config + live enforcement shipped (2026-08-03)
 - `src/schemas/` — shared NSFW content rating schema

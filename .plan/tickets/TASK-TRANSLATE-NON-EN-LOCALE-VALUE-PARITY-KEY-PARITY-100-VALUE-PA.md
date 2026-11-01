@@ -1,4 +1,11 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 # TASK: Translate non-en locale value parity (key parity 100%, value parity 44-46%)
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+**Effort:** (none captured)
 
 **Status:** Not Started
 **Priority:** medium

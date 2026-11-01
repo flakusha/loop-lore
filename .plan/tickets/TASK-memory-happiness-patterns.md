@@ -64,4 +64,4 @@ interface EmotionPattern {
 
 Ticket created 2026-08-15 during `.plan/` reconciliation (matrix referenced
 `TASK-memory-happiness-patterns.md` but no file existed; flagged "needs ticket" in
-`backlog/priority.md` P6-D).
+`.plan/backlog-archive.md` § priority P6-D).

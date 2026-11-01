@@ -57,4 +57,4 @@ internal-traits layer both integrations are blocked (matrix G27, G36).
 
 Epic is Draft (extended D7–D9: coping, approach, autonomy). Wire into `epic-character-core-system.md`
 ownership model. Ticket created 2026-08-15 during `.plan/` reconciliation (was flagged
-"needs ticket" in `backlog/priority.md` P6-D).
+"needs ticket" in `.plan/backlog-archive.md` § priority P6-D).
