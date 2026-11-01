@@ -52025,7 +52025,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-per-user-isolation-gate.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-PERF-SERVER-NO-CACHE-HTML-ENTRY-POINTS-STREAM-STATIC-FILES-W": {
     "hash": "91d9c92",
