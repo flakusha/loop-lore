@@ -3,7 +3,7 @@
 
 # TASK: Harness ToS acknowledgement frontend confirmation
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Harness provider ToS usage-class matrix + admin settings ToS acknowledgement frontend confirmation
 **Priority:** medium
 **Effort:** Medium
@@ -41,3 +41,5 @@ Frontend confirmation surface for the harness ToS grayzone: a settings toggle pl
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-02 registry-driven close: git issue bc45824 (registry tip: cf5c2287b Konstantin Fedotov Close issue)

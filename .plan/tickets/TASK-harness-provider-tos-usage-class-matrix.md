@@ -3,7 +3,7 @@
 
 # TASK: Harness provider ToS usage-class matrix
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Harness provider ToS usage-class matrix + admin settings ToS acknowledgement frontend confirmation
 **Priority:** medium
 **Effort:** Medium
@@ -42,3 +42,5 @@ Policy frame (binding): harness-as-provider for RPG/other functionalities is per
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-02 registry-driven close: git issue c311702 (registry tip: f83bc654d Konstantin Fedotov Close issue)
