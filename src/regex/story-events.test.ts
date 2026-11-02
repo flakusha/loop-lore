@@ -3,6 +3,7 @@ import {
   COMBAT_ACTION,
   COMBAT_DAMAGE,
   COMBAT_PATTERNS,
+  combatIntentFromConsequence,
   ITEM_DROP,
   ITEM_GIVE,
   ITEM_PATTERNS,
@@ -331,5 +332,26 @@ describe("story-events regex", () => {
     it("has 2 patterns", () => {
       expect(LORE_PATTERNS.length,).toBe(2,);
     });
+  });
+
+  // ── Combat Intent Signal ─────────────────────────────────
+
+  describe("combatIntentFromConsequence", () => {
+    it.each([
+      "The guard strikes the barkeep across the face.",
+      "An arrow fires at the party from the treeline.",
+      "The mercenary takes 12 damage and staggers.",
+      "She loses 4 hp as the trap springs.",
+    ],)("signals combat for '%s'", (input,) => {
+      expect(combatIntentFromConsequence(input,),).toBe(true,);
+    },);
+
+    it.each([
+      "The merchant lowers his price to 8 gold.",
+      "The door swings open onto a moonlit courtyard.",
+      "She persuades the magistrate to drop the charges.",
+    ],)("stays quiet for '%s'", (input,) => {
+      expect(combatIntentFromConsequence(input,),).toBe(false,);
+    },);
   });
 });
