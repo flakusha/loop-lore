@@ -39,6 +39,7 @@ import {
 import { applyGateFilter, } from "./filter.mjs";
 import { ADVISORY_GATES, checks, } from "./gate-table.mjs";
 import { applyDiffScopedStaticGates, browserSpecPaths, } from "./gates-scope.mjs";
+import { overlapCommands, } from "./scoped-overlap.mjs";
 import { filterPaths, SKIP_PATTERNS, } from "./test-skip.mjs";
 
 // Re-exported so `runner.mjs` keeps one import site for the assembled table.
@@ -232,12 +233,19 @@ function coverageCommand() {
   // anything but an in-memory DB / /tmp uploads without it. It was missing,
   // so a scoped run that reached the e2e helpers failed on the safeguard
   // rather than on the change under test.
-  return [
-    companionRun,
+  const scopedRun =
     `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
       filteredPaths.join(" ",)
-    } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${filesFlag}${skipNote}`,
-  ].filter((c,) => c.length > 0).join(" && ",);
+    }`;
+  const floorRun =
+    `bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${filesFlag}${skipNote}`;
+  // The companion and the scoped pass are independent: the companion writes
+  // no coverage, the scoped pass writes the lcov the floor reads. Overlapping
+  // them halves the gate's wall time (measured 397s -> 205s on the dev host,
+  // 188s and 209s apart).
+  return companionRun.length === 0
+    ? `${scopedRun} && ${floorRun}`
+    : `${overlapCommands(companionRun, scopedRun,)} && ${floorRun}`;
 }
 
 /**
