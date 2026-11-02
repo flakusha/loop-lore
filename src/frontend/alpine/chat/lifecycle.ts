@@ -107,6 +107,10 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
       // panel handlers). Optional call: lifecycle tests drive init() with a
       // bare ctx that does not carry the gesture submodule.
       (this as { setupTouchGestures?: () => void }).setupTouchGestures?.();
+      // Keynav consumers (j/k scroll, [ / ] chat switching) live only while
+      // the chat page is mounted — destroy() drops them again. Optional call
+      // for the same reason as the gesture submodule.
+      (this as { setupKeynav?: () => void }).setupKeynav?.();
     }
   },
 
@@ -153,6 +157,8 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     // the live #message-list node may already have been replaced by an htmx
     // swap; teardown drops the cleanups captured then (no leaked listeners).
     (this as { teardownTouchGestures?: () => void }).teardownTouchGestures?.();
+    // Drop the chat-page keynav consumers — they must not survive the page.
+    (this as { teardownKeynav?: () => void }).teardownKeynav?.();
     destroyVnRenderer();
 
     this._cleanupSSE?.();

@@ -18,6 +18,7 @@ import { chatFilters, } from "../chat-filters";
 import { chatGenerations, } from "../chat-generations";
 import { chatGroup, } from "../chat-group";
 import { chatInvites, } from "../chat-invites";
+import { chatKeynav, } from "../chat-keynav";
 import { chatKeys, } from "../chat-keys";
 import { chatLocation, } from "../chat-location";
 import { chatManagement, } from "../chat-management";
@@ -110,6 +111,7 @@ export function chatState() {
     ...chatInvites,
     ...worldChannels,
     ...chatTouchGestures,
+    ...chatKeynav,
 
     // Lifecycle must be last: sub-modules such as commandPalette also expose init().
     ...chatLifecycle,
