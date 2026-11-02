@@ -41,4 +41,12 @@ export interface LoreRow extends ActivationEntry {
   timeline_id?: string | null;
   /** Unified rarity tier; null/undefined = common (weight 1, always passes). */
   rarity?: string | null;
+  /**
+   * Inclusion group name (094, epic-lorebook-inclusion-groups): entries
+   * sharing a non-empty group are mutually exclusive — only one fires per
+   * turn. null/blank = no group.
+   */
+  inclusion_group: string | null;
+  /** Author-set insertion order; lower wins an inclusion-group tie. */
+  insertion_order: number;
 }

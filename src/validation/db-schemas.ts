@@ -1091,6 +1091,7 @@ export const WorldLoreEntriesSchema = t.Object({
   reveal_condition: t.Optional(t.String(),),
   timeline_id: t.Optional(t.String(),),
   rarity: t.Optional(ItemRaritySchema,),
+  inclusion_group: t.Optional(t.String(),),
 },);
 
 // ── world_members ────────────────────────────────────────────
@@ -1274,6 +1275,7 @@ export const ActorLoreEntriesSchema = t.Object({
   reveal_condition: t.Optional(t.String(),),
   timeline_id: t.Optional(t.String(),),
   rarity: t.Optional(ItemRaritySchema,),
+  inclusion_group: t.Optional(t.String(),),
 },);
 
 // ── actor_notes ────────────────────────────────────────────

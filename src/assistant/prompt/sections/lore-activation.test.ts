@@ -5,9 +5,11 @@
 import { afterEach, describe, expect, test, } from "bun:test";
 import {
   type ActivationEntry,
+  admitExclusiveGroups,
   clampScanDepth,
+  type InclusionGroupCandidate,
   isCooldownExpired,
-  matchesSelectiveKeys,
+  matchSelectiveKeys,
   MAX_SCAN_DEPTH,
   passesActivationChance,
 } from "./lore-activation";
@@ -16,6 +18,11 @@ const originalRandom = Math.random;
 
 function entry(overrides: Partial<ActivationEntry> = {},): ActivationEntry {
   return { keys: null, key_type: null, key_groups: null, scan_depth: null, activation_chance: null, ...overrides, };
+}
+
+/** Boolean view of the matcher — the activation gate only needs "did it match". */
+function matches(e: ActivationEntry, words: ReadonlySet<string>, text: string,): boolean {
+  return matchSelectiveKeys(e, words, text,).active;
 }
 
 afterEach(() => {
@@ -47,16 +54,16 @@ describe("clampScanDepth", () => {
   });
 });
 
-describe("matchesSelectiveKeys", () => {
+describe("matchSelectiveKeys", () => {
   const words = new Set(["dragon", "hoard",],);
 
   test("empty activation condition is always active", () => {
-    expect(matchesSelectiveKeys(entry(), words, "no keys at all",),).toBe(true,);
+    expect(matches(entry(), words, "no keys at all",),).toBe(true,);
   });
 
   test("regex keys match case-insensitively against the raw text", () => {
     expect(
-      matchesSelectiveKeys(
+      matches(
         entry({ key_type: "regex", keys: JSON.stringify(["wyvern", "dragon",],), },),
         words,
         "the DRAGON sleeps",
@@ -64,7 +71,7 @@ describe("matchesSelectiveKeys", () => {
     ).toBe(true,);
 
     expect(
-      matchesSelectiveKeys(
+      matches(
         entry({ key_type: "regex", keys: JSON.stringify(["wyvern",],), },),
         words,
         "the dragon sleeps",
@@ -73,14 +80,14 @@ describe("matchesSelectiveKeys", () => {
   });
 
   test("regex keys with empty list are always active", () => {
-    expect(matchesSelectiveKeys(entry({ key_type: "regex", keys: JSON.stringify([],), },), words, "anything",),).toBe(
+    expect(matches(entry({ key_type: "regex", keys: JSON.stringify([],), },), words, "anything",),).toBe(
       true,
     );
   });
 
   test("unsafe catastrophic regex is treated as no-match, never a crash", () => {
     expect(
-      matchesSelectiveKeys(
+      matches(
         entry({ key_type: "regex", keys: JSON.stringify(["(a+)+$",],), },),
         words,
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -90,8 +97,8 @@ describe("matchesSelectiveKeys", () => {
 
   test("key groups require every keyword of at least one AND group", () => {
     const groups = JSON.stringify([["dragon", "hoard",], ["elf",],],);
-    expect(matchesSelectiveKeys(entry({ key_groups: groups, },), words, "",),).toBe(true,);
-    expect(matchesSelectiveKeys(entry({ key_groups: JSON.stringify([["dragon", "sword",],],), },), words, "",),).toBe(
+    expect(matches(entry({ key_groups: groups, },), words, "",),).toBe(true,);
+    expect(matches(entry({ key_groups: JSON.stringify([["dragon", "sword",],],), },), words, "",),).toBe(
       false,
     );
   });
@@ -99,7 +106,7 @@ describe("matchesSelectiveKeys", () => {
   test("malformed key groups fall back to plain keyword matching", () => {
     // "groups" is a flat array of strings, not a nest of arrays -> null.
     expect(
-      matchesSelectiveKeys(
+      matches(
         entry({ key_groups: JSON.stringify(["dragon",],), keys: JSON.stringify(["hoard",],), },),
         words,
         "",
@@ -108,18 +115,162 @@ describe("matchesSelectiveKeys", () => {
   });
 
   test("plain keywords match against the lowercased word set", () => {
-    expect(matchesSelectiveKeys(entry({ keys: JSON.stringify(["Dragon",],), },), words, "",),).toBe(true,);
-    expect(matchesSelectiveKeys(entry({ keys: JSON.stringify(["goblin",],), },), words, "",),).toBe(false,);
+    expect(matches(entry({ keys: JSON.stringify(["Dragon",],), },), words, "",),).toBe(true,);
+    expect(matches(entry({ keys: JSON.stringify(["goblin",],), },), words, "",),).toBe(false,);
   });
 
   test("plain keyword fallback also accepts comma-separated strings", () => {
-    expect(matchesSelectiveKeys(entry({ keys: "goblin, HOARD", },), words, "",),).toBe(true,);
+    expect(matches(entry({ keys: "goblin, HOARD", },), words, "",),).toBe(true,);
   });
 
   test("non-empty plain keyword list with no hits is inactive", () => {
-    expect(matchesSelectiveKeys(entry({ keys: JSON.stringify(["orc", "troll",],), },), words, "dragon hoard",),).toBe(
+    expect(matches(entry({ keys: JSON.stringify(["orc", "troll",],), },), words, "dragon hoard",),).toBe(
       false,
     );
+  });
+});
+
+describe("matchSelectiveKeys — matched-key count", () => {
+  const words = new Set(["dragon", "hoard",],);
+
+  test("plain keys count the keywords present in the window", () => {
+    const result = matchSelectiveKeys(entry({ keys: JSON.stringify(["dragon", "hoard",],), },), words, "",);
+    expect(result.active,).toBe(true,);
+    expect(result.matched,).toBe(2,);
+  });
+
+  test("only the present plain keywords are counted", () => {
+    const result = matchSelectiveKeys(entry({ keys: JSON.stringify(["dragon", "orc",],), },), words, "",);
+    expect(result.active,).toBe(true,);
+    expect(result.matched,).toBe(1,);
+  });
+
+  test("regex keys count the matching patterns", () => {
+    const result = matchSelectiveKeys(
+      entry({ key_type: "regex", keys: JSON.stringify(["dragon", "wyvern",],), },),
+      words,
+      "the dragon sleeps",
+    );
+
+    expect(result.active,).toBe(true,);
+    expect(result.matched,).toBe(1,);
+  });
+
+  test("key groups count the keys of the largest satisfied group", () => {
+    const result = matchSelectiveKeys(
+      entry({ key_groups: JSON.stringify([["dragon", "hoard",], ["elf",],],), },),
+      words,
+      "",
+    );
+
+    expect(result.active,).toBe(true,);
+    expect(result.matched,).toBe(2,);
+  });
+
+  test("an entry without an activation condition matches nothing", () => {
+    const result = matchSelectiveKeys(entry(), words, "",);
+    expect(result.active,).toBe(true,);
+    expect(result.matched,).toBe(0,);
+  });
+});
+
+describe("admitExclusiveGroups", () => {
+  /** Build a group candidate with sane defaults. */
+  function candidate(overrides: Partial<InclusionGroupCandidate> & { id: string },): InclusionGroupCandidate {
+    return {
+      inclusion_group: null,
+      matched_keys: 0,
+      priority: 0,
+      insertion_order: 0,
+      ...overrides,
+    };
+  }
+
+  test("exactly one of N mutually exclusive entries fires", () => {
+    const result = admitExclusiveGroups([
+      candidate({ id: "a", inclusion_group: "rumors", matched_keys: 1, },),
+      candidate({ id: "b", inclusion_group: "rumors", matched_keys: 3, },),
+      candidate({ id: "c", inclusion_group: "rumors", matched_keys: 2, },),
+    ],);
+
+    expect(result.admitted.map((c,) => c.id),).toEqual(["b",],);
+    expect(result.decisions,).toEqual([
+      { group: "rumors", winner_id: "b", skipped_ids: ["a", "c",], },
+    ],);
+  });
+
+  test("entries without a group are unaffected", () => {
+    const result = admitExclusiveGroups([
+      candidate({ id: "a", },),
+      candidate({ id: "b", },),
+    ],);
+
+    expect(result.admitted.map((c,) => c.id),).toEqual(["a", "b",],);
+    expect(result.decisions,).toEqual([],);
+  });
+
+  test("a blank group is treated as no group", () => {
+    const result = admitExclusiveGroups([
+      candidate({ id: "a", inclusion_group: "", },),
+      candidate({ id: "b", inclusion_group: "   ", },),
+      candidate({ id: "c", inclusion_group: null, },),
+    ],);
+
+    expect(result.admitted.map((c,) => c.id),).toEqual(["a", "b", "c",],);
+    expect(result.decisions,).toEqual([],);
+  });
+
+  test("a single-entry group fires", () => {
+    const result = admitExclusiveGroups([candidate({ id: "a", inclusion_group: "rumors", },),],);
+
+    expect(result.admitted.map((c,) => c.id),).toEqual(["a",],);
+  });
+
+  test("a tie on matched keys goes to the higher priority", () => {
+    const result = admitExclusiveGroups([
+      candidate({ id: "a", inclusion_group: "rumors", matched_keys: 2, priority: 1, },),
+      candidate({ id: "b", inclusion_group: "rumors", matched_keys: 2, priority: 5, },),
+    ],);
+
+    expect(result.admitted.map((c,) => c.id),).toEqual(["b",],);
+  });
+
+  test("a tie on priority goes to the lower insertion order", () => {
+    const result = admitExclusiveGroups([
+      candidate({ id: "a", inclusion_group: "rumors", matched_keys: 2, insertion_order: 7, },),
+      candidate({ id: "b", inclusion_group: "rumors", matched_keys: 2, insertion_order: 3, },),
+    ],);
+
+    expect(result.admitted.map((c,) => c.id),).toEqual(["b",],);
+  });
+
+  test("a full tie keeps the first candidate", () => {
+    const result = admitExclusiveGroups([
+      candidate({ id: "a", inclusion_group: "rumors", matched_keys: 2, },),
+      candidate({ id: "b", inclusion_group: "rumors", matched_keys: 2, },),
+    ],);
+
+    expect(result.admitted.map((c,) => c.id),).toEqual(["a",],);
+  });
+
+  test("group names are trimmed, so whitespace variants share a group", () => {
+    const result = admitExclusiveGroups([
+      candidate({ id: "a", inclusion_group: "rumors", matched_keys: 1, },),
+      candidate({ id: "b", inclusion_group: "  rumors  ", matched_keys: 2, },),
+    ],);
+
+    expect(result.admitted.map((c,) => c.id),).toEqual(["b",],);
+    expect(result.decisions[0]?.group,).toBe("rumors",);
+  });
+
+  test("separate groups do not compete with each other", () => {
+    const result = admitExclusiveGroups([
+      candidate({ id: "a", inclusion_group: "rumors", matched_keys: 1, },),
+      candidate({ id: "b", inclusion_group: "props", matched_keys: 2, },),
+    ],);
+
+    expect(result.admitted.map((c,) => c.id),).toEqual(["a", "b",],);
+    expect(result.decisions.length,).toBe(2,);
   });
 });
 

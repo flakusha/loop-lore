@@ -38,6 +38,10 @@
  * surface them with reduced trust. Defaults are identity for worlds that
  * have not opted in (`min_confidence = 25`, decay 0.5/day, cap 80).
  *
+ * Inclusion groups (094, epic-lorebook-inclusion-groups): admitted entries
+ * that share a non-empty `inclusion_group` are mutually exclusive — exactly
+ * one of them fires per turn (the one that matched the most keys).
+ *
  * Included entries are ordered by `priority` (high first) then insertion order.
  */
 import { selectWithinBudget, } from "../../../memory/budget";
@@ -55,15 +59,26 @@ import { wrapSection, } from "../../xml-utils";
 import { recentConversation, } from "../keywords";
 import type { SectionBuilder, } from "../types";
 import {
+  admitExclusiveGroups,
   clampScanDepth,
   isCooldownExpired,
-  matchesSelectiveKeys,
+  matchSelectiveKeys,
   MAX_SCAN_DEPTH,
   passesActivationChance,
 } from "./lore-activation";
 import { isLoreDisputed, passesConfidenceFloor, } from "./lore-lifecycle-gate";
 import { loadLore, } from "./lore-load";
+import { logGroupAdmissions, } from "./lore-logger";
 import type { LoreRow, } from "./lore-types";
+
+/** Per-entry gate outcome: admitted, and how many keys the entry matched. */
+interface EntryAdmission {
+  admitted: boolean;
+  matched: number;
+}
+
+/** Gate outcome for an entry that did not pass the per-entry gates. */
+const rejected: EntryAdmission = { admitted: false, matched: 0, };
 
 export const loreSection: SectionBuilder = {
   name: "lore",
@@ -119,17 +134,17 @@ export const loreSection: SectionBuilder = {
       passesActivationChance(entry.activation_chance,) &&
       passesRarityWeight(entry.rarity,);
 
-    const isRelevant = (entry: LoreRow,): boolean => {
+    const isRelevant = (entry: LoreRow,): EntryAdmission => {
       // Audience gate first — forbidden lore is never considered for activation.
       if (!isLoreVisibleTo({ audienceScope: parseLoreScope(entry.audience_scope,), }, identityWithLocation,)) {
-        return false;
+        return rejected;
       }
 
       // Lifecycle confidence floor (TASK-world-lore-lifecycle-confidence-decay-distortion).
-      if (!passesConfidenceFloor(entry, loaded.lifecycleConfig,)) { return false; }
+      if (!passesConfidenceFloor(entry, loaded.lifecycleConfig,)) { return rejected; }
       // Check cooldown second
       if (!isCooldownExpired(entry.last_activated, entry.cooldown_seconds,)) {
-        return false;
+        return rejected;
       }
 
       // Secret-lore reveal gate (084/epic-lore-knowledge): entries with a
@@ -142,31 +157,51 @@ export const loreSection: SectionBuilder = {
           .join("\n",);
 
         const condition = parseRevealCondition(entry.reveal_condition,);
-        if (condition === null) { return false; }
+        if (condition === null) { return rejected; }
         const met = revealConditionMet(condition, {
           words: windowWords(revealWindow,),
           timelineEventTypes: loaded.timelineEvents.eventTypes,
           timelineEventText: loaded.timelineEvents.descriptionText,
         },);
 
-        if (!met) { return false; }
+        if (!met) { return rejected; }
       }
 
-      if (entry.constant || !entry.selective) { return admitStochastically(entry,); }
+      if (entry.constant || !entry.selective) {
+        return { admitted: admitStochastically(entry,), matched: 0, };
+      }
 
       // Selective: build the per-entry scan window (first `scanDepth` messages).
       const depth = clampScanDepth(entry.scan_depth,);
       const window = recentMessages.slice(0, depth,).join("\n",);
       const words = windowWords(window,);
 
-      if (!matchesSelectiveKeys(entry, words, window,)) { return false; }
-      return admitStochastically(entry,);
+      const match = matchSelectiveKeys(entry, words, window,);
+      if (!match.active) { return rejected; }
+      return { admitted: admitStochastically(entry,), matched: match.matched, };
     };
 
-    const relevantEntries: LoreRow[] = [];
+    const admittedEntries: LoreRow[] = [];
+    const matchedKeys = new Map<string, number>();
     for (const entry of allEntries) {
-      if (isRelevant(entry,)) { relevantEntries.push(entry,); }
+      const outcome = isRelevant(entry,);
+      if (!outcome.admitted) { continue; }
+      admittedEntries.push(entry,);
+      matchedKeys.set(entry.id, outcome.matched,);
     }
+
+    // Inclusion groups (094, epic-lorebook-inclusion-groups): entries sharing
+    // a group are mutually exclusive — exactly one of them fires per turn.
+    // Winner: most matched keys, then priority, then insertion order.
+    const groupAdmission = admitExclusiveGroups(
+      admittedEntries.map((entry,) => ({
+        ...entry,
+        matched_keys: matchedKeys.get(entry.id,) ?? 0,
+      })),
+    );
+
+    logGroupAdmissions(groupAdmission.decisions,);
+    const relevantEntries: LoreRow[] = groupAdmission.admitted;
 
     // Priority weighting — high-priority entries sort before low-priority ones;
     // ties keep stable insertion order (position asc from the query).

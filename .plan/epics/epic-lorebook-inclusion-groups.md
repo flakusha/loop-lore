@@ -10,7 +10,7 @@
 
 
 **Status:** Done
-**Status Note:** Not Started
+**Status Note:** Shipped — nullable `inclusion_group` on both lore tables (`src/db/migrations/094_lorebook_inclusion_groups.ts`, regenerated `src/db/schema-story.ts` / `src/db/schema-manifest.ts` / `src/validation/db-schemas.ts` / `src/test-utils/insert-helpers.ts`); group-name parsing (`parseInclusionGroup` in `src/assistant/prompt/keywords.ts`); exclusive per-group admission (`admitExclusiveGroups` in `src/assistant/prompt/sections/lore-activation.ts`, wired in `src/assistant/prompt/sections/lore.ts`, column carried by the select lists in `src/assistant/prompt/sections/lore-load.ts` and `LoreRow` in `src/assistant/prompt/sections/lore-types.ts`); admit/skip logging via the child logger `src/assistant/prompt/sections/lore-logger.ts`; fixtures in `src/assistant/prompt/sections/lore-inclusion-groups.test.ts` and `src/assistant/prompt/sections/lore-activation.test.ts`. Ticket `TASK-lorebook-inclusion-groups-schema-column-admission-gate-group` → Done. Winner rule: most matched keys, then priority, then insertion order.
 **Priority:** High
 
 ## Summary

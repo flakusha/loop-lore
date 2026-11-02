@@ -75,6 +75,8 @@ function actorLoreQuery(
       "reveal_condition",
       "timeline_id",
       "rarity",
+      "inclusion_group",
+      "insertion_order",
     ],)
     .where("actor_id", "=", actorId,)
     .where("enabled", "=", "enabled",)
@@ -145,6 +147,8 @@ export async function loadLore(
           "reveal_condition",
           "timeline_id",
           "rarity",
+          "inclusion_group",
+          "insertion_order",
         ],)
         .where("world_id", "=", chat.world_id,)
         .where("enabled", "=", "enabled",)

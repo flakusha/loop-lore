@@ -4,6 +4,7 @@
 # TASK: Lorebook inclusion groups: schema column, admission gate, group scoring
 
 **Status:** Done
+**Scope:** epic-lorebook-inclusion-groups
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-lorebook-inclusion-groups
@@ -25,26 +26,26 @@ Epic: epic-lorebook-inclusion-groups.md. Coordinate (no overlap) with TASK-loreb
 
 ## Acceptance Criteria
 
-- [ ] `inclusion_group` nullable column on `world_lore_entries` + `actor_lore_entries` via a new forward migration.
-- [ ] Keyword-group parsing extended (entry can declare its inclusion group); parser unit-tested.
-- [ ] Admission gate: exactly one entry per inclusion group fires per turn; the winner is the entry matching more keys (tie -> priority/insertion_order); fixtures cover mutually-exclusive rumors (one of N fires).
-- [ ] Fixtures cover: no-group entries unaffected; empty group; single-entry group; cooldown/rarity interplay.
+- [x] `inclusion_group` nullable column on `world_lore_entries` + `actor_lore_entries` via a new forward migration. (`src/db/migrations/094_lorebook_inclusion_groups.ts`; regenerated artifacts: `src/db/schema-story.ts`, `src/db/schema-manifest.ts`, `src/validation/db-schemas.ts`, `src/test-utils/insert-helpers.ts`.)
+- [x] Keyword-group parsing extended (entry can declare its inclusion group); parser unit-tested. (`parseInclusionGroup` in `src/assistant/prompt/keywords.ts`, unit-tested in `src/assistant/prompt/keywords.test.ts`.)
+- [x] Admission gate: exactly one entry per inclusion group fires per turn; the winner is the entry matching more keys (tie -> priority/insertion_order); fixtures cover mutually-exclusive rumors (one of N fires). (`admitExclusiveGroups` in `src/assistant/prompt/sections/lore-activation.ts`, wired in `src/assistant/prompt/sections/lore.ts`; fixtures in `lore-activation.test.ts` + `lore-inclusion-groups.test.ts`.)
+- [x] Fixtures cover: no-group entries unaffected; empty group; single-entry group; cooldown/rarity interplay. (`src/assistant/prompt/sections/lore-inclusion-groups.test.ts`.)
 
 ## Caveats
 
-- [ ] TOCTOU: none (pure prompt-assembly read path).
-- [ ] Partial failure: migration must be backward compatible (null group = today behavior).
-- [ ] Stale state: entries changing group mid-chat take effect next turn only.
-- [ ] Observability: dedupe pass logs group admits/skips via existing lore telemetry.
+- [x] TOCTOU: none (pure prompt-assembly read path).
+- [x] Partial failure: migration must be backward compatible (null group = today behavior). (NULL/blank group = no group; pre-existing rows keep today's admission.)
+- [x] Stale state: entries changing group mid-chat take effect next turn only. (The gate runs per prompt assembly over the freshly loaded rows.)
+- [x] Observability: dedupe pass logs group admits/skips. **Surface used: the repo's structured logger**, via the new child-logger module `src/assistant/prompt/sections/lore-logger.ts` (`getChildLogger("assistant/prompt/lore")`), which emits one `debug` line per group with the winner id and the skipped ids. *Why not the Prometheus counter map:* no lore-specific telemetry exists (no `lore` counters under `src/telemetry/`; `src/api-governance/telemetry/prometheus.ts` only exposes the `loop_lore_` product-prefixed counters), and a product-prefixed counter cannot attribute a skip to a group, while the logger carries the group name, winner and skipped ids.
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+SillyTavern-style inclusion groups were missing while the flat admission path was already per-entry. The column value is the source of truth for grouping; `parseInclusionGroup` trims it and maps blank/absent to `null` (= no group). The gate runs after the per-entry gates (audience, lifecycle, cooldown, reveal, stochastic) and before the priority sort, so cooldown/rarity still remove candidates before the group decides. Scoring: most matched keys wins, ties go to higher `priority`, then lower `insertion_order`, then collection order. `matchSelectiveKeys` replaced `matchesSelectiveKeys` and now returns `{ active, matched }` — the matched count is what the group ranks on (matched regex patterns / largest satisfied AND-group size / present plain keywords). Constant (non-selective) entries match 0 keys, so a specific selective entry overrides them in the same group ("generic fallback + specific overrides"). The column is not yet exposed through the lore-entry CRUD routes — it is settable via DB/import only; route exposure is a follow-up. Docs: the schema facts are generated (`src/db/schema-manifest.ts` and `src/validation/db-schemas.ts` are regenerated from the migrations), the plan/epic pages are served from the generated `docs/plan-gen/` mirror, and the hand-written surfaces were updated for this feature (`docs/spec/lore.md` — column + exclusivity rule; `docs/frontend/chat/prompt-creation.md` — group resolution step in the injection path). *Follow-ups, not built here:* the lore column reference in `docs/spec/` is hand-written prose while the same facts are machine-readable in the generated `src/db/schema-manifest.ts` - a generator could emit it (and the stale migration-sequence table in `docs/spec/schema.md`) into the VitePress build; and the regex-key path re-validates + recompiles every pattern on every turn - a bounded precompiled-regex cache in `packages/core/src/utils/safe-regexp.ts` would move that into the compiled layer. Both are recorded next to the code (`TODO(perf)` in `src/assistant/prompt/sections/lore-activation.ts`) with their revisit triggers.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated (`docs/spec/lore.md`, `docs/frontend/chat/prompt-creation.md`, `CHANGELOG.md`; generated plan pages served from `docs/plan-gen/`)
 
 **Resolved:** 2026-11-03 registry-driven close: git issue 6bad0ee (registry tip: d03b15433 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-LOREBOOK-INCLUSION-GROUPS-S)
