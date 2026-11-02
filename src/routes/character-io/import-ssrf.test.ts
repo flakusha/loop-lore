@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 giwt Contributors
-
 /**
  * The URL-import SSRF guard: a hostname that LOOKS public but resolves to a
  * private address must be rejected. The old guard compared the hostname string
@@ -13,15 +12,16 @@
  * fetch, without any real network, DNS, ports, or sleeps. The database is a
  * per-run createTestDb, closed in afterAll.
  */
-import type { Database, } from "bun:sqlite";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
-import { Elysia, } from "elysia";
-import type { Kysely, } from "kysely";
+import type { CharacterSystemsExport, } from "../../characters/exporters/character-systems";
 import type { DB, } from "../../db/schema";
-import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
+import type { Database, } from "bun:sqlite";
 import type { HostResolver, } from "../../utils/url-validation";
+import type { Kysely, } from "kysely";
+import { Elysia, } from "elysia";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { createTestDb, } from "../../test-utils/create-test-db";
 import { importRoutes, } from "./import";
+import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
 
 const ACTOR_ID = "11111111-1111-4111-8111-111111111111";
 
@@ -107,15 +107,36 @@ describe("character-io import/url SSRF guard", () => {
     expect(res.status,).toBe(400,);
   });
 
-  test("gets past the guard for a genuinely public host (fails later at fetch, not 400-private)", async () => {
-    const res = await importFrom(
-      "https://cards.example.com/card.json",
-      () => Promise.resolve(["93.184.216.34",],),
-    );
+  // The route's post-guard fetch (import.ts safeFetch) must not leave the
+  // machine: real DNS/TLS to a public host inside bun's 5s per-test runner
+  // budget is exactly the parallel-load kill this suite suffers. Swap
+  // globalThis.fetch for the duration of the call — the same seam the
+  // safe-fetch tests use (packages/core/src/utils/safe-fetch/fetch.test.ts)
+  // — and restore it even on failure. The SSRF guard above still exercises
+  // the real validateFetchUrl logic; only the outbound fetch is stubbed.
+  const originalFetch = globalThis.fetch;
 
-    // The guard lets this through; the fetch itself then fails in the sandbox.
-    // Either way it must NOT be the private-address rejection.
-    const body = await res.text();
-    expect(body,).not.toContain("private address",);
+  test("gets past the guard for a genuinely public host (fails later at fetch, not 400-private)", async () => {
+    const exportPayload: CharacterSystemsExport = {
+      version: "1.0",
+      exportedAt: new Date().toISOString(),
+      characterId: ACTOR_ID,
+    };
+
+    globalThis.fetch = (() => Promise.resolve(Response.json(exportPayload,),)) as typeof fetch;
+    try {
+      const res = await importFrom(
+        "https://cards.example.com/card.json",
+        () => Promise.resolve(["93.184.216.34",],),
+      );
+
+      // The guard lets this through; the stubbed fetch hands back a minimal
+      // valid export. Either way the body must NOT be the private-address
+      // rejection.
+      const body = await res.text();
+      expect(body,).not.toContain("private address",);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });
