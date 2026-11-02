@@ -182,12 +182,12 @@ export const loreSection: SectionBuilder = {
     };
 
     const admittedEntries: LoreRow[] = [];
-    const matchedKeys = new Map<string, number>();
+    const matchedKeys = new Map<LoreRow, number>();
     for (const entry of allEntries) {
       const outcome = isRelevant(entry,);
       if (!outcome.admitted) { continue; }
       admittedEntries.push(entry,);
-      matchedKeys.set(entry.id, outcome.matched,);
+      matchedKeys.set(entry, outcome.matched,);
     }
 
     // Inclusion groups (094, epic-lorebook-inclusion-groups): entries sharing
@@ -196,7 +196,7 @@ export const loreSection: SectionBuilder = {
     const groupAdmission = admitExclusiveGroups(
       admittedEntries.map((entry,) => ({
         ...entry,
-        matched_keys: matchedKeys.get(entry.id,) ?? 0,
+        matched_keys: matchedKeys.get(entry,) ?? 0,
       })),
     );
 
