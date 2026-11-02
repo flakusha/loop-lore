@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import { ActorType, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
@@ -172,10 +172,11 @@ async function serveWorldsSearch(
   }
 
   if (query) {
+    const pattern = `%${escapeLike(query,)}%`;
     qb = qb.where((eb,) =>
       eb.or([
-        eb("name", "like", `%${escapeLike(query,)}%`,),
-        eb("description", "like", `%${escapeLike(query,)}%`,),
+        sql`name LIKE ${pattern} ESCAPE '\\'`.$castTo<boolean>(),
+        sql`description LIKE ${pattern} ESCAPE '\\'`.$castTo<boolean>(),
       ],)
     );
   }
