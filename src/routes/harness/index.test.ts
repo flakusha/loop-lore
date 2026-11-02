@@ -21,6 +21,7 @@ import { buildRunRecord, } from "../../harness/exec-recorder";
 import * as realQuery from "../../harness/query";
 import type { HarnessRunRecord, HarnessRunSummary, HarnessStats, } from "../../harness/types";
 import { serializeRun, toSummary, } from "../../harness/types";
+import { initHarnessAdminSettings, resetHarnessAdminSettings, } from "../../integrations/harness/admin-settings";
 import { harnessRoutes, } from "./index";
 
 /**
@@ -123,13 +124,74 @@ afterEach(() => {
 describe("harnessRoutes", () => {
   describe("authz", () => {
     it("denies a non-admin on every endpoint", async () => {
-      for (const path of ["/api/v1/harness/runs", "/api/v1/harness/runs/run-1", "/api/v1/harness/stats",]) {
+      for (
+        const path of [
+          "/api/v1/harness/runs",
+          "/api/v1/harness/runs/run-1",
+          "/api/v1/harness/stats",
+          "/api/v1/harness/settings",
+        ]
+      ) {
         expect((await get("user", path,)).status,).toBe(403,);
       }
     });
 
     it("denies an unauthenticated request", async () => {
       expect((await get(null, "/api/v1/harness/runs",)).status,).toBe(403,);
+    });
+  });
+
+  describe("GET /api/v1/harness/settings", () => {
+    afterEach(() => resetHarnessAdminSettings());
+
+    it("returns enabled state and profiles decorated with the provider ToS matrix", async () => {
+      initHarnessAdminSettings({
+        enabled: true,
+        profiles: [
+          { name: "omp-main", command: ["omp",], tiers: {}, },
+          { name: "cc-sub", command: ["claude",], tiers: {}, harness: "claude-code", tosGrayzoneAcknowledged: true, },
+        ],
+      },);
+
+      const res = await get("admin", "/api/v1/harness/settings",);
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as {
+        enabled: boolean;
+        profiles: Array<
+          {
+            name: string;
+            flavor: string;
+            usageClasses: string[];
+            subscriptionBacked: boolean;
+            noteKey: string;
+            tosGrayzoneAcknowledged: boolean;
+          }
+        >;
+      };
+
+      expect(body.enabled,).toBe(true,);
+      expect(body.profiles,).toHaveLength(2,);
+      expect(body.profiles[0],).toEqual({
+        name: "omp-main",
+        flavor: "omp",
+        usageClasses: ["api", "local",],
+        subscriptionBacked: false,
+        noteKey: "harness.tos.note.omp",
+        tosGrayzoneAcknowledged: false,
+      },);
+
+      expect(body.profiles[1]?.flavor,).toBe("claude-code",);
+      expect(body.profiles[1]?.subscriptionBacked,).toBe(true,);
+      expect(body.profiles[1]?.usageClasses,).toContain("subscription-backed",);
+      expect(body.profiles[1]?.tosGrayzoneAcknowledged,).toBe(true,);
+    });
+
+    it("reads the code defaults when the store was never seeded", async () => {
+      const res = await get("admin", "/api/v1/harness/settings",);
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as { enabled: boolean; profiles: unknown[] };
+      expect(body.enabled,).toBe(false,);
+      expect(body.profiles,).toEqual([],);
     });
   });
 

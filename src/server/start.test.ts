@@ -95,6 +95,11 @@ if (ISOLATED) {
     updateRuntimeNsfwFileConfig: () => {},
   }),);
 
+  mock.module("../integrations/harness/admin-settings", () => ({
+    applyStoredHarnessSettings: async () => {},
+    initHarnessAdminSettings: () => {},
+  }),);
+
   mock.module("../plugins", () => ({
     loadAllPlugins: async () => {
       if (pluginGate) { await pluginGate; }
