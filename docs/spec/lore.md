@@ -13,6 +13,7 @@
 - Timeline scoping: nullable `timeline_id` on both lore tables (084) — NULL rows are timeline-universal, non-NULL rows load only for chats on that timeline (`chats.timeline_id`, filtered in `lore-load.ts`).
 - Rarity-weighted selection: `rarity` column (canonical `ItemRarity` scale, default `common`) with tier weights in `src/assistant/lore/rarity-weight.ts` — non-common entries are admitted stochastically after activation; common/unknown always pass.
 - Audience scoping: `src/assistant/lore/audience.ts` — subject kinds world / location / profession / race; unknown subjects hidden by default.
+- Inclusion groups: nullable `inclusion_group` column on both lore tables (094, epic-lorebook-inclusion-groups) — entries sharing a non-empty group are mutually exclusive: exactly one fires per turn, the winner being the entry that matched the most keys (tie → higher `priority`, then lower `insertion_order`). NULL/blank means "no group" and is unaffected by the gate. Selection lives in `admitExclusiveGroups` (`src/assistant/prompt/sections/lore-activation.ts`) and runs in `loreSection` after the per-entry gates, so cooldown/rarity still remove candidates before the group decides.
 - Event → lore promotion: `src/story/events/promote-lore.ts` (additive; opt-out via `promoteToLore === false`).
 - Timeline: `src/story/timeline/event-steering.ts` (create/roll/resolve steerings, red-herring guard) and `src/story/timeline/world-timeline.ts` (shared per-world event timeline; convergence queries exclude the caller's own story).
 

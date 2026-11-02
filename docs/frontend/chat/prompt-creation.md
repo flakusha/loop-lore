@@ -138,6 +138,7 @@ All fields nullable — missing fields omitted from output.
 - Scan latest `scan_depth` messages for keyword matches against loaded lorebook keys
 - Sort matches by `insertion_order` (lower = earlier)
 - Deduplicate by lorebook entry `id`
+- Resolve inclusion groups: entries sharing a non-empty `inclusion_group` are mutually exclusive — exactly one fires per turn (the entry that matched the most keys wins)
 - Fill up to `token_budget` characters, prioritizing highest-`priority` entries
 - Insert position: `before_char` or `after_char` (relative to actor header)
 
