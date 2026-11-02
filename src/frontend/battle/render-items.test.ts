@@ -104,18 +104,17 @@ describe("SOCIAL_ACTIONS contract", () => {
 });
 
 describe("action economy + environment", () => {
+  /** Depth-first class search over the fake DOM tree (panel nodes are FakeEls). */
   function findByClass(
-    root: { children: { className: string; children: never[] }[] },
+    root: { className: string; children: ArrayLike<unknown> },
     name: string,
-  ): { textContent: string; children: { className: string; children: never[] }[] } | null {
-    const stack = [...root.children,];
-    while (stack.length > 0) {
-      const el = stack.pop()!;
-      if (el.className.split(/\s+/,).includes(name,)) {
-        return el as { textContent: string; children: { className: string; children: never[] }[] };
-      }
+  ): FakeEl | null {
+    for (const child of Array.from(root.children,)) {
+      const node = child as { className: string; children: ArrayLike<unknown> };
+      if (node.className.split(/\s+/,).includes(name,)) { return node as unknown as FakeEl; }
 
-      stack.push(...el.children,);
+      const nested = findByClass(node, name,);
+      if (nested) { return nested; }
     }
 
     return null;

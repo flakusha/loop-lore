@@ -307,7 +307,8 @@ describe("panel i18n labels", () => {
   it("falls back to the i18n key when the catalog is empty", () => {
     localeStringsHost.__localeStrings = {};
     const { container, } = mountBattle(view(),);
-    const overlay = container.children[0]!;
+    // The a11y live region is appended before the overlay; find the panel by class.
+    const overlay = container.children.find((el,) => el.className === "battle-panel-content")!;
     expect(overlay.getAttribute("aria-label",),).toBe("battle.battleControls",);
   });
 });
