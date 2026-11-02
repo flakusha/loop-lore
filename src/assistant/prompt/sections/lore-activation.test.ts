@@ -1,7 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/** Contract tests for the pure lore selective-activation rules. */
+/**
+ * Contract tests for the pure lore selective-activation rules.
+ *
+ * Resource contract: the rules under test are pure, so the tests own no
+ * database, file or port. The only global they touch is `Math.random`
+ * (the chance gate reads it); it is restored in `afterEach`, so the tests
+ * stay independent of each other and of their order.
+ */
 import { afterEach, describe, expect, test, } from "bun:test";
 import {
   type ActivationEntry,
