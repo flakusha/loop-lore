@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { DB, } from "../../db/schema";
 import type { Kysely, } from "kysely";
 import { ActorType, AssetType, } from "../../db/enums";
-import { applyGalleryAssetFilters, galleryMediaContext, GRID_PAGE_SIZE, inheritedHiddenAssetIds, } from "./gallery";
-import { buildGallerySearchViewModel, type GallerySearchViewModel, } from "./view-models/gallery-grid";
+import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
-import { escapeHtml, htmlResponse, } from "./layout";
 import { escapeLike, } from "../message-search/helpers";
-import { renderGalleryCards, renderGalleryEmptyState, } from "./gallery-cards";
 import { type ViewsViewer, visibleCharactersTo, } from "./access";
+import { applyGalleryAssetFilters, galleryMediaContext, GRID_PAGE_SIZE, inheritedHiddenAssetIds, } from "./gallery";
+import { renderGalleryCards, renderGalleryEmptyState, } from "./gallery-cards";
+import { escapeHtml, htmlResponse, } from "./layout";
+import { buildGallerySearchViewModel, type GallerySearchViewModel, } from "./view-models/gallery-grid";
 
 /**
  * Fetch and project the gallery search result set — the single data path
