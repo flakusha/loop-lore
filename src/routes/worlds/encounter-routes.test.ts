@@ -94,7 +94,7 @@ async function body(res: Response,): Promise<{ data?: Record<string, unknown> }>
 
 describe("world encounter routes", () => {
   test("unauthenticated → 404 (world invisibility)", async () => {
-    const { userId, worldId, } = await seedWorld("anon",);
+    const { worldId, } = await seedWorld("anon",);
     const res = await makeApp().handle(
       new Request(`http://localhost/api/worlds/${worldId}/encounter-templates`,),
     );
@@ -112,7 +112,7 @@ describe("world encounter routes", () => {
       ),
     );
 
-    expect(empty.data,).toEqual([],);
+    expect(empty.data as unknown as unknown[],).toEqual([],);
 
     const created = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/encounter-templates`, {
