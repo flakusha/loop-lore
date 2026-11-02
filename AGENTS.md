@@ -78,6 +78,13 @@ bun run check && bun run test:unit
 #   changes are still listed, and only TRACKED worktree changes are seen, so an
 #   untracked new file is not gated. `giwt finalize` Step 2 passes the ref
 #   automatically; static gates always run project-wide.
+# - The scoped coverage gate runs its two test passes CONCURRENTLY: the
+#   collision companion (every touched subsystem's whole test dir, unscoped)
+#   and the scoped pass (the diff's own test files, isolated + coverage) are
+#   independent — the companion writes no coverage output, the scoped pass
+#   writes the lcov the floor reads — so they run side by side instead of one
+#   after the other. The gate reports the FIRST failing half's own exit code
+#   (scripts/check/parallel/scoped-overlap.mjs).
 # - `bun run check --gates <csv>` / `--skip-gates <csv>` runs a subset of
 #   the registered gates. Names are matched verbatim against the runner's check
 #   registry; unknown names exit 2 and list available gates. `--gates`

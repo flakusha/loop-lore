@@ -38,8 +38,12 @@ if (files.length === 0) {
 
 // Warm the frontend build once, before workers race on the build lock: the
 // helper itself is concurrency-safe (stale-PID lock + hash-named trees), but
-// one warm build means every worker goes straight to serving.
-ensureFrontendBuild();
+// one warm build means every worker goes straight to serving. The published
+// tree is handed down through E2E_FRONTEND_BUILD_DIR instead of being rebuilt
+// per worker: a worker that rebuilds re-runs the whole frontend build, and a
+// build that FAILS then costs every spec the full build timeout instead of
+// failing the gate once, here.
+const buildDir = ensureFrontendBuild();
 
 const BROWSER_JOBS = Math.max(
   1,
@@ -57,6 +61,7 @@ async function runSpec(file: string,): Promise<void> {
     cwd: root,
     env: {
       ...process.env,
+      E2E_FRONTEND_BUILD_DIR: buildDir,
       E2E_SAFEGUARD: "1",
       HTTP_PROXY: "",
       NO_PROXY: "*",
