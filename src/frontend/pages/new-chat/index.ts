@@ -20,29 +20,37 @@ const WORLD_REQUIRED_VARIANTS = new Set(["rpg", "rpg_group",],);
  * htmx:after:init can fire for several nodes of one swap, re-triggering the
  * page loader while a previous run is still awaiting its fetches. A late
  * re-entry rebuilds the world select and wipes the user's picked world, so
- * the required select blocks submit silently. Only one load may run per
- * mounted form.
+ * only one load may run per mounted form. The guard is keyed to the mounted
+ * form: a genuine swap to a fresh form starts a new load, while a stale run
+ * bails out before touching the new DOM.
  */
-let loadInFlight = false;
+let activeLoadForm: HTMLFormElement | null = null;
 
 globalThis.loadNewChatPage = async function(): Promise<void> {
-  if (loadInFlight) { return; }
-  loadInFlight = true;
+  const form = $<HTMLFormElement>("#create-chat-form",);
+  if (activeLoadForm === form) { return; }
+  activeLoadForm = form;
   try {
-    await loadNewChatPageInner();
+    await loadNewChatPageInner(form,);
   } finally {
-    loadInFlight = false;
+    if (activeLoadForm === form) { activeLoadForm = null; }
   }
 };
 
-/** Fetch page data, populate selects, and bind handlers for the form. */
-async function loadNewChatPageInner(): Promise<void> {
+/**
+ * Fetch page data, populate selects, and bind handlers for the form.
+ * @param form - the mounted form this load owns
+ */
+async function loadNewChatPageInner(form: HTMLFormElement | null,): Promise<void> {
+  // A swap that mounts a fresh form starts a new load; this stale run must
+  // not continue mutating shared DOM after its next await.
+  const isStale = (): boolean => activeLoadForm !== form;
   const ctx: NewChatCtx = createCtx();
 
   // Bind submit before any await: a stalled fetch in this loader must never
   // leave the form without its submit handler, which would turn the button
   // into a silent native submit (no POST, no error).
-  ctx.form = $<HTMLFormElement>("#create-chat-form",);
+  ctx.form = form;
   bindSubmitHandler(ctx,);
 
   try {
@@ -53,6 +61,8 @@ async function loadNewChatPageInner(): Promise<void> {
     /* ignore */
   }
 
+  if (isStale()) { return; }
+
   // ── Chat setup templates: load + pre-fill key mechanics ─────
   try {
     const res = await feFetch("/api/v1/chat-setup-templates",);
@@ -62,6 +72,8 @@ async function loadNewChatPageInner(): Promise<void> {
   } catch {
     /* ignore */
   }
+
+  if (isStale()) { return; }
 
   // ── Worlds: load for the world picker (fine-tune override) ─────
   let worlds: { id: string; name: string }[] = [];
@@ -74,6 +86,8 @@ async function loadNewChatPageInner(): Promise<void> {
   } catch {
     /* ignore */
   }
+
+  if (isStale()) { return; }
 
   ctx.templateSelect = $<HTMLSelectElement>("#chat-template",);
   // Guard the empty option so htmx re-entry doesn't stack template duplicates.
@@ -178,6 +192,8 @@ async function loadNewChatPageInner(): Promise<void> {
   } catch {
     /* ignore */
   }
+
+  if (isStale()) { return; }
 
   ctx.searchInput = $<HTMLInputElement>("#participant-search",);
   ctx.resultsEl = $<HTMLElement>("#participant-results",);
