@@ -159,3 +159,33 @@ export const HarnessStatsSchema = Type.Object({
   byPattern: Type.Array(HarnessByPatternSchema,),
   toolingGaps: Type.Array(HarnessToolingGapSchema,),
 },);
+
+/**
+ * One configured profile of `GET /api/v1/harness/settings`, decorated with
+ * the static provider ToS matrix (`integrations/harness/provider-tos.ts`):
+ * usage classes, subscription flag and the localized note key travel on the
+ * wire so the panel renders the matrix without importing server modules.
+ */
+export const HarnessProfileSettingsSchema = Type.Object({
+  name: Type.String(),
+  /** `harness` flavor, defaulted to `"omp"` when the profile omitted it. */
+  flavor: Type.String(),
+  usageClasses: Type.Array(Type.String(),),
+  subscriptionBacked: Type.Boolean(),
+  /** Locale key (`harness.tos.note.*`) of the provider ToS note. */
+  noteKey: Type.String(),
+  tosGrayzoneAcknowledged: Type.Boolean(),
+},);
+
+/** `GET /api/v1/harness/settings` body (also the future PUT response shape). */
+export const HarnessSettingsResponse = Type.Object({
+  enabled: Type.Boolean(),
+  profiles: Type.Array(HarnessProfileSettingsSchema,),
+},);
+
+/**
+ * The settings payload, nullable — `parseOr` needs a fallback of the schema's
+ * own static type, and "no settings loaded" is exactly the state after a bad
+ * response, so the nullability lives in the schema instead of a cast.
+ */
+export const HarnessSettingsNullable = Type.Union([HarnessSettingsResponse, Type.Null(),],);
