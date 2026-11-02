@@ -30,6 +30,14 @@ import { trackPageErrors, } from "../../helpers/htmx-alpine";
 
 const REPO_ROOT = join(import.meta.dir, "..", "..", "..", "..",);
 const DIST_DIR = join(REPO_ROOT, "docs", ".vitepress", "dist",);
+
+// ── Build the docs site if needed ─────────────────────────────
+// ensureDocsBuild now lives in tests/e2e/helpers/browser-docs-build.ts:
+// same skip-if-dist-complete semantics, plus the hash-keyed dist cache
+// (.tmp/docs-dist-cache) and the codified docs-build heap flag.
+
+// ── Discover pages with mermaid blocks ────────────────────────
+
 function findHtmlFiles(dir: string,): string[] {
   const out: string[] = [];
   for (const entry of readdirSync(dir,)) {
