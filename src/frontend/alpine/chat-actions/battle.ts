@@ -83,6 +83,7 @@ function isBattleViewShape(value: unknown,): value is {
   combatants: unknown[];
   items?: unknown;
   log?: unknown;
+  environmentalEffects?: unknown;
 } {
   if (!value || typeof value !== "object") { return false; }
   const v = value as Record<string, unknown>;
