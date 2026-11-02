@@ -3,7 +3,7 @@
 
 # TASK: NSFW blur preference for permitted users
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -21,3 +21,5 @@ Per-user preference (nsfw_user_preferences.nsfw_blur_media, migration 093) to re
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-02 registry-driven close: git issue 91abe63 (registry tip: 23a9e3617 Konstantin Fedotov Close issue)
