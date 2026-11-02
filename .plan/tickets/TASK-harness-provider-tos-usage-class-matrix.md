@@ -3,7 +3,8 @@
 
 # TASK: Harness provider ToS usage-class matrix
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Harness provider ToS usage-class matrix + admin settings ToS acknowledgement frontend confirmation
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
