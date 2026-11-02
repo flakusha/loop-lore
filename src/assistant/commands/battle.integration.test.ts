@@ -207,4 +207,47 @@ describe("battle commands via slash dispatch", () => {
     expect(alice.isNpc,).toBe(false,);
     expect(orc.isNpc,).toBe(true,);
   });
+
+  it("reports usage for an unknown subcommand", async () => {
+    const res = await dispatch(db, chatId, "/battle frobnicate",);
+    expect(await sysMsg(res,),).toContain("Usage:",);
+  });
+
+  it("reports no active encounter when ending an idle chat", async () => {
+    const idleChat = uid();
+    await insertChats(db, "Idle Chat", CALLER_ACTOR_ID, { id: idleChat, } as never,);
+    await insertChatParticipants(db, idleChat, CALLER_ACTOR_ID, { role_in_chat: "owner", } as never,);
+
+    const res = await dispatch(db, idleChat, "/battle end",);
+    expect(await sysMsg(res,),).toContain("no active encounter",);
+  });
+
+  it("refuses to start with an empty roster", async () => {
+    const emptyChat = uid();
+    await insertChats(db, "Empty Roster Chat", CALLER_ACTOR_ID, { id: emptyChat, } as never,);
+    await insertChatParticipants(db, emptyChat, CALLER_ACTOR_ID, { role_in_chat: "owner", } as never,);
+
+    const res = await dispatch(db, emptyChat, "/battle start",);
+    expect(await sysMsg(res,),).toContain("no combatants found",);
+  });
+
+  it("delegates use and social to the battle-actions handlers", async () => {
+    const idleChat = uid();
+    await insertChats(db, "Delegate Chat", CALLER_ACTOR_ID, { id: idleChat, } as never,);
+    await insertChatParticipants(db, idleChat, CALLER_ACTOR_ID, { role_in_chat: "owner", } as never,);
+
+    const useRes = await dispatch(db, idleChat, "/battle use potion",);
+    expect((await sysMsg(useRes,)).length,).toBeGreaterThan(0,);
+
+    const socialRes = await dispatch(db, idleChat, "/battle social taunt Orc",);
+    expect((await sysMsg(socialRes,)).length,).toBeGreaterThan(0,);
+  });
+
+  it("reports align usage and unknown align targets", async () => {
+    const badSide = await dispatch(db, chatId, "/battle align Orc sideways",);
+    expect(await sysMsg(badSide,),).toContain("Usage:",);
+
+    const noTarget = await dispatch(db, chatId, "/battle align ghost enemy",);
+    expect(await sysMsg(noTarget,),).toContain("not found among combatants",);
+  });
 });
