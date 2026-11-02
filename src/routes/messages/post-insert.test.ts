@@ -125,13 +125,16 @@ describe("post-insert fan-out trigger", () => {
       undefined,
     );
 
+    // Poll budget inside waitFor() is 15s (default); bun's per-test runner
+    // default is 5s, which would kill this test under parallel load before
+    // the poll resolves. Runner budget must exceed the poll budget.
     const queued = await waitFor(async () => (await outboxRows(db, messageId,)).length > 0);
     expect(queued,).toBe(true,);
     const rows = await outboxRows(db, messageId,);
     expect(rows,).toHaveLength(1,);
     expect(rows[0]!.target_origin,).toBe(PEER,);
     expect(rows[0]!.chat_id,).toBe(chatId,);
-  });
+  }, 30_000,);
 
   test("unconsented chat: nothing sent, write still succeeds", async () => {
     const chatId = "chat-fanout-noconsent";
