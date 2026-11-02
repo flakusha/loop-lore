@@ -36,6 +36,14 @@ function makePassingCargo(): { dir: string; cleanup: () => void } {
   return { dir, cleanup: () => rmSync(dir, { recursive: true, force: true, },), };
 }
 
+// A cold run of scripts/build-native.ts (real cargo, cdylib + wasm) measured
+// ~41s; budget the runner well above that so a warm/cold build never trips
+// bun's 5s per-test default.
+const RUNNER_TIMEOUT_MS = 120_000;
+// Hard cap on the spawned script itself: spawnSync kills the child when this
+// fires, so a wedged build can never dangle past test teardown.
+const SPAWN_TIMEOUT_MS = 90_000;
+
 describe("build-native exit code (B4)", () => {
   test("exits non-zero when cargo build fails", () => {
     const { dir, cleanup, } = makeFailingCargo();
@@ -43,12 +51,13 @@ describe("build-native exit code (B4)", () => {
       const result = spawnSync("bun", [SCRIPT,], {
         env: { ...process.env, PATH: `${dir}:${process.env.PATH}`, },
         encoding: "utf8",
+        timeout: SPAWN_TIMEOUT_MS,
       },);
       expect(result.status,).not.toBe(0,);
     } finally {
       cleanup();
     }
-  });
+  }, RUNNER_TIMEOUT_MS,);
 
   test("does not exit 1 with cargo failure when cargo succeeds", () => {
     const { dir, cleanup, } = makePassingCargo();
@@ -56,6 +65,7 @@ describe("build-native exit code (B4)", () => {
       const result = spawnSync("bun", [SCRIPT,], {
         env: { ...process.env, PATH: `${dir}:${process.env.PATH}`, },
         encoding: "utf8",
+        timeout: SPAWN_TIMEOUT_MS,
       },);
       // The fake cargo succeeds for all invocations, so the script must not
       // report a cargo failure. It may still exit non-zero for other reasons
@@ -65,5 +75,5 @@ describe("build-native exit code (B4)", () => {
     } finally {
       cleanup();
     }
-  });
+  }, RUNNER_TIMEOUT_MS,);
 });
