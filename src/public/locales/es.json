@@ -2059,13 +2059,44 @@
       "tools": "Herramientas",
       "message": "Mensaje",
       "fileName": "Nombre",
-      "fileSize": "Tamaño"
+      "fileSize": "Tamaño",
+      "profile": "Perfil",
+      "flavor": "Harness",
+      "usageClass": "Clase de uso",
+      "tosNote": "Nota de ToS del proveedor",
+      "ack": "Confirmado"
     },
     "taskType": {
       "harnessCode": "Código",
       "harnessEdit": "Edición",
       "harnessReview": "Revisión",
       "harnessCreative": "Creativo"
+    },
+    "settingsTitle": "Proveedores de harness ACP",
+    "settingsDescription": "Perfiles de harness externos configurados en este servidor. Los perfiles basados en suscripción usan una suscripción del proveedor cuando loop-lore emplea el harness como proveedor para RPG u otras funciones ajenas al chat.",
+    "statusEnabled": "Activado",
+    "statusDisabled": "Desactivado",
+    "settingsLoadFailed": "No se pudo cargar la configuración del harness.",
+    "errorLoadSettings": "No se pudo cargar la configuración del harness.",
+    "profilesEmpty": "No hay perfiles de harness configurados.",
+    "ungatedBadge": "Sin restricción",
+    "ungatedNote": "La ejecución local y el acceso directo por API no están limitados por los términos del proveedor y permanecen sin restricción — solo el uso de harness como proveedor basado en suscripción requiere confirmación.",
+    "ack": {
+      "yes": "Sí",
+      "no": "No"
+    },
+    "usage": {
+      "subscription-backed": "Basado en suscripción",
+      "local": "Local",
+      "api": "API"
+    },
+    "tos": {
+      "note": {
+        "omp": "omp se ejecuta con las claves API y proveedores configurados en el propio omp — el acceso directo por API se factura bajo los términos de API del proveedor, no bajo un acuerdo de suscripción.",
+        "opencode": "opencode se ejecuta con las claves API y proveedores configurados en el propio opencode — el acceso directo por API se factura bajo los términos de API del proveedor, no bajo un acuerdo de suscripción.",
+        "codex": "Codex inicia sesión con una suscripción de plan de ChatGPT — usarlo como proveedor de loop-lore para RPG u otras funciones ajenas al chat puede entrar en conflicto con los términos de OpenAI y requiere confirmación explícita.",
+        "claude-code": "Claude Code inicia sesión con una suscripción de plan de Claude — usarlo como proveedor de loop-lore para RPG u otras funciones ajenas al chat puede entrar en conflicto con los términos de Anthropic y requiere confirmación explícita."
+      }
     }
   },
   "branches": {

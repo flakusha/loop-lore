@@ -40,6 +40,7 @@ import {
   type HarnessStats,
 } from "./admin-harness-rows";
 import { HarnessRunsResponse, HarnessStatsSchema, } from "./admin-harness-schema";
+import { type HarnessProfileRow, loadHarnessSettings, } from "./admin-harness-settings";
 import { t, } from "./i18n";
 import { parseOr, } from "./validation";
 
@@ -75,9 +76,16 @@ export const adminHarness = {
   harnessFilesPath: "",
   harnessFileRows: [] as SandboxFileRow[],
 
+  // Settings/profiles slice (state owned by ./admin-harness-settings).
+  harnessSettingsEnabled: false,
+  harnessProfileRows: [] as HarnessProfileRow[],
+  loadingHarnessSettings: false,
+  harnessSettingsError: "",
+
   /**
-   * Load the runs list and the stats rollup together. Each response is
-   * classified independently, so a 403 on stats does not blank the run table.
+   * Load the runs list, the stats rollup and the settings view together.
+   * Each response is classified independently, so a 403 on stats does not
+   * blank the run table, and a settings failure does not blank telemetry.
    * @returns {Promise<void>}
    */
   async loadHarness() {
@@ -88,6 +96,7 @@ export const adminHarness = {
       const [runsRes, statsRes,] = await Promise.allSettled([
         apiFetch(`${RUNS_URL}${query}`, JSON_HEADERS,),
         apiFetch(STATS_URL, JSON_HEADERS,),
+        loadHarnessSettings(this,),
       ],);
 
       if (runsRes.status === "fulfilled") { await this.applyRuns(runsRes.value,); }

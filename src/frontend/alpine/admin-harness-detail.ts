@@ -20,6 +20,8 @@ import { parseOr, } from "./validation";
 
 /** `GET /api/v1/harness/runs` — also the prefix for `/runs/:runId`. */
 export const RUNS_URL = "/api/v1/harness/runs";
+/** `GET /api/v1/harness/settings` — the admin settings/profiles view. */
+export const SETTINGS_URL = "/api/v1/harness/settings";
 /** Every harness call asks for JSON. */
 export const JSON_HEADERS = { headers: { Accept: "application/json", }, };
 

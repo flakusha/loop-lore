@@ -2059,13 +2059,44 @@
       "tools": "工具",
       "message": "消息",
       "fileName": "名称",
-      "fileSize": "大小"
+      "fileSize": "大小",
+      "profile": "配置文件",
+      "flavor": "Harness",
+      "usageClass": "使用类别",
+      "tosNote": "服务商条款说明",
+      "ack": "已确认"
     },
     "taskType": {
       "harnessCode": "代码",
       "harnessEdit": "编辑",
       "harnessReview": "审查",
       "harnessCreative": "创作"
+    },
+    "settingsTitle": "ACP Harness 服务商",
+    "settingsDescription": "本服务器上配置的外部 Harness 配置文件。当 loop-lore 为 RPG 或其他非聊天功能将 Harness 用作服务商时，订阅驱动的配置文件会使用服务商订阅。",
+    "statusEnabled": "已启用",
+    "statusDisabled": "已停用",
+    "settingsLoadFailed": "无法加载 Harness 设置。",
+    "errorLoadSettings": "无法加载 Harness 设置。",
+    "profilesEmpty": "尚未配置 Harness 配置文件。",
+    "ungatedBadge": "不受限",
+    "ungatedNote": "本地执行和直接 API 访问不受服务商条款限制，保持不受限 — 仅订阅驱动的 Harness 作为服务商使用需要确认。",
+    "ack": {
+      "yes": "是",
+      "no": "否"
+    },
+    "usage": {
+      "subscription-backed": "订阅驱动",
+      "local": "本地",
+      "api": "API"
+    },
+    "tos": {
+      "note": {
+        "omp": "omp 使用其自身配置的 API 密钥和服务商运行 — 直接 API 访问按服务商的 API 条款计费，而非订阅协议。",
+        "opencode": "opencode 使用其自身配置的 API 密钥和服务商运行 — 直接 API 访问按服务商的 API 条款计费，而非订阅协议。",
+        "codex": "Codex 通过 ChatGPT 套餐订阅登录 — 将其作为 loop-lore 服务商用于 RPG 或其他非聊天功能可能与 OpenAI 条款冲突，需要明确确认。",
+        "claude-code": "Claude Code 通过 Claude 套餐订阅登录 — 将其作为 loop-lore 服务商用于 RPG 或其他非聊天功能可能与 Anthropic 条款冲突，需要明确确认。"
+      }
     }
   },
   "branches": {

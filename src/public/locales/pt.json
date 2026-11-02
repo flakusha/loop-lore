@@ -2059,13 +2059,44 @@
       "tools": "Ferramentas",
       "message": "Mensagem",
       "fileName": "Nome",
-      "fileSize": "Tamanho"
+      "fileSize": "Tamanho",
+      "profile": "Perfil",
+      "flavor": "Harness",
+      "usageClass": "Classe de uso",
+      "tosNote": "Nota de ToS do provedor",
+      "ack": "Confirmado"
     },
     "taskType": {
       "harnessCode": "Código",
       "harnessEdit": "Edição",
       "harnessReview": "Revisão",
       "harnessCreative": "Criativo"
+    },
+    "settingsTitle": "Provedores de harness ACP",
+    "settingsDescription": "Perfis de harness externos configurados neste servidor. Perfis baseados em assinatura usam uma assinatura do provedor quando o loop-lore emprega o harness como provedor para RPG ou outras funções fora do chat.",
+    "statusEnabled": "Ativado",
+    "statusDisabled": "Desativado",
+    "settingsLoadFailed": "Não foi possível carregar as configurações do harness.",
+    "errorLoadSettings": "Não foi possível carregar as configurações do harness.",
+    "profilesEmpty": "Nenhum perfil de harness configurado.",
+    "ungatedBadge": "Sem restrição",
+    "ungatedNote": "A execução local e o acesso direto por API não são limitados pelos termos do provedor e permanecem sem restrição — apenas o uso do harness como provedor baseado em assinatura exige confirmação.",
+    "ack": {
+      "yes": "Sim",
+      "no": "Não"
+    },
+    "usage": {
+      "subscription-backed": "Baseado em assinatura",
+      "local": "Local",
+      "api": "API"
+    },
+    "tos": {
+      "note": {
+        "omp": "O omp é executado com as chaves de API e provedores configurados no próprio omp — o acesso direto por API é faturado sob os termos de API do provedor, não sob um contrato de assinatura.",
+        "opencode": "O opencode é executado com as chaves de API e provedores configurados no próprio opencode — o acesso direto por API é faturado sob os termos de API do provedor, não sob um contrato de assinatura.",
+        "codex": "O Codex entra com uma assinatura de plano ChatGPT — usá-lo como provedor do loop-lore para RPG ou outras funções fora do chat pode conflitar com os termos da OpenAI e exige confirmação explícita.",
+        "claude-code": "O Claude Code entra com uma assinatura de plano Claude — usá-lo como provedor do loop-lore para RPG ou outras funções fora do chat pode conflitar com os termos da Anthropic e exige confirmação explícita."
+      }
     }
   },
   "branches": {

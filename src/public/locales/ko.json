@@ -2059,13 +2059,44 @@
       "tools": "도구",
       "message": "메시지",
       "fileName": "이름",
-      "fileSize": "크기"
+      "fileSize": "크기",
+      "profile": "프로필",
+      "flavor": "하니스",
+      "usageClass": "사용 클래스",
+      "tosNote": "공급자 ToS 안내",
+      "ack": "확인됨"
     },
     "taskType": {
       "harnessCode": "코드",
       "harnessEdit": "편집",
       "harnessReview": "리뷰",
       "harnessCreative": "창작"
+    },
+    "settingsTitle": "ACP 하니스 공급자",
+    "settingsDescription": "이 서버에 구성된 외부 하니스 프로필입니다. 구독 기반 프로필은 loop-lore가 RPG 등 채트 외 기능을 위해 하니스를 공급자로 사용할 때 공급자 구독을 이용합니다.",
+    "statusEnabled": "활성화됨",
+    "statusDisabled": "비활성화됨",
+    "settingsLoadFailed": "하니스 설정을 불러올 수 없습니다.",
+    "errorLoadSettings": "하니스 설정을 불러올 수 없습니다.",
+    "profilesEmpty": "구성된 하니스 프로필이 없습니다.",
+    "ungatedBadge": "제한 없음",
+    "ungatedNote": "로컬 실행과 직접 API 접근은 공급자 이용약관의 제한을 받지 않으며 제한 없이 유지됩니다 — 구독 기반 하니스·어즈·공급자 사용만 확인이 필요합니다.",
+    "ack": {
+      "yes": "예",
+      "no": "아니요"
+    },
+    "usage": {
+      "subscription-backed": "구독 기반",
+      "local": "로컬",
+      "api": "API"
+    },
+    "tos": {
+      "note": {
+        "omp": "omp는 omp 자체에 구성된 API 키와 공급자로 실행됩니다 — 직접 API 접근은 구독 계약이 아닌 공급자의 API 약관에 따라 청구됩니다.",
+        "opencode": "opencode는 opencode 자체에 구성된 API 키와 공급자로 실행됩니다 — 직접 API 접근은 구독 계약이 아닌 공급자의 API 약관에 따라 청구됩니다.",
+        "codex": "Codex는 ChatGPT 플랜 구독으로 로그인합니다 — RPG 등 채트 외 기능을 위해 loop-lore 공급자로 사용하면 OpenAI 약관에 어긋날 수 있으며 명시적 확인이 필요합니다.",
+        "claude-code": "Claude Code는 Claude 플랜 구독으로 로그인합니다 — RPG 등 채트 외 기능을 위해 loop-lore 공급자로 사용하면 Anthropic 약관에 어긋날 수 있으며 명시적 확인이 필요합니다."
+      }
     }
   },
   "branches": {

@@ -94,7 +94,7 @@ function freshState() {
 }
 
 describe("adminHarness.loadHarness", () => {
-  test("fills cards, run rows, model rollup and gaps from the two endpoints", async () => {
+  test("fills cards, run rows, model rollup, gaps and settings from the three endpoints", async () => {
     route({},);
     const state = freshState();
     await state.loadHarness();
@@ -107,7 +107,11 @@ describe("adminHarness.loadHarness", () => {
     expect(state.harnessModelRows,).toHaveLength(2,);
     expect(state.harnessGapRows,).toEqual([{ toolingGap: "no-web-search", count: 4, },],);
     expect(state.harnessRunsEmpty(),).toBe(false,);
-    expect(calls.sort(),).toEqual(["/api/v1/harness/runs?limit=50", "/api/v1/harness/stats",],);
+    expect(calls.sort(),).toEqual([
+      "/api/v1/harness/runs?limit=50",
+      "/api/v1/harness/settings",
+      "/api/v1/harness/stats",
+    ],);
   });
 
   test("passes taskType + result as query params and clears them on reset", async () => {

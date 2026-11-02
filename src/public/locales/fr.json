@@ -2059,13 +2059,44 @@
       "tools": "Outils",
       "message": "Message",
       "fileName": "Nom",
-      "fileSize": "Taille"
+      "fileSize": "Taille",
+      "profile": "Profil",
+      "flavor": "Harness",
+      "usageClass": "Classe d'usage",
+      "tosNote": "Note ToS du fournisseur",
+      "ack": "Confirmé"
     },
     "taskType": {
       "harnessCode": "Code",
       "harnessEdit": "Édition",
       "harnessReview": "Relecture",
       "harnessCreative": "Créatif"
+    },
+    "settingsTitle": "Fournisseurs harness ACP",
+    "settingsDescription": "Profils harness externes configurés sur ce serveur. Les profils basés sur abonnement mobilisent un abonnement fournisseur quand loop-lore utilise le harness comme fournisseur pour le RPG ou d'autres fonctions hors chat.",
+    "statusEnabled": "Activé",
+    "statusDisabled": "Désactivé",
+    "settingsLoadFailed": "Impossible de charger les paramètres du harness.",
+    "errorLoadSettings": "Impossible de charger les paramètres du harness.",
+    "profilesEmpty": "Aucun profil harness configuré.",
+    "ungatedBadge": "Non restreint",
+    "ungatedNote": "L'exécution locale et l'accès API direct ne sont pas limités par les conditions des fournisseurs et restent non restreints — seul l'usage du harness comme fournisseur basé sur abonnement exige une confirmation.",
+    "ack": {
+      "yes": "Oui",
+      "no": "Non"
+    },
+    "usage": {
+      "subscription-backed": "Basé sur abonnement",
+      "local": "Local",
+      "api": "API"
+    },
+    "tos": {
+      "note": {
+        "omp": "omp s'exécute avec les clés API et fournisseurs configurés dans omp lui-même — l'accès API direct est facturé selon les conditions API du fournisseur, pas selon un abonnement.",
+        "opencode": "opencode s'exécute avec les clés API et fournisseurs configurés dans opencode lui-même — l'accès API direct est facturé selon les conditions API du fournisseur, pas selon un abonnement.",
+        "codex": "Codex se connecte via un abonnement à un plan ChatGPT — l'employer comme fournisseur loop-lore pour le RPG ou d'autres fonctions hors chat peut contredire les conditions d'OpenAI et exige une confirmation explicite.",
+        "claude-code": "Claude Code se connecte via un abonnement à un plan Claude — l'employer comme fournisseur loop-lore pour le RPG ou d'autres fonctions hors chat peut contredire les conditions d'Anthropic et exige une confirmation explicite."
+      }
     }
   },
   "branches": {

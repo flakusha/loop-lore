@@ -2252,13 +2252,44 @@
       "tools": "Tools",
       "message": "Message",
       "fileName": "Name",
-      "fileSize": "Size"
+      "fileSize": "Size",
+      "profile": "Profile",
+      "flavor": "Harness",
+      "usageClass": "Usage class",
+      "tosNote": "Provider ToS note",
+      "ack": "Acknowledged"
     },
     "taskType": {
       "harnessCode": "Code",
       "harnessEdit": "Edit",
       "harnessReview": "Review",
       "harnessCreative": "Creative"
+    },
+    "settingsTitle": "ACP harness providers",
+    "settingsDescription": "External harness profiles configured on this server. Subscription-backed profiles drive a provider subscription when loop-lore uses the harness as a provider for RPG or other non-chat functionality.",
+    "statusEnabled": "Enabled",
+    "statusDisabled": "Disabled",
+    "settingsLoadFailed": "Could not load harness settings.",
+    "errorLoadSettings": "Could not load harness settings.",
+    "profilesEmpty": "No harness profiles configured.",
+    "ungatedBadge": "Ungated",
+    "ungatedNote": "Local execution and direct API access are not limited by provider terms of service and stay ungated — only subscription-backed harness-as-provider usage requires acknowledgement.",
+    "ack": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "usage": {
+      "subscription-backed": "Subscription-backed",
+      "local": "Local",
+      "api": "API"
+    },
+    "tos": {
+      "note": {
+        "omp": "omp runs with the API keys and providers configured in omp itself — direct API access is billed under the provider's API terms, not a subscription agreement.",
+        "opencode": "opencode runs with the API keys and providers configured in opencode itself — direct API access is billed under the provider's API terms, not a subscription agreement.",
+        "codex": "Codex signs in with a ChatGPT plan subscription — driving it as a loop-lore provider for RPG or other non-chat functionality may conflict with OpenAI's terms, and requires explicit acknowledgement.",
+        "claude-code": "Claude Code signs in with a Claude plan subscription — driving it as a loop-lore provider for RPG or other non-chat functionality may conflict with Anthropic's terms, and requires explicit acknowledgement."
+      }
     }
   },
   "keys": {

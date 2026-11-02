@@ -2059,13 +2059,44 @@
       "tools": "Werkzeuge",
       "message": "Nachricht",
       "fileName": "Name",
-      "fileSize": "Größe"
+      "fileSize": "Größe",
+      "profile": "Profil",
+      "flavor": "Harness",
+      "usageClass": "Nutzungsklasse",
+      "tosNote": "Provider-ToS-Hinweis",
+      "ack": "Bestätigt"
     },
     "taskType": {
       "harnessCode": "Code",
       "harnessEdit": "Bearbeitung",
       "harnessReview": "Überprüfung",
       "harnessCreative": "Kreativ"
+    },
+    "settingsTitle": "ACP-Harness-Anbieter",
+    "settingsDescription": "Auf diesem Server konfigurierte externe Harness-Profile. Abo-basierte Profile nutzen ein Provider-Abo, wenn loop-lore den Harness als Anbieter für RPG oder andere Nicht-Chat-Funktionen einsetzt.",
+    "statusEnabled": "Aktiviert",
+    "statusDisabled": "Deaktiviert",
+    "settingsLoadFailed": "Harness-Einstellungen konnten nicht geladen werden.",
+    "errorLoadSettings": "Harness-Einstellungen konnten nicht geladen werden.",
+    "profilesEmpty": "Keine Harness-Profile konfiguriert.",
+    "ungatedBadge": "Unbeschränkt",
+    "ungatedNote": "Lokale Ausführung und direkter API-Zugriff unterliegen nicht den Nutzungsbedingungen der Anbieter und bleiben unbeschränkt — nur abo-basierte Harness-als-Anbieter-Nutzung erfordert eine Bestätigung.",
+    "ack": {
+      "yes": "Ja",
+      "no": "Nein"
+    },
+    "usage": {
+      "subscription-backed": "Abo-basiert",
+      "local": "Lokal",
+      "api": "API"
+    },
+    "tos": {
+      "note": {
+        "omp": "omp läuft mit den in omp selbst konfigurierten API-Schlüsseln und Anbietern — direkter API-Zugriff wird über die API-Bedingungen des Anbieters abgerechnet, nicht über ein Abo.",
+        "opencode": "opencode läuft mit den in opencode selbst konfigurierten API-Schlüsseln und Anbietern — direkter API-Zugriff wird über die API-Bedingungen des Anbieters abgerechnet, nicht über ein Abo.",
+        "codex": "Codex meldet sich über ein ChatGPT-Abo an — der Einsatz als loop-lore-Anbieter für RPG oder andere Nicht-Chat-Funktionen kann den OpenAI-Bedingungen widersprechen und erfordert eine ausdrückliche Bestätigung.",
+        "claude-code": "Claude Code meldet sich über ein Claude-Abo an — der Einsatz als loop-lore-Anbieter für RPG oder andere Nicht-Chat-Funktionen kann den Anthropic-Bedingungen widersprechen und erfordert eine ausdrückliche Bestätigung."
+      }
     }
   },
   "branches": {
