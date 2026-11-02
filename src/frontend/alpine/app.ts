@@ -12,6 +12,7 @@ import {
   type TranslationMap,
 } from "../i18n";
 import { enforceAgeGate, } from "./age-gate";
+import { registerGotoKeynavHandlers, } from "./keynav-goto";
 import { log as rootLog, } from "./logger";
 import { initTelemetry, } from "./telemetry";
 
@@ -27,6 +28,8 @@ globalThis.app = function() {
     // immediately, without waiting for the async loadLocale() fetch.
     localeStrings: (globalThis.__localeStrings ?? {}) as unknown as TranslationMap,
     pageTitle: "loop-lore",
+    /** Unsubscribe for the app-global keynav `goto-*` consumers. */
+    _keynavUnsub: null as (() => void) | null,
 
     /**
      * @param {string} key
@@ -69,6 +72,20 @@ globalThis.app = function() {
       this.currentLocale = locale;
       applyDirection(locale,);
       this.loadLocale(locale,);
+
+      // App-global keynav `goto-*` consumers. The root component owns them:
+      // the sidebar outlives htmx swaps of #app-root, so they must not be
+      // torn down with a swapped page.
+      this._keynavUnsub?.();
+      this._keynavUnsub = registerGotoKeynavHandlers();
+    },
+
+    /**
+     * @returns {void}
+     */
+    destroy() {
+      this._keynavUnsub?.();
+      this._keynavUnsub = null;
     },
 
     /**

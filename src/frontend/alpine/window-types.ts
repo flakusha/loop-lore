@@ -34,6 +34,9 @@ declare global {
       currentLocale: string;
       localeStrings: Record<string, unknown>;
       init: () => void;
+      /** Unsubscribe for the app-global keynav `goto-*` consumers. */
+      _keynavUnsub: (() => void) | null;
+      destroy: () => void;
       applyTheme: (themeId: string,) => void;
       iconFor: (type: string,) => string;
       closeAllModals: () => void;

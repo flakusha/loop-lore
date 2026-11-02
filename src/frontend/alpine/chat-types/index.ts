@@ -11,6 +11,7 @@ export type { ChatCoreComposerState, } from "./composer-state";
 export type { ChatCoreState, } from "./core";
 export type { ChatCoreEncryptionState, } from "./encryption-state";
 export type { GmConfig, GmGuidance, GmParticipant, GmTurnPriority, } from "./gm";
+export type { ChatKeynavState, } from "./keynav-state";
 export type { ChatLocationState, } from "./location-state";
 export type { AuditAction, AuditEntry, MemoryEntry, MemoryPanelState, } from "./memory";
 export type { ChatMemoryState, } from "./memory-state";
