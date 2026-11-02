@@ -2,22 +2,28 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Harness exec-log read API.
+ * Harness exec-log read API + admin harness settings read.
  *
- * Three endpoints, all admin-only: the log carries branch names, error text
- * and process ids, so it is not public data. No write endpoint — the log is
- * append-only from inside the process (`harness/exec-log.ts`), never by HTTP.
+ * Runs/stats/files endpoints are admin-only: the log carries branch names,
+ * error text and process ids, so it is not public data. No write endpoint —
+ * the log is append-only from inside the process (`harness/exec-log.ts`),
+ * never by HTTP. `/harness/settings` is the read side of the admin settings
+ * store (`integrations/harness/admin-settings.ts`); its write half lands with
+ * the ToS acknowledgement frontend ticket.
  */
 import { Elysia, t, } from "elysia";
 import {
   HarnessRunDetailSchema,
   HarnessRunsResponse,
   HarnessSandboxFilesSchema,
+  HarnessSettingsResponse,
   HarnessStatsSchema,
 } from "../../frontend/alpine/admin-harness-schema";
 import { getRun, listRuns, stats, } from "../../harness/query";
 import type { HarnessResult, HarnessTaskType, } from "../../harness/types";
 import { HARNESS_TASK_TYPES, toDetail, toSummary, } from "../../harness/types";
+import { getHarnessAdminSettings, type HarnessProfileSettingsView, } from "../../integrations/harness/admin-settings";
+import { providerTosInfo, } from "../../integrations/harness/provider-tos";
 import { requirePermission, } from "../../middleware/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, type HttpStatusCode, jsonError, jsonResponse, } from "../http-utils";
@@ -146,5 +152,40 @@ export function harnessRoutes(prefix = "/api/v1",) {
         },)
         .get(`${prefix}/harness/stats`, async () => jsonResponse(await stats(),), {
           response: { 200: HarnessStatsSchema, ...denied, },
+        },)
+        .get(`${prefix}/harness/settings`, async () => {
+          const view = getHarnessAdminSettings();
+          return jsonResponse({
+            enabled: view.enabled,
+            profiles: view.profiles.map(decorateProfile,),
+          },);
+        }, {
+          response: { 200: HarnessSettingsResponse, ...denied, },
         },),);
+}
+
+/**
+ * Decorate one configured profile with the static provider ToS matrix from
+ * `provider-tos.ts` — the admin panel renders usage class + note per flavor
+ * straight off the wire, so the matrix stays the single in-code source.
+ * @param p - the store's profile view
+ * @returns the wire shape the panel decodes (HarnessSettingsResponse item).
+ */
+function decorateProfile(p: HarnessProfileSettingsView,): {
+  name: string;
+  flavor: string;
+  usageClasses: string[];
+  subscriptionBacked: boolean;
+  noteKey: string;
+  tosGrayzoneAcknowledged: boolean;
+} {
+  const tos = providerTosInfo(p.flavor,);
+  return {
+    name: p.name,
+    flavor: p.flavor,
+    usageClasses: [...tos.usageClasses,],
+    subscriptionBacked: tos.subscriptionBacked,
+    noteKey: tos.noteKey,
+    tosGrayzoneAcknowledged: p.tosGrayzoneAcknowledged,
+  };
 }

@@ -30,6 +30,101 @@
   state never renders beside a "no data yet" empty state.
 -->
 <div x-show="!loadingHarness && harnessError === ''" style="padding: var(--space-6)">
+  <!--
+    Settings + configured profiles (TASK-harness-provider-tos-usage-class-matrix).
+    Rows come from /api/v1/harness/settings; usage-class badges and ToS notes
+    arrive pre-shaped (labels/keys) from admin-harness-settings.ts, so markup
+    does no formatting. Subscription-backed classes are ToS-gated; local and
+    api classes are visibly marked ungated / not ToS-limited.
+  -->
+  <div style="margin-bottom: var(--space-6)" data-testid="harness-settings-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); flex-wrap: wrap; gap: var(--space-2)">
+      <h3 style="font-size: 14px; font-weight: 600; margin: 0">{{{t("harness.settingsTitle")}}}</h3>
+      <span
+        style="font-size: 11px; padding: 2px 6px; border-radius: 4px"
+        :style="harnessSettingsEnabled ? 'background:#28a74522;color:#28a745' : 'background:#8897a222;color:#55606e'"
+        x-text="harnessSettingsEnabled ? t('harness.statusEnabled') : t('harness.statusDisabled')"
+        data-testid="harness-settings-status"
+      ></span>
+    </div>
+    <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 var(--space-3)">
+      {{{t("harness.settingsDescription")}}}
+    </p>
+    <div
+      x-show="harnessSettingsError !== ''"
+      class="empty-state"
+      style="padding: var(--space-6)"
+      data-testid="harness-settings-error"
+    >
+      <div class="icon">⚠️</div>
+      <div class="title">{{{t("harness.settingsLoadFailed")}}}</div>
+      <div class="description" x-text="harnessSettingsError"></div>
+    </div>
+    <div
+      x-show="harnessSettingsError === '' && harnessProfileRows.length === 0"
+      class="empty-state"
+      style="padding: var(--space-6)"
+      data-testid="harness-settings-empty"
+    >
+      <div class="icon">🛠️</div>
+      <div class="title">{{{t("harness.profilesEmpty")}}}</div>
+    </div>
+    <table
+      x-show="harnessSettingsError === '' && harnessProfileRows.length > 0"
+      class="admin-table"
+      data-testid="harness-profiles-table"
+    >
+      <thead>
+        <tr>
+          <th>{{{t("harness.column.profile")}}}</th>
+          <th>{{{t("harness.column.flavor")}}}</th>
+          <th>{{{t("harness.column.usageClass")}}}</th>
+          <th>{{{t("harness.column.tosNote")}}}</th>
+          <th>{{{t("harness.column.ack")}}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="row in harnessProfileRows" :key="row.name">
+          <tr data-testid="harness-profile-row">
+            <td x-text="row.name"></td>
+            <td x-text="row.flavor"></td>
+            <td>
+              <template x-for="badge in row.usageBadges" :key="badge.value">
+                <span
+                  style="font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-right: var(--space-1); display: inline-block"
+                  :style="badge.ungated ? 'background:#28a74522;color:#28a745' : 'background:#f0ad4e33;color:#a4700a'"
+                  :data-testid="badge.ungated ? 'harness-usage-ungated' : 'harness-usage-gated'"
+                  x-text="badge.ungated ? badge.label + ' · ' + t('harness.ungatedBadge') : badge.label"
+                ></span>
+              </template>
+            </td>
+            <td
+              style="font-size: 12px; color: var(--text-secondary)"
+              x-text="t(row.noteKey)"
+              data-testid="harness-profile-note"
+            >
+            </td>
+            <td>
+              <span
+                style="font-size: 11px"
+                :style="row.acknowledged ? 'color:#28a745' : (row.subscriptionBacked ? 'color:#a4700a' : 'color: var(--text-secondary)')"
+                x-text="row.acknowledged ? t('harness.ack.yes') : t('harness.ack.no')"
+                :data-testid="row.acknowledged ? 'harness-profile-ack-yes' : 'harness-profile-ack-no'"
+              ></span>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+    <p
+      x-show="harnessSettingsError === '' && harnessProfileRows.length > 0"
+      style="font-size: 11px; color: var(--text-secondary); margin: var(--space-2) 0 0"
+      data-testid="harness-ungated-note"
+    >
+      {{{t("harness.ungatedNote")}}}
+    </p>
+  </div>
+
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4); flex-wrap: wrap; gap: var(--space-2)">
     <h3 style="font-size: 16px; font-weight: 600">{{{t("harness.title")}}}</h3>
     <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap">

@@ -2059,13 +2059,44 @@
       "tools": "ツール",
       "message": "メッセージ",
       "fileName": "名前",
-      "fileSize": "サイズ"
+      "fileSize": "サイズ",
+      "profile": "プロファイル",
+      "flavor": "ハーネス",
+      "usageClass": "利用クラス",
+      "tosNote": "プロバイダー利用規約の注意",
+      "ack": "確認済み"
     },
     "taskType": {
       "harnessCode": "コード",
       "harnessEdit": "編集",
       "harnessReview": "レビュー",
       "harnessCreative": "クリエイティブ"
+    },
+    "settingsTitle": "ACPハーネスプロバイダー",
+    "settingsDescription": "このサーバーに設定された外部ハーネスプロファイル。サブスクリプション連携のプロファイルは、loop-loreがRPGやチャット以外の機能のためにハーネスをプロバイダーとして利用する際に、プロバイダーのサブスクリプションを利用します。",
+    "statusEnabled": "有効",
+    "statusDisabled": "無効",
+    "settingsLoadFailed": "ハーネス設定を読み込めませんでした。",
+    "errorLoadSettings": "ハーネス設定を読み込めませんでした。",
+    "profilesEmpty": "設定されたハーネスプロファイルはありません。",
+    "ungatedBadge": "制限なし",
+    "ungatedNote": "ローカル実行と直接APIアクセスはプロバイダーの利用規約に制限されず、制限なしのままです — サブスクリプション連携のハーネス・アズ・プロバイダー利用のみ確認が必要です。",
+    "ack": {
+      "yes": "はい",
+      "no": "いいえ"
+    },
+    "usage": {
+      "subscription-backed": "サブスクリプション連携",
+      "local": "ローカル",
+      "api": "API"
+    },
+    "tos": {
+      "note": {
+        "omp": "ompはomp自体に設定されたAPIキーとプロバイダーで動作します — 直接APIアクセスはサブスクリプション契約ではなくプロバイダーのAPI規約に基づいて課金されます。",
+        "opencode": "opencodeはopencode自体に設定されたAPIキーとプロバイダーで動作します — 直接APIアクセスはサブスクリプション契約ではなくプロバイダーのAPI規約に基づいて課金されます。",
+        "codex": "CodexはChatGPTプランのサブスクリプションでサインインします — RPGやチャット以外の機能のためにloop-loreのプロバイダーとして利用するとOpenAIの規約に抵触する可能性があり、明示的な確認が必要です。",
+        "claude-code": "Claude CodeはClaudeプランのサブスクリプションでサインインします — RPGやチャット以外の機能のためにloop-loreのプロバイダーとして利用するとAnthropicの規約に抵触する可能性があり、明示的な確認が必要です。"
+      }
     }
   },
   "branches": {
