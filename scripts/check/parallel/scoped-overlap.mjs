@@ -30,7 +30,7 @@ export function overlapCommands(first, second,) {
  * Without a companion (a diff that touches no subsystem test dir) the scoped
  * pass runs alone.
  */
-export function scopedCoverageCommand({ companionRun = "", scopedRun, floorRun, }) {
+export function scopedCoverageCommand({ companionRun = "", scopedRun, floorRun, },) {
   if (companionRun.length === 0) { return `${scopedRun} && ${floorRun}`; }
   return `${overlapCommands(companionRun, scopedRun,)} && ${floorRun}`;
 }
