@@ -2,16 +2,20 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Harness exec-log read API + admin harness settings read.
+ * Harness exec-log read API + admin harness settings read/write.
  *
  * Runs/stats/files endpoints are admin-only: the log carries branch names,
- * error text and process ids, so it is not public data. No write endpoint —
- * the log is append-only from inside the process (`harness/exec-log.ts`),
- * never by HTTP. `/harness/settings` is the read side of the admin settings
- * store (`integrations/harness/admin-settings.ts`); its write half lands with
- * the ToS acknowledgement frontend ticket.
+ * error text and process ids, so it is not public data. The log itself is
+ * append-only from inside the process (`harness/exec-log.ts`), never by
+ * HTTP. `/harness/settings` is the admin settings surface — read side is
+ * the store view; the write side persists the enable flag and per-profile
+ * ToS greyzone acknowledgements through the existing config save path
+ * (`saveHarnessAdminSettings` → `system_config`, round-tripped through
+ * `validateAcpProfiles`).
  */
 import { Elysia, t, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
 import {
   HarnessRunDetailSchema,
   HarnessRunsResponse,
@@ -22,7 +26,11 @@ import {
 import { getRun, listRuns, stats, } from "../../harness/query";
 import type { HarnessResult, HarnessTaskType, } from "../../harness/types";
 import { HARNESS_TASK_TYPES, toDetail, toSummary, } from "../../harness/types";
-import { getHarnessAdminSettings, type HarnessProfileSettingsView, } from "../../integrations/harness/admin-settings";
+import {
+  getHarnessAdminSettings,
+  type HarnessProfileSettingsView,
+  saveHarnessAdminSettings,
+} from "../../integrations/harness/admin-settings";
 import { providerTosInfo, } from "../../integrations/harness/provider-tos";
 import { requirePermission, } from "../../middleware/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
@@ -74,11 +82,13 @@ function filesErrorStatus(refusal: SandboxFilesError,): HttpStatusCode {
 
 /**
  * Build the harness route plugin.
+ * @param opts - injected database handle (the settings write path persists
+ *   through `system_config`, like every other admin surface plugin).
  * @param prefix - Mount prefix. Admin-gated like the rest of the admin
  *   surface, so the default is the versioned root.
  * @returns The Elysia plugin, ready for `.use()`.
  */
-export function harnessRoutes(prefix = "/api/v1",) {
+export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api/v1",) {
   const guard = requirePermission("admin.system",);
   // The 200 bodies are the schemas the web client already decodes with, imported
   // from there so the declared output and the `parseOr` input cannot drift. That
@@ -160,6 +170,39 @@ export function harnessRoutes(prefix = "/api/v1",) {
             profiles: view.profiles.map(decorateProfile,),
           },);
         }, {
+          response: { 200: HarnessSettingsResponse, ...denied, },
+        },)
+        .put(`${prefix}/harness/settings`, async (ctx,) => {
+          const body = ctx.body as {
+            enabled?: boolean;
+            acknowledgements?: Record<string, boolean>;
+          };
+
+          try {
+            const view = await saveHarnessAdminSettings(database, {
+              enabled: body.enabled,
+              acknowledgements: body.acknowledgements,
+            },);
+
+            return jsonResponse({
+              enabled: view.enabled,
+              profiles: view.profiles.map(decorateProfile,),
+            },);
+          } catch (error) {
+            // The save path validates before persisting (unknown profile,
+            // non-boolean ack, non-serializable value) — a rejected patch is
+            // a client error and nothing was written.
+            return jsonError({
+              message: String(error,),
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.BadRequest,
+            },);
+          }
+        }, {
+          body: t.Object({
+            enabled: t.Optional(t.Boolean({},),),
+            acknowledgements: t.Optional(t.Record(t.String(), t.Boolean(),),),
+          },),
           response: { 200: HarnessSettingsResponse, ...denied, },
         },),);
 }

@@ -1052,7 +1052,6 @@
   "mood": {
     "adjustHappiness": "幸福感を調整"
   },
-
   "nsfw": {
     "blurReveal": "表示",
     "bodyState": {
@@ -2078,12 +2077,21 @@
     "statusDisabled": "無効",
     "settingsLoadFailed": "ハーネス設定を読み込めませんでした。",
     "errorLoadSettings": "ハーネス設定を読み込めませんでした。",
+    "errorSaveSettings": "Harness設定を保存できませんでした。",
     "profilesEmpty": "設定されたハーネスプロファイルはありません。",
     "ungatedBadge": "制限なし",
     "ungatedNote": "ローカル実行と直接APIアクセスはプロバイダーの利用規約に制限されず、制限なしのままです — サブスクリプション連携のハーネス・アズ・プロバイダー利用のみ確認が必要です。",
+    "toggle": {
+      "enable": "Harness ACPを有効にする",
+      "disable": "Harness ACPを無効にする"
+    },
     "ack": {
       "yes": "はい",
-      "no": "いいえ"
+      "no": "いいえ",
+      "title": "プロバイダー利用規約の確認",
+      "body": "Harness ACPを有効にすると、サブスクリプション連携のHarnessプロファイル（ChatGPTまたはClaudeプランのサインイン）を、RPGなどのチャット以外の機能でloop-loreのプロバイダーとして利用します。これはプロバイダーの利用規約と矛盾する可能性があり、明示的な確認が必要です。ローカルおよびAPI接続のプロファイルは影響を受けず、ゲートもありません。",
+      "confirm": "確認しました — 有効にする",
+      "decline": "キャンセル"
     },
     "usage": {
       "subscription-backed": "サブスクリプション連携",
