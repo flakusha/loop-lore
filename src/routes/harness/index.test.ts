@@ -13,6 +13,7 @@
  */
 import * as realQuery from "../../harness/query";
 import type { DB, } from "../../db/schema";
+import type { HarnessAcpConfig, } from "../../config/schema/harness";
 import type { HarnessRunRecord, HarnessRunSummary, HarnessStats, } from "../../harness/types";
 import type { Kysely, } from "kysely";
 import { Elysia, } from "elysia";
@@ -79,15 +80,19 @@ const STATS: HarnessStats = {
 };
 
 /** Shared settings-store fixture: the config the admin settings tests read. */
-const SETTINGS_FIXTURE = {
+const SETTINGS_FIXTURE: HarnessAcpConfig = {
   enabled: false,
   profiles: [
-    { name: "omp-main", command: ["omp", "acp",], tiers: { good: { model: "test-provider/test-model", }, }, },
+    {
+      name: "omp-main",
+      command: ["omp", "acp",],
+      tiers: { good: { model: "test-provider/test-model", capabilities: ["tools",], }, },
+    },
     {
       name: "codex-sub",
       command: ["codex", "--acp",],
-      harness: "codex" as const,
-      tiers: { good: { model: "test-provider/test-model", }, },
+      harness: "codex",
+      tiers: { good: { model: "test-provider/test-model", capabilities: ["tools",], }, },
     },
   ],
 };

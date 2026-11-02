@@ -16,23 +16,37 @@ import { deleteConfig, getConfigValue, } from "../../admin/config";
 import { type HarnessConfig, } from "../../config/schema/harness";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import {
+  getHarnessAdminFileConfig,
   getHarnessAdminSettings,
   HARNESS_SETTINGS_ACKS_KEY,
   HARNESS_SETTINGS_ENABLED_KEY,
+  harnessAdminSettings,
   initHarnessAdminSettings,
   resetHarnessAdminSettings,
   saveHarnessAdminSettings,
 } from "./admin-settings";
 
-const TIERS = { good: { model: "test-provider/test-model", }, };
-
 const FILE_CONFIG: HarnessConfig = {
   acp: {
     enabled: false,
     profiles: [
-      { name: "omp-main", command: ["omp", "acp",], tiers: { ...TIERS, }, },
-      { name: "codex-sub", command: ["codex", "--acp",], harness: "codex", tiers: { ...TIERS, }, },
-      { name: "ack-in-file", command: ["omp", "acp",], tiers: { ...TIERS, }, tosGrayzoneAcknowledged: true, },
+      {
+        name: "omp-main",
+        command: ["omp", "acp",],
+        tiers: { good: { model: "test-provider/test-model", capabilities: ["tools",], }, },
+      },
+      {
+        name: "codex-sub",
+        command: ["codex", "--acp",],
+        harness: "codex",
+        tiers: { good: { model: "test-provider/test-model", capabilities: ["tools",], }, },
+      },
+      {
+        name: "ack-in-file",
+        command: ["omp", "acp",],
+        tiers: { good: { model: "test-provider/test-model", capabilities: ["tools",], }, },
+        tosGrayzoneAcknowledged: true,
+      },
     ],
   },
 };
@@ -63,6 +77,14 @@ describe("harness admin settings store", () => {
     expect(view.profiles.find((p,) => p.name === "ack-in-file")?.tosGrayzoneAcknowledged,).toBe(true,);
     expect(view.profiles.find((p,) => p.name === "ack-in-file")?.flavor,).toBe("omp",);
     expect(view.profiles.find((p,) => p.name === "codex-sub")?.flavor,).toBe("codex",);
+  });
+
+  it("exposes the raw file layer and the singleton behind the accessors", () => {
+    resetHarnessAdminSettings();
+    initHarnessAdminSettings(FILE_CONFIG.acp,);
+
+    expect(getHarnessAdminFileConfig(),).toBe(FILE_CONFIG.acp,);
+    expect(getHarnessAdminSettings(),).toEqual(harnessAdminSettings.get(),);
   });
 
   it("save round-trips valid acknowledgements through validateAcpProfiles and persists them", async () => {

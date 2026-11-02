@@ -9,7 +9,7 @@
  * admin tab decodes the same shape with `parseOr`, so a contract drift shows
  * up as "unexpected shape" instead of an untyped cast.
  */
-import { Type, } from "@sinclair/typebox";
+import { type Static, Type, } from "@sinclair/typebox";
 
 /**
  * One row of `GET /api/v1/harness/runs`.
@@ -177,11 +177,14 @@ export const HarnessProfileSettingsSchema = Type.Object({
   tosGrayzoneAcknowledged: Type.Boolean(),
 },);
 
-/** `GET /api/v1/harness/settings` body (also the future PUT response shape). */
+/** `GET /api/v1/harness/settings` body (also the PUT response shape). */
 export const HarnessSettingsResponse = Type.Object({
   enabled: Type.Boolean(),
   profiles: Type.Array(HarnessProfileSettingsSchema,),
 },);
+
+/** Static view of {@link HarnessSettingsResponse} for typed row shaping. */
+export type HarnessSettingsView = Static<typeof HarnessSettingsResponse>;
 
 /**
  * The settings payload, nullable — `parseOr` needs a fallback of the schema's
