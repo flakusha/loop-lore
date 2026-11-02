@@ -45,9 +45,10 @@ export async function start() {
   setGlobalLogger(createLogger(config.logging,),);
   initAgeGate(config.ageGate,);
   initNsfwRuntimeConfig(config.nsfw,);
-  // Seed the harness admin settings file layer (system_config overrides are
-  // overlaid further down, after the DB is open).
-  initHarnessAdminSettings(config.harness.acp,);
+  // `loadConfig` omits the harness section entirely when unconfigured (the
+  // schema default does not materialize it) — seed an empty section so the
+  // admin settings store still reads as "disabled, no profiles".
+  initHarnessAdminSettings(config.harness?.acp ?? { enabled: false, profiles: [], },);
   initAssistantQuota(config.assistant,);
   // Seed the hot-apply snapshot and register live consumers so config edits
   // re-apply without a restart (see src/config/hot-apply.ts).
