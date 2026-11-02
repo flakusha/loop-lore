@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 **Status:** In Progress
-**Status Note:** Landed on dev: ACP driver module (`34a018b09` HarnessDriver + session/cancel + permission approval), opencode adapter (`410954c39`, plus codex on the shared `GenericAcpAdapter` engine), omp adapter (original adapter in ancestry of `src/integrations/harness/omp.ts`; migrated onto the generic engine by `410954c39`), claude-code adapter (`516ecb808`), fake ACP server test fixture (fixture landed through `6ba944b5a` and earlier fixture commits), profile-aware model selection (`c4f23fa56` + `7082da5da`), and the per-user isolation gate (`84b4ad10`). TASK-acp-driver-module, TASK-acp-profile-harness-adapters, TASK-acp-claude-code-adapter, TASK-fake-acp-server-test-fixture Done; TASK-per-user-isolation-gate landed. Open: permission/approval flow (TASK-permission-approval-flow), model discovery + capability enrichment (TASK-model-discovery-capability-enrichment), message persistence mapping (TASK-message-persistence-mapping), optional-dep packaging (TASK-optional-dep-packaging), e2e env-gated scenario (TASK-e2e-env-gated-scenario), plus four ToS acknowledgement tickets (TASK-harness-tos-acknowledgement-config-flag, TASK-harness-tos-acknowledgement-dispatch-guard, TASK-harness-tos-acknowledgement-frontend-confirmation, TASK-harness-provider-tos-usage-class-matrix — all Not Started).
+**Status Note:** Landed on dev: ACP driver module (`34a018b09` HarnessDriver + session/cancel + permission approval), opencode adapter (`410954c39`, plus codex on the shared `GenericAcpAdapter` engine), omp adapter (original adapter in ancestry of `src/integrations/harness/omp.ts`; migrated onto the generic engine by `410954c39`), claude-code adapter (`516ecb808`), fake ACP server test fixture (fixture landed through `6ba944b5a` and earlier fixture commits), profile-aware model selection (`c4f23fa56` + `7082da5da`), the per-user isolation gate (`84b4ad10`), the ToS acknowledgement config flag (`AcpProfileConfig.tosGrayzoneAcknowledged` validated by `validateAcpProfiles`), the ToS dispatch guard (`profile-selector.ts` `tos_unacknowledged` skip), and the e2e env-gated ACP scenario (`tests/e2e/flows/harness-acp.test.ts` behind `HARNESSE2E=1`). TASK-acp-driver-module, TASK-acp-profile-harness-adapters, TASK-acp-claude-code-adapter, TASK-fake-acp-server-test-fixture, TASK-e2e-env-gated-scenario, TASK-harness-tos-acknowledgement-config-flag and TASK-harness-tos-acknowledgement-dispatch-guard Done. TASK-harness-provider-tos-usage-class-matrix and TASK-harness-tos-acknowledgement-frontend-confirmation land with the `feat-tos-frontend` branch — done-if-landed: static provider ToS usage-class matrix rendered in the admin harness panel, plus the settings enable toggle + confirmation modal persisting `tosGrayzoneAcknowledged` through `validateAcpProfiles`. Open: permission/approval flow (TASK-permission-approval-flow), model discovery + capability enrichment (TASK-model-discovery-capability-enrichment), message persistence mapping (TASK-message-persistence-mapping), optional-dep packaging (TASK-optional-dep-packaging).
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -55,13 +55,18 @@ Spawn official binary only; never extract credentials; single-user/single-machin
 - [x] ACP driver module
 - [x] opencode adapter
 - [x] omp adapter
+- [x] claude-code adapter
 - [ ] permission/approval flow
 - [ ] model discovery + capability enrichment
 - [ ] message persistence mapping
 - [x] per-user isolation gate
 - [ ] optional-dep packaging
 - [x] fake ACP server test fixture
-- [ ] e2e env-gated scenario
+- [x] e2e env-gated scenario
+- [x] ToS acknowledgement config flag
+- [x] ToS dispatch guard
+- [x] ToS provider usage-class matrix (done-if-landed: feat-tos-frontend)
+- [x] ToS acknowledgement frontend confirmation (done-if-landed: feat-tos-frontend)
 
 ## Dependencies
 
