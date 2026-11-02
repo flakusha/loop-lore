@@ -7,6 +7,7 @@ interface ControlState {
   locations: ExplorerLocation[];
   states: ExplorerLocationState[];
   search: string;
+  viewMode: string;
   filterStatus: string;
   filterHasState: "" | "yes" | "no";
   filterAtmosphere: string;
@@ -30,6 +31,7 @@ function makeCtx(overrides: Partial<ControlState> = {},): ControlState {
     locations: [],
     states: [],
     search: "",
+    viewMode: "tree",
     filterStatus: "",
     filterHasState: "",
     filterAtmosphere: "",
