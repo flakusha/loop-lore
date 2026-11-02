@@ -20,6 +20,7 @@ import { createApp, } from "../elysia-app";
 import { initializeProviders, } from "../generation";
 import { initDefaultHooks, } from "../generation/hooks";
 import { bindSharedQuotaEngine, } from "../generation/quota-engine";
+import { applyStoredHarnessSettings, initHarnessAdminSettings, } from "../integrations/harness/admin-settings";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
@@ -44,6 +45,9 @@ export async function start() {
   setGlobalLogger(createLogger(config.logging,),);
   initAgeGate(config.ageGate,);
   initNsfwRuntimeConfig(config.nsfw,);
+  // Seed the harness admin settings file layer (system_config overrides are
+  // overlaid further down, after the DB is open).
+  initHarnessAdminSettings(config.harness.acp,);
   initAssistantQuota(config.assistant,);
   // Seed the hot-apply snapshot and register live consumers so config edits
   // re-apply without a restart (see src/config/hot-apply.ts).
@@ -212,6 +216,8 @@ export async function start() {
   await seedDefaults(database, config,);
   // Apply persisted admin NSFW overrides (if any) so the toggle survives restart.
   await applyStoredNsfwConfig(database,);
+  // Same for the harness admin settings (ACP enable + ToS acknowledgements).
+  await applyStoredHarnessSettings(database,);
 
   if (config.logging.dbEnabled) {
     const { DBTransport, } = await import("../logger/transports/db");
