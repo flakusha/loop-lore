@@ -245,7 +245,7 @@ function coverageCommand() {
   // no coverage, the scoped pass writes the lcov the floor reads. Overlapping
   // them halves the gate's wall time (measured 397s -> 205s on the dev host,
   // 188s and 209s apart).
-  return scopedCoverageCommand({ companionRun, scopedRun, floorRun, });
+  return scopedCoverageCommand({ companionRun, scopedRun, floorRun, },);
 }
 
 /**
