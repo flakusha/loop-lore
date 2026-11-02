@@ -44204,7 +44204,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-provider-tos-usage-class-matrix.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-HARNESS-REUSABLE-CHAT-ROUTE-FILES-FROM-THE-GENERATE-ROUTE-PA": {
     "hash": "bc92e99",
@@ -44396,7 +44396,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-tos-acknowledgement-frontend-confirmation.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-HARNESS-WORK-TOPICS": {
     "hash": "4910513",
