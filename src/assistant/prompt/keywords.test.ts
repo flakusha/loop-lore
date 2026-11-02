@@ -17,6 +17,7 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import {
+  parseInclusionGroup,
   parseKeyGroups,
   parseKeywords,
   recentConversation,
@@ -71,6 +72,24 @@ describe("parseKeyGroups", () => {
 
   test("direct array input works", () => {
     expect(parseKeyGroups([["x",],],),).toEqual([["x",],],);
+  });
+});
+
+describe("parseInclusionGroup", () => {
+  test("nullish and non-string input yields null", () => {
+    expect(parseInclusionGroup(null,),).toBeNull();
+    expect(parseInclusionGroup(undefined,),).toBeNull();
+    expect(parseInclusionGroup(42,),).toBeNull();
+  });
+
+  test("a name is trimmed", () => {
+    expect(parseInclusionGroup("rumors",),).toBe("rumors",);
+    expect(parseInclusionGroup("  rumors  ",),).toBe("rumors",);
+  });
+
+  test("an empty or blank name yields null (no group)", () => {
+    expect(parseInclusionGroup("",),).toBeNull();
+    expect(parseInclusionGroup("   ",),).toBeNull();
   });
 });
 

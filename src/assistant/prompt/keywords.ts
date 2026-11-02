@@ -62,6 +62,21 @@ export function parseKeyGroups(raw: unknown,): string[][] | null {
 }
 
 /**
+ * Normalize a lore entry's `inclusion_group` column value.
+ *
+ * The column is the source of truth for grouping: trimmed name, or `null`
+ * when the value is absent, blank, or not a string. A blank group is
+ * therefore "no group" — such an entry is never exclusive with anything.
+ * @param raw
+ * @returns void
+ */
+export function parseInclusionGroup(raw: unknown,): string | null {
+  if (typeof raw !== "string") { return null; }
+  const trimmed = raw.trim();
+  return trimmed === "" ? null : trimmed;
+}
+
+/**
  * Lowercased word set built from the most recent user message content in a chat.
  *
  * Tokenizes on non-alphanumeric boundaries and lowercases each word, matching

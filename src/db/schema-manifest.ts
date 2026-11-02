@@ -1595,6 +1595,7 @@ export const SCHEMA = new SchemaManifest()
     reveal_condition: col("text",),
     timeline_id: col("text",),
     rarity: col("text", { notNull: true, hasDefault: true, },),
+    inclusion_group: col("text",),
   },)
   .table("actor_memories", {
     id: col("text", { primaryKey: true, },),
@@ -2806,6 +2807,7 @@ export const SCHEMA = new SchemaManifest()
     reveal_condition: col("text",),
     timeline_id: col("text",),
     rarity: col("text", { notNull: true, hasDefault: true, },),
+    inclusion_group: col("text",),
   },)
   .table("world_maps", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
