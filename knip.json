@@ -212,6 +212,11 @@
     // Tests only import the trackPageErrors singleton, not these wrappers.
     "tests/e2e/helpers/htmx-alpine.ts",
     //
+    // ensureDocsBuild: docs-mermaid.browser.ts (itself glob-discovered, see the
+    // .browser.ts ignore entries below) imports it; knip cannot trace
+    // glob-discovered spec -> helper edges.
+    "tests/e2e/helpers/browser-docs-build.ts",
+    //
     // _handleImportRequest: internal route handler called only by createTestServer's
     // route dispatcher. createTestServer IS used by all e2e tests; knip can't
     "tests/e2e/helpers/server.ts",

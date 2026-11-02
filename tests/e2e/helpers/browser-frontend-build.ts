@@ -6,7 +6,6 @@ import {
   cpSync,
   existsSync,
   mkdirSync,
-  openSync,
   readdirSync,
   readFileSync,
   renameSync,
@@ -14,10 +13,10 @@ import {
   statSync,
   unlinkSync,
   writeFileSync,
-  writeSync,
 } from "node:fs";
 import { join, } from "node:path";
 import { HASH_ALPHABET, } from "../../../src/content/hash-injection";
+import { acquireBuildLock, } from "./build-lock";
 
 /**
  * Prefix for the immutable, hash-named trees the browser suite serves from.
@@ -46,41 +45,6 @@ function hashFrontendSources(root: string,): string {
   }
 
   return hash.digest("hex",);
-}
-
-function processIsRunning(pid: number,): boolean {
-  try {
-    process.kill(pid, 0,);
-    return true;
-  } catch (error) {
-    return (error as NodeJS.ErrnoException).code === "EPERM";
-  }
-}
-
-function acquireBuildLock(lockPath: string, isReady: () => boolean,): number | null {
-  while (!isReady()) {
-    try {
-      const fd = openSync(lockPath, "wx", 0o600,);
-      writeSync(fd, `${process.pid}\n`,);
-      return fd;
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== "EEXIST") { throw error; }
-    }
-
-    const ownerPid = Number(readFileSync(lockPath, "utf8",).trim(),);
-    if (ownerPid > 0 && !processIsRunning(ownerPid,)) {
-      try {
-        unlinkSync(lockPath,);
-        continue;
-      } catch (error) {
-        if ((error as NodeJS.ErrnoException).code !== "ENOENT") { throw error; }
-      }
-    }
-
-    Bun.sleepSync(25,);
-  }
-
-  return null;
 }
 
 /**

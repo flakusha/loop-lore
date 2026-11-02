@@ -21,49 +21,15 @@
  */
 import { type Browser, chromium, type Page, } from "@playwright/test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { spawnSync, } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 import { join, relative, } from "node:path";
+import { ensureDocsBuild, } from "../../helpers/browser-docs-build";
 import { trackPageErrors, } from "../../helpers/htmx-alpine";
 
 // ── Fixtures (paths from repo root) ────────────────────────────
 
 const REPO_ROOT = join(import.meta.dir, "..", "..", "..", "..",);
 const DIST_DIR = join(REPO_ROOT, "docs", ".vitepress", "dist",);
-
-// ── Build the docs site if needed ─────────────────────────────
-
-function ensureDocsBuild(): void {
-  // `index.html` alone does not prove the build finished. A `docs:build` that
-  // throws mid-render leaves index.html on disk from an earlier run while
-  // skipping the post-render writes, so a partial dist looks ready and the
-  // suite fails on asset 404s that no longer have a cause. `hashmap.json`
-  // and `vp-icons.css` are written in the same post-render block, so either
-  // one is a completion marker — require it.
-  if (existsSync(join(DIST_DIR, "index.html",),) && existsSync(join(DIST_DIR, "hashmap.json",),)) {
-    return;
-  }
-
-  const result = spawnSync("bun", ["run", "docs:build",], {
-    stdio: ["ignore", "pipe", "pipe",],
-    cwd: REPO_ROOT,
-    // vitepress build OOMs at Node's ~4 GB default heap on large doc trees;
-    // give it an explicit larger ceiling (machine permitting).
-    env: {
-      ...process.env,
-      NODE_OPTIONS: [process.env.NODE_OPTIONS, "--max-old-space-size=12288",].filter(Boolean,).join(" ",),
-    },
-  },);
-
-  if (result.status !== 0) {
-    throw new Error(
-      `docs:build failed (exit ${result.status ?? "unknown"}): ${result.stderr?.toString() ?? ""}`,
-    );
-  }
-}
-
-// ── Discover pages with mermaid blocks ────────────────────────
-
 function findHtmlFiles(dir: string,): string[] {
   const out: string[] = [];
   for (const entry of readdirSync(dir,)) {
