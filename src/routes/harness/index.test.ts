@@ -11,21 +11,21 @@
  * record-to-DTO mappers are only ever reached on that path and a stubbed test
  * cannot see a wrong field name in them.
  */
-import * as realQuery from "../../harness/query";
-import type { DB, } from "../../db/schema";
-import type { HarnessAcpConfig, } from "../../config/schema/harness";
-import type { HarnessRunRecord, HarnessRunSummary, HarnessStats, } from "../../harness/types";
-import type { Kysely, } from "kysely";
-import { Elysia, } from "elysia";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock, } from "bun:test";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { join, } from "node:path";
+import type { HarnessAcpConfig, } from "../../config/schema/harness";
+import type { DB, } from "../../db/schema";
+import { setExecLogPath, } from "../../harness/exec-log";
 import { buildRunRecord, } from "../../harness/exec-recorder";
+import * as realQuery from "../../harness/query";
+import type { HarnessRunRecord, HarnessRunSummary, HarnessStats, } from "../../harness/types";
+import { serializeRun, toSummary, } from "../../harness/types";
+import { initHarnessAdminSettings, resetHarnessAdminSettings, } from "../../integrations/harness/admin-settings";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { harnessRoutes, } from "./index";
-import { initHarnessAdminSettings, resetHarnessAdminSettings, } from "../../integrations/harness/admin-settings";
-import { join, } from "node:path";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
-import { serializeRun, toSummary, } from "../../harness/types";
-import { setExecLogPath, } from "../../harness/exec-log";
 
 /**
  * Fixtures live under the repo's .tmp/, matching src/harness/query.test.ts:
@@ -96,6 +96,7 @@ const SETTINGS_FIXTURE: HarnessAcpConfig = {
     },
   ],
 };
+
 let db: Kysely<DB>;
 let dbFixture: TestDb;
 
@@ -107,6 +108,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await destroyTestDb(dbFixture,);
 },);
+
 /** Mount the routes on a fresh app with a fixed role (read-only endpoints need no database). */
 function app(role: string | null,): Elysia {
   const built = new Elysia({},)
@@ -131,6 +133,7 @@ function send(role: string | null, path: string, body: unknown, method = "PUT",)
     },),
   );
 }
+
 /**
  * The REAL query module, captured at import time as a plain value snapshot.
  *
