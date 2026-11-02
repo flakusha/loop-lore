@@ -12,7 +12,7 @@ import { expect, test, } from "bun:test";
 import { mkdtempSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
-import { overlapCommands, } from "./scoped-overlap.mjs";
+import { overlapCommands, scopedCoverageCommand, } from "./scoped-overlap.mjs";
 
 function runBash(command,) {
   const proc = Bun.spawnSync(["bash", "-c", command,], { stdout: "pipe", stderr: "pipe", },);
@@ -50,5 +50,30 @@ test("the halves run concurrently, not one after the other", () => {
   const second = `sleep 0.2; touch ${marker}`;
   const result = runBash(`${overlapCommands(first, second,)} && echo FLOOR`,);
   expect(result.code,).toBe(0,);
+  expect(result.out,).toContain("FLOOR",);
+});
+
+test("the gate command overlaps the two halves and floors afterwards", () => {
+  const command = scopedCoverageCommand({
+    companionRun: "echo COMPANION",
+    floorRun: "echo FLOOR",
+    scopedRun: "echo SCOPED",
+  },);
+  const result = runBash(command,);
+  expect(result.code,).toBe(0,);
+  expect(result.out,).toContain("COMPANION",);
+  expect(result.out,).toContain("SCOPED",);
+  expect(result.out,).toContain("FLOOR",);
+  // The floor runs after both halves, not next to them.
+  expect(result.out.indexOf("FLOOR",),).toBeGreaterThan(result.out.indexOf("COMPANION",),);
+});
+
+test("without a companion the scoped pass runs alone, then the floor", () => {
+  const command = scopedCoverageCommand({ floorRun: "echo FLOOR", scopedRun: "echo SCOPED", },);
+  // No overlap construct: the two commands are chained, not backgrounded.
+  expect(command,).not.toContain("p1=$!",);
+  const result = runBash(command,);
+  expect(result.code,).toBe(0,);
+  expect(result.out,).toContain("SCOPED",);
   expect(result.out,).toContain("FLOOR",);
 });
