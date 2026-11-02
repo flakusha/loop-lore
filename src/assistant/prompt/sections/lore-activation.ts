@@ -181,7 +181,7 @@ export function isCooldownExpired(
 
 /** A lore entry that passed the per-entry gates, considered for group admission. */
 export interface InclusionGroupCandidate {
-  /** Lore row id (unique across the actor and world lore tables). */
+  /** Lore row id — reported in the decision log (winner / skipped ids). */
   id: string;
   /** Raw inclusion-group name; blank or absent = no group. */
   inclusion_group: string | null;

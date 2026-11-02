@@ -18,6 +18,7 @@ import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import {
+  insertActorLoreEntries,
   insertActors,
   insertChats,
   insertMessages,
@@ -258,6 +259,52 @@ describe("loreSection — inclusion groups", () => {
 
       expect(text,).toContain("Generic dragon rumor.",);
       expect(text,).not.toContain("Rare hoard rumor.",);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("group members that share a row id across the two tables are ranked independently", async () => {
+    try {
+      createLogger({ level: "error", },);
+    } catch {
+      // Already initialized — ignore.
+    }
+
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const { worldId, actorId, } = await setupWorld(db,);
+      const sharedId = "shared-lore-row-id";
+      // Same row id in both lore tables: the matched-key counts must stay
+      // per entry (actor row matches one key, world row matches two), so the
+      // world row wins the group instead of the actor row.
+      await insertActorLoreEntries(db, actorId, "Actor dragon rumor.", {
+        id: sharedId,
+        selective: 1,
+        constant: 0,
+        enabled: LoreEntryStatus.Enabled,
+        position: LorePosition.BeforeChar,
+        keys: JSON.stringify(["dragon",],),
+        inclusion_group: "rumors",
+        cooldown_seconds: 0,
+      },);
+
+      await insertWorldLoreEntries(db, worldId, "World hoard rumor.", {
+        id: sharedId,
+        selective: 1,
+        constant: 0,
+        enabled: LoreEntryStatus.Enabled,
+        position: LorePosition.BeforeChar,
+        keys: JSON.stringify(["dragon", "hoard",],),
+        inclusion_group: "rumors",
+        cooldown_seconds: 0,
+      },);
+
+      const built = await loreSection.build(ctxFor(db, worldId, actorId,),);
+      const text = built.map((m,) => m.content).join("\n",);
+
+      expect(text,).toContain("World hoard rumor.",);
+      expect(text,).not.toContain("Actor dragon rumor.",);
     } finally {
       sqlite.close();
     }
