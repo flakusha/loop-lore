@@ -4,6 +4,20 @@
 # Worktrees branch from dev; dev is the integration target.
 root = "dev"
 
+[commands]
+# giwt finalize Step 3 runs the full unit suite. giwt splits this string on
+# whitespace and spawns it WITHOUT a shell, so the suite is reached through a
+# package script (bun run does expand the shell syntax).
+#
+# The suite is the same one `test:unit` runs; only the worker count differs:
+# the check runner's own src chunk gate measures this suite at ~200s with 12
+# workers against ~435s with 4 (scripts/check/parallel/config.mjs,
+# SRC_TEST_JOBS), and Step 3 runs alone after the gate pools drain.
+# CHECK_SRC_TEST_JOBS is the knob the check runner already uses for this
+# suite — drop it when finalizing beside other lanes (the 12-worker peak is
+# ~30GB tree-isolated).
+test = "bun run test:unit:finalize"
+
 [status.aliases]
 # Free-form legacy statuses -> the closed plan vocabulary
 # (Not Started | In Progress | Blocked | Done | Wontfix | Postponed).

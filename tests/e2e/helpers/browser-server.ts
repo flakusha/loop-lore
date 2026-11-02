@@ -67,7 +67,9 @@ const CLOSE_TIMEOUT_MS = 5_000;
 export async function createBrowserTest(
   overrides?: Omit<Partial<Config>, "auth"> & { auth?: Partial<Config["auth"]> },
 ): Promise<BrowserTestContext> {
-  const publicDir = ensureFrontendBuild();
+  // The suite runner publishes the frontend build once and hands the tree down
+  // through E2E_FRONTEND_BUILD_DIR; a standalone spec run builds it here.
+  const publicDir = process.env.E2E_FRONTEND_BUILD_DIR ?? ensureFrontendBuild();
   if (activeBrowserContext) {
     throw new Error("Browser E2E uses process-global app state; create one context per worker process.",);
   }
