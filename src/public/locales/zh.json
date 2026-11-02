@@ -1052,7 +1052,6 @@
   "mood": {
     "adjustHappiness": "调整幸福感"
   },
-
   "nsfw": {
     "blurReveal": "显示",
     "bodyState": {
@@ -2078,12 +2077,21 @@
     "statusDisabled": "已停用",
     "settingsLoadFailed": "无法加载 Harness 设置。",
     "errorLoadSettings": "无法加载 Harness 设置。",
+    "errorSaveSettings": "无法保存 Harness 设置。",
     "profilesEmpty": "尚未配置 Harness 配置文件。",
     "ungatedBadge": "不受限",
     "ungatedNote": "本地执行和直接 API 访问不受服务商条款限制，保持不受限 — 仅订阅驱动的 Harness 作为服务商使用需要确认。",
+    "toggle": {
+      "enable": "启用 Harness ACP",
+      "disable": "停用 Harness ACP"
+    },
     "ack": {
       "yes": "是",
-      "no": "否"
+      "no": "否",
+      "title": "确认服务商条款",
+      "body": "启用 Harness ACP 后，订阅型 Harness 配置文件（通过 ChatGPT 或 Claude 套餐登录）将作为 loop-lore 的服务商用于 RPG 及其他非聊天功能。这可能与服务商条款冲突，需要你明确确认。本地和 API 配置文件不受影响，保持不受限。",
+      "confirm": "我已确认 — 启用",
+      "decline": "取消"
     },
     "usage": {
       "subscription-backed": "订阅驱动",

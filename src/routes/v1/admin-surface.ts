@@ -42,7 +42,7 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
     // ── Harness exec log ──────────────────────────────────────
     // Admin-gated like the rest of this surface, so it mounts versioned
     // under /api/v1; the unversioned /api/harness/* path 308s here.
-    .use(harnessRoutes(prefix,),)
+    .use(harnessRoutes({ database, }, prefix,),)
     // ── Import / export ──────────────────────────────────────
     .use(importRoutes(handleOpts, prefix,),)
     .use(exportRoutes({ database, }, prefix,),)

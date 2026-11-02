@@ -1052,7 +1052,6 @@
   "mood": {
     "adjustHappiness": "Glückseinstellung anpassen"
   },
-
   "nsfw": {
     "blurReveal": "Anzeigen",
     "bodyState": {
@@ -2078,12 +2077,21 @@
     "statusDisabled": "Deaktiviert",
     "settingsLoadFailed": "Harness-Einstellungen konnten nicht geladen werden.",
     "errorLoadSettings": "Harness-Einstellungen konnten nicht geladen werden.",
+    "errorSaveSettings": "Harness-Einstellungen konnten nicht gespeichert werden.",
     "profilesEmpty": "Keine Harness-Profile konfiguriert.",
     "ungatedBadge": "Unbeschränkt",
     "ungatedNote": "Lokale Ausführung und direkter API-Zugriff unterliegen nicht den Nutzungsbedingungen der Anbieter und bleiben unbeschränkt — nur abo-basierte Harness-als-Anbieter-Nutzung erfordert eine Bestätigung.",
+    "toggle": {
+      "enable": "Harness-ACP aktivieren",
+      "disable": "Harness-ACP deaktivieren"
+    },
     "ack": {
       "yes": "Ja",
-      "no": "Nein"
+      "no": "Nein",
+      "title": "Anbieterbedingungen bestätigen",
+      "body": "Das Aktivieren von Harness-ACP nutzt abonnementgebundene Harness-Profile (ChatGPT- oder Claude-Abos) als loop-lore-Anbieter für RPG- und andere Nicht-Chat-Funktionen. Das kann mit den Bedingungen des Anbieters kollidieren und erfordert deine ausdrückliche Bestätigung. Lokale und API-gestützte Profile sind nicht betroffen und bleiben ungated.",
+      "confirm": "Ich bestätige — aktivieren",
+      "decline": "Abbrechen"
     },
     "usage": {
       "subscription-backed": "Abo-basiert",

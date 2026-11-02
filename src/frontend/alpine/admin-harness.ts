@@ -40,7 +40,14 @@ import {
   type HarnessStats,
 } from "./admin-harness-rows";
 import { HarnessRunsResponse, HarnessStatsSchema, } from "./admin-harness-schema";
-import { type HarnessProfileRow, loadHarnessSettings, } from "./admin-harness-settings";
+import {
+  applyHarnessSettings,
+  confirmHarnessAck,
+  declineHarnessAck,
+  type HarnessProfileRow,
+  loadHarnessSettings,
+  onHarnessToggle,
+} from "./admin-harness-settings";
 import { t, } from "./i18n";
 import { parseOr, } from "./validation";
 
@@ -81,6 +88,29 @@ export const adminHarness = {
   harnessProfileRows: [] as HarnessProfileRow[],
   loadingHarnessSettings: false,
   harnessSettingsError: "",
+  harnessToggleIntent: false,
+  harnessAckModalOpen: false,
+  savingHarnessSettings: false,
+
+  /** Enable/disable intent; opens the ToS modal for subscription-backed setups. */
+  async toggleHarness(): Promise<void> {
+    await onHarnessToggle(this,);
+  },
+
+  /** Modal confirm — deliberate acknowledgement + enable. */
+  async confirmHarnessAck(): Promise<void> {
+    await confirmHarnessAck(this,);
+  },
+
+  /** Modal decline — nothing is sent; flag stays unset, toggle stays off. */
+  declineHarnessAck(): void {
+    declineHarnessAck(this,);
+  },
+
+  /** Escape hatch for tests/direct patches. */
+  async applyHarnessSettings(patch: { enabled?: boolean; acknowledgements?: Record<string, boolean> },): Promise<void> {
+    await applyHarnessSettings(this, patch,);
+  },
 
   /**
    * Load the runs list, the stats rollup and the settings view together.
