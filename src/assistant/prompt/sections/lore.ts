@@ -193,6 +193,12 @@ export const loreSection: SectionBuilder = {
     // Inclusion groups (094, epic-lorebook-inclusion-groups): entries sharing
     // a group are mutually exclusive — exactly one of them fires per turn.
     // Winner: most matched keys, then priority, then insertion order.
+    // ponytail: the map below copies each admitted row once to carry the
+    // matched-key count — one shallow allocation per lore row loaded for the
+    // world/actor (the load query has no LIMIT, so the count is
+    // data-dependent) — so the admission pass stays independent of the DB row
+    // type. Revisit when a world's lorebook exceeds ~1000 rows or a profile
+    // points here.
     const groupAdmission = admitExclusiveGroups(
       admittedEntries.map((entry,) => ({
         ...entry,

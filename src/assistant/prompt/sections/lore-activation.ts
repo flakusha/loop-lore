@@ -53,6 +53,17 @@ export function clampScanDepth(scanDepth: number | null,): number {
  * catastrophic-backtracking shapes so a malicious card cannot freeze every
  * chat turn. Invalid patterns are treated as no-match (never crash prompt
  * assembly).
+ *
+ * TODO(perf): every regex key is re-validated and recompiled on every turn
+ * (per entry x pattern): `hasSafeShape` walks the pattern character by
+ * character and `new RegExp` runs again. A precompiled-regex cache would move
+ * both into the compiled layer, but it needs a bounded size (patterns are
+ * author-supplied, so the key space is unbounded) and a "no `g`/`y` flag" rule
+ * — a cached RegExp with `g` carries `lastIndex` between `test()` calls — and
+ * it belongs to the shared compiler
+ * (`packages/core/src/utils/safe-regexp.ts`), not to a lore-local change.
+ * Revisit when regex-key rows per world exceed ~50 or prompt-assembly p95
+ * grows.
  * @param key
  * @returns void
  */
@@ -233,24 +244,6 @@ function beatsGroupWinner<T extends InclusionGroupCandidate,>(candidate: T, incu
 }
 
 /**
- * Group the candidates by their normalized inclusion-group name.
- * @param candidates
- * @returns void
- */
-function bucketByGroup<T extends InclusionGroupCandidate,>(candidates: readonly T[],): Map<string, T[]> {
-  const buckets = new Map<string, T[]>();
-  for (const candidate of candidates) {
-    const group = parseInclusionGroup(candidate.inclusion_group,);
-    if (group === null) { continue; }
-    const bucket = buckets.get(group,);
-    if (bucket) { bucket.push(candidate,); }
-    else { buckets.set(group, [candidate,],); }
-  }
-
-  return buckets;
-}
-
-/**
  * The group member that fires: most matched keys, then higher priority, then
  * lower insertion order, then the earlier candidate.
  * @param bucket
@@ -277,16 +270,32 @@ function pickGroupWinner<T extends InclusionGroupCandidate,>(bucket: readonly T[
  * @param candidates Admitted entries in collection order.
  * @returns The admitted subset and one decision per group.
  */
+// ponytail: per turn this pass allocates one Set, one Map and one array per
+// contested group — one per lore row loaded for the world/actor. The load
+// query has no LIMIT, so that count is data-dependent (a large lorebook can
+// hold thousands of rows) and it is noise next to the DB query and the LLM
+// round-trip. It is a pure pass over already-loaded rows, so there is no
+// I/O or compiled-layer work to move out. Revisit when a world's lorebook
+// exceeds ~1000 rows or a profile points here.
 export function admitExclusiveGroups<T extends InclusionGroupCandidate,>(
   candidates: readonly T[],
 ): InclusionGroupAdmission<T> {
   const kept = new Set<T>();
+  const buckets = new Map<string, T[]>();
   for (const candidate of candidates) {
-    if (parseInclusionGroup(candidate.inclusion_group,) === null) { kept.add(candidate,); }
+    const group = parseInclusionGroup(candidate.inclusion_group,);
+    if (group === null) {
+      kept.add(candidate,);
+      continue;
+    }
+
+    const bucket = buckets.get(group,);
+    if (bucket) { bucket.push(candidate,); }
+    else { buckets.set(group, [candidate,],); }
   }
 
   const decisions: InclusionGroupDecision[] = [];
-  for (const [group, bucket,] of bucketByGroup(candidates,)) {
+  for (const [group, bucket,] of buckets) {
     const winner = pickGroupWinner(bucket,);
     kept.add(winner,);
     const skipped: string[] = [];
