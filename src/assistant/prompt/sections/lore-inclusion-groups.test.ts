@@ -9,14 +9,23 @@
  * exactly one of them fires per prompt turn. The winner is the entry that
  * matched the most keys; ties go to priority, then insertion order. Entries
  * without a group are unaffected.
+ *
+ * Resource contract (parallel runners execute files in worker processes with
+ * a fresh global per file — `bun test --parallel=N --isolate`):
+ * - Each test owns its own in-memory SQLite database (`createTestDb`), torn
+ *   down in `finally` via `destroyTestDb`. No file paths, ports or shared
+ *   collections are used, so tests are independent of each other and of
+ *   their order.
+ * - The only global this file mutates is `Math.random` (one test needs a
+ *   deterministic rarity roll). It is restored in `afterEach`, so a failing
+ *   test cannot leak the stub into the next one.
  */
 import { afterEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { ItemRarity, MessageRole, MessageStatus, MessageVisibility, } from "../../../db/enums";
 import { LoreEntryStatus, LorePosition, } from "../../../db/enums-story";
 import type { DB, } from "../../../db/schema";
-import { createLogger, } from "../../../logger";
-import { createTestDb, } from "../../../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, } from "../../../test-utils/create-test-db";
 import {
   insertActorLoreEntries,
   insertActors,
@@ -48,7 +57,7 @@ async function setupWorld(db: Kysely<DB>,): Promise<{ worldId: string; actorId: 
   await insertWorlds(db, user.id, "Group World",);
   const world = await db.selectFrom("worlds",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
 
-  await insertChats(db, "Group Chat", user.id, { id: CHAT_ID as never, world_id: world.id, },);
+  await insertChats(db, "Group Chat", user.id, { id: CHAT_ID, world_id: world.id, },);
 
   await insertMessages(db, CHAT_ID, actor.id, MessageRole.User, "The dragon guards a hoard.", {
     status: MessageStatus.Confirmed,
@@ -81,12 +90,24 @@ function ctxFor(db: Kysely<DB>, worldId: string, actorId: string,): AssembleCont
   };
 }
 
+/** Options for the selective world-lore entries used by these tests. */
+interface LoreInsertOptions {
+  /** Selective keys the entry is activated by. */
+  keys?: string[];
+  /** Inclusion group name; `null`/absent means "no group". */
+  inclusion_group?: string | null;
+  /** Entry priority (higher wins a tie). */
+  priority?: number;
+  /** Insertion order (later wins a tie after priority). */
+  insertion_order?: number;
+}
+
 /** Insert one selective world-lore entry. */
 async function insertLore(
   db: Kysely<DB>,
   worldId: string,
   content: string,
-  opts: { keys?: string[]; inclusion_group?: string | null; priority?: number; insertion_order?: number },
+  opts: LoreInsertOptions,
 ): Promise<void> {
   await insertWorldLoreEntries(db, worldId, content, {
     selective: 1,
@@ -103,12 +124,6 @@ async function insertLore(
 
 describe("loreSection — inclusion groups", () => {
   test("exactly one of two mutually exclusive rumors fires", async () => {
-    try {
-      createLogger({ level: "error", },);
-    } catch {
-      // Already initialized — ignore.
-    }
-
     const { db, sqlite, } = await createTestDb();
     try {
       const { worldId, actorId, } = await setupWorld(db,);
@@ -124,17 +139,11 @@ describe("loreSection — inclusion groups", () => {
       expect(text,).toContain("Specific hoard rumor.",);
       expect(text,).not.toContain("Generic dragon rumor.",);
     } finally {
-      sqlite.close();
+      await destroyTestDb({ db, sqlite, },);
     }
   });
 
   test("entries without a group are unaffected", async () => {
-    try {
-      createLogger({ level: "error", },);
-    } catch {
-      // Already initialized — ignore.
-    }
-
     const { db, sqlite, } = await createTestDb();
     try {
       const { worldId, actorId, } = await setupWorld(db,);
@@ -147,17 +156,11 @@ describe("loreSection — inclusion groups", () => {
       expect(text,).toContain("Ungrouped dragon lore.",);
       expect(text,).toContain("Ungrouped hoard lore.",);
     } finally {
-      sqlite.close();
+      await destroyTestDb({ db, sqlite, },);
     }
   });
 
   test("a blank group is treated as no group", async () => {
-    try {
-      createLogger({ level: "error", },);
-    } catch {
-      // Already initialized — ignore.
-    }
-
     const { db, sqlite, } = await createTestDb();
     try {
       const { worldId, actorId, } = await setupWorld(db,);
@@ -170,17 +173,11 @@ describe("loreSection — inclusion groups", () => {
       expect(text,).toContain("Blank group lore.",);
       expect(text,).toContain("Null group lore.",);
     } finally {
-      sqlite.close();
+      await destroyTestDb({ db, sqlite, },);
     }
   });
 
   test("a single-entry group fires", async () => {
-    try {
-      createLogger({ level: "error", },);
-    } catch {
-      // Already initialized — ignore.
-    }
-
     const { db, sqlite, } = await createTestDb();
     try {
       const { worldId, actorId, } = await setupWorld(db,);
@@ -191,17 +188,11 @@ describe("loreSection — inclusion groups", () => {
 
       expect(text,).toContain("Lone rumor.",);
     } finally {
-      sqlite.close();
+      await destroyTestDb({ db, sqlite, },);
     }
   });
 
   test("cooldown excludes the specific entry before the group gate runs", async () => {
-    try {
-      createLogger({ level: "error", },);
-    } catch {
-      // Already initialized — ignore.
-    }
-
     const { db, sqlite, } = await createTestDb();
     try {
       const { worldId, actorId, } = await setupWorld(db,);
@@ -224,17 +215,11 @@ describe("loreSection — inclusion groups", () => {
       expect(text,).toContain("Generic dragon rumor.",);
       expect(text,).not.toContain("Specific hoard rumor.",);
     } finally {
-      sqlite.close();
+      await destroyTestDb({ db, sqlite, },);
     }
   });
 
   test("a rare group member dropped by its rarity weight lets the other member fire", async () => {
-    try {
-      createLogger({ level: "error", },);
-    } catch {
-      // Already initialized — ignore.
-    }
-
     const { db, sqlite, } = await createTestDb();
     try {
       const { worldId, actorId, } = await setupWorld(db,);
@@ -260,17 +245,11 @@ describe("loreSection — inclusion groups", () => {
       expect(text,).toContain("Generic dragon rumor.",);
       expect(text,).not.toContain("Rare hoard rumor.",);
     } finally {
-      sqlite.close();
+      await destroyTestDb({ db, sqlite, },);
     }
   });
 
   test("group members that share a row id across the two tables are ranked independently", async () => {
-    try {
-      createLogger({ level: "error", },);
-    } catch {
-      // Already initialized — ignore.
-    }
-
     const { db, sqlite, } = await createTestDb();
     try {
       const { worldId, actorId, } = await setupWorld(db,);
@@ -306,7 +285,7 @@ describe("loreSection — inclusion groups", () => {
       expect(text,).toContain("World hoard rumor.",);
       expect(text,).not.toContain("Actor dragon rumor.",);
     } finally {
-      sqlite.close();
+      await destroyTestDb({ db, sqlite, },);
     }
   });
 });
