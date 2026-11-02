@@ -5,6 +5,7 @@ import {
   type ScorableMessage,
   scoreMessage,
 } from "./pruning";
+import { estimateTokens, } from "./token-utils";
 
 /**
  * @param id
@@ -115,7 +116,7 @@ describe("pruneMessages — edge cases", () => {
   // AND drop it from context.
   test("promoted messages appear in both promoted and pruned buckets", () => {
     // m1: old user message with exactly 4 keyword matches → relevance 0.4,
-    // importance exactly 0.6 (promoted), 100 chars ≈ 30 tokens.
+    // importance exactly 0.6 (promoted), 100 chars ≈ 25 tokens (ceil(len/4)).
     const m1 = makeMsg("m1", `lore decide fear castle ${"x".repeat(76,)}`, 0, 4,);
     // m2: old system message, lowest score, pruned first.
     const m2 = makeMsg("m2", "y".repeat(100,), 1, 4, { role: "system", },);
@@ -135,7 +136,7 @@ describe("pruneMessages — edge cases", () => {
     );
 
     expect(result.tokensSaved,).toBe(
-      Math.ceil(100 * 0.3,) + Math.ceil(100 * 0.3,),
+      estimateTokens(m1.content,) + estimateTokens(m2.content,),
     );
   });
 });
