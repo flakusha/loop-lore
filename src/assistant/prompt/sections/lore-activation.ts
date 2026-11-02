@@ -54,16 +54,9 @@ export function clampScanDepth(scanDepth: number | null,): number {
  * chat turn. Invalid patterns are treated as no-match (never crash prompt
  * assembly).
  *
- * TODO(perf): every regex key is re-validated and recompiled on every turn
- * (per entry x pattern): `hasSafeShape` walks the pattern character by
- * character and `new RegExp` runs again. A precompiled-regex cache would move
- * both into the compiled layer, but it needs a bounded size (patterns are
- * author-supplied, so the key space is unbounded) and a "no `g`/`y` flag" rule
- * — a cached RegExp with `g` carries `lastIndex` between `test()` calls — and
- * it belongs to the shared compiler
- * (`packages/core/src/utils/safe-regexp.ts`), not to a lore-local change.
- * Revisit when regex-key rows per world exceed ~50 or prompt-assembly p95
- * grows.
+ * TODO(perf): regex keys are re-validated and recompiled every turn (per entry x pattern) - cache the RegExp in
+ * packages/core/src/utils/safe-regexp.ts (bounded size; no g/y flags, a cached `g` RegExp carries `lastIndex`) when a
+ * world exceeds ~50 regex-key rows.
  * @param key
  * @returns void
  */
@@ -270,13 +263,8 @@ function pickGroupWinner<T extends InclusionGroupCandidate,>(bucket: readonly T[
  * @param candidates Admitted entries in collection order.
  * @returns The admitted subset and one decision per group.
  */
-// ponytail: per turn this pass allocates one Set, one Map and one array per
-// contested group — one per lore row loaded for the world/actor. The load
-// query has no LIMIT, so that count is data-dependent (a large lorebook can
-// hold thousands of rows) and it is noise next to the DB query and the LLM
-// round-trip. It is a pure pass over already-loaded rows, so there is no
-// I/O or compiled-layer work to move out. Revisit when a world's lorebook
-// exceeds ~1000 rows or a profile points here.
+// ponytail: allocates one Set, one Map and one array per contested group, per turn - noise at lorebook sizes;
+// revisit when a world's lorebook exceeds ~1000 rows (the lore load query has no LIMIT).
 export function admitExclusiveGroups<T extends InclusionGroupCandidate,>(
   candidates: readonly T[],
 ): InclusionGroupAdmission<T> {
