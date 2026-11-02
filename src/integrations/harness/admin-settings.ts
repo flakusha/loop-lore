@@ -214,7 +214,7 @@ export async function saveHarnessAdminSettings(
     // the validator skips profile checks while the switch is off, but the
     // dispatch guard consults the ack exactly when the integration is on,
     // so a non-boolean must throw here, before anything is written.
-    const merged: HarnessAcpConfig["acp"] = {
+    const merged: HarnessAcpConfig = {
       enabled: true,
       profiles: file.profiles.map((p,) => {
         if (!(p.name in acks)) { return p as AcpProfileConfig; }
@@ -224,6 +224,9 @@ export async function saveHarnessAdminSettings(
 
     validateAcpProfiles(merged,);
     const acksJson = safeJsonStringify(acks,);
+    if (!acksJson.ok) {
+      throw new Error("harness.acp.tos_acknowledgements: values are not JSON-serializable",);
+    }
 
     await setConfig(db, HARNESS_SETTINGS_ACKS_KEY, acksJson.value, ACKS_DESCRIPTION,);
   }

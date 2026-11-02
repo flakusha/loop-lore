@@ -10,15 +10,25 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import type { ApiFetchMock, } from "../tests/test-types";
+import { SETTINGS_URL, } from "./admin-harness-detail";
 import {
+  HarnessProfileSettingsSchema,
+  HarnessSettingsNullable,
+  HarnessSettingsResponse,
+} from "./admin-harness-schema";
+import {
+  applyHarnessSettings,
+  applySettings,
   buildProfileRows,
   confirmHarnessAck,
   declineHarnessAck,
   emptyHarnessSettingsState,
   type HarnessSettingsState as SettingsState,
+  hasSubscriptionBacked,
   loadHarnessSettings,
   onHarnessToggle,
 } from "./admin-harness-settings";
+import { parseOr, } from "./validation";
 
 const globalState = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
@@ -143,6 +153,40 @@ describe("buildProfileRows", () => {
     expect(rows[0]?.usageBadges.every((b,) => b.ungated),).toBe(true,);
     expect(rows[1]?.usageBadges.filter((b,) => b.value === "subscription-backed")[0]?.ungated,)
       .toBe(false,);
+  });
+
+  test("settings contract: schema constants and the settings URL stay aligned", () => {
+    expect(SETTINGS_URL,).toBe("/api/v1/harness/settings",);
+    expect(HarnessProfileSettingsSchema.properties.name.type,).toBe("string",);
+    expect(HarnessSettingsResponse.properties.enabled.type,).toBe("boolean",);
+    // Nullable schema accepts the plain payload and null.
+    expect(parseOr(HarnessSettingsNullable, SETTINGS, null, () => {},),).not.toBeNull();
+    expect(parseOr(HarnessSettingsNullable, null, null, () => {},),).toBeNull();
+  });
+
+  test("applySettings rebuilds rows and hasSubscriptionBacked reflects the rows", () => {
+    const state = emptyHarnessSettingsState();
+    applySettings(state, SETTINGS as never,);
+    expect(state.harnessProfileRows,).toHaveLength(2,);
+    expect(hasSubscriptionBacked(state,),).toBe(true,);
+
+    applySettings(state, { enabled: false, profiles: [SETTINGS.profiles[0]!,], },);
+    expect(hasSubscriptionBacked(state,),).toBe(false,);
+  });
+
+  test("applyHarnessSettings PUTs a direct patch and re-applies the view", async () => {
+    const state = await loadedState();
+    let seenBody: unknown = null;
+    handler = async (_url, opts,) => {
+      seenBody = JSON.parse(String(opts?.body ?? "{}",),);
+      return Response.json(SETTINGS,);
+    };
+
+    await applyHarnessSettings(state, { acknowledgements: { "cc-sub": true, }, },);
+
+    expect(seenBody,).toEqual({ acknowledgements: { "cc-sub": true, }, },);
+    expect(state.harnessSettingsError,).toBe("",);
+    expect(state.harnessProfileRows,).toHaveLength(2,);
   });
 });
 

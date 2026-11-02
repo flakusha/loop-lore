@@ -17,7 +17,7 @@
 import { harnessFailure, JSON_HEADERS, log, SETTINGS_URL, } from "./admin-harness-detail";
 import {
   HarnessSettingsNullable,
-  HarnessSettingsResponse,
+  type HarnessSettingsView,
 } from "./admin-harness-schema";
 import { t, } from "./i18n";
 import { safeJsonStringify, } from "./json";
@@ -114,7 +114,7 @@ export async function loadHarnessSettings(state: HarnessSettingsState,): Promise
  * @param data - decoded `GET /harness/settings` body
  * @returns {void}
  */
-export function applySettings(state: HarnessSettingsState, data: HarnessSettingsResponse,): void {
+export function applySettings(state: HarnessSettingsState, data: HarnessSettingsView,): void {
   state.harnessSettingsEnabled = data.enabled;
   state.harnessProfileRows = buildProfileRows(data.profiles,);
 }
@@ -125,7 +125,7 @@ export function applySettings(state: HarnessSettingsState, data: HarnessSettings
  * @param profiles - profiles from the settings response
  * @returns {HarnessProfileRow[]} rows the table renders
  */
-export function buildProfileRows(profiles: HarnessSettingsResponse["profiles"],): HarnessProfileRow[] {
+export function buildProfileRows(profiles: HarnessSettingsView["profiles"],): HarnessProfileRow[] {
   return profiles.map((p,) => ({
     name: p.name,
     flavor: p.flavor,
