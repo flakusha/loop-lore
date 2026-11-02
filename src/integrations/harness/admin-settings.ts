@@ -91,6 +91,11 @@ class HarnessAdminSettingsStore {
     };
   }
 
+  /** Raw file layer (config-shaped), for save paths that must re-validate the real profiles. */
+  getFile(): HarnessAcpConfig {
+    return this.state.file;
+  }
+
   /** Reset to unseeded defaults. Dev/test only. */
   reset(): void {
     this.state = {
@@ -129,6 +134,16 @@ export function initHarnessAdminSettings(acp: HarnessAcpConfig,): void {
  */
 export function getHarnessAdminSettings(): HarnessAdminSettingsView {
   return harnessAdminSettings.get();
+}
+
+/**
+ * Read the raw file-layer `harness.acp` config the store was seeded with —
+ * the save path re-validates against these real profiles (the shaped view
+ * drops command/tiers on purpose).
+ * @returns {HarnessAcpConfig} the file config.
+ */
+export function getHarnessAdminFileConfig(): HarnessAcpConfig {
+  return harnessAdminSettings.getFile();
 }
 
 /**
@@ -182,7 +197,7 @@ export async function saveHarnessAdminSettings(
   db: Kysely<DB>,
   patch: { enabled?: boolean; acknowledgements?: Record<string, unknown> },
 ): Promise<HarnessAdminSettingsView> {
-  const file = harnessAdminSettings.get();
+  const file = getHarnessAdminFileConfig();
   const knownNames = new Set(file.profiles.map((p,) => p.name),);
 
   if (patch.acknowledgements !== undefined) {
@@ -194,8 +209,13 @@ export async function saveHarnessAdminSettings(
 
     const acks = patch.acknowledgements;
 
+    // Round-trip gate: inject the RAW acknowledgement values into the file
+    // profiles and run the section validator. `enabled` is forced TRUE —
+    // the validator skips profile checks while the switch is off, but the
+    // dispatch guard consults the ack exactly when the integration is on,
+    // so a non-boolean must throw here, before anything is written.
     const merged: HarnessAcpConfig["acp"] = {
-      enabled: patch.enabled ?? file.enabled,
+      enabled: true,
       profiles: file.profiles.map((p,) => {
         if (!(p.name in acks)) { return p as AcpProfileConfig; }
         return { ...p, tosGrayzoneAcknowledged: acks[p.name], } as AcpProfileConfig;

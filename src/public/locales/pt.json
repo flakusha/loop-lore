@@ -1052,7 +1052,6 @@
   "mood": {
     "adjustHappiness": "Ajustar felicidade"
   },
-
   "nsfw": {
     "blurReveal": "Mostrar",
     "bodyState": {
@@ -2078,12 +2077,21 @@
     "statusDisabled": "Desativado",
     "settingsLoadFailed": "Não foi possível carregar as configurações do harness.",
     "errorLoadSettings": "Não foi possível carregar as configurações do harness.",
+    "errorSaveSettings": "Não foi possível salvar as configurações do harness.",
     "profilesEmpty": "Nenhum perfil de harness configurado.",
     "ungatedBadge": "Sem restrição",
     "ungatedNote": "A execução local e o acesso direto por API não são limitados pelos termos do provedor e permanecem sem restrição — apenas o uso do harness como provedor baseado em assinatura exige confirmação.",
+    "toggle": {
+      "enable": "Ativar ACP do harness",
+      "disable": "Desativar ACP do harness"
+    },
     "ack": {
       "yes": "Sim",
-      "no": "Não"
+      "no": "Não",
+      "title": "Confirmar os termos do provedor",
+      "body": "Ativar o ACP do harness usará perfis de harness por assinatura (sessões de planos ChatGPT ou Claude) como provedores do loop-lore para RPG e outras funções fora do chat. Isso pode conflitar com os termos do provedor e exige a sua confirmação explícita. Perfis locais e de API não são afetados e permanecem sem restrições.",
+      "confirm": "Confirmo — ativar",
+      "decline": "Cancelar"
     },
     "usage": {
       "subscription-backed": "Baseado em assinatura",

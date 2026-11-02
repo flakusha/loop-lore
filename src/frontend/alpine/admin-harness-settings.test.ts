@@ -12,8 +12,12 @@ import { join, } from "node:path";
 import type { ApiFetchMock, } from "../tests/test-types";
 import {
   buildProfileRows,
+  confirmHarnessAck,
+  declineHarnessAck,
   emptyHarnessSettingsState,
+  type HarnessSettingsState as SettingsState,
   loadHarnessSettings,
+  onHarnessToggle,
 } from "./admin-harness-settings";
 
 const globalState = globalThis as unknown as {
@@ -37,9 +41,9 @@ const EN = JSON.parse(
 beforeEach(() => {
   calls = [];
   handler = async () => Response.json({},);
-  globalState.apiFetch = (url,) => {
+  globalState.apiFetch = (url, opts,) => {
     calls.push(url,);
-    return handler(url,);
+    return handler(url, opts,);
   };
 
   globalState.showToast = () => {};
@@ -139,5 +143,126 @@ describe("buildProfileRows", () => {
     expect(rows[0]?.usageBadges.every((b,) => b.ungated),).toBe(true,);
     expect(rows[1]?.usageBadges.filter((b,) => b.value === "subscription-backed")[0]?.ungated,)
       .toBe(false,);
+  });
+});
+
+/** State pre-loaded with the two-profile SETTINGS fixture. */
+async function loadedState(): Promise<SettingsState> {
+  handler = async (url,) => {
+    if (url === "/api/v1/harness/settings") { return Response.json(SETTINGS,); }
+    return new Response("", { status: 404, },);
+  };
+
+  const state = emptyHarnessSettingsState();
+  await loadHarnessSettings(state,);
+  return state;
+}
+
+describe("enable toggle + ToS modal", () => {
+  test("enabling with a subscription-backed profile opens the modal and applies nothing", async () => {
+    const state = await loadedState();
+
+    onHarnessToggle(state,);
+
+    expect(state.harnessAckModalOpen,).toBe(true,);
+    expect(state.harnessToggleIntent,).toBe(true,);
+    expect(state.harnessSettingsEnabled,).toBe(false,);
+    expect(calls,).toEqual(["/api/v1/harness/settings",],);
+  });
+
+  test("declining closes the modal, sends nothing, and leaves the toggle off", async () => {
+    const state = await loadedState();
+    onHarnessToggle(state,);
+
+    declineHarnessAck(state,);
+
+    expect(state.harnessAckModalOpen,).toBe(false,);
+    expect(state.harnessSettingsEnabled,).toBe(false,);
+    expect(state.harnessToggleIntent,).toBe(false,);
+    expect(calls,).toEqual(["/api/v1/harness/settings",],);
+  });
+
+  test("confirming PUTs the enable flag plus acknowledgements for subscription-backed profiles only", async () => {
+    const state = await loadedState();
+    onHarnessToggle(state,);
+    let seenBody: unknown = null;
+    const acked = SETTINGS.profiles.map((p,) => ({ ...p, tosGrayzoneAcknowledged: p.subscriptionBacked, }));
+    handler = async (_url, opts,) => {
+      seenBody = JSON.parse(String(opts?.body ?? "{}",),);
+      return Response.json({ ...SETTINGS, enabled: true, profiles: acked, },);
+    };
+
+    await confirmHarnessAck(state,);
+
+    expect(seenBody,).toEqual({ enabled: true, acknowledgements: { "cc-sub": true, }, },);
+    expect(state.harnessAckModalOpen,).toBe(false,);
+    expect(state.harnessSettingsEnabled,).toBe(true,);
+    expect(state.harnessProfileRows.find((r,) => r.name === "cc-sub")?.acknowledged,).toBe(true,);
+    expect(state.harnessProfileRows.find((r,) => r.name === "omp-main")?.acknowledged,).toBe(false,);
+  });
+
+  test("re-confirming the same acknowledgement is idempotent (same PUT body)", async () => {
+    const state = await loadedState();
+    onHarnessToggle(state,);
+    const bodies: unknown[] = [];
+    const acked = SETTINGS.profiles.map((p,) => ({ ...p, tosGrayzoneAcknowledged: p.subscriptionBacked, }));
+    handler = async (_url, opts,) => {
+      bodies.push(JSON.parse(String(opts?.body ?? "{}",),),);
+      return Response.json({ ...SETTINGS, enabled: true, profiles: acked, },);
+    };
+
+    await confirmHarnessAck(state,);
+    state.harnessToggleIntent = true;
+    state.harnessAckModalOpen = true;
+    await confirmHarnessAck(state,);
+
+    expect(bodies,).toEqual([
+      { enabled: true, acknowledgements: { "cc-sub": true, }, },
+      { enabled: true, acknowledgements: { "cc-sub": true, }, },
+    ],);
+  });
+
+  test("disabling never opens the modal and PUTs enabled false", async () => {
+    const state = await loadedState();
+    state.harnessSettingsEnabled = true;
+    let seenBody: unknown = null;
+    handler = async (_url, opts,) => {
+      seenBody = JSON.parse(String(opts?.body ?? "{}",),);
+      return Response.json({ ...SETTINGS, enabled: false, },);
+    };
+
+    await onHarnessToggle(state,);
+
+    expect(state.harnessAckModalOpen,).toBe(false,);
+    expect(seenBody,).toEqual({ enabled: false, },);
+    expect(state.harnessSettingsEnabled,).toBe(false,);
+  });
+
+  test("an all-local/API setup enables directly without a modal", async () => {
+    handler = async () => Response.json({ ...SETTINGS, profiles: [SETTINGS.profiles[0],], },);
+    const state = emptyHarnessSettingsState();
+    await loadHarnessSettings(state,);
+    let seenBody: unknown = null;
+    handler = async (_url, opts,) => {
+      seenBody = JSON.parse(String(opts?.body ?? "{}",),);
+      return Response.json({ ...SETTINGS, enabled: true, profiles: [SETTINGS.profiles[0],], },);
+    };
+
+    await onHarnessToggle(state,);
+
+    expect(state.harnessAckModalOpen,).toBe(false,);
+    expect(seenBody,).toEqual({ enabled: true, },);
+    expect(state.harnessSettingsEnabled,).toBe(true,);
+  });
+
+  test("a failed save surfaces the error and leaves the toggle off", async () => {
+    const state = await loadedState();
+    onHarnessToggle(state,);
+    handler = async () => new Response("", { status: 500, },);
+
+    await confirmHarnessAck(state,);
+
+    expect(state.harnessSettingsError,).not.toBe("",);
+    expect(state.harnessSettingsEnabled,).toBe(false,);
   });
 });

@@ -1582,7 +1582,6 @@
   "mood": {
     "adjustHappiness": "Adjust Happiness"
   },
-
   "nsfw": {
     "blurReveal": "Reveal",
     "bodyState": {
@@ -2271,12 +2270,21 @@
     "statusDisabled": "Disabled",
     "settingsLoadFailed": "Could not load harness settings.",
     "errorLoadSettings": "Could not load harness settings.",
+    "errorSaveSettings": "Could not save harness settings.",
     "profilesEmpty": "No harness profiles configured.",
     "ungatedBadge": "Ungated",
     "ungatedNote": "Local execution and direct API access are not limited by provider terms of service and stay ungated — only subscription-backed harness-as-provider usage requires acknowledgement.",
+    "toggle": {
+      "enable": "Enable harness ACP",
+      "disable": "Disable harness ACP"
+    },
     "ack": {
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "title": "Acknowledge provider terms",
+      "body": "Enabling harness ACP will drive subscription-backed harness profiles (ChatGPT or Claude plan sign-ins) as loop-lore providers for RPG and other non-chat functionality. This may conflict with the provider's terms of service and requires your explicit acknowledgement. Local and API-backed profiles are unaffected and stay ungated.",
+      "confirm": "I acknowledge — enable",
+      "decline": "Cancel"
     },
     "usage": {
       "subscription-backed": "Subscription-backed",

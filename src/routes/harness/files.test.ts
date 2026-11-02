@@ -10,8 +10,10 @@
  */
 import { afterEach, beforeEach, describe, expect, it, mock, } from "bun:test";
 import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
+import type { DB, } from "../../db/schema";
 import { setExecLogPath, } from "../../harness/exec-log";
 import * as realQuery from "../../harness/query";
 import type { HarnessRunRecord, } from "../../harness/types";
@@ -52,7 +54,9 @@ let sandboxRoot = "";
 function app(role: string | null,): Elysia {
   const built = new Elysia({},)
     .derive(() => ({ userId: "u1", userRole: role, }))
-    .use(harnessRoutes(),);
+    // The files endpoints never touch the database; the handle is injected
+    // only because the settings write route shares the plugin.
+    .use(harnessRoutes({ database: {} as Kysely<DB>, },),);
 
   return built as unknown as Elysia;
 }

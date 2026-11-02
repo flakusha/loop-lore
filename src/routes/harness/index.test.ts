@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * Route tests for the three harness endpoints: the admin guard denies
  * non-admins, the list endpoint returns summaries, the detail endpoint
@@ -12,17 +11,20 @@
  * record-to-DTO mappers are only ever reached on that path and a stubbed test
  * cannot see a wrong field name in them.
  */
-import { afterEach, beforeEach, describe, expect, it, mock, } from "bun:test";
-import { Elysia, } from "elysia";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
-import { join, } from "node:path";
-import { setExecLogPath, } from "../../harness/exec-log";
-import { buildRunRecord, } from "../../harness/exec-recorder";
 import * as realQuery from "../../harness/query";
+import type { DB, } from "../../db/schema";
 import type { HarnessRunRecord, HarnessRunSummary, HarnessStats, } from "../../harness/types";
-import { serializeRun, toSummary, } from "../../harness/types";
-import { initHarnessAdminSettings, resetHarnessAdminSettings, } from "../../integrations/harness/admin-settings";
+import type { Kysely, } from "kysely";
+import { Elysia, } from "elysia";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock, } from "bun:test";
+import { buildRunRecord, } from "../../harness/exec-recorder";
+import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { harnessRoutes, } from "./index";
+import { initHarnessAdminSettings, resetHarnessAdminSettings, } from "../../integrations/harness/admin-settings";
+import { join, } from "node:path";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { serializeRun, toSummary, } from "../../harness/types";
+import { setExecLogPath, } from "../../harness/exec-log";
 
 /**
  * Fixtures live under the repo's .tmp/, matching src/harness/query.test.ts:
@@ -76,11 +78,35 @@ const STATS: HarnessStats = {
   toolingGaps: [{ toolingGap: "no-edit-tool", count: 1, },],
 };
 
-/** Mount the routes on a fresh app with a fixed role. */
+/** Shared settings-store fixture: the config the admin settings tests read. */
+const SETTINGS_FIXTURE = {
+  enabled: false,
+  profiles: [
+    { name: "omp-main", command: ["omp", "acp",], tiers: { good: { model: "test-provider/test-model", }, }, },
+    {
+      name: "codex-sub",
+      command: ["codex", "--acp",],
+      harness: "codex" as const,
+      tiers: { good: { model: "test-provider/test-model", }, },
+    },
+  ],
+};
+let db: Kysely<DB>;
+let dbFixture: TestDb;
+
+beforeAll(async () => {
+  dbFixture = await createTestDb();
+  db = dbFixture.db;
+},);
+
+afterAll(async () => {
+  await destroyTestDb(dbFixture,);
+},);
+/** Mount the routes on a fresh app with a fixed role (read-only endpoints need no database). */
 function app(role: string | null,): Elysia {
   const built = new Elysia({},)
     .derive(() => ({ userId: "u1", userRole: role, }))
-    .use(harnessRoutes(),);
+    .use(harnessRoutes({ database: db, },),);
 
   return built as unknown as Elysia;
 }
@@ -90,6 +116,16 @@ function get(role: string | null, path: string,): Promise<Response> {
   return app(role,).handle(new Request(`http://localhost${path}`,),);
 }
 
+/** Hit a path with a JSON body on the mounted app. */
+function send(role: string | null, path: string, body: unknown, method = "PUT",): Promise<Response> {
+  return app(role,).handle(
+    new Request(`http://localhost${path}`, {
+      method,
+      headers: { "content-type": "application/json", },
+      body: JSON.stringify(body,),
+    },),
+  );
+}
 /**
  * The REAL query module, captured at import time as a plain value snapshot.
  *
@@ -365,6 +401,101 @@ describe("harnessRoutes", () => {
       expect(typeof detail.costUsd,).toBe("number",);
       expect(detail.costUsd,).toBe(0,);
       expect(detail.costUsd,).toBe(list.items[0]!.costUsd,);
+    });
+  });
+
+  describe("GET /api/v1/harness/settings", () => {
+    it("decorates each configured profile with usage class + note per flavor", async () => {
+      resetHarnessAdminSettings();
+      initHarnessAdminSettings(SETTINGS_FIXTURE,);
+
+      const res = await get("admin", "/api/v1/harness/settings",);
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as {
+        enabled: boolean;
+        profiles: {
+          name: string;
+          flavor: string;
+          usageClasses: string[];
+          subscriptionBacked: boolean;
+          tosGrayzoneAcknowledged: boolean;
+        }[];
+      };
+
+      expect(body.enabled,).toBe(false,);
+      const codex = body.profiles.find((p,) => p.name === "codex-sub")!;
+      expect(codex.flavor,).toBe("codex",);
+      expect(codex.usageClasses,).toContain("subscription-backed",);
+      expect(codex.subscriptionBacked,).toBe(true,);
+      expect(codex.tosGrayzoneAcknowledged,).toBe(false,);
+
+      const omp = body.profiles.find((p,) => p.name === "omp-main")!;
+      expect(omp.subscriptionBacked,).toBe(false,);
+      expect(omp.usageClasses,).toContain("local",);
+    });
+  });
+
+  describe("PUT /api/v1/harness/settings", () => {
+    it("denies a non-admin and an unauthenticated caller", async () => {
+      expect((await send("user", "/api/v1/harness/settings", { enabled: true, },)).status,).toBe(403,);
+      expect((await send(null, "/api/v1/harness/settings", { enabled: true, },)).status,).toBe(403,);
+    });
+
+    it("round-trips an acknowledgement through the save path and persists it", async () => {
+      resetHarnessAdminSettings();
+      initHarnessAdminSettings(SETTINGS_FIXTURE,);
+
+      const res = await send("admin", "/api/v1/harness/settings", { acknowledgements: { "codex-sub": true, }, },);
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as {
+        enabled: boolean;
+        profiles: { name: string; tosGrayzoneAcknowledged: boolean }[];
+      };
+
+      expect(body.profiles.find((p,) => p.name === "codex-sub")?.tosGrayzoneAcknowledged,).toBe(true,);
+
+      const stored = await db.selectFrom("system_config",).select("value",).where(
+        "key",
+        "=",
+        "harness.acp.tos_acknowledgements",
+      ).executeTakeFirst();
+
+      expect(stored?.value,).toBe(JSON.stringify({ "codex-sub": true, },),);
+    });
+
+    it("a declining client that sends nothing leaves the flag unset and the toggle off", async () => {
+      resetHarnessAdminSettings();
+      initHarnessAdminSettings(SETTINGS_FIXTURE,);
+
+      const res = await get("admin", "/api/v1/harness/settings",);
+      const body = await res.json() as { enabled: boolean; profiles: { tosGrayzoneAcknowledged: boolean }[] };
+      expect(body.enabled,).toBe(false,);
+      expect(body.profiles.every((p,) => p.tosGrayzoneAcknowledged === false),).toBe(true,);
+    });
+
+    it("rejects a malformed acknowledgement patch without persisting", async () => {
+      resetHarnessAdminSettings();
+      initHarnessAdminSettings(SETTINGS_FIXTURE,);
+      await db.deleteFrom("system_config",).where("key", "=", "harness.acp.tos_acknowledgements",).execute();
+
+      // Typebox rejects the non-boolean value before the handler runs.
+      const bad = await send("admin", "/api/v1/harness/settings", { acknowledgements: { "codex-sub": "yes", }, },);
+      expect(bad.status,).toBe(422,);
+
+      // The handler maps a validator rejection (unknown profile) to 400.
+      const unknown = await send("admin", "/api/v1/harness/settings", {
+        acknowledgements: { "no-such-profile": true, },
+      },);
+
+      expect(unknown.status,).toBe(400,);
+
+      const stored = await db.selectFrom("system_config",).select("value",).where(
+        "key",
+        "=",
+        "harness.acp.tos_acknowledgements",
+      ).executeTakeFirst();
+
+      expect(stored,).toBeUndefined();
     });
   });
 });
