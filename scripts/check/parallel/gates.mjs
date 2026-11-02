@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 367
+// size-allow: 370
 // One command-assembly pass: the coverage builder, the scope filters and the
 // per-gate command bodies all read the same run context (DIFF_BASE, changed
 // files, skip patterns), so splitting them would thread that context through
-// every helper for no separation gain.
+// every helper for no separation gain. The scoped coverage gate's command is
+// assembled here for the same reason; only the bash overlap construct that
+// runs its two halves side by side lives elsewhere.
 
 /**
  * Gate command assembly. The static registry (`checks`, `ADVISORY_GATES`) lives
@@ -39,7 +41,7 @@ import {
 import { applyGateFilter, } from "./filter.mjs";
 import { ADVISORY_GATES, checks, } from "./gate-table.mjs";
 import { applyDiffScopedStaticGates, browserSpecPaths, } from "./gates-scope.mjs";
-import { overlapCommands, } from "./scoped-overlap.mjs";
+import { scopedCoverageCommand, } from "./scoped-overlap.mjs";
 import { filterPaths, SKIP_PATTERNS, } from "./test-skip.mjs";
 
 // Re-exported so `runner.mjs` keeps one import site for the assembled table.
@@ -243,9 +245,7 @@ function coverageCommand() {
   // no coverage, the scoped pass writes the lcov the floor reads. Overlapping
   // them halves the gate's wall time (measured 397s -> 205s on the dev host,
   // 188s and 209s apart).
-  return companionRun.length === 0
-    ? `${scopedRun} && ${floorRun}`
-    : `${overlapCommands(companionRun, scopedRun,)} && ${floorRun}`;
+  return scopedCoverageCommand({ companionRun, scopedRun, floorRun, });
 }
 
 /**
