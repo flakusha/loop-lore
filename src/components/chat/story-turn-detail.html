@@ -1,0 +1,46 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Story Turn Lookup — deep-link a story turn by id and render its detail.
+  Reads shared state from the storyState scope; responses are cached
+  client-side per (chatId, turnId).
+-->
+<div class="gm-section gm-turn-detail" data-testid="gm-turn-detail">
+  <h4 class="gm-section-title">{{{t("story.turnLookup")}}}</h4>
+  <div class="gm-turn-detail-load">
+    <input
+      class="form-input"
+      x-ref="turnLookupId"
+      :placeholder="t('story.turnIdPlaceholder')"
+      data-testid="gm-turn-detail-input"
+    />
+    <button
+      class="btn btn-ghost btn-sm"
+      :disabled="turnDetailLoading"
+      @click="loadStoryTurn($refs.turnLookupId.value.trim())"
+      data-testid="gm-turn-detail-submit"
+    >
+      {{{t("story.lookupTurn")}}}
+    </button>
+  </div>
+  <p class="gm-section-hint" x-show="!turnDetail">{{{t("story.noTurnSelected")}}}</p>
+  <template x-if="turnDetail">
+    <div class="gm-turn-detail-view">
+      <div class="gm-turn-detail-head">
+        <span class="gm-turn-index" x-text="turnDetail.turn_number"></span>
+        <span class="gm-turn-detail-actor" x-show="turnDetail.actor_id" x-text="turnDetail.actor_id"></span>
+        <span class="gm-turn-detail-status" x-text="turnDetail.status"></span>
+      </div>
+      <pre class="gm-turn-detail-prompt" x-text="turnDetail.prompt_sent"></pre>
+      <div class="gm-turn-detail-meta">
+        <span x-show="turnDetail.quality_score != null">
+          {{{t("story.qualityScore")}}}: <span x-text="turnDetail.quality_score"></span>
+        </span>
+        <span x-show="turnDetail.quest_progress">{{{t("story.questProgress")}}}: <span
+            x-text="turnDetail.quest_progress"
+          ></span></span>
+      </div>
+    </div>
+  </template>
+</div>
