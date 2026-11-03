@@ -28,6 +28,7 @@ import {
   toast,
 } from "./story-state/derived";
 import { loaders, } from "./story-state/loaders";
+import { mutations, } from "./story-state/mutations";
 import type {
   QuestBanner,
   QuestMilestone,
@@ -65,7 +66,15 @@ const log = rootLog.child({ module: "story-state", },);
     error: null,
     _worldId: null,
     _locationId: null,
+    worldStates: [],
+    worldStatesTotal: 0,
+    npcState: null,
+    npcStateActorId: null,
+    npcDraft: { health: "", mentalState: "", locationId: "", },
+    turnDetail: null,
+    turnDetailLoading: false,
     ...loaders,
+    ...mutations,
 
     /**
      * @returns {Promise<void>}
@@ -91,6 +100,7 @@ const log = rootLog.child({ module: "story-state", },);
           this._loadQuests(),
           this._loadWorldState(),
           this._loadParticipants(),
+          this.loadWorldStates(),
         ],);
       } catch (error) {
         this.error = error instanceof Error ? error.message : String(error,);

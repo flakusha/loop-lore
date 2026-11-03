@@ -1,0 +1,70 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  NPC State section — on-demand per-NPC story state read + optimistic edit
+  (reverts on failure). Reads shared state from the storyState scope; the
+  edit form is gated on the owner/GM check (canManageWorld).
+-->
+<div class="gm-section gm-npc-state" data-testid="gm-npc-state">
+  <h4 class="gm-section-title">{{{t("story.npcState")}}}</h4>
+  <div class="gm-npc-state-load">
+    <input
+      class="form-input"
+      x-ref="npcActorId"
+      :placeholder="t('story.npcActorId')"
+      data-testid="gm-npc-state-actor-input"
+    />
+    <button
+      class="btn btn-ghost btn-sm"
+      @click="loadNpcState($refs.npcActorId.value.trim())"
+      data-testid="gm-npc-state-load"
+    >
+      {{{t("story.loadNpc")}}}
+    </button>
+  </div>
+  <template x-if="npcState">
+    <div class="gm-npc-state-view">
+      <div class="gm-form-group">
+        <label class="form-label" for="gm-npc-health">{{{t("story.npcHealth")}}}</label>
+        <input
+          id="gm-npc-health"
+          class="form-input"
+          type="number"
+          x-model="npcDraft.health"
+          :disabled="!canManageWorld()"
+          data-testid="gm-npc-health"
+        />
+      </div>
+      <div class="gm-form-group">
+        <label class="form-label" for="gm-npc-mental">{{{t("story.npcMentalState")}}}</label>
+        <input
+          id="gm-npc-mental"
+          class="form-input"
+          x-model="npcDraft.mentalState"
+          :disabled="!canManageWorld()"
+          data-testid="gm-npc-mental"
+        />
+      </div>
+      <div class="gm-form-group">
+        <label class="form-label" for="gm-npc-location">{{{t("story.npcLocationId")}}}</label>
+        <input
+          id="gm-npc-location"
+          class="form-input"
+          x-model="npcDraft.locationId"
+          :disabled="!canManageWorld()"
+          data-testid="gm-npc-location"
+        />
+      </div>
+      <button
+        class="btn btn-primary btn-sm"
+        x-show="canManageWorld()"
+        @click="saveNpcState()"
+        data-testid="gm-npc-state-save"
+      >
+        {{{t("story.saveNpc")}}}
+      </button>
+      <p class="gm-section-hint" x-show="!canManageWorld()">{{{t("story.ownerGmOnly")}}}</p>
+    </div>
+  </template>
+</div>
