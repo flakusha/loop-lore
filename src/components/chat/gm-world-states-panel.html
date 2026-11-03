@@ -1,0 +1,40 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  World States section — paginated snapshot list + "Add state" form.
+  Reads shared state from the storyState scope; writes gate on the
+  owner/GM check (canManageWorld) mirroring the backend gate.
+-->
+<div class="gm-section gm-world-states" data-testid="gm-world-states">
+  <h4 class="gm-section-title">{{{t("story.worldStatesList")}}}</h4>
+  <div class="gm-world-states-list" x-show="worldStates.length > 0">
+    <template x-for="state in worldStates" :key="state.id">
+      <div class="gm-world-state-row" :data-testid="'gm-world-state-' + state.id">
+        <span class="gm-world-state-id" x-text="state.id"></span>
+        <span class="gm-world-state-desc" x-show="state.description" x-text="state.description"></span>
+        <span class="gm-world-state-date" x-show="state.created_at" x-text="state.created_at"></span>
+      </div>
+    </template>
+  </div>
+  <p class="gm-section-hint" x-show="worldStates.length === 0">{{{t("story.noWorldStates")}}}</p>
+  <p class="gm-section-hint" x-show="worldStatesTotal > 0">
+    {{{t("story.worldStatesCount")}}}: <span x-text="worldStatesTotal"></span>
+  </p>
+  <div class="gm-new-world-state" x-show="canManageWorld()">
+    <input
+      class="form-input"
+      x-ref="newWorldStateDesc"
+      :placeholder="t('story.stateDescription')"
+      data-testid="gm-world-states-new-input"
+    />
+    <button
+      class="btn btn-primary btn-sm"
+      @click="addWorldState($refs.newWorldStateDesc.value); $refs.newWorldStateDesc.value = ''"
+      data-testid="gm-world-states-new-submit"
+    >
+      {{{t("story.addState")}}}
+    </button>
+  </div>
+  <p class="gm-section-hint" x-show="!canManageWorld()">{{{t("story.ownerGmOnly")}}}</p>
+</div>
