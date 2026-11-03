@@ -99,6 +99,19 @@ describe("harness.acp config section", () => {
       .toThrow();
   });
 
+  it("accepts strategy failover", () => {
+    expect(() => validateAcpProfiles(acp([profile({ strategy: "failover", },),],),)).not.toThrow();
+  });
+
+  it("rejects an unimplemented strategy (best-of/split)", () => {
+    expect(() => validateAcpProfiles(acp([profile({ strategy: "best-of", },),],),)).toThrow(
+      /strategy "best-of" is not implemented/,
+    );
+    expect(() => validateAcpProfiles(acp([profile({ strategy: "split", },),],),)).toThrow(
+      /strategy "split" is not implemented/,
+    );
+  });
+
   it("json-schema meta exposes the harness flavor enum", () => {
     const section = harnessMeta.properties.acp as { properties?: Record<string, unknown> };
     const profiles = section.properties?.profiles as

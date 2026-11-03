@@ -89,6 +89,13 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
     );
   }
 
+  if (p.strategy !== undefined && p.strategy !== "failover") {
+    throw new Error(
+      `harness.acp.profiles["${p.name}"]: strategy "${p
+        .strategy as string}" is not implemented (only "failover" is supported)`,
+    );
+  }
+
   if (
     !Array.isArray(p.command,) || p.command.length === 0 || p.command.some((c,) => typeof c !== "string" || c === "")
   ) {
@@ -188,7 +195,7 @@ export const harnessMeta = {
               },
               strategy: {
                 type: "string",
-                enum: ["failover", "best-of", "split",],
+                enum: ["failover",],
                 description: "Multi-profile strategy (only failover implemented)",
               },
               tiers: {
