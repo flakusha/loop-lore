@@ -9,7 +9,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** Done
 **Status Note:** Not Started
 **Priority:** High
 
@@ -38,3 +38,5 @@ None — the research doc lists no blocking questions for this epic (the `key_gr
 
 
 git issue: eb61541
+
+**Resolved:** 2026-11-03 registry-driven close: git issue eb61541 (registry tip: 4ad530c63 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-LOREBOOK-INCLUSION-GROUPS d)

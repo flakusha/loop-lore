@@ -15885,7 +15885,7 @@
       "sillytavern-parity"
     ],
     "source": ".plan/epics/epic-lorebook-inclusion-groups.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "eb61541",
     "project": ""
   },
@@ -48029,7 +48029,7 @@
     "epic": "epic-lorebook-inclusion-groups",
     "tags": [],
     "source": ".plan/tickets/TASK-lorebook-inclusion-groups-schema-column-admission-gate-group.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-LOREBOOK-TEMPLATE-SEEDING": {
     "epic": "epic-character-core-system",
@@ -63142,7 +63142,7 @@
     "type": "TASK"
   },
   "TASK-WIRE-BATTLE-CHAT-SETUP-TEMPLATE-SELECTION-INTO-EGUI-FRONTEND": {
-    "hash": "pending",
+    "hash": "88d0a42",
     "extid": "TASK-WIRE-BATTLE-CHAT-SETUP-TEMPLATE-SELECTION-INTO-EGUI-FRONTEND",
     "type": "TASK",
     "title": "Wire battle chat-setup template selection into egui frontend",
@@ -63152,10 +63152,11 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-battle-chat-setup-template-selection-into-egui-frontend.md",
-    "status": "in_progress"
+    "status": "in_progress",
+    "git_issue": "88d0a42"
   },
   "TASK-WIRE-BATTLE-CHAT-SETUP-TEMPLATE-SELECTION-INTO-TUI-FRONTEND": {
-    "hash": "pending",
+    "hash": "ee92b3c",
     "extid": "TASK-WIRE-BATTLE-CHAT-SETUP-TEMPLATE-SELECTION-INTO-TUI-FRONTEND",
     "type": "TASK",
     "title": "Wire battle chat-setup template selection into TUI frontend",
@@ -63165,7 +63166,8 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-battle-chat-setup-template-selection-into-tui-frontend.md",
-    "status": "in_progress"
+    "status": "in_progress",
+    "git_issue": "ee92b3c"
   },
   "TASK-WIRE-COMBAT-ROUTES": {
     "epic": "epic-rpg-mechanics",
