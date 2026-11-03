@@ -91,8 +91,7 @@ describe("createHarnessRuntime", () => {
 
     expect(factory("omp-main", ["omp",],),).toBeInstanceOf(OmpAcpAdapter,);
     expect(factory("codex-sub", ["codex",],),).toBeInstanceOf(CodexAcpAdapter,);
-    // An unknown profile name falls back to the default flavor (omp); a
-    // CONFIGURED flavor with no shipped adapter is the guarded case.
+    // A CONFIGURED flavor with no shipped adapter is the guarded case.
     const unknownFlavor = {
       name: "bedrock-p",
       command: ["x",],
@@ -103,6 +102,17 @@ describe("createHarnessRuntime", () => {
     expect(
       () => harnessAdapterFactoryFor({ enabled: true, profiles: [unknownFlavor,], },)("bedrock-p", ["x",],),
     ).toThrow(/no ACP adapter factory/,);
+  });
+
+  it("throws when invoked with a profile name absent from the config", () => {
+    const acp: HarnessAcpConfig = {
+      enabled: true,
+      profiles: [{ name: "omp-main", command: ["omp",], tiers: {}, },],
+    };
+
+    expect(
+      () => harnessAdapterFactoryFor(acp,)("ghost", ["omp",],),
+    ).toThrow('no harness profile named "ghost" — adapter factory cannot resolve its flavor',);
   });
 });
 

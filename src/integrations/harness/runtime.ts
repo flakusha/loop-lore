@@ -66,8 +66,12 @@ export interface CreateHarnessRuntimeOptions {
  */
 export function harnessAdapterFactoryFor(acp: HarnessAcpConfig,): HarnessAdapterFactory {
   return (profile, command, options,) => {
-    const flavor = acp.profiles.find((p,) => p.name === profile)?.harness;
-    return resolveAdapterFactory(flavor,)(profile, command, options,);
+    const configured = acp.profiles.find((p,) => p.name === profile);
+    if (!configured) {
+      throw new Error(`no harness profile named "${profile}" — adapter factory cannot resolve its flavor`,);
+    }
+
+    return resolveAdapterFactory(configured.harness,)(profile, command, options,);
   };
 }
 
