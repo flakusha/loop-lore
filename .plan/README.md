@@ -11,9 +11,29 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 | --------------------- | ------- |
 | `tickets/`            | Task specs (authoring, review, iteration) |
 | `epics/`              | Epic definitions (major initiatives, includes merged design/roadmaps/ideas/research/features) |
-| `epics-index.md`      | Epic registry index (generated; `giwt plan gen-docs`); replaces the retired `.plan/epics.md` snapshot |
-| `priority-matrix.md`  | Generated priority × status view (`bun run plan:priority`; advisory `plan - priority` freshness gate) |
+| `epics-index.md`      | Epic registry index (generated, untracked; `bun run plan:artifacts`); replaces the retired `.plan/epics.md` snapshot |
+| `priority-matrix.md`  | Generated priority × status view (generated, untracked; `bun run plan:artifacts`; advisory `plan - priority` freshness gate) |
 | `backlog-archive.md`  | Historical archive of the dropped hand-maintained backlog tier files (2026-11-01) |
+
+## Generated artifacts (untracked)
+
+Six artifacts are machine-generated from the hand-written `.plan/` tree and are
+**not tracked in git** — they are rebuildable, and tracking them rewrote the
+generated set on every plan change:
+
+| Artifact | Generator |
+| --- | --- |
+| `code-map.json` | `bun run plan:map` |
+| `feature-matrix.md` | `bun run plan:matrix` |
+| `epics-index.md` | `bun run plan:docs` |
+| `interconnect.json`, `interconnect.md` | `bun run plan:links` |
+| `priority-matrix.md` | `bun run plan:priority` |
+
+Regenerate all of them with `bun run plan:artifacts`. A fresh clone has none of
+them: run it once before the advisory `plan - validate`, `code-map - freshness`,
+`plan - matrix` and `plan - priority` gates, which compare the on-disk artifact
+against a fresh rebuild. The ticket index (`.plan/tickets/index.json` + `.stamp`)
+stays tracked — it is the sync state, not a rebuild.
 
 ## Backlog tier files (dropped 2026-11-01)
 

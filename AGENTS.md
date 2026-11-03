@@ -614,9 +614,16 @@ giwt gi <command>
 
 - **`.plan/epics/`** — epic definitions (includes merged design/roadmaps/ideas/research/features content)
 - **`.plan/tickets/`** — task tickets
-- **`.plan/epics-index.md`** — consolidated epic status (auto-generated from `.plan/epics/`)
-- **`.plan/priority-matrix.md`** — generated priority × status view (`bun run plan:priority`; backlog tier files dropped 2026-11-01, archived in `.plan/backlog-archive.md`)
-- **`.plan/feature-matrix.md`** — feature matrix generated from the ticket index (auto-generated)
+- **`.plan/epics-index.md`** — consolidated epic status (auto-generated from `.plan/epics/`; untracked)
+- **`.plan/priority-matrix.md`** — generated priority × status view (`bun run plan:priority`; untracked; backlog tier files dropped 2026-11-01, archived in `.plan/backlog-archive.md`)
+- **`.plan/feature-matrix.md`** — feature matrix generated from the ticket index (auto-generated; untracked)
+
+The auto-generated plan artifacts (`code-map.json`, `epics-index.md`,
+`feature-matrix.md`, `interconnect.json`, `interconnect.md`, `priority-matrix.md`)
+are **not tracked** — they are rebuildable and were rewritten wholesale on every
+plan change. Regenerate them with `bun run plan:artifacts`; a fresh clone has
+none of them. The ticket index (`.plan/tickets/index.json` + `.stamp`) stays
+tracked: it is the sync state, not a rebuild.
 
 **`.plan/` is source of truth**; `docs/meta/` is reference only.
 
