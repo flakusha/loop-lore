@@ -3,7 +3,8 @@
 
 # TASK: NSFW consent-grant route missing
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** feat(nsfw): consent grant/revoke route with enforced chat scope
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-nsfw-ui
