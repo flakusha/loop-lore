@@ -56,6 +56,7 @@ import "./sidebar";
 import "./stat-allocation";
 import "./story-controls";
 import "./story-state";
+import "./story-turn-order";
 import "./template-library";
 import "./text-toolbar";
 import "./theme";
