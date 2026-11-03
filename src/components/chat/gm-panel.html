@@ -197,7 +197,8 @@
       participant/actor management
     -->
     <div x-show="$store.ui.gmAssistantTab === 'story'">
-      {{> chat/gm-story-panel.html }}
+      {{> chat/gm-story-panel.html }} {{> chat/gm-world-states-panel.html }} {{> chat/gm-npc-state-panel.html }} {{>
+      chat/story-turn-detail.html }}
       <div class="gm-story-guidance">
         <h4 class="gm-section-title">{{{t("story.guidance")}}}</h4>
         <div x-data="gmGuidance" x-init="init()">
