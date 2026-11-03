@@ -37,5 +37,13 @@ Turn order visualization for story mode.
 
 ## Files to Create
 
+- `src/frontend/alpine/story-turn-order.ts` — Alpine `storyTurnOrder()` component (supersedes the stale `src/frontend/story/*` paths below — that tree never existed; Alpine modules are canonical per the epic's Frontend Surface section)
+- `src/frontend/alpine/story-turn-order.test.ts`
+- `src/components/chat/gm-story-turn-order.html`
+
+<details><summary>Stale original list (kept for history)</summary>
+
 - `src/frontend/story/turn-order.ts`
 - `src/frontend/story/turn-indicator.ts`
+
+</details>
