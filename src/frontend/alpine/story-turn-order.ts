@@ -18,6 +18,7 @@
 
 import type { GroupTurnOrder, TurnOrderSlot, } from "./chat-types/participants-state";
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import { storyControl, } from "./story-controls";
@@ -146,7 +147,7 @@ export interface StoryTurnOrderComponent {
 
     async setInitiative(actorId: string, value: number,): Promise<void> {
       const chatId = activeChatId();
-      if (!chatId || !actorId) { return; }
+      if (!chatId || !actorId || !Number.isFinite(value,)) { return; }
       try {
         const res = await apiFetch(`/api/v1/chats/${chatId}/participants/${actorId}`, {
           method: "PUT",
@@ -165,7 +166,7 @@ export interface StoryTurnOrderComponent {
         log.warn("Initiative update failed", { chatId, actorId, error, },);
       }
 
-      this.$dispatch?.("show-toast", { type: "error", message: "participants.failedUpdate", },);
+      this.$dispatch?.("show-toast", { type: "error", message: t("participants.failedUpdate",), },);
     },
 
     async _loadSnapshot(chatId: string,): Promise<void> {

@@ -257,4 +257,18 @@ describe("storyTurnOrder component", () => {
     expect(calls,).toEqual([],);
     expect(component.snapshot,).toBeNull();
   });
+
+  test("setInitiative ignores non-finite values (cleared input)", async () => {
+    const component = makeComponent();
+    await component.load();
+    const putCount = calls.filter((c,) => c.method === "PUT").length;
+    await component.setInitiative("a2", Number.NaN,);
+
+    expect(calls.filter((c,) => c.method === "PUT").length,).toBe(putCount,);
+  });
+
+  test("component module is registered in the app bundle", async () => {
+    const index = await Bun.file(new URL("./index.ts", import.meta.url,),).text();
+    expect(index,).toContain('import "./story-turn-order";',);
+  });
 });
