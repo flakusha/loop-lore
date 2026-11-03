@@ -59719,7 +59719,7 @@
     "epic": "epic-synthetic-capture-wire-or-remove",
     "tags": [],
     "source": ".plan/tickets/TASK-synthetic-qa-capture-wire-or-remove-decision-admin-gated-cap.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY": {
     "epic": "epic-chat-context-optimization",
@@ -63152,7 +63152,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-battle-chat-setup-template-selection-into-egui-frontend.md",
-    "status": "in_progress",
+    "status": "done",
     "git_issue": "88d0a42"
   },
   "TASK-WIRE-BATTLE-CHAT-SETUP-TEMPLATE-SELECTION-INTO-TUI-FRONTEND": {
@@ -63166,7 +63166,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-battle-chat-setup-template-selection-into-tui-frontend.md",
-    "status": "in_progress",
+    "status": "done",
     "git_issue": "ee92b3c"
   },
   "TASK-WIRE-COMBAT-ROUTES": {
