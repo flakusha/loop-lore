@@ -1521,7 +1521,24 @@
       "completed": "Completed",
       "failed": "Failed",
       "abandoned": "Abandoned"
-    }
+    },
+    "worldStatesList": "World States",
+    "addState": "Add State",
+    "stateDescription": "Description (optional)",
+    "noWorldStates": "No world states yet.",
+    "worldStatesCount": "Total",
+    "ownerGmOnly": "Owner/GM only",
+    "npcState": "NPC State",
+    "npcActorId": "Actor ID",
+    "loadNpc": "Load",
+    "saveNpc": "Save",
+    "npcHealth": "Health",
+    "npcMentalState": "Mental state",
+    "npcLocationId": "Location ID",
+    "turnLookup": "Story Turn Lookup",
+    "turnIdPlaceholder": "Turn ID",
+    "lookupTurn": "Lookup",
+    "noTurnSelected": "No turn selected."
   },
   "crypto": {
     "encryptionNotConfigured": "Encryption not configured",
