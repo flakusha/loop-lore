@@ -3,7 +3,7 @@
 
 # TASK: Wire battle chat-setup template selection into egui frontend
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Substantially implemented as uncommitted dev dirt (no branch): api.rs template list/parse/create-body + unit tests, app.rs create form with template ComboBox — needs test run + landing, see Context.
 **Epic:** epic-battle-ui
 **Priority:** medium
@@ -25,3 +25,5 @@ Web parity reference: `src/frontend/pages/new-chat/index.ts:30-63` (template lis
 - [ ] "+ New" opens the create form; template ComboBox lists GET /api/v1/chat-setup-templates ("None" default, lazy-loaded on first open)
 - [ ] Create POSTs {name} + optional templateId (key omitted when None — web parity), then opens the new chat
 - [ ] Rust unit tests for template parse/create-body present in the dirt — run them green before landing
+
+**Resolved:** 2026-11-03 registry-driven close: git issue 88d0a42 (registry tip: 29f462126 Konstantin Fedotov Close issue)

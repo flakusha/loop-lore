@@ -3,7 +3,7 @@
 
 # TASK: Synthetic QA capture: wire-or-remove decision, admin-gated capture endpoint + export
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** epic-synthetic-capture-wire-or-remove
 **Priority:** low
 **Effort:** Medium
@@ -48,3 +48,5 @@ Epic: epic-synthetic-capture-wire-or-remove.md.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-03 registry-driven close: git issue de50ac4 (registry tip: e50a8bc4f Konstantin Fedotov Close issue)

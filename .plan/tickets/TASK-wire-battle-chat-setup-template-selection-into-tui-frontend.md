@@ -3,7 +3,7 @@
 
 # TASK: Wire battle chat-setup template selection into TUI frontend
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Partial in-flight work as uncommitted dev dirt (no branch): API layer sends templateId, picker UI step still missing — see Context.
 **Epic:** epic-battle-ui
 **Priority:** medium
@@ -25,3 +25,5 @@ Web parity reference: `src/frontend/pages/new-chat/index.ts:30-63` (template lis
 - [ ] Chat-create flow fetches GET /api/v1/chat-setup-templates and offers a template step (Enter = use highlight, Esc = skip, per CREATE_TEMPLATE_STATUS)
 - [ ] Picked template POSTed as `templateId`; blank chat omits the key (web parity)
 - [ ] Tests: picker step in chat-picker.test.ts + templateId body on the create-api path
+
+**Resolved:** 2026-11-03 registry-driven close: git issue ee92b3c (registry tip: 949b00613 Konstantin Fedotov Close issue)
