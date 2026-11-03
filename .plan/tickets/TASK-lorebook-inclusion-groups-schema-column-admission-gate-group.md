@@ -3,7 +3,7 @@
 
 # TASK: Lorebook inclusion groups: schema column, admission gate, group scoring
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-lorebook-inclusion-groups
@@ -46,3 +46,5 @@ Epic: epic-lorebook-inclusion-groups.md. Coordinate (no overlap) with TASK-loreb
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-03 registry-driven close: git issue 6bad0ee (registry tip: d03b15433 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-LOREBOOK-INCLUSION-GROUPS-S)
