@@ -85,6 +85,63 @@ export interface StoryChatDetail {
   turn_strategy?: string | null;
 }
 
+/** World-state snapshot row from GET /api/v1/worlds/:worldId/states. */
+export interface WorldStateSnapshot {
+  id: string;
+  turn_id?: string | null;
+  message_id?: string | null;
+  description?: string | null;
+  created_at?: string | null;
+}
+
+/** Body for POST /api/v1/worlds/:worldId/states. */
+export interface WorldStateCreateInput {
+  turnId?: string;
+  messageId?: string;
+  description?: string;
+}
+
+/** npc_states row as returned by GET /api/v1/worlds/:worldId/npc-states/:actorId. */
+export interface NpcStateRow {
+  id: string;
+  actor_id: string;
+  world_id: string;
+  location_id: string | null;
+  health: number;
+  mental_state: string;
+  knowledge: string;
+  relationships: string;
+  schedule: string;
+  updated_at: string;
+}
+
+/** Editable NPC-state fields sent to PUT /api/v1/worlds/:worldId/npc-states/:actorId. */
+export interface NpcStatePatch {
+  health?: number;
+  mentalState?: string;
+  locationId?: string;
+}
+
+/** Form draft backing the NPC-state edit inputs (string-typed for x-model). */
+export interface NpcStateDraft {
+  health: string;
+  mentalState: string;
+  locationId: string;
+}
+
+/** Story turn row from GET /api/v1/chats/:id/story-turns/:turnId. */
+export interface StoryTurnDetail {
+  id: string;
+  chat_id: string;
+  turn_number: number;
+  parent_message_id: string | null;
+  actor_id: string | null;
+  prompt_sent: string;
+  quality_score: number | null;
+  status: string;
+  quest_progress: string;
+}
+
 /** The story-state component factory's return shape. */
 export interface StoryStateComponent {
   chatId: string | null;
@@ -105,6 +162,20 @@ export interface StoryStateComponent {
   _worldId: string | null;
   /** Id of the story's current location (loaded from the chat detail). */
   _locationId: string | null;
+  /** World-state snapshots (GM panel world-states section). */
+  worldStates: WorldStateSnapshot[];
+  /** Total snapshot count from the last world-states page load. */
+  worldStatesTotal: number;
+  /** Per-NPC story state (GM panel NPC-state section). */
+  npcState: NpcStateRow | null;
+  /** Actor id the currently loaded npcState belongs to. */
+  npcStateActorId: string | null;
+  /** String-typed edit draft for the NPC-state form. */
+  npcDraft: NpcStateDraft;
+  /** Deep-linked story turn detail (turn-by-id lookup). */
+  turnDetail: StoryTurnDetail | null;
+  /** True while a turn-by-id lookup is in flight. */
+  turnDetailLoading: boolean;
   init(): Promise<void>;
   refresh(): Promise<void>;
   turnForMessage(messageId: string,): StoryTurnMeta | null;
@@ -112,6 +183,18 @@ export interface StoryStateComponent {
   questMilestones(quest: StoryQuest,): QuestMilestone[];
   questRewardChips(quest: StoryQuest,): string[];
   qualityClass(score: number,): string;
+  /** True when the viewer may create world states (owner/GM gate). */
+  canManageWorld(): boolean;
+  /** Load the paginated world-states list for the story's world. */
+  loadWorldStates(): Promise<void>;
+  /** Create a world-state snapshot from the form description, then refresh. */
+  addWorldState(description: string,): Promise<void>;
+  /** Load one NPC's story state and seed the edit draft. */
+  loadNpcState(actorId: string,): Promise<void>;
+  /** Save the NPC-state draft optimistically; revert on failure. */
+  saveNpcState(): Promise<void>;
+  /** Load a story turn by id (cached per chatId+turnId). */
+  loadStoryTurn(turnId: string,): Promise<void>;
   togglePause(): Promise<void>;
   stepTurn(): Promise<void>;
   escalateToMe(): Promise<void>;
