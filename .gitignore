@@ -119,3 +119,13 @@ docs/plan-gen/
 # newly created tickets/epics stage with plain `git add` (never add -f).
 !.plan/
 !.plan/**
+
+# Auto-generated plan artifacts — untracked, regenerate with `bun run plan:artifacts`.
+# They are rebuildable from the hand-written .plan/ tree, so keeping them in git
+# rewrote ~46 MB on every plan change (the interconnect pair alone is 46 MB).
+.plan/code-map.json
+.plan/epics-index.md
+.plan/feature-matrix.md
+.plan/interconnect.json
+.plan/interconnect.md
+.plan/priority-matrix.md
