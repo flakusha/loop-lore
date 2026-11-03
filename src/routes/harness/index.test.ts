@@ -24,6 +24,7 @@ import * as realQuery from "../../harness/query";
 import type { HarnessRunRecord, HarnessRunSummary, HarnessStats, } from "../../harness/types";
 import { serializeRun, toSummary, } from "../../harness/types";
 import { initHarnessAdminSettings, resetHarnessAdminSettings, } from "../../integrations/harness/admin-settings";
+import { getHarnessRuntime, initHarnessRuntime, resetHarnessRuntime, } from "../../integrations/harness/runtime";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { harnessRoutes, } from "./index";
 
@@ -228,6 +229,33 @@ describe("harnessRoutes", () => {
       expect(body.profiles[1]?.subscriptionBacked,).toBe(true,);
       expect(body.profiles[1]?.usageClasses,).toContain("subscription-backed",);
       expect(body.profiles[1]?.tosGrayzoneAcknowledged,).toBe(true,);
+    });
+
+    it("serves the boot-composed runtime's own config snapshot unchanged", async () => {
+      const acp: HarnessAcpConfig = {
+        enabled: true,
+        profiles: [{ name: "omp-main", command: ["omp",], tiers: {}, },],
+      };
+
+      // The boot pairing: the store's file layer and the outbound runtime
+      // compose from ONE snapshot, so the settings surface and the dispatch
+      // stack can never disagree about the configured profiles.
+      initHarnessAdminSettings(acp,);
+      initHarnessRuntime(acp,);
+      try {
+        const res = await get("admin", "/api/v1/harness/settings",);
+        expect(res.status,).toBe(200,);
+        const body = await res.json() as { enabled: boolean; profiles: Array<{ name: string }> };
+        expect(body.enabled,).toBe(true,);
+        expect(body.profiles.map((p,) => p.name),).toEqual(["omp-main",],);
+
+        // The routes and the runtime see the same composed singleton and the
+        // same snapshot the store was seeded from.
+        expect(getHarnessRuntime(),).toBe(getHarnessRuntime(),);
+        expect(getHarnessRuntime()?.acp,).toBe(acp,);
+      } finally {
+        resetHarnessRuntime();
+      }
     });
 
     it("reads the code defaults when the store was never seeded", async () => {

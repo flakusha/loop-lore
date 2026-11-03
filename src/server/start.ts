@@ -21,6 +21,7 @@ import { initializeProviders, } from "../generation";
 import { initDefaultHooks, } from "../generation/hooks";
 import { bindSharedQuotaEngine, } from "../generation/quota-engine";
 import { applyStoredHarnessSettings, initHarnessAdminSettings, } from "../integrations/harness/admin-settings";
+import { initHarnessRuntime, } from "../integrations/harness/runtime";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
@@ -47,8 +48,12 @@ export async function start() {
   initNsfwRuntimeConfig(config.nsfw,);
   // `loadConfig` omits the harness section entirely when unconfigured (the
   // schema default does not materialize it) — seed an empty section so the
-  // admin settings store still reads as "disabled, no profiles".
-  initHarnessAdminSettings(config.harness?.acp ?? { enabled: false, profiles: [], },);
+  // admin settings store still reads as "disabled, no profiles", and compose
+  // the outbound ACP runtime from the same snapshot (a disabled config
+  // composes nothing; both take effect on restart).
+  const harnessAcp = config.harness?.acp ?? { enabled: false, profiles: [], };
+  initHarnessAdminSettings(harnessAcp,);
+  initHarnessRuntime(harnessAcp,);
   initAssistantQuota(config.assistant,);
   // Seed the hot-apply snapshot and register live consumers so config edits
   // re-apply without a restart (see src/config/hot-apply.ts).
