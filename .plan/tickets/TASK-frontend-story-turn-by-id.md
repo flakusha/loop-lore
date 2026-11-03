@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** EPIC-STORY-MODE-UI first slice: story turn-order visualization + world-state/NPC-state CRUD wiring + turn-by-id lookup (frontend wiring of existing src/routes/story-states/ backend)
 **Priority:** P2 — Medium
 **Effort:** Small
 **Epic:** epic-story-mode-ui
