@@ -544,3 +544,65 @@
   gap: 6px;
   align-items: center;
 }
+
+/* ── Story turn-order panel (TASK-story-turn-order) ─────────────── */
+.gm-story-turn-order {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gm-story-turn-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.gm-story-turn-strategy {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border-default);
+  color: var(--text-tertiary, #888);
+}
+
+.gm-story-turn-slot.is-current {
+  background: var(--accent-soft, rgb(59 130 246 / 15%));
+}
+
+.gm-story-turn-slot.is-next {
+  outline: 1px solid var(--border-default);
+}
+
+.gm-story-turn-slot .badge {
+  font-size: 10px;
+}
+
+.gm-story-turn-init {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-tertiary, #888);
+}
+
+.gm-story-turn-init input {
+  width: 46px;
+  min-width: 0;
+}
+
+.gm-story-turn-step {
+  margin-left: auto;
+}
+
+@media (width <= 479px) {
+  .gm-story-turn-slot {
+    flex-wrap: wrap;
+  }
+
+  .gm-story-turn-step {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}

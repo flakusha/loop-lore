@@ -1,0 +1,56 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Story turn-order panel (TASK-story-turn-order) — queue from
+  GET /api/v1/chats/:id/turn-order (current/next per the chat's turn strategy)
+  with initiative values joined from GET /api/v1/chats/:id/participants.
+  Self-contained scope: mounted from the GM panel's Story tab inside
+  <div x-data="storyTurnOrder()" x-init="init()">. Direct story chats and
+  chats without AI participants have no snapshot — hint only, no actions.
+-->
+<div class="gm-story-turn-order" data-testid="story-turn-order">
+  <div class="gm-story-turn-head">
+    <h4 class="gm-section-title">{{{ t("story.turnOrder") }}}</h4>
+    <span class="gm-story-turn-strategy" x-show="strategy" x-text="strategy"></span>
+  </div>
+  <div class="gm-turn-order" x-show="queue.length > 0">
+    <template x-for="(slot, idx) in queue" :key="slot.actor_id">
+      <div
+        class="gm-turn-actor gm-story-turn-slot"
+        :class="{ 'is-current': slot.isCurrent, 'is-next': slot.isNext }"
+        :aria-current="slot.isCurrent ? 'true' : false"
+        data-testid="story-turn-slot"
+      >
+        <span class="gm-turn-index" x-text="idx + 1"></span>
+        <span class="gm-turn-name" x-text="slot.display_name"></span>
+        <span class="badge badge-current" x-show="slot.isCurrent" x-text="t('participants.current')"></span>
+        <span
+          class="badge badge-next"
+          x-show="slot.isNext"
+          x-text="nextIsExact ? t('participants.next') : t('story.upNext')"
+        ></span>
+        <label class="gm-story-turn-init">
+          <span :title="t('participants.initiative')">{{{ t("story.initiativeShort") }}}</span>
+          <input
+            type="number"
+            :value="slot.initiative ?? 0"
+            @change="setInitiative(slot.actor_id, Number($event.target.value))"
+            :data-testid="'story-turn-init-' + idx"
+          />
+        </label>
+        <button
+          class="btn btn-sm btn-ghost gm-story-turn-step"
+          @click="stepWith(slot.actor_id)"
+          :disabled="busy"
+          :data-testid="'story-turn-step-' + idx"
+          :title="t('story.stepWith')"
+        >
+          {{{ t("story.stepWith") }}}
+        </button>
+      </div>
+    </template>
+  </div>
+  <p class="gm-section-hint" x-show="queue.length > 0">{{{ t("story.turnOrderHint") }}}</p>
+  <p class="gm-section-hint" x-show="queue.length === 0">{{{ t("participants.noTurnOrder") }}}</p>
+</div>
