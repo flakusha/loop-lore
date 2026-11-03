@@ -65,8 +65,8 @@ export interface AcpProfileConfig {
   command: string[];
   /** Tier → concrete model mapping; at least one tier required. */
   tiers: Partial<Record<HarnessTierId, AcpTierConfig>>;
-  /** Selection strategy: only `failover` is implemented in this slice. */
-  strategy?: "failover" | "best-of" | "split";
+  /** Selection strategy: only `failover` is implemented. */
+  strategy?: "failover";
   /** Which shipped adapter speaks this profile's wire. Default: `"omp"`. */
   harness?: HarnessFlavor;
   /** Optional usage caps (rpm / tokensPerDay). */
