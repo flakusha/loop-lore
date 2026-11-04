@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** Backend lanes done 2026-11-04 (professions-service-routes worktree): skills routes, professions service+routes, config templates + seeding landed. Remaining: item templates (TASK-item-config-templates), frontend (TASK-skills-frontend, TASK-professions-frontend).
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -21,8 +21,8 @@ Three gaps identified: (1) **Skills & Professions** have DB tables + services bu
 
 | System              | DB Tables                                         | Service                     | Routes  | Frontend | Config Templates           | Seeding     |
 | ------------------- | ------------------------------------------------- | --------------------------- | ------- | -------- | -------------------------- | ----------- |
-| Skills              | `character_skills` (036)                          | ✅ `SkillsService`          | ❌ none | ❌ none  | ❌ none                    | ❌ none     |
-| Professions         | `professions`, `profession_specializations` (011) | ❌ none                     | ❌ none | ❌ none  | ❌ none                    | ❌ none     |
+| Skills              | `character_skills` (036)                          | ✅ `SkillsService`          | ✅ `src/routes/rpg/skills.ts` (9 endpoints + tests) | ❌ none  | ✅ `skills[]` template field | ✅ on start |
+| Professions         | `professions`, `profession_specializations` (011) | ✅ `ProfessionsService`     | ✅ `src/routes/rpg/professions.ts` (5 endpoints + tests) | ❌ none  | ✅ `professions[]` template field | ✅ on start |
 | Character templates | —                                                 | ✅ `seedCharacterTemplates` | —       | —        | ✅ exists (no skills/prof) | ✅ on start |
 | Item templates      | —                                                 | ❌ none                     | —       | —        | ❌ none                    | ❌ none     |
 
@@ -57,10 +57,10 @@ Three gaps identified: (1) **Skills & Professions** have DB tables + services bu
 
 ## Acceptance Criteria
 
-- [ ] Skills CRUD + XP + tree + prerequisites accessible via HTTP
-- [ ] Professions CRUD + progression + specializations accessible via HTTP
-- [ ] Seeded characters from config include their declared skills
-- [ ] Seeded characters from config include their declared professions
+- [x] Skills CRUD + XP + tree + prerequisites accessible via HTTP
+- [x] Professions CRUD + progression + specializations accessible via HTTP
+- [x] Seeded characters from config include their declared skills
+- [x] Seeded characters from config include their declared professions
 - [ ] Item templates in config seed idempotently on server start
 - [ ] Items link to unified `ItemCategory`/`ItemRarity` taxonomy
 - [ ] Skill tree visible in character panel (frontend)
