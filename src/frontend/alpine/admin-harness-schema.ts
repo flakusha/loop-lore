@@ -161,6 +161,28 @@ export const HarnessStatsSchema = Type.Object({
 },);
 
 /**
+ * Binary availability of one harness profile (TASK-optional-dep-packaging):
+ * a discriminated verdict — the binary's `--version` first line when
+ * spawnable, otherwise why the configured command cannot start. Probed
+ * lazily against the admin-configured argv only; never at module load.
+ */
+export const HarnessAvailabilitySchema = Type.Union([
+  Type.Object({
+    available: Type.Literal(true,),
+    /** First line of the binary's `--version` output; null when it printed none. */
+    version: Type.Union([Type.String(), Type.Null(),],),
+  },),
+  Type.Object({
+    available: Type.Literal(false,),
+    /** Why the configured command cannot be spawned (not found / spawn error). */
+    reason: Type.String({},),
+  },),
+],);
+
+/** Static view of {@link HarnessAvailabilitySchema} for typed row shaping. */
+export type HarnessAvailabilityView = Static<typeof HarnessAvailabilitySchema>;
+
+/**
  * One configured profile of `GET /api/v1/harness/settings`, decorated with
  * the static provider ToS matrix (`integrations/harness/provider-tos.ts`):
  * usage classes, subscription flag and the localized note key travel on the
@@ -175,6 +197,8 @@ export const HarnessProfileSettingsSchema = Type.Object({
   /** Locale key (`harness.tos.note.*`) of the provider ToS note. */
   noteKey: Type.String(),
   tosGrayzoneAcknowledged: Type.Boolean(),
+  /** Binary availability verdict for the profile's configured command. */
+  availability: HarnessAvailabilitySchema,
 },);
 
 /** `GET /api/v1/harness/settings` body (also the PUT response shape). */

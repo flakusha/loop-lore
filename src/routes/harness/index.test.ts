@@ -24,6 +24,7 @@ import * as realQuery from "../../harness/query";
 import type { HarnessRunRecord, HarnessRunSummary, HarnessStats, } from "../../harness/types";
 import { serializeRun, toSummary, } from "../../harness/types";
 import { initHarnessAdminSettings, resetHarnessAdminSettings, } from "../../integrations/harness/admin-settings";
+import * as realAvailability from "../../integrations/harness/availability";
 import { getHarnessRuntime, initHarnessRuntime, resetHarnessRuntime, } from "../../integrations/harness/runtime";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { harnessRoutes, } from "./index";
@@ -80,18 +81,24 @@ const STATS: HarnessStats = {
   toolingGaps: [{ toolingGap: "no-edit-tool", count: 1, },],
 };
 
+/**
+ * Command name guaranteed absent on any development machine, so the
+ * availability verdicts below are deterministic (`available: false`).
+ */
+const MISSING_BINARY = "loop-lore-no-such-binary";
+
 /** Shared settings-store fixture: the config the admin settings tests read. */
 const SETTINGS_FIXTURE: HarnessAcpConfig = {
   enabled: false,
   profiles: [
     {
       name: "omp-main",
-      command: ["omp", "acp",],
+      command: [MISSING_BINARY, "acp",],
       tiers: { good: { model: "test-provider/test-model", capabilities: ["tools",], }, },
     },
     {
       name: "codex-sub",
-      command: ["codex", "--acp",],
+      command: [MISSING_BINARY, "--acp",],
       harness: "codex",
       tiers: { good: { model: "test-provider/test-model", capabilities: ["tools",], }, },
     },
@@ -159,11 +166,30 @@ function withQuery(overrides: Record<string, unknown>,): void {
   mock.module("../../harness/query", () => ({ ...REAL_QUERY, ...overrides, }),);
 }
 
+/**
+ * The REAL availability module, captured at import time as a plain value
+ * snapshot — same mechanism as REAL_QUERY above. Tests that assert the
+ * available:true wire path stub `probeHarnessCommand` (a real probe would
+ * depend on the host's installed binaries); `withAvailability({})` restores
+ * the real module.
+ */
+const REAL_AVAILABILITY: Record<string, unknown> = { ...realAvailability, };
+
+/**
+ * Point the availability module at `overrides` on top of the real exports.
+ * Call with no overrides to restore the real probe.
+ * @param overrides - the availability functions to replace; empty restores the real ones.
+ */
+function withAvailability(overrides: Record<string, unknown>,): void {
+  mock.module("../../integrations/harness/availability", () => ({ ...REAL_AVAILABILITY, ...overrides, }),);
+}
+
 afterEach(() => {
   // A stub left installed outlives this file: mock.module is process-global,
   // so every later file of a non-isolated run would import it (see the
   // mirror-image restore in files.test.ts).
   mock.module("../../harness/query", () => REAL_QUERY,);
+  mock.module("../../integrations/harness/availability", () => REAL_AVAILABILITY,);
 },);
 
 describe("harnessRoutes", () => {
@@ -193,8 +219,14 @@ describe("harnessRoutes", () => {
       initHarnessAdminSettings({
         enabled: true,
         profiles: [
-          { name: "omp-main", command: ["omp",], tiers: {}, },
-          { name: "cc-sub", command: ["claude",], tiers: {}, harness: "claude-code", tosGrayzoneAcknowledged: true, },
+          { name: "omp-main", command: [MISSING_BINARY,], tiers: {}, },
+          {
+            name: "cc-sub",
+            command: [MISSING_BINARY,],
+            tiers: {},
+            harness: "claude-code",
+            tosGrayzoneAcknowledged: true,
+          },
         ],
       },);
 
@@ -210,6 +242,7 @@ describe("harnessRoutes", () => {
             subscriptionBacked: boolean;
             noteKey: string;
             tosGrayzoneAcknowledged: boolean;
+            availability: { available: boolean; reason?: string };
           }
         >;
       };
@@ -223,6 +256,7 @@ describe("harnessRoutes", () => {
         subscriptionBacked: false,
         noteKey: "harness.tos.note.omp",
         tosGrayzoneAcknowledged: false,
+        availability: { available: false, reason: `"${MISSING_BINARY}" not found on PATH`, },
       },);
 
       expect(body.profiles[1]?.flavor,).toBe("claude-code",);
@@ -234,7 +268,7 @@ describe("harnessRoutes", () => {
     it("serves the boot-composed runtime's own config snapshot unchanged", async () => {
       const acp: HarnessAcpConfig = {
         enabled: true,
-        profiles: [{ name: "omp-main", command: ["omp",], tiers: {}, },],
+        profiles: [{ name: "omp-main", command: [MISSING_BINARY,], tiers: {}, },],
       };
 
       // The boot pairing: the store's file layer and the outbound runtime
@@ -469,6 +503,47 @@ describe("harnessRoutes", () => {
       expect(omp.subscriptionBacked,).toBe(false,);
       expect(omp.usageClasses,).toContain("local",);
     });
+
+    it("decorates every profile with a lazily probed availability verdict", async () => {
+      resetHarnessAdminSettings();
+      initHarnessAdminSettings(SETTINGS_FIXTURE,);
+
+      // The fixture commands point at a name that cannot exist, so the
+      // verdict is deterministic: unavailable, with the probe's reason.
+      const res = await get("admin", "/api/v1/harness/settings",);
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as {
+        profiles: { name: string; availability: { available: boolean; reason: string } }[];
+      };
+
+      expect(body.profiles,).toHaveLength(2,);
+      for (const profile of body.profiles) {
+        expect(profile.availability.available,).toBe(false,);
+        expect(profile.availability.reason,).toContain(MISSING_BINARY,);
+      }
+    });
+
+    it("surfaces an available verdict with the probed version when the binary exists", async () => {
+      // A real probe would depend on the host's installed binaries, so the
+      // wire path for available:true is asserted against the stubbed probe.
+      withAvailability({
+        probeHarnessCommand: () => Promise.resolve({ available: true, version: "opencode 9.9.9", },),
+      },);
+
+      resetHarnessAdminSettings();
+      initHarnessAdminSettings(SETTINGS_FIXTURE,);
+
+      const res = await get("admin", "/api/v1/harness/settings",);
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as {
+        profiles: { availability: { available: boolean; version: string | null } }[];
+      };
+
+      expect(body.profiles,).toHaveLength(2,);
+      for (const profile of body.profiles) {
+        expect(profile.availability,).toEqual({ available: true, version: "opencode 9.9.9", },);
+      }
+    });
   });
 
   describe("PUT /api/v1/harness/settings", () => {
@@ -485,10 +560,13 @@ describe("harnessRoutes", () => {
       expect(res.status,).toBe(200,);
       const body = await res.json() as {
         enabled: boolean;
-        profiles: { name: string; tosGrayzoneAcknowledged: boolean }[];
+        profiles: { name: string; tosGrayzoneAcknowledged: boolean; availability: { available: boolean } }[];
       };
 
       expect(body.profiles.find((p,) => p.name === "codex-sub")?.tosGrayzoneAcknowledged,).toBe(true,);
+
+      // The save response is the same wire shape, availability included.
+      expect(body.profiles.every((p,) => p.availability.available === false),).toBe(true,);
 
       const stored = await db.selectFrom("system_config",).select("value",).where(
         "key",
