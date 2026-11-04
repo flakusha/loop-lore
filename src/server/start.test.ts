@@ -98,6 +98,10 @@ if (ISOLATED) {
   mock.module("../integrations/harness/admin-settings", () => ({
     applyStoredHarnessSettings: async () => {},
     initHarnessAdminSettings: () => {},
+    // isolation-gate imports these too — a partial mock breaks module
+    // linking for every importer; keep them on the file-config fallback.
+    isHarnessAdminSettingsSeeded: () => false,
+    getHarnessAdminSettings: () => ({ enabled: false, profiles: [], }),
   }),);
 
   mock.module("../plugins", () => ({
