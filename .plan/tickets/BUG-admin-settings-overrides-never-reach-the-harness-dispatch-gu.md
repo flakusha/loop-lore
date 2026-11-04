@@ -4,7 +4,7 @@
 # BUG: Admin settings overrides never reach the harness dispatch guard (reads config file only)
 
 **Status:** Done
-**Status Note:** Implemented on branch `harness-effective-view` (stacked on `acp-composition-root` @ `9c5c95116`); pending finalize behind the parked wave.
+**Status Note:** Implemented on branch `harness-effective-view` (stacked on `acp-composition-root` @ `9c5c95116`); pending finalize (dev index clean; other unfinalized branches: acp-composition-root, acp-strategy-enum, lorebook-inclusion-groups).
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
