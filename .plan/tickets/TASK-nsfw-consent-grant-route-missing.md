@@ -3,7 +3,7 @@
 
 # TASK: NSFW consent-grant route missing
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** feat(nsfw): consent grant/revoke route with enforced chat scope
 **Priority:** high
 **Effort:** Medium
@@ -124,15 +124,15 @@ The UI affordance (consent dialog) belongs to
 
 ## Acceptance Criteria
 
-- [ ] `NsfwConsentBody` exists in `src/validation/schemas/nsfw.ts`, is exported from the barrel, and declares `additionalProperties: false`
-- [ ] `POST /api/v1/nsfw/consent` persists a `given` row for (authenticated user, chat), and `recordNsfwConsent` gains its first production caller
-- [ ] A revoke action persists a `revoked` row, and the next gated write is denied with `consent_revoked`
-- [ ] A body carrying `userId` is rejected with 422 — the field is not in the DTO and `additionalProperties` is false, so the user id can only come from the session
-- [ ] The route rejects a `chatId` the caller does not participate in (403)
-- [ ] `POST /api/v1/nsfw/intimacy/action` and `POST /api/v1/nsfw/encounters` succeed for a chat where consent was granted
-- [ ] The same routes still deny with `consent_required` where consent was never granted
-- [ ] A chat-scoped NSFW write request without a `chatId` is rejected with 422 at the boundary — the consent stage is no longer skippable by omission
-- [ ] Route-level tests cover: grant, revoke, client-supplied userId 422, wrong-chat 403, missing-consent 403, granted-consent success, chatless write 422
+- [x] `NsfwConsentBody` exists in `src/validation/schemas/nsfw.ts`, is exported from the barrel, and declares `additionalProperties: false`
+- [x] `POST /api/v1/nsfw/consent` persists a `given` row for (authenticated user, chat), and `recordNsfwConsent` gains its first production caller
+- [x] A revoke action persists a `revoked` row, and the next gated write is denied with `consent_revoked`
+- [x] A body carrying `userId` is rejected with 422 — the field is not in the DTO and `additionalProperties` is false, so the user id can only come from the session
+- [x] The route rejects a `chatId` the caller does not participate in (403)
+- [x] `POST /api/v1/nsfw/intimacy/action` and `POST /api/v1/nsfw/encounters` succeed for a chat where consent was granted
+- [x] The same routes still deny with `consent_required` where consent was never granted
+- [x] A chat-scoped NSFW write request without a `chatId` is rejected with 422 at the boundary — the consent stage is no longer skippable by omission
+- [x] Route-level tests cover: grant, revoke, client-supplied userId 422, wrong-chat 403, missing-consent 403, granted-consent success, chatless write 422
 
 ## Files
 
@@ -168,10 +168,39 @@ The UI affordance (consent dialog) belongs to
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Shipped `POST /api/v1/nsfw/consent` in `src/routes/nsfw/consent.ts`, mounted from
+`src/routes/nsfw/index.ts` (`nsfwRoutes(opts, prefix)`) so the versioned path
+is the real one. The body DTO is `NsfwConsentBody` in
+`src/validation/schemas/nsfw.ts`, exported through the schemas barrel: a
+closed object (`additionalProperties: false`) with a required `chatId`, a
+required `action`, and optional `scope` / `reason`. The action vocabulary is
+the consent ledger's own `given` / `revoked` — the same words
+`recordNsfwConsent` and `hasActiveConsent` use — so the handler hands the
+value straight to the ledger with no mapping layer. `action` is a plain
+`t.Union` of two literals, not `t.UnionEnum`, so an absent `action` is a 422
+instead of silently defaulting to the first member.
+
+`chatId` is now REQUIRED on the three chat-scoped write DTOs
+(`NsfwIntimacyActionBody`, `NsfwSeductionAttemptBody`,
+`NsfwEncounterCreateBody`); every caller and test was updated. The chat id
+was the way to skip the consent stage by omission, so the omission now
+closes at the boundary with a 422.
+
+The participation rule: the caller must participate in the target chat. The
+route reads `getChatParticipantUserIds` (the users backing the chat's
+actors) and, failing that, falls back to the chat's creator — the creator
+may hold no participant row of their own. A caller who is neither returns
+403, so the route cannot become a consent-row writer for arbitrary chats.
+
+The raw body is re-checked in the handler. Elysia strips unknown keys of a
+`body` schema instead of refusing them, so a client-supplied `userId` would
+be silently ignored rather than rejected. The `parse` hook keeps the raw
+request object and the handler validates it against the closed DTO, which
+is what turns a client-supplied `userId` into the 422 this route owes the
+caller. The user id always comes from the session.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
