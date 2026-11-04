@@ -56,7 +56,7 @@ Spawn official binary only; never extract credentials; single-user/single-machin
 - [x] opencode adapter
 - [x] omp adapter
 - [x] claude-code adapter
-- [ ] permission/approval flow
+- [x] permission/approval flow
 - [ ] model discovery + capability enrichment
 - [ ] message persistence mapping
 - [x] per-user isolation gate
