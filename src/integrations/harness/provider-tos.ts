@@ -92,3 +92,20 @@ export function providerTosInfo(flavor?: string,): HarnessProviderTosInfo {
 
   return info;
 }
+
+/**
+ * Whether a profile's flavor is ToS-gated (can drive a provider
+ * subscription). Fail-closed: a flavor with no matrix entry — impossible
+ * through config validation, but reachable from hand-built configs — is
+ * treated as GATED, never auto-allowed
+ * (BUG-tos-dispatch-guard-denies-local-api-profiles-that-the-bindin).
+ * @param flavor - the profile's `harness` value, when set
+ * @returns true when dispatch requires a ToS greyzone acknowledgement.
+ */
+export function providerTosGated(flavor?: string,): boolean {
+  try {
+    return providerTosInfo(flavor,).subscriptionBacked;
+  } catch {
+    return true;
+  }
+}
