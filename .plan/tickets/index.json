@@ -31151,6 +31151,20 @@
     "status": "Not Started",
     "git_issue": "b2af6ed"
   },
+  "TASK-BEVY-CONSUMER-APP-SPIKE-HEADLESS-BEVY-CI-TESTING-BRP-LOOPBAC": {
+    "hash": "7566a96",
+    "git_issue": "7566a96",
+    "extid": "TASK-BEVY-CONSUMER-APP-SPIKE-HEADLESS-BEVY-CI-TESTING-BRP-LOOPBAC",
+    "type": "TASK",
+    "title": "Bevy consumer app spike: headless + bevy_ci_testing + BRP loopback",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-bevy-consumer-app-spike-headless-bevy-ci-testing-brp-loopbac.md",
+    "status": "open"
+  },
   "TASK-BEVY-EXPORT-PROFILE": {
     "hash": "c79fc05",
     "git_issue": "c79fc05",
@@ -38219,6 +38233,20 @@
     "title": "Dev Tooling Updates — Biome, dprint, stylelint",
     "type": "TASK"
   },
+  "TASK-DEVICE-TIER-DETECTOR-FOR-3D-PROGRESSIVE-ENHANCEMENT-GATE": {
+    "hash": "36dc268",
+    "git_issue": "36dc268",
+    "extid": "TASK-DEVICE-TIER-DETECTOR-FOR-3D-PROGRESSIVE-ENHANCEMENT-GATE",
+    "type": "TASK",
+    "title": "Device-tier detector for 3D progressive enhancement gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-device-tier-detector-for-3d-progressive-enhancement-gate.md",
+    "status": "open"
+  },
   "TASK-DIFF-SCOPED-COVERAGE-GATE-FLOORS-FILES-THE-BRANCH-DID-NOT-AU": {
     "hash": "7c2b079",
     "git_issue": "7c2b079",
@@ -41679,6 +41707,20 @@
     "source": ".plan/tickets/TASK-fix-git-merge-aware-dag-rewrite-for-empty-commit-removal-in-.md",
     "status": "Not Started"
   },
+  "TASK-FIX-GODOT-ADDON-API-NAMES-IN-EPIC-GAME-ENGINE-SDKS-WEBSOCKET": {
+    "hash": "28cc0bb",
+    "git_issue": "28cc0bb",
+    "extid": "TASK-FIX-GODOT-ADDON-API-NAMES-IN-EPIC-GAME-ENGINE-SDKS-WEBSOCKET",
+    "type": "TASK",
+    "title": "Fix Godot addon API names in epic-game-engine-sdks (WebSocketClient to WebSocketPeer)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fix-godot-addon-api-names-in-epic-game-engine-sdks-websocket.md",
+    "status": "open"
+  },
   "TASK-FIX-HTML-INLINE-SCRIPTS": {
     "epic": "epic-continuous-improvement",
     "extid": "TASK-FIX-HTML-INLINE-SCRIPTS",
@@ -41952,6 +41994,20 @@
     ],
     "title": "Fractal locations migration (013_locations_fractal.ts)",
     "type": "TASK"
+  },
+  "TASK-FREEZE-STORYEVENT-AS-VERSIONED-SRC-TYPE-ENGINE-SDK-PREREQUIS": {
+    "hash": "887c9dc",
+    "git_issue": "887c9dc",
+    "extid": "TASK-FREEZE-STORYEVENT-AS-VERSIONED-SRC-TYPE-ENGINE-SDK-PREREQUIS",
+    "type": "TASK",
+    "title": "Freeze StoryEvent as versioned src type (engine SDK prerequisite)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-freeze-storyevent-as-versioned-src-type-engine-sdk-prerequis.md",
+    "status": "open"
   },
   "TASK-FRIENDLY-PORT-CONFLICT-ERROR-ON-BOOT-EADDRINUSE": {
     "hash": "4d06224",
@@ -43616,6 +43672,20 @@
     ],
     "title": "GM/Assistant Story Whitenotes System",
     "type": "TASK"
+  },
+  "TASK-GODOT-GDSCRIPT-ADDON-SKELETON-CI-EXPORT-RECIPE-EXAMPLE-2D-SC": {
+    "hash": "6640613",
+    "git_issue": "6640613",
+    "extid": "TASK-GODOT-GDSCRIPT-ADDON-SKELETON-CI-EXPORT-RECIPE-EXAMPLE-2D-SC",
+    "type": "TASK",
+    "title": "Godot GDScript addon skeleton + CI export recipe + example 2D scene",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-godot-gdscript-addon-skeleton-ci-export-recipe-example-2d-sc.md",
+    "status": "open"
   },
   "TASK-GODOT-HEADLESS-IMPORT-VERIFICATION": {
     "hash": "a96d730",
@@ -55346,6 +55416,20 @@
     "title": "Reconcile `*.ts` import extensions (user-seeding session)",
     "type": "TASK"
   },
+  "TASK-RECONCILE-WORLD-DISPLAY-PLAN-DRIFT-FROM-2D-CANVAS-3D-WORLD-R": {
+    "hash": "f2e4cc6",
+    "git_issue": "f2e4cc6",
+    "extid": "TASK-RECONCILE-WORLD-DISPLAY-PLAN-DRIFT-FROM-2D-CANVAS-3D-WORLD-R",
+    "type": "TASK",
+    "title": "Reconcile world-display plan drift from 2d-canvas-3d-world research",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-world-display-plan-drift-from-2d-canvas-3d-world-r.md",
+    "status": "open"
+  },
   "TASK-RECONCILIATION-PLAN": {
     "epic": "epic-logic-reconciliation",
     "extid": "TASK-RECONCILIATION-PLAN",
@@ -61666,6 +61750,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-triage-knip-src-findings.md",
     "status": "done"
+  },
+  "TASK-TS-REFERENCE-ENGINE-CLIENT-VS-FROZEN-STORYEVENT-ONE-BROWSER-": {
+    "hash": "775871d",
+    "git_issue": "775871d",
+    "extid": "TASK-TS-REFERENCE-ENGINE-CLIENT-VS-FROZEN-STORYEVENT-ONE-BROWSER-",
+    "type": "TASK",
+    "title": "TS reference engine client vs frozen StoryEvent + one browser scene",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ts-reference-engine-client-vs-frozen-storyevent-one-browser-.md",
+    "status": "open"
   },
   "TASK-TTS-EDGE-INTEGRATION": {
     "epic": "epic-audio-video-sound",
