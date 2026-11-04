@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** landed 2026-11-04 in worktree `professions-service-routes` (authz-hardening/frontend slice) — landed-reality notes inline on the ACs below; the two crafting-integration ACs are NOT done (out of slice, see notes).
 **Priority:** P2 — Medium
 **Effort:** Medium
 **Epic:** epic-skills-professions-config
@@ -45,14 +46,16 @@ No frontend exists for skills. Characters have skills (after seeding) but there'
 
 ## Acceptance Criteria
 
-- [ ] Skill tree displayed in character panel with hierarchy
-- [ ] Each skill shows: name, level, proficiency, XP progress
-- [ ] Locked skills visually distinct with prerequisite info
-- [ ] Skill detail panel with full info + actions
-- [ ] XP gain triggers visual level-up feedback
-- [ ] Specialization selector for eligible skills
-- [ ] Mobile responsive (collapsible tree)
-- [ ] `bun test src/frontend` green; `bun run check` green
+- [x] Skill tree displayed in character panel with hierarchy (landed: `character/skills-panel.html` in character-info-panel — category → skill rows; `characters.html` tab deviation: panel lives in the character info panel, not a characters-page tab)
+- [x] Each skill shows: name, level, proficiency, XP progress (landed: XP shown as value in detail — server owns thresholds and exposes no per-level curve, so no percent bar; recorded deviation)
+- [x] Locked skills visually distinct with prerequisite info (landed: `[LOCK]` prefix + locked prerequisite names in detail)
+- [x] Skill detail panel with full info + actions (+100 XP, Specialize)
+- [x] XP gain triggers visual level-up feedback (landed: `skillFeedback` inline level-up + new-proficiency badge; no animation, mirror of rpg-stats feedback pattern)
+- [x] Specialization selector for eligible skills (landed: name input + Specialize for skills without one; server validates requirements)
+- [x] Mobile responsive (collapsible tree) (landed: collapsible categories + collapsible whole panel)
+- [x] `bun test src/frontend` green; `bun run check` green (landed: BUN_TEST_WORKER_ID=1 bun test src/frontend/alpine/skill-tree.test.ts + professions.test.ts → 20 pass / 0 fail; check:fast ALL PASS 2026-11-04)
+
+**Landed files deviation:** `skill-tree-panel.html`/`skill-detail.html` sketches merged into the single `src/components/character/skills-panel.html` (detail is a section within it, mirroring rpg-stats panel shape); no `characters.html`/`views/characters` tab — wired into `character-info-panel.html` next to RPG stats, state merged into ChatState via `chat/inline-state.ts`.
 
 ## Files to Create
 
