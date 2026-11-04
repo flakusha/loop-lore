@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** P1 — High
 **Effort:** Medium
 **Epic:** epic-skills-professions-config
