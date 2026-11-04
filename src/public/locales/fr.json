@@ -565,6 +565,23 @@
       "errorTooLong": "Les étiquettes doivent contenir au plus 64 caractères.",
       "errorDuplicate": "Étiquette en doublon : {tag}",
       "errorTooMany": "Au plus 200 étiquettes sont autorisées."
+    },
+    "providerWizard": {
+      "title": "Connecter un fournisseur",
+      "preset": "Fournisseur prédéfini",
+      "custom": "Personnalisé",
+      "baseUrl": "URL de base",
+      "label": "Libellé",
+      "apiKey": "Clé d'API",
+      "apiKeyStored": "Une clé est déjà enregistrée. Laissez ce champ vide pour la conserver.",
+      "setDefault": "Définir comme fournisseur par défaut",
+      "testTitle": "Tester la connexion et les rôles",
+      "test": "Tester la connexion",
+      "unreachable": "Injoignable",
+      "missing": "Ce qui manque",
+      "missingFields": "Des champs obligatoires sont manquants",
+      "configured": "Fournisseurs configurés",
+      "importInstead": "Importer un fichier de configuration à la place"
     }
   },
   "errors": {
@@ -1780,7 +1797,8 @@
     "classifierTagsSaved": "Étiquettes du classificateur enregistrées",
     "classifierTagsSaveFailed": "Échec de l'enregistrement des étiquettes du classificateur",
     "characterUpdated": "Personnage {name} mis à jour",
-    "failedUpdateCharacter": "Échec de la mise à jour du personnage"
+    "failedUpdateCharacter": "Échec de la mise à jour du personnage",
+    "providerSaved": "Fournisseur enregistré"
   },
   "status": {
     "characterResponding": "Le personnage répond...",

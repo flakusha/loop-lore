@@ -845,7 +845,13 @@
         </div>
         <template x-if="!loadingModels">
           <div style="padding: var(--space-6)">
-            <div style="display: flex; justify-content: flex-end; margin-bottom: var(--space-4)">
+            <div style="display: flex; justify-content: flex-end; gap: var(--space-2); margin-bottom: var(--space-4)">
+              <button
+                class="btn btn-primary btn-sm"
+                @click="openProviderWizard()"
+                x-text="t('admin.providerWizard.title')"
+              >
+              </button>
               <button
                 class="btn btn-secondary btn-sm"
                 @click="rescanProviders()"
@@ -3398,5 +3404,8 @@
     <div x-show="activeTab === 'federation'">
       {{> federation/admin-federation-panel.html }}
     </div>
+
+    <!-- Provider Connection Wizard (TASK-provider-connection-wizard-core-first-run-provider-connectio) -->
+    {{> setup/provider-wizard.html }}
   </main>
 </div>

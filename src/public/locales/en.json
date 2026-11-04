@@ -644,6 +644,23 @@
       "errorTooLong": "Tags must be at most {max} characters.",
       "errorDuplicate": "Duplicate tag: {tag}",
       "errorTooMany": "At most {max} tags are allowed."
+    },
+    "providerWizard": {
+      "title": "Connect a provider",
+      "preset": "Provider preset",
+      "custom": "Custom",
+      "baseUrl": "Base URL",
+      "label": "Label",
+      "apiKey": "API key",
+      "apiKeyStored": "A key is already stored. Leave this blank to keep it.",
+      "setDefault": "Set as default provider",
+      "testTitle": "Test connection & roles",
+      "test": "Test connection",
+      "unreachable": "Unreachable",
+      "missing": "What is missing",
+      "missingFields": "Required fields are missing",
+      "configured": "Configured providers",
+      "importInstead": "Import a configuration file instead"
     }
   },
   "errors": {
@@ -1886,7 +1903,8 @@
     "classifierTagsSaved": "Classifier tags saved",
     "classifierTagsSaveFailed": "Failed to save classifier tags",
     "characterUpdated": "Character {name} updated",
-    "failedUpdateCharacter": "Failed to update character"
+    "failedUpdateCharacter": "Failed to update character",
+    "providerSaved": "Provider saved"
   },
   "wizard": {
     "previewTitle": "Create {type} — Preview",

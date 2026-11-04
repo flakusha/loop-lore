@@ -565,6 +565,23 @@
       "errorTooLong": "タグは64文字以内にしてください。",
       "errorDuplicate": "重複したタグ: {tag}",
       "errorTooMany": "タグは最大200個までです。"
+    },
+    "providerWizard": {
+      "title": "プロバイダーを接続",
+      "preset": "プロバイダーのプリセット",
+      "custom": "カスタム",
+      "baseUrl": "ベース URL",
+      "label": "ラベル",
+      "apiKey": "API キー",
+      "apiKeyStored": "キーはすでに保存されています。空欄のままにすると保存済みのキーが維持されます。",
+      "setDefault": "既定のプロバイダーに設定",
+      "testTitle": "接続とロールの確認",
+      "test": "接続をテスト",
+      "unreachable": "接続できません",
+      "missing": "不足している項目",
+      "missingFields": "必須項目が未入力です",
+      "configured": "設定済みのプロバイダー",
+      "importInstead": "代わりに設定ファイルをインポート"
     }
   },
   "errors": {
@@ -1780,7 +1797,8 @@
     "classifierTagsSaved": "分類タグを保存しました",
     "classifierTagsSaveFailed": "分類タグの保存に失敗しました",
     "characterUpdated": "キャラクター {name} を更新しました",
-    "failedUpdateCharacter": "キャラクターの更新に失敗しました"
+    "failedUpdateCharacter": "キャラクターの更新に失敗しました",
+    "providerSaved": "プロバイダーを保存しました"
   },
   "status": {
     "characterResponding": "キャラクターが応答中...",

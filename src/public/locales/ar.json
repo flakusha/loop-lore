@@ -565,6 +565,23 @@
       "errorTooLong": "يجب ألا تتجاوز الوسوم 64 حرفًا.",
       "errorDuplicate": "وسم مكرر: {tag}",
       "errorTooMany": "يُسمح بـ 200 وسم كحد أقصى."
+    },
+    "providerWizard": {
+      "title": "ربط مزوّد",
+      "preset": "مزوّد مُعدّ مسبقًا",
+      "custom": "مخصص",
+      "baseUrl": "عنوان URL الأساسي",
+      "label": "التسمية",
+      "apiKey": "مفتاح API",
+      "apiKeyStored": "يوجد مفتاح محفوظ بالفعل. اترك الحقل فارغًا للإبقاء عليه.",
+      "setDefault": "تعيينه كمزوّد افتراضي",
+      "testTitle": "اختبار الاتصال والأدوار",
+      "test": "اختبار الاتصال",
+      "unreachable": "غير متاح",
+      "missing": "ما الذي ينقص",
+      "missingFields": "حقول إلزامية مفقودة",
+      "configured": "المزوّدات المُهيّأة",
+      "importInstead": "استيراد ملف إعدادات بدلاً من ذلك"
     }
   },
   "errors": {
@@ -1780,7 +1797,8 @@
     "classifierTagsSaved": "تم حفظ وسوم المصنف",
     "classifierTagsSaveFailed": "فشل حفظ وسوم المصنف",
     "characterUpdated": "تم تحديث الشخصية {name}",
-    "failedUpdateCharacter": "فشل تحديث الشخصية"
+    "failedUpdateCharacter": "فشل تحديث الشخصية",
+    "providerSaved": "تم حفظ المزوّد"
   },
   "status": {
     "characterResponding": "الشخصية ترد...",

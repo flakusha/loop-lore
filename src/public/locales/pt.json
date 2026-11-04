@@ -565,6 +565,23 @@
       "errorTooLong": "As etiquetas devem ter no máximo 64 caracteres.",
       "errorDuplicate": "Etiqueta duplicada: {tag}",
       "errorTooMany": "No máximo 200 etiquetas são permitidas."
+    },
+    "providerWizard": {
+      "title": "Conectar um provedor",
+      "preset": "Provedor predefinido",
+      "custom": "Personalizado",
+      "baseUrl": "URL base",
+      "label": "Rótulo",
+      "apiKey": "Chave de API",
+      "apiKeyStored": "Já existe uma chave guardada. Deixe em branco para a manter.",
+      "setDefault": "Definir como provedor predefinido",
+      "testTitle": "Testar a ligação e as funções",
+      "test": "Testar ligação",
+      "unreachable": "Inacessível",
+      "missing": "O que falta",
+      "missingFields": "Faltam campos obrigatórios",
+      "configured": "Provedores configurados",
+      "importInstead": "Importar um ficheiro de configuração em vez disso"
     }
   },
   "errors": {
@@ -1780,7 +1797,8 @@
     "classifierTagsSaved": "Etiquetas do classificador salvas",
     "classifierTagsSaveFailed": "Falha ao salvar as etiquetas do classificador",
     "characterUpdated": "Personagem {name} atualizado",
-    "failedUpdateCharacter": "Falha ao atualizar personagem"
+    "failedUpdateCharacter": "Falha ao atualizar personagem",
+    "providerSaved": "Provedor guardado"
   },
   "status": {
     "characterResponding": "O personagem está respondendo...",
