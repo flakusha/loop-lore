@@ -37309,6 +37309,20 @@
     "source": ".plan/tickets/TASK-DATASET-EXPORT-LAYER-SFT-DPO-IMAGE-AUDIO.md",
     "status": "open"
   },
+  "TASK-DATASET-LABEL-GRADE-QUEUE-PLUS-EVAL-DASHBOARD-UI": {
+    "hash": "b7cad68",
+    "git_issue": "b7cad68",
+    "extid": "TASK-DATASET-LABEL-GRADE-QUEUE-PLUS-EVAL-DASHBOARD-UI",
+    "type": "TASK",
+    "title": "Dataset label-grade queue plus eval dashboard UI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dataset-label-grade-queue-plus-eval-dashboard-ui.md",
+    "status": "open"
+  },
   "TASK-DB-ADD-CREATED-AT-UPDATED-AT-METADATA-TO-ACTOR-AND-CHARACTER": {
     "epic": "(none — hygiene/self-contained)",
     "extid": "TASK-DB-ADD-CREATED-AT-UPDATED-AT-METADATA-TO-ACTOR-AND-CHARACTER",
@@ -39757,6 +39771,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-enforce-viewer-id-contract-in-memory-injection.md",
     "status": "Not Started"
+  },
+  "TASK-ENGINE-DEMO-SCENE-PLUS-OFFLINE-FALLBACK-STORY": {
+    "hash": "3e46d82",
+    "git_issue": "3e46d82",
+    "extid": "TASK-ENGINE-DEMO-SCENE-PLUS-OFFLINE-FALLBACK-STORY",
+    "type": "TASK",
+    "title": "Engine demo scene plus offline-fallback story",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-engine-demo-scene-plus-offline-fallback-story.md",
+    "status": "open"
   },
   "TASK-ENGINE-DOCS-SEARCH": {
     "hash": "d59364a",
@@ -48313,6 +48341,20 @@
     "title": "Markdown Preview Before Send",
     "type": "TASK"
   },
+  "TASK-MARKETPLACE-PREREQS-CARD-WORLD-ROUND-TRIP-PLUS-LICENSE-PLUS-": {
+    "hash": "d8fa9dd",
+    "git_issue": "d8fa9dd",
+    "extid": "TASK-MARKETPLACE-PREREQS-CARD-WORLD-ROUND-TRIP-PLUS-LICENSE-PLUS-",
+    "type": "TASK",
+    "title": "Marketplace prereqs: card-world round-trip plus license plus hash",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-marketplace-prereqs-card-world-round-trip-plus-license-plus-.md",
+    "status": "open"
+  },
   "TASK-MARKUPLINT-DIFF-SCOPED-TEMPLATE-GATE": {
     "epic": "(none — hygiene/self-contained)",
     "extid": "TASK-MARKUPLINT-DIFF-SCOPED-TEMPLATE-GATE",
@@ -48796,6 +48838,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-mcp-client-over-stdio-and-streamable-http.md",
     "status": "Not Started"
+  },
+  "TASK-MCP-OVER-ACP-TRANSPORT-AFTER-BOTH-SERVERS-LAND": {
+    "hash": "a892852",
+    "git_issue": "a892852",
+    "extid": "TASK-MCP-OVER-ACP-TRANSPORT-AFTER-BOTH-SERVERS-LAND",
+    "type": "TASK",
+    "title": "MCP-over-ACP transport after both servers land",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mcp-over-acp-transport-after-both-servers-land.md",
+    "status": "open"
   },
   "TASK-MCP-STDIO-SERVER-VIA-TYPESCRIPT-SDK": {
     "hash": "93a1ef8",
@@ -57630,6 +57686,20 @@
     "source": ".plan/tickets/TASK-rsi-scope-resolver-per-principal-kind.md",
     "status": "Not Started"
   },
+  "TASK-RULESET-MODULE-ABSTRACTION-PLUS-CAMPAIGN-LINKS-AND-SNAPSHOTS": {
+    "hash": "0cd547d",
+    "git_issue": "0cd547d",
+    "extid": "TASK-RULESET-MODULE-ABSTRACTION-PLUS-CAMPAIGN-LINKS-AND-SNAPSHOTS",
+    "type": "TASK",
+    "title": "Ruleset module abstraction plus campaign links and snapshots",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ruleset-module-abstraction-plus-campaign-links-and-snapshots.md",
+    "status": "open"
+  },
   "TASK-RUNGIT-VCS-SEAM-HARDENING-FOR-FUTURE-ADAPTERS": {
     "hash": "3ad6479",
     "git_issue": "3ad6479",
@@ -62780,6 +62850,20 @@
     ],
     "title": "VN Q&A Mode",
     "type": "TASK"
+  },
+  "TASK-VN-SCENE-GRAPH-AUTHORING-VIEW-WITH-EXPLICIT-CHOICE-VARIABLES": {
+    "hash": "b272cb2",
+    "git_issue": "b272cb2",
+    "extid": "TASK-VN-SCENE-GRAPH-AUTHORING-VIEW-WITH-EXPLICIT-CHOICE-VARIABLES",
+    "type": "TASK",
+    "title": "VN scene-graph authoring view with explicit choice variables",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-scene-graph-authoring-view-with-explicit-choice-variables.md",
+    "status": "open"
   },
   "TASK-VN-SCENE-TEMPLATE-SYSTEM": {
     "epic": "epic-visual-novel-mode",
