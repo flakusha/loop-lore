@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** item config templates: idempotent seeding from config
 **Priority:** P1 — High
 **Effort:** Medium
 **Epic:** epic-skills-professions-config
