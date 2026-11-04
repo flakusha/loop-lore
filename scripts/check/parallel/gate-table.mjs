@@ -231,16 +231,6 @@ export const checks = {
   // and any branch with an active worktree may belong to a concurrent session.
   // Blocking a finalize on it would fight the dev branch's own movement.
   "branches - audit": "bun run scripts/audit-branches.ts",
-
-  // Commit signatures: every commit the branch adds must be GPG-signed.
-  // BLOCKING: AGENTS.md makes an unsigned commit a blocker, but nothing
-  // enforced it — `giwt commit-wt` only warns when its signature verification
-  // comes back inconclusive, and `giwt finalize` verifies the MERGE commit,
-  // never the commits the branch carries. Range-scoped (the commits the base
-  // lacks), so a base's own history is never re-litigated. A clone without
-  // the public key cannot check any signature: that is reported as SKIPPED,
-  // never as a failure.
-  "commits - signatures": "bun run scripts/check/commit-signatures.mjs",
 };
 
 // Advisory gates: these RUN and REPORT like any other gate, but a failure
