@@ -5,9 +5,25 @@
  * isolation-gate tests. Pure verdict tests — no DB, no subprocesses, no
  * shared state; each case builds its own config literal.
  */
-import { describe, expect, it, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { type HarnessConfig, } from "../../config/schema/harness";
+import {
+  harnessAdminSettings,
+  initHarnessAdminSettings,
+  resetHarnessAdminSettings,
+} from "./admin-settings";
 import { assertHarnessExecution, type HarnessIsolationVerdict, } from "./isolation-gate";
+
+// Parallel-safety: the admin-settings singleton is process-shared and other
+// files seed it; every case in THIS file runs against an UNSEEDED store so
+// the file-config fallback governs, regardless of cross-file order.
+beforeEach(() => {
+  resetHarnessAdminSettings();
+},);
+
+afterEach(() => {
+  resetHarnessAdminSettings();
+},);
 
 const PROFILE = {
   name: "omp-main",
@@ -128,5 +144,64 @@ describe("assertHarnessExecution", () => {
     },);
 
     expect(verdict,).toMatchObject({ allowed: false, code: "harness_disabled", },);
+  });
+});
+
+// Resource contract: in-memory admin-settings store only — seeded in the
+// case, reset in beforeEach AND afterEach so a failed case cannot leak
+// store state into siblings; no DB, no subprocesses, no ports.
+describe("assertHarnessExecution effective admin settings (BUG 369e695)", () => {
+  beforeEach(() => {
+    resetHarnessAdminSettings();
+  },);
+
+  afterEach(() => {
+    resetHarnessAdminSettings();
+  },);
+
+  it("a disabled override suppresses spawn even with file enabled: true", () => {
+    initHarnessAdminSettings({ enabled: true, profiles: [PROFILE,], },);
+    harnessAdminSettings.update({ enabled: false, },);
+
+    const verdict = assertHarnessExecution({
+      config: configWith(),
+      role: "admin",
+      userId: "u1",
+      profileName: "omp-main",
+    },);
+
+    expect(verdict,).toEqual({
+      allowed: false,
+      code: "harness_disabled",
+      message: "harness.acp.enabled is false — external harness execution is off",
+    },);
+  });
+
+  it("an enabled override over a file-disabled config allows spawn", () => {
+    initHarnessAdminSettings({ enabled: false, profiles: [PROFILE,], },);
+    harnessAdminSettings.update({ enabled: true, },);
+
+    const verdict = assertHarnessExecution({
+      config: configWith({ enabled: false, },),
+      role: "admin",
+      userId: "u1",
+      profileName: "omp-main",
+    },);
+
+    expectAllowed(verdict,);
+  });
+
+  it("no-downgrade: an unseeded store falls back to the file layer", () => {
+    // Store deliberately unseeded (reset in beforeEach): the file config
+    // governs, exactly as before the effective view existed — an unavailable
+    // store never widens access.
+    const verdict = assertHarnessExecution({
+      config: configWith(),
+      role: "admin",
+      userId: "u1",
+      profileName: "omp-main",
+    },);
+
+    expectAllowed(verdict,);
   });
 });

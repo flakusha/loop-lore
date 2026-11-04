@@ -12,13 +12,16 @@
  * module the whole outbound client layer was constructed only in tests
  * (review G1) — dead code at runtime.
  *
- * Posture: `harness.acp.enabled` gates composition. With the default
- * (disabled) config nothing is composed and getHarnessRuntime() reads null,
- * so "disabled profiles are never probed or selected" holds structurally —
- * the selector itself does not re-check the master switch, which is exactly
- * why the gate lives here. The runtime composes from the boot-time config
- * snapshot, the same object initHarnessAdminSettings() seeds the admin
- * settings store's file layer from; config edits take effect on restart.
+ * Posture: `harness.acp.enabled` gates composition (file config; the
+ * default is disabled — nothing is composed and getHarnessRuntime() reads
+ * null). After boot the EFFECTIVE admin-settings view governs: the
+ * selector's master-switch + acknowledgement checks and the isolation
+ * gate's spawn gate read getHarnessAdminSettings()
+ * (BUG-admin-settings-overrides-never-reach-the-harness-dispatch-gu), so a
+ * UI toggle suppresses selection and spawn without a restart. The runtime
+ * composes from the boot-time config snapshot, the same object
+ * initHarnessAdminSettings() seeds the admin settings store's file layer
+ * from; file-config edits still take effect on restart.
  *
  * Consumers (dispatch paths, future route surfaces) obtain the stack via
  * getHarnessRuntime() and MUST null-check: null means the stack was never

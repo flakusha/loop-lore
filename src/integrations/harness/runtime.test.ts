@@ -9,8 +9,13 @@
  * production factory dispatches each profile's own flavor. Pure in-memory
  * fakes — no subprocess, parallel-safe.
  */
-import { afterEach, describe, expect, it, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { AcpProfileConfig, HarnessAcpConfig, } from "../../config/schema/harness";
+import {
+  harnessAdminSettings,
+  initHarnessAdminSettings,
+  resetHarnessAdminSettings,
+} from "./admin-settings";
 import { CodexAcpAdapter, } from "./codex";
 import { fakeFactory, } from "./fakes";
 import { OmpAcpAdapter, } from "./omp";
@@ -28,6 +33,17 @@ import { UsageLedger, } from "./usage-ledger";
 
 afterEach(() => {
   resetHarnessRuntime();
+},);
+
+// Parallel-safety: the admin-settings singleton is process-shared and other
+// files seed it; every case in THIS file starts from an UNSEEDED store so
+// the file-config fallback governs, regardless of cross-file order.
+beforeEach(() => {
+  resetHarnessAdminSettings();
+},);
+
+afterEach(() => {
+  resetHarnessAdminSettings();
 },);
 
 describe("createHarnessRuntime", () => {
@@ -138,5 +154,29 @@ describe("initHarnessRuntime", () => {
   it("a disabled config composes nothing", () => {
     initHarnessRuntime({ enabled: false, profiles: [], },);
     expect(getHarnessRuntime(),).toBeNull();
+  });
+});
+
+// Resource contract: in-memory fakes + the in-memory admin-settings store
+// (reset in afterEach); the runtime singleton is reset by the file-level
+// afterEach above. No DB, no subprocess, no ports — parallel-safe.
+describe("initHarnessRuntime effective admin settings (BUG 369e695)", () => {
+  it("a runtime composed from an enabled file config stops selecting when the store override flips off", async () => {
+    const p: AcpProfileConfig = {
+      name: "p",
+      command: ["fake", "p",],
+      tiers: { fast: { model: "p/fast", capabilities: ["tools",], }, },
+      tosGrayzoneAcknowledged: true,
+    };
+
+    initHarnessAdminSettings({ enabled: true, profiles: [p,], },);
+    fakeFactory({ p: { models: ["p/fast",], }, },);
+    initHarnessRuntime({ enabled: true, profiles: [p,], },);
+    harnessAdminSettings.update({ enabled: false, },);
+
+    const runtime = getHarnessRuntime();
+    expect(runtime,).not.toBeNull();
+    const picks = await runtime?.selector.select({ taskType: "mechanical", needsCapabilities: [], },);
+    expect(picks,).toEqual([],);
   });
 });
