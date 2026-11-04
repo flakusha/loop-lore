@@ -199,6 +199,39 @@ describe("PermissionQueue", () => {
     expect(h.queue.listPending()[0]?.profile,).toBe("q",);
   });
 
+  it("a connection that rejects the decision fails typed and keeps the entry", async () => {
+    const root = mkdtempSync(TMP_ROOT,);
+    sandboxes.push(root,);
+    const queue = new PermissionQueue({
+      connection: () => ({
+        respondPermission: () => {
+          throw new Error("channel closed",);
+        },
+      }),
+    },);
+
+    const parked = await queue.submit(editAsk(root,),);
+    if (parked.decision !== "pending") { throw new Error("expected pending",); }
+
+    const result = queue.resolve({ id: parked.id, decision: "approve", },);
+    if (result.ok) { throw new Error("expected a typed failure",); }
+    expect(result.code,).toBe("no_connection",);
+    expect(result.message,).toBe('profile "p" did not accept the decision',);
+    expect(queue.pendingCount(),).toBe(1,);
+  });
+
+  it("idle() settles once concurrent submits finish", async () => {
+    const h = harness();
+    const inFlight = [h.queue.submit(editAsk(h.root,),), h.queue.submit(editAsk(h.root,),),];
+    await h.queue.idle();
+
+    for (const settled of await Promise.all(inFlight,)) {
+      expect(settled.decision,).toBe("pending",);
+    }
+
+    await h.queue.idle(); // idempotent when nothing is in flight
+  });
+
   it("an auto-allowable ask through a missing connection parks, never auto-allows", async () => {
     const h = harness();
     h.dropConnection();
