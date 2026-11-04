@@ -565,6 +565,23 @@
       "errorTooLong": "Теги должны быть не длиннее 64 символов.",
       "errorDuplicate": "Дублирующийся тег: {tag}",
       "errorTooMany": "Разрешено не более 200 тегов."
+    },
+    "providerWizard": {
+      "title": "Подключение провайдера",
+      "preset": "Пресет провайдера",
+      "custom": "Пользовательский",
+      "baseUrl": "Базовый URL",
+      "label": "Метка",
+      "apiKey": "API-ключ",
+      "apiKeyStored": "Ключ уже сохранён. Оставьте поле пустым, чтобы сохранить его.",
+      "setDefault": "Сделать провайдером по умолчанию",
+      "testTitle": "Проверка подключения и ролей",
+      "test": "Проверить подключение",
+      "unreachable": "Недоступен",
+      "missing": "Что отсутствует",
+      "missingFields": "Не заполнены обязательные поля",
+      "configured": "Настроенные провайдеры",
+      "importInstead": "Импортировать файл конфигурации"
     }
   },
   "errors": {
@@ -1780,7 +1797,8 @@
     "classifierTagsSaved": "Теги классификатора сохранены",
     "classifierTagsSaveFailed": "Не удалось сохранить теги классификатора",
     "characterUpdated": "Персонаж {name} обновлён",
-    "failedUpdateCharacter": "Не удалось обновить персонажа"
+    "failedUpdateCharacter": "Не удалось обновить персонажа",
+    "providerSaved": "Провайдер сохранён"
   },
   "status": {
     "characterResponding": "Персонаж отвечает...",
