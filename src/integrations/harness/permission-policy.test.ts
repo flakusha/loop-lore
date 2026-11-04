@@ -11,7 +11,12 @@
  */
 import { afterEach, describe, expect, it, } from "bun:test";
 import { mkdtempSync, rmSync, } from "node:fs";
-import { classifyPermission, } from "./permission-policy";
+import {
+  classifyPermission,
+  NO_FS_TOOL_KINDS,
+  READ_ONLY_TOOL_KINDS,
+  WRITE_OR_EXEC_TOOL_KINDS,
+} from "./permission-policy";
 
 /** Shared parent for per-test sandboxes (the repo's .tmp scratchpad). */
 const TMP_ROOT = ".tmp/harness-permission-policy";
@@ -145,5 +150,43 @@ describe("classifyPermission (fail-closed)", () => {
     },);
 
     expect(verdict.decision,).toBe("require_approval",);
+  });
+});
+
+describe("tool-kind partition", () => {
+  it("partitions every known kind into exactly one of the three classes", () => {
+    for (const kind of READ_ONLY_TOOL_KINDS) {
+      expect(NO_FS_TOOL_KINDS,).not.toContain(kind,);
+      expect(WRITE_OR_EXEC_TOOL_KINDS,).not.toContain(kind,);
+    }
+
+    for (const kind of NO_FS_TOOL_KINDS) {
+      expect(WRITE_OR_EXEC_TOOL_KINDS,).not.toContain(kind,);
+    }
+  });
+
+  it("classifies each listed kind the way its class promises", async () => {
+    const root = sandbox();
+    for (const kind of READ_ONLY_TOOL_KINDS) {
+      const verdict = await classifyPermission({
+        params: askParams({ path: "in-sandbox.md", },),
+        kind,
+        sandboxRoot: root,
+      },);
+
+      expect(verdict.decision,).toBe("auto_allow",);
+    }
+
+    for (const kind of NO_FS_TOOL_KINDS) {
+      const verdict = await classifyPermission({ params: askParams({},), kind, sandboxRoot: root, },);
+
+      expect(verdict.decision,).toBe("auto_allow",);
+    }
+
+    for (const kind of WRITE_OR_EXEC_TOOL_KINDS) {
+      const verdict = await classifyPermission({ params: askParams({},), kind, sandboxRoot: root, },);
+
+      expect(verdict.decision,).toBe("require_approval",);
+    }
   });
 });
