@@ -222,3 +222,38 @@ export type HarnessPendingPermission = Static<typeof HarnessPendingPermissionSch
 
 /** Static view of {@link HarnessPermissionsResponse}. */
 export type HarnessPermissionsView = Static<typeof HarnessPermissionsResponse>;
+
+/**
+ * Capability facts merged onto a discovered model from the static
+ * capability table (`src/admin/model-capabilities.ts`); null on the entry
+ * when the table does not know the model.
+ */
+export const HarnessModelCapabilitiesSchema = Type.Object({
+  contextWindow: Type.Union([Type.Number({},), Type.Null(),],),
+  maxOutput: Type.Union([Type.Number({},), Type.Null(),],),
+  supportsTools: Type.Boolean({},),
+  supportsVision: Type.Boolean({},),
+  supportsThinking: Type.Boolean({},),
+  modalities: Type.Array(Type.String({},),),
+},);
+
+/**
+ * One model discovered for a harness profile
+ * (`GET /api/v1/harness/models`). `source` discriminates harness-verified
+ * ids (a live connection's listing) from static fallbacks (configured tier
+ * models); `reason` explains a static fallback and is absent on
+ * harness-reported entries.
+ */
+export const HarnessDiscoveredModelSchema = Type.Object({
+  profile: Type.String({},),
+  harness: Type.String({},),
+  model: Type.String({},),
+  source: Type.Union([Type.Literal("harness",), Type.Literal("static",),],),
+  reason: Type.Optional(Type.String({},),),
+  capabilities: Type.Union([HarnessModelCapabilitiesSchema, Type.Null(),],),
+},);
+
+/** `GET /api/v1/harness/models` body (profiles in preference order). */
+export const HarnessModelsResponse = Type.Object({
+  items: Type.Array(HarnessDiscoveredModelSchema,),
+},);
