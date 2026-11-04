@@ -3,7 +3,8 @@
 
 # TASK: setup-state endpoint: GET /api/v1/setup/state {checks:[{id,ok,hint}]}
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** GET /api/v1/setup/state machine-readable setup checks
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-first-run-auto-setup
