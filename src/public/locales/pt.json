@@ -1084,6 +1084,48 @@
       "arousalActive": "Excitado",
       "arousalHigh": "Muito excitado",
       "arousalDesperate": "Desesperado"
+    },
+    "intimacy": {
+      "title": "Intimidade",
+      "open": "Interagir",
+      "close": "Fechar",
+      "back": "Voltar",
+      "retry": "Tentar novamente",
+      "continue": "Continuar",
+      "partnerTitle": "Escolher um parceiro",
+      "partnerEmpty": "Nenhum parceiro disponível neste chat.",
+      "actionTitle": "Escolher uma ação",
+      "scoreLabel": "Intimidade: {score}",
+      "lockedFmt": "Requer intimidade {min}",
+      "applying": "Aplicando…",
+      "consentTitle": "Confirmar consentimento",
+      "consentBody": "Pedir antes de \"{action}\"? Esta ação depende do consentimento do parceiro.",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar",
+      "effectsTitle": "Resultado",
+      "deltaFmt": "Mudança de intimidade: {delta} (agora {score})",
+      "errorTitle": "Algo deu errado",
+      "errorConsent": "Esta ação requer consentimento. Conceda-o e tente novamente.",
+      "errorTarget": "Esse parceiro não está disponível para intimidade neste chat.",
+      "errorValidation": "A ação não foi aceita — ajuste e tente novamente.",
+      "errorAuth": "Faça login e tente novamente.",
+      "errorNetwork": "Não foi possível contatar o servidor — verifique sua conexão e tente novamente.",
+      "action": {
+        "talk": "Conversar",
+        "rest": "Descansar juntos",
+        "gift": "Dar um presente",
+        "kiss": "Beijar",
+        "embrace": "Abraçar",
+        "play": "Momento íntimo"
+      },
+      "actionDesc": {
+        "talk": "Compartilhar uma conversa tranquila.",
+        "rest": "Relaxar juntos.",
+        "gift": "Oferecer um pequeno presente.",
+        "kiss": "Um beijo gentil.",
+        "embrace": "Segurar-se com carinho.",
+        "play": "Compartilhar um momento íntimo — requer consentimento."
+      }
     }
   },
   "help": {

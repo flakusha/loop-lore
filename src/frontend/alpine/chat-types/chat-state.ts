@@ -20,6 +20,7 @@ import type { ChatMoodState, } from "./mood-state";
 import type { ChatMovementState, } from "./movement-state";
 import type { ChatMusicLinksState, } from "./music-links-state";
 import type { ChatNpcState, } from "./npc-state";
+import type { ChatNsfwIntimacyState, } from "./nsfw-intimacy-state";
 import type { ChatNsfwBlurState, ChatNsfwState, } from "./nsfw-state";
 import type { ChatParticipantsState, } from "./participants-state";
 import type { ChatPinsState, } from "./pins-state";
@@ -55,6 +56,7 @@ export interface ChatState
     ChatMovementState,
     ChatNpcState,
     ChatNsfwState,
+    ChatNsfwIntimacyState,
     ChatNsfwBlurState,
     ChatWizardState,
     ChatRpgQuestionsState,
