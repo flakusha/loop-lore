@@ -390,7 +390,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-settings-overrides-never-reach-the-harness-dispatch-gu.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-ADMIN-SYSTEM-CONFIG-DELETE-PASSES-USER-CONTROLLED-KEY-WITHOU": {
     "hash": "daacc4b",
@@ -10143,7 +10143,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-tos-dispatch-guard-denies-local-api-profiles-that-the-bindin.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-TOUCHMEMORY-NEVER-CALLED-ON-MEMORY-INJECTION-SO-LAST-ACCESSE": {
     "hash": "255ff5b",
