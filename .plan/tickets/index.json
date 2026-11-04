@@ -30262,6 +30262,20 @@
     "title": "# TASK-avatars-dynamic-2d: Dota-style dynamic 2D avatars (Phase 4)",
     "type": "TASK"
   },
+  "TASK-BACKEND-WORKER-SUBDIVISION-PURE-BUFFER-VECTOR-TRANSFORMS-OFF": {
+    "hash": "dfa8a3b",
+    "git_issue": "dfa8a3b",
+    "extid": "TASK-BACKEND-WORKER-SUBDIVISION-PURE-BUFFER-VECTOR-TRANSFORMS-OFF",
+    "type": "TASK",
+    "title": "Backend worker subdivision: pure buffer/vector transforms off main thread, Kysely stays main",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-backend-worker-subdivision-pure-buffer-vector-transforms-off.md",
+    "status": "open"
+  },
   "TASK-BACKFILL-DATA-VERSION-RECORD-HASH-FOR-EXISTING-ROWS": {
     "hash": "6f0c192",
     "git_issue": "6f0c192",
@@ -31836,6 +31850,20 @@
     "tags": [],
     "title": "Bulk Export (ZIP Archive)",
     "type": "TASK"
+  },
+  "TASK-BUSINESS-EXTENSIONS-GPU-RELAY-MARKETPLACE-VOICE-PACKS-HOSTED": {
+    "hash": "59da665",
+    "git_issue": "59da665",
+    "extid": "TASK-BUSINESS-EXTENSIONS-GPU-RELAY-MARKETPLACE-VOICE-PACKS-HOSTED",
+    "type": "TASK",
+    "title": "business extensions: GPU relay, marketplace, voice packs, hosted worlds, creator subs",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-licensing",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-business-extensions-gpu-relay-marketplace-voice-packs-hosted.md",
+    "status": "open"
   },
   "TASK-BYOK-API-KEYS": {
     "epic": "epic-byok-api-keys",
@@ -35337,6 +35365,20 @@
     "title": "ComfyUI Workflow Template Registry",
     "type": "TASK"
   },
+  "TASK-COMFYUI-WIRE-DELTAS-PAINTERI2V-PPM-HUNYUAN3D-WRAPPERS-PLYPRE": {
+    "hash": "0724304",
+    "git_issue": "0724304",
+    "extid": "TASK-COMFYUI-WIRE-DELTAS-PAINTERI2V-PPM-HUNYUAN3D-WRAPPERS-PLYPRE",
+    "type": "TASK",
+    "title": "ComfyUI WIRE deltas: PainterI2V, ppm, Hunyuan3D wrappers, PlyPreview, ACE-Step nodes",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-comfyui-first-class-citizen",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-wire-deltas-painteri2v-ppm-hunyuan3d-wrappers-plypre.md",
+    "status": "open"
+  },
   "TASK-COMFYUI-WORKFLOW-ACCEPTANCE-PROBE-SCAFFOLD": {
     "hash": "f518aa7",
     "git_issue": "f518aa7",
@@ -36080,6 +36122,20 @@
     "tags": [],
     "title": "Consolidate unsafe Date/Buffer/JSON usage into shared utils",
     "type": "TASK"
+  },
+  "TASK-CONSUME-SIDE-MCP-COMFYUI-LOCAL-BLENDER-MCP-NODES-AS-TOOLS": {
+    "hash": "01b1c19",
+    "git_issue": "01b1c19",
+    "extid": "TASK-CONSUME-SIDE-MCP-COMFYUI-LOCAL-BLENDER-MCP-NODES-AS-TOOLS",
+    "type": "TASK",
+    "title": "consume-side MCP: ComfyUI Local + Blender MCP nodes-as-tools",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-consume-side-mcp-comfyui-local-blender-mcp-nodes-as-tools.md",
+    "status": "open"
   },
   "TASK-CONTENT-COMPRESSION-ZSTD-STREAMING": {
     "epic": "(none — proposed epic never materialized)",
@@ -38568,6 +38624,20 @@
     "tags": [],
     "title": "Document Processing Pipeline",
     "type": "TASK"
+  },
+  "TASK-DOCUMENT-TEXT-SIDECAR-AT-UPLOAD-PDF-MD-TXT-FOR-FUTURE-RAG-RE": {
+    "hash": "dd8881a",
+    "git_issue": "dd8881a",
+    "extid": "TASK-DOCUMENT-TEXT-SIDECAR-AT-UPLOAD-PDF-MD-TXT-FOR-FUTURE-RAG-RE",
+    "type": "TASK",
+    "title": "Document text sidecar at upload (pdf/md/txt) for future RAG retrieval",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-document-text-sidecar-at-upload-pdf-md-txt-for-future-rag-re.md",
+    "status": "open"
   },
   "TASK-DOWNLOAD-POLICY-UI-ENFORCEMENT": {
     "epic": "epic-byok-local-models",
@@ -41957,6 +42027,20 @@
     "source": ".plan/tickets/TASK-frontend-banned-pattern-ownership-comment-claims-eslint-enfo.md",
     "status": "Not Started"
   },
+  "TASK-FRONTEND-BUCKET-CARD-STUDIO-DOWNLOAD-CENTER-DATASET-QUEUE-EV": {
+    "hash": "1cc1db4",
+    "git_issue": "1cc1db4",
+    "extid": "TASK-FRONTEND-BUCKET-CARD-STUDIO-DOWNLOAD-CENTER-DATASET-QUEUE-EV",
+    "type": "TASK",
+    "title": "frontend bucket: card studio, download center, dataset queue, eval dashboard, quota modal, group-chat viewer",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-frontend-admin",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-bucket-card-studio-download-center-dataset-queue-ev.md",
+    "status": "open"
+  },
   "TASK-FRONTEND-BUNDLE-ANALYSIS": {
     "epic": "epic-frontend-bundle-optimization",
     "extid": "TASK-FRONTEND-BUNDLE-ANALYSIS",
@@ -44431,6 +44515,20 @@
     "source": ".plan/tickets/TASK-harness-subagent-delegation.md",
     "status": "Not Started",
     "git_issue": "5d928d3"
+  },
+  "TASK-HARNESS-SURFACING-EXEC-LOG-SSE-TO-CHAT-USAGE-LEDGER-CREDIT-G": {
+    "hash": "96f7c25",
+    "git_issue": "96f7c25",
+    "extid": "TASK-HARNESS-SURFACING-EXEC-LOG-SSE-TO-CHAT-USAGE-LEDGER-CREDIT-G",
+    "type": "TASK",
+    "title": "harness surfacing: exec-log SSE to chat, usage-ledger credit guard, terminal-WS hardening",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-surfacing-exec-log-sse-to-chat-usage-ledger-credit-g.md",
+    "status": "open"
   },
   "TASK-HARNESS-SYNC-LEDGER-V2": {
     "hash": "9154b20",
@@ -50051,6 +50149,20 @@
     "source": ".plan/tickets/TASK-model-news-ingestion-pipeline.md",
     "status": "Not Started"
   },
+  "TASK-MODEL-NODE-HARDENING-PICKLE-SCAN-COMFYUI-NODE-PIN-BLENDER-AU": {
+    "hash": "f3b9194",
+    "git_issue": "f3b9194",
+    "extid": "TASK-MODEL-NODE-HARDENING-PICKLE-SCAN-COMFYUI-NODE-PIN-BLENDER-AU",
+    "type": "TASK",
+    "title": "model + node hardening: pickle scan, ComfyUI node pin, Blender autoexec-off",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-security-sandboxing",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-model-node-hardening-pickle-scan-comfyui-node-pin-blender-au.md",
+    "status": "open"
+  },
   "TASK-MODEL-PROVIDER-DOWNLOAD-ENTRY-OLLAMA-PULL-THROUGH-WITH-FIT-V": {
     "hash": "ef23ea3",
     "git_issue": "ef23ea3",
@@ -53104,6 +53216,20 @@
     "title": "Platform Support (Multi-OS / Mobile / Browser matrix)",
     "type": "TASK"
   },
+  "TASK-PLAYWRIGHT-MCP-CAPABILITY-GATED-SILLYTAVERN-CHAT-LOG-IMPORT": {
+    "hash": "96ce6bb",
+    "git_issue": "96ce6bb",
+    "extid": "TASK-PLAYWRIGHT-MCP-CAPABILITY-GATED-SILLYTAVERN-CHAT-LOG-IMPORT",
+    "type": "TASK",
+    "title": "Playwright MCP (capability-gated) + SillyTavern chat-log import",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-import-export-io",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-playwright-mcp-capability-gated-sillytavern-chat-log-import.md",
+    "status": "open"
+  },
   "TASK-PLUGIN-ALPINE": {
     "epic": "epic-plugin-management-ui",
     "extid": "TASK-PLUGIN-ALPINE",
@@ -54670,6 +54796,20 @@
     ],
     "title": "# TASK-rag-knowledge-graph: RAG knowledge graph",
     "type": "TASK"
+  },
+  "TASK-RAG-KNOWN-ANSWER-EVAL-HARNESS-30-QS-CHUNKS-QUESTIONS-JSONL": {
+    "hash": "7680055",
+    "git_issue": "7680055",
+    "extid": "TASK-RAG-KNOWN-ANSWER-EVAL-HARNESS-30-QS-CHUNKS-QUESTIONS-JSONL",
+    "type": "TASK",
+    "title": "RAG known-answer eval harness (30+ Qs, chunks/questions JSONL)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-rag-evaluation-observability",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rag-known-answer-eval-harness-30-qs-chunks-questions-jsonl.md",
+    "status": "open"
   },
   "TASK-RAG-LOCAL-SEARCH-CACHE": {
     "epic": "epic-rag-document-processing",
@@ -56971,6 +57111,20 @@
     "source": ".plan/tickets/TASK-RESTORE-ACCEPTANCE-EXTERNAL-ARCHIVES-ROW-COUNT-TABLE-PRESENC.md",
     "status": "open"
   },
+  "TASK-RESTRICT-ACP-STRATEGY-ENUM-TO-FAILOVER": {
+    "hash": "83ff0c7",
+    "git_issue": "83ff0c7",
+    "extid": "TASK-RESTRICT-ACP-STRATEGY-ENUM-TO-FAILOVER",
+    "type": "TASK",
+    "title": "Restrict ACP strategy enum to failover",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-restrict-acp-strategy-enum-to-failover.md",
+    "status": "open"
+  },
   "TASK-RESULT-GRADE-PERSISTENCE": {
     "hash": "b5fb1b1",
     "git_issue": "b5fb1b1",
@@ -59122,6 +59276,20 @@
     "title": "`/...` slash commands for chat, group chat, assistant continuation",
     "type": "TASK"
   },
+  "TASK-SLIDE-DECK-GENERATION-LLM-OUTLINE-TO-SLIDE-JSON-PLUS-HTML-PR": {
+    "hash": "75840eb",
+    "git_issue": "75840eb",
+    "extid": "TASK-SLIDE-DECK-GENERATION-LLM-OUTLINE-TO-SLIDE-JSON-PLUS-HTML-PR",
+    "type": "TASK",
+    "title": "Slide deck generation: LLM outline to slide-JSON plus HTML present view",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-slide-deck-generation-llm-outline-to-slide-json-plus-html-pr.md",
+    "status": "open"
+  },
   "TASK-SLOT-REPLACE-TRANSACTIONAL-REBIND-SEMANTICS": {
     "epic": "epic-avatar-regeneration-control",
     "extid": "TASK-SLOT-REPLACE-TRANSACTIONAL-REBIND-SEMANTICS",
@@ -61186,6 +61354,20 @@
     "title": "Trading Interface",
     "type": "TASK"
   },
+  "TASK-TRAINER-SEAMS-TOGETHER-UNSLOTH-ADAPTERS-AI-TOOLKIT-SIDECAR-D": {
+    "hash": "02f7e66",
+    "git_issue": "02f7e66",
+    "extid": "TASK-TRAINER-SEAMS-TOGETHER-UNSLOTH-ADAPTERS-AI-TOOLKIT-SIDECAR-D",
+    "type": "TASK",
+    "title": "trainer seams: Together/Unsloth adapters + ai-toolkit sidecar + DPO-on-swipes template",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-training-finetune-datasets",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-trainer-seams-together-unsloth-adapters-ai-toolkit-sidecar-d.md",
+    "status": "open"
+  },
   "TASK-TRAINING-SIDECAR-SUPERVISOR-WIRED-INTO-GENERATION-JOBS": {
     "hash": "6f1a058",
     "git_issue": "6f1a058",
@@ -61497,6 +61679,20 @@
     "tags": [],
     "title": "TTS Provider Interface + Edge-TTS Integration",
     "type": "TASK"
+  },
+  "TASK-TTS-STT-BACKENDS-CHATTERBOX-SERVER-TTS-AUDIO-SUITE-PARAKEET-": {
+    "hash": "0c2ed43",
+    "git_issue": "0c2ed43",
+    "extid": "TASK-TTS-STT-BACKENDS-CHATTERBOX-SERVER-TTS-AUDIO-SUITE-PARAKEET-",
+    "type": "TASK",
+    "title": "TTS/STT backends: Chatterbox server, TTS-Audio-Suite, Parakeet-ONNX",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-tts-foundation",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tts-stt-backends-chatterbox-server-tts-audio-suite-parakeet-.md",
+    "status": "open"
   },
   "TASK-TTS-VISEME-TIMELINE": {
     "hash": "6d42077",
