@@ -10,6 +10,7 @@
  *   swipe left   → archive-confirm dialog (the 📦 Archive button's action)
  *   swipe right  → startEdit() (the ✏️ Edit button's action)
  *   long-press   → openContextMenu() (the right-click / context-menu path)
+ *   pinch        → zoom the message list (the chat-only zoom surface)
  *
  * Delegation: listeners live on `#message-list`, captured at setup and
  * released in teardown. htmx swaps re-run Alpine init, so the fresh node is
@@ -22,7 +23,15 @@
  * visible-button alternative, so reduced-motion users lose nothing: the
  * wiring performs no animation of its own.
  */
-import { onLongPress, onSwipe, } from "../touch";
+import { hapticFeedback, onLongPress, onPinch, onPull, onSwipe, } from "../touch";
+import {
+  applyPinchZoom,
+  beginPinchZoom,
+  bindZoomKeys,
+  endPinchZoom,
+  resetZoom,
+  type ZoomKeyScope,
+} from "../touch-zoom";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
 
@@ -83,12 +92,21 @@ export const chatTouchGestures: Partial<ChatState> & ThisType<ChatState> = {
    */
   setupTouchGestures() {
     this.teardownTouchGestures();
-    if (!isTouchCapable()) { return; }
-    const list = document.querySelector("#message-list",);
+    const list = document.querySelector<HTMLElement>("#message-list",);
     if (!list) { return; }
 
-    this._touchGesturesEl = list;
     const cleanups: (() => void)[] = [];
+
+    // The keyboard zoom is the WCAG alternative of the pinch gesture, so it
+    // is bound on every device - not only on touch-capable ones.
+    cleanups.push(bindZoomKeys(globalThis as unknown as ZoomKeyScope, list,),);
+
+    if (!isTouchCapable()) {
+      this._touchGesturesCleanups = cleanups;
+      return;
+    }
+
+    this._touchGesturesEl = list;
 
     // Delegated swipe targeting: messages re-render freely, so the row a
     // swipe belongs to must be captured at touchstart, not looked up when
@@ -98,10 +116,22 @@ export const chatTouchGestures: Partial<ChatState> & ThisType<ChatState> = {
       this._touchSwipeTarget = messageRowFrom(target,);
       this._touchOnControl = typeof target?.closest === "function" &&
         target.closest(CONTROL_SELECTOR,) !== null;
+      // A second finger starts the pinch: remember the zoom factor the pinch
+      // measures against.
+
+      if ((e as TouchEvent).touches.length >= 2) { beginPinchZoom(list,); }
+    };
+
+    const trackEnd = (): void => {
+      endPinchZoom(list,);
     };
 
     list.addEventListener("touchstart", trackStart as EventListener, { passive: true, },);
     cleanups.push(() => list.removeEventListener("touchstart", trackStart as EventListener,));
+    list.addEventListener("touchend", trackEnd as EventListener, { passive: true, },);
+    list.addEventListener("touchcancel", trackEnd as EventListener, { passive: true, },);
+    cleanups.push(() => list.removeEventListener("touchend", trackEnd as EventListener,));
+    cleanups.push(() => list.removeEventListener("touchcancel", trackEnd as EventListener,));
 
     cleanups.push(onSwipe(list, {
       threshold: SWIPE_THRESHOLD_PX,
@@ -113,10 +143,12 @@ export const chatTouchGestures: Partial<ChatState> & ThisType<ChatState> = {
           // gates the actual archive request.
           this._archiveConfirmId = msgId;
           this._archiveConfirmOpen = true;
+          hapticFeedback("light",);
           log.debug("gesture: archive requested", { messageId: msgId, },);
         } else if (direction === "right") {
           // The ✏️ Edit button's exact action.
           this.startEdit(msgId,);
+          hapticFeedback("light",);
           log.debug("gesture: edit requested", { messageId: msgId, },);
         }
       },
@@ -138,11 +170,52 @@ export const chatTouchGestures: Partial<ChatState> & ThisType<ChatState> = {
           stopPropagation: noop,
         } as MouseEvent, msgId,);
 
+        hapticFeedback("medium",);
         log.debug("gesture: context menu requested", { messageId: msgId, },);
       },
     },),);
 
+    // A pinch claims the gesture, so it never also swipes or pulls. It drives
+    // the zoom of the message list - the chat-only zoom surface, so the
+    // sidebar and the composer stay anchored.
+    cleanups.push(onPinch(list, {
+      onPinch: (_e, scale,) => {
+        if (this._touchOnControl) { return; }
+        const factor = applyPinchZoom(list, scale,);
+        log.debug("gesture: pinch", { scale, factor, },);
+      },
+    },),);
+
+    // Pull-to-refresh: at the top of the list, a downward pull reloads the
+    // message list through the same path the chat switch uses.
+    //
+    // The list's own infinite scroll loads OLDER pages from a sentinel on the
+    // same top edge, so a refresh must not start while such a load is in
+    // flight: that response would land on the fresh page-1 list and leave a
+    // gap in the history (and a scroll jump from its position compensation).
+    cleanups.push(onPull(list, {
+      onPull: () => {
+        if (this._touchOnControl) { return; }
+        if (this.loadingOlder || this.loadingMessages) { return; }
+        void this.loadMessages?.();
+        log.debug("gesture: pull to refresh", {},);
+      },
+    },),);
+
     this._touchGesturesCleanups = cleanups;
+  },
+
+  /**
+   * Reset the zoom of the message list.
+   *
+   * Called when the chat changes and when the list is re-rendered: a new
+   * surface starts unzoomed.
+   * @returns {void}
+   */
+  resetChatZoom() {
+    const list = this._touchGesturesEl ?? document.querySelector("#message-list",);
+    if (!list) { return; }
+    resetZoom(list as HTMLElement,);
   },
 
   /**

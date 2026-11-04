@@ -249,12 +249,15 @@ Messages injected to guide story development (not from a user or character):
 ## Message Swipe (Variant Switching, Character Messages Only)
 
 - Counter always visible: `"2/4"` (current variant / total)
-- Desktop: left/right arrow keys when message row focused, or click counter
-- Mobile: horizontal touch gesture on the character message
-- Swipe right → cycle to next existing variant (pre-generated)
-- Swipe left → request new AI variant (generates on the fly, counter increments)
+- Prev/next buttons next to the counter cycle the pre-generated variants
+- The `⋯` button on the row opens the variants browser modal (list, `Use`, merge
+  selected)
 - Variants stored server-side with group index in message record
 - Deleting the last variant of a message deletes the entire message
+- **Not implemented**: the variant counter is NOT driven by a horizontal swipe
+  and NOT by arrow keys. The chat's horizontal swipe is the message gesture map
+  — swipe right → edit, swipe left → archive-confirm dialog, long-press →
+  context menu (`src/frontend/alpine/chat-touch-gestures.ts`).
 
 ---
 
@@ -301,8 +304,10 @@ Bubble bounded by chat width (max 650px):
 - Floating images: max 40% of bubble width
 - No enforced cap on text + image total height (chat list scrolls, not bubbles)
 
-**Click to expand**: inline image → lightbox overlay (fullscreen, pinch-to-zoom
-on mobile).
+**Click to expand**: not implemented — chat images render inline; there is no
+lightbox overlay, so the chat view has no zoom surface to pinch-zoom yet (the
+pinch detector in `src/frontend/touch.ts` reports the scale ratio but drives no
+surface).
 
 ### Document Display
 

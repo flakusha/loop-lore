@@ -13,6 +13,8 @@ export interface ChatTouchGestureState {
   _touchOnControl: boolean;
   /** Attach swipe/long-press handlers to #message-list (touch devices only). */
   setupTouchGestures(): void;
+  /** Reset the zoom of the message list (chat switch / list re-render). */
+  resetChatZoom?(): void;
   /** Remove every gesture listener registered by setupTouchGestures. */
   teardownTouchGestures(): void;
 }

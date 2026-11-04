@@ -103,6 +103,8 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
    */
   async _selectChatInner(chatId: string,) {
     this.loadingError = null;
+    // Another chat is a fresh surface: drop the zoom the user applied.
+    (this as { resetChatZoom?: () => void }).resetChatZoom?.();
     this.activeChat = chatId;
     this.restoreComposerDraft();
     getLogger().setBindings({ chatId, },);

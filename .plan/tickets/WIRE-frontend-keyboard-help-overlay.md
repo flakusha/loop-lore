@@ -9,7 +9,7 @@
 
 
 **Status:** Done
-**Status Note:** focus trap + focus restore implemented 2026-10-25 (`a11y-keynav-phase3`) — no `@alpinejs/focus` dependency; document-level Tab/Shift+Tab trap in `src/frontend/alpine/keynav-help.ts`
+**Status Note:** focus trap + focus restore implemented 2026-10-25 (`a11y-keynav-phase3`) — no `@alpinejs/focus` dependency; document-level Tab/Shift+Tab trap in `src/frontend/alpine/keynav-help.ts`; hardened 2026-11-03 (`a11y-help-focus-trap`) — Escape closes through the trap, the focus lands on the overlay container when it has no focusable control, and the restore falls back to the help trigger / app root when the trigger is gone
 **Priority:** Medium
 **Effort:** Small
 **Epic:** (none — proposed epic never materialized)
@@ -174,11 +174,11 @@ kbd {
 - [x] Overlay reads shortcuts from `getKeymap()` registry
 - [x] All strings are i18n-localised (corrected history: the first wiring commit reached for a `globalThis.t` that did not reliably resolve, rendering raw action ids in the Action columns; fixed by importing `t` directly from `src/frontend/alpine/i18n.ts` — the dominant Alpine convention — in the `fix(a11y)` follow-up)
 - [x] Escape closes the overlay
-- [x] Focus is trapped inside overlay while open (`@alpinejs/focus` not loaded — `keynav-help.ts` installs a document-level Tab/Shift+Tab trap that cycles the overlay's focusable elements and pulls focus back in when it escapes)
-- [x] Focus returns to previously focused element on close (the element focused before the overlay opened is restored when it closes)
+- [x] Focus is trapped inside overlay while open (`@alpinejs/focus` not loaded — `keynav-help.ts` installs a document-level Tab/Shift+Tab trap that cycles the overlay's focusable elements and pulls focus back in when it escapes; with no focusable control at all the focus stays on the overlay container, which is made focusable with `tabindex="-1"`)
+- [x] Focus returns to previously focused element on close (the element focused before the overlay opened is restored when it closes; when it is gone — an htmx swap removed it — or was `<body>`, the focus falls back to the help trigger and finally to the app root, without throwing)
 - [x] `prefers-reduced-motion` disables overlay animation
 - [x] Overlay is keyboard-accessible (Tab navigation works)
-- [x] Unit test: overlay open/close state + focus trap/restore (`src/frontend/alpine/keynav-help.test.ts` — trap, Tab cycling, escape pull-back and focus restore are asserted)
+- [x] Unit test: overlay open/close state + focus trap/restore (`src/frontend/alpine/keynav-help.test.ts` — trap, Tab/Shift+Tab cycling and wrapping, escape pull-back, Escape close, focus into the overlay, focus restore, trigger-removed fallback and the closed-overlay no-trap case are asserted)
 
 ## Implementation Note (2026-10-25, `a11y-keynav-phase3`)
 
@@ -204,6 +204,27 @@ Wired, but with three deviations from the original design:
 (`navEnabled`), re-reads the keymap on every open (rebound combos show up
 without a reload), and is registered in the Alpine bundle
 (`src/frontend/alpine/index.ts`) and `window-types.ts`.
+
+## Implementation Note (2026-11-03, `a11y-help-focus-trap`)
+
+The trap that shipped with the 2026-10-25 wiring was hardened into the
+behaviour the WIRE design asked for:
+
+1. Escape closes the overlay through the trap itself (an `onEscape` callback),
+   so the close path no longer rides on the Alpine
+   `x-on:keydown.escape.window` attribute alone.
+2. The initial focus lands on the first focusable control; when the overlay has
+   none, the overlay container is made focusable (`tabindex="-1"`) and takes
+   the focus instead of leaving it on `<body>`.
+3. The focus restore falls back when the element focused before the overlay
+   opened is gone (an htmx swap removed it) or was `<body>`: the help trigger
+   first, then the app root (`focusMainContent()` from
+   `src/frontend/alpine/focus.ts`). Neither path throws.
+
+`src/frontend/alpine/focus.ts` is reused for that last-resort anchor only:
+`trapFocus()` is container-scoped and therefore cannot keep the focus from
+leaving the overlay, and `FocusPortal` restores without a fallback, so the
+overlay keeps its own document-level trap.
 
 ## Files
 
