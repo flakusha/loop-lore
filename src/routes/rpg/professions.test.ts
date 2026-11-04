@@ -9,7 +9,9 @@
  * XP level-up, and specialization requirement failures.
  *
  * Parallel-safe: one createTestDb per file, unique ids per test, no ports,
- * no fixed paths, no sleeps.
+ * no fixed paths, no sleeps. The authz negative-path tests create their own
+ * actor/profession fixtures (insertActors + POST) so they pass alone and in
+ * any order.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -269,8 +271,23 @@ describe("professionsRoutes", () => {
   });
 
   test("non-owner id-scoped access → 404, identical to missing", async () => {
+    // Per-test fixture (passes alone / in any order): own actor + profession.
+    const actor = uid();
+    await insertActors(db, "Isolated Profession Actor", { id: actor, owner_id: userId, } as never,);
+    const owner = authedApp();
+    const created = await owner.handle(
+      new Request("http://localhost/api/rpg/professions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ actorId: actor, worldId, discipline: "enchanting", },),
+      },),
+    );
+
+    expect(created.status,).toBe(201,);
+    const id = (await json(created,)).id as string;
+
     const app = authedApp(uid(),);
-    const base = `http://localhost/api/rpg/professions/${professionId}`;
+    const base = `http://localhost/api/rpg/professions/${id}`;
 
     const owned = await app.handle(new Request(base,),);
     expect(owned.status,).toBe(404,);
@@ -303,7 +320,6 @@ describe("professionsRoutes", () => {
     expect(spec.status,).toBe(404,);
 
     // The owner still sees the profession; the stranger mutated nothing.
-    const owner = authedApp();
     expect((await owner.handle(new Request(base,),)).status,).toBe(200,);
   });
 });

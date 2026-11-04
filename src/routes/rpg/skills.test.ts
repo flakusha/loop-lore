@@ -4,6 +4,11 @@
  * Mounts the skills routes behind a stub auth middleware and exercises CRUD,
  * actor-scoped listing, XP, and specialization over a real test DB. Verifies
  * actor-ownership gating (403 for non-owners).
+ *
+ * Resource contract: one createTestDb per file (ephemeral sqlite), destroyed
+ * in afterAll; rows scoped by unique per-test ids; the authz negative-path
+ * tests create their own actor/skill fixtures (insertActors + POST) so they
+ * pass alone and in any order; no ports, no fixed paths, no sleeps.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -248,7 +253,9 @@ describe("skills CRUD + progression (auth-gated)", () => {
       .use(skillsRoutes({ database: db, config: {} as never, },),)
       .use(skillsProgressionRoutes({ database: db, config: {} as never, },),) as any;
 
-    const base = `http://localhost/api/rpg/skills/${skillId}`;
+    // Per-test target id: 401 fires before any record fetch, so a random id
+    // proves the authN gate without reading shared fixture rows.
+    const base = `http://localhost/api/rpg/skills/${uid()}`;
     expect((await app.handle(new Request("http://localhost/api/rpg/skills",),)).status,).toBe(401,);
     expect((await app.handle(new Request(base,),)).status,).toBe(401,);
     expect(
@@ -291,8 +298,23 @@ describe("skills CRUD + progression (auth-gated)", () => {
   });
 
   test("non-owner id-scoped skill access → 404, identical to missing", async () => {
+    // Per-test fixture (passes alone / in any order): own actor + skill.
+    const actor = uid();
+    await insertActors(db, "Isolated Skill Actor", { id: actor, owner_id: userId, } as never,);
+    const owner = authedApp();
+    const created = await owner.handle(
+      new Request("http://localhost/api/rpg/skills", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ actorId: actor, worldId, name: "Isolated Blade", category: "combat", },),
+      },),
+    );
+
+    expect(created.status,).toBe(201,);
+    const id = readId(await json(created,),);
+
     const app = authedApp(uid(),);
-    const base = `http://localhost/api/rpg/skills/${skillId}`;
+    const base = `http://localhost/api/rpg/skills/${id}`;
 
     const owned = await app.handle(new Request(base,),);
     expect(owned.status,).toBe(404,);
@@ -338,16 +360,31 @@ describe("skills CRUD + progression (auth-gated)", () => {
     expect(spec.status,).toBe(404,);
 
     // The owner still sees the (unmutated) skill.
-    const still = await authedApp().handle(new Request(base,),);
+    const still = await owner.handle(new Request(base,),);
     expect(still.status,).toBe(200,);
-    expect(((await json(still,)) as { name?: string }).name,).toBe("Master Swordsmanship",);
+    expect(((await json(still,)) as { name?: string }).name,).toBe("Isolated Blade",);
   });
 
   test("list route gates ?actorId= and scopes the cross-actor listing", async () => {
+    // Per-test fixture (passes alone / in any order): own actor + skill.
+    const actor = uid();
+    await insertActors(db, "Isolated List Actor", { id: actor, owner_id: userId, } as never,);
+    const owner = authedApp();
+    const created = await owner.handle(
+      new Request("http://localhost/api/rpg/skills", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ actorId: actor, worldId, name: "Isolated Lister", category: "combat", },),
+      },),
+    );
+
+    expect(created.status,).toBe(201,);
+    const id = readId(await json(created,),);
+
     const stranger = authedApp(uid(),);
 
     const gated = await stranger.handle(
-      new Request(`http://localhost/api/rpg/skills?actorId=${actorId}`,),
+      new Request(`http://localhost/api/rpg/skills?actorId=${actor}`,),
     );
 
     expect(gated.status,).toBe(403,);
@@ -355,12 +392,12 @@ describe("skills CRUD + progression (auth-gated)", () => {
     const strangerList = await stranger.handle(new Request("http://localhost/api/rpg/skills",),);
     expect(strangerList.status,).toBe(200,);
     const strangerSkills = ((await json(strangerList,)) as { skills: Array<{ id: string }> }).skills;
-    expect(strangerSkills.some((s,) => s.id === skillId),).toBe(false,);
+    expect(strangerSkills.some((s,) => s.id === id),).toBe(false,);
 
-    const ownerList = await authedApp().handle(new Request("http://localhost/api/rpg/skills",),);
+    const ownerList = await owner.handle(new Request("http://localhost/api/rpg/skills",),);
     expect(ownerList.status,).toBe(200,);
     const ownerSkills = ((await json(ownerList,)) as { skills: Array<{ id: string }> }).skills;
-    expect(ownerSkills.some((s,) => s.id === skillId),).toBe(true,);
+    expect(ownerSkills.some((s,) => s.id === id),).toBe(true,);
   });
 
   test("delete skill", async () => {
