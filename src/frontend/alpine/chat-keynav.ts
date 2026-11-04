@@ -105,6 +105,10 @@ function switchChat(state: ChatState, offset: 1 | -1,): void {
 
 /**
  * Chat ids in the order the sidebar lists them.
+ *
+ * The sidebar shows the world-channel tree above the flat chat list, and the
+ * tree groups its channels per world/location — so the walk follows that
+ * order. A channel that is also in the flat list is walked once.
  * @param state - the chat page state
  * @returns {string[]}
  */
@@ -113,5 +117,21 @@ function visibleChatIds(state: ChatState,): string[] {
     return state._searchResults.map((result,) => result.chatId);
   }
 
-  return state.filteredChats.map((chat,) => chat.id);
+  const ids: string[] = [];
+  const seen = new Set<string>();
+  const add = (chatId: string,) => {
+    if (seen.has(chatId,)) { return; }
+    seen.add(chatId,);
+    ids.push(chatId,);
+  };
+
+  for (const world of state._worlds) {
+    for (const group of state.worldChatGroups(world.id,)) {
+      for (const chat of group.chats) { add(chat.id,); }
+    }
+  }
+
+  for (const chat of state.filteredChats) { add(chat.id,); }
+
+  return ids;
 }
