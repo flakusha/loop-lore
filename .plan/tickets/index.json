@@ -25778,6 +25778,20 @@
     "git_issue": "44122d6",
     "project": ""
   },
+  "TASK-ACP-COMPOSITION-ROOT-WIRING": {
+    "hash": "a55751e",
+    "git_issue": "a55751e",
+    "extid": "TASK-ACP-COMPOSITION-ROOT-WIRING",
+    "type": "TASK",
+    "title": "ACP composition root wiring",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-composition-root-wiring.md",
+    "status": "open"
+  },
   "TASK-ACP-DRIVER-MODULE": {
     "hash": "a727ddb",
     "git_issue": "a727ddb",
