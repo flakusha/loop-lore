@@ -16,8 +16,6 @@ May-2026 ST Bot Browser incident: extension stole API keys. Policy for our plugi
 
 (fill in before starting: why this change, constraints, alternatives considered.)
 
-Closed as duplicate of TASK-extension-supply-chain-policy-official-list-spend-caps-serve (sibling, filed first 00:14; identical scope). Git issue 08e04ac closed.
-
 **Acceptance Criteria:**
 
 - [ ] Implementation complete

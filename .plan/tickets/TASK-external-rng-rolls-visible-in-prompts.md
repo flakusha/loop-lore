@@ -16,8 +16,6 @@ ST D&D Dice pattern: macro replaced client-side pre-send so the AI sees the numb
 
 (fill in before starting: why this change, constraints, alternatives considered.)
 
-Closed as duplicate of TASK-real-rng-outside-the-model-dice-enforcement-pattern (sibling, filed first 00:14); DICE_SIMPLE detail merged there. Git issue 083258f closed.
-
 **Acceptance Criteria:**
 
 - [ ] Implementation complete

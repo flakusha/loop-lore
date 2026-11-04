@@ -16,8 +16,6 @@ Telemetry + benchmark-CI epics exist; surface per-chat cost (tokens, est. spend)
 
 (fill in before starting: why this change, constraints, alternatives considered.)
 
-Closed as duplicate of TASK-per-session-cost-meter-user-visible-complements-cost-estimat (sibling, filed first 00:14); header placement + companion-market signal merged there. Git issue 503fb92 closed.
-
 **Acceptance Criteria:**
 
 - [ ] Implementation complete

@@ -8,6 +8,7 @@
 **Effort:** Large (5 tasks, each independently shippable)
 **Type:** Feature Epic
 **Tags:** transitions, canvas, world-display, battle-entrance, arrival-events, writeback
+**Overview:** Close the world↔chat↔map↔inventory↔battle display-transition loop across the canvas surfaces in 5 cheapest-first tasks, reusing existing endpoints.
 
 ## Summary
 
