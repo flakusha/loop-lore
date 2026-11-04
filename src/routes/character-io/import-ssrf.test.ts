@@ -5,9 +5,16 @@
  * The URL-import SSRF guard: a hostname that LOOKS public but resolves to a
  * private address must be rejected. The old guard compared the hostname string
  * only, so `https://public.example.com` pointing at 10.x reached the fetch.
+ *
+ * Resource contract (parallel-safe): the guard's DNS is injected per call via
+ * the `resolveHost` seam, and `globalThis.fetch` is swapped for an
+ * instant-throwing stub in `beforeEach` and restored in `afterEach` — the
+ * public-host case proves the guard PASSES and the failure happens at the
+ * fetch, without any real network, DNS, ports, or sleeps. The database is a
+ * per-run createTestDb, closed in afterAll.
  */
 import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
@@ -32,6 +39,19 @@ describe("character-io import/url SSRF guard", () => {
   },);
 
   afterAll(() => sqlite.close());
+
+  // The fetch stub is per-test owned: every dial the route makes after the
+  // guard throws instantly, so no test touches real DNS or the network.
+  const realFetch = globalThis.fetch;
+  beforeEach(() => {
+    globalThis.fetch = (async () => {
+      throw new Error("network disabled in test",);
+    }) as unknown as typeof fetch;
+  },);
+
+  afterEach(() => {
+    globalThis.fetch = realFetch;
+  },);
 
   /**
    * @param resolve - resolver seam standing in for DNS
