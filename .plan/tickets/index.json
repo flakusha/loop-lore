@@ -35926,7 +35926,7 @@
     "type": "TASK"
   },
   "TASK-CONNECTION-PROFILES-MASTER-PRESET-PER-CHAT": {
-    "hash": "pending",
+    "hash": "4b12d1d",
     "extid": "TASK-CONNECTION-PROFILES-MASTER-PRESET-PER-CHAT",
     "type": "TASK",
     "title": "Connection-profiles master preset per chat",
@@ -35936,7 +35936,8 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-connection-profiles-master-preset-per-chat.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "4b12d1d"
   },
   "TASK-CONSENT-RECEIPTS-LEDGER-APPEND-ONLY-PROVENANCE-FOR-3-GATES": {
     "hash": "46ca664",
@@ -40363,7 +40364,7 @@
     "status": "Not Started"
   },
   "TASK-EXTENSION-SUPPLY-CHAIN-POLICY-OFFICIAL-LIST-SPEND-CAPS-PLUGI": {
-    "hash": "pending",
+    "hash": "08e04ac",
     "extid": "TASK-EXTENSION-SUPPLY-CHAIN-POLICY-OFFICIAL-LIST-SPEND-CAPS-PLUGI",
     "type": "TASK",
     "title": "Extension supply-chain policy: official-list, spend caps, plugins off by default",
@@ -40373,7 +40374,8 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-extension-supply-chain-policy-official-list-spend-caps-plugi.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "08e04ac"
   },
   "TASK-EXTERNAL-COMFYUI-PLUGIN-REPO-INTEGRATION-CONTRACT": {
     "hash": "5d8de9f",
@@ -40418,7 +40420,7 @@
     "status": "Not Started"
   },
   "TASK-EXTERNAL-RNG-ROLLS-VISIBLE-IN-PROMPTS": {
-    "hash": "pending",
+    "hash": "083258f",
     "extid": "TASK-EXTERNAL-RNG-ROLLS-VISIBLE-IN-PROMPTS",
     "type": "TASK",
     "title": "External RNG rolls visible in prompts",
@@ -40428,7 +40430,8 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-external-rng-rolls-visible-in-prompts.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "083258f"
   },
   "TASK-EXTERNAL-SERVER-SUPERVISION-HARDENING-ONEXIT-RESTART-WITH-BA": {
     "hash": "7e1f5c8",
@@ -43127,6 +43130,20 @@
     ],
     "title": "GGUF split-chunk manifest contract",
     "type": "TASK"
+  },
+  "TASK-GIT-ANNEX-LOCAL-ASSET-STORE-FOR-MODELS-ADAPTERS-DATASETS": {
+    "hash": "18af758",
+    "git_issue": "18af758",
+    "extid": "TASK-GIT-ANNEX-LOCAL-ASSET-STORE-FOR-MODELS-ADAPTERS-DATASETS",
+    "type": "TASK",
+    "title": "git-annex local asset store for models adapters datasets",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-git-annex-local-asset-store-for-models-adapters-datasets.md",
+    "status": "open"
   },
   "TASK-GITHUB-PAGES-VITEPRESS": {
     "epic": "epic-tooling-improvement",
@@ -46929,6 +46946,20 @@
     "title": "Language-gated lore visibility",
     "type": "TASK"
   },
+  "TASK-LFS-CONSUME-CLIENT-FOR-HUGGINGFACE-HUB-DOWNLOADS": {
+    "hash": "c8cbb77",
+    "git_issue": "c8cbb77",
+    "extid": "TASK-LFS-CONSUME-CLIENT-FOR-HUGGINGFACE-HUB-DOWNLOADS",
+    "type": "TASK",
+    "title": "LFS consume client for HuggingFace Hub downloads",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lfs-consume-client-for-huggingface-hub-downloads.md",
+    "status": "open"
+  },
   "TASK-LICENSE-COMPLIANCE-CHECK-INERT-CHECK-PARALLEL-EMITS-INFO-SKI": {
     "hash": "723402d",
     "git_issue": "723402d",
@@ -49044,7 +49075,7 @@
     "type": "TASK"
   },
   "TASK-MEMORY-TO-LOREBOOK-ONE-CLICK-PROMOTE": {
-    "hash": "pending",
+    "hash": "d485b75",
     "extid": "TASK-MEMORY-TO-LOREBOOK-ONE-CLICK-PROMOTE",
     "type": "TASK",
     "title": "Memory to lorebook one-click promote",
@@ -49054,7 +49085,8 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-memory-to-lorebook-one-click-promote.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "d485b75"
   },
   "TASK-MEMORY-TRANSACTIONAL-CONSOLIDATION-PLUS-HYBRID-RETRIEVAL": {
     "hash": "9c0fbce",
@@ -51947,6 +51979,20 @@
     "title": "Adopt @optique/core + @optique/run for typed CLI parsing",
     "type": "TASK"
   },
+  "TASK-ORCHESTRATOR-QUEUE-VISIBILITY-BORROW": {
+    "hash": "89571cd",
+    "git_issue": "89571cd",
+    "extid": "TASK-ORCHESTRATOR-QUEUE-VISIBILITY-BORROW",
+    "type": "TASK",
+    "title": "Orchestrator queue visibility borrow",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-orchestrator-queue-visibility-borrow.md",
+    "status": "open"
+  },
   "TASK-OTLP-SINK-DECIDE-BACKEND-SIGNALS-AND-WHETHER-TO-BUILD": {
     "hash": "0b67182",
     "git_issue": "0b67182",
@@ -52399,7 +52445,7 @@
     "type": "TASK"
   },
   "TASK-PER-SESSION-COST-METER-FROM-TELEMETRY": {
-    "hash": "pending",
+    "hash": "503fb92",
     "extid": "TASK-PER-SESSION-COST-METER-FROM-TELEMETRY",
     "type": "TASK",
     "title": "Per-session cost meter from telemetry",
@@ -52409,7 +52455,8 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-per-session-cost-meter-from-telemetry.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "503fb92"
   },
   "TASK-PER-TARGET-FUZZING-HARNESSES-AUTH-ASSET-CHAT-LLM-ADMIN-IPC": {
     "hash": "c0dc9f0",
@@ -52477,7 +52524,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-permission-approval-flow.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-PERSIST-CHAT-PURPOSE-ON-CREATION": {
     "epic": "(none — hygiene/self-contained)",
@@ -57582,6 +57629,20 @@
     ],
     "source": ".plan/tickets/TASK-rsi-scope-resolver-per-principal-kind.md",
     "status": "Not Started"
+  },
+  "TASK-RUNGIT-VCS-SEAM-HARDENING-FOR-FUTURE-ADAPTERS": {
+    "hash": "3ad6479",
+    "git_issue": "3ad6479",
+    "extid": "TASK-RUNGIT-VCS-SEAM-HARDENING-FOR-FUTURE-ADAPTERS",
+    "type": "TASK",
+    "title": "runGit VCS seam hardening for future adapters",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rungit-vcs-seam-hardening-for-future-adapters.md",
+    "status": "open"
   },
   "TASK-RUNTIME-ABSTRACTION-LAYER": {
     "epic": "epic-api-library-distribution",
