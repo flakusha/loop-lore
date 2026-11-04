@@ -16,6 +16,7 @@ import { commandsRoutes, } from "../commands";
 import { exportRoutes, } from "../export";
 import { exportSseRoutes, } from "../export-sse";
 import { harnessRoutes, } from "../harness";
+import { harnessPermissionRoutes, } from "../harness/permissions";
 import { importRoutes, } from "../import";
 import { pluginRoutes, } from "../plugins";
 import { worldImportRoutes, } from "../world-import";
@@ -43,6 +44,10 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
     // Admin-gated like the rest of this surface, so it mounts versioned
     // under /api/v1; the unversioned /api/harness/* path 308s here.
     .use(harnessRoutes({ database, }, prefix,),)
+    // ── Harness permission approval (TASK-permission-approval-flow) ──
+    // Reads its queue off the composed runtime; 503 when the integration
+    // is disabled, so the surface is inert rather than auto-anything.
+    .use(harnessPermissionRoutes(prefix,),)
     // ── Import / export ──────────────────────────────────────
     .use(importRoutes(handleOpts, prefix,),)
     .use(exportRoutes({ database, }, prefix,),)

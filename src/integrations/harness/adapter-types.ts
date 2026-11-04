@@ -142,6 +142,8 @@ export interface HarnessAdapterCommandOptions {
   readTextFile?: (path: string,) => Promise<string>;
   /** Called once per open permission request, so hosts can prompt a human. */
   onPermissionRequest?: (pending: PendingPermission,) => void;
+  /** Called when the connection dies or closes with an ask still parked, so hosts drop the queue entry. */
+  onPermissionWithdrawn?: () => void;
 }
 
 /**
