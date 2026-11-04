@@ -66,6 +66,12 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         const providers = await listServerProviders(opts.database,);
         return jsonResponse({ providers, },);
       }, {
+        detail: {
+          summary: "List stored provider instances",
+          description: "Returns the operator-entered provider instances persisted in system_config. " +
+            "Never carries key material — each entry reports whether a sealed API key is stored.",
+          tags: ["Admin", "Providers",],
+        },
         response: {
           200: AdminSetupProvidersResponse,
           403: ErrorResponse,
@@ -104,6 +110,13 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           }
         },);
       }, {
+        detail: {
+          summary: "Create or update a provider instance",
+          description: "Persists an operator-entered provider instance and makes it live in the provider " +
+            "registry without a restart. The API key is stored sealed; omitting it on an update " +
+            "keeps the previously stored key.",
+          tags: ["Admin", "Providers",],
+        },
         body: AdminSetupProviderBody,
         response: {
           200: AdminSetupProviderResponse,
@@ -128,6 +141,12 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         removeServerProviderInstance(opts.config, name,);
         return jsonNoContent();
       }, {
+        detail: {
+          summary: "Delete a provider instance",
+          description: "Removes a stored provider instance and its sealed API key, and unregisters it " +
+            "from the provider registry.",
+          tags: ["Admin", "Providers",],
+        },
         response: {
           204: t.Void(),
           400: ErrorResponse,
