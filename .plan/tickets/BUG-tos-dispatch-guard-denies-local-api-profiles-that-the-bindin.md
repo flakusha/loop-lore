@@ -3,7 +3,8 @@
 
 # BUG: ToS dispatch guard denies local/api profiles that the binding policy says stay ungated
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Implemented on branch `harness-effective-view` (stacked on `acp-composition-root` @ `9c5c95116`); pending finalize behind the parked wave.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
@@ -28,10 +29,18 @@ Owner-confirmed required 2026-11-03 (ratifies review OQ1: narrow the guard to su
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The blanket ack guard contradicted the dispatch-guard ticket's binding policy frame once
+the provider matrix landed. The selector now consults a new fail-closed
+`providerTosGated()` (`provider-tos.ts`: unknown flavor ⇒ GATED, never auto-allowed) and
+gates only subscription-backed flavors; local/api profiles select without an ack. The
+`tos_unacknowledged` skip code and the structured log line are preserved verbatim for
+gated flavors; the stale blanket rationale comment in `profile-selector.ts` is removed.
+Existing selector tests updated (not weakened): the blanket-denial cases now pin
+codex/claude-code as gated, plus new negative-path tests (local ungated, unknown flavor
+denied) in `profile-selector.test.ts` and `provider-tos.test.ts`.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
