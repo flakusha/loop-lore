@@ -76,10 +76,8 @@ describe("setup state route", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as { checks: Array<{ id: string; ok: boolean; hint?: string }> };
     expect(Array.isArray(body.checks,),).toBe(true,);
-    expect(body.checks.length,).toBe(STABLE_IDS.length,);
-    for (const id of STABLE_IDS) {
-      expect(body.checks.some((check,) => check.id === id),).toBe(true,);
-    }
+    // Exact ids IN ORDER — the order is part of the published contract.
+    expect(body.checks.map((check,) => check.id),).toEqual(STABLE_IDS,);
 
     for (const check of body.checks) {
       expect(typeof check.id,).toBe("string",);
