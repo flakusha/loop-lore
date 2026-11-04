@@ -155,18 +155,32 @@ async function git(args, timeoutMs = GIT_TIMEOUT_MS,) {
 }
 
 /**
- * The commits this branch adds: everything on HEAD the base does not have.
- * On the base branch itself the range is empty — the base's own history is
- * not this branch's work, and re-litigating it would flag commits nobody
- * can re-sign.
+ * The base ref to measure the branch against, and whether HEAD exists.
  *
- * @param base - Base ref name.
- * @returns The revision range, or null when the base or HEAD is absent.
+ * The probes are independent, so they run together: one round trip instead
+ * of one per ref, and a wedged ref costs one deadline rather than one each.
+ * A probe that times out is fatal only when no base answers — a base that
+ * does answer is measured, and the range it names covers at least as much
+ * as the preferred ref would have.
  */
-async function branchRange(base,) {
-  if ((await git(["rev-parse", "--verify", "-q", base,],)).code !== 0) { return null; }
-  if ((await git(["rev-parse", "--verify", "-q", "HEAD",],)).code !== 0) { return null; }
-  return `${base}..HEAD`;
+async function resolveBase() {
+  const settled = await Promise.allSettled([
+    ...BASE_REFS.map((ref,) => git(["rev-parse", "--verify", "-q", ref,],)),
+    git(["rev-parse", "--verify", "-q", "HEAD",],),
+  ],);
+  const head = settled[BASE_REFS.length];
+  if (head.status === "rejected") {
+    // A wedged HEAD must not be read as "this repository has no HEAD".
+    throw head.reason;
+  }
+  const probes = settled.slice(0, BASE_REFS.length,);
+  const index = probes.findIndex((probe,) => probe.status === "fulfilled" && probe.value.code === 0);
+  if (index !== -1) {
+    return { base: BASE_REFS[index], hasHead: head.value.code === 0, };
+  }
+  const failed = settled.find((probe,) => probe.status === "rejected");
+  if (failed) { throw failed.reason; }
+  return { base: null, hasHead: false, };
 }
 
 /**
@@ -280,24 +294,18 @@ function report(findings,) {
 }
 
 async function main() {
-  let base;
-  for (const ref of BASE_REFS) {
-    if ((await git(["rev-parse", "--verify", "-q", ref,],)).code === 0) {
-      base = ref;
-      break;
-    }
-  }
+  const { base, hasHead, } = await resolveBase();
   if (!base) {
     console.log(
       `commit-signatures: SKIPPED — no base ref (${BASE_REFS.join("/",)}) to measure the branch against`,
     );
     return;
   }
-  const range = await branchRange(base,);
-  if (!range) {
+  if (!hasHead) {
     console.log("commit-signatures: SKIPPED — no HEAD in this repository",);
     return;
   }
+  const range = `${base}..HEAD`;
 
   const { total, uncheckable, findings, } = await collectCommits(range,);
   if (findings.length > 0) {
