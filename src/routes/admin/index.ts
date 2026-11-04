@@ -20,6 +20,7 @@ import { resourcesRoutes, } from "./resources";
 import { reviewStatsRoutes, } from "./review-stats";
 import { sdStatusRoutes, } from "./sd-status";
 import { seedRoutes, } from "./seed";
+import { setupProvidersRoutes, } from "./setup-providers";
 import { statsRoutes, } from "./stats";
 import { systemConfigRoutes, } from "./system-config";
 import { usersRoutes, } from "./users";
@@ -38,6 +39,9 @@ import { worldsRoutes, } from "./worlds";
  *   GET  /api/admin/providers      — list providers with health status
  *   GET  /api/admin/providers/:name/models — list models for a provider
  *   POST /api/admin/providers/rescan — trigger provider re-scan
+ *   GET  /api/admin/setup/providers — list stored provider instances (no secrets)
+ *   POST /api/admin/setup/providers — create or update a provider instance
+ *   DELETE /api/admin/setup/providers/:name — delete a provider instance
  *   GET  /api/admin/model-roles    — get current role assignments
  *   PUT  /api/admin/model-roles/:role — set role override
  *   DELETE /api/admin/model-roles/:role — clear role override
@@ -75,6 +79,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(newsRoutes(opts, prefix,),)
       .use(sdStatusRoutes(opts, prefix,),)
       .use(systemConfigRoutes(opts, prefix,),)
+      .use(setupProvidersRoutes(opts, prefix,),)
       .use(worldsRoutes(opts, prefix,),)
       .use(worldEventsRoutes(opts, prefix,),)
       .use(itemPowerRoutes(opts, prefix,),)

@@ -225,6 +225,12 @@ export async function start() {
   // Same for the harness admin settings (ACP enable + ToS acknowledgements).
   await applyStoredHarnessSettings(database,);
 
+  // Materialize operator-entered provider instances (system_config) into the
+  // registry so a wizard-created provider exists before `ready = true` and
+  // survives a restart.
+  const { materializeServerProviders, } = await import("../generation/providers/server-provider-store");
+  await materializeServerProviders(database, config,);
+
   if (config.logging.dbEnabled) {
     const { DBTransport, } = await import("../logger/transports/db");
     logger.addTransport(new DBTransport(database,),);

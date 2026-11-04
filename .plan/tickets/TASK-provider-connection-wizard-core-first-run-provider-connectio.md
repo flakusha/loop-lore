@@ -3,7 +3,7 @@
 
 # TASK: provider-connection-wizard core: first-run provider connection flow
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-provider-connection-wizard
@@ -48,7 +48,60 @@ Fresh installs currently reach a booted server with zero providers and no guided
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The backend half of this ticket shipped in the `provider-wizard-backend` lane.
+The frontend half of the wizard lands in a separate lane, so the acceptance
+criteria below stay unticked until both halves are in.
+
+**Backend contract shipped**
+
+- `src/generation/providers/server-provider-store.ts` — the store.
+  `serverProviderDescriptorKey(name)` → `provider.<name>.config`,
+  `serverProviderSecretKey(name)` → `provider.<name>.apiKey`,
+  `listServerProviders(db)`, `saveServerProvider(db, input)`,
+  `deleteServerProvider(db, name)`, `materializeServerProviders(db, config)`,
+  `applyStoredServerDefaults(db, config)`.
+- Admin routes (`src/routes/admin/setup-providers.ts`, mounted on the `/api/v1`
+  admin surface, permission `admin.system`):
+  `GET /api/v1/admin/setup/providers` → `{ providers: [...] }` (never a key),
+  `POST /api/v1/admin/setup/providers` → `{ ok: true, provider }`,
+  `DELETE /api/v1/admin/setup/providers/:name` → 204.
+- The API key is written through `setConfig`, so the row is sealed with the
+  `secret:v1:` envelope (`SECRET_KEY_PATTERN` matches `provider.<name>.apiKey`);
+  the descriptor row `provider.<name>.config` is plain JSON.
+- `materializeServerProviders` runs at boot (`src/server/start.ts`, next to
+  `applyStoredNsfwConfig`) so a wizard-created provider exists before
+  `ready = true` and survives a restart.
+
+**DECISION — the "no new backend routes beyond setup-state" constraint had to be relaxed**
+
+The Scope section says "no new backend routes beyond setup-state". That
+constraint could not hold: there is NO existing route that creates a provider
+instance or stores a provider key. `src/routes/admin/providers.ts` exposes only
+`GET /providers`, `GET /admin/providers`, `GET /admin/providers/:name/models`
+and `POST /admin/providers/rescan` — read/inspect surfaces over the registry.
+The registry is filled from the config file at boot (`initializeProviders`,
+`src/generation/providers/registry.ts`); nothing persists a provider instance or
+its key. The wizard needs new backend routes, and this ticket ships them.
+
+**PRECONDITION — remote provider hosts were impossible before this change**
+
+`BaseProvider` validated the base URL with an EMPTY allowlist
+(`src/generation/providers/base.ts` → `validateProviderUrl(baseUrl)`;
+`packages/core/src/utils/url-validation.ts` → `allowlist = options.allowlist ?? []`),
+so every remote hostname was rejected ("Remote host \"x\" not in allowlist").
+A remote provider in the config file also crashed boot, because
+`initializeProviders` is called unguarded in `src/server/start.ts`.
+`ProviderInstanceConfig` now carries an optional `allowedHosts` list — the
+operator's explicit host approval — and `BaseProvider` passes it to the
+validator. The default behaviour is unchanged: with no `allowedHosts` a remote
+host is still rejected.
+
+**Follow-up (not implemented here)**
+
+Only openai-compatible instances are materialized (that covers OpenAI,
+OpenRouter, Groq, Together, LM Studio, Ollama's OpenAI mode, llama.cpp and
+vLLM). Anthropic-native and ollama-native instances are NOT materialized — a
+follow-up ticket should extend `materializeServerProviders` for them.
 
 **Acceptance Criteria:**
 
