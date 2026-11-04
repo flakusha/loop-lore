@@ -10,8 +10,10 @@
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { chatKeynav, } from "./chat-keynav";
+import type { WorldChannelChat, } from "./chat-types";
 import { __resetKeynavHandlersForTests, dispatchKeynavActionToHandlers, } from "./shortcuts";
 import type { ChatState, } from "./types";
+import { worldChannels, } from "./world-channels";
 
 /** Minimal stand-in for the scrolling #message-list element. */
 type FakeList = {
@@ -54,6 +56,11 @@ function makeState(overrides: Record<string, unknown> = {},): FakeState {
     activeChat: "c1",
     filteredChats: [{ id: "c1", }, { id: "c2", }, { id: "c3", },],
     _searchResults: [] as { chatId: string; chatName: string; characterName: string }[],
+    _worlds: [] as { id: string; name: string }[],
+    _worldChats: {} as Record<string, WorldChannelChat[]>,
+    worldChatGroups(worldId: string,) {
+      return worldChannels.worldChatGroups!.call(this, worldId,);
+    },
     selected,
     selectChat: async (chatId: string,) => {
       selected.push(chatId,);
@@ -164,6 +171,26 @@ describe("chat keynav consumers", () => {
     dispatchKeynavActionToHandlers("next-chat",);
 
     expect(state.selected,).toEqual(["c7",],);
+  });
+
+  it("walks the world-channel tree before the flat list, without repeats", () => {
+    const state = makeState({
+      activeChat: "c9",
+      filteredChats: [{ id: "c1", }, { id: "c2", }, { id: "c3", }, { id: "c4", },],
+      _worlds: [{ id: "w1", name: "Everhollow", },],
+      _worldChats: {
+        w1: [
+          { id: "c3", current_location_id: "loc-a", location_name: "Chapel", },
+          { id: "c1", current_location_id: null, location_name: "", },
+        ],
+      },
+    },);
+
+    state.setupKeynav();
+
+    dispatchKeynavActionToHandlers("next-chat",);
+
+    expect(state.selected,).toEqual(["c3",],);
   });
 
   it("teardown removes every consumer", () => {
