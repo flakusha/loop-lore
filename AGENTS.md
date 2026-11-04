@@ -330,7 +330,7 @@ bun run check        # parallel gate runner. The authoritative gate list is
 #                     #   dead - code (knip), dead - code (src files)
 #                     #   wiring - check, fe-be - harmony, api - doc drift,
 #                     #   changelog - gate, db - schema gate, migrations - ordering,
-#                     #   conflict - markers, commits - signatures, size - check,
+#                     #   conflict - markers, size - check,
 #                     #   size - strict, context - weight, no - shell - refs,
 #                     #   fuzz - generated tests, i18n - reconcile,
 #                     #   i18n - static keys, tests - coverage gaps (see below),
@@ -533,14 +533,6 @@ requirement. The user owns GPG configuration; agents report, the user fixes
 the signer. An unsigned commit on `dev` is a blocker — reset it and ask the
 user to re-sign or re-run the flow. Warm the cache with `giwt gpg-unlock`
 before any signing run if `gpg-agent` is cold.
-
-The `commits - signatures` gate (`scripts/check/commit-signatures.mjs`)
-enforces that rule on the commits a branch adds — `giwt commit-wt` only warns
-when its own verification comes back inconclusive, and `giwt finalize`
-verifies the merge commit, never the branch's. Run `bun run check` before
-committing; the gate is range-scoped, so a base branch's own history is never
-re-litigated, and a machine without the public key reports SKIPPED rather
-than failing.
 
 ### Stop on tooling failure
 
