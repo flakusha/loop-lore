@@ -223,6 +223,28 @@ describe("server provider store", () => {
     expect(providers.some((provider,) => provider.name === "broken-provider"),).toBe(false,);
   });
 
+  test("skips a descriptor whose name does not match its own key", async () => {
+    await setConfig(
+      db,
+      serverProviderDescriptorKey("mismatched",),
+      JSON.stringify({
+        name: "other-name",
+        label: "Mismatched",
+        baseUrl: "https://api.example.com/v1",
+        model: "demo-model",
+        allowedHosts: ["api.example.com",],
+        timeout: 30_000,
+        retries: 3,
+        allowUserApiKey: true,
+        setDefault: false,
+      },),
+    );
+
+    const providers = await listServerProviders(db,);
+    expect(providers.some((provider,) => provider.name === "other-name"),).toBe(false,);
+    expect(providers.some((provider,) => provider.name === "mismatched"),).toBe(false,);
+  });
+
   test("applies the stored default_provider read-back on materialize", async () => {
     const config = testConfig();
     await setConfig(
@@ -258,6 +280,37 @@ describe("server provider store", () => {
     await applyStoredServerDefaults(db, config,);
 
     expect(config.generation.defaultProvider,).toBe("",);
+  });
+
+  test("an update replaces the live registry instance and the stored key", async () => {
+    const config = testConfig();
+    await saveServerProvider(db, {
+      name: "updated-provider",
+      label: "Updated Provider",
+      baseUrl: "https://api.example.com/v1",
+      model: "demo-model",
+      apiKey: "sk-first-value",
+      config,
+    },);
+
+    registered.push("updated-provider",);
+    const first = getProvider("updated-provider",);
+
+    await saveServerProvider(db, {
+      name: "updated-provider",
+      label: "Updated Provider",
+      baseUrl: "https://api.example.com/v2",
+      model: "demo-model-2",
+      apiKey: "sk-second-value",
+      config,
+    },);
+
+    // The registry keeps the FIRST instance for a name — the update must swap it.
+    const second = getProvider("updated-provider",);
+    expect(second,).toBeDefined();
+    expect(second,).not.toBe(first,);
+    expect(config.generation.providers.openaiCompatible[0]?.baseUrl,).toBe("https://api.example.com/v2",);
+    expect(await getConfigValue(db, serverProviderSecretKey("updated-provider",),),).toBe("sk-second-value",);
   });
 
   test("makes the first saved provider the default", async () => {
