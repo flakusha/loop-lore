@@ -70,15 +70,15 @@ interface CharacterTemplate {
 
 ## Acceptance Criteria
 
-- [ ] `CharacterTemplate` has `skills[]` and `professions[]` optional fields
-- [ ] Seeded characters from config include their declared skills
-- [ ] Seeded characters from config include their declared professions
-- [ ] Skills seeded with correct level + proficiency
-- [ ] Professions seeded with correct discipline + level
-- [ ] Idempotent: re-seeding doesn't duplicate skills/professions
-- [ ] Default templates (Elara, ARIA-7, Morgan) have example skills/professions
-- [ ] Config JSON schema validates skills/professions fields
-- [ ] `bun test src/` green; `bun run check` green
+- [x] `CharacterTemplate` has `skills[]` and `professions[]` optional fields (landed in `packages/core/src/config/sections/characters/types.ts`)
+- [x] Seeded characters from config include their declared skills (seeder is `src/characters/seed/rpg-sheets.ts`, not the sketched `templates.ts`)
+- [x] Seeded characters from config include their declared professions
+- [x] Skills seeded with correct level + proficiency (`SkillsService.createSkill` gained optional level/proficiency params; defaults unchanged)
+- [x] Professions seeded with correct discipline + level
+- [x] Idempotent: re-seeding doesn't duplicate skills/professions (asserted in seed tests)
+- [x] Default templates (Elara, ARIA-7, Morgan) have example skills/professions (Elara enchanting 30, ARIA-7 engineering 50, Morgan skills-only)
+- [x] Config JSON schema validates skills/professions fields (`section.ts`)
+- [x] `bun test src/` green; `bun run check` green (check:fast ALL PASS; 776 tests: 744 pass / 32 skip / 0 fail)
 
 ## Files to Create
 
@@ -86,11 +86,11 @@ interface CharacterTemplate {
 
 ## Files to Modify
 
-- `src/config/sections/characters/types.ts` — add `SkillTemplate`, `ProfessionTemplate`
-- `src/config/sections/characters/defaults.ts` — add example skills/professions
-- `src/config/sections/characters/section.ts` — update JSON schema
-- `src/characters/seed/templates.ts` — seed skills + professions
-- `src/config/schema/characters.ts` — update top-level config type
+- `src/config/sections/characters/types.ts` — add `SkillTemplate`, `ProfessionTemplate` (landed at `packages/core/src/config/sections/characters/types.ts`)
+- `src/config/sections/characters/defaults.ts` — add example skills/professions (landed at `packages/core/src/config/sections/characters/defaults.ts`)
+- `src/config/sections/characters/section.ts` — update JSON schema (landed at `packages/core/src/config/sections/characters/section.ts`)
+- `src/characters/seed/templates.ts` — seed skills + professions (landed at `src/characters/seed/rpg-sheets.ts`)
+- `src/config/schema/characters.ts` — update top-level config type (landed via `packages/core/src/config/sections/characters/`)
 
 ## Related
 
