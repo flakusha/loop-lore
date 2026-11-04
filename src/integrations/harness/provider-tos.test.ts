@@ -12,6 +12,7 @@ import { DEFAULT_HARNESS_FLAVOR, } from "./flavor-factories";
 import {
   HARNESS_PROVIDER_TOS,
   HARNESS_USAGE_CLASSES,
+  providerTosGated,
   providerTosInfo,
 } from "./provider-tos";
 
@@ -72,5 +73,24 @@ describe("providerTosInfo", () => {
 
   it("throws on a flavor with no metadata", () => {
     expect(() => providerTosInfo("bedrock",)).toThrow(/no provider ToS metadata/,);
+  });
+});
+
+// Resource contract: pure functions over the in-code matrix — no shared
+// state, no DB, no ports. Parallel-safe.
+describe("providerTosGated (fail-closed dispatch gate input)", () => {
+  it("gates exactly the subscription-backed flavors", () => {
+    expect(providerTosGated("omp",),).toBe(false,);
+    expect(providerTosGated("opencode",),).toBe(false,);
+    expect(providerTosGated("codex",),).toBe(true,);
+    expect(providerTosGated("claude-code",),).toBe(true,);
+  });
+
+  it("treats an omitted flavor as the default (omp — local, ungated)", () => {
+    expect(providerTosGated(),).toBe(false,);
+  });
+
+  it("deny-by-default: an unknown flavor is GATED, never auto-allowed", () => {
+    expect(providerTosGated("bedrock",),).toBe(true,);
   });
 });

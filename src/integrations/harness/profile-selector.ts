@@ -11,17 +11,20 @@
  *   4. cost — cheapest `costPer1kTokens` first among the survivors
  *
  * Candidate admission also carries the ToS acknowledgement guard
- * (TASK-harness-tos-acknowledgement-dispatch-guard): until the usage-class
- * matrix (TASK-harness-provider-tos-usage-class-matrix) lands there is no
- * static subscription-backed metadata, so the guard applies to every
- * profile — one lacking `tosGrayzoneAcknowledged: true` is not a selectable
- * candidate and is denied with the distinct `tos_unacknowledged` skip code.
+ * (TASK-harness-tos-acknowledgement-dispatch-guard, scoped by
+ * BUG-tos-dispatch-guard-denies-local-api-profiles-that-the-bindin): only
+ * subscription-backed flavors (`providerTosGated`) require
+ * `tosGrayzoneAcknowledged: true`; local/api profiles stay ungated. The
+ * ack and the master switch are read from the EFFECTIVE admin-settings
+ * view (UI toggles), falling back to the file config while the store is
+ * unseeded; a gated profile without an acknowledgement is denied with the
+ * `tos_unacknowledged` skip code.
  *
  * Only the `failover` strategy exists in this slice: `runTurn` walks the
  * ordered candidates and rotates to the next (profile, tier) on failure.
  */
 
-import type { HarnessCapability, HarnessTierId, } from "../../config/schema/harness";
+import { type AcpProfileConfig, type HarnessCapability, type HarnessTierId, } from "../../config/schema/harness";
 import { getChildLogger, } from "../../logger";
 import { safeJsonStringify, } from "../../utils";
 import {
@@ -29,8 +32,14 @@ import {
   type HarnessAdapterFactory,
   type HarnessTurnResult,
 } from "./adapter-types";
+import {
+  getHarnessAdminSettings,
+  type HarnessAdminSettingsView,
+  isHarnessAdminSettingsSeeded,
+} from "./admin-settings";
 import { ProfileBreaker, } from "./profile-breaker";
 import { type ProfileRegistry, } from "./profile-registry";
+import { providerTosGated, } from "./provider-tos";
 import { type UsageLedger, } from "./usage-ledger";
 
 /** Logger; null-safe — the selector must work before logger init. */
@@ -132,6 +141,16 @@ export class ProfileSelector {
     const wantedTier = requirement.preferredTier ??
       (GOOD_TIER_TASK_TYPES.has(requirement.taskType,) ? "good" : "fast");
 
+    // Master switch: the effective admin-settings view (UI toggle) once the
+    // store is seeded; the raw file layer while unseeded. Off = no probing,
+    // no candidates, no spawns (BUG-admin-settings-overrides-never-reach-
+    // the-harness-dispatch-gu, AC "disabled override suppresses spawn even
+    // with file enabled: true").
+    const effective = isHarnessAdminSettingsSeeded() ? getHarnessAdminSettings() : null;
+    if (effective && !effective.enabled) {
+      return { candidates: [], skips: [], };
+    }
+
     const candidates: TurnCandidate[] = [];
     const skips: DispatchSkip[] = [];
     for (const name of this.registry.names()) {
@@ -139,7 +158,10 @@ export class ProfileSelector {
       if (probe.state !== "healthy") { continue; }
       const cfg = this.registry.config(name,);
       if (!cfg) { continue; }
-      if (cfg.tosGrayzoneAcknowledged !== true) {
+      // Scope + ack: only subscription-backed flavors are gated; local/api
+      // profiles stay ungated; an unknown flavor is fail-closed GATED
+      // (BUG-tos-dispatch-guard-denies-local-api-profiles-that-the-bindin).
+      if (this.tosDenied(cfg, effective,)) {
         skips.push({ profile: name, code: HARNESS_TOS_UNACKNOWLEDGED, },);
         log()?.warn(
           "harness profile denied — ToS greyzone not acknowledged",
@@ -161,6 +183,23 @@ export class ProfileSelector {
 
     candidates.sort((a, b,) => (this.costs.get(a.model,) ?? Infinity) - (this.costs.get(b.model,) ?? Infinity));
     return { candidates, skips, };
+  }
+
+  /**
+   * Whether admission for this profile requires a ToS greyzone
+   * acknowledgement and none is in force. Acknowledgement source: the
+   * effective admin-settings view (override acks win); a profile absent
+   * from the seeded view falls back to its file flag — last-known-good,
+   * never an implicit true (no-downgrade AC).
+   * @param cfg - the profile's file config
+   * @param effective - the effective admin-settings view, or null while the
+   *   store is unseeded (file-config fallback)
+   * @returns true when the profile must be denied with `tos_unacknowledged`.
+   */
+  private tosDenied(cfg: AcpProfileConfig, effective: HarnessAdminSettingsView | null,): boolean {
+    const viewProfile = effective?.profiles.find((p,) => p.name === cfg.name);
+    const acknowledged = viewProfile?.tosGrayzoneAcknowledged ?? cfg.tosGrayzoneAcknowledged === true;
+    return providerTosGated(cfg.harness,) && !acknowledged;
   }
 
   /**

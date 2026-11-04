@@ -6,13 +6,29 @@
  * cost) and failover rotation. In-memory fakes, injected clocks; each test
  * builds its own selector (parallel-safe).
  */
-import { describe, expect, it, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { AcpProfileConfig, } from "../../config/schema/harness";
+import {
+  harnessAdminSettings,
+  initHarnessAdminSettings,
+  resetHarnessAdminSettings,
+} from "./admin-settings";
 import { fakeFactory, } from "./fakes";
 import { ProfileBreaker, } from "./profile-breaker";
 import { ProfileRegistry, } from "./profile-registry";
 import { HARNESS_TOS_UNACKNOWLEDGED, ProfileSelector, } from "./profile-selector";
 import { UsageLedger, } from "./usage-ledger";
+
+// Parallel-safety: the admin-settings singleton is process-shared and other
+// files seed it; every case in THIS file starts from an UNSEEDED store so
+// the file-config fallback governs, regardless of cross-file order.
+beforeEach(() => {
+  resetHarnessAdminSettings();
+},);
+
+afterEach(() => {
+  resetHarnessAdminSettings();
+},);
 
 /** Build a profile config. */
 function cfg(
@@ -113,8 +129,24 @@ describe("ProfileSelector.select", () => {
     expect(recovered,).toHaveLength(1,);
   });
 
-  it("excludes profiles without tosGrayzoneAcknowledged: true (tos_unacknowledged)", async () => {
-    const denied = cfg("denied", "d/good", "d/fast", { tosGrayzoneAcknowledged: undefined, },);
+  it("admits local/api profiles (omp default) without an ack — ungated", async () => {
+    const noAck = cfg("no-ack", "d/good", "d/fast", { tosGrayzoneAcknowledged: undefined, },);
+    const ok = cfg("ok", "o/good", "o/fast",);
+    const { selector, } = makeSelector([noAck, ok,], {
+      "no-ack": { models: ["d/good", "d/fast",], },
+      ok: { models: ["o/good", "o/fast",], },
+    },);
+
+    const picks = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
+    expect(picks.map((c,) => c.profile),).toEqual(["no-ack", "ok",],);
+  });
+
+  it("denies an unacknowledged subscription-backed profile (tos_unacknowledged)", async () => {
+    const denied = cfg("denied", "d/good", "d/fast", {
+      harness: "codex",
+      tosGrayzoneAcknowledged: undefined,
+    },);
+
     const ok = cfg("ok", "o/good", "o/fast",);
     const { selector, } = makeSelector([denied, ok,], {
       denied: { models: ["d/good", "d/fast",], },
@@ -123,6 +155,18 @@ describe("ProfileSelector.select", () => {
 
     const picks = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
     expect(picks.map((c,) => c.profile),).toEqual(["ok",],);
+  });
+
+  it("deny-by-default: a profile whose flavor has no ToS metadata is gated", async () => {
+    const weird = cfg("weird", "w/good", "w/fast", {
+      harness: "unknown-flavor" as unknown as AcpProfileConfig["harness"],
+      tosGrayzoneAcknowledged: undefined,
+    },);
+
+    const { selector, } = makeSelector([weird,], { weird: { models: ["w/good", "w/fast",], }, },);
+
+    const picks = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
+    expect(picks,).toEqual([],);
   });
 
   it("runs an acknowledged profile through dispatch unchanged", async () => {
@@ -172,8 +216,12 @@ describe("ProfileSelector.runTurn", () => {
   });
 
   it("names tos_unacknowledged when ToS denial emptied the candidate list", async () => {
-    const a = cfg("a", "a/good", "a/fast", { tosGrayzoneAcknowledged: false, },);
-    const b = cfg("b", "b/good", "b/fast", { tosGrayzoneAcknowledged: undefined, },);
+    const a = cfg("a", "a/good", "a/fast", { harness: "codex", tosGrayzoneAcknowledged: false, },);
+    const b = cfg("b", "b/good", "b/fast", {
+      harness: "claude-code",
+      tosGrayzoneAcknowledged: undefined,
+    },);
+
     const { selector, factory, } = makeSelector([a, b,], {
       a: { models: ["a/good", "a/fast",], },
       b: { models: ["b/good", "b/fast",], },
@@ -192,5 +240,77 @@ describe("ProfileSelector.runTurn", () => {
     await selector.runTurn({ taskType: "mechanical", needsCapabilities: [], }, "hi", factory,);
     const after = await selector.select({ taskType: "mechanical", needsCapabilities: [], },);
     expect(after,).toEqual([],);
+  });
+});
+
+// Resource contract: in-memory fakes + the in-memory admin-settings store —
+// seeded per case, reset in beforeEach AND afterEach so a failed test can
+// never leak store state into siblings (other suites in this file rely on
+// the unseeded file-config fallback). No DB, no ports, no fixed paths.
+describe("ProfileSelector effective admin settings (BUG 369e695)", () => {
+  beforeEach(() => {
+    resetHarnessAdminSettings();
+  },);
+
+  afterEach(() => {
+    resetHarnessAdminSettings();
+  },);
+
+  it("a UI-toggled ack enables a subscription-backed profile without a config-file edit", async () => {
+    const p = cfg("p", "p/good", "p/fast", { harness: "codex", tosGrayzoneAcknowledged: false, },);
+    initHarnessAdminSettings({ enabled: true, profiles: [p,], },);
+    const { selector, } = makeSelector([p,], { p: { models: ["p/good", "p/fast",], }, },);
+
+    // Before the toggle: gated.
+    const before = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
+    expect(before,).toEqual([],);
+
+    // The admin save path lands here as an override ack — no config edit.
+    harnessAdminSettings.update({ acks: { p: true, }, },);
+    const after = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
+    expect(after,).toEqual([{ profile: "p", tier: "fast", model: "p/fast", },],);
+  });
+
+  it("a disabled override suppresses selection even with file enabled: true", async () => {
+    const p = cfg("p", "p/good", "p/fast",);
+    initHarnessAdminSettings({ enabled: true, profiles: [p,], },);
+    harnessAdminSettings.update({ enabled: false, },);
+    const { selector, factory, } = makeSelector([p,], { p: { models: ["p/good", "p/fast",], }, },);
+
+    const picks = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
+    expect(picks,).toEqual([],);
+    await expect(
+      selector.runTurn({ taskType: "mechanical", needsCapabilities: [], }, "hi", factory,),
+    ).rejects.toThrow(/no harness profile satisfies/,);
+  });
+
+  it("an enabled override over a file-disabled config enables selection", async () => {
+    const p = cfg("p", "p/good", "p/fast",);
+    initHarnessAdminSettings({ enabled: false, profiles: [p,], },);
+    harnessAdminSettings.update({ enabled: true, },);
+    const { selector, } = makeSelector([p,], { p: { models: ["p/good", "p/fast",], }, },);
+
+    const picks = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
+    expect(picks,).toHaveLength(1,);
+  });
+
+  it("no-downgrade: an unseeded store falls back to file-config behavior", async () => {
+    // Store deliberately unseeded (reset in beforeEach): the file flag
+    // governs, exactly as before the effective view existed.
+    const p = cfg("p", "p/good", "p/fast",);
+    const { selector, } = makeSelector([p,], { p: { models: ["p/good", "p/fast",], }, },);
+
+    const picks = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
+    expect(picks,).toHaveLength(1,);
+  });
+
+  it("an override ack cannot be revoked below the file flag (OR semantics)", async () => {
+    const p = cfg("p", "p/good", "p/fast", { harness: "codex", tosGrayzoneAcknowledged: true, },);
+    initHarnessAdminSettings({ enabled: true, profiles: [p,], },);
+    harnessAdminSettings.update({ acks: {}, },);
+    const { selector, } = makeSelector([p,], { p: { models: ["p/good", "p/fast",], }, },);
+
+    const picks = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
+    expect(picks,).toHaveLength(1,);
   });
 });
