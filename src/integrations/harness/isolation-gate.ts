@@ -8,7 +8,9 @@
  * Every harness spawn passes through {@link assertHarnessExecution}, which
  * enforces, in order:
  *
- * 1. master switch — `harness.acp.enabled` must be on;
+ * 1. master switch — the effective admin-settings view must be on (the UI
+ *    toggle wins over the file config once the store is seeded; an
+ *    unseeded store falls back to the file layer);
  * 2. role gate — `isAdminRole` (solo/admin), checked explicitly and NOT
  *    implied by any route's `auth.required`;
  * 3. profile allowlist — the executed profile must exist in the
@@ -25,6 +27,7 @@
 
 import { type AcpProfileConfig, type HarnessConfig, } from "../../config/schema/harness";
 import { isAdminRole, } from "../../users/roles";
+import { getHarnessAdminSettings, isHarnessAdminSettingsSeeded, } from "./admin-settings";
 
 /** What {@link assertHarnessExecution} resolves with — denies are values, never throws. */
 export type HarnessIsolationVerdict =
@@ -58,7 +61,17 @@ export interface HarnessIsolationInput {
  */
 export function assertHarnessExecution(input: HarnessIsolationInput,): HarnessIsolationVerdict {
   const { config, role, userId, profileName, } = input;
-  if (!config.acp.enabled) {
+  // Master switch: the effective admin-settings view (UI toggle) once the
+  // store is seeded; the raw file layer before boot. An unseeded store is
+  // "unavailable" — unavailable means last-known-good file config, never a
+  // silent widening (BUG-admin-settings-overrides-never-reach-the-harness-
+  // dispatch-gu, no-downgrade AC). Authz semantics unchanged: this only
+  // redirects WHERE the enabled value is read from, never who is allowed.
+  const effectiveEnabled = isHarnessAdminSettingsSeeded()
+    ? getHarnessAdminSettings().enabled
+    : config.acp.enabled;
+
+  if (!effectiveEnabled) {
     return {
       allowed: false,
       code: "harness_disabled",
