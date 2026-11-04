@@ -24,6 +24,12 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 `GET /api/v1/health` — returns `{ status: "ok" }`
 
+## Setup
+
+### Setup State
+
+`GET /api/v1/setup/state` — machine-readable setup checks — requires the `admin.system` permission (admin only; 401 unauthenticated, 403 non-admin) — returns `{ checks: [{ id, ok, hint? }] }` where `id` is one of `env.pii`, `provider.health`, `smk`, `model.roles`, `native`, `tls`
+
 ## Authentication Endpoints
 
 ### Login
