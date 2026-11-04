@@ -20,6 +20,7 @@ import type { Static, } from "@sinclair/typebox";
 import { Value, } from "@sinclair/typebox/value";
 import { type Context, Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { isChatOwner, } from "../../chat/service/owners-core";
 import type { DB, } from "../../db/schema";
 import { getChatParticipantUserIds, } from "../../middleware/nsfw-gate/access";
 import { hasActiveConsent, recordNsfwConsent, } from "../../middleware/nsfw-gate/consent-ledger";
@@ -47,7 +48,7 @@ type ConsentBody = Static<typeof NsfwConsentBody>;
 
 /**
  * Whether the caller participates in the chat: a participant of the chat is
- * backed by the caller's user account, or the caller created the chat.
+ * backed by the caller's user account, or the caller holds chat authority.
  * Consent is a per-(user, chat) concept, so a non-member must not be able to
  * plant a row.
  * @param database
@@ -63,14 +64,9 @@ async function isChatParticipantUser(
   const participants = await getChatParticipantUserIds(database, chatId,);
   if (participants.includes(userId,)) { return true; }
 
-  // The chat creator may hold no participant row of their own.
-  const chat = await database
-    .selectFrom("chats",)
-    .select("created_by",)
-    .where("id", "=", chatId,)
-    .executeTakeFirst();
-
-  return chat?.created_by === userId;
+  // The chat creator (and any current owner) may hold no participant row of
+  // their own — the owners set is the authority source for a chat.
+  return isChatOwner(database, chatId, userId,);
 }
 
 /**
