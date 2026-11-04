@@ -16,6 +16,7 @@ import { commandsRoutes, } from "../commands";
 import { exportRoutes, } from "../export";
 import { exportSseRoutes, } from "../export-sse";
 import { harnessRoutes, } from "../harness";
+import { harnessModelRoutes, } from "../harness/models";
 import { harnessPermissionRoutes, } from "../harness/permissions";
 import { importRoutes, } from "../import";
 import { pluginRoutes, } from "../plugins";
@@ -48,6 +49,10 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
     // Reads its queue off the composed runtime; 503 when the integration
     // is disabled, so the surface is inert rather than auto-anything.
     .use(harnessPermissionRoutes(prefix,),)
+    // ── Harness model discovery (TASK-model-discovery-capability-enrichment) ──
+    // Read-only listing off the composed runtime's EXISTING connections,
+    // enriched from the static capability table; never spawns to list.
+    .use(harnessModelRoutes({ database, }, prefix,),)
     // ── Import / export ──────────────────────────────────────
     .use(importRoutes(handleOpts, prefix,),)
     .use(exportRoutes({ database, }, prefix,),)
