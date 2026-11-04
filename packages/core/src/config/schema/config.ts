@@ -27,6 +27,7 @@ import type { HeadersConfig, } from "./headers";
 import type { HooksConfig, } from "./hooks";
 import type { IdempotencyConfig, } from "./idempotency";
 import type { IntegrationsConfig, } from "./integrations";
+import type { ItemsConfig, } from "./items";
 import type { LoggingConfig, } from "./logging";
 import type { MessagesConfig, } from "./messages";
 import type { NsfwConfig, } from "./nsfw";
@@ -64,6 +65,7 @@ export interface Config {
   dynamicResponse: DynamicResponseConfig;
   templates: TemplatesConfig;
   characters: CharactersConfig;
+  items: ItemsConfig;
   testing?: TestingConfig;
   frontend: FrontendConfig;
   cron: CronConfig;
