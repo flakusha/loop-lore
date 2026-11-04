@@ -378,6 +378,20 @@
     "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md",
     "status": "done"
   },
+  "BUG-ADMIN-SETTINGS-OVERRIDES-NEVER-REACH-THE-HARNESS-DISPATCH-GU": {
+    "hash": "369e695",
+    "git_issue": "369e695",
+    "extid": "BUG-ADMIN-SETTINGS-OVERRIDES-NEVER-REACH-THE-HARNESS-DISPATCH-GU",
+    "type": "BUG",
+    "title": "Admin settings overrides never reach the harness dispatch guard (reads config file only)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-settings-overrides-never-reach-the-harness-dispatch-gu.md",
+    "status": "open"
+  },
   "BUG-ADMIN-SYSTEM-CONFIG-DELETE-PASSES-USER-CONTROLLED-KEY-WITHOU": {
     "hash": "daacc4b",
     "git_issue": "daacc4b",
@@ -10116,6 +10130,20 @@
     "tags": [],
     "title": "LLM tool calls persist in `messages.tool_calls` (migration 037) but no `MessageContentType.ToolResult` exists and no frontend bubble renders them — tool calls appear as raw JSON text in chat",
     "type": "BUG"
+  },
+  "BUG-TOS-DISPATCH-GUARD-DENIES-LOCAL-API-PROFILES-THAT-THE-BINDIN": {
+    "hash": "137cfa0",
+    "git_issue": "137cfa0",
+    "extid": "BUG-TOS-DISPATCH-GUARD-DENIES-LOCAL-API-PROFILES-THAT-THE-BINDIN",
+    "type": "BUG",
+    "title": "ToS dispatch guard denies local/api profiles that the binding policy says stay ungated",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tos-dispatch-guard-denies-local-api-profiles-that-the-bindin.md",
+    "status": "open"
   },
   "BUG-TOUCHMEMORY-NEVER-CALLED-ON-MEMORY-INJECTION-SO-LAST-ACCESSE": {
     "hash": "255ff5b",
