@@ -12,14 +12,22 @@
  * - Federation disabled -> silent no-op, nothing queued.
  * - Peer failure never rejects the write path.
  *
- * Timing note (ts-no-test-timers exception): the trigger is fire-and-forget
- * with no exposed signal, and the chain crosses real DNS + real SQLite, so
- * fake timers cannot drive it. waitFor polls the actual outbox condition
- * instead of guessing a duration; the negative cases bound the same poll.
+ * Timing note: the trigger is fire-and-forget with no exposed signal, so
+ * waitFor polls the actual outbox condition instead of guessing a duration;
+ * the negative cases bound the same poll. Because the peer dial is refused
+ * instantly (see resource contract), the positive poll resolves in tens of
+ * milliseconds and the 3s bound is generous.
+ *
+ * Resource contract (parallel-safe): each run owns one freshly bound
+ * 127.0.0.1 ephemeral listener that is CLOSED before any test dials it, so
+ * every push fails with an immediate ECONNREFUSED — no DNS, no external
+ * network, no fixed ports, no sleeps. The mesh test DB comes from
+ * createTestDb and is reset in afterAll.
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { type AddressInfo, createServer, } from "node:net";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { grantChatFederationConsent, } from "../../federation/clearance";
@@ -29,7 +37,8 @@ import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { runPostInsertChatEffects, } from "./post-insert";
 
-const PEER = "https://loop-lore-invalid-peer.invalid";
+/** Loopback origin whose listener is closed before any test dials it. */
+let PEER = "";
 
 function testConfig(enabled: boolean,): Config {
   return {
@@ -56,7 +65,7 @@ async function outboxRows(db: Kysely<DB>, contentId: string,) {
 /** Poll the real outbox condition; resolves true when it holds, false on timeout. */
 async function waitFor(
   cond: () => Promise<boolean>,
-  timeoutMs = 15000,
+  timeoutMs = 3000,
 ): Promise<boolean> {
   const start = Date.now();
   for (;;) {
@@ -75,6 +84,15 @@ describe("post-insert fan-out trigger", () => {
   let actorId: string;
 
   beforeAll(async () => {
+    // Bind an ephemeral loopback listener, read its port, then CLOSE it: every
+    // later dial gets an immediate ECONNREFUSED. Fully run-owned — no DNS, no
+    // external network, no fixed port.
+    const listener = createServer();
+    await new Promise<void>((resolve,) => listener.listen(0, "127.0.0.1", resolve,));
+    const port = (listener.address() as AddressInfo).port;
+    await new Promise<void>((resolve,) => listener.close(() => resolve()));
+    PEER = `http://127.0.0.1:${port}`;
+
     createLogger({ level: "error", },);
     ({ db, sqlite, } = await createTestDb());
     userId = await insertUsers(db, "fanout-user", "Fanout",);
@@ -131,8 +149,10 @@ describe("post-insert fan-out trigger", () => {
     );
 
     // A row appearing would prove the trigger bypassed the gate: bound the
-    // same poll and expect it to time out with nothing queued.
-    const queued = await waitFor(async () => (await outboxRows(db, messageId,)).length > 0, 1500,);
+    // same poll and expect it to time out with nothing queued. The dial is
+    // refused in-process within milliseconds, so a wrongly queued row would
+    // surface in the first poll — 400ms is a wide margin.
+    const queued = await waitFor(async () => (await outboxRows(db, messageId,)).length > 0, 400,);
     expect(queued,).toBe(false,);
   });
 
@@ -152,7 +172,7 @@ describe("post-insert fan-out trigger", () => {
       undefined,
     );
 
-    const queued = await waitFor(async () => (await outboxRows(db, messageId,)).length > 0, 1500,);
+    const queued = await waitFor(async () => (await outboxRows(db, messageId,)).length > 0, 400,);
     expect(queued,).toBe(false,);
   });
 
