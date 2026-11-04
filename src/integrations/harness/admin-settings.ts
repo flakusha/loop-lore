@@ -96,6 +96,11 @@ class HarnessAdminSettingsStore {
     return this.state.file;
   }
 
+  /** Whether the file layer has been seeded (boot availability check). */
+  isSeeded(): boolean {
+    return this.state.seeded;
+  }
+
   /** Reset to unseeded defaults. Dev/test only. */
   reset(): void {
     this.state = {
@@ -134,6 +139,18 @@ export function initHarnessAdminSettings(acp: HarnessAcpConfig,): void {
  */
 export function getHarnessAdminSettings(): HarnessAdminSettingsView {
   return harnessAdminSettings.get();
+}
+
+/**
+ * Whether the admin settings store has been seeded with the file layer
+ * (`initHarnessAdminSettings`, server boot). Dispatch-time availability
+ * check for the no-downgrade fallback: while false, consumers fall back to
+ * the raw file config — the store's unavailability never widens access
+ * (BUG-admin-settings-overrides-never-reach-the-harness-dispatch-gu).
+ * @returns true once the file layer is seeded.
+ */
+export function isHarnessAdminSettingsSeeded(): boolean {
+  return harnessAdminSettings.isSeeded();
 }
 
 /**

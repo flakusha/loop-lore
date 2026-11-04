@@ -11,7 +11,7 @@
  * Serial-by-file: the module-level settings singleton is shared, so every
  * case resets it first.
  */
-import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeAll, describe, expect, it, } from "bun:test";
 import { deleteConfig, getConfigValue, } from "../../admin/config";
 import { type HarnessConfig, } from "../../config/schema/harness";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
@@ -22,6 +22,7 @@ import {
   HARNESS_SETTINGS_ENABLED_KEY,
   harnessAdminSettings,
   initHarnessAdminSettings,
+  isHarnessAdminSettingsSeeded,
   resetHarnessAdminSettings,
   saveHarnessAdminSettings,
 } from "./admin-settings";
@@ -152,5 +153,20 @@ describe("harness admin settings store", () => {
     expect(await getConfigValue(fixture.db, HARNESS_SETTINGS_ACKS_KEY,),).toBe(
       JSON.stringify({ "codex-sub": true, },),
     );
+  });
+});
+
+// Resource contract: in-memory store singleton only — reset in afterEach so
+// a failed case cannot leak into siblings; no DB, no ports.
+describe("isHarnessAdminSettingsSeeded", () => {
+  afterEach(() => {
+    resetHarnessAdminSettings();
+  },);
+
+  it("is false before seeding and true after", () => {
+    resetHarnessAdminSettings();
+    expect(isHarnessAdminSettingsSeeded(),).toBe(false,);
+    initHarnessAdminSettings({ enabled: false, profiles: [], },);
+    expect(isHarnessAdminSettingsSeeded(),).toBe(true,);
   });
 });

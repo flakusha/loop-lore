@@ -3,7 +3,8 @@
 
 # BUG: Admin settings overrides never reach the harness dispatch guard (reads config file only)
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Implemented on branch `harness-effective-view` (stacked on `acp-composition-root` @ `9c5c95116`); pending finalize behind the parked wave.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
@@ -27,10 +28,20 @@ Owner-confirmed required 2026-11-03 (ratifies review OQ2: admin-settings store v
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The store persisted acks/enable as `system_config` overrides while the dispatch-time
+consumers read the file config. Selector (`profile-selector.ts` walk: effective
+master-switch + per-profile acks via a new `tosDenied` helper) and the isolation gate now
+read the effective view (`getHarnessAdminSettings`); a new
+`isHarnessAdminSettingsSeeded()` gates the no-downgrade fallback — an unseeded store
+degrades to the raw file layer (last-known-good), never a silent widening; the composed
+runtime is untouched structurally (`runtime.ts` composes nothing when file-disabled).
+Authz semantics unchanged: only WHERE enabled/acks are read from moved. AC evidence:
+unit tests at select/runTurn/gate level in `profile-selector.test.ts`,
+`isolation-gate.test.ts`, `runtime.test.ts`, `admin-settings.test.ts` (in-memory fakes,
+store reset per test); documentation = the updated module doc headers.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
