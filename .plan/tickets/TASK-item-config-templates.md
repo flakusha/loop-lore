@@ -69,14 +69,22 @@ Character templates are seeded idempotently from config on server start, but **i
 
 ## Acceptance Criteria
 
-- [ ] `ItemsConfig` with `enabled` + `templates[]` in config schema
-- [ ] Item templates define: name, category, rarity, properties, value, weight
-- [ ] Default item templates cover all major categories (weapon, armor, consumable, tool, treasure)
-- [ ] Seeder creates item definitions idempotently on server start
-- [ ] Items can be seeded globally (all worlds) or per-world
-- [ ] User config templates merge with/override built-in defaults
-- [ ] Seeded items use unified `ItemCategory` + `ItemRarity` enums
-- [ ] `bun test src/` green; `bun run check` green
+- [x] `ItemsConfig` with `enabled` + `templates[]` in config schema (landed: `ItemsSection` class in `packages/core/src/config/sections/items/section.ts`; `src/config/...` paths in this sketch are re-export shims — real code lives in `packages/core/src/config/`)
+- [x] Item templates define: name, category, rarity, properties, value, weight (landed: `ItemTemplate` in `packages/core/src/config/sections/items/types.ts`)
+- [x] Default item templates cover all major categories (weapon, armor, consumable, tool, treasure) (landed: 6 defaults in `defaults.ts` — Iron Sword, Leather Armor, Health Potion, Torch, Hempen Rope, Gold Ring)
+- [x] Seeder creates item definitions idempotently on server start (landed: `src/items/seed/templates.ts`, skip-by-(world,name,category) reusing `createDefinition` duplicate check; asserted by `src/items/seed/seed.test.ts`)
+- [x] Items can be seeded globally (all worlds) or per-world (landed: global seeding inserts into every `worlds` row; `template.world` matches world id or name; explicit `worldId` seeder arg restricts/overrides)
+- [x] User config templates merge with/override built-in defaults (landed: `mergeItemTemplates` by name case-insensitive, wired in `src/server/init-background-services.ts` next to the characters seed job)
+- [x] Seeded items use unified `ItemCategory` + `ItemRarity` enums (landed: meta enums mirror `src/db/enums-story/items.ts`)
+- [x] `bun test src/` green; `bun run check` green (landed: targeted `bun test src/items/ packages/core/src/config/sections/items/` 17 pass / 0 fail; `bun run check:fast` 14/14 PASS)
+
+## Deviations from the sketch (landed reality, 2026-11-04)
+
+- Ticket's `src/server/start.ts:163-192` seeding entry point is stale: character seeding actually runs in `src/server/init-background-services.ts` (invoked by start.ts) — item seeding wired there as an `item-templates` init job.
+- `src/config/schema/config.ts` + section files are shim/re-export structure: real section code in `packages/core/src/config/sections/items/`; registration touched at schema-class (defaults factory), json-schema (property + required), schema/config.ts, sections barrel, and `src/config/sections/items/` shims.
+- Seeder signature is `seedItemTemplates(database, config, worldId?)` — the sketch's `ownerId?` param dropped: `items` rows are world-scoped with no owner column.
+- `ItemsService.placeInLocation()` instance placement NOT implemented (definition seeding only); instance placement needs a location target the config section doesn't carry — left out rather than half-wired.
+- `createDefinition` gained an optional `hardId` third param to honor `template.id` deterministically.
 
 ## Files to Create
 

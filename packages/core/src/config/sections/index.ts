@@ -31,6 +31,7 @@ export {
   integrationsMeta,
   type IntegrationsSection,
 } from "./integrations";
+export { ITEMS_DEFAULTS, itemsMeta, ItemsSection, } from "./items";
 export { LOGGING_DEFAULTS, loggingMeta, LoggingSection, } from "./logging";
 export { MESSAGES_DEFAULTS, messagesMeta, MessagesSection, } from "./messages";
 export { NSFW_DEFAULTS, nsfwMeta, NsfwSection, } from "./nsfw";
