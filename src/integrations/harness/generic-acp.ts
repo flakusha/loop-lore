@@ -37,6 +37,8 @@ export interface GenericAcpOptions {
   readTextFile?: (path: string,) => Promise<string>;
   /** Called once per open permission request, so hosts can prompt a human. */
   onPermissionRequest?: (pending: PendingPermission,) => void;
+  /** Called when the connection dies or closes with an ask still parked, so hosts drop the queue entry. */
+  onPermissionWithdrawn?: () => void;
 }
 
 /** Map a transport error to the adapter's typed error. */
@@ -255,7 +257,9 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     this.rpc?.close();
     this.rpc = null;
     this.session = null;
+    const parked = this.permission !== null;
     this.permission = null;
+    if (parked) { this.opts.onPermissionWithdrawn?.(); }
   }
 
   /**
@@ -277,7 +281,9 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
         // "connection closed" forever.
         this.rpc = null;
         this.session = null;
+        const parked = this.permission !== null;
         this.permission = null;
+        if (parked) { this.opts.onPermissionWithdrawn?.(); }
       },
       onRequest: (method, params,) => this.handleServerRequest(method, params,),
       onNotification: (method, params,) => {
@@ -324,7 +330,10 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   /**
    * Serve one server-originated request: permission asks park on the engine
    * until `respondPermission`, fs-read asks go through the injected reader,
-   * anything else answers unsupported.
+   * anything else answers unsupported. The permission slot stays SINGLE per
+   * connection on purpose (harnesses serialize asks; a concurrent ask is
+   * refused `-32601`) — multiplexing across profiles is the runtime queue's
+   * job, not this engine's.
    * @param method - wire method the harness invoked
    * @param params - raw request params
    * @returns the response result payload.

@@ -11,6 +11,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { AcpProfileConfig, HarnessAcpConfig, } from "../../config/schema/harness";
+import type { HarnessAdapterCommandOptions, HarnessAdapterFactory, } from "./adapter-types";
 import {
   harnessAdminSettings,
   initHarnessAdminSettings,
@@ -19,6 +20,7 @@ import {
 import { CodexAcpAdapter, } from "./codex";
 import { fakeFactory, } from "./fakes";
 import { OmpAcpAdapter, } from "./omp";
+import { PermissionQueue, } from "./permission-queue";
 import { ProfileBreaker, } from "./profile-breaker";
 import { ProfileRegistry, } from "./profile-registry";
 import { ProfileSelector, } from "./profile-selector";
@@ -178,5 +180,69 @@ describe("initHarnessRuntime effective admin settings (BUG 369e695)", () => {
     expect(runtime,).not.toBeNull();
     const picks = await runtime?.selector.select({ taskType: "mechanical", needsCapabilities: [], },);
     expect(picks,).toEqual([],);
+  });
+});
+
+// Permission queue wiring (TASK-permission-approval-flow).
+// Resource contract: in-memory fakes + the in-memory admin-settings store
+// (reset by the file-level hooks above); the runtime singleton is likewise
+// reset there. No DB, no subprocess, no ports — parallel-safe.
+describe("runtime permission queue (TASK-permission-approval-flow)", () => {
+  const profile: AcpProfileConfig = {
+    name: "p",
+    command: ["fake", "p",],
+    tiers: { fast: { model: "p/fast", capabilities: ["tools",], }, },
+    tosGrayzoneAcknowledged: true,
+  };
+
+  it("composes the permission queue on the runtime", () => {
+    const { factory, } = fakeFactory({},);
+    const runtime = createHarnessRuntime({ acp: { enabled: true, profiles: [profile,], }, factory, },);
+
+    expect(runtime.permissions,).toBeInstanceOf(PermissionQueue,);
+  });
+
+  it("resolves a decision through the profile's registry connection", async () => {
+    const { factory, logs, } = fakeFactory({ p: { models: ["p/fast",], }, },);
+    const runtime = createHarnessRuntime({ acp: { enabled: true, profiles: [profile,], }, factory, },);
+    await runtime.registry.ensureProbed("p",);
+
+    const parked = await runtime.permissions.submit({
+      profile: "p",
+      pending: { params: { sessionId: "s", kind: "edit", }, kind: "edit", },
+      sandboxRoot: process.cwd(),
+    },);
+
+    if (parked.decision !== "pending") { throw new Error("expected the edit ask to park",); }
+
+    expect(runtime.permissions.resolve({ id: parked.id, decision: "approve", },),).toEqual({ ok: true, },);
+    expect(logs.get("p",)?.permissions,).toEqual([{ outcome: "allow_once", },],);
+  });
+
+  it("the composed factory reports adapter asks into the queue and withdrawals out", async () => {
+    let captured: HarnessAdapterCommandOptions | undefined;
+    const { factory: base, } = fakeFactory({ p: { models: ["p/fast",], }, },);
+    const factory: HarnessAdapterFactory = (name, command, options,) => {
+      captured = options;
+      return base(name, command,);
+    };
+
+    const runtime = createHarnessRuntime({ acp: { enabled: true, profiles: [profile,], }, factory, },);
+    await runtime.registry.ensureProbed("p",);
+
+    expect(captured?.onPermissionRequest,).toBeTypeOf("function",);
+    expect(captured?.onPermissionWithdrawn,).toBeTypeOf("function",);
+
+    captured?.onPermissionRequest?.({ params: { sessionId: "s", kind: "edit", }, kind: "edit", },);
+    await runtime.permissions.idle();
+    expect(runtime.permissions.pendingCount(),).toBe(1,);
+
+    captured?.onPermissionWithdrawn?.();
+    expect(runtime.permissions.pendingCount(),).toBe(0,);
+  });
+
+  it("a disabled config composes no queue — the flow is inert", () => {
+    initHarnessRuntime({ enabled: false, profiles: [], },);
+    expect(getHarnessRuntime(),).toBeNull();
   });
 });
