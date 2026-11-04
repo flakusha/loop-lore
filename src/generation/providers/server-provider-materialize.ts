@@ -57,6 +57,18 @@ export async function readStoredProviders(db: Kysely<DB>,): Promise<StoredServer
       continue;
     }
 
+    // The key names the instance; a descriptor whose name disagrees with its
+    // own key can never be addressed by name, so it is malformed too.
+    const keyName = row.key.slice(DESCRIPTOR_KEY_PREFIX.length, row.key.length - DESCRIPTOR_KEY_SUFFIX.length,);
+    if (stored.name !== keyName) {
+      warnProviderStore("Skipping provider descriptor whose name does not match its key", {
+        key: row.key,
+        name: stored.name,
+      },);
+
+      continue;
+    }
+
     providers.push(stored,);
   }
 
