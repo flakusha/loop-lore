@@ -30286,6 +30286,20 @@
     "source": ".plan/tickets/TASK-avatar-template-example-documents-outfits-default-outfit-tha.md",
     "status": "Not Started"
   },
+  "TASK-AVATARCONFIG-PRIORITY-VS-WEIGHT-SPLIT-PLUS-SPRITE-PACK-ZIP-I": {
+    "hash": "54e4e32",
+    "git_issue": "54e4e32",
+    "extid": "TASK-AVATARCONFIG-PRIORITY-VS-WEIGHT-SPLIT-PLUS-SPRITE-PACK-ZIP-I",
+    "type": "TASK",
+    "title": "AvatarConfig priority-vs-weight split plus sprite-pack ZIP importer (Agnai/ST patterns)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatarconfig-priority-vs-weight-split-plus-sprite-pack-zip-i.md",
+    "status": "open"
+  },
   "TASK-AVATARS-DYNAMIC-2D": {
     "epic": "(none — proposed epic never materialized)",
     "extid": "TASK-AVATARS-DYNAMIC-2D",
@@ -36057,6 +36071,24 @@
     "title": "Config Migration Tool",
     "type": "TASK"
   },
+  "TASK-CONNECTION-PROFILES-MASTER-PRESET-ONE-NAMED-BUNDLE-PER-CHAT": {
+    "hash": "b4c40f6",
+    "git_issue": "b4c40f6",
+    "extid": "TASK-CONNECTION-PROFILES-MASTER-PRESET-ONE-NAMED-BUNDLE-PER-CHAT",
+    "type": "TASK",
+    "title": "Connection Profiles / master preset (one named bundle per chat)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "preset",
+      "connection-profile",
+      "research-gap"
+    ],
+    "source": ".plan/tickets/TASK-connection-profiles-master-preset-one-named-bundle-per-chat.md",
+    "status": "open"
+  },
   "TASK-CONNECTION-PROFILES-MASTER-PRESET-PER-CHAT": {
     "hash": "4b12d1d",
     "extid": "TASK-CONNECTION-PROFILES-MASTER-PRESET-PER-CHAT",
@@ -36165,6 +36197,20 @@
     "tags": [],
     "title": "Consolidate template constants under global all-constants umbrella",
     "type": "TASK"
+  },
+  "TASK-CONSOLIDATE-TRIPLE-MULBERRY32-COPIES-AND-REMOVE-MATH-RANDOM-": {
+    "hash": "e381669",
+    "git_issue": "e381669",
+    "extid": "TASK-CONSOLIDATE-TRIPLE-MULBERRY32-COPIES-AND-REMOVE-MATH-RANDOM-",
+    "type": "TASK",
+    "title": "Consolidate triple mulberry32 copies and remove Math.random from random-events",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-consolidate-triple-mulberry32-copies-and-remove-math-random-.md",
+    "status": "open"
   },
   "TASK-CONSOLIDATE-UNSAFE-DATE-BUFFER-JSON-USAGE-INTO-SHARED-UTILS": {
     "epic": "epic-code-quality",
@@ -40579,6 +40625,24 @@
     "status": "done",
     "git_issue": "08e04ac"
   },
+  "TASK-EXTENSION-SUPPLY-CHAIN-POLICY-OFFICIAL-LIST-SPEND-CAPS-SERVE": {
+    "hash": "669dc29",
+    "git_issue": "669dc29",
+    "extid": "TASK-EXTENSION-SUPPLY-CHAIN-POLICY-OFFICIAL-LIST-SPEND-CAPS-SERVE",
+    "type": "TASK",
+    "title": "Extension supply-chain policy (official-list, spend caps, server-plugins-off)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-security-sandboxing",
+    "project": "",
+    "tags": [
+      "supply-chain",
+      "plugins",
+      "research-gap"
+    ],
+    "source": ".plan/tickets/TASK-extension-supply-chain-policy-official-list-spend-caps-serve.md",
+    "status": "open"
+  },
   "TASK-EXTERNAL-COMFYUI-PLUGIN-REPO-INTEGRATION-CONTRACT": {
     "hash": "5d8de9f",
     "extid": "TASK-EXTERNAL-COMFYUI-PLUGIN-REPO-INTEGRATION-CONTRACT",
@@ -41229,6 +41293,24 @@
     "tags": [],
     "source": ".plan/tickets/TASK-federation-admin-usage-dashboard-ui.md",
     "status": "done"
+  },
+  "TASK-FEDERATION-ANONYMOUS-VS-IDENTIFIED-STORAGE-TIERS-AGNAI-SHAPE": {
+    "hash": "bb43eae",
+    "git_issue": "bb43eae",
+    "extid": "TASK-FEDERATION-ANONYMOUS-VS-IDENTIFIED-STORAGE-TIERS-AGNAI-SHAPE",
+    "type": "TASK",
+    "title": "Federation anonymous-vs-identified storage tiers (Agnai shape)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-instance-federation",
+    "project": "",
+    "tags": [
+      "federation",
+      "multi-user",
+      "research-gap"
+    ],
+    "source": ".plan/tickets/TASK-federation-anonymous-vs-identified-storage-tiers-agnai-shape.md",
+    "status": "open"
   },
   "TASK-FEDERATION-CONTENT-CLEARANCE-GATE-PER-CHAT-CONSENT-BEFORE-ME": {
     "epic": "epic-mesh-federation-content-sharing",
@@ -49388,6 +49470,24 @@
     "status": "done",
     "git_issue": "d485b75"
   },
+  "TASK-MEMORY-TO-LOREBOOK-PROMOTION-MEMORY-BOOKS-PATTERN": {
+    "hash": "cc944b3",
+    "git_issue": "cc944b3",
+    "extid": "TASK-MEMORY-TO-LOREBOOK-PROMOTION-MEMORY-BOOKS-PATTERN",
+    "type": "TASK",
+    "title": "Memory to lorebook promotion (Memory Books pattern)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "memory",
+      "lorebook",
+      "research-gap"
+    ],
+    "source": ".plan/tickets/TASK-memory-to-lorebook-promotion-memory-books-pattern.md",
+    "status": "open"
+  },
   "TASK-MEMORY-TRANSACTIONAL-CONSOLIDATION-PLUS-HYBRID-RETRIEVAL": {
     "hash": "9c0fbce",
     "git_issue": "9c0fbce",
@@ -52733,6 +52833,20 @@
     "title": "Per Actor Llm",
     "type": "TASK"
   },
+  "TASK-PER-CHARACTER-VOICE-BINDING-FOR-TTS-PROVIDERS-ELEVENLABS-SHA": {
+    "hash": "c515dba",
+    "git_issue": "c515dba",
+    "extid": "TASK-PER-CHARACTER-VOICE-BINDING-FOR-TTS-PROVIDERS-ELEVENLABS-SHA",
+    "type": "TASK",
+    "title": "Per-character voice binding for TTS providers (ElevenLabs shape)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-per-character-voice-binding-for-tts-providers-elevenlabs-sha.md",
+    "status": "open"
+  },
   "TASK-PER-CHAT-AUTO-TRANSLATION-LAYER": {
     "epic": "epic-output-control-transforms",
     "extid": "TASK-PER-CHAT-AUTO-TRANSLATION-LAYER",
@@ -52772,6 +52886,20 @@
     "title": "Per-model/per-provider cost attribution for LLM execution stats",
     "type": "TASK"
   },
+  "TASK-PER-REPLY-EMOTION-CLASSIFY-TO-SPRITE-LOOP-ST-CLASSIFY-PATTER": {
+    "hash": "a4b5ac1",
+    "git_issue": "a4b5ac1",
+    "extid": "TASK-PER-REPLY-EMOTION-CLASSIFY-TO-SPRITE-LOOP-ST-CLASSIFY-PATTER",
+    "type": "TASK",
+    "title": "Per-reply emotion classify-to-sprite loop (ST classify pattern)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-per-reply-emotion-classify-to-sprite-loop-st-classify-patter.md",
+    "status": "open"
+  },
   "TASK-PER-SESSION-COST-METER-FROM-TELEMETRY": {
     "hash": "503fb92",
     "extid": "TASK-PER-SESSION-COST-METER-FROM-TELEMETRY",
@@ -52785,6 +52913,24 @@
     "source": ".plan/tickets/TASK-per-session-cost-meter-from-telemetry.md",
     "status": "done",
     "git_issue": "503fb92"
+  },
+  "TASK-PER-SESSION-COST-METER-USER-VISIBLE-COMPLEMENTS-COST-ESTIMAT": {
+    "hash": "2a5226c",
+    "git_issue": "2a5226c",
+    "extid": "TASK-PER-SESSION-COST-METER-USER-VISIBLE-COMPLEMENTS-COST-ESTIMAT",
+    "type": "TASK",
+    "title": "Per-session cost meter (user-visible, complements cost estimator)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "cost",
+      "telemetry",
+      "research-gap"
+    ],
+    "source": ".plan/tickets/TASK-per-session-cost-meter-user-visible-complements-cost-estimat.md",
+    "status": "open"
   },
   "TASK-PER-TARGET-FUZZING-HARNESSES-AUTH-ASSET-CHAT-LLM-ADMIN-IPC": {
     "hash": "c0dc9f0",
@@ -54150,6 +54296,24 @@
     "title": "Prompt Template Registry — Typed Purposes, Single Defaults Source",
     "type": "TASK"
   },
+  "TASK-PROMPT-TURN-TRACE-VIEW-WHY-THIS-OUTPUT-INSPECTOR": {
+    "hash": "7cdee7f",
+    "git_issue": "7cdee7f",
+    "extid": "TASK-PROMPT-TURN-TRACE-VIEW-WHY-THIS-OUTPUT-INSPECTOR",
+    "type": "TASK",
+    "title": "Prompt/turn trace view (why-this-output inspector)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "observability",
+      "prompt-inspector",
+      "research-gap"
+    ],
+    "source": ".plan/tickets/TASK-prompt-turn-trace-view-why-this-output-inspector.md",
+    "status": "open"
+  },
   "TASK-PROPERTY-TEST-THE-DB-SCHEMAS-INSERT-READ-ROUND-TRIP": {
     "hash": "f0cad30",
     "git_issue": "f0cad30",
@@ -54269,6 +54433,24 @@
     "tags": [],
     "title": "Provider contributions via plugin system",
     "type": "TASK"
+  },
+  "TASK-PROVIDER-FALLBACK-CHAIN-HYPAV3-40-40-20-MEMORY-SAMPLING": {
+    "hash": "3e91988",
+    "git_issue": "3e91988",
+    "extid": "TASK-PROVIDER-FALLBACK-CHAIN-HYPAV3-40-40-20-MEMORY-SAMPLING",
+    "type": "TASK",
+    "title": "Provider fallback chain + HypaV3 40-40-20 memory sampling",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "fallback",
+      "memory",
+      "research-gap"
+    ],
+    "source": ".plan/tickets/TASK-provider-fallback-chain-hypav3-40-40-20-memory-sampling.md",
+    "status": "open"
   },
   "TASK-PROVIDER-TRANSPARENCY-CAPABILITY-FLAG": {
     "epic": "epic-avatar-alpha-vn-layering",
@@ -55225,6 +55407,24 @@
     ],
     "title": "Real LLM/Sd e2e fixture (llama.cpp + llama-swap + sd-server)",
     "type": "TASK"
+  },
+  "TASK-REAL-RNG-OUTSIDE-THE-MODEL-DICE-ENFORCEMENT-PATTERN": {
+    "hash": "b9f75ae",
+    "git_issue": "b9f75ae",
+    "extid": "TASK-REAL-RNG-OUTSIDE-THE-MODEL-DICE-ENFORCEMENT-PATTERN",
+    "type": "TASK",
+    "title": "Real RNG outside the model (dice-enforcement pattern)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-mechanics-governance",
+    "project": "",
+    "tags": [
+      "rng",
+      "dice",
+      "research-gap"
+    ],
+    "source": ".plan/tickets/TASK-real-rng-outside-the-model-dice-enforcement-pattern.md",
+    "status": "open"
   },
   "TASK-RECON-CRITICAL-FIXES": {
     "epic": "epic-logic-reconciliation",
