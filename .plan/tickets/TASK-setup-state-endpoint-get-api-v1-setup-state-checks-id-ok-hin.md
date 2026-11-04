@@ -49,7 +49,20 @@ Research round 3 candidate C2 (ranked as the smallest standalone PR; unblocks C1
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Shipped contract (this branch): `GET /api/v1/setup/state` → `{ checks: [{ id, ok, hint? }] }`.
+
+- Route: `src/routes/setup/routes.ts` — `setupRoutes(opts: { database?: Kysely<DB>; config: Config }, prefix = "/api")`, mounted ONLY from the v1 barrel (`src/routes/v1/base-surface.ts`, prefix `/api/v1`). `/api/health` is untouched and there is NO unversioned `/api/setup/state` mount.
+- Guard: default-deny, exactly the `src/routes/admin/system-config.ts:49-50` pattern — `requirePermissionUserId(ctx, "admin.system")` returns the userId string on success and a 401 (anonymous) / 403 (non-admin) Response otherwise. There is NO anonymous mode and NO booleans-only mode in this implementation: the ticket allowed one only as an opt-in, and default-deny with zero hint/count leakage is the shipped behaviour.
+- Response schema: TypeBox `t.Object({ checks: t.Array(t.Object({ id: t.String(), ok: t.Boolean(), hint: t.Optional(t.String()) })) })` declared inline in the route file (200), plus `ErrorResponse` (403) from `src/validation/schemas`.
+- Checks module: `src/routes/setup/checks.ts` — `setupChecks(config, db?)` returns SIX checks, always the same ids in the same order, each individually try/caught (a throwing probe becomes `{ id, ok: false, hint: <error message> }`):
+  - `env.pii` — reads `isDevEnv()` and the three resolved PII secrets (`resolveNsfwPiiSecret` / `resolveReporterHashSecret` / `resolveTelemetryPiiSecret`) from `packages/core/src/config/load/pii-safety.ts`. Dev → ok. Prod → each resolved secret must be ≥ `MIN_PII_SECRET_LENGTH` (32); a missing/short secret yields ok:false with a hint naming the offending env var (`NSFW_PII_SECRET`, `NSFW_FLAG_REPORTER_HASH_SECRET`, `TELEMETRY_PII_SECRET`). Resolution errors are caught, never thrown.
+  - `provider.health` — reads `getHealthCache()` from `src/admin/provider-health.ts` only (NO network scan from this endpoint): empty cache → ok:false; otherwise ok when some entry has status `healthy`, else the hint lists the failing provider names and their error text.
+  - `smk` — `isEncryptionEnabled()` from `src/crypto/smk.ts`.
+  - `model.roles` — `resolveModelRole("main", config, db)` from `src/admin/model-roles.ts`; ok when the resolved role has a non-empty provider AND model.
+  - `native` — `getNativeStatus().available` from the native loader (`src/native/loader.ts` → `packages/core/src/native/loader.ts`).
+  - `tls` — `existsSync` on `config.server.tls.key` and `config.server.tls.cert`. `ensureTlsCerts` is deliberately NOT called: it GENERATES certificates, a side effect a read-only endpoint must not have.
+
+Why this shape: the checks read IN-PROCESS state only (no network, no cert generation, no disk writes), so the endpoint stays a cheap read and can back the boot readiness summary, `/doctor` and the provider-connection wizard without re-querying anything.
 
 **Acceptance Criteria:**
 
