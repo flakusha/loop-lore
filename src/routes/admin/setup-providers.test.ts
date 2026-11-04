@@ -146,6 +146,25 @@ describe("admin setup-provider routes", () => {
     expect(res.status,).toBe(400,);
   });
 
+  test("POST returns 400 for a body that passes the schema but is not a usable URL", async () => {
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/v1/admin/setup/providers", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          name: "bad-url-provider",
+          label: "Bad URL",
+          baseUrl: "not-a-url",
+          model: "demo-model",
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    expect(getProvider("bad-url-provider",),).toBeUndefined();
+  });
+
   test("POST returns 403 for non-admin", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
