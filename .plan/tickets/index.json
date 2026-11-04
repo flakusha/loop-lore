@@ -35925,6 +35925,19 @@
     "title": "Config Migration Tool",
     "type": "TASK"
   },
+  "TASK-CONNECTION-PROFILES-MASTER-PRESET-PER-CHAT": {
+    "hash": "pending",
+    "extid": "TASK-CONNECTION-PROFILES-MASTER-PRESET-PER-CHAT",
+    "type": "TASK",
+    "title": "Connection-profiles master preset per chat",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-connection-profiles-master-preset-per-chat.md",
+    "status": "done"
+  },
   "TASK-CONSENT-RECEIPTS-LEDGER-APPEND-ONLY-PROVENANCE-FOR-3-GATES": {
     "hash": "46ca664",
     "git_issue": "46ca664",
@@ -40349,6 +40362,19 @@
     "source": ".plan/tickets/TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas.md",
     "status": "Not Started"
   },
+  "TASK-EXTENSION-SUPPLY-CHAIN-POLICY-OFFICIAL-LIST-SPEND-CAPS-PLUGI": {
+    "hash": "pending",
+    "extid": "TASK-EXTENSION-SUPPLY-CHAIN-POLICY-OFFICIAL-LIST-SPEND-CAPS-PLUGI",
+    "type": "TASK",
+    "title": "Extension supply-chain policy: official-list, spend caps, plugins off by default",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-extension-supply-chain-policy-official-list-spend-caps-plugi.md",
+    "status": "done"
+  },
   "TASK-EXTERNAL-COMFYUI-PLUGIN-REPO-INTEGRATION-CONTRACT": {
     "hash": "5d8de9f",
     "extid": "TASK-EXTERNAL-COMFYUI-PLUGIN-REPO-INTEGRATION-CONTRACT",
@@ -40390,6 +40416,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-external-process-survivability-pause-and-restart-on-crash.md",
     "status": "Not Started"
+  },
+  "TASK-EXTERNAL-RNG-ROLLS-VISIBLE-IN-PROMPTS": {
+    "hash": "pending",
+    "extid": "TASK-EXTERNAL-RNG-ROLLS-VISIBLE-IN-PROMPTS",
+    "type": "TASK",
+    "title": "External RNG rolls visible in prompts",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-external-rng-rolls-visible-in-prompts.md",
+    "status": "done"
   },
   "TASK-EXTERNAL-SERVER-SUPERVISION-HARDENING-ONEXIT-RESTART-WITH-BA": {
     "hash": "7e1f5c8",
@@ -43564,6 +43603,20 @@
     "tags": [],
     "title": "Group-chat minors from 2026-10-04 review",
     "type": "TASK"
+  },
+  "TASK-GROUP-CHAT-NATURAL-SPEAKER-SELECTION": {
+    "hash": "2ef1994",
+    "git_issue": "2ef1994",
+    "extid": "TASK-GROUP-CHAT-NATURAL-SPEAKER-SELECTION",
+    "type": "TASK",
+    "title": "Group chat NATURAL speaker selection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-group-chat-natural-speaker-selection.md",
+    "status": "open"
   },
   "TASK-GROUP-CHAT-PER-ACTOR-EMOTION-AVATAR-RESOLUTION": {
     "hash": "652c188",
@@ -48990,6 +49043,19 @@
     "title": "Timescape-Aware Memory",
     "type": "TASK"
   },
+  "TASK-MEMORY-TO-LOREBOOK-ONE-CLICK-PROMOTE": {
+    "hash": "pending",
+    "extid": "TASK-MEMORY-TO-LOREBOOK-ONE-CLICK-PROMOTE",
+    "type": "TASK",
+    "title": "Memory to lorebook one-click promote",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-memory-to-lorebook-one-click-promote.md",
+    "status": "done"
+  },
   "TASK-MEMORY-TRANSACTIONAL-CONSOLIDATION-PLUS-HYBRID-RETRIEVAL": {
     "hash": "9c0fbce",
     "git_issue": "9c0fbce",
@@ -52331,6 +52397,19 @@
     "tags": [],
     "title": "Per-model/per-provider cost attribution for LLM execution stats",
     "type": "TASK"
+  },
+  "TASK-PER-SESSION-COST-METER-FROM-TELEMETRY": {
+    "hash": "pending",
+    "extid": "TASK-PER-SESSION-COST-METER-FROM-TELEMETRY",
+    "type": "TASK",
+    "title": "Per-session cost meter from telemetry",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-per-session-cost-meter-from-telemetry.md",
+    "status": "done"
   },
   "TASK-PER-TARGET-FUZZING-HARNESSES-AUTH-ASSET-CHAT-LLM-ADMIN-IPC": {
     "hash": "c0dc9f0",
