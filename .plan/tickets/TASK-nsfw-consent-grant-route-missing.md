@@ -188,9 +188,11 @@ closes at the boundary with a 422.
 
 The participation rule: the caller must participate in the target chat. The
 route reads `getChatParticipantUserIds` (the users backing the chat's
-actors) and, failing that, falls back to the chat's creator — the creator
-may hold no participant row of their own. A caller who is neither returns
-403, so the route cannot become a consent-row writer for arbitrary chats.
+actors) and, failing that, falls back to `isChatOwner` — the repo's
+canonical chat-authority source (the `chat_owners` set, which the create
+path seeds with the creator). The creator may hold no participant row of
+their own. A caller who is neither returns 403, so the route cannot become
+a consent-row writer for arbitrary chats.
 
 The raw body is re-checked in the handler. Elysia strips unknown keys of a
 `body` schema instead of refusing them, so a client-supplied `userId` would
