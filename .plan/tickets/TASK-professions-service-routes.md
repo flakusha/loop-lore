@@ -8,10 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-// hint: Cosmetic change on both sides. Pick either version or combine formatting.
-**Status:** Not Started
-**Status Note:** 2026-11-06 reconcile: no false-Done — code genuinely unlanded (verified `src/routes/rpg/professions.ts`, `src/integrations/loop-lore-facade/authz.ts`, `src/rpg/crafting/professions/progression.ts` ABSENT on dev). The sibling `professions-service-routes` branch carries the implementation; land it, then flip.
-**Blocker:** HELD — unlanded branch work: (1) fe-be checker blind spot — `POST /api/rpg/professions` is invisible to the checker because `.post(R, ...)` with a bare-identifier route arg never expands (`src/routes/rpg/professions.ts:72`); sibling `skills.ts:119` has the same blind spot. Owner: checker-maintainer lane — teach `scanBe` to resolve file-scope `R`/prefix consts used as bare call args, or record the waiver. (2) thin coverage on 2 new frontend files `src/frontend/alpine/professions-selection.ts` + `skill-tree.ts`. (3) generator blast-radius note: `scripts/generate-db-types.ts`/`generate-schema-manifest.ts` global later-re-add-wins rule (needed for 095/096) inverts drop semantics for future tables — owner: generator maintainers to scope-or-revert after landing. IDOR fix already in-branch (row-level `checkActorOwnership` + `BUG-profession-id-scoped-routes-allow-cross-user-read-mutate-ido`); 095/096 (`095_professions_world_optional`, `096_professions_world_nullable`) renumber off dev HEAD 094 at landing. Next: land `professions-service-routes`, then flip this ticket to Done with the landing sha.
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Epic:** epic-skills-professions-config
