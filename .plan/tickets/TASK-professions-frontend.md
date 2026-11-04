@@ -8,8 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Done
-**Status Note:** landed 2026-11-04 in worktree `professions-service-routes` (authz-hardening/frontend slice) — landed-reality notes inline on the ACs below; the two crafting-integration ACs are NOT done (out of slice, see notes).
+**Status:** In Progress
+**Status Note:** frontend slice landed 2026-11-04 — 6/8 ACs met with landed-reality notes inline; the two crafting-integration ACs (station bonus display, XP-on-craft) remain and belong to crafting-lane scope pending `TASK-wire-crafting-routes` (XP-on-craft needs a game-balance decision).
 **Priority:** P2 — Medium
 **Effort:** Medium
 **Epic:** epic-skills-professions-config
