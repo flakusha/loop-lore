@@ -13925,6 +13925,26 @@
     "title": "Disease & Poison Systems",
     "type": "EPIC"
   },
+  "EPIC-DISPLAY-TRANSITIONS": {
+    "hash": "pending",
+    "extid": "EPIC-DISPLAY-TRANSITIONS",
+    "type": "EPIC",
+    "title": "Display Transitions — world ↔ chat ↔ map ↔ inventory ↔ battle",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "transitions",
+      "canvas",
+      "world-display",
+      "battle-entrance",
+      "arrival-events",
+      "writeback"
+    ],
+    "source": ".plan/tickets/epic-display-transitions.md",
+    "status": "open"
+  },
   "EPIC-DISTRIBUTED-COMPUTE-SHARING": {
     "epic": "",
     "extid": "EPIC-DISTRIBUTED-COMPUTE-SHARING",
@@ -30910,6 +30930,20 @@
     ],
     "title": "Battle Pre-Configured Action Templates",
     "type": "TASK"
+  },
+  "TASK-BATTLE-TO-WORLD-WRITEBACK-ON-ENDBATTLE-LOCATION-PLUS-LOOT": {
+    "hash": "e511876",
+    "git_issue": "e511876",
+    "extid": "TASK-BATTLE-TO-WORLD-WRITEBACK-ON-ENDBATTLE-LOCATION-PLUS-LOOT",
+    "type": "TASK",
+    "title": "Battle-to-world writeback on endBattle (location plus loot)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-battle-to-world-writeback-on-endbattle-location-plus-loot.md",
+    "status": "open"
   },
   "TASK-BATTLE-TRIGGER-DESIGN-OPT-IN-REASONS-NO-REASON-GUARD-STORY-I": {
     "hash": "b28e5e4",
@@ -50243,6 +50277,20 @@
     "source": ".plan/tickets/TASK-moss-plus-anima-family-templates-from-operator-workflows.md",
     "status": "Not Started"
   },
+  "TASK-MOUNT-OR-DELETE-DECISION-FOR-UNMOUNTED-PARTY-WORLD-TRAVEL-EN": {
+    "hash": "b37faae",
+    "git_issue": "b37faae",
+    "extid": "TASK-MOUNT-OR-DELETE-DECISION-FOR-UNMOUNTED-PARTY-WORLD-TRAVEL-EN",
+    "type": "TASK",
+    "title": "Mount-or-delete decision for unmounted party world-travel engine",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mount-or-delete-decision-for-unmounted-party-world-travel-en.md",
+    "status": "open"
+  },
   "TASK-MOVE-RELATIONSHIP-UPDATE-DELETE-EXISTENCE-CHECK-INSIDE-THE-T": {
     "hash": "4f8b313",
     "git_issue": "4f8b313",
@@ -54165,6 +54213,20 @@
     "source": ".plan/tickets/TASK-publication-viewer-read-mode.md",
     "status": "Not Started",
     "git_issue": "f435cc4"
+  },
+  "TASK-PUBLISH-TRAVEL-TICK-ARRIVAL-EVENTS-TO-WORLD-STREAM": {
+    "hash": "4636ae9",
+    "git_issue": "4636ae9",
+    "extid": "TASK-PUBLISH-TRAVEL-TICK-ARRIVAL-EVENTS-TO-WORLD-STREAM",
+    "type": "TASK",
+    "title": "Publish travel-tick arrival events to world stream",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-publish-travel-tick-arrival-events-to-world-stream.md",
+    "status": "open"
   },
   "TASK-PWA-CACHED-SHELL-PLUS-SEND-QUEUE-OFFLINE-SURVIVAL-SLICE": {
     "hash": "85e13a0",
@@ -62382,6 +62444,20 @@
     "source": ".plan/tickets/TASK-validate-expansion-config-at-load-time.md",
     "status": "Not Started"
   },
+  "TASK-VALIDATE-NPC-MOVETOLOCATION-AND-ACTOR-POSITION-SETS-SAME-WOR": {
+    "hash": "417d672",
+    "git_issue": "417d672",
+    "extid": "TASK-VALIDATE-NPC-MOVETOLOCATION-AND-ACTOR-POSITION-SETS-SAME-WOR",
+    "type": "TASK",
+    "title": "Validate NPC moveToLocation and actor position sets (same-world plus adjacency)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-validate-npc-movetolocation-and-actor-position-sets-same-wor.md",
+    "status": "open"
+  },
   "TASK-VALIDATE-UNRECOGNIZED-EXAMPLES-SECTION-ROLE-LABELS-INSTEAD-O": {
     "hash": "c773846",
     "git_issue": "c773846",
@@ -63476,6 +63552,20 @@
     "tags": [],
     "title": "Wire FSWatcher onReload callback in server startup",
     "type": "TASK"
+  },
+  "TASK-WIRE-GAME-CANVAS-CLICKS-TO-TRAVEL-AND-VN-SELECT-ENDPOINTS": {
+    "hash": "2744314",
+    "git_issue": "2744314",
+    "extid": "TASK-WIRE-GAME-CANVAS-CLICKS-TO-TRAVEL-AND-VN-SELECT-ENDPOINTS",
+    "type": "TASK",
+    "title": "Wire game-canvas clicks to travel and VN-select endpoints",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-game-canvas-clicks-to-travel-and-vn-select-endpoints.md",
+    "status": "open"
   },
   "TASK-WIRE-GM-SERVICE-STORY-MODE": {
     "epic": "epic-logic-reconciliation",
