@@ -70,6 +70,36 @@ export async function initBackgroundServices(
     },);
   }
 
+  // Seed item templates from config (idempotent)
+  if (config.items.enabled) {
+    initJobs.push({
+      name: "item-templates",
+      promise: (async () => {
+        const { mergeItemTemplates, seedItemTemplates, } = await import("../items/seed");
+        const { ITEMS_DEFAULTS, } = await import("../config/sections/items");
+
+        // Merge built-in defaults with user config templates
+        const mergedConfig = {
+          ...config.items,
+          templates: mergeItemTemplates(ITEMS_DEFAULTS.templates, config.items.templates,),
+        };
+
+        const result = await seedItemTemplates(database, mergedConfig,);
+        if (result.created > 0) {
+          logger.info("item templates seeded", {
+            module: "server",
+            created: result.created,
+            skipped: result.skipped,
+          },);
+        }
+
+        if (result.errors.length > 0) {
+          logger.warn("item template seeding had errors", { module: "server", errors: result.errors, },);
+        }
+      })(),
+    },);
+  }
+
   // Auto-start external AI servers (llama.cpp, sd.cpp) in background
   const autoStart = config.generation.autoStart;
   if (autoStart) {

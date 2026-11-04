@@ -42,6 +42,7 @@ import { WEB_DEFAULTS, } from "./web";
 
 import type { Config, } from "../schema";
 import { CHARACTERS_DEFAULTS, } from "../sections/characters";
+import { ITEMS_DEFAULTS, } from "../sections/items";
 import { TEMPLATES_DEFAULTS, } from "../sections/templates";
 
 /**
@@ -95,6 +96,7 @@ export const createConfigSchema = () => {
     harness: deepClone(HARNESS_DEFAULTS,),
     templates: deepClone(TEMPLATES_DEFAULTS,),
     characters: deepClone(CHARACTERS_DEFAULTS,),
+    items: deepClone(ITEMS_DEFAULTS,),
     web: deepClone(WEB_DEFAULTS,),
   };
 
@@ -129,6 +131,7 @@ export const createConfigSchema = () => {
         harness: sections.harness,
         templates: sections.templates,
         characters: sections.characters,
+        items: sections.items,
         integrations: sections.integrations,
         web: sections.web,
       };

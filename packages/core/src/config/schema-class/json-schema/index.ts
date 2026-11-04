@@ -22,6 +22,7 @@ import { headers, } from "./headers";
 import { hooks, } from "./hooks";
 import { idempotency, } from "./idempotency";
 import { integrations, } from "./integrations";
+import { items, } from "./items";
 import { logging, } from "./logging";
 import { messages, } from "./messages";
 import { nsfw, } from "./nsfw";
@@ -88,6 +89,7 @@ export const jsonSchema = (): JSONSchema => {
       seeding,
       templates,
       characters,
+      items,
       cron,
       integrations,
       harness,
@@ -111,6 +113,7 @@ export const jsonSchema = (): JSONSchema => {
       "seeding",
       "templates",
       "characters",
+      "items",
       "web",
     ],
   },) as JSONSchema;

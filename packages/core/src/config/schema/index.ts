@@ -26,6 +26,7 @@ export * from "./harness";
 export * from "./headers";
 export * from "./hooks";
 export * from "./integrations";
+export * from "./items";
 export * from "./logging";
 export * from "./messages";
 export * from "./nsfw";
