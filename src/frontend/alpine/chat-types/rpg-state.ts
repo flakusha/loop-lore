@@ -72,3 +72,117 @@ export interface ChatRpgQuestionsState {
   /** Submits `_pendingAnswer`; internal helper shared by submit and retry. */
   _submitAnswer(): Promise<void>;
 }
+
+// ── Skills tree (TASK-skills-frontend) ──────────────────────
+/** One actor skill as returned by GET /api/rpg/skills/actors/:actorId. */
+export interface SkillView {
+  id: string;
+  name: string;
+  category: string;
+  description: string | null;
+  level: number;
+  /** Experience accumulated on the skill (server-owned thresholds). */
+  xp: number;
+  proficiency: string;
+  specialization: string | null;
+  isLocked: boolean;
+  /** Prerequisite skill ids; unmet ones are absent from the actor's list. */
+  prerequisites: string[];
+}
+
+/** Feedback after an XP award triggered a level-up / proficiency change. */
+export interface SkillFeedback {
+  skillId: string;
+  xpGained: number;
+  newProficiency: string | null;
+}
+
+/** Skills-tree panel slice (see `src/frontend/alpine/skill-tree.ts`). */
+export interface ChatSkillsState {
+  skills: SkillView[];
+  skillsLoading: boolean;
+  /** Last load/action failure (404 never lands here — it means "not visible"). */
+  skillsError: string | null;
+  selectedSkillId: string | null;
+  /** Skill id with an XP/specialize request in flight (double-submit guard). */
+  skillsBusyId: string | null;
+  /** Most recent level-up feedback, keyed to the skill that earned it. */
+  skillFeedback: SkillFeedback | null;
+  /** Draft name for the selected skill's specialization. */
+  skillSpecName: string;
+  /** Per-category expand/collapse (default open). */
+  openCategories: Record<string, boolean>;
+  loadSkills(): Promise<void>;
+  skillsByCategory(): Array<{ category: string; skills: SkillView[] }>;
+  isCategoryOpen(category: string,): boolean;
+  toggleCategory(category: string,): void;
+  toggleSkill(id: string,): void;
+  selectedSkill(): SkillView | null;
+  addSkillXp(skillId: string,): Promise<void>;
+  specializeSkill(skillId: string,): Promise<void>;
+}
+
+// ── Professions (TASK-professions-frontend) ─────────────────
+/** One actor profession as returned by GET /api/rpg/professions/actors/:actorId. */
+export interface ProfessionView {
+  id: string;
+  discipline: string;
+  level: number;
+  /** Cumulative experience; each level costs LEVEL_XP (=100). */
+  experience: number;
+  title: string;
+}
+
+/** One unlocked specialization from GET /api/rpg/professions/:id. */
+export interface ProfessionSpecView {
+  id: string;
+  name: string;
+  description: string | null;
+  bonusType: string;
+  bonusValue: number;
+  requirementLevel: number;
+  isActive: boolean;
+}
+
+/** Feedback after profession XP triggered a level-up / title change. */
+export interface ProfessionFeedback {
+  professionId: string;
+  leveledUp: boolean;
+  newLevel: number;
+  newTitle: string;
+  titleChanged: boolean;
+}
+
+/** Draft for unlocking a new specialization on the selected profession. */
+export interface ProfessionSpecDraft {
+  name: string;
+  bonusType: string;
+  bonusValue: number;
+}
+
+/** Professions panel slice (see `src/frontend/alpine/professions.ts`). */
+export interface ChatProfessionsState {
+  professions: ProfessionView[];
+  professionsLoading: boolean;
+  professionsError: string | null;
+  selectedProfessionId: string | null;
+  /** Selected profession's specializations, or null while none selected. */
+  selectedProfessionSpecs: ProfessionSpecView[] | null;
+  professionsBusyId: string | null;
+  professionFeedback: ProfessionFeedback | null;
+  specDraft: ProfessionSpecDraft;
+  /** Discipline picked in the assign dropdown ("" = none). */
+  assignDiscipline: string;
+  assignBusy: boolean;
+  /** Crafting disciplines accepted by POST /api/rpg/professions. */
+  disciplines: readonly string[];
+  loadProfessions(): Promise<void>;
+  selectProfession(id: string,): Promise<void>;
+  assignableDisciplines(): string[];
+  assignProfession(): Promise<void>;
+  addProfessionXp(professionId: string,): Promise<void>;
+  addProfessionSpecialization(professionId: string,): Promise<void>;
+  professionBonuses(level: number,): { success: number; quality: number; speed: number; materialSaving: number };
+  nextTitleAt(level: number,): number | null;
+  xpProgress(profession: Pick<ProfessionView, "level" | "experience">,): number;
+}

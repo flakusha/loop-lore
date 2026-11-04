@@ -1,0 +1,182 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Professions panel: crafting disciplines, XP ladder, specializations, assign.
+  Bound to the `professions` chat-state mixin (src/frontend/alpine/professions.ts);
+  included from the character info panel next to the RPG stats section.
+-->
+<div class="rpg-professions-section" data-testid="rpg-professions-section">
+  <div class="rpg-stats-header">
+    <h4 class="rpg-stats-title">Professions</h4>
+    <button
+      class="btn btn-secondary btn-xs"
+      @click="showProfessionsPanel = !showProfessionsPanel; if (showProfessionsPanel) { loadProfessions() }"
+      :aria-expanded="showProfessionsPanel"
+      title="Expand professions"
+    >
+      <span x-text="showProfessionsPanel ? '-' : '+'"></span>
+    </button>
+  </div>
+
+  <template x-if="showProfessionsPanel">
+    <div class="rpg-professions-expanded">
+      <div x-show="professionsLoading" class="rpg-stat-label">Loading…</div>
+      <div
+        x-show="professionsError"
+        class="rpg-stat-label"
+        style="color: #c00"
+        x-text="professionsError"
+        data-testid="rpg-professions-error"
+      >
+      </div>
+
+      <template x-if="!professionsLoading && professions.length === 0 && !professionsError">
+        <div class="rpg-stat-label">No professions yet.</div>
+      </template>
+
+      <!-- Summary -->
+      <template x-if="professions.length > 0">
+        <div class="rpg-stat-label" data-testid="rpg-professions-summary">
+          <span x-text="professions.length"></span> disciplines · top <span
+            x-text="Math.max(...professions.map((p) => p.level))"
+          ></span>
+        </div>
+      </template>
+
+      <!-- Discipline rows -->
+      <template x-for="p in professions" :key="p.id">
+        <div class="rpg-stat-row" data-testid="rpg-profession-row">
+          <button
+            class="rpg-stat-name"
+            @click="selectProfession(p.id)"
+            :data-testid="'rpg-profession-' + p.discipline"
+          >
+            <span x-text="p.discipline.charAt(0).toUpperCase() + p.discipline.slice(1)"></span>
+          </button>
+          <span class="rpg-status-badge" x-text="p.title"></span>
+          <span x-text="'Lv ' + p.level"></span>
+          <div class="rpg-progress-track">
+            <div
+              class="rpg-progress-fill"
+              :style="'width:' + Math.round(xpProgress(p) * 100) + '%'"
+              data-testid="rpg-profession-xp-bar"
+            >
+            </div>
+          </div>
+          <div class="rpg-stat-label">
+            <span
+              x-text="professionBonuses(p.level).success > 0 ? '+' + Math.round(professionBonuses(p.level).success * 100) + '% success' : ''"
+            ></span>
+            <span
+              x-text="professionBonuses(p.level).quality > 0 ? ' +' + Math.round(professionBonuses(p.level).quality * 100) + '% quality' : ''"
+            ></span>
+            <span
+              x-text="professionBonuses(p.level).speed > 0 ? ' +' + Math.round(professionBonuses(p.level).speed * 100) + '% speed' : ''"
+            ></span>
+            <span
+              x-text="professionBonuses(p.level).materialSaving > 0 ? ' +' + Math.round(professionBonuses(p.level).materialSaving * 100) + '% materials' : ''"
+            ></span>
+            <template x-if="nextTitleAt(p.level)">
+              <span x-text="' · next title at ' + nextTitleAt(p.level)"></span>
+            </template>
+          </div>
+          <div
+            x-show="professionFeedback && professionFeedback.professionId === p.id"
+            class="rpg-stat-label"
+            data-testid="rpg-profession-feedback"
+          >
+            Level up! <span x-text="professionFeedback ? 'Lv ' + professionFeedback.newLevel : ''"></span>
+            <span
+              x-show="professionFeedback && professionFeedback.titleChanged"
+              x-text="professionFeedback ? '— now ' + professionFeedback.newTitle : ''"
+            ></span>
+          </div>
+        </div>
+      </template>
+
+      <!-- Selected profession detail: specializations + actions -->
+      <template x-if="selectedProfessionId && professions.find((p) => p.id === selectedProfessionId)">
+        <div class="rpg-profession-detail" data-testid="rpg-profession-detail">
+          <template x-for="spec in selectedProfessionSpecs ?? []" :key="spec.id">
+            <div class="rpg-stat-label">
+              <span x-text="spec.name"></span>
+              <span x-text="' +' + spec.bonusValue + '% ' + spec.bonusType"></span>
+              <span
+                x-show="spec.requirementLevel"
+                x-text="spec.requirementLevel ? ' (requires level ' + spec.requirementLevel + ')' : ''"
+              ></span>
+              <div x-text="spec.description"></div>
+            </div>
+          </template>
+          <template x-if="(selectedProfessionSpecs ?? []).length === 0">
+            <div class="rpg-stat-label">No specializations yet.</div>
+          </template>
+
+          <div class="rpg-asi-grid">
+            <button
+              class="btn btn-secondary btn-xs"
+              :disabled="professionsBusyId !== null"
+              @click="addProfessionXp(selectedProfessionId)"
+              data-testid="rpg-profession-xp"
+            >
+              +50 XP
+            </button>
+          </div>
+
+          <!-- Unlock a specialization -->
+          <div class="rpg-asi-section">
+            <input
+              type="text"
+              x-model="specDraft.name"
+              placeholder="Specialization name"
+              data-testid="rpg-profession-spec-name"
+            />
+            <select x-model="specDraft.bonusType" data-testid="rpg-profession-spec-type">
+              <option value="quality">quality</option>
+              <option value="speed">speed</option>
+              <option value="success">success</option>
+              <option value="materialSaving">material saving</option>
+              <option value="xp">xp</option>
+            </select>
+            <input
+              type="number"
+              x-model.number="specDraft.bonusValue"
+              min="1"
+              max="50"
+              data-testid="rpg-profession-spec-value"
+            />
+            <button
+              class="btn btn-secondary btn-xs"
+              :disabled="professionsBusyId !== null"
+              @click="addProfessionSpecialization(selectedProfessionId)"
+              data-testid="rpg-profession-specialize"
+            >
+              Specialize
+            </button>
+          </div>
+        </div>
+      </template>
+
+      <!-- Assign a new discipline -->
+      <template x-if="assignableDisciplines().length > 0">
+        <div class="rpg-asi-section">
+          <select x-model="assignDiscipline" data-testid="rpg-profession-assign-select">
+            <option value="">Pick a discipline…</option>
+            <template x-for="d in assignableDisciplines()" :key="d">
+              <option :value="d" x-text="d"></option>
+            </template>
+          </select>
+          <button
+            class="btn btn-secondary btn-xs"
+            :disabled="assignBusy"
+            @click="assignProfession()"
+            data-testid="rpg-profession-assign"
+          >
+            Assign
+          </button>
+        </div>
+      </template>
+    </div>
+  </template>
+</div>

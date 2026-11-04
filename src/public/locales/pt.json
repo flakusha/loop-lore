@@ -2439,5 +2439,23 @@
         "duplicate": "Essa tecla já é usada por outro atalho."
       }
     }
+  },
+
+  "rpg": {
+    "forbidden": "You do not have access to this character.",
+    "skills": {
+      "loadFailed": "Failed to load skills.",
+      "xpFailed": "Failed to add skill XP.",
+      "specializeFailed": "Failed to specialize skill.",
+      "specializeNameRequired": "Enter a specialization name."
+    },
+    "professions": {
+      "loadFailed": "Failed to load professions.",
+      "assignFailed": "Failed to assign profession.",
+      "assignPickDiscipline": "Pick a discipline first.",
+      "xpFailed": "Failed to add profession XP.",
+      "specializeFailed": "Failed to specialize profession.",
+      "specializeNameRequired": "Enter a specialization name."
+    }
   }
 }

@@ -1,0 +1,152 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Skills panel: category → skill hierarchy with progression and GM actions.
+  Bound to the `skillTree` chat-state mixin (src/frontend/alpine/skill-tree.ts);
+  included from the character info panel next to the RPG stats section.
+-->
+<div class="rpg-skills-section" data-testid="rpg-skills-section">
+  <div class="rpg-stats-header">
+    <h4 class="rpg-stats-title">Skills</h4>
+    <button
+      class="btn btn-secondary btn-xs"
+      @click="showSkillsPanel = !showSkillsPanel; if (showSkillsPanel) { loadSkills() }"
+      :aria-expanded="showSkillsPanel"
+      title="Expand skills"
+    >
+      <span x-text="showSkillsPanel ? '-' : '+'"></span>
+    </button>
+  </div>
+
+  <template x-if="showSkillsPanel">
+    <div class="rpg-skills-expanded">
+      <div x-show="skillsLoading" class="rpg-stat-label">Loading…</div>
+      <div
+        x-show="skillsError"
+        class="rpg-stat-label"
+        style="color: #c00"
+        x-text="skillsError"
+        data-testid="rpg-skills-error"
+      >
+      </div>
+
+      <template x-if="!skillsLoading && skills.length === 0 && !skillsError">
+        <div class="rpg-stat-label">No skills yet.</div>
+      </template>
+
+      <!-- Summary: total skills, highest level, specialization count -->
+      <template x-if="skills.length > 0">
+        <div class="rpg-stat-label" data-testid="rpg-skills-summary">
+          <span x-text="skills.length"></span> skills · top level <span
+            x-text="Math.max(...skills.map((s) => s.level))"
+          ></span>
+          · <span x-text="skills.filter((s) => s.specialization).length"></span> specialized
+        </div>
+      </template>
+
+      <!-- Category → skill tree -->
+      <template x-for="group in skillsByCategory()" :key="group.category">
+        <div class="rpg-skill-category">
+          <button
+            class="rpg-stat-name"
+            @click="toggleCategory(group.category)"
+            :aria-expanded="isCategoryOpen(group.category)"
+          >
+            <span x-text="isCategoryOpen(group.category) ? '▾' : '▸'"></span>
+            <span x-text="group.category"></span>
+          </button>
+          <template x-if="isCategoryOpen(group.category)">
+            <div>
+              <template x-for="skill in group.skills" :key="skill.id">
+                <div
+                  class="rpg-stat-row"
+                  :class="skill.isLocked ? 'rpg-skill-locked' : ''"
+                  data-testid="rpg-skill-row"
+                >
+                  <button
+                    class="rpg-stat-name"
+                    @click="toggleSkill(skill.id)"
+                    :data-testid="'rpg-skill-' + skill.id"
+                  >
+                    <span x-text="(skill.isLocked ? '[LOCK] ' : '') + skill.name"></span>
+                  </button>
+                  <span>
+                    <span x-text="'Lv ' + skill.level"></span>
+                    <span class="rpg-status-badge" x-text="skill.proficiency"></span>
+                  </span>
+                  <div
+                    x-show="skillFeedback && skillFeedback.skillId === skill.id"
+                    class="rpg-stat-label"
+                    data-testid="rpg-skill-feedback"
+                  >
+                    Level up!<span
+                      x-show="skillFeedback && skillFeedback.newProficiency"
+                      x-text="skillFeedback ? ' New proficiency: ' + skillFeedback.newProficiency : ''"
+                    ></span>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <!-- Selected skill detail -->
+      <template x-if="selectedSkill()">
+        <div class="rpg-skill-detail" data-testid="rpg-skill-detail">
+          <div class="rpg-stat-row">
+            <span class="rpg-stat-name" x-text="selectedSkill()?.name"></span>
+            <span x-text="'Lv ' + selectedSkill()?.level"></span>
+          </div>
+          <div class="rpg-stat-label" x-text="selectedSkill()?.description"></div>
+          <div class="rpg-stat-label">
+            XP <span x-text="selectedSkill()?.xp ?? 0"></span>
+          </div>
+          <template x-if="selectedSkill() && selectedSkill().prerequisites.length > 0">
+            <div class="rpg-stat-label">
+              Prerequisites:
+              <template x-for="pid in selectedSkill().prerequisites" :key="pid">
+                <span
+                  :class="skills.some((s) => s.id === pid) ? '' : 'rpg-skill-locked'"
+                  x-text="skills.find((s) => s.id === pid)?.name ?? 'locked'"
+                ></span>
+              </template>
+            </div>
+          </template>
+          <div x-show="selectedSkill()?.specialization" class="rpg-stat-label">
+            Specialization: <span x-text="selectedSkill()?.specialization"></span>
+          </div>
+          <div class="rpg-asi-grid">
+            <button
+              class="btn btn-secondary btn-xs"
+              :disabled="skillsBusyId !== null"
+              @click="selectedSkill() && addSkillXp(selectedSkill().id)"
+              data-testid="rpg-skill-xp"
+            >
+              +100 XP
+            </button>
+          </div>
+          <template x-if="selectedSkill() && !selectedSkill().specialization">
+            <div class="rpg-asi-section">
+              <input
+                type="text"
+                x-model="skillSpecName"
+                placeholder="Specialization name"
+                data-testid="rpg-skill-spec-name"
+              />
+              <button
+                class="btn btn-secondary btn-xs"
+                :disabled="skillsBusyId !== null"
+                @click="selectedSkill() && specializeSkill(selectedSkill().id)"
+                data-testid="rpg-skill-specialize"
+              >
+                Specialize
+              </button>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+  </template>
+</div>
