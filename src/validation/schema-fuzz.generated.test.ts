@@ -1891,6 +1891,11 @@ describe("NpcStateBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_worldState.NpcStateBody,));
 });
 
+describe("NsfwConsentBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_nsfw.NsfwConsentBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_nsfw.NsfwConsentBody,));
+});
 describe("NsfwEncounterCreateBody", () => {
   test("accepts generated values", () => checkAllValid(validation_nsfw.NsfwEncounterCreateBody,));
 
@@ -2758,4 +2763,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 437 schemas discovered across 536 module(s).
+// 438 schemas discovered across 537 module(s).

@@ -12,7 +12,7 @@ import {
 
 
 export const NsfwIntimacyActionBody = t.Object({
-  chatId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
+  chatId: t.String({ minLength: 1, },),
   actorId: t.String({ minLength: 1, },),
   targetActorId: t.String({ minLength: 1, },),
   worldId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
@@ -26,7 +26,7 @@ export const NsfwIntimacyActionBody = t.Object({
 },);
 
 export const NsfwSeductionAttemptBody = t.Object({
-  chatId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
+  chatId: t.String({ minLength: 1, },),
   actorId: t.String({ minLength: 1, },),
   targetId: t.String({ minLength: 1, },),
   skillCategory: SeductionSkillCategorySchema,
@@ -38,7 +38,7 @@ export const NsfwSeductionAttemptBody = t.Object({
 },);
 
 export const NsfwEncounterCreateBody = t.Object({
-  chatId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
+  chatId: t.String({ minLength: 1, },),
   actorId: t.String({ minLength: 1, },),
   worldId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
   locationId: t.Optional(t.Nullable(t.String({ minLength: 1, },),),),
@@ -48,3 +48,21 @@ export const NsfwEncounterCreateBody = t.Object({
   participants: t.Array(t.String({ minLength: 1, },), { minItems: 1, maxItems: 16, },),
   contentTags: t.Optional(t.Array(t.String({ minLength: 1, maxLength: 64, },), { maxItems: 32, },),),
 },);
+
+
+/**
+ * Body of `POST /api/v1/nsfw/consent` — the caller's explicit consent action
+ * for one chat. Closed (`additionalProperties: false`): the user id always
+ * comes from the session, never from the body.
+ *
+ * `action` reuses the consent ledger's own vocabulary (`given` / `revoked`)
+ * so the handler hands it straight to `recordNsfwConsent` with no mapping
+ * layer. A plain `t.Union` of literals — not `t.UnionEnum` — keeps an absent
+ * `action` a 422 instead of silently filling it with the first member.
+ */
+export const NsfwConsentBody = t.Object({
+  chatId: t.String({ minLength: 1, },),
+  action: t.Union([t.Literal("given",), t.Literal("revoked",),],),
+  scope: t.Optional(t.String({ maxLength: 64, },),),
+  reason: t.Optional(t.String({ maxLength: 500, },),),
+}, { additionalProperties: false, },);

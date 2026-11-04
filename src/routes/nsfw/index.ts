@@ -3,6 +3,7 @@
 
 import { Elysia, } from "elysia";
 import { bodyRoutes, } from "./body";
+import { consentRoutes, } from "./consent";
 import { encounterRoutes, } from "./encounters";
 import { fantasyRoutes, } from "./fantasies";
 import { intimacyRoutes, } from "./intimacy";
@@ -21,6 +22,7 @@ import type { HandlerOpts, } from "./types";
 export function nsfwRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "nsfw", },)
+      .use(consentRoutes(opts, prefix,),)
       .use(intimacyRoutes(opts, prefix,),)
       .use(seductionRoutes(opts, prefix,),)
       .use(bodyRoutes(opts, prefix,),)
