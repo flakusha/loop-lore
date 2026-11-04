@@ -24,6 +24,7 @@ import { requestStatusRoutes, } from "../requests";
 import { sessionsRoutes, } from "../sessions";
 import { switchSessionRoutes, } from "../sessions-switch";
 import { settingsRoutes, } from "../settings";
+import { setupRoutes, } from "../setup/routes";
 import { telemetryRoutes, } from "../telemetry";
 import { usersRoutes, } from "../users";
 
@@ -71,5 +72,6 @@ export function baseSurface(opts: RegisterPluginsOpts,) {
     .use(actorPlanRoutes({ database, }, prefix,),)
     .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
     .use(messageEncryptionRoutes(handleOpts, prefix,),)
-    .use(keyManagementRoutes({ database, }, prefix,),);
+    .use(keyManagementRoutes({ database, }, prefix,),)
+    .use(setupRoutes(handleOpts, prefix,),);
 }
