@@ -236,4 +236,74 @@ describe("professionsRoutes", () => {
 
     expect(missing.status,).toBe(404,);
   });
+
+  test("unauthenticated id-scoped access → 401", async () => {
+    const app = new Elysia({ name: "test-professions-anon-id", },)
+      .use(professionsRoutes({ database: db, config: {} as never, },),) as any;
+
+    const base = `http://localhost/api/rpg/professions/${uid()}`;
+    expect((await app.handle(new Request(base,),)).status,).toBe(401,);
+    expect(
+      (
+        await app.handle(
+          new Request(`${base}/xp`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", },
+            body: JSON.stringify({ amount: 10, },),
+          },),
+        )
+      ).status,
+    ).toBe(401,);
+
+    expect(
+      (
+        await app.handle(
+          new Request(`${base}/specialize`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", },
+            body: JSON.stringify({ name: "Rune Weaving", bonusType: "quality", bonusValue: 5, },),
+          },),
+        )
+      ).status,
+    ).toBe(401,);
+  });
+
+  test("non-owner id-scoped access → 404, identical to missing", async () => {
+    const app = authedApp(uid(),);
+    const base = `http://localhost/api/rpg/professions/${professionId}`;
+
+    const owned = await app.handle(new Request(base,),);
+    expect(owned.status,).toBe(404,);
+    const missing = await app.handle(
+      new Request(`http://localhost/api/rpg/professions/${uid()}`,),
+    );
+
+    expect(missing.status,).toBe(404,);
+    // Not-owned and missing are byte-identical: an id is not an existence oracle.
+    expect(await owned.json(),).toEqual(await missing.json(),);
+
+    const xp = await app.handle(
+      new Request(`${base}/xp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ amount: 10, },),
+      },),
+    );
+
+    expect(xp.status,).toBe(404,);
+
+    const spec = await app.handle(
+      new Request(`${base}/specialize`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Hijack", bonusType: "quality", bonusValue: 1, },),
+      },),
+    );
+
+    expect(spec.status,).toBe(404,);
+
+    // The owner still sees the profession; the stranger mutated nothing.
+    const owner = authedApp();
+    expect((await owner.handle(new Request(base,),)).status,).toBe(200,);
+  });
 });

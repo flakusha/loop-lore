@@ -5,11 +5,19 @@
  * Skills progression routes — actor-scoped skill tree, prerequisites, XP and
  * specialization. Split from `skills.ts` to keep both files under the 250-line
  * ceiling.
+ *
+ * Gating (server-side authN + row-level authZ on every route): the
+ * actor-scoped routes and `prerequisites/check` go through
+ * `requireNsfwActorAccess` (caller must own the actor, or be admin/solo). The
+ * id-scoped routes (`/:id/xp`, `/:id/specialize`) fetch the skill and enforce
+ * ownership of its actor via `checkActorOwnership`; missing and not-owned
+ * return byte-identical 404s so an id cannot be used as an existence oracle.
  */
 import { Elysia, t, } from "elysia";
 import { LevelServiceError, } from "../../rpg/level/types.js";
 import { type SkillCategory, SkillsService, } from "../../rpg/skills";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
+import { checkActorOwnership, } from "../actor-auth";
 import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
@@ -141,6 +149,14 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
+        const skill = await svc().getSkill(ctx.params.id,);
+        if (
+          !skill ||
+          !(await checkActorOwnership(database, skill.actorId, userId, ctx.userRole ?? null,))
+        ) {
+          return notFoundResponse("Skill",);
+        }
+
         const body = ctx.body as { xpAmount: number; worldId?: string };
         // Per-world rpg_xp opt-in (FEAT-gate-xp): an explicit worldId that
         // is opted out rejects with 403. World-less calls stay fail-open.
@@ -180,6 +196,14 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
+        const existing = await svc().getSkill(ctx.params.id,);
+        if (
+          !existing ||
+          !(await checkActorOwnership(database, existing.actorId, userId, ctx.userRole ?? null,))
+        ) {
+          return notFoundResponse("Skill",);
+        }
+
         const body = ctx.body as { specialization: string };
         const skill = await svc().specializeSkill(ctx.params.id, body.specialization,);
         return jsonResponse(skill,);

@@ -243,6 +243,126 @@ describe("skills CRUD + progression (auth-gated)", () => {
     expect(res.status,).toBe(403,);
   });
 
+  test("unauthenticated skill access → 401", async () => {
+    const app = new Elysia({ name: "test-skills-anon", },)
+      .use(skillsRoutes({ database: db, config: {} as never, },),)
+      .use(skillsProgressionRoutes({ database: db, config: {} as never, },),) as any;
+
+    const base = `http://localhost/api/rpg/skills/${skillId}`;
+    expect((await app.handle(new Request("http://localhost/api/rpg/skills",),)).status,).toBe(401,);
+    expect((await app.handle(new Request(base,),)).status,).toBe(401,);
+    expect(
+      (
+        await app.handle(
+          new Request(base, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", },
+            body: JSON.stringify({ name: "Hijacked", },),
+          },),
+        )
+      ).status,
+    ).toBe(401,);
+
+    expect((await app.handle(new Request(base, { method: "DELETE", },),)).status,).toBe(401,);
+
+    expect(
+      (
+        await app.handle(
+          new Request(`${base}/xp`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", },
+            body: JSON.stringify({ xpAmount: 10, },),
+          },),
+        )
+      ).status,
+    ).toBe(401,);
+
+    expect(
+      (
+        await app.handle(
+          new Request(`${base}/specialize`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", },
+            body: JSON.stringify({ specialization: "Heavy Blades", },),
+          },),
+        )
+      ).status,
+    ).toBe(401,);
+  });
+
+  test("non-owner id-scoped skill access → 404, identical to missing", async () => {
+    const app = authedApp(uid(),);
+    const base = `http://localhost/api/rpg/skills/${skillId}`;
+
+    const owned = await app.handle(new Request(base,),);
+    expect(owned.status,).toBe(404,);
+    const missing = await app.handle(
+      new Request(`http://localhost/api/rpg/skills/${uid()}`,),
+    );
+
+    expect(missing.status,).toBe(404,);
+    // Not-owned and missing are byte-identical: an id is not an existence oracle.
+    expect(await owned.json(),).toEqual(await missing.json(),);
+
+    const put = await app.handle(
+      new Request(base, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Hijacked", },),
+      },),
+    );
+
+    expect(put.status,).toBe(404,);
+
+    const del = await app.handle(new Request(base, { method: "DELETE", },),);
+    expect(del.status,).toBe(404,);
+
+    const xp = await app.handle(
+      new Request(`${base}/xp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ xpAmount: 10, },),
+      },),
+    );
+
+    expect(xp.status,).toBe(404,);
+
+    const spec = await app.handle(
+      new Request(`${base}/specialize`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ specialization: "Heavy Blades", },),
+      },),
+    );
+
+    expect(spec.status,).toBe(404,);
+
+    // The owner still sees the (unmutated) skill.
+    const still = await authedApp().handle(new Request(base,),);
+    expect(still.status,).toBe(200,);
+    expect(((await json(still,)) as { name?: string }).name,).toBe("Master Swordsmanship",);
+  });
+
+  test("list route gates ?actorId= and scopes the cross-actor listing", async () => {
+    const stranger = authedApp(uid(),);
+
+    const gated = await stranger.handle(
+      new Request(`http://localhost/api/rpg/skills?actorId=${actorId}`,),
+    );
+
+    expect(gated.status,).toBe(403,);
+
+    const strangerList = await stranger.handle(new Request("http://localhost/api/rpg/skills",),);
+    expect(strangerList.status,).toBe(200,);
+    const strangerSkills = ((await json(strangerList,)) as { skills: Array<{ id: string }> }).skills;
+    expect(strangerSkills.some((s,) => s.id === skillId),).toBe(false,);
+
+    const ownerList = await authedApp().handle(new Request("http://localhost/api/rpg/skills",),);
+    expect(ownerList.status,).toBe(200,);
+    const ownerSkills = ((await json(ownerList,)) as { skills: Array<{ id: string }> }).skills;
+    expect(ownerSkills.some((s,) => s.id === skillId),).toBe(true,);
+  });
+
   test("delete skill", async () => {
     const app = authedApp();
     const res = await app.handle(

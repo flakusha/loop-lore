@@ -4,24 +4,27 @@
 /**
  * Skills Routes.
  *
- * CRUD + progression + skill-tree endpoints backed by `SkillsService`
- * (src/rpg/skills):
+ * Skill CRUD endpoints backed by `SkillsService` (src/rpg/skills):
  *   GET/POST /api/rpg/skills
  *   GET/PUT/DELETE /api/rpg/skills/:id
- *   GET /api/rpg/skills/actors/:actorId?worldId=
- *   GET /api/rpg/skills/actors/:actorId/category/:category?worldId=
- *   GET /api/rpg/skills/actors/:actorId/tree?worldId=
- *   POST /api/rpg/skills/:id/xp
- *   POST /api/rpg/skills/:id/specialize
- *   POST /api/rpg/skills/prerequisites/check
  *
- * Actor-scoped routes are gated via `requireNsfwActorAccess` so the caller must
- * own the actor (or be admin/solo).
+ * Actor-scoped listing/XP/specialization/prerequisites live in
+ * `skills-progression.ts` and are gated via `requireNsfwActorAccess`. Here:
+ *   - POST / gates on the body actor's ownership via `requireNsfwActorAccess`.
+ *   - GET / requires a session; an `?actorId=` query is gated the same way,
+ *     and the cross-actor listing is scoped to actors the caller owns
+ *     (`admin.character` holders see everything — the `checkActorOwnership`
+ *     predicate).
+ *   - The id-scoped routes fetch the skill and enforce ownership of its actor
+ *     via `checkActorOwnership`; missing and not-owned return byte-identical
+ *     404s so an id cannot be used as an existence oracle.
  */
 import { Elysia, t, } from "elysia";
 import { parseJsonField, } from "../../rpg/shared/rpg-service-utils";
 import { SkillsService, } from "../../rpg/skills";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
+import { checkActorOwnership, } from "../actor-auth";
 import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
@@ -74,11 +77,27 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
       try {
         const { actorId, worldId, } = ctx.query as { actorId?: string; worldId?: string };
         if (actorId) {
+          const gate = await requireNsfwActorAccess(database, actorId, ctx,);
+          if (typeof gate !== "string") { return gate; }
           const skills = await svc().getActorSkills(actorId, worldId,);
           return jsonResponse({ skills, },);
         }
 
+        // Row-level scoping for the cross-actor listing: callers see only
+        // skills of actors they own; `admin.character` holders see everything
+        // (same predicate as `checkActorOwnership` / views visibleCharactersTo).
         let query = database.selectFrom("character_skills",).selectAll();
+        if (!can(ctx.userRole ?? null, "admin.character",)) {
+          query = query.where((eb,) =>
+            eb.exists(
+              eb.selectFrom("actors",)
+                .select("actors.id",)
+                .whereRef("actors.id", "=", "character_skills.actor_id",)
+                .where("actors.owner_id", "=", userId,),
+            )
+          );
+        }
+
         if (worldId) { query = query.where("world_id", "=", worldId,); }
         const rows = await query.execute();
         const mapped = Array.from(rows, (r,) => rowToSkillLike(r,),);
@@ -89,7 +108,7 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
       }
     }, {
       query: skillsQuery,
-      response: { 200: SuccessResponse, 401: ErrorResponse, },
+      response: { 200: SuccessResponse, 401: ErrorResponse, 403: ErrorResponse, },
       detail: {
         summary: "List skills",
         description: "List skills, optionally scoped to an actor or world.",
@@ -123,7 +142,13 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
       if (typeof userId !== "string") { return userId; }
       try {
         const skill = await svc().getSkill(ctx.params.id,);
-        if (!skill) { return notFoundResponse("Skill",); }
+        if (
+          !skill ||
+          !(await checkActorOwnership(database, skill.actorId, userId, ctx.userRole ?? null,))
+        ) {
+          return notFoundResponse("Skill",);
+        }
+
         return jsonResponse(skill,);
       } catch (error) {
         log().error("Failed to get skill", error instanceof Error ? error : undefined,);
@@ -143,9 +168,17 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
+        const skill = await svc().getSkill(ctx.params.id,);
+        if (
+          !skill ||
+          !(await checkActorOwnership(database, skill.actorId, userId, ctx.userRole ?? null,))
+        ) {
+          return notFoundResponse("Skill",);
+        }
+
         const body = ctx.body as Record<string, unknown>;
-        const skill = await svc().updateSkill(ctx.params.id, body,);
-        return jsonResponse(skill,);
+        const updated = await svc().updateSkill(ctx.params.id, body,);
+        return jsonResponse(updated,);
       } catch (error) {
         log().error("Failed to update skill", error instanceof Error ? error : undefined,);
         return jsonError("Internal server error", 500,);
@@ -166,7 +199,13 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
       if (typeof userId !== "string") { return userId; }
       try {
         const existing = await svc().getSkill(ctx.params.id,);
-        if (!existing) { return notFoundResponse("Skill",); }
+        if (
+          !existing ||
+          !(await checkActorOwnership(database, existing.actorId, userId, ctx.userRole ?? null,))
+        ) {
+          return notFoundResponse("Skill",);
+        }
+
         await svc().deleteSkill(ctx.params.id,);
         return jsonResponse({ ok: true, },);
       } catch (error) {

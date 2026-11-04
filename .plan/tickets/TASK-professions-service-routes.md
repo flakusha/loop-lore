@@ -56,6 +56,7 @@ Both tables are empty — no code writes to them. The `epic-crafting-professions
 - [x] Profession bonuses (success, quality, speed) computed from level
 - [x] Discipline enum matches crafting disciplines (alchemy, smithing, etc.) (`types.ts`)
 - [x] Ownership-gated (actor owner or admin) via `requireNsfwActorAccess`
+  - AC overstated (2026-11-04 correction, authz-hardening lane — honest trail, no history rewrite): at the time this AC was ticked, only the actor-scoped routes (POST `/`, GET `/actors/:actorId`) were gated; the id-scoped trio (GET `/:id`, POST `/:id/xp`, POST `/:id/specialize`) was authN-only (`requireUserId`) — any authenticated user could read/mutate any actor's profession (IDOR). Hardened with row-level `checkActorOwnership` gates (byte-identical 404 for missing/not-owned, 401 for anonymous) + negative-path tests in this branch; tracked as BUG-profession-id-scoped-routes-allow-cross-user-read-mutate-ido (issue b21af33), fixed in the `fix(security): row-level ownership on rpg profession/skill id routes` commit.
 - [x] `bun test src/` green; `bun run check` green (check:fast ALL PASS; 776 tests: 744 pass / 32 skip / 0 fail)
 
 ## Files to Create
