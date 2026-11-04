@@ -28,11 +28,11 @@ Intimacy interaction UI for NSFW features.
 
 ## Acceptance Criteria
 
-- [ ] Intimacy scene selection
-- [ ] Character positioning display
-- [ ] Action selection with descriptions
-- [ ] Scene progression controls
-- [ ] Mobile responsive
+- [x] Intimacy scene selection
+- [ ] Character positioning display (out of Phase-1 scope here — not implemented)
+- [x] Action selection with descriptions
+- [x] Scene progression controls (consent confirm/cancel, back, continue, retry, close)
+- [ ] Mobile responsive (layout classes reused from the battle panel; not verified)
 
 ## Files to Create
 
