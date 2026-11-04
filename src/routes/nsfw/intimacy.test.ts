@@ -164,6 +164,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
+          chatId: "intimacy-chat-unauth",
           actorId: "intimacy-test-actor-x",
           targetActorId: "intimacy-test-target-x",
           actionId: "act-1",
@@ -180,11 +181,16 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
   test("owner applies action → 200", async () => {
     const { userId, actorId, } = await seedAuthorized("put",);
     await seedTarget("put",);
+    const chatId = "intimacy-chat-put";
+    await insertChats(db, "Intimacy Chat", userId, { id: chatId as never, },);
+    await insertChatParticipants(db, chatId, actorId,);
+    await insertNsfwConsentState(db, userId, chatId, "given", "2026-01-01T00:00:00Z",);
     const res = await makeApp(userId,).handle(
       new Request("http://localhost/api/nsfw/intimacy/action", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
+          chatId,
           actorId,
           targetActorId: actorId,
           actionId: "act-kiss",
@@ -216,6 +222,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
+          chatId: "intimacy-chat-putnonowner",
           actorId,
           targetActorId: targetId,
           actionId: "act-kiss",

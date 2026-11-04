@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Read-only status panel shipped 2026-10-30 (`TASK-nsfw-read-only-status-panel.md`); body-state widget shipped 2026-11-01 (`TASK-nsfw-body-state.md` — health bar, condition list and arousal meter on the shared battle health-bar widget; body-region display blocked, no backend data source). Mutating surfaces (action selection, consent dialogs, partner selection, housing) still open.
+**Status Note:** Read-only status panel shipped 2026-10-30 (`TASK-nsfw-read-only-status-panel.md`); body-state widget shipped 2026-11-01 (`TASK-nsfw-body-state.md` — health bar, condition list and arousal meter on the shared battle health-bar widget; body-region display blocked, no backend data source). Consent grant/revoke shipped (`TASK-nsfw-consent-grant-route-missing.md` — `POST /api/v1/nsfw/consent` in `src/routes/nsfw/consent.ts`, body DTO `NsfwConsentBody` in `src/validation/schemas/nsfw.ts`); the chat scope is enforced, so the chat-scoped NSFW write DTOs now require `chatId` and a chatless write is a 422 instead of a consent bypass. Mutating surfaces (action selection, consent dialog UI, partner selection, housing) still open.
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Epic
@@ -127,7 +127,7 @@ Complete NSFW interaction interface for intimacy system, body state display, hea
 | TASK-nsfw-housing-management.md | P0       | ⬜ Not Started |
 | TASK-nsfw-alpine.md             | P0       | ⬜ Not Started |
 | TASK-nsfw-read-only-status-panel.md | P0   | ✅ Done        |
-| TASK-nsfw-consent-grant-route-missing.md | P0 | ⬜ Not Started |
+| TASK-nsfw-consent-grant-route-missing.md | P0 | ✅ Done        |
 
 ## Files to Create
 

@@ -22,6 +22,9 @@ import { resetNsfwRuntimeConfig, } from "../../nsfw/runtime-config";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
+  insertChatParticipants,
+  insertChats,
+  insertNsfwConsentState,
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
@@ -77,6 +80,22 @@ async function seedAuthorized(id: string,): Promise<{ userId: string; actorId: s
 }
 
 /**
+ * Seed a chat the caller participates in, with an active consent grant — the
+ * chat-scoped encounter write requires both.
+ * @param id
+ * @param userId
+ * @param actorId
+ * @returns {Promise<string>} the chat id
+ */
+async function seedChatWithConsent(id: string, userId: string, actorId: string,): Promise<string> {
+  const chatId = `encounters-chat-${id}`;
+  await insertChats(db, "Encounters Chat", userId, { id: chatId as never, },);
+  await insertChatParticipants(db, chatId, actorId,);
+  await insertNsfwConsentState(db, userId, chatId, "given", "2026-01-01T00:00:00Z",);
+  return chatId;
+}
+
+/**
  * @param userId optional authenticated user
  * @param config
  */
@@ -109,12 +128,14 @@ describe("encounter routes — GET /api/nsfw/encounters/:id", () => {
 
   test("authenticated, existing encounter → 200", async () => {
     const { userId, actorId, worldId, } = await seedAuthorized("getexisting",);
+    const chatId = await seedChatWithConsent("getexisting", userId, actorId,);
     const app = makeApp(userId,);
     const createRes = await app.handle(
       new Request("http://localhost/api/nsfw/encounters", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
+          chatId,
           actorId,
           worldId,
           encounterType: "romantic",
@@ -167,12 +188,14 @@ describe("encounter routes — POST /api/nsfw/encounters/:id/advance", () => {
 
   test("advance progresses phases then completes", async () => {
     const { userId, actorId, worldId, } = await seedAuthorized("advancephases",);
+    const chatId = await seedChatWithConsent("advancephases", userId, actorId,);
     const app = makeApp(userId,);
     const createRes = await app.handle(
       new Request("http://localhost/api/nsfw/encounters", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
+          chatId,
           actorId,
           worldId,
           encounterType: "romantic",
@@ -245,6 +268,7 @@ describe("encounter routes — GET /api/nsfw/encounters/world/:worldId", () => {
 
   test("authenticated → 200 with world encounters", async () => {
     const { userId, actorId, worldId, } = await seedAuthorized("listworld",);
+    const chatId = await seedChatWithConsent("listworld", userId, actorId,);
     const app = makeApp(userId,);
     // Create two encounters in the world.
     for (const type of ["romantic", "passionate",]) {
@@ -253,6 +277,7 @@ describe("encounter routes — GET /api/nsfw/encounters/world/:worldId", () => {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: JSON.stringify({
+            chatId,
             actorId,
             worldId,
             encounterType: type,

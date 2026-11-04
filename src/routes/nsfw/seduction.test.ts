@@ -21,6 +21,9 @@ import { resetNsfwRuntimeConfig, } from "../../nsfw/runtime-config";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
+  insertChatParticipants,
+  insertChats,
+  insertNsfwConsentState,
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
@@ -232,7 +235,13 @@ describe("seduction routes — POST /api/nsfw/seduction/attempt", () => {
       new Request("http://localhost/api/nsfw/seduction/attempt", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ actorId: "x", targetId: "y", approach: "compliment", },),
+        body: JSON.stringify({
+          chatId: "seduction-chat-unauth",
+          actorId: "x",
+          targetId: "y",
+          skillCategory: "foreplay",
+          approach: "compliment",
+        },),
       },),
     );
 
@@ -249,11 +258,19 @@ describe("seduction routes — POST /api/nsfw/seduction/attempt", () => {
       user_id: userId,
     },);
 
+    // The attempt is chat-scoped: the caller needs a chat it participates in
+    // and an active consent grant for it.
+    const chatId = "seduction-chat-attempt";
+    await insertChats(db, "Seduction Chat", userId, { id: chatId as never, },);
+    await insertChatParticipants(db, chatId, actorId,);
+    await insertNsfwConsentState(db, userId, chatId, "given", "2026-01-01T00:00:00Z",);
+
     const res = await makeApp(userId,).handle(
       new Request("http://localhost/api/nsfw/seduction/attempt", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
+          chatId: "seduction-chat-attempt",
           actorId,
           targetId,
           skillCategory: "foreplay",
@@ -281,7 +298,13 @@ describe("seduction routes — POST /api/nsfw/seduction/attempt", () => {
       new Request("http://localhost/api/nsfw/seduction/attempt", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ actorId, targetId: "t", approach: "x", },),
+        body: JSON.stringify({
+          chatId: "seduction-chat-attemptnonowner",
+          actorId,
+          targetId: "t",
+          skillCategory: "foreplay",
+          approach: "x",
+        },),
       },),
     );
 
