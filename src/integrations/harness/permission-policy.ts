@@ -69,23 +69,41 @@ export interface ClassifyPermissionInput {
 }
 
 /**
- * Collect every string leaf of an arbitrarily shaped params object,
- * depth-limited so a hostile payload cannot blow the stack. Truncation is
- * reported, never silently swallowed: strings the walk did not examine are
- * unverifiable, and unverifiable means require-approval (fail-closed).
+ * Shared depth-limited string walk underpinning both collectors below: one
+ * recursion skeleton (array/object descent, truncation accounting) so the
+ * two policies cannot drift apart.
  * @param value - raw JSON value
  * @param depth - remaining descent budget
- * @returns the string leaves seen plus whether any content was skipped.
+ * @param underPathKey - whether a path-bearing key was seen above
+ * @param pathKeyOnly - collect only leaves under a path-bearing key
+ * @returns the collected string leaves plus whether any content was skipped.
  */
-function collectStringLeaves(value: unknown, depth: number,): { leaves: string[]; truncated: boolean } {
-  if (typeof value === "string") { return { leaves: [value,], truncated: false, }; }
+function walkStrings(
+  value: unknown,
+  depth: number,
+  underPathKey: boolean,
+  pathKeyOnly: boolean,
+): { leaves: string[]; truncated: boolean } {
+  if (typeof value === "string") {
+    return { leaves: !pathKeyOnly || underPathKey ? [value,] : [], truncated: false, };
+  }
+
   if (depth <= 0) { return { leaves: [], truncated: true, }; }
   if (Array.isArray(value,) || (value !== null && typeof value === "object")) {
-    const values = Array.isArray(value,) ? value : Object.values(value,);
+    const entries = Array.isArray(value,)
+      ? value.map((v,) => [null, v,] as const)
+      : Object.entries(value,);
+
     const leaves: string[] = [];
     let truncated = false;
-    for (const v of values) {
-      const inner = collectStringLeaves(v, depth - 1,);
+    for (const [key, v,] of entries) {
+      const inner = walkStrings(
+        v,
+        depth - 1,
+        underPathKey || (key !== null && PATH_KEY_PATTERN.test(key,)),
+        pathKeyOnly,
+      );
+
       leaves.push(...inner.leaves,);
       truncated = truncated || inner.truncated;
     }
@@ -114,28 +132,7 @@ function collectPathCandidates(
   depth: number,
   underPathKey: boolean,
 ): { leaves: string[]; truncated: boolean } {
-  if (typeof value === "string") {
-    return { leaves: underPathKey ? [value,] : [], truncated: false, };
-  }
-
-  if (depth <= 0) { return { leaves: [], truncated: true, }; }
-  if (Array.isArray(value,) || (value !== null && typeof value === "object")) {
-    const entries = Array.isArray(value,)
-      ? value.map((v,) => [null, v,] as const)
-      : Object.entries(value,);
-
-    const leaves: string[] = [];
-    let truncated = false;
-    for (const [key, v,] of entries) {
-      const inner = collectPathCandidates(v, depth - 1, underPathKey || (key !== null && PATH_KEY_PATTERN.test(key,)),);
-      leaves.push(...inner.leaves,);
-      truncated = truncated || inner.truncated;
-    }
-
-    return { leaves, truncated, };
-  }
-
-  return { leaves: [], truncated: false, };
+  return walkStrings(value, depth, underPathKey, true,);
 }
 
 /**
@@ -164,7 +161,7 @@ export async function classifyPermission(input: ClassifyPermissionInput,): Promi
     return { decision: "auto_allow", reason: `no-filesystem tool kind "${kind}"`, };
   }
 
-  const strings = collectStringLeaves(params, 6,);
+  const strings = walkStrings(params, 6, true, false,);
   if (strings.truncated) {
     return { decision: "require_approval", reason: "params nest deeper than the walk budget — unverifiable", };
   }

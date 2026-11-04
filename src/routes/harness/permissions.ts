@@ -62,6 +62,10 @@ export function harnessPermissionRoutes(prefix = "/api/v1",) {
   const guard = requirePermission("admin.system",);
   const denied = { 403: ErrorResponse, } as const;
   const params = { params: t.Object({ id: t.String({},), },), } as const;
+  /** Shared approve/deny response contract — one source of truth. */
+  const decisionResponse = {
+    response: { 200: HarnessPermissionDecisionResponse, 404: ErrorResponse, 503: ErrorResponse, ...denied, },
+  } as const;
 
   return new Elysia({ name: "harness-permissions", },)
     .guard({ beforeHandle: guard, }, (app,) =>
@@ -76,14 +80,8 @@ export function harnessPermissionRoutes(prefix = "/api/v1",) {
         },)
         .post(`${prefix}/harness/permissions/:id/approve`, (ctx,) => {
           return decide((ctx.params as { id: string }).id, "approve",);
-        }, {
-          ...params,
-          response: { 200: HarnessPermissionDecisionResponse, 404: ErrorResponse, 503: ErrorResponse, ...denied, },
-        },)
+        }, { ...params, ...decisionResponse, },)
         .post(`${prefix}/harness/permissions/:id/deny`, (ctx,) => {
           return decide((ctx.params as { id: string }).id, "deny",);
-        }, {
-          ...params,
-          response: { 200: HarnessPermissionDecisionResponse, 404: ErrorResponse, 503: ErrorResponse, ...denied, },
-        },),);
+        }, { ...params, ...decisionResponse, },),);
 }
