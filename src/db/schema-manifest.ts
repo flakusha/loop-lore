@@ -1137,7 +1137,7 @@ export const SCHEMA = new SchemaManifest()
   .table("professions", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
-    world_id: col("text", { notNull: true, },),
+    world_id: col("text",),
     discipline: col("text", { notNull: true, },),
     level: col("integer", { notNull: true, hasDefault: true, },),
     experience: col("integer", { notNull: true, hasDefault: true, },),

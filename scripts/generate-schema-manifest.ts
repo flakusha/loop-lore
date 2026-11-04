@@ -89,6 +89,10 @@ function generateManifest(
     const table = finalTables.get(name,);
     if (!table) { continue; }
     for (const col of colSet) {
+      // A later alter may re-add a dropped column — drop + re-add is how a
+      // nullability/FK change is expressed for SQLite here (094). The re-add
+      // wins over the drop.
+      if (alterColumns.get(name,)?.[col]) { continue; }
       delete table[col];
     }
   }
