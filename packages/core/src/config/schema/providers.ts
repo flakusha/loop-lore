@@ -37,6 +37,13 @@ export interface ProviderInstanceConfig {
   headers?: Record<string, string>;
   /** Operator-declared native locale of this provider's models (LOCALE_REGISTRY code) */
   locale?: string;
+  /**
+   * Hosts the operator explicitly approves for this provider instance.
+   * Used to permit remote provider endpoints under the SSRF validator —
+   * without an entry the validator rejects every remote host.
+   * Omitted = no remote host is approved (default behaviour unchanged).
+   */
+  allowedHosts?: string[];
   /** Known models (name → limits) */
   models: Record<string, ModelLimits>;
 }

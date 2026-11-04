@@ -127,6 +127,18 @@ describe("BaseProvider construction", () => {
       .toThrow(ProviderError,);
   });
 
+  test("rejects a remote host unless allowedHosts approves it", () => {
+    expect(() => new TestProvider(makeInstance({ baseUrl: "https://api.example.com/v1", },),))
+      .toThrow(ProviderError,);
+
+    expect(() =>
+      new TestProvider(makeInstance({
+        baseUrl: "https://api.example.com/v1",
+        allowedHosts: ["api.example.com",],
+      },),)
+    ).not.toThrow();
+  });
+
   test("buildState maps the shared state to the concrete shape", async () => {
     const provider = new TestProvider(makeInstance(), undefined, { withMarker: true, },);
     await provider.complete(makeReq(),);

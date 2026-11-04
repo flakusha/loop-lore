@@ -5,7 +5,8 @@
 
 **Overview:** First-run provider connection flow (auto-setup research round 3 candidate C5, `.tmp/research/AutoSetup-Approaches.md` §7 C5): pick provider → API key (sealed) → test via rescan → default model roles. Skippable and re-enterable; ≤2 screens. Depends on the setup-state endpoint ticket; absorbs giwt ticket `4293058`.
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Backend half shipped (server provider store + `/api/v1/admin/setup/providers` routes + operator-approved remote hosts); the wizard frontend lands in a separate lane.
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic

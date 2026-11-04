@@ -105,7 +105,7 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
       : config.baseUrl;
 
     const baseUrl = rawBase.replace(/\/+$/, "",);
-    const validated = validateProviderUrl(baseUrl,);
+    const validated = validateProviderUrl(baseUrl, { allowlist: config.allowedHosts ?? [], },);
     if (!validated.ok) {
       throw new ProviderError(
         `Invalid provider URL (${config.name}): ${validated.error}`,
