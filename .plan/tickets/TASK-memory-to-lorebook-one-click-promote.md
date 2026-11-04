@@ -16,8 +16,6 @@ ST memory-to-lore is manual everywhere (DeepWiki: vectors ext can include World 
 
 (fill in before starting: why this change, constraints, alternatives considered.)
 
-Closed as duplicate of TASK-memory-to-lorebook-promotion-memory-books-pattern (sibling, filed first 00:14); unique detail merged there. Git issue d485b75 closed.
-
 **Acceptance Criteria:**
 
 - [ ] Implementation complete

@@ -16,8 +16,6 @@ ST connection profiles: one named bundle (API+model+preset+persona) per chat. Sc
 
 (fill in before starting: why this change, constraints, alternatives considered.)
 
-Closed as duplicate of TASK-connection-profiles-master-preset-one-named-bundle-per-chat (sibling, filed first 00:14; identical scope). Git issue 4b12d1d closed.
-
 **Acceptance Criteria:**
 
 - [ ] Implementation complete
