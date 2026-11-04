@@ -16,6 +16,11 @@
  * - deletes the original oversized file,
  * - rewrites markdown links across the docs tree that target the removed
  *   file (`<name>.md`, `./<name>.md`, `<name>.md#anchor`) to the new paths.
+ *
+ * Finally, drops list-item links and unlinks inline links in the kept
+ * plan-gen pages whose targets fall under the VitePress `srcExclude` set
+ * (see `docs/.vitepress/config.mts`) — those targets never build, so the
+ * links would 404 (hidden by `ignoreDeadLinks`, still dead for readers).
  */
 
 import { mkdir, readdir, readFile, rm, stat, writeFile, } from "node:fs/promises";
@@ -35,6 +40,7 @@ interface SplitSummary {
   filesSplit: string[];
   pagesWritten: number;
   linksRewritten: number;
+  linksPruned: number;
   unmappedAnchors: number;
 }
 
@@ -55,6 +61,56 @@ async function collectMarkdownFiles(root: string, skipDirs: string[],): Promise<
   }
   await walk(root,);
   return files.sort();
+}
+
+/** plan-gen paths excluded from the VitePress build — mirrors `srcExclude`
+ * in `docs/.vitepress/config.mts`, relative to `docs/plan-gen/`. Includes the
+ * unsplit filenames so `docs:dev` (no split step) matches the build. */
+const EXCLUDED_DIR_NAMES = ["epics", "tickets", "interconnect", "feature-matrix",];
+const EXCLUDED_FILES = new Set([
+  "epics-index.md",
+  "priority-matrix.md",
+  "interconnect.md",
+  "feature-matrix.md",
+],);
+
+/** True when a markdown link target (relative, optional `./`, `#anchor`) resolves under the exclusion set. */
+function isExcludedTarget(target: string,): boolean {
+  const path = target.replace(/^\.\//, "",).split("#",)[0] ?? "";
+  if (EXCLUDED_FILES.has(path,)) { return true; }
+  return EXCLUDED_DIR_NAMES.some((dir,) => path === dir || path.startsWith(`${dir}/`,));
+}
+
+/** Drop list-item links and unlink inline links targeting build-excluded plan-gen paths. */
+async function pruneExcludedLinks(options: {
+  planGenDir: string;
+  summary: SplitSummary;
+},): Promise<void> {
+  const { planGenDir, summary, } = options;
+  const listItemRe = /^\s*[-*]\s+\[[^\]]+\]\(\s*(\.?\/)?([^)\s#]+)(#[^)]*)?\s*\)\s*$/;
+  const inlineRe = /(?<!!)\[([^\]]+)\]\(\s*(\.?\/)?([^)\s#]+)(#[^)]*)?\s*\)/g;
+  const files = await collectMarkdownFiles(planGenDir, EXCLUDED_DIR_NAMES,);
+  for (const file of files) {
+    if ([...EXCLUDED_FILES,].some((name,) => file.endsWith(`/${name}`,))) { continue; }
+    const before = await readFile(file, "utf8",);
+    const pruned = before.split("\n",).filter((line,) => {
+      const match = listItemRe.exec(line,);
+      if (match === null) { return true; }
+      if (isExcludedTarget(match[2] ?? "",)) {
+        summary.linksPruned += 1;
+        return false;
+      }
+      return true;
+    },).join("\n",);
+    const after = pruned.replace(inlineRe, (link, text: string, _rel: string, target: string,) => {
+      if (isExcludedTarget(target ?? "",)) {
+        summary.linksPruned += 1;
+        return text;
+      }
+      return link;
+    },);
+    if (after !== before) { await writeFile(file, after,); }
+  }
 }
 
 /** Rewrite every markdown link that targets one of the split files. */
@@ -105,7 +161,13 @@ export async function runSplitPlanGen(options: {
   const statInfo = await stat(planGenDir,);
   if (!statInfo.isDirectory()) { throw new Error(`not a directory: ${planGenDir}`,); }
 
-  const summary: SplitSummary = { filesSplit: [], pagesWritten: 0, linksRewritten: 0, unmappedAnchors: 0, };
+  const summary: SplitSummary = {
+    filesSplit: [],
+    pagesWritten: 0,
+    linksRewritten: 0,
+    linksPruned: 0,
+    unmappedAnchors: 0,
+  };
   const groups: SplitGroup[] = [];
   for (const entry of await readdir(planGenDir, { withFileTypes: true, },)) {
     if (!entry.isFile() || !entry.name.endsWith(".md",)) { continue; }
@@ -143,6 +205,9 @@ export async function runSplitPlanGen(options: {
     );
     await rewriteLinks({ planGenDir, groups, files, summary, },);
   }
+  // Prune after rewriting: rewritten targets may themselves fall under the
+  // exclusion set (e.g. `./interconnect.md#x` -> `interconnect/<part>.md#x`).
+  await pruneExcludedLinks({ planGenDir, summary, },);
   return summary;
 }
 
@@ -159,6 +224,7 @@ async function main(): Promise<void> {
     (summary.filesSplit.length > 0 ? `: ${summary.filesSplit.join(", ",)}` : ""),
     `${summary.pagesWritten} pages written`,
     `${summary.linksRewritten} links rewritten`,
+    `${summary.linksPruned} links pruned`,
   ];
   if (summary.unmappedAnchors > 0) { parts.push(`${summary.unmappedAnchors} unmapped anchors`,); }
   process.stdout.write(`${parts.join("; ",)}\n`,);
