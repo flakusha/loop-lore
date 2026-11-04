@@ -17,12 +17,19 @@
  * sibling convention (`skills.ts`) scopes actor surfaces under
  * `/api/rpg/<domain>/actors/:actorId`, which is followed here.
  *
- * Actor-scoped routes are gated via `requireNsfwActorAccess` so the caller
- * must own the actor (or be admin/solo).
+ * Gating (server-side authN + row-level authZ on every route):
+ *   - Actor-scoped routes (POST /, GET /actors/:actorId) go through
+ *     `requireNsfwActorAccess` so the caller must own the actor (or be
+ *     admin/solo).
+ *   - The id-scoped routes (GET /:id, POST /:id/xp, POST /:id/specialize)
+ *     fetch the profession and enforce ownership of its actor via
+ *     `checkActorOwnership`; missing and not-owned return byte-identical 404s
+ *     so an id cannot be used as an existence oracle.
  */
 import { Elysia, } from "elysia";
 import { ProfessionsService, } from "../../rpg/crafting/professions";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
+import { checkActorOwnership, } from "../actor-auth";
 import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
@@ -115,7 +122,13 @@ export function professionsRoutes({ database, }: HandlerOpts, prefix = "/api",):
       if (typeof userId !== "string") { return userId; }
       try {
         const profession = await svc().getProfession(ctx.params.id,);
-        if (!profession) { return notFoundResponse("Profession",); }
+        if (
+          !profession ||
+          !(await checkActorOwnership(database, profession.actorId, userId, ctx.userRole ?? null,))
+        ) {
+          return notFoundResponse("Profession",);
+        }
+
         return jsonResponse(profession,);
       } catch (error) {
         log().error("Failed to get profession", error instanceof Error ? error : undefined,);
@@ -135,6 +148,14 @@ export function professionsRoutes({ database, }: HandlerOpts, prefix = "/api",):
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
+        const profession = await svc().getProfession(ctx.params.id,);
+        if (
+          !profession ||
+          !(await checkActorOwnership(database, profession.actorId, userId, ctx.userRole ?? null,))
+        ) {
+          return notFoundResponse("Profession",);
+        }
+
         const body = ctx.body as { amount: number };
         const result = await svc().addExperience(ctx.params.id, body.amount,);
         return jsonResponse(result,);
@@ -164,6 +185,14 @@ export function professionsRoutes({ database, }: HandlerOpts, prefix = "/api",):
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
+        const profession = await svc().getProfession(ctx.params.id,);
+        if (
+          !profession ||
+          !(await checkActorOwnership(database, profession.actorId, userId, ctx.userRole ?? null,))
+        ) {
+          return notFoundResponse("Profession",);
+        }
+
         const specialization = await svc().addSpecialization(ctx.params.id, ctx.body as never,);
         return jsonResponse(specialization, 201,);
       } catch (error) {
