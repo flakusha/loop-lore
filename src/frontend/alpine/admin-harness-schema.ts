@@ -192,3 +192,33 @@ export type HarnessSettingsView = Static<typeof HarnessSettingsResponse>;
  * response, so the nullability lives in the schema instead of a cast.
  */
 export const HarnessSettingsNullable = Type.Union([HarnessSettingsResponse, Type.Null(),],);
+
+/**
+ * One permission ask parked for human approval
+ * (`GET /api/v1/harness/permissions`). `input` is the harness's raw
+ * `session/request_permission` params — pass-through, deliberately untyped.
+ */
+export const HarnessPendingPermissionSchema = Type.Object({
+  id: Type.String({},),
+  profile: Type.String({},),
+  tool: Type.Union([Type.String({},), Type.Null(),],),
+  input: Type.Unknown(),
+  cwd: Type.String({},),
+  arrival: Type.Number({},),
+},);
+
+/** `GET /api/v1/harness/permissions` body (FIFO order, oldest first). */
+export const HarnessPermissionsResponse = Type.Object({
+  items: Type.Array(HarnessPendingPermissionSchema,),
+},);
+
+/** `POST /api/v1/harness/permissions/:id/approve|deny` body. */
+export const HarnessPermissionDecisionResponse = Type.Object({
+  ok: Type.Boolean({},),
+},);
+
+/** Static view of {@link HarnessPendingPermissionSchema} for typed shaping. */
+export type HarnessPendingPermission = Static<typeof HarnessPendingPermissionSchema>;
+
+/** Static view of {@link HarnessPermissionsResponse}. */
+export type HarnessPermissionsView = Static<typeof HarnessPermissionsResponse>;

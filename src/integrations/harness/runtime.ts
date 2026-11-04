@@ -5,10 +5,12 @@
  * runtime.ts — the composition root for the outbound ACP stack
  * (TASK-acp-composition-root-wiring).
  *
- * Constructs the four-piece harness runtime exactly once, at server boot:
+ * Constructs the harness runtime exactly once, at server boot:
  * ProfileRegistry (one flavor-resolved adapter connection per profile),
  * ProfileSelector (ordered admission), UsageLedger (rolling rpm/token
- * windows) and ProfileBreaker (per-profile circuit state). Before this
+ * windows), ProfileBreaker (per-profile circuit state) and PermissionQueue
+ * (the approval-flow surface; asks the policy engine cannot auto-allow park
+ * there for a human decision through the admin routes). Before this
  * module the whole outbound client layer was constructed only in tests
  * (review G1) — dead code at runtime.
  *
@@ -30,12 +32,17 @@
  */
 
 import type { HarnessAcpConfig, } from "../../config/schema/harness";
+import { getChildLogger, } from "../../logger";
 import { type HarnessAdapterFactory, } from "./adapter-types";
 import { resolveAdapterFactory, } from "./flavor-factories";
+import { PermissionQueue, } from "./permission-queue";
 import { ProfileBreaker, } from "./profile-breaker";
 import { ProfileRegistry, } from "./profile-registry";
 import { ProfileSelector, } from "./profile-selector";
 import { UsageLedger, } from "./usage-ledger";
+
+/** Logger; null-safe — composition happens beside boot. */
+const log = (): ReturnType<typeof getChildLogger> | null => getChildLogger("harness-acp",);
 
 /** The composed outbound ACP stack, shared by every consumer of the process. */
 export interface HarnessRuntime {
@@ -49,6 +56,8 @@ export interface HarnessRuntime {
   readonly ledger: UsageLedger;
   /** Per-profile circuit breakers. */
   readonly breaker: ProfileBreaker;
+  /** Permission asks awaiting a human decision (the approval-flow surface). */
+  readonly permissions: PermissionQueue;
 }
 
 /** Options for createHarnessRuntime. */
@@ -82,16 +91,42 @@ export function harnessAdapterFactoryFor(acp: HarnessAcpConfig,): HarnessAdapter
  * Compose the runtime: registry + ledger + breaker + selector sharing
  * instances — the selector holds THE registry/ledger/breaker, never copies,
  * and the breaker reads its thresholds through the registry's health config.
+ * The permission queue rides the same registry: the composed factory wraps
+ * the caller's (or the production flavor-resolving one) so every adapter
+ * connection reports asks into the queue and withdrawals out of it. The
+ * sandbox root an ask is judged against is the connection's own cwd
+ * (session/new cwd); production profiles pass none, so that is
+ * `process.cwd()` — the same default the adapter hands to session/new.
  * @param options - config snapshot + optional factory override
  * @returns the composed runtime.
  */
 export function createHarnessRuntime(options: CreateHarnessRuntimeOptions,): HarnessRuntime {
-  const factory = options.factory ?? harnessAdapterFactoryFor(options.acp,);
-  const registry = new ProfileRegistry({ acp: options.acp, factory, },);
+  const baseFactory = options.factory ?? harnessAdapterFactoryFor(options.acp,);
+  // Late-bound: the queue resolves decisions through the registry while the
+  // registry is constructed with a factory that reports into the queue.
+  let registry: ProfileRegistry | undefined;
+  const permissions = new PermissionQueue({ connection: (profile,) => registry?.connection(profile,), },);
+  const queueFactory: HarnessAdapterFactory = (profile, command, opts,) =>
+    baseFactory(profile, command, {
+      ...opts,
+      onPermissionRequest: (pending,) => {
+        void permissions.submit({ profile, pending, sandboxRoot: opts?.cwd ?? process.cwd(), },).catch(
+          (error: unknown,) => {
+            log()?.warn("harness permission evaluation failed", { profile, error: String(error,), },);
+          },
+        );
+      },
+      onPermissionWithdrawn: () => {
+        permissions.withdrawProfile(profile,);
+      },
+    },);
+
+  const composed = new ProfileRegistry({ acp: options.acp, factory: queueFactory, },);
+  registry = composed;
   const ledger = new UsageLedger();
-  const breaker = new ProfileBreaker((profile,) => registry.healthThresholds(profile,));
-  const selector = new ProfileSelector({ registry, ledger, breaker, },);
-  return { acp: options.acp, registry, selector, ledger, breaker, };
+  const breaker = new ProfileBreaker((profile,) => composed.healthThresholds(profile,));
+  const selector = new ProfileSelector({ registry: composed, ledger, breaker, },);
+  return { acp: options.acp, registry: composed, selector, ledger, breaker, permissions, };
 }
 
 /** The boot-composed runtime; null while disabled/unconfigured or before boot. */
@@ -103,9 +138,11 @@ let runtime: HarnessRuntime | null = null;
  * `harness.acp` composes nothing — getHarnessRuntime() stays null,
  * preserving the disabled-by-default posture (no probes, no spawns).
  * @param acp - the loaded `harness.acp` config (empty section when unconfigured)
+ * @param factory - adapter factory override; a dev/test seam, exactly like
+ *   {@link createHarnessRuntime}'s. Production omits it.
  */
-export function initHarnessRuntime(acp: HarnessAcpConfig,): void {
-  runtime = acp.enabled ? createHarnessRuntime({ acp, },) : null;
+export function initHarnessRuntime(acp: HarnessAcpConfig, factory?: HarnessAdapterFactory,): void {
+  runtime = acp.enabled ? createHarnessRuntime({ acp, factory, },) : null;
 }
 
 /**
