@@ -30,6 +30,11 @@ export const CHARACTERS_DEFAULTS: { enabled: boolean; templates: CharacterTempla
       mes_example:
         "*Elara traces a finger along a glowing tome.* This one remembers the Old Tongue. It has not been opened in three centuries. Are you worthy of its secrets?",
       tags: ["fantasy", "guide", "lore", "sage",],
+      skills: [
+        { name: "Lore Mastery", category: "knowledge", level: 60, proficiency: "expert", },
+        { name: "Arcana", category: "magic", level: 35, proficiency: "journeyman", },
+      ],
+      professions: [{ discipline: "enchanting", level: 30, },],
       creator: "loop-lore",
       visibility: "public",
       content_rating: "sfw",
@@ -102,6 +107,11 @@ export const CHARACTERS_DEFAULTS: { enabled: boolean; templates: CharacterTempla
       mes_example:
         "*ARIA's hologram flickers.* I've calculated 47 possible outcomes. Only 3 end with everyone alive. I... do not enjoy those odds, Captain.",
       tags: ["sci-fi", "companion", "AI", "space",],
+      skills: [
+        { name: "Hacking", category: "knowledge", level: 85, proficiency: "master", },
+        { name: "Engineering", category: "crafting", level: 60, proficiency: "expert", },
+      ],
+      professions: [{ discipline: "engineering", level: 50, },],
       creator: "loop-lore",
       visibility: "public",
       content_rating: "sfw",
@@ -129,6 +139,10 @@ export const CHARACTERS_DEFAULTS: { enabled: boolean; templates: CharacterTempla
       mes_example:
         "*Morgan lights a cigarette.* Everyone lies. The trick isn't catching them — it's figuring out why they think you need to hear the lie.",
       tags: ["modern", "detective", "mystery", "noir",],
+      skills: [
+        { name: "Investigation", category: "knowledge", level: 60, proficiency: "expert", },
+        { name: "Perception", category: "exploration", level: 35, proficiency: "journeyman", },
+      ],
       creator: "loop-lore",
       visibility: "public",
       content_rating: "sfw",

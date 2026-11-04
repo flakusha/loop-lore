@@ -62,6 +62,14 @@ export interface CreateSkillInput {
   acquiredAt?: string;
   acquisitionReason?: string;
   acquisitionSource?: SkillAcquisitionSource;
+  /**
+   * Starting level (default 1) — used by config-seeded baseline skills
+   * (TASK-character-config-skills-professions); runtime creation always
+   * starts at 1.
+   */
+  level?: number;
+  /** Starting proficiency (default novice). */
+  proficiency?: ProficiencyLevel;
 }
 /** Skill update input */
 export interface UpdateSkillInput {

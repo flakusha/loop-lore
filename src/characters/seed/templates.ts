@@ -16,6 +16,7 @@ import { TraitsService, } from "../services/traits-service";
 import { ContentRating, } from "../spec";
 import { ensureSystemUser, normalizeSpecies, resolveTemplateAvatar, } from "./avatar";
 import { adoptExistingActor, findExistingActor, stableTemplateId, } from "./identity";
+import { persistTemplateRpgSheets, } from "./rpg-sheets";
 
 interface SeedResult {
   created: number;
@@ -142,6 +143,7 @@ async function seedTemplate(
 
     await persistIdentityTraits(traits, id, template,);
     await linkTemplateAvatar(database, uploadDir, ownerId, template, id, avatars,);
+    await persistTemplateRpgSheets(database, id, template,);
 
     result.created++;
     logger.info("seeded character template", { module: "characters", name: template.name, id, },);
