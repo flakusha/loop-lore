@@ -3,7 +3,7 @@
 
 # TASK: permission approval flow
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
@@ -22,3 +22,5 @@ Implement client-side approval authority for ACP session/request_permission; aut
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-04 registry-driven close: git issue d2a2938 (registry tip: 8e39be96d Konstantin Fedotov Close issue)
