@@ -137,6 +137,77 @@ export const charactersMeta = {
               required: ["name", "slot", "item_match", "outfit",],
             },
           },
+          // ── RPG sheets (TASK-character-config-skills-professions) ──
+          skills: {
+            type: "array",
+            description: "Config-seeded baseline skills created at seed time",
+            items: {
+              type: "object",
+              properties: {
+                name: { type: "string", description: "Skill display name", },
+                category: {
+                  type: "string",
+                  description: "SkillCategory value",
+                  enum: ["combat", "magic", "crafting", "social", "exploration", "survival", "knowledge", "stealth",],
+                },
+                level: { type: "number", description: "Starting level (default 1)", },
+                proficiency: {
+                  type: "string",
+                  description: "ProficiencyLevel value (default novice)",
+                  enum: ["novice", "apprentice", "journeyman", "expert", "master", "grandmaster",],
+                },
+                description: { type: "string", description: "Skill description", },
+              },
+              required: ["name", "category",],
+            },
+          },
+          professions: {
+            type: "array",
+            description: "Config-seeded starting crafting disciplines",
+            items: {
+              type: "object",
+              properties: {
+                discipline: {
+                  type: "string",
+                  description: "CraftingDiscipline value",
+                  enum: [
+                    "alchemy",
+                    "smithing",
+                    "enchanting",
+                    "cooking",
+                    "tailoring",
+                    "woodworking",
+                    "jewelry",
+                    "engineering",
+                  ],
+                },
+                level: { type: "number", description: "Starting level (default 1, clamped 1..100)", },
+                specializations: {
+                  type: "array",
+                  description: "Specializations pre-unlocked with the profession",
+                  items: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string", description: "Specialization name", },
+                      description: { type: "string", description: "Specialization description", },
+                      bonusType: {
+                        type: "string",
+                        description: "ProfessionBonusType value",
+                        enum: ["speed", "quality", "success", "material_saving", "experience_gain",],
+                      },
+                      bonusValue: { type: "number", description: "Bonus magnitude", },
+                      requirementLevel: {
+                        type: "number",
+                        description: "Minimum profession level (must be ≤ starting level)",
+                      },
+                    },
+                    required: ["name", "bonusType", "bonusValue",],
+                  },
+                },
+              },
+              required: ["discipline",],
+            },
+          },
         },
         required: ["name", "description",],
       },

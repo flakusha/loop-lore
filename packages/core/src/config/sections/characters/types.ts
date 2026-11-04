@@ -64,6 +64,12 @@ export interface CharacterTemplate {
   outfits?: CharacterOutfitTemplate[];
   /** Equipped-items → outfit mapping (deferred loadout-bridge phase). */
   loadouts?: CharacterLoadoutTemplate[];
+
+  // ── RPG sheets (TASK-character-config-skills-professions) ──
+  /** Config-seeded baseline skills, created at seed time. */
+  skills?: SkillTemplate[];
+  /** Config-seeded starting professions (crafting disciplines), seeded at start. */
+  professions?: ProfessionTemplate[];
 }
 
 /** Wardrobe outfit descriptor for a character template. */
@@ -89,4 +95,45 @@ export interface CharacterLoadoutTemplate {
   item_match: string;
   /** Outfit id (from outfits[]) to switch into. */
   outfit: string;
+}
+
+/**
+ * Config-seeded baseline skill (TASK-character-config-skills-professions).
+ * String-typed because this core package cannot import app-side enums; the
+ * seeding path validates against `SkillCategory` / `ProficiencyLevel`.
+ */
+export interface SkillTemplate {
+  /** Skill display name (e.g. "Lore Mastery"). */
+  name: string;
+  /** One of the SkillCategory values (combat, magic, crafting, social, exploration, survival, knowledge, stealth). */
+  category: string;
+  /** Starting level (default 1). */
+  level?: number;
+  /** One of the ProficiencyLevel values (novice…grandmaster); default novice. */
+  proficiency?: string;
+  description?: string;
+}
+
+/**
+ * Config-seeded starting profession (sibling of
+ * TASK-professions-service-routes). `discipline` is one of the
+ * CraftingDiscipline values (alchemy, smithing, enchanting, cooking,
+ * tailoring, woodworking, jewelry, engineering); validated at seed time.
+ */
+export interface ProfessionTemplate {
+  discipline: string;
+  /** Starting level (default 1; clamped 1..100 by the service). */
+  level?: number;
+  specializations?: ProfessionSpecializationTemplate[];
+}
+
+/** Specialization pre-unlocked with a seeded profession. */
+export interface ProfessionSpecializationTemplate {
+  name: string;
+  description?: string;
+  /** One of the ProfessionBonusType values (speed, quality, success, material_saving, experience_gain). */
+  bonusType: string;
+  bonusValue: number;
+  /** Minimum profession level required (must be ≤ the starting level). */
+  requirementLevel?: number;
 }
