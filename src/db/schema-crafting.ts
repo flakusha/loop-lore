@@ -185,7 +185,7 @@ export interface ProfessionSpecializations {
 export interface Professions {
   id: string;
   actor_id: string;
-  world_id: string;
+  world_id: string | null;
   discipline: CraftingDiscipline;
   level: Generated<number>;
   experience: Generated<number>;

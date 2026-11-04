@@ -110,8 +110,13 @@ function buildSchema(): Map<string, Record<string, ColumnDef>> {
 
   for (const [name, colSet,] of allDrops) {
     const table = allTables.get(name,);
-    if (table) {
-      for (const c of colSet) { delete table[c]; }
+    if (!table) { continue; }
+    for (const c of colSet) {
+      // A later alter may re-add a dropped column — drop + re-add is how a
+      // nullability/FK change is expressed for SQLite here (094). The re-add
+      // wins over the drop.
+      if (allAlters.get(name,)?.[c]) { continue; }
+      delete table[c];
     }
   }
 

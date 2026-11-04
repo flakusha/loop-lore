@@ -3180,18 +3180,16 @@ export async function insertProfessionSpecializations(
 export async function insertProfessions(
   db: Db,
   actor_id: string,
-  world_id: string,
   discipline: CraftingDiscipline,
   created_at: string,
   updated_at: string,
-  opts?: { id?: string; level?: number; experience?: number; title?: ProfessionTitle },
+  opts?: { id?: string; world_id?: string | null; level?: number; experience?: number; title?: ProfessionTitle },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("professions",).values({
     id,
     actor_id,
-    world_id,
     discipline,
     created_at,
     updated_at,

@@ -2330,10 +2330,10 @@ export const ProfessionSpecializationsSchema = t.Object({
 // ── professions ────────────────────────────────────────────
 export const ProfessionsSchema = t.Object({
   actor_id: t.String(),
-  world_id: t.String(),
   discipline: CraftingDisciplineSchema,
   created_at: t.String(),
   updated_at: t.String(),
+  world_id: t.Optional(t.String(),),
   level: t.Optional(t.Number(),),
   experience: t.Optional(t.Number(),),
   title: t.Optional(ProfessionTitleSchema,),
