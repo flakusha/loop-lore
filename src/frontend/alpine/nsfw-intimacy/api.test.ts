@@ -62,6 +62,13 @@ describeOrSkip("classifyApplyFailure", () => {
 
 describeOrSkip("applyIntimacyAction", () => {
   test("posts the full action payload with chatId to the action endpoint", async () => {
+    // Locale-catalog sentinel: actionName must be the localized label, not the id.
+    // Without a catalog t() falls back to the raw key, which is still a non-empty
+    // string distinct from the id — the second assertion keeps that mode honest.
+    (globalThis as unknown as { __localeStrings: unknown }).__localeStrings = {
+      nsfw: { intimacy: { action: { talk: "Talk it out", }, }, },
+    };
+
     handler = async () => Response.json({ newScore: 12, actualDelta: 2, applied: true, thresholdsReached: [], },);
     const result = await applyIntimacyAction(input(),);
     expect(calls[0]!.url,).toBe("/api/v1/nsfw/intimacy/action",);
@@ -70,6 +77,9 @@ describeOrSkip("applyIntimacyAction", () => {
     expect(body["actorId"],).toBe("actor-a",);
     expect(body["targetActorId"],).toBe("actor-b",);
     expect(body["actionId"],).toBe("talk",);
+    expect(body["actionName"],).toBe("Talk it out",);
+    expect(body["actionName"],).not.toBe(body["actionId"],);
+    expect(typeof body["actionName"],).toBe("string",);
     expect(body["actionType"],).toBe("verbal",);
     expect(body["delta"],).toBe(2,);
     expect(result.status,).toBe("ok",);
