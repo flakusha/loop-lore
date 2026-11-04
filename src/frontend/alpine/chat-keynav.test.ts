@@ -7,6 +7,12 @@
  * The consumers are driven through dispatchKeynavActionToHandlers — the entry
  * point the document keydown listener uses (shortcuts-listener.test.ts covers
  * the key → action mapping and the opt-in flag gate).
+ *
+ * Resource contract: fully in-memory and parallel-safe. Each test owns a
+ * private FakeList and FakeState; the shared `document.querySelector` is
+ * re-stubbed in `beforeEach` and restored (stub removed) in `afterEach`, and
+ * the global keynav handler registry is reset per test — no ports, no files,
+ * no ordering dependence.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { chatKeynav, } from "./chat-keynav";
