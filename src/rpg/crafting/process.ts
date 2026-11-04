@@ -12,6 +12,8 @@ import type { DB, } from "../../db/schema";
 import type { CraftingRecipeMaterials, } from "../../db/schema-crafting";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
 import { emitRecipeDiscovered, hasDiscovery, insertDiscovery, } from "./discovery";
+import { progressionBonuses, } from "./professions";
+import type { ProfessionBonuses, } from "./professions";
 import type {
   CraftAttempt,
   CraftAttemptOpts,
@@ -280,6 +282,18 @@ export class CraftingProcessService {
       };
     }
 
+    // Profession bonuses (TASK-professions-service-routes): the actor's
+    // profession level in the recipe's discipline modulates success, the
+    // quality ceiling and material saving, mirroring the station bonuses.
+    // No profession row → no bonus (the zero ladder is applied only when a
+    // row exists, so un-disciplined actors are untouched).
+    const profRow = await this.db.selectFrom("professions",).selectAll()
+      .where("actor_id", "=", opts.actorId,)
+      .where("discipline", "=", recipe.discipline,)
+      .executeTakeFirst();
+
+    const prof: ProfessionBonuses | null = profRow ? progressionBonuses(profRow.level,) : null;
+
     // Transactional (ambient-safe): reuses the caller's transaction when
     // this service is constructed on a trx (fulfillOrder) instead of
     // throwing on a nested .transaction().
@@ -287,7 +301,12 @@ export class CraftingProcessService {
       const consumed = await consumeRecipeMaterials(trx, opts.actorId, matRows, defMap,);
 
       // Roll success
-      const chance = Math.min(1, recipe.base_success_chance + (station?.successBonus ?? 0),);
+      const chance = Math.min(
+        1,
+        recipe.base_success_chance + (station?.successBonus ?? 0) +
+          (prof?.success ?? 0),
+      );
+
       const success = Math.random() < chance;
       let status: CraftingAttemptStatus = CraftingAttemptStatus.Failure;
       let quality = 0;
@@ -295,7 +314,7 @@ export class CraftingProcessService {
       let outputQuantity = 0;
       const saved: MaterialRecord[] = [];
       if (success) {
-        const maxQ = recipe.base_quality_max + (station?.qualityBonus ?? 0);
+        const maxQ = recipe.base_quality_max + (station?.qualityBonus ?? 0) + (prof?.quality ?? 0);
         quality = Math.floor(Math.random() * (maxQ - recipe.base_quality_min + 1),) +
           recipe.base_quality_min;
 
@@ -318,7 +337,7 @@ export class CraftingProcessService {
           }, outputQuantity,);
         }
       } else {
-        const saveChance = station?.materialSavingChance ?? 0;
+        const saveChance = Math.min(1, (station?.materialSavingChance ?? 0) + (prof?.materialSaving ?? 0),);
         for (const mat of matRows) {
           if (Math.random() >= saveChance) {
             continue;
@@ -346,7 +365,7 @@ export class CraftingProcessService {
         output_quantity: outputQuantity,
         experience_gained: 0,
         skill_increase: 0,
-        bonus_effects: "{}",
+        bonus_effects: jsonStringifyOr(prof ? { profession: prof, } : {},),
         duration_ms: 0,
         created_at: new Date().toISOString(),
       },).execute();
@@ -366,6 +385,7 @@ export class CraftingProcessService {
         materialsConsumed: consumed,
         materialsSaved: saved,
         recipeDiscovered: discovered !== null,
+        ...(prof ? { professionBonuses: prof, } : {}),
       };
 
       return { result, discoveredRecipe: discovered, };

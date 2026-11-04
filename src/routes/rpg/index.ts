@@ -12,6 +12,7 @@ import { craftingStationRoutes, } from "./crafting-stations";
 import { diceRoutes, } from "./dice";
 import { npcMemoryRoutes, } from "./npc-memory";
 import { npcNavigationRoutes, } from "./npc-navigation";
+import { professionsRoutes, } from "./professions";
 import { progressionRoutes, } from "./progression";
 import { questionsRoutes, } from "./questions";
 import { replayabilityRoutes, } from "./replayability";
@@ -55,6 +56,13 @@ import { xpLootTablesRoutes, } from "./xp-loot-tables";
  *     GET/POST /api/rpg/skills — list/create
  *     GET/PUT/DELETE /api/rpg/skills/:id — skill CRUD
  *     .../actors/:actorId/... — actor-scoped skills, XP, specialization
+ *
+ *   Professions:
+ *     POST /api/rpg/professions — assign a discipline
+ *     GET /api/rpg/professions/actors/:actorId?worldId= — actor professions
+ *     GET /api/rpg/professions/:id — profession + specializations
+ *     POST /api/rpg/professions/:id/xp — add XP (level-up + title)
+ *     POST /api/rpg/professions/:id/specialize — unlock a specialization
  *
  *   NPC Navigation:
  *     /api/rpg/npc-navigation/actors/:actorId/... — state, pattern, move
@@ -102,6 +110,7 @@ export function rpgRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(replayabilityRoutes(opts, prefix,),)
       .use(skillsRoutes(opts, prefix,),)
       .use(skillsProgressionRoutes(opts, prefix,),)
+      .use(professionsRoutes(opts, prefix,),)
       .use(npcNavigationRoutes(opts, prefix,),)
       .use(npcMemoryRoutes(opts, prefix,),)
       .use(bestiaryRoutes(opts, prefix,),)
