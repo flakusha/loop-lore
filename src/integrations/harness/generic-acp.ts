@@ -15,6 +15,7 @@
 import {
   type HarnessAcpAdapter,
   HarnessAcpError,
+  type HarnessAdapterCommandOptions,
   type HarnessTurnResult,
   type HarnessUsageReport,
   type PendingPermission,
@@ -25,20 +26,13 @@ import { JsonRpcProcess, JsonRpcRequestError, } from "./jsonrpc-process";
 /** ACP protocol version the adapter speaks. */
 const PROTOCOL_VERSION = 1;
 
-/** Options shared by every generic-ACP harness adapter. */
-export interface GenericAcpOptions {
+/**
+ * Options shared by every generic-ACP harness adapter: the spawn command
+ * plus the per-connection knobs declared on {@link HarnessAdapterCommandOptions}.
+ */
+export interface GenericAcpOptions extends HarnessAdapterCommandOptions {
   /** Spawn argv for the harness's ACP server. */
   command: string[];
-  /** Working directory for session/new. */
-  cwd?: string;
-  /** Per-request timeout in ms. */
-  requestTimeoutMs?: number;
-  /** Serves server-originated `fs/read_text_file` asks; without one they answer as unsupported. */
-  readTextFile?: (path: string,) => Promise<string>;
-  /** Called once per open permission request, so hosts can prompt a human. */
-  onPermissionRequest?: (pending: PendingPermission,) => void;
-  /** Called when the connection dies or closes with an ask still parked, so hosts drop the queue entry. */
-  onPermissionWithdrawn?: () => void;
 }
 
 /** Map a transport error to the adapter's typed error. */
@@ -255,6 +249,15 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   /** Terminate the underlying process. Idempotent. */
   close(): void {
     this.rpc?.close();
+    this.dropTransportState();
+  }
+
+  /**
+   * Forget the transport and memoized session, withdrawing any parked
+   * permission ask. Shared by close() and the child-exit path so a dying
+   * child and a deliberate close behave identically.
+   */
+  private dropTransportState(): void {
     this.rpc = null;
     this.session = null;
     const parked = this.permission !== null;
@@ -279,11 +282,7 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
         // memoized session bound to a dead transport — the next adapter call
         // respawns a fresh child and session instead of surfacing
         // "connection closed" forever.
-        this.rpc = null;
-        this.session = null;
-        const parked = this.permission !== null;
-        this.permission = null;
-        if (parked) { this.opts.onPermissionWithdrawn?.(); }
+        this.dropTransportState();
       },
       onRequest: (method, params,) => this.handleServerRequest(method, params,),
       onNotification: (method, params,) => {
