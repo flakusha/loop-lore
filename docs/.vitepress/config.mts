@@ -11,6 +11,19 @@ export default withMermaid(defineConfig({
   description: 'A lightweight RPG chat application reimagining SillyTavern',
   base: '/docs/',
 
+  // Heavy generated plan mirror (giwt plan sync-docs copies .plan/ 1:1).
+  // The tickets/epics/interconnect/feature-matrix trees plus the retired
+  // index artifacts dominate SSG time/memory — exclude them from the build.
+  // User-written pages are unaffected (light plan-gen pages still build).
+  srcExclude: [
+    'plan-gen/tickets/**',
+    'plan-gen/epics/**',
+    'plan-gen/interconnect/**',
+    'plan-gen/feature-matrix/**',
+    'plan-gen/epics-index.md',
+    'plan-gen/priority-matrix.md',
+  ],
+
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/docs/favicon.svg' }],
   ],
@@ -214,9 +227,6 @@ export default withMermaid(defineConfig({
           collapsed: false,
           items: [
             { text: 'Plan Index', link: '/plan-gen/' },
-            { text: 'Epics', link: '/plan-gen/epics/' },
-            { text: 'Tickets', link: '/plan-gen/tickets/' },
-            { text: 'Backlog', link: '/plan-gen/backlog/' },
           ],
         },
       ],
