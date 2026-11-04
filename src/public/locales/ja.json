@@ -1084,6 +1084,48 @@
       "arousalActive": "興奮",
       "arousalHigh": "高度に興奮",
       "arousalDesperate": "激しく欲している"
+    },
+    "intimacy": {
+      "title": "親密さ",
+      "open": "交流する",
+      "close": "閉じる",
+      "back": "戻る",
+      "retry": "再試行",
+      "continue": "続ける",
+      "partnerTitle": "パートナーを選択",
+      "partnerEmpty": "このチャットで利用できるパートナーがいません。",
+      "actionTitle": "アクションを選択",
+      "scoreLabel": "親密さ: {score}",
+      "lockedFmt": "親密さ {min} が必要",
+      "applying": "適用中…",
+      "consentTitle": "同意の確認",
+      "consentBody": "「{action}」の前に確認しますか？このアクションは相手の同意が必要です。",
+      "confirm": "確認",
+      "cancel": "キャンセル",
+      "effectsTitle": "結果",
+      "deltaFmt": "親密さの変化: {delta}（現在 {score}）",
+      "errorTitle": "問題が発生しました",
+      "errorConsent": "このアクションには同意が必要です。同意してから再試行してください。",
+      "errorTarget": "そのパートナーはこのチャットの親密な操作には利用できません。",
+      "errorValidation": "アクションが受け付けられませんでした — 修正して再試行してください。",
+      "errorAuth": "ログインして再試行してください。",
+      "errorNetwork": "サーバーに接続できません — 接続を確認して再試行してください。",
+      "action": {
+        "talk": "語らう",
+        "rest": "共に休む",
+        "gift": "贈り物",
+        "kiss": "キス",
+        "embrace": "抱きしめる",
+        "play": "親密な時間"
+      },
+      "actionDesc": {
+        "talk": "静かに会話を楽しむ。",
+        "rest": "一緒にくつろぐ。",
+        "gift": "小さな贈り物を渡す。",
+        "kiss": "優しいキス。",
+        "embrace": "身を寄せ合う。",
+        "play": "親密なひとときを共有する — 同意が必要。"
+      }
     }
   },
   "help": {

@@ -1625,6 +1625,48 @@
       "arousalActive": "Aroused",
       "arousalHigh": "Highly Aroused",
       "arousalDesperate": "Desperate"
+    },
+    "intimacy": {
+      "title": "Intimacy",
+      "open": "Interact",
+      "close": "Close",
+      "back": "Back",
+      "retry": "Retry",
+      "continue": "Continue",
+      "partnerTitle": "Choose a partner",
+      "partnerEmpty": "No partners available in this chat.",
+      "actionTitle": "Choose an action",
+      "scoreLabel": "Intimacy: {score}",
+      "lockedFmt": "Requires intimacy {min}",
+      "applying": "Applying…",
+      "consentTitle": "Confirm consent",
+      "consentBody": "Check in before “{action}”? This action depends on your partner's consent.",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "effectsTitle": "Result",
+      "deltaFmt": "Intimacy change: {delta} (now {score})",
+      "errorTitle": "Something went wrong",
+      "errorConsent": "Consent is required before this action. Grant consent and try again.",
+      "errorTarget": "That partner is not available for intimacy in this chat.",
+      "errorValidation": "The action was not accepted — adjust it and try again.",
+      "errorAuth": "Please log in and try again.",
+      "errorNetwork": "Could not reach the server — check your connection and retry.",
+      "action": {
+        "talk": "Talk",
+        "rest": "Rest together",
+        "gift": "Give a gift",
+        "kiss": "Kiss",
+        "embrace": "Embrace",
+        "play": "Intimate play"
+      },
+      "actionDesc": {
+        "talk": "Share a quiet conversation.",
+        "rest": "Relax together and unwind.",
+        "gift": "Offer a small gift.",
+        "kiss": "A gentle kiss.",
+        "embrace": "Hold each other close.",
+        "play": "Share an intimate moment — needs consent."
+      }
     }
   },
   "help": {

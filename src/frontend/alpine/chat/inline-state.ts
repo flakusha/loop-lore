@@ -15,6 +15,7 @@ import { t, } from "../i18n";
 import { memoryPanel, } from "../memory-panel";
 import { moodState, } from "../mood";
 import { bodyStateState, } from "../nsfw-body";
+import { intimacyState, } from "../nsfw-intimacy/state";
 import { nsfwPanelState, } from "../nsfw-panel";
 import { rpgQuestions, } from "../rpg-questions";
 import { rpgStats, } from "../rpg-stats";
@@ -238,4 +239,7 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
 
   // ── NSFW Body State (health / conditions / arousal) ──
   ...bodyStateState,
+
+  // ── NSFW Intimacy Interface (action selection / consent / effects) ──
+  ...intimacyState,
 };

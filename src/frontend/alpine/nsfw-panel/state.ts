@@ -15,11 +15,12 @@ const log = rootLog.child({ module: "nsfw-panel", },);
  * Resolve the chat character's actor id.
  *
  * Uses the same source as the RPG stats panel (`GET /api/v1/chats/:id` →
- * `character_id`): the chat's non-user participant.
+ * `character_id`): the chat's non-user participant. Exported for the
+ * intimacy flow mixin, which needs the same resolution before dispatch.
  * @param chatId - the active chat id
  * @returns {Promise<string | null>}
  */
-async function resolveCharacterId(chatId: string,): Promise<string | null> {
+export async function resolveCharacterId(chatId: string,): Promise<string | null> {
   try {
     const res = await apiFetch(`/api/v1/chats/${chatId}`,);
     if (!res.ok) { return null; }

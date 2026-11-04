@@ -1084,6 +1084,48 @@
       "arousalActive": "흥분",
       "arousalHigh": "매우 흥분",
       "arousalDesperate": "절실함"
+    },
+    "intimacy": {
+      "title": "친밀도",
+      "open": "교감하기",
+      "close": "닫기",
+      "back": "뒤로",
+      "retry": "재시도",
+      "continue": "계속",
+      "partnerTitle": "파트너 선택",
+      "partnerEmpty": "이 채팅에서 이용 가능한 파트너가 없습니다.",
+      "actionTitle": "행동 선택",
+      "scoreLabel": "친밀도: {score}",
+      "lockedFmt": "친밀도 {min} 필요",
+      "applying": "적용 중…",
+      "consentTitle": "동의 확인",
+      "consentBody": "'{action}' 전에 확인할까요? 이 행동은 상대의 동의가 필요합니다.",
+      "confirm": "확인",
+      "cancel": "취소",
+      "effectsTitle": "결과",
+      "deltaFmt": "친밀도 변화: {delta} (현재 {score})",
+      "errorTitle": "문제가 발생했습니다",
+      "errorConsent": "이 행동에는 동의가 필요합니다. 동의 후 다시 시도하세요.",
+      "errorTarget": "그 파트너는 이 채팅의 친밀한 상호작용에 사용할 수 없습니다.",
+      "errorValidation": "행동이 수락되지 않았습니다 — 수정 후 다시 시도하세요.",
+      "errorAuth": "로그인 후 다시 시도하세요.",
+      "errorNetwork": "서버에 연결할 수 없습니다 — 연결을 확인하고 다시 시도하세요.",
+      "action": {
+        "talk": "대화",
+        "rest": "함께 휴식",
+        "gift": "선물하기",
+        "kiss": "키스",
+        "embrace": "포옹",
+        "play": "친밀한 시간"
+      },
+      "actionDesc": {
+        "talk": "조용한 대화를 나눕니다.",
+        "rest": "함께 휴식을 취합니다.",
+        "gift": "작은 선물을 건넵니다.",
+        "kiss": "부드러운 키스.",
+        "embrace": "서로를 꼭 안습니다.",
+        "play": "친밀한 순간을 함께합니다 — 동의 필요."
+      }
     }
   },
   "help": {

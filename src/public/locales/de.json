@@ -1084,6 +1084,48 @@
       "arousalActive": "Erregt",
       "arousalHigh": "Stark erregt",
       "arousalDesperate": "Verzweifelt"
+    },
+    "intimacy": {
+      "title": "Intimität",
+      "open": "Interagieren",
+      "close": "Schließen",
+      "back": "Zurück",
+      "retry": "Erneut versuchen",
+      "continue": "Weiter",
+      "partnerTitle": "Partner wählen",
+      "partnerEmpty": "Keine Partner in diesem Chat verfügbar.",
+      "actionTitle": "Aktion wählen",
+      "scoreLabel": "Intimität: {score}",
+      "lockedFmt": "Erfordert Intimität {min}",
+      "applying": "Wird angewendet…",
+      "consentTitle": "Einwilligung bestätigen",
+      "consentBody": "Vor „{action}“ nachfragen? Diese Aktion hängt von der Einwilligung des Partners ab.",
+      "confirm": "Bestätigen",
+      "cancel": "Abbrechen",
+      "effectsTitle": "Ergebnis",
+      "deltaFmt": "Intimitätsänderung: {delta} (jetzt {score})",
+      "errorTitle": "Etwas ist schiefgelaufen",
+      "errorConsent": "Diese Aktion erfordert Einwilligung. Bitte erteile sie und versuche es erneut.",
+      "errorTarget": "Dieser Partner steht für Intimität in diesem Chat nicht zur Verfügung.",
+      "errorValidation": "Die Aktion wurde nicht akzeptiert — passe sie an und versuche es erneut.",
+      "errorAuth": "Bitte melde dich an und versuche es erneut.",
+      "errorNetwork": "Server nicht erreichbar — prüfe die Verbindung und versuche es erneut.",
+      "action": {
+        "talk": "Reden",
+        "rest": "Zusammen ausruhen",
+        "gift": "Ein Geschenk machen",
+        "kiss": "Küssen",
+        "embrace": "Umarmen",
+        "play": "Intimes Spiel"
+      },
+      "actionDesc": {
+        "talk": "Ein ruhiges Gespräch führen.",
+        "rest": "Gemeinsam entspannen.",
+        "gift": "Ein kleines Geschenk anbieten.",
+        "kiss": "Ein zarter Kuss.",
+        "embrace": "Sich nah halten.",
+        "play": "Einen intimen Moment teilen — braucht Einwilligung."
+      }
     }
   },
   "help": {

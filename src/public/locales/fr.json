@@ -1084,6 +1084,48 @@
       "arousalActive": "Excité",
       "arousalHigh": "Très excité",
       "arousalDesperate": "Désespéré"
+    },
+    "intimacy": {
+      "title": "Intimité",
+      "open": "Interagir",
+      "close": "Fermer",
+      "back": "Retour",
+      "retry": "Réessayer",
+      "continue": "Continuer",
+      "partnerTitle": "Choisir un partenaire",
+      "partnerEmpty": "Aucun partenaire disponible dans cette conversation.",
+      "actionTitle": "Choisir une action",
+      "scoreLabel": "Intimité : {score}",
+      "lockedFmt": "Nécessite une intimité de {min}",
+      "applying": "Application…",
+      "consentTitle": "Confirmer le consentement",
+      "consentBody": "Demander avant « {action} » ? Cette action dépend du consentement de votre partenaire.",
+      "confirm": "Confirmer",
+      "cancel": "Annuler",
+      "effectsTitle": "Résultat",
+      "deltaFmt": "Changement d'intimité : {delta} (maintenant {score})",
+      "errorTitle": "Une erreur est survenue",
+      "errorConsent": "Cette action requiert le consentement. Accordez-le puis réessayez.",
+      "errorTarget": "Ce partenaire n'est pas disponible pour l'intimité dans cette conversation.",
+      "errorValidation": "L'action n'a pas été acceptée — ajustez et réessayez.",
+      "errorAuth": "Connectez-vous puis réessayez.",
+      "errorNetwork": "Serveur injoignable — vérifiez votre connexion et réessayez.",
+      "action": {
+        "talk": "Parler",
+        "rest": "Se reposer ensemble",
+        "gift": "Offrir un cadeau",
+        "kiss": "Embrasser",
+        "embrace": "S'enlacer",
+        "play": "Jeu intime"
+      },
+      "actionDesc": {
+        "talk": "Partager une conversation calme.",
+        "rest": "Se détendre ensemble.",
+        "gift": "Offrir un petit cadeau.",
+        "kiss": "Un baiser doux.",
+        "embrace": "Se serrer l'un contre l'autre.",
+        "play": "Partager un moment intime — consentement requis."
+      }
     }
   },
   "help": {

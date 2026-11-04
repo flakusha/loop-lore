@@ -1084,6 +1084,48 @@
       "arousalActive": "兴奋",
       "arousalHigh": "高度兴奋",
       "arousalDesperate": "难以自持"
+    },
+    "intimacy": {
+      "title": "亲密",
+      "open": "互动",
+      "close": "关闭",
+      "back": "返回",
+      "retry": "重试",
+      "continue": "继续",
+      "partnerTitle": "选择伴侣",
+      "partnerEmpty": "此聊天中没有可用的伴侣。",
+      "actionTitle": "选择行动",
+      "scoreLabel": "亲密: {score}",
+      "lockedFmt": "需要亲密 {min}",
+      "applying": "应用中…",
+      "consentTitle": "确认同意",
+      "consentBody": "在“{action}”之前先询问？此行动需要对方的同意。",
+      "confirm": "确认",
+      "cancel": "取消",
+      "effectsTitle": "结果",
+      "deltaFmt": "亲密变化: {delta}（当前 {score}）",
+      "errorTitle": "出现问题",
+      "errorConsent": "此行动需要同意。请先授予同意再重试。",
+      "errorTarget": "该伴侣在此聊天中不可进行亲密互动。",
+      "errorValidation": "行动未被接受——请调整后重试。",
+      "errorAuth": "请登录后重试。",
+      "errorNetwork": "无法连接服务器——请检查网络后重试。",
+      "action": {
+        "talk": "交谈",
+        "rest": "共同休息",
+        "gift": "赠送礼物",
+        "kiss": "亲吻",
+        "embrace": "拥抱",
+        "play": "亲密玩耍"
+      },
+      "actionDesc": {
+        "talk": "进行安静的交谈。",
+        "rest": "一起放松。",
+        "gift": "送上一份小礼物。",
+        "kiss": "温柔的亲吻。",
+        "embrace": "紧紧相拥。",
+        "play": "共享亲密时光——需要同意。"
+      }
     }
   },
   "help": {
