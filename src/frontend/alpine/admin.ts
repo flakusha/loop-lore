@@ -11,6 +11,7 @@ import { adminClassifierVocab, } from "./admin-classifier-vocab";
 import { adminFederation, } from "./admin-federation";
 import { adminHarness, } from "./admin-harness";
 import { adminModels, } from "./admin-models";
+import { createProviderWizard, } from "./admin-provider-wizard";
 import { adminReview, } from "./admin-review";
 import { adminSystem, } from "./admin-system";
 import { adminTemplates, } from "./admin-templates";
@@ -78,6 +79,7 @@ adminGlobals.adminPage = function() {
     ...adminWorkflows,
     ...adminAnalytics,
     ...adminFederation,
+    ...createProviderWizard(),
 
     // ── Lifecycle ───────────────────────────────────────
     /**

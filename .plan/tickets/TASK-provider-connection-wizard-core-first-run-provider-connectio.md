@@ -3,7 +3,7 @@
 
 # TASK: provider-connection-wizard core: first-run provider connection flow
 
-**Status:** In Progress
+**Status:** in_progress
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-provider-connection-wizard

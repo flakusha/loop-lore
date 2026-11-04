@@ -565,6 +565,23 @@
       "errorTooLong": "탭은 최대 64자여야 합니다.",
       "errorDuplicate": "중복된 탭: {tag}",
       "errorTooMany": "최대 200개의 탭만 허용됩니다."
+    },
+    "providerWizard": {
+      "title": "제공자 연결",
+      "preset": "제공자 프리셋",
+      "custom": "사용자 지정",
+      "baseUrl": "기본 URL",
+      "label": "레이블",
+      "apiKey": "API 키",
+      "apiKeyStored": "키가 이미 저장되어 있습니다. 비워 두면 저장된 키가 유지됩니다.",
+      "setDefault": "기본 제공자로 설정",
+      "testTitle": "연결 및 역할 테스트",
+      "test": "연결 테스트",
+      "unreachable": "연결 불가",
+      "missing": "누락된 항목",
+      "missingFields": "필수 항목이 비어 있습니다",
+      "configured": "설정된 제공자",
+      "importInstead": "대신 설정 파일 가져오기"
     }
   },
   "errors": {
@@ -1780,7 +1797,8 @@
     "classifierTagsSaved": "분류 태그가 저장되었습니다",
     "classifierTagsSaveFailed": "분류 태그 저장 실패",
     "characterUpdated": "캐릭터 {name}이(가) 업데이트되었습니다",
-    "failedUpdateCharacter": "캐릭터 업데이트 실패"
+    "failedUpdateCharacter": "캐릭터 업데이트 실패",
+    "providerSaved": "제공자를 저장했습니다"
   },
   "status": {
     "characterResponding": "캐릭터가 응답 중...",
