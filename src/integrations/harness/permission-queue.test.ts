@@ -12,9 +12,15 @@
  */
 import { afterEach, describe, expect, it, } from "bun:test";
 import { mkdtempSync, rmSync, } from "node:fs";
+import { createLogger, setGlobalLogger, } from "../../logger";
 import type { PermissionOutcome, } from "./adapter-types";
 import type { PermissionRespondable, } from "./permission-queue";
 import { PermissionQueue, } from "./permission-queue";
+
+// The queue logs every auto-allow, park, and decision through the module
+// child logger; a silent global logger exercises those real call sites
+// (line coverage) without console noise or IO.
+setGlobalLogger(createLogger({ console: false, dbEnabled: false, level: "error", },),);
 
 /** Shared parent for per-test sandboxes (the repo's .tmp scratchpad). */
 const TMP_ROOT = ".tmp/harness-permission-queue";
