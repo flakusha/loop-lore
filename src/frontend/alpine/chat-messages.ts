@@ -35,6 +35,8 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
    * @returns {Promise<void>}
    */
   async loadMessages() {
+    // A reloaded list is a fresh surface: drop the zoom the user applied.
+    (this as { resetChatZoom?: () => void }).resetChatZoom?.();
     // Capture the target chat up front so a rapid selectChat A→B cannot let a
     // slow A response overwrite B's state (out-of-order fetch race).
     const chatId = this.activeChat;

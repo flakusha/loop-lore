@@ -10,17 +10,29 @@
  * `keynav` localStorage flag).
  */
 
+import { focusMainContent, } from "./focus";
 import { t, } from "./i18n";
 import { getKeymap, isKeyboardNavEnabled, type ShortcutEntry, } from "./shortcuts";
 
 /** Selector for the overlay element rendered in layout.html. */
 const OVERLAY_SELECTOR = '[data-testid="keynav-help-overlay"]';
 
+/** Selector for the button that opens the overlay (focus fallback). */
+const TRIGGER_SELECTOR = '[data-testid="keynav-help-button"]';
+
 /** Selector for the elements that can hold keyboard focus. */
 const FOCUSABLE_SELECTOR = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 /** Releases the focus trap of the open overlay (null while the overlay is closed). */
 let releaseFocusTrap: (() => void) | null = null;
+
+/** Options for the overlay focus trap. */
+interface OverlayTrapOptions {
+  /** The overlay element that holds the dialog. */
+  overlay: HTMLElement;
+  /** Called when Escape is pressed while the overlay is open. */
+  onEscape: () => void;
+}
 
 /**
  * Trap keyboard focus inside the help overlay.
@@ -30,19 +42,39 @@ let releaseFocusTrap: (() => void) | null = null;
  * on the following frames. Tab and Shift+Tab only ever reach the overlay's
  * focusable elements.
  *
- * @param overlay - The overlay element
+ * @param options - The overlay to trap focus in and the Escape handler
  * @returns A release function that removes the trap and restores the focus
  */
-function trapOverlayFocus(overlay: HTMLElement,): () => void {
+function trapOverlayFocus(options: OverlayTrapOptions,): () => void {
+  const { overlay, onEscape, } = options;
   const previous = document.activeElement as HTMLElement | null;
 
   const focusables = (): HTMLElement[] => Array.from(overlay.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR,),);
 
+  /**
+   * The element that holds the focus inside the overlay: the first focusable
+   * control, or the overlay itself (made focusable) when it has none.
+   * @returns {HTMLElement}
+   */
+  const focusTarget = (): HTMLElement => {
+    const [first,] = focusables();
+    if (first) { return first; }
+    overlay.setAttribute("tabindex", "-1",);
+    return overlay;
+  };
+
   const onKeyDown = (event: KeyboardEvent,): void => {
+    if (event.key === "Escape") {
+      onEscape();
+      return;
+    }
+
     if (event.key !== "Tab") { return; }
     const items = focusables();
     if (items.length === 0) {
+      // Nothing to cycle — keep the focus on the overlay container.
       event.preventDefault();
+      focusTarget().focus();
       return;
     }
 
@@ -60,8 +92,7 @@ function trapOverlayFocus(overlay: HTMLElement,): () => void {
   // Move focus into the overlay once it is visible (x-show reveals it a frame later).
   let attempts = 10;
   const pullFocusIn = (): void => {
-    const [first,] = focusables();
-    first?.focus();
+    focusTarget().focus();
     if (overlay.contains(document.activeElement,) || attempts-- <= 0) { return; }
     globalThis.requestAnimationFrame(pullFocusIn,);
   };
@@ -70,8 +101,33 @@ function trapOverlayFocus(overlay: HTMLElement,): () => void {
 
   return () => {
     document.removeEventListener("keydown", onKeyDown as EventListener, true,);
-    previous?.focus();
+    restoreFocus(previous,);
   };
+}
+
+/**
+ * Restore the focus after the overlay closed.
+ *
+ * The element focused before the overlay opened gets the focus back. When it
+ * is gone (an htmx swap removed it) or was the document body, the focus
+ * falls back to the help trigger and finally to the app root.
+ *
+ * @param previous - The element focused before the overlay opened
+ * @returns {void}
+ */
+function restoreFocus(previous: HTMLElement | null,): void {
+  if (previous && previous !== document.body && previous.isConnected) {
+    previous.focus();
+    return;
+  }
+
+  const trigger = document.querySelector<HTMLElement>(TRIGGER_SELECTOR,);
+  if (trigger) {
+    trigger.focus();
+    return;
+  }
+
+  focusMainContent();
 }
 
 /** State exposed to the Alpine template in layout.html. */
@@ -120,7 +176,9 @@ export function keynavHelp(): KeynavHelpState {
       this.shortcuts = getKeymap();
       document.body.style.overflow = "hidden";
       const overlay = document.querySelector<HTMLElement>(OVERLAY_SELECTOR,);
-      if (overlay) { releaseFocusTrap = trapOverlayFocus(overlay,); }
+      if (overlay) {
+        releaseFocusTrap = trapOverlayFocus({ overlay, onEscape: () => this.close(), },);
+      }
     },
 
     /**

@@ -122,15 +122,22 @@ describe("keynavHelp", () => {
 
 // ── Focus trap ──────────────────────────────────────────────────────────
 
-const docListeners = new Map<string, (event: KeyboardEvent,) => void>();
 const rafQueue: Array<() => void> = [];
+
+/** Selectors the overlay component uses to find its parts. */
+const OVERLAY_SELECTOR = '[data-testid="keynav-help-overlay"]';
+const TRIGGER_SELECTOR = '[data-testid="keynav-help-button"]';
+const MAIN_SELECTOR = '[role="main"], #app-root';
 
 /** Element stand-in: focus() only lands while the fake document is visible. */
 class FakeElement {
   focused = false;
+  /** Mirrors HTMLElement.isConnected — false once the element was swapped out. */
+  isConnected = true;
+  readonly attributes = new Map<string, string>();
 
   constructor(
-    private readonly doc: { activeElement: unknown; visible: boolean },
+    private readonly doc: FakeDocument,
     readonly children: FakeElement[] = [],
   ) {}
 
@@ -147,51 +154,81 @@ class FakeElement {
   querySelectorAll(): FakeElement[] {
     return this.children;
   }
+
+  setAttribute(name: string, value: string,): void {
+    this.attributes.set(name, value,);
+  }
+
+  getAttribute(name: string,): string | null {
+    return this.attributes.get(name,) ?? null;
+  }
+}
+
+/** Fake document with selector routing and one listener list per event type. */
+class FakeDocument {
+  activeElement: unknown = null;
+  visible = true;
+  readonly body = { style: { overflow: "", }, };
+  readonly elements = new Map<string, FakeElement>();
+  readonly listeners = new Map<string, Array<(event: KeyboardEvent,) => void>>();
+
+  addEventListener(type: string, fn: (event: KeyboardEvent,) => void,): void {
+    const handlers = this.listeners.get(type,) ?? [];
+    handlers.push(fn,);
+    this.listeners.set(type, handlers,);
+  }
+
+  removeEventListener(type: string, fn: (event: KeyboardEvent,) => void,): void {
+    const handlers = this.listeners.get(type,) ?? [];
+    const index = handlers.indexOf(fn,);
+    if (index >= 0) { handlers.splice(index, 1,); }
+  }
+
+  querySelector(selector: string,): FakeElement | null {
+    return this.elements.get(selector,) ?? null;
+  }
 }
 
 interface FocusDom {
-  doc: { activeElement: unknown; visible: boolean };
+  doc: FakeDocument;
   trigger: FakeElement;
+  overlay: FakeElement;
   focusables: FakeElement[];
+  main: FakeElement;
 }
 
+/** The document installed by the last installFocusDom() call. */
+let currentDoc: FakeDocument | null = null;
+
 /** Install a fake document whose overlay can take focus. */
-function installFocusDom(): FocusDom {
+function installFocusDom(options?: { empty?: boolean },): FocusDom {
   installWindow("1",);
-  docListeners.clear();
   rafQueue.length = 0;
-  const doc = { activeElement: null as unknown, visible: true, };
+  const doc = new FakeDocument();
   const trigger = new FakeElement(doc,);
   const closeButton = new FakeElement(doc,);
   const panel = new FakeElement(doc,);
-  const overlay = new FakeElement(doc, [closeButton, panel,],);
+  const overlay = new FakeElement(doc, options?.empty ? [] : [closeButton, panel,],);
+  const main = new FakeElement(doc,);
   doc.activeElement = trigger;
-  (globalThis as { document?: unknown }).document = {
-    get activeElement() {
-      return doc.activeElement;
-    },
-    body: { style: { overflow: "", }, },
-    addEventListener: (type: string, fn: (event: KeyboardEvent,) => void,) => {
-      docListeners.set(type, fn,);
-    },
-    removeEventListener: (type: string,) => {
-      docListeners.delete(type,);
-    },
-    querySelector: () => overlay,
-  };
+  doc.elements.set(OVERLAY_SELECTOR, overlay,);
+  doc.elements.set(TRIGGER_SELECTOR, trigger,);
+  doc.elements.set(MAIN_SELECTOR, main,);
+  currentDoc = doc;
+  (globalThis as { document?: unknown }).document = doc;
 
   (globalThis as { requestAnimationFrame?: unknown }).requestAnimationFrame = (fn: () => void,) => {
     rafQueue.push(fn,);
     return rafQueue.length;
   };
 
-  return { doc, trigger, focusables: [closeButton, panel,], };
+  return { doc, trigger, overlay, focusables: [closeButton, panel,], main, };
 }
 
-/** Fire a Tab keydown at the document-level focus trap. */
-function pressTab(shiftKey = false,): { prevented: boolean } {
+/** Fire a keydown at the document-level listeners. */
+function pressKey(key: string, shiftKey = false,): { prevented: boolean } {
   const event = {
-    key: "Tab",
+    key,
     shiftKey,
     prevented: false,
     preventDefault(): void {
@@ -199,8 +236,16 @@ function pressTab(shiftKey = false,): { prevented: boolean } {
     },
   };
 
-  docListeners.get("keydown",)?.(event as unknown as KeyboardEvent,);
+  for (const handler of [...(currentDoc?.listeners.get("keydown",) ?? []),]) {
+    handler(event as unknown as KeyboardEvent,);
+  }
+
   return event;
+}
+
+/** Fire a Tab keydown at the document-level focus trap. */
+function pressTab(shiftKey = false,): { prevented: boolean } {
+  return pressKey("Tab", shiftKey,);
 }
 
 describe("keynavHelp focus trap", () => {
@@ -259,13 +304,74 @@ describe("keynavHelp focus trap", () => {
     help.close();
   });
 
-  it("releases the trap on close", async () => {
-    installFocusDom();
+  it("does not trap focus while the overlay is closed", async () => {
+    const { doc, focusables, } = installFocusDom();
+    const { keynavHelp, } = await freshHelp();
+    const help = keynavHelp();
+    const outside = new FakeElement(doc,);
+    doc.activeElement = outside;
+
+    const before = pressTab();
+    expect(before.prevented,).toBe(false,);
+    expect(doc.activeElement,).toBe(outside,);
+
+    help.toggle();
+    expect(doc.activeElement,).toBe(focusables[0],);
+    help.close();
+
+    doc.activeElement = outside;
+    pressTab();
+    expect(doc.activeElement,).toBe(outside,);
+  });
+
+  it("closes the overlay on Escape and restores the focus", async () => {
+    const { doc, trigger, focusables, } = installFocusDom();
     const { keynavHelp, } = await freshHelp();
     const help = keynavHelp();
     help.toggle();
-    expect(docListeners.has("keydown",),).toBe(true,);
+    expect(doc.activeElement,).toBe(focusables[0],);
+
+    pressKey("Escape",);
+    expect(help.open,).toBe(false,);
+    expect(doc.activeElement,).toBe(trigger,);
+  });
+
+  it("keeps the focus on the overlay container when it has no focusable control", async () => {
+    const { doc, overlay, } = installFocusDom({ empty: true, },);
+    const { keynavHelp, } = await freshHelp();
+    const help = keynavHelp();
+    help.toggle();
+    expect(doc.activeElement,).toBe(overlay,);
+    expect(overlay.getAttribute("tabindex",),).toBe("-1",);
+
+    const tab = pressTab();
+    expect(tab.prevented,).toBe(true,);
+    expect(doc.activeElement,).toBe(overlay,);
     help.close();
-    expect(docListeners.has("keydown",),).toBe(false,);
+  });
+
+  it("restores the focus to the help trigger when the overlay was opened from the body", async () => {
+    const { doc, trigger, focusables, } = installFocusDom();
+    doc.activeElement = doc.body;
+    const { keynavHelp, } = await freshHelp();
+    const help = keynavHelp();
+    help.toggle();
+    expect(doc.activeElement,).toBe(focusables[0],);
+    help.close();
+    expect(doc.activeElement,).toBe(trigger,);
+  });
+
+  it("falls back to the app root when the trigger was removed", async () => {
+    const { doc, trigger, main, focusables, } = installFocusDom();
+    const { keynavHelp, } = await freshHelp();
+    const help = keynavHelp();
+    help.toggle();
+    expect(doc.activeElement,).toBe(focusables[0],);
+
+    // An htmx swap removed the trigger while the overlay was open.
+    trigger.isConnected = false;
+    doc.elements.delete(TRIGGER_SELECTOR,);
+    help.close();
+    expect(doc.activeElement,).toBe(main,);
   });
 });
