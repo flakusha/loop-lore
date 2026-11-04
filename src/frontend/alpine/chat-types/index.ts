@@ -66,11 +66,18 @@ export type { ChatCoreQuickRepliesState, } from "./quick-replies-state";
 export type { EquipmentSlot, RpgStatBlock, RpgStats, StatusEffect, } from "./rpg";
 export type { ChatRpgState, } from "./rpg-state";
 export type {
+  ChatProfessionsState,
   ChatRpgQuestionsState,
+  ChatSkillsState,
+  ProfessionFeedback,
+  ProfessionSpecDraft,
+  ProfessionView,
   RpgQuestionInputKind,
   RpgQuestionOptionView,
   RpgQuestionPendingAnswer,
   RpgQuestionView,
+  SkillFeedback,
+  SkillView,
 } from "./rpg-state";
 export type { ChatSideChannelsState, SideChannel, } from "./side-channels-state";
 export type { ChatTouchGestureState, } from "./touch-gesture-state";

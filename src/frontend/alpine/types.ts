@@ -24,11 +24,14 @@ export type {
   EquipmentSlot,
   MemoryEntry,
   MemoryPanelState,
+  ProfessionView,
   RpgQuestionInputKind,
   RpgQuestionOptionView,
   RpgQuestionPendingAnswer,
   RpgQuestionView,
   RpgStats,
+  SkillFeedback,
+  SkillView,
   StatusEffect,
 } from "./chat-types";
 export type { WorldEditState, } from "./world-types";

@@ -60,6 +60,37 @@ export async function readAsiError(res: Response, fallback: string,): Promise<st
 }
 
 /**
+ * Generic variant of {@link readAsiError} for the skills/professions panels:
+ * read the server error message from a non-ok response, falling back when the
+ * body is empty or unparseable.
+ * @param res
+ * @param fallback
+ */
+export async function readServerError(res: Response, fallback: string,): Promise<string> {
+  const text = await res.text().catch(() => "");
+  const body = jsonParseOr(text, null,) as { error?: unknown } | null;
+  return typeof body?.error === "string" && body.error ? body.error : fallback;
+}
+
+/**
+ * Resolve the active chat's character actor id (mirrors the lookup in
+ * `rpgStats.loadRpgStats`): chat id → GET /api/v1/chats/:id → character_id.
+ * Transport failures resolve to null so callers render their empty state.
+ * @param activeChat
+ */
+export async function resolveChatActorId(activeChat: string | null,): Promise<string | null> {
+  if (!activeChat) { return null; }
+  try {
+    const res = await apiFetch(`/api/v1/chats/${encodeURIComponent(activeChat,)}`,);
+    if (!res.ok) { return null; }
+    const chat = await res.json() as { character_id?: string | null };
+    return chat.character_id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Parse conditions + buff/debuff active effects into StatusEffect badges.
  * Active-effect stat_modifier entries attach so effectiveStat() picks them up.
  * @param conditionsRaw

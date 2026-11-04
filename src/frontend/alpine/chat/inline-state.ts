@@ -22,6 +22,14 @@ import { rpgStats, } from "../rpg-stats";
 import type { AlpineMagicThis, ChatState, WorldChannelChat, } from "../types";
 import { chatSearch, } from "./search";
 
+import { professions, } from "../professions";
+import { skillTree, } from "../skill-tree";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// Chat inline state: core fields, getters, and panel mixins (incl. RPG
+// questions) spread into chatState(). Extracted from bootstrap.ts.
+
 /** RPG questions mixin, co-located with the other chat/* mixins. */
 export const chatRpgQuestions: Partial<ChatState> & ThisType<ChatState> = {
   ...rpgQuestions,
@@ -224,6 +232,12 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
   // ── RPG Stats State ──
   ...rpgStats,
   showRpgPanel: false as boolean,
+
+  // ── Skills Tree / Professions State (TASK-skills-frontend, TASK-professions-frontend) ──
+  ...skillTree,
+  ...professions,
+  showSkillsPanel: false as boolean,
+  showProfessionsPanel: false as boolean,
 
   // ── RPG Questions State (TASK-029) ──
   ...chatRpgQuestions,

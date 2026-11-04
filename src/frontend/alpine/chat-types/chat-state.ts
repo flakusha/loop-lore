@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 import type { ChatArchiveState, } from "./archive-state";
 import type { ChatBattleState, } from "./battle-state";
 import type { ChatBodyStateState, } from "./body-state";
@@ -8,30 +7,30 @@ import type { ChatBranchesState, } from "./branches-state";
 import type { ChatComposerPreSendState, } from "./composer-pre-send-state";
 import type { ChatCoreState, } from "./core";
 import type { ChatGalleryBatchState, } from "./gallery-batch-state";
-import type { GifPickerState, } from "./gif-picker-state";
 import type { ChatKeynavState, } from "./keynav-state";
 import type { ChatLocationState, } from "./location-state";
 import type { ChatMemoryState, } from "./memory-state";
 import type { ChatMergeState, } from "./merge-state";
-import type { MessageActionsState, } from "./message-actions-state";
 import type { ChatMessageSearchState, } from "./message-search-state";
-import type { LinkPreviewState, } from "./messages";
 import type { ChatMoodState, } from "./mood-state";
 import type { ChatMovementState, } from "./movement-state";
 import type { ChatMusicLinksState, } from "./music-links-state";
 import type { ChatNpcState, } from "./npc-state";
-import type { ChatNsfwIntimacyState, } from "./nsfw-intimacy-state";
 import type { ChatNsfwBlurState, ChatNsfwState, } from "./nsfw-state";
+import type { ChatNsfwIntimacyState, } from "./nsfw-intimacy-state";
 import type { ChatParticipantsState, } from "./participants-state";
 import type { ChatPinsState, } from "./pins-state";
+import type { ChatProfessionsState, ChatRpgQuestionsState, ChatRpgState, ChatSkillsState, } from "./rpg-state";
 import type { ChatPromptAnalyzeState, } from "./prompt-analyze-state";
 import type { ChatPromptImproveState, } from "./prompt-improve-state";
 import type { ChatPromptTemplateState, } from "./prompt-template-state";
-import type { ChatRpgQuestionsState, ChatRpgState, } from "./rpg-state";
 import type { ChatSideChannelsState, } from "./side-channels-state";
 import type { ChatTouchGestureState, } from "./touch-gesture-state";
-import type { TurnSkipState, } from "./turn-skip-state";
 import type { ChatWizardState, } from "./wizard-state";
+import type { GifPickerState, } from "./gif-picker-state";
+import type { LinkPreviewState, } from "./messages";
+import type { MessageActionsState, } from "./message-actions-state";
+import type { TurnSkipState, } from "./turn-skip-state";
 
 /** Aggregate ChatState: composed from domain slices. */
 export interface ChatState
@@ -60,6 +59,8 @@ export interface ChatState
     ChatNsfwBlurState,
     ChatWizardState,
     ChatRpgQuestionsState,
+    ChatSkillsState,
+    ChatProfessionsState,
     ChatPromptImproveState,
     ChatPromptAnalyzeState,
     ChatPromptTemplateState,
