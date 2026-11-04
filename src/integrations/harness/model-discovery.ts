@@ -195,12 +195,22 @@ export function staticHarnessModels(options: {
  * @returns one entry set per configured profile, in preference order.
  */
 export async function discoverHarnessModels(options: DiscoverHarnessModelsOptions,): Promise<ProfileModels[]> {
-  const results: ProfileModels[] = [];
-  for (const profile of options.runtime.acp.profiles) {
-    results.push(await discoverProfileModels({ runtime: options.runtime, db: options.db, profile, },),);
-  }
+  // Concurrent: each profile asks its OWN connection (separate process) and
+  // its enrichment reads are independent; allSettled keeps preference order
+  // and never lets one profile's harness failure sink the others. A
+  // rejection here can only be a programming error (harness and enrichment
+  // failures are caught inside discoverProfileModels) — surface it loudly.
+  const settled = await Promise.allSettled(
+    options.runtime.acp.profiles.map((profile,) =>
+      discoverProfileModels({ runtime: options.runtime, db: options.db, profile, },)
+    ),
+  );
 
-  return results;
+  return settled.map((outcome,) => {
+    if (outcome.status === "fulfilled") { return outcome.value; }
+
+    throw outcome.reason;
+  },);
 }
 
 /**
@@ -225,12 +235,22 @@ async function discoverProfileModels(options: {
     entries = await listedOrStaticEntries({ adapter, profile: cfg, harness, },);
   }
 
-  const enrichments = new Map<string, HarnessModelCapabilities | null>();
-  for (const entry of entries) {
-    if (!enrichments.has(entry.model,)) {
-      enrichments.set(entry.model, await enrichModel({ db: options.db, model: entry.model, harness, },),);
-    }
-  }
+  // Enrichment reads are independent I/O (capability-table lookups) — run
+  // them concurrently over the distinct ids, then map results back by id.
+  // enrichModel is total (it catches its own lookup failures), so every
+  // outcome arrives fulfilled; a rejected outcome degrades to null like a
+  // lookup miss instead of sinking the profile.
+  const distinct = [...new Set(entries.map((entry,) => entry.model),),];
+  const settled = await Promise.allSettled(
+    distinct.map((model,) => enrichModel({ db: options.db, model, harness, },)),
+  );
+
+  const enrichments = new Map<string, HarnessModelCapabilities | null>(
+    distinct.map((model, index,) => {
+      const outcome = settled[index];
+      return [model, outcome?.status === "fulfilled" ? outcome.value : null,];
+    },),
+  );
 
   return {
     profile: cfg.name,
