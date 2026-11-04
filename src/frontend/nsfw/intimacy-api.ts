@@ -14,7 +14,7 @@
 import { apiFetch, } from "../alpine/htmx";
 import { jsonBody, } from "../alpine/json";
 import { toResult, } from "../alpine/nsfw-panel/api";
-import type { IntimacyActionView, IntimacyApplyOutcome, IntimacyError, } from "./intimacy-types";
+import { actionLabel, type IntimacyActionView, type IntimacyApplyOutcome, type IntimacyError, } from "./intimacy-types";
 
 /** Stable prefix the NSFW gate writes before the failure reason (shared.ts:173). */
 const DENIED_PREFIX = "NSFW access denied: ";
@@ -87,7 +87,7 @@ export async function applyIntimacyAction(input: ApplyIntimacyInput,): Promise<A
         targetActorId: input.targetActorId,
         worldId: input.worldId ?? null,
         actionId: input.action.id,
-        actionName: input.action.id,
+        actionName: actionLabel(input.action,),
         actionType: input.action.type,
         delta: input.action.delta,
         minIntimacy: input.action.minIntimacy,
