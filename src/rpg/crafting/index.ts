@@ -14,9 +14,23 @@ export {
   insertDiscovery,
 } from "./discovery";
 export { CraftingProcessService, } from "./process";
+export {
+  getProgression,
+  ProfessionsService,
+  progressionBonuses,
+  titleForLevel,
+} from "./professions";
+export type {
+  AddSpecializationInput,
+  CreateProfessionInput,
+  Profession,
+  ProfessionBonuses,
+  ProfessionProgression,
+  ProfessionSpecialization,
+  ProfessionXpResult,
+} from "./professions";
 export { RecipesService, } from "./recipes";
 export { StationsService, } from "./stations";
 // TODO: Add these as they are implemented:
-// export { ProfessionsService, } from "./professions";
 // export { QualityService, } from "./quality";
 // export { GatheringService, } from "./gathering";
