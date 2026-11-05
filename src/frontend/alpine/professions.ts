@@ -19,19 +19,12 @@ import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
+import { nextTitleAt, professionBonuses, xpProgress, } from "./professions-progression";
 import { readServerError, resolveChatActorId, } from "./rpg-stats-helpers";
 import type { ChatState, ProfessionView, } from "./types";
 
 const log = rootLog.child({ module: "professions", },);
 
-/**
- * Progression constants mirrored from the server source of truth
- * (`src/rpg/crafting/professions/progression.ts` — LEVEL_XP, MAX_LEVEL,
- * TITLE_BANDS, progressionBonuses). Kept in sync by the pinning tests in
- * `professions.test.ts`.
- */
-const LEVEL_XP = 100;
-const MAX_LEVEL = 100;
 /** XP granted per "Add XP" click (GM/testing affordance, per the ticket). */
 const PROFESSION_XP_STEP = 50;
 
@@ -46,15 +39,6 @@ export const PROFESSION_DISCIPLINES = [
   "jewelry",
   "engineering",
 ] as const;
-
-/** Title for a level (1-25 apprentice, 26-50 journeyman, 51-75 expert, 76-99 master, 100 grandmaster). */
-function titleForLevel(level: number,): string {
-  if (level >= 100) { return "grandmaster"; }
-  if (level >= 76) { return "master"; }
-  if (level >= 51) { return "expert"; }
-  if (level >= 26) { return "journeyman"; }
-  return "apprentice";
-}
 
 export const professions: Partial<ChatState> & ThisType<ChatState> = {
   professions: [] as ProfessionView[],
@@ -276,38 +260,16 @@ export const professions: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Level bonuses (fractions 0..1) — client mirror of the server ladder
-   * (`progressionBonuses`): Journeyman +5% success, Expert +10% quality,
-   * Master +15% speed, Grandmaster +20% all four.
+   * Level bonuses (fractions 0..1) — server ladder via the progression
+   * mirror (`./professions-progression`).
    */
-  professionBonuses(level: number,) {
-    const title = titleForLevel(level,);
-    const zero = { success: 0, quality: 0, speed: 0, materialSaving: 0, };
-    switch (title) {
-      case "journeyman":
-        return { ...zero, success: 0.05, };
-      case "expert":
-        return { ...zero, quality: 0.10, };
-      case "master":
-        return { ...zero, speed: 0.15, };
-      case "grandmaster":
-        return { success: 0.20, quality: 0.20, speed: 0.20, materialSaving: 0.20, };
-      default:
-        return zero;
-    }
-  },
+  professionBonuses,
 
   /** Level where the next title band starts, or null at the cap. */
-  nextTitleAt(level: number,) {
-    if (level >= MAX_LEVEL) { return null; }
-    return Math.min(MAX_LEVEL, (Math.floor((level - 1) / 25,) + 1) * 25 + 1,);
-  },
+  nextTitleAt,
 
   /** Progress through the current level (0..1); 1 at the cap. */
-  xpProgress(profession: Pick<ProfessionView, "level" | "experience">,) {
-    if (profession.level >= MAX_LEVEL) { return 1; }
-    return Math.min(1, Math.max(0, (profession.experience % LEVEL_XP) / LEVEL_XP,),);
-  },
+  xpProgress,
 };
 
 // professions-panel.html binds methods through the ChatState scope, but the
