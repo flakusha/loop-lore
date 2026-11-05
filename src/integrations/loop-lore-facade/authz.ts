@@ -7,6 +7,16 @@
 // wrapped services — the facade never bypasses a guard. This seam adds the
 // facade-level admission check (epic BLOCKING fix: "access control is
 // ROUTE-level and a guard-skipping facade bypasses every guard").
+//
+// CREDENTIAL POLICY (Q4 decision, owner-verbatim):
+//  - Admin/subscribed harness API keys are LOCKED. The ToS forbid sharing a
+//    subscription's harness API keys with any other client (1 subscription
+//    = 1 person/user) — the scoped-credential epic must NOT mint
+//    credentials backed by admin/subscription harness keys.
+//  - Open scenarios, research candidates OUT OF SCOPE until a ticket exists:
+//    BYOK (the user supplies their own keys / runs the harness locally) and
+//    federation (the federated instance runs its own harness, sharing
+//    DB/chat with the head/master instance).
 
 import type { FacadeContext, FacadeOp, FacadeResult, } from "./types";
 
