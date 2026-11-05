@@ -14,12 +14,12 @@ import { getAllConfig, } from "../../admin/config";
 import type { Config, ProviderInstanceConfig, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { asError, } from "../../utils";
 import { circuitBreaker, } from "./circuit-breaker";
 import { OpenAiCompatibleProvider, } from "./openai-compatible";
 import { registerProvider, unregisterProvider, } from "./registry";
 import {
-  DESCRIPTOR_KEY_PREFIX,
-  DESCRIPTOR_KEY_SUFFIX,
+  descriptorNameFromKey,
   parseStoredServerProvider,
   resolveApprovedHosts,
   type StoredServerProvider,
@@ -48,9 +48,8 @@ export async function readStoredProviders(db: Kysely<DB>,): Promise<StoredServer
   const providers: StoredServerProvider[] = [];
 
   for (const row of rows) {
-    if (!row.key.startsWith(DESCRIPTOR_KEY_PREFIX,) || !row.key.endsWith(DESCRIPTOR_KEY_SUFFIX,)) {
-      continue;
-    }
+    const keyName = descriptorNameFromKey(row.key,);
+    if (keyName === null) { continue; }
 
     const stored = parseStoredServerProvider(row.value,);
     if (!stored) {
@@ -60,7 +59,6 @@ export async function readStoredProviders(db: Kysely<DB>,): Promise<StoredServer
 
     // The key names the instance; a descriptor whose name disagrees with its
     // own key can never be addressed by name, so it is malformed too.
-    const keyName = row.key.slice(DESCRIPTOR_KEY_PREFIX.length, row.key.length - DESCRIPTOR_KEY_SUFFIX.length,);
     if (stored.name !== keyName) {
       warnProviderStore("Skipping provider descriptor whose name does not match its key", {
         key: row.key,
@@ -151,13 +149,13 @@ export function probeProvider(
   try {
     resolveApprovedHosts(provider.baseUrl, provider.allowedHosts,);
   } catch (error) {
-    return { ok: false, error: error instanceof Error ? error.message : String(error,), };
+    return { ok: false, error: asError(error,).message, };
   }
 
   try {
     return { ok: true, prepared: prepareProvider(provider, apiKey || undefined,), };
   } catch (error) {
-    return { ok: false, error: error instanceof Error ? error.message : String(error,), };
+    return { ok: false, error: asError(error,).message, };
   }
 }
 

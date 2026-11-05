@@ -5,6 +5,7 @@ import type { InsertObject, } from "kysely";
 import type { Config, } from "../config/schema";
 import { AUTH_DEFAULTS, } from "../config/sections/auth";
 import type { Db, } from "../db";
+import { logEntryEnvelope, } from "../db/log-entries";
 import type { DB, } from "../db/schema";
 import type { TranslatorFn, } from "../i18n/types";
 import { getLogger, } from "../logger";
@@ -77,10 +78,7 @@ function auditRowValues(info: GuestReadAuditInfo,): InsertObject<DB, "log_entrie
   },);
 
   return {
-    id: crypto.randomUUID(),
-    level: 6, // INFO
-    timestamp: Date.now(),
-    time: new Date().toISOString(),
+    ...logEntryEnvelope(6,), // 6 = INFO
     message: `Guest read: ${info.route}`,
     module: "guest-read",
     // No invented identity: the guest tier has no user row.

@@ -180,6 +180,44 @@ OpenRouter, Groq, Together, LM Studio, Ollama's OpenAI mode, llama.cpp and
 vLLM). Anthropic-native and ollama-native instances are NOT materialized — a
 follow-up ticket should extend `materializeServerProviders` for them.
 
+**GATE-FIXING ROUND (backend lane)**
+
+The branch shipped green on its own gates but was red on two repo gates and two
+advisories. What changed:
+
+- **Fuzz snapshot regenerated.** `bun run fuzz:gen` re-emitted
+  `src/validation/schema-fuzz.generated.test.ts`; the four new admin schemas
+  (`AdminServerProviderDescriptor`, `AdminSetupProviderBody`,
+  `AdminSetupProviderResponse`, `AdminSetupProvidersResponse`) are now in the
+  committed snapshot.
+- **19 coverage gaps closed** (`scripts/check/test-gaps.mjs` → `newGaps: []`).
+  Module-internal symbols that nothing outside their module imports lost the
+  `export` keyword: `SERVER_PROVIDER_NAME_PATTERN`, `DESCRIPTOR_KEY_PREFIX`,
+  `DESCRIPTOR_KEY_SUFFIX`, `assertValidAllowedHost` (plus the helpers it owns:
+  `assertIpv6AllowedHost`, `assertDomainAllowedHost`, `isHostnameLabel`).
+  The public surface got real regression tests instead:
+  `server-provider-descriptor.test.ts` (name rules, host approval, key layout,
+  stored-row parse), `server-provider-materialize.test.ts` (probe, prepare,
+  activate, prune, stored listing, the materialization error),
+  `server-provider-audit.test.ts` (the audit row, the failing-row warning, the
+  shared log-entry envelope) and `src/validation/schemas/admin.test.ts` (the
+  four setup-provider schemas). No new coverage debt was accepted.
+- **jscpd ratchet back to baseline.** The audit writer inlined the whole
+  `log_entries` row envelope, which cloned `src/routes/admin/danger-zone.ts`,
+  `src/middleware/nsfw-gate/logging.ts` and `src/middleware/guest-rate-limit.ts`.
+  The envelope now lives in one place — `src/db/log-entries.ts`
+  (`logEntryEnvelope(level)`) — and the audit writer spreads it. The route
+  body type is derived from the schema (`Static<typeof AdminSetupProviderBody>`)
+  instead of a hand-copied inline type, which removes the clone with
+  `src/routes/admin/setup-providers.ts`.
+- **Plan index re-synced.** `bun run plan:sync:fix` (`giwt sync --fix`) ran in the
+  worktree and reported "No status mismatches"; the gate
+  `plan - ticket index (sync)` is green. giwt deliberately does not write
+  `.plan/tickets/index.json` inside a linked worktree
+  (`node_modules/giwt/src/tickets/sync-index-write.ts` — the write is deferred to
+  the target branch at finalize time), so the index row for this ticket is
+  regenerated when the branch lands.
+
 **Acceptance Criteria:**
 
 - [x] Implementation complete

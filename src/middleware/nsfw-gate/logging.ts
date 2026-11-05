@@ -19,6 +19,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db";
+import { logEntryEnvelope, } from "../../db/log-entries";
 import { getLogger, } from "../../logger";
 import {
   applyNsfwMetadataRedaction,
@@ -86,10 +87,7 @@ export async function logNsfwEvent(
     await database
       .insertInto("log_entries",)
       .values({
-        id: crypto.randomUUID(),
-        level: 6, // INFO
-        timestamp: Date.now(),
-        time: new Date().toISOString(),
+        ...logEntryEnvelope(6,), // 6 = INFO
         message: `NSFW gate: ${event.action} — ${event.reason}`,
         module: "nsfw-gate",
         user_id: userHash,

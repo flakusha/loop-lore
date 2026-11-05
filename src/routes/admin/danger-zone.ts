@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import { logEntryEnvelope, } from "../../db/log-entries";
 import type { DB, } from "../../db/schema";
 import { seedDefaultActors, } from "../../db/seed";
 import { getLogger, } from "../../logger";
@@ -76,10 +77,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       await db
         .insertInto("log_entries",)
         .values({
-          id: crypto.randomUUID(),
-          level: 6, // INFO
-          timestamp: Date.now(),
-          time: new Date().toISOString(),
+          ...logEntryEnvelope(6,), // 6 = INFO
           message,
           module: "admin-danger-zone",
           action,
