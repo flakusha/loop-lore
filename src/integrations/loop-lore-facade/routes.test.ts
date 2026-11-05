@@ -2,24 +2,22 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // src/integrations/loop-lore-facade/routes.test.ts — the facade REST surface
-// exercised through the ACTUAL Elysia plugin (app.handle, sibling-route-test
-// style: bare app + derive standing in for the auth middleware).
+// exercised through the ACTUAL Elysia plugin via app.handle (derive = auth).
 //
-// Covers the HTTP wiring acceptance surfaces:
-//  - manifest requires an authenticated principal; any user may read it;
-//  - POST identity comes from the derived context — an adversarial
-//    principal-shaped body is inert (trust boundary, HTTP layer);
-//  - unknown op -> 404;  governance budget exhaustion -> 429 passthrough;
-//  - a real chat.history roundtrip over the real services.
+// Covers the HTTP wiring acceptance surfaces: manifest auth + descriptor
+// shape; POST identity from the derived context (adversarial body inert);
+// unknown op -> 404; 429 passthrough; hostile inputs stay data; row-level
+// foreign-chat denial; a real chat.history roundtrip over the real services.
 //
 // Resource contract (parallel-safe): one :memory: SQLite per file via
-// createTestDb, no ports, no env, no sleeps; the rate test keys its budget
-// on a dedicated user id so it cannot drain a sibling test's budget.
+// createTestDb, no ports, no env, no sleeps; the rate test uses a dedicated
+// user id so it cannot drain a sibling test's budget.
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
+import { createConfigSchema, } from "../../config/schema-class";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
@@ -48,7 +46,8 @@ beforeAll(async () => {
   createLogger({ level: "error", },);
   testDb = await createTestDb();
   db = testDb.db;
-  config = {} as Config;
+  // Real schema defaults: the chat.send pipeline reads config.generation.
+  config = createConfigSchema().defaults as unknown as Config;
 
   await insertUsers(db, USER, "Facade HTTP User", { id: USER, },);
   await insertUsers(db, OTHER, "Facade HTTP Other", { id: OTHER, },);
@@ -195,12 +194,46 @@ describe("facade REST surface", () => {
     expect(leaked,).toHaveLength(0,);
   });
 
+  test("SQL metacharacters in facade inputs are data, never interpreted", async () => {
+    // Every input reaches SQLite only as a bound Kysely parameter against a
+    // constant column name — hostile metacharacters must round-trip as DATA.
+    const payload = "'; DROP TABLE messages;-- ' OR '1'='1";
+
+    const send = await post(makeApp(USER,), "chat.send", {
+      chatId: CHAT,
+      content: payload,
+    },);
+
+    expect(send.status,).toBe(201,);
+    const sendBody = await send.json() as { id: unknown };
+    expect(typeof sendBody.id,).toBe("string",);
+
+    const hist = await post(makeApp(USER,), "chat.history", { chatId: CHAT, },);
+    expect(hist.status,).toBe(200,);
+    const histBody = await hist.json() as { data: Array<{ content: string }> };
+    expect(histBody.data.some((m,) => m.content === payload),).toBe(true,);
+
+    const hostileId = await post(makeApp(USER,), "chat.send", {
+      chatId: "x'; DROP TABLE messages;--",
+      content: "hi",
+    },);
+
+    expect(hostileId.status,).toBe(404,);
+
+    const hostileQuery = await post(makeApp(USER,), "chat.history", {
+      chatId: CHAT,
+      parentId: "' OR '1'='1' --",
+      translateLocale: "en'; DROP TABLE messages;--",
+    },);
+
+    expect(hostileQuery.status,).toBe(200,);
+  });
+
   test("governance budget exhaustion passes 429 through", async () => {
     const app = makeApp(RATE,);
     let sawLimit = false;
     // chatPolicy: 60s window, burst 50 — ~51 cheap unknown-chat calls drain
-    // the bucket; the cap keeps the loop bounded even if a sibling process
-    // already warmed this key's window.
+    // the bucket; the cap keeps the loop bounded if the window was warmed.
     for (let i = 0; i < 80 && !sawLimit; i++) {
       const res = await post(app, "chat.history", { chatId: "facade-http-nope", },);
       if (res.status === 429) {
