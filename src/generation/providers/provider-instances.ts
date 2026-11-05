@@ -92,6 +92,33 @@ export function findSdProviderInstance(config: Config, name: string,): ProviderI
 }
 
 /**
+ * Every configured VIDEO provider instance (`generation.providers.video`),
+ * in config order — the BYO-key surface for ComfyUI video workflow engines.
+ * Kept separate from {@link listProviderInstances} for the same reason as the
+ * image list: the chat list also feeds admin name-collision validation.
+ * @param config
+ * @returns the configured video instances
+ */
+export function listVideoProviderInstances(config: Config,): ProviderInstance[] {
+  const video = config.generation?.providers?.video;
+
+  return (video ?? []).map((instance,) => ({
+    name: instance.name,
+    allowUserApiKey: instance.allowUserApiKey !== false,
+  }));
+}
+
+/**
+ * Find a configured video provider instance by name.
+ * @param config
+ * @param name
+ * @returns the instance, or undefined when the name is not configured
+ */
+export function findVideoProviderInstance(config: Config, name: string,): ProviderInstance | undefined {
+  return listVideoProviderInstances(config,).find((instance,) => instance.name === name);
+}
+
+/**
  * Find a configured provider instance by name.
  * @param config
  * @param name
