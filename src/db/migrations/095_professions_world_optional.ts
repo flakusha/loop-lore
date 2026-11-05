@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 094_professions_world_optional — step 1 (constraint out of the table)
+ * 095_professions_world_optional — step 1 (constraint out of the table)
  *
  * `professions.world_id` is NOT NULL with an FK to `worlds.id`
  * (001_init, parts/009-crafting) — but professions exist independently of any
@@ -16,7 +16,7 @@
  * separate UNIQUE index blocks it too). Step 1 therefore rebuilds the table
  * with the identical shape, replacing the table-level
  * `uq_profession_actor_world_discipline` CONSTRAINT with an equivalent
- * standalone UNIQUE index; step 2 (`095_professions_world_nullable`) then
+ * standalone UNIQUE index; step 2 (`096_professions_world_nullable`) then
  * drops that index, re-issues `world_id` without `notNull()`, and restores
  * the index — a pair the schema generators model correctly (a re-added
  * column wins over its drop), so the generated `Professions` interface
@@ -28,9 +28,8 @@
  * only schema/migration/lore-read references), so the copy is a formality —
  * it still runs so the migration is honest for databases that wrote rows.
  *
- * Known-numbering risk: 094/095 are also claimed by the unfinalized
- * lorebook-inclusion-groups branch (its 094); the loser of the finalize race
- * is renumbered at rebase (established renumber process).
+ * Known-numbering note: formerly 094/095; renumbered to 095/096 because 094
+ * is claimed by lorebook-inclusion-groups (its 094_lorebook_inclusion_groups).
  */
 import { type Kysely, sql, } from "kysely";
 
