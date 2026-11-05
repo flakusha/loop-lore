@@ -45,6 +45,7 @@ import * as routes_quests_world from "@/routes/quests/world";
 import * as routes_rpg_achievementsSchemas from "@/routes/rpg/achievements-schemas";
 import * as routes_rpg_combatSchemas from "@/routes/rpg/combat-schemas";
 import * as routes_rpg_npcNavigationSchemas from "@/routes/rpg/npc-navigation-schemas";
+import * as routes_rpg_professionsSchemas from "@/routes/rpg/professions-schemas";
 import * as routes_rpg_questionsSchemas from "@/routes/rpg/questions-schemas";
 import * as routes_rpg_replayabilitySchemas from "@/routes/rpg/replayability-schemas";
 import * as routes_rpg_skillsSchemas from "@/routes/rpg/skills-schemas";
@@ -216,6 +217,11 @@ describe("ActorIdAvatarParams", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_characterSystems.ActorIdAvatarParams,));
 });
 
+describe("actorIdParams", () => {
+  test("accepts generated values", () => checkAllValid(routes_rpg_professionsSchemas.actorIdParams,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_professionsSchemas.actorIdParams,));
+});
 describe("ActorIdParams", () => {
   test("accepts generated values", () => checkAllValid(validation_actors.ActorIdParams,));
 
@@ -1137,6 +1143,11 @@ describe("ContentRatingSchema", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_primitives.ContentRatingSchema,));
 });
 
+describe("createProfessionBody", () => {
+  test("accepts generated values", () => checkAllValid(routes_rpg_professionsSchemas.createProfessionBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_professionsSchemas.createProfessionBody,));
+});
 describe("createQuestionBody", () => {
   test("accepts generated values", () => checkAllValid(routes_rpg_questionsSchemas.createQuestionBody,));
 
@@ -2023,6 +2034,29 @@ describe("playthroughsQuery", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_replayabilitySchemas.playthroughsQuery,));
 });
 
+describe("professionIdParams", () => {
+  test("accepts generated values", () => checkAllValid(routes_rpg_professionsSchemas.professionIdParams,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_professionsSchemas.professionIdParams,));
+});
+
+describe("professionSpecializeBody", () => {
+  test("accepts generated values", () => checkAllValid(routes_rpg_professionsSchemas.professionSpecializeBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_professionsSchemas.professionSpecializeBody,));
+});
+
+describe("professionsQuery", () => {
+  test("accepts generated values", () => checkAllValid(routes_rpg_professionsSchemas.professionsQuery,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_professionsSchemas.professionsQuery,));
+});
+
+describe("professionXpBody", () => {
+  test("accepts generated values", () => checkAllValid(routes_rpg_professionsSchemas.professionXpBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_professionsSchemas.professionXpBody,));
+});
 describe("progressBody", () => {
   test("accepts generated values", () => checkAllValid(routes_rpg_achievementsSchemas.progressBody,));
 
@@ -2763,4 +2797,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 438 schemas discovered across 537 module(s).
+// 444 schemas discovered across 539 module(s).
