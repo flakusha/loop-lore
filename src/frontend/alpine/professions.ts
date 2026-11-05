@@ -19,26 +19,14 @@ import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
+import { PROFESSION_DISCIPLINES, PROFESSION_XP_STEP, } from "./professions-constants";
 import { nextTitleAt, professionBonuses, xpProgress, } from "./professions-progression";
 import { readServerError, resolveChatActorId, } from "./rpg-stats-helpers";
 import type { ChatState, ProfessionView, } from "./types";
 
 const log = rootLog.child({ module: "professions", },);
 
-/** XP granted per "Add XP" click (GM/testing affordance, per the ticket). */
-const PROFESSION_XP_STEP = 50;
-
-/** Crafting disciplines accepted by POST /api/rpg/professions (t.Enum schema). */
-export const PROFESSION_DISCIPLINES = [
-  "alchemy",
-  "smithing",
-  "enchanting",
-  "cooking",
-  "tailoring",
-  "woodworking",
-  "jewelry",
-  "engineering",
-] as const;
+export { PROFESSION_DISCIPLINES, PROFESSION_XP_STEP, } from "./professions-constants";
 
 export const professions: Partial<ChatState> & ThisType<ChatState> = {
   professions: [] as ProfessionView[],
@@ -275,4 +263,3 @@ export const professions: Partial<ChatState> & ThisType<ChatState> = {
 // professions-panel.html binds methods through the ChatState scope, but the
 // IIFE-wrapped bundle keeps module scopes private — expose for direct binds.
 (globalThis as Record<string, unknown>).professions = professions;
-(globalThis as Record<string, unknown>).PROFESSION_DISCIPLINES = PROFESSION_DISCIPLINES;
