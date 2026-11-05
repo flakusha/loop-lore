@@ -50316,7 +50316,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-model-discovery-capability-enrichment.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-MODEL-METADATA-SIDECAR-CACHE-AND-HASH-LOOKUP-CASCADE": {
     "hash": "257ba0e",
