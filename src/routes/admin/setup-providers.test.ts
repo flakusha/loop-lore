@@ -217,4 +217,87 @@ describe("admin setup-provider routes", () => {
 
     expect(res.status,).toBe(400,);
   });
+
+  test("POST returns 400 for an allowed host that is not a bare hostname", async () => {
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/v1/admin/setup/providers", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          name: "wildcard-provider",
+          label: "Wildcard Provider",
+          baseUrl: "https://api.example.com/v1",
+          model: "demo-model",
+          allowedHosts: ["*",],
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    expect(getProvider("wildcard-provider",),).toBeUndefined();
+  });
+
+  test("POST clears the stored key when an empty apiKey is sent", async () => {
+    const app = makeApp(db, "admin",);
+    const create = await app.handle(
+      new Request("http://localhost/api/v1/admin/setup/providers", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          name: "cleared-route-provider",
+          label: "Cleared Route Provider",
+          baseUrl: "https://api.example.com/v1",
+          model: "demo-model",
+          apiKey: "sk-route-to-clear",
+        },),
+      },),
+    );
+
+    expect(create.status,).toBe(200,);
+    registered.push("cleared-route-provider",);
+
+    const clear = await app.handle(
+      new Request("http://localhost/api/v1/admin/setup/providers", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          name: "cleared-route-provider",
+          label: "Cleared Route Provider",
+          baseUrl: "https://api.example.com/v1",
+          model: "demo-model",
+          apiKey: "",
+        },),
+      },),
+    );
+
+    expect(clear.status,).toBe(200,);
+    const body = await clear.json() as { provider: { hasApiKey: boolean } };
+    expect(body.provider.hasApiKey,).toBe(false,);
+  });
+
+  test("GET reports the live state of a stored provider", async () => {
+    const app = makeApp(db, "admin",);
+    const create = await app.handle(
+      new Request("http://localhost/api/v1/admin/setup/providers", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          name: "stateful-provider",
+          label: "Stateful Provider",
+          baseUrl: "https://api.example.com/v1",
+          model: "demo-model",
+        },),
+      },),
+    );
+
+    expect(create.status,).toBe(200,);
+    registered.push("stateful-provider",);
+
+    const res = await app.handle(new Request("http://localhost/api/v1/admin/setup/providers",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { providers: { name: string; state: string }[] };
+    const descriptor = body.providers.find((entry,) => entry.name === "stateful-provider");
+    expect(descriptor?.state,).toBe("live",);
+  });
 });
