@@ -28,6 +28,16 @@ export interface FacadePrincipal {
   readonly kind: PrincipalKind;
   readonly userId: string | null;
   readonly userRole: string | null;
+  /**
+   * Integration-token attribution (ADR admin-scoped slice): the token row a
+   * principal resolved from — the audit row's tokenId/tokenName and the
+   * per-token budget bucket key. Null for every other principal kind
+   * (JWT users keep both facade tiers; tokens get their own buckets).
+   */
+  readonly credentialId: string | null;
+  readonly credentialName: string | null;
+  /** The token's granted FacadeScope tier; null for non-token principals. */
+  readonly credentialScope: FacadeScope | null;
 }
 
 /** Everything an op handler receives; built from a verified RequestContext. */
@@ -98,6 +108,17 @@ export function facadeContextFromRequestContext(
       kind: rc.principalKind,
       userId: rc.userId,
       userRole: rc.userRole,
+      credentialId: rc.credentialId,
+      credentialName: rc.credentialName,
+      // Narrow the middleware's string column back to the tier vocabulary;
+      // anything unknown narrows to null (and an external-agent principal
+      // with null scope is denied by authorizeFacadeOp — fail closed).
+      credentialScope: toFacadeScope(rc.credentialScope,),
     },
   };
+}
+
+/** Narrow a stored scope string to the FacadeScope tier vocabulary. */
+function toFacadeScope(value: string | null,): FacadeScope | null {
+  return value === "read" || value === "chat-write" ? value : null;
 }

@@ -44,11 +44,14 @@ export function governanceBeforeHook(enabled: () => boolean,): (ctx: any,) => Re
   return (ctx: any,) => {
     (ctx as Record<string, unknown>).__governanceStart ??= Date.now();
     if (!enabled()) { return undefined; }
-    const userId = ctx.userId as string | undefined;
-    if (!userId) { return undefined; } // unauthenticated abuse is stopped at the auth endpoints' own limiters
+    // Bucket key = PRINCIPAL IDENTITY: integration tokens get their OWN
+    // bucket (credential id) so two tokens of one admin never share a
+    // budget; user sessions key on their userId exactly as before.
+    const principal = (ctx.credentialId ?? ctx.userId) as string | undefined;
+    if (!principal) { return undefined; } // unauthenticated abuse is stopped at the auth endpoints' own limiters
     const url = new URL(ctx.request.url,);
     const policy = policyForRoute(url.pathname,);
-    const verdict = governanceRateLimiter.consume(`${userId}:${policy.name}`, policy,);
+    const verdict = governanceRateLimiter.consume(`${principal}:${policy.name}`, policy,);
     if (!verdict.allowed) {
       // Count the 429 exactly once here and flag the request so the
       // onAfterHandle telemetry hook skips it (Elysia runs onAfterHandle

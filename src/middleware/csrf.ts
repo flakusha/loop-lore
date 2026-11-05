@@ -59,6 +59,17 @@ export interface CsrfMiddlewareOptions {
 }
 
 /**
+ * Whether the request authenticates via an Authorization bearer header
+ * (JWT session token or integration token) — see the verification-path
+ * skip in {@link decideCsrf} for why these are outside CSRF scope.
+ * @param headers - request headers
+ * @returns true when an `Authorization: Bearer ...` header is present
+ */
+function hasBearerAuthorization(headers: Headers,): boolean {
+  return headers.get("authorization",)?.startsWith("Bearer ",) === true;
+}
+
+/**
  * Resolve the `Secure` flag for the cookie. Mirrors the decision matrix used
  * by `src/routes/auth/shared.ts: setTokenCookie`.
  * @param override
@@ -236,6 +247,18 @@ export function decideCsrf(
 
   // ── Verification path (unsafe methods, non-exempt routes) ────────
   if (isUnsafe && !isExempt) {
+    // Bearer-credential requests (JWT session token or integration token)
+    // carry their proof in the Authorization header — a NON-ambient
+    // credential a cross-site page cannot attach: setting a custom header
+    // triggers a CORS preflight, so no third-party origin can forge the
+    // request. The double-submit cookie defends cookie-borne sessions
+    // (where the credential is attached implicitly by the browser); it is
+    // meaningless for header-authenticated API clients, which by design
+    // hold no cookies. Cookie flows below are unchanged.
+    if (hasBearerAuthorization(args.headers,)) {
+      return { ok: true, cookieToIssue: null, };
+    }
+
     const headerToken = args.headers.get(CSRF_HEADER,);
     const cookieToken = readCsrfCookie(args.headers.get("cookie",),);
     // Double-submit cookie requires BOTH the header AND the cookie to be

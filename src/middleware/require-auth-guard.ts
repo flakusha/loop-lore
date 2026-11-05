@@ -8,6 +8,7 @@ import type { TranslatorFn, } from "../i18n/types";
 import { registry, } from "../plugins";
 import { normalizePluginRoutePath, } from "../plugins/registry-policy";
 import { unauthorizedResponse, } from "../routes/http-utils";
+import type { PrincipalKind, } from "./types";
 
 export interface GuardIdentity {
   userId: string | null;
@@ -145,6 +146,32 @@ function isNonApiGet(method: string, pathname: string,): boolean {
 }
 
 /**
+ * Whether a request path is an integration-agent surface — the ONLY routes a
+ * `principalKind: "external-agent"` principal (an integration token, ADR
+ * credentials-issuer-model admin-scoped slice) may reach: the facade REST op
+ * surface, its manifest, and the MCP transport, all under `integrations/`.
+ * Deliberately EXCLUDES the webhook receivers under `integrations/webhooks/`
+ * (their authority is the per-adapter HMAC proof checked in-handler, and a
+ * token principal has no business there) and the admin token CRUD
+ * (`/admin/integration-tokens` — tokens can never mint or revoke tokens;
+ * that surface stays JWT-admin-only). Every other path fail-closes for
+ * token principals.
+ * @param pathname - full request pathname (version prefix still on)
+ * @returns true when the version-stripped path sits under `integrations`
+ *   but outside `integrations/webhooks/`
+ */
+export function isIntegrationAgentPath(pathname: string,): boolean {
+  const stripped = stripApiVersion(pathname,);
+  // `stripApiVersion` keeps the leading slash: "/integrations/...". Segment-
+  // exact, so lookalikes like `/integrations-webhooks` never match.
+  if (stripped === null || !(stripped.startsWith("/integrations/",) || stripped === "/integrations")) {
+    return false;
+  }
+
+  return !stripped.startsWith("/integrations/webhooks/",);
+}
+
+/**
  * Plugin-declared open routes: a plugin route with neither `requiresAuth`
  * nor `permissions` is public by contract (`route-access.ts`), and the
  * guard must honor that — otherwise a fail-closed check at the app layer
@@ -210,13 +237,29 @@ export function requireAuthGuard(ctx: {
   request: Request;
   userId?: string | null;
   userRole?: string | null;
+  principalKind?: PrincipalKind | null;
   set: { status?: number | string };
   t?: TranslatorFn | undefined;
 },): Response | undefined {
   const { request, set, } = ctx;
 
   const userId = ctx.userId ?? null;
-  if (userId) { return undefined; }
+  if (userId) {
+    // Integration-token principals are surface-confined (fail-closed): a
+    // valid token identity reaches ONLY the integration-agent surfaces above,
+    // never the general API. User JWTs are unaffected (principalKind
+    // defaults to "user"). Belt-and-braces with the seam's own off-surface
+    // rejection in authenticate-request.ts — both sides import the SAME
+    // predicate, so they cannot drift.
+    if (
+      (ctx.principalKind ?? "user") === "external-agent" && !isIntegrationAgentPath(new URL(request.url,).pathname,)
+    ) {
+      set.status = 401;
+      return unauthorizedResponse(undefined, ctx.t,);
+    }
+
+    return undefined;
+  }
 
   const url = new URL(request.url,);
   if (isAllowlisted(request.method, url.pathname, ctx.userRole ?? null,)) { return undefined; }
