@@ -21,7 +21,7 @@ import type { Config, } from "../../../config/schema";
 import type { DB, } from "../../../db/schema";
 import { listChatMessagesPage, type MessageListQuery, } from "../../../routes/messages/list-page";
 import { sendUserMessage, } from "../../../routes/messages/send-message";
-import { MessageCreateBody, } from "../../../validation/schemas";
+import { MessageCreateBody, MessagesQuery, } from "../../../validation/schemas";
 import { type FacadeRegistry, facadeResultFromResponse, } from "../registry";
 import type { FacadeContext, FacadeOp, FacadeResult, } from "../types";
 
@@ -37,13 +37,13 @@ export const FacadeSendMessageBody = t.Object({
   ...MessageCreateBody.properties,
 },);
 
-/** Facade chat.history body: chatId + the route's list query fields. */
+/** Facade chat.history body: the route's URL chatId + the route's query schema. */
 export const FacadeListMessagesBody = t.Object({
   chatId: t.String({ minLength: 1, },),
-  page: t.Optional(t.Numeric(),),
-  pageSize: t.Optional(t.Numeric(),),
-  parentId: t.Optional(t.String(),),
-  translateLocale: t.Optional(t.String(),),
+  // Same single-source composition as the send body: spread the route's
+  // MessagesQuery properties (page/pageSize bounds + defaults) so the facade
+  // can never validate more loosely than GET /api/v1/chats/:id/messages.
+  ...MessagesQuery.properties,
 },);
 
 /**
