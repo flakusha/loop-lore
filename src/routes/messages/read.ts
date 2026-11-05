@@ -2,10 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { attachMessageAvatars, } from "../../characters/services/wardrobe/message-avatar";
-import { checkChatAccess, getMessageWithAccess, listMessages, } from "../../chat/service";
-import { getChildLogger, } from "../../logger";
-import { notFound, } from "../../validation/middleware";
+import { getMessageWithAccess, } from "../../chat/service";
 import {
   ChatIdParams,
   ErrorResponse,
@@ -13,20 +10,18 @@ import {
   MessagesQuery,
   MessageVariantQuery,
 } from "../../validation/schemas";
-import { extractAuth, HttpStatus, jsonError, jsonPaginated, jsonResponse, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import {
   enrichAttachments,
-  enrichMessageForList,
   isServiceError,
   parseToolCalls,
   parseToolResultMeta,
   serviceErrorToResponse,
 } from "./helpers";
+import { listChatMessagesPage, } from "./list-page";
+import type { MessageListQuery, } from "./list-page";
 import { resolveMessageContentForRender, } from "./render-message-content";
 import type { HandlerOpts, } from "./types";
-
-import { detectLocale, } from "../../middleware/i18n";
-import { attachRequestedTranslations, } from "./list-translations";
 
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
@@ -52,65 +47,17 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const { id: chatId, } = ctx.params as { id: string };
 
-        const access = await checkChatAccess(database, chatId, userId, userRole,);
-        if (!access.ok) { return notFound(ctx.t?.("messages.chatNotFound",) ?? "Chat not found",); }
-
-        const query = ctx.query as {
-          page?: number;
-          pageSize?: number;
-          parentId?: string;
-          translateLocale?: string;
-        };
-
-        const page = query.page ?? 1;
-        const pageSize = query.pageSize ?? 20;
-
-        const { data: messages, total, } = await listMessages(database, {
+        return listChatMessagesPage({
+          database,
+          config,
+          userId,
+          userRole,
           chatId,
-          page,
-          pageSize,
-          parentId: query.parentId,
+          query: ctx.query as MessageListQuery,
+          request: ctx.request as Request,
+          translator: ctx.t as ((key: string,) => string) | undefined,
+          regexTransforms,
         },);
-
-        const enrichResults = await Promise.allSettled(
-          messages.map((m,) => enrichMessageForList(database, m as never, regexTransforms,)),
-        );
-
-        const enriched: Record<string, unknown>[] = [];
-        for (const r of enrichResults) {
-          if (r.status === "fulfilled") { enriched.push(r.value,); }
-        }
-
-        // TASK-chat-avatar-resolver-outfit-aware: resolve each message's avatar
-        // server-side through the single wardrobe ladder owner, so the header
-        // outfit switcher reaches the render path. A row whose actor resolves
-        // no outfit keeps its field absent and renders exactly as before.
-        // Belt-and-braces: the resolver already swallows per-row failures, but
-        // the endpoint contract is that a wardrobe problem must never cost the
-        // reader their message page, so the boundary holds the line too.
-        try {
-          await attachMessageAvatars({ database, chatId, messages: enriched, },);
-        } catch (error) {
-          getChildLogger("routes.messages.read",)?.error(
-            "Failed to attach message avatars",
-            error instanceof Error ? error : undefined,
-            { chatId, },
-          );
-        }
-
-        // Read-time translation negotiation (FEAT-language-selection-three-level):
-        // opt-in `?translateLocale=<locale|auto>` attaches the matching
-        // message_translations row per message (ONE inArray select). Default
-        // payloads (no param) are unchanged, and a negotiation failure never
-        // costs the reader their message page.
-        await attachRequestedTranslations(database, enriched, {
-          chatId,
-          userId: userId ?? "",
-          uiLocale: detectLocale(ctx.request,),
-          requestedLocale: query.translateLocale,
-        },);
-
-        return jsonPaginated({ data: enriched, total, page, pageSize, },);
       },
       {
         params: ChatIdParams,
