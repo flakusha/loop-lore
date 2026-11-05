@@ -23,7 +23,7 @@
  */
 
 import { type ChildProcess, spawn, } from "node:child_process";
-import { existsSync, } from "node:fs";
+import fs from "node:fs";
 import { delimiter, join, } from "node:path";
 import { safeJsonStringify, } from "../../utils";
 
@@ -88,13 +88,13 @@ export function __resetHarnessAvailabilityCache(): void {
  */
 function resolveOnPath(binary: string, pathValue: string,): string | null {
   if (binary.includes("/",) || binary.includes("\\",)) {
-    return existsSync(binary,) ? binary : null;
+    return fs.existsSync(binary,) ? binary : null;
   }
 
   for (const dir of pathValue.split(delimiter,)) {
     if (dir.length === 0) { continue; }
     const candidate = join(dir, binary,);
-    if (existsSync(candidate,)) { return candidate; }
+    if (fs.existsSync(candidate,)) { return candidate; }
   }
 
   return null;
