@@ -6,6 +6,7 @@ import {
   deleteServerProvider,
   listServerProviders,
   saveServerProvider,
+  ServerProviderMaterializationError,
   ServerProviderValidationError,
 } from "../../generation/providers/server-provider-store";
 import {
@@ -40,6 +41,23 @@ function validationRejection(error: unknown,): Response | undefined {
 }
 
 /**
+ * Map a provider that could not be materialized onto its 502.
+ *
+ * The payload was accepted — the instance itself could not be brought up, so
+ * this is not an operator input error (400) but a failed materialization.
+ * @param error - the thrown error
+ * @returns the 502 response, or undefined when the error is not ours
+ */
+function materializationRejection(error: unknown,): Response | undefined {
+  if (!(error instanceof ServerProviderMaterializationError)) { return undefined; }
+  return jsonError({
+    message: error.message,
+    status: HttpStatus.BadGateway,
+    code: ErrorCode.BadGateway,
+  },);
+}
+
+/**
  * @param opts
  * @param prefix
  * @returns Elysia plugin with the setup-provider endpoints.
@@ -68,7 +86,8 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         detail: {
           summary: "List stored provider instances",
           description: "Returns the operator-entered provider instances persisted in system_config. " +
-            "Never carries key material — each entry reports whether a sealed API key is stored and whether the instance is live.",
+            "Never carries key material — each entry reports whether a sealed API key is stored, whether the instance is live " +
+            "and, when it is not live, the real reason it could not be materialized.",
           tags: ["Admin", "Providers",],
         },
         response: {
@@ -104,7 +123,7 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
             return jsonResponse({ ok: true, provider, },);
           } catch (error) {
-            const rejection = validationRejection(error,);
+            const rejection = validationRejection(error,) ?? materializationRejection(error,);
             if (rejection) { return rejection; }
             throw error;
           }
@@ -114,7 +133,11 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           summary: "Create or update a provider instance",
           description: "Persists an operator-entered provider instance and makes it live in the provider " +
             "registry without a restart. The API key is stored sealed; omitting it on an update " +
-            "keeps the previously stored key, passing an empty apiKey clears it.",
+            "keeps the previously stored key, passing an empty apiKey clears it. " +
+            "400 when the payload is rejected — an invalid name, base URL, host approval, or a name " +
+            "another provider already owns. 502 when the payload was accepted but the provider " +
+            "instance could not be materialized: the response carries the real reason and nothing " +
+            "is stored, so the instance is not live.",
           tags: ["Admin", "Providers",],
         },
         body: AdminSetupProviderBody,
@@ -122,6 +145,7 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           200: AdminSetupProviderResponse,
           400: ErrorResponse,
           403: ErrorResponse,
+          502: ErrorResponse,
         },
       },)
       // -- Delete a provider instance --------------------------
