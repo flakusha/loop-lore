@@ -34,8 +34,10 @@ import { resetFacadeRegistry, } from "./instance";
 import { createFacadeRoutes, } from "./routes";
 
 const USER = "facade-http-user";
+const OTHER = "facade-http-other-user";
 const RATE = "facade-http-rate-user";
 const CHAT = "facade-http-chat-1";
+const OTHER_CHAT = "facade-http-chat-other";
 const PREFIX = "/api/v1";
 
 let testDb: TestDb;
@@ -49,10 +51,14 @@ beforeAll(async () => {
   config = {} as Config;
 
   await insertUsers(db, USER, "Facade HTTP User", { id: USER, },);
+  await insertUsers(db, OTHER, "Facade HTTP Other", { id: OTHER, },);
   await insertUsers(db, RATE, "Facade HTTP Rate User", { id: RATE, },);
   await insertActors(db, "Facade HTTP User", { id: USER, user_id: USER, owner_id: USER, },);
   await insertChats(db, "facade-http-chat", USER, { id: CHAT, },);
   await insertChatParticipants(db, CHAT, USER, { role_in_chat: "owner", },);
+  await insertActors(db, "Facade HTTP Other", { id: OTHER, user_id: OTHER, owner_id: OTHER, },);
+  await insertChats(db, "facade-http-chat-other", OTHER, { id: OTHER_CHAT, },);
+  await insertChatParticipants(db, OTHER_CHAT, OTHER, { role_in_chat: "owner", },);
   await insertMessages(db, CHAT, USER, "user", "hello agent",);
 },);
 
@@ -163,6 +169,30 @@ describe("facade REST surface", () => {
     expect(row,).toBeDefined();
     expect(row?.user_id,).toBe(USER,);
     expect(row?.action,).toBe("chat.history",);
+  });
+
+  test("foreign chat reads and writes fail closed at the facade (row-level authz)", async () => {
+    // Row-level: USER must not read or write OTHER's chat through the facade.
+    // The verdict is the access seam's not-found-or-not-owner 404 — identity
+    // comes from the context, so no body field can widen the caller's reach.
+    const read = await post(makeApp(USER,), "chat.history", { chatId: OTHER_CHAT, },);
+    expect(read.status,).toBe(404,);
+
+    const write = await post(makeApp(USER,), "chat.send", {
+      chatId: OTHER_CHAT,
+      content: "should never land",
+    },);
+
+    expect(write.status,).toBe(404,);
+
+    // And nothing leaked: the denied send wrote no message row.
+    const leaked = await db
+      .selectFrom("messages",)
+      .selectAll()
+      .where("chat_id", "=", OTHER_CHAT,)
+      .execute();
+
+    expect(leaked,).toHaveLength(0,);
   });
 
   test("governance budget exhaustion passes 429 through", async () => {
