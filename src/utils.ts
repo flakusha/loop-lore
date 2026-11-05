@@ -24,7 +24,7 @@ export {
 // ── Safe Fetch ──────────────────────────────────────────────
 
 export type { FetchAuth, FetchResult, SafeFetchOptions, } from "./utils/safe-fetch";
-export { safeFetch, safeFetchWithRetry, } from "./utils/safe-fetch";
+export { DEFAULT_MAX_SIZE, DEFAULT_TIMEOUT, safeFetch, safeFetchWithRetry, } from "./utils/safe-fetch";
 
 // ── Numeric Clamping ──────────────────────────────────────────
 //
