@@ -20,12 +20,12 @@ Expose loop-lore as a stable, scoped, documented agentic surface: MCP server (st
 
 ## Protocol pins
 
-- MCP: spec revision 2026-07-28 pinned in code (Streamable HTTP transport; HTTP+SSE deprecated since 2025-03-26; protocol-level sessions removed). Tool descriptions/schemas treated as untrusted-adjacent input.
+- MCP: the `@modelcontextprotocol/sdk` owns negotiation (SDK 1.32.2; a client requesting a revision newer than the SDK — e.g. 2026-07-28 — gets the SDK's latest per the spec downgrade rule). Streamable HTTP transport, stateless (no session ids, initialize tolerated per request; HTTP+SSE deprecated since 2025-03-26). Tool descriptions/schemas treated as untrusted-adjacent input.
 - ACP: v1 pinned (schema `agentclientprotocol/agent-client-protocol`); v2 out of scope until needed.
 
-## SDK decision (provisional — owner may override, evaluation §5 Q7)
+## SDK decision (ADOPTED for MCP — evaluation §5 Q7)
 
-Adopt `@modelcontextprotocol/sdk` + the official ACP TS SDK rather than hand-rolled JSON-RPC/NDJSON framing (spec-drift precedent: SSE deprecation, session removal). `banned-patterns.md:71-75` (own-abstraction stance) does not prohibit protocol SDKs — ruling recorded.
+`@modelcontextprotocol/sdk` is installed and owns the MCP protocol layer (`mcp/server.ts` + `mcp/bridge.ts` over an InMemoryTransport peer; hand-rolled JSON-RPC framing deleted). stdio needs no new work when a ticket asks for it — the same SDK `Server` attaches to `StdioServerTransport`. The ACP TS SDK remains to be adopted with the ACP slice (ruling against hand-rolled framing stands: spec-drift precedent — SSE deprecation, session removal; `banned-patterns.md:71-75` does not prohibit protocol SDKs).
 
 ## Facade authorization (evaluation BLOCKING fix)
 
@@ -73,8 +73,8 @@ Depends on `epic-principal-scoped-credentials.md` (principal kinds + scoped cred
 
 ## DECISIONS (owner questions pending — RSI-RepoAccess-EVALUATION §5)
 
-- §5 Q4 credentials story (scoped admin-issued tokens vs OAuth-style): OPEN.
-- §5 Q7 protocol SDK deps: adopted (provisional).
+- §5 Q4 credentials story: DECIDED (2026-11-05) — admin/subscription harness API keys are LOCKED (ToS: 1 subscription = 1 person/user; the scoped-credential epic must not mint credentials backed by them). Research candidates, out of scope until a ticket exists: BYOK (user-supplied keys / local harness) and federation (federated instance runs its own harness, sharing DB/chat with the head/master instance). Recorded in `authz.ts` + `docs/spec/integrations-architecture.md`.
+- §5 Q7 protocol SDK deps: ADOPTED for MCP (`@modelcontextprotocol/sdk` in-tree); ACP SDK pending the ACP slice.
 - §B8 docs wiring from the op registry: proposal; single-source requirement stands.
 
 
