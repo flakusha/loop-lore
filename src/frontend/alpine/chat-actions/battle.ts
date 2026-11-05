@@ -173,7 +173,9 @@ function isRollShape(value: unknown,): value is BattleRollView {
     typeof v.natural === "number" &&
     typeof v.modifier === "number" &&
     typeof v.total === "number" &&
-    typeof v.dc === "number"
+    typeof v.dc === "number" &&
+    typeof v.hit === "boolean" &&
+    typeof v.criticalMiss === "boolean"
   );
 }
 

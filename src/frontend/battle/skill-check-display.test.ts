@@ -64,6 +64,23 @@ describe("renderSkillCheckChip", () => {
     expect(chip.dice.className,).toBe("battle-dice",);
     expect(chip.dice.textContent,).toBe("9",);
   });
+
+  it("keeps the delivered verdict over the total-vs-DC comparison", () => {
+    // A natural 20 hits whatever the DC is; a natural 1 misses whatever the
+    // total is. The backend already resolved both.
+    const hit = renderSkillCheckChip({ roll: 20, modifier: 2, total: 22, dc: 25, hit: true, critical: "hit", },);
+    expect(hit.root.children[2]!.textContent,).toBe("success",);
+    const miss = renderSkillCheckChip({ roll: 1, modifier: 14, total: 15, dc: 15, hit: false, critical: "fail", },);
+    expect(miss.root.children[2]!.textContent,).toBe("failure",);
+    expect(miss.root.children[2]!.className,).toContain("battle-critical-fail",);
+  });
+
+  it("derives the outcome from the DC when no verdict is delivered", () => {
+    const hit = renderSkillCheckChip({ roll: 14, modifier: 3, total: 17, dc: 15, critical: null, },);
+    expect(hit.root.children[2]!.textContent,).toBe("success",);
+    const miss = renderSkillCheckChip({ roll: 4, modifier: 1, total: 5, dc: 15, critical: null, },);
+    expect(miss.root.children[2]!.textContent,).toBe("failure",);
+  });
 });
 
 describe("setDiceRolling", () => {
