@@ -6,9 +6,9 @@
 export * from "./audit";
 export * from "./authz";
 export { type FacadeRegistryDeps, getFacadeRegistry, resetFacadeRegistry, } from "./instance";
+export { McpTransportBridge, } from "./mcp/bridge";
 export { createMcpRoutes, } from "./mcp/routes";
-export type { McpCallToolResult, McpTool, } from "./mcp/server";
-export { createMcpFacadeServer, MCP_PROTOCOL_VERSION, MCP_SERVER_NAME, } from "./mcp/server";
+export { buildMcpServer, MCP_SERVER_NAME, type McpServerDeps, } from "./mcp/server";
 export { type ChatFacadeDeps, FacadeListMessagesBody, FacadeSendMessageBody, registerChatOps, } from "./ops/chat";
 export { type GenerationFacadeDeps, registerGenerationOps, } from "./ops/generation";
 export * from "./rate-limit";

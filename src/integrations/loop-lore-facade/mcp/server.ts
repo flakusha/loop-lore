@@ -1,160 +1,104 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/integrations/loop-lore-facade/mcp/server.ts — MCP server semantics
-// over the facade op registry (epic TASK: tools/list + tools/call).
+// src/integrations/loop-lore-facade/mcp/server.ts - the MCP PROTOCOL LAYER
+// (@modelcontextprotocol/sdk `Server`) over the facade op registry
+// (TASK-MCP-BRIDGE: tools/list + tools/call).
 //
-// SINGLE SOURCE OF TRUTH: tools come from registry.manifest() (+ resolve()
+// SINGLE SOURCE OF TRUTH: tools derive from registry.manifest() (+ resolve()
 // for bodySchema); execution is runFacadeOp with a FacadeContext the HTTP
-// layer builds from the AUTHENTICATED principal — never from the RPC body.
+// layer builds from the AUTHENTICATED principal - never from the RPC body.
+// The SDK owns the wire protocol: version negotiation (a requested revision
+// the SDK does not support - e.g. one newer than its LATEST - answers the
+// SDK's latest per the spec's downgrade rule), initialize/ping handling, and
+// the JSON-RPC envelope/error codes (handler-thrown McpError.code propagates
+// into the error envelope).
 //
-// HAND-ROLLED (no @modelcontextprotocol/sdk dependency — flagged): protocol
-// revision pinned to the epic's 2026-07-28 pin. STATELESS by slice decision:
-// no session ids, no session storage — the pinned spec removed protocol-level
-// sessions, so an initialize per request (or per client run) is tolerated.
+// STATELESS by slice decision: a fresh Server graph is built per payload and
+// no session ids exist - initialize-per-request is tolerated.
 
+import { Server, } from "@modelcontextprotocol/sdk/server/index.js";
+import {
+  CallToolRequestSchema,
+  ErrorCode,
+  ListToolsRequestSchema,
+  McpError,
+} from "@modelcontextprotocol/sdk/types.js";
 import { safeJsonStringify, } from "../../../utils";
 import { type FacadeRegistry, runFacadeOp, } from "../registry";
 import type { FacadeContext, } from "../types";
-import { RPC_INVALID_PARAMS, RpcError, } from "./jsonrpc";
-
-/** Protocol revision pinned by the epic (Streamable HTTP, sessions removed). */
-export const MCP_PROTOCOL_VERSION = "2026-07-28";
 
 export const MCP_SERVER_NAME = "loop-lore-facade";
 
-/** MCP tool content block (text only — this slice streams JSON as text). */
-export interface McpTextContent {
-  type: "text";
-  text: string;
+/** Deps bound per HTTP payload (the facade context carries the principal). */
+export interface McpServerDeps {
+  registry: FacadeRegistry;
+  version: string;
+  ctx: FacadeContext;
 }
 
-/** MCP tools/call result. */
-export interface McpCallToolResult {
-  content: McpTextContent[];
-  structuredContent?: Record<string, unknown>;
-  isError?: boolean;
-}
-
-/** MCP tools/list tool descriptor. `inputSchema` is a JSON Schema object —
- * TypeBox TSchema at runtime — typed honestly as unknown (serialization
- * boundary data, never queried structurally by this module). */
-export interface McpTool {
-  name: string;
-  description: string;
-  inputSchema: unknown;
-}
-
-/** MCP initialize result. */
-export interface McpInitializeResult {
-  protocolVersion: string;
-  capabilities: { tools: { listChanged: false } };
-  serverInfo: { name: string; version: string };
-}
-
-export interface McpFacadeServer {
-  initialize(params: unknown,): McpInitializeResult;
-  toolsList(): { tools: McpTool[] };
-  toolsCall(params: unknown, ctx: FacadeContext,): Promise<McpCallToolResult>;
-  ping(): Record<string, never>;
-}
-
-function asParamsObject(params: unknown,): Record<string, unknown> {
-  return typeof params === "object" && params !== null && !Array.isArray(params,)
-    ? params as Record<string, unknown>
-    : {};
-}
-
-function textContent(value: unknown,): McpTextContent {
+function textContent(value: unknown,): { type: "text"; text: string } {
   const serialized = safeJsonStringify(value ?? null,);
   return { type: "text", text: serialized.ok ? serialized.value : "null", };
 }
 
 /**
- * Build the MCP server over a facade registry.
- * @param deps - the op registry (single source of truth) + app version for
- *   serverInfo (APP_VERSION from src/config/constants)
- * @returns the protocol-method implementations
+ * Build the SDK MCP server over a facade registry + per-payload context.
+ * @param deps - registry (single source of truth), app version for
+ *   serverInfo, and the authenticated facade context for this payload
+ * @returns a connect-ready SDK Server instance
  */
-export function createMcpFacadeServer(deps: {
-  registry: FacadeRegistry;
-  version: string;
-},): McpFacadeServer {
-  const { registry, version, } = deps;
+export function buildMcpServer(deps: McpServerDeps,): Server {
+  const { registry, ctx, } = deps;
 
-  return {
-    initialize(params,): McpInitializeResult {
-      const requested = asParamsObject(params,).protocolVersion;
-      // Negotiation: echo the client's requested revision when it supplies
-      // one, else answer with our pin.
-      const protocolVersion = typeof requested === "string" && requested.length > 0
-        ? requested
-        : MCP_PROTOCOL_VERSION;
+  const server = new Server(
+    { name: MCP_SERVER_NAME, version: deps.version, },
+    { capabilities: { tools: { listChanged: false, }, }, },
+  );
+
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({
+    tools: registry.manifest().map((entry,) => {
+      const schema = registry.resolve(entry.name,)?.bodySchema;
 
       return {
-        protocolVersion,
-        capabilities: { tools: { listChanged: false, }, },
-        serverInfo: { name: MCP_SERVER_NAME, version, },
+        name: entry.name,
+        description: schema === undefined
+          // Permissive-schema note: ops without a declared body schema accept
+          // any JSON object (each handler validates authoritatively).
+          ? `${entry.description} (input: any JSON object)`
+          : entry.description,
+        inputSchema: schema ?? { type: "object", additionalProperties: true, },
       };
-    },
+    },),
+  }),);
 
-    toolsList(): { tools: McpTool[] } {
-      const tools = registry.manifest().map((entry,) => {
-        const schema = registry.resolve(entry.name,)?.bodySchema as
-          | Record<string, unknown>
-          | undefined;
+  server.setRequestHandler(CallToolRequestSchema, async (request,) => {
+    const { name, arguments: args = {}, } = request.params;
 
-        return {
-          name: entry.name,
-          description: schema === undefined
-            // Permissive-schema note: ops without a declared body schema
-            // accept any JSON object (each handler validates authoritatively).
-            ? `${entry.description} (input: any JSON object)`
-            : entry.description,
-          inputSchema: schema ?? { type: "object", additionalProperties: true, },
-        };
-      },);
+    if (registry.resolve(name,) === undefined) {
+      throw new McpError(ErrorCode.InvalidParams, `unknown tool "${name}"`,);
+    }
 
-      return { tools, };
-    },
+    const result = await runFacadeOp(registry, ctx, name, args,);
 
-    async toolsCall(params, ctx,): Promise<McpCallToolResult> {
-      const p = asParamsObject(params,);
-      const name = typeof p.name === "string" && p.name.length > 0 ? p.name : null;
-      if (name === null) {
-        throw new RpcError(RPC_INVALID_PARAMS, "tools/call requires a string tool name",);
-      }
+    if (!result.ok) {
+      return { content: [textContent(result.json,),], isError: true, };
+    }
 
-      const op = registry.resolve(name,);
-      if (!op) {
-        throw new RpcError(RPC_INVALID_PARAMS, `unknown tool "${name}"`,);
-      }
+    // structuredContent is object-only per spec; arrays/primitives ride the
+    // text content alone.
+    const structured = typeof result.json === "object" && result.json !== null
+      ? result.json
+      : undefined;
 
-      const rawArgs = p.arguments;
-      const args = typeof rawArgs === "object" && rawArgs !== null && !Array.isArray(rawArgs,)
-        ? rawArgs
-        : {};
+    return {
+      content: [textContent(result.json,),],
+      ...(structured === undefined ? {} : { structuredContent: structured, }),
+    };
+  },);
 
-      const result = await runFacadeOp(registry, ctx, name, args,);
+  // initialize + ping are served by the SDK itself (negotiation + empty
+  // result); no handler registration needed.
 
-      if (!result.ok) {
-        return { content: [textContent(result.json,),], isError: true, };
-      }
-
-      // structuredContent is object-only per spec; arrays/primitives ride the
-      // text content alone.
-      const structured = typeof result.json === "object" && result.json !== null
-        ? result.json as Record<string, unknown>
-        : undefined;
-
-      return {
-        content: [textContent(result.json,),],
-        ...(structured === undefined ? {} : { structuredContent: structured, }),
-      };
-    },
-
-    ping(): Record<string, never> {
-      return {};
-    },
-  };
+  return server;
 }
