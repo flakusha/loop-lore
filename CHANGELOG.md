@@ -75,9 +75,11 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 - **In-repo `scripts/worktree/` CLI deleted in favour of the pinned `giwt`** — the fork duplicated `giwt`'s worktree surface; `giwt` is now the only entry point and 99 tracked files are gone (`scripts/worktree/**`, `tests/worktree-flow.test.ts`, `scripts/gpg-unlock.mjs`, `scripts/lib/{colors,assertions,src-refs}.ts`, and the `scripts/plan/*` helpers that `giwt plan {metadata,report,validate,status,gen-docs,code-map}` now cover). Five scripts are **kept** because `giwt` does not yet replace them, each carrying an inline note naming the upstream ticket that supersedes it: `scripts/check-spdx.ts` (giwt's SPDX gate walks only `.plan/` markdown and only the `SPDX-License-Identifier` token, while this repo's `REUSE.toml` requires both tokens across `src/**`, `data/**`, `scripts/**`, `tests/**`, `docs/**`, `.plan/**` and the root config files — `FEAT-repo-wide-spdx-header-check-…`), `scripts/check-md-links.ts` (`giwt plan check-links --fix` does not exist — `FEAT-plan-check-links-fix-to-auto-repair-…`), `scripts/plan/normalize-statuses.ts` (`giwt plan normalize-statuses` does not exist — `FEAT-plan-normalize-statuses-subcommand-…`), `scripts/check-file-size.ts` (giwt's scans only `src/**/*.ts` and exempts nothing but `*.test.*`, so it reports 7 false positives against the generated DB-type modules and `src/db/migrations/`), and `scripts/docs/sync-plan.mjs` (a site-shaped `.plan/` → `docs/plan-gen/` generator; giwt ships the generic `docs sync-agents --dir` primitive, but baking one consumer's layout into the shared CLI is the consumer's call). `scripts/check/parallel/gpg.mjs` imports giwt's gpg helpers by deep path and re-implements the two unexported ones inline until `FEAT-export-a-reusable-cold-cache-gpg-warm-helper-…` lands. **Coverage loss:** `tests/worktree-flow.test.ts` (47 scenarios) went with the CLI; `bun test` excludes `node_modules`, so `giwt finalize` has no coverage in this repo until that suite is wired in.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Fixed
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 - **Help-overlay focus trap hardened (WIRE-frontend-keyboard-help-overlay)** — the keyboard shortcut help overlay's trap in `src/frontend/alpine/keynav-help.ts` now closes the overlay on Escape through the trap itself instead of relying only on the Alpine `x-on:keydown.escape.window` attribute, and the initial focus falls back to the overlay container (given `tabindex="-1"`) when the overlay has no focusable control instead of leaving the focus on `<body>`. Closing restores the focus to the element focused before the overlay opened and, when that element is gone (an htmx swap removed it) or was the document body, falls back to the help trigger and then to the app root, so a keyboard user can neither Tab out of the overlay nor lose their place. The trap stays plain DOM code: `@alpinejs/focus` is not a dependency of this repo, so the `x-trap` of the original design is not used.
 - **Password hashing pins its algorithm** — `Bun.password.hash` was called with no algorithm argument in `src/db/seed.ts`, `src/routes/auth/register.ts` and `src/seeding/users.ts`, so the algorithm of every stored hash depended on Bun's runtime default. The new `src/auth/password.ts` helper pins argon2id (memory cost 65536, time cost 2) for hashing, and the login route verifies through the same helper. Those are exactly the parameters Bun's default already used, so hashes written before the pin keep verifying and newly written hashes are byte-for-byte unchanged; a hash written with another algorithm (bcrypt rows an older install carries) still verifies through Bun's inference — the pin applies to hashing, not to verifying what already exists.
 
@@ -156,6 +158,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 - **Dead `src/actors/` layer** — deleted the directory: 11 files with zero importers, surfaced by the widened knip scan, including a third parallel actor-items implementation (`src/actors/actor-items.ts`) alongside `src/services/actor-items.ts` and `src/services/actor-items/`.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ## [0.1.0] - 2026-08-15
 
 First release. Clean-room reimplementation of SillyTavern-style RPG chat.
@@ -174,21 +177,25 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Plumbing** — Kysely + `bun:sqlite` (PG dialect-swappable), encrypted DB backup/recovery, plugin system, structured logging, telemetry, auxiliary LLM pipeline, wiring gate (`scripts/check-wiring.ts`), e2e browser suite (19 flows).
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Changed
 
 - Lint debt resolved across `src` (156 files), eslint config + example configs shipped.
 - In-range dependency bumps (kysely, smol-toml, js-yaml, alpine, eslint, unicorn, typescript-eslint, etc.).
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Fixed
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
 - Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Removed
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Security
 
 - Actor-scoped access control on RPG routes (`requireActorAccess`); pre-push hook blocks agent pushes (human-attested release pushes).
@@ -201,6 +208,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Fixed
 
 - **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
@@ -209,6 +217,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Fixed
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
@@ -218,4 +227,4 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Image-edit input images reach ComfyUI as uploaded bytes** — the ComfyUI image-edit provider now uploads every `image`-typed parameter (`input_image`, `mask_image`, `control_image`) before the workflow is built and substitutes the name ComfyUI stored the bytes under, so a `LoadImage` node no longer names a file the server never uploaded. The parameter carries the ASSET ID of an image the caller owns: the provider checks the owner, decrypts with the chat key when the asset is encrypted, and reads the bytes through the asset row — a path on the server is never opened. The run body is validated against one shared TypeBox schema (`src/validation/schemas/image-edit.ts`): the route declares it as its `body:`, so the server validates every run body before the handler runs — and `handleRun` applies the same validator, which covers the chain-run executor that calls the handler directly.
 - **Coverage run executes the bundled plugin engines' own tests** — the plugin engines under `plugins/` ship their own `*.test.ts`, but the coverage run's test set was `tests/e2e/ src/`, so those files never ran and the `plugins` module was measured at a fraction of what the tests actually cover. `test:coverage` now includes `plugins/`, and the parallel runner's coverage gate builds the same test set (it walks `plugins/` alongside `src/`, so the gate and the manual script agree). The plugin engines are in-process unit tests, so they belong inside the coverage invocation rather than in the separate scripts pass.
 - **Image-edit input images reach ComfyUI as uploaded bytes** — the ComfyUI image-edit provider now uploads every `image`-typed parameter (`input_image`, `mask_image`, `control_image`) before the workflow is built and substitutes the name ComfyUI stored the bytes under, so a `LoadImage` node no longer names a file the server never uploaded. The parameter carries the ASSET ID of an image the caller owns: the provider checks the owner, decrypts with the chat key when the asset is encrypted, and reads the bytes through the asset row — a path on the server is never opened. The run body is validated against one shared TypeBox schema (`src/validation/schemas/image-edit.ts`): the route declares it as its `body:` — so the served OpenAPI document carries the contract — and `handleRun` applies the same validator, which covers the chain-run executor that calls the handler directly.
-// hint: Structural change (rename/retype). Check callers of this entity.
+  // hint: Structural change (rename/retype). Check callers of this entity.
