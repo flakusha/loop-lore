@@ -12,4 +12,4 @@ generation:
 # deepl: { name: "deepl", label: "DeepL", authKey: "your-key:fx", freeTier: true, model: "en-us", timeout: 30000, retries: 3, allowUserApiKey: true }
 # libretranslate: { name: "libretranslate", label: "LibreTranslate", baseUrl: "https://libretranslate.example.com", apiKey: "optional", model: "en", timeout: 30000, retries: 3, allowUserApiKey: false }
 # googleTranslate: { name: "google-translate", label: "Google Translate", apiKey: "AIza...", model: "en", timeout: 30000, retries: 3, allowUserApiKey: true }
-# sd: [] # stable diffusion providers
+# sd: [] # stable diffusion providers; allowUserApiKey (default true) gates per-user BYOK keys
