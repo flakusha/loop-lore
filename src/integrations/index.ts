@@ -48,6 +48,26 @@ export {
   type RateLimitRule,
 } from "./health";
 export {
+  authorizeFacadeOp,
+  type ChatFacadeDeps,
+  consumeFacadeBudget,
+  createFacadeRegistry,
+  type FacadeBudget,
+  type FacadeContext,
+  facadeContextFromRequestContext,
+  type FacadeOp,
+  type FacadeOpDescriptor,
+  type FacadePrincipal,
+  type FacadeRegisterResult,
+  type FacadeRegistry,
+  type FacadeResult,
+  type FacadeScope,
+  type GenerationFacadeDeps,
+  registerChatOps,
+  registerGenerationOps,
+  runFacadeOp,
+} from "./loop-lore-facade";
+export {
   type BridgeRegistry,
   createBridgeRegistry,
   type NegotiateResult,
