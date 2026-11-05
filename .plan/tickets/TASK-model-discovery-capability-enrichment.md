@@ -3,7 +3,7 @@
 
 # TASK: model discovery capability enrichment
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
@@ -22,3 +22,5 @@ Discover models from harness session/new configOptions; merge with static capabi
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-05 registry-driven close: git issue a78f091 (registry tip: 683a98518 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-MODEL-DISCOVERY-CAPABILITY-)
