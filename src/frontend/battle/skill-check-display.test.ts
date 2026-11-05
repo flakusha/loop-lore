@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { installBattleDom, } from "../tests/battle-fake-dom";
-import { renderSkillCheckResult, setDiceRolling, } from "./skill-check-display";
+import { renderSkillCheckChip, renderSkillCheckResult, setDiceRolling, } from "./skill-check-display";
 
 let restoreDom: () => void;
 
@@ -54,6 +54,15 @@ describe("renderSkillCheckResult", () => {
     const el = renderSkillCheckResult({ roll: 14, modifier: 3, total: 17, dc: 15, critical: null, },);
     expect(el.children[1]!.textContent,).toBe("battle.rollResult",);
     expect(el.children[2]!.textContent,).toBe("battle.rollSuccess",);
+  });
+});
+
+describe("renderSkillCheckChip", () => {
+  it("exposes the dice face the animation tumbles", () => {
+    const chip = renderSkillCheckChip({ roll: 9, modifier: 1, total: 10, dc: 10, critical: null, },);
+    expect(chip.root.className,).toBe("battle-skill-check",);
+    expect(chip.dice.className,).toBe("battle-dice",);
+    expect(chip.dice.textContent,).toBe("9",);
   });
 });
 
