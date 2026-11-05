@@ -1,6 +1,6 @@
 import { afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
-import { nsfwPanelState, } from "./state";
+import { nsfwPanelState, resolveCharacterId, } from "./state";
 
 // ── Mock ../htmx (must precede importing ./state) ──
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
@@ -211,5 +211,22 @@ describeOrSkip("loadNsfwPanel", () => {
 
     expect((ctx._nsfwIntimacy as { score: number }[])[0]?.score,).toBe(99,);
     expect((ctx._nsfwBody as { stamina: number }).stamina,).toBe(99,);
+  });
+},);
+
+describeOrSkip("resolveCharacterId", () => {
+  test("returns the chat character id", async () => {
+    routeResponses({ characterId: "actor-1", },);
+    await expect(resolveCharacterId("chat-1",),).resolves.toBe("actor-1",);
+  });
+
+  test("returns null when the chat has no character", async () => {
+    routeResponses({ characterId: null, },);
+    await expect(resolveCharacterId("chat-1",),).resolves.toBeNull();
+  });
+
+  test("returns null when the chat request fails", async () => {
+    routeResponses({ chatStatus: 500, },);
+    await expect(resolveCharacterId("chat-1",),).resolves.toBeNull();
   });
 },);
