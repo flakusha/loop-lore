@@ -49,11 +49,11 @@ export {
 } from "./health";
 export {
   authorizeFacadeOp,
+  buildMcpServer,
   type ChatFacadeDeps,
   consumeFacadeBudget,
   createFacadeRegistry,
   createFacadeRoutes,
-  createMcpFacadeServer,
   createMcpRoutes,
   type FacadeBudget,
   type FacadeContext,
