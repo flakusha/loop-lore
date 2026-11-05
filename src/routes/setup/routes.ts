@@ -28,10 +28,10 @@ const SetupStateResponse = t.Object({
 
 /**
  * @param opts - Database handle (optional) and app config.
- * @param prefix - route prefix; defaults to the unversioned surface `/api`.
+ * @param prefix - route prefix; defaults to the versioned surface `/api/v1`.
  * @returns {Elysia}
  */
-export function setupRoutes(opts: { database?: Kysely<DB>; config: Config }, prefix = "/api",): Elysia {
+export function setupRoutes(opts: { database?: Kysely<DB>; config: Config }, prefix = "/api/v1",): Elysia {
   return new Elysia({ name: "setup-state", },)
     .get(`${prefix}/setup/state`, async (ctx: any,) => {
       const userId = requirePermissionUserId(ctx, "admin.system",);
