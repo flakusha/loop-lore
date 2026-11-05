@@ -5,8 +5,10 @@
 
 export * from "./audit";
 export * from "./authz";
+export { type FacadeRegistryDeps, getFacadeRegistry, resetFacadeRegistry, } from "./instance";
 export { type ChatFacadeDeps, FacadeListMessagesBody, FacadeSendMessageBody, registerChatOps, } from "./ops/chat";
 export { type GenerationFacadeDeps, registerGenerationOps, } from "./ops/generation";
 export * from "./rate-limit";
 export * from "./registry";
+export { createFacadeRoutes, } from "./routes";
 export * from "./types";
