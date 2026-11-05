@@ -235,8 +235,9 @@ interface PlayerProviderConfig {
       format
 - [ ] BYOK settings UI (add / list / revoke) -- does not exist
 - [ ] Write the missing `docs/spec/byok-api-keys.md`
-- [ ] Decide whether BYOK should cover image providers; it currently does not
-      (see *Known Gap* below)
+- [x] BYOK covers image providers (closed 2026-11-05: CRUD accepts configured
+      `sd[]` names, the resolver honors the per-instance opt-out, fail-closed
+      decrypt is regression-tested -- see the Known Gap section, now closed)
 
 ## Files
 
@@ -261,14 +262,16 @@ interface PlayerProviderConfig {
 `src/generation/fallback.ts`, `src/frontend/settings/api-keys.ts`,
 `docs/spec/byok-api-keys.md`.
 
-## Known Gap: BYOK does not cover image providers
+## Known Gap: BYOK does not cover image providers — CLOSED 2026-11-05
 
 > **Corrected 2026-10-18 during self-review.** An earlier draft of this section
 > claimed "remote/hosted image generation does not exist". **That was wrong.**
 > It was derived from the audit's reading of `generation.providers`, which
 > describes the *LLM* provider map only. The image surface is a separate array,
-> `generation.providers.sd[]`, and it has a fully implemented **remote** backend.
-> The accurate gap is narrower: BYOK resolves credentials for chat providers only.
+> `generation.providers.sd[]`, and it has a fully implemented **remote**
+> backend. The accurate gap was narrower: BYOK resolved credentials for chat
+> providers only. **The gap is now closed** — see the closure notes below; the
+> surface description is kept for the record.
 
 **Remote image generation does exist.** Image generation is configured as
 `generation.providers.sd: ImageProviderConfig[]`
@@ -309,17 +312,55 @@ only `openaiCompatible` -- `meta.ts` is descriptive metadata, not a gate, and
   checks. The image credential is the static `ImageProviderConfig.apiKey` read
   from the server's own config file.
 
-So the user-visible statement is: **a BYOK-only user gets remote chat inference
-but cannot supply an image-provider credential through BYOK.** Remote image
-generation itself works -- it is operator-configured, not user-supplied. That is
-a credential-coverage gap, not a missing feature.
+**The gap, and its closure (2026-11-05).** At audit time the credential
+coverage was chat-only:
 
-Out of scope for this epic: widening the BYOK provider allowlist beyond
-`openaiCompatible`; per-user image-provider credentials; and hosted ComfyUI
-offerings (ComfyUI is local by definition -- `src/generation/providers/comfyui.ts`
-is an HTTP client over a `baseUrl` (`:82-106`, `:116`, `:151`, `:244`, `:257`,
-`:297`) that never spawns a process). Provisioning for a *local* ComfyUI is
-`epic-comfyui-lifecycle.md`'s job.
+- BYOK resolution lived only on the chat path: `resolveProvider` reads
+  `user_api_keys` for the resolved LLM provider (`registry.ts:123-135`).
+- `POST /api/user-api-keys` validated the provider name against chat/translate
+  instances only (`listProviderInstances`), so a user **could not even store**
+  a key for an image provider -- see
+  `BUG-byok-store-rejects-non-openaicompatible-provider-names.md`.
+- `src/generation/image-gen-route.ts` never consulted `byoKey` or
+  `user_api_keys`; the image credential was the static
+  `ImageProviderConfig.apiKey` from the server's own config file.
+
+**Closure, as shipped (all verified against source):**
+
+- The image-gen route already threads
+  `userApiKeyResolver({ userId, config, db })` into
+  `generateImagesWithFailover` (image-gen-route.ts), and the failover engine
+  resolves a BYO key per provider NAME (a key stored for backend A is never
+  handed to backend B; the caller-supplied key is spent on the first candidate
+  only).
+- `POST /api/user-api-keys` now accepts configured image provider names:
+  validation unions the chat instances with
+  `listSdProviderInstances(config)` (`generation.providers.sd[]`).
+- `ImageProviderConfig.allowUserApiKey?: boolean` (optional, default-allow —
+  only an explicit `false` denies) is honored by the resolver for image
+  providers, mirroring the chat contract; config examples document it.
+- **Fail-closed:** a stored image key that fails to decrypt throws
+  `ByoKeyDecryptError` and aborts the request before any vendor call — the
+  operator key is never silently billed. Regression-tested at both the
+  resolver (`user-api-key.test.ts`) and the failover engine
+  (`image-engine/index.test.ts`) levels.
+- No schema migration: rows are keyed `(user_id, provider_name)` exactly as
+  for chat providers; image provider names are just new values of the same
+  UNIQUE pair.
+
+Still a gap — **video**: video generation has no implemented provider surface
+in this repo (no config array, no route; the `video` command and template
+apply endpoints answer "not implemented"). Video BYOK rows (Kling partner
+nodes, Veo via Gemini) remain owned by `epic-video-generation.md` (Phase C,
+consent-gated) and will hang off that epic's provider surface when it lands.
+The image-EDIT path (`image-edit/providers/sd-server-provider`) still reads
+only the operator's static `cfg.apiKey`; threading the BYO resolver through
+it is follow-up work, deliberately out of this slice.
+
+So the user-visible statement today: **a BYOK user can store a key for a
+configured remote image provider and their key is preferred at generation
+time, with fail-closed decrypt semantics; video remains operator/local-only
+until epic-video-generation lands.**
 
 ## Linked Tasks
 

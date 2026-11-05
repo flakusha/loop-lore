@@ -82,6 +82,8 @@ export interface ImageProviderConfig {
   apiFamily: ImageApiFamily;
   /** Optional API key */
   apiKey?: string;
+  /** Allow user API key override for this provider (default true) */
+  allowUserApiKey?: boolean;
   /** Provider purpose — determines which use-case picks this provider */
   purpose?: "generate" | "edit" | "both";
   /** Default generation parameters */

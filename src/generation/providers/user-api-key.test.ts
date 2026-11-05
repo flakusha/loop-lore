@@ -12,7 +12,7 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { loadConfig, } from "../../config/load";
-import type { Config, } from "../../config/schema";
+import type { Config, ImageProviderConfig, } from "../../config/schema";
 import { encryptValue, } from "../../crypto";
 import type { DB, } from "../../db/schema";
 import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
@@ -23,6 +23,10 @@ const USER_ID = "uak-user";
 const ALLOWED = "uak-allowed";
 const BLOCKED = "uak-blocked";
 const UNSTORED = "uak-unstored";
+// Image providers (generation.providers.sd) — the BYOK image coverage.
+const SD_ALLOWED = "sd-remote";
+const SD_BLOCKED = "sd-pinned";
+const SD_ABSENT = "sd-unstored";
 
 function instance(name: string, allowUserApiKey: boolean,) {
   return {
@@ -37,6 +41,19 @@ function instance(name: string, allowUserApiKey: boolean,) {
   };
 }
 
+function sdInstance(name: string, allowUserApiKey?: boolean,): ImageProviderConfig {
+  return {
+    name,
+    label: name,
+    baseUrl: `http://${name}.invalid`,
+    apiFamily: "openai",
+    ...(allowUserApiKey === undefined ? {} : { allowUserApiKey, }),
+    defaults: { width: 64, height: 64, steps: 1, cfgScale: 1, sampler: "euler", },
+    timeout: 1000,
+    generationTimeout: 1000,
+  };
+}
+
 function config(): Config {
   const cfg: Config = {
     ...loadConfig(),
@@ -45,7 +62,7 @@ function config(): Config {
         openaiCompatible: [instance(ALLOWED, true,), instance(BLOCKED, false,),],
         anthropic: undefined,
         ollamaNative: undefined,
-        sd: undefined,
+        sd: [sdInstance(SD_ALLOWED,), sdInstance(SD_BLOCKED, false,),],
       },
       defaultProvider: ALLOWED,
       defaultModels: {},
@@ -72,7 +89,7 @@ beforeAll(async () => {
     settings: "{}",
   },).execute();
 
-  for (const provider of [ALLOWED, BLOCKED,]) {
+  for (const provider of [ALLOWED, BLOCKED, SD_ALLOWED,]) {
     await testDb.insertInto("user_api_keys",).values({
       id: crypto.randomUUID(),
       user_id: USER_ID,
@@ -135,5 +152,41 @@ describe("userApiKeyResolver", () => {
     expect(err,).toBeInstanceOf(ByoKeyDecryptError,);
     expect((err as Error).message,).toContain(UNSTORED,);
     expect((err as Error).message,).not.toContain("sk-",);
+  });
+
+  // ── Image providers (generation.providers.sd) — BYOK image coverage ──
+
+  test("resolves a stored key for an image provider", async () => {
+    const resolve = userApiKeyResolver({ userId: USER_ID, config: config(), db: testDb, },);
+    expect(await resolve(SD_ALLOWED,),).toBe(`sk-${SD_ALLOWED}`,);
+  });
+
+  test("an image provider without the flag defaults to user-key-allowed", async () => {
+    // sdInstance(SD_ALLOWED,) omits allowUserApiKey — the historical
+    // default-allow must hold for image providers too.
+    const resolve = userApiKeyResolver({ userId: USER_ID, config: config(), db: testDb, },);
+    expect(await resolve(SD_ALLOWED,),).toBeDefined();
+  });
+
+  test("returns undefined for an image provider with allowUserApiKey: false", async () => {
+    const resolve = userApiKeyResolver({ userId: USER_ID, config: config(), db: testDb, },);
+    expect(await resolve(SD_BLOCKED,),).toBeUndefined();
+  });
+
+  test("returns undefined for an image provider with no stored key — operator key path", async () => {
+    const resolve = userApiKeyResolver({ userId: USER_ID, config: config(), db: testDb, },);
+    expect(await resolve(SD_ABSENT,),).toBeUndefined();
+  });
+
+  test("a corrupt IMAGE-provider key fails closed — never the operator key", async () => {
+    await testDb.insertInto("user_api_keys",).values({
+      id: crypto.randomUUID(),
+      user_id: USER_ID,
+      provider_name: SD_ABSENT,
+      api_key_encrypted: "corrupt-image-key-ciphertext",
+    },).execute();
+
+    const resolve = userApiKeyResolver({ userId: USER_ID, config: config(), db: testDb, },);
+    await expect(resolve(SD_ABSENT,),).rejects.toThrow(ByoKeyDecryptError,);
   });
 });

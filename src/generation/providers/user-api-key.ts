@@ -15,7 +15,10 @@ import { decryptValue, } from "../../crypto";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { findProviderInstance, } from "./provider-instances";
+import {
+  findProviderInstance,
+  findSdProviderInstance,
+} from "./provider-instances";
 import type { UserApiKeyResolver, } from "./types";
 
 /**
@@ -43,14 +46,21 @@ export class ByoKeyDecryptError extends Error {
 
 /**
  * Whether a stored user key may be used against this provider instance.
- * Only an explicit `false` denies: an instance absent from config (partial
+ * Only an explicit `false` denies: a provider absent from config (partial
  * configs in tests, `callAux` forwarding a stub) keeps the historical default.
+ * Chat/translation instances are checked first; an IMAGE provider
+ * (`generation.providers.sd`) is consulted when no chat instance matches, so
+ * remote image backends honor their own `allowUserApiKey` opt-out
+ * (BYOK image coverage — see epic-byok-api-keys.md).
  * @param config
  * @param providerName
  * @returns {boolean}
  */
 function userKeyAllowed(config: Config, providerName: string,): boolean {
-  return findProviderInstance(config, providerName,)?.allowUserApiKey !== false;
+  const chatInstance = findProviderInstance(config, providerName,);
+  if (chatInstance) { return chatInstance.allowUserApiKey !== false; }
+
+  return findSdProviderInstance(config, providerName,)?.allowUserApiKey !== false;
 }
 
 /**
