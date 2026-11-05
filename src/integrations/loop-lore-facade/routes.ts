@@ -23,6 +23,23 @@ import { runFacadeOp, } from "./registry";
 import { facadeContextFromRequestContext, } from "./types";
 
 /**
+ * The Elysia context fields this plugin reads. The composed app populates
+ * them via app-level derives (`elysia-app.ts`: requestIdMiddleware, the
+ * authenticate derive) — those live outside the plugin's type surface, so
+ * the plugin declares the narrowest honest shape it consumes and lets the
+ * optional fields be absent when mounted bare (tests). Only the POST
+ * `:opName` route carries params; the manifest GET has none.
+ */
+interface FacadeRouteCtx {
+  userId?: string | null;
+  userRole?: string | null;
+  sessionId?: string | null;
+  requestId?: string;
+  params?: { opName?: string };
+  body?: unknown;
+}
+
+/**
  * Facade REST surface:
  *  - `POST <prefix>/integrations/:opName` — run one op through the full
  *    facade lifecycle and echo the FacadeResult's status + body;
@@ -39,15 +56,17 @@ export function createFacadeRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "loop-lore-facade-routes", },)
     .post(
       `${prefix}/integrations/:opName`,
-      async (ctx: any,) => {
+      async (ctx: FacadeRouteCtx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
-        const { opName, } = ctx.params as { opName: string };
+        // Route matching guarantees opName for this path; "" resolves to no
+        // op and fails closed at 404.
+        const opName = ctx.params?.opName ?? "";
         const rc = createRequestContext({
           userId,
-          userRole: (ctx.userRole as string | null) ?? null,
-          sessionId: (ctx.sessionId as string | null) ?? null,
+          userRole: ctx.userRole ?? null,
+          sessionId: ctx.sessionId ?? null,
         },);
 
         const facadeCtx = facadeContextFromRequestContext(
@@ -74,7 +93,7 @@ export function createFacadeRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
       { params: t.Object({ opName: t.String({ minLength: 1, },), },), },
     )
-    .get(`${prefix}/integrations/manifest`, (ctx: any,) => {
+    .get(`${prefix}/integrations/manifest`, (ctx: FacadeRouteCtx,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
