@@ -19,6 +19,8 @@ import {
   loadEquipmentSlots,
   parseStatusEffects,
   readAsiError,
+  readServerError,
+  resolveChatActorId,
   slotForEquippedType,
 } from "./rpg-stats-helpers";
 
@@ -93,6 +95,48 @@ describeOrSkip("readAsiError", () => {
     expect(await readAsiError(new Response("", { status: 400, },), "fallback",),).toBe("fallback",);
     expect(await readAsiError(new Response("not json", { status: 400, },), "fallback",),).toBe("fallback",);
     expect(await readAsiError(Response.json({ error: 42, }, { status: 400, },), "fallback",),).toBe("fallback",);
+  });
+},);
+
+describeOrSkip("readServerError", () => {
+  test("reads the server error message", async () => {
+    const res = Response.json({ error: "Duplicate discipline", }, { status: 400, },);
+    expect(await readServerError(res, "fallback",),).toBe("Duplicate discipline",);
+  });
+
+  test("falls back on empty, unparseable, or non-string bodies", async () => {
+    expect(await readServerError(new Response("", { status: 400, },), "fallback",),).toBe("fallback",);
+    expect(await readServerError(new Response("not json", { status: 400, },), "fallback",),).toBe("fallback",);
+    expect(await readServerError(Response.json({ error: 42, }, { status: 400, },), "fallback",),).toBe("fallback",);
+  });
+},);
+
+describeOrSkip("resolveChatActorId", () => {
+  test("returns null without a chat", async () => {
+    expect(await resolveChatActorId(null,),).toBeNull();
+  });
+
+  test("resolves character_id from the chat lookup", async () => {
+    fetchHandler = (url,) =>
+      url === "/api/v1/chats/chat-1"
+        ? Response.json({ character_id: "actor-1", },)
+        : new Response("nope", { status: 404, },);
+
+    expect(await resolveChatActorId("chat-1",),).toBe("actor-1",);
+  });
+
+  test("returns null on non-ok, missing id, or transport failure", async () => {
+    fetchHandler = () => new Response("nope", { status: 404, },);
+    expect(await resolveChatActorId("chat-1",),).toBeNull();
+
+    fetchHandler = () => Response.json({},);
+    expect(await resolveChatActorId("chat-1",),).toBeNull();
+
+    fetchHandler = () => {
+      throw new Error("offline",);
+    };
+
+    expect(await resolveChatActorId("chat-1",),).toBeNull();
   });
 },);
 
