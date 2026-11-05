@@ -36,6 +36,25 @@ export function getCsrfToken(): string {
 }
 
 /**
+ * Send the browser to the login page, keeping the current path as the
+ * redirect target.
+ *
+ * Avoids redirect loops: when the browser is already on the login or the
+ * register page, a 401 (e.g. from a background session check) must not
+ * re-encode ?redirect= and bounce the page back into an infinite chain.
+ * @returns Nothing — it navigates the browser.
+ */
+export function redirectToLogin(): void {
+  const path = location.pathname;
+  if (path === "/views/login" || path === "/views/register") {
+    return;
+  }
+
+  const redirect = encodeURIComponent(location.pathname + location.search,);
+  location.assign(`/views/login?redirect=${redirect}`,);
+}
+
+/**
  * @param url
  * @param options
  * @throws {Error}
@@ -82,16 +101,7 @@ export async function feFetch(
     auth: { csrfToken: csrf || undefined, },
     handle401: true,
     onAuthError: () => {
-      // Avoid redirect loops: if we're already on the login or register page,
-      // a 401 from a background request (e.g. session check) must not re-encode
-      // ?redirect= and bounce us into an infinite chain.
-      const path = location.pathname;
-      if (path === "/views/login" || path === "/views/register") {
-        return;
-      }
-
-      const redirect = encodeURIComponent(location.pathname + location.search,);
-      location.assign(`/views/login?redirect=${redirect}`,);
+      redirectToLogin();
     },
   },);
 

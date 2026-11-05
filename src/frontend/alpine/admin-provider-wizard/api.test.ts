@@ -9,7 +9,7 @@
  * a non-2xx response. The backend answers with `{ error, code, meta }`
  * (src/routes/http-utils/errors.ts) — `error` carries the operator-facing text.
  */
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi, } from "bun:test";
 import { listSetupProviders, putModelRole, saveSetupProvider, } from "./api";
 
 /** A request the client sent. */
@@ -22,6 +22,7 @@ let calls: FetchCall[] = [];
 let handler: (url: string, init: RequestInit,) => Promise<Response> = async () => Response.json({},);
 const originalFetch = globalThis.fetch;
 const originalDocument = globalThis.document;
+const originalLocation = (globalThis as { location?: unknown }).location;
 
 beforeEach(() => {
   calls = [];
@@ -45,6 +46,7 @@ beforeEach(() => {
 afterEach(() => {
   globalThis.fetch = originalFetch;
   (globalThis as { document: unknown }).document = originalDocument;
+  (globalThis as { location?: unknown }).location = originalLocation;
 },);
 
 /** The provider payload the wizard posts. */
@@ -101,5 +103,47 @@ describe("provider wizard api client", () => {
     handler = async () => Response.json({ error: "Forbidden", }, { status: 403, },);
 
     expect(await listSetupProviders(),).toEqual([],);
+  });
+
+  test("a 401 sends the operator to the login page", async () => {
+    const assigns: string[] = [];
+    (globalThis as { location?: unknown }).location = {
+      pathname: "/views/admin",
+      search: "?tab=models",
+      assign: (url: string,) => {
+        assigns.push(url,);
+      },
+    };
+
+    handler = async () => Response.json({ error: "Unauthorized", }, { status: 401, },);
+
+    let caught: unknown;
+    try {
+      await saveSetupProvider(payload,);
+    } catch (err) {
+      caught = err;
+    }
+
+    expect(assigns,).toEqual(["/views/login?redirect=%2Fviews%2Fadmin%3Ftab%3Dmodels",],);
+    expect((caught as Error).message,).toBe("Unauthorized",);
+  });
+
+  test("a hanging request is aborted after the timeout", async () => {
+    vi.useFakeTimers();
+    try {
+      globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit,) => {
+        return new Promise<Response>((_resolve, reject,) => {
+          init?.signal?.addEventListener("abort", () => {
+            reject(new DOMException("Aborted", "AbortError",),);
+          },);
+        },);
+      }) as unknown as typeof fetch;
+
+      const pending = saveSetupProvider(payload,);
+      vi.advanceTimersByTime(30_001,);
+      await expect(pending,).rejects.toThrow("Request timed out after 30000ms",);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
