@@ -147,17 +147,42 @@ describe("battleActionHandlers rendering actions", () => {
       battle: {
         ...validBattle.battle,
         log: [
-          { type: "attack", description: "Alice hits!", roll: { natural: 20, modifier: 3, total: 23, dc: 16, }, },
-          { type: "attack", description: "Bob misses!", roll: { natural: 4, modifier: 1, total: 5, dc: "16", }, },
-          { type: "attack", description: "Cleo hits!", roll: { natural: 11, modifier: 2, total: 13, dc: 14, }, },
+          {
+            type: "attack",
+            description: "Alice hits!",
+            roll: { natural: 20, modifier: 3, total: 23, dc: 16, hit: true, criticalMiss: false, },
+          },
+          {
+            type: "attack",
+            description: "Bob misses!",
+            roll: { natural: 4, modifier: 1, total: 5, dc: "16", hit: false, criticalMiss: false, },
+          },
+          {
+            type: "attack",
+            description: "Cleo hits!",
+            roll: { natural: 11, modifier: 2, total: 13, dc: 14, hit: true, criticalMiss: false, },
+          },
+          {
+            type: "attack",
+            description: "Dan whiffs!",
+            roll: { natural: 1, modifier: 0, total: 1, dc: 14, hit: "false", criticalMiss: true, },
+          },
         ],
       },
     }, "chat-1",);
 
     const view = ctx.rendered[0] as { log: unknown[] };
     expect(view.log,).toEqual([
-      { type: "attack", description: "Alice hits!", roll: { natural: 20, modifier: 3, total: 23, dc: 16, }, },
-      { type: "attack", description: "Cleo hits!", roll: { natural: 11, modifier: 2, total: 13, dc: 14, }, },
+      {
+        type: "attack",
+        description: "Alice hits!",
+        roll: { natural: 20, modifier: 3, total: 23, dc: 16, hit: true, criticalMiss: false, },
+      },
+      {
+        type: "attack",
+        description: "Cleo hits!",
+        roll: { natural: 11, modifier: 2, total: 13, dc: 14, hit: true, criticalMiss: false, },
+      },
     ],);
   });
 

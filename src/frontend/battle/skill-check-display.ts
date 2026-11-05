@@ -8,6 +8,12 @@ export interface SkillCheckResult {
   modifier: number;
   total: number;
   dc: number;
+  /**
+   * The resolved outcome when the backend delivered one (an attack's hit
+   * verdict). Omitted for skill checks, where the outcome is the roll's
+   * comparison against the DC.
+   */
+  hit?: boolean;
   critical?: "hit" | "fail" | null;
 }
 
@@ -49,7 +55,9 @@ export function renderSkillCheckChip(result: SkillCheckResult,): SkillCheckChip 
 
   const outcome = document.createElement("span",);
   outcome.className = "battle-skill-check-outcome";
-  const success = result.total >= result.dc;
+  // The backend's verdict wins when it delivered one; only a plain skill
+  // check (no verdict) is decided by comparing the total with the DC.
+  const success = result.hit ?? result.total >= result.dc;
   outcome.textContent = success ? t("battle.rollSuccess",) : t("battle.rollFailure",);
   if (result.critical === "hit") { outcome.classList.add("battle-critical-hit",); }
   if (result.critical === "fail") { outcome.classList.add("battle-critical-fail",); }

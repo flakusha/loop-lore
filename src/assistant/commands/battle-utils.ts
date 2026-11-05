@@ -187,6 +187,10 @@ export interface SerializedRoll {
   total: number;
   /** Armor class the roll was compared against. */
   dc: number;
+  /** Whether the attack resolved as a hit (the backend's own verdict). */
+  hit: boolean;
+  /** Whether the attack was a natural-1 critical miss (the backend's verdict). */
+  criticalMiss: boolean;
 }
 
 /**
@@ -200,7 +204,7 @@ export interface SerializedRoll {
  */
 function projectRoll(entry: CombatAction, roster: Combatant[],): SerializedRoll | null {
   const attack = entry.attack;
-  if (!attack) { return null; }
+  if (!attack?.roll) { return null; }
   const target = entry.targetId ? roster.find((c,) => c.id === entry.targetId) : undefined;
   if (!target) { return null; }
 
@@ -208,7 +212,17 @@ function projectRoll(entry: CombatAction, roster: Combatant[],): SerializedRoll 
   // A roll the backend cannot read must not reach the panel as a broken chip.
   if (!Number.isFinite(rawTotal,) || !Number.isFinite(modifier,) || !Number.isFinite(total,)) { return null; }
 
-  return { natural: rawTotal, modifier, total, dc: target.ac, };
+  // The hit verdict travels with the roll: the panel must not re-derive it,
+  // because the backend also counts a natural 20 as a hit and a natural 1 as
+  // a miss regardless of the total.
+  return {
+    natural: rawTotal,
+    modifier,
+    total,
+    dc: target.ac,
+    hit: attack.hit === true,
+    criticalMiss: attack.criticalMiss === true,
+  };
 }
 
 /**

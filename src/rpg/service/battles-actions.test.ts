@@ -371,8 +371,91 @@ describe("battle item helpers (pure)", () => {
 
     const view = serializeBattle(battle,);
     // The panel gets the roll math it needs — never the raw dice.
-    expect(view.log[0]?.roll,).toEqual({ natural: 20, modifier: 3, total: 23, dc: 16, },);
+    expect(view.log[0]?.roll,).toEqual({
+      natural: 20,
+      modifier: 3,
+      total: 23,
+      dc: 16,
+      hit: true,
+      criticalMiss: false,
+    },);
+
     expect(JSON.stringify(view.log[0]?.roll,),).not.toContain("dice",);
+  });
+
+  it("serializeBattle carries the backend hit verdict, not a client-side guess", () => {
+    const alice = makeCombatant("alice", "Alice", false, 12,);
+    const orc = makeCombatant("orc", "Orc", true, 15,);
+    // A natural 20 hits whatever the DC is; a natural 1 misses whatever the
+    // total is. Only the backend's own verdict can express that.
+    const crit = {
+      actorId: "alice",
+      type: "attack",
+      targetId: "orc",
+      attack: {
+        roll: {
+          dice: [{ sides: 20, value: 20, exploded: false, },],
+          rawTotal: 20,
+          modifier: 3,
+          total: 23,
+          advantageMode: "normal",
+          natural20: true,
+          natural1: false,
+        },
+        total: 23,
+        hit: true,
+        criticalHit: true,
+        criticalMiss: false,
+        damage: null,
+        narration: "Alice crushes the orc.",
+      },
+      damage: 8,
+      description: "Alice crushes the orc for 8 damage.",
+    };
+
+    const battle = {
+      id: "b5",
+      status: "active",
+      round: 1,
+      turnIndex: 0,
+      combatants: [alice, orc,],
+      log: [crit,],
+    } as unknown as Parameters<typeof serializeBattle>[0];
+
+    expect(serializeBattle(battle,).log[0]?.roll?.hit,).toBe(true,);
+
+    // Same roll maths, but the backend resolved it as a natural-1 miss.
+    const missed = {
+      ...crit,
+      attack: {
+        ...crit.attack,
+        roll: {
+          ...crit.attack.roll,
+          dice: [{ sides: 20, value: 1, exploded: false, },],
+          rawTotal: 1,
+          total: 4,
+          natural20: false,
+          natural1: true,
+        },
+        total: 4,
+        hit: false,
+        criticalHit: false,
+        criticalMiss: true,
+      },
+    };
+
+    const missView = serializeBattle(
+      { ...battle, log: [missed,], } as unknown as Parameters<typeof serializeBattle>[0],
+    );
+
+    expect(missView.log[0]?.roll,).toEqual({
+      natural: 1,
+      modifier: 3,
+      total: 4,
+      dc: 16,
+      hit: false,
+      criticalMiss: true,
+    },);
   });
 
   it("serializeBattle omits the roll summary when the persisted roll is unreadable", () => {

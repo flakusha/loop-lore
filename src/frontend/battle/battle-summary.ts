@@ -19,9 +19,14 @@ import type { BattleLogEntryView, } from "./commands.js";
  * Render the end-of-battle summary card.
  * @param summary Deterministic summary (headline + counts)
  * @param log Full battle log entries for the expanded view
+ * @param battleId The battle the log belongs to (scopes the dice-tumble guard)
  * @returns Collapsed-by-default summary element
  */
-export function renderBattleSummary(summary: BattleSummary, log: BattleLogEntryView[],): HTMLElement {
+export function renderBattleSummary(
+  summary: BattleSummary,
+  log: BattleLogEntryView[],
+  battleId: string,
+): HTMLElement {
   const card = document.createElement("section",);
   card.className = "battle-summary";
   card.setAttribute("aria-label", t("battle.battleSummary",),);
@@ -44,7 +49,7 @@ export function renderBattleSummary(summary: BattleSummary, log: BattleLogEntryV
   toggle.textContent = t("battle.showLog", { count: log.length, },);
   toggle.setAttribute("aria-expanded", "false",);
 
-  const expanded = renderBattleLog(log,);
+  const expanded = renderBattleLog(log, battleId,);
   if (expanded) {
     expanded.hidden = true;
     toggle.addEventListener("click", () => {

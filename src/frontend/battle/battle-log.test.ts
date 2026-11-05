@@ -76,7 +76,7 @@ const rolled: BattleLogEntryView = {
   damage: 8,
   critical: true,
   description: "Alice crushes the orc for 8 damage.",
-  roll: { natural: 20, modifier: 3, total: 23, dc: 16, },
+  roll: { natural: 20, modifier: 3, total: 23, dc: 16, hit: true, criticalMiss: false, },
 };
 
 /** Attack entry fixture whose dice tumble is asserted. */
@@ -85,7 +85,7 @@ const tumbled: BattleLogEntryView = {
   damage: 5,
   critical: false,
   description: "Bob slashes the goblin for 5 damage.",
-  roll: { natural: 17, modifier: 2, total: 19, dc: 14, },
+  roll: { natural: 17, modifier: 2, total: 19, dc: 14, hit: true, criticalMiss: false, },
 };
 
 /** Attack entry fixture re-rendered to prove the tumble does not replay. */
@@ -94,7 +94,28 @@ const replayed: BattleLogEntryView = {
   damage: 12,
   critical: false,
   description: "Cleo hacks the troll for 12 damage.",
-  roll: { natural: 11, modifier: 4, total: 15, dc: 18, },
+  roll: { natural: 11, modifier: 4, total: 15, dc: 18, hit: false, criticalMiss: false, },
+};
+
+/**
+ * Attack entry fixture whose total is BELOW the DC but the backend still
+ * resolved it as a hit (a natural 20 always hits).
+ */
+const critAboveDc: BattleLogEntryView = {
+  type: "attack",
+  damage: 4,
+  critical: true,
+  description: "Dina crits the ogre.",
+  roll: { natural: 20, modifier: 2, total: 22, dc: 25, hit: true, criticalMiss: false, },
+};
+
+/** Attack entry fixture for a natural-1 critical miss (the backend's verdict). */
+const critMiss: BattleLogEntryView = {
+  type: "attack",
+  damage: 0,
+  critical: false,
+  description: "Erik whiffs at the wraith.",
+  roll: { natural: 1, modifier: 14, total: 15, dc: 15, hit: false, criticalMiss: true, },
 };
 
 /** The skill-check chip rendered on a log line (undefined when it carries no roll). */
@@ -124,11 +145,11 @@ describe("scrollToLatest", () => {
 
 describe("renderBattleLog", () => {
   it("returns null for an empty history", () => {
-    expect(renderBattleLog([],),).toBeNull();
+    expect(renderBattleLog([], "battle-empty",),).toBeNull();
   });
 
   it("renders an accessible keyboard-focusable log", () => {
-    const panel = renderBattleLog([hit,],) as unknown as FakeEl;
+    const panel = renderBattleLog([hit,], "battle-a",) as unknown as FakeEl;
     expect(panel.className,).toBe("battle-log",);
     expect(panel.getAttribute("role",),).toBe("log",);
     expect(panel.getAttribute("aria-live",),).toBe("polite",);
@@ -137,7 +158,7 @@ describe("renderBattleLog", () => {
   });
 
   it("renders entries with indicator classes, damage chips and narration", () => {
-    const panel = renderBattleLog([hit, heal,],) as unknown as FakeEl;
+    const panel = renderBattleLog([hit, heal,], "battle-a",) as unknown as FakeEl;
     expect(panel.children,).toHaveLength(2,);
 
     const attackLine = panel.children[0]!;
@@ -157,7 +178,7 @@ describe("renderBattleLog", () => {
   });
 
   it("auto-scrolls the fresh panel toward the latest entry", () => {
-    const panel = renderBattleLog([hit, heal,],) as unknown as FakeEl;
+    const panel = renderBattleLog([hit, heal,], "battle-a",) as unknown as FakeEl;
     // The fake DOM has no layout (no scrollHeight), but the scroll-position
     // assignment proves the render pinned the view to the bottom; the
     // scrollTop = scrollHeight arithmetic is pinned by scrollToLatest above.
@@ -166,24 +187,40 @@ describe("renderBattleLog", () => {
 
   it("falls back to the i18n key when the catalog is empty", () => {
     localeStringsHost.__localeStrings = {};
-    const panel = renderBattleLog([hit,],) as unknown as FakeEl;
+    const panel = renderBattleLog([hit,], "battle-a",) as unknown as FakeEl;
     expect(panel.getAttribute("aria-label",),).toBe("battle.log",);
   });
 
   it("renders the roll math and the critical marker on the entry line", () => {
-    const panel = renderBattleLog([rolled,],) as unknown as FakeEl;
+    const panel = renderBattleLog([rolled,], "battle-a",) as unknown as FakeEl;
     const chip = chipOf(panel.children[0]!,)!;
     expect(chip.className,).toBe("battle-skill-check",);
     expect(chip.children[0]!.className,).toContain("battle-dice",);
     expect(chip.children[0]!.textContent,).toBe("20",);
     expect(chip.children[1]!.textContent,).toBe("20 +3 = 23 vs DC 16",);
+    expect(chip.children[2]!.textContent,).toBe("success",);
     expect(chip.children[2]!.className,).toContain("battle-critical-hit",);
+  });
+
+  it("keeps the backend verdict when the total is below the DC", () => {
+    const panel = renderBattleLog([critAboveDc,], "battle-crit",) as unknown as FakeEl;
+    const chip = chipOf(panel.children[0]!,)!;
+    // A natural 20 hits whatever the DC is — the panel must not re-derive it.
+    expect(chip.children[2]!.textContent,).toBe("success",);
+    expect(chip.children[2]!.className,).toContain("battle-critical-hit",);
+  });
+
+  it("marks a natural-1 critical miss", () => {
+    const panel = renderBattleLog([critMiss,], "battle-whiff",) as unknown as FakeEl;
+    const chip = chipOf(panel.children[0]!,)!;
+    expect(chip.children[2]!.textContent,).toBe("failure",);
+    expect(chip.children[2]!.className,).toContain("battle-critical-fail",);
   });
 
   it("tumbles the dice and lands on the final roll", () => {
     vi.useFakeTimers();
     try {
-      const panel = renderBattleLog([tumbled,],) as unknown as FakeEl;
+      const panel = renderBattleLog([tumbled,], "battle-tumble",) as unknown as FakeEl;
       const dice = chipOf(panel.children[0]!,)!.children[0]!;
       expect(dice.classList.contains("battle-dice-rolling",),).toBe(true,);
       vi.advanceTimersByTime(500,);
