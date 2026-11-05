@@ -156,6 +156,10 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
       throw new Error("sd-server not configured. Set config.generation.providers.sd",);
     }
 
+    // A resolved BYO key wins over the operator's static key (BYOK image
+    // coverage); the spread keeps the cached host config untouched.
+    const effectiveCfg = opts.apiKey ? { ...cfg, apiKey: opts.apiKey, } : cfg;
+
     onProgress?.({ status: "pending", message: "Building request...", },);
 
     // Families return raw wire images; THIS method owns persistence (same
@@ -168,11 +172,11 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
     const dispatch = (): Promise<SdServerRawImage[]> => {
       switch (template.category) {
         case "txt2img": {
-          return executeTxt2ImgDispatch(this, request.params, cfg, onProgress,);
+          return executeTxt2ImgDispatch(this, request.params, effectiveCfg, onProgress,);
         }
 
         case "img2img": {
-          return executeImg2ImgDispatch(this, request.params, cfg, onProgress,);
+          return executeImg2ImgDispatch(this, request.params, effectiveCfg, onProgress,);
         }
 
         case "upscale": {

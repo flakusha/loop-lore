@@ -401,6 +401,8 @@ export default [
       "src/generation/lora/discovery-http.ts",
       "src/generation/matting/providers.ts",
       "src/generation/providers/comfyui.ts",
+      "src/generation/providers/comfyui-download.ts",
+      "src/generation/providers/comfyui-poll.ts",
     ],
     rules: {
       "no-restricted-syntax": "off",

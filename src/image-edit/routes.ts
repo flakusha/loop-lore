@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 260
+// size-allow: 275
 
 /**
  * Image Edit API Routes — ComfyUI + sd-server unified endpoints
@@ -24,7 +24,9 @@ import {
   missingRequiredParams,
   validateImageEditBody,
 } from "../validation/schemas";
+import { resolveEditApiKey, } from "./credentials";
 import { ComfyUIEditProvider, } from "./providers/comfyui-provider";
+import { ensureWorkflowFileTemplates, } from "./providers/comfyui-workflow-template";
 import { SDServerEditProvider, } from "./providers/sd-server-provider";
 import { authorizeRunLinkage, } from "./run-authz";
 import type { HandleRunAuth, } from "./run-authz";
@@ -121,6 +123,9 @@ export async function handleRun(
 
   const db = opts?.database ?? getDatabase();
   await ensureWorkflowRegistry(db,).catch(() => 0);
+  // Operator-named configs/workflows edit templates register on first use,
+  // mirroring the DB-backed library hydration above.
+  await ensureWorkflowFileTemplates();
   const template = templateRegistry.get(body.template_id,);
   if (!template) {
     return jsonError({ message: `Unknown template: ${body.template_id}`, status: HttpStatus.NotFound, },);
@@ -154,8 +159,14 @@ export async function handleRun(
   }
 
   try {
+    // BYOK first: a stored user key wins, an absent row falls back to the
+    // operator key, and a corrupt row throws ByoKeyDecryptError — aborting
+    // here, before execute, so the operator credential is never billed.
+    const config = loadConfig();
+    const apiKey = await resolveEditApiKey({ userId: opts?.userId, config, db, },);
+
     // The gate above guarantees `userId`; the owner is never read from the body.
-    const results = await provider.execute(body, template, { ownerId: opts?.userId ?? "", },);
+    const results = await provider.execute(body, template, { ownerId: opts?.userId ?? "", apiKey, },);
     return jsonResponse({ data: results, },);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error,);
@@ -170,9 +181,10 @@ export async function handleRun(
  *   backend  — filter by backend (comfyui | sd-server)
  *   category — filter by category (txt2img | img2img | inpaint | upscale | controlnet)
  * @param request
- * @returns {Response}
+ * @returns {Promise<Response>}
  */
-export function handleTemplates(request: Request,): Response {
+export async function handleTemplates(request: Request,): Promise<Response> {
+  await ensureWorkflowFileTemplates();
   const url = new URL(request.url,);
   const backend = url.searchParams.get("backend",) as ImageEditBackend | null;
   const category = url.searchParams.get("category",);
