@@ -21,6 +21,7 @@ import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import { PROFESSION_DISCIPLINES, PROFESSION_XP_STEP, } from "./professions-constants";
 import { nextTitleAt, professionBonuses, xpProgress, } from "./professions-progression";
+import { selectProfession, } from "./professions-selection";
 import { readServerError, resolveChatActorId, } from "./rpg-stats-helpers";
 import type { ChatState, ProfessionView, } from "./types";
 
@@ -83,35 +84,7 @@ export const professions: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  async selectProfession(id: string,) {
-    if (this.selectedProfessionId === id) {
-      this.selectedProfessionId = null;
-      this.selectedProfessionSpecs = null;
-      return;
-    }
-
-    this.selectedProfessionId = id;
-    this.selectedProfessionSpecs = null;
-    try {
-      const res = await apiFetch(`/api/rpg/professions/${encodeURIComponent(id,)}`,);
-      if (res.status === 404) {
-        // Not visible (missing/not-owned) — drop the selection quietly.
-        this.selectedProfessionId = null;
-        return;
-      }
-
-      if (!res.ok) {
-        this.professionsError = t("rpg.professions.loadFailed",);
-        return;
-      }
-
-      const data = await res.json() as { specializations?: ChatState["selectedProfessionSpecs"] };
-      this.selectedProfessionSpecs = Array.isArray(data.specializations,) ? data.specializations : [];
-    } catch (error) {
-      log.error("Failed to load profession details", error instanceof Error ? error : undefined,);
-      this.professionsError = t("rpg.professions.loadFailed",);
-    }
-  },
+  selectProfession,
 
   assignableDisciplines() {
     const held = new Set(this.professions.map((p,) => p.discipline),);
