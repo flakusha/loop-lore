@@ -7,6 +7,11 @@
  * (401 / 400 / 404 / 403 / 501). Engine dispatch, timeout mapping, and BYO
  * key behavior live in video-engine.test.ts; the happy path through the
  * template seam is covered by routes/templates/modality.test.ts.
+ *
+ * Resource contract (parallel-safe): one :memory: SQLite per FILE (never a
+ * shared db file), torn down in afterAll; fixed row ids (video-route-user,
+ * route-chat-1, route-msg-1) are file-local; no ports, no sleeps, no
+ * module mocks — tests are order-independent and never reach the engine.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
