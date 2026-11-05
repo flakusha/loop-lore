@@ -43,6 +43,7 @@ export function createFacadeRoutes(opts: HandlerOpts, prefix = "/api",) {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
+        const { opName, } = ctx.params as { opName: string };
         const rc = createRequestContext({
           userId,
           userRole: (ctx.userRole as string | null) ?? null,
@@ -59,7 +60,7 @@ export function createFacadeRoutes(opts: HandlerOpts, prefix = "/api",) {
         const result = await runFacadeOp(
           getFacadeRegistry({ database, config, },),
           facadeCtx,
-          (ctx.params as { opName: string }).opName,
+          opName,
           ctx.body,
         );
 
