@@ -66,7 +66,9 @@ criteria below stay unticked until both halves are in.
 - Admin routes (`src/routes/admin/setup-providers.ts`, mounted on the `/api/v1`
   admin surface, permission `admin.system`):
   `GET /api/v1/admin/setup/providers` → `{ providers: [...] }` (never a key),
-  `POST /api/v1/admin/setup/providers` → `{ ok: true, provider }`,
+  `POST /api/v1/admin/setup/providers` → `{ ok: true, provider }` (400 for a
+  rejected payload, 502 when the payload was accepted but the instance could
+  not be materialized — the reason is in the response body),
   `DELETE /api/v1/admin/setup/providers/:name` → 204.
 - The API key is written through `setConfig`, so the row is sealed with the
   `secret:v1:` envelope (`SECRET_KEY_PATTERN` matches `provider.<name>.apiKey`);
@@ -130,6 +132,36 @@ host is still rejected.
   (`action = server-provider.saved` / `server-provider.deleted`). The repo has
   no shared `log_entries` writer helper — the row follows the inline convention
   of `src/routes/admin/system-config.ts`; no new audit subsystem was added.
+
+**FIXES applied in the second review round (backend lane)**
+
+- **Typecheck fix.** `src/server/start.test.ts` carried a duplicate
+  `watchDomainConfigs` key in the `../config/hot-reload` mock (introduced by
+  the rebase): TS1117 broke `bun run typecheck` and `bun run typecheck:bun`
+  while ESLint and `bun test` stayed green (the second occurrence simply won).
+  One key removed — no other mock changed.
+- **A failed materialization is reported, not swallowed.** The POST path used
+  to answer 400 with a generic "Provider could not be activated" wrapper, and
+  the listing re-derived a proxy reason by re-running `resolveApprovedHosts`
+  (so a provider that failed for another reason — a missing key row, a failed
+  build — reported a misleading one). Now:
+  - `POST /api/v1/admin/setup/providers` answers **502** when the payload was
+    accepted but the instance could not be materialized. The response carries
+    the real reason, nothing is stored and the instance is not live. 400 stays
+    the answer for a rejected payload (invalid name, base URL, host approval,
+    a name another provider owns).
+  - The listing carries the real reason: `probeProvider`
+    (`src/generation/providers/server-provider-materialize.ts`) runs the same
+    checks as the boot path — host approval, then construction — so a missing
+    key row, a rejected host and a failed build each report their own reason.
+  - The boot path still skips a broken descriptor (boot must not crash) and
+    logs the reason with the provider name.
+- **Audit decision re-checked.** The repo still has NO shared `log_entries`
+  writer helper — `src/routes/admin/system-config.ts`, `src/chat/moderation.ts`,
+  `src/federation/storage-eviction.ts` and `src/gc/archive-expiration.ts` all
+  insert into `log_entries` directly — so `server-provider-audit.ts` stays as
+  the provider store's own small writer, following that inline convention. Its
+  row carries name, base URL, model and approved hosts — never key material.
 
 **Deliberately NOT changed**
 

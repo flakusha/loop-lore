@@ -631,4 +631,20 @@ describe("server provider store", () => {
     expect(descriptor?.state,).toBe("error",);
     expect(descriptor?.error,).toBeTruthy();
   });
+
+  test("lists the real reason a stored provider is not live", async () => {
+    // A descriptor without a key row is skipped at boot - the listing must
+    // carry that reason, not a proxy message.
+    await seedDescriptor("keyless-provider",);
+    await db
+      .deleteFrom("system_config",)
+      .where("key", "=", serverProviderSecretKey("keyless-provider",),)
+      .execute();
+
+    const providers = await listServerProviders(db,);
+    const descriptor = providers.find((entry,) => entry.name === "keyless-provider");
+
+    expect(descriptor?.state,).toBe("error",);
+    expect(descriptor?.error,).toBe("The descriptor has no stored API key.",);
+  });
 });

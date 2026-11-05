@@ -34,11 +34,12 @@ import {
 } from "./server-provider-descriptor";
 import {
   activateProvider,
-  materializeInstance,
   type PreparedProvider,
   prepareProvider,
+  probeProvider,
   readStoredProviders,
   removeServerProviderInstance,
+  ServerProviderMaterializationError,
   warnProviderStore,
 } from "./server-provider-materialize";
 
@@ -48,6 +49,7 @@ export {
   ServerProviderValidationError,
 } from "./server-provider-descriptor";
 export type { ServerProviderDescriptor, ServerProviderState, } from "./server-provider-descriptor";
+export { ServerProviderMaterializationError, } from "./server-provider-materialize";
 
 /** Default connection timeout for a materialized instance. */
 const DEFAULT_TIMEOUT_MS = 30_000;
@@ -82,7 +84,7 @@ export async function listServerProviders(db: Kysely<DB>,): Promise<ServerProvid
       allowedHosts: provider.allowedHosts,
       hasApiKey: apiKey !== undefined && apiKey !== "",
       state: live ? "live" : "error",
-      error: live ? undefined : inactiveReason(provider,),
+      error: live ? undefined : inactiveReason(provider, apiKey,),
     },);
   }
 
@@ -91,15 +93,20 @@ export async function listServerProviders(db: Kysely<DB>,): Promise<ServerProvid
 
 /**
  * Why a stored provider is not live.
+ *
+ * The reason is the REAL one: the same probe the boot path runs. A provider
+ * that could not be built reports why it failed — not a proxy message.
  * @param provider - the stored descriptor
- * @returns the rejection reason, or a generic registry message
+ * @param apiKey - the opened API key, or undefined when none is stored
+ * @returns the failure reason
  */
-function inactiveReason(provider: StoredServerProvider,): string {
-  try {
-    resolveApprovedHosts(provider.baseUrl, provider.allowedHosts,);
-  } catch (error) {
-    return error instanceof Error ? error.message : String(error,);
+function inactiveReason(provider: StoredServerProvider, apiKey: string | undefined,): string {
+  if (apiKey === undefined) {
+    return "The descriptor has no stored API key.";
   }
+
+  const probe = probeProvider(provider, apiKey,);
+  if (!probe.ok) { return probe.error; }
 
   return "Provider is not registered in the provider registry.";
 }
@@ -135,8 +142,9 @@ export interface SaveServerProviderInput {
  * @param db
  * @param input
  * @throws {ServerProviderValidationError} When the name, base URL or host
- *   approval is invalid, the name collides with another provider, or the
- *   instance cannot be activated.
+ *   approval is invalid, or the name collides with another provider.
+ * @throws {ServerProviderMaterializationError} When the instance cannot be
+ *   materialized - the payload was accepted, the provider could not be built.
  * @returns the stored descriptor — never the key
  */
 export async function saveServerProvider(
@@ -184,8 +192,17 @@ export async function saveServerProvider(
   const apiKey = input.apiKey !== undefined ? input.apiKey : (storedKey ?? "");
 
   // Build the provider BEFORE persisting: an instance that cannot be
-  // activated must not leave a stored row behind.
-  const prepared = buildProvider(record, apiKey,);
+  // activated must not leave a stored row behind. The host approval was
+  // validated above (a rejected host is a 400); what can still fail here is
+  // the materialization itself.
+  let prepared: PreparedProvider;
+  try {
+    prepared = prepareProvider(record, apiKey || undefined,);
+  } catch (error) {
+    throw new ServerProviderMaterializationError(
+      error instanceof Error ? error.message : String(error,),
+    );
+  }
 
   await db.transaction().execute(async (trx,) => {
     await setConfig(trx, serverProviderDescriptorKey(input.name,), encoded.value, "Server provider instance",);
@@ -223,21 +240,6 @@ function assertNameIsFree(name: string, config: Config,): void {
     throw new ServerProviderValidationError(
       `Provider name "${name}" is already used by another provider.`,
     );
-  }
-}
-
-/**
- * Build the provider instance for a stored descriptor.
- * @param record - the descriptor to persist
- * @param apiKey - the API key to use, empty when none is stored
- * @throws {ServerProviderValidationError} When the instance cannot be built.
- */
-function buildProvider(record: StoredServerProvider, apiKey: string,): PreparedProvider {
-  try {
-    return prepareProvider(record, apiKey || undefined,);
-  } catch (error) {
-    const reason = error instanceof Error ? error.message : String(error,);
-    throw new ServerProviderValidationError(`Provider could not be activated: ${reason}`,);
   }
 }
 
@@ -349,11 +351,25 @@ export async function materializeServerProviders(db: Kysely<DB>, config: Config,
   let defaultName: string | undefined;
 
   for (const provider of stored) {
-    const apiKey = await materializableKey(db, provider,);
-    if (apiKey === undefined) { continue; }
+    const apiKey = await getConfigValue(db, serverProviderSecretKey(provider.name,),);
+    if (apiKey === undefined) {
+      warnProviderStore("Skipping provider — its descriptor has no stored key", { name: provider.name, },);
+      continue;
+    }
 
-    const result = materializeInstance(config, provider, apiKey || undefined,);
-    if (!result.ok) { continue; }
+    // The probe carries the REAL reason: boot must not crash on a broken
+    // descriptor, but the reason belongs in the log next to its name.
+    const probe = probeProvider(provider, apiKey,);
+    if (!probe.ok) {
+      warnProviderStore("Skipping provider — stored descriptor could not be materialized", {
+        name: provider.name,
+        error: probe.error,
+      },);
+
+      continue;
+    }
+
+    activateProvider(config, provider.name, probe.prepared,);
     materialized.push(provider.name,);
     models.set(provider.name, provider.model,);
     if (provider.setDefault) { defaultName = provider.name; }
@@ -376,35 +392,4 @@ export async function materializeServerProviders(db: Kysely<DB>, config: Config,
   }
 
   return materialized;
-}
-
-/**
- * The stored key of a descriptor that may be materialized at boot.
- *
- * A descriptor without a key row is incomplete, and a descriptor whose host
- * approval no longer holds is rejected — both are skipped with a warning
- * instead of crashing the boot.
- * @param db
- * @param provider - the stored descriptor
- * @returns the stored key, or undefined when the descriptor must be skipped
- */
-async function materializableKey(db: Kysely<DB>, provider: StoredServerProvider,): Promise<string | undefined> {
-  const apiKey = await getConfigValue(db, serverProviderSecretKey(provider.name,),);
-  if (apiKey === undefined) {
-    warnProviderStore("Skipping provider — its descriptor has no stored key", { name: provider.name, },);
-    return undefined;
-  }
-
-  try {
-    resolveApprovedHosts(provider.baseUrl, provider.allowedHosts,);
-  } catch (error) {
-    warnProviderStore("Skipping provider — stored descriptor rejected", {
-      name: provider.name,
-      error: error instanceof Error ? error.message : String(error,),
-    },);
-
-    return undefined;
-  }
-
-  return apiKey;
 }

@@ -21,6 +21,7 @@ import {
   DESCRIPTOR_KEY_PREFIX,
   DESCRIPTOR_KEY_SUFFIX,
   parseStoredServerProvider,
+  resolveApprovedHosts,
   type StoredServerProvider,
 } from "./server-provider-descriptor";
 
@@ -83,9 +84,25 @@ export interface PreparedProvider {
   provider: OpenAiCompatibleProvider;
 }
 
-/** Outcome of a materialization attempt. */
-export type MaterializeResult =
-  | { ok: true; value: OpenAiCompatibleProvider }
+/**
+ * Raised when a stored provider cannot be materialized.
+ *
+ * The operator input was accepted — the instance itself could not be brought
+ * up. Distinct from `ServerProviderValidationError`, which rejects the input.
+ */
+export class ServerProviderMaterializationError extends Error {
+  /**
+   * @param message - the real reason the provider could not be materialized
+   */
+  constructor(message: string,) {
+    super(message,);
+    this.name = "ServerProviderMaterializationError";
+  }
+}
+
+/** Outcome of probing a stored descriptor for materialization. */
+export type ProbeResult =
+  | { ok: true; prepared: PreparedProvider }
   | { ok: false; error: string };
 
 /**
@@ -118,6 +135,33 @@ export function prepareProvider(
 }
 
 /**
+ * Probe a stored descriptor WITHOUT registering it.
+ *
+ * The probe mirrors the boot path exactly: the host approval is re-checked and
+ * the provider is constructed. The caller therefore learns the REAL reason a
+ * provider is not live instead of re-deriving a proxy one.
+ * @param provider - the stored descriptor
+ * @param apiKey - the opened API key, or undefined when none is stored
+ * @returns the prepared provider, or the reason it could not be built
+ */
+export function probeProvider(
+  provider: StoredServerProvider,
+  apiKey: string | undefined,
+): ProbeResult {
+  try {
+    resolveApprovedHosts(provider.baseUrl, provider.allowedHosts,);
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error,), };
+  }
+
+  try {
+    return { ok: true, prepared: prepareProvider(provider, apiKey || undefined,), };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error,), };
+  }
+}
+
+/**
  * Register a prepared provider and merge its config into the live list.
  *
  * The registry keeps the FIRST instance for a name, so an update must
@@ -142,35 +186,6 @@ export function activateProvider(
   } else {
     instances.push(prepared.instance,);
   }
-}
-
-/**
- * Build the registry instance for a stored provider and register it.
- * @param config - live config; the instance is merged into it
- * @param provider - the stored descriptor
- * @param apiKey - the opened API key, or undefined when none is stored
- * @returns the registered provider, or the reason it could not be built
- */
-export function materializeInstance(
-  config: Config,
-  provider: StoredServerProvider,
-  apiKey: string | undefined,
-): MaterializeResult {
-  let prepared: PreparedProvider;
-  try {
-    prepared = prepareProvider(provider, apiKey,);
-  } catch (error) {
-    const reason = error instanceof Error ? error.message : String(error,);
-    warnProviderStore("Skipping provider — construction failed", {
-      name: provider.name,
-      error: reason,
-    },);
-
-    return { ok: false, error: reason, };
-  }
-
-  activateProvider(config, provider.name, prepared,);
-  return { ok: true, value: prepared.provider, };
 }
 
 /**

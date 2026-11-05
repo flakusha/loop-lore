@@ -153,7 +153,6 @@ if (ISOLATED) {
   mock.module("../logger/transports/db", () => ({ DBTransport: class {}, }),);
   mock.module("../config/hot-reload", () => ({
     watchDomainConfigs: () => ({ close() {}, __close() {}, }),
-    watchDomainConfigs: () => ({ close() {}, __close() {}, }),
     stopWatchingDomainConfigs: () => {},
   }),);
 }
