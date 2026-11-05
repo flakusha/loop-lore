@@ -10,8 +10,9 @@
  */
 
 import type { Kysely, } from "kysely";
+import { logEntryEnvelope, } from "../../db/log-entries";
 import type { DB, } from "../../db/schema";
-import { safeJsonStringify, } from "../../utils";
+import { asError, safeJsonStringify, } from "../../utils";
 import type { StoredServerProvider, } from "./server-provider-descriptor";
 import { warnProviderStore, } from "./server-provider-materialize";
 
@@ -41,10 +42,7 @@ export async function auditProviderStore(
     await db
       .insertInto("log_entries",)
       .values({
-        id: crypto.randomUUID(),
-        level: 6,
-        timestamp: Date.now(),
-        time: new Date().toISOString(),
+        ...logEntryEnvelope(6,), // 6 = INFO
         message: `Provider instance "${provider.name}" ${action}`,
         module: "server-provider-store",
         action: `server-provider.${action}`,
@@ -59,7 +57,7 @@ export async function auditProviderStore(
     warnProviderStore("Could not write the provider store audit row", {
       name: provider.name,
       action,
-      error: error instanceof Error ? error.message : String(error,),
+      error: asError(error,).message,
     },);
   }
 }

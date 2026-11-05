@@ -398,6 +398,30 @@ describe("AdminRoleUpdateBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminRoleUpdateBody,));
 });
 
+describe("AdminServerProviderDescriptor", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminServerProviderDescriptor,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminServerProviderDescriptor,));
+});
+
+describe("AdminSetupProviderBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminSetupProviderBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSetupProviderBody,));
+});
+
+describe("AdminSetupProviderResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminSetupProviderResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSetupProviderResponse,));
+});
+
+describe("AdminSetupProvidersResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminSetupProvidersResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSetupProvidersResponse,));
+});
+
 describe("AdminSystemConfigBody", () => {
   test("accepts generated values", () => checkAllValid(validation_admin.AdminSystemConfigBody,));
 
@@ -2735,4 +2759,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 433 schemas discovered across 535 module(s).
+// 437 schemas discovered across 536 module(s).
