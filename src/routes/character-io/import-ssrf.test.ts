@@ -12,16 +12,16 @@
  * fetch, without any real network, DNS, ports, or sleeps. The database is a
  * per-run createTestDb, closed in afterAll.
  */
+import type { Database, } from "bun:sqlite";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
 import type { CharacterSystemsExport, } from "../../characters/exporters/character-systems";
 import type { DB, } from "../../db/schema";
-import type { Database, } from "bun:sqlite";
-import type { HostResolver, } from "../../utils/url-validation";
-import type { Kysely, } from "kysely";
-import { Elysia, } from "elysia";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { importRoutes, } from "./import";
 import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
+import type { HostResolver, } from "../../utils/url-validation";
+import { importRoutes, } from "./import";
 
 const ACTOR_ID = "11111111-1111-4111-8111-111111111111";
 
@@ -123,7 +123,7 @@ describe("character-io import/url SSRF guard", () => {
       characterId: ACTOR_ID,
     };
 
-    globalThis.fetch = (() => Promise.resolve(Response.json(exportPayload,),)) as typeof fetch;
+    globalThis.fetch = (() => Promise.resolve(Response.json(exportPayload,),)) as unknown as typeof fetch;
     try {
       const res = await importFrom(
         "https://cards.example.com/card.json",
