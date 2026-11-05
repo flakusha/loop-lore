@@ -2,9 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * v1 standaloneSurface barrel — the five route modules that used to mount
+ * v1 standaloneSurface barrel — the route modules that used to mount
  * from `src/app/register-plugins.ts` as a guarded `migrated-v1` instance
- * outside the v1 barrel.
+ * outside the v1 barrel, plus the loop-lore-facade REST surface (agents call
+ * the facade op registry over HTTP; mounts here so the v1 auth/governance
+ * chain wraps it like every other /api/v1 route).
  *
  * They already default to `prefix = "/api/v1"`; this surface is the single
  * owner that passes that prefix explicitly, so every module answers exactly
@@ -19,6 +21,7 @@
  */
 import { Elysia, } from "elysia";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
+import { createFacadeRoutes, } from "../../integrations/loop-lore-facade/routes";
 import { agencyRoutes, } from "../agency";
 import { configMenuRoutes, } from "../config-menu";
 import { gameStateRoutes, } from "../game-state";
@@ -38,5 +41,6 @@ export function standaloneSurface(opts: RegisterPluginsOpts,) {
     .use(locationExplorerRoutes(handleOpts, prefix,),)
     .use(gameStateRoutes(handleOpts, prefix,),)
     .use(storyOrchestrationRoutes(handleOpts, prefix,),)
-    .use(configMenuRoutes({ database: handleOpts.database, }, prefix,),);
+    .use(configMenuRoutes({ database: handleOpts.database, }, prefix,),)
+    .use(createFacadeRoutes(handleOpts, prefix,),);
 }
