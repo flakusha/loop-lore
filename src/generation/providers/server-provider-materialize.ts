@@ -75,21 +75,32 @@ export async function readStoredProviders(db: Kysely<DB>,): Promise<StoredServer
   return providers.sort((a, b,) => a.name.localeCompare(b.name,));
 }
 
+/** A constructed provider plus the instance config it was built from. */
+export interface PreparedProvider {
+  /** The instance config merged into the live provider list. */
+  instance: ProviderInstanceConfig;
+  /** The constructed provider, ready to register. */
+  provider: OpenAiCompatibleProvider;
+}
+
+/** Outcome of a materialization attempt. */
+export type MaterializeResult =
+  | { ok: true; value: OpenAiCompatibleProvider }
+  | { ok: false; error: string };
+
 /**
- * Build the registry instance for a stored provider and register it.
+ * Build the provider for a stored descriptor WITHOUT registering it.
  *
- * The registry keeps the FIRST instance for a name, so an update must
- * unregister before registering.
- * @param config - live config; the instance is merged into it
+ * Construction validates the base URL against the approved hosts, so an
+ * unusable descriptor fails here — before anything is persisted or registered.
  * @param provider - the stored descriptor
  * @param apiKey - the opened API key, or undefined when none is stored
- * @returns true when the provider was registered
+ * @throws {ProviderError} When the provider configuration is rejected.
  */
-export function materializeInstance(
-  config: Config,
+export function prepareProvider(
   provider: StoredServerProvider,
   apiKey: string | undefined,
-): boolean {
+): PreparedProvider {
   const instance: ProviderInstanceConfig = {
     name: provider.name,
     label: provider.label,
@@ -103,31 +114,63 @@ export function materializeInstance(
     allowedHosts: provider.allowedHosts,
   };
 
-  let created: OpenAiCompatibleProvider;
-  try {
-    created = new OpenAiCompatibleProvider(instance,);
-  } catch (error) {
-    warnProviderStore("Skipping provider — construction failed", {
-      name: provider.name,
-      error: error instanceof Error ? error.message : String(error,),
-    },);
+  return { instance, provider: new OpenAiCompatibleProvider(instance,), };
+}
 
-    return false;
-  }
-
-  unregisterProvider(provider.name,);
-  registerProvider(provider.name, created,);
-  circuitBreaker.register(provider.name,);
+/**
+ * Register a prepared provider and merge its config into the live list.
+ *
+ * The registry keeps the FIRST instance for a name, so an update must
+ * unregister before registering.
+ * @param config - live config; the instance is merged into it
+ * @param name - the provider instance name
+ * @param prepared - the constructed provider and its instance config
+ */
+export function activateProvider(
+  config: Config,
+  name: string,
+  prepared: PreparedProvider,
+): void {
+  unregisterProvider(name,);
+  registerProvider(name, prepared.provider,);
+  circuitBreaker.register(name,);
 
   const instances = config.generation.providers.openaiCompatible;
-  const index = instances.findIndex((entry,) => entry.name === provider.name);
+  const index = instances.findIndex((entry,) => entry.name === name);
   if (index >= 0) {
-    instances[index] = instance;
+    instances[index] = prepared.instance;
   } else {
-    instances.push(instance,);
+    instances.push(prepared.instance,);
+  }
+}
+
+/**
+ * Build the registry instance for a stored provider and register it.
+ * @param config - live config; the instance is merged into it
+ * @param provider - the stored descriptor
+ * @param apiKey - the opened API key, or undefined when none is stored
+ * @returns the registered provider, or the reason it could not be built
+ */
+export function materializeInstance(
+  config: Config,
+  provider: StoredServerProvider,
+  apiKey: string | undefined,
+): MaterializeResult {
+  let prepared: PreparedProvider;
+  try {
+    prepared = prepareProvider(provider, apiKey,);
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error,);
+    warnProviderStore("Skipping provider — construction failed", {
+      name: provider.name,
+      error: reason,
+    },);
+
+    return { ok: false, error: reason, };
   }
 
-  return true;
+  activateProvider(config, provider.name, prepared,);
+  return { ok: true, value: prepared.provider, };
 }
 
 /**

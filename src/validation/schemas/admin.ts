@@ -36,8 +36,9 @@ export const AdminSystemConfigImportBody = t.Object({
 /**
  * Body for POST /api/v1/admin/setup/providers — an operator-entered provider
  * instance. `apiKey` is optional: omitting it on an update keeps the stored
- * (sealed) key. `allowedHosts` is the operator's explicit host approval; when
- * omitted the base URL's own host is approved.
+ * (sealed) key, an empty string clears it. `allowedHosts` is the operator's
+ * explicit host approval; when omitted the base URL's own host is approved. Its
+ * entries are bare hostnames — no scheme, path, port or userinfo.
  */
 export const AdminSetupProviderBody = t.Object({
   name: t.String({ minLength: 1, maxLength: 64, pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$", },),
@@ -57,6 +58,10 @@ export const AdminServerProviderDescriptor = t.Object({
   model: t.String(),
   allowedHosts: t.Array(t.String()),
   hasApiKey: t.Boolean(),
+  /** Whether the instance is live in the provider registry. */
+  state: t.Union([t.Literal("live"), t.Literal("error"),],),
+  /** Why the instance is not live — present only in the error state. */
+  error: t.Optional(t.String()),
 },);
 
 /** Response body of GET /api/v1/admin/setup/providers. */

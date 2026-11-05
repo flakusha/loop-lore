@@ -818,6 +818,18 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 `PUT /api/v1/admin/nsfw` — body: NSFW config fields (admin only)
 
+### Setup Providers — List
+
+`GET /api/v1/admin/setup/providers` — list the operator-entered provider instances stored in `system_config` (admin only). Each entry carries `name`, `label`, `baseUrl`, `model`, `allowedHosts`, `hasApiKey`, `state` (`live` / `error`) and — when not live — the `error` reason. Never carries key material.
+
+### Setup Provider — Create or Update
+
+`POST /api/v1/admin/setup/providers` — body: `{ name, label, baseUrl, model, apiKey?, allowedHosts?, setDefault? }` (admin only). The instance is stored (API key sealed) and made live in the provider registry without a restart. `apiKey` omitted keeps the stored key, an empty string clears it. `allowedHosts` entries are bare hostnames (no scheme, path, port or userinfo); link-local and cloud-metadata targets are rejected. 400 on an invalid payload, a name another provider already owns, or a host approval that fails validation.
+
+### Setup Provider — Delete
+
+`DELETE /api/v1/admin/setup/providers/:name` — removes the stored instance, its sealed key and its registry/config-file entry, 204 (admin only). 400 for an unknown provider.
+
 ## Image Edit
 
 ### Workflow Templates — List

@@ -5,7 +5,6 @@ import { Elysia, t, } from "elysia";
 import {
   deleteServerProvider,
   listServerProviders,
-  removeServerProviderInstance,
   saveServerProvider,
   ServerProviderValidationError,
 } from "../../generation/providers/server-provider-store";
@@ -69,7 +68,7 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         detail: {
           summary: "List stored provider instances",
           description: "Returns the operator-entered provider instances persisted in system_config. " +
-            "Never carries key material — each entry reports whether a sealed API key is stored.",
+            "Never carries key material — each entry reports whether a sealed API key is stored and whether the instance is live.",
           tags: ["Admin", "Providers",],
         },
         response: {
@@ -79,7 +78,7 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       },)
       // -- Create or update a provider instance ----------------
       .post(`${prefix}/admin/setup/providers`, async (ctx: any,) => {
-        return withPermissionAuth(ctx, "admin.system", async () => {
+        return withPermissionAuth(ctx, "admin.system", async (userId,) => {
           const body = ctx.body as {
             name: string;
             label: string;
@@ -100,6 +99,7 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               allowedHosts: body.allowedHosts,
               setDefault: body.setDefault,
               config: opts.config,
+              actor: userId,
             },);
 
             return jsonResponse({ ok: true, provider, },);
@@ -114,7 +114,7 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           summary: "Create or update a provider instance",
           description: "Persists an operator-entered provider instance and makes it live in the provider " +
             "registry without a restart. The API key is stored sealed; omitting it on an update " +
-            "keeps the previously stored key.",
+            "keeps the previously stored key, passing an empty apiKey clears it.",
           tags: ["Admin", "Providers",],
         },
         body: AdminSetupProviderBody,
@@ -131,14 +131,19 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
         const name = ctx.params.name as string;
         try {
-          await deleteServerProvider(opts.database, name,);
+          // The store prunes the config-file instance too — the route cannot
+          // forget it.
+          await deleteServerProvider(opts.database, {
+            name,
+            config: opts.config,
+            actor: userId,
+          },);
         } catch (error) {
           const rejection = validationRejection(error,);
           if (rejection) { return rejection; }
           throw error;
         }
 
-        removeServerProviderInstance(opts.config, name,);
         return jsonNoContent();
       }, {
         detail: {

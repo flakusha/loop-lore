@@ -11,8 +11,9 @@
  * registry access.
  */
 
+import { isIP, } from "node:net";
 import { safeJsonParse, } from "../../utils";
-import { validateProviderUrl, } from "../../utils/url-validation";
+import { isMetadataTarget, validateProviderUrl, } from "../../utils/url-validation";
 
 /** Provider instance names are slug-ish: letters, digits, dot, dash, underscore. */
 export const SERVER_PROVIDER_NAME_PATTERN = /^[a-z0-9][a-z0-9._-]{0,63}$/i;
@@ -39,6 +40,9 @@ export function serverProviderSecretKey(name: string,): string {
   return `${DESCRIPTOR_KEY_PREFIX}${name}.apiKey`;
 }
 
+/** Whether a stored provider instance is live in the provider registry. */
+export type ServerProviderState = "live" | "error";
+
 /** Public descriptor of a stored provider instance — never carries key material. */
 export interface ServerProviderDescriptor {
   name: string;
@@ -49,6 +53,10 @@ export interface ServerProviderDescriptor {
   allowedHosts: string[];
   /** Whether a sealed API key is stored for this instance. */
   hasApiKey: boolean;
+  /** Whether the instance is live in the provider registry. */
+  state: ServerProviderState;
+  /** Why the instance is not live — present only in the "error" state. */
+  error?: string;
 }
 
 /** The persisted descriptor — the JSON stored under `provider.<name>.config`. */
@@ -89,6 +97,93 @@ export function assertValidServerProviderName(name: string,): void {
 }
 
 /**
+ * Validate one operator-approved host entry.
+ *
+ * An entry is a bare hostname: no scheme, no path, no port, no userinfo. A
+ * wildcard may cover a domain ("*.example.com") but never a bare TLD
+ * ("*.com") — that would approve the whole internet.
+ * @param host - the operator-supplied entry
+ * @throws {ServerProviderValidationError} When the entry is not a bare hostname.
+ */
+export function assertValidAllowedHost(host: string,): void {
+  if (host === "" || host !== host.trim()) {
+    throw new ServerProviderValidationError(`Invalid allowed host "${host}" — use a bare hostname.`,);
+  }
+
+  if (host.includes("://",) || host.includes("/",) || host.includes("@",) || host.includes(" ",)) {
+    throw new ServerProviderValidationError(
+      `Invalid allowed host "${host}" — use a bare hostname without scheme, path, port or userinfo.`,
+    );
+  }
+
+  if (host === "*") {
+    throw new ServerProviderValidationError(`Invalid allowed host "*" — a host approval must name a host.`,);
+  }
+
+  if (host.startsWith("[",)) {
+    assertIpv6AllowedHost(host,);
+    return;
+  }
+
+  if (host.includes(":",)) {
+    throw new ServerProviderValidationError(
+      `Invalid allowed host "${host}" — a port is not part of a host approval.`,
+    );
+  }
+
+  assertDomainAllowedHost(host,);
+}
+
+/**
+ * @param host - an IPv6-literal host approval
+ * @throws {ServerProviderValidationError} When the literal is malformed.
+ */
+function assertIpv6AllowedHost(host: string,): void {
+  if (!host.endsWith("]",) || isIP(host.slice(1, -1,),) !== 6) {
+    throw new ServerProviderValidationError(`Invalid allowed host "${host}" — expected an IPv6 literal.`,);
+  }
+}
+
+/**
+ * @param host - a domain-shaped host approval (optionally "*.domain")
+ * @throws {ServerProviderValidationError} When the shape is not a hostname.
+ */
+function assertDomainAllowedHost(host: string,): void {
+  const wildcard = host.startsWith("*.",);
+  const domain = wildcard ? host.slice(2,) : host;
+  if (wildcard && !domain.includes(".",)) {
+    throw new ServerProviderValidationError(
+      `Invalid allowed host "${host}" — a wildcard must cover a domain, not a bare TLD.`,
+    );
+  }
+
+  for (const label of domain.split(".",)) {
+    if (!isHostnameLabel(label,)) {
+      throw new ServerProviderValidationError(
+        `Invalid allowed host "${host}" — "${label}" is not a hostname label.`,
+      );
+    }
+  }
+}
+
+/**
+ * @param label - one dot-separated hostname label
+ * @returns true when the label is a valid hostname label
+ */
+function isHostnameLabel(label: string,): boolean {
+  if (!label || label.length > 63) { return false; }
+  if (label.startsWith("-",) || label.endsWith("-",)) { return false; }
+
+  for (const ch of label) {
+    const isDigit = ch >= "0" && ch <= "9";
+    const isLetter = (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z");
+    if (!isDigit && !isLetter && ch !== "-") { return false; }
+  }
+
+  return true;
+}
+
+/**
  * Validate the base URL and resolve the operator-approved hosts.
  *
  * An explicit `allowedHosts` list is the operator's approval; when it is
@@ -116,6 +211,21 @@ export function resolveApprovedHosts(baseUrl: string, allowedHosts?: string[],):
   }
 
   const hosts = allowedHosts ?? [parsed.hostname,];
+  for (const host of hosts) {
+    assertValidAllowedHost(host,);
+    if (isMetadataTarget(host,)) {
+      throw new ServerProviderValidationError(
+        `Provider host "${host}" is a link-local or cloud-metadata target and is never allowed.`,
+      );
+    }
+  }
+
+  if (isMetadataTarget(parsed.hostname,)) {
+    throw new ServerProviderValidationError(
+      `Provider URL rejected: "${parsed.hostname}" is a link-local or cloud-metadata target.`,
+    );
+  }
+
   const validated = validateProviderUrl(baseUrl, { allowlist: hosts, },);
   if (!validated.ok) {
     throw new ServerProviderValidationError(`Provider URL rejected: ${validated.error}`,);
