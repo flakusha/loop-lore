@@ -23,20 +23,22 @@ import { runFacadeOp, } from "./registry";
 import { facadeContextFromRequestContext, } from "./types";
 
 /**
- * The Elysia context fields this plugin reads. The composed app populates
- * them via app-level derives (`elysia-app.ts`: requestIdMiddleware, the
- * authenticate derive) — those live outside the plugin's type surface, so
- * the plugin declares the narrowest honest shape it consumes and lets the
+ * The Elysia context fields this plugin family reads. The composed app
+ * populates them via app-level derives (`elysia-app.ts`: requestIdMiddleware,
+ * the authenticate derive) — those live outside the plugin's type surface, so
+ * the plugins declare the narrowest honest shape they consume and let the
  * optional fields be absent when mounted bare (tests). Only the POST
  * `:opName` route carries params; the manifest GET has none.
  */
-interface FacadeRouteCtx {
+export interface FacadeRouteCtx {
   userId?: string | null;
   userRole?: string | null;
   sessionId?: string | null;
   requestId?: string;
   params?: { opName?: string };
   body?: unknown;
+  /** Raw request — the MCP transport reads the unparsed body text. */
+  request?: Request;
 }
 
 /**
