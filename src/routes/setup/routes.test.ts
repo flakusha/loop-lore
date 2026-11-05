@@ -19,6 +19,7 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { baseSurface, } from "../v1/base-surface";
+import { setupChecks, } from "./checks";
 import { setupRoutes, } from "./routes";
 
 /**
@@ -163,5 +164,45 @@ describe("setup state route", () => {
     const app = barrelApp();
     const res = await app.handle(new Request("http://localhost/api/setup/state",),);
     expect(res.status,).toBe(404,);
+  });
+
+  test("the provider-health hint names the failing provider", async () => {
+    const { mock, } = await import("bun:test");
+    const health = await import("../../admin/provider-health");
+    const failing = [{ name: "dead-provider", status: "unhealthy", error: "connection refused", },];
+    mock.module("../../admin/provider-health", () => ({ ...health, getHealthCache: () => failing, }),);
+    try {
+      const checks = await setupChecks(testConfig(),);
+      const provider = checks.find((check,) => check.id === "provider.health");
+      expect(provider?.ok,).toBe(false,);
+      expect(provider?.hint,).toContain("dead-provider: connection refused",);
+    } finally {
+      mock.module("../../admin/provider-health", () => health,);
+    }
+  });
+
+  test("a healthy provider and a resolvable main role report ok", async () => {
+    const { mock, } = await import("bun:test");
+    const health = await import("../../admin/provider-health");
+    const okCache = [{ name: "live-provider", status: "healthy", },];
+    mock.module("../../admin/provider-health", () => ({ ...health, getHealthCache: () => okCache, }),);
+    try {
+      const checks = await setupChecks(
+        {
+          server: { tls: { key: "/nonexistent/setup-state/key.pem", cert: "/nonexistent/setup-state/cert.pem", }, },
+          generation: { modelRoles: { main: { provider: "live-provider", model: "m", }, }, },
+        } as unknown as Config,
+        {
+          selectFrom: () => ({
+            where: () => ({ selectAll: () => ({ executeTakeFirst: () => Promise.resolve(undefined,), }), }),
+          }),
+        } as unknown as Kysely<DB>,
+      );
+
+      expect(checks.find((check,) => check.id === "provider.health")?.ok,).toBe(true,);
+      expect(checks.find((check,) => check.id === "model.roles")?.ok,).toBe(true,);
+    } finally {
+      mock.module("../../admin/provider-health", () => health,);
+    }
   });
 });
