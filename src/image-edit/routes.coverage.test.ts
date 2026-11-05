@@ -499,7 +499,7 @@ describe("POST /api/v1/image-edit/run", () => {
 
 describe("exported handlers", () => {
   test("handleTemplates is callable without the Elysia mount; handleRun needs auth", async () => {
-    const listRes = handleTemplates(new Request(`${BASE}/templates`,),);
+    const listRes = await handleTemplates(new Request(`${BASE}/templates`,),);
     expect(listRes.status,).toBe(200,);
     const listed = (await listRes.json()) as Envelope<TemplateSummary[]>;
     expect(listed.data.length,).toBeGreaterThan(0,);

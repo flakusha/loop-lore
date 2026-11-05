@@ -117,6 +117,12 @@ export interface ImageEditProgress {
 export interface ImageEditExecuteOpts {
   /** Authenticated user the run's assets belong to. Never read from the body. */
   ownerId: string;
+  /**
+   * Resolved credential for proxy-fronted backends — the caller resolves the
+   * user's BYO key first (fail-closed on decrypt failure) and falls back to
+   * the operator key; undefined keeps stock-unauthenticated behavior.
+   */
+  apiKey?: string;
   onProgress?: (progress: ImageEditProgress,) => void;
 }
 

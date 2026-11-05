@@ -72,13 +72,16 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * parallel.
    * @param config
    */
-  protected getClient(config?: Config,): ComfyUIClient {
+  protected getClient(config?: Config, apiKey?: string,): ComfyUIClient {
     const sdConfig = pickSdProvider((config ?? loadConfig()).generation.providers.sd, "edit",);
 
     return new ComfyUIClient({
       baseUrl: sdConfig?.baseUrl ?? "http://127.0.0.1:8188",
       timeout: sdConfig?.generationTimeout ?? 120_000,
       pollIntervalMs: 500,
+      // A resolved BYO key wins; the operator's static key is the fallback
+      // posture. Stock-unauthenticated servers keep undefined.
+      apiKey: apiKey ?? sdConfig?.apiKey,
     },);
   }
 
@@ -151,7 +154,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     const onProgress = opts.onProgress;
     // One `loadConfig()` for both the client and the upload dir below.
     const config = loadConfig();
-    const client = this.getClient(config,);
+    const client = this.getClient(config, opts.apiKey,);
     const database = getDatabase();
     const uploadDir = this.#uploadDir ?? config.assets.uploadDir;
 
