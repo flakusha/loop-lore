@@ -134,7 +134,8 @@
       <input id="pw-role-model" class="form-input" type="text" x-model="wizard.roleModel" />
 
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px">
-        <button type="button" class="btn btn-secondary btn-xs" @click="closeWizard();">{{{t("common.skip")}}}</button>
+        <button type="button" class="btn btn-secondary btn-xs" @click="closeWizard();" x-text="t('common.skip');">
+        </button>
         <button
           type="button"
           class="btn btn-secondary btn-xs"
