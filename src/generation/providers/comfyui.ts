@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 340
-
 /**
  * ComfyUI Provider — HTTP/WebSocket client for ComfyUI API. Submits
  * workflow JSON, polls for execution, and retrieves generated images.
@@ -10,8 +8,13 @@
  */
 
 import { jsonStringifyOr, } from "../../utils";
-import { safeFromUint8Array, } from "../../utils/safe-buffer";
 import { validateProviderUrl, } from "../../utils/url-validation";
+import { downloadComfyFile, } from "./comfyui-download";
+import {
+  type ComfyUIPollResult,
+  pollComfyResult,
+  waitForComfyFiles,
+} from "./comfyui-poll";
 import { uploadImageToComfy, } from "./comfyui-upload";
 
 /** */
@@ -61,12 +64,7 @@ export interface ComfyUIDownloadedFile {
   buffer: Buffer;
 }
 
-/** Output buckets that are not `images`, in history key → media kind form. */
-const NON_IMAGE_BUCKETS = [
-  ["audio", "audio",],
-  ["videos", "video",],
-  ["gifs", "video",],
-] as const;
+// Output buckets that are not `images` moved to comfyui-poll.ts with the polling code.
 
 /** */
 export interface ComfyUINodeInfo {
@@ -156,56 +154,8 @@ export class ComfyUIClient {
    * @returns completion state with images or error
    * @throws {Error} When the history fetch returns a non-OK status.
    */
-  async pollResult(promptId: string,): Promise<{
-    done: boolean;
-    images?: ComfyUIOutputFile[];
-    files?: { kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[];
-    error?: string;
-  }> {
-    const url = `${this.baseUrl}/history/${promptId}`;
-
-    const resp = await fetch(url, {
-      headers: this.authHeaders(),
-      signal: AbortSignal.timeout(10_000,),
-    },);
-
-    if (!resp.ok) {
-      throw new Error(`ComfyUI history fetch failed [${resp.status}]`,);
-    }
-
-    const data = (await resp.json()) as Record<string, ComfyUIExecutionStatus>;
-    const entry = data[promptId];
-
-    if (!entry) {
-      return { done: false, };
-    }
-
-    if (entry.status === "completed") {
-      const images: ComfyUIOutputFile[] = [];
-      const files: { kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[] = [];
-      if (entry.outputs) {
-        for (const nodeOutput of Object.values(entry.outputs,)) {
-          for (const file of nodeOutput.images ?? []) {
-            images.push(file,);
-            files.push({ kind: "image", file, },);
-          }
-
-          for (const [bucket, kind,] of NON_IMAGE_BUCKETS) {
-            for (const file of nodeOutput[bucket] ?? []) {
-              files.push({ kind, file, },);
-            }
-          }
-        }
-      }
-
-      return { done: true, images, files, };
-    }
-
-    if (entry.status === "failed" || entry.status === "cancelled") {
-      return { done: true, error: entry.error ?? `execution ${entry.status}`, };
-    }
-
-    return { done: false, };
+  async pollResult(promptId: string,): Promise<ComfyUIPollResult> {
+    return pollComfyResult(this.baseUrl, promptId, this.apiKey,);
   }
 
   /**
@@ -219,23 +169,11 @@ export class ComfyUIClient {
     promptId: string,
     timeoutMs?: number,
   ): Promise<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[]> {
-    const deadline = Date.now() + (timeoutMs ?? this.timeout);
-
-    while (Date.now() < deadline) {
-      const result = await this.pollResult(promptId,);
-
-      if (result.done) {
-        if (result.error) {
-          throw new Error(`ComfyUI execution failed: ${result.error}`,);
-        }
-
-        return result.files ?? [];
-      }
-
-      await new Promise((r,) => setTimeout(r, this.pollIntervalMs,));
-    }
-
-    throw new Error("ComfyUI execution timed out",);
+    return waitForComfyFiles(this.baseUrl, promptId, {
+      timeoutMs: timeoutMs ?? this.timeout,
+      pollIntervalMs: this.pollIntervalMs,
+      apiKey: this.apiKey,
+    },);
   }
 
   /**
@@ -307,22 +245,7 @@ export class ComfyUIClient {
    * @throws {SafeBufferError} When the bytes exceed the safe buffer limit.
    */
   async downloadFile(file: ComfyUIOutputFile,): Promise<Buffer> {
-    const params = new URLSearchParams({ filename: file.filename, type: file.type ?? "output", },);
-    if (file.subfolder) { params.set("subfolder", file.subfolder,); }
-
-    const url = `${this.baseUrl}/view?${params.toString()}`;
-    const resp = await fetch(url, {
-      headers: this.authHeaders(),
-      signal: AbortSignal.timeout(30_000,),
-    },);
-
-    if (!resp.ok) {
-      throw new Error(`ComfyUI view download failed [${resp.status}]: ${file.filename}`,);
-    }
-
-    const result = safeFromUint8Array(new Uint8Array(await resp.arrayBuffer(),),);
-    if (!result.ok) { throw result.error; }
-    return result.buffer;
+    return downloadComfyFile(this.baseUrl, file, this.apiKey,);
   }
 
   /**

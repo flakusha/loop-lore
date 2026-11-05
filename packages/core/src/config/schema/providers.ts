@@ -86,6 +86,15 @@ export interface ImageProviderConfig {
   allowUserApiKey?: boolean;
   /** Provider purpose — determines which use-case picks this provider */
   purpose?: "generate" | "edit" | "both";
+  /**
+   * ComfyUI workflow file under configs/workflows/ (name without extension,
+   * e.g. "qwen-image-edit"). When set on an edit-purpose instance, the
+   * operator's workflow graph is registered as an image-edit template: the
+   * graph encodes the model (Qwen-Image-Edit or any edit checkpoint); the run
+   * substitutes only the prompt and input-image nodes. BYOK credential is
+   * resolved per instance name as usual.
+   */
+  workflow?: string;
   /** Default generation parameters */
   defaults: ImageProviderDefaults;
   /** Connection timeout in ms */
