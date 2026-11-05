@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Done
+**Status:** In Progress
+**Scope:** epic-world-management-ui: wizard edit-prefill UI + honest AC bookkeeping
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Epic:** epic-world-management-ui
