@@ -14,10 +14,25 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import type { RegisterPluginsOpts, } from "../../app/register-plugins";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
+import { baseSurface, } from "../v1/base-surface";
 import { setupRoutes, } from "./routes";
+
+/**
+ * The v1 barrel as the server mounts it (admin caller). The route lives ONLY
+ * in `src/routes/v1/base-surface.ts`, so mounting the barrel is what proves
+ * the shipped path is wired.
+ */
+function barrelApp(): { handle(request: Request,): Promise<Response> } {
+  const app = new Elysia({ name: "test-setup-barrel", },)
+    .derive(() => ({ userId: "user-1", userRole: "admin", }))
+    .use(baseSurface({ database: db, config: testConfig(), } as unknown as RegisterPluginsOpts,),);
+
+  return app as unknown as { handle(request: Request,): Promise<Response> };
+}
 
 /** The stable, documented check ids. */
 const STABLE_IDS = ["env.pii", "provider.health", "smk", "model.roles", "native", "tls",];
@@ -40,7 +55,9 @@ function makeApp(db: Kysely<DB> | undefined, userRole: string | null,) {
     userRole,
   }));
 
-  return app.use(setupRoutes({ database: db, config: testConfig(), }, "/api",),);
+  // NO prefix argument on purpose: the factory default IS the shipped
+  // contract (`/api/v1`), so this test fails if it regresses to `/api`.
+  return app.use(setupRoutes({ database: db, config: testConfig(), },),);
 }
 
 let db: Kysely<DB>;
@@ -58,21 +75,21 @@ afterAll(async () => {
 },);
 
 describe("setup state route", () => {
-  test("GET /api/setup/state returns 401 for anonymous", async () => {
+  test("GET /api/v1/setup/state returns 401 for anonymous", async () => {
     const app = makeApp(db, null,);
-    const res = await app.handle(new Request("http://localhost/api/setup/state",),);
+    const res = await app.handle(new Request("http://localhost/api/v1/setup/state",),);
     expect(res.status,).toBe(401,);
   });
 
-  test("GET /api/setup/state returns 403 for non-admin", async () => {
+  test("GET /api/v1/setup/state returns 403 for non-admin", async () => {
     const app = makeApp(db, "user",);
-    const res = await app.handle(new Request("http://localhost/api/setup/state",),);
+    const res = await app.handle(new Request("http://localhost/api/v1/setup/state",),);
     expect(res.status,).toBe(403,);
   });
 
-  test("GET /api/setup/state returns 200 with the six stable check ids for admin", async () => {
+  test("GET /api/v1/setup/state returns 200 with the six stable check ids for admin", async () => {
     const app = makeApp(db, "admin",);
-    const res = await app.handle(new Request("http://localhost/api/setup/state",),);
+    const res = await app.handle(new Request("http://localhost/api/v1/setup/state",),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as { checks: Array<{ id: string; ok: boolean; hint?: string }> };
     expect(Array.isArray(body.checks,),).toBe(true,);
@@ -87,8 +104,8 @@ describe("setup state route", () => {
 
   test("the check ids are stable across calls", async () => {
     const app = makeApp(db, "admin",);
-    const first = await app.handle(new Request("http://localhost/api/setup/state",),);
-    const second = await app.handle(new Request("http://localhost/api/setup/state",),);
+    const first = await app.handle(new Request("http://localhost/api/v1/setup/state",),);
+    const second = await app.handle(new Request("http://localhost/api/v1/setup/state",),);
     const firstBody = await first.json() as { checks: Array<{ id: string }> };
     const secondBody = await second.json() as { checks: Array<{ id: string }> };
     expect(firstBody.checks.map((check,) => check.id),).toEqual(secondBody.checks.map((check,) => check.id),);
@@ -110,7 +127,7 @@ describe("setup state route", () => {
 
     try {
       const app = makeApp(db, "admin",);
-      const res = await app.handle(new Request("http://localhost/api/setup/state",),);
+      const res = await app.handle(new Request("http://localhost/api/v1/setup/state",),);
       expect(res.status,).toBe(200,);
       const body = await res.json() as { checks: Array<{ id: string; ok: boolean; hint?: string }> };
 
@@ -132,5 +149,19 @@ describe("setup state route", () => {
         }
       }
     }
+  });
+
+  test("the v1 barrel serves /api/v1/setup/state", async () => {
+    const app = barrelApp();
+    const res = await app.handle(new Request("http://localhost/api/v1/setup/state",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { checks: Array<{ id: string }> };
+    expect(body.checks.map((check,) => check.id),).toEqual(STABLE_IDS,);
+  });
+
+  test("there is no unversioned /api/setup/state mount", async () => {
+    const app = barrelApp();
+    const res = await app.handle(new Request("http://localhost/api/setup/state",),);
+    expect(res.status,).toBe(404,);
   });
 });
