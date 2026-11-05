@@ -10,7 +10,11 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
-import { findProviderInstance, listProviderInstances, } from "../generation/providers/provider-instances";
+import {
+  findProviderInstance,
+  findSdProviderInstance,
+  listProviderInstances,
+} from "../generation/providers/provider-instances";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
@@ -28,6 +32,7 @@ function testConfig(): Config {
         openaiCompatible: [{ name: "test-prov", },],
         anthropic: { name: "anthropic", },
         ollamaNative: { name: "ollama-native", },
+        sd: [{ name: "sd-remote", allowUserApiKey: true, },],
       },
     },
   } as unknown as Config;
@@ -150,5 +155,55 @@ describe("BYO key store provider validation", () => {
     } as unknown as Config;
 
     expect(findProviderInstance(cfg, "anthropic",)?.allowUserApiKey,).toBe(false,);
+  });
+
+  // ── Image providers (generation.providers.sd) — BYOK image coverage ──
+
+  test("a configured image provider name is accepted", async () => {
+    const app = makeApp(db, userId, testConfig(),);
+
+    const res = await storeKey(app, "sd-remote",);
+
+    expect(res.status,).toBe(200,);
+    const stored: { ok: boolean; provider: string } = await res.json();
+    expect(stored.provider,).toBe("sd-remote",);
+
+    const rows = await db
+      .selectFrom("user_api_keys",)
+      .select("api_key_encrypted",)
+      .where("user_id", "=", userId,)
+      .where("provider_name", "=", "sd-remote",)
+      .executeTakeFirst();
+
+    // Stored encrypted — the plaintext key is never persisted.
+    expect(rows?.api_key_encrypted,).toBeDefined();
+    expect(rows?.api_key_encrypted,).not.toContain("sk-fixture",);
+  });
+
+  test("an unknown image provider name is still rejected", async () => {
+    const app = makeApp(db, userId, testConfig(),);
+
+    const res = await storeKey(app, "sd-ghost",);
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("the sd instance list covers image providers with the opt-out flag", () => {
+    const cfg = {
+      generation: {
+        providers: {
+          sd: [
+            { name: "sd-remote", allowUserApiKey: true, },
+            { name: "sd-pinned", allowUserApiKey: false, },
+            { name: "sd-default", },
+          ],
+        },
+      },
+    } as unknown as Config;
+
+    expect(findSdProviderInstance(cfg, "sd-pinned",)?.allowUserApiKey,).toBe(false,);
+    // Absent flag defaults to allowed — the historical default-allow rule.
+    expect(findSdProviderInstance(cfg, "sd-default",)?.allowUserApiKey,).toBe(true,);
+    expect(findSdProviderInstance(cfg, "sd-ghost",),).toBeUndefined();
   });
 });

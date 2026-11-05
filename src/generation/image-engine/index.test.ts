@@ -20,8 +20,11 @@
  * the backend, not the backend's error transport.
  */
 import { describe, expect, it, } from "bun:test";
-import type { ImageProviderConfig, } from "../../config/schema";
+import type { Config, ImageProviderConfig, } from "../../config/schema";
 import { createLogger, } from "../../logger";
+import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
+import { insertUsers, } from "../../test-utils/insert-helpers";
+import { ByoKeyDecryptError, userApiKeyResolver, } from "../providers/user-api-key";
 import { generateImages, generateImagesWithFailover, } from "./index";
 import type { ImageGenFailure, } from "./types";
 
@@ -185,4 +188,63 @@ describe("generateImagesWithFailover", () => {
 
     expect(viaFailover,).toEqual(direct,);
   },);
+});
+
+describe("generateImagesWithFailover BYO keys", () => {
+  const byoFailing = (name: string,): ImageProviderConfig => ({ ...BASE, name, baseUrl: "not-a-url", });
+
+  it("a corrupt stored image key fails closed — the operator key is never billed", async () => {
+    const env = await createTestDb();
+    try {
+      await insertUsers(env.db, "byok-user", "BYOK User", { id: "byok-user", },);
+      await env.db.insertInto("user_api_keys",).values({
+        id: crypto.randomUUID(),
+        user_id: "byok-user",
+        provider_name: "gen-a",
+        api_key_encrypted: "corrupt-image-ciphertext",
+      },).execute();
+
+      const config = {
+        byoKey: { enabled: true, encryptionKey: "engine-byok-secret", },
+        generation: { providers: {}, },
+      } as unknown as Config;
+
+      const resolve = userApiKeyResolver({ userId: "byok-user", config, db: env.db, },);
+
+      const providers = [byoFailing("gen-a",), byoFailing("gen-b",),];
+      await expect(
+        generateImagesWithFailover(providers, "generate", OPTS, resolve,),
+      ).rejects.toThrow(ByoKeyDecryptError,);
+    } finally {
+      await destroyTestDb(env,);
+    }
+  });
+
+  it("with no stored key the resolver yields undefined and the walk proceeds", async () => {
+    const env = await createTestDb();
+    try {
+      const config = {
+        byoKey: { enabled: true, encryptionKey: "engine-byok-secret", },
+        generation: { providers: {}, },
+      } as unknown as Config;
+
+      const resolve = userApiKeyResolver({ userId: "byok-user", config, db: env.db, },);
+
+      // Un-gated on purpose: no candidate is dispatched past the URL guard, so
+      // this holds for the real dispatcher AND the stub.
+      const outcome = await generateImagesWithFailover(
+        [byoFailing("gen-a",),],
+        "generate",
+        OPTS,
+        resolve,
+      );
+
+      // The backend attempt ran (URL-guard 400); the undefined resolver result
+      // means its static apiKey is what it received.
+      expect(outcome.ok,).toBe(false,);
+      expect((outcome as ImageGenFailure).status,).toBe(400,);
+    } finally {
+      await destroyTestDb(env,);
+    }
+  });
 });

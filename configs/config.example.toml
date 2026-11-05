@@ -118,11 +118,16 @@ openaiCompatible = []
 # ── Image generation providers (sd.cpp) ────────────────────
 # sd = []
 #
+# BYOK: a user may store their own API key for a remote image provider
+# (POST /api/user-api-keys); set allowUserApiKey = false to pin an instance
+# to the operator key.
+#
 # [[generation.providers.sd]]
 # name = "sd-cpp-local"
 # label = "SD CPP Local"
 # baseUrl = "http://localhost:9010"
 # apiFamily = "sdapi"
+# allowUserApiKey = true
 # purpose = "both"                    # generate | edit | both
 # timeout = 10000
 # generationTimeout = 120000

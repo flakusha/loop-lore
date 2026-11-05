@@ -63,6 +63,35 @@ export function listProviderInstances(config: Config,): ProviderInstance[] {
 }
 
 /**
+ * Every configured IMAGE provider instance (`generation.providers.sd`), in
+ * config order — the BYO-key surface for remote image backends.
+ *
+ * Deliberately separate from {@link listProviderInstances}: that list also
+ * feeds the admin provider-store name-collision check, which must not change
+ * semantics because image providers became BYO-keyable.
+ * @param config
+ * @returns the configured image instances
+ */
+export function listSdProviderInstances(config: Config,): ProviderInstance[] {
+  const sd = config.generation?.providers?.sd;
+
+  return (sd ?? []).map((instance,) => ({
+    name: instance.name,
+    allowUserApiKey: instance.allowUserApiKey !== false,
+  }));
+}
+
+/**
+ * Find a configured image provider instance by name.
+ * @param config
+ * @param name
+ * @returns the instance, or undefined when the name is not configured
+ */
+export function findSdProviderInstance(config: Config, name: string,): ProviderInstance | undefined {
+  return listSdProviderInstances(config,).find((instance,) => instance.name === name);
+}
+
+/**
  * Find a configured provider instance by name.
  * @param config
  * @param name
