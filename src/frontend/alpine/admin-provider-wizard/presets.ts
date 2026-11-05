@@ -9,6 +9,10 @@ export interface ProviderDescriptor {
   model: string;
   allowedHosts: string[];
   hasApiKey: boolean;
+  /** Whether the instance is live in the provider registry. */
+  state: "live" | "error";
+  /** Why the instance is not live — present only in the error state. */
+  error?: string;
 }
 
 /** Provider health summary from the existing rescan route. */
@@ -59,12 +63,13 @@ export const MODEL_ROLES = ["main", "auxiliary", "captioning", "classifier", "tr
  * Derive an instance name from a custom base URL.
  *
  * The backend accepts `^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$` for provider names,
- * so dots and dashes survive while everything else collapses to a dash.
+ * so dots and dashes survive while everything else collapses to a dash. The
+ * first character has to be alphanumeric, so leading symbols are dropped.
  * @param baseUrl - Operator-entered base URL.
  * @returns A backend-acceptable instance name.
  */
 export function deriveProviderName(baseUrl: string,): string {
   const host = baseUrl.replace(/^https?:\/\//iu, "",).replace(/\/.*$/u, "",);
-  const cleaned = host.replace(/[^a-zA-Z0-9._-]+/gu, "-",).replace(/^[-.]+/u, "",).slice(0, 64,);
+  const cleaned = host.replace(/[^a-zA-Z0-9._-]+/gu, "-",).replace(/^[^a-zA-Z0-9]+/u, "",).slice(0, 64,);
   return cleaned || "custom";
 }
