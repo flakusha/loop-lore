@@ -52,6 +52,7 @@ export {
   type ChatFacadeDeps,
   consumeFacadeBudget,
   createFacadeRegistry,
+  createFacadeRoutes,
   type FacadeBudget,
   type FacadeContext,
   facadeContextFromRequestContext,
@@ -60,11 +61,14 @@ export {
   type FacadePrincipal,
   type FacadeRegisterResult,
   type FacadeRegistry,
+  type FacadeRegistryDeps,
   type FacadeResult,
   type FacadeScope,
   type GenerationFacadeDeps,
+  getFacadeRegistry,
   registerChatOps,
   registerGenerationOps,
+  resetFacadeRegistry,
   runFacadeOp,
 } from "./loop-lore-facade";
 export {
