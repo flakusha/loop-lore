@@ -24,7 +24,35 @@ function userCtx(userId: string | null,): FacadeContext {
   return {
     database: DB,
     config: CONFIG,
-    principal: { kind: "user", userId, userRole: userId === null ? null : "user", },
+    principal: {
+      kind: "user",
+      userId,
+      userRole: userId === null ? null : "user",
+      credentialId: null,
+      credentialName: null,
+      credentialScope: null,
+    },
+    requestId: "req-1",
+  };
+}
+
+/** Integration-token principal context (ADR admin-scoped slice). */
+function tokenCtx(
+  userId: string,
+  credentialId: string,
+  credentialScope: FacadeContext["principal"]["credentialScope"],
+): FacadeContext {
+  return {
+    database: DB,
+    config: CONFIG,
+    principal: {
+      kind: "external-agent",
+      userId,
+      userRole: null,
+      credentialId,
+      credentialName: `token-${credentialId}`,
+      credentialScope,
+    },
     requestId: "req-1",
   };
 }
@@ -156,5 +184,63 @@ describe("runFacadeOp", () => {
     // Structural guard: facade chat ops reuse the HTTP chat budget so an
     // agent cannot outrun a browser client on any shared tier.
     expect(chatPolicy.name,).toBe("chat",);
+  });
+});
+
+describe("runFacadeOp — integration-token tier enforcement (ADR admin-scoped slice)", () => {
+  test("a read-tier token is denied a chat-write op with a typed 403", async () => {
+    const registry = createFacadeRegistry();
+    registry.register({ ...echoOp(), scope: "chat-write", },);
+
+    const result = await runFacadeOp(registry, tokenCtx("admin-1", "tok-read", "read",), "test.echo", {},);
+    expect(result.ok,).toBe(false,);
+    expect(result.status,).toBe(403,);
+    expect((result.json as { error: string }).error,).toBe("forbidden",);
+  });
+
+  test("a chat-write token covers both tiers (write implies read)", async () => {
+    const registry = createFacadeRegistry();
+    registry.register(echoOp(),);
+    registry.register({ ...echoOp(), name: "test.write", scope: "chat-write", },);
+
+    const read = await runFacadeOp(registry, tokenCtx("admin-1", "tok-write", "chat-write",), "test.echo", {},);
+    expect(read.ok,).toBe(true,);
+
+    const write = await runFacadeOp(registry, tokenCtx("admin-1", "tok-write", "chat-write",), "test.write", {},);
+    expect(write.ok,).toBe(true,);
+  });
+
+  test("a token principal with NO parsable scope is denied even read ops (fail closed)", async () => {
+    const registry = createFacadeRegistry();
+    registry.register(echoOp(),);
+
+    const result = await runFacadeOp(registry, tokenCtx("admin-1", "tok-null", null,), "test.echo", {},);
+    expect(result.ok,).toBe(false,);
+    expect(result.status,).toBe(403,);
+  });
+
+  test("JWT user principals keep today's both-tiers behavior (no tier check)", async () => {
+    const registry = createFacadeRegistry();
+    registry.register({ ...echoOp(), scope: "chat-write", },);
+
+    const result = await runFacadeOp(registry, userCtx("u1",), "test.echo", {},);
+    expect(result.ok,).toBe(true,);
+  });
+
+  test("two tokens of one admin draw SEPARATE budget buckets", async () => {
+    governanceRateLimiter.destroy();
+    const registry = createFacadeRegistry();
+    registry.register(echoOp(1,),);
+
+    // Same issuing admin userId, two distinct token credentials.
+    const first = await runFacadeOp(registry, tokenCtx("admin-1", "tok-a", "read",), "test.echo", {},);
+    expect(first.ok,).toBe(true,);
+
+    const drained = await runFacadeOp(registry, tokenCtx("admin-1", "tok-a", "read",), "test.echo", {},);
+    expect(drained.status,).toBe(429,);
+
+    // The sibling token does NOT inherit tok-a's exhausted bucket.
+    const second = await runFacadeOp(registry, tokenCtx("admin-1", "tok-b", "read",), "test.echo", {},);
+    expect(second.ok,).toBe(true,);
   });
 });

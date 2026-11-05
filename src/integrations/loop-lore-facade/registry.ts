@@ -107,7 +107,14 @@ export async function runFacadeOp(
   const authzFailure = authorizeFacadeOp(ctx, op,);
   if (authzFailure) { return authzFailure; }
 
-  const budget = consumeFacadeBudget({ key: ctx.principal.userId ?? "anonymous", policy: op.ratePolicy, },);
+  // Budget bucket keyed on PRINCIPAL IDENTITY: an integration token gets its
+  // OWN bucket (its credential id) so two tokens of one admin never share a
+  // budget; JWT users key on their userId exactly as before.
+  const budget = consumeFacadeBudget({
+    key: ctx.principal.credentialId ?? ctx.principal.userId ?? "anonymous",
+    policy: op.ratePolicy,
+  },);
+
   if (!budget.allowed) {
     return {
       ok: false,

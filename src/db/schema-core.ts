@@ -26,6 +26,7 @@ import type {
   FactionAlignment,
   FactionDiplomaticStatus,
   FactionRole,
+  IntegrationTokenScope,
   InteractionCategory,
   InteractionOutcome,
   InviteStatus,
@@ -2195,4 +2196,17 @@ export interface ToolCallAudit {
   tags: Generated<string>;
   duration_ms: Generated<number>;
   created_at: Generated<string>;
+}
+
+// ── integration_tokens ────────────────────────────────────────────
+export interface IntegrationTokens {
+  id: string;
+  name: string;
+  token_hash: string;
+  scopes: IntegrationTokenScope;
+  issuer_admin_user_id: string;
+  created_at: Generated<string>;
+  last_used_at: string | null;
+  revoked_at: string | null;
+  expires_at: string | null;
 }

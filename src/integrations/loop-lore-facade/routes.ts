@@ -14,6 +14,7 @@
 // authenticated principal (no anonymous discovery).
 
 import { Elysia, t, } from "elysia";
+import type { PrincipalKind, } from "../../middleware/types";
 import { createRequestContext, } from "../../middleware/types";
 import { jsonResponse, requireUserId, } from "../../routes/http-utils";
 import type { HandlerOpts, } from "../../routes/messages/types";
@@ -34,6 +35,11 @@ export interface FacadeRouteCtx {
   userId?: string | null;
   userRole?: string | null;
   sessionId?: string | null;
+  /** Auth-derive identity: principal kind + integration-token attribution. */
+  principalKind?: PrincipalKind;
+  credentialId?: string | null;
+  credentialName?: string | null;
+  credentialScope?: string | null;
   requestId?: string;
   params?: { opName?: string };
   body?: unknown;
@@ -69,6 +75,10 @@ export function createFacadeRoutes(opts: HandlerOpts, prefix = "/api",) {
           userId,
           userRole: ctx.userRole ?? null,
           sessionId: ctx.sessionId ?? null,
+          principalKind: ctx.principalKind ?? "user",
+          credentialId: ctx.credentialId ?? null,
+          credentialName: ctx.credentialName ?? null,
+          credentialScope: ctx.credentialScope ?? null,
         },);
 
         const facadeCtx = facadeContextFromRequestContext(
