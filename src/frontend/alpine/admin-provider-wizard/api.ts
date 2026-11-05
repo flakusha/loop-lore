@@ -1,7 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { jsonBody, } from "../json";
+/**
+ * Admin provider-wizard API client.
+ *
+ * Raw `fetch` instead of `apiFetch`: the shared helper discards the body of a
+ * non-2xx response (packages/core/src/utils/safe-fetch/fetch.ts), so the
+ * backend's own reason — "Provider name already used", "Remote host not
+ * approved" — never reached the operator. The CSRF header and the same-origin
+ * credentials are the ones `apiFetch` attaches, so the double-submit gate
+ * (src/middleware/csrf-plugin.ts) still accepts the request.
+ */
+
+import { getCsrfToken, } from "../../fe-fetch";
+import { jsonBody, jsonParseOr, } from "../json";
 import type { ProviderDescriptor, ProviderSummary, SetupCheck, } from "./presets";
 
 /** Payload accepted by POST /api/v1/admin/setup/providers. */
@@ -14,14 +26,53 @@ export interface ProviderPayload {
   setDefault?: boolean;
 }
 
+/** Error body the admin API answers with: `{ error, code, meta }`. */
+interface ApiErrorBody {
+  error?: string;
+}
+
+/**
+ * Call the admin API with the CSRF header and the credentials `apiFetch` uses.
+ * @param url - API path.
+ * @param init - Fetch options (method, headers, body).
+ * @returns The raw response — the caller decides what a non-2xx means.
+ */
+async function adminFetch(url: string, init: RequestInit = {},): Promise<Response> {
+  const headers = new Headers(init.headers ?? {},);
+  const csrf = getCsrfToken();
+  if (csrf !== "") { headers.set("X-CSRF-Token", csrf,); }
+  // eslint-disable-next-line no-restricted-syntax -- raw Response: safeFetch drops the error body for non-2xx.
+  return fetch(url, { ...init, headers, credentials: "same-origin", },);
+}
+
+/**
+ * Reject a failed response with the server's own message.
+ * @param res - The response to check.
+ * @throws {Error} With the server's message and the HTTP status attached.
+ */
+async function assertOk(res: Response,): Promise<void> {
+  if (res.ok) { return; }
+  let text = "";
+  try {
+    text = await res.text();
+  } catch {
+    text = "";
+  }
+
+  const body = jsonParseOr<ApiErrorBody>(text, {},);
+  const err = new Error(body.error ?? `HTTP ${res.status}`,) as Error & { status?: number };
+  err.status = res.status;
+  throw err;
+}
+
 /**
  * GET /api/v1/admin/setup/providers - wizard-managed provider instances.
  * @returns The configured instances, or an empty list when the call fails.
  */
 export async function listSetupProviders(): Promise<ProviderDescriptor[]> {
   try {
-    const res = await apiFetch("/api/v1/admin/setup/providers", { headers: { Accept: "application/json", }, },);
-    if (!res.ok) { return []; }
+    const res = await adminFetch("/api/v1/admin/setup/providers", { headers: { Accept: "application/json", }, },);
+    await assertOk(res,);
     const data = await res.json() as { providers?: ProviderDescriptor[] };
     return data.providers ?? [];
   } catch {
@@ -33,22 +84,16 @@ export async function listSetupProviders(): Promise<ProviderDescriptor[]> {
  * POST /api/v1/admin/setup/providers - create or update a provider instance.
  * @param payload - Provider descriptor, with apiKey only when the operator typed one.
  * @returns The saved descriptor.
- * @throws {Error} With the server message when the payload is rejected (400).
+ * @throws {Error} With the server's message when the payload is rejected (400).
  */
 export async function saveSetupProvider(payload: ProviderPayload,): Promise<ProviderDescriptor> {
-  const res = await apiFetch("/api/v1/admin/setup/providers", {
+  const res = await adminFetch("/api/v1/admin/setup/providers", {
     method: "POST",
     headers: { "Content-Type": "application/json", },
     body: jsonBody(payload,),
   },);
 
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({})) as { message?: string };
-    const err = new Error(body.message || `HTTP ${res.status}`,) as Error & { status?: number };
-    err.status = res.status;
-    throw err;
-  }
-
+  await assertOk(res,);
   const data = await res.json() as { provider?: ProviderDescriptor };
   if (!data.provider) { throw new Error("provider missing in response",); }
   return data.provider;
@@ -57,10 +102,11 @@ export async function saveSetupProvider(payload: ProviderPayload,): Promise<Prov
 /**
  * POST /api/v1/admin/providers/rescan - existing route reused for the test step.
  * @returns Health summaries for every known provider.
+ * @throws {Error} With the server's message when the rescan is refused.
  */
 export async function rescanProviderSummaries(): Promise<ProviderSummary[]> {
-  const res = await apiFetch("/api/v1/admin/providers/rescan", { method: "POST", },);
-  if (!res.ok) { return []; }
+  const res = await adminFetch("/api/v1/admin/providers/rescan", { method: "POST", },);
+  await assertOk(res,);
   const data = await res.json() as { providers?: ProviderSummary[] };
   return data.providers ?? [];
 }
@@ -70,13 +116,17 @@ export async function rescanProviderSummaries(): Promise<ProviderSummary[]> {
  * @param role - Model role id.
  * @param provider - Provider instance name.
  * @param model - Model id within that provider.
+ * @throws {Error} With the server's message when the role assignment is rejected.
  */
 export async function putModelRole(role: string, provider: string, model: string,): Promise<void> {
-  await apiFetch(`/api/v1/admin/model-roles/${encodeURIComponent(role,)}`, {
+  const res = await adminFetch(`/api/v1/admin/model-roles/${encodeURIComponent(role,)}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json", },
     body: jsonBody({ provider, model, },),
   },);
+
+  await assertOk(res,);
+  await res.text();
 }
 
 /**
@@ -85,8 +135,8 @@ export async function putModelRole(role: string, provider: string, model: string
  */
 export async function fetchSetupChecks(): Promise<SetupCheck[] | null> {
   try {
-    const res = await apiFetch("/api/v1/setup/state", { headers: { Accept: "application/json", }, },);
-    if (!res.ok) { return null; }
+    const res = await adminFetch("/api/v1/setup/state", { headers: { Accept: "application/json", }, },);
+    await assertOk(res,);
     const data = await res.json() as { checks?: SetupCheck[] };
     return data.checks ?? [];
   } catch {

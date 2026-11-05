@@ -1,20 +1,60 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import "../i18n.test-helper";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { createProviderWizard, } from "./index";
 
-type FetchMock = (url: string, options?: RequestInit,) => Promise<Response>;
+/** A request the wizard sent. */
+interface FetchCall {
+  url: string;
+  method: string;
+  body: Record<string, unknown> | null;
+}
 
-const globalState = globalThis as unknown as {
-  apiFetch?: FetchMock;
-  showToast?: (type: "success" | "error", message: string,) => void;
-};
+/** The element double the toast renderer writes into. */
+interface FakeEl {
+  className: string;
+  textContent: string;
+  innerHTML: string;
+  type: string;
+  children: FakeEl[];
+  parentNode: FakeEl | null;
+  append(...els: FakeEl[]): void;
+  setAttribute(): void;
+  addEventListener(): void;
+  remove(): void;
+}
 
-let posts: Array<{ url: string; body: Record<string, unknown> }> = [];
-let toasts: Array<{ type: string; message: string }> = [];
+/** Build the element double the toast renderer writes into. */
+function makeEl(): FakeEl {
+  const el: FakeEl = {
+    className: "",
+    textContent: "",
+    innerHTML: "",
+    type: "",
+    children: [],
+    parentNode: null,
+    append(...els: FakeEl[]) {
+      for (const child of els) {
+        child.parentNode = el;
+        el.children.push(child,);
+      }
+    },
+    setAttribute() {},
+    addEventListener() {},
+    remove() {
+      const parent = el.parentNode;
+      if (!parent) { return; }
+      parent.children = parent.children.filter((child,) => child !== el);
+      el.parentNode = null;
+    },
+  };
 
-/** Build a JSON response for the mocked apiFetch. */
+  return el;
+}
+
+/** Build a JSON response for the mocked backend. */
 function jsonResponse(body: unknown, status = 200,): Response {
   return new Response(JSON.stringify(body,), {
     status,
@@ -30,29 +70,55 @@ const savedProvider = {
   model: "gpt-4o-mini",
   allowedHosts: ["api.openai.com",],
   hasApiKey: true,
+  state: "live",
 };
 
+let calls: FetchCall[] = [];
+let handler: (url: string, init: RequestInit,) => Promise<Response> = async () => Response.json({},);
+let toastContainer = makeEl();
+const originalFetch = globalThis.fetch;
+const originalDocument = globalThis.document;
+
 beforeEach(() => {
-  posts = [];
-  toasts = [];
-  globalState.showToast = (type: string, message: string,) => {
-    toasts.push({ type, message, },);
+  calls = [];
+  toastContainer = makeEl();
+  handler = async () => Response.json({},);
+  globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
+    calls.push({
+      url: String(url,),
+      method: init?.method ?? "GET",
+      body: typeof init?.body === "string" ? JSON.parse(init.body,) : null,
+    },);
+
+    return handler(String(url,), init ?? {},);
+  }) as typeof fetch;
+
+  (globalThis as { document: unknown }).document = {
+    querySelector: (selector: string,) => (selector === "#toast-container" ? toastContainer : null),
+    createElement: () => makeEl(),
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    cookie: "",
   };
 },);
 
 afterEach(() => {
-  globalState.apiFetch = undefined;
-  globalState.showToast = undefined;
+  globalThis.fetch = originalFetch;
+  (globalThis as { document: unknown }).document = originalDocument;
 },);
+
+/** The toasts the real showToast rendered into the fake container. */
+function renderedToasts(): { type: string; message: string }[] {
+  return toastContainer.children.map((toast,) => ({
+    type: (toast.className.match(/toast\s+(\S+)/u,) ?? [])[1] ?? "",
+    message: toast.children[1]?.textContent ?? "",
+  }));
+}
 
 describe("provider connection wizard", () => {
   test("save posts the provider body and clears the api key", async () => {
-    globalState.apiFetch = async (url: string, options?: RequestInit,) => {
-      if (options?.method === "POST") {
-        posts.push({ url, body: JSON.parse(String(options.body,),), },);
-        return jsonResponse({ ok: true, provider: savedProvider, },);
-      }
-
+    handler = async (_url: string, init: RequestInit,) => {
+      if (init.method === "POST") { return jsonResponse({ ok: true, provider: savedProvider, },); }
       return jsonResponse({ providers: [], },);
     };
 
@@ -63,8 +129,8 @@ describe("provider connection wizard", () => {
 
     await wizard.saveProvider();
 
-    expect(posts[0]?.url,).toBe("/api/v1/admin/setup/providers",);
-    expect(posts[0]?.body,).toEqual({
+    expect(calls[0]?.url,).toBe("/api/v1/admin/setup/providers",);
+    expect(calls[0]?.body,).toEqual({
       name: "api.openai.com",
       label: "api.openai.com",
       baseUrl: "https://api.openai.com/v1",
@@ -79,8 +145,11 @@ describe("provider connection wizard", () => {
   });
 
   test("a rejected save shows the server message and keeps no stale success state", async () => {
-    globalState.apiFetch = async (_url: string, options?: RequestInit,) => {
-      if (options?.method === "POST") { return jsonResponse({ message: "Invalid provider payload", }, 400,); }
+    handler = async (_url: string, init: RequestInit,) => {
+      if (init.method === "POST") {
+        return jsonResponse({ error: "Invalid provider payload", code: "VALIDATION_ERROR", }, 400,);
+      }
+
       return jsonResponse({ providers: [], },);
     };
 
@@ -95,11 +164,11 @@ describe("provider connection wizard", () => {
     expect(wizard.wizard.step,).toBe(1,);
     expect(wizard.wizard.savedName,).toBe("",);
     expect(wizard.wizard.apiKey,).toBe("sk-secret",);
-    expect(toasts.filter((toast,) => toast.type === "error"),).toHaveLength(0,);
+    expect(renderedToasts().filter((toast,) => toast.type === "error"),).toHaveLength(0,);
   });
 
   test("the test step reads the rescan summary of the saved provider", async () => {
-    globalState.apiFetch = async (url: string,) => {
+    handler = async (url: string,) => {
       if (url === "/api/v1/admin/providers/rescan") {
         return jsonResponse({
           providers: [
@@ -128,12 +197,8 @@ describe("provider connection wizard", () => {
   });
 
   test("a stored api key is kept when the field is left empty", async () => {
-    globalState.apiFetch = async (url: string, options?: RequestInit,) => {
-      if (options?.method === "POST") {
-        posts.push({ url, body: JSON.parse(String(options.body,),), },);
-        return jsonResponse({ ok: true, provider: savedProvider, },);
-      }
-
+    handler = async (_url: string, init: RequestInit,) => {
+      if (init.method === "POST") { return jsonResponse({ ok: true, provider: savedProvider, },); }
       return jsonResponse({ providers: [savedProvider,], },);
     };
 
@@ -146,12 +211,28 @@ describe("provider connection wizard", () => {
 
     await wizard.saveProvider();
 
-    expect(posts[0]?.body.apiKey,).toBeUndefined();
-    expect(posts[0]?.body.name,).toBe("openai",);
+    expect(calls[1]?.body?.apiKey,).toBeUndefined();
+    expect(calls[1]?.body?.name,).toBe("openai",);
+  });
+
+  test("the role save posts the model-role override", async () => {
+    handler = async () => jsonResponse({ ok: true, },);
+
+    const wizard = createProviderWizard();
+    wizard.wizard.role = "auxiliary";
+    wizard.wizard.roleProvider = "openai";
+    wizard.wizard.roleModel = "gpt-4o-mini";
+
+    await wizard.saveWizardRole();
+
+    expect(calls[0]?.url,).toBe("/api/v1/admin/model-roles/auxiliary",);
+    expect(calls[0]?.method,).toBe("PUT",);
+    expect(calls[0]?.body,).toEqual({ provider: "openai", model: "gpt-4o-mini", },);
+    expect(renderedToasts().map((toast,) => toast.type),).toEqual(["success",],);
   });
 
   test("a failing setup-state fetch leaves the wizard usable", async () => {
-    globalState.apiFetch = async (url: string,) => {
+    handler = async (url: string,) => {
       if (url === "/api/v1/setup/state") { throw new Error("network down",); }
       return jsonResponse({ providers: [], },);
     };
@@ -163,6 +244,6 @@ describe("provider connection wizard", () => {
 
     expect(wizard.wizard.setupHints,).toEqual([],);
     expect(wizard.wizard.open,).toBe(true,);
-    expect(toasts,).toHaveLength(0,);
+    expect(renderedToasts(),).toHaveLength(0,);
   });
 });

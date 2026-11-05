@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 260
+
+import { showToast, } from "../../ui";
 import { t, } from "../i18n";
 import { fetchSetupChecks, listSetupProviders, putModelRole, rescanProviderSummaries, saveSetupProvider, } from "./api";
 import type { ProviderPayload, } from "./api";
@@ -33,8 +36,20 @@ export interface ProviderWizardState {
   setupHints: string[];
 }
 
-/** Admin page members the wizard borrows from the surrounding scope. */
-interface ProviderWizardHost {
+/**
+ * The scope the slice's methods run against.
+ *
+ * Alpine evaluates template expressions with `this` bound to the page scope
+ * proxy, so the state is read and written through `this` — the host pattern
+ * admin-import-wizard.ts and admin-classifier-vocab.ts use. Writing to a
+ * closed-over object instead bypasses Alpine's reactive proxy: the value
+ * changes but the template never re-renders.
+ */
+export interface ProviderWizardScope {
+  wizard: ProviderWizardState;
+  loadProviders(): Promise<void>;
+  loadSetupState(): Promise<void>;
+  /** Admin page members the wizard borrows from the surrounding scope. */
   openImportWizard?: () => void;
   showTab?: (tab: string,) => void;
 }
@@ -44,16 +59,16 @@ export interface ProviderWizardSlice {
   wizard: ProviderWizardState;
   providerPresets: typeof PROVIDER_PRESETS;
   providerRoles: typeof MODEL_ROLES;
-  openProviderWizard(): void;
-  closeWizard(): void;
-  selectPreset(presetId: string,): void;
-  editProvider(name: string,): void;
-  saveProvider(): Promise<void>;
-  loadProviders(): Promise<void>;
-  loadSetupState(): Promise<void>;
-  testConnection(): Promise<void>;
-  saveRole(): Promise<void>;
-  openImportInstead(): void;
+  openProviderWizard(this: ProviderWizardScope,): void;
+  closeWizard(this: ProviderWizardScope,): void;
+  selectPreset(this: ProviderWizardScope, presetId: string,): void;
+  editProvider(this: ProviderWizardScope, name: string,): void;
+  saveProvider(this: ProviderWizardScope,): Promise<void>;
+  loadProviders(this: ProviderWizardScope,): Promise<void>;
+  loadSetupState(this: ProviderWizardScope,): Promise<void>;
+  testConnection(this: ProviderWizardScope,): Promise<void>;
+  saveWizardRole(this: ProviderWizardScope,): Promise<void>;
+  openImportInstead(this: ProviderWizardScope,): void;
 }
 
 /**
@@ -90,160 +105,155 @@ export function createProviderWizard(): ProviderWizardSlice {
     setupHints: [],
   };
 
-  async function loadProviders(): Promise<void> {
-    state.providers = await listSetupProviders();
-  }
-
-  async function loadSetupState(): Promise<void> {
-    const checks = await fetchSetupChecks();
-    state.setupHints = (checks ?? []).filter((c,) => !c.ok).map((c,) => c.hint ?? c.id);
-  }
-
   return {
     wizard: state,
     providerPresets: PROVIDER_PRESETS,
     providerRoles: MODEL_ROLES,
 
-    openProviderWizard(): void {
-      state.open = true;
-      state.step = 1;
-      state.preset = "custom";
-      state.name = "";
-      state.label = "";
-      state.baseUrl = "";
-      state.model = "";
-      state.apiKey = "";
-      state.setDefault = false;
-      state.hasStoredKey = false;
-      state.error = "";
-      state.savedName = "";
-      state.testStatus = "";
-      state.testError = "";
-      state.role = "main";
-      state.roleProvider = "";
-      state.roleModel = "";
-      void loadProviders();
-      void loadSetupState();
+    openProviderWizard(this: ProviderWizardScope,): void {
+      this.wizard.open = true;
+      this.wizard.step = 1;
+      this.wizard.preset = "custom";
+      this.wizard.name = "";
+      this.wizard.label = "";
+      this.wizard.baseUrl = "";
+      this.wizard.model = "";
+      this.wizard.apiKey = "";
+      this.wizard.setDefault = false;
+      this.wizard.hasStoredKey = false;
+      this.wizard.error = "";
+      this.wizard.savedName = "";
+      this.wizard.testStatus = "";
+      this.wizard.testError = "";
+      this.wizard.role = "main";
+      this.wizard.roleProvider = "";
+      this.wizard.roleModel = "";
+      void this.loadProviders();
+      void this.loadSetupState();
     },
 
-    closeWizard(): void {
-      state.open = false;
-      state.apiKey = "";
+    closeWizard(this: ProviderWizardScope,): void {
+      this.wizard.open = false;
+      this.wizard.apiKey = "";
     },
 
-    selectPreset(presetId: string,): void {
-      state.preset = presetId;
+    selectPreset(this: ProviderWizardScope, presetId: string,): void {
+      this.wizard.preset = presetId;
       if (presetId === "custom") {
-        state.name = "";
-        state.label = "";
+        this.wizard.name = "";
+        this.wizard.label = "";
         return;
       }
 
       const preset = PROVIDER_PRESETS.find((p,) => p.id === presetId);
       if (!preset) { return; }
-      state.name = preset.id;
-      state.label = preset.label;
-      state.baseUrl = preset.baseUrl;
-      state.model = preset.model;
+      this.wizard.name = preset.id;
+      this.wizard.label = preset.label;
+      this.wizard.baseUrl = preset.baseUrl;
+      this.wizard.model = preset.model;
     },
 
-    editProvider(name: string,): void {
-      const provider = state.providers.find((p,) => p.name === name);
+    editProvider(this: ProviderWizardScope, name: string,): void {
+      const provider = this.wizard.providers.find((p,) => p.name === name);
       if (!provider) { return; }
       const preset = PROVIDER_PRESETS.find((p,) => p.baseUrl === provider.baseUrl);
-      state.preset = preset?.id ?? "custom";
-      state.name = provider.name;
-      state.label = provider.label;
-      state.baseUrl = provider.baseUrl;
-      state.model = provider.model;
-      state.apiKey = "";
-      state.hasStoredKey = provider.hasApiKey;
-      state.setDefault = false;
-      state.error = "";
-      state.step = 1;
+      this.wizard.preset = preset?.id ?? "custom";
+      this.wizard.name = provider.name;
+      this.wizard.label = provider.label;
+      this.wizard.baseUrl = provider.baseUrl;
+      this.wizard.model = provider.model;
+      this.wizard.apiKey = "";
+      this.wizard.hasStoredKey = provider.hasApiKey;
+      this.wizard.setDefault = false;
+      this.wizard.error = "";
+      this.wizard.step = 1;
     },
 
-    async saveProvider(): Promise<void> {
-      const name = state.name || (state.baseUrl ? deriveProviderName(state.baseUrl,) : "");
-      if (!name || !state.baseUrl || !state.model) {
-        state.error = t("admin.providerWizard.missingFields",);
+    async saveProvider(this: ProviderWizardScope,): Promise<void> {
+      const name = this.wizard.name || (this.wizard.baseUrl ? deriveProviderName(this.wizard.baseUrl,) : "");
+      if (!name || !this.wizard.baseUrl || !this.wizard.model) {
+        this.wizard.error = t("admin.providerWizard.missingFields",);
         return;
       }
 
       const payload: ProviderPayload = {
         name,
-        label: state.label || name,
-        baseUrl: state.baseUrl,
-        model: state.model,
-        setDefault: state.setDefault,
+        label: this.wizard.label || name,
+        baseUrl: this.wizard.baseUrl,
+        model: this.wizard.model,
+        setDefault: this.wizard.setDefault,
       };
 
-      if (state.apiKey !== "") { payload.apiKey = state.apiKey; }
-      state.saving = true;
-      state.error = "";
+      if (this.wizard.apiKey !== "") { payload.apiKey = this.wizard.apiKey; }
+      this.wizard.saving = true;
+      this.wizard.error = "";
       try {
         const provider = await saveSetupProvider(payload,);
-        state.apiKey = "";
-        state.savedName = provider.name;
-        state.roleProvider = provider.name;
-        state.roleModel = provider.model;
-        state.step = 2;
+        this.wizard.apiKey = "";
+        this.wizard.savedName = provider.name;
+        this.wizard.roleProvider = provider.name;
+        this.wizard.roleModel = provider.model;
+        this.wizard.step = 2;
         showToast("success", t("toasts.providerSaved",),);
-        await loadProviders();
+        await this.loadProviders();
       } catch (err) {
         const status = (err as { status?: number }).status;
-        state.error = (err as Error).message || t("toasts.failed",);
+        this.wizard.error = (err as Error).message || t("toasts.failed",);
         if (status !== 400) { showToast("error", t("toasts.networkError",),); }
       } finally {
-        state.saving = false;
+        this.wizard.saving = false;
       }
     },
 
-    loadProviders,
+    async loadProviders(this: ProviderWizardScope,): Promise<void> {
+      this.wizard.providers = await listSetupProviders();
+    },
 
-    loadSetupState,
+    async loadSetupState(this: ProviderWizardScope,): Promise<void> {
+      const checks = await fetchSetupChecks();
+      this.wizard.setupHints = (checks ?? []).filter((c,) => !c.ok).map((c,) => c.hint ?? c.id);
+    },
 
-    async testConnection(): Promise<void> {
-      state.testing = true;
-      state.testError = "";
+    async testConnection(this: ProviderWizardScope,): Promise<void> {
+      this.wizard.testing = true;
+      this.wizard.testError = "";
       try {
         const summaries = await rescanProviderSummaries();
-        const summary = summaries.find((p,) => p.name === state.savedName);
+        const summary = summaries.find((p,) => p.name === this.wizard.savedName);
         if (!summary) {
-          state.testStatus = "error";
-          state.testError = t("toasts.failedRescanProviders",);
+          this.wizard.testStatus = "error";
+          this.wizard.testError = t("toasts.failedRescanProviders",);
           return;
         }
 
-        state.testStatus = summary.status;
-        state.testError = summary.error ?? "";
-      } catch {
-        state.testStatus = "error";
-        state.testError = t("toasts.networkError",);
+        this.wizard.testStatus = summary.status;
+        this.wizard.testError = summary.error ?? "";
+      } catch (err) {
+        this.wizard.testStatus = "error";
+        this.wizard.testError = (err as Error).message || t("toasts.networkError",);
       } finally {
-        state.testing = false;
+        this.wizard.testing = false;
       }
     },
 
-    async saveRole(): Promise<void> {
-      if (!state.roleProvider || !state.roleModel) { return; }
-      state.roleSaving = true;
+    async saveWizardRole(this: ProviderWizardScope,): Promise<void> {
+      if (!this.wizard.roleProvider || !this.wizard.roleModel) { return; }
+      this.wizard.roleSaving = true;
       try {
-        await putModelRole(state.role, state.roleProvider, state.roleModel,);
-        showToast("success", t("toasts.roleUpdatedFor", { role: state.role, },),);
-      } catch {
-        showToast("error", t("toasts.networkError",),);
+        await putModelRole(this.wizard.role, this.wizard.roleProvider, this.wizard.roleModel,);
+        showToast("success", t("toasts.roleUpdatedFor", { role: this.wizard.role, },),);
+      } catch (err) {
+        showToast("error", (err as Error).message || t("toasts.networkError",),);
       } finally {
-        state.roleSaving = false;
+        this.wizard.roleSaving = false;
       }
     },
 
-    openImportInstead(): void {
-      const host = this as unknown as ProviderWizardHost;
-      state.open = false;
-      state.apiKey = "";
-      host.openImportWizard?.();
-      host.showTab?.("system",);
+    openImportInstead(this: ProviderWizardScope,): void {
+      this.wizard.open = false;
+      this.wizard.apiKey = "";
+      this.openImportWizard?.();
+      this.showTab?.("system",);
     },
   };
 }
