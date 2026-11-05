@@ -10,7 +10,7 @@
  * (src/routes/http-utils/errors.ts) — `error` carries the operator-facing text.
  */
 import { afterEach, beforeEach, describe, expect, test, vi, } from "bun:test";
-import { listSetupProviders, putModelRole, saveSetupProvider, } from "./api";
+import { fetchSetupChecks, listSetupProviders, putModelRole, rescanProviderSummaries, saveSetupProvider, } from "./api";
 
 /** A request the client sent. */
 interface FetchCall {
@@ -145,5 +145,40 @@ describe("provider wizard api client", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  test("the optional setup-state endpoint: a missing endpoint leaves the wizard without hints", async () => {
+    handler = async () => Response.json({ error: "Not found", }, { status: 404, },);
+
+    expect(await fetchSetupChecks(),).toBeNull();
+  });
+
+  test("the setup-state checks are parsed when the endpoint answers", async () => {
+    handler = async () =>
+      Response.json({ checks: [{ id: "provider", ok: false, hint: "No provider configured", },], },);
+
+    expect(await fetchSetupChecks(),).toEqual([{ id: "provider", ok: false, hint: "No provider configured", },],);
+  });
+
+  test("a refused rescan surfaces the server's error message", async () => {
+    handler = async () => Response.json({ error: "Provider registry is empty", }, { status: 503, },);
+
+    let caught: unknown;
+    try {
+      await rescanProviderSummaries();
+    } catch (err) {
+      caught = err;
+    }
+
+    expect((caught as Error).message,).toBe("Provider registry is empty",);
+  });
+
+  test("a healthy rescan maps the body to provider summaries", async () => {
+    handler = async () =>
+      Response.json({ providers: [{ name: "openai", label: "OpenAI", status: "ok", modelCount: 3, },], },);
+
+    expect(await rescanProviderSummaries(),).toEqual([
+      { name: "openai", label: "OpenAI", status: "ok", modelCount: 3, },
+    ],);
   });
 });

@@ -319,3 +319,35 @@ describe("option passthrough", () => {
     expect((opts.headers as Headers).get("X-Custom",),).toBe("1",);
   });
 });
+
+// ── redirectToLogin ─────────────────────────────────────────
+
+describe("redirectToLogin", () => {
+  test("sends the browser to the login page with the current path as the redirect target", async () => {
+    locPathname = "/views/admin";
+    locSearch = "?tab=models";
+    const { redirectToLogin, } = await importFeFetch();
+
+    redirectToLogin();
+
+    expect(locAssigns,).toEqual(["/views/login?redirect=%2Fviews%2Fadmin%3Ftab%3Dmodels",],);
+  });
+
+  test("does not redirect when the browser is already on the login page", async () => {
+    locPathname = "/views/login";
+    const { redirectToLogin, } = await importFeFetch();
+
+    redirectToLogin();
+
+    expect(locAssigns,).toEqual([],);
+  });
+
+  test("does not redirect when the browser is already on the register page", async () => {
+    locPathname = "/views/register";
+    const { redirectToLogin, } = await importFeFetch();
+
+    redirectToLogin();
+
+    expect(locAssigns,).toEqual([],);
+  });
+});

@@ -13,7 +13,7 @@
  * timeout, and the login redirect on a 401.
  */
 
-import { DEFAULT_TIMEOUT, } from "../../../utils";
+import { DEFAULT_TIMEOUT, } from "../../../utils/safe-fetch";
 import { getCsrfToken, redirectToLogin, } from "../../fe-fetch";
 import { jsonBody, jsonParseOr, } from "../json";
 import type { ProviderDescriptor, ProviderSummary, SetupCheck, } from "./presets";
