@@ -41,6 +41,10 @@ export interface BattleRollView {
   total: number;
   /** Armor class the roll was compared against. */
   dc: number;
+  /** Whether the attack resolved as a hit (the backend's own verdict). */
+  hit: boolean;
+  /** Whether the attack was a natural-1 critical miss (the backend's verdict). */
+  criticalMiss: boolean;
 }
 
 /** One battle-log entry delivered by the backend payload. */

@@ -59,7 +59,7 @@ describe("renderBattleSummary", () => {
       type: "attack",
       critical: false,
       description: "Alice hits",
-    },],) as unknown as FakeEl;
+    },], "battle-summary",) as unknown as FakeEl;
 
     const [headline, meta, toggle, log,] = card.children;
     expect(headline!.textContent,).toBe("**Combat over — the party win!**",);
@@ -74,18 +74,18 @@ describe("renderBattleSummary", () => {
   });
 
   it("omits the toggle when the log is empty", () => {
-    const card = renderBattleSummary(summary(), [],) as unknown as FakeEl;
+    const card = renderBattleSummary(summary(), [], "battle-summary",) as unknown as FakeEl;
     expect(card.children,).toHaveLength(2,);
   });
 
   it("labels the card from the i18n catalog", () => {
-    const card = renderBattleSummary(summary(), [],) as unknown as FakeEl;
+    const card = renderBattleSummary(summary(), [], "battle-summary",) as unknown as FakeEl;
     expect(card.getAttribute("aria-label",),).toBe("Battle summary",);
   });
 
   it("falls back to the i18n key when the catalog is empty", () => {
     localeStringsHost.__localeStrings = {};
-    const card = renderBattleSummary(summary(), [],) as unknown as FakeEl;
+    const card = renderBattleSummary(summary(), [], "battle-summary",) as unknown as FakeEl;
     expect(card.getAttribute("aria-label",),).toBe("battle.battleSummary",);
   });
 });

@@ -59,7 +59,8 @@ function rollChip(entry: BattleLogEntryView,): SkillCheckChip | null {
     modifier: roll.modifier,
     total: roll.total,
     dc: roll.dc,
-    critical: entry.critical ? "hit" : null,
+    hit: roll.hit,
+    critical: entry.critical ? "hit" : roll.criticalMiss ? "fail" : null,
   },);
 
   // The enclosing role="log" region announces the new line; the chip must not
@@ -94,10 +95,11 @@ function animateRoll(entry: BattleLogEntryView, chip: SkillCheckChip, index: num
 /**
  * Render the battle log panel from the delivered history.
  * @param log - The battle-log entries delivered by the backend payload
- * @param battleId - The battle the log belongs to (scopes the dice-tumble guard)
+ * @param battleId - The battle the log belongs to (scopes the dice-tumble guard, so
+ *   one battle's guard is never inherited by another)
  * @returns {HTMLElement | null} The `.battle-log` container, or null when there is no history yet
  */
-export function renderBattleLog(log: BattleLogEntryView[], battleId = "",): HTMLElement | null {
+export function renderBattleLog(log: BattleLogEntryView[], battleId: string,): HTMLElement | null {
   if (log.length === 0) { return null; }
 
   const panel = document.createElement("div",);
