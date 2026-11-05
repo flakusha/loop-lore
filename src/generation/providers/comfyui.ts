@@ -83,6 +83,12 @@ export interface ComfyUIClientOptions {
   baseUrl: string;
   timeout?: number;
   pollIntervalMs?: number;
+  /**
+   * Optional credential for reverse-proxy-fronted servers — sent as
+   * `Authorization: Bearer <apiKey>` on every request when set. Stock
+   * ComfyUI is unauthenticated, so this stays undefined for local engines.
+   */
+  apiKey?: string;
 }
 
 /** */
@@ -90,20 +96,27 @@ export class ComfyUIClient {
   readonly baseUrl: string;
   private timeout: number;
   private pollIntervalMs: number;
+  private apiKey?: string;
 
   /**
-   * @param options - client options (baseUrl, timeout, poll interval)
+   * @param options - client options (baseUrl, timeout, poll interval, credential)
    * @throws when the base URL fails provider validation
    */
   constructor(options: ComfyUIClientOptions,) {
     this.baseUrl = options.baseUrl.replace(/\/+$/, "",);
     this.timeout = options.timeout ?? 120_000;
     this.pollIntervalMs = options.pollIntervalMs ?? 500;
+    this.apiKey = options.apiKey;
 
     const validated = validateProviderUrl(this.baseUrl,);
     if (!validated.ok) {
       throw new Error(`Invalid ComfyUI URL: ${validated.error}`,);
     }
+  }
+
+  /** Auth headers for proxy-fronted engines; empty for stock ComfyUI. */
+  private authHeaders(): Record<string, string> {
+    return this.apiKey ? { authorization: `Bearer ${this.apiKey}`, } : {};
   }
 
   /**
@@ -116,6 +129,7 @@ export class ComfyUIClient {
     const url = `${this.baseUrl}/prompt`;
     const resp = await fetch(url, {
       method: "POST",
+      headers: this.authHeaders(),
       body: jsonStringifyOr({ prompt: workflow, },),
       signal: AbortSignal.timeout(this.timeout,),
     },);
@@ -151,6 +165,7 @@ export class ComfyUIClient {
     const url = `${this.baseUrl}/history/${promptId}`;
 
     const resp = await fetch(url, {
+      headers: this.authHeaders(),
       signal: AbortSignal.timeout(10_000,),
     },);
 
@@ -244,6 +259,7 @@ export class ComfyUIClient {
     const url = `${this.baseUrl}/interrupt`;
     await fetch(url, {
       method: "POST",
+      headers: this.authHeaders(),
       signal: AbortSignal.timeout(10_000,),
     },);
   }
@@ -296,6 +312,7 @@ export class ComfyUIClient {
 
     const url = `${this.baseUrl}/view?${params.toString()}`;
     const resp = await fetch(url, {
+      headers: this.authHeaders(),
       signal: AbortSignal.timeout(30_000,),
     },);
 
@@ -349,6 +366,6 @@ export class ComfyUIClient {
    * @returns the stored filename (pass to LoadImage's `image` input)
    */
   async uploadImage(buffer: Buffer, filename: string,): Promise<string> {
-    return uploadImageToComfy(this.baseUrl, this.timeout, buffer, filename,);
+    return uploadImageToComfy(this.baseUrl, this.timeout, buffer, filename, this.apiKey,);
   }
 }

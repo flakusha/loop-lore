@@ -6,6 +6,7 @@
 **Status:** In Progress
 **Status Note:** Landed on `feat-comfyui-param-derivation` + `feat-model-rankings` lanes; unlanded phase-A slice lives on `epic-agentic-integration` (Phase A route + engine + tests done, async job shape open).
 **Blocker:** HELD with `epic-agentic-integration` — same 095 renumber + lock decision as `TASK-agentic-integration-tests`. Next: land that branch, then re-check this ticket's Phase-A boxes against dev.
+**Phase-A progress (from epic-agentic-integration):** Landed `src/generation/video-engine.ts` (ComfyUI workflow dispatch, cross-instance failover, per-provider BYO keys with fail-closed decrypt, 501/500/502/503/504 mapping), `POST /api/v1/generation/video` in `video-gen-route.ts` (auth contract + template render + storage quota gate + asset persistence as `assetType: "video"`), video provider config (`generation.providers.video`, `VideoApiFamily.Comfyui`), per-modality template apply dispatch (`routes/templates/modality.ts`), API-keys surface listing video instances, config examples, and tests (engine: sink/error/failover/BYOK; route: 401/400/404/403/501 gates; apply seam). Still open: the async job shape — the route blocks on the engine's bounded submit/poll/download instead of returning a job handle, so a long render still holds the HTTP connection (deadline is `generationTimeout`); route-level happy-path/asset-link assertions and a route-level template-render test are not yet written.
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-video-generation

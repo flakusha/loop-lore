@@ -12,6 +12,7 @@
 import type { Kysely, } from "kysely";
 import type { ChatKey, } from "../../crypto/chat-keys";
 import type { PipelineConfig, } from "../../crypto/pipeline";
+import type { AssetType as AssetTypeT, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createAsset, hashBuffer, } from "./create";
 import { extensionForMime, } from "./detect";
@@ -29,6 +30,12 @@ export interface PersistGeneratedImagesOpts {
   altText: string | ((index: number, buffer: Buffer,) => string);
   /** Entity links applied to every persisted asset (e.g. message + chat). */
   links: AssetLinkInput[];
+  /**
+   * Asset type written on the rows. Defaults to `"image"` (the historical
+   * caller shape); video/audio generators pass their own kind — the mime
+   * type still drives the file extension.
+   */
+  assetType?: AssetTypeT;
   /**
    * Optional filename stem override per image. Defaults to the content hash,
    * so an identical re-run addresses the same bytes. Pass only when the caller
@@ -78,7 +85,7 @@ export async function persistGeneratedImages(
         ownerId: opts.ownerId,
         filename,
         mimeType: opts.mimeType,
-        assetType: "image",
+        assetType: opts.assetType ?? "image",
         sizeBytes: buffer.length,
         buffer,
         altText,
