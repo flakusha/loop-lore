@@ -13,7 +13,7 @@
  *   - selectProfession GETs /:id and stores specializations; 404 clears the
  *     selection quietly
  *   - assignProfession POSTs { actorId, discipline }
- *   - addProfessionXp POSTs { amount: 50 } and surfaces level-up/title feedback
+ *   - addProfessionXp POSTs { amount: PROFESSION_XP_STEP } and surfaces level-up/title feedback
  *   - addProfessionSpecialization POSTs { name, bonusType, bonusValue }
  *   - the client progression mirror (bonuses ladder, next title, XP bar)
  *     matches the server source of truth (progression.ts)
@@ -22,7 +22,7 @@ import "./i18n.test-helper";
 import { afterEach, expect, mock, test, } from "bun:test";
 import { LEVEL_XP, MAX_LEVEL, progressionBonuses, titleForLevel, } from "../../rpg/crafting/professions/progression";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
-import { PROFESSION_DISCIPLINES, professions, } from "./professions";
+import { PROFESSION_DISCIPLINES, PROFESSION_XP_STEP, professions, } from "./professions";
 import type { ChatState, ProfessionView, } from "./types";
 
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
@@ -226,7 +226,7 @@ describeOrSkip("professions.assignProfession", () => {
 },);
 
 describeOrSkip("professions.addProfessionXp", () => {
-  test("POSTs { amount: 50 } and surfaces level-up + title feedback", async () => {
+  test("POSTs { amount: PROFESSION_XP_STEP } and surfaces level-up + title feedback", async () => {
     const ctx = buildCtx({ professions: [PROFESSION,], },);
     let body: unknown = null;
     fetchHandler = (url, opts,) => {
@@ -242,7 +242,7 @@ describeOrSkip("professions.addProfessionXp", () => {
 
     await ctx.addProfessionXp("prof-1",);
 
-    expect(body,).toEqual({ amount: 50, },);
+    expect(body,).toEqual({ amount: PROFESSION_XP_STEP, },);
     expect(ctx.professionsBusyId,).toBeNull();
     expect(ctx.professionFeedback?.professionId,).toBe("prof-1",);
     expect(ctx.professionFeedback?.newLevel,).toBe(31,);
