@@ -53,6 +53,7 @@ export {
   battleCommandFor,
   type BattleItemView,
   type BattleLogEntryView,
+  type BattleRollView,
   type BattleView,
   type EnvironmentalEffect,
 } from "./commands.js";
@@ -214,7 +215,7 @@ function render(): void {
   }
 
   // The battle log is only meaningful once the backend has delivered history.
-  const log = renderBattleLog(deps.battle.log,);
+  const log = renderBattleLog(deps.battle.log, deps.battle.id,);
   if (log) { overlay.append(log,); }
 
   // Focus the current cycle target once mounted.

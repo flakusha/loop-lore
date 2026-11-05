@@ -30,4 +30,30 @@ describe("animateDiceRoll", () => {
     expect(await pending,).toBe(17,);
     expect(animateSkillCheck,).toBe(animateDiceRoll,);
   });
+
+  it("lands on the final roll at once when motion is reduced", () => {
+    const host = globalThis as { matchMedia?: (query: string,) => { matches: boolean } };
+    const original = host.matchMedia;
+    host.matchMedia = () => ({ matches: true, });
+
+    try {
+      const dice = document.createElement("span",) as unknown as HTMLElement;
+      animateDiceRoll(dice, 17, { frames: 2, intervalMs: 10, },);
+      expect(dice.textContent,).toBe("17",);
+      expect(dice.classList.contains("battle-dice-rolling",),).toBe(false,);
+    } finally {
+      if (original) {
+        host.matchMedia = original;
+      } else {
+        delete host.matchMedia;
+      }
+    }
+  });
+
+  it("completes the roll when there is no dice element", async () => {
+    const { promise, resolve, } = Promise.withResolvers<number>();
+    animateDiceRoll(null, 17, { onComplete: resolve, },);
+
+    expect(await promise,).toBe(17,);
+  });
 });

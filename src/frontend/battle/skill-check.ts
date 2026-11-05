@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { prefersReducedMotion, } from "../effects/text-fx.js";
 import { setDiceRolling, } from "./skill-check-display.js";
 
 export * from "./skill-check-display.js";
@@ -12,12 +13,24 @@ export interface SkillCheckAnimationOptions {
 }
 
 export function animateDiceRoll(
-  dice: HTMLElement,
+  dice: HTMLElement | null,
   finalRoll: number,
   options: SkillCheckAnimationOptions = {},
 ): void {
   const frames = options.frames ?? 8;
   const intervalMs = options.intervalMs ?? 40;
+  // Reduced motion, or no dice to tumble: land on the final value at once.
+  if (!dice || prefersReducedMotion()) {
+    if (dice) {
+      dice.textContent = String(finalRoll,);
+      setDiceRolling(dice, false,);
+    }
+
+    options.onComplete?.(finalRoll,);
+
+    return;
+  }
+
   setDiceRolling(dice, true,);
 
   let i = 0;

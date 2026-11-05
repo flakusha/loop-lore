@@ -12,7 +12,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema.js";
 import type { EnvironmentalEffect, } from "../../frontend/battle/environmental-effects.js";
-import type { Combatant, } from "../../rpg/combat.js";
+import type { CombatAction, Combatant, } from "../../rpg/combat.js";
 import {
   type BattleItemView,
   type BattleWithRoster,
@@ -173,6 +173,42 @@ export interface SerializedLogEntry {
   critical: boolean;
   /** Narration line for the entry. */
   description: string;
+  /** Roll the entry was resolved with (omitted for entries without a roll). */
+  roll?: SerializedRoll;
+}
+
+/** Roll summary for a battle-log entry: the d20 the action was resolved with. */
+export interface SerializedRoll {
+  /** Natural d20 face value rolled. */
+  natural: number;
+  /** Flat modifier applied to the roll. */
+  modifier: number;
+  /** Roll total after the modifier. */
+  total: number;
+  /** Armor class the roll was compared against. */
+  dc: number;
+}
+
+/**
+ * Project an attack's persisted roll into the payload's lean roll summary.
+ *
+ * The raw dice stay in the battle log; the panel only needs the natural d20,
+ * the modifier, the roll total and the target's armor class.
+ * @param entry - The battle-log entry
+ * @param roster - The battle roster (source of the target's armor class)
+ * @returns The roll summary, or null when the entry carries no resolvable roll
+ */
+function projectRoll(entry: CombatAction, roster: Combatant[],): SerializedRoll | null {
+  const attack = entry.attack;
+  if (!attack) { return null; }
+  const target = entry.targetId ? roster.find((c,) => c.id === entry.targetId) : undefined;
+  if (!target) { return null; }
+
+  const { rawTotal, modifier, total, } = attack.roll;
+  // A roll the backend cannot read must not reach the panel as a broken chip.
+  if (!Number.isFinite(rawTotal,) || !Number.isFinite(modifier,) || !Number.isFinite(total,)) { return null; }
+
+  return { natural: rawTotal, modifier, total, dc: target.ac, };
 }
 
 /**
@@ -228,6 +264,9 @@ export function serializeBattle(
     };
 
     if (entry.damage !== undefined) { serialized.damage = entry.damage; }
+
+    const roll = projectRoll(entry, battle.combatants,);
+    if (roll) { serialized.roll = roll; }
 
     return serialized;
   },);
