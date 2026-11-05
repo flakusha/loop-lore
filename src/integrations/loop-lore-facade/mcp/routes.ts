@@ -4,14 +4,14 @@
 // src/integrations/loop-lore-facade/mcp/routes.ts — the MCP Streamable HTTP
 // transport over the facade registry (epic TASK: tools/list + tools/call).
 //
-// One authenticated POST endpoint speaking JSON-RPC 2.0 (initialize,
-// tools/list, tools/call, ping; batch arrays supported). The caller identity
-// is minted EXCLUSIVELY from the auth middleware's RequestContext — the RPC
-// body is protocol payload only and can never assert a principal. Sessions
-// are STATELESS by slice decision (pinned spec removed protocol sessions):
-// no session ids, initialize per request tolerated; notification-only posts
-// answer 202 per the Streamable HTTP transport. Response transport is plain
-// application/json (no SSE streams this slice).
+// One authenticated POST endpoint speaking JSON-RPC 2.0 through the SDK
+// stateless bridge (initialize, tools/list, tools/call, ping; batch arrays
+// supported). The caller identity is minted EXCLUSIVELY from the auth
+// middleware's RequestContext — the RPC body is protocol payload only and
+// can never assert a principal. Sessions are STATELESS by slice decision
+// (pinned spec removed protocol sessions): no session ids, initialize per
+// request tolerated; notification-only posts answer 202. Response transport
+// is plain application/json (no SSE streams this slice).
 //
 // parse:"none" — the body must be dispatched as RAW text so malformed JSON
 // answers the JSON-RPC -32700 Parse error instead of the app validation
@@ -27,21 +27,15 @@ import { safeJsonStringify, } from "../../../utils";
 import { getFacadeRegistry, } from "../instance";
 import { type FacadeRouteCtx, } from "../routes";
 import { facadeContextFromRequestContext, } from "../types";
-import { dispatchJsonRpc, RPC_METHOD_NOT_FOUND, RpcError, } from "./jsonrpc";
-import { createMcpFacadeServer, } from "./server";
+import { McpTransportBridge, } from "./bridge";
 
 /** The MCP POST handler additionally consumes the raw Request body. */
 interface McpRouteCtx extends FacadeRouteCtx {
   request: Request;
 }
 
-function jsonEnvelope(value: unknown, status: number,): Response {
-  const serialized = safeJsonStringify(value,);
-  return new Response(serialized.ok ? serialized.value : "null", {
-    status,
-    headers: { "content-type": "application/json", },
-  },);
-}
+/** Stateless: the bridge holds no per-session state of its own. */
+const mcpBridge = new McpTransportBridge();
 
 /**
  * MCP transport endpoint:
@@ -74,33 +68,23 @@ export function createMcpRoutes(opts: HandlerOpts, prefix = "/api",) {
           asyncStore,
         );
 
-        const server = createMcpFacadeServer({
+        const raw = await ctx.request.text();
+        const outcome = await mcpBridge.handlePayload(raw, {
           registry: getFacadeRegistry({ database, config, },),
           version: APP_VERSION,
-        },);
-
-        const raw = await ctx.request.text();
-        const response = await dispatchJsonRpc(raw, (method, params,) => {
-          switch (method) {
-            case "initialize":
-              return server.initialize(params,);
-            case "tools/list":
-              return server.toolsList();
-            case "tools/call":
-              return server.toolsCall(params, facadeCtx,);
-            case "ping":
-              return server.ping();
-            default:
-              throw new RpcError(RPC_METHOD_NOT_FOUND, `method "${method}" not found`,);
-          }
+          ctx: facadeCtx,
         },);
 
         // Notification-only payload: nothing to answer -> 202 Accepted.
-        if (response === null) {
+        if (outcome.status === 202) {
           return new Response(null, { status: 202, },);
         }
 
-        return jsonEnvelope(response, 200,);
+        const serialized = safeJsonStringify(outcome.body,);
+        return new Response(serialized.ok ? serialized.value : "null", {
+          status: 200,
+          headers: { "content-type": "application/json", },
+        },);
       },
       { parse: "none", },
     )
