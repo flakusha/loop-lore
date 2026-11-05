@@ -3,7 +3,7 @@
 
 # ADR: Credentials issuer model (dual issuer — admin-scoped tokens + OAuth-style BYOK)
 
-**Status:** Proposed
+**Status:** PARTIALLY IMPLEMENTED — §Decision a (ADMIN-SCOPED TOKENS) is implemented on branch `epic-agentic-integration` (commit "feat(integrations): admin-scoped integration tokens"): migration `095_integration_tokens` (`integration_tokens`: id/name/token_hash/scopes/issuer_admin_user_id/created_at/last_used_at/revoked_at/expires_at), verification seam `authenticate-request.ts` (sibling of `authenticate` + `requireAuthGuard`, fail-closed), enforced FacadeScope tiers in `authorizeFacadeOp`, admin CRUD at `/api/v1/admin/integration-tokens`, per-token budget buckets, token-attributed audit rows. Documented refinements vs this ADR: revocation = row-VALUE `revoked_at` (not row deletion — the row is the audit trail; fail-closed semantics identical); `expires_at` OPTIONAL, default NULL = non-expiring, pending the "Token lifetime" open question below; subject binding = the ISSUING ADMIN's `userId` (principalKind `external-agent`, `userRole: null` — no synthetic user rows, explicit attribution closes TASK-byok-agent-subject-binding). §Decision b (OAUTH-STYLE) remains **Proposed**, pending the open questions below.
 **Date:** 2026-11-05
 **Decides:** epic-principal-scoped-credentials §5 Q4 (and the same §5 Q4 amendment in epic-agentic-integration-mcp-acp)
 **Ticket:** TASK-credentials-story-decision-record
