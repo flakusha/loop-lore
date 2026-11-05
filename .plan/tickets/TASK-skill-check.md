@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** epic-battle-ui: skill-check/dice-roll UI (TASK-skill-check)
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task
