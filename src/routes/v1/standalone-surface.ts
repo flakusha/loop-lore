@@ -21,6 +21,7 @@
  */
 import { Elysia, } from "elysia";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
+import { createMcpRoutes, } from "../../integrations/loop-lore-facade/mcp/routes";
 import { createFacadeRoutes, } from "../../integrations/loop-lore-facade/routes";
 import { agencyRoutes, } from "../agency";
 import { configMenuRoutes, } from "../config-menu";
@@ -43,5 +44,6 @@ export function standaloneSurface(opts: RegisterPluginsOpts,) {
     .use(gameStateRoutes(handleOpts, prefix,),)
     .use(storyOrchestrationRoutes(handleOpts, prefix,),)
     .use(configMenuRoutes({ database: handleOpts.database, }, prefix,),)
-    .use(createFacadeRoutes(handleOpts, prefix,),);
+    .use(createFacadeRoutes(handleOpts, prefix,),)
+    .use(createMcpRoutes(handleOpts, prefix,),);
 }

@@ -53,6 +53,8 @@ export {
   consumeFacadeBudget,
   createFacadeRegistry,
   createFacadeRoutes,
+  createMcpFacadeServer,
+  createMcpRoutes,
   type FacadeBudget,
   type FacadeContext,
   facadeContextFromRequestContext,
