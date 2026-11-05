@@ -13,6 +13,7 @@ import type {
   BattleCombatantView,
   BattleItemView,
   BattleLogEntryView,
+  BattleRollView,
   BattleView,
   EnvironmentalEffect,
 } from "../../battle/panel";
@@ -152,10 +153,27 @@ function isLogEntryShape(value: unknown,): value is BattleLogEntryView {
   if (!value || typeof value !== "object") { return false; }
   const v = value as Record<string, unknown>;
   const damageOk = v.damage === undefined || typeof v.damage === "number";
+  const rollOk = v.roll === undefined || isRollShape(v.roll,);
   return (
     typeof v.type === "string" &&
     damageOk &&
+    rollOk &&
     typeof v.description === "string"
+  );
+}
+
+/**
+ * @param value
+ * @returns true when `value` has the shape of a battle roll summary.
+ */
+function isRollShape(value: unknown,): value is BattleRollView {
+  if (!value || typeof value !== "object") { return false; }
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.natural === "number" &&
+    typeof v.modifier === "number" &&
+    typeof v.total === "number" &&
+    typeof v.dc === "number"
   );
 }
 

@@ -4,7 +4,12 @@
 # TASK: Skill Check Dice Animation
 
 **Summary:** (none captured)
-**Context:** (none captured)
+**Context:** Skill-check/dice-roll slice shipped (2026-11-05).
+- **Shipped:** `src/frontend/battle/skill-check-display.ts` (roll chip: dice face, roll math, success/failure outcome, critical marker), `src/frontend/battle/skill-check.ts` (`animateDiceRoll` — CSS tumble, lands on the final value under reduced motion or with no dice element), `src/frontend/battle/battle-log.ts` (chip rendered on the log line; the tumble fires once per new roll, guarded per battle id so a re-render never replays it and a new battle never inherits it), `src/frontend/alpine/chat-actions/battle.ts` (payload validation for the new `roll` field), `src/public/css/vn.css` (dice/roll chip styles, `prefers-reduced-motion` fallback, small-width rule), and the locale keys `battle.rollResult` / `battle.rollSuccess` / `battle.rollFailure` so the chip labels resolve through the repo's i18n catalog.
+- **Server side:** `src/assistant/commands/battle-utils.ts` — `serializeBattle` now projects the PERSISTED attack roll (`CombatAction.attack.roll`: `rawTotal` = natural d20, `modifier`, `total`) plus the target's armor class as the DC into the lean `roll` payload field. The raw dice never leave the battle log.
+- **Feeding endpoint:** the panel payload built by `serializeBattle` (battle panel route) → chat actions `battle-started` / `battle-updated` → `renderBattlePanel` → `renderBattleLog`. The roll source is the attack roll persisted with the combat action; the DC is the target's `Combatant.ac` (the same value the attack roll is compared against).
+- **Deliberately skipped:** sound effects. The repo has no audio asset pipeline (no asset dir, no playback helper), and the AC is optional — the dice animation is silent.
+- **Still open:** target selection (the payload carries no area/self targets), action cost and cooldown display (the payload carries no per-action cost or cooldown), and social skill-check rolls (`src/rpg/service/battles/social.ts` persists only the narration, so no roll reaches the client).
 **Acceptance Criteria:** (none captured)
 
 
@@ -29,11 +34,11 @@ Animated dice roll visualization for skill checks and attacks.
 
 ## Acceptance Criteria
 
-- [ ] 3D dice roll animation
-- [ ] Roll result display
-- [ ] Critical hit/fail visual indicators
-- [ ] Sound effects (optional)
-- [ ] Mobile compatible
+- [x] 3D dice roll animation (`src/public/css/vn.css` dice tumble + `animateDiceRoll` wiring in `src/frontend/battle/skill-check.ts`; verified 2026-11-05)
+- [x] Roll result display (natural/modifier/total/DC chip in `src/frontend/battle/skill-check-display.ts`, rendered on the log line in `src/frontend/battle/battle-log.ts`; verified 2026-11-05)
+- [x] Critical hit/fail visual indicators (the entry's existing `critical` flag drives the chip's critical marker; verified 2026-11-05)
+- [ ] Sound effects (optional) — deliberately skipped: the repo has no audio asset pipeline and the AC is optional
+- [x] Mobile compatible (the chip has a small-width rule in the `@media (width <= 640px)` block in `src/public/css/vn.css`; verified 2026-11-05)
 
 ## Files to Create
 

@@ -1043,6 +1043,67 @@
   color: var(--text-primary);
 }
 
+/* Skill-check chip: dice face, roll math and outcome. */
+.battle-skill-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  margin-left: var(--space-1, 0.25rem);
+  perspective: 12rem;
+}
+
+.battle-dice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5em;
+  height: 1.5em;
+  border: 1px solid var(--border-default);
+  border-radius: 0.25rem;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The tumble is CSS-only: JS swaps the face value, CSS does the spinning. */
+.battle-dice-rolling {
+  animation: battle-dice-tumble 120ms linear infinite;
+}
+
+@keyframes battle-dice-tumble {
+  from {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(360deg) rotateY(180deg);
+  }
+}
+
+.battle-skill-check-math {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.battle-skill-check-outcome {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.battle-critical-hit {
+  color: var(--accent-green);
+}
+
+.battle-critical-fail {
+  color: var(--accent-red);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .battle-dice-rolling {
+    animation: none;
+  }
+}
+
 /* Action economy line on each combatant tile. */
 .battle-action-economy {
   display: block;
@@ -1223,5 +1284,9 @@
   }
   .battle-roster {
     flex-direction: column;
+  }
+  .battle-skill-check {
+    margin-left: 0;
+    font-size: 0.75rem;
   }
 }

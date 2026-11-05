@@ -1,15 +1,31 @@
-import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { installBattleDom, } from "../tests/battle-fake-dom";
 import { renderSkillCheckResult, setDiceRolling, } from "./skill-check-display";
 
 let restoreDom: () => void;
 
+// The chip labels resolve through the i18n catalog; bun runs every test file
+// in one process, so save and restore whatever catalog is in place.
+const localeStringsHost = globalThis as { __localeStrings?: unknown };
+const initialLocaleStrings = localeStringsHost.__localeStrings;
+
 beforeEach(() => {
   restoreDom = installBattleDom();
+  localeStringsHost.__localeStrings = {
+    battle: {
+      rollResult: "{roll} {modifier} = {total} vs DC {dc}",
+      rollSuccess: "success",
+      rollFailure: "failure",
+    },
+  };
 },);
 
 afterEach(() => {
   restoreDom();
+},);
+
+afterAll(() => {
+  localeStringsHost.__localeStrings = initialLocaleStrings;
 },);
 
 describe("renderSkillCheckResult", () => {
@@ -31,6 +47,13 @@ describe("renderSkillCheckResult", () => {
     const el = renderSkillCheckResult({ roll: 1, modifier: 2, total: 3, dc: 15, critical: "fail", },);
     expect(el.children[2]!.className,).toContain("battle-critical-fail",);
     expect(el.children[2]!.textContent,).toBe("failure",);
+  });
+
+  it("falls back to the i18n key when the catalog is empty", () => {
+    localeStringsHost.__localeStrings = {};
+    const el = renderSkillCheckResult({ roll: 14, modifier: 3, total: 17, dc: 15, critical: null, },);
+    expect(el.children[1]!.textContent,).toBe("battle.rollResult",);
+    expect(el.children[2]!.textContent,).toBe("battle.rollSuccess",);
   });
 });
 

@@ -31,6 +31,18 @@ export interface BattleCombatantView {
   reactions?: number;
 }
 
+/** Roll summary delivered with a battle-log entry (the d20 it was resolved with). */
+export interface BattleRollView {
+  /** Natural d20 face value rolled. */
+  natural: number;
+  /** Flat modifier applied to the roll. */
+  modifier: number;
+  /** Roll total after the modifier. */
+  total: number;
+  /** Armor class the roll was compared against. */
+  dc: number;
+}
+
 /** One battle-log entry delivered by the backend payload. */
 export interface BattleLogEntryView {
   /** Combat action type (drives the entry's indicator class). */
@@ -41,6 +53,8 @@ export interface BattleLogEntryView {
   critical: boolean;
   /** Narration line for the entry. */
   description: string;
+  /** Roll the entry was resolved with (omitted for entries without a roll). */
+  roll?: BattleRollView;
 }
 
 /** A battle-usable item offered by the panel's Item group. */

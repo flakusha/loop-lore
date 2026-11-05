@@ -4,7 +4,7 @@
  * critical highlighting, damage chips, latest-entry-visible auto-scroll, and
  * the null result for an empty history.
  */
-import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi, } from "bun:test";
 import { type FakeEl, installBattleDom, } from "../tests/battle-fake-dom";
 import { logTypeClass, renderBattleLog, scrollToLatest, } from "./battle-log";
 import { type BattleLogEntryView, } from "./commands";
@@ -23,9 +23,14 @@ beforeEach(() => {
   restoreDom = installBattleDom();
   savedLocaleStrings = localeStringsHost.__localeStrings;
   hasSavedLocaleStrings = true;
-  // Seed the alpine i18n catalog the log resolves its label from.
+  // Seed the alpine i18n catalog the log and the roll chip resolve from.
   localeStringsHost.__localeStrings = {
-    battle: { log: "Battle log", },
+    battle: {
+      log: "Battle log",
+      rollResult: "{roll} {modifier} = {total} vs DC {dc}",
+      rollSuccess: "success",
+      rollFailure: "failure",
+    },
   };
 },);
 
@@ -57,6 +62,45 @@ const heal: BattleLogEntryView = {
   critical: false,
   description: "Alice recovers 3 HP.",
 };
+
+/**
+ * Roll fixtures.
+ *
+ * Resource contract: the renderer keeps module-level state (one tumble per
+ * new roll), so every test below owns a DISTINCT log entry — no test can see
+ * another test's animation guard, in any order.
+ */
+/** Attack entry fixture carrying a roll (the panel's dice chip). */
+const rolled: BattleLogEntryView = {
+  type: "attack",
+  damage: 8,
+  critical: true,
+  description: "Alice crushes the orc for 8 damage.",
+  roll: { natural: 20, modifier: 3, total: 23, dc: 16, },
+};
+
+/** Attack entry fixture whose dice tumble is asserted. */
+const tumbled: BattleLogEntryView = {
+  type: "attack",
+  damage: 5,
+  critical: false,
+  description: "Bob slashes the goblin for 5 damage.",
+  roll: { natural: 17, modifier: 2, total: 19, dc: 14, },
+};
+
+/** Attack entry fixture re-rendered to prove the tumble does not replay. */
+const replayed: BattleLogEntryView = {
+  type: "attack",
+  damage: 12,
+  critical: false,
+  description: "Cleo hacks the troll for 12 damage.",
+  roll: { natural: 11, modifier: 4, total: 15, dc: 18, },
+};
+
+/** The skill-check chip rendered on a log line (undefined when it carries no roll). */
+function chipOf(line: FakeEl,): FakeEl | undefined {
+  return line.children.find((c,) => c.className === "battle-skill-check");
+}
 
 describe("logTypeClass", () => {
   it("maps known action types to an indicator class suffix", () => {
@@ -124,5 +168,54 @@ describe("renderBattleLog", () => {
     localeStringsHost.__localeStrings = {};
     const panel = renderBattleLog([hit,],) as unknown as FakeEl;
     expect(panel.getAttribute("aria-label",),).toBe("battle.log",);
+  });
+
+  it("renders the roll math and the critical marker on the entry line", () => {
+    const panel = renderBattleLog([rolled,],) as unknown as FakeEl;
+    const chip = chipOf(panel.children[0]!,)!;
+    expect(chip.className,).toBe("battle-skill-check",);
+    expect(chip.children[0]!.className,).toContain("battle-dice",);
+    expect(chip.children[0]!.textContent,).toBe("20",);
+    expect(chip.children[1]!.textContent,).toBe("20 +3 = 23 vs DC 16",);
+    expect(chip.children[2]!.className,).toContain("battle-critical-hit",);
+  });
+
+  it("tumbles the dice and lands on the final roll", () => {
+    vi.useFakeTimers();
+    try {
+      const panel = renderBattleLog([tumbled,],) as unknown as FakeEl;
+      const dice = chipOf(panel.children[0]!,)!.children[0]!;
+      expect(dice.classList.contains("battle-dice-rolling",),).toBe(true,);
+      vi.advanceTimersByTime(500,);
+      expect(dice.textContent,).toBe("17",);
+      expect(dice.classList.contains("battle-dice-rolling",),).toBe(false,);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not replay the tumble when the same log re-renders", () => {
+    vi.useFakeTimers();
+    try {
+      renderBattleLog([replayed,], "battle-a",);
+      const panel = renderBattleLog([replayed,], "battle-a",) as unknown as FakeEl;
+      const dice = chipOf(panel.children[0]!,)!.children[0]!;
+      expect(dice.classList.contains("battle-dice-rolling",),).toBe(false,);
+      expect(dice.textContent,).toBe("11",);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("tumbles again for another battle's identical roll", () => {
+    vi.useFakeTimers();
+    try {
+      renderBattleLog([replayed,], "battle-a",);
+      const panel = renderBattleLog([replayed,], "battle-b",) as unknown as FakeEl;
+      const dice = chipOf(panel.children[0]!,)!.children[0]!;
+      expect(dice.classList.contains("battle-dice-rolling",),).toBe(true,);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
