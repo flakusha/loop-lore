@@ -17,7 +17,11 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import { encryptValue, } from "../crypto";
 import type { DB, } from "../db/schema";
-import { listProviderInstances, listSdProviderInstances, } from "../generation/providers/provider-instances";
+import {
+  listProviderInstances,
+  listSdProviderInstances,
+  listVideoProviderInstances,
+} from "../generation/providers/provider-instances";
 import { uid, } from "../utils";
 import { forbidden, notFound, } from "../validation/middleware";
 import { ApiKeyCreateBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
@@ -80,13 +84,13 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
       }
 
       // Validate the provider exists in config — every provider instance the
-      // registry can dispatch to, plus the configured image providers
-      // (generation.providers.sd) so remote image backends are BYO-keyable
-      // (epic-byok-api-keys.md Known Gap). Video providers have no config
-      // surface yet (epic-video-generation.md owns their BYOK tier).
+      // registry can dispatch to, plus the configured image and video
+      // providers (generation.providers.sd / .video) so ComfyUI workflow
+      // engines are BYO-keyable (epic-byok-api-keys.md Known Gap).
       const knownProviders = [
         ...listProviderInstances(config,).map((instance,) => instance.name),
         ...listSdProviderInstances(config,).map((instance,) => instance.name),
+        ...listVideoProviderInstances(config,).map((instance,) => instance.name),
       ];
 
       if (!knownProviders.includes(providerName,)) {

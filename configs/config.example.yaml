@@ -139,6 +139,16 @@ generation:
   #       negativePrompt: "worst quality"
   defaultModels: {}
 
+  # ── Video generation providers (ComfyUI video workflows) ──
+  # video:
+  #   - name: comfy-video-local
+  #     baseUrl: http://localhost:8188
+  #     apiFamily: comfyui
+  #     workflow: txt2video                  # configs/workflows/txt2video.json
+  #     allowUserApiKey: true
+  #     timeout: 10000
+  #     generationTimeout: 600000
+
   # ── Auto-start external AI servers (optional) ──
   # Uncomment to spawn llama.cpp / sd-server as child processes at startup.
   # Servers are skipped gracefully if binaries not found.

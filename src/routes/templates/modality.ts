@@ -5,19 +5,11 @@
  * Per-modality prompt-template routes (FEAT-065 SUB-VIDEO / SUB-AUDIO).
  *
  * Thin facades over the unified template service, mounted per modality:
- *
- *   GET    /api/templates/video|audio           — list (owner rows)
- *   POST   /api/templates/video|audio           — create (modality forced)
- *   GET    /api/templates/video|audio/:id       — retrieve (owner + modality)
- *   PATCH  /api/templates/video|audio/:id       — update (owner + modality)
- *   DELETE /api/templates/video|audio/:id       — delete (owner + modality)
- *   POST   /api/templates/video|audio/:id/apply — audio generates, video 501
- *
- * Render previews stay on the unified `POST /api/templates/:id/apply`
- * (prompt-only, provider-independent). The per-modality apply is the
- * generation entrypoint: audio templates dispatch to the ambient audio
- * pipeline (TASK-ambient-sound-system); video still answers 501 while no
- * video provider exists, per the ticket contract.
+ * GET/POST/DELETE CRUD under `/api/templates/video|audio`, plus the
+ * per-modality apply — the GENERATION entrypoint (render previews stay on
+ * the unified `POST /api/templates/:id/apply`, prompt-only). Audio applies
+ * dispatch to the ambient audio pipeline; video applies dispatch to the
+ * ComfyUI video generation route (epic-video-generation Phase A).
  */
 import { Type, } from "@sinclair/typebox";
 import { Elysia, } from "elysia";
@@ -35,6 +27,7 @@ import {
   updateTemplate,
 } from "../../generation/template-service";
 import { parseTemplatePayload, } from "../../generation/template-types";
+import { handleVideoGeneration, } from "../../generation/video-gen-route";
 import { notFound, } from "../../validation/middleware";
 import {
   ErrorResponse,
@@ -43,7 +36,7 @@ import {
   TemplateDetailLevelSchema,
   TemplateSummaryResponse,
 } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 
 /** Scene tags accepted per audio apply — matches the ambient route cap. */
 const MAX_AUDIO_TAGS = 8;
@@ -97,12 +90,7 @@ export function modalityTemplateRoutes(
     return row;
   };
 
-  /**
-   * Audio apply: render the template body with the request context and split
-   * it into scene tags for the ambient pipeline.
-   * @param body - Template body to render
-   * @param vars - {{variable}} substitutions from the apply context
-   */
+  /** Audio apply: render the template body into scene tags (ambient pipeline). */
   const renderAudioTags = (body: string, vars: Record<string, string>,): string[] =>
     body
       .replace(/\{\{(\w+)\}\}/g, (_match, name: string,) => vars[name] ?? "",)
@@ -228,14 +216,17 @@ export function modalityTemplateRoutes(
         return handleAmbientGeneration({ tags, chatId: body.chatId, }, database, userId, userRole,);
       }
 
-      // Generation entrypoint: no video provider exists yet (ticket contract).
-      // Prompt-only rendering stays on the unified apply route.
-      return jsonError({
-        message:
-          "video generation providers are not implemented yet — render previews via POST /api/templates/:id/apply",
-        status: HttpStatus.NotImplemented,
-        code: ErrorCode.NotImplemented,
-      },);
+      // Video apply: render the body into a prompt and dispatch to the video
+      // generation route (auth, IDOR scoping, generation and asset persistence
+      // live in that handler).
+      const body = ctx.body as { context?: Record<string, string>; chatId?: string };
+      const payload = parseTemplatePayload(row.payload, "video",) as { body?: string };
+      const prompt = (payload.body ?? "")
+        .replace(/\{\{(\w+)\}\}/g, (_match, name: string,) => body.context?.[name] ?? "",)
+        .trim();
+
+      const userRole = (ctx as { userRole?: string | null }).userRole ?? undefined;
+      return handleVideoGeneration({ prompt, chatId: body.chatId, }, database, userId, userRole,);
     }, {
       params: IdParams,
       body: TemplateApplyBody,
@@ -249,7 +240,7 @@ export function modalityTemplateRoutes(
       detail: {
         summary: modality === "audio"
           ? `Apply an audio template (generate)`
-          : `Apply a video template (not yet implemented)`,
+          : `Apply a video template (generate via ComfyUI)`,
         tags: ["Templates",],
       },
     },);

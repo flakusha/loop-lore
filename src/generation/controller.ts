@@ -15,6 +15,7 @@
  *   POST /api/v1/generation/continue       — Continue partial/cancelled message
  *   POST /api/v1/generation/regenerate     — Replace AI response
  *   POST /api/v1/generation/image          — Generate image from prompt
+ *   POST /api/v1/generation/video          — Generate video via a ComfyUI workflow
  *   POST /api/v1/generation/audio/ambient  — Generate layered ambient scene audio
  *   POST /api/v1/generation/caption        — Caption image assets
  *   POST /api/v1/generation/prompt         — Improve/analyze prompt drafts
@@ -43,6 +44,7 @@ import {
 } from "./generation-routes";
 import { handleImageGeneration, } from "./image-gen-route";
 import { handlePromptImprove, } from "./prompt-route";
+import { handleVideoGeneration, } from "./video-gen-route";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -127,6 +129,11 @@ export function generationRoutes(
   app.post(`${prefix}/generation/image`, async (ctx,) => {
     const auth = ctx as unknown as { userId?: string | null; userRole?: string | null };
     return handleImageGeneration(readBody(ctx,), database, auth.userId ?? undefined, auth.userRole,);
+  },);
+
+  app.post(`${prefix}/generation/video`, async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string | null; userRole?: string | null };
+    return handleVideoGeneration(readBody(ctx,), database, auth.userId ?? undefined, auth.userRole,);
   },);
 
   app.post(`${prefix}/generation/caption`, async (ctx,) => {

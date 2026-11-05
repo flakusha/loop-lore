@@ -14,6 +14,7 @@ import { safeFetch, } from "../../utils/safe-fetch";
  * @param timeoutMs - request timeout in ms
  * @param buffer - image bytes
  * @param filename - name the file gets in the ComfyUI input directory
+ * @param apiKey - optional Bearer credential for proxy-fronted engines
  * @returns the stored filename (pass to LoadImage's `image` input)
  * @throws {Error}
  * @throws {Error}
@@ -23,6 +24,7 @@ export async function uploadImageToComfy(
   timeoutMs: number,
   buffer: Buffer,
   filename: string,
+  apiKey?: string,
 ): Promise<string> {
   const form = new FormData();
   form.append("image", new Blob([new Uint8Array(buffer,),], { type: "image/png", },), filename,);
@@ -30,6 +32,7 @@ export async function uploadImageToComfy(
 
   const result = await safeFetch<{ name?: string }>(`${baseUrl}/upload/image`, {
     method: "POST",
+    headers: apiKey ? { authorization: `Bearer ${apiKey}`, } : undefined,
     body: form,
     timeout: timeoutMs,
   },);

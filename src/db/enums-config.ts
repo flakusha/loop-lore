@@ -147,6 +147,13 @@ export const AudioApiFamily = {
 
 export type AudioApiFamily = (typeof AudioApiFamily)[keyof typeof AudioApiFamily];
 
+// ── Video Generation ──────────────────────────────────────
+export const VideoApiFamily = {
+  Comfyui: "comfyui",
+} as const;
+
+export type VideoApiFamily = (typeof VideoApiFamily)[keyof typeof VideoApiFamily];
+
 // ── HTTP Security Headers ─────────────────────────────────
 export const XFrameOption = {
   Deny: "DENY",

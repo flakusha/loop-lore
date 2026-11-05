@@ -9,6 +9,7 @@ defaultModels = {} # { openaiCompatible = "gpt-4" }
 openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
 # anthropic = { name = "anthropic", label = "Anthropic", apiKey = "sk-ant-...", model = "claude-3-5-sonnet-latest", timeout = 30000, retries = 3, allowUserApiKey = true }
 # sd = [] # stable diffusion providers; allowUserApiKey (default true) gates per-user BYOK keys
+# video = [] # ComfyUI video workflow providers ({ name, baseUrl, apiFamily: comfyui, workflow, allowUserApiKey?, timeout, generationTimeout })
 # Dedicated translation providers (model = default TARGET language; usable
 # as the `generation.modelRoles.translator` provider):
 # deepl = { name = "deepl", label = "DeepL", authKey = "your-key:fx", freeTier = true, model = "en-us", timeout = 30000, retries = 3, allowUserApiKey = true }

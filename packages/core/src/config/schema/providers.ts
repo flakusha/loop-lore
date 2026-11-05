@@ -5,7 +5,7 @@
 //
 // Enum types sourced from @/db/enums.
 
-import type { AudioApiFamily, ImageApiFamily, } from "@/db/enums";
+import type { AudioApiFamily, ImageApiFamily, VideoApiFamily, } from "@/db/enums";
 
 /** */
 export interface ModelLimits {
@@ -110,6 +110,31 @@ export interface AudioProviderConfig {
   generationTimeout: number;
 }
 
+/**
+ * Video generation provider (ComfyUI workflow based) — the operator (or a
+ * BYO-key user, when `allowUserApiKey` permits) points at a ComfyUI server
+ * running a video workflow (WAN/Hunyuan-style t2v/i2v graphs live in the
+ * operator's `configs/workflows/` directory; none ship with the repo).
+ */
+export interface VideoProviderConfig {
+  /** Unique provider instance name */
+  name: string;
+  /** Base URL of the ComfyUI server */
+  baseUrl: string;
+  /** API family: comfyui (video workflow) */
+  apiFamily: VideoApiFamily;
+  /** ComfyUI workflow file under configs/workflows/ (e.g. "txt2video") */
+  workflow: string;
+  /** Optional credential for reverse-proxy-fronted ComfyUI servers (Bearer) */
+  apiKey?: string;
+  /** Allow user API key override for this provider (default true) */
+  allowUserApiKey?: boolean;
+  /** Connection timeout in ms */
+  timeout: number;
+  /** Video generation timeout in ms */
+  generationTimeout: number;
+}
+
 /** */
 export interface GenerationProvidersConfig {
   /** OpenAI-compatible providers (llama.cpp, vLLM, Ollama, LM Studio, etc.) */
@@ -120,6 +145,8 @@ export interface GenerationProvidersConfig {
   ollamaNative?: ProviderInstanceConfig;
   /** Image generation providers (SD, FLUX, etc.) — first entry is default */
   sd?: ImageProviderConfig[];
+  /** Video generation providers (ComfyUI video workflows) — first entry is default */
+  video?: VideoProviderConfig[];
   /** AWS Bedrock provider (Claude, Llama, Titan models) */
   bedrock?: BedrockProviderConfig;
   /** Audio generation providers (ComfyUI); empty means local synthesis only */

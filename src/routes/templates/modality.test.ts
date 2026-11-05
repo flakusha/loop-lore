@@ -3,8 +3,9 @@
 
 /**
  * Route tests for the per-modality template API (FEAT-065 SUB-VIDEO /
- * SUB-AUDIO): CRUD with ownership + modality guards, and the 501 apply
- * contract while no video/audio generation provider exists.
+ * SUB-AUDIO): CRUD with ownership + modality guards, and the apply
+ * contract — audio dispatches to the ambient pipeline, video dispatches to
+ * the ComfyUI generation route (no providers configured → 501).
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -255,18 +256,17 @@ describe("per-modality template routes", () => {
     expect(moved.status,).toBe(400,);
   });
 
-  test("apply answers 501 NOT_IMPLEMENTED for an owned template", async () => {
+  test("video apply dispatches; with no provider configured it answers 501", async () => {
     const app = makeApp(db, userId,);
     const id = await createVideoId(app,);
     const res = await post(app, `/api/templates/video/${id}/apply`, { context: { subject: "Aria", }, },);
     expect(res.status,).toBe(501,);
-    const body = (await res.json()) as ErrorBody;
-    expect(body.code,).toBe("NOT_IMPLEMENTED",);
-    expect(body.error,).toContain("video",);
-    expect(body.error,).toContain("/api/templates/:id/apply",);
+    const body = (await res.json()) as { error: string; status: number };
+    expect(body.status,).toBe(501,);
+    expect(body.error,).toContain("No video generation provider configured",);
   });
 
-  test("apply 404s for unknown, foreign, and cross-modality ids before the 501", async () => {
+  test("apply 404s for unknown, foreign, and cross-modality ids before dispatch", async () => {
     const app = makeApp(db, userId,);
     const foreignOwner = uid();
     await insertUsers(db, `user-${foreignOwner}`, "Foreign Owner", { id: foreignOwner, } as never,);
