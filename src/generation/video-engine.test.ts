@@ -4,10 +4,12 @@
 /**
  * Tests for the video engine (generation/video-engine.ts): workflow-based
  * ComfyUI dispatch, sink selection, error mapping, and BYO key resolution.
- * The workflow loader is INJECTED (never mock.module — bun's module mock
- * leaks across test files) and the HTTP surface swaps globalThis.fetch
- * (audio provider conventions). The real loader singleton is never touched:
- * its async scan races other test files that bind it (image-engine).
+ * Loader INJECTED (bun's mock.module leaks across files); fetch swapped per
+ * withMockFetch body only, restored in `finally`; the localhost baseUrl is
+ * never dialed; the BYO suite's :memory: DB is per-file (afterAll teardown),
+ * its fixed row ids file-local; no test shares state — order-independent.
+ * The real loader singleton is never touched (its async scan races other
+ * files that bind it, e.g. image-engine).
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Config, VideoProviderConfig, } from "../config/schema";
@@ -40,10 +42,8 @@ const REQUEST = { prompt: "a dragon flies", seconds: 4, };
 /** Workflow graph the injected loader returns (shape only — never submitted). */
 const LOADED_WORKFLOW = { "9": { inputs: {}, class_type: "SaveVideo", }, };
 
-/** Loader stub standing in for the real configs/workflows lookup. */
+/** Loader stubs: happy paths get LOADED_WORKFLOW; failingLoader = unknown name. */
 const stubLoader = async () => LOADED_WORKFLOW;
-
-/** Loader stub rejecting like the real one for an unknown workflow name. */
 const failingLoader = async () => {
   throw new Error('Workflow "missing" not found',);
 };
