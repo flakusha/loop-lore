@@ -16,13 +16,13 @@ import { safeJsonParse, } from "../../utils";
 import { isMetadataTarget, validateProviderUrl, } from "../../utils/url-validation";
 
 /** Provider instance names are slug-ish: letters, digits, dot, dash, underscore. */
-export const SERVER_PROVIDER_NAME_PATTERN = /^[a-z0-9][a-z0-9._-]{0,63}$/i;
+const SERVER_PROVIDER_NAME_PATTERN = /^[a-z0-9][a-z0-9._-]{0,63}$/i;
 
 /** Prefix of the `system_config` keys that hold a provider descriptor. */
-export const DESCRIPTOR_KEY_PREFIX = "provider.";
+const DESCRIPTOR_KEY_PREFIX = "provider.";
 
 /** Suffix of the `system_config` keys that hold a provider descriptor. */
-export const DESCRIPTOR_KEY_SUFFIX = ".config";
+const DESCRIPTOR_KEY_SUFFIX = ".config";
 
 /**
  * @param name - provider instance name
@@ -38,6 +38,18 @@ export function serverProviderDescriptorKey(name: string,): string {
  */
 export function serverProviderSecretKey(name: string,): string {
   return `${DESCRIPTOR_KEY_PREFIX}${name}.apiKey`;
+}
+
+/**
+ * @param key - a `system_config` key
+ * @returns the provider instance name the key holds a descriptor for, or null
+ *   when the key is not a descriptor key
+ */
+export function descriptorNameFromKey(key: string,): string | null {
+  if (!key.startsWith(DESCRIPTOR_KEY_PREFIX,) || !key.endsWith(DESCRIPTOR_KEY_SUFFIX,)) { return null; }
+
+  const name = key.slice(DESCRIPTOR_KEY_PREFIX.length, key.length - DESCRIPTOR_KEY_SUFFIX.length,);
+  return name === "" ? null : name;
 }
 
 /** Whether a stored provider instance is live in the provider registry. */
@@ -105,7 +117,7 @@ export function assertValidServerProviderName(name: string,): void {
  * @param host - the operator-supplied entry
  * @throws {ServerProviderValidationError} When the entry is not a bare hostname.
  */
-export function assertValidAllowedHost(host: string,): void {
+function assertValidAllowedHost(host: string,): void {
   if (host === "" || host !== host.trim()) {
     throw new ServerProviderValidationError(`Invalid allowed host "${host}" — use a bare hostname.`,);
   }

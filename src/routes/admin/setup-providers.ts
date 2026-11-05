@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { Static, } from "@sinclair/typebox";
 import { Elysia, t, } from "elysia";
 import {
   deleteServerProvider,
@@ -67,7 +68,7 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-setup-providers", },)
       // Schema violations are operator input errors, not protocol errors —
       // answer them with the same 400 the semantic validation returns.
-      .onError(({ code, }: any,) => {
+      .onError(({ code, },) => {
         if (code !== "VALIDATION") { return undefined; }
         return jsonError({
           message: "Invalid provider payload",
@@ -98,15 +99,7 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       // -- Create or update a provider instance ----------------
       .post(`${prefix}/admin/setup/providers`, async (ctx: any,) => {
         return withPermissionAuth(ctx, "admin.system", async (userId,) => {
-          const body = ctx.body as {
-            name: string;
-            label: string;
-            baseUrl: string;
-            model: string;
-            apiKey?: string;
-            allowedHosts?: string[];
-            setDefault?: boolean;
-          };
+          const body = ctx.body as Static<typeof AdminSetupProviderBody>;
 
           try {
             const provider = await saveServerProvider(opts.database, {
