@@ -1,5 +1,5 @@
 import { describe, expect, it, } from "bun:test";
-import { validateFetchUrl, validateProviderUrl, validateProviderUrls, } from "./url-validation";
+import { isMetadataTarget, validateFetchUrl, validateProviderUrl, validateProviderUrls, } from "./url-validation";
 
 describe("url-validation (real logic)", () => {
   it("allows 127.0.0.1 by default", () => {
@@ -57,6 +57,40 @@ describe("url-validation (real logic)", () => {
 
     expect(results["local"]?.ok,).toBe(true,);
     expect(results["remote"]?.ok,).toBe(false,);
+  });
+});
+
+describe("isMetadataTarget", () => {
+  it("flags the link-local and cloud-metadata targets", () => {
+    for (
+      const host of [
+        "169.254.169.254",
+        "169.254.0.1",
+        "[fe80::1]",
+        "fe80::1",
+        "100.100.100.200",
+        "fd00:ec2::254",
+        "metadata.google.internal",
+      ]
+    ) {
+      expect(isMetadataTarget(host,),).toBe(true,);
+    }
+  });
+
+  it("does not flag loopback or private LAN addresses", () => {
+    for (
+      const host of [
+        "127.0.0.1",
+        "::1",
+        "localhost",
+        "10.0.0.5",
+        "172.16.4.4",
+        "192.168.1.10",
+        "api.example.com",
+      ]
+    ) {
+      expect(isMetadataTarget(host,),).toBe(false,);
+    }
   });
 });
 

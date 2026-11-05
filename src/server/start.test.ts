@@ -143,8 +143,16 @@ if (ISOLATED) {
 
   mock.module("../admin/provider-health", () => ({ scanAllProviders: async () => [], }),);
   mock.module("../admin/config", () => ({ seedDefaults: async () => {}, }),);
+  // The boot path materializes stored provider instances. The store drags in
+  // the provider registry and the crypto barrel behind it, so it is mocked
+  // like the sibling dynamic imports below — the real module has its own suite.
+  mock.module("../generation/providers/server-provider-store", () => ({
+    materializeServerProviders: async () => [],
+  }),);
+
   mock.module("../logger/transports/db", () => ({ DBTransport: class {}, }),);
   mock.module("../config/hot-reload", () => ({
+    watchDomainConfigs: () => ({ close() {}, __close() {}, }),
     watchDomainConfigs: () => ({ close() {}, __close() {}, }),
     stopWatchingDomainConfigs: () => {},
   }),);

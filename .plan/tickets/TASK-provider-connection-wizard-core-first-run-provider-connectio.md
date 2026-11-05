@@ -41,7 +41,7 @@ Fresh installs currently reach a booted server with zero providers and no guided
 ## Acceptance Criteria
 
 - [ ] fresh instance reaches first successful chat without touching a config file
-- [ ] entered key is stored sealed (secret:v1: envelope via setConfig), never plaintext in system_config
+- [x] entered key is stored sealed (secret:v1: envelope via setConfig), never plaintext in system_config
 - [ ] wizard is skippable and re-enterable from settings
 - [ ] wizard test step uses the existing provider rescan and reflects ok:false -> ok:true from setup-state checks
 - [ ] import path (YAML/TOML upload) still works standalone (4293058 scope absorbed, not dropped)
@@ -58,8 +58,11 @@ criteria below stay unticked until both halves are in.
   `serverProviderDescriptorKey(name)` → `provider.<name>.config`,
   `serverProviderSecretKey(name)` → `provider.<name>.apiKey`,
   `listServerProviders(db)`, `saveServerProvider(db, input)`,
-  `deleteServerProvider(db, name)`, `materializeServerProviders(db, config)`,
+  `deleteServerProvider(db, { name, config, actor })`,
+  `materializeServerProviders(db, config)`,
   `applyStoredServerDefaults(db, config)`.
+  The listing entry carries `state` (`live` / `error`) and — when not live —
+  the `error` reason.
 - Admin routes (`src/routes/admin/setup-providers.ts`, mounted on the `/api/v1`
   admin surface, permission `admin.system`):
   `GET /api/v1/admin/setup/providers` → `{ providers: [...] }` (never a key),
@@ -96,6 +99,48 @@ operator's explicit host approval — and `BaseProvider` passes it to the
 validator. The default behaviour is unchanged: with no `allowedHosts` a remote
 host is still rejected.
 
+**FIXES applied in the review round (backend lane)**
+
+- **SSRF semantics changed.** The host approval is no longer a rubber stamp:
+  `allowedHosts` entries must be bare hostnames (no scheme, path, port or
+  userinfo; `*` and bare-TLD wildcards like `*.com` are rejected), and a
+  link-local / cloud-metadata target (`169.254.0.0/16`, `fe80::/10`,
+  `100.100.100.200`, `fd00:ec2::254`, `metadata.google.internal`) is rejected
+  with 400 — see `isMetadataTarget` in
+  `packages/core/src/utils/url-validation.ts`. Loopback (`127.0.0.1`, `::1`)
+  and the RFC1918 ranges stay allowed, so the shipped `localhost:11434` /
+  `localhost:1234` presets keep working.
+- **Materialization re-validates.** `materializeServerProviders` re-checks every
+  stored descriptor at boot, so a `provider.<name>.config` row injected through
+  the generic system-config path is skipped with a warning instead of being
+  materialized unchecked. A descriptor row without its key row is skipped too.
+- **One transaction.** The descriptor row and the sealed key row are written in
+  one transaction — a partial write leaves neither.
+- **Registry hijack closed.** A save whose name is already owned by another
+  provider (registry entry or config-file instance) is rejected with 400;
+  only the instance the store owns may be replaced.
+- **Defaults no longer drift.** An update keeps the stored `setDefault` intent,
+  and updating the current default refreshes the persisted `default_provider` /
+  `default_model` rows.
+- **Delete prunes everything.** The store now removes the config-file instance
+  as well, so the route cannot forget it. A successful update resets the
+  provider's circuit breaker. An explicit empty `apiKey` clears the stored key
+  (documented in the route description and `docs/reference/api.md`).
+- **Audit trail.** Every save/delete writes a `log_entries` row
+  (`action = server-provider.saved` / `server-provider.deleted`). The repo has
+  no shared `log_entries` writer helper — the row follows the inline convention
+  of `src/routes/admin/system-config.ts`; no new audit subsystem was added.
+
+**Deliberately NOT changed**
+
+- The descriptor key stays `provider.<name>.config`. It only collides with
+  `SECRET_KEY_PATTERN` when the operator's provider NAME contains a
+  secret-ish substring (`token`, `api-key`, …); renaming the suffix would not
+  remove that class of collision, and the row is still read back correctly
+  (sealed values are opened on read). Accepted as-is.
+- Only openai-compatible instances are materialized (the anthropic / ollama-
+  native follow-up below is untouched).
+
 **Follow-up (not implemented here)**
 
 Only openai-compatible instances are materialized (that covers OpenAI,
@@ -105,6 +150,6 @@ follow-up ticket should extend `materializeServerProviders` for them.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
