@@ -7,12 +7,14 @@
  * Raw `fetch` instead of `apiFetch`: the shared helper discards the body of a
  * non-2xx response (packages/core/src/utils/safe-fetch/fetch.ts), so the
  * backend's own reason — "Provider name already used", "Remote host not
- * approved" — never reached the operator. The CSRF header and the same-origin
- * credentials are the ones `apiFetch` attaches, so the double-submit gate
- * (src/middleware/csrf-plugin.ts) still accepts the request.
+ * approved" — never reached the operator. Everything else `apiFetch` does is
+ * kept: the CSRF double-submit header and same-origin credentials, so the gate
+ * (src/middleware/csrf-plugin.ts) still accepts the request, the 30s request
+ * timeout, and the login redirect on a 401.
  */
 
-import { getCsrfToken, } from "../../fe-fetch";
+import { DEFAULT_TIMEOUT, } from "../../../utils";
+import { getCsrfToken, redirectToLogin, } from "../../fe-fetch";
 import { jsonBody, jsonParseOr, } from "../json";
 import type { ProviderDescriptor, ProviderSummary, SetupCheck, } from "./presets";
 
@@ -33,16 +35,38 @@ interface ApiErrorBody {
 
 /**
  * Call the admin API with the CSRF header and the credentials `apiFetch` uses.
+ *
+ * Keeps apiFetch's client-side guarantees so the swap to a raw fetch only
+ * changes WHAT the caller sees (the error body), not how the request behaves:
+ * the CSRF double-submit header, same-origin credentials, the 30s timeout
+ * `safeFetch` arms, and the login redirect on a 401 — an expired session still
+ * lands on the login page instead of an error inside the modal.
  * @param url - API path.
- * @param init - Fetch options (method, headers, body).
+ * @param init - Fetch options (method, headers, body). A caller-supplied
+ *   `signal` is not honoured: the wizard issues no cancellable request.
  * @returns The raw response — the caller decides what a non-2xx means.
+ * @throws {Error} When the request times out.
  */
 async function adminFetch(url: string, init: RequestInit = {},): Promise<Response> {
   const headers = new Headers(init.headers ?? {},);
   const csrf = getCsrfToken();
   if (csrf !== "") { headers.set("X-CSRF-Token", csrf,); }
-  // eslint-disable-next-line no-restricted-syntax -- raw Response: safeFetch drops the error body for non-2xx.
-  return fetch(url, { ...init, headers, credentials: "same-origin", },);
+  const controller = new AbortController();
+  const timer = setTimeout(() => {
+    controller.abort();
+  }, DEFAULT_TIMEOUT,);
+
+  try {
+    // eslint-disable-next-line no-restricted-syntax -- raw Response: safeFetch drops the error body for non-2xx.
+    const res = await fetch(url, { ...init, headers, credentials: "same-origin", signal: controller.signal, },);
+    if (res.status === 401) { redirectToLogin(); }
+    return res;
+  } catch (err) {
+    if (controller.signal.aborted) { throw new Error(`Request timed out after ${DEFAULT_TIMEOUT}ms`,); }
+    throw err;
+  } finally {
+    clearTimeout(timer,);
+  }
 }
 
 /**

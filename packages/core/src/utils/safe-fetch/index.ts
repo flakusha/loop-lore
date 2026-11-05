@@ -7,6 +7,7 @@
  * Original module split into domain modules; this barrel preserves the
  * public import surface (`safe-fetch` / `safe-fetch/index`).
  */
+export { DEFAULT_MAX_SIZE, DEFAULT_TIMEOUT, } from "./constants";
 export { safeFetch, } from "./fetch";
 export { safeFetchWithRetry, } from "./retry";
 export type { FetchAuth, FetchResult, SafeFetchOptions, } from "./types";
