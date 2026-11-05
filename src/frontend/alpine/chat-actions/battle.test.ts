@@ -141,6 +141,26 @@ describe("battleActionHandlers rendering actions", () => {
     ],);
   });
 
+  test("keeps entries with a well-formed roll and drops malformed rolls", () => {
+    const ctx = buildCtx();
+    battleActionHandlers["battle-updated"]!(ctx, {
+      battle: {
+        ...validBattle.battle,
+        log: [
+          { type: "attack", description: "Alice hits!", roll: { natural: 20, modifier: 3, total: 23, dc: 16, }, },
+          { type: "attack", description: "Bob misses!", roll: { natural: 4, modifier: 1, total: 5, dc: "16", }, },
+          { type: "attack", description: "Cleo hits!", roll: { natural: 11, modifier: 2, total: 13, dc: 14, }, },
+        ],
+      },
+    }, "chat-1",);
+
+    const view = ctx.rendered[0] as { log: unknown[] };
+    expect(view.log,).toEqual([
+      { type: "attack", description: "Alice hits!", roll: { natural: 20, modifier: 3, total: 23, dc: 16, }, },
+      { type: "attack", description: "Cleo hits!", roll: { natural: 11, modifier: 2, total: 13, dc: 14, }, },
+    ],);
+  });
+
   test("defaults a missing battle log to an empty list", () => {
     const ctx = buildCtx();
     battleActionHandlers["battle-started"]!(ctx, validBattle, "chat-1",);

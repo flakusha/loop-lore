@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Partially shipped — chat battle panel with roster HP, keyboard nav, and a full action bar (attack/heal/end, item-use menu, social verbs incl. negotiate) is live, plus a reusable health-bar widget, an acting-first turn-order strip (verified 2026-10-23), and — delivered in the payload, not faked client-side — status-effect badges and a scrollable battle log (verified 2026-11-01: `serializeBattle` now carries `Combatant.conditions` and the battle log). Remaining open: skill-check UI. A flee action stays unwired by design: no backend verb or route exists for it.
+**Status Note:** Partially shipped — chat battle panel with roster HP, keyboard nav, and a full action bar (attack/heal/end, item-use menu, social verbs incl. negotiate) is live, plus a reusable health-bar widget, an acting-first turn-order strip (verified 2026-10-23), and — delivered in the payload, not faked client-side — status-effect badges and a scrollable battle log (verified 2026-11-01: `serializeBattle` now carries `Combatant.conditions` and the battle log). Remaining open: skill-check UI. The skill-check/dice-roll slice landed (verified 2026-11-05): `serializeBattle` projects the persisted attack roll into the panel payload and the battle log renders a roll chip (dice face, natural/modifier/total/DC, success/failure outcome, critical indicator) with a CSS dice tumble and a small-width rule; sound effects stay out (no audio asset pipeline in the repo, optional AC). Still open for missing payload data: target selection (no area/self targets delivered), action cost and cooldown display (no per-action cost/cooldown delivered), and social skill-check rolls (`src/rpg/service/battles/social.ts` persists only the narration, so no roll reaches the client). A flee action stays unwired by design: no backend verb or route exists for it.
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
@@ -34,7 +34,7 @@ Complete battle interface for turn-based combat, including state display, action
 | Turn order visualization | Shipped | `src/frontend/battle/turn-order.ts` (current turn + queue from delivered turnIndex/initiative) |
 | Status effect badges | Shipped | `src/frontend/battle/status-effects.ts` + roster in `src/frontend/battle/render.ts` (conditions delivered by `serializeBattle`) |
 | Battle log viewer | Shipped | `src/frontend/battle/battle-log.ts` + panel wiring in `src/frontend/battle/panel.ts` (log delivered by `serializeBattle`) |
-| Skill check UI (dice animation) | Not Started | — |
+| Skill check UI (dice animation) | Shipped (attack rolls) | `src/frontend/battle/skill-check-display.ts` + `src/frontend/battle/skill-check.ts` + `src/frontend/battle/battle-log.ts` (roll delivered by `serializeBattle`); social rolls still open |
 | Dynamic backgrounds | Not Started | — (see `./epic-battle-action-systems.md`) |
 
 ## Unticketed Gaps (resolved / re-scoped 2026-10-23)
@@ -124,7 +124,7 @@ The earlier gap here — backend social and combat item-use routes unreachable f
 - [ ] Target selection for single/area/self actions
 - [ ] Action cost and cooldown display
 - [x] Battle log with scrollable history (`src/frontend/battle/battle-log.ts`, rendered from the `serializeBattle`-delivered log; keyboard-focusable, auto-scrolls to the latest entry; verified 2026-11-01)
-- [ ] Skill check UI with dice roll animation
+- [x] Skill check UI with dice roll animation (attack rolls: roll chip + CSS dice tumble in `src/frontend/battle/skill-check-display.ts` / `src/frontend/battle/skill-check.ts`, rendered on the log line in `src/frontend/battle/battle-log.ts` from the `serializeBattle`-delivered roll; verified 2026-11-05 — social skill-check rolls still open, no roll reaches the client)
 - [ ] Environmental effects display
 - [ ] Mobile responsive (touch-friendly action buttons)
 - [x] Keyboard shortcuts for common actions (`src/frontend/battle/panel.ts` arrow/Enter/Space focus cycle)
@@ -172,7 +172,7 @@ The earlier gap here — backend social and combat item-use routes unreachable f
 - `TASK-battle-state-display.md` (Not Started)
 - `TASK-battle-action-selector.md` (Not Started)
 - `TASK-battle-log.md` (Done)
-- `TASK-skill-check.md` (Not Started)
+- `TASK-skill-check.md` (In Progress)
 - `TASK-health-bar.md` (Not Started)
 - `TASK-status-effects.md` (Done)
 - `TASK-battle-panel-health-bar-widget-turn-order-strip.md` (open)

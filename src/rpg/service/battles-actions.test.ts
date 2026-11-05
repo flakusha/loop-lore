@@ -331,6 +331,84 @@ describe("battle item helpers (pure)", () => {
       { type: "bonus_action", critical: false, description: "Alice (negotiate → Orc): the orc hesitates.", },
     ],);
   });
+
+  it("serializeBattle projects the attack roll into a lean roll summary", () => {
+    const alice = makeCombatant("alice", "Alice", false, 12,);
+    const orc = makeCombatant("orc", "Orc", true, 15,);
+    const battle = {
+      id: "b3",
+      status: "active",
+      round: 1,
+      turnIndex: 0,
+      combatants: [alice, orc,],
+      log: [
+        {
+          actorId: "alice",
+          type: "attack",
+          targetId: "orc",
+          attack: {
+            roll: {
+              dice: [{ sides: 20, value: 20, exploded: false, },],
+              rawTotal: 20,
+              modifier: 3,
+              total: 23,
+              advantageMode: "normal",
+              natural20: true,
+              natural1: false,
+            },
+            total: 23,
+            hit: true,
+            criticalHit: true,
+            criticalMiss: false,
+            damage: null,
+            narration: "Alice crushes the orc.",
+          },
+          damage: 8,
+          description: "Alice crushes the orc for 8 damage.",
+        },
+      ],
+    } as unknown as Parameters<typeof serializeBattle>[0];
+
+    const view = serializeBattle(battle,);
+    // The panel gets the roll math it needs — never the raw dice.
+    expect(view.log[0]?.roll,).toEqual({ natural: 20, modifier: 3, total: 23, dc: 16, },);
+    expect(JSON.stringify(view.log[0]?.roll,),).not.toContain("dice",);
+  });
+
+  it("serializeBattle omits the roll summary when the persisted roll is unreadable", () => {
+    const alice = makeCombatant("alice", "Alice", false, 12,);
+    const orc = makeCombatant("orc", "Orc", true, 15,);
+    const battle = {
+      id: "b4",
+      status: "active",
+      round: 1,
+      turnIndex: 0,
+      combatants: [alice, orc,],
+      log: [
+        {
+          actorId: "alice",
+          type: "attack",
+          targetId: "orc",
+          attack: {
+            roll: { dice: [20,], modifier: 3, total: 23, },
+            total: 23,
+            hit: true,
+            criticalHit: true,
+            criticalMiss: false,
+            damage: null,
+            narration: "Alice crushes the orc.",
+          },
+          damage: 8,
+          description: "Alice crushes the orc for 8 damage.",
+        },
+      ],
+    } as unknown as Parameters<typeof serializeBattle>[0];
+
+    const view = serializeBattle(battle,);
+    // An unreadable roll drops the summary, not the narration line.
+    expect(view.log[0]?.roll,).toBeUndefined();
+    expect(view.log[0]?.description,).toBe("Alice crushes the orc for 8 damage.",);
+  });
 });
 
 describe("battle item + social service", () => {
