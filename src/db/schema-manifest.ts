@@ -671,6 +671,17 @@ export const SCHEMA = new SchemaManifest()
     eviction_policy: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("integration_tokens", {
+    id: col("text", { primaryKey: true, },),
+    name: col("text", { notNull: true, },),
+    token_hash: col("text", { notNull: true, },),
+    scopes: col("text", { notNull: true, },),
+    issuer_admin_user_id: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    last_used_at: col("text",),
+    revoked_at: col("text",),
+    expires_at: col("text",),
+  },)
   .table("interaction_logs", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),

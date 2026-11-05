@@ -20,14 +20,34 @@ export interface RequestContext {
   locale: Locale;
   t: TranslatorFn;
   requestId: string;
+  /**
+   * Integration-token attribution (ADR-credentials-issuer-model): set ONLY
+   * when the principal was resolved from an `integration_tokens` row — the
+   * token id/name/scope the audit row and the per-token budget bucket key
+   * on. Null for every other principal kind. Server-resolved at the seam,
+   * never caller-supplied.
+   */
+  credentialId: string | null;
+  credentialName: string | null;
+  credentialScope: string | null;
 }
 
 export function createRequestContext(
-  partial: Pick<RequestContext, "userId" | "userRole" | "sessionId"> & { principalKind?: PrincipalKind },
+  partial:
+    & Pick<RequestContext, "userId" | "userRole" | "sessionId">
+    & {
+      principalKind?: PrincipalKind;
+      credentialId?: string | null;
+      credentialName?: string | null;
+      credentialScope?: string | null;
+    },
 ): RequestContext {
   return {
     ...partial,
     principalKind: partial.principalKind ?? "user",
+    credentialId: partial.credentialId ?? null,
+    credentialName: partial.credentialName ?? null,
+    credentialScope: partial.credentialScope ?? null,
     locale: "en",
     t: (key: string,) => key,
     requestId: "",

@@ -8,6 +8,7 @@ import {
   isAllowlisted,
   isGuestReadPath,
   isGuestReadRequest,
+  isIntegrationAgentPath,
   requireAuthGuard,
   stripApiVersion,
 } from "./require-auth-guard";
@@ -16,12 +17,18 @@ function req(method: string, pathname: string,): Request {
   return new Request(`http://localhost${pathname}`, { method, },);
 }
 
-function guardRes(method: string, pathname: string, userId: string | null, userRole: string | null,): {
+function guardRes(
+  method: string,
+  pathname: string,
+  userId: string | null,
+  userRole: string | null,
+  principalKind?: "user" | "external-agent",
+): {
   allowed: boolean;
   status: number;
 } {
   const set: { status?: number | string } = {};
-  const out = requireAuthGuard({ request: req(method, pathname,), userId, userRole, set, },);
+  const out = requireAuthGuard({ request: req(method, pathname,), userId, userRole, principalKind, set, },);
   if (out === undefined) { return { allowed: true, status: 0, }; }
   return { allowed: false, status: out.status, };
 }
@@ -153,5 +160,65 @@ describe("guard wired into the composed app", () => {
     const res = await app.handle(new Request("http://localhost/api/v1/auth/login", { method: "POST", },),);
     expect(res.status,).toBe(200,);
     expect(calls,).toBe(1,);
+  });
+});
+
+describe("isIntegrationAgentPath", () => {
+  test("facade REST, manifest, and MCP surfaces are integration-agent paths", () => {
+    expect(isIntegrationAgentPath("/api/v1/integrations/chat.send",),).toBe(true,);
+    expect(isIntegrationAgentPath("/api/integrations/chat.send",),).toBe(true,);
+    expect(isIntegrationAgentPath("/api/v1/integrations/manifest",),).toBe(true,);
+    expect(isIntegrationAgentPath("/api/v1/integrations/mcp",),).toBe(true,);
+  });
+
+  test("admin token CRUD and every non-integration path are NOT", () => {
+    // Tokens can never mint or revoke tokens - the CRUD surface stays JWT-admin.
+    expect(isIntegrationAgentPath("/api/v1/admin/integration-tokens",),).toBe(false,);
+    expect(isIntegrationAgentPath("/api/v1/chats",),).toBe(false,);
+    expect(isIntegrationAgentPath("/api/v1/integrations-webhooks/x",),).toBe(false,);
+    expect(isIntegrationAgentPath("/health/live",),).toBe(false,);
+  });
+
+  test("webhook receivers are NOT token-principal surfaces", () => {
+    // Their authority is the per-adapter HMAC proof checked in-handler; the
+    // token-principal confinement must not widen onto them.
+    expect(isIntegrationAgentPath("/api/v1/integrations/webhooks/discord",),).toBe(false,);
+    expect(isIntegrationAgentPath("/api/integrations/webhooks/telegram",),).toBe(false,);
+  });
+});
+
+describe("requireAuthGuard - external-agent surface confinement", () => {
+  const ISSUER = "admin-issuer-1";
+
+  test("a token principal passes ONLY on integration-agent surfaces", () => {
+    expect(guardRes("POST", "/api/v1/integrations/chat.send", ISSUER, null, "external-agent",).allowed,).toBe(true,);
+    expect(guardRes("GET", "/api/v1/integrations/manifest", ISSUER, null, "external-agent",).allowed,).toBe(true,);
+    expect(guardRes("POST", "/api/v1/integrations/mcp", ISSUER, null, "external-agent",).allowed,).toBe(true,);
+  });
+
+  test("a token principal is fail-closed 401 on every other route, even with a userId", () => {
+    // Issuing-admin attribution gives the principal a userId; the guard must
+    // NOT let that userId wander the general API.
+    expect(guardRes("POST", "/api/v1/chats", ISSUER, null, "external-agent",),).toEqual({
+      allowed: false,
+      status: 401,
+    },);
+
+    expect(guardRes("DELETE", "/api/v1/admin/integration-tokens/tok-1", ISSUER, null, "external-agent",),).toEqual({
+      allowed: false,
+      status: 401,
+    },);
+
+    expect(guardRes("GET", "/api/v1/admin/integration-tokens", ISSUER, null, "external-agent",),).toEqual({
+      allowed: false,
+      status: 401,
+    },);
+  });
+
+  test("user JWT principals are unaffected by the confinement", () => {
+    expect(guardRes("POST", "/api/v1/chats", "u-1", "user", "user",).allowed,).toBe(true,);
+    expect(guardRes("POST", "/api/v1/chats", "u-1", "user",).allowed,).toBe(true,);
+    // Absent principalKind (older callers) behaves exactly as before.
+    expect(guardRes("POST", "/api/v1/worlds", "u-1", "user",).allowed,).toBe(true,);
   });
 });

@@ -265,6 +265,7 @@ export const GenerationStatusSchema = t.UnionEnum([
 ],);
 export const HeatPhaseSchema = t.UnionEnum(["normal", "pre_heat", "heat", "post_heat",],);
 export const ImageApiFamilySchema = t.UnionEnum(["openai", "sdapi", "sdcpp", "comfyui",],);
+export const IntegrationTokenScopeSchema = t.UnionEnum(["read", "chat-write",],);
 export const InteractionCategorySchema = t.UnionEnum([
   "survival",
   "social",
@@ -692,6 +693,7 @@ export const UserRoleSchema = t.UnionEnum([
   "solo",
 ],);
 export const UserStatusSchema = t.UnionEnum(["active", "disabled", "deactivated",],);
+export const VideoApiFamilySchema = t.UnionEnum(["comfyui",],);
 export const VisibilityOverrideSchema = t.UnionEnum(["none", "private", "unlisted", "public",],);
 export const VnChoiceStatusSchema = t.UnionEnum(["available", "selected", "dismissed",],);
 export const WhiteneoteScopeSchema = t.UnionEnum(["scene", "chapter", "session", "world",],);
@@ -3906,4 +3908,16 @@ export const ToolCallAuditSchema = t.Object({
   tags: t.Optional(t.String(),),
   duration_ms: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
+},);
+
+// ── integration_tokens ────────────────────────────────────────────
+export const IntegrationTokensSchema = t.Object({
+  name: t.String(),
+  token_hash: t.String(),
+  scopes: IntegrationTokenScopeSchema,
+  issuer_admin_user_id: t.String(),
+  created_at: t.Optional(t.String(),),
+  last_used_at: t.Optional(t.String(),),
+  revoked_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
 },);

@@ -23,7 +23,7 @@ import { startAppScheduler, } from "./cron";
 import type { Db, } from "./db";
 import type { TranslatorFn, } from "./i18n/types";
 import { getLogger, } from "./logger";
-import { authenticate, } from "./middleware/auth";
+import { authenticateRequest, } from "./middleware/auth";
 import {
   CSRF_EXEMPT_ROUTES,
   CSRF_HEADER,
@@ -105,7 +105,11 @@ export function createApp(deps: AppDeps,) {
     .derive(requestIdMiddleware(),)
     // ── Authentication guard (runs before all routes, populates context) ──────
     .derive(async ({ request, },) => {
-      const authResult = await authenticate({ request, database, authConfig: config.auth, },);
+      // authenticateRequest = integration-token seam first (an `llri_` bearer
+      // resolves via integration_tokens and NEVER reaches the JWT/solo/guest
+      // paths), then the unchanged JWT authenticate(). The result carries the
+      // token credential (null for user sessions) for audit + budget keys.
+      const authResult = await authenticateRequest({ request, database, authConfig: config.auth, },);
       // When auth fails, we still return values (will be null)
       // Route handlers are responsible for checking userId (null = unauthenticated)
       // and returning 401 where appropriate — not all do; null userId in a SQL
@@ -117,7 +121,16 @@ export function createApp(deps: AppDeps,) {
         // Unauthenticated: drop any client-supplied x-user-id so it cannot
         // spoof the user attributed in the access log (handler reads it).
         request.headers.delete("x-user-id",);
-        return { userId: null, userRole: null, sessionId: null, ...i18n, };
+        return {
+          userId: null,
+          userRole: null,
+          sessionId: null,
+          principalKind: "user" as const,
+          credentialId: null,
+          credentialName: null,
+          credentialScope: null,
+          ...i18n,
+        };
       }
 
       // Detect locale and create translator
@@ -142,6 +155,10 @@ export function createApp(deps: AppDeps,) {
         userId: authResult.context.userId,
         userRole: authResult.context.userRole,
         sessionId: authResult.context.sessionId,
+        principalKind: authResult.context.principalKind,
+        credentialId: authResult.credential?.id ?? null,
+        credentialName: authResult.credential?.name ?? null,
+        credentialScope: authResult.credential?.scopes ?? null,
         ...i18n,
       };
     },)

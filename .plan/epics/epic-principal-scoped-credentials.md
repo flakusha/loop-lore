@@ -32,7 +32,7 @@ Shared primitive extracted from the evaluated repo-access draft (tasks #1/#4) pe
 ## Tasks
 
 - [ ] PrincipalKind model + server-side resolution (actors-row mapping; param-supplied principal ignored)
-- [ ] Scoped credential model + API-key table (issue/verify/revoke + one issuer; db:sync gates)
+- [x] Scoped credential model + API-key table (issue/verify/revoke + one issuer; db:sync gates) — ADMIN-SCOPED SLICE landed on `epic-agentic-integration` (commit "feat(integrations): admin-scoped integration tokens"): migration `095_integration_tokens` (+ `IntegrationTokenScope` enum, db:sync regenerated), verification seam `src/middleware/auth/authenticate-request.ts` (sibling of `authenticate` + `requireAuthGuard`; fail-closed), `authorizeFacadeOp` now ENFORCES FacadeScope tiers (JWT users keep both tiers), token CRUD at `/api/v1/admin/integration-tokens`, per-token budget buckets (facade + governance), audit rows carry tokenId/tokenName. Deliberate refinements: revocation = row-VALUE `revoked_at` (audit trail; fail-closed identical), expiry OPTIONAL default-non-expiring (open ADR lifetime question), subject binding = ISSUING ADMIN's userId with `principalKind: "external-agent"` and `userRole: null` (closes TASK-byok-agent-subject-binding's explicit-attribution AC). OAuth-style slice (§Decision b) remains Proposed pending the ADR open questions.
 - [ ] Fail-closed seam extension (sibling of authenticate derive + requireAuthGuard; no-downgrade tests)
 
 ## Non-goals

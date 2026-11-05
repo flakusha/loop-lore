@@ -15,7 +15,7 @@
  *   // Type:  const x: GenerationStatus  → accepts only union members
  *
  * Enum-to-table mappings (for validation):
- *   enums-core: UserRole, UserStatus, ChatType, ChatMode, ChatPurpose, TurnStrategy,
+ *   enums-core: UserRole, UserStatus, IntegrationTokenScope, ChatType, ChatMode, ChatPurpose, TurnStrategy,
  *               ChatVisibility,
  *               ActorType, AgentType, ChatParticipantRole, MessageRole, MessageContentType,
  *               MessageContentFormat, MessageStatus, MessageVisibility, ActorVisibility,

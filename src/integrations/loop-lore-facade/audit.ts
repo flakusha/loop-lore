@@ -25,7 +25,6 @@ export interface FacadeAuditEntry {
   principal: FacadePrincipal;
   requestId: string;
 }
-
 const log = (): ReturnType<typeof getChildLogger> => getChildLogger("integrations.loop-lore-facade",);
 
 /**
@@ -41,12 +40,17 @@ const log = (): ReturnType<typeof getChildLogger> => getChildLogger("integration
  */
 export async function writeFacadeAudit(database: Kysely<DB>, entry: FacadeAuditEntry,): Promise<void> {
   // safeJsonStringify returns a Result ({ok, value}) — bind value, never the
-  // envelope object itself, into the TEXT meta column.
+  // envelope object itself, into the TEXT meta column. Token principals add
+  // their credential attribution (id + name) so every credential-bearing
+  // call is traceable to the minted token, not just the issuing admin.
   const metaResult = safeJsonStringify({
     domain: entry.domain,
     scope: entry.scope,
     principalKind: entry.principal.kind,
     status: entry.status,
+    tokenId: entry.principal.credentialId,
+    tokenName: entry.principal.credentialName,
+    tokenScope: entry.principal.credentialScope,
   },);
 
   try {

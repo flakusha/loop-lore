@@ -59,6 +59,10 @@ export function createMcpRoutes(opts: HandlerOpts, prefix = "/api",) {
           userId,
           userRole: ctx.userRole ?? null,
           sessionId: ctx.sessionId ?? null,
+          principalKind: ctx.principalKind ?? "user",
+          credentialId: ctx.credentialId ?? null,
+          credentialName: ctx.credentialName ?? null,
+          credentialScope: ctx.credentialScope ?? null,
         },);
 
         const facadeCtx = facadeContextFromRequestContext(

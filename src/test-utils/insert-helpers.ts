@@ -48,6 +48,7 @@ import type {
   FantasyCategory,
   GatheringNodeType,
   GenerationStatus,
+  IntegrationTokenScope,
   InteractionCategory,
   InteractionOutcome,
   InviteStatus,
@@ -6331,6 +6332,34 @@ export async function insertToolCallAudit(
     id,
     tool,
     verdict,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a integration_tokens row. */
+export async function insertIntegrationTokens(
+  db: Db,
+  name: string,
+  token_hash: string,
+  scopes: IntegrationTokenScope,
+  issuer_admin_user_id: string,
+  opts?: {
+    id?: string;
+    created_at?: string;
+    last_used_at?: string | null;
+    revoked_at?: string | null;
+    expires_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("integration_tokens",).values({
+    id,
+    name,
+    token_hash,
+    scopes,
+    issuer_admin_user_id,
     ...restOpts,
   } as any,).execute();
   return id;

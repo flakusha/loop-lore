@@ -8,6 +8,13 @@
  * public import surface (`auth` / `auth/index`).
  */
 export { authenticate, } from "./authenticate";
+export { authenticateRequest, type AuthResolution, } from "./authenticate-request";
+export {
+  hashIntegrationToken,
+  INTEGRATION_TOKEN_PREFIX,
+  mintIntegrationToken,
+  verifyIntegrationToken,
+} from "./integration-token";
 export { getOrCreateSoloUserForAuth, resetSoloUserCache, } from "./solo-user";
 export { extractBearerToken, resolveUserIdFromRequest, } from "./token";
 export type { AuthenticateOpts, } from "./types";

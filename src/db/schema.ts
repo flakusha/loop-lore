@@ -249,4 +249,5 @@ export interface DB {
   model_rankings: import("./schema-telemetry").ModelRankings;
   ranking_snapshots: import("./schema-telemetry").RankingSnapshots;
   tool_call_audit: import("./schema-core").ToolCallAudit;
+  integration_tokens: import("./schema-core").IntegrationTokens;
 }
