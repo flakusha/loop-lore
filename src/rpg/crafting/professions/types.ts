@@ -8,7 +8,7 @@
  * tables `professions` / `profession_specializations`, DDL in migration
  * `001_init.ts` parts/009-crafting — the ticket's `011_crafting_professions`
  * citation is stale; 011 is actor BDI. `world_id` was made nullable by
- * migration `094_professions_world_optional.ts`). This module never imports
+ * migration `095_professions_world_optional.ts`). This module never imports
  * DB modules — everything is threaded with an explicit `Kysely<DB>` handle.
  */
 

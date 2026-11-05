@@ -11,7 +11,7 @@
  * constructor handle, camelCase row mappers, and thrown `Error`s for
  * not-found / invalid input (routes translate them to 404/400).
  *
- * `world_id` is nullable since migration `094_professions_world_optional.ts`
+ * `world_id` is nullable since migration `095_professions_world_optional.ts`
  * (config-seeded templates carry disciplines before any world exists); the
  * actor+discipline duplicate check below is the enforcement point for
  * world-less rows, whose SQLite UNIQUE entry no longer dedupes (NULLs are
