@@ -52,11 +52,12 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **Chat-page keyboard navigation consumers (epic-accessibility-input, Phase 3)** — the `keynav` actions that had dispatch but no consumer now act: `j`/`k` scroll the chat message list (`#message-list`), `[`/`]` step through the visible chat list (server-side search results while a search is active, otherwise the client-side filtered list) through the existing `selectChat` surface, and the `g`-prefixed `goto-*` actions activate the sidebar's own htmx navigation (`nav-chat`, `nav-personas`, `nav-characters`, `nav-settings`, `nav-gallery`) while `goto-home` goes to the app root route. The chat consumers register on page init and are dropped on teardown (`src/frontend/alpine/chat-keynav.ts`); the `goto-*` consumers live in the root Alpine component (`src/frontend/alpine/keynav-goto.ts`, `src/frontend/alpine/app.ts`) so they survive htmx swaps of `#app-root`. The document keydown listener stays exactly as narrow as it was — only the opt-in `keynav` flag reaches these actions.
 
+- **Chat keynav walk follows the sidebar's world-channel tree (epic-accessibility-input)** — the `[`/`]` shortcuts now step through the chats in the order the sidebar lists them: the world-channel tree first, whose channels are grouped per world/location exactly as the sidebar renders them, then the flat filtered list; a chat that shows up in both is walked once. `src/frontend/alpine/chat-keynav.ts` resolves that order in `visibleChatIds()`, and while a search is active the server-side search results still take precedence.
+
 - **Chat touch gesture system (epic-accessibility-input)** — the chat message list now answers touch gestures as well as clicks, and the detectors that used to each own their own touch handling now cooperate. `src/frontend/touch-session.ts` is the shared arbitration layer: every detector that listens on the same element joins ONE session that carries a single claim (`horizontal` / `vertical` / `pinch`), so a pinch, a pull and a swipe never fire together — the first gesture to earn the claim keeps it, and a pinch outranks the rest. `src/frontend/touch.ts` keeps the public detectors (`onSwipe` / `onTap` / `onLongPress` / `onPinch` / `onPull` / `hapticFeedback`), and `src/frontend/alpine/chat-touch-gestures.ts` wires them onto `#message-list` with event delegation, dispatching the same actions the visible buttons use: swipe left opens the archive-confirm dialog, swipe right starts the edit, a long-press opens the context menu, and a pull at the top of the list reloads the messages through the list's own `loadMessages` path (skipped while an older-page load or a reload is in flight, so a refresh cannot race the infinite scroll). Pinch-to-zoom lives in `src/frontend/touch-zoom.ts` and scales the message list with the CSS `zoom` property rather than `transform: scale()` — a transform takes no part in layout, so the scroll container would keep its unscaled `scrollHeight` and scroll wrong once zoomed — with the factor clamped to [1, 2] and Ctrl+= / Ctrl+- / Ctrl+0 as the keyboard alternative to the pinch (the bare keys work too when no text field has focus). The swipe and long-press actions pulse the device through `hapticFeedback`, and a gesture that starts over a selected text is a no-op, so picking text inside a message never triggers an action.
 
 ### Changed
 
-- **Auto-generated `.plan` artifacts are no longer tracked** — `code-map.json`, `epics-index.md`, `feature-matrix.md`, `interconnect.json`, `interconnect.md` and `priority-matrix.md` are rebuildable from the hand-written `.plan/` tree, but tracking them rewrote the whole generated set on every plan change (the `chore(plan): post-merge reconciliation` commits carried the entire interconnect pair with them). They are now gitignored and regenerated on demand with `bun run plan:artifacts`; the pinned `giwt` change makes `finalize` Step 5c stage the plan directory minus the paths the repo ignores, so the reconciliation commit no longer re-adds them. The ticket index (`.plan/tickets/index.json` + `.stamp`) stays tracked — it is the sync state, not a rebuild.
 
 - **`giwt finalize` spends less wall time in its gates** — the scoped coverage gate now runs its two test passes side by side instead of one after the other: the collision companion (every touched subsystem's whole test dir, unscoped) and the scoped pass (the diff's own test files, isolated + coverage) are independent, since the companion writes no coverage output while the scoped pass writes the lcov the floor reads. `giwt finalize` Step 3 runs the unit suite with the same worker count the check runner's own src chunk gate measures on this host (12 workers, `CHECK_SRC_TEST_JOBS` overrides it) instead of the 4-worker default. The browser e2e suite hands its published frontend build down to the spec workers instead of letting each worker resolve its own: a frontend build that fails now fails the gate once, up front, rather than once per spec after a full build timeout.
 
@@ -156,11 +157,13 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **The archive purge only surveyed two of the foreign keys that point at `messages.id`** — the purge (`src/routes/messages/archiving.ts`) deleted archived messages and then checked which of them were still referenced, but the check only knew `messages.parent_id` and `chat_branches.parent_message_id`. Every other foreign key that targets `messages.id` (`generation_attempts.parent_message_id`, `whitenotes.message_id`, `game_states.message_id`, `story_triggers.trigger_message_id`, `conversation_merge.base_message_id`) uses `NO ACTION`, so a message referenced from one of them aborted the whole purge with a raw SQLite 500. The survey is now PRAGMA-driven: `src/routes/messages/message-fk-survey.ts` reads `PRAGMA foreign_key_list` for every table, collects the columns that target `messages.id` and block the delete (`CASCADE` and `SET NULL` columns let the delete through), and keeps any message a surviving row still references - the same structural treatment `chat_branches` already got. `src/routes/messages/archiving.coverage.test.ts` covers the purge with a `generation_attempts` and a `whitenotes` reference.
 
+
 ### Removed
 
 - **Dead `src/actors/` layer** — deleted the directory: 11 files with zero importers, surfaced by the widened knip scan, including a third parallel actor-items implementation (`src/actors/actor-items.ts`) alongside `src/services/actor-items.ts` and `src/services/actor-items/`.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 
 ## [0.1.0] - 2026-08-15
 
@@ -192,12 +195,14 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Plumbing** — Kysely + `bun:sqlite` (PG dialect-swappable), encrypted DB backup/recovery, plugin system, structured logging, telemetry, auxiliary LLM pipeline, wiring gate (`scripts/check-wiring.ts`), e2e browser suite (19 flows).
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Changed
 
 - Lint debt resolved across `src` (156 files), eslint config + example configs shipped.
 - In-range dependency bumps (kysely, smol-toml, js-yaml, alpine, eslint, unicorn, typescript-eslint, etc.).
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Fixed
 
 - **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
@@ -211,6 +216,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 ### Removed
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Security
 
 - Actor-scoped access control on RPG routes (`requireActorAccess`); pre-push hook blocks agent pushes (human-attested release pushes).
@@ -296,6 +302,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Fixed
 
 - **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
@@ -304,6 +311,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 
 ### Fixed
 
@@ -315,3 +323,4 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Coverage run executes the bundled plugin engines' own tests** — the plugin engines under `plugins/` ship their own `*.test.ts`, but the coverage run's test set was `tests/e2e/ src/`, so those files never ran and the `plugins` module was measured at a fraction of what the tests actually cover. `test:coverage` now includes `plugins/`, and the parallel runner's coverage gate builds the same test set (it walks `plugins/` alongside `src/`, so the gate and the manual script agree). The plugin engines are in-process unit tests, so they belong inside the coverage invocation rather than in the separate scripts pass.
 - **Image-edit input images reach ComfyUI as uploaded bytes** — the ComfyUI image-edit provider now uploads every `image`-typed parameter (`input_image`, `mask_image`, `control_image`) before the workflow is built and substitutes the name ComfyUI stored the bytes under, so a `LoadImage` node no longer names a file the server never uploaded. The parameter carries the ASSET ID of an image the caller owns: the provider checks the owner, decrypts with the chat key when the asset is encrypted, and reads the bytes through the asset row — a path on the server is never opened. The run body is validated against one shared TypeBox schema (`src/validation/schemas/image-edit.ts`): the route declares it as its `body:` — so the served OpenAPI document carries the contract — and `handleRun` applies the same validator, which covers the chain-run executor that calls the handler directly.
   // hint: Structural change (rename/retype). Check callers of this entity.
+
