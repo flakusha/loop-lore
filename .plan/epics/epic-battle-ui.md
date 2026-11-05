@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Partially shipped — chat battle panel with roster HP, keyboard nav, and a full action bar (attack/heal/end, item-use menu, social verbs incl. negotiate) is live, plus a reusable health-bar widget, an acting-first turn-order strip (verified 2026-10-23), and — delivered in the payload, not faked client-side — status-effect badges and a scrollable battle log (verified 2026-11-01: `serializeBattle` now carries `Combatant.conditions` and the battle log). Remaining open: skill-check UI. The skill-check/dice-roll slice landed (verified 2026-11-05): `serializeBattle` projects the persisted attack roll into the panel payload and the battle log renders a roll chip (dice face, natural/modifier/total/DC, success/failure outcome, critical indicator) with a CSS dice tumble and a small-width rule; sound effects stay out (no audio asset pipeline in the repo, optional AC). Still open for missing payload data: target selection (no area/self targets delivered), action cost and cooldown display (no per-action cost/cooldown delivered), and social skill-check rolls (`src/rpg/service/battles/social.ts` persists only the narration, so no roll reaches the client). A flee action stays unwired by design: no backend verb or route exists for it.
+**Status Note:** Partially shipped — chat battle panel with roster HP, keyboard nav, and a full action bar (attack/heal/end, item-use menu, social verbs incl. negotiate) is live, plus a reusable health-bar widget, an acting-first turn-order strip (verified 2026-10-23), and — delivered in the payload, not faked client-side — status-effect badges and a scrollable battle log (verified 2026-11-01: `serializeBattle` now carries `Combatant.conditions` and the battle log). The skill-check/dice-roll slice landed (verified 2026-11-05): `serializeBattle` projects the persisted attack roll into the panel payload and the battle log renders a roll chip (dice face, natural/modifier/total/DC, success/failure outcome, critical indicator) with a CSS dice tumble and a small-width rule; sound effects stay out (no audio asset pipeline in the repo, optional AC). Still open for missing payload data: target selection (no area/self targets delivered), action cost and cooldown display (no per-action cost/cooldown delivered), and social skill-check rolls (`src/rpg/service/battles/social.ts` persists only the narration, so no roll reaches the client). A flee action stays unwired by design: no backend verb or route exists for it.
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
@@ -21,7 +21,7 @@ Complete battle interface for turn-based combat, including state display, action
 
 - **Modules:** `src/frontend/battle/panel.ts` (VN-style overlay panel: mount/destroy/render, keyboard focus cycle over combatants + actions + items), `src/frontend/battle/commands.ts` (attack/heal/end + item toggle + social-* verb action set + slash-command mapping), `src/frontend/battle/render.ts` (header/roster/actions DOM builders), `src/frontend/battle/health-bar.ts` (reusable HP progressbar widget), `src/frontend/battle/turn-order.ts` (acting-first initiative queue strip), `src/frontend/battle/status-effects.ts` (condition badges with tooltips, rendered from the delivered conditions), `src/frontend/battle/battle-log.ts` (scrollable `role="log"` panel with latest-entry auto-scroll, rendered from the delivered log); `src/frontend/alpine/chat-battle.ts` + `src/frontend/alpine/chat-actions/battle.ts` (chat-side dispatch of `/attack`, `/heal`, `/battle` commands); backend payload: `serializeBattle` (`src/assistant/commands/battle-utils.ts`) delivers per-combatant `conditions` and the battle log
 - **Shipped:** battle screen embedded in chat, combatant roster with HP display via the reusable health-bar widget, single-target selection via focus cycle, keyboard shortcuts (arrows/Enter/Space), dispatch into the backend battle routes, turn-order visualization (current turn + upcoming queue, derived from the delivered turnIndex/initiative roster), item-use menu (`/battle use`) and social verbs incl. negotiate (`/battle social`), status-effect badges with tooltips, battle log with scrollable history and auto-scroll
-- **Not shipped:** flee button (no backend verb or route — `/battle social` rejects `flee`; no flee endpoint), skill-check dice animation, dynamic backgrounds
+- **Not shipped:** flee button (no backend verb or route — `/battle social` rejects `flee`; no flee endpoint), dynamic backgrounds (the skill-check dice animation shipped 2026-11-05)
 
 ## Current State
 
@@ -193,11 +193,16 @@ Implemented (verified 2026-11-01):
 - `src/frontend/battle/battle-log.ts` — battle log panel (panel integration in `panel.ts`)
 - `src/assistant/commands/battle-utils.ts` — `serializeBattle` now delivers conditions + log
 
+Implemented (verified 2026-11-05):
+- `src/frontend/battle/skill-check-display.ts` — roll chip (dice face, roll math, outcome, critical marker)
+- `src/frontend/battle/skill-check.ts` — dice roll animation (`animateDiceRoll`)
+- `src/frontend/battle/battle-log.ts` — roll chip on the log line (tumble guard scoped per battle)
+- `src/assistant/commands/battle-utils.ts` — `serializeBattle` also delivers the projected attack roll
+
 Planned (do not exist yet):
 - `src/frontend/battle/battle-screen.ts` — main battle page
 - `src/frontend/battle/battle-state.ts` — state display component
 - `src/frontend/battle/action-selector.ts` — action selection UI
-- `src/frontend/battle/skill-check.ts` — dice roll animation
 - `src/frontend/alpine/battle.ts` — standalone Alpine battle logic (chat-battle.ts covers the chat surface)
 
 ## Related Epics
