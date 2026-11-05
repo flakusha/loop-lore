@@ -11,7 +11,7 @@
 import { describe, expect, test, } from "bun:test";
 import type { ImageProviderConfig, } from "../../config/schema";
 import type { ComfyUIWorkflow, } from "../../generation/providers/comfyui";
-import { templateRegistry, } from "../template-registry";
+import { registerBuiltinTemplates, templateRegistry, } from "../template-registry";
 import {
   createWorkflowFileTemplate,
   registerWorkflowFileTemplates,
@@ -66,7 +66,7 @@ describe("createWorkflowFileTemplate", () => {
     );
 
     expect(template,).not.toBeNull();
-    expect(template!.id,).toBe("edit-comfy",);
+    expect(template!.id,).toBe("workflow:edit-comfy",);
     expect(template!.backends,).toEqual(["comfyui",],);
 
     const graph = template!.build({
@@ -104,9 +104,24 @@ describe("registerWorkflowFileTemplates", () => {
 
     await registerWorkflowFileTemplates(cfg, loaderReturning(GRAPH,),);
 
-    const registered = templateRegistry.get("edit-comfy",);
+    const registered = templateRegistry.get("workflow:edit-comfy",);
     expect(registered,).toBeDefined();
     expect(registered!.category,).toBe("img2img",);
+  });
+
+  test("a provider named like a built-in never clobbers the built-in template", async () => {
+    const cfg = {
+      generation: { providers: { sd: [{ ...provider("qwen-edit",), name: "img2img", },], }, },
+    } as Parameters<typeof registerWorkflowFileTemplates>[0];
+
+    registerBuiltinTemplates();
+    const builtin = templateRegistry.get("img2img",);
+    expect(builtin,).toBeDefined();
+
+    await registerWorkflowFileTemplates(cfg, loaderReturning(GRAPH,),);
+
+    expect(templateRegistry.get("img2img",),).toBe(builtin,);
+    expect(templateRegistry.get("workflow:img2img",),).toBeDefined();
   });
 
   test("a provider that drops its workflow loses its template on the next pass", async () => {
@@ -119,10 +134,10 @@ describe("registerWorkflowFileTemplates", () => {
     } as Parameters<typeof registerWorkflowFileTemplates>[0];
 
     await registerWorkflowFileTemplates(withWorkflow, loaderReturning(GRAPH,),);
-    expect(templateRegistry.get("edit-comfy",),).toBeDefined();
+    expect(templateRegistry.get("workflow:edit-comfy",),).toBeDefined();
 
     await registerWorkflowFileTemplates(withoutWorkflow, loaderReturning(GRAPH,),);
-    expect(templateRegistry.get("edit-comfy",),).toBeUndefined();
+    expect(templateRegistry.get("workflow:edit-comfy",),).toBeUndefined();
     expect(templateRegistry.listAll().some((t,) => t.id === WORKFLOW_FILE_SOURCE),).toBe(false,);
   });
 });

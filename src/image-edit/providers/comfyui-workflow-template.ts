@@ -57,7 +57,10 @@ export async function createWorkflowFileTemplate(
   if (!workflow) { return null; }
 
   return {
-    id: provider.name,
+    // Namespaced so an operator provider named like a built-in ("txt2img",
+    // "img2img", a library row id) can never silently clobber that template —
+    // registry overwrite always wins, so the namespaces must not overlap.
+    id: `workflow:${provider.name}`,
     name: provider.label || provider.name,
     description: `Operator workflow "${provider.workflow}" from configs/workflows/ ` +
       `(backend ${provider.name}),`,
