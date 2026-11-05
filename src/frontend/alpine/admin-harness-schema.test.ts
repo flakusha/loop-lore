@@ -12,6 +12,7 @@
 import { Value, } from "@sinclair/typebox/value";
 import { describe, expect, it, } from "bun:test";
 import {
+  HarnessAvailabilitySchema,
   HarnessPendingPermissionSchema,
   HarnessPermissionDecisionResponse,
   HarnessPermissionsResponse,
@@ -44,6 +45,14 @@ describe("admin harness permission schemas", () => {
     expect(Value.Check(HarnessPermissionsResponse, { items: [], },),).toBe(true,);
     expect(Value.Check(HarnessPermissionsResponse, { items: [validPending, 3,], },),).toBe(false,);
     expect(Value.Check(HarnessPermissionsResponse, {},),).toBe(false,);
+  });
+
+  it("HarnessAvailabilitySchema accepts both verdict arms and rejects shape violations", () => {
+    expect(Value.Check(HarnessAvailabilitySchema, { available: true, version: "opencode 9.9.9", },),).toBe(true,);
+    expect(Value.Check(HarnessAvailabilitySchema, { available: true, version: null, },),).toBe(true,);
+    expect(Value.Check(HarnessAvailabilitySchema, { available: false, reason: "nope", },),).toBe(true,);
+    expect(Value.Check(HarnessAvailabilitySchema, { available: true, },),).toBe(false,);
+    expect(Value.Check(HarnessAvailabilitySchema, { available: false, },),).toBe(false,);
   });
 
   it("HarnessPermissionDecisionResponse accepts only { ok: boolean }", () => {
