@@ -30,7 +30,8 @@ import { storyOrchestrationRoutes, } from "../story-orchestration";
 
 /**
  * @param opts
- * @returns Elysia plugin carrying the five standalone v1 modules.
+ * @returns Elysia plugin carrying the standalone v1 modules + the facade
+ * REST surface.
  */
 export function standaloneSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
