@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** EPIC-STORY-MODE-UI first slice: story turn-order visualization + world-state/NPC-state CRUD wiring + turn-by-id lookup (frontend wiring of existing src/routes/story-states/ backend)
 **Priority:** P2 — Medium
 **Effort:** Small
@@ -33,3 +33,5 @@ specific turn.
 - [ ] Response renders in a turn detail view
 - [ ] Cached per (chatId, turnId) on the client
 - [ ] `bun run check` green
+
+**Resolved:** 2026-11-06 registry-driven close: git issue 5854b9c (registry tip: 4b4fa7724 Konstantin Fedotov Close issue)

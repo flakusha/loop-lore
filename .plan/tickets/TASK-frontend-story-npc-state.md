@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** EPIC-STORY-MODE-UI first slice: story turn-order visualization + world-state/NPC-state CRUD wiring + turn-by-id lookup (frontend wiring of existing src/routes/story-states/ backend)
 **Priority:** P2 — Medium
 **Effort:** Small
@@ -35,3 +35,5 @@ modify NPC story state.
 - [ ] Optimistic update; revert on error
 - [ ] Owner/GM-only gate surfaced in UI
 - [ ] `bun run check` green
+
+**Resolved:** 2026-11-06 registry-driven close: git issue eb3b315 (registry tip: c6b47ba33 Konstantin Fedotov Close issue)

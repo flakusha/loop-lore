@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** EPIC-STORY-MODE-UI first slice: story turn-order visualization + world-state/NPC-state CRUD wiring + turn-by-id lookup (frontend wiring of existing src/routes/story-states/ backend)
 **Priority:** P2 — Medium
 **Effort:** Small
@@ -34,3 +34,5 @@ Wire the per-world story-state list + create endpoints. The web UI has no caller
 - [ ] List refreshes after success
 - [ ] Owner/GM-only gate surfaced in UI
 - [ ] `bun run check` green
+
+**Resolved:** 2026-11-06 registry-driven close: git issue e764684 (registry tip: 4f53f58d3 Konstantin Fedotov Close issue)
