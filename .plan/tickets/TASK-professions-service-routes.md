@@ -156,3 +156,5 @@ Both tables are empty — no code writes to them. The `epic-crafting-professions
    column will silently keep the new def. Recommendation: scope the rule to
    `professions` (or revert after landing) — follow-up owned by the
    generator maintainers, not this branch.
+
+**Resolved:** 2026-11-06 registry-driven close: git issue f9f8f95 (registry tip: 96fb825d2 Konstantin Fedotov Close issue)
