@@ -55,6 +55,7 @@ interface Ctx {
   selectPartner(actorId: string,): void;
   selectAction(actionId: string,): void;
   confirmConsent(): Promise<void>;
+  cancelConsent(): void;
   closeIntimacy(): void;
   dispatchIntimacy(): Promise<void>;
   [key: string]: unknown;
@@ -200,6 +201,60 @@ describeOrSkip("dispatchIntimacy", () => {
     await flush();
     expect(ctx._intimacyFlow.phase,).toBe("error",);
     expect(ctx._intimacyFlow.error?.kind,).toBe("consent",);
+  });
+
+  test("a second confirm during the grant POST is a no-op (single-flight)", async () => {
+    let release = false;
+    actionHandler = async (url,) => {
+      if (typeof url === "string" && url === "/api/v1/nsfw/consent") {
+        while (!release) { await Bun.sleep(1,); }
+        return Response.json({ granted: true, },);
+      }
+
+      return Response.json({ newScore: 53, actualDelta: 8, applied: true, thresholdsReached: [], },);
+    };
+
+    const ctx = buildCtx();
+    ctx.openIntimacy();
+    ctx.selectPartner("actor-b",);
+    ctx.selectAction("play",);
+    const first = ctx.confirmConsent();
+    expect(ctx._intimacyFlow.phase,).toBe("applying",);
+    await ctx.confirmConsent();
+    release = true;
+    await first;
+    await flush();
+
+    const grants = calls.filter((call,) => call.url === "/api/v1/nsfw/consent");
+    expect(grants,).toHaveLength(1,);
+  });
+
+  test("a cancel racing the grant POST is swallowed (confirm already committed)", async () => {
+    let release = false;
+    actionHandler = async (url,) => {
+      if (typeof url === "string" && url === "/api/v1/nsfw/consent") {
+        while (!release) { await Bun.sleep(1,); }
+        return Response.json({ granted: true, },);
+      }
+
+      return Response.json({ newScore: 53, actualDelta: 8, applied: true, thresholdsReached: [], },);
+    };
+
+    const ctx = buildCtx();
+    ctx.openIntimacy();
+    ctx.selectPartner("actor-b",);
+    ctx.selectAction("play",);
+    const pending = ctx.confirmConsent();
+    ctx.cancelConsent();
+    release = true;
+    await pending;
+    await flush();
+
+    // Confirm committed synchronously: the racing cancel is a reducer
+    // no-op, so the granted flow still dispatches exactly once.
+    const grants = calls.filter((call,) => call.url === "/api/v1/nsfw/consent");
+    expect(grants,).toHaveLength(1,);
+    expect(ctx._intimacyFlow.phase,).toBe("effects",);
   });
 
   test("a stale chat switch discards the in-flight dispatch", async () => {
