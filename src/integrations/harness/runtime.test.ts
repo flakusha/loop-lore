@@ -10,6 +10,9 @@
  * fakes — no subprocess, parallel-safe.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import type { AcpProfileConfig, HarnessAcpConfig, } from "../../config/schema/harness";
 import type { HarnessAdapterCommandOptions, HarnessAdapterFactory, } from "./adapter-types";
 import {
@@ -47,6 +50,27 @@ beforeEach(() => {
 afterEach(() => {
   resetHarnessAdminSettings();
 },);
+
+/**
+ * A factory that fires one read-ask for a path inside `root` the moment the
+ * profile connects, then hands back the ordinary fake adapter.
+ * @param root - the directory the ask's path lives in
+ * @returns the asking factory.
+ */
+function askingFactory(root: string,): HarnessAdapterFactory {
+  const { factory, } = fakeFactory({ p: { models: [], reply: "ok", }, },);
+  return (profile, command, opts,) => {
+    opts?.onPermissionRequest?.({
+      params: {
+        sessionId: "s-1",
+        toolCall: { toolCallId: "c-1", title: "f.txt", rawInput: { path: join(root, "f.txt",), }, },
+      },
+      kind: "read",
+    },);
+
+    return factory(profile, command, opts,);
+  };
+}
 
 describe("createHarnessRuntime", () => {
   it("composes the four pieces sharing instances", () => {
@@ -94,6 +118,48 @@ describe("createHarnessRuntime", () => {
     expect(runtime.ledger.check("p", { rpm: 2, },).allowed,).toBe(true,);
     // And the breaker closed again on the successful turn.
     expect(runtime.breaker.allow("p",),).toBe(true,);
+  });
+
+  it("judges permission asks against the profile's configured sandboxRoot", async () => {
+    const root = mkdtempSync(join(tmpdir(), "harness-runtime-sandbox-",),);
+    try {
+      const acp: HarnessAcpConfig = {
+        enabled: true,
+        profiles: [{ name: "p", command: ["fake", "p",], tiers: {}, sandboxRoot: root, },],
+      };
+
+      const runtime = createHarnessRuntime({ acp, factory: askingFactory(root,), },);
+      await runtime.registry.ensureProbed("p",);
+      await runtime.permissions.idle();
+
+      // The ask's path is inside the CONFIGURED root, so it is auto-allowed
+      // and never parked for a human.
+      expect(runtime.permissions.pendingCount(),).toBe(0,);
+    } finally {
+      rmSync(root, { recursive: true, force: true, },);
+    }
+  });
+
+  it("keeps the cwd default when a profile configures no sandboxRoot", async () => {
+    const root = mkdtempSync(join(tmpdir(), "harness-runtime-sandbox-",),);
+    try {
+      const acp: HarnessAcpConfig = {
+        enabled: true,
+        profiles: [{ name: "p", command: ["fake", "p",], tiers: {}, },],
+      };
+
+      const runtime = createHarnessRuntime({ acp, factory: askingFactory(root,), },);
+      await runtime.registry.ensureProbed("p",);
+      await runtime.permissions.idle();
+
+      // Without the knob the root is the process cwd, so the same path (in a
+      // temp dir) escapes it and the ask waits for a human.
+      const pending = runtime.permissions.listPending();
+      expect(pending.length,).toBe(1,);
+      expect(pending[0]?.cwd,).toBe(process.cwd(),);
+    } finally {
+      rmSync(root, { recursive: true, force: true, },);
+    }
   });
 
   it("resolves each profile's own flavor through the production factory", () => {

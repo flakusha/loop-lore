@@ -7,6 +7,8 @@
 // semantic validation the JSON schema cannot express (unknown tier keys,
 // non-`provider/id` models, duplicate profile names).
 
+import { type Stats, statSync, } from "node:fs";
+import { resolve, } from "node:path";
 import {
   type AcpProfileConfig,
   HARNESS_CAPABILITIES,
@@ -119,6 +121,8 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
 
   if (p.limits !== undefined) { validateLimits(p.name, p.limits,); }
 
+  if (p.sandboxRoot !== undefined) { validateSandboxRoot(p.name, p.sandboxRoot,); }
+
   if (p.tosGrayzoneAcknowledged !== undefined && typeof p.tosGrayzoneAcknowledged !== "boolean") {
     throw new Error(
       `harness.acp.profiles["${p.name}"].tosGrayzoneAcknowledged must be a boolean`,
@@ -147,6 +151,42 @@ function validateTier(name: string, tier: HarnessTierId, tierCfg: AcpProfileConf
         HARNESS_CAPABILITIES.join(", ",)
       }]`,
     );
+  }
+}
+
+/**
+ * Validate one profile's sandbox root: an existing directory, no traversal.
+ * Fail closed at config load — a root that does not exist (or is not a
+ * directory) would make every permission ask judge paths against a
+ * non-existent scope, so the config must not load with one.
+ * @param name - profile name (for the error message)
+ * @param root - the configured sandbox root
+ * @throws {Error} If the root is empty, carries a `..` segment, does not
+ *   exist, or is not a directory.
+ */
+function validateSandboxRoot(name: string, root: string,): void {
+  if (typeof root !== "string" || root.trim() === "") {
+    throw new Error(`harness.acp.profiles["${name}"].sandboxRoot must be a non-empty path`,);
+  }
+
+  if (root.split(/[\\/]+/,).includes("..",)) {
+    throw new Error(
+      `harness.acp.profiles["${name}"].sandboxRoot must not contain ".." traversal (got "${root}")`,
+    );
+  }
+
+  const resolved = resolve(root,);
+  let stats: Stats;
+  try {
+    stats = statSync(resolved,);
+  } catch {
+    throw new Error(
+      `harness.acp.profiles["${name}"].sandboxRoot "${root}" does not exist (resolved to "${resolved}")`,
+    );
+  }
+
+  if (!stats.isDirectory()) {
+    throw new Error(`harness.acp.profiles["${name}"].sandboxRoot "${root}" is not a directory`,);
   }
 }
 
@@ -227,6 +267,11 @@ export const harnessMeta = {
                   maxConsecutiveFailures: { type: "integer", description: "Failures before the breaker opens", },
                   cooldownMs: { type: "integer", description: "Open-breaker cooldown in ms", },
                 },
+              },
+              sandboxRoot: {
+                type: "string",
+                description:
+                  'Directory the profile\'s permission asks are judged against (must exist; no ".." traversal). Absent = the process cwd',
               },
             },
           },
