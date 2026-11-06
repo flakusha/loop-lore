@@ -14,7 +14,7 @@
  * A settings failure is classified independently of runs/stats: the panel
  * shows the settings error inline without blanking the telemetry tables.
  */
-import { harnessFailure, JSON_HEADERS, log, SETTINGS_URL, } from "./admin-harness-detail";
+import { harnessFailure, harnessThrownMessage, JSON_HEADERS, log, SETTINGS_URL, } from "./admin-harness-detail";
 import {
   HarnessSettingsNullable,
   type HarnessSettingsView,
@@ -102,7 +102,7 @@ export async function loadHarnessSettings(state: HarnessSettingsState,): Promise
     applySettings(state, data,);
   } catch (error) {
     log.warn("Harness settings request failed", { error: String(error,), },);
-    state.harnessSettingsError = t("harness.errorNetwork",);
+    state.harnessSettingsError = harnessThrownMessage(error, "harness.errorLoadSettings",);
   } finally {
     state.loadingHarnessSettings = false;
   }
@@ -235,7 +235,7 @@ export async function applyHarnessSettings(
     applySettings(state, data,);
   } catch (error) {
     log.warn("Harness settings save failed", { error: String(error,), },);
-    state.harnessSettingsError = t("harness.errorNetwork",);
+    state.harnessSettingsError = harnessThrownMessage(error, "harness.errorSaveSettings",);
   } finally {
     state.savingHarnessSettings = false;
   }

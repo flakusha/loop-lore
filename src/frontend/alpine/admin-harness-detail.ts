@@ -45,6 +45,45 @@ export async function harnessFailure(res: Response, key: string,): Promise<strin
   return null;
 }
 
+/**
+ * Classify a THROWN harness request failure into the message the tab shows.
+ *
+ * `apiFetch` never surfaces a non-2xx response — `feFetch` throws it — so the
+ * HTTP status arrives on the error, not on a Response. Without this every
+ * failure reads as "the API is unreachable": a 403 (not an admin) and a 500
+ * (the server refused) look identical to a dead server.
+ * @param error - the error the request threw
+ * @param key - i18n key for the endpoint's own failure message
+ * @returns the message to show
+ */
+export function harnessThrownMessage(error: unknown, key: string,): string {
+  const status = (error as { status?: number } | null)?.status;
+  if (status === 403) { return t("harness.errorForbidden",); }
+  // No status (or a zero one) means the request never got an answer — the
+  // server is down.
+  if (!status) { return t("harness.errorNetwork",); }
+  return t(key,);
+}
+
+/**
+ * The message for a failed tab load, or null when both loads succeeded.
+ *
+ * The runs and stats requests settle together and the tab shows ONE error
+ * banner, so the first rejection wins: a runs failure reads as the runs
+ * failure, a stats-only failure as the stats failure.
+ * @param runs - settled result of the runs request
+ * @param stats - settled result of the stats request
+ * @returns the message to show, or null when nothing was rejected
+ */
+export function harnessTabLoadError(
+  runs: PromiseSettledResult<Response>,
+  stats: PromiseSettledResult<Response>,
+): string | null {
+  if (runs.status === "rejected") { return harnessThrownMessage(runs.reason, "harness.errorLoadRuns",); }
+  if (stats.status === "rejected") { return harnessThrownMessage(stats.reason, "harness.errorLoadStats",); }
+  return null;
+}
+
 /** The slice of tab state this method touches. */
 export interface HarnessDetailState {
   harnessRunId: string;
@@ -90,7 +129,7 @@ export async function loadHarnessDetail(state: HarnessDetailState, runId: string
   } catch (error) {
     if (isStale(state.harnessRunId, runId,)) { return; }
     log.warn("Harness run detail request failed", { error: String(error,), },);
-    state.harnessError = t("harness.errorNetwork",);
+    state.harnessError = harnessThrownMessage(error, "harness.errorLoadRun",);
   } finally {
     if (!isStale(state.harnessRunId, runId,)) { state.loadingHarnessDetail = false; }
   }

@@ -29,6 +29,7 @@ const originalToast = globalState.showToast;
 const localeHost = globalThis as unknown as { __localeStrings?: unknown };
 const originalLocale = localeHost.__localeStrings;
 let calls: string[] = [];
+let methods: string[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
 // `t()` resolves against the server-injected catalog; seed it from the real
@@ -68,9 +69,11 @@ const PENDING = {
 
 beforeEach(() => {
   calls = [];
+  methods = [];
   handler = async () => Response.json({},);
   globalState.apiFetch = (url, opts,) => {
     calls.push(url,);
+    methods.push(opts?.method ?? "GET",);
     return handler(url, opts,);
   };
 
@@ -136,6 +139,31 @@ describe("loadHarnessPermissions", () => {
       "Could not reach the harness API. Check that the server is running.",
     );
   });
+
+  // `apiFetch` throws on a non-2xx instead of returning the Response, so the
+  // real browser never reaches the response guard — the status arrives on the
+  // error. A 403 is "not an admin", not "the server is down".
+  test("a thrown 403 reports the forbidden message", async () => {
+    handler = async () => {
+      throw Object.assign(new Error("HTTP 403: Forbidden",), { status: 403, },);
+    };
+
+    const state = emptyHarnessPermissionsState();
+    await loadHarnessPermissions(state,);
+
+    expect(state.harnessPermissionsError,).toBe("You do not have permission to view harness data.",);
+  });
+
+  test("a thrown server error reports the endpoint's own failure", async () => {
+    handler = async () => {
+      throw Object.assign(new Error("HTTP 500: Internal Server Error",), { status: 500, },);
+    };
+
+    const state = emptyHarnessPermissionsState();
+    await loadHarnessPermissions(state,);
+
+    expect(state.harnessPermissionsError,).toBe("Could not load pending permission requests.",);
+  });
 });
 
 describe("decideHarnessPermission", () => {
@@ -150,6 +178,9 @@ describe("decideHarnessPermission", () => {
     await decideHarnessPermission(state, "ask-1", "approve",);
 
     expect(calls,).toEqual([`${PERMISSIONS_URL}/ask-1/approve`, PERMISSIONS_URL,],);
+    // The decision route is POST-only; `apiFetch` defaults to GET, so the
+    // method has to be explicit or the ask is never decided.
+    expect(methods,).toEqual(["POST", "GET",],);
     expect(state.harnessPermissionsError,).toBe("",);
     expect(state.harnessDecidingId,).toBe("",);
   });
@@ -168,15 +199,36 @@ describe("decideHarnessPermission", () => {
     expect(state.harnessPermissionRows,).toEqual([],);
   });
 
-  test("a rejected decision renders the failure and does not reload", async () => {
-    handler = async () => new Response("nope", { status: 500, },);
+  test("a rejected decision reports the failure without hiding the queue", async () => {
+    handler = async (url,) => {
+      if (url === PERMISSIONS_URL) { return Response.json(PENDING,); }
+      return new Response("nope", { status: 500, },);
+    };
+
+    const state = emptyHarnessPermissionsState();
+    await loadHarnessPermissions(state,);
+    await decideHarnessPermission(state, "ask-1", "approve",);
+
+    // The load, then the decision — and no reload: a failed decision leaves
+    // the queue exactly as it was.
+    expect(calls,).toEqual([PERMISSIONS_URL, `${PERMISSIONS_URL}/ask-1/approve`,],);
+    // The queue is still readable, so the load-error field stays empty: the
+    // table keeps listing the parked asks the operator has to decide on.
+    expect(state.harnessPermissionsError,).toBe("",);
+    expect(state.harnessDecisionError,).toBe("Could not record the decision.",);
+    expect(state.harnessPermissionRows.length,).toBe(2,);
+    expect(state.harnessDecidingId,).toBe("",);
+  });
+
+  test("a thrown server error on the decision reports the decision failure", async () => {
+    handler = async () => {
+      throw Object.assign(new Error("HTTP 503: Service Unavailable",), { status: 503, },);
+    };
 
     const state = emptyHarnessPermissionsState();
     await decideHarnessPermission(state, "ask-1", "approve",);
 
-    expect(calls.length,).toBe(1,);
-    expect(state.harnessPermissionsError,).toBe("Could not record the decision.",);
-    expect(state.harnessDecidingId,).toBe("",);
+    expect(state.harnessDecisionError,).toBe("Could not record the decision.",);
   });
 
   test("a second decision while one is in flight is ignored", async () => {
@@ -223,6 +275,22 @@ describe("buildPermissionRows", () => {
     ],);
 
     expect(rows[0]?.input.length,).toBeLessThanOrEqual(160,);
+  });
+
+  test("a long string input is capped too", () => {
+    const rows = buildPermissionRows([
+      { id: "ask-1", profile: "p", tool: "write", input: "x".repeat(500,), cwd: "/tmp", arrival: 0, },
+    ],);
+
+    expect(rows[0]?.input.length,).toBeLessThanOrEqual(160,);
+  });
+
+  test("a multi-line string input renders as one line", () => {
+    const rows = buildPermissionRows([
+      { id: "ask-1", profile: "p", tool: "write", input: "line one\nline two", cwd: "/tmp", arrival: 0, },
+    ],);
+
+    expect(rows[0]?.input,).toBe("line one line two",);
   });
 
   test("a missing input renders the empty-value dash", () => {

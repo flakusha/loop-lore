@@ -15,7 +15,7 @@
  * persistence, so nothing is remembered beyond the single decision.
  */
 import { toDate, } from "../../utils/date";
-import { harnessFailure, JSON_HEADERS, log, } from "./admin-harness-detail";
+import { harnessFailure, harnessThrownMessage, JSON_HEADERS, log, } from "./admin-harness-detail";
 import { formatRunTs, textOrDash, } from "./admin-harness-format";
 import {
   type HarnessPendingPermission,
@@ -46,7 +46,18 @@ export interface HarnessPermissionRow {
 /** The slice of tab state this module owns. */
 export interface HarnessPermissionsState {
   harnessPermissionRows: HarnessPermissionRow[];
+  /**
+   * Set when the queue could not be READ. The rows are cleared with it, so the
+   * panel replaces the table with the error — a failed read leaves nothing to
+   * decide on.
+   */
   harnessPermissionsError: string;
+  /**
+   * Set when a DECISION failed. The queue is still readable, so the parked
+   * asks stay listed: the operator has to see them to retry. Kept apart from
+   * `harnessPermissionsError` so a failed decision never hides the queue.
+   */
+  harnessDecisionError: string;
   /** Id of the ask being decided; the panel disables the buttons while one is in flight. */
   harnessDecidingId: string;
 }
@@ -59,6 +70,7 @@ export interface HarnessPermissionsState {
 export const harnessPermissions = {
   harnessPermissionRows: [] as HarnessPermissionRow[],
   harnessPermissionsError: "",
+  harnessDecisionError: "",
   harnessDecidingId: "",
 
   /**
@@ -84,19 +96,29 @@ export const harnessPermissions = {
   },
 };
 
+/** Longest raw-input preview kept in one table cell. */
+const MAX_INPUT_PREVIEW = 160;
+
 /**
  * Compact one-line preview of the raw ACP request params.
+ *
+ * Both payload shapes go through the same cap: a harness may send the params
+ * as a bare string, and an uncapped string would stretch the table row. The
+ * whitespace flattening matches the pi-tui preview (`formatPermissionInput`),
+ * so the same ask reads the same on both surfaces.
  * @param input - the harness's raw `session/request_permission` params
  * @returns a single-line, length-capped summary
  */
 function previewInput(input: unknown,): string {
   if (input === null || input === undefined) { return textOrDash(null,); }
-  if (typeof input === "string") { return input; }
 
-  const serialized = safeJsonStringify(input,);
+  const serialized = typeof input === "string" ? { ok: true as const, value: input, } : safeJsonStringify(input,);
   const text = serialized.ok ? serialized.value : String(input,);
 
-  return text.length > 160 ? `${text.slice(0, 157,)}…` : text;
+  const flat = text.replace(/\s+/g, " ",).trim();
+  if (flat.length === 0) { return textOrDash(null,); }
+
+  return flat.length > MAX_INPUT_PREVIEW ? `${flat.slice(0, MAX_INPUT_PREVIEW - 1,)}…` : flat;
 }
 
 /**
@@ -123,6 +145,7 @@ export function emptyHarnessPermissionsState(): HarnessPermissionsState {
   return {
     harnessPermissionRows: [],
     harnessPermissionsError: "",
+    harnessDecisionError: "",
     harnessDecidingId: "",
   };
 }
@@ -134,6 +157,8 @@ export function emptyHarnessPermissionsState(): HarnessPermissionsState {
  */
 export async function loadHarnessPermissions(state: HarnessPermissionsState,): Promise<void> {
   state.harnessPermissionsError = "";
+  // Fresh data supersedes a stale decision failure.
+  state.harnessDecisionError = "";
   try {
     const res = await apiFetch(PERMISSIONS_URL, JSON_HEADERS,);
     const failure = await harnessFailure(res, "harness.permissions.loadFailed",);
@@ -156,7 +181,7 @@ export async function loadHarnessPermissions(state: HarnessPermissionsState,): P
   } catch (error) {
     log.warn("Harness permissions request failed", { error: String(error,), },);
     state.harnessPermissionRows = [];
-    state.harnessPermissionsError = t("harness.errorNetwork",);
+    state.harnessPermissionsError = harnessThrownMessage(error, "harness.permissions.loadFailed",);
   }
 }
 
@@ -178,17 +203,25 @@ export async function decideHarnessPermission(
   if (state.harnessDecidingId !== "") { return; }
   state.harnessDecidingId = id;
   try {
-    const res = await apiFetch(`${PERMISSIONS_URL}/${encodeURIComponent(id,)}/${decision}`, JSON_HEADERS,);
+    // The route is POST-only and `apiFetch` defaults to GET, so the method is
+    // explicit here — a GET would 404 and the ask would never be decided.
+    const res = await apiFetch(`${PERMISSIONS_URL}/${encodeURIComponent(id,)}/${decision}`, {
+      ...JSON_HEADERS,
+      method: "POST",
+    },);
+
     const failure = await harnessFailure(res, "harness.permissions.decideFailed",);
     if (failure !== null) {
-      state.harnessPermissionsError = failure;
+      // The queue is untouched — the ask is still parked. Report the failure
+      // in its own field so the table keeps listing the pending asks.
+      state.harnessDecisionError = failure;
       return;
     }
 
     await loadHarnessPermissions(state,);
   } catch (error) {
     log.warn("Harness permission decision failed", { error: String(error,), },);
-    state.harnessPermissionsError = t("harness.errorNetwork",);
+    state.harnessDecisionError = harnessThrownMessage(error, "harness.permissions.decideFailed",);
   } finally {
     state.harnessDecidingId = "";
   }

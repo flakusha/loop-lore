@@ -12,7 +12,7 @@
  * helper against the server-seeded `__EDITOR_FILE_ROOT__`.
  */
 import { editorUrl, joinEditorPath, } from "../open-in-editor";
-import { harnessFailure, JSON_HEADERS, log, RUNS_URL, } from "./admin-harness-detail";
+import { harnessFailure, harnessThrownMessage, JSON_HEADERS, log, RUNS_URL, } from "./admin-harness-detail";
 import { HarnessSandboxFilesNullable, } from "./admin-harness-schema";
 import { t, } from "./i18n";
 import { parseOr, } from "./validation";
@@ -139,7 +139,7 @@ export async function loadHarnessFiles(state: HarnessFilesState, runId: string, 
   } catch (error) {
     if (state.harnessRunId !== runId) { return; }
     log.warn("Harness sandbox file listing failed", { error: String(error,), },);
-    state.harnessFilesError = t("harness.errorNetwork",);
+    state.harnessFilesError = harnessThrownMessage(error, "harness.filesError",);
   } finally {
     if (state.harnessRunId === runId) { state.loadingHarnessFiles = false; }
   }

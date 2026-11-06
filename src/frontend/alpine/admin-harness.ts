@@ -14,6 +14,7 @@
  */
 import {
   harnessFailure,
+  harnessTabLoadError,
   JSON_HEADERS,
   loadHarnessDetail,
   log,
@@ -32,6 +33,7 @@ import {
   buildRunRows,
   buildRunsQuery,
   buildStatCards,
+  filterHarnessRuns,
   type HarnessDetailView,
   type HarnessGapRow,
   type HarnessModelRow,
@@ -136,9 +138,10 @@ export const adminHarness = {
 
       if (runsRes.status === "fulfilled") { await this.applyRuns(runsRes.value,); }
       if (statsRes.status === "fulfilled") { await this.applyStats(statsRes.value,); }
-      if (runsRes.status === "rejected" || statsRes.status === "rejected") {
+      const loadError = harnessTabLoadError(runsRes, statsRes,);
+      if (loadError !== null) {
         log.warn("Harness request failed",);
-        this.harnessError = t("harness.errorNetwork",);
+        this.harnessError = loadError;
       }
     } finally {
       this.loadingHarness = false;
@@ -196,17 +199,7 @@ export const adminHarness = {
    * @returns {HarnessRunRow[]} the rows the table renders
    */
   filteredHarnessRuns(): HarnessRunRow[] {
-    const query = this.harnessSearch.trim().toLowerCase();
-    if (!query) { return this.harnessRunRows; }
-    const out: HarnessRunRow[] = [];
-    for (const row of this.harnessRunRows) {
-      const haystack = `${row.task} ${row.taskType} ${row.model} ${row.result} ${row.branch} ${row.gitSha}`
-        .toLowerCase();
-
-      if (haystack.includes(query,)) { out.push(row,); }
-    }
-
-    return out;
+    return filterHarnessRuns(this.harnessRunRows, this.harnessSearch,);
   },
 
   /**

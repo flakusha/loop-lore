@@ -30,6 +30,8 @@ export class PendingPermissions {
   private items: PendingPermission[] = [];
   /** Last failure (load or decision), rendered as a message, never thrown. */
   private error: string | null = null;
+  /** True while a decision is in flight — a second keypress must not re-post it. */
+  private deciding = false;
   private readonly menu: MenuList;
 
   constructor() {
@@ -90,13 +92,23 @@ export class PendingPermissions {
     const target = this.highlighted();
     if (!target) { return; }
 
-    const result = await decidePermission(target.id, decision, sessionToken,);
-    if (!result.ok) {
-      this.error = result.error;
-      return;
-    }
+    // One decision at a time. The queue drops the ask once it is decided, so
+    // a second keypress while the first is in flight would race it into a
+    // 404 — the same guard the web panel keeps on its buttons.
+    if (this.deciding) { return; }
 
-    await this.load(sessionToken,);
+    this.deciding = true;
+    try {
+      const result = await decidePermission(target.id, decision, sessionToken,);
+      if (!result.ok) {
+        this.error = result.error;
+        return;
+      }
+
+      await this.load(sessionToken,);
+    } finally {
+      this.deciding = false;
+    }
   }
 
   /** Route the navigation keys to the pending cursor. */
