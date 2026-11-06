@@ -4,6 +4,7 @@
 # TASK: harness-model-discovery-ui-wiring-frontend-models-caller-cost-aware-selector
 
 **Status:** Not Started
+**Blocker:** HELD — sibling lane `harness-approval-fixes` (`528c160f3`) carries follow-up fixes on top of the landed approval-operability slice (`f5b0d91c3`/`304821a14`); this models-UI ticket is report-only from the sibling lane and stays Not Started until its own implementation lane exists. Do NOT touch.
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-external-harness-acp

@@ -4,6 +4,7 @@
 # TASK: credentials-story-decision-record
 
 **Status:** Not Started
+**Blocker:** HELD — ticket-file collision with dev: dev filed this ticket as `d7fd5c36a` (Not Started skeleton) while the branch re-filed it with the Done + Decision-record content (`85a5a3db9` ADR slice + `eedd65bb1` issuer-model ADR). Owner at landing: merge the ticket file toward the branch content (Done + ADR pointer), do NOT keep the dev skeleton. Next: land `credentials-decision-record`, then flip this ticket to Done with the landing sha.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-principal-scoped-credentials

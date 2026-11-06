@@ -4,6 +4,7 @@
 # TASK: Agentic integration tests
 
 **Status:** Not Started
+**Blocker:** HELD — `095_integration_tokens.ts` collides with `095_professions_world_optional.ts` on the sibling professions lane (dev HEAD is 094, so both branches claim 095); renumber per landing order at finalize. Plus `bun.lock` churn in-branch (SDK + route deps) — owner at landing: decide keep-regen vs drop. Next: land `epic-agentic-integration`, renumber the loser off the winner, then flip the affected tickets with the landing sha.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-agentic-integration-mcp-acp
