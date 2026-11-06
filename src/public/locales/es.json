@@ -2123,6 +2123,22 @@
         "codex": "Codex inicia sesión con una suscripción de plan de ChatGPT — usarlo como proveedor de loop-lore para RPG u otras funciones ajenas al chat puede entrar en conflicto con los términos de OpenAI y requiere confirmación explícita.",
         "claude-code": "Claude Code inicia sesión con una suscripción de plan de Claude — usarlo como proveedor de loop-lore para RPG u otras funciones ajenas al chat puede entrar en conflicto con los términos de Anthropic y requiere confirmación explícita."
       }
+    },
+    "permissions": {
+      "title": "Solicitudes de permisos pendientes",
+      "empty": "Ninguna solicitud de permiso espera una decisión.",
+      "loadFailed": "No se pudieron cargar las solicitudes de permisos pendientes.",
+      "decideFailed": "No se pudo registrar la decisión.",
+      "approve": "Aprobar",
+      "deny": "Denegar",
+      "column": {
+        "profile": "Perfil",
+        "tool": "Herramienta",
+        "cwd": "Directorio de trabajo",
+        "input": "Solicitud",
+        "arrived": "Llegó",
+        "decision": "Decisión"
+      }
     }
   },
   "branches": {

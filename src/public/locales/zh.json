@@ -2123,6 +2123,22 @@
         "codex": "Codex 通过 ChatGPT 套餐订阅登录 — 将其作为 loop-lore 服务商用于 RPG 或其他非聊天功能可能与 OpenAI 条款冲突，需要明确确认。",
         "claude-code": "Claude Code 通过 Claude 套餐订阅登录 — 将其作为 loop-lore 服务商用于 RPG 或其他非聊天功能可能与 Anthropic 条款冲突，需要明确确认。"
       }
+    },
+    "permissions": {
+      "title": "待处理的权限请求",
+      "empty": "没有等待决定的权限请求。",
+      "loadFailed": "无法加载待处理的权限请求。",
+      "decideFailed": "无法记录该决定。",
+      "approve": "批准",
+      "deny": "拒绝",
+      "column": {
+        "profile": "配置文件",
+        "tool": "工具",
+        "cwd": "工作目录",
+        "input": "请求",
+        "arrived": "到达时间",
+        "decision": "决定"
+      }
     }
   },
   "branches": {
