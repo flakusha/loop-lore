@@ -9686,6 +9686,20 @@
     "title": "story: destroy() partial-quantity update path missing world_id where-clause",
     "type": "BUG"
   },
+  "BUG-STORY-ESCALATE-ACTION-POSTS-STORY-ESCALATE-BUT-ROUTE-IS-GM-E": {
+    "hash": "a931688",
+    "git_issue": "a931688",
+    "extid": "BUG-STORY-ESCALATE-ACTION-POSTS-STORY-ESCALATE-BUT-ROUTE-IS-GM-E",
+    "type": "BUG",
+    "title": "story escalate action posts /story/escalate but route is /gm/escalate",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-story-escalate-action-posts-story-escalate-but-route-is-gm-e.md",
+    "status": "open"
+  },
   "BUG-STORY-ITEMS-CROSS-WORLD-IDOR-READ-TRANSFER-DESTROY": {
     "epic": "",
     "extid": "BUG-STORY-ITEMS-CROSS-WORLD-IDOR-READ-TRANSFER-DESTROY",
@@ -42803,7 +42817,7 @@
     "label": "task",
     "priority": "P2 — Medium",
     "source": ".plan/tickets/TASK-frontend-story-npc-state.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Frontend — Story NPC State GET/PUT",
     "type": "TASK"
@@ -42816,7 +42830,7 @@
     "label": "task",
     "priority": "P2 — Medium",
     "source": ".plan/tickets/TASK-frontend-story-turn-by-id.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Frontend — Story Turn By-ID Lookup",
     "type": "TASK"
@@ -42829,7 +42843,7 @@
     "label": "task",
     "priority": "P2 — Medium",
     "source": ".plan/tickets/TASK-frontend-story-world-states-crud.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Frontend — Story World States CRUD",
     "type": "TASK"
@@ -60480,7 +60494,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-story-turn-order.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "story",
       "frontend",
