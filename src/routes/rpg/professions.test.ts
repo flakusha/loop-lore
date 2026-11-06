@@ -13,11 +13,12 @@
  * actor/profession fixtures (insertActors + POST) so they pass alone and in
  * any order.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, spyOn, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { ProfessionsService, } from "../../rpg/crafting/professions/index";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
@@ -268,6 +269,171 @@ describe("professionsRoutes", () => {
         )
       ).status,
     ).toBe(401,);
+  });
+
+  test("actor listing scopes by world, including the world-less scope", async () => {
+    // Own fixture (isolation-safe): one actor, one world-bound + one world-less profession.
+    const actor = uid();
+    await insertActors(db, "Scoped Listing Actor", { id: actor, owner_id: userId, } as never,);
+    const app = authedApp();
+    const mk = (discipline: string, world?: string,) =>
+      app.handle(
+        new Request("http://localhost/api/rpg/professions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ actorId: actor, ...(world === undefined ? {} : { worldId: world, }), discipline, },),
+        },),
+      );
+
+    expect((await mk("smithing", worldId,)).status,).toBe(201,);
+    expect((await mk("cooking",)).status,).toBe(201,);
+
+    const allRes = await app.handle(
+      new Request(`http://localhost/api/rpg/professions/actors/${actor}`,),
+    );
+
+    expect(allRes.status,).toBe(200,);
+    const all = ((await json(allRes,)).professions as Array<{ discipline: string }>).map((p,) => p.discipline).sort();
+    expect(all,).toEqual(["cooking", "smithing",],);
+
+    const scopedRes = await app.handle(
+      new Request(`http://localhost/api/rpg/professions/actors/${actor}?worldId=${worldId}`,),
+    );
+
+    expect(scopedRes.status,).toBe(200,);
+    expect(((await json(scopedRes,)).professions as Array<{ discipline: string }>).map((p,) => p.discipline),).toEqual([
+      "smithing",
+    ],);
+
+    const worldlessRes = await app.handle(
+      new Request(`http://localhost/api/rpg/professions/actors/${actor}?worldId=`,),
+    );
+
+    expect(worldlessRes.status,).toBe(200,);
+    expect(((await json(worldlessRes,)).professions as Array<{ discipline: string }>).map((p,) => p.discipline),)
+      .toEqual(["cooking",],);
+  });
+
+  test("route catch blocks map unexpected service failures to 500", async () => {
+    // Each id-scoped/actor route logs and returns 500 when the service throws
+    // something the mapper does not recognize — the caller's fix is to retry,
+    // not to change the request.
+    const app = authedApp();
+    const spies = [
+      spyOn(ProfessionsService.prototype, "getActorProfessions",).mockRejectedValue(new Error("boom",),),
+      spyOn(ProfessionsService.prototype, "createProfession",).mockRejectedValue(new Error("boom",),),
+      spyOn(ProfessionsService.prototype, "getProfession",).mockRejectedValue(new Error("boom",),),
+      spyOn(ProfessionsService.prototype, "addExperience",).mockRejectedValue(new Error("boom",),),
+      spyOn(ProfessionsService.prototype, "addSpecialization",).mockRejectedValue(new Error("boom",),),
+    ];
+
+    try {
+      const listed = await app.handle(
+        new Request(`http://localhost/api/rpg/professions/actors/${actorId}`,),
+      );
+
+      expect(listed.status,).toBe(500,);
+      expect((await json(listed,)).error,).toBe("Internal server error",);
+
+      const created = await app.handle(
+        new Request("http://localhost/api/rpg/professions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ actorId, worldId, discipline: "cooking", },),
+        },),
+      );
+
+      expect(created.status,).toBe(500,);
+
+      expect((await app.handle(new Request(`http://localhost/api/rpg/professions/${professionId}`,),)).status,).toBe(
+        500,
+      );
+
+      expect(
+        (await app.handle(
+          new Request(`http://localhost/api/rpg/professions/${professionId}/xp`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", },
+            body: JSON.stringify({ amount: 10, },),
+          },),
+        )).status,
+      ).toBe(500,);
+
+      expect(
+        (await app.handle(
+          new Request(`http://localhost/api/rpg/professions/${professionId}/specialize`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", },
+            body: JSON.stringify({ name: "Ghost", bonusType: "quality", bonusValue: 1, },),
+          },),
+        )).status,
+      ).toBe(500,);
+    } finally {
+      for (const s of spies) { s.mockRestore(); }
+    }
+  });
+
+  test("xp maps service validation errors to 400 and service 404s to 404", async () => {
+    // The schema layer only enforces minimum: 1, so a service-side amount
+    // rejection surfaces the service message (not a generic 500).
+    const app = authedApp();
+    const amountSpy = spyOn(ProfessionsService.prototype, "addExperience",)
+      .mockRejectedValue(new Error("XP amount must be a finite positive number",),);
+
+    try {
+      const bad = await app.handle(
+        new Request(`http://localhost/api/rpg/professions/${professionId}/xp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ amount: 10, },),
+        },),
+      );
+
+      expect(bad.status,).toBe(400,);
+      expect((await json(bad,)).error,).toBe("XP amount must be a finite positive number",);
+    } finally {
+      amountSpy.mockRestore();
+    }
+
+    // A service-side unknown id (lost between the ownership lookup and the
+    // mutation) maps to the same byte-identical 404 as a missing row.
+    const goneSpy = spyOn(ProfessionsService.prototype, "addExperience",)
+      .mockRejectedValue(new Error("Profession not found",),);
+
+    try {
+      const gone = await app.handle(
+        new Request(`http://localhost/api/rpg/professions/${professionId}/xp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ amount: 10, },),
+        },),
+      );
+
+      expect(gone.status,).toBe(404,);
+    } finally {
+      goneSpy.mockRestore();
+    }
+  });
+
+  test("specialize maps a service-side unknown id to 404", async () => {
+    // Same race as XP: the row vanishes after the ownership lookup.
+    const app = authedApp();
+    const goneSpy = spyOn(ProfessionsService.prototype, "addSpecialization",)
+      .mockRejectedValue(new Error("Profession not found",),);
+
+    try {
+      const gone = await app.handle(
+        new Request(`http://localhost/api/rpg/professions/${professionId}/specialize`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ name: "Ghost", bonusType: "quality", bonusValue: 1, },),
+        },),
+      );
+
+      expect(gone.status,).toBe(404,);
+    } finally {
+      goneSpy.mockRestore();
+    }
   });
 
   test("non-owner id-scoped access → 404, identical to missing", async () => {
