@@ -31,6 +31,90 @@
 -->
 <div x-show="!loadingHarness && harnessError === ''" style="padding: var(--space-6)">
   <!--
+    Pending permission asks (TASK-harness-approval-flow-operability).
+    Rows come from /api/v1/harness/permissions; the queue is FIFO (oldest
+    first) and never times out, so a parked ask holds its harness session
+    until an operator decides. Approve sends allow_once, deny reject_once —
+    both apply to that one ask, nothing is remembered.
+  -->
+  <div style="margin-bottom: var(--space-6)" data-testid="harness-permissions-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); gap: var(--space-2)">
+      <h3 style="font-size: 14px; font-weight: 600; margin: 0">{{{t("harness.permissions.title")}}}</h3>
+      <button
+        class="btn btn-secondary btn-sm"
+        @click="refreshHarnessPermissions()"
+        data-testid="harness-permissions-refresh"
+      >
+        {{{t("common.retry")}}}
+      </button>
+    </div>
+    <div
+      x-show="harnessPermissionsError !== ''"
+      class="empty-state"
+      style="padding: var(--space-6)"
+      data-testid="harness-permissions-error"
+    >
+      <div class="icon">⚠️</div>
+      <div class="title">{{{t("harness.permissions.loadFailed")}}}</div>
+      <div class="description" x-text="harnessPermissionsError"></div>
+    </div>
+    <div
+      x-show="harnessPermissionsError === '' && harnessPermissionRows.length === 0"
+      class="empty-state"
+      style="padding: var(--space-6)"
+      data-testid="harness-permissions-empty"
+    >
+      <div class="icon">🔔</div>
+      <div class="title">{{{t("harness.permissions.empty")}}}</div>
+    </div>
+    <table
+      x-show="harnessPermissionsError === '' && harnessPermissionRows.length > 0"
+      class="admin-table"
+      data-testid="harness-permissions-table"
+    >
+      <thead>
+        <tr>
+          <th>{{{t("harness.permissions.column.profile")}}}</th>
+          <th>{{{t("harness.permissions.column.tool")}}}</th>
+          <th>{{{t("harness.permissions.column.cwd")}}}</th>
+          <th>{{{t("harness.permissions.column.input")}}}</th>
+          <th>{{{t("harness.permissions.column.arrived")}}}</th>
+          <th>{{{t("harness.permissions.column.decision")}}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="row in harnessPermissionRows" :key="row.id">
+          <tr data-testid="harness-permission-row">
+            <td x-text="row.profile"></td>
+            <td x-text="row.tool"></td>
+            <td x-text="row.cwd"></td>
+            <td x-text="row.input"></td>
+            <td x-text="row.arrived"></td>
+            <td>
+              <button
+                class="btn btn-sm"
+                @click="answerHarnessPermission(row.id, 'approve')"
+                :disabled="harnessDecidingId !== ''"
+                data-testid="harness-permission-approve"
+              >
+                {{{t("harness.permissions.approve")}}}
+              </button>
+              <button
+                class="btn btn-secondary btn-sm"
+                @click="answerHarnessPermission(row.id, 'deny')"
+                :disabled="harnessDecidingId !== ''"
+                data-testid="harness-permission-deny"
+              >
+                {{{t("harness.permissions.deny")}}}
+              </button>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+
+  <!--
     Settings + configured profiles (TASK-harness-provider-tos-usage-class-matrix).
     Rows come from /api/v1/harness/settings; usage-class badges and ToS notes
     arrive pre-shaped (labels/keys) from admin-harness-settings.ts, so markup

@@ -2123,6 +2123,22 @@
         "codex": "Codex meldet sich über ein ChatGPT-Abo an — der Einsatz als loop-lore-Anbieter für RPG oder andere Nicht-Chat-Funktionen kann den OpenAI-Bedingungen widersprechen und erfordert eine ausdrückliche Bestätigung.",
         "claude-code": "Claude Code meldet sich über ein Claude-Abo an — der Einsatz als loop-lore-Anbieter für RPG oder andere Nicht-Chat-Funktionen kann den Anthropic-Bedingungen widersprechen und erfordert eine ausdrückliche Bestätigung."
       }
+    },
+    "permissions": {
+      "title": "Ausstehende Berechtigungsanfragen",
+      "empty": "Keine Berechtigungsanfrage wartet auf eine Entscheidung.",
+      "loadFailed": "Ausstehende Berechtigungsanfragen konnten nicht geladen werden.",
+      "decideFailed": "Die Entscheidung konnte nicht gespeichert werden.",
+      "approve": "Genehmigen",
+      "deny": "Ablehnen",
+      "column": {
+        "profile": "Profil",
+        "tool": "Werkzeug",
+        "cwd": "Arbeitsverzeichnis",
+        "input": "Anfrage",
+        "arrived": "Eingegangen",
+        "decision": "Entscheidung"
+      }
     }
   },
   "branches": {
