@@ -4,6 +4,7 @@
 import { storageGet, } from "../../storage";
 import { isLocalInferenceOptedIn, } from "../local-inference";
 import { log as rootLog, } from "../logger";
+import { fetchProviderList, } from "../provider-list";
 import { nsfwConsentSettings, } from "./nsfw-consent";
 import type { LocaleInfoArray, SettingsState, } from "./types";
 
@@ -111,24 +112,22 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
     },
 
     /**
+     * Load the provider dropdown. The provider list is admin-gated, so a
+     * non-admin gets a 403: the dropdown keeps only its "Custom" entry and
+     * the notice says why instead of the list silently disappearing.
      * @returns {Promise<void>}
      */
     async loadProviders() {
-      try {
-        const res = await apiFetch("/api/v1/providers", { headers: { Accept: "application/json", }, },);
-        if (res.ok) {
-          const data = await res.json();
-          const providers = data.providers || [];
-          const healthy: { name: string; label: string; status: string }[] = [];
-          for (const p of providers) {
-            if (p.status === "healthy") { healthy.push(p,); }
-          }
+      const outcome = await fetchProviderList();
+      this.providerListNotice = outcome.notice;
+      if (outcome.notice !== "") { return; }
 
-          this.providerList = healthy;
-        }
-      } catch (error) {
-        log.warn("loadProviders failed", { error: String(error,), },);
+      const healthy: { name: string; label: string; status: string }[] = [];
+      for (const p of outcome.providers) {
+        if (p.status === "healthy") { healthy.push(p,); }
       }
+
+      this.providerList = healthy;
     },
 
     /**

@@ -30,6 +30,8 @@
     "export": "Export",
     "import": "Import",
     "retry": "Retry",
+    "providerListAdminOnly": "The provider list is only available to administrators.",
+    "providerListUnavailable": "The provider list could not be loaded.",
     "skip": "Skip",
     "done": "Done",
     "clear": "Clear",
