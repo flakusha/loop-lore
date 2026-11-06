@@ -99,3 +99,5 @@ interface CharacterTemplate {
 - `TASK-item-config-templates.md` — parallel: item templates in config
 - `TASK-skills-frontend.md` — displays seeded skills
 - `TASK-professions-frontend.md` — displays seeded professions
+
+**Resolved:** 2026-11-06 registry-driven close: git issue 7f82d5a (registry tip: 1dd87779e Konstantin Fedotov Close issue)
