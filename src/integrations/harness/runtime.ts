@@ -31,6 +31,7 @@
  * HarnessRuntime.acp as the config input.
  */
 
+import { resolve, } from "node:path";
 import type { HarnessAcpConfig, } from "../../config/schema/harness";
 import { getChildLogger, } from "../../logger";
 import { type HarnessAdapterFactory, } from "./adapter-types";
@@ -88,14 +89,28 @@ export function harnessAdapterFactoryFor(acp: HarnessAcpConfig,): HarnessAdapter
 }
 
 /**
+ * The configured sandbox root for one profile, resolved absolute. Absent =
+ * undefined, so the caller keeps its own default (the connection cwd, then
+ * the process cwd) — the knob only overrides the root when set.
+ * @param acp - the `harness.acp` snapshot
+ * @param profile - the profile name
+ * @returns the resolved root, or undefined when the profile configures none.
+ */
+function sandboxRootFor(acp: HarnessAcpConfig, profile: string,): string | undefined {
+  const configured = acp.profiles.find((p,) => p.name === profile)?.sandboxRoot;
+  return configured === undefined ? undefined : resolve(configured,);
+}
+
+/**
  * Compose the runtime: registry + ledger + breaker + selector sharing
  * instances — the selector holds THE registry/ledger/breaker, never copies,
  * and the breaker reads its thresholds through the registry's health config.
  * The permission queue rides the same registry: the composed factory wraps
  * the caller's (or the production flavor-resolving one) so every adapter
  * connection reports asks into the queue and withdrawals out of it. The
- * sandbox root an ask is judged against is the connection's own cwd
- * (session/new cwd); production profiles pass none, so that is
+ * sandbox root an ask is judged against is the profile's configured
+ * `sandboxRoot` when it has one (resolved absolute), else the connection's
+ * own cwd (session/new cwd); production profiles pass none, so that is
  * `process.cwd()` — the same default the adapter hands to session/new.
  * @param options - config snapshot + optional factory override
  * @returns the composed runtime.
@@ -110,11 +125,15 @@ export function createHarnessRuntime(options: CreateHarnessRuntimeOptions,): Har
     baseFactory(profile, command, {
       ...opts,
       onPermissionRequest: (pending,) => {
-        void permissions.submit({ profile, pending, sandboxRoot: opts?.cwd ?? process.cwd(), },).catch(
-          (error: unknown,) => {
+        void permissions
+          .submit({
+            profile,
+            pending,
+            sandboxRoot: sandboxRootFor(options.acp, profile,) ?? opts?.cwd ?? process.cwd(),
+          },)
+          .catch((error: unknown,) => {
             log()?.warn("harness permission evaluation failed", { profile, error: String(error,), },);
-          },
-        );
+          },);
       },
       onPermissionWithdrawn: () => {
         permissions.withdrawProfile(profile,);

@@ -6,6 +6,7 @@
  * JSON-schema gate. Pure — no subprocess, no shared state (parallel-safe).
  */
 import { describe, expect, it, } from "bun:test";
+import { fileURLToPath, } from "node:url";
 import { jsonSchema, } from "../schema-class/json-schema";
 import type { HarnessAcpConfig, } from "../schema/harness";
 import { HARNESS_FLAVORS, } from "../schema/harness";
@@ -160,6 +161,36 @@ describe("harness.acp config section", () => {
     expect(() => validateAcpProfiles(acp([flagged, plain,],),)).not.toThrow();
     expect((flagged as { tosGrayzoneAcknowledged?: boolean }).tosGrayzoneAcknowledged,).toBe(true,);
     expect((plain as { tosGrayzoneAcknowledged?: boolean }).tosGrayzoneAcknowledged,).toBeUndefined();
+  });
+
+  it("accepts a sandboxRoot that is an existing directory", () => {
+    expect(() => validateAcpProfiles(acp([profile({ sandboxRoot: process.cwd(), },),],),)).not.toThrow();
+  });
+
+  it("rejects a sandboxRoot that does not exist", () => {
+    expect(() => validateAcpProfiles(acp([profile({ sandboxRoot: "/nope/not/here", },),],),)).toThrow(
+      /does not exist/,
+    );
+  });
+
+  it("rejects a sandboxRoot that is not a directory", () => {
+    expect(() => validateAcpProfiles(acp([profile({ sandboxRoot: fileURLToPath(import.meta.url,), },),],),)).toThrow(
+      /is not a directory/,
+    );
+  });
+
+  it("rejects a sandboxRoot carrying traversal", () => {
+    expect(() => validateAcpProfiles(acp([profile({ sandboxRoot: "/tmp/../etc", },),],),)).toThrow(/traversal/,);
+  });
+
+  it("rejects an empty sandboxRoot", () => {
+    expect(() => validateAcpProfiles(acp([profile({ sandboxRoot: "  ", },),],),)).toThrow(/non-empty path/,);
+  });
+
+  it("json-schema meta documents sandboxRoot", () => {
+    const prop = harnessMeta.properties.acp.properties.profiles.items.properties.sandboxRoot;
+    expect(prop.type,).toBe("string",);
+    expect(prop.description,).toMatch(/process cwd/,);
   });
 
   it("json-schema meta documents tosGrayzoneAcknowledged with the ToS warning", () => {
