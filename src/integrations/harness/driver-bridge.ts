@@ -73,8 +73,10 @@ export function createHarnessProtocolAdapter(
       }
 
       // Rows before delivery: a turn that cannot be persisted must not reach
-      // the chat as if it had been recorded.
-      await options.turnSink?.onTurnResolved(result.turn,);
+      // the chat as if it had been recorded. The bridge's per-send
+      // idempotency key is the turn key, so a retried send writes one set of
+      // rows, not two.
+      await options.turnSink?.onTurnResolved(result.turn, message.idempotencyKey,);
 
       const id = `harness-${crypto.randomUUID()}`;
       handler?.({

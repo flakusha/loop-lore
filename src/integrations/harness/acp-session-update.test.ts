@@ -8,7 +8,7 @@
  * module state.
  */
 import { describe, expect, it, } from "bun:test";
-import { narrowSessionUpdate, } from "./acp-session-update";
+import { isTerminalToolStatus, narrowSessionUpdate, } from "./acp-session-update";
 
 describe("narrowSessionUpdate", () => {
   it("narrows an agent_message_chunk to a text event", () => {
@@ -98,5 +98,30 @@ describe("narrowSessionUpdate", () => {
       .toEqual([],);
 
     expect(narrowSessionUpdate({ update: { sessionUpdate: "tool_call_update", }, },),).toEqual([],);
+  });
+
+  it("leaves an empty result body when the harness reported no content", () => {
+    const events = narrowSessionUpdate({
+      update: { sessionUpdate: "tool_call_update", toolCallId: "tc-4", status: "completed", },
+    },);
+
+    expect(events[0],).toEqual({
+      type: "tool-result",
+      toolCallId: "tc-4",
+      name: null,
+      status: "completed",
+      content: "",
+      error: false,
+    },);
+  });
+});
+
+describe("isTerminalToolStatus", () => {
+  it("ends a call only on completed and failed", () => {
+    expect(isTerminalToolStatus("completed",),).toBe(true,);
+    expect(isTerminalToolStatus("failed",),).toBe(true,);
+    expect(isTerminalToolStatus("in_progress",),).toBe(false,);
+    expect(isTerminalToolStatus("pending",),).toBe(false,);
+    expect(isTerminalToolStatus("",),).toBe(false,);
   });
 });

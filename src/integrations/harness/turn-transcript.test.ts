@@ -8,7 +8,7 @@
  * module state; every case builds its own collector.
  */
 import { describe, expect, it, } from "bun:test";
-import { TurnTranscriptCollector, } from "./turn-transcript";
+import { emptyTurnTranscript, TurnTranscriptCollector, } from "./turn-transcript";
 
 describe("TurnTranscriptCollector", () => {
   it("concatenates text and keeps reasoning in arrival order", () => {
@@ -80,5 +80,10 @@ describe("TurnTranscriptCollector", () => {
     const transcript = collector.snapshot();
 
     expect(transcript.toolCalls.map((call,) => call.id),).toEqual(["tc-1", "tc-2",],);
+  });
+
+  it("matches the empty transcript when the collector saw no events", () => {
+    expect(new TurnTranscriptCollector().snapshot(),).toEqual(emptyTurnTranscript(),);
+    expect(emptyTurnTranscript().text,).toBe("",);
   });
 });

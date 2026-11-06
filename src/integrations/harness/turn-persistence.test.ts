@@ -9,6 +9,7 @@
  * global test-database override, no cross-test state.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { type KyselyPlugin, SelectQueryNode, } from "kysely";
 import { MessageStatus, } from "../../db/enums";
 import { parseToolCalls, parseToolResultMeta, } from "../../routes/messages/helpers";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
@@ -194,6 +195,57 @@ describe("persistHarnessTurn", () => {
       .where("id", "=", persisted.assistantMessageId,).executeTakeFirstOrThrow();
 
     expect(row.status,).toBe("partial",);
+  });
+
+  it("replays the winner's row when a concurrent writer claimed the turn key", async () => {
+    // The pre-read must not see the winner's row (that is the race window),
+    // so the winner is inserted right after that read returns; the insert is
+    // then the first thing that hits the enforced unique index.
+    let armed = false;
+    let fired = false;
+    const racingDb = (fixture.db as unknown as { withPlugin: (plugin: KyselyPlugin,) => unknown })
+      .withPlugin({
+        transformQuery: (args,) => {
+          if (!fired && SelectQueryNode.is(args.node,)) { armed = true; }
+          return args.node;
+        },
+        transformResult: async (args,) => {
+          if (armed) {
+            armed = false;
+            fired = true;
+            await fixture.db.insertInto("messages",).values({
+              id: "winner-row",
+              chat_id: chatId,
+              actor_id: actorId,
+              parent_id: null,
+              role: "assistant",
+              content: "the winner's answer",
+              content_format: "markdown",
+              content_type: "text",
+              content_encoding: "identity",
+              status: "confirmed",
+              visibility: "visible",
+              idempotency_key: "harness:omp:turn-race",
+            },).execute();
+          }
+
+          return args.result;
+        },
+      },) as typeof fixture.db;
+
+    const persisted = await persistHarnessTurn({
+      database: racingDb,
+      chatId,
+      actorId,
+      profile: "omp",
+      transcript: transcript(),
+      turn: turn(),
+      turnKey: "turn-race",
+    },);
+
+    expect(persisted.assistantMessageId,).toBe("winner-row",);
+    const rows = await fixture.db.selectFrom("messages",).selectAll().execute();
+    expect(rows,).toHaveLength(1,);
   });
 
   it("writes nothing when the same turn key is replayed", async () => {
