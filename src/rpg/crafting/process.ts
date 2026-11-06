@@ -285,10 +285,13 @@ export class CraftingProcessService {
     // Profession bonuses (TASK-professions-service-routes): the actor's
     // profession level in the recipe's discipline modulates success, the
     // quality ceiling and material saving, mirroring the station bonuses.
+    // Scoped by world_id — the unique index is (actor_id, world_id,
+    // discipline), so a sibling row in another world must not leak bonuses.
     // No profession row → no bonus (the zero ladder is applied only when a
     // row exists, so un-disciplined actors are untouched).
     const profRow = await this.db.selectFrom("professions",).selectAll()
       .where("actor_id", "=", opts.actorId,)
+      .where("world_id", "=", opts.worldId,)
       .where("discipline", "=", recipe.discipline,)
       .executeTakeFirst();
 
