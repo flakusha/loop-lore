@@ -12,7 +12,7 @@
  * fetch; the pair read endpoint INSERTS a zero-score row on read.
  */
 
-import { applyIntimacyAction, } from "../../nsfw/intimacy-api";
+import { applyIntimacyAction, grantIntimacyConsent, } from "../../nsfw/intimacy-api";
 import { renderIntimacyPanel, } from "../../nsfw/intimacy-interface";
 import { reduceIntimacyFlow, } from "../../nsfw/intimacy-scene";
 import {
@@ -90,12 +90,26 @@ export const intimacyState: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /** Confirm the consent dialog and dispatch the pending action.
-   * @returns {void}
+  /** Confirm the consent dialog: persist the chat consent grant, then dispatch.
+   * A refused grant parks the flow in the classified error phase; only a
+   * persisted grant advances the reducer, so the gate never sees an
+   * ungranted confirm.
+   * @returns {Promise<void>}
    */
-  confirmConsent() {
+  async confirmConsent() {
+    const chatId = this.activeChat;
+    if (!chatId || this._intimacyFlow.phase !== "confirmConsent") { return; }
+
+    const grant = await grantIntimacyConsent(chatId,);
+    if (this.activeChat !== chatId) { return; }
+    if (grant.status !== "ok") {
+      this._intimacyFlow = { ...this._intimacyFlow, phase: "error", error: grant.error, };
+      this.mountIntimacyPanel();
+      return;
+    }
+
     this._intimacyFlow = reduceIntimacyFlow(this._intimacyFlow, { type: "confirmConsent", },);
-    void this.dispatchIntimacy();
+    await this.dispatchIntimacy();
   },
 
   /** Cancel the consent dialog and return to action selection.

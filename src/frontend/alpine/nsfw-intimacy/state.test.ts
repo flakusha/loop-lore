@@ -54,7 +54,7 @@ interface Ctx {
   openIntimacy(): void;
   selectPartner(actorId: string,): void;
   selectAction(actionId: string,): void;
-  confirmConsent(): void;
+  confirmConsent(): Promise<void>;
   closeIntimacy(): void;
   dispatchIntimacy(): Promise<void>;
   [key: string]: unknown;
@@ -127,8 +127,15 @@ describeOrSkip("openIntimacy", () => {
 },);
 
 describeOrSkip("dispatchIntimacy", () => {
-  test("consent flow: select → confirm posts chatId and lands in effects", async () => {
-    actionHandler = async () => Response.json({ newScore: 53, actualDelta: 8, applied: true, thresholdsReached: [], },);
+  test("consent flow: select → confirm posts the consent grant then lands in effects", async () => {
+    actionHandler = async (url,) => {
+      if (typeof url === "string" && url === "/api/v1/nsfw/consent") {
+        return Response.json({ granted: true, },);
+      }
+
+      return Response.json({ newScore: 53, actualDelta: 8, applied: true, thresholdsReached: [], },);
+    };
+
     const ctx = buildCtx();
     ctx.openIntimacy();
     ctx.selectPartner("actor-b",);
@@ -136,9 +143,13 @@ describeOrSkip("dispatchIntimacy", () => {
 
     ctx.selectAction("play",);
     expect(ctx._intimacyFlow.phase,).toBe("confirmConsent",);
-    ctx.confirmConsent();
+    await ctx.confirmConsent();
 
     await flush();
+    const consentCall = calls.find((call,) => call.url === "/api/v1/nsfw/consent")!;
+    const grantBody = JSON.parse(String(consentCall.opts.body,),) as Record<string, unknown>;
+    expect(grantBody["chatId"],).toBe("chat-1",);
+    expect(grantBody["action"],).toBe("given",);
     const actionCall = calls.at(-1,)!;
     expect(actionCall.url,).toBe("/api/v1/nsfw/intimacy/action",);
     const body = JSON.parse(String(actionCall.opts.body,),) as Record<string, unknown>;
@@ -147,8 +158,38 @@ describeOrSkip("dispatchIntimacy", () => {
     expect(ctx._intimacyFlow.phase,).toBe("effects",);
   });
 
+  test("a refused consent grant parks the flow in the classified error phase", async () => {
+    actionHandler = async (url,) => {
+      if (typeof url === "string" && url === "/api/v1/nsfw/consent") {
+        return Response.json(
+          { error: "NSFW access denied: consent_revoked", code: "FORBIDDEN", meta: { api_version: "1", }, },
+          { status: 403, },
+        );
+      }
+
+      return Response.json({ newScore: 1, actualDelta: 1, applied: true, thresholdsReached: [], },);
+    };
+
+    const ctx = buildCtx();
+    ctx.openIntimacy();
+    ctx.selectPartner("actor-b",);
+    ctx.selectAction("play",);
+    expect(ctx._intimacyFlow.phase,).toBe("confirmConsent",);
+    await ctx.confirmConsent();
+
+    await flush();
+    expect(ctx._intimacyFlow.phase,).toBe("error",);
+    expect(ctx._intimacyFlow.error?.kind,).toBe("consent",);
+    expect(calls.some((call,) => call.url === "/api/v1/nsfw/intimacy/action"),).toBe(false,);
+  });
+
   test("a consent 403 parks the flow in the consent error phase", async () => {
-    actionHandler = async () => new Response("NSFW access denied: consent_required", { status: 403, },);
+    actionHandler = async () =>
+      Response.json(
+        { error: "NSFW access denied: consent_required", code: "FORBIDDEN", meta: { api_version: "1", }, },
+        { status: 403, },
+      );
+
     const ctx = buildCtx();
     ctx.openIntimacy();
     ctx.selectPartner("actor-b",);

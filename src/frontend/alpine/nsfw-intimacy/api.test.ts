@@ -1,6 +1,6 @@
 import { afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
-import { applyIntimacyAction, classifyApplyFailure, } from "../../nsfw/intimacy-api";
+import { applyIntimacyAction, classifyApplyFailure, grantIntimacyConsent, } from "../../nsfw/intimacy-api";
 import { INTIMACY_ACTION_CATALOG, type IntimacyActionView, } from "../../nsfw/intimacy-types";
 
 // ── Mock ../htmx (must precede importing ./state — ISOLATED pattern, see
@@ -42,8 +42,31 @@ describeOrSkip("classifyApplyFailure", () => {
   });
 
   test("403 with the gate prefix and a consent reason maps to consent", () => {
-    expect(classifyApplyFailure(403, "NSFW access denied: consent_required",).kind,).toBe("consent",);
-    expect(classifyApplyFailure(403, "NSFW access denied: consent_revoked",).kind,).toBe("consent",);
+    for (
+      const body of [
+        "NSFW access denied: consent_required",
+        "NSFW access denied: consent_revoked",
+        JSON.stringify({
+          error: "NSFW access denied: consent_required",
+          code: "FORBIDDEN",
+          meta: { api_version: "1", },
+        },),
+      ]
+    ) {
+      expect(classifyApplyFailure(403, body,).kind,).toBe("consent",);
+    }
+  });
+
+  test("403 JSON error envelope unwraps the gate message", () => {
+    const envelope = JSON.stringify({
+      error: "NSFW access denied: consent_revoked",
+      code: "FORBIDDEN",
+      meta: { api_version: "1", },
+    },);
+
+    const error = classifyApplyFailure(403, envelope,);
+    expect(error.kind,).toBe("consent",);
+    expect(error.message,).toBe("NSFW access denied: consent_revoked",);
   });
 
   test("403 gate prefix with other reasons maps to target", () => {
@@ -87,14 +110,53 @@ describeOrSkip("applyIntimacyAction", () => {
   });
 
   test("classifies a consent 403 into the consent error kind", async () => {
-    handler = async () => new Response("NSFW access denied: consent_required", { status: 403, },);
+    handler = async () =>
+      Response.json(
+        { error: "NSFW access denied: consent_required", code: "FORBIDDEN", meta: { api_version: "1", }, },
+        { status: 403, },
+      );
+
     const result = await applyIntimacyAction(input(),);
     expect(result.status,).toBe("error",);
     expect(result.status === "error" && result.error.kind,).toBe("consent",);
   });
 
+  test("a non-JSON 403 still classifies on the raw body", async () => {
+    handler = async () => new Response("NSFW access denied: consent_required", { status: 403, },);
+
+    const result = await applyIntimacyAction(input(),);
+    expect(result.status === "error" && result.error.kind,).toBe("consent",);
+  });
+},);
+
+describeOrSkip("grantIntimacyConsent", () => {
+  test("posts chatId with the given action to the consent endpoint", async () => {
+    handler = async () => Response.json({ granted: true, },);
+
+    const result = await grantIntimacyConsent("chat-1",);
+    expect(result.status,).toBe("ok",);
+    expect(calls[0]!.url,).toBe("/api/v1/nsfw/consent",);
+    const body = JSON.parse(String(calls[0]!.opts.body,),) as Record<string, unknown>;
+    expect(body["chatId"],).toBe("chat-1",);
+    expect(body["action"],).toBe("given",);
+  });
+
+  test("classifies a refused grant through the error envelope", async () => {
+    handler = async () =>
+      Response.json(
+        { error: "NSFW access denied: consent_revoked", code: "FORBIDDEN", meta: { api_version: "1", }, },
+        { status: 403, },
+      );
+
+    const result = await grantIntimacyConsent("chat-1",);
+    expect(result.status === "error" && result.error.kind,).toBe("consent",);
+  });
+},);
+
+describeOrSkip("applyIntimacyAction — other failures", () => {
   test("classifies a validation 422 and a transport throw", async () => {
     handler = async () => new Response("bad body", { status: 422, },);
+
     const validation = await applyIntimacyAction(input(),);
     expect(validation.status === "error" && validation.error.kind,).toBe("validation",);
 
@@ -108,6 +170,7 @@ describeOrSkip("applyIntimacyAction", () => {
 
   test("a non-ok body (unreadable json) degrades to network", async () => {
     handler = async () => new Response("not-json", { status: 200, headers: { "content-type": "application/json", }, },);
+
     const result = await applyIntimacyAction(input(),);
     expect(result.status === "error" && result.error.kind,).toBe("network",);
   });

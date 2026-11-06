@@ -21,8 +21,10 @@ export interface ChatNsfwIntimacyState {
   selectPartner(actorId: string,): void;
   /** Pick an action; consent-gated ones route through the confirm phase. */
   selectAction(actionId: string,): void;
-  /** Confirm the consent dialog and dispatch the pending action. */
-  confirmConsent(): void;
+  /** Confirm the consent dialog: persist the chat grant, then dispatch.
+   * @returns {Promise<void>} resolves after the grant POST settles
+   */
+  confirmConsent(): Promise<void>;
   /** Cancel the consent dialog and return to action selection. */
   cancelConsent(): void;
   /** Leave the effects screen: refresh pairs, then re-enter action selection. */
