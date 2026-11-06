@@ -28,6 +28,7 @@ import {
 import type { DB, } from "../../db/schema";
 import { assertValidWrite, } from "../../db/validators/enforce";
 import { encryptStoredContent, } from "../../generation/generate-route/tool-result-persist";
+import { findByIdempotencyKey, isIdempotencyUniqueViolation, } from "../../routes/messages/swipe-race-insert";
 import { safeJsonStringify, } from "../../utils";
 import { isTerminalToolStatus, } from "./acp-session-update";
 import { type HarnessTurnResult, } from "./adapter-types";
@@ -57,7 +58,7 @@ export interface PersistHarnessTurnOptions {
 export interface PersistedHarnessTurn {
   /** Id of the assistant row. */
   assistantMessageId: string;
-  /** Ids of the tool_result rows, in transcript order. */
+  /** Ids of the tool_result rows, in transcript order; empty on a replay. */
   toolResultIds: string[];
 }
 
@@ -91,7 +92,9 @@ function toolResultMetadata(result: HarnessToolResult,): string | null {
 /**
  * Persist one harness turn: the assistant row plus a `tool_result` row per
  * finished tool call. A replay with the same `turnKey` writes nothing and
- * returns the row the first write produced.
+ * returns the assistant row the first write produced; when a concurrent
+ * writer claims the key first, this call replays that row instead of
+ * failing.
  * @param options - the turn, its transcript, and the chat binding
  * @returns the assistant row id and the tool_result row ids
  * @throws {Error} when the rows violate the message state machine or the write fails
@@ -103,15 +106,9 @@ export async function persistHarnessTurn(
   const status = options.status ?? MessageStatus.Confirmed;
   const idempotencyKey = `harness:${profile}:${turnKey}`;
 
-  const existing = await database
-    .selectFrom("messages",)
-    .select(["id",],)
-    .where("chat_id", "=", chatId,)
-    .where("idempotency_key", "=", idempotencyKey,)
-    .executeTakeFirst();
-
-  if (existing) {
-    return { assistantMessageId: existing.id, toolResultIds: [], };
+  const existingId = await findByIdempotencyKey(database, chatId, idempotencyKey,);
+  if (existingId) {
+    return { assistantMessageId: existingId, toolResultIds: [], };
   }
 
   const assistantId = randomUUID();
@@ -149,54 +146,64 @@ export async function persistHarnessTurn(
 
   assertValidWrite("messages", { status, visibility: MessageVisibility.Visible, },);
 
-  const toolResultIds = await database.transaction().execute(async (trx,) => {
-    await trx.insertInto("messages",).values({
-      id: assistantId,
-      chat_id: chatId,
-      actor_id: actorId,
-      parent_id: null,
-      role: MessageRole.Assistant,
-      content: assistantContent.storedContent,
-      key_id: assistantContent.storedKeyId,
-      content_format: MessageContentFormat.Markdown,
-      content_type: MessageContentType.Text,
-      content_encoding: ContentEncoding.Identity,
-      status,
-      visibility: MessageVisibility.Visible,
-      tool_calls: toolCalls.ok ? toolCalls.value : null,
-      thinking: thinking.ok ? thinking.value : null,
-      metadata: metadata.ok ? metadata.value : null,
-      idempotency_key: idempotencyKey,
-      token_count_prompt: turn.usage?.inputTokens ?? null,
-      token_count_completion: turn.usage?.outputTokens ?? null,
-      token_count_total: turn.usage?.totalTokens ?? null,
-    },).execute();
-
-    const ids: string[] = [];
-    for (const [index, result,] of finished.entries()) {
-      const id = randomUUID();
-      const content = toolContents[index]!;
+  try {
+    const toolResultIds = await database.transaction().execute(async (trx,) => {
       await trx.insertInto("messages",).values({
-        id,
+        id: assistantId,
         chat_id: chatId,
         actor_id: actorId,
-        parent_id: assistantId,
+        parent_id: null,
         role: MessageRole.Assistant,
-        content: content.storedContent,
-        key_id: content.storedKeyId,
+        content: assistantContent.storedContent,
+        key_id: assistantContent.storedKeyId,
         content_format: MessageContentFormat.Markdown,
-        content_type: MessageContentType.ToolResult,
+        content_type: MessageContentType.Text,
         content_encoding: ContentEncoding.Identity,
-        status: MessageStatus.Confirmed,
+        status,
         visibility: MessageVisibility.Visible,
-        metadata: toolResultMetadata(result,),
+        tool_calls: toolCalls.ok ? toolCalls.value : null,
+        thinking: thinking.ok ? thinking.value : null,
+        metadata: metadata.ok ? metadata.value : null,
+        idempotency_key: idempotencyKey,
+        token_count_prompt: turn.usage?.inputTokens ?? null,
+        token_count_completion: turn.usage?.outputTokens ?? null,
+        token_count_total: turn.usage?.totalTokens ?? null,
       },).execute();
 
-      ids.push(id,);
-    }
+      const ids: string[] = [];
+      for (const [index, result,] of finished.entries()) {
+        const id = randomUUID();
+        const content = toolContents[index]!;
+        await trx.insertInto("messages",).values({
+          id,
+          chat_id: chatId,
+          actor_id: actorId,
+          parent_id: assistantId,
+          role: MessageRole.Assistant,
+          content: content.storedContent,
+          key_id: content.storedKeyId,
+          content_format: MessageContentFormat.Markdown,
+          content_type: MessageContentType.ToolResult,
+          content_encoding: ContentEncoding.Identity,
+          status: MessageStatus.Confirmed,
+          visibility: MessageVisibility.Visible,
+          metadata: toolResultMetadata(result,),
+        },).execute();
 
-    return ids;
-  },);
+        ids.push(id,);
+      }
 
-  return { assistantMessageId: assistantId, toolResultIds, };
+      return ids;
+    },);
+
+    return { assistantMessageId: assistantId, toolResultIds, };
+  } catch (error) {
+    // A concurrent writer claimed this turn key between the pre-read and the
+    // insert. The enforced index (migration 045) rejected the duplicate, so
+    // replay the winner's row instead of surfacing the constraint violation.
+    if (!isIdempotencyUniqueViolation(error,)) { throw error; }
+    const winnerId = await findByIdempotencyKey(database, chatId, idempotencyKey,);
+    if (!winnerId) { throw error; }
+    return { assistantMessageId: winnerId, toolResultIds: [], };
+  }
 }

@@ -36,6 +36,21 @@ Implementation:
 - `src/integrations/harness/turn-sink.ts` — the (chat, actor, profile) binding of rows + frames; `registerHarnessDriver` takes it optionally.
 - The fake ACP server grew one knob (`FAKE_EVENTS`) that emits arbitrary `session/update` payloads before the reply chunk.
 
+**Review (self-review before landing, 2026-11-06):**
+
+Blocking findings, fixed before landing:
+- The `tests - coverage gaps` gate FAILED — two new exports (`isTerminalToolStatus`, `emptyTurnTranscript`) were imported by no test file. Both are now covered by real assertions (the ACP terminal set: `completed`/`failed` end a call, `pending`/`in_progress` do not; the empty transcript equals an empty collector).
+- The idempotency key was unreachable: the bridge never passed a turn key, so every turn wrote a fresh one and the dedupe path could never fire. The bridge now passes the bridge's per-send idempotency key (`message.idempotencyKey`, spec §4.3) as the turn key; a retried send writes ONE set of rows (seam test: both turns delivered, one assistant row).
+
+Fixed while reviewing:
+- A tool result with neither content blocks nor raw output stored the literal string `null` as its body; it now stores an empty body.
+- The concurrent-replay path (the `messages (chat_id, idempotency_key)` UNIQUE index, migration 045) surfaced a raw constraint violation. The writer now reuses the routes' `findByIdempotencyKey` / `isIdempotencyUniqueViolation` helpers: the race loser replays the winner's row instead of failing.
+
+Deviations / notes:
+- Nothing in production constructs a sink yet — the harness has no production bridge registration in `src/`, so this is a proven SEAM: the rows do not land in a user's chat until the production dispatch path (TASK-harness-production-dispatch-path-runturn-caller-tasktype-mem) wires one.
+- Encryption follows the shared helper, exactly as the LLM path does: `none` → plaintext, `standard` → server-encrypted (`key_id` set), `at-rest` → stored verbatim (server-generated content, the same trade the LLM path makes).
+- The turn's tool-call rows are children of the assistant row (`parent_id`), unlike the LLM path where the assistant row does not exist yet — the ACP turn is written after the fact, so the id is known.
+
 **Acceptance Criteria:**
 
 - [x] Implementation complete

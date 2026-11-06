@@ -34,7 +34,8 @@ export interface HarnessTurnSink {
   /**
    * Persist a resolved turn and push its frames.
    * @param turn - the resolved turn, transcript included
-   * @param turnKey - idempotency key; a replay with the same key writes nothing
+   * @param turnKey - idempotency key (the bridge's per-send key); a replay with
+   * the same key writes nothing. Absent → a fresh key, so every call writes.
    */
   onTurnResolved(turn: HarnessTurnResult, turnKey?: string,): Promise<void>;
 }

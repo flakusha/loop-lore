@@ -46,6 +46,14 @@ export function isTerminalToolStatus(status: string,): boolean {
   return TERMINAL_TOOL_STATUSES.has(status,);
 }
 
+/** Readable result text: the content blocks, else the raw output, else empty. */
+function toolResultContent(content: unknown, rawOutput: unknown,): string {
+  const text = toolContentText(content,);
+  if (text) { return text; }
+  if (rawOutput === undefined || rawOutput === null) { return ""; }
+  return jsonStringifyOr(rawOutput,);
+}
+
 /** Narrow an unknown value to a plain record, or null. */
 function asRecord(value: unknown,): Record<string, unknown> | null {
   return typeof value === "object" && value !== null ? value as Record<string, unknown> : null;
@@ -120,7 +128,7 @@ export function narrowSessionUpdate(params: unknown,): HarnessTurnEvent[] {
         toolCallId,
         name,
         status,
-        content: toolContentText(update.content,) || jsonStringifyOr(update.rawOutput ?? null,),
+        content: toolResultContent(update.content, update.rawOutput,),
         error: status === "failed",
       },);
     }
@@ -149,7 +157,7 @@ export function narrowSessionUpdate(params: unknown,): HarnessTurnEvent[] {
       toolCallId,
       name,
       status,
-      content: toolContentText(update.content,) || jsonStringifyOr(update.rawOutput ?? null,),
+      content: toolResultContent(update.content, update.rawOutput,),
       error: status === "failed",
     },);
 

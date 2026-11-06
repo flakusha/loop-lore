@@ -265,4 +265,28 @@ describe("harness turn persistence", () => {
     const rows = await rig.fixture.db.selectFrom("messages",).selectAll().execute();
     expect(rows,).toHaveLength(0,);
   });
+
+  it("writes one set of rows when the same send is retried", async () => {
+    const rig = await openRig({ FAKE_REPLY: "harness says hi", }, "harness-test", {
+      turnSink: (fixture,) =>
+        createHarnessTurnSink({ database: fixture.db, chatId, actorId, profile: "harness-test", },),
+    },);
+
+    await seedChat(rig.fixture,);
+    const received: AdapterMessage[] = [];
+    rig.bridge.onMessage((message,) => received.push(message,));
+    const adapter = rig.registry.get("harness-test",);
+    if (!adapter) { throw new Error("adapter missing",); }
+    adapter.onMessage((message,) => rig.bridge.receive("harness-test", message,));
+
+    const message = { ...outbound("ping",), idempotencyKey: "retry-7", };
+    await rig.bridge.send("harness:harness-test", message,);
+    await rig.bridge.send("harness:harness-test", message,);
+
+    // Both turns ran (both were delivered) ...
+    expect(received,).toHaveLength(2,);
+    // ... but the retried turn wrote no second set of rows.
+    const rows = await rig.fixture.db.selectFrom("messages",).selectAll().execute();
+    expect(rows.filter((row,) => row.content_type === "text"),).toHaveLength(1,);
+  });
 });
