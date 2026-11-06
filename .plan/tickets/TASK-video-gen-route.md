@@ -3,7 +3,9 @@
 
 # TASK: Video generation route (`POST /api/generation/video`)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Landed on `feat-comfyui-param-derivation` + `feat-model-rankings` lanes; unlanded phase-A slice lives on `epic-agentic-integration` (Phase A route + engine + tests done, async job shape open).
+**Blocker:** HELD with `epic-agentic-integration` — same 095 renumber + lock decision as `TASK-agentic-integration-tests`. Next: land that branch, then re-check this ticket's Phase-A boxes against dev.
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-video-generation

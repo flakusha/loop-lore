@@ -4,6 +4,7 @@
 # TASK: harness-sandbox-root-knob-configurable-cwd
 
 **Status:** Not Started
+**Blocker:** HELD — unlanded branch `harness-sandbox-root-knob` (`d886c680d` per-profile `sandboxRoot`; `runtime.ts` + tests only, no `src/config` knob yet per branch stat). Next: land the branch, then flip this ticket with the landing sha.
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-external-harness-acp

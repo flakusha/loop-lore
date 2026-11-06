@@ -4,6 +4,7 @@
 # TASK: harness-wizard-landing-tracker-provider-backend-frontend-delete-state-route
 
 **Status:** Not Started
+**Blocker:** HELD — tracks the landing of two unmerged wizard halves (backend `e288f7e9b`/`8bcfe4fa` + frontend `a400e18d9`/`7bc9e9a11`/`bd9d521ac`/`88643611a` per ticket body); both are SHIPPED on branch but NOT on dev. Backend store+routes partially present on dev (`3793bff82`); frontend client absent. Do NOT finalize from this ticket. Next: re-check the four landing boxes against dev after the lanes land, then close in favor of the wizard core ticket.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
