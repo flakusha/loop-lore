@@ -11,6 +11,7 @@ import {
   buildModelRows,
   buildRunRows,
   buildStatCards,
+  filterHarnessRuns,
   formatDuration,
   formatUsd,
 } from "./admin-harness-rows";
@@ -22,6 +23,28 @@ import { parseOr, } from "./validation";
 
 /** A row as `toSummary()` actually serves it for a run with no git context. */
 const NO_GIT_RUN = { ...RUN, runId: "run-no-git", branch: null, gitSha: null, pid: null, };
+
+describe("filterHarnessRuns", () => {
+  const rows = buildRunRows([
+    { ...RUN, runId: "run-a", task: "nightly-build", model: "sonnet", result: "ok", },
+    { ...RUN, runId: "run-b", task: "docs", model: "opus", result: "failed", },
+  ],);
+
+  test("an empty query keeps every row", () => {
+    expect(filterHarnessRuns(rows, "",),).toHaveLength(2,);
+    expect(filterHarnessRuns(rows, "   ",),).toHaveLength(2,);
+  });
+
+  test("matches the task, the model and the result, case-insensitively", () => {
+    expect(filterHarnessRuns(rows, "NIGHTLY",).map((row,) => row.runId),).toEqual(["run-a",],);
+    expect(filterHarnessRuns(rows, "opus",).map((row,) => row.runId),).toEqual(["run-b",],);
+    expect(filterHarnessRuns(rows, "failed",).map((row,) => row.runId),).toEqual(["run-b",],);
+  });
+
+  test("a query nothing matches yields no rows", () => {
+    expect(filterHarnessRuns(rows, "nothing-here",),).toHaveLength(0,);
+  });
+});
 
 describe("buildStatCards", () => {
   test("maps every total to a card with a pre-formatted value", () => {

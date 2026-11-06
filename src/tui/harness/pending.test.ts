@@ -184,6 +184,48 @@ describe("PendingPermissions", () => {
     expect(calls.length,).toBe(1,);
   });
 
+  it("ignores a second decision while one is in flight", async () => {
+    const calls: Call[] = [];
+    let releasePost: () => void = () => {};
+    let markStarted: () => void = () => {};
+    const started = new Promise<void>((resolve,) => {
+      markStarted = resolve;
+    },);
+
+    const fetchStub = async (url: string, opts?: SafeFetchOptions,) => {
+      calls.push({ url: new URL(url,).pathname, method: opts?.method ?? "GET", },);
+      if (opts?.method === "POST") {
+        markStarted();
+        await new Promise<void>((resolve,) => {
+          releasePost = resolve;
+        },);
+
+        return { ok: true, data: { ok: true, }, status: 200, headers: new Headers(), } as FetchResult<unknown>;
+      }
+
+      return { ok: true, data: { items: [ASK,], }, status: 200, headers: new Headers(), } as FetchResult<unknown>;
+    };
+
+    setFetch(fetchStub as Parameters<typeof setFetch>[0],);
+
+    const pending = new PendingPermissions();
+    await pending.load("tok",);
+
+    const first = pending.decide("approve", "tok",);
+    await started;
+    // Not awaited yet: the assertion below is what proves the second keypress
+    // never reached the wire.
+    const second = pending.decide("deny", "tok",);
+
+    // The ask is dropped once it is decided — a second POST would race it
+    // into a 404, so the in-flight decision stands alone.
+    expect(calls.filter((c,) => c.method === "POST").length,).toBe(1,);
+
+    releasePost();
+    await first;
+    await second;
+  });
+
   it("keeps the queue and shows the failure when the load is refused", async () => {
     refuse();
     const pending = new PendingPermissions();

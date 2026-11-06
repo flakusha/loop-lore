@@ -334,6 +334,10 @@
     // cannot trace a shell glob as an import edge.
     "tests/e2e/flows/browser/alpine-hydration-smoke.browser.ts",
     "tests/e2e/flows/browser/alpine-post-swap.browser.ts",
+    // Harness approval-queue coverage (the panel's decide flow). Same class as
+    // the entries above: run-browser-tests.ts discovers by directory glob, knip
+    // cannot trace a shell glob as an import edge.
+    "tests/e2e/flows/browser/harness-permissions.browser.ts",
     // Chat-header notification bell coverage. Same class as the entries
     // above: run-browser-tests.ts discovers by directory glob, knip cannot
     // trace a shell glob as an import edge.

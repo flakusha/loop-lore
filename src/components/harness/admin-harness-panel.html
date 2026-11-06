@@ -67,6 +67,19 @@
       <div class="icon">🔔</div>
       <div class="title">{{{t("harness.permissions.empty")}}}</div>
     </div>
+    <!--
+      A failed DECISION is not a failed read: the parked asks are still there,
+      so the table keeps listing them and only the failure is reported — the
+      operator has to see the asks to retry them. Inline (like the settings
+      save error) because the table stays right below it.
+    -->
+    <p
+      x-show="harnessDecisionError !== ''"
+      style="font-size: 12px; color: var(--color-danger); margin: var(--space-2) 0 0"
+      x-text="harnessDecisionError"
+      data-testid="harness-permissions-decision-error"
+    >
+    </p>
     <table
       x-show="harnessPermissionsError === '' && harnessPermissionRows.length > 0"
       class="admin-table"
