@@ -74,6 +74,12 @@ export interface AcpProfileConfig {
   /** Optional breaker thresholds. */
   health?: AcpProfileHealth;
   /**
+   * Sandbox root the profile's permission asks are judged against. Absent =
+   * the process cwd (unchanged behaviour). When set it must be an existing
+   * directory; a path with `..` traversal is rejected at config load.
+   */
+  sandboxRoot?: string;
+  /**
    * Explicit user acknowledgement that driving this profile for RPG/other
    * non-chat functionalities may conflict with the provider's ToS when the
    * profile is subscription-backed. Absent/false by default; records consent
