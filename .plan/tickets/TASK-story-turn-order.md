@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** EPIC-STORY-MODE-UI first slice: story turn-order visualization + world-state/NPC-state CRUD wiring + turn-by-id lookup (frontend wiring of existing src/routes/story-states/ backend)
 **Priority:** P1 — High
 **Effort:** Small
@@ -47,3 +47,5 @@ Turn order visualization for story mode.
 - `src/frontend/story/turn-indicator.ts`
 
 </details>
+
+**Resolved:** 2026-11-06 registry-driven close: git issue 717dcf3 (registry tip: 386e87131 Konstantin Fedotov Close issue)
