@@ -138,6 +138,78 @@ describeOrSkip("skillTree.loadSkills", () => {
     expect(ctx.skills,).toEqual([],);
     expect(fetchCalls.some((c,) => c.url.startsWith("/api/rpg/",)),).toBe(false,);
   });
+
+  test("ignores a reload while one is already in flight", async () => {
+    const ctx = buildCtx({ skillsLoading: true, skills: [SKILL_A,], },);
+    mockChats("actor-1",);
+    await ctx.loadSkills();
+
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.skills,).toEqual([SKILL_A,],);
+  });
+
+  test("renders the forbidden error on 403 and clears the list", async () => {
+    const ctx = buildCtx();
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+      if (url.startsWith("/api/rpg/skills/actors/",)) { return new Response("{}", { status: 403, },); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.loadSkills();
+
+    expect(ctx.skills,).toEqual([],);
+    expect(ctx.skillsError,).toBe("You do not have access to this character.",);
+    expect(ctx.skillsLoading,).toBe(false,);
+  });
+
+  test("renders loadFailed on a 500 and clears the list", async () => {
+    const ctx = buildCtx();
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+      if (url.startsWith("/api/rpg/skills/actors/",)) {
+        return Response.json({ error: "boom", }, { status: 500, },);
+      }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.loadSkills();
+
+    expect(ctx.skills,).toEqual([],);
+    expect(ctx.skillsError,).toBe("Failed to load skills.",);
+    expect(ctx.skillsLoading,).toBe(false,);
+  });
+
+  test("defaults to an empty list when the body has no skills array", async () => {
+    const ctx = buildCtx();
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+      if (url.startsWith("/api/rpg/skills/actors/",)) { return Response.json({},); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.loadSkills();
+
+    expect(ctx.skills,).toEqual([],);
+    expect(ctx.skillsError,).toBeNull();
+  });
+
+  test("renders loadFailed when the list request throws", async () => {
+    const ctx = buildCtx({ skills: [SKILL_A,], },);
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+      throw new Error("boom",);
+    };
+
+    await ctx.loadSkills();
+
+    expect(ctx.skills,).toEqual([],);
+    expect(ctx.skillsError,).toBe("Failed to load skills.",);
+    expect(ctx.skillsLoading,).toBe(false,);
+  });
 },);
 
 describeOrSkip("skillTree.addSkillXp", () => {
@@ -182,6 +254,63 @@ describeOrSkip("skillTree.addSkillXp", () => {
     expect(ctx.skillsError,).toBeNull();
     expect(ctx.skills,).toEqual([],);
   });
+
+  test("no-ops while a request is already busy", async () => {
+    const ctx = buildCtx({ skills: [SKILL_A,], skillsBusyId: "skill-a", },);
+    mockChats("actor-1",);
+    await ctx.addSkillXp("skill-a",);
+
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.skillsBusyId,).toBe("skill-a",);
+  });
+
+  test("clears XP feedback when the grant does not level up", async () => {
+    const ctx = buildCtx({
+      skills: [SKILL_A,],
+      skillFeedback: { skillId: "other", xpGained: 5, newProficiency: null, },
+    },);
+
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+      if (url === "/api/rpg/skills/skill-a/xp") { return Response.json({ leveledUp: false, },); }
+      if (url === "/api/rpg/skills/actors/actor-1") { return Response.json({ skills: [SKILL_A,], },); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.addSkillXp("skill-a",);
+
+    expect(ctx.skillFeedback,).toBeNull();
+    expect(ctx.skillsBusyId,).toBeNull();
+  });
+
+  test("surfaces the server error message when the XP grant fails", async () => {
+    const ctx = buildCtx({ skills: [SKILL_A,], },);
+    fetchHandler = (url,) => {
+      if (url === "/api/rpg/skills/skill-a/xp") {
+        return Response.json({ error: "XP is capped for today", }, { status: 400, },);
+      }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.addSkillXp("skill-a",);
+
+    expect(ctx.skillsError,).toBe("XP is capped for today",);
+    expect(ctx.skillsBusyId,).toBeNull();
+  });
+
+  test("falls back to xpFailed when the XP grant throws", async () => {
+    const ctx = buildCtx({ skills: [SKILL_A,], },);
+    fetchHandler = () => {
+      throw new Error("boom",);
+    };
+
+    await ctx.addSkillXp("skill-a",);
+
+    expect(ctx.skillsError,).toBe("Failed to add skill XP.",);
+    expect(ctx.skillsBusyId,).toBeNull();
+  });
 },);
 
 describeOrSkip("skillTree.specializeSkill", () => {
@@ -212,6 +341,98 @@ describeOrSkip("skillTree.specializeSkill", () => {
     expect(body,).toEqual({ specialization: "Ember Shackles", },);
     expect(ctx.skillSpecName,).toBe("",);
     expect(ctx.skillsBusyId,).toBeNull();
+  });
+
+  test("no-ops while a request is already busy", async () => {
+    const ctx = buildCtx({ skillSpecName: "Ember Shackles", skillsBusyId: "skill-a", },);
+    mockChats("actor-1",);
+    await ctx.specializeSkill("skill-a",);
+
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.skillsBusyId,).toBe("skill-a",);
+  });
+
+  test("refreshes instead of erroring on 404 (stale/hidden row)", async () => {
+    const ctx = buildCtx({ skillSpecName: "Ember Shackles", skills: [SKILL_A,], },);
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+      if (url === "/api/rpg/skills/skill-a/specialize") { return new Response("{}", { status: 404, },); }
+      if (url === "/api/rpg/skills/actors/actor-1") { return Response.json({ skills: [], },); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.specializeSkill("skill-a",);
+
+    expect(ctx.skillsError,).toBeNull();
+    expect(ctx.skills,).toEqual([],);
+    expect(ctx.skillsBusyId,).toBeNull();
+  });
+
+  test("surfaces the server error message when specializing fails", async () => {
+    const ctx = buildCtx({ skillSpecName: "Ember Shackles", },);
+    fetchHandler = (url,) => {
+      if (url === "/api/rpg/skills/skill-a/specialize") {
+        return Response.json({ error: "Already specialized", }, { status: 400, },);
+      }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.specializeSkill("skill-a",);
+
+    expect(ctx.skillsError,).toBe("Already specialized",);
+    expect(ctx.skillsBusyId,).toBeNull();
+  });
+
+  test("falls back to specializeFailed when specializing throws", async () => {
+    const ctx = buildCtx({ skillSpecName: "Ember Shackles", },);
+    fetchHandler = () => {
+      throw new Error("boom",);
+    };
+
+    await ctx.specializeSkill("skill-a",);
+
+    expect(ctx.skillsError,).toBe("Failed to specialize skill.",);
+    expect(ctx.skillsBusyId,).toBeNull();
+  });
+},);
+
+describeOrSkip("skillTree.category + selection state", () => {
+  test("categories default open and toggle per-category", () => {
+    const ctx = buildCtx();
+
+    expect(ctx.isCategoryOpen("combat",),).toBe(true,);
+    ctx.toggleCategory("combat",);
+    expect(ctx.isCategoryOpen("combat",),).toBe(false,);
+    expect(ctx.isCategoryOpen("stealth",),).toBe(true,);
+    ctx.toggleCategory("combat",);
+    expect(ctx.isCategoryOpen("combat",),).toBe(true,);
+  });
+
+  test("toggleSkill selects, reselects to clear, and resets draft state", () => {
+    const ctx = buildCtx({
+      selectedSkillId: "skill-a",
+      skillFeedback: { skillId: "skill-a", xpGained: 100, newProficiency: "journeyman", },
+      skillSpecName: "draft",
+    },);
+
+    ctx.toggleSkill("skill-b",);
+    expect(ctx.selectedSkillId,).toBe("skill-b",);
+    expect(ctx.skillFeedback,).toBeNull();
+    expect(ctx.skillSpecName,).toBe("",);
+
+    ctx.toggleSkill("skill-b",);
+    expect(ctx.selectedSkillId,).toBeNull();
+  });
+
+  test("selectedSkill returns the match or null", () => {
+    const ctx = buildCtx({ skills: [SKILL_A, SKILL_B,], selectedSkillId: "skill-b", },);
+
+    expect(ctx.selectedSkill()?.id,).toBe("skill-b",);
+
+    const empty = buildCtx();
+    expect(empty.selectedSkill(),).toBeNull();
   });
 },);
 

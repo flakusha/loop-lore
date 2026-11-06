@@ -188,6 +188,51 @@ describeOrSkip("professions.selectProfession", () => {
     expect(ctx.selectedProfessionId,).toBeNull();
     expect(ctx.professionsError,).toBeNull();
   });
+
+  test("toggles off without fetching when reselecting the same id", async () => {
+    const ctx = buildCtx({ selectedProfessionId: "prof-1", selectedProfessionSpecs: [], },);
+    await ctx.selectProfession("prof-1",);
+
+    expect(ctx.selectedProfessionId,).toBeNull();
+    expect(ctx.selectedProfessionSpecs,).toBeNull();
+    expect(fetchCalls.length,).toBe(0,);
+  });
+
+  test("keeps the selection and surfaces loadFailed on a 500", async () => {
+    const ctx = buildCtx({ selectedProfessionId: null, },);
+    fetchHandler = () => new Response("{}", { status: 500, },);
+
+    await ctx.selectProfession("prof-1",);
+
+    expect(ctx.selectedProfessionId,).toBe("prof-1",);
+    expect(ctx.professionsError,).toBe("Failed to load professions.",);
+  });
+
+  test("defaults to an empty spec list when the body has none", async () => {
+    const ctx = buildCtx();
+    fetchHandler = (url,) => {
+      if (url === "/api/rpg/professions/prof-1") { return Response.json({ ...PROFESSION, },); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.selectProfession("prof-1",);
+
+    expect(ctx.selectedProfessionId,).toBe("prof-1",);
+    expect(ctx.selectedProfessionSpecs,).toEqual([],);
+  });
+
+  test("surfaces loadFailed when the detail request throws", async () => {
+    const ctx = buildCtx({ selectedProfessionId: null, },);
+    fetchHandler = () => {
+      throw new Error("boom",);
+    };
+
+    await ctx.selectProfession("prof-1",);
+
+    expect(ctx.selectedProfessionId,).toBe("prof-1",);
+    expect(ctx.professionsError,).toBe("Failed to load professions.",);
+  });
 },);
 
 describeOrSkip("professions.assignProfession", () => {
