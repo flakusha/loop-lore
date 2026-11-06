@@ -35,6 +35,23 @@ describe("Creation flows E2E", () => {
     await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 30_000, },);
   }
 
+  /**
+   * Poll the DB until the row lands. A create POST commits asynchronously, so
+   * a single read right after the submit click races the transaction: the read
+   * returns undefined and the assertion below then crashes on a missing id.
+   */
+  async function waitForRow<T,>(read: () => Promise<T | undefined>, timeoutMs = 15_000,): Promise<T> {
+    const deadline = Date.now() + timeoutMs;
+    let row = await read();
+    while (row === undefined && Date.now() < deadline) {
+      await Bun.sleep(50,);
+      row = await read();
+    }
+
+    expect(row,).toBeDefined();
+    return row!;
+  }
+
   describe("Character create persists", () => {
     test("creates a character that appears in the grid and DB", async () => {
       const page = await ctx.openPage();
@@ -55,19 +72,20 @@ describe("Creation flows E2E", () => {
         await page.click("[data-testid='create-character-form'] button[type='submit']",);
 
         // Persisted in DB (solo user context).
-        const row = await ctx.db
-          .selectFrom("actors",)
-          .select(["id", "display_name",],)
-          .where("display_name", "=", name,)
-          .executeTakeFirst();
+        const row = await waitForRow(() =>
+          ctx.db
+            .selectFrom("actors",)
+            .select(["id", "display_name",],)
+            .where("display_name", "=", name,)
+            .executeTakeFirst()
+        );
 
-        expect(row,).toBeDefined();
-        expect(row!.display_name,).toBe(name,);
+        expect(row.display_name,).toBe(name,);
 
         // The grid reload can race the DB commit, so reload the page (grid
         // re-fetches on load) and assert the new card renders.
         await page.reload({ waitUntil: "domcontentloaded", },);
-        await page.locator(`[data-testid='character-card-${row!.id}']`,).waitFor({ timeout: 30_000, },);
+        await page.locator(`[data-testid='character-card-${row.id}']`,).waitFor({ timeout: 30_000, },);
       } finally {
         errors.assert();
         errors.detach();
@@ -92,17 +110,18 @@ describe("Creation flows E2E", () => {
         await page.click("[data-testid='create-world-form'] button[type='submit']",);
 
         // Persisted in DB.
-        const row = await ctx.db
-          .selectFrom("worlds",)
-          .select(["id", "name",],)
-          .where("name", "=", name,)
-          .executeTakeFirst();
+        const row = await waitForRow(() =>
+          ctx.db
+            .selectFrom("worlds",)
+            .select(["id", "name",],)
+            .where("name", "=", name,)
+            .executeTakeFirst()
+        );
 
-        expect(row,).not.toBeNull();
-        expect(row!.name,).toBe(name,);
+        expect(row.name,).toBe(name,);
 
         // App UX: createWorld() redirects to the new world's edit page.
-        await page.waitForURL((url,) => url.pathname === `/worlds/${row!.id}/edit`, { timeout: 30_000, },);
+        await page.waitForURL((url,) => url.pathname === `/worlds/${row.id}/edit`, { timeout: 30_000, },);
       } finally {
         errors.assert();
         errors.detach();
@@ -126,20 +145,20 @@ describe("Creation flows E2E", () => {
         const worldName = `LocWorld-${Date.now()}`;
         await page.fill("#world-name", worldName,);
         await page.click("[data-testid='create-world-form'] button[type='submit']",);
-        const worldRow = await ctx.db
-          .selectFrom("worlds",)
-          .select(["id", "owner_id",],)
-          .where("name", "=", worldName,)
-          .executeTakeFirst();
-
-        expect(worldRow,).not.toBeNull();
+        const worldRow = await waitForRow(() =>
+          ctx.db
+            .selectFrom("worlds",)
+            .select(["id", "owner_id",],)
+            .where("name", "=", worldName,)
+            .executeTakeFirst()
+        );
 
         // The create form ALREADY redirects to the new world's edit page
         // (createWorld() → location.assign, asserted by the create test).
         // Wait for that redirect instead of re-navigating: a second goto() to
         // the URL the page is already navigating to aborts the in-flight
         // client-side redirect (net::ERR_ABORTED).
-        await page.waitForURL((url,) => url.pathname === `/worlds/${worldRow!.id}/edit`, { timeout: 30_000, },);
+        await page.waitForURL((url,) => url.pathname === `/worlds/${worldRow.id}/edit`, { timeout: 30_000, },);
         // Two .world-edit-tabs elements exist (primary bar + NPC sub-tabs);
         // scope to the first — the primary tab bar.
         await page.locator(".world-edit-tabs",).first().waitFor({ state: "visible", timeout: 30_000, },);
