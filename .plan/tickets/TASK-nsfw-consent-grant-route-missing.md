@@ -206,3 +206,5 @@ caller. The user id always comes from the session.
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-11-05 registry-driven close: git issue 3352640 (registry tip: 4ab833f25 Konstantin Fedotov Close issue)
