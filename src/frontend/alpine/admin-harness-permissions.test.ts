@@ -37,8 +37,15 @@ const EN = JSON.parse(
   readFileSync(join(import.meta.dir, "../../public/locales/en.json",), "utf8",),
 ) as Record<string, unknown>;
 
-/** Two parked asks, oldest first, as the queue serves them. */
+/**
+ * Two parked asks, oldest first, as the queue serves them.
+ *
+ * The `meta` envelope is part of the REAL body (`jsonResponse` stamps
+ * `api_version` on every JSON response), so the fixture carries it: the panel
+ * must keep decoding a body that carries the envelope, not a bare list.
+ */
 const PENDING = {
+  meta: { api_version: "1", },
   items: [
     {
       id: "ask-1",
