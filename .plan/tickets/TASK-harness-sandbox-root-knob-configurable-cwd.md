@@ -36,3 +36,11 @@ Parity matrix gap #5 (PARTIAL): per-run cwd exists at the permission-queue seam 
 - [ ] Config knob sets the sandbox root per profile (or globally); unset preserves current `process.cwd()` behavior.
 - [ ] Invalid roots (missing, not-a-directory, traversal) fail closed at config validation with a named error.
 - [ ] Unit test proving `onPermissionRequest` receives the configured root.
+- [ ] Unit test proving `onPermissionRequest` receives the configured root.
+
+## Dedup-note (2026-11-07 triage)
+
+- DUPLICATE: `harness-sandbox-root-knob` (d886c680d) and `harness-dispatch-path` (ca3f1d09, knob commit ca3f1d096) implement the same `harness.acp.profiles[].sandboxRoot` knob: same schema field, same fail-closed `validateSandboxRoot`, same runtime threading in `createHarnessRuntime`.
+- WINNER: `harness-dispatch-path` — its knob commit is the superset: it also hands the resolved root to the adapter as the session `cwd` (classifier verdicts and session cwd cannot drift) and exposes the queue-wrapped `factory` on the runtime (needed by approval-flow callers). It rides with the dispatch + turn-persistence stack already queued for landing.
+- LOSER DROPS: do NOT land `harness-sandbox-root-knob` separately. After the dispatch branch lands, drop its knob commit (rebase onto dev, or delete the branch).
+- Note: the HELD Blocker line above is stale — the knob branch DOES carry the `src/config` knob (`sections/harness.ts` +45), not just runtime + tests.
