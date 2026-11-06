@@ -1537,8 +1537,6 @@
     "turnIdPlaceholder": "Turn ID",
     "lookupTurn": "Lookup",
     "noTurnSelected": "No turn selected.",
-    "qualityScore": "Quality",
-    "questProgress": "Quest progress",
     "questRewards": "Rewards",
     "questStatus": {
       "active": "Active",
