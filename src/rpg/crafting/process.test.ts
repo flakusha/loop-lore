@@ -25,6 +25,7 @@ import {
   insertCraftingStationDefs,
   insertCraftingStationInstances,
   insertItems,
+  insertProfessions,
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
@@ -258,6 +259,55 @@ describe("attemptCraft", () => {
 
       expect(await svc.listAttempts(s.actorId, s.worldId,),).toEqual([],);
       expect(await stockOf(s.db, s.actorId, "Ore",),).toBe(1,);
+    } finally {
+      await s.db.destroy();
+    }
+  });
+
+  test("same-world profession row applies bonuses", async () => {
+    const s = await seed({ baseSuccessChance: 0, },);
+    try {
+      const now = new Date().toISOString();
+      await insertProfessions(s.db, s.actorId, "smithing", now, now, {
+        world_id: s.worldId,
+        level: 100,
+      },);
+
+      const svc = new CraftingProcessService(s.db,);
+      const result = await withRandom(
+        0,
+        () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),
+      );
+
+      // Grandmaster +20% success turns a 0-chance roll into a success.
+      expect(result.status,).toBe(CraftingAttemptStatus.Success,);
+      expect(result.professionBonuses,).toMatchObject({ success: 0.2, },);
+    } finally {
+      await s.db.destroy();
+    }
+  });
+
+  test("other-world profession row is ignored (world-scoped lookup)", async () => {
+    const s = await seed({ baseSuccessChance: 0, },);
+    try {
+      // Sibling world must exist for the FK; the Grandmaster row lives there.
+      const otherWorld = uid();
+      await insertWorlds(s.db, s.userId, "Other World", { id: otherWorld, } as never,);
+      const now = new Date().toISOString();
+      await insertProfessions(s.db, s.actorId, "smithing", now, now, {
+        world_id: otherWorld,
+        level: 100,
+      },);
+
+      const svc = new CraftingProcessService(s.db,);
+      const result = await withRandom(
+        0.99,
+        () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),
+      );
+
+      // The sibling world's Grandmaster row must not leak bonuses here.
+      expect(result.status,).toBe(CraftingAttemptStatus.Failure,);
+      expect(result.professionBonuses,).toBeUndefined();
     } finally {
       await s.db.destroy();
     }

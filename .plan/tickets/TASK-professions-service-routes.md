@@ -78,3 +78,43 @@ Both tables are empty — no code writes to them. The `epic-crafting-professions
 - `TASK-wire-crafting-routes.md` — crafting uses profession bonuses
 - `TASK-professions-frontend.md` — consumes these endpoints
 - `TASK-character-config-skills-professions.md` — seeds professions
+
+## Review follow-ups (2026-11-06, branch professions-service-routes)
+
+1. **world_id scoping (BLOCKING, FIXED):** `CraftingProcessService.attemptCraft`
+   looked up `professions` by `(actor_id, discipline)` only
+   (`src/rpg/crafting/process.ts:290-293`), but the unique index is
+   `(actor_id, world_id, discipline)` (`095:60-62`, `096:40-43`). Same actor
+   holding the same discipline in two worlds got the first row's bonuses in
+   both. Fixed by threading `opts.worldId` into the lookup
+   (`process.ts:290-296`); the request already carries `worldId`
+   (`CraftAttemptOpts.worldId`, `src/rpg/crafting/types.ts:15`), so no
+   signature change. Regression tests in `process.test.ts`: same-world
+   Grandmaster row applies bonuses; other-world sibling row is ignored.
+
+2. **fe-be-harmony FLAG `FE-no-BE: POST /api/rpg/professions` — CHECKER-ARTIFACT
+   (no product change):** the route EXISTS as `.post(R, ...)` with
+   `const R = \`${prefix}/rpg/professions\`` (`src/routes/rpg/professions.ts:68,72`),
+   mounted via `professionsRoutes(opts, prefix)` in the facade
+   (`src/routes/rpg/index.ts:113`), itself `.use()`d under `/api/v1`
+   (`src/routes/v1/actors-surface.ts:91`, `src/routes/v1/index.ts:62`) and
+   reachable as `POST /api/rpg/professions` (proven by route test
+   `src/routes/rpg/professions.test.ts:88-103` hitting exactly that URL → 201;
+   FE caller `src/frontend/alpine/professions.ts:110`). The checker's
+   `scanBe` regex only captures literal call-site arguments to
+   `.(get|post|...)` (`be-routes.ts:66`) and resolves `${prefix}`/`${R}`
+   against file-scope `const` defaults (`be-routes.ts:24-51,54-62`) — so the
+   bare identifier `R` in `.post(R, ...)` never expands and the route is
+   invisible to the checker. Blind spot is generic: sibling `skills.ts:119`
+   `.post(R, ...)` is likewise missing from the scan (only `:id/xp` +
+   `:id/specialize` from the template-literal call sites appear).
+
+3. **Generator BLAST RADIUS (flagged, code left alone per assignment):** this
+   branch changed `scripts/generate-db-types.ts:111-121` and
+   `scripts/generate-schema-manifest.ts:88-98` so a later re-add wins over an
+   earlier drop GLOBALLY (needed for 095/096's `world_id` drop+re-add
+   nullability change). That inverts drop semantics for every future table:
+   any migration that drops a column and later re-adds an unrelated same-named
+   column will silently keep the new def. Recommendation: scope the rule to
+   `professions` (or revert after landing) — follow-up owned by the
+   generator maintainers, not this branch.
