@@ -9576,6 +9576,20 @@
     "title": "Stale audit rows in TASK-aux-emotion-avatar.md + TASK-aux-mood-classification.md contradict current wiring",
     "type": "BUG"
   },
+  "BUG-STALE-HASHED-BUNDLES-IN-DIST-PUBLIC-MAKE-THE-SERVED-PAGE-RUN": {
+    "hash": "f233522",
+    "git_issue": "f233522",
+    "extid": "BUG-STALE-HASHED-BUNDLES-IN-DIST-PUBLIC-MAKE-THE-SERVED-PAGE-RUN",
+    "type": "BUG",
+    "title": "stale hashed bundles in dist/public make the served page run old JS",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-e2e-integration-testing",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-stale-hashed-bundles-in-dist-public-make-the-served-page-run.md",
+    "status": "open"
+  },
   "BUG-STALE-SSE-STREAM-WRITES-RENDER-INTO-WRONG-CHAT": {
     "epic": "",
     "extid": "BUG-STALE-SSE-STREAM-WRITES-RENDER-INTO-WRONG-CHAT",
@@ -59738,7 +59752,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-skill-check.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "battle",
       "frontend",
