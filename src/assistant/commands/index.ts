@@ -22,6 +22,7 @@ import "./detail";
 import "./dice";
 import "./duplicate";
 import "./gm-guidance";
+import "./harness-turn";
 import "./harness-verbs";
 import "./heal";
 import "./help";

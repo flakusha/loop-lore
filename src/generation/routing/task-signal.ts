@@ -10,15 +10,16 @@
  * deadlock (and cost money on every turn).
  *
  * `TaskType` is closed: one member per dispatch surface — the two chat-facing
- * generation routes, the 11 AUX pipeline jobs (which reuse `AuxTaskName`
- * verbatim so a new AUX job is a compile error until it is classified), and
- * the background transports (embeddings, rerank).
+ * generation routes, the AUX pipeline jobs (which reuse `AuxTaskName`
+ * verbatim so a new AUX job is a compile error until it is classified), the
+ * outbound ACP harness dispatch, and the background transports (embeddings,
+ * rerank).
  */
 import type { AuxTaskName, } from "../../aux-pipeline/types";
 import type { HarnessTaskType, } from "../../harness/types";
 
 /** Closed set of classified work classes. */
-export type TaskType = "interactive-turn" | "auto-gen" | AuxTaskName | "background";
+export type TaskType = "interactive-turn" | "auto-gen" | "harness" | AuxTaskName | "background";
 
 /** Capability names a signal can require of a candidate model. */
 export type TaskCapability = "text" | "image" | "embeddings" | "streaming" | "tools" | "thinking";
@@ -67,15 +68,19 @@ export function toTaskSignal(task: AuxTaskName,): TaskSignal {
  * The two vocabularies are deliberately different: routing needs one class per
  * dispatch surface (so a new AUX job is classified individually), while the log
  * groups the AUX family into one rollup bucket. The final fall-through IS the
- * AUX family: `TaskType` is `interactive-turn | auto-gen | AuxTaskName |
- * background`, so once the three named members are excluded, TypeScript has
- * narrowed the rest to `AuxTaskName`. No hand-maintained name list to drift.
+ * AUX family: `TaskType` is `interactive-turn | auto-gen | harness |
+ * AuxTaskName | background`, so once the four named members are excluded,
+ * TypeScript has narrowed the rest to `AuxTaskName`. No hand-maintained name
+ * list to drift.
  * @param taskType - routing class
  * @returns The exec-log task type.
  */
 export function toHarnessTaskType(taskType: TaskType,): HarnessTaskType {
   if (taskType === "interactive-turn") { return "chat"; }
   if (taskType === "auto-gen") { return "auto-gen"; }
+  // An outbound ACP dispatch: its own bucket, distinct from the local
+  // provider calls the other classes record.
+  if (taskType === "harness") { return "harness"; }
   // embeddings + rerank both go through the shared background transport.
   if (taskType === "background") { return "memory"; }
   return "aux";
