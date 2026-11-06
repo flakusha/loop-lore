@@ -326,6 +326,23 @@
     "source": ".plan/tickets/BUG-admin-dashboard-browser-tests-repeat-the-login-hx-redirect-r.md",
     "status": "done"
   },
+  "BUG-ADMIN-MODEL-NEWS-WEIGHT-CHANGE-TEST-TIMES-OUT-UNDER-PARALLEL": {
+    "hash": "3880301",
+    "git_issue": "3880301",
+    "extid": "BUG-ADMIN-MODEL-NEWS-WEIGHT-CHANGE-TEST-TIMES-OUT-UNDER-PARALLEL",
+    "type": "BUG",
+    "title": "admin model-news weight-change test times out under parallel-coverage load",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "flaky-test",
+      "load-induced"
+    ],
+    "source": ".plan/tickets/BUG-admin-model-news-weight-change-test-times-out-under-parallel.md",
+    "status": "open"
+  },
   "BUG-ADMIN-PLUGIN-ENABLE-ROUTE-LEAVES-HALF-REGISTERED-ONLOAD-STAT": {
     "hash": "c4dd53c",
     "git_issue": "c4dd53c",
@@ -3326,6 +3343,20 @@
     "tags": [],
     "title": "CSP unsafe-inline defeats per-request nonce",
     "type": "BUG"
+  },
+  "BUG-CSRF-GATE-REJECTS-THE-TUI-S-BEARER-ONLY-POSTS-SO-EVERY-TUI-W": {
+    "hash": "c3ab617",
+    "git_issue": "c3ab617",
+    "extid": "BUG-CSRF-GATE-REJECTS-THE-TUI-S-BEARER-ONLY-POSTS-SO-EVERY-TUI-W",
+    "type": "BUG",
+    "title": "CSRF gate rejects the TUI's Bearer-only POSTs, so every TUI write 403s in multi-user mode",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-csrf-gate-rejects-the-tui-s-bearer-only-posts-so-every-tui-w.md",
+    "status": "open"
   },
   "BUG-DATE-PARSE-RESULTS-UNCHECKED-FOR-NAN-10-SITES": {
     "epic": "epic-i18n",
@@ -8321,6 +8352,20 @@
     "source": ".plan/tickets/BUG-probes-ts-stale-llama-swap-health-route-claim.md",
     "status": "done"
   },
+  "BUG-PROFESSION-ID-SCOPED-ROUTES-ALLOW-CROSS-USER-READ-MUTATE-IDO": {
+    "hash": "b21af33",
+    "git_issue": "b21af33",
+    "extid": "BUG-PROFESSION-ID-SCOPED-ROUTES-ALLOW-CROSS-USER-READ-MUTATE-IDO",
+    "type": "BUG",
+    "title": "Profession id-scoped routes allow cross-user read/mutate (IDOR)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-profession-id-scoped-routes-allow-cross-user-read-mutate-ido.md",
+    "status": "done"
+  },
   "BUG-PROMPTOVERRIDE-SCHEMA-HAS-NO-MAXLENGTH-TOKEN-BOMB-STORAGE-VE": {
     "epic": "",
     "extid": "BUG-PROMPTOVERRIDE-SCHEMA-HAS-NO-MAXLENGTH-TOKEN-BOMB-STORAGE-VE",
@@ -9415,6 +9460,20 @@
     "tags": [],
     "title": "size-strict pre-existing dev drift",
     "type": "BUG"
+  },
+  "BUG-SKILL-ID-SCOPED-ROUTES-ALLOW-CROSS-USER-READ-MUTATE-IDOR": {
+    "hash": "717edfa",
+    "git_issue": "717edfa",
+    "extid": "BUG-SKILL-ID-SCOPED-ROUTES-ALLOW-CROSS-USER-READ-MUTATE-IDOR",
+    "type": "BUG",
+    "title": "Skill id-scoped routes allow cross-user read/mutate (IDOR)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-skill-id-scoped-routes-allow-cross-user-read-mutate-idor.md",
+    "status": "done"
   },
   "BUG-SKIPOLDCHAIN-ZEROES-THE-CALLER-S-RECEIVINGCHAINKEY-DESPITE-I": {
     "hash": "bc9c205",
@@ -32868,7 +32927,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-character-config-skills-professions.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "skills",
       "professions",
@@ -54255,7 +54314,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-professions-service-routes.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "professions",
       "crafting",
@@ -59810,7 +59869,7 @@
     "label": "task",
     "priority": "P2 — Medium",
     "source": ".plan/tickets/TASK-skills-frontend.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "skills",
       "frontend",
@@ -59830,7 +59889,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-skills-routes.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "skills",
       "routes",
