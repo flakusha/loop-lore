@@ -324,7 +324,7 @@ function isLoadConfigFunctional(): boolean {
 const describeLoadReal = isLoadConfigFunctional() ? describe : describe.skip;
 
 describeLoadReal("loadConfig integration", () => {
-  const tmpDir = join(import.meta.dir, "__test_config_tmp",);
+  const tmpDir = mkdtempSync(join(tmpdir(), "load-config-test-",),);
 
   /**
    * @param files

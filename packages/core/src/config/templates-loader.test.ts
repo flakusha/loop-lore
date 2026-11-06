@@ -1,7 +1,8 @@
 // src/config/templates-loader.test.ts — Tests for template config loader
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { existsSync, mkdirSync, rmSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import path from "node:path";
 import type {
   AvatarTemplateConfig,
@@ -22,7 +23,7 @@ import {
 
 // ── Test Helpers ────────────────────────────────────────────
 
-const TEST_DIR = path.join(import.meta.dir, "..", ".test-templates",);
+const TEST_DIR = mkdtempSync(path.join(tmpdir(), "templates-loader-test-",),);
 
 /** */
 function setupTestDir() {

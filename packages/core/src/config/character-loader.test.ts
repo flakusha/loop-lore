@@ -1,11 +1,12 @@
 // src/config/character-loader.test.ts — Unit tests for character file loader
 
 import { describe, expect, test, } from "bun:test";
-import { existsSync, mkdirSync, rmSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import path from "node:path";
 import { loadCharacterFiles, } from "./character-loader";
 
-const TEST_DIR = path.join(import.meta.dir, "../../test-fixtures/character-loader",);
+const TEST_DIR = mkdtempSync(path.join(tmpdir(), "character-loader-test-",),);
 
 // ── Helpers ─────────────────────────────────────────────────
 
