@@ -4,6 +4,7 @@
 import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
+import { fetchProviderList, } from "./provider-list";
 
 const log = rootLog.child({ module: "personas", },);
 
@@ -33,6 +34,8 @@ globalThis.personasPage = function() {
     formMaxTokens: "" as string | number,
     formTemperature: "" as string | number,
     personaAvailableModels: [] as string[],
+    /** Why the model suggestions are unavailable; empty when they loaded. */
+    personaModelsNotice: "",
 
     /**
      * @returns {Promise<void>}
@@ -43,24 +46,23 @@ globalThis.personasPage = function() {
     },
 
     /**
+     * Load the model suggestions for the persona form. The provider list is
+     * admin-gated, so a non-admin gets a 403: the suggestions stay empty and
+     * the notice says why instead of the list silently disappearing.
      * @returns {Promise<void>}
      */
     async loadPersonaModels() {
-      try {
-        const res = await apiFetch("/api/v1/providers", { headers: { Accept: "application/json", }, },);
-        if (!res.ok) { return; }
-        const data = await res.json();
-        const models: string[] = [];
-        const providers = data.providers || [];
-        for (const p of providers) {
-          if (p.status !== "healthy") { continue; }
-          await this._collectModelsForProvider(p.name, models,);
-        }
+      const outcome = await fetchProviderList();
+      this.personaModelsNotice = outcome.notice;
+      if (outcome.notice !== "") { return; }
 
-        this.personaAvailableModels = models;
-      } catch {
-        /* network error — keep empty */
+      const models: string[] = [];
+      for (const p of outcome.providers) {
+        if (p.status !== "healthy") { continue; }
+        await this._collectModelsForProvider(p.name, models,);
       }
+
+      this.personaAvailableModels = models;
     },
 
     /**

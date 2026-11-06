@@ -26,6 +26,7 @@ settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
     detailLevel: "Immersion",
     provider: "OpenAI",
     providerList: [] as { name: string; label: string; status: string }[],
+    providerListNotice: "",
     apiKey: "",
     apiEndpoint: "",
     model: "",

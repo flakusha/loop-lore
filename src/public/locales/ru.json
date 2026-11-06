@@ -55,7 +55,9 @@
     "actions": "Действия",
     "openInEditor": "Open in $EDITOR",
     "terminalTitle": "Terminal editor",
-    "closeTerminal": "Close terminal"
+    "closeTerminal": "Close terminal",
+    "providerListAdminOnly": "The provider list is only available to administrators.",
+    "providerListUnavailable": "The provider list could not be loaded."
   },
   "auth": {
     "login": "Log In",

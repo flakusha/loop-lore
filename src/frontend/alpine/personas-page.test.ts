@@ -29,6 +29,7 @@ interface PersonasState {
   search: string;
   loading: boolean;
   personaAvailableModels: string[];
+  personaModelsNotice: string;
   loadPersonas(): Promise<void>;
   loadPersonaModels(): Promise<void>;
   _collectModelsForProvider(providerName: string, models: string[],): Promise<void>;
@@ -190,6 +191,15 @@ describe("personasPage.loadPersonaModels", () => {
     const s = fresh();
     await s.loadPersonaModels();
     expect(s.personaAvailableModels,).toEqual([],);
+    expect(s.personaModelsNotice,).toBe("common.providerListUnavailable",);
+  });
+
+  test("reports the admin-only refusal instead of silently emptying the list", async () => {
+    handler = async () => new Response("forbidden", { status: 403, },);
+    const s = fresh();
+    await s.loadPersonaModels();
+    expect(s.personaAvailableModels,).toEqual([],);
+    expect(s.personaModelsNotice,).toBe("common.providerListAdminOnly",);
   });
 
   test("skips providers whose model fetch fails", async () => {

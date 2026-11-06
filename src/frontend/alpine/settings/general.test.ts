@@ -36,6 +36,7 @@ interface Host {
   temperature: number;
   locales: { id: string; name: string; nativeName: string; direction: string }[];
   providerList: { name: string; label: string; status: string }[];
+  providerListNotice: string;
   displayName: string;
   birthDate: string;
   confirmDeleteText: string;
@@ -441,6 +442,16 @@ describe("settings general loadProviders", () => {
     await host.loadProviders();
 
     expect(host.providerList,).toEqual([],);
+  });
+
+  test("reports the admin-only refusal instead of silently emptying the list", async () => {
+    handler = async () => new Response("forbidden", { status: 403, },);
+
+    const host = freshHost();
+    await host.loadProviders();
+
+    expect(host.providerList,).toEqual([],);
+    expect(host.providerListNotice,).toBe("common.providerListAdminOnly",);
   });
 });
 

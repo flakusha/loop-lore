@@ -176,6 +176,15 @@
                 <option :value="m"></option>
               </template>
             </datalist>
+            <template x-if="personaModelsNotice !== ''">
+              <div
+                style="padding: 10px 14px; margin-top: 8px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; font-size: 13px; color: #6b5400"
+                role="alert"
+                data-testid="persona-model-notice"
+              >
+                <strong x-text="t(personaModelsNotice)"></strong>
+              </div>
+            </template>
           </div>
           <div class="form-group">
             <label class="form-label" for="persona-maxTokens">{{{t("personas.maxTokensOverride")}}}</label>
