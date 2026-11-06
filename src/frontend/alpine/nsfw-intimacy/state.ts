@@ -90,25 +90,28 @@ export const intimacyState: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /** Confirm the consent dialog: persist the chat consent grant, then dispatch.
-   * A refused grant parks the flow in the classified error phase; only a
-   * persisted grant advances the reducer, so the gate never sees an
-   * ungranted confirm.
+  /** Confirm the consent dialog: persist the chat grant, then dispatch.
+   * The reducer advances synchronously so a second confirm (or cancel/back)
+   * during the grant POST is a reducer no-op — single-flight. A refused
+   * grant parks the flow in the classified error phase via the `failed`
+   * event; only a persisted grant reaches the action dispatch.
    * @returns {Promise<void>}
    */
   async confirmConsent() {
     const chatId = this.activeChat;
     if (!chatId || this._intimacyFlow.phase !== "confirmConsent") { return; }
 
+    this._intimacyFlow = reduceIntimacyFlow(this._intimacyFlow, { type: "confirmConsent", },);
+    this.mountIntimacyPanel();
+
     const grant = await grantIntimacyConsent(chatId,);
     if (this.activeChat !== chatId) { return; }
     if (grant.status !== "ok") {
-      this._intimacyFlow = { ...this._intimacyFlow, phase: "error", error: grant.error, };
+      this._intimacyFlow = reduceIntimacyFlow(this._intimacyFlow, { type: "failed", error: grant.error, },);
       this.mountIntimacyPanel();
       return;
     }
 
-    this._intimacyFlow = reduceIntimacyFlow(this._intimacyFlow, { type: "confirmConsent", },);
     await this.dispatchIntimacy();
   },
 
