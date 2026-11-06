@@ -63,11 +63,13 @@ export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapte
       }
 
       log.prompts.push(prompt,);
+      const text = spec.reply ?? "ok";
       const result: HarnessTurnResult = {
-        text: spec.reply ?? "ok",
+        text,
         stopReason: "end_turn",
         usage: { inputTokens: 10, outputTokens: 5, totalTokens: 15, },
         acpSessionId: "fake-session",
+        transcript: { text, thinking: [], toolCalls: [], toolResults: [], },
       };
 
       return Promise.resolve(result,);

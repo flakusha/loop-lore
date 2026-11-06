@@ -21,6 +21,7 @@ import {
 import { type BridgeRegistry, type RegisterResult, } from "../registry";
 import { HarnessAcpError, } from "./adapter-types";
 import { type HarnessDriver, } from "./driver";
+import { type HarnessTurnSink, } from "./turn-sink";
 
 /** Wrapper options; `target` opts the driver into bridge target routing. */
 export interface HarnessProtocolAdapterOptions {
@@ -30,6 +31,8 @@ export interface HarnessProtocolAdapterOptions {
   protocol?: string;
   /** The one target the wrapper claims; absent → it never owns a target. */
   target?: string;
+  /** Persists the turn and pushes its frames; absent → the turn is not persisted. */
+  turnSink?: HarnessTurnSink;
 }
 
 /**
@@ -68,6 +71,10 @@ export function createHarnessProtocolAdapter(
       if (!result.ok) {
         throw new HarnessAcpError(result.kind, result.message,);
       }
+
+      // Rows before delivery: a turn that cannot be persisted must not reach
+      // the chat as if it had been recorded.
+      await options.turnSink?.onTurnResolved(result.turn,);
 
       const id = `harness-${crypto.randomUUID()}`;
       handler?.({
