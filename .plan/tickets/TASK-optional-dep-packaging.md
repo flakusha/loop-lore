@@ -28,3 +28,5 @@ Optional-dep packaging for the external harness integration (epic-external-harne
 - [x] Implementation complete
 - [x] Tests passing (11 new probe tests in availability.test.ts; 3 new route tests in index.test.ts; scoped harness+routes suites 242/242 green; typecheck - backend gate green; eslint 0 errors on touched files; dprint clean; bun run size green)
 - [x] Documentation updated (ticket Context = design record; module header documents the npm-no-op reduction; epic checkbox ticked + Status Note updated)
+
+**Resolved:** 2026-11-06 registry-driven close: git issue a9c13bd (registry tip: 1960d5c7b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-OPTIONAL-DEP-PACKAGING done)

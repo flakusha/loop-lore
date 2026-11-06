@@ -3,7 +3,7 @@
 
 # TASK: setup-state endpoint: GET /api/v1/setup/state {checks:[{id,ok,hint}]}
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** GET /api/v1/setup/state machine-readable setup checks
 **Priority:** high
 **Effort:** Small
@@ -71,3 +71,5 @@ Path contract (corrected on this branch): the committed suite in `src/routes/set
 - [x] Implementation complete — route + TypeBox schema + default-deny admin guard + the shared six-check `setupChecks` module
 - [x] Tests passing — `bun test src/routes/setup` (7 pass): the six ids IN ORDER, the 401/403 negative paths, the fresh-clone NSFW_PII_SECRET hint, the v1-barrel wiring, and the no-unversioned-mount contract
 - [x] Documentation updated — `docs/reference/api.md` documents `GET /api/v1/setup/state`
+
+**Resolved:** 2026-11-06 registry-driven close: git issue 205978b (registry tip: ccc07de10 Konstantin Fedotov Close issue)

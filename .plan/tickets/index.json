@@ -5645,6 +5645,20 @@
     "source": ".plan/tickets/BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te.md",
     "status": "done"
   },
+  "BUG-HARNESS-F1-NON-ADMIN-PROVIDERS-CALLERS-SWALLOW-403": {
+    "hash": "aac1498",
+    "git_issue": "aac1498",
+    "extid": "BUG-HARNESS-F1-NON-ADMIN-PROVIDERS-CALLERS-SWALLOW-403",
+    "type": "BUG",
+    "title": "harness-f1-non-admin-providers-callers-swallow-403",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-harness-f1-non-admin-providers-callers-swallow-403.md",
+    "status": "open"
+  },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
     "epic": "epic-nsfw-moderation-priority",
     "extid": "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B",
@@ -20574,7 +20588,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-byok-image-video-credential-coverage.md",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-BYOK-LOCAL-MODELS": {
     "epic": "epic-byok-local-models",
@@ -31989,7 +32003,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-byok-agent-subject-binding.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-BYOK-API-KEYS": {
     "epic": "epic-byok-api-keys",
@@ -44296,6 +44310,20 @@
     "title": "Harmonize Quest Type Taxonomy",
     "type": "TASK"
   },
+  "TASK-HARNESS-APPROVAL-FLOW-OPERABILITY-ALPINE-TUI-APPROVE-DENY-CA": {
+    "hash": "3520ca1",
+    "git_issue": "3520ca1",
+    "extid": "TASK-HARNESS-APPROVAL-FLOW-OPERABILITY-ALPINE-TUI-APPROVE-DENY-CA",
+    "type": "TASK",
+    "title": "harness-approval-flow-operability-alpine-tui-approve-deny-callers",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-approval-flow-operability-alpine-tui-approve-deny-ca.md",
+    "status": "open"
+  },
   "TASK-HARNESS-ASSISTANT-PERSONALITIES": {
     "hash": "949aa8a",
     "extid": "TASK-HARNESS-ASSISTANT-PERSONALITIES",
@@ -44664,6 +44692,20 @@
     "status": "Not Started",
     "git_issue": "0a63dda"
   },
+  "TASK-HARNESS-MODEL-DISCOVERY-UI-WIRING-FRONTEND-MODELS-CALLER-COS": {
+    "hash": "3776ca2",
+    "git_issue": "3776ca2",
+    "extid": "TASK-HARNESS-MODEL-DISCOVERY-UI-WIRING-FRONTEND-MODELS-CALLER-COS",
+    "type": "TASK",
+    "title": "harness-model-discovery-ui-wiring-frontend-models-caller-cost-aware-selector",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-model-discovery-ui-wiring-frontend-models-caller-cos.md",
+    "status": "open"
+  },
   "TASK-HARNESS-MODEL-ROUTING": {
     "hash": "ca8751c",
     "extid": "TASK-HARNESS-MODEL-ROUTING",
@@ -44716,6 +44758,20 @@
     "status": "Not Started",
     "git_issue": "49ae132"
   },
+  "TASK-HARNESS-PRODUCTION-DISPATCH-PATH-RUNTURN-CALLER-TASKTYPE-MEM": {
+    "hash": "657c28d",
+    "git_issue": "657c28d",
+    "extid": "TASK-HARNESS-PRODUCTION-DISPATCH-PATH-RUNTURN-CALLER-TASKTYPE-MEM",
+    "type": "TASK",
+    "title": "harness-production-dispatch-path-runturn-caller-tasktype-member",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-production-dispatch-path-runturn-caller-tasktype-mem.md",
+    "status": "open"
+  },
   "TASK-HARNESS-PROGRAMMATIC-API": {
     "hash": "a893dc4",
     "extid": "TASK-HARNESS-PROGRAMMATIC-API",
@@ -44754,6 +44810,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-harness-reusable-chat-route-files-from-the-generate-route-pa.md",
     "status": "Not Started"
+  },
+  "TASK-HARNESS-SANDBOX-ROOT-KNOB-CONFIGURABLE-CWD": {
+    "hash": "c895790",
+    "git_issue": "c895790",
+    "extid": "TASK-HARNESS-SANDBOX-ROOT-KNOB-CONFIGURABLE-CWD",
+    "type": "TASK",
+    "title": "harness-sandbox-root-knob-configurable-cwd",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-sandbox-root-knob-configurable-cwd.md",
+    "status": "open"
   },
   "TASK-HARNESS-SCOPED-FALLBACK-CHAIN": {
     "hash": "bfad1d6",
@@ -44863,6 +44933,20 @@
     "status": "Not Started",
     "git_issue": "9154b20"
   },
+  "TASK-HARNESS-TELEMETRY-METRICS-HEALTH-SIGNAL-USAGE-LEDGER-ENDPOIN": {
+    "hash": "635eef8",
+    "git_issue": "635eef8",
+    "extid": "TASK-HARNESS-TELEMETRY-METRICS-HEALTH-SIGNAL-USAGE-LEDGER-ENDPOIN",
+    "type": "TASK",
+    "title": "harness-telemetry-metrics-health-signal-usage-ledger-endpoint",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-telemetry-metrics-health-signal-usage-ledger-endpoin.md",
+    "status": "open"
+  },
   "TASK-HARNESS-TOOL-SANDBOX": {
     "hash": "13bfecb",
     "extid": "TASK-HARNESS-TOOL-SANDBOX",
@@ -44947,6 +45031,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-harness-tos-acknowledgement-frontend-confirmation.md",
     "status": "done"
+  },
+  "TASK-HARNESS-WIZARD-LANDING-TRACKER-PROVIDER-BACKEND-FRONTEND-DEL": {
+    "hash": "e854961",
+    "git_issue": "e854961",
+    "extid": "TASK-HARNESS-WIZARD-LANDING-TRACKER-PROVIDER-BACKEND-FRONTEND-DEL",
+    "type": "TASK",
+    "title": "harness-wizard-landing-tracker-provider-backend-frontend-delete-state-route",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-wizard-landing-tracker-provider-backend-frontend-del.md",
+    "status": "open"
   },
   "TASK-HARNESS-WORK-TOPICS": {
     "hash": "4910513",
@@ -46691,7 +46789,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-item-config-templates.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "items",
       "config",
@@ -49867,7 +49965,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-message-persistence-mapping.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-MESSAGE-POLLS-VOTES": {
     "epic": "epic-chat-rich-engagement",
@@ -52518,7 +52616,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-optional-dep-packaging.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-OPTIQUE-CLI-TOOLING-INTEGRATION": {
     "epic": "epic-cli-tooling-optique",
@@ -59305,7 +59403,7 @@
     "epic": "epic-first-run-auto-setup",
     "tags": [],
     "source": ".plan/tickets/TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-SFX-TRIGGER-DETECTION-AND-LIBRARY-AMBIENT-MUSIC-SFX-EPIC-PHA": {
     "hash": "6477a8f",
@@ -59645,7 +59743,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-skill-check-slash-commands.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "Skill-check slash commands (/pick_pocket, /disarm, /climb, /swim, /trap_check)",
     "type": "TASK"
