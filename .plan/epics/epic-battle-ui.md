@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Partially shipped — chat battle panel with roster HP, keyboard nav, and a full action bar (attack/heal/end, item-use menu, social verbs incl. negotiate) is live, plus a reusable health-bar widget, an acting-first turn-order strip (verified 2026-10-23), and — delivered in the payload, not faked client-side — status-effect badges and a scrollable battle log (verified 2026-11-01: `serializeBattle` now carries `Combatant.conditions` and the battle log). The skill-check/dice-roll slice landed (verified 2026-11-05, reconciled 2026-11-06 as `a07f3ce89` + `181971f9a`, ticket now Done): `serializeBattle` projects the persisted attack roll into the panel payload and the battle log renders a roll chip (dice face, natural/modifier/total/DC, success/failure outcome, critical indicator) with a CSS dice tumble and a small-width rule; the outcome word and the critical-fail marker come from the backend's own `hit` / `criticalMiss` verdict (delivered in the payload), not from a client-side total-vs-DC guess; sound effects stay out (no audio asset pipeline in the repo, optional AC). Still open for missing payload data: target selection (no area/self targets delivered), action cost and cooldown display (no per-action cost/cooldown delivered), and social skill-check rolls (`src/rpg/service/battles/social.ts` persists only the narration, so no roll reaches the client). A flee action stays unwired by design: no backend verb or route exists for it.
+**Status Note:** Partially shipped — chat battle panel with roster HP, keyboard nav, and a full action bar (attack/heal/end, item-use menu, social verbs incl. negotiate) is live, plus a reusable health-bar widget, an acting-first turn-order strip (verified 2026-10-23), and — delivered in the payload, not faked client-side — status-effect badges and a scrollable battle log (verified 2026-11-01: `serializeBattle` now carries `Combatant.conditions` and the battle log) plus environmental-effect badges in the panel header (verified 2026-11-02: `serializeBattle` carries `environmentalEffects`). The skill-check/dice-roll slice landed (verified 2026-11-05, reconciled 2026-11-06 as `a07f3ce89` + `181971f9a`, ticket now Done): `serializeBattle` projects the persisted attack roll into the panel payload and the battle log renders a roll chip (dice face, natural/modifier/total/DC, success/failure outcome, critical indicator) with a CSS dice tumble and a small-width rule; the outcome word and the critical-fail marker come from the backend's own `hit` / `criticalMiss` verdict (delivered in the payload), not from a client-side total-vs-DC guess; sound effects stay out (no audio asset pipeline in the repo, optional AC). The acceptance criteria were reconciled against the shipped code on 2026-11-06: action selection, the skill-check UI, environmental effects, mobile responsiveness and accessibility are ticked with file:line citations. Two criteria stay open for missing payload data — target selection (single-target picking does ship through the roster, but the payload carries no area/self targets and the dedicated selector `src/frontend/battle/target-selection.ts` is unwired) and action cost/cooldown display (the payload carries no per-action cost or cooldown — only the combatant action economy — and `src/frontend/battle/action-cost.ts` is unwired). Social skill-check rolls also stay open (`src/rpg/service/battles/social.ts` persists only the narration, so no roll reaches the client). A flee action stays unwired by design: no backend verb or route exists for it.
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
@@ -120,15 +120,15 @@ The earlier gap here — backend social and combat item-use routes unreachable f
 - [x] Battle state displays all participants with health bars (HP only — mana/stamina have no data source yet; `src/frontend/battle/health-bar.ts`, verified 2026-10-23)
 - [x] Status effects shown as badges with tooltips (`src/frontend/battle/status-effects.ts`, rendered from the `serializeBattle`-delivered conditions; verified 2026-11-01)
 - [x] Turn order visualization shows current turn and queue (`src/frontend/battle/turn-order.ts`, verified 2026-10-23)
-- [ ] Action selection interface with all action types
-- [ ] Target selection for single/area/self actions
-- [ ] Action cost and cooldown display
+- [x] Action selection interface with all action types (`renderActions` in `src/frontend/battle/render.ts:138` builds the toolbar; the action set is `ACTIONS` in `src/frontend/battle/commands.ts:109` — attack/heal/end — plus the item-use menu and `SOCIAL_ACTIONS` in `src/frontend/battle/commands.ts:116` — intimidate/taunt/negotiate/surrender; each dispatches through `battleCommandFor` in `src/frontend/battle/commands.ts:204`; verified 2026-11-06 — flee/defend/spell/ability have no backend verb or route, so no button exists for them)
+- [ ] Target selection for single/area/self actions (not shipped — the payload carries no area/self targets: `serializeBattle` delivers only the roster, items, log and environmental effects (`src/rpg/service/battles-actions.test.ts:270`); the dedicated selector `src/frontend/battle/target-selection.ts:14` is unwired. Single-target picking does ship through the roster tiles in `src/frontend/battle/render.ts:79`)
+- [ ] Action cost and cooldown display (not shipped — the payload carries no per-action cost or cooldown, only the combatant action economy (`src/rpg/service/battles-actions.test.ts:270`); the cost/cooldown widget `src/frontend/battle/action-cost.ts:13` is unwired)
 - [x] Battle log with scrollable history (`src/frontend/battle/battle-log.ts`, rendered from the `serializeBattle`-delivered log; keyboard-focusable, auto-scrolls to the latest entry; verified 2026-11-01)
 - [x] Skill check UI with dice roll animation (attack rolls: roll chip + CSS dice tumble in `src/frontend/battle/skill-check-display.ts` / `src/frontend/battle/skill-check.ts`, rendered on the log line in `src/frontend/battle/battle-log.ts` from the `serializeBattle`-delivered roll; verified 2026-11-05 — social skill-check rolls still open, no roll reaches the client)
-- [ ] Environmental effects display
-- [ ] Mobile responsive (touch-friendly action buttons)
+- [x] Environmental effects display (`renderEnvironmentalEffects` in `src/frontend/battle/environmental-effects.ts:23` builds the badge row, appended to the panel header in `src/frontend/battle/render.ts:50`; the effects arrive in the payload via `serializeBattle` in `src/assistant/commands/battle-utils.ts:296`, asserted in `src/rpg/service/battles-actions.test.ts:271`; verified 2026-11-06)
+- [x] Mobile responsive (touch-friendly action buttons) (`@media (width <= 640px)` block in `src/public/css/vn.css:1270`: the action bar wraps (`:1275`), the buttons keep a 44px touch target (`:1279`), the roster stacks (`:1285`) and the roll chip shrinks (`:1288`); verified 2026-11-06)
 - [x] Keyboard shortcuts for common actions (`src/frontend/battle/panel.ts` arrow/Enter/Space focus cycle)
-- [ ] Accessibility (ARIA labels, screen reader support)
+- [x] Accessibility (ARIA labels, screen reader support) (the panel keeps a persistent polite live announcer (`src/frontend/battle/panel-live.ts:36`), the battle log is a labelled `role="log"` region (`src/frontend/battle/battle-log.ts:107`), the badge rows are `role="list"`/`listitem` (`src/frontend/battle/status-effects.ts:24`, `src/frontend/battle/environmental-effects.ts:30`), the HP bar is a `progressbar` with value attributes (`src/frontend/battle/health-bar.ts:41`), and the action bar is a labelled `role="toolbar"` (`src/frontend/battle/render.ts:146`); verified 2026-11-06)
 
 ## Implementation Phases
 
@@ -193,13 +193,20 @@ Implemented (verified 2026-11-01):
 - `src/frontend/battle/battle-log.ts` — battle log panel (panel integration in `panel.ts`)
 - `src/assistant/commands/battle-utils.ts` — `serializeBattle` now delivers conditions + log
 
+Implemented (verified 2026-11-02):
+- `src/frontend/battle/environmental-effects.ts` — environmental-effect badge row (header integration in `render.ts`)
+
 Implemented (verified 2026-11-05):
 - `src/frontend/battle/skill-check-display.ts` — roll chip (dice face, roll math, outcome, critical marker)
 - `src/frontend/battle/skill-check.ts` — dice roll animation (`animateDiceRoll`)
 - `src/frontend/battle/battle-log.ts` — roll chip on the log line (tumble guard scoped per battle; `renderBattleLog` requires the battle id)
 - `src/assistant/commands/battle-utils.ts` — `serializeBattle` also delivers the projected attack roll plus the backend's `hit` / `criticalMiss` verdict
 
-Planned (do not exist yet):
+Present but unwired (not part of the shipped UI; the payload carries no data for them — verified 2026-11-06):
+- `src/frontend/battle/target-selection.ts` — area/self target selector, no importer outside its own test
+- `src/frontend/battle/action-cost.ts` — per-action cost/cooldown widget, no importer outside its own test
+
+Planned (do not exist yet; not part of the skill-check slice — other lanes may own them):
 - `src/frontend/battle/battle-screen.ts` — main battle page
 - `src/frontend/battle/battle-state.ts` — state display component
 - `src/frontend/battle/action-selector.ts` — action selection UI
