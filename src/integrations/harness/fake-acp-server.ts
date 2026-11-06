@@ -69,6 +69,11 @@ const runPromptFlow = async (promptId) => {
     await askClient("fs/read_text_file", { sessionId: "fake-session-1", path: process.env.FAKE_READ_FILE });
   }
   if (cancelPromise) { await cancelPromise; cancelWaiter = null; }
+  if (process.env.FAKE_EVENTS) {
+    for (const update of JSON.parse(process.env.FAKE_EVENTS)) {
+      send({ jsonrpc: "2.0", method: "session/update", params: { sessionId: "fake-session-1", update } });
+    }
+  }
   send({ jsonrpc: "2.0", method: "session/update", params: {
     sessionId: "fake-session-1",
     update: { sessionUpdate: "agent_message_chunk", content: { type: "text", text: process.env.FAKE_REPLY ?? "ok" } },
@@ -181,6 +186,8 @@ export interface FakeAcpEnv {
   FAKE_READ_FILE?: string;
   /** When set, the session/prompt reply waits for `session/cancel`; stopReason then defaults to "cancelled". */
   FAKE_AWAIT_CANCEL?: string;
+  /** JSON array of ACP `session/update` payloads emitted before the reply chunk. */
+  FAKE_EVENTS?: string;
 }
 
 /** One observed client reaction, as logged by the fixture child. */

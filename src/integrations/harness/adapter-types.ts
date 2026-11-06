@@ -18,6 +18,8 @@
  * reports.
  */
 
+import { type HarnessTurnTranscript, } from "./turn-transcript";
+
 /** Quota report status, as published by harness `_omp/usage`-style reports. */
 export type HarnessUsageStatus = "ok" | "warning" | "exhausted" | "unknown";
 
@@ -48,6 +50,8 @@ export interface HarnessTurnResult {
   usage: HarnessTurnUsage | null;
   /** ACP session id the turn ran in, when the harness reported one. */
   acpSessionId: string | null;
+  /** Everything the turn streamed: text, reasoning, tool calls, tool results. */
+  transcript: HarnessTurnTranscript;
 }
 
 /** Typed failure kinds a harness adapter reports. `@throws` never — errors are values. */

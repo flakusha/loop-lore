@@ -12,6 +12,7 @@
  * adapter-types.ts.
  */
 
+import { narrowSessionUpdate, } from "./acp-session-update";
 import {
   type HarnessAcpAdapter,
   HarnessAcpError,
@@ -22,6 +23,7 @@ import {
   type PermissionOutcome,
 } from "./adapter-types";
 import { JsonRpcProcess, JsonRpcRequestError, } from "./jsonrpc-process";
+import { TurnTranscriptCollector, } from "./turn-transcript";
 
 /** ACP protocol version the adapter speaks. */
 const PROTOCOL_VERSION = 1;
@@ -52,11 +54,6 @@ interface RawUsage {
   totalTokens?: unknown;
 }
 
-/** A session/update notification payload and its text content block. */
-interface SessionUpdateParams {
-  update?: { sessionUpdate?: unknown; content?: { type: string; text?: string } | null };
-}
-
 /**
  * One live ACP connection to a harness profile. All methods may reject with
  * {@link HarnessAcpError}; the caller records the failure with its breaker.
@@ -70,8 +67,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
 
   private session: { sessionId: string; options: unknown } | null = null;
   private readonly opts: GenericAcpOptions;
-  /** agent_message_chunk text accumulated during the in-flight prompt. */
-  private chunks: string[] = [];
+  /** Everything the in-flight prompt streamed (text, reasoning, tool calls). */
+  private transcript = new TurnTranscriptCollector();
   /** Open server-originated permission request, when one awaits an outcome. */
   private permission: {
     pending: PendingPermission;
@@ -179,7 +176,7 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     this.promptDispatched = dispatched.promise;
     try {
       const sessionId = (await this.ensureSession()).sessionId;
-      this.chunks = [];
+      this.transcript = new TurnTranscriptCollector();
       const requestPromise = this.rpc!.request("session/prompt", {
         sessionId,
         prompt: [{ type: "text", text: prompt, },],
@@ -188,11 +185,13 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       dispatched.resolve();
       const response = await requestPromise as { stopReason?: unknown; usage?: RawUsage | null };
 
+      const transcript = this.transcript.snapshot();
       return {
-        text: this.chunks.join("",),
+        text: transcript.text,
         stopReason: typeof response.stopReason === "string" ? response.stopReason : "unknown",
         usage: this.toUsage(response.usage,),
         acpSessionId: sessionId,
+        transcript,
       };
     } catch (error) {
       dispatched.resolve();
@@ -287,12 +286,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       onRequest: (method, params,) => this.handleServerRequest(method, params,),
       onNotification: (method, params,) => {
         if (method !== "session/update") { return; }
-        const p = params as SessionUpdateParams;
-        const update = p?.update;
-        if (update?.sessionUpdate !== "agent_message_chunk") { return; }
-        const content = update.content;
-        if (content?.type === "text" && typeof content.text === "string") {
-          this.chunks.push(content.text,);
+        for (const event of narrowSessionUpdate(params,)) {
+          this.transcript.append(event,);
         }
       },
     },);
