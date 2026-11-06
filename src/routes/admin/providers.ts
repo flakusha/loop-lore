@@ -26,7 +26,7 @@ import {
 export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-providers", },)
-      // ── Public providers list (no auth) ───────────────────
+      // ── Provider list (admin-gated) ────────────────────────
       .get(`${prefix}/providers`, (ctx: any,) => {
         const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
@@ -47,7 +47,7 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
         },
         detail: {
           summary: "List active providers",
-          description: "Returns available providers for settings dropdown. No authentication required.",
+          description: "Returns available providers for the settings dropdown. Requires the admin.system permission.",
           tags: ["Providers",],
         },
       },)

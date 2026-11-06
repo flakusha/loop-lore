@@ -90,6 +90,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 - **The Harness tab's approve/deny buttons never reached the server (TASK-harness-approval-flow-operability)** — `apiFetch` defaults to GET, and the panel's decision call passed no method, so every approve/deny went out as `GET /api/v1/harness/permissions/:id/approve` against a POST-only route: the ask was never decided and the operator only saw a failure. The decision call now sends POST explicitly. The same panel reported a refused decision through the field it used for a failed READ, and the table's visibility keyed on that field — one refused decision replaced the parked asks with an error block, so the operator lost the queue exactly when they had to retry it; the two are separate now (`harnessPermissionsError` for a failed read, `harnessDecisionError` for a failed decision) and the failure is reported inline above the still-listed asks. Every harness panel also classified failures wrongly: `feFetch` throws a non-2xx instead of returning the Response, so the response guard never ran and a 403 (not an admin) read as "Could not reach the harness API"; the shared `harnessThrownMessage` now reads the status off the thrown error, so a 403 says so, an HTTP failure names the endpoint, and only a request that never got an answer says the server is down. The table's raw-input preview also caps and flattens a string payload, not just an object one — a harness that sends bare-string params stretched the row past the one-line preview. The pi-tui overlay's `a`/`d` keys ignore a second decision while one is in flight: the queue drops an ask once it is decided, so the second POST raced it into a 404.
+- **Non-admin provider-list callers stopped swallowing the 403 (BUG-harness-f1-non-admin-providers-callers-swallow-403)** — `GET /api/v1/providers` is admin-gated (anonymous requests get a 401, a signed-in non-admin a 403), but both frontend callers dropped the failed response and left an empty list with no signal: the personas page's model suggestions (`src/frontend/alpine/personas.ts`) and the settings provider dropdown (`src/frontend/alpine/settings/general.ts`). Both now go through one helper (`src/frontend/alpine/provider-list.ts`) that classifies the outcome — providers, admin-only refusal, or failed — and the views render a notice (`common.providerListAdminOnly` / `common.providerListUnavailable`) instead of a silently empty list. The route's stale "public providers list (no auth)" comment and its "No authentication required" description were corrected to match the admin gate that actually runs.
 - **Help-overlay focus trap hardened (WIRE-frontend-keyboard-help-overlay)** — the keyboard shortcut help overlay's trap in `src/frontend/alpine/keynav-help.ts` now closes the overlay on Escape through the trap itself instead of relying only on the Alpine `x-on:keydown.escape.window` attribute, and the initial focus falls back to the overlay container (given `tabindex="-1"`) when the overlay has no focusable control instead of leaving the focus on `<body>`. Closing restores the focus to the element focused before the overlay opened and, when that element is gone (an htmx swap removed it) or was the document body, falls back to the help trigger and then to the app root, so a keyboard user can neither Tab out of the overlay nor lose their place. The trap stays plain DOM code: `@alpinejs/focus` is not a dependency of this repo, so the `x-trap` of the original design is not used.
 - **Password hashing pins its algorithm** — `Bun.password.hash` was called with no algorithm argument in `src/db/seed.ts`, `src/routes/auth/register.ts` and `src/seeding/users.ts`, so the algorithm of every stored hash depended on Bun's runtime default. The new `src/auth/password.ts` helper pins argon2id (memory cost 65536, time cost 2) for hashing, and the login route verifies through the same helper. Those are exactly the parameters Bun's default already used, so hashes written before the pin keep verifying and newly written hashes are byte-for-byte unchanged; a hash written with another algorithm (bcrypt rows an older install carries) still verifies through Bun's inference — the pin applies to hashing, not to verifying what already exists.
 
@@ -163,7 +164,6 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **The archive purge only surveyed two of the foreign keys that point at `messages.id`** — the purge (`src/routes/messages/archiving.ts`) deleted archived messages and then checked which of them were still referenced, but the check only knew `messages.parent_id` and `chat_branches.parent_message_id`. Every other foreign key that targets `messages.id` (`generation_attempts.parent_message_id`, `whitenotes.message_id`, `game_states.message_id`, `story_triggers.trigger_message_id`, `conversation_merge.base_message_id`) uses `NO ACTION`, so a message referenced from one of them aborted the whole purge with a raw SQLite 500. The survey is now PRAGMA-driven: `src/routes/messages/message-fk-survey.ts` reads `PRAGMA foreign_key_list` for every table, collects the columns that target `messages.id` and block the delete (`CASCADE` and `SET NULL` columns let the delete through), and keeps any message a surviving row still references - the same structural treatment `chat_branches` already got. `src/routes/messages/archiving.coverage.test.ts` covers the purge with a `generation_attempts` and a `whitenotes` reference.
 
-
 ### Removed
 
 - **Dead `src/actors/` layer** — deleted the directory: 11 files with zero importers, surfaced by the widened knip scan, including a third parallel actor-items implementation (`src/actors/actor-items.ts`) alongside `src/services/actor-items.ts` and `src/services/actor-items/`.
@@ -202,12 +202,14 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
+
 ### Changed
 
 - Lint debt resolved across `src` (156 files), eslint config + example configs shipped.
 - In-range dependency bumps (kysely, smol-toml, js-yaml, alpine, eslint, unicorn, typescript-eslint, etc.).
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 
 ### Fixed
 
@@ -222,6 +224,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 ### Removed
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 
 ### Security
 
@@ -300,6 +303,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 - **The archive purge only surveyed two of the foreign keys that point at `messages.id`** — the purge (`src/routes/messages/archiving.ts`) deleted archived messages and then checked which of them were still referenced, but the check only knew `messages.parent_id` and `chat_branches.parent_message_id`. Every other foreign key that targets `messages.id` (`generation_attempts.parent_message_id`, `whitenotes.message_id`, `game_states.message_id`, `story_triggers.trigger_message_id`, `conversation_merge.base_message_id`) uses `NO ACTION`, so a message referenced from one of them aborted the whole purge with a raw SQLite 500. The survey is now PRAGMA-driven: `src/routes/messages/message-fk-survey.ts` reads `PRAGMA foreign_key_list` for every table, collects the columns that target `messages.id` and block the delete (`CASCADE` and `SET NULL` columns let the delete through), and keeps any message a surviving row still references - the same structural treatment `chat_branches` already got. `src/routes/messages/archiving.coverage.test.ts` covers the purge with a `generation_attempts` and a `whitenotes` reference.
 
+
 ### Fixed
 
 - **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
@@ -308,6 +312,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 
 ### Fixed
 
@@ -329,4 +334,3 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Coverage run executes the bundled plugin engines' own tests** — the plugin engines under `plugins/` ship their own `*.test.ts`, but the coverage run's test set was `tests/e2e/ src/`, so those files never ran and the `plugins` module was measured at a fraction of what the tests actually cover. `test:coverage` now includes `plugins/`, and the parallel runner's coverage gate builds the same test set (it walks `plugins/` alongside `src/`, so the gate and the manual script agree). The plugin engines are in-process unit tests, so they belong inside the coverage invocation rather than in the separate scripts pass.
 - **Image-edit input images reach ComfyUI as uploaded bytes** — the ComfyUI image-edit provider now uploads every `image`-typed parameter (`input_image`, `mask_image`, `control_image`) before the workflow is built and substitutes the name ComfyUI stored the bytes under, so a `LoadImage` node no longer names a file the server never uploaded. The parameter carries the ASSET ID of an image the caller owns: the provider checks the owner, decrypts with the chat key when the asset is encrypted, and reads the bytes through the asset row — a path on the server is never opened. The run body is validated against one shared TypeBox schema (`src/validation/schemas/image-edit.ts`): the route declares it as its `body:` — so the served OpenAPI document carries the contract — and `handleRun` applies the same validator, which covers the chain-run executor that calls the handler directly.
   // hint: Structural change (rename/retype). Check callers of this entity.
-

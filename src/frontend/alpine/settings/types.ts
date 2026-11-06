@@ -54,6 +54,8 @@ export interface SettingsState {
   detailLevel: string;
   provider: string;
   providerList: { name: string; label: string; status: string }[];
+  /** Why the provider list is unavailable; empty when it loaded. */
+  providerListNotice: string;
   apiKey: string;
   apiEndpoint: string;
   model: string;
