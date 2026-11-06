@@ -14,7 +14,7 @@ import { randomUUID, } from "node:crypto";
 import { MessageStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { type HarnessTurnResult, } from "./adapter-types";
-import { persistHarnessTurn, } from "./turn-persistence";
+import { type PersistedHarnessTurn, persistHarnessTurn, } from "./turn-persistence";
 import { harnessTurnEndFrame, harnessTurnFrames, pushHarnessFrame, } from "./turn-sse";
 
 /** Options for one turn sink. */
@@ -37,7 +37,7 @@ export interface HarnessTurnSink {
    * @param turnKey - idempotency key (the bridge's per-send key); a replay with
    * the same key writes nothing. Absent → a fresh key, so every call writes.
    */
-  onTurnResolved(turn: HarnessTurnResult, turnKey?: string,): Promise<void>;
+  onTurnResolved(turn: HarnessTurnResult, turnKey?: string,): Promise<PersistedHarnessTurn>;
 }
 
 /** The row status a turn ends with: a cancelled turn never completed. */
@@ -54,7 +54,7 @@ export function createHarnessTurnSink(options: CreateHarnessTurnSinkOptions,): H
   const { database, chatId, actorId, profile, } = options;
 
   return {
-    async onTurnResolved(turn: HarnessTurnResult, turnKey?: string,): Promise<void> {
+    async onTurnResolved(turn: HarnessTurnResult, turnKey?: string,): Promise<PersistedHarnessTurn> {
       const status = turnStatus(turn.stopReason,);
       const persisted = await persistHarnessTurn({
         database,
@@ -79,6 +79,8 @@ export function createHarnessTurnSink(options: CreateHarnessTurnSinkOptions,): H
           status,
         },),
       );
+
+      return persisted;
     },
   };
 }

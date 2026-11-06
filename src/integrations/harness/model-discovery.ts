@@ -304,10 +304,9 @@ async function listedOrStaticEntries(options: {
 
 /**
  * Project discovered entries onto the shared router's candidate shape, so a
- * future harness dispatch site can feed them to `ModelRouter.route` with an
- * existing `TaskSignal` — the epic's "map to existing" routing decision: no
- * `harness` TaskType until a dispatch site exists, but no shape churn when
- * one does. Input order is preserved (the router treats it as preference).
+ * harness dispatch site can feed them to `ModelRouter.route` with an existing
+ * `TaskSignal`. Input order is preserved (the router treats it as
+ * preference).
  * @param entries - discovered (already enriched) entries
  * @returns `RoutableModel` candidates.
  */

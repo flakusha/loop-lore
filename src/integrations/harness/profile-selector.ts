@@ -70,6 +70,13 @@ export interface TurnRequirement {
   needsCapabilities: HarnessCapability[];
   /** Explicit tier preference (overrides the taskType default). */
   preferredTier?: HarnessTierId;
+  /**
+   * Restrict admission to this one profile. The isolation gate allows a
+   * dispatch only against an admin-configured profile, so a gated caller pins
+   * the profile it was cleared for instead of letting the failover walk run
+   * the turn on a different one.
+   */
+  profile?: string;
 }
 
 /** One selectable (profile, tier) candidate. */
@@ -153,7 +160,7 @@ export class ProfileSelector {
 
     const candidates: TurnCandidate[] = [];
     const skips: DispatchSkip[] = [];
-    for (const name of this.registry.names()) {
+    for (const name of this.pinnedTo(requirement,)) {
       const probe = await this.registry.ensureProbed(name,);
       if (probe.state !== "healthy") { continue; }
       const cfg = this.registry.config(name,);
@@ -183,6 +190,19 @@ export class ProfileSelector {
 
     candidates.sort((a, b,) => (this.costs.get(a.model,) ?? Infinity) - (this.costs.get(b.model,) ?? Infinity));
     return { candidates, skips, };
+  }
+
+  /**
+   * The profiles this requirement may run on: the pinned one (the isolation
+   * gate's allowlist) or every configured profile.
+   * @param requirement - what the turn needs
+   * @returns the profile names to consider.
+   */
+  private pinnedTo(requirement: TurnRequirement,): string[] {
+    const names = this.registry.names();
+    return requirement.profile === undefined
+      ? names
+      : names.filter((name,) => name === requirement.profile);
   }
 
   /**

@@ -59,6 +59,13 @@ export interface HarnessRuntime {
   readonly breaker: ProfileBreaker;
   /** Permission asks awaiting a human decision (the approval-flow surface). */
   readonly permissions: PermissionQueue;
+  /**
+   * The composed adapter factory — the queue-wrapped one, so a connection it
+   * opens still reports its permission asks into {@link permissions}. A caller
+   * that runs a turn outside the registry's own connections passes this, never
+   * a bare factory (that would route asks around the queue).
+   */
+  readonly factory: HarnessAdapterFactory;
 }
 
 /** Options for createHarnessRuntime. */
@@ -145,7 +152,7 @@ export function createHarnessRuntime(options: CreateHarnessRuntimeOptions,): Har
   const ledger = new UsageLedger();
   const breaker = new ProfileBreaker((profile,) => composed.healthThresholds(profile,));
   const selector = new ProfileSelector({ registry: composed, ledger, breaker, },);
-  return { acp: options.acp, registry: composed, selector, ledger, breaker, permissions, };
+  return { acp: options.acp, registry: composed, selector, ledger, breaker, permissions, factory: queueFactory, };
 }
 
 /** The boot-composed runtime; null while disabled/unconfigured or before boot. */
