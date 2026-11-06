@@ -2123,6 +2123,22 @@
         "codex": "Codex는 ChatGPT 플랜 구독으로 로그인합니다 — RPG 등 채트 외 기능을 위해 loop-lore 공급자로 사용하면 OpenAI 약관에 어긋날 수 있으며 명시적 확인이 필요합니다.",
         "claude-code": "Claude Code는 Claude 플랜 구독으로 로그인합니다 — RPG 등 채트 외 기능을 위해 loop-lore 공급자로 사용하면 Anthropic 약관에 어긋날 수 있으며 명시적 확인이 필요합니다."
       }
+    },
+    "permissions": {
+      "title": "대기 중인 권한 요청",
+      "empty": "결정을 기다리는 권한 요청이 없습니다.",
+      "loadFailed": "대기 중인 권한 요청을 불러오지 못했습니다.",
+      "decideFailed": "결정을 기록하지 못했습니다.",
+      "approve": "승인",
+      "deny": "거부",
+      "column": {
+        "profile": "프로필",
+        "tool": "도구",
+        "cwd": "작업 디렉터리",
+        "input": "요청",
+        "arrived": "도착 시각",
+        "decision": "결정"
+      }
     }
   },
   "branches": {

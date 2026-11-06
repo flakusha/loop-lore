@@ -2315,6 +2315,22 @@
       "confirm": "I acknowledge — enable",
       "decline": "Cancel"
     },
+    "permissions": {
+      "title": "Pending permission requests",
+      "empty": "No permission request is waiting for a decision.",
+      "loadFailed": "Could not load pending permission requests.",
+      "decideFailed": "Could not record the decision.",
+      "approve": "Approve",
+      "deny": "Deny",
+      "column": {
+        "profile": "Profile",
+        "tool": "Tool",
+        "cwd": "Working directory",
+        "input": "Request",
+        "arrived": "Arrived",
+        "decision": "Decision"
+      }
+    },
     "usage": {
       "subscription-backed": "Subscription-backed",
       "local": "Local",

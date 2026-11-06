@@ -2123,6 +2123,22 @@
         "codex": "CodexはChatGPTプランのサブスクリプションでサインインします — RPGやチャット以外の機能のためにloop-loreのプロバイダーとして利用するとOpenAIの規約に抵触する可能性があり、明示的な確認が必要です。",
         "claude-code": "Claude CodeはClaudeプランのサブスクリプションでサインインします — RPGやチャット以外の機能のためにloop-loreのプロバイダーとして利用するとAnthropicの規約に抵触する可能性があり、明示的な確認が必要です。"
       }
+    },
+    "permissions": {
+      "title": "保留中の権限リクエスト",
+      "empty": "判断待ちの権限リクエストはありません。",
+      "loadFailed": "保留中の権限リクエストを読み込めませんでした。",
+      "decideFailed": "判断を記録できませんでした。",
+      "approve": "承認",
+      "deny": "拒否",
+      "column": {
+        "profile": "プロファイル",
+        "tool": "ツール",
+        "cwd": "作業ディレクトリ",
+        "input": "リクエスト",
+        "arrived": "到達時刻",
+        "decision": "判断"
+      }
     }
   },
   "branches": {

@@ -2123,6 +2123,22 @@
         "codex": "O Codex entra com uma assinatura de plano ChatGPT — usá-lo como provedor do loop-lore para RPG ou outras funções fora do chat pode conflitar com os termos da OpenAI e exige confirmação explícita.",
         "claude-code": "O Claude Code entra com uma assinatura de plano Claude — usá-lo como provedor do loop-lore para RPG ou outras funções fora do chat pode conflitar com os termos da Anthropic e exige confirmação explícita."
       }
+    },
+    "permissions": {
+      "title": "Pedidos de permissão pendentes",
+      "empty": "Nenhum pedido de permissão aguarda uma decisão.",
+      "loadFailed": "Não foi possível carregar os pedidos de permissão pendentes.",
+      "decideFailed": "Não foi possível registrar a decisão.",
+      "approve": "Aprovar",
+      "deny": "Recusar",
+      "column": {
+        "profile": "Perfil",
+        "tool": "Ferramenta",
+        "cwd": "Diretório de trabalho",
+        "input": "Pedido",
+        "arrived": "Chegou",
+        "decision": "Decisão"
+      }
     }
   },
   "branches": {

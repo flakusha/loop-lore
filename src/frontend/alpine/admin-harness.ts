@@ -25,6 +25,7 @@ import {
   sandboxEditorHref,
   type SandboxFileRow,
 } from "./admin-harness-files";
+import { harnessPermissions, } from "./admin-harness-permissions";
 import {
   buildGapRows,
   buildModelRows,
@@ -83,6 +84,9 @@ export const adminHarness = {
   harnessFilesPath: "",
   harnessFileRows: [] as SandboxFileRow[],
 
+  // Pending permission asks (state owned by ./admin-harness-permissions).
+  ...harnessPermissions,
+
   // Settings/profiles slice (state owned by ./admin-harness-settings).
   harnessSettingsEnabled: false,
   harnessProfileRows: [] as HarnessProfileRow[],
@@ -127,6 +131,7 @@ export const adminHarness = {
         apiFetch(`${RUNS_URL}${query}`, JSON_HEADERS,),
         apiFetch(STATS_URL, JSON_HEADERS,),
         loadHarnessSettings(this,),
+        this.refreshHarnessPermissions(),
       ],);
 
       if (runsRes.status === "fulfilled") { await this.applyRuns(runsRes.value,); }

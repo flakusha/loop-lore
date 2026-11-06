@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { safeJsonStringify, } from "../../utils";
 import { escapeMarkup, } from "../markup";
+import type { PendingPermission, } from "./api";
 import type { HarnessResult, HarnessRunDetail, HarnessRunSummary, HarnessStats, } from "./types";
 
 const MAX_TASK_LEN = 48;
+/** Longest raw-input preview kept on one pending-ask line. */
+const MAX_INPUT_PREVIEW = 60;
 /** Highest ms that still renders as `NN.Ns`; 59_950 rounds up to a full minute. */
 const LAST_SUB_MINUTE_MS = 59_950;
 
@@ -122,6 +126,41 @@ export function formatRunDetail(detail: HarnessRunDetail,): string {
  */
 export function formatEmptyRuns(): string {
   return "{cyan-fg}No harness runs recorded yet.{/cyan-fg}";
+}
+
+/**
+ * Render the raw `session/request_permission` params as one short line.
+ * @param input - the harness's raw params (shape is deliberately untyped)
+ * @returns a single-line, width-safe preview of the ask's input
+ */
+export function formatPermissionInput(input: unknown,): string {
+  if (input === null || input === undefined) { return "—"; }
+
+  let text: string;
+  if (typeof input === "string") {
+    text = input;
+  } else {
+    const encoded = safeJsonStringify(input,);
+    text = encoded.ok ? encoded.value : String(input,);
+  }
+
+  const flat = text.replace(/\s+/g, " ",).trim();
+  if (flat.length === 0) { return "—"; }
+
+  return flat.length > MAX_INPUT_PREVIEW ? `${flat.slice(0, MAX_INPUT_PREVIEW - 1,)}…` : flat;
+}
+
+/**
+ * Format one pending permission ask as a one-line blessed markup string.
+ * Shape: `profile  tool  cwd  input-preview`
+ * @param pending
+ * @returns the blessed markup line for the pending-requests block.
+ */
+export function formatPendingPermission(pending: PendingPermission,): string {
+  const tool = pending.tool ?? "—";
+  return `${escapeMarkup(pending.profile,)}  {blue-fg}${escapeMarkup(tool,)}{/blue-fg}  ${
+    escapeMarkup(pending.cwd,)
+  }  {gray-fg}${escapeMarkup(formatPermissionInput(pending.input,),)}{/gray-fg}`;
 }
 
 export function formatStats(stats: HarnessStats,): string {

@@ -94,7 +94,7 @@ function freshState() {
 }
 
 describe("adminHarness.loadHarness", () => {
-  test("fills cards, run rows, model rollup, gaps and settings from the three endpoints", async () => {
+  test("fills cards, run rows, model rollup, gaps and settings from the harness endpoints", async () => {
     route({},);
     const state = freshState();
     await state.loadHarness();
@@ -108,6 +108,7 @@ describe("adminHarness.loadHarness", () => {
     expect(state.harnessGapRows,).toEqual([{ toolingGap: "no-web-search", count: 4, },],);
     expect(state.harnessRunsEmpty(),).toBe(false,);
     expect(calls.sort(),).toEqual([
+      "/api/v1/harness/permissions",
       "/api/v1/harness/runs?limit=50",
       "/api/v1/harness/settings",
       "/api/v1/harness/stats",
