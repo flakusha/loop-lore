@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task
@@ -61,3 +61,5 @@ catalog grows past Phase 1.
 
 - `src/frontend/nsfw/intimacy-interface.ts`
 - `src/frontend/nsfw/intimacy-scene.ts`
+
+**Resolved:** 2026-11-06 registry-driven close: git issue ee54c1c (registry tip: 6bff65be4 Konstantin Fedotov Close issue)

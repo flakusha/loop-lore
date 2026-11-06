@@ -51831,7 +51831,7 @@
     "label": "task",
     "priority": "P0",
     "source": ".plan/tickets/TASK-nsfw-frontend-integration.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "nsfw",
       "frontend",
@@ -51970,7 +51970,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-nsfw-intimacy-interface.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "nsfw",
       "frontend",

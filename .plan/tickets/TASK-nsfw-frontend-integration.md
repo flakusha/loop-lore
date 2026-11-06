@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** P0
 **Effort:** High
 **Epic:** epic-frontend-backend-integration
@@ -74,3 +74,5 @@ Create the NSFW interaction interface for the intimacy system and body state dis
 ## Housing (moved out)
 
 Housing management UI, room layout, and furniture placement now live under **`epic-housing.md`** — see `TASK-housing-general.md`. Do not re-add housing here.
+
+**Resolved:** 2026-11-06 registry-driven close: git issue 16d86fd (registry tip: c65fde561 Konstantin Fedotov Close issue)
