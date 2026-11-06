@@ -5,8 +5,10 @@
  * contract the existing message readers impose on them.
  *
  * Resource contract: ONE in-memory migrated DB per test, seeded with its own
- * user/actor/chat; released in afterEach. No child process, no ports, no
- * global test-database override, no cross-test state.
+ * user/actor/chat; released in afterEach. Every test also owns UNIQUE row ids
+ * (a per-test tag), so no two tests can address the same rows even if they
+ * ever shared a database. No child process, no ports, no global
+ * test-database override, no cross-test state.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { type KyselyPlugin, SelectQueryNode, } from "kysely";
@@ -18,9 +20,14 @@ import { type HarnessTurnResult, } from "./adapter-types";
 import { persistHarnessTurn, } from "./turn-persistence";
 import { type HarnessTurnTranscript, } from "./turn-transcript";
 
-const userId = "user-harness-turn";
-const actorId = "actor-harness-turn";
-const chatId = "chat-harness-turn";
+// Each test owns its own user/actor/chat ids: the rows live in a per-test
+// in-memory DB, but unique ids keep one test's rows out of another's reach
+// even if the DB handling ever changes.
+let userId: string;
+let actorId: string;
+let chatId: string;
+let tag = "";
+let idCounter = 0;
 
 let fixture: TestDb;
 
@@ -53,6 +60,10 @@ function turn(overrides?: Partial<HarnessTurnResult>,): HarnessTurnResult {
 }
 
 beforeEach(async () => {
+  tag = `t${++idCounter}`;
+  userId = `user-harness-turn-${tag}`;
+  actorId = `actor-harness-turn-${tag}`;
+  chatId = `chat-harness-turn-${tag}`;
   fixture = await createTestDb();
   await fixture.db.insertInto("users",).values({
     id: userId,
@@ -201,6 +212,7 @@ describe("persistHarnessTurn", () => {
     // The pre-read must not see the winner's row (that is the race window),
     // so the winner is inserted right after that read returns; the insert is
     // then the first thing that hits the enforced unique index.
+    const winnerId = `winner-${tag}`;
     let armed = false;
     let fired = false;
     const racingDb = (fixture.db as unknown as { withPlugin: (plugin: KyselyPlugin,) => unknown })
@@ -214,7 +226,7 @@ describe("persistHarnessTurn", () => {
             armed = false;
             fired = true;
             await fixture.db.insertInto("messages",).values({
-              id: "winner-row",
+              id: winnerId,
               chat_id: chatId,
               actor_id: actorId,
               parent_id: null,
@@ -243,7 +255,7 @@ describe("persistHarnessTurn", () => {
       turnKey: "turn-race",
     },);
 
-    expect(persisted.assistantMessageId,).toBe("winner-row",);
+    expect(persisted.assistantMessageId,).toBe(winnerId,);
     const rows = await fixture.db.selectFrom("messages",).selectAll().execute();
     expect(rows,).toHaveLength(1,);
   });
