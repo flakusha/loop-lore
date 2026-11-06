@@ -2,11 +2,12 @@
 
 import { createLogger, } from "@/logger";
 import { beforeAll, describe, expect, test, } from "bun:test";
-import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import path from "node:path";
 import { loadConfig, } from "./load";
 
-const TEST_DIR = path.join(import.meta.dir, "__test_domain_configs__",);
+const TEST_DIR = mkdtempSync(path.join(tmpdir(), "domain-configs-test-",),);
 
 describe("Domain Config Loading", () => {
   beforeAll(() => {
