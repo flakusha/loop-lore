@@ -13,6 +13,8 @@ import {
   insertActors,
   insertAssets,
   insertAssetTags,
+  insertLocations,
+  insertLocationStates,
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
@@ -368,5 +370,23 @@ describe("views/search — worlds", () => {
     const res = await serveWorldsSearch(db, new URLSearchParams({ q: "script", },), "alice", "user",);
     const html = await res.text();
     expect(html,).not.toContain("<script>w</script>",);
+  });
+
+  test("search results render the same previews as the world list", async () => {
+    const locationId = await insertLocations(db, "world-elm", "Hollow", { id: "loc-elm" as never, },);
+    await insertLocationStates(db, locationId, "world-elm", {
+      id: "state-elm" as never,
+      npcs_present: JSON.stringify(["actor-a", "actor-b",],),
+      time_of_day: "night",
+      weather: "storm",
+    },);
+
+    const res = await serveWorldsSearch(db, new URLSearchParams({ q: "elm", },), "alice", "user",);
+    const html = await res.text();
+    expect(html,).toContain("📍 1 locations",);
+    expect(html,).toContain("👤 2 NPCs",);
+    expect(html,).toContain("night",);
+    expect(html,).toContain("storm",);
+    expect(html,).not.toContain("0 chats",);
   });
 });
