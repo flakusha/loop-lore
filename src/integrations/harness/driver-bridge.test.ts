@@ -280,8 +280,10 @@ describe("harness turn persistence", () => {
     adapter.onMessage((message,) => rig.bridge.receive("harness-test", message,));
 
     const message = { ...outbound("ping",), idempotencyKey: "retry-7", };
-    await rig.bridge.send("harness:harness-test", message,);
-    await rig.bridge.send("harness:harness-test", message,);
+    // The same send twice: both turns run, one set of rows.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await rig.bridge.send("harness:harness-test", message,);
+    }
 
     // Both turns ran (both were delivered) ...
     expect(received,).toHaveLength(2,);
