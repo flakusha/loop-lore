@@ -3,7 +3,7 @@
 
 # TASK: byok-agent-subject-binding
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-agentic-integration-mcp-acp
@@ -23,3 +23,5 @@ Decide + implement whether a facade/integration API key resolves `user_api_keys`
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
+
+**Resolved:** 2026-11-06 registry-driven close: git issue ead0001 (registry tip: 5a6eb8f2f Konstantin Fedotov Close issue)

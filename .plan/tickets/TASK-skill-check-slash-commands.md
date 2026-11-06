@@ -7,7 +7,7 @@
 **Context:** Read-side integration ticket for epic-character-world-integration.md. Character skills live in character_skills (src/rpg/skills/service); AbilityScore from src/characters/spec/character.ts; command plumbing pattern follows existing slash commands in the assistant/commands layer.
 **Acceptance Criteria:** Each command maps to a skill + ability; roll = dice + Skill.value-derived bonus + AbilityScore.modifier; failure paths produce narrated consequences (condition or reputation event) rather than silent denial; prompt section records the check result; tests cover success/critical/failure and unknown-skill fallback.
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-rpg-mechanics
@@ -18,3 +18,5 @@
 - Depends on: TASK-shared-character-domain-models
 
 **Branch:** open on dev.
+
+**Resolved:** 2026-11-06 registry-driven close: git issue 8f7ec24 (registry tip: ebf107762 Konstantin Fedotov Close issue)
