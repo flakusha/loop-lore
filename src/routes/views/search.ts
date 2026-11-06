@@ -10,6 +10,7 @@ import { applyGalleryAssetFilters, galleryMediaContext, GRID_PAGE_SIZE, inherite
 import { renderGalleryCards, renderGalleryEmptyState, } from "./gallery-cards";
 import { escapeHtml, htmlResponse, } from "./layout";
 import { buildGallerySearchViewModel, type GallerySearchViewModel, } from "./view-models/gallery-grid";
+import { loadWorldListCards, renderWorldCard, } from "./worlds-list";
 
 /**
  * Fetch and project the gallery search result set — the single data path
@@ -195,15 +196,13 @@ async function serveWorldsSearch(
     </div>`,);
   }
 
-  const items = Array.from(worlds, (w,) => {
-    const name = escapeHtml(w.name,);
-    const desc = escapeHtml(w.description || "",);
-    return `<div class="world-card" x-on:click="window.location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
-      <div class="world-header"><h3 class="world-name">${name}</h3><span class="world-id">ID: ${w.id}</span></div>
-      <div class="world-description">${desc}</div>
-      <div class="world-meta"><span class="tag">0 chats</span></div>
-    </div>`;
-  },).join("",);
+  // Same card renderer as the worlds list (/dynamic/worlds/list) so a search
+  // result shows the same previews: location/NPC counts, condition badges and
+  // the age. The search path used to render a bare card with a hardcoded
+  // "0 chats" tag that was never a real count.
+  const items = (await loadWorldListCards(database, worlds,))
+    .map((card,) => renderWorldCard(card, Date.now(),))
+    .join("",);
 
   return htmlResponse(items,);
 }
