@@ -137,6 +137,22 @@ export function buildRunRows(runs: HarnessRunSummary[],): HarnessRunRow[] {
 }
 
 /**
+ * Rows after the client-side search. Matches task, type, model, result,
+ * branch and sha — the fields an operator would type to find a run.
+ * @param rows - The rows to filter
+ * @param query - The operator's search text
+ * @returns The rows matching the query (all of them when it is empty)
+ */
+export function filterHarnessRuns(rows: HarnessRunRow[], query: string,): HarnessRunRow[] {
+  const needle = query.trim().toLowerCase();
+  if (!needle) { return rows; }
+
+  return rows.filter((row,) =>
+    `${row.task} ${row.taskType} ${row.model} ${row.result} ${row.branch} ${row.gitSha}`.toLowerCase().includes(needle,)
+  );
+}
+
+/**
  * Shape the per-model rollup table.
  * @param byModel - Decoded `stats.byModel` rows
  * @returns Rows with duration and cost already formatted
