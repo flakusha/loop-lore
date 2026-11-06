@@ -6,8 +6,14 @@
  * createBridgeRegistry, message flow through createMessageBridge with its
  * own moderationGate (reused, not re-implemented), against the fake ACP
  * fixture. Per-test fixture + bridge; afterEach reaps everything.
+ *
+ * Resource contract: each test owns its OWN fake ACP child (its own mkdtemp
+ * dir), its OWN in-memory migrated DB, its OWN chat/actor/user ids (the
+ * stream buffer is a process-global keyed by chat id), and its OWN bridge
+ * registry. afterEach closes the drivers, reaps the children, disposes the
+ * DBs and removes the buffer. No ordering dependence between tests.
  */
-import { afterEach, describe, expect, it, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { getOrCreateBuffer, removeBuffer, } from "../../generation/stream-buffer";
 import { insertActors, } from "../../test-utils/insert-helpers";
 import { type AdapterMessage, } from "../adapter";
@@ -159,9 +165,20 @@ describe("registerHarnessDriver", () => {
 });
 
 describe("harness turn persistence", () => {
-  const chatId = "chat-harness-bridge";
-  const actorId = "actor-harness-bridge";
-  const userId = "user-harness-bridge";
+  // Each test owns its own chat/actor/user ids: the stream buffer is a
+  // process-global keyed by chat id, and the rows live in a per-test DB, so a
+  // per-test id keeps one test's frames and rows out of another's reach.
+  let chatId: string;
+  let actorId: string;
+  let userId: string;
+  let idCounter = 0;
+
+  beforeEach(() => {
+    const tag = `t${++idCounter}`;
+    chatId = `chat-harness-bridge-${tag}`;
+    actorId = `actor-harness-bridge-${tag}`;
+    userId = `user-harness-bridge-${tag}`;
+  },);
 
   afterEach(() => {
     removeBuffer(chatId,);
