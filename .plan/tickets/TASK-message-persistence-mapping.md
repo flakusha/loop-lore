@@ -47,7 +47,7 @@ Fixed while reviewing:
 - The concurrent-replay path (the `messages (chat_id, idempotency_key)` UNIQUE index, migration 045) surfaced a raw constraint violation. The writer now reuses the routes' `findByIdempotencyKey` / `isIdempotencyUniqueViolation` helpers: the race loser replays the winner's row instead of failing.
 
 Deviations / notes:
-- Nothing in production constructs a sink yet — the harness has no production bridge registration in `src/`, so this is a proven SEAM: the rows do not land in a user's chat until the production dispatch path (TASK-harness-production-dispatch-path-runturn-caller-tasktype-mem) wires one.
+- Nothing in production constructs a sink yet — the harness has no production bridge registration in `src/`, so this is a proven SEAM: the rows do not land in a user's chat until the production dispatch path lands (the harness production-dispatch-path ticket, filed on the `harness-gap-filing` branch).
 - Encryption follows the shared helper, exactly as the LLM path does: `none` → plaintext, `standard` → server-encrypted (`key_id` set), `at-rest` → stored verbatim (server-generated content, the same trade the LLM path makes).
 - The turn's tool-call rows are children of the assistant row (`parent_id`), unlike the LLM path where the assistant row does not exist yet — the ACP turn is written after the fact, so the id is known.
 

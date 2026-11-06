@@ -58,7 +58,7 @@ Spawn official binary only; never extract credentials; single-user/single-machin
 - [x] claude-code adapter
 - [x] permission/approval flow
 - [x] model discovery + capability enrichment
-- [ ] message persistence mapping
+- [x] message persistence mapping
 - [x] per-user isolation gate
 - [x] optional-dep packaging
 - [x] fake ACP server test fixture
