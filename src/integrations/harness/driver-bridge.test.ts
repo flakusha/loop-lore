@@ -8,6 +8,8 @@
  * fixture. Per-test fixture + bridge; afterEach reaps everything.
  */
 import { afterEach, describe, expect, it, } from "bun:test";
+import { getOrCreateBuffer, removeBuffer, } from "../../generation/stream-buffer";
+import { insertActors, } from "../../test-utils/insert-helpers";
 import { type AdapterMessage, } from "../adapter";
 import { createMessageBridge, type MessageBridge, type ModerationGate, } from "../bridge";
 import { type BridgeRegistry, createBridgeRegistry, } from "../registry";
@@ -15,6 +17,7 @@ import { createHarnessDriver, type HarnessDriver, type HarnessDriverOptions, } f
 import { createHarnessProtocolAdapter, registerHarnessDriver, } from "./driver-bridge";
 import { type FakeAcpEnv, } from "./fake-acp-server";
 import { createHarnessFixture, type HarnessFixture, } from "./harness-fixture";
+import { createHarnessTurnSink, type HarnessTurnSink, } from "./turn-sink";
 
 const fixtures: HarnessFixture[] = [];
 const drivers: HarnessDriver[] = [];
@@ -38,6 +41,7 @@ async function openRig(
   options?: {
     moderationGate?: ModerationGate;
     driver?: Partial<HarnessDriverOptions>;
+    turnSink?: (fixture: HarnessFixture,) => HarnessTurnSink;
   },
 ): Promise<Rig> {
   const fixture = await createHarnessFixture({ server, },);
@@ -52,7 +56,12 @@ async function openRig(
 
   drivers.push(driver,);
   const registry = createBridgeRegistry();
-  const registered = registerHarnessDriver(registry, driver, { name, target: `harness:${name}`, },);
+  const registered = registerHarnessDriver(registry, driver, {
+    name,
+    target: `harness:${name}`,
+    turnSink: options?.turnSink?.(fixture,),
+  },);
+
   if (!registered.ok) { throw new Error(registered.message,); }
   const bridge = createMessageBridge(registry, { moderationGate: options?.moderationGate, },);
   return { bridge, driver, fixture, registry, };
@@ -146,5 +155,114 @@ describe("registerHarnessDriver", () => {
     expect(adapter.isConnected(),).toBe(true,);
     await adapter.disconnect();
     expect(adapter.isConnected(),).toBe(false,);
+  });
+});
+
+describe("harness turn persistence", () => {
+  const chatId = "chat-harness-bridge";
+  const actorId = "actor-harness-bridge";
+  const userId = "user-harness-bridge";
+
+  afterEach(() => {
+    removeBuffer(chatId,);
+  },);
+
+  /** Seed the user/actor/chat the harness rows hang off. */
+  async function seedChat(fixture: HarnessFixture,): Promise<void> {
+    await fixture.db.insertInto("users",).values({
+      id: userId,
+      username: "harness-bridge",
+      display_name: "Harness Bridge",
+      role: "solo",
+      status: "active",
+      settings: "{}",
+    },).execute();
+
+    await insertActors(fixture.db, "Alice", {
+      id: actorId,
+      actor_type: "character",
+      owner_id: userId,
+      agent_type: "ai",
+      settings: "{}",
+      import_spec: "raw",
+      data_source_format: "json",
+      data_raw: null,
+    } as never,);
+
+    await fixture.db.insertInto("chats",).values({
+      id: chatId,
+      name: "Harness Bridge",
+      type: "direct",
+      mode: "direct",
+      created_by: userId,
+      max_turns: null,
+    } as never,).execute();
+  }
+
+  it("persists the turn as message rows and pushes its frames", async () => {
+    const rig = await openRig(
+      {
+        FAKE_REPLY: "harness says hi",
+        FAKE_EVENTS: JSON.stringify([
+          { sessionUpdate: "agent_thought_chunk", content: { type: "text", text: "thinking out loud", }, },
+          { sessionUpdate: "tool_call", toolCallId: "tc-1", title: "grep", kind: "read", },
+          {
+            sessionUpdate: "tool_call_update",
+            toolCallId: "tc-1",
+            status: "completed",
+            content: [{ type: "content", content: { type: "text", text: "one match", }, },],
+          },
+        ],),
+      },
+      "harness-test",
+      {
+        turnSink: (fixture,) =>
+          createHarnessTurnSink({ database: fixture.db, chatId, actorId, profile: "harness-test", },),
+      },
+    );
+
+    await seedChat(rig.fixture,);
+    const buffer = getOrCreateBuffer(chatId,);
+
+    const result = await rig.bridge.send("harness:harness-test", outbound("ping",),);
+
+    expect(result.ok,).toBe(true,);
+    const rows = await rig.fixture.db.selectFrom("messages",).selectAll().execute();
+    const assistant = rows.find((row,) => row.content_type === "text");
+    expect(assistant?.content,).toBe("harness says hi",);
+    expect(JSON.parse(assistant?.thinking ?? "[]",),).toEqual(["thinking out loud",],);
+    expect(JSON.parse(assistant?.tool_calls ?? "[]",),).toEqual([{
+      id: "tc-1",
+      type: "function",
+      function: { name: "grep", arguments: "{}", },
+    },],);
+
+    const toolRow = rows.find((row,) => row.content_type === "tool_result");
+    expect(toolRow?.content,).toBe("one match",);
+    expect(toolRow?.parent_id,).toBe(assistant?.id,);
+    const events = buffer.replay();
+    expect(events.map((event,) => event.type),).toEqual([
+      "harness-chunk",
+      "harness-thinking",
+      "harness-tool-call",
+      "harness-tool-result",
+      "harness-turn-end",
+    ],);
+  });
+
+  it("persists nothing when the send is blocked before the harness runs", async () => {
+    const rig = await openRig({ FAKE_REPLY: "should not happen", }, "harness-test", {
+      moderationGate: async () => ({ allowed: false, reason: "nsfw", }),
+      turnSink: (fixture,) =>
+        createHarnessTurnSink({ database: fixture.db, chatId, actorId, profile: "harness-test", },),
+    },);
+
+    await seedChat(rig.fixture,);
+
+    const result = await rig.bridge.send("harness:harness-test", outbound("banned",),);
+
+    expect(result.ok,).toBe(false,);
+    const rows = await rig.fixture.db.selectFrom("messages",).selectAll().execute();
+    expect(rows,).toHaveLength(0,);
   });
 });

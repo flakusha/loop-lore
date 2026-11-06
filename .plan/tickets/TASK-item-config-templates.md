@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** item config templates: idempotent seeding from config
 **Priority:** P1 — High
 **Effort:** Medium
@@ -108,3 +108,5 @@ Character templates are seeded idempotently from config on server start, but **i
 - `TASK-item-generation.md` — generated items follow same `ItemDefinition` shape
 - `TASK-item-provisioning-dashboard.md` — seeded items appear as unallocated
 - `TASK-persist-loot-drops.md` — loot creates items with same structure
+
+**Resolved:** 2026-11-06 registry-driven close: git issue a71cfe0 (registry tip: 8d983247e Konstantin Fedotov Close issue)
