@@ -1,0 +1,151 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Provider connection wizard (TASK-provider-connection-wizard-core-first-run-provider-connectio).
+  Screen 1 connects a provider, screen 2 tests it and assigns a default model role.
+  State and methods come from the adminProviderWizard slice (frontend/alpine/admin-provider-wizard).
+-->
+<div
+  x-show="wizard.open"
+  x-cloak
+  style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); display: flex; align-items: center; justify-content: center; z-index: 1000"
+  @click.self="closeWizard()"
+>
+  <div style="background: var(--bg-surface, #fff); color: inherit; border-radius: 8px; padding: 20px; width: min(640px, 92vw); max-height: 85vh; overflow: auto; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25)">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px">
+      <h3 style="font-size: 16px; font-weight: 600; margin: 0">
+        <span x-show="wizard.step === 1">{{{t("admin.providerWizard.title")}}}</span>
+        <span x-show="wizard.step === 2">{{{t("admin.providerWizard.testTitle")}}}</span>
+      </h3>
+      <button type="button" class="btn btn-secondary btn-xs" @click="closeWizard()">{{{t("common.skip")}}}</button>
+    </div>
+
+    <!-- Screen 1: connect a provider -->
+    <div x-show="wizard.step === 1;" style="display: flex; flex-direction: column; gap: 8px">
+      <div x-show="wizard.setupHints.length > 0;" style="font-size: 12px; color: #c00; font-size: 12px">
+        <strong x-text="t('admin.providerWizard.missing');"></strong>
+        <div style="margin: 4px 0 0 16px">
+          <template x-for="hint in wizard.setupHints" :key="hint">
+            <div x-text="hint;"></div>
+          </template>
+        </div>
+      </div>
+
+      <label style="display: block; font-size: 12px" for="pw-preset">{{{t("admin.providerWizard.preset")}}}</label>
+      <select id="pw-preset" class="form-input" x-model="wizard.preset" @change="selectPreset(wizard.preset);">
+        <template x-for="preset in providerPresets" :key="preset.id">
+          <option :value="preset.id" x-text="preset.label;"></option>
+        </template>
+        <option value="custom">{{{t("admin.providerWizard.custom")}}}</option>
+      </select>
+
+      <label style="display: block; font-size: 12px" for="pw-base-url">{{{t("admin.providerWizard.baseUrl")}}}</label>
+      <input
+        id="pw-base-url"
+        class="form-input"
+        type="text"
+        x-model="wizard.baseUrl"
+        placeholder="https://api.openai.com/v1"
+      />
+
+      <label style="display: block; font-size: 12px" for="pw-model">{{{t("admin.model")}}}</label>
+      <input id="pw-model" class="form-input" type="text" x-model="wizard.model" />
+
+      <label style="display: block; font-size: 12px" for="pw-label">{{{t("admin.providerWizard.label")}}}</label>
+      <input id="pw-label" class="form-input" type="text" x-model="wizard.label" />
+
+      <label style="display: block; font-size: 12px" for="pw-api-key">{{{t("admin.providerWizard.apiKey")}}}</label>
+      <input id="pw-api-key" class="form-input" type="password" x-model="wizard.apiKey" autocomplete="off" />
+      <p x-show="wizard.hasStoredKey;" style="font-size: 12px; margin: 0">
+        {{{t("admin.providerWizard.apiKeyStored")}}}
+      </p>
+
+      <label style="display: flex; align-items: center; gap: 6px; font-size: 12px">
+        <input type="checkbox" x-model="wizard.setDefault" />
+        {{{t("admin.providerWizard.setDefault")}}}
+      </label>
+
+      <p x-show="wizard.error;" style="color: #c00; font-size: 12px; margin: 0" x-text="wizard.error;"></p>
+
+      <div x-show="wizard.providers.length > 0;">
+        <strong style="font-size: 12px">{{{t("admin.providerWizard.configured")}}}</strong>
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px">
+          <template x-for="provider in wizard.providers" :key="provider.name">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px">
+              <span x-text="provider.label || provider.name;"></span>
+              <button
+                type="button"
+                class="btn btn-secondary btn-xs"
+                @click="editProvider(provider.name);"
+                x-text="t('common.edit');"
+              >
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px">
+        <button type="button" class="btn btn-secondary btn-xs" @click="openImportInstead();">
+          {{{t("admin.providerWizard.importInstead")}}}
+        </button>
+        <button type="button" class="btn btn-secondary btn-xs" @click="closeWizard();">{{{t("common.skip")}}}</button>
+        <button
+          type="button"
+          class="btn btn-primary btn-xs"
+          @click="saveProvider();"
+          :disabled="wizard.saving;"
+          x-text="t('common.save');"
+        >
+        </button>
+      </div>
+    </div>
+
+    <!-- Screen 2: test the connection and assign a default model role -->
+    <div x-show="wizard.step === 2;" style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+        <strong x-text="wizard.savedName;"></strong>
+        <span x-show="wizard.testStatus === 'healthy';" x-text="t('admin.healthy');"></span>
+        <span x-show="wizard.testStatus === 'unreachable';" x-text="t('admin.providerWizard.unreachable');"></span>
+        <span x-show="wizard.testStatus === 'error';" x-text="t('common.error');"></span>
+        <button
+          type="button"
+          class="btn btn-secondary btn-xs"
+          @click="testConnection();"
+          :disabled="wizard.testing;"
+          x-text="t('admin.providerWizard.test');"
+        >
+        </button>
+      </div>
+      <p x-show="wizard.testError;" style="color: #c00; font-size: 12px; margin: 0" x-text="wizard.testError;"></p>
+
+      <label style="display: block; font-size: 12px" for="pw-role">{{{t("admin.role")}}}</label>
+      <select id="pw-role" class="form-input" x-model="wizard.role">
+        <template x-for="role in providerRoles" :key="role">
+          <option :value="role" x-text="role;"></option>
+        </template>
+      </select>
+
+      <label style="display: block; font-size: 12px" for="pw-role-provider">{{{t("admin.provider")}}}</label>
+      <input id="pw-role-provider" class="form-input" type="text" x-model="wizard.roleProvider" />
+
+      <label style="display: block; font-size: 12px" for="pw-role-model">{{{t("admin.model")}}}</label>
+      <input id="pw-role-model" class="form-input" type="text" x-model="wizard.roleModel" />
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px">
+        <button type="button" class="btn btn-secondary btn-xs" @click="closeWizard();" x-text="t('common.skip');">
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-xs"
+          @click="saveWizardRole();"
+          :disabled="wizard.roleSaving;"
+          x-text="t('common.save');"
+        >
+        </button>
+        <button type="button" class="btn btn-primary btn-xs" @click="closeWizard();">{{{t("common.done")}}}</button>
+      </div>
+    </div>
+  </div>
+</div>

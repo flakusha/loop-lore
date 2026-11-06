@@ -33,6 +33,50 @@ export const AdminSystemConfigImportBody = t.Object({
   content: t.String({ maxLength: 1024 * 1024, },),
 });
 
+/**
+ * Body for POST /api/v1/admin/setup/providers — an operator-entered provider
+ * instance. `apiKey` is optional: omitting it on an update keeps the stored
+ * (sealed) key, an empty string clears it. `allowedHosts` is the operator's
+ * explicit host approval; when omitted the base URL's own host is approved. Its
+ * entries are bare hostnames — no scheme, path, port or userinfo.
+ */
+export const AdminSetupProviderBody = t.Object({
+  name: t.String({ minLength: 1, maxLength: 64, pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$", },),
+  label: t.String({ minLength: 1, maxLength: 200, },),
+  baseUrl: t.String({ minLength: 1, maxLength: 2048, },),
+  model: t.String({ minLength: 1, maxLength: 200, },),
+  apiKey: t.Optional(t.String({ maxLength: 4096, },),),
+  allowedHosts: t.Optional(t.Array(t.String({ minLength: 1, maxLength: 253, },),),),
+  setDefault: t.Optional(t.Boolean(),),
+},);
+
+/** A stored provider instance — never carries key material. */
+export const AdminServerProviderDescriptor = t.Object({
+  name: t.String(),
+  label: t.String(),
+  baseUrl: t.String(),
+  model: t.String(),
+  allowedHosts: t.Array(t.String()),
+  hasApiKey: t.Boolean(),
+  /** Whether the instance is live in the provider registry. */
+  state: t.Union([t.Literal("live"), t.Literal("error"),],),
+  /** Why the instance is not live — present only in the error state. */
+  error: t.Optional(t.String()),
+},);
+
+/** Response body of GET /api/v1/admin/setup/providers. */
+export const AdminSetupProvidersResponse = t.Object({
+  providers: t.Array(AdminServerProviderDescriptor,),
+  meta: t.Optional(t.Any(),),
+},);
+
+/** Response body of POST /api/v1/admin/setup/providers. */
+export const AdminSetupProviderResponse = t.Object({
+  ok: t.Boolean(),
+  provider: AdminServerProviderDescriptor,
+  meta: t.Optional(t.Any(),),
+},);
+
 export const AdminModelRoleOverrideBody = t.Object({
   provider: t.String({ minLength: 1, },),
   model: t.String({ minLength: 1, },),

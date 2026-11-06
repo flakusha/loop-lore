@@ -18,10 +18,15 @@ import type { ItemDefinition, ItemState, } from "./types";
  * tuple with `DuplicateItemDefinitionError`, carrying the existing id.
  * @param state
  * @param def
+ * @param hardId - Optional deterministic row id (config template seeding)
  * @returns {Promise<string>}
  * @throws {DuplicateItemDefinitionError} when the tuple already exists
  */
-export async function createDefinition(state: ItemState, def: ItemDefinition,): Promise<string> {
+export async function createDefinition(
+  state: ItemState,
+  def: ItemDefinition,
+  hardId?: string,
+): Promise<string> {
   parseItemEffects(def.properties.effects,);
   const existing = await state.db
     .selectFrom("items",)
@@ -36,7 +41,7 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
     throw new DuplicateItemDefinitionError(existing.id,);
   }
 
-  const id = uid();
+  const id = hardId ?? uid();
   await state.db
     .insertInto("items",)
     .values({

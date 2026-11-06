@@ -77,6 +77,7 @@ const SETTINGS = {
       subscriptionBacked: false,
       noteKey: "harness.tos.note.omp",
       tosGrayzoneAcknowledged: false,
+      availability: { available: false, reason: "loop-lore-no-such-binary not found on PATH", },
     },
     {
       name: "cc-sub",
@@ -85,6 +86,7 @@ const SETTINGS = {
       subscriptionBacked: true,
       noteKey: "harness.tos.note.claude-code",
       tosGrayzoneAcknowledged: true,
+      availability: { available: false, reason: "loop-lore-no-such-binary not found on PATH", },
     },
   ],
 };
@@ -149,7 +151,7 @@ describe("loadHarnessSettings", () => {
 
 describe("buildProfileRows", () => {
   test("marks local and api badges ungated, subscription-backed not", () => {
-    const rows = buildProfileRows(SETTINGS.profiles,);
+    const rows = buildProfileRows(SETTINGS.profiles as never,);
     expect(rows[0]?.usageBadges.every((b,) => b.ungated),).toBe(true,);
     expect(rows[1]?.usageBadges.filter((b,) => b.value === "subscription-backed")[0]?.ungated,)
       .toBe(false,);
@@ -170,7 +172,7 @@ describe("buildProfileRows", () => {
     expect(state.harnessProfileRows,).toHaveLength(2,);
     expect(hasSubscriptionBacked(state,),).toBe(true,);
 
-    applySettings(state, { enabled: false, profiles: [SETTINGS.profiles[0]!,], },);
+    applySettings(state, { enabled: false, profiles: [SETTINGS.profiles[0]!,], } as never,);
     expect(hasSubscriptionBacked(state,),).toBe(false,);
   });
 
@@ -283,13 +285,13 @@ describe("enable toggle + ToS modal", () => {
   });
 
   test("an all-local/API setup enables directly without a modal", async () => {
-    handler = async () => Response.json({ ...SETTINGS, profiles: [SETTINGS.profiles[0],], },);
+    handler = async () => Response.json({ ...SETTINGS, profiles: [SETTINGS.profiles[0] as never,], },);
     const state = emptyHarnessSettingsState();
     await loadHarnessSettings(state,);
     let seenBody: unknown = null;
     handler = async (_url, opts,) => {
       seenBody = JSON.parse(String(opts?.body ?? "{}",),);
-      return Response.json({ ...SETTINGS, enabled: true, profiles: [SETTINGS.profiles[0],], },);
+      return Response.json({ ...SETTINGS, enabled: true, profiles: [SETTINGS.profiles[0] as never,], },);
     };
 
     await onHarnessToggle(state,);

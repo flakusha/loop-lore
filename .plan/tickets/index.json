@@ -10733,6 +10733,20 @@
     "source": ".plan/tickets/BUG-web-ui-never-sets-db-idempotencykey.md",
     "status": "done"
   },
+  "BUG-WEBHOOK-ADAPTER-ENDPOINT-500S-BODY-ALREADY-USED-UNDER-COMPOS": {
+    "hash": "6eb9065",
+    "git_issue": "6eb9065",
+    "extid": "BUG-WEBHOOK-ADAPTER-ENDPOINT-500S-BODY-ALREADY-USED-UNDER-COMPOS",
+    "type": "BUG",
+    "title": "Webhook adapter endpoint 500s Body already used under composed v1 barrel",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-webhook-adapter-endpoint-500s-body-already-used-under-compos.md",
+    "status": "open"
+  },
   "BUG-WEBHOOK-DEDUP-IS-RECORDED-BEFORE-DISPATCH-SO-A-HANDLER-THROW": {
     "hash": "ebafd77",
     "git_issue": "ebafd77",
@@ -20548,6 +20562,20 @@
     "title": "# FEAT-byok-api-keys: BYOK API Keys",
     "type": "FEAT"
   },
+  "FEAT-BYOK-IMAGE-VIDEO-CREDENTIAL-COVERAGE": {
+    "hash": "3d9f686",
+    "git_issue": "3d9f686",
+    "extid": "FEAT-BYOK-IMAGE-VIDEO-CREDENTIAL-COVERAGE",
+    "type": "FEAT",
+    "title": "byok-image-video-credential-coverage",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-byok-api-keys",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-byok-image-video-credential-coverage.md",
+    "status": "open"
+  },
   "FEAT-BYOK-LOCAL-MODELS": {
     "epic": "epic-byok-local-models",
     "extid": "FEAT-BYOK-LOCAL-MODELS",
@@ -20568,6 +20596,20 @@
     ],
     "title": "# FEAT-byok-local-models: BYOK Local Models",
     "type": "FEAT"
+  },
+  "FEAT-BYOK-SETTINGS-UI": {
+    "hash": "2de56c8",
+    "git_issue": "2de56c8",
+    "extid": "FEAT-BYOK-SETTINGS-UI",
+    "type": "FEAT",
+    "title": "byok-settings-ui",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-byok-api-keys",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-byok-settings-ui.md",
+    "status": "open"
   },
   "FEAT-CHARACTER-SPEC-INCLUSION-RACE-ORIGIN-CULTURE": {
     "epic": "epic-character-spec",
@@ -31935,6 +31977,20 @@
     "source": ".plan/tickets/TASK-business-extensions-gpu-relay-marketplace-voice-packs-hosted.md",
     "status": "open"
   },
+  "TASK-BYOK-AGENT-SUBJECT-BINDING": {
+    "hash": "ead0001",
+    "git_issue": "ead0001",
+    "extid": "TASK-BYOK-AGENT-SUBJECT-BINDING",
+    "type": "TASK",
+    "title": "byok-agent-subject-binding",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-byok-agent-subject-binding.md",
+    "status": "open"
+  },
   "TASK-BYOK-API-KEYS": {
     "epic": "epic-byok-api-keys",
     "extid": "TASK-BYOK-API-KEYS",
@@ -31947,6 +32003,20 @@
     "tags": [],
     "title": "BYOK API Keys (Bring Your Own Key)",
     "type": "TASK"
+  },
+  "TASK-BYOK-ENCRYPTION-KEY-ROTATION": {
+    "hash": "56e9606",
+    "git_issue": "56e9606",
+    "extid": "TASK-BYOK-ENCRYPTION-KEY-ROTATION",
+    "type": "TASK",
+    "title": "byok-encryption-key-rotation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-byok-api-keys",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-byok-encryption-key-rotation.md",
+    "status": "open"
   },
   "TASK-C1-MODERATION-ACTION-NOTICES-WITH-ACTOR-THUMB": {
     "hash": "3aa7c0a",
@@ -36866,6 +36936,20 @@
     "title": "World/Location Detail Modal",
     "type": "TASK"
   },
+  "TASK-CREDENTIALS-STORY-DECISION-RECORD": {
+    "hash": "70801ad",
+    "git_issue": "70801ad",
+    "extid": "TASK-CREDENTIALS-STORY-DECISION-RECORD",
+    "type": "TASK",
+    "title": "credentials-story-decision-record",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-principal-scoped-credentials",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-credentials-story-decision-record.md",
+    "status": "open"
+  },
   "TASK-CRON-ADMIN-OBSERVABILITY-DOCS": {
     "epic": "epic-cron-scheduler",
     "extid": "TASK-CRON-ADMIN-OBSERVABILITY-DOCS",
@@ -41368,6 +41452,20 @@
     "source": ".plan/tickets/TASK-federation-fail-closed-issuance.md",
     "status": "Not Started"
   },
+  "TASK-FEDERATION-INSTANCE-ISSUED-SCOPED-TOKENS": {
+    "hash": "14c56e3",
+    "git_issue": "14c56e3",
+    "extid": "TASK-FEDERATION-INSTANCE-ISSUED-SCOPED-TOKENS",
+    "type": "TASK",
+    "title": "federation-instance-issued-scoped-tokens",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-instance-federation",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-instance-issued-scoped-tokens.md",
+    "status": "open"
+  },
   "TASK-FEDERATION-INSTANCE-SWITCHER-IN-FRONTEND-TRAVEL-BETWEEN-INST": {
     "epic": "epic-instance-federation",
     "extid": "TASK-FEDERATION-INSTANCE-SWITCHER-IN-FRONTEND-TRAVEL-BETWEEN-INST",
@@ -41507,6 +41605,20 @@
     "source": ".plan/tickets/TASK-federation-peer-health-and-load-registry.md",
     "status": "done"
   },
+  "TASK-FEDERATION-PEER-PRINCIPAL-KIND": {
+    "hash": "4e62ecf",
+    "git_issue": "4e62ecf",
+    "extid": "TASK-FEDERATION-PEER-PRINCIPAL-KIND",
+    "type": "TASK",
+    "title": "federation-peer-principal-kind",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-instance-federation",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-peer-principal-kind.md",
+    "status": "open"
+  },
   "TASK-FEDERATION-PEER-REGISTRY-WORKLOAD-COLUMNS": {
     "hash": "1d80416",
     "git_issue": "1d80416",
@@ -41519,6 +41631,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-federation-peer-registry-workload-columns.md",
     "status": "done"
+  },
+  "TASK-FEDERATION-PEER-TOKEN-KEY-DOMAIN": {
+    "hash": "f25dc28",
+    "git_issue": "f25dc28",
+    "extid": "TASK-FEDERATION-PEER-TOKEN-KEY-DOMAIN",
+    "type": "TASK",
+    "title": "federation-peer-token-key-domain",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-peer-token-key-domain.md",
+    "status": "open"
   },
   "TASK-FEDERATION-PEER-WORKLOAD-WIRE-ENDPOINTS": {
     "hash": "1d5dd61",
@@ -51516,7 +51642,7 @@
       "gate"
     ],
     "source": ".plan/tickets/TASK-nsfw-consent-grant-route-missing.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-NSFW-CONSENT-INTEGRATION": {
     "epic": "epic-nsfw-integration-gaps",

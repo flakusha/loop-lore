@@ -17,20 +17,24 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import {
+  type HarnessAvailabilityView,
   HarnessRunDetailSchema,
   HarnessRunsResponse,
   HarnessSandboxFilesSchema,
   HarnessSettingsResponse,
+  type HarnessSettingsView,
   HarnessStatsSchema,
 } from "../../frontend/alpine/admin-harness-schema";
 import { getRun, listRuns, stats, } from "../../harness/query";
 import type { HarnessResult, HarnessTaskType, } from "../../harness/types";
 import { HARNESS_TASK_TYPES, toDetail, toSummary, } from "../../harness/types";
 import {
+  getHarnessAdminFileConfig,
   getHarnessAdminSettings,
   type HarnessProfileSettingsView,
   saveHarnessAdminSettings,
 } from "../../integrations/harness/admin-settings";
+import { probeHarnessCommand, } from "../../integrations/harness/availability";
 import { providerTosInfo, } from "../../integrations/harness/provider-tos";
 import { requirePermission, } from "../../middleware/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
@@ -163,13 +167,11 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
         .get(`${prefix}/harness/stats`, async () => jsonResponse(await stats(),), {
           response: { 200: HarnessStatsSchema, ...denied, },
         },)
-        .get(`${prefix}/harness/settings`, async () => {
-          const view = getHarnessAdminSettings();
-          return jsonResponse({
-            enabled: view.enabled,
-            profiles: view.profiles.map(decorateProfile,),
-          },);
+        .get(`${prefix}/harness/settings`, async (ctx,) => {
+          const q = ctx.query as Record<string, string | undefined>;
+          return jsonResponse(await settingsWithAvailability(q.refresh === "1",),);
         }, {
+          query: t.Object({ refresh: t.Optional(t.String({},),), },),
           response: { 200: HarnessSettingsResponse, ...denied, },
         },)
         .put(`${prefix}/harness/settings`, async (ctx,) => {
@@ -179,15 +181,12 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
           };
 
           try {
-            const view = await saveHarnessAdminSettings(database, {
+            await saveHarnessAdminSettings(database, {
               enabled: body.enabled,
               acknowledgements: body.acknowledgements,
             },);
 
-            return jsonResponse({
-              enabled: view.enabled,
-              profiles: view.profiles.map(decorateProfile,),
-            },);
+            return jsonResponse(await settingsWithAvailability(false,),);
           } catch (error) {
             // The save path validates before persisting (unknown profile,
             // non-boolean ack, non-serializable value) — a rejected patch is
@@ -231,4 +230,44 @@ function decorateProfile(p: HarnessProfileSettingsView,): {
     noteKey: tos.noteKey,
     tosGrayzoneAcknowledged: p.tosGrayzoneAcknowledged,
   };
+}
+
+/**
+ * Probe one profile's binary availability (TASK-optional-dep-packaging).
+ * The probed argv comes from the admin-owned file config only — the same
+ * invariant as the isolation gate's allowlist: caller input never becomes a
+ * spawn argv. Lazy and cached per process; `refresh` re-runs the probe.
+ * @param name - the profile's loop-lore-local name
+ * @param refresh - bypass the probe cache when true
+ * @returns the wire availability verdict.
+ */
+async function availabilityForProfile(name: string, refresh: boolean,): Promise<HarnessAvailabilityView> {
+  const profile = getHarnessAdminFileConfig().profiles.find((p,) => p.name === name);
+  if (profile === undefined) {
+    return { available: false, reason: "profile not present in harness.acp config", };
+  }
+
+  const verdict = await probeHarnessCommand({ command: profile.command, refresh, },);
+  return verdict.available
+    ? { available: true, version: verdict.version, }
+    : { available: false, reason: verdict.reason, };
+}
+
+/**
+ * Shape the effective settings view into the wire body, probing every
+ * configured profile's binary availability sequentially (the profile list is
+ * tiny, and verdicts are cached after the first hit).
+ * @param refresh - bypass the probe cache when true
+ * @returns the `GET`/`PUT /harness/settings` response body.
+ */
+async function settingsWithAvailability(refresh: boolean,): Promise<HarnessSettingsView> {
+  const view = getHarnessAdminSettings();
+
+  const profiles: HarnessSettingsView["profiles"] = [];
+
+  for (const p of view.profiles) {
+    profiles.push({ ...decorateProfile(p,), availability: await availabilityForProfile(p.name, refresh,), },);
+  }
+
+  return { enabled: view.enabled, profiles, };
 }
