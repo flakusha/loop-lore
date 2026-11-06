@@ -109,6 +109,44 @@ Both tables are empty — no code writes to them. The `epic-crafting-professions
    `.post(R, ...)` is likewise missing from the scan (only `:id/xp` +
    `:id/specialize` from the template-literal call sites appear).
 
+   **RULING (2026-11-06, branch professions-service-routes — investigated, checker NOT touched):**
+   - Blind-spot file:line: `scripts/fe-be-harmonization/be-routes.ts:66` — the
+     `literalBeRoutes` regex only captures *string-literal* first arguments to
+     `.get/.post/.put/.patch/.delete(...)`; route variables bound to a bare
+     identifier (`R` in `.post(R, ...)` at `src/routes/rpg/professions.ts:72`
+     and the twin `src/routes/rpg/skills.ts:119`) are silently dropped even
+     though `routeConsts` (`be-routes.ts:24-51`) already resolves `R` when it
+     appears inside a template literal (`${R}/:id` expands fine — the sibling
+     routes DO appear in the scan). Also note `.get(R, ...)` at
+     `skills.ts:74` is equally invisible.
+   - Reachability probe (runtime, conclusive): `bun test --isolate
+     src/routes/rpg/professions.test.ts -t "create profession returns 201"`
+     → 1 pass — the test `POST`s `http://localhost/api/rpg/professions`
+     (`professions.test.ts:90-96`) through the real Elysia plugin and gets
+     201 with `title: "journeyman"`. Twin: `skills.test.ts:93-100` POSTs the
+     same-shape `http://localhost/api/rpg/skills` → id (both files green:
+     28 pass / 0 fail). Scan-side proof: a probe running `scanBe()` in-repo
+     returns zero rows for `POST /api/rpg/professions` AND zero for
+     `POST /api/rpg/skills` while returning the template-literal siblings
+     (`GET /actors/:actorId`, `GET /:id`, `POST /:id/xp`, `POST
+     /:id/specialize` for professions; `GET/PUT/DELETE /:id` for skills) —
+     i.e. the routes the checker CAN see; the omission is the scanner's, not
+     the router's. Full checker output: `FE-no-BE: POST /api/rpg/professions`
+     at `src/frontend/alpine/professions.ts:110` (the only blocking finding;
+     431 advisory unchanged); skills escapes the flag only because the FE has
+     no bare-`POST /api/rpg/skills` caller to trip the join.
+   - Mount chain (static): `professionsRoutes` defined `professions.ts:66-68`
+     → `.use()`d in the rpg facade (`src/routes/rpg/index.ts:113`) → facade
+     `.use()`d under `/api/v1` (`src/routes/v1/actors-surface.ts:91`,
+     `src/routes/v1/index.ts:62`) → public path `POST /api/rpg/professions`,
+     exactly the flagged URL.
+   - Requested action: checker fix OR gate waiver at landing — either (a)
+     teach `literalBeRoutes` to resolve bare-identifier route args against
+     the `routeConsts` map built for the same file, or (b) waive this single
+     `FE-no-BE` finding at landing with this ruling cited. Branch deliberately
+     makes no checker change per assignment; flag is a false positive, no
+     product change required.
+
 3. **Generator BLAST RADIUS (flagged, code left alone per assignment):** this
    branch changed `scripts/generate-db-types.ts:111-121` and
    `scripts/generate-schema-manifest.ts:88-98` so a later re-add wins over an
