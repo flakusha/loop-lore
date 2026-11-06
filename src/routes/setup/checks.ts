@@ -13,7 +13,7 @@
  * summary, /doctor and the provider-connection wizard): never rename one.
  */
 import type { Kysely, } from "kysely";
-import { existsSync, } from "node:fs";
+import fs from "node:fs";
 import { resolveModelRole, } from "../../admin/model-roles";
 import { getHealthCache, } from "../../admin/provider-health";
 import {
@@ -117,7 +117,7 @@ function nativeCheck(): SetupCheck {
 /** TLS key + certificate files exist. Never generates them — this is a read. */
 function tlsCheck(config: Config,): SetupCheck {
   const tls = config.server?.tls;
-  const ok = !!tls && existsSync(tls.key,) && existsSync(tls.cert,);
+  const ok = !!tls && fs.existsSync(tls.key,) && fs.existsSync(tls.cert,);
   return ok
     ? { id: "tls", ok: true, }
     : { id: "tls", ok: false, hint: "TLS certificate files are missing.", };
