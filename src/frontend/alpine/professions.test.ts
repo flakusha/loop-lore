@@ -343,6 +343,245 @@ describeOrSkip("professions.addProfessionSpecialization", () => {
   });
 },);
 
+describeOrSkip("professions.loadProfessions error paths", () => {
+  test("surfaces rpg.forbidden on a 403 (not-owner is visible to the caller)", async () => {
+    const ctx = buildCtx();
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+      if (url.startsWith("/api/rpg/professions/actors/",)) { return new Response("{}", { status: 403, },); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.loadProfessions();
+
+    expect(ctx.professions,).toEqual([],);
+    expect(ctx.professionsError,).toBe("You do not have access to this character.",);
+    expect(ctx.professionsLoading,).toBe(false,);
+  });
+
+  test("surfaces loadFailed on a non-ok status", async () => {
+    const ctx = buildCtx();
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+      if (url.startsWith("/api/rpg/professions/actors/",)) { return new Response("{}", { status: 500, },); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.loadProfessions();
+
+    expect(ctx.professions,).toEqual([],);
+    expect(ctx.professionsError,).toBe("Failed to load professions.",);
+  });
+
+  test("surfaces loadFailed when the fetch throws", async () => {
+    const ctx = buildCtx();
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+
+      throw new Error("boom",);
+    };
+
+    await ctx.loadProfessions();
+
+    expect(ctx.professions,).toEqual([],);
+    expect(ctx.professionsError,).toBe("Failed to load professions.",);
+    expect(ctx.professionsLoading,).toBe(false,);
+  });
+
+  test("renders the empty state when the chat has no actor", async () => {
+    const ctx = buildCtx();
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: null, },); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.loadProfessions();
+
+    expect(ctx.professions,).toEqual([],);
+    expect(ctx.professionsError,).toBeNull();
+    expect(ctx.professionsLoading,).toBe(false,);
+    expect(fetchCalls.some((c,) => c.url.startsWith("/api/rpg/professions/actors/",)),).toBe(false,);
+  });
+
+  test("skips the fetch while a load is already in flight", async () => {
+    const ctx = buildCtx({ professionsLoading: true, professions: [PROFESSION,], },);
+    await ctx.loadProfessions();
+
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.professions.length,).toBe(1,);
+  });
+},);
+
+describeOrSkip("professions.assignProfession error paths", () => {
+  test("reloads instead of erroring on a 404 (stale/hidden row)", async () => {
+    const ctx = buildCtx({ assignDiscipline: "smithing", },);
+    fetchHandler = (url,) => {
+      if (url === "/api/rpg/professions") { return new Response("{}", { status: 404, },); }
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+      if (url === "/api/rpg/professions/actors/actor-1") { return Response.json({ professions: [], },); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.assignProfession();
+
+    expect(ctx.professionsError,).toBeNull();
+    expect(ctx.professions,).toEqual([],);
+    expect(ctx.assignBusy,).toBe(false,);
+  });
+
+  test("surfaces the server error message on a non-ok response", async () => {
+    const ctx = buildCtx({ assignDiscipline: "smithing", },);
+    fetchHandler = (url,) => {
+      if (url === "/api/rpg/professions") {
+        return new Response(JSON.stringify({ error: "Actor already has the smithing discipline", },), {
+          status: 400,
+        },);
+      }
+
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.assignProfession();
+
+    expect(ctx.professionsError,).toBe("Actor already has the smithing discipline",);
+    expect(ctx.assignBusy,).toBe(false,);
+  });
+
+  test("surfaces assignFailed when the fetch throws", async () => {
+    const ctx = buildCtx({ assignDiscipline: "smithing", },);
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+
+      throw new Error("boom",);
+    };
+
+    await ctx.assignProfession();
+
+    expect(ctx.professionsError,).toBe("Failed to assign profession.",);
+    expect(ctx.assignBusy,).toBe(false,);
+  });
+
+  test("surfaces assignFailed when the chat has no actor", async () => {
+    const ctx = buildCtx({ assignDiscipline: "smithing", },);
+    mockChats(null,);
+
+    await ctx.assignProfession();
+
+    expect(ctx.professionsError,).toBe("Failed to assign profession.",);
+    expect(ctx.assignBusy,).toBe(false,);
+  });
+
+  test("skips the POST while an assign is already in flight", async () => {
+    const ctx = buildCtx({ assignDiscipline: "smithing", assignBusy: true, },);
+    await ctx.assignProfession();
+
+    expect(fetchCalls.length,).toBe(0,);
+  });
+},);
+
+describeOrSkip("professions.addProfessionXp error paths", () => {
+  test("surfaces the server error message on a non-ok response", async () => {
+    const ctx = buildCtx({ professions: [PROFESSION,], },);
+    fetchHandler = (url,) => {
+      if (url === "/api/rpg/professions/prof-1/xp") {
+        return new Response(JSON.stringify({ error: "XP amount must be a finite positive number", },), {
+          status: 400,
+        },);
+      }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.addProfessionXp("prof-1",);
+
+    expect(ctx.professionsError,).toBe("XP amount must be a finite positive number",);
+    expect(ctx.professionFeedback,).toBeNull();
+    expect(ctx.professionsBusyId,).toBeNull();
+  });
+
+  test("surfaces xpFailed when the fetch throws", async () => {
+    const ctx = buildCtx({ professions: [PROFESSION,], },);
+    fetchHandler = () => {
+      throw new Error("boom",);
+    };
+
+    await ctx.addProfessionXp("prof-1",);
+
+    expect(ctx.professionsError,).toBe("Failed to add profession XP.",);
+    expect(ctx.professionsBusyId,).toBeNull();
+  });
+
+  test("skips the POST while XP is already in flight", async () => {
+    const ctx = buildCtx({ professionsBusyId: "prof-1", },);
+    await ctx.addProfessionXp("prof-1",);
+
+    expect(fetchCalls.length,).toBe(0,);
+  });
+},);
+
+describeOrSkip("professions.addProfessionSpecialization error paths", () => {
+  test("reloads instead of erroring on a 404 (stale/hidden row)", async () => {
+    const ctx = buildCtx({ specDraft: { name: "Catalyst", bonusType: "quality", bonusValue: 5, }, },);
+    fetchHandler = (url,) => {
+      if (url === "/api/rpg/professions/prof-1/specialize") { return new Response("{}", { status: 404, },); }
+      if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "actor-1", },); }
+      if (url === "/api/rpg/professions/actors/actor-1") { return Response.json({ professions: [], },); }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.addProfessionSpecialization("prof-1",);
+
+    expect(ctx.professionsError,).toBeNull();
+    expect(ctx.professionsBusyId,).toBeNull();
+  });
+
+  test("surfaces the server error message on a non-ok response", async () => {
+    const ctx = buildCtx({ specDraft: { name: "Catalyst", bonusType: "quality", bonusValue: 5, }, },);
+    fetchHandler = (url,) => {
+      if (url === "/api/rpg/professions/prof-1/specialize") {
+        return new Response(JSON.stringify({ error: "Specialization requires level 99", },), { status: 400, },);
+      }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.addProfessionSpecialization("prof-1",);
+
+    expect(ctx.professionsError,).toBe("Specialization requires level 99",);
+    expect(ctx.professionsBusyId,).toBeNull();
+  });
+
+  test("surfaces specializeFailed when the fetch throws", async () => {
+    const ctx = buildCtx({ specDraft: { name: "Catalyst", bonusType: "quality", bonusValue: 5, }, },);
+    fetchHandler = () => {
+      throw new Error("boom",);
+    };
+
+    await ctx.addProfessionSpecialization("prof-1",);
+
+    expect(ctx.professionsError,).toBe("Failed to specialize profession.",);
+    expect(ctx.professionsBusyId,).toBeNull();
+  });
+
+  test("skips the POST while a specialization is already in flight", async () => {
+    const ctx = buildCtx({
+      specDraft: { name: "Catalyst", bonusType: "quality", bonusValue: 5, },
+      professionsBusyId: "prof-1",
+    },);
+
+    await ctx.addProfessionSpecialization("prof-1",);
+
+    expect(fetchCalls.length,).toBe(0,);
+  });
+},);
+
 describeOrSkip("professions.assignableDisciplines", () => {
   test("excludes already-held disciplines", () => {
     const ctx = buildCtx({ professions: [PROFESSION,], },);
