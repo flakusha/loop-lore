@@ -115,7 +115,14 @@ export async function persistHarnessTurn(
   const finished = transcript.toolResults.filter((result,) => isTerminalToolStatus(result.status,));
 
   // Encrypt before the transaction opens: a failed encryption must persist
-  // nothing at all (sequential awaits — the repo lint bans bare Promise.all).
+  // nothing at all. The assistant content goes first on purpose - it is the
+  // call that materialises the actor key (ensureActorKey creates it on first
+  // use, and actor_keys has no unique index, so two concurrent first-use
+  // calls would insert two active keys). After it, the tool results only
+  // read that key, so they encrypt concurrently.
+  // `Promise.allSettled` is the project shape (bare `Promise.all` is banned
+  // by `no-restricted-syntax`); the first rejection rethrows here, so a
+  // failed encryption still persists nothing.
   const assistantContent = await encryptStoredContent({
     database,
     chatId,
@@ -123,16 +130,21 @@ export async function persistHarnessTurn(
     plaintext: transcript.text,
   },);
 
-  const toolContents: { storedContent: string; storedKeyId: string | null }[] = [];
-  for (const result of finished) {
-    toolContents.push(
-      await encryptStoredContent({
+  const settled = await Promise.allSettled(
+    finished.map((result,) =>
+      encryptStoredContent({
         database,
         chatId,
         actorId,
         plaintext: result.content,
-      },),
-    );
+      },)
+    ),
+  );
+
+  const toolContents: { storedContent: string; storedKeyId: string | null }[] = [];
+  for (const entry of settled) {
+    if (entry.status === "rejected") { throw entry.reason; }
+    toolContents.push(entry.value,);
   }
 
   const toolCalls = safeJsonStringify(storedToolCalls(transcript,),);
