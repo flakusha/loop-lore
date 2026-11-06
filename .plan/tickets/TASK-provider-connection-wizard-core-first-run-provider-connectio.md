@@ -3,7 +3,8 @@
 
 # TASK: provider-connection-wizard core: first-run provider connection flow
 
-**Status:** in_progress
+**Status:** In Progress
+**Status Note:** 2026-11-06 reconcile: backend half verified on dev (`3793bff82` store + routes, `f3d4d42d4` gate clearance, `f52c68813`/`6f2b66374`/`35bbcf135` reactivity/bound/error fixes); frontend client still on the unlanded lane (see tracker). Do NOT touch — `p0-world-wizard-edit`-adjacent wizard lane owns the frontend.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-provider-connection-wizard

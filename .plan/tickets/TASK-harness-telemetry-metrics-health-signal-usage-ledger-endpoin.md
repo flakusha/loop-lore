@@ -4,6 +4,7 @@
 # TASK: harness-telemetry-metrics-health-signal-usage-ledger-endpoint
 
 **Status:** Not Started
+**Blocker:** HELD — no implementation lane exists yet; code genuinely unlanded (no `harness` type under `src/telemetry`, no metrics/health mention). Do NOT touch until a lane is scoped.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-harness-acp

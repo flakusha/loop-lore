@@ -15,7 +15,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
+**Landed:** 181971f9a attack-roll chip + backend-verdict outcome (battle-log render, CSS dice tumble; sound deliberately skipped — no audio pipeline, optional AC; social rolls stay open on the epic)
 **Scope:** epic-battle-ui: skill-check/dice-roll UI (TASK-skill-check)
 **Priority:** P0 — Critical
 **Effort:** Medium
@@ -46,3 +47,5 @@ Animated dice roll visualization for skill checks and attacks.
 
 - `src/frontend/battle/dice-animation.ts`
 - `src/frontend/battle/skill-check-display.ts`
+
+**Resolved:** 2026-11-06 reconcile: attack-roll slice landed on dev (`a07f3ce89` + `181971f9a`, epic note `3d5d11e2f`); social-roll gap stays open on the epic.

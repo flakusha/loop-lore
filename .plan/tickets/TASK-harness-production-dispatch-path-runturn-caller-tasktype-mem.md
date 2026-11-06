@@ -4,6 +4,7 @@
 # TASK: harness-production-dispatch-path-runturn-caller-tasktype-member
 
 **Status:** Not Started
+**Blocker:** HELD — unlanded branch `harness-dispatch-path` (`ca3f1d096` dispatch + `2a93b879d` runTurn caller; storage seam already landed `9887a9c2d`/`f4622eef1`). Next: land the branch, then flip this ticket with the landing sha.
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-external-harness-acp
