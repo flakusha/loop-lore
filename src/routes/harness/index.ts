@@ -196,7 +196,11 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
           }
         }, {
           query: t.Object({ refresh: t.Optional(t.String({},),), },),
-          response: { 200: HarnessSettingsResponse, ...denied, },
+          // The 500 is declared because the handler can answer it: an
+          // unknown provider flavor is a server-side config defect. The
+          // generated OpenAPI spec reads this map, so an undeclared 500
+          // would ship a spec that under-documents the endpoint.
+          response: { 200: HarnessSettingsResponse, ...denied, 500: ErrorResponse, },
         },)
         .put(`${prefix}/harness/settings`, async (ctx,) => {
           const body = ctx.body as {
