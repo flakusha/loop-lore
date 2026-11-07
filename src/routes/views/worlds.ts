@@ -4,9 +4,9 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { listTimelineEntries, } from "../../story/timeline/world-timeline";
-import { can, } from "../../users/permissions";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { requireWorldAccess, } from "../worlds/access";
+import { visibleWorldsTo, } from "./access";
 import { escapeHtml, htmlResponse, } from "./layout";
 import { renderTimelineEvents, TIMELINE_EVENT_CAP, } from "./world-timeline-events";
 import { loadWorldListCards, renderWorldCard, } from "./worlds-list";
@@ -34,10 +34,9 @@ async function serveWorldsListDb(
   userRole: string | null,
 ): Promise<Response> {
   let qb = database.selectFrom("worlds",).selectAll().orderBy("name", "asc",).limit(100,);
-  // Non-admin users only see their own worlds (mirrors GET /api/worlds).
-  if (userId && !can(userRole, "admin.world",)) {
-    qb = qb.where("owner_id", "=", userId,);
-  }
+  // Every viewer arm filters (visibleWorldsTo): anonymous callers match
+  // nothing, the guest tier sees public worlds only.
+  qb = qb.where(visibleWorldsTo({ userId, userRole, },),);
 
   const worlds = await qb.execute();
 
