@@ -8,8 +8,10 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Wontfix
+**Status Note:** superseded as a standalone component — the reusable HP progressbar widget shipped as `src/frontend/battle/health-bar.ts` (rendered by `src/frontend/battle/render.ts`, styled in `src/public/css/vn.css:938`); regeneration/damage indicators were never built and no separate NPC-view consumer exists.
 **Priority:** P0 — Critical
+**Caveats:** superseded — no new code; stale-state risk if the battle panel regresses
 **Effort:** Small
 **Type:** Feature Task
 **Tags:** battle, frontend, ui, health, component

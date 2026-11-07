@@ -167,13 +167,13 @@ The earlier gap here — backend social and combat item-use routes unreachable f
 
 ## Linked Tasks
 
-- `TASK-battle-screen.md` (open)
+- `TASK-battle-screen.md` (Wontfix — superseded by the shipped chat battle panel)
 - `TASK-battle-alpine.md` (open)
-- `TASK-battle-state-display.md` (Not Started)
-- `TASK-battle-action-selector.md` (Not Started)
+- `TASK-battle-state-display.md` (Wontfix — superseded by the shipped chat battle panel)
+- `TASK-battle-action-selector.md` (Wontfix — superseded by the shipped chat battle panel)
 - `TASK-battle-log.md` (Done)
 - `TASK-skill-check.md` (Done — attack-roll slice landed `a07f3ce89` + `181971f9a`; social rolls open)
-- `TASK-health-bar.md` (Not Started)
+- `TASK-health-bar.md` (Wontfix — superseded by the shipped chat battle panel)
 - `TASK-status-effects.md` (Done)
 - `TASK-battle-panel-health-bar-widget-turn-order-strip.md` (open)
 
