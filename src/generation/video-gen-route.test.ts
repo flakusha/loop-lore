@@ -38,7 +38,6 @@ import { ErrorCode, } from "../routes/http-utils/status";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertChats, insertMessages, insertUsers, } from "../test-utils/insert-helpers";
 import * as realVideoEngine from "./video-engine";
-import type * as videoGenRoute from "./video-gen-route";
 
 /** Engine outcome the route test controls per case. */
 let engineOutcome: { ok: true } | { ok: false; error: string; status: number } = { ok: true, };
