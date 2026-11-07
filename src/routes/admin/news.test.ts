@@ -75,13 +75,24 @@ describe("admin model-news routes", () => {
   test("GET weight-change returns false for unknown model", async () => {
     const app = makeApp(db, "admin",);
     // The route asks the Hugging Face API about the model through the global
-    // fetch. Stub it (the codebase mock-fetch pattern) so the test resolves
-    // nothing over the network: the shared public API used to hang until this
-    // test's 5s deadline, which reddened the suite under load. A 404 is what
-    // the API returns for an unknown model.
+    // fetch. Stub it so the test resolves nothing over the network: the shared
+    // public API used to hang until this test's 5s deadline, which reddened the
+    // suite under load. A 404 is what the API returns for an unknown model.
+    // Only huggingface.co URLs are intercepted; every other URL keeps going to
+    // the previously installed fetch — a blanket stub would answer another
+    // test file's request in this shared process.
     const realFetch = globalThis.fetch;
-    (globalThis as Record<string, unknown>).fetch = () =>
-      Promise.resolve(new Response("Not Found", { status: 404, },),);
+    (globalThis as Record<string, unknown>).fetch = (
+      input: string | URL | Request,
+      init?: RequestInit,
+    ) => {
+      const url = typeof input === "string" ? input : String(input,);
+      if (url.includes("huggingface.co",)) {
+        return Promise.resolve(new Response("Not Found", { status: 404, },),);
+      }
+
+      return realFetch(input, init,);
+    };
 
     try {
       const res = await app.handle(
