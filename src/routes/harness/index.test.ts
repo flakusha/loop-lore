@@ -651,6 +651,32 @@ describe("harnessRoutes", () => {
       expect(body.error,).toContain("bedrock",);
       expect(body.error,).not.toContain("no provider ToS metadata",);
     });
+
+    it("denies a non-admin and an unauthenticated caller ahead of the flavor error path", async () => {
+      // The error path above reads the admin's own config to name the offending
+      // flavor, so the authorization boundary has to hold AHEAD of it: an
+      // unauthorized caller gets the 403 and never the 500 that leaks the
+      // flavor. The guard is a beforeHandle on the whole router, so the denial
+      // happens before the handler body runs at all.
+      resetHarnessAdminSettings();
+      initHarnessAdminSettings({
+        enabled: false,
+        profiles: [
+          {
+            name: "typo-profile",
+            command: [MISSING_BINARY, "acp",],
+            harness: "bedrock",
+            tiers: { good: { model: "test-provider/test-model", capabilities: ["tools",], }, },
+          },
+        ],
+      } as unknown as HarnessAcpConfig,);
+
+      for (const role of ["user", null,]) {
+        const res = await get(role, "/api/v1/harness/settings",);
+        expect(res.status,).toBe(403,);
+        expect(await res.text(),).not.toContain("bedrock",);
+      }
+    });
   });
 
   describe("PUT /api/v1/harness/settings", () => {
