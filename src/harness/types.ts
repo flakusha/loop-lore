@@ -11,15 +11,12 @@
  * existing `from "./types"` imports keep working.
  */
 import type { HarnessRunDetail, HarnessRunSummary, } from "./read-models";
-import type { HarnessTaskType, HarnessTier, } from "./types-wire";
+import type { HarnessResult, HarnessTaskType, HarnessTier, } from "./types-wire";
 
 // Wire-side names re-exported from ./types-wire so existing
 // `from "./types"` imports keep working.
-export { deserializeRun, HARNESS_TASK_TYPES, serializeRun, } from "./types-wire";
-export type { HarnessTaskType, HarnessTier, } from "./types-wire";
-
-/** How the run ended. `"error"` is the only failure value, so `jq` can count it. */
-export type HarnessResult = "ok" | "error" | "timeout" | "cancelled";
+export { deserializeRun, HARNESS_RESULTS, HARNESS_TASK_TYPES, serializeRun, } from "./types-wire";
+export type { HarnessResult, HarnessTaskType, HarnessTier, } from "./types-wire";
 
 /** Tools the run touched (tool names, not payloads). */
 export type HarnessTool = string;

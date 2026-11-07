@@ -27,7 +27,7 @@ import {
 } from "../../frontend/alpine/admin-harness-schema";
 import { getRun, listRuns, stats, } from "../../harness/query";
 import type { HarnessResult, HarnessTaskType, } from "../../harness/types";
-import { HARNESS_TASK_TYPES, toDetail, toSummary, } from "../../harness/types";
+import { HARNESS_RESULTS, HARNESS_TASK_TYPES, toDetail, toSummary, } from "../../harness/types";
 import {
   getHarnessAdminFileConfig,
   getHarnessAdminSettings,
@@ -40,11 +40,12 @@ import { requirePermission, } from "../../middleware/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, type HttpStatusCode, jsonError, jsonResponse, } from "../http-utils";
 import { harnessRunFiles, type SandboxFilesError, } from "./files";
+import { resultSchema, runIdParams, taskTypeSchema, } from "./query-schema";
 
 /**
- * Narrow an untrusted query string to the closed `HarnessTaskType` union.
- * @param value - the raw, untrusted `?taskType=` query value
- * @returns the matching task type, or undefined when it is absent/unknown.
+ * Narrow a validated query value to the closed `HarnessTaskType` union.
+ * @param value - the `?taskType=` query value, already validated by the schema
+ * @returns the matching task type, or undefined when it is absent.
  */
 function asTaskType(value: unknown,): HarnessTaskType | undefined {
   if (typeof value !== "string") { return undefined; }
@@ -54,14 +55,13 @@ function asTaskType(value: unknown,): HarnessTaskType | undefined {
 }
 
 /**
- * Narrow an untrusted query string to the closed `HarnessResult` union.
- * @param value - the raw, untrusted `?result=` query value
- * @returns the matching result, or undefined when it is absent/unknown.
+ * Narrow a validated query value to the closed `HarnessResult` union.
+ * @param value - the `?result=` query value, already validated by the schema
+ * @returns the matching result, or undefined when it is absent.
  */
 function asResult(value: unknown,): HarnessResult | undefined {
   if (typeof value !== "string") { return undefined; }
-  const known: readonly HarnessResult[] = ["ok", "error", "timeout", "cancelled",];
-  return known.find((k,) => k === value);
+  return HARNESS_RESULTS.find((k,) => k === value);
 }
 
 /**
@@ -114,8 +114,8 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
         }, {
           query: t.Object({
             limit: t.Optional(t.String({},),),
-            taskType: t.Optional(t.String({},),),
-            result: t.Optional(t.String({},),),
+            taskType: t.Optional(taskTypeSchema,),
+            result: t.Optional(resultSchema,),
           },),
           response: { 200: HarnessRunsResponse, ...denied, },
         },)
@@ -132,7 +132,7 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
 
           return jsonResponse(toDetail(record,),);
         }, {
-          params: t.Object({ runId: t.String({},), },),
+          params: runIdParams,
           response: { 200: HarnessRunDetailSchema, ...denied, },
         },)
         .get(`${prefix}/harness/runs/:runId/files`, async (ctx,) => {
@@ -161,6 +161,7 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
 
           return jsonResponse(listed,);
         }, {
+          params: runIdParams,
           query: t.Object({ path: t.Optional(t.String({},),), },),
           response: { 200: HarnessSandboxFilesSchema, ...denied, },
         },)
