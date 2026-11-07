@@ -8,8 +8,10 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Wontfix
+**Status Note:** superseded as a standalone component — the action bar shipped inside the chat battle panel (`src/frontend/battle/commands.ts:109` `ACTIONS`, `render.ts:138` `renderActions`: attack/heal/end plus the item-use menu and social verbs incl. negotiate). The two real gaps stay open in `epic-battle-ui.md`: target selection (single/area/self) and action cost/cooldown display — the widgets `src/frontend/battle/target-selection.ts` and `src/frontend/battle/action-cost.ts` exist but are unwired.
 **Priority:** P0 — Critical
+**Caveats:** superseded — no new code; stale-state risk if the battle action bar regresses
 **Effort:** Medium
 **Epic:** epic-battle-ui
 

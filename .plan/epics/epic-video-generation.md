@@ -5,8 +5,8 @@
 
 **Overview:** (see sections below)
 
-**Status:** Not Started
-**Status Note:** Rewritten 2026-10-28 (plan branch `plan-ivss`) from the IVSS research package; supersedes the Wan/LTX stub in place. ComfyUI is the **unified** generation backend across creative AND chat/avatar flows (user decision 2026-10-28). sdcpp's disposition decided 2026-10-29: opt-in lightweight fallback (see Decisions).
+**Status:** In Progress
+**Status Note:** The Phase-A video slice landed on dev via `33f7461de` — video engine (`src/generation/video-engine.ts`), `POST /api/v1/generation/video` route with auth contract + asset persistence, video provider config and per-modality template apply dispatch, plus tests. Still open: the async submit/poll job shape (`TASK-video-gen-route` AC 2), the video template schema (`TASK-video-template-schema`) and the MiniMax H3 provider row (`TASK-video-provider-minimax-h3`). Rewritten 2026-10-28 (plan branch `plan-ivss`) from the IVSS research package; supersedes the Wan/LTX stub in place. ComfyUI is the **unified** generation backend across creative AND chat/avatar flows (user decision 2026-10-28). sdcpp's disposition decided 2026-10-29: opt-in lightweight fallback (see Decisions).
 **Priority:** Medium
 **Effort:** Large
 **Type:** Feature Epic

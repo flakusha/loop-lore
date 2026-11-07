@@ -8,8 +8,10 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Wontfix
+**Status Note:** superseded as a standalone page — the battle screen shipped as the chat-embedded panel (`src/frontend/battle/panel.ts`, mounted by `src/frontend/alpine/chat-battle.ts`); updates are refresh-driven, not SSE. Remaining battle gaps are tracked in `epic-battle-ui.md`.
 **Priority:** P0 — Critical
+**Caveats:** superseded — no new code; stale-state risk if the chat battle panel regresses
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** battle, frontend, ui

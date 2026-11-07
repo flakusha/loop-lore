@@ -11,6 +11,7 @@
 **Status:** Done
 **Scope:** EPIC-STORY-MODE-UI first slice: story turn-order visualization + world-state/NPC-state CRUD wiring + turn-by-id lookup (frontend wiring of existing src/routes/story-states/ backend)
 **Priority:** P1 — High
+**Caveats:** evidence verified at commit time; re-verify if the turn-order widget or story routes change
 **Effort:** Small
 **Type:** Feature Task
 **Tags:** story, frontend, ui, turn-order
@@ -29,11 +30,11 @@ Turn order visualization for story mode.
 
 ## Acceptance Criteria
 
-- [ ] Turn order display
-- [ ] Current turn indicator
-- [ ] Initiative tracking
-- [ ] Available actions per turn
-- [ ] Mobile responsive
+- [x] Turn order display (landed: `src/components/chat/gm-story-turn-order.html` + `src/frontend/alpine/story-turn-order.ts`, mounted in `gm-panel.html:202`)
+- [x] Current turn indicator (landed: `is-current` badge + `aria-current` — `gm-story-turn-order.html:21-27`)
+- [x] Initiative tracking (landed: `mergeInitiative` joins participant initiative — `story-turn-order.ts:49`; editable initiative input — `gm-story-turn-order.html:33-40`)
+- [x] Available actions per turn (landed: `stepWith(slot.actor_id)` → `POST /api/v1/chats/:id/story/step` with `forceActorId`)
+- [x] Mobile responsive (landed: `@media (width <= 479px)` block — `src/public/css/story.css:599`)
 
 ## Files to Create
 

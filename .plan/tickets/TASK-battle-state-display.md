@@ -8,8 +8,10 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Wontfix
+**Status Note:** superseded as a standalone component — the state display shipped inside the chat battle panel (`src/frontend/battle/render.ts` roster): HP progressbar (`health-bar.ts`), status-effect badges (`status-effects.ts`), environmental-effect badges (`environmental-effects.ts`), current-turn highlight and queue (`turn-order.ts`), mobile layout (`src/public/css/vn.css:1270`). Position display, battle-phase indicator and mana/stamina bars have no payload source and are not tracked gaps.
 **Priority:** P0 — Critical
+**Caveats:** superseded — no new code; stale-state risk if the battle roster widget regresses
 **Effort:** Medium
 **Epic:** epic-battle-ui
 

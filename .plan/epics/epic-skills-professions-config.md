@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Backend lanes done 2026-11-04 (professions-service-routes worktree): skills routes, professions service+routes, config templates + seeding landed. Remaining: item templates (TASK-item-config-templates), frontend (TASK-skills-frontend, TASK-professions-frontend).
+**Status Note:** Backend lanes done 2026-11-04 (professions-service-routes worktree): skills routes, professions service+routes, config templates + seeding landed. Item templates (`TASK-item-config-templates`, 7/7) and the skills/professions frontends (`TASK-skills-frontend` 8/8, `TASK-professions-frontend` 6/8 — the two crafting-integration ACs there are still open) landed 2026-11-04. Remaining: the unified ItemCategory/ItemRarity taxonomy link and a green `bun run check` with full test coverage.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -61,10 +61,10 @@ Three gaps identified: (1) **Skills & Professions** have DB tables + services bu
 - [x] Professions CRUD + progression + specializations accessible via HTTP
 - [x] Seeded characters from config include their declared skills
 - [x] Seeded characters from config include their declared professions
-- [ ] Item templates in config seed idempotently on server start
+- [x] Item templates in config seed idempotently on server start (landed 2026-11-04 — `TASK-item-config-templates` Done, 7/7)
 - [ ] Items link to unified `ItemCategory`/`ItemRarity` taxonomy
-- [ ] Skill tree visible in character panel (frontend)
-- [ ] Profession level + bonuses visible in character panel (frontend)
+- [x] Skill tree visible in character panel (frontend) (landed 2026-11-04 — `TASK-skills-frontend` Done, 8/8)
+- [x] Profession level + bonuses visible in character panel (frontend) (landed 2026-11-04 — `TASK-professions-frontend` Done, 6/8; the two crafting-integration ACs in that ticket remain open)
 - [ ] `bun run check` green; all new code covered by tests
 
 ## Related Epics
