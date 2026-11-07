@@ -151,8 +151,17 @@ describe("i18n E2E", () => {
 
       // Switch to Spanish so the active catalog is the Spanish one.
       await switchLocale(page, "es",);
+      // The reload has committed, but the new document's translator bundle may
+      // not have installed `t` yet. Wait for that readiness signal instead of
+      // assuming it: resolving a key in a document without `t` yields null.
+      await page.waitForFunction(
+        () => typeof (globalThis as unknown as { t?: unknown }).t === "function",
+        undefined,
+        { timeout: 15_000, },
+      );
       // The SHIPPED translator (ui.ts `t`, assigned to globalThis by the layout
       // bundle) resolves the known key in the post-reload document.
+
       const reloadedEditLabel = await page.evaluate(() => {
         const g = globalThis as unknown as { t?: (key: string,) => string };
         return g.t?.("common.edit",) ?? null;
