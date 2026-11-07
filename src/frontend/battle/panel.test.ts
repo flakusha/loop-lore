@@ -13,6 +13,7 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import {
   clearFocusLog,
+  type FakeEl,
   installBattleDom,
   lastFocus,
   pressKey,
@@ -190,6 +191,7 @@ describe("mountBattlePanel", () => {
       "battle-panel-header",
       "battle-turn-order",
       "battle-roster",
+      "battle-target-selector",
       "battle-actions",
     ],);
 
@@ -202,6 +204,7 @@ describe("mountBattlePanel", () => {
     expect(overlay.children.map((el,) => el.className),).toEqual([
       "battle-panel-header",
       "battle-roster",
+      "battle-target-selector",
       "battle-actions",
     ],);
   });
@@ -281,6 +284,69 @@ describe("target selection", () => {
     tile(container, "alice",).click();
     renderBattle(view(),);
     expect(tile(container, "alice",).classList.contains("is-selected",),).toBe(false,);
+  });
+});
+
+describe("target selector", () => {
+  const overlayOf = (container: FakeEl,): FakeEl => container.children[1]!;
+  const section = (container: FakeEl, cls: string,): FakeEl | undefined =>
+    overlayOf(container,).children.find((el,) => el.className === cls);
+
+  const options = (container: FakeEl,): FakeEl[] => section(container, "battle-target-selector",)?.children ?? [];
+  const option = (container: FakeEl, id: string,): FakeEl | undefined =>
+    options(container,).find((el,) => el.dataset.targetId === id);
+
+  it("renders one option per combatant, marking the acting one", () => {
+    const { container, } = mountBattle(view(),);
+    const picker = section(container, "battle-target-selector",)!;
+    expect(picker.getAttribute("role",),).toBe("radiogroup",);
+    expect(options(container,),).toHaveLength(2,);
+    // Alice acts first (turnIndex 0) — the picker names her self-target role.
+    expect(option(container, "alice",)!.textContent,).toBe("Alice (acting)",);
+    expect(option(container, "orc",)!.textContent,).toBe("Orc Grunt",);
+  });
+
+  it("drives the same selection state as the roster tiles", () => {
+    const { container, } = mountBattle(view(),);
+    option(container, "orc",)!.click();
+    expect(tile(container, "orc",).classList.contains("is-selected",),).toBe(true,);
+    expect(option(container, "orc",)!.classList.contains("is-selected",),).toBe(true,);
+    expect(actionButton(container, "attack",).disabled,).toBe(false,);
+    option(container, "orc",)!.click();
+    expect(tile(container, "orc",).classList.contains("is-selected",),).toBe(false,);
+  });
+
+  it("surfaces defeated combatants as disabled options the tiles swallow", () => {
+    const { container, } = mountBattle(
+      view({ combatants: [...roster, deadCombatant(),], },),
+    );
+
+    const ghost = option(container, "ghost",)!;
+    expect(ghost.disabled,).toBe(true,);
+    ghost.click();
+    expect(tile(container, "ghost",).classList.contains("is-selected",),).toBe(false,);
+    expect(actionButton(container, "attack",).disabled,).toBe(true,);
+  });
+});
+
+describe("action cost", () => {
+  const costOf = (container: FakeEl, kind: string,): string | null => {
+    const btn = actionButton(container, kind,);
+    const badge = btn.children.find((el,) => el.className === "battle-action-cost");
+    return badge?.textContent ?? null;
+  };
+
+  it("badges the action-economy drain on attack, heal and item", () => {
+    const { container, } = mountBattle(view(),);
+    expect(costOf(container, "attack",),).toBe("1 AP",);
+    expect(costOf(container, "heal",),).toBe("bonus",);
+    expect(costOf(container, "item",),).toBe("1 AP",);
+  });
+
+  it("leaves free actions unbadged (socials are free, end is the escape hatch)", () => {
+    const { container, } = mountBattle(view(),);
+    expect(costOf(container, "social-negotiate",),).toBeNull();
+    expect(costOf(container, "end",),).toBeNull();
   });
 });
 

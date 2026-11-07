@@ -151,6 +151,24 @@ export interface RoundResult {
   winner: "player" | "enemy" | null;
 }
 
+/** A d20 skill check persisted on a combat action (social negotiate). */
+export interface CombatSkillCheck {
+  /** Natural d20 face value rolled */
+  natural: number;
+  /** Flat modifier applied to the roll */
+  modifier: number;
+  /** Roll total after the modifier */
+  total: number;
+  /** Difficulty class the roll was compared against */
+  dc: number;
+  /** Whether the check succeeded */
+  success: boolean;
+  /** Natural-20 critical success */
+  criticalSuccess: boolean;
+  /** Natural-1 critical failure */
+  criticalFailure: boolean;
+}
+
 /** Action taken in combat */
 export interface CombatAction {
   /** Actor ID */
@@ -161,6 +179,8 @@ export interface CombatAction {
   targetId?: string;
   /** Attack result (if attack action) */
   attack?: AttackResult;
+  /** Skill-check roll (if a social negotiate action) */
+  skillCheck?: CombatSkillCheck;
   /** Damage dealt */
   damage?: number;
   /** Description */
