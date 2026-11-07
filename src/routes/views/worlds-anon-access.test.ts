@@ -15,6 +15,7 @@ import { WorldVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
+import { visibleWorldsTo, } from "./access";
 import { serveWorldsSearch, } from "./search";
 import { serveWorldsListDb, } from "./worlds";
 
@@ -88,5 +89,20 @@ describe("views/worlds anon access", () => {
     const html = await (await serveWorldsSearch(db, new URLSearchParams(), "owner", "admin",)).text();
     expect(html,).toContain("world-card-w-public",);
     expect(html,).toContain("world-card-w-private",);
+  });
+
+  test("visibleWorldsTo filters every viewer arm", async () => {
+    const ids = (userId: string | null, userRole: string | null,): Promise<string[]> =>
+      db.selectFrom("worlds",)
+        .select("worlds.id",)
+        .where(visibleWorldsTo({ userId, userRole, },),)
+        .execute()
+        .then((rows,) => rows.map((r,) => r.id).sort());
+
+    expect(await ids(null, null,),).toEqual([],);
+    expect(await ids(null, "guest",),).toEqual(["w-public",],);
+    expect(await ids("stranger", "user",),).toEqual([],);
+    expect(await ids("owner", "user",),).toEqual(["w-private", "w-public", "w-unlisted",],);
+    expect(await ids("owner", "admin",),).toEqual(["w-private", "w-public", "w-unlisted",],);
   });
 });
