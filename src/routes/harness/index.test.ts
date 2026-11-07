@@ -623,6 +623,34 @@ describe("harnessRoutes", () => {
         expect(profile.availability,).toEqual({ available: true, version: "opencode 9.9.9", },);
       }
     });
+
+    it("answers the error envelope when a profile carries an unknown harness flavor", async () => {
+      // The typed config forbids an unknown flavor, and the config validator
+      // only checks flavors while `harness.acp.enabled` is true — so a
+      // DISABLED config with a typo'd flavor reaches the store unchallenged.
+      // The cast injects exactly that state; the wire decoration then throws
+      // and the route must answer the envelope, not a raw-text 500.
+      resetHarnessAdminSettings();
+      initHarnessAdminSettings({
+        enabled: false,
+        profiles: [
+          {
+            name: "typo-profile",
+            command: [MISSING_BINARY, "acp",],
+            harness: "bedrock",
+            tiers: { good: { model: "test-provider/test-model", capabilities: ["tools",], }, },
+          },
+        ],
+      } as unknown as HarnessAcpConfig,);
+
+      const res = await get("admin", "/api/v1/harness/settings",);
+      expect(res.status,).toBe(500,);
+      const body = await res.json() as { error: string; code: string };
+      expect(body.code,).toBe("SERVER_ERROR",);
+      // The operator gets the flavor to fix, and nothing else.
+      expect(body.error,).toContain("bedrock",);
+      expect(body.error,).not.toContain("no provider ToS metadata",);
+    });
   });
 
   describe("PUT /api/v1/harness/settings", () => {
