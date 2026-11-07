@@ -17,7 +17,7 @@ import {
   resetExecLogPath,
   setExecLogPath,
 } from "./exec-log";
-import { deserializeRun, type HarnessRunRecord, serializeRun, } from "./types";
+import { deserializeRun, HARNESS_RESULTS, type HarnessRunRecord, serializeRun, } from "./types";
 
 /** A fully-populated record — every field non-default so round-trips are visible. */
 function sample(overrides: Partial<HarnessRunRecord> = {},): HarnessRunRecord {
@@ -124,6 +124,17 @@ describe("harness types", () => {
     // A known member survives untouched.
     expect(deserializeRun('{"run_id":"r","ts":"t","result":"timeout"}',)?.result,).toBe("timeout",);
     expect(deserializeRun('{"run_id":"r","ts":"t","result":"ok"}',)?.result,).toBe("ok",);
+  });
+
+  it("keeps the exported result union and the coercion in step", () => {
+    // The union is the runtime source of truth for the outcome list and the
+    // coercion is derived from it, so every member must survive the read and
+    // nothing outside it may read as an outcome at all.
+    expect(HARNESS_RESULTS,).toEqual(["ok", "error", "timeout", "cancelled",],);
+
+    for (const result of HARNESS_RESULTS) {
+      expect(deserializeRun(`{"run_id":"r","ts":"t","result":"${result}"}`,)?.result,).toBe(result,);
+    }
   });
 
   it("reads a pre-turn_id line as turnId null instead of rejecting it", () => {
