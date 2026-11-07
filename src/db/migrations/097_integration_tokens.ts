@@ -1,5 +1,5 @@
 /**
- * 095_integration_tokens
+ * 097_integration_tokens
  *
  * Admin-scoped integration tokens (ADR-credentials-issuer-model §Decision a —
  * server-provided capability for integration clients). One credential table
