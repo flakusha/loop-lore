@@ -35,8 +35,10 @@ import {
   saveHarnessAdminSettings,
 } from "../../integrations/harness/admin-settings";
 import { probeHarnessCommand, } from "../../integrations/harness/availability";
-import { providerTosInfo, } from "../../integrations/harness/provider-tos";
+import { HARNESS_PROVIDER_TOS, providerTosInfo, } from "../../integrations/harness/provider-tos";
+import { getChildLogger, } from "../../logger";
 import { requirePermission, } from "../../middleware/permissions";
+import { asError, } from "../../utils";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, type HttpStatusCode, jsonError, jsonResponse, } from "../http-utils";
 import { harnessRunFiles, type SandboxFilesError, } from "./files";
@@ -170,7 +172,28 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
         },)
         .get(`${prefix}/harness/settings`, async (ctx,) => {
           const q = ctx.query as Record<string, string | undefined>;
-          return jsonResponse(await settingsWithAvailability(q.refresh === "1",),);
+
+          try {
+            return jsonResponse(await settingsWithAvailability(q.refresh === "1",),);
+          } catch (error) {
+            // A configured profile whose `harness` flavor the provider-ToS
+            // matrix does not know is a SERVER-side config defect: the config
+            // validator only checks flavors while `harness.acp.enabled` is
+            // true, so a typo'd flavor in a disabled config survives to the
+            // decoration step. The throw used to escape the handler and
+            // answer a plain-text 500; it now answers the error envelope and
+            // names only the offending flavor. The real cause is logged.
+            getChildLogger("routes.harness",)?.error("Harness settings read failed", asError(error,),);
+            const flavor = unknownFlavor();
+
+            return jsonError({
+              message: flavor === undefined
+                ? "Harness settings could not be read"
+                : `Harness profile flavor "${flavor}" is not a known provider flavor`,
+              status: HttpStatus.InternalServerError,
+              code: ErrorCode.ServerError,
+            },);
+          }
         }, {
           query: t.Object({ refresh: t.Optional(t.String({},),), },),
           response: { 200: HarnessSettingsResponse, ...denied, },
@@ -231,6 +254,20 @@ function decorateProfile(p: HarnessProfileSettingsView,): {
     noteKey: tos.noteKey,
     tosGrayzoneAcknowledged: p.tosGrayzoneAcknowledged,
   };
+}
+
+/**
+ * The configured profile flavor the provider-ToS matrix does not know.
+ *
+ * The matrix is the same table `providerTosInfo` reads, so this names the
+ * flavor that made the decoration throw without a second list of flavors to
+ * keep in sync.
+ * @returns the offending flavor, or undefined when every flavor is known.
+ */
+function unknownFlavor(): string | undefined {
+  const bad = getHarnessAdminSettings().profiles.find((p,) => !Object.hasOwn(HARNESS_PROVIDER_TOS, p.flavor,));
+
+  return bad?.flavor;
 }
 
 /**
