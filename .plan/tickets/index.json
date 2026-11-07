@@ -11050,6 +11050,20 @@
     "title": "World delete untransactioned + missing travel cleanup -> FK 500 half-deleted world",
     "type": "BUG"
   },
+  "BUG-WORLD-EDIT-MODAL-SERVED-BLANK-FIELDS-AND-WIPED-WORLD-DESCRIP": {
+    "hash": "368d726",
+    "git_issue": "368d726",
+    "extid": "BUG-WORLD-EDIT-MODAL-SERVED-BLANK-FIELDS-AND-WIPED-WORLD-DESCRIP",
+    "type": "BUG",
+    "title": "World edit modal served blank fields and wiped world description/lore",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-world-management-ui",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-world-edit-modal-served-blank-fields-and-wiped-world-descrip.md",
+    "status": "open"
+  },
   "BUG-WORLD-IMPORT-QUEST-TIME-LOCATION-ID-NOT-REMAPPED-CONNECTIONS": {
     "epic": "epic-world-travel-time",
     "extid": "BUG-WORLD-IMPORT-QUEST-TIME-LOCATION-ID-NOT-REMAPPED-CONNECTIONS",
