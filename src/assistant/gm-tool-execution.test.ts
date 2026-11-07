@@ -213,11 +213,11 @@ describe("executeGmToolRequest", () => {
     // Behavioral half: the slash path claims dice input outright.
     const slash = await dispatchCommand(db, config, userId, chatId, "/roll d20",);
     expect(slash.handled,).toBe(true,);
-    // Structural half: in the message-send route, GM execution is wired
+    // Structural half: in the message-send intake, GM execution is wired
     // strictly after the slash dispatch early-return, so a handled slash
     // command can never double-execute via the GM path.
     const routeSource = await readFile(
-      new URL("../routes/messages/create.ts", import.meta.url,),
+      new URL("../routes/messages/send-intake.ts", import.meta.url,),
       "utf8",
     );
 
