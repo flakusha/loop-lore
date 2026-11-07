@@ -2138,6 +2138,7 @@
     "evaluate": "Appraise an item (/evaluate <item>)",
     "forage": "Forage for supplies (/forage [location])",
     "guide": "GM: give narrative direction (/guide <direction>)",
+    "harness": "Run one turn on an external ACP harness (/harness <profile> <prompt>)",
     "heal": "Heal a target in battle (/heal <target> [amount])",
     "help": "Show available commands",
     "hide": "Attempt to hide (/hide [location])",
