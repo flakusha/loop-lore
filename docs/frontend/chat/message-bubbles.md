@@ -305,9 +305,10 @@ Bubble bounded by chat width (max 650px):
 - No enforced cap on text + image total height (chat list scrolls, not bubbles)
 
 **Click to expand**: not implemented — chat images render inline; there is no
-lightbox overlay, so the chat view has no zoom surface to pinch-zoom yet (the
-pinch detector in `src/frontend/touch.ts` reports the scale ratio but drives no
-surface).
+lightbox overlay. The chat view does have a pinch-zoom surface: a two-finger
+pinch on `#message-list` scales the list through the CSS `zoom` property,
+clamped to [1, 2] (`src/frontend/touch-zoom.ts`), with Ctrl+= / Ctrl+- / Ctrl+0
+as the keyboard equivalent.
 
 ### Document Display
 
