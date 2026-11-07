@@ -11077,6 +11077,20 @@
     "title": "World import: quest time_location_id not remapped; connections JSON copied verbatim",
     "type": "BUG"
   },
+  "BUG-WORLD-LIST-SEARCH-VIEWS-EXPOSE-PRIVATE-WORLDS-TO-ANONYMOUS-C": {
+    "hash": "da53429",
+    "git_issue": "da53429",
+    "extid": "BUG-WORLD-LIST-SEARCH-VIEWS-EXPOSE-PRIVATE-WORLDS-TO-ANONYMOUS-C",
+    "type": "BUG",
+    "title": "World list/search views expose private worlds to anonymous callers",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-world-list-search-views-expose-private-worlds-to-anonymous-c.md",
+    "status": "open"
+  },
   "BUG-WORLD-LOCATION-REPARENT-HAS-NO-CYCLE-SELF-DESCENDANT-CHECKS-": {
     "epic": "epic-world-locations",
     "extid": "BUG-WORLD-LOCATION-REPARENT-HAS-NO-CYCLE-SELF-DESCENDANT-CHECKS-",
