@@ -266,6 +266,16 @@ describe("harness query (file-backed)", () => {
       expect(s.toolingGaps,).toEqual([{ toolingGap: "g1", count: 2, },],);
     });
 
+    it("counts a line with no result as a failure, not a success", async () => {
+      // The log is append-only: a torn or hand-written line carries no
+      // `result` key, and it must not be counted as a successful run.
+      writeFileSync(log, JSON.stringify({ run_id: "no-result", ts: "2026-10-03T00:00:00Z", },) + NL,);
+      setExecLogPath(log,);
+      const s = await stats();
+      expect(s.totals.runs,).toBe(1,);
+      expect(s.totals.failures,).toBe(1,);
+    });
+
     it("labels empty model and pattern buckets rather than dropping them", async () => {
       write([rec({ runId: "1", model: "", pattern: "", },),],);
       const s = await stats();

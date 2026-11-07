@@ -101,10 +101,29 @@ describe("harness types", () => {
     const record = deserializeRun('{"run_id":"r","ts":"t"}',);
     expect(record,).not.toBeNull();
     expect(record?.tools,).toEqual([],);
-    expect(record?.result,).toBe("ok",);
+    // A line with NO result is not a success: the log is append-only, so a
+    // torn or hand-written line must not read as a successful run.
+    expect(record?.result,).toBe("error",);
     expect(record?.taskType,).toBe("other",);
     // An absent cost_usd means "unknown", not "free" — it must NOT coerce to 0.
     expect(record?.costUsd,).toBeNull();
+  });
+
+  it("reads a non-union result back as a known member, never a number", () => {
+    // A numeric `result` used to leak a number into a field the response
+    // schema declares as a string, which makes the admin client's
+    // whole-envelope decode fail and empties the whole runs table.
+    const numeric = deserializeRun('{"run_id":"r","ts":"t","result":42}',);
+    expect(numeric?.result,).toBe("error",);
+    expect(typeof numeric?.result,).toBe("string",);
+
+    // An unknown outcome is coerced to "error" too — never passed through raw.
+    const unknown = deserializeRun('{"run_id":"r","ts":"t","result":"WEIRD_RESULT"}',);
+    expect(unknown?.result,).toBe("error",);
+
+    // A known member survives untouched.
+    expect(deserializeRun('{"run_id":"r","ts":"t","result":"timeout"}',)?.result,).toBe("timeout",);
+    expect(deserializeRun('{"run_id":"r","ts":"t","result":"ok"}',)?.result,).toBe("ok",);
   });
 
   it("reads a pre-turn_id line as turnId null instead of rejecting it", () => {

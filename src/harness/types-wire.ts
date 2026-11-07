@@ -73,6 +73,26 @@ export const HARNESS_RESULTS = ["ok", "error", "timeout", "cancelled",] as const
 /** How the run ended. */
 export type HarnessResult = (typeof HARNESS_RESULTS)[number];
 
+/** Runtime membership test for the result union, for values off the wire. */
+const RESULT_SET: ReadonlySet<string> = new Set<string>(HARNESS_RESULTS,);
+
+/**
+ * Coerce an untrusted wire value to a known run outcome.
+ *
+ * A missing, null, non-string or unknown outcome is NOT a success: the log is
+ * append-only, so a torn or hand-written line must not read as a successful
+ * run. `w.result ?? "ok"` counted a torn line as a success, and a numeric
+ * `result: 42` leaked a number into a field the response schema declares as a
+ * string, which makes the admin client's whole-envelope decode fail and empties
+ * the whole runs table.
+ *
+ * @param v - the raw `result` from the JSONL
+ * @returns the value when it is a union member, otherwise "error".
+ */
+function toResult(v: unknown,): HarnessResult {
+  return typeof v === "string" && RESULT_SET.has(v,) ? (v as HarnessResult) : "error";
+}
+
 /** What a run was doing, independent of the model. */
 export type HarnessTaskType = (typeof HARNESS_TASK_TYPES)[number];
 
@@ -188,7 +208,7 @@ export function deserializeRun(line: string,): HarnessRunRecord | null {
     toolCount: num(w.tool_count,),
     pattern: str(w.pattern,),
     patternDetail: str(w.pattern_detail,),
-    result: w.result ?? "ok",
+    result: toResult(w.result,),
     error: typeof w.error === "string" ? w.error : null,
     toolingGap: typeof w.tooling_gap === "string" ? w.tooling_gap : null,
     // null/absent cost stays null — a 0 here would claim the call was free.
