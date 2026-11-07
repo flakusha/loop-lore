@@ -61,3 +61,25 @@ export function visibleCharactersTo(
   if (can(userRole, "admin.character",)) { return (eb,) => eb.val(true,); }
   return (eb,) => eb("actors.owner_id", "=", userId,);
 }
+
+/**
+ * Worlds a viewer may see in the `/dynamic/*` list/search fragments.
+ *
+ * The auth derive leaves `userId` null for anonymous callers instead of
+ * 401ing, so a truthy-`userId` guard would leave the query unfiltered and
+ * leak the whole table (private worlds included). Every arm filters:
+ * `admin.world` sees all; authenticated non-admins see only their own rows
+ * (the views layer stays stricter than GET /api/worlds, which also lists
+ * public and member worlds); the guest tier (null id with `world.view`)
+ * sees public worlds only; no identity at all matches nothing.
+ * @param viewer - who is asking (`userId` null for anonymous callers)
+ * @returns a `where()` callback for a `worlds` query
+ */
+export function visibleWorldsTo(
+  { userId, userRole, }: { userId: string | null; userRole: string | null },
+): (eb: ExpressionBuilder<DB, "worlds">,) => Expression<SqlBool> {
+  if (can(userRole, "admin.world",)) { return (eb,) => eb.val(true,); }
+  if (userId) { return (eb,) => eb("worlds.owner_id", "=", userId,); }
+  if (can(userRole, "world.view",)) { return (eb,) => eb("worlds.visibility", "=", "public",); }
+  return (eb,) => eb.val(false,);
+}
