@@ -74,10 +74,26 @@ describe("admin model-news routes", () => {
 
   test("GET weight-change returns false for unknown model", async () => {
     const app = makeApp(db, "admin",);
-    const res = await app.handle(new Request("http://localhost/api/admin/model-news/weight-change/nope",),);
-    expect(res.status,).toBe(200,);
-    const body = await res.json() as { modelId: string; weightChange: boolean };
-    expect(body.modelId,).toBe("nope",);
-    expect(body.weightChange,).toBe(false,);
+    // The route asks the Hugging Face API about the model through the global
+    // fetch. Stub it (the codebase mock-fetch pattern) so the test resolves
+    // nothing over the network: the shared public API used to hang until this
+    // test's 5s deadline, which reddened the suite under load. A 404 is what
+    // the API returns for an unknown model.
+    const realFetch = globalThis.fetch;
+    (globalThis as Record<string, unknown>).fetch = () =>
+      Promise.resolve(new Response("Not Found", { status: 404, },),);
+
+    try {
+      const res = await app.handle(
+        new Request("http://localhost/api/admin/model-news/weight-change/nope",),
+      );
+
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as { modelId: string; weightChange: boolean };
+      expect(body.modelId,).toBe("nope",);
+      expect(body.weightChange,).toBe(false,);
+    } finally {
+      (globalThis as Record<string, unknown>).fetch = realFetch;
+    }
   });
 });
