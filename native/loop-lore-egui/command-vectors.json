@@ -1,11 +1,11 @@
 {
   "commands": [
     {
-      "name": "agency"
-    },
-    {
       "name": "adapt",
       "requiredRole": "owner"
+    },
+    {
+      "name": "agency"
     },
     {
       "name": "analyze"
@@ -100,6 +100,10 @@
     },
     {
       "name": "skip"
+    },
+    {
+      "name": "harness",
+      "requiredRole": "member"
     },
     {
       "name": "workflow",
@@ -256,11 +260,11 @@
       "name": "summarize"
     },
     {
-      "name": "timeline",
-      "requiredRole": "member"
+      "name": "sum"
     },
     {
-      "name": "sum"
+      "name": "timeline",
+      "requiredRole": "member"
     },
     {
       "name": "world-list",
@@ -330,8 +334,8 @@
     {
       "query": "",
       "expected": [
-        "agency",
         "adapt",
+        "agency",
         "analyze",
         "apply",
         "asset-list",
@@ -359,6 +363,7 @@
         "target",
         "priority",
         "skip",
+        "harness",
         "workflow",
         "orchestrate",
         "workflowz",
@@ -402,8 +407,8 @@
         "split",
         "stats",
         "summarize",
-        "timeline",
         "sum",
+        "timeline",
         "world-list",
         "world-get",
         "world-update",
@@ -420,8 +425,8 @@
     {
       "query": "a",
       "expected": [
-        "agency",
         "adapt",
+        "agency",
         "analyze",
         "apply",
         "asset-list",
@@ -439,6 +444,7 @@
         "duplicate",
         "constraint",
         "target",
+        "harness",
         "orchestrate",
         "heal",
         "impersonate",
