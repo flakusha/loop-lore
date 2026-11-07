@@ -18,11 +18,17 @@
  * imports keep working.
  */
 import { safeJsonParse, } from "../utils";
-import type { HarnessResult, HarnessRunRecord, } from "./types";
+import type { HarnessRunRecord, } from "./types";
 
 /**
  * Every task type, as a runtime list. The union below is DERIVED from this so
  * the wire-side check in `deserializeRun` cannot drift from the type.
+ *
+ * The admin harness panel's task-type filter offers exactly these four
+ * `harness*` values (`harnessCode`, `harnessEdit`, `harnessReview`,
+ * `harnessCreative`), so the API's allowed-value set must cover the client's
+ * vocabulary — otherwise the boundary drops the filter and returns unfiltered
+ * rows.
  */
 export const HARNESS_TASK_TYPES = [
   "chat",
@@ -36,6 +42,10 @@ export const HARNESS_TASK_TYPES = [
   "sandbox",
   "harness",
   "eval",
+  "harnessCode",
+  "harnessEdit",
+  "harnessReview",
+  "harnessCreative",
   "other",
 ] as const;
 
@@ -56,6 +66,12 @@ const TIER_SET: ReadonlySet<string> = new Set<string>(HARNESS_TIERS,);
 function toTier(v: unknown,): HarnessTier | null {
   return typeof v === "string" && TIER_SET.has(v,) ? (v as HarnessTier) : null;
 }
+
+/** Every run outcome, as a runtime list. The union below is derived from it. */
+export const HARNESS_RESULTS = ["ok", "error", "timeout", "cancelled",] as const;
+
+/** How the run ended. */
+export type HarnessResult = (typeof HARNESS_RESULTS)[number];
 
 /** What a run was doing, independent of the model. */
 export type HarnessTaskType = (typeof HARNESS_TASK_TYPES)[number];
