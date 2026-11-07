@@ -4,10 +4,10 @@
 # TASK: Video generation route (`POST /api/generation/video`)
 
 **Status:** In Progress
-**Status Note:** Landed on `feat-comfyui-param-derivation` + `feat-model-rankings` lanes; unlanded phase-A slice lives on `epic-agentic-integration` (Phase A route + engine + tests done, async job shape open).
-**Blocker:** HELD with `epic-agentic-integration` — same 095 renumber + lock decision as `TASK-agentic-integration-tests`. Next: land that branch, then re-check this ticket's Phase-A boxes against dev.
+**Status Note:** The Phase-A slice (video engine + route + provider config + modality dispatch + tests) landed on dev via `33f7461de`; only the async submit/poll job shape (AC 2) remains to be implemented.
 **Phase-A progress (from epic-agentic-integration):** Landed `src/generation/video-engine.ts` (ComfyUI workflow dispatch, cross-instance failover, per-provider BYO keys with fail-closed decrypt, 501/500/502/503/504 mapping), `POST /api/v1/generation/video` in `video-gen-route.ts` (auth contract + template render + storage quota gate + asset persistence as `assetType: "video"`), video provider config (`generation.providers.video`, `VideoApiFamily.Comfyui`), per-modality template apply dispatch (`routes/templates/modality.ts`), API-keys surface listing video instances, config examples, and tests (engine: sink/error/failover/BYOK; route: 401/400/404/403/501 gates; apply seam). Still open: the async job shape — the route blocks on the engine's bounded submit/poll/download instead of returning a job handle, so a long render still holds the HTTP connection (deadline is `generationTimeout`); route-level happy-path/asset-link assertions and a route-level template-render test are not yet written.
 **Priority:** low
+**Caveats:** evidence verified at commit time; re-verify if the video route or provider config changes
 **Effort:** Medium
 **Epic:** epic-video-generation
 **Related:** `TASK-video-provider-minimax-h3.md`, `TASK-video-template-schema.md`, `FEAT-065-sub-video.md`
@@ -40,17 +40,26 @@ path; and output is `assetType: "video"` (MIME already in
 
 ## Acceptance Criteria
 
-- [ ] `src/generation/video-gen-route.ts` exports `handleVideoGeneration` with
+- [x] `src/generation/video-gen-route.ts` exports `handleVideoGeneration` with
   the image-route auth contract: 401 without user, `checkChatAccess` 403 on
   foreign `chatId`, 400 on missing prompt, 501 when no video provider is
-  configured
+  configured (landed: `33f7461de` — the route and its auth-matrix tests are
+  on dev; `src/generation/video-gen-route.ts`)
 - [ ] Async job shape: submit → poll with `generationTimeout` deadline → 504
   on timeout, mirroring `generateSDCPP` (`image-engine/sdcpp.ts:79-127`);
-  no request holds an HTTP connection through a multi-minute render
-- [ ] Output persists via `createAsset` (`assetType: "video"`) + `linkAsset`
-  message/chat links, `dedupe: false` per-run like the image route
+  no request holds an HTTP connection through a multi-minute render (OPEN —
+  another lane owns this slice; the route still blocks on the engine's
+  bounded submit/poll)
+- [x] Output persists via `createAsset` (`assetType: "video"`) + `linkAsset`
+  message/chat links, `dedupe: false` per-run like the image route (landed:
+  `33f7461de` — the route persists the clip as `assetType: "video"` with
+  message/chat links)
 - [ ] `templateId`/`context` render through the video template schema from
   `TASK-video-template-schema.md`; non-video modality rejected 400 (image
-  route precedent `:88-93`)
+  route precedent `:88-93`) (PARTIAL — the route rejects a non-video template
+  400, but the video template schema ticket `TASK-video-template-schema` is
+  still Not Started)
 - [ ] Unit tests: auth matrix (401/403/400/501), timeout path, asset-link
-  assertions — mirroring `image-gen-route.test.ts`
+  assertions — mirroring `image-gen-route.test.ts` (PARTIAL — the auth-matrix
+  tests landed with `33f7461de`; the timeout-path assertions belong to the
+  open async job shape above)
