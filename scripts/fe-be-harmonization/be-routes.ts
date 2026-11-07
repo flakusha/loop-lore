@@ -62,13 +62,23 @@ function resolveRouteConsts(s: string, consts: Map<string, string>,): string {
 }
 
 /** Literal route registrations in one file (skips .all catch-alls). */
-function literalBeRoutes(src: string, rel: string, resolve: (s: string,) => string, out: BeRoute[],): void {
-  const re = /\.(get|post|put|patch|delete|all)\s*\(\s*(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g;
+function literalBeRoutes(src: string, rel: string, consts: Map<string, string>, out: BeRoute[],): void {
+  const re =
+    /\.(get|post|put|patch|delete|all)\s*\(\s*(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[A-Za-z_$][\w$]*)/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(src,)) !== null) {
     const verb = ((m[1] ?? "get") as string).toUpperCase();
     if (verb === "ALL") { continue; }
-    const raw = resolve((m[2] ?? "").slice(1, -1,),);
+    const arg = m[2] ?? "";
+    // Bare identifier: `const R = `${prefix}/rpg/professions`` + `.post(R, ...)`.
+    // routeConsts() already captures R; resolve it here. Unknown names (e.g.
+    // imported consts) stay invisible, as before.
+    const raw = arg.startsWith("`",) || arg.startsWith('"',) || arg.startsWith("'",)
+      ? resolveRouteConsts(arg.slice(1, -1,), consts,)
+      : consts.has(arg,)
+      ? resolveRouteConsts(consts.get(arg,) ?? "", consts,)
+      : null;
+    if (raw === null) { continue; }
     if (!raw.startsWith("/",) && !raw.includes("${",)) { continue; }
     const win = callExtent(src, m.index,);
     out.push({
@@ -108,7 +118,7 @@ export function scanBe(): BeRoute[] {
         consts.set("basePath", basePath,);
         consts.set("withIdPath", withIdPath,);
       }
-      literalBeRoutes(src, rel, (s,) => resolveRouteConsts(s, consts,), out,);
+      literalBeRoutes(src, rel, consts, out,);
       expandEntityFactories(src, rel, out,);
       expandMemoryCarryPlugin(src, rel, consts, out,);
     }
