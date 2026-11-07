@@ -408,6 +408,10 @@ describe("column rename upgrade path", () => {
       "SELECT sql FROM sqlite_master WHERE sql IS NOT NULL",
     ).all() as { sql: string }[];
 
+    // 097_integration_tokens reuses `token_hash` for a DIFFERENT credential
+    // (SHA-256 of the integration token, per that migration's header) — a new
+    // table, not a leftover of the 057 sessions.token_hash rename. Scope the
+    // scan to every other object so the old-name assertion stays intact.
     const old = [
       "format_version",
       "password_hash",
@@ -416,8 +420,10 @@ describe("column rename upgrade path", () => {
       "fallback_chain",
     ];
 
+    const inScope = ddl.filter((d,) => !d.sql.includes("integration_tokens",));
+
     for (const name of old) {
-      const hits = ddl.filter((d,) => d.sql.includes(name,));
+      const hits = inScope.filter((d,) => d.sql.includes(name,));
       expect(hits.map((h,) => h.sql.slice(0, 80,)), `no DDL still references ${name}`,).toEqual([],);
     }
 
