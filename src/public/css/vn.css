@@ -1104,6 +1104,26 @@
   }
 }
 
+/* Action cost badge on action-bar buttons (AP drain for the turn's action). */
+.battle-action-cost {
+  margin-left: var(--space-1, 0.25rem);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Explicit target picker (radiogroup over the roster). */
+.battle-target-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1, 0.25rem);
+  margin-top: var(--space-2, 0.5rem);
+}
+
+.battle-target.is-selected {
+  border-color: var(--accent-primary);
+}
+
 /* Action economy line on each combatant tile. */
 .battle-action-economy {
   display: block;

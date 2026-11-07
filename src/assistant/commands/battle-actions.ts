@@ -20,6 +20,7 @@ import {
   type BattleWithRoster,
   findUsableItem,
   getActiveBattle,
+  getBattle,
   listUsableBattleItems,
   parseSocialAction,
   performSocialAction,
@@ -114,7 +115,9 @@ export async function handleBattleUse(args: string[], ctx: CommandContext,): Pro
       itemId: split.item.id,
     },);
 
-    const battleAfter: BattleWithRoster = { ...active, combatants: result.combatants, };
+    const battleAfter: BattleWithRoster = await getBattle({ database: db, }, active.id,) ??
+      { ...active, combatants: result.combatants, };
+
     const itemsAfter = await listUsableBattleItems({ database: db, }, actor.id,);
     const lines = [
       `**${result.actor.name}** uses **${result.item.name}** on ${result.target.name} — restores **${result.healed} HP**.`,
@@ -194,11 +197,16 @@ export async function handleBattleSocial(
       targetId: target.id,
     },);
 
+    // Re-read: serializing `active` would drop the entry just persisted
+    // (and with it any social skill-check roll) — the panel would never see it.
+    const battleAfter: BattleWithRoster = await getBattle({ database: db, }, active.id,) ??
+      { ...active, combatants: result.combatants, };
+
     const lines = [
       `**${verb}** — ${result.actor.name} → ${result.target.name}`,
       result.outcome,
       "",
-      formatBattle(active,),
+      formatBattle(battleAfter,),
     ];
 
     return {
@@ -207,7 +215,7 @@ export async function handleBattleSocial(
       actionPayload: {
         battleId: active.id,
         battle: serializeBattle(
-          active,
+          battleAfter,
           await listUsableBattleItems({ database: db, }, actor.id,),
           await loadBattleEnvironment(db, active.worldId,),
         ),

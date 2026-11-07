@@ -68,6 +68,7 @@ export async function performSocialAction(
 
   let success: boolean;
   let outcome: string;
+  let skillCheck: CombatAction["skillCheck"];
   let surrenderChance: number | undefined;
   let canSurrender: boolean | undefined;
 
@@ -96,6 +97,9 @@ export async function performSocialAction(
 
     case "negotiate": {
       // Charisma-based combat skill check against the standard medium DC.
+      // The only social verb that rolls dice: persist the d20 so the panel
+      // can chip it. Intimidate/taunt/surrender are deterministic margin
+      // math with no die behind them, so they persist narration only.
       const check = makeCombatSkillCheck(
         abilityModifier(actor.stats.cha,),
         STANDARD_DC["medium"]!,
@@ -103,6 +107,20 @@ export async function performSocialAction(
 
       success = check.success;
       outcome = check.narration;
+      // The kept die is the natural roll; the modifier is whatever the
+      // engine added on top (skill bonus plus any extra modifiers).
+      // ponytail: keptIdx fallback 0 — rollDice always keeps a rolled die.
+      const natural = check.roll.results[check.roll.keptIdx] ?? 0;
+      skillCheck = {
+        natural,
+        modifier: check.roll.total - natural,
+        total: check.roll.total,
+        dc: STANDARD_DC["medium"]!.value,
+        success: check.success,
+        criticalSuccess: check.criticalSuccess,
+        criticalFailure: check.criticalFailure,
+      };
+
       break;
     }
 
@@ -136,6 +154,8 @@ export async function performSocialAction(
     targetId: target.id,
     description: `${actor.name} (${params.action} → ${target.name}): ${outcome}`,
   };
+
+  if (skillCheck) { action.skillCheck = skillCheck; }
 
   // Social actions surface calculator output; the roster itself is unchanged.
   await persistBattle(

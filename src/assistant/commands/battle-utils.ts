@@ -194,34 +194,54 @@ export interface SerializedRoll {
 }
 
 /**
- * Project an attack's persisted roll into the payload's lean roll summary.
+ * Project a persisted roll into the payload's lean roll summary.
  *
- * The raw dice stay in the battle log; the panel only needs the natural d20,
- * the modifier, the roll total and the target's armor class.
+ * Attacks resolve against the target's armor class; social negotiate checks
+ * carry their own DC. The raw dice stay in the battle log; the panel only
+ * needs the natural d20, the modifier, the roll total and the DC.
  * @param entry - The battle-log entry
- * @param roster - The battle roster (source of the target's armor class)
+ * @param roster - The battle roster (source of an attack target's armor class)
  * @returns The roll summary, or null when the entry carries no resolvable roll
  */
 function projectRoll(entry: CombatAction, roster: Combatant[],): SerializedRoll | null {
   const attack = entry.attack;
-  if (!attack?.roll) { return null; }
-  const target = entry.targetId ? roster.find((c,) => c.id === entry.targetId) : undefined;
-  if (!target) { return null; }
+  if (attack?.roll) {
+    const target = entry.targetId ? roster.find((c,) => c.id === entry.targetId) : undefined;
+    if (!target) { return null; }
 
-  const { rawTotal, modifier, total, } = attack.roll;
-  // A roll the backend cannot read must not reach the panel as a broken chip.
-  if (!Number.isFinite(rawTotal,) || !Number.isFinite(modifier,) || !Number.isFinite(total,)) { return null; }
+    const { rawTotal, modifier, total, } = attack.roll;
+    // A roll the backend cannot read must not reach the panel as a broken chip.
+    if (!Number.isFinite(rawTotal,) || !Number.isFinite(modifier,) || !Number.isFinite(total,)) { return null; }
 
-  // The hit verdict travels with the roll: the panel must not re-derive it,
-  // because the backend also counts a natural 20 as a hit and a natural 1 as
-  // a miss regardless of the total.
+    // The hit verdict travels with the roll: the panel must not re-derive it,
+    // because the backend also counts a natural 20 as a hit and a natural 1 as
+    // a miss regardless of the total.
+    return {
+      natural: rawTotal,
+      modifier,
+      total,
+      dc: target.ac,
+      hit: attack.hit === true,
+      criticalMiss: attack.criticalMiss === true,
+    };
+  }
+
+  // Social negotiate is the only non-attack action that rolls dice; its DC
+  // travels on the persisted check (no roster lookup needed).
+  const check = entry.skillCheck;
+  if (!check) { return null; }
+  if (
+    !Number.isFinite(check.natural,) || !Number.isFinite(check.modifier,) ||
+    !Number.isFinite(check.total,) || !Number.isFinite(check.dc,)
+  ) { return null; }
+
   return {
-    natural: rawTotal,
-    modifier,
-    total,
-    dc: target.ac,
-    hit: attack.hit === true,
-    criticalMiss: attack.criticalMiss === true,
+    natural: check.natural,
+    modifier: check.modifier,
+    total: check.total,
+    dc: check.dc,
+    hit: check.success === true,
+    criticalMiss: check.criticalFailure === true,
   };
 }
 
@@ -273,7 +293,7 @@ export function serializeBattle(
   const log = Array.from(battle.log, (entry,) => {
     const serialized: SerializedLogEntry = {
       type: entry.type,
-      critical: entry.attack?.criticalHit ?? false,
+      critical: entry.attack?.criticalHit ?? entry.skillCheck?.criticalSuccess ?? false,
       description: entry.description,
     };
 

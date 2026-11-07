@@ -45,6 +45,7 @@ import {
   renderItems,
   renderRoster,
 } from "./render.js";
+import { renderTargetSelector, type TargetOption, } from "./target-selection.js";
 import { renderTurnOrder, } from "./turn-order.js";
 
 export {
@@ -156,6 +157,22 @@ export function refreshBattle(): void {
 
 // ── Rendering ──────────────────────────────────────────
 
+/**
+ * Roster mapped to single-target picker options: every combatant is an
+ * option, defeated ones visibly disabled, the acting combatant named as the
+ * self-target. The engine has no multi-target verbs, so no area option exists.
+ * @param battle - The battle whose roster supplies the options
+ * @returns Picker options in roster order
+ */
+function targetOptions(battle: BattleView,): TargetOption[] {
+  const acting = battle.combatants[battle.turnIndex] ?? null;
+  return Array.from(battle.combatants, (c,) => ({
+    id: c.id,
+    name: c.id === acting?.id ? `${c.name} (acting)` : c.name,
+    disabled: c.hp <= 0,
+  }),);
+}
+
 /** */
 function render(): void {
   if (!container) { return; }
@@ -206,6 +223,13 @@ function render(): void {
 
   overlay.append(
     renderRoster(deps.battle, deps.selectedTargetId, callbacks,),
+    // Explicit target picker: same selection state as the roster tiles, plus
+    // defeated combatants surface as disabled options (tiles swallow clicks).
+    renderTargetSelector(
+      targetOptions(deps.battle,),
+      deps.selectedTargetId,
+      (id,) => callbacks.select(id,),
+    ),
     renderActions(deps.battle, deps.itemsOpen, deps.selectedTargetId, callbacks,),
   );
 

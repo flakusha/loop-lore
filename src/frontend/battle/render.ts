@@ -10,6 +10,7 @@
  */
 
 import { t, } from "../alpine/i18n";
+import { renderActionCost, } from "./action-cost.js";
 import {
   actionAvailable,
   ACTIONS,
@@ -23,6 +24,7 @@ import {
 import { renderEnvironmentalEffects, } from "./environmental-effects.js";
 import { renderHealthBar, } from "./health-bar.js";
 import { renderStatusEffects, } from "./status-effects.js";
+import { renderTargetSelector, } from "./target-selection.js";
 
 /** */
 export interface BattleRenderCallbacks {
@@ -129,6 +131,32 @@ export function renderRoster(
 }
 
 /**
+ * Cost badge shown on each action-bar button, from the engine's real
+ * action-economy mapping (`consumeAction` in `src/rpg/combat/actions.ts`):
+ * attack/item drain the turn's action pool, heal spends the bonus action,
+ * social verbs are free actions and end is the free escape hatch. The engine
+ * tracks no cooldowns, so no cooldown is ever shown.
+ * @param kind - The action-bar kind
+ * @returns Badge text, or null for free actions
+ */
+function actionCostLabel(kind: BattleActionKind,): string | null {
+  switch (kind) {
+    case "attack":
+    case "item": {
+      return "1 AP";
+    }
+
+    case "heal": {
+      return "bonus";
+    }
+
+    default: {
+      return null;
+    }
+  }
+}
+
+/**
  * @param battle
  * @param itemsOpen
  * @param selectedTargetId
@@ -164,6 +192,20 @@ export function renderActions(
     btn.dataset.battleAction = kind;
     btn.textContent = label;
     btn.disabled = disabled;
+    // Cost badges document the engine's action-economy drain: attack/item
+    // spend the turn's action ("1 AP"), heal spends the bonus action, free
+    // actions (socials, end) render no badge at all.
+    const costLabel = actionCostLabel(kind,);
+    if (costLabel === "1 AP") {
+      const badge = renderActionCost({ cost: 1, },);
+      if (badge) { btn.append(badge,); }
+    } else if (costLabel !== null) {
+      const badge = document.createElement("span",);
+      badge.className = "battle-action-cost";
+      badge.textContent = costLabel;
+      btn.append(badge,);
+    }
+
     if (kind === "item") { btn.setAttribute("aria-expanded", String(itemsOpen,),); }
     btn.addEventListener("click", onActivate,);
     return btn;

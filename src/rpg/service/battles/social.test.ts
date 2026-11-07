@@ -266,6 +266,52 @@ describe("performSocialAction", () => {
     expect(result.outcome,).toBe("Taunt successful! Target becomes reckless.",);
   });
 
+  test("negotiate persists its d20 on the log entry so the panel can chip it", async () => {
+    const battleId = await seedBattle([
+      combatant("alice", "Alice", { cha: 10, isNpc: false, },),
+      combatant("orc", "Orc",),
+    ],);
+
+    const result = await performSocialAction({ database: db, }, {
+      battleId,
+      action: "negotiate",
+      actorId: "alice",
+      targetId: "orc",
+    },);
+
+    const reloaded = await getBattle({ database: db, }, battleId,);
+    const entry = reloaded!.log.at(-1,)!;
+    const check = entry.skillCheck!;
+    // A real d20: natural face 1–20, DC 15, verdict consistent with d20 rules.
+    expect(check.natural,).toBeGreaterThanOrEqual(1,);
+    expect(check.natural,).toBeLessThanOrEqual(20,);
+    expect(check.dc,).toBe(15,);
+    expect(check.total,).toBe(check.natural + check.modifier,);
+    expect(check.success,).toBe(result.success,);
+    expect(check.criticalSuccess,).toBe(check.natural === 20,);
+    expect(check.criticalFailure,).toBe(check.natural === 1,);
+  });
+
+  test("intimidate persists narration only — deterministic margin math rolls no dice", async () => {
+    // cha 10 → +0 modifier; a plain d20 against STANDARD_DC.medium (15).
+    const battleId = await seedBattle([
+      combatant("alice", "Alice", { cha: 10, isNpc: false, },),
+      combatant("orc", "Orc",),
+    ],);
+
+    const result = await performSocialAction({ database: db, }, {
+      battleId,
+      action: "intimidate",
+      actorId: "alice",
+      targetId: "orc",
+    },);
+
+    const reloaded = await getBattle({ database: db, }, battleId,);
+    const entry = reloaded!.log.at(-1,)!;
+    expect(entry.skillCheck,).toBeUndefined();
+    expect(result.outcome,).toBe("Intimidation failed! Target stands firm.",);
+  });
+
   test("negotiate runs a charisma check against the medium DC and reports it honestly", async () => {
     // cha 10 → +0 modifier; a plain d20 against STANDARD_DC.medium (15).
     const battleId = await seedBattle([

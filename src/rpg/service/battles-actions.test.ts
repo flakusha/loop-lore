@@ -458,6 +458,56 @@ describe("battle item helpers (pure)", () => {
     },);
   });
 
+  it("serializeBattle projects a social negotiate roll into a lean roll summary", () => {
+    const alice = makeCombatant("alice", "Alice", false, 12,);
+    const orc = makeCombatant("orc", "Orc", true, 15,);
+    const battle = {
+      id: "b6",
+      status: "active",
+      round: 1,
+      turnIndex: 0,
+      combatants: [alice, orc,],
+      log: [
+        {
+          actorId: "alice",
+          type: "free_action",
+          targetId: "orc",
+          skillCheck: {
+            natural: 17,
+            modifier: 2,
+            total: 19,
+            dc: 15,
+            success: true,
+            criticalSuccess: false,
+            criticalFailure: false,
+          },
+          description: "Alice (negotiate → Orc): Success! Roll: 19 vs DC 15",
+        },
+        {
+          actorId: "alice",
+          type: "free_action",
+          targetId: "orc",
+          description: "Alice (taunt → Orc): Taunt failed! Target remains composed.",
+        },
+      ],
+    } as unknown as Parameters<typeof serializeBattle>[0];
+
+    const view = serializeBattle(battle,);
+    // Negotiate carries its own DC — no roster lookup, backend verdict intact.
+    expect(view.log[0]?.roll,).toEqual({
+      natural: 17,
+      modifier: 2,
+      total: 19,
+      dc: 15,
+      hit: true,
+      criticalMiss: false,
+    },);
+
+    expect(view.log[0]?.critical,).toBe(false,);
+    // Deterministic verbs persist narration only — never a chip.
+    expect(view.log[1]?.roll,).toBeUndefined();
+  });
+
   it("serializeBattle omits the roll summary when the persisted roll is unreadable", () => {
     const alice = makeCombatant("alice", "Alice", false, 12,);
     const orc = makeCombatant("orc", "Orc", true, 15,);

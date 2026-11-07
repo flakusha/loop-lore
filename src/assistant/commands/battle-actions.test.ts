@@ -117,6 +117,11 @@ describe("battle use/social commands", () => {
     const result = await handleBattleSocial(["intimidate", "orc",], ctx(),);
     expect(result.handled,).toBe(true,);
     expect(result.action,).toBe("battle-updated",);
+    // The payload must carry the re-read battle: the just-persisted entry
+    // (and with it any social roll) reaches the panel, not a stale snapshot.
+    const payload = result.actionPayload as { battle: { log: { description: string }[] } };
+    const last = payload.battle.log.at(-1,)!;
+    expect(last.description,).toContain("(intimidate →",);
   });
 
   test("social rejects unknown verbs and targets", async () => {
