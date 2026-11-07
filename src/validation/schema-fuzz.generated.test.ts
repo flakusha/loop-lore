@@ -37,6 +37,7 @@ import * as routes_chatSections_types from "@/routes/chat-sections/types";
 import * as routes_chats_branchShared from "@/routes/chats/branch-shared";
 import * as routes_crafting_recipesSchemas from "@/routes/crafting/recipes-schemas";
 import * as routes_gmNotes_schemas from "@/routes/gm-notes/schemas";
+import * as routes_harness_querySchema from "@/routes/harness/query-schema";
 import * as routes_nsfwModeration_appeals from "@/routes/nsfw-moderation/appeals";
 import * as routes_nsfwModeration_shared from "@/routes/nsfw-moderation/shared";
 import * as routes_proactiveMessaging_schemas from "@/routes/proactive-messaging/schemas";
@@ -2200,6 +2201,12 @@ describe("resolveFlagBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_nsfwModeration_shared.resolveFlagBody,));
 });
 
+describe("resultSchema", () => {
+  test("accepts generated values", () => checkAllValid(routes_harness_querySchema.resultSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_harness_querySchema.resultSchema,));
+});
+
 describe("RevealBody", () => {
   test("accepts generated values", () => checkAllValid(routes_gmNotes_schemas.RevealBody,));
 
@@ -2216,6 +2223,12 @@ describe("ReviewDecisionBody", () => {
   test("accepts generated values", () => checkAllValid(validation_actors.ReviewDecisionBody,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_actors.ReviewDecisionBody,));
+});
+
+describe("runIdParams", () => {
+  test("accepts generated values", () => checkAllValid(routes_harness_querySchema.runIdParams,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_harness_querySchema.runIdParams,));
 });
 
 describe("SaveBody", () => {
@@ -2406,6 +2419,12 @@ describe("TargetRefSchema [validation/responses-interaction]", () => {
   test("accepts generated values", () => checkAllValid(validation_responsesInteraction.TargetRefSchema,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesInteraction.TargetRefSchema,));
+});
+
+describe("taskTypeSchema", () => {
+  test("accepts generated values", () => checkAllValid(routes_harness_querySchema.taskTypeSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_harness_querySchema.taskTypeSchema,));
 });
 
 describe("TelemetryAnalyticsErrorsRow", () => {
@@ -2802,4 +2821,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 444 schemas discovered across 545 module(s).
+// 447 schemas discovered across 546 module(s).
