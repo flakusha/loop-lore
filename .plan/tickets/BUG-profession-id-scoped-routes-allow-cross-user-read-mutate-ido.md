@@ -3,7 +3,8 @@
 
 # BUG: Profession id-scoped routes allow cross-user read/mutate (IDOR)
 
-**Status:** Fixed (2026-11-04, authz-hardening lane) — row-level ownership gates + negative-path tests landed on `professions-service-routes` (issue b21af33); check:fast 14/14 PASS, targeted suites 180 pass / 0 fail
+**Status:** Done
+**Status Note:** Fixed 2026-11-04, authz-hardening lane — row-level ownership gates + negative-path tests landed on `professions-service-routes` (issue b21af33); check:fast 14/14 PASS, targeted suites 180 pass / 0 fail
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
