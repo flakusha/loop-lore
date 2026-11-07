@@ -21,7 +21,13 @@ import type { DB, } from "../../db/schema";
 import { setExecLogPath, } from "../../harness/exec-log";
 import { buildRunRecord, } from "../../harness/exec-recorder";
 import * as realQuery from "../../harness/query";
-import type { HarnessRunRecord, HarnessRunSummary, HarnessStats, } from "../../harness/types";
+import type {
+  HarnessResult,
+  HarnessRunRecord,
+  HarnessRunSummary,
+  HarnessStats,
+  HarnessTaskType,
+} from "../../harness/types";
 import { serializeRun, toSummary, } from "../../harness/types";
 import { initHarnessAdminSettings, resetHarnessAdminSettings, } from "../../integrations/harness/admin-settings";
 import * as realAvailability from "../../integrations/harness/availability";
@@ -326,11 +332,6 @@ describe("harnessRoutes", () => {
       expect(res.status,).toBe(200,);
       expect(seen,).toEqual([{ taskType: "chat", result: "error", }, 7,],);
     });
-
-    it("ignores an unknown taskType rather than erroring", async () => {
-      withQuery({ listRuns: (): Promise<HarnessRunRecord[]> => Promise.resolve([],), },);
-      expect((await get("admin", "/api/v1/harness/runs?taskType=bogus",)).status,).toBe(200,);
-    });
   });
 
   describe("GET /api/v1/harness/runs/:runId", () => {
@@ -471,6 +472,84 @@ describe("harnessRoutes", () => {
       expect(typeof detail.costUsd,).toBe("number",);
       expect(detail.costUsd,).toBe(0,);
       expect(detail.costUsd,).toBe(list.items[0]!.costUsd,);
+    });
+  });
+
+  /**
+   * The runs filter, driven through REAL log lines: the task-type vocabulary
+   * the admin panel sends (`harnessCode`) is only meaningful if the boundary
+   * accepts it, and a value it does not know must be a rejection, not a
+   * silently dropped filter that returns every row.
+   */
+  describe("GET /api/v1/harness/runs: filter contract on real log rows", () => {
+    let dir: string;
+
+    beforeEach(() => {
+      mkdirSync(TMP_ROOT, { recursive: true, },);
+      dir = mkdtempSync(join(TMP_ROOT, "fixture-",),);
+      const log = join(dir, "executions.jsonl",);
+      // Three real rows: a chat run, a harnessCode run and a chat run that
+      // timed out. Written by the real serializer, so the lines are
+      // indistinguishable from the ones the running server produces.
+      const rows: Array<{ runId: string; taskType: HarnessTaskType; result: HarnessResult }> = [
+        { runId: "run-chat", taskType: "chat", result: "ok", },
+        { runId: "run-code", taskType: "harnessCode", result: "ok", },
+        { runId: "run-timeout", taskType: "chat", result: "timeout", },
+      ];
+
+      const lines = rows.map((row,) => {
+        const record = buildRunRecord({
+          taskType: row.taskType,
+          model: "gpt-test",
+          runMs: 100,
+          result: row.result,
+          task: "generate",
+          tools: ["read",],
+        },);
+
+        return JSON.stringify(serializeRun({ ...record, runId: row.runId, },),);
+      },);
+
+      writeFileSync(log, lines.join("\n",) + "\n", "utf8",);
+      setExecLogPath(log,);
+      // The REAL query functions — `mock.module` is permanent and
+      // process-global, so this comes from the import-time snapshot.
+      withQuery({},);
+    },);
+
+    afterEach(() => {
+      setExecLogPath(null,);
+      rmSync(dir, { recursive: true, force: true, },);
+    },);
+
+    it("returns only the rows whose task type matches the panel's vocabulary", async () => {
+      const res = await get("admin", "/api/v1/harness/runs?taskType=harnessCode",);
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as { items: HarnessRunSummary[] };
+      expect(body.items.map((i,) => i.runId),).toEqual(["run-code",],);
+      // The wire coercion must not flatten the value to "other" either.
+      expect(body.items[0]?.taskType,).toBe("harnessCode",);
+    });
+
+    it("still filters on the server's own vocabulary", async () => {
+      const res = await get("admin", "/api/v1/harness/runs?taskType=chat",);
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as { items: HarnessRunSummary[] };
+      expect(body.items.map((i,) => i.runId),).toEqual(["run-timeout", "run-chat",],);
+    });
+
+    it("rejects an unknown task type instead of dropping the filter", async () => {
+      // Status only: the bare route test app does not mount the app-level
+      // `onValidationError`, so the body is Elysia's default, not the app
+      // envelope.
+      expect((await get("admin", "/api/v1/harness/runs?taskType=bogus",)).status,).toBe(422,);
+    });
+
+    it("returns only the timeout rows for ?result=timeout", async () => {
+      const res = await get("admin", "/api/v1/harness/runs?result=timeout",);
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as { items: HarnessRunSummary[] };
+      expect(body.items.map((i,) => i.runId),).toEqual(["run-timeout",],);
     });
   });
 

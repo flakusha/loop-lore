@@ -23,12 +23,13 @@ import { type Static, Type, } from "@sinclair/typebox";
  * "unexpected shape" error instead of the row.
  *
  * `taskType` and `result` stay `Type.String()` even though the server types
- * them as closed unions: `deserializeRun` does `w.task_type ?? "other"` with
- * no union check, so a legacy line carrying `"WEIRD_RESULT"` reaches the API
- * verbatim. A `Type.Union` of literals here would reject the entire runs
- * response over one odd historical row, turning a cosmetic anomaly into a
- * blank table. The unknown value renders fine - `failed` is a `!== "ok"`
- * comparison, so an unrecognised result is simply counted as a failure.
+ * them as closed unions: `deserializeRun` coerces both, so an unknown
+ * `task_type` becomes `"other"` and an unknown `result` becomes `"error"`
+ * before the row ever reaches the API. A `Type.Union` of literals here would
+ * reject the entire runs response over one odd historical row, turning a
+ * cosmetic anomaly into a blank table. The coerced value renders fine -
+ * `failed` is a `!== "ok"` comparison, so an unrecognised result is simply
+ * counted as a failure.
  */
 export const HarnessRunSummarySchema = Type.Object({
   runId: Type.String(),
