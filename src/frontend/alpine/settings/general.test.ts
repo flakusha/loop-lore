@@ -142,6 +142,7 @@ function freshHost(): Host {
     temperature: 1,
     locales: [],
     providerList: [],
+    providerListNotice: "",
     displayName: "",
     birthDate: "",
     confirmDeleteText: "",
