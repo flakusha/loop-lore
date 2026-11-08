@@ -252,8 +252,8 @@ describe("appendExecLog", () => {
 
     it("counts every record handed to the writer", () => {
       setExecLogPath(null,);
-      appendExecLog(sample(),);
-      appendExecLog(sample(),);
+      appendExecLog(sample({ runId: "r1", },),);
+      appendExecLog(sample({ runId: "r2", },),);
 
       expect(getExecLogCounters().runs,).toBe(2,);
       expect(getExecLogCounters().errors,).toBe(0,);
