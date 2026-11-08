@@ -71,6 +71,34 @@ describe("ProfileBreaker", () => {
     expect(breaker.allow("b",),).toBe(true,);
   });
 
+  it("counts every trip, not just the current open state", () => {
+    const { now, } = fakeClock();
+    const breaker = smallBreaker(now,);
+    expect(breaker.tripCount("p",),).toBe(0,);
+
+    breaker.onFailure("p",);
+    breaker.onFailure("p",);
+    expect(breaker.tripCount("p",),).toBe(1,);
+
+    // A success closes the breaker; the trip count is history, not state.
+    breaker.onSuccess("p",);
+    expect(breaker.allow("p",),).toBe(true,);
+    expect(breaker.tripCount("p",),).toBe(1,);
+
+    breaker.onFailure("p",);
+    breaker.onFailure("p",);
+    expect(breaker.tripCount("p",),).toBe(2,);
+  });
+
+  it("counts trips per profile", () => {
+    const { now, } = fakeClock();
+    const breaker = smallBreaker(now,);
+    breaker.onFailure("a",);
+    breaker.onFailure("a",);
+    expect(breaker.tripCount("a",),).toBe(1,);
+    expect(breaker.tripCount("b",),).toBe(0,);
+  });
+
   it("resolves thresholds per profile from config", () => {
     const { now, } = fakeClock();
     const breaker = new ProfileBreaker(
