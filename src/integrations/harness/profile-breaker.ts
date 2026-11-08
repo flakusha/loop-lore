@@ -30,6 +30,8 @@ export interface HealthThresholds {
 interface ProfileHealth {
   consecutiveFailures: number;
   openUntil: number;
+  /** How many times this profile's breaker has opened. */
+  trips: number;
 }
 
 /** */
@@ -84,7 +86,20 @@ export class ProfileBreaker {
     if (h.consecutiveFailures >= maxConsecutiveFailures) {
       h.openUntil = this.clock() + cooldownMs;
       h.consecutiveFailures = 0;
+      // A trip is the moment the breaker OPENS. The count survives the
+      // cooldown and the next success: it is how many times this profile
+      // tripped, not whether it is tripped right now.
+      h.trips++;
     }
+  }
+
+  /**
+   * How many times the profile's breaker has opened.
+   * @param profile - profile name
+   * @returns the trip count (0 for a profile that never tripped).
+   */
+  tripCount(profile: string,): number {
+    return this.profiles.get(profile,)?.trips ?? 0;
   }
 
   /**
@@ -106,7 +121,7 @@ export class ProfileBreaker {
   private entry(profile: string,): ProfileHealth {
     let h = this.profiles.get(profile,);
     if (!h) {
-      h = { consecutiveFailures: 0, openUntil: 0, };
+      h = { consecutiveFailures: 0, openUntil: 0, trips: 0, };
       this.profiles.set(profile, h,);
     }
 

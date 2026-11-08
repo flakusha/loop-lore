@@ -28,6 +28,8 @@ export interface HarnessProfileUsage {
   breakerOpen: boolean;
   /** Remaining breaker cooldown in ms (0 when the profile is not blocked). */
   breakerCooldownRemainingMs: number;
+  /** How many times the profile's breaker has opened (process-lifetime). */
+  breakerTrips: number;
 }
 
 /**
@@ -55,6 +57,7 @@ export function harnessProfileUsage(runtime: HarnessRuntime,): HarnessProfileUsa
       quotaResetAt: row?.quotaResetAt ?? null,
       breakerOpen: !runtime.breaker.allow(name,),
       breakerCooldownRemainingMs: runtime.breaker.cooldownRemainingMs(name,),
+      breakerTrips: runtime.breaker.tripCount(name,),
     },);
   }
 
