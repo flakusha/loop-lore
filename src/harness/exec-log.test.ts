@@ -279,6 +279,15 @@ describe("appendExecLog", () => {
       expect(getExecLogCounters().spendUsd,).toBeCloseTo(0.0042, 6,);
     });
 
+    it("a non-finite cost does not poison the spend counter", () => {
+      setExecLogPath(null,);
+      appendExecLog(sample({ costUsd: 0.0042, },),);
+      appendExecLog(sample({ costUsd: Number.NaN, },),);
+      appendExecLog(sample({ costUsd: 0.0058, },),);
+
+      expect(getExecLogCounters().spendUsd,).toBeCloseTo(0.01, 6,);
+    });
+
     it("counts a run even when the log path is unavailable", () => {
       setExecLogPath(null,);
       appendExecLog(sample(),);
