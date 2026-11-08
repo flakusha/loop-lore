@@ -70,7 +70,12 @@ function countRecord(record: HarnessRunRecord,): void {
   }
 
   // A null cost is unknown, not zero — it contributes nothing to the sum.
-  if (record.costUsd !== null) { counters.spendUsd += record.costUsd; }
+  // The finite check is the one the wire reader applies to the same field: a
+  // non-finite cost would make the counter NaN, and NaN survives every later
+  // addition — one bad record would poison the metric for the whole process.
+  if (typeof record.costUsd === "number" && Number.isFinite(record.costUsd,)) {
+    counters.spendUsd += record.costUsd;
+  }
 }
 
 /**
