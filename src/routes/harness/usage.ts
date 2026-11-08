@@ -34,6 +34,7 @@ const HarnessUsageProfileSchema = t.Object({
   quotaResetAt: t.Union([t.Number(), t.Null(),],),
   breakerOpen: t.Boolean(),
   breakerCooldownRemainingMs: t.Number(),
+  breakerTrips: t.Number(),
 },);
 
 /** `GET /api/v1/harness/usage` body. */

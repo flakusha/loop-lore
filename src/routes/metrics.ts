@@ -150,6 +150,16 @@ function harnessMetrics(): string {
 
   lines.push(
     labelledFamily(
+      "loop_lore_harness_breaker_trips_total",
+      "How many times each harness profile's circuit breaker has opened (process-lifetime).",
+      "counter",
+      "profile",
+      rows.map((row,) => [labelValue(row.profile,), row.breakerTrips,] as [string, number,]),
+    ),
+  );
+
+  lines.push(
+    labelledFamily(
       "loop_lore_harness_profile_rpm",
       "Harness dispatches per profile inside the rolling 60s window.",
       "gauge",

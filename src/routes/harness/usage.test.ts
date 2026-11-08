@@ -80,6 +80,7 @@ describe("harnessUsageRoutes", () => {
       expect(body,).not.toContain("tokensInDay",);
       expect(body,).not.toContain("quotaResetAt",);
       expect(body,).not.toContain("breakerOpen",);
+      expect(body,).not.toContain("breakerTrips",);
     }
   });
 
@@ -108,6 +109,7 @@ describe("harnessUsageRoutes", () => {
         quotaResetAt: number | null;
         breakerOpen: boolean;
         breakerCooldownRemainingMs: number;
+        breakerTrips: number;
       }>;
     };
 
@@ -119,6 +121,7 @@ describe("harnessUsageRoutes", () => {
         quotaResetAt: null,
         breakerOpen: false,
         breakerCooldownRemainingMs: 0,
+        breakerTrips: 0,
       },
     ],);
   });
@@ -129,8 +132,22 @@ describe("harnessUsageRoutes", () => {
     for (let i = 0; i < 3; i++) { runtime?.breaker.onFailure("p",); }
 
     const res = await hit("admin", "/api/v1/harness/usage",);
-    const body = await res.json() as { items: Array<{ breakerOpen: boolean }> };
+    const body = await res.json() as { items: Array<{ breakerOpen: boolean; breakerTrips: number }> };
     expect(body.items[0]?.breakerOpen,).toBe(true,);
+    expect(body.items[0]?.breakerTrips,).toBe(1,);
+  });
+
+  it("counts every trip, not just the current one", async () => {
+    composeRuntime();
+    const runtime = getHarnessRuntime();
+    // Two trips: the breaker opens, a success closes it, then it opens again.
+    for (let i = 0; i < 3; i++) { runtime?.breaker.onFailure("p",); }
+    runtime?.breaker.onSuccess("p",);
+    for (let i = 0; i < 3; i++) { runtime?.breaker.onFailure("p",); }
+
+    const res = await hit("admin", "/api/v1/harness/usage",);
+    const body = await res.json() as { items: Array<{ breakerTrips: number }> };
+    expect(body.items[0]?.breakerTrips,).toBe(2,);
   });
 
   it("the shared read view carries the same rows as the endpoint", async () => {

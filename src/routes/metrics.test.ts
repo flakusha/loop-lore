@@ -139,6 +139,7 @@ describe("renderMetrics", () => {
         "loop_lore_harness_spend_usd_total",
         "loop_lore_harness_errors_by_kind_total",
         "loop_lore_harness_breaker_open_profiles",
+        "loop_lore_harness_breaker_trips_total",
         "loop_lore_harness_profile_rpm",
         "loop_lore_harness_profile_tokens_per_day",
         "loop_lore_harness_profile_breaker_open",
@@ -162,6 +163,17 @@ describe("renderMetrics", () => {
       expect(parts.length,).toBe(2,);
       expect(Number.isNaN(Number(parts[1] ?? "",),),).toBe(false,);
     }
+  });
+
+  test("the trip counter counts every trip, not just the current one", () => {
+    composeRuntime();
+    const runtime = getHarnessRuntime();
+    for (let i = 0; i < 3; i++) { runtime?.breaker.onFailure("p",); }
+    runtime?.breaker.onSuccess("p",);
+    for (let i = 0; i < 3; i++) { runtime?.breaker.onFailure("p",); }
+
+    const out = renderMetrics();
+    expect(out,).toContain('loop_lore_harness_breaker_trips_total{profile="p"} 2',);
   });
 
   test("a profile that left the config is not named in the exposition", () => {
