@@ -11,9 +11,11 @@ import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import {
   appendExecLog,
+  getExecLogCounters,
   getExecLogPath,
   HARNESS_DIR,
   HARNESS_LOG_FILENAME,
+  resetExecLogCounters,
   resetExecLogPath,
   setExecLogPath,
 } from "./exec-log";
@@ -236,6 +238,51 @@ describe("appendExecLog", () => {
       expect(lines,).toHaveLength(2,);
       expect(deserializeRun(lines[0]!,)?.runId,).toBe("r1",);
       expect(deserializeRun(lines[1]!,)?.runId,).toBe("r2",);
+    });
+  });
+
+  describe("counters", () => {
+    beforeEach(() => {
+      resetExecLogCounters();
+    },);
+
+    afterEach(() => {
+      resetExecLogCounters();
+    },);
+
+    it("counts every record handed to the writer", () => {
+      setExecLogPath(null,);
+      appendExecLog(sample(),);
+      appendExecLog(sample(),);
+
+      expect(getExecLogCounters().runs,).toBe(2,);
+      expect(getExecLogCounters().errors,).toBe(0,);
+    });
+
+    it("counts non-ok results by kind", () => {
+      setExecLogPath(null,);
+      appendExecLog(sample({ result: "error", },),);
+      appendExecLog(sample({ result: "timeout", },),);
+      appendExecLog(sample({ result: "cancelled", },),);
+
+      const counters = getExecLogCounters();
+      expect(counters.runs,).toBe(3,);
+      expect(counters.errors,).toBe(3,);
+      expect(counters.byKind,).toEqual({ error: 1, timeout: 1, cancelled: 1, },);
+    });
+
+    it("sums the priced runs and ignores an unpriced one", () => {
+      setExecLogPath(null,);
+      appendExecLog(sample({ costUsd: 0.0042, },),);
+      appendExecLog(sample({ costUsd: null, },),);
+
+      expect(getExecLogCounters().spendUsd,).toBeCloseTo(0.0042, 6,);
+    });
+
+    it("counts a run even when the log path is unavailable", () => {
+      setExecLogPath(null,);
+      appendExecLog(sample(),);
+      expect(getExecLogCounters().runs,).toBe(1,);
     });
   });
 });
