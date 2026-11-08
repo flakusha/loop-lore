@@ -44,6 +44,18 @@ export interface LedgerLimits {
   tokensPerDay?: number;
 }
 
+/** Read-only view of one profile's rolling usage. */
+export interface HarnessUsageSnapshot {
+  /** Profile name. */
+  profile: string;
+  /** Dispatches inside the rolling 60s window. */
+  dispatchesInWindow: number;
+  /** Tokens consumed inside the rolling 24h window. */
+  tokensInDay: number;
+  /** Last reported quota reset (epoch ms), or null. */
+  quotaResetAt: number | null;
+}
+
 /** */
 export class UsageLedger {
   private readonly profiles = new Map<string, ProfileLedger>();
@@ -120,6 +132,38 @@ export class UsageLedger {
     }
 
     return { allowed: true, };
+  }
+
+  /**
+   * Read the ledger without changing it: one entry per KNOWN profile (a
+   * profile the ledger has already seen), with the rolling-window counters
+   * computed against the current clock.
+   *
+   * Read-only by construction: it walks the existing entries directly (it
+   * never creates one) and never prunes, so `check()` keeps its exact
+   * behaviour — a quota reset that has expired is still reported here until
+   * the next `check()` clears it.
+   * @returns one snapshot per known profile, in insertion order.
+   */
+  snapshot(): HarnessUsageSnapshot[] {
+    const now = this.clock();
+    const rows: HarnessUsageSnapshot[] = [];
+    for (const [profile, entry,] of this.profiles) {
+      const dispatchesInWindow = entry.dispatches.filter((t,) => now - t < RPM_WINDOW_MS).length;
+      const tokensInDay = entry.tokens.reduce(
+        (sum, [t, tokens,],) => (now - t < DAY_WINDOW_MS ? sum + tokens : sum),
+        0,
+      );
+
+      rows.push({
+        profile,
+        dispatchesInWindow,
+        tokensInDay,
+        quotaResetAt: entry.quotaResetAt,
+      },);
+    }
+
+    return rows;
   }
 
   /**
