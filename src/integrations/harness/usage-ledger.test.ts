@@ -129,8 +129,7 @@ describe("UsageLedger", () => {
       const { now, } = fakeClock();
       const ledger = new UsageLedger(now,);
       ledger.record("a", 100,);
-      ledger.snapshot();
-      ledger.snapshot();
+      for (let i = 0; i < 2; i++) { ledger.snapshot(); }
 
       // The rpm limit of 3 is not reached by one dispatch, and the token limit
       // is still exactly exhausted — the snapshot consumed nothing.
