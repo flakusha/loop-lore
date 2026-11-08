@@ -18,6 +18,7 @@ import { exportSseRoutes, } from "../export-sse";
 import { harnessRoutes, } from "../harness";
 import { harnessModelRoutes, } from "../harness/models";
 import { harnessPermissionRoutes, } from "../harness/permissions";
+import { harnessUsageRoutes, } from "../harness/usage";
 import { importRoutes, } from "../import";
 import { pluginRoutes, } from "../plugins";
 import { worldImportRoutes, } from "../world-import";
@@ -53,6 +54,10 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
     // Read-only listing off the composed runtime's EXISTING connections,
     // enriched from the static capability table; never spawns to list.
     .use(harnessModelRoutes({ database, }, prefix,),)
+    // ── Harness usage ledger (TASK-harness-telemetry-metrics-health-signal-usage-ledger-endpoint) ──
+    // Per-profile rolling usage windows plus breaker state, read off the
+    // composed runtime; 503 when the integration is disabled.
+    .use(harnessUsageRoutes(prefix,),)
     // ── Import / export ──────────────────────────────────────
     .use(importRoutes(handleOpts, prefix,),)
     .use(exportRoutes({ database, }, prefix,),)

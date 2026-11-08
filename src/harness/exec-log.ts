@@ -32,6 +32,69 @@ let warned = false;
 let logPath: string | null = null;
 
 /**
+ * Process-local counters over the records handed to the writer.
+ *
+ * They are the only harness counters a metrics scrape may read: the JSONL is
+ * read from disk by the stats endpoint (an O(file) tail scan), which a scrape
+ * must never do. The counters are FIXED-SIZE and reset when the process
+ * restarts — they are a since-start view of this process, not a durable
+ * total. The population is every record handed to {@link appendExecLog}, the
+ * same set the stats endpoint rolls up, so the two agree on what a "run" is.
+ */
+const counters = {
+  /** Records handed to the writer. */
+  runs: 0,
+  /** Records whose result was not `ok`. */
+  errors: 0,
+  /** USD summed over the records that declared a price (null = unknown, never free). */
+  spendUsd: 0,
+  /** Non-ok results by kind. */
+  byKind: { error: 0, timeout: 0, cancelled: 0, },
+};
+
+/**
+ * Fold one run record into the process-local counters.
+ *
+ * Counted before the path check: the counters describe the RUN, not the
+ * write. A run outside a checkout still happened, and the counters are the
+ * only harness counters a metrics scrape may read (the JSONL read side is an
+ * O(file) tail scan).
+ * @param record - the run being logged.
+ * @returns nothing; mutates the module counters.
+ */
+function countRecord(record: HarnessRunRecord,): void {
+  counters.runs++;
+  if (record.result !== "ok") {
+    counters.errors++;
+    counters.byKind[record.result]++;
+  }
+
+  // A null cost is unknown, not zero — it contributes nothing to the sum.
+  if (record.costUsd !== null) { counters.spendUsd += record.costUsd; }
+}
+
+/**
+ * The process-local harness counters.
+ * @returns a copy of the counters (the caller cannot mutate the live state).
+ */
+export function getExecLogCounters(): {
+  runs: number;
+  errors: number;
+  spendUsd: number;
+  byKind: { error: number; timeout: number; cancelled: number };
+} {
+  return { ...counters, byKind: { ...counters.byKind, }, };
+}
+
+/** Reset the process-local counters. Test-only seam. */
+export function resetExecLogCounters(): void {
+  counters.runs = 0;
+  counters.errors = 0;
+  counters.spendUsd = 0;
+  counters.byKind = { error: 0, timeout: 0, cancelled: 0, };
+}
+
+/**
  * Absolute path of the exec log, or null when the repo root cannot be found.
  * @returns The JSONL path, or null outside a checkout.
  */
@@ -71,6 +134,7 @@ export function resetExecLogPath(): void {
  * @returns nothing; a write failure is logged once and swallowed
  */
 export function appendExecLog(record: HarnessRunRecord,): void {
+  countRecord(record,);
   const path = getExecLogPath();
   if (path === null) { return; }
   try {

@@ -89,4 +89,73 @@ describe("UsageLedger", () => {
     expect(ledger.check("b", { tokensPerDay: 100, },).allowed,).toBe(true,);
     expect(ledger.check("a", { tokensPerDay: 100, },).allowed,).toBe(false,);
   });
+
+  describe("snapshot", () => {
+    it("reports one entry per known profile with the windowed counters", () => {
+      const { now, } = fakeClock();
+      const ledger = new UsageLedger(now,);
+      ledger.record("a", 100,);
+      ledger.record("a", 50,);
+      ledger.record("b", 10,);
+
+      expect(ledger.snapshot(),).toEqual([
+        { profile: "a", dispatchesInWindow: 2, tokensInDay: 150, quotaResetAt: null, },
+        { profile: "b", dispatchesInWindow: 1, tokensInDay: 10, quotaResetAt: null, },
+      ],);
+    });
+
+    it("drops dispatches that left the rpm window and tokens that left the day window", () => {
+      const { now, advance, } = fakeClock();
+      const ledger = new UsageLedger(now,);
+      ledger.record("a", 100,);
+      advance(60_001,);
+      ledger.record("a", 7,);
+      // The day window still holds both token events.
+      expect(ledger.snapshot()[0]?.dispatchesInWindow,).toBe(1,);
+      expect(ledger.snapshot()[0]?.tokensInDay,).toBe(107,);
+
+      advance(86_400_001,);
+      expect(ledger.snapshot()[0]?.dispatchesInWindow,).toBe(0,);
+      expect(ledger.snapshot()[0]?.tokensInDay,).toBe(0,);
+    });
+
+    it("creates no entry for an unknown profile", () => {
+      const { now, } = fakeClock();
+      const ledger = new UsageLedger(now,);
+      expect(ledger.snapshot(),).toEqual([],);
+    });
+
+    it("does not mutate state: check() still sees the same usage afterwards", () => {
+      const { now, } = fakeClock();
+      const ledger = new UsageLedger(now,);
+      ledger.record("a", 100,);
+      ledger.snapshot();
+      ledger.snapshot();
+
+      // The rpm limit of 3 is not reached by one dispatch, and the token limit
+      // is still exactly exhausted — the snapshot consumed nothing.
+      expect(ledger.check("a", { rpm: 3, },).allowed,).toBe(true,);
+      expect(ledger.check("a", { tokensPerDay: 100, },).allowed,).toBe(false,);
+    });
+
+    it("reports the reported quota reset without clearing it", () => {
+      const { now, advance, } = fakeClock();
+      const ledger = new UsageLedger(now,);
+      ledger.applyUsageReports("a", [
+        {
+          providerId: "zai",
+          status: "exhausted",
+          remainingFraction: 0,
+          resetsAt: new Date(1_000_000 + 30_000,).toISOString(),
+        },
+      ],);
+
+      expect(ledger.snapshot()[0]?.quotaResetAt,).toBe(1_000_000 + 30_000,);
+      advance(30_001,);
+      // The snapshot is read-only: it leaves the expiry to check().
+      expect(ledger.snapshot()[0]?.quotaResetAt,).toBe(1_000_000 + 30_000,);
+      expect(ledger.check("a", undefined,).allowed,).toBe(true,);
+      expect(ledger.snapshot()[0]?.quotaResetAt,).toBeNull();
+    });
+  });
 });
