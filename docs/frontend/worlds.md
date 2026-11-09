@@ -138,7 +138,9 @@ Create is a modal on the worlds page (**+ New** header button loads
 The world-detail page's **Edit** button opens a modal instead
 (`/partials/worlds/edit-modal`). The modal prefills name, description and
 lore from `GET /api/v1/worlds/:id` and keeps its Save button disabled until
-the world is loaded, so an unloadable world can never be saved empty.
+the world is loaded, so an unloadable world can never be saved empty. A
+failed load shows an inline error with a Retry button re-running the load;
+fields the user already typed into keep their text on a later fill.
 
 Single-column form, max-width 600px, centered.
 

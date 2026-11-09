@@ -14,6 +14,23 @@
       <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
     </div>
     <div class="modal-body">
+      <p
+        class="form-error"
+        role="alert"
+        x-show="loadError"
+        x-cloak
+        data-testid="edit-world-load-error"
+      >
+        {{{ t("worlds.loadFailed") }}}
+        <button
+          type="button"
+          class="btn btn-secondary"
+          x-on:click="retry()"
+          data-testid="edit-world-retry"
+        >
+          {{{ t("common.retry") }}}
+        </button>
+      </p>
       <form
         hx-put="/api/v1/worlds/{{worldId}}"
         hx-target="#world-detail"
