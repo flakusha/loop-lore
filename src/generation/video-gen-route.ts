@@ -20,12 +20,14 @@ import { loadConfig, } from "../config/load";
 import type { VideoProviderConfig, } from "../config/schema";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { releaseModelsForRender, } from "../llm/llama-swap-release";
 import { getChildLogger, } from "../logger";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
 import { userApiKeyResolver, } from "./providers/user-api-key";
 import { getOwnedTemplate, } from "./template-service";
 import { parseTemplatePayload, type SimpleTemplatePayload, } from "./template-types";
+import { dispatchThroughVideoGate, setVideoPreDispatchHook, VIDEO_QUEUE_WAIT_MS, } from "./video-dispatch-gate";
 import { generateVideoWithFailover, type VideoApiKeyResolver, type VideoGenRequest, } from "./video-engine";
 import { completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./video-jobs";
 
@@ -35,6 +37,16 @@ import { completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./v
  * here avoids paying for a render this instance cannot store.
  */
 const ESTIMATED_VIDEO_BYTES = 50_000_000;
+
+/**
+ * B1 composition: the gate owns the box slot, the sibling unload owns the
+ * release semantics. Register once at module load; the box key is
+ * intentionally unused (the base resolves from app config, never request
+ * input). Failure never aborts the render (runVideoPreDispatchHook logs).
+ */
+setVideoPreDispatchHook(async () => {
+  await releaseModelsForRender();
+},);
 
 /** Request body — prompt is required unless a template renders it. */
 interface VideoGenBody {
@@ -220,9 +232,16 @@ export async function handleVideoGeneration(
 }
 
 /**
- * Settle one submitted video job: engine failover, then the persistence
- * block, then mark the job done (or failed with the engine/persist code).
- * A render resolving after its deadline reports failed/504.
+ * Settle one submitted video job: per-box gate admission (local providers),
+ * engine failover, then the persistence block, then mark the job done (or
+ * failed with the engine/persist code). A render resolving after its
+ * deadline reports failed/504. A waiter past the queue-wait ceiling reports
+ * failed/429 — that ceiling is queue-wait only, separate from the render
+ * deadline: `generationTimeoutMs` budgets the render itself, the ceiling
+ * budgets the wait for a box slot (see docs/spec/integrations/video-generation.md).
+ * Authorization stays at the submit route: this continuation only settles
+ * jobs that already passed the 401/403 checks; the queued job keeps its
+ * submitter `ownerId` and the poll route still 404s foreign jobs.
  * @param job - submit-time snapshot consumed by the continuation
  * @returns {Promise<void>}
  */
@@ -241,7 +260,33 @@ async function runVideoRender(job: {
   messageId?: string;
 },): Promise<void> {
   const log = getChildLogger("video-gen",);
-  const outcome = await generateVideoWithFailover(job.providers, job.request, job.resolveApiKey,);
+  let outcome: Awaited<ReturnType<typeof generateVideoWithFailover>> | undefined;
+  try {
+    await dispatchThroughVideoGate({
+      providers: job.providers,
+      queueWaitMs: VIDEO_QUEUE_WAIT_MS,
+      run: () =>
+        generateVideoWithFailover(job.providers, job.request, job.resolveApiKey,).then(
+          (settled,) => {
+            outcome = settled;
+          },
+        ),
+    },);
+  } catch (error) {
+    // Queue-wait ceiling only: dispatch throws a 429-coded error when the
+    // wait for a box slot passes VIDEO_QUEUE_WAIT_MS. Engine failures stay
+    // inside `outcome` and settle below — this catch never reinterprets them.
+    const status = (error as { status?: number }).status ?? 500;
+    const message = error instanceof Error ? error.message : String(error,);
+    log?.warn("video render dropped at queue-wait ceiling", { jobId: job.jobId, },);
+    failVideoJob(job.jobId, message, status,);
+    return;
+  }
+
+  if (!outcome) {
+    failVideoJob(job.jobId, "video render settled without an outcome", 500,);
+    return;
+  }
 
   if (Date.now() > (getVideoJob(job.jobId,)?.deadline ?? Number.POSITIVE_INFINITY)) {
     log?.warn("video render resolved after its deadline", { jobId: job.jobId, },);
@@ -254,6 +299,10 @@ async function runVideoRender(job: {
     return;
   }
 
+  // Closure-narrowing: `outcome` is assigned inside the gate callback, so TS
+  // cannot narrow it — bind the settled success once for the block below.
+  const settled = outcome;
+
   const links = [
     ...(job.messageId ? [{ entityType: "message" as const, entityId: job.messageId, label: "generated", },] : []),
     ...(job.chatId ? [{ entityType: "chat" as const, entityId: job.chatId, label: "generated", },] : []),
@@ -262,8 +311,8 @@ async function runVideoRender(job: {
   const persisted = await persistGeneratedImages({
     database: job.database,
     uploadDir: job.uploadDir,
-    images: [outcome.buffer,],
-    mimeType: outcome.mimeType,
+    images: [settled.buffer,],
+    mimeType: settled.mimeType,
     ownerId: job.ownerId,
     altText: `Generated video: ${job.prompt.slice(0, 80,)}`,
     links,
@@ -271,7 +320,7 @@ async function runVideoRender(job: {
     // Per-run identity: a re-rendered prompt must mint a distinct asset
     // row, not collapse onto the byte-identical earlier row (image route
     // precedent). The job id is unique per submit, so it keys each clip.
-    makeFilename: () => `${job.jobId}.${extensionForMime(outcome.mimeType,)}`,
+    makeFilename: () => `${job.jobId}.${extensionForMime(settled.mimeType,)}`,
   },);
 
   const asset = persisted[0]?.asset;
@@ -286,7 +335,7 @@ async function runVideoRender(job: {
     url: `/api/v1/assets/${asset.id}/raw`,
     filename: asset.filename,
     mimeType: asset.mime_type,
-    provider: outcome.providerId,
+    provider: settled.providerId,
   },);
 }
 

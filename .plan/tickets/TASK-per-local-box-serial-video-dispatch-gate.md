@@ -3,7 +3,7 @@
 
 # TASK: Per-local-box serial video dispatch gate
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-video-generation
@@ -93,6 +93,27 @@ Whichever option is chosen, the ticket ships with the decision **recorded**,
 including the config-migration story if a new field is added (default value,
 how existing configs behave, whether the admin UI/config schema exposes it).
 
+### Decision (recorded 2026-11-09, gate-impl lane)
+
+**Option 1 — explicit `localBox` field — implemented.**
+`VideoProviderConfig.localBox?: string`
+(`packages/core/src/config/schema/providers.ts`): absent or empty means
+**external** and the provider bypasses the gate with zero added latency;
+a non-empty value names the box whose GPU the provider shares and the
+dispatch gate serializes one running render per distinct name.
+BaseUrl heuristics are NOT a decision input (mis-classify both ways: LAN
+ComfyUI on the same weak box; localhost ComfyUI with its own GPU).
+
+Migration story: purely additive optional field — every existing config
+parses unchanged and behaves exactly as today (no serialization, since no
+provider names a box). Four example configs document the field
+(`configs/config.example.{yaml,toml}`,
+`configs/config.generation.example.{yaml,toml}`) with `localBox` commented
+alongside the video provider entries. No admin-UI surface change in this
+ticket: video providers have no provider-health/admin editor wiring in
+scope (see Provider health below); the field rides the existing
+`VideoProviderConfig` schema the config files already feed.
+
 ### What the gate does
 
 - **Serializes per local box.** Keyed by the local box identity (see the
@@ -160,58 +181,68 @@ The gate is **not** an entry point, and it must not become one:
 
 ## Acceptance Criteria
 
-- [ ] **One render per local box at a time**: two submissions targeting the
-  same local box are serialized (the second does not start until the first
-  finishes); two submissions targeting different local boxes run concurrently
+- [x] **One render per local box at a time** — evidence: `video-dispatch-gate.test.ts` same-box serialization + different-box concurrency + queued-dispatch-on-release; route serializes two same-box submits
 
-- [ ] The **gate key derivation is documented in code** and used consistently
-  by the gate, the pre-dispatch hook, and the logging that reports which box
-  a render is holding
+- [x] The **gate key derivation is documented in code** — evidence: `videoGateKeys` docstring in `video-dispatch-gate.ts:60-68`; gate + `runVideoPreDispatchHook(boxKey)` + `{ boxKey }` logs share it
 
-- [ ] **Caller identity is enforced server-side before a job reaches the
-  gate**: the submit route's existing per-request checks (401 no user, 403
-  foreign chat) run first and still apply; the gate itself is reachable only
-  from the dispatch path; a queued job keeps its submitter's identity, and no
-  request-supplied value selects the provider instance, the box key, or the
-  model the pre-dispatch hook releases
+- [x] **Caller identity enforced before the gate** — evidence: route checks untouched (401/403 submit, 401/404 poll); gate is continuation-internal only; `ownerId` kept on queued jobs; hook takes derived box key only
 
-- [ ] **External providers bypass the gate** with no added latency
-- [ ] The **local-vs-remote decision is resolved and recorded** in this
-  ticket (explicit config field vs `baseUrl` detection), including the
-  config-migration story if a field is added
+- [x] **External providers bypass the gate** — evidence: `needsVideoGate` false path awaits `run()` directly (no chaining); external-bypass test
+- [x] The **local-vs-remote decision is resolved and recorded** — evidence: Decision section above (explicit `localBox`, additive/optional, existing configs unaffected; examples updated)
 
-- [ ] A queued submission stays **`pending`** and is dispatched when a slot
-  frees; the poll-by-job-id shape (`handleVideoGenerationStatus`) is unchanged
+- [x] A queued submission stays **`pending`**, dispatched on slot release, poll shape unchanged — evidence: route test serializes two same-box submits to `done` via `submitAndPoll`
 
-- [ ] The in-memory job store at `src/generation/video-jobs.ts:45` is
-  **bounded** (cap and/or eviction of settled jobs) with the ceiling
-  documented in code
+- [x] The in-memory job store is **bounded** — evidence: `VIDEO_JOB_STORE_MAX = 500` + eviction rule in `video-jobs.ts` docstring; burst test stores 550, asserts cap + pending preserved
 
-- [ ] A **single named pre-dispatch model-rotation hook** exists on the
-  dispatch path; it is a no-op when nothing needs releasing, its failure does
-  not abort the render, and it composes with the sibling
-  precise-unload ticket in either landing order
+- [x] A **single named pre-dispatch hook** on the dispatch path — evidence: `setVideoPreDispatchHook` + no-op default + failure-never-aborts; hook-called-before-dispatch + no-op + failure-proceeds tests; sibling plugs via setter, no hard import
 
-- [ ] The hook's release sequence is the sibling's **precise** one —
-  enumerate via `GET /running`, evict per-model ids only (`comfyui_auto`
-  excluded), one `POST /api/models/unload/{id}` per id with both 404 shapes
-  treated as continue-cases, drain via a bounded `GET /running` poll, and
-  submit the render only after the drain; the global unload and `pause`
-  endpoints are never called
+- [x] The hook's release sequence is the sibling's **precise** one — wired 2026-11-09 (B1): `video-gen-route.ts` registers `releaseModelsForRender` via `setVideoPreDispatchHook` at module load; composition test (`video-dispatch-gate-bounds.test.ts` "replaces the no-op with the precise release") proves the registered hook hits llama-swap `GET /running` (no-op never fetches) and dispatch still runs
 
-- [ ] Submit still returns **202 promptly** (the gate queues; it does not
+- [x] Submit still returns **202 promptly** (the gate queues; it does not
   block the HTTP request)
 
-- [ ] A **named queue-wait ceiling** fails the job with a defined status, and
-  the interaction with `generationTimeoutMs` is documented
+- [x] A **named queue-wait ceiling** fails the job — evidence: `VIDEO_QUEUE_WAIT_MS` fails waiters with 429 (`failed/429` test); wait-vs-render budget interaction in `docs/spec/integrations/video-generation.md`
 
-- [ ] **Provider health is either consulted by the gate or explicitly not
-  consulted**, with the reason stated in the ticket
+- [x] **Provider health explicitly not consulted** — evidence: `scanAllProviders` reads the LLM provider registry, which video providers are never registered in (registry is LLM-only; video failover is a separate config list), so a health read here would always report unknown; failover/timeouts already surface per-candidate
 
-- [ ] **Tests:** same-box serialization; different-box concurrency; external
-  provider not serialized; queued job dispatched on slot release; hook called
-  before dispatch and no-op when nothing to release; job store bounded under a
-  burst of submissions
+- [x] **Tests** — evidence: `video-dispatch-gate.test.ts` (8) + `video-dispatch-gate-bounds.test.ts` (3) + `video-dispatch-hook-composition.test.ts` (B1: registered hook hits `GET /running`, dispatch runs) + `video-gen-route.test.ts` (24) + `video-jobs.test.ts` (8) + unload suites (21): 65 pass `bun test --isolate`
 
-- [ ] The behaviour is **documented** outside this ticket (where the video
-  generation and provider configuration docs live)
+- [x] The behaviour is **documented** — evidence: `docs/spec/integrations/video-generation.md` (91L) + `localBox` in all four example configs
+
+### Implementation notes (gate-impl lane, 2026-11-09)
+
+- Gate: `src/generation/video-dispatch-gate.ts` (192L) — per-box FIFO tails
+  over a promise chain (boring keyed semaphore; no new dep; ResourceManager
+  rejected — it is a priority LLM scheduler, wrong shape for one-slot FIFO).
+  Key derivation `videoGateKeys` = distinct non-empty `localBox`, first-seen;
+  gate + hook + logs all take the derived `boxKey` (call-site never supplies
+  a hook target). `VIDEO_QUEUE_WAIT_MS = 300_000` (5 min = generationTimeout
+  default, so a waiter that outlasts a render attempt fails 429).
+- Call site: `runVideoRender` (`src/generation/video-gen-route.ts`) routes the
+  engine call through `dispatchThroughVideoGate`; submit still returns 202
+  promptly; pending = queued; poll shape unchanged; ownerId/auth untouched
+  (gate is post-checks, internal-only). Queue-wait 429 vs
+  `generationTimeoutMs`: the ceiling budgets only the WAIT for a box slot,
+  separate from `generationTimeoutMs` which budgets the RENDER itself
+  (deadline checked after admission) — documented in
+  `docs/spec/integrations/video-generation.md`.
+- Store: `VIDEO_JOB_STORE_MAX = 500` (`src/generation/video-jobs.ts`);
+  insert-then-evict, oldest settled first, oldest pending only when no
+  settled remain (pending jobs are never dropped while a settled job exists).
+- Hook seam: `setVideoPreDispatchHook` / `runVideoPreDispatchHook` /
+  `__resetVideoPreDispatchHookForTests` — single named seam, no-op default,
+  failure logs-and-proceeds (never aborts the render), takes only the box key.
+  Sibling composes by calling the setter at startup; landing order free.
+- Provider health: explicitly NOT consulted — `scanAllProviders`
+  iterates `listProviders()` from the LLM provider registry
+  (`src/generation/providers/registry.ts`), and video providers are never
+  registered there (video failover is a separate config list,
+  `generation.providers.video`, with its own `listVideoProviderInstances`
+  surface). A health read in the dispatch path would therefore always
+  report unknown. Render failure already surfaces per-candidate via engine
+  failover (timeout → 504, failure → 502).
+- Open points answered: (1) baseUrl heuristic — declined, reasons above;
+  (2) queue-wait vs generationTimeout — separate budgets, documented;
+  (3) `comfyui_auto` exclusion + 404-continue + drain-poll semantics belong
+  to the sibling unload ticket; this seam passes only the box key and
+  imposes nothing on the sibling's sequence.
