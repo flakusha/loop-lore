@@ -1304,6 +1304,13 @@
     "galleryBatchDelete": "Delete selected",
     "galleryBatchToggle": "Select for batch action",
     "transitionPicker": "Transition",
+    "exportChat": "Export chat",
+    "exportFormat": {
+      "markdown": "Markdown (.md)",
+      "json": "JSON (.json)",
+      "html": "HTML (.html)",
+      "text": "Plain text (.txt)"
+    },
     "transitionDestination": "Destination location…",
     "transitionInPlace": "Update location in place",
     "transitionNewChat": "New chat at destination",
