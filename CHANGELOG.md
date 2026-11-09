@@ -93,11 +93,13 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Fixed
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 - **The world Edit modal no longer wipes a world's description and lore (BUG-world-edit-modal-served-blank-fields-and-wiped-world-descrip)** — the modal is served as a static, DB-less partial, so its name/description/lore fields arrived blank and the PUT wrote those blanks over the world's row: saving the modal without retyping the lore silently cleared it. The modal now prefills itself from the access-checked `GET /api/v1/worlds/:id` (new Alpine component `src/frontend/alpine/world-edit-modal.ts`, mounted with `x-data="worldEditModal()"`), and its Save button ships `disabled` until the world is loaded, so a world that cannot be loaded can no longer be submitted empty. A failed load now renders inline (an alert paragraph plus a Retry button re-running the load, reusing the existing `worlds.loadFailed` and `common.retry` strings) alongside the toast, and fields the user already typed into keep their text when the loaded values arrive. The world id the modal reads out of the page is URL-escaped into its path segment by the shared `fetchWorldJson` helper (an id carrying "/" or "?" would otherwise retarget the request) and is read as everything after the API prefix rather than the last path segment, so the modal can only ever load the world its form targets. Clearing a field on purpose still clears it — the server keeps its "a non-null field is written as sent" semantics. The API stays authoritative for every field it writes (the route validates the body against `WorldUpdateBody` before the handler writes it), and the world's name input now mirrors that limit on all three surfaces (edit modal, create modal, full-page editor: `maxlength="255"`), so an over-long name cannot turn the whole save into a 422 that drops the description and lore edits with it. What the API cannot express is "a client must not send a value it never loaded" — an empty string is a legitimate clear — so closing that gap server-side would need explicit clear flags on `WorldUpdateBody`; named as a follow-up, not done here.
 
 - **The harness cost tiebreak was inert for candidates with no known price (TASK-harness-model-discovery-ui-wiring-frontend-models-caller-cos)** — `ProfileSelector`'s cost tiebreak sorted with `(costA ?? Infinity) - (costB ?? Infinity)`, so two candidates with no known cost compared `Infinity - Infinity` = NaN, and the sort spec treats a NaN comparator result as +0: the tiebreak silently did nothing. The comparator now branches explicitly (`src/integrations/harness/profile-selector.ts`, `compareCandidateCost`) — never NaN, and a candidate with no known cost ranks last, mirroring the router's "unknown ranks last" convention. The observable ordering is unchanged and no prices were invented: `ProviderCapabilities.costPer1kTokens` is still populated by no real provider, so the tiebreak only fires for a caller that supplies a cost table.
@@ -187,6 +189,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ## [0.1.0] - 2026-08-15
 
 First release. Clean-room reimplementation of SillyTavern-style RPG chat.
@@ -207,6 +210,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Changed
 
 - Lint debt resolved across `src` (156 files), eslint config + example configs shipped.
@@ -215,6 +219,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Fixed
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
@@ -223,11 +228,13 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Removed
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Security
 
 - Actor-scoped access control on RPG routes (`requireActorAccess`); pre-push hook blocks agent pushes (human-attested release pushes).
@@ -242,6 +249,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Fixed
 
 - **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
@@ -252,6 +260,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
+
 ### Fixed
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
@@ -262,4 +271,4 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Coverage run executes the bundled plugin engines' own tests** — the plugin engines under `plugins/` ship their own `*.test.ts`, but the coverage run's test set was `tests/e2e/ src/`, so those files never ran and the `plugins` module was measured at a fraction of what the tests actually cover. `test:coverage` now includes `plugins/`, and the parallel runner's coverage gate builds the same test set (it walks `plugins/` alongside `src/`, so the gate and the manual script agree). The plugin engines are in-process unit tests, so they belong inside the coverage invocation rather than in the separate scripts pass.
 - **Image-edit input images reach ComfyUI as uploaded bytes** — the ComfyUI image-edit provider now uploads every `image`-typed parameter (`input_image`, `mask_image`, `control_image`) before the workflow is built and substitutes the name ComfyUI stored the bytes under, so a `LoadImage` node no longer names a file the server never uploaded. The parameter carries the ASSET ID of an image the caller owns: the provider checks the owner, decrypts with the chat key when the asset is encrypted, and reads the bytes through the asset row — a path on the server is never opened. The run body is validated against one shared TypeBox schema (`src/validation/schemas/image-edit.ts`): the route declares it as its `body:` — so the served OpenAPI document carries the contract — and `handleRun` applies the same validator, which covers the chain-run executor that calls the handler directly.
   // hint: Structural change (rename/retype). Check callers of this entity.
-// hint: Structural change (rename/retype). Check callers of this entity.
+  // hint: Structural change (rename/retype). Check callers of this entity.
