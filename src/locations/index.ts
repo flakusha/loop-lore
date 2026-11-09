@@ -4,6 +4,7 @@
 /**
  * Fractal Locations — Public API
  */
+export { isFastTravelLocked, } from "./fast-travel";
 export { ActorPositionService, } from "./positions";
 export type { ActorPosition, } from "./positions";
 export { TravelRouteService, } from "./routes";
