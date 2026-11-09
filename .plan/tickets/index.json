@@ -11062,7 +11062,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-world-edit-modal-served-blank-fields-and-wiped-world-descrip.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-WORLD-IMPORT-QUEST-TIME-LOCATION-ID-NOT-REMAPPED-CONNECTIONS": {
     "epic": "epic-world-travel-time",
@@ -29890,7 +29890,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-auth-register-route.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Auth Register Route",
     "type": "TASK"
@@ -41937,7 +41937,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Finalize notification bell header wiring",
     "type": "TASK"
@@ -42627,7 +42627,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-frontend-chat-memories-spec.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Frontend Chat Memory Panel Implementation",
     "type": "TASK"
@@ -42983,7 +42983,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-frontend-trade-balance-and-execute.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Frontend — Trade Balance + Execute",
     "type": "TASK"
@@ -49673,7 +49673,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-memory-emotion-impact.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Memory Emotion-Impact Fields",
     "type": "TASK"
@@ -49712,7 +49712,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-memory-promotion-pipeline.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Implement memory promotion pipeline",
     "type": "TASK"
@@ -49725,7 +49725,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-memory-provision-wiring.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wire memory provision into prompt assembly",
     "type": "TASK"
@@ -55141,7 +55141,7 @@
     "label": "task",
     "priority": "Low",
     "source": ".plan/tickets/TASK-quiet-hours.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Quiet Hours / Do-Not-Disturb",
     "type": "TASK"
