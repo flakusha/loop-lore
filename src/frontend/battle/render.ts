@@ -24,7 +24,6 @@ import {
 import { renderEnvironmentalEffects, } from "./environmental-effects.js";
 import { renderHealthBar, } from "./health-bar.js";
 import { renderStatusEffects, } from "./status-effects.js";
-import { renderTargetSelector, } from "./target-selection.js";
 
 /** */
 export interface BattleRenderCallbacks {
