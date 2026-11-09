@@ -41,7 +41,7 @@ already declares `version: 0.1.0`.
 | `TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION.md` | Playwright coverage growth (Gate C features: tool-call blocks, GM panels, quest log) | 🟡 open |
 | `TASK-PLAN-RELEASE-V010.md` | `docs/meta/release-process.md` ✅, changelog/release notes ✅ | 🟡 tag 0.1.0 deferred — post-testing human decision |
 | `TASK-PLAN-SIZE-STRICT-DEBT.md` | Size-strict promotion AC | ✅ closed 2026-08-12 |
-| `TASK-docs-reconcile-implementation.md` | Docs/API-reference vs `src/` audit (release-facing docs) | 🟡 open — audit; worktree merged |
+| `TASK-docs-reconcile-implementation.md` | Docs/API-reference vs `src/` audit (release-facing docs) | ✅ closed — ticket file and index both read Done |
 
 ## Pre-release gate (land-order, mirrors `.plan/backlog-archive.md` § open.md rows W1–W4)
 
@@ -58,7 +58,7 @@ already declares `version: 0.1.0`.
 
 - ~~AUX M6 telemetry~~ ✅ done 2026-08-18 (`F3` in `.plan/backlog-archive.md` § open.md)
 - World timeline §5.3/§5.4 (cluster B)
-- Frontend gaps: music linking, party join/leave, unified GM↔assistant view, creation wizards, avatar-gallery visibility inheritance
+- Frontend gaps: ~~music linking~~ (shipped — `src/routes/music-links.ts` + chat music-links panel), ~~party join/leave~~ (shipped — `src/chat/service/party.ts` + `src/routes/chats/participants.ts`), ~~creation wizards~~ (shipped — `src/frontend/alpine/creation-wizard.ts`, `world-create-wizard.ts`, `components/chat/wizard-panel.html`), unified GM↔assistant view, avatar-gallery visibility inheritance
 
 ## Definition of Done
 
