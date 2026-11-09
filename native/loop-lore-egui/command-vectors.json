@@ -106,6 +106,10 @@
       "requiredRole": "member"
     },
     {
+      "name": "whatif",
+      "requiredRole": "member"
+    },
+    {
       "name": "workflow",
       "requiredRole": "member"
     },
@@ -364,6 +368,7 @@
         "priority",
         "skip",
         "harness",
+        "whatif",
         "workflow",
         "orchestrate",
         "workflowz",
@@ -445,6 +450,7 @@
         "constraint",
         "target",
         "harness",
+        "whatif",
         "orchestrate",
         "heal",
         "impersonate",

@@ -2051,7 +2051,8 @@
     "reroll-emotion": "Re-roll a character's emotion-avatar slots (/reroll-emotion [@Name] [emotion...])",
     "reunite": "Merge a split branch chat back into this chat (/reunite <secondaryChatId>)",
     "split": "Branch the party into per-location chats (/split <locationId>:<actorId[,actorId...]> ...)",
-    "harness": "Run one turn on an external ACP harness (/harness <profile> <prompt>)"
+    "harness": "Run one turn on an external ACP harness (/harness <profile> <prompt>)",
+    "whatif": "Simulate a hypothetical branch (/whatif <hypothetical> [beats])"
   },
   "participants": {
     "title": "Participants",
