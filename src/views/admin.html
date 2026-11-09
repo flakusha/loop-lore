@@ -2360,6 +2360,67 @@
                 </template>
               </tbody>
             </table>
+            <h3
+              style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)"
+              x-text="t('admin.knowledgeGraph')"
+            >
+            </h3>
+            <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3)">
+              <button class="btn btn-secondary btn-xs" @click="loadKnowledgeGraph()" x-text="t('common.retry')">
+              </button>
+              <span style="font-size: 12px; color: var(--text-muted, #6b7280)">
+                <span
+                  style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--success)"
+                ></span>
+                <span x-text="t('admin.kgAssets')"></span>
+                <span
+                  style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--warning); margin-left: var(--space-2)"
+                ></span>
+                <span x-text="t('admin.kgEntities')"></span>
+              </span>
+            </div>
+            <div
+              x-show="kgNodes.length === 0"
+              class="empty-state"
+              style="padding: var(--space-4); font-size: 13px; margin-bottom: var(--space-6)"
+              x-text="t('admin.noGraphData')"
+            >
+            </div>
+            <svg
+              x-show="kgNodes.length > 0"
+              data-testid="knowledge-graph"
+              viewBox="0 0 400 400"
+              style="width: 100%; max-width: 520px; height: auto; margin-bottom: var(--space-6); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px"
+            >
+              <template x-for="e in kgEdges" :key="e.source + '->' + e.target">
+                <line
+                  :x1="e.x1"
+                  :y1="e.y1"
+                  :x2="e.x2"
+                  :y2="e.y2"
+                  stroke="currentColor"
+                  stroke-opacity="0.35"
+                  style="color: var(--text-muted, #6b7280)"
+                >
+                </line>
+              </template>
+              <template x-for="n in kgNodes" :key="n.id">
+                <g>
+                  <circle :cx="n.x" :cy="n.y" r="8" :fill="n.fill">
+                    <title x-text="n.label"></title>
+                  </circle>
+                  <text
+                    :x="n.x"
+                    :y="n.y - 12"
+                    text-anchor="middle"
+                    fill="currentColor"
+                    style="color: var(--text-primary, #212529); font-size: 9px"
+                    x-text="n.label.length > 18 ? n.label.slice(0, 17) + '…' : n.label"
+                  >
+                  </text>
+                </g>
+              </template>
+            </svg>
             <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Recent Errors</h3>
             <div
               x-show="errorEvents.length === 0"

@@ -10,6 +10,7 @@ import { adminChats, } from "./admin-chats";
 import { adminClassifierVocab, } from "./admin-classifier-vocab";
 import { adminFederation, } from "./admin-federation";
 import { adminHarness, } from "./admin-harness";
+import { adminKnowledgeGraph, } from "./admin-knowledge-graph";
 import { adminModels, } from "./admin-models";
 import { createProviderWizard, } from "./admin-provider-wizard";
 import { adminReview, } from "./admin-review";
@@ -78,6 +79,7 @@ adminGlobals.adminPage = function() {
     ...adminTemplates,
     ...adminWorkflows,
     ...adminAnalytics,
+    ...adminKnowledgeGraph,
     ...adminFederation,
     ...createProviderWizard(),
 
@@ -182,6 +184,7 @@ adminGlobals.adminPage = function() {
 
         case "analytics": {
           this.loadAnalytics();
+          this.loadKnowledgeGraph();
           break;
         }
 
