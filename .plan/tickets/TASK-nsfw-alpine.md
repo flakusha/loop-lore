@@ -30,11 +30,11 @@ Alpine.js state management for NSFW system.
 
 ## Acceptance Criteria
 
-- [ ] Intimacy state management
-- [ ] Body state tracking
-- [ ] Housing state management
-- [ ] Scene progression logic
-- [ ] SSE updates
+- [x] Intimacy state management (mixins `src/frontend/alpine/nsfw-intimacy`, `nsfw-panel`, `nsfw-body` via `inline-state.ts`, 2026-11-09)
+- [x] Body state tracking (`nsfw-body` mixin + widget, shipped)
+- [x] Housing state management (NSFW slice: gated `fetchLocationConfig` + suitability view `src/frontend/nsfw/private-space.ts`; full housing in `epic-housing`, 2026-11-09)
+- [x] Scene progression logic (reducer `src/frontend/nsfw/intimacy-scene.ts` + position step, 2026-11-09)
+- [ ] SSE updates (no intimacy SSE contract exists; `continueIntimacy` re-pulls pairs — interim path)
 
 ## Files to Create
 

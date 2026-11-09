@@ -122,10 +122,10 @@ Complete NSFW interaction interface for intimacy system, body state display, hea
 
 | Task                            | Priority | Status         |
 | ------------------------------- | -------- | -------------- |
-| TASK-nsfw-intimacy-interface.md | P0       | ⬜ Not Started |
+| TASK-nsfw-intimacy-interface.md | P0       | ✅ Done (positioning: positionSelect + wire `context` `near/facing:<id>`, mobile CSS; 2026-11-09) |
 | TASK-nsfw-body-state.md         | P0       | Done           |
-| TASK-nsfw-housing-management.md | P0       | ⬜ Not Started |
-| TASK-nsfw-alpine.md             | P0       | ⬜ Not Started |
+| TASK-nsfw-housing-management.md | P0       | ✅ NSFW slice done (private-spaces suitability view over `GET /api/v1/nsfw/location/:id`; full housing stays in `epic-housing`, 2026-11-09) |
+| TASK-nsfw-alpine.md             | P0       | ✅ Done (entry point = `src/frontend/alpine/nsfw-intimacy` + `nsfw-panel` + `nsfw-body` mixins via `inline-state`; `src/frontend/alpine/nsfw.ts` never created — umbrella file superseded) |
 | TASK-nsfw-read-only-status-panel.md | P0   | ✅ Done        |
 | TASK-nsfw-consent-grant-route-missing.md | P0 | ✅ Done        |
 
