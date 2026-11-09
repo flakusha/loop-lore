@@ -14,6 +14,7 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../../db/enums";
+import { indexMessageSearchTokens, } from "../../search";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -44,6 +45,7 @@ export async function injectShadowRevealNarration(
 
   const text = `[Shadow Revealed] ${content}`;
 
+  const narrationId = randomUUID() as string;
   let storedContent = text;
   let storedKeyId: string | null = null;
   if (isEncryptionEnabled()) {
@@ -63,7 +65,7 @@ export async function injectShadowRevealNarration(
   await database
     .insertInto("messages",)
     .values({
-      id: randomUUID() as string,
+      id: narrationId,
       chat_id: chatId,
       actor_id: narrator.id,
       role: MessageRole.System,
@@ -76,4 +78,13 @@ export async function injectShadowRevealNarration(
       visibility: MessageVisibility.Visible,
     },)
     .execute();
+
+  // The row carries no plaintext mirror: index blind tokens for the token
+  // tier (no-op unless ENABLE_TOKEN_INDEXING=1).
+  await indexMessageSearchTokens(database, {
+    messageId: narrationId,
+    chatId,
+    plaintext: text,
+    keyId: storedKeyId,
+  },);
 }

@@ -28,8 +28,16 @@ export { createMessageProviders, } from "./providers/messages";
 export { bm25ToScore, fuzzyScore, reciprocalRankFusion, RRF_K, } from "./rank";
 export type { ServiceOptions, ServiceProviders, UnifiedSearchService, } from "./service";
 export { createUnifiedSearchService, } from "./service";
-export type { TokenMatch, } from "./token-store";
-export { deleteMessageTokens, matchMessageIdsByTokens, reindexMessageTokens, } from "./token-store";
+export type { BackfillTokensOpts, BackfillTokensSummary, } from "./token-backfill";
+export { backfillMessageTokens, } from "./token-backfill";
+export type { IndexMessageTokensOpts, TokenMatch, } from "./token-store";
+export {
+  deleteMessageTokens,
+  indexMessageSearchTokens,
+  isTokenIndexingEnabled,
+  matchMessageIdsByTokens,
+  reindexMessageTokens,
+} from "./token-store";
 export type {
   SearchHit,
   SearchMode,

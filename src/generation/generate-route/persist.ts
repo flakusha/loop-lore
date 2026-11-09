@@ -21,6 +21,7 @@ import {
 } from "../../db/enums";
 import type { CancelReason, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { indexMessageSearchTokens, } from "../../search";
 import { safeJsonStringify, } from "../../utils";
 import { completeGeneration, } from "../cancellation-manager";
 import { buildQualityMetadata, qualityMetricsJson, repetitionRate, } from "../quality";
@@ -116,6 +117,15 @@ async function storeGeneratedMessage({
       .where("id", "=", targetMessageId,)
       .execute();
 
+    // Regen replaces the placeholder's content in place: re-index its tokens
+    // (no-op unless ENABLE_TOKEN_INDEXING=1).
+    await indexMessageSearchTokens(database, {
+      messageId: targetMessageId,
+      chatId,
+      plaintext: result.content,
+      keyId: storedKeyId,
+    },);
+
     return targetMessageId;
   }
 
@@ -148,6 +158,15 @@ async function storeGeneratedMessage({
       tool_calls: toolCallsJson,
     },)
     .execute();
+
+  // The generated row carries no plaintext mirror: index blind tokens for the
+  // token tier (no-op unless ENABLE_TOKEN_INDEXING=1).
+  await indexMessageSearchTokens(database, {
+    messageId,
+    chatId,
+    plaintext: result.content,
+    keyId: storedKeyId,
+  },);
 
   return messageId;
 }

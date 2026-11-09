@@ -20,6 +20,7 @@ import {
 import type { DB, } from "../../db/schema";
 import { extractAndStore, } from "../../game-state";
 import { getLogger, } from "../../logger";
+import { indexMessageSearchTokens, } from "../../search";
 import { uid, } from "../../utils";
 import {
   isSwipeIndexUniqueViolation,
@@ -186,6 +187,15 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
     if (!outcome.ok) { throw outcome.lastError; }
 
     return { swipeIndex: outcome.value ?? null, };
+  },);
+
+  // The row carries no plaintext mirror: index blind tokens for the token
+  // tier (no-op unless ENABLE_TOKEN_INDEXING=1).
+  await indexMessageSearchTokens(database, {
+    messageId,
+    chatId,
+    plaintext: storedText,
+    keyId: encResult.keyId,
   },);
 
   // Game-state extraction (FEAT-game-state-extraction-and-analysis-pipeline):

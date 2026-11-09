@@ -104,6 +104,8 @@
     "migrate:character:legacy": "bun run src/scripts/migrate-character-legacy.ts",
     "backfill:users:encryption-secret": "bun run src/scripts/backfill-users-encryption-secret.ts",
     "backfill:users:encryption-secret:dry": "bun run src/scripts/backfill-users-encryption-secret.ts --dry-run",
+    "backfill:messages:search-tokens": "bun run src/scripts/backfill-message-tokens.ts",
+    "backfill:messages:search-tokens:dry": "bun run src/scripts/backfill-message-tokens.ts --dry-run",
     "schemas:check": "bun run scripts/check-schemas.ts",
     "schemas:check:fix": "bun run scripts/fix-schemas.ts",
     "openapi": "NODE_ENV=development bun run scripts/generate-openapi.ts",

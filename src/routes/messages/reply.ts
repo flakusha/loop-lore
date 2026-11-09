@@ -24,6 +24,7 @@ import type { DB, } from "../../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
 import { checkPaused, } from "../../group-chat/turn-selector";
 import { filter as filterProfanity, } from "../../profanity/service";
+import { indexMessageSearchTokens, } from "../../search";
 import { uid, } from "../../utils";
 import {
   isSwipeIndexUniqueViolation,
@@ -214,6 +215,15 @@ export async function maybeAutoReply(
 
       const assistantId = attempt.value;
       const storedAssistantId = String(assistantId,);
+
+      // The encrypted reply row carries no plaintext mirror: index blind
+      // tokens for the token tier (no-op unless ENABLE_TOKEN_INDEXING=1).
+      await indexMessageSearchTokens(database, {
+        messageId: storedAssistantId,
+        chatId,
+        plaintext: assistantContent,
+        keyId: replyKeyId,
+      },);
 
       // Additive translation variant (fire-and-forget): the reply is already
       // committed; a translation failure writes no row and never fails or
