@@ -3,7 +3,7 @@
 
 # TASK: Video generation route (`POST /api/generation/video`)
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** The Phase-A slice (video engine + route + provider config + modality dispatch + tests) landed on dev via `33f7461de`; only the async submit/poll job shape (AC 2) remains to be implemented.
 **Phase-A progress (from epic-agentic-integration):** Landed `src/generation/video-engine.ts` (ComfyUI workflow dispatch, cross-instance failover, per-provider BYO keys with fail-closed decrypt, 501/500/502/503/504 mapping), `POST /api/v1/generation/video` in `video-gen-route.ts` (auth contract + template render + storage quota gate + asset persistence as `assetType: "video"`), video provider config (`generation.providers.video`, `VideoApiFamily.Comfyui`), per-modality template apply dispatch (`routes/templates/modality.ts`), API-keys surface listing video instances, config examples, and tests (engine: sink/error/failover/BYOK; route: 401/400/404/403/501 gates; apply seam). Still open: the async job shape — the route blocks on the engine's bounded submit/poll/download instead of returning a job handle, so a long render still holds the HTTP connection (deadline is `generationTimeout`); route-level happy-path/asset-link assertions and a route-level template-render test are not yet written.
 **Priority:** low

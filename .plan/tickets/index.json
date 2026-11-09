@@ -19121,7 +19121,7 @@
     "label": "epic",
     "priority": "P0 — Critical",
     "source": ".plan/epics/epic-world-management-ui.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "world",
       "locations",
@@ -27914,7 +27914,7 @@
       "testing"
     ],
     "source": ".plan/tickets/TASK-agentic-integration-tests.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-AGENTIC-WORKSPACE-MODE": {
     "epic": "epic-use-case-agentic-workspace",
@@ -44885,7 +44885,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-production-dispatch-path-runturn-caller-tasktype-mem.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HARNESS-PROGRAMMATIC-API": {
     "hash": "a893dc4",
@@ -63443,7 +63443,7 @@
     "epic": "epic-video-generation",
     "tags": [],
     "source": ".plan/tickets/TASK-video-gen-route.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "960495a"
   },
   "TASK-VIDEO-PROVIDER-MINIMAX-H3": {
