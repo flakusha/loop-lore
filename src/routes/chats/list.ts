@@ -7,6 +7,7 @@ import { ChatVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { extractAuth, jsonPaginated, parsePagination, } from "../http-utils";
+import { type ExplicitChatListFilters, loadChatListFilters, resolveChatListFilters, } from "./filters";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -18,6 +19,11 @@ import type { HandlerOpts, } from "./types";
  *   Archive state lives on `chats.is_pinned` (PinnedState: unpinned|pinned|archived),
  *   so "active" = is_pinned != 'archived'. Omit = both.
  * - `sort`: "recent" (default) | "name" | "unread" | "pinned-first"
+ *
+ * Enforcement (TASK-server-side-room-filter-enforcement): for an
+ * authenticated caller, every dimension the request omits falls back to the
+ * user's saved `chat_list_filters` snapshot (see ./filters.ts). An explicit
+ * query param always wins, and guests / clean users keep the unfiltered list.
  */
 const archivedTrue = t.Literal("true",);
 const archivedFalse = t.Literal("false",);
@@ -150,13 +156,24 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
           const { userId, userRole, } = extractAuth(ctx,);
           const { page, pageSize, } = parsePagination(new URL(ctx.request.url,).searchParams,);
           const offset = (page - 1) * pageSize;
-          const type = ctx.query.type as "direct" | "group" | undefined;
-          const archived = ctx.query.archived as string | undefined;
-          const sort = (ctx.query.sort as string | undefined) ?? "recent";
-          const world = ctx.query.world as string | undefined;
-          const minMessages = ctx.query.minMessages as number | undefined;
-          const maxMessages = ctx.query.maxMessages as number | undefined;
-          const updatedSince = ctx.query.updatedSince as string | undefined;
+
+          // Enforcement: the saved snapshot fills every dimension the request
+          // omits (guests / never-saved users -> null -> no fallback).
+          const storedFilters = userId === null ? null : await loadChatListFilters(database, userId,);
+          const explicit: ExplicitChatListFilters = {
+            type: ctx.query.type as "direct" | "group" | undefined,
+            archived: ctx.query.archived as string | undefined,
+            sort: ctx.query.sort as string | undefined,
+            world: ctx.query.world as string | undefined,
+            minMessages: ctx.query.minMessages as number | undefined,
+            maxMessages: ctx.query.maxMessages as number | undefined,
+            updatedSince: ctx.query.updatedSince as string | undefined,
+          };
+
+          const { type, archived, sort, world, minMessages, maxMessages, updatedSince, } = resolveChatListFilters(
+            explicit,
+            storedFilters,
+          );
 
           // Shared filters. Archive state lives on chats.is_pinned
           // (PinnedState enum: unpinned | pinned | archived).
