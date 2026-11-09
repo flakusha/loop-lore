@@ -5,6 +5,7 @@ import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import type { InventoryItem, } from "../inventory/inventory-grid";
 import { inventoryTrading, inventoryTradingFactory, stateFromTradeActors, } from "./inventory-trading";
+import { tradingBalanceSlice, } from "./inventory-trading-balance";
 
 // ── Mock apiFetch (inventory-trading imports ./htmx) ──
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
@@ -317,6 +318,20 @@ describeOrSkip("inventory trading state", () => {
 },);
 
 describe("inventory trading scope", () => {
+  test("tradingBalanceSlice carries the balance defaults and guards", async () => {
+    expect(tradingBalanceSlice.playerBalance,).toBeNull();
+    expect(tradingBalanceSlice.balanceLoading,).toBe(false,);
+    expect(tradingBalanceSlice.balanceError,).toBe("",);
+
+    const state = stateFromTradeActors(null, null, null,);
+    const before = calls.length;
+    await state.loadBalance();
+    await state.executeTrade();
+    expect(calls.length,).toBe(before,);
+    expect(state.balanceLoading,).toBe(false,);
+    expect(state.error,).toBe("",);
+  });
+
   test("inventoryTradingFactory scopes a panel to one triple", () => {
     const state = inventoryTradingFactory("world-1", "player-1", "npc-1",);
     expect(state._worldId,).toBe("world-1",);
