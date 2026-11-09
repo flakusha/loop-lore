@@ -68,6 +68,29 @@ describe("actorLoreEntriesRoutes", () => {
     expect(res.status,).toBe(201,);
   });
 
+  // BUG-entity-create-body-strips-lore-keys: `keys` was absent from
+  // EntityCreateBody, so Elysia's TypeBox validation stripped it before the
+  // route's fieldMappings ran — a created entry silently lost its trigger
+  // keys (row stored keys:"[]") and could never activate. Pin the field
+  // through the REAL route so the schema can never drop it again.
+  test("create persists trigger keys through the EntityCreateBody boundary", async () => {
+    const res = await makeApp(db, "user1",).handle(
+      new Request("http://localhost/api/actors/user1/lore-entries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          name: "dragon",
+          content: "The dragon guards the bridge",
+          keys: ["dragon", "bridge",],
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
+    const created = (await res.json()) as { keys?: string };
+    expect(JSON.parse(created.keys ?? "[]",),).toEqual(["dragon", "bridge",],);
+  });
+
   test("create rejects empty content with 400", async () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/lore-entries", {

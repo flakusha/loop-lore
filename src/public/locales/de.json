@@ -1454,7 +1454,10 @@
     "aiExplain": "Explain simply",
     "aiActionItems": "Extract action items",
     "aiTranslate": "Translate…",
-    "aiTranslatePrompt": "Translate into which language?"
+    "aiTranslatePrompt": "Translate into which language?",
+    "promoteToLore": "Promote to lorebook",
+    "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
+    "promoteToLoreFailed": "Could not create the lorebook entry"
   },
   "personas": {
     "title": "Personas",

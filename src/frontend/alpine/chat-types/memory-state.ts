@@ -13,6 +13,7 @@ export interface ChatMemoryState {
   createMemory(): Promise<void>;
   deleteMemory(memoryId: string,): Promise<void>;
   toggleMemoryPin(memoryId: string,): Promise<void>;
+  promoteMemoryToLore(mem: MemoryEntry,): Promise<void>;
   saveEditMemory(): Promise<void>;
   startEditMemory(mem: MemoryEntry,): void;
   cancelEditMemory(): void;
