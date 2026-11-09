@@ -17,7 +17,7 @@ import { loadConfig, } from "../../config/load";
 import { type CommandResult, registerCommand, } from "./registry";
 
 /** True when at least one video provider is configured. */
-export function resolveVideoCommandAvailability(): boolean {
+function resolveVideoCommandAvailability(): boolean {
   try {
     return (loadConfig().generation.providers.video?.length ?? 0) > 0;
   } catch {
