@@ -216,6 +216,10 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     // Body state (health / conditions / arousal) reuses the same resolved
     // chat character; it also never rejects (denied sections render empty).
     await this.loadBodyState();
+    // Private-space venue suitability for the chat's current location; like
+    // the loaders above it never rejects (denied/failed hides the section).
+    // Optional-chained: unit-test contexts stub only the loads they exercise.
+    await this.loadPrivateSpace?.();
   },
 
   /**

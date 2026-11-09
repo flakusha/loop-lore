@@ -168,7 +168,9 @@ export async function applyIntimacyAction(input: ApplyIntimacyInput,): Promise<A
         delta: input.action.delta,
         minIntimacy: input.action.minIntimacy,
         requiresConsent: input.action.requiresConsent,
-        context: input.context ?? null,
+        // DTO is t.Optional(t.String) with no Nullable (nsfw.ts:25): an
+        // explicit null key fails validation, so omit the key when unset.
+        ...(input.context ? { context: input.context, } : {}),
       },),
     },);
 

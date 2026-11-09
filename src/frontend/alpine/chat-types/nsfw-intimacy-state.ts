@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { IntimacyFlowState, IntimacyPartnerOption, } from "../../nsfw/intimacy-types";
+import type { PrivateSpaceView, } from "../../nsfw/private-space";
 
 // ── NSFW Intimacy Flow ─────────────────────────────────────
 
@@ -15,6 +16,10 @@ export interface ChatNsfwIntimacyState {
   _intimacyFlow: IntimacyFlowState;
   /** Partner options for the current open flow (participants minus character). */
   _intimacyPartners: IntimacyPartnerOption[];
+  /** Venue suitability for the chat's current location; null when hidden. */
+  _privateSpaceView: PrivateSpaceView | null;
+  /** Load the venue suitability for the active chat; never rejects. */
+  loadPrivateSpace(): Promise<void>;
   /** Build partner options and enter partner selection. */
   openIntimacy(): void;
   /** Pick a partner and enter position selection. */

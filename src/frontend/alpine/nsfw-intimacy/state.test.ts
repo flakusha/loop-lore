@@ -10,11 +10,18 @@ import { intimacyState, } from "./state";
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let actionHandler: ApiFetchMock = async () => Response.json({},);
+let locationConfig: unknown = { privacyLevel: "private", locationType: "bedroom", };
+let locationStatus = 200;
 
 /** Route chats reads to a fixed character; the action POST to the test handler. */
 const handler: ApiFetchMock = async (url, opts,) => {
   if (typeof url === "string" && url.includes("/chats/",)) {
-    return Response.json({ character_id: "actor-a", },);
+    return Response.json({ character_id: "actor-a", current_location_id: "loc-1", },);
+  }
+
+  if (typeof url === "string" && url.includes("/nsfw/location/",)) {
+    if (locationStatus !== 200) { return new Response("denied", { status: locationStatus, },); }
+    return Response.json(locationConfig,);
   }
 
   calls.push({ url, opts: opts ?? {}, },);
@@ -93,6 +100,7 @@ function buildCtx(overrides: Partial<Ctx> = {},): Ctx {
       "closeIntimacy",
       "dispatchIntimacy",
       "retryIntimacy",
+      "loadPrivateSpace",
       "mountIntimacyPanel",
     ]
   ) {
@@ -106,6 +114,8 @@ function buildCtx(overrides: Partial<Ctx> = {},): Ctx {
 afterEach(() => {
   calls = [];
   actionHandler = async () => Response.json({},);
+  locationConfig = { privacyLevel: "private", locationType: "bedroom", };
+  locationStatus = 200;
   clearFocusLog();
 },);
 
@@ -330,6 +340,40 @@ describeOrSkip("closeIntimacy", () => {
     ctx.openIntimacy();
     ctx.closeIntimacy();
     expect(ctx._intimacyFlow.phase,).toBe("idle",);
+  });
+},);
+
+describeOrSkip("loadPrivateSpace", () => {
+  test("loads the venue view and renders it under the flow panel", async () => {
+    const ctx = buildCtx() as unknown as Record<string, unknown>;
+    await (intimacyState as unknown as { loadPrivateSpace: (this: unknown,) => Promise<void> }).loadPrivateSpace.call(
+      ctx,
+    );
+
+    const view = ctx["_privateSpaceView"] as { suitable: boolean; locationType: string } | null;
+    expect(view?.suitable,).toBe(true,);
+    expect(view?.locationType,).toBe("bedroom",);
+  });
+
+  test("a 403 hides the section (null view, consent gate holds)", async () => {
+    locationStatus = 403;
+    const ctx = buildCtx() as unknown as Record<string, unknown>;
+    await (intimacyState as unknown as { loadPrivateSpace: (this: unknown,) => Promise<void> }).loadPrivateSpace.call(
+      ctx,
+    );
+
+    expect(ctx["_privateSpaceView"],).toBeNull();
+  });
+
+  test("a chat switch mid-flight discards the stale result", async () => {
+    locationConfig = { privacyLevel: "isolated", locationType: "suite", };
+    const ctx = buildCtx() as unknown as Record<string, unknown> & { activeChat: string | null };
+    const load = (intimacyState as unknown as { loadPrivateSpace: (this: unknown,) => Promise<void> }).loadPrivateSpace
+      .call(ctx,);
+
+    ctx.activeChat = "chat-2";
+    await load;
+    expect(ctx["_privateSpaceView"],).toBeUndefined();
   });
 },);
 

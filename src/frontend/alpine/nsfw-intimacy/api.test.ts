@@ -127,6 +127,24 @@ describeOrSkip("applyIntimacyAction", () => {
     const result = await applyIntimacyAction(input(),);
     expect(result.status === "error" && result.error.kind,).toBe("consent",);
   });
+
+  test("omits the context key when no position is staged (DTO is Optional, not Nullable)", async () => {
+    handler = async () => Response.json({ newScore: 1, actualDelta: 1, applied: true, thresholdsReached: [], },);
+
+    const result = await applyIntimacyAction(input(),);
+    expect(result.status,).toBe("ok",);
+    const body = JSON.parse(String(calls[0]!.opts.body,),) as Record<string, unknown>;
+    expect("context" in body,).toBe(false,);
+  });
+
+  test("sends the staged position context when set", async () => {
+    handler = async () => Response.json({ newScore: 1, actualDelta: 1, applied: true, thresholdsReached: [], },);
+
+    const result = await applyIntimacyAction({ ...input(), context: "near/facing:embrace-hold", },);
+    expect(result.status,).toBe("ok",);
+    const body = JSON.parse(String(calls[0]!.opts.body,),) as Record<string, unknown>;
+    expect(body["context"],).toBe("near/facing:embrace-hold",);
+  });
 },);
 
 describeOrSkip("grantIntimacyConsent", () => {
