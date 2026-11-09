@@ -102,7 +102,7 @@ function notifyLoadFailed(): void {
  * @param root the modal root element
  * @returns true when the fields were filled
  */
-export async function prefillWorldEditModal(root: ParentNode,): Promise<boolean> {
+async function prefillWorldEditModal(root: ParentNode,): Promise<boolean> {
   try {
     const worldId = worldIdFromForm(root,);
     if (!worldId) {
