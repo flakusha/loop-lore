@@ -14,7 +14,8 @@ import { NOOP_OK, } from "./context.mjs";
 export const checks = {
   // Type checking
   "typecheck - backend": "bun run typecheck",
-  // Bun 1.4.3's built-in TS7 checker. Not a substitute for the tsgo gates —
+  // Bun 1.4.4's built-in TS7 checker (the version every workflow pins).
+  // Not a substitute for the tsgo gates —
   // but it CAN select a project: `bun --check --tsconfig-override=<project>`
   // covers tsconfig.backend.json, tsconfig.frontend.json, tsconfig.scripts.json.
   // The bare `bun check` subcommand stays shadowed by this repo's `check`
