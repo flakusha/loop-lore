@@ -107,6 +107,23 @@ export interface ProfileSelectorOptions {
   costPer1kTokens?: Map<string, number>;
 }
 
+/**
+ * Compare two candidates by cost, cheapest first.
+ *
+ * A candidate with NO known cost ranks LAST. The old comparator subtracted
+ * `Infinity - Infinity` for two unknown costs: that is NaN, and the sort spec
+ * treats a NaN comparator result as +0, so the tiebreak was silently inert.
+ * These branches never return NaN.
+ * @param costA - the first candidate's cost, or undefined when unknown
+ * @param costB - the second candidate's cost, or undefined when unknown
+ * @returns negative when A is cheaper, positive when B is, 0 when equal
+ */
+export function compareCandidateCost(costA: number | undefined, costB: number | undefined,): number {
+  if (costA === undefined) { return costB === undefined ? 0 : 1; }
+  if (costB === undefined) { return -1; }
+  return costA - costB;
+}
+
 /** */
 export class ProfileSelector {
   private readonly registry: ProfileRegistry;
@@ -188,7 +205,7 @@ export class ProfileSelector {
       candidates.push({ profile: name, tier: wantedTier, model: tier.model, },);
     }
 
-    candidates.sort((a, b,) => (this.costs.get(a.model,) ?? Infinity) - (this.costs.get(b.model,) ?? Infinity));
+    candidates.sort((a, b,) => compareCandidateCost(this.costs.get(a.model,), this.costs.get(b.model,),));
     return { candidates, skips, };
   }
 

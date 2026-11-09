@@ -16,6 +16,7 @@
 import type { Static, } from "@sinclair/typebox";
 import { formatDuration, formatRunTs, formatUsd, textOrDash, } from "./admin-harness-format";
 import {
+  type HarnessDiscoveredModel,
   HarnessRunDetailSchema,
   HarnessRunSummarySchema,
   HarnessStatsSchema,
@@ -64,6 +65,27 @@ export interface HarnessModelRow {
   cost: string;
   tokensIn: number;
   tokensOut: number;
+}
+
+/**
+ * One discovered-model row, pre-formatted (the template formats nothing).
+ *
+ * Unknown values carry an explicit dash: a blank cell would read like a
+ * false claim ("this model has no tools" instead of "we do not know").
+ */
+export interface HarnessDiscoveredModelRow {
+  profile: string;
+  model: string;
+  /** `harness` (verified by the harness) or `static` (configured fallback). */
+  source: string;
+  /** Why a static fallback was used; dash when the entry is harness-reported. */
+  reason: string;
+  contextWindow: string;
+  maxOutput: string;
+  /** The KNOWN capabilities, joined; dash when none is known. */
+  capabilities: string;
+  /** The advertised modalities, comma-joined; dash when none is known. */
+  modalities: string;
 }
 
 /** One tooling-gap row. */
@@ -167,6 +189,41 @@ export function buildModelRows(byModel: HarnessStats["byModel"],): HarnessModelR
     tokensIn: row.tokensIn,
     tokensOut: row.tokensOut,
   }));
+}
+
+/**
+ * The KNOWN capability names of a discovered model, in a fixed order.
+ * @param caps - the entry's capability facts, or null when the table knows nothing
+ * @returns the known names joined by a middot, or the dash when none is known
+ */
+function capabilityNames(caps: HarnessDiscoveredModel["capabilities"],): string {
+  if (caps === null) { return textOrDash(null,); }
+  const names: string[] = [];
+  if (caps.supportsTools) { names.push("tools",); }
+  if (caps.supportsVision) { names.push("vision",); }
+  if (caps.supportsThinking) { names.push("thinking",); }
+  return names.length > 0 ? names.join(" · ",) : textOrDash(null,);
+}
+
+/**
+ * Shape the discovered-model table.
+ * @param items - Decoded `GET /api/v1/harness/models` entries
+ * @returns Rows with every cell already formatted
+ */
+export function buildDiscoveredModelRows(items: HarnessDiscoveredModel[],): HarnessDiscoveredModelRow[] {
+  return items.map((item,) => {
+    const caps = item.capabilities;
+    return {
+      profile: item.profile,
+      model: item.model,
+      source: item.source,
+      reason: textOrDash(item.reason,),
+      contextWindow: textOrDash(caps?.contextWindow ?? null,),
+      maxOutput: textOrDash(caps?.maxOutput ?? null,),
+      capabilities: capabilityNames(caps,),
+      modalities: caps !== null && caps.modalities.length > 0 ? caps.modalities.join(", ",) : textOrDash(null,),
+    };
+  },);
 }
 
 /**

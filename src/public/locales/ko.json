@@ -2167,7 +2167,11 @@
       "flavor": "하니스",
       "usageClass": "사용 클래스",
       "tosNote": "공급자 ToS 안내",
-      "ack": "확인됨"
+      "ack": "확인됨",
+      "source": "Source",
+      "reason": "Reason",
+      "contextWindow": "Context window",
+      "capabilities": "Capabilities"
     },
     "taskType": {
       "harnessCode": "코드",
@@ -2225,7 +2229,10 @@
         "arrived": "도착 시각",
         "decision": "결정"
       }
-    }
+    },
+    "discoveredModels": "Discovered models",
+    "noDiscoveredModels": "No models discovered yet",
+    "errorLoadModels": "Could not load the discovered models."
   },
   "branches": {
     "title": "분기",

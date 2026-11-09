@@ -16,7 +16,7 @@ import {
 import { fakeFactory, } from "./fakes";
 import { ProfileBreaker, } from "./profile-breaker";
 import { ProfileRegistry, } from "./profile-registry";
-import { HARNESS_TOS_UNACKNOWLEDGED, ProfileSelector, } from "./profile-selector";
+import { compareCandidateCost, HARNESS_TOS_UNACKNOWLEDGED, ProfileSelector, } from "./profile-selector";
 import { UsageLedger, } from "./usage-ledger";
 
 // Parallel-safety: the admin-settings singleton is process-shared and other
@@ -181,6 +181,33 @@ describe("ProfileSelector.select", () => {
     const a = cfg("a", "a/good", "a/cheap",);
     const b = cfg("b", "b/good", "b/pricey",);
     const costs = new Map([["a/cheap", 0.1,], ["b/pricey", 9,],],);
+    const { selector, } = makeSelector([a, b,], {
+      a: { models: ["a/good", "a/cheap",], },
+      b: { models: ["b/good", "b/pricey",], },
+    }, { costs, },);
+
+    const picks = await selector.select({ taskType: "mechanical", needsCapabilities: ["tools",], },);
+    expect(picks.map((c,) => c.profile),).toEqual(["a", "b",],);
+  });
+});
+
+describe("ProfileSelector cost tiebreak", () => {
+  it("never compares two unknown costs to NaN and ranks an unknown cost last", () => {
+    // Two unknown costs used to compare `Infinity - Infinity` = NaN, and the
+    // sort spec treats a NaN comparator result as +0: the tiebreak was inert.
+    expect(compareCandidateCost(undefined, undefined,),).toBe(0,);
+    expect(Number.isNaN(compareCandidateCost(undefined, undefined,),),).toBe(false,);
+    expect(compareCandidateCost(1, undefined,),).toBeLessThan(0,);
+    expect(compareCandidateCost(undefined, 1,),).toBeGreaterThan(0,);
+    expect(compareCandidateCost(1, 2,),).toBeLessThan(0,);
+    expect(compareCandidateCost(2, 1,),).toBeGreaterThan(0,);
+    expect(compareCandidateCost(1, 1,),).toBe(0,);
+  });
+
+  it("a candidate with no known cost ranks last", async () => {
+    const a = cfg("a", "a/good", "a/cheap",);
+    const b = cfg("b", "b/good", "b/pricey",);
+    const costs = new Map([["a/cheap", 0.1,],],);
     const { selector, } = makeSelector([a, b,], {
       a: { models: ["a/good", "a/cheap",], },
       b: { models: ["b/good", "b/pricey",], },

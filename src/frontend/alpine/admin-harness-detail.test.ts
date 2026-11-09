@@ -62,20 +62,31 @@ describe("harnessThrownMessage", () => {
 });
 
 describe("harnessTabLoadError", () => {
-  test("both loads succeeded yields no message", () => {
+  test("every load succeeded yields no message", () => {
     const ok = { status: "fulfilled", value: Response.json({},), } as const;
-    expect(harnessTabLoadError(ok, ok,),).toBeNull();
+    const errors = harnessTabLoadError(ok, ok, ok,);
+    expect(errors.tab,).toBeNull();
+    expect(errors.models,).toBeNull();
   });
 
   test("a rejected runs load reports the runs failure", () => {
     const rejected = { status: "rejected", reason: thrown(500,), } as const;
     const ok = { status: "fulfilled", value: Response.json({},), } as const;
-    expect(harnessTabLoadError(rejected, ok,),).toBe("Could not load harness runs.",);
+    expect(harnessTabLoadError(rejected, ok, ok,).tab,).toBe("Could not load harness runs.",);
   });
 
   test("a rejected stats load reports the stats failure", () => {
     const ok = { status: "fulfilled", value: Response.json({},), } as const;
     const rejected = { status: "rejected", reason: thrown(500,), } as const;
-    expect(harnessTabLoadError(ok, rejected,),).toBe("Could not load harness stats.",);
+    expect(harnessTabLoadError(ok, rejected, ok,).tab,).toBe("Could not load harness stats.",);
+  });
+
+  test("a rejected models load reports the models failure in its own channel", () => {
+    const ok = { status: "fulfilled", value: Response.json({},), } as const;
+    const rejected = { status: "rejected", reason: thrown(403,), } as const;
+    const errors = harnessTabLoadError(ok, ok, rejected,);
+    expect(errors.models,).toBe("You do not have permission to view harness data.",);
+    // The models failure must not blank the runs table or the stat cards.
+    expect(errors.tab,).toBeNull();
   });
 });
