@@ -1,0 +1,96 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Audio player. Bound to the `audioPlayerFactory` Alpine scope.
+
+  Source URL: the enclosing scope exposes it as `audioSrc`; the partial copies
+  that into the player's own `src`. To configure the scope itself, copy the
+  element and change the factory call to `audioPlayerFactory({ src: url })`.
+
+  Several players can live on one page; each keeps its own volume, mute, speed
+  and loop state, so ambient + TTS + music play at the same time.
+-->
+<audio-player
+  class="audio-player"
+  x-data="audioPlayerFactory()"
+  x-init="src = src || (typeof audioSrc === 'undefined' ? '' : audioSrc)"
+  tabindex="0"
+  @keydown="handleKey($event)"
+  data-testid="audio-player"
+>
+  <audio
+    x-ref="audio"
+    preload="metadata"
+    :src="src"
+    @timeupdate="onTimeUpdate()"
+    @loadedmetadata="onLoadedMetadata()"
+    @ended="onEnded()"
+    @error="onError()"
+  >
+  </audio>
+
+  <span class="audio-player-label" x-text="label"></span>
+
+  <div class="audio-player-controls">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      @click="toggle()"
+      :aria-label="playing ? 'Pause' : 'Play'"
+      x-text="playing ? 'Pause' : 'Play'"
+    >
+    </button>
+    <button type="button" class="btn btn-secondary" @click="stop()" aria-label="Stop">Stop</button>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      @click="toggleMute()"
+      :aria-pressed="muted"
+      :aria-label="muted ? 'Unmute' : 'Mute'"
+      x-text="muted ? 'Unmute' : 'Mute'"
+    >
+    </button>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      @click="toggleLoop()"
+      :aria-pressed="loop"
+      aria-label="Loop"
+      x-text="loop ? 'Looping' : 'Loop'"
+    >
+    </button>
+    <input
+      type="range"
+      class="audio-player-volume"
+      min="0"
+      max="1"
+      step="0.05"
+      :value="volume"
+      @input="setVolume(Number($event.target.value))"
+      aria-label="Volume"
+    />
+    <button
+      type="button"
+      class="btn btn-secondary"
+      @click="cycleSpeed()"
+      aria-label="Playback speed"
+      x-text="`${speed}x`"
+    >
+    </button>
+  </div>
+
+  <input
+    type="range"
+    class="audio-player-progress"
+    min="0"
+    :max="duration || 0"
+    step="0.1"
+    :value="currentTime"
+    @input="seekTo(Number($event.target.value))"
+    aria-label="Seek"
+  />
+
+  <p class="audio-player-time" x-text="`${Math.floor(currentTime)} / ${Math.floor(duration)}s`"></p>
+  <p class="audio-player-error" x-show="error" x-text="error"></p>
+</audio-player>

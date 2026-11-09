@@ -1,0 +1,63 @@
+/*
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ * SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+ */
+
+/* Audio player component (epic-audio-video-sound).
+ * Touch targets are 44px so the controls stay usable on phones. */
+
+.audio-player {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.audio-player:focus-visible {
+  outline: 2px solid var(--text-secondary);
+  outline-offset: 2px;
+}
+
+.audio-player audio {
+  width: 100%;
+}
+
+.audio-player-label {
+  font-size: var(--fs-xs, 12px);
+  color: var(--text-tertiary, #888);
+}
+
+.audio-player-controls {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.audio-player-controls button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.audio-player-volume {
+  flex: 1 1 120px;
+  min-height: 44px;
+  min-width: 120px;
+}
+
+.audio-player-progress {
+  width: 100%;
+  min-height: 44px;
+}
+
+.audio-player-time {
+  font-size: var(--fs-xs, 12px);
+  color: var(--text-tertiary, #888);
+  margin: 0;
+}
+
+.audio-player-error {
+  font-size: var(--fs-xs, 12px);
+  color: var(--danger, #dc3545);
+  margin: 0;
+}
