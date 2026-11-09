@@ -57,8 +57,14 @@ export async function loadStationProfession(
   worldId?: string,
 ): Promise<ProfessionView | null> {
   try {
-    const query = worldId ? `?worldId=${encodeURIComponent(worldId,)}` : "";
-    const res = await apiFetch(`/api/rpg/professions/actors/${encodeURIComponent(actorId,)}${query}`,);
+    // Literal `?` in the template (not hidden in `${query}`): the fe-be
+    // harmony gate cuts the query at the first `?` before segment matching.
+    const res = await apiFetch(
+      `/api/rpg/professions/actors/${encodeURIComponent(actorId,)}${
+        worldId ? `?worldId=${encodeURIComponent(worldId,)}` : ""
+      }`,
+    );
+
     if (!res.ok) { return null; }
     const data = await res.json() as { professions?: ProfessionView[] };
     const rows = Array.isArray(data.professions,) ? data.professions : [];
