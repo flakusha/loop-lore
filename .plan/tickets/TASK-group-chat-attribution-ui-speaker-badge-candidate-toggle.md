@@ -3,7 +3,7 @@
 
 # TASK: group chat attribution UI (speaker badge + candidate toggle)
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-group-chat
@@ -23,6 +23,10 @@ Acceptance: every group message labeled with speaker badge; judged expandable to
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Every group message labeled with speaker badge — `src/components/chat/message-list.html:194-200`
+- [x] Impersonated turns show human speaker — `src/components/chat/message-list.html:206-212` (`impersonation-badge` 🎭 via `impersonatedActorIds()` in `src/frontend/alpine/chat-participants.ts:214-217`, sourced from server `impersonate_actor_id` rows; actor_id display-only, never auth)
+- [x] Turn-order indicator on existing endpoint — `src/components/chat/message-list.html:86-88` (group-turn-strip over `GET /turn-order`, outside the story tab)
+- [ ] Judged expandable to candidates (model+confidence when fan-out ran) — BLOCKED on `TASK-group-cascade-n-assistant-round…` (Not Started); no candidate data exists to display
+- [ ] Frontend snapshot tests with per-test fake DOM/state — open
+
+**Status Note (T8, 2026-11-09, branch `core-t8-groupchat` commit `7f062a787`):** speaker-badge + impersonation + turn-order slices shipped (see boxes above). Candidate toggle is genuinely blocked on the fan-out judge backend, so this ticket stays In Progress with only that box (plus snapshot tests) open.

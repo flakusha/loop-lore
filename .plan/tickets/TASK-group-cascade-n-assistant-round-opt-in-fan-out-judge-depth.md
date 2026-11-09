@@ -25,6 +25,8 @@ Acceptance: default path byte-identical; K drafts + 1 judged message; PASS never
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
+- [ ] Implementation complete (fan-out judge engine — NOT started; viewer slice only, see note)
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Status Note (T8, 2026-11-09 — viewer slice only, engine untouched):** the cascade *viewer* surface now exists for what the backend serves today: group turn strip (strategy-selected next actor via `GET /turn-order`, `src/components/chat/message-list.html:86-88`), pause/resume toggle, and split/reunite execution modal (`src/components/chat/party-split-panel.html`, `src/frontend/alpine/chat-party-split.ts:86,122` submit paths, server `bad_request` shown inline). The `cascade_mode` sequential|fan-out engine, K-draft judge depth, parallel verifyCascadeActor gates, and per-branch cost logging proposed here are NOT started — default path deliberately left byte-identical. `max_turns`/`auto_advance` remain create-time-only columns (no PATCH route), so no cascade-depth knob was added.
