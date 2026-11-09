@@ -30,6 +30,9 @@ import {
   type IntimacyPartnerOption,
   positionContext,
 } from "../../nsfw/intimacy-types";
+import { fetchLocationConfig, renderPrivateSpace, toPrivateSpaceView, } from "../../nsfw/private-space";
+import type { PrivateSpaceView, } from "../../nsfw/private-space";
+import { apiFetch, } from "../htmx";
 import { log as rootLog, } from "../logger";
 import { resolveCharacterId, } from "../nsfw-panel/state";
 import type { ChatState, } from "../types";
@@ -225,6 +228,60 @@ export const intimacyState: Partial<ChatState> & ThisType<ChatState> = {
     void this.dispatchIntimacy();
   },
 
+  /** Venue suitability for the chat's current location; null when hidden. */
+  _privateSpaceView: null as PrivateSpaceView | null,
+
+  /**
+   * Load the venue suitability for the chat's current location.
+   *
+   * Never rejects: denied/failed fetches hide the section (null view), and a
+   * chat switch mid-flight discards the stale result (body-state precedent).
+   * The location id resolves from the chat detail row — `loadLocations` is
+   * not part of the select flow, so `_chatCurrentLocationId` may still be
+   * null here. Consent/age gates stay server-side (the location route 403s
+   * without NSFW access, which maps to a hidden section).
+   * @returns {Promise<void>}
+   */
+  async loadPrivateSpace() {
+    const chatId = this.activeChat;
+    if (!chatId) {
+      this._privateSpaceView = null;
+      this.mountIntimacyPanel();
+      return;
+    }
+
+    try {
+      const res = await apiFetch(`/api/v1/chats/${chatId}`,);
+      if (this.activeChat !== chatId) { return; }
+      if (!res.ok) {
+        this._privateSpaceView = null;
+        this.mountIntimacyPanel();
+        return;
+      }
+
+      const chat = (await res.json()) as { current_location_id?: string | null };
+      const locationId = typeof chat.current_location_id === "string" && chat.current_location_id.length > 0
+        ? chat.current_location_id
+        : null;
+
+      if (!locationId) {
+        this._privateSpaceView = null;
+        this.mountIntimacyPanel();
+        return;
+      }
+
+      const fetched = await fetchLocationConfig(locationId, apiFetch,);
+      if (this.activeChat !== chatId) { return; }
+      this._privateSpaceView = fetched.status === "ok" ? toPrivateSpaceView(locationId, fetched.data,) : null;
+      this.mountIntimacyPanel();
+    } catch (error) {
+      if (this.activeChat !== chatId) { return; }
+      log.error("Failed to load private space", error instanceof Error ? error : undefined, {},);
+      this._privateSpaceView = null;
+      this.mountIntimacyPanel();
+    }
+  },
+
   /**
    * Render the current flow into the `x-ref="intimacyPanel"` slot.
    * A missing slot is a no-op (body-state precedent).
@@ -256,6 +313,9 @@ export const intimacyState: Partial<ChatState> & ThisType<ChatState> = {
         onClose: () => this.closeIntimacy(),
       },
     },),);
+
+    const venue = renderPrivateSpace(this._privateSpaceView ?? null,);
+    if (venue) { slot.append(venue,); }
   },
 };
 
