@@ -197,4 +197,24 @@ describe("alpine/world-edit-modal", () => {
     // Save ships disabled - only a loaded world may be submitted.
     expect(html,).toMatch(/id="edit-world-save"[^>]*disabled/,);
   });
+
+  test("the name field mirrors the backend's length limit", () => {
+    const html = readFileSync(
+      join(import.meta.dir, "../../partials/worlds/edit-modal.html",),
+      "utf8",
+    );
+
+    const primitives = readFileSync(
+      join(import.meta.dir, "../../validation/schemas/primitives.ts",),
+      "utf8",
+    );
+
+    // The backend is the truth: Name is t.String({ minLength: 1, maxLength: 255 }).
+    const nameSchema = primitives.match(/Name = t\.String\(\{[^}]*\}/,)?.[0] ?? "";
+    const limit = nameSchema.match(/maxLength: (\d+)/,)?.[1];
+    expect(limit,).toBe("255",);
+    // The frontend copy must match it - a longer name is rejected server-side,
+    // and the whole save (with the description and lore edits) is lost with it.
+    expect(html,).toContain(`maxlength="${limit}"`,);
+  });
 });
