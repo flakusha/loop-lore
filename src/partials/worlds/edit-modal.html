@@ -5,6 +5,7 @@
   id="edit-world-modal"
   class="modal-overlay"
   x-on:click="window.closeModalOnBackdrop($event)"
+  x-data="worldEditModal()"
   data-testid="edit-world-modal"
 >
   <div class="modal">
@@ -19,6 +20,7 @@
         hx-swap="innerHTML"
         hx-target-error="#toast-container"
         data-hx-success-event="world:saved"
+        id="edit-world-form"
         data-testid="edit-world-form"
       >
         <div class="form-group">
@@ -63,7 +65,9 @@
           <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
             {{{ t("common.cancel") }}}
           </button>
-          <button type="submit" class="btn btn-primary">{{{ t("common.save") }}}</button>
+          <button type="submit" class="btn btn-primary" id="edit-world-save" disabled>
+            {{{ t("common.save") }}}
+          </button>
         </div>
       </form>
     </div>
