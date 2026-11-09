@@ -4,6 +4,7 @@
 # TASK: egui-battle-display-panel
 
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: verified open — no battle view in `native/` (glob `native/**/battle*` empty), web reference `src/frontend/battle/` shipped. Medium surface — carried, not built in T10 lane.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-battle-ui

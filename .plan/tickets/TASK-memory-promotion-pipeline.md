@@ -10,9 +10,11 @@
 
 
 **Issue:** 22f6cd99-562f-4df1-a09a-f7f343a41b69
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-09 reconcile: shipped — `promoteMessagesToMemories` in `src/chat/transitions.ts:165` (select → scope-detect → store with `storeMemoriesWithScope`, ownership guard), covered by `transitions.test.ts:61`. Companion `TASK-wire-memory-promotion-pipeline.md` already Done.
 **Priority:** medium
 **Epic:** epic-memory-knowledge-systems
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 ## Overview
 
@@ -30,10 +32,10 @@ Wire message promotion to memory extraction and storage.
 - Wire `transitions.ts` → `memory/extraction.ts` → DB
 
 **Acceptance Criteria:**
-- [ ] Promoted messages trigger memory extraction
-- [ ] Extracted memories get correct scope (character/world/assistant)
-- [ ] `promotedToMemory` array is populated in ContextWindow
-- [ ] Existing memory extraction tests still pass
+- [x] Promoted messages trigger memory extraction
+- [x] Extracted memories get correct scope (character/world/assistant)
+- [x] `promotedToMemory` array is populated in ContextWindow
+- [x] Existing memory extraction tests still pass
 
 ## Files
 

@@ -9,9 +9,11 @@
 
 
 **Epic:** epic-memory-knowledge-systems
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: verified open — `emotion_impact` fields shipped but no mood/coping/relationship/prompt wiring from them found in `src/memory/` (comfort `moodModifier` is injection-side, not memory-driven). Explicit carry, not built in T10 lane.
 
 **Summary:**
 Integrate memory emotion-impact with character systems: mood, coping, relationships, and prompt assembly.

@@ -4,6 +4,7 @@
 # TASK: Memory to lorebook promotion (Memory Books pattern)
 
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: event→lore backend exists (`src/story/events/promote-lore.ts`); the user-facing one-click promote + priority-vs-weight split is unverified in code — explicit carry with `TASK-memory-to-lorebook-one-click-promote.md` (registry-Done, boxes unchecked).
 **Priority:** medium
 **Effort:** Medium
 **Tags:** memory, lorebook, research-gap

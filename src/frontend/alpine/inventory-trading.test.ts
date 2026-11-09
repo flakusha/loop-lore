@@ -237,6 +237,83 @@ describeOrSkip("inventory trading state", () => {
     expect(state.playerItems,).toEqual([],);
     expect(state._worldId,).toBe("world-2",);
   });
+
+  test("load pulls the player gold balance; executeTrade settles the draft atomically", async () => {
+    const seen: { url: string; opts: RequestInit }[] = [];
+    handler = async (url: string, opts?: RequestInit,) => {
+      seen.push({ url, opts: opts ?? {}, },);
+      if (url.includes("/trade/balance",)) {
+        return Response.json({ actorId: "player-1", worldId: "world-1", balance: 250, },);
+      }
+
+      if (url.endsWith("/trade/execute",)) {
+        return Response.json({ ok: true, pricePaid: 50, },);
+      }
+
+      return Response.json({ data: [], },);
+    };
+
+    const state = stateFromTradeActors("world-1", "player-1", "npc-1",);
+    state.playerItems = [{ ...sword(), id: "inst-player", },];
+    state.npcItems = [{ ...steelSword(), id: "inst-9", },];
+    await state.loadBalance();
+    await flush();
+    expect(state.playerBalance,).toBe(250,);
+    expect(state.balanceError,).toBe("",);
+    expect(state.balanceLoading,).toBe(false,);
+
+    state.toggle("player", "inst-player",);
+    state.toggle("npc", "inst-9",);
+    await state.executeTrade();
+    await flush();
+    const exec = seen.find((call,) => call.url.endsWith("/trade/execute",));
+    expect(exec?.opts.method,).toBe("POST",);
+    expect(JSON.parse(String(exec?.opts.body ?? "{}",) as string,),).toEqual({
+      buyerActorId: "player-1",
+      sellerActorId: "npc-1",
+      buyerItems: [{ worldItemId: "inst-9", quantity: 1, },],
+      sellerItems: [{ worldItemId: "inst-player", quantity: 1, },],
+      price: 50,
+    },);
+
+    expect(state.draft,).toEqual({ playerIds: [], npcIds: [], },);
+    expect(state.message.length > 0,).toBe(true,);
+    expect(state.error,).toBe("",);
+
+    // Balance invalidated on success: re-fetched after execute.
+    expect(seen.filter((call,) => call.url.includes("/trade/balance",)).length,).toBe(2,);
+  });
+
+  test("executeTrade failure surfaces the backend message and keeps the draft", async () => {
+    handler = async (url: string,) => {
+      if (url.endsWith("/trade/execute",)) {
+        return Response.json({ error: "insufficient gold", code: "BAD_REQUEST", }, { status: 400, },);
+      }
+
+      return Response.json({ data: [], },);
+    };
+
+    const state = stateFromTradeActors("world-1", "player-1", "npc-1",);
+    state.playerItems = [sword(),];
+    state.toggle("player", "sword",);
+    await state.executeTrade();
+    await flush();
+    expect(state.error,).toBe("insufficient gold",);
+    expect(state.draft.playerIds,).toEqual(["sword",],);
+  });
+
+  test("executeTrade is a no-op on an empty draft", async () => {
+    let posts = 0;
+    handler = async (url: string,) => {
+      if (url.endsWith("/trade/execute",)) { posts += 1; }
+      return Response.json({ data: [], },);
+    };
+
+    const state = stateFromTradeActors("world-1", "player-1", "npc-1",);
+    await state.executeTrade();
+    await flush();
+    expect(posts,).toBe(0,);
+  });
 },);
 
 describe("inventory trading scope", () => {

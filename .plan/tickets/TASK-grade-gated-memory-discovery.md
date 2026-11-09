@@ -4,6 +4,7 @@
 # TASK: grade-gated-memory-discovery
 
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: verified open — no `sourceGradeId`/dry-run provenance in `src/memory/`; research ticket with vague ACs. Explicit carry, not built in T10 lane.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-memory-knowledge-systems

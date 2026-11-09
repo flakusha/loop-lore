@@ -9,6 +9,8 @@
 //   GET    /api/v1/worlds/:worldId/items?pageSize=100         (definitions: name + value)
 //   POST   /api/v1/worlds/:worldId/trade/buy-from-npc         { buyerActorId, npcActorId, sellerItems, price }
 //   POST   /api/v1/worlds/:worldId/trade/sell-to-npc          { sellerActorId, npcActorId, buyerItems, price }
+//   GET    /api/v1/worlds/:worldId/trade/balance?actorId=             (player balance, loaded on open)
+//   POST   /api/v1/worlds/:worldId/trade/execute                    { buyerActorId, sellerActorId, buyerItems, sellerItems, price }
 // Selection/pricing reuse src/frontend/inventory/trade-panel.ts.
 // World + NPC ids are set by the host page; lists load on demand and both
 // sides refetch after every confirmed trade instead of holding a stream.
@@ -49,6 +51,10 @@ export interface InventoryTradingState {
   busy: boolean;
   message: string;
   error: string;
+  /** Player gold balance (GET /trade/balance); null until loaded. */
+  playerBalance: number | null;
+  balanceLoading: boolean;
+  balanceError: string;
   draft: TradeDraft;
   /** Point the panel at a world/player/NPC triple; clears lists + draft. */
   setTradeActors(worldId: string, playerActorId: string, npcActorId: string,): void;
@@ -62,6 +68,8 @@ export interface InventoryTradingState {
   loadPlayerItems(): Promise<void>;
   /** Reload the NPC list from the server. */
   loadNpcItems(): Promise<void>;
+  /** Reload the player gold balance from the server. */
+  loadBalance(): Promise<void>;
   /** Rows per side plus gold totals for the current draft. */
   summary(): TradeSummary;
   /** Confirm: split the draft into sell + buy legs against the NPC routes. */
@@ -70,6 +78,8 @@ export interface InventoryTradingState {
   buyFromNpc(): Promise<void>;
   /** Sell the selected player rows for their listed gold value. */
   sellToNpc(): Promise<void>;
+  /** Settle the whole draft atomically via POST /trade/execute. */
+  executeTrade(): Promise<void>;
 }
 
 /** Route body for one NPC trade leg (buy-: buyerActorId/sellerItems; sell-: sellerActorId/buyerItems). */
@@ -100,6 +110,9 @@ export const stateFromTradeActors = (
   busy: false,
   message: "",
   error: "",
+  playerBalance: null,
+  balanceLoading: false,
+  balanceError: "",
   draft: emptyDraft(),
 
   setTradeActors(worldId: string, playerActorId: string, npcActorId: string,) {
@@ -111,6 +124,7 @@ export const stateFromTradeActors = (
     this.draft = emptyDraft();
     this.playerLoadError = "";
     this.npcLoadError = "";
+    this.balanceError = "";
     this.message = "";
     this.error = "";
   },
@@ -132,6 +146,7 @@ export const stateFromTradeActors = (
   async load() {
     await this.loadPlayerItems();
     await this.loadNpcItems();
+    await this.loadBalance();
   },
 
   async loadPlayerItems() {
@@ -227,6 +242,70 @@ export const stateFromTradeActors = (
 
   async sellToNpc() {
     await tradeSide(this, "player",);
+  },
+
+  async loadBalance() {
+    const worldId = this._worldId;
+    const actorId = this._playerActorId;
+    if (!worldId || !actorId) { return; }
+
+    this.balanceLoading = true;
+    this.balanceError = "";
+    try {
+      const res = await apiFetch(`/api/v1/worlds/${worldId}/trade/balance?actorId=${actorId}`,);
+      if (!res.ok) {
+        this.balanceError = routeErrorMessage(await res.json().catch(() => ({})), t("status.tradeBalanceFailed",),);
+        return;
+      }
+
+      const body = await res.json().catch(() => ({})) as { balance?: unknown };
+      if (typeof body.balance !== "number") {
+        this.balanceError = t("status.tradeBalanceFailed",);
+
+        return;
+      }
+
+      this.playerBalance = body.balance;
+    } catch (error) {
+      log.error("Failed to load trade balance", error instanceof Error ? error : undefined, { actorId, },);
+      this.balanceError = t("status.tradeBalanceFailed",);
+    } finally {
+      this.balanceLoading = false;
+    }
+  },
+
+  async executeTrade() {
+    const worldId = this._worldId;
+    const playerActorId = this._playerActorId;
+    const npcActorId = this._npcActorId;
+    if (!worldId || !playerActorId || !npcActorId) { return; }
+    const summary = this.summary();
+    if (summary.playerItems.length === 0 && summary.npcItems.length === 0) { return; }
+    this.busy = true;
+    this.error = "";
+    this.message = "";
+    const result = await mutate(`/api/v1/worlds/${worldId}/trade/execute`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: jsonBody({
+        buyerActorId: playerActorId,
+        sellerActorId: npcActorId,
+        buyerItems: tradeLines(summary.npcItems,),
+        sellerItems: tradeLines(summary.playerItems,),
+        price: Math.max(0, -summary.net,),
+      },),
+    },);
+
+    this.busy = false;
+    if (!result.ok) {
+      this.error = result.message ?? t("status.tradeFailed",);
+
+      return;
+    }
+
+    this.draft = emptyDraft();
+    this.message = t("status.tradeConfirmed",);
+    await this.load();
   },
 });
 

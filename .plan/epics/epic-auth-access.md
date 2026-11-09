@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Auth routes (register/login/logout/me) implemented and mounted (`src/routes/auth/`, mounted via `src/routes/v1/base-surface.ts`); message-access and reaction-access gating Done. MFA/TOTP, encryption-access display, and authoring-ownership indicators remain unimplemented (`src/auth/` holds only JWT).
+**Status Note:** 2026-11-09 reconcile: register/login slice shipped and ticked (`TASK-auth-register-route.md` Done — route `src/routes/auth/register.ts:67`, view `src/views/register.html`, login link + `/register` redirect). Message/reaction access gating shipped under `epic-logic-reconciliation.md` (`TASK-dedupe-message-access-checks.md`, `TASK-fix-message-reactions-access.md` Done). Authorship Done via `epic-authoring-creation.md` (`TASK-authoring-creation.md` Done — asset-pipeline, plot-autopilot, whatif-simulator). Carry: MFA/TOTP (`TASK-two-factor-multi-factor-auth.md` open — no totp/webauthn code in `src/`), encryption access display (`TASK-encryption-access-management.md` open — no `access_duration` code), session localStorage/RBAC-matrix/`verifyJwt` hardening items. Auth routes (register/login/logout/me) implemented and mounted (`src/routes/auth/`, mounted via `src/routes/v1/base-surface.ts`); MFA/TOTP, encryption-access display, and authoring-ownership indicators remain unimplemented (`src/auth/` holds only JWT).
 **Priority:** High
 **Effort:** High
 **Type:** Foundation Epic
@@ -71,14 +71,14 @@ Authorization and access control for the application. Covers user registration, 
 
 ## Acceptance Criteria
 
-- [ ] `POST /api/auth/register` route functional with frontend registration page
-- [ ] Login form with htmx submission using `feFetch` (`src/frontend/fe-fetch.ts`)
-- [ ] TOTP support with QR code generation and enrollment UI
-- [ ] Backup codes system with fallback mechanisms
-- [ ] Message-level access check UI (inline denied feedback)
-- [ ] Encryption status visible in access control display
-- [ ] Authoring/creation ownership indicators on content
-- [ ] Reaction UI respects access gating
+- [x] `POST /api/auth/register` route functional with frontend registration page
+- [x] Login form with htmx submission using `feFetch` (`src/frontend/fe-fetch.ts`)
+- [ ] TOTP support with QR code generation and enrollment UI — CARRY (no totp/webauthn code in `src/`)
+- [ ] Backup codes system with fallback mechanisms — CARRY
+- [ ] Message-level access check UI (inline denied feedback) — Done at service layer (`epic-logic-reconciliation.md`); inline UI feedback CARRY if wanted
+- [ ] Encryption status visible in access control display — CARRY (`TASK-encryption-access-management.md` open)
+- [x] Authoring/creation ownership indicators on content — Done via `TASK-authoring-creation.md` (asset pipeline, plot autopilot, what-if simulator shipped 2026-10-08)
+- [x] Reaction UI respects access gating — Done (`TASK-fix-message-reactions-access.md`)
 - [ ] All TypeScript typechecks pass
 - [ ] Unit tests for auth logic and access checks
 

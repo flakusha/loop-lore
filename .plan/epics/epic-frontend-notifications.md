@@ -9,8 +9,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** 2026-11-09 reconcile: bell + center + prefs + SSE shipped and ticked (`TASK-finalize-notification-bell-header-wiring.md` Done — persistent host `src/views/layout.html:354`; `TASK-quiet-hours.md` Done with default/timezone deltas noted; `TASK-notification-system-with-noise-filtering.md` family Done). Carry: model-comparison reactions + cross-chat SSE (unscoped in `TASK-notification-expansion.md`/`FEAT-notification-expansion.md`).
 **Priority:** Medium
 
 ## Summary

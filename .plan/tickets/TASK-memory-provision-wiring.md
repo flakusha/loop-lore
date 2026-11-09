@@ -10,9 +10,11 @@
 
 
 **Issue:** 3bfb101c-e553-4879-b239-a817bc68a83f
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-09 reconcile: shipped — `src/assistant/prompt/sections/memories.ts:26,76` calls `provisionMemories` with `buildProvisionContext` (participants, trust, timeline, party lineage); `trustModifier` computed via `computeTrustModifier` (`memories-helpers.ts:75`).
 **Priority:** high
 **Epic:** epic-memory-knowledge-systems
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 ## Overview
 
@@ -30,11 +32,11 @@ Connect the memory provision module to the prompt assembly pipeline.
 - Test: private memories not injected for non-owner viewers
 
 **Acceptance Criteria:**
-- [ ] `src/assistant/prompt/sections/memories.ts` calls `provisionMemories()`
-- [ ] Private memories only injected for owner
-- [ ] Secret memories respect shareability config
-- [ ] Token budget from context window limits memory injection
-- [ ] Existing memory tests still pass
+- [x] `src/assistant/prompt/sections/memories.ts` calls `provisionMemories()`
+- [x] Private memories only injected for owner
+- [x] Secret memories respect shareability config
+- [x] Token budget from context window limits memory injection
+- [x] Existing memory tests still pass
 
 ## Files
 

@@ -4,9 +4,11 @@
 # TASK: Memory Compact Pointer To Message Chain
 
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: verified open — no `memory_pointer`/`anchor_message` schema in `src/db/`; schema change + dereference path unbuilt. Explicit carry, not built in T10 lane.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-memory-knowledge-systems
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 **Tags:** memory, pointer, source-chain
 
 **Summary:**

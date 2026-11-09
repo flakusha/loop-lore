@@ -8,10 +8,12 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-09 reconcile: bell mounted persistently in `src/views/layout.html:354` (`notification-bell-host`, survives per-view htmx header swaps — better than the feared zero-mount gap); backend `src/routes/notifications/index.ts:53,127,168` (unread-count, preferences, SSE stream), center view + prefs UI, tests (`user-notifications.test.ts`, `stream.test.ts`).
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-frontend-notifications
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 ## Summary
 
@@ -37,6 +39,6 @@ Finalize steps (in this worktree):
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

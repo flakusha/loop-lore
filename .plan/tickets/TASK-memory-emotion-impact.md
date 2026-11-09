@@ -9,9 +9,11 @@
 
 
 **Epic:** epic-memory-knowledge-systems
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-09 reconcile: shipped — `EmotionImpact`/`MemoryEmotionImpact` in `src/memory/types.ts:39,55`, `emotion_impact` column (migration `069_actor_memories_emotion_impact.ts:9`), sanitize/parse in `src/memory/emotion-impact.ts` with tests (`emotion-impact.test.ts`), budget-tier touchpoint (`budget.ts:14,32`).
 
 **Summary:**
 Add structured emotion-impact fields to episodic memories that drive character behavior. Replaces the single `emotional_valence` scalar with a structured `MemoryEmotionImpact` type.
@@ -68,9 +70,9 @@ interface MemoryEmotionImpact {
 - `epic-character-internal-traits.md` (coping profile integration)
 
 **Acceptance Criteria:**
-- [ ] `EmotionImpact` type defined
-- [ ] `MemoryEmotionImpact` interface defined
-- [ ] `emotion_impact` field on episodic memories
-- [ ] Migration applied
-- [ ] Validation passes
-- [ ] Tests pass
+- [x] `EmotionImpact` type defined
+- [x] `MemoryEmotionImpact` interface defined
+- [x] `emotion_impact` field on episodic memories
+- [x] Migration applied
+- [x] Validation passes
+- [x] Tests pass

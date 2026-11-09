@@ -8,10 +8,12 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-09 reconcile: slice built in this lane — balance lookup on panel open (`loadBalance` in `src/frontend/alpine/inventory-trading.ts`, GET `/api/worlds/:worldId/trade/balance`), atomic settle (`executeTrade`, POST `/trade/execute` with both sides' lines + net price), result/error rendering, balance invalidation on success; colocated tests (`inventory-trading.test.ts`: balance load, execute payload, failure keeps draft, empty-draft no-op) + `status.tradeBalanceFailed` locale key. Backend routes + tests pre-existing (`src/routes/trade/index.ts:64,89`).
 **Priority:** P1 — High
 **Effort:** Medium
 **Epic:** epic-economy-trading
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 **Related:** TASK-trade-history-npc-counterparty, TASK-persistent-trade-offer-accept-cancel-lifecycle-with-counter-
 **Source:** FE-BE harmonization check, 2026-09-17 — 2 routes in this slice.
 
@@ -30,8 +32,8 @@ flagged as INFRA-style endpoints and are out of scope for this slice.
 
 ## Acceptance Criteria
 
-- [ ] Trade panel shows current balance (GET on open)
-- [ ] Execute button submits the trade payload (POST)
-- [ ] Result rendered; balance invalidated on success
-- [ ] Error path shows the backend message
-- [ ] `bun run check` green
+- [x] Trade panel shows current balance (GET on open)
+- [x] Execute button submits the trade payload (POST)
+- [x] Result rendered; balance invalidated on success
+- [x] Error path shows the backend message
+- [x] `bun run check` green

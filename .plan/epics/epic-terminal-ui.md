@@ -10,7 +10,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Built — blessed + blessed-contrib scaffolding shipped; `src/tui/harness/` overlay shipped and wired to F3; integration hardening in progress
+**Status Note:** 2026-11-09 reconcile (T10 lane): chat picker, slash completion, models overlay, keynav, i18n shipped and ticked. Parity tail explicitly carried — `TASK-tui-chat-parity-streaming-replies-group-chat-ui-moderation-s.md` open (TUI `handleSend` reloads transcript after non-streaming 201, `src/tui/chat/api.ts:99`; no group-chat/moderation surfaces in `src/tui/`); `TASK-EGUI-BATTLE-DISPLAY-PANEL.md` open (no battle view in `native/`). Not built in this lane (Large/Medium surfaces).
 **Priority:** Low
 
 

@@ -9,9 +9,11 @@
 
 
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: verified open — no `access_duration`/`expires_at` columns or expiry checks in `src/`; blocked on group key distribution per ticket. Carried, not built in T10 lane.
 **Priority:** Medium
 **Effort:** Med
 **Epic:** epic-crypto
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 **Parent:** TASK-epic17-encryption-e2e-expansion
 **Blocked by:** TASK-encryption-group-key-distribution
 
