@@ -11,6 +11,10 @@
  *
  * The Save button ships disabled and is only enabled once the values are
  * loaded, so a world that cannot be loaded can never be submitted empty.
+ *
+ * The read is access-checked server-side (requireWorldAccess): the modal
+ * renders what the API returned and never decides access itself - a denied
+ * read fails closed, with Save left disabled.
  */
 import { showToast, } from "../ui";
 import { t, } from "./i18n";
