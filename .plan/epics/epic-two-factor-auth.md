@@ -8,7 +8,7 @@
 
 
 **Status:** Not Started
-**Status Note:** Not Started
+**Status Note:** Not Started. 2026-11-09 T10 verify: still no implementation (no TOTP/WebAuthn/backup-code symbols in `src/`); `TASK-two-factor-multi-factor-auth.md` explicitly carried — not built in T10 lane.
 **Priority:** Medium
 **Effort:** Medium
 **Issue:** `280c355`

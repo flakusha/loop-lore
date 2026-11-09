@@ -7,7 +7,7 @@
 
 
 **Status:** Not Started
-**Status Note:** Not Started
+**Status Note:** 2026-11-09 reconcile: trade backend + NPC trade UI shipped — currency balances, atomic `execute`, NPC buy/sell, offers/history (`src/routes/trade/`, `src/frontend/alpine/inventory-trading.ts` incl. balance+execute in T10 lane, `inventory-offers.ts`); `TASK-frontend-trade-balance-and-execute.md` Done. Carry: auction house, banking, market/supply-demand simulation, currency exchange, player shops, item generation UI, NPC inventory frontend (tickets open).
 **Priority:** Medium
 **Effort:** Very High
 **Issue:** `772d0e5`

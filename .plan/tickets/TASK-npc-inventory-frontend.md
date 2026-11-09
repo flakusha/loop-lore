@@ -9,9 +9,11 @@
 
 
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: verified open — only `NpcInventoryItem` types exist (`src/frontend/alpine/chat-types/npc.ts:37`); no NPC inventory view or trading UI; NPC trade *routes* shipped (`src/routes/trade/npc.ts` via `inventory-trading.ts`). Depends on `TASK-link-npc-inventory.md`. Carried, not built in T10 lane.
 **Priority:** P1 — High
 **Effort:** Medium
 **Epic:** epic-item-systems-unification
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 **Tags:** items, npc, inventory, trade, frontend
 
 **Summary:**

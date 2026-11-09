@@ -4,6 +4,7 @@
 # TASK: TUI chat parity: streaming replies + group chat UI + moderation surfaces
 
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: verified open — TUI chat has no streaming (`src/tui/chat/api.ts:99` documents the SSE gap), no group-chat UI (no mention/turn-order/group matches in `src/tui/`), no moderation surfaces; no battle view in `native/`. Large/Medium surfaces — explicitly carried, not built in T10 lane.
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-terminal-ui

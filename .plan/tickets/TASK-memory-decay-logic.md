@@ -11,8 +11,10 @@
 
 **Issue:** d1b048b4-509a-43e8-b175-4798aa3c74fe
 **Status:** Done
+**Status Note:** 2026-11-09 reconcile: logic shipped — `applyDecay`/`touchMemory`/`purgeStaleMemories` in `src/memory/purge.ts:35` with tests (`purge.test.ts`, `audit.test.ts:378`). One AC box stays unchecked (purge of sub-threshold rows) — verify before a future tick.
 **Priority:** medium
 **Epic:** epic-memory-knowledge-systems
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 ## Overview
 
