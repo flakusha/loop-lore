@@ -40,7 +40,7 @@ Out of scope:
 | --- | --- | --- |
 | TASK-group-chat-mention-routing | TASK | Done — `src/group-chat/mention-parser.ts` |
 | TASK-group-chat-turn-orchestration | TASK | Done — talkativity prompt section, silence-pass filtering, context-mention boost all verified in `src/group-chat/turn-selector.ts` |
-| TASK-group-chat-frontend-viewer | TASK | Done — viewer (speaker badge `message-list.html:194-200`, turn strip `:86-88`, split/reunite modal `chat-party-split.ts:32`) shipped T8 `core-t8-groupchat` |
+| TASK-group-chat-frontend-viewer | TASK | In Progress — viewer (speaker badge, impersonation marker, turn strip, split/reunite modal) shipped T8 `core-t8-groupchat`; candidate toggle waits on fan-out engine |
 | BUG-group-chat-mention-prefix-collision | BUG | Done — ambiguous prefix returns null, disambiguation prompt |
 | BUG-group-chat-talkativity-not-surfaced-in-prompt | BUG | Done — group-talkativity prompt section |
 | BUG-group-chat-silence-pass-not-implemented | BUG | Done — `detectPassToken` (`src/group-chat/mention-parser.ts`) + `filterPassedActors` (`src/generation/auto-gen/pass-filter.ts`) |
@@ -56,7 +56,7 @@ Out of scope:
 | Turn selection (talkativity weighting) | Shipped | `src/group-chat/turn-selector.ts` |
 | Cascade orchestration | Shipped | `src/generation/auto-gen/group-cascade.ts` |
 | Turn orchestration ticket closure | Done | `TASK-group-chat-turn-orchestration.md` |
-| Frontend viewer (speaker badge, turn strip, split/reunite modal) | Shipped (T8 `7f062a787`) | `src/components/chat/message-list.html:86-88,194-212`, `src/components/chat/party-split-panel.html`, `src/frontend/alpine/chat-party-split.ts`, `src/frontend/alpine/chat-participants.ts:214-217` |
+| Frontend viewer (speaker badge, turn strip, split/reunite modal) | Shipped (T8) | `src/components/chat/message-list.html` (group-turn-strip + speaker-badge), `party-split-panel.html`, `src/frontend/alpine/chat-party-split.ts` |
 
 ## Integration Points
 

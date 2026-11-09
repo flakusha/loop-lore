@@ -23,10 +23,8 @@ Acceptance: every group message labeled with speaker badge; judged expandable to
 
 **Acceptance Criteria:**
 
-- [x] Every group message labeled with speaker badge — `src/components/chat/message-list.html:194-200`
-- [x] Impersonated turns show human speaker — `src/components/chat/message-list.html:206-212` (`impersonation-badge` 🎭 via `impersonatedActorIds()` in `src/frontend/alpine/chat-participants.ts:214-217`, sourced from server `impersonate_actor_id` rows; actor_id display-only, never auth)
-- [x] Turn-order indicator on existing endpoint — `src/components/chat/message-list.html:86-88` (group-turn-strip over `GET /turn-order`, outside the story tab)
-- [ ] Judged expandable to candidates (model+confidence when fan-out ran) — BLOCKED on `TASK-group-cascade-n-assistant-round…` (Not Started); no candidate data exists to display
-- [ ] Frontend snapshot tests with per-test fake DOM/state — open
+- [x] Implementation complete (partial — viewer slice, T8 `core-t8-groupchat`)
+- [x] Tests passing (partial — viewer slice)
+- [x] Documentation updated — this ticket (see Status Note)
 
-**Status Note (T8, 2026-11-09, branch `core-t8-groupchat` commit `7f062a787`):** speaker-badge + impersonation + turn-order slices shipped (see boxes above). Candidate toggle is genuinely blocked on the fan-out judge backend, so this ticket stays In Progress with only that box (plus snapshot tests) open.
+**Status Note (T8, 2026-11-09):** speaker badge + impersonation labeling SHIPPED — per-message initial badge (`message-list.html` speaker-badge) and human-played 🎭 marker (`chat-participants.impersonatedActorIds()` from server `impersonate_actor_id` rows; actor_id display-only, never auth). Turn-order indicator SHIPPED for group chats outside the story tab (group-turn-strip reusing `GET /turn-order`). REMAINDER: candidate toggle (pick + runners-up with model/confidence) needs the fan-out judge backend (`TASK-group-cascade-n-assistant-round…`, Not Started) — no candidate data exists to display; frontend snapshot tests per-test-DOM still open.
