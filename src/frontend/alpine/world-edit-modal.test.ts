@@ -28,10 +28,15 @@ const globalState = globalThis as unknown as {
 
 const originalApiFetch = globalState.apiFetch;
 let fetchHandler: (url: string,) => Promise<Response> = async () => Response.json({},);
+let fetchCalls = 0;
 
 beforeEach(() => {
+  fetchCalls = 0;
   fetchHandler = async () => Response.json({},);
-  globalState.apiFetch = (url,) => fetchHandler(url,);
+  globalState.apiFetch = (url,) => {
+    fetchCalls += 1;
+    return fetchHandler(url,);
+  };
 },);
 
 afterEach(() => {
@@ -162,6 +167,18 @@ describe("alpine/world-edit-modal", () => {
 
     expect(modal.fields["#edit-description"]?.value,).toBe("",);
     expect(modal.fields["#edit-lore"]?.value,).toBe("",);
+    expect(modal.save.disabled,).toBe(true,);
+  });
+
+  test("a modal without a world target never fetches and stays unsaveable", async () => {
+    fetchHandler = async () => Response.json(WORLD,);
+
+    const modal = makeModal(null,);
+
+    await openModal(modal,);
+
+    expect(fetchCalls,).toBe(0,);
+    expect(modal.fields["#edit-description"]?.value,).toBe("",);
     expect(modal.save.disabled,).toBe(true,);
   });
 
