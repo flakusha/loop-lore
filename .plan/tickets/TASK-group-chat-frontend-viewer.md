@@ -3,7 +3,7 @@
 
 # TASK: Group chat frontend viewer
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-group-chat
@@ -23,3 +23,5 @@ Mention UI and turn indicators for multi-character conversations (who is speakin
 - [x] Documentation updated — this ticket (see Status Note)
 
 **Status Note (T8, 2026-11-09, branch `core-t8-groupchat`):** mention autocomplete + turn-order indicator backend were already shipped (`chat-participants.ts`, `GET /turn-order`); this slice adds the missing viewer surface: per-message speaker badge (actor initial, `data-speaker`), human-played 🎭 marker via `impersonatedActorIds()`, group turn strip (current/next + pause toggle reusing `_turnOrder`), and split/reunite execution modal (`POST /split`, `POST /reunite`, server `bad_request` shown inline, draft preserved). Remainder: candidate toggle needs the fan-out judge backend (`TASK-group-cascade-n-assistant-round…`, still Not Started); cascade depth knob (`max_turns`) is create-time only — no PATCH endpoint exists.
+
+**Resolved:** 2026-11-09 registry-driven close: git issue 8e3fdc1 (registry tip: 32de4b7dc Konstantin Fedotov Auto-closed: appended .md marker marks TASK-GROUP-CHAT-FRONTEND-VIEWER )
