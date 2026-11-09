@@ -180,6 +180,22 @@ describe("alpine/world-edit-modal", () => {
     },);
   });
 
+  test("the modal loads the world the form targets, not another world", async () => {
+    let seen = "";
+    fetchHandler = async (url: string,) => {
+      seen = url;
+      return Response.json(WORLD,);
+    };
+
+    // A world id carrying "/" must stay one id - taking the last path
+    // segment would load a DIFFERENT world into this modal.
+    const modal = makeModal("w-1/w-2",);
+
+    await openModal(modal,);
+
+    expect(seen,).toBe("/api/v1/worlds/w-1%2Fw-2",);
+  });
+
   test("a world that cannot be loaded leaves Save disabled and the fields empty", async () => {
     fetchHandler = async () => new Response("boom", { status: 500, },);
     const modal = makeModal("w-1",);
