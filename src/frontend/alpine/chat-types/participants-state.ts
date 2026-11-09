@@ -87,4 +87,6 @@ export interface ChatParticipantsState extends AlpineMagicThis {
   updateParticipantTalkativity(actorId: string, value: number,): Promise<void>;
   /** Update a participant's initiative (PUT /participants/:actorId). */
   updateParticipantInitiative(actorId: string, value: number,): Promise<void>;
+  /** Actor ids currently driven by a human via impersonation (T8 viewer badge). */
+  impersonatedActorIds(): Set<string>;
 }
