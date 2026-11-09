@@ -2258,6 +2258,17 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     expires_at: col("text",),
   },)
+  .table("chat_list_filters", {
+    user_id: col("text", { primaryKey: true, notNull: true, },),
+    chat_type: col("text", { notNull: true, hasDefault: true, },),
+    archived: col("text", { notNull: true, hasDefault: true, },),
+    sort: col("text", { notNull: true, hasDefault: true, },),
+    world_id: col("text",),
+    min_messages: col("integer",),
+    max_messages: col("integer",),
+    updated_since: col("text",),
+    updated_at: col("text", { notNull: true, },),
+  },)
   .table("chat_location_events", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),

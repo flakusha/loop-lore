@@ -251,3 +251,28 @@ export const ChatOwnerParams = t.Object({
 export const ChatOwnerRemoveQuery = t.Object({
   reason: t.Optional(t.String({ maxLength: 500, },),),
 },);
+
+// ── Chat-list filter persistence (TASK-server-side-room-filter-enforcement) ──
+
+/**
+ * Body for `PUT /api/v1/chats/filters` — the FULL chat-list filter-panel
+ * snapshot, upserted as one `chat_list_filters` row per user. Closed DTO:
+ * unknown keys are rejected (422) rather than silently stripped; every key
+ * is required so the stored row is always a complete snapshot. `world`
+ * accepts a world uuid or the client's cleared value `""`; `null` fields
+ * mean "no filter on this dimension".
+ */
+export const ChatListFiltersBody = t.Object(
+  {
+    type: t.Union([t.Literal("all",), t.Literal("direct",), t.Literal("group",),],),
+    status: t.Union([t.Literal("all",), t.Literal("active",), t.Literal("archived",),],),
+    sort: t.Union(
+      [t.Literal("recent",), t.Literal("name",), t.Literal("unread",), t.Literal("pinned-first",),],
+    ),
+    world: t.Union([Id, t.Literal("",), t.Null(),],),
+    minMessages: t.Union([t.Integer({ minimum: 0, maximum: 1_000_000, },), t.Null(),],),
+    maxMessages: t.Union([t.Integer({ minimum: 0, maximum: 1_000_000, },), t.Null(),],),
+    updatedSince: t.Union([t.String({ minLength: 1, maxLength: 64, },), t.Null(),],),
+  },
+  { additionalProperties: false, },
+);

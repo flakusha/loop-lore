@@ -3921,3 +3921,16 @@ export const IntegrationTokensSchema = t.Object({
   revoked_at: t.Optional(t.String(),),
   expires_at: t.Optional(t.String(),),
 },);
+
+// ── chat_list_filters ────────────────────────────────────────────
+export const ChatListFiltersSchema = t.Object({
+  updated_at: t.String(),
+  user_id: t.Optional(t.String(),),
+  chat_type: t.Optional(t.String(),),
+  archived: t.Optional(t.String(),),
+  sort: t.Optional(t.String(),),
+  world_id: t.Optional(t.String(),),
+  min_messages: t.Optional(t.Number(),),
+  max_messages: t.Optional(t.Number(),),
+  updated_since: t.Optional(t.String(),),
+},);

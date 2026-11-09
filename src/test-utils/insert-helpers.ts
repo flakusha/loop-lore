@@ -6364,3 +6364,26 @@ export async function insertIntegrationTokens(
   } as any,).execute();
   return id;
 }
+
+/** Insert a chat_list_filters row. */
+export async function insertChatListFilters(
+  db: Db,
+  updated_at: string,
+  opts: {
+    user_id: string;
+    chat_type?: string;
+    archived?: string;
+    sort?: string;
+    world_id?: string | null;
+    min_messages?: number | null;
+    max_messages?: number | null;
+    updated_since?: string | null;
+  },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("chat_list_filters",).values({
+    updated_at,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).user_id as string;
+}

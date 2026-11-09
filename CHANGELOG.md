@@ -9,6 +9,8 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Added
 
+- **Chat-list filters persist and enforce server-side (TASK-server-side-room-filter-enforcement)** — the sidebar filter panel (type / status / sort / world / message bounds / updatedSince) no longer dies with `localStorage`: migration `098_chat_list_filters` adds one snapshot row per user, `PUT /api/v1/chats/filters` upserts it through the closed `ChatListFiltersBody` DTO (raw-body re-check so unknown keys are a 422, not a silent strip — the Elysia strips-unknown-keys precedent from the settings allowlist), `GET /api/v1/chats/filters` returns it, and the list endpoint now ENFORCES the snapshot for every filter dimension the request omits (an explicit query param always wins; guests and never-saved users keep the unfiltered list). The Alpine panel (`chat-filters.ts` via the new `chat-filters-server.ts`) PUTs on every change and reconciles from the server on restore, fire-and-forget with the localStorage mirror as the offline fallback, so filters survive a wiped browser and apply on every device.
+
 - **`<audio-player>` frontend component (TASK-audio-player-component)** — the frontend finally has one reusable audio player instead of bare `<audio controls>` tags: `src/frontend/alpine/audio-player.ts` exports an `audioPlayerFactory` Alpine scope (registered on `globalThis`) that drives a plain HTML5 `<audio>` element through play/pause/stop, a volume slider plus mute toggle, playback speed (0.5x–2.0x, stepped through the presets 0.5/0.75/1/1.25/1.5/2), a loop toggle for ambient/music, a seekable progress bar, and keyboard shortcuts (space = play/pause, left/right arrows = seek ±5s). The remembered volume lives in `localStorage` under `loop-lore.audio-player.volume` and is restored on the next page load, and the markup (`src/components/audio-player.html`) plus 44px-minimum touch-target styles (`src/public/css/components/audio-player.css`, linked from `src/views/layout.html`) make the controls usable on a phone. Each `<audio-player>` element plays one track and keeps its own volume/mute/speed/loop state, so ambient + TTS + music can play simultaneously; the optional waveform/equalizer visualisation was deliberately skipped (a plain `<audio>` element has no analyser node to draw from). Covered by 16 unit tests in `src/frontend/alpine/audio-player.test.ts`.
 
 - **The admin Harness tab lists the models a harness profile would use (TASK-harness-model-discovery-ui-wiring-frontend-models-caller-cos)** — the discovery endpoint already shipped (`GET /api/v1/harness/models`, admin-gated, merging a live harness's model listing with the static capability table) but nothing called it, so the panel showed only the RUN rollup and an operator could not tell which model a profile would actually use. The tab now renders the discovered models in their own section (`src/frontend/alpine/admin-harness-models.ts` — the fetch, the section's own error channel and the pre-formatted rows; `src/components/harness/admin-harness-panel.html` — the table), each row carrying its profile, model, source (`harness` / `static`), the static fallback's reason, the context window and the known capabilities. A refused or failed request shows its message IN that section: the runs table and the stat cards stay visible, and a refusal never reads as "no models discovered".
@@ -92,12 +94,12 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-// hint: Structural change (rename/retype). Check callers of this entity.
 
 ### Fixed
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
+// hint: Structural change (rename/retype). Check callers of this entity.
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 - **The world Edit modal no longer wipes a world's description and lore (BUG-world-edit-modal-served-blank-fields-and-wiped-world-descrip)** — the modal is served as a static, DB-less partial, so its name/description/lore fields arrived blank and the PUT wrote those blanks over the world's row: saving the modal without retyping the lore silently cleared it. The modal now prefills itself from the access-checked `GET /api/v1/worlds/:id` (new Alpine component `src/frontend/alpine/world-edit-modal.ts`, mounted with `x-data="worldEditModal()"`), and its Save button ships `disabled` until the world is loaded, so a world that cannot be loaded can no longer be submitted empty. A failed load now renders inline (an alert paragraph plus a Retry button re-running the load, reusing the existing `worlds.loadFailed` and `common.retry` strings) alongside the toast, and fields the user already typed into keep their text when the loaded values arrive. The world id the modal reads out of the page is URL-escaped into its path segment by the shared `fetchWorldJson` helper (an id carrying "/" or "?" would otherwise retarget the request) and is read as everything after the API prefix rather than the last path segment, so the modal can only ever load the world its form targets. Clearing a field on purpose still clears it — the server keeps its "a non-null field is written as sent" semantics. The API stays authoritative for every field it writes (the route validates the body against `WorldUpdateBody` before the handler writes it), and the world's name input now mirrors that limit on all three surfaces (edit modal, create modal, full-page editor: `maxlength="255"`), so an over-long name cannot turn the whole save into a 422 that drops the description and lore edits with it. What the API cannot express is "a client must not send a value it never loaded" — an empty string is a legitimate clear — so closing that gap server-side would need explicit clear flags on `WorldUpdateBody`; named as a follow-up, not done here.
@@ -188,7 +190,6 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-// hint: Structural change (rename/retype). Check callers of this entity.
 
 ## [0.1.0] - 2026-08-15
 
@@ -209,7 +210,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-// hint: Structural change (rename/retype). Check callers of this entity.
 
 ### Changed
 
@@ -218,7 +218,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-// hint: Structural change (rename/retype). Check callers of this entity.
 
 ### Fixed
 
@@ -227,13 +226,11 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-// hint: Structural change (rename/retype). Check callers of this entity.
 
 ### Removed
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-// hint: Structural change (rename/retype). Check callers of this entity.
 
 ### Security
 
@@ -248,18 +245,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-// hint: Structural change (rename/retype). Check callers of this entity.
-
-### Fixed
-
-- **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
-- **Non-retryable provider errors keep their identity when the request is cancelled** — `withProviderRetry` classified an aborted signal before checking whether the failure was already a non-retryable `ProviderError`, so a 401 raised in the same tick as a user cancel surfaced as `Request cancelled` (no status) instead of the auth error. `callWithFailover` maps the two down different paths, which would have swallowed auth failures. Precedence now matches the hand-rolled loops these call sites replaced, and `retry.test.ts` pins it.
-
-- **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
-
-// hint: Structural change (rename/retype). Check callers of this entity.
-
-// hint: Structural change (rename/retype). Check callers of this entity.
 
 ### Fixed
 
@@ -267,6 +252,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
 
 - **Image-edit endpoints reach the API reference** — `POST /api/v1/image-edit/run` declares an OpenAPI summary and tag, so the served document names the operation instead of publishing a bare path, and `docs/reference/api.md` gains an Image Edit section: the run endpoint plus the template, node, capability and health reads, with the body shape (`{ template_id, backend, params?, chatId?, messageId? }`) and the rule that an `image` parameter carries an asset id, never bytes or a path. The run body schema also moves to Elysia's `t` — the convention every sibling validation schema already uses — and its two optional fields carry descriptions. Known limit: the generated document publishes the request-body SLOT but not the body schema, because the composed app enables body inference and `@elysia/openapi` skips function parsers; most routes publish an empty `content`, so the body contract lives in the prose reference until that changes.
-- **Image-edit input images reach ComfyUI as uploaded bytes** — the ComfyUI image-edit provider now uploads every `image`-typed parameter (`input_image`, `mask_image`, `control_image`) before the workflow is built and substitutes the name ComfyUI stored the bytes under, so a `LoadImage` node no longer names a file the server never uploaded. The parameter carries the ASSET ID of an image the caller owns: the provider checks the owner, decrypts with the chat key when the asset is encrypted, and reads the bytes through the asset row — a path on the server is never opened. The run body is validated against one shared TypeBox schema (`src/validation/schemas/image-edit.ts`): the route declares it as its `body:`, so the server validates every run body before the handler runs — and `handleRun` applies the same validator, which covers the chain-run executor that calls the handler directly.
 - **Coverage run executes the bundled plugin engines' own tests** — the plugin engines under `plugins/` ship their own `*.test.ts`, but the coverage run's test set was `tests/e2e/ src/`, so those files never ran and the `plugins` module was measured at a fraction of what the tests actually cover. `test:coverage` now includes `plugins/`, and the parallel runner's coverage gate builds the same test set (it walks `plugins/` alongside `src/`, so the gate and the manual script agree). The plugin engines are in-process unit tests, so they belong inside the coverage invocation rather than in the separate scripts pass.
+- **Image-edit input images reach ComfyUI as uploaded bytes** — the ComfyUI image-edit provider now uploads every `image`-typed parameter (`input_image`, `mask_image`, `control_image`) before the workflow is built and substitutes the name ComfyUI stored the bytes under, so a `LoadImage` node no longer names a file the server never uploaded. The parameter carries the ASSET ID of an image the caller owns: the provider checks the owner, decrypts with the chat key when the asset is encrypted, and reads the bytes through the asset row — a path on the server is never opened. The run body is validated against one shared TypeBox schema (`src/validation/schemas/image-edit.ts`): the route declares it as its `body:` — so the served OpenAPI document carries the contract — and `handleRun` applies the same validator, which covers the chain-run executor that calls the handler directly.
   // hint: Structural change (rename/retype). Check callers of this entity.

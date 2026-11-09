@@ -2210,3 +2210,16 @@ export interface IntegrationTokens {
   revoked_at: string | null;
   expires_at: string | null;
 }
+
+// ── chat_list_filters ────────────────────────────────────────────
+export interface ChatListFilters {
+  user_id: string;
+  chat_type: Generated<string>;
+  archived: Generated<string>;
+  sort: Generated<string>;
+  world_id: string | null;
+  min_messages: number | null;
+  max_messages: number | null;
+  updated_since: string | null;
+  updated_at: string;
+}

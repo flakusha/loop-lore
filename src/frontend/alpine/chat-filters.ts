@@ -16,7 +16,18 @@
 // loadChats(), applyChatFilters() persists on every change. Active filters
 // surface as removable chips (activeChatFilterChips + clearChatFilter /
 // clearAllChatFilters).
+//
+// The same snapshot is ALSO persisted server-side (TASK-server-side-room-
+// filter-enforcement, chat-filters-server.ts): every persist PUTs
+// /api/v1/chats/filters and every restore reconciles from it, so filters
+// survive a wiped browser and are enforced by GET /api/v1/chats even when
+// the client sends no params. localStorage stays the offline fallback.
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
+import {
+  reconcileChatFiltersFromServer,
+  saveChatFilters,
+  toChatFilterSnapshot,
+} from "./chat-filters-server";
 import type { ChatState, } from "./types";
 
 const STORAGE_KEY = "chat-sidebar-filters";
@@ -82,7 +93,12 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
       store = null;
     }
 
-    if (!store) { return; }
+    if (!store) {
+      // No storage (privacy mode): still converge on the server snapshot.
+      void reconcileChatFiltersFromServer(this,);
+      return;
+    }
+
     const stored = readStoredFilters();
     if (stored.type === "direct" || stored.type === "group") { this._chatType = stored.type; }
     if (stored.status === "active" || stored.status === "archived") { this._chatStatus = stored.status; }
@@ -94,6 +110,12 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
     if (typeof stored.minMessages === "string") { this._chatMinMessages = stored.minMessages; }
     if (typeof stored.maxMessages === "string") { this._chatMaxMessages = stored.maxMessages; }
     if (typeof stored.updatedSince === "string") { this._chatUpdatedSince = stored.updatedSince; }
+
+    // The server snapshot then reconciles over the local restore — the saved
+    // server-side filters are the cross-device truth. Fire-and-forget: the
+    // first paint never waits on it, and the list endpoint enforces the
+    // stored filters even while the panel still shows local values.
+    void reconcileChatFiltersFromServer(this,);
   },
 
   /** Persist the current filters to localStorage (no-op without storage). */
@@ -101,6 +123,12 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
    * @returns {void}
    */
   persistChatFilters(): void {
+    // Server snapshot first: it is the enforcement source of truth and must
+    // survive even where localStorage is unavailable. Fire-and-forget (the
+    // helper swallows its own failures) — a failed save degrades to the
+    // localStorage-only behavior this panel has always had.
+    void saveChatFilters(toChatFilterSnapshot(this,),);
+
     let store: Storage | null = null;
     try {
       store = typeof localStorage === "undefined" ? null : localStorage;
