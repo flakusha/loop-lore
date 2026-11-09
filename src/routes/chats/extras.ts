@@ -5,6 +5,7 @@ import { Elysia, } from "elysia";
 import { isChatOwner, updateImpersonation, } from "../../chat/service";
 import { recordLocationChange, } from "../../chat/service/location-events";
 import { ensureSectionForLocation, } from "../../chat/service/section-transition";
+import { isFastTravelLocked, } from "../../locations/fast-travel";
 import { can, } from "../../users/permissions";
 import {
   ChatIdParams,
@@ -93,6 +94,28 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .executeTakeFirst();
 
           if (!location) { return notFound("Location not found in this world",); }
+
+          // Fast-travel unlock gate: gated destinations (requires_discovery
+          // inbound edge, no discovery latch for any of the caller's actors)
+          // reject with 403. World owner / admin.world bypass, mirroring the
+          // adjacency hop in EdgeTravelService.travel.
+          const worldRow = await database
+            .selectFrom("worlds",)
+            .select("owner_id",)
+            .where("id", "=", fullChat.world_id,)
+            .executeTakeFirst();
+
+          const privileged = worldRow?.owner_id === userId || can(userRole, "admin.world",);
+          if (
+            await isFastTravelLocked(database, {
+              worldId: fullChat.world_id,
+              destinationId: locationId,
+              userId,
+              isPrivileged: privileged,
+            },)
+          ) {
+            return forbidden("Destination locked — discover it first",);
+          }
 
           await database.transaction().execute(async (tx,) => {
             await tx
