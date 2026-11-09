@@ -4,7 +4,7 @@
 # TASK: Memory to lorebook one-click promote
 
 **Status:** Done
-**Status Note:** 2026-11-09 reconcile: registry-Done with unchecked boxes — completion marker without acceptance evidence (same stale pattern as the story CRUD/turn-order tickets). Event→lore backend exists (`src/story/events/promote-lore.ts`); the ticket's user-facing one-click promote surface (assistant command/chat action over summary range, keys auto-suggested, user confirm before insert) is NOT found in code (no from-memory/to-lore command matches). Treat as carry for the UI slice; boxes left unchecked deliberately.
+**Status Note:** 2026-11-09 landing (branch feat-memory-lore-promote, d89c1cdbb): the user-facing one-click promote UI slice now EXISTS — memory-panel character tab gains a per-memory Promote-to-lorebook action (memory-panel.html + memory-panel-core.ts loreEntryDraftFromMemory: name from first keyword else 48-char content prefix, keys from memory keywords capped at the route 5-key limit, explicit confirm() before insert, POST to existing POST /api/v1/actors/:actorId/lore-entries with server-side ownership enforcement; failures surface on panel error banner, memory kept). Prior reconcile note claiming the surface was NOT found is superseded. ~127 LOC excl. tests/locales; no migration, no new route. Tests: memory-panel.test.ts +8 blocks, actor-lore-entries.test.ts +1 keys-persistence pin.
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -19,6 +19,6 @@ ST memory-to-lore is manual everywhere (DeepWiki: vectors ext can include World 
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
