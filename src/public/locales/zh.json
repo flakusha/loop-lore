@@ -2167,7 +2167,11 @@
       "flavor": "Harness",
       "usageClass": "使用类别",
       "tosNote": "服务商条款说明",
-      "ack": "已确认"
+      "ack": "已确认",
+      "source": "Source",
+      "reason": "Reason",
+      "contextWindow": "Context window",
+      "capabilities": "Capabilities"
     },
     "taskType": {
       "harnessCode": "代码",
@@ -2225,7 +2229,10 @@
         "arrived": "到达时间",
         "decision": "决定"
       }
-    }
+    },
+    "discoveredModels": "Discovered models",
+    "noDiscoveredModels": "No models discovered yet",
+    "errorLoadModels": "Could not load the discovered models."
   },
   "branches": {
     "title": "分支",

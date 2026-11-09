@@ -2167,7 +2167,11 @@
       "flavor": "ハーネス",
       "usageClass": "利用クラス",
       "tosNote": "プロバイダー利用規約の注意",
-      "ack": "確認済み"
+      "ack": "確認済み",
+      "source": "Source",
+      "reason": "Reason",
+      "contextWindow": "Context window",
+      "capabilities": "Capabilities"
     },
     "taskType": {
       "harnessCode": "コード",
@@ -2225,7 +2229,10 @@
         "arrived": "到達時刻",
         "decision": "判断"
       }
-    }
+    },
+    "discoveredModels": "Discovered models",
+    "noDiscoveredModels": "No models discovered yet",
+    "errorLoadModels": "Could not load the discovered models."
   },
   "branches": {
     "title": "分岐",

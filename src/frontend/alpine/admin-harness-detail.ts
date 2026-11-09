@@ -66,22 +66,49 @@ export function harnessThrownMessage(error: unknown, key: string,): string {
 }
 
 /**
- * The message for a failed tab load, or null when both loads succeeded.
+ * The tab's error channels: the banner and the discovered-models section's own.
+ *
+ * They are separate because they cover separate sections: the banner hides
+ * the whole tab content, so a failed models call must NOT land there — it
+ * would blank the runs table and the stat cards with it.
+ */
+export interface HarnessTabLoadErrors {
+  /** The tab-level banner (runs/stats); null when both loaded. */
+  tab: string | null;
+  /** The discovered-models section's own message; null when it loaded. */
+  models: string | null;
+}
+
+/**
+ * The messages for a failed tab load, or nulls when everything loaded.
  *
  * The runs and stats requests settle together and the tab shows ONE error
  * banner, so the first rejection wins: a runs failure reads as the runs
- * failure, a stats-only failure as the stats failure.
+ * failure, a stats-only failure as the stats failure. The models request
+ * keeps its own channel, so its failure never hides the other sections.
  * @param runs - settled result of the runs request
  * @param stats - settled result of the stats request
- * @returns the message to show, or null when nothing was rejected
+ * @param models - settled result of the models request
+ * @returns the per-section messages, null where the section loaded
  */
 export function harnessTabLoadError(
   runs: PromiseSettledResult<Response>,
   stats: PromiseSettledResult<Response>,
-): string | null {
-  if (runs.status === "rejected") { return harnessThrownMessage(runs.reason, "harness.errorLoadRuns",); }
-  if (stats.status === "rejected") { return harnessThrownMessage(stats.reason, "harness.errorLoadStats",); }
-  return null;
+  models: PromiseSettledResult<Response>,
+): HarnessTabLoadErrors {
+  let tab: string | null = null;
+  if (runs.status === "rejected") {
+    tab = harnessThrownMessage(runs.reason, "harness.errorLoadRuns",);
+  } else if (stats.status === "rejected") {
+    tab = harnessThrownMessage(stats.reason, "harness.errorLoadStats",);
+  }
+
+  let modelsMessage: string | null = null;
+  if (models.status === "rejected") {
+    modelsMessage = harnessThrownMessage(models.reason, "harness.errorLoadModels",);
+  }
+
+  return { tab, models: modelsMessage, };
 }
 
 /** The slice of tab state this method touches. */

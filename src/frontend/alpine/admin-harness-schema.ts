@@ -282,3 +282,9 @@ export const HarnessDiscoveredModelSchema = Type.Object({
 export const HarnessModelsResponse = Type.Object({
   items: Type.Array(HarnessDiscoveredModelSchema,),
 },);
+
+/** Static view of {@link HarnessDiscoveredModelSchema}. */
+export type HarnessDiscoveredModel = Static<typeof HarnessDiscoveredModelSchema>;
+
+/** Static view of {@link HarnessModelsResponse}. */
+export type HarnessModelsView = Static<typeof HarnessModelsResponse>;

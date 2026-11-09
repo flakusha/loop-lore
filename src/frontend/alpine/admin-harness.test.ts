@@ -52,7 +52,13 @@ afterEach(() => {
   localeHost.__localeStrings = originalLocale;
 },);
 
-/** Route the three harness endpoints; unknown URLs 404. */
+/** The discovered-models response the fake endpoint serves. */
+function modelsResponse(opts: { models?: unknown; modelsStatus?: number },): Response {
+  if (opts.modelsStatus) { return new Response("", { status: opts.modelsStatus, },); }
+  return Response.json(opts.models ?? { items: [], },);
+}
+
+/** Route the harness endpoints; unknown URLs 404. */
 function route(opts: {
   runs?: unknown;
   runsStatus?: number;
@@ -60,6 +66,8 @@ function route(opts: {
   stats?: unknown;
   statsStatus?: number;
   rejectStats?: boolean;
+  models?: unknown;
+  modelsStatus?: number;
   detail?: unknown;
   detailStatus?: number;
 },): void {
@@ -83,6 +91,8 @@ function route(opts: {
       if (opts.statsStatus) { return new Response("", { status: opts.statsStatus, },); }
       return Response.json(opts.stats ?? STATS,);
     }
+
+    if (url.startsWith("/api/v1/harness/models",)) { return modelsResponse(opts,); }
 
     return new Response("", { status: 404, },);
   };
@@ -108,6 +118,7 @@ describe("adminHarness.loadHarness", () => {
     expect(state.harnessGapRows,).toEqual([{ toolingGap: "no-web-search", count: 4, },],);
     expect(state.harnessRunsEmpty(),).toBe(false,);
     expect(calls.sort(),).toEqual([
+      "/api/v1/harness/models",
       "/api/v1/harness/permissions",
       "/api/v1/harness/runs?limit=50",
       "/api/v1/harness/settings",
@@ -141,6 +152,18 @@ describe("adminHarness.loadHarness", () => {
     expect(state.harnessRunRows,).toEqual([],);
     // Error state must not masquerade as an empty-data state.
     expect(state.harnessRunsEmpty(),).toBe(false,);
+  });
+
+  test("a refused models request leaves the runs table and the stat cards alone", async () => {
+    route({ modelsStatus: 403, },);
+    const state = freshState();
+    await state.loadHarness();
+
+    expect(state.harnessRunRows,).toHaveLength(1,);
+    expect(state.harnessStatCards,).toHaveLength(6,);
+    expect(state.harnessModelsError.toLowerCase(),).toContain("permission",);
+    // The tab-level banner stays clear: it hides the whole tab content.
+    expect(state.harnessError,).toBe("",);
   });
 
   test("a 403 on stats alone still leaves the runs table populated", async () => {

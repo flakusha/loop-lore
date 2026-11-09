@@ -426,6 +426,67 @@
     </tbody>
   </table>
 
+  <!--
+    Discovered models from /api/v1/harness/models: which model each harness
+    profile would actually use. The endpoint merges a live harness's listing
+    with the static capability table, so a "static" entry is a configured
+    fallback and carries the reason. The section keeps its OWN error channel:
+    a refused or failed request shows the message HERE and leaves the runs
+    table and the stat cards alone — a refusal never reads as "nothing found".
+  -->
+  <div style="margin-bottom: var(--space-6)" data-testid="harness-discovered-models-section">
+    <h3 style="font-size: 14px; font-weight: 600; margin: var(--space-6) 0 var(--space-3)">
+      {{{t("harness.discoveredModels")}}}
+    </h3>
+    <div
+      x-show="harnessModelsError !== ''"
+      class="empty-state"
+      style="padding: var(--space-6)"
+      data-testid="harness-discovered-models-error"
+    >
+      <div class="icon">⚠️</div>
+      <div class="title">{{{t("harness.errorLoadModels")}}}</div>
+      <div class="description" x-text="harnessModelsError"></div>
+    </div>
+    <div
+      x-show="harnessModelsError === '' && harnessDiscoveredModelsEmpty()"
+      class="empty-state"
+      style="padding: var(--space-8)"
+      data-testid="harness-discovered-models-empty"
+    >
+      <div class="icon">🔎</div>
+      <div class="title">{{{t("harness.noDiscoveredModels")}}}</div>
+    </div>
+    <table
+      x-show="harnessModelsError === '' && !harnessDiscoveredModelsEmpty()"
+      class="admin-table"
+      data-testid="harness-discovered-models-table"
+    >
+      <thead>
+        <tr>
+          <th>{{{t("harness.column.profile")}}}</th>
+          <th>{{{t("harness.column.model")}}}</th>
+          <th>{{{t("harness.column.source")}}}</th>
+          <th>{{{t("harness.column.reason")}}}</th>
+          <th>{{{t("harness.column.contextWindow")}}}</th>
+          <th>{{{t("harness.column.capabilities")}}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="row in harnessDiscoveredModels" :key="row.profile + ':' + row.model">
+          <tr data-testid="harness-discovered-model-row">
+            <td x-text="row.profile"></td>
+            <td x-text="row.model"></td>
+            <td x-text="row.source"></td>
+            <td x-text="row.reason"></td>
+            <td x-text="row.contextWindow"></td>
+            <td x-text="row.capabilities"></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+
   <!-- Tooling gaps from /api/v1/harness/stats toolingGaps -->
   <h3 style="font-size: 14px; font-weight: 600; margin: var(--space-6) 0 var(--space-3)">
     {{{t("harness.toolingGaps")}}}
