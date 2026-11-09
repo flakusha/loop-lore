@@ -6,6 +6,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { storyLocationStateRoutes, } from "./location";
 import { storyNpcStateRoutes, } from "./npc";
+import { storyStateStreamRoutes, } from "./stream";
 import { storyWorldStateRoutes, } from "./world-states";
 
 /**
@@ -21,5 +22,6 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> }, prefi
   return new Elysia({ name: "story-states", },)
     .use(storyNpcStateRoutes({ database, }, prefix,),)
     .use(storyLocationStateRoutes({ database, }, prefix,),)
-    .use(storyWorldStateRoutes({ database, }, prefix,),);
+    .use(storyWorldStateRoutes({ database, }, prefix,),)
+    .use(storyStateStreamRoutes({ database, }, prefix,),);
 }

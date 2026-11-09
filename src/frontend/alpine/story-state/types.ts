@@ -176,10 +176,22 @@ export interface StoryStateComponent {
   turnDetail: StoryTurnDetail | null;
   /** True while a turn-by-id lookup is in flight. */
   turnDetailLoading: boolean;
+  /** True once the chat-context-refresh listener is attached (init guard). */
+  _storyRefreshBound?: boolean;
+  /** Live story-state SSE subscription (null when offline/unsupported). */
+  _storyStream: EventSource | null;
+  /** Open (or re-open) the story-state stream for the current world. */
+  connectStoryStream(): void;
+  /** Close the story-state stream (chat switch / teardown). */
+  disconnectStoryStream(): void;
   init(): Promise<void>;
   refresh(): Promise<void>;
   turnForMessage(messageId: string,): StoryTurnMeta | null;
   questProgressPct(quest: StoryQuest,): number;
+  /** Only the `active` quests (quest log). */
+  activeQuests(): StoryQuest[];
+  /** Only the `completed` quests (quest history). */
+  completedQuests(): StoryQuest[];
   questMilestones(quest: StoryQuest,): QuestMilestone[];
   questRewardChips(quest: StoryQuest,): string[];
   qualityClass(score: number,): string;

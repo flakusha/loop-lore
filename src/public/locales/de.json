@@ -1517,6 +1517,7 @@
     "initiativeShort": "Init",
     "turnOrderHint": "Die Reihenfolge folgt der Zugstrategie des Chats; der nächste Zug ist exakt, außer bei der Initiativ-Strategie.",
     "activeQuests": "Active Quests",
+    "questHistory": "Quest History",
     "noQuests": "No active quests.",
     "newQuestPlaceholder": "Quest name…",
     "newQuest": "New Quest",

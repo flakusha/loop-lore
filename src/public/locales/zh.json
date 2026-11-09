@@ -1517,6 +1517,7 @@
     "initiativeShort": "先攻",
     "turnOrderHint": "顺序遵循聊天的回合策略；除先攻策略外，下一个选择是确定的。",
     "activeQuests": "Active Quests",
+    "questHistory": "Quest History",
     "noQuests": "No active quests.",
     "newQuestPlaceholder": "Quest name…",
     "newQuest": "New Quest",

@@ -33,7 +33,7 @@ Alpine.js state management for story mode.
 - [x] Quest state tracking (+ tests)
 - [x] GM state management (+ tests)
 - [x] Turn state management (+ tests)
-- [ ] SSE updates — pending LLM-role-wiring SSE stream; refresh() re-pull is the interim path
+- [x] SSE updates — subscribed via `src/frontend/alpine/story-state/stream.ts` (`connectStoryStream()` against `GET /api/v1/worlds/:worldId/story-stream`); `refresh()` re-pull retained as the offline/fallback path
 
 ## Clarification 2026-09-26
 
@@ -45,6 +45,6 @@ Scoped next step: file/confirm a `CLARIFY-` follow-up for the SSE subscription (
 
 Acceptance:
 
-- [ ] SSE subscription follow-up filed with feed contract + fallback behavior
-- [ ] `refresh()` re-pull retained as the offline/fallback path (not removed)
-- [ ] Chat-switch re-triggers `refresh()` (no stale story panel)
+- [x] SSE subscription follow-up filed with feed contract + fallback behavior (`TASK-clarify-story-state-sse-subscription-contract.md`, contract section T4)
+- [x] `refresh()` re-pull retained as the offline/fallback path (not removed — `src/frontend/alpine/story-state.ts`)
+- [x] Chat-switch re-triggers `refresh()` (no stale story panel — `chat-context-refresh` listener in `init()` + stream disconnect on switch)

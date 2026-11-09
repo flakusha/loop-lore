@@ -112,6 +112,24 @@ export function questProgressPct(quest: StoryQuest,): number {
   return Math.max(0, Math.min(100, Math.round(pct,),),);
 }
 
+/**
+ * Active quests (status `active`): the in-progress quest log.
+ * @param quests all loaded world quests
+ * @returns only the active rows
+ */
+export function activeQuests(quests: StoryQuest[],): StoryQuest[] {
+  return quests.filter((q,) => q.status === "active");
+}
+
+/**
+ * Completed quests (status `completed`): the quest history.
+ * @param quests all loaded world quests
+ * @returns only the completed rows
+ */
+export function completedQuests(quests: StoryQuest[],): StoryQuest[] {
+  return quests.filter((q,) => q.status === "completed");
+}
+
 /** Rewards JSON as stored on a quest row (`rewards` column). */
 interface QuestRewardShape {
   xp?: number;
