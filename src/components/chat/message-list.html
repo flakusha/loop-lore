@@ -110,6 +110,29 @@
       <span x-show="window.isChatPaused($store.chat?.currentChat)">▶</span>
     </button>
   </div>
+  <!--
+    NPC movement strip: recent location-change events recorded on message
+    metadata by the auto-gen store path (see store-npc-movement.ts). Loaded
+    with the message list; hidden until events exist.
+  -->
+  <div
+    x-show="activeChat && movementEvents.length > 0"
+    x-cloak
+    class="npc-movement-strip"
+    data-testid="npc-movement-strip"
+  >
+    <span class="npc-movement-label" x-text="t('chats.npcMovementTitle')"></span>
+    <template x-for="ev in movementEvents" :key="ev.timestamp + ev.actorId">
+      <span
+        class="npc-movement-chip"
+        :title="npcMovementActorName(ev.actorId) + ' · ' + ev.timestamp"
+        data-testid="npc-movement-chip"
+      >
+        <span aria-hidden="true" x-text="getMovementIcon(ev.pattern)"></span>
+        <span class="npc-movement-place" x-text="ev.toLocationId || t('chats.npcMovementUnknown')"></span>
+      </span>
+    </template>
+  </div>
 
   <template x-for="(msg, i) in groupedMessages" :key="msg.id">
     <div

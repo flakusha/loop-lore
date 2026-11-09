@@ -20,5 +20,7 @@ export interface ChatMovementState {
   movementEvents: MovementEvent[];
   loadingMovementEvents: boolean;
   loadMovementEvents(): Promise<void>;
+  /** Display name for a movement event's actor (participant name or id fallback). */
+  npcMovementActorName(actorId: string,): string;
   getMovementIcon(pattern: string,): string;
 }

@@ -17,11 +17,12 @@
  * (no migration mutation).
  */
 import type { Database, } from "bun:sqlite";
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
@@ -32,6 +33,13 @@ import {
 import { repetitionRate, } from "../quality";
 import type { GenDeps, } from "./deps";
 import { storeMessage, type StoreMessageOpts, } from "./store-message";
+
+// storeMessage's non-fatal post-store hooks (game-state extraction, NPC
+// movement indicators) log via the module logger, which throws before init —
+// create a quiet one up front.
+beforeAll(() => {
+  createLogger({ level: "error", },);
+},);
 
 /**
  * GenDeps stub: no encryption (getSmk → null), pass-through encryptAtRest.
@@ -234,5 +242,70 @@ describe("storeMessage", () => {
       .execute();
 
     expect(rows.length,).toBe(0,);
+  });
+
+  test("location_change narration persists a movement event on metadata", async () => {
+    await seedChat("chat-mv",);
+
+    const result = await storeMessage(
+      makeOpts(db, {
+        chatId: "chat-mv",
+        actorId: "actor-chat-mv",
+        content: "I walk to the tavern",
+      },),
+    );
+
+    const row = await db
+      .selectFrom("messages",)
+      .selectAll()
+      .where("id", "=", result.messageId,)
+      .executeTakeFirstOrThrow();
+
+    // The movement indicator merges its event into the stored metadata blob.
+    const metadata = JSON.parse(row.metadata ?? "{}",) as {
+      movement?: Array<{
+        actorId: string;
+        fromLocationId: string;
+        toLocationId: string;
+        pattern: string;
+        timestamp: string;
+      }>;
+    };
+
+    expect(metadata.movement,).toHaveLength(1,);
+    expect(metadata.movement![0]!.actorId,).toBe("actor-chat-mv",);
+    expect(metadata.movement![0]!.toLocationId,).toBe("the tavern",);
+    expect(metadata.movement![0]!.pattern,).toBe("regex",);
+  });
+
+  test("movement-indicator failure never breaks the generation path", async () => {
+    await seedChat("chat-mv-fail",);
+    // Abort the metadata UPDATE that storeMovementEvents performs when it
+    // merges the movement blob — simulating a storage-layer failure. The
+    // message row must survive with its original (movement-free) metadata.
+    sqlite.run(
+      `CREATE TRIGGER npc_movement_fail BEFORE UPDATE ON messages WHEN NEW.metadata LIKE '%"movement"%' BEGIN SELECT RAISE(ABORT, 'npc-movement fail'); END`,
+    );
+
+    try {
+      const result = await storeMessage(
+        makeOpts(db, {
+          chatId: "chat-mv-fail",
+          actorId: "actor-chat-mv-fail",
+          content: "I walk to the tavern",
+        },),
+      );
+
+      const row = await db
+        .selectFrom("messages",)
+        .selectAll()
+        .where("id", "=", result.messageId,)
+        .executeTakeFirstOrThrow();
+
+      const metadata = JSON.parse(row.metadata ?? "{}",) as { movement?: unknown };
+      expect(metadata.movement,).toBeUndefined();
+    } finally {
+      sqlite.run("DROP TRIGGER npc_movement_fail",);
+    }
   });
 });
