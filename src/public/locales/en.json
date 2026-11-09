@@ -2049,6 +2049,7 @@
     "inventoryDropFailed": "Failed to drop item.",
     "inventoryTransferFailed": "Failed to transfer item.",
     "tradeNpcLoadFailed": "Failed to load merchant items.",
+    "tradeBalanceFailed": "Failed to load balance.",
     "tradeFailed": "Trade failed.",
     "tradeConfirmed": "Trade confirmed.",
     "tradeOffersLoadFailed": "Failed to load trade offers.",

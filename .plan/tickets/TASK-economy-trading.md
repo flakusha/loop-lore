@@ -9,9 +9,11 @@
 
 
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: explicit carry — auction/market/banking/currency-exchange/player-shops surfaces unbuilt (only trade backend + NPC trade UI shipped). Large epic slice, not built in T10 lane.
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-economy-trading
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 ## Summary
 

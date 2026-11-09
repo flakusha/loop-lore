@@ -9,9 +9,11 @@
 
 
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: verified open — no `items/generate` or `generate-llm` endpoints in `src/routes/`; requires workflow-stack convergence per ticket. Carried, not built in T10 lane.
 **Priority:** P2 — Medium
 **Effort:** Medium
 **Epic:** epic-item-systems-unification
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 **Tags:** items, generation, procedural, llm, creative-studio, frontend
 
 ## Summary

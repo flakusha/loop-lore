@@ -7,7 +7,9 @@
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-analytics-observability
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 **Summary:** Add a knowledge-graph visualizer view + `GET /api/memory/knowledge-graph` route backed by the existing `asset_links` table.
+**Status Note:** 2026-11-09 T10: explicit carry — route + visualization unbuilt; Medium surface touching analytics routes + admin frontend, not built in T10 lane.
 **Context:** gap-audit 2026-09-19 of `epic-analytics-observability` (FEA-2026-058) found the memory visualizer feature has neither route nor visualization component even though `asset_links` exists and is indexed in `src/db/migrations/001_init.ts:385-449`.
 **Acceptance Criteria:** Route returns `{ nodes, edges }` from `asset_links`; route mounted with existing analytics routes; frontend renders an interactive knowledge graph; deterministic backend test for seeded fixture; no heavy new dep.
 

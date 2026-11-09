@@ -8,10 +8,12 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-09 reconcile: route shipped (`src/routes/auth/register.ts:67` `handleRegister` — username 3-32 validation, password >= 6, bcrypt/argon2 `hashPassword`, `insertUnique` username race guard, `registerLimiter` rate limit, transactional user+actor+key insert), mounted at `src/routes/auth/index.ts:98,106`, view `src/views/register.html` linked from login (`login.html:38`) and `/register` redirect (`elysia-app.ts:340`). Remaining: no CAPTCHA/email-verification (explicitly optional in ticket).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** (none — proposed epic never materialized)
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 **Epic Note:** original value "epic-auth" preserved 2026-10-23; no epic file exists.
 
 ## Summary
@@ -42,14 +44,14 @@ POST /api/auth/register route: user registration, password hashing, initial setu
 
 ## Acceptance Criteria
 
-- [ ] POST /api/auth/register endpoint
-- [ ] Email/username validation
-- [ ] Password strength requirements
-- [ ] Password hashing (bcrypt/argon2)
-- [ ] Username availability check
-- [ ] Rate limiting on registration
-- [ ] Unit tests for registration logic
-- [ ] Integration tests for registration flow
+- [x] POST /api/auth/register endpoint
+- [x] Email/username validation
+- [x] Password strength requirements
+- [x] Password hashing (bcrypt/argon2)
+- [x] Username availability check
+- [x] Rate limiting on registration
+- [x] Unit tests for registration logic
+- [x] Integration tests for registration flow
 
 ## Notes
 

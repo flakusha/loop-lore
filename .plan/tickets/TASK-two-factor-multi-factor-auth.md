@@ -9,9 +9,11 @@
 
 
 **Status:** Not Started
+**Status Note:** 2026-11-09 reconcile: verified open — zero totp/webauthn/backup-code matches in `src/`; `src/auth/` holds JWT only. Full MFA surface (TOTP+QR, backup codes, WebAuthn, enrollment UI) — explicitly carried, not built in T10 lane.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-two-factor-auth
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 ## Summary
 

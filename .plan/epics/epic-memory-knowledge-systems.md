@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** three-tier scopes, budget, extraction, injection, provision, shareability, decay, promotion, purge built
+**Status Note:** 2026-11-09 reconcile: core loop shipped and ticked — selection UI/pins/injection, decay, promotion pipeline, provision + trust wiring, emotion-impact fields, keyphrase recall, history chain binding. Explicit carry (not built in T10 lane): character emotion integration (mood/coping/relationship/prompt), timescape/timeline-aware memory, reflection/synthesis, importance scoring, emotional pattern tracking, compact pointer chains, grade-gated discovery, one-click memory→lorebook promote UI, visualizer. See Carried list below.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -31,21 +31,21 @@ Three-tier memory system — episodic, semantic, and procedural memory. Covers m
 | Feature | ID | Ticket | Status | Description |
 | ------- | -- | ------ | ------ | ------------|
 | Three-tier memory | FEA-2026-052 | — | ✅ Done | Episodic/semantic/procedural per spec |
-| Memory selection UI | FEA-2026-053 | — | ✅ Done | Mid-chat panel for pinning, selection |
+| Memory selection UI | FEA-2026-053 | — | ✅ Done | Mid-chat panel for pinning, selection (`TASK-memory-selection-ui.md` Done; `TASK-frontend-chat-memories-spec.md` Done 2026-11-09) |
 | Lorebook activation | FEA-2026-054 | — | ✅ Done | Sticky entries, cooldowns, activation conditions |
 | Cross-chat memory | FEA-2026-055 | — | ✅ Done | Persistent persona/knowledge across workspaces |
-| Emotion-impact fields | FEA-2026-056 | `TASK-memory-emotion-impact.md` | 🟡 Partial | Structured emotion on memories (implemented); `TASK-memory-emotion-impact.md` adds character integration |
+| Emotion-impact fields | FEA-2026-056 | `TASK-memory-emotion-impact.md` | ✅ Done | Structured emotion on memories; ticket ticked 2026-11-09 (`src/memory/types.ts:39`, migration 069) |
 | Character emotion integration | FEA-2026-057 | `TASK-memory-character-integration.md` | ⬜ Not Started | Memory → mood/coping/relationship integration |
 | Timescape-aware memory | FEA-2026-058 | `TASK-memory-timescape.md` | ⬜ Not Started | Game-time timestamps, timeline-specific memory, time-based decay |
 | Reflection/memory synthesis | FEA-2026-059 | `TASK-memory-distillation-dreams.md` | ⬜ Not Started | Periodic synthesis of observations into higher-level conclusions |
-| Keyphrase-triggered recall | FEA-2026-060 | `TASK-memory-retrieval-filtering-by-lore-access-profile.md` | ⬜ Not Started | Recall by keyphrase match; reliable retrieval for important facts |
+| Keyphrase-triggered recall | FEA-2026-060 | `TASK-memory-retrieval-filtering-by-lore-access-profile.md` | ✅ Done | Keyphrase journal recall shipped (delivered inventory 2026-11-07) |
 | Importance-based scoring | FEA-2026-061 | — | ⬜ Not Started | Retrieval scoring: recency×importance×relevance |
 | Emotional pattern tracking | FEA-2026-062 | `TASK-memory-happiness-patterns.md` | ⬜ Not Started | Track emotional patterns across conversations; feed into mood system |
-| History search / try-hard recall | FEA-2026-063 | `TASK-memory-history-search-bind-message-chain-reconstructable-con.md` | 🟡 Partial | Memories bind source message chains; `008_memory_source_chain` landed; pending finalize |
-| Memory decay logic | — | `TASK-memory-decay-logic.md` | ⬜ Not Started | Per game-day decay, permanent emotion survivorship |
-| Memory promotion pipeline | — | `TASK-memory-promotion-pipeline.md` | ⬜ Not Started | Extract → promote → inject pipeline |
-| Memory trust modifier | — | `TASK-memory-trust-modifier-wiring.md` | ⬜ Not Started | Trust modifier wired into memory retrieval |
-| Memory provision wiring | — | `TASK-memory-provision-wiring.md` | ⬜ Not Started | Provision service wired into extraction |
+| History search / try-hard recall | FEA-2026-063 | `TASK-memory-history-search-bind-message-chain-reconstructable-con.md` | ✅ Done | Source-message-chain binding shipped (`008_memory_source_chain`); `promoteMessagesToMemories` in `src/chat/transitions.ts:165` |
+| Memory decay logic | — | `TASK-memory-decay-logic.md` | ✅ Done | `applyDecay`/`touchMemory` in `src/memory/purge.ts:35`; sub-threshold purge row unverified — see ticket note |
+| Memory promotion pipeline | — | `TASK-memory-promotion-pipeline.md` | ✅ Done | `promoteMessagesToMemories` (`src/chat/transitions.ts:165`); ticket ticked 2026-11-09 |
+| Memory trust modifier | — | `TASK-memory-trust-modifier-wiring.md` | ✅ Done | `computeTrustModifier` in `memories-helpers.ts:75` feeds provision |
+| Memory provision wiring | — | `TASK-memory-provision-wiring.md` | ✅ Done | `memories.ts:26,76` calls `provisionMemories`; ticked 2026-11-09 |
 
 ## Emotion-Impact Fields (FEA-2026-056)
 
@@ -117,18 +117,18 @@ Memory timestamps aligned with world/game time:
 
 ## Acceptance Criteria
 
-- [ ] Three-tier memory system implemented
-- [ ] Memory selection UI functional
-- [ ] Lorebook activation with cooldowns works
-- [ ] Cross-chat memory persists across workspaces
-- [ ] Emotion-impact fields on episodic memories
-- [ ] Memory → mood integration (momentary emotions affect happiness)
-- [ ] Memory → coping integration (triggers_coping activates coping profile)
-- [ ] Memory → relationship integration (emotion target updates relationship strength)
-- [ ] Game-time timestamps on memories (not real-time)
-- [ ] Timeline-specific memory recall
-- [ ] Time-based decay (per game-day, not real-day)
-- [ ] Permanent emotions survive time compression
+- [x] Three-tier memory system implemented
+- [x] Memory selection UI functional
+- [x] Lorebook activation with cooldowns works
+- [x] Cross-chat memory persists across workspaces
+- [x] Emotion-impact fields on episodic memories
+- [ ] Memory → mood integration (momentary emotions affect happiness) — CARRY (`TASK-memory-character-integration.md` open)
+- [ ] Memory → coping integration (triggers_coping activates coping profile) — CARRY
+- [ ] Memory → relationship integration (emotion target updates relationship strength) — CARRY
+- [ ] Game-time timestamps on memories (not real-time) — CARRY (`TASK-memory-timescape.md` missing; no timeline_id linkage found)
+- [ ] Timeline-specific memory recall — CARRY
+- [ ] Time-based decay (per game-day, not real-day) — PARTIAL (real-day decay shipped; game-day anchoring CARRY)
+- [ ] Permanent emotions survive time compression — CARRY
 
 ## Dependencies
 

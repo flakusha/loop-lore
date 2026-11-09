@@ -6,6 +6,7 @@
 > **Implementation status:** Largely implemented — memory extraction with audit (`src/memory/extraction.ts`, `extraction-burst.ts`, `extraction-store.ts`), memory panel UI with character/assistant/world/audit tabs incl. create, pin, and delete (`src/components/chat/memory-panel.html`, `src/frontend/alpine/memory-panel*`), `actor_memories` reads for prompt assembly, and decay/purge logic (`src/memory/purge.ts`). Flows below that go beyond these pointers are design targets.
 >
 > Related epic: `.plan/epics/epic-memory-knowledge-systems.md` — 🟡 Partial (three-tier scopes, budget, extraction, injection, provision, shareability, decay, promotion, purge).
+> Panel tracker: `.plan/tickets/TASK-frontend-chat-memories-spec.md`.
 
 ---
 
