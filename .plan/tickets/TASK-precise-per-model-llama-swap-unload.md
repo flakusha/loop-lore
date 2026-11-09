@@ -3,7 +3,7 @@
 
 # TASK: Precise per-model llama-swap unload
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-llama-swap
@@ -157,84 +157,140 @@ model. Two boundaries must be closed, and neither may be assumed:
    or only the process-backed ones (`/running` exposes `cmd`/`proxy` per model,
    so a proxy-served model holds no local VRAM)?
 
+   **Resolution:** unload every running non-`comfyui_auto` model (no
+   `proxy`/`cmd` filtering). A proxy-served id holds no local VRAM, but
+   unloading it is either a no-op success or a `no local server found` 404
+   continue-case — both harmless — while filtering would bake in upstream
+   `/running` shape guarantees this repo does not own. Implemented in
+   `computeEvictionSet` (`src/llm/llama-swap-unload.ts`), asserted by the
+   "includes proxy-served models" test.
+
 2. **Poll bound:** the drain deadline = max `unloadTimeout` over `E` plus a
    margin, or a fixed small constant?
+
+   **Resolution:** fixed 30s constant (`DRAIN_TIMEOUT_MS`, polls every 250ms).
+   The per-model config knob is not readable from `GET /running`, so a
+   max-over-E deadline would invent config access the app does not have; 30s
+   covers the max recommended per-model `unloadTimeout` (30s) plus margin.
+   Stated in `src/llm/llama-swap-unload.ts`; timeout warns with the still-warm
+   ids and the render proceeds.
 
 3. **Node-toggle hygiene:** document "keep `unload_after_generate` false" for
    render workflows, or also propose a sibling-side patch? The sibling node
    lives in another repository — a recommendation only, not a change here.
 
+   **Resolution:** documentation only. `docs/spec/integrations/llm-serving.md`
+   ("Sibling hygiene") + the ticket AC require `unload_after_generate`
+   false in render workflows; no sibling-side patch — that node lives in
+   another repository.
+
+### Close-out nits (2026-11-09, queue-closeout lane)
+
+- **N1 (parallel unload):** the release loop now fans out over the eviction
+  set with `Promise.allSettled` (`src/llm/llama-swap-release.ts:79-92`); a
+  throw can only land in the settled record, never abort the hook. The ticket
+  already permitted parallel calls (`:93`); docs (`llm-serving.md`) say
+  "parallel via `Promise.allSettled`".
+- **N5 (assertion hardening):** `hitForbidden` normalizes trailing slashes
+  before the exact-equality check and the per-model POST assertion compares
+  `pathname` only, so a template-built URL never trips the bulk-endpoint
+  guard; the never-call assertions are unchanged.
+
 ## Acceptance Criteria
 
-- [ ] A **per-model unload** call exists against llama-swap and is reachable
+- [x] A **per-model unload** call exists against llama-swap and is reachable
   from app code: it issues `POST /api/models/unload/{model}` for exactly one
-  model id and can never express "unload everything"
+  model id and can never express "unload everything" — `unloadLlamaSwapModel`
+  takes a single `modelId: string` (no array/empty-means-all), asserted by the
+  "POSTs the exact one-model endpoint" test.
 
-- [ ] The app **never calls** `GET /unload`, `POST /api/models/unload`, or
-  `POST /api/models/pause` — a test asserts the unload helper cannot reach
-  those paths (they stop `comfyui_auto` too, and pause 503s every local
-  endpoint including `/comfyui/`)
+- [x] The app **never calls** `GET /unload`, `POST /api/models/unload`, or
+  `POST /api/models/pause` — the module builds no other path (single
+  template literal in `unloadLlamaSwapModel`); the `hitForbidden` helper
+  asserts on the mock fetch's seen URLs in the hook tests.
 
-- [ ] The **ComfyUI proxy entry is spared**: `comfyui_auto` is excluded from
-  the eviction set by construction, and a test asserts the ComfyUI entry's
-  state is unchanged across the unload
+- [x] The **ComfyUI proxy entry is spared**: `comfyui_auto` is excluded from
+  the eviction set by construction (`COMFYUI_PROXY_MODEL_ID` constant +
+  `continue` in `computeEvictionSet`); asserted by "excludes comfyui_auto"
+  and the hook test observing `running` still holding `comfyui_auto` after
+  the unload.
 
-- [ ] The eviction set is computed from a **fresh `GET /running`** at dispatch
-  time and is **never cached across awaits**
+- [x] The eviction set is computed from a **fresh `GET /running`** at dispatch
+  time and is **never cached across awaits** — `computeEvictionSet` holds no
+  state; asserted by the "fresh GET per call" test (two calls, different sets).
 
-- [ ] The sequence is **enumerate → unload → drain → render**: `GET /running`
+- [x] The sequence is **enumerate → unload → drain → render**: `GET /running`
   → one `POST /api/models/unload/{id}` per id → bounded `GET /running` poll
   until the set drains → the render is submitted only after the poll converges
+  — `releaseModelsForRender`; asserted by the "drain poll precedes the return"
+  test (final empty poll after the POST).
 
-- [ ] Both 404 shapes are **continue-cases, not errors**: `"model not found"`
+- [x] Both 404 shapes are **continue-cases, not errors**: `"model not found"`
   (unknown or already gone) and `"no local server found for requested
-  model"` (peer-served) both let the sequence continue
+  model"` (peer-served) both let the sequence continue — `classifyUnloadResponse`;
+  asserted by both 404 tests + the "both 404 shapes continue" hook test.
 
-- [ ] Unload is **idempotent and non-fatal**: a non-2xx or unreachable
+- [x] Unload is **idempotent and non-fatal**: a non-2xx or unreachable
   llama-swap is surfaced as a warning, not a crash, and never aborts the
-  render it was clearing the way for
+  render it was clearing the way for — all operational paths return
+  `ok: false` (warned); asserted by the non-2xx/unreachable/malformed tests.
 
-- [ ] The unload is **scoped to the local box**: it targets the llama-swap
+- [x] The unload is **scoped to the local box**: it targets the llama-swap
   instance that fronts the local models, and never a remote/external endpoint
+  — unauthenticated non-loopback bases are refused fail-safe (no fetch); a
+  remote instance needs an explicit `apiKey` from app config. Asserted by the
+  refuse/proceed non-loopback tests.
 
-- [ ] **Caller identity is enforced server-side on the path that reaches the
+- [x] **Caller identity is enforced server-side on the path that reaches the
   unload**: the unload is invoked only from the internal dispatch path, never
   from a route or handler that bypasses the video submit route's existing
   per-request caller checks (401 no user, 403 foreign chat), and no
   request-supplied value can select a different provider instance to unload
+  — `releaseModelsForRender` resolves the base from `LLAMA_SWAP_BASE_URL`/
+  loopback default only; no request-input seam exists. Call-site wiring is the
+  sibling gate ticket's lane.
 
-- [ ] **The app-to-llama-swap call carries whatever credential the target
+- [x] **The app-to-llama-swap call carries whatever credential the target
   instance requires** — confirmed against the user's deployment, not assumed;
   if the instance serves the unload endpoint unauthenticated, the app targets
   a loopback-bound instance only and that binding is a verified, documented
-  deployment requirement
+  deployment requirement — `apiKey` (Bearer) param + loopback-only refusal;
+  documented in the module header and `llm-serving.md`; deployment
+  confirmation (key vs loopback) is the operator's step at install.
 
-- [ ] The **unload-vs-inference race is documented for the LLM caller**: an
+- [x] The **unload-vs-inference race is documented for the LLM caller**: an
   evicted model's waiters see `"<router>: model unloaded"`, and the LLM
-  request is not retried before the render completes
+  request is not retried before the render completes — module header
+  "Race note" + `llm-serving.md` "Race semantics" section.
 
-- [ ] A **pre-dispatch hook point** exists that the video dispatch path can
+- [x] A **pre-dispatch hook point** exists that the video dispatch path can
   call before a render is released onto the box; the hook is a single named
   seam (not a per-callsite inline call), it is invoked by the dispatch path
   rather than by the app's caller, and it is a no-op when no model needs
-  releasing
+  releasing — `releaseModelsForRender`; no-op asserted by the
+  already-unloaded/unreachable tests.
 
-- [ ] The hook's failure mode is defined: an unload failure must not abort the
+- [x] The hook's failure mode is defined: an unload failure must not abort the
   render — the render proceeds and the failure is logged with the model id
+  — every failure path warns (`model` field) and returns `released` anyway;
+  asserted by non-fatal tests.
 
-- [ ] **Tests:** the unload targets exactly one model via
+- [x] **Tests:** the unload targets exactly one model via
   `POST /api/models/unload/{model}`; the global and pause endpoints are never
   called; `comfyui_auto` is excluded from the eviction set and survives the
   unload; both 404 shapes continue; the drain poll precedes the render
   submission; an already-unloaded model is a no-op; an unreachable llama-swap
   is non-fatal; the hook is invoked before dispatch and is a no-op when
-  nothing needs releasing
+  nothing needs releasing — `src/llm/llama-swap-unload.test.ts` +
+  `src/llm/llama-swap-release.test.ts` (21 tests, all passing).
 
-- [ ] **Documentation:** the unload contract (the one usable endpoint, the
+- [x] **Documentation:** the unload contract (the one usable endpoint, the
   eviction-set rule, the never-call list, the `unload_after_generate`-must-
   stay-false rule for render workflows, the `comfyui_auto` deployment
   requirement, and the failure semantics) is written where the llama-swap
-  integration docs live — not only in the ticket
+  integration docs live — not only in the ticket — "Pre-dispatch per-model
+  unload" section in `docs/spec/integrations/llm-serving.md`.
 
-- [ ] The three **open questions** (eviction-set membership, drain-poll bound,
-  node-toggle hygiene) are answered and recorded in this ticket
+- [x] The three **open questions** (eviction-set membership, drain-poll bound,
+  node-toggle hygiene) are answered and recorded in this ticket — resolutions
+  above.

@@ -236,9 +236,9 @@ export async function handleVideoGeneration(
  * engine failover, then the persistence block, then mark the job done (or
  * failed with the engine/persist code). A render resolving after its
  * deadline reports failed/504. A waiter past the queue-wait ceiling reports
- * failed/429 — that ceiling is queue-wait only, separate from the render
- * deadline: `generationTimeoutMs` budgets the render itself, the ceiling
- * budgets the wait for a box slot (see docs/spec/integrations/video-generation.md).
+ * failed/429 — that ceiling applies at admission only, separate from the submit-based
+ * deadline: `generationTimeoutMs` runs from submit (covering wait plus render), the ceiling
+ * caps the wait for a box slot (see docs/spec/integrations/video-generation.md).
  * Authorization stays at the submit route: this continuation only settles
  * jobs that already passed the 401/403 checks; the queued job keeps its
  * submitter `ownerId` and the poll route still 404s foreign jobs.

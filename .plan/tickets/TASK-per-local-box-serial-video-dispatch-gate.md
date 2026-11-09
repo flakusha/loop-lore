@@ -187,7 +187,7 @@ The gate is **not** an entry point, and it must not become one:
 
 - [x] **Caller identity enforced before the gate** — evidence: route checks untouched (401/403 submit, 401/404 poll); gate is continuation-internal only; `ownerId` kept on queued jobs; hook takes derived box key only
 
-- [x] **External providers bypass the gate** — evidence: `needsVideoGate` false path awaits `run()` directly (no chaining); external-bypass test
+- [x] **External providers bypass the gate** — evidence: empty `videoGateKeys` (no `localBox` anywhere) awaits `run()` directly (no chaining); external-bypass test
 - [x] The **local-vs-remote decision is resolved and recorded** — evidence: Decision section above (explicit `localBox`, additive/optional, existing configs unaffected; examples updated)
 
 - [x] A queued submission stays **`pending`**, dispatched on slot release, poll shape unchanged — evidence: route test serializes two same-box submits to `done` via `submitAndPoll`
@@ -209,7 +209,13 @@ The gate is **not** an entry point, and it must not become one:
 
 - [x] The behaviour is **documented** — evidence: `docs/spec/integrations/video-generation.md` (91L) + `localBox` in all four example configs
 
-### Implementation notes (gate-impl lane, 2026-11-09)
+### Implementation notes (gate-impl lane, 2026-11-09; close-out nits N2–N4 fixed same day)
+
+- Nit N3 (bound): the `1000` figure lived only in the gate-impl lane's stale
+  `.tmp/intercom/PROGRESS.md` entry — code, docs, ticket AC/tests, and the
+  store docstring all say `VIDEO_JOB_STORE_MAX = 500`; nothing to change.
+- Nit N4 (phantom predicate): the `needsVideoGate` wording in the external-bypass
+  AC is fixed to name the real mechanism (empty `videoGateKeys` → direct `run()`).
 
 - Gate: `src/generation/video-dispatch-gate.ts` (192L) — per-box FIFO tails
   over a promise chain (boring keyed semaphore; no new dep; ResourceManager
@@ -242,7 +248,8 @@ The gate is **not** an entry point, and it must not become one:
   report unknown. Render failure already surfaces per-candidate via engine
   failover (timeout → 504, failure → 502).
 - Open points answered: (1) baseUrl heuristic — declined, reasons above;
-  (2) queue-wait vs generationTimeout — separate budgets, documented;
+  (2) queue-wait ceiling applies at admission, submit-based deadline runs from
+  submit — reworded 2026-11-09 (close-out lane);
   (3) `comfyui_auto` exclusion + 404-continue + drain-poll semantics belong
   to the sibling unload ticket; this seam passes only the box key and
   imposes nothing on the sibling's sequence.
