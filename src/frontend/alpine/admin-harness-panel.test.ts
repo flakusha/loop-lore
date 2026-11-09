@@ -43,4 +43,10 @@ describe("admin harness panel — the discovered-models section", () => {
     expect(first,).toBeGreaterThan(-1,);
     expect(html.indexOf(ERROR_WRAPPER, first + 1,),).toBeGreaterThan(sectionIndex,);
   });
+
+  test("the panel's divs stay balanced", () => {
+    const openings = (html.match(/<div\b/g,) ?? []).length;
+    const closings = (html.match(/<\/div>/g,) ?? []).length;
+    expect(openings,).toBe(closings,);
+  });
 });
