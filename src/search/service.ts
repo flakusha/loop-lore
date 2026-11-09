@@ -10,7 +10,10 @@
  * FTS5 keyword (`src/routes/message-search/helpers.ts:buildFtsQuery`),
  * vector (`src/memory/embeddings.ts:rankBySimilarity`), fuzzy gallery
  * (`fuzzyScore` in `./rank`), token (`deriveSearchTokens` in
- * `./encrypted-tokens` + the pending `message_search_tokens` table).
+ * `./encrypted-tokens` over the `message_search_tokens` table; rows are
+ * written by `indexMessageSearchTokens` in `./token-store` when
+ * `ENABLE_TOKEN_INDEXING=1` and backfilled by
+ * `scripts/backfill-message-tokens.ts`).
  */
 import { resolveTimeCap, type SearchTimeCapConfig, } from "./config";
 import { reciprocalRankFusion, } from "./rank";

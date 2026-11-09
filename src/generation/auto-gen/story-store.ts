@@ -25,6 +25,7 @@ import {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { Logger, } from "../../logger/types";
+import { indexMessageSearchTokens, } from "../../search";
 import { uid, } from "../../utils";
 import { buildQualityMetadata, repetitionRate, } from "../quality";
 import { runContentHooks, } from "./content-hooks";
@@ -189,6 +190,15 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
       outfit_id: null,
     },)
     .execute();
+
+  // The row carries no plaintext mirror: index blind tokens for the token
+  // tier (no-op unless ENABLE_TOKEN_INDEXING=1).
+  await indexMessageSearchTokens(database, {
+    messageId,
+    chatId,
+    plaintext: response,
+    keyId: storedKeyId,
+  },);
 
   return { messageId, };
 }
