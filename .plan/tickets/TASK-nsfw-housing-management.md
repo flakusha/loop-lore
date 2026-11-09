@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done (NSFW slice, 2026-11-09)
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task
@@ -30,11 +30,17 @@ Housing management interface for base building.
 
 ## Acceptance Criteria
 
-- [ ] Room layout visualization
-- [ ] Furniture placement interface
-- [ ] Room assignment (NPCs, functions)
-- [ ] Housing conditions and effects
-- [ ] Mobile responsive
+> NSFW-owned slice only (2026-11-09). Room layout / furniture / room
+> assignment / conditions belong to `epic-housing` (`TASK-housing-frontend`,
+> blocked on `/api/housing/*` which does not exist).
+
+- [x] Private-space suitability view over the existing gated `GET /api/v1/nsfw/location/:locationId` (`src/frontend/nsfw/private-space.ts:fetchLocationConfig/toPrivateSpaceView/renderPrivateSpace`)
+- [x] Consent-denied stays denied (403 → `denied`, panel hidden; `private-space.test.ts` fetch gate block)
+- [x] Mobile responsive (verdict stacks under the 480px breakpoint, `src/public/css/app.css`)
+- [ ] Room layout visualization (epic-housing)
+- [ ] Furniture placement interface (epic-housing)
+- [ ] Room assignment — NPCs, functions (epic-housing)
+- [ ] Housing conditions and effects (epic-housing)
 
 ## Files to Create
 

@@ -1,7 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { clearFocusLog, type FakeEl, installBattleDom, } from "../tests/battle-fake-dom";
 import { renderIntimacyPanel, } from "./intimacy-interface";
-import { INTIMACY_ACTION_CATALOG, type IntimacyFlowState, type IntimacyPartnerOption, } from "./intimacy-types";
+import {
+  INTIMACY_ACTION_CATALOG,
+  type IntimacyFlowState,
+  type IntimacyPartnerOption,
+  type IntimacyPositionOption,
+} from "./intimacy-types";
 
 /** Fixed partner fixture (fresh per call). */
 function partner(): IntimacyPartnerOption {
@@ -30,8 +35,15 @@ function byTestId(root: FakeEl, testId: string,): FakeEl[] {
 }
 
 /** Render a panel section for the given state (fresh per test — no shared DOM). */
-function render(state: IntimacyFlowState, partners: IntimacyPartnerOption[] = [partner(),], pairScore = 45,): FakeEl {
-  return renderIntimacyPanel(state, { partners, pairScore, handlers: {}, },) as unknown as FakeEl;
+function render(
+  state: Omit<IntimacyFlowState, "position"> & { position?: IntimacyPositionOption | null },
+  partners: IntimacyPartnerOption[] = [partner(),],
+  pairScore = 45,
+): FakeEl {
+  return renderIntimacyPanel(
+    { position: null, ...state, } as IntimacyFlowState,
+    { partners, pairScore, handlers: {}, },
+  ) as unknown as FakeEl;
 }
 
 beforeEach(() => {
@@ -55,6 +67,14 @@ describe("renderIntimacyPanel — partnerSelect", () => {
     expect(byTestId(section, "nsfw-intimacy-empty",),).toHaveLength(1,);
     expect(byTag(section, "button",).filter((b,) => (b.dataset["testid"] ?? "").startsWith("nsfw-intimacy-partner-",)),)
       .toHaveLength(0,);
+  });
+});
+
+describe("renderIntimacyPanel — positionSelect", () => {
+  it("renders one button per catalog position", () => {
+    const section = render({ phase: "positionSelect", partner: partner(), action: null, outcome: null, error: null, },);
+    expect(byTestId(section, "nsfw-intimacy-position-facing",),).toHaveLength(1,);
+    expect(byTestId(section, "nsfw-intimacy-position-cell-embrace-hold",),).toHaveLength(1,);
   });
 });
 

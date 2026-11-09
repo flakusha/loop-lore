@@ -1127,7 +1127,25 @@
         "kiss": "温柔的亲吻。",
         "embrace": "紧紧相拥。",
         "play": "共享亲密时光——需要同意。"
+      },
+      "positionTitle": "Choose a position",
+      "stagingFmt": "Staged: {position}",
+      "position": {
+        "side-by-side": "Side by side",
+        "facing": "Facing each other",
+        "embrace-hold": "Embrace hold"
+      },
+      "positionDesc": {
+        "side-by-side": "Sit together, shoulders touching.",
+        "facing": "Face each other, eye to eye.",
+        "embrace-hold": "Hold each other close."
       }
+    },
+    "privateSpace": {
+      "title": "Private space",
+      "suitable": "This venue is private enough ({privacy}).",
+      "unsuitable": "Not private enough for intimacy ({privacy}).",
+      "kindFmt": "Venue: {kind}"
     }
   },
   "help": {

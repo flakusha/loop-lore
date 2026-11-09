@@ -20,6 +20,7 @@ import {
   renderError,
   renderIdle,
   renderPartnerSelect,
+  renderPositionSelect,
 } from "./intimacy-phases";
 import type { IntimacyFlowState, } from "./intimacy-types";
 
@@ -45,6 +46,10 @@ export function renderIntimacyPanel(
 
     case "partnerSelect": {
       return renderPartnerSelect(state, options.partners, options.handlers,);
+    }
+
+    case "positionSelect": {
+      return renderPositionSelect(state, options.handlers,);
     }
 
     case "actionSelect": {

@@ -45,6 +45,7 @@ interface Ctx {
   _intimacyFlow: {
     phase: string;
     partner: IntimacyPartnerOption | null;
+    position: { id: string } | null;
     action: { id: string } | null;
     outcome: unknown;
     error: { kind: string } | null;
@@ -53,6 +54,7 @@ interface Ctx {
   $refs?: { intimacyPanel?: { children: unknown[]; replaceChildren(): void; append(el: unknown,): void } };
   openIntimacy(): void;
   selectPartner(actorId: string,): void;
+  selectPosition(positionId: string,): void;
   selectAction(actionId: string,): void;
   confirmConsent(): Promise<void>;
   cancelConsent(): void;
@@ -72,7 +74,7 @@ function buildCtx(overrides: Partial<Ctx> = {},): Ctx {
     ],
     currentCharacter: { id: "actor-a", },
     _nsfwIntimacy: [{ targetActorId: "actor-b", score: 45, },],
-    _intimacyFlow: { phase: "idle", partner: null, action: null, outcome: null, error: null, },
+    _intimacyFlow: { phase: "idle", partner: null, position: null, action: null, outcome: null, error: null, },
     _intimacyPartners: [],
     $refs: { intimacyPanel: slot, },
     ...overrides,
@@ -82,6 +84,7 @@ function buildCtx(overrides: Partial<Ctx> = {},): Ctx {
     const key of [
       "openIntimacy",
       "selectPartner",
+      "selectPosition",
       "selectAction",
       "confirmConsent",
       "cancelConsent",
@@ -127,8 +130,41 @@ describeOrSkip("openIntimacy", () => {
   });
 },);
 
+describeOrSkip("selectPosition", () => {
+  test("advances positionSelect to actionSelect and echoes staging in effects", () => {
+    const ctx = buildCtx();
+    ctx.openIntimacy();
+    ctx.selectPartner("actor-b",);
+    ctx.selectPosition("embrace-hold",);
+    expect(ctx._intimacyFlow.phase,).toBe("actionSelect",);
+    expect(ctx._intimacyFlow.position?.id,).toBe("embrace-hold",);
+    const staging = (ctx.$refs!.intimacyPanel!.children[0] as { children: unknown[] }).children;
+    expect(staging.length,).toBeGreaterThan(0,);
+  });
+
+  test("ignores unknown position ids", () => {
+    const ctx = buildCtx();
+    ctx.openIntimacy();
+    ctx.selectPartner("actor-b",);
+    ctx.selectPosition("nope",);
+    expect(ctx._intimacyFlow.phase,).toBe("positionSelect",);
+  });
+
+  test("back steps actions → positions → partners", () => {
+    const ctx = buildCtx();
+    ctx.openIntimacy();
+    ctx.selectPartner("actor-b",);
+    ctx.selectPosition("facing",);
+    (ctx._intimacyFlow as { phase: string }).phase = "actionSelect";
+    (ctx.backIntimacy as () => void)();
+    expect(ctx._intimacyFlow.phase,).toBe("positionSelect",);
+    (ctx.backIntimacy as () => void)();
+    expect(ctx._intimacyFlow.phase,).toBe("partnerSelect",);
+  });
+},);
+
 describeOrSkip("dispatchIntimacy", () => {
-  test("consent flow: select → confirm posts the consent grant then lands in effects", async () => {
+  test("consent flow: partner → position → confirm posts the consent grant then lands in effects", async () => {
     actionHandler = async (url,) => {
       if (typeof url === "string" && url === "/api/v1/nsfw/consent") {
         return Response.json({ granted: true, },);
@@ -140,6 +176,9 @@ describeOrSkip("dispatchIntimacy", () => {
     const ctx = buildCtx();
     ctx.openIntimacy();
     ctx.selectPartner("actor-b",);
+    expect(ctx._intimacyFlow.phase,).toBe("positionSelect",);
+
+    ctx.selectPosition("facing",);
     expect(ctx._intimacyFlow.phase,).toBe("actionSelect",);
 
     ctx.selectAction("play",);
@@ -156,6 +195,7 @@ describeOrSkip("dispatchIntimacy", () => {
     const body = JSON.parse(String(actionCall.opts.body,),) as Record<string, unknown>;
     expect(body["chatId"],).toBe("chat-1",);
     expect(body["targetActorId"],).toBe("actor-b",);
+    expect(body["context"],).toBe("near/facing:facing",);
     expect(ctx._intimacyFlow.phase,).toBe("effects",);
   });
 
@@ -174,6 +214,7 @@ describeOrSkip("dispatchIntimacy", () => {
     const ctx = buildCtx();
     ctx.openIntimacy();
     ctx.selectPartner("actor-b",);
+    ctx.selectPosition("facing",);
     ctx.selectAction("play",);
     expect(ctx._intimacyFlow.phase,).toBe("confirmConsent",);
     await ctx.confirmConsent();
@@ -195,6 +236,7 @@ describeOrSkip("dispatchIntimacy", () => {
     ctx.openIntimacy();
     ctx.selectPartner("actor-b",);
     const talk = INTIMACY_ACTION_CATALOG.find((a,) => a.id === "talk")!;
+    ctx.selectPosition("side-by-side",);
     ctx.selectAction(talk.id,);
     expect(ctx._intimacyFlow.phase,).toBe("applying",);
 
@@ -217,6 +259,7 @@ describeOrSkip("dispatchIntimacy", () => {
     const ctx = buildCtx();
     ctx.openIntimacy();
     ctx.selectPartner("actor-b",);
+    ctx.selectPosition("facing",);
     ctx.selectAction("play",);
     const first = ctx.confirmConsent();
     expect(ctx._intimacyFlow.phase,).toBe("applying",);
@@ -243,6 +286,7 @@ describeOrSkip("dispatchIntimacy", () => {
     const ctx = buildCtx();
     ctx.openIntimacy();
     ctx.selectPartner("actor-b",);
+    ctx.selectPosition("side-by-side",);
     ctx.selectAction("play",);
     const pending = ctx.confirmConsent();
     ctx.cancelConsent();
@@ -267,6 +311,7 @@ describeOrSkip("dispatchIntimacy", () => {
     const ctx = buildCtx();
     ctx.openIntimacy();
     ctx.selectPartner("actor-b",);
+    ctx.selectPosition("side-by-side",);
     const talk = INTIMACY_ACTION_CATALOG.find((a,) => a.id === "talk")!;
     ctx.selectAction(talk.id,);
 

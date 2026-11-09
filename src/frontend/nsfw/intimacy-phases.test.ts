@@ -11,6 +11,7 @@ import {
   renderError,
   renderIdle,
   renderPartnerSelect,
+  renderPositionSelect,
 } from "./intimacy-phases";
 import {
   INTIMACY_ACTION_CATALOG,
@@ -25,7 +26,7 @@ function partner(): IntimacyPartnerOption {
 
 /** Blank flow state parked in the given phase. */
 function blankState(phase: IntimacyFlowState["phase"],): IntimacyFlowState {
-  return { phase, partner: null, action: null, outcome: null, error: null, };
+  return { phase, partner: null, position: null, action: null, outcome: null, error: null, };
 }
 
 /** All descendant elements with the given tag name (fake DOM has no querySelectorAll). */
@@ -94,6 +95,17 @@ describe("renderPartnerSelect", () => {
     expect(
       byTag(empty, "button",).filter((b,) => (b.dataset["testid"] ?? "").startsWith("nsfw-intimacy-partner-",)),
     ).toHaveLength(0,);
+  });
+});
+
+describe("renderPositionSelect", () => {
+  it("renders one button and description per catalog position", () => {
+    installBattleDom();
+    const section = renderPositionSelect(blankState("positionSelect",), {},) as unknown as FakeEl;
+    for (const id of ["side-by-side", "facing", "embrace-hold",] as const) {
+      expect(byTestId(section, `nsfw-intimacy-position-${id}`,).length,).toBe(1,);
+      expect(byTestId(section, `nsfw-intimacy-position-cell-${id}`,).length,).toBe(1,);
+    }
   });
 });
 

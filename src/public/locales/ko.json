@@ -1127,7 +1127,25 @@
         "kiss": "부드러운 키스.",
         "embrace": "서로를 꼭 안습니다.",
         "play": "친밀한 순간을 함께합니다 — 동의 필요."
+      },
+      "positionTitle": "Choose a position",
+      "stagingFmt": "Staged: {position}",
+      "position": {
+        "side-by-side": "Side by side",
+        "facing": "Facing each other",
+        "embrace-hold": "Embrace hold"
+      },
+      "positionDesc": {
+        "side-by-side": "Sit together, shoulders touching.",
+        "facing": "Face each other, eye to eye.",
+        "embrace-hold": "Hold each other close."
       }
+    },
+    "privateSpace": {
+      "title": "Private space",
+      "suitable": "This venue is private enough ({privacy}).",
+      "unsuitable": "Not private enough for intimacy ({privacy}).",
+      "kindFmt": "Venue: {kind}"
     }
   },
   "help": {
