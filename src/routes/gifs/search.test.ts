@@ -6,6 +6,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import type { GifSearchOpts, } from "./search";
 import { gifSearchRoutes, normalizeGifResults, resolveTenorKey, } from "./search";
 
 type FetchStub = (url: string,) => Promise<Response>;
@@ -153,6 +154,16 @@ describe("resolveTenorKey", () => {
   test("falls back to the environment", () => {
     process.env.TENOR_API_KEY = "env-key";
     expect(resolveTenorKey(base,),).toBe("env-key",);
+  });
+
+  test("prefers the integrations config over the environment", () => {
+    process.env.TENOR_API_KEY = "env-key";
+    const opts = {
+      ...base,
+      config: { integrations: { gifs: { apiKey: "cfg-key", }, }, },
+    } as unknown as GifSearchOpts;
+
+    expect(resolveTenorKey(opts,),).toBe("cfg-key",);
   });
 
   test("returns null when nothing is configured", () => {

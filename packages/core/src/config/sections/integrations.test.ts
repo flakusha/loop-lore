@@ -23,6 +23,7 @@ const SENSITIVE_PATHS = [
   "xmpp.password",
   "telegram.botToken",
   "discord.botToken",
+  "gifs.apiKey",
   "irc.password",
 ] as const;
 
@@ -53,7 +54,7 @@ describe("INTEGRATIONS_DEFAULTS", () => {
 });
 
 describe("integrationsMeta.sensitive", () => {
-  test("marks exactly the seven secret fields", () => {
+  test("marks exactly the eight secret fields", () => {
     expect([...integrationsMeta.sensitive,].sort(),).toEqual(
       [...SENSITIVE_PATHS,].sort(),
     );

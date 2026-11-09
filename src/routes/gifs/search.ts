@@ -4,11 +4,10 @@
 /**
  * GIF search proxy — GET /api/gifs/search?q=&limit=.
  *
- * The provider key stays server-side (explicit opt, else TENOR_API_KEY;
- * wire it into config when a gif-provider section lands — there is no
- * such section today, so an unconfigured proxy answers 501 like the
- * image-generation route does). The browser only sees normalized
- * results. Upstream 429s pass through as 429 so the picker can show a
+ * The provider key stays server-side (explicit opt, else
+ * integrations.gifs.apiKey config, else TENOR_API_KEY env). An unconfigured
+ * proxy answers 501 like the image-generation route does. The browser only
+ * sees normalized results. Upstream 429s pass through as 429 so the picker can show a
  * rate-limit toast instead of a generic failure.
  *
  * Owner wiring (not this file):
@@ -56,14 +55,20 @@ interface TenorSearchBody {
 }
 
 /**
- * Resolve the Tenor key: explicit opt first, then the environment.
- * @param opts - Route opts carrying the optional explicit key.
+ * Resolve the Tenor key: explicit opt first, then the integrations config
+ * (integrations.gifs.apiKey), then the environment.
+ * @param opts - Route opts carrying the optional explicit key and app config.
  * @returns The key, or null when GIF search is unconfigured.
  */
 export function resolveTenorKey(opts: GifSearchOpts,): string | null {
   const explicit = opts.tenorApiKey?.trim();
   if (explicit) {
     return explicit;
+  }
+
+  const configKey = opts.config.integrations?.gifs?.apiKey?.trim();
+  if (configKey) {
+    return configKey;
   }
 
   const envKey = process.env.TENOR_API_KEY?.trim();
