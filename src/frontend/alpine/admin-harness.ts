@@ -26,6 +26,7 @@ import {
   sandboxEditorHref,
   type SandboxFileRow,
 } from "./admin-harness-files";
+import { harnessModels, MODELS_URL, } from "./admin-harness-models";
 import { harnessPermissions, } from "./admin-harness-permissions";
 import {
   buildGapRows,
@@ -89,6 +90,9 @@ export const adminHarness = {
   // Pending permission asks (state owned by ./admin-harness-permissions).
   ...harnessPermissions,
 
+  // Discovered models slice (state owned by ./admin-harness-models).
+  ...harnessModels,
+
   // Settings/profiles slice (state owned by ./admin-harness-settings).
   harnessSettingsEnabled: false,
   harnessProfileRows: [] as HarnessProfileRow[],
@@ -129,20 +133,25 @@ export const adminHarness = {
     this.harnessError = "";
     try {
       const query = buildRunsQuery(this.harnessTaskType, this.harnessResult, RUNS_LIMIT,);
-      const [runsRes, statsRes,] = await Promise.allSettled([
+      const [runsRes, statsRes, modelsRes,] = await Promise.allSettled([
         apiFetch(`${RUNS_URL}${query}`, JSON_HEADERS,),
         apiFetch(STATS_URL, JSON_HEADERS,),
+        apiFetch(MODELS_URL, JSON_HEADERS,),
         loadHarnessSettings(this,),
         this.refreshHarnessPermissions(),
       ],);
 
       if (runsRes.status === "fulfilled") { await this.applyRuns(runsRes.value,); }
       if (statsRes.status === "fulfilled") { await this.applyStats(statsRes.value,); }
-      const loadError = harnessTabLoadError(runsRes, statsRes,);
-      if (loadError !== null) {
+      if (modelsRes.status === "fulfilled") { await this.loadHarnessModels(modelsRes.value,); }
+
+      const { tab, models, } = harnessTabLoadError(runsRes, statsRes, modelsRes,);
+      if (tab !== null) {
         log.warn("Harness request failed",);
-        this.harnessError = loadError;
+        this.harnessError = tab;
       }
+
+      if (models !== null) { this.harnessModelsError = models; }
     } finally {
       this.loadingHarness = false;
     }
