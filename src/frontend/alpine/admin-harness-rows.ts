@@ -214,8 +214,8 @@ export function buildDiscoveredModelRows(items: HarnessDiscoveredModel[],): Harn
   return items.map((item,) => {
     const caps = item.capabilities;
     return {
-      profile: item.profile,
-      model: item.model,
+      profile: textOrDash(item.profile,),
+      model: textOrDash(item.model,),
       source: item.source,
       reason: textOrDash(item.reason,),
       contextWindow: textOrDash(caps?.contextWindow ?? null,),

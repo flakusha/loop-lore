@@ -162,4 +162,13 @@ describe("harnessModels.loadHarnessModels", () => {
     expect(state.harnessDiscoveredModelsEmpty(),).toBe(true,);
     expect(state.harnessModelsError,).toBe("",);
   });
+
+  test("an empty profile or model renders the dash, never a blank cell", async () => {
+    handler = async () => Response.json({ items: [{ ...STATIC_MODEL, profile: "", model: "", },], },);
+    const state = freshState();
+    await state.loadHarnessModels();
+
+    expect(state.harnessDiscoveredModels[0]?.profile,).toBe("\u2014",);
+    expect(state.harnessDiscoveredModels[0]?.model,).toBe("\u2014",);
+  });
 });
