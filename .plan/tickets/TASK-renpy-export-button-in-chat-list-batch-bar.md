@@ -3,7 +3,7 @@
 
 # TASK: RenPy export button in chat-list batch bar
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** S
 **Epic:** epic-renpy-export
@@ -12,7 +12,7 @@
 
 **Summary:**
 
-Frontend: batch-bar button in src/components/chat/chat-list-panel.html calling POST /api/v1/renpy/export with selectedChats (mirroring batchExport blob download as renpy-export.zip), toast + i18n keys, unit coverage beside chat-management.test.ts; explicit out of scope: no in-RenPy editing inside loop-lore, no vn_choices menu mapping in v1.
+Frontend: Ren'Py button in the batch bar (chat-list-panel.html) calling POST /api/renpy/export@v1 with { chatIds: selectedChats } via a new batchExportRenpy() mirroring the batchExport blob download (renpy-export.zip), reusing the existing exportedCount/failedExport/networkErrorExportingChats toasts (no new i18n keys), tests beside chat-management.test.ts (route + payload + download + error); implemented + tested (32 pass in isolation).
 
 **Context:**
 

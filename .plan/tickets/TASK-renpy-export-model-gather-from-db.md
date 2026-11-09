@@ -3,7 +3,7 @@
 
 # TASK: RenPy export model gather from DB
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** M
 **Epic:** epic-renpy-export
@@ -12,7 +12,7 @@
 
 **Summary:**
 
-DB layer in plugins/core/renpy-export: caller-owned chats only (batchExportChats parity, created_by=userId filter), active branch root-to-tip path via walkMessagePath, sibling branches sharing parent_message_id become menu stubs grouped by fork, participants joined to actors for display names, avatar bytes via getAssetData with loadConfig uploadDir with encrypted assets skipped; vn_choices left out of v1 (scene_index is a client-side ordinal, not message-anchored).
+DB layer in plugins/core/renpy-export (model.ts): unknown chats throw (route maps to 404), active branch root-to-tip path via the same parent_id walk as the branch service, remaining chats fall back to created_at order, sibling branches become menu stubs, participants joined to actors for deduped speaker slugs, public avatars bundled as bytes (missing files keep the define without bytes); implemented + tested (model.test.ts, 5 tests).
 
 **Context:**
 

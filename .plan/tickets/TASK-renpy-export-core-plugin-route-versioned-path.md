@@ -3,7 +3,7 @@
 
 # TASK: RenPy export core plugin route (versioned path)
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** M
 **Epic:** epic-renpy-export
@@ -12,7 +12,7 @@
 
 **Summary:**
 
-Core plugin manifest plugins/core/renpy-export (origin core self-approves) registering POST /api/v1/renpy-export (versioned path so the elysia catch-all dispatch reaches it; unversioned /api/renpy/export 308-redirects and misses), requiresAuth + caller.userId for ownership, db captured from onLoad context closure, ZIP via existing JSZip/finalizeExportZip pattern (game/script.rpy + game/characters.rpy + game/images + README.md), 20 chat id cap, regression test that /api/v1/renpy/export is reachable and unowned chats are excluded.
+Core plugin manifest plugins/core/renpy-export (origin core self-approves) registering POST /api/renpy/export@v1 (versioned `@v1` suffix; the next format ships `@v2` alongside), requiresAuth + caller.userId, db captured from the onLoad context closure, zip via JSZip (game/script.rpy + game/characters.rpy + README.md + game/images/*.png), 50 chat id cap, tests for auth/validation/zip-shape/path-guard.
 
 **Context:**
 
