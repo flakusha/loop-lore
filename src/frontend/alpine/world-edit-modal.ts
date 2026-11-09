@@ -41,20 +41,20 @@ const FIELD_IDS: readonly (readonly [string, keyof WorldEditModalValues,])[] = [
 ];
 
 /**
- * The modal form's PUT target is the world's own API URL - the static
- * partial substitutes {{worldId}} into it, so it carries the world id.
- */
-const WORLD_ID_PATTERN = /^\/api\/v1\/worlds\/([^/?#]+)$/;
-
-/**
  * Read the world id from the modal form's PUT target.
+ *
+ * The action is rendered by the server (the static partial substitutes
+ * {{worldId}} into it), so the id is the last path segment. The id's shape
+ * belongs to the API - it validates the path param, a bad id answers 404
+ * and the modal stays unsaveable - so this reads the id out of the action
+ * instead of re-checking what the route already validates.
  * @param root the modal root element
  * @returns the world id, or null when the form is missing or unexpected
  */
 function worldIdFromForm(root: ParentNode,): string | null {
   const form = root.querySelector<HTMLFormElement>("#edit-world-form",);
   const action = form?.getAttribute("hx-put",) ?? "";
-  return action.match(WORLD_ID_PATTERN,)?.[1] ?? null;
+  return action.split("/",).pop() || null;
 }
 
 /**
