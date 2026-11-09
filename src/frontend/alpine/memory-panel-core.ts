@@ -5,9 +5,38 @@
  * Memory panel load/filter/edit actions. Spread into the memory panel
  * component — methods use `this` as ChatState.
  */
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { memoriesForTab, type MemoryApiRow, toMemoryEntry, } from "./memory-panel/transform";
 import type { ChatState, MemoryEntry, } from "./types";
+
+/** Max lore-entry keys accepted by the lore-entries route schema. */
+const LORE_KEYS_MAX = 5;
+/** Max characters for the derived lore-entry name. */
+const LORE_NAME_MAX = 48;
+
+/**
+ * Draft a character-book lore entry from a memory row.
+ * The name prefers the memory's first keyword, else falls back to the first
+ * {@linkcode LORE_NAME_MAX} characters of the content (trailing whitespace
+ * trimmed); keys are the memory keywords (capped at the route's key limit).
+ * @param mem - memory row to promote
+ * @returns a create body for `POST /api/v1/actors/:actorId/lore-entries`
+ */
+export function loreEntryDraftFromMemory(
+  mem: Pick<MemoryEntry, "content" | "keywords">,
+): { name: string; content: string; keys?: string[] } {
+  const content = mem.content.trim();
+  const keywords = mem.keywords.map((k,) => k.trim()).filter((k,) => k.length > 0);
+  const name = keywords[0] ??
+    (content.length > LORE_NAME_MAX ? `${content.slice(0, LORE_NAME_MAX,).trimEnd()}…` : content);
+
+  return {
+    name,
+    content,
+    keys: keywords.length > 0 ? keywords.slice(0, LORE_KEYS_MAX,) : undefined,
+  };
+}
 
 export const memoryPanelCore: Partial<ChatState> & ThisType<ChatState> = {
   /**
@@ -198,5 +227,42 @@ export const memoryPanelCore: Partial<ChatState> & ThisType<ChatState> = {
     let total = 0;
     for (const m of allMemories) { total += m.tokenCount || 0; }
     this.memoryPanel.tokensUsed = total;
+  },
+
+  /**
+   * One-click promote of a character memory into the character's lorebook
+   * (`POST /api/v1/actors/:actorId/lore-entries`, existing route — ownership
+   * is enforced server-side). Drafts the entry name/keys from the memory,
+   * asks for explicit user confirmation before inserting, and surfaces
+   * failures on the shared panel error state. The memory itself is kept.
+   * @param mem - the character-scope memory to promote
+   * @throws never — failures land in `memoryPanel.error`
+   */
+  async promoteMemoryToLore(mem: MemoryEntry,) {
+    if (this.memoryPanel.activeTab !== "character") { return; }
+    const actorId = this._getCharacterActorId();
+    if (!actorId) { return; }
+
+    const draft = loreEntryDraftFromMemory(mem,);
+    if (!draft.content || !draft.name) { return; }
+    if (!confirm(t("chats.promoteToLoreConfirm", { name: draft.name, },),)) { return; }
+
+    this.memoryPanel.busy = true;
+    this.memoryPanel.error = null;
+    try {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/lore-entries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ name: draft.name, content: draft.content, keys: draft.keys, },),
+      },);
+
+      if (!res.ok) {
+        this.memoryPanel.error = t("chats.promoteToLoreFailed",);
+      }
+    } catch {
+      this.memoryPanel.error = t("chats.promoteToLoreFailed",);
+    } finally {
+      this.memoryPanel.busy = false;
+    }
   },
 };

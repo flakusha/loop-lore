@@ -67,6 +67,11 @@ export const EntityCreateBody = t.Object({
   reviewStatus: t.Optional(EntityReviewStatusSchema,),
   scope: t.Optional(EntityScopeSchema,),
   keywords: t.Optional(Keywords,),
+  // Lorebook trigger keys (actor/world lore entries route them through
+  // fieldMappings.keys → keys). Without this property Elysia's TypeBox
+  // validation STRIPS the field before the route reads it, so a created
+  // entry silently loses its trigger keys (BUG-seam).
+  keys: t.Optional(t.Array(t.String({ maxLength: 100, },), { maxItems: 5, },),),
   revealCondition: t.Optional(RevealConditionBody,),
   timelineId: t.Optional(t.String(),),
   rarity: t.Optional(t.String(),),
@@ -80,6 +85,8 @@ export const EntityUpdateBody = t.Object({
   pinned: t.Optional(t.Boolean(),),
   reviewStatus: t.Optional(EntityReviewStatusSchema,),
   keywords: t.Optional(Keywords,),
+  // Same strip risk as EntityCreateBody — see the keys comment there.
+  keys: t.Optional(t.Array(t.String({ maxLength: 100, },), { maxItems: 5, },),),
   revealCondition: t.Optional(RevealConditionBody,),
   timelineId: t.Optional(t.String(),),
   rarity: t.Optional(t.String(),),
