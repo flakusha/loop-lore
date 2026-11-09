@@ -7,7 +7,7 @@ import type {
   DiscoveryMethod,
   ItemCategory,
 } from "../../db/enums";
-import type { ProfessionBonuses, } from "./professions/types";
+import type { ProfessionBonuses, ProfessionXpResult, } from "./professions/types";
 
 /** Input for a craft attempt. */
 export interface CraftAttemptOpts {
@@ -46,6 +46,11 @@ export interface CraftResult {
    * actor holds the recipe's discipline; TASK-professions-service-routes).
    */
   professionBonuses?: ProfessionBonuses;
+  /**
+   * Profession XP granted by this attempt (present only when the actor holds
+   * the recipe's discipline and the award is positive; XP-on-craft).
+   */
+  professionXp?: ProfessionXpResult;
 }
 
 /** Recorded craft attempt. */
