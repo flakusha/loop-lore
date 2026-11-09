@@ -13,6 +13,7 @@ import { chatSendMethods, } from "./chat-send";
 import { chatVoiceNoteMethods, } from "./chat-voice-notes";
 import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
+import { npcMovementMethods, } from "./npc-movement";
 import type { ChatState, Message, } from "./types";
 import { parseOr, } from "./validation";
 
@@ -68,6 +69,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     },);
     await this.loadAllReactions();
     await this.loadChatPolls();
+    await this.loadMovementEvents();
     await this.loadQuickEmojis();
     await this.loadAllSeen();
     this.startSeenPolling();
