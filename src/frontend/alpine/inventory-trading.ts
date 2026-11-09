@@ -32,13 +32,14 @@ import {
 } from "../inventory/trade-panel.js";
 import { apiFetch, } from "./htmx.js";
 import { t, } from "./i18n.js";
+import { tradingBalanceSlice, type TradingBalanceState, } from "./inventory-trading-balance.js";
 import { jsonBody, } from "./json.js";
 import { log as rootLog, } from "./logger.js";
 
 const log = rootLog.child({ module: "inventory-trading", },);
 
 /** Alpine scope for the NPC trading panel. */
-export interface InventoryTradingState {
+export interface InventoryTradingState extends TradingBalanceState {
   _worldId: string | null;
   _playerActorId: string | null;
   _npcActorId: string | null;
@@ -51,10 +52,6 @@ export interface InventoryTradingState {
   busy: boolean;
   message: string;
   error: string;
-  /** Player gold balance (GET /trade/balance); null until loaded. */
-  playerBalance: number | null;
-  balanceLoading: boolean;
-  balanceError: string;
   draft: TradeDraft;
   /** Point the panel at a world/player/NPC triple; clears lists + draft. */
   setTradeActors(worldId: string, playerActorId: string, npcActorId: string,): void;
@@ -62,7 +59,7 @@ export interface InventoryTradingState {
   toggle(side: "player" | "npc", itemId: string,): void;
   /** Clear both sides' selections. */
   clearDraft(): void;
-  /** Reload player + NPC lists. */
+  /** Reload player + NPC lists plus the player balance. */
   load(): Promise<void>;
   /** Reload the player list from the server. */
   loadPlayerItems(): Promise<void>;
@@ -110,9 +107,7 @@ export const stateFromTradeActors = (
   busy: false,
   message: "",
   error: "",
-  playerBalance: null,
-  balanceLoading: false,
-  balanceError: "",
+  ...tradingBalanceSlice,
   draft: emptyDraft(),
 
   setTradeActors(worldId: string, playerActorId: string, npcActorId: string,) {
@@ -242,70 +237,6 @@ export const stateFromTradeActors = (
 
   async sellToNpc() {
     await tradeSide(this, "player",);
-  },
-
-  async loadBalance() {
-    const worldId = this._worldId;
-    const actorId = this._playerActorId;
-    if (!worldId || !actorId) { return; }
-
-    this.balanceLoading = true;
-    this.balanceError = "";
-    try {
-      const res = await apiFetch(`/api/v1/worlds/${worldId}/trade/balance?actorId=${actorId}`,);
-      if (!res.ok) {
-        this.balanceError = routeErrorMessage(await res.json().catch(() => ({})), t("status.tradeBalanceFailed",),);
-        return;
-      }
-
-      const body = await res.json().catch(() => ({})) as { balance?: unknown };
-      if (typeof body.balance !== "number") {
-        this.balanceError = t("status.tradeBalanceFailed",);
-
-        return;
-      }
-
-      this.playerBalance = body.balance;
-    } catch (error) {
-      log.error("Failed to load trade balance", error instanceof Error ? error : undefined, { actorId, },);
-      this.balanceError = t("status.tradeBalanceFailed",);
-    } finally {
-      this.balanceLoading = false;
-    }
-  },
-
-  async executeTrade() {
-    const worldId = this._worldId;
-    const playerActorId = this._playerActorId;
-    const npcActorId = this._npcActorId;
-    if (!worldId || !playerActorId || !npcActorId) { return; }
-    const summary = this.summary();
-    if (summary.playerItems.length === 0 && summary.npcItems.length === 0) { return; }
-    this.busy = true;
-    this.error = "";
-    this.message = "";
-    const result = await mutate(`/api/v1/worlds/${worldId}/trade/execute`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: jsonBody({
-        buyerActorId: playerActorId,
-        sellerActorId: npcActorId,
-        buyerItems: tradeLines(summary.npcItems,),
-        sellerItems: tradeLines(summary.playerItems,),
-        price: Math.max(0, -summary.net,),
-      },),
-    },);
-
-    this.busy = false;
-    if (!result.ok) {
-      this.error = result.message ?? t("status.tradeFailed",);
-
-      return;
-    }
-
-    this.draft = emptyDraft();
-    this.message = t("status.tradeConfirmed",);
-    await this.load();
   },
 });
 
