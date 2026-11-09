@@ -7,7 +7,7 @@
 
 
 **Status:** Done
-**Status Note:** All 15 acceptance boxes shipped; fast-travel unlock gated server-side in `PUT /chats/:id/location` via `src/locations/fast-travel.ts` (403 until discovery latch, owner/admin bypass).
+**Status Note:** All 14 acceptance boxes shipped; fast-travel unlock gated server-side in `PUT /chats/:id/location` via `src/locations/fast-travel.ts` (403 until discovery latch, owner/admin bypass).
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
