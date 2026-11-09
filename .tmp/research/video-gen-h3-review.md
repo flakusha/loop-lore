@@ -4,8 +4,8 @@ Date: 2026-11-09. Source: `../comfyui/custom_nodes/comfyui-minimaxh3-director/`
 (read-only). loop-lore side: `src/generation/video-engine.ts` (167 lines,
 single-clip ComfyUI failover), `src/generation/video-gen-route.ts` (339 lines,
 submit-202 + poll-status), `src/generation/video-jobs.ts` (in-memory
-pending/done/failed store). Example workflows reviewed by NAME ONLY (9 files,
-listed in §1); contents never opened per directive.
+pending/done/failed store). Example workflows reviewed by NAME ONLY (10 .json
+files, listed in §1); contents never opened per directive.
 
 ## 1. What the pack is
 
@@ -18,29 +18,32 @@ side by side:
   `minimax_preview*.py`, `minimax_enhance.py` 586L, `minimax_retake.py`,
   `minimax_lastframe.py`, `js/minimax_director.js`): WYSIWYG timeline
   front-end forked from LTX Director (GPL-3.0; 93% of the editor file still
-  upstream code). All timeline interpretation lives in `minimax_plan.py` so
-  the live prompt preview and the chain node cannot drift.
+  upstream code, per CONTRIBUTING.md). All timeline interpretation lives in
+  `minimax_plan.py` so the live prompt preview and the chain node cannot drift.
 - NG (`ng/`: 15 context/director/chunk/render/studio/provider/connector/
-  product/output/preview/AI/control/storyboard/still/guide nodes;
-  `ng/core/` ~45 pure modules; `ng/adapters/` ~20 ComfyUI-facing;
-  `ng/nodes/` thin V3 wrappers; `js/ng/` ~70 panels): context cards
-  (Image/Video/Audio/Text), Context Connector, Studio (the Director node's
-  face), Render Sequence (native sampling), Collect/Output. Core imports
-  nothing from ComfyUI by rule.
+  product/output/preview/AI/control/storyboard/still/guide node groups —
+  exactly the list in `ng/nodes/__init__.py`; `ng/core/` 51 modules;
+  `ng/adapters/` 40 ComfyUI-facing modules; `ng/nodes/` thin V3 wrappers;
+  `js/ng/` 70+ panels): context cards (Image/Video/Audio/Text), Context
+  Connector, Studio (the Director node's face), Render Sequence (native
+  sampling), Collect/Output. Core imports nothing from ComfyUI by rule.
 - Skill/docs: `SKILL.md` (install/models/9-workflow table/symptom table),
   `GUIDE.md` (1705 lines, per-workflow chapters), `docs/NG*.md`,
   `docs/NG-validation.md` (664L execution/signal checks), `docs/paper/`,
-  `docs/legacy-director.md`. Tests: `test_plan.py` (98K) + `test_node.py`
-  legacy; `tests/ng/` 100+ suites incl. `regressions/` (~90 bug_NNN files,
-  dual .py/.mjs runners `run_all.py`/`run_tests.py`. `tests/js/` node syntax
-  checks. Example workflows (names only): 1 Text to video, 2 Characters and
+  `docs/legacy-director.md`. Tests: `test_plan.py` + `test_node.py` legacy;
+  `tests/ng/` ~115 `test_*.py` suites + `run_all.py`/`run_tests.py` runners;
+  `tests/ng/regressions/` ~90 files (~55 `bug_*.py` numbered 033–095 with
+  duplicate 090/091 numbers, ~26 `bug_*.mjs`/timeline/audio suites);
+  `tests/ng/js/` JS checks (there is no `tests/js/`). Example workflows
+  (names only, 10 `.json` + thumbnails): 1 Text to video, 2 Characters and
   voice, 3 Music video, 4 Shots from pictures, 5 Pictures, 6 Storyboard,
   7 Control video, 8 Inpaint, 9 Custom sampling, Legacy.
 
-SKILL.md/GUIDE.md claims check out against the tree: every symptom row maps
-to a real subsystem (turbo-LoRA settings, Missing Models panel, control-patch
-slots, Ollama provider), and the "9 workflows" table matches the
-`example_workflows/` names exactly. No doc-only feature found.
+SKILL.md/GUIDE.md claims spot-checked against the tree: sampled symptom rows
+map to real subsystems (turbo-LoRA settings, Missing Models panel,
+control-patch slots, Ollama provider), and the 9-workflow table names the 9
+numbered `example_workflows/` files (plus Legacy). No doc-only feature found
+in the sampled chapters.
 
 ## 2. Adoption mapping (module -> capability -> loop-lore gap)
 
@@ -68,8 +71,10 @@ continuity, or re-useable media. Candidates, lazy order:
    wrapper, bounded overhead %, jpeg transport) -> live progress. Fills: poll
    endpoint reports pending/done only; preview frames would ride the existing
    job id with no schema change.
-6. `minimax_enhance.py` (VLM writes `global_prompt`, `_clean()` strips section
-   labels/numbering collisions) + `ng/core/assist.py` + `system_prompts.py`
+6. `minimax_enhance.py` (VLM writes `global_prompt`; `clean_prompt()` strips
+   section labels/numbering collisions — note the module docstring still says
+   `_clean()`, which does not exist; own exhibit of fork drift) +
+   `ng/core/assist.py` + `system_prompts.py`
    -> prompt assistance that cannot corrupt the compiled structure. Fills:
    route takes raw prompt or `{{variables}}` template; no expansion/validation
    layer. Adopt LAST — needs provider plumbing.
@@ -95,9 +100,9 @@ classes with file evidence:
    routes (`client_interruptible` transport watch + InterruptProcessingException),
    `duration_seconds` socket + `length_seconds` output. None is backportable
    as a stable hunk; each re-architects data flow.
-2. Bug-tail density. `tests/ng/regressions/` holds ~90 `bug_033..bug_095`
-   files, each a standalone repro (empty-context-id crashes bug_047-056,
-   split/owner binding bug_087-089, trim-window float() crash, schema-version-2
+2. Bug-tail density. `tests/ng/regressions/` holds ~90 files (~55 `bug_*.py`
+   repros numbered 033–095: empty-context-id crashes bug_047-056, split/owner
+   binding bug_087-089, trim-window float() crash, schema-version-2
    audio-model override drop). Upstream velocity cannot absorb this tail as
    patches; the fork's test suite IS the specification.
 3. Co-evolved contracts. `CompiledChunk`/`ContinuityPlan`/`Issue` all carry
@@ -105,17 +110,18 @@ classes with file evidence:
    Audio model override) and `prompt_key` validity scoping mean backend and
    `js/ng/` must move in lockstep — a patchset against upstream's files would
    rot on every upstream JS edit.
-4. Divergent lineage already. NG (~45 core + ~20 adapters + 15 nodes + ~70 JS)
-   does not exist upstream in this shape; Legacy editor is a GPL-3.0 fork kept
-   at 93% upstream-identical deliberately for side-by-side install. There is
-   no upstream base to patch against — the fork IS the base.
+4. Divergent lineage already. NG (51 core + 40 adapters + 15 node groups +
+   70+ `js/ng/` panels) does not exist upstream in this shape; Legacy editor
+   is a GPL-3.0 fork kept at 93% upstream-identical deliberately for
+   side-by-side install. There is no upstream base to patch against — the
+   fork IS the base.
 5. Environment churn baked in: `.ruff_cache/`, `.tmp/` (repro scripts,
    ngtest.log), `__pycache__/` committed-adjacent, `docs/NG-validation.md`
    references local `_notes/` + external Windows paths. A patchset would drag
    this along; a fork owns it.
 
 Own going forward: chunk/continuation arithmetic, compile+issues contracts,
-retake splice, TAEHV preview transport, enhance `_clean()` guard. Leave:
+retake splice, TAEHV preview transport, enhance `clean_prompt()` guard. Leave:
 Studio/cards JS, media workspace, storyboard/tooling JS, turbo profiles.
 
 ## 4. Soft-fork contrast (parent `../comfyui`)
@@ -126,11 +132,11 @@ https://github.com/Comfy-Org/ComfyUI.git`, and local delta is a patch stack
 in `custom_nodes_patches/` (13 numbered patches for h3-director alone:
 0001 timeout .. 0013 locked-audio, plus per-node dirs for was-suite,
 ClipProj, llama_swap, DaSiWa, easy-use, H3-Multishot). Patches apply at
-install (`patches_base` known-good pin); upstream stays mergeable. That model
-works because the parent's delta is small, hunk-stable, and upstream-shaped.
-h3-director's delta is the opposite: architectural, cross-layer, test-defined.
-Shallow `custom_nodes/` listing confirms: ~20 sibling packs coexist
-untouched; only the director needed a fork.
+install (per commit titles: `patches_base` known-good pin); upstream stays
+mergeable. That model works because the parent's delta is small, hunk-stable,
+and upstream-shaped. h3-director's delta is the opposite: architectural,
+cross-layer, test-defined. Shallow `custom_nodes/` listing confirms: ~20
+sibling packs coexist untouched; only the director needed a fork.
 
 ## 5. Open questions
 
