@@ -3,7 +3,7 @@
 
 # TASK: server-side room-filter enforcement
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-chat-lifecycle-moderation
@@ -46,10 +46,10 @@ Display-only filtering in the message read path stays client-authoritative
 
 **Acceptance Criteria:**
 
-- [ ] Per-user room-filter rows persisted server-side (schema/migration + persistence surface)
-- [ ] List endpoint honors persisted rows when explicit params are absent; explicit params win when present
-- [ ] Client keeps sending filters and remains authoritative for display-only filtering
-- [ ] Tests covering persistence, precedence, and list-query application
+- [x] Per-user room-filter rows persisted server-side (schema/migration + persistence surface)
+- [x] List endpoint honors persisted rows when explicit params are absent; explicit params win when present
+- [x] Client keeps sending filters and remains authoritative for display-only filtering
+- [x] Tests covering persistence, precedence, and list-query application
 
 ## Files
 
@@ -67,3 +67,17 @@ Display-only filtering in the message read path stays client-authoritative
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
+
+**Acceptance evidence** (branch `feat-room-filters-server` @ d7c402b70):
+
+- Migration `src/db/migrations/098_chat_list_filters.ts` creates per-user
+  `chat_list_filters` rows (number 098 verified free on dev).
+- `src/routes/chats/filters.ts` mounts `GET/PUT /api/v1/chats/filters`
+  (`loadChatListFilters` + `resolveChatListFilters` merge: explicit query
+  params win, persisted snapshot is the default); `src/routes/chats/list.ts`
+  applies the resolved filters in the list query.
+- `src/frontend/alpine/chat-filters-server.ts` keeps sending explicit
+  filters (client remains display-authoritative).
+- `src/routes/chats/filters.test.ts`: 22 pass;
+  `src/frontend/alpine/chat-filters-server.test.ts`: 12 pass
+  (`bun test`, 2026-11-09).
