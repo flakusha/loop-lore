@@ -70,6 +70,7 @@ import "./vn-templates";
 import "./world";
 import "./world-create-wizard";
 import "./world-edit";
+import "./world-edit-modal";
 import "./world-lore";
 
 export { useRequestStatus, } from "./use-request-status";
