@@ -44,6 +44,17 @@ describe("fetchWorldJson", () => {
     expect(seen,).toBe("/api/v1/worlds/w1/travel/status",);
   });
 
+  test("escapes the world id into the URL path segment", async () => {
+    let seen = "";
+    g.apiFetch = async (url: string | URL,) => {
+      seen = String(url,);
+      return Response.json({},);
+    };
+
+    await fetchWorldJson("w/1?x=2", "/chats",);
+    expect(seen,).toBe("/api/v1/worlds/w%2F1%3Fx%3D2/chats",);
+  });
+
   test("returns null on non-2xx", async () => {
     fetchHandler = () => new Response("{}", { status: 404, },);
     expect(await fetchWorldJson("w1", "/chats",),).toBeNull();

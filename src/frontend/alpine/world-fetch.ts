@@ -34,7 +34,12 @@ export async function fetchWorldJson<T,>(
 ): Promise<T | null> {
   if (!worldId) { return null; }
   try {
-    const res = await requestFn()(`/api/v1/worlds/${worldId}${path}`, {
+    // The world id is a URL path segment, so it needs URL escaping here -
+    // HTML escaping (the server's escapeHtml) does not make a value safe in a
+    // path, and an id carrying "/" or "?" would otherwise retarget the
+    // request. Every caller passes the raw id, so this is the one place the
+    // segment is built.
+    const res = await requestFn()(`/api/v1/worlds/${encodeURIComponent(worldId,)}${path}`, {
       headers: { Accept: "application/json", },
     },);
 

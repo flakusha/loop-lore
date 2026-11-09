@@ -30,6 +30,9 @@ What changed:
 - src/frontend/alpine/world-edit-modal.test.ts (new) - the regression test.
 - src/partials/worlds/edit-modal.html, src/partials/worlds/create-modal.html, src/views/world-edit.html - the name input mirrors the API's limit (maxlength="255") on every world surface, so an over-long name cannot turn the whole save into a 422 that drops the description and lore edits with it.
 - docs/frontend/worlds.md - documents the modal surface, its prefill and the fields' real limits.
+- src/frontend/alpine/world-fetch.ts - the shared world-scoped fetch helper URL-ESCAPES the world id into its path segment (`encodeURIComponent`). The modal's id comes out of the DOM (the form's PUT target), so it is a value the page did not mint; HTML escaping (the server's `escapeHtml`) does not make a value safe in a URL path, and an id carrying "/" or "?" would otherwise retarget the request. Every caller passes the raw id, so this is the one place the segment is built.
+- src/frontend/alpine/world-edit-modal.ts - the world id is read as EVERYTHING after the known `/api/v1/worlds/` prefix, not as the last path segment: an id carrying "/" would otherwise yield a different id than the form targets, and the modal would fill itself with another world's values. The API still owns the id's shape (a bad id answers 404 and the modal stays unsaveable).
+- src/frontend/alpine/world-fetch.test.ts, src/frontend/alpine/world-edit-modal.test.ts - the regression tests for those two boundaries: the world id is URL-escaped into the path segment, and the modal loads the world the form targets (an id carrying "/" stays ONE id). Both fail without their fix.
 
 Constraints: no new endpoint, no backend change, no new dependency - the modal is served by the static partial route, which has no database handle.
 
