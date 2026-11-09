@@ -16,9 +16,11 @@
  * renders what the API returned and never decides access itself - a denied
  * read fails closed, with Save left disabled.
  */
+import { Type, } from "@sinclair/typebox";
 import { showToast, } from "../ui";
 import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
+import { parseOr, } from "./validation";
 import { fetchWorldJson, } from "./world-fetch";
 
 const log = rootLog.child({ module: "world-edit-modal", },);
@@ -30,12 +32,24 @@ export interface WorldEditModalValues {
   lore: string;
 }
 
-/** The loaded world row - only the fields the modal edits are read. */
-interface WorldEditModalRow {
-  name?: string | null;
-  description?: string | null;
-  lore?: string | null;
-}
+/**
+ * The world's row as GET /api/v1/worlds/:id serves it, limited to the fields
+ * the modal edits.
+ *
+ * The route answers with the raw `worlds` row, so the two text columns are
+ * nullable on the wire (a world with no description serves `null`). The
+ * check is strict on purpose: a row that does not match leaves the modal
+ * unsaveable (the load fails closed) instead of filling the fields with
+ * guesses - a half-filled form is what wiped the world's text.
+ */
+const WorldRowSchema = Type.Union([
+  Type.Object({
+    name: Type.String(),
+    description: Type.Union([Type.String(), Type.Null(),],),
+    lore: Type.Union([Type.String(), Type.Null(),],),
+  },),
+  Type.Null(),
+],);
 
 /** Modal field id -> key of the loaded world row. */
 const FIELD_IDS: readonly (readonly [string, keyof WorldEditModalValues,])[] = [
@@ -118,15 +132,25 @@ async function prefillWorldEditModal(root: ParentNode,): Promise<boolean> {
       return false;
     }
 
-    const row = await fetchWorldJson<WorldEditModalRow>(worldId, "",);
-    if (!row) {
+    const raw = await fetchWorldJson<unknown>(worldId, "",);
+    if (raw === null) {
       log.warn(`world ${worldId} could not be loaded`,);
       notifyLoadFailed();
       return false;
     }
 
+    // The row is decoded through the shared schema before any field is
+    // read: an unexpected shape leaves the modal unsaveable instead of
+    // filling the fields with guesses.
+    const row = parseOr(WorldRowSchema, raw, null,);
+    if (!row) {
+      log.warn(`world ${worldId} did not match the expected shape`,);
+      notifyLoadFailed();
+      return false;
+    }
+
     fillFields(root, {
-      name: row.name ?? "",
+      name: row.name,
       description: row.description ?? "",
       lore: row.lore ?? "",
     },);

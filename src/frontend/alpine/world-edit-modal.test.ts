@@ -207,6 +207,21 @@ describe("alpine/world-edit-modal", () => {
     expect(modal.save.disabled,).toBe(true,);
   });
 
+  test("a payload that is not a world row leaves the fields empty and Save disabled", async () => {
+    // The row is decoded through a schema before any field is read. A payload
+    // that does not match must fail closed - guessing the fields would put
+    // wrong text into a form that submits them over the world's own.
+    fetchHandler = async () => Response.json({ id: "w-1", name: 42, description: { nope: true, }, },);
+    const modal = makeModal("w-1",);
+
+    await openModal(modal,);
+
+    expect(modal.fields["#edit-name"]?.value,).toBe("",);
+    expect(modal.fields["#edit-description"]?.value,).toBe("",);
+    expect(modal.fields["#edit-lore"]?.value,).toBe("",);
+    expect(modal.save.disabled,).toBe(true,);
+  });
+
   test("a modal without a world target never fetches and stays unsaveable", async () => {
     fetchHandler = async () => Response.json(WORLD,);
 
