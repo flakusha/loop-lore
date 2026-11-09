@@ -105,6 +105,18 @@
           },
           "required": ["enabled", "botToken"]
         },
+        "gifs": {
+          "type": "object",
+          "description": "GIF provider (Tenor) for the chat GIF picker. Unconfigured = picker answers 501.",
+          "properties": {
+            "apiKey": {
+              "type": "string",
+              "default": "",
+              "description": "Tenor API key. Env-only: TENOR_API_KEY. SECRET — never log or echo."
+            }
+          },
+          "required": ["apiKey"]
+        },
         "irc": {
           "type": "object",
           "description": "IRC integration. Opt-in; disabled by default.",
@@ -141,6 +153,7 @@
         "xmpp",
         "telegram",
         "discord",
+        "gifs",
         "irc",
         "nostr"
       ]
