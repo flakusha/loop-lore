@@ -13,16 +13,10 @@
 
 import { t, } from "../alpine/i18n";
 import { renderHealthBar, } from "../battle/health-bar.js";
+import { button, navRow, phaseTitle, sectionShell, } from "./intimacy-positions";
 import { actionLocked, } from "./intimacy-scene";
 import type { IntimacyFlowState, } from "./intimacy-types";
-import {
-  actionDescription,
-  actionLabel,
-  INTIMACY_ACTION_CATALOG,
-  INTIMACY_POSITION_CATALOG,
-  positionDescription,
-  positionLabel,
-} from "./intimacy-types";
+import { actionDescription, actionLabel, INTIMACY_ACTION_CATALOG, positionLabel, } from "./intimacy-types";
 
 /** Click handlers the renderer wires up; all optional (phase-dependent). */
 export interface IntimacyPanelHandlers {
@@ -46,61 +40,6 @@ export interface IntimacyPanelHandlers {
   onBack?: () => void;
   /** The close button was clicked (return to idle). */
   onClose?: () => void;
-}
-
-/** Create a button with a stable test id and click wiring.
- * @param label - localized button text
- * @param testId - data-testid for assertions
- * @param onClick - click handler
- * @returns {HTMLButtonElement} the button element
- */
-function button(label: string, testId: string, onClick?: () => void,): HTMLButtonElement {
-  const el = document.createElement("button",);
-  el.type = "button";
-  el.className = "btn btn-secondary btn-xs nsfw-intimacy-btn";
-  el.dataset.testid = testId;
-  el.textContent = label;
-
-  if (onClick) { el.addEventListener("click", onClick,); }
-  return el;
-}
-
-/** Build the shared section shell (role=group + localized aria-label).
- * @param testId - data-testid for the section
- * @returns {HTMLElement} the section element
- */
-function sectionShell(testId: string,): HTMLElement {
-  const section = document.createElement("section",);
-  section.className = "nsfw-intimacy";
-  section.setAttribute("role", "group",);
-  section.setAttribute("aria-label", t("nsfw.intimacy.title",),);
-  section.dataset.testid = testId;
-  return section;
-}
-
-/** Build the phase title line.
- * @param key - i18n key of the title
- * @returns {HTMLElement} the title element
- */
-function phaseTitle(key: string,): HTMLElement {
-  const title = document.createElement("h4",);
-  title.className = "nsfw-title";
-  title.textContent = t(key,);
-  return title;
-}
-
-/** Build the back + close row.
- * @param handlers - click handlers
- * @param withBack - whether the phase offers a back button
- * @returns {HTMLElement} the nav row
- */
-function navRow(handlers: IntimacyPanelHandlers, withBack: boolean,): HTMLElement {
-  const nav = document.createElement("div",);
-  nav.className = "nsfw-intimacy-nav";
-
-  if (withBack) { nav.append(button(t("nsfw.intimacy.back",), "nsfw-intimacy-back", handlers.onBack,),); }
-  nav.append(button(t("nsfw.intimacy.close",), "nsfw-intimacy-close", handlers.onClose,),);
-  return nav;
 }
 
 /** Render the idle phase: the open trigger only.
@@ -155,45 +94,8 @@ export function renderPartnerSelect(
   return section;
 }
 
-/** Render the position-selection phase (character positioning display).
- *
- * Client-side staging between partner and action: three descriptive labels
- * with no score gates. The mixin carries the choice into the apply wire
- * `context`; the effects phase echoes the staging alongside the outcome.
- * @param state - flow state (position comes from the mixin's stored choice)
- * @param handlers - click handlers
- * @returns {HTMLElement} the section
- */
-export function renderPositionSelect(state: IntimacyFlowState, handlers: IntimacyPanelHandlers,): HTMLElement {
-  const section = sectionShell("nsfw-intimacy-positions",);
-  section.append(phaseTitle("nsfw.intimacy.positionTitle",),);
-
-  const list = document.createElement("div",);
-  list.className = "nsfw-intimacy-position-list";
-
-  for (const position of INTIMACY_POSITION_CATALOG) {
-    const chosen = state.position?.id === position.id;
-    const btn = button(
-      positionLabel(position,),
-      `nsfw-intimacy-position-${position.id}`,
-      () => handlers.onPosition?.(position.id,),
-    );
-
-    btn.setAttribute("aria-pressed", String(chosen,),);
-    const desc = document.createElement("div",);
-    desc.className = "nsfw-intimacy-position-desc";
-    desc.textContent = positionDescription(position,);
-
-    const cell = document.createElement("div",);
-    cell.className = "nsfw-intimacy-position";
-    cell.dataset.testid = `nsfw-intimacy-position-cell-${position.id}`;
-    cell.append(btn, desc,);
-    list.append(cell,);
-  }
-
-  section.append(list, navRow(handlers, true,),);
-  return section;
-}
+/** Render the position-selection phase (character positioning display). */
+export { renderPositionSelect, } from "./intimacy-positions";
 
 /** Render the action-selection grid (locked actions disabled with the requirement).
  * @param pairScore - current pair score
