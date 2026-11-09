@@ -47,6 +47,14 @@ describeOrSkip("storyControl", () => {
     });
   }
 
+  test("POSTs escalate to the gm endpoint (not /story/escalate)", async () => {
+    mockFetch(200, { ok: true, },);
+    const result = await storyControl("chat-1", "escalate",);
+    expect(result.ok,).toBe(true,);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/gm/escalate",);
+    expect(fetchCalls[0]?.opts.method,).toBe("POST",);
+  });
+
   test("includes an optional JSON body", async () => {
     mockFetch(200, { ok: true, },);
     await storyControl("chat-1", "narration", { text: "The door creaks.", },);

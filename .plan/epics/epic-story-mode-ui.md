@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** GM panel, GM guidance commands, quest panel and the story-state read models are wired; world/NPC state editing, turn-order display and the story-state SSE subscription contract are still open
+**Status Note:** GM panel, GM guidance commands, quest panel, story-state read models, world/NPC-state CRUD wiring, turn-order display, and the story-state SSE subscription contract are wired (T4); remaining: SR/a11y pass
 **Priority:** P1 — High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -127,9 +127,9 @@ The user as Game Master has explicit control over narrative direction in group-c
 - [x] Quest panel renders the active quests for the chat's world (`src/components/chat/gm-quests-panel.html` against `src/routes/quests/`).
 - [x] GM-guided story creation: `/guide`, `/target`, `/constraint`, `/scene`, `/skip`, `/priority` are handled in story mode — recognised via `activeChat.mode === 'story'` **or** `gm_config.storyMode` (`src/frontend/alpine/gm-guidance.ts`, `src/assistant/commands/gm-guidance.ts`).
 - [x] Story state is readable in chat via fetch-based read models (`src/frontend/alpine/story-state/`).
-- [ ] World-state and NPC-state editing is reachable from chat (backend routes exist under `src/routes/story-states/`; the frontend CRUD tickets are open).
-- [ ] Turn-order visualization shows the current actor, the queue and actor status — no turn-order frontend module exists yet.
-- [ ] The story-state SSE subscription contract is written down and the story-state read models use it instead of polling.
+- [x] World-state and NPC-state editing is reachable from chat — `createWorldState`/`saveNpcState` in `src/frontend/alpine/story-state/mutations.ts`, panel `src/components/chat/gm-story-panel.html` (verified present-but-unwired T4; CRUD UI wiring landed in `TASK-frontend-story-world-states-crud.md` / `TASK-frontend-story-npc-state.md`).
+- [x] Turn-order visualization shows the current actor, the queue and actor status — `src/frontend/alpine/story-turn-order.ts` (`init()` auto-invoke contract pinned in `src/frontend/alpine/story-turn-order.test.ts`), panel `src/components/chat/gm-story-turn-order.html` mounted in `gm-panel.html`.
+- [x] The story-state SSE subscription contract is written down (`TASK-clarify-story-state-sse-subscription-contract.md`: `GET /api/v1/worlds/:worldId/story-stream`, `story-state` event, reconnect + stale-world guard) and the story-state read models use it (`src/frontend/alpine/story-state/stream.ts` + `connectStoryStream()` in `src/frontend/alpine/story-state.ts`); `refresh()` re-pull retained as fallback.
 - [ ] The story surfaces are keyboard operable and expose accessible names for screen readers.
 
 ## Implementation Phases
@@ -195,8 +195,14 @@ Paths verified against `src/`. Landed:
 
 - `src/frontend/alpine/gm-panel.ts` (+ `gm-panel-entities.ts`, `gm-panel-types.ts`) — GM control panel
 - `src/frontend/alpine/gm-guidance.ts` — GM guidance commands
-- `src/frontend/alpine/story-state.ts` + `src/frontend/alpine/story-state/` — story-state read models
+- `src/frontend/alpine/story-state.ts` + `src/frontend/alpine/story-state/` — story-state read models + CRUD mutations + SSE subscription (`stream.ts`)
+- `src/frontend/alpine/story-turn-order.ts` — turn-order visualization (`storyQueue`, `mergeInitiative`)
+- `src/routes/story-states/stream.ts` — `GET /api/v1/worlds/:worldId/story-stream` server SSE
 - `src/components/chat/gm-panel.html`, `gm-guidance-panel.html`, `gm-quests-panel.html`, `gm-story-panel.html`
+
+T4 verified (typecheck + lint + affected suites green): the CRUD mutations,
+turn-order component, and mount points named "not built yet" below all exist —
+that paragraph is stale and now superseded by the AC ticks above.
 
 Not built yet (no such module exists): turn-order visualization, and the editing side of
 world-state / NPC-state. The `src/frontend/story/` tree named in earlier revisions of this

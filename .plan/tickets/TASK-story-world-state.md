@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** 2026-11-09 (T4 core-t4-story): display paths verified (location/time-weather/NPCs/conditions via `src/frontend/alpine/story-state/loaders.ts` + `src/frontend/alpine/world-page-state.ts` where applicable); mobile responsive remains open.
 **Priority:** P1 — High
 **Effort:** Small
 **Type:** Feature Task
@@ -28,10 +29,10 @@ World state display for story mode.
 
 ## Acceptance Criteria
 
-- [ ] Current location display
-- [ ] Time and weather
-- [ ] Active NPCs in area
-- [ ] World conditions and effects
+- [x] Current location display (`_locationId` + `fetchLocationState` in `src/frontend/alpine/story-state/api.ts`)
+- [x] Time and weather (world conditions via `src/routes/worlds/world-stream.ts` + `src/frontend/alpine/world-page-state.ts`)
+- [x] Active NPCs in area (`npcsAt` via `src/routes/story-states/npc.ts`, `fetchNpcState` in `src/frontend/alpine/story-state/npc-state-api.ts`)
+- [x] World conditions and effects (conditions SSE snapshot + forecast)
 - [ ] Mobile responsive
 
 ## Files to Create

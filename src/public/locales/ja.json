@@ -1517,6 +1517,7 @@
     "initiativeShort": "主導",
     "turnOrderHint": "順序はチャットのターン戦略に従います。イニシアチブ戦略を除き、次の選択は正確です。",
     "activeQuests": "Active Quests",
+    "questHistory": "Quest History",
     "noQuests": "No active quests.",
     "newQuestPlaceholder": "Quest name…",
     "newQuest": "New Quest",

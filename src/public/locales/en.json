@@ -1539,6 +1539,7 @@
     "initiativeShort": "Init",
     "turnOrderHint": "Order follows the chat's turn strategy; the next pick is exact except under the initiative strategy.",
     "activeQuests": "Active Quests",
+    "questHistory": "Quest History",
     "noQuests": "No quests.",
     "worldStatesList": "World States",
     "addState": "Add State",

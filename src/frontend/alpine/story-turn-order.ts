@@ -74,6 +74,8 @@ export interface StoryTurnOrderComponent {
   initiativeRows: InitiativeRow[];
   /** True while a step request is in flight (disables step buttons). */
   busy: boolean;
+  /** Alpine auto-invokes `init` (x-data); delegates to load(). */
+  init(): Promise<void>;
   /** Load the snapshot + initiative rows for the active chat. */
   load(): Promise<void>;
   /** Acting-first queue with joined initiative (empty when no snapshot). */
@@ -99,6 +101,10 @@ export interface StoryTurnOrderComponent {
     snapshot: null,
     initiativeRows: [] as InitiativeRow[],
     busy: false,
+
+    async init(): Promise<void> {
+      await this.load();
+    },
 
     async load(): Promise<void> {
       const chatId = activeChatId();

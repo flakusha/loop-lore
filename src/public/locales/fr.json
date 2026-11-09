@@ -1517,6 +1517,7 @@
     "initiativeShort": "Init.",
     "turnOrderHint": "L'ordre suit la stratégie de tours du chat ; le prochain choix est exact sauf avec la stratégie d'initiative.",
     "activeQuests": "Active Quests",
+    "questHistory": "Quest History",
     "noQuests": "No active quests.",
     "newQuestPlaceholder": "Quest name…",
     "newQuest": "New Quest",

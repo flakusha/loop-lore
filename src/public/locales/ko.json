@@ -1517,6 +1517,7 @@
     "initiativeShort": "주도",
     "turnOrderHint": "순서는 채팅의 턴 전략을 따릅니다. 주도 전략을 제외하고 다음 선택은 정확합니다.",
     "activeQuests": "Active Quests",
+    "questHistory": "Quest History",
     "noQuests": "No active quests.",
     "newQuestPlaceholder": "Quest name…",
     "newQuest": "New Quest",

@@ -127,6 +127,18 @@ describeOrSkip("storyState", () => {
 
       expect(s.turnForMessage("nope",),).toBeNull();
     });
+
+    test("activeQuests/completedQuests split the log from the history", () => {
+      const s = makeState();
+      s.quests = [
+        { id: "a", status: "active", } as never,
+        { id: "c", status: "completed", } as never,
+        { id: "f", status: "failed", } as never,
+      ];
+
+      expect(s.activeQuests().map((q,) => q.id),).toEqual(["a",],);
+      expect(s.completedQuests().map((q,) => q.id),).toEqual(["c",],);
+    });
   },);
 
   describeOrSkip("_parseQuestBanners", () => {
@@ -559,12 +571,12 @@ describeOrSkip("storyState controls (step/escalate/narration)", () => {
     expect(fetchCalls,).toEqual([],);
   });
 
-  test("escalateToMe posts the escalate action", async () => {
+  test("escalateToMe posts to the gm escalate endpoint", async () => {
     const s = makeState();
     s.chatId = "chat-1";
     mockFetch(200, { ok: true, },);
     await s.escalateToMe();
-    expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/story/escalate",);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/gm/escalate",);
   });
 
   test("escalateToMe notifies on failure", async () => {

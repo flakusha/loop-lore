@@ -8,8 +8,9 @@
 -->
 <div class="gm-quests-tab" data-testid="gm-quests-tab">
   <div class="gm-section">
-    <div class="gm-quests" x-show="quests.length > 0" role="list">
-      <template x-for="quest in quests" :key="quest.id">
+    <h4 class="gm-section-title">{{{t("story.activeQuests")}}}</h4>
+    <div class="gm-quests" x-show="activeQuests().length > 0" role="list">
+      <template x-for="quest in activeQuests()" :key="quest.id">
         <div class="gm-quest-row" role="listitem">
           <div class="gm-quest-head">
             <span class="gm-quest-name" x-text="quest.name"></span>
@@ -60,7 +61,34 @@
         </div>
       </template>
     </div>
-    <p class="gm-section-hint" x-show="quests.length === 0">{{{t("story.noQuests")}}}</p>
+    <p class="gm-section-hint" x-show="activeQuests().length === 0">{{{t("story.noQuests")}}}</p>
+    <h4 class="gm-section-title" x-show="completedQuests().length > 0">{{{t("story.questHistory")}}}</h4>
+    <div class="gm-quests gm-quest-history" x-show="completedQuests().length > 0" role="list">
+      <template x-for="quest in completedQuests()" :key="quest.id">
+        <div class="gm-quest-row is-history" role="listitem">
+          <div class="gm-quest-head">
+            <span class="gm-quest-name" x-text="quest.name"></span>
+            <span
+              class="gm-quest-status"
+              :class="'is-' + quest.status"
+              x-text="t('story.questStatus.' + quest.status)"
+            ></span>
+            <span
+              class="gm-quest-pct"
+              x-text="quest.progress + '/' + (quest.target ?? '?') + ' · ' + questProgressPct(quest) + '%'"
+            ></span>
+          </div>
+          <div class="gm-quest-bar">
+            <div
+              class="gm-quest-bar-fill"
+              :style="'width: ' + questProgressPct(quest) + '%'"
+              :class="quest.status === 'completed' ? 'is-complete' : (quest.status === 'failed' ? 'is-failed' : '')"
+            >
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
     <div class="gm-new-quest">
       <input
         class="form-input"
