@@ -584,7 +584,11 @@
       "missingFields": "Не заполнены обязательные поля",
       "configured": "Настроенные провайдеры",
       "importInstead": "Импортировать файл конфигурации"
-    }
+    },
+    "knowledgeGraph": "Граф знаний",
+    "kgAssets": "Ресурсы",
+    "kgEntities": "Сущности",
+    "noGraphData": "Данных графа знаний пока нет"
   },
   "errors": {
     "notFound": "Not found",
@@ -1892,7 +1896,8 @@
     "classifierTagsSaveFailed": "Не удалось сохранить теги классификатора",
     "characterUpdated": "Персонаж {name} обновлён",
     "failedUpdateCharacter": "Не удалось обновить персонажа",
-    "providerSaved": "Провайдер сохранён"
+    "providerSaved": "Провайдер сохранён",
+    "failedLoadKnowledgeGraph": "Не удалось загрузить граф знаний"
   },
   "status": {
     "characterResponding": "Персонаж отвечает...",

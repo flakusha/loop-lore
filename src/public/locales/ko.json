@@ -584,7 +584,11 @@
       "missingFields": "필수 항목이 비어 있습니다",
       "configured": "설정된 제공자",
       "importInstead": "대신 설정 파일 가져오기"
-    }
+    },
+    "knowledgeGraph": "지식 그래프",
+    "kgAssets": "에셋",
+    "kgEntities": "엔티티",
+    "noGraphData": "지식 그래프 데이터가 아직 없습니다"
   },
   "errors": {
     "notFound": "Not found",
@@ -1892,7 +1896,8 @@
     "classifierTagsSaveFailed": "분류 태그 저장 실패",
     "characterUpdated": "캐릭터 {name}이(가) 업데이트되었습니다",
     "failedUpdateCharacter": "캐릭터 업데이트 실패",
-    "providerSaved": "제공자를 저장했습니다"
+    "providerSaved": "제공자를 저장했습니다",
+    "failedLoadKnowledgeGraph": "지식 그래프를 불러오지 못했습니다"
   },
   "status": {
     "characterResponding": "캐릭터가 응답 중...",

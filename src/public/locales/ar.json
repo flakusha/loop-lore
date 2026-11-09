@@ -584,7 +584,11 @@
       "missingFields": "حقول إلزامية مفقودة",
       "configured": "المزوّدات المُهيّأة",
       "importInstead": "استيراد ملف إعدادات بدلاً من ذلك"
-    }
+    },
+    "knowledgeGraph": "مخطط المعرفة",
+    "kgAssets": "الأصول",
+    "kgEntities": "الكيانات",
+    "noGraphData": "لا توجد بيانات لمخطط المعرفة بعد"
   },
   "errors": {
     "notFound": "Not found",
@@ -1892,7 +1896,8 @@
     "classifierTagsSaveFailed": "فشل حفظ وسوم المصنف",
     "characterUpdated": "تم تحديث الشخصية {name}",
     "failedUpdateCharacter": "فشل تحديث الشخصية",
-    "providerSaved": "تم حفظ المزوّد"
+    "providerSaved": "تم حفظ المزوّد",
+    "failedLoadKnowledgeGraph": "فشل تحميل مخطط المعرفة"
   },
   "status": {
     "characterResponding": "الشخصية ترد...",

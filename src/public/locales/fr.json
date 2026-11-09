@@ -584,7 +584,11 @@
       "missingFields": "Des champs obligatoires sont manquants",
       "configured": "Fournisseurs configurés",
       "importInstead": "Importer un fichier de configuration à la place"
-    }
+    },
+    "knowledgeGraph": "Graphe de connaissances",
+    "kgAssets": "Assets",
+    "kgEntities": "Entités",
+    "noGraphData": "Aucune donnée de graphe de connaissances pour le moment"
   },
   "errors": {
     "notFound": "Not found",
@@ -1892,7 +1896,8 @@
     "classifierTagsSaveFailed": "Échec de l'enregistrement des étiquettes du classificateur",
     "characterUpdated": "Personnage {name} mis à jour",
     "failedUpdateCharacter": "Échec de la mise à jour du personnage",
-    "providerSaved": "Fournisseur enregistré"
+    "providerSaved": "Fournisseur enregistré",
+    "failedLoadKnowledgeGraph": "Échec du chargement du graphe de connaissances"
   },
   "status": {
     "characterResponding": "Le personnage répond...",

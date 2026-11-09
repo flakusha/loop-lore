@@ -584,7 +584,11 @@
       "missingFields": "Faltam campos obrigatórios",
       "configured": "Provedores configurados",
       "importInstead": "Importar um ficheiro de configuração em vez disso"
-    }
+    },
+    "knowledgeGraph": "Grafo de conhecimento",
+    "kgAssets": "Ativos",
+    "kgEntities": "Entidades",
+    "noGraphData": "Ainda não há dados do grafo de conhecimento"
   },
   "errors": {
     "notFound": "Not found",
@@ -1892,7 +1896,8 @@
     "classifierTagsSaveFailed": "Falha ao salvar as etiquetas do classificador",
     "characterUpdated": "Personagem {name} atualizado",
     "failedUpdateCharacter": "Falha ao atualizar personagem",
-    "providerSaved": "Provedor guardado"
+    "providerSaved": "Provedor guardado",
+    "failedLoadKnowledgeGraph": "Falha ao carregar o grafo de conhecimento"
   },
   "status": {
     "characterResponding": "O personagem está respondendo...",
