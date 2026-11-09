@@ -40,6 +40,21 @@ const craftResultSchema = t.Object({
   materialsConsumed: t.Array(materialRecordSchema,),
   materialsSaved: t.Array(materialRecordSchema,),
   recipeDiscovered: t.Boolean(),
+  professionBonuses: t.Optional(t.Object({
+    success: t.Number(),
+    quality: t.Number(),
+    speed: t.Number(),
+    materialSaving: t.Number(),
+  },),),
+  professionXp: t.Optional(t.Object({
+    professionId: Id,
+    xpGained: t.Integer(),
+    totalExperience: t.Integer(),
+    newLevel: t.Integer(),
+    newTitle: t.String(),
+    leveledUp: t.Boolean(),
+    titleChanged: t.Boolean(),
+  },),),
 },);
 
 const craftAttemptSchema = t.Object({

@@ -33,7 +33,7 @@ import type {
   ProfessionSpecialization,
   ProfessionXpResult,
 } from "./types.js";
-export { getProgression, progressionBonuses, titleForLevel, } from "./progression.js";
+export { getProgression, LEVEL_XP, MAX_LEVEL, progressionBonuses, titleForLevel, } from "./progression.js";
 export type {
   AddSpecializationInput,
   CreateProfessionInput,
@@ -43,6 +43,24 @@ export type {
   ProfessionSpecialization,
   ProfessionXpResult,
 } from "./types.js";
+
+// game-balance: profession XP per craft. Success grants the recipe tier's full
+// award (tier x CRAFT_XP_PER_TIER, floored at CRAFT_XP_MIN); failure grants
+// half, rounded down, so failed attempts still inch the discipline forward.
+// Adjust the two constants freely — no config UI (per the ticket).
+export const CRAFT_XP_PER_TIER = 10;
+export const CRAFT_XP_MIN = 5;
+
+/**
+ * XP award for one craft attempt, from the recipe tier and outcome.
+ * @param tier recipe tier (>= 1)
+ * @param success whether the craft succeeded
+ * @returns XP to grant (half, rounded down, on failure)
+ */
+export function craftXpForAttempt(tier: number, success: boolean,): number {
+  const full = Math.max(CRAFT_XP_MIN, Math.max(1, Math.floor(tier,),) * CRAFT_XP_PER_TIER,);
+  return success ? full : Math.floor(full / 2,);
+}
 
 /**
  * Map a `professions` row to the domain shape.

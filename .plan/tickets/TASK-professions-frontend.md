@@ -9,8 +9,9 @@
 
 
 **Status:** In Progress
-**Status Note:** frontend slice landed 2026-11-04 — 6/8 ACs met with landed-reality notes inline; the two crafting-integration ACs (station bonus display, XP-on-craft) remain and belong to crafting-lane scope pending `TASK-wire-crafting-routes` (XP-on-craft needs a game-balance decision).
+**Status Note:** 8/8 ACs landed 2026-11-09 (T7, branch core-t7-craft): station bonus display via the `stationProfessions` mixin slice + XP-on-craft in `attemptCraft` (same-trx level-up, receipt on the result). Game-balance default: tier x 10 XP on success (min 5), half rounded down on failure (`CRAFT_XP_PER_TIER`/`CRAFT_XP_MIN` in `src/rpg/crafting/professions/index.ts` — adjust freely, no config UI). No dedicated station-opening view exists in the frontend yet (backend-only surface), so the bonus line is a mixin/template seam for the crafting lane to call when that UI lands.
 **Priority:** P2 — Medium
+**Caveats:** partial failure (XP grant and attempt record share one trx — no half-written state), stale state (station bonus line reads the fetched profession row; refresh after level-up), observability (XP receipt on the result + `experience_gained` on the attempt row)
 **Effort:** Medium
 **Epic:** epic-skills-professions-config
 **Tags:** professions, crafting, frontend, ui, character
@@ -50,8 +51,8 @@ No frontend exists for professions. After `TASK-professions-service-routes.md` c
 - [x] XP progress bar toward next title threshold (landed: `rpg-progress-track/fill` bar + `nextTitleAt` hint; client mirror pinned against `progression.ts` by test)
 - [x] Bonus summary visible (success%, quality%, speed%, material saving) (landed: per-row bonuses line from the title-ladder mirror)
 - [x] Specializations listed with bonus descriptions (landed: `selectProfession` → GET /:id → spec list with bonus + requirement level)
-- [ ] Crafting station shows active profession bonuses — **NOT done**: crafting-station UI wiring is out of this slice (separate crafting lane); the bonuses data is available via `professionBonuses(level)` for that lane to consume.
-- [ ] Crafting attempts gain profession XP (feedback on level-up) — **NOT done**: no XP-on-craft wiring exists server-side or client-side; honest deviation, needs its own ticket/lane decision (XP economy value is a game-balance call).
+- [x] Crafting station shows active profession bonuses — landed T7: `stationProfessions` mixin slice (`src/frontend/alpine/professions-crafting.ts`) — `loadStationProfession(actorId, discipline, worldId?)` fetches the matching profession via the existing actor-scoped list route, `stationProfessionBonus()` renders the line next to station tier bonuses (reuses `professionBonuses(level)`, never reimplements the ladder). Pinned by `professions.test.ts` station block (Journeyman +5% success, Expert +10% quality shapes).
+- [x] Crafting attempts gain profession XP (feedback on level-up) — landed T7: server-side in `CraftingProcessService.attemptCraft` (`src/rpg/crafting/process.ts`) — the matching-discipline profession levels in the same trx as the attempt; `experience_gained` recorded on the attempt row; result carries `professionXp` (id/xpGained/total/newLevel/newTitle/leveledUp/titleChanged); route schema exposes both new fields. Balance default: tier x 10 XP on success (min 5), half (rounded down) on failure — constants `CRAFT_XP_PER_TIER`/`CRAFT_XP_MIN` in `src/rpg/crafting/professions/index.ts`, no config UI. Pinned by `process.test.ts` (success/half/none/level-up) + award-table tests.
 - [x] Mobile responsive (collapsible panel + rows)
 - [x] `bun test src/frontend` green; `bun run check` green (landed: BUN_TEST_WORKER_ID=1 bun test src/frontend/alpine/professions.test.ts + skill-tree.test.ts → 20 pass / 0 fail; check:fast ALL PASS 2026-11-04)
 

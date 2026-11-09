@@ -12,8 +12,8 @@ import type { DB, } from "../../db/schema";
 import type { CraftingRecipeMaterials, } from "../../db/schema-crafting";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
 import { emitRecipeDiscovered, hasDiscovery, insertDiscovery, } from "./discovery";
-import { progressionBonuses, } from "./professions";
-import type { ProfessionBonuses, } from "./professions";
+import { craftXpForAttempt, LEVEL_XP, MAX_LEVEL, progressionBonuses, titleForLevel, } from "./professions";
+import type { ProfessionBonuses, ProfessionXpResult, } from "./professions";
 import type {
   CraftAttempt,
   CraftAttemptOpts,
@@ -30,6 +30,8 @@ export type {
   CraftResult,
   MaterialRecord,
 } from "./types";
+
+export { CRAFT_XP_MIN, CRAFT_XP_PER_TIER, } from "./professions";
 
 /**
  * Find or merge quantity into an actor's inventory.
@@ -355,6 +357,37 @@ export class CraftingProcessService {
       }
 
       const attemptId = uid();
+      // XP-on-craft (TASK-professions-frontend crafting integration): the
+      // matching-discipline profession levels in the same trx as the attempt
+      // (shared place with no UI of its own — no isolated ProfessionsService
+      // needed). No profession row, or a zero award, skips quietly.
+      let professionXp: ProfessionXpResult | null = null;
+      if (profRow) {
+        const award = craftXpForAttempt(recipe.tier, success,);
+        if (award > 0) {
+          const gained = profRow.experience + award;
+          const newLevel = Math.min(MAX_LEVEL, 1 + Math.floor(gained / LEVEL_XP,),);
+          await trx.updateTable("professions",)
+            .set({
+              experience: gained,
+              level: newLevel,
+              title: titleForLevel(newLevel,),
+              updated_at: new Date().toISOString(),
+            },)
+            .where("id", "=", profRow.id,).execute();
+
+          professionXp = {
+            professionId: profRow.id,
+            xpGained: award,
+            totalExperience: gained,
+            newLevel,
+            newTitle: titleForLevel(newLevel,),
+            leveledUp: newLevel > profRow.level,
+            titleChanged: titleForLevel(newLevel,) !== profRow.title,
+          };
+        }
+      }
+
       await trx.insertInto("crafting_attempts",).values({
         id: attemptId,
         actor_id: opts.actorId,
@@ -366,7 +399,7 @@ export class CraftingProcessService {
         quality_achieved: quality,
         output_item_id: outputItemId,
         output_quantity: outputQuantity,
-        experience_gained: 0,
+        experience_gained: professionXp?.xpGained ?? 0,
         skill_increase: 0,
         bonus_effects: jsonStringifyOr(prof ? { profession: prof, } : {},),
         duration_ms: 0,
@@ -389,6 +422,7 @@ export class CraftingProcessService {
         materialsSaved: saved,
         recipeDiscovered: discovered !== null,
         ...(prof ? { professionBonuses: prof, } : {}),
+        ...(professionXp ? { professionXp, } : {}),
       };
 
       return { result, discoveredRecipe: discovered, };

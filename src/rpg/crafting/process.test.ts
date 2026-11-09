@@ -312,6 +312,112 @@ describe("attemptCraft", () => {
       await s.db.destroy();
     }
   });
+
+  test("successful craft grants tier-scaled profession XP in the same trx", async () => {
+    const s = await seed();
+    try {
+      const now = new Date().toISOString();
+      const profId = await insertProfessions(s.db, s.actorId, "smithing", now, now, {
+        world_id: s.worldId,
+        level: 1,
+        experience: 0,
+      },);
+
+      const svc = new CraftingProcessService(s.db,);
+      const result = await withRandom(
+        0,
+        () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),
+      );
+
+      // Tier-1 recipe: 10 XP on success; result carries the XP receipt.
+      expect(result.status,).toBe(CraftingAttemptStatus.Success,);
+      expect(result.professionXp?.xpGained,).toBe(10,);
+      expect(result.professionXp?.professionId,).toBe(profId,);
+      expect(result.professionXp?.leveledUp,).toBe(false,);
+      const row = await s.db.selectFrom("professions",).selectAll()
+        .where("id", "=", profId,).executeTakeFirst();
+
+      expect(row?.experience,).toBe(10,);
+      const stored = await svc.getAttempt(result.attemptId,);
+      expect(stored?.experienceGained,).toBe(10,);
+    } finally {
+      await s.db.destroy();
+    }
+  });
+
+  test("failed craft grants half XP (rounded down)", async () => {
+    const s = await seed({ baseSuccessChance: 0, },);
+    try {
+      const now = new Date().toISOString();
+      const profId = await insertProfessions(s.db, s.actorId, "smithing", now, now, {
+        world_id: s.worldId,
+        level: 1,
+        experience: 0,
+      },);
+
+      const svc = new CraftingProcessService(s.db,);
+      const result = await withRandom(
+        0.99,
+        () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),
+      );
+
+      expect(result.status,).toBe(CraftingAttemptStatus.Failure,);
+      expect(result.professionXp?.xpGained,).toBe(5,);
+      const row = await s.db.selectFrom("professions",).selectAll()
+        .where("id", "=", profId,).executeTakeFirst();
+
+      expect(row?.experience,).toBe(5,);
+    } finally {
+      await s.db.destroy();
+    }
+  });
+
+  test("craft without a profession row grants no XP and stays quiet", async () => {
+    const s = await seed();
+    try {
+      const svc = new CraftingProcessService(s.db,);
+      const result = await withRandom(
+        0,
+        () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),
+      );
+
+      expect(result.status,).toBe(CraftingAttemptStatus.Success,);
+      expect(result.professionXp,).toBeUndefined();
+      const stored = await svc.getAttempt(result.attemptId,);
+      expect(stored?.experienceGained,).toBe(0,);
+    } finally {
+      await s.db.destroy();
+    }
+  });
+
+  test("XP crossing the level boundary levels the profession up", async () => {
+    const s = await seed();
+    try {
+      const now = new Date().toISOString();
+      const profId = await insertProfessions(s.db, s.actorId, "smithing", now, now, {
+        world_id: s.worldId,
+        level: 1,
+        experience: 95,
+      },);
+
+      const svc = new CraftingProcessService(s.db,);
+      const result = await withRandom(
+        0,
+        () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),
+      );
+
+      // 95 + 10 = 105 crosses the 100-XP boundary: level 2.
+      expect(result.professionXp?.leveledUp,).toBe(true,);
+      expect(result.professionXp?.newLevel,).toBe(2,);
+      const row = await s.db.selectFrom("professions",).selectAll()
+        .where("id", "=", profId,).executeTakeFirst();
+
+      expect(row?.level,).toBe(2,);
+      expect(row?.experience,).toBe(105,);
+    } finally {
+      await s.db.destroy();
+    }
+  });
 });
 
 describe("attemptCraft with stations", () => {

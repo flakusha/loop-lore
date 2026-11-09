@@ -20,6 +20,7 @@ import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import { PROFESSION_DISCIPLINES, PROFESSION_XP_STEP, } from "./professions-constants";
+import { stationProfessions, } from "./professions-crafting";
 import { nextTitleAt, professionBonuses, xpProgress, } from "./professions-progression";
 import { selectProfession, } from "./professions-selection";
 import { readServerError, resolveChatActorId, } from "./rpg-stats-helpers";
@@ -231,6 +232,11 @@ export const professions: Partial<ChatState> & ThisType<ChatState> = {
 
   /** Progress through the current level (0..1); 1 at the cap. */
   xpProgress,
+
+  // Station bonus display (crafting integration): fetch the matching
+  // profession when a station opens; the station template renders
+  // stationProfessionBonus() beside the station's own tier bonuses.
+  ...stationProfessions,
 };
 
 // professions-panel.html binds methods through the ChatState scope, but the

@@ -168,6 +168,9 @@ export interface ChatProfessionsState {
   selectedProfessionId: string | null;
   /** Selected profession's specializations, or null while none selected. */
   selectedProfessionSpecs: ProfessionSpecView[] | null;
+  /** Matching-discipline profession for the open crafting station, if any. */
+  stationProfession: ProfessionView | null;
+  stationProfessionLoading: boolean;
   professionsBusyId: string | null;
   professionFeedback: ProfessionFeedback | null;
   specDraft: ProfessionSpecDraft;
@@ -185,4 +188,6 @@ export interface ChatProfessionsState {
   professionBonuses(level: number,): { success: number; quality: number; speed: number; materialSaving: number };
   nextTitleAt(level: number,): number | null;
   xpProgress(profession: Pick<ProfessionView, "level" | "experience">,): number;
+  loadStationProfession(actorId: string, discipline: string, worldId?: string,): Promise<void>;
+  stationProfessionBonus(): string;
 }
