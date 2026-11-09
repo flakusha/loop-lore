@@ -94,12 +94,8 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-
 ### Fixed
 
-// hint: Structural change (rename/retype). Check callers of this entity.
-
-// hint: Structural change (rename/retype). Check callers of this entity.
 // hint: Structural change (rename/retype). Check callers of this entity.
 
 - **The world Edit modal no longer wipes a world's description and lore (BUG-world-edit-modal-served-blank-fields-and-wiped-world-descrip)** — the modal is served as a static, DB-less partial, so its name/description/lore fields arrived blank and the PUT wrote those blanks over the world's row: saving the modal without retyping the lore silently cleared it. The modal now prefills itself from the access-checked `GET /api/v1/worlds/:id` (new Alpine component `src/frontend/alpine/world-edit-modal.ts`, mounted with `x-data="worldEditModal()"`), and its Save button ships `disabled` until the world is loaded, so a world that cannot be loaded can no longer be submitted empty. A failed load now renders inline (an alert paragraph plus a Retry button re-running the load, reusing the existing `worlds.loadFailed` and `common.retry` strings) alongside the toast, and fields the user already typed into keep their text when the loaded values arrive. The world id the modal reads out of the page is URL-escaped into its path segment by the shared `fetchWorldJson` helper (an id carrying "/" or "?" would otherwise retarget the request) and is read as everything after the API prefix rather than the last path segment, so the modal can only ever load the world its form targets. Clearing a field on purpose still clears it — the server keeps its "a non-null field is written as sent" semantics. The API stays authoritative for every field it writes (the route validates the body against `WorldUpdateBody` before the handler writes it), and the world's name input now mirrors that limit on all three surfaces (edit modal, create modal, full-page editor: `maxlength="255"`), so an over-long name cannot turn the whole save into a 422 that drops the description and lore edits with it. What the API cannot express is "a client must not send a value it never loaded" — an empty string is a legitimate clear — so closing that gap server-side would need explicit clear flags on `WorldUpdateBody`; named as a follow-up, not done here.
@@ -190,7 +186,6 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-
 ## [0.1.0] - 2026-08-15
 
 First release. Clean-room reimplementation of SillyTavern-style RPG chat.
@@ -210,14 +205,12 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-
 ### Changed
 
 - Lint debt resolved across `src` (156 files), eslint config + example configs shipped.
 - In-range dependency bumps (kysely, smol-toml, js-yaml, alpine, eslint, unicorn, typescript-eslint, etc.).
 
 // hint: Structural change (rename/retype). Check callers of this entity.
-
 
 ### Fixed
 
@@ -226,11 +219,9 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
 
-
 ### Removed
 
 // hint: Structural change (rename/retype). Check callers of this entity.
-
 
 ### Security
 
@@ -244,7 +235,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
 
 // hint: Structural change (rename/retype). Check callers of this entity.
-
 
 ### Fixed
 
