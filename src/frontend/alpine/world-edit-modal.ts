@@ -84,16 +84,34 @@ function worldIdFromForm(root: ParentNode,): string | null {
 
 /**
  * Write the world's current values into the modal's fields.
+ * Loaded values only fill fields the user has not touched yet (a field
+ * holding typed text is left alone): the user's text wins, and untouched
+ * fields still get their loaded values, so an untouched save submits the
+ * world's own values instead of wiping them.
  * @param root the modal root element
  * @param values the world's current values
+ * @returns true when every field was present and filled or already typed
  */
-function fillFields(root: ParentNode, values: WorldEditModalValues,): void {
+export function fillFields(root: ParentNode, values: WorldEditModalValues,): boolean {
+  let complete = true;
   for (const [selector, key,] of FIELD_IDS) {
     const field = root.querySelector<HTMLInputElement | HTMLTextAreaElement>(selector,);
-    if (!field) { continue; }
+    if (!field) {
+      complete = false;
+
+      continue;
+    }
+
+    // Skip fields the user already typed into - their text wins over the load.
+    if (field.value !== "") {
+      continue;
+    }
+
     field.value = values[key];
     field.dispatchEvent(new Event("input", { bubbles: true, },),);
   }
+
+  return complete;
 }
 
 /**
@@ -107,36 +125,40 @@ function enableSave(root: ParentNode,): void {
 }
 
 /**
- * Report a failed load to the user (best effort - the toast container may
- * not be on the page).
+ * Report a failed load to the user. showToast never throws (it returns
+ * early when the toast container is absent), so no try/catch here.
  */
 function notifyLoadFailed(): void {
-  try {
-    showToast("error", t("worlds.loadFailed",),);
-  } catch (error) {
-    log.warn("toast failed", { error: String(error,), },);
-  }
+  showToast("error", t("worlds.loadFailed",),);
+  log.warn("world failed to load",);
 }
 
 /**
  * Load the world's current values into the modal's fields.
  * @param root the modal root element
+ * @param store optional component state updated with the load outcome
+ * (loadError reflects whether the fields hold the world's values)
  * @returns true when the fields were filled
  */
-async function prefillWorldEditModal(root: ParentNode,): Promise<boolean> {
+export async function prefillWorldEditModal(root: ParentNode, store?: { loadError: boolean },): Promise<boolean> {
+  const fail = (): false => {
+    if (store) { store.loadError = true; }
+    notifyLoadFailed();
+
+    return false;
+  };
+
   try {
     const worldId = worldIdFromForm(root,);
     if (!worldId) {
       log.warn("no world id on the edit form",);
-      notifyLoadFailed();
-      return false;
+      return fail();
     }
 
     const raw = await fetchWorldJson<unknown>(worldId, "",);
     if (raw === null) {
       log.warn(`world ${worldId} could not be loaded`,);
-      notifyLoadFailed();
-      return false;
+      return fail();
     }
 
     // The row is decoded through the shared schema before any field is
@@ -145,22 +167,28 @@ async function prefillWorldEditModal(root: ParentNode,): Promise<boolean> {
     const row = parseOr(WorldRowSchema, raw, null,);
     if (!row) {
       log.warn(`world ${worldId} did not match the expected shape`,);
-      notifyLoadFailed();
-      return false;
+      return fail();
     }
 
-    fillFields(root, {
+    const complete = fillFields(root, {
       name: row.name,
       description: row.description ?? "",
       lore: row.lore ?? "",
     },);
 
+    if (!complete) {
+      // A missing field would submit "" and wipe the column, so an
+      // incomplete fill is a failed load: toast, Save stays disabled.
+      log.warn(`world ${worldId} modal is missing a field`,);
+      return fail();
+    }
+
+    if (store) { store.loadError = false; }
     enableSave(root,);
     return true;
   } catch (error) {
     log.warn("prefill failed", { error: String(error,), },);
-    notifyLoadFailed();
-    return false;
+    return fail();
   }
 }
 
@@ -168,8 +196,12 @@ async function prefillWorldEditModal(root: ParentNode,): Promise<boolean> {
 export interface WorldEditModalComponent {
   /** The modal root element (Alpine injects it). */
   $el?: HTMLElement;
+  /** True while the last load failed to fill the fields. */
+  loadError: boolean;
   /** Load the world's current values into the modal's fields. */
   init(): Promise<void>;
+  /** Re-run the load after a failure (the Retry button). */
+  retry(): Promise<void>;
 }
 
 /**
@@ -179,6 +211,7 @@ export interface WorldEditModalComponent {
  */
 export function worldEditModal(): WorldEditModalComponent {
   return {
+    loadError: false,
     async init(this: WorldEditModalComponent,): Promise<void> {
       const root = this.$el;
       if (!root) {
@@ -186,7 +219,16 @@ export function worldEditModal(): WorldEditModalComponent {
         return;
       }
 
-      await prefillWorldEditModal(root,);
+      await prefillWorldEditModal(root, this,);
+    },
+    async retry(this: WorldEditModalComponent,): Promise<void> {
+      const root = this.$el;
+      if (!root) {
+        log.warn("modal root element missing",);
+        return;
+      }
+
+      await prefillWorldEditModal(root, this,);
     },
   };
 }

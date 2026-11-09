@@ -25,7 +25,7 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
-import { worldEditModal, } from "./world-edit-modal";
+import { fillFields, prefillWorldEditModal, worldEditModal, } from "./world-edit-modal";
 
 // TODO(env): bun-only — `bun:test` and `import.meta.dir` are Bun-specific APIs;
 // add a node shim (node:test + import.meta.dirname) when a node test target lands.
@@ -180,7 +180,7 @@ describe("alpine/world-edit-modal", () => {
     },);
   });
 
-  test("the modal loads the world the form targets, not another world", async () => {
+  test("prefillWorldEditModal requests the world the form targets", async () => {
     let seen = "";
     fetchHandler = async (url: string,) => {
       seen = url;
@@ -191,20 +191,69 @@ describe("alpine/world-edit-modal", () => {
     // segment would load a DIFFERENT world into this modal.
     const modal = makeModal("w-1/w-2",);
 
-    await openModal(modal,);
+    const ok = await prefillWorldEditModal(modal.root,);
 
+    expect(ok,).toBe(true,);
     expect(seen,).toBe("/api/v1/worlds/w-1%2Fw-2",);
+  });
+
+  test("prefillWorldEditModal fails closed when a field is missing", async () => {
+    fetchHandler = async () => Response.json(WORLD,);
+    // The served partial always renders all three fields; drop one the way
+    // a hand-edited or truncated copy would, and the load must refuse to
+    // enable Save rather than submit "" over the missing column.
+    const modal = makeModal("w-1",);
+    delete modal.fields["#edit-lore"];
+
+    // fillFields itself reports the incomplete fill.
+    expect(fillFields(modal.root, { name: "x", description: "y", lore: "z", },),).toBe(false,);
+
+    const ok = await prefillWorldEditModal(modal.root,);
+
+    expect(ok,).toBe(false,);
+    expect(modal.save.disabled,).toBe(true,);
   });
 
   test("a world that cannot be loaded leaves Save disabled and the fields empty", async () => {
     fetchHandler = async () => new Response("boom", { status: 500, },);
     const modal = makeModal("w-1",);
 
-    await openModal(modal,);
+    const component = await openModal(modal,);
 
+    expect(component.loadError,).toBe(true,);
     expect(modal.fields["#edit-description"]?.value,).toBe("",);
     expect(modal.fields["#edit-lore"]?.value,).toBe("",);
     expect(modal.save.disabled,).toBe(true,);
+  });
+
+  test("retry after a failed load fills the fields and clears the error", async () => {
+    fetchHandler = async () => new Response("boom", { status: 500, },);
+    const modal = makeModal("w-1",);
+    const component = await openModal(modal,);
+    expect(component.loadError,).toBe(true,);
+
+    fetchHandler = async () => Response.json(WORLD,);
+    await component.retry();
+
+    expect(modal.fields["#edit-name"]?.value,).toBe("Ashfen",);
+    expect(modal.fields["#edit-description"]?.value,).toBe("A drowned city of bells",);
+    expect(modal.fields["#edit-lore"]?.value,).toBe("The bells still ring under the tide.",);
+    expect(component.loadError,).toBe(false,);
+    expect(modal.save.disabled,).toBe(false,);
+  });
+
+  test("text typed during the load wins over the loaded values", async () => {
+    fetchHandler = async () => Response.json(WORLD,);
+    const modal = makeModal("w-1",);
+    modal.fields["#edit-description"]!.value = "Typed By User";
+
+    const component = await openModal(modal,);
+
+    expect(modal.fields["#edit-description"]?.value,).toBe("Typed By User",);
+    expect(modal.fields["#edit-name"]?.value,).toBe("Ashfen",);
+    expect(modal.fields["#edit-lore"]?.value,).toBe("The bells still ring under the tide.",);
+    expect(modal.save.disabled,).toBe(false,);
+    expect(component.loadError,).toBe(false,);
   });
 
   test("a payload that is not a world row leaves the fields empty and Save disabled", async () => {
@@ -246,6 +295,11 @@ describe("alpine/world-edit-modal", () => {
     expect(html,).toContain(`id="edit-name"`,);
     expect(html,).toContain(`id="edit-description"`,);
     expect(html,).toContain(`id="edit-lore"`,);
+    // A failed load renders inline: an alert paragraph plus a Retry button
+    // re-invoking the load. Save stays disabled until success.
+    expect(html,).toContain(`role="alert"`,);
+    expect(html,).toContain(`x-on:click="retry()"`,);
+    expect(html,).toContain(`id="edit-world-retry"`,);
     // Save ships disabled - only a loaded world may be submitted.
     expect(html,).toMatch(/id="edit-world-save"[^>]*disabled/,);
   });
