@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { adminKnowledgeGraph, projectKnowledgeGraph, } from "./admin-knowledge-graph";
+import {
+  adminKnowledgeGraph,
+  buildGraphSvg,
+  projectKnowledgeGraph,
+} from "./admin-knowledge-graph";
 
 const globalState = globalThis as unknown as {
   apiFetch?: (url: string, opts?: RequestInit,) => Promise<Response>;
@@ -57,6 +61,39 @@ describe("projectKnowledgeGraph", () => {
   });
 });
 
+describe("buildGraphSvg", () => {
+  test("renders edges before nodes with theme-var fills", () => {
+    const { nodes, edges, } = projectKnowledgeGraph(
+      [
+        { id: "asset:1", kind: "asset", label: "a.png", },
+        { id: "entity:character:1", kind: "entity", label: "character:1", },
+      ],
+      [{ source: "asset:1", target: "entity:character:1", label: null, },],
+    );
+
+    const svg = buildGraphSvg(nodes, edges,);
+    expect(svg,).toContain("<line",);
+    expect(svg,).toContain("<circle",);
+    expect(svg,).toContain("var(--success)",);
+    expect(svg,).toContain("var(--warning)",);
+    expect(svg.indexOf("<line",),).toBeLessThan(svg.indexOf("<circle",),);
+  });
+
+  test("escapes xml-sensitive characters in labels", () => {
+    const svg = buildGraphSvg(
+      [{ id: "asset:1", kind: "asset", label: '<a&"b>', x: 200, y: 50, fill: "var(--success)", },],
+      [],
+    );
+
+    expect(svg,).not.toContain("<a&",);
+    expect(svg,).toContain("&lt;a&amp;&quot;b&gt;",);
+  });
+
+  test("returns empty markup for an empty graph", () => {
+    expect(buildGraphSvg([], [],),).toBe("",);
+  });
+});
+
 describe("adminKnowledgeGraph.loadKnowledgeGraph", () => {
   test("fetches the endpoint and stores projected nodes/edges", async () => {
     const state = makeState();
@@ -72,7 +109,7 @@ describe("adminKnowledgeGraph.loadKnowledgeGraph", () => {
     await state.loadKnowledgeGraph();
     expect(calledUrl,).toBe("/api/v1/memory/knowledge-graph",);
     expect(state.kgNodes,).toHaveLength(1,);
-    expect(state.kgEdges,).toEqual([],);
+    expect(state.kgGraphSvg,).toContain("<circle",);
     expect(toasts,).toEqual([],);
     expect(state.loadingKnowledgeGraph,).toBe(false,);
   });
@@ -82,6 +119,7 @@ describe("adminKnowledgeGraph.loadKnowledgeGraph", () => {
     handler = async () => new Response("{}", { status: 500, },);
     await state.loadKnowledgeGraph();
     expect(state.kgNodes,).toEqual([],);
+    expect(state.kgGraphSvg,).toBe("",);
     expect(toasts,).toHaveLength(1,);
     expect(toasts[0]!.type,).toBe("error",);
   });
@@ -90,6 +128,7 @@ describe("adminKnowledgeGraph.loadKnowledgeGraph", () => {
     const state = makeState();
     handler = async () => Promise.reject(new Error("offline",),);
     await state.loadKnowledgeGraph();
+    expect(state.kgGraphSvg,).toBe("",);
     expect(toasts,).toHaveLength(1,);
     expect(toasts[0]!.type,).toBe("error",);
     expect(state.loadingKnowledgeGraph,).toBe(false,);

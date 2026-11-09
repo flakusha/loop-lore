@@ -52,6 +52,46 @@ const KG_FILL: Record<KnowledgeNodeRaw["kind"], string> = {
   entity: "var(--warning)",
 };
 
+/** Escape a label for safe inclusion in SVG markup. */
+function escapeXml(value: string,): string {
+  return value
+    .replaceAll("&", "&amp;",)
+    .replaceAll("<", "&lt;",)
+    .replaceAll(">", "&gt;",)
+    .replaceAll('"', "&quot;",);
+}
+
+function truncateLabel(label: string,): string {
+  return label.length > 18 ? label.slice(0, 17,) + "…" : label;
+}
+
+/**
+ * Build the inner SVG markup (edges first, then nodes) for the graph.
+ *
+ * Alpine's x-for cannot iterate inside an <svg> element (its <template>
+ * wrapper would land in the SVG namespace and lose `.content`), so the
+ * panel binds this markup with x-html instead.
+ *
+ * @param nodes - Positioned nodes from the circle layout.
+ * @param edges - Laid-out edges from the circle layout.
+ * @returns SVG inner markup, empty string for an empty graph.
+ */
+export function buildGraphSvg(nodes: GraphNode[], edges: GraphEdge[],): string {
+  const lines = edges.map((e,) =>
+    `<line x1="${e.x1}" y1="${e.y1}" x2="${e.x2}" y2="${e.y2}" stroke="currentColor"` +
+    ` stroke-opacity="0.35" style="color: var(--text-secondary, #6b7280)"></line>`
+  );
+
+  const nodeMarks = nodes.map((n,) =>
+    `<circle cx="${n.x}" cy="${n.y}" r="8" fill="${escapeXml(n.fill,)}">` +
+    `<title>${escapeXml(n.label,)}</title></circle>` +
+    `<text x="${n.x}" y="${n.y - 12}" text-anchor="middle" fill="var(--text-primary, #212529)"` +
+    ` style="font-size: 9px">${escapeXml(truncateLabel(n.label,),)}</text>`
+  );
+
+  return [...lines, ...nodeMarks,].join("",);
+}
+
 /**
  * Project raw nodes/edges onto a circular layout.
  *
@@ -94,7 +134,7 @@ export function projectKnowledgeGraph(
 /** Knowledge-graph panel state + loader for the admin analytics tab. */
 export const adminKnowledgeGraph = {
   kgNodes: [] as GraphNode[],
-  kgEdges: [] as GraphEdge[],
+  kgGraphSvg: "",
   loadingKnowledgeGraph: false,
 
   /**
@@ -116,10 +156,11 @@ export const adminKnowledgeGraph = {
       }
 
       const data = await res.json() as KnowledgeGraphResponse;
+
       const { nodes, edges, } = projectKnowledgeGraph(data.nodes ?? [], data.edges ?? [],);
 
       this.kgNodes = nodes;
-      this.kgEdges = edges;
+      this.kgGraphSvg = buildGraphSvg(nodes, edges,);
     } catch {
       showToast("error", t("toasts.networkError",),);
     } finally {
