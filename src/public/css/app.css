@@ -929,6 +929,89 @@ body {
   user-select: none;
 }
 
+/* --- T8 group-chat viewer: speaker badge + impersonation marker --- */
+.message .bubble .meta .speaker-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--accent-soft, rgb(59 130 246 / 15%));
+  color: var(--text-primary);
+  user-select: none;
+  flex: none;
+}
+
+.message .bubble .meta .impersonation-badge {
+  font-size: 11px;
+  cursor: help;
+  user-select: none;
+}
+
+/* --- T8 group-chat viewer: turn-indicator strip above the message list --- */
+.group-turn-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--border-default);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.group-turn-label {
+  font-weight: 600;
+  margin-right: var(--space-1);
+}
+
+.group-turn-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-default);
+  max-width: 160px;
+}
+
+.group-turn-slot.is-current {
+  background: var(--accent-soft, rgb(59 130 246 / 15%));
+  font-weight: 600;
+}
+
+.group-turn-slot.is-next {
+  border-style: dashed;
+}
+
+.group-turn-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- T8 party split modal: branch draft cards + actor picker rows --- */
+.branch-select-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px 0;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.modal-error {
+  padding: var(--space-2);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: rgb(239 68 68 / 12%);
+  color: var(--danger, #ef4444);
+  font-size: 13px;
+}
+
 .message .bubble .meta .edited-label {
   font-size: 11px;
   font-style: italic;

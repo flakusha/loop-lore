@@ -54,6 +54,7 @@ import { chatWorld, } from "./world";
 import { schedulingActions, } from "../chat-actions/scheduling";
 import { chatBranchMerge, } from "../chat-branch-merge";
 import { chatMusicLinks, } from "../chat-music-links";
+import { chatPartySplit, } from "../chat-party-split";
 import { transitionPicker, } from "../chat-transition-picker";
 import { slashAutocomplete, } from "../slash-autocomplete";
 import { mergeReactiveSource, } from "./merge-reactive";
@@ -106,6 +107,7 @@ export function chatState() {
     ...chatMusicLinks,
     ...chatBranches,
     ...chatBranchMerge,
+    ...chatPartySplit,
     ...messageArchive,
     ...messageTranslate,
     ...chatInvites,

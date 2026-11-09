@@ -1,0 +1,131 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Party split / reunite execution modal (T8 group-chat viewer).
+  Backs `chatPartySplit` (src/frontend/alpine/chat-party-split.ts) against
+  the existing `POST /api/v1/chats/:id/split|/reunite` engine. Reads chatState
+  scope (`splitBranches`, `_chatParticipants`) — mount inside the chat.html
+  x-data="chatState()" tree, next to the sections panel.
+-->
+<div
+  class="modal-overlay"
+  x-show="$store.ui.showPartySplit"
+  @click.self="window.closePartySplit()"
+  @keydown.escape.window="window.closePartySplit()"
+  x-cloak
+  data-testid="party-split-modal"
+>
+  <div class="modal-panel" role="dialog" aria-modal="true" :aria-label="t('partySplit.title')">
+    <div class="modal-header">
+      <h3 x-text="t('partySplit.title')"></h3>
+      <button class="btn-icon btn-xs" @click="window.closePartySplit()" x-bind:aria-label="t('common.close')">
+        ✕
+      </button>
+    </div>
+    <div class="modal-body">
+      <h4 class="gm-section-title" x-text="t('partySplit.splitTitle')"></h4>
+      <p class="modal-hint" x-text="t('partySplit.splitHint')"></p>
+      <div class="modal-error" x-show="splitError" data-testid="party-split-error">
+        <span x-text="splitError"></span>
+      </div>
+      <template x-for="(branch, bi) in splitBranches" :key="bi">
+        <div class="gm-note-card" data-testid="party-split-branch">
+          <div class="gm-note-header">
+            <span x-text="t('partySplit.branch') + ' ' + (bi + 1)"></span>
+            <button
+              class="btn-icon btn-xs"
+              x-show="splitBranches.length > 2"
+              @click="removeSplitBranch(bi)"
+              x-bind:title="t('partySplit.removeBranch')"
+              data-testid="party-split-remove-branch"
+            >
+              🗑
+            </button>
+          </div>
+          <div class="gm-form-group">
+            <label class="form-label" x-text="t('partySplit.location')"></label>
+            <input
+              type="text"
+              class="form-input"
+              x-model="branch.locationId"
+              :placeholder="t('partySplit.locationPlaceholder')"
+              data-testid="party-split-location"
+            />
+          </div>
+          <div class="gm-form-group">
+            <label class="form-label" x-text="t('partySplit.nameOptional')"></label>
+            <input
+              type="text"
+              class="form-input"
+              x-model="branch.name"
+              :placeholder="t('partySplit.namePlaceholder')"
+              data-testid="party-split-name"
+            />
+          </div>
+          <div class="gm-form-group">
+            <label class="form-label" x-text="t('partySplit.members')"></label>
+            <template x-if="_chatParticipants.length === 0">
+              <p class="gm-section-hint" x-text="t('partySplit.noParticipants')"></p>
+            </template>
+            <template x-for="p in _chatParticipants" :key="p.actor_id">
+              <label class="branch-select-row" data-testid="party-split-actor">
+                <input
+                  type="checkbox"
+                  :checked="branch.actorIds.includes(p.actor_id)"
+                  @change="toggleSplitActor(bi, p.actor_id)"
+                  :data-testid="'party-split-actor-' + p.actor_id"
+                />
+                <span x-text="p.display_name || p.name || p.actor_id"></span>
+              </label>
+            </template>
+          </div>
+        </div>
+      </template>
+      <div class="panel-toolbar">
+        <button class="btn btn-ghost btn-sm" @click="addSplitBranch()" data-testid="party-split-add-branch">
+          <span x-text="t('partySplit.addBranch')"></span>
+        </button>
+        <button
+          class="btn btn-primary btn-sm"
+          @click="window.submitPartySplit()"
+          :disabled="splitBusy"
+          data-testid="party-split-submit"
+        >
+          <span x-text="splitBusy ? t('partySplit.splitting') : t('partySplit.split')"></span>
+        </button>
+      </div>
+
+      <h4 class="gm-section-title" x-text="t('partySplit.reuniteTitle')"></h4>
+      <p class="modal-hint" x-text="t('partySplit.reuniteHint')"></p>
+      <div class="modal-error" x-show="reuniteError" data-testid="party-reunite-error">
+        <span x-text="reuniteError"></span>
+      </div>
+      <div class="gm-form-group" style="display: flex; gap: var(--space-2); align-items: end">
+        <div style="flex: 1">
+          <label class="form-label" x-text="t('partySplit.secondaryChat')"></label>
+          <input
+            type="text"
+            class="form-input"
+            x-model="reuniteSecondaryId"
+            :placeholder="t('partySplit.secondaryPlaceholder')"
+            data-testid="party-reunite-secondary"
+          />
+        </div>
+        <button
+          class="btn btn-primary btn-sm"
+          @click="window.submitPartyReunite()"
+          :disabled="reuniteBusy || !reuniteSecondaryId.trim()"
+          data-testid="party-reunite-submit"
+        >
+          <span x-text="reuniteBusy ? t('partySplit.reuniting') : t('partySplit.reunite')"></span>
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" @click="window.closePartySplit()" data-testid="party-split-close">
+        <span x-text="t('common.close')"></span>
+      </button>
+    </div>
+  </div>
+</div>

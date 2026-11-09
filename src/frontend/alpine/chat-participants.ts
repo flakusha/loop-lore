@@ -203,4 +203,20 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
       this.$dispatch?.("show-toast", { type: "error", message: t("participants.failedUpdate",), },);
     }
   },
+
+  /**
+   * Actor ids currently driven by a human in this chat (T8 speaker
+   * attribution). A participant row whose `impersonate_actor_id` is set
+   * means its owner speaks *as* that actor, so the viewer marks the
+   * actor's messages with the human-played badge.
+   * @returns {Set<string>} impersonated actor ids (empty for direct chats)
+   */
+  impersonatedActorIds() {
+    const ids = new Set<string>();
+    for (const p of this._participants ?? []) {
+      if (p.impersonate_actor_id) { ids.add(p.impersonate_actor_id,); }
+    }
+
+    return ids;
+  },
 };
