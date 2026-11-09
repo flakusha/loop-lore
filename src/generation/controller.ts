@@ -135,11 +135,28 @@ export function generationRoutes(
   app.post(`${prefix}/generation/video`, async (ctx,) => {
     const auth = ctx as unknown as { userId?: string | null; userRole?: string | null };
     return handleVideoGeneration(readBody(ctx,), database, auth.userId ?? undefined, auth.userRole,);
+  }, {
+    // The summary and the tag are what the generated OpenAPI document
+    // publishes for this route; without them the served reference carries a
+    // bare path nobody can place.
+    detail: {
+      summary: "Submit a video generation job",
+      description: "Starts a background render and returns 202 with the job id. Poll the status route for the " +
+        "outcome; on success the clip is persisted as a video asset linked to the chat.",
+      tags: ["Generation",],
+    },
   },);
 
   app.get(`${prefix}/generation/video/status/:jobId`, async (ctx,) => {
     const auth = ctx as unknown as { userId?: string; userRole?: string | null };
     return handleVideoGenerationStatus(ctx.params.jobId, database, auth.userId, auth.userRole,);
+  }, {
+    detail: {
+      summary: "Poll a video generation job",
+      description: "The job's status and, once it succeeds, the persisted asset. A job owned by another " +
+        "user reads as not found.",
+      tags: ["Generation",],
+    },
   },);
 
   app.post(`${prefix}/generation/caption`, async (ctx,) => {
