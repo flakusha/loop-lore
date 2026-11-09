@@ -135,6 +135,11 @@ Worlds contain many locations. Locations form a travel graph.
 Create is a modal on the worlds page (**+ New** header button loads
 `/partials/worlds/create-modal`). Edit is a page at `/worlds/:id/edit`.
 
+The world-detail page's **Edit** button opens a modal instead
+(`/partials/worlds/edit-modal`). The modal prefills name, description and
+lore from `GET /api/v1/worlds/:id` and keeps its Save button disabled until
+the world is loaded, so an unloadable world can never be saved empty.
+
 Single-column form, max-width 600px, centered.
 
 **Fields**:
