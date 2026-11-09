@@ -53,6 +53,7 @@ import { chatWorld, } from "./world";
 
 import { schedulingActions, } from "../chat-actions/scheduling";
 import { chatBranchMerge, } from "../chat-branch-merge";
+import "../chat-export"; // side-effect: registers window.exportChat
 import { chatMusicLinks, } from "../chat-music-links";
 import { chatPartySplit, } from "../chat-party-split";
 import { transitionPicker, } from "../chat-transition-picker";

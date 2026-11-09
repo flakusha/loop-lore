@@ -71,6 +71,8 @@ export const uiStoreDefinition: Record<string, unknown> = {
   transitionDestinationId: "",
   transitionLocations: [] as { id: string; name: string }[],
   transitionBusy: false,
+  // ── Export chat (header dropdown) ──
+  showExportMenu: false,
 
   // ── Active entity refs ───────────────────────────────
   activePersona: null,

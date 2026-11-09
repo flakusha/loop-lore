@@ -305,6 +305,42 @@
         </div>
       </div>
     </div>
+    <!-- Export chat dropdown (blob download via GET /api/v1/chats/:id/export) -->
+    <div
+      class="side-channels-wrap"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="export-menu-wrap"
+    >
+      <button
+        class="btn-icon"
+        x-bind:title="t('chats.exportChat')"
+        x-bind:aria-label="t('chats.exportChat')"
+        @click="$store.ui.showExportMenu = !$store.ui.showExportMenu"
+        data-testid="export-menu-toggle"
+      >
+        &#8681;
+      </button>
+      <div
+        class="side-channels-dropdown-menu"
+        x-show="$store.ui.showExportMenu"
+        x-cloak
+        @click.outside="$store.ui.showExportMenu = false"
+        data-testid="export-menu"
+      >
+        <div class="side-channels-header">
+          <span>{{{t("chats.exportChat")}}}</span>
+        </div>
+        <template x-for="f in ['markdown', 'json', 'html', 'text']" :key="f">
+          <div
+            class="side-channel-row"
+            @click="$store.ui.showExportMenu = false; window.exportChat(f)"
+            data-testid="export-format-row"
+          >
+            <span class="side-channel-name" x-text="t('chats.exportFormat.' + f)"></span>
+          </div>
+        </template>
+      </div>
+    </div>
     <!--
       Party split / reunite execution (T8 group-chat viewer): branch the
       active group chat into per-location sub-chats or merge one back.
