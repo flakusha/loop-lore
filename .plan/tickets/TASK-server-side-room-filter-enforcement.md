@@ -81,3 +81,5 @@ Display-only filtering in the message read path stays client-authoritative
 - `src/routes/chats/filters.test.ts`: 22 pass;
   `src/frontend/alpine/chat-filters-server.test.ts`: 12 pass
   (`bun test`, 2026-11-09).
+
+**Resolved:** 2026-11-09 registry-driven close: git issue f69c9c8 (registry tip: 8a3a81fb0 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-SERVER-SIDE-ROOM-FILTER-ENF)

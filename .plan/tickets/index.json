@@ -59466,7 +59466,7 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/TASK-server-side-room-filter-enforcement.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-SERVICES-ACTOR-ITEMS-TS-VS-SERVICES-ACTOR-ITEMS-NAME-COLLISI": {
     "hash": "1f9ebc1",
