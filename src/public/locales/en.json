@@ -2479,5 +2479,32 @@
     "new": "New Template",
     "payload": "Payload (JSON)",
     "preset": "Preset"
+  },
+
+  "partySplit": {
+    "title": "Party Split",
+    "splitTitle": "Split the Party",
+    "splitHint": "Split the chat into branches, each starting at a different location.",
+    "branch": "Branch",
+    "removeBranch": "Remove branch",
+    "location": "Location",
+    "locationPlaceholder": "Location ID",
+    "nameOptional": "Name (optional)",
+    "namePlaceholder": "e.g. Forest Patrol",
+    "members": "Members",
+    "noParticipants": "No participants in this chat.",
+    "addBranch": "+ Add branch",
+    "split": "Split",
+    "splitting": "Splitting…",
+    "splitDone": "Party split",
+    "failed": "Failed to split the party.",
+    "reuniteTitle": "Reunite the Party",
+    "reuniteHint": "Merge a split branch back into this chat. The secondary chat is archived.",
+    "secondaryChat": "Secondary chat",
+    "secondaryPlaceholder": "Secondary chat ID",
+    "reunite": "Reunite",
+    "reuniting": "Reuniting…",
+    "reunited": "Party reunited",
+    "failedReunite": "Failed to reunite the party."
   }
 }
