@@ -37,7 +37,7 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
     }
 
     // Check unimplemented generation actions
-    if (["generate-music", "generate-sfx", "generate-video",].includes(action,)) {
+    if (["generate-music", "generate-sfx",].includes(action,)) {
       const label = action.replace("generate-", "",);
       this.$dispatch?.("show-toast", {
         type: "info",
@@ -86,6 +86,16 @@ const actionHandlers: Record<string, ActionHandler> = {
       "/api/v1/generation/image",
       body,
       "Image generation",
+      chatId,
+    );
+  },
+
+  "generate-video": async (ctx, payload, chatId,) => {
+    await dispatchGenerationAction(
+      ctx,
+      "/api/v1/generation/video",
+      { prompt: (payload?.prompt as string) ?? "", chatId, },
+      "Video generation",
       chatId,
     );
   },

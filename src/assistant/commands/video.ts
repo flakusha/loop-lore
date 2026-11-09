@@ -4,10 +4,26 @@
 /**
  * /video — Generate a video from a text prompt.
  *
- * Uses video generation providers (ComfyUI, Runway, etc.) when configured.
+ * Returns a command action for the frontend to dispatch via
+ * POST /api/v1/generation/video (mirrors /image). The route renders the clip
+ * in the background and persists it as a chat-linked video asset.
+ *
+ * Availability gated on a configured video provider: with none configured the
+ * command stays hidden from `listCommands()` while the handler remains callable
+ * for direct slash input.
  */
 
+import { loadConfig, } from "../../config/load";
 import { type CommandResult, registerCommand, } from "./registry";
+
+/** True when at least one video provider is configured. */
+export function resolveVideoCommandAvailability(): boolean {
+  try {
+    return (loadConfig().generation.providers.video?.length ?? 0) > 0;
+  } catch {
+    return false;
+  }
+}
 
 registerCommand("video", (args,): CommandResult => {
   const prompt = args.join(" ",).trim();
@@ -20,12 +36,10 @@ registerCommand("video", (args,): CommandResult => {
     };
   }
 
-  // TODO: Call video generation provider (ComfyUI, Runway, etc.)
+  // Delegate to the frontend action dispatch — the route owns the render.
   return {
-    systemMessage:
-      `**Video generation is not implemented yet** — this command is a placeholder, so nothing was generated.\n\nPrompt: ${prompt}`,
     action: "generate-video",
     actionPayload: { prompt, },
     handled: true,
   };
-}, { available: false, capabilities: ["write-asset",], },);
+}, { available: resolveVideoCommandAvailability(), capabilities: ["write-asset", "network",], },);
