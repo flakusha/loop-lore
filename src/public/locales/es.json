@@ -1952,7 +1952,8 @@
     "tradeOfferCountered": "Trade offer countered.",
     "tradeOfferCancelFailed": "Failed to cancel trade offer.",
     "tradeOfferCancelled": "Trade offer cancelled.",
-    "tradeOfferEmptyDraft": "Select items or set a price for the offer."
+    "tradeOfferEmptyDraft": "Select items or set a price for the offer.",
+    "tradeBalanceFailed": "Failed to load balance."
   },
   "commands": {
     "timeline": "Gestiona las ramas de línea temporal del mundo (list/fork/switch)",
@@ -2479,7 +2480,6 @@
       "specializeNameRequired": "Enter a specialization name."
     }
   },
-
   "partySplit": {
     "title": "Party Split",
     "splitTitle": "Split the Party",
