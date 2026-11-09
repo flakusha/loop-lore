@@ -3,7 +3,7 @@
 
 import { afterEach, expect, test, } from "bun:test";
 import { describeOrSkip, } from "../../../test-utils/isolate-only";
-import { connectStoryStream, disconnectStoryStream, parseStoryStateFrame, } from "./stream";
+import { connectStoryStream, disconnectStoryStream, parseStoryStateFrame, storyStream, } from "./stream";
 import type { StoryStreamHost, } from "./stream";
 
 // ── Fake EventSource ──
@@ -147,5 +147,25 @@ describeOrSkip("connectStoryStream", () => {
     disconnectStoryStream(host,);
     expect(source.closed,).toBe(true,);
     expect(host._storyStream,).toBeNull();
+  });
+},);
+
+describeOrSkip("storyStream mixin", () => {
+  test("mixin methods delegate to the module connect/disconnect", () => {
+    stubEventSource();
+    const component = {
+      _worldId: "world-1",
+      _storyStream: null,
+      _activeChatId: () => "chat-1",
+      refresh: async () => {},
+      ...storyStream,
+    } as unknown as StoryStreamHost & typeof storyStream;
+
+    storyStream.connectStoryStream.call(component as never,);
+    expect(FakeEventSource.instances.length,).toBe(1,);
+    expect(FakeEventSource.instances[0]?.url,).toBe("/api/v1/worlds/world-1/story-stream",);
+    const source = FakeEventSource.instances[0]!;
+    storyStream.disconnectStoryStream.call(component as never,);
+    expect(source.closed,).toBe(true,);
   });
 },);
