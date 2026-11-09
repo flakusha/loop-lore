@@ -85,6 +85,12 @@ export interface IntegrationNostrConfig {
   relayUrls: string[];
 }
 
+/** GIF provider (Tenor) config. Unconfigured = empty apiKey. */
+export interface IntegrationGifsConfig {
+  /** Tenor API key. Env-only: TENOR_API_KEY. Empty = GIF search unconfigured (501). */
+  apiKey: string;
+}
+
 /** External integrations master config. Everything off by default (opt-in). */
 export interface IntegrationsConfig {
   /** Master switch — no adapter loads unless this is true. Default false. */
@@ -99,6 +105,8 @@ export interface IntegrationsConfig {
   telegram: IntegrationTelegramConfig;
   /** Discord family. */
   discord: IntegrationDiscordConfig;
+  /** GIF provider family. */
+  gifs: IntegrationGifsConfig;
   /** IRC family. */
   irc: IntegrationIrcConfig;
   /** Nostr family. */
