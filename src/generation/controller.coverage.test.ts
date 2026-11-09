@@ -63,6 +63,8 @@ const ROUTES: RouteCase[] = [
   { name: "continue", method: "POST", path: "/api/v1/generation/continue", body: {}, expected: 400, },
   { name: "regenerate", method: "POST", path: "/api/v1/generation/regenerate", body: {}, expected: 400, },
   { name: "image", method: "POST", path: "/api/v1/generation/image", body: {}, expected: 400, },
+  // Unknown job id → 404 (foreign jobs are 404 too, so ids are not probeable).
+  { name: "video-status", method: "GET", path: "/api/v1/generation/video/status/missing-job", expected: 404, },
   { name: "caption", method: "POST", path: "/api/v1/generation/caption", body: {}, expected: 400, },
   { name: "prompt", method: "POST", path: "/api/v1/generation/prompt", body: {}, expected: 400, },
   { name: "test-connection", method: "POST", path: "/api/v1/generation/test-connection", body: {}, expected: 400, },
