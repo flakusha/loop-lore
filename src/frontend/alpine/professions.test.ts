@@ -57,6 +57,8 @@ function buildCtx(overrides: Record<string, unknown> = {},): ChatState {
     assignDiscipline: "",
     assignBusy: false,
     disciplines: PROFESSION_DISCIPLINES,
+    stationProfession: null,
+    stationProfessionLoading: false,
     ...professions,
     ...overrides,
   };
@@ -590,5 +592,74 @@ describeOrSkip("professions.assignableDisciplines", () => {
     expect(assignable,).not.toContain("alchemy",);
     expect(assignable,).toContain("smithing",);
     expect(assignable.length,).toBe(PROFESSION_DISCIPLINES.length - 1,);
+  });
+},);
+
+describeOrSkip("professions.stationProfession (station bonus display)", () => {
+  test("bonus line names the discipline, title and non-zero bonuses", () => {
+    // Journeyman (level 30): +5% success only — the line reuses the
+    // progression mirror, not a reimplemented ladder.
+    const ctx = buildCtx({ stationProfession: { ...PROFESSION, level: 30, title: "journeyman", }, },);
+
+    expect(ctx.stationProfessionBonus(),).toBe("Your Alchemy (Journeyman): +5% success",);
+  });
+
+  test("bonus line is empty without a profession or at Apprentice (no bonuses)", () => {
+    expect(buildCtx({ stationProfession: null, },).stationProfessionBonus(),).toBe("",);
+    expect(
+      buildCtx({ stationProfession: { ...PROFESSION, level: 1, title: "apprentice", }, },).stationProfessionBonus(),
+    ).toBe("",);
+  });
+
+  test("loadStationProfession stores the matching discipline", async () => {
+    const ctx = buildCtx();
+    const expert: ProfessionView = {
+      id: "prof-9",
+      discipline: "smithing",
+      level: 60,
+      experience: 100,
+      title: "expert",
+    };
+
+    fetchHandler = (url,) => {
+      if (url === "/api/rpg/professions/actors/actor-1") {
+        return Response.json({ professions: [PROFESSION, expert,], },);
+      }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.loadStationProfession("actor-1", "smithing",);
+
+    expect(ctx.stationProfession,).toEqual(expert,);
+    expect(ctx.stationProfessionLoading,).toBe(false,);
+    // Expert (level 60): +10% quality — the AC's example shape.
+    expect(ctx.stationProfessionBonus(),).toBe("Your Smithing (Expert): +10% quality",);
+  });
+
+  test("loadStationProfession resolves null on 404 (not visible) without an error", async () => {
+    const ctx = buildCtx();
+    fetchHandler = () => new Response("{}", { status: 404, },);
+
+    await ctx.loadStationProfession("actor-1", "smithing",);
+
+    expect(ctx.stationProfession,).toBeNull();
+    expect(ctx.professionsError,).toBeNull();
+  });
+
+  test("loadStationProfession forwards the world scope", async () => {
+    const ctx = buildCtx();
+    fetchHandler = (url,) => {
+      if (url === "/api/rpg/professions/actors/actor-1?worldId=world-1") {
+        return Response.json({ professions: [], },);
+      }
+
+      return new Response("{}", { status: 500, },);
+    };
+
+    await ctx.loadStationProfession("actor-1", "smithing", "world-1",);
+
+    expect(ctx.stationProfession,).toBeNull();
+    expect(fetchCalls.some((c,) => c.url === "/api/rpg/professions/actors/actor-1?worldId=world-1"),).toBe(true,);
   });
 },);

@@ -15,7 +15,7 @@ import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import { insertActors, insertUsers, insertWorlds, } from "../../../test-utils/insert-helpers";
 import { uid, } from "../../../utils";
-import { ProfessionsService, } from "./index";
+import { craftXpForAttempt, ProfessionsService, } from "./index";
 
 // Resource contract: one createTestDb() per file (ephemeral sqlite), rows
 // scoped by unique ids per test, destroyed in afterAll; no ports or sleeps.
@@ -156,5 +156,18 @@ describe("ProfessionsService", () => {
     await expect(
       svc.addSpecialization(uid(), { name: "X", bonusType: ProfessionBonusType.Success, bonusValue: 1, },),
     ).rejects.toThrow("Profession not found",);
+  });
+});
+
+describe("craftXpForAttempt (XP-on-craft award table)", () => {
+  test("success grants tier x 10 with a 5-XP floor", () => {
+    expect(craftXpForAttempt(1, true,),).toBe(10,);
+    expect(craftXpForAttempt(3, true,),).toBe(30,);
+    expect(craftXpForAttempt(0, true,),).toBe(10,);
+  });
+
+  test("failure grants half, rounded down", () => {
+    expect(craftXpForAttempt(1, false,),).toBe(5,);
+    expect(craftXpForAttempt(3, false,),).toBe(15,);
   });
 });
