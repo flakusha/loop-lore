@@ -144,9 +144,9 @@ Single-column form, max-width 600px, centered.
 
 **Fields**:
 
-- Name (text input, required)
+- Name (text input, required, max 255 characters - the limit the API enforces)
 - Description (textarea, short summary for the world card)
-- Lore (textarea, full setting description. No limit enforced by UI, server-side cap applies.)
+- Lore (textarea, full setting description. No length cap on either side.)
 - Tags (comma-separated, converted to chips)
 
 **Locations tab** (second tab in edit view):

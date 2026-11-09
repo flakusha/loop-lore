@@ -107,7 +107,7 @@
               <form @submit.prevent="saveWorld()" data-testid="edit-world-form">
                 <div class="form-group">
                   <label class="form-label" for="edit-name">{{{t("worlds.name")}}}</label>
-                  <input class="form-input" type="text" id="edit-name" x-model="world.name" required />
+                  <input class="form-input" type="text" id="edit-name" x-model="world.name" maxlength="255" required />
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="edit-description">{{{t("worlds.description")}}}</label>
