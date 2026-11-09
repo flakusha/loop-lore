@@ -19,6 +19,7 @@ import {
   insertActorItems,
   insertActors,
   insertItems,
+  insertProfessions,
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
@@ -210,5 +211,37 @@ describe("crafting attempt lifecycle", () => {
     );
 
     expect(res.status,).toBe(403,);
+  });
+
+  test("craft response carries profession XP fields when the actor holds the discipline", async () => {
+    const now = new Date().toISOString();
+    await insertProfessions(db, actorId, "smithing", now, now, {
+      world_id: worldId,
+      level: 1,
+      experience: 0,
+    },);
+
+    const app = authedApp();
+    const res = await app.handle(
+      new Request(`http://localhost/api/worlds/${worldId}/craft`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ actorId, recipeId, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as {
+      status: string;
+      professionBonuses?: { success: number };
+      professionXp?: { xpGained: number; newLevel: number; leveledUp: boolean };
+    };
+
+    // Tier-1 recipe on a 100%-chance seed: success grants 10 XP; the
+    // optional response fields survive route validation.
+    expect(body.professionXp?.xpGained,).toBe(10,);
+    expect(body.professionXp?.newLevel,).toBe(1,);
+    expect(body.professionXp?.leveledUp,).toBe(false,);
+    expect(body.professionBonuses?.success,).toBe(0,);
   });
 });

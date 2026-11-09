@@ -358,9 +358,8 @@ export class CraftingProcessService {
 
       const attemptId = uid();
       // XP-on-craft (TASK-professions-frontend crafting integration): the
-      // matching-discipline profession levels in the same trx as the attempt
-      // (shared place with no UI of its own — no isolated ProfessionsService
-      // needed). No profession row, or a zero award, skips quietly.
+      // matching-discipline profession levels in the same trx as the attempt.
+      // No profession row, or a zero award, skips quietly.
       let professionXp: ProfessionXpResult | null = null;
       if (profRow) {
         const award = craftXpForAttempt(recipe.tier, success,);
