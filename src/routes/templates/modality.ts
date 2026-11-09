@@ -59,6 +59,23 @@ const ModalityCreateBody = Type.Object({
 const ModalityUpdateBody = Type.Partial(ModalityCreateBody,);
 const IdParams = Type.Object({ id: Type.String(), },);
 
+/** 202 submit body: the async video job handle returned by a video apply. */
+const VideoSubmitResponse = Type.Object({
+  data: Type.Object({ jobId: Type.String(), status: Type.String(), },),
+},);
+
+/** Apply responses shared by both modalities. */
+const ApplyResponse = {
+  200: SuccessResponse,
+  400: ErrorResponse,
+  401: ErrorResponse,
+  404: ErrorResponse,
+  501: ErrorResponse,
+};
+
+/** Video applies also answer 202 with the async job handle; audio applies never do. */
+const VideoApplyResponse = { ...ApplyResponse, 202: VideoSubmitResponse, };
+
 /**
  * Build the CRUD + apply surface for one simple modality (video | audio).
  *
@@ -230,13 +247,7 @@ export function modalityTemplateRoutes(
     }, {
       params: IdParams,
       body: TemplateApplyBody,
-      response: {
-        200: SuccessResponse,
-        400: ErrorResponse,
-        401: ErrorResponse,
-        404: ErrorResponse,
-        501: ErrorResponse,
-      },
+      response: modality === "video" ? VideoApplyResponse : ApplyResponse,
       detail: {
         summary: modality === "audio"
           ? `Apply an audio template (generate)`
