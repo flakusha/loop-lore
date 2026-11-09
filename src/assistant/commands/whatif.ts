@@ -20,9 +20,20 @@ import { type CommandResult, registerCommand, } from "./registry";
 const DEFAULT_BEATS = 3;
 const MAX_BEATS = 10;
 
-function parseBeatCount(raw: string | undefined,): number {
-  const n = Number.parseInt(raw ?? "", 10,);
-  return Number.isFinite(n,) && n > 0 ? Math.min(n, MAX_BEATS,) : DEFAULT_BEATS;
+/**
+ * Split args into (hypothetical, beat count). parseCommand has no quote
+ * grouping, so a free-text hypothetical is the args joined with spaces and
+ * an optional TRAILING integer is the beat count: `/whatif the dragon wins 5`.
+ */
+function splitHypotheticalArgs(args: string[],): { hypothetical: string; beatCount: number } {
+  const last = args[args.length - 1] ?? "";
+  const hasCount = args.length > 1 && /^[1-9]\d*$/.test(last,);
+  const beatCount = hasCount
+    ? Math.min(Number.parseInt(last, 10,), MAX_BEATS,)
+    : DEFAULT_BEATS;
+
+  const hypothetical = (hasCount ? args.slice(0, -1,) : args).join(" ",).trim();
+  return { hypothetical, beatCount, };
 }
 
 registerCommand("whatif", async (args, ctx,): Promise<CommandResult> => {
@@ -31,7 +42,7 @@ registerCommand("whatif", async (args, ctx,): Promise<CommandResult> => {
     return { systemMessage: "**What-if unavailable:** command context missing database.", handled: true, };
   }
 
-  const hypothetical = (args[0] ?? "").trim();
+  const { hypothetical, beatCount, } = splitHypotheticalArgs(args,);
   if (!hypothetical) {
     return { systemMessage: "Usage: /whatif <hypothetical> [beats]", handled: true, };
   }
@@ -58,7 +69,7 @@ registerCommand("whatif", async (args, ctx,): Promise<CommandResult> => {
 
   const timelineId = chat.timeline_id ?? "prime";
   const simulator = createWhatIfSimulator({ db, worldId, timelineId, },);
-  const beats = await simulator.simulateForkFor(hypothetical, timelineId, parseBeatCount(args[1],),);
+  const beats = await simulator.simulateForkFor(hypothetical, timelineId, beatCount,);
 
   const lines = beats.map((b,) => `▸ ${b.description}`);
 

@@ -123,10 +123,11 @@ describe("whatif command", () => {
   });
 
   test("simulates beats and reports them as a system message", async () => {
-    const result = await whatif(["the dragon wins", "2",], ctx(),);
+    // Realistic args: parseCommand splits on whitespace — no quote grouping.
+    const result = await whatif(["the", "dragon", "wins", "the", "war", "2",], ctx(),);
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("**What-if:**",);
-    expect(result.systemMessage,).toContain("the dragon wins",);
+    expect(result.systemMessage,).toContain("the dragon wins the war",);
     expect(result.action,).toBe("whatif",);
     const payload = result.actionPayload as { worldId: string; timelineId: string; beats: unknown[] };
     expect(payload.worldId,).toBe(worldId,);
@@ -141,11 +142,28 @@ describe("whatif command", () => {
       .where("id", "=", "chat-1",)
       .execute();
 
-    const result = await whatif(["the dark age never ends",], ctx(),);
+    const result = await whatif(["the", "dark", "age", "never", "ends",], ctx(),);
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("Branch divergence vs prime",);
     const payload = result.actionPayload as { timelineId: string; diff: Record<string, number> };
     expect(payload.timelineId,).toBe(forkId,);
     expect(typeof payload.diff.shared,).toBe("number",);
+  });
+
+  test("a trailing integer is the beat count, not part of the hypothetical", async () => {
+    const result = await whatif(["the", "dragon", "wins", "2",], ctx(),);
+    expect(result.handled,).toBe(true,);
+    expect(result.systemMessage,).toContain("the dragon wins",);
+    const payload = result.actionPayload as { hypothetical: string; beats: unknown[] };
+    expect(payload.hypothetical,).toBe("the dragon wins",);
+  });
+
+  test("a trailing zero or junk count falls back to the default", async () => {
+    const result = await whatif(["the", "dragon", "wins", "0",], ctx(),);
+    expect(result.handled,).toBe(true,);
+    const payload = result.actionPayload as { hypothetical: string };
+    // "0" is not matched as a count (count must be a positive integer), so it
+    // stays part of the free text — deterministic default applies.
+    expect(payload.hypothetical,).toBe("the dragon wins 0",);
   });
 });
