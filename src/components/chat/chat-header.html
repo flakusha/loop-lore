@@ -306,6 +306,20 @@
       </div>
     </div>
     <!--
+      Party split / reunite execution (T8 group-chat viewer): branch the
+      active group chat into per-location sub-chats or merge one back.
+    -->
+    <button
+      class="btn-icon"
+      title="Split / reunite party"
+      aria-label="Split / reunite party"
+      @click="window.openPartySplit()"
+      x-show="$store.ui.hasActiveChat && $store.chat?.currentChat?.type === 'group'"
+      data-testid="party-split-toggle"
+    >
+      &#9196;
+    </button>
+    <!--
       Transition-mode picker (location-transition AC6): choose a
       destination + how to get there (in-place / new chat / isolate).
     -->
