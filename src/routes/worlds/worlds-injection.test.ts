@@ -10,13 +10,31 @@
  * SQL-shaped id must match no row, must not leak another world's data and
  * must not carry a second statement, and the list filter's LIKE pattern must
  * be bound the same way.
+ *
+ * Resource contract (parallel-safe):
+ * - Each test owns a FRESH in-memory SQLite DB (`createTestDb` in
+ *   beforeEach) - a `:memory:` handle is per-instance, never a shared file,
+ *   so concurrent runners cannot collide.
+ * - Teardown is deterministic: `destroyTestDb` runs in `afterEach`, which Bun
+ *   executes even when an assertion throws, so a failed test cannot leak an
+ *   open handle into the next one.
+ * - No ordering dependence: every test seeds its own user and its own canary
+ *   world in `beforeEach`, so no test sees rows another test created and each
+ *   one passes on its own. The canary world is what makes the LIKE test
+ *   meaningful - a concatenated pattern would return it.
+ * - No process globals are set: this file never calls `setTestDatabase`,
+ *   never registers a provider, opens a port or writes a file.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
-import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
+import {
+  createTestDb,
+  destroyTestDb,
+  type TestDb,
+} from "../../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import type { HandleOpts, } from "./types";
@@ -36,13 +54,14 @@ function appWithAuth(db: Kysely<DB>, userId: string | null, userRole: string | n
 }
 
 describe("worldRoutes — injection surface", () => {
+  let fixture: TestDb | undefined;
   let db: Kysely<DB>;
-  let sqlite: TestDb["sqlite"];
   let ownerId: string;
   let worldId: string;
 
-  beforeAll(async () => {
-    ({ db, sqlite, } = await createTestDb());
+  beforeEach(async () => {
+    fixture = await createTestDb();
+    db = fixture.db;
 
     ownerId = uid();
     await insertUsers(db, "injection-owner", "Injection Owner", { id: ownerId, } as never,);
@@ -74,8 +93,11 @@ describe("worldRoutes — injection surface", () => {
     ({ id: worldId, } = (await res.json()) as { id: string });
   },);
 
-  afterAll(async () => {
-    await sqlite.close();
+  afterEach(async () => {
+    if (fixture) {
+      await destroyTestDb(fixture,);
+      fixture = undefined;
+    }
   },);
 
   test("a SQL-shaped world id matches no world and leaks no row", async () => {
@@ -115,7 +137,8 @@ describe("worldRoutes — injection surface", () => {
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { data: { name: string }[]; pagination: { total: number } };
     // A bound pattern matches no name; a concatenated one would leave
-    // `name like '%'` in the WHERE clause and return every visible world.
+    // `name like '%'` in the WHERE clause and return every visible world -
+    // the canary included.
     expect(body.pagination.total,).toBe(0,);
     expect(body.data,).toEqual([],);
   });

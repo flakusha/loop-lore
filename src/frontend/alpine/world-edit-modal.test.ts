@@ -6,6 +6,21 @@
  * partial with blank fields, and saving it as-is wiped the world's
  * description and lore. Opening it must show the world's CURRENT values,
  * and an untouched save must carry them instead of clearing them.
+ *
+ * Resource contract (parallel-safe):
+ * - This file OWNS the `globalThis.apiFetch` slot for the duration of one
+ *   test - the ambient `apiFetch` global is shared with every other suite in
+ *   this worker, so a leaked stub silently hijacks their network calls. The
+ *   slot is taken in `beforeEach` and released in `afterEach`, so a failed
+ *   assertion cannot poison the next test.
+ * - The stub is installed unconditionally, so a prior suite's leaked stub
+ *   cannot satisfy the component and silently pass the assertions.
+ * - No ordering dependence: `fetchHandler` and `fetchCalls` are per-file
+ *   state reset in `beforeEach`, so no test observes another test's requests
+ *   and each one passes on its own.
+ * - No database, port, file or provider is touched: the modal reads through
+ *   the stubbed `apiFetch` and the assertions read the served partial from
+ *   disk.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { readFileSync, } from "node:fs";
@@ -37,6 +52,8 @@ let fetchCalls = 0;
 beforeEach(() => {
   fetchCalls = 0;
   fetchHandler = async () => Response.json({},);
+  // The slot is taken unconditionally, so a prior suite's leaked stub
+  // cannot satisfy the component and silently pass the assertions.
   globalState.apiFetch = (url,) => {
     fetchCalls += 1;
     return fetchHandler(url,);
