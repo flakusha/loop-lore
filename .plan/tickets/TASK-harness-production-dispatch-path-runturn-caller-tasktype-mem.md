@@ -3,8 +3,8 @@
 
 # TASK: harness-production-dispatch-path-runturn-caller-tasktype-member
 
-**Status:** Not Started
-**Blocker:** HELD — unlanded branch `harness-dispatch-path` (`ca3f1d096` dispatch + `2a93b879d` runTurn caller; storage seam already landed `9887a9c2d`/`f4622eef1`). Next: land the branch, then flip this ticket with the landing sha.
+**Status:** Done
+**Status Note:** Production dispatch path landed on dev via `9c7c3d291` (verified ancestor of dev): `dispatchHarnessTurn` (`src/integrations/harness/dispatch.ts`) routes through the composed runtime's selector, `/harness` (`src/assistant/commands/harness-turn.ts`) is the production caller, `TaskType "harness"` + `toHarnessTaskType` (`src/generation/routing/task-signal.ts`) map the exec-log bucket, gates (isolation + ToS + permission queue) sit inside the dispatch, and `dispatch.test.ts` + `harness-turn.test.ts` prove the routing.
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-external-harness-acp
@@ -33,7 +33,7 @@ Parity matrix gap (ABSENT in production): the whole outbound ACP stack — selec
 
 **Acceptance Criteria:**
 
-- [ ] A production code path calls `runTurn` through the composed harness runtime (not a test-only construction).
-- [ ] `TaskType` covers harness work (new member or recorded map-to-existing decision + `toHarnessTaskType` update).
-- [ ] Dispatch honors isolation gate + ToS guard + permission approval (denials surface, never bypassed).
-- [ ] Unit test at select/runTurn level proving the caller routes through the runtime.
+- [x] A production code path calls `runTurn` through the composed harness runtime (not a test-only construction).
+- [x] `TaskType` covers harness work (new member or recorded map-to-existing decision + `toHarnessTaskType` update).
+- [x] Dispatch honors isolation gate + ToS guard + permission approval (denials surface, never bypassed).
+- [x] Unit test at select/runTurn level proving the caller routes through the runtime.
