@@ -10,7 +10,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  BUN_VERSION: "1.2.x"
+  # Pinned to the local toolchain; `bun --check` (the `typecheck - bun` gate) needs Bun 1.4.3+.
+  BUN_VERSION: "1.4.4"
 
 # Hybrid release model:
 #   - Branch push (master/release/*): verification gate only — full checks +
@@ -44,7 +45,7 @@ jobs:
           path: |
             ~/.bun/install/cache
             node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
@@ -124,7 +125,7 @@ jobs:
           path: |
             ~/.bun/install/cache
             node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
