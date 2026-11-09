@@ -647,6 +647,19 @@ describeOrSkip("professions.stationProfession (station bonus display)", () => {
     expect(ctx.professionsError,).toBeNull();
   });
 
+  test("loadStationProfession resolves null when the fetch throws (offline) without an error", async () => {
+    const ctx = buildCtx();
+    fetchHandler = () => {
+      throw new Error("boom",);
+    };
+
+    await ctx.loadStationProfession("actor-1", "smithing",);
+
+    expect(ctx.stationProfession,).toBeNull();
+    expect(ctx.professionFeedback,).toBeNull();
+    expect(ctx.professionsError,).toBeNull();
+  });
+
   test("loadStationProfession forwards the world scope", async () => {
     const ctx = buildCtx();
     fetchHandler = (url,) => {
