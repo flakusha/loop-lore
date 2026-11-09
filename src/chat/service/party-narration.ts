@@ -17,6 +17,7 @@ import {
   MessageVisibility,
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { indexMessageSearchTokens, } from "../../search";
 /**
  * Find the narrator actor, if one exists. Mirrors GM `injectNarration`.
  * @param database
@@ -53,6 +54,7 @@ export async function injectPartyNarration(
     const narrator = await findNarrator(database,);
     if (!narrator) { return; }
 
+    const narrationId = crypto.randomUUID();
     let storedContent = text;
     let storedKeyId: string | null = null;
     if (isEncryptionEnabled()) {
@@ -72,7 +74,7 @@ export async function injectPartyNarration(
     await database
       .insertInto("messages",)
       .values({
-        id: crypto.randomUUID(),
+        id: narrationId,
         chat_id: chatId,
         actor_id: narrator.id,
         role: MessageRole.System,
@@ -85,6 +87,15 @@ export async function injectPartyNarration(
         visibility: MessageVisibility.Visible,
       },)
       .execute();
+
+    // The row carries no plaintext mirror: index blind tokens for the token
+    // tier (no-op unless ENABLE_TOKEN_INDEXING=1; best-effort like the insert).
+    await indexMessageSearchTokens(database, {
+      messageId: narrationId,
+      chatId,
+      plaintext: text,
+      keyId: storedKeyId,
+    },);
   } catch {
     /* non-fatal — party mutation already applied */
   }

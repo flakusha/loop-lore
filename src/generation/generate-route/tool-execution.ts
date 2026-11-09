@@ -41,6 +41,7 @@ import {
   stripScriptTags,
   stripUnsafeUrlAttributes,
 } from "../../regex/html-sanitize";
+import { indexMessageSearchTokens, } from "../../search";
 import { jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 import { encryptStoredContent, } from "./tool-result-persist";
@@ -104,6 +105,7 @@ async function persistToolResults(
   results: PersistedToolResult[],
 ): Promise<void> {
   for (const result of results) {
+    const toolResultId = randomUUID();
     const { storedContent, storedKeyId, } = await encryptStoredContent({
       database: ctx.db,
       chatId: ctx.chatId,
@@ -120,7 +122,7 @@ async function persistToolResults(
     await ctx.db
       .insertInto("messages",)
       .values({
-        id: randomUUID(),
+        id: toolResultId,
         chat_id: ctx.chatId,
         actor_id: ctx.actorId,
         parent_id: null,
@@ -135,6 +137,15 @@ async function persistToolResults(
         metadata: metadata.ok ? metadata.value : null,
       },)
       .execute();
+
+    // The row carries no plaintext mirror: index blind tokens for the token
+    // tier (no-op unless ENABLE_TOKEN_INDEXING=1; best-effort like the insert).
+    await indexMessageSearchTokens(ctx.db, {
+      messageId: toolResultId,
+      chatId: ctx.chatId,
+      plaintext: result.content,
+      keyId: storedKeyId,
+    },);
   }
 }
 

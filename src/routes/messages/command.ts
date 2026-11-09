@@ -36,6 +36,7 @@ import {
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { stripLeadingMention, } from "../../group-chat/mention-parser";
+import { indexMessageSearchTokens, } from "../../search";
 import { resolveUserRole, } from "../../users/roles";
 import { toErrorMessage, uid, } from "../../utils";
 import { jsonResponse, } from "../http-utils";
@@ -102,6 +103,15 @@ export async function insertCommandSystemMessage(
       visibility: "visible",
     },)
     .execute();
+
+  // The row carries no plaintext mirror: index blind tokens for the token
+  // tier (no-op unless ENABLE_TOKEN_INDEXING=1; fail-open).
+  await indexMessageSearchTokens(database, {
+    messageId: sysMsgId,
+    chatId,
+    plaintext: text,
+    keyId: sysKeyId,
+  },);
 }
 
 /** Chat row shape shared by the command-context helpers. */

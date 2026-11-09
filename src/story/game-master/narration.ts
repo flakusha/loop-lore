@@ -17,6 +17,7 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../../db/enums";
+import { indexMessageSearchTokens, } from "../../search";
 import type { GmState, } from "./types";
 
 /**
@@ -47,6 +48,7 @@ export async function injectNarration(state: GmState, worldId: string, text: str
     // Encrypt narration bodies when server-side encryption is enabled, so the
     // story/GM write path matches auto-gen (encrypted rows: identity encoding
     // + key_id set; read path keys on key_id presence).
+    const narrationId = randomUUID() as string;
     let storedContent = text;
     let storedKeyId: string | null = null;
     if (isEncryptionEnabled()) {
@@ -66,7 +68,7 @@ export async function injectNarration(state: GmState, worldId: string, text: str
     await state.db
       .insertInto("messages",)
       .values({
-        id: randomUUID() as string,
+        id: narrationId,
         chat_id: chat.id,
         actor_id: narrator.id,
         role: MessageRole.System,
@@ -79,5 +81,14 @@ export async function injectNarration(state: GmState, worldId: string, text: str
         visibility: MessageVisibility.Visible,
       },)
       .execute();
+
+    // The row carries no plaintext mirror: index blind tokens for the token
+    // tier (no-op unless ENABLE_TOKEN_INDEXING=1).
+    await indexMessageSearchTokens(state.db, {
+      messageId: narrationId,
+      chatId: chat.id,
+      plaintext: text,
+      keyId: storedKeyId,
+    },);
   }
 }
