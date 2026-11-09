@@ -584,7 +584,11 @@
       "missingFields": "Pflichtfelder fehlen",
       "configured": "Konfigurierte Provider",
       "importInstead": "Stattdessen eine Konfigurationsdatei importieren"
-    }
+    },
+    "knowledgeGraph": "Wissensgraph",
+    "kgAssets": "Assets",
+    "kgEntities": "Entitäten",
+    "noGraphData": "Noch keine Wissensgraph-Daten"
   },
   "errors": {
     "notFound": "Not found",
@@ -1892,7 +1896,8 @@
     "classifierTagsSaveFailed": "Klassifikator-Tags konnten nicht gespeichert werden",
     "characterUpdated": "Charakter {name} aktualisiert",
     "failedUpdateCharacter": "Charakter konnte nicht aktualisiert werden",
-    "providerSaved": "Provider gespeichert"
+    "providerSaved": "Provider gespeichert",
+    "failedLoadKnowledgeGraph": "Wissensgraph konnte nicht geladen werden"
   },
   "status": {
     "characterResponding": "Charakter antwortet...",

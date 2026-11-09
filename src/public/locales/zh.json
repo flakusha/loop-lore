@@ -584,7 +584,11 @@
       "missingFields": "缺少必填项",
       "configured": "已配置的提供商",
       "importInstead": "改为导入配置文件"
-    }
+    },
+    "knowledgeGraph": "知识图谱",
+    "kgAssets": "资产",
+    "kgEntities": "实体",
+    "noGraphData": "暂无知识图谱数据"
   },
   "errors": {
     "notFound": "Not found",
@@ -1892,7 +1896,8 @@
     "classifierTagsSaveFailed": "保存分类标签失败",
     "characterUpdated": "角色 {name} 已更新",
     "failedUpdateCharacter": "更新角色失败",
-    "providerSaved": "提供商已保存"
+    "providerSaved": "提供商已保存",
+    "failedLoadKnowledgeGraph": "加载知识图谱失败"
   },
   "status": {
     "characterResponding": "角色正在回复……",

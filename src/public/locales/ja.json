@@ -584,7 +584,11 @@
       "missingFields": "必須項目が未入力です",
       "configured": "設定済みのプロバイダー",
       "importInstead": "代わりに設定ファイルをインポート"
-    }
+    },
+    "knowledgeGraph": "ナレッジグラフ",
+    "kgAssets": "アセット",
+    "kgEntities": "エンティティ",
+    "noGraphData": "ナレッジグラフのデータはまだありません"
   },
   "errors": {
     "notFound": "Not found",
@@ -1892,7 +1896,8 @@
     "classifierTagsSaveFailed": "分類タグの保存に失敗しました",
     "characterUpdated": "キャラクター {name} を更新しました",
     "failedUpdateCharacter": "キャラクターの更新に失敗しました",
-    "providerSaved": "プロバイダーを保存しました"
+    "providerSaved": "プロバイダーを保存しました",
+    "failedLoadKnowledgeGraph": "ナレッジグラフの読み込みに失敗しました"
   },
   "status": {
     "characterResponding": "キャラクターが応答中...",
