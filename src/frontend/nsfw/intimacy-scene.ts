@@ -7,9 +7,11 @@
  * `reduceIntimacyFlow` is the single transition function: the Alpine mixin
  * feeds it events and renders whatever phase comes back. Progression per
  * the ticket trim is "repeat the flow with refreshed pair state" — the
- * `continue` event returns to `actionSelect` and the mixin reloads pairs;
- * there is deliberately no positioning/scene state (no backend contract
- * exists — see the note filed in TASK-nsfw-intimacy-interface.md).
+ * `continue` event returns to `actionSelect` and the mixin reloads pairs.
+ * Positioning is client-side staging (`positionSelect` between partner and
+ * action): the selection rides the apply wire `context` field
+ * (`positionContext`), which the backend persists verbatim into
+ * `action_history[].context` — no new backend contract.
  */
 
 import type {
@@ -43,7 +45,20 @@ export function reduceIntimacyFlow(state: IntimacyFlowState, event: IntimacyFlow
 
     case "selectPartner": {
       if (state.phase !== "partnerSelect") { return state; }
-      return { ...state, phase: "actionSelect", partner: event.partner, action: null, outcome: null, error: null, };
+      return {
+        ...state,
+        phase: "positionSelect",
+        partner: event.partner,
+        position: null,
+        action: null,
+        outcome: null,
+        error: null,
+      };
+    }
+
+    case "selectPosition": {
+      if (state.phase !== "positionSelect" || !state.partner) { return state; }
+      return { ...state, phase: "actionSelect", position: event.position, };
     }
 
     case "selectAction": {
@@ -75,7 +90,19 @@ export function reduceIntimacyFlow(state: IntimacyFlowState, event: IntimacyFlow
 
     case "back": {
       if (state.phase === "confirmConsent") { return { ...state, phase: "actionSelect", action: null, }; }
-      if (state.phase === "actionSelect") { return { ...state, phase: "partnerSelect", partner: null, }; }
+      if (state.phase === "actionSelect") {
+        return {
+          ...state,
+          phase: "positionSelect",
+          position: null,
+          action: null,
+        };
+      }
+
+      if (state.phase === "positionSelect") {
+        return { ...state, phase: "partnerSelect", partner: null, position: null, };
+      }
+
       return state;
     }
 

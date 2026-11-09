@@ -97,10 +97,33 @@ export interface IntimacyError {
   message?: string;
 }
 
+/** Character positioning for an intimacy scene (Phase-1 remainder).
+ *
+ * Positions are display-stage labels, not simulation state: the mixin
+ * carries the selection into the apply wire `context` field
+ * (`"near/facing:<id>"`), which the backend persists verbatim into
+ * `action_history[].context`. No new backend contract.
+ */
+export type IntimacyPositionId =
+  | "side-by-side"
+  | "facing"
+  | "embrace-hold";
+
+/** One selectable position option. */
+export interface IntimacyPositionOption {
+  /** Stable id sent inside the wire context. */
+  id: IntimacyPositionId;
+  /** i18n key of the display name (`nsfw.intimacy.position.<id>`). */
+  nameKey: string;
+  /** i18n key of the description line (`nsfw.intimacy.positionDesc.<id>`). */
+  descriptionKey: string;
+}
+
 /** The intimacy flow's discrete phases (plan §4 state machine). */
 export type IntimacyPhase =
   | "idle"
   | "partnerSelect"
+  | "positionSelect"
   | "actionSelect"
   | "confirmConsent"
   | "applying"
@@ -113,6 +136,8 @@ export interface IntimacyFlowState {
   phase: IntimacyPhase;
   /** Selected partner (set from `partnerSelect` onward). */
   partner: IntimacyPartnerOption | null;
+  /** Selected position (set from `positionSelect` onward; null = default staging). */
+  position: IntimacyPositionOption | null;
   /** Selected action (set from `actionSelect` onward). */
   action: IntimacyActionView | null;
   /** Successful apply result (set in the `effects` phase). */
@@ -125,6 +150,7 @@ export interface IntimacyFlowState {
 export type IntimacyFlowEvent =
   | { type: "open"; partners: IntimacyPartnerOption[] }
   | { type: "selectPartner"; partner: IntimacyPartnerOption }
+  | { type: "selectPosition"; position: IntimacyPositionOption }
   | { type: "selectAction"; action: IntimacyActionView }
   | { type: "confirmConsent" }
   | { type: "cancelConsent" }
@@ -136,7 +162,7 @@ export type IntimacyFlowEvent =
 
 /** Initial flow state (also the reset target). */
 export function initialFlowState(): IntimacyFlowState {
-  return { phase: "idle", partner: null, action: null, outcome: null, error: null, };
+  return { phase: "idle", partner: null, position: null, action: null, outcome: null, error: null, };
 }
 
 /** Localized display name of a catalog action. */
@@ -220,4 +246,58 @@ export const INTIMACY_ACTION_CATALOG: readonly IntimacyActionView[] = [
  */
 export function findCatalogAction(id: string,): IntimacyActionView | null {
   return INTIMACY_ACTION_CATALOG.find((action,) => action.id === id) ?? null;
+}
+
+// ── Position catalog ───────────────────────────────────────────
+
+/**
+ * Phase-1 position catalog. Three staging labels covering the ticket's
+ * "character positioning display": side-by-side (default staging), facing
+ * (eye-contact staging for verbal/gift actions), embrace-hold (close
+ * staging for physical/intimate actions). No score gates — positioning is
+ * descriptive staging, never a progression lock.
+ */
+export const INTIMACY_POSITION_CATALOG: readonly IntimacyPositionOption[] = [
+  {
+    id: "side-by-side",
+    nameKey: "nsfw.intimacy.position.side-by-side",
+    descriptionKey: "nsfw.intimacy.positionDesc.side-by-side",
+  },
+  {
+    id: "facing",
+    nameKey: "nsfw.intimacy.position.facing",
+    descriptionKey: "nsfw.intimacy.positionDesc.facing",
+  },
+  {
+    id: "embrace-hold",
+    nameKey: "nsfw.intimacy.position.embrace-hold",
+    descriptionKey: "nsfw.intimacy.positionDesc.embrace-hold",
+  },
+];
+
+/** Look up a catalog position by id.
+ * @param id - catalog position id
+ * @returns {IntimacyPositionOption | null} the position, or null when unknown
+ */
+export function findCatalogPosition(id: string,): IntimacyPositionOption | null {
+  return INTIMACY_POSITION_CATALOG.find((position,) => position.id === id) ?? null;
+}
+
+/** Localized display name of a catalog position. */
+export function positionLabel(position: IntimacyPositionOption,): string {
+  return t(position.nameKey,);
+}
+
+/** Localized description of a catalog position. */
+export function positionDescription(position: IntimacyPositionOption,): string {
+  return t(position.descriptionKey,);
+}
+
+/** Encode the position into the apply wire `context` field.
+ * @param position - selected position, or null for default staging
+ * @returns {string | undefined} the context fragment, or undefined when unset
+ */
+export function positionContext(position: IntimacyPositionOption | null,): string | undefined {
+  if (!position) { return undefined; }
+  return `near/facing:${position.id}`;
 }

@@ -9,7 +9,12 @@
  * (same mechanism as the body-state widget). Loaders never reject and every
  * async hop carries the stale-chat guard (`state.ts:109` precedent). Pair
  * scores come from the read-only panel's rows (`_nsfwIntimacy`) — no extra
- * fetch; the pair read endpoint INSERTS a zero-score row on read.
+ * fetch; the pair read endpoint INSERTS a zero-score row on read. Position
+ * is client-side staging: `selectPosition` feeds the reducer, `dispatchIntimacy`
+ * carries it into the apply wire `context` (`positionContext` — persisted
+ * verbatim by the backend, no new contract). Consent + age gates stay on
+ * every path: selection phases render only, `confirmConsent` persists the chat
+ * grant and `dispatchIntimacy` re-enters the same gated POST.
  */
 
 import { applyIntimacyAction, grantIntimacyConsent, } from "../../nsfw/intimacy-api";
@@ -17,11 +22,13 @@ import { renderIntimacyPanel, } from "../../nsfw/intimacy-interface";
 import { reduceIntimacyFlow, } from "../../nsfw/intimacy-scene";
 import {
   findCatalogAction,
+  findCatalogPosition,
   initialFlowState,
   INTIMACY_ACTION_CATALOG,
   type IntimacyActionView,
   type IntimacyFlowState,
   type IntimacyPartnerOption,
+  positionContext,
 } from "../../nsfw/intimacy-types";
 import { log as rootLog, } from "../logger";
 import { resolveCharacterId, } from "../nsfw-panel/state";
@@ -62,7 +69,7 @@ export const intimacyState: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Pick a partner and enter action selection.
+   * Pick a partner and enter position selection.
    * @param actorId - the chosen partner's actor id
    * @returns {void}
    */
@@ -70,6 +77,18 @@ export const intimacyState: Partial<ChatState> & ThisType<ChatState> = {
     const partner = this._intimacyPartners.find((p,) => p.actorId === actorId);
     if (!partner) { return; }
     this._intimacyFlow = reduceIntimacyFlow(this._intimacyFlow, { type: "selectPartner", partner, },);
+    this.mountIntimacyPanel();
+  },
+
+  /**
+   * Pick a staging position and enter action selection.
+   * @param positionId - the chosen catalog position id
+   * @returns {void}
+   */
+  selectPosition(positionId: string,) {
+    const position = findCatalogPosition(positionId,);
+    if (!position) { return; }
+    this._intimacyFlow = reduceIntimacyFlow(this._intimacyFlow, { type: "selectPosition", position, },);
     this.mountIntimacyPanel();
   },
 
@@ -154,7 +173,7 @@ export const intimacyState: Partial<ChatState> & ThisType<ChatState> = {
    * @returns {Promise<void>}
    */
   async dispatchIntimacy() {
-    const { partner, action, } = this._intimacyFlow;
+    const { partner, position, action, } = this._intimacyFlow;
     const chatId = this.activeChat;
     if (!partner || !action || !chatId) {
       this._intimacyFlow = reduceIntimacyFlow(this._intimacyFlow, { type: "failed", error: { kind: "network", }, },);
@@ -174,7 +193,14 @@ export const intimacyState: Partial<ChatState> & ThisType<ChatState> = {
         return;
       }
 
-      const result = await applyIntimacyAction({ chatId, actorId, targetActorId: partner.actorId, action, },);
+      const result = await applyIntimacyAction({
+        chatId,
+        actorId,
+        targetActorId: partner.actorId,
+        action,
+        context: positionContext(position ?? null,),
+      },);
+
       if (this.activeChat !== chatId) { return; }
 
       this._intimacyFlow = result.status === "ok"
@@ -220,6 +246,7 @@ export const intimacyState: Partial<ChatState> & ThisType<ChatState> = {
       handlers: {
         onOpen: () => this.openIntimacy(),
         onPartner: (actorId,) => this.selectPartner(actorId,),
+        onPosition: (positionId,) => this.selectPosition(positionId,),
         onAction: (actionId,) => this.selectAction(actionId,),
         onConfirm: () => this.confirmConsent(),
         onCancel: () => this.cancelConsent(),

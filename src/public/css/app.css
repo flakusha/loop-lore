@@ -3615,6 +3615,31 @@ html {
   font-size: 10px;
 }
 
+.nsfw-intimacy-position-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nsfw-intimacy-position {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nsfw-intimacy-position-desc {
+  flex: 1;
+  min-width: 140px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.nsfw-intimacy-staging {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
 .nsfw-body {
   margin-top: var(--space-3);
   padding-top: var(--space-3);
@@ -3756,6 +3781,15 @@ html {
 
   .nsfw-body-state-value {
     margin-left: auto;
+  }
+
+  .nsfw-intimacy-position {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nsfw-intimacy-position-desc {
+    min-width: 0;
   }
 }
 

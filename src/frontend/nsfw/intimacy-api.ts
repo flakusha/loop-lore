@@ -34,6 +34,8 @@ export interface ApplyIntimacyInput {
   worldId?: string | null;
   /** Selected catalog action (sent field-by-field). */
   action: IntimacyActionView;
+  /** Staging context (`positionContext`) — persisted verbatim into history. */
+  context?: string;
 }
 
 /** Outcome of an apply attempt — never throws. */
@@ -145,7 +147,8 @@ export async function grantIntimacyConsent(chatId: string,): Promise<GrantConsen
  * Sends exactly the schema's known fields (Elysia silently strips unknown
  * keys — LANE-nsfw-consent.md:17), with `chatId` always present: the
  * consent gate is chat-scoped and the companion lane promotes it to a
- * required DTO field.
+ * required DTO field. `context` carries the client-side staging label
+ * (`positionContext`); the backend persists it verbatim into history.
  * @param input - chat/partner/action descriptor
  * @returns {Promise<ApplyIntimacyOutcome>} ok with the apply result, or a classified error
  */
@@ -165,6 +168,7 @@ export async function applyIntimacyAction(input: ApplyIntimacyInput,): Promise<A
         delta: input.action.delta,
         minIntimacy: input.action.minIntimacy,
         requiresConsent: input.action.requiresConsent,
+        context: input.context ?? null,
       },),
     },);
 

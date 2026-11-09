@@ -29,10 +29,10 @@ Intimacy interaction UI for NSFW features.
 ## Acceptance Criteria
 
 - [x] Intimacy scene selection
-- [ ] Character positioning display (out of Phase-1 scope here — not implemented)
+- [x] Character positioning display (positionSelect phase: `side-by-side` / `facing` / `embrace-hold`; `src/frontend/nsfw/intimacy-types.ts`; carried on the apply wire `context` `near/facing:<id>`, 2026-11-09)
 - [x] Action selection with descriptions
 - [x] Scene progression controls (consent confirm/cancel, back, continue, retry, close)
-- [ ] Mobile responsive (layout classes reused from the battle panel; not verified)
+- [x] Mobile responsive (`.nsfw-intimacy-position` stacks under the 480px breakpoint, `src/public/css/app.css`; 2026-11-09)
 
 ## Review decisions
 

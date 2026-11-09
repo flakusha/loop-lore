@@ -1,6 +1,11 @@
 import { describe, expect, it, } from "bun:test";
 import { actionLocked, reduceIntimacyFlow, } from "./intimacy-scene";
-import { initialFlowState, INTIMACY_ACTION_CATALOG, type IntimacyFlowState, } from "./intimacy-types";
+import {
+  findCatalogPosition,
+  initialFlowState,
+  INTIMACY_ACTION_CATALOG,
+  type IntimacyFlowState,
+} from "./intimacy-types";
 
 /** Fixed partner fixture (fresh per call — no shared mutable state). */
 function partner(): { actorId: string; displayName: string } {
@@ -25,6 +30,33 @@ describe("actionLocked", () => {
   });
 });
 
+/** Flow state parked in actionSelect via partner + default staging position. */
+function positionedState(): IntimacyFlowState {
+  const partnered = reduceIntimacyFlow(partnerSelectState(), { type: "selectPartner", partner: partner(), },);
+  const position = findCatalogPosition("side-by-side",)!;
+  return reduceIntimacyFlow(partnered, { type: "selectPosition", position, },);
+}
+
+describe("positionSelect", () => {
+  it("parks partner selection in the position step", () => {
+    const next = reduceIntimacyFlow(partnerSelectState(), { type: "selectPartner", partner: partner(), },);
+    expect(next.phase,).toBe("positionSelect",);
+    expect(next.partner?.actorId,).toBe("actor-b",);
+    expect(next.position,).toBeNull();
+  });
+
+  it("advances a position pick into action selection", () => {
+    expect(positionedState().phase,).toBe("actionSelect",);
+    expect(positionedState().position?.id,).toBe("side-by-side",);
+  });
+
+  it("ignores selectAction while the position is unset", () => {
+    const talk = INTIMACY_ACTION_CATALOG.find((a,) => a.id === "talk")!;
+    const parked = reduceIntimacyFlow(partnerSelectState(), { type: "selectPartner", partner: partner(), },);
+    expect(reduceIntimacyFlow(parked, { type: "selectAction", action: talk, },),).toBe(parked,);
+  });
+});
+
 describe("reduceIntimacyFlow", () => {
   it("opens into partner selection", () => {
     const next = reduceIntimacyFlow(initialFlowState(), { type: "open", partners: [partner(),], },);
@@ -33,7 +65,7 @@ describe("reduceIntimacyFlow", () => {
 
   it("routes consent-free actions straight to applying", () => {
     const talk = INTIMACY_ACTION_CATALOG.find((a,) => a.id === "talk")!;
-    const state = reduceIntimacyFlow(partnerSelectState(), { type: "selectPartner", partner: partner(), },);
+    const state = positionedState();
     const next = reduceIntimacyFlow(state, { type: "selectAction", action: talk, },);
     expect(next.phase,).toBe("applying",);
     expect(next.action?.id,).toBe("talk",);
@@ -42,7 +74,7 @@ describe("reduceIntimacyFlow", () => {
 
   it("routes consent-gated actions through the confirm phase", () => {
     const play = INTIMACY_ACTION_CATALOG.find((a,) => a.id === "play")!;
-    const state = reduceIntimacyFlow(partnerSelectState(), { type: "selectPartner", partner: partner(), },);
+    const state = positionedState();
     const confirmed = reduceIntimacyFlow(state, { type: "selectAction", action: play, },);
     expect(confirmed.phase,).toBe("confirmConsent",);
     expect(reduceIntimacyFlow(confirmed, { type: "confirmConsent", },).phase,).toBe("applying",);
@@ -50,7 +82,7 @@ describe("reduceIntimacyFlow", () => {
 
   it("cancel returns from the consent dialog to action selection", () => {
     const play = INTIMACY_ACTION_CATALOG.find((a,) => a.id === "play")!;
-    const state = reduceIntimacyFlow(partnerSelectState(), { type: "selectPartner", partner: partner(), },);
+    const state = positionedState();
     const dialog = reduceIntimacyFlow(state, { type: "selectAction", action: play, },);
     const next = reduceIntimacyFlow(dialog, { type: "cancelConsent", },);
     expect(next.phase,).toBe("actionSelect",);
@@ -59,10 +91,7 @@ describe("reduceIntimacyFlow", () => {
 
   it("applied lands in effects with the outcome", () => {
     const talk = INTIMACY_ACTION_CATALOG.find((a,) => a.id === "talk")!;
-    const applying = reduceIntimacyFlow(
-      reduceIntimacyFlow(partnerSelectState(), { type: "selectPartner", partner: partner(), },),
-      { type: "selectAction", action: talk, },
-    );
+    const applying = reduceIntimacyFlow(positionedState(), { type: "selectAction", action: talk, },);
 
     const next = reduceIntimacyFlow(applying, {
       type: "applied",
@@ -75,10 +104,7 @@ describe("reduceIntimacyFlow", () => {
 
   it("failed lands in error with the classified error", () => {
     const talk = INTIMACY_ACTION_CATALOG.find((a,) => a.id === "talk")!;
-    const applying = reduceIntimacyFlow(
-      reduceIntimacyFlow(partnerSelectState(), { type: "selectPartner", partner: partner(), },),
-      { type: "selectAction", action: talk, },
-    );
+    const applying = reduceIntimacyFlow(positionedState(), { type: "selectAction", action: talk, },);
 
     const next = reduceIntimacyFlow(applying, { type: "failed", error: { kind: "consent", }, },);
     expect(next.phase,).toBe("error",);
@@ -87,10 +113,7 @@ describe("reduceIntimacyFlow", () => {
 
   it("continue returns from effects to refreshed action selection", () => {
     const talk = INTIMACY_ACTION_CATALOG.find((a,) => a.id === "talk")!;
-    const applying = reduceIntimacyFlow(
-      reduceIntimacyFlow(partnerSelectState(), { type: "selectPartner", partner: partner(), },),
-      { type: "selectAction", action: talk, },
-    );
+    const applying = reduceIntimacyFlow(positionedState(), { type: "selectAction", action: talk, },);
 
     const effects = reduceIntimacyFlow(applying, {
       type: "applied",
@@ -103,13 +126,15 @@ describe("reduceIntimacyFlow", () => {
     expect(next.partner?.actorId,).toBe("actor-b",);
   });
 
-  it("back steps consent → actions and actions → partners", () => {
+  it("back steps consent → actions → positions → partners", () => {
     const play = INTIMACY_ACTION_CATALOG.find((a,) => a.id === "play")!;
-    const state = reduceIntimacyFlow(partnerSelectState(), { type: "selectPartner", partner: partner(), },);
+    const state = positionedState();
     const dialog = reduceIntimacyFlow(state, { type: "selectAction", action: play, },);
     const actions = reduceIntimacyFlow(dialog, { type: "back", },);
     expect(actions.phase,).toBe("actionSelect",);
-    const partners = reduceIntimacyFlow(actions, { type: "back", },);
+    const positions = reduceIntimacyFlow(actions, { type: "back", },);
+    expect(positions.phase,).toBe("positionSelect",);
+    const partners = reduceIntimacyFlow(positions, { type: "back", },);
     expect(partners.phase,).toBe("partnerSelect",);
     expect(partners.partner,).toBeNull();
   });

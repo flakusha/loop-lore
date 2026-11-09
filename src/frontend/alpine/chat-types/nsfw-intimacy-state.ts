@@ -17,8 +17,10 @@ export interface ChatNsfwIntimacyState {
   _intimacyPartners: IntimacyPartnerOption[];
   /** Build partner options and enter partner selection. */
   openIntimacy(): void;
-  /** Pick a partner and enter action selection. */
+  /** Pick a partner and enter position selection. */
   selectPartner(actorId: string,): void;
+  /** Pick a staging position and enter action selection. */
+  selectPosition(positionId: string,): void;
   /** Pick an action; consent-gated ones route through the confirm phase. */
   selectAction(actionId: string,): void;
   /** Confirm the consent dialog: persist the chat grant, then dispatch.
@@ -29,7 +31,7 @@ export interface ChatNsfwIntimacyState {
   cancelConsent(): void;
   /** Leave the effects screen: refresh pairs, then re-enter action selection. */
   continueIntimacy(): Promise<void>;
-  /** Go back one step (consent → actions, actions → partners). */
+  /** Go back one step (consent → actions → positions → partners). */
   backIntimacy(): void;
   /** Close the flow entirely (reset to idle). */
   closeIntimacy(): void;

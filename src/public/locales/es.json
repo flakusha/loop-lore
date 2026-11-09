@@ -1127,7 +1127,25 @@
         "kiss": "Un beso suave.",
         "embrace": "Abrazarse con cariño.",
         "play": "Compartir un momento íntimo — requiere consentimiento."
+      },
+      "positionTitle": "Choose a position",
+      "stagingFmt": "Staged: {position}",
+      "position": {
+        "side-by-side": "Side by side",
+        "facing": "Facing each other",
+        "embrace-hold": "Embrace hold"
+      },
+      "positionDesc": {
+        "side-by-side": "Sit together, shoulders touching.",
+        "facing": "Face each other, eye to eye.",
+        "embrace-hold": "Hold each other close."
       }
+    },
+    "privateSpace": {
+      "title": "Private space",
+      "suitable": "This venue is private enough ({privacy}).",
+      "unsuitable": "Not private enough for intimacy ({privacy}).",
+      "kindFmt": "Venue: {kind}"
     }
   },
   "help": {

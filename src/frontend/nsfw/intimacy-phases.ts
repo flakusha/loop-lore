@@ -15,7 +15,14 @@ import { t, } from "../alpine/i18n";
 import { renderHealthBar, } from "../battle/health-bar.js";
 import { actionLocked, } from "./intimacy-scene";
 import type { IntimacyFlowState, } from "./intimacy-types";
-import { actionDescription, actionLabel, INTIMACY_ACTION_CATALOG, } from "./intimacy-types";
+import {
+  actionDescription,
+  actionLabel,
+  INTIMACY_ACTION_CATALOG,
+  INTIMACY_POSITION_CATALOG,
+  positionDescription,
+  positionLabel,
+} from "./intimacy-types";
 
 /** Click handlers the renderer wires up; all optional (phase-dependent). */
 export interface IntimacyPanelHandlers {
@@ -23,6 +30,8 @@ export interface IntimacyPanelHandlers {
   onOpen?: () => void;
   /** A partner button was clicked. */
   onPartner?: (actorId: string,) => void;
+  /** A position button was clicked (positionSelect phase). */
+  onPosition?: (positionId: string,) => void;
   /** An action button was clicked (only enabled actions fire). */
   onAction?: (actionId: string,) => void;
   /** The consent dialog's confirm button was clicked. */
@@ -146,6 +155,46 @@ export function renderPartnerSelect(
   return section;
 }
 
+/** Render the position-selection phase (character positioning display).
+ *
+ * Client-side staging between partner and action: three descriptive labels
+ * with no score gates. The mixin carries the choice into the apply wire
+ * `context`; the effects phase echoes the staging alongside the outcome.
+ * @param state - flow state (position comes from the mixin's stored choice)
+ * @param handlers - click handlers
+ * @returns {HTMLElement} the section
+ */
+export function renderPositionSelect(state: IntimacyFlowState, handlers: IntimacyPanelHandlers,): HTMLElement {
+  const section = sectionShell("nsfw-intimacy-positions",);
+  section.append(phaseTitle("nsfw.intimacy.positionTitle",),);
+
+  const list = document.createElement("div",);
+  list.className = "nsfw-intimacy-position-list";
+
+  for (const position of INTIMACY_POSITION_CATALOG) {
+    const chosen = state.position?.id === position.id;
+    const btn = button(
+      positionLabel(position,),
+      `nsfw-intimacy-position-${position.id}`,
+      () => handlers.onPosition?.(position.id,),
+    );
+
+    btn.setAttribute("aria-pressed", String(chosen,),);
+    const desc = document.createElement("div",);
+    desc.className = "nsfw-intimacy-position-desc";
+    desc.textContent = positionDescription(position,);
+
+    const cell = document.createElement("div",);
+    cell.className = "nsfw-intimacy-position";
+    cell.dataset.testid = `nsfw-intimacy-position-cell-${position.id}`;
+    cell.append(btn, desc,);
+    list.append(cell,);
+  }
+
+  section.append(list, navRow(handlers, true,),);
+  return section;
+}
+
 /** Render the action-selection grid (locked actions disabled with the requirement).
  * @param pairScore - current pair score
  * @param handlers - click handlers
@@ -234,6 +283,14 @@ export function renderEffects(state: IntimacyFlowState, handlers: IntimacyPanelH
   const outcome = state.outcome;
 
   if (!outcome) { return section; }
+
+  if (state.position) {
+    const staging = document.createElement("div",);
+    staging.className = "nsfw-intimacy-staging";
+    staging.dataset.testid = "nsfw-intimacy-staging";
+    staging.textContent = t("nsfw.intimacy.stagingFmt", { position: positionLabel(state.position,), },);
+    section.append(staging,);
+  }
 
   const delta = document.createElement("div",);
   delta.className = "nsfw-intimacy-delta";
