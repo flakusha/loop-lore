@@ -138,6 +138,7 @@ describe("Alpine state contract E2E", () => {
       expect(ui.transitionDestinationId,).toBe("",);
       expect(Array.isArray(ui.transitionLocations,),).toBe(true,);
       expect(ui.transitionBusy,).toBe(false,);
+      expect(ui.showExportMenu,).toBe(false,);
       expect(ui.activePersona,).toBeNull();
       expect(ui.userRole,).toBe("member",);
       expect(ui.banner,).toBe("",);
@@ -163,6 +164,7 @@ describe("Alpine state contract E2E", () => {
         "showChatSettings",
         "showCreateForm",
         "showEditModal",
+        "showExportMenu",
         "showGallery",
         "showGmGuidance",
         "showGmPanel",
