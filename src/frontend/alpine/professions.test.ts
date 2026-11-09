@@ -23,6 +23,7 @@ import { afterEach, expect, mock, test, } from "bun:test";
 import { LEVEL_XP, MAX_LEVEL, progressionBonuses, titleForLevel, } from "../../rpg/crafting/professions/progression";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { PROFESSION_DISCIPLINES, PROFESSION_XP_STEP, professions, } from "./professions";
+import { stationProfessionBonusLine, stationProfessions, } from "./professions-crafting";
 import type { ChatState, ProfessionView, } from "./types";
 
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
@@ -596,6 +597,23 @@ describeOrSkip("professions.assignableDisciplines", () => {
 },);
 
 describeOrSkip("professions.stationProfession (station bonus display)", () => {
+  test("stationProfessionBonusLine is exercised directly (gap pin)", () => {
+    // Journeyman (level 30): +5% success only — the line reuses the
+    // progression mirror, not a reimplemented ladder.
+    expect(
+      stationProfessionBonusLine({ discipline: "alchemy", level: 30, title: "journeyman", },),
+    ).toBe("Your Alchemy (Journeyman): +5% success",);
+
+    expect(stationProfessionBonusLine({ discipline: "alchemy", level: 1, title: "apprentice", },),).toBe("",);
+  });
+
+  test("stationProfessions slice carries the loading + bonus shape", () => {
+    expect(stationProfessions.stationProfession,).toBeNull();
+    expect(stationProfessions.stationProfessionLoading,).toBe(false,);
+    expect(typeof stationProfessions.stationProfessionBonus,).toBe("function",);
+    expect(typeof stationProfessions.loadStationProfession,).toBe("function",);
+  });
+
   test("bonus line names the discipline, title and non-zero bonuses", () => {
     // Journeyman (level 30): +5% success only — the line reuses the
     // progression mirror, not a reimplemented ladder.
