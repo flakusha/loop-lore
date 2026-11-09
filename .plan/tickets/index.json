@@ -44175,7 +44175,7 @@
     "epic": "epic-group-chat",
     "tags": [],
     "source": ".plan/tickets/TASK-group-chat-frontend-viewer.md",
-    "status": "Not Started"
+    "status": "Done"
   },
   "TASK-GROUP-CHAT-MENTION-AUTOCOMPLETE-DROPDOWN-ACCEPTANCE": {
     "epic": "epic-group-chat",
