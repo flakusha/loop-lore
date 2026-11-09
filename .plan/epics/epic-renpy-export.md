@@ -11,7 +11,7 @@
 **Effort:** Medium
 **Type:** Feature Epic
 **Tags:** renpy, export, plugin, vn
-**Related:** `epic-2d-sprite-world.md`, `epic-vn-choices-ui.md`, `epic-import-export-io.md`
+**Related:** `epic-2d-sprite-world.md`, `epic-visual-novel-mode.md`, `epic-conversation-branching.md`, `epic-import-export-io.md`, `epic-game-asset-pipeline-export.md`
 
 ## Summary
 
