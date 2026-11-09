@@ -22,7 +22,7 @@ and looping.
 
 ## Acceptance Criteria
 
-- [x] `<audio-player>` component (Alpine.js) — `src/frontend/alpine/audio-player.ts` exports the `audioPlayerFactory` scope and registers it on `globalThis`; `src/components/audio-player.html` is the markup (included into a view with `{{> audio-player.html}}`)
+- [x] `<audio-player>` component (Alpine.js) — `src/frontend/alpine/audio-player.ts` exports the `audioPlayerFactory` scope and registers it on `globalThis`; `src/components/audio-player.html` is the markup partial (a consumer view includes it with `{{> audio-player.html}}`; no view includes it yet)
 - [x] Play/pause/stop controls — `play()` / `pause()` / `stop()` (rewinds) / `toggle()` on the scope, wired to the buttons in the partial
 - [x] Volume slider + mute toggle — `setVolume()` (clamped 0..1, remembered in `localStorage` under `loop-lore.audio-player.volume`) + `toggleMute()`
 - [x] Playback speed control (0.5x - 2.0x) — `setSpeed()` clamps to 0.5..2 and writes `playbackRate`; `cycleSpeed()` walks the presets 0.5/0.75/1/1.25/1.5/2
