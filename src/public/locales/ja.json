@@ -1340,6 +1340,8 @@
     "selectChatDescription": "Choose a conversation from the sidebar or create a new one.",
     "noMessages": "No messages yet",
     "noMessagesHint": "Start a conversation below. Messages are persisted automatically.",
+    "npcMovementTitle": "NPCの移動",
+    "npcMovementUnknown": "どこか",
     "loadingMessages": "Loading messages...",
     "edited": "(edited)",
     "thinking": "Thinking…",

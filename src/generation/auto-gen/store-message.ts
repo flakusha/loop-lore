@@ -29,6 +29,17 @@ import {
 import { buildQualityMetadata, repetitionRate, } from "../quality";
 import type { GenDeps, } from "./deps";
 
+import { storeNpcMovement, } from "./store-npc-movement";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * Message-storage step for auto-generation.
+ *
+ * Computes the swipe index, optionally encrypts the content, and inserts the
+ * generated assistant message.
+ */
+
 /** */
 export interface StoreMessageOpts {
   d: GenDeps;
@@ -211,6 +222,12 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
       error: error instanceof Error ? error.message : String(error,),
     },);
   }
+
+  // NPC movement indicators: classify the narration and persist a movement
+  // event when it signals a location change. Strictly non-fatal (the
+  // try/catch lives in store-npc-movement.ts) — indicator failures must
+  // never break message storage.
+  await storeNpcMovement({ database, config, chatId, actorId, messageId, content: storedText, },);
 
   return { messageId, transformed: false, };
 }
