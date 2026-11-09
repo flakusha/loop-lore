@@ -127,7 +127,7 @@ export function gifSearchRoutes(opts: GifSearchOpts, prefix = "/api",) {
         const key = resolveTenorKey(opts,);
         if (!key) {
           return jsonError({
-            message: "GIF search is not configured. Set TENOR_API_KEY.",
+            message: "GIF search is not configured. Set integrations.gifs.apiKey (or TENOR_API_KEY).",
             status: 501,
           },);
         }
