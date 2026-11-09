@@ -57,6 +57,7 @@ import "./summarize";
 import "./timeline";
 import "./translate";
 import "./video";
+import "./whatif";
 import "./workflow";
 import "./worlds-access";
 import "./worlds-mutate";
