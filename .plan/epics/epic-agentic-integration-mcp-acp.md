@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 **Status:** Not Started
-**Status Note:** Promoted from evaluated research `.tmp/research/AgenticIntegration-MCPACP.md` + `.tmp/research/RSI-RepoAccess-EVALUATION.md` — amended per RSI-RepoAccess-EVALUATION Part 4; provisional defaults marked inline.
+**Status Note:** Promoted from evaluated research `.tmp/research/AgenticIntegration-MCPACP.md` + `.tmp/research/RSI-RepoAccess-EVALUATION.md` — amended per RSI-RepoAccess-EVALUATION Part 4; provisional defaults marked inline. Landed in the tree: scoped-token facade seam + MCP transport tests (`scoped-agent.test.ts`: 403-class scope refusals, ownership/budget/audit over MCP and the facade REST op route) and ACP-client authorization tests (`acp-authorization.test.ts`: admin-role gate, parked write asks answered `reject_once`) — the narrowed integration-tests ticket is Done 3/3. Still open: the inbound MCP stdio server, the inbound ACP stdio server, and the remaining facade slices (assets/characters/memory/rpg).
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
