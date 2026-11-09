@@ -12,6 +12,10 @@ import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { worldEditModal, } from "./world-edit-modal";
 
+// TODO(env): bun-only — `bun:test` and `import.meta.dir` are Bun-specific APIs;
+// add a node shim (node:test + import.meta.dirname) when a node test target lands.
+const TEST_DIR = import.meta.dir;
+
 /** The world row as GET /api/v1/worlds/:id returns it. */
 const WORLD = {
   id: "w-1",
@@ -184,7 +188,7 @@ describe("alpine/world-edit-modal", () => {
 
   test("the served modal wires the prefill and blocks an empty save", () => {
     const html = readFileSync(
-      join(import.meta.dir, "../../partials/worlds/edit-modal.html",),
+      join(TEST_DIR, "../../partials/worlds/edit-modal.html",),
       "utf8",
     );
 
@@ -200,12 +204,12 @@ describe("alpine/world-edit-modal", () => {
 
   test("the name field mirrors the backend's length limit", () => {
     const html = readFileSync(
-      join(import.meta.dir, "../../partials/worlds/edit-modal.html",),
+      join(TEST_DIR, "../../partials/worlds/edit-modal.html",),
       "utf8",
     );
 
     const primitives = readFileSync(
-      join(import.meta.dir, "../../validation/schemas/primitives.ts",),
+      join(TEST_DIR, "../../validation/schemas/primitives.ts",),
       "utf8",
     );
 
