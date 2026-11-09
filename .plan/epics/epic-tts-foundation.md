@@ -70,7 +70,7 @@ interface TTSResult {
 - [ ] Emotion/tone parameter mapping
 - [ ] Audio asset creation + linking to messages
 - [ ] `POST /api/tts/synthesize` route
-- [ ] Frontend audio player component (`src/components/audio-player.html`)
+- [x] Frontend audio player component (`src/components/audio-player.html`) — shipped on branch `core-t6-audio` via TASK-audio-player-component.md
 - [ ] Auto-play TTS on message receive (opt-in setting)
 - [ ] Unit tests for TTS provider
 
@@ -86,7 +86,7 @@ interface TTSResult {
 - `src/generation/providers/tts.ts` — TTS provider interface
 - `src/generation/providers/edge-tts.ts` — Edge-TTS client
 - `src/components/audio-player.html` — audio playback UI
-- `src/frontend/alpine/audio.ts` — audio player Alpine component
+- `src/frontend/alpine/audio-player.ts` — audio player Alpine component
 
 ## Linked Tasks
 

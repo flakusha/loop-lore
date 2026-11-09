@@ -14,6 +14,7 @@ import "./actor-wardrobe";
 import "./admin";
 import "./age-gate";
 import "./app";
+import "./audio-player";
 import "./autonomy-panel";
 import "./blog";
 import "./character-extension-editor";
