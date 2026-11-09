@@ -153,6 +153,50 @@
 
         {{> trade-window-panel.html}} {{> inventory-panels.html}} {{> world-lore-panel.html}}
       </div>
+
+      <!-- Map zones (READ-ONLY, 063): list maps, click a tile to resolve its zone -->
+      <div class="world-page" x-data="worldMapZones('{{worldId}}')" x-init="init()" data-testid="world-map-zones">
+        <div class="panel">
+          <h3 x-text="t('worlds.mapZonesTitle')"></h3>
+          <p x-show="loading" x-text="t('worlds.loading')"></p>
+          <p x-show="loadError" x-cloak x-text="t('worlds.mapZonesLoadFailed')" data-testid="map-zones-error"></p>
+          <p
+            x-show="!loading && !loadError && groups.length === 0"
+            x-cloak
+            x-text="t('worlds.mapZonesEmpty')"
+            data-testid="map-zones-empty"
+          >
+          </p>
+          <template x-for="group in groups" :key="group.map.id">
+            <div class="map-zone-block">
+              <h4 x-text="group.map.name"></h4>
+              <svg
+                class="map-zone-svg"
+                :viewBox="`0 0 ${group.map.width} ${group.map.height}`"
+                @click="pick($event, group)"
+                x-html="svgInner(group)"
+                role="img"
+                :aria-label="group.map.name"
+                data-testid="map-zone-svg"
+              >
+              </svg>
+            </div>
+          </template>
+          <p x-show="resolvedMap" x-cloak data-testid="map-zone-resolved">
+            <span x-text="resolvedMap"></span>:
+            <span
+              x-text="resolveError ? t('worlds.mapZonesResolveFailed') : (resolvedZone ?? t('worlds.mapZonesOffMap'))"
+            ></span>
+          </p>
+          <p
+            class="muted"
+            x-show="!resolvedMap && !loading && !loadError && groups.length > 0"
+            x-cloak
+            x-text="t('worlds.mapZonesHint')"
+          >
+          </p>
+        </div>
+      </div>
     </div>
     <div id="modal-container"></div>
   </main>

@@ -13,6 +13,7 @@ import "./pages/worlds-io";
 import "./pages/new-chat";
 import "./pages/quests";
 import "./pages/blog";
-// world-detail.html uses x-data="worldTimelineBar('...')"; register the
-// factory on globalThis so Alpine can resolve it from the pages bundle.
+// world-detail.html uses x-data="worldTimelineBar('...')" and x-data="worldMapZones('...')";
+// register the factories on globalThis so Alpine can resolve them from the pages bundle.
 import "./pages/world-timeline-bar";
+import "./alpine/world-map";

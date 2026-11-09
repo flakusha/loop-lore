@@ -4496,6 +4496,39 @@ html {
   align-items: center;
 }
 
+/* --- Map zones read view (world-detail): tile-grid SVG per map. Zone fills
+       cycle the six theme accent tokens; the surface and frame use the
+       standard surface/border tokens. --- */
+.map-zone-block {
+  margin-top: var(--space-3);
+}
+
+.map-zone-svg {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  cursor: crosshair;
+}
+
+.map-zone-svg .map-zone-surface {
+  fill: var(--bg-secondary);
+}
+
+.map-zone-svg .map-zone-rect {
+  fill-opacity: 0.35;
+  stroke-width: 0.3;
+}
+
+.map-zone-svg .map-zone-label {
+  fill: var(--text-primary);
+  font-size: 2.5px;
+  pointer-events: none;
+}
+
 .condition {
   display: inline-flex;
   gap: 4px;
