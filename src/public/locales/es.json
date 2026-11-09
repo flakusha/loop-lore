@@ -1517,6 +1517,7 @@
     "initiativeShort": "Inic.",
     "turnOrderHint": "El orden sigue la estrategia de turnos del chat; la siguiente elección es exacta salvo con la estrategia de iniciativa.",
     "activeQuests": "Active Quests",
+    "questHistory": "Quest History",
     "noQuests": "No active quests.",
     "newQuestPlaceholder": "Quest name…",
     "newQuest": "New Quest",

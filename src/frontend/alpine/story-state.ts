@@ -20,6 +20,8 @@ import { log as rootLog, } from "./logger";
 import { storyControl, } from "./story-controls";
 import {
   activeChatId,
+  activeQuests as activeQuestsOf,
+  completedQuests as completedQuestsOf,
   parseQuestBanners,
   qualityClass as qualityClassTier,
   questMilestones as questMilestonesOf,
@@ -29,6 +31,7 @@ import {
 } from "./story-state/derived";
 import { loaders, } from "./story-state/loaders";
 import { mutations, } from "./story-state/mutations";
+import { storyStream, } from "./story-state/stream";
 import type {
   QuestBanner,
   QuestMilestone,
@@ -73,13 +76,28 @@ const log = rootLog.child({ module: "story-state", },);
     npcDraft: { health: "", mentalState: "", locationId: "", },
     turnDetail: null,
     turnDetailLoading: false,
+    _storyStream: null,
     ...loaders,
     ...mutations,
+    ...storyStream,
 
     /**
      * @returns {Promise<void>}
      */
     init(): Promise<void> {
+      // In-page chat switches dispatch `chat-context-refresh` (chat-messages);
+      // re-read so the panel never shows the previous chat's story state.
+      // The listener is idempotent across Alpine re-inits of the same scope.
+      const doc = globalThis.document;
+      const onRefresh = (): void => {
+        void this.refresh();
+      };
+
+      if (typeof doc?.addEventListener === "function" && !this._storyRefreshBound) {
+        this._storyRefreshBound = true;
+        doc.addEventListener("chat-context-refresh", onRefresh,);
+      }
+
       return this.refresh();
     },
 
@@ -89,6 +107,8 @@ const log = rootLog.child({ module: "story-state", },);
     async refresh(): Promise<void> {
       const chatId = this._activeChatId();
       if (!chatId) { return; }
+      // Chat switch: drop the previous world's stream before re-reading.
+      if (this.chatId !== null && this.chatId !== chatId) { this.disconnectStoryStream(); }
       this.chatId = chatId;
       this.loading = true;
       this.error = null;
@@ -102,6 +122,9 @@ const log = rootLog.child({ module: "story-state", },);
           this._loadParticipants(),
           this.loadWorldStates(),
         ],);
+
+        // Live path: the `story-state` event re-triggers this refresh.
+        this.connectStoryStream();
       } catch (error) {
         this.error = error instanceof Error ? error.message : String(error,);
         log.warn("Story state load failed", { chatId, error, },);
@@ -124,6 +147,14 @@ const log = rootLog.child({ module: "story-state", },);
      */
     questProgressPct(quest: StoryQuest,): number {
       return questProgressPercent(quest,);
+    },
+
+    activeQuests(): StoryQuest[] {
+      return activeQuestsOf(this.quests,);
+    },
+
+    completedQuests(): StoryQuest[] {
+      return completedQuestsOf(this.quests,);
     },
 
     questMilestones(quest: StoryQuest,): QuestMilestone[] {

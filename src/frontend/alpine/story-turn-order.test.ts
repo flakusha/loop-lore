@@ -271,4 +271,11 @@ describe("storyTurnOrder component", () => {
     const index = await Bun.file(new URL("./index.ts", import.meta.url,),).text();
     expect(index,).toContain('import "./story-turn-order";',);
   });
+
+  test("init() delegates to load() (x-data auto-invokes init; no x-init needed)", async () => {
+    const component = makeComponent();
+    await component.init();
+    expect(component.snapshot?.strategy,).toBe("round_robin",);
+    expect(calls.some((c,) => c.url === "/api/v1/chats/chat-1/turn-order"),).toBe(true,);
+  });
 });
