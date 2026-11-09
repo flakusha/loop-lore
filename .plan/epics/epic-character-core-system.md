@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** verified 2026-10-09: the character API and its companion services ship (`charactersRoutes` + traits/mood/relationships/avatars/emotions/availability/licensing/IO mounted in `src/routes/v1/actors-surface.ts:56-76`), the RPG stat system ships (`src/rpg/stats/` + `src/rpg/service/character-stats.ts`), and character template seeding ships (`src/characters/seed/`); open — the six-slice stat-allocation extension (no `character_stat_allocation` / `requires_stats` anywhere in `src/` or `configs/`) and the four-tier memory extension (no episodic/semantic/procedural tables).
+**Status Note:** reconciled 2026-11-09: the character API and its companion services ship (`charactersRoutes` + traits/mood/relationships/avatars/emotions/availability/licensing/IO mounted in `src/routes/v1/actors-surface.ts:56-76`), the RPG stat system ships (`src/rpg/stats/` + `src/rpg/service/character-stats.ts`), character template seeding ships (`src/characters/seed/`), and the six-slice stat-allocation extension **ships** (all six tickets closed 2026-10-23; code evidence in the slice table below). Carried to other lanes: the three char-editor depth tickets (raw JSON/YAML/TOML editor, structured-fields UI, validation-spec compliance), the growth LLM-assist aux pass, and growth journey export — see "Carried (not built here)" below. Still open: the four-tier memory extension (no episodic/semantic/procedural tables).
 **Priority:** High
 **Effort:** High
 **Type:** Foundation Epic
@@ -81,7 +81,7 @@ Core character data model and services — mandatory/optional fields, RPG stats,
 | Character search/filter (`page` / `pageSize` / `type`) | Shipped | `src/routes/characters/list.ts:21-24` |
 | Character template seeding | Shipped | `src/characters/seed/`, `src/server/init-background-services.ts:37` |
 | Import/export | Shipped | `src/routes/character-io/`, `src/characters/parser.ts` — see `epic-import-export-io.md` |
-| Stat-allocation extension (the six slices below) | Not shipped | no `character_stat_allocation`, `character_trait_assignments`, `requires_stats` or `stat_point_budget` anywhere in `src/` or `configs/` |
+| Stat-allocation extension (the six slices below) | Shipped (verified 2026-11-09) | `src/db/migrations/074_worlds_stat_requirements.ts`, `src/db/migrations/075_character_stat_allocation.ts`, `src/rpg/traits/catalog.ts`, `src/rpg/dice/trait-roll.ts`, `src/rpg/service/stat-allocation.ts`, `src/routes/rpg/stat-allocation.ts`, `src/routes/rpg/trait-catalog.ts`, `src/frontend/alpine/stat-allocation.ts`, `src/components/character/stat-allocation-panel.html` |
 | Four-tier memory extension (`CharacterMemory`) | Not shipped | no episodic / semantic / procedural / consolidation tables in `src/db/migrations/001_init.ts` |
 | Character-growth research extension (table below) | Superseded by `epic-character-growth.md` | `character_arc` (`001_init.ts:1096`) and `growth_log` (`:1106`) now ship; rows below annotated |
 | Cross-system events (`character.stats_changed`, `character.relationship_changed`, `memory.emotion_applied`) | Not shipped | no emitter or subscriber anywhere in `src/` |
@@ -121,13 +121,19 @@ Implemented (verified 2026-10-09):
 - `src/rpg/stats/`, `src/rpg/service/character-stats.ts` — stat calculations and persistence
 - `src/characters/seed/` — character template seeding
 - `src/validation/schemas/` — TypeBox request/response schemas
+- `src/db/migrations/074_worlds_stat_requirements.ts`, `src/db/migrations/075_character_stat_allocation.ts` — stat-requirement columns + allocation/trait-assignment tables
+- `src/rpg/traits/catalog.ts` — typed trait catalog
+- `src/rpg/dice/trait-roll.ts` — trait-aware roll engine (`applyTraits`, `minimumRollValue`, `rollWithTraits`)
+- `src/rpg/service/stat-allocation.ts` — allocation read/validate/put
+- `src/routes/rpg/stat-allocation.ts`, `src/routes/rpg/trait-catalog.ts` — allocation + catalog endpoints
+- `src/frontend/alpine/stat-allocation.ts`, `src/components/character/stat-allocation-panel.html` — author-side allocation panel
 
 Planned (do not exist yet):
 
 - `src/routes/characters.ts` — superseded by the `src/routes/characters/` directory
 - `src/validation/schemas.ts` — superseded by the `src/validation/schemas/` directory
 - a spells module under `src/rpg/` — never built (the epic's old "dice, combat, achievements, crafting, encounters, spells" line named it in error)
-- `character_stat_allocation` / `character_trait_assignments` tables, the `requires_stats` world config and the allocation modal — the six-stat-allocation slices below
+- ~~`character_stat_allocation` / `character_trait_assignments` tables, the `requires_stats` world config and the allocation modal~~ — shipped 2026-10-23; see the slice table below
 
 ## Acceptance Criteria
 
@@ -211,20 +217,33 @@ combat, and save outcomes; the modal surfaces the budget and trait picker to
 authors. Implementation slices below; new tickets are sequenced DB → catalog →
 engine → API → FE → tests so each phase has a verifiable boundary.
 
-> **Verified 2026-10-09 — none of the six slices has started.** `requires_stats`,
-> `stat_point_budget`, `stat_min`, `stat_max`, `character_stat_allocation` and
-> `character_trait_assignments` appear nowhere in `src/` or `configs/`, and all six
-> ticket files still read **Not Started**. The stat system this extension builds on
-> *does* ship (`src/rpg/stats/`), so the sequence can start from a working base.
+> **Verified 2026-11-09 — all six slices ship.** Every ticket below closed **Done** on
+> 2026-10-23 (registry-driven close), and the code exists on `dev`: the world
+> columns, the trait catalog, the trait-aware roll engine, the allocation tables
+> and PUT route, the author panel, and the test suites. The 2026-10-09 "none of the
+> six slices has started" note above was stale and is superseded.
 
 | Task | Ticket | Status |
 | ---- | ------ | ------ |
-| `worlds.requires_stats`, `stat_point_budget`, `stat_min`, `stat_max` columns | `TASK-world-requires-stats-flag-and-point-budget-config.md` | ⬜ Not Started |
-| Typed trait catalog (`fast_reflexes`, `innate_magic`, `swift_hands`, …) | `TASK-character-trait-catalog-for-gameplay-mechanics.md` | ⬜ Not Started |
-| `applyTraits`, `minimumRollValue`, `rollWithTraits` wired into combat/dice/saves | `TASK-character-stat-modifiers-and-trait-application-engine.md` | ⬜ Not Started |
-| Migration 023 + `character_stat_allocation` / `character_trait_assignments` + PUT route | `TASK-character-stat-allocation-backend-api-and-db-integration.md` | ⬜ Not Started |
-| htmx/Alpine modal + catalog endpoint, gated by `requires_stats` | `TASK-character-stat-allocation-frontend-modal-and-edit-integration.md` | ⬜ Not Started |
-| DB + engine + route coverage, 80% floor | `TASK-character-stat-allocation-integration-tests-e2e.md` | ⬜ Not Started |
+| `worlds.requires_stats`, `stat_point_budget`, `stat_min`, `stat_max` columns | `TASK-world-requires-stats-flag-and-point-budget-config.md` | ✅ Shipped — `src/db/migrations/074_worlds_stat_requirements.ts:15-32`; `src/db/schema-manifest.ts:2933-2936` |
+| Typed trait catalog (`fast_reflexes`, `innate_magic`, `swift_hands`, …) | `TASK-character-trait-catalog-for-gameplay-mechanics.md` | ✅ Shipped — `src/rpg/traits/catalog.ts:27-92` (`TRAIT_CATALOG`), `getTraitsForWorld` `:99`, `assertTraitIds` `:111`; route `src/routes/rpg/trait-catalog.ts` |
+| `applyTraits`, `minimumRollValue`, `rollWithTraits` wired into combat/dice/saves | `TASK-character-stat-modifiers-and-trait-application-engine.md` | ✅ Shipped — `src/rpg/dice/trait-roll.ts:33,57,106` (barrel `src/rpg/dice/index.ts:25`). Caveat: the engine is additive and exported, but combat/saves still roll `abilityModifier` + `rollDice` directly (`src/rpg/combat/attacks.ts:40-44`, `src/rpg/combat/saves.ts:29-31`) — the ticket's acceptance required the additive API only |
+| Migration 023 + `character_stat_allocation` / `character_trait_assignments` + PUT route | `TASK-character-stat-allocation-backend-api-and-db-integration.md` | ✅ Shipped — `src/db/migrations/075_character_stat_allocation.ts`; `src/db/schema-core.ts:2074-2095`; service `src/rpg/service/stat-allocation.ts`; route `src/routes/rpg/stat-allocation.ts:58,88-158` |
+| htmx/Alpine modal + catalog endpoint, gated by `requires_stats` | `TASK-character-stat-allocation-frontend-modal-and-edit-integration.md` | ✅ Shipped (panel + catalog route) — panel `src/components/character/stat-allocation-panel.html` + `src/frontend/alpine/stat-allocation.ts` (wired at `src/routes/views/character-panels-section.ts:51`); catalog route `src/routes/rpg/trait-catalog.ts`. Caveat: the `requires_stats` gate is **not** enforced anywhere — `StatConfigRead.requiresStats` is fetched by the panel but unused, and the API stores allocations for any world (storage stays permissive per the ticket's recorded deviation). Carried below as a cross-layer decision, not a one-line fix |
+| DB + engine + route coverage, 80% floor | `TASK-character-stat-allocation-integration-tests-e2e.md` | ✅ Shipped — `src/rpg/service/stat-allocation.test.ts`, `src/routes/rpg/stat-allocation.test.ts`, `src/frontend/alpine/stat-allocation.test.ts`, `src/rpg/dice/trait-roll.test.ts`, `src/rpg/traits/catalog.test.ts`, `tests/e2e/flows/stat-allocation.test.ts` |
+
+### Carried (verified 2026-11-09, not built in this lane)
+
+These are open in the tracker and were reconciled against the code, not built here —
+each needs a new editor surface or a pipeline that does not exist yet:
+
+| Item | Where | Verdict |
+| ---- | ----- | ------- |
+| Raw JSON/YAML/TOML editor | `TASK-char-editor-raw-json-yaml-toml-editor.md` (Not Started) | Carried — needs a new editor tab + a CodeMirror/Monaco dependency; no raw-editor surface exists in `src/frontend/` |
+| Structured-fields editor UI | `TASK-char-editor-structured-fields-ui.md` (Not Started) | Carried — needs a new 5-tab author form (Basic Info / Traits / NSFW / Extensions / Review); the shipped edit form is a single flat page (`src/frontend/pages/characters-edit-form.ts`) |
+| Validation-spec compliance | `TASK-char-editor-validation-spec-compliance.md` (Not Started) | Carried — needs a client-side validation layer, `POST /api/characters/validate`, `X-Validation-Mode`, review workflow and impersonation-conflict detection. Server-side pieces partly exist (`src/characters/validator/index.ts` strict/relaxed modes, `src/characters/validator/fields.ts`), but no validate route and no `X-Validation-Mode` handling exist anywhere in `src/` |
+| Growth LLM-assist aux pass | `epic-character-growth.md:313` | Carried — `runLlmAssist` exists (`src/characters/services/growth-service/llm-assist.ts:46-79`) but the aux-LLM call is an intentional stub; needs the aux-pipeline |
+| Growth journey export | `epic-character-growth.md:335-336` (Open Question 2) | Carried — no export route exists under `src/routes/character-growth/` (only `/arc` and `/log`); deferred to a follow-on epic |
 
 ---
 
