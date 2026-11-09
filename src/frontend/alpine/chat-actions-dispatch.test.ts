@@ -268,16 +268,21 @@ describeOrSkip("dispatchCommandAction", () => {
       expect(ctx.toasts[0]?.message,).toContain("not yet implemented",);
     });
 
-    test("generate-video shows not-implemented toast", async () => {
+    test("generate-video fires POST to /api/v1/generation/video with prompt + chatId", async () => {
+      mockFetch(202,);
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
         ctx as any,
         "generate-video",
-        { prompt: "a cat", },
+        { prompt: "a dragon flying", },
         "chat-1",
       );
 
-      expect(ctx.toasts[0]?.message,).toContain("not yet implemented",);
+      expect(fetchCalls.length,).toBe(1,);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/generation/video",);
+      expect(fetchCalls[0]?.opts.method,).toBe("POST",);
+      const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
+      expect(body,).toEqual({ prompt: "a dragon flying", chatId: "chat-1", },);
     });
   },);
 
