@@ -365,6 +365,9 @@ botToken = "" # ⚠ SECRET
 enabled = false
 botToken = "" # ⚠ SECRET
 
+[integrations.gifs]
+apiKey = "" # ⚠ SECRET
+
 [integrations.irc]
 enabled = false
 server = ""
