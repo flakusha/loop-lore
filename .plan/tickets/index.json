@@ -52054,7 +52054,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-nsfw-housing-management.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "nsfw",
       "frontend",

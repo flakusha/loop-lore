@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Done (NSFW slice, 2026-11-09)
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task
@@ -51,3 +51,5 @@ Housing management interface for base building.
 
 - `epic-housing.md` — Housing epic (owner)
 - `TASK-housing-frontend.md` — Housing UI task
+
+**Resolved:** 2026-11-09 registry-driven close: git issue da34ef5 (registry tip: 389d0ea11 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-NSFW-HOUSING-MANAGEMENT don)
