@@ -38,6 +38,9 @@ export const INTEGRATIONS_DEFAULTS = {
     enabled: false,
     botToken: "",
   },
+  gifs: {
+    apiKey: "",
+  },
   irc: {
     enabled: false,
     server: "",
@@ -61,6 +64,7 @@ export const integrationsMeta = {
     "xmpp.password",
     "telegram.botToken",
     "discord.botToken",
+    "gifs.apiKey",
     "irc.password",
   ] as const,
   properties: {
@@ -159,6 +163,18 @@ export const integrationsMeta = {
         },
       },
       required: ["enabled", "botToken",] as const,
+    },
+    gifs: {
+      type: "object",
+      description: "GIF provider (Tenor) for the chat GIF picker. Unconfigured = picker answers 501.",
+      properties: {
+        apiKey: {
+          type: "string",
+          default: INTEGRATIONS_DEFAULTS.gifs.apiKey,
+          description: "Tenor API key. Env-only: TENOR_API_KEY. SECRET — never log or echo.",
+        },
+      },
+      required: ["apiKey",] as const,
     },
     irc: {
       type: "object",

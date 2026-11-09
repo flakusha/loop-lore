@@ -220,6 +220,7 @@ export const envMap = (): EnvMap => {
   map.TELEGRAM_BOT_TOKEN = "integrations.telegram.botToken";
   map.DISCORD_ENABLED = "integrations.discord.enabled";
   map.DISCORD_BOT_TOKEN = "integrations.discord.botToken";
+  map.TENOR_API_KEY = "integrations.gifs.apiKey";
   map.IRC_ENABLED = "integrations.irc.enabled";
   map.IRC_SERVER = "integrations.irc.server";
   map.IRC_NICK = "integrations.irc.nick";
