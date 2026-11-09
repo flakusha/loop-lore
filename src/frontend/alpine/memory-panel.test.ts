@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { memoryPanel, } from "./memory-panel";
+import { loreEntryDraftFromMemory, } from "./memory-panel-core";
 import type { ChatState, } from "./types";
 
 // apiFetch is a browser global wired at runtime via globalThis.apiFetch — stub it.
@@ -596,5 +597,112 @@ describe("memoryPanel.formatMemoryDate wiring", () => {
   test("returns an empty string for invalid timestamps", () => {
     const c = ctx();
     expect(c.formatMemoryDate!("not-a-date",),).toBe("",);
+  });
+});
+
+// TASK-memory-to-lorebook-one-click-promote: the one-click promote surface —
+// a character memory becomes a character-book lore entry via the EXISTING
+// POST /api/v1/actors/:actorId/lore-entries route, behind an explicit
+// user confirm(); name/keys are drafted from the memory content/keywords.
+describe("loreEntryDraftFromMemory", () => {
+  test("prefers the first keyword for the name and caps keys at 5", () => {
+    const draft = loreEntryDraftFromMemory(
+      { content: "The dragon guards the eastern bridge", keywords: ["dragon", "bridge", "k1", "k2", "k3", "k6",], },
+    );
+
+    expect(draft.name,).toBe("dragon",);
+    expect(draft.keys,).toEqual(["dragon", "bridge", "k1", "k2", "k3",],);
+  });
+
+  test("falls back to a truncated content name and drops empty keywords", () => {
+    const long = "x".repeat(60,);
+    const draft = loreEntryDraftFromMemory(
+      { content: `  ${long}  `, keywords: ["", "  ",], },
+    );
+
+    expect(draft.name,).toBe(`${"x".repeat(48,)}…`,);
+    expect(draft.keys,).toBeUndefined();
+  });
+
+  test("uses the whole content as the name when it is short", () => {
+    const draft = loreEntryDraftFromMemory({ content: "Short fact", keywords: [], },);
+    expect(draft.name,).toBe("Short fact",);
+  });
+});
+
+describe("memoryPanel.promoteMemoryToLore", () => {
+  const mem = {
+    id: "m1",
+    content: "The dragon guards the eastern bridge",
+    type: "semantic" as const,
+    confidence: 1,
+    importance: 1,
+    keywords: ["dragon",],
+    createdAt: "t",
+  };
+
+  /** @param overrides */
+  function promoteCtx(overrides: Record<string, unknown> = {},) {
+    return ctx({
+      memoryPanel: {
+        ...(memoryPanel.memoryPanel as object),
+        activeTab: "character",
+        ...overrides,
+      },
+    },);
+  }
+
+  test("POSTs a drafted lore entry to the existing route after confirm", async () => {
+    (globalThis as Record<string, unknown>).confirm = () => true;
+    mockFetch(201, { ok: true, },);
+    const c = promoteCtx();
+    await c.promoteMemoryToLore!(mem,);
+    expect(fetchCalls,).toHaveLength(1,);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/actors/char-1/lore-entries",);
+    expect(fetchCalls[0]!.opts?.method,).toBe("POST",);
+    expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({
+      name: "dragon",
+      content: "The dragon guards the eastern bridge",
+      keys: ["dragon",],
+    },);
+
+    expect(c.memoryPanel!.error,).toBeNull();
+    expect(c.memoryPanel!.busy,).toBe(false,);
+  });
+
+  test("skips non-character tabs", async () => {
+    (globalThis as Record<string, unknown>).confirm = () => true;
+    mockFetch(201, {},);
+    const c = promoteCtx({ activeTab: "assistant", },);
+    await c.promoteMemoryToLore!(mem,);
+    expect(fetchCalls,).toEqual([],);
+  });
+
+  test("does nothing when the user declines the confirm dialog", async () => {
+    (globalThis as Record<string, unknown>).confirm = () => false;
+    const c = promoteCtx();
+    await c.promoteMemoryToLore!(mem,);
+    expect(fetchCalls,).toEqual([],);
+    expect(c.memoryPanel!.error,).toBeNull();
+  });
+
+  test("surfaces a panel error when the route rejects", async () => {
+    (globalThis as Record<string, unknown>).confirm = () => true;
+    mockFetch(422, { message: "nope", },);
+    const c = promoteCtx();
+    await c.promoteMemoryToLore!(mem,);
+    expect(c.memoryPanel!.error,).toBe("chats.promoteToLoreFailed",);
+    expect(c.memoryPanel!.busy,).toBe(false,);
+  });
+
+  test("surfaces a panel error when the request throws", async () => {
+    (globalThis as Record<string, unknown>).confirm = () => true;
+    fetchHandler = () => {
+      throw new Error("network down",);
+    };
+
+    const c = promoteCtx();
+    await c.promoteMemoryToLore!(mem,);
+    expect(c.memoryPanel!.error,).toBe("chats.promoteToLoreFailed",);
   });
 });

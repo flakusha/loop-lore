@@ -79,6 +79,15 @@
         @input="searchMemories()"
       />
 
+      <!-- Panel-level error (e.g. a failed lore promote) -->
+      <div
+        x-show="memoryPanel.error"
+        style="margin-bottom: var(--space-3); padding: var(--space-2); background: var(--bg-error, #fee); border-radius: 4px; font-size: 12px; color: var(--text-error, #c33)"
+        data-testid="memory-panel-error"
+      >
+        <span x-text="memoryPanel.error"></span>
+      </div>
+
       <!-- Create Form (world memories are admin-managed) -->
       <button
         class="btn btn-primary btn-xs"
@@ -167,6 +176,16 @@
                       x-bind:aria-label="t('chats.pin')"
                     >
                       📌
+                    </button>
+                    <button
+                      class="btn-icon"
+                      x-show="memoryPanel.activeTab === 'character'"
+                      data-testid="memory-promote-lore"
+                      @click="promoteMemoryToLore(mem)"
+                      x-bind:title="t('chats.promoteToLore')"
+                      x-bind:aria-label="t('chats.promoteToLore')"
+                    >
+                      📖
                     </button>
                     <button
                       class="btn-icon"
