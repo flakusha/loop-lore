@@ -911,6 +911,12 @@ describe("ChatImpersonateBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_chat.ChatImpersonateBody,));
 });
 
+describe("ChatListFiltersBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_chat.ChatListFiltersBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_chat.ChatListFiltersBody,));
+});
+
 describe("ChatListResponse", () => {
   test("accepts generated values", () => checkAllValid(validation_responses.ChatListResponse,));
 
@@ -2821,4 +2827,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 447 schemas discovered across 548 module(s).
+// 448 schemas discovered across 549 module(s).

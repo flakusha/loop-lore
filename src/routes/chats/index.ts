@@ -11,6 +11,7 @@ import { classifierTagRoutes, } from "./classifier-tags";
 import { createRoutes, } from "./create";
 import { entitySuggestionRoutes, } from "./entity-suggestions";
 import { extrasRoutes, } from "./extras";
+import { chatFilterRoutes, } from "./filters";
 import { generateEntityRoutes, } from "./generate-entity";
 import { listRoutes, } from "./list";
 import { manageRoutes, } from "./manage";
@@ -47,6 +48,7 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
         return parsed.value;
       },)
       .use(listRoutes(opts, prefix,),)
+      .use(chatFilterRoutes(opts, prefix,),)
       .use(createRoutes(opts, prefix,),)
       .use(templatesRoutes(opts, prefix,),)
       .use(batchRoutes(opts, prefix,),)
