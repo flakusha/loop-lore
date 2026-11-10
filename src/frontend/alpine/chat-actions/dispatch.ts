@@ -18,9 +18,6 @@ import { worldActionHandlers, } from "./world-actions";
 const log = rootLog.child({ module: "chat-actions", },);
 
 export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
-  /**
-   * Dispatch a command action returned by the backend.
-   *
    * Maps action strings to the appropriate API endpoint and fires the request.
    * Generation actions connect SSE for real-time progress streaming.
    * @param action - Action identifier from CommandResult.action
@@ -33,18 +30,6 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
     const handler = actionHandlers[action];
     if (handler) {
       await handler(this, payload, chatId,);
-      return;
-    }
-
-    // Check unimplemented generation actions
-    if (["generate-music", "generate-sfx",].includes(action,)) {
-      const label = action.replace("generate-", "",);
-      this.$dispatch?.("show-toast", {
-        type: "info",
-        message: t("toasts.actionNotImplemented", { label, },),
-      },);
-
-      log.info("Unimplemented generation action", { action, },);
       return;
     }
 
@@ -65,14 +50,6 @@ export type ActionHandler = (
 ) => Promise<void> | void;
 
 const actionHandlers: Record<string, ActionHandler> = {
-  ...battleActionHandlers,
-  ...emotionAvatarActionHandlers,
-  ...itemActionHandlers,
-  ...entityActionHandlers,
-  ...entityCopyActionHandlers,
-  ...wizardActionHandlers,
-  ...worldActionHandlers,
-
   "generate-image": async (ctx, payload, chatId,) => {
     // Avatar Dogfood slice 1: /avatar rides the same action; its payload only
     // adds bindActorAvatar, forwarded so the route binds generated variants.
@@ -306,5 +283,44 @@ const actionHandlers: Record<string, ActionHandler> = {
 
   "review-entity": (_ctx, payload,) => {
     log.info("review-entity action — display only", { payload, },);
+  },
+
+  "generate-sfx": async (ctx, payload, chatId,) => {
+    await dispatchGenerationAction(
+      ctx,
+      "/api/v1/generation/audio",
+      { prompt: (payload?.prompt as string) ?? "", seconds: (payload?.seconds as number) ?? 6, chatId, },
+      "Sound effect generation",
+      chatId,
+    );
+  },
+
+  "generate-music": async (ctx, payload, chatId,) => {
+    await dispatchGenerationAction(
+      ctx,
+      "/api/v1/generation/audio",
+      { prompt: (payload?.prompt as string) ?? "", seconds: (payload?.seconds as number) ?? 30, chatId, },
+      "Music generation",
+      chatId,
+    );
+  },
+
+  "link-music": async (ctx, payload,) => {
+    const url = (payload?.url as string) ?? "";
+    if (!url) {
+      ctx.$dispatch?.("show-toast", {
+        type: "warning",
+        message: t("toasts.actionNoInput", { action: "music link", },),
+      },);
+
+      return;
+    }
+
+    // Reuse the music-links panel flow: it posts the link and refreshes the list.
+    ctx._musicLinkUrl = url;
+    await ctx.addMusicLink?.();
+    if (ctx._musicLinkError) {
+      ctx.$dispatch?.("show-toast", { type: "error", message: ctx._musicLinkError, },);
+    }
   },
 };

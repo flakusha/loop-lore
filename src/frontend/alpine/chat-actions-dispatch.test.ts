@@ -241,22 +241,9 @@ describeOrSkip("dispatchCommandAction", () => {
     });
   },);
 
-  describeOrSkip("unimplemented generation actions", () => {
-    test("generate-music shows not-implemented toast", async () => {
-      const ctx = buildCtx();
-      await chatActions.dispatchCommandAction!.call(
-        ctx as any,
-        "generate-music",
-        { prompt: "jazz", },
-        "chat-1",
-      );
-
-      expect(fetchCalls.length,).toBe(0,);
-      expect(ctx.toasts[0]?.type,).toBe("info",);
-      expect(ctx.toasts[0]?.message,).toContain("not yet implemented",);
-    });
-
-    test("generate-sfx shows not-implemented toast", async () => {
+  describeOrSkip("audio generation actions", () => {
+    test("generate-sfx fires POST to /api/v1/generation/audio with prompt + chatId", async () => {
+      mockFetch(200,);
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
         ctx as any,
@@ -265,9 +252,44 @@ describeOrSkip("dispatchCommandAction", () => {
         "chat-1",
       );
 
-      expect(ctx.toasts[0]?.message,).toContain("not yet implemented",);
+      expect(fetchCalls.length,).toBe(1,);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/generation/audio",);
+      expect(fetchCalls[0]?.opts.method,).toBe("POST",);
+      const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
+      expect(body,).toEqual({ prompt: "explosion", seconds: 6, chatId: "chat-1", },);
     });
 
+    test("generate-music fires POST to /api/v1/generation/audio with the track length", async () => {
+      mockFetch(200,);
+      const ctx = buildCtx();
+      await chatActions.dispatchCommandAction!.call(
+        ctx as any,
+        "generate-music",
+        { prompt: "jazz", },
+        "chat-1",
+      );
+
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/generation/audio",);
+      const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
+      expect(body,).toEqual({ prompt: "jazz", seconds: 30, chatId: "chat-1", },);
+    });
+
+    test("generate-sfx surfaces the provider error on a failed generation", async () => {
+      mockFetch(502, { error: "Audio generation failed", },);
+      const ctx = buildCtx();
+      await chatActions.dispatchCommandAction!.call(
+        ctx as any,
+        "generate-sfx",
+        { prompt: "explosion", },
+        "chat-1",
+      );
+
+      expect(ctx.toasts[0]?.type,).toBe("error",);
+      expect(ctx.toasts[0]?.message,).toBe("Audio generation failed",);
+    });
+  },);
+
+  describeOrSkip("video generation action", () => {
     test("generate-video fires POST to /api/v1/generation/video with prompt + chatId", async () => {
       mockFetch(202,);
       const ctx = buildCtx();

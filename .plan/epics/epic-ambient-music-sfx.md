@@ -30,7 +30,8 @@ crossfaded into a single atmosphere per scene (Phases 2–3 of the parent epic).
 | Ambient generation core | `src/generation/audio/` | Built - provider registry (`types.ts`/`engine.ts`), local procedural provider, scene-tag layer planner + WAV codec + mixer (`ambient.ts`, `wav.ts`) |
 | ComfyUI audio support | `src/generation/providers/comfyui.ts`, `src/generation/audio/providers/comfyui.ts` | Built - client extracts `audio`/`gifs` outputs and downloads them (`waitForFiles`, `runWorkflowFiles`); workflow name from config becomes the provider id |
 | Ambient route | `POST /api/v1/generation/audio/ambient` (`src/generation/audio-gen-route.ts`) | Built - auth + chat-access scoped, stores the track as an `audio` asset, links chat/message, returns the asset URL |
-| `/sfx`, `/music` assistant commands | `src/assistant/commands/sfx.ts`, `music.ts` | Registered `available: false` stubs (BUG-advertised-sfx-music-video-commands-are-stubs, Done - de-advertised, not implemented) |
+| `/sfx`, `/music` assistant commands | `src/assistant/commands/sfx.ts`, `music.ts` | Live - the commands return a `generate-sfx` / `generate-music` action that the frontend dispatches to the prompt route; gated on a configured audio provider (hidden otherwise) |
+| Prompt-driven audio route | `POST /api/v1/generation/audio` (`src/generation/audio-prompt-route.ts`) | Built - auth + chat-access scoped, refuses the procedural `local` bank with 501, stores the track as an `audio` asset, links chat/message |
 | External chat music links (NOT this epic) | `src/routes/music-links.ts` + FE music-links panel | Built - embedding user-supplied media links; unrelated to audio generation |
 | Voice notes (NOT this epic) | `src/routes/messages/helpers.ts` | Playback metadata only (`label: "voice-note"`, duration) |
 
@@ -104,11 +105,14 @@ interface AudioLayer {
       `mixLayers` with per-layer gain + clamp
 - [x] Crossfade between locations (fade tails on the mixed track) - per-layer
       `fadeInSec`/`fadeOutSec` (1.5s) in the mix; location-change tails come free
-- [ ] Music generation via stable-audio-open or ComfyUI
+- [x] Music generation via stable-audio-open or ComfyUI - the prompt route dispatches
+      to the configured audio provider (`POST /api/v1/generation/audio`)
 - [ ] Scene-aware music selection (combat -> intense, rest -> calm)
 - [x] Ambient route - real path `POST /api/v1/generation/audio/ambient`
       (`src/generation/audio-gen-route.ts`)
-- [ ] `POST /api/v1/generation/audio/music` route
+- [x] Prompt-driven audio route - `POST /api/v1/generation/audio`
+      (`src/generation/audio-prompt-route.ts`); one route covers music and SFX, the
+      per-modality `src/generation/audio/{music,sfx}.ts` split was dropped
 - [x] Wire `POST /api/v1/templates/audio/:id/apply` to the dispatch (drops the 501 for audio)
 - [ ] Audio settings in chat (volume, auto-play, mixing) - needs a settings column,
       file separately
@@ -117,7 +121,8 @@ interface AudioLayer {
 
 - [ ] SFX trigger detection (message contains action verbs)
 - [ ] SFX library (pre-generated common sounds)
-- [ ] SFX generation via Bark or ComfyUI
+- [x] SFX generation via Bark or ComfyUI - the prompt route dispatches to the
+      configured audio provider (`POST /api/v1/generation/audio`)
 - [ ] Event-driven SFX (door open, combat hit, spell cast)
 - [ ] SFX volume + spatial positioning
 
@@ -139,13 +144,16 @@ Built:
 - `src/generation/audio/wav.ts` - WAV codec + layer mixer
 - `src/generation/audio/providers/` - local procedural + ComfyUI providers
 - `src/generation/audio-gen-route.ts` - `POST /api/v1/generation/audio/ambient`
+- `src/generation/audio-prompt-route.ts` - `POST /api/v1/generation/audio` (prompt-driven)
 - `src/routes/templates/modality.ts` - audio `apply` seam (video still 501)
 
 Still to build:
 
-- `src/generation/audio/music.ts` - music generation
-- `src/generation/audio/sfx.ts` - sound effects
+- scene-aware music selection (combat -> intense, rest -> calm)
+- event-driven SFX (trigger detection, spatial positioning, volume)
 
 ## Linked Tasks
 
 - TASK-ambient-sound-system.md - ambient core (Done)
+- TASK-prompt-driven-audio-generation-route-live-sfx-and-music-comm.md - prompt-driven
+  route + live `/sfx` and `/music` commands (Done)
