@@ -139,13 +139,15 @@ of selection order.
 
 - `TASK-assistant-server-side-branch-command.md` — server-side /branch via forkBranch (open)
 - `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md` — split-classifier tests + hot-path aux call scope (open, re-filed here)
+- `TASK-party-chat-branch-merge-on-converge.md` — TASK-PARTY-CHAT-BRANCH-MERGE-ON-CONVERGE, party chat branch merge on converge (open, epic-party-migration)
+- `TASK-world-time-sync-wait-and-chat-branch-merge.md` — TASK-WORLD-TIME-SYNC-WAIT-AND-CHAT-BRANCH-MERGE, world time-sync wait + chat branch merge (open, bound to this epic)
 
 ## Acceptance Criteria
 
-- [ ] Branch navigation queries work on existing `messages.parent_id`
-- [ ] Visual branch selector implemented in chat view
-- [ ] Branch merge functionality works without data loss
-- [ ] Content merge (FEA-2026-047) lands per the task files listed under Features: preview → confirm → continue with source branches preserved
+- [x] Branch navigation queries work on existing `messages.parent_id` — `src/chat/service/branch-helpers.ts:22` parent_id root walk; `src/chat/service/branches.ts` listBranchesPage; `src/chat/service/branch-nav.test.ts`
+- [x] Visual branch selector implemented in chat view — `src/components/chat/branch-list-panel.html` sidebar with switch/merge/delete controls, mounted from `chat-header.html`
+- [x] Branch merge functionality works without data loss — structural splice-merge `mergeBranch`: `src/chat/service/branch-merge.ts`, route `src/routes/chats/branch-crud.ts:68`, FE `src/frontend/alpine/chat-branches.ts:172-185`; note the source branch ROW is deleted by design (transactional re-parent, documented in branch-merge.ts header)
+- [x] Content merge (FEA-2026-047) lands per the task files listed under Features: preview → confirm → continue with source branches preserved — routes `src/routes/chats/branch-merges.ts` (initiate/preview/confirm/continue), service `src/chat/service/merge/` (merge-preview.ts, merge-confirm.ts — no source deletion, merge-continue.ts), migration `src/db/migrations/047_conversation_merge.ts`, wizard `src/components/chat/branch-merge-modal.html` + `src/frontend/alpine/chat-branch-merge.ts` + `chat-types/merge-state.ts`, i18n `branches.merge*` in all `src/public/locales/`
 
 ## Dependencies
 
