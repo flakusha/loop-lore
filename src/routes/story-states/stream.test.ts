@@ -280,6 +280,28 @@ describe("storyStateStreamRoutes", () => {
     const res = await app.handle(new Request(`http://localhost/api/worlds/${worldId}/story-stream`,),);
     expect([401, 404,],).toContain(res.status,);
   });
+
+  test("a signed-in non-member gets no stream for someone else's private world", async () => {
+    // Resource-level guard (IDOR): authentication alone is not access. The
+    // caller neither owns the world nor joined it, so the stream stays closed
+    // and the world is not even confirmed to exist (404, not 403).
+    const strangerId = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: strangerId,
+        username: `user-${strangerId}`,
+        display_name: "Stranger",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      },)
+      .execute();
+
+    const app = appWithAuth(db, strangerId, "user",);
+    const res = await app.handle(new Request(`http://localhost/api/worlds/${worldId}/story-stream`,),);
+    expect(res.status,).toBe(404,);
+  });
 });
 
 describe("story-state stream timing constants", () => {
