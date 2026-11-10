@@ -3,7 +3,8 @@
 
 # TASK: Party Travel Engine Adjacency And Fast Travel
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** 2026-11-10 (release-010-closeout): the engine shipped with a different shape than the ticket describes — `advancePartyTravel` lives in `src/rpg/world-travel/travel.ts` (not `src/parties/travel.ts`) and is called as `advancePartyTravel(db, worldId, tick, ctx)` from the autonomy scheduler (`src/autonomy/dispatch/travel-dispatch.ts`): it walks a party's route one edge per tick, updates `current_location_id` and `status`, enforces a per-window budget ceiling and resolves arrival collisions (first claimant wins, the loser defers a tick). Tests: `src/rpg/world-travel/travel.test.ts`. Still open: a `party:arrived` event broadcast and the chat transfer on arrival (tracked by `TASK-party-world-tick-and-chat-transfer-integration`).
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-party-migration
