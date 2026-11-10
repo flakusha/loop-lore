@@ -31,10 +31,36 @@ function makeState(): StoryStateComponent {
   return (globalThis as unknown as Record<string, () => StoryStateComponent>).storyState!();
 }
 
+// ── Fake EventSource (the SSE subscription the panel opens) ──
+class FakeEventSource {
+  static readonly CLOSED = 2;
+  static instances: FakeEventSource[] = [];
+  readyState = 1;
+  listeners = new Map<string, ((event: { data?: string },) => void)[]>();
+  constructor() {
+    FakeEventSource.instances.push(this,);
+  }
+  addEventListener(type: string, cb: (event: { data?: string },) => void,) {
+    const list = this.listeners.get(type,) ?? [];
+    list.push(cb,);
+    this.listeners.set(type, list,);
+  }
+  close() {
+    this.readyState = FakeEventSource.CLOSED;
+  }
+  emit(type: string,) {
+    for (const cb of this.listeners.get(type,) ?? []) { cb({ data: "{}", },); }
+  }
+}
+
+const realEventSource = (globalThis as { EventSource?: unknown }).EventSource;
+
 afterEach(() => {
   fetchCalls = [];
   fetchHandler = null;
   (globalThis as { Alpine?: unknown }).Alpine = realAlpine;
+  (globalThis as { EventSource?: unknown }).EventSource = realEventSource;
+  FakeEventSource.instances = [];
 },);
 
 describeOrSkip("storyState", () => {
@@ -509,6 +535,35 @@ describeOrSkip("storyState", () => {
       expect(s.isStoryMode,).toBe(true,);
       expect(s.worldName,).toBe("Eldoria",);
       expect(s.loading,).toBe(false,);
+    });
+
+    test("a snapshot-driven refresh keeps one subscription (no reconnect storm)", async () => {
+      const s = makeState();
+      (s as { _activeChatId(): string | null })._activeChatId = () => "chat-1";
+      fetchHandler = (url,) => {
+        if (url.endsWith("/participants",)) { return Response.json([], { status: 200, },); }
+
+        if (url.includes("/story-turns",) || url.includes("/quests",)) {
+          return Response.json({ data: [], }, { status: 200, },);
+        }
+
+        if (url.includes("/chats/",)) {
+          return Response.json({ mode: "story", world_id: "world-1", gm_config: "{}", }, { status: 200, },);
+        }
+
+        return Response.json({ data: [], name: "World", }, { status: 200, },);
+      };
+
+      (globalThis as { EventSource?: unknown }).EventSource = FakeEventSource;
+
+      await s.refresh();
+      expect(FakeEventSource.instances.length,).toBe(1,);
+
+      // The server replays its snapshot on every subscribe and the panel
+      // refreshes on it — re-subscribing per refresh would loop forever.
+      FakeEventSource.instances[0]?.emit("story-state",);
+      await new Promise((resolve,) => setTimeout(resolve, 0,));
+      expect(FakeEventSource.instances.length,).toBe(1,);
     });
   },);
 },);

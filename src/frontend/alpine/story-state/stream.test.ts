@@ -46,6 +46,7 @@ function buildHost(refreshImpl?: () => Promise<void>,): StoryStreamHost & { refr
   const host = {
     _worldId: "world-1",
     _storyStream: null,
+    _storyStreamWorldId: null,
     refreshCalls: 0,
     async refresh(): Promise<void> {
       refreshCalls++;
@@ -129,14 +130,29 @@ describeOrSkip("connectStoryStream", () => {
     expect(host.refreshCalls,).toBe(0,);
   });
 
-  test("reconnecting closes the previous stream", () => {
+  test("re-connecting for the same world keeps the single stream open", () => {
     stubEventSource();
     const host = buildHost();
     connectStoryStream(host,);
     const first = FakeEventSource.instances[0]!;
     connectStoryStream(host,);
+    // The server replays its snapshot on every subscribe, so a second
+    // subscribe would feed that snapshot into another refresh — a loop.
+    expect(first.closed,).toBe(false,);
+    expect(FakeEventSource.instances.length,).toBe(1,);
+    expect(host._storyStream?.url,).toBe("/api/v1/worlds/world-1/story-stream",);
+  });
+
+  test("a world change re-opens the stream", () => {
+    stubEventSource();
+    const host = buildHost();
+    connectStoryStream(host,);
+    const first = FakeEventSource.instances[0]!;
+    host._worldId = "world-2";
+    connectStoryStream(host,);
     expect(first.closed,).toBe(true,);
     expect(FakeEventSource.instances.length,).toBe(2,);
+    expect(FakeEventSource.instances[1]?.url,).toBe("/api/v1/worlds/world-2/story-stream",);
   });
 
   test("disconnect closes the stream", () => {
@@ -156,6 +172,7 @@ describeOrSkip("storyStream mixin", () => {
     const component = {
       _worldId: "world-1",
       _storyStream: null,
+      _storyStreamWorldId: null,
       _activeChatId: () => "chat-1",
       refresh: async () => {},
       ...storyStream,
