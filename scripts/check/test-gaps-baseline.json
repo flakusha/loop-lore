@@ -1,4 +1,5 @@
 {
+// hint: Structural change (rename/retype). Check callers of this entity.
   "generatedAt": "2026-11-11T08:31:23.830Z",
   "count": 1287,
   "gaps": [
@@ -384,6 +385,7 @@
     "src/frontend/alpine/admin-worlds.ts#adminWorlds",
     "src/frontend/alpine/avatar-focus.ts#AVATAR_FOCUS_DEFAULT",
     "src/frontend/alpine/catalog-download.ts#filenameFromUrl",
+    "src/frontend/alpine/chat-actions/audio.ts#audioActionHandlers",
     "src/frontend/alpine/chat-actions/entities.ts#entityActionHandlers",
     "src/frontend/alpine/chat-actions/generation-helpers.ts#dispatchGenerationAction",
     "src/frontend/alpine/chat-actions/generation-helpers.ts#dispatchQuestAction",
