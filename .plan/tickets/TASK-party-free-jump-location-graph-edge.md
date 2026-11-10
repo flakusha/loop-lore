@@ -3,7 +3,8 @@
 
 # TASK: Party Free Jump Location Graph Edge
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** 2026-11-10 (release-010-closeout): the edge mode shipped — `free-jump` is a first-class `LocationEdgeMode` (`src/db/enums-story/world.ts`) carrying a validated `cost_json` price tag (gold, itemId, cooldownHours, requiresFactionStanding — `src/locations/edge-core.ts`), the cooldown runs off the append-only world event log (`src/locations/edge-discovery.ts`), the gold is charged from the travelling actor's wallet and the faction-standing gate is enforced in `src/locations/edge-travel.ts`, and discovery gating reuses the edge discovery service. Tests cover a charged jump, a refused jump (insufficient gold) and the cooldown window. Still open: the party-level cost split (the ticket names `PartyEconomy.sharedCurrency`; the implementation charges the acting actor) and a GM cost bypass (the admin override bypasses discovery only).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-party-migration
