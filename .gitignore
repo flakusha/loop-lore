@@ -104,6 +104,9 @@ coverage/
 docs/.vitepress/config.mjs
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+# A vitepress run rooted at the repo root drops its cache here — build output,
+# never sources (it otherwise trips the dprint/eslint gates).
+.vitepress/
 
 # Auto-generated issue tracker (regenerate with docs:gen)
 docs/meta/issues.md
