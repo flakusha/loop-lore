@@ -39972,7 +39972,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-encrypted-search-minimal-first-slice.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Encrypted-search minimal first slice — wire + backfill for pilot chat",
     "type": "TASK"
@@ -51785,7 +51785,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-nsfw-alpine.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "nsfw",
       "frontend",

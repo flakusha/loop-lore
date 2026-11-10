@@ -3,7 +3,7 @@
 
 # TASK: Encrypted-search minimal first slice — wire + backfill for pilot chat
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium (depends on `TASK-019-users-encryption-secret.md` landing first)
 **Epic:** epic-chat-privacy
@@ -36,3 +36,5 @@
 
 
 git issue: e352a13
+
+**Resolved:** 2026-11-10 registry-driven close: git issue e352a13 (registry tip: d0225dfcd Konstantin Fedotov Close issue)
