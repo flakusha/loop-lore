@@ -254,13 +254,12 @@ describe("/music", () => {
     const result = mustGet("music",)([url,], baseCtx(),) as CommandResult;
     expect(result.action,).toBe("link-music",);
     expect(result.actionPayload,).toEqual({ url, source: "external", },);
-    expect(result.systemMessage,).toContain("**Music linked:**",);
   });
 
-  it("queues generation for a text prompt", () => {
+  it("dispatches generation for a text prompt", () => {
     const result = mustGet("music",)(["epic", "battle", "theme",], baseCtx(),) as CommandResult;
     expect(result.action,).toBe("generate-music",);
-    expect(result.actionPayload,).toEqual({ prompt: "epic battle theme", },);
+    expect(result.actionPayload,).toEqual({ prompt: "epic battle theme", seconds: 30, },);
   });
 
   it("is registered as unavailable (hidden from listings)", () => {
@@ -306,10 +305,10 @@ describe("/sfx and /sound", () => {
     expect(result.systemMessage,).toContain("Usage: /sfx <prompt>",);
   },);
 
-  it.each(["sfx", "sound",],)("queues a sound effect via /%s", (name,) => {
+  it.each(["sfx", "sound",],)("dispatches a sound effect via /%s", (name,) => {
     const result = mustGet(name,)(["thunder", "crash",], baseCtx(),) as CommandResult;
     expect(result.action,).toBe("generate-sfx",);
-    expect(result.actionPayload,).toEqual({ prompt: "thunder crash", },);
+    expect(result.actionPayload,).toEqual({ prompt: "thunder crash", seconds: 6, },);
   },);
 
   it("registers both aliases as unavailable", () => {

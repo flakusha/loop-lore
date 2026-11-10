@@ -4,13 +4,16 @@
 /**
  * /music — Generate music or link an external music source.
  *
- * If a URL is provided (YouTube, Spotify, SoundCloud), stores the link
- * and the browser handles playback natively (no server download).
- * If a text prompt is provided, generates audio via the audio provider.
+ * If a URL is provided (YouTube, Spotify, SoundCloud), the frontend stores the
+ * link through POST /api/v1/chats/:id/music-links (the chat's music-links
+ * panel lists it) — no server download.
+ * If a text prompt is provided, the frontend dispatches
+ * POST /api/v1/generation/audio.
  */
 
 import { EXTERNAL_MUSIC_PATTERNS, } from "../../regex/music-urls";
 import { type CommandResult, registerCommand, } from "./registry";
+import { resolveAudioCommandAvailability, } from "./sfx";
 
 registerCommand("music", (args,): CommandResult => {
   const prompt = args.join(" ",).trim();
@@ -28,22 +31,18 @@ registerCommand("music", (args,): CommandResult => {
   const isExternalUrl = EXTERNAL_MUSIC_PATTERNS.some((pattern,) => pattern.test(prompt,));
 
   if (isExternalUrl) {
-    // Store link — browser handles playback natively (copyright-safe)
+    // Store the link — the frontend posts it to the chat's music-links API.
     return {
-      systemMessage: `**Music linked:** ${prompt}\n\nThe browser will handle playback natively.`,
       action: "link-music",
       actionPayload: { url: prompt, source: "external", },
       handled: true,
     };
   }
 
-  // Generate audio via audio provider
-  // TODO: Call audio generation provider
+  // Delegate to frontend action dispatch — the route owns the generation.
   return {
-    systemMessage:
-      `**Music generation is not implemented yet** — this command is a placeholder, so nothing was generated.\n\nPrompt: ${prompt}`,
     action: "generate-music",
-    actionPayload: { prompt, },
+    actionPayload: { prompt, seconds: 30, },
     handled: true,
   };
-}, { available: false, capabilities: ["write-asset",], },);
+}, { available: resolveAudioCommandAvailability(), capabilities: ["write-asset", "network",], },);

@@ -12,6 +12,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 ### Added
+- **Prompt-driven audio generation route + live `/sfx` and `/music` (TASK-prompt-driven-audio-generation-route-live-sfx-and-music-comm)** — the audio provider layer and the ambient route existed, but the prompt-driven path did not: `/sfx` and `/music` were `available: false` stubs that answered "generation is not implemented yet". The new route `POST /api/v1/generation/audio` (`src/generation/audio-prompt-route.ts`) mirrors the ambient route's auth contract — 401 unauthenticated, 404 unknown `messageId`, 400 when the message does not belong to the chat, 403 on a foreign chat, 400 on an empty/over-long prompt or an out-of-range length — resolves the provider from the registry and refuses the procedural `local` bank with 501 (it is a texture bank, not a prompt model; the ambient route keeps the procedural path), then persists the track with `createAsset` (`assetType: "audio"`, `dedupe: false`) + `linkAsset` chat/message links. The commands now return a `generate-sfx` / `generate-music` action that the frontend dispatch posts to the route (the `/image` shape), `/music` with an external URL links through the existing chat music-links API, and both commands are gated on a configured audio provider so they stay hidden from the palette otherwise.
 
 // hint: Structural and logic conflict. Both design and behavior differ.
 // hint: Structural and logic conflict. Both design and behavior differ.
@@ -65,25 +66,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **The admin panel's analytics tab draws the memory knowledge graph** — `GET /api/memory/knowledge-graph` (`src/routes/analytics/knowledge-graph.ts`) already answered with the asset/entity nodes and the links between them, but no admin surface drew them. `src/frontend/alpine/admin-knowledge-graph.ts` lays the nodes out on a circle and projects the edges onto the SVG geometry, and the panel (`src/views/admin.html`) mounts it through an `x-html` binding — the first version inlined the SVG in the template, where Alpine could not bind to it.
 
 - **NPC movement indicators in the chat header** — a transition that moves an NPC (`classifyTransition` → `location_change`) now persists a movement event on the message metadata: `storeNpcMovement()` runs beside the game-state extraction in the auto-gen store path and writes through `NpcMovementIndicatorService`, strictly non-fatal (a failed store is logged and swallowed, so message storage never throws). The chat reads the events back (`GET /api/v1/npc-movement/recent/:chatId`) through the `npcMovementMethods` Alpine mixin — implementing the previously dead `ChatMovementState` contract (`movementEvents`, `loadMovementEvents`, `getMovementIcon`) — and renders a chip strip in the message-list header (icon + destination, actor name as tooltip). i18n: `chats.npcMovementTitle` / `chats.npcMovementUnknown` in all ten locale catalogs.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 - **Chat-list filters persist and enforce server-side (TASK-server-side-room-filter-enforcement)** — the sidebar filter panel (type / status / sort / world / message bounds / updatedSince) no longer dies with `localStorage`: migration `098_chat_list_filters` adds one snapshot row per user, `PUT /api/v1/chats/filters` upserts it through the closed `ChatListFiltersBody` DTO (raw-body re-check so unknown keys are a 422, not a silent strip — the Elysia strips-unknown-keys precedent from the settings allowlist), `GET /api/v1/chats/filters` returns it, and the list endpoint now ENFORCES the snapshot for every filter dimension the request omits (an explicit query param always wins; guests and never-saved users keep the unfiltered list). The Alpine panel (`chat-filters.ts` via the new `chat-filters-server.ts`) PUTs on every change and reconciles from the server on restore, fire-and-forget with the localStorage mirror as the offline fallback, so filters survive a wiped browser and apply on every device.
