@@ -21,17 +21,21 @@
       <button type="button" class="btn btn-secondary btn-xs" @click="closeWizard()">{{{t("common.skip")}}}</button>
     </div>
 
+    <!--
+      Still missing (setup-state checks) — shown on both screens so the
+      list follows the provider test and the role save.
+    -->
+    <div x-show="wizard.setupHints.length > 0;" style="font-size: 12px; color: #c00; font-size: 12px">
+      <strong x-text="t('admin.providerWizard.missing');"></strong>
+      <div style="margin: 4px 0 0 16px">
+        <template x-for="hint in wizard.setupHints" :key="hint">
+          <div x-text="hint;"></div>
+        </template>
+      </div>
+    </div>
+
     <!-- Screen 1: connect a provider -->
     <div x-show="wizard.step === 1;" style="display: flex; flex-direction: column; gap: 8px">
-      <div x-show="wizard.setupHints.length > 0;" style="font-size: 12px; color: #c00; font-size: 12px">
-        <strong x-text="t('admin.providerWizard.missing');"></strong>
-        <div style="margin: 4px 0 0 16px">
-          <template x-for="hint in wizard.setupHints" :key="hint">
-            <div x-text="hint;"></div>
-          </template>
-        </div>
-      </div>
-
       <label style="display: block; font-size: 12px" for="pw-preset">{{{t("admin.providerWizard.preset")}}}</label>
       <select id="pw-preset" class="form-input" x-model="wizard.preset" @change="selectPreset(wizard.preset);">
         <template x-for="preset in providerPresets" :key="preset.id">
