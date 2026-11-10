@@ -19,6 +19,21 @@ export {
   TOKEN_HEX_LENGTH,
   tokenizeForSearch,
 } from "./encrypted-tokens";
+export type {
+  IndexLoreTokensOpts,
+  LoreDomain,
+  LoreTokenMatch,
+  LoreTokenSearchHit,
+  LoreTokenSearchOpts,
+  LoreTokenTable,
+} from "./lore-token-store";
+export {
+  indexActorLoreSearchTokens,
+  indexWorldLoreSearchTokens,
+  matchLoreEntriesByTokens,
+  matchLoreIdsByTokens,
+  reindexLoreTokens,
+} from "./lore-token-store";
 export type { AssetHit, } from "./providers/assets";
 export { ASSET_FUZZY_CANDIDATE_CAP, createAssetProviders, } from "./providers/assets";
 export type { MemoryHit, MemoryProviderOptions, } from "./providers/memories";

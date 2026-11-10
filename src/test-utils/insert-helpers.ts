@@ -6387,3 +6387,31 @@ export async function insertChatListFilters(
   } as any,).execute();
   return (restOpts as Record<string, unknown>).user_id as string;
 }
+
+/** Insert a world_lore_search_tokens row. */
+export async function insertWorldLoreSearchTokens(
+  db: Db,
+  entry_id: string,
+  term: string,
+  scope: string,
+): Promise<void> {
+  await db.insertInto("world_lore_search_tokens",).values({
+    entry_id,
+    term,
+    scope,
+  } as any,).execute();
+}
+
+/** Insert a actor_lore_search_tokens row. */
+export async function insertActorLoreSearchTokens(
+  db: Db,
+  entry_id: string,
+  term: string,
+  scope: string,
+): Promise<void> {
+  await db.insertInto("actor_lore_search_tokens",).values({
+    entry_id,
+    term,
+    scope,
+  } as any,).execute();
+}

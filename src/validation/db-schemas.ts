@@ -3934,3 +3934,17 @@ export const ChatListFiltersSchema = t.Object({
   max_messages: t.Optional(t.Number(),),
   updated_since: t.Optional(t.String(),),
 },);
+
+// ── world_lore_search_tokens ────────────────────────────────────────────
+export const WorldLoreSearchTokensSchema = t.Object({
+  entry_id: t.String(),
+  term: t.String(),
+  scope: t.String(),
+},);
+
+// ── actor_lore_search_tokens ────────────────────────────────────────────
+export const ActorLoreSearchTokensSchema = t.Object({
+  entry_id: t.String(),
+  term: t.String(),
+  scope: t.String(),
+},);
