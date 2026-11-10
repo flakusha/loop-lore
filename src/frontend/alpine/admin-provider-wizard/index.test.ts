@@ -196,6 +196,73 @@ describe("provider connection wizard", () => {
     expect(wizard.wizard.testError,).toBe("connection refused",);
   });
 
+  test("the test step re-reads the setup state so the provider hint clears", async () => {
+    let providerHealthy = false;
+    handler = async (url: string,) => {
+      if (url === "/api/v1/admin/providers/rescan") {
+        // The rescan refreshes the server's provider health cache.
+        providerHealthy = true;
+        return jsonResponse({
+          providers: [{ name: "openai", label: "OpenAI", status: "healthy", modelCount: 3, },],
+        },);
+      }
+
+      if (url === "/api/v1/setup/state") {
+        return jsonResponse({
+          checks: [{
+            id: "provider.health",
+            ok: providerHealthy,
+            hint: providerHealthy ? undefined : "No provider configured — connect one to enable generation.",
+          },],
+        },);
+      }
+
+      return jsonResponse({ providers: [], },);
+    };
+
+    const wizard = createProviderWizard();
+    wizard.wizard.savedName = "openai";
+    await wizard.loadSetupState();
+    expect(wizard.wizard.setupHints,).toEqual(["No provider configured — connect one to enable generation.",],);
+
+    await wizard.testConnection();
+
+    expect(wizard.wizard.testStatus,).toBe("healthy",);
+    expect(wizard.wizard.setupHints,).toEqual([],);
+  });
+
+  test("saving the model role re-reads the setup state so the role hint clears", async () => {
+    let roleSet = false;
+    handler = async (url: string,) => {
+      if (url.startsWith("/api/v1/admin/model-roles/",)) {
+        roleSet = true;
+        return jsonResponse({ ok: true, },);
+      }
+
+      if (url === "/api/v1/setup/state") {
+        return jsonResponse({
+          checks: [{
+            id: "model.roles",
+            ok: roleSet,
+            hint: roleSet ? undefined : "Set the main model role to a provider and model.",
+          },],
+        },);
+      }
+
+      return jsonResponse({ providers: [], },);
+    };
+
+    const wizard = createProviderWizard();
+    wizard.wizard.roleProvider = "openai";
+    wizard.wizard.roleModel = "gpt-4o-mini";
+    await wizard.loadSetupState();
+    expect(wizard.wizard.setupHints,).toEqual(["Set the main model role to a provider and model.",],);
+
+    await wizard.saveWizardRole();
+
+    expect(wizard.wizard.setupHints,).toEqual([],);
+  });
+
   test("a stored api key is kept when the field is left empty", async () => {
     handler = async (_url: string, init: RequestInit,) => {
       if (init.method === "POST") { return jsonResponse({ ok: true, provider: savedProvider, },); }
