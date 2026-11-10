@@ -11089,7 +11089,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-world-list-search-views-expose-private-worlds-to-anonymous-c.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-WORLD-LOCATION-REPARENT-HAS-NO-CYCLE-SELF-DESCENDANT-CHECKS-": {
     "epic": "epic-world-locations",
@@ -34900,7 +34900,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-clarify-story-state-sse-subscription-contract.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "frontend",
       "story"
