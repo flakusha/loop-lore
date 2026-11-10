@@ -5,6 +5,7 @@ import type { Kysely, } from "kysely";
 import type { LorebookData, } from "../../characters/spec";
 import { LoreEntryStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { indexActorLoreSearchTokens, } from "../../search";
 import { safeJsonStringify, uid, } from "../../utils";
 
 /**
@@ -26,10 +27,11 @@ export async function importLorebook(
 
   for (const entry of lorebook.entries) {
     try {
+      const entryId = uid();
       await database
         .insertInto("actor_lore_entries",)
         .values({
-          id: uid(),
+          id: entryId,
           actor_id: actorId,
           name: entry.name || null,
           content: entry.content,
@@ -49,6 +51,9 @@ export async function importLorebook(
           sort_order: entry.id ?? imported,
         },)
         .execute();
+
+      // Blind token tier (no-op unless ENABLE_TOKEN_INDEXING=1; fail-open).
+      await indexActorLoreSearchTokens(database, { entryId, },);
 
       imported++;
     } catch (error) {

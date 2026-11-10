@@ -16,6 +16,7 @@ import type { Kysely, } from "kysely";
 import { registerContentVersion, } from "../../db/content-version";
 import { LoreEntryStatus, LorePosition, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
+import { indexActorLoreSearchTokens, indexWorldLoreSearchTokens, } from "../../search";
 import { normalizeAudienceScope, } from "../../story/events/promote-lore";
 import { safeJsonStringify, uid, } from "../../utils";
 import type { LoreScope, } from "../lore/audience";
@@ -191,6 +192,9 @@ export async function insertEntityLore(
           world_id: worldId!,
         },)
         .execute();
+
+      // Blind token tier (no-op unless ENABLE_TOKEN_INDEXING=1; fail-open).
+      await indexWorldLoreSearchTokens(db, { entryId: loreValues.id, },);
     } else {
       // actor_lore_entries
       await db
@@ -201,6 +205,9 @@ export async function insertEntityLore(
           world_id: worldId && worldId !== "default" ? worldId : null,
         },)
         .execute();
+
+      // Blind token tier (no-op unless ENABLE_TOKEN_INDEXING=1; fail-open).
+      await indexActorLoreSearchTokens(db, { entryId: loreValues.id, },);
     }
   }
 }
