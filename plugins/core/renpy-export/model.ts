@@ -8,7 +8,7 @@
  * Throws on unreadable chats; each chat resolves its own speakers.
  */
 import { type Kysely, } from "kysely";
-import type { DB, } from "../../db/schema";
+import type { DB, } from "../../../src/db/schema";
 import { slugify, uniqueSlugs, } from "./script";
 import type { RenpyCharacter, RenpyExportChat, RenpyExportForkStub, RenpyExportMessage, RenpyExportModel, } from "./types";
 
