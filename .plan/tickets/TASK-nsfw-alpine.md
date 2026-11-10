@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task
@@ -39,3 +39,5 @@ Alpine.js state management for NSFW system.
 ## Files to Create
 
 - `src/frontend/alpine/nsfw.ts`
+
+**Resolved:** 2026-11-10 registry-driven close: git issue d9fae17 (registry tip: 9d94f2976 Konstantin Fedotov Close issue)
