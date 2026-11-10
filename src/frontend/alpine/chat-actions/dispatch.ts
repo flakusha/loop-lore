@@ -19,6 +19,9 @@ import { worldActionHandlers, } from "./world-actions";
 const log = rootLog.child({ module: "chat-actions", },);
 
 export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * Dispatch a command action returned by the backend.
+   *
    * Maps action strings to the appropriate API endpoint and fires the request.
    * Generation actions connect SSE for real-time progress streaming.
    * @param action - Action identifier from CommandResult.action
@@ -51,6 +54,15 @@ export type ActionHandler = (
 ) => Promise<void> | void;
 
 const actionHandlers: Record<string, ActionHandler> = {
+  ...audioActionHandlers,
+  ...battleActionHandlers,
+  ...emotionAvatarActionHandlers,
+  ...itemActionHandlers,
+  ...entityActionHandlers,
+  ...entityCopyActionHandlers,
+  ...wizardActionHandlers,
+  ...worldActionHandlers,
+
   "generate-image": async (ctx, payload, chatId,) => {
     // Avatar Dogfood slice 1: /avatar rides the same action; its payload only
     // adds bindActorAvatar, forwarded so the route binds generated variants.
