@@ -18,6 +18,7 @@ Not fixed here (out of scope): `TestingConfig.llamaSwapConfig` (`src/config/sche
 
 
 **Status:** Done
+**Status Note:** D1 follow-up (branch `feat-audio-gen-route`, commits `dd1b6cb50` + `2f16abf21`): the "hide-or-wire" decision for `/sfx` and `/music` is resolved by WIRING them behind an engine. Both commands now dispatch to the new `POST /api/v1/generation/audio` route, and they are advertised again ONLY when an audio provider is configured — the same registration-time gate `/image` and `/video` use — so a default install keeps them hidden exactly as this ticket left them. `/video` remains a stub.
 **Priority:** medium
 **Effort:** Small
 
