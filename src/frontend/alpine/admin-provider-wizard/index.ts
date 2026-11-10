@@ -228,6 +228,10 @@ export function createProviderWizard(): ProviderWizardSlice {
 
         this.wizard.testStatus = summary.status;
         this.wizard.testError = summary.error ?? "";
+        // The rescan refreshed the server's provider health cache, so the
+        // setup-state checks answer differently now — re-read them and let
+        // the wizard show the transition (the provider hint clears).
+        await this.loadSetupState();
       } catch (err) {
         this.wizard.testStatus = "error";
         this.wizard.testError = (err as Error).message || t("toasts.networkError",);
@@ -241,6 +245,9 @@ export function createProviderWizard(): ProviderWizardSlice {
       this.wizard.roleSaving = true;
       try {
         await putModelRole(this.wizard.role, this.wizard.roleProvider, this.wizard.roleModel,);
+        // The role resolves now — re-read the setup state so the "missing"
+        // hints drop the model-role entry.
+        await this.loadSetupState();
         showToast("success", t("toasts.roleUpdatedFor", { role: this.wizard.role, },),);
       } catch (err) {
         showToast("error", (err as Error).message || t("toasts.networkError",),);
