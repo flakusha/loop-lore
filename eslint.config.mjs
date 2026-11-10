@@ -154,6 +154,7 @@ export default [
       ".hermes/",
       ".vitepress/",
       "docs/.vitepress/",
+      ".vitepress/",
       "docs/research/",
       "migrations/",
       "plugins/",
