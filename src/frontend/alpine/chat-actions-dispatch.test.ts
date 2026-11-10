@@ -591,11 +591,9 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
   },);
 
-
   function confirmWith(value: boolean,) {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => value;
   }
-
 
   test("confirmed link POSTs to /api/v1/assets/:id/links and toasts success", async () => {
     confirmWith(true,);
@@ -630,7 +628,6 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
     expect(ctx.toasts,).toEqual([],);
   });
 
-
   test("missing payload fields send nothing", async () => {
     confirmWith(true,);
     const ctx = buildCtx();
@@ -638,7 +635,6 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
     expect(fetchCalls.length,).toBe(0,);
     expect(ctx.toasts,).toEqual([],);
   });
-
 
   test("failed POST toasts error", async () => {
     confirmWith(true,);
@@ -662,14 +658,12 @@ describeOrSkip("dispatchCommandAction loc-update", () => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
   },);
 
-
   function confirmWith(value: boolean, captured?: { message?: string },) {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = (message,) => {
       if (captured) { captured.message = message; }
       return value;
     };
   }
-
 
   test("confirmed loc-update PUTs the patch to /api/v1/worlds/:wid/locations/:lid and toasts success", async () => {
     confirmWith(true,);
@@ -735,7 +729,6 @@ describeOrSkip("dispatchCommandAction loc-update", () => {
     expect(ctx.toasts,).toEqual([],);
   });
 
-
   test("missing payload fields send nothing", async () => {
     confirmWith(true,);
     const ctx = buildCtx();
@@ -750,7 +743,6 @@ describeOrSkip("dispatchCommandAction loc-update", () => {
     expect(fetchCalls.length,).toBe(0,);
     expect(ctx.toasts,).toEqual([],);
   });
-
 
   test("failed PUT toasts error", async () => {
     confirmWith(true,);
@@ -851,11 +843,9 @@ describeOrSkip("dispatchCommandAction world-update / world-delete", () => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
   },);
 
-
   function confirmWith(value: boolean,) {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => value;
   }
-
 
   test("confirmed world-update PUTs the patch to /api/v1/worlds/:id and toasts success", async () => {
     confirmWith(true,);
@@ -966,11 +956,9 @@ describeOrSkip("dispatchCommandAction item mutations", () => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
   },);
 
-
   function confirmWith(value: boolean,) {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => value;
   }
-
 
   const TRANSFER_PAYLOAD = {
     worldId: "w1",
