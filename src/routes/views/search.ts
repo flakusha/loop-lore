@@ -5,7 +5,7 @@ import { ActorType, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { escapeLike, } from "../message-search/helpers";
-import { type ViewsViewer, visibleCharactersTo, visibleWorldsTo, } from "./access";
+import { type ViewsViewer, visibleCharactersTo, } from "./access";
 import { applyGalleryAssetFilters, galleryMediaContext, GRID_PAGE_SIZE, inheritedHiddenAssetIds, } from "./gallery";
 import { renderGalleryCards, renderGalleryEmptyState, } from "./gallery-cards";
 import { escapeHtml, htmlResponse, } from "./layout";
@@ -167,9 +167,10 @@ async function serveWorldsSearch(
   const sort = params.get("sort",) ?? "name";
 
   let qb = database.selectFrom("worlds",).selectAll();
-  // Same arms as the worlds list: anonymous matches nothing, guest sees
-  // public worlds only.
-  qb = qb.where(visibleWorldsTo({ userId, userRole, },),);
+  // Non-admin users only see their own worlds (mirrors GET /api/worlds).
+  if (userId && !can(userRole, "admin.world",)) {
+    qb = qb.where("owner_id", "=", userId,);
+  }
 
   if (query) {
     const pattern = `%${escapeLike(query,)}%`;
