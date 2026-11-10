@@ -3,7 +3,7 @@
 
 # TASK: CLARIFY-story-state-sse-subscription-contract
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** 2026-11-09 (T4 core-t4-story): contract written + implemented (server `story-stream.ts`, client `story-state/stream.ts`); verification pending.
 **Priority:** medium
 **Effort:** Medium
@@ -55,3 +55,5 @@ Subscribe window.storyState.refresh to the world-scoped snapshot/event SSE feed 
 - [x] SSE subscription with reconnect (EventSource auto-reconnect + `onStart` snapshot replay — `src/routes/story-states/stream.ts`, `src/frontend/alpine/story-state/stream.ts`)
 - [x] Stale-chatId guard (client drops frames whose world differs + disconnects on chat switch — `src/frontend/alpine/story-state/stream.ts`, `src/frontend/alpine/story-state.ts`)
 - [x] Poll fallback retained (`refresh()` re-pull stays the offline path; no EventSource never blocks a load — `src/frontend/alpine/story-state.ts`)
+
+**Resolved:** 2026-11-10 registry-driven close: git issue c657918 (registry tip: 1b10d2fa8 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CLARIFY-STORY-STATE-SSE-SUB)
