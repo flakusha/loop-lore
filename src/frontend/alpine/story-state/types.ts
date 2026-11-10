@@ -180,6 +180,8 @@ export interface StoryStateComponent {
   _storyRefreshBound?: boolean;
   /** Live story-state SSE subscription (null when offline/unsupported). */
   _storyStream: EventSource | null;
+  /** World the open story-state subscription belongs to (null when offline). */
+  _storyStreamWorldId: string | null;
   /** Open (or re-open) the story-state stream for the current world. */
   connectStoryStream(): void;
   /** Close the story-state stream (chat switch / teardown). */

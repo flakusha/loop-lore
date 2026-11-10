@@ -77,6 +77,7 @@ const log = rootLog.child({ module: "story-state", },);
     turnDetail: null,
     turnDetailLoading: false,
     _storyStream: null,
+    _storyStreamWorldId: null,
     ...loaders,
     ...mutations,
     ...storyStream,

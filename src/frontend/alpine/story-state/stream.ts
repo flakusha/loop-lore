@@ -12,6 +12,10 @@
  * offline fallback (no EventSource, closed stream, or undecodable frame
  * never blocks a manual load).
  *
+ * One subscription per world: `connectStoryStream` keeps a live stream
+ * for the current world instead of re-opening it, so the snapshot the
+ * server replays on subscribe cannot feed an endless re-subscribe loop.
+ *
  * Stale-chat guard: the stream belongs to one world. A frame arriving
  * after the story moved to another world is dropped; the component
  * re-subscribes on the next refresh instead.
@@ -56,25 +60,38 @@ export function parseStoryStateFrame(raw: string,): StoryStateStreamFrame {
 export interface StoryStreamHost {
   _worldId: string | null;
   _storyStream: EventSource | null;
+  /** World the open subscription belongs to (null when offline). */
+  _storyStreamWorldId: string | null;
   refresh(): Promise<void>;
   _activeChatId(): string | null;
 }
 
 /**
- * Open (or re-open) the story-state stream for the host's current world.
- * Closes a previous stream first. No-op without a world or EventSource.
+ * Ensure a live story-state subscription for the host's current world.
+ *
+ * Idempotent per world: an open stream for the SAME world is kept as-is.
+ * Re-opening it per refresh would replay the server's connect-snapshot into
+ * another refresh, and that refresh would open yet another stream — an
+ * endless subscribe/reload loop. EventSource reconnects on its own and the
+ * server replays the snapshot on subscribe, so a live stream never needs
+ * re-opening; a changed world (or a dropped stream) does.
  * @param host component state
  * @returns {void}
  */
 export function connectStoryStream(host: StoryStreamHost,): void {
   if (typeof EventSource === "undefined") { return; }
   const worldId = host._worldId;
-  host._storyStream?.close();
-  host._storyStream = null;
-  if (!worldId) { return; }
+  if (!worldId) {
+    disconnectStoryStream(host,);
+    return;
+  }
+
+  if (host._storyStream && host._storyStreamWorldId === worldId) { return; }
+  disconnectStoryStream(host,);
 
   const source = new EventSource(`/api/v1/worlds/${worldId}/story-stream`,);
   host._storyStream = source;
+  host._storyStreamWorldId = worldId;
 
   source.addEventListener("story-state", () => {
     // Stale-world guard: the story may have moved worlds since subscribing.
@@ -86,7 +103,10 @@ export function connectStoryStream(host: StoryStreamHost,): void {
 
   source.addEventListener("error", () => {
     if (typeof EventSource !== "undefined" && source.readyState === EventSource.CLOSED) {
+      // A closed source is dead: drop it so the next refresh re-subscribes.
+      if (host._storyStream !== source) { return; }
       host._storyStream = null;
+      host._storyStreamWorldId = null;
     }
   },);
 }
@@ -99,6 +119,7 @@ export function connectStoryStream(host: StoryStreamHost,): void {
 export function disconnectStoryStream(host: StoryStreamHost,): void {
   host._storyStream?.close();
   host._storyStream = null;
+  host._storyStreamWorldId = null;
 }
 
 /** Mixin methods spread into the story-state component record. */
