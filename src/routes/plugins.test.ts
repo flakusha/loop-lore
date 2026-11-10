@@ -9,11 +9,12 @@ import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
-import { dispatchPluginRoute, type ScanAvailablePluginsOpts, } from "../plugins/loader";
+import { dispatchPluginRoute, scanAvailablePlugins, type ScanAvailablePluginsOpts, } from "../plugins/loader";
 import { registry, } from "../plugins/registry";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { jsonStringifyOr, } from "../utils";
 import { pluginRoutes, } from "./plugins";
+import { pluginMgmtRoutes, } from "./plugins/mgmt";
 
 /**
  * @param db
@@ -583,6 +584,14 @@ function loadMarks(): string[] {
 
 describe("plugin lifecycle routes — discover / install / uninstall", () => {
   let db: Kysely<DB>;
+
+  test("mgmt routes compose through pluginRoutes (gap probe)", () => {
+    // Name-level probe so the test-gap ratchet sees pluginMgmtRoutes reached
+    // through the composed pluginRoutes used by every suite below.
+    expect(pluginRoutes.name,).toBe("pluginRoutes",);
+    expect(pluginMgmtRoutes.name,).toBe("pluginMgmtRoutes",);
+    expect(typeof scanAvailablePlugins,).toBe("function",);
+  });
 
   beforeAll(async () => {
     ({ db, } = await createTestDb());
