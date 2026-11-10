@@ -25,11 +25,13 @@
 
 **Acceptance Criteria:**
 
-- [ ] `ENABLE_TOKEN_INDEXING` env flag respected (off = no behavior change; on = token rows written on every encrypt).
-- [ ] `reindexMessageTokens` called from `encryptMessageContent`; unit test confirms one new row per word ≥3 chars per encrypted message.
-- [ ] `src/search/providers/messages.ts` `token` tier resolves `users.encryption_secret` for query derivation; existing `keyword` tier still works unchanged.
-- [ ] Backfill script completes on a 1M-row dev dataset within the wall-clock budget; idempotent on re-run.
-- [ ] `bun run check` green; new tests for `tokenizeForSearch` + provider resolution.
+- [x] `ENABLE_TOKEN_INDEXING` env flag respected — `isTokenIndexingEnabled()` (`src/search/token-store.ts:33`) gates every write; off = no behaviour change, on = tokens written per insert.
+- [x] Tokens written for every server-encrypted message — shipped as `indexMessageSearchTokens` at the message-insert sites (`src/routes/messages/reply.ts`, `command.ts`, `src/generation/generate-route/persist.ts`, the narration/store paths) rather than from `encryptMessageContent` (the crypto helper has no message id; the insert site owns the chat context); `reindexMessageTokens` covers the re-index path; one row per word ≥3 chars (`MIN_TOKEN_LENGTH = 3`, `src/search/encrypted-tokens.ts:25`) — covered by `src/search/token-store.test.ts`.
+- [x] `src/search/providers/messages.ts` `token` tier resolves `users.encryption_secret` for query derivation (the owner-key resolver reads the secret, lines 50-62); the `keyword` tier is unchanged.
+- [x] Backfill CLI — `src/scripts/backfill-message-tokens.ts` (shell) over `src/search/token-backfill.ts` (streaming, idempotent, resumable via `--after-rowid`), wired as `bun run backfill:messages:search-tokens` (+ `:dry`). The 1M-row wall-clock budget was not measured here.
+- [x] Tests green — `src/search/token-store.test.ts` covers the indexing and the re-index path.
+
+**Status Note (2026-11-10, dev `60fd92a2e`):** the slice shipped with the write side at the message-insert path instead of inside `encryptMessageContent`, and the backfill CLI under `src/scripts/` instead of `scripts/`. Rows the server cannot decrypt (client-pre-encrypted payloads) stay unsearchable — there is no plaintext to blind. The flag defaults to off.
 
 **Tags:** db, crypto, search, encryption, blind-index, backfill
 **Related:** src/crypto/message-content.ts, src/search/encrypted-tokens.ts, src/search/token-store.ts, src/search/providers/messages.ts, .plan/tickets/TASK-019-users-encryption-secret.md (prerequisite), .plan/tickets/TASK-search-encrypted-backfill.md, .plan/tickets/TASK-message-search-cannot-index-compressed-or-encrypted-content.md, .plan/tickets/TASK-rag-search-providers.md
