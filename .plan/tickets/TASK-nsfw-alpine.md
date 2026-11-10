@@ -36,6 +36,8 @@ Alpine.js state management for NSFW system.
 - [x] Scene progression logic (reducer `src/frontend/nsfw/intimacy-scene.ts` + position step, 2026-11-09)
 - [ ] SSE updates (no intimacy SSE contract exists; `continueIntimacy` re-pulls pairs — interim path)
 
+**Status Note (2026-11-10):** the NSFW Alpine state shipped as three focused mixins — `src/frontend/alpine/nsfw-intimacy/`, `nsfw-panel/`, `nsfw-body/` — wired through `inline-state.ts`; the umbrella `src/frontend/alpine/nsfw.ts` was never created, which is what `epic-nsfw-ui.md` records for this row (the epic marks it Done). The remaining SSE acceptance criterion is an interim path (`continueIntimacy` re-pulls the pairs), not a missing feature.
+
 ## Files to Create
 
 - `src/frontend/alpine/nsfw.ts`
