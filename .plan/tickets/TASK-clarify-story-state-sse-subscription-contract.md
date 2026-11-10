@@ -4,7 +4,7 @@
 # TASK: CLARIFY-story-state-sse-subscription-contract
 
 **Status:** Done
-**Status Note:** 2026-11-09 (T4 core-t4-story): contract written + implemented (server `story-stream.ts`, client `story-state/stream.ts`); verification pending.
+**Status Note:** 2026-11-10 (release-010-closeout): contract verified on dev and the client hardened — one live subscription per world instead of a re-open after every refresh (the server replays its snapshot on subscribe, so the re-open fed the snapshot back into another refresh: a reconnect storm). Regression test: `src/frontend/alpine/story-state.test.ts`.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-story-mode-ui
@@ -37,8 +37,11 @@ Semantics:
   (activity, notifications, world conditions) is poll-and-diff. The client
   re-runs `refresh()` on each `story-state` event to converge.
 - client (`src/frontend/alpine/story-state/stream.ts`): `connectStoryStream()`
-  opens `EventSource(/api/v1/worlds/:worldId/story-stream)` after each
-  successful `refresh()`; `disconnectStoryStream()` closes on chat switch.
+  keeps ONE live `EventSource(/api/v1/worlds/:worldId/story-stream)` per world —
+  a stream already open for the current world is kept (re-opening it per
+  refresh would replay the connect-snapshot into another refresh: a reconnect
+  storm); a world change or a dropped stream re-subscribes.
+  `disconnectStoryStream()` closes on chat switch.
   Stale-world guard: frames arriving after the story moved worlds are dropped.
 - `refresh()` re-pull is retained as the offline/fallback path (no EventSource,
   closed stream, or undecodable frame never blocks a manual load).
