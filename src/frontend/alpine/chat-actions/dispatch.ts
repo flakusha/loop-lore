@@ -6,6 +6,7 @@ import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
+import { audioActionHandlers, } from "./audio";
 import { battleActionHandlers, } from "./battle";
 import { emotionAvatarActionHandlers, } from "./emotion-avatars";
 import { entityActionHandlers, } from "./entities";
@@ -283,44 +284,5 @@ const actionHandlers: Record<string, ActionHandler> = {
 
   "review-entity": (_ctx, payload,) => {
     log.info("review-entity action — display only", { payload, },);
-  },
-
-  "generate-sfx": async (ctx, payload, chatId,) => {
-    await dispatchGenerationAction(
-      ctx,
-      "/api/v1/generation/audio",
-      { prompt: (payload?.prompt as string) ?? "", seconds: (payload?.seconds as number) ?? 6, chatId, },
-      "Sound effect generation",
-      chatId,
-    );
-  },
-
-  "generate-music": async (ctx, payload, chatId,) => {
-    await dispatchGenerationAction(
-      ctx,
-      "/api/v1/generation/audio",
-      { prompt: (payload?.prompt as string) ?? "", seconds: (payload?.seconds as number) ?? 30, chatId, },
-      "Music generation",
-      chatId,
-    );
-  },
-
-  "link-music": async (ctx, payload,) => {
-    const url = (payload?.url as string) ?? "";
-    if (!url) {
-      ctx.$dispatch?.("show-toast", {
-        type: "warning",
-        message: t("toasts.actionNoInput", { action: "music link", },),
-      },);
-
-      return;
-    }
-
-    // Reuse the music-links panel flow: it posts the link and refreshes the list.
-    ctx._musicLinkUrl = url;
-    await ctx.addMusicLink?.();
-    if (ctx._musicLinkError) {
-      ctx.$dispatch?.("show-toast", { type: "error", message: ctx._musicLinkError, },);
-    }
   },
 };
