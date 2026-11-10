@@ -4,7 +4,7 @@
 # TASK: Prompt-driven audio generation route + live /sfx and /music commands
 
 **Status:** Done
-**Status Note:** implemented on branch `feat-audio-gen-route` (pending merge to dev) — `src/generation/audio-prompt-route.ts` (the route) + `audio-prompt-route.test.ts` (auth matrix, 501 gate, success path), `src/generation/controller.ts` (route registration), `src/assistant/commands/sfx.ts` + `music.ts` (live commands), `src/frontend/alpine/chat-actions/dispatch.ts` (generate-sfx / generate-music / link-music handlers)
+**Status Note:** implemented and merged into the `release-010-closeout` branch (pending merge to dev) — `src/generation/audio-prompt-route.ts` (the route) + `audio-prompt-route.test.ts` (auth matrix, 501 gate, success path), `src/generation/controller.ts` (route registration), `src/assistant/commands/sfx.ts` + `music.ts` (live commands), `src/frontend/alpine/chat-actions/dispatch.ts` (generate-sfx / generate-music / link-music handlers)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-ambient-music-sfx
