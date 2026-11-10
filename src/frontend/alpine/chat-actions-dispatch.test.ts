@@ -287,6 +287,38 @@ describeOrSkip("dispatchCommandAction", () => {
       expect(ctx.toasts[0]?.type,).toBe("error",);
       expect(ctx.toasts[0]?.message,).toBe("Audio generation failed",);
     });
+
+    test("link-music routes the URL through the chat music-links flow", async () => {
+      const linked: string[] = [];
+      const ctx = Object.assign(buildCtx(), {
+        _musicLinkUrl: "",
+        _musicLinkError: "",
+        async addMusicLink() {
+          linked.push(this._musicLinkUrl,);
+        },
+      },);
+
+      await chatActions.dispatchCommandAction!.call(
+        ctx as any,
+        "link-music",
+        { url: "https://youtube.com/watch?v=abc123", },
+        "chat-1",
+      );
+
+      expect(linked,).toEqual(["https://youtube.com/watch?v=abc123",],);
+    });
+
+    test("link-music warns when the payload carries no URL", async () => {
+      const ctx = buildCtx();
+      await chatActions.dispatchCommandAction!.call(
+        ctx as any,
+        "link-music",
+        { url: "", },
+        "chat-1",
+      );
+
+      expect(ctx.toasts[0]?.type,).toBe("warning",);
+    });
   },);
 
   describeOrSkip("video generation action", () => {
@@ -554,13 +586,16 @@ describeOrSkip("selectCommand", () => {
 
 describeOrSkip("dispatchCommandAction link-asset", () => {
   const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
+
   afterEach(() => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
   },);
 
+
   function confirmWith(value: boolean,) {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => value;
   }
+
 
   test("confirmed link POSTs to /api/v1/assets/:id/links and toasts success", async () => {
     confirmWith(true,);
@@ -595,6 +630,7 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
     expect(ctx.toasts,).toEqual([],);
   });
 
+
   test("missing payload fields send nothing", async () => {
     confirmWith(true,);
     const ctx = buildCtx();
@@ -602,6 +638,7 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
     expect(fetchCalls.length,).toBe(0,);
     expect(ctx.toasts,).toEqual([],);
   });
+
 
   test("failed POST toasts error", async () => {
     confirmWith(true,);
@@ -620,9 +657,11 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
 
 describeOrSkip("dispatchCommandAction loc-update", () => {
   const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
+
   afterEach(() => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
   },);
+
 
   function confirmWith(value: boolean, captured?: { message?: string },) {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = (message,) => {
@@ -630,6 +669,7 @@ describeOrSkip("dispatchCommandAction loc-update", () => {
       return value;
     };
   }
+
 
   test("confirmed loc-update PUTs the patch to /api/v1/worlds/:wid/locations/:lid and toasts success", async () => {
     confirmWith(true,);
@@ -695,6 +735,7 @@ describeOrSkip("dispatchCommandAction loc-update", () => {
     expect(ctx.toasts,).toEqual([],);
   });
 
+
   test("missing payload fields send nothing", async () => {
     confirmWith(true,);
     const ctx = buildCtx();
@@ -709,6 +750,7 @@ describeOrSkip("dispatchCommandAction loc-update", () => {
     expect(fetchCalls.length,).toBe(0,);
     expect(ctx.toasts,).toEqual([],);
   });
+
 
   test("failed PUT toasts error", async () => {
     confirmWith(true,);
@@ -804,13 +846,16 @@ describeOrSkip("dispatchCommandAction impersonate", () => {
 
 describeOrSkip("dispatchCommandAction world-update / world-delete", () => {
   const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
+
   afterEach(() => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
   },);
 
+
   function confirmWith(value: boolean,) {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => value;
   }
+
 
   test("confirmed world-update PUTs the patch to /api/v1/worlds/:id and toasts success", async () => {
     confirmWith(true,);
@@ -916,13 +961,16 @@ describeOrSkip("dispatchCommandAction world-update / world-delete", () => {
 
 describeOrSkip("dispatchCommandAction item mutations", () => {
   const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
+
   afterEach(() => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
   },);
 
+
   function confirmWith(value: boolean,) {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => value;
   }
+
 
   const TRANSFER_PAYLOAD = {
     worldId: "w1",
