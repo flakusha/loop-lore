@@ -9,7 +9,7 @@
     "**/data",
     "**/.tmp",
     "**/.hermes",
-    "**/docs/.vitepress",
+    "**/.vitepress",
     "**/docs/**",
     "**/plugins",
     "**/tree/",
