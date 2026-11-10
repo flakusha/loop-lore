@@ -20,7 +20,7 @@ import "./impersonate";
 import "./music";
 import "./narrate";
 import "./ooc";
-import "./sfx";
+import { resolveAudioCommandAvailability, } from "./sfx";
 import "./summarize";
 import "./video";
 import {
@@ -204,6 +204,10 @@ describe("/image", () => {
 
   it("reports availability from the configured image providers", () => {
     expect(typeof resolveImageCommandAvailability(),).toBe("boolean",);
+  });
+
+  it("reports availability from the configured audio providers", () => {
+    expect(typeof resolveAudioCommandAvailability(),).toBe("boolean",);
   });
 });
 
