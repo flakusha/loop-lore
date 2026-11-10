@@ -19,6 +19,7 @@ import {
   WorldVisibility,
 } from "../../db/enums-story";
 import type { DB, Locations, LocationStates, Quests, WorldLoreEntries, Worlds, WorldStates, } from "../../db/schema";
+import { indexWorldLoreSearchTokens, } from "../../search";
 import { jsonStringifyOr, safeJsonParse, uid, } from "../../utils";
 import type { WorldBundle, } from "../export-shared";
 import { num, rowOf, rowsOf, str, strOrNull, } from "./rows";
@@ -195,9 +196,10 @@ export async function importWorldBundle(
 
     // ── world_lore_entries ─────────────────────────────────────
     for (const row of rowsOf(bundle.world_lore_entries,)) {
+      const entryId = uid();
       await trx.insertInto("world_lore_entries",).values(
         {
-          id: uid(),
+          id: entryId,
           world_id: worldId,
           name: strOrNull(row, "name",),
           content: str(row, "content",) ?? "",
@@ -217,6 +219,10 @@ export async function importWorldBundle(
           audience_scope: strOrNull(row, "audience_scope",),
         } satisfies Insertable<WorldLoreEntries>,
       ).execute();
+
+      // Blind token tier (no-op unless ENABLE_TOKEN_INDEXING=1; fail-open;
+      // rows roll back with the import transaction on failure).
+      await indexWorldLoreSearchTokens(trx, { entryId, },);
 
       counts.world_lore_entries++;
     }

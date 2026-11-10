@@ -2223,3 +2223,17 @@ export interface ChatListFilters {
   updated_since: string | null;
   updated_at: string;
 }
+
+// ── world_lore_search_tokens ────────────────────────────────────────────
+export interface WorldLoreSearchTokens {
+  entry_id: string;
+  term: string;
+  scope: string;
+}
+
+// ── actor_lore_search_tokens ────────────────────────────────────────────
+export interface ActorLoreSearchTokens {
+  entry_id: string;
+  term: string;
+  scope: string;
+}

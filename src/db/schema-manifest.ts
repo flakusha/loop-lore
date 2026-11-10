@@ -1608,6 +1608,11 @@ export const SCHEMA = new SchemaManifest()
     rarity: col("text", { notNull: true, hasDefault: true, },),
     inclusion_group: col("text",),
   },)
+  .table("actor_lore_search_tokens", {
+    entry_id: col("text", { notNull: true, },),
+    term: col("text", { notNull: true, },),
+    scope: col("text", { notNull: true, },),
+  },)
   .table("actor_memories", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
@@ -2830,6 +2835,11 @@ export const SCHEMA = new SchemaManifest()
     timeline_id: col("text",),
     rarity: col("text", { notNull: true, hasDefault: true, },),
     inclusion_group: col("text",),
+  },)
+  .table("world_lore_search_tokens", {
+    entry_id: col("text", { notNull: true, },),
+    term: col("text", { notNull: true, },),
+    scope: col("text", { notNull: true, },),
   },)
   .table("world_maps", {
     id: col("text", { primaryKey: true, hasDefault: true, },),

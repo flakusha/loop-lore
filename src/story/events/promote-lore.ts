@@ -17,6 +17,7 @@ import { randomUUID, } from "node:crypto";
 import { isValidUuid, type LoreScope, } from "../../assistant/lore/audience";
 import { LoreEntryStatus, LorePosition, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
+import { indexWorldLoreSearchTokens, } from "../../search";
 import { safeJsonStringify, } from "../../utils";
 import { EVENT_RARITY_PRIORITY, parseEventRarity, } from "./rarity";
 
@@ -134,6 +135,9 @@ export async function promoteEventToLore(
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },).execute();
+
+  // Blind token tier (no-op unless ENABLE_TOKEN_INDEXING=1; fail-open).
+  await indexWorldLoreSearchTokens(db, { entryId: id, },);
 
   return id;
 }

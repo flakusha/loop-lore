@@ -4,8 +4,11 @@
 /**
  * /rag-search, /rag-ask — RAG retrieval over world/character lore.
  *
- * Searches world_lore_entries and actor_lore_entries using keyword matching.
- * When the RAG epic lands, swap to FTS5 over the documents table.
+ * Searches world_lore_entries and actor_lore_entries using keyword matching,
+ * plus the blind-token tier over `*_lore_search_tokens` when
+ * `ENABLE_TOKEN_INDEXING=1` (silent no-op otherwise — same contract as the
+ * message tier in `src/search/`). When the RAG epic lands, swap to FTS5 over
+ * the documents table.
  */
 
 import type { Kysely, } from "kysely";
@@ -13,6 +16,7 @@ import { callAux, } from "../../aux-pipeline";
 import type { DB, } from "../../db/schema";
 import { resolveSystemPrompt, } from "../../prompts";
 import { requireWorldAccess, } from "../../routes/worlds/access";
+import { type LoreTokenMatch, matchLoreEntriesByTokens, } from "../../search";
 import { quotaGate, } from "../quota/gate";
 import { type CommandResult, registerCommand, } from "./registry";
 
@@ -22,6 +26,49 @@ interface LoreHit {
   content: string;
   source: "world" | "actor";
   score: number;
+  /** True when matched only via HMAC token (blind-index tier). */
+  encryptedMatch?: boolean;
+}
+
+/**
+ * Hydrate one domain's token matches into lore hits, applying the same
+ * visibility filters as the keyword tier (enabled entries in this world).
+ * @param db - typed Kysely instance
+ * @param source - which lore table the matches came from
+ * @param matches - token matches to hydrate
+ * @param worldId - world ID for scoping
+ * @returns lore hits scored by shared-token count
+ */
+async function hydrateTokenHits(
+  db: Kysely<DB>,
+  source: "world" | "actor",
+  matches: LoreTokenMatch[],
+  worldId: string,
+): Promise<LoreHit[]> {
+  if (matches.length === 0) { return []; }
+  const ids = matches.map((m,) => m.entryId);
+  const rows = source === "world"
+    ? await db.selectFrom("world_lore_entries",)
+      .select(["id", "name", "content",],)
+      .where("id", "in", ids,)
+      .where("world_id", "=", worldId,)
+      .where("enabled", "=", "enabled",)
+      .execute()
+    : await db.selectFrom("actor_lore_entries",)
+      .select(["id", "name", "content",],)
+      .where("id", "in", ids,)
+      .where("world_id", "=", worldId,)
+      .where("enabled", "=", "enabled",)
+      .execute();
+
+  return rows.map((row,) => ({
+    id: row.id,
+    name: row.name ?? "",
+    content: row.content,
+    source,
+    score: matches.find((m,) => m.entryId === row.id)?.hits ?? 1,
+    encryptedMatch: true,
+  }));
 }
 
 /**
@@ -62,7 +109,31 @@ async function searchLore(db: Kysely<DB>, query: string, worldId: string,): Prom
     if (score > 0) { hits.push({ id: row.id, name: row.name ?? "", content: row.content, source: "actor", score, },); }
   }
 
-  return hits.sort((a, b,) => b.score - a.score).slice(0, 10,);
+  // Token tier (ENABLE_TOKEN_INDEXING): blind-token matches over the lore
+  // search-token tables, derived with the world owner's key. Silent no-op
+  // when the flag is off or the owner has no usable secret — same contract
+  // as the message token tier. Keyword hits win on id collisions (their
+  // score already counts the matched terms).
+  const seen = new Set(hits.map((h,) => h.id),);
+  const tokenMatches = (await matchLoreEntriesByTokens(db, { worldId, query, },))
+    .filter((m,) => !seen.has(m.entryId,));
+
+  const tokenHits = [
+    ...await hydrateTokenHits(
+      db,
+      "world",
+      tokenMatches.filter((m,) => m.source === "world"),
+      worldId,
+    ),
+    ...await hydrateTokenHits(
+      db,
+      "actor",
+      tokenMatches.filter((m,) => m.source === "actor"),
+      worldId,
+    ),
+  ];
+
+  return [...hits, ...tokenHits,].sort((a, b,) => b.score - a.score).slice(0, 10,);
 }
 
 registerCommand("rag-search", async (args, ctx,): Promise<CommandResult> => {

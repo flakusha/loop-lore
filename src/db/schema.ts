@@ -251,4 +251,6 @@ export interface DB {
   tool_call_audit: import("./schema-core").ToolCallAudit;
   integration_tokens: import("./schema-core").IntegrationTokens;
   chat_list_filters: import("./schema-core").ChatListFilters;
+  world_lore_search_tokens: import("./schema-core").WorldLoreSearchTokens;
+  actor_lore_search_tokens: import("./schema-core").ActorLoreSearchTokens;
 }
