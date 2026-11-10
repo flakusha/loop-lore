@@ -82,7 +82,7 @@ Complete plugin management interface including plugin marketplace, configuration
 - [ ] Plugin browser with categories
 - [ ] Plugin search
 - [ ] Plugin ratings and reviews
-- [ ] Plugin installation
+- [x] Plugin installation
 - [ ] Plugin configuration
 - [ ] Plugin dependencies
 - [ ] Plugin permissions
@@ -90,7 +90,7 @@ Complete plugin management interface including plugin marketplace, configuration
 - [ ] Enable/disable plugins
 - [ ] Plugin status display
 - [ ] Plugin logs
-- [ ] Plugin removal
+- [x] Plugin removal
 - [ ] Mobile responsive
 - [ ] Keyboard accessible
 - [ ] Screen reader support
