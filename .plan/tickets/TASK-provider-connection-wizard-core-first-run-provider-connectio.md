@@ -4,7 +4,7 @@
 # TASK: provider-connection-wizard core: first-run provider connection flow
 
 **Status:** In Progress
-**Status Note:** 2026-11-06 reconcile: backend half verified on dev (`3793bff82` store + routes, `f3d4d42d4` gate clearance, `f52c68813`/`6f2b66374`/`35bbcf135` reactivity/bound/error fixes); frontend client still on the unlanded lane (see tracker). Do NOT touch — `p0-world-wizard-edit`-adjacent wizard lane owns the frontend.
+**Status Note:** 2026-11-10 (release-010-closeout): the frontend half is on dev (Alpine wizard slice `src/frontend/alpine/admin-provider-wizard/`); the test step now re-reads the setup state after the rescan, so the "still missing" list reflects the provider flipping `ok: false -> ok: true`, and the model-role save re-reads it too. The remaining criterion (a fresh instance reaching a first successful chat) needs a live provider — not verifiable here.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-provider-connection-wizard
@@ -43,9 +43,9 @@ Fresh installs currently reach a booted server with zero providers and no guided
 
 - [ ] fresh instance reaches first successful chat without touching a config file
 - [x] entered key is stored sealed (secret:v1: envelope via setConfig), never plaintext in system_config
-- [ ] wizard is skippable and re-enterable from settings
-- [ ] wizard test step uses the existing provider rescan and reflects ok:false -> ok:true from setup-state checks
-- [ ] import path (YAML/TOML upload) still works standalone (4293058 scope absorbed, not dropped)
+- [x] wizard is skippable and re-enterable from settings
+- [x] wizard test step uses the existing provider rescan and reflects ok:false -> ok:true from setup-state checks
+- [x] import path (YAML/TOML upload) still works standalone (4293058 scope absorbed, not dropped)
 
 **Context:**
 
