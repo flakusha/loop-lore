@@ -3,7 +3,8 @@
 
 # BUG: World list/search views expose private worlds to anonymous callers
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-10 (release-010-closeout): the fix is on dev (`212107056` scope worlds list and search to viewer visibility, `8e84cc1d0` direct coverage of the visibility arms); the release note landed under 0.1.0 → Security.
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -24,6 +25,6 @@ Verification: new src/routes/views/worlds-anon-access.test.ts asserts the served
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
