@@ -16,6 +16,7 @@ Feeds: card-import-parity-agnai-2026-11-03 §§2-4 (add ccv2 fallbacks ~15 LOC; 
 AC2 Import parity: Agnai tavern + native JSON fixtures import with zero silent field loss (parity probes 1-4 green); tags persist to settings.tags and round-trip; PNG chara-chunk inherits the same; no gate-passing import with dropped persona/scenario/extensions.
 
 Related: .tmp/research/release-1.0.0-roadmap.md
+Scope note: serves Required card-parity items; impersonation-adjacent via template/actor IO.
 
 **Caveats:** TOCTOU: import is single-shot file parse; concurrent re-import last-writer-wins. Security: imported JSON is author-controlled; validate before persist. Authorization: importer requires character-create permission. Parallelism: probe scripts are read-only, safe under parallel suite. Partial failure: normalizer failure rejects the card, never half-imports. Rollback: failed import leaves no actor row. Observability: mis-detection warnings logged per shape.
 

@@ -16,6 +16,7 @@ Feeds: finalize-speedup.md §1 baseline (886s scoped; 529.8s browser; 188.8s typ
 AC8 Release hygiene: scoped finalize within the 1-5 min target (or documented critical-path reduction with e2e-browser off the critical path); plan-validate clean — zero duplicate/contradictory Status lines, no stale Not-Started on shipped code.
 
 Related: .tmp/research/release-1.0.0-roadmap.md
+Scope note: serves Desirable finalize/gate speedups; research-only, no product scope.
 
 **Caveats:** TOCTOU: check timings vary per run; baseline is advisory. Security: research-only, no code changes. Authorization: n/a. Parallelism: measurement runs serialized to avoid skew. Partial failure: speedup slices land independently. Rollback: n/a, docs only. Observability: check-report.json is the evidence artifact. (research-only)
 

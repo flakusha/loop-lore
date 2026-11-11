@@ -18,6 +18,7 @@ AC3 Scripting-lite: pipe chaining + shared macro resolver + named args + per-com
 AC7 Chat residual: membership-change re-key + ownership transfer shipped as the re-scoped epic; the 9 landed migrations closed out, not re-litigated.
 
 Related: .tmp/research/release-1.0.0-roadmap.md
+Scope note: serves Required chat-scenarios/branching/VN/scripting items + chat-product residual.
 
 **Caveats:** TOCTOU: macro resolution at invocation time; concurrent definition edit uses snapshot. Security: macros expand author-controlled text; no privilege escalation via pipe. Authorization: pipe/valves respect per-command capability tags. Parallelism: parser unit tests use in-memory registry, no shared state. Partial failure: failed pipe stage aborts chain, no half-applied commands. Rollback: macro/pipe are additive syntax; removal restores prior parsing. Observability: pipe failures logged per stage.
 

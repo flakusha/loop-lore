@@ -18,6 +18,7 @@ AC4 Offline web: manifest + service-worker shell installs; queued sends survive 
 AC5 Memory budget: hardcoded 1024-token cap replaced by a context-share ratio honoring per-world token_budget; prompt assembly stays within budget on a measured long-context fixture.
 
 Related: .tmp/research/release-1.0.0-roadmap.md
+Scope note: serves Required mobile/PWA + solo-run items (thin client over /api/v1+SSE).
 
 **Caveats:** TOCTOU: outbox drain is FIFO with idempotency keys; concurrent drain single-flighted. Security: Bearer auth on every write; PWA shell caches no secrets. Authorization: outbox replays as the originating user. Parallelism: service-worker tests are isolated; no shared fixtures. Partial failure: failed send stays queued with backoff, never dropped. Rollback: PWA shell is additive; removal restores online-only. Observability: outbox depth + drain failures surfaced in UI.
 
