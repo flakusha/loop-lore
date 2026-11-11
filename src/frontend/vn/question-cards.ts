@@ -24,6 +24,12 @@ export interface VnQuestionOption {
   relationship_modifier: number;
   next_scene_id: string | null;
   consequence: Record<string, unknown> | null;
+  /**
+   * Where the option came from: "custom" marks a player-typed answer the
+   * server persisted as a synthesized option (mirrors the backend type in
+   * chat/service/vn-questions-types.ts). Absent = LLM-generated.
+   */
+  provenance?: "custom" | "generated";
 }
 
 /** */

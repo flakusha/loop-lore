@@ -309,7 +309,7 @@ describe("renderQuestionCards", () => {
     const form = freeformForm(container,)!;
     const input = form.children[0]!;
     input.value = "  I opened it myself  ";
-    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+    form.listeners.submit![0]!({ preventDefault: () => {}, },);
 
     expect(seen,).toEqual([["q1", "I opened it myself",],],);
     // Cleared on accept so a resubmit cannot double-fire.
@@ -331,7 +331,7 @@ describe("renderQuestionCards", () => {
 
     const form = freeformForm(container,)!;
     form.children[0]!.value = "   ";
-    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+    form.listeners.submit![0]!({ preventDefault: () => {}, },);
 
     expect(calls,).toBe(0,);
   });
@@ -387,7 +387,7 @@ describe("renderQuestionCards", () => {
 
     const form = freeformForm(container,)!;
     form.children[0]!.value = "<img src=x onerror=alert(1)>";
-    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+    form.listeners.submit![0]!({ preventDefault: () => {}, },);
 
     expect(typed,).toBe("<img src=x onerror=alert(1)>",);
     const tags = container.children[0]!.children.map((card,) => card.tagName);

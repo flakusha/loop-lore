@@ -193,7 +193,7 @@ describe("renderChoiceCards", () => {
     const form = freeformForm(container,)!;
     const input = form.children[0]!;
     input.value = "  I climb the wall instead  ";
-    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+    form.listeners.submit![0]!({ preventDefault: () => {}, },);
 
     expect(actions,).toEqual(["I climb the wall instead",],);
     expect(input.value,).toBe("",);
@@ -215,7 +215,7 @@ describe("renderChoiceCards", () => {
 
     const form = freeformForm(container,)!;
     form.children[0]!.value = " ";
-    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+    form.listeners.submit![0]!({ preventDefault: () => {}, },);
 
     expect(calls,).toBe(0,);
   });
@@ -252,7 +252,7 @@ describe("renderChoiceCards", () => {
 
     const form = freeformForm(container,)!;
     form.children[0]!.value = "<script>alert(1)</script>";
-    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+    form.listeners.submit![0]!({ preventDefault: () => {}, },);
 
     expect(typed,).toBe("<script>alert(1)</script>",);
     expect(container.children.map((c,) => c.tagName),).not.toContain("SCRIPT",);
