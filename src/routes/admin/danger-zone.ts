@@ -6,6 +6,7 @@ import { logEntryEnvelope, } from "../../db/log-entries";
 import type { DB, } from "../../db/schema";
 import { seedDefaultActors, } from "../../db/seed";
 import { getLogger, } from "../../logger";
+import { seedHarnessModelCapabilities, } from "../../seeding";
 import { ErrorResponse, } from "../../validation/schemas";
 import {
   ErrorCode,
@@ -173,6 +174,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               },);
 
               await seedDefaultActors(db, config,);
+              await seedHarnessModelCapabilities(db,); // restore codex/* + claude/* enrichment rows
             } catch (error) {
               log().error("Factory reset failed", error as Error,);
               return jsonError({

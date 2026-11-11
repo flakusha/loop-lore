@@ -25,7 +25,12 @@ import { applyStoredInboundSettings, initInboundSettings, } from "../integration
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
-import { applyEnvironmentOverrides, seedConfiguredContent, seedConfiguredUsers, } from "../seeding";
+import {
+  applyEnvironmentOverrides,
+  seedConfiguredContent,
+  seedConfiguredUsers,
+  seedHarnessModelCapabilities,
+} from "../seeding";
 import { ServerExternalManager, } from "../services/server-external-manager";
 import { seedDynamicContent, } from "./boot-seed";
 import { createRequestHandler, handleApiRequest, } from "./handler";
@@ -204,6 +209,7 @@ export async function start() {
   // can observe a zombie `running` job after a restart.
   await reconcileInterruptedJobs(database,);
   await seedDefaultActors(database, config,);
+  await seedHarnessModelCapabilities(database,); // codex/* + claude/* enrichment rows (idempotent)
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
   await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);
   await seedConfiguredContent(database, effectiveSeeding, config.auth.required,);

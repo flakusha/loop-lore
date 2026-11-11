@@ -115,6 +115,7 @@ if (ISOLATED) {
     applyEnvironmentOverrides: (cfg: unknown,) => cfg,
     seedConfiguredContent: async () => {},
     seedConfiguredUsers: async () => {},
+    seedHarnessModelCapabilities: async () => 0,
   }),);
 
   mock.module("../services/server-external-manager", () => ({
