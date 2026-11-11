@@ -150,6 +150,30 @@ describe("facade repo-access ops — the RSI tier", () => {
     expect((result.json as { ok?: boolean }).ok,).toBe(false,);
   });
 
+  test("an internal-service principal WITHOUT a userId is 401'd before the gate (attribution first)", async () => {
+    initRepoAccessSettings({ enabled: true, },);
+    const registry = buildRegistry();
+    const ctx = ctxFor("internal-service", "svc-null",);
+    const principal = { ...ctx.principal, userId: null, };
+    const result = await runFacadeOp(registry, { ...ctx, principal, }, "repo.context", {},);
+    expect(result.ok,).toBe(false,);
+    expect(result.status,).toBe(401,);
+  });
+
+  test("an unresolved repo root maps to the 409 arm of the denial (environment, not policy)", async () => {
+    initRepoAccessSettings({ enabled: true, },);
+    setRepoScopeRootDetectorForTests(() => "");
+    try {
+      const registry = buildRegistry();
+      const result = await runFacadeOp(registry, ctxFor("internal-service", "svc-noroot",), "repo.context", {},);
+      expect(result.ok,).toBe(false,);
+      expect(result.status,).toBe(409,);
+      expect((result.json as { code?: string }).code,).toBe("root_unresolved",);
+    } finally {
+      setRepoScopeRootDetectorForTests(null,);
+    }
+  });
+
   test("the manifest exposes the repo-access descriptors", () => {
     const manifest = buildRegistry().manifest();
     const repo = manifest.filter((m,) => m.domain === "repo-access");
