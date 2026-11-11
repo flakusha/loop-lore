@@ -28,6 +28,15 @@ What landed:
 
 **Acceptance Criteria:**
 
-- [x] Implementation complete — for the harness-profile queue slice; the assistant-participant flavor (Option C) remains open
-- [x] Tests passing
-- [x] Documentation updated (CHANGELOG `## [Unreleased]`, epic-harness-integration task row)
+- [ ] Implementation complete — the assistant-participant flavor (Option C) remains open
+- [ ] Tests passing — full-ticket criteria not yet met
+- [ ] Documentation updated — full-ticket criteria not yet met
+
+Slice-level acceptance for the DELIVERED harness-profile queue (2026-11-11, `orchestration-queue` @ 8b2cad102), with evidence:
+
+- [x] Queue-slice implementation complete (surfaces listed above; dispatchHarnessTurn unchanged)
+- [x] Queue-slice tests passing: `bun test src/integrations/harness/queue.test.ts src/routes/harness/queue.test.ts` → 16 pass / 0 fail; touched-dir sweep `bun test src/integrations/harness src/routes/harness src/db` → 932 pass / 0 fail (incl. schema-sync over migration 100)
+- [x] Queue-slice docs updated: CHANGELOG `## [Unreleased]`, epic-harness-integration task row annotated
+- [x] Gates: `bun run check --gates "typecheck - backend,lint - eslint"` → PASS both (run 3176895-mwc8buuh); `scripts/check-file-size.ts --strict` → PASS
+
+The three top-level criteria flip only when the assistant-participant flavor (Option C) and any delegated follow-ups (TASK-harness-subagent-delegation) land.
