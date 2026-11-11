@@ -16,7 +16,9 @@ import { type HarnessFlavor, } from "../../config/schema/harness";
 import { type HarnessAdapterFactory, } from "./adapter-types";
 import { createClaudeCodeAdapter, } from "./claude-code";
 import { createCodexAdapter, } from "./codex";
+import { createHermesAdapter, } from "./hermes";
 import { createOmpAdapter, } from "./omp";
+import { createOpenClawAdapter, } from "./openclaw";
 import { createOpenCodeAdapter, } from "./opencode";
 
 /** Flavor assumed when a profile omits `harness` (back-compat with pre-flavor configs). */
@@ -28,6 +30,8 @@ export const HARNESS_ADAPTER_FACTORIES: Record<HarnessFlavor, HarnessAdapterFact
   opencode: createOpenCodeAdapter,
   codex: createCodexAdapter,
   "claude-code": createClaudeCodeAdapter,
+  hermes: createHermesAdapter,
+  openclaw: createOpenClawAdapter,
 };
 
 /**

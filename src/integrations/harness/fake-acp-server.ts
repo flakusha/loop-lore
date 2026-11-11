@@ -132,6 +132,12 @@ process.stdin.on("data", (c) => {
       } else {
         send({ jsonrpc: "2.0", id: m.id, result: {} });
       }
+    } else if (m.method === "session/set_session_model") {
+      if (rejectModel && m.params.modelId === rejectModel) {
+        send({ jsonrpc: "2.0", id: m.id, error: { code: -32602, message: "Unknown model " + m.params.modelId } });
+      } else {
+        send({ jsonrpc: "2.0", id: m.id, result: {} });
+      }
     } else if (m.method === "session/set_config_option") {
       if (rejectModel && m.params.value === rejectModel) {
         send({ jsonrpc: "2.0", id: m.id, error: { code: -32602, message: "Unknown ACP model " + m.params.value } });

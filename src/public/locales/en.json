@@ -2476,7 +2476,9 @@
         "omp": "omp runs with the API keys and providers configured in omp itself — direct API access is billed under the provider's API terms, not a subscription agreement.",
         "opencode": "opencode runs with the API keys and providers configured in opencode itself — direct API access is billed under the provider's API terms, not a subscription agreement.",
         "codex": "Codex signs in with a ChatGPT plan subscription — driving it as a loop-lore provider for RPG or other non-chat functionality may conflict with OpenAI's terms, and requires explicit acknowledgement.",
-        "claude-code": "Claude Code signs in with a Claude plan subscription — driving it as a loop-lore provider for RPG or other non-chat functionality may conflict with Anthropic's terms, and requires explicit acknowledgement."
+        "claude-code": "Claude Code signs in with a Claude plan subscription — driving it as a loop-lore provider for RPG or other non-chat functionality may conflict with Anthropic's terms, and requires explicit acknowledgement.",
+        "hermes": "Hermes runs with the API keys and providers configured in Hermes itself — direct API access is billed under the provider's API terms, not a subscription agreement.",
+        "openclaw": "OpenClaw forwards prompts to its configured Gateway — access runs under the Gateway host's provider terms, not a subscription agreement."
       }
     }
   },

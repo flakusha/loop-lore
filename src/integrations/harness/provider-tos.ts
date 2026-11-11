@@ -74,6 +74,26 @@ export const HARNESS_PROVIDER_TOS: Record<HarnessFlavor, HarnessProviderTosInfo>
     subscriptionBacked: true,
     noteKey: "harness.tos.note.claude-code",
   },
+  // [INFERENCE confirmed against upstream docs] hermes runs on the operator's
+  // own provider credentials configured inside Hermes itself (`hermes model`,
+  // `~/.hermes/.env`; the ACP adapter has no auth store of its own —
+  // https://hermes-agent.nousresearch.com/docs/developer-guide/acp-internals,
+  // "Provider/auth behavior"). No subscription-backed hosted tier is
+  // documented, so it mirrors omp/opencode: api + local, ungated.
+  hermes: {
+    usageClasses: ["api", "local",],
+    subscriptionBacked: false,
+    noteKey: "harness.tos.note.hermes",
+  },
+  // [INFERENCE confirmed against upstream docs] openclaw acts as a Gateway-
+  // backed ACP bridge; provider credentials live on the Gateway/host
+  // (https://docs.openclaw.ai/cli/acp). No subscription-backed tier is
+  // documented, so it mirrors omp/opencode: api + local, ungated.
+  openclaw: {
+    usageClasses: ["api", "local",],
+    subscriptionBacked: false,
+    noteKey: "harness.tos.note.openclaw",
+  },
 };
 
 /**
