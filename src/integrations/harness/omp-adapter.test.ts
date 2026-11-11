@@ -98,6 +98,8 @@ describe("OmpAcpAdapter (fake ACP fixture)", () => {
       { providerId: "zai", status: "exhausted", remainingFraction: 0, resetsAt: "2030-01-01T00:00:00Z", },
     ],);
 
+    expect(adapter.quotaSurface,).toBe("omp-ext",);
+
     adapter.close();
   });
 

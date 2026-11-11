@@ -109,6 +109,7 @@ describe("OpenCodeAcpAdapter (fake ACP fixture, opencode flavor)", () => {
     const server = serve({ FAKE_CONFIG_ID: "model", FAKE_MODELS: "anthropic/claude-sonnet-4-5", },);
     const adapter = makeAdapter({ command: server.argv, },);
     expect(await adapter.fetchUsageReports(),).toBeNull();
+    expect(adapter.quotaSurface,).toBe("none",);
     adapter.close();
   });
 

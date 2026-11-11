@@ -12,6 +12,7 @@
 import {
   type HarnessAcpAdapter,
   type HarnessAdapterCommandOptions,
+  type HarnessQuotaSurface,
   type HarnessUsageReport,
 } from "./adapter-types";
 import { GenericAcpAdapter, type GenericAcpOptions, } from "./generic-acp";
@@ -25,6 +26,9 @@ const USAGE_METHOD = "_omp/usage";
 /** The omp reference adapter: `MODEL_CONFIG_ID` select + `_omp/usage` quota. */
 export class OmpAcpAdapter extends GenericAcpAdapter {
   protected readonly modelConfigId = MODEL_CONFIG_ID;
+
+  /** omp answers quota probes on its private `_omp/usage` ext method. */
+  override readonly quotaSurface: HarnessQuotaSurface = "omp-ext";
 
   /**
    * @param options - spawn argv + cwd; the handshake happens lazily on the

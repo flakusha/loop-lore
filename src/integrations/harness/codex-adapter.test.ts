@@ -113,6 +113,7 @@ describe("CodexAcpAdapter (fake ACP fixture, codex flavor)", () => {
     const server = serve({ FAKE_CONFIG_ID: "model", FAKE_MODELS: "gpt-5.1-codex", },);
     const adapter = makeAdapter({ command: server.argv, },);
     expect(await adapter.fetchUsageReports(),).toBeNull();
+    expect(adapter.quotaSurface,).toBe("none",);
     adapter.close();
   });
 

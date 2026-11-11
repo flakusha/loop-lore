@@ -17,6 +17,7 @@ import {
   type HarnessAcpAdapter,
   HarnessAcpError,
   type HarnessAdapterCommandOptions,
+  type HarnessQuotaSurface,
   type HarnessTurnResult,
   type HarnessUsageReport,
   type PendingPermission,
@@ -107,6 +108,12 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   protected async fetchQuotaReports(): Promise<HarnessUsageReport[] | null> {
     return null;
   }
+
+  /**
+   * ACP flavors have no requestable quota method (see HARNESS_QUOTA_SURFACES),
+   * so the generic engine declares "none"; only omp's ext method overrides.
+   */
+  readonly quotaSurface: HarnessQuotaSurface = "none";
 
   /**
    * Enumerate the advertised model list.

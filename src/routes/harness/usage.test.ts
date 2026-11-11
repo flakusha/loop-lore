@@ -119,11 +119,38 @@ describe("harnessUsageRoutes", () => {
         dispatchesInWindow: 1,
         tokensInDay: 100,
         quotaResetAt: null,
+        quotaSurface: "omp-ext",
         breakerOpen: false,
         breakerCooldownRemainingMs: 0,
         breakerTrips: 0,
       },
     ],);
+  });
+
+  it("a live connection's quota surface wins; unprobed profiles fall back to their flavor's", async () => {
+    // p: omp flavor (omitted harness → omp), probed with an ext-publishing fake.
+    // q: opencode flavor, configured but never probed — static fallback.
+    const { factory, } = fakeFactory({
+      p: { models: ["zai/glm-4.6",], quotaSurface: "omp-ext", },
+    },);
+
+    const q: AcpProfileConfig = {
+      name: "q",
+      command: ["fake", "q",],
+      harness: "opencode",
+      tiers: { fast: { model: "anthropic/claude-sonnet-4-5", capabilities: [], }, },
+    };
+
+    initHarnessRuntime({ enabled: true, profiles: [LIVE, q,], }, factory,);
+    await getHarnessRuntime()?.registry.ensureProbed("p",);
+
+    const runtime = getHarnessRuntime();
+    expect(runtime,).not.toBeNull();
+    if (!runtime) { return; }
+
+    const rows = harnessProfileUsage(runtime,);
+    expect(rows.find((row,) => row.profile === "p")?.quotaSurface,).toBe("omp-ext",);
+    expect(rows.find((row,) => row.profile === "q")?.quotaSurface,).toBe("none",);
   });
 
   it("reports a tripped breaker as open with its cooldown", async () => {

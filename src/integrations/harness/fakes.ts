@@ -29,6 +29,8 @@ export interface FakeAdapterSpec {
   reply?: string;
   /** Reports returned by fetchUsageReports(). */
   usageReports?: HarnessUsageReport[] | null;
+  /** The quota surface the fake adapter declares (default "none"). */
+  quotaSurface?: HarnessQuotaSurface;
 }
 
 /** Calls made to one fake adapter (asserted by tests). */
@@ -79,6 +81,7 @@ export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapte
       return Promise.resolve();
     },
     fetchUsageReports: () => Promise.resolve(spec.usageReports ?? null,),
+    quotaSurface: spec.quotaSurface ?? "none",
     pendingPermission: () => null,
     respondPermission: (outcome,) => {
       log.permissions.push(outcome,);

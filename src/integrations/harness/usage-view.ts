@@ -12,6 +12,8 @@
  * read-only: the ledger snapshot never creates entries and the breaker is
  * only asked whether it currently blocks, never told anything.
  */
+import { type HarnessQuotaSurface, } from "./adapter-types";
+import { DEFAULT_HARNESS_FLAVOR, FLAVOR_QUOTA_SURFACES, } from "./flavor-factories";
 import type { HarnessRuntime, } from "./runtime";
 
 /** One profile's usage windows and breaker state. */
@@ -24,6 +26,13 @@ export interface HarnessProfileUsage {
   tokensInDay: number;
   /** Last reported quota reset (epoch ms), or null. */
   quotaResetAt: number | null;
+  /**
+   * The profile's provider-quota wire surface: a live connection's own
+   * declaration when one exists, otherwise the flavor's static surface.
+   * "none" means the config limits are the only quota bound (ACP v1 has no
+   * requestable quota method — see HARNESS_QUOTA_SURFACES).
+   */
+  quotaSurface: HarnessQuotaSurface;
   /** True while the profile's breaker blocks dispatches. */
   breakerOpen: boolean;
   /** Remaining breaker cooldown in ms (0 when the profile is not blocked). */
@@ -50,11 +59,14 @@ export function harnessProfileUsage(runtime: HarnessRuntime,): HarnessProfileUsa
   const rows: HarnessProfileUsage[] = [];
   for (const name of names) {
     const row = snapshot.get(name,);
+    const cfg = runtime.acp.profiles.find((p,) => p.name === name);
+    const flavor = cfg?.harness ?? DEFAULT_HARNESS_FLAVOR;
     rows.push({
       profile: name,
       dispatchesInWindow: row?.dispatchesInWindow ?? 0,
       tokensInDay: row?.tokensInDay ?? 0,
       quotaResetAt: row?.quotaResetAt ?? null,
+      quotaSurface: runtime.registry.connection(name,)?.quotaSurface ?? FLAVOR_QUOTA_SURFACES[flavor],
       breakerOpen: !runtime.breaker.allow(name,),
       breakerCooldownRemainingMs: runtime.breaker.cooldownRemainingMs(name,),
       breakerTrips: runtime.breaker.tripCount(name,),
