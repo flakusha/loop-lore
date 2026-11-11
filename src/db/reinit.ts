@@ -7,6 +7,7 @@ import { existsSync, } from "node:fs";
 import path from "node:path";
 import { DATA_DIR, } from "../config/constants";
 import { createLogger, getLogger, } from "../logger";
+import { seedHarnessModelCapabilities, } from "../seeding";
 import { createSqliteDialect, getDatabase, } from "./index";
 import { runMigrations, } from "./migrate";
 import { archiveFile, } from "./reinit-archive";
@@ -49,6 +50,7 @@ async function reinit(): Promise<void> {
   const db = new Kysely<DB>({ dialect, },);
   await runMigrations(db,);
   await seedDefaultActors(db,);
+  await seedHarnessModelCapabilities(db,);
   await db.destroy();
   log.info("Database reinitialized successfully",);
 }
