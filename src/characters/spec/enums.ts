@@ -76,6 +76,7 @@ export type StorageFormat = (typeof StorageFormat)[keyof typeof StorageFormat];
 export const ImportFormat = {
   Ccv2: "ccv2",
   Ccv3: "ccv3",
+  Agnai: "agnai",
   CharacterAi: "character-ai",
   JsonFlat: "json-flat",
   Yaml: "yaml",

@@ -55,6 +55,20 @@ describe("actorHeaderSection", () => {
     expect(content,).toContain("Scenario: Aboard the Zephyr.",);
   });
 
+  test("skips fields that only repeat the description", async () => {
+    const out = await actorHeaderSection.build(
+      ctx({
+        display_name: "Lyra",
+        description: "A sky pirate.",
+        personality: "A sky pirate.",
+        appearance: "A sky pirate.",
+      },),
+    );
+
+    const content = out[0]?.content as string;
+    expect(content.match(/A sky pirate\./g,),).toHaveLength(1,);
+  });
+
   test("partial card emits only the present parts", async () => {
     const out = await actorHeaderSection.build(ctx({ display_name: "Lyra", },),);
     expect(out,).toEqual([{ role: "system", content: "You are Lyra.", },],);

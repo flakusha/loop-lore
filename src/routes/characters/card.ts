@@ -67,7 +67,10 @@ export function cardRoutes(opts: HandlerOpts, prefix = "/api",) {
             creator: actor.creator ?? "",
             character_version: actor.character_version ?? "",
             tags,
-            extensions: {},
+            // The card's own extensions blob (an imported card has no column
+            // for it) lives in `settings` - restore it so the shared card view
+            // shows what was imported.
+            extensions: (settings.extensions as Record<string, unknown>) ?? {},
           },
         };
 

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { cardExtensions, cardTags, } from "../../characters/card-settings";
 import { exportToCcV3Json, } from "../../characters/exporters/ccv3";
 import { exportActorLorebooks, } from "../../characters/exporters/lorebook";
 import { exportToPng, } from "../../characters/exporters/png";
@@ -37,6 +38,7 @@ export async function exportCharactersToZip(ctx: ExportContext,): Promise<void> 
       "creator_notes",
       "character_version",
       "alternate_greetings",
+      "settings",
     ],)
     .where("actor_type", "=", "character",)
     .where("user_id", "=", ctx.userId,)
@@ -78,6 +80,8 @@ export async function exportCharactersToZip(ctx: ExportContext,): Promise<void> 
       creator: char.creator ?? undefined,
       creator_notes: char.creator_notes ?? undefined,
       alternate_greetings: char.alternate_greetings ? jsonParseOr(char.alternate_greetings, [],) : undefined,
+      tags: cardTags(char.settings,),
+      extensions: cardExtensions(char.settings,),
       lorebook: lorebooks.get(char.id,),
     };
 

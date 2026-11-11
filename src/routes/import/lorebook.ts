@@ -9,6 +9,16 @@ import { indexActorLoreSearchTokens, } from "../../search";
 import { safeJsonStringify, uid, } from "../../utils";
 
 /**
+ * Serialize a list value for storage (empty list when unset or unserializable).
+ * @param value
+ * @returns string
+ */
+function jsonList(value: unknown,): string {
+  const result = safeJsonStringify(value ?? [],);
+  return result.ok ? result.value : "[]";
+}
+
+/**
  * Import lorebook entries for a character.
  * Maps LorebookData from parsed character card to actor_lore_entries table.
  * @param database
@@ -35,10 +45,7 @@ export async function importLorebook(
           actor_id: actorId,
           name: entry.name || null,
           content: entry.content,
-          keys: (() => {
-            const r = safeJsonStringify(entry.keys,);
-            return r.ok ? r.value : "[]";
-          })(),
+          keys: jsonList(entry.keys,),
           secondary_keys: "[]",
           selective: entry.selective ? 1 : 0,
           case_sensitive: entry.case_sensitive ? 1 : 0,
@@ -49,6 +56,9 @@ export async function importLorebook(
           priority: entry.priority,
           comment: entry.comment ?? null,
           sort_order: entry.id ?? imported,
+          key_type: entry.key_type ?? (entry.use_regex ? "regex" : "keyword"),
+          key_groups: jsonList(entry.key_groups,),
+          scan_depth: entry.scan_depth ?? null,
         },)
         .execute();
 

@@ -3,6 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import { createAsset, detectAssetType, linkAsset, mimeFromExtension, } from "../../assets/service";
+import { cardSettings, } from "../../characters/card-settings";
 import { AssetImportError, CharacterValidationError, } from "../../characters/errors";
 import { validateCharacter, } from "../../characters/parser";
 import { AssetLinkEntity, } from "../../db/enums";
@@ -68,7 +69,7 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
       data_source_format: opts.sourceFormat ?? format,
       data_raw: opts.rawSource ?? null,
       alternate_greetings: alternateGreetings,
-      settings: "{}",
+      settings: cardSettings(character,),
       row_version: 0,
     },)
     .execute();

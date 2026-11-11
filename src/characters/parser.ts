@@ -13,18 +13,17 @@
 import { load as yamlLoad, } from "js-yaml";
 import { jsonParseOr, } from "../utils";
 import { safeFromString, } from "../utils/safe-buffer";
-import { extractCharx, } from "./charx";
+import { isAgnaiNative, normalizeAgnai, } from "./normalizers/agnai";
 import { normalizeCcV2, } from "./normalizers/ccv2";
 import { normalizeCcV3, } from "./normalizers/ccv3";
 import { normalizeCharacterAI, } from "./normalizers/character-ai";
 import { normalizeJsonFlat, } from "./normalizers/json-flat";
 import { normalizeToml, } from "./normalizers/toml";
 import { normalizeYaml, } from "./normalizers/yaml";
-import { extractCharacterDataFromPng, } from "./steganography";
+import { parseCharxCard, parsePngCard, } from "./parse-binary";
 
 import type {
   CanonicalCharacter,
-  CharacterFormat,
   ParseError,
   ParseResult,
 } from "./spec";
@@ -93,38 +92,6 @@ export async function parseCharacterCard(input: Buffer | string, _filename?: str
   throw error;
 }
 
-/**
- * @param data
- * @param warnings
- * @returns void
- */
-function parsePngCard(data: Buffer, warnings: string[],): ParseResult | null {
-  const result = extractCharacterDataFromPng(data,);
-  if (!result) { return null; }
-  const format: CharacterFormat = result.spec === "chara_card_v3" ? "png-v3" : "png-v2";
-  const character = format === "png-v3" ? normalizeCcV3(result.data,) : normalizeCcV2(result.data,);
-  warnings.push(`PNG ${format === "png-v3" ? "V3" : "V2"} card detected`,);
-  return { character, format, warnings, };
-}
-
-/**
- * @param data
- * @param warnings
- * @returns parsed card, or null when the buffer is not a CHARX bundle
- */
-async function parseCharxCard(data: Buffer, warnings: string[],): Promise<ParseResult | null> {
-  try {
-    const charxResult = await extractCharx(data,);
-    const character = normalizeCcV3(charxResult.card,);
-    character.assets = charxResult.assets;
-    warnings.push(`CHARX bundle with ${charxResult.assets.length} assets`,);
-    return { character, format: "charx", warnings, };
-  } catch (error) {
-    warnings.push(`CHARX extraction failed: ${error instanceof Error ? error.message : "unknown"}`,);
-    return null;
-  }
-}
-
 function tryParseJson(text: string,): ParseResult | null {
   const parsed = jsonParseOr(text, null,);
   if (!parsed || typeof parsed !== "object") { return null; }
@@ -140,6 +107,14 @@ function tryParseJson(text: string,): ParseResult | null {
   if (obj.spec === "chara_card_v2") {
     warnings.push("CCv2 format detected",);
     return { character: normalizeCcV2(obj,), format: "ccv2", warnings, };
+  }
+
+  // Agnai native cards carry a persona bag and camelCase fields and have no
+  // `spec`, so they used to be read as Character.AI cards - which dropped the
+  // persona, sampleChat, scenario and extensions.
+  if (isAgnaiNative(obj,)) {
+    warnings.push("Agnai native format detected",);
+    return { character: normalizeAgnai(obj,), format: "agnai", warnings, };
   }
 
   if (obj.definition || obj.greeting) {

@@ -3,6 +3,7 @@
 
 import { Elysia, t, } from "elysia";
 import { readFileSync, } from "node:fs";
+import { cardExtensions, cardTags, } from "../../characters/card-settings";
 import { createCharx, } from "../../characters/charx";
 import { exportToCcV2Json, } from "../../characters/exporters/ccv2";
 import { exportToCcV3, exportToCcV3Json, } from "../../characters/exporters/ccv3";
@@ -86,6 +87,8 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
         alternate_greetings: actor.alternate_greetings
           ? jsonParseOr(actor.alternate_greetings, [],)
           : undefined,
+        tags: cardTags(actor.settings,),
+        extensions: cardExtensions(actor.settings,),
         lorebook,
       };
 

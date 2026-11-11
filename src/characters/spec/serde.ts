@@ -11,6 +11,7 @@ import type { ImportFormat, ReviewRole, ReviewState, } from "./enums";
 export type CharacterFormat =
   | "ccv2"
   | "ccv3"
+  | "agnai"
   | "character-ai"
   | "json-flat"
   | "yaml"
