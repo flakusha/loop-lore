@@ -3,6 +3,7 @@
 
 # TASK: Harness inflight job handles
 
+// hint: Structural and logic conflict. Both design and behavior differ.
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
