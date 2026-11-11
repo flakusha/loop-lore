@@ -640,6 +640,25 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text",),
     updated_at: col("text",),
   },)
+  .table("harness_queue_turns", {
+    id: col("text", { primaryKey: true, },),
+    batch_id: col("text", { notNull: true, },),
+    profile: col("text", { notNull: true, },),
+    prompt: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    chat_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    requested_by: col("text", { notNull: true, },),
+    requested_role: col("text",),
+    turn_key: col("text",),
+    attempts: col("integer", { notNull: true, hasDefault: true, },),
+    result_message_id: col("text",),
+    error_code: col("text",),
+    error_message: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    started_at: col("text",),
+    finished_at: col("text",),
+  },)
   .table("immersion_decision_log", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),

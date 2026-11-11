@@ -48,6 +48,8 @@ import type {
   FantasyCategory,
   GatheringNodeType,
   GenerationStatus,
+  HarnessQueueErrorCode,
+  HarnessQueueTurnStatus,
   IntegrationTokenScope,
   InteractionCategory,
   InteractionOutcome,
@@ -6414,4 +6416,42 @@ export async function insertActorLoreSearchTokens(
     term,
     scope,
   } as any,).execute();
+}
+
+/** Insert a harness_queue_turns row. */
+export async function insertHarnessQueueTurns(
+  db: Db,
+  batch_id: string,
+  profile: string,
+  prompt: string,
+  chat_id: string,
+  actor_id: string,
+  requested_by: string,
+  opts?: {
+    id?: string;
+    status?: HarnessQueueTurnStatus;
+    requested_role?: string | null;
+    turn_key?: string | null;
+    attempts?: number;
+    result_message_id?: string | null;
+    error_code?: HarnessQueueErrorCode | null;
+    error_message?: string | null;
+    created_at?: string;
+    started_at?: string | null;
+    finished_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("harness_queue_turns",).values({
+    id,
+    batch_id,
+    profile,
+    prompt,
+    chat_id,
+    actor_id,
+    requested_by,
+    ...restOpts,
+  } as any,).execute();
+  return id;
 }
