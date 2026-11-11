@@ -28349,6 +28349,20 @@
     "title": "Alpine Component-State Testing Harness",
     "type": "TASK"
   },
+  "TASK-ALTERNATE-GREETING-PICKER-AT-CHAT-CREATION": {
+    "hash": "ba938f2",
+    "git_issue": "ba938f2",
+    "extid": "TASK-ALTERNATE-GREETING-PICKER-AT-CHAT-CREATION",
+    "type": "TASK",
+    "title": "Alternate greeting picker at chat creation",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-alternate-greeting-picker-at-chat-creation.md",
+    "status": "open"
+  },
   "TASK-AMBIENT-SOUND-SYSTEM": {
     "epic": "epic-audio-video-sound",
     "extid": "TASK-AMBIENT-SOUND-SYSTEM",
@@ -44869,7 +44883,7 @@
     "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-inflight-job-handles.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-HARNESS-IRC-TTSR": {
     "hash": "1bdc949",
@@ -50236,6 +50250,20 @@
     "source": ".plan/tickets/TASK-message-carriage-translator-ticket-closeout.md",
     "status": "Not Started",
     "git_issue": "578b57f"
+  },
+  "TASK-MESSAGE-MULTI-SELECT-BULK-ACTIONS": {
+    "hash": "b1251df",
+    "git_issue": "b1251df",
+    "extid": "TASK-MESSAGE-MULTI-SELECT-BULK-ACTIONS",
+    "type": "TASK",
+    "title": "Message multi-select bulk actions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-multi-select-bulk-actions.md",
+    "status": "open"
   },
   "TASK-MESSAGE-PERSISTENCE-MAPPING": {
     "hash": "caaa1f2",
@@ -57002,6 +57030,20 @@
     "tags": [],
     "title": "Regen UI re-roll and regenerate-all controls",
     "type": "TASK"
+  },
+  "TASK-REGEN-WITH-CUSTOM-INSTRUCTION-FREE-TEXT-ACTION": {
+    "hash": "20e2250",
+    "git_issue": "20e2250",
+    "extid": "TASK-REGEN-WITH-CUSTOM-INSTRUCTION-FREE-TEXT-ACTION",
+    "type": "TASK",
+    "title": "Regen with custom instruction free-text action",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-regen-with-custom-instruction-free-text-action.md",
+    "status": "open"
   },
   "TASK-REGEX-EXTRACTION-PIPELINE-IMPLEMENTATION": {
     "epic": "(none — proposed epic never materialized)",

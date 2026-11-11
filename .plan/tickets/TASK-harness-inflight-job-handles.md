@@ -3,7 +3,7 @@
 
 # TASK: Harness inflight job handles
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-harness-integration
@@ -22,3 +22,5 @@ Option B first slice: surface harness job state as chat messages. Scope: add a j
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-11 registry-driven close: git issue 2b1e55d (registry tip: 7a00eb102 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-HARNESS-INFLIGHT-JOB-HANDLE)
