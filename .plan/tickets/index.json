@@ -3054,6 +3054,20 @@
     "title": "config schema emitter missing top-level sections",
     "type": "BUG"
   },
+  "BUG-CONFIG-SCHEMA-GENERATORS-EXIT-1-SILENTLY": {
+    "hash": "f85d344",
+    "git_issue": "f85d344",
+    "extid": "BUG-CONFIG-SCHEMA-GENERATORS-EXIT-1-SILENTLY",
+    "type": "BUG",
+    "title": "config schema generators exit 1 silently",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-contract-and-config-tooling",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-config-schema-generators-exit-1-silently.md",
+    "status": "open"
+  },
   "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY": {
     "epic": "epic-nsfw-integration-gaps",
     "extid": "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY",
@@ -13649,6 +13663,26 @@
     "title": "Continuous Improvement — Lint, TypeCheck, Build, Coverage",
     "type": "EPIC"
   },
+  "EPIC-CONTRACT-AND-CONFIG-TOOLING": {
+    "hash": "pending",
+    "extid": "EPIC-CONTRACT-AND-CONFIG-TOOLING",
+    "type": "EPIC",
+    "title": "Contract and config tooling gaps",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "tooling",
+      "openapi",
+      "contract",
+      "config",
+      "schema",
+      "generator"
+    ],
+    "source": ".plan/tickets/epic-contract-and-config-tooling.md",
+    "status": "open"
+  },
   "EPIC-CONVERSATION-BRANCHING": {
     "epic": "",
     "extid": "EPIC-CONVERSATION-BRANCHING",
@@ -16603,6 +16637,26 @@
     "status": "Not Started",
     "git_issue": "b805fb9",
     "project": ""
+  },
+  "EPIC-MULTI-AGENT-ORCHESTRATION": {
+    "hash": "pending",
+    "extid": "EPIC-MULTI-AGENT-ORCHESTRATION",
+    "type": "EPIC",
+    "title": "Multi-agent orchestration (turn queue)",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "orchestration",
+      "multi-agent",
+      "turn-queue",
+      "harness",
+      "subagents",
+      "parallelism"
+    ],
+    "source": ".plan/tickets/epic-multi-agent-orchestration.md",
+    "status": "in_progress"
   },
   "EPIC-MULTI-INSTANCE-RECONCILIATION": {
     "epic": "",
@@ -52863,6 +52917,20 @@
     "tags": [],
     "title": "OpenAPI-Driven API Reference",
     "type": "TASK"
+  },
+  "TASK-OPENAPI-SPEC-OMITS-HARNESS-ROUTES-PLUGIN": {
+    "hash": "9468167",
+    "git_issue": "9468167",
+    "extid": "TASK-OPENAPI-SPEC-OMITS-HARNESS-ROUTES-PLUGIN",
+    "type": "TASK",
+    "title": "OpenAPI spec omits harness routes plugin",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-contract-and-config-tooling",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-openapi-spec-omits-harness-routes-plugin.md",
+    "status": "open"
   },
   "TASK-OPENAPI-SPECIFICATION": {
     "epic": "epic-api-governance",
