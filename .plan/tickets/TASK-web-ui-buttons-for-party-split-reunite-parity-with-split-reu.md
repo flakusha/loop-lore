@@ -3,7 +3,7 @@
 
 # TASK: Web UI buttons for party split/reunite (parity with /split /reunite commands)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -29,3 +29,5 @@ Precedent pattern to follow: the branch-merge wizard modal src/components/chat/b
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-11 registry-driven close: git issue 4e332d2 (registry tip: 3147154c6 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WEB-UI-BUTTONS-FOR-PARTY-SP)

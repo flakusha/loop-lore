@@ -3,7 +3,7 @@
 
 # TASK: Location Travel Connected Fast And Free Jump
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-world-travel-time
@@ -21,3 +21,5 @@ Existing location model lists locations but lacks a first-class location graph. 
 - For `"free-jump"`, cost honored (`TASK-party-free-jump-location-graph-edge`).
 - Discovery gating (`TASK-location-graph-editor-and-discovery-gating`).
 - Tests: adjacency succeeds; fast-travel on unknown edge rejected; free-jump cost deducted.
+
+**Resolved:** 2026-11-11 registry-driven close: git issue c536b59 (registry tip: f24edff13 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-LOCATION-TRAVEL-CONNECTED-F)
