@@ -18,12 +18,13 @@ import {
   type HarnessTierId,
 } from "../schema/harness";
 
-/** Defaults: harness integration is opt-in and empty. */
+/** Defaults: harness integration is opt-in and empty; the repo-access tier is off. */
 export const HARNESS_DEFAULTS: HarnessConfig = {
   acp: {
     enabled: false,
     profiles: [],
   },
+  repoAccess: { enabled: false, },
 };
 
 /** Default breaker threshold when a profile omits `health`. */
@@ -35,6 +36,7 @@ export const HARNESS_DEFAULT_COOLDOWN_MS = 300_000;
 /** */
 export class HarnessSection {
   acp = structuredClone(HARNESS_DEFAULTS.acp,);
+  repoAccess = structuredClone(HARNESS_DEFAULTS.repoAccess,);
 
   /**
    * @param overrides
@@ -275,6 +277,19 @@ export const harnessMeta = {
               },
             },
           },
+        },
+      },
+    },
+    repoAccess: {
+      type: "object",
+      description:
+        "RSI repo-root access tier (DANGEROUS, default off): lets the server-resolved internal-service principal execute repo commands and touch repo-root paths (src/, .plan/, migrations, workflows). Every decision is audited to tool_call_audit; the gate fails closed",
+      properties: {
+        enabled: {
+          type: "boolean",
+          default: false,
+          description:
+            "Master switch for the repo-access tier. False (default) denies every repo-access execution regardless of principal or grants; only the operator may enable it",
         },
       },
     },

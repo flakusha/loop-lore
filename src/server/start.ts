@@ -36,6 +36,14 @@ import { createNonApiHandler, } from "./static-files";
 import { createTerminalGateway, type TerminalSocketData, } from "./terminal-ws";
 import { isTerminalUpgradeRequest, } from "./terminal-ws-protocol";
 
+import {
+  applyStoredRepoAccessSettings,
+  initRepoAccessSettings,
+} from "../integrations/harness/repo-access";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Bootstrap the Loop Lore HTTP/HTTPS server: init subsystems, seed the DB,
  * pre-compress static assets, load plugins, and wire graceful shutdown.
@@ -67,6 +75,11 @@ export async function start() {
       principalScope: "read",
     },
   );
+
+  // RSI repo-access tier: seeded from the file layer only (absent = off);
+  // the operator's stored admin override re-applies below, after the DB
+  // opens. Disabled by default; never auto-enabled.
+  initRepoAccessSettings(config.harness?.repoAccess,);
 
   initAssistantQuota(config.assistant,);
   // Seed the hot-apply snapshot and register live consumers so config edits
@@ -240,6 +253,8 @@ export async function start() {
   await applyStoredHarnessSettings(database,);
   // Same for the inbound MCP/ACP studio settings (server switches + principal).
   await applyStoredInboundSettings(database,);
+  // Repo-access tier override (default-deny when no stored row exists).
+  await applyStoredRepoAccessSettings(database,);
 
   // Materialize operator-entered provider instances (system_config) into the
   // registry so a wizard-created provider exists before `ready = true` and

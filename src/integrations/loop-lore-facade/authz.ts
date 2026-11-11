@@ -55,6 +55,27 @@ export function authorizeFacadeOp(ctx: FacadeContext, op: FacadeOp,): FacadeResu
     };
   }
 
+  // RSI repo-access tier (epic-harness-rsi-repo-access): kind admission is
+  // decided HERE, fail-closed, before any handler runs. Only the
+  // server-resolved internal-service principal is ever admitted; users,
+  // user-worktrees, and integration-token external agents are refused even
+  // when a token's scope ladder would satisfy the op's nominal scope (the
+  // repo-root tier is not part of the token tier ladder — no credential
+  // mints it). The full gate (operator master switch + grants + audit)
+  // still runs inside the op handler; this seam keeps the kind refusal
+  // independent of any DB state.
+  if (op.domain === "repo-access" && ctx.principal.kind !== "internal-service") {
+    return {
+      ok: false,
+      status: 403,
+      json: {
+        error: "forbidden",
+        message:
+          `facade op "${op.name}" requires the internal-service principal (repo-access tier); kind "${ctx.principal.kind}" is never admitted`,
+      },
+    };
+  }
+
   if (ctx.principal.kind === "external-agent" && !tokenSatisfiesTier(ctx.principal.credentialScope, op.scope,)) {
     return {
       ok: false,

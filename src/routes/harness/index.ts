@@ -36,6 +36,10 @@ import {
 } from "../../integrations/harness/admin-settings";
 import { probeHarnessCommand, } from "../../integrations/harness/availability";
 import { HARNESS_PROVIDER_TOS, providerTosInfo, } from "../../integrations/harness/provider-tos";
+import {
+  getRepoAccessSettings,
+  saveRepoAccessSettings,
+} from "../../integrations/harness/repo-access";
 import { getChildLogger, } from "../../logger";
 import { requirePermission, } from "../../middleware/permissions";
 import { asError, } from "../../utils";
@@ -206,12 +210,20 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
           const body = ctx.body as {
             enabled?: boolean;
             acknowledgements?: Record<string, boolean>;
+            repoAccessEnabled?: boolean;
           };
 
           try {
             await saveHarnessAdminSettings(database, {
               enabled: body.enabled,
               acknowledgements: body.acknowledgements,
+            },);
+
+            // RSI repo-access tier (DANGEROUS, default off): persisted
+            // through its own system_config row + override store. Only this
+            // admin-gated endpoint flips it — nothing auto-enables it.
+            await saveRepoAccessSettings(database, {
+              enabled: body.repoAccessEnabled,
             },);
 
             return jsonResponse(await settingsWithAvailability(false,),);
@@ -229,6 +241,7 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
           body: t.Object({
             enabled: t.Optional(t.Boolean({},),),
             acknowledgements: t.Optional(t.Record(t.String(), t.Boolean(),),),
+            repoAccessEnabled: t.Optional(t.Boolean({},),),
           },),
           response: { 200: HarnessSettingsResponse, ...denied, },
         },),);
@@ -311,5 +324,11 @@ async function settingsWithAvailability(refresh: boolean,): Promise<HarnessSetti
     profiles.push({ ...decorateProfile(p,), availability: await availabilityForProfile(p.name, refresh,), },);
   }
 
-  return { enabled: view.enabled, profiles, };
+  return {
+    enabled: view.enabled,
+    profiles,
+    // RSI repo-access tier switch — a separate store from the ACP master
+    // switch (repo-access/settings.ts), same override-wins layering.
+    repoAccessEnabled: getRepoAccessSettings().enabled,
+  };
 }

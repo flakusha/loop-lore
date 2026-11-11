@@ -206,6 +206,11 @@ export const HarnessProfileSettingsSchema = Type.Object({
 export const HarnessSettingsResponse = Type.Object({
   enabled: Type.Boolean(),
   profiles: Type.Array(HarnessProfileSettingsSchema,),
+  /**
+   * RSI repo-access tier master switch (DANGEROUS, default off). Optional in
+   * the schema for back-compat with cached clients; the server always sets it.
+   */
+  repoAccessEnabled: Type.Optional(Type.Boolean(),),
 },);
 
 /** Static view of {@link HarnessSettingsResponse} for typed row shaping. */

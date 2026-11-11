@@ -58,7 +58,7 @@ export type FacadeResult =
 export interface FacadeOp {
   /** Namespaced name (`chat.send`, `generation.generate`, ...). */
   readonly name: string;
-  readonly domain: "chat" | "generation";
+  readonly domain: "chat" | "generation" | "repo-access";
   /** Short summary — the future `tools/list` + docs-table single source. */
   readonly summary: string;
   readonly description: string;
@@ -77,7 +77,7 @@ export interface FacadeOp {
 /** Manifest entry — schemas stay internal; descriptors feed discovery/docs. */
 export interface FacadeOpDescriptor {
   readonly name: string;
-  readonly domain: "chat" | "generation";
+  readonly domain: "chat" | "generation" | "repo-access";
   readonly summary: string;
   readonly description: string;
   readonly scope: FacadeScope;

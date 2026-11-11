@@ -5,8 +5,8 @@
 
 **Overview:** (see sections below)
 
-**Status:** Not Started
-**Status Note:** Promoted from evaluated research `.tmp/research/HarnessRSI-RepoAccess.md` + `.tmp/research/RSI-RepoAccess-EVALUATION.md` — amended per RSI-RepoAccess-EVALUATION Part 4; provisional defaults marked inline.
+**Status:** In Progress (first slice landed on branch `rsi-repo-access`)
+**Status Note:** Promoted from evaluated research `.tmp/research/HarnessRSI-RepoAccess.md` + `.tmp/research/RSI-RepoAccess-EVALUATION.md` — amended per RSI-RepoAccess-EVALUATION Part 4; provisional defaults marked inline. First slice delivered (2026-11-11, `rsi-repo-access` worktree): typed capability vocabulary + principal-aware scope resolver/guard + fail-closed execution gate + escalation audit + operator master switch (file + admin override, default OFF) + facade `repo-access` domain ops (`repo.context`, `repo.check`). Still open: grant persistence on `chat_branches` (migration, absorbs TASK-harness-delegated-permission-grants), the admin approval-queue surface for escalations, the internal-service credential bootstrap, and the project-space root resolver (blocked below).
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -46,15 +46,15 @@ Repo-root writes go through worktree + finalize like external agents (provisiona
 
 ## Tasks
 
-- [ ] Scope resolver on shared principal kind (user-kind pass-through-until-spaces)
-- [ ] Principal-aware scope guard (server-issued principal; param-supplied principal ignored)
+- [x] Scope resolver on shared principal kind (user-kind pass-through-until-spaces) — `resolveScopeRoot` `src/integrations/harness/repo-access/principal-scope.ts` (internal-service → git toplevel with fail-closed detection, user/user-worktree → explicit-root pass-through, external-agent → realpath-verified `tree/agent-<id>/` confinement); matrix tests `principal-scope.test.ts`
+- [x] Principal-aware scope guard (server-issued principal; param-supplied principal ignored) — `assertParamsWithinPrincipalScope` takes the principal as a server-side argument and never reads it from params; AC asserted in `principal-scope.test.ts` ("a param-supplied principal is IGNORED")
 - [ ] Project-space root resolver (BLOCKED-BY epic-project-spaces-pm-integration)
-- [ ] Capability grant model (absorbs TASK-harness-delegated-permission-grants; typed constants; db:sync gates in AC)
-- [ ] Escalation audit (recorded request in tool_call_audit + admin approval queue; no auto-approve)
-- [ ] internal-service bootstrap (grants-based principal; credentials via shared seam)
-- [ ] Agent API boundary enforcement (default-deny BEFORE any principal exists; no bootstrap dependency)
-- [ ] Isolation test matrix (parallel-safe resource contract)
-- [ ] Docs + typed capability constants
+- [ ] Capability grant model (absorbs TASK-harness-delegated-permission-grants; typed constants; db:sync gates in AC) — PARTIAL: typed constants `HARNESS_REPO_CAPABILITIES` (`repo-access/capabilities.ts`) + per-kind defaults and fail-closed intersection (`repo-access/grants.ts`) + gate enforcement landed; the `chat_branches` spawn-time persistence migration is the remaining half
+- [ ] Escalation audit (recorded request in tool_call_audit + admin approval queue; no auto-approve) — PARTIAL: `requestRepoRootChange` records `escalation_attempt = 1` denials into `tool_call_audit` (migration 092 reused, no new table; `repo-access/gate.ts`) with NO auto-approve for any principal; the admin approval queue (list/approve surface) is the remaining half
+- [ ] internal-service bootstrap (grants-based principal; credentials via shared seam) — PARTIAL: the grants-based admission exists (kind gate + defaults holding all capabilities); the credential issuance through the shared auth seam is the remaining half
+- [x] Agent API boundary enforcement (default-deny BEFORE any principal exists; no bootstrap dependency) — the gate's first check is the operator master switch (unseeded store reads disabled → every execution denied with zero principal/bootstrap), and the facade `repo-access` domain is kind-refused in `authorizeFacadeOp` (`loop-lore-facade/authz.ts`) before any handler runs; the future `/api/v1/agent/*` routes inherit the seam via the gate
+- [x] Isolation test matrix (parallel-safe resource contract) — `repo-access/*.test.ts` + `loop-lore-facade/ops-repo-access.test.ts`: :memory: DB per file, mkdtemp roots via detector seam, unique principals per test; covers user ✗ repo root, external-agent ✗ own-worktree escapes/symlinks/other agents' worktrees, internal-service ✓ only when operator-enabled, escalation always denied
+- [x] Docs + typed capability constants — security-boundary module docs on every `repo-access/` module + core config schema docs (`RepoAccessConfig`), constants in `capabilities.ts`
 
 ## Non-goals
 

@@ -37,12 +37,19 @@ function acp(profiles: unknown[], enabled = true,): HarnessAcpConfig {
 
 describe("harness.acp config section", () => {
   it("defaults to disabled with no profiles", () => {
-    expect(HARNESS_DEFAULTS,).toEqual({ acp: { enabled: false, profiles: [], }, },);
+    expect(HARNESS_DEFAULTS,).toEqual({ acp: { enabled: false, profiles: [], }, repoAccess: { enabled: false, }, },);
   });
 
   it("section class applies overrides", () => {
     const section = new HarnessSection({ acp: { enabled: true, profiles: [], }, },);
     expect(section.acp.enabled,).toBe(true,);
+  });
+
+  it("repoAccess defaults to disabled even when the file omits the section", () => {
+    const section = new HarnessSection({},);
+    expect(section.repoAccess,).toEqual({ enabled: false, },);
+    const enabled = new HarnessSection({ repoAccess: { enabled: true, }, },);
+    expect(enabled.repoAccess?.enabled,).toBe(true,);
   });
 
   it("isConcreteModelId accepts provider/id and rejects aliases", () => {
