@@ -65,6 +65,17 @@ function lines(text: string,): string[] {
   return text === "" ? [] : text.split("\n",);
 }
 
+/**
+ * `git cherry` diffs every unique commit, so its cost grows with `ahead`
+ * (~1s per 500 commits; ~9s for a 7k-commit fork). Past this cap the branch
+ * is REVIEW-bound on inspection anyway — a fork this large is never
+ * auto-deleted as patch-equivalent — so the walk is skipped and `novel`
+ * reports `ahead` as an upper bound. This also bounds the no-merge-base
+ * case, where `base..branch` spans the branch's whole history. Skipping to
+ * REVIEW is the safe direction: it never auto-deletes.
+ */
+const MAX_CHERRY_AHEAD = 500;
+
 function classify(base: string, branch: string,): BranchReport {
   const name = branch;
   const merged = git(["merge-base", "--is-ancestor", name, base,],).code === 0;
@@ -72,9 +83,11 @@ function classify(base: string, branch: string,): BranchReport {
   const ahead = Number.parseInt(git(["rev-list", "--count", `${base}..${name}`,],).out, 10,) || 0;
   const behind = Number.parseInt(git(["rev-list", "--count", `${name}..${base}`,],).out, 10,) || 0;
 
-  const cherry = lines(git(["cherry", base, name,],).out,);
-  const novel = cherry.filter((l,) => l.startsWith("+",)).length;
-  const equivalent = cherry.filter((l,) => l.startsWith("-",)).length;
+  // Capped: skip the per-commit patch-id walk on large forks (see above).
+  const capped = !merged && ahead > MAX_CHERRY_AHEAD;
+  const cherry = capped ? [] : lines(git(["cherry", base, name,],).out,);
+  const novel = capped ? ahead : cherry.filter((l,) => l.startsWith("+",)).length;
+  const equivalent = capped ? 0 : cherry.filter((l,) => l.startsWith("-",)).length;
 
   let verdict: BranchReport["verdict"] = "REVIEW";
   if (merged) {
