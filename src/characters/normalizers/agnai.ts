@@ -89,8 +89,9 @@ function personaText(name: string, persona: AgnaiPersona | undefined,): string {
     ([key, values,],) => `${key}: ${(values ?? []).join(", ",)}`,
   );
 
-  if (lines.length === 0) { return ""; }
-  return `Name: ${name}\n${lines.join("\n",)}`;
+  // Upstream leads with the name, so a persona bag with no attributes still
+  // yields a non-empty description - the import gate needs one.
+  return [`Name: ${name}`, ...lines,].join("\n",);
 }
 
 /**
