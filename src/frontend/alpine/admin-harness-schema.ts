@@ -293,3 +293,71 @@ export type HarnessDiscoveredModel = Static<typeof HarnessDiscoveredModelSchema>
 
 /** Static view of {@link HarnessModelsResponse}. */
 export type HarnessModelsView = Static<typeof HarnessModelsResponse>;
+
+// ── Turn queue (TASK-harness-multi-agent-turn-queue) ──────────────────
+
+/** The common fields every queue-turn state carries. */
+const HarnessQueueTurnBaseFields = {
+  id: Type.String({},),
+  batchId: Type.String({},),
+  profile: Type.String({},),
+  prompt: Type.String({},),
+  chatId: Type.String({},),
+  actorId: Type.String({},),
+  createdAt: Type.String({},),
+} as const;
+
+/**
+ * One turn of the harness queue (`GET /api/v1/harness/queue`) — a
+ * discriminated union on `status`, one shape per state, so a completed turn
+ * cannot carry an error and a failed one cannot lack one.
+ */
+export const HarnessQueuedTurnSchema = Type.Union([
+  Type.Object({
+    ...HarnessQueueTurnBaseFields,
+    status: Type.Literal("queued",),
+  },),
+  Type.Object({
+    ...HarnessQueueTurnBaseFields,
+    status: Type.Literal("running",),
+    startedAt: Type.String({},),
+  },),
+  Type.Object({
+    ...HarnessQueueTurnBaseFields,
+    status: Type.Literal("completed",),
+    startedAt: Type.String({},),
+    finishedAt: Type.String({},),
+    /** The assistant row the turn landed in. */
+    resultMessageId: Type.String({},),
+  },),
+  Type.Object({
+    ...HarnessQueueTurnBaseFields,
+    status: Type.Literal("failed",),
+    startedAt: Type.Union([Type.String({},), Type.Null(),],),
+    finishedAt: Type.String({},),
+    /** The dispatch refusal vocabulary (`harness_disabled` …) + `interrupted`. */
+    errorCode: Type.String({},),
+    errorMessage: Type.String({},),
+  },),
+  Type.Object({
+    ...HarnessQueueTurnBaseFields,
+    status: Type.Literal("cancelled",),
+    finishedAt: Type.Union([Type.String({},), Type.Null(),],),
+  },),
+],);
+
+/** `GET /api/v1/harness/queue` body (newest first). */
+export const HarnessQueueResponse = Type.Object({
+  items: Type.Array(HarnessQueuedTurnSchema,),
+},);
+
+/** `POST /api/v1/harness/queue` body — the batch was accepted and queued. */
+export const HarnessQueueEnqueueResponse = Type.Object({
+  batchId: Type.String({},),
+  turnIds: Type.Array(Type.String({},),),
+},);
+
+/** `POST /api/v1/harness/queue/turns/:id/cancel` body. */
+export const HarnessQueueCancelResponse = Type.Object({
+  ok: Type.Boolean({},),
+},);

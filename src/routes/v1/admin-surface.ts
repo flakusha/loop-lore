@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * v1 adminSurface barrel (split out: one Elysia chain per file keeps TS2589 away).
  */
@@ -20,6 +19,7 @@ import { harnessLedgerRoutes, } from "../harness/ledger";
 import { harnessMetricsRoutes, } from "../harness/metrics";
 import { harnessModelRoutes, } from "../harness/models";
 import { harnessPermissionRoutes, } from "../harness/permissions";
+import { harnessQueueRoutes, } from "../harness/queue";
 import { harnessStreamRoutes, } from "../harness/stream";
 import { harnessUsageRoutes, } from "../harness/usage";
 import { importRoutes, } from "../import";
@@ -71,6 +71,11 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
     // Admin-gated tail of the exec log and the permission queue; anchors at
     // connect, 503 when the integration is disabled.
     .use(harnessStreamRoutes(prefix,),)
+    // ── Harness turn queue (TASK-harness-multi-agent-turn-queue) ──────
+    // Enqueue/list/cancel over the boot-composed queue singleton; 503 when
+    // the integration is disabled, so the surface is inert rather than
+    // auto-anything.
+    .use(harnessQueueRoutes(prefix,),)
     // ── Import / export ──────────────────────────────────────
     .use(importRoutes(handleOpts, prefix,),)
     .use(exportRoutes({ database, }, prefix,),)

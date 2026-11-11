@@ -21,7 +21,6 @@ import { initializeProviders, } from "../generation";
 import { initDefaultHooks, } from "../generation/hooks";
 import { bindSharedQuotaEngine, } from "../generation/quota-engine";
 import { applyStoredHarnessSettings, initHarnessAdminSettings, } from "../integrations/harness/admin-settings";
-import { initHarnessRuntime, } from "../integrations/harness/runtime";
 import { applyStoredInboundSettings, initInboundSettings, } from "../integrations/inbound/settings";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
@@ -41,6 +40,13 @@ import {
   initRepoAccessSettings,
 } from "../integrations/harness/repo-access";
 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+import { initHarnessTurnQueue, } from "../integrations/harness/queue";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
@@ -255,6 +261,18 @@ export async function start() {
   await applyStoredInboundSettings(database,);
   // Repo-access tier override (default-deny when no stored row exists).
   await applyStoredRepoAccessSettings(database,);
+
+  // ── Harness turn queue (TASK-harness-multi-agent-turn-queue) ────────
+  // Composed only when the ACP integration is enabled (the same gate as
+  // initHarnessRuntime): a disabled integration leaves the singleton unset
+  // and the admin surface reads 503 — inert, never auto-anything. init runs
+  // crash recovery first (a turn found `running` died with the previous
+  // process → failed `interrupted`), then pumps, so `queued` rows left by a
+  // previous process resume here; the dispatch gate re-judges every turn at
+  // run time under the enqueueing principal.
+  if (harnessAcp.enabled) {
+    initHarnessTurnQueue({ database, runtime: getHarnessRuntime, },);
+  }
 
   // Materialize operator-entered provider instances (system_config) into the
   // registry so a wizard-created provider exists before `ready = true` and
