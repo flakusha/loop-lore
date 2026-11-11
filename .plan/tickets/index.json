@@ -45242,7 +45242,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-telemetry-metrics-health-signal-usage-ledger-endpoin.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HARNESS-TOOL-SANDBOX": {
     "hash": "13bfecb",
@@ -53408,6 +53408,27 @@
     "title": "Per-command Valves-like options schema",
     "type": "TASK"
   },
+  "TASK-PER-LOCAL-BOX-SERIAL-VIDEO-DISPATCH-GATE": {
+    "hash": "78a333c",
+    "git_issue": "78a333c",
+    "extid": "TASK-PER-LOCAL-BOX-SERIAL-VIDEO-DISPATCH-GATE",
+    "type": "TASK",
+    "title": "Per-local-box serial video dispatch gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "video",
+      "queue",
+      "concurrency",
+      "comfyui",
+      "gpu",
+      "generation"
+    ],
+    "source": ".plan/tickets/TASK-per-local-box-serial-video-dispatch-gate.md",
+    "status": "done"
+  },
   "TASK-PER-MODEL-PER-PROVIDER-COST-ATTRIBUTION-FOR-LLM-EXECUTION-ST": {
     "epic": "epic-analytics-observability",
     "extid": "TASK-PER-MODEL-PER-PROVIDER-COST-ATTRIBUTION-FOR-LLM-EXECUTION-ST",
@@ -54340,6 +54361,26 @@
     "tags": [],
     "title": "Portable story bundle export import",
     "type": "TASK"
+  },
+  "TASK-PRECISE-PER-MODEL-LLAMA-SWAP-UNLOAD": {
+    "hash": "7b050eb",
+    "git_issue": "7b050eb",
+    "extid": "TASK-PRECISE-PER-MODEL-LLAMA-SWAP-UNLOAD",
+    "type": "TASK",
+    "title": "Precise per-model llama-swap unload",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-llama-swap",
+    "project": "",
+    "tags": [
+      "llama-swap",
+      "models",
+      "lifecycle",
+      "vram",
+      "unload"
+    ],
+    "source": ".plan/tickets/TASK-precise-per-model-llama-swap-unload.md",
+    "status": "done"
   },
   "TASK-PRECOMPILED-HOT-BINARIES": {
     "epic": "epic-precompiled-hot-binaries",
