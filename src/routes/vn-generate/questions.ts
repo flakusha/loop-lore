@@ -165,12 +165,16 @@ export function questionsRoutes(opts: VnGenerateRouteOpts,) {
 
             // Persist every generated question so the FE's
             // GET /api/chats/:id/vn-questions?sceneIndex=N can list it. Option
-            // ids are assigned here — the LLM does not mint stable ids.
+            // ids are assigned here — the LLM does not mint stable ids, and
+            // provenance is authoritative here too: a generated option is
+            // stamped "generated" so the LLM cannot forge the player-typed
+            // "custom" marker (set only by the answer service).
             const questions = result.questions ?? [];
             for (const question of questions) {
               const options = (question.options ?? []).map((option,) => ({
                 ...option,
                 id: uid(),
+                provenance: "generated" as const,
               }));
 
               await database
