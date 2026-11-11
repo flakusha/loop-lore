@@ -63,15 +63,7 @@ function rowVersion(v: Version,): string {
     ? `${v.major}.${v.minor}.${v.patch}-${v.prerelease}`
     : `${v.major}.${v.minor}.${v.patch}`;
 }
-/**
- * @param v - parsed `Version` object
- * @returns canonical bare version string (`x.y.z` or `x.y.z-prerelease`).
- */
-function rowVersion(v: Version,): string {
-  return v.prerelease
-    ? `${v.major}.${v.minor}.${v.patch}-${v.prerelease}`
-    : `${v.major}.${v.minor}.${v.patch}`;
-}
+
 /**
  * Numeric comparator for bare `x.y.z[-pre]` tag names — the in-process
  * equivalent of the `sort -t. -k1 -k2 -k3 -n | tail -1` this replaced.
@@ -86,6 +78,7 @@ function compareNumericTag(a: string, b: string,): number {
   const [bp = 0, bm = 0, bx = 0,] = parts(b,);
   return (ap - bp) || (am - bm) || (ax - bx) || a.localeCompare(b,);
 }
+
 /**
  * @param major - optional major version filter (`undefined` returns latest overall)
  * @returns latest matching tag string, or `null` if none found / `git` failed.
@@ -161,6 +154,7 @@ function determineBump(commits: string[],): "major" | "minor" | "patch" | null {
 function getCurrentBranch(): string {
   return runGit(["branch", "--show-current",],);
 }
+
 /**
  * @returns the version pinned in `package.json`, or "0.0.0" if missing/unparseable.
  *
@@ -344,6 +338,7 @@ function parseCliArgs(): CliArgs {
 
   return { command, type: args.type, tag: args.tag, };
 }
+
 function main(): void {
   const args = parseCliArgs();
   switch (args.command) {
@@ -372,4 +367,6 @@ await log()?.flush().catch(() => undefined);
  * Module logger accessor — null if no logger is initialized.
  * @returns the child logger, or null when no logger is initialized.
  */
-const log = (): Logger | null => getChildLogger("scripts/version-bump",);
+function log(): Logger | null {
+  return getChildLogger("scripts/version-bump",);
+}
