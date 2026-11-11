@@ -218,6 +218,37 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  async batchExportRenpy() {
+    const ids = this.selectedChats;
+    if (ids.length === 0) { return; }
+    try {
+      const res = await apiFetch("/api/renpy/export@v1", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ chatIds: ids, },),
+      },);
+
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob,);
+        const a = document.createElement("a",);
+        a.href = url;
+        a.download = "renpy-export.zip";
+        a.click();
+        URL.revokeObjectURL(url,);
+        this.$dispatch?.("show-toast", {
+          type: "success",
+          message: t("toasts.exportedCount", { count: String(ids.length,), },),
+        },);
+      } else {
+        const err = await res.json();
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedExport",), },);
+      }
+    } catch {
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorExportingChats",), },);
+    }
+  },
+
   async unarchiveChat(chatId: string,) {
     log.info("unarchiveChat", { chatId, },);
     try {

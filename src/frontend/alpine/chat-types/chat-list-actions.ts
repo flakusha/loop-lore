@@ -13,6 +13,7 @@ export interface ChatCoreChatListActions {
   batchArchive(): Promise<void>;
   batchDelete(): Promise<void>;
   batchExport(): Promise<void>;
+  batchExportRenpy(): Promise<void>;
   openOwnershipTransferModal(): void;
   closeOwnershipTransferModal(): void;
   submitOwnershipTransfer(): Promise<void>;

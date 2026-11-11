@@ -315,6 +315,51 @@ describeOrSkip("chatManagement.batchExport", () => {
   });
 },);
 
+describeOrSkip("chatManagement.batchExportRenpy", () => {
+  test("returns early with no selection", async () => {
+    const ctx = mgmtCtx({ selectedChats: [], },);
+    await chatManagement.batchExportRenpy!.call(ctx,);
+    expect(fetchCalls,).toHaveLength(0,);
+  });
+
+  test("posts chat ids to the versioned export route", async () => {
+    fetchHandler = (url,) => {
+      expect(url,).toBe("/api/renpy/export@v1",);
+      return new Response(new Blob(["zip",],), { status: 200, },);
+    };
+
+    const clicks: string[] = [];
+    const origCreate = document.createElement.bind(document,);
+    (document as unknown as Record<string, unknown>).createElement = (tag: string,) => {
+      const el = origCreate(tag,) as HTMLAnchorElement;
+      if (tag === "a") {
+        el.click = () => {
+          clicks.push(el.download,);
+        };
+      }
+
+      return el;
+    };
+
+    try {
+      const ctx = mgmtCtx({ selectedChats: ["c1", "c2",], },);
+      await chatManagement.batchExportRenpy!.call(ctx,);
+      expect(JSON.parse(fetchCalls[0]!.opts.body as string,),).toEqual({ chatIds: ["c1", "c2",], },);
+      expect(clicks,).toEqual(["renpy-export.zip",],);
+      expect((ctx.toasts as { type: string }[])[0]?.type,).toBe("success",);
+    } finally {
+      (document as unknown as Record<string, unknown>).createElement = origCreate;
+    }
+  });
+
+  test("toasts server errors", async () => {
+    mockFetch(404, { error: "chat not found: x", },);
+    const ctx = mgmtCtx({ selectedChats: ["c1",], },);
+    await chatManagement.batchExportRenpy!.call(ctx,);
+    expect((ctx.toasts as { type: string }[])[0]?.type,).toBe("error",);
+  });
+},);
+
 describeOrSkip("chatManagement.deleteChat", () => {
   const delEvent = () => {
     let stopped = 0;
