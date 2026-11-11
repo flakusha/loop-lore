@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { DB, } from "../../db/schema";
-import type { DataMigration, } from "./types";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import type { DataMigration, } from "./types";
 
 /**
  * @param db
@@ -56,6 +56,7 @@ function compareVersionNames(a: string, b: string,): number {
   if (!Number.isNaN(an,) && !Number.isNaN(bn,) && an !== bn) { return an - bn; }
   return a < b ? -1 : a > b ? 1 : 0;
 }
+
 /**
  * Discover and import data migrations colocated next to this runner.
  * Exported for testing — production callers use {@link runDataMigrations}.
@@ -121,6 +122,7 @@ export async function applyDataMigration(
     return true;
   },);
 }
+
 /**
  * @param db
  * @param logProgress

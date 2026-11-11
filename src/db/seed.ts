@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { Config, } from "../config/schema";
-import type { DB, } from "./schema";
 import type { Kysely, } from "kysely";
-import { ASSISTANT_SYSTEM_PROMPT, resolveSystemPrompt, } from "../prompts";
-import { ActorType, AgentType, UserRole, UserStatus, } from "./enums";
+import { hashPassword, } from "../auth/password";
+import type { Config, } from "../config/schema";
 import { generateEncryptionSecret, } from "../crypto/user-secret";
 import { getLogger, type Logger, } from "../logger";
-import { hashPassword, } from "../auth/password";
+import { ASSISTANT_SYSTEM_PROMPT, resolveSystemPrompt, } from "../prompts";
 import { uid, } from "../utils";
+import { ActorType, AgentType, UserRole, UserStatus, } from "./enums";
+import type { DB, } from "./schema";
 
 const ASSISTANT_ID = "assistant-default";
 

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { ChatState, } from "./types";
 import { apiFetch, } from "./htmx";
-import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
 import { t, } from "./i18n";
+import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
+import type { ChatState, } from "./types";
 
 export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
   _groupPaused: false,

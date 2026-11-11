@@ -13,7 +13,6 @@ import type { NpcState, WorldEvent, } from "./story-events-types";
 
 // ─── Game Master Config ──────────────────────────────────────────
 
-
 export interface GameMasterConfig {
   type: GMT;
   llmConfig?: {

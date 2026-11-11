@@ -17,7 +17,6 @@ import {
 } from "../test-utils/insert-helpers";
 import { chatPinRoutes, } from "./chat-pins";
 
-
 /**
  * @param db
  * @param userId

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { Scorer, } from "../types";
 import { calculateSimilarity, } from "../shared";
+import type { Scorer, } from "../types";
 
 export const scoreCreativity: Scorer = ({ response, recentTurns, },) => {
   let score = 65;

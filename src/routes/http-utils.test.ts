@@ -20,7 +20,6 @@ import {
 
 // ── jsonResponse ──────────────────────────────────────────────
 
-
 /**
  * Tests for HTTP response utilities.
  *
@@ -29,7 +28,6 @@ import {
  */
 // ── jsonResponse ──────────────────────────────────────────────
 
-
 /**
  * Tests for HTTP response utilities.
  *
@@ -44,7 +42,6 @@ import {
  * Every test creates a Response and asserts status/body shape.
  */
 // ── jsonResponse ──────────────────────────────────────────────
-
 
 /**
  * Tests for HTTP response utilities.
