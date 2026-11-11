@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { Scorer, } from "./types";
 import { QualityDimension, } from "../../db/enums";
 import { scoreCharacterVoice, } from "./scorers/character-voice";
 import { scoreCreativity, } from "./scorers/creativity";
@@ -8,6 +7,7 @@ import { scoreLoreConsistency, } from "./scorers/lore-consistency";
 import { scoreNarrativeQuality, } from "./scorers/narrative-quality";
 import { scorePlotCoherence, } from "./scorers/plot-coherence";
 import { scoreQuestRelevance, } from "./scorers/quest-relevance";
+import type { Scorer, } from "./types";
 
 export const SCORERS: Record<QualityDimension, Scorer> = {
   [QualityDimension.CharacterVoice]: scoreCharacterVoice,

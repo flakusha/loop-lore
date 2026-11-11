@@ -83,6 +83,7 @@ settingsModal = function() {
         const link = document.querySelector("#theme-" + t.id,) as HTMLLinkElement | null;
         if (link) { link.disabled = t.id !== this.theme; }
       }
+
       document.body.classList.toggle("theme-no-icons", this.theme === "no-icons",);
       localStorage.setItem("theme-preference", this.theme,);
     },

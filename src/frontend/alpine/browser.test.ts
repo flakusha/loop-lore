@@ -16,11 +16,9 @@ import {
   browserImportKey,
 } from "../browser";
 
-
 /**
  * Tests for frontend/browser.ts — browser compression and encryption utilities
  */
-
 
 /**
  * Tests for frontend/browser.ts — browser compression and encryption utilities

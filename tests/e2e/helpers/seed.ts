@@ -31,7 +31,6 @@ import type { Kysely, } from "kysely";
 
 // ── Deterministic IDs ───────────────────────────────────────────
 
-
 /**
  * E2E Seed Data
  *
@@ -39,7 +38,6 @@ import type { Kysely, } from "kysely";
  * All IDs are deterministic for cross-flow reference.
  */
 // ── Deterministic IDs ───────────────────────────────────────────
-
 
 /**
  * E2E Seed Data

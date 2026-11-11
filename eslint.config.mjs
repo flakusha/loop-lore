@@ -152,6 +152,7 @@ export default [
       "data/",
       "**/.tmp/",
       ".hermes/",
+      ".vitepress/",
       "docs/.vitepress/",
       "docs/research/",
       "migrations/",

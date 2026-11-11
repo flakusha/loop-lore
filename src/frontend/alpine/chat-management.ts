@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { ChatState, } from "./types";
 import { apiFetch, } from "./htmx";
+import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
-import { t, } from "./i18n";
+import type { ChatState, } from "./types";
 
 const log = rootLog.child({ module: "chat", },);
 

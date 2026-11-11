@@ -9,11 +9,9 @@ import {
   handleRetryGeneration,
 } from "./generation-routes";
 
-
 /**
  * Tests for generation controller (input validation and non-DB paths).
  */
-
 
 import type { DB, } from "../db/schema";
 
@@ -81,6 +79,7 @@ afterEach(() => {
   sqlite = null;
   testDb = null;
 },);
+
 let testDb: Kysely<DB> | null = null;
 describe("handleCancelGeneration", () => {
   test("returns 401 when unauthenticated", async () => {

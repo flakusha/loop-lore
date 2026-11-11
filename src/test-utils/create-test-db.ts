@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { DB, } from "../db/schema";
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
-import { createLogger, } from "../logger";
 import { createSqliteDialect, getTestDatabaseOverride, setTestDatabase, } from "../db/index";
 import { runMigrations, } from "../db/migrate";
+import type { DB, } from "../db/schema";
+import { createLogger, } from "../logger";
 
 /**
  * Create an in-memory SQLite DB with all migrations applied.
@@ -68,6 +68,7 @@ export async function destroyTestDb(fixture: TestDb,): Promise<void> {
     // Already closed by `db.destroy()` — nothing to do.
   }
 }
+
 /**
  * Drop all non-migration tables from the test DB.
  * Useful for tests that need a clean slate without re-running migrations.

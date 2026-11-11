@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { ChatState, GmConfig, } from "./types";
 import type { OutputStylePreset, } from "../../chat/output-style";
-import { apiFetch, } from "./htmx";
-import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
 import { classifierTagsActions, } from "./chat-settings/classifier-tags";
-import { jsonBody, jsonParseOr, } from "./json";
-import { log as rootLog, } from "./logger";
+import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
+import { presentationGmConfig, } from "./chat-settings/gm-config-presentation";
 import { ownersActions, } from "./chat-settings/owners";
 import { ownershipActions, } from "./chat-settings/ownership";
 import { personaActions, } from "./chat-settings/persona";
-import { presentationGmConfig, } from "./chat-settings/gm-config-presentation";
 import { syncVnRenderer, vnQaActions, } from "./chat-settings/vn";
+import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
+import { jsonBody, jsonParseOr, } from "./json";
+import { log as rootLog, } from "./logger";
+import type { ChatState, GmConfig, } from "./types";
 
 const log = rootLog.child({ module: "chat-settings", },);
 export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {

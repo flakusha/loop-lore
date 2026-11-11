@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { ProgressCalculator, } from "./types";
 import { QuestType, } from "../../db/enums";
 import { calculateCollectionProgress, } from "./calculators/collection";
 import { calculateCompositeProgress, } from "./calculators/composite";
@@ -9,6 +8,7 @@ import { calculateDiscoveryProgress, } from "./calculators/discovery";
 import { calculateRescueProgress, } from "./calculators/rescue";
 import { calculateSocialProgress, } from "./calculators/social";
 import { calculateTimeProgress, } from "./calculators/time";
+import type { ProgressCalculator, } from "./types";
 
 export const PROGRESS_CALCULATORS: Record<QuestType, ProgressCalculator> = {
   [QuestType.Destruction]: calculateDestructionProgress,

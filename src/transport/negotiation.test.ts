@@ -16,7 +16,6 @@ import {
 
 // ── Test Request Helper ───────────────────────────────────────
 
-
 /**
  * Tests for transport protocol negotiation.
  *
@@ -24,7 +23,6 @@ import {
  */
 // ── Test Request Helper ───────────────────────────────────────
 
-
 /**
  * Tests for transport protocol negotiation.
  *
@@ -37,7 +35,6 @@ import {
  * Pure functions — no I/O, no mocks needed.
  */
 // ── Test Request Helper ───────────────────────────────────────
-
 
 /**
  * Tests for transport protocol negotiation.
