@@ -22,7 +22,16 @@ const EMPTY_MESSAGE_PAGE = {
   data: [],
   pagination: { total: 0, page: 1, pageSize: 50, totalPages: 1, },
 };
+
 export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
+  ...chatDraftMethods,
+  ...chatSendMethods,
+  ...chatSeenMethods,
+  ...chatReactionMethods,
+  ...chatLinkPreviewMethods,
+  ...chatPollMethods,
+  ...chatVoiceNoteMethods,
+  ...npcMovementMethods,
   /**
    * @returns {Promise<void>}
    */
@@ -61,12 +70,14 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     } finally {
       this.loadingMessages = false;
     }
+
     if (this.activeChat !== chatId) { return; }
     this.$nextTick?.(() => {
       this.scrollToBottom();
       this.setupInfiniteScroll();
       this.setupScrollDetection();
     },);
+
     await this.loadAllReactions();
     await this.loadChatPolls();
     await this.loadMovementEvents();
@@ -80,6 +91,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
         detail: { chatId, },
       },),
     );
+
     // Keep the VN scene in sync with the freshly loaded messages.
     this.updateVnMode?.();
   },
@@ -114,6 +126,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     } finally {
       this.loadingOlder = false;
     }
+
     if (el && prevScrollHeight > 0) {
       el.scrollTop = el.scrollHeight - prevScrollHeight;
     }
@@ -127,6 +140,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       this.scrollObserver?.disconnect();
       this.scrollObserver = null;
     }
+
     const sentinel = document.querySelector("#scroll-sentinel",);
     if (!sentinel) { return; }
     this.scrollObserver = new IntersectionObserver(
@@ -137,6 +151,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       },
       { rootMargin: "100px 0px 0px 0px", },
     );
+
     this.scrollObserver?.observe(sentinel,);
   },
 
@@ -167,6 +182,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
       this._isScrolledUp = !atBottom;
     };
+
     el.addEventListener("scroll", this._scrollHandler, { passive: true, },);
   },
 
@@ -187,59 +203,5 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
    */
   autoResize(el: HTMLTextAreaElement,) {
     autoResizeImpl(el,);
-  },
-
-  async sendMessage() {
-    log.info("sendMessage", { chatId: this.activeChat, },);
-    const input = this.$refs.messageInput as HTMLTextAreaElement;
-    const text = input.value.trim() ?? "";
-    const pendingAssets = this.pendingAssets ?? [];
-    if (!text && pendingAssets.length === 0) { return; }
-    if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
-      return;
-    }
-
-    const msgs = this.messages;
-    msgs.push({
-      id: "temp-" + Date.now(),
-      role: "user",
-      content: text || "(attached media)",
-      created_at: new Date().toISOString(),
-    },);
-    input.value = "";
-    this.autoResize(input,);
-    this.$nextTick?.(() => this.scrollToBottom());
-
-    const body = await buildSendBody(this, text, msgs, pendingAssets,);
-
-    this.isGenerating = true;
-    try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/messages`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", },
-        body: jsonBody(body,),
-      },);
-      if (res.ok) {
-        this.pendingAssets = [];
-        const data = await res.json();
-        if (data.action) {
-          await this.dispatchCommandAction(data.action, data.actionPayload ?? null, this.activeChat,);
-        } else {
-          this.connectGenerationSSE(this.activeChat,);
-        }
-        await this.loadMessages();
-        await this.loadChats();
-      } else {
-        this.isGenerating = false;
-        const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
-        removeTempMessages(this, msgs,);
-      }
-    } catch {
-      this.isGenerating = false;
-      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
-      removeTempMessages(this, msgs,);
-    }
   },
 };
