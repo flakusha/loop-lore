@@ -293,5 +293,19 @@ describe("appendExecLog", () => {
       appendExecLog(sample(),);
       expect(getExecLogCounters().runs,).toBe(1,);
     });
+
+    it("breaks dispatches down by task type and profile", () => {
+      setExecLogPath(null,);
+      appendExecLog(sample({ runId: "a", taskType: "chat", profile: "p", },),);
+      appendExecLog(sample({ runId: "b", taskType: "chat", profile: "p", },),);
+      // An internal provider dispatch carries no profile: counted by task
+      // type, absent from the per-profile breakdown (a null key would render
+      // as a label nothing can filter on).
+      appendExecLog(sample({ runId: "c", taskType: "aux", profile: null, },),);
+
+      const counters = getExecLogCounters();
+      expect(counters.byTaskType,).toEqual({ chat: 2, aux: 1, },);
+      expect(counters.byProfile,).toEqual({ p: 2, },);
+    });
   });
 });

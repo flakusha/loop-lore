@@ -50,6 +50,14 @@ const counters = {
   spendUsd: 0,
   /** Non-ok results by kind. */
   byKind: { error: 0, timeout: 0, cancelled: 0, },
+  /** Dispatches by exec-log task type — a closed vocabulary, so the map stays bounded. */
+  byTaskType: {} as Record<string, number>,
+  /**
+   * Dispatches by external-harness profile name. Records without a profile
+   * (internal provider dispatches) contribute nothing — a null key would
+   * render as a label nothing can filter on.
+   */
+  byProfile: {} as Record<string, number>,
 };
 
 /**
@@ -67,6 +75,11 @@ function countRecord(record: HarnessRunRecord,): void {
   if (record.result !== "ok") {
     counters.errors++;
     counters.byKind[record.result]++;
+  }
+
+  counters.byTaskType[record.taskType] = (counters.byTaskType[record.taskType] ?? 0) + 1;
+  if (record.profile) {
+    counters.byProfile[record.profile] = (counters.byProfile[record.profile] ?? 0) + 1;
   }
 
   // A null cost is unknown, not zero — it contributes nothing to the sum.
@@ -87,8 +100,15 @@ export function getExecLogCounters(): {
   errors: number;
   spendUsd: number;
   byKind: { error: number; timeout: number; cancelled: number };
+  byTaskType: Record<string, number>;
+  byProfile: Record<string, number>;
 } {
-  return { ...counters, byKind: { ...counters.byKind, }, };
+  return {
+    ...counters,
+    byKind: { ...counters.byKind, },
+    byTaskType: { ...counters.byTaskType, },
+    byProfile: { ...counters.byProfile, },
+  };
 }
 
 /** Reset the process-local counters. Test-only seam. */
@@ -97,6 +117,8 @@ export function resetExecLogCounters(): void {
   counters.errors = 0;
   counters.spendUsd = 0;
   counters.byKind = { error: 0, timeout: 0, cancelled: 0, };
+  counters.byTaskType = {};
+  counters.byProfile = {};
 }
 
 /**

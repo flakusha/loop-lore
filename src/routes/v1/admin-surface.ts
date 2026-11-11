@@ -16,8 +16,11 @@ import { commandsRoutes, } from "../commands";
 import { exportRoutes, } from "../export";
 import { exportSseRoutes, } from "../export-sse";
 import { harnessRoutes, } from "../harness";
+import { harnessLedgerRoutes, } from "../harness/ledger";
+import { harnessMetricsRoutes, } from "../harness/metrics";
 import { harnessModelRoutes, } from "../harness/models";
 import { harnessPermissionRoutes, } from "../harness/permissions";
+import { harnessStreamRoutes, } from "../harness/stream";
 import { harnessUsageRoutes, } from "../harness/usage";
 import { importRoutes, } from "../import";
 import { pluginRoutes, } from "../plugins";
@@ -58,6 +61,16 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
     // Per-profile rolling usage windows plus breaker state, read off the
     // composed runtime; 503 when the integration is disabled.
     .use(harnessUsageRoutes(prefix,),)
+    // ── Harness telemetry (TASK-harness-telemetry-metrics-health-signal-usage-ledger-endpoint) ──
+    // Raw usage-ledger rows and the admin Prometheus surface (shared block
+    // + scoped dispatch/quota/flavor/availability families), both read-only
+    // off the composed runtime; 503 when the integration is disabled.
+    .use(harnessLedgerRoutes(prefix,),)
+    .use(harnessMetricsRoutes(prefix,),)
+    // ── Harness exec-log / job-status SSE (TASK-harness-surfacing-exec-log-sse-to-chat-usage-ledger-credit-g) ──
+    // Admin-gated tail of the exec log and the permission queue; anchors at
+    // connect, 503 when the integration is disabled.
+    .use(harnessStreamRoutes(prefix,),)
     // ── Import / export ──────────────────────────────────────
     .use(importRoutes(handleOpts, prefix,),)
     .use(exportRoutes({ database, }, prefix,),)
