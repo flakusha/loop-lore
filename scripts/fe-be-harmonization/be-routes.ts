@@ -6,11 +6,11 @@
  * dynamic producers (createEntityRoutes factory, memory-carry plugin).
  */
 
-import { readFileSync, } from "node:fs";
+import { readdirSync, readFileSync, } from "node:fs";
 import path from "node:path";
 import { type BeRoute, callExtent, lineOf, norm, ROOT, walk, } from "./shared";
 
-const BE_SCAN_DIRS = ["src/routes", "src",];
+const BE_SCAN_DIRS = ["src/routes", "src", "plugins",];
 const BE_EXTRA_FILES = new Set(["src/elysia-app.ts",],);
 const BE_FILE_RE = /(route|controller)\.ts$/i;
 function isBeFile(p: string,): boolean {
@@ -93,7 +93,7 @@ function literalBeRoutes(src: string, rel: string, consts: Map<string, string>, 
   }
 }
 
-/** Collect Elysia route registrations across the scan dirs. */
+/** Collect Elysia route registrations across the scan dirs, plus plugin-registered routes. */
 export function scanBe(): BeRoute[] {
   const out: BeRoute[] = [];
   const seen = new Set<string>();
@@ -121,9 +121,57 @@ export function scanBe(): BeRoute[] {
       literalBeRoutes(src, rel, consts, out,);
       expandEntityFactories(src, rel, out,);
       expandMemoryCarryPlugin(src, rel, consts, out,);
+      expandPluginRoutes(src, rel, path.dirname(f,), out,);
     }
   }
   return out;
+}
+
+/** Expand plugin-registered routes (`context.registerApiRoute({ method, path })`).
+ * Plugins register at runtime via the manifest loader (loader.ts), so the FE
+ * checker would otherwise report every plugin FE call as FE-no-BE blocking.
+ * Handles literal paths plus module-level `export const X = "..."` names.
+ * Unknown indirection (computed paths) stays invisible, as before. */
+function expandPluginRoutes(src: string, rel: string, dir: string, out: BeRoute[],): void {
+  const consts = new Map<string, string>();
+  for (const cm of src.matchAll(/export const (\w+) =\s*"([^"]+)"/g,)) {
+    consts.set(cm[1] ?? "", cm[2] ?? "",);
+  }
+  for (const cm of src.matchAll(/const (\w+) =\s*"([^"]+)"/g,)) {
+    if (!consts.has(cm[1] ?? "",)) { consts.set(cm[1] ?? "", cm[2] ?? "",); }
+  }
+  for (
+    const m of src.matchAll(
+      /registerApiRoute\(\s*\{[\s\S]{0,400}?method:\s*"(GET|POST|PUT|PATCH|DELETE)"[\s\S]{0,400}?path:\s*(EXPORT_PATH|"[^"]+"|[A-Za-z_$][\w$]*)/g,
+    )
+  ) {
+    const method = (m[1] ?? "GET").toUpperCase();
+    const ref = m[2] ?? "";
+    const raw = ref.startsWith('"',) ? ref.slice(1, -1,) : consts.get(ref,) ?? siblingPluginConst(dir, ref,);
+    if (!raw?.startsWith("/",)) { continue; }
+    out.push({
+      method,
+      path: norm(raw,),
+      raw: raw.slice(0, 90,),
+      file: rel,
+      line: lineOf(src, m.index,),
+      bodySchema: null,
+      querySchema: null,
+    },);
+  }
+}
+
+/** Sibling-file constant for plugin routes: `plugin.ts` imports `X` from `./routes`. */
+function siblingPluginConst(dir: string, name: string,): string | null {
+  for (const e of readdirSync(dir,)) {
+    if (!e.endsWith(".ts",) || e.endsWith(".test.ts",)) { continue; }
+    try {
+      const sib = readFileSync(path.join(dir, e,), "utf8",);
+      const hit = new RegExp(`(?:export\\s+)?const ${name}\\s*=\\s*"([^"]+)"`,).exec(sib,);
+      if (hit?.[1]) { return hit[1]; }
+    } catch { /* unreadable sibling */ }
+  }
+  return null;
 }
 
 /** Expand createEntityRoutes({parentPrefix, parentParam, entityPath}) into CRUD. */
