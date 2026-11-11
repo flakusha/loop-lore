@@ -20,6 +20,7 @@ import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { principalKind, } from "../../middleware/principal-kind";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
@@ -81,6 +82,9 @@ function makeApp(userId: string | null, requestId = "req-http-test",): Elysia {
     userId,
     userRole: userId === null ? null : "user",
     sessionId: null,
+    // The route ctx REQUIRES the kind (fail-closed seam) — the test derive
+    // names the user shape it stands in for.
+    principalKind: principalKind("user",),
     requestId,
   }));
 

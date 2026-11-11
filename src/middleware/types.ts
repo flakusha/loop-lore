@@ -9,13 +9,22 @@
  */
 
 import type { Locale, TranslatorFn, } from "../i18n/types";
+import type { PrincipalKind, } from "./principal-kind";
 
-export type PrincipalKind = "user" | "user-worktree" | "internal-service" | "external-agent";
+export type { PrincipalKind, } from "./principal-kind";
 
 export interface RequestContext {
   userId: string | null;
   userRole: string | null;
   sessionId: string | null;
+  /**
+   * Server-resolved principal kind (epic-principal-scoped-credentials):
+   * minted ONLY by `principalKind` / `toPrincipalKind` /
+   * `principalKindForActor` (src/middleware/principal-kind.ts) from verified
+   * credential evidence — never caller-supplied, never defaulted. REQUIRED
+   * on every context; the auth derive resolves it or the request is
+   * rejected downstream.
+   */
   principalKind: PrincipalKind;
   locale: Locale;
   t: TranslatorFn;
@@ -34,9 +43,8 @@ export interface RequestContext {
 
 export function createRequestContext(
   partial:
-    & Pick<RequestContext, "userId" | "userRole" | "sessionId">
+    & Pick<RequestContext, "userId" | "userRole" | "sessionId" | "principalKind">
     & {
-      principalKind?: PrincipalKind;
       credentialId?: string | null;
       credentialName?: string | null;
       credentialScope?: string | null;
@@ -44,7 +52,6 @@ export function createRequestContext(
 ): RequestContext {
   return {
     ...partial,
-    principalKind: partial.principalKind ?? "user",
     credentialId: partial.credentialId ?? null,
     credentialName: partial.credentialName ?? null,
     credentialScope: partial.credentialScope ?? null,

@@ -21,6 +21,7 @@ import { getChildLogger, } from "../../logger/index";
 import { LL_TOKEN, } from "../../regex/cookies";
 import { ErrorCode, HttpStatus, jsonError, } from "../../routes/http-utils";
 import { parseExpiryMs, } from "../../utils/date";
+import { principalKind, principalKindForActor, } from "../principal-kind";
 import type { RequestContext, } from "../types";
 import { createRequestContext, } from "../types";
 import { getOrCreateSoloUserForAuth, } from "./solo-user";
@@ -105,15 +106,16 @@ async function verifyTokenContext(
     return null;
   }
 
-  // Server-side principal resolution (never caller-supplied): an actors row
-  // with actor_type 'system' maps to internal-service; everything else is a user.
+  // Server-side principal resolution (never caller-supplied): the actors-row
+  // mapping lives in principal-kind.ts — the ONE place the session's actor
+  // evidence becomes a kind ("system" → internal-service, else user).
   const actor = await database
     .selectFrom("actors",)
     .select("actor_type",)
     .where("id", "=", payload.sub,)
     .executeTakeFirst();
 
-  const principalKind = actor?.actor_type === "system" ? "internal-service" : "user";
+  const principalKind = principalKindForActor(actor?.actor_type,);
 
   // Update last activity (throttled: at most once per 5 minutes)
   try {
@@ -193,6 +195,9 @@ export async function authenticate({
         userId: soloUser.id,
         userRole: UserRole.Solo,
         sessionId: null,
+        // The solo identity is a real user principal (its own users/actors
+        // rows) — the kind is named, not defaulted.
+        principalKind: principalKind("user",),
       },),
     };
   }
@@ -209,6 +214,9 @@ export async function authenticate({
         userId: null,
         userRole: UserRole.Guest,
         sessionId: null,
+        // The guest tier is the user kind at its least privileged shape:
+        // null userId, read-mostly role. Named here, not defaulted.
+        principalKind: principalKind("user",),
       },),
     };
   }

@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { principalKind, } from "../middleware/principal-kind";
 import { createRequestContext, type RequestContext, } from "../middleware/types";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
@@ -60,7 +61,12 @@ let service: PersonasService;
  * @param userId - Authenticated user id, or null for anonymous.
  */
 function ctxFor(userId: string | null,): RequestContext {
-  return createRequestContext({ userId, userRole: userId ? "user" : null, sessionId: null, },);
+  return createRequestContext({
+    userId,
+    userRole: userId ? "user" : null,
+    sessionId: null,
+    principalKind: principalKind("user",),
+  },);
 }
 
 beforeAll(async () => {

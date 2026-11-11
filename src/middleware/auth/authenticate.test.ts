@@ -20,7 +20,8 @@ import type { DB, } from "../../db/schema";
 import { createLogger, getLogger, type Logger, setGlobalLogger, } from "../../logger";
 import { ErrorCode, } from "../../routes/http-utils";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertSessions, insertUsers, } from "../../test-utils/insert-helpers";
+import { insertActors, insertSessions, insertUsers, } from "../../test-utils/insert-helpers";
+import { principalKind, } from "../principal-kind";
 import { authenticate, } from "./authenticate";
 import { resetSoloUserCache, } from "./solo-user";
 
@@ -210,5 +211,39 @@ describe("authenticate — presented-token handling", () => {
         .query(`INSERT INTO sessions (id, user_id, secret_hash, expires_at) VALUES (?, ?, ?, NULL)`,)
         .run("null-expiry", userId, "hash",)
     ).toThrow(/NOT NULL/,);
+  });
+
+  // ── Principal-kind resolution (epic-principal-scoped-credentials) ──
+
+  it("a session user resolves the user principal kind", async () => {
+    const { userId, token, } = await seedSession();
+    await insertActors(db, "Alice", { id: userId, user_id: userId, owner_id: userId, },);
+    const result = await authenticate({ request: req(token,), database: db, authConfig: SOLO_CONFIG, },);
+    expect("context" in result,).toBe(true,);
+    if (!("context" in result)) { throw new Error("expected context",); }
+    expect(result.context.principalKind,).toBe(principalKind("user",),);
+  });
+
+  it("a system actors row resolves the internal-service principal kind", async () => {
+    const { userId, token, } = await seedSession();
+    await insertActors(db, "Internal Service", {
+      id: userId,
+      actor_type: "system",
+      user_id: userId,
+      owner_id: userId,
+    },);
+
+    const result = await authenticate({ request: req(token,), database: db, authConfig: SOLO_CONFIG, },);
+    expect("context" in result,).toBe(true,);
+    if (!("context" in result)) { throw new Error("expected context",); }
+    expect(result.context.principalKind,).toBe(principalKind("internal-service",),);
+  });
+
+  it("no actors row still resolves the user kind — the mapping is total, never a guessed kind", async () => {
+    const { token, } = await seedSession();
+    const result = await authenticate({ request: req(token,), database: db, authConfig: SOLO_CONFIG, },);
+    expect("context" in result,).toBe(true,);
+    if (!("context" in result)) { throw new Error("expected context",); }
+    expect(result.context.principalKind,).toBe(principalKind("user",),);
   });
 });

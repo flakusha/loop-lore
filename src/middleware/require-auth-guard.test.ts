@@ -3,6 +3,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
+import { principalKind, type PrincipalKindLiteral, } from "./principal-kind";
 import {
   GUEST_READ_SHAPES,
   isAllowlisted,
@@ -17,18 +18,30 @@ function req(method: string, pathname: string,): Request {
   return new Request(`http://localhost${pathname}`, { method, },);
 }
 
+/**
+ * Drive the guard with a named kind. The default pins the user-JWT shape;
+ * the literal still goes THROUGH the minting seam — the guard itself has
+ * no default.
+ */
 function guardRes(
   method: string,
   pathname: string,
   userId: string | null,
   userRole: string | null,
-  principalKind?: "user" | "external-agent",
+  kind: PrincipalKindLiteral = "user",
 ): {
   allowed: boolean;
   status: number;
 } {
   const set: { status?: number | string } = {};
-  const out = requireAuthGuard({ request: req(method, pathname,), userId, userRole, principalKind, set, },);
+  const out = requireAuthGuard({
+    request: req(method, pathname,),
+    userId,
+    userRole,
+    principalKind: principalKind(kind,),
+    set,
+  },);
+
   if (out === undefined) { return { allowed: true, status: 0, }; }
   return { allowed: false, status: out.status, };
 }
@@ -217,8 +230,26 @@ describe("requireAuthGuard - external-agent surface confinement", () => {
 
   test("user JWT principals are unaffected by the confinement", () => {
     expect(guardRes("POST", "/api/v1/chats", "u-1", "user", "user",).allowed,).toBe(true,);
+    // The helper's default pins the user-JWT shape; the guard itself has no
+    // default — every caller names the kind (compile-enforced).
     expect(guardRes("POST", "/api/v1/chats", "u-1", "user",).allowed,).toBe(true,);
-    // Absent principalKind (older callers) behaves exactly as before.
     expect(guardRes("POST", "/api/v1/worlds", "u-1", "user",).allowed,).toBe(true,);
+  });
+
+  test("internal-service and user-worktree principals are not surface-confined", () => {
+    // Only external-agent is confined to the integration surfaces; the other
+    // kinds keep the general-API access their user identity carries.
+    expect(guardRes("POST", "/api/v1/chats", "svc-1", "user", "internal-service",).allowed,).toBe(true,);
+    expect(guardRes("POST", "/api/v1/chats", "wt-1", "user", "user-worktree",).allowed,).toBe(true,);
+  });
+
+  test("a userId WITHOUT a resolved kind is rejected — no default-principal fallback", () => {
+    // An identity that never passed the auth seam carries no kind; the guard
+    // assumes nothing and denies (deny-by-default).
+    const set: { status?: number | string } = {};
+    const out = requireAuthGuard({ request: req("POST", "/api/v1/chats",), userId: "u-1", userRole: "user", set, },);
+    expect(out,).not.toBeUndefined();
+    if (out === undefined) { throw new Error("expected a 401 response",); }
+    expect(out.status,).toBe(401,);
   });
 });

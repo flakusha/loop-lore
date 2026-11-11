@@ -37,6 +37,7 @@ import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
 import { authenticateRequest, } from "../../../middleware/auth";
 import { mintIntegrationToken, } from "../../../middleware/auth/integration-token";
+import { principalKind, } from "../../../middleware/principal-kind";
 import { requireAuthGuard, } from "../../../middleware/require-auth-guard";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../../test-utils/create-test-db";
 import {
@@ -113,7 +114,9 @@ function makeApp(): Elysia {
         userId: null,
         userRole: null,
         sessionId: null,
-        principalKind: "user" as const,
+        // Auth failed, so NO principal was resolved — the inert identity's
+        // kind is explicit (the guard 401s null userId regardless).
+        principalKind: principalKind("user",),
         credentialId: null,
         credentialName: null,
         credentialScope: null,

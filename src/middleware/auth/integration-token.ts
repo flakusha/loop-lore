@@ -24,6 +24,7 @@ import type { IntegrationTokenScope, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getChildLogger, } from "../../logger/index";
 import { parseExpiryMs, toDate, } from "../../utils/date";
+import { principalKind, } from "../principal-kind";
 import { isIntegrationAgentPath, } from "../require-auth-guard";
 import type { RequestContext, } from "../types";
 import { createRequestContext, } from "../types";
@@ -176,7 +177,9 @@ export function integrationTokenContext(token: ResolvedIntegrationToken,): Reque
     userId: token.issuerAdminUserId,
     userRole: null,
     sessionId: null,
-    principalKind: "external-agent",
+    // Server-side, never client-asserted: an integration_tokens row IS the
+    // external-agent credential evidence; the kind is minted, not claimed.
+    principalKind: principalKind("external-agent",),
     credentialId: token.id,
     credentialName: token.name,
     credentialScope: token.scopes,

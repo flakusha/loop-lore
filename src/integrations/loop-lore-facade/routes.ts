@@ -16,7 +16,7 @@
 import { Elysia, t, } from "elysia";
 import type { PrincipalKind, } from "../../middleware/types";
 import { createRequestContext, } from "../../middleware/types";
-import { jsonResponse, requireUserId, } from "../../routes/http-utils";
+import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import type { HandlerOpts, } from "../../routes/messages/types";
 import { safeJsonStringify, } from "../../utils";
 import { getFacadeRegistry, } from "./instance";
@@ -35,7 +35,12 @@ export interface FacadeRouteCtx {
   userId?: string | null;
   userRole?: string | null;
   sessionId?: string | null;
-  /** Auth-derive identity: principal kind + integration-token attribution. */
+  /**
+   * Auth-derive principal kind. The composed app's derive ALWAYS resolves it
+   * (fail-closed seam) — optional in the TYPE only because Elysia cannot
+   * type app-level derive fields; the handlers REJECT a principal with no
+   * kind instead of defaulting one.
+   */
   principalKind?: PrincipalKind;
   credentialId?: string | null;
   credentialName?: string | null;
@@ -68,6 +73,17 @@ export function createFacadeRoutes(opts: HandlerOpts, prefix = "/api",) {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
+        // Fail-closed seam: the auth derive ALWAYS resolves a kind on the
+        // composed app; a mount that bypassed it has none. Reject rather
+        // than default — there is no default principal to fall back to.
+        if (ctx.principalKind === undefined) {
+          return jsonError({
+            message: "Request reached the facade without a resolved principal",
+            status: HttpStatus.Unauthorized,
+            code: ErrorCode.Unauthorized,
+          },);
+        }
+
         // Route matching guarantees opName for this path; "" resolves to no
         // op and fails closed at 404.
         const opName = ctx.params?.opName ?? "";
@@ -75,7 +91,8 @@ export function createFacadeRoutes(opts: HandlerOpts, prefix = "/api",) {
           userId,
           userRole: ctx.userRole ?? null,
           sessionId: ctx.sessionId ?? null,
-          principalKind: ctx.principalKind ?? "user",
+          // The resolved kind passes through verbatim — never defaulted.
+          principalKind: ctx.principalKind,
           credentialId: ctx.credentialId ?? null,
           credentialName: ctx.credentialName ?? null,
           credentialScope: ctx.credentialScope ?? null,
