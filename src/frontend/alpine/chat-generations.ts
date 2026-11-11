@@ -1,735 +1,306 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type 
-{
- ChatState, 
-}
- from "./types"
-;
+import type {
+  ChatState,
+} from "./types";
 
-import 
-{
- ErrorEvent, 
-}
- from "../../validation/schemas/responses"
-;
+import {
+  ErrorEvent,
+} from "../../validation/schemas/responses";
 
-import 
-{
- SANITIZE_CONFIG, 
-}
- from "./chat-utils/sanitize"
-;
+import {
+  SANITIZE_CONFIG,
+} from "./chat-utils/sanitize";
 
-import 
-{
- apiFetch, 
-}
- from "./htmx"
-;
+import {
+  apiFetch,
+} from "./htmx";
 
-import 
-{
- jsonBody, jsonParseOr, 
-}
- from "./json"
-;
+import {
+  jsonBody,
+  jsonParseOr,
+} from "./json";
 
-import 
-{
- log as rootLog, 
-}
- from "./logger"
-;
+import {
+  log as rootLog,
+} from "./logger";
 
-import 
-{
- parseOr, 
-}
- from "./validation"
-;
+import {
+  parseOr,
+} from "./validation";
 
-import 
-{
- t, 
-}
- from "./i18n"
-;
+import {
+  t,
+} from "./i18n";
 
-import 
-{
- trackTelemetry, 
-}
- from "./telemetry"
-;
-
-
-const log = rootLog.child(
-{
- module: "chat", 
-}
-,)
-;
+import {
+  trackTelemetry,
+} from "./telemetry";
 
 const log = rootLog.child({ module: "chat", },);
 const getDOMPurify = () => globalThis.__DOMPurify as { sanitize(html: string, config?: unknown,): string } | undefined;
 
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = 
-{
-
+export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
   /**
-   * @param 
-{
-string
-}
- chatId
-   * @returns 
-{
-void
-}
-
+   * @param {string} chatId
+   * @returns {void}
    */
-  connectGenerationSSE(chatId: string,) 
-{
+  connectGenerationSSE(chatId: string,) {
+    if (this._generationEventSource) {
+      this._generationEventSource.close();
+    }
 
-    if (this._generationEventSource) 
-{
+    this.isGenerating = true;
 
-      this._generationEventSource.close()
-;
+    const url = `/api/v1/generation/stream/${chatId}`;
 
-    
-}
+    const es = new EventSource(url,);
 
-
-    this.isGenerating = true
-;
-
-    const url = `/api/v1/generation/stream/${chatId}`
-;
-
-    const es = new EventSource(url,)
-;
-
-    this._generationEventSource = es
-;
+    this._generationEventSource = es;
 
     // Stale-stream guard: handlers close over the chat this stream belongs to
     // and must not write shared stream state after the user switched chats.
-    const isStale = () => this.activeChat !== chatId
-;
+    const isStale = () => this.activeChat !== chatId;
 
+    es.addEventListener("stream-update", (event: MessageEvent,) => {
+      if (isStale()) {
+        return;
+      }
 
-    es.addEventListener("stream-update", (event: MessageEvent,) => 
-{
+      this._streamContent = event.data;
 
-      if (isStale()) 
-{
- return
-;
- 
-}
+      this.renderStreamContainer();
 
-      this._streamContent = event.data
-;
+      this.activeAttemptId = chatId;
+    },);
 
-      this.renderStreamContainer()
-;
+    es.addEventListener("tool_call", (event: MessageEvent,) => {
+      if (isStale()) {
+        return;
+      }
 
-      this.activeAttemptId = chatId
-;
+      this._streamToolCalls.push(event.data,);
 
-    
-}
-,)
-;
-
-
-    es.addEventListener("tool_call", (event: MessageEvent,) => 
-{
-
-      if (isStale()) 
-{
- return
-;
- 
-}
-
-      this._streamToolCalls.push(event.data,)
-;
-
-      this.renderStreamContainer()
-;
-
-    
-}
-,)
-;
-
-
-    es.addEventListener("stream-done", () => 
-{
-
-      if (!isStale()) 
-{
-
-        trackTelemetry("generation.completed", 
-{
- chatId, 
-}
-,)
-;
-
-      
-}
-
-
-      this.isGenerating = false
-;
-
-      this.activeAttemptId = null
-;
-
-      this.generationDetail = null
-;
-
-      this._streamToolCalls = []
-;
-
-      this._streamContent = ""
-;
-
-      this._cleanupSSE()
-;
-
-      if (isStale()) 
-{
- return
-;
- 
-}
-
-      void (async () => 
-{
-
-        try 
-{
-
-          await this.loadMessages()
-;
-
-    // Harness job-status pushes (TASK-harness-inflight-job-handles): the
-    // server appends a `job-status` event per journal row while a stream is
-    // open. Payload is a plain server-built one-liner (op/state/step — no
-    // user content), rendered as text inside the sanitized container.
-    es.addEventListener("job-status", (event: MessageEvent,) => {
-      if (isStale()) { return; }
-      this._jobStatusLine = event.data;
       this.renderStreamContainer();
     },);
 
     es.addEventListener("stream-done", () => {
       if (!isStale()) {
-        trackTelemetry("generation.completed", { chatId, },);
+        trackTelemetry("generation.completed", {
+          chatId,
+        },);
       }
 
       this.isGenerating = false;
+
       this.activeAttemptId = null;
+
       this.generationDetail = null;
+
       this._streamToolCalls = [];
+
       this._streamContent = "";
-      this._jobStatusLine = "";
+
       this._cleanupSSE();
-      if (isStale()) { return; }
+
+      if (isStale()) {
+        return;
+      }
+
       void (async () => {
         try {
           await this.loadMessages();
           await this.fireAutoQuickReplies("ai",);
         } catch {
           /* non-critical */
-        
-}
-
-      
-}
-)()
-;
-
-    
-}
-,)
-;
-
-
-    es.addEventListener("stream-error", (event: MessageEvent,) => 
-{
-
-      log.warn("generation error via SSE", 
-{
- chatId, error: event.data, 
-}
-,)
-;
-
-      this.isGenerating = false
-;
-
-      this.activeAttemptId = null
-;
-
-      this.generationDetail = null
-;
-
-      this._streamToolCalls = []
-;
-
-      this._streamContent = ""
-;
-
-      this._cleanupSSE()
-;
-
-      if (isStale()) 
-{
- return
-;
- 
-}
-
-      try 
-{
-
-        const data = parseOr(ErrorEvent, jsonParseOr(event.data, null,), 
-{
-}
-,)
-;
-
-        this.$dispatch?.("show-toast", 
-{
- type: "error", message: data.error ?? t("toasts.generationFailed",), 
-}
-,)
-;
-
-      
-}
- catch 
-{
-
-        this.$dispatch?.("show-toast", 
-{
- type: "error", message: t("toasts.generationFailed",), 
-}
-,)
-;
-
-      
-}
-
-    
-}
-,)
-;
-
-
-    es.addEventListener("error", () => 
-{
-
-      if (es.readyState !== EventSource.CLOSED) 
-{
- return
-;
- 
-}
-
-      log.debug("SSE connection closed permanently", 
-{
- chatId, 
-}
-,)
-;
-
-      this.isGenerating = false
-;
+        }
+      })();
+    },);
 
     es.addEventListener("stream-error", (event: MessageEvent,) => {
-      log.warn("generation error via SSE", { chatId, error: event.data, },);
+      log.warn("generation error via SSE", {
+        chatId,
+        error: event.data,
+      },);
+
       this.isGenerating = false;
+
       this.activeAttemptId = null;
+
       this.generationDetail = null;
+
       this._streamToolCalls = [];
+
       this._streamContent = "";
-      this._jobStatusLine = "";
+
       this._cleanupSSE();
-      if (isStale()) { return; }
+
+      if (isStale()) {
+        return;
+      }
+
       try {
         const data = parseOr(ErrorEvent, jsonParseOr(event.data, null,), {},);
-        this.$dispatch?.("show-toast", { type: "error", message: data.error ?? t("toasts.generationFailed",), },);
+
+        this.$dispatch?.("show-toast", {
+          type: "error",
+          message: data.error ?? t("toasts.generationFailed",),
+        },);
       } catch {
-        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.generationFailed",), },);
+        this.$dispatch?.("show-toast", {
+          type: "error",
+          message: t("toasts.generationFailed",),
+        },);
       }
     },);
 
-  
-}
-,
+    es.addEventListener("error", () => {
+      if (es.readyState !== EventSource.CLOSED) {
+        return;
+      }
+
+      log.debug("SSE connection closed permanently", {
+        chatId,
+      },);
+
+      this.isGenerating = false;
+      this._cleanupSSE();
+    },);
+  },
 
   /**
-   * @param 
-{
-string
-}
- chatId
-   * @returns 
-{
-Promise<void>
-}
-
+   * @param {string} chatId
+   * @returns {Promise<void>}
    */
-  async checkGenerationStatus(chatId: string,) 
-{
+  async checkGenerationStatus(chatId: string,) {
+    log.debug("checkGenerationStatus", {
+      chatId,
+    },);
 
-    log.debug("checkGenerationStatus", 
-{
- chatId, 
-}
-,)
-;
+    try {
+      const response = await apiFetch(`/api/v1/generation/status/${chatId}`,);
 
-    try 
-{
+      const data = await response.json();
 
-      const response = await apiFetch(`/api/v1/generation/status/${chatId}`,)
-;
+      const hadActiveAttempt = !!this.activeAttemptId;
 
-      const data = await response.json()
-;
+      if (data.isActive) {
+        this.isGenerating = true;
 
-      const hadActiveAttempt = !!this.activeAttemptId
-;
-
-
-      if (data.isActive) 
-{
-
-        this.isGenerating = true
-;
-
-        this.activeAttemptId = data.attemptId
-;
+        this.activeAttemptId = data.attemptId;
 
         this.generationDetail = data.generation
-          ? 
-{
-
+          ? {
             attemptId: data.generation.attemptId,
             status: data.generation.status,
             elapsedMs: data.generation.elapsedMs,
             chunksReceived: data.generation.chunksReceived,
             charsReceived: data.generation.charsReceived,
-          
-}
+          }
+          : null;
 
-          : null
-;
+        const detail = this.generationDetail;
 
+        if (detail) {
+          const elapsed = detail.elapsedMs ? ` (${Math.round(Number(detail.elapsedMs,) / 1000,)}s)` : "";
 
-        const detail = this.generationDetail
-;
+          const chars = detail.charsReceived ? ` · ${detail.charsReceived} chars` : "";
 
-        if (detail) 
-{
+          this.generationLabel = `Generating${elapsed}${chars}`;
+        }
+      } else if (hadActiveAttempt) {
+        trackTelemetry("generation.completed", {
+          chatId,
+        },);
 
-          const elapsed = detail.elapsedMs ? ` (${Math.round(Number(detail.elapsedMs,) / 1000,)}s)` : ""
-;
+        this.isGenerating = false;
 
-          const chars = detail.charsReceived ? ` · ${detail.charsReceived} chars` : ""
-;
+        this.activeAttemptId = null;
 
-          this.generationLabel = `Generating${elapsed}${chars}`
-;
+        this.generationDetail = null;
 
-        
-}
+        await this.loadMessages();
+      } else if (!this.isGenerating) {
+        this.activeAttemptId = null;
 
-      
-}
- else if (hadActiveAttempt) 
-{
-
-        trackTelemetry("generation.completed", 
-{
- chatId, 
-}
-,)
-;
-
-        this.isGenerating = false
-;
-
-        this.activeAttemptId = null
-;
-
-        this.generationDetail = null
-;
-
-        await this.loadMessages()
-;
-
-      
-}
- else if (!this.isGenerating) 
-{
-
-        this.activeAttemptId = null
-;
-
-        this.generationDetail = null
-;
-
-      
-}
-
-    
-}
- catch (error) 
-{
-
-      // Recovery poll is best-effort
-;
- surface the reason instead of swallowing it.
-      log.debug("checkGenerationStatus failed", 
-{
- chatId, error: String(error,), 
-}
-,)
-;
-
-    
-}
-
-  
-}
-,
+        this.generationDetail = null;
+      }
+    } catch (error) {
+      // Recovery poll is best-effort; surface the reason instead of swallowing it.
+      log.debug("checkGenerationStatus failed", {
+        chatId,
+        error: String(error,),
+      },);
+    }
+  },
   /**
-   * @param 
-{
-string
-}
- chatId
-   * @param 
-{
-() => void
-}
- onDone
-   * @returns 
-{
-Promise<void>
-}
-
+   * @param {string} chatId
+   * @param {() => void} onDone
+   * @returns {Promise<void>}
    */
-  async sendWithPreferredMode(chatId: string, onDone?: () => void,) 
-{
+  async sendWithPreferredMode(chatId: string, onDone?: () => void,) {
+    const pref = this.getStreamPreference?.(chatId,) ?? this._streamResponses !== false;
 
-    const pref = this.getStreamPreference?.(chatId,) ?? this._streamResponses !== false
-;
+    if (pref) {
+      this.connectGenerationSSE(chatId,);
 
-    if (pref) 
-{
+      return;
+    }
 
-      this.connectGenerationSSE(chatId,)
-;
+    const end = Date.now() + 30_000;
 
-      return
-;
+    do {
+      await this.checkGenerationStatus(chatId,);
 
-    
-}
+      if (!this.isGenerating || Date.now() >= end) {
+        break;
+      }
 
+      await new Promise<void>((resolve,) => {
+        setTimeout(resolve, 1000,);
+      },);
+    } while (Date.now() < end);
 
-    const end = Date.now() + 30_000
-;
+    await this.loadMessages();
 
-    do 
-{
-
-      await this.checkGenerationStatus(chatId,)
-;
-
-      if (!this.isGenerating || Date.now() >= end) 
-{
- break
-;
- 
-}
-
-      await new Promise<void>((resolve,) => 
-{
-
-        setTimeout(resolve, 1000,)
-;
-
-      
-}
-,)
-;
-
-    
-}
- while (Date.now() < end)
-;
-
-
-    await this.loadMessages()
-;
-
-    onDone?.()
-;
-
-  
-}
-,
+    onDone?.();
+  },
 
   /**
-   * @returns 
-{
-Promise<void>
-}
-
+   * @returns {Promise<void>}
    */
-  async cancelGeneration() 
-{
+  async cancelGeneration() {
+    log.info("cancelGeneration", {
+      chatId: this.activeChat,
+    },);
 
-    log.info("cancelGeneration", 
-{
- chatId: this.activeChat, 
-}
-,)
-;
+    if (!this.activeChat) {
+      this.$dispatch?.("show-toast", {
+        type: "warning",
+        message: t("toasts.noActiveChatToCancel",),
+      },);
 
-    if (!this.activeChat) 
-{
+      return;
+    }
 
-      this.$dispatch?.("show-toast", 
-{
- type: "warning", message: t("toasts.noActiveChatToCancel",), 
-}
-,)
-;
-
-      return
-;
-
-    
-}
-
-
-    try 
-{
-
-      const response = await apiFetch("/api/v1/generation/cancel", 
-{
-
+    try {
+      const response = await apiFetch("/api/v1/generation/cancel", {
         method: "POST",
-        headers: 
-{
- "Content-Type": "application/json", 
-}
-,
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: jsonBody(
-{
-
-          chatId: this.activeChat,
-          reason: "user_cancel",
-          source: "user",
-          detail: "User cancelled generation",
-        
-}
-,),
-      
-}
-,)
-;
-
-
-      const data = await response.json()
-;
-
-      if (response.ok && data.ok) 
-{
+          {
+            chatId: this.activeChat,
+            reason: "user_cancel",
+            source: "user",
+            detail: "User cancelled generation",
+          },
+        ),
+      },);
 
       const data = await response.json();
+
       if (response.ok && data.ok) {
         this.$dispatch?.("show-toast", { type: "info", message: t("toasts.generationCancelled",), },);
       } else {
@@ -754,26 +325,8 @@ Promise<void>
     }
   },
 
-      this.$dispatch?.("show-toast", 
-{
- type: "error", message: t("toasts.networkErrorCancellingGeneration",), 
-}
-,)
-;
-
-    
-}
-
-  
-}
-,
-
   /**
-   * @returns 
-{
-void
-}
-
+   * @returns {void}
    */
   renderStreamContainer() {
     const container = document.querySelector("#stream-container",);
@@ -791,52 +344,20 @@ void
       return;
     }
 
-      return
-;
-
-    
-}
-
-
     // Fail-safe: sanitizer unavailable — render as text, never raw HTML.
-    const pre = document.createElement("pre",)
-;
-
-    pre.textContent = html
-;
-
-    container.replaceChildren(pre,)
-;
-
-  
-}
-,
+    const pre = document.createElement("pre",);
+    pre.textContent = html;
+    container.replaceChildren(pre,);
+  },
 
   /**
-   * @returns 
-{
-void
-}
-
+   * @returns {void}
    */
-  _cleanupSSE() 
-{
-
-    if (this._generationEventSource) 
-{
-
-      this._generationEventSource.close()
-;
-
-      this._generationEventSource = null
-;
-
-    
-}
-
-
-    this._streamToolCalls = []
-;
+  _cleanupSSE() {
+    if (this._generationEventSource) {
+      this._generationEventSource.close();
+      this._generationEventSource = null;
+    }
 
     this._streamToolCalls = [];
     this._streamContent = "";
