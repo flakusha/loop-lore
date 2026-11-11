@@ -7,11 +7,12 @@
  * an uncomposed queue reads 503 (the surface is inert when the integration
  * is disabled), and enqueue/list/cancel round-trip the queue service.
  *
- * Resource contract: ONE in-memory migrated DB per test (its own
- * user/actor/chat rows), a stub dispatch seam whose turns the test settles
- * by hand (no sleeps), the queue singleton reset around every test. No
- * ports, no subprocesses, no cross-test state — order-independent under the
- * parallel runner.
+ * Resource contract (parallel-safe): ONE in-memory migrated DB per test
+ * (fixed fixture ids are per-DB, so cross-test uniqueness holds), a stub
+ * dispatch seam whose turns the test settles by hand (no sleeps), and the
+ * process-shared queue singleton reset around EVERY test in
+ * beforeEach/afterEach (resetHarnessTurnQueue). Each test settles every turn
+ * it enqueues, so no gates leak into sibling tests.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { Elysia, } from "elysia";
