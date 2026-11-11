@@ -3,7 +3,6 @@
 
 # TASK: Harness inflight job handles
 
-// hint: Structural and logic conflict. Both design and behavior differ.
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
@@ -16,12 +15,28 @@ Option B first slice: surface harness job state as chat messages. Scope: add a j
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Delivered by the sibling harness-surfacing lane and landed on dev as
+`64495e4ec` (feat(chat): surface harness/async job state as job_status
+messages) + `0fd943272` (parallel-safety hardening) + `46315a235` (review
+nits); verified 2026-11-11 in the harness-tail-gaps worktree against that
+state. Delivered shape: `job_status` MessageContentType
+(src/db/enums-core/messages.ts); append-only best-effort writer
+`src/chat/service/job-status.ts` (dedupe memo keyed jobId+state+step =
+single-transition write, terminal states clear memo entries); initial
+`pending` row posted in `maybeAutoReply` after the pause gate
+(src/routes/messages/reply.ts), keyed by x-request-id; AsyncStore
+progress/completion bridged via `src/generation/auto-gen/job-status-bridge.ts`
+(persisted row + live SSE `job-status` event, no polling); harness turnId
+(attemptId) stamped into `messages.metadata` on complete/failed rows for
+exec-log joins. Notification-to-new-turn stays gated: the bridge is
+display-only and never schedules generation, so the reply-route pause gate
+and group-cascade depth checks remain authoritative. Alternatives
+(update-in-place status rows, frontend polling) rejected: append-only
+journal rows keep the timeline replayable and match the swipe-sibling
+immutability philosophy.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
-
-**Resolved:** 2026-11-11 registry-driven close: git issue 2b1e55d (registry tip: 7a00eb102 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-HARNESS-INFLIGHT-JOB-HANDLE)
+- [x] Implementation complete
+- [x] Tests passing (36 pass: job-status.test.ts, job-status-bridge.test.ts, reply.test.ts)
+- [x] Documentation updated (CHANGELOG.md entry in `64495e4ec`)
