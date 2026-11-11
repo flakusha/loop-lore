@@ -193,6 +193,7 @@ openaiCompatible = []
 # apiFamily = "comfyui"
 # workflow = "txt2video"
 # allowUserApiKey = true
+# localBox = "weak-box-1" # one render at a time per named box (omit for external providers)
 # timeout = 10000
 # generationTimeout = 600000
 

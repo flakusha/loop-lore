@@ -15,6 +15,7 @@ import {
   getVideoJob,
   listVideoJobs,
   storeVideoJob,
+  VIDEO_JOB_STORE_MAX,
   type VideoJob,
   type VideoJobAsset,
 } from "./video-jobs";
@@ -95,5 +96,30 @@ describe("video job store", () => {
     storeVideoJob(pendingJob("job-1", "owner-1", 1,),);
     failVideoJob("job-1", "boom", 500,);
     expect(failVideoJob("job-1", "boom", 500,),).toBe(false,);
+  });
+
+  test("store stays bounded under a burst: settled jobs evict oldest-first", () => {
+    for (let i = 0; i < VIDEO_JOB_STORE_MAX + 50; i += 1) {
+      const id = `burst-${i}`;
+      storeVideoJob(pendingJob(id, "owner-1", i,),);
+      completeVideoJob(id, ASSET,);
+    }
+
+    expect(listVideoJobs("owner-1",).length,).toBe(VIDEO_JOB_STORE_MAX,);
+    // Oldest settled evicted; newest retained.
+    expect(getVideoJob("burst-0",),).toBeUndefined();
+    expect(getVideoJob(`burst-${VIDEO_JOB_STORE_MAX + 49}`,),).toBeDefined();
+  });
+
+  test("store never evicts a pending job while a settled one remains", () => {
+    storeVideoJob(pendingJob("keep-pending", "owner-1", 0,),);
+    for (let i = 0; i < VIDEO_JOB_STORE_MAX; i += 1) {
+      const id = `settled-${i}`;
+      storeVideoJob(pendingJob(id, "owner-1", i + 1,),);
+      completeVideoJob(id, ASSET,);
+    }
+
+    expect(getVideoJob("keep-pending",),).toBeDefined();
+    expect(listVideoJobs("owner-1",).length,).toBe(VIDEO_JOB_STORE_MAX,);
   });
 });

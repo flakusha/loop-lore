@@ -23,6 +23,20 @@ export {
 export { isSchedulerCancel, } from "./internal-handle";
 
 export {
+  COMFYUI_PROXY_MODEL_ID,
+  computeEvictionSet,
+  unloadLlamaSwapModel,
+  type UnloadModelOptions,
+  type UnloadOutcome,
+} from "./llama-swap-unload";
+
+export {
+  releaseModelsForRender,
+  type ReleaseModelsOptions,
+  type ReleaseSummary,
+} from "./llama-swap-release";
+
+export {
   type Priority,
   PriorityLevel,
   type PriorityLevel as PriorityLevelT,
