@@ -93,6 +93,7 @@ The surrounding **provisioning semantics** (which channel may grant login/unlock
 
 - TASK-two-factor-multi-factor-auth.md (canonical)
 - TASK-2fa-mfa.md (duplicate — folded)
+- TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md (1.0.0 MFA: email/messenger code channel first)
 
 
 ## Integration Points
