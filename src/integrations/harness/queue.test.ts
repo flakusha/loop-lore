@@ -4,13 +4,18 @@
 /**
  * Queue service tests (TASK-harness-multi-agent-turn-queue).
  *
- * Resource contract: ONE in-memory migrated DB per test (its own
- * user/actor/chat ids), a stub dispatch seam whose turns the test settles by
- * hand (caller-held promise gates — exact ordering, no sleeps), and the
- * process-shared queue singleton reset around every test. The one end-to-end
- * test runs the REAL dispatchHarnessTurn over in-memory fake adapters and a
- * temp exec-log file (reset afterwards). No child process, no ports, no
- * cross-test state — order-independent under the parallel runner.
+ * Resource contract (parallel-safe): ONE in-memory migrated DB per test (its
+ * own user/actor/chat ids), a stub dispatch seam whose turns the test settles
+ * by hand (caller-held promise gates — exact ordering, no sleeps), and the
+ * process-shared singletons reset around EVERY test in beforeEach/afterEach:
+ * resetHarnessTurnQueue (queue singleton), resetHarnessRuntime +
+ * resetHarnessAdminSettings + resetExecLogPath (the integration e2e's temp
+ * exec-log). The queue's drain machinery is per-INSTANCE, so one instance's
+ * parked gates cannot hang another's idle(); every test settles everything
+ * it enqueues, so no gates leak into sibling tests. The one end-to-end test
+ * runs the REAL dispatchHarnessTurn over in-memory fake adapters and a temp
+ * exec-log file (reset afterwards). No child process, no ports, no fixed
+ * paths — order-independent under the parallel runner.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { existsSync, mkdtempSync, } from "node:fs";

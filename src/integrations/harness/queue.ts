@@ -149,24 +149,12 @@ export interface HarnessTurnQueue {
    * @returns how many interrupted rows were failed.
    */
   recoverAndPump(): Promise<number>;
-  /** Resolves when no claim, run or pump is in flight — the drain seam. */
+  /**
+   * Resolves when THIS instance has no claim, run or pump in flight — the
+   * drain seam. Instance-scoped: another instance's (or another test's)
+   * work never satisfies it.
+   */
   idle(): Promise<void>;
-}
-
-/** Async-work counter: `idle()` resolves when it drains to zero. */
-let pending = 0;
-/** Waiters `idle()` parked while work was in flight. */
-const drained: Array<() => void> = [];
-
-/** Count one piece of async work; notify drain waiters when the last ends. */
-function track<T,>(work: Promise<T>,): Promise<T> {
-  pending++;
-  return work.finally(() => {
-    pending--;
-    if (pending === 0) {
-      for (const notify of drained.splice(0, drained.length,)) { notify(); }
-    }
-  },);
 }
 
 /**
@@ -180,6 +168,21 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
   /** profile → in-flight turn id: THE per-profile serialization lock. */
   const inFlight = new Map<string, string>();
   let pumping = false;
+  /** THIS instance's async-work count — never shared across instances. */
+  let pending = 0;
+  /** Waiters this instance's `idle()` parked while its work was in flight. */
+  const drained: Array<() => void> = [];
+
+  /** Count one piece of async work; notify drain waiters when the last ends. */
+  function track<T,>(work: Promise<T>,): Promise<T> {
+    pending++;
+    return work.finally(() => {
+      pending--;
+      if (pending === 0) {
+        for (const notify of drained.splice(0, drained.length,)) { notify(); }
+      }
+    },);
+  }
 
   /** Claim and start every turn the caps admit; re-armed after each finish. */
   async function pump(): Promise<void> {
