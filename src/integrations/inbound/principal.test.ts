@@ -20,6 +20,7 @@ import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { principalKind, } from "../../middleware/principal-kind";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { getFacadeRegistry, resetFacadeRegistry, } from "../loop-lore-facade/instance";
@@ -81,7 +82,7 @@ describe("inbound principal gate", () => {
 
     const ctx = buildInboundFacadeContext(db, baseConfig, "mcp-stdio", "req-3",);
     expect(ctx,).not.toBeNull();
-    expect(ctx?.principal.kind,).toBe("external-agent",);
+    expect(ctx?.principal.kind,).toBe(principalKind("external-agent",),);
     expect(ctx?.principal.userId,).toBe(USER,);
     expect(ctx?.principal.credentialScope,).toBe("read",);
     expect(ctx?.principal.credentialName,).toBe("inbound-mcp-stdio",);

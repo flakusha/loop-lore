@@ -21,6 +21,7 @@ import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { principalKind, } from "../../middleware/principal-kind";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { getFacadeRegistry, resetFacadeRegistry, } from "../loop-lore-facade/instance";
@@ -66,7 +67,7 @@ function ctxFor(scope: "read" | "chat-write", requestId: string,): FacadeContext
     config,
     requestId,
     principal: {
-      kind: "external-agent",
+      kind: principalKind("external-agent",),
       userId: USER,
       userRole: null,
       credentialId: null,

@@ -23,6 +23,7 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import { principalKind, } from "../../middleware/principal-kind";
 import type { FacadeContext, FacadeScope, } from "../loop-lore-facade/types";
 import { getInboundSettings, type InboundSettingsView, isInboundSettingsSeeded, } from "./settings";
 
@@ -56,7 +57,7 @@ export function buildInboundFacadeContext(
     config,
     requestId,
     principal: {
-      kind: "external-agent",
+      kind: principalKind("external-agent",),
       userId: settings.principalUserId,
       userRole: null,
       credentialId: null,
