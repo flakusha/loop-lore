@@ -23,14 +23,14 @@
  * TASK-harness-delegated-permission-grants) is a LATER slice — the grant
  * list input shape here is the seam that persistence will feed.
  */
-import { type PrincipalKind, } from "../../../middleware/types";
+import { type PrincipalKind, type PrincipalKindLiteral, } from "../../../middleware/principal-kind";
 import {
   type RepoCapability,
   toRepoCapability,
 } from "./capabilities";
 
 /** Default capability grants per principal kind (epic-verbatim table). */
-export const DEFAULT_KIND_GRANTS: Record<PrincipalKind, readonly RepoCapability[]> = {
+export const DEFAULT_KIND_GRANTS: Record<PrincipalKindLiteral, readonly RepoCapability[]> = {
   "internal-service": [
     "repo:write",
     "worktree:spawn",
@@ -64,7 +64,11 @@ export interface ResolveRepoGrantsInput {
  *   kind defaults (an explicit list means exactly those, never more)
  */
 export function resolveRepoGrants(input: ResolveRepoGrantsInput,): ReadonlySet<RepoCapability> {
-  const kindDefaults = DEFAULT_KIND_GRANTS[input.kind] as readonly RepoCapability[];
+  // The brand is compile-time only — the runtime value is one of the four
+  // vocabulary literals — so widening to the literal union is lossless and
+  // keeps the lookup total (every kind has a row).
+  const kind: PrincipalKindLiteral = input.kind;
+  const kindDefaults = DEFAULT_KIND_GRANTS[kind];
 
   if (input.granted === undefined) {
     return new Set<RepoCapability>(kindDefaults,);

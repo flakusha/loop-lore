@@ -23,6 +23,7 @@ import { join, } from "node:path";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { principalKind, type PrincipalKindLiteral, } from "../../middleware/principal-kind";
 import { createRequestContext, } from "../../middleware/types";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { setRepoScopeRootDetectorForTests, } from "../harness/repo-access/principal-scope";
@@ -77,14 +78,14 @@ function buildRegistry(runner?: RepoCheckRunner,): ReturnType<typeof createFacad
 }
 
 function ctxFor(
-  kind: "user" | "internal-service" | "external-agent",
+  kind: PrincipalKindLiteral,
   userId: string,
 ): ReturnType<typeof facadeContextFromRequestContext> {
   const rc = createRequestContext({
     userId,
     userRole: "admin",
     sessionId: null,
-    principalKind: kind,
+    principalKind: principalKind(kind,),
   },);
 
   return facadeContextFromRequestContext({ ...rc, requestId: `req-${userId}`, }, db, config,);
