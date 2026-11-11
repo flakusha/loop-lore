@@ -25139,7 +25139,7 @@
     "title": "1.0.0 MFA: email/messenger code channel first (metaapplication-ready)",
     "label": "task",
     "priority": "medium",
-    "epic": "",
+    "epic": "epic-two-factor-auth",
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md",
