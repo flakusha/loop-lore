@@ -14,7 +14,7 @@
  */
 
 import { readdirSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { isAbsolute, join } from "node:path";
 import type { Kysely, Selectable } from "kysely";
 import { PluginStatus } from "../db/enums";
 import type { DB, PluginState } from "../db/schema";
@@ -105,15 +105,7 @@ export async function loadAllPlugins(
       continue;
     }
 
-    const entries = readdirSync(fullDir, { withFileTypes: true });
-    const pluginDirs: string[] = [];
-    for (const e of entries) {
-      if (e.isDirectory()) { pluginDirs.push(e.name); }
-    }
-
-    pluginDirs.sort((a, b) => a.localeCompare(b));
-
-    for (const pluginName of pluginDirs) {
+    for (const pluginName of pluginDirNames(fullDir,)) {
       await loadSinglePlugin(db, pluginName, join(fullDir, pluginName), origin,);
     }
   }
@@ -130,6 +122,122 @@ export async function loadAllPlugins(
   // Routes are only registered by now, so this is the earliest point at which
   // the declared-but-unenforceable set is known.
   warnIfAccessFieldsAreInert(opts,);
+}
+
+/**
+ * Sorted subdirectory names under a plugin root — the per-plugin folders.
+ * @param fullDir - Resolved plugin root directory
+ * @returns Directory names in deterministic (locale-compare) order.
+ */
+function pluginDirNames(fullDir: string,): string[] {
+  const entries = readdirSync(fullDir, { withFileTypes: true },);
+  const names = entries.filter((e) => e.isDirectory(),).map((e,) => e.name,);
+  names.sort((a, b) => a.localeCompare(b,),);
+  return names;
+}
+
+/** One plugin manifest found on disk by {@link scanAvailablePlugins}. */
+export interface AvailablePlugin {
+  manifest: PluginManifest;
+  origin: PluginOrigin;
+  directory: string;
+}
+
+/** Options for {@link scanAvailablePlugins}. */
+export interface ScanAvailablePluginsOpts {
+  /**
+   * Override the scanned roots (`origin` + `dir` pairs). Absolute dirs are
+   * used as-is; relative ones resolve from the repo root like the loader's
+   * own defaults. Tests drive discovery against temp-dir fixtures and never
+   * scan the repo tree.
+   */
+  roots?: { origin: PluginOrigin; dir: string }[];
+}
+
+/**
+ * Scan plugin directories for manifests on disk.
+ *
+ * Reads `plugin.ts` the same way the loader does (an import is the only
+ * manifest source) but registers nothing: the result is the raw
+ * available-on-disk view the discover/install routes filter by registry
+ * membership. Broken directories (no entry point, no named manifest, a
+ * throwing import) are skipped with the loader's visibility, not fatal.
+ * @param opts - Scan options (root override, see {@link ScanAvailablePluginsOpts})
+ * @returns One entry per distinct manifest name; first dir on disk wins.
+ */
+export async function scanAvailablePlugins(
+  opts: ScanAvailablePluginsOpts = {},
+): Promise<AvailablePlugin[]> {
+  const available = new Map<string, AvailablePlugin>();
+
+  for (const { origin, dir } of opts.roots ?? PLUGIN_DIRS) {
+    await scanPluginRoot({ origin, dir, available, },);
+  }
+
+  return [...available.values(),];
+}
+
+/** Inputs for {@link scanPluginRoot}. */
+interface ScanPluginRootOpts {
+  origin: PluginOrigin;
+  dir: string;
+  /** Accumulator the scan adds every distinct named manifest to. */
+  available: Map<string, AvailablePlugin>;
+}
+
+/**
+ * Scan one plugin root, adding every distinct named manifest to `available`.
+ * @param opts - Root, origin, and the shared accumulator
+ */
+async function scanPluginRoot({ origin, dir, available, }: ScanPluginRootOpts,): Promise<void> {
+  const log = getLogger();
+  const fullDir = isAbsolute(dir,) ? dir : join(import.meta.dir, "..", "..", dir,);
+  if (!existsSync(fullDir,)) {
+    log.debug({ message: `Plugin dir not found — skipping`, dir },);
+    return;
+  }
+
+  for (const pluginName of pluginDirNames(fullDir,)) {
+    const found = await readPluginManifest(join(fullDir, pluginName,), origin,);
+    // The registry keys by manifest name, so a second dir with the same
+    // name is unreachable — first dir on disk wins.
+    if (!found || available.has(found.manifest.name,)) { continue; }
+
+    available.set(found.manifest.name, found,);
+  }
+}
+
+/**
+ * Import one plugin directory's manifest, or undefined when the directory
+ * cannot be discovered (no entry point, no named manifest, throwing import).
+ * @param directory - The per-plugin directory
+ * @param origin - Origin recorded on the result
+ * @returns The available-plugin record, or undefined to skip the directory.
+ */
+async function readPluginManifest(
+  directory: string,
+  origin: PluginOrigin,
+): Promise<AvailablePlugin | undefined> {
+  const pluginFile = join(directory, "plugin.ts",);
+  if (!existsSync(pluginFile,)) { return undefined; }
+
+  try {
+    const mod = (await import(/* @vite-ignore */ pluginFile,)) as Record<string, unknown>;
+    const manifest = mod.plugin as PluginManifest | undefined;
+    if (!manifest?.name) { return undefined; }
+
+    return { manifest, origin, directory, };
+  } catch (error) {
+    // A directory whose entry point throws cannot be discovered — the
+    // loader would refuse it too. Name it, then skip.
+    getLogger().warn(`Failed to import plugin for discovery`, {
+      plugin: pluginFile,
+      origin,
+      error: String(error,),
+    },);
+
+    return undefined;
+  }
 }
 
 /**
@@ -274,6 +382,27 @@ export async function initializePlugin({ db, manifest, }: InitializePluginOpts,)
  * @param name
  */
 export function resetPluginInit(name: string,): void {
+  initializedPlugins.delete(name,);
+}
+
+/**
+ * Whether the plugin's `onLoad` has run, so an uninstall's `onUnload` is real
+ * teardown rather than teardown-without-setup.
+ * @param name
+ */
+export function isPluginInitialized(name: string,): boolean {
+  return initializedPlugins.has(name,);
+}
+
+/**
+ * Forget a plugin's loader bookkeeping after an explicit uninstall: drop it
+ * from the shutdown order and clear its one-shot init marker. Dropping the
+ * registry entry itself stays the caller's job (`registry.unregister`).
+ * @param name
+ */
+export function forgetLoadedPlugin(name: string,): void {
+  const at = loadOrder.indexOf(name,);
+  if (at >= 0) { loadOrder.splice(at, 1,); }
   initializedPlugins.delete(name,);
 }
 

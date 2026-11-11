@@ -14,7 +14,7 @@
  */
 
 import { afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
-import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import type { Kysely, } from "kysely";
@@ -26,7 +26,7 @@ import { writeMemoryNoteTool, } from "../generation/tools/write-memory-note";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { templateRegistry, } from "../image-edit/template-registry";
 import { writeStoredPluginConfig, } from "./config-store";
-import { dispatchPluginRoute, initializePlugin, loadAllPlugins, loadSinglePlugin, registry, unloadAllPlugins, } from "./loader";
+import { dispatchPluginRoute, forgetLoadedPlugin, initializePlugin, isPluginInitialized, loadAllPlugins, loadSinglePlugin, registry, scanAvailablePlugins, unloadAllPlugins, } from "./loader";
 import { executePluginTool, } from "./tool-executor";
 import { STRICT_CODEGEN_FLAG, } from "./tool-policy";
 
@@ -852,5 +852,59 @@ describe("origin-scoped approval", () => {
     expect(
       await dispatchPluginRoute({ request: new Request("http://x/approval/vetoed",), },),
     ).toBeNull();
+  });
+});
+
+describe("plugin init bookkeeping — isPluginInitialized / forgetLoadedPlugin", () => {
+  test("fresh name is uninitialized and forget is a no-op", () => {
+    expect(isPluginInitialized("never-seen-plugin",),).toBe(false,);
+    expect(() => forgetLoadedPlugin("never-seen-plugin",),).not.toThrow();
+    expect(isPluginInitialized("never-seen-plugin",),).toBe(false,);
+  });
+
+  test("loaded plugin is initialized until forgotten", async () => {
+    const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-init-mark", "init-mark",), });
+
+    await loadSinglePlugin(stubDb(), "fixture-init-mark", dir, "core",);
+    expect(isPluginInitialized("fixture-init-mark",),).toBe(true,);
+
+    forgetLoadedPlugin("fixture-init-mark",);
+    expect(isPluginInitialized("fixture-init-mark",),).toBe(false,);
+  });
+});
+
+describe("plugin discovery scan — scanAvailablePlugins", () => {
+  test("returns one entry per distinct manifest name with origin", async () => {
+    const rootA = makePluginDir({});
+    const rootB = makePluginDir({});
+    mkdirSync(join(rootA, "fixture-scan-a",), { recursive: true, },);
+    writeFileSync(
+      join(rootA, "fixture-scan-a", "plugin.ts",),
+      `export const plugin = {\n  name: "fixture-scan-a",\n  version: "1.0.0",\n  description: "a",\n  author: "test",\n};\n`,
+    );
+
+    mkdirSync(join(rootB, "fixture-scan-b",), { recursive: true, },);
+    writeFileSync(
+      join(rootB, "fixture-scan-b", "plugin.ts",),
+      `export const plugin = {\n  name: "fixture-scan-b",\n  version: "1.0.0",\n  description: "b",\n  author: "test",\n};\n`,
+    );
+
+    const found = await scanAvailablePlugins({
+      roots: [{ origin: "community", dir: rootA, }, { origin: "core", dir: rootB, },],
+    });
+
+    const byName = new Map(found.map((p,) => [p.manifest.name, p,],));
+    expect(byName.get("fixture-scan-a")?.manifest.version,).toBe("1.0.0",);
+    expect(byName.get("fixture-scan-a")?.origin,).toBe("community",);
+    expect(byName.get("fixture-scan-b")?.manifest.version,).toBe("1.0.0",);
+    expect(byName.get("fixture-scan-b")?.origin,).toBe("core",);
+  });
+
+  test("skips missing plugin.ts without failing the scan", async () => {
+    const root = makePluginDir({ "README.md": "no entry point here", });
+
+    const found = await scanAvailablePlugins({ roots: [{ origin: "community", dir: root, },], });
+
+    expect(found,).toEqual([],);
   });
 });

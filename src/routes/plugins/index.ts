@@ -10,7 +10,9 @@
  *   POST /api/plugins/:name/enable  — enable a plugin
  *   POST /api/plugins/:name/disable — disable a plugin
  *
- * Per-plugin config read/write lives in `./config` (FEAT-051).
+ * Per-plugin config read/write lives in `./config` (FEAT-051);
+ * install / discover / uninstall live in `./mgmt`
+ * (TASK-plugin-management-api).
  */
 
 import { Elysia, t, } from "elysia";
@@ -25,6 +27,8 @@ import { forbidden, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import { pluginConfigRoutes, } from "./config";
+import { pluginMgmtRoutes, } from "./mgmt";
+import type { ScanAvailablePluginsOpts, } from "../../plugins/loader";
 
 /** */
 function log() {
@@ -37,7 +41,11 @@ function log() {
  * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { plugins: { get: { ...; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
-export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
+export function pluginRoutes(
+  { database, }: { database: Kysely<DB> },
+  prefix = "/api",
+  scanOpts: ScanAvailablePluginsOpts = {},
+) {
   return new Elysia({ name: "plugins", },)
     .get(
       `${prefix}/plugins`,
@@ -215,5 +223,6 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
         },
       },
     )
-    .use(pluginConfigRoutes({ database, }, prefix,),);
+    .use(pluginConfigRoutes({ database, }, prefix,),)
+    .use(pluginMgmtRoutes({ database, }, prefix, scanOpts,),);
 }
