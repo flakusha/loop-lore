@@ -22,6 +22,7 @@ import { initDefaultHooks, } from "../generation/hooks";
 import { bindSharedQuotaEngine, } from "../generation/quota-engine";
 import { applyStoredHarnessSettings, initHarnessAdminSettings, } from "../integrations/harness/admin-settings";
 import { initHarnessRuntime, } from "../integrations/harness/runtime";
+import { applyStoredInboundSettings, initInboundSettings, } from "../integrations/inbound/settings";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
@@ -54,6 +55,19 @@ export async function start() {
   const harnessAcp = config.harness?.acp ?? { enabled: false, profiles: [], };
   initHarnessAdminSettings(harnessAcp,);
   initHarnessRuntime(harnessAcp,);
+  // Inbound MCP/ACP studio servers (§3.3): seed the effective-settings store
+  // from the file layer. Deny-by-default — an omitted `integrations.inbound`
+  // section seeds as "disabled, no principal", so the stdio entrypoints
+  // refuse to serve until the operator configures it.
+  initInboundSettings(
+    config.integrations?.inbound ?? {
+      mcpEnabled: false,
+      acpEnabled: false,
+      principalUserId: "",
+      principalScope: "read",
+    },
+  );
+
   initAssistantQuota(config.assistant,);
   // Seed the hot-apply snapshot and register live consumers so config edits
   // re-apply without a restart (see src/config/hot-apply.ts).
@@ -224,6 +238,8 @@ export async function start() {
   await applyStoredNsfwConfig(database,);
   // Same for the harness admin settings (ACP enable + ToS acknowledgements).
   await applyStoredHarnessSettings(database,);
+  // Same for the inbound MCP/ACP studio settings (server switches + principal).
+  await applyStoredInboundSettings(database,);
 
   // Materialize operator-entered provider instances (system_config) into the
   // registry so a wizard-created provider exists before `ready = true` and

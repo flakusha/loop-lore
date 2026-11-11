@@ -7,6 +7,12 @@ import type { IntegrationsConfig, } from "../schema";
 
 export const INTEGRATIONS_DEFAULTS = {
   enabled: false,
+  inbound: {
+    mcpEnabled: false,
+    acpEnabled: false,
+    principalUserId: "",
+    principalScope: "read",
+  },
   email: {
     enabled: false,
     imapHost: "",
@@ -72,6 +78,18 @@ export const integrationsMeta = {
       type: "boolean",
       default: INTEGRATIONS_DEFAULTS.enabled,
       description: "Master switch. No adapter loads unless this is true.",
+    },
+    inbound: {
+      type: "object",
+      description:
+        "Inbound MCP/ACP agentic servers (external tools drive loop-lore). Deny-by-default: disabled and principal-less until explicitly configured.",
+      properties: {
+        mcpEnabled: { type: "boolean", default: INTEGRATIONS_DEFAULTS.inbound.mcpEnabled, },
+        acpEnabled: { type: "boolean", default: INTEGRATIONS_DEFAULTS.inbound.acpEnabled, },
+        principalUserId: { type: "string", default: INTEGRATIONS_DEFAULTS.inbound.principalUserId, },
+        principalScope: { type: "string", default: INTEGRATIONS_DEFAULTS.inbound.principalScope, },
+      },
+      required: ["mcpEnabled", "acpEnabled", "principalUserId", "principalScope",] as const,
     },
     email: {
       type: "object",
@@ -207,6 +225,7 @@ export const integrationsMeta = {
   },
   required: [
     "enabled",
+    "inbound",
     "email",
     "matrix",
     "xmpp",

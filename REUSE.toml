@@ -69,6 +69,16 @@ precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
 SPDX-License-Identifier = "Apache-2.0 OR MIT"
 
+# The packages/ workspace (e.g. @loop-lore/core) is first-party code and its
+# sources already carry per-file LGPL SPDX headers; the REUSE.toml rules above
+# only covered the top-level src/ tree, so any commit touching packages/ had
+# no matching rule.
+[[annotations]]
+path = ["packages/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
+SPDX-License-Identifier = "LGPL-3.0-or-later"
+
 [[annotations]]
 path = ["LICENSES/**"]
 precedence = "override"
