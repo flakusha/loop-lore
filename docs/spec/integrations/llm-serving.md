@@ -132,6 +132,44 @@ llama-server serves `/v1/embeddings` and `/v1/rerank` (OpenAI-style) — it does
 
 Upstream llama-swap binds the fixed `comfyui_auto` model id to `/comfyui` + `/comfyui/{path}`; `compatibility.ignoreWebsockets: true` keeps `/ws` out of swap/TTL accounting. `ComfyUIClient` (`src/generation/providers/comfyui.ts`) only uses plain HTTP paths (`/prompt`, `/history/{id}`, `/view`, `/upload`, `/object_info`), so pointing the ComfyUI provider `baseUrl` at `http://<swap-host>:<port>/comfyui` routes image generation through the proxy with no code change. Browser `/ws` consumers are the only traffic that never wakes the model.
 
+### Pre-dispatch per-model unload (video renders on the weak box)
+
+Before a render the video serial gate calls `releaseModelsForRender`
+(`src/llm/llama-swap-release.ts`) — the ONE usable endpoint is
+`POST {base}/api/models/unload/{model}` for exactly one model id; the
+signature makes "unload everything" inexpressible.
+
+Eviction set = running LLM model ids from a fresh `GET {base}/running`
+(minus `comfyui_auto` BY CONSTRUCTION — the `/comfyui` proxy entry never
+appears in the unload path; proxy-served entries hold no local VRAM but are
+unloaded anyway: their 404 is a continue-case and the filter would need
+upstream shape guarantees we do not have). Never cached across awaits.
+Sequence: enumerate → one POST per id (parallel via `Promise.allSettled`) → bounded drain poll
+(fixed 30s deadline: the max recommended per-model `unloadTimeout` plus
+margin) → submit the render. Both 404 shapes (`model not found`,
+`no local server found for requested model`) continue; any other failure is
+a warned, non-fatal no-op — the render proceeds.
+
+Never call: `GET /unload`, `POST /api/models/unload` (both unload ALL local
+processes, `comfyui_auto` included), `POST /api/models/pause` (unloads all
+AND 503s every local endpoint including `/comfyui/` until resume).
+
+Two deployment requirements: (1) the swap config MUST register `comfyui_auto`
+(see `configs/config.llama-swap.example.yaml`) or `/comfyui/` answers
+`404 local model comfyui_auto not found`; (2) unauthenticated use targets a
+loopback-bound instance only (refused otherwise); pass the instance
+credential via `apiKey` (Bearer) when the deployment requires one.
+
+Sibling hygiene: keep the ComfyUI `comfyui_llama_swap` node's
+`unload_after_generate` FALSE in render workflows — it fires the blunt
+global `GET /unload` on both success and error paths. Recommendation only:
+that node lives in another repository (no patch from here).
+
+Race semantics: an evicted model's waiters/queued requests fail with
+`"<router>: model unloaded"`; do NOT retry the LLM call before the render
+completes. Stale browser tabs on an unloaded ComfyUI see a benign `409`;
+interacting restarts the model.
+
 ## vLLM Integration (Future)
 
 High-throughput GPU serving with PagedAttention, continuous batching, tensor parallelism.
