@@ -11,7 +11,7 @@
 
 Rationale: 84 commands registered but no user-authorable composition: pipe operator, shared macro resolver, named args, per-command valves all Not Started; smart-regen transforms + decision gate Not Started. Pair with the narrowed chat-product-features residual (membership re-key, ownership transfer) after re-scoping the 9 already-landed migrations.
 
-Feeds: stscript-guided-generations-2026-11-03 (TASK-shared-macro-engine, TASK-pipe-operator-chaining, TASK-named-arguments, TASK-per-command-valves, TASK-workflow-runner-step-ui; Quick-Reply Done vs macros gap); epic-priority-analysis §B2/C3 (re-scope chat-product-features); §C2 chat-variants-taxonomy
+Feeds: stscript-guided-generations-2026-11-03 (TASK-shared-macro-engine, TASK-pipe-operator-chaining, TASK-named-arguments, TASK-per-command-valves, TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui; Quick-Reply Done vs macros gap); epic-priority-analysis §B2/C3 (re-scope chat-product-features); §C2 chat-variants-taxonomy
 
 AC3 Scripting-lite: pipe chaining + shared macro resolver + named args + per-command valves shipped with unit tests; smart-regen decision gate in the main pipeline with style-picker UI.
 
