@@ -31,6 +31,14 @@ export const generationPolicy: RatePolicy = { name: "generation", windowMs: 60_0
 export const chatPolicy: RatePolicy = { name: "chat", windowMs: 60_000, max: 300, burst: 50, };
 
 /**
+ * RSI repo-access tier ops (epic-harness-rsi-repo-access) — deliberately
+ * tight: these run repo commands / touch repo-root paths, so the budget is
+ * an order of magnitude under chat volume (defense in depth beside the
+ * capability gate; the gate itself never rate-limits).
+ */
+export const repoAccessPolicy: RatePolicy = { name: "repo-access", windowMs: 60_000, max: 10, burst: 2, };
+
+/**
  * Server-side outbound fetches: GET /api/v1/chats/:id/link-preview performs
  * a remote fetch of a caller-chosen URL on every cache miss (S-12), so its
  * budget must sit far below chat UI volume — 300/min would make the instance

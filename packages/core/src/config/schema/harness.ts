@@ -96,7 +96,32 @@ export interface HarnessAcpConfig {
   profiles: AcpProfileConfig[];
 }
 
+/**
+ * `harness.repoAccess` sub-config: the RSI repo-root access tier
+ * (epic-harness-rsi-repo-access).
+ *
+ * SECURITY BOUNDARY — DANGEROUS CAPABILITY. Enabling this tier lets the
+ * server-resolved `internal-service` principal execute repo commands and
+ * touch repo-root paths (`src/`, `.plan/`, migrations, workflows) that every
+ * other principal is confined away from. It is disabled by default, never
+ * auto-enabled, and only the operator turns it on (file config or the admin
+ * harness-settings override). Every execution decision is audited to
+ * `tool_call_audit`; the gate fails closed on every absent/unknown input.
+ */
+export interface RepoAccessConfig {
+  /**
+   * Master switch for the repo-access tier. `false` (the default) denies
+   * every repo-access execution regardless of principal or grants.
+   */
+  enabled: boolean;
+}
 /** Top-level `harness` section. */
 export interface HarnessConfig {
   acp: HarnessAcpConfig;
+  /**
+   * RSI repo-root access tier. Optional: an absent section means disabled
+   * (resolve through the default at the gate — `loadConfig` omits
+   * unconfigured sections, so absence must never widen access).
+   */
+  repoAccess?: RepoAccessConfig;
 }

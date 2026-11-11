@@ -12,6 +12,7 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { registerChatOps, } from "./ops/chat";
 import { registerGenerationOps, } from "./ops/generation";
+import { registerRepoAccessOps, } from "./ops/repo-access";
 import { createFacadeRegistry, type FacadeRegistry, } from "./registry";
 
 /** Deps the singleton ops close over — the app's handles, bound once. */
@@ -35,6 +36,12 @@ export function getFacadeRegistry(deps: FacadeRegistryDeps,): FacadeRegistry {
     const registry = createFacadeRegistry();
     registerChatOps(registry, deps,);
     registerGenerationOps(registry, deps,);
+    // RSI repo-access tier (epic-harness-rsi-repo-access): registered with
+    // the SAME deps as every other domain. The ops are harmless on a shared
+    // registry — the tier stays inert until the operator enables it
+    // (repo-access/settings.ts), and every op re-runs the fail-closed gate
+    // + audit inside the handler (ops/repo-access.ts).
+    registerRepoAccessOps(registry, deps,);
     singleton = registry;
   }
 
