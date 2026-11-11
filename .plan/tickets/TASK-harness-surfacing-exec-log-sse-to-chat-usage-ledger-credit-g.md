@@ -3,7 +3,8 @@
 
 # TASK: harness surfacing: exec-log SSE to chat, usage-ledger credit guard, terminal-WS hardening
 
-**Status:** Not Started
+**Status:** In Progress
+**Progress:** Slice (1) is partially landed (2026-11-11, branch `harness-telemetry`): `GET /api/v1/harness/stream` (admin-gated, `routes/harness/stream.ts` on the `routes/sse-stream.ts` scaffold) surfaces the exec-log as `run` SSE frames (runs-summary shape plus the dispatching profile; anchors at connect, never replays history) and the permission queue as `jobs` frames. The chat-timeline last mile for exec-log runs, the usage-ledger credit guard (2), and the terminal-WS hardening (3) remain open.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-harness-integration
