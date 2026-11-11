@@ -100,11 +100,15 @@ describe("normalizeAgnai", () => {
     expect(result.description,).toBe("Name: Aria",);
   });
 
-  test("falls back to the description when the card has no appearance", () => {
+  test("leaves a field the card does not carry empty", () => {
+    // The import maps the card faithfully: a copy of the description would
+    // print the same prose three times and leak a field the card never had
+    // into the export.
     const result = normalizeAgnai({ ...nativeCard, appearance: undefined, },);
-    expect(result.appearance,).toBe(PERSONA_TEXT,);
-    expect(result.personality,).toBe(PERSONA_TEXT,);
-    expect(result.default_outfit,).toBe("default",);
-    expect(result.outfits,).toHaveLength(1,);
+    expect(result.appearance,).toBe("",);
+    expect(result.personality,).toBe("",);
+    expect(result.default_outfit,).toBe("",);
+    expect(result.outfits,).toHaveLength(0,);
+    expect(result.description,).toBe(PERSONA_TEXT,);
   });
 });

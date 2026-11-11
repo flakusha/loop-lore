@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import { cardExtensions, cardTags, } from "../../characters/card-settings";
 import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
 import {
@@ -45,8 +46,7 @@ export function cardRoutes(opts: HandlerOpts, prefix = "/api",) {
           },);
         }
 
-        const settings = jsonParseOr(actor.settings, {},) as Record<string, unknown>;
-        const tags = Array.isArray(settings.tags,) ? settings.tags : [];
+        const tags = cardTags(actor.settings,) ?? [];
         const card = {
           spec: "chara_card_v2",
           spec_version: "2.0",
@@ -70,7 +70,7 @@ export function cardRoutes(opts: HandlerOpts, prefix = "/api",) {
             // The card's own extensions blob (an imported card has no column
             // for it) lives in `settings` - restore it so the shared card view
             // shows what was imported.
-            extensions: (settings.extensions as Record<string, unknown>) ?? {},
+            extensions: cardExtensions(actor.settings,) ?? {},
           },
         };
 

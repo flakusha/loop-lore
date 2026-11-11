@@ -34,19 +34,17 @@ export function normalizeCharacterAI(data: Record<string, unknown>,): CanonicalC
     description = description ? `${description}\n\n${cardData.definition}` : cardData.definition;
   }
 
-  // ponytail: heuristic fallbacks (definition→personality, description→appearance,
-  // synthesized default outfit) so legacy CAI cards pass the import gate;
-  // replace with LLM-assist extraction when a real wardrobe signal exists.
-  const personality = cardData.definition || cardData.description || "";
-  const appearance = cardData.description || cardData.definition || "";
-  const descriptor = appearance || personality || description || "Default outfit";
+  // A Character.AI card carries no separate personality, appearance or
+  // wardrobe: its persona lives in `description` + `definition`, both of which
+  // are kept in the description. The import maps the card faithfully - copying
+  // the description into the missing fields would print the same prose twice.
   return {
     name: cardData.name ?? "",
     description,
-    personality,
-    appearance,
-    default_outfit: "default",
-    outfits: [{ id: "default", name: "Default", descriptor, },],
+    personality: "",
+    appearance: "",
+    default_outfit: "",
+    outfits: [],
     welcome_message: cardData.greeting,
     mes_example: cardData.examples_of_dialogue,
     tags: cardData.tags,

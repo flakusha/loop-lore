@@ -183,21 +183,14 @@ export function validateCharacter(character: CanonicalCharacter,): string[] {
     errors.push("Description is required",);
   }
 
-  if (!character.personality || character.personality.trim() === "") {
-    errors.push("Personality is required",);
-  }
-
-  if (!character.appearance || character.appearance.trim() === "") {
-    errors.push("Appearance is required",);
-  }
-
-  if (!Array.isArray(character.outfits,) || character.outfits.length === 0) {
-    errors.push("At least one outfit is required",);
-  } else if (!character.default_outfit || character.default_outfit.trim() === "") {
-    errors.push("Default outfit is required",);
-  } else if (!character.outfits.some((o,) => o?.id === character.default_outfit)) {
-    errors.push("Default outfit must match an outfits[].id",);
-  } else {
+  // The import gate demands only what every card format carries. Personality,
+  // appearance and the wardrobe are loop-lore's own authoring spec - enforced
+  // where a character is created, not where one is imported. A foreign card
+  // that has no such field imports with it empty and the import reports the
+  // gap as a warning; inventing a value (a copy of the description) would
+  // print the same prose three times and leak a field the card never had into
+  // the export.
+  if (Array.isArray(character.outfits,) && character.outfits.length > 0) {
     const ids = new Set<string>();
     for (const o of character.outfits) {
       if (o && typeof o.id === "string" && o.id !== "") {
@@ -208,6 +201,10 @@ export function validateCharacter(character: CanonicalCharacter,): string[] {
 
         ids.add(o.id,);
       }
+    }
+
+    if (character.default_outfit && !character.outfits.some((o,) => o?.id === character.default_outfit)) {
+      errors.push("Default outfit must match an outfits[].id",);
     }
   }
 

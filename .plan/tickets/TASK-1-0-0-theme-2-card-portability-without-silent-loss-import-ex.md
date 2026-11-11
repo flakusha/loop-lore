@@ -9,7 +9,7 @@
 
 **Summary:**
 
-Rationale: Agnai-native JSON mis-detects as Character.AI and passes the gate while dropping persona/sampleChat/scenario/extensions; tavern hybrids lose personality/appearance; every normalizer's tags die at import (settings='{}'); lorebook use_regex is dropped. Fix detection + fallbacks + tag routing in one lane.
+Rationale: Agnai-native JSON mis-detects as Character.AI and passes the gate while dropping persona/sampleChat/scenario/extensions; tavern hybrids lose personality/appearance; every normalizer's tags die at import (settings='{}'); lorebook use_regex is dropped. Fix detection + faithful mapping + tag routing in one lane.
 
 Feeds: card-import-parity-agnai-2026-11-03 §§2-4 (add ccv2 fallbacks ~15 LOC; new agnai.ts normalizer; skip ooba/charas); matrix-cross-mechanics §0.1.0 alignment (IO x character/world/location/story export/import wiring blocks P3-P5)
 
@@ -36,12 +36,16 @@ still detected as before. The new `agnai` normalizer maps the native fields
 onto the canonical card and keeps the persona bag + `depth_prompt` in
 `extensions`.
 
-The import gate (`validateCharacter`) requires a personality, an appearance and
-a wardrobe, which foreign cards rarely carry. Instead of relaxing the gate,
-the shared normalizer fills the gaps from what the card does say (its
-description) and synthesizes a `default` outfit - a card that passes the gate
-without losing the fields it has. The prompt repeats the description once: the
-character header skips a personality/appearance that is only a copy of it.
+The import gate (`validateCharacter`) demanded a personality, an appearance and
+a wardrobe - fields that are loop-lore's own authoring spec, and that a
+foreign card rarely carries. The gate now demands only what every card format
+carries (a name and a description); the import maps the card faithfully, so a
+field the card does not have stays empty instead of being filled with a copy
+of the description. The copy printed the same prose three times (card view,
+adapter payload, group participant) and leaked a field the card never had into
+the export. The gap is reported per import as a warning, so the authoring gap
+stays visible without being invented. The character header still skips a
+personality/appearance that is only a copy of the description.
 
 Card payload with no column of its own (tags, the card `extensions` blob)
 rides along in `actors.settings` - the same place `POST /api/actors` already
@@ -49,11 +53,12 @@ stores tags - through `src/characters/card-settings.ts`, and the exporters read
 it back. The lorebook rows now carry `key_type`, `key_groups` and
 `scan_depth`, so the activation mode survives the round trip.
 
-Alternatives considered: relaxing the import gate (rejected - a card without a
-personality is a real authoring gap, not an import bug); an LLM assist step to
-extract a personality from the description (deferred - the copy fallback is
-enough to import; a `ponytail:` comment marks the ceiling); a side table for
-the card payload (rejected - `settings` already carries tags).
+Alternatives considered: filling the missing fields with a copy of the
+description (rejected - it duplicates the prose on every surface and puts a
+field the card never had into the export); an LLM assist step to extract a
+personality from the description (deferred - there is no signal until a card
+genuinely lacks one); a side table for the card payload (rejected - `settings`
+already carries tags).
 
 Implementation is complete on the `feat-character-import-parity` branch and
 awaits the operator's landing.
