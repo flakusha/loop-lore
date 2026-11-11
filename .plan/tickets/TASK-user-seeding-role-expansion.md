@@ -313,3 +313,6 @@ const DEFAULT_PERMISSIONS: Record<UserRole, Permission[]> = {
 - `src/seeding/worlds.ts` — world seeding
 - `src/seeding/audit.ts` — seed audit trail
 - `config/seeding.yaml` — default seeding config
+
+
+git issue: b1b4c6b

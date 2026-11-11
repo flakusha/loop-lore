@@ -100,3 +100,6 @@ matching emotion-tagged avatar variant per message.
   EmotionHook does not run in that flow. Per-message avatar swap works for the
   auto-gen path (EmotionHook runs); GM-path messages fall back to the base
   avatar. Follow-up: thread the GM pipeline's emotion trace into that insert.
+
+
+git issue: 8925a2d

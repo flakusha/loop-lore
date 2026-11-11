@@ -110,3 +110,6 @@ File: `.agents/skills/sync-tickets/SKILL.md`
 
 - `epic-code-quality.md` — ongoing ESLint quality epic
 - `TASK-epic-36-lint-fix-array-method-warnings.md` — related array method lint task
+
+
+git issue: 6e15ad2

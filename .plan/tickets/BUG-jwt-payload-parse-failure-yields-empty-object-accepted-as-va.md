@@ -21,3 +21,6 @@ src/auth/jwt.ts:166-170 — jsonParseOr(payloadStr, {} as JwtPayload) then paylo
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+git issue: c31f487

@@ -136,3 +136,6 @@ affected asset routes — `PATCH /:id`, `POST /:id/links`, `DELETE /:id/links/:l
 - Note: the e2e `ApiClient.del()` helper cannot send a body, so DELETE routes are only
   exercisable via raw fetch — the earlier "500 undefined is not an object" readings were a
   bodiless-request artifact identical to pre-fix behavior, not a regression.
+
+
+git issue: 80e07be
