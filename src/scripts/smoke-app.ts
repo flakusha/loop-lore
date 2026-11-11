@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { DB, } from "../db/schema";
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
+import { tmpdir, } from "node:os";
+import { loadConfig, } from "../config/load";
+import { createSqliteDialect, } from "../db/index";
+import { up, } from "../db/migrations/001_init";
+import type { DB, } from "../db/schema";
 import { createApp, } from "../elysia-app";
 import { createLogger, getChildLogger, type Logger, } from "../logger";
-import { createSqliteDialect, } from "../db/index";
-import { loadConfig, } from "../config/load";
 import { safeFetch, } from "../utils";
-import { tmpdir, } from "node:os";
-import { up, } from "../db/migrations/001_init";
 
 // Console-only logger: a one-shot smoke run has no host process to seed one.
 createLogger({ level: "info", },);
@@ -50,4 +50,6 @@ process.exit(0,);
  * Module logger accessor — null if no logger is initialized.
  * @returns the child logger, or null when no logger is initialized.
  */
-const log = (): Logger | null => getChildLogger("scripts/smoke-app",);
+function log(): Logger | null {
+  return getChildLogger("scripts/smoke-app",);
+}
