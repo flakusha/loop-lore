@@ -95,6 +95,11 @@ describe("normalizeAgnai", () => {
     expect(entry?.priority,).toBe(10,);
   });
 
+  test("keeps the name when the persona bag carries no attributes", () => {
+    const result = normalizeAgnai({ ...nativeCard, persona: { kind: "attributes", attributes: {}, }, },);
+    expect(result.description,).toBe("Name: Aria",);
+  });
+
   test("falls back to the description when the card has no appearance", () => {
     const result = normalizeAgnai({ ...nativeCard, appearance: undefined, },);
     expect(result.appearance,).toBe(PERSONA_TEXT,);
