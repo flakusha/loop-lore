@@ -33,3 +33,4 @@ Two constraints shaped the design: (1) the procedural `local` provider is a text
 - [x] The frontend dispatch posts `generate-sfx` / `generate-music` to the new route; `/music` with an external URL links it through the existing chat music-links API (`addMusicLink`)
 - [x] Unit tests: route auth matrix + 501 gate + success path (fake provider), command action contract, frontend dispatch wiring
 - [x] CHANGELOG entry under Unreleased/Added
+**Resolved:** 2026-11-11T13:59:16.948Z Landed on dev as part of the release-010-closeout closeout (audio-prompt-route + live sfx/music + controller registration + dispatch handlers, tests green).
