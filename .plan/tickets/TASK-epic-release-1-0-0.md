@@ -27,6 +27,7 @@ GAP tickets (2026-11-11):
 3. TASK-1-0-0-gap-verify-multi-assistant-and-multi-llm-chat-rows.md (issue 2f405b6)
 4. TASK-1-0-0-gap-backup-restore-before-1-0-0-required-unstarted.md (issue 942d357)
 MFA (deferred-then-approved 2026-11-11): TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md — email/messenger first, TOTP later.
+Flavors hermes/openclaw (IN decision 2026-11-11): implemented in tree/harness-flavor-parity @ fa95b7ca, landing pending; no flavor tickets needed.
 
 Baseline: 374 epics (211 Not Started / 110 In Progress / 52 Done / 1 Postponed); 4486 tickets (~2650 open-like / ~1830 closed-like); 32% no usable epic pointer; no 1.0.0 epic (only epic-release-010 for 0.1.0); package.json 0.1.0; zero git tags.
 
