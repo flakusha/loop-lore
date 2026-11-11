@@ -6,12 +6,28 @@ import { createAsset, detectAssetType, linkAsset, mimeFromExtension, } from "../
 import { cardSettings, } from "../../characters/card-settings";
 import { AssetImportError, CharacterValidationError, } from "../../characters/errors";
 import { validateCharacter, } from "../../characters/parser";
+import type { CanonicalCharacter, } from "../../characters/spec";
 import { AssetLinkEntity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { safeJsonStringify, uid, } from "../../utils";
 import { jsonCreated, } from "../http-utils";
 import { importLorebook, } from "./lorebook";
 import type { ImportActorOpts, } from "./types";
+
+/**
+ * Report the fields a foreign card does not carry. The import does not invent
+ * them - a copy of the description would print the same prose three times and
+ * leak a field the card never had into the export - but the gap stays visible
+ * to the user.
+ * @param character
+ * @param warnings
+ * @returns {void}
+ */
+function reportCardGaps(character: CanonicalCharacter, warnings: string[],): void {
+  if (!character.personality?.trim()) { warnings.push("The card carries no separate personality field",); }
+  if (!character.appearance?.trim()) { warnings.push("The card carries no separate appearance field",); }
+  if (!character.outfits?.length) { warnings.push("The card carries no wardrobe",); }
+}
 
 /**
  * @param opts
@@ -26,6 +42,8 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
   if (validationErrors.length > 0) {
     throw new CharacterValidationError(validationErrors,);
   }
+
+  reportCardGaps(character, warnings,);
 
   const id = uid();
 

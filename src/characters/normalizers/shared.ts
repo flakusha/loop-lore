@@ -76,32 +76,22 @@ export function buildCanonicalFields(
     ? outfitsRaw.filter((o,): o is CharacterOutfit => !!o && typeof o === "object")
     : [];
 
-  // Spec-mandatory fallbacks: a foreign card (SillyTavern, Agnai, Character.AI)
-  // rarely carries loop-lore's wardrobe or a separate personality, and the
-  // import gate rejects a card without them. Fill them from what the card does
-  // say instead of refusing the import.
-  // ponytail: the fallbacks copy the description into the prompt - replace
-  // with LLM-assist extraction when a real signal exists.
+  // A foreign card (SillyTavern, Agnai, Character.AI) rarely carries loop-lore's
+  // wardrobe or a separate personality/appearance field. The import maps the
+  // card faithfully: a field the card does not have stays empty. Filling it
+  // with a copy of the description would print the same prose three times
+  // (card view, adapter payload, group participant) and leak a field the card
+  // never had into the export.
   const description = (raw.description as string) ?? "";
-  const personality = (raw.personality as string) || description;
-  const appearance = (raw.appearance as string) ||
-    appearanceFromExtensions(raw.extensions,) ||
-    description;
+  const personality = (raw.personality as string) ?? "";
+  // A Tavern/Agnai hybrid parks its appearance in `extensions.agnai` - that is
+  // the card's own field, so it is recovered instead of lost.
+  const appearance = (raw.appearance as string) || appearanceFromExtensions(raw.extensions,);
 
-  const wardrobe = outfits.length > 0
-    ? outfits
-    : [{
-      id: "default",
-      name: "Default",
-      descriptor: appearance || personality || description || "Default outfit",
-    },];
-
-  const defaultOutfit = outfits.length > 0
-    ? ((raw.default_outfit as string | undefined) ??
-      (raw.outfit as string | undefined) ??
-      wardrobe[0]?.id ??
-      "")
-    : (wardrobe[0]?.id ?? "default");
+  const defaultOutfit = (raw.default_outfit as string | undefined) ??
+    (raw.outfit as string | undefined) ??
+    outfits[0]?.id ??
+    "";
 
   return {
     name: (raw.name as string) ?? "",
@@ -109,7 +99,7 @@ export function buildCanonicalFields(
     personality,
     appearance,
     default_outfit: defaultOutfit,
-    outfits: wardrobe,
+    outfits,
     scenario: raw.scenario as string | undefined,
     welcome_message: raw[welcomeKey] as string | undefined,
     mes_example: raw.mes_example as string | undefined,

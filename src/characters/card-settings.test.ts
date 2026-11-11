@@ -48,4 +48,17 @@ describe("cardTags / cardExtensions", () => {
     expect(cardTags("not json",),).toBeUndefined();
     expect(cardExtensions(null,),).toBeUndefined();
   });
+
+  test("survive a blob that is not an object", () => {
+    // The settings column is text, not a contract: a legacy row can hold
+    // `null`, an array or a bare string - none of which carry card payload.
+    for (const blob of ["null", "[]", '"abc"', "123", "true",]) {
+      expect(cardTags(blob,),).toBeUndefined();
+      expect(cardExtensions(blob,),).toBeUndefined();
+    }
+  });
+
+  test("drop tag entries that are not strings", () => {
+    expect(cardTags('{"tags":["a",1,null]}',),).toEqual(["a",],);
+  });
 });

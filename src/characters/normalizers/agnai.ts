@@ -159,6 +159,8 @@ export function normalizeAgnai(data: Record<string, unknown>,): CanonicalCharact
     voice: card.voice,
     json: card.json,
     sprite: card.sprite,
+    // The depth prompt's insertion depth travels with the prompt text.
+    insert: card.insert,
   };
 
   if (card.insert?.prompt) { extensions.depth_prompt = card.insert.prompt; }

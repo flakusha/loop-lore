@@ -17,7 +17,11 @@ import type { CanonicalCharacter, CharacterExtensions, } from "./spec";
  * @returns Record<string, unknown>
  */
 function actorSettings(settings: string | null | undefined,): Record<string, unknown> {
-  return jsonParseOr<Record<string, unknown>>(settings ?? "{}", {},);
+  const parsed = jsonParseOr<unknown>(settings ?? "{}", null,);
+  // The blob is text, not a contract: a legacy row can hold `null`, an array
+  // or a bare string, and none of those carry card payload.
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed,)) { return {}; }
+  return parsed as Record<string, unknown>;
 }
 
 /**
@@ -42,7 +46,8 @@ export function cardSettings(character: CanonicalCharacter,): string {
  */
 export function cardTags(settings: string | null | undefined,): string[] | undefined {
   const tags = actorSettings(settings,).tags;
-  return Array.isArray(tags,) ? (tags as string[]) : undefined;
+  if (!Array.isArray(tags,)) { return undefined; }
+  return tags.filter((tag,): tag is string => typeof tag === "string");
 }
 
 /**

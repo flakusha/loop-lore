@@ -93,4 +93,58 @@ describe("card import/export parity", () => {
     const book = exported.data.character_book as { entries: { use_regex?: boolean }[] };
     expect(book.entries[0]?.use_regex,).toBe(true,);
   });
+
+  test("a card without a personality imports without inventing one", async () => {
+    const card = {
+      spec: "chara_card_v2",
+      spec_version: "2.0",
+      data: {
+        name: "Wanderer",
+        description: "A tall elven ranger in silver armor.",
+        first_mes: "You are not alone out here.",
+      },
+    };
+
+    const fd = new FormData();
+    fd.append("file", new File([JSON.stringify(card,),], "wanderer.json", { type: "application/json", },),);
+    const res = await handleImport(
+      new Request("http://localhost/api/import", { method: "POST", body: fd, },),
+      db,
+      userId,
+    );
+
+    expect(res.status,).toBe(201,);
+
+    // The gap is reported instead of being papered over with a copy of the
+    // description (which would print the same prose three times).
+    const body = (await res.json()) as { warnings: string[] };
+    expect(body.warnings,).toContain("The card carries no separate personality field",);
+    expect(body.warnings,).toContain("The card carries no wardrobe",);
+
+    const actor = await db.selectFrom("actors",)
+      .select(["id", "description", "personality", "appearance", "outfits",],)
+      .where("display_name", "=", "Wanderer",)
+      .executeTakeFirstOrThrow();
+
+    expect(actor.description,).toBe("A tall elven ranger in silver armor.",);
+    expect(actor.personality ?? "",).toBe("",);
+    expect(actor.appearance ?? "",).toBe("",);
+    expect(actor.outfits,).toBeNull();
+
+    // The export must not invent the fields the card never had.
+    const app = new Elysia({ name: "card-parity-export-bare", },)
+      .derive({ as: "scoped", }, () => ({ userId, userRole: "user", }),)
+      .use(exportRoutes({ database: db, },),) as unknown as Elysia;
+
+    const exportRes = await app.handle(
+      new Request(`http://localhost/api/actors/${actor.id}/export?format=ccv3`,),
+    );
+
+    expect(exportRes.status,).toBe(200,);
+
+    const exported = (await exportRes.json()) as { data: Record<string, unknown> };
+    expect(exported.data.description,).toBe("A tall elven ranger in silver armor.",);
+    expect(exported.data.personality ?? "",).toBe("",);
+    expect(exported.data.appearance ?? "",).toBe("",);
+  });
 });

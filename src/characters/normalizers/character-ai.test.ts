@@ -20,11 +20,12 @@ describe("normalizeCharacterAI", () => {
 
     expect(result.name,).toBe("Test Character",);
     expect(result.description,).toBe("A test character\n\nYou are a friendly character",);
-    expect(result.personality,).toBe("You are a friendly character",);
-    expect(result.appearance,).toBe("A test character",);
-    expect(result.default_outfit,).toBe("default",);
-    expect(result.outfits,).toHaveLength(1,);
-    expect(result.outfits[0]?.id,).toBe("default",);
+    // The card has no separate personality/appearance/wardrobe: the persona
+    // lives in the description and is not copied into the missing fields.
+    expect(result.personality,).toBe("",);
+    expect(result.appearance,).toBe("",);
+    expect(result.default_outfit,).toBe("",);
+    expect(result.outfits,).toHaveLength(0,);
     expect(result.welcome_message,).toBe("Hello!",);
     expect(result.mes_example,).toBe("User: Hi\nCharacter: Hello!",);
     expect(result.tags,).toEqual(["test", "friendly",],);
@@ -40,10 +41,10 @@ describe("normalizeCharacterAI", () => {
 
     expect(result.name,).toBe("Minimal Character",);
     expect(result.description,).toBe("Minimal description",);
-    expect(result.personality,).toBe("Minimal description",);
-    expect(result.appearance,).toBe("Minimal description",);
-    expect(result.default_outfit,).toBe("default",);
-    expect(result.outfits,).toHaveLength(1,);
+    expect(result.personality,).toBe("",);
+    expect(result.appearance,).toBe("",);
+    expect(result.default_outfit,).toBe("",);
+    expect(result.outfits,).toHaveLength(0,);
     expect(result.welcome_message,).toBeUndefined();
     expect(result.mes_example,).toBeUndefined();
     expect(result.tags,).toBeUndefined();
@@ -59,8 +60,8 @@ describe("normalizeCharacterAI", () => {
     const result = normalizeCharacterAI(input,);
 
     expect(result.description,).toBe("{{char}} is a character who likes {{user}}",);
-    expect(result.personality,).toBe("{{char}} is a character who likes {{user}}",);
-    expect(result.appearance,).toBe("{{char}} is a character who likes {{user}}",);
+    expect(result.personality,).toBe("",);
+    expect(result.appearance,).toBe("",);
   });
 
   it("handles definition without description", () => {
@@ -72,15 +73,15 @@ describe("normalizeCharacterAI", () => {
     const result = normalizeCharacterAI(input,);
 
     expect(result.description,).toBe("You are a character",);
-    expect(result.personality,).toBe("You are a character",);
-    expect(result.appearance,).toBe("You are a character",);
+    expect(result.personality,).toBe("",);
+    expect(result.appearance,).toBe("",);
   });
 
-  it("synthesizes a default outfit so CAI cards pass the import gate", () => {
+  it("leaves the wardrobe empty so the card is imported faithfully", () => {
     const result = normalizeCharacterAI({ name: "CAI", description: "A traveler", definition: "Bold scout", },);
-    expect(result.default_outfit,).toBe("default",);
-    expect(result.outfits,).toHaveLength(1,);
-    expect(result.outfits[0]?.descriptor,).toBe("A traveler",);
+    expect(result.default_outfit,).toBe("",);
+    expect(result.outfits,).toHaveLength(0,);
+    expect(result.description,).toBe("A traveler\n\nBold scout",);
   });
 
   it("handles empty input", () => {

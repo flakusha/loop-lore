@@ -73,12 +73,12 @@ describe("normalizeCcV2", () => {
 
     expect(result.name,).toBe("Minimal Character",);
     expect(result.description,).toBe("Minimal description",);
-    // Mandatory fields fall back to the description so a foreign card passes
-    // the import gate instead of being rejected for a missing wardrobe.
-    expect(result.personality,).toBe("Minimal description",);
-    expect(result.appearance,).toBe("Minimal description",);
-    expect(result.default_outfit,).toBe("default",);
-    expect(result.outfits,).toHaveLength(1,);
+    // A field the card does not carry stays empty: the import maps the card
+    // faithfully instead of copying the description into every field.
+    expect(result.personality,).toBe("",);
+    expect(result.appearance,).toBe("",);
+    expect(result.default_outfit,).toBe("",);
+    expect(result.outfits,).toHaveLength(0,);
     expect(result.scenario,).toBeUndefined();
     expect(result.welcome_message,).toBeUndefined();
     expect(result.mes_example,).toBeUndefined();

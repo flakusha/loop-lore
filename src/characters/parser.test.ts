@@ -87,7 +87,9 @@ describe("parseCharacterCard", () => {
     const result = await parseCharacterCard(JSON.stringify(tavern,),);
     expect(result.format,).toBe("ccv2",);
     expect(result.character.appearance,).toBe("Silver hair",);
-    expect(result.character.personality,).toBe("Name: Aria\nspecies: elf",);
+    // The card carries no personality of its own - it stays empty instead of
+    // being filled with a copy of the description.
+    expect(result.character.personality,).toBe("",);
   });
 
   test("detects flat JSON format", async () => {
@@ -144,9 +146,21 @@ describe("validateCharacter", () => {
     const errors = validateCharacter(character,);
     expect(errors,).toContain("Name is required",);
     expect(errors,).toContain("Description is required",);
-    expect(errors,).toContain("Personality is required",);
-    expect(errors,).toContain("Appearance is required",);
-    expect(errors,).toContain("At least one outfit is required",);
+  });
+
+  test("accepts a foreign card with no personality, appearance or wardrobe", () => {
+    // The import maps the card faithfully: loop-lore's authoring spec is
+    // enforced where a character is created, not where one is imported.
+    const character: CanonicalCharacter = {
+      name: "Foreign",
+      description: "A tall elven ranger in silver armor.",
+      personality: "",
+      appearance: "",
+      default_outfit: "",
+      outfits: [],
+    };
+
+    expect(validateCharacter(character,),).toEqual([],);
   });
 
   test("returns errors for duplicate outfit ids", () => {
