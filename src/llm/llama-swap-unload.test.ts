@@ -8,10 +8,17 @@
 import { describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
 import {
+  authHeaders,
+  BASE_ENV_VAR,
   baseHost,
   COMFYUI_PROXY_MODEL_ID,
   computeEvictionSet,
+  DEFAULT_BASE,
+  DRAIN_POLL_MS,
+  DRAIN_TIMEOUT_MS,
   isLoopbackHost,
+  REQUEST_TIMEOUT_MS,
+  stripBase,
   unloadLlamaSwapModel,
 } from "./llama-swap-unload";
 
@@ -188,5 +195,25 @@ describe("computeEvictionSet", () => {
     },);
 
     expect(ids,).toEqual([],);
+  });
+});
+
+describe("unload constants + pure helpers", () => {
+  test("constants match llama-swap defaults", () => {
+    expect(BASE_ENV_VAR,).toBe("LLAMA_SWAP_BASE_URL",);
+    expect(DEFAULT_BASE,).toBe("http://127.0.0.1:8080",);
+    expect(DRAIN_TIMEOUT_MS,).toBe(30_000,);
+    expect(DRAIN_POLL_MS,).toBe(250,);
+    expect(REQUEST_TIMEOUT_MS,).toBe(10_000,);
+  });
+
+  test("stripBase trims trailing slashes", () => {
+    expect(stripBase("http://127.0.0.1:8080///",),).toBe("http://127.0.0.1:8080",);
+    expect(stripBase(BASE,),).toBe(BASE,);
+  });
+
+  test("authHeaders emits Bearer only with a key", () => {
+    expect(authHeaders("k",),).toEqual({ authorization: "Bearer k", },);
+    expect(authHeaders(),).toEqual({},);
   });
 });
