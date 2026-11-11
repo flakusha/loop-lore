@@ -552,3 +552,101 @@ describe("GET /api/v1/chats/:id/vn-choices validation", () => {
     await db.destroy();
   });
 });
+
+describe("POST /api/v1/chats/:id/vn-choices/custom", () => {
+  test("creates a provenance:'custom' choice and selects it in one call", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const app = makeApp(db, PARTICIPANT_ID,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/custom`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ freeText: "  I bolt the door  ", sceneIndex: 0, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as {
+      choice: { id: string; label: string; selected: number; consequences: { provenance?: string } };
+      appliedAt: string | null;
+    };
+
+    // Same response contract as /select.
+    expect(body.choice.id.startsWith("custom-",),).toBe(true,);
+    expect(body.choice.label,).toBe("I bolt the door",);
+    expect(body.choice.selected,).toBe(1,);
+    expect(body.choice.consequences.provenance,).toBe("custom",);
+
+    // The row exists, is selected, and went through the standard history path.
+    const row = await db.selectFrom("vn_choices",).selectAll()
+      .where("id", "=", body.choice.id,).executeTakeFirstOrThrow();
+
+    expect(row.status,).toBe("selected",);
+    expect(JSON.parse(row.consequences,),).toEqual({ provenance: "custom", },);
+
+    const history = await db.selectFrom("vn_choice_selections",).selectAll()
+      .where("choice_id", "=", body.choice.id,).execute();
+
+    expect(history,).toHaveLength(1,);
+
+    // The typed choice no longer counts as pending.
+    const list = await app.handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices?sceneIndex=0`,),
+    );
+
+    const listed = await list.json() as { choices: { id: string }[] };
+    expect(listed.choices,).toHaveLength(1,); // only the seeded generated card
+    expect(listed.choices[0]!.id,).not.toBe(body.choice.id,);
+
+    await db.destroy();
+  });
+
+  test("rejects blank, over-cap, and malformed bodies with 400", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const app = makeApp(db, PARTICIPANT_ID,);
+    const post = (body: unknown,) =>
+      app.handle(
+        new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/custom`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify(body,),
+        },),
+      );
+
+    expect((await post({ freeText: "   ", sceneIndex: 0, },)).status,).toBe(400,);
+    expect((await post({ freeText: "a".repeat(2001,), sceneIndex: 0, },)).status,).toBe(400,);
+    // A non-string fails the body schema before the handler sees it.
+    expect((await post({ freeText: 7, sceneIndex: 0, },)).status,).toBe(422,);
+    expect((await post({ freeText: "I wait", sceneIndex: -1, },)).status,).toBe(400,);
+    expect((await post({ freeText: "I wait", sceneIndex: 1.5, },)).status,).toBe(400,);
+
+    // Nothing was authored by the rejected requests.
+    const rows = await db.selectFrom("vn_choices",).selectAll()
+      .where("chat_id", "=", CHAT_ID,).execute();
+
+    expect(rows,).toHaveLength(1,);
+
+    await db.destroy();
+  });
+
+  test("a non-participant receives 404", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const res = await makeApp(db, OUTSIDER_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/custom`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ freeText: "I wait", sceneIndex: 0, },),
+      },),
+    );
+
+    expect(res.status,).toBe(404,);
+
+    await db.destroy();
+  });
+});

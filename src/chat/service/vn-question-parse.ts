@@ -62,6 +62,12 @@ function parseOption(raw: unknown,): VnQuestionOption | null {
   const id = o.id;
   if (typeof id !== "string" || id === "") { return null; }
 
+  // Provenance is pass-through-but-typed: only the two known values survive,
+  // anything else (legacy rows, LLM junk) reads as the generated default.
+  const provenance = o.provenance === "custom" || o.provenance === "generated"
+    ? o.provenance
+    : undefined;
+
   return {
     id,
     text: typeof o.text === "string" ? o.text : "",
@@ -71,6 +77,7 @@ function parseOption(raw: unknown,): VnQuestionOption | null {
     consequence: typeof o.consequence === "object" && o.consequence !== null
       ? (o.consequence as Record<string, unknown>)
       : null,
+    provenance,
   };
 }
 

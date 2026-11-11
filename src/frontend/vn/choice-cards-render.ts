@@ -4,6 +4,7 @@
 /** Choice card DOM rendering. */
 import { t, } from "../alpine/i18n";
 import type { VnChoice, } from "./choice-cards";
+import { buildFreeformInput, } from "./freeform-input";
 
 // ── Internal ────────────────────────────────────────────────────────────────
 
@@ -12,6 +13,7 @@ import type { VnChoice, } from "./choice-cards";
  * @param choices
  * @param onSelect
  * @param onSkip - called with every available choice id when the skip button is clicked.
+ * @param onCustomAction - called with the typed action when the "type your own" form is submitted.
  * @returns {void}
  */
 export function renderChoiceCards(
@@ -19,6 +21,7 @@ export function renderChoiceCards(
   choices: VnChoice[],
   onSelect: (id: string,) => void,
   onSkip?: (id: string,) => void,
+  onCustomAction?: (text: string,) => void,
 ): void {
   if (!container) {
     return;
@@ -94,5 +97,19 @@ export function renderChoiceCards(
     },);
 
     container.append(skip,);
+  }
+
+  // The custom-typeable affordance: while the scene still has an open
+  // decision, the player can always type their own action instead of picking
+  // any of the authored cards.
+  if (available.length > 0 && onCustomAction) {
+    container.append(buildFreeformInput({
+      className: "vn-choice-freeform",
+      placeholder: t("toasts.vnCustomActionPlaceholder",),
+      sendLabel: t("toasts.vnCustomActionSend",),
+      onSubmit: (text,) => {
+        onCustomAction(text,);
+      },
+    },),);
   }
 }

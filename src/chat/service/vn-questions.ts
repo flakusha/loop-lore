@@ -15,6 +15,8 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { jsonStringifyOr, } from "../../utils";
+import { resolveVnAnswerOption, } from "./vn-free-text";
 import { applyVnImpacts, markVnQuestionApplied, withOptionModifier, } from "./vn-impacts";
 import { parseVnQuestion, QUESTION_COLUMNS, } from "./vn-question-parse";
 import type {
@@ -77,6 +79,10 @@ export async function listVnQuestions(
  * the chosen option's modifiers) to the character systems, and returns the
  * option's impacts for the caller to surface.
  *
+ * `freeText` answers take the identical route: the typed text is persisted
+ * as a synthesized `provenance: "custom"` option (no modifiers, no
+ * option-level consequences) and selected through the same single-shot flip.
+ *
  * Side effects after the single-shot status flip are individually guarded: a
  * failing impact write never loses the answer — it only leaves `appliedAt`
  * null.
@@ -88,7 +94,7 @@ export async function answerVnQuestion(
   database: Kysely<DB>,
   params: AnswerVnQuestionParams,
 ): Promise<AnswerVnQuestionResult> {
-  const { chatId, questionId, optionId, actingUserId, } = params;
+  const { chatId, questionId, optionId, freeText, actingUserId, } = params;
 
   // chat_id is part of the WHERE so a question from another chat reads as
   // not_found rather than leaking existence (IDOR guard).
@@ -109,10 +115,14 @@ export async function answerVnQuestion(
     return { code: "bad_request", message: "Question already answered", };
   }
 
-  const option = parsed.options.find((o,) => o.id === optionId);
-  if (!option) {
-    return { code: "bad_request", message: "Option not found on question", };
+  // Resolve the answer channel: a picked option or a typed answer synthesized
+  // as a first-class `provenance: "custom"` option (see vn-free-text.ts).
+  const resolution = resolveVnAnswerOption(parsed.options, optionId, freeText,);
+  if (!resolution.ok) {
+    return { code: "bad_request", message: resolution.message, };
   }
+
+  const { option: selectedOption, customOption, } = resolution;
 
   const now = new Date().toISOString();
 
@@ -122,7 +132,16 @@ export async function answerVnQuestion(
   // Zero affected rows means another answer landed first, so report it.
   const updated = await database
     .updateTable("vn_questions",)
-    .set({ status: "answered", selected_option_id: optionId, answered_at: now, },)
+    .set({
+      status: "answered",
+      selected_option_id: selectedOption.id,
+      answered_at: now,
+      // The synthesized custom option persists with the flip, so a later
+      // list/GET shows what the player actually typed.
+      ...(customOption
+        ? { options: jsonStringifyOr([...parsed.options, customOption,],), }
+        : {}),
+    },)
     .where("id", "=", questionId,)
     .where("status", "=", "available",)
     .executeTakeFirst();
@@ -132,27 +151,32 @@ export async function answerVnQuestion(
   }
 
   parsed.status = "answered";
-  parsed.selected_option_id = optionId;
+  parsed.selected_option_id = selectedOption.id;
+  if (customOption) {
+    parsed.options = [...parsed.options, customOption,];
+  }
+
   parsed.answered_at = now;
 
   // An option-level consequence wins over the question-level one, mirroring how
   // next_scene_id resolves above. The frontend branches on this to push the
   // player to the new location.
-  const locationId = (typeof option.consequence?.location === "string" ? option.consequence.location : undefined) ??
-    (typeof parsed.consequences?.location === "string" ? parsed.consequences.location : undefined);
+  const locationId =
+    (typeof selectedOption.consequence?.location === "string" ? selectedOption.consequence.location : undefined) ??
+      (typeof parsed.consequences?.location === "string" ? parsed.consequences.location : undefined);
 
   // The question's impact maps folded with the chosen option's modifiers;
   // exactly what applyVnImpacts writes (and what the route surfaces).
   const relationshipImpact = withOptionModifier(
     parsed.relationship_impact,
     "standing",
-    option.relationship_modifier,
+    selectedOption.relationship_modifier,
   );
 
   const moodImpact = withOptionModifier(
     parsed.mood_impact,
     "happiness",
-    option.emotion_modifier,
+    selectedOption.emotion_modifier,
   );
 
   // Consequence write-back: application and stamp run inside a single
@@ -190,8 +214,8 @@ export async function answerVnQuestion(
   return {
     ok: true,
     question: parsed,
-    option,
-    nextSceneId: option.next_scene_id ?? parsed.next_scene_id,
+    option: selectedOption,
+    nextSceneId: selectedOption.next_scene_id ?? parsed.next_scene_id,
     locationId,
     relationshipImpact,
     moodImpact,

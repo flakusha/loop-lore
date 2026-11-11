@@ -15,8 +15,9 @@ import {
   initChoiceCards,
   loadChoices,
   skipChoice,
+  submitCustomChoice,
 } from "./choice-cards";
-import { isVnDecisionPending, setQuestionPending, } from "./pending-decision";
+import { isVnDecisionPending, setChoicePending, setQuestionPending, } from "./pending-decision";
 
 // ── Mock apiFetch ───────────────────────────────────────────────────────────
 
@@ -51,6 +52,7 @@ interface FakeEl {
   className: string;
   disabled: boolean;
   textContent: string;
+  value: string;
   attrs: Record<string, string>;
   children: FakeEl[];
   listeners: Record<string, Array<() => void>>;
@@ -66,6 +68,7 @@ function makeEl(): FakeEl {
     className: "",
     disabled: false,
     textContent: "",
+    value: "",
     attrs: {},
     children: [],
     listeners: {},
@@ -139,6 +142,11 @@ function boot(): FakeEl {
   const container = makeEl();
   initChoiceCards(container as unknown as HTMLElement, "chat-1", 2,);
   return container;
+}
+
+/** Labels of each card, via the label span (choice-cards-render.test.ts convention). */
+function cardLabels(cards: FakeEl[],): string[] {
+  return cards.map((c,) => c.children[0]?.textContent ?? "");
 }
 
 afterEach(() => {
@@ -340,5 +348,64 @@ describeOrSkip("loadChoices", () => {
     await loadChoices();
 
     expect(isVnDecisionPending(),).toBe(true,);
+  });
+},);
+
+describeOrSkip("submitCustomChoice", () => {
+  test("posts { freeText, sceneIndex } and folds the returned card in as selected", async () => {
+    const container = boot();
+    apiHandler = (url,) => {
+      if (url.includes("/custom",)) {
+        return jsonRes({
+          choice: rawChoice({
+            id: "custom-abc",
+            text: "I bolt the door",
+            label: "I bolt the door",
+            consequences: { provenance: "custom", },
+          },),
+          locationId: null,
+          appliedAt: null,
+        },);
+      }
+
+      return jsonRes({ choices: [rawChoice({},),], },);
+    };
+
+    await loadChoices();
+    toasts.length = 0;
+
+    expect(await submitCustomChoice("  I bolt the door  ",),).toBe(true,);
+
+    const call = apiCalls.find((c,) => c.url.includes("/custom",));
+    expect(call?.url,).toBe("/api/v1/chats/chat-1/vn-choices/custom",);
+    expect(call?.opts.method,).toBe("POST",);
+    expect(JSON.parse(call!.opts.body as string,),).toEqual({
+      freeText: "  I bolt the door  ",
+      sceneIndex: 2,
+    },);
+
+    // The typed card is selected locally; the seeded generated card is not,
+    // so the gate stays closed (same rule as a card pick).
+    expect(isVnDecisionPending(),).toBe(true,);
+    expect(getAccumulatedImpacts(),).toEqual({ relationships: {}, moods: {}, },);
+
+    // Re-render includes both cards: available generated card first, then the
+    // selected custom card (both carry the vn-choice-card base class).
+    const cards = container.children[0]!.children.filter((c,) => c.className.includes("vn-choice-card",));
+    expect(cardLabels(cards,),).toEqual(["Go left", "I bolt the door",],);
+    expect(cards[1]!.className,).toBe("vn-choice-card vn-choice-card--selected",);
+    setChoicePending(false,);
+  });
+
+  test("a rejected custom action surfaces a toast and changes nothing", async () => {
+    boot();
+    apiHandler = () => jsonRes({ choices: [rawChoice({},),], },);
+    await loadChoices();
+    toasts.length = 0;
+    apiHandler = () => jsonRes({ error: "blank", }, 400,);
+
+    expect(await submitCustomChoice("   ",),).toBe(false,);
+    expect(toasts.length,).toBe(1,);
+    expect(toasts[0]!.type,).toBe("error",);
   });
 },);
