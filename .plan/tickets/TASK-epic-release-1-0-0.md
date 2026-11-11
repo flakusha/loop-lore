@@ -26,6 +26,7 @@ GAP tickets (2026-11-11):
 2. TASK-1-0-0-gap-sd-cpp-local-image-wiring-as-owned-scope.md (issue 4bd966e)
 3. TASK-1-0-0-gap-verify-multi-assistant-and-multi-llm-chat-rows.md (issue 2f405b6)
 4. TASK-1-0-0-gap-backup-restore-before-1-0-0-required-unstarted.md (issue 942d357)
+5. TASK-1-0-0-gap-vn-custom-typeable-choices.md — closes the VN Required line's custom-typeable leg (typed question answers + typed branching actions, provenance-flagged; branch vn-free-text-choices)
 MFA (deferred-then-approved 2026-11-11): TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md — email/messenger first, TOTP later.
 Flavors hermes/openclaw (IN decision 2026-11-11): implemented in tree/harness-flavor-parity @ fa95b7ca, landing pending; no flavor tickets needed.
 
