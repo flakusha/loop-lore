@@ -390,6 +390,33 @@
   white-space: nowrap;
 }
 
+/* ── Custom-typeable answers ("or type your own") ────────── */
+
+.vn-question-freeform,
+.vn-choice-freeform {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+  margin-top: var(--space-2, 0.5rem);
+}
+
+.vn-freeform-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Zero-option questions are free-text-first: the prompt reads as the card's
+   headline so the input is obviously the way to answer. */
+.vn-question-card-freeform .vn-question-card-text {
+  font-weight: 600;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .vn-freeform-input,
+  .vn-freeform-send {
+    min-height: 44px;
+  }
+}
+
 /* ── Loading Indicator ──────────────────────────────────── */
 
 .vn-loading-indicator {

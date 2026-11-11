@@ -21,7 +21,10 @@ import type { HandlerOpts, } from "./types";
 
 const tChatIdParams = t.Object({ id: t.String(), },);
 const tAnswerParams = t.Object({ id: t.String(), questionId: t.String(), },);
-const AnswerBodySchema = t.Object({ optionId: t.String(), },);
+const AnswerBodySchema = t.Object({
+  optionId: t.Optional(t.String(),),
+  freeText: t.Optional(t.String(),),
+},);
 
 /**
  * Map a service error code to its HTTP status (mirrors chats/vn-choices.ts).
@@ -111,13 +114,15 @@ function handleAnswerVnQuestion(database: Kysely<DB>,) {
     }
 
     const questionId = ctx.params.questionId;
-    const optionId = (ctx.body as { optionId?: string }).optionId ?? "";
+    const body = ctx.body as { optionId?: unknown; freeText?: unknown };
+    const optionId = typeof body.optionId === "string" ? body.optionId : "";
+    const freeText = typeof body.freeText === "string" ? body.freeText : undefined;
 
-    if (!questionId || !optionId) {
-      return jsonError("questionId and optionId are required", HttpStatus.BadRequest,);
+    if (!questionId || (!optionId && freeText === undefined)) {
+      return jsonError("optionId or freeText is required", HttpStatus.BadRequest,);
     }
 
-    const result = await answerVnQuestion(database, { chatId, questionId, optionId, actingUserId: userId, },);
+    const result = await answerVnQuestion(database, { chatId, questionId, optionId, freeText, actingUserId: userId, },);
 
     if ("code" in result) {
       return jsonError(result.message, statusForCode(result.code,), result.code as never,);

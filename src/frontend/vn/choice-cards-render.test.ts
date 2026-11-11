@@ -18,12 +18,13 @@ interface FakeEl {
   type: string;
   disabled: boolean;
   textContent: string;
+  value: string;
   attrs: Record<string, string>;
   children: FakeEl[];
-  listeners: Record<string, Array<() => void>>;
+  listeners: Record<string, Array<(event?: unknown,) => void>>;
   append(...els: FakeEl[]): void;
   replaceChildren(): void;
-  addEventListener(type: string, fn: () => void,): void;
+  addEventListener(type: string, fn: (event?: unknown,) => void,): void;
   setAttribute(name: string, value: string,): void;
 }
 
@@ -35,6 +36,7 @@ function makeEl(tag: string,): FakeEl {
     type: "",
     disabled: false,
     textContent: "",
+    value: "",
     attrs: {},
     children: [],
     listeners: {},
@@ -155,5 +157,104 @@ describe("renderChoiceCards", () => {
     renderChoiceCards(el, [choice({ id: "b", },), choice({ id: "c", },),] as never, () => {},);
     expect(container.children.length,).toBe(1,);
     expect(cardLabels(container.children[0]!.children,),).toEqual(["Go left", "Go left",],);
+  });
+
+  // ── "Or type your own" affordance ─────────────────────────────────────────
+
+  /** The custom-action form, rendered after the choice list. */
+  function freeformForm(container: FakeEl,): FakeEl | undefined {
+    return container.children.find((c,) => c.className === "vn-choice-freeform");
+  }
+
+  test("an available decision renders a type-your-own form", () => {
+    const container = makeEl("div",);
+    const choices = [choice({ id: "av", text: "Go left", },),] as never;
+    renderChoiceCards(container as unknown as HTMLElement, choices, () => {}, undefined, () => {},);
+
+    const form = freeformForm(container,)!;
+    expect(form.children[0]!.tagName,).toBe("INPUT",);
+    expect(form.children[0]!.attrs["aria-label"],).toBeTruthy();
+    expect(form.children[1]!.tagName,).toBe("BUTTON",);
+    expect(form.children[1]!.type,).toBe("submit",);
+  });
+
+  test("submitting reports the trimmed action and clears the input", () => {
+    const container = makeEl("div",);
+    const actions: string[] = [];
+    const choices = [choice({ id: "av", text: "Go left", },),] as never;
+    renderChoiceCards(
+      container as unknown as HTMLElement,
+      choices,
+      () => {},
+      undefined,
+      (text,) => actions.push(text,),
+    );
+
+    const form = freeformForm(container,)!;
+    const input = form.children[0]!;
+    input.value = "  I climb the wall instead  ";
+    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+
+    expect(actions,).toEqual(["I climb the wall instead",],);
+    expect(input.value,).toBe("",);
+  });
+
+  test("a blank submit does not fire the callback", () => {
+    const container = makeEl("div",);
+    let calls = 0;
+    const choices = [choice({ id: "av", text: "Go left", },),] as never;
+    renderChoiceCards(
+      container as unknown as HTMLElement,
+      choices,
+      () => {},
+      undefined,
+      () => {
+        calls += 1;
+      },
+    );
+
+    const form = freeformForm(container,)!;
+    form.children[0]!.value = " ";
+    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+
+    expect(calls,).toBe(0,);
+  });
+
+  test("no form once every choice is resolved", () => {
+    const container = makeEl("div",);
+    const choices = [choice({ id: "sel", text: "Stay put", selected: true, },),] as never;
+    renderChoiceCards(container as unknown as HTMLElement, choices, () => {}, undefined, () => {},);
+
+    expect(freeformForm(container,),).toBeUndefined();
+  });
+
+  test("no form when the caller supplied no custom-action handler", () => {
+    const container = makeEl("div",);
+    const choices = [choice({ id: "av", text: "Go left", },),] as never;
+    renderChoiceCards(container as unknown as HTMLElement, choices, () => {},);
+
+    expect(freeformForm(container,),).toBeUndefined();
+  });
+
+  test("typed markup is never turned into elements", () => {
+    const container = makeEl("div",);
+    let typed = "";
+    const choices = [choice({ id: "av", text: "Go left", },),] as never;
+    renderChoiceCards(
+      container as unknown as HTMLElement,
+      choices,
+      () => {},
+      undefined,
+      (text,) => {
+        typed = text;
+      },
+    );
+
+    const form = freeformForm(container,)!;
+    form.children[0]!.value = "<script>alert(1)</script>";
+    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+
+    expect(typed,).toBe("<script>alert(1)</script>",);
+    expect(container.children.map((c,) => c.tagName),).not.toContain("SCRIPT",);
   });
 });

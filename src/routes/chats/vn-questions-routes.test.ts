@@ -136,4 +136,64 @@ describe("vnQuestionRoutes", () => {
 
     await db.destroy();
   });
+
+  test("accepts a typed free-text answer and returns the custom option", async () => {
+    const { db, } = await createTestDb();
+    const questions = await seedWithQuestions(db,);
+    const app = mount(db, PARTICIPANT_ID,);
+    const base = `http://localhost/api/chats/${CHAT_ID}/vn-questions`;
+
+    const res = await app.handle(
+      new Request(`${base}/${questions.answered}/answer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ freeText: "  The cat did it  ", },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as {
+      question: { selected_option_id: string | null; options: { id: string; provenance?: string }[] };
+      option: { id: string; text: string; provenance?: string };
+    };
+
+    // The typed answer comes back as a first-class custom option and the
+    // question row records it as the selection.
+    expect(body.option.provenance,).toBe("custom",);
+    expect(body.option.text,).toBe("The cat did it",);
+    expect(body.question.selected_option_id,).toBe(body.option.id,);
+    expect(body.question.options.some((o,) => o.provenance === "custom"),).toBe(true,);
+
+    await db.destroy();
+  });
+
+  test("rejects answer bodies with neither, both, or an invalid freeText", async () => {
+    const { db, } = await createTestDb();
+    const questions = await seedWithQuestions(db,);
+    const app = mount(db, PARTICIPANT_ID,);
+    const answer = (body: unknown,) =>
+      app.handle(
+        new Request(`http://localhost/api/chats/${CHAT_ID}/vn-questions/${questions.dismissed}/answer`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify(body,),
+        },),
+      );
+
+    expect((await answer({},)).status,).toBe(400,);
+    expect((await answer({ optionId: "o1", freeText: "typed", },)).status,).toBe(400,);
+    expect((await answer({ optionId: "", },)).status,).toBe(400,);
+    expect((await answer({ freeText: "   ", },)).status,).toBe(400,);
+    expect((await answer({ freeText: "a".repeat(2001,), },)).status,).toBe(400,);
+
+    // Every rejection leaves the question answerable.
+    const list = await app.handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/vn-questions?sceneIndex=0`,),
+    );
+
+    const listed = await list.json() as { questions: unknown[] };
+    expect(listed.questions.length,).toBe(2,);
+
+    await db.destroy();
+  });
 });

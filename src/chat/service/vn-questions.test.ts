@@ -47,6 +47,8 @@ function answered(result: AnswerVnQuestionResult,): {
   option: VnQuestion["options"][number];
   nextSceneId: string | null;
   locationId?: string;
+  relationshipImpact: Record<string, number>;
+  moodImpact: Record<string, number>;
 } {
   if (!("ok" in result)) { throw new Error(`Unexpected error: ${result.code}`,); }
   return result;
@@ -413,6 +415,197 @@ describe("vn question service", () => {
       },);
 
       expect(await statusOf(db, id, otherChatId,),).toBe("available",);
+    });
+  });
+
+  // ── answerVnQuestion — typed (free-text) answers ──────────────────────────
+
+  describe("answerVnQuestion — free text", () => {
+    test("a typed answer persists a provenance:'custom' option and selects it", async () => {
+      const id = await insertVnQuestions(db, chatId, 0, "Who opened it?", "2024-01-01T00:00:00Z", {
+        options: OPTIONS_JSON,
+        status: "available",
+      },);
+
+      const result = answered(
+        await answerVnQuestion(db, {
+          chatId,
+          questionId: id,
+          freeText: "  The cat pushed it open  ",
+          actingUserId: ownerId,
+        },),
+      );
+
+      // The synthesized option is first-class: same shape, custom provenance.
+      expect(result.option.provenance,).toBe("custom",);
+      expect(result.option.text,).toBe("The cat pushed it open",);
+      expect(result.option.id.startsWith("custom-",),).toBe(true,);
+      expect(result.question.selected_option_id,).toBe(result.option.id,);
+      expect(result.question.status,).toBe("answered",);
+
+      // Persisted with the flip, so a later read shows what was typed.
+      const row = await db.selectFrom("vn_questions",)
+        .select(["selected_option_id", "options",],)
+        .where("id", "=", id,)
+        .executeTakeFirstOrThrow();
+
+      expect(row.selected_option_id,).toBe(result.option.id,);
+
+      const persisted = JSON.parse(row.options,) as Array<{ id: string; provenance?: string }>;
+      const custom = persisted.find((o,) => o.id === result.option.id);
+      expect(custom?.provenance,).toBe("custom",);
+      expect(persisted,).toHaveLength(3,);
+    });
+
+    test("a typed answer folds no option modifier: impacts stay the question's own", async () => {
+      const id = await insertVnQuestions(db, chatId, 0, " mood: { tense: 2 }", "2024-01-01T00:00:00Z", {
+        options: OPTIONS_JSON,
+        status: "available",
+        relationship_impact: JSON.stringify({ standing: 4, },),
+        mood_impact: JSON.stringify({ happiness: 2, },),
+      },);
+
+      const result = answered(
+        await answerVnQuestion(db, {
+          chatId,
+          questionId: id,
+          freeText: "I say nothing",
+          actingUserId: ownerId,
+        },),
+      );
+
+      // The custom option carries zero modifiers, so the fold is a no-op.
+      expect(result.relationshipImpact,).toEqual({ standing: 4, },);
+      expect(result.moodImpact,).toEqual({ happiness: 2, },);
+      expect(result.nextSceneId,).toBeNull();
+    });
+
+    test("a typed answer works on a zero-option question", async () => {
+      const id = await insertVnQuestions(db, chatId, 0, "What do you do?", "2024-01-01T00:00:00Z", {
+        options: "[]",
+        status: "available",
+      },);
+
+      const result = answered(
+        await answerVnQuestion(db, {
+          chatId,
+          questionId: id,
+          freeText: "I walk away",
+          actingUserId: ownerId,
+        },),
+      );
+
+      expect(result.option.text,).toBe("I walk away",);
+      expect(await statusOf(db, id, chatId,),).toBe("answered",);
+    });
+
+    test("typed markup is stored verbatim — rendering escapes via textContent", async () => {
+      const id = await insertVnQuestions(db, chatId, 0, "Say something", "2024-01-01T00:00:00Z", {
+        options: "[]",
+        status: "available",
+      },);
+
+      const malicious = "<img src=x onerror=alert(1)>";
+      const result = answered(
+        await answerVnQuestion(db, {
+          chatId,
+          questionId: id,
+          freeText: malicious,
+          actingUserId: ownerId,
+        },),
+      );
+
+      expect(result.option.text,).toBe(malicious,);
+    });
+
+    test("control characters are stripped from typed answers", async () => {
+      const id = await insertVnQuestions(db, chatId, 0, "Say something", "2024-01-01T00:00:00Z", {
+        options: "[]",
+        status: "available",
+      },);
+
+      const result = answered(
+        await answerVnQuestion(db, {
+          chatId,
+          questionId: id,
+          freeText: "keep\u0000me\u0007safe\u001B[31m",
+          actingUserId: ownerId,
+        },),
+      );
+
+      expect(result.option.text,).toBe("keepmesafe[31m",);
+    });
+
+    test("both channels at once is a bad_request", async () => {
+      const id = await insertVnQuestions(db, chatId, 0, "Pick or type", "2024-01-01T00:00:00Z", {
+        options: OPTIONS_JSON,
+        status: "available",
+      },);
+
+      expect(
+        await answerVnQuestion(db, {
+          chatId,
+          questionId: id,
+          optionId: "o1",
+          freeText: "typed too",
+          actingUserId: ownerId,
+        },),
+      ).toEqual({ code: "bad_request", message: "Provide exactly one of optionId or freeText", },);
+
+      expect(await statusOf(db, id, chatId,),).toBe("available",);
+    });
+
+    test("neither channel is a bad_request", async () => {
+      const id = await insertVnQuestions(db, chatId, 0, "Pick or type", "2024-01-01T00:00:00Z", {
+        options: OPTIONS_JSON,
+        status: "available",
+      },);
+
+      expect(
+        await answerVnQuestion(db, {
+          chatId,
+          questionId: id,
+          actingUserId: ownerId,
+        },),
+      ).toEqual({ code: "bad_request", message: "Provide exactly one of optionId or freeText", },);
+    });
+
+    test("a blank typed answer is a bad_request", async () => {
+      const id = await insertVnQuestions(db, chatId, 0, "Type", "2024-01-01T00:00:00Z", {
+        options: "[]",
+        status: "available",
+      },);
+
+      const result = await answerVnQuestion(db, {
+        chatId,
+        questionId: id,
+        freeText: "   \n\t ",
+        actingUserId: ownerId,
+      },);
+
+      expect(result,).toEqual({ code: "bad_request", message: "freeText must not be empty", },);
+      expect(await statusOf(db, id, chatId,),).toBe("available",);
+    });
+
+    test("an over-cap typed answer is a bad_request", async () => {
+      const id = await insertVnQuestions(db, chatId, 0, "Type", "2024-01-01T00:00:00Z", {
+        options: "[]",
+        status: "available",
+      },);
+
+      const result = await answerVnQuestion(db, {
+        chatId,
+        questionId: id,
+        freeText: "a".repeat(2001,),
+        actingUserId: ownerId,
+      },);
+
+      expect(result,).toEqual({
+        code: "bad_request",
+        message: "freeText must be at most 2000 characters",
+      },);
+
+      expect(await statusOf(db, id, chatId,),).toBe("available",);
     });
   });
 });

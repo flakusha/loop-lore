@@ -163,10 +163,9 @@ function reportSkipFailure(): void {
 }
 
 /**
- * Answer a question, then apply its best-effort side effects.
- *
- * The answer is recorded first and returned even when a side effect fails —
- * same contract as `selectChoice`.
+ * Answer a question by picking an authored option, then apply its best-effort
+ * side effects. The answer is recorded first and returned even when a side
+ * effect fails — same contract as `selectChoice`.
  * @param questionId
  * @param optionId
  * @returns {AnswerQuestionResult} on success, null on failure.
@@ -174,6 +173,35 @@ function reportSkipFailure(): void {
 export async function answerQuestion(
   questionId: string,
   optionId: string,
+): Promise<AnswerQuestionResult | null> {
+  return postAnswer(questionId, { optionId, },);
+}
+
+/**
+ * Answer a question by typing a custom response. The server persists the
+ * typed text as a synthesized `provenance: "custom"` option and routes it
+ * through the identical downstream path as an option pick (single-shot flip,
+ * impact application, next-scene/location response).
+ * @param questionId
+ * @param freeText - the player's typed answer; trimmed server-side.
+ * @returns {AnswerQuestionResult} on success, null on failure.
+ */
+export async function answerQuestionCustom(
+  questionId: string,
+  freeText: string,
+): Promise<AnswerQuestionResult | null> {
+  return postAnswer(questionId, { freeText, },);
+}
+
+/**
+ * POST an answer body and apply the response's best-effort side effects.
+ * @param questionId
+ * @param body - `{ optionId }` or `{ freeText }`; the server rejects bodies
+ * carrying both or neither.
+ */
+async function postAnswer(
+  questionId: string,
+  body: Record<string, string>,
 ): Promise<AnswerQuestionResult | null> {
   if (!chatId) { return null; }
   const idx = questions.findIndex((q,) => q.id === questionId);
@@ -183,7 +211,7 @@ export async function answerQuestion(
     const res = await apiFetch(`/api/v1/chats/${chatId}/vn-questions/${questionId}/answer`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
-      body: jsonBody({ optionId, },),
+      body: jsonBody(body,),
     },);
 
     if (!res.ok) {
@@ -197,7 +225,14 @@ export async function answerQuestion(
     const data = await res.json();
     const { question: returned, option, nextSceneId, locationId, } = data as AnsweredPayload;
 
-    const updated: VnQuestion = { ...returned, status: "answered", selected_option_id: optionId, };
+    // The server echoes the answered row: its selected_option_id is the
+    // picked option id, or the synthesized `custom-…` id for typed answers.
+    const updated: VnQuestion = {
+      ...returned,
+      status: "answered",
+      selected_option_id: returned.selected_option_id,
+    };
+
     questions = Array.from(questions, (q, i,) => (i === idx ? updated : q),);
     // Answering one question leaves its siblings 'available' server-side, so
     // the gate stays closed while any remain.
@@ -250,5 +285,6 @@ function renderQuestions(): void {
       void answerQuestion(questionId, optionId,);
     },
     (questionId,) => void skipQuestion(questionId,),
+    (questionId, text,) => void answerQuestionCustom(questionId, text,),
   );
 }

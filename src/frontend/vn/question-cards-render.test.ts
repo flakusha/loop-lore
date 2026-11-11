@@ -22,12 +22,15 @@ interface FakeEl {
   type: string;
   disabled: boolean;
   textContent: string;
+  value: string;
   dataset: Record<string, string>;
+  attrs: Record<string, string>;
   children: FakeEl[];
-  listeners: Record<string, Array<() => void>>;
+  listeners: Record<string, Array<(event?: unknown,) => void>>;
   append(...els: FakeEl[]): void;
   replaceChildren(): void;
-  addEventListener(type: string, fn: () => void,): void;
+  addEventListener(type: string, fn: (event?: unknown,) => void,): void;
+  setAttribute(name: string, value: string,): void;
 }
 
 function makeEl(tag: string,): FakeEl {
@@ -37,7 +40,9 @@ function makeEl(tag: string,): FakeEl {
     type: "",
     disabled: false,
     textContent: "",
+    value: "",
     dataset: {},
+    attrs: {},
     children: [],
     listeners: {},
     append(...els: FakeEl[]) {
@@ -48,6 +53,9 @@ function makeEl(tag: string,): FakeEl {
     },
     addEventListener(type, fn,) {
       (el.listeners[type] ??= []).push(fn,);
+    },
+    setAttribute(name, value,) {
+      el.attrs[name] = value;
     },
   };
 
@@ -265,5 +273,125 @@ describe("renderQuestionCards", () => {
 
     expect(container.children.length,).toBe(1,);
     expect(container.children[0]!.children.map((c,) => c.dataset.questionId),).toEqual(["q2", "q3",],);
+  });
+
+  // ── Custom-typeable affordance ────────────────────────────────────────────
+
+  /** The free-text form of a card, via its options container. */
+  function freeformForm(container: FakeEl, cardIndex = 0,): FakeEl | undefined {
+    const card = container.children[0]!.children[cardIndex]!;
+    const optionsEl = card.children.find((c,) => c.className === "vn-question-card-options")!;
+    return optionsEl.children.find((c,) => c.className === "vn-question-freeform");
+  }
+
+  test("an available question renders a type-in form with input and send", () => {
+    const container = makeEl("div",);
+    renderQuestionCards(container as unknown as HTMLElement, [question(),], () => {}, undefined, () => {},);
+
+    const form = freeformForm(container,)!;
+    expect(form.children[0]!.tagName,).toBe("INPUT",);
+    expect(form.children[0]!.attrs["aria-label"],).toBeTruthy();
+    expect(form.children[1]!.tagName,).toBe("BUTTON",);
+    expect(form.children[1]!.type,).toBe("submit",);
+  });
+
+  test("submitting the form reports the question id and the trimmed text", () => {
+    const container = makeEl("div",);
+    const seen: Array<[string, string,]> = [];
+    renderQuestionCards(
+      container as unknown as HTMLElement,
+      [question(),],
+      () => {},
+      undefined,
+      (questionId, text,) => seen.push([questionId, text,],),
+    );
+
+    const form = freeformForm(container,)!;
+    const input = form.children[0]!;
+    input.value = "  I opened it myself  ";
+    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+
+    expect(seen,).toEqual([["q1", "I opened it myself",],],);
+    // Cleared on accept so a resubmit cannot double-fire.
+    expect(input.value,).toBe("",);
+  });
+
+  test("a blank submit does not fire the callback", () => {
+    const container = makeEl("div",);
+    let calls = 0;
+    renderQuestionCards(
+      container as unknown as HTMLElement,
+      [question(),],
+      () => {},
+      undefined,
+      () => {
+        calls += 1;
+      },
+    );
+
+    const form = freeformForm(container,)!;
+    form.children[0]!.value = "   ";
+    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+
+    expect(calls,).toBe(0,);
+  });
+
+  test("an answered question renders no form", () => {
+    const container = makeEl("div",);
+    renderQuestionCards(
+      container as unknown as HTMLElement,
+      [question({ status: "answered", selected_option_id: "o2", },),],
+      () => {},
+      undefined,
+      () => {},
+    );
+
+    expect(freeformForm(container,),).toBeUndefined();
+  });
+
+  test("no form when the caller supplied no free-text handler", () => {
+    const container = makeEl("div",);
+    renderQuestionCards(container as unknown as HTMLElement, [question(),], () => {},);
+
+    expect(freeformForm(container,),).toBeUndefined();
+  });
+
+  test("a zero-option question is free-text-first: modified card and a form", () => {
+    const container = makeEl("div",);
+    renderQuestionCards(
+      container as unknown as HTMLElement,
+      [question({ options: [], },),],
+      () => {},
+      undefined,
+      () => {},
+    );
+
+    const card = container.children[0]!.children[0]!;
+    expect(card.className,).toBe("vn-question-card vn-question-card-freeform",);
+    expect(optionButtons(container,).filter((c,) => c.type === "button").length,).toBe(0,);
+    expect(freeformForm(container,),).toBeDefined();
+  });
+
+  test("typed markup is never turned into elements", () => {
+    const container = makeEl("div",);
+    let typed = "";
+    renderQuestionCards(
+      container as unknown as HTMLElement,
+      [question(),],
+      () => {},
+      undefined,
+      (_questionId, text,) => {
+        typed = text;
+      },
+    );
+
+    const form = freeformForm(container,)!;
+    form.children[0]!.value = "<img src=x onerror=alert(1)>";
+    form.listeners.submit[0]!({ preventDefault: () => {}, },);
+
+    expect(typed,).toBe("<img src=x onerror=alert(1)>",);
+    const tags = container.children[0]!.children.map((card,) => card.tagName);
+    expect(tags,).not.toContain("IMG",);
+    expect(tags,).not.toContain("SCRIPT",);
   });
 });

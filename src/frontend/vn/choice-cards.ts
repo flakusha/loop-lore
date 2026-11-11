@@ -161,6 +161,37 @@ export async function loadChoices(): Promise<void> {
 }
 
 /**
+ * Apply a location consequence: best-effort PUT of the chat's location plus
+ * the change event the scene listens for.
+ * @param locationId
+ * @returns true when the chat's location actually changed.
+ */
+async function applyLocationConsequence(locationId: string,): Promise<boolean> {
+  if (!chatId) { return false; }
+
+  try {
+    const locRes = await apiFetch(`/api/v1/chats/${chatId}/location`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", },
+      body: jsonBody({ locationId, },),
+    },);
+
+    if (!locRes.ok) { return false; }
+
+    globalThis.dispatchEvent(
+      new CustomEvent(LOCATION_CHANGED_EVENT, {
+        detail: { chatId, locationId, locationName: null, },
+      },),
+    );
+
+    return true;
+  } catch {
+    // Location change is best-effort; the choice itself already persisted.
+    return false;
+  }
+}
+
+/**
  * Select a choice, apply its effects, and trigger location/split/reunite
  * consequences via their dedicated endpoints.
  * @param choiceId
@@ -201,25 +232,7 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
     let reunionTriggered = false;
 
     if (locationId) {
-      try {
-        const locRes = await apiFetch(`/api/v1/chats/${chatId}/location`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({ locationId, },),
-        },);
-
-        if (locRes.ok) {
-          globalThis.dispatchEvent(
-            new CustomEvent(LOCATION_CHANGED_EVENT, {
-              detail: { chatId, locationId, locationName: null, },
-            },),
-          );
-
-          locationChanged = true;
-        }
-      } catch {
-        // Location change is best-effort; choice itself already persisted.
-      }
+      locationChanged = await applyLocationConsequence(locationId,);
     }
 
     // Phase 4: split/reunite consequences on choice cards.
@@ -240,6 +253,58 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
     );
 
     return null;
+  }
+}
+
+/**
+ * Submit a typed action as the player's decision: the server creates a
+ * custom `vn_choices` row (`"provenance": "custom"` in its consequences) and
+ * selects it through the standard single-shot path, then this folds the
+ * returned card into the local state exactly like `selectChoice` does.
+ * @param freeText - the player's typed action; trimmed and capped server-side.
+ * @returns true when the typed action was created and selected.
+ */
+export async function submitCustomChoice(freeText: string,): Promise<boolean> {
+  if (!chatId) { return false; }
+
+  try {
+    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices/custom`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: jsonBody({ freeText, sceneIndex, },),
+    },);
+
+    if (!res.ok) {
+      document.dispatchEvent(
+        new CustomEvent("show-toast", { detail: { type: "error", message: "Failed to select choice", }, },),
+      );
+
+      return false;
+    }
+
+    const data = await res.json() as { choice?: VnChoice; locationId?: string };
+    const returned = data.choice;
+    if (!returned) { return false; }
+
+    const returnedLabel = returned.label ?? returned.text ?? "Custom action";
+    choices = [...choices, { ...returned, selected: true, label: returnedLabel, } as VnChoice,];
+    // The typed card resolved itself; siblings stay available server-side, so
+    // the gate stays closed while any remain — same rule as a card pick.
+    setChoicePending(choices.some((c,) => !c.selected),);
+
+    if (data.locationId) {
+      await applyLocationConsequence(data.locationId,);
+    }
+
+    renderChoices();
+
+    return true;
+  } catch {
+    document.dispatchEvent(
+      new CustomEvent("show-toast", { detail: { type: "error", message: "Failed to select choice", }, },),
+    );
+
+    return false;
   }
 }
 
@@ -281,5 +346,6 @@ function renderChoices(): void {
     choices,
     (id,) => void selectChoice(id,),
     (id,) => void skipChoice(id,),
+    (text,) => void submitCustomChoice(text,),
   );
 }

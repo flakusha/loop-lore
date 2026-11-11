@@ -20,6 +20,13 @@ export interface VnQuestionOption {
   relationship_modifier: number;
   next_scene_id: string | null;
   consequence: Record<string, unknown> | null;
+  /**
+   * Where the option came from: `"custom"` marks a player-typed answer
+   * persisted as a synthesized option, so generation prompts can distinguish
+   * picked-vs-typed. Absent (or `"generated"`) means the LLM authored it at
+   * generation time — the historical default.
+   */
+  provenance?: "custom" | "generated";
 }
 
 /** A question card awaiting an answer. */
@@ -56,7 +63,15 @@ export type ListVnQuestionsResult = ServiceError | { ok: true; questions: VnQues
 export interface AnswerVnQuestionParams {
   chatId: string;
   questionId: string;
-  optionId: string;
+  /** Chosen option id. Required unless `freeText` is supplied. */
+  optionId?: string;
+  /**
+   * Player-typed answer, taking the identical downstream route as an option
+   * pick: it is persisted as a synthesized `provenance: "custom"` option and
+   * selected through the same single-shot flip. Exactly one of
+   * `optionId`/`freeText` must be present.
+   */
+  freeText?: unknown;
   /** User who answered; resolves the actor the impacts land on. */
   actingUserId: string;
 }

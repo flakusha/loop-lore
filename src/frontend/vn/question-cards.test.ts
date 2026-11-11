@@ -14,6 +14,7 @@ import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { isVnDecisionPending, setChoicePending, setQuestionPending, } from "./pending-decision";
 import {
   answerQuestion,
+  answerQuestionCustom,
   destroyQuestionCards,
   initQuestionCards,
   loadQuestions,
@@ -47,12 +48,15 @@ interface FakeEl {
   disabled: boolean;
   type: string;
   textContent: string;
+  value: string;
+  attrs: Record<string, string>;
   dataset: Record<string, string>;
   children: FakeEl[];
   listeners: Record<string, Array<() => void>>;
   append(...els: FakeEl[]): void;
   replaceChildren(): void;
   addEventListener(type: string, fn: () => void,): void;
+  setAttribute(name: string, value: string,): void;
 }
 
 /** */
@@ -62,6 +66,8 @@ function makeEl(): FakeEl {
     disabled: false,
     type: "",
     textContent: "",
+    value: "",
+    attrs: {},
     dataset: {},
     children: [],
     listeners: {},
@@ -73,6 +79,9 @@ function makeEl(): FakeEl {
     },
     addEventListener(type, fn,) {
       (el.listeners[type] ??= []).push(fn,);
+    },
+    setAttribute(name, value,) {
+      el.attrs[name] = value;
     },
   };
 
@@ -134,13 +143,13 @@ function boot(): FakeEl {
   return container;
 }
 
-/** Walk list → card → options container → option buttons. */
+/** Walk list → card → options container → option buttons (form excluded). */
 function optionButtons(container: FakeEl,): FakeEl[] {
   const list = container.children[0]!;
   const cards = list.children;
   if (cards.length === 0) { return []; }
   const optionsEl = cards[0]!.children.find((c,) => c.className === "vn-question-card-options")!;
-  return optionsEl.children;
+  return optionsEl.children.filter((c,) => c.type === "button");
 }
 
 afterEach(() => {
@@ -335,6 +344,50 @@ describeOrSkip("answerQuestion", () => {
     const callsBefore = apiCalls.length;
     expect(await answerQuestion("no-such-question", "o1",),).toBeNull();
     expect(apiCalls.length,).toBe(callsBefore,);
+  });
+
+  test("answerQuestionCustom posts { freeText } and records the custom selection", async () => {
+    boot();
+    apiHandler = (url,) => {
+      if (url.includes("/answer",)) {
+        return jsonRes({
+          question: rawQuestion({ status: "answered", selected_option_id: "custom-abc", },),
+          option: { id: "custom-abc", text: "I opened it myself", provenance: "custom", },
+          nextSceneId: null,
+        },);
+      }
+
+      return jsonRes({ questions: [rawQuestion(),], },);
+    };
+
+    await loadQuestions();
+    const result = await answerQuestionCustom("q1", "  I opened it myself  ",);
+
+    expect(result,).not.toBeNull();
+    expect(result!.option.provenance,).toBe("custom",);
+    // The selection recorded on state is the server's synthesized custom id.
+    expect(result!.question.selected_option_id,).toBe("custom-abc",);
+
+    expect(apiCalls[1]!.url,).toBe("/api/v1/chats/chat-1/vn-questions/q1/answer",);
+    expect(apiCalls[1]!.opts.method,).toBe("POST",);
+    expect(JSON.parse(apiCalls[1]!.opts.body as string,),).toEqual({
+      freeText: "  I opened it myself  ",
+    },);
+  });
+
+  test("a rejected custom answer returns null and surfaces the failure toast", async () => {
+    boot();
+    apiHandler = (url,) => {
+      if (url.includes("/answer",)) { return jsonRes({ error: "blank", }, 400,); }
+      return jsonRes({ questions: [rawQuestion(),], },);
+    };
+
+    await loadQuestions();
+    toasts.length = 0;
+
+    expect(await answerQuestionCustom("q1", "   ",),).toBeNull();
+    expect(toasts.length,).toBe(1,);
+    expect(toasts[0]!.type,).toBe("error",);
   });
 
   test("skipQuestion posts the dismiss endpoint and clears the flag", async () => {

@@ -3,6 +3,7 @@
 
 /** Question card DOM rendering. Mirrors ./choice-cards-render.ts. */
 import { t, } from "../alpine/i18n";
+import { buildFreeformInput, } from "./freeform-input";
 import type { VnQuestion, VnQuestionOption, } from "./question-cards";
 
 // ── Internal ────────────────────────────────────────────────────────────────
@@ -24,6 +25,7 @@ function impactLabel(value: number,): string {
  * @param questions
  * @param onAnswer
  * @param onSkip - called with every available question id when the skip button is clicked.
+ * @param onFreeTextAnswer - called with the question id and the typed answer when a card's free-text form is submitted.
  * @returns {void}
  */
 export function renderQuestionCards(
@@ -31,6 +33,7 @@ export function renderQuestionCards(
   questions: VnQuestion[],
   onAnswer: (questionId: string, optionId: string,) => void,
   onSkip?: (questionId: string,) => void,
+  onFreeTextAnswer?: (questionId: string, text: string,) => void,
 ): void {
   if (!container) {
     return;
@@ -80,7 +83,13 @@ export function renderQuestionCards(
 
   for (const question of questions) {
     const card = document.createElement("div",);
-    card.className = "vn-question-card";
+    // A question persisted with zero options is free-text-first: typing is
+    // the only way to respond, so the card leads with the input instead of
+    // rendering a dead card the player can never answer.
+    card.className = question.status === "available" && (question.options ?? []).length === 0
+      ? "vn-question-card vn-question-card-freeform"
+      : "vn-question-card";
+
     card.dataset.questionId = question.id;
 
     if (question.speaker_id) {
@@ -98,9 +107,23 @@ export function renderQuestionCards(
     const options = document.createElement("div",);
     options.className = "vn-question-card-options";
     // Guarded: a question persisted with an empty options array renders as a
-    // dead card rather than a zero-button card the player can never answer.
+    // free-text-first card rather than a zero-button card the player can
+    // never answer.
     for (const option of question.options ?? []) {
       options.append(renderOption(question, option,),);
+    }
+
+    // The custom-typeable affordance: every open question can also be
+    // answered by typing, whatever its authored options say.
+    if (question.status === "available" && onFreeTextAnswer) {
+      options.append(buildFreeformInput({
+        className: "vn-question-freeform",
+        placeholder: t("toasts.vnCustomAnswerPlaceholder",),
+        sendLabel: t("toasts.vnCustomAnswerSend",),
+        onSubmit: (text,) => {
+          onFreeTextAnswer(question.id, text,);
+        },
+      },),);
     }
 
     // Skip control, shown only while the question is still open.
