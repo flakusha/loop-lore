@@ -138,6 +138,14 @@ export interface VideoProviderConfig {
   apiKey?: string;
   /** Allow user API key override for this provider (default true) */
   allowUserApiKey?: boolean;
+  /**
+   * Local box identity: names the weak box this provider shares a GPU with.
+   * Providers WITH `localBox` serialize one render at a time per box via
+   * the video dispatch gate; providers WITHOUT it are external and bypass
+   * the gate with zero added latency. Optional — absent means external, so
+   * every existing config keeps today's unserialized behaviour.
+   */
+  localBox?: string;
   /** Connection timeout in ms */
   timeout: number;
   /** Video generation timeout in ms */

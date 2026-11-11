@@ -146,6 +146,9 @@ generation:
   #     apiFamily: comfyui
   #     workflow: txt2video                  # configs/workflows/txt2video.json
   #     allowUserApiKey: true
+  #     # localBox: weak-box-1  # serializes one render at a time per named
+  #                             # box via the video dispatch gate (omit for
+  #                             # external providers — they bypass the gate).
   #     timeout: 10000
   #     generationTimeout: 600000
 

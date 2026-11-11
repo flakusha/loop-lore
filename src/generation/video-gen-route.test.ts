@@ -491,4 +491,72 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
     expect(terminal["code"],).toBe(502,);
     expect(terminal["error"],).toBe("boom",);
   });
+
+  test("202 does not wait for the render: submit returns while the job is pending", async () => {
+    engineOutcome = { ok: true, };
+    const submit = await handleVideoGeneration({ prompt: "a slow clip", }, pollDb, "video-status-user", "user",);
+    expect(submit.status,).toBe(202,);
+    const submitBody = (await submit.json()) as { data: { jobId: string; status: string } };
+    // The gate queues; it never blocks the HTTP request. The continuation
+    // settles in the background — poll it to done like any other submit.
+    expect(submitBody.data.status,).toBe("pending",);
+
+    const { terminal, } = await submitAndPoll({ prompt: "a slow clip", }, pollDb, "video-status-user",);
+
+    expect(terminal["status"],).toBe("done",);
+  });
+
+  test("local-box providers serialize at the route: second submit queues behind the first", async () => {
+    // Same box key on the stubbed providers: the continuation routes both
+    // renders through one FIFO tail, so the second stays pending until the
+    // first settles — then both reach done with an unchanged poll shape.
+    videoProviders = [
+      {
+        name: "video-local-test",
+        baseUrl: "http://127.0.0.1:8188",
+        apiFamily: "comfyui",
+        workflow: "txt2video",
+        timeout: 1_000,
+        generationTimeout: 5_000,
+        localBox: "route-test-box",
+      },
+    ];
+
+    engineOutcome = { ok: true, };
+
+    const first = await handleVideoGeneration({ prompt: "first", }, pollDb, "video-status-user", "user",);
+    expect(first.status,).toBe(202,);
+    const second = await handleVideoGeneration({ prompt: "second", }, pollDb, "video-status-user", "user",);
+    expect(second.status,).toBe(202,);
+
+    const firstBody = (await first.json()) as { data: { jobId: string } };
+    const secondBody = (await second.json()) as { data: { jobId: string } };
+    expect(firstBody.data.jobId,).not.toBe(secondBody.data.jobId,);
+
+    const { terminal: firstTerminal, } = await submitAndPoll(
+      { prompt: "first", },
+      pollDb,
+      "video-status-user",
+    );
+
+    const { terminal: secondTerminal, } = await submitAndPoll(
+      { prompt: "second", },
+      pollDb,
+      "video-status-user",
+    );
+
+    expect(firstTerminal["status"],).toBe("done",);
+    expect(secondTerminal["status"],).toBe("done",);
+
+    videoProviders = [
+      {
+        name: "video-test-provider",
+        baseUrl: "http://127.0.0.1:8188",
+        apiFamily: "comfyui",
+        workflow: "txt2video",
+        timeout: 1_000,
+        generationTimeout: 5_000,
+      },
+    ];
+  });
 },);
