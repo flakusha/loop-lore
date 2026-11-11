@@ -2235,7 +2235,9 @@
         "omp": "omp se ejecuta con las claves API y proveedores configurados en el propio omp — el acceso directo por API se factura bajo los términos de API del proveedor, no bajo un acuerdo de suscripción.",
         "opencode": "opencode se ejecuta con las claves API y proveedores configurados en el propio opencode — el acceso directo por API se factura bajo los términos de API del proveedor, no bajo un acuerdo de suscripción.",
         "codex": "Codex inicia sesión con una suscripción de plan de ChatGPT — usarlo como proveedor de loop-lore para RPG u otras funciones ajenas al chat puede entrar en conflicto con los términos de OpenAI y requiere confirmación explícita.",
-        "claude-code": "Claude Code inicia sesión con una suscripción de plan de Claude — usarlo como proveedor de loop-lore para RPG u otras funciones ajenas al chat puede entrar en conflicto con los términos de Anthropic y requiere confirmación explícita."
+        "claude-code": "Claude Code inicia sesión con una suscripción de plan de Claude — usarlo como proveedor de loop-lore para RPG u otras funciones ajenas al chat puede entrar en conflicto con los términos de Anthropic y requiere confirmación explícita.",
+        "hermes": "Hermes se ejecuta con las claves API y proveedores configurados en el propio Hermes — el acceso directo por API se factura bajo los términos de API del proveedor, no bajo un acuerdo de suscripción.",
+        "openclaw": "OpenClaw reenvía las peticiones a su Gateway configurado — el acceso se rige por los términos del proveedor del host del Gateway, no por un acuerdo de suscripción."
       }
     },
     "permissions": {
