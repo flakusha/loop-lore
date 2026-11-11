@@ -3,7 +3,7 @@
 
 # TASK: harness-telemetry-metrics-health-signal-usage-ledger-endpoint
 
-**Status:** Not Started
+**Status:** Done
 **Blocker:** HELD — no implementation lane exists yet; code genuinely unlanded (no `harness` type under `src/telemetry`, no metrics/health mention). Do NOT touch until a lane is scoped.
 **Priority:** medium
 **Effort:** Medium
@@ -36,3 +36,5 @@ Parity matrix gap #7 (PARTIAL) + `TASK-harness-stats-endpoint` precedent (Done t
 - [ ] Harness run/error/breaker/spend counters visible via the standard metrics or health surface (no shell/JSONL required).
 - [ ] Usage ledger is queryable or an explicit already-covered decision is recorded with pointers.
 - [ ] No new tables, no new infra; existing `record()`/collector conventions reused.
+
+**Resolved:** 2026-11-11 registry-driven close: git issue 635eef8 (registry tip: 5f1ea508a Konstantin Fedotov Auto-closed: appended .md marker marks TASK-HARNESS-TELEMETRY-METRICS-H)
