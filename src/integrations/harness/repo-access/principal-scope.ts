@@ -33,7 +33,7 @@ import {
   assertParamsWithinScope,
   resolveWithinScope,
 } from "../../../harness/worktree-scope";
-import { type PrincipalKind, } from "../../../middleware/types";
+import { type PrincipalKind, type PrincipalKindLiteral, } from "../../../middleware/principal-kind";
 
 /**
  * A server-resolved principal, shaped for repo-access decisions. Minted only
@@ -114,7 +114,11 @@ export async function resolveScopeRoot(
   principal: RepoAccessPrincipal,
   explicitRoot?: string,
 ): Promise<RepoScopeResolution> {
-  switch (principal.kind) {
+  // The brand is compile-time only — the runtime value is one of the four
+  // vocabulary literals — so widening to the literal union is lossless and
+  // lets the case labels below narrow.
+  const kind: PrincipalKindLiteral = principal.kind;
+  switch (kind) {
     case "user":
     case "user-worktree": {
       // Pass-through-until-spaces (PROVISIONAL, epic DECISIONS §5 Q5): the
@@ -194,6 +198,16 @@ export async function resolveScopeRoot(
       }
 
       return { ok: true, root: resolved, basis: "agent-worktree", };
+    }
+
+    default: {
+      // Unreachable over the closed kind set (all four kinds are cased above)
+      // — kept so an unknown kind FAILS CLOSED instead of resolving a root.
+      return {
+        ok: false,
+        code: "root_unresolved",
+        message: `unknown principal kind "${principal.kind}"; refusing scope resolution`,
+      };
     }
   }
 }

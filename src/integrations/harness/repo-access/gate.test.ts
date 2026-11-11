@@ -14,6 +14,7 @@ import { mkdir, mkdtemp, rm, } from "node:fs/promises";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import type { DB, } from "../../../db/schema";
+import { principalKind, } from "../../../middleware/principal-kind";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../../test-utils/create-test-db";
 import {
   assertRepoAccessExecution,
@@ -27,9 +28,9 @@ let fixture: TestDb;
 let db: Kysely<DB>;
 let repoRoot: string;
 
-const svc: RepoAccessPrincipal = { kind: "internal-service", userId: "svc-1", };
-const user: RepoAccessPrincipal = { kind: "user", userId: "u-1", };
-const agent: RepoAccessPrincipal = { kind: "external-agent", userId: "a-1", };
+const svc: RepoAccessPrincipal = { kind: principalKind("internal-service",), userId: "svc-1", };
+const user: RepoAccessPrincipal = { kind: principalKind("user",), userId: "u-1", };
+const agent: RepoAccessPrincipal = { kind: principalKind("external-agent",), userId: "a-1", };
 
 async function auditRows(): Promise<Array<{ verdict: string; escalation_attempt: number; rationale: string }>> {
   return await db
@@ -116,7 +117,7 @@ describe("assertRepoAccessExecution — the fail-closed chain", () => {
   it("runs the kind gate before root resolution (no worktree leak)", async () => {
     initRepoAccessSettings({ enabled: true, },);
     const v = await assertRepoAccessExecution({
-      principal: { kind: "external-agent", userId: "a-2", agentWorktree: undefined, },
+      principal: { kind: principalKind("external-agent",), userId: "a-2", agentWorktree: undefined, },
       db,
     },);
 

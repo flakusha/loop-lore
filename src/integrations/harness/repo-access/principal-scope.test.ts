@@ -12,6 +12,7 @@ import { mkdir, mkdtemp, rm, symlink, writeFile, } from "node:fs/promises";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { PathOutsideScopeError, } from "../../../harness/worktree-scope";
+import { principalKind, } from "../../../middleware/principal-kind";
 import {
   assertParamsWithinPrincipalScope,
   type RepoAccessPrincipal,
@@ -26,7 +27,7 @@ beforeEach(async () => {
   await mkdir(join(repoRoot, "tree", "agent-1",), { recursive: true, },);
   await mkdir(join(repoRoot, "src",), { recursive: true, },);
   agent = {
-    kind: "external-agent",
+    kind: principalKind("external-agent",),
     userId: "agent-1",
     agentWorktree: join(repoRoot, "tree", "agent-1",),
   };
@@ -39,7 +40,7 @@ afterEach(async () => {
   await rm(repoRoot, { recursive: true, force: true, },);
 },);
 
-const internal: RepoAccessPrincipal = { kind: "internal-service", userId: "svc-1", };
+const internal: RepoAccessPrincipal = { kind: principalKind("internal-service",), userId: "svc-1", };
 /** Built per test in beforeEach — the worktree path depends on the temp root. */
 let agent: RepoAccessPrincipal;
 
@@ -58,18 +59,18 @@ describe("resolveScopeRoot — per-kind matrix", () => {
 
   it("user principals pass through the explicit root (until project spaces)", async () => {
     const explicit = join(repoRoot, "src",);
-    const r = await resolveScopeRoot({ kind: "user", userId: "u-1", }, explicit,);
+    const r = await resolveScopeRoot({ kind: principalKind("user",), userId: "u-1", }, explicit,);
     expect(r,).toEqual({ ok: true, root: explicit, basis: "explicit", },);
   });
 
   it("user principals deny without an explicit root", async () => {
-    const r = await resolveScopeRoot({ kind: "user", userId: "u-1", },);
+    const r = await resolveScopeRoot({ kind: principalKind("user",), userId: "u-1", },);
     expect(r.ok,).toBe(false,);
     expect(r.ok === false && r.code,).toBe("root_required",);
   });
 
   it("user-worktree behaves like user (pass-through-until-spaces)", async () => {
-    const r = await resolveScopeRoot({ kind: "user-worktree", userId: "u-1", },);
+    const r = await resolveScopeRoot({ kind: principalKind("user-worktree",), userId: "u-1", },);
     expect(r.ok,).toBe(false,);
     expect(r.ok === false && r.code,).toBe("root_required",);
   });
@@ -82,14 +83,14 @@ describe("resolveScopeRoot — per-kind matrix", () => {
   });
 
   it("external-agent denies when no worktree was assigned server-side", async () => {
-    const r = await resolveScopeRoot({ kind: "external-agent", userId: "agent-2", },);
+    const r = await resolveScopeRoot({ kind: principalKind("external-agent",), userId: "agent-2", },);
     expect(r.ok,).toBe(false,);
     expect(r.ok === false && r.code,).toBe("agent_worktree_required",);
   });
 
   it("external-agent denies an assigned path outside tree/ (src/ is not agent land)", async () => {
     const r = await resolveScopeRoot({
-      kind: "external-agent",
+      kind: principalKind("external-agent",),
       userId: "agent-3",
       agentWorktree: join(repoRoot, "src",),
     },);
@@ -100,7 +101,7 @@ describe("resolveScopeRoot — per-kind matrix", () => {
 
   it("external-agent denies an escaping worktree path", async () => {
     const r = await resolveScopeRoot({
-      kind: "external-agent",
+      kind: principalKind("external-agent",),
       userId: "agent-4",
       agentWorktree: join(repoRoot, "tree", "..", "..",),
     },);
@@ -116,7 +117,7 @@ describe("resolveScopeRoot — per-kind matrix", () => {
       const link = join(repoRoot, "tree", "agent-link",);
       await symlink(outside, link,);
       const r = await resolveScopeRoot({
-        kind: "external-agent",
+        kind: principalKind("external-agent",),
         userId: "agent-5",
         agentWorktree: link,
       },);
@@ -160,7 +161,7 @@ describe("assertParamsWithinPrincipalScope — trust boundary", () => {
         toolName: "probe",
         principal: agent,
         params: {
-          principal: { kind: "internal-service", userId: "svc-1", },
+          principal: { kind: principalKind("internal-service",), userId: "svc-1", },
           path: join(repoRoot, "src", "secret.ts",),
         },
       },),
@@ -182,7 +183,7 @@ describe("assertParamsWithinPrincipalScope — trust boundary", () => {
   it("returns the typed root refusal instead of guarding when the root itself is denied", async () => {
     const r = await assertParamsWithinPrincipalScope({
       toolName: "probe",
-      principal: { kind: "user", userId: "u-2", },
+      principal: { kind: principalKind("user",), userId: "u-2", },
       params: { path: "anywhere", },
     },);
 
