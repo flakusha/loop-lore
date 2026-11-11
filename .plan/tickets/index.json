@@ -42970,7 +42970,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-frontend-touch-gestures.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Frontend touch gesture system — wire recovered utility into mobile UI",
     "type": "TASK"
