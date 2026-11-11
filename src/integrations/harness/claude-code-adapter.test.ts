@@ -117,6 +117,7 @@ describe("ClaudeCodeAcpAdapter (fake ACP fixture, claude-code flavor)", () => {
     const server = serve({ FAKE_MODELS_FIELD: "1", FAKE_MODELS: "claude-opus-4-6", },);
     const adapter = makeAdapter({ command: server.argv, },);
     expect(await adapter.fetchUsageReports(),).toBeNull();
+    expect(adapter.quotaSurface,).toBe("none",);
     adapter.close();
   });
 

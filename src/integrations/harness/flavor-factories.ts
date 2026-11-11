@@ -13,7 +13,7 @@
  */
 
 import { type HarnessFlavor, } from "../../config/schema/harness";
-import { type HarnessAdapterFactory, } from "./adapter-types";
+import { type HarnessAdapterFactory, type HarnessQuotaSurface, } from "./adapter-types";
 import { createClaudeCodeAdapter, } from "./claude-code";
 import { createCodexAdapter, } from "./codex";
 import { createHermesAdapter, } from "./hermes";
@@ -34,6 +34,19 @@ export const HARNESS_ADAPTER_FACTORIES: Record<HarnessFlavor, HarnessAdapterFact
   openclaw: createOpenClawAdapter,
 };
 
+/**
+ * Flavor → provider-quota wire surface, mirroring each adapter's own
+ * `quotaSurface` declaration. Statically knowable per flavor (omp's
+ * `_omp/usage` ext is an omp wire fact), so the usage view can render a
+ * surface for a configured-but-never-probed profile; a live connection's
+ * own declaration always wins over this fallback.
+ */
+export const FLAVOR_QUOTA_SURFACES: Record<HarnessFlavor, HarnessQuotaSurface> = {
+  omp: "omp-ext",
+  opencode: "none",
+  codex: "none",
+  "claude-code": "none",
+};
 /**
  * Resolve the adapter factory for a profile's `harness` flavor.
  * @param flavor - the profile's `harness` value, when set

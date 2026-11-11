@@ -32,6 +32,7 @@ const HarnessUsageProfileSchema = t.Object({
   dispatchesInWindow: t.Number(),
   tokensInDay: t.Number(),
   quotaResetAt: t.Union([t.Number(), t.Null(),],),
+  quotaSurface: t.Union([t.Literal("omp-ext",), t.Literal("none",),],),
   breakerOpen: t.Boolean(),
   breakerCooldownRemainingMs: t.Number(),
   breakerTrips: t.Number(),

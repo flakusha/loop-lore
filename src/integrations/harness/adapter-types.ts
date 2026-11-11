@@ -23,6 +23,20 @@ import { type HarnessTurnTranscript, } from "./turn-transcript";
 /** Quota report status, as published by harness `_omp/usage`-style reports. */
 export type HarnessUsageStatus = "ok" | "warning" | "exhausted" | "unknown";
 
+/**
+ * Which provider-quota wire surface an adapter publishes, as a closed union.
+ *
+ * Wire survey (2026-11-11): ACP v1 has NO requestable quota method — its only
+ * usage element is the `usage_update` session-update notification, which
+ * reports context-window fill (`used`/`size`) plus optional session cost, i.e.
+ * not provider quota. The one real surface is omp's private `_omp/usage` ext
+ * method; every other flavor declares "none". The usage-ledger's config
+ * limits still bound every profile either way.
+ */
+export const HARNESS_QUOTA_SURFACES = ["omp-ext", "none",] as const;
+/** A `HARNESS_QUOTA_SURFACES` member. */
+export type HarnessQuotaSurface = (typeof HARNESS_QUOTA_SURFACES)[number];
+
 /** One provider quota report, normalized across harnesses. */
 export interface HarnessUsageReport {
   /** Provider id inside the harness (e.g. `zai`). */
@@ -108,6 +122,13 @@ export interface HarnessAcpAdapter {
    * @returns reports, or null when the harness has no quota surface.
    */
   fetchUsageReports(): Promise<HarnessUsageReport[] | null>;
+  /**
+   * The provider-quota wire surface this adapter publishes. A static wire
+   * fact, readable without spawning: the usage ledger and the admin usage
+   * surface render it verbatim, with "none" meaning the config limits are
+   * the only quota bound on the profile.
+   */
+  readonly quotaSurface: HarnessQuotaSurface;
   /** The open server-originated permission request, when one awaits an outcome. */
   pendingPermission(): PendingPermission | null;
   /**
