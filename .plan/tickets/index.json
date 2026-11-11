@@ -54651,6 +54651,20 @@
     "title": "# TASK-prompt-character-extensions-section",
     "type": "TASK"
   },
+  "TASK-PROMPT-DRIVEN-AUDIO-GENERATION-ROUTE-LIVE-SFX-AND-MUSIC-COMM": {
+    "hash": "19f0c9d",
+    "git_issue": "19f0c9d",
+    "extid": "TASK-PROMPT-DRIVEN-AUDIO-GENERATION-ROUTE-LIVE-SFX-AND-MUSIC-COMM",
+    "type": "TASK",
+    "title": "Prompt-driven audio generation route + live /sfx and /music commands",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-ambient-music-sfx",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-driven-audio-generation-route-live-sfx-and-music-comm.md",
+    "status": "done"
+  },
   "TASK-PROMPT-DRY-RUN-INSPECTION": {
     "epic": "epic-chat-context-optimization",
     "extid": "TASK-PROMPT-DRY-RUN-INSPECTION",
