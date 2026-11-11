@@ -188,4 +188,9 @@ export const PART_2: Record<string, Record<string, string>> = {
     "workload_class": "PeerWorkloadClass",
     "budget_mode": "PeerBudgetMode",
   },
+  // 100_harness_queue_turns (TASK-harness-multi-agent-turn-queue)
+  "HarnessQueueTurns": {
+    "status": "HarnessQueueTurnStatus",
+    "error_code": "HarnessQueueErrorCode",
+  },
 };

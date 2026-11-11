@@ -26,6 +26,8 @@ import type {
   FactionAlignment,
   FactionDiplomaticStatus,
   FactionRole,
+  HarnessQueueErrorCode,
+  HarnessQueueTurnStatus,
   IntegrationTokenScope,
   InteractionCategory,
   InteractionOutcome,
@@ -2236,4 +2238,25 @@ export interface ActorLoreSearchTokens {
   entry_id: string;
   term: string;
   scope: string;
+}
+
+// ── harness_queue_turns ────────────────────────────────────────────
+export interface HarnessQueueTurns {
+  id: string;
+  batch_id: string;
+  profile: string;
+  prompt: string;
+  status: Generated<HarnessQueueTurnStatus>;
+  chat_id: string;
+  actor_id: string;
+  requested_by: string;
+  requested_role: string | null;
+  turn_key: string | null;
+  attempts: Generated<number>;
+  result_message_id: string | null;
+  error_code: HarnessQueueErrorCode | null;
+  error_message: string | null;
+  created_at: Generated<string>;
+  started_at: string | null;
+  finished_at: string | null;
 }

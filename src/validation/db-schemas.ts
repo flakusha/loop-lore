@@ -263,6 +263,14 @@ export const GenerationStatusSchema = t.UnionEnum([
   "failed",
   "cancelled",
 ],);
+export const HarnessQueueErrorCodeSchema = t.UnionEnum([
+  "harness_disabled",
+  "role_denied",
+  "profile_unknown",
+  "turn_failed",
+  "interrupted",
+],);
+export const HarnessQueueTurnStatusSchema = t.UnionEnum(["queued", "running", "completed", "failed", "cancelled",],);
 export const HeatPhaseSchema = t.UnionEnum(["normal", "pre_heat", "heat", "post_heat",],);
 export const ImageApiFamilySchema = t.UnionEnum(["openai", "sdapi", "sdcpp", "comfyui",],);
 export const IntegrationTokenScopeSchema = t.UnionEnum(["read", "chat-write",],);
@@ -3947,4 +3955,24 @@ export const ActorLoreSearchTokensSchema = t.Object({
   entry_id: t.String(),
   term: t.String(),
   scope: t.String(),
+},);
+
+// ── harness_queue_turns ────────────────────────────────────────────
+export const HarnessQueueTurnsSchema = t.Object({
+  batch_id: t.String(),
+  profile: t.String(),
+  prompt: t.String(),
+  chat_id: t.String(),
+  actor_id: t.String(),
+  requested_by: t.String(),
+  status: t.Optional(HarnessQueueTurnStatusSchema,),
+  requested_role: t.Optional(t.String(),),
+  turn_key: t.Optional(t.String(),),
+  attempts: t.Optional(t.Number(),),
+  result_message_id: t.Optional(t.String(),),
+  error_code: t.Optional(HarnessQueueErrorCodeSchema,),
+  error_message: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  started_at: t.Optional(t.String(),),
+  finished_at: t.Optional(t.String(),),
 },);
