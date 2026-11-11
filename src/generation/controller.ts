@@ -27,6 +27,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { handleAmbientGeneration, } from "./audio-gen-route";
+import { handleAudioGeneration, } from "./audio-prompt-route";
 import { handleImageCaption, } from "./caption-route";
 import { handleGenerate, } from "./generate-route";
 import {
@@ -47,32 +48,6 @@ import { handleImageGeneration, } from "./image-gen-route";
 import { handlePromptImprove, } from "./prompt-route";
 import { handleVideoGeneration, handleVideoGenerationStatus, } from "./video-gen-route";
 
-// ── Helpers ──────────────────────────────────────────────────
-
-import { handleAudioGeneration, } from "./audio-prompt-route";
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-/**
- * Generation Controller
- *
- * Elysia plugin for LLM generation control routes.
- *
- *   POST /api/v1/generation/generate       — Main generation endpoint
- *   POST /api/v1/generation/cancel         — Cancel active generation
- *   GET  /api/v1/generation/status/:chatId — Check generation status
- *   GET  /api/v1/generation/stream/:chatId — HTMX SSE streaming
- *   GET  /api/v1/generation/active         — List active
- *   POST /api/v1/generation/retry          — Retry with step-from-point
- *   POST /api/v1/generation/continue       — Continue partial/cancelled message
- *   POST /api/v1/generation/regenerate     — Replace AI response
- *   POST /api/v1/generation/image          — Generate image from prompt
- *   POST /api/v1/generation/video          — Generate video via a ComfyUI workflow
- *   GET  /api/v1/generation/video/status/:jobId — Poll a submitted video job
- *   POST /api/v1/generation/audio/ambient  — Generate layered ambient scene audio
- *   POST /api/v1/generation/caption        — Caption image assets
- *   POST /api/v1/generation/prompt         — Improve/analyze prompt drafts
- */
 // ── Helpers ──────────────────────────────────────────────────
 
 /**
@@ -198,6 +173,13 @@ export function generationRoutes(
   app.post(`${prefix}/generation/audio`, async (ctx,) => {
     const auth = ctx as unknown as { userId?: string | null; userRole?: string | null };
     return handleAudioGeneration(readBody(ctx,), database, auth.userId ?? undefined, auth.userRole,);
+  }, {
+    detail: {
+      summary: "Generate an audio track from a prompt",
+      description:
+        "Renders one prompt-driven track (backing /sfx and /music) and persists it as an audio asset linked to the chat.",
+      tags: ["Generation",],
+    },
   },);
 
   app.post(`${prefix}/generation/prompt`, async (ctx,) => {
