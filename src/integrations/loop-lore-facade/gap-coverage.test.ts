@@ -23,6 +23,7 @@ import {
   ensureWorkflowFileTemplates,
   resetWorkflowFileTemplatesForTests,
 } from "../../image-edit/providers/comfyui-workflow-template";
+import { principalKind, } from "../../middleware/principal-kind";
 import { listChatMessagesPage, } from "../../routes/messages/list-page";
 import { prepareUserMessage, } from "../../routes/messages/send-intake";
 import { sendUserMessage, } from "../../routes/messages/send-message";
@@ -44,7 +45,7 @@ function userCtx(userId: string | null,): FacadeContext {
     database: DB,
     config: CONFIG,
     principal: {
-      kind: "user",
+      kind: principalKind("user",),
       userId,
       userRole: userId === null ? null : "user",
       credentialId: null,
@@ -108,7 +109,7 @@ describe("facade/video/messaging gap coverage", () => {
     const readToken: FacadeContext = {
       ...ctx,
       principal: {
-        kind: "external-agent",
+        kind: principalKind("external-agent",),
         userId: "admin",
         userRole: null,
         credentialId: "t1",
@@ -123,7 +124,7 @@ describe("facade/video/messaging gap coverage", () => {
     const nullScope: FacadeContext = {
       ...ctx,
       principal: {
-        kind: "external-agent",
+        kind: principalKind("external-agent",),
         userId: "admin",
         userRole: null,
         credentialId: "t1",

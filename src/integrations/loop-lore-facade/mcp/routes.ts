@@ -21,7 +21,7 @@
 import { Elysia, } from "elysia";
 import { APP_VERSION, } from "../../../config/constants";
 import { createRequestContext, } from "../../../middleware/types";
-import { requireUserId, } from "../../../routes/http-utils";
+import { ErrorCode, HttpStatus, jsonError, requireUserId, } from "../../../routes/http-utils";
 import type { HandlerOpts, } from "../../../routes/messages/types";
 import { safeJsonStringify, } from "../../../utils";
 import { getFacadeRegistry, } from "../instance";
@@ -55,11 +55,23 @@ export function createMcpRoutes(opts: HandlerOpts, prefix = "/api",) {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
+        // Fail-closed seam: the auth derive ALWAYS resolves a kind on the
+        // composed app; a mount that bypassed it has none. Reject rather
+        // than default — there is no default principal to fall back to.
+        if (ctx.principalKind === undefined) {
+          return jsonError({
+            message: "Request reached the MCP transport without a resolved principal",
+            status: HttpStatus.Unauthorized,
+            code: ErrorCode.Unauthorized,
+          },);
+        }
+
         const rc = createRequestContext({
           userId,
           userRole: ctx.userRole ?? null,
           sessionId: ctx.sessionId ?? null,
-          principalKind: ctx.principalKind ?? "user",
+          // The resolved kind passes through verbatim — never defaulted.
+          principalKind: ctx.principalKind,
           credentialId: ctx.credentialId ?? null,
           credentialName: ctx.credentialName ?? null,
           credentialScope: ctx.credentialScope ?? null,

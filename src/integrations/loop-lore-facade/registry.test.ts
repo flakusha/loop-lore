@@ -13,6 +13,7 @@
 import { afterEach, describe, expect, test, } from "bun:test";
 import { governanceRateLimiter, } from "../../api-governance/rate-limiting/instance";
 import { chatPolicy, } from "../../api-governance/rate-limiting/policies";
+import { principalKind, } from "../../middleware/principal-kind";
 import { createFacadeRegistry, runFacadeOp, } from "./registry";
 import type { FacadeContext, FacadeOp, } from "./types";
 
@@ -25,7 +26,7 @@ function userCtx(userId: string | null,): FacadeContext {
     database: DB,
     config: CONFIG,
     principal: {
-      kind: "user",
+      kind: principalKind("user",),
       userId,
       userRole: userId === null ? null : "user",
       credentialId: null,
@@ -46,7 +47,7 @@ function tokenCtx(
     database: DB,
     config: CONFIG,
     principal: {
-      kind: "external-agent",
+      kind: principalKind("external-agent",),
       userId,
       userRole: null,
       credentialId,

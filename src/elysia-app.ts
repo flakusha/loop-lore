@@ -34,6 +34,7 @@ import { createGuestReadLimiter, } from "./middleware/guest-rate-limit";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { idempotent, } from "./middleware/idempotency";
 import type { IdempotencyCtx, } from "./middleware/idempotency";
+import { principalKind, } from "./middleware/principal-kind";
 import { requestIdMiddleware, } from "./middleware/request-id";
 import { requireAuthGuard, } from "./middleware/require-auth-guard";
 
@@ -125,7 +126,11 @@ export function createApp(deps: AppDeps,) {
           userId: null,
           userRole: null,
           sessionId: null,
-          principalKind: "user" as const,
+          // Auth failed, so NO principal was resolved. The kind is explicit,
+          // not a default: the vocabulary has no anonymous member, this
+          // identity is inert (null userId is 401'd by requireAuthGuard below
+          // and by every handler), and no credential ever falls back to it.
+          principalKind: principalKind("user",),
           credentialId: null,
           credentialName: null,
           credentialScope: null,

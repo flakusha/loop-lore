@@ -21,6 +21,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { principalKind, } from "../../middleware/principal-kind";
 import { createRequestContext, } from "../../middleware/types";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../../test-utils/insert-helpers";
@@ -63,6 +64,7 @@ function ctxFor(userId: string | null,): ReturnType<typeof facadeContextFromRequ
     userId,
     userRole: userId === null ? null : "user",
     sessionId: null,
+    principalKind: principalKind("user",),
   },);
 
   return facadeContextFromRequestContext({ ...rc, requestId: "req-facade-1", }, db, config,);

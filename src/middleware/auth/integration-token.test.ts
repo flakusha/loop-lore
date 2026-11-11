@@ -20,6 +20,7 @@ import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertIntegrationTokens, insertUsers, } from "../../test-utils/insert-helpers";
+import { principalKind, } from "../principal-kind";
 import { authenticateRequest, } from "./authenticate-request";
 import {
   hashIntegrationToken,
@@ -225,7 +226,7 @@ describe("integationTokenContext — subject binding", () => {
       issuerAdminUserId: ISSUER,
     },);
 
-    expect(ctx.principalKind,).toBe("external-agent",);
+    expect(ctx.principalKind,).toBe(principalKind("external-agent",),);
     expect(ctx.userId,).toBe(ISSUER,);
     // userRole is deliberately null: the token is a scoped credential, not
     // the admin's session — `can(null, "admin.system")` is false everywhere.
@@ -248,7 +249,7 @@ describe("authenticateRequest — presented llri_ bearer never downgrades", () =
 
     expect("context" in result,).toBe(true,);
     if (!("context" in result)) { throw new Error("expected context",); }
-    expect(result.context.principalKind,).toBe("external-agent",);
+    expect(result.context.principalKind,).toBe(principalKind("external-agent",),);
     expect(result.context.userId,).toBe(ISSUER,);
     expect(result.credential,).not.toBeNull();
   });

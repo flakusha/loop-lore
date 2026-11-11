@@ -20,6 +20,7 @@ import type { Config, } from "../../../config/schema";
 import { createConfigSchema, } from "../../../config/schema-class";
 import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
+import { principalKind, } from "../../../middleware/principal-kind";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../../test-utils/create-test-db";
 import {
   insertActors,
@@ -61,7 +62,15 @@ afterAll(async () => {
 function makeApp(userId: string | null, requestId = "req-mcp-test",): Elysia {
   resetFacadeRegistry();
   const app = new Elysia({ name: "test-mcp-routes", },);
-  app.derive(() => ({ userId, userRole: userId === null ? null : "user", sessionId: null, requestId, }));
+  // The route ctx REQUIRES the kind (fail-closed seam) — the test derive
+  // names the user shape it stands in for.
+  app.derive(() => ({
+    userId,
+    userRole: userId === null ? null : "user",
+    sessionId: null,
+    principalKind: principalKind("user",),
+    requestId,
+  }));
 
   return app.use(createMcpRoutes({ database: db, config, }, PREFIX,),);
 }

@@ -237,6 +237,11 @@ export function requireAuthGuard(ctx: {
   request: Request;
   userId?: string | null;
   userRole?: string | null;
+  /**
+   * The auth derive ALWAYS resolves it. Optional in the type only because
+   * Elysia cannot type app-level derive fields — an identity WITHOUT a kind
+   * is rejected below (deny-by-default; no default-principal fallback).
+   */
   principalKind?: PrincipalKind | null;
   set: { status?: number | string };
   t?: TranslatorFn | undefined;
@@ -245,14 +250,20 @@ export function requireAuthGuard(ctx: {
 
   const userId = ctx.userId ?? null;
   if (userId) {
+    // An identity with no resolved kind never passed the auth seam (a bare
+    // mount that bypassed the derive). Fail closed — assume nothing.
+    if (ctx.principalKind == null) {
+      set.status = 401;
+      return unauthorizedResponse(undefined, ctx.t,);
+    }
+
     // Integration-token principals are surface-confined (fail-closed): a
     // valid token identity reaches ONLY the integration-agent surfaces above,
-    // never the general API. User JWTs are unaffected (principalKind
-    // defaults to "user"). Belt-and-braces with the seam's own off-surface
+    // never the general API. Belt-and-braces with the seam's own off-surface
     // rejection in authenticate-request.ts — both sides import the SAME
     // predicate, so they cannot drift.
     if (
-      (ctx.principalKind ?? "user") === "external-agent" && !isIntegrationAgentPath(new URL(request.url,).pathname,)
+      ctx.principalKind === "external-agent" && !isIntegrationAgentPath(new URL(request.url,).pathname,)
     ) {
       set.status = 401;
       return unauthorizedResponse(undefined, ctx.t,);
