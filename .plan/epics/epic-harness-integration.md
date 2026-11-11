@@ -532,7 +532,7 @@ Concrete gaps with evidence; each has an explicit `IN or OUT?` marker.
 - [ ] TASK-harness-context-op-events — context add/remove/compact/rotate as first-class event records
 - [ ] TASK-harness-delegated-permission-grants — spawn-time capability grants persisted on chat_branches
 - [ ] TASK-harness-worktree-scope-guard — worktree-root path guard + explicit request_root_change escalation
-- [ ] TASK-harness-multi-agent-turn-queue — assistant participant turns + detached-job parallelism (deferred until Option C)
+- [ ] TASK-harness-multi-agent-turn-queue — assistant participant turns + detached-job parallelism (deferred until Option C); harness-profile turn queue + admin surface delivered on `orchestration-queue` (migration `100_harness_queue_turns`, `src/integrations/harness/queue.ts`, `/api/v1/harness/queue`) — assistant-participant flavor remains
 
 ## Dependencies
 
