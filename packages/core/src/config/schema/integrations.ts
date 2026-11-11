@@ -3,6 +3,28 @@
 
 // src/config/schema/integrations.ts — external integrations config types
 
+/**
+ * Inbound agentic servers (external tools connect INTO loop-lore) —
+ * epic-agentic-integration-mcp-acp §3.3. Both servers default OFF and the
+ * principal fields default empty: an unconfigured instance refuses every
+ * inbound connection (deny-by-default, like the harness ToS acks).
+ */
+export interface IntegrationInboundConfig {
+  /** Inbound MCP stdio server (facade registry over StdioServerTransport). Default false. */
+  mcpEnabled: boolean;
+  /** Inbound ACP studio server (ACP v1 agent over stdio NDJSON). Default false. */
+  acpEnabled: boolean;
+  /**
+   * userId every inbound op is attributed to (audit rows, budgets, chat
+   * ownership). The server-resolved principal of the stdio transports —
+   * there is no HTTP request to authenticate, so the operator names the
+   * principal. Empty = deny.
+   */
+  principalUserId: string;
+  /** Facade tier granted to the inbound principal. Cumulative: chat-write implies read. Default "read". */
+  principalScope: "read" | "chat-write";
+}
+
 /** Email (IMAP/SMTP) integration. Unconfigured = empty strings. */
 export interface IntegrationEmailConfig {
   /** Enable the email adapter. Default false. */
@@ -95,6 +117,8 @@ export interface IntegrationGifsConfig {
 export interface IntegrationsConfig {
   /** Master switch — no adapter loads unless this is true. Default false. */
   enabled: boolean;
+  /** Inbound agentic servers (MCP/ACP studio). Deny-by-default. */
+  inbound: IntegrationInboundConfig;
   /** Email (IMAP/SMTP) family. */
   email: IntegrationEmailConfig;
   /** Matrix family. */
