@@ -35,11 +35,11 @@ Plugin management API for installing, listing, enabling, and disabling plugins. 
 ## Tasks
 
 - [ ] `GET /api/plugins` — list installed plugins
-- [ ] `POST /api/plugins/install` — install plugin (multipart upload)
+- [x] `POST /api/plugins/install` — install plugin (on-disk dir scan; multipart upload deferred)
 - [ ] `POST /api/plugins/:id/enable` — enable plugin
 - [ ] `POST /api/plugins/:id/disable` — disable plugin
-- [ ] `GET /api/plugins/discover` — discover available plugins
-- [ ] `DELETE /api/plugins/:id` — uninstall plugin
+- [x] `GET /api/plugins/discover` — discover available plugins
+- [x] `DELETE /api/plugins/:id` — uninstall plugin
 - [ ] Plugin config schema validation
 - [ ] Admin UI: plugin manager tab
 
