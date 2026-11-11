@@ -4,7 +4,6 @@ import {
   detectPolicyMismatch,
   registerDefaultNullDetector,
   registerPolicyDetector,
-  PolicyDetector,
 } from "./policy-detector";
 import type { PolicyDetector, } from "./policy-detector";
 
