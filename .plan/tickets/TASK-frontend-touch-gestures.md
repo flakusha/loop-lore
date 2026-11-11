@@ -73,3 +73,5 @@ missing unit tests, per epic Phase 2 ("Touch gesture system … swipe/tap/long-p
 
 
 git issue: a88cf96
+
+**Resolved:** 2026-11-11 registry-driven close: git issue a88cf96 (registry tip: d1ef6ee4e Konstantin Fedotov Auto-closed: appended .md marker marks TASK-FRONTEND-TOUCH-GESTURES don)
