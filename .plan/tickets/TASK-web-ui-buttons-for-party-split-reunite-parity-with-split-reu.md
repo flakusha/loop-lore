@@ -4,6 +4,7 @@
 # TASK: Web UI buttons for party split/reunite (parity with /split /reunite commands)
 
 **Status:** Done
+**Status Note:** 2026-11-10 (release-010-closeout): the web UI ships — `chatPartySplit` (`src/frontend/alpine/chat-party-split.ts`) backs the `party-split-panel.html` modal against `POST /api/v1/chats/:id/split` and `POST /api/v1/chats/:id/reunite`: branch drafts (a location plus an actor set per branch), a reunite picker over the chat's child branches, a toast on success, the server's refusal message on error, and a transcript refresh after a successful split or reunite. Tests: `src/frontend/alpine/chat-party-split.test.ts`.
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -26,8 +27,8 @@ Precedent pattern to follow: the branch-merge wizard modal src/components/chat/b
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
 
 **Resolved:** 2026-11-11 registry-driven close: git issue 4e332d2 (registry tip: 3147154c6 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WEB-UI-BUTTONS-FOR-PARTY-SP)
