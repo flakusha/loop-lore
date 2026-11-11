@@ -4,7 +4,7 @@
 # TASK: harness-telemetry-metrics-health-signal-usage-ledger-endpoint
 
 **Status:** Done
-**Blocker:** HELD — no implementation lane exists yet; code genuinely unlanded (no `harness` type under `src/telemetry`, no metrics/health mention). Do NOT touch until a lane is scoped.
+**Scope:** `GET /api/v1/harness/metrics`, `GET /api/v1/harness/ledger`, `GET /api/v1/harness/stream` — all admin-gated (`requirePermission("admin.system")`), 503 when the runtime is not composed (the inert sibling posture). Landed 2026-11-11 on branch `harness-telemetry`.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
@@ -33,8 +33,6 @@ Parity matrix gap #7 (PARTIAL) + `TASK-harness-stats-endpoint` precedent (Done t
 
 **Acceptance Criteria:**
 
-- [ ] Harness run/error/breaker/spend counters visible via the standard metrics or health surface (no shell/JSONL required).
-- [ ] Usage ledger is queryable or an explicit already-covered decision is recorded with pointers.
-- [ ] No new tables, no new infra; existing `record()`/collector conventions reused.
-
-**Resolved:** 2026-11-11 registry-driven close: git issue 635eef8 (registry tip: 5f1ea508a Konstantin Fedotov Auto-closed: appended .md marker marks TASK-HARNESS-TELEMETRY-METRICS-H)
+- [x] Harness run/error/breaker/spend counters visible via the standard metrics or health surface (no shell/JSONL required). — the admin `GET /api/v1/harness/metrics` (`src/routes/harness/metrics.ts`) renders the SHARED harness block (`src/routes/harness/prometheus.ts`: runs/errors/spend, errors by kind, breaker open/trips, per-profile rpm/tokens/breaker — byte-identical to the opt-in `/metrics` families, so the two surfaces cannot drift) PLUS scoped families: `loop_lore_harness_dispatch_total{task_type}` and `loop_lore_harness_profile_dispatch_total{profile}` (process-lifetime exec-log counters extended in place with `byTaskType`/`byProfile`), `loop_lore_harness_profile_quota_reset_epoch_seconds`, `loop_lore_harness_profile_info{profile,flavor}`, and `loop_lore_harness_profile_available` (cached binary probe). Health folds into the metrics families (adapter liveness + breaker gauges) — no second JSON health route; `/api/health` stays provider-agnostic.
+- [x] Usage ledger is queryable or an explicit already-covered decision is recorded with pointers. — `GET /api/v1/harness/ledger` (`src/routes/harness/ledger.ts`) returns the RAW ledger snapshot: every profile the ledger has seen, insertion order, with the `quotaResetAt` surface. `/harness/usage` remains the breaker-merged view over the same rows (`usage-view.ts`).
+- [x] No new tables, no new infra; existing `record()`/collector conventions reused. — exec-log counters extended in place; the SSE surface rides the existing `routes/sse-stream.ts` scaffold (ActivityStreamer poll+change shape); zero migrations, zero new deps.
