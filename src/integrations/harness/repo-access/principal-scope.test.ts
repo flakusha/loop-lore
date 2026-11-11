@@ -128,6 +128,17 @@ describe("resolveScopeRoot — per-kind matrix", () => {
       await rm(outside, { recursive: true, force: true, },);
     }
   });
+
+  it("FAILS CLOSED on a kind outside the vocabulary (never resolves a root)", async () => {
+    // The brand is compile-time only, so a value that escaped the mint (a
+    // hand-built principal, a stale persisted kind) must still be refused
+    // rather than falling through to a resolved scope root.
+    const rogue = { kind: "rogue-kind", userId: "u-rogue", } as unknown as RepoAccessPrincipal;
+    const r = await resolveScopeRoot(rogue,);
+
+    expect(r.ok,).toBe(false,);
+    expect(r.ok === false && r.code,).toBe("root_unresolved",);
+  });
 });
 
 describe("assertParamsWithinPrincipalScope — trust boundary", () => {

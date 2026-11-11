@@ -33,7 +33,7 @@ import {
   assertParamsWithinScope,
   resolveWithinScope,
 } from "../../../harness/worktree-scope";
-import { type PrincipalKind, type PrincipalKindLiteral, } from "../../../middleware/principal-kind";
+import { type PrincipalKind, } from "../../../middleware/principal-kind";
 
 /**
  * A server-resolved principal, shaped for repo-access decisions. Minted only
@@ -114,11 +114,7 @@ export async function resolveScopeRoot(
   principal: RepoAccessPrincipal,
   explicitRoot?: string,
 ): Promise<RepoScopeResolution> {
-  // The brand is compile-time only — the runtime value is one of the four
-  // vocabulary literals — so widening to the literal union is lossless and
-  // lets the case labels below narrow.
-  const kind: PrincipalKindLiteral = principal.kind;
-  switch (kind) {
+  switch (principal.kind) {
     case "user":
     case "user-worktree": {
       // Pass-through-until-spaces (PROVISIONAL, epic DECISIONS §5 Q5): the
