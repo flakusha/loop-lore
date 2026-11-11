@@ -107,6 +107,7 @@ describe("harnessUsageRoutes", () => {
         dispatchesInWindow: number;
         tokensInDay: number;
         quotaResetAt: number | null;
+        quotaSurface: string;
         breakerOpen: boolean;
         breakerCooldownRemainingMs: number;
         breakerTrips: number;

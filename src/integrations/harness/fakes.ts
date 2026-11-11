@@ -10,6 +10,7 @@ import {
   type HarnessAcpAdapter,
   HarnessAcpError,
   type HarnessAdapterFactory,
+  type HarnessQuotaSurface,
   type HarnessTurnResult,
   type HarnessUsageReport,
   type PermissionOutcome,
