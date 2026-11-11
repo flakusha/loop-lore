@@ -28,6 +28,21 @@ export function extractEnvelope(
 }
 
 /**
+ * Read the appearance a Tavern/Agnai hybrid card parks in
+ * `extensions.agnai.appearance`: those cards carry no top-level `appearance`
+ * field, so the value was silently dropped on import.
+ * @param extensions
+ * @returns string
+ */
+function appearanceFromExtensions(extensions: unknown,): string {
+  if (!extensions || typeof extensions !== "object") { return ""; }
+  const agnai = (extensions as Record<string, unknown>).agnai;
+  if (!agnai || typeof agnai !== "object") { return ""; }
+  const appearance = (agnai as Record<string, unknown>).appearance;
+  return typeof appearance === "string" ? appearance : "";
+}
+
+/**
  * Build the common fields of a CanonicalCharacter.
  * Normalizers call this and spread any extra fields (lorebook, assets, extensions, etc.)
  * onto the result.
@@ -61,18 +76,40 @@ export function buildCanonicalFields(
     ? outfitsRaw.filter((o,): o is CharacterOutfit => !!o && typeof o === "object")
     : [];
 
-  const defaultOutfit = (raw.default_outfit as string | undefined) ??
-    (raw.outfit as string | undefined) ??
-    outfits[0]?.id ??
-    "";
+  // Spec-mandatory fallbacks: a foreign card (SillyTavern, Agnai, Character.AI)
+  // rarely carries loop-lore's wardrobe or a separate personality, and the
+  // import gate rejects a card without them. Fill them from what the card does
+  // say instead of refusing the import.
+  // ponytail: the fallbacks copy the description into the prompt - replace
+  // with LLM-assist extraction when a real signal exists.
+  const description = (raw.description as string) ?? "";
+  const personality = (raw.personality as string) || description;
+  const appearance = (raw.appearance as string) ||
+    appearanceFromExtensions(raw.extensions,) ||
+    description;
+
+  const wardrobe = outfits.length > 0
+    ? outfits
+    : [{
+      id: "default",
+      name: "Default",
+      descriptor: appearance || personality || description || "Default outfit",
+    },];
+
+  const defaultOutfit = outfits.length > 0
+    ? ((raw.default_outfit as string | undefined) ??
+      (raw.outfit as string | undefined) ??
+      wardrobe[0]?.id ??
+      "")
+    : (wardrobe[0]?.id ?? "default");
 
   return {
     name: (raw.name as string) ?? "",
-    description: (raw.description as string) ?? "",
-    personality: (raw.personality as string) ?? "",
-    appearance: (raw.appearance as string) ?? "",
+    description,
+    personality,
+    appearance,
     default_outfit: defaultOutfit,
-    outfits,
+    outfits: wardrobe,
     scenario: raw.scenario as string | undefined,
     welcome_message: raw[welcomeKey] as string | undefined,
     mes_example: raw.mes_example as string | undefined,

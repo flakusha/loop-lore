@@ -55,6 +55,41 @@ describe("parseCharacterCard", () => {
     expect(result.character.welcome_message,).toBe("Hi there!",);
   });
 
+  test("detects an Agnai native card and keeps its persona", async () => {
+    const agnai = {
+      name: "Aria",
+      persona: { kind: "attributes", attributes: { species: ["elf",], }, },
+      greeting: "Greetings",
+      sampleChat: "{{user}}: hi",
+      scenario: "A tavern at dusk",
+    };
+
+    const result = await parseCharacterCard(JSON.stringify(agnai,),);
+    expect(result.format,).toBe("agnai",);
+    expect(result.character.description,).toBe("Name: Aria\nspecies: elf",);
+    expect(result.character.mes_example,).toBe("{{user}}: hi",);
+    expect(result.character.scenario,).toBe("A tavern at dusk",);
+  });
+
+  test("reads the appearance a Tavern hybrid parks in extensions.agnai", async () => {
+    const tavern = {
+      spec: "chara_card_v2",
+      spec_version: "2.0",
+      data: {
+        name: "Aria",
+        description: "Name: Aria\nspecies: elf",
+        personality: "",
+        first_mmes: "Greetings",
+        extensions: { agnai: { appearance: "Silver hair", }, },
+      },
+    };
+
+    const result = await parseCharacterCard(JSON.stringify(tavern,),);
+    expect(result.format,).toBe("ccv2",);
+    expect(result.character.appearance,).toBe("Silver hair",);
+    expect(result.character.personality,).toBe("Name: Aria\nspecies: elf",);
+  });
+
   test("detects flat JSON format", async () => {
     const flat = {
       name: "Flat Character",

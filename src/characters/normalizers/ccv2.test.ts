@@ -73,7 +73,12 @@ describe("normalizeCcV2", () => {
 
     expect(result.name,).toBe("Minimal Character",);
     expect(result.description,).toBe("Minimal description",);
-    expect(result.personality,).toBe("",);
+    // Mandatory fields fall back to the description so a foreign card passes
+    // the import gate instead of being rejected for a missing wardrobe.
+    expect(result.personality,).toBe("Minimal description",);
+    expect(result.appearance,).toBe("Minimal description",);
+    expect(result.default_outfit,).toBe("default",);
+    expect(result.outfits,).toHaveLength(1,);
     expect(result.scenario,).toBeUndefined();
     expect(result.welcome_message,).toBeUndefined();
     expect(result.mes_example,).toBeUndefined();
