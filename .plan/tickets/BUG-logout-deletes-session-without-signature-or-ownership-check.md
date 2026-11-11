@@ -21,3 +21,6 @@ src/routes/auth/session.ts:18-21 — logout deletes session by sid extracted fro
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+git issue: fafb5a9

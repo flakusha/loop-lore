@@ -37,3 +37,6 @@ For non-RPG chat-only worlds, locations act as channels (1 location : N chats) g
 
 - i18n invite/kind/visibility keys are currently English in all 10 locales (full translation deferred)
 - No world member-removal UI yet (flat `world_members` exists; removal is backend-only)
+
+
+git issue: e803564

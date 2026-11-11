@@ -91,3 +91,6 @@ scenario-source feature from the recovered interface.
 - `epic-assistant-generation-extensions.md` (Phase 4: "Scenario source store + reuse in generation")
 - `epic-blog-system.md` ("consume generated-world seeds")
 - `EPIC-055` (Assistant Generation Extensions, git issue `29d4e8c`)
+
+
+git issue: 828ef68

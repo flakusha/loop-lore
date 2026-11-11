@@ -87,3 +87,6 @@ Assistant/GM flows reconciliation — generation of new characters, items, world
 - Reference `epic-assistant-gm-flows.md` for full system design
 - See `src/assistant/commands/generate.ts` for generation commands
 - Consider prompt template management
+
+
+git issue: d964033

@@ -31,3 +31,6 @@ Fail-fast guard comparing applied vs committed migrations; a78a2a4f deleted+renu
 - [ ] Unit tests: fresh DB passes; DB with an unknown applied migration fails with the actionable message
 - [ ] Document policy in `src/db/migrations/README` (or equivalent): applied migrations are append-only — never delete or renumber once shipped
 - [ ] `bun run check` and `bun test src/` stay green
+
+
+git issue: c41b00a

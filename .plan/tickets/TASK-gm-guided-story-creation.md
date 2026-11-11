@@ -165,3 +165,6 @@ Medium — GM-guided story creation changes the chat UX in group-chat mode. The 
 - `epic-story-mode-ui.md` — Story mode UI epic
 - `docs/frontend/chat/group-chat.md` — Group chat spec (194 lines, partially implemented)
 - `docs/frontend/chat/multi-llm-story.md` — Story mode spec (521 lines, aspirational)
+
+
+git issue: 7fbc5c8

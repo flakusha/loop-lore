@@ -87,3 +87,6 @@ wired (assistant, gm, vn, vnChoices, transition, intent, memory). Design: `.plan
 - `src/generation/hooks/hooks.test.ts`, `src/generation/hooks/e2e-integration.test.ts`,
   `src/nsfw/runtime-config.test.ts`
 - `configs/config.example.yaml`, `configs/config.example.toml`
+
+
+git issue: b06545c
