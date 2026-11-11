@@ -154,6 +154,24 @@ describe("harnessUsageRoutes", () => {
     expect(rows.find((row,) => row.profile === "q")?.quotaSurface,).toBe("none",);
   });
 
+  it("a phantom ledger row (profile left the config) declares no surface", () => {
+    // "ghost" is never configured; a ledger record for it is a phantom row.
+    // No connection, no configured flavor — the row must not inherit the
+    // default flavor's "omp-ext".
+    const { factory, } = fakeFactory({
+      p: { models: ["zai/glm-4.6",], quotaSurface: "omp-ext", },
+    },);
+
+    initHarnessRuntime({ enabled: true, profiles: [LIVE,], }, factory,);
+
+    getHarnessRuntime()?.ledger.record("ghost", 5,);
+
+    const rows = harnessProfileUsage(getHarnessRuntime()!,);
+
+    expect(rows.find((row,) => row.profile === "ghost")?.quotaSurface,).toBe("none",);
+    expect(rows.find((row,) => row.profile === "p")?.quotaSurface,).toBe("omp-ext",);
+  });
+
   it("reports a tripped breaker as open with its cooldown", async () => {
     composeRuntime();
     const runtime = getHarnessRuntime();

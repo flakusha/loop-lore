@@ -59,14 +59,19 @@ export function harnessProfileUsage(runtime: HarnessRuntime,): HarnessProfileUsa
   const rows: HarnessProfileUsage[] = [];
   for (const name of names) {
     const row = snapshot.get(name,);
+    // A phantom name (ledger/breaker row whose profile left the config) has
+    // no configured flavor to fall back on — report "none" rather than
+    // guessing the default flavor's surface.
     const cfg = runtime.acp.profiles.find((p,) => p.name === name);
-    const flavor = cfg?.harness ?? DEFAULT_HARNESS_FLAVOR;
+    const surface = runtime.registry.connection(name,)?.quotaSurface ??
+      (cfg ? FLAVOR_QUOTA_SURFACES[cfg.harness ?? DEFAULT_HARNESS_FLAVOR] : "none");
+
     rows.push({
       profile: name,
       dispatchesInWindow: row?.dispatchesInWindow ?? 0,
       tokensInDay: row?.tokensInDay ?? 0,
       quotaResetAt: row?.quotaResetAt ?? null,
-      quotaSurface: runtime.registry.connection(name,)?.quotaSurface ?? FLAVOR_QUOTA_SURFACES[flavor],
+      quotaSurface: surface,
       breakerOpen: !runtime.breaker.allow(name,),
       breakerCooldownRemainingMs: runtime.breaker.cooldownRemainingMs(name,),
       breakerTrips: runtime.breaker.tripCount(name,),
