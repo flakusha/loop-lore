@@ -25131,6 +25131,20 @@
     "source": ".plan/tickets/TASK-1-0-0-gap-verify-multi-assistant-and-multi-llm-chat-rows.md",
     "status": "open"
   },
+  "TASK-1-0-0-MFA-EMAIL-MESSENGER-CODE-CHANNEL-FIRST-METAAPPLICATION": {
+    "hash": "7466fb8",
+    "git_issue": "7466fb8",
+    "extid": "TASK-1-0-0-MFA-EMAIL-MESSENGER-CODE-CHANNEL-FIRST-METAAPPLICATION",
+    "type": "TASK",
+    "title": "1.0.0 MFA: email/messenger code channel first (metaapplication-ready)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md",
+    "status": "open"
+  },
   "TASK-1-0-0-THEME-1-OPERATOR-CORRECT-AGENTIC-RUNTIME-HARNESS-LADDE": {
     "hash": "174eca7",
     "git_issue": "174eca7",
