@@ -131,8 +131,10 @@ export const OUTBOX_DRAIN_MESSAGE = "ll-drain-outbox";
  * Classify a thrown send error as offline-class (network down / timeout /
  * abort — the request never reached HTTP). fe-fetch attaches `status` to
  * every error that carries an HTTP response, so a missing status means the
- * transport failed; the bare `Unauthorized` throw (401) is explicitly not
- * offline — the server answered.
+ * transport failed; a `status` of 0 (or any out-of-range code — no HTTP
+ * server answered) is the same transport failure, not a server answer.
+ * The bare `Unauthorized` throw (401) is explicitly not offline — the
+ * server answered.
  * @param error - thrown value from the send attempt
  * @returns `true` when the entry should stay queued rather than count as poison
  */
@@ -141,7 +143,9 @@ export function isOfflineClassError(error: unknown,): boolean {
   if (error instanceof Error && error.message === "Unauthorized") { return false; }
   if (error instanceof TypeError) { return true; }
   const status = (error as { status?: unknown } | null)?.status;
-  return typeof status !== "number";
+  if (typeof status !== "number") { return true; }
+  if (status <= 0 || status > 599) { return true; }
+  return false;
 }
 
 /** Narrow a parsed JSON row back to {@link OutboxEntry}; corrupt rows are skipped. */

@@ -148,19 +148,15 @@ describe("Phone viewport shell + offline outbox badge (theme-4 AC4)", () => {
     }
   }, 60_000,);
 
-  // SKIPPED (diagnosed 2026-11-12, worktree theme4-pwa-caps): the offline
-  // FAILURE-path enqueue never fires in the browser. Instrumented run: with
-  // navigator.onLine === false, sendMessage pushes the optimistic row and
-  // clears the input, then rolls it back (removeTempMessage + restoreInput)
-  // WITHOUT ever calling localStorage.setItem("ll-outbox-v1", …) and without
-  // the queueOfflineSend warn. Consistent cause: feFetch attaches a `status`
-  // to safeFetch's offline failure error (fe-fetch.ts:117 attaches status on
-  // EVERY !result.ok), so keepFailedSendQueued → isOfflineClassError sees a
-  // status-bearing error and bails. The offline FAST path (isOffline() gate
-  // before the POST) is unaffected in principle; here even that path did not
-  // enqueue, so the offline send queue needs a slice-level fix decision
-  // (classify status 0 / network failures as offline-class in fe-fetch or in
-  // the store) + fresh browser coverage. Unit-level outbox behaviour is green.
+  // SKIPPED (2026-11-12, worktree theme4-pwa-caps): the offline FAILURE-path
+  // enqueue never fires in the browser. Instrumented runs with the classifier
+  // fix in place show the failure is UPSTREAM of it: the offline FAST path
+  // (`isOffline()` gate) runs `queueOfflineSend` → returns false with NO
+  // outbox write and no error (the local copy in chat-send.ts swallows the
+  // throw silently), so the row rolls back before the catch path is ever
+  // reached. Suspects: `buildBody()` (encryption/compress) or the enqueue
+  // throwing inside the silent catch. Next: surface that error, then re-run.
+  // Unit-level outbox behaviour (incl. the fixed classifier) is green.
   test.skip("offline send queues under the banner and delivers on reconnect", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page, { allowlist: SPEC_ALLOWLIST, },);
@@ -295,8 +291,9 @@ describe("Phone viewport shell + offline outbox badge (theme-4 AC4)", () => {
     }
   }, 60_000,);
 
-  // Skipped for the same offline-failure enqueue root cause as above — the
-  // pending list + discard UI is unit-covered in outbox-badge.test.ts.
+  // SKIPPED — same upstream fast-path failure as above (this test exercises
+  // the same enqueue path twice). The pending list + discard UI stays
+  // unit-covered in outbox-badge.test.ts.
   test.skip("outbox badge pending list supports per-entry discard with confirm", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page, { allowlist: SPEC_ALLOWLIST, },);
