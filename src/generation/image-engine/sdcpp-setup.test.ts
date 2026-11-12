@@ -150,6 +150,22 @@ describe("sd.cpp setup store", () => {
     await expect(deleteSdCppSetup(db, "ghost",),).rejects.toThrow(SdCppSetupValidationError,);
   });
 
+  test("SQL-shaped names never reach a query as anything but a rejected literal", async () => {
+    const hostile = "a'; DROP TABLE system_config;--";
+
+    // save: the slug-name validation rejects the payload before any key is built.
+    await expect(saveSdCppSetup(db, { ...VALID_INPUT, name: hostile, },),).rejects.toThrow(
+      SdCppSetupValidationError,
+    );
+
+    // delete: the hostile name is bound as an equality parameter (no match) —
+    // the table survives and stays empty.
+    await expect(deleteSdCppSetup(db, hostile,),).rejects.toThrow(SdCppSetupValidationError,);
+
+    const rows = await db.selectFrom("system_config",).selectAll().execute();
+    expect(rows,).toEqual([],);
+  });
+
   test("parseStoredSdCppSetup rejects malformed rows", () => {
     expect(parseStoredSdCppSetup("not json",),).toBeNull();
     expect(parseStoredSdCppSetup(JSON.stringify({ name: 7, },),),).toBeNull();
