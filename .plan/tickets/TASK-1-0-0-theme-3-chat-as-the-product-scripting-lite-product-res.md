@@ -26,6 +26,8 @@ Scope note: serves Required chat-scenarios/branching/VN/scripting items + chat-p
 
 (fill in before starting: why this change, constraints, alternatives considered.)
 
+Wave progress (scripting-lite lane): slice-1 (macro engine, named args, per-command valves, pipe operator) and wave-3 (smart-regen decision gate `assistant.smartRegenGate` + `/regen` `/rewrite` style-picker UI + legacy template resolvers rewired onto the macro engine) are implemented on the `scripting-lite` branch — see the implementation notes in TASK-shared-macro-engine-for-templates-and-commands, TASK-named-arguments-for-slash-commands, TASK-per-command-valves-like-options-schema, TASK-pipe-operator-chaining-slash-commands, FEAT-smart-regen-decision-gate-in-main-pipeline and FEAT-style-picker-ui-for-smart-regen. AC7 (chat residual) is NOT in this lane.
+
 **Acceptance Criteria:**
 
 - [ ] Implementation complete

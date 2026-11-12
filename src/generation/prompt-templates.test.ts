@@ -53,6 +53,30 @@ describe("resolveTemplate", () => {
     const result = resolveTemplate("{{charName}} {{unknownToken}}", ctx,);
     expect(result,).toBe("Alice {{unknownToken}}",);
   });
+
+  test("expands a nested reference carried in a value (shared engine, legacy semantics)", () => {
+    const result = resolveTemplate("{{charDescription}}", {
+      ...ctx,
+      charDescription: "an apprentice of {{userName}}",
+    },);
+
+    expect(result,).toBe("an apprentice of Bob",);
+  });
+
+  test("matches token names exactly — inner whitespace stays literal", () => {
+    const result = resolveTemplate("{{ charName }} {{charName}}", ctx,);
+    expect(result,).toBe("{{ charName }} Alice",);
+  });
+
+  test("expands through one backslash (no escape syntax, legacy semantics)", () => {
+    const result = resolveTemplate("\\{{charName}}", ctx,);
+    expect(result,).toBe("\\Alice",);
+  });
+
+  test("inserts replacement-pattern values verbatim", () => {
+    const result = resolveTemplate("pay {{spell}}", { ...ctx, extra: { spell: "$& $' $$", }, },);
+    expect(result,).toBe("pay $& $' $$",);
+  });
 });
 
 describe("resolveProfile", () => {

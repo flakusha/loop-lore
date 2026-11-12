@@ -25,6 +25,7 @@ import {
   type LlmTemplateSection,
   parseTemplatePayload,
 } from "../../generation/template-types";
+import { expandMacros, LEGACY_TEMPLATE_MACRO_OPTIONS, type MacroRegistry, } from "../macro/engine";
 import { dropOverBudgetSections, reorderPromptMessages, } from "../prompt-budget";
 import { PROMPT_SECTIONS, } from "./registry";
 import type { AssembleContext, AssembledPrompt, PromptSectionReport, } from "./types";
@@ -176,7 +177,10 @@ function collectNeededBuiltins(sections: LlmTemplatePayload["sections"],): Set<s
 /**
  * Substitute {{variables}} in static template content: scalars from the
  * actor/chat context, builtin section names and aliases as the joined text
- * of that section's built messages.
+ * of that section's built messages. The scan is delegated to the shared
+ * macro engine with the LEGACY_TEMPLATE_MACRO_OPTIONS preset (values expand,
+ * exact token names, no escape syntax) — unlike the pre-engine sweep, this
+ * also makes replacement-pattern (`$&`) values safe.
  * @param content - Raw template content
  * @param scalars - Scalar variable map
  * @param builtin - Built section messages keyed by builder name
@@ -187,22 +191,16 @@ function substituteVars(
   scalars: ScalarVars,
   builtin: Map<string, GenerationMessage[]>,
 ): string {
-  let result = content;
-  for (const [key, value,] of Object.entries(scalars,)) {
-    result = result.replaceAll(`{{${key}}}`, value,);
-  }
-
+  const registry: MacroRegistry = { ...scalars, };
   for (const [alias, builtinName,] of Object.entries(VARIABLE_ALIASES,)) {
     const joined = (builtin.get(builtinName,) ?? [])
       .map((msg,) => msg.content).join("\n\n",);
 
-    result = result.replaceAll(`{{${alias}}}`, joined,);
-    if (builtinName !== alias) {
-      result = result.replaceAll(`{{${builtinName}}}`, joined,);
-    }
+    registry[alias] = joined;
+    if (builtinName !== alias) { registry[builtinName] = joined; }
   }
 
-  return result;
+  return expandMacros(content, registry, LEGACY_TEMPLATE_MACRO_OPTIONS,);
 }
 
 /**

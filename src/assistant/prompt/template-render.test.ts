@@ -217,4 +217,41 @@ describe("assembleFromTemplate", () => {
       sqlite.close();
     }
   });
+
+  test("leaves unknown tokens unchanged", async () => {
+    const res = await assembleFromTemplate(makeCtx(10_000,), {
+      sections: [{ identifier: "", role: "system", content: "{{unknownToken}} stays", enabled: true, priority: 1, },],
+    },);
+
+    expect(res.messages[0]?.content,).toBe("{{unknownToken}} stays",);
+  });
+
+  test("matches token names exactly — inner whitespace stays literal", async () => {
+    const res = await assembleFromTemplate(makeCtx(10_000,), {
+      sections: [{ identifier: "", role: "system", content: "{{ charName }} stays", enabled: true, priority: 1, },],
+    },);
+
+    expect(res.messages[0]?.content,).toBe("{{ charName }} stays",);
+  });
+
+  test("inserts replacement-pattern scalar values verbatim", async () => {
+    const ctx = makeCtx(10_000,);
+    ctx.actor.display_name = "$& $' $$";
+    const res = await assembleFromTemplate(ctx, {
+      sections: [{ identifier: "", role: "system", content: "voice: {{charName}}", enabled: true, priority: 1, },],
+    },);
+
+    expect(res.messages[0]?.content,).toBe("voice: $& $' $$",);
+  });
+
+  test("expands a builtin reference carried in a scalar value", async () => {
+    const ctx = makeCtx(10_000,);
+    ctx.actor.description = "friend of {{userName}}";
+    const res = await assembleFromTemplate(ctx, {
+      sections: [{ identifier: "", role: "system", content: "{{charDescription}}", enabled: true, priority: 1, },],
+    },);
+
+    // userName is empty without a participant row; the token still consumes.
+    expect(res.messages[0]?.content,).toBe("friend of ",);
+  });
 });

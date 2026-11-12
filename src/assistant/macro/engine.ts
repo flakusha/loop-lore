@@ -30,6 +30,35 @@ export type MacroRegistry = Record<string, MacroValue>;
 /** How resolved values interact with further expansion. */
 export type MacroMode = "literal" | "expand-values";
 
+/** Optional engine knobs. Defaults keep the command-path semantics. */
+export interface MacroOptions {
+  /** Expansion mode; defaults to `"literal"`. */
+  mode?: MacroMode;
+  /**
+   * Trim whitespace around macro names before lookup (default true). The
+   * legacy prompt-template resolvers matched tokens EXACTLY, so they pass
+   * false to keep `{{ char }}` literal.
+   */
+  trimNames?: boolean;
+  /**
+   * Honor the `\{{name}}` escape (default true). The legacy resolvers had no
+   * escape and substituted through the backslash; they pass false so a
+   * backslash-prefixed token still expands (legacy observable behavior).
+   */
+  escapes?: boolean;
+}
+
+/**
+ * The pre-engine template semantics, shared by the legacy prompt-template
+ * resolvers rewired onto this engine: values expand (bounded passes), token
+ * names match exactly (no trim), and no escape syntax.
+ */
+export const LEGACY_TEMPLATE_MACRO_OPTIONS: Required<MacroOptions> = {
+  mode: "expand-values",
+  trimNames: false,
+  escapes: false,
+};
+
 /** Innermost double-brace token: the captured name holds no braces. */
 const MACRO_PATTERN = /\{\{([^{}]*)\}\}/g;
 
@@ -57,9 +86,14 @@ function trailingBackslashRun(input: string, end: number,): number {
  * Expand one scan of the input against the registry.
  * @param input - Text to scan
  * @param registry - Macro values (lazy resolvers invoked only on reference)
+ * @param opts - Resolved knobs (name trimming, escape handling)
  * @returns the expanded text plus whether any macro was replaced
  */
-function expandOnce(input: string, registry: MacroRegistry,): { text: string; replaced: boolean } {
+function expandOnce(
+  input: string,
+  registry: MacroRegistry,
+  opts: Required<MacroOptions>,
+): { text: string; replaced: boolean } {
   let out = "";
   let consumed = 0;
   let replaced = false;
@@ -70,11 +104,12 @@ function expandOnce(input: string, registry: MacroRegistry,): { text: string; re
 
     const literal = input.slice(consumed, start,);
     const escapeRun = trailingBackslashRun(input, start,);
-    const escaped = escapeRun % 2 === 1;
     // An escape consumes one backslash; the surviving backslashes stay literal.
+    const escaped = opts.escapes && escapeRun % 2 === 1;
     out += escaped ? literal.slice(0, -1,) : literal;
 
-    const name = (match[1] ?? "").trim();
+    const rawName = match[1] ?? "";
+    const name = opts.trimNames ? rawName.trim() : rawName;
     const value = name === "" ? undefined : registry[name];
     if (escaped || value === undefined) {
       // Unknown (or escaped) macro: keep the author's spelling untouched.
@@ -100,17 +135,23 @@ function expandOnce(input: string, registry: MacroRegistry,): { text: string; re
  * pass only — a value that emits `\{{x}}` is not re-escaped.
  * @param input - Text containing `{{macro}}` tokens
  * @param registry - Macro values; lazy resolvers run only when referenced
- * @param mode - Expansion mode; defaults to `"literal"`
+ * @param options - Knobs: mode, name trimming, escape handling
  * @returns the expanded text with unknown macros kept literal
  * @throws {Error} When a lazy macro resolver throws
  */
-export function expandMacros(input: string, registry: MacroRegistry, mode: MacroMode = "literal",): string {
-  const first = expandOnce(input, registry,);
-  if (mode === "literal" || !first.replaced) { return first.text; }
+export function expandMacros(input: string, registry: MacroRegistry, options: MacroOptions = {},): string {
+  const opts: Required<MacroOptions> = {
+    mode: options.mode ?? "literal",
+    trimNames: options.trimNames ?? true,
+    escapes: options.escapes ?? true,
+  };
+
+  const first = expandOnce(input, registry, opts,);
+  if (opts.mode === "literal" || !first.replaced) { return first.text; }
 
   let text = first.text;
   for (let pass = 1; pass < MAX_EXPANSION_PASSES; pass++) {
-    const next = expandOnce(text, registry,);
+    const next = expandOnce(text, registry, opts,);
     text = next.text;
     if (!next.replaced) { break; }
   }
