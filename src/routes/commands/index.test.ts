@@ -129,6 +129,23 @@ describe("GET /api/commands", () => {
       expect(gated?.requiredRole,).toBe("owner",);
       const open = body.data.find((entry,) => entry.name === TEST_COMMAND);
       expect(open && "requiredRole" in open,).toBe(false,);
+
+      // The chat-scoped map is a spread of the base entries, so the valve
+      // advertisement must survive scoping. (Valved-command registered in
+      // the unscoped test above; same afterEach prefix cleans it up.)
+      const valved = "valved-cmd-scoped";
+      registerCommand(valved, () => ({ handled: true, }), {
+        capabilities: ["read-chat",],
+        valves: t.Object({ format: t.Optional(t.String({ default: "concise", },),), },),
+      },);
+
+      const res2 = await app.handle(new Request(`http://localhost/api/commands?chatId=${chatId}`,),);
+      const body2 = await res2.json() as {
+        data: { name: string; valves?: { name: string; type?: unknown; default?: unknown }[] }[];
+      };
+
+      const scopedEntry = body2.data.find((cmd,) => cmd.name === valved);
+      expect(scopedEntry?.valves,).toEqual([{ name: "format", type: "string", default: "concise", },],);
     } finally {
       await tdb.db.destroy();
     }

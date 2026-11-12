@@ -129,9 +129,10 @@ pub struct CommandEntry {
 
 /// Parse `GET /api/v1/commands` into command entries + optional role.
 ///
-/// The server returns `{data: [{name, descriptionKey, requiredRole?}],
-/// roleInChat?}`. `descriptionKey` is ignored (the egui client renders the
-/// name only); `requiredRole` drives role-gated display.
+/// The server returns `{data: [{name, descriptionKey, requiredRole?,
+/// valves?}], roleInChat?}`. `descriptionKey` is ignored (the egui client
+/// renders the name only, and serde ignores the optional `valves` display
+/// summary); `requiredRole` drives role-gated display.
 pub fn parse_command_list(raw: &str) -> Result<(Vec<CommandEntry>, Option<String>), String> {
   let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
   let data = value
