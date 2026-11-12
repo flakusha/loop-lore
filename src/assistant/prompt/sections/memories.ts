@@ -12,6 +12,7 @@
  * re-ranked by cosine similarity against recent conversation context after
  * privacy/provision filtering but before injection filtering.
  */
+import { clampPromptBudget, } from "../../../config/sections/prompt";
 import { getLogger, } from "../../../logger";
 import { recordAuditLog, } from "../../../memory/audit";
 import { selectWithinBudget, } from "../../../memory/budget";
@@ -148,7 +149,13 @@ export const memorySection: SectionBuilder = {
     const ranked = [...pinned, ...mutable,];
 
     // ── Phase 2: Token budget ──────────────────────────────────────────────
-    const budgeted = selectWithinBudget(ranked, { maxTokens: 1024, respectPins: true, },);
+    // `prompt.memoryTokenBudget` (clamped; default 1024) replaces the
+    // historical hardcoded cap. Pinned memories are never dropped here.
+    const budgeted = selectWithinBudget(
+      ranked,
+      { maxTokens: clampPromptBudget(ctx.config?.prompt?.memoryTokenBudget,), respectPins: true, },
+    );
+
     if (budgeted.length === 0) { return []; }
 
     // ── Phase 3: Injection filter ──────────────────────────────────────────

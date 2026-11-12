@@ -32,6 +32,7 @@ import type { LoggingConfig, } from "./logging";
 import type { MessagesConfig, } from "./messages";
 import type { NsfwConfig, } from "./nsfw";
 import type { ObservabilityConfig, } from "./observability";
+import type { PromptConfig, } from "./prompt";
 import type { SeedingConfig, } from "./seeding";
 import type { ServerConfig, } from "./server";
 import type { TestingConfig, } from "./testing";
@@ -72,4 +73,5 @@ export interface Config {
   federation: FederationConfig;
   integrations: IntegrationsConfig;
   harness: HarnessConfig;
+  prompt: PromptConfig;
 }

@@ -23,6 +23,7 @@ import { LOGGING_DEFAULTS, } from "./logging";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
 import { OBSERVABILITY_DEFAULTS, } from "./observability";
+import { PROMPT_DEFAULTS, } from "./prompt";
 import { SERVER_DEFAULTS, } from "./server";
 import { TRANSPORT_DEFAULTS, } from "./transport";
 import { TUI_DEFAULTS, } from "./tui";
@@ -61,6 +62,7 @@ export const envMap = (): EnvMap => {
     cron: CRON_DEFAULTS,
     federation: FEDERATION_DEFAULTS,
     integrations: INTEGRATIONS_DEFAULTS,
+    prompt: PROMPT_DEFAULTS,
     web: WEB_DEFAULTS,
   };
 
@@ -100,6 +102,7 @@ export const envMap = (): EnvMap => {
   add("cron", s.cron,);
   add("federation", s.federation,);
   add("integrations", s.integrations,);
+  add("prompt", s.prompt,);
   add("web", s.web,);
 
   // Manual overrides for renamed/mapped env vars
