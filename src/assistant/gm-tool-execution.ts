@@ -20,7 +20,7 @@ import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { recordRegexCall, } from "../regex/telemetry";
 import { jsonResponse, } from "../routes/http-utils";
-import { commandActiveChat, fetchChatAndRole, insertCommandSystemMessage, } from "../routes/messages/command";
+import { commandActiveChat, fetchChatAndRole, insertCommandSystemMessage, } from "../routes/messages/command-context";
 import { jsonParseOr, toErrorMessage, } from "../utils";
 import type { CommandContext, CommandResult, } from "./commands/registry";
 import { getCommand, getCommandRequirement, satisfiesRole, } from "./commands/registry";

@@ -9,7 +9,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { insertCommandSystemMessage, } from "./command";
+import { insertCommandSystemMessage, } from "./command-context";
 
 const SMK_HEX = "d".repeat(64,);
 

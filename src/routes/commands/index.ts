@@ -25,7 +25,7 @@ import { getCommandRequirement, listCommands, } from "../../assistant/commands/r
 import { type DB, getDatabase, } from "../../db/index";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas/primitives";
 import { requireUserId, } from "../http-utils";
-import { fetchChatAndRole, } from "../messages/command";
+import { fetchChatAndRole, } from "../messages/command-context";
 
 interface CommandDescriptor {
   name: string;
