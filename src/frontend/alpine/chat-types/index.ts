@@ -81,6 +81,7 @@ export type {
   SkillView,
 } from "./rpg-state";
 export type { ChatSideChannelsState, SideChannel, } from "./side-channels-state";
+export type { StyleOption, StylePickerState, } from "./style-picker-state";
 export type { ChatTouchGestureState, } from "./touch-gesture-state";
 export type { ChatWizardState, } from "./wizard-state";
 export type { WorldChannelChat, } from "./world";

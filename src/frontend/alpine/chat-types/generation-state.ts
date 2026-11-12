@@ -22,7 +22,7 @@ export interface ChatCoreGenerationState {
   _cleanupSSE(): void;
   cancelGeneration(): Promise<void>;
   regenerateResponse(): Promise<void>;
-  regenerateVariant(messageId: string,): Promise<void>;
+  regenerateVariant(messageId: string, style?: string | null,): Promise<void>;
   switchVariant(messageId: string, direction: number,): Promise<void>;
   _variantsOpen: boolean;
   _variantsLoading: boolean;

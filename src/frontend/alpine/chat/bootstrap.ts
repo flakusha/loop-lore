@@ -56,6 +56,7 @@ import { chatBranchMerge, } from "../chat-branch-merge";
 import "../chat-export"; // side-effect: registers window.exportChat
 import { chatMusicLinks, } from "../chat-music-links";
 import { chatPartySplit, } from "../chat-party-split";
+import { chatStylePicker, } from "../chat-style-picker";
 import { transitionPicker, } from "../chat-transition-picker";
 import { slashAutocomplete, } from "../slash-autocomplete";
 import { mergeReactiveSource, } from "./merge-reactive";
@@ -91,6 +92,7 @@ export function chatState() {
     ...chatMessages,
     ...chatGenerations,
     ...chatVariants,
+    ...chatStylePicker,
     ...chatActivity,
     ...chatManagement,
     ...chatEditing,
