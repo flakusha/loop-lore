@@ -625,6 +625,19 @@
               <template x-if="msg.role === 'assistant'">
                 <button
                   class="btn-icon-action"
+                  x-bind:title="t('chats.regenWithStyle')"
+                  x-bind:aria-label="t('chats.regenWithStyle')"
+                  aria-haspopup="menu"
+                  :aria-expanded="_stylePicker.visible && _stylePicker.messageId === msg.id ? 'true' : 'false'"
+                  data-testid="regen-with-style"
+                  @click="openStylePicker(msg.id, $event)"
+                >
+                  ▾
+                </button>
+              </template>
+              <template x-if="msg.role === 'assistant'">
+                <button
+                  class="btn-icon-action"
                   @click="openVariants(msg.id)"
                   title="Browse variants"
                   aria-label="Browse variants"
@@ -872,6 +885,14 @@
                       ♻ {{{t("chats.regenerate")}}}
                     </button>
                   </template>
+                  <template x-if="msg.role === 'assistant'">
+                    <button
+                      data-testid="hamburger-regen-style"
+                      @click="openStylePicker(msg.id, $event); _hamburgerOpen[msg.id] = false"
+                    >
+                      ▾ {{{t("chats.regenWithStyle")}}}
+                    </button>
+                  </template>
                   <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
                     <button @click="switchVariant(msg.id, -1); _hamburgerOpen[msg.id] = false">
                       ◀ {{{t("chats.prevVariant")}}}
@@ -973,6 +994,12 @@
     >
       <button @click="regenerateVariant(_contextMenu.messageId); closeContextMenu()">
         ♻ {{{t("chats.regenerate")}}}
+      </button>
+      <button
+        data-testid="context-menu-regen-style"
+        @click="openStylePicker(_contextMenu.messageId, $event); closeContextMenu()"
+      >
+        ▾ {{{t("chats.regenWithStyle")}}}
       </button>
     </template>
     <template
@@ -1086,6 +1113,38 @@
         @click="toggleReaction(_reactionPicker.messageId, emoji); closeReactionPicker()"
       >
         <span x-text="emoji" aria-hidden="true"></span>
+      </button>
+    </template>
+  </div>
+
+  <!--
+    Regeneration/rewrite style picker (FEAT-style-picker-ui-for-smart-regen):
+    smart-regen transforms regenerate the message as a new variant carrying
+    the style hint; the /rewrite styles stage `/rewrite --style <style>` in
+    the composer (the command targets the last assistant message on send).
+  -->
+  <div
+    class="dropdown-base style-picker"
+    x-show="_stylePicker.visible"
+    :style="{ left: _stylePicker.x + 'px', top: _stylePicker.y + 'px' }"
+    role="menu"
+    :aria-label="t('chats.stylePickerTitle')"
+    @click.outside="closeStylePicker()"
+    @keydown.escape.window="closeStylePicker()"
+    data-testid="style-picker"
+    x-cloak
+  >
+    <p class="style-picker-heading" role="presentation">{{{t("chats.stylePickerTitle")}}}</p>
+    <p class="style-picker-heading">{{{t("chats.regenStyleHeading")}}}</p>
+    <template x-for="opt in regenStyleOptions" :key="'regen-' + opt.id">
+      <button role="menuitem" :data-style="opt.id" @click="regenerateWithStyle(_stylePicker.messageId, opt.id)">
+        <span x-text="t(opt.labelKey)"></span>
+      </button>
+    </template>
+    <p class="style-picker-heading">{{{t("chats.rewriteStyleHeading")}}}</p>
+    <template x-for="opt in rewriteStyleOptions" :key="'rewrite-' + opt.id">
+      <button role="menuitem" :data-style="opt.id" @click="stageRewriteStyle(opt.id)">
+        <span x-text="t(opt.labelKey)"></span>
       </button>
     </template>
   </div>
