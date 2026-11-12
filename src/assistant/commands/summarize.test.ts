@@ -111,10 +111,10 @@ describe("summarize command", () => {
     };
 
     const ctx = { chatId: "c1", messages: msgs(2,), };
-    await runSummarize(["--format", "tldr",], ctx, { complete, },);
-    await runSummarize(["--format", "bullets",], ctx, { complete, },);
-    await runSummarize(["--format", "detailed",], ctx, { complete, },);
-    await runSummarize([], ctx, { complete, },);
+    await runSummarize([], { ...ctx, namedArgs: { format: "tldr", }, positionalArgs: [], }, { complete, },);
+    await runSummarize([], { ...ctx, namedArgs: { format: "bullets", }, positionalArgs: [], }, { complete, },);
+    await runSummarize([], { ...ctx, namedArgs: { format: "detailed", }, positionalArgs: [], }, { complete, },);
+    await runSummarize([], { ...ctx, namedArgs: { format: "concise", }, positionalArgs: [], }, { complete, },);
     expect(seen[0],).toContain("one or two sentences",);
     expect(seen[1],).toContain("bullet list",);
     expect(seen[2],).toContain("in detail",);
@@ -124,8 +124,8 @@ describe("summarize command", () => {
   it("reports the format in the action payload", async () => {
     const complete = async (): Promise<{ content: string }> => ({ content: "ok", });
     const result = await runSummarize(
-      ["--format", "bullets",],
-      { chatId: "c1", messages: msgs(2,), },
+      [],
+      { chatId: "c1", messages: msgs(2,), namedArgs: { format: "bullets", }, positionalArgs: [], },
       { complete, },
     );
 
@@ -139,14 +139,17 @@ describe("summarize command", () => {
       return { content: "ok", };
     };
 
-    await runSummarize(["--format", "haiku",], { chatId: "c1", messages: msgs(2,), }, { complete, },);
+    await runSummarize([], { chatId: "c1", messages: msgs(2,), namedArgs: { format: "haiku", }, positionalArgs: [], }, {
+      complete,
+    },);
+
     expect(captured,).toContain("concisely",);
   });
 
   it("ignores --format in the extractive fallback", async () => {
     const result = await runSummarize(
-      ["--format", "tldr",],
-      { chatId: "c1", messages: msgs(2,), },
+      [],
+      { chatId: "c1", messages: msgs(2,), namedArgs: { format: "tldr", }, positionalArgs: [], },
       {},
     );
 

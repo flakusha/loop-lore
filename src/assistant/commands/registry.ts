@@ -6,11 +6,16 @@
 // Command registry — maps command names to handler functions.
 
 import type { Kysely, } from "kysely";
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+import type { TObject, } from "@sinclair/typebox";
 import type { Config, } from "../../config/schema";
 import type { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { CapabilityTag, ToolLimits, } from "../capabilities";
 import { DEFAULT_LIMITS, } from "../capabilities";
+import type { PipeEmit, } from "./pipe";
 
 /** Context provided to command handlers */
 export interface CommandContext {
@@ -21,6 +26,14 @@ export interface CommandContext {
   messages?: { id: string; role: string; content: string; created_at: string }[];
   /** The calling participant's role in the chat (from `chat_participants`). */
   roleInChat?: ChatParticipantRole;
+  /**
+   * Named arguments for this invocation (`--key value` / `--key=value`),
+   * with valve defaults filled when the command declares a valve schema.
+   * Values stay strings unless a valve schema converts them.
+   */
+  namedArgs?: Record<string, string | number | boolean>;
+  /** Positional arguments (flags and their consumed values removed). */
+  positionalArgs?: string[];
   db?: Kysely<DB>;
   config?: Config;
   userId?: string;
@@ -44,6 +57,11 @@ export interface CommandResult {
   actionPayload?: Record<string, unknown>;
   /** Whether to prevent sending the message to the LLM */
   handled: boolean;
+  /**
+   * What this command pipes into the next `|` stage's `{{pipe}}` macro.
+   * Omitted = the system message pipes through (empty when none).
+   */
+  pipe?: PipeEmit;
 }
 
 /** Command handler function signature */
@@ -80,8 +98,7 @@ export interface CommandOptions {
   capabilities?: CapabilityTag[];
   /** Per-command resource ceilings. Defaults to {@link DEFAULT_LIMITS}. */
   limits?: ToolLimits;
-  /**
-   * Hosts the command may reach over the network.
+  /** Hosts the command may reach over the network.
    *
    * The guard's effective network allowlist for one call is the union of
    * this declaration and the instance's configured provider hosts. The
@@ -89,6 +106,14 @@ export interface CommandOptions {
    * no host at all.
    */
   allowedNetworkHosts?: string[];
+  /**
+   * Named-argument valves (Open WebUI pattern): a TypeBox object schema the
+   * dispatcher resolves the parsed `--key value` map against — unknown keys
+   * and type violations are rejected before the handler runs, and schema
+   * defaults are filled so handlers read complete values from
+   * `ctx.namedArgs`. Keys here are the `--key` names (without dashes).
+   */
+  valves?: TObject;
 }
 
 /**
@@ -235,6 +260,15 @@ export function getCommandLimits(name: string,): ToolLimits | undefined {
   const registration = handlers.get(name.toLowerCase(),);
   if (!registration) { return undefined; }
   return registration.limits ?? DEFAULT_LIMITS;
+}
+
+/**
+ * Get the named-argument valve schema of a command.
+ * @param name - Command name
+ * @returns The valve schema, or undefined when the command declares none
+ */
+export function getCommandValves(name: string,): TObject | undefined {
+  return handlers.get(name.toLowerCase(),)?.valves;
 }
 
 /**

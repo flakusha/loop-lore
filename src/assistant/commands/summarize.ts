@@ -6,10 +6,26 @@
 // /summarize — abstractive summary via the LLM when a provider resolves,
 // extractive fallback (counts + excerpts) otherwise.
 
+import { t, } from "elysia";
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
 import { parseIntOr, } from "../../utils/parse-number";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
+
+/**
+ * /summarize valves: output format and transcript window. The dispatcher
+ * validates named args against this schema (unknown keys are rejected) and
+ * fills the `format` default; `count` also accepts the positional form.
+ */
+const SUMMARIZE_VALVES = t.Object({
+  format: t.Optional(t.Union([
+    t.Literal("concise",),
+    t.Literal("tldr",),
+    t.Literal("bullets",),
+    t.Literal("detailed",),
+  ], { default: "concise", description: "Summary output shape", },),),
+  count: t.Optional(t.Number({ minimum: 1, maximum: 100, description: "Messages to summarize", },),),
+},);
 
 /**
  * @param args
@@ -62,21 +78,17 @@ const SUMMARIZE_FORMAT_PROMPTS: Record<SummarizeFormat, string> = {
 };
 
 /**
- * Extract `--format <name>` (default concise), returning the remaining args.
- * Unknown names fall back to concise; the extractive fallback ignores the flag.
- * @param args
- * @returns chosen format plus args with the flag removed
+ * Resolve the summary format from the valve-resolved named args. Unknown
+ * values (possible via direct calls that bypass the dispatcher) fall back
+ * to concise; the extractive fallback ignores the flag entirely.
+ * @param named - Valve-resolved named args
+ * @returns the chosen format
  */
-function parseFormat(args: string[],): { format: SummarizeFormat; rest: string[] } {
-  const idx = args.indexOf("--format",);
-  if (idx === -1) { return { format: "concise", rest: args, }; }
-  const requested = args[idx + 1];
-  const rest = args.filter((_, i,) => i !== idx && i !== idx + 1);
-  if (requested === "tldr" || requested === "bullets" || requested === "detailed") {
-    return { format: requested, rest, };
-  }
-
-  return { format: "concise", rest, };
+function resolveFormat(named: CommandContext["namedArgs"],): SummarizeFormat {
+  const value = named?.format;
+  return value === "tldr" || value === "bullets" || value === "detailed" || value === "concise"
+    ? value
+    : "concise";
 }
 
 /**
@@ -96,8 +108,15 @@ export async function runSummarize(
     return { systemMessage: "No messages to summarize.", handled: true, };
   }
 
-  const { format, rest, } = parseFormat(args,);
-  const count = Math.max(1, Math.min(parseIntOr(rest[0] ?? "10", 10,), ctx.messages.length,),);
+  const format = resolveFormat(ctx.namedArgs,);
+  // Window: explicit `--count` valve wins, then the positional number, then 10.
+  const rest = ctx.positionalArgs ?? args;
+  const valveCount = typeof ctx.namedArgs?.count === "number" ? ctx.namedArgs.count : undefined;
+  const count = Math.max(
+    1,
+    Math.min(valveCount ?? parseIntOr(rest[0] ?? "10", 10,), ctx.messages.length,),
+  );
+
   const recent = ctx.messages.slice(-count,);
   if (deps.complete) {
     const transcript = recent
@@ -134,7 +153,7 @@ export async function runSummarize(
 }
 
 function resolveAndSummarize(args: string[], ctx: CommandContext,): CommandResult | Promise<CommandResult> {
-  const { rest, } = parseFormat(args,);
+  const rest = ctx.positionalArgs ?? args;
   const { config, db, } = ctx;
   if (!db || !config) {
     return buildSummary(rest, ctx,);
@@ -153,6 +172,9 @@ function resolveAndSummarize(args: string[], ctx: CommandContext,): CommandResul
   })();
 }
 
-registerCommand("summarize", resolveAndSummarize, { capabilities: ["read-chat", "network",], },);
+registerCommand("summarize", resolveAndSummarize, {
+  capabilities: ["read-chat", "network",],
+  valves: SUMMARIZE_VALVES,
+},);
 
-registerCommand("sum", resolveAndSummarize, { capabilities: ["read-chat", "network",], },);
+registerCommand("sum", resolveAndSummarize, { capabilities: ["read-chat", "network",], valves: SUMMARIZE_VALVES, },);

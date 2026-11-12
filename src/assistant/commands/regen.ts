@@ -85,7 +85,9 @@ export async function runRegenAction(args: string[], ctx: CommandContext, deps: 
   }
 
   const style = id === "more-concise" ? "concise" : "clear";
-  return runRewrite(["--style", style, target.content,], ctx, deps,);
+  // runRewrite reads the style from the valve-resolved namedArgs and the
+  // target text from positionalArgs — the raw-args flag form is legacy.
+  return runRewrite([target.content,], { ...ctx, namedArgs: { style, }, positionalArgs: [target.content,], }, deps,);
 }
 
 registerCommand("regen", async (args, ctx,): Promise<CommandResult> => {
