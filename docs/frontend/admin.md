@@ -564,6 +564,60 @@ descriptions). Powers future Meta→widget typed binding of the System tab.
 
 ---
 
+## Harness
+
+**URL**: `/admin` → Harness tab.
+
+Agentic-runtime operator surface: enable switch, per-profile provider ToS
+acknowledgement, and run telemetry. Admin-only (`admin.system`).
+
+### Enable Switch
+
+Master switch for all external harness execution. The UI toggle wins over
+the `harness.acp` file config once the admin-settings store is seeded; an
+unseeded store reads the file layer. `enabled=false` suppresses every spawn:
+the isolation gate denies with `harness_disabled` and the profile selector
+returns no candidates. An unseeded store falls back to the file layer, never
+to an implicit allow.
+
+### ToS Acknowledgement
+
+Each configured profile carries a provider ToS usage class from the static
+matrix (`src/integrations/harness/provider-tos.ts`):
+
+| Flavor      | Usage classes         | Acknowledgement required |
+| ----------- | --------------------- | ------------------------ |
+| omp         | `api`, `local`        | No — ungated             |
+| opencode    | `api`, `local`        | No — ungated             |
+| codex       | `subscription-backed` | Yes                      |
+| claude-code | `subscription-backed` | Yes                      |
+| hermes      | `api`, `local`        | No — ungated             |
+| openclaw    | `api`, `local`        | No — ungated             |
+
+A gated profile with no acknowledgement is skipped at dispatch with code
+`tos_unacknowledged` plus a structured log (`profile`, `code`); the
+zero-candidate error names each skipped profile (`tos_unacknowledged:<name>`).
+An unknown flavor is fail-closed gated. Acknowledgement source is the
+effective admin-settings view — override acks win, a profile absent from the
+seeded view falls back to its file `tosGrayzoneAcknowledged` flag (never an
+implicit true). Per-profile notes render through the `harness.tos.note.*`
+locale keys (`src/public/locales/en.json`).
+
+### Run Telemetry
+
+Read endpoints served from the append-only exec log (`.harness/executions.jsonl`):
+
+| Endpoint                                 | Content                                  |
+| ---------------------------------------- | ---------------------------------------- |
+| `GET /api/v1/harness/runs`               | Run summaries (`?taskType=`, `?result=`)  |
+| `GET /api/v1/harness/runs/:runId`        | One run detail                           |
+| `GET /api/v1/harness/runs/:runId/files`  | Sandbox file tree, one level             |
+| `GET /api/v1/harness/stats`              | Per-model / task-type / pattern rollups  |
+| `GET /api/v1/harness/settings`           | Effective view + ToS matrix + availability (`?refresh=1` re-probes binaries) |
+| `PUT /api/v1/harness/settings`           | Save enable flag + acknowledgements (validated before persist; rejects unknown profile, non-boolean ack) |
+
+---
+
 ## Revision History
 
 **URL**: `/admin/revisions` (global) or inline on any entity detail panel
