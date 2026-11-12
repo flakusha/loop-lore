@@ -114,7 +114,15 @@ export async function start() {
             ...config.generation.providers,
             sd: Array.from(
               discovered,
-              (b,) => backendToConfig(b, b.apiFamily === "comfyui" ? "comfyui-auto" : "sd-server-auto",),
+              (b,) =>
+                backendToConfig(
+                  b,
+                  b.apiFamily === "comfyui"
+                    ? "comfyui-auto"
+                    : b.apiFamily === "sdcpp"
+                    ? "sdcpp-auto"
+                    : "sd-server-auto",
+                ),
             ),
           },
         },
