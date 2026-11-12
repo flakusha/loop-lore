@@ -3,7 +3,7 @@
 
 import { beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../../logger";
-import { expandMacros, macroNames, } from "./engine";
+import { expandMacros, } from "./engine";
 
 beforeAll(() => {
   createLogger({ level: "error", },);
@@ -92,11 +92,5 @@ describe("expandMacros", () => {
     };
 
     expect(() => expandMacros("{{boom}}", registry,)).toThrow("resolver failed",);
-  });
-});
-
-describe("macroNames", () => {
-  test("returns sorted macro names", () => {
-    expect(macroNames({ b: "2", a: "1", c: "3", },),).toEqual(["a", "b", "c",],);
   });
 });

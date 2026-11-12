@@ -117,12 +117,3 @@ export function expandMacros(input: string, registry: MacroRegistry, mode: Macro
 
   return text;
 }
-
-/**
- * List the macro names a registry serves (sorted, for error/help text).
- * @param registry - Macro values
- * @returns sorted macro names
- */
-export function macroNames(registry: MacroRegistry,): string[] {
-  return Object.keys(registry,).sort((a, b,) => a.localeCompare(b,));
-}
