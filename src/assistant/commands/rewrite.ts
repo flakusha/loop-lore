@@ -10,10 +10,21 @@
  * @module assistant/commands/rewrite
  */
 
+import { t, } from "elysia";
 import { applyRewriteToMessage, type RewriteApplyError, } from "../../chat/service";
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
+
+/**
+ * /rewrite valves: the style hint and the `--apply` write-back flag. The
+ * dispatcher validates named args against this schema (unknown keys are
+ * rejected) and fills the default style.
+ */
+const REWRITE_VALVES = t.Object({
+  style: t.Optional(t.String({ default: "clear", description: "Rewrite style hint", },),),
+  apply: t.Optional(t.String({ description: "Flag: apply the rewrite to the last assistant message", },),),
+},);
 
 /** Deps shape for /rewrite — matches `runCreateGeneration`'s `complete` signature. */
 export interface RewriteDeps {
@@ -24,25 +35,15 @@ export interface RewriteDeps {
 }
 
 /**
- * Extract `--style <name>` from args, returning the chosen style and the
- * remaining positional args. Defaults to "clear".
- * @param args
- * @returns string
- */
-function parseStyle(args: string[],): { style: string; rest: string[] } {
-  const idx = args.indexOf("--style",);
-  if (idx !== -1 && idx + 1 < args.length) {
-    return { style: args[idx + 1] ?? "clear", rest: args.filter((_, i,) => i !== idx && i !== idx + 1), };
-  }
-
-  return { style: "clear", rest: args, };
-}
-
-/**
  * Core `/rewrite` logic. Extractable so tests can inject a stub `complete`.
  * The production handler resolves a provider and passes the bound `complete`
  * here, mirroring `runCreateGeneration`.
- * @param args
+ *
+ * Style and `--apply` arrive through the valve-resolved `ctx.namedArgs`
+ * (`/rewrite --style noir --apply`); free text arrives via
+ * `ctx.positionalArgs` with the raw `args` list as fallback for direct
+ * callers.
+ * @param args - Raw argument tokens (fallback when no positional args)
  * @param ctx
  * @param deps
  * @returns void
@@ -52,8 +53,10 @@ export async function runRewrite(
   ctx: CommandContext,
   deps: RewriteDeps,
 ): Promise<CommandResult> {
-  const applyRequested = args.includes("--apply",);
-  const { style, rest, } = parseStyle(args.filter((a,) => a !== "--apply"),);
+  const named = ctx.namedArgs ?? {};
+  const rest = ctx.positionalArgs ?? args;
+  const applyRequested = named.apply !== undefined;
+  const style = typeof named.style === "string" && named.style !== "" ? named.style : "clear";
   let targetId: string | undefined;
 
   let targetText: string | undefined;
@@ -199,7 +202,7 @@ registerCommand("rewrite", async (args, ctx,): Promise<CommandResult> => {
   } catch {
     return runRewrite(args, ctx, { apply: buildApply(ctx, db, config,), },);
   }
-}, { capabilities: ["write-chat", "network",], },);
+}, { capabilities: ["write-chat", "network",], valves: REWRITE_VALVES, },);
 
 /**
  * Local fallback: trim whitespace, style-based transforms, sentence punctuation.

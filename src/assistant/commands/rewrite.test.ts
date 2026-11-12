@@ -77,8 +77,8 @@ describe("rewrite command", () => {
 
       for (const style of ["clear", "concise", "dramatic", "formal",]) {
         await runRewrite(
-          ["--style", style, "text",],
-          { chatId: "c1", },
+          ["text",],
+          { chatId: "c1", namedArgs: { style, }, positionalArgs: ["text",], },
           { complete, },
         );
       }
@@ -91,8 +91,8 @@ describe("rewrite command", () => {
 
     it("falls back to local heuristics when complete is undefined and appends the system note", async () => {
       const result = await runRewrite(
-        ["  I just   want  ", "--style", "concise",],
-        { chatId: "c1", },
+        ["  I just   want  ",],
+        { chatId: "c1", namedArgs: { style: "concise", }, positionalArgs: ["  I just   want  ",], },
         {},
       );
 
@@ -157,7 +157,7 @@ describe("rewrite command", () => {
 
     it("writes back through the apply dep", async () => {
       let applied: { messageId: string; content: string } | undefined;
-      const result = await runRewrite(["--apply",], history, {
+      const result = await runRewrite(["--apply",], { ...history, namedArgs: { apply: "", }, positionalArgs: [], }, {
         complete,
         apply: async (messageId, content,) => {
           applied = { messageId, content, };
@@ -173,12 +173,17 @@ describe("rewrite command", () => {
     });
 
     it("refuses explicit text with --apply (no target)", async () => {
-      const result = await runRewrite(["some text", "--apply",], { chatId: "c1", }, { complete, },);
+      const result = await runRewrite(["some text",], {
+        chatId: "c1",
+        namedArgs: { apply: "", },
+        positionalArgs: ["some text",],
+      }, { complete, },);
+
       expect(result.systemMessage,).toContain("Nothing to apply to",);
     });
 
     it("maps forbidden to the authorship message", async () => {
-      const result = await runRewrite(["--apply",], history, {
+      const result = await runRewrite(["--apply",], { ...history, namedArgs: { apply: "", }, positionalArgs: [], }, {
         complete,
         apply: async () => ({ ok: false, error: "forbidden", }),
       },);
@@ -187,7 +192,7 @@ describe("rewrite command", () => {
     });
 
     it("maps cross_chat to the scope message", async () => {
-      const result = await runRewrite(["--apply",], history, {
+      const result = await runRewrite(["--apply",], { ...history, namedArgs: { apply: "", }, positionalArgs: [], }, {
         complete,
         apply: async () => ({ ok: false, error: "cross_chat", }),
       },);
@@ -196,7 +201,7 @@ describe("rewrite command", () => {
     });
 
     it("maps not_found to the missing message", async () => {
-      const result = await runRewrite(["--apply",], history, {
+      const result = await runRewrite(["--apply",], { ...history, namedArgs: { apply: "", }, positionalArgs: [], }, {
         complete,
         apply: async () => ({ ok: false, error: "not_found", }),
       },);
@@ -205,7 +210,10 @@ describe("rewrite command", () => {
     });
 
     it("requires a backend-backed apply dep", async () => {
-      const result = await runRewrite(["--apply",], history, { complete, },);
+      const result = await runRewrite(["--apply",], { ...history, namedArgs: { apply: "", }, positionalArgs: [], }, {
+        complete,
+      },);
+
       expect(result.systemMessage,).toContain("needs a backend",);
     });
   });

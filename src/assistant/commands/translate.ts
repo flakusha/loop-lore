@@ -10,12 +10,23 @@
  * @module assistant/commands/translate
  */
 
+import { t, } from "elysia";
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
 import { resolveTranslatorRole, } from "../../generation/translator-role";
 import { isWellFormedBcp47, normalizeBcp47Tag, } from "../../i18n/bcp47";
 import { getLogger, } from "../../logger";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
+
+/**
+ * /translate valves: explicit target language override. The dispatcher
+ * validates named args against this schema; without `--lang`/`--to` the
+ * positional forms (`<text> to <lang>`, `<lang> <text>`) still parse.
+ */
+const TRANSLATE_VALVES = t.Object({
+  lang: t.Optional(t.String({ description: "Target language code", },),),
+  to: t.Optional(t.String({ description: "Alias of --lang", },),),
+},);
 
 /** Known language identifiers with display names. */
 const LANGUAGES: Record<string, string> = {
@@ -47,13 +58,14 @@ export interface TranslateDeps {
  */
 export async function runTranslate(
   args: string[],
-  _ctx: CommandContext,
+  ctx: CommandContext,
   deps: TranslateDeps,
 ): Promise<CommandResult> {
-  if (args.length === 0) {
+  const words = ctx.positionalArgs ?? args;
+  if (words.length === 0 && (ctx.namedArgs?.lang === undefined && ctx.namedArgs?.to === undefined)) {
     return {
       systemMessage:
-        "**Translate** — usage: `/translate <text> to <lang>` or `/translate <lang> <text>`\n\nSupported languages: en, es, fr, de, ja, ko, zh, pt, ru, ar",
+        "**Translate** — usage: `/translate <text> to <lang>` or `/translate <lang> <text>` or `/translate --lang <code> <text>`\n\nSupported languages: en, es, fr, de, ja, ko, zh, pt, ru, ar",
       handled: true,
     };
   }
@@ -61,22 +73,29 @@ export async function runTranslate(
   let text: string;
   let targetLang: string;
 
-  // Parse: /translate <text> to <lang>
-  const toIndex = args.indexOf("to",);
-  if (toIndex !== -1 && toIndex + 1 < args.length) {
-    text = args.slice(0, toIndex,).join(" ",);
-    targetLang = (args[toIndex + 1] ?? "").toLowerCase();
-  } else if (LANGUAGES[(args[0] ?? "").toLowerCase()] || isWellFormedBcp47(args[0] ?? "",)) {
+  // Named override first: /translate --lang es Hola
+  const namedLang = ctx.namedArgs?.lang ?? ctx.namedArgs?.to;
+  if (typeof namedLang === "string" && namedLang !== "") {
+    text = words.join(" ",);
+    targetLang = namedLang.toLowerCase();
+  } else if (
+    // Parse: /translate <text> to <lang>
+    (words.indexOf("to",)) !== -1 && (words.indexOf("to",)) + 1 < words.length
+  ) {
+    const toIndex = words.indexOf("to",);
+    text = words.slice(0, toIndex,).join(" ",);
+    targetLang = (words[toIndex + 1] ?? "").toLowerCase();
+  } else if (LANGUAGES[(words[0] ?? "").toLowerCase()] || isWellFormedBcp47(words[0] ?? "",)) {
     // Parse: /translate <lang> <text> — catalog codes AND free-form BCP-47
     // tags (translation locales are not limited to the 10 catalog codes).
-    targetLang = normalizeBcp47Tag(args[0] ?? "",) ?? (args[0] ?? "").toLowerCase();
-    text = args.slice(1,).join(" ",);
+    targetLang = normalizeBcp47Tag(words[0] ?? "",) ?? (words[0] ?? "").toLowerCase();
+    text = words.slice(1,).join(" ",);
   } else {
     // Last arg might be a language code
-    const last = args[args.length - 1] ?? "";
+    const last = words[words.length - 1] ?? "";
     if (LANGUAGES[last.toLowerCase()] || isWellFormedBcp47(last,)) {
       targetLang = normalizeBcp47Tag(last,) ?? last.toLowerCase();
-      text = args.slice(0, -1,).join(" ",);
+      text = words.slice(0, -1,).join(" ",);
     } else {
       return {
         systemMessage:
@@ -188,9 +207,9 @@ async function runTranslateCommand(args: string[], ctx: CommandContext,): Promis
  * Translate command registration.
  * @returns void
  */
-registerCommand("translate", runTranslateCommand, { capabilities: ["network",], },);
+registerCommand("translate", runTranslateCommand, { capabilities: ["network",], valves: TRANSLATE_VALVES, },);
 
 /** Alias: /tl → /translate */
-registerCommand("tl", runTranslateCommand, { capabilities: ["network",], },);
+registerCommand("tl", runTranslateCommand, { capabilities: ["network",], valves: TRANSLATE_VALVES, },);
 
 export { LANGUAGES, };
