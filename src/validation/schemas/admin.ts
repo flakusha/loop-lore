@@ -156,6 +156,91 @@ export const AdminSdCppDiscoveryResponse = t.Object({
   providers: t.Array(AdminSdCppDiscoveryEntry,),
 },);
 
+// ── ComfyUI discovery / setup (admin sd-status surface) ───────
+
+/**
+ * Body for POST /api/admin/sd-status/comfyui/setup — an operator-entered
+ * ComfyUI instance. `apiKey` is optional (Bearer credential for
+ * reverse-proxy-fronted engines): omitting it on an update keeps the stored
+ * (sealed) key, an empty string clears it. `workflow` pins a workflow name
+ * (filename without extension); `defaults` fields fall back to the ComfyUI
+ * generation defaults when omitted.
+ */
+export const AdminComfyUISetupBody = t.Object({
+  name: t.String({ minLength: 1, maxLength: 64, pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$", },),
+  label: t.Optional(t.String({ minLength: 1, maxLength: 200, },),),
+  baseUrl: t.String({ minLength: 1, maxLength: 2048, },),
+  purpose: t.Optional(t.Union([t.Literal("generate"), t.Literal("edit"), t.Literal("both")],),),
+  workflow: t.Optional(t.String({ minLength: 1, maxLength: 200, pattern: "^[A-Za-z0-9._-]+$", },),),
+  defaults: t.Optional(t.Object({
+    width: t.Optional(t.Number(),),
+    height: t.Optional(t.Number(),),
+    steps: t.Optional(t.Number(),),
+    cfgScale: t.Optional(t.Number(),),
+    sampler: t.Optional(t.String({ minLength: 1, maxLength: 100, },),),
+    negativePrompt: t.Optional(t.String({ maxLength: 4000, },),),
+  },),),
+  apiKey: t.Optional(t.String({ maxLength: 4096, },),),
+},);
+
+/** A stored ComfyUI setup descriptor — never carries key material. */
+export const AdminComfyUISetupDescriptor = t.Object({
+  name: t.String(),
+  label: t.String(),
+  baseUrl: t.String(),
+  purpose: t.Union([t.Literal("generate"), t.Literal("edit"), t.Literal("both")],),
+  workflow: t.Optional(t.String(),),
+  defaults: t.Object({
+    width: t.Number(),
+    height: t.Number(),
+    steps: t.Number(),
+    cfgScale: t.Number(),
+    sampler: t.String(),
+    negativePrompt: t.Optional(t.String(),),
+  },),
+  hasApiKey: t.Boolean(),
+},);
+
+/** Response body of POST /api/admin/sd-status/comfyui/setup. */
+export const AdminComfyUISetupResponse = t.Object({
+  ok: t.Boolean(),
+  provider: AdminComfyUISetupDescriptor,
+  /** True — the saved instance joins the generation failover candidates
+   * immediately; consumers that read only config-file providers (image-edit,
+   * emotion avatars) do not consult stored setups. */
+  generationLive: t.Boolean(),
+},);
+
+/** One probed ComfyUI instance in the discovery response. */
+export const AdminComfyUIDiscoveryEntry = t.Object({
+  name: t.String(),
+  baseUrl: t.String(),
+  /** Where the candidate came from: config file or stored setup. */
+  source: t.Union([t.Literal("config"), t.Literal("stored")],),
+  /** Whether the generation failover path dispatches to this instance. */
+  dispatching: t.Boolean(),
+  reachable: t.Boolean(),
+  latencyMs: t.Optional(t.Number(),),
+  version: t.Optional(t.String(),),
+  pythonVersion: t.Optional(t.String(),),
+  pytorchVersion: t.Optional(t.String(),),
+  /** Advertised compute devices (name/type pairs). */
+  devices: t.Optional(t.Array(t.Object({
+    name: t.Optional(t.String(),),
+    type: t.Optional(t.String(),),
+  },),),),
+  /** Structured skip reason when unreachable. */
+  reason: t.Optional(t.String(),),
+  detail: t.Optional(t.String(),),
+  httpStatus: t.Optional(t.Number(),),
+},);
+
+/** Response body of GET /api/admin/sd-status/comfyui. */
+export const AdminComfyUIDiscoveryResponse = t.Object({
+  probedAt: t.String(),
+  providers: t.Array(AdminComfyUIDiscoveryEntry,),
+},);
+
 export const AdminModelRoleOverrideBody = t.Object({
   provider: t.String({ minLength: 1, },),
   model: t.String({ minLength: 1, },),
