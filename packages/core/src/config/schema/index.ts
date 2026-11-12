@@ -31,6 +31,7 @@ export * from "./logging";
 export * from "./messages";
 export * from "./nsfw";
 export * from "./observability";
+export * from "./prompt";
 export * from "./providers";
 export * from "./sd-provider";
 export * from "./seeding";

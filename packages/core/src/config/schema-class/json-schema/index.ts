@@ -27,6 +27,7 @@ import { logging, } from "./logging";
 import { messages, } from "./messages";
 import { nsfw, } from "./nsfw";
 import { observability, } from "./observability";
+import { prompt, } from "./prompt";
 import { seeding, } from "./seeding";
 import { server, } from "./server";
 import { templates, } from "./templates";
@@ -93,6 +94,7 @@ export const jsonSchema = (): JSONSchema => {
       cron,
       integrations,
       harness,
+      prompt,
       web,
     },
     required: [

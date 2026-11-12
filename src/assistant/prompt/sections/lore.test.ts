@@ -12,6 +12,7 @@
  */
 import { describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { PromptSection, } from "../../../config/sections/prompt";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../../../db/enums";
 import { TraitCategory, } from "../../../db/enums-character";
 import {
@@ -982,6 +983,66 @@ describe("loreSection — token budget cap", () => {
       expect(text,).toContain("HIGH-",);
       expect(text,).not.toContain("MID-",);
       expect(text,).not.toContain("LOW-",);
+    } finally {
+      await sqlite.close();
+    }
+  });
+
+  test("prompt.loreTokenBudget config tightens the cap", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertUsers(db, "gm", "GM",);
+      const user = await db.selectFrom("users",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+      await insertActors(db, "Speaker",);
+      const actor = await db.selectFrom("actors",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+      await insertWorlds(db, user.id, "Budget World",);
+      const world = await db.selectFrom("worlds",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+
+      await insertWorldLoreEntries(db, world.id, "CONSTANT-PIN", {
+        enabled,
+        constant: 1,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+      },);
+
+      // One 750-token non-constant entry: fits the default 1024 budget beside
+      // the pin, but must drop when the config tightens the budget to 256.
+      await insertWorldLoreEntries(db, world.id, `HIGH-${"y".repeat(HEAVY,)}`, {
+        enabled,
+        constant: 0,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        priority: 10,
+      },);
+
+      const ctx: AssembleContext = {
+        db,
+        actor: {
+          id: actor.id,
+          display_name: "Speaker",
+          system_prompt: null,
+          description: null,
+          personality: null,
+          scenario: null,
+          post_history_instructions: null,
+          mes_example: null,
+          agent_role: null,
+        },
+        chat: { id: "chat-lore-budget-cfg", mode: "story", world_id: world.id, current_location_id: null, },
+        params: { actorId: actor.id, chatId: "chat-lore-budget-cfg", modelId: "test-model", selectiveKeys: [], },
+        isStory: true,
+        tokenBudget: 8000,
+        config: {
+          prompt: new PromptSection({ loreTokenBudget: 256, },),
+        } as AssembleContext["config"],
+      };
+
+      const text = (await loreSection.build(ctx,)).map((m,) => m.content).join("\n",);
+
+      // The pinned constant survives (respectPins); the 750-token entry no
+      // longer fits the tightened budget.
+      expect(text,).toContain("CONSTANT-PIN",);
+      expect(text,).not.toContain("HIGH-",);
     } finally {
       await sqlite.close();
     }

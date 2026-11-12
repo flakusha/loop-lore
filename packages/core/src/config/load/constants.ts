@@ -36,6 +36,7 @@ export const DOMAINS = [
   "encryption",
   "headers",
   "web",
+  "prompt",
 ] as const;
 
 /** Known network filesystem mount prefixes (Linux/macOS). */

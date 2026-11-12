@@ -34,6 +34,7 @@ import { LOGGING_DEFAULTS, } from "./logging";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
 import { OBSERVABILITY_DEFAULTS, } from "./observability";
+import { PROMPT_DEFAULTS, } from "./prompt";
 import { SEEDING_DEFAULTS, } from "./seeding";
 import { SERVER_DEFAULTS, } from "./server";
 import { TRANSPORT_DEFAULTS, } from "./transport";
@@ -94,6 +95,7 @@ export const createConfigSchema = () => {
     cron: deepClone(CRON_DEFAULTS,),
     integrations: deepClone(INTEGRATIONS_DEFAULTS,),
     harness: deepClone(HARNESS_DEFAULTS,),
+    prompt: deepClone(PROMPT_DEFAULTS,),
     templates: deepClone(TEMPLATES_DEFAULTS,),
     characters: deepClone(CHARACTERS_DEFAULTS,),
     items: deepClone(ITEMS_DEFAULTS,),
@@ -133,6 +135,7 @@ export const createConfigSchema = () => {
         characters: sections.characters,
         items: sections.items,
         integrations: sections.integrations,
+        prompt: sections.prompt,
         web: sections.web,
       };
     },

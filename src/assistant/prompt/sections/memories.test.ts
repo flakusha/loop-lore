@@ -14,6 +14,7 @@
 import { beforeEach, describe, expect, mock, test, } from "bun:test";
 import type {} from "kysely";
 
+import { PromptSection, } from "../../../config/sections/prompt";
 import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import {
@@ -121,6 +122,103 @@ describe("memorySection — per-viewer cross-actor isolation", () => {
     } finally {
       sqlite.close();
     }
+  });
+});
+
+/**
+ * memorySection token budget (1.0.0 THEME 4 AC5 slice): the historical
+ * hardcoded 1024 cap is now `prompt.memoryTokenBudget` (clamped). The
+ * budget runs BEFORE the probabilistic injection filter, so trimming is
+ * deterministic — an over-budget memory never reaches injection at all.
+ */
+describe("memorySection — token budget cap", () => {
+  const scopeCharacter = "character";
+  const privacyPublic = "public";
+  const storyMode = "story";
+  /** 800 chars → ~200 estimated tokens per memory (chars / 4). */
+  const HEAVY = 800;
+
+  /**
+   * @param configBudget - configured memoryTokenBudget, or undefined for the default
+   */
+  async function setupAndBuild(configBudget?: number,): Promise<string> {
+    try {
+      createLogger({ level: "error", },);
+    } catch {
+      // Already initialized — ignore.
+    }
+
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertUsers(db, "human", "Human",);
+      await insertActors(db, "Human",);
+      const users = await db.selectFrom("users",).select(["id", "username",],).execute();
+      const actors = await db.selectFrom("actors",).select(["id",],).execute();
+      const userId = users.find((u,) => u.username === "human")!.id;
+      const actorId = actors[0]!.id;
+
+      await insertChats(db, "Budget chat", userId, { mode: storyMode, },);
+      const chat = await db.selectFrom("chats",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+
+      // Two 200-token memories; importance ranks A first so the tightened
+      // budget admits A and drops B deterministically.
+      await insertActorMemories(db, actorId, `MEMA-${"a".repeat(HEAVY,)}`, {
+        scope: scopeCharacter,
+        privacy: privacyPublic,
+        importance: 0.9,
+      },);
+
+      await insertActorMemories(db, actorId, `MEMB-${"b".repeat(HEAVY,)}`, {
+        scope: scopeCharacter,
+        privacy: privacyPublic,
+        importance: 0.5,
+      },);
+
+      const ctx: AssembleContext = {
+        db,
+        actor: {
+          id: actorId,
+          display_name: "Human",
+          system_prompt: null,
+          description: null,
+          personality: null,
+          scenario: null,
+          post_history_instructions: null,
+          mes_example: null,
+          agent_role: null,
+        },
+        chat: { id: chat.id, mode: storyMode, world_id: null, current_location_id: null, },
+        params: { actorId, chatId: chat.id, modelId: "test-model", },
+        isStory: false,
+        tokenBudget: 8000,
+        // Deterministic injection: roll 0 always passes the probability gate.
+        randomFn: () => 0,
+        ...(configBudget === undefined
+          ? {}
+          : {
+            config: {
+              prompt: new PromptSection({ memoryTokenBudget: configBudget, },),
+            } as AssembleContext["config"],
+          }),
+      };
+
+      const messages = await memorySection.build(ctx,);
+      return messages.map((m,) => m.content).join("\n",);
+    } finally {
+      sqlite.close();
+    }
+  }
+
+  test("default budget (unconfigured) still injects both memories", async () => {
+    const output = await setupAndBuild();
+    expect(output,).toContain("MEMA-",);
+    expect(output,).toContain("MEMB-",);
+  });
+
+  test("prompt.memoryTokenBudget config tightens the budget", async () => {
+    const output = await setupAndBuild(256,);
+    expect(output,).toContain("MEMA-",);
+    expect(output,).not.toContain("MEMB-",);
   });
 });
 

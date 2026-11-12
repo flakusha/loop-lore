@@ -4,6 +4,7 @@
 // src/config/schema-class/validate.ts — config validation
 import type { Config, } from "../schema";
 import { validateAcpProfiles, } from "../sections/harness";
+import { PROMPT_BUDGET_BOUNDS, } from "../sections/prompt";
 
 /**
  * @param config - Fully merged config to check, after defaults are applied.
@@ -113,6 +114,18 @@ export const validate = (config: Config,): void => {
 
   if (typeof config.web.editor !== "string" || config.web.editor.trim() === "") {
     throw new Error(`Invalid web.editor: "${config.web.editor}"`,);
+  }
+
+  // Prompt token budgets must sit inside the clamp bounds (sections/prompt.ts
+  // clamps defensively; load-time validation surfaces the misconfiguration).
+  const { min: budgetMin, max: budgetMax, } = PROMPT_BUDGET_BOUNDS;
+  for (const field of ["loreTokenBudget", "memoryTokenBudget",] as const) {
+    const value = config.prompt[field];
+    if (!Number.isFinite(value,) || value < budgetMin || value > budgetMax) {
+      throw new Error(
+        `Invalid prompt.${field}: ${String(value,)}. Must be ${budgetMin}-${budgetMax}`,
+      );
+    }
   }
 
   // External harness profiles: duplicate names, unknown tier keys, and
