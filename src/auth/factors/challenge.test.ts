@@ -6,12 +6,25 @@
  *
  * Pure: the clock is injected, so TTL and expiry are deterministic and no
  * timers, delivery channel or network is involved.
+ *
+ * Resource contract (parallel-safe):
+ * - Each test owns a FRESH in-memory SQLite DB (`createTestDb` in
+ *   beforeEach) — `:memory:` handles are per-instance, never a shared
+ *   file, so concurrent runners cannot collide.
+ * - Teardown is deterministic: `destroyTestDb` runs in `afterEach`, which
+ *   Bun executes even when an assertion throws, so a failed test cannot
+ *   leak an open handle into the next one.
+ * - No ordering dependence: every test seeds its own user and factor and
+ *   reads only the rows it created.
+ * - No process globals are set: this file never calls `setTestDatabase`,
+ *   never stubs a timer or `globalThis.fetch`, opens a port or writes a
+ *   file.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, Selectable, } from "kysely";
 import { ChallengePurpose, FactorKind, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertAuthFactors, insertUsers, } from "../../test-utils/insert-helpers";
 import { verifyPassword, } from "../password";
 import { issueChallenge, MAX_CHALLENGE_ATTEMPTS, sweepExpired, verifyChallenge, } from "./challenge";
@@ -19,6 +32,7 @@ import { issueChallenge, MAX_CHALLENGE_ATTEMPTS, sweepExpired, verifyChallenge, 
 /** Fixed epoch-ms start of the injected clock. */
 const T0 = 1_700_000_000_000;
 
+let fixture: TestDb | undefined;
 let db: Kysely<DB>;
 let clock: number;
 
@@ -26,12 +40,16 @@ let clock: number;
 const now = (): number => clock;
 
 beforeEach(async () => {
-  ({ db, } = await createTestDb());
+  fixture = await createTestDb();
+  db = fixture.db;
   clock = T0;
 },);
 
 afterEach(async () => {
-  await db.destroy();
+  if (fixture) {
+    await destroyTestDb(fixture,);
+    fixture = undefined;
+  }
 },);
 
 /** A user owning one e-mail factor. */
