@@ -4,6 +4,7 @@
 // size-allow: 320
 // One API client surface for the TUI chat widgets: request shaping, envelope
 // parsing and the stale-chat guards all read the same page/pagination contract.
+import type { CommandValveSpec, } from "../../assistant/commands/valves";
 import { safeFetch as _realFetch, safeJsonStringify, } from "../../utils";
 import type { ChatHost, ChatMessage, } from "./types";
 
@@ -15,6 +16,8 @@ export interface CommandDescriptor {
   descriptionKey: string;
   /** Minimum participant role, when the registry pins one (display-only). */
   requiredRole?: string;
+  /** Declared named-argument valves (display summary), when the command declares any. */
+  valves?: CommandValveSpec[];
 }
 
 /** Envelope shape returned by GET /api/v1/commands. */

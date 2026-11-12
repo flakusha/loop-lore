@@ -53,6 +53,54 @@ export function matchCommands(
   return registry.filter((entry,) => entry.name.toLowerCase().startsWith(needle,));
 }
 
+/**
+ * The command name whose arguments are being typed — a `/`-prefixed input
+ * with a name, a space, and something after it. `parseCommandQuery` treats
+ * such input as settled (completion has nothing left to offer); the usage
+ * hint takes over from there.
+ * @param text - raw input box content
+ * @returns the settled command name, or null when the input is not one
+ */
+export function parseSettledCommand(text: string,): string | null {
+  if (!text.startsWith("/",)) { return null; }
+  const space = text.indexOf(" ",);
+  if (space <= 1) { return null; }
+  return text.slice(1, space,);
+}
+
+/**
+ * Guided-regen action vocabulary (src/assistant/commands/regen.ts). Static
+ * on purpose — the TUI is a thin HTTP client and imports no engine code —
+ * with parity against the backend pinned by chat/commands.test.ts.
+ */
+export const REGEN_ACTIONS = ["try-again", "add-details", "more-concise",] as const;
+
+/**
+ * The named-argument usage line for a command: the advertised valve specs
+ * when the registry carries them, the guided-regen action vocabulary for
+ * `/regen`.
+ * @param descriptor - one registry row
+ * @returns the usage line, or null when the command has none to show
+ */
+export function valveUsageLine(descriptor: CommandDescriptor,): string | null {
+  const valves = descriptor.valves;
+  if (valves !== undefined && valves.length > 0) {
+    return valves
+      .map((valve,) => {
+        const type = valve.enum === undefined ? valve.type : valve.enum.join("|",);
+        const note = valve.default === undefined ? "" : `, default ${String(valve.default,)}`;
+        return `--${valve.name} (${type}${note})`;
+      },)
+      .join(", ",);
+  }
+
+  if (descriptor.name === "regen") {
+    return `<${REGEN_ACTIONS.join("|",)}>`;
+  }
+
+  return null;
+}
+
 /** Construction options for {@link CommandCompleter}. */
 export interface CommandCompleterOptions {
   /** Loads the live registry. Called at most once, on the first `/`. */
@@ -68,14 +116,22 @@ export interface CommandCompleterOptions {
  * still send as an ordinary message, exactly as it does without completions.
  * Tab moves the selection; Enter on a selection commits the command text and
  * leaves the send to the following Enter.
+ *
+ * Once the command name is settled (a space typed), the hint becomes the
+ * command's named-argument usage line — the advertised valve vocabulary, or
+ * `/regen`'s action ids — so styles and flags are discoverable while typing
+ * arguments.
  */
 export class CommandCompleter {
   private registry: CommandDescriptor[] = [];
   private matches: CommandDescriptor[] = [];
   private query: string | null = null;
   private index = -1;
+  private settledCommand: CommandDescriptor | null = null;
   private loading = false;
-  private settled = false;
+  private settledFetch = false;
+  /** Raw input box content, so the deferred registry load can re-settle. */
+  private lastInput = "";
   private readonly loadRegistry: () => Promise<CommandListResult>;
   private readonly onChange: () => void;
 
@@ -93,12 +149,14 @@ export class CommandCompleter {
    * @param text - raw input box content
    */
   update(text: string,): void {
+    this.lastInput = text;
     const query = parseCommandQuery(text,);
     if (query === null) {
-      this.reset();
+      this.settle(text,);
       return;
     }
 
+    this.settledCommand = null;
     this.query = query;
     this.request();
     this.refilter();
@@ -135,6 +193,11 @@ export class CommandCompleter {
 
   /** @returns the status-bar hint, or null when the input is not a command */
   hint(): string | null {
+    if (this.settledCommand !== null) {
+      const usage = valveUsageLine(this.settledCommand,);
+      return usage === null ? null : `{bold}/${this.settledCommand.name}{/bold}  |  ${usage}`;
+    }
+
     if (this.query === null) { return null; }
 
     if (this.matches.length === 0) {
@@ -151,11 +214,45 @@ export class CommandCompleter {
 
     const cursor = this.index >= 0 ? ` [${this.index + 1}/${this.matches.length}]` : "";
 
-    return `${shown.join("  ",)}${overflow}${cursor}  |  Tab: cycle | Enter: accept`;
+    const single = this.matches.length === 1 ? this.matches[0] : undefined;
+    const usage = single === undefined ? null : valveUsageLine(single,);
+    const usagePart = usage === null ? "" : `  |  ${usage}`;
+
+    return `${shown.join("  ",)}${overflow}${cursor}${usagePart}  |  Tab: cycle | Enter: accept`;
   }
 
   /** Drop every trace of the query — used when the input stops being a command. */
   private reset(): void {
+    this.query = null;
+    this.matches = [];
+    this.index = -1;
+    this.settledCommand = null;
+    this.onChange();
+  }
+
+  /**
+   * Resolve the usage hint for a settled command (name typed, arguments
+   * being typed). Unknown names and commands without a usage line clear the
+   * hint; an unchanged hint does not repaint.
+   * @param text - raw input box content
+   */
+  private settle(text: string,): void {
+    const name = parseSettledCommand(text,);
+    // The lazy one-shot load must fire from this path too: a first keystroke
+    // that lands directly on settled arguments still needs the registry.
+    // Plain text (no command name) must not.
+    if (name !== null) { this.request(); }
+    const needle = name?.toLowerCase();
+    const descriptor = needle === undefined
+      ? undefined
+      : this.registry.find((entry,) => entry.name.toLowerCase() === needle);
+
+    const next = descriptor !== undefined && valveUsageLine(descriptor,) !== null ? descriptor : null;
+    if (next === this.settledCommand && this.query === null && this.matches.length === 0) {
+      return; // Nothing changed — plain text or the same settled command.
+    }
+
+    this.settledCommand = next;
     this.query = null;
     this.matches = [];
     this.index = -1;
@@ -171,7 +268,7 @@ export class CommandCompleter {
 
   /** Kick the one-shot registry fetch. */
   private request(): void {
-    if (this.loading || this.settled) { return; }
+    if (this.loading || this.settledFetch) { return; }
     this.loading = true;
     // Fire-and-forget still needs a catch: an unhandled rejection kills the process.
     void this.load()
@@ -187,10 +284,13 @@ export class CommandCompleter {
     const result = await this.loadRegistry();
     this.loading = false;
     // Settled either way: a failed registry must not retry on every keystroke.
-    this.settled = true;
+    this.settledFetch = true;
     if (result.ok) { this.registry = result.data; }
     // Repaint either way — skipping it on failure would strand the strip on
     // "…loading commands" for the rest of the session.
     this.refilter();
+    // With the registry live, recompute the settled usage hint if that is
+    // the state the user is sitting in.
+    if (this.query === null) { this.settle(this.lastInput,); }
   }
 }
