@@ -102,7 +102,15 @@ async function queueOfflineSend(
     ctx.messages = ctx.messages.map((m,) => m.id === tempId ? { ...m, status: "queued", } : m);
     ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.messageQueued",), },);
     return true;
-  } catch {
+  } catch (error: unknown) {
+    // Never silent: a fast-path failure rolls the optimistic row back, so
+    // the cause must be observable or the offline queue looks "broken".
+    log.warn("offline enqueue failed", {
+      chatId: ctx.activeChat ?? "",
+      tempId,
+      error: error instanceof Error ? error.message : String(error,),
+    },);
+
     return false;
   }
 }
