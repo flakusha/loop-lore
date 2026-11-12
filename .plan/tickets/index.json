@@ -17291,7 +17291,7 @@
       "shared-primitive"
     ],
     "source": ".plan/epics/epic-principal-scoped-credentials.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "e23cb34",
     "project": ""
   },
@@ -17853,6 +17853,24 @@
     ],
     "title": "Release 0.1.0",
     "type": "EPIC"
+  },
+  "EPIC-RENPY-EXPORT": {
+    "hash": "pending",
+    "extid": "EPIC-RENPY-EXPORT",
+    "type": "EPIC",
+    "title": "Ren'Py Conversion Export",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "renpy",
+      "export",
+      "plugin",
+      "vn"
+    ],
+    "source": ".plan/tickets/epic-renpy-export.md",
+    "status": "open"
   },
   "EPIC-REPLAYABILITY": {
     "epic": "",
@@ -25185,6 +25203,24 @@
     "source": ".plan/tickets/TASK-1-0-0-gap-verify-multi-assistant-and-multi-llm-chat-rows.md",
     "status": "open"
   },
+  "TASK-1-0-0-GAP-VN-CUSTOM-TYPEABLE-CHOICES": {
+    "hash": "pending",
+    "extid": "TASK-1-0-0-GAP-VN-CUSTOM-TYPEABLE-CHOICES",
+    "type": "TASK",
+    "title": "1.0.0 GAP — VN custom-typeable choices (typed answers and typed actions)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-visual-novel-mode",
+    "project": "",
+    "tags": [
+      "visual-novel",
+      "free-text",
+      "custom-choices",
+      "release-1-0-0"
+    ],
+    "source": ".plan/tickets/TASK-1-0-0-gap-vn-custom-typeable-choices.md",
+    "status": "done"
+  },
   "TASK-1-0-0-MFA-EMAIL-MESSENGER-CODE-CHANNEL-FIRST-METAAPPLICATION": {
     "hash": "7466fb8",
     "git_issue": "7466fb8",
@@ -25198,6 +25234,24 @@
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md",
     "status": "open"
+  },
+  "TASK-1-0-0-THEME-1-3-3-INBOUND-MCP-ACP-STUDIO-SERVERS-EXTERNAL-TO": {
+    "hash": "05bdec6",
+    "git_issue": "05bdec6",
+    "extid": "TASK-1-0-0-THEME-1-3-3-INBOUND-MCP-ACP-STUDIO-SERVERS-EXTERNAL-TO",
+    "type": "TASK",
+    "title": "1.0.0 theme-1 §3.3: inbound MCP/ACP studio servers (external tools connect INTO loop-lore)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-agentic-integration-mcp-acp",
+    "project": "",
+    "tags": [
+      "mcp",
+      "acp",
+      "agentic"
+    ],
+    "source": ".plan/tickets/TASK-1-0-0-theme-1-3-3-inbound-mcp-acp-studio-servers-external-to.md",
+    "status": "in_progress"
   },
   "TASK-1-0-0-THEME-1-OPERATOR-CORRECT-AGENTIC-RUNTIME-HARNESS-LADDE": {
     "hash": "174eca7",
@@ -45136,6 +45190,19 @@
     "status": "Not Started",
     "git_issue": "a893dc4"
   },
+  "TASK-HARNESS-PROVIDER-QUOTA-SURFACES-BEYOND-OMP": {
+    "hash": "pending",
+    "extid": "TASK-HARNESS-PROVIDER-QUOTA-SURFACES-BEYOND-OMP",
+    "type": "TASK",
+    "title": "Harness provider quota surfaces beyond omp",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-provider-quota-surfaces-beyond-omp.md",
+    "status": "open"
+  },
   "TASK-HARNESS-PROVIDER-TOS-USAGE-CLASS-MATRIX": {
     "hash": "c311702",
     "git_issue": "c311702",
@@ -57486,6 +57553,78 @@
     "title": "Render path resolveTransform in chat bubbles",
     "type": "TASK"
   },
+  "TASK-RENPY-EXPORT-BUTTON-IN-CHAT-LIST-BATCH-BAR": {
+    "hash": "d2bbfa1",
+    "git_issue": "d2bbfa1",
+    "extid": "TASK-RENPY-EXPORT-BUTTON-IN-CHAT-LIST-BATCH-BAR",
+    "type": "TASK",
+    "title": "RenPy export button in chat-list batch bar",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-renpy-export",
+    "project": "",
+    "tags": [
+      "renpy",
+      "export",
+      "ui"
+    ],
+    "source": ".plan/tickets/TASK-renpy-export-button-in-chat-list-batch-bar.md",
+    "status": "in_progress"
+  },
+  "TASK-RENPY-EXPORT-CORE-PLUGIN-ROUTE-VERSIONED-PATH": {
+    "hash": "43f862e",
+    "git_issue": "43f862e",
+    "extid": "TASK-RENPY-EXPORT-CORE-PLUGIN-ROUTE-VERSIONED-PATH",
+    "type": "TASK",
+    "title": "RenPy export core plugin route (versioned path)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-renpy-export",
+    "project": "",
+    "tags": [
+      "renpy",
+      "export",
+      "plugin"
+    ],
+    "source": ".plan/tickets/TASK-renpy-export-core-plugin-route-versioned-path.md",
+    "status": "in_progress"
+  },
+  "TASK-RENPY-EXPORT-MODEL-GATHER-FROM-DB": {
+    "hash": "dc2e726",
+    "git_issue": "dc2e726",
+    "extid": "TASK-RENPY-EXPORT-MODEL-GATHER-FROM-DB",
+    "type": "TASK",
+    "title": "RenPy export model gather from DB",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-renpy-export",
+    "project": "",
+    "tags": [
+      "renpy",
+      "export",
+      "plugin"
+    ],
+    "source": ".plan/tickets/TASK-renpy-export-model-gather-from-db.md",
+    "status": "in_progress"
+  },
+  "TASK-RENPY-EXPORT-SCRIPT-GENERATOR-PURE-FUNCTION": {
+    "hash": "e472ddb",
+    "git_issue": "e472ddb",
+    "extid": "TASK-RENPY-EXPORT-SCRIPT-GENERATOR-PURE-FUNCTION",
+    "type": "TASK",
+    "title": "RenPy export script generator (pure function)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-renpy-export",
+    "project": "",
+    "tags": [
+      "renpy",
+      "export",
+      "plugin"
+    ],
+    "source": ".plan/tickets/TASK-renpy-export-script-generator-pure-function.md",
+    "status": "open"
+  },
   "TASK-REPAIR-CHAT-NORMAL-STARTUP-REMOVE-TEST-BYPASS": {
     "epic": "epic-testing-qa",
     "extid": "TASK-REPAIR-CHAT-NORMAL-STARTUP-REMOVE-TEST-BYPASS",
@@ -59696,6 +59835,19 @@
     ],
     "title": "Search Telemetry & Quota Observability",
     "type": "TASK"
+  },
+  "TASK-SEED-CODEX-AND-CLAUDE-MODEL-CAPABILITY-ROWS-FOR-HARNESS-ENRI": {
+    "hash": "pending",
+    "extid": "TASK-SEED-CODEX-AND-CLAUDE-MODEL-CAPABILITY-ROWS-FOR-HARNESS-ENRI",
+    "type": "TASK",
+    "title": "Seed codex and claude model capability rows for harness enrichment",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-seed-codex-and-claude-model-capability-rows-for-harness-enri.md",
+    "status": "open"
   },
   "TASK-SEED-CORPORA-10K-SEEDS-PER-FUZZING-TARGET": {
     "hash": "bcb4342",
