@@ -46,6 +46,8 @@ export const FLAVOR_QUOTA_SURFACES: Record<HarnessFlavor, HarnessQuotaSurface> =
   opencode: "none",
   codex: "none",
   "claude-code": "none",
+  hermes: "none",
+  openclaw: "none",
 };
 /**
  * Resolve the adapter factory for a profile's `harness` flavor.
