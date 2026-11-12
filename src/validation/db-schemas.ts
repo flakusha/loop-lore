@@ -87,6 +87,7 @@ export const CancelSourceSchema = t.UnionEnum([
   "chat_switch",
   "system",
 ],);
+export const ChallengePurposeSchema = t.UnionEnum(["login", "stepup", "enroll", "address-change", "unlock",],);
 export const CharacterStateSchema = t.UnionEnum(["active", "injured", "unconscious", "dead",],);
 export const ChatModeSchema = t.UnionEnum(["direct", "group", "story", "battle",],);
 export const ChatParticipantRoleSchema = t.UnionEnum(["member", "owner", "observer", "guest", "gm",],);
@@ -219,6 +220,7 @@ export const FactionDiplomaticStatusSchema = t.UnionEnum([
   "at_war",
 ],);
 export const FactionRoleSchema = t.UnionEnum(["leader", "officer", "member", "ally",],);
+export const FactorKindSchema = t.UnionEnum(["messenger-matrix", "messenger-im", "email", "federated-oidc",],);
 export const FantasyCategorySchema = t.UnionEnum([
   "power_exchange",
   "exhibitionism",
@@ -3975,4 +3977,23 @@ export const HarnessQueueTurnsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   started_at: t.Optional(t.String(),),
   finished_at: t.Optional(t.String(),),
+},);
+
+// ── auth_factors ────────────────────────────────────────────
+export const AuthFactorsSchema = t.Object({
+  user_id: t.String(),
+  kind: FactorKindSchema,
+  created_at: t.Number(),
+},);
+
+// ── auth_challenges ────────────────────────────────────────────
+export const AuthChallengesSchema = t.Object({
+  user_id: t.String(),
+  factor_id: t.String(),
+  purpose: ChallengePurposeSchema,
+  nonce_hash: t.String(),
+  expires_at: t.Number(),
+  created_at: t.Number(),
+  attempts: t.Optional(t.Number(),),
+  consumed: t.Optional(t.Number(),),
 },);

@@ -11,6 +11,7 @@ import type {
   AgentType,
   AnomalyInteraction,
   AnomalyType,
+  ChallengePurpose,
   CharacterState,
   ChatMode,
   ChatParticipantRole,
@@ -26,6 +27,7 @@ import type {
   FactionAlignment,
   FactionDiplomaticStatus,
   FactionRole,
+  FactorKind,
   HarnessQueueErrorCode,
   HarnessQueueTurnStatus,
   IntegrationTokenScope,
@@ -2259,4 +2261,25 @@ export interface HarnessQueueTurns {
   created_at: Generated<string>;
   started_at: string | null;
   finished_at: string | null;
+}
+
+// ── auth_factors ────────────────────────────────────────────
+export interface AuthFactors {
+  id: string;
+  user_id: string;
+  kind: FactorKind;
+  created_at: number;
+}
+
+// ── auth_challenges ────────────────────────────────────────────
+export interface AuthChallenges {
+  id: string;
+  user_id: string;
+  factor_id: string;
+  purpose: ChallengePurpose;
+  nonce_hash: string;
+  expires_at: number;
+  attempts: Generated<number>;
+  consumed: Generated<number>;
+  created_at: number;
 }
