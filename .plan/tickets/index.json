@@ -25279,7 +25279,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-theme-2-card-portability-without-silent-loss-import-ex.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "TASK-1-0-0-THEME-3-CHAT-AS-THE-PRODUCT-SCRIPTING-LITE-PRODUCT-RES": {
     "hash": "97b0aae",
@@ -45191,7 +45191,7 @@
     "git_issue": "a893dc4"
   },
   "TASK-HARNESS-PROVIDER-QUOTA-SURFACES-BEYOND-OMP": {
-    "hash": "pending",
+    "hash": "56a6267",
     "extid": "TASK-HARNESS-PROVIDER-QUOTA-SURFACES-BEYOND-OMP",
     "type": "TASK",
     "title": "Harness provider quota surfaces beyond omp",
@@ -45201,7 +45201,8 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-provider-quota-surfaces-beyond-omp.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "56a6267"
   },
   "TASK-HARNESS-PROVIDER-TOS-USAGE-CLASS-MATRIX": {
     "hash": "c311702",
@@ -59837,7 +59838,7 @@
     "type": "TASK"
   },
   "TASK-SEED-CODEX-AND-CLAUDE-MODEL-CAPABILITY-ROWS-FOR-HARNESS-ENRI": {
-    "hash": "pending",
+    "hash": "2350e43",
     "extid": "TASK-SEED-CODEX-AND-CLAUDE-MODEL-CAPABILITY-ROWS-FOR-HARNESS-ENRI",
     "type": "TASK",
     "title": "Seed codex and claude model capability rows for harness enrichment",
@@ -59847,7 +59848,8 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-seed-codex-and-claude-model-capability-rows-for-harness-enri.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "2350e43"
   },
   "TASK-SEED-CORPORA-10K-SEEDS-PER-FUZZING-TARGET": {
     "hash": "bcb4342",
