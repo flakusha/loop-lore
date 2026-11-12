@@ -7,9 +7,11 @@ import { validateProviderUrl, } from "../../utils/url-validation";
 import { generateComfyUI, } from "./comfyui";
 import { failure, } from "./helpers";
 import { generateOpenAI, } from "./openai";
+import { sdServerAuthHeaders, } from "./sd-server-jobs";
 import { generateSDAPI, } from "./sdapi";
 import { generateSDCPP, } from "./sdcpp";
-import type { ImageGenOptions, ImageGenOutcome, } from "./types";
+import { DEFAULT_SDCPP_PROBE_TIMEOUT_MS, probeSdCpp, } from "./sdcpp-discovery";
+import type { FailoverAttempt, ImageGenOptions, ImageGenOutcome, } from "./types";
 
 // ── Public API re-exports ──────────────────────────────────
 export type {
@@ -66,6 +68,64 @@ export async function generateImages(
  * stored for provider A is never handed to provider B during failover. */
 export type SdApiKeyResolver = (providerName: string,) => Promise<string | undefined>;
 
+/** Probe timeout ceiling for the failover discovery gate — the healthy path
+ * pays one cheap GET, the dead path never hangs longer than this. */
+const FAILOVER_PROBE_TIMEOUT_MS = DEFAULT_SDCPP_PROBE_TIMEOUT_MS;
+
+/**
+ * Discovery gate for one sd.cpp failover candidate.
+ * @param candidate - the sd.cpp provider candidate
+ * @param apiKey - resolved key for this candidate
+ * @returns the skip attempt when the instance is unreachable, else null
+ */
+async function sdCppSkipAttempt(
+  candidate: ImageProviderConfig,
+  apiKey: string | undefined,
+): Promise<FailoverAttempt | null> {
+  const probe = await probeSdCpp({
+    baseUrl: candidate.baseUrl,
+    timeoutMs: Math.min(candidate.timeout, FAILOVER_PROBE_TIMEOUT_MS,),
+    headers: sdServerAuthHeaders(apiKey ?? candidate.apiKey,),
+  },);
+
+  if (probe.reachable) { return null; }
+
+  return {
+    provider: candidate.name,
+    outcome: "skipped",
+    reason: `${probe.reason}: ${probe.detail}`,
+    ...(probe.httpStatus !== undefined ? { status: probe.httpStatus, } : {}),
+  };
+}
+
+/**
+ * Run one candidate's generation. A provider that THROWS (e.g. LoRA discovery
+ * against a dead backend) is converted to a failure outcome so the failover
+ * loop never aborts hard; failures and throws are recorded on `attempts`.
+ * @param candidate - the provider candidate
+ * @param opts - request inputs with the per-candidate key merged in
+ * @param attempts - the loop's attempt record (mutated)
+ * @returns the candidate's outcome
+ */
+async function attemptCandidate(
+  candidate: ImageProviderConfig,
+  opts: ImageGenOptions,
+  attempts: FailoverAttempt[],
+): Promise<ImageGenOutcome> {
+  try {
+    const outcome = await generateImages(candidate, opts,);
+    if (!outcome.ok) {
+      attempts.push({ provider: candidate.name, outcome: "failed", reason: outcome.error, status: outcome.status, },);
+    }
+
+    return outcome;
+  } catch (error) {
+    const outcome = failure(error instanceof Error ? error.message : String(error,), 502,);
+    attempts.push({ provider: candidate.name, outcome: "failed", reason: outcome.error, status: 502, },);
+    return outcome;
+  }
+}
+
 /**
  * Generate images with cross-backend failover (ordered fallback list).
  *
@@ -74,11 +134,17 @@ export type SdApiKeyResolver = (providerName: string,) => Promise<string | undef
  * key resolved by provider name. A caller-resolved `opts.apiKey` is honored
  * on the first candidate only — per-provider resolution takes over after a
  * failed attempt so a key for backend A never bills backend B.
+ *
+ * sd.cpp candidates pass a discovery gate first: an instance whose native
+ * `/sdcpp/v1/capabilities` probe fails is skipped with a structured reason
+ * instead of paying a doomed generation attempt. Every candidate's skip or
+ * failure is recorded on the returned failure outcome (`attempts`).
  * @param providers - All configured SD providers (may be undefined)
  * @param purpose - What the provider will be used for
  * @param opts - Generation request inputs (no per-attempt key needed)
  * @param resolveApiKey - Optional BYO key resolver keyed by provider name
- * @returns A discriminated outcome; the LAST candidate's failure when every backend fails
+ * @returns A discriminated outcome; the LAST candidate's failure — carrying
+ * the per-candidate `attempts` record — when every backend fails or is skipped
  */
 export async function generateImagesWithFailover(
   providers: ImageProviderConfig[] | undefined,
@@ -94,15 +160,34 @@ export async function generateImagesWithFailover(
     );
   }
 
+  const attempts: FailoverAttempt[] = [];
   let last: ImageGenOutcome | undefined;
   for (const [i, candidate,] of candidates.entries()) {
     const apiKey = i === 0
       ? opts.apiKey ?? await resolveApiKey?.(candidate.name,)
       : await resolveApiKey?.(candidate.name,);
 
-    last = await generateImages(candidate, { ...opts, apiKey, },);
+    // sd.cpp discovery gate (TASK-1-0-0-gap-sd-cpp): an undiscovered or
+    // unreachable instance is skipped with a structured reason instead of a
+    // doomed generation attempt.
+    if (candidate.apiFamily === "sdcpp") {
+      const skip = await sdCppSkipAttempt(candidate, apiKey,);
+      if (skip) {
+        attempts.push(skip,);
+        continue;
+      }
+    }
+
+    last = await attemptCandidate(candidate, { ...opts, apiKey, }, attempts,);
     if (last.ok) { return last; }
   }
 
-  return last!;
+  if (!last) {
+    // Every candidate was refused by the discovery gate — nothing was attempted.
+    const summary = attempts.map((attempt,) => `${attempt.provider}: ${attempt.reason}`).join("; ",);
+    return { ...failure(`No reachable image generation provider — ${summary}`, 502,), attempts, };
+  }
+
+  // Loop exit means `last` is a failure — successes returned inside the loop.
+  return last.ok ? last : { ...last, attempts, };
 }

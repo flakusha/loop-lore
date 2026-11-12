@@ -51,6 +51,14 @@ const WELL_KNOWN_PORTS: { port: number; apiFamily: ImageApiFamily; label: string
     label: "ComfyUI (auto-discovered)",
     healthPath: "/object_info",
   },
+  {
+    // sd.cpp native surface — the capabilities endpoint is the health probe
+    // (TASK-1-0-0-gap-sd-cpp discovery, mirroring the comfyui well-known leg).
+    port: 9010,
+    apiFamily: "sdcpp",
+    label: "sd.cpp (auto-discovered)",
+    healthPath: "/sdcpp/v1/capabilities",
+  },
 ];
 
 /**

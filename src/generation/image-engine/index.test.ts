@@ -19,14 +19,14 @@
  * because the dispatch contract under test is that a valid URL reaches
  * the backend, not the backend's error transport.
  */
-import { describe, expect, it, } from "bun:test";
+import { afterEach, describe, expect, it, } from "bun:test";
 import type { Config, ImageProviderConfig, } from "../../config/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { ByoKeyDecryptError, userApiKeyResolver, } from "../providers/user-api-key";
 import { generateImages, generateImagesWithFailover, } from "./index";
-import type { ImageGenFailure, } from "./types";
+import type { FailoverAttempt, ImageGenFailure, } from "./types";
 
 // Backend warn paths and the workflow loader call getLogger(), which
 // throws when the root logger is uninitialized — mirror the repo-wide
@@ -186,7 +186,20 @@ describe("generateImagesWithFailover", () => {
     const viaFailover = await generateImagesWithFailover([provider,], "generate", OPTS,);
     const direct = await generateImages(provider, OPTS,);
 
-    expect(viaFailover,).toEqual(direct,);
+    // The failover walk records per-candidate attempts on its failures; the
+    // direct dispatch carries none.
+    expect(direct.ok,).toBe(false,);
+    const expected = {
+      ...direct,
+      attempts: [{
+        provider: "only",
+        outcome: "failed",
+        reason: (direct as ImageGenFailure).error,
+        status: (direct as ImageGenFailure).status,
+      },],
+    } as ImageGenFailure;
+
+    expect(viaFailover,).toEqual(expected,);
   },);
 });
 
@@ -247,4 +260,116 @@ describe("generateImagesWithFailover BYO keys", () => {
       await destroyTestDb(env,);
     }
   });
+});
+
+// ── sd.cpp discovery gate (TASK-1-0-0-gap-sd-cpp) ─────────────
+//
+// sd.cpp candidates pass a capabilities probe before any generation attempt:
+// an undiscovered/unreachable instance is SKIPPED with a structured reason so
+// the walk continues to the next backend instead of failing hard.
+
+describe("generateImagesWithFailover sd.cpp discovery gate", () => {
+  const originalFetch = globalThis.fetch;
+
+  const sdcppProvider = (name: string, baseUrl = "http://127.0.0.1:9010",): ImageProviderConfig => ({
+    ...BASE,
+    name,
+    apiFamily: "sdcpp",
+    baseUrl,
+  });
+
+  const comfyProvider = (name: string,): ImageProviderConfig => ({
+    ...BASE,
+    name,
+    apiFamily: "comfyui",
+    baseUrl: "http://127.0.0.1:8188",
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  },);
+
+  itRealDispatch("skips an unreachable sd.cpp candidate and falls through to the next backend", async () => {
+    const requested: string[] = [];
+    globalThis.fetch = (async (input: string | URL | Request,) => {
+      const url = String(input instanceof Request ? input.url : input,);
+      requested.push(url,);
+      if (url.endsWith("/object_info",)) { return new Response("boom", { status: 500, },); }
+      throw new Error("connection refused",);
+    }) as typeof fetch;
+
+    const outcome = await generateImagesWithFailover(
+      [sdcppProvider("sd-down",), comfyProvider("comfy-main",),],
+      "generate",
+      OPTS,
+    );
+
+    // The dead sd.cpp instance was skipped (no img_gen attempt); the walk
+    // still reached the ComfyUI backend.
+    expect(outcome.ok,).toBe(false,);
+    const failure = outcome as ImageGenFailure;
+    expect(failure.attempts,).toHaveLength(2,);
+    expect(failure.attempts![0]!.provider,).toBe("sd-down",);
+    expect(failure.attempts![0]!.outcome,).toBe("skipped",);
+    expect(failure.attempts![0]!.reason,).toContain("unreachable",);
+    expect(failure.attempts![1]!.provider,).toBe("comfy-main",);
+    expect(failure.attempts![1]!.outcome,).toBe("failed",);
+    expect(requested.some((url,) => url.endsWith("/sdcpp/v1/img_gen",)),).toBe(false,);
+  },);
+
+  itRealDispatch("records the probe http status when the endpoint is not sd.cpp", async () => {
+    globalThis.fetch = (async (input: string | URL | Request,) => {
+      const url = String(input instanceof Request ? input.url : input,);
+      if (url.endsWith("/sdcpp/v1/capabilities",)) { return new Response("not found", { status: 404, },); }
+      throw new Error(`unexpected fetch ${url}`,);
+    }) as typeof fetch;
+
+    const outcome = await generateImagesWithFailover([sdcppProvider("not-sdcpp",),], "generate", OPTS,);
+
+    expect(outcome.ok,).toBe(false,);
+    const failure = outcome as ImageGenFailure;
+    expect(failure.status,).toBe(502,);
+    expect(failure.error,).toContain("No reachable image generation provider",);
+    expect(failure.attempts,).toEqual(
+      [{
+        provider: "not-sdcpp",
+        outcome: "skipped",
+        reason: expect.stringContaining("http-error",),
+        status: 404,
+      },] satisfies FailoverAttempt[],
+    );
+  },);
+
+  itRealDispatch("dispatches a healthy sd.cpp candidate without probing later candidates", async () => {
+    const IMG_B64 = Buffer.from("png-data",).toString("base64",);
+    let comfyProbed = false;
+    globalThis.fetch = (async (input: string | URL | Request,) => {
+      const url = String(input instanceof Request ? input.url : input,);
+      if (url.endsWith("/sdcpp/v1/capabilities",)) {
+        return Response.json({ version: "t", runtime: { state: "ready", }, },);
+      }
+
+      if (url.endsWith("/sdcpp/v1/img_gen",)) { return Response.json({ id: "j1", },); }
+      if (url.endsWith("/sdcpp/v1/jobs/j1",)) {
+        return Response.json({ status: "done", images: [IMG_B64,], },);
+      }
+
+      if (url.endsWith("/object_info",)) {
+        comfyProbed = true;
+        return new Response("boom", { status: 500, },);
+      }
+
+      throw new Error(`unexpected fetch ${url}`,);
+    }) as typeof fetch;
+
+    const outcome = await generateImagesWithFailover(
+      [sdcppProvider("sd-ok",), comfyProvider("comfy-main",),],
+      "generate",
+      OPTS,
+    );
+
+    expect(outcome.ok,).toBe(true,);
+    expect((outcome as { attempts?: FailoverAttempt[] }).attempts,).toBeUndefined();
+    expect(comfyProbed,).toBe(false,);
+  },);
 });

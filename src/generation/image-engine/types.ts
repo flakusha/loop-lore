@@ -40,6 +40,21 @@ export interface ImageGenFailure {
   ok: false;
   error: string;
   status: number;
+  /** Per-candidate record from the failover loop — why each candidate was
+   * skipped (discovery gate) or failed. Absent on a direct provider dispatch. */
+  attempts?: readonly FailoverAttempt[];
+}
+
+/** One failover candidate that was skipped or failed, with the structured reason. */
+export interface FailoverAttempt {
+  /** Provider instance name. */
+  readonly provider: string;
+  /** "skipped" = discovery gate refused before any generation attempt; "failed" = attempted. */
+  readonly outcome: "skipped" | "failed";
+  /** Structured skip/failure reason. */
+  readonly reason: string;
+  /** HTTP-ish status when one applies. */
+  readonly status?: number;
 }
 
 /** */
