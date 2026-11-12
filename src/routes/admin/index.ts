@@ -9,6 +9,7 @@ import { carriageRoutes, } from "./carriage";
 import { chatsRoutes, } from "./chats";
 import { cronRoutes, } from "./cron";
 import { dangerZoneRoutes, } from "./danger-zone";
+import { dbBackupRoutes, } from "./db-backup";
 import { federationAdminRoutes, } from "./federation";
 import { integrationTokenRoutes, } from "./integration-tokens";
 import { itemPowerRoutes, } from "./item-power";
@@ -89,6 +90,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(cronRoutes(opts, prefix,),)
       .use(auditRoutes(opts, prefix,),)
       .use(dangerZoneRoutes(opts, prefix,),)
+      .use(dbBackupRoutes(opts, prefix,),)
       .use(seedRoutes(opts, prefix,),)
       .use(keyRotationRoutes(opts, prefix,),)
       .use(auxTelemetryRoutes(opts, prefix,),)
