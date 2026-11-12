@@ -8,6 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>loop-lore</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- PWA app surface (TASK-pwa-cached-shell slice 1): manifest + theme color.
+         Manifest ships WITHOUT icons on purpose: the repo has no raster app
+         icons (img/icons are UI glyphs; favicon.svg is the only brand mark) and
+         SVG-only installability is not dependable (Chromium issue 40706719).
+         Ship proper 192px/512px PNGs before relying on the install prompt. -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#151820" />
 
     <!-- Core resets - always loaded -->
     <link rel="stylesheet" href="/css/theme.css" media="all" />

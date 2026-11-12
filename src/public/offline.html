@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!--
+  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+  Offline fallback page (TASK-pwa-cached-shell slice 1): served by the
+  service worker when a /views navigation fails or times out. Deliberately
+  self-contained — inline CSS only, no scripts, no server-rendered content —
+  because it must render from Cache Storage with the network down.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>loop-lore — offline</title>
+    <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #151820;
+      color: #fffdf5;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      text-align: center;
+    }
+    .offline-card {
+      max-width: 26rem;
+      padding: 2rem 2.5rem;
+      background: #21242c;
+      border: 1px solid #30333b;
+      border-radius: 12px;
+    }
+    .offline-card h1 {
+      font-size: 1.15rem;
+      margin: 0 0 0.5rem;
+    }
+    .offline-card p {
+      font-size: 0.9rem;
+      color: #cfcfcf;
+      margin: 0 0 1.25rem;
+      line-height: 1.5;
+    }
+    .offline-card button {
+      font: inherit;
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid #4a4c4e;
+      background: #30333b;
+      color: #fffdf5;
+      cursor: pointer;
+    }
+    </style>
+  </head>
+  <body>
+    <main class="offline-card">
+      <h1>You're offline</h1>
+      <p>
+        loop-lore couldn't reach the server. The app shell is cached, but this view needs the network. Reconnect and try
+        again — in-flight data is not lost, it just can't refresh right now.
+      </p>
+      <button type="button" onclick="location.reload()">Retry</button>
+    </main>
+  </body>
+</html>
