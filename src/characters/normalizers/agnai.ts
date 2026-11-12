@@ -12,36 +12,14 @@
 // Agnai itself decides what a native character means on its Tavern export.
 
 import type { CanonicalCharacter, LorebookData, LorebookEntry, } from "../spec";
-import { buildCanonicalFields, } from "./shared";
-
-interface AgnaiPersona {
-  kind?: string;
-  attributes?: Record<string, string[]>;
-}
-
-interface AgnaiData {
-  name?: string;
-  /** Upstream maps the native `description` to `creator_notes` on export. */
-  description?: string;
-  appearance?: string;
-  persona?: AgnaiPersona;
-  greeting?: string;
-  sampleChat?: string;
-  scenario?: string;
-  systemPrompt?: string;
-  postHistoryInstructions?: string;
-  alternateGreetings?: string[];
-  tags?: string[];
-  creator?: string;
-  characterVersion?: string;
-  culture?: string;
-  insert?: { depth?: number; prompt?: string };
-  characterBook?: Record<string, unknown>;
-  extensions?: Record<string, unknown>;
-  voice?: unknown;
-  json?: unknown;
-  sprite?: unknown;
-}
+import {
+  buildCanonicalFields,
+  cardNumber,
+  cardObject,
+  cardOptionalText,
+  cardText,
+  cardTextList,
+} from "./shared";
 
 /** Native-only fields - their presence next to a persona bag identifies the format. */
 const AGNAI_MARKERS = [
@@ -62,10 +40,10 @@ const AGNAI_MARKERS = [
  * @returns boolean
  */
 export function isAgnaiNative(data: Record<string, unknown>,): boolean {
-  const persona = data.persona as AgnaiPersona | undefined;
-  if (!persona || typeof persona !== "object") { return false; }
+  const persona = cardObject(data.persona,);
+  if (!persona) { return false; }
   if (typeof persona.kind !== "string") { return false; }
-  if (!persona.attributes || typeof persona.attributes !== "object") { return false; }
+  if (!cardObject(persona.attributes,)) { return false; }
   return AGNAI_MARKERS.some((marker,) => marker in data);
 }
 
@@ -79,14 +57,14 @@ export function isAgnaiNative(data: Record<string, unknown>,): boolean {
  * @param persona
  * @returns string
  */
-function personaText(name: string, persona: AgnaiPersona | undefined,): string {
-  const attributes = persona?.attributes ?? {};
+function personaText(name: string, persona: Record<string, unknown> | undefined,): string {
+  const attributes = cardObject(persona?.attributes,);
   if (persona?.kind === "text") {
-    return attributes.text?.[0] ?? "";
+    return cardTextList(attributes?.text,)?.[0] ?? "";
   }
 
-  const lines = Object.entries(attributes,).map(
-    ([key, values,],) => `${key}: ${(values ?? []).join(", ",)}`,
+  const lines = Object.entries(attributes ?? {},).map(
+    ([key, values,],) => `${key}: ${cardTextList(values,)?.join(", ",) ?? ""}`,
   );
 
   // Upstream leads with the name, so a persona bag with no attributes still
@@ -104,15 +82,15 @@ function personaText(name: string, persona: AgnaiPersona | undefined,): string {
  */
 function nativeLoreEntry(entry: Record<string, unknown>, index: number,): LorebookEntry {
   return {
-    keys: (entry.keywords as string[]) ?? [],
-    content: (entry.entry as string) ?? "",
+    keys: cardTextList(entry.keywords,) ?? [],
+    content: cardText(entry.entry,),
     enabled: entry.enabled !== false,
-    insertion_order: (entry.weight as number) ?? 0,
+    insertion_order: cardNumber(entry.weight,) ?? 0,
     case_sensitive: false,
-    name: (entry.name as string) ?? "",
-    priority: (entry.priority as number) ?? 0,
-    id: (entry.id as number) ?? index,
-    comment: entry.comment as string | undefined,
+    name: cardText(entry.name,),
+    priority: cardNumber(entry.priority,) ?? 0,
+    id: cardNumber(entry.id,) ?? index,
+    comment: cardOptionalText(entry.comment,),
     selective: entry.selective === true,
     constant: entry.constant === true,
     position: entry.position === "after_char" ? "after_char" : "before_char",
@@ -126,17 +104,17 @@ function nativeLoreEntry(entry: Record<string, unknown>, index: number,): Lorebo
  * @returns LorebookData
  */
 function nativeLorebook(book: Record<string, unknown>,): LorebookData {
-  const entries = Array.isArray(book.entries,)
-    ? book.entries as Record<string, unknown>[]
-    : [];
+  const entries = Array.isArray(book.entries,) ? book.entries : [];
 
   return {
-    name: book.name as string | undefined,
-    description: book.description as string | undefined,
-    scan_depth: book.scanDepth as number | undefined,
-    token_budget: book.tokenBudget as number | undefined,
-    recursive_scanning: book.recursiveScanning as boolean | undefined,
-    entries: entries.map((entry, index,) => nativeLoreEntry(entry, index,)),
+    name: cardOptionalText(book.name,),
+    description: cardOptionalText(book.description,),
+    scan_depth: cardNumber(book.scanDepth,),
+    token_budget: cardNumber(book.tokenBudget,),
+    recursive_scanning: typeof book.recursiveScanning === "boolean"
+      ? book.recursiveScanning
+      : undefined,
+    entries: entries.map((entry, index,) => nativeLoreEntry(cardObject(entry,) ?? {}, index,)),
   };
 }
 
@@ -146,43 +124,43 @@ function nativeLorebook(book: Record<string, unknown>,): LorebookData {
  * @returns CanonicalCharacter
  */
 export function normalizeAgnai(data: Record<string, unknown>,): CanonicalCharacter {
-  const card = data as AgnaiData;
-  const name = card.name ?? "";
+  const name = cardText(data.name,);
 
   // Keep the Agnai-namespace payload the way the upstream Tavern export does,
   // so a native card and its Tavern twin land on the same canonical extensions.
-  const extensions: Record<string, unknown> = { ...(card.extensions ?? {}), };
+  const extensions: Record<string, unknown> = { ...(cardObject(data.extensions,) ?? {}), };
   extensions.agnai = {
-    ...((extensions.agnai as Record<string, unknown> | undefined) ?? {}),
-    persona: card.persona,
-    appearance: card.appearance,
-    voice: card.voice,
-    json: card.json,
-    sprite: card.sprite,
+    ...(cardObject(extensions.agnai,) ?? {}),
+    persona: cardObject(data.persona,),
+    appearance: cardOptionalText(data.appearance,),
+    voice: data.voice,
+    json: data.json,
+    sprite: data.sprite,
     // The depth prompt's insertion depth travels with the prompt text.
-    insert: card.insert,
+    insert: cardObject(data.insert,),
   };
 
-  if (card.insert?.prompt) { extensions.depth_prompt = card.insert.prompt; }
+  const insert = cardObject(data.insert,);
+  if (typeof insert?.prompt === "string") { extensions.depth_prompt = insert.prompt; }
 
   return {
     ...buildCanonicalFields({
       name,
-      description: personaText(name, card.persona,),
-      creator_notes: card.description,
-      appearance: card.appearance,
-      scenario: card.scenario,
-      first_mes: card.greeting,
-      mes_example: card.sampleChat,
-      system_prompt: card.systemPrompt,
-      post_history_instructions: card.postHistoryInstructions,
-      alternate_greetings: card.alternateGreetings,
-      tags: card.tags,
-      creator: card.creator,
-      character_version: card.characterVersion,
-      culture: card.culture,
+      description: personaText(name, cardObject(data.persona,),),
+      creator_notes: cardOptionalText(data.description,),
+      appearance: cardOptionalText(data.appearance,),
+      scenario: cardOptionalText(data.scenario,),
+      first_mes: cardOptionalText(data.greeting,),
+      mes_example: cardOptionalText(data.sampleChat,),
+      system_prompt: cardOptionalText(data.systemPrompt,),
+      post_history_instructions: cardOptionalText(data.postHistoryInstructions,),
+      alternate_greetings: cardTextList(data.alternateGreetings,),
+      tags: cardTextList(data.tags,),
+      creator: cardOptionalText(data.creator,),
+      character_version: cardOptionalText(data.characterVersion,),
+      culture: cardOptionalText(data.culture,),
     },),
     extensions,
-    lorebook: card.characterBook ? nativeLorebook(card.characterBook,) : undefined,
+    lorebook: nativeLorebook(cardObject(data.characterBook,) ?? {},),
   };
 }

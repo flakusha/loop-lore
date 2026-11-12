@@ -56,5 +56,9 @@ export function cardTags(settings: string | null | undefined,): string[] | undef
  * @returns CharacterExtensions | undefined
  */
 export function cardExtensions(settings: string | null | undefined,): CharacterExtensions | undefined {
-  return actorSettings(settings,).extensions as CharacterExtensions | undefined;
+  const extensions = actorSettings(settings,).extensions;
+  // The blob is untyped: a legacy row can hold a string or an array where the
+  // extensions object is expected, and that must not reach the exported card.
+  if (!extensions || typeof extensions !== "object" || Array.isArray(extensions,)) { return undefined; }
+  return extensions as CharacterExtensions;
 }

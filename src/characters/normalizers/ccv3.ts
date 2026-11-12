@@ -7,62 +7,48 @@
 // Converts CCv3 format to canonical character card.
 
 import type { CanonicalCharacter, CharacterAsset, LorebookData, } from "../spec";
-import { buildCanonicalFields, buildLorebook, extractEnvelope, } from "./shared";
-
-interface CCv3Data {
-  name?: string;
-  description?: string;
-  personality?: string;
-  scenario?: string;
-  first_mes?: string;
-  mes_example?: string;
-  system_prompt?: string;
-  post_history_instructions?: string;
-  alternate_greetings?: string[];
-  tags?: string[];
-  creator?: string;
-  character_version?: string;
-  nickname?: string;
-  extensions?: Record<string, unknown>;
-  creation_date?: number;
-  modification_date?: number;
-  assets?: {
-    type?: string;
-    name?: string;
-    uri?: string;
-    ext?: string;
-  }[];
-  character_book?: Record<string, unknown>;
-}
+import {
+  buildCanonicalFields,
+  buildLorebook,
+  cardNumber,
+  cardObject,
+  cardOptionalText,
+  cardText,
+  extractEnvelope,
+} from "./shared";
 
 /**
  * Normalize CCv3 format to canonical character card.
+ *
+ * The card payload is untyped JSON: the envelope, the assets list, the lorebook
+ * and the extensions blob are checked before their fields are read.
  * @param data
  * @returns Record<string
  */
 export function normalizeCcV3(data: Record<string, unknown>,): CanonicalCharacter {
   const raw = extractEnvelope(data,);
-  const cardData = raw as CCv3Data;
 
-  const lorebook: LorebookData | undefined = cardData.character_book
-    ? buildLorebook(cardData.character_book,)
-    : undefined;
+  const book = cardObject(raw.character_book,);
+  const lorebook: LorebookData | undefined = book ? buildLorebook(book,) : undefined;
 
-  const assets: CharacterAsset[] | undefined = cardData.assets
-    ? Array.from(cardData.assets, (asset,) => ({
-      type: asset.type ?? "unknown",
-      name: asset.name ?? "unnamed",
-      uri: asset.uri ?? "",
-      ext: asset.ext ?? "",
-    }),)
+  const assets: CharacterAsset[] | undefined = Array.isArray(raw.assets,)
+    ? raw.assets.map((asset,) => {
+      const item = cardObject(asset,) ?? {};
+      return {
+        type: cardText(item.type,) || "unknown",
+        name: cardText(item.name,) || "unnamed",
+        uri: cardText(item.uri,),
+        ext: cardText(item.ext,),
+      };
+    },)
     : undefined;
 
   return {
     ...buildCanonicalFields(raw,),
-    nickname: cardData.nickname,
-    extensions: cardData.extensions,
-    creation_date: typeof cardData.creation_date === "number" ? cardData.creation_date : undefined,
-    modification_date: typeof cardData.modification_date === "number" ? cardData.modification_date : undefined,
+    nickname: cardOptionalText(raw.nickname,),
+    extensions: cardObject(raw.extensions,),
+    creation_date: cardNumber(raw.creation_date,),
+    modification_date: cardNumber(raw.modification_date,),
     lorebook,
     assets,
   };

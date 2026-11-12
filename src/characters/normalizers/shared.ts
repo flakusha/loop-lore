@@ -15,6 +15,59 @@ import type {
 } from "../spec";
 
 /**
+ * A card field is untyped JSON: only a real string is a string. The import
+ * boundary is the only place that can check the shape, so every card field is
+ * narrowed here instead of being cast and trusted downstream (a card whose
+ * `personality` is a number would otherwise reach a `.trim()` and crash the
+ * import with a 500).
+ * @param value
+ * @returns string
+ */
+export function cardText(value: unknown,): string {
+  return typeof value === "string" ? value : "";
+}
+
+/**
+ * Narrow an untyped card field to an optional string.
+ * @param value
+ * @returns string | undefined
+ */
+export function cardOptionalText(value: unknown,): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+/**
+ * Narrow an untyped card field to a plain object - a nested card payload
+ * (`extensions`, `character_book`, a native `persona`) is only an object when it
+ * really is one.
+ * @param value
+ * @returns Record<string, unknown> | undefined
+ */
+export function cardObject(value: unknown,): Record<string, unknown> | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value,)) { return undefined; }
+  return value as Record<string, unknown>;
+}
+
+/**
+ * Narrow an untyped card field to a number.
+ * @param value
+ * @returns number | undefined
+ */
+export function cardNumber(value: unknown,): number | undefined {
+  return typeof value === "number" && Number.isFinite(value,) ? value : undefined;
+}
+
+/**
+ * Narrow an untyped card field to a list of strings.
+ * @param value
+ * @returns string[] | undefined
+ */
+export function cardTextList(value: unknown,): string[] | undefined {
+  if (!Array.isArray(value,)) { return undefined; }
+  return value.filter((item,): item is string => typeof item === "string");
+}
+
+/**
  * Extract card data from an envelope wrapper.
  * CCv2/CCv3 wrap their data in `{ data: { ... } }`.
  * Other formats pass data directly.
@@ -24,7 +77,13 @@ import type {
 export function extractEnvelope(
   data: Record<string, unknown>,
 ): Record<string, unknown> {
-  return (data.data ?? data) as Record<string, unknown>;
+  const envelope = data.data;
+  if (envelope && typeof envelope === "object" && !Array.isArray(envelope,)) {
+    return envelope as Record<string, unknown>;
+  }
+
+  if (!data || typeof data !== "object" || Array.isArray(data,)) { return {}; }
+  return data;
 }
 
 /**
@@ -62,18 +121,19 @@ export function buildCanonicalFields(
   // Identity fields — accept both canonical names and legacy aliases.
   // `race` → `species` (SillyTavern V2), `origin` → `homeland` (per-character generator).
   // Canonical names win; aliases fill in when canonical is missing.
-  const species = (raw.species as string | undefined) ?? (raw.race as string | undefined);
-  const homeland = (raw.homeland as string | undefined) ?? (raw.origin as string | undefined);
-  const culture = raw.culture as string | undefined;
-  const gender = raw.gender as string | undefined;
+  const species = cardOptionalText(raw.species,) ?? cardOptionalText(raw.race,);
+  const homeland = cardOptionalText(raw.homeland,) ?? cardOptionalText(raw.origin,);
+  const culture = cardOptionalText(raw.culture,);
+  const gender = cardOptionalText(raw.gender,);
   const ageRaw = raw.age;
   const age = (typeof ageRaw === "number" || typeof ageRaw === "string") ? ageRaw : undefined;
   // Wardrobe — canonical names; legacy aliases (`outfit` singular, `wardrobe`) fill in when missing.
-  const outfitsRaw = (raw.outfits as CanonicalCharacter["outfits"] | undefined) ??
-    (raw.wardrobe as CanonicalCharacter["outfits"] | undefined);
+  const outfitsRaw = raw.outfits ?? raw.wardrobe;
 
-  const outfits = Array.isArray(outfitsRaw,)
-    ? outfitsRaw.filter((o,): o is CharacterOutfit => !!o && typeof o === "object")
+  const outfits: CharacterOutfit[] = Array.isArray(outfitsRaw,)
+    ? outfitsRaw
+      .filter((o,): o is Record<string, unknown> => !!o && typeof o === "object" && !Array.isArray(o,))
+      .map((o,) => ({ id: cardText(o.id,), name: cardText(o.name,), descriptor: cardText(o.descriptor,), }))
     : [];
 
   // A foreign card (SillyTavern, Agnai, Character.AI) rarely carries loop-lore's
@@ -82,34 +142,34 @@ export function buildCanonicalFields(
   // with a copy of the description would print the same prose three times
   // (card view, adapter payload, group participant) and leak a field the card
   // never had into the export.
-  const description = (raw.description as string) ?? "";
-  const personality = (raw.personality as string) ?? "";
+  const description = cardText(raw.description,);
+  const personality = cardText(raw.personality,);
   // A Tavern/Agnai hybrid parks its appearance in `extensions.agnai` - that is
   // the card's own field, so it is recovered instead of lost.
-  const appearance = (raw.appearance as string) || appearanceFromExtensions(raw.extensions,);
+  const appearance = cardText(raw.appearance,) || appearanceFromExtensions(raw.extensions,);
 
-  const defaultOutfit = (raw.default_outfit as string | undefined) ??
-    (raw.outfit as string | undefined) ??
-    outfits[0]?.id ??
+  const defaultOutfit = cardText(raw.default_outfit,) ||
+    cardText(raw.outfit,) ||
+    outfits[0]?.id ||
     "";
 
   return {
-    name: (raw.name as string) ?? "",
+    name: cardText(raw.name,),
     description,
     personality,
     appearance,
     default_outfit: defaultOutfit,
     outfits,
-    scenario: raw.scenario as string | undefined,
-    welcome_message: raw[welcomeKey] as string | undefined,
-    mes_example: raw.mes_example as string | undefined,
-    system_prompt: raw.system_prompt as string | undefined,
-    post_history_instructions: raw.post_history_instructions as string | undefined,
-    alternate_greetings: raw.alternate_greetings as string[] | undefined,
-    tags: raw.tags as string[] | undefined,
-    creator: raw.creator as string | undefined,
-    creator_notes: raw.creator_notes as string | undefined,
-    character_version: raw.character_version as string | undefined,
+    scenario: cardOptionalText(raw.scenario,),
+    welcome_message: cardOptionalText(raw[welcomeKey],),
+    mes_example: cardOptionalText(raw.mes_example,),
+    system_prompt: cardOptionalText(raw.system_prompt,),
+    post_history_instructions: cardOptionalText(raw.post_history_instructions,),
+    alternate_greetings: cardTextList(raw.alternate_greetings,),
+    tags: cardTextList(raw.tags,),
+    creator: cardOptionalText(raw.creator,),
+    creator_notes: cardOptionalText(raw.creator_notes,),
+    character_version: cardOptionalText(raw.character_version,),
     species,
     homeland,
     culture,
@@ -127,20 +187,20 @@ export function normalizeLorebookEntry(
   entry: Record<string, unknown>,
 ): LorebookEntry {
   return {
-    keys: (entry.keys as string[]) ?? [],
-    content: (entry.content as string) ?? "",
-    enabled: (entry.enabled as boolean) ?? true,
-    insertion_order: (entry.insertion_order as number) ?? 0,
-    case_sensitive: (entry.case_sensitive as boolean) ?? false,
-    name: (entry.name as string) ?? "",
-    priority: (entry.priority as number) ?? 0,
-    id: (entry.id as number) ?? 0,
-    comment: entry.comment as string | undefined,
-    selective: (entry.selective as boolean) ?? false,
-    constant: (entry.constant as boolean) ?? false,
-    position: (entry.position as "before_char" | "after_char") ?? "before_char",
-    use_regex: entry.use_regex as boolean | undefined,
-    extensions: entry.extensions as Record<string, unknown> | undefined,
+    keys: cardTextList(entry.keys,) ?? [],
+    content: cardText(entry.content,),
+    enabled: typeof entry.enabled === "boolean" ? entry.enabled : true,
+    insertion_order: cardNumber(entry.insertion_order,) ?? 0,
+    case_sensitive: entry.case_sensitive === true,
+    name: cardText(entry.name,),
+    priority: cardNumber(entry.priority,) ?? 0,
+    id: cardNumber(entry.id,) ?? 0,
+    comment: cardOptionalText(entry.comment,),
+    selective: entry.selective === true,
+    constant: entry.constant === true,
+    position: entry.position === "after_char" ? "after_char" : "before_char",
+    use_regex: typeof entry.use_regex === "boolean" ? entry.use_regex : undefined,
+    extensions: cardObject(entry.extensions,),
   };
 }
 
@@ -153,15 +213,17 @@ export function normalizeLorebookEntry(
 export function buildLorebook(
   characterBook: Record<string, unknown>,
 ): LorebookData {
-  const source = characterBook.entries as Record<string, unknown>[] ?? [];
-  const entries = Array.from(source, (e,) => normalizeLorebookEntry(e,),);
+  const source = Array.isArray(characterBook.entries,) ? characterBook.entries : [];
+  const entries = source.map((e,) => normalizeLorebookEntry(cardObject(e,) ?? {},));
 
   return {
-    name: characterBook.name as string | undefined,
-    description: characterBook.description as string | undefined,
-    scan_depth: characterBook.scan_depth as number | undefined,
-    token_budget: characterBook.token_budget as number | undefined,
-    recursive_scanning: characterBook.recursive_scanning as boolean | undefined,
+    name: cardOptionalText(characterBook.name,),
+    description: cardOptionalText(characterBook.description,),
+    scan_depth: cardNumber(characterBook.scan_depth,),
+    token_budget: cardNumber(characterBook.token_budget,),
+    recursive_scanning: typeof characterBook.recursive_scanning === "boolean"
+      ? characterBook.recursive_scanning
+      : undefined,
     entries,
   };
 }

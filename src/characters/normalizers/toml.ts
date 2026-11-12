@@ -7,7 +7,7 @@
 // Converts TOML format to canonical character card.
 
 import type { CanonicalCharacter, } from "../parser";
-import { buildCanonicalFields, } from "./shared";
+import { buildCanonicalFields, cardObject, } from "./shared";
 
 /**
  * Normalize TOML format to canonical character card.
@@ -17,10 +17,10 @@ import { buildCanonicalFields, } from "./shared";
  * @returns Record<string
  */
 export function normalizeToml(data: Record<string, unknown>,): CanonicalCharacter {
-  const char = (data.character ?? {}) as Record<string, unknown>;
-  const meta = (char.metadata ?? {}) as Record<string, unknown>;
-  const prompts = (char.prompts ?? {}) as Record<string, unknown>;
-  const greetings = (char.greetings ?? {}) as Record<string, unknown>;
+  const char = cardObject(data.character,) ?? {};
+  const meta = cardObject(char.metadata,) ?? {};
+  const prompts = cardObject(char.prompts,) ?? {};
+  const greetings = cardObject(char.greetings,) ?? {};
 
   // Flatten nested TOML structure
   const flat: Record<string, unknown> = {
