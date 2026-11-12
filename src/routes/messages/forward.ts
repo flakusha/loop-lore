@@ -27,7 +27,7 @@ import { ErrorResponse, MessageForwardBody, } from "../../validation/schemas";
 import { Id, } from "../../validation/schemas/primitives";
 import { badRequestResponse, jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
 import type { HttpStatusCode, } from "../http-utils";
-import { attachAttachmentsOrForbidden, } from "./guards";
+import { attachAttachmentsOrForbidden, enforceAgeGate, } from "./guards";
 import { serviceErrorToResponse, } from "./helpers";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
 import { prepareContentStorage, } from "./post";
@@ -72,6 +72,11 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const targetAccess = await checkChatAccess(database, targetChatId, actorId, ctx.userRole as string | null,);
         if (!targetAccess.ok) { return serviceErrorToResponse(targetAccess.error,); }
+
+        // Send-time age gate (theme-5 AC6): a forward writes a user-attributed
+        // message into the target chat, so it gates like a fresh send.
+        const ageRejection = await enforceAgeGate(database, actorId,);
+        if (ageRejection) { return ageRejection; }
 
         // Empty string is "no key": storing "" would collide on the unique index.
         const idempotencyKey = body.idempotencyKey ? body.idempotencyKey : null;
