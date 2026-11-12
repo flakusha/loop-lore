@@ -27,6 +27,7 @@ import { agencyRoutes, } from "../agency";
 import { configMenuRoutes, } from "../config-menu";
 import { gameStateRoutes, } from "../game-state";
 import { locationExplorerRoutes, } from "../location-explorer";
+import { omniSearchRoutes, } from "../omni-search";
 import { storyOrchestrationRoutes, } from "../story-orchestration";
 
 /**
@@ -44,6 +45,7 @@ export function standaloneSurface(opts: RegisterPluginsOpts,) {
     .use(gameStateRoutes(handleOpts, prefix,),)
     .use(storyOrchestrationRoutes(handleOpts, prefix,),)
     .use(configMenuRoutes({ database: handleOpts.database, }, prefix,),)
+    .use(omniSearchRoutes({ database: handleOpts.database, }, prefix,),)
     .use(createFacadeRoutes(handleOpts, prefix,),)
     .use(createMcpRoutes(handleOpts, prefix,),);
 }
