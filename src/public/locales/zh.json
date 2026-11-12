@@ -583,10 +583,10 @@
       "missing": "缺少的内容",
       "missingFields": "缺少必填项",
       "configured": "已配置的提供商",
+      "importInstead": "改为导入配置文件",
       "delete": "删除",
       "confirmDelete": "确认删除",
-      "deleteProvider": "删除提供商 {name}",
-      "importInstead": "改为导入配置文件"
+      "deleteProvider": "删除提供商 {name}"
     },
     "knowledgeGraph": "知识图谱",
     "kgAssets": "资产",
@@ -1513,7 +1513,8 @@
     "aiTranslatePrompt": "Translate into which language?",
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
-    "promoteToLoreFailed": "Could not create the lorebook entry"
+    "promoteToLoreFailed": "Could not create the lorebook entry",
+    "queuedOffline": "已排队（离线）"
   },
   "personas": {
     "title": "Personas",
@@ -1946,8 +1947,12 @@
     "characterUpdated": "角色 {name} 已更新",
     "failedUpdateCharacter": "更新角色失败",
     "providerSaved": "提供商已保存",
-    "providerDeleted": "提供商已删除",
-    "failedLoadKnowledgeGraph": "加载知识图谱失败"
+    "failedLoadKnowledgeGraph": "加载知识图谱失败",
+    "messageQueued": "消息已加入队列，联网后将自动发送。",
+    "outboxDelivered": "已发送 {count} 条排队消息",
+    "outboxPoison": "一条排队消息被服务器拒绝（HTTP {status}）并已丢弃。",
+    "outboxMaxAttempts": "一条排队消息多次发送失败，已丢弃。",
+    "providerDeleted": "提供商已删除"
   },
   "status": {
     "characterResponding": "角色正在回复……",
@@ -2591,6 +2596,22 @@
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
   },
+  "banners": {
+    "offline": "您已离线 — 发送的消息将进入队列，等待连接恢复后发送。"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search chats, messages, and assets…",
+    "searching": "Searching…",
+    "error": "Something went wrong while searching. Try again.",
+    "noResults": "No results for \"{query}\"",
+    "emptyHint": "Try a different keyword.",
+    "chats": "Chats",
+    "messages": "Messages",
+    "assets": "Assets",
+    "openChat": "Open chat",
+    "openAsset": "Preview asset"
+  },
   "npc": {
     "relationshipsTab": "Relationships",
     "relationshipsTitle": "Relationships",
@@ -2619,18 +2640,5 @@
     "nsfwPolicy": "NSFW policy",
     "empty": "No availability settings for this character yet.",
     "add": "Add availability"
-  },
-  "search": {
-    "title": "Search",
-    "placeholder": "Search chats, messages, and assets…",
-    "searching": "Searching…",
-    "error": "Something went wrong while searching. Try again.",
-    "noResults": "No results for \"{query}\"",
-    "emptyHint": "Try a different keyword.",
-    "chats": "Chats",
-    "messages": "Messages",
-    "assets": "Assets",
-    "openChat": "Open chat",
-    "openAsset": "Preview asset"
   }
 }

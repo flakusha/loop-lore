@@ -157,7 +157,6 @@
     "rollResult": "{roll} {modifier} = {total} vs DC {dc}",
     "rollSuccess": "success",
     "rollFailure": "failure",
-    "attackRollPreview": "Attack roll {total} vs AC {ac}: {outcome}",
     "environmentalEffects": "Environmental effects",
     "targetSelection": "Target selection",
     "battleActions": "Battle actions",
@@ -165,7 +164,8 @@
     "battleControls": "Battle controls",
     "battleSummary": "Battle summary",
     "showLog": "Show full log ({count})",
-    "hideLog": "Hide full log"
+    "hideLog": "Hide full log",
+    "attackRollPreview": "Attack roll {total} vs AC {ac}: {outcome}"
   },
   "chat": {
     "sendMessage": "Send Message",
@@ -385,27 +385,6 @@
   "admin": {
     "title": "Administration",
     "dashboard": "Admin Dashboard",
-    "lora": {
-      "tab": "LoRA",
-      "title": "LoRA models",
-      "help": "Discover LoRA models on the configured image backends (sd.cpp, ComfyUI) and inspect the discovery cache.",
-      "discover": "Discover",
-      "discovering": "Discovering…",
-      "refresh": "Refresh",
-      "clear": "Clear cache",
-      "searchPlaceholder": "Search models...",
-      "backendAll": "All backends",
-      "cacheEntries": "Cached entries",
-      "strength": "Strength",
-      "empty": "No LoRA models cached. Run discovery to scan the configured backends.",
-      "loadFailed": "Failed to load LoRA models",
-      "discoverDone": "Discovery complete",
-      "discoverFailed": "Discovery failed",
-      "discoverForbidden": "LoRA discovery requires admin rights",
-      "clearDone": "Discovery cache cleared",
-      "clearFailed": "Failed to clear the discovery cache",
-      "clearForbidden": "Clearing the cache requires admin rights"
-    },
     "users": "Users",
     "worlds": "Worlds",
     "chats": "Chats",
@@ -691,10 +670,31 @@
       "missing": "What is missing",
       "missingFields": "Required fields are missing",
       "configured": "Configured providers",
+      "importInstead": "Import a configuration file instead",
       "delete": "Delete",
       "confirmDelete": "Confirm delete",
-      "deleteProvider": "Delete provider {name}",
-      "importInstead": "Import a configuration file instead"
+      "deleteProvider": "Delete provider {name}"
+    },
+    "lora": {
+      "tab": "LoRA",
+      "title": "LoRA models",
+      "help": "Discover LoRA models on the configured image backends (sd.cpp, ComfyUI) and inspect the discovery cache.",
+      "discover": "Discover",
+      "discovering": "Discovering…",
+      "refresh": "Refresh",
+      "clear": "Clear cache",
+      "searchPlaceholder": "Search models...",
+      "backendAll": "All backends",
+      "cacheEntries": "Cached entries",
+      "strength": "Strength",
+      "empty": "No LoRA models cached. Run discovery to scan the configured backends.",
+      "loadFailed": "Failed to load LoRA models",
+      "discoverDone": "Discovery complete",
+      "discoverFailed": "Discovery failed",
+      "discoverForbidden": "LoRA discovery requires admin rights",
+      "clearDone": "Discovery cache cleared",
+      "clearFailed": "Failed to clear the discovery cache",
+      "clearForbidden": "Clearing the cache requires admin rights"
     }
   },
   "errors": {
@@ -1179,35 +1179,6 @@
     "typeBlogPost": "Blog post",
     "typeBlogComment": "Blog comment"
   },
-  "npc": {
-    "relationshipsTab": "Relationships",
-    "relationshipsTitle": "Relationships",
-    "relationshipsLoading": "Loading relationships...",
-    "relationshipsActorLabel": "Character",
-    "relationshipsEmpty": "No relationships recorded for this character yet.",
-    "relationshipsLoadError": "Failed to load relationships.",
-    "relationshipsUnknownActor": "Unknown character",
-    "relationshipsStanding": "Standing",
-    "relationshipsTrust": "Trust",
-    "relationshipsFamiliarity": "Familiarity"
-  },
-  "availability": {
-    "title": "Availability",
-    "help": "Control how and where this character can be used.",
-    "status": "Status",
-    "statusAvailable": "Available",
-    "statusLimited": "Limited",
-    "statusUnavailable": "Unavailable",
-    "statusRetired": "Retired",
-    "usagePolicy": "Usage policy",
-    "usagePolicyPlaceholder": "e.g. Personal use only",
-    "activityRestrictions": "Activity restrictions",
-    "activityRestrictionsHint": "Comma-separated, e.g. trading, combat",
-    "contentPolicy": "Content policy",
-    "nsfwPolicy": "NSFW policy",
-    "empty": "No availability settings for this character yet.",
-    "add": "Add availability"
-  },
   "placeholders": {
     "chatName": "Chat name",
     "filter": "Filter…",
@@ -1537,7 +1508,8 @@
     "aiExplain": "Explain simply",
     "aiActionItems": "Extract action items",
     "aiTranslate": "Translate…",
-    "aiTranslatePrompt": "Translate into which language?"
+    "aiTranslatePrompt": "Translate into which language?",
+    "queuedOffline": "Queued (offline)"
   },
   "participants": {
     "title": "Participants",
@@ -2103,6 +2075,10 @@
     "characterUpdated": "Character {name} updated",
     "failedUpdateCharacter": "Failed to update character",
     "providerSaved": "Provider saved",
+    "messageQueued": "Message queued — it will send when you're back online.",
+    "outboxDelivered": "Sent {count} queued message(s)",
+    "outboxPoison": "A queued message was rejected by the server (HTTP {status}) and was dropped.",
+    "outboxMaxAttempts": "A queued message kept failing and was dropped.",
     "providerDeleted": "Provider deleted"
   },
   "wizard": {
@@ -2175,9 +2151,6 @@
     "licensingDeleteFailed": "Failed to delete license",
     "licensingLoadFailed": "Failed to load license",
     "licensingSaveFailed": "Failed to save license",
-    "availabilityLoadFailed": "Failed to load availability",
-    "availabilitySaveFailed": "Failed to save availability",
-    "availabilityDeleteFailed": "Failed to delete availability",
     "systemsExportComplete": "Export complete",
     "systemsExportFailed": "Export failed",
     "systemsImportComplete": "Import complete",
@@ -2191,7 +2164,10 @@
     "traitsNameRequired": "Name is required",
     "allocationLoadFailed": "Failed to load stat allocation",
     "allocationSaveFailed": "Failed to save stat allocation",
-    "allocationSaved": "Stat allocation saved"
+    "allocationSaved": "Stat allocation saved",
+    "availabilityLoadFailed": "Failed to load availability",
+    "availabilitySaveFailed": "Failed to save availability",
+    "availabilityDeleteFailed": "Failed to delete availability"
   },
   "analyze": {
     "ready": "Prompt analyzed",
@@ -2220,7 +2196,6 @@
     "emptyDraft": "Type a message before scheduling.",
     "failed": "Could not schedule that message."
   },
-
   "search": {
     "title": "Search",
     "placeholder": "Search chats, messages, and assets…",
@@ -2633,5 +2608,37 @@
     "reuniting": "Reuniting…",
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
+  },
+  "banners": {
+    "offline": "You're offline — messages you send will queue until the connection returns."
+  },
+  "npc": {
+    "relationshipsTab": "Relationships",
+    "relationshipsTitle": "Relationships",
+    "relationshipsLoading": "Loading relationships...",
+    "relationshipsActorLabel": "Character",
+    "relationshipsEmpty": "No relationships recorded for this character yet.",
+    "relationshipsLoadError": "Failed to load relationships.",
+    "relationshipsUnknownActor": "Unknown character",
+    "relationshipsStanding": "Standing",
+    "relationshipsTrust": "Trust",
+    "relationshipsFamiliarity": "Familiarity"
+  },
+  "availability": {
+    "title": "Availability",
+    "help": "Control how and where this character can be used.",
+    "status": "Status",
+    "statusAvailable": "Available",
+    "statusLimited": "Limited",
+    "statusUnavailable": "Unavailable",
+    "statusRetired": "Retired",
+    "usagePolicy": "Usage policy",
+    "usagePolicyPlaceholder": "e.g. Personal use only",
+    "activityRestrictions": "Activity restrictions",
+    "activityRestrictionsHint": "Comma-separated, e.g. trading, combat",
+    "contentPolicy": "Content policy",
+    "nsfwPolicy": "NSFW policy",
+    "empty": "No availability settings for this character yet.",
+    "add": "Add availability"
   }
 }

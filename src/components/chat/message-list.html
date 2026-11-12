@@ -254,6 +254,14 @@
               ></span>
               <span class="edited-label" x-show="msg.edited_at" data-testid="edited-indicator"
               >{{{t("chats.edited")}}}</span>
+              <!-- Offline send queue (slices 2-3): optimistic row awaiting reconnect -->
+              <span
+                class="queued-label"
+                x-show="msg.status === 'queued'"
+                x-text="t('chats.queuedOffline')"
+                x-bind:title="t('chats.queuedOffline')"
+                data-testid="queued-indicator"
+              >⏳</span>
               <!-- Story mode: quality score badge from the matching story turn -->
               <template x-if="isStoryMode && turnForMessage(msg.id)?.qualityScore != null">
                 <span

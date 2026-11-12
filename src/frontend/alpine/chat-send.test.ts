@@ -324,11 +324,29 @@ describe("chatSendMethods.sendMessage — failure paths", () => {
     expect(ctx.messages,).toEqual([],);
   });
 
-  test("network failures roll back and toast", async () => {
+  test("network failures queue the optimistic message instead of rolling it back", async () => {
     const ctx = buildCtx();
     ctx.$refs.messageInput.value = "hello";
     handler = async () => {
-      throw new Error("offline",);
+      throw new TypeError("Failed to fetch",);
+    };
+
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+    // Offline-class throw (slices 2-3): the row stays, marked queued for the
+    // reconnect drain — it is NOT rolled back.
+    expect(ctx.messages,).toHaveLength(1,);
+    expect(ctx.messages[0]!.status,).toBe("queued",);
+    expect(ctx.isGenerating,).toBe(false,);
+    // The queued send owns the composed text, so the input is not restored.
+    expect(ctx.$refs.messageInput.value,).toBe("",);
+    expect(ctx.toasts[0]!.type,).toBe("info",);
+  });
+
+  test("a 401 Unauthorized throw still rolls back (not offline-class)", async () => {
+    const ctx = buildCtx();
+    ctx.$refs.messageInput.value = "hello";
+    handler = async () => {
+      throw new Error("Unauthorized",);
     };
 
     await chatSendMethods.sendMessage!.call(ctx as never,);

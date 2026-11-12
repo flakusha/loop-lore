@@ -14,6 +14,8 @@
 
 import { log as rootLog, } from "../alpine/logger";
 import { applyChatViewDefaults, assertChatViewShape, } from "../alpine/store-schema";
+import { watchConnection, } from "./connection";
+import { connectionStoreDefinition, } from "./connection-store";
 import { uiStoreDefinition, } from "./ui-store";
 
 const log = rootLog.child({ module: "stores", },);
@@ -21,6 +23,8 @@ const log = rootLog.child({ module: "stores", },);
 /** Store name → initial value object. */
 const stores: Record<string, Record<string, unknown>> = {
   sidebar: { open: false, },
+  // Connection store (TASK-pwa-cached-shell slices 2-3): online/offline for
+  // the layout banner + chat-send gate; `watchConnection` binds listeners.
   // Chat store — owns the currently active chat along with non-reactive
   // fallback fields read by templates before the live chat payload lands.
   // Safe defaults are applied via `applyChatViewDefaults` at module init so
@@ -33,6 +37,7 @@ const stores: Record<string, Record<string, unknown>> = {
     currentChat: null as { id: string; name?: string; type?: string } | null,
   },
   ui: uiStoreDefinition as Record<string, unknown>,
+  connection: connectionStoreDefinition,
 };
 
 // Module init: seed chat-view defaults + (dev-only) assert the chat payload
@@ -64,4 +69,7 @@ export function initAlpineStores(): void {
       log.warn(`Failed to register "${name}":`, { error: String(error,), },);
     }
   }
+
+  // Online/offline listeners + boot drain for the send outbox (slices 2-3).
+  watchConnection();
 }

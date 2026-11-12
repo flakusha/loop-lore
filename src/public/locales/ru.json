@@ -583,10 +583,10 @@
       "missing": "Что отсутствует",
       "missingFields": "Не заполнены обязательные поля",
       "configured": "Настроенные провайдеры",
+      "importInstead": "Импортировать файл конфигурации",
       "delete": "Удалить",
       "confirmDelete": "Подтвердить удаление",
-      "deleteProvider": "Удалить провайдер {name}",
-      "importInstead": "Импортировать файл конфигурации"
+      "deleteProvider": "Удалить провайдер {name}"
     },
     "knowledgeGraph": "Граф знаний",
     "kgAssets": "Ресурсы",
@@ -1513,7 +1513,8 @@
     "aiTranslatePrompt": "Translate into which language?",
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
-    "promoteToLoreFailed": "Could not create the lorebook entry"
+    "promoteToLoreFailed": "Could not create the lorebook entry",
+    "queuedOffline": "В очереди (офлайн)"
   },
   "personas": {
     "title": "Personas",
@@ -1946,8 +1947,12 @@
     "characterUpdated": "Персонаж {name} обновлён",
     "failedUpdateCharacter": "Не удалось обновить персонажа",
     "providerSaved": "Провайдер сохранён",
-    "providerDeleted": "Провайдер удалён",
-    "failedLoadKnowledgeGraph": "Не удалось загрузить граф знаний"
+    "failedLoadKnowledgeGraph": "Не удалось загрузить граф знаний",
+    "messageQueued": "Сообщение поставлено в очередь — оно будет отправлено, когда вы снова будете онлайн.",
+    "outboxDelivered": "Отправлено сообщений из очереди: {count}",
+    "outboxPoison": "Сообщение из очереди отклонено сервером (HTTP {status}) и удалено.",
+    "outboxMaxAttempts": "Сообщение из очереди несколько раз не удалось отправить и оно было удалено.",
+    "providerDeleted": "Провайдер удалён"
   },
   "status": {
     "characterResponding": "Персонаж отвечает...",
@@ -2591,6 +2596,22 @@
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
   },
+  "banners": {
+    "offline": "Вы офлайн — отправленные сообщения будут поставлены в очередь до восстановления соединения."
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search chats, messages, and assets…",
+    "searching": "Searching…",
+    "error": "Something went wrong while searching. Try again.",
+    "noResults": "No results for \"{query}\"",
+    "emptyHint": "Try a different keyword.",
+    "chats": "Chats",
+    "messages": "Messages",
+    "assets": "Assets",
+    "openChat": "Open chat",
+    "openAsset": "Preview asset"
+  },
   "npc": {
     "relationshipsTab": "Relationships",
     "relationshipsTitle": "Relationships",
@@ -2619,18 +2640,5 @@
     "nsfwPolicy": "NSFW policy",
     "empty": "No availability settings for this character yet.",
     "add": "Add availability"
-  },
-  "search": {
-    "title": "Search",
-    "placeholder": "Search chats, messages, and assets…",
-    "searching": "Searching…",
-    "error": "Something went wrong while searching. Try again.",
-    "noResults": "No results for \"{query}\"",
-    "emptyHint": "Try a different keyword.",
-    "chats": "Chats",
-    "messages": "Messages",
-    "assets": "Assets",
-    "openChat": "Open chat",
-    "openAsset": "Preview asset"
   }
 }

@@ -583,10 +583,10 @@
       "missing": "Was fehlt",
       "missingFields": "Pflichtfelder fehlen",
       "configured": "Konfigurierte Provider",
+      "importInstead": "Stattdessen eine Konfigurationsdatei importieren",
       "delete": "Löschen",
       "confirmDelete": "Löschen bestätigen",
-      "deleteProvider": "Provider {name} löschen",
-      "importInstead": "Stattdessen eine Konfigurationsdatei importieren"
+      "deleteProvider": "Provider {name} löschen"
     },
     "knowledgeGraph": "Wissensgraph",
     "kgAssets": "Assets",
@@ -1513,7 +1513,8 @@
     "aiTranslatePrompt": "Translate into which language?",
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
-    "promoteToLoreFailed": "Could not create the lorebook entry"
+    "promoteToLoreFailed": "Could not create the lorebook entry",
+    "queuedOffline": "In Warteschlange (offline)"
   },
   "personas": {
     "title": "Personas",
@@ -1946,8 +1947,12 @@
     "characterUpdated": "Charakter {name} aktualisiert",
     "failedUpdateCharacter": "Charakter konnte nicht aktualisiert werden",
     "providerSaved": "Provider gespeichert",
-    "providerDeleted": "Provider gelöscht",
-    "failedLoadKnowledgeGraph": "Wissensgraph konnte nicht geladen werden"
+    "failedLoadKnowledgeGraph": "Wissensgraph konnte nicht geladen werden",
+    "messageQueued": "Nachricht in Warteschlange — sie wird gesendet, sobald du wieder online bist.",
+    "outboxDelivered": "{count} wartende Nachricht(en) gesendet",
+    "outboxPoison": "Eine wartende Nachricht wurde vom Server abgelehnt (HTTP {status}) und verworfen.",
+    "outboxMaxAttempts": "Eine wartende Nachricht ist wiederholt fehlgeschlagen und wurde verworfen.",
+    "providerDeleted": "Provider gelöscht"
   },
   "status": {
     "characterResponding": "Charakter antwortet...",
@@ -2591,6 +2596,22 @@
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
   },
+  "banners": {
+    "offline": "Du bist offline — gesendete Nachrichten werden in die Warteschlange gestellt, bis die Verbindung wiederhergestellt ist."
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search chats, messages, and assets…",
+    "searching": "Searching…",
+    "error": "Something went wrong while searching. Try again.",
+    "noResults": "No results for \"{query}\"",
+    "emptyHint": "Try a different keyword.",
+    "chats": "Chats",
+    "messages": "Messages",
+    "assets": "Assets",
+    "openChat": "Open chat",
+    "openAsset": "Preview asset"
+  },
   "npc": {
     "relationshipsTab": "Relationships",
     "relationshipsTitle": "Relationships",
@@ -2619,18 +2640,5 @@
     "nsfwPolicy": "NSFW policy",
     "empty": "No availability settings for this character yet.",
     "add": "Add availability"
-  },
-  "search": {
-    "title": "Search",
-    "placeholder": "Search chats, messages, and assets…",
-    "searching": "Searching…",
-    "error": "Something went wrong while searching. Try again.",
-    "noResults": "No results for \"{query}\"",
-    "emptyHint": "Try a different keyword.",
-    "chats": "Chats",
-    "messages": "Messages",
-    "assets": "Assets",
-    "openChat": "Open chat",
-    "openAsset": "Preview asset"
   }
 }

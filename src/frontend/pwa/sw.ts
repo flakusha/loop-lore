@@ -15,6 +15,7 @@
  * registration URL must be stable; content versioning lives in
  * SW_CACHE_VERSION (bump it when the precache list or shell semantics change).
  */
+import { OUTBOX_DRAIN_MESSAGE, } from "./outbox-store";
 import {
   CACHE_NAME_PREFIX,
   cacheName,
@@ -36,7 +37,10 @@ interface FetchEventLike extends Event {
 interface ServiceWorkerLike {
   location: { origin: string };
   skipWaiting(): Promise<void>;
-  clients: { claim(): Promise<void> };
+  clients: {
+    claim(): Promise<void>;
+    matchAll(options?: { type?: string },): Promise<Array<{ postMessage(message: unknown,): void }>>;
+  };
   addEventListener(type: "install", listener: (event: ExtendableEventLike,) => void,): void;
   addEventListener(type: "activate", listener: (event: ExtendableEventLike,) => void,): void;
   addEventListener(type: "fetch", listener: (event: FetchEventLike,) => void,): void;
@@ -92,14 +96,39 @@ async function cacheFirst(request: Request, pathname: string,): Promise<Response
  * Network-first for /views HTML: race the network against VIEW_NETWORK_TIMEOUT_MS;
  * on failure or timeout serve the cached public /offline.html page. The view
  * response itself is NEVER written to the cache (authenticated content).
+ *
+ * Connectivity ping (slices 2-3): a successful network fetch shortly after a
+ * fallback means the connection is back — nudge every open client to drain
+ * the offline send outbox (the page may have missed its `online` event).
  */
+const CONNECTIVITY_SIGNAL_WINDOW_MS = 60_000;
+let lastOfflineFallbackAt = 0;
+
+/** Best-effort nudge; failures never surface (the page's `online` event also drains). */
+async function notifyClientsToDrain(): Promise<void> {
+  const clients = await sw.clients.matchAll({ type: "window", },);
+  for (const client of clients) { client.postMessage({ type: OUTBOX_DRAIN_MESSAGE, },); }
+}
+
 async function networkFirstOfflinePage(request: Request,): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), VIEW_NETWORK_TIMEOUT_MS,);
   try {
     // eslint-disable-next-line no-restricted-syntax -- respondWith streams the live Response; safeFetch buffers and cannot replay it.
-    return await fetch(request, { signal: controller.signal, },);
+    const response = await fetch(request, { signal: controller.signal, },);
+    if (
+      response.ok && lastOfflineFallbackAt !== 0 &&
+      Date.now() - lastOfflineFallbackAt < CONNECTIVITY_SIGNAL_WINDOW_MS
+    ) {
+      lastOfflineFallbackAt = 0;
+      void notifyClientsToDrain().catch(() => {
+        /* best-effort: the page's own online event drains too */
+      },);
+    }
+
+    return response;
   } catch {
+    lastOfflineFallbackAt = Date.now();
     const cache = await caches.open(cacheName(),);
     const offline = await cache.match("/offline.html",);
     return offline ?? new Response("Offline", {

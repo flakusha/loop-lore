@@ -583,10 +583,10 @@
       "missing": "Qué falta",
       "missingFields": "Faltan campos obligatorios",
       "configured": "Proveedores configurados",
+      "importInstead": "Importar un archivo de configuración en su lugar",
       "delete": "Eliminar",
       "confirmDelete": "Confirmar eliminación",
-      "deleteProvider": "Eliminar el proveedor {name}",
-      "importInstead": "Importar un archivo de configuración en su lugar"
+      "deleteProvider": "Eliminar el proveedor {name}"
     },
     "knowledgeGraph": "Grafo de conocimiento",
     "kgAssets": "Activos",
@@ -1513,7 +1513,8 @@
     "aiTranslatePrompt": "Translate into which language?",
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
-    "promoteToLoreFailed": "Could not create the lorebook entry"
+    "promoteToLoreFailed": "Could not create the lorebook entry",
+    "queuedOffline": "En cola (sin conexión)"
   },
   "personas": {
     "title": "Personas",
@@ -1946,8 +1947,12 @@
     "characterUpdated": "Personaje {name} actualizado",
     "failedUpdateCharacter": "Error al actualizar el personaje",
     "providerSaved": "Proveedor guardado",
-    "providerDeleted": "Proveedor eliminado",
-    "failedLoadKnowledgeGraph": "Error al cargar el grafo de conocimiento"
+    "failedLoadKnowledgeGraph": "Error al cargar el grafo de conocimiento",
+    "messageQueued": "Mensaje en cola: se enviará cuando vuelvas a estar en línea.",
+    "outboxDelivered": "Se enviaron {count} mensaje(s) en cola",
+    "outboxPoison": "Un mensaje en cola fue rechazado por el servidor (HTTP {status}) y se descartó.",
+    "outboxMaxAttempts": "Un mensaje en cola falló repetidamente y se descartó.",
+    "providerDeleted": "Proveedor eliminado"
   },
   "status": {
     "characterResponding": "El personaje está respondiendo...",
@@ -2591,6 +2596,22 @@
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
   },
+  "banners": {
+    "offline": "Estás sin conexión — los mensajes que envíes quedarán en cola hasta que vuelva la conexión."
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search chats, messages, and assets…",
+    "searching": "Searching…",
+    "error": "Something went wrong while searching. Try again.",
+    "noResults": "No results for \"{query}\"",
+    "emptyHint": "Try a different keyword.",
+    "chats": "Chats",
+    "messages": "Messages",
+    "assets": "Assets",
+    "openChat": "Open chat",
+    "openAsset": "Preview asset"
+  },
   "npc": {
     "relationshipsTab": "Relationships",
     "relationshipsTitle": "Relationships",
@@ -2619,18 +2640,5 @@
     "nsfwPolicy": "NSFW policy",
     "empty": "No availability settings for this character yet.",
     "add": "Add availability"
-  },
-  "search": {
-    "title": "Search",
-    "placeholder": "Search chats, messages, and assets…",
-    "searching": "Searching…",
-    "error": "Something went wrong while searching. Try again.",
-    "noResults": "No results for \"{query}\"",
-    "emptyHint": "Try a different keyword.",
-    "chats": "Chats",
-    "messages": "Messages",
-    "assets": "Assets",
-    "openChat": "Open chat",
-    "openAsset": "Preview asset"
   }
 }
