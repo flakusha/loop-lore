@@ -66,5 +66,14 @@ These two items are gate/CI plumbing, not file-splitting; the size debt itself i
 
 Only promote to blocking after the split tasks land — otherwise CI goes red on pre-existing debt.
 
+## Closeout — check-debt-green (2026-11-12)
+
+The branch's size-strict work lands under this ticket: the two remaining strict
+offenders the dev-red report named (`src/routes/harness/index.ts`,
+`src/frontend/vn/choice-cards.ts`) are split into cohesive single-purpose modules
+(route plugin + settings-view view-model; choice-cards lifecycle + state + select)
+with callers and colocated tests repointed and no re-export shims. `size - strict`
+gate green on the scoped run. No threshold change, no waivers added.
+
 
 git issue: cb776c9
