@@ -3,7 +3,7 @@
 
 # TASK: 1.0.0 GAP: unified cross-surface omni-search
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -18,6 +18,6 @@ No unified search epic exists: gallery search is Done (epic-frontend-gallery.md)
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

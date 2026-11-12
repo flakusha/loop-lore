@@ -12,10 +12,13 @@
 // see all). TOCTOU: last-committed snapshot per surface; per-surface failure
 // degrades to the remaining surfaces (Promise.allSettled).
 import { Elysia, } from "elysia";
+import { sql, } from "kysely";
 import { getLogger, } from "../../logger";
 import { searchAssets, searchMessages, } from "../../search";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { extractAuth, jsonResponse, requireUserId, } from "../http-utils";
+import { escapeLike, } from "../message-search/helpers";
 import { type HandlerOpts, OmniSearchQuery, OmniSearchResponse, } from "./types";
 
 export type { HandlerOpts, } from "./types";
@@ -40,6 +43,11 @@ export function omniSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
           const q = query.q.trim();
           const limit = query.limit ?? 10;
 
+          if (q === "") {
+            return jsonResponse({ query: q, chats: [], messages: [], assets: [], },);
+          }
+
+          const like = `%${escapeLike(q,)}%`;
           const [chats, messages, assets,] = await Promise.allSettled([
             database
               .selectFrom("chats",)
@@ -50,15 +58,15 @@ export function omniSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
               .where("chats.is_pinned", "!=", "archived",)
               .where((eb,) =>
                 eb.or([
-                  eb("chats.name", "like", `%${q}%`,),
-                  eb("actors.display_name", "like", `%${q}%`,),
+                  sql`chats.name LIKE ${like} ESCAPE '\\'`.$castTo<boolean>(),
+                  sql`actors.display_name LIKE ${like} ESCAPE '\\'`.$castTo<boolean>(),
                 ],)
               )
               .groupBy("chats.id",)
               .orderBy("chats.updated_at", "desc",)
               .limit(limit,)
               .execute(),
-            searchMessages(database, q, { userId, topK: limit, },),
+            searchMessages(database, q, { userId, topK: limit, isAdmin: can(userRole, "admin.chat",), },),
             searchAssets(database, q, { userId, userRole, topK: limit, },),
           ],);
 
