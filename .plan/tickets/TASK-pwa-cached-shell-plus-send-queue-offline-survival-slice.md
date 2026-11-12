@@ -89,6 +89,51 @@ Deferred (not built): an explicit retry/backoff timer between connectivity
 events (drain runs on the four triggers above), and outbox-depth surfacing
 beyond the toasts (theme-4 observability caveat).
 
+**Implementation note (2026-11-12, outbox depth badge — this worktree):**
+
+Outbox depth badge LANDED (theme-4 observability caveat closed at the UI
+level):
+- `src/frontend/pwa/outbox-store.ts` — new `discard(id)` on the store
+  (per-entry removal, `true` when removed); drain now re-checks membership
+  before every send so a mid-round discard is never sent. `size-allow`
+  bumped 280 → 300 for the two additions.
+- `src/frontend/stores/connection.ts` — `OUTBOX_CHANGED_EVENT`
+  (`ll-outbox:changed`) dispatched on enqueue and after every drain round;
+  the same document-event bridge the delivered reload uses. `discard` lives
+  on the store and is called by the badge component directly.
+- `src/frontend/alpine/outbox-badge.ts` — `outboxBadge()` Alpine component:
+  depth from `outbox.depth()`, pending-list rows (content snippet collapsed
+  then ellipsized at 80 chars, enqueued time via `toDate().toLocaleString()`),
+  per-entry discard behind `confirm(t("chats.outboxDiscardConfirm"))`;
+  refreshes on the change event (registered in `alpine/index.ts`).
+- `src/views/layout.html` — persistent `#outbox-badge` host outside
+  `#app-root` (survives htmx view swaps), scoped style block beside the
+  offline-banner precedent, 44px tap targets, hidden at depth 0.
+  `data-testid`: `outbox-badge`, `outbox-badge-button`, `outbox-badge-count`,
+  `outbox-list`, `outbox-discard`, `outbox-empty`.
+- i18n: `chats.outboxBadgeTitle` ({count} placeholder), `chats.outboxEmpty`,
+  `chats.outboxQueuedAt` ({time}), `chats.outboxDiscard`,
+  `chats.outboxDiscardConfirm` added to ALL 10 locale files (byte-identical
+  JSON round-trip injection verified before writing).
+- Tests: `outbox-store.test.ts` (+discard: targeted removal order-preserved,
+  unknown-id no-op, mid-drain discard not clobbered/sent);
+  `outbox-badge.test.ts` (enqueue→count, drain→count + list close, discard
+  confirm accept/cancel, empty-queue toggle no-op, `ll-outbox:changed`
+  bridge, snippet collapse/ellipsize, and the i18n contract — every new key
+  resolves in all 10 locales + `{count}` placeholder present).
+
+**BROWSER-LEVEL FINDING (open, blocks the offline e2e flow):** with
+`navigator.onLine === false`, an offline send in the real browser pushes the
+optimistic row then rolls it back WITHOUT ever writing `ll-outbox-v1` (no
+`queueOfflineSend` warn either). Instrumented evidence points at feFetch
+attaching a `status` to safeFetch's offline failure error (fe-fetch.ts
+attaches status on every `!result.ok`), so the failure path classifies the
+throw as non-offline and skips the enqueue. The unit-covered paths are green;
+the browser-level classification needs a slice-level fix decision (treat
+status-0/network errors as offline-class) before the offline→online e2e can
+go green. The two browser tests are landed as `test.skip` with this
+diagnosis inline (`tests/e2e/flows/browser/mobile-outbox.browser.ts`).
+
 **Acceptance Criteria:**
 
 - [ ] Implementation complete

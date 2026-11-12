@@ -42,6 +42,31 @@ fixtures in `lore.test.ts` / `memories.test.ts`.
 Still open (not started, do not half-build):
 - AC4 phone-viewport verification (<800px tiers, 44px coarse-pointer targets).
 
+**Implementation note (2026-11-12, phone-viewport spec — this worktree):**
+
+`tests/e2e/flows/browser/mobile-outbox.browser.ts` LANDED covering AC4's
+phone-viewport leg, with two tests `test.skip`-ed carrying inline diagnoses:
+- Horizontal overflow at 375px + 360px: the ~1200px chat-header `.actions`
+  row forced a ~900px page overflow — FIXED here (app.css ≤768px block:
+  `flex-wrap` + row-gap + flex-end on `.main-header .actions`). A residual
+  5px overflow remains (game-canvas/chat-container/input-area clip correctly;
+  one element still 5px wide) — the test's failure dump names offenders.
+  Re-enable after the TASK-mobile-surface-audit-360px pass closes the gap.
+- Offline send → badge → drain delivery, and badge pending list + per-entry
+  discard: blocked by the browser-level offline-failure enqueue finding on
+  the outbox slice ticket (feFetch status attachment defeats
+  `isOfflineClassError`); skipped with the diagnosis inline. The badge UI
+  itself is landed + unit-covered (enqueue→count, drain→count, discard).
+- Style-picker viewport-bounds assertion DEFERRED — component lives on the
+  scripting-lite branch (d68abdb52); add one post-merge follow-up spec after
+  both branches land on dev (overlap/bounds logic is already unit-tested
+  there in chat-style-picker.test.ts).
+
+Acceptance note: AC4's "queued sends survive offline→online" is verified at
+the unit level (outbox-store + chat-send-offline suites) and the 44px
+tap-target rule is applied on the new badge surface; the end-to-end browser
+demonstration stays skipped until the enqueue-classification fix lands.
+
 Landed since (2026-11-12, worktree theme4-pwa-caps):
 - AC4 offline send outbox — the dedicated slice ticket
   `TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice.md` now has

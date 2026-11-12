@@ -2568,6 +2568,15 @@ body {
     left: var(--space-4);
   }
 
+  /* App bar: the icon row wraps instead of forcing horizontal page scroll
+     (theme-4 AC4 phone-viewport verification: the row measures ~1200px on a
+     360px screen with every panel toggle inline). */
+  .main-header .actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    row-gap: var(--space-1);
+  }
+
   /* Location Explorer: stack tree + detail on narrow viewports */
   .loc-explorer-layout {
     flex-direction: column;
