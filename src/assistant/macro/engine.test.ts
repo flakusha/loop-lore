@@ -72,7 +72,16 @@ describe("expandMacros", () => {
   });
 
   test("expands values in expand-values mode", () => {
-    expect(expandMacros("she {{nested}}", REGISTRY, "expand-values",),).toBe("she says Aria",);
+    expect(expandMacros("she {{nested}}", REGISTRY, { mode: "expand-values", },),).toBe("she says Aria",);
+  });
+
+  test("matches names exactly when trimNames is off (legacy template semantics)", () => {
+    expect(expandMacros("{{ char }} stays", REGISTRY, { trimNames: false, },),).toBe("{{ char }} stays",);
+    expect(expandMacros("{{char}} goes", REGISTRY, { trimNames: false, },),).toBe("Aria goes",);
+  });
+
+  test("expands through one backslash when escapes are off (legacy template semantics)", () => {
+    expect(expandMacros("\\{{char}}", REGISTRY, { escapes: false, },),).toBe("\\Aria",);
   });
 
   test("is safe against replacement-pattern pitfalls", () => {

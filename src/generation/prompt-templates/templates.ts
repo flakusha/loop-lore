@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { expandMacros, LEGACY_TEMPLATE_MACRO_OPTIONS, } from "../../assistant/macro/engine";
 import type {
   DetailLevel,
   ImageModelTemplates,
@@ -9,28 +10,18 @@ import type {
 
 // ── Template tokens ─────────────────────────────────────────
 
-const TOKENS = {
-  charName: "{{charName}}",
-  charDescription: "{{charDescription}}",
-  userName: "{{userName}}",
-  userDescription: "{{userDescription}}",
-  lastMessage: "{{lastMessage}}",
-  sceneSummary: "{{sceneSummary}}",
-  chatHistory: "{{chatHistory}}",
-  negativePrompt: "{{negativePrompt}}",
-  charPrefix: "{{charPrefix}}",
-} as const;
-
-type TokenKey = keyof typeof TOKENS;
-
 /**
- * Resolve a template string by replacing all tokens
+ * Resolve a template string by expanding every `{{token}}` against the
+ * context (fixed keys first, then `ctx.extra` overrides). Delegates the scan
+ * to the shared macro engine with the LEGACY_TEMPLATE_MACRO_OPTIONS preset:
+ * values expand (nested references), token names match exactly, no escape
+ * syntax — the pre-engine semantics.
  * @param template
  * @param ctx
  * @returns {string}
  */
 export function resolveTemplate(template: string, ctx: TemplateContext,): string {
-  const tokenMap: Record<TokenKey, string> = {
+  const registry: Record<string, string> = {
     charName: ctx.charName,
     charDescription: ctx.charDescription,
     userName: ctx.userName,
@@ -40,20 +31,10 @@ export function resolveTemplate(template: string, ctx: TemplateContext,): string
     chatHistory: ctx.chatHistory,
     negativePrompt: ctx.negativePrompt ?? "",
     charPrefix: ctx.charPrefix ?? "",
+    ...ctx.extra,
   };
 
-  let result = template;
-  for (const [key, value,] of Object.entries(tokenMap,)) {
-    result = result.replaceAll(TOKENS[key as TokenKey], () => value,);
-  }
-
-  if (ctx.extra) {
-    for (const [key, value,] of Object.entries(ctx.extra,)) {
-      result = result.replaceAll(`{{${key}}}`, () => value,);
-    }
-  }
-
-  return result;
+  return expandMacros(template, registry, LEGACY_TEMPLATE_MACRO_OPTIONS,);
 }
 
 // ── Helper: build tag-based templates ───────────────────────
