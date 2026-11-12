@@ -113,6 +113,12 @@ const BASELINE = [
   // writes the ephemeral spawn script under an mkdtemp tmpdir and rmSync's
   // it in its own teardown — it never touches user paths.
   "src/integrations/harness/fake-acp-server.ts",
+  // Repo-access scope-root resolution: its realpath must observe the REAL
+  // filesystem (a policed realpath would judge the sandbox allowlist instead
+  // of resolving the principal's actual worktree root). Unreachable from an
+  // assistant command handler — the harness repo-access tier is gated by the
+  // server-resolved principal, never by a tool param.
+  "src/integrations/harness/repo-access/principal-scope.ts",
   "src/plugins/loader.ts",
   // Trust-boundary scope-root resolver: its realpath(repoRoot) call must
   // observe the REAL filesystem (a policed realpath would judge the sandbox

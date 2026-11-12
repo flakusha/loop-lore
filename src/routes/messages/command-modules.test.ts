@@ -35,7 +35,7 @@ const config = {
   encryption: { compressThreshold: 1000, compressAlgorithm: "none", },
 } as unknown as Config;
 
-const PROBES = ["mod-echo", "mod-boom", ...Array.from({ length: 9, }, (_, i,) => `mod-cap-${i}`,),];
+const PROBES = ["mod-echo", "mod-boom", "mod-{{char}}", ...Array.from({ length: 9, }, (_, i,) => `mod-cap-${i}`,),];
 
 afterAll(() => {
   for (const name of PROBES) { __unregisterCommandForTests(name,); }
@@ -162,5 +162,22 @@ describe("command dispatch modules", () => {
     if (!outcome.handled) { throw new Error("outcome must be handled",); }
     const body = await outcome.response.json() as Record<string, unknown>;
     expect(String(body.systemMessage,),).toContain("Command failed",);
+  });
+
+  it("aborts a stage whose expansion no longer resolves to a command", async () => {
+    // The registered name carries a macro, so the stage parses BEFORE the
+    // expansion and breaks AFTER it.
+    registerCommand("mod-{{char}}", async (): Promise<CommandResult> => ({
+      handled: true,
+      systemMessage: "never runs",
+    }), { capabilities: ["read-chat",], },);
+
+    const { db, chatId, userId, } = await setup();
+    const outcome = await dispatchPipeChain(db, config, userId, chatId, "/mod-{{char}}",);
+
+    expect(outcome.handled,).toBe(true,);
+    if (!outcome.handled) { throw new Error("outcome must be handled",); }
+    const body = await outcome.response.json() as Record<string, unknown>;
+    expect(String(body.systemMessage,),).toContain("no longer resolves to a command",);
   });
 });
