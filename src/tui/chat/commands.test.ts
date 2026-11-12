@@ -11,11 +11,19 @@
  * stub modules, this one does not.
  */
 import { afterEach, describe, expect, it, } from "bun:test";
+import { listMessageActions, } from "../../assistant/commands/regen";
 import { safeFetch as realFetch, } from "../../utils";
 import type { FetchResult, } from "../../utils/safe-fetch/types";
 import type { CommandDescriptor, CommandListResult, } from "./api";
 import { loadCommands, setFetch, } from "./api";
-import { CommandCompleter, matchCommands, parseCommandQuery, } from "./commands";
+import {
+  CommandCompleter,
+  matchCommands,
+  parseCommandQuery,
+  parseSettledCommand,
+  REGEN_ACTIONS,
+  valveUsageLine,
+} from "./commands";
 
 const REGISTRY: CommandDescriptor[] = [
   { name: "reset", descriptionKey: "commands.reset", },
@@ -200,6 +208,95 @@ it("reports matches while the registry is still in flight", () => {
   const harness = makeCompleter(() => new Promise<CommandListResult>(() => {},));
   harness.completer.update("/",);
   expect(harness.completer.hint(),).toBe("/ …loading commands",);
+});
+
+/** The valve-carrying fixture row, kept named so tests pass it directly. */
+const REWRITE_DESCRIPTOR: CommandDescriptor = {
+  name: "rewrite",
+  descriptionKey: "commands.rewrite",
+  valves: [
+    {
+      name: "style",
+      type: "clear|concise|dramatic|formal",
+      default: "clear",
+      enum: ["clear", "concise", "dramatic", "formal",],
+    },
+    { name: "apply", type: "boolean", },
+  ],
+};
+
+/** Registry fixture carrying valves, a bare regen and a plain command. */
+const USAGE_REGISTRY: CommandDescriptor[] = [
+  REWRITE_DESCRIPTOR,
+  { name: "regen", descriptionKey: "commands.regen", },
+  { name: "improve", descriptionKey: "commands.improve", },
+];
+
+/** Harness over {@link USAGE_REGISTRY}. */
+function makeUsageCompleter(): Harness {
+  return makeCompleter(() => Promise.resolve({ ok: true, data: USAGE_REGISTRY, },));
+}
+
+it("parses the settled command out of input with arguments", () => {
+  expect(parseSettledCommand("/rewrite --style dramatic",),).toBe("rewrite",);
+  expect(parseSettledCommand("/rewrite ",),).toBe("rewrite",);
+  expect(parseSettledCommand("/rewrite",),).toBeNull();
+  expect(parseSettledCommand("/ rew",),).toBeNull();
+  expect(parseSettledCommand("rewrite --style",),).toBeNull();
+  expect(parseSettledCommand("/",),).toBeNull();
+});
+
+it("renders the valve usage line for a valve descriptor", () => {
+  expect(valveUsageLine(REWRITE_DESCRIPTOR,),).toBe(
+    "--style (clear|concise|dramatic|formal, default clear), --apply (boolean)",
+  );
+
+  expect(valveUsageLine({ name: "improve", descriptionKey: "commands.improve", },),).toBeNull();
+});
+
+it("appends the valve usage when a single command matches", async () => {
+  const harness = makeUsageCompleter();
+  harness.completer.update("/rew",);
+  await settle();
+
+  const hint = harness.completer.hint();
+  expect(hint,).toContain("--style (clear|concise|dramatic|formal, default clear)",);
+  expect(hint,).toContain("Tab: cycle",);
+});
+
+it("shows the regen action vocabulary for /regen", async () => {
+  const harness = makeUsageCompleter();
+  harness.completer.update("/regen",);
+  await settle();
+
+  expect(harness.completer.hint(),).toContain("<try-again|add-details|more-concise>",);
+});
+
+it("switches to the usage hint while arguments are being typed", async () => {
+  const harness = makeUsageCompleter();
+  harness.completer.update("/rewrite --style dr",);
+  await settle();
+
+  const hint = harness.completer.hint();
+  expect(hint,).toContain("/rewrite",);
+  expect(hint,).toContain("--style",);
+  expect(hint,).not.toContain("Tab: cycle",);
+});
+
+it("drops the hint for settled commands without a usage line", async () => {
+  const harness = makeUsageCompleter();
+  harness.completer.update("/improve ",);
+  await settle();
+  expect(harness.completer.hint(),).toBeNull();
+
+  harness.completer.update("/nope ",);
+  expect(harness.completer.hint(),).toBeNull();
+});
+
+it("keeps the regen action vocabulary in parity with the backend", () => {
+  expect(REGEN_ACTIONS.join("|",),).toBe(
+    listMessageActions().map((action,) => action.id).join("|",),
+  );
 });
 
 describe("loadCommands", () => {
