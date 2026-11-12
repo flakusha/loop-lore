@@ -286,3 +286,48 @@ describe("isOfflineClassError", () => {
     expect(isOfflineClassError(new Error("Unauthorized",),),).toBe(false,);
   });
 });
+
+describe("outbox store — discard", () => {
+  test("discard removes exactly the targeted entry, order preserved", () => {
+    const storage = fakeStorage();
+    const store = createOutbox({ storage, },);
+    const [first, second, third,] = [
+      store.enqueue({ chatId: "chat-a", idempotencyKey: "key-1", body: '{"content":"first"}', },),
+      store.enqueue({ chatId: "chat-b", idempotencyKey: "key-2", body: '{"content":"second"}', },),
+      store.enqueue({ chatId: "chat-c", idempotencyKey: "key-3", body: '{"content":"third"}', },),
+    ];
+
+    expect(store.discard(second.id,),).toBe(true,);
+    expect(store.depth(),).toBe(2,);
+    expect(store.entries().map((entry,) => entry.id),).toEqual([first.id, third.id,],);
+
+    // Persisted: storage holds only the surviving entries.
+    const persisted = JSON.parse(storage.dump(),) as OutboxEntry[];
+    expect(persisted.map((entry,) => entry.id),).toEqual([first.id, third.id,],);
+  });
+
+  test("discard of an unknown id is a no-op returning false", () => {
+    const store = createOutbox({ storage: fakeStorage(), },);
+    store.enqueue({ chatId: "chat-a", idempotencyKey: "key-1", body: '{"content":"first"}', },);
+
+    expect(store.discard("no-such-id",),).toBe(false,);
+    expect(store.depth(),).toBe(1,);
+  });
+
+  test("discard during a drain round does not clobber the round's writes", async () => {
+    const store = createOutbox({ storage: fakeStorage(), },);
+    const [first, second,] = enqueueTwo(store,);
+
+    // Slow transport: the discard lands while the round is between sends.
+    const report = await store.drain(async (entry,) => {
+      if (entry.id === first.id) {
+        expect(store.discard(second.id,),).toBe(true,);
+      }
+
+      return { ok: true, status: 201, };
+    },);
+
+    expect(report.delivered.map((entry,) => entry.id),).toEqual([first.id,],);
+    expect(store.depth(),).toBe(0,);
+  });
+});

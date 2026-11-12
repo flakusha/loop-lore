@@ -1514,7 +1514,12 @@
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
     "promoteToLoreFailed": "Could not create the lorebook entry",
-    "queuedOffline": "В очереди (офлайн)"
+    "queuedOffline": "В очереди (офлайн)",
+    "outboxBadgeTitle": "Оффлайн-отправки в очереди: {count}",
+    "outboxEmpty": "Очередь пуста — оффлайн-отправки доставляются автоматически.",
+    "outboxQueuedAt": "В очереди с {time}",
+    "outboxDiscard": "Убрать",
+    "outboxDiscardConfirm": "Убрать это сообщение из очереди? Оно не будет отправлено."
   },
   "personas": {
     "title": "Personas",

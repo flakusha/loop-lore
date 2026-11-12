@@ -46,6 +46,7 @@ import "./notification-center";
 import "./notifications";
 import "./npc";
 import "./omni-search";
+import "./outbox-badge";
 import "./personas";
 import "./planning-kanban";
 import "./professions";

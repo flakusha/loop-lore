@@ -1514,7 +1514,12 @@
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
     "promoteToLoreFailed": "Could not create the lorebook entry",
-    "queuedOffline": "En cola (sin conexión)"
+    "queuedOffline": "En cola (sin conexión)",
+    "outboxBadgeTitle": "Envíos sin conexión en cola: {count}",
+    "outboxEmpty": "Nada en cola: los envíos sin conexión se entregan automáticamente.",
+    "outboxQueuedAt": "En cola {time}",
+    "outboxDiscard": "Descartar",
+    "outboxDiscardConfirm": "¿Descartar este mensaje en cola? No se enviará."
   },
   "personas": {
     "title": "Personas",
