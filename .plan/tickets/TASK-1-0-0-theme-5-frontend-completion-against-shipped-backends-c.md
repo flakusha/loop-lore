@@ -3,7 +3,7 @@
 
 # TASK: 1.0.0 THEME 5: Frontend completion against shipped backends (contract-hardened)
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 
@@ -21,6 +21,8 @@ Scope note: serves Required gallery/search/frontend-completion items (UI over sh
 **Caveats:** TOCTOU: age-gate status checked at send time, not render time. Security: age-gate enforcement is server-side; UI is display only. Authorization: admin surfaces keep requirePermission gates. Parallelism: contract-gate tests scan static files, no shared state. Partial failure: failed landing rebases, never force-pushes. Rollback: UI-only slices revert without migration changes. Observability: contract-gate violations fail the check with file:line.
 
 **Context:**
+
+Implementation note (2026-11-12, agegate-sendtime worktree, dev @ feb3823b): server-side age-gate SEND-TIME enforcement is now present. `enforceAgeGate` (src/routes/messages/guards.ts) runs in the shared send-intake gate chain (src/routes/messages/send-intake.ts — covers POST /chats/:/messages solo sends AND the loop-lore-facade chat.send op), in the forward handler (src/routes/messages/forward.ts), and at chat creation (src/routes/chats/create.ts checkAgeGate). Residual gap closed: the scheduled-message dispatcher (src/chat/scheduled/dispatcher.ts dispatchDue) now runs `enforceAgeGate` per row — an unpassed author's due message is HELD (stays pending, retried next pass, same semantics as quiet hours) instead of landing as a user message. Proactive send-handler (src/routes/proactive-messaging/send-handler.ts) only triggers character auto-gen and inserts no user message — judged out of gate scope. Tests: src/chat/scheduled/scheduled.test.ts (age-gate hold/deliver/regain-pass) + src/routes/messages/age-gate-send.test.ts (20 pass / 0 fail).
 
 (fill in before starting: why this change, constraints, alternatives considered.)
 
