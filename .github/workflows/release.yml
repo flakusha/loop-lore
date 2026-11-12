@@ -25,7 +25,9 @@ jobs:
     name: Verify (post-merge gate)
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/'))
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    # See ci.yml: the browser gate inside `bun run check:ci` has a 45 min
+    # budget of its own and runs last - the job timeout has to exceed it.
+    timeout-minutes: 90
     permissions:
       contents: read
     steps:
@@ -51,6 +53,13 @@ jobs:
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      # `bun run check:ci` runs the browser gate (e2e - browser (baseline)),
+      # so this path needs a Chromium as well - without it the gate fails
+      # with a missing-browser error and the release can never go green.
+      # Installed WITHOUT `--with-deps` for the reason documented in ci.yml.
+      - name: Install Playwright browsers
+        run: bunx playwright install chromium
 
       - name: Run quality checks
         run: bun run check:ci
