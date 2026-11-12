@@ -7,6 +7,12 @@
  * The fields a card carries but the actor row has no column for - the card
  * tags and the card's own `extensions` blob - must survive the round trip,
  * and the lorebook activation mode must not be dropped on the way in.
+ *
+ * Resource contract: this file owns ONE in-memory SQLite database (created in
+ * `beforeAll`, destroyed in `afterAll` - no fixed path, no port, no file), so
+ * it is safe to run beside the rest of the suite. Each test inserts its own
+ * actor under its own `display_name` ("Aria", "Wanderer") and reads that row
+ * back by that name, so the cases share no rows and pass in any order.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
