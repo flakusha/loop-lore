@@ -33,6 +33,12 @@ const WIRED = workflow(
 /** A job that runs a browser-backed step with no browser installed. */
 const BARE = workflow(job("verify", step("Run quality checks", "bun run check:ci",),),);
 
+/**
+ * Resource contract: every case is PURE over strings - no temp directory,
+ * no port, no database, no shared mutable state. Each case owns only its own
+ * workflow literal, so the cases are order-independent and safe to run in
+ * parallel; the last case only READS the repo's workflow files.
+ */
 describe("checkReleaseGateWiring", () => {
   test("a workflow that installs the browser first passes", () => {
     expect(checkReleaseGateWiring([{ path: "ci.yml", text: WIRED, },],),).toEqual([],);
