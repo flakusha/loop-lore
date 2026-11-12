@@ -9,7 +9,7 @@
 
 
 **Status:** Done
-**Status Note:** FIXED (issue 6465282) — local `ci` runs the browser suite between `test:e2e` and `build` and the CI `build` job depends on `test-browser` (10f8e5287); this branch closes the release-path half: `release.yml` + `dev-release.yml` install a Chromium before the gate suite runs, CI installs Chromium without `--with-deps` (the apt font pull fails with DNS errors on the runner image while all 26 shared libraries are already present), the gate-suite job timeouts now outlast the browser gate's own 45-minute budget, and the `wiring - check` gate fails when a workflow runs a browser-backed step without installing a browser first. Controlled-failure evidence: one injected failing browser file made the suite report `1/51 files failed` and exit 1 (all 50 real spec files green in the same run), so the `&&` chain in `bun run ci` stops before `build`.
+**Status Note:** FIXED (issue 6465282) — local `ci` runs the browser suite between `test:e2e` and `build` and the CI `build` job depends on `test-browser` (10f8e5287); this branch closes the release-path half: `release.yml` + `dev-release.yml` install a Chromium before the gate suite runs, CI installs Chromium without `--with-deps` (the apt font pull fails with DNS errors on the runner image while all 26 shared libraries are already present), the gate-suite job timeouts now outlast the browser gate's own 45-minute budget, and the `wiring - check` gate fails when a workflow JOB runs a browser-backed step without installing a browser first in that same job. Controlled-failure evidence: one injected failing browser file made the suite report `1/51 files failed` and exit 1 (all 50 real spec files green in the same run), so the `&&` chain in `bun run ci` stops before `build`.
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-release-010
@@ -62,7 +62,7 @@ into the release gate.
 - [x] No regression to existing `test:unit`, `test:e2e`, or `build` ordering.
 - [x] The release and dev-release workflows install a browser before the gate suite runs.
 - [x] The gate-suite job timeouts outlast the browser gate's own budget.
-- [x] The `wiring - check` gate fails when a workflow runs a browser-backed step without installing a browser first.
+- [x] The `wiring - check` gate fails when a workflow job runs a browser-backed step without installing a browser first in that same job.
 
 
 git issue: 6465282

@@ -22,29 +22,65 @@ export interface WorkflowFile {
 
 /** The step that provisions the browser the browser gate drives. */
 const BROWSER_STEP = /^\s*run:.*playwright install/;
-/** A step that drives a real browser and therefore needs one installed. */
-const BROWSER_NEEDING_STEP = /^\s*run:.*(bun run check:ci|bun run test:e2e:browser)/;
+/**
+ * A step that drives a real browser and therefore needs one installed: the
+ * gate suite (which contains the browser gate), the local `ci` chain (which
+ * ends in the browser suite), and the browser suites themselves.
+ */
+const BROWSER_NEEDING_STEP = /^\s*run:.*bun run (check:ci|ci|test:all|test:e2e:browser|test:e2e:smoke)\b/;
+/** A workflow job key, at the two-space indent GitHub Actions uses. */
+const JOB_KEY = /^ {2}[A-Za-z0-9_-]+:\s*$/;
+
+interface WorkflowJob {
+  /** Job name, as written in the workflow. */
+  readonly name: string;
+  /** The job's lines. */
+  readonly lines: string[];
+}
 
 /**
- * Check that every workflow installs a browser before a browser-backed step.
+ * Split a workflow into its jobs. Text outside a job (the `on:`/`env:`
+ * blocks) carries no steps and is dropped.
+ * @param text - Workflow file contents.
+ * @returns The jobs, in file order.
+ */
+function splitJobs(text: string,): WorkflowJob[] {
+  const jobs: WorkflowJob[] = [];
+  let current: WorkflowJob | undefined;
+  for (const line of text.split("\n",)) {
+    if (JOB_KEY.test(line,)) {
+      current = { name: line.trim().replace(/:$/, "",), lines: [], };
+      jobs.push(current,);
+      continue;
+    }
+    current?.lines.push(line,);
+  }
+  return jobs;
+}
+
+/**
+ * Check that every workflow job installs a browser before its browser-backed
+ * step.
  * @param workflows - Workflow files to inspect.
  * @returns One message per violation; empty when the wiring is sound.
  */
 export function checkReleaseGateWiring(workflows: readonly WorkflowFile[],): string[] {
   const errors: string[] = [];
   for (const workflow of workflows) {
-    const lines = workflow.text.split("\n",);
-    const needsAt = lines.findIndex((line,) => BROWSER_NEEDING_STEP.test(line,));
-    if (needsAt === -1) { continue; }
-    const installAt = lines.findIndex((line,) => BROWSER_STEP.test(line,));
-    if (installAt === -1) {
-      errors.push(
-        `${workflow.path}: runs a browser-backed step but never installs a browser - the browser gate cannot pass`,
-      );
-    } else if (installAt > needsAt) {
-      errors.push(
-        `${workflow.path}: installs the browser AFTER the browser-backed step - that step would run without one`,
-      );
+    for (const job of splitJobs(workflow.text,)) {
+      const lines = job.lines;
+      const needsAt = lines.findIndex((line,) => BROWSER_NEEDING_STEP.test(line,));
+      if (needsAt === -1) { continue; }
+      const installAt = lines.findIndex((line,) => BROWSER_STEP.test(line,));
+      if (installAt === -1) {
+        errors.push(
+          `${workflow.path} [${job.name}]: runs a browser-backed step but never installs a browser - the browser gate cannot pass`,
+        );
+      } else if (installAt > needsAt) {
+        errors.push(
+          `${workflow.path} [${job.name}]: installs the browser AFTER the browser-backed step - that step would run without one`,
+        );
+      }
     }
   }
   return errors;

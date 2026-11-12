@@ -6,31 +6,55 @@ import { checkReleaseGateWiring, readWorkflowFiles, } from "./release-gate-wirin
 
 const ROOT = import.meta.dir + "/../..";
 
-/** A workflow that installs the browser before the step that needs it. */
-const WIRED = [
-  "      - name: Install Playwright browsers",
-  "        run: bunx playwright install chromium",
-  "",
-  "      - name: Run local gate suite",
-  "        run: bun run check:ci",
-].join("\n",);
+/** A workflow with the given job blocks. */
+function workflow(...blocks: string[]): string {
+  return ["jobs:", ...blocks,].join("\n",);
+}
+
+/** One workflow job: the job key and its steps. */
+function job(name: string, steps: string[],): string {
+  return [`  ${name}:`, "    steps:", ...steps,].join("\n",);
+}
+
+/** One workflow step, as the two lines GitHub Actions writes it. */
+function step(name: string, run: string,): string[] {
+  return [`      - name: ${name}`, `        run: ${run}`,];
+}
+
+/** A job that installs the browser before the step that needs it. */
+const WIRED = workflow(
+  job("gates", [
+    ...step("Install Playwright browsers", "bunx playwright install chromium",),
+    "",
+    ...step("Run local gate suite", "bun run check:ci",),
+  ],),
+);
+
+/** A job that runs a browser-backed step with no browser installed. */
+const BARE = workflow(job("verify", step("Run quality checks", "bun run check:ci",),),);
 
 describe("checkReleaseGateWiring", () => {
   test("a workflow that installs the browser first passes", () => {
     expect(checkReleaseGateWiring([{ path: "ci.yml", text: WIRED, },],),).toEqual([],);
   });
 
-  test("a workflow that never installs a browser is reported", () => {
+  test("a job that never installs a browser is reported", () => {
     const errors = checkReleaseGateWiring([
-      { path: "release.yml", text: "        run: bun run check:ci", },
+      { path: "release.yml", text: BARE, },
     ],);
     expect(errors.length,).toBe(1,);
     expect(errors[0],).toContain("never installs a browser",);
   });
 
-  test("a workflow that installs the browser too late is reported", () => {
+  test("a job that installs the browser too late is reported", () => {
+    const text = workflow(
+      job("verify", [
+        ...step("Run quality checks", "bun run check:ci",),
+        ...step("Install Playwright browsers", "bunx playwright install chromium",),
+      ],),
+    );
     const errors = checkReleaseGateWiring([
-      { path: "release.yml", text: "        run: bun run check:ci\n" + WIRED, },
+      { path: "release.yml", text, },
     ],);
     expect(errors.length,).toBe(1,);
     expect(errors[0],).toContain("AFTER",);
@@ -38,16 +62,45 @@ describe("checkReleaseGateWiring", () => {
 
   test("a comment naming the command is not a step", () => {
     const errors = checkReleaseGateWiring([
-      { path: "release.yml", text: "      # `bun run check:ci` runs the browser gate\n", },
+      { path: "release.yml", text: workflow(job("verify", ["      # `bun run check:ci` runs the browser gate",],),), },
     ],);
     expect(errors,).toEqual([],);
   });
 
-  test("a workflow without a browser-backed step is ignored", () => {
+  test("a job without a browser-backed step is ignored", () => {
     const errors = checkReleaseGateWiring([
-      { path: "audit.yml", text: "        run: bun run lint:eslint", },
+      { path: "audit.yml", text: workflow(job("audit", step("Lint", "bun run lint:eslint",),),), },
     ],);
     expect(errors,).toEqual([],);
+  });
+
+  test("an install in another job does not cover the job that runs the gate", () => {
+    const text = workflow(
+      job("provision", step("Install Playwright browsers", "bunx playwright install chromium",),),
+      job("verify", step("Run quality checks", "bun run check:ci",),),
+    );
+    const errors = checkReleaseGateWiring([
+      { path: "release.yml", text, },
+    ],);
+    expect(errors.length,).toBe(1,);
+    expect(errors[0],).toContain("verify",);
+  });
+
+  test("the local ci chain counts as browser-backed", () => {
+    const errors = checkReleaseGateWiring([
+      { path: "ci.yml", text: workflow(job("gates", step("CI", "bun run ci",),),), },
+    ],);
+    expect(errors.length,).toBe(1,);
+  });
+
+  test("the browser E2E suite counts as browser-backed", () => {
+    const errors = checkReleaseGateWiring([
+      {
+        path: "ci.yml",
+        text: workflow(job("test-browser", step("Browser E2E Tests", "bun run test:e2e:browser",),),),
+      },
+    ],);
+    expect(errors.length,).toBe(1,);
   });
 
   test("the repo workflows install the browser before the browser-backed step", async () => {
