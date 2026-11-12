@@ -88,7 +88,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   }
 
   /**
-   * Stored-setup fallback (TASK-1-0-0 gap): when no config-file sd provider
+   * Stored-setup fallback (TASK-1-0-0 gap): when NO config-file sd provider
    * is configured, a healthy stored sd.cpp setup serves edit runs. Probed
    * with the failover discovery gate; unreachable setups are skipped with a
    * structured reason. Cached like a config-file pick once resolved.
@@ -96,6 +96,13 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   private async ensureStoredFallback(): Promise<void> {
     if (this.config || this.storedFallbackTried) { return; }
     this.storedFallbackTried = true;
+
+    // A config-file provider is authoritative: when one exists the stored
+    // walk never runs — even if its URL later fails validation (the pick
+    // fails exactly as before). This keeps the BYO credential resolution
+    // (resolveEditApiKey, keyed by the config pick's name) and the dispatch
+    // on the same instance: a key for backend A is never handed to backend B.
+    if (pickSdProvider(loadConfig().generation.providers.sd, "edit",)) { return; }
 
     const stored = await pickStoredSdCppProvider(getDatabase(), "edit",);
     if (!stored) { return; }
