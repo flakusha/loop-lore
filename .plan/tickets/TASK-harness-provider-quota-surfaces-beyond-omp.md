@@ -3,7 +3,7 @@
 
 # TASK: Harness provider quota surfaces beyond omp
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-external-harness-acp
@@ -22,3 +22,5 @@ Only the omp adapter resolves non-null quota reports (src/integrations/harness/o
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-12 registry-driven close: git issue 56a6267 (registry tip: f4ca8761b Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # TASK: 1.0.0 THEME 1: Operator-correct agentic runtime (harness ladder first)
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -24,10 +24,10 @@ Scope note: serves Required harness/RSI/ACP-drivers/orchestration/model-grading-
 
 **Context:**
 
-Verified 2026-11-12: AC1 implementation is present on dev (see Rationale note). Harness suites green: isolation-gate + profile-selector + admin-settings + provider-tos (54 tests, 2026-11-12).
+Verified 2026-11-12: AC1 implementation is present on dev (see Rationale note). Harness suites green: isolation-gate + profile-selector + admin-settings + provider-tos + routes/harness + admin-harness-settings (95 tests, 2026-11-12). Docs: `docs/frontend/admin.md` ## Harness (enable switch, ToS matrix, run telemetry).
 
 **Acceptance Criteria:**
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated
+- [x] Documentation updated (`docs/frontend/admin.md` ## Harness: enable switch, ToS matrix, run telemetry; 2026-11-12)

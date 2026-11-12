@@ -25265,7 +25265,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-theme-1-operator-correct-agentic-runtime-harness-ladde.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-THEME-2-CARD-PORTABILITY-WITHOUT-SILENT-LOSS-IMPORT-EX": {
     "hash": "442dc3b",
@@ -32259,7 +32259,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-browser-suite-release-gate-wiring.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "Browser suite must gate release artifacts",
     "type": "TASK"
@@ -45201,7 +45201,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-provider-quota-surfaces-beyond-omp.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "56a6267"
   },
   "TASK-HARNESS-PROVIDER-TOS-USAGE-CLASS-MATRIX": {
@@ -59848,7 +59848,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-seed-codex-and-claude-model-capability-rows-for-harness-enri.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "2350e43"
   },
   "TASK-SEED-CORPORA-10K-SEEDS-PER-FUZZING-TARGET": {

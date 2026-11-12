@@ -3,7 +3,7 @@
 
 # TASK: Seed codex and claude model capability rows for harness enrichment
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-external-harness-acp
@@ -22,3 +22,5 @@ Harness model discovery enriches provider/id model ids from the admin model-capa
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-12 registry-driven close: git issue 2350e43 (registry tip: 630d045db Konstantin Fedotov Close issue)
