@@ -24,7 +24,7 @@ export interface ImageGenOptions {
   lora?: LoRAConfig;
   /** BYO API key for this request (resolved user key). When set it overrides
    * the server-configured key on transports that send auth (openai, sdapi,
-   * sd.cpp). ComfyUI's client has no auth seam and ignores it. */
+   * sd.cpp, comfyui Bearer seam). */
   apiKey?: string;
 }
 

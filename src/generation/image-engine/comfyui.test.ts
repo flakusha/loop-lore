@@ -214,4 +214,79 @@ describe("generateComfyUI", () => {
     const loraNodes = Object.values(parsed.prompt,).filter((n,) => n.class_type === "LoraLoader");
     expect(loraNodes,).toHaveLength(0,);
   });
+
+  it("forwards the resolved BYO key as a Bearer auth header", async () => {
+    const png = Buffer.from("comfy-png",);
+    let authHeaders: unknown;
+    globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
+      const target = String(url,);
+      if (target.endsWith("/prompt",)) {
+        authHeaders = init?.headers;
+        return new Response(JSON.stringify({ prompt_id: "p-4", },), { status: 200, },);
+      }
+
+      if (target.includes("/history/",)) {
+        return new Response(
+          JSON.stringify({
+            "p-4": {
+              prompt_id: "p-4",
+              status: "completed",
+              outputs: { "9": { images: [{ filename: "gen.png", subfolder: "", type: "output", },], }, },
+            },
+          },),
+          { status: 200, },
+        );
+      }
+
+      if (target.includes("/view",)) {
+        return new Response(png, { status: 200, headers: { "Content-Type": "image/png", }, },);
+      }
+
+      throw new Error(`unexpected stub call: ${target}`,);
+    }) as typeof fetch;
+
+    const outcome = await generateComfyUI(CONFIG, { ...OPTS, apiKey: "byo-key", },);
+
+    expect(outcome.ok,).toBe(true,);
+    expect(authHeaders,).toEqual({ authorization: "Bearer byo-key", },);
+  });
+
+  it("falls back to the provider-configured apiKey when no BYO key resolves", async () => {
+    const png = Buffer.from("comfy-png",);
+    let authHeaders: unknown;
+    globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
+      const target = String(url,);
+      if (target.endsWith("/prompt",)) {
+        authHeaders = init?.headers;
+        return new Response(JSON.stringify({ prompt_id: "p-5", },), { status: 200, },);
+      }
+
+      if (target.includes("/history/",)) {
+        return new Response(
+          JSON.stringify({
+            "p-5": {
+              prompt_id: "p-5",
+              status: "completed",
+              outputs: { "9": { images: [{ filename: "gen.png", subfolder: "", type: "output", },], }, },
+            },
+          },),
+          { status: 200, },
+        );
+      }
+
+      if (target.includes("/view",)) {
+        return new Response(png, { status: 200, headers: { "Content-Type": "image/png", }, },);
+      }
+
+      throw new Error(`unexpected stub call: ${target}`,);
+    }) as typeof fetch;
+
+    const outcome = await generateComfyUI(
+      { ...CONFIG, apiKey: "config-key", },
+      OPTS,
+    );
+
+    expect(outcome.ok,).toBe(true,);
+    expect(authHeaders,).toEqual({ authorization: "Bearer config-key", },);
+  });
 });

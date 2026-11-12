@@ -5,6 +5,7 @@ import type { ImageProviderConfig, } from "../../config/schema";
 import { listSdProviders, } from "../../config/schema";
 import { validateProviderUrl, } from "../../utils/url-validation";
 import { generateComfyUI, } from "./comfyui";
+import { probeComfyUI, } from "./comfyui-discovery";
 import { failure, } from "./helpers";
 import { generateOpenAI, } from "./openai";
 import { sdServerAuthHeaders, } from "./sd-server-jobs";
@@ -90,8 +91,42 @@ export async function sdCppSkipAttempt(
 
   if (probe.reachable) { return null; }
 
+  return skipAttemptFor(candidate.name, probe,);
+}
+
+/**
+ * Discovery gate for one ComfyUI failover candidate — the same mechanics as
+ * the sd.cpp gate, against the native `/system_stats` readiness endpoint.
+ * @param candidate - the ComfyUI provider candidate
+ * @param apiKey - resolved key for this candidate
+ * @returns the skip attempt when the instance is unreachable, else null
+ */
+export async function comfyUiSkipAttempt(
+  candidate: ImageProviderConfig,
+  apiKey: string | undefined,
+): Promise<FailoverAttempt | null> {
+  const probe = await probeComfyUI({
+    baseUrl: candidate.baseUrl,
+    timeoutMs: Math.min(candidate.timeout, FAILOVER_PROBE_TIMEOUT_MS,),
+    headers: sdServerAuthHeaders(apiKey ?? candidate.apiKey,),
+  },);
+
+  if (probe.reachable) { return null; }
+
+  return skipAttemptFor(candidate.name, probe,);
+}
+
+/**
+ * @param providerName - the candidate's instance name
+ * @param probe - the unreachable probe outcome (sd.cpp or ComfyUI shape)
+ * @returns the structured skip attempt
+ */
+function skipAttemptFor(
+  providerName: string,
+  probe: { reason: string; detail: string; httpStatus?: number; reachable: false },
+): FailoverAttempt {
   return {
-    provider: candidate.name,
+    provider: providerName,
     outcome: "skipped",
     reason: `${probe.reason}: ${probe.detail}`,
     ...(probe.httpStatus !== undefined ? { status: probe.httpStatus, } : {}),
@@ -135,10 +170,11 @@ async function attemptCandidate(
  * on the first candidate only — per-provider resolution takes over after a
  * failed attempt so a key for backend A never bills backend B.
  *
- * sd.cpp candidates pass a discovery gate first: an instance whose native
- * `/sdcpp/v1/capabilities` probe fails is skipped with a structured reason
- * instead of paying a doomed generation attempt. Every candidate's skip or
- * failure is recorded on the returned failure outcome (`attempts`).
+ * sd.cpp and ComfyUI candidates pass a discovery gate first: an instance
+ * whose native probe (`/sdcpp/v1/capabilities`, `/system_stats`) fails is
+ * skipped with a structured reason instead of paying a doomed generation
+ * attempt. Every candidate's skip or failure is recorded on the returned
+ * failure outcome (`attempts`).
  * @param providers - All configured SD providers (may be undefined)
  * @param purpose - What the provider will be used for
  * @param opts - Generation request inputs (no per-attempt key needed)
@@ -146,6 +182,21 @@ async function attemptCandidate(
  * @returns A discriminated outcome; the LAST candidate's failure — carrying
  * the per-candidate `attempts` record — when every backend fails or is skipped
  */
+/**
+ * Discovery gate for one local-engine failover candidate (sd.cpp or ComfyUI).
+ * @param candidate - the provider candidate
+ * @param apiKey - resolved key for this candidate
+ * @returns the skip attempt when the instance is unreachable, else null
+ */
+async function discoverySkipAttempt(
+  candidate: ImageProviderConfig,
+  apiKey: string | undefined,
+): Promise<FailoverAttempt | null> {
+  if (candidate.apiFamily === "sdcpp") { return sdCppSkipAttempt(candidate, apiKey,); }
+  if (candidate.apiFamily === "comfyui") { return comfyUiSkipAttempt(candidate, apiKey,); }
+  return null;
+}
+
 export async function generateImagesWithFailover(
   providers: ImageProviderConfig[] | undefined,
   purpose: "generate" | "edit",
@@ -167,15 +218,13 @@ export async function generateImagesWithFailover(
       ? opts.apiKey ?? await resolveApiKey?.(candidate.name,)
       : await resolveApiKey?.(candidate.name,);
 
-    // sd.cpp discovery gate (TASK-1-0-0-gap-sd-cpp): an undiscovered or
-    // unreachable instance is skipped with a structured reason instead of a
-    // doomed generation attempt.
-    if (candidate.apiFamily === "sdcpp") {
-      const skip = await sdCppSkipAttempt(candidate, apiKey,);
-      if (skip) {
-        attempts.push(skip,);
-        continue;
-      }
+    // Local-engine discovery gate (TASK-1-0-0-gap-sd-cpp): an undiscovered
+    // or unreachable sd.cpp/ComfyUI instance is skipped with a structured
+    // reason instead of a doomed generation attempt.
+    const skip = await discoverySkipAttempt(candidate, apiKey,);
+    if (skip) {
+      attempts.push(skip,);
+      continue;
     }
 
     last = await attemptCandidate(candidate, { ...opts, apiKey, }, attempts,);
