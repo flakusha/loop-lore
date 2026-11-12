@@ -19,7 +19,8 @@ import { getLogger, type Logger, setGlobalLogger, } from "../../logger";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
-import { commandActiveChat, dispatchCommand, fetchChatAndRole, } from "./command";
+import { dispatchCommand, } from "./command";
+import { commandActiveChat, fetchChatAndRole, } from "./command-context";
 
 beforeAll(() => {
   createLogger({ level: "error", },);

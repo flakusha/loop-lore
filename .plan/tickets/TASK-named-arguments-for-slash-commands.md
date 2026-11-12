@@ -20,6 +20,19 @@ Extend the command parser with --key value named args (SillyTavern namedArgument
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [ ] Documentation updated (deferred: command palette help text for named args)
+
+## Implementation note (scripting-lite lane, 2026-11-12)
+
+Parser: `src/assistant/command-parser.ts` — `ParsedCommand` gained `named: Record<string, string>` and `positional: string[]`; `args` keeps EVERY token (flags and consumed values included) so legacy handlers that scan the raw list (`/rewrite`'s old `parseStyle`, audit hashing) keep working unchanged.
+
+Syntax: `--key value`, `--key=value`, `--key "quoted value"` (quotes group words, stripped), `--flag` → `""`. Keys are lowercased.
+
+Design decisions:
+- Named keys REQUIRE the `--` prefix: a non-flag token containing `=` stays positional, so dice notation (`4d6-2`) and `/whatif` free text (`1+1=2`) can never parse as arguments. The brief's `name="quoted value"` no-dash form was deliberately dropped for this reason.
+- A bare `--key` consumes the next token as its value unless that token starts another `--` flag.
+- Tokenizer is quote-aware (double/single, mid-word quotes like `--style="a b"`), unterminated quote consumes the rest.
+- Dispatch attaches `ctx.namedArgs` (valve-resolved when the command declares valves) and `ctx.positionalArgs` to the `CommandContext` per stage.
+
