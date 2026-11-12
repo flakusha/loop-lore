@@ -11,7 +11,10 @@
  *
  * Each entry returns a `descriptionKey` pointing at the existing
  * `commands.<name>` i18n catalog so the FE can localize the description
- * without the BE having to load locale catalogs per request.
+ * without the BE having to load locale catalogs per request. Commands that
+ * declare named-argument valves additionally carry a `valves` summary —
+ * the schema reduced to display fields (name, type, default, enum), never
+ * raw TypeBox internals.
  *
  * The endpoint is auth-gated like the rest of the assistant surface; it
  * requires the calling user. Without `chatId` it surfaces no per-user
@@ -21,7 +24,8 @@
  */
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
-import { getCommandRequirement, listCommands, } from "../../assistant/commands/registry";
+import { getCommandRequirement, getCommandValves, listCommands, } from "../../assistant/commands/registry";
+import { type CommandValveSpec, valveSpecs, } from "../../assistant/commands/valves";
 import { type DB, getDatabase, } from "../../db/index";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas/primitives";
 import { requireUserId, } from "../http-utils";
@@ -34,6 +38,19 @@ interface CommandDescriptor {
   /** Minimum participant role, when the registry pins one (display-only). */
 
   requiredRole?: string;
+  /** Declared named-argument valves, when the command declares any. */
+  valves?: CommandValveSpec[];
+}
+
+/**
+ * Advertised valve specs for one command, omitted entirely when the command
+ * declares no valves (the shape stays identical to the pre-valve response).
+ * @param name - Command name
+ * @returns the spread-able valves field
+ */
+function commandValves(name: string,): { valves?: CommandValveSpec[] } {
+  const schema = getCommandValves(name,);
+  return schema === undefined ? {} : { valves: valveSpecs(schema,), };
 }
 
 /**
@@ -59,6 +76,7 @@ export function commandsRoutes(opts: { prefix?: string; database?: Kysely<DB> },
           name,
           descriptionKey: `commands.${name}`,
           requiredRole: getCommandRequirement(name,),
+          ...commandValves(name,),
         }));
 
         // Chat-scoped display hint only: the slash dispatch gate stays the
