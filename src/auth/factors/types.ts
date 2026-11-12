@@ -52,7 +52,7 @@ export interface IssueChallengeParams {
   userId: string;
   factorId: string;
   purpose: ChallengePurpose;
-  /** Lifetime in ms; defaults to DEFAULT_CHALLENGE_TTL_MS. */
+  /** Lifetime in ms; defaults to 10 minutes. */
   ttlMs?: number;
   /** Clock in epoch ms; defaults to Date.now. */
   now?: () => number;

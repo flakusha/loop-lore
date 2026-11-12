@@ -25,7 +25,7 @@ import type {
 } from "./types";
 
 /** Default challenge lifetime in ms — 10 minutes. */
-export const DEFAULT_CHALLENGE_TTL_MS = 10 * 60 * 1000;
+const DEFAULT_CHALLENGE_TTL_MS = 10 * 60 * 1000;
 
 /** Failed code attempts allowed before a challenge is refused. */
 export const MAX_CHALLENGE_ATTEMPTS = 5;
