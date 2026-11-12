@@ -7,6 +7,8 @@ import { auditRoutes, } from "./audit";
 import { auxTelemetryRoutes, } from "./aux-telemetry";
 import { carriageRoutes, } from "./carriage";
 import { chatsRoutes, } from "./chats";
+import { comfyUISetupRoutes, } from "./comfyui-setup";
+import { comfyUIStatusRoutes, } from "./comfyui-status";
 import { cronRoutes, } from "./cron";
 import { dangerZoneRoutes, } from "./danger-zone";
 import { dbBackupRoutes, } from "./db-backup";
@@ -84,7 +86,9 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(modelCapabilitiesRoutes(opts, prefix,),)
       .use(newsRoutes(opts, prefix,),)
       .use(sdStatusRoutes(opts, prefix,),)
+      .use(comfyUIStatusRoutes(opts, prefix,),)
       .use(sdCppSetupRoutes(opts, prefix,),)
+      .use(comfyUISetupRoutes(opts, prefix,),)
       .use(systemConfigRoutes(opts, prefix,),)
       .use(setupProvidersRoutes(opts, prefix,),)
       .use(worldsRoutes(opts, prefix,),)
