@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import { Elysia, } from "elysia";
 import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
+import { Elysia, } from "elysia";
 import { auditRoutes, } from "./audit";
 import { auxTelemetryRoutes, } from "./aux-telemetry";
 import { carriageRoutes, } from "./carriage";
@@ -20,6 +20,7 @@ import { newsRoutes, } from "./news";
 import { providersRoutes, } from "./providers";
 import { resourcesRoutes, } from "./resources";
 import { reviewStatsRoutes, } from "./review-stats";
+import { sdCppSetupRoutes, } from "./sdcpp-setup";
 import { sdStatusRoutes, } from "./sd-status";
 import { seedRoutes, } from "./seed";
 import { setupProvidersRoutes, } from "./setup-providers";
@@ -44,6 +45,9 @@ import { worldsRoutes, } from "./worlds";
  *   GET  /api/admin/setup/providers — list stored provider instances (no secrets)
  *   POST /api/admin/setup/providers — create or update a provider instance
  *   DELETE /api/admin/setup/providers/:name — delete a provider instance
+ *   GET  /api/admin/sd-status/sdcpp — probe every sd.cpp instance (reachability, version, models)
+ *   POST /api/admin/sd-status/sdcpp/setup — create or update an sd.cpp instance (probe-gated)
+ *   DELETE /api/admin/sd-status/sdcpp/setup/:name — delete an sd.cpp instance
  *   GET  /api/admin/model-roles    — get current role assignments
  *   PUT  /api/admin/model-roles/:role — set role override
  *   DELETE /api/admin/model-roles/:role — clear role override
@@ -80,6 +84,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(modelCapabilitiesRoutes(opts, prefix,),)
       .use(newsRoutes(opts, prefix,),)
       .use(sdStatusRoutes(opts, prefix,),)
+      .use(sdCppSetupRoutes(opts, prefix,),)
       .use(systemConfigRoutes(opts, prefix,),)
       .use(setupProvidersRoutes(opts, prefix,),)
       .use(worldsRoutes(opts, prefix,),)

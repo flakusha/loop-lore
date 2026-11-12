@@ -16,6 +16,7 @@ import { resolveActorAccess, } from "../routes/actor-access";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
 import { generateImagesWithFailover, } from "./image-engine";
+import { listStoredSdCppProviders, mergeSdCppSetups, } from "./image-engine/sdcpp-setup";
 import type { LoRAConfig, } from "./lora/types";
 import { userApiKeyResolver, } from "./providers/user-api-key";
 import {
@@ -162,7 +163,14 @@ export async function handleImageGeneration(
 
   const config = loadConfig();
 
-  const configuredSd = listSdProviders(config.generation.providers.sd, "generate",);
+  // Stored sd.cpp setups (admin setup surface) join the failover candidates
+  // immediately — a stored setup replaces a config-file provider with the same
+  // name. One indexed query; empty when the operator saved nothing.
+  const storedSd = await listStoredSdCppProviders(db,);
+  const configuredSd = listSdProviders(
+    mergeSdCppSetups(config.generation.providers.sd, storedSd,),
+    "generate",
+  );
 
   if (configuredSd.length === 0) {
     return Response.json(
