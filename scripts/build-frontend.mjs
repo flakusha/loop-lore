@@ -80,6 +80,13 @@ async function buildBundles() {
   await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/alpine/local-engine.worker.ts`;
   await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/alpine/wllama-engine.worker.ts`;
 
+  // Service worker (TASK-pwa-cached-shell slice 1). IIFE wrapper; deliberately
+  // UNHASHED — the /sw.js registration URL must be stable for the worker's
+  // scope, and Cache-Control on the non-hashed 60s TTL is fine for update
+  // checks. Content versioning lives in SW_CACHE_VERSION inside
+  // pwa/sw-strategy.ts (activate purges older loop-lore-shell-* caches).
+  await $`bun build --target browser --minify --format=iife --outdir ${DIST} ${frontend}/pwa/sw.ts`;
+
   console.log("JS bundles built",);
 }
 

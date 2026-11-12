@@ -1,0 +1,11 @@
+{
+  "name": "loop-lore",
+  "short_name": "loop-lore",
+  "description": "Self-hosted LLM RPG chat platform",
+  "id": "/",
+  "start_url": "/views/chat-list",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#151820",
+  "theme_color": "#151820"
+}

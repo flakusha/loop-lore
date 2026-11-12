@@ -44,6 +44,10 @@ import { enhanceOpenInEditorLinks, } from "./open-in-editor";
 // Lazy-loads @xterm/xterm on first open; upgrades approach-A anchors when
 // web.terminal.enabled.
 import "./terminal-panel";
+// ── 10g. Service-worker registration (TASK-pwa-cached-shell slice 1) ──
+// Side-effect module: registers /sw.js on window load; CSP worker-src 'self'
+// already allows the worker script.
+import "./pwa/register";
 // ── 10d. TASK-text-effects-overlays: emotion triggers + status/badge overlays ──
 import {
   applyEmotionFx,
