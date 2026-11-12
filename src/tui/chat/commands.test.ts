@@ -293,6 +293,19 @@ it("drops the hint for settled commands without a usage line", async () => {
   expect(harness.completer.hint(),).toBeNull();
 });
 
+it("leaves Enter and Tab to the caller while the usage hint is up", async () => {
+  const harness = makeUsageCompleter();
+  harness.completer.update("/rewrite --style dr",);
+  await settle();
+
+  // The usage hint must not swallow interaction: nothing is selected, so
+  // accept() yields no commit text (Enter sends) and cycle() reports no
+  // selection to advance (Tab passes through).
+  expect(harness.completer.selected(),).toBeNull();
+  expect(harness.completer.accept(),).toBeNull();
+  expect(harness.completer.cycle(),).toBe(false,);
+});
+
 it("keeps the regen action vocabulary in parity with the backend", () => {
   expect(REGEN_ACTIONS.join("|",),).toBe(
     listMessageActions().map((action,) => action.id).join("|",),
