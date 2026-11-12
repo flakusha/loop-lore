@@ -3,7 +3,7 @@
 
 # TASK: 1.0.0 THEME 2: Card portability without silent loss (import/export parity)
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -62,6 +62,8 @@ already carries tags).
 
 Implementation is complete on the `feat-character-import-parity` branch and
 awaits the operator's landing.
+
+Verified 2026-11-12 on dev @ 9202c0842: both legs are LANDED — import parity (`844da9a84` agnai normalizer + `isAgnaiNative` detection, `ed5b76190` faithful mapping, `5bf389d76` persona-name fix, `0655a15bb` payload-shape gate) and export/tag-routing parity (`card-settings.ts` tags/extensions round-trip through `actors.settings`, export canonical rebuild reads `cardTags`/`cardExtensions`, lorebook `key_type`/`key_groups`/`scan_depth` round-trip). Suites green: agnai + card-settings + card-parity + export.coverage (28 tests, 2026-11-12; parity probes green).
 
 **Acceptance Criteria:**
 
