@@ -28,6 +28,7 @@ import type { MessageCreateBody, } from "../../validation/schemas";
 import { badRequestResponse, jsonCreated, } from "../http-utils";
 import { dispatchCommand, } from "./command";
 import {
+  enforceAgeGate,
   enforceInjectionGate,
   enforceMuteGate,
   enforceVnDecisionGate,
@@ -99,6 +100,12 @@ export async function prepareUserMessage(params: SendIntakeParams,): Promise<Sen
 
   const muteRejection = await enforceMuteGate(database, chatId, actorId,);
   if (muteRejection) { return { ok: false, response: muteRejection, }; }
+
+  // ── Age gate: send-time enforcement (theme-5 AC6) ───────────
+  // Runs beside the mute gate, before idempotency/VN side effects, so a
+  // minor can neither send nor trigger pipeline work in any chat.
+  const ageRejection = await enforceAgeGate(database, actorId,);
+  if (ageRejection) { return { ok: false, response: ageRejection, }; }
 
   // ── Idempotency: short-circuit if a row already covers this key.
   // Runs before any side effect (NSFW audit, backoff resets,
