@@ -141,6 +141,11 @@
           "default": false,
           "description": "Bound/linked travel mode: prompt the LLM to narrate travel and suggest moving the chat to another location/chat when the narrative leaves the current one"
         },
+        "smartRegenGate": {
+          "type": "boolean",
+          "default": false,
+          "description": "Smart-regen decision gate: when enabled, /regen without an explicit action resolves by message-size heuristic to a plain re-roll or an alternate style instead of showing the usage menu"
+        },
         "quotaWindowMs": {
           "type": "integer",
           "default": 86400000,
@@ -2733,6 +2738,34 @@
           "default": false,
           "description": "Master switch. No adapter loads unless this is true."
         },
+        "inbound": {
+          "type": "object",
+          "description": "Inbound MCP/ACP agentic servers (external tools drive loop-lore). Deny-by-default: disabled and principal-less until explicitly configured.",
+          "properties": {
+            "mcpEnabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "acpEnabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "principalUserId": {
+              "type": "string",
+              "default": ""
+            },
+            "principalScope": {
+              "type": "string",
+              "default": "read"
+            }
+          },
+          "required": [
+            "mcpEnabled",
+            "acpEnabled",
+            "principalUserId",
+            "principalScope"
+          ]
+        },
         "email": {
           "type": "object",
           "description": "Email (IMAP/SMTP) integration. Opt-in; disabled by default.",
@@ -2951,6 +2984,7 @@
       },
       "required": [
         "enabled",
+        "inbound",
         "email",
         "matrix",
         "xmpp",
@@ -2989,7 +3023,9 @@
                       "omp",
                       "opencode",
                       "codex",
-                      "claude-code"
+                      "claude-code",
+                      "hermes",
+                      "openclaw"
                     ],
                     "default": "omp",
                     "description": "Which shipped ACP adapter speaks this profile (default omp)"
@@ -3061,6 +3097,17 @@
                   }
                 }
               }
+            }
+          }
+        },
+        "repoAccess": {
+          "type": "object",
+          "description": "RSI repo-root access tier (DANGEROUS, default off): lets the server-resolved internal-service principal execute repo commands and touch repo-root paths (src/, .plan/, migrations, workflows). Every decision is audited to tool_call_audit; the gate fails closed",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Master switch for the repo-access tier. False (default) denies every repo-access execution regardless of principal or grants; only the operator may enable it"
             }
           }
         }
