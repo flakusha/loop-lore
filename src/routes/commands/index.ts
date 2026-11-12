@@ -108,7 +108,12 @@ export function commandsRoutes(opts: { prefix?: string; database?: Kysely<DB> },
         },
         detail: {
           summary: "List registered chat commands",
-          description: "Returns the live command registry the assistant exposes to chat clients.",
+          description: "Returns the live command registry the assistant exposes to chat clients. " +
+            "Each item: name, descriptionKey (i18n catalog key commands.<name>), optional requiredRole " +
+            "(display-only participant-role minimum), and optional valves — the command's named-argument " +
+            "schema reduced to display specs [{ name, type, default?, enum? }] by valveSpecs; omitted when " +
+            "the command declares none. With ?chatId, roleInChat echoes the caller's chat role. " +
+            "The slash dispatch gate remains the enforcement authority.",
           tags: ["Assistant", "Commands",],
         },
       },
