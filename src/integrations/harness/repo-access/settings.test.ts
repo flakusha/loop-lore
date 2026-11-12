@@ -13,6 +13,7 @@ import {
   getRepoAccessSettings,
   initRepoAccessSettings,
   REPO_ACCESS_SETTINGS_ENABLED_KEY,
+  repoAccessSettings,
   resetRepoAccessSettings,
   saveRepoAccessSettings,
 } from "./settings";
@@ -76,5 +77,28 @@ describe("repo-access settings — the dangerous-capability master switch", () =
     initRepoAccessSettings({ enabled: false, },);
     await applyStoredRepoAccessSettings(fixture.db,);
     expect(getRepoAccessSettings().enabled,).toBe(false,);
+  });
+});
+
+describe("repoAccessSettings — the singleton behind the read path", () => {
+  it("is the same store the read function consults (unseeded = off)", () => {
+    expect(repoAccessSettings.isSeeded(),).toBe(false,);
+    expect(repoAccessSettings.get(),).toEqual(getRepoAccessSettings(),);
+    expect(repoAccessSettings.get().enabled,).toBe(false,);
+  });
+
+  it("mirrors the init → override → reset lifecycle", async () => {
+    repoAccessSettings.init({ enabled: true, },);
+    expect(repoAccessSettings.isSeeded(),).toBe(true,);
+    expect(repoAccessSettings.get().enabled,).toBe(true,);
+    expect(getRepoAccessSettings().enabled,).toBe(true,);
+
+    // The persisted admin override still wins through the singleton view.
+    await saveRepoAccessSettings(fixture.db, { enabled: false, },);
+    expect(repoAccessSettings.get().enabled,).toBe(false,);
+
+    repoAccessSettings.reset();
+    expect(repoAccessSettings.isSeeded(),).toBe(false,);
+    expect(repoAccessSettings.get(),).toEqual({ enabled: false, },);
   });
 });

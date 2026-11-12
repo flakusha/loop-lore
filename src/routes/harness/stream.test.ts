@@ -26,7 +26,7 @@ import { appendExecLog, resetExecLogCounters, resetExecLogPath, setExecLogPath, 
 import { buildRunRecord, } from "../../harness/exec-recorder";
 import { fakeFactory, } from "../../integrations/harness/fakes";
 import { getHarnessRuntime, initHarnessRuntime, resetHarnessRuntime, } from "../../integrations/harness/runtime";
-import { harnessStreamRoutes, } from "./stream";
+import { harnessStreamRoutes, openHarnessStream, } from "./stream";
 
 let dir: string;
 
@@ -186,6 +186,33 @@ describe("harnessStreamRoutes", () => {
 
     expect(tail,).toContain("event: jobs",);
     expect(tail,).toContain('"profile":"p"',);
+
+    await reader!.cancel();
+  });
+});
+
+describe("openHarnessStream", () => {
+  it("serves the same SSE surface directly as the route does", async () => {
+    composeRuntime();
+
+    const res = openHarnessStream({ intervalMs: 10, keepaliveMs: 60_000, },);
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("content-type",),).toContain("text/event-stream",);
+
+    const reader = res.body?.getReader();
+    expect(reader,).toBeDefined();
+    // Anchor + immediate jobs snapshot, exactly like the route path.
+    const first = await readChunk(reader!,);
+    expect(first,).toContain("event: jobs",);
+
+    const runId = dispatch("direct-open",);
+    let tail = "";
+    for (let i = 0; i < 3 && !tail.includes(`"runId":"${runId}"`,); i++) {
+      tail += await readChunk(reader!,);
+    }
+
+    expect(tail,).toContain("event: run",);
+    expect(tail,).toContain(`"runId":"${runId}"`,);
 
     await reader!.cancel();
   });

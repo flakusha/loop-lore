@@ -20,6 +20,7 @@ import {
   INBOUND_SETTINGS_MCP_KEY,
   INBOUND_SETTINGS_SCOPE_KEY,
   INBOUND_SETTINGS_USER_KEY,
+  inboundSettings,
   initInboundSettings,
   isInboundSettingsSeeded,
   resetInboundSettings,
@@ -119,5 +120,27 @@ describe("inbound settings store", () => {
     const view = getInboundSettings();
     expect(view.mcpEnabled,).toBe(false,);
     expect(view.principalScope,).toBe("read",);
+  });
+});
+
+describe("inboundSettings — the singleton behind the read path", () => {
+  test("is the same store the read function consults (unseeded)", () => {
+    expect(inboundSettings.isSeeded(),).toBe(false,);
+    expect(inboundSettings.get(),).toEqual(getInboundSettings(),);
+    expect(inboundSettings.get(),).toEqual(FILE_LAYER,);
+  });
+
+  test("mirrors the init → override → reset lifecycle", async () => {
+    inboundSettings.init(FILE_LAYER,);
+    expect(inboundSettings.isSeeded(),).toBe(true,);
+    expect(inboundSettings.get().mcpEnabled,).toBe(false,);
+
+    await saveInboundAdminSettings(db, { acpEnabled: true, principalUserId: "op-2", },);
+    expect(inboundSettings.get().acpEnabled,).toBe(true,);
+    expect(inboundSettings.get(),).toEqual(getInboundSettings(),);
+
+    inboundSettings.reset();
+    expect(inboundSettings.isSeeded(),).toBe(false,);
+    expect(inboundSettings.get().acpEnabled,).toBe(false,);
   });
 });

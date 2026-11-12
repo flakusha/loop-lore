@@ -26,7 +26,7 @@ import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/crea
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { getFacadeRegistry, resetFacadeRegistry, } from "../loop-lore-facade/instance";
 import type { FacadeContext, } from "../loop-lore-facade/types";
-import { ACP_PROTOCOL_VERSION, createAcpAgentHandler, extractReplyText, } from "./agent-server";
+import { ACP_ERRORS, ACP_PROTOCOL_VERSION, createAcpAgentHandler, extractReplyText, } from "./agent-server";
 
 const USER = "acp-agent-user";
 const CHAT = "acp-agent-chat";
@@ -209,5 +209,25 @@ describe("inbound ACP agent server", () => {
     expect(extractReplyText({ text: "there", },),).toBe("there",);
     expect(extractReplyText({ id: "m1", context: {}, },),).toBe(JSON.stringify({ id: "m1", context: {}, },),);
     expect(extractReplyText(null,),).toBe("null",);
+  });
+});
+
+describe("ACP_ERRORS — the JSON-RPC error code table", () => {
+  test("pins the wire codes callers (Studio) match against", () => {
+    expect(ACP_ERRORS.parse,).toBe(-32700,);
+    expect(ACP_ERRORS.methodNotFound,).toBe(-32601,);
+    expect(ACP_ERRORS.invalidParams,).toBe(-32602,);
+    expect(ACP_ERRORS.serverError,).toBe(-32000,);
+    expect(ACP_ERRORS.unknownSession,).toBe(-32002,);
+  });
+
+  test("exposes exactly the five documented codes", () => {
+    expect(Object.keys(ACP_ERRORS,).sort(),).toEqual([
+      "invalidParams",
+      "methodNotFound",
+      "parse",
+      "serverError",
+      "unknownSession",
+    ],);
   });
 });

@@ -23,7 +23,12 @@ import { appendExecLog, resetExecLogCounters, resetExecLogPath, } from "../../ha
 import { buildRunRecord, } from "../../harness/exec-recorder";
 import { fakeFactory, } from "../../integrations/harness/fakes";
 import { getHarnessRuntime, initHarnessRuntime, resetHarnessRuntime, } from "../../integrations/harness/runtime";
-import { harnessMetricsRoutes, } from "./metrics";
+import {
+  harnessMetricsRoutes,
+  harnessScopedFamilies,
+  renderHarnessMetrics,
+} from "./metrics";
+import { PROM_TEXT_MIME, } from "./prometheus";
 
 beforeEach(() => {
   resetHarnessRuntime();
@@ -151,5 +156,77 @@ describe("harnessMetricsRoutes", () => {
         expect(Number.isNaN(Number(value,),),).toBe(false,);
       }
     }
+  });
+});
+
+describe("harnessScopedFamilies", () => {
+  it("renders nothing when the runtime is not composed", async () => {
+    expect(await harnessScopedFamilies(),).toBe("",);
+  });
+
+  it("renders only the admin-scoped families, never the shared scrape families", async () => {
+    composeRuntime();
+    dispatch("chat", "p",);
+
+    const text = await harnessScopedFamilies();
+    // Scoped: dispatch counters by exec-log task type and by profile (lifetime).
+    expect(text,).toContain('loop_lore_harness_dispatch_total{task_type="chat"} 1\n',);
+    expect(text,).toContain('loop_lore_harness_profile_dispatch_total{profile="p"} 1\n',);
+    // Scoped: quota reset surface, configured flavor, cached availability probe.
+    expect(text,).toContain('loop_lore_harness_profile_quota_reset_epoch_seconds{profile="p"} 0\n',);
+    expect(text,).toContain('loop_lore_harness_profile_info{profile="p",flavor="omp"} 1\n',);
+    expect(text,).toContain('loop_lore_harness_profile_available{profile="p"}',);
+    // The shared families stay OUT: they belong to the shared block only.
+    for (
+      const shared of [
+        "loop_lore_harness_runs_total",
+        "loop_lore_harness_errors_total",
+        "loop_lore_harness_spend_usd_total",
+        "loop_lore_harness_errors_by_kind_total",
+        "loop_lore_harness_breaker_open_profiles",
+        "loop_lore_harness_breaker_trips_total",
+        "loop_lore_harness_profile_rpm",
+        "loop_lore_harness_profile_tokens_per_day",
+        "loop_lore_harness_profile_breaker_open",
+      ]
+    ) {
+      expect(text,).not.toContain(shared,);
+    }
+  });
+
+  it("keeps the lifetime by-profile count of a profile that left the config", async () => {
+    composeRuntime();
+    dispatch("aux", "ghost",);
+
+    const text = await harnessScopedFamilies();
+    expect(text,).toContain('loop_lore_harness_profile_dispatch_total{profile="ghost"} 1\n',);
+  });
+});
+
+describe("renderHarnessMetrics", () => {
+  it("renders the shared block first, then the scoped families", async () => {
+    composeRuntime();
+    dispatch("chat", "p",);
+
+    const text = await renderHarnessMetrics();
+    expect(text,).toStartWith("# HELP loop_lore_harness_runs_total",);
+    // Shared block content...
+    expect(text,).toContain("loop_lore_harness_runs_total 1\n",);
+    expect(text,).toContain('loop_lore_harness_profile_rpm{profile="p"}',);
+    // ...followed by the scoped content.
+    expect(text,).toContain('loop_lore_harness_dispatch_total{task_type="chat"} 1\n',);
+    expect(text.indexOf("loop_lore_harness_runs_total",),).toBeLessThan(
+      text.indexOf("loop_lore_harness_dispatch_total",),
+    );
+  });
+
+  it("the route serves the render under the Prometheus exposition content type", async () => {
+    composeRuntime();
+    dispatch("chat", "p",);
+
+    const res = await hit("admin", "/api/v1/harness/metrics",);
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("content-type",),).toBe(PROM_TEXT_MIME,);
+    expect(await res.text(),).toBe(await renderHarnessMetrics(),);
   });
 });
