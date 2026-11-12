@@ -19,6 +19,7 @@ import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import type { Logger, } from "../../logger/types";
 import { NotificationService, } from "../../notifications/service";
+import { enforceAgeGate, } from "../../routes/messages/guards";
 import { prepareContentStorage, } from "../../routes/messages/post";
 import {
   findByIdempotencyKey,
@@ -102,6 +103,15 @@ export async function dispatchDue(
   };
 
   for (const row of await selectDueScheduledMessages(database, now,)) {
+    // Theme-5 send-time enforcement: a parked body lands as a user message,
+    // so the age gate must pass at delivery time too. An unpassed author is
+    // HELD like quiet hours — the row stays pending with its original
+    // send_at and retries once the gate is passed.
+    if (await enforceAgeGate(database, row.author_id,)) {
+      summary.held += 1;
+      continue;
+    }
+
     if (await isQuiet(row.chat_id,)) {
       summary.held += 1;
       continue;

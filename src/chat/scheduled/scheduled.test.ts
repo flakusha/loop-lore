@@ -9,10 +9,12 @@
  * due vs not-yet-due, the quiet-hours hold, a canceled row, and the
  * exactly-once reminder fire.
  */
-import { beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { initAgeGate, } from "../../age-gate/controller";
 import type { Config, } from "../../config/schema";
 import { initSmk, } from "../../crypto";
+import { AgeGateMode, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -424,5 +426,115 @@ describe("dispatchDue — at-rest encryption", () => {
 
     expect(row?.content,).toBe("nothing secret",);
     expect(row?.key_id,).toBeNull();
+  });
+});
+
+describe("dispatchDue — age-gate send-time enforcement", () => {
+  let db: Kysely<DB>;
+  let adultId: string;
+  let minorId: string;
+  let chatId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+
+    adultId = await insertUsers(db, "adult", "Adult", {
+      birth_date: "2000-01-01",
+      age_gate_accepted_at: "2024-06-01T12:00:00.000Z",
+    },);
+
+    minorId = await insertUsers(db, "minor", "Minor",);
+    await insertActors(db, "Adult Actor", { id: adultId as never, actor_type: "user" as never, },);
+    await insertActors(db, "Minor Actor", { id: minorId as never, actor_type: "user" as never, },);
+
+    chatId = uid();
+    await insertChats(db, "Gate Chat", adultId, { id: chatId, } as never,);
+
+    initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
+  },);
+
+  afterAll(() => {
+    // The gate store is module-global; leave it off for later suites.
+    initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None, },);
+  },);
+
+  /** @param authorId @param body */
+  async function parkDue(authorId: string, body: string,): Promise<string> {
+    const result = await scheduleMessage(db, {
+      chatId,
+      authorId,
+      body,
+      sendAt: new Date(Date.now() - 60_000,).toISOString(),
+    },);
+
+    if (!("ok" in result)) { throw new Error(`park failed: ${result.message}`,); }
+    return result.scheduled.id;
+  }
+
+  test("an adult author's due message is delivered", async () => {
+    await parkDue(adultId, "adult delivery",);
+
+    const summary = await dispatchDue(db, testConfig,);
+
+    expect(summary.sent,).toBe(1,);
+    expect(summary.held,).toBe(0,);
+    const rows = await db
+      .selectFrom("messages",)
+      .select("content",)
+      .where("chat_id", "=", chatId,)
+      .where("content", "=", "adult delivery",)
+      .execute();
+
+    expect(rows.length,).toBe(1,);
+  });
+
+  test("a minor author's due message is HELD, not delivered", async () => {
+    const rowId = await parkDue(minorId, "minor hold",);
+
+    const summary = await dispatchDue(db, testConfig,);
+
+    expect(summary.held,).toBe(1,);
+    expect(summary.sent,).toBe(0,);
+    const delivered = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .where("content", "=", "minor hold",)
+      .execute();
+
+    expect(delivered.length,).toBe(0,);
+
+    // HELD semantics: still pending, retried on a later pass.
+    const row = await db
+      .selectFrom("scheduled_messages",)
+      .select("status",)
+      .where("id", "=", rowId,)
+      .executeTakeFirst();
+
+    expect(row?.status,).toBe("pending",);
+  });
+
+  test("once the minor passes the gate, the held row delivers", async () => {
+    await db
+      .updateTable("users",)
+      .set({
+        birth_date: "2000-01-01",
+        age_gate_accepted_at: "2024-06-01T12:00:00.000Z",
+      },)
+      .where("id", "=", minorId,)
+      .execute();
+
+    const summary = await dispatchDue(db, testConfig,);
+
+    expect(summary.sent,).toBe(1,);
+    const delivered = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .where("content", "=", "minor hold",)
+      .execute();
+
+    expect(delivered.length,).toBe(1,);
   });
 });
