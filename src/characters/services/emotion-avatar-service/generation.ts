@@ -12,6 +12,7 @@ import type { EmotionEntry, } from "../../../config/sections/templates";
 import { EmotionType, } from "../../../db/enums";
 import { AssetLinkEntity, } from "../../../db/enums-content";
 import type { DB, } from "../../../db/schema";
+import { pickStoredSdCppProvider, } from "../../../generation/image-engine/sdcpp-pick";
 import type { MattingProvider, } from "../../../generation/matting/types";
 import { getLogger, } from "../../../logger";
 import { validateProviderUrl, } from "../../../utils/url-validation";
@@ -142,7 +143,13 @@ export async function runBatchGeneration(
   // no row behind, so the gallery can never misread a stillborn batch as
   // in-flight work.
   const config = loadConfig();
-  const sdConfig = opts.imageProvider ?? pickSdProvider(config.generation.providers.sd, "generate",);
+  // Stored-setup fallback: when no config-file generation provider exists, a
+  // healthy stored sd.cpp setup serves the batch (probe-gated with the same
+  // discovery gate the generation failover path uses).
+  const sdConfig = opts.imageProvider ??
+    pickSdProvider(config.generation.providers.sd, "generate",) ??
+    await pickStoredSdCppProvider(svc.db, "generate",);
+
   // Config-driven per-emotion intent/asset map consumed by prompt building.
   const avatarEmotions = config.templates.avatar.emotions;
 

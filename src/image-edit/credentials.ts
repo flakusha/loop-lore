@@ -18,6 +18,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import { pickSdProvider, } from "../config/schema";
 import type { DB, } from "../db/schema";
+import { listStoredSdCppProviders, } from "../generation/image-engine/sdcpp-setup";
 import { ByoKeyDecryptError, userApiKeyResolver, } from "../generation/providers/user-api-key";
 
 /**
@@ -32,11 +33,17 @@ export async function resolveEditApiKey(opts: {
   db: Kysely<DB>;
 },): Promise<string | undefined> {
   const sdConfig = pickSdProvider(opts.config.generation.providers.sd, "edit",);
-  if (!sdConfig) { return undefined; }
+  // Stored-setup fallback: when no config-file sd provider exists, a stored
+  // sd.cpp setup serves edit runs too — resolve the BYO key against its name
+  // (unprobed here; the dispatch path probe-gates the actual call).
+  const providerName = sdConfig?.name ??
+    (await listStoredSdCppProviders(opts.db,)).find((provider,) => provider.purpose !== "generate")?.name;
+
+  if (!providerName) { return undefined; }
 
   return userApiKeyResolver({
     userId: opts.userId,
     config: opts.config,
     db: opts.db,
-  },)(sdConfig.name,);
+  },)(providerName,);
 }
