@@ -12,7 +12,6 @@
  * re-ranked by cosine similarity against recent conversation context after
  * privacy/provision filtering but before injection filtering.
  */
-import { clampPromptBudget, } from "../../../config/sections/prompt";
 import { getLogger, } from "../../../logger";
 import { recordAuditLog, } from "../../../memory/audit";
 import { selectWithinBudget, } from "../../../memory/budget";
@@ -28,6 +27,7 @@ import { provisionMemories, } from "../../../memory/provision";
 import { touchMemories, } from "../../../memory/purge";
 import type { MemoryEntry, } from "../../../memory/types";
 import { wrapSection, } from "../../xml-utils";
+import { resolveSectionBudget, } from "../budgets";
 import type { SectionBuilder, } from "../types";
 import {
   buildProvisionContext,
@@ -149,11 +149,13 @@ export const memorySection: SectionBuilder = {
     const ranked = [...pinned, ...mutable,];
 
     // ── Phase 2: Token budget ──────────────────────────────────────────────
-    // `prompt.memoryTokenBudget` (clamped; default 1024) replaces the
+    // `prompt.memoryTokenBudget` (clamped; default 1024) scaled by the
+    // world's context-share ratio (`worlds.prompt_budget_ratio`, theme-4
+    // AC5; scale-then-clamp keeps the global ceiling) replaces the
     // historical hardcoded cap. Pinned memories are never dropped here.
     const budgeted = selectWithinBudget(
       ranked,
-      { maxTokens: clampPromptBudget(ctx.config?.prompt?.memoryTokenBudget,), respectPins: true, },
+      { maxTokens: await resolveSectionBudget(ctx, "memory",), respectPins: true, },
     );
 
     if (budgeted.length === 0) { return []; }

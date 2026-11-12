@@ -4,8 +4,12 @@
 import { createConfigSchema, envMap, jsonSchema, validate, } from "@/config/schema-class";
 import {
   clampPromptBudget,
+  clampPromptRatio,
+  effectivePromptBudget,
   PROMPT_BUDGET_BOUNDS,
   PROMPT_DEFAULTS,
+  PROMPT_RATIO_BOUNDS,
+  PROMPT_RATIO_DEFAULT,
   PROMPT_TOKEN_CAP_DEFAULT,
   promptMeta,
   PromptSection,
@@ -37,6 +41,55 @@ describe("PromptSection", () => {
     expect(clampPromptBudget(null,),).toBe(PROMPT_TOKEN_CAP_DEFAULT,);
     expect(clampPromptBudget(Number.NaN,),).toBe(PROMPT_TOKEN_CAP_DEFAULT,);
     expect(clampPromptBudget(256.9,),).toBe(256,);
+  });
+});
+
+describe("per-world context-share ratio (theme-4 AC5)", () => {
+  test("neutral ratio keeps the configured budget", () => {
+    expect(effectivePromptBudget(1024, 1,),).toBe(1024,);
+    expect(effectivePromptBudget(1024, undefined,),).toBe(1024,);
+    expect(effectivePromptBudget(1024, null,),).toBe(1024,);
+  });
+
+  test("ratio scales the budget within the global ceiling", () => {
+    expect(effectivePromptBudget(1024, 0.5,),).toBe(512,);
+    expect(effectivePromptBudget(1024, 2,),).toBe(2048,);
+  });
+
+  test("ratio of 0 clamps to the ratio floor, never to zero tokens", () => {
+    expect(clampPromptRatio(0,),).toBe(PROMPT_RATIO_BOUNDS.min,);
+    expect(effectivePromptBudget(1024, 0,),).toBe(Math.floor(1024 * PROMPT_RATIO_BOUNDS.min,),);
+  });
+
+  test("negative ratios clamp to the ratio floor", () => {
+    expect(clampPromptRatio(-1,),).toBe(PROMPT_RATIO_BOUNDS.min,);
+    expect(effectivePromptBudget(1024, -10,),).toBe(Math.floor(1024 * PROMPT_RATIO_BOUNDS.min,),);
+  });
+
+  test("ratios above the max clamp, and the budget ceiling still holds", () => {
+    expect(clampPromptRatio(8,),).toBe(PROMPT_RATIO_BOUNDS.max,);
+    // 1024 * 4 stays in bounds…
+    expect(effectivePromptBudget(1024, 8,),).toBe(4096,);
+    // …but a huge ratio can never exceed PROMPT_BUDGET_BOUNDS.max.
+    expect(effectivePromptBudget(8192, 1e9,),).toBe(PROMPT_BUDGET_BOUNDS.max,);
+    expect(effectivePromptBudget(4096, 100,),).toBe(PROMPT_BUDGET_BOUNDS.max,);
+  });
+
+  test("non-finite ratios fall back to neutral", () => {
+    expect(clampPromptRatio(Number.NaN,),).toBe(PROMPT_RATIO_DEFAULT,);
+    expect(clampPromptRatio(Number.POSITIVE_INFINITY,),).toBe(PROMPT_RATIO_DEFAULT,);
+    expect(effectivePromptBudget(1024, Number.NaN,),).toBe(1024,);
+  });
+
+  test("fractional products floor back into integer token budgets", () => {
+    expect(effectivePromptBudget(1024, 0.25,),).toBe(256,);
+    expect(effectivePromptBudget(1000, 0.5,),).toBe(500,);
+    expect(effectivePromptBudget(1023, 0.3,),).toBe(Math.floor(1023 * 0.3,),);
+  });
+
+  test("scale-then-clamp: the unconfigured base still respects the ratio", () => {
+    // Base undefined → historical default 1024, then scaled + clamped.
+    expect(effectivePromptBudget(undefined, 2,),).toBe(2048,);
   });
 });
 

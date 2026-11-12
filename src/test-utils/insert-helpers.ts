@@ -969,6 +969,7 @@ export async function insertWorlds(
     stat_point_budget?: number;
     stat_min?: number;
     stat_max?: number;
+    prompt_budget_ratio?: number;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

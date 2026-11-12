@@ -162,6 +162,7 @@ export interface Worlds extends AuditColumns {
   stat_point_budget: Generated<number>;
   stat_min: Generated<number>;
   stat_max: Generated<number>;
+  prompt_budget_ratio: Generated<number>;
 }
 
 // ── actor_lore_entries ────────────────────────────────────────────

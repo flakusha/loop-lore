@@ -3,6 +3,7 @@
 
 import { type ExpressionBuilder, type Kysely, } from "kysely";
 import { assertNoCrossBoundaryWrite, } from "../../characters/world-boundary";
+import { PROMPT_RATIO_BOUNDS, } from "../../config/sections/prompt";
 import {
   DifficultyReroll,
   DifficultyState,
@@ -189,6 +190,21 @@ export async function handleUpdateWorld(
   if (body.lore != null) { updates.lore = body.lore; }
   if (body.scanDepth != null) { updates.scan_depth = body.scanDepth; }
   if (body.tokenBudget != null) { updates.token_budget = body.tokenBudget; }
+  // Per-world context-share ratio (theme-4 AC5): scales the prompt lore/memory
+  // budgets. Validated bounds here mirror `PROMPT_RATIO_BOUNDS`; clampPromptRatio
+  // re-clamps defensively at read time.
+  if (body.promptBudgetRatio != null) {
+    const ratio = Number(body.promptBudgetRatio,);
+    if (!Number.isFinite(ratio,) || ratio < PROMPT_RATIO_BOUNDS.min || ratio > PROMPT_RATIO_BOUNDS.max) {
+      return jsonError({
+        message: `promptBudgetRatio must be a number between ${PROMPT_RATIO_BOUNDS.min} and ${PROMPT_RATIO_BOUNDS.max}`,
+        status: HttpStatus.UnprocessableEntity,
+      },);
+    }
+
+    updates.prompt_budget_ratio = ratio;
+  }
+
   if (body.difficultyModifier != null) { updates.difficulty_modifier = body.difficultyModifier; }
   if (body.difficultyReroll != null) { updates.difficulty_reroll = body.difficultyReroll; }
   if (body.difficultyState != null) { updates.difficulty_state = body.difficultyState; }

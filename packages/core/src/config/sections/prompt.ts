@@ -32,6 +32,46 @@ export function clampPromptBudget(value: number | undefined | null,): number {
   return Math.min(PROMPT_BUDGET_BOUNDS.max, Math.max(PROMPT_BUDGET_BOUNDS.min, Math.floor(value,),),);
 }
 
+/** Inclusive bounds for the per-world prompt-budget context-share ratio. */
+export const PROMPT_RATIO_BOUNDS = {
+  min: 0.25,
+  max: 4,
+} as const;
+
+/** Neutral ratio — a world without an explicit share consumes the config budgets as-is. */
+export const PROMPT_RATIO_DEFAULT = 1;
+
+/**
+ * Clamp a per-world context-share ratio into {@link PROMPT_RATIO_BOUNDS};
+ * non-finite values fall back to {@link PROMPT_RATIO_DEFAULT}.
+ * @param value - stored ratio (may be out of bounds or non-numeric)
+ * @returns the clamped ratio, always within bounds
+ */
+export function clampPromptRatio(value: number | undefined | null,): number {
+  if (typeof value !== "number" || !Number.isFinite(value,)) {
+    return PROMPT_RATIO_DEFAULT;
+  }
+
+  return Math.min(PROMPT_RATIO_BOUNDS.max, Math.max(PROMPT_RATIO_BOUNDS.min, value,),);
+}
+
+/**
+ * Compose the global clamped budget with a per-world context-share ratio.
+ * Order is SCALE-THEN-CLAMP: the config budget is the authoritative hard
+ * ceiling, the world ratio only scales within it, and the product is re-clamped
+ * so no ratio can push a section outside {@link PROMPT_BUDGET_BOUNDS}. Clamping
+ * first (clamp → scale) could overflow the bounds with ratio > 1.
+ * @param baseBudget - configured section budget (clamped internally)
+ * @param ratio - per-world share (clamped internally)
+ * @returns the effective budget, always within bounds
+ */
+export function effectivePromptBudget(
+  baseBudget: number | undefined | null,
+  ratio: number | undefined | null,
+): number {
+  return clampPromptBudget(clampPromptBudget(baseBudget,) * clampPromptRatio(ratio,),);
+}
+
 export const PROMPT_DEFAULTS = {
   loreTokenBudget: PROMPT_TOKEN_CAP_DEFAULT,
   memoryTokenBudget: PROMPT_TOKEN_CAP_DEFAULT,
