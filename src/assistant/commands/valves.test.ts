@@ -3,7 +3,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import { t, } from "elysia";
-import { resolveCommandValves, valveUsage, } from "./valves";
+import { resolveCommandValves, valveSpecs, valveUsage, } from "./valves";
 
 const FORMAT = t.Object({
   format: t.Optional(t.Union([t.Literal("concise",), t.Literal("bullets",),], { default: "concise", },),),
@@ -59,6 +59,16 @@ describe("resolveCommandValves", () => {
     const named = { count: "3", };
     resolveCommandValves({ command: "s", schema: FORMAT, named, },);
     expect(named,).toEqual({ count: "3", },);
+  });
+});
+
+describe("valveSpecs", () => {
+  test("summarizes each property as a display spec", () => {
+    expect(valveSpecs(FORMAT,),).toEqual([
+      { name: "format", type: "concise|bullets", default: "concise", enum: ["concise", "bullets",], },
+      { name: "count", type: "number", default: 10, },
+      { name: "verbose", type: "boolean", },
+    ],);
   });
 });
 
