@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** THEME 3 scripting-lite: shared macro engine, named args, per-command valves, pipe operator, smart-regen decision gate
 **Priority:** medium
 **Effort:** Medium
 
