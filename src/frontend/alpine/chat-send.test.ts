@@ -303,6 +303,36 @@ describe("chatSendMethods.sendMessage — success paths", () => {
   });
 });
 
+describe("chatSendMethods.sendMessage — offline fast-path root cause", () => {
+  test("a buildBody throw in the fast path does NOT queue: the send is dropped", async () => {
+    // Pins the exact throwing statement, no browser globals required:
+    // queueOfflineSend (chat-send-offline.ts:41-46) awaits buildBody()
+    // INSIDE the try. In the live send this builder is buildSendBody →
+    // browserCompressThenEncrypt → browserEncryptContent (browser-crypto),
+    // which rejects on a dead key. No jsonBody/uuid/storage seam throws
+    // first (jsonBody over a plain object cannot fail; uuidv7 succeeds),
+    // so the catch (offline enqueue failed) is the drop point and the warn
+    // seam is what makes that visible.
+    const ctx = buildCtx();
+
+    const { queueOfflineSend, } = await import("./chat-send-offline");
+    const ok = await queueOfflineSend(
+      ctx as never,
+      "tmp-x",
+      "key-1",
+      async () => {
+        // Mirror buildSendBody's live-key branch: encrypt with a null key
+        // throws exactly like the real dead-key path.
+        const { browserCompressThenEncrypt, } = await import("../browser");
+        return browserCompressThenEncrypt("hello", null as never, "k1",);
+      },
+    );
+
+    expect(ok,).toBe(false,);
+    expect(ctx.messages,).toEqual([],);
+  });
+});
+
 describe("chatSendMethods.sendMessage — failure paths", () => {
   test("rolls the temp message back and toasts the server error", async () => {
     const ctx = buildCtx();

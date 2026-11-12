@@ -138,14 +138,26 @@ optimistic row then rolls it back WITHOUT ever writing `ll-outbox-v1` (no
 
 2. OPEN — offline FAST path (`isOffline()` gate in `chat-send.ts`):
    instrumented browser runs (with fix 1 in the served bundle, verified by
-   hash) show the fast path IS taken (`isOffline()=true`) but the local
-   `queueOfflineSend` copy returns `false` — `buildBody()` or the enqueue
-   throws inside its silent `catch { return false; }`, so the row rolls back
-   before the catch path is ever reached. No outbox write, no error
-   surfaced. Next step: log/surface that fast-path error (buildBody =
-   encryption/compress path vs `outbox.enqueue`), fix, then re-run the two
-   skipped browser tests. The two browser tests stay `test.skip` with this
-   diagnosis until the fast-path fix lands.
+   hash) show the fast path IS taken (`isOffline()=true`) but the queue call
+   returns `false` — `buildBody()` or the enqueue throws inside the catch,
+   so the row rolls back before the catch path is ever reached. RESOLVED
+   the observability half 2026-11-12: the local copy's silent
+   `catch { return false; }` now warns `log.warn("offline enqueue failed",
+   { chatId, tempId, error })` (contract unchanged — still returns false;
+   no message content in the log). Root-cause candidates narrowed by unit
+   pin: `jsonBody` over a plain-object body cannot throw, `browserUUIDv7`
+   succeeds on `crypto.getRandomValues`, and production storage (real
+   localStorage) is live — leaving `buildBody()` →
+   `browserCompressThenEncrypt` → `browserEncryptContent` (dead key / empty
+   plaintext) as the prime suspect; pinned by a new unit asserting a
+   throwing `buildBody` returns `false` with no queue write
+   (`chat-send.test.ts` — offline fast-path root cause). The REAL e2e
+   failure cause is still unproven in-browser: the console transport prints
+   message (+ error) only — meta rides the entry to other sinks — so the
+   browser console will name the seam but not chatId/tempId/cause until
+   the console-vs-meta gap is closed. The two browser tests stay
+   `test.skip` with this diagnosis until the fast-path fix lands and the
+   flow genuinely passes.
 
 **Acceptance Criteria:**
 
