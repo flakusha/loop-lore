@@ -40,14 +40,29 @@ as the unconfigured default. Tests: `packages/core/src/config/sections/prompt.te
 fixtures in `lore.test.ts` / `memories.test.ts`.
 
 Still open (not started, do not half-build):
+- AC4 phone-viewport verification (<800px tiers, 44px coarse-pointer targets).
+
+Landed since (2026-11-12, worktree theme4-pwa-caps):
 - AC4 offline send outbox — the dedicated slice ticket
   `TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice.md` now has
-  slice 1 (cached shell) LANDED in this worktree (see its implementation
-  note); slices 2–3 (outbox + drain) remain open, so the queued-send AC is
-  unmet.
-- AC5 full form: per-world `token_budget` context-share ratio (this slice
-  ships the global clamped config knob only).
-- AC4 phone-viewport verification (<800px tiers, 44px coarse-pointer targets).
+  slices 2–3 LANDED (outbox + drain; see its implementation note). The
+  queued-sends-survive-offline AC is met at the unit level; the phone-viewport
+  leg of AC4 remains the open item above.
+- AC5 full form — per-world `token_budget` context-share ratio LANDED:
+  `worlds.prompt_budget_ratio` (migration 101, real, default 1.0, validated
+  bounds [0.25, 4] on world update + clamped at read) scales the clamped
+  `prompt.loreTokenBudget` / `prompt.memoryTokenBudget` inside the lore and
+  memories sections via `resolveSectionBudget`
+  (`src/assistant/prompt/budgets.ts`). Composition decision (documented in
+  `effectivePromptBudget`): SCALE-THEN-CLAMP — the global config stays the
+  hard ceiling, the world ratio scales within it, and the product re-clamps
+  into [128, 8192], so no ratio can collapse a section to zero tokens or
+  explode one past the bounds. The pre-existing absolute
+  `worlds.token_budget` lorebook column remains deliberately unwired (it is
+  a different knob; wiring it is a separate decision). Tests: math edges
+  (0, negative, >1, huge, non-finite, fractional flooring) in
+  `packages/core/src/config/sections/prompt.test.ts`; DB-backed composition
+  fixtures in `src/assistant/prompt/budgets.test.ts`.
 
 **Acceptance Criteria:**
 
