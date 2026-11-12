@@ -44,7 +44,6 @@
  *
  * Included entries are ordered by `priority` (high first) then insertion order.
  */
-import { clampPromptBudget, } from "../../../config/sections/prompt";
 import { selectWithinBudget, } from "../../../memory/budget";
 import { getConvergentEvents, } from "../../../story/timeline/convergence";
 import { listPendingSteerings, } from "../../../story/timeline/event-steering";
@@ -57,6 +56,7 @@ import {
   revealConditionMet,
 } from "../../lore/reveal-condition";
 import { wrapSection, } from "../../xml-utils";
+import { resolveSectionBudget, } from "../budgets";
 import { recentConversation, } from "../keywords";
 import type { SectionBuilder, } from "../types";
 import {
@@ -212,8 +212,10 @@ export const loreSection: SectionBuilder = {
 
     // Token-budget cap (TASK-ctx-lore-budget): the lore section was
     // historically never budgeted — a large lorebook could dominate the whole
-    // window. Admit entries within the configured budget
-    // (`prompt.loreTokenBudget`, clamped; default MAX_LORE_TOKENS) via the
+    // window. Admit entries within the effective budget — the configured
+    // budget (`prompt.loreTokenBudget`, clamped; default MAX_LORE_TOKENS)
+    // scaled by the world's context-share ratio (`worlds.prompt_budget_ratio`,
+    // theme-4 AC5; scale-then-clamp keeps the global ceiling) — via the
     // shared budget selector: constant entries are pinned (never dropped),
     // the rest compete by priority in the section's existing order.
     const budgeted = selectWithinBudget(
@@ -224,7 +226,7 @@ export const loreSection: SectionBuilder = {
         importance: entry.priority,
         pinned: Boolean(entry.constant,),
       }),),
-      { maxTokens: clampPromptBudget(ctx.config?.prompt?.loreTokenBudget,), },
+      { maxTokens: await resolveSectionBudget(ctx, "lore",), },
     ).map((m,) => m.entry);
 
     relevantEntries.length = 0;

@@ -62,6 +62,9 @@ export const WorldUpdateBody = t.Object({
   rpgLoot: t.Optional(Flag,),
   rpgQuests: t.Optional(Flag,),
   rpgSkills: t.Optional(Flag,),
+  // Per-world prompt-budget context-share ratio (theme-4 AC5). Bounds mirror
+  // PROMPT_RATIO_BOUNDS; the handler validates again before writing.
+  promptBudgetRatio: t.Optional(t.Number({ minimum: 0.25, maximum: 4, },),),
   // Autonomy pacing override blob (TASK-autonomy-config-surface). A JSON
   // object, a raw JSON string, or null to clear the world layer.
   autonomyConfig: t.Optional(t.Union([t.Record(t.String(), t.Unknown(),), t.String(), t.Null(),],),),

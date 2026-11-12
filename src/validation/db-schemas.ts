@@ -1191,6 +1191,7 @@ export const WorldsSchema = t.Object({
   stat_point_budget: t.Optional(t.Number(),),
   stat_min: t.Optional(t.Number(),),
   stat_max: t.Optional(t.Number(),),
+  prompt_budget_ratio: t.Optional(t.Number(),),
 },);
 
 // ── activitypub_actor_keys ────────────────────────────────────────────

@@ -2991,6 +2991,7 @@ export const SCHEMA = new SchemaManifest()
     stat_point_budget: col("integer", { notNull: true, hasDefault: true, },),
     stat_min: col("integer", { notNull: true, hasDefault: true, },),
     stat_max: col("integer", { notNull: true, hasDefault: true, },),
+    prompt_budget_ratio: col("real", { notNull: true, hasDefault: true, },),
   },)
   // ── Generation & Prompts ──────────────────────────────────────────────
   .table("model_capabilities", {
