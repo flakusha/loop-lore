@@ -30,5 +30,19 @@
 **Tags:** coverage, waivers, frontend, alpine, testing-qa
 **Related:** .plan/backlog-archive.md § New clusters, .plan/epics/epic-testing-qa.md, .plan/tickets/TASK-waiver-coverage-floor-below-80-for-plugins-frontend-native-i.md
 
+## Progress — check-debt-green (2026-11-12)
+
+Export-gap paydown in this ticket's lanes, without touching the waiver set:
+new and expanded colocated tests cover the harness turn-queue store, row views
+and status enums, repo-access grants and settings, inbound settings, the inbound
+ACP and MCP stdio servers, harness metrics/prometheus/settings-view/stream, the
+admin-harness queue schemas, card-portability normalizers and quota surfaces,
+plus the VN choice-cards state split and the freeform-input affordance. Every
+new case passed an adversarial review (tautology, echo and incidental-default
+screen); two weak assertions were rewritten as behavior checks. The coverage-gaps
+gate is green against the committed baseline with no baseline change and no
+new-debt flag; the fuzz regen is a pure staleness refresh. This does not close
+the ticket: the waiver review and the floor-raise items remain open.
+
 
 git issue: 04475df
