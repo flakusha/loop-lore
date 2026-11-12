@@ -20,4 +20,4 @@ No unified search epic exists: gallery search is Done (epic-frontend-gallery.md)
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated
+- [x] Documentation updated

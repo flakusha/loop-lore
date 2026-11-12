@@ -21,6 +21,7 @@
 - Auth: `/api/v1/auth/{login,register,logout,me}`, `/api/v1/demo-login` — web-first, form-encoded, set `ll_token` + `HX-Redirect`; registration gated on `auth.registrationOpen`.
 - Sessions: `/api/v1/sessions` (list), `/api/v1/sessions/:id` (get/delete), `/api/v1/sessions/:id/switch` — force-logout and session switching (admin or self).
 - Users, chats (+ participants, activity, location), messages (immutable content; variants/swipes, visibility, status), actors (+ ST v2 card, import, memories), worlds (+ locations, `initialize-states`), assets (+ links, shares, signed URLs) — full request/response tables: see `.plan/epics/epic-api-routes.md`.
+- Search: `/api/v1/search` — one query fanned out over chats + messages + assets, each surface keeping its own permission gate (`docs/spec/omni-search.md`).
 - View routes (static, not API): `/`, `/chat`, `/settings`, `/gallery` from `dist/public/`; dynamic htmx partials under `/dynamic/*` and `/views/*`.
 
 ## Not implemented / aspirational
