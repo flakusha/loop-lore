@@ -294,6 +294,9 @@ describe("generateImagesWithFailover sd.cpp discovery gate", () => {
     globalThis.fetch = (async (input: string | URL | Request,) => {
       const url = String(input instanceof Request ? input.url : input,);
       requested.push(url,);
+      // The ComfyUI candidate passes its own discovery gate (/system_stats)
+      // before its generation attempt runs.
+      if (url.endsWith("/system_stats",)) { return Response.json({},); }
       if (url.endsWith("/object_info",)) { return new Response("boom", { status: 500, },); }
       throw new Error("connection refused",);
     }) as typeof fetch;
@@ -339,6 +342,109 @@ describe("generateImagesWithFailover sd.cpp discovery gate", () => {
       },] satisfies FailoverAttempt[],
     );
   },);
+
+  // ── ComfyUI discovery gate ────────────────────────────────────
+  //
+  // ComfyUI candidates pass the same family of discovery gate as sd.cpp, against
+  // the native /system_stats endpoint: an unreachable instance is SKIPPED with a
+  // structured reason and the walk continues.
+
+  describe("generateImagesWithFailover ComfyUI discovery gate", () => {
+    const originalFetch = globalThis.fetch;
+
+    const comfy = (name: string, baseUrl = "http://127.0.0.1:8188",): ImageProviderConfig => ({
+      ...BASE,
+      name,
+      apiFamily: "comfyui",
+      // Same purpose fit as the sdcpp candidates so listSdProviders keeps the
+      // given order (purpose-less providers sort last).
+      purpose: "generate",
+      baseUrl,
+    });
+
+    const failing = (name: string, purpose: ImageProviderConfig["purpose"],): ImageProviderConfig => ({
+      ...BASE,
+      name,
+      purpose,
+      baseUrl: "not-a-url",
+    });
+
+    afterEach(() => {
+      globalThis.fetch = originalFetch;
+    },);
+
+    itRealDispatch("skips an unreachable ComfyUI candidate and falls through to the next backend", async () => {
+      const requested: string[] = [];
+      (globalThis as Record<string, unknown>).fetch = async (input: string | URL | Request,) => {
+        const url = String(input instanceof Request ? input.url : input,);
+        requested.push(url,);
+        throw new Error("connection refused",);
+      };
+
+      const outcome = await generateImagesWithFailover(
+        [comfy("comfy-down",), failing("gen-openai", "generate",),],
+        "generate",
+        OPTS,
+      );
+
+      // The dead ComfyUI instance was skipped (no prompt attempt); the walk
+      // still attempted the next backend.
+      expect(outcome.ok,).toBe(false,);
+      const failure = outcome as ImageGenFailure;
+      expect(failure.attempts,).toHaveLength(2,);
+      expect(failure.attempts![0]!.provider,).toBe("comfy-down",);
+      expect(failure.attempts![0]!.outcome,).toBe("skipped",);
+      expect(failure.attempts![0]!.reason,).toContain("unreachable",);
+      expect(failure.attempts![1]!.provider,).toBe("gen-openai",);
+      expect(failure.attempts![1]!.outcome,).toBe("failed",);
+      expect(requested.some((url,) => url.endsWith("/prompt",)),).toBe(false,);
+      expect(requested.some((url,) => url.endsWith("/system_stats",)),).toBe(true,);
+    },);
+
+    itRealDispatch("records the probe http status when the endpoint is not ComfyUI", async () => {
+      globalThis.fetch = (async (input: string | URL | Request,) => {
+        const url = String(input instanceof Request ? input.url : input,);
+        if (url.endsWith("/system_stats",)) { return new Response("not found", { status: 404, },); }
+        throw new Error(`unexpected fetch ${url}`,);
+      }) as typeof fetch;
+
+      const outcome = await generateImagesWithFailover([comfy("not-comfy",),], "generate", OPTS,);
+
+      expect(outcome.ok,).toBe(false,);
+      const failure = outcome as ImageGenFailure;
+      expect(failure.status,).toBe(502,);
+      expect(failure.error,).toContain("No reachable image generation provider",);
+      expect(failure.attempts,).toEqual(
+        [{
+          provider: "not-comfy",
+          outcome: "skipped",
+          reason: expect.stringContaining("http-error",),
+          status: 404,
+        },] satisfies FailoverAttempt[],
+      );
+    },);
+
+    itRealDispatch("dispatches a healthy ComfyUI candidate after a passing probe", async () => {
+      const requested: string[] = [];
+      globalThis.fetch = (async (input: string | URL | Request,) => {
+        const url = String(input instanceof Request ? input.url : input,);
+        requested.push(url,);
+        if (url.endsWith("/system_stats",)) { return Response.json({},); }
+        throw new Error(`unexpected fetch ${url}`,);
+      }) as typeof fetch;
+
+      const outcome = await generateImagesWithFailover([comfy("comfy-ok",),], "generate", OPTS,);
+
+      // The probe passed, so the walk paid a real generation attempt (which
+      // fails against the mock transport) — recorded as failed, not skipped.
+      expect(outcome.ok,).toBe(false,);
+      const failure = outcome as ImageGenFailure;
+      expect(failure.attempts,).toHaveLength(1,);
+      expect(failure.attempts![0]!.provider,).toBe("comfy-ok",);
+      expect(failure.attempts![0]!.outcome,).toBe("failed",);
+      expect(requested.some((url,) => url.endsWith("/system_stats",)),).toBe(true,);
+    },);
+  });
 
   itRealDispatch("dispatches a healthy sd.cpp candidate without probing later candidates", async () => {
     const IMG_B64 = Buffer.from("png-data",).toString("base64",);

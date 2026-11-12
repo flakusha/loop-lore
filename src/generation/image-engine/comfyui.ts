@@ -78,6 +78,9 @@ export async function generateComfyUI(
   const comfyClient = new ComfyUIClient({
     baseUrl: sdConfig.baseUrl,
     timeout: sdConfig.generationTimeout ?? 120_000,
+    // BYO key for reverse-proxy-fronted engines — the same auth seam the
+    // sd.cpp and video paths use (Bearer; absent for stock ComfyUI).
+    apiKey: opts.apiKey ?? sdConfig.apiKey,
   },);
 
   const buffers = await comfyClient.runWorkflow(workflow,);
