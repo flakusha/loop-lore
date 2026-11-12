@@ -92,9 +92,12 @@ export function checkReleaseGateWiring(workflows: readonly WorkflowFile[],): str
  * @returns The workflow files, path-sorted for stable output.
  */
 export async function readWorkflowFiles(root: string,): Promise<WorkflowFile[]> {
-  const files: WorkflowFile[] = [];
+  const paths: string[] = [];
   for await (const file of new Glob(".github/workflows/*.y*ml",).scan({ cwd: root, },)) {
-    files.push({ path: file, text: await Bun.file(root + "/" + file,).text(), },);
+    paths.push(file,);
   }
+  const files = await Promise.all(
+    paths.map(async (path,) => ({ path, text: await Bun.file(root + "/" + path,).text(), })),
+  );
   return files.sort((a, b,) => a.path.localeCompare(b.path,));
 }
