@@ -3,7 +3,7 @@
 
 # TASK: 1.0.0 THEME 2: Card portability without silent loss (import/export parity)
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
