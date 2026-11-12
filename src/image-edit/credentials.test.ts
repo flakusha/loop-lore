@@ -16,6 +16,7 @@ import { loadConfig, } from "../config/load";
 import type { Config, ImageProviderConfig, } from "../config/schema";
 import { encryptValue, } from "../crypto";
 import type { DB, } from "../db/schema";
+import { saveSdCppSetup, } from "../generation/image-engine/sdcpp-setup";
 import { ByoKeyDecryptError, } from "../generation/providers/user-api-key";
 import { createTestDb, destroyTestDb, } from "../test-utils/create-test-db";
 import { insertUserApiKeys, insertUsers, } from "../test-utils/insert-helpers";
@@ -137,5 +138,54 @@ describe("resolveEditApiKey", () => {
 
     const key = await resolveEditApiKey({ userId: USER_ID, config: cfg, db: testDb, },);
     expect(key,).toBeUndefined();
+  });
+
+  test("a config-file provider wins over a stored setup — key never crosses instances", async () => {
+    // Stored setup with its own user key; the config-file provider keeps its
+    // key. The resolution MUST target the config provider's instance, so the
+    // returned key is the config one — a key for backend A is never handed
+    // to stored backend B.
+    await saveSdCppSetup(testDb, { name: "stored-edit", baseUrl: "http://127.0.0.1:9416", },);
+    await insertUserApiKeys(
+      testDb,
+      USER_ID,
+      "stored-edit",
+      await encryptValue("sk-stored-setup-key", SECRET,),
+    );
+
+    await insertUserApiKeys(
+      testDb,
+      USER_ID,
+      "file-edit-wins",
+      await encryptValue("sk-file-edit-key", SECRET,),
+    );
+
+    const key = await resolveEditApiKey({
+      userId: USER_ID,
+      config: config("file-edit-wins",),
+      db: testDb,
+    },);
+
+    expect(key,).toBe("sk-file-edit-key",);
+  });
+
+  test("with no config-file provider, the stored setup's instance is the key target", async () => {
+    // Start from a clean setup store — earlier tests in this suite persist
+    // their setups and the store read is config-ordered.
+    await testDb.deleteFrom("system_config",).execute();
+    await saveSdCppSetup(testDb, { name: "stored-only", baseUrl: "http://127.0.0.1:9417", },);
+    await insertUserApiKeys(
+      testDb,
+      USER_ID,
+      "stored-only",
+      await encryptValue("sk-stored-only-key", SECRET,),
+    );
+
+    const cfg = config("unused-file",);
+    cfg.generation.providers.sd = [];
+
+    const key = await resolveEditApiKey({ userId: USER_ID, config: cfg, db: testDb, },);
+
+    expect(key,).toBe("sk-stored-only-key",);
   });
 });
