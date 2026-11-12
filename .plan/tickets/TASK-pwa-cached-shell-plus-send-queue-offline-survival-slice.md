@@ -27,9 +27,9 @@ Caveats: TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, pa
 Acceptance:
 
 - [x] Airplane-mode reload renders cached shell (slice 1: precache + cache-first shell; navigations fall back to the cached public `/offline.html` — note: NOT the last-visited view, because caching authenticated /views HTML is ruled out by the repo's security posture).
-- [ ] Offline send keeps the optimistic message marked queued (slice 2 — open, not built).
-- [ ] Reconnect drains FIFO with zero duplicates (slice 3 — open, not built).
-- [ ] Poison (409/4xx) surfaces toast and drops only that entry, order preserved (slice 3 — open, not built).
+- [x] Offline send keeps the optimistic message marked queued (slice 2 — landed: `stores/connection-store.ts` + `stores/connection.ts` ($store.connection.offline, online/offline listeners), offline banner in `views/layout.html`, chat-send offline fast-path + offline-class failure enqueue into localStorage `ll-outbox-v1`, queued badge in `components/chat/message-list.html`; i18n keys in all 10 locales).
+- [x] Reconnect drains FIFO with zero duplicates (slice 3 — landed: `pwa/outbox-store.ts` drain (single-flighted, FIFO, replay with the SAME idempotency key via `apiFetch` → `Idempotency-Key` header + body key, so the migration-045 intake short-circuit coalesces partial successes); triggers: `online` event, SW connectivity ping (`ll-drain-outbox`, posted by `pwa/sw.ts` after a failed-then-successful view fetch), boot with a non-empty queue, next successful send; delivered → `ll-outbox:delivered` event reloads thread + chat list).
+- [x] Poison (409/4xx) surfaces toast and drops only that entry, order preserved (slice 3 — landed: 2xx removes + continues; 4xx drops ONLY that entry and continues; 5xx/non-offline throws count attempts and pause the round — at `OUTBOX_MAX_ATTEMPTS` (3) the entry is surfaced + dropped; offline-class throws never count toward poison and pause the round, entries can queue indefinitely while offline).
 - [x] No new deps — none added.
 
 **Context:**
@@ -47,7 +47,47 @@ Slice 1 (cached PWA app shell) LANDED:
 - `src/server/static-mime.ts` — `.webmanifest` → `application/manifest+json` (was text/plain, which breaks manifest parsing).
 - `src/views/layout.html` — `<link rel="manifest">` + `<meta name="theme-color">` in the head.
 
-Slices 2–3 (offline send outbox: `stores/connection.ts` banner, chat-send gating into `localStorage ll-outbox-v1`, FIFO drain with idempotency-key replay + poison handling) remain OPEN — no outbox code exists in this worktree. The IndexedDB upgrade path is still not built, as the slice spec allows.
+Slices 2–3 (offline send outbox) LANDED (2026-11-12, same worktree):
+- `src/frontend/pwa/outbox-store.ts` — pure FIFO store over injected storage
+  (production: localStorage `ll-outbox-v1`; `createOutbox({ storage, now })`,
+  no browser globals in tests). Entries carry chatId + idempotencyKey + the
+  exact serialized POST body + enqueuedAt + attempts. Drain policy: 2xx
+  removes and continues; 4xx is POISON — surface + drop ONLY that entry,
+  order preserved for the rest; 5xx (and non-offline throws) count attempts
+  and pause the round, dropping at `OUTBOX_MAX_ATTEMPTS` (3); offline-class
+  throws never count toward poison and pause the round. Single-flighted; an
+  entry enqueued mid-round is never clobbered (re-read before every write).
+  Offline classification (`isOfflineClassError`): `navigator.onLine ===
+  false`, TypeError, or an error WITHOUT a `status` (fe-fetch attaches status
+  only when HTTP answered); bare `Unauthorized` (401) is explicitly NOT
+  offline. Tests: `outbox-store.test.ts` (FIFO order, same-key replay,
+  offline pause, poison drop-only-that-entry, max attempts, single-flight,
+  no-clobber, corrupt storage).
+- `src/frontend/stores/connection-store.ts` + `stores/connection.ts` —
+  `$store.connection.offline` (layout banner, `views/layout.html`, scoped
+  style block beside the notification-bell precedent) + the live outbox and
+  its replay transport (`apiFetch` POST of the ORIGINAL body with the SAME
+  idempotency key — feFetch re-attaches the `Idempotency-Key` header; the
+  send-intake idempotency short-circuit returns the original row as 201, so
+  a partial success replays into delivery, never a duplicate). Drain
+  triggers: `online` event, SW ping (`OUTBOX_DRAIN_MESSAGE` posted by
+  `pwa/sw.ts` network-first when a view fetch succeeds within 60s of a
+  fallback), boot with a non-empty queue, and the next successful send.
+- `src/frontend/alpine/chat-send.ts` + `chat-send-offline.ts` — offline
+  fast-path (skip the doomed POST, enqueue, keep the optimistic row with
+  `status: "queued"`, info toast `toasts.messageQueued`), offline-class
+  failure path in the catch (enqueue the exact `sentBody`), success path
+  triggers a drain; the `ll-outbox:delivered` document event reloads the
+  thread + chat list via the chatState bridge. Queued badge in
+  `components/chat/message-list.html` (`chats.queuedOffline`).
+- i18n: `banners.offline`, `chats.queuedOffline`, `toasts.messageQueued`,
+  `toasts.outboxDelivered`, `toasts.outboxPoison`, `toasts.outboxMaxAttempts`
+  added to all 10 locale files (byte-identical JSON round-trip injection).
+
+The IndexedDB upgrade path is still not built, as the slice spec allows.
+Deferred (not built): an explicit retry/backoff timer between connectivity
+events (drain runs on the four triggers above), and outbox-depth surfacing
+beyond the toasts (theme-4 observability caveat).
 
 **Acceptance Criteria:**
 
