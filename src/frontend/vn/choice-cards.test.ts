@@ -477,9 +477,27 @@ describeOrSkip("renderChoices", () => {
     expect(cardLabels(list.children as unknown as FakeEl[],),).toEqual(["Beta",],);
   });
 
-  test("without a container it is a no-op", () => {
-    // No boot: initChoiceState never ran in this test process context...
+  test("without a container it builds nothing and leaves the gate untouched", () => {
     resetChoiceState();
-    expect(() => renderChoices()).not.toThrow();
+    setChoicePending(false,);
+    const doc = (globalThis as unknown as { document: { createElement: () => FakeEl } }).document;
+    const realCreate = doc.createElement;
+    let created = 0;
+    doc.createElement = () => {
+      created++;
+      return realCreate();
+    };
+
+    try {
+      renderChoices();
+    } finally {
+      doc.createElement = realCreate;
+    }
+
+    // The early return held: no DOM was built and the pending gate (which
+    // syncPendingGate owns, not render) was never touched.
+    expect(created,).toBe(0,);
+
+    expect(isVnDecisionPending(),).toBe(false,);
   });
 },);

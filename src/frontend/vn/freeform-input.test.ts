@@ -110,9 +110,11 @@ function build(): FakeEl {
 // ── Tests ───────────────────────────────────────────────────────────────────
 
 describe("VN_INPUT_MAX_LENGTH", () => {
-  test("mirrors the backend free-text cap", () => {
-    expect(VN_INPUT_MAX_LENGTH,).toBe(2000,);
+  test("mirrors the backend free-text cap, and the built input enforces it", () => {
+    // A backend cap bump without a frontend bump fails here: players could
+    // type text the server then rejects.
     expect(VN_INPUT_MAX_LENGTH,).toBe(VN_FREE_TEXT_MAX_LENGTH,);
+    expect(build().children[0]!.maxLength,).toBe(VN_FREE_TEXT_MAX_LENGTH,);
   });
 });
 
