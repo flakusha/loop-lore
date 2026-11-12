@@ -4,8 +4,9 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { initAgeGate, } from "../../age-gate/controller";
 import type { Config, } from "../../config/schema";
-import { MessageRole, } from "../../db/enums";
+import { AgeGateMode, MessageRole, } from "../../db/enums";
 import { AssetLinkEntity, AssetType, } from "../../db/enums-content";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
@@ -232,5 +233,20 @@ describe("forwardRoutes", () => {
     ).execute();
 
     expect(links.map((l,) => l.asset_id),).toEqual([ownedAsset,],);
+  });
+
+  test("denies a minor the forward (403, send-time age gate)", async () => {
+    initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
+    try {
+      const app = forwardApp(db, participantId, "user",);
+      const res = await appHandle(
+        app,
+        post(`/api/chats/${chatA}/messages/${sourceMsg}/forward`, { targetChatId: chatB, },),
+      );
+
+      expect(res.status,).toBe(403,);
+    } finally {
+      initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None, },);
+    }
   });
 });
