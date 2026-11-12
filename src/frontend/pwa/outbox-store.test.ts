@@ -284,6 +284,15 @@ describe("isOfflineClassError", () => {
     const httpish = Object.assign(new Error("HTTP 429",), { status: 429, },);
     expect(isOfflineClassError(httpish,),).toBe(false,);
     expect(isOfflineClassError(new Error("Unauthorized",),),).toBe(false,);
+    const gateway = Object.assign(new Error("HTTP 502",), { status: 502, },);
+    expect(isOfflineClassError(gateway,),).toBe(false,);
+  });
+
+  test("status 0 and out-of-range statuses are transport failures (offline-class)", () => {
+    for (const status of [0, -1, 600, 999,]) {
+      const err = Object.assign(new Error(`transport status ${status}`,), { status, },);
+      expect(isOfflineClassError(err,),).toBe(true,);
+    }
   });
 });
 

@@ -125,14 +125,27 @@ level):
 **BROWSER-LEVEL FINDING (open, blocks the offline e2e flow):** with
 `navigator.onLine === false`, an offline send in the real browser pushes the
 optimistic row then rolls it back WITHOUT ever writing `ll-outbox-v1` (no
-`queueOfflineSend` warn either). Instrumented evidence points at feFetch
-attaching a `status` to safeFetch's offline failure error (fe-fetch.ts
-attaches status on every `!result.ok`), so the failure path classifies the
-throw as non-offline and skips the enqueue. The unit-covered paths are green;
-the browser-level classification needs a slice-level fix decision (treat
-status-0/network errors as offline-class) before the offline→online e2e can
-go green. The two browser tests are landed as `test.skip` with this
-diagnosis inline (`tests/e2e/flows/browser/mobile-outbox.browser.ts`).
+`queueOfflineSend` warn either). Two layered defects identified 2026-11-12:
+
+1. FIXED — classifier seam (`isOfflineClassError`,
+   `src/frontend/pwa/outbox-store.ts`): a transport failure CAN carry a
+   numeric `status` (notably status 0 stamped onto the failed error by
+   fe-fetch), and the old `typeof status !== "number"` check misclassified
+   it as a server answer, so the catch-path enqueue never fired. Now:
+   `status` 0 or out-of-range (<=0, >599) is offline-class; 401/`Unauthorized`
+   and 2xx–5xx stay non-offline. Unit-covered (`status 0 and out-of-range
+   statuses are transport failures`, plus 502 stays non-offline).
+
+2. OPEN — offline FAST path (`isOffline()` gate in `chat-send.ts`):
+   instrumented browser runs (with fix 1 in the served bundle, verified by
+   hash) show the fast path IS taken (`isOffline()=true`) but the local
+   `queueOfflineSend` copy returns `false` — `buildBody()` or the enqueue
+   throws inside its silent `catch { return false; }`, so the row rolls back
+   before the catch path is ever reached. No outbox write, no error
+   surfaced. Next step: log/surface that fast-path error (buildBody =
+   encryption/compress path vs `outbox.enqueue`), fix, then re-run the two
+   skipped browser tests. The two browser tests stay `test.skip` with this
+   diagnosis until the fast-path fix lands.
 
 **Acceptance Criteria:**
 
