@@ -3,7 +3,7 @@
 
 # TASK: 1.0.0 THEME 4: Mobile-ready web without a native package
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 
@@ -25,6 +25,27 @@ Scope note: serves Required mobile/PWA + solo-run items (thin client over /api/v
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
+
+**Implementation note (2026-11-12, worktree theme4-pwa-caps):**
+
+Landed — AC5 config slice: the hardcoded 1024-token caps are now the new
+`prompt` config section, `prompt.loreTokenBudget` and
+`prompt.memoryTokenBudget` (default 1024, clamped 128–8192; load-time
+`validate()` rejects out-of-bounds, `PromptSection` clamps defensively and
+section builders clamp again at consumption). Threaded via `AssembleContext.config`
+into `loreSection` (`src/assistant/prompt/sections/lore.ts`) and `memorySection`
+(`src/assistant/prompt/sections/memories.ts`); `MAX_LORE_TOKENS` stays exported
+as the unconfigured default. Tests: `packages/core/src/config/sections/prompt.test.ts`
+(defaults, clamping, env-map/json-schema/validate wiring) + config-honored
+fixtures in `lore.test.ts` / `memories.test.ts`.
+
+Still open (not started, do not half-build):
+- AC4 PWA shell + offline send outbox — the dedicated slice ticket
+  `TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice.md` remains
+  Not Started; no manifest/sw/outbox code exists in this worktree.
+- AC5 full form: per-world `token_budget` context-share ratio (this slice
+  ships the global clamped config knob only).
+- AC4 phone-viewport verification (<800px tiers, 44px coarse-pointer targets).
 
 **Acceptance Criteria:**
 
