@@ -3,7 +3,8 @@
 
 # TASK: 1.0.0 GAP: sd.cpp local image wiring as owned scope
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Discovery/setup/ownership slice implemented on `sdcpp-discovery` — see Implementation Note below. Remaining scope is tracked there.
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -14,7 +15,16 @@ sd.cpp is folded as one task inside epic-local-process-swarm.md (Not Started) wi
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Prior audit corrected the ticket premise: the sd.cpp PROVIDER is already wired in dev (`src/generation/image-engine/sdcpp.ts`, dispatched as the `sdcpp` case in `generateImages`), so the real gap was the discovery/setup/ownership surface — no way for an operator to see whether an sd.cpp server is reachable/healthy, no way to register one without a config-file edit, and a failover walk that treated an unreachable instance as a doomed generation attempt. Implemented on the `sdcpp-discovery` worktree mirroring the sibling patterns (`sd-status.ts` admin probe, `setup-providers.ts` validate-then-persist store, `sd-discovery.ts` well-known ports).
+
+## Implementation Note (sdcpp-discovery, 2026-11-12)
+
+- **Discovery probe** — `src/generation/image-engine/sdcpp-discovery.ts`: `probeSdCpp` GETs `/sdcpp/v1/capabilities` and reports reachability, latency, version (`version` or `build_info.build_number`), loaded-model `state`/`serverError`/`models` from the additive `runtime` field, as a discriminated union. Structured skip reasons: `invalid-base-url` | `unreachable` (transport failure) | `http-error` (non-2xx — a 404 from a non-sd.cpp HTTP server or a 503 while loading is NOT liveness) | `malformed-response`. Parsing is defensive; the probe never throws.
+- **Admin discovery sweep** — `GET /api/admin/sd-status/sdcpp` (in `src/routes/admin/sd-status.ts`, admin.system-gated): probes every candidate — stored setups, config-file sdcpp providers, the `autoStart.sdCpp` instance — in parallel (`Promise.allSettled`), reporting `source` (`config`/`stored`/`auto-start`), `dispatching` (whether the generation path serves this instance now), and the structured reason when unreachable. Never echoes key material.
+- **Setup surface** — `POST`/`DELETE /api/admin/sd-status/sdcpp/setup` (`src/routes/admin/sdcpp-setup.ts`) following the setup-providers pattern: TypeBox body schema, probe-gate BEFORE save (unreachable target → 502 with the structured reason, nothing stored), store validation in `src/generation/image-engine/sdcpp-setup.ts` (slug name, `validateProviderUrl` + explicit link-local/cloud-metadata rejection — the sync URL validator does not resolve DNS, so a literal metadata host passes it; defaults range-checked). Persisted in `system_config` under `sdcpp.<name>.config` (descriptor JSON) and `sdcpp.<name>.apiKey` (sealed — the key matches `SECRET_KEY_PATTERN`); list responses carry `hasApiKey` only. Empty `apiKey` clears a stored key.
+- **Fallback skip wiring** — `generateImagesWithFailover` (`src/generation/image-engine/index.ts`) probe-gates sdcpp candidates (bounded by `min(provider.timeout, 3s)`): an unreachable instance is SKIPPED with the structured reason recorded on the failure outcome's new `attempts` field (`src/generation/image-engine/types.ts` `FailoverAttempt`), the walk continues to the next backend, and a provider that THROWS is converted to a failure outcome so one backend can no longer abort the whole walk. When every candidate is skipped, the outcome names each skip reason. `image-gen-route` merges stored setups into its candidates (`mergeSdCppSetups` — a stored setup replaces a same-name config provider), so a saved instance serves generation without a restart. Boot auto-discovery (`src/services/sd-discovery.ts`) gains the sd.cpp well-known port 9010 with `/sdcpp/v1/capabilities` as its health path.
+- **Tests** — `sdcpp-discovery.test.ts` (probe parsing/reasons/URL joining), `sdcpp-setup.test.ts` (validation matrix, sealed-key round-trip, merge), `routes/admin/sdcpp-setup.test.ts` (auth, probe-gate 502, no-secret responses, delete), `sd-status.test.ts` (sweep auth + config/stored/auto-start shapes), `image-engine/index.test.ts` (skip-then-fall-through, http-status skip record, healthy-dispatch-no-probe). All green; full `bun run check` NOT run in this lane (operator lands).
+- **Remaining scope** (explicitly NOT done here): (1) `apiFamily` ImageApiFamily for a stored setup is fixed to `sdcpp` — no ComfyUI setup surface; (2) image-edit (`sd-server-provider`) and emotion-avatar generation still read config-file providers only — stored setups are live on the image-generation failover path and the admin sweep, not those consumers; (3) the assistant-side `/image` ComfyUI-first opt-in routing is `TASK-sd-cpp-provider.md`, untouched; (4) `TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste.md`'s remaining call sites (`image-edit-service/apply.ts`, `matting/factory.ts`) still single-pick via `pickSdProvider`.
 
 **Acceptance Criteria:**
 
