@@ -7,7 +7,7 @@
  * Scope: input validation, LoRA passthrough, unsupported-backend guard.
  * generateImages is mocked so no real image generation occurs.
  */
-import { beforeEach, expect, it, mock, } from "bun:test";
+import { afterEach, beforeEach, expect, it, mock, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 // Capture real modules before mocking so each mock re-exposes the module's
 // other exports and overrides only the specific function under test. Bun's
@@ -240,6 +240,23 @@ const COMFYUI_CONFIG = {
 };
 
 // ── Tests ───────────────────────────────────────────────────────────────────────
+
+const originalFetch = globalThis.fetch;
+
+/**
+ * Answer both local-engine discovery probes healthy so the failover walk
+ * dispatches its candidates instead of skipping them: the sd.cpp gate hits
+ * /sdcpp/v1/capabilities, the ComfyUI gate hits /system_stats.
+ */
+function stubDiscoveryProbesHealthy(): void {
+  globalThis.fetch = (async (input: string | URL | Request,) => {
+    const url = String(input instanceof Request ? input.url : input,);
+    if (url.endsWith("/sdcpp/v1/capabilities",)) { return Response.json({},); }
+    if (url.endsWith("/system_stats",)) { return Response.json({},); }
+    throw new Error(`unexpected probe fetch ${url}`,);
+  }) as typeof fetch;
+}
+
 describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
@@ -247,9 +264,14 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     generateError = null;
   },);
 
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  },);
+
   // (1) Opt-out: no lora field → generateImages called WITHOUT lora
 
   it("does NOT pass lora to generateImages when lora field is absent", async () => {
+    stubDiscoveryProbesHealthy();
     const body = makeBody({ prompt: "no lora prompt", },);
     await handleImageGeneration(body, await migratedDb(), "test-user",);
 
@@ -261,6 +283,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   // (2) Opt-in: sd.cpp + lora → generateImages called WITH lora
 
   it("passes lora config to generateImages when sd.cpp backend is selected", async () => {
+    stubDiscoveryProbesHealthy();
     const body = makeBody({
       prompt: "lora prompt",
       lora: LORA_CONFIG,
@@ -311,6 +334,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     }),);
 
     const { handleImageGeneration: handleComfyUI, } = await import("./image-gen-route");
+    stubDiscoveryProbesHealthy();
 
     const body = makeBody({
       prompt: "comfyui lora prompt",
@@ -625,6 +649,150 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     } finally {
       await db.destroy();
     }
+  });
+},);
+
+// ── /image ComfyUI-first opt-in routing (TASK-sd-cpp-provider) ──────────────
+describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    persistGeneratedCalls.length = 0;
+    generateError = null;
+  },);
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  },);
+
+  /** Config with an sdcpp provider listed AHEAD of a ComfyUI provider. */
+  const sdThenComfyConfig = (comfyUiFirst: boolean | undefined,) => ({
+    assets: { uploadDir: "/tmp", },
+    generation: {
+      ...(comfyUiFirst === undefined ? {} : { imageRouting: { comfyUiFirst, }, }),
+      providers: {
+        sd: [
+          {
+            name: "test-sdcpp",
+            label: "Test sd.cpp",
+            baseUrl: "http://127.0.0.1:7860",
+            apiFamily: "sdcpp",
+            purpose: "generate",
+            defaults: {
+              width: 512,
+              height: 512,
+              steps: 20,
+              cfgScale: 7,
+              negativePrompt: "",
+              sampler: "Euler",
+            },
+            timeout: 30_000,
+            generationTimeout: 300_000,
+          },
+          {
+            name: "test-comfyui",
+            label: "Test ComfyUI",
+            baseUrl: "http://127.0.0.1:8188",
+            apiFamily: "comfyui",
+            purpose: "generate",
+            defaults: {
+              width: 512,
+              height: 512,
+              steps: 20,
+              cfgScale: 7,
+              negativePrompt: "",
+              sampler: "Euler",
+            },
+            timeout: 30_000,
+            generationTimeout: 120_000,
+          },
+        ],
+      },
+    },
+  });
+
+  it("knob OFF keeps the configured order (sdcpp dispatched first)", async () => {
+    stubDiscoveryProbesHealthy();
+    mock.module("../config/load", () => ({
+      ...realConfigLoad,
+      loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
+        ...sdThenComfyConfig(undefined,),
+      }),
+    }),);
+
+    const { handleImageGeneration: handleRouting, } = await import("./image-gen-route");
+    const res = await handleRouting(makeBody(), await migratedDb(), "test-user",);
+
+    expect(res.status,).toBe(200,);
+    expect(generateImagesCalls.length,).toBeGreaterThan(0,);
+    const [firstConfig,] = generateImagesCalls[0]!;
+    if (!(typeof firstConfig === "object" && firstConfig !== null && "name" in firstConfig)) {
+      throw new Error("dispatch did not receive a provider config",);
+    }
+
+    expect(firstConfig.name,).toBe("test-sdcpp",);
+  });
+
+  afterEach(() => {
+    // State restore for later suites: this file's mock.module registrations
+    // are process-global and cannot be unregistered, so the LAST loadConfig
+    // wins for everything that runs afterwards. Re-register the gate-free
+    // openai config (the state test (7) established before this describe
+    // existed) after each routing test.
+    mock.module("../config/load", () => ({
+      ...realConfigLoad,
+      loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
+        generation: {
+          ...structuredClone(createConfigSchema().defaults,).generation,
+          providers: {
+            ...structuredClone(createConfigSchema().defaults,).generation.providers,
+            sd: [
+              {
+                name: "test-openai",
+                label: "Test OpenAI",
+                baseUrl: "http://127.0.0.1:8080/v1",
+                apiFamily: "openai",
+                purpose: "generate",
+                defaults: {
+                  width: 512,
+                  height: 512,
+                  steps: 20,
+                  cfgScale: 7,
+                  negativePrompt: "",
+                  sampler: "Euler",
+                },
+                timeout: 30_000,
+                generationTimeout: 120_000,
+              },
+            ],
+          },
+        },
+      }),
+    }),);
+  },);
+
+  it("knob ON orders the healthy ComfyUI instance ahead of the chain", async () => {
+    stubDiscoveryProbesHealthy();
+    mock.module("../config/load", () => ({
+      ...realConfigLoad,
+      loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
+        ...sdThenComfyConfig(true,),
+      }),
+    }),);
+
+    const { handleImageGeneration: handleRouting, } = await import("./image-gen-route");
+    const res = await handleRouting(makeBody(), await migratedDb(), "test-user",);
+
+    expect(res.status,).toBe(200,);
+    expect(generateImagesCalls.length,).toBeGreaterThan(0,);
+    const [firstConfig,] = generateImagesCalls[0]!;
+    if (!(typeof firstConfig === "object" && firstConfig !== null && "name" in firstConfig)) {
+      throw new Error("dispatch did not receive a provider config",);
+    }
+
+    expect(firstConfig.name,).toBe("test-comfyui",);
   });
 },);
 

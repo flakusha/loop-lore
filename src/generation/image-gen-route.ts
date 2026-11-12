@@ -16,6 +16,8 @@ import { resolveActorAccess, } from "../routes/actor-access";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
 import { generateImagesWithFailover, } from "./image-engine";
+import { comfyUiFirstOrder, } from "./image-engine/comfyui-first";
+import { listStoredComfyUIProviders, mergeComfyUISetups, } from "./image-engine/comfyui-setup";
 import { listStoredSdCppProviders, mergeSdCppSetups, } from "./image-engine/sdcpp-setup";
 import type { LoRAConfig, } from "./lora/types";
 import { userApiKeyResolver, } from "./providers/user-api-key";
@@ -163,14 +165,15 @@ export async function handleImageGeneration(
 
   const config = loadConfig();
 
-  // Stored sd.cpp setups (admin setup surface) join the failover candidates
-  // immediately — a stored setup replaces a config-file provider with the same
-  // name. One indexed query; empty when the operator saved nothing.
+  // Stored local-engine setups (admin setup surface) join the failover
+  // candidates immediately — a stored setup replaces a config-file provider
+  // with the same name. One indexed query per family; empty when the operator
+  // saved nothing.
   const storedSd = await listStoredSdCppProviders(db,);
-  const configuredSd = listSdProviders(
-    mergeSdCppSetups(config.generation.providers.sd, storedSd,),
-    "generate",
-  );
+  const storedComfy = await listStoredComfyUIProviders(db,);
+  const mergedSd = mergeSdCppSetups(config.generation.providers.sd, storedSd,);
+  const mergedSdAndComfy = mergeComfyUISetups(mergedSd, storedComfy,);
+  const configuredSd = listSdProviders(mergedSdAndComfy, "generate",);
 
   if (configuredSd.length === 0) {
     return Response.json(
@@ -182,15 +185,22 @@ export async function handleImageGeneration(
     );
   }
 
+  // ComfyUI-first opt-in (TASK-sd-cpp-provider): when the knob is on, ComfyUI
+  // candidates order ahead of the chain. Pure ordering — the walk's discovery
+  // gate still skips an unreachable ComfyUI with the structured reason.
+  //
   // LoRA opt-in: only comfyui + sd-server/sdcpp support it — restrict the
   // failover candidates to capable backends instead of rejecting the request
   // outright when the top pick cannot serve a LoRA run. When NO configured
   // backend can serve the run the request is refused, and the message names
   // the families that refused it: an operator reading a 400 needs to know
   // which backend has to change.
-  const sdCandidates = req.lora
-    ? configuredSd.filter((p,) => p.apiFamily === "comfyui" || p.apiFamily === "sdcpp")
-    : configuredSd;
+  const sdCandidates = comfyUiFirstOrder(
+    req.lora
+      ? configuredSd.filter((p,) => p.apiFamily === "comfyui" || p.apiFamily === "sdcpp")
+      : configuredSd,
+    config.generation.imageRouting?.comfyUiFirst,
+  );
 
   if (sdCandidates.length === 0) {
     const refusing = [...new Set(configuredSd.map((p,) => p.apiFamily),),].join(", ",);

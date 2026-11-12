@@ -93,10 +93,22 @@ export interface GenerationFlowControl {
   maxConcurrentPerChat?: number;
 }
 
+/** Backend ordering policy for assistant-side image generation (`/image`).
+ * Ordering only — the failover chain still answers when the preferred family
+ * is skipped, and every candidate stays probe-gated. */
+export interface ImageRoutingConfig {
+  /** Prefer a healthy ComfyUI instance (stored setup or config provider) for
+   * `/image` generation: ComfyUI candidates are ordered ahead of the rest of
+   * the failover chain. Default false — config order decides. */
+  comfyUiFirst?: boolean;
+}
+
 /** */
 export interface GenerationConfig {
   /** Provider configurations */
   providers: GenerationProvidersConfig;
+  /** `/image` backend ordering policy (default: config order). */
+  imageRouting?: ImageRoutingConfig;
   /** Default provider name when none specified per-chat */
   defaultProvider: string;
   /** Default model per provider (providerName → modelId) */
