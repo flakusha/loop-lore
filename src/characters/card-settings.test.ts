@@ -6,6 +6,9 @@
  *
  * The card `tags` and the card `extensions` blob have no column of their own;
  * they ride along in `actors.settings` and are restored on export.
+ *
+ * Resource contract: pure functions over in-memory strings - no database, no
+ * filesystem, no network, no state shared between the cases.
  */
 import { describe, expect, test, } from "bun:test";
 import { cardExtensions, cardSettings, cardTags, } from "./card-settings";
