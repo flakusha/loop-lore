@@ -22,7 +22,7 @@ Extend the command parser with --key value named args (SillyTavern namedArgument
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated (deferred: command palette help text for named args)
+- [x] Documentation updated — named-arg syntax and the no-dash rejection rationale documented in docs/spec/assistant-commands.md ("Command Parser" + "Named arguments"). The palette-help-text deferral: the WEB palette does not render argument hints (its description text is the Not-Started i18n ticket TASK-command-palette-descriptions-… scope), so the interactive surface for this landed where a client renders usage — `GET /api/commands` now advertises valve summaries and the TUI completion strip renders the named-arg usage line (src/tui/chat/commands.ts). Wave-4, scripting-lite lane.
 
 ## Implementation note (scripting-lite lane, 2026-11-12)
 

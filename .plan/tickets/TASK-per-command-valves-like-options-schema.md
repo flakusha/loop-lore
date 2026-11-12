@@ -22,7 +22,7 @@ Add a per-command options schema (Open WebUI Valves pattern): defaults like summ
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated (deferred: valves authoring guide for command authors)
+- [x] Documentation updated — valves authoring guide (resolution order, inner-style defaults, rejection contract, migrated-command list) in docs/spec/assistant-commands.md "Per-command valves". The `GET /api/commands` advertisement deferral is RESOLVED in wave-4: descriptors now carry a per-command `valves` summary (name/type/default/enum, derived by `valveSpecs` — no raw TypeBox internals), with route tests and a TUI hint-strip consumer.
 
 ## Implementation note (scripting-lite lane, 2026-11-12)
 
@@ -34,7 +34,7 @@ Wiring:
 
 Migrated commands: `/rewrite` (style, apply), `/summarize` + `/sum` (format union, count), `/translate` + `/tl` (lang/to). Their legacy in-handler `--flag` scanning was replaced by `ctx.namedArgs`/`ctx.positionalArgs` reads. Direct-call contract after the migration: plain-TEXT arguments still work through the `args` fallback (`runTranslate(["hola to es"], ctx, deps,)`), but legacy FLAG forms in the raw args list (`["--style", "dark"]`) are IGNORED by the migrated handlers — flags must arrive via `ctx.namedArgs` (as the dispatcher populates, or as a direct-call test supplies).
 
-Deferred: chat-settings editing UI for valve values (the Open WebUI panel surface), rolling schemas out to the remaining ~80 commands, and surfacing valve usage in `GET /api/commands` descriptors.
+Deferred: chat-settings editing UI for valve values (the Open WebUI panel surface) and rolling schemas out to the remaining ~80 commands stay open; surfacing valve usage in `GET /api/commands` descriptors landed in wave-4 (typed `valves` summary per descriptor, consumed by the TUI completion strip; the WEB command palette does not render argument hints — its description text belongs to the i18n ticket TASK-command-palette-descriptions-…).
 
 Knip note: the `pipeText`/`pipeNone` helpers in `src/assistant/commands/pipe.ts` are part of the emit-contract API but currently have no production callers (tests only) — the `dead - code` finalize gate may flag them; remove or wire a handler if it does.
 

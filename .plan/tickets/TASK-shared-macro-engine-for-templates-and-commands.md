@@ -22,7 +22,7 @@ One {{macro}} resolver (char, user, chat, last, pipe) used by both the prompt li
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated (deferred: docs/spec walkthrough of the macro syntax)
+- [x] Documentation updated — docs/spec/assistant-commands.md "Macro engine" section: token syntax (innermost match, trimmed case-sensitive names), literal-vs-expand-values modes, `\{{name}}` escaping, the command-path macro set (char/user/chat/last/pipe), the LEGACY_TEMPLATE_MACRO_OPTIONS preset and the rewired resolver contract. Wave-4, scripting-lite lane.
 
 ## Implementation note (scripting-lite lane, 2026-11-12)
 

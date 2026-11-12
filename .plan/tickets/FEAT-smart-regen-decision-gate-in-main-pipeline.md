@@ -26,7 +26,7 @@
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated (deferred: the gate's user-facing behavior is documented by the `assistant.smartRegenGate` config description and this note)
+- [x] Documentation updated — beyond the config description and the note below, the gate's user-facing semantics (off-by-default menu, gate-on size heuristic, explicit-action passthrough) are now in docs/spec/assistant-commands.md "Smart-regen decision gate". Wave-4, scripting-lite lane.
 
 ## Implementation note (scripting-lite lane, 2026-11-12)
 
