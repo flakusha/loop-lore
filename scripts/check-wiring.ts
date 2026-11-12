@@ -26,6 +26,8 @@
  *     `src/app/register-plugins.ts`.
  *  4. Route-test coverage: every mounted route factory has a matching
  *     `*.test.ts` exercising it.
+ *  5. Release-path browser wiring: every workflow that runs a browser-backed
+ *     step (the gate suite, the browser E2E suite) installs a Chromium first.
  *
  * Documented deferrals (intentionally unwired): none. The former `loraRoutes`
  * deferral (LoRA gated "when feature is ready for production") ended when the
@@ -36,6 +38,7 @@
  * Exit 1 on any violation.
  */
 import { Glob, } from "bun";
+import { checkReleaseGateWiring, readWorkflowFiles, } from "./check/release-gate-wiring";
 
 const ROOT = import.meta.dir + "/..";
 const errors: string[] = [];
@@ -205,6 +208,14 @@ for (const factory of routeFactories) {
 }
 
 // ── Report ─────────────────────────────────────────────────────────
+// ── 5. Release-path browser wiring ─────────────────────────────────
+// The gate suite contains the browser gate, so a workflow that runs it must
+// install a Chromium first: without the browser the gate fails minutes into a
+// release run, in CI only - the local suite may already have one.
+for (const error of await checkReleaseGateWiring(await readWorkflowFiles(ROOT,),)) {
+  errors.push(`[wiring] ${error}`,);
+}
+
 if (warnings.length > 0) {
   console.warn(`[wiring] ${warnings.length} advisory warning(s):`,);
   for (const w of warnings) { console.warn(`  - ${w}`,); }

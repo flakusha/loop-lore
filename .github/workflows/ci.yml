@@ -26,7 +26,11 @@ jobs:
   gates:
     name: Local Gate Suite
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # The browser gate's OWN budget is 45 min (scripts/check/parallel/
+    # runner.mjs) and it runs LAST in the solo tail - a job timeout equal
+    # to the gate budget kills the job exactly as the gate expires, so the
+    # suite could never finish. 90 leaves room for the gate plus the rest.
+    timeout-minutes: 90
     permissions:
       contents: read
     steps:
@@ -53,8 +57,17 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # Chromium WITHOUT `--with-deps`: the runner image already ships all 26
+      # shared libraries Playwright asks apt for (apt reports every one of
+      # them already at the newest version on the current ubuntu-26.04
+      # image), and the extra apt packages it pulls are FONT packages whose
+      # download fails with DNS errors ("Temporary failure resolving
+      # security.ubuntu.com"). The browser specs assert DOM state, never
+      # rendered pixels, so the fonts are not needed. Re-add `--with-deps`
+      # only if a future image drops a shared library - that fails loudly
+      # at browser launch, never silently.
       - name: Install Playwright browsers
-        run: bunx playwright install chromium --with-deps
+        run: bunx playwright install chromium
 
       - name: Build frontend
         run: bun run build:frontend
@@ -188,8 +201,17 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # Chromium WITHOUT `--with-deps`: the runner image already ships all 26
+      # shared libraries Playwright asks apt for (apt reports every one of
+      # them already at the newest version on the current ubuntu-26.04
+      # image), and the extra apt packages it pulls are FONT packages whose
+      # download fails with DNS errors ("Temporary failure resolving
+      # security.ubuntu.com"). The browser specs assert DOM state, never
+      # rendered pixels, so the fonts are not needed. Re-add `--with-deps`
+      # only if a future image drops a shared library - that fails loudly
+      # at browser launch, never silently.
       - name: Install Playwright browsers
-        run: bunx playwright install chromium --with-deps
+        run: bunx playwright install chromium
 
       - name: Build frontend
         run: bun run build:frontend
