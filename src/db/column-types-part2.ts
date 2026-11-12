@@ -9,6 +9,12 @@
  */
 
 export const PART_2: Record<string, Record<string, string>> = {
+  "AuthChallenges": {
+    "purpose": "ChallengePurpose",
+  },
+  "AuthFactors": {
+    "kind": "FactorKind",
+  },
   "InteractionLogs": {
     "category": "InteractionCategory",
     "outcome": "InteractionOutcome",

@@ -199,6 +199,23 @@ export const SCHEMA = new SchemaManifest()
     window_start: col("text", { notNull: true, },),
     used_units: col("integer", { notNull: true, hasDefault: true, },),
   },)
+  .table("auth_challenges", {
+    id: col("text", { primaryKey: true, },),
+    user_id: col("text", { notNull: true, },),
+    factor_id: col("text", { notNull: true, },),
+    purpose: col("text", { notNull: true, },),
+    nonce_hash: col("text", { notNull: true, },),
+    expires_at: col("integer", { notNull: true, },),
+    attempts: col("integer", { notNull: true, hasDefault: true, },),
+    consumed: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("integer", { notNull: true, },),
+  },)
+  .table("auth_factors", {
+    id: col("text", { primaryKey: true, },),
+    user_id: col("text", { notNull: true, },),
+    kind: col("text", { notNull: true, },),
+    created_at: col("integer", { notNull: true, },),
+  },)
   .table("autonomy_budget", {
     scope_kind: col("text", { notNull: true, },),
     scope_id: col("text", { notNull: true, },),

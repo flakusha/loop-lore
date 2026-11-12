@@ -8,6 +8,7 @@
  */
 
 export * from "./actors.js";
+export * from "./auth-factors.js";
 export * from "./character-state.js";
 export * from "./flags.js";
 export * from "./harness-queue.js";

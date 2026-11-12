@@ -254,4 +254,6 @@ export interface DB {
   world_lore_search_tokens: import("./schema-core").WorldLoreSearchTokens;
   actor_lore_search_tokens: import("./schema-core").ActorLoreSearchTokens;
   harness_queue_turns: import("./schema-core").HarnessQueueTurns;
+  auth_factors: import("./schema-core").AuthFactors;
+  auth_challenges: import("./schema-core").AuthChallenges;
 }

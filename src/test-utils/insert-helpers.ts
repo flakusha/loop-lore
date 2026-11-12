@@ -22,6 +22,7 @@ import type {
   AvatarSelectionRule,
   CancelReason,
   CancelSource,
+  ChallengePurpose,
   CharacterState,
   ChatMode,
   ChatParticipantRole,
@@ -45,6 +46,7 @@ import type {
   FactionAlignment,
   FactionDiplomaticStatus,
   FactionRole,
+  FactorKind,
   FantasyCategory,
   GatheringNodeType,
   GenerationStatus,
@@ -6451,6 +6453,52 @@ export async function insertHarnessQueueTurns(
     chat_id,
     actor_id,
     requested_by,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a auth_factors row. */
+export async function insertAuthFactors(
+  db: Db,
+  user_id: string,
+  kind: FactorKind,
+  created_at: number,
+  opts?: { id?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("auth_factors",).values({
+    id,
+    user_id,
+    kind,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a auth_challenges row. */
+export async function insertAuthChallenges(
+  db: Db,
+  user_id: string,
+  factor_id: string,
+  purpose: ChallengePurpose,
+  nonce_hash: string,
+  expires_at: number,
+  created_at: number,
+  opts?: { id?: string; attempts?: number; consumed?: number },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("auth_challenges",).values({
+    id,
+    user_id,
+    factor_id,
+    purpose,
+    nonce_hash,
+    expires_at,
+    created_at,
     ...restOpts,
   } as any,).execute();
   return id;
