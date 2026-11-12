@@ -22,7 +22,7 @@ Add the | operator passing one command output as the next command input via {{pi
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated (deferred: user-facing pipe syntax doc)
+- [x] Documentation updated — user-facing pipe syntax doc written as docs/spec/assistant-commands.md "Pipe operator" (chain syntax, split-before-expansion, MAX_PIPE_STAGES cap, emit contract, pre-run validation, abort behavior, cycle-safety argument, workflow-runner boundary). Wave-4, scripting-lite lane.
 
 ## Implementation note (scripting-lite lane, 2026-11-12)
 

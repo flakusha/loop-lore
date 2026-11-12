@@ -25,7 +25,7 @@
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated (deferred: the picker is self-describing in-UI; vocabulary parity is pinned by the component test)
+- [x] Documentation updated — the picker remains self-describing in-UI with vocabulary parity pinned by the component test (original scope), and the TUI surface is now documented in docs/spec/terminal-ui.md ("Regenerate with style" bullet: completion-strip usage hint + typed `/regen <action>` / `/rewrite --style`, overlay picker deliberately not ported).
 
 ## Implementation note (scripting-lite lane, 2026-11-12)
 
@@ -41,4 +41,4 @@ i18n: 13 new `chats.*` keys (regenWithStyle, stylePickerTitle, regenStyleHeading
 
 Tests: `src/frontend/alpine/chat-style-picker.test.ts` — vocabulary parity with the BE catalog, all-locale label-key coverage, opener/bubble positioning + clamping, focus-preserving close, style→regenerate wiring, composer staging.
 
-Not done here (kept out of scope): the picker does not appear in the TUI client; `/rewrite --apply` is not surfaced (text-command only, as today); the backend `GET /api/commands` descriptor still does not advertise valve vocabularies (pre-existing deferral in the valves ticket).
+Not done here (kept out of scope): `/rewrite --apply` is not surfaced (text-command only, as today). Wave-4 (scripting-lite lane) closed the other two gaps: the TUI now exposes regenerate-with-style through the completion strip's usage hint plus typed `/regen <action>` / `/rewrite --style` (see docs/spec/terminal-ui.md), and the backend `GET /api/commands` descriptor advertises valve vocabularies (typed `valves` summary per command).
