@@ -78,7 +78,7 @@ const FAILOVER_PROBE_TIMEOUT_MS = DEFAULT_SDCPP_PROBE_TIMEOUT_MS;
  * @param apiKey - resolved key for this candidate
  * @returns the skip attempt when the instance is unreachable, else null
  */
-async function sdCppSkipAttempt(
+export async function sdCppSkipAttempt(
   candidate: ImageProviderConfig,
   apiKey: string | undefined,
 ): Promise<FailoverAttempt | null> {
