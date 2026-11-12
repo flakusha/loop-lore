@@ -1514,7 +1514,12 @@
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
     "promoteToLoreFailed": "Could not create the lorebook entry",
-    "queuedOffline": "送信待ち（オフライン）"
+    "queuedOffline": "送信待ち（オフライン）",
+    "outboxBadgeTitle": "待機中のオフライン送信: {count}",
+    "outboxEmpty": "待機中のメッセージはありません。オフライン送信は自動的に配信されます。",
+    "outboxQueuedAt": "{time} に待機",
+    "outboxDiscard": "破棄",
+    "outboxDiscardConfirm": "この待機メッセージを破棄しますか？送信されません。"
   },
   "personas": {
     "title": "Personas",

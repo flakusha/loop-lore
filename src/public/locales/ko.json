@@ -1514,7 +1514,12 @@
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
     "promoteToLoreFailed": "Could not create the lorebook entry",
-    "queuedOffline": "대기 중(오프라인)"
+    "queuedOffline": "대기 중(오프라인)",
+    "outboxBadgeTitle": "오프라인 대기 중인 전송: {count}",
+    "outboxEmpty": "대기 중인 메시지가 없습니다. 오프라인 전송은 자동으로 전달됩니다.",
+    "outboxQueuedAt": "{time}에 대기됨",
+    "outboxDiscard": "버리기",
+    "outboxDiscardConfirm": "대기 중인 메시지를 버리시겠습니까? 전송되지 않습니다."
   },
   "personas": {
     "title": "Personas",

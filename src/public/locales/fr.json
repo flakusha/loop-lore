@@ -1514,7 +1514,12 @@
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
     "promoteToLoreFailed": "Could not create the lorebook entry",
-    "queuedOffline": "En file d'attente (hors ligne)"
+    "queuedOffline": "En file d'attente (hors ligne)",
+    "outboxBadgeTitle": "Envois hors ligne en attente : {count}",
+    "outboxEmpty": "File d'attente vide — les envois hors ligne sont livrés automatiquement.",
+    "outboxQueuedAt": "En attente {time}",
+    "outboxDiscard": "Abandonner",
+    "outboxDiscardConfirm": "Abandonner ce message en attente ? Il ne sera pas envoyé."
   },
   "personas": {
     "title": "Personas",

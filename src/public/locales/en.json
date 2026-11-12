@@ -1509,7 +1509,12 @@
     "aiActionItems": "Extract action items",
     "aiTranslate": "Translate…",
     "aiTranslatePrompt": "Translate into which language?",
-    "queuedOffline": "Queued (offline)"
+    "queuedOffline": "Queued (offline)",
+    "outboxBadgeTitle": "Queued offline sends: {count}",
+    "outboxEmpty": "Nothing queued — offline sends deliver automatically.",
+    "outboxQueuedAt": "Queued {time}",
+    "outboxDiscard": "Discard",
+    "outboxDiscardConfirm": "Discard this queued message? It will not be sent."
   },
   "participants": {
     "title": "Participants",

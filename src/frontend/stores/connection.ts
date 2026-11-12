@@ -36,6 +36,15 @@ const log = rootLog.child({ module: "connection", },);
 /** Event dispatched on `document` after a drain delivers queued sends. */
 export const OUTBOX_DELIVERED_EVENT = "ll-outbox:delivered";
 
+/** Event dispatched on `document` whenever the outbox queue mutates. */
+export const OUTBOX_CHANGED_EVENT = "ll-outbox:changed";
+
+/** Re-read depth + entries listeners (outbox badge). */
+function notifyOutboxChanged(): void {
+  if (typeof document === "undefined") { return; }
+  document.dispatchEvent(new CustomEvent(OUTBOX_CHANGED_EVENT,),);
+}
+
 /** The singleton outbox over browser localStorage (null storage in tests). */
 export const outbox = createOutbox({
   storage: typeof localStorage === "undefined" ? null : localStorage,
@@ -56,6 +65,7 @@ export function enqueueOutboxSend(input: {
   body: string;
 },): void {
   outbox.enqueue(input,);
+  notifyOutboxChanged();
 }
 
 /** Replay transport: the original POST, byte-identical body, same key. */
@@ -98,7 +108,11 @@ function surfaceReport(delivered: OutboxEntry[], dropped: OutboxDrop[],): void {
 export function drainOutbox(): Promise<void> {
   return outbox
     .drain(sendQueued,)
-    .then((report,) => surfaceReport(report.delivered, report.dropped,))
+    .then((report,) => {
+      surfaceReport(report.delivered, report.dropped,);
+      // Depth may have moved even when nothing delivered (discards, pauses).
+      notifyOutboxChanged();
+    },)
     .catch((error: unknown,) => {
       log.warn("outbox drain failed", {
         error: error instanceof Error ? error.message : String(error,),

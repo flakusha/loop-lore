@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 280
+// size-allow: 300
 
 /**
  * Offline send outbox — a localStorage FIFO of failed chat sends
@@ -105,6 +105,11 @@ export interface OutboxStore {
   /** `true` while a drain round is in flight. */
   draining(): boolean;
   /**
+   * Remove one queued entry by id (per-entry discard).
+   * @returns `true` when the entry was queued and is now gone
+   */
+  discard(id: string,): boolean;
+  /**
    * Replay the FIFO in order through `send`. Single-flighted: concurrent
    * calls share the running round instead of double-sending.
    * @param send - transport seam; defaults live in the connection wiring
@@ -193,6 +198,9 @@ export function createOutbox(options: OutboxOptions,): OutboxStore {
   const runRound = async (send: OutboxSend,): Promise<OutboxDrainReport> => {
     const report: OutboxDrainReport = { delivered: [], dropped: [], pending: 0, };
     for (const entry of read()) {
+      // Re-read before every send: an entry the user discarded while an
+      // earlier entry of this round was in flight must not be sent.
+      if (!read().some((queued,) => queued.id === entry.id)) { continue; }
       let result: OutboxSendResult;
       try {
         result = await send(entry,);
@@ -260,6 +268,13 @@ export function createOutbox(options: OutboxOptions,): OutboxStore {
     },
     entries: read,
     depth: () => read().length,
+    discard(id: string,): boolean {
+      const entries = read();
+      const next = entries.filter((entry,) => entry.id !== id);
+      if (next.length === entries.length) { return false; }
+      write(next,);
+      return true;
+    },
     draining: () => drainInFlight !== null,
     drain(send,) {
       if (drainInFlight) { return drainInFlight; }

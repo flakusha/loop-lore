@@ -1514,7 +1514,12 @@
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
     "promoteToLoreFailed": "Could not create the lorebook entry",
-    "queuedOffline": "In Warteschlange (offline)"
+    "queuedOffline": "In Warteschlange (offline)",
+    "outboxBadgeTitle": "Ausstehende Offline-Sendungen: {count}",
+    "outboxEmpty": "Nichts in der Warteschlange — Offline-Sendungen werden automatisch zugestellt.",
+    "outboxQueuedAt": "Eingereiht {time}",
+    "outboxDiscard": "Verwerfen",
+    "outboxDiscardConfirm": "Diese wartende Nachricht verwerfen? Sie wird nicht gesendet."
   },
   "personas": {
     "title": "Personas",

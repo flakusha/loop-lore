@@ -1514,7 +1514,12 @@
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
     "promoteToLoreFailed": "Could not create the lorebook entry",
-    "queuedOffline": "في قائمة الانتظار (غير متصل)"
+    "queuedOffline": "في قائمة الانتظار (غير متصل)",
+    "outboxBadgeTitle": "الإرسالات غير المتصلة المنتظرة: {count}",
+    "outboxEmpty": "لا شيء في قائمة الانتظار — تُسلَّم الإرسالات غير المتصلة تلقائيًا.",
+    "outboxQueuedAt": "في الانتظار {time}",
+    "outboxDiscard": "تجاهل",
+    "outboxDiscardConfirm": "تجاهل هذه الرسالة المنتظرة؟ لن تُرسل."
   },
   "personas": {
     "title": "Personas",

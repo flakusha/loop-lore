@@ -1514,7 +1514,12 @@
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
     "promoteToLoreFailed": "Could not create the lorebook entry",
-    "queuedOffline": "已排队（离线）"
+    "queuedOffline": "已排队（离线）",
+    "outboxBadgeTitle": "离线待发送：{count}",
+    "outboxEmpty": "队列中没有消息 — 离线发送会自动送达。",
+    "outboxQueuedAt": "{time} 入队",
+    "outboxDiscard": "丢弃",
+    "outboxDiscardConfirm": "丢弃这条待发送的消息？它将不会被发送。"
   },
   "personas": {
     "title": "Personas",
