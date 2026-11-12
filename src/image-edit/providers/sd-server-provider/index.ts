@@ -21,6 +21,7 @@ import {
 } from "../../../config/schema";
 import { getDatabase, } from "../../../db";
 import type { ImageApiFamily, } from "../../../db/enums-config";
+import { pickStoredSdCppProvider, } from "../../../generation/image-engine/sdcpp-pick";
 import { getLogger, } from "../../../logger";
 import { safeFetch, } from "../../../utils";
 import { mustFromBase64, } from "../../../utils/safe-buffer";
@@ -58,6 +59,11 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   apiFamily: ImageApiFamily = "sdcpp";
   private config: ImageProviderConfig | null = null;
 
+  /** The stored-setup fallback is tried once per provider instance: a config-
+   * file provider always wins, and a failed stored walk is not retried on
+   * every call. */
+  private storedFallbackTried = false;
+
   /** */
   /**
    * @returns {ImageProviderConfig | null}
@@ -81,11 +87,41 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
     return sdConfig;
   }
 
+  /**
+   * Stored-setup fallback (TASK-1-0-0 gap): when no config-file sd provider
+   * is configured, a healthy stored sd.cpp setup serves edit runs. Probed
+   * with the failover discovery gate; unreachable setups are skipped with a
+   * structured reason. Cached like a config-file pick once resolved.
+   */
+  private async ensureStoredFallback(): Promise<void> {
+    if (this.config || this.storedFallbackTried) { return; }
+    this.storedFallbackTried = true;
+
+    const stored = await pickStoredSdCppProvider(getDatabase(), "edit",);
+    if (!stored) { return; }
+
+    const validated = validateProviderUrl(stored.baseUrl,);
+    if (!validated.ok) {
+      log().warn({
+        message: "Invalid stored sd-server URL",
+        provider: stored.name,
+        error: validated.error,
+      },);
+
+      return;
+    }
+
+    this.baseUrl = stored.baseUrl.replace(/\/+$/, "",);
+    this.apiFamily = stored.apiFamily ?? "sdcpp";
+    this.config = stored;
+  }
+
   /** */
   /**
    * @returns {Promise<boolean>}
    */
   async healthCheck(): Promise<boolean> {
+    await this.ensureStoredFallback();
     try {
       const cfg = this.getConfig();
       if (!cfg || !this.baseUrl) { return false; }
@@ -151,6 +187,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
     opts: ImageEditExecuteOpts,
   ): Promise<ImageEditResult[]> {
     const onProgress = opts.onProgress;
+    await this.ensureStoredFallback();
     const cfg = this.getConfig();
     if (!cfg || !this.baseUrl) {
       throw new Error("sd-server not configured. Set config.generation.providers.sd",);
