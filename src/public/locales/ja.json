@@ -583,10 +583,10 @@
       "missing": "不足している項目",
       "missingFields": "必須項目が未入力です",
       "configured": "設定済みのプロバイダー",
+      "importInstead": "代わりに設定ファイルをインポート",
       "delete": "削除",
       "confirmDelete": "削除を確認",
-      "deleteProvider": "プロバイダー {name} を削除",
-      "importInstead": "代わりに設定ファイルをインポート"
+      "deleteProvider": "プロバイダー {name} を削除"
     },
     "knowledgeGraph": "ナレッジグラフ",
     "kgAssets": "アセット",
@@ -1513,7 +1513,8 @@
     "aiTranslatePrompt": "Translate into which language?",
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
-    "promoteToLoreFailed": "Could not create the lorebook entry"
+    "promoteToLoreFailed": "Could not create the lorebook entry",
+    "queuedOffline": "送信待ち（オフライン）"
   },
   "personas": {
     "title": "Personas",
@@ -1946,8 +1947,12 @@
     "characterUpdated": "キャラクター {name} を更新しました",
     "failedUpdateCharacter": "キャラクターの更新に失敗しました",
     "providerSaved": "プロバイダーを保存しました",
-    "providerDeleted": "プロバイダーを削除しました",
-    "failedLoadKnowledgeGraph": "ナレッジグラフの読み込みに失敗しました"
+    "failedLoadKnowledgeGraph": "ナレッジグラフの読み込みに失敗しました",
+    "messageQueued": "メッセージをキューに追加しました。オンラインに戻ると送信されます。",
+    "outboxDelivered": "{count} 件の待機メッセージを送信しました",
+    "outboxPoison": "待機中のメッセージがサーバーに拒否され（HTTP {status}）、破棄されました。",
+    "outboxMaxAttempts": "待機中のメッセージは繰り返し失敗したため破棄されました。",
+    "providerDeleted": "プロバイダーを削除しました"
   },
   "status": {
     "characterResponding": "キャラクターが応答中...",
@@ -2591,6 +2596,22 @@
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
   },
+  "banners": {
+    "offline": "オフラインです — 送信したメッセージは接続の回復までキューに保存されます。"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search chats, messages, and assets…",
+    "searching": "Searching…",
+    "error": "Something went wrong while searching. Try again.",
+    "noResults": "No results for \"{query}\"",
+    "emptyHint": "Try a different keyword.",
+    "chats": "Chats",
+    "messages": "Messages",
+    "assets": "Assets",
+    "openChat": "Open chat",
+    "openAsset": "Preview asset"
+  },
   "npc": {
     "relationshipsTab": "Relationships",
     "relationshipsTitle": "Relationships",
@@ -2619,18 +2640,5 @@
     "nsfwPolicy": "NSFW policy",
     "empty": "No availability settings for this character yet.",
     "add": "Add availability"
-  },
-  "search": {
-    "title": "Search",
-    "placeholder": "Search chats, messages, and assets…",
-    "searching": "Searching…",
-    "error": "Something went wrong while searching. Try again.",
-    "noResults": "No results for \"{query}\"",
-    "emptyHint": "Try a different keyword.",
-    "chats": "Chats",
-    "messages": "Messages",
-    "assets": "Assets",
-    "openChat": "Open chat",
-    "openAsset": "Preview asset"
   }
 }

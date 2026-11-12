@@ -370,6 +370,39 @@
     <!-- Header slot placeholder — replaced via hx-swap-oob on page nav -->
     <header id="header-slot" class="main-header"></header>
 
+    <!-- Offline banner (slices 2-3): persistent shell state from $store.connection.
+         Lives OUTSIDE #app-root so it survives every htmx view swap. -->
+    <div
+      id="offline-banner"
+      class="offline-banner"
+      x-show="$store.connection && $store.connection.offline"
+      x-cloak
+      role="status"
+      data-testid="offline-banner"
+    >
+      <span class="offline-banner__dot" aria-hidden="true">●</span>
+      <span x-text="t('banners.offline')"></span>
+    </div>
+    <style>
+      .offline-banner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1199;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.45rem 1rem;
+        background: #b45309;
+        color: #fff;
+        font-size: 0.85rem;
+      }
+      .offline-banner__dot { animation: offline-pulse 1.6s ease-in-out infinite; }
+      @keyframes offline-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    </style>
+
     <!-- Persistent notification bell: global, survives per-view htmx header swaps -->
     <div id="notification-bell-host" class="notification-bell" x-data="notificationsBell()">
       <style>

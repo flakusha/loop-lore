@@ -583,10 +583,10 @@
       "missing": "O que falta",
       "missingFields": "Faltam campos obrigatórios",
       "configured": "Provedores configurados",
+      "importInstead": "Importar um ficheiro de configuração em vez disso",
       "delete": "Eliminar",
       "confirmDelete": "Confirmar eliminação",
-      "deleteProvider": "Eliminar o provedor {name}",
-      "importInstead": "Importar um ficheiro de configuração em vez disso"
+      "deleteProvider": "Eliminar o provedor {name}"
     },
     "knowledgeGraph": "Grafo de conhecimento",
     "kgAssets": "Ativos",
@@ -1513,7 +1513,8 @@
     "aiTranslatePrompt": "Translate into which language?",
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
-    "promoteToLoreFailed": "Could not create the lorebook entry"
+    "promoteToLoreFailed": "Could not create the lorebook entry",
+    "queuedOffline": "Na fila (offline)"
   },
   "personas": {
     "title": "Personas",
@@ -1946,8 +1947,12 @@
     "characterUpdated": "Personagem {name} atualizado",
     "failedUpdateCharacter": "Falha ao atualizar personagem",
     "providerSaved": "Provedor guardado",
-    "providerDeleted": "Provedor eliminado",
-    "failedLoadKnowledgeGraph": "Falha ao carregar o grafo de conhecimento"
+    "failedLoadKnowledgeGraph": "Falha ao carregar o grafo de conhecimento",
+    "messageQueued": "Mensagem na fila — será enviada quando você voltar a ficar online.",
+    "outboxDelivered": "{count} mensagem(ns) na fila enviada(s)",
+    "outboxPoison": "Uma mensagem na fila foi rejeitada pelo servidor (HTTP {status}) e descartada.",
+    "outboxMaxAttempts": "Uma mensagem na fila falhou repetidamente e foi descartada.",
+    "providerDeleted": "Provedor eliminado"
   },
   "status": {
     "characterResponding": "O personagem está respondendo...",
@@ -2591,6 +2596,22 @@
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
   },
+  "banners": {
+    "offline": "Você está offline — as mensagens enviadas ficarão na fila até a conexão voltar."
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search chats, messages, and assets…",
+    "searching": "Searching…",
+    "error": "Something went wrong while searching. Try again.",
+    "noResults": "No results for \"{query}\"",
+    "emptyHint": "Try a different keyword.",
+    "chats": "Chats",
+    "messages": "Messages",
+    "assets": "Assets",
+    "openChat": "Open chat",
+    "openAsset": "Preview asset"
+  },
   "npc": {
     "relationshipsTab": "Relationships",
     "relationshipsTitle": "Relationships",
@@ -2619,18 +2640,5 @@
     "nsfwPolicy": "NSFW policy",
     "empty": "No availability settings for this character yet.",
     "add": "Add availability"
-  },
-  "search": {
-    "title": "Search",
-    "placeholder": "Search chats, messages, and assets…",
-    "searching": "Searching…",
-    "error": "Something went wrong while searching. Try again.",
-    "noResults": "No results for \"{query}\"",
-    "emptyHint": "Try a different keyword.",
-    "chats": "Chats",
-    "messages": "Messages",
-    "assets": "Assets",
-    "openChat": "Open chat",
-    "openAsset": "Preview asset"
   }
 }

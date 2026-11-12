@@ -16,8 +16,10 @@
 
 import { ErrorCode, } from "../../api/error-codes";
 import { browserCompressThenEncrypt, browserRandomUUIDv7, } from "../browser";
+import { drainOutbox, isOffline, } from "../stores/connection";
 import { isVnDecisionPending, } from "../vn/pending-decision";
 import { requireActiveChat, } from "./chat-guards";
+import { keepFailedSendQueued, queueOfflineSend, } from "./chat-send-offline";
 import { interceptSlashSend, } from "./chat-slash";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -71,6 +73,38 @@ async function buildSendBody(
   }
 
   return body;
+}
+
+/**
+ * Offline gate (slices 2-3): queue the composed send for replay and keep the
+ * optimistic row marked `queued` instead of rolling it back. The connection
+ * watcher drains the queue on reconnect with the SAME idempotency key.
+ * @param ctx - chat state (activeChat, messages, toast dispatch)
+ * @param tempId - the optimistic row to mark queued
+ * @param idempotencyKey - the send's key; the replay reuses it verbatim
+ * @param buildBody - builds the serialized POST body (encryption included)
+ * @returns `true` when queued; `false` when the body could not be built and
+ *   the caller must roll back like the online error path
+ */
+async function queueOfflineSend(
+  ctx: ChatState,
+  tempId: string,
+  idempotencyKey: string,
+  buildBody: () => Promise<string>,
+): Promise<boolean> {
+  try {
+    enqueueOutboxSend({
+      chatId: ctx.activeChat ?? "",
+      idempotencyKey,
+      body: await buildBody(),
+    },);
+
+    ctx.messages = ctx.messages.map((m,) => m.id === tempId ? { ...m, status: "queued", } : m);
+    ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.messageQueued",), },);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -179,20 +213,42 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
     // (10s window) and the DB unique index (migration 045) then coalesce the
     // same logical turn instead of minting independent keys per layer.
     const idempotencyKey = crypto.randomUUID();
-    const postMessage = async () => {
+    // The exact serialized body of the LAST post attempt. The offline gate
+    // enqueues these bytes so a drained replay is identical to the original
+    // send (encryption included) and the intake idempotency coalesces it.
+    let sentBody: string | null = null;
+    const buildBody = async (): Promise<string> => {
       const body = await buildSendBody(this, text, msgs, pendingAssets,);
       body.idempotencyKey = idempotencyKey;
+      return jsonBody(body,);
+    };
+
+    const postMessage = async () => {
+      const serialized = await buildBody();
+      sentBody = serialized;
 
       return await apiFetch(
         `/api/v1/chats/${this.activeChat}/messages`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json", },
-          body: jsonBody(body,),
+          body: serialized,
           idempotencyKey,
         } as Parameters<typeof apiFetch>[1],
       );
     };
+
+    // Offline gate (slices 2-3): the browser reports no network, so the POST
+    // would only burn safeFetch's 30s timeout. Queue the send (FIFO, same
+    // idempotency key) and keep the optimistic row marked `queued`.
+    if (isOffline()) {
+      if (await queueOfflineSend(this, tempId, idempotencyKey, buildBody,)) { return; }
+      removeTempMessage(this, tempId,);
+      restoreInput();
+      this.flushComposerDraft();
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
+      return;
+    }
 
     this.isGenerating = true;
     try {
@@ -243,6 +299,10 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
 
         await this.loadMessages();
         await this.loadChats();
+        // Connectivity is back (or was never the problem) — flush anything
+        // queued while offline (slices 2-3). Single-flighted; delivery toasts
+        // and thread reload ride the outbox delivered event.
+        void drainOutbox();
         // Finalize an automated send: count it for the loop-guard cap and
         // clear the in-flight flag now that the send has landed.
         if (this._autoFired) {
@@ -292,9 +352,15 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         restoreInput();
         this.flushComposerDraft();
       }
-    } catch {
+    } catch (error: unknown) {
       this.isGenerating = false;
       this._autoFired = false;
+      // Offline-class failure (network down / timeout — the request never
+      // reached HTTP): enqueue the exact body instead of dropping, keep the
+      // optimistic row marked queued (slices 2-3). HTTP errors carry a
+      // status and fall through to the rollback path below.
+      if (await keepFailedSendQueued(this, tempId, idempotencyKey, sentBody, error,)) { return; }
+
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
       removeTempMessage(this, tempId,);
       restoreInput();

@@ -583,10 +583,10 @@
       "missing": "ما الذي ينقص",
       "missingFields": "حقول إلزامية مفقودة",
       "configured": "المزوّدات المُهيّأة",
+      "importInstead": "استيراد ملف إعدادات بدلاً من ذلك",
       "delete": "حذف",
       "confirmDelete": "تأكيد الحذف",
-      "deleteProvider": "حذف المزوّد {name}",
-      "importInstead": "استيراد ملف إعدادات بدلاً من ذلك"
+      "deleteProvider": "حذف المزوّد {name}"
     },
     "knowledgeGraph": "مخطط المعرفة",
     "kgAssets": "الأصول",
@@ -1513,7 +1513,8 @@
     "aiTranslatePrompt": "Translate into which language?",
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
-    "promoteToLoreFailed": "Could not create the lorebook entry"
+    "promoteToLoreFailed": "Could not create the lorebook entry",
+    "queuedOffline": "في قائمة الانتظار (غير متصل)"
   },
   "personas": {
     "title": "Personas",
@@ -1946,8 +1947,12 @@
     "characterUpdated": "تم تحديث الشخصية {name}",
     "failedUpdateCharacter": "فشل تحديث الشخصية",
     "providerSaved": "تم حفظ المزوّد",
-    "providerDeleted": "تم حذف المزوّد",
-    "failedLoadKnowledgeGraph": "فشل تحميل مخطط المعرفة"
+    "failedLoadKnowledgeGraph": "فشل تحميل مخطط المعرفة",
+    "messageQueued": "تم وضع الرسالة في قائمة الانتظار — سيتم إرسالها عند عودة الاتصال.",
+    "outboxDelivered": "تم إرسال {count} رسالة معلقة",
+    "outboxPoison": "تم رفض رسالة معلقة من قبل الخادم (HTTP {status}) وتم حذفها.",
+    "outboxMaxAttempts": "فشلت رسالة معلقة بشكل متكرر وتم حذفها.",
+    "providerDeleted": "تم حذف المزوّد"
   },
   "status": {
     "characterResponding": "الشخصية ترد...",
@@ -2591,6 +2596,22 @@
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
   },
+  "banners": {
+    "offline": "أنت غير متصل — سيتم وضع الرسائل التي ترسلها في قائمة الانتظار حتى عودة الاتصال."
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search chats, messages, and assets…",
+    "searching": "Searching…",
+    "error": "Something went wrong while searching. Try again.",
+    "noResults": "No results for \"{query}\"",
+    "emptyHint": "Try a different keyword.",
+    "chats": "Chats",
+    "messages": "Messages",
+    "assets": "Assets",
+    "openChat": "Open chat",
+    "openAsset": "Preview asset"
+  },
   "npc": {
     "relationshipsTab": "Relationships",
     "relationshipsTitle": "Relationships",
@@ -2619,18 +2640,5 @@
     "nsfwPolicy": "NSFW policy",
     "empty": "No availability settings for this character yet.",
     "add": "Add availability"
-  },
-  "search": {
-    "title": "Search",
-    "placeholder": "Search chats, messages, and assets…",
-    "searching": "Searching…",
-    "error": "Something went wrong while searching. Try again.",
-    "noResults": "No results for \"{query}\"",
-    "emptyHint": "Try a different keyword.",
-    "chats": "Chats",
-    "messages": "Messages",
-    "assets": "Assets",
-    "openChat": "Open chat",
-    "openAsset": "Preview asset"
   }
 }

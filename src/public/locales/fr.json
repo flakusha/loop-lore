@@ -583,10 +583,10 @@
       "missing": "Ce qui manque",
       "missingFields": "Des champs obligatoires sont manquants",
       "configured": "Fournisseurs configurés",
+      "importInstead": "Importer un fichier de configuration à la place",
       "delete": "Supprimer",
       "confirmDelete": "Confirmer la suppression",
-      "deleteProvider": "Supprimer le fournisseur {name}",
-      "importInstead": "Importer un fichier de configuration à la place"
+      "deleteProvider": "Supprimer le fournisseur {name}"
     },
     "knowledgeGraph": "Graphe de connaissances",
     "kgAssets": "Assets",
@@ -1513,7 +1513,8 @@
     "aiTranslatePrompt": "Translate into which language?",
     "promoteToLore": "Promote to lorebook",
     "promoteToLoreConfirm": "Create lorebook entry \"{name}\" from this memory?",
-    "promoteToLoreFailed": "Could not create the lorebook entry"
+    "promoteToLoreFailed": "Could not create the lorebook entry",
+    "queuedOffline": "En file d'attente (hors ligne)"
   },
   "personas": {
     "title": "Personas",
@@ -1946,8 +1947,12 @@
     "characterUpdated": "Personnage {name} mis à jour",
     "failedUpdateCharacter": "Échec de la mise à jour du personnage",
     "providerSaved": "Fournisseur enregistré",
-    "providerDeleted": "Fournisseur supprimé",
-    "failedLoadKnowledgeGraph": "Échec du chargement du graphe de connaissances"
+    "failedLoadKnowledgeGraph": "Échec du chargement du graphe de connaissances",
+    "messageQueued": "Message mis en file d'attente : il sera envoyé au retour de la connexion.",
+    "outboxDelivered": "{count} message(s) en file d'attente envoyé(s)",
+    "outboxPoison": "Un message en file d'attente a été refusé par le serveur (HTTP {status}) et a été supprimé.",
+    "outboxMaxAttempts": "Un message en file d'attente a échoué à plusieurs reprises et a été supprimé.",
+    "providerDeleted": "Fournisseur supprimé"
   },
   "status": {
     "characterResponding": "Le personnage répond...",
@@ -2591,6 +2596,22 @@
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
   },
+  "banners": {
+    "offline": "Vous êtes hors ligne — les messages envoyés seront mis en file d'attente jusqu'au retour de la connexion."
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search chats, messages, and assets…",
+    "searching": "Searching…",
+    "error": "Something went wrong while searching. Try again.",
+    "noResults": "No results for \"{query}\"",
+    "emptyHint": "Try a different keyword.",
+    "chats": "Chats",
+    "messages": "Messages",
+    "assets": "Assets",
+    "openChat": "Open chat",
+    "openAsset": "Preview asset"
+  },
   "npc": {
     "relationshipsTab": "Relationships",
     "relationshipsTitle": "Relationships",
@@ -2619,18 +2640,5 @@
     "nsfwPolicy": "NSFW policy",
     "empty": "No availability settings for this character yet.",
     "add": "Add availability"
-  },
-  "search": {
-    "title": "Search",
-    "placeholder": "Search chats, messages, and assets…",
-    "searching": "Searching…",
-    "error": "Something went wrong while searching. Try again.",
-    "noResults": "No results for \"{query}\"",
-    "emptyHint": "Try a different keyword.",
-    "chats": "Chats",
-    "messages": "Messages",
-    "assets": "Assets",
-    "openChat": "Open chat",
-    "openAsset": "Preview asset"
   }
 }
