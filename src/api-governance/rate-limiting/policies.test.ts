@@ -11,6 +11,7 @@ import {
   outboundFetchPolicy,
   policies,
   policyForRoute,
+  repoAccessPolicy,
   routePolicies,
 } from "./policies";
 
@@ -21,6 +22,26 @@ describe("policy registry", () => {
     expect(chatPolicy.max,).toBe(300,);
     expect(chatPolicy.burst,).toBe(50,);
     expect(policies["chat"],).toBe(chatPolicy,);
+  });
+
+  test("repo-access policy is deliberately tight — repo commands, not UI volume (epic-harness-rsi-repo-access)", () => {
+    // RSI repo-access tier ops run repo commands / touch repo-root paths, so
+    // the budget is an order of magnitude under chat volume (defense in
+    // depth beside the capability gate; the gate itself never rate-limits).
+    // The ops wire this policy directly as their ratePolicy, not through the
+    // route table — hence no policyForRoute assertion here.
+    expect(repoAccessPolicy.name,).toBe("repo-access",);
+    expect(repoAccessPolicy.windowMs,).toBe(60_000,);
+    expect(repoAccessPolicy.max,).toBe(10,);
+    expect(repoAccessPolicy.burst,).toBe(2,);
+    // Below the billable generation budget and an order of magnitude under
+    // the chat + default buckets.
+    expect(repoAccessPolicy.max,).toBeLessThan(generationPolicy.max,);
+    expect(repoAccessPolicy.max,).toBeLessThan(chatPolicy.max,);
+    expect(repoAccessPolicy.max,).toBeLessThan(defaultPolicy.max,);
+    // Tightest burst of any named policy (peers sit at 5-50).
+    expect(repoAccessPolicy.burst,).toBeLessThan(authPolicy.burst!,);
+    expect(repoAccessPolicy.burst,).toBeLessThan(chatPolicy.burst!,);
   });
 
   test("every routePolicies entry is registered by name", () => {

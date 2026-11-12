@@ -16,6 +16,10 @@ import {
   HarnessPendingPermissionSchema,
   HarnessPermissionDecisionResponse,
   HarnessPermissionsResponse,
+  HarnessQueueCancelResponse,
+  HarnessQueuedTurnSchema,
+  HarnessQueueEnqueueResponse,
+  HarnessQueueResponse,
 } from "./admin-harness-schema";
 
 /** A well-formed parked ask, as produced by the permission queue. */
@@ -59,5 +63,92 @@ describe("admin harness permission schemas", () => {
     expect(Value.Check(HarnessPermissionDecisionResponse, { ok: true, },),).toBe(true,);
     expect(Value.Check(HarnessPermissionDecisionResponse, { ok: false, },),).toBe(true,);
     expect(Value.Check(HarnessPermissionDecisionResponse, { ok: "yes", },),).toBe(false,);
+  });
+});
+
+/** A well-formed queue turn's common fields, as the queue views emit them. */
+const baseTurn = {
+  id: "3f2504e0-4f89-11d3-9a0c-0305e82c3302",
+  batchId: "batch-1",
+  profile: "omp",
+  prompt: "do the thing",
+  chatId: "chat-1",
+  actorId: "actor-1",
+  createdAt: "2026-01-01T00:00:00.000Z",
+};
+
+describe("admin harness turn-queue schemas", () => {
+  it("HarnessQueuedTurnSchema accepts every lifecycle arm", () => {
+    expect(Value.Check(HarnessQueuedTurnSchema, { ...baseTurn, status: "queued", },),).toBe(true,);
+    expect(
+      Value.Check(HarnessQueuedTurnSchema, { ...baseTurn, status: "running", startedAt: "2026-01-02T00:00:00.000Z", },),
+    ).toBe(true,);
+
+    expect(Value.Check(HarnessQueuedTurnSchema, {
+      ...baseTurn,
+      status: "completed",
+      startedAt: "2026-01-02T00:00:00.000Z",
+      finishedAt: "2026-01-03T00:00:00.000Z",
+      resultMessageId: "msg-9",
+    },),).toBe(true,);
+
+    expect(Value.Check(HarnessQueuedTurnSchema, {
+      ...baseTurn,
+      status: "failed",
+      startedAt: null,
+      finishedAt: "2026-01-03T00:00:00.000Z",
+      errorCode: "interrupted",
+      errorMessage: "process died",
+    },),).toBe(true,);
+
+    expect(Value.Check(HarnessQueuedTurnSchema, { ...baseTurn, status: "cancelled", finishedAt: null, },),).toBe(true,);
+  });
+
+  it("HarnessQueuedTurnSchema rejects unknown states and broken state fields", () => {
+    // No status / no matching literal arm.
+    expect(Value.Check(HarnessQueuedTurnSchema, baseTurn,),).toBe(false,);
+    expect(Value.Check(HarnessQueuedTurnSchema, { ...baseTurn, status: "moribund", },),).toBe(false,);
+    // Mistyped per-state fields.
+    expect(Value.Check(HarnessQueuedTurnSchema, { ...baseTurn, status: "running", startedAt: 42, },),).toBe(false,);
+    expect(Value.Check(HarnessQueuedTurnSchema, {
+      ...baseTurn,
+      status: "completed",
+      startedAt: "2026-01-02T00:00:00.000Z",
+      finishedAt: "2026-01-03T00:00:00.000Z",
+      // missing resultMessageId
+    },),).toBe(false,);
+
+    expect(Value.Check(HarnessQueuedTurnSchema, {
+      ...baseTurn,
+      status: "failed",
+      startedAt: null,
+      finishedAt: "2026-01-03T00:00:00.000Z",
+      errorCode: "interrupted",
+      // missing errorMessage
+    },),).toBe(false,);
+
+    expect(Value.Check(HarnessQueuedTurnSchema, { ...baseTurn, status: "cancelled", finishedAt: 7, },),).toBe(false,);
+  });
+
+  it("HarnessQueueResponse wraps the turn array", () => {
+    const queued = { ...baseTurn, status: "queued", };
+    expect(Value.Check(HarnessQueueResponse, { items: [queued,], },),).toBe(true,);
+    expect(Value.Check(HarnessQueueResponse, { items: [], },),).toBe(true,);
+    expect(Value.Check(HarnessQueueResponse, { items: [queued, 3,], },),).toBe(false,);
+    expect(Value.Check(HarnessQueueResponse, {},),).toBe(false,);
+  });
+
+  it("HarnessQueueEnqueueResponse accepts { batchId, turnIds } only", () => {
+    expect(Value.Check(HarnessQueueEnqueueResponse, { batchId: "batch-1", turnIds: ["t1", "t2",], },),).toBe(true,);
+    expect(Value.Check(HarnessQueueEnqueueResponse, { batchId: "batch-1", turnIds: [], },),).toBe(true,);
+    expect(Value.Check(HarnessQueueEnqueueResponse, { batchId: "batch-1", turnIds: [1,], },),).toBe(false,);
+    expect(Value.Check(HarnessQueueEnqueueResponse, { batchId: "batch-1", },),).toBe(false,);
+    expect(Value.Check(HarnessQueueEnqueueResponse, { turnIds: [], },),).toBe(false,);
+  });
+
+  it("HarnessQueueCancelResponse accepts only { ok: boolean }", () => {
+    expect(Value.Check(HarnessQueueCancelResponse, { ok: true, },),).toBe(true,);
+    expect(Value.Check(HarnessQueueCancelResponse, { ok: false, },),).toBe(true,);
+    expect(Value.Check(HarnessQueueCancelResponse, { ok: "yes", },),).toBe(false,);
   });
 });

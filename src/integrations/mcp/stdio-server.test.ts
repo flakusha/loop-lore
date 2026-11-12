@@ -12,22 +12,83 @@
  * all when `integrations.inbound` is unseeded/disabled/principal-less.
  *
  * Resource contract (parallel-safe): one :memory: SQLite per file, registry
- * reset per build, no ports/env.
+ * reset per build/test, no ports/env, no fixed paths. The main() suite owns
+ * the process seams it touches: logger/config/Stdio-transport module mocks
+ * exist only under ISOLATED (per-file module registry), the getDatabase()
+ * override is set per test and cleared in afterEach/teardown, and
+ * process.exitCode is restored to its entry value (?? 0) in a finally —
+ * every teardown lives in afterEach/finally so a failed test cannot poison
+ * siblings.
  */
 
 import { Client, } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport, } from "@modelcontextprotocol/sdk/inMemory.js";
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
+import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { initInboundSettings, resetInboundSettings, } from "../inbound/settings";
 import { resetFacadeRegistry, } from "../loop-lore-facade/instance";
-import { connectInboundMcpServer, } from "./stdio-server";
+import { connectInboundMcpServer, main, } from "./stdio-server";
+
+// ── main()'s module seams (ISOLATED-only: mock.module pins the process) ─────
+
+const logCalls: { level: string; message: string }[] = [];
+const fakeLogger = new Proxy({}, {
+  get: (_target: unknown, level: string | symbol,) => (...args: unknown[]) => {
+    logCalls.push({ level: String(level,), message: typeof args[0] === "string" ? args[0] : "", },);
+    // Chainable (getLogger().child(...) in migrate.ts et al).
+    return fakeLogger;
+  },
+},);
+
+let mainConfig: Config | null = null;
+const stdioTransports: Array<{ started: boolean }> = [];
+
+if (ISOLATED) {
+  mock.module("../../logger", () => ({
+    createLogger: () => fakeLogger,
+    getLogger: () => fakeLogger,
+    setGlobalLogger: () => {},
+    getChildLogger: () => null,
+    LoggerImpl: class {},
+  }),);
+
+  mock.module("../../config/load", () => ({
+    loadConfig: () => {
+      if (mainConfig === null) { throw new Error("stdio-server.test: mainConfig not seeded",); }
+      return mainConfig;
+    },
+    validateConfig: () => {},
+    applyProviderEnvVars: () => {},
+    coerceValue: (...args: unknown[]) => args[0],
+    deepMerge: (...args: unknown[]) => args[0],
+    setByPath: (...args: unknown[]) => args[0],
+    MIN_PII_SECRET_LENGTH: 8,
+    validatePiiSafety: () => true,
+    DEFAULT_CONFIG_FILES: [],
+    ENV_MAP: {},
+    LOCAL_CONFIG_FILES: [],
+  }),);
+
+  // The stdio transport seam: main() constructs StdioServerTransport itself;
+  // the fake records the attach and satisfies Protocol.connect's surface.
+  mock.module("@modelcontextprotocol/sdk/server/stdio.js", () => ({
+    StdioServerTransport: class {
+      started = false;
+      async start(): Promise<void> {
+        this.started = true;
+        stdioTransports.push(this,);
+      }
+    },
+  }),);
+}
 
 const USER = "mcp-stdio-user";
 const CHAT = "mcp-stdio-chat";
@@ -142,3 +203,56 @@ describe("inbound MCP stdio server", () => {
     await client!.close();
   });
 });
+
+describeOrSkip("inbound MCP stdio server main()", () => {
+  beforeEach(() => {
+    resetFacadeRegistry();
+    resetInboundSettings();
+    logCalls.length = 0;
+    stdioTransports.length = 0;
+    // main() resolves its own config + database; point those seams at the
+    // file's fixture (destroyTestDb clears the db override).
+    mainConfig = baseConfig;
+    setTestDatabase(db, testDb.sqlite,);
+  },);
+
+  afterEach(() => {
+    setTestDatabase(null,);
+    resetInboundSettings();
+    mainConfig = null;
+  },);
+
+  test("the deny-by-default gate refuses the boot: no transport is attached", async () => {
+    const prevExitCode = process.exitCode ?? 0;
+    let exitCodeAfter: string | number | undefined;
+    try {
+      await main();
+      exitCodeAfter = process.exitCode;
+    } finally {
+      process.exitCode = prevExitCode;
+    }
+
+    expect(exitCodeAfter,).toBe(1,);
+    expect(logCalls.some((call,) => call.level === "warn" && call.message.includes("refused to start",)),).toBe(true,);
+    expect(stdioTransports,).toHaveLength(0,);
+  });
+
+  test("an admitted boot attaches the facade server to StdioServerTransport", async () => {
+    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    mainConfig = configWith({ mcpEnabled: true, principalUserId: USER, principalScope: "read", },);
+    const prevExitCode = process.exitCode ?? 0;
+    let exitCodeAfter: string | number | undefined;
+    try {
+      await main();
+      exitCodeAfter = process.exitCode;
+    } finally {
+      process.exitCode = prevExitCode;
+      mainConfig = null;
+    }
+
+    expect(stdioTransports,).toHaveLength(1,);
+    expect(stdioTransports[0]?.started,).toBe(true,);
+    expect(logCalls.some((call,) => call.level === "info" && call.message.includes("ready",)),).toBe(true,);
+    expect(exitCodeAfter,).toBe(prevExitCode,);
+  });
+},);

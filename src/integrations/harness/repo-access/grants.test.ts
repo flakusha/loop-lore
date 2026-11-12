@@ -5,7 +5,7 @@
 // fail-closed intersection. Parallel-safe: pure functions, no IO.
 import { describe, expect, it, } from "bun:test";
 import { principalKind, } from "../../../middleware/principal-kind";
-import { DEFAULT_KIND_GRANTS, resolveRepoGrants, } from "./grants";
+import { DEFAULT_KIND_GRANTS, holdsCapability, resolveRepoGrants, } from "./grants";
 
 describe("DEFAULT_KIND_GRANTS — the epic defaults table", () => {
   it("internal-service holds all six capabilities", () => {
@@ -66,5 +66,26 @@ describe("resolveRepoGrants — fail-closed composition", () => {
     },);
 
     expect(grants.size,).toBe(0,);
+  });
+});
+
+describe("holdsCapability — set membership over the resolved grants", () => {
+  it("true when the set holds the required capability", () => {
+    const grants = resolveRepoGrants({ kind: principalKind("internal-service",), },);
+    expect(holdsCapability(grants, "check:run",),).toBe(true,);
+    expect(holdsCapability(grants, "finalize:merge",),).toBe(true,);
+  });
+
+  it("false when the set lacks the capability", () => {
+    const grants = resolveRepoGrants({ kind: principalKind("external-agent",), },);
+    // worktree:spawn is held; repo:write never is for this kind.
+    expect(holdsCapability(grants, "worktree:spawn",),).toBe(true,);
+    expect(holdsCapability(grants, "repo:write",),).toBe(false,);
+  });
+
+  it("false for an absent capability on an empty set", () => {
+    const grants = resolveRepoGrants({ kind: principalKind("user",), granted: ["repo:write",], },);
+    expect(grants.size,).toBe(0,);
+    expect(holdsCapability(grants, "worktree:spawn",),).toBe(false,);
   });
 });

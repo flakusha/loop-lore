@@ -14,7 +14,18 @@ import {
   initChoiceCards,
   loadChoices,
 } from "./choice-cards";
-import { getAccumulatedImpacts, skipChoice, submitCustomChoice, } from "./choice-cards-select";
+import { getAccumulatedImpacts, renderChoices, skipChoice, submitCustomChoice, } from "./choice-cards-select";
+import {
+  getChatId,
+  getChoices,
+  getContainer,
+  getSceneIndex,
+  initChoiceState,
+  resetChoiceState,
+  setChoices,
+  syncPendingGate,
+  type VnChoice,
+} from "./choice-cards-state";
 import { isVnDecisionPending, setChoicePending, setQuestionPending, } from "./pending-decision";
 
 // ── Mock apiFetch ───────────────────────────────────────────────────────────
@@ -405,5 +416,70 @@ describeOrSkip("submitCustomChoice", () => {
     expect(await submitCustomChoice("   ",),).toBe(false,);
     expect(toasts.length,).toBe(1,);
     expect(toasts[0]!.type,).toBe("error",);
+  });
+},);
+
+describeOrSkip("choice-cards-state accessors", () => {
+  test("init seeds the component refs; accessors expose them", () => {
+    const container = boot();
+    expect(getContainer(),).toBe(container as unknown as HTMLElement,);
+    expect(getChatId(),).toBe("chat-1",);
+    expect(getSceneIndex(),).toBe(2,);
+  });
+
+  test("setChoices replaces the card list; getChoices returns it", () => {
+    boot();
+    const seeded = [{ ...rawChoice(), } as unknown as VnChoice,];
+    setChoices(seeded,);
+    expect(getChoices(),).toBe(seeded,);
+  });
+
+  test("syncPendingGate mirrors unresolved cards onto the pending flag", () => {
+    boot();
+    setChoices([
+      { ...rawChoice({ is_active: 1, },), selected: true, } as unknown as VnChoice,
+      { ...rawChoice({ id: "c2", },), selected: false, } as unknown as VnChoice,
+    ],);
+
+    syncPendingGate();
+    expect(isVnDecisionPending(),).toBe(true,); // c2 unresolved
+
+    setChoices([{ ...rawChoice({ is_active: 1, },), selected: true, } as unknown as VnChoice,],);
+    syncPendingGate();
+    expect(isVnDecisionPending(),).toBe(false,);
+  });
+
+  test("resetChoiceState clears the refs and the card list", () => {
+    boot();
+    setChoices([rawChoice() as unknown as VnChoice,],);
+    resetChoiceState();
+    expect(getChoices(),).toEqual([],);
+    expect(getContainer(),).toBeNull();
+    expect(getChatId(),).toBeNull();
+    expect(getSceneIndex(),).toBe(0,);
+  });
+},);
+
+describeOrSkip("renderChoices", () => {
+  test("re-renders the container from the current card list", async () => {
+    const container = boot();
+    apiHandler = () => jsonRes({ choices: [rawChoice({ id: "a", text: "Alpha", is_active: 1, },),], },);
+    await loadChoices();
+
+    const afterLoad = container.children.length;
+    expect(afterLoad,).toBeGreaterThan(0,);
+
+    // Swap the list under the component and re-render: the card list is
+    // rebuilt to show exactly the new cards.
+    setChoices([rawChoice({ id: "b", text: "Beta", is_active: 1, },) as unknown as VnChoice,],);
+    renderChoices();
+    const list = container.children.find((c,) => c.className === "vn-choice-list")!;
+    expect(cardLabels(list.children as unknown as FakeEl[],),).toEqual(["Beta",],);
+  });
+
+  test("without a container it is a no-op", () => {
+    // No boot: initChoiceState never ran in this test process context...
+    resetChoiceState();
+    expect(() => renderChoices()).not.toThrow();
   });
 },);
