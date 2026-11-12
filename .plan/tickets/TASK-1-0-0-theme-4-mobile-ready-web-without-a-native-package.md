@@ -40,9 +40,11 @@ as the unconfigured default. Tests: `packages/core/src/config/sections/prompt.te
 fixtures in `lore.test.ts` / `memories.test.ts`.
 
 Still open (not started, do not half-build):
-- AC4 PWA shell + offline send outbox — the dedicated slice ticket
-  `TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice.md` remains
-  Not Started; no manifest/sw/outbox code exists in this worktree.
+- AC4 offline send outbox — the dedicated slice ticket
+  `TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice.md` now has
+  slice 1 (cached shell) LANDED in this worktree (see its implementation
+  note); slices 2–3 (outbox + drain) remain open, so the queued-send AC is
+  unmet.
 - AC5 full form: per-world `token_budget` context-share ratio (this slice
   ships the global clamped config knob only).
 - AC4 phone-viewport verification (<800px tiers, 44px coarse-pointer targets).
