@@ -14,6 +14,7 @@ export const ASSISTANT_QUOTA_DEFAULTS = {
 export const ASSISTANT_DEFAULTS = {
   enabled: true,
   travelPrompts: false,
+  smartRegenGate: false,
   ...ASSISTANT_QUOTA_DEFAULTS,
 };
 
@@ -21,6 +22,7 @@ export const ASSISTANT_DEFAULTS = {
 export class AssistantSection {
   enabled = ASSISTANT_DEFAULTS.enabled;
   travelPrompts = ASSISTANT_DEFAULTS.travelPrompts;
+  smartRegenGate = ASSISTANT_DEFAULTS.smartRegenGate;
   quotaWindowMs = ASSISTANT_QUOTA_DEFAULTS.quotaWindowMs;
   quotaLimitPerWindow = ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow;
 
@@ -48,6 +50,12 @@ export const assistantMeta = {
       default: ASSISTANT_DEFAULTS.travelPrompts,
       description:
         "Bound/linked travel mode: prompt the LLM to narrate travel and suggest moving the chat to another location/chat when the narrative leaves the current one",
+    },
+    smartRegenGate: {
+      type: "boolean",
+      default: ASSISTANT_DEFAULTS.smartRegenGate,
+      description:
+        "Smart-regen decision gate: when enabled, /regen without an explicit action resolves by message-size heuristic to a plain re-roll or an alternate style instead of showing the usage menu",
     },
     quotaWindowMs: {
       type: "integer",

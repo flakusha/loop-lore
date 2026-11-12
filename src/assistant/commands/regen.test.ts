@@ -117,3 +117,65 @@ describe("registered /regen handler", () => {
     expect(result.systemMessage,).toContain("Improved:",);
   });
 });
+
+describe("regen decision gate wiring", () => {
+  const GATE_ON = { assistant: { smartRegenGate: true, }, } as unknown as Config;
+
+  async function payloadOf(args: string[], ctx: CommandContext,): Promise<Record<string, unknown>> {
+    const result = await runRegenAction(args, ctx, {},);
+    return (result.actionPayload ?? {}) as Record<string, unknown>;
+  }
+
+  it("gate off (default) keeps the usage menu for an unqualified regen", async () => {
+    const result = await runRegenAction([], history, {},);
+    expect(result.systemMessage,).toContain("/regen",);
+  });
+
+  it("gate on with a long target picks the condensing style", async () => {
+    const longCtx: CommandContext = {
+      chatId: "c1",
+      messages: [{ id: "1", role: "assistant", content: "x".repeat(1300,), created_at: "t", },],
+      config: GATE_ON,
+    };
+
+    expect(await payloadOf([], longCtx,),).toMatchObject({ style: "shorter", },);
+  });
+
+  it("gate on with a short target picks the expanding style", async () => {
+    const shortCtx: CommandContext = {
+      chatId: "c1",
+      messages: [{ id: "1", role: "assistant", content: "short.", created_at: "t", },],
+      config: GATE_ON,
+    };
+
+    expect(await payloadOf([], shortCtx,),).toMatchObject({ style: "longer", },);
+  });
+
+  it("gate on with a mid-sized target re-rolls plain (clear style)", async () => {
+    const midCtx: CommandContext = {
+      chatId: "c1",
+      messages: [{ id: "1", role: "assistant", content: "m".repeat(400,), created_at: "t", },],
+      config: GATE_ON,
+    };
+
+    expect(await payloadOf([], midCtx,),).toMatchObject({ style: "clear", },);
+  });
+
+  it("gate on with no target lands on the usage menu", async () => {
+    const result = await runRegenAction([], { chatId: "c1", config: GATE_ON, }, {},);
+    expect(result.systemMessage,).toContain("try-again",);
+  });
+
+  it("an explicit action still dispatches with the gate on", async () => {
+    const conciseCtx: CommandContext = { ...history, config: GATE_ON, };
+    let system = "";
+    await runRegenAction(["more-concise",], conciseCtx, {
+      complete: async (req,) => {
+        system = String(req.messages[0]?.content ?? "",);
+        return { content: "short", };
+      },
+    },);
+
+    expect(system,).toContain("concise style",);
+  });
+});
