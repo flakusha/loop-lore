@@ -238,6 +238,17 @@ describe("forwardRoutes", () => {
   test("denies a minor the forward (403, send-time age gate)", async () => {
     initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
     try {
+      const countTarget = async (): Promise<number> =>
+        Number(
+          (await db.selectFrom("messages",).select(({ fn, },) => fn.count<number>("id",).as("n",)).where(
+            "chat_id",
+            "=",
+            chatB,
+          ).executeTakeFirst())?.n ?? 0,
+        );
+
+      const before = await countTarget();
+
       const app = forwardApp(db, participantId, "user",);
       const res = await appHandle(
         app,
@@ -245,6 +256,7 @@ describe("forwardRoutes", () => {
       );
 
       expect(res.status,).toBe(403,);
+      expect(await countTarget(),).toBe(before,);
     } finally {
       initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None, },);
     }

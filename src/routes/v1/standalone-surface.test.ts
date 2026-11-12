@@ -2,12 +2,12 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * standaloneSurface barrel — the single owner mounting the five former
+ * standaloneSurface barrel — the single owner mounting the former
  * `migrated-v1` modules (agency, location-explorer, game-state,
- * story-orchestration, config-menu) under `/api/v1`. Pinned here: the
- * surface mounts each module's versioned routes exactly once, and the
- * retired legacy fallback stays retired (an unmatched versioned path 404s
- * instead of resolving an unversioned twin).
+ * story-orchestration, config-menu) plus omni-search under `/api/v1`.
+ * Pinned here: the surface mounts each module's versioned routes exactly
+ * once, and the retired legacy fallback stays retired (an unmatched
+ * versioned path 404s instead of resolving an unversioned twin).
  *
  * Resource contract (parallel-safe): each test owns a fresh `:memory:`
  * SQLite via `createTestDb` (fixed user id is safe — never shared across
@@ -43,6 +43,13 @@ describe("standaloneSurface", () => {
   test("mounts the agency balance route under /api/v1", async () => {
     await withApp(async (app,) => {
       const res = await app.handle(new Request("http://localhost/api/v1/agency/balance",),);
+      expect(res.status,).toBe(200,);
+    },);
+  });
+
+  test("mounts the omni-search route under /api/v1", async () => {
+    await withApp(async (app,) => {
+      const res = await app.handle(new Request("http://localhost/api/v1/search?q=tavern",),);
       expect(res.status,).toBe(200,);
     },);
   });
