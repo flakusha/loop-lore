@@ -66,3 +66,5 @@ into the release gate.
 
 
 git issue: 6465282
+
+**Resolved:** 2026-11-12 registry-driven close: git issue 6465282 (registry tip: a0033ec70 Konstantin Fedotov Close issue)
