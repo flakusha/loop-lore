@@ -92,6 +92,7 @@ export default withMermaid(defineConfig({
             { text: 'Users & Sessions', link: '/spec/users-sessions' },
             { text: 'Assets', link: '/spec/assets' },
             { text: 'Asset Attribution', link: '/spec/assets-attribution' },
+            { text: 'Omni-Search', link: '/spec/omni-search' },
             { text: 'Regex Extraction', link: '/spec/regex-extraction' },
             { text: 'Profanity Filter', link: '/spec/profanity-filter' },
             { text: 'Scheduler', link: '/spec/scheduler' },
