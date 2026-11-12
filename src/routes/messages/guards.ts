@@ -6,13 +6,15 @@
  */
 
 import type { Kysely, } from "kysely";
+import { getRuntimeConfig, } from "../../age-gate/controller";
+import { getStatus, } from "../../age-gate/service";
 import { isMuted, } from "../../chat/moderation";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { checkPromptInjection, } from "../../validation/prompt-injection";
-import { conflictResponse, internalErrorResponse, jsonResponse, } from "../http-utils";
+import { conflictResponse, forbiddenResponse, internalErrorResponse, jsonResponse, } from "../http-utils";
 import type { HttpStatusCode, } from "../http-utils";
 import { AttachmentOwnershipError, } from "./attachment-ownership";
 import { attachMessageAttachments, } from "./post";
@@ -130,6 +132,38 @@ export async function enforceMuteGate(
     { error: "forbidden", message: "You are muted in this chat", },
     403 as HttpStatusCode,
   );
+}
+
+/**
+ * Age gate (theme-5 send-time enforcement): a minor who never passed the
+ * shipped age-gate flow must not send into any chat — chat-create already
+ * gates new chats, but joining an existing chat would bypass it. Disabled
+ * gate is a no-op (null), mirroring `checkAgeGate` in chats/create.ts.
+ * @param database
+ * @param actorId Sending actor (session user).
+ * @returns 403 response while the gate is unpassed; null to proceed.
+ */
+export async function enforceAgeGate(
+  database: Kysely<DB>,
+  actorId: string,
+): Promise<Response | null> {
+  const config = getRuntimeConfig();
+  if (!config.enabled || config.mode === "none") { return null; }
+  const user = await database
+    .selectFrom("users",)
+    .select(["birth_date", "age_gate_accepted_at",],)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+
+  const st = getStatus(config, user ?? null,);
+  if (st.hasPassed) { return null; }
+
+  getLogger().child({ module: "messages/create", },).info(
+    "Message rejected: age gate not passed",
+    { actorId, },
+  );
+
+  return forbiddenResponse("Age gate not passed",);
 }
 
 /**
