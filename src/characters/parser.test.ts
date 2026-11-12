@@ -41,6 +41,32 @@ describe("parseCharacterCard", () => {
     expect(result.character.nickname,).toBe("V3",);
   });
 
+  test("drops card fields whose type is wrong", async () => {
+    const card = {
+      spec: "chara_card_v3",
+      spec_version: "3.0",
+      data: {
+        name: "Typed",
+        description: "A card with wrong field types",
+        personality: 42,
+        appearance: { nope: true, },
+        tags: ["ok", 7,],
+        alternate_greetings: "not a list",
+        outfits: [{ id: 5, name: "Casual", },],
+      },
+    };
+
+    const result = await parseCharacterCard(JSON.stringify(card,),);
+    // A card field is untyped JSON: only a real string is a string, only a real
+    // list is a list. A wrong-typed field is dropped, never cast through - a
+    // number in `personality` would otherwise reach a `.trim()` and 500.
+    expect(result.character.personality,).toBe("",);
+    expect(result.character.appearance,).toBe("",);
+    expect(result.character.tags,).toEqual(["ok",],);
+    expect(result.character.alternate_greetings,).toBeUndefined();
+    expect(result.character.outfits,).toEqual([{ id: "", name: "Casual", descriptor: "", },],);
+  });
+
   test("detects Character.AI format", async () => {
     const cai = {
       name: "CAI Character",

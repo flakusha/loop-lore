@@ -7,46 +7,40 @@
 // Converts Character.AI format to canonical character card.
 
 import type { CanonicalCharacter, } from "../spec";
-
-interface CharacterAIData {
-  name?: string;
-  description?: string;
-  greeting?: string;
-  definition?: string;
-  examples_of_dialogue?: string;
-  tags?: string[];
-  visibility?: string;
-}
+import { cardOptionalText, cardText, cardTextList, } from "./shared";
 
 /**
  * Normalize Character.AI format to canonical character card.
+ *
+ * The card payload is untyped JSON, so every field is narrowed to its runtime
+ * type here rather than cast: a card whose `name` is a number must not reach
+ * the character row as a number.
  * @param data
  * @returns Record<string
  */
 export function normalizeCharacterAI(data: Record<string, unknown>,): CanonicalCharacter {
-  const cardData = data as CharacterAIData;
-
   // Character.AI uses macro syntax in definition field
   // {{char}} and {{user}} are preserved as-is
-  let description = cardData.description ?? "";
-  if (cardData.definition) {
-    // Append definition to description, preserving macro syntax
-    description = description ? `${description}\n\n${cardData.definition}` : cardData.definition;
-  }
+  const description = cardText(data.description,);
+  const definition = cardText(data.definition,);
+  // Append definition to description, preserving macro syntax
+  const fullDescription = description && definition
+    ? `${description}\n\n${definition}`
+    : (description || definition);
 
   // A Character.AI card carries no separate personality, appearance or
   // wardrobe: its persona lives in `description` + `definition`, both of which
   // are kept in the description. The import maps the card faithfully - copying
   // the description into the missing fields would print the same prose twice.
   return {
-    name: cardData.name ?? "",
-    description,
+    name: cardText(data.name,),
+    description: fullDescription,
     personality: "",
     appearance: "",
     default_outfit: "",
     outfits: [],
-    welcome_message: cardData.greeting,
-    mes_example: cardData.examples_of_dialogue,
-    tags: cardData.tags,
+    welcome_message: cardOptionalText(data.greeting,),
+    mes_example: cardOptionalText(data.examples_of_dialogue,),
+    tags: cardTextList(data.tags,),
   };
 }

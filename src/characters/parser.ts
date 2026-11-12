@@ -18,6 +18,7 @@ import { normalizeCcV2, } from "./normalizers/ccv2";
 import { normalizeCcV3, } from "./normalizers/ccv3";
 import { normalizeCharacterAI, } from "./normalizers/character-ai";
 import { normalizeJsonFlat, } from "./normalizers/json-flat";
+import { cardObject, } from "./normalizers/shared";
 import { normalizeToml, } from "./normalizers/toml";
 import { normalizeYaml, } from "./normalizers/yaml";
 import { parseCharxCard, parsePngCard, } from "./parse-binary";
@@ -93,10 +94,9 @@ export async function parseCharacterCard(input: Buffer | string, _filename?: str
 }
 
 function tryParseJson(text: string,): ParseResult | null {
-  const parsed = jsonParseOr(text, null,);
-  if (!parsed || typeof parsed !== "object") { return null; }
+  const obj = cardObject(jsonParseOr(text, null,),);
+  if (!obj) { return null; }
 
-  const obj = parsed as Record<string, unknown>;
   const warnings: string[] = [];
 
   if (obj.spec === "chara_card_v3") {
@@ -130,10 +130,8 @@ function tryParseToml(text: string,): ParseResult | null {
   try {
     if (!text.includes("[",) || !text.includes("]",)) { return null; }
 
-    const parsed = Bun.TOML.parse(text,);
-    if (!parsed || typeof parsed !== "object") { return null; }
-
-    const obj = parsed as Record<string, unknown>;
+    const obj = cardObject(Bun.TOML.parse(text,),);
+    if (!obj) { return null; }
     if (!obj.character) { return null; }
 
     const warnings = ["TOML format detected",];
@@ -147,10 +145,8 @@ function tryParseYaml(text: string,): ParseResult | null {
   try {
     if (!text.includes(":",)) { return null; }
 
-    const parsed = yamlLoad(text,);
-    if (!parsed || typeof parsed !== "object") { return null; }
-
-    const obj = parsed as Record<string, unknown>;
+    const obj = cardObject(yamlLoad(text,),);
+    if (!obj) { return null; }
     if (!obj.name && !obj.description) { return null; }
 
     const warnings = ["YAML format detected",];
