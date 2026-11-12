@@ -6,7 +6,7 @@
  * (WIRE-assistant-command-palette-stale-static-list)
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import { randomUUID, } from "node:crypto";
 import {
   __unregisterCommandForTests,
@@ -42,7 +42,10 @@ describe("GET /api/commands", () => {
     __unregisterCommandForTests(TEST_COMMAND,);
     __unregisterCommandForTests(OTHER_TEST_COMMAND,);
     for (const name of listCommands()) {
-      if (name.startsWith("fresh-cmd-",) || name.startsWith("stub-cmd-",) || name.startsWith("owner-gated-",)) {
+      if (
+        name.startsWith("fresh-cmd-",) || name.startsWith("stub-cmd-",) || name.startsWith("owner-gated-",) ||
+        name.startsWith("valved-cmd-",)
+      ) {
         __unregisterCommandForTests(name,);
       }
     }
@@ -129,6 +132,41 @@ describe("GET /api/commands", () => {
     } finally {
       await tdb.db.destroy();
     }
+  });
+
+  it("advertises valve summaries for commands that declare valves", async () => {
+    const valved = `valved-cmd-${Date.now()}`;
+    registerCommand(valved, () => ({ handled: true, }), {
+      capabilities: ["read-chat",],
+      valves: t.Object({
+        style: t.Optional(t.Union([t.Literal("clear",), t.Literal("dramatic",),], { default: "clear", },),),
+        count: t.Optional(t.Number({ default: 5, },),),
+        note: t.Optional(t.String(),),
+      },),
+    },);
+
+    const app = makeApp("user-1",);
+    const res = await app.handle(new Request("http://localhost/api/commands",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as {
+      data: { name: string; valves?: { name: string; type: string; default?: unknown; enum?: string[] }[] }[];
+    };
+
+    const entry = body.data.find((cmd,) => cmd.name === valved);
+    expect(entry?.valves,).toEqual([
+      { name: "style", type: "clear|dramatic", default: "clear", enum: ["clear", "dramatic",], },
+      { name: "count", type: "number", default: 5, },
+      { name: "note", type: "string", },
+    ],);
+  });
+
+  it("omits valves for commands that declare no valve schema", async () => {
+    const app = makeApp("user-1",);
+    const res = await app.handle(new Request("http://localhost/api/commands",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { data: Record<string, unknown>[] };
+    const entry = body.data.find((cmd,) => cmd.name === TEST_COMMAND);
+    expect(entry !== undefined && "valves" in entry,).toBe(false,);
   });
 
   it("fails open to the unscoped list for an unknown chat", async () => {

@@ -17,6 +17,51 @@ import { jsonStringifyOr, } from "../../utils";
 /** A valve value after conversion: strings stay strings, numbers/booleans coerce. */
 export type ValveValue = string | number | boolean;
 
+/**
+ * One valve argument, summarized for API consumers (GET /api/commands, the
+ * TUI hint strip). Deliberately free of TypeBox internals: consumers get
+ * plain display fields, never a schema object.
+ */
+export interface CommandValveSpec {
+  /** The `--key` name (without dashes). */
+  name: string;
+  /** Display type: "number", "boolean", a `a|b|c` literal union, or "text". */
+  type: string;
+  /** Schema default, when the property declares one. */
+  default?: ValveValue;
+  /** Literal-union vocabulary, when the property is a union of literals. */
+  enum?: string[];
+}
+
+/**
+ * Summarize a valve schema into per-argument display specs.
+ * @param schema - The command's valve schema
+ * @returns one spec per schema property, in declaration order
+ */
+export function valveSpecs(schema: TObject,): CommandValveSpec[] {
+  return Object.entries(schema.properties,).map(([key, prop,],) => {
+    const union: unknown = "anyOf" in prop ? prop.anyOf : undefined;
+    const members: unknown[] | undefined = Array.isArray(union,) ? union : undefined;
+    const enumValues = members === undefined
+      ? undefined
+      : members
+        .map((entry,) => (entry !== null && typeof entry === "object" && "const" in entry ? entry.const : undefined))
+        .filter((value,): value is string => typeof value === "string");
+
+    const def: unknown = "default" in prop ? prop.default : undefined;
+    const defaultSpec = typeof def === "string" || typeof def === "number" || typeof def === "boolean"
+      ? { default: def, }
+      : {};
+
+    return {
+      name: key,
+      type: propertyKind(prop,),
+      ...defaultSpec,
+      ...(enumValues !== undefined && enumValues.length > 0 ? { enum: enumValues, } : {}),
+    };
+  },);
+}
+
 /** The dispatcher's valve resolution outcome. */
 export type ValveOutcome =
   | { ok: true; values: Record<string, ValveValue> }
