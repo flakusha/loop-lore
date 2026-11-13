@@ -1993,7 +1993,10 @@
     "tradeOfferCancelFailed": "Failed to cancel trade offer.",
     "tradeOfferCancelled": "Trade offer cancelled.",
     "tradeOfferEmptyDraft": "Select items or set a price for the offer.",
-    "tradeBalanceFailed": "Failed to load balance."
+    "tradeBalanceFailed": "Failed to load balance.",
+    "availabilityLoadFailed": "Failed to load availability",
+    "availabilitySaveFailed": "Failed to save availability",
+    "availabilityDeleteFailed": "Failed to delete availability"
   },
   "commands": {
     "timeline": "Zeitlinienzweige der Welt verwalten (list/fork/switch)",
@@ -2562,7 +2565,6 @@
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
   },
-
   "npc": {
     "relationshipsTab": "Relationships",
     "relationshipsTitle": "Relationships",
@@ -2574,8 +2576,24 @@
     "relationshipsStanding": "Standing",
     "relationshipsTrust": "Trust",
     "relationshipsFamiliarity": "Familiarity"
-  }
-
+  },
+  "availability": {
+    "title": "Availability",
+    "help": "Control how and where this character can be used.",
+    "status": "Status",
+    "statusAvailable": "Available",
+    "statusLimited": "Limited",
+    "statusUnavailable": "Unavailable",
+    "statusRetired": "Retired",
+    "usagePolicy": "Usage policy",
+    "usagePolicyPlaceholder": "e.g. Personal use only",
+    "activityRestrictions": "Activity restrictions",
+    "activityRestrictionsHint": "Comma-separated, e.g. trading, combat",
+    "contentPolicy": "Content policy",
+    "nsfwPolicy": "NSFW policy",
+    "empty": "No availability settings for this character yet.",
+    "add": "Add availability"
+  },
   "search": {
     "title": "Search",
     "placeholder": "Search chats, messages, and assets…",

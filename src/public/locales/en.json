@@ -1167,6 +1167,24 @@
     "relationshipsTrust": "Trust",
     "relationshipsFamiliarity": "Familiarity"
   },
+
+  "availability": {
+    "title": "Availability",
+    "help": "Control how and where this character can be used.",
+    "status": "Status",
+    "statusAvailable": "Available",
+    "statusLimited": "Limited",
+    "statusUnavailable": "Unavailable",
+    "statusRetired": "Retired",
+    "usagePolicy": "Usage policy",
+    "usagePolicyPlaceholder": "e.g. Personal use only",
+    "activityRestrictions": "Activity restrictions",
+    "activityRestrictionsHint": "Comma-separated, e.g. trading, combat",
+    "contentPolicy": "Content policy",
+    "nsfwPolicy": "NSFW policy",
+    "empty": "No availability settings for this character yet.",
+    "add": "Add availability"
+  },
   "placeholders": {
     "chatName": "Chat name",
     "filter": "Filter…",
@@ -2134,6 +2152,9 @@
     "licensingDeleteFailed": "Failed to delete license",
     "licensingLoadFailed": "Failed to load license",
     "licensingSaveFailed": "Failed to save license",
+    "availabilityLoadFailed": "Failed to load availability",
+    "availabilitySaveFailed": "Failed to save availability",
+    "availabilityDeleteFailed": "Failed to delete availability",
     "systemsExportComplete": "Export complete",
     "systemsExportFailed": "Export failed",
     "systemsImportComplete": "Import complete",
