@@ -198,7 +198,8 @@ describe("Phone viewport shell + offline outbox badge (theme-4 AC4)", () => {
         const scopes = document.querySelectorAll("[x-data='chatState()']",).length;
         const btn = document.querySelector("[data-testid='send-button']",) as HTMLElement | null;
         btn?.click();
-        const data = (globalThis as { Alpine?: { $data?: (el: Element,) => { messages?: unknown[] } } }).Alpine
+        const data = (globalThis as unknown as { Alpine?: { $data?: (el: Element,) => { messages?: unknown[] } } })
+          .Alpine
           ?.$data?.(
             document.querySelector("[x-data='chatState()']",) ?? document.body,
           );
@@ -215,7 +216,7 @@ describe("Phone viewport shell + offline outbox badge (theme-4 AC4)", () => {
       console.log(`[offline-diag] immediate=${JSON.stringify(immediate,)} valueBefore=${valueBefore}`,);
       await page.waitForTimeout(1_500,);
       const after1s5 = await page.evaluate(() => {
-        const alpine = (globalThis as {
+        const alpine = (globalThis as unknown as {
           Alpine?: { $data?: (el: Element,) => { messages?: Array<{ id: string; status: string }> } };
         }).Alpine;
 

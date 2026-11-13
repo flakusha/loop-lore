@@ -11,11 +11,12 @@ import { describe, expect, test, } from "bun:test";
 import {
   createOutbox,
   isOfflineClassError,
+  OUTBOX_DRAIN_MESSAGE,
   OUTBOX_MAX_ATTEMPTS,
+  OUTBOX_STORAGE_KEY,
   type OutboxDrainReport,
   type OutboxEntry,
   type OutboxSend,
-  type OutboxSendResult,
   type OutboxStorage,
 } from "./outbox-store";
 
@@ -43,7 +44,7 @@ function fakeStorage(): OutboxStorage & { dump(): string; failNextSet(): void } 
   };
 }
 
-const enqueueTwo = (store: ReturnType<typeof createOutbox>,): OutboxEntry[] => [
+const enqueueTwo = (store: ReturnType<typeof createOutbox>,): [OutboxEntry, OutboxEntry,] => [
   store.enqueue({ chatId: "chat-a", idempotencyKey: "key-1", body: '{"content":"first"}', },),
   store.enqueue({ chatId: "chat-b", idempotencyKey: "key-2", body: '{"content":"second"}', },),
 ];
@@ -227,7 +228,7 @@ describe("outbox store — drain", () => {
     enqueueTwo(store,);
     let inFlight = 0;
     let maxConcurrent = 0;
-    const slowSend: OutboxSend = async (entry,) => {
+    const slowSend: OutboxSend = async (_entry,) => {
       inFlight += 1;
       maxConcurrent = Math.max(maxConcurrent, inFlight,);
       await new Promise((resolve,) => setTimeout(resolve, 5,));
@@ -338,5 +339,17 @@ describe("outbox store — discard", () => {
 
     expect(report.delivered.map((entry,) => entry.id),).toEqual([first.id,],);
     expect(store.depth(),).toBe(0,);
+  });
+});
+
+describe("outbox store — contract keys", () => {
+  test("stable storage key and SW drain message", () => {
+    const storage = fakeStorage();
+    const store = createOutbox({ storage, },);
+    store.enqueue({ chatId: "c", idempotencyKey: "k", body: "b", },);
+
+    expect(OUTBOX_STORAGE_KEY,).toBe("ll-outbox-v1",);
+    expect(storage.dump(),).not.toBe("",);
+    expect(OUTBOX_DRAIN_MESSAGE,).toBe("ll-drain-outbox",);
   });
 });

@@ -114,4 +114,11 @@ export function createOutboxBadge(deps: {
   };
 }
 
+/** Alpine entry point (`x-data="outboxBadge()"`). */
+type OutboxBadgeFactory = () => OutboxBadgeState;
+declare global {
+  // Ambient registration consumed by Alpine x-data="outboxBadge()".
+  var outboxBadge: OutboxBadgeFactory;
+}
+
 globalThis.outboxBadge = (): OutboxBadgeState => createOutboxBadge();
