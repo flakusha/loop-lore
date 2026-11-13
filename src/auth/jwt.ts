@@ -35,6 +35,10 @@ export interface JwtPayload {
   exp: number;
   /** Session ID for revocation tracking */
   sid: string;
+  /** Authentication methods (e.g. `["pwd","mfa-email"]`); absent = password only. */
+  amr?: string[];
+  /** Seconds since epoch when step-up MFA completed; absent = never. */
+  auth_time?: number;
 }
 
 /** */
@@ -59,6 +63,10 @@ export interface SignJwtOpts {
   role: string;
   sessionId: string;
   expiresInSeconds: number;
+  /** Authentication methods; echoed into `amr`. Omit for password-only. */
+  amr?: string[];
+  /** Step-up completion time (sec); echoed into `auth_time`. Omit when never. */
+  authTime?: number;
 }
 
 /** */
@@ -135,6 +143,8 @@ export async function signJwt(opts: SignJwtOpts,): Promise<string> {
     iat: now,
     exp: now + opts.expiresInSeconds,
     sid: opts.sessionId,
+    ...(opts.amr === undefined ? {} : { amr: opts.amr, }),
+    ...(opts.authTime === undefined ? {} : { auth_time: opts.authTime, }),
   };
 
   const encoder = new TextEncoder();

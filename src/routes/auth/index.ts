@@ -15,14 +15,13 @@
  */
 
 import { Elysia, } from "elysia";
-import type { Kysely, } from "kysely";
-import type { DB, } from "../../db/schema";
 import type { TranslatorFn, } from "../../i18n/types";
-import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
+import { ErrorResponse, SuccessResponse, VerifyFactorBody, } from "../../validation/schemas";
 import { handleDemoLogin, handleLogin, } from "./login";
 import { handleRegister, } from "./register";
 import { handleLogout, handleMe, } from "./session";
 import type { HandleOpts, } from "./types";
+import { handleVerifyFactor, } from "./verify";
 
 export {
   createDemoLoginLimiter,
@@ -127,7 +126,7 @@ export function authPublicRoutes({ database, config, limiters, }: HandleOpts, pr
  * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
-export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
+export function authProtectedRoutes({ database, config, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "auth-protected", },)
     .post(
       `${prefix}/auth/logout`,
@@ -171,6 +170,55 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
         detail: {
           summary: "Current user",
           description: "Get the authenticated user's profile.",
+          tags: ["Auth",],
+        },
+      },
+    )
+    .post(
+      `${prefix}/auth/factors/verify`,
+      async ({ request, body, ...rest },) => {
+        const userId = "userId" in rest && typeof rest.userId === "string"
+          ? rest.userId
+          : null;
+
+        const sessionId = "sessionId" in rest && typeof rest.sessionId === "string"
+          ? rest.sessionId
+          : null;
+
+        const userRole = "userRole" in rest && typeof rest.userRole === "string"
+          ? rest.userRole
+          : null;
+
+        const { challengeId, code, purpose, } = body as {
+          challengeId: string;
+          code: string;
+          purpose:
+            (typeof import("../../db/enums").ChallengePurpose)[keyof typeof import("../../db/enums").ChallengePurpose];
+        };
+
+        return handleVerifyFactor({
+          database,
+          config,
+          userId,
+          sessionId,
+          userRole,
+          challengeId,
+          code,
+          purpose,
+        },);
+      },
+      {
+        body: VerifyFactorBody,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+          410: ErrorResponse,
+        },
+        detail: {
+          summary: "Verify MFA factor",
+          description: "Consume an MFA challenge and elevate the session with amr + auth_time claims.",
           tags: ["Auth",],
         },
       },
