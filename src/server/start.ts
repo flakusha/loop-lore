@@ -60,6 +60,13 @@ import { getHarnessRuntime, initHarnessRuntime, } from "../integrations/harness/
  * Bootstrap the Loop Lore HTTP/HTTPS server: init subsystems, seed the DB,
  * pre-compress static assets, load plugins, and wire graceful shutdown.
  */
+/** Provider instance name for an auto-discovered SD backend by API family. */
+function autoProviderName(apiFamily: string,): string {
+  if (apiFamily === "comfyui") { return "comfyui-auto"; }
+  if (apiFamily === "sdcpp") { return "sdcpp-auto"; }
+  return "sd-server-auto";
+}
+
 export async function start() {
   // Bootstrap logger before config load (template expansion needs it)
   createLogger();
@@ -112,18 +119,7 @@ export async function start() {
           ...config.generation,
           providers: {
             ...config.generation.providers,
-            sd: Array.from(
-              discovered,
-              (b,) =>
-                backendToConfig(
-                  b,
-                  b.apiFamily === "comfyui"
-                    ? "comfyui-auto"
-                    : b.apiFamily === "sdcpp"
-                    ? "sdcpp-auto"
-                    : "sd-server-auto",
-                ),
-            ),
+            sd: Array.from(discovered, (b,) => backendToConfig(b, autoProviderName(b.apiFamily,),),),
           },
         },
       };
