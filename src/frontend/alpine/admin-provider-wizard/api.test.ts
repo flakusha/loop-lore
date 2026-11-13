@@ -10,7 +10,14 @@
  * (src/routes/http-utils/errors.ts) — `error` carries the operator-facing text.
  */
 import { afterEach, beforeEach, describe, expect, test, vi, } from "bun:test";
-import { fetchSetupChecks, listSetupProviders, putModelRole, rescanProviderSummaries, saveSetupProvider, } from "./api";
+import {
+  deleteSetupProvider,
+  fetchSetupChecks,
+  listSetupProviders,
+  putModelRole,
+  rescanProviderSummaries,
+  saveSetupProvider,
+} from "./api";
 
 /** A request the client sent. */
 interface FetchCall {
@@ -171,6 +178,43 @@ describe("provider wizard api client", () => {
     }
 
     expect((caught as Error).message,).toBe("Provider registry is empty",);
+  });
+
+  test("a delete removes the named provider and encodes the name in the URL", async () => {
+    handler = async () => new Response(null, { status: 204, },);
+
+    await deleteSetupProvider("my provider/x",);
+
+    expect(calls[0]?.url,).toBe("/api/v1/admin/setup/providers/my%20provider%2Fx",);
+    expect(calls[0]?.init.method,).toBe("DELETE",);
+  });
+
+  test("a refused delete surfaces the server's error message", async () => {
+    handler = async () => Response.json({ error: "Provider not found", }, { status: 400, },);
+
+    let caught: unknown;
+    try {
+      await deleteSetupProvider("openai",);
+    } catch (err) {
+      caught = err;
+    }
+
+    expect((caught as Error).message,).toBe("Provider not found",);
+    expect((caught as { status?: number }).status,).toBe(400,);
+  });
+
+  test("a delete without the admin permission surfaces the server's error message", async () => {
+    handler = async () => Response.json({ error: "Forbidden", }, { status: 403, },);
+
+    let caught: unknown;
+    try {
+      await deleteSetupProvider("openai",);
+    } catch (err) {
+      caught = err;
+    }
+
+    expect((caught as Error).message,).toBe("Forbidden",);
+    expect((caught as { status?: number }).status,).toBe(403,);
   });
 
   test("a healthy rescan maps the body to provider summaries", async () => {

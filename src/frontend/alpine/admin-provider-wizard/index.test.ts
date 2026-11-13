@@ -298,6 +298,66 @@ describe("provider connection wizard", () => {
     expect(renderedToasts().map((toast,) => toast.type),).toEqual(["success",],);
   });
 
+  test("the first delete click only arms the row", async () => {
+    handler = async (_url: string, init: RequestInit,) => {
+      if (init.method === "DELETE") { return new Response(null, { status: 204, },); }
+      return jsonResponse({ providers: [savedProvider,], },);
+    };
+
+    const wizard = createProviderWizard();
+    await wizard.loadProviders();
+
+    await wizard.deleteProvider("openai",);
+
+    expect(wizard.wizard.pendingDelete,).toBe("openai",);
+    expect(calls.filter((call,) => call.method === "DELETE"),).toHaveLength(0,);
+  });
+
+  test("the second delete click removes the provider and refreshes the list", async () => {
+    let deleted = false;
+    handler = async (_url: string, init: RequestInit,) => {
+      if (init.method === "DELETE") {
+        deleted = true;
+        return new Response(null, { status: 204, },);
+      }
+
+      return jsonResponse({ providers: deleted ? [] : [savedProvider,], },);
+    };
+
+    const wizard = createProviderWizard();
+    await wizard.loadProviders();
+
+    await wizard.deleteProvider("openai",);
+    await wizard.deleteProvider("openai",);
+
+    const deletes = calls.filter((call,) => call.method === "DELETE");
+    expect(deletes,).toHaveLength(1,);
+    expect(deletes[0]?.url,).toBe("/api/v1/admin/setup/providers/openai",);
+    expect(wizard.wizard.pendingDelete,).toBeNull();
+    expect(wizard.wizard.providers,).toEqual([],);
+    expect(renderedToasts().map((toast,) => toast.type),).toEqual(["success",],);
+  });
+
+  test("a failed delete keeps the provider and shows the server message", async () => {
+    handler = async (_url: string, init: RequestInit,) => {
+      if (init.method === "DELETE") {
+        return jsonResponse({ error: "Provider not found", code: "VALIDATION_ERROR", }, 400,);
+      }
+
+      return jsonResponse({ providers: [savedProvider,], },);
+    };
+
+    const wizard = createProviderWizard();
+    await wizard.loadProviders();
+
+    await wizard.deleteProvider("openai",);
+    await wizard.deleteProvider("openai",);
+
+    expect(wizard.wizard.pendingDelete,).toBeNull();
+    expect(wizard.wizard.error,).toBe("Provider not found",);
+    expect(wizard.wizard.providers.map((provider,) => provider.name),).toEqual(["openai",],);
+  });
+
   test("a failing setup-state fetch leaves the wizard usable", async () => {
     handler = async (url: string,) => {
       if (url === "/api/v1/setup/state") { throw new Error("network down",); }

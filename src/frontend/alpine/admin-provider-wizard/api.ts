@@ -154,6 +154,18 @@ export async function putModelRole(role: string, provider: string, model: string
 }
 
 /**
+ * DELETE /api/v1/admin/setup/providers/:name - remove a stored provider instance.
+ * @param name - Provider instance name.
+ * @throws {Error} With the server's message when the deletion is refused.
+ */
+export async function deleteSetupProvider(name: string,): Promise<void> {
+  const res = await adminFetch(`/api/v1/admin/setup/providers/${encodeURIComponent(name,)}`, { method: "DELETE", },);
+
+  await assertOk(res,);
+  await res.text();
+}
+
+/**
  * GET /api/v1/setup/state - optional endpoint, may not exist yet.
  * @returns The checks, or null when the endpoint is absent or unreachable.
  */

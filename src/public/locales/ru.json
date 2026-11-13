@@ -583,6 +583,9 @@
       "missing": "Что отсутствует",
       "missingFields": "Не заполнены обязательные поля",
       "configured": "Настроенные провайдеры",
+      "delete": "Удалить",
+      "confirmDelete": "Подтвердить удаление",
+      "deleteProvider": "Удалить провайдер {name}",
       "importInstead": "Импортировать файл конфигурации"
     },
     "knowledgeGraph": "Граф знаний",
@@ -1943,6 +1946,7 @@
     "characterUpdated": "Персонаж {name} обновлён",
     "failedUpdateCharacter": "Не удалось обновить персонажа",
     "providerSaved": "Провайдер сохранён",
+    "providerDeleted": "Провайдер удалён",
     "failedLoadKnowledgeGraph": "Не удалось загрузить граф знаний"
   },
   "status": {

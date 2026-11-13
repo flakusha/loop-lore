@@ -583,6 +583,9 @@
       "missing": "Was fehlt",
       "missingFields": "Pflichtfelder fehlen",
       "configured": "Konfigurierte Provider",
+      "delete": "Löschen",
+      "confirmDelete": "Löschen bestätigen",
+      "deleteProvider": "Provider {name} löschen",
       "importInstead": "Stattdessen eine Konfigurationsdatei importieren"
     },
     "knowledgeGraph": "Wissensgraph",
@@ -1943,6 +1946,7 @@
     "characterUpdated": "Charakter {name} aktualisiert",
     "failedUpdateCharacter": "Charakter konnte nicht aktualisiert werden",
     "providerSaved": "Provider gespeichert",
+    "providerDeleted": "Provider gelöscht",
     "failedLoadKnowledgeGraph": "Wissensgraph konnte nicht geladen werden"
   },
   "status": {

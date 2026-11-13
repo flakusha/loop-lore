@@ -583,6 +583,9 @@
       "missing": "ما الذي ينقص",
       "missingFields": "حقول إلزامية مفقودة",
       "configured": "المزوّدات المُهيّأة",
+      "delete": "حذف",
+      "confirmDelete": "تأكيد الحذف",
+      "deleteProvider": "حذف المزوّد {name}",
       "importInstead": "استيراد ملف إعدادات بدلاً من ذلك"
     },
     "knowledgeGraph": "مخطط المعرفة",
@@ -1943,6 +1946,7 @@
     "characterUpdated": "تم تحديث الشخصية {name}",
     "failedUpdateCharacter": "فشل تحديث الشخصية",
     "providerSaved": "تم حفظ المزوّد",
+    "providerDeleted": "تم حذف المزوّد",
     "failedLoadKnowledgeGraph": "فشل تحميل مخطط المعرفة"
   },
   "status": {

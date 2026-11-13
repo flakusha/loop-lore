@@ -690,6 +690,9 @@
       "missing": "What is missing",
       "missingFields": "Required fields are missing",
       "configured": "Configured providers",
+      "delete": "Delete",
+      "confirmDelete": "Confirm delete",
+      "deleteProvider": "Delete provider {name}",
       "importInstead": "Import a configuration file instead"
     }
   },
@@ -2098,7 +2101,8 @@
     "classifierTagsSaveFailed": "Failed to save classifier tags",
     "characterUpdated": "Character {name} updated",
     "failedUpdateCharacter": "Failed to update character",
-    "providerSaved": "Provider saved"
+    "providerSaved": "Provider saved",
+    "providerDeleted": "Provider deleted"
   },
   "wizard": {
     "previewTitle": "Create {type} — Preview",
