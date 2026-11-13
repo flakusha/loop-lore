@@ -18,13 +18,24 @@ export {
   toRepoCapability,
 } from "./capabilities";
 export {
+  type EscalationRateLimiter,
+  REPO_ACCESS_ESCALATION_TOOL,
+  type RepoRootChangeInput,
+  type RepoRootChangeOutcome,
+  requestRepoRootChange,
+} from "./escalation";
+export {
+  type EscalationDecision,
+  type EscalationResolution,
+  listPendingEscalations,
+  type PendingEscalation,
+  resolveEscalation,
+} from "./escalation-queue";
+export {
   assertRepoAccessExecution,
   REPO_ACCESS_AUDIT_TOOL,
   type RepoAccessGateInput,
   type RepoAccessVerdict,
-  type RepoRootChangeDenial,
-  type RepoRootChangeInput,
-  requestRepoRootChange,
 } from "./gate";
 export {
   DEFAULT_KIND_GRANTS,

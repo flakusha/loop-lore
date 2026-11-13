@@ -16,11 +16,7 @@ import { join, } from "node:path";
 import type { DB, } from "../../../db/schema";
 import { principalKind, } from "../../../middleware/principal-kind";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../../test-utils/create-test-db";
-import {
-  assertRepoAccessExecution,
-  REPO_ACCESS_AUDIT_TOOL,
-  requestRepoRootChange,
-} from "./gate";
+import { assertRepoAccessExecution, REPO_ACCESS_AUDIT_TOOL, } from "./gate";
 import { type RepoAccessPrincipal, setRepoScopeRootDetectorForTests, } from "./principal-scope";
 import { initRepoAccessSettings, resetRepoAccessSettings, } from "./settings";
 
@@ -146,32 +142,5 @@ describe("assertRepoAccessExecution — the fail-closed chain", () => {
     expect(rows,).toHaveLength(2,);
     expect(rows.map((r,) => r.verdict).sort(),).toEqual(["allowed", "denied",],);
     expect(rows.every((r,) => r.escalation_attempt === 0),).toBe(true,);
-  });
-});
-
-describe("requestRepoRootChange — audited escalation, default deny", () => {
-  it("always denies and records escalation_attempt = 1, for ANY principal", async () => {
-    initRepoAccessSettings({ enabled: true, },);
-    for (const principal of [svc, user, agent,]) {
-      const denial = await requestRepoRootChange({
-        principal,
-        targetPath: "/etc",
-        db,
-      },);
-
-      expect(denial.ok,).toBe(false,);
-      expect(denial.ok === false && denial.code,).toBe("escalation_denied",);
-    }
-
-    const rows = await auditRows();
-    expect(rows,).toHaveLength(3,);
-    expect(rows.every((r,) => r.verdict === "denied"),).toBe(true,);
-    expect(rows.every((r,) => r.escalation_attempt === 1),).toBe(true,);
-  });
-
-  it("records the request even while the tier is disabled", async () => {
-    const denial = await requestRepoRootChange({ principal: user, targetPath: "/", db, },);
-    expect(denial.ok,).toBe(false,);
-    expect(await auditRows(),).toHaveLength(1,);
   });
 });

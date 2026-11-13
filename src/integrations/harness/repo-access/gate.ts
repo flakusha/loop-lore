@@ -25,11 +25,10 @@
  *
  * AUDIT: every decision (allow and deny) writes a `tool_call_audit` row
  * (migration 092) via the shared `recordToolCallAudit` writer — no new
- * table (epic amendment A7). Escalation requests are RECORDED DENIALS:
- * `requestRepoRootChange` writes a row with `escalation_attempt = 1` and
- * always returns a denial — default deny, NO auto-approve for ANY principal
- * (amendment A2; `internal-service` holds grants instead of escalating).
- * The admin approval queue (list/approve surface) is a follow-up slice.
+ * table (epic amendment A7). Escalation requests are RECORDED DENIALS and
+ * live in the escalation queue (escalation.ts / escalation-queue.ts) —
+ * default deny, NO auto-approve for ANY principal (amendment A2;
+ * `internal-service` holds grants instead of escalating).
  */
 import type { Kysely, } from "kysely";
 import { recordToolCallAudit, } from "../../../assistant/guard/audit";
@@ -180,50 +179,4 @@ export async function assertRepoAccessExecution(input: RepoAccessGateInput,): Pr
   },);
 
   return { allowed: true, root: resolution.root, grants, };
-}
-
-/** The typed refusal {@link requestRepoRootChange} always returns. */
-export interface RepoRootChangeDenial {
-  ok: false;
-  code: "escalation_denied";
-  message: string;
-}
-
-/** Inputs for {@link requestRepoRootChange}. */
-export interface RepoRootChangeInput {
-  /** The SERVER-RESOLVED principal requesting the root change. */
-  principal: RepoAccessPrincipal;
-  /** The path the caller asked to escape to (recorded verbatim). */
-  targetPath: string;
-  /** Database handle — the request is recorded in tool_call_audit. */
-  db: Kysely<DB>;
-}
-
-/**
- * Record an audited root-change (escalation) request. DEFAULT DENY: the
- * request is written to `tool_call_audit` with `escalation_attempt = 1` and
- * refused — there is NO auto-approve for any principal, and no approval
- * flow approves from this seam yet (the admin approval queue is a
- * follow-up slice; until it exists, denial is the only live behavior).
- * @param input - principal, target path, db handle
- * @returns the typed denial (always; never a promise of approval).
- */
-export async function requestRepoRootChange(input: RepoRootChangeInput,): Promise<RepoRootChangeDenial> {
-  await recordToolCallAudit(input.db, {
-    tool: REPO_ACCESS_AUDIT_TOOL,
-    chatId: "",
-    userId: input.principal.userId ?? "",
-    verdict: "denied",
-    rationale: `root change requested to "${input.targetPath}" — recorded, default-deny (no approval flow)`,
-    escalationAttempt: true,
-    requiredRole: null,
-    tags: [input.principal.kind, "escalation-request",],
-    durationMs: 0,
-  },);
-
-  return {
-    ok: false,
-    code: "escalation_denied",
-    message: `root change to "${input.targetPath}" was recorded and denied (default deny; no auto-approve)`,
-  };
 }

@@ -9,17 +9,18 @@
 // unknown op -> 404; 429 passthrough; hostile inputs stay data; row-level
 // foreign-chat denial; a real chat.history roundtrip over the real services.
 //
-// Resource contract (parallel-safe): one :memory: SQLite per file via
-// createTestDb, no ports, no env, no sleeps; the rate test uses a dedicated
-// user id so it cannot drain a sibling test's budget.
+// Resource contract (parallel-safe): ONE :memory: SQLite PER TEST (created in
+// beforeEach, destroyed in afterEach) and unique principals per test — the
+// governance budget bucket is process-global and keyed by the principal's
+// user id, so a shared id would let one test drain a sibling's budget.
+// No ports, no env, no sleeps.
 
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
 import type { DB, } from "../../db/schema";
-import { createLogger, } from "../../logger";
 import { principalKind, } from "../../middleware/principal-kind";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import {
@@ -32,37 +33,55 @@ import {
 import { resetFacadeRegistry, } from "./instance";
 import { createFacadeRoutes, } from "./routes";
 
-const USER = "facade-http-user";
-const OTHER = "facade-http-other-user";
-const RATE = "facade-http-rate-user";
-const CHAT = "facade-http-chat-1";
-const OTHER_CHAT = "facade-http-chat-other";
 const PREFIX = "/api/v1";
 
 let testDb: TestDb;
 let db: Kysely<DB>;
 let config: Config;
+let idCounter = 0;
+/** Principals — unique per test (see the resource contract above). */
+let principalId = "";
+let otherPrincipalId = "";
+let ratePrincipalId = "";
+let chatId = "";
+let otherChatId = "";
 
-beforeAll(async () => {
-  createLogger({ level: "error", },);
+beforeEach(async () => {
+  const tag = `f${++idCounter}`;
+  principalId = `facade-http-user-${tag}`;
+  otherPrincipalId = `facade-http-other-user-${tag}`;
+  ratePrincipalId = `facade-http-rate-user-${tag}`;
+  chatId = `facade-http-chat-${tag}`;
+  otherChatId = `facade-http-chat-other-${tag}`;
+
   testDb = await createTestDb();
   db = testDb.db;
   // Real schema defaults: the chat.send pipeline reads config.generation.
   config = createConfigSchema().defaults as unknown as Config;
 
-  await insertUsers(db, USER, "Facade HTTP User", { id: USER, },);
-  await insertUsers(db, OTHER, "Facade HTTP Other", { id: OTHER, },);
-  await insertUsers(db, RATE, "Facade HTTP Rate User", { id: RATE, },);
-  await insertActors(db, "Facade HTTP User", { id: USER, user_id: USER, owner_id: USER, },);
-  await insertChats(db, "facade-http-chat", USER, { id: CHAT, },);
-  await insertChatParticipants(db, CHAT, USER, { role_in_chat: "owner", },);
-  await insertActors(db, "Facade HTTP Other", { id: OTHER, user_id: OTHER, owner_id: OTHER, },);
-  await insertChats(db, "facade-http-chat-other", OTHER, { id: OTHER_CHAT, },);
-  await insertChatParticipants(db, OTHER_CHAT, OTHER, { role_in_chat: "owner", },);
-  await insertMessages(db, CHAT, USER, "user", "hello agent",);
+  await insertUsers(db, principalId, "Facade HTTP User", { id: principalId, },);
+  await insertUsers(db, otherPrincipalId, "Facade HTTP Other", { id: otherPrincipalId, },);
+  await insertUsers(db, ratePrincipalId, "Facade HTTP Rate User", { id: ratePrincipalId, },);
+  await insertActors(db, "Facade HTTP User", {
+    id: principalId,
+    user_id: principalId,
+    owner_id: principalId,
+  },);
+
+  await insertChats(db, "facade-http-chat", principalId, { id: chatId, },);
+  await insertChatParticipants(db, chatId, principalId, { role_in_chat: "owner", },);
+  await insertActors(db, "Facade HTTP Other", {
+    id: otherPrincipalId,
+    user_id: otherPrincipalId,
+    owner_id: otherPrincipalId,
+  },);
+
+  await insertChats(db, "facade-http-chat-other", otherPrincipalId, { id: otherChatId, },);
+  await insertChatParticipants(db, otherChatId, otherPrincipalId, { role_in_chat: "owner", },);
+  await insertMessages(db, chatId, principalId, "user", "hello agent",);
 },);
 
-afterAll(async () => {
+afterEach(async () => {
   resetFacadeRegistry();
   await destroyTestDb(testDb,);
 },);
@@ -120,7 +139,7 @@ describe("facade REST surface", () => {
   });
 
   test("manifest serves bare descriptors to any authenticated user", async () => {
-    const res = await makeApp(USER,).handle(
+    const res = await makeApp(principalId,).handle(
       new Request(`http://localhost${PREFIX}/integrations/manifest`,),
     );
 
@@ -141,14 +160,14 @@ describe("facade REST surface", () => {
   });
 
   test("unknown op is a typed 404", async () => {
-    const res = await post(makeApp(USER,), "no.such-op", {},);
+    const res = await post(makeApp(principalId,), "no.such-op", {},);
     expect(res.status,).toBe(404,);
     const body = await res.json() as { error: string };
     expect(body.error,).toBe("unknown_facade_op",);
   });
 
   test("chat.history roundtrips over HTTP against the real services", async () => {
-    const res = await post(makeApp(USER,), "chat.history", { chatId: CHAT, },);
+    const res = await post(makeApp(principalId,), "chat.history", { chatId, },);
     expect(res.status,).toBe(200,);
 
     const body = await res.json() as { data: Array<{ content: string }> };
@@ -157,9 +176,10 @@ describe("facade REST surface", () => {
 
   test("POST identity comes from the context; adversarial body principal is inert", async () => {
     // If the body's principal-shaped fields were trusted, the op would run
-    // as "attacker" (no chat access -> 404). It must run as USER -> 200.
-    const res = await post(makeApp(USER, "req-adv-1",), "chat.history", {
-      chatId: CHAT,
+    // as "attacker" (no chat access -> 404). It must run as the context
+    // principal -> 200.
+    const res = await post(makeApp(principalId, "req-adv-1",), "chat.history", {
+      chatId,
       userId: "attacker",
       userRole: "admin",
     },);
@@ -170,19 +190,19 @@ describe("facade REST surface", () => {
     // context request id — the body fields never reached the facade context.
     const row = await auditRowFor("req-adv-1",);
     expect(row,).toBeDefined();
-    expect(row?.user_id,).toBe(USER,);
+    expect(row?.user_id,).toBe(principalId,);
     expect(row?.action,).toBe("chat.history",);
   });
 
   test("foreign chat reads and writes fail closed at the facade (row-level authz)", async () => {
-    // Row-level: USER must not read or write OTHER's chat through the facade.
+    // Row-level: the caller must not read or write another principal's chat.
     // The verdict is the access seam's not-found-or-not-owner 404 — identity
     // comes from the context, so no body field can widen the caller's reach.
-    const read = await post(makeApp(USER,), "chat.history", { chatId: OTHER_CHAT, },);
+    const read = await post(makeApp(principalId,), "chat.history", { chatId: otherChatId, },);
     expect(read.status,).toBe(404,);
 
-    const write = await post(makeApp(USER,), "chat.send", {
-      chatId: OTHER_CHAT,
+    const write = await post(makeApp(principalId,), "chat.send", {
+      chatId: otherChatId,
       content: "should never land",
     },);
 
@@ -192,7 +212,7 @@ describe("facade REST surface", () => {
     const leaked = await db
       .selectFrom("messages",)
       .selectAll()
-      .where("chat_id", "=", OTHER_CHAT,)
+      .where("chat_id", "=", otherChatId,)
       .execute();
 
     expect(leaked,).toHaveLength(0,);
@@ -203,8 +223,8 @@ describe("facade REST surface", () => {
     // constant column name — hostile metacharacters must round-trip as DATA.
     const payload = "'; DROP TABLE messages;-- ' OR '1'='1";
 
-    const send = await post(makeApp(USER,), "chat.send", {
-      chatId: CHAT,
+    const send = await post(makeApp(principalId,), "chat.send", {
+      chatId,
       content: payload,
     },);
 
@@ -212,20 +232,20 @@ describe("facade REST surface", () => {
     const sendBody = await send.json() as { id: unknown };
     expect(typeof sendBody.id,).toBe("string",);
 
-    const hist = await post(makeApp(USER,), "chat.history", { chatId: CHAT, },);
+    const hist = await post(makeApp(principalId,), "chat.history", { chatId, },);
     expect(hist.status,).toBe(200,);
     const histBody = await hist.json() as { data: Array<{ content: string }> };
     expect(histBody.data.some((m,) => m.content === payload),).toBe(true,);
 
-    const hostileId = await post(makeApp(USER,), "chat.send", {
+    const hostileId = await post(makeApp(principalId,), "chat.send", {
       chatId: "x'; DROP TABLE messages;--",
       content: "hi",
     },);
 
     expect(hostileId.status,).toBe(404,);
 
-    const hostileQuery = await post(makeApp(USER,), "chat.history", {
-      chatId: CHAT,
+    const hostileQuery = await post(makeApp(principalId,), "chat.history", {
+      chatId,
       parentId: "' OR '1'='1' --",
       translateLocale: "en'; DROP TABLE messages;--",
     },);
@@ -234,7 +254,7 @@ describe("facade REST surface", () => {
   });
 
   test("governance budget exhaustion passes 429 through", async () => {
-    const app = makeApp(RATE,);
+    const app = makeApp(ratePrincipalId,);
     let sawLimit = false;
     // chatPolicy: 60s window, burst 50 — ~51 cheap unknown-chat calls drain
     // the bucket; the cap keeps the loop bounded if the window was warmed.

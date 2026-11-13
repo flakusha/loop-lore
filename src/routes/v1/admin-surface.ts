@@ -15,6 +15,7 @@ import { commandsRoutes, } from "../commands";
 import { exportRoutes, } from "../export";
 import { exportSseRoutes, } from "../export-sse";
 import { harnessRoutes, } from "../harness";
+import { harnessEscalationRoutes, } from "../harness/escalations";
 import { harnessLedgerRoutes, } from "../harness/ledger";
 import { harnessMetricsRoutes, } from "../harness/metrics";
 import { harnessModelRoutes, } from "../harness/models";
@@ -53,6 +54,11 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
     // Reads its queue off the composed runtime; 503 when the integration
     // is disabled, so the surface is inert rather than auto-anything.
     .use(harnessPermissionRoutes(prefix,),)
+    // ── Harness escalation audit queue (TASK-escalation-audit-queue-with-no-auto-approve) ──
+    // Lists the recorded root-change requests and records the admin's
+    // decision on one of them; the queue lives in the repo-access audit
+    // table, so there is nothing to decide on until a request is recorded.
+    .use(harnessEscalationRoutes({ database, }, prefix,),)
     // ── Harness model discovery (TASK-model-discovery-capability-enrichment) ──
     // Read-only listing off the composed runtime's EXISTING connections,
     // enriched from the static capability table; never spawns to list.

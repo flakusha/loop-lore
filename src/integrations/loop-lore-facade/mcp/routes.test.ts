@@ -8,18 +8,20 @@
 // tools/list from the registry, real tools/call (chat.history roundtrip +
 // isError mapping), protocol errors (-32601/-32700/-32602), notification
 // 202, batch arrays, GET 405, HTTP-level 401, adversarial body principal
-// inert. Resource contract (parallel-safe): one :memory: SQLite per file via
-// createTestDb, no ports, no env, no sleeps; config is the real schema
-// defaults so the tool pipeline completes.
+// inert. Resource contract (parallel-safe): ONE :memory: SQLite PER TEST
+// (created in beforeEach, destroyed in afterEach) and unique principals per
+// test — the governance budget bucket is process-global and keyed by the
+// principal's user id, so a shared id would let one test drain a sibling's
+// budget. No ports, no env, no sleeps; config is the real schema defaults so
+// the tool pipeline completes.
 
 import { LATEST_PROTOCOL_VERSION, } from "@modelcontextprotocol/sdk/types.js";
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../../config/schema";
 import { createConfigSchema, } from "../../../config/schema-class";
 import type { DB, } from "../../../db/schema";
-import { createLogger, } from "../../../logger";
 import { principalKind, } from "../../../middleware/principal-kind";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../../test-utils/create-test-db";
 import {
@@ -32,29 +34,39 @@ import {
 import { resetFacadeRegistry, } from "../instance";
 import { createMcpRoutes, } from "./routes";
 
-const USER = "mcp-http-user";
-const CHAT = "mcp-http-chat-1";
 const PREFIX = "/api/v1";
 
 let testDb: TestDb;
 let db: Kysely<DB>;
 let config: Config;
+let idCounter = 0;
+/** Principals — unique per test (see the resource contract above). */
+let principalId = "";
+let chatId = "";
 
-beforeAll(async () => {
-  createLogger({ level: "error", },);
+beforeEach(async () => {
+  const tag = `m${++idCounter}`;
+  principalId = `mcp-http-user-${tag}`;
+  chatId = `mcp-http-chat-${tag}`;
+
   testDb = await createTestDb();
   db = testDb.db;
   // Real schema defaults: the chat pipeline reads config.generation.
   config = createConfigSchema().defaults as unknown as Config;
 
-  await insertUsers(db, USER, "MCP HTTP User", { id: USER, },);
-  await insertActors(db, "MCP HTTP User", { id: USER, user_id: USER, owner_id: USER, },);
-  await insertChats(db, "mcp-http-chat", USER, { id: CHAT, },);
-  await insertChatParticipants(db, CHAT, USER, { role_in_chat: "owner", },);
-  await insertMessages(db, CHAT, USER, "user", "hello agent",);
+  await insertUsers(db, principalId, "MCP HTTP User", { id: principalId, },);
+  await insertActors(db, "MCP HTTP User", {
+    id: principalId,
+    user_id: principalId,
+    owner_id: principalId,
+  },);
+
+  await insertChats(db, "mcp-http-chat", principalId, { id: chatId, },);
+  await insertChatParticipants(db, chatId, principalId, { role_in_chat: "owner", },);
+  await insertMessages(db, chatId, principalId, "user", "hello agent",);
 },);
 
-afterAll(async () => {
+afterEach(async () => {
   resetFacadeRegistry();
   await destroyTestDb(testDb,);
 },);
@@ -122,7 +134,7 @@ describe("MCP transport over the facade registry", () => {
     // The epic pinned 2026-07-28; SDK 1.32.2 tops out earlier, so the spec's
     // negotiation rule applies (a SUPPORTED version echoes verbatim - the
     // batch test asserts that). Unsupported request -> server's LATEST.
-    const res = await call(makeApp(USER,), rpc("initialize", initParams("2026-07-28",), 1,),);
+    const res = await call(makeApp(principalId,), rpc("initialize", initParams("2026-07-28",), 1,),);
 
     expect(res.status,).toBe(200,);
     const envelope = await res.json() as Envelope;
@@ -131,7 +143,7 @@ describe("MCP transport over the facade registry", () => {
   });
 
   test("tools/list surfaces registry ops with descriptions + inputSchema", async () => {
-    const res = await call(makeApp(USER,), rpc("tools/list", {}, 2,),);
+    const res = await call(makeApp(principalId,), rpc("tools/list", {}, 2,),);
     expect(res.status,).toBe(200,);
 
     const envelope = await res.json() as Envelope;
@@ -152,8 +164,8 @@ describe("MCP transport over the facade registry", () => {
 
   test("tools/call executes a real chat.history over HTTP", async () => {
     const res = await call(
-      makeApp(USER,),
-      rpc("tools/call", { name: "chat.history", arguments: { chatId: CHAT, }, }, 3,),
+      makeApp(principalId,),
+      rpc("tools/call", { name: "chat.history", arguments: { chatId, }, }, 3,),
     );
 
     expect(res.status,).toBe(200,);
@@ -170,7 +182,7 @@ describe("MCP transport over the facade registry", () => {
 
   test("tools/call maps a not-found chat onto isError content", async () => {
     const res = await call(
-      makeApp(USER,),
+      makeApp(principalId,),
       rpc("tools/call", { name: "chat.history", arguments: { chatId: "nope", }, }, 4,),
     );
 
@@ -182,16 +194,16 @@ describe("MCP transport over the facade registry", () => {
   });
 
   test("protocol errors: unknown tool -32602, unknown method -32601, malformed -32700", async () => {
-    const tool = await call(makeApp(USER,), rpc("tools/call", { name: "no.such-tool", arguments: {}, }, 5,),);
+    const tool = await call(makeApp(principalId,), rpc("tools/call", { name: "no.such-tool", arguments: {}, }, 5,),);
     const toolEnvelope = await tool.json() as Envelope;
     expect(toolEnvelope.error?.code,).toBe(-32602,);
 
-    const method = await call(makeApp(USER,), rpc("resources/list", {}, 6,),);
+    const method = await call(makeApp(principalId,), rpc("resources/list", {}, 6,),);
     const methodEnvelope = await method.json() as Envelope;
     expect(methodEnvelope.error?.code,).toBe(-32601,);
 
     // parse:"none" keeps the raw body reachable so the parse error is answerable with a null id.
-    const malformed = await call(makeApp(USER,), {
+    const malformed = await call(makeApp(principalId,), {
       method: "POST",
       headers: { "content-type": "application/json", },
       body: "{jsonrpc:2.0 broken",
@@ -203,11 +215,11 @@ describe("MCP transport over the facade registry", () => {
   });
 
   test("a notification answers 202; GET is 405 (no SSE stream)", async () => {
-    const posted = await call(makeApp(USER,), rpc("notifications/initialized",),);
+    const posted = await call(makeApp(principalId,), rpc("notifications/initialized",),);
     expect(posted.status,).toBe(202,);
     expect(await posted.text(),).toBe("",);
 
-    const got = await makeApp(USER,).handle(new Request(`http://localhost${PREFIX}/integrations/mcp`,),);
+    const got = await makeApp(principalId,).handle(new Request(`http://localhost${PREFIX}/integrations/mcp`,),);
     expect(got.status,).toBe(405,);
     expect(got.headers.get("allow",),).toBe("POST",);
   });
@@ -217,7 +229,7 @@ describe("MCP transport over the facade registry", () => {
     const list = { jsonrpc: "2.0", id: 11, method: "tools/list", params: {}, },
       ping = { jsonrpc: "2.0", id: 12, method: "ping", };
 
-    const res = await call(makeApp(USER,), {
+    const res = await call(makeApp(principalId,), {
       method: "POST",
       headers: { "content-type": "application/json", },
       body: JSON.stringify([init, list, ping,],),
@@ -234,12 +246,13 @@ describe("MCP transport over the facade registry", () => {
 
   test("adversarial body principal is inert — identity from the context only", async () => {
     // If the body's principal-shaped fields were trusted, the tool call would
-    // run as "attacker" (no chat access -> isError 404). It must run as USER.
+    // run as "attacker" (no chat access -> isError 404). It must run as the
+    // context principal.
     const res = await call(
-      makeApp(USER, "req-mcp-adv",),
+      makeApp(principalId, "req-mcp-adv",),
       rpc("tools/call", {
         name: "chat.history",
-        arguments: { chatId: CHAT, userId: "attacker", userRole: "admin", },
+        arguments: { chatId, userId: "attacker", userRole: "admin", },
       }, 7,),
     );
 
@@ -254,6 +267,6 @@ describe("MCP transport over the facade registry", () => {
       .where("request_id", "=", "req-mcp-adv",)
       .executeTakeFirst();
 
-    expect(row?.user_id,).toBe(USER,);
+    expect(row?.user_id,).toBe(principalId,);
   });
 });
