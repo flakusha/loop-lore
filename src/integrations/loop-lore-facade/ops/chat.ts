@@ -48,9 +48,15 @@ export const FacadeListMessagesBody = t.Object({
 
 /**
  * chat.history's structured result: the route's jsonPaginated envelope
- * (`data` + `pagination`; `meta` rides along). The enriched message rows have
- * a rendering-driven shape, so `data` is typed as an array of objects - the
- * envelope itself is what the schema pins.
+ * (`data` + `pagination` + `meta` - `src/routes/http-utils/responses.ts:83`).
+ * The enriched message rows have a rendering-driven shape, so `data` is typed
+ * as an array of objects - the envelope itself is what the schema pins.
+ *
+ * The pagination numbers and `meta` are REQUIRED so a drifted envelope fails
+ * the SDK client's schema validation instead of shipping silently. `meta` is
+ * `ApiResponseMeta` (`src/routes/http-utils/types.ts:10-15`): `api_version` is
+ * always set (the `API_META` constant), `deprecated` is optional and never
+ * set by `API_META` today.
  */
 export const ChatHistoryOutputSchema: FacadeOutputSchema = {
   type: "object",
@@ -64,9 +70,18 @@ export const ChatHistoryOutputSchema: FacadeOutputSchema = {
         pageSize: { type: "number", },
         totalPages: { type: "number", },
       },
+      required: ["total", "page", "pageSize", "totalPages",],
+    },
+    meta: {
+      type: "object",
+      properties: {
+        api_version: { type: "string", },
+        deprecated: { type: "boolean", },
+      },
+      required: ["api_version",],
     },
   },
-  required: ["data", "pagination",],
+  required: ["data", "pagination", "meta",],
 };
 
 /**
@@ -159,13 +174,16 @@ export function registerChatOps(registry: FacadeRegistry, deps: ChatFacadeDeps,)
       scope: "read",
       ratePolicy: chatPolicy,
       bodySchema: FacadeListMessagesBody,
-      // The handler only SELECTs (access check, page, enrichment, avatar and
-      // translation attachment) - it never writes, so the op is read-only,
-      // non-destructive, idempotent, and closed to the outside world.
+      // NOT read-only: the facade registry appends a `log_entries` audit row
+      // on EVERY call, and avatar resolution materializes the actor's default
+      // outfit (a `wardrobe_items` insert - idempotent after the first touch).
+      // Both writes are additive INSERTs - no update, no delete - so the op is
+      // not read-only but not destructive either. The per-call audit row makes
+      // repeats NOT effect-free, so idempotency is false too.
       annotations: {
-        readOnlyHint: true,
+        readOnlyHint: false,
         destructiveHint: false,
-        idempotentHint: true,
+        idempotentHint: false,
         openWorldHint: false,
       },
       outputSchema: ChatHistoryOutputSchema,

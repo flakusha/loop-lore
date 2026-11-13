@@ -173,10 +173,13 @@ describe("inbound MCP stdio server", () => {
     expect(names,).toContain("chat.send",);
     expect(names,).toContain("chat.history",);
 
-    // A host tells a read-only op from a mutating one by the annotations.
+    // The hints must be honest: chat.history is NOT read-only (the facade
+    // appends an audit row per call and the avatar path materializes the
+    // actor's default outfit), and repeats are not effect-free either.
     const history = tools.tools.find((tool,) => tool.name === "chat.history");
     const send = tools.tools.find((tool,) => tool.name === "chat.send");
-    expect(history?.annotations?.readOnlyHint,).toBe(true,);
+    expect(history?.annotations?.readOnlyHint,).toBe(false,);
+    expect(history?.annotations?.idempotentHint,).toBe(false,);
     expect(send?.annotations?.readOnlyHint,).not.toBe(true,);
     // chat.history declares the envelope it returns; the SDK client validates
     // the structured result against it on every tools/call.
