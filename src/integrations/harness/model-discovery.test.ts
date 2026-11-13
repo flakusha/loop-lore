@@ -16,6 +16,8 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, } from "bun:test";
 import { upsertModelCapabilities, } from "../../admin/model-capabilities";
 import { type AcpProfileConfig, } from "../../config/schema/harness";
+import { registerProvider, unregisterProvider, } from "../../generation/providers/registry";
+import type { LLMProvider, } from "../../generation/providers/types";
 import { ModelRouter, type RoutableModel, } from "../../generation/routing/router";
 import { INTERACTIVE_TURN, } from "../../generation/routing/task-signal";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
@@ -307,6 +309,29 @@ describe("toRoutableCandidates", () => {
     },);
 
     expect(candidates[1],).toEqual({ name: "q", model: "q/fast", capabilities: {}, },);
+  });
+
+  it("projects the provider registry's published price onto the candidate", () => {
+    registerProvider("discovery-price", {
+      capabilities: { label: "discovery-price", costPer1kTokens: 1.5, },
+    } as unknown as LLMProvider,);
+
+    try {
+      const entries: HarnessModelEntry[] = [
+        {
+          source: "harness",
+          profile: "p",
+          harness: "omp",
+          model: "discovery-price/glm-4.6",
+          capabilities: null,
+        },
+      ];
+
+      const candidates: RoutableModel[] = toRoutableCandidates(entries,);
+      expect(candidates[0]?.costPer1kTokens,).toBe(1.5,);
+    } finally {
+      unregisterProvider("discovery-price",);
+    }
   });
 
   it("feeds ModelRouter.route: an explicit tools=false candidate is filtered out", () => {

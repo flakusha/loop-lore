@@ -44,7 +44,7 @@ import {
 } from "./admin-settings";
 import { listedHarnessModels, toRoutableCandidates, } from "./model-discovery";
 import { ProfileBreaker, } from "./profile-breaker";
-import { type ProbeResult, type ProfileRegistry, } from "./profile-registry";
+import { type ProfileRegistry, } from "./profile-registry";
 import { providerTosGated, } from "./provider-tos";
 import { type UsageLedger, } from "./usage-ledger";
 
@@ -131,23 +131,6 @@ export function compareCandidateCost(costA: number | undefined, costB: number | 
   if (costA === undefined) { return costB === undefined ? 0 : 1; }
   if (costB === undefined) { return -1; }
   return costA - costB;
-}
-
-/**
- * The price of one DISCOVERED model: the routable candidate the harness
- * advertised for it, priced from the provider registry. Unknown when the
- * profile advertised no such model, or no provider publishes a price.
- * @param options - the profile config, its probe result, and the model id
- * @returns USD per 1k tokens, or undefined when unknown.
- */
-function discoveredCost(options: {
-  profile: AcpProfileConfig;
-  probe: ProbeResult;
-  model: string;
-},): number | undefined {
-  const entries = listedHarnessModels({ profile: options.profile, models: options.probe.models, },);
-  const candidate = toRoutableCandidates(entries,).find((entry,) => entry.model === options.model);
-  return candidate?.costPer1kTokens;
 }
 
 /** */
@@ -242,20 +225,24 @@ export class ProfileSelector {
   }
 
   /**
-   * The prices the DISCOVERED candidates carry: each candidate's model, as
-   * the harness advertised it, priced from the provider registry.
+   * The prices the DISCOVERED models carry: the models the candidate profiles
+   * advertise, priced from the provider registry — one projection per
+   * profile, so a profile's advertised list is priced once per turn.
    * @param candidates - the admitted candidates
    * @returns model id to USD per 1k tokens (absent when unknown).
    */
   private async discoveredCosts(candidates: TurnCandidate[],): Promise<Map<string, number>> {
     const prices = new Map<string, number>();
-    for (const candidate of candidates) {
-      const probe = await this.registry.ensureProbed(candidate.profile,);
-      const cfg = this.registry.config(candidate.profile,);
+    const profiles = [...new Set(candidates.map((candidate,) => candidate.profile),),];
+    for (const profile of profiles) {
+      const probe = await this.registry.ensureProbed(profile,);
+      const cfg = this.registry.config(profile,);
       if (!cfg) { continue; }
 
-      const cost = discoveredCost({ profile: cfg, probe, model: candidate.model, },);
-      if (cost !== undefined) { prices.set(candidate.model, cost,); }
+      const entries = listedHarnessModels({ profile: cfg, models: probe.models, },);
+      for (const candidate of toRoutableCandidates(entries,)) {
+        if (candidate.costPer1kTokens !== undefined) { prices.set(candidate.model, candidate.costPer1kTokens,); }
+      }
     }
 
     return prices;
