@@ -11,12 +11,10 @@ import { afterAll, afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import {
   destroyChoiceCards,
-  getAccumulatedImpacts,
   initChoiceCards,
   loadChoices,
-  skipChoice,
-  submitCustomChoice,
 } from "./choice-cards";
+import { getAccumulatedImpacts, skipChoice, submitCustomChoice, } from "./choice-cards-select";
 import { isVnDecisionPending, setChoicePending, setQuestionPending, } from "./pending-decision";
 
 // ── Mock apiFetch ───────────────────────────────────────────────────────────

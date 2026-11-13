@@ -2,57 +2,24 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * VN Choice Cards
+ * VN Choice Cards — component lifecycle.
  *
- * Renders branching choice cards in VN mode and handles selection.
+ * Mounts/unmounts the branching choice cards in VN mode and hydrates the
+ * card list from the API. Card resolution (select, skip, custom submit and
+ * their consequences) lives in `choice-cards-select.ts`; the shared state
+ * both sides read through accessors lives in `choice-cards-state.ts`.
  */
 import { apiFetch, } from "../alpine/htmx";
-import { t, } from "../alpine/i18n";
-import { jsonBody, } from "../alpine/json";
+import { renderChoices, } from "./choice-cards-select";
 import {
-  extractReunionSource,
-  extractSplitBranches,
-  triggerReunite,
-  triggerSplit,
-} from "./choice-cards-consequences";
-import { renderChoiceCards, } from "./choice-cards-render";
+  getChatId,
+  getSceneIndex,
+  initChoiceState,
+  resetChoiceState,
+  setChoices,
+  type VnChoice,
+} from "./choice-cards-state";
 import { setChoicePending, } from "./pending-decision";
-
-const LOCATION_CHANGED_EVENT = "chat:location-changed";
-
-/** */
-export interface VnChoice {
-  id: string;
-  chat_id: string;
-  scene_index: number;
-  choice_index: number;
-  text: string;
-  description: string | null;
-  consequences: Record<string, unknown>;
-  relationship_impact: Record<string, number>;
-  mood_impact: Record<string, number>;
-  unlock_conditions: Record<string, unknown>;
-  selection_count: number;
-  is_active: number;
-  /** Populated from API on load: true when is_active === 1. */
-  selected?: boolean;
-  /** Display label derived from text on load. */
-  label?: string;
-}
-
-/** Return type from selectChoice including location change result. */
-export interface SelectChoiceResult {
-  choice: VnChoice;
-  locationId?: string;
-  splitTriggered?: boolean;
-  reunionTriggered?: boolean;
-  locationChanged: boolean;
-}
-
-let choices: VnChoice[] = [];
-let container: HTMLElement | null = null;
-let chatId: string | null = null;
-let sceneIndex = 0;
 
 /**
  * Initialize the choice cards component.
@@ -65,61 +32,7 @@ export function initChoiceCards(
   currentChatId: string,
   currentSceneIndex: number,
 ): void {
-  container = containerEl;
-  chatId = currentChatId;
-  sceneIndex = currentSceneIndex;
-}
-
-/**
- * Skip a pending choice — the escape hatch out of the VN decision gate.
- *
- * Server-side this sets `status='dismissed'` (see `dismissVnChoice`); client
- * side we drop the row so the card disappears rather than showing a permanent
- * "skipped" state that the server no longer returns on the next load.
- * @param choiceId
- * @returns {Promise<boolean>} true when the skip was accepted.
- */
-export async function skipChoice(choiceId: string,): Promise<boolean> {
-  if (!chatId) {
-    reportSkipFailure();
-
-    return false;
-  }
-
-  try {
-    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices/${choiceId}/dismiss`, {
-      method: "POST",
-    },);
-
-    if (!res.ok) {
-      reportSkipFailure();
-
-      return false;
-    }
-  } catch {
-    reportSkipFailure();
-
-    return false;
-  }
-
-  choices = choices.filter((c,) => c.id !== choiceId);
-  setChoicePending(choices.some((c,) => !c.selected),);
-  renderChoices();
-
-  return true;
-}
-
-/**
- * A rejected skip leaves the row `available` server-side, so the flag stays set
- * and the gate keeps 409ing. Without this toast the only recovery is a full
- * page reload, which reads as "the button is broken".
- */
-function reportSkipFailure(): void {
-  document.dispatchEvent(
-    new CustomEvent("show-toast", {
-      detail: { type: "error", message: t("toasts.vnSkipFailed",), },
-    },),
-  );
+  initChoiceState(containerEl, currentChatId, currentSceneIndex,);
 }
 
 /** Destroy the choice cards component. */
@@ -127,9 +40,7 @@ export function destroyChoiceCards(): void {
   // Leaving the flag set here would wedge the composer: the cards are gone, so
   // nothing can resolve the decision the gate is still waiting on.
   setChoicePending(false,);
-  container = null;
-  chatId = null;
-  choices = [];
+  resetChoiceState();
 }
 
 /**
@@ -137,215 +48,27 @@ export function destroyChoiceCards(): void {
  * @returns {Promise<void>}
  */
 export async function loadChoices(): Promise<void> {
+  const chatId = getChatId();
   if (!chatId) { return; }
   try {
-    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices?sceneIndex=${sceneIndex}`,);
+    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices?sceneIndex=${getSceneIndex()}`,);
     if (!res.ok) { return; }
     const data = await res.json();
     const raw: VnChoice[] = data.choices ?? data.data ?? [];
-    choices = [];
+    const hydrated: VnChoice[] = [];
     for (const c of raw) {
-      choices.push({
+      hydrated.push({
         ...c,
         selected: c.selected === true || c.is_active === 1,
         label: c.label ?? c.text ?? "Untitled choice",
       },);
     }
 
-    setChoicePending(choices.length > 0,);
+    setChoices(hydrated,);
+    setChoicePending(hydrated.length > 0,);
     renderChoices();
   } catch {
-    choices = [];
+    setChoices([],);
     setChoicePending(false,);
   }
-}
-
-/**
- * Apply a location consequence: best-effort PUT of the chat's location plus
- * the change event the scene listens for.
- * @param locationId
- * @returns true when the chat's location actually changed.
- */
-async function applyLocationConsequence(locationId: string,): Promise<boolean> {
-  if (!chatId) { return false; }
-
-  try {
-    const locRes = await apiFetch(`/api/v1/chats/${chatId}/location`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", },
-      body: jsonBody({ locationId, },),
-    },);
-
-    if (!locRes.ok) { return false; }
-
-    globalThis.dispatchEvent(
-      new CustomEvent(LOCATION_CHANGED_EVENT, {
-        detail: { chatId, locationId, locationName: null, },
-      },),
-    );
-
-    return true;
-  } catch {
-    // Location change is best-effort; the choice itself already persisted.
-    return false;
-  }
-}
-
-/**
- * Select a choice, apply its effects, and trigger location/split/reunite
- * consequences via their dedicated endpoints.
- * @param choiceId
- * @returns SelectChoiceResult on success, null on failure.
- */
-export async function selectChoice(choiceId: string,): Promise<SelectChoiceResult | null> {
-  if (!chatId) { return null; }
-  const idx = choices.findIndex((c,) => c.id === choiceId);
-  if (idx === -1) { return null; }
-
-  try {
-    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices/${choiceId}/select`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: jsonBody({ choiceId, },),
-    },);
-
-    if (!res.ok) {
-      document.dispatchEvent(
-        new CustomEvent("show-toast", { detail: { type: "error", message: "Failed to select choice", }, },),
-      );
-
-      return null;
-    }
-
-    const data = await res.json();
-    const { choice: returned, locationId, } = (data.choice ?? data.data) as { choice: VnChoice; locationId?: string };
-    const returnedLabel = returned.label ?? returned.text ?? "Untitled choice";
-
-    const updated = { ...returned, selected: true, label: returnedLabel, } as VnChoice;
-    choices = Array.from(choices, (c, i,) => (i === idx ? updated : c),);
-    // Only the picked choice stopped being 'available' server-side; siblings
-    // are still resolvable, so the gate must stay closed while any remain.
-    setChoicePending(choices.some((c,) => !c.selected),);
-
-    let locationChanged = false;
-    let splitTriggered = false;
-    let reunionTriggered = false;
-
-    if (locationId) {
-      locationChanged = await applyLocationConsequence(locationId,);
-    }
-
-    // Phase 4: split/reunite consequences on choice cards.
-    const splitBranches = extractSplitBranches(returned.consequences,);
-    if (splitBranches) {
-      splitTriggered = await triggerSplit(chatId, splitBranches,);
-    }
-
-    const reunionSource = extractReunionSource(returned.consequences,);
-    if (reunionSource) {
-      reunionTriggered = await triggerReunite(chatId, reunionSource,);
-    }
-
-    return { choice: returned, locationId, splitTriggered, reunionTriggered, locationChanged, };
-  } catch {
-    document.dispatchEvent(
-      new CustomEvent("show-toast", { detail: { type: "error", message: "Failed to select choice", }, },),
-    );
-
-    return null;
-  }
-}
-
-/**
- * Submit a typed action as the player's decision: the server creates a
- * custom `vn_choices` row (`"provenance": "custom"` in its consequences) and
- * selects it through the standard single-shot path, then this folds the
- * returned card into the local state exactly like `selectChoice` does.
- * @param freeText - the player's typed action; trimmed and capped server-side.
- * @returns true when the typed action was created and selected.
- */
-export async function submitCustomChoice(freeText: string,): Promise<boolean> {
-  if (!chatId) { return false; }
-
-  try {
-    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices/custom`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: jsonBody({ freeText, sceneIndex, },),
-    },);
-
-    if (!res.ok) {
-      document.dispatchEvent(
-        new CustomEvent("show-toast", { detail: { type: "error", message: "Failed to select choice", }, },),
-      );
-
-      return false;
-    }
-
-    const data = await res.json() as { choice?: VnChoice; locationId?: string };
-    const returned = data.choice;
-    if (!returned) { return false; }
-
-    const returnedLabel = returned.label ?? returned.text ?? "Custom action";
-    choices = [...choices, { ...returned, selected: true, label: returnedLabel, } as VnChoice,];
-    // The typed card resolved itself; siblings stay available server-side, so
-    // the gate stays closed while any remain — same rule as a card pick.
-    setChoicePending(choices.some((c,) => !c.selected),);
-
-    if (data.locationId) {
-      await applyLocationConsequence(data.locationId,);
-    }
-
-    renderChoices();
-
-    return true;
-  } catch {
-    document.dispatchEvent(
-      new CustomEvent("show-toast", { detail: { type: "error", message: "Failed to select choice", }, },),
-    );
-
-    return false;
-  }
-}
-
-/**
- * Get the relationship and mood impacts from all selected choices.
- * @returns {{ relationships: Record<string, number>; moods: Record<string, number>; }}
- */
-export function getAccumulatedImpacts(): {
-  relationships: Record<string, number>;
-  moods: Record<string, number>;
-} {
-  const relationships: Record<string, number> = {};
-  const moods: Record<string, number> = {};
-
-  for (const choice of choices) {
-    if (!choice.selected) {
-      continue;
-    }
-
-    for (const [key, value,] of Object.entries(choice.relationship_impact,)) {
-      relationships[key] = (relationships[key] ?? 0) + value;
-    }
-
-    for (const [key, value,] of Object.entries(choice.mood_impact,)) {
-      moods[key] = (moods[key] ?? 0) + value;
-    }
-  }
-
-  return { relationships, moods, };
-}
-
-/**
- * Internal: dispatch to renderChoices in ./choice-cards-render.ts
- */
-function renderChoices(): void {
-  if (!container) { return; }
-  renderChoiceCards(
-    container,
-    choices,
-    (id,) => void selectChoice(id,),
-    (id,) => void skipChoice(id,),
-    (text,) => void submitCustomChoice(text,),
-  );
 }

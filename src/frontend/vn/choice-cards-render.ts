@@ -3,7 +3,7 @@
 
 /** Choice card DOM rendering. */
 import { t, } from "../alpine/i18n";
-import type { VnChoice, } from "./choice-cards";
+import type { VnChoice, } from "./choice-cards-state";
 import { buildFreeformInput, } from "./freeform-input";
 
 // ── Internal ────────────────────────────────────────────────────────────────

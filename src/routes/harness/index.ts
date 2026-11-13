@@ -17,29 +17,17 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import {
-  type HarnessAvailabilityView,
   HarnessRunDetailSchema,
   HarnessRunsResponse,
   HarnessSandboxFilesSchema,
   HarnessSettingsResponse,
-  type HarnessSettingsView,
   HarnessStatsSchema,
 } from "../../frontend/alpine/admin-harness-schema";
 import { getRun, listRuns, stats, } from "../../harness/query";
 import type { HarnessResult, HarnessTaskType, } from "../../harness/types";
 import { HARNESS_RESULTS, HARNESS_TASK_TYPES, toDetail, toSummary, } from "../../harness/types";
-import {
-  getHarnessAdminFileConfig,
-  getHarnessAdminSettings,
-  type HarnessProfileSettingsView,
-  saveHarnessAdminSettings,
-} from "../../integrations/harness/admin-settings";
-import { probeHarnessCommand, } from "../../integrations/harness/availability";
-import { HARNESS_PROVIDER_TOS, providerTosInfo, } from "../../integrations/harness/provider-tos";
-import {
-  getRepoAccessSettings,
-  saveRepoAccessSettings,
-} from "../../integrations/harness/repo-access";
+import { saveHarnessAdminSettings, } from "../../integrations/harness/admin-settings";
+import { saveRepoAccessSettings, } from "../../integrations/harness/repo-access";
 import { getChildLogger, } from "../../logger";
 import { requirePermission, } from "../../middleware/permissions";
 import { asError, } from "../../utils";
@@ -47,6 +35,7 @@ import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, type HttpStatusCode, jsonError, jsonResponse, } from "../http-utils";
 import { harnessRunFiles, type SandboxFilesError, } from "./files";
 import { resultSchema, runIdParams, taskTypeSchema, } from "./query-schema";
+import { settingsWithAvailability, unknownFlavor, } from "./settings-view";
 
 /**
  * Narrow a validated query value to the closed `HarnessTaskType` union.
@@ -245,90 +234,4 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
           },),
           response: { 200: HarnessSettingsResponse, ...denied, },
         },),);
-}
-
-/**
- * Decorate one configured profile with the static provider ToS matrix from
- * `provider-tos.ts` — the admin panel renders usage class + note per flavor
- * straight off the wire, so the matrix stays the single in-code source.
- * @param p - the store's profile view
- * @returns the wire shape the panel decodes (HarnessSettingsResponse item).
- */
-function decorateProfile(p: HarnessProfileSettingsView,): {
-  name: string;
-  flavor: string;
-  usageClasses: string[];
-  subscriptionBacked: boolean;
-  noteKey: string;
-  tosGrayzoneAcknowledged: boolean;
-} {
-  const tos = providerTosInfo(p.flavor,);
-  return {
-    name: p.name,
-    flavor: p.flavor,
-    usageClasses: [...tos.usageClasses,],
-    subscriptionBacked: tos.subscriptionBacked,
-    noteKey: tos.noteKey,
-    tosGrayzoneAcknowledged: p.tosGrayzoneAcknowledged,
-  };
-}
-
-/**
- * The configured profile flavor the provider-ToS matrix does not know.
- *
- * The matrix is the same table `providerTosInfo` reads, so this names the
- * flavor that made the decoration throw without a second list of flavors to
- * keep in sync.
- * @returns the offending flavor, or undefined when every flavor is known.
- */
-function unknownFlavor(): string | undefined {
-  const bad = getHarnessAdminSettings().profiles.find((p,) => !Object.hasOwn(HARNESS_PROVIDER_TOS, p.flavor,));
-
-  return bad?.flavor;
-}
-
-/**
- * Probe one profile's binary availability (TASK-optional-dep-packaging).
- * The probed argv comes from the admin-owned file config only — the same
- * invariant as the isolation gate's allowlist: caller input never becomes a
- * spawn argv. Lazy and cached per process; `refresh` re-runs the probe.
- * @param name - the profile's loop-lore-local name
- * @param refresh - bypass the probe cache when true
- * @returns the wire availability verdict.
- */
-async function availabilityForProfile(name: string, refresh: boolean,): Promise<HarnessAvailabilityView> {
-  const profile = getHarnessAdminFileConfig().profiles.find((p,) => p.name === name);
-  if (profile === undefined) {
-    return { available: false, reason: "profile not present in harness.acp config", };
-  }
-
-  const verdict = await probeHarnessCommand({ command: profile.command, refresh, },);
-  return verdict.available
-    ? { available: true, version: verdict.version, }
-    : { available: false, reason: verdict.reason, };
-}
-
-/**
- * Shape the effective settings view into the wire body, probing every
- * configured profile's binary availability sequentially (the profile list is
- * tiny, and verdicts are cached after the first hit).
- * @param refresh - bypass the probe cache when true
- * @returns the `GET`/`PUT /harness/settings` response body.
- */
-async function settingsWithAvailability(refresh: boolean,): Promise<HarnessSettingsView> {
-  const view = getHarnessAdminSettings();
-
-  const profiles: HarnessSettingsView["profiles"] = [];
-
-  for (const p of view.profiles) {
-    profiles.push({ ...decorateProfile(p,), availability: await availabilityForProfile(p.name, refresh,), },);
-  }
-
-  return {
-    enabled: view.enabled,
-    profiles,
-    // RSI repo-access tier switch — a separate store from the ACP master
-    // switch (repo-access/settings.ts), same override-wins layering.
-    repoAccessEnabled: getRepoAccessSettings().enabled,
-  };
 }

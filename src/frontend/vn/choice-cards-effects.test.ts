@@ -7,7 +7,8 @@
  */
 import { afterAll, afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
-import { destroyChoiceCards, initChoiceCards, loadChoices, selectChoice, } from "./choice-cards";
+import { destroyChoiceCards, initChoiceCards, loadChoices, } from "./choice-cards";
+import { selectChoice, } from "./choice-cards-select";
 
 // ── Mock apiFetch / feFetch ─────────────────────────────────────────────────
 
