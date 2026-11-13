@@ -92,6 +92,11 @@ export function buildMcpServer(deps: McpServerDeps,): Server {
 
     // structuredContent is object-only per spec; arrays/primitives ride the
     // text content alone.
+    //
+    // LIMITATION: the low-level SDK Server never validates structuredContent
+    // against the op's declared outputSchema (that check lives in the
+    // high-level McpServer). Only a client that called tools/list validates
+    // the envelope - a client that never listed the tools gets it unchecked.
     const structured = typeof result.json === "object" && result.json !== null
       ? result.json
       : undefined;

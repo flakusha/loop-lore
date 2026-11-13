@@ -4,6 +4,8 @@
 // Gap-coverage for the facade/video/messaging slice: exercises the pure and
 // near-pure seams the test-gaps ratchet flags, with assertions that fail
 // without the real code (no tautologies).
+import { Client, } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport, } from "@modelcontextprotocol/sdk/inMemory.js";
 import { describe, expect, test, } from "bun:test";
 import type { Config, } from "../../config/schema";
 import { IntegrationTokenScope, } from "../../db/enums-core/integration-tokens";
@@ -176,8 +178,39 @@ describe("facade/video/messaging gap coverage", () => {
   });
 
   test("chat.history output schema pins the paginated envelope", () => {
-    expect(ChatHistoryOutputSchema.required,).toEqual(["data", "pagination",],);
+    expect(ChatHistoryOutputSchema.required,).toEqual(["data", "pagination", "meta",],);
     expect(ChatHistoryOutputSchema.properties?.pagination,).toBeDefined();
+    expect(ChatHistoryOutputSchema.properties?.meta,).toBeDefined();
+  });
+
+  test("the declared chat.history schema rejects a drifted envelope", async () => {
+    const registry = createFacadeRegistry();
+    registry.register({
+      ...readOp(),
+      name: "chat.history",
+      outputSchema: ChatHistoryOutputSchema,
+      handler: async () => ({
+        ok: true,
+        status: 200,
+        // The drift the schema must catch: pagination without `totalPages`.
+        json: { data: [], pagination: { total: 0, page: 1, pageSize: 20, }, meta: { api_version: "1", }, },
+      }),
+    },);
+
+    const [serverTransport, clientTransport,] = InMemoryTransport.createLinkedPair();
+    const server = buildMcpServer({ registry, version: "test", ctx: userCtx("u1",), },);
+    await server.connect(serverTransport,);
+    const client = new Client({ name: "gap-schema-client", version: "0.0.0", },);
+    await client.connect(clientTransport,);
+
+    // listTools first: the SDK client caches the declared outputSchema and
+    // validates every later structured result against it.
+    await client.listTools();
+    await expect(
+      client.callTool({ name: "chat.history", arguments: {}, },),
+    ).rejects.toThrow("Structured content does not match the tool's output schema",);
+
+    await client.close();
   });
 
   test("getFacadeRegistry memoizes and reset rebuilds", () => {
