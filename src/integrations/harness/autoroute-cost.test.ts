@@ -6,9 +6,10 @@
  * models each harness advertised — and breaks a tie by cost.
  *
  * Resource contract: in-memory fakes only — no DB, no ports, no subprocess,
- * no fixed paths, no shared fixtures. The provider registry is
- * process-global, so every case registers its own uniquely-named providers
- * and unregisters them in afterEach; the admin-settings singleton is reset
+ * no fixed paths, no shared fixtures. Each case owns the provider-registry
+ * entries it registers: the names are unique to this file (the registry is
+ * process-global) and afterEach unregisters them all, so a case never sees a
+ * price another case left behind. The admin-settings singleton is reset
  * before and after every case, so the file-config fallback governs whatever
  * order the cases run in. Every case is order-independent and parallel-safe.
  */

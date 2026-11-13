@@ -10,8 +10,10 @@
  * Resource contract (parallel-safe): the runtime is the per-test composed
  * singleton, reset in beforeEach AND afterEach via resetHarnessRuntime;
  * the DB is a per-file in-memory fixture (createTestDb/destroyTestDb); the
- * adapters are in-memory fakes. No ports, no sleeps, no fixed paths —
- * order-independent under the parallel runner.
+ * adapters are in-memory fakes. The provider registry is process-global, so
+ * the one case that needs a published price owns a provider named for that
+ * case and unregisters it in the case's finally. No ports, no sleeps, no
+ * fixed paths — order-independent under the parallel runner.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, } from "bun:test";
 import { upsertModelCapabilities, } from "../../admin/model-capabilities";
@@ -312,8 +314,9 @@ describe("toRoutableCandidates", () => {
   });
 
   it("projects the provider registry's published price onto the candidate", () => {
-    registerProvider("discovery-price", {
-      capabilities: { label: "discovery-price", costPer1kTokens: 1.5, },
+    const provider = "discovery-published-price";
+    registerProvider(provider, {
+      capabilities: { label: provider, costPer1kTokens: 1.5, },
     } as unknown as LLMProvider,);
 
     try {
@@ -322,7 +325,7 @@ describe("toRoutableCandidates", () => {
           source: "harness",
           profile: "p",
           harness: "omp",
-          model: "discovery-price/glm-4.6",
+          model: `${provider}/glm-4.6`,
           capabilities: null,
         },
       ];
@@ -330,7 +333,7 @@ describe("toRoutableCandidates", () => {
       const candidates: RoutableModel[] = toRoutableCandidates(entries,);
       expect(candidates[0]?.costPer1kTokens,).toBe(1.5,);
     } finally {
-      unregisterProvider("discovery-price",);
+      unregisterProvider(provider,);
     }
   });
 
