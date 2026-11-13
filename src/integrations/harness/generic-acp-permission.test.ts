@@ -122,6 +122,22 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
     expect(outcome?.outcome,).toEqual({ outcome: { outcome: "reject_once", }, },);
   });
 
+  it("does not let a denial ride the harness's allow option", async () => {
+    const server = serve({ FAKE_PERMISSION: "1", FAKE_MODELS: "m", },);
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    adapter.respondPermission({ outcome: "reject_once", optionId: "allow", },);
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "reject_once", optionId: "reject", }, },);
+  });
+
   it("closing the connection with a parked ask fires onPermissionWithdrawn once", async () => {
     const server = serve({ FAKE_PERMISSION: "1", FAKE_MODELS: "m", },);
     const { adapter, nextAsk, withdrawn, } = makePermissionAdapter(server,);

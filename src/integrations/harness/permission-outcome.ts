@@ -25,7 +25,7 @@ const OUTCOME_VERBS: readonly PermissionOutcome["outcome"][] = [
   "cancelled",
 ];
 
-/** The verbs that grant the tool call. */
+/** The verbs that grant the tool call; every other verb refuses it. */
 const ALLOW_VERBS: Record<string, true> = { allow_once: true, allow_always: true, };
 
 /**
@@ -89,12 +89,37 @@ export function wirePermissionOutcome(
   outcome: PermissionOutcome,
   options: AdvertisedPermissionOption[],
 ): WirePermissionOutcome {
+  // A cancellation is not an option choice - the protocol answers it as itself.
+  if (outcome.outcome === "cancelled") { return outcome; }
   if (options.length === 0) { return outcome; }
 
-  const chosen = options.find((option,) => option.optionId === outcome.optionId) ??
-    options.find((option,) => option.outcome === outcome.outcome);
+  const allow = outcome.outcome in ALLOW_VERBS;
+  // Only an option of the SAME polarity may carry the decision: a denial
+  // never rides an allow option, and an allow never rides a reject one.
+  const samePolarity = options.filter((option,) =>
+    option.outcome !== null && (option.outcome in ALLOW_VERBS) === allow
+  );
+
+  const chosen = samePolarity.find((option,) => option.optionId === outcome.optionId) ??
+    samePolarity.find((option,) => option.outcome === outcome.outcome);
 
   if (chosen) { return { outcome: chosen.kind, optionId: chosen.optionId, }; }
 
-  return outcome.outcome in ALLOW_VERBS ? { outcome: "reject_once", } : outcome;
+  // Nothing the harness advertised can carry this decision - fail closed.
+  return allow ? denial(options,) : outcome;
+}
+
+/**
+ * The denial to send when an allow cannot be carried: the harness's own reject
+ * spelling when it advertised one, else the spec verb.
+ * @param options - the options the harness advertised
+ * @returns the denial to put on the wire.
+ */
+function denial(options: AdvertisedPermissionOption[],): WirePermissionOutcome {
+  const rejection = options.find((option,) => option.outcome === "reject_once") ??
+    options.find((option,) => option.outcome === "reject_always");
+
+  if (rejection) { return { outcome: rejection.kind, optionId: rejection.optionId, }; }
+
+  return { outcome: "reject_once", };
 }
