@@ -29,6 +29,11 @@ export const MFA_EMAIL_DEFAULT_WINDOW_MS = 60_000;
 /** Default sender stamped on MFA mail when no sender is configured. */
 export const MFA_EMAIL_DEFAULT_SENDER = "no-reply@loop-lore.local";
 
+// Module-singleton limiter: each createRateLimiter() owns a Map + prune
+// timer, so a fresh instance per send would never limit and would leak an
+// interval per call. Cached by resolved window, like src/routes/auth/shared.ts.
+let cached: { windowMs: number; limiter: RateLimiter } | undefined;
+
 /** Build a per-user MFA send limiter from the stored window override.
  * @param options Database handle plus optional window override.
  * @returns The limiter and its resolved window. */
@@ -36,7 +41,10 @@ export async function createMfaEmailLimiter(
   options: { database: Kysely<DB>; windowMs?: number },
 ): Promise<{ limiter: RateLimiter; windowMs: number }> {
   const resolved = options.windowMs ?? await readMfaEmailWindowMs({ database: options.database, },);
-  return { limiter: createRateLimiter({ windowMs: resolved, maxRequests: 1, },), windowMs: resolved, };
+  if (cached !== undefined && cached.windowMs === resolved) { return cached; }
+  const fresh = { windowMs: resolved, limiter: createRateLimiter({ windowMs: resolved, maxRequests: 1, },), };
+  cached = fresh;
+  return fresh;
 }
 
 /** Effective MFA send window (stored override wins, default otherwise).
@@ -103,8 +111,9 @@ function fail(code: ChallengeError["code"], message: string,): { ok: false; erro
 }
 
 /** Issue an MFA challenge and deliver its code to `toEmail` via the bridge.
- * Peek the per-user limiter, issue, send, then record — a delivery failure
- * records nothing, so a retry is not starved by its own failed attempt.
+ * Reserve the per-user budget at the gate (peek + record on the same tick —
+ * no await between, so concurrent sends cannot both pass), then refund on
+ * any issue/send failure so a retry is not starved by its own failed attempt.
  * @param options Database, bridge, user/factor/purpose, recipient, limiter, clock.
  * @returns The issued challenge, or a typed rate-limit/issue/delivery failure.
  * The plaintext code travels only in the result and the mail body — never logged. */
@@ -118,6 +127,8 @@ export async function sendMfaEmail(options: SendMfaEmailOptions,): Promise<Chall
     return fail("rate_limited", "MFA code already sent — try again shortly",);
   }
 
+  limiter.record(key, at,);
+
   const issued = await issueChallenge({
     database,
     userId,
@@ -127,10 +138,15 @@ export async function sendMfaEmail(options: SendMfaEmailOptions,): Promise<Chall
     now,
   },);
 
-  if (!issued.ok) { return issued; }
+  if (!issued.ok) {
+    limiter.refund(key,);
+    return issued;
+  }
 
-  const body =
-    `Your verification code is: ${issued.value.code}\nIt expires in 10 minutes. If you did not request this, ignore this message.`;
+  const minutes = Math.round((issued.value.expiresAt - at) / 60_000,);
+  const body = `Your verification code is: ${issued.value.code}\nIt expires in ${minutes} minute${
+    minutes === 1 ? "" : "s"
+  }. If you did not request this, ignore this message.`;
 
   const sent = await bridge.send(toEmail, {
     id: randomUUID(),
@@ -141,9 +157,9 @@ export async function sendMfaEmail(options: SendMfaEmailOptions,): Promise<Chall
   },);
 
   if (!sent.ok) {
+    limiter.refund(key,);
     return fail("delivery_failed", `MFA email delivery failed: ${sent.message}`,);
   }
 
-  limiter.record(key, at,);
   return issued;
 }

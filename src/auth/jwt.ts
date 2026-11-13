@@ -35,7 +35,7 @@ export interface JwtPayload {
   exp: number;
   /** Session ID for revocation tracking */
   sid: string;
-  /** Authentication methods (e.g. `["pwd","mfa-email"]`); absent = password only. */
+  /** Authentication methods (e.g. `["mfa-email"]`); absent = password only. */
   amr?: string[];
   /** Seconds since epoch when step-up MFA completed; absent = never. */
   auth_time?: number;
