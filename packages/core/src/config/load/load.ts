@@ -13,6 +13,7 @@ import { loadTemplateConfig, } from "../templates-loader";
 import { DEFAULT_CONFIG_FILES, ENV_MAP, LOCAL_CONFIG_FILES, } from "./constants";
 import { loadDomainConfigs, } from "./domain";
 import { applyEnvironmentOverrides, applyProviderEnvVars, liftFlatEnvKeys, } from "./env";
+import { ensureFirstBootPiiSecrets, } from "./first-boot";
 import { findConfigFile, firstExisting, } from "./fs";
 import { deepMerge, normalizeConfig, parseFileContent, } from "./parse";
 import { validatePiiSafety, } from "./pii-safety";
@@ -155,6 +156,7 @@ export function loadConfig(cwd?: string,): Config {
   validateConfig(config,);
   validateDatabaseSafety(config,);
   validateAuthSafety(config,);
+  config = ensureFirstBootPiiSecrets(directory, config,);
   validatePiiSafety(config,);
   return config;
 }

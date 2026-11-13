@@ -68,6 +68,16 @@ Container image at repo-root `Dockerfile` (multi-stage); full stack (Caddy TLS +
 docker build -t loop-lore:latest .
 ```
 
+## First boot
+
+A fresh clone with no env vars boots directly: when `NODE_ENV` is unset
+(prod-like) and no config file exists, the server generates PII secrets
+(`nsfw.piiSecret`, `nsfw.reporterHashSecret`,
+`observability.telemetry.piiSecret`) into gitignored `config.local.yaml`
+(chmod 0600) instead of failing. Deleting that file restores fresh-clone
+behavior. Remaining setup (providers, encryption, model roles, TLS) is
+reported machine-readably at `GET /api/v1/setup/state` (admin-gated).
+
 ## Verification
 
 1. Web UI at `http://localhost:3000`

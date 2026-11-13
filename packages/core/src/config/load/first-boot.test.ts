@@ -1,0 +1,236 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+// src/config/load/first-boot.test.ts — Empty-env boot promotion.
+
+import { createLogger, } from "@/logger";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
+import type { Config, } from "../schema";
+import { createConfigSchema, } from "../schema-class";
+import {
+  ensureFirstBootPiiSecrets,
+  FIRST_BOOT_FILE,
+  generatePiiSecret,
+  hasAnyConfigFile,
+  renderFirstBootYaml,
+  writeFirstBootFile,
+} from "./first-boot";
+import { deepMerge, } from "./parse";
+import { MIN_PII_SECRET_LENGTH, validatePiiSafety, } from "./pii-safety";
+
+beforeAll(() => {
+  createLogger({ level: "error", },);
+},);
+
+const SECRET_ENV = [
+  "NSFW_PII_SECRET",
+  "NSFW_FLAG_REPORTER_HASH_SECRET",
+  "NSFW_MODERATION_HMAC_SECRET",
+  "TELEMETRY_PII_SECRET",
+];
+
+/** Empty env: no NODE_ENV (prod-like), no secrets. Returns a restore fn. */
+function emptyEnv(): () => void {
+  const saved = new Map<string, string | undefined>();
+  for (const key of [...SECRET_ENV, "NODE_ENV",]) {
+    saved.set(key, process.env[key],);
+    delete process.env[key];
+  }
+  return () => {
+    for (const [key, value,] of saved) {
+      if (value === undefined) { delete process.env[key]; }
+      else { process.env[key] = value; }
+    }
+  };
+}
+
+function freshConfig(): Config {
+  return structuredClone(createConfigSchema().defaults,) as Config;
+}
+
+function scratchDir(): { dir: string; cleanup: () => void } {
+  const dir = mkdtempSync(join(tmpdir(), "first-boot-",),);
+  return { dir, cleanup: () => rmSync(dir, { recursive: true, force: true, },), };
+}
+
+describe("generatePiiSecret", () => {
+  test("meets the production minimum length", () => {
+    expect(generatePiiSecret().length,).toBeGreaterThanOrEqual(MIN_PII_SECRET_LENGTH,);
+  });
+
+  test("is unique per call", () => {
+    expect(generatePiiSecret(),).not.toBe(generatePiiSecret(),);
+  });
+});
+
+describe("hasAnyConfigFile", () => {
+  test("empty dir has no config", () => {
+    const { dir, cleanup, } = scratchDir();
+    try {
+      expect(hasAnyConfigFile(dir,),).toBe(false,);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("sees main, local, default, domain, and env files", () => {
+    for (
+      const name of ["config.yaml", "config.local.toml", "config.default.yml", "configs/config.nsfw.yaml", "env.yaml",]
+    ) {
+      const { dir, cleanup, } = scratchDir();
+      try {
+        const target = join(dir, name,);
+        mkdirSync(join(dir, name.split("/",).slice(0, -1,).join("/",),), { recursive: true, },);
+        writeFileSync(target, "{}",);
+        expect(hasAnyConfigFile(dir,),).toBe(true,);
+      } finally {
+        cleanup();
+      }
+    }
+  });
+});
+
+describe("renderFirstBootYaml", () => {
+  test("omits ungenerated sections", () => {
+    const yaml = renderFirstBootYaml({ telemetryPiiSecret: "x".repeat(32,), },);
+    expect(yaml,).not.toContain("nsfw",);
+    expect(yaml,).toContain("observability:",);
+  });
+});
+
+describe("writeFirstBootFile", () => {
+  test("writes chmod 0600 and refuses to overwrite (O_EXCL)", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      const secrets = { nsfwPiiSecret: generatePiiSecret(), };
+      expect(writeFirstBootFile(dir, secrets,),).toBe("created",);
+      expect(statSync(join(dir, FIRST_BOOT_FILE,),).mode & 0o777,).toBe(0o600,);
+      expect(writeFirstBootFile(dir, secrets,),).toBe("existed",);
+      expect(readFileSync(join(dir, FIRST_BOOT_FILE,), "utf8",),).toBe(renderFirstBootYaml(secrets,),);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+});
+
+describe("ensureFirstBootPiiSecrets", () => {
+  test("empty env + empty dir: promotes secrets and validates", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      const promoted = ensureFirstBootPiiSecrets(dir, freshConfig(),);
+      expect(() => validatePiiSafety(promoted,)).not.toThrow();
+      expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(true,);
+      expect(promoted.nsfw.piiSecret!.length,).toBeGreaterThanOrEqual(MIN_PII_SECRET_LENGTH,);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("re-run with the promoted file leaves it untouched (idempotent)", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      ensureFirstBootPiiSecrets(dir, freshConfig(),);
+      const before = readFileSync(join(dir, FIRST_BOOT_FILE,), "utf8",);
+      // A real second boot merges the promoted file before promotion runs.
+      const loaded = deepMerge(freshConfig(), Bun.YAML.parse(before,) as Record<string, unknown>,);
+      const second = ensureFirstBootPiiSecrets(dir, loaded,);
+      expect(second,).toBe(loaded,);
+      expect(readFileSync(join(dir, FIRST_BOOT_FILE,), "utf8",),).toBe(before,);
+      expect(() => validatePiiSafety(second,)).not.toThrow();
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("pre-existing config file: untouched, validation still throws", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      writeFileSync(join(dir, "config.yaml",), "server:\n  port: 3000\n",);
+      const config = freshConfig();
+      expect(ensureFirstBootPiiSecrets(dir, config,),).toBe(config,);
+      expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
+      expect(() => validatePiiSafety(config,)).toThrow(/NSFW_PII_SECRET/,);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("dev env: no file, config untouched", () => {
+    const { dir, cleanup, } = scratchDir();
+    process.env["NODE_ENV"] = "test";
+    try {
+      const config = freshConfig();
+      expect(ensureFirstBootPiiSecrets(dir, config,),).toBe(config,);
+      expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
+    } finally {
+      delete process.env["NODE_ENV"];
+      cleanup();
+    }
+  });
+
+  test("secrets from env: no file", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    const long = "e".repeat(MIN_PII_SECRET_LENGTH,);
+    process.env["NSFW_PII_SECRET"] = long;
+    process.env["NSFW_FLAG_REPORTER_HASH_SECRET"] = long;
+    process.env["TELEMETRY_PII_SECRET"] = long;
+    try {
+      const config = freshConfig();
+      expect(ensureFirstBootPiiSecrets(dir, config,),).toBe(config,);
+      expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("partial env: generates only the missing secrets", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    const long = "e".repeat(MIN_PII_SECRET_LENGTH,);
+    process.env["NSFW_PII_SECRET"] = long;
+    process.env["NSFW_FLAG_REPORTER_HASH_SECRET"] = long;
+    try {
+      const promoted = ensureFirstBootPiiSecrets(dir, freshConfig(),);
+      expect(() => validatePiiSafety(promoted,)).not.toThrow();
+      const file = readFileSync(join(dir, FIRST_BOOT_FILE,), "utf8",);
+      expect(file,).not.toContain("nsfw:",);
+      expect(file,).toContain("observability:",);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("short operator secret is never overwritten", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      writeFileSync(join(dir, "config.yaml",), "nsfw:\n  piiSecret: tiny\n",);
+      const config = freshConfig();
+      config.nsfw.piiSecret = "tiny";
+      const out = ensureFirstBootPiiSecrets(dir, config,);
+      expect(out.nsfw.piiSecret,).toBe("tiny",);
+      expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+});
+
+afterAll(() => {
+  delete process.env["NODE_ENV"];
+},);
