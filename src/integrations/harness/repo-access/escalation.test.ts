@@ -408,6 +408,21 @@ describe("the admin queue — list, approve, deny", () => {
     expect(await listPendingEscalations(db,),).toHaveLength(1,);
   });
 
+  it("reports a failed read instead of throwing when the database is gone", async () => {
+    const subject = principal("user",);
+    const request = await requestRepoRootChange({ principal: subject, targetPath: "/etc", db, limiter: allowAll, },);
+    const requestId = request.ok === false ? (request.requestId ?? "") : "";
+
+    // The DB handle is closed under the queue: the read fails instead of
+    // throwing out of resolveEscalation, and no decision is reported.
+    await destroyTestDb(fixture,);
+
+    const decision = await resolveEscalation(db, { id: requestId, decision: "approve", adminId: "admin-1", },);
+
+    expect(decision.ok,).toBe(false,);
+    expect(decision.ok === false && decision.code,).toBe("write_failed",);
+  });
+
   it("lets only one of two concurrent admins decide the same request", async () => {
     const subject = principal("user",);
     const request = await requestRepoRootChange({ principal: subject, targetPath: "/etc", db, limiter: allowAll, },);

@@ -130,6 +130,9 @@ export async function listPendingEscalations(db: Kysely<DB>,): Promise<PendingEs
 
 /**
  * Record an admin decision on one pending escalation request.
+ *
+ * A failed read or write is reported as a failure Result — never a throw, and
+ * never a decision: a read that fails leaves the request pending.
  * @param db - database handle
  * @param opts - the request id, the decision and the deciding admin
  * @returns the decision outcome (a Result, never a throw)
@@ -138,30 +141,30 @@ export async function resolveEscalation(
   db: Kysely<DB>,
   opts: { id: string; decision: EscalationDecision; adminId: string },
 ): Promise<EscalationResolution> {
-  const rows = await db
-    .selectFrom("tool_call_audit",)
-    .select(["id", "user_id", "verdict", "rationale", "tags", "created_at",],)
-    .where("id", "=", opts.id,)
-    .where("tool", "=", REPO_ACCESS_ESCALATION_TOOL,)
-    .execute();
-
-  const state = rows[0] === undefined ? null : parseEscalationRow(rows[0],);
-  if (state === null || state.marker !== MARKER_REQUEST) {
-    return { ok: false, code: "unknown_request", message: `escalation request "${opts.id}" is unknown`, };
-  }
-
-  const key = keyOfState(state,);
-  const deciding = await latestEscalationRow(db, key,);
-  if (deciding !== null && deciding.id !== state.id) {
-    return {
-      ok: false,
-      code: "already_decided",
-      message: `escalation request "${opts.id}" was already decided`,
-    };
-  }
-
-  const approved = opts.decision === "approve";
   try {
+    const rows = await db
+      .selectFrom("tool_call_audit",)
+      .select(["id", "user_id", "verdict", "rationale", "tags", "created_at",],)
+      .where("id", "=", opts.id,)
+      .where("tool", "=", REPO_ACCESS_ESCALATION_TOOL,)
+      .execute();
+
+    const state = rows[0] === undefined ? null : parseEscalationRow(rows[0],);
+    if (state === null || state.marker !== MARKER_REQUEST) {
+      return { ok: false, code: "unknown_request", message: `escalation request "${opts.id}" is unknown`, };
+    }
+
+    const key = keyOfState(state,);
+    const deciding = await latestEscalationRow(db, key,);
+    if (deciding !== null && deciding.id !== state.id) {
+      return {
+        ok: false,
+        code: "already_decided",
+        message: `escalation request "${opts.id}" was already decided`,
+      };
+    }
+
+    const approved = opts.decision === "approve";
     const claimed = await writeEscalationRow(db, {
       id: escalationRowId(MARKER_DECISION, state.id,),
       userId: key.subjectId,
@@ -179,8 +182,8 @@ export async function resolveEscalation(
       };
     }
   } catch (cause) {
-    getChildLogger("harness-repo-access",)?.warn("repo-access escalation decision write failed", {
-      requestId: state.id,
+    getChildLogger("harness-repo-access",)?.warn("repo-access escalation decision failed", {
+      requestId: opts.id,
       error: cause instanceof Error ? cause.message : String(cause,),
     },);
 
