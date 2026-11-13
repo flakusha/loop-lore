@@ -81,7 +81,7 @@ export const adminLora: AdminLoraState = {
 
       const [statusRes, listRes,] = await Promise.allSettled([
         apiFetch("/api/v1/lora/status",),
-        apiFetch(`/api/v1/lora/list${query}`,),
+        apiFetch("/api/v1/lora/list" + query,),
       ],);
 
       if (statusRes.status !== "fulfilled" || listRes.status !== "fulfilled") {

@@ -63,7 +63,21 @@ describe("Character edit view E2E", () => {
       .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
 
-    // Seed permanent traits (the schema stores these in a side table, not on
+    // Seed an availability record: the edit view's availability panel fetches
+    // /api/v1/actors/:id/availability, whose designed 404 ("no row yet") still
+    // logs a browser console resource error. Same rationale as the license row.
+    await ctx.db
+      .insertInto("character_availability",)
+      .values({
+        id: crypto.randomUUID(),
+        actor_id: SEED.character.id,
+        status: "available",
+        created_at: licNow,
+        updated_at: licNow,
+      },)
+      .onConflict((oc,) => oc.column("id",).doNothing())
+      .execute();
+
     // the actor row). Idempotent on re-runs.
     for (const t of [{ id: "kind", label: "Kind", }, { id: "curious", label: "Curious", },]) {
       await ctx.db
