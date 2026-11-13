@@ -42,8 +42,10 @@ import {
   type HarnessAdminSettingsView,
   isHarnessAdminSettingsSeeded,
 } from "./admin-settings";
-import { listedHarnessModels, toRoutableCandidates, } from "./model-discovery";
 import { ProfileBreaker, } from "./profile-breaker";
+// NOTE: model-discovery loads lazily in discoveredCosts (not at module top):
+// its provider-registry subtree breaks module linking when pulled into
+// heavily-mocked graphs (server bootstrap tests) at import time.
 import { type ProfileRegistry, } from "./profile-registry";
 import { providerTosGated, } from "./provider-tos";
 import { type UsageLedger, } from "./usage-ledger";
@@ -232,6 +234,9 @@ export class ProfileSelector {
    * @returns model id to USD per 1k tokens (absent when unknown).
    */
   private async discoveredCosts(candidates: TurnCandidate[],): Promise<Map<string, number>> {
+    // Lazy: keeps the provider-registry subtree out of this module's
+    // import-time graph (see NOTE at the imports); cached after first load.
+    const { listedHarnessModels, toRoutableCandidates, } = await import("./model-discovery");
     const prices = new Map<string, number>();
     const profiles = [...new Set(candidates.map((candidate,) => candidate.profile),),];
     for (const profile of profiles) {
