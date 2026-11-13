@@ -200,7 +200,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       return {
         text: transcript.text,
         stopReason: typeof response.stopReason === "string" ? response.stopReason : "unknown",
-        usage: this.toUsage(response.usage, this.turnCostUsd,),
+        usage: this.toUsage(response.usage,),
+        costUsd: this.turnCostUsd,
         acpSessionId: sessionId,
         transcript,
       };
@@ -386,19 +387,24 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   }
 
   /**
-   * Normalize the wire usage object.
+   * Normalize the wire usage object (token counts only).
+   *
+   * The COST does not come from here: the stable ACP v1 `PromptResponse` has
+   * no `usage` property at all (schema.md, `PromptResponse`), so a conformant
+   * harness never carries one. The only spec carrier of cost is the
+   * `usage_update` event, whose `used`/`size` are CONTEXT-WINDOW metrics
+   * ("Tokens currently in context" / "Total context window size in tokens"),
+   * not this turn's input/output counts - they are never mapped onto them.
    * @param usage - raw usage from the prompt response
-   * @param costUsd - cost the harness reported for the turn (usage_update)
-   * @returns usage, or null when unusable.
+   * @returns usage, or null when the response carried none.
    */
-  private toUsage(usage: RawUsage | null | undefined, costUsd: number | null,): HarnessTurnResult["usage"] {
+  private toUsage(usage: RawUsage | null | undefined,): HarnessTurnResult["usage"] {
     if (!usage) { return null; }
     const num = (v: unknown,): number => (typeof v === "number" && Number.isFinite(v,) ? v : 0);
     return {
       inputTokens: num(usage.inputTokens,),
       outputTokens: num(usage.outputTokens,),
       totalTokens: num(usage.totalTokens,),
-      costUsd,
     };
   }
 }

@@ -7,8 +7,9 @@
  * Resource contract: ONE in-memory migrated DB per test, seeded with its own
  * user/actor/chat; released in afterEach. Every test also owns UNIQUE row ids
  * (a per-test tag), so no two tests can address the same rows even if they
- * ever shared a database. No child process, no ports, no global
- * test-database override, no cross-test state.
+ * ever shared a database. No ports, no global test-database override, no
+ * cross-test state; the one test that drives a real turn owns its own fixture
+ * subprocess (unique mkdtemp dir) and reaps it in a finally block.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { type KyselyPlugin, SelectQueryNode, } from "kysely";
@@ -17,6 +18,8 @@ import { parseToolCalls, parseToolResultMeta, } from "../../routes/messages/help
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertActors, } from "../../test-utils/insert-helpers";
 import { type HarnessTurnResult, } from "./adapter-types";
+import { startFakeAcp, } from "./fake-acp-server";
+import { OmpAcpAdapter, } from "./omp";
 import { persistHarnessTurn, } from "./turn-persistence";
 import { type HarnessTurnTranscript, } from "./turn-transcript";
 
@@ -52,7 +55,8 @@ function turn(overrides?: Partial<HarnessTurnResult>,): HarnessTurnResult {
   return {
     text: "the answer",
     stopReason: "end_turn",
-    usage: { inputTokens: 3, outputTokens: 4, totalTokens: 7, costUsd: null, },
+    usage: { inputTokens: 3, outputTokens: 4, totalTokens: 7, },
+    costUsd: null,
     acpSessionId: "sess-1",
     transcript: transcript(),
     ...overrides,
@@ -132,7 +136,8 @@ describe("persistHarnessTurn", () => {
       profile: "omp",
       transcript: transcript(),
       turn: turn({
-        usage: { inputTokens: 3, outputTokens: 4, totalTokens: 7, costUsd: 0.012, },
+        usage: { inputTokens: 3, outputTokens: 4, totalTokens: 7, },
+        costUsd: 0.012,
       },),
       turnKey: "turn-cost",
     },);
@@ -141,6 +146,44 @@ describe("persistHarnessTurn", () => {
       .where("id", "=", persisted.assistantMessageId,).executeTakeFirstOrThrow();
 
     expect(row.token_cost,).toBe(0.012,);
+  });
+
+  it("persists the cost a usage_update reported when the response carried no usage", async () => {
+    // The stable ACP v1 PromptResponse has no `usage` property, so a
+    // conformant harness reports its cost ONLY through the usage_update.
+    const server = startFakeAcp({
+      FAKE_MODELS: "m",
+      FAKE_NO_USAGE: "1",
+      FAKE_EVENTS: JSON.stringify([
+        { sessionUpdate: "usage_update", used: 120, size: 1000, cost: { amount: 0.5, currency: "USD", }, },
+      ],),
+    },);
+
+    const adapter = new OmpAcpAdapter({ command: server.argv, requestTimeoutMs: 4000, },);
+
+    try {
+      const turn = await adapter.prompt("hi",);
+      expect(turn.usage,).toBeNull();
+
+      const persisted = await persistHarnessTurn({
+        database: fixture.db,
+        chatId,
+        actorId,
+        profile: "omp",
+        transcript: turn.transcript,
+        turn,
+        turnKey: "turn-usage-cost",
+      },);
+
+      const row = await fixture.db.selectFrom("messages",).selectAll()
+        .where("id", "=", persisted.assistantMessageId,).executeTakeFirstOrThrow();
+
+      expect(row.token_cost,).toBe(0.5,);
+      expect(row.token_count_total,).toBeNull();
+    } finally {
+      adapter.close();
+      server.stop();
+    }
   });
 
   it("writes the tool_calls column in the shape the message readers parse", async () => {

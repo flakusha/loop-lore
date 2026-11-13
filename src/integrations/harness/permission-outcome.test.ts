@@ -61,8 +61,42 @@ describe("wirePermissionOutcome", () => {
     },);
   });
 
-  it("keeps the decision when the harness advertised no options", () => {
-    expect(wirePermissionOutcome({ outcome: "allow_once", }, [],),).toEqual({ outcome: "allow_once", },);
+  it("denies an allow when the harness advertised no options", () => {
+    // The spec REQUIRES the options on a permission request, so a harness that
+    // advertises none offers nothing to select - the allow fails closed.
+    expect(wirePermissionOutcome({ outcome: "allow_once", }, [],),).toEqual({ outcome: "reject_once", },);
+  });
+
+  it("keeps a denial a denial when the harness advertised no options", () => {
+    expect(wirePermissionOutcome({ outcome: "reject_once", }, [],),).toEqual({ outcome: "reject_once", },);
+  });
+
+  it("rides the nearest allow kind when the harness advertises no always-kind", () => {
+    const options = advertisedPermissionOptions({
+      options: [
+        { optionId: "allow", kind: "allow_once", },
+        { optionId: "reject", kind: "reject_once", },
+      ],
+    },);
+
+    expect(wirePermissionOutcome({ outcome: "allow_always", }, options,),).toEqual({
+      outcome: "allow_once",
+      optionId: "allow",
+    },);
+  });
+
+  it("rides the nearest reject kind when the harness advertises no always-kind", () => {
+    const options = advertisedPermissionOptions({
+      options: [
+        { optionId: "allow", kind: "allow_once", },
+        { optionId: "reject", kind: "reject_once", },
+      ],
+    },);
+
+    expect(wirePermissionOutcome({ outcome: "reject_always", }, options,),).toEqual({
+      outcome: "reject_once",
+      optionId: "reject",
+    },);
   });
 
   it("denies an allow the harness advertised no option for", () => {

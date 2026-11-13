@@ -31,11 +31,14 @@
  * HarnessRuntime.acp as the config input.
  */
 
+import { open, } from "node:fs/promises";
 import { resolve, } from "node:path";
 import type { HarnessAcpConfig, } from "../../config/schema/harness";
+import { PathOutsideScopeError, resolveWithinScope, } from "../../harness/worktree-scope";
 import { getChildLogger, } from "../../logger";
 import { type HarnessAdapterFactory, } from "./adapter-types";
 import { resolveAdapterFactory, } from "./flavor-factories";
+import { JsonRpcRequestError, } from "./jsonrpc-process";
 import { PermissionQueue, } from "./permission-queue";
 import { ProfileBreaker, } from "./profile-breaker";
 import { ProfileRegistry, } from "./profile-registry";
@@ -95,6 +98,58 @@ export function harnessAdapterFactoryFor(acp: HarnessAcpConfig,): HarnessAdapter
   };
 }
 
+/** The most bytes one `fs/read_text_file` answer carries. */
+const MAX_READ_BYTES = 1024 * 1024;
+
+/**
+ * Read a file for an agent's `fs/read_text_file` ask, confined to the
+ * profile's sandbox root. The path is resolved against that root and checked
+ * with the scope guard the repo-access tier delegates to
+ * (`worktree-scope.ts`), so a traversal or an escaping symlink is refused.
+ * A raw filesystem error never reaches the agent — the refusal is a typed
+ * JSON-RPC error.
+ * @param root - the sandbox root the read is confined to
+ * @param path - the path the agent asked for
+ * @returns the file's text
+ * @throws {JsonRpcRequestError} when the path escapes the root or the read fails
+ */
+async function readSandboxedText(root: string, path: string,): Promise<string> {
+  let resolved: string;
+  try {
+    resolved = await resolveWithinScope(root, path,);
+  } catch (error) {
+    const outside = error instanceof PathOutsideScopeError;
+    log()?.warn(
+      outside
+        ? "harness fs read refused — path outside the sandbox root"
+        : "harness fs read refused — sandbox root unusable",
+      { root, path, },
+    );
+
+    throw new JsonRpcRequestError(
+      outside ? "path is outside the sandbox root" : "the sandbox root could not be resolved",
+      -32000,
+    );
+  }
+
+  try {
+    // ponytail: the answer is capped at 1 MiB (the bridge ignores the
+    // request's line/limit params); honour them when the reader grows a
+    // ranged signature.
+    const handle = await open(resolved, "r",);
+    try {
+      const buffer = Buffer.alloc(MAX_READ_BYTES,);
+      const { bytesRead, } = await handle.read(buffer, 0, MAX_READ_BYTES, 0,);
+      return buffer.toString("utf8", 0, bytesRead,);
+    } finally {
+      await handle.close();
+    }
+  } catch {
+    log()?.warn("harness fs read failed", { root, path, },);
+    throw new JsonRpcRequestError("the requested file could not be read", -32000,);
+  }
+}
+
 /**
  * The configured sandbox root for one profile, resolved absolute. Absent =
  * undefined, so the caller keeps its own default (the connection cwd, then
@@ -120,7 +175,9 @@ function sandboxRootFor(acp: HarnessAcpConfig, profile: string,): string | undef
  * own cwd (session/new cwd); production profiles pass none, so that is
  * `process.cwd()` — the same default the adapter hands to session/new.
  * A configured root also becomes the adapter's cwd, so the agent works in
- * the very directory its asks are judged against.
+ * the very directory its asks are judged against, and it confines the
+ * `fs/read_text_file` bridge — the advertised capability is backed by a real
+ * reader, not by a bridge that answers "unsupported".
  * @param options - config snapshot + optional factory override
  * @returns the composed runtime.
  */
@@ -130,16 +187,21 @@ export function createHarnessRuntime(options: CreateHarnessRuntimeOptions,): Har
   // registry is constructed with a factory that reports into the queue.
   let registry: ProfileRegistry | undefined;
   const permissions = new PermissionQueue({ connection: (profile,) => registry?.connection(profile,), },);
-  const queueFactory: HarnessAdapterFactory = (profile, command, opts,) =>
-    baseFactory(profile, command, {
+  const queueFactory: HarnessAdapterFactory = (profile, command, opts,) => {
+    const configured = sandboxRootFor(options.acp, profile,);
+    // The read bridge is confined to the SAME root the asks are judged
+    // against, so the advertised `fs.readTextFile` capability is backed.
+    const root = configured ?? opts?.cwd ?? process.cwd();
+    return baseFactory(profile, command, {
       ...opts,
-      cwd: sandboxRootFor(options.acp, profile,) ?? opts?.cwd,
+      cwd: configured ?? opts?.cwd,
+      readTextFile: (path,) => readSandboxedText(root, path,),
       onPermissionRequest: (pending,) => {
         void permissions
           .submit({
             profile,
             pending,
-            sandboxRoot: sandboxRootFor(options.acp, profile,) ?? opts?.cwd ?? process.cwd(),
+            sandboxRoot: root,
           },)
           .catch((error: unknown,) => {
             log()?.warn("harness permission evaluation failed", { profile, error: String(error,), },);
@@ -149,6 +211,7 @@ export function createHarnessRuntime(options: CreateHarnessRuntimeOptions,): Har
         permissions.withdrawProfile(profile,);
       },
     },);
+  };
 
   const composed = new ProfileRegistry({ acp: options.acp, factory: queueFactory, },);
   registry = composed;

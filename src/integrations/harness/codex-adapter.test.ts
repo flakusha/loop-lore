@@ -104,7 +104,7 @@ describe("CodexAcpAdapter (fake ACP fixture, codex flavor)", () => {
     const turn = await adapter.prompt("fix the flake",);
     expect(turn.text,).toBe("patched",);
     expect(turn.stopReason,).toBe("end_turn",);
-    expect(turn.usage,).toEqual({ inputTokens: 10, outputTokens: 5, totalTokens: 15, costUsd: null, },);
+    expect(turn.usage,).toEqual({ inputTokens: 10, outputTokens: 5, totalTokens: 15, },);
     expect(turn.acpSessionId,).toBe("fake-session-1",);
     adapter.close();
   });
