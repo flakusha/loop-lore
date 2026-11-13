@@ -62,6 +62,19 @@ describe("Character panel saves E2E", () => {
         updated_at: now,
       },)
       .execute();
+
+    // An availability row keeps the availability panel's initial GET from
+    // hitting its designed 404 (same console-noise contract).
+    await ctx.db
+      .insertInto("character_availability",)
+      .values({
+        id: crypto.randomUUID(),
+        actor_id: actorId,
+        status: "available",
+        created_at: now,
+        updated_at: now,
+      },)
+      .execute();
   }, 90_000,);
 
   afterAll(async () => {
