@@ -8,6 +8,7 @@
 // (chats, messages, assets). Permission gating stays server-side — the
 // route inherits each surface's visibility rules.
 
+import { t, } from "./i18n";
 import { jsonParseOr, } from "./json";
 import type { OmniSearchResults, OmniSearchState, } from "./types";
 
@@ -34,6 +35,14 @@ globalThis.omniSearch = function(): OmniSearchState {
     },
 
     /**
+     * Empty-state heading with the failed query interpolated.
+     * @returns {string}
+     */
+    noResultsLabel() {
+      return t("search.noResults", { query: this.queried, },);
+    },
+
+    /**
      * Run the unified search for the current input (debounced by the view).
      * @returns {Promise<void>}
      */
@@ -53,7 +62,7 @@ globalThis.omniSearch = function(): OmniSearchState {
       this.loading = true;
       this.error = false;
       try {
-        const res = await apiFetch(`/api/search?q=${encodeURIComponent(q,)}`,);
+        const res = await apiFetch(`/api/v1/search?q=${encodeURIComponent(q,)}`,);
         if (seq !== requestSeq) { return; }
         if (!res.ok) { throw new Error(`omni search failed: ${String(res.status,)}`,); }
         const data = jsonParseOr<Partial<OmniSearchResults>>(await res.text(), EMPTY_RESULTS,);

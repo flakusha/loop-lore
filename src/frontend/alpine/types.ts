@@ -219,6 +219,7 @@ export interface OmniSearchState {
   queried: string;
   results: OmniSearchResults;
   total: () => number;
+  noResultsLabel: () => string;
   run: () => Promise<void>;
   openChat: (chatId: string,) => void;
   openAsset: (assetId: string,) => void;
