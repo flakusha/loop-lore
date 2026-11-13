@@ -39,7 +39,8 @@ export type {
 export type { ChatMoodState, } from "./mood-state";
 export type { ChatMovementState, MovementEvent, } from "./movement-state";
 export type { ChatMusicLinksState, MusicLinkRow, } from "./music-links-state";
-export type {
+  ActorRelationshipRow,
+  ActorSummary,
   NpcData,
   NpcDisposition,
   NpcFaction,
@@ -48,9 +49,10 @@ export type {
   NpcInventoryItem,
   NpcKarma,
   NpcKarmaCategory,
-  NpcRelationship,
+  ActorRelationshipRow,
   NpcScheduleEntry,
   NpcStat,
+  RelationshipDisplayRow,
   RelationshipType,
   StandingTier,
 } from "./npc";

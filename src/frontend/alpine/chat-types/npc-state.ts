@@ -2,10 +2,12 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type {
+  ActorRelationshipRow,
+  ActorSummary,
   NpcData,
   NpcFaction,
   NpcKarma,
-  NpcRelationship,
+  RelationshipDisplayRow,
 } from "./npc";
 
 // ── NPC Management UI State ─────────────────────────────────
@@ -18,9 +20,12 @@ export interface ChatNpcState {
   npcFilter: string;
   loadingNpcs: boolean;
 
-  // Relationships
-  relationships: NpcRelationship[];
+  // Relationships (real data — npc-relationships state plugin)
+  cast: ActorSummary[];
+  relationships: ActorRelationshipRow[];
+  relationshipActorId: string | null;
   loadingRelationships: boolean;
+  relationshipsError: string;
 
   // Factions
   factions: NpcFaction[];
@@ -39,6 +44,7 @@ export interface ChatNpcState {
   selectNpc(id: string,): void;
   filteredNpcs(): NpcData[];
   loadRelationships(): Promise<void>;
+  relationshipRows(): RelationshipDisplayRow[];
   loadFactions(): Promise<void>;
   selectFaction(id: string,): void;
   loadKarma(): Promise<void>;
