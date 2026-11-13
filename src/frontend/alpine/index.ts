@@ -5,6 +5,7 @@
  * Imported by alpine-init.ts (single bundle entry).
  */
 // loaders.d.ts provides ambient global types via tsconfig include — no runtime import needed
+import "./actor-availability";
 import "./actor-emotion-avatars";
 import "./actor-entities";
 import "./actor-licensing";
@@ -43,8 +44,8 @@ import "./message-translate";
 import "./model-manager";
 import "./notification-center";
 import "./notifications";
-import "./omni-search";
 import "./npc";
+import "./omni-search";
 import "./personas";
 import "./planning-kanban";
 import "./professions";

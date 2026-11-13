@@ -27,6 +27,9 @@ export function panelsSection(
             <section x-data="actorLicensingFactory(actorId)" data-testid="character-licensing">${
     loadBody("licensing-panel.html",)
   }</section>
+            <section x-data="actorAvailabilityFactory(actorId)" data-testid="character-availability" style="margin-top:var(--space-4)">${
+    loadBody("availability-panel.html",)
+  }</section>
             <section x-data="actorEntitiesFactory(actorId, 'notes')" data-testid="character-notes" style="margin-top:var(--space-4)">${
     loadBody("entities-panel.html",)
   }</section>

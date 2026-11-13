@@ -1,0 +1,166 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Character availability panel. Mount with:
+  `<section x-data="actorAvailabilityFactory(actorId)">`. Reads / writes
+  `/api/v1/actors/:actorId/availability`.
+-->
+<section class="availability-panel" x-data="actorAvailabilityFactory(actorId,)">
+  <header class="licensing-header">
+    <h4 class="licensing-title" x-text="t('availability.title')"></h4>
+    <p class="licensing-help" x-text="t('availability.help')"></p>
+  </header>
+
+  <!-- Loading -->
+  <div class="licensing-loading" x-show="availabilityLoading" data-testid="availability-loading">
+    <span class="spinner"></span>
+    <span x-text="t('common.loading')"></span>
+  </div>
+
+  <!-- Error -->
+  <p
+    class="licensing-error"
+    x-show="availabilityError"
+    x-text="availabilityError"
+    data-testid="availability-error"
+  >
+  </p>
+
+  <!-- View mode: read-only summary when no edits are pending -->
+  <div
+    class="licensing-summary"
+    x-show="!availabilityLoading && availability && !availabilityDirty"
+    data-testid="availability-summary"
+  >
+    <div>
+      <span class="form-label" x-text="t('availability.status')"></span>
+      <span x-text="availability ? describeStatus(availability.status) : ''" data-testid="availability-status"></span>
+    </div>
+    <div x-show="availability?.usage_policy">
+      <span class="form-label" x-text="t('availability.usagePolicy')"></span>
+      <span x-text="availability?.usage_policy"></span>
+    </div>
+    <div x-show="availability?.activity_restrictions && storedRestrictions().length > 0">
+      <span class="form-label" x-text="t('availability.activityRestrictions')"></span>
+      <span x-text="storedRestrictions().join(', ')"></span>
+    </div>
+    <div x-show="availability?.content_policy">
+      <span class="form-label" x-text="t('availability.contentPolicy')"></span>
+      <span x-text="availability?.content_policy"></span>
+    </div>
+    <div x-show="availability?.nsfw_policy">
+      <span class="form-label" x-text="t('availability.nsfwPolicy')"></span>
+      <span x-text="availability?.nsfw_policy"></span>
+    </div>
+    <button type="button" class="btn btn-secondary btn-sm" @click="availabilityDirty = true">
+      <span x-text="t('common.edit')"></span>
+    </button>
+    <button type="button" class="btn btn-danger btn-sm" @click="remove()" data-testid="availability-delete">
+      <span x-text="t('common.remove')"></span>
+    </button>
+  </div>
+
+  <!-- Edit / create form -->
+  <form
+    class="licensing-form"
+    x-show="!availabilityLoading && (!availability || availabilityDirty)"
+    @input="markDirty()"
+    @change="markDirty()"
+    data-testid="availability-form"
+  >
+    <div class="form-group">
+      <label class="form-label" for="avail-status" x-text="t('availability.status')"></label>
+      <select id="avail-status" class="form-input" x-model="availabilityForm.status">
+        <template x-for="opt in statusOptions" :key="opt">
+          <option :value="opt" x-text="describeStatus(opt)"></option>
+        </template>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="avail-usage" x-text="t('availability.usagePolicy')"></label>
+      <input
+        id="avail-usage"
+        type="text"
+        class="form-input"
+        x-model="availabilityForm.usage_policy"
+        :placeholder="t('availability.usagePolicyPlaceholder')"
+        data-testid="availability-usage-policy"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="avail-restrictions" x-text="t('availability.activityRestrictions')"></label>
+      <input
+        id="avail-restrictions"
+        type="text"
+        class="form-input"
+        x-model="availabilityForm.activity_restrictions"
+        :placeholder="t('availability.activityRestrictionsHint')"
+        data-testid="availability-restrictions"
+      >
+      <p class="form-hint" style="color: var(--text-secondary)" x-text="t('availability.activityRestrictionsHint')"></p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="avail-content" x-text="t('availability.contentPolicy')"></label>
+      <input
+        id="avail-content"
+        type="text"
+        class="form-input"
+        x-model="availabilityForm.content_policy"
+        data-testid="availability-content-policy"
+      >
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="avail-nsfw" x-text="t('availability.nsfwPolicy')"></label>
+      <input
+        id="avail-nsfw"
+        type="text"
+        class="form-input"
+        x-model="availabilityForm.nsfw_policy"
+        data-testid="availability-nsfw-policy"
+      >
+    </div>
+
+    <div class="licensing-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        @click="save()"
+        :disabled="availabilitySaving"
+        data-testid="availability-save"
+      >
+        <span x-show="!availabilitySaving" x-text="t('common.save')"></span>
+        <span x-show="availabilitySaving" x-text="t('common.saving')"></span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        @click="cancelEdit()"
+        x-show="availability"
+      >
+        <span x-text="t('common.cancel')"></span>
+      </button>
+    </div>
+  </form>
+
+  <!-- Empty state when no availability record exists and no form is open -->
+  <div
+    class="licensing-empty"
+    x-show="!availabilityLoading && !availability && !availabilityDirty"
+    data-testid="availability-empty"
+  >
+    <p x-text="t('availability.empty')"></p>
+    <button
+      type="button"
+      class="btn btn-primary btn-sm"
+      @click="availabilityDirty = true"
+      data-testid="availability-add"
+    >
+      <span x-text="t('availability.add')"></span>
+    </button>
+  </div>
+</section>
