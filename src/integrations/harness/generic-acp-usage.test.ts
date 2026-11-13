@@ -56,6 +56,23 @@ describe("GenericAcpAdapter usage cost (fake ACP fixture)", () => {
     expect(turn.costUsd,).toBe(0.012,);
   });
 
+  it("carries a cost the harness reported as zero", async () => {
+    // A reported zero is a cost, not a missing one: null means the harness
+    // reported NO cost, 0 means it reported zero.
+    const server = serve({
+      FAKE_MODELS: "m",
+      FAKE_EVENTS: JSON.stringify([
+        { sessionUpdate: "usage_update", used: 120, size: 1000, cost: { amount: 0, currency: "USD", }, },
+      ],),
+    },);
+
+    const adapter = adapterFor(server,);
+
+    const turn = await adapter.prompt("hi",);
+
+    expect(turn.costUsd,).toBe(0,);
+  });
+
   it("reports no cost when the harness reported none", async () => {
     const server = serve({
       FAKE_MODELS: "m",
