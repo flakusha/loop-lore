@@ -201,7 +201,7 @@ describeOrSkip("inbound ACP stdio server main()", () => {
 
   test("the deny-by-default gate refuses the boot: stdin is never wired", async () => {
     const prevExitCode = process.exitCode ?? 0;
-    let exitCodeAfter: string | number | undefined;
+    let exitCodeAfter: string | number | null | undefined;
     try {
       await main();
       exitCodeAfter = process.exitCode;
@@ -230,7 +230,7 @@ describeOrSkip("inbound ACP stdio server main()", () => {
     }) as typeof process.stdout.write;
 
     const prevExitCode = process.exitCode ?? 0;
-    let exitCodeAfter: string | number | undefined;
+    let exitCodeAfter: string | number | null | undefined;
     try {
       await main();
       exitCodeAfter = process.exitCode;

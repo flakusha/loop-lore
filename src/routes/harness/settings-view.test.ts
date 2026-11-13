@@ -70,7 +70,7 @@ describe("unknownFlavor", () => {
   it("is undefined when every configured flavor is known", () => {
     initHarnessAdminSettings({
       enabled: false,
-      profiles: [{ name: "ok", command: ["fake", "acp",], flavor: "omp", tiers: {}, },],
+      profiles: [{ name: "ok", command: ["fake", "acp",], harness: "omp", tiers: {}, },],
     },);
 
     expect(unknownFlavor(),).toBeUndefined();

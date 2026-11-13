@@ -37,7 +37,7 @@ describe("HarnessQueueTurnStatus", () => {
       ["Queued", "Running", "Completed", "Failed", "Cancelled",],
     );
 
-    expect(Object.values(HarnessQueueTurnStatus,),).toEqual(Object.keys(coverage,),);
+    expect(Object.values(HarnessQueueTurnStatus,),).toEqual(Object.keys(coverage,) as HarnessQueueTurnStatus[],);
   });
 });
 
@@ -65,6 +65,6 @@ describe("HarnessQueueErrorCode", () => {
       ["HarnessDisabled", "RoleDenied", "ProfileUnknown", "TurnFailed", "Interrupted",],
     );
 
-    expect(Object.values(HarnessQueueErrorCode,),).toEqual(Object.keys(coverage,),);
+    expect(Object.values(HarnessQueueErrorCode,),).toEqual(Object.keys(coverage,) as HarnessQueueErrorCode[],);
   });
 });

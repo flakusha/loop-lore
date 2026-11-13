@@ -22,6 +22,7 @@ import {
   type InsertQueuedTurn,
   insertQueuedTurns,
   listQueuedTurns,
+  type QueuedTurnRow,
   recoverInterruptedTurns,
 } from "./queue-store";
 
@@ -97,7 +98,7 @@ function turn(id: string, opts: Partial<InsertQueuedTurn> = {},): InsertQueuedTu
 }
 
 /** The full queued row shape, for exact-shape assertions. */
-function queuedRow(id: string, createdAt = T0,): Record<string, unknown> {
+function queuedRow(id: string, createdAt = T0,): QueuedTurnRow {
   return {
     id,
     batch_id: `batch-${id}`,
