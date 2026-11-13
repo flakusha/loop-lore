@@ -138,8 +138,11 @@ async function main() {
   // the gate without src/).
   const unkeyed = [];
   try {
-    const { listCommands, } = await import(join(SRC_DIR, "assistant", "commands", "index.ts",));
-    for (const name of listCommands()) {
+    // listAllCommands, not listCommands: availability-gated stubs (/sfx etc.
+    // before a provider is configured) stay hidden from the palette but remain
+    // callable by direct slash input, so they still need their catalog key.
+    const { listAllCommands, } = await import(join(SRC_DIR, "assistant", "commands", "index.ts",));
+    for (const name of listAllCommands()) {
       if (!catalog.has(`commands.${name}`,)) {
         unkeyed.push(name,);
       }

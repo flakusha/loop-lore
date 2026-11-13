@@ -66,5 +66,12 @@ export { parseCommand, } from "../command-parser";
 export type { ParsedCommand, } from "../command-parser";
 export { formatDiceResult, handleRollCommand, parseDiceNotation, rollDice, rollDie, } from "./dice";
 export type { DiceResult, DieRoll, } from "./dice";
-export { getCommand, getCommandRequirement, listCommands, registerCommand, satisfiesRole, } from "./registry";
+export {
+  getCommand,
+  getCommandRequirement,
+  listAllCommands,
+  listCommands,
+  registerCommand,
+  satisfiesRole,
+} from "./registry";
 export type { CommandContext, CommandHandler, CommandOptions, CommandResult, } from "./registry";
