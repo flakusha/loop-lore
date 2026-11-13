@@ -2,14 +2,26 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * permission-outcome.ts — the wire boundary for ACP permission outcomes.
+ * permission-outcome.ts — the wire boundary for ACP permission answers.
  *
- * The protocol's outcome vocabulary is snake_case (`allow_once`, ...), but
- * some harnesses speak a hyphenated dialect (`allow-once` — Cursor CLI). The
- * internal union stays spec-shaped; only the wire may carry a harness's own
- * spelling. This module normalises a wire spelling into the union and maps a
- * decision onto the option the harness advertised, so the answer comes back
- * in the vocabulary that harness understands.
+ * The answer to `session/request_permission` is `RequestPermissionResponse`
+ * (vendored ACP v1 schema, `RequestPermissionResponse`): an object whose
+ * REQUIRED `outcome` property carries the `RequestPermissionOutcome`, and
+ * that outcome is EXACTLY one of two variants (vendored schema,
+ * `RequestPermissionOutcome`):
+ * - `{ outcome: "selected", optionId }` — the user picked one of the
+ *   ADVERTISED options; `optionId` is REQUIRED and is the id the harness
+ *   advertised.
+ * - `{ outcome: "cancelled" }` — the prompt turn was cancelled.
+ *
+ * The verb vocabulary (`allow_once` | `allow_always` | `reject_once` |
+ * `reject_always`) is NOT an outcome: it is the spec's `PermissionOptionKind`
+ * — the kind of an ADVERTISED option. It decides WHICH option the answer
+ * selects and never appears in the answer itself.
+ *
+ * The protocol's option kinds are snake_case, but some harnesses speak a
+ * hyphenated dialect (`allow-once` — Cursor CLI). The internal union stays
+ * spec-shaped; only the advertised kind is normalised.
  *
  * Pure: no IO, no clock, no framework.
  */
@@ -51,13 +63,21 @@ export function normalizePermissionOutcome(value: string,): PermissionOutcome["o
   return OUTCOME_VERBS.find((verb,) => verb === key) ?? null;
 }
 
-/** The outcome as it goes on the wire — the harness's own spelling. */
-export interface WirePermissionOutcome {
-  /** The outcome verb, in the harness's own spelling. */
-  outcome: string;
-  /** The chosen option id, when the harness's options carry ids. */
-  optionId?: string;
-}
+/**
+ * The spec's answer to a permission request (vendored ACP v1 schema,
+ * `RequestPermissionOutcome`) — the ONLY two shapes the protocol allows.
+ */
+export type WirePermissionOutcome =
+  | { outcome: "selected"; optionId: string }
+  | { outcome: "cancelled" };
+
+/**
+ * The mapped answer: the spec shape, or why no advertised option can carry
+ * the decision (a Result value, never a throw).
+ */
+export type PermissionAnswer =
+  | { ok: true; outcome: WirePermissionOutcome }
+  | { ok: false; reason: string };
 
 /** One permission option the harness advertised. */
 export interface AdvertisedPermissionOption {
@@ -92,29 +112,29 @@ export function advertisedPermissionOptions(params: unknown,): AdvertisedPermiss
 
 /**
  * Map a decision onto the option the harness advertised, so the answer
- * carries that harness's own spelling. Only an option of the SAME polarity
- * may carry the decision (a denial never rides an allow option). An allow the
- * harness advertised no option for is never sent — it fails closed as a denial.
+ * selects that option. Only an option of the SAME polarity may carry the
+ * decision (a denial never rides an allow option). The answer carries the
+ * selected option's ID, never the option's kind — the spec has no field for
+ * the kind.
  *
- * The spec REQUIRES the options on a permission request
- * (https://agentclientprotocol.com/protocol/v1/schema.md,
- * `RequestPermissionRequest.options`), so a harness that advertises none
- * offers nothing to select: an allow cannot be expressed and fails closed.
+ * A decision NO advertised option can carry cannot be expressed: the spec's
+ * `selected` variant requires an option id, and the `cancelled` variant would
+ * claim the turn was cancelled when it was not. The caller fails the request
+ * closed instead.
  * @param outcome - the decision, in the spec union
  * @param options - the options the harness advertised
- * @returns the outcome to put on the wire.
+ * @returns the spec answer, or the reason it cannot be expressed.
  */
 export function wirePermissionOutcome(
   outcome: PermissionOutcome,
   options: AdvertisedPermissionOption[],
-): WirePermissionOutcome {
+): PermissionAnswer {
   // A cancellation is not an option choice - the protocol answers it as itself.
-  if (outcome.outcome === "cancelled") { return outcome; }
+  if (outcome.outcome === "cancelled") {
+    return { ok: true, outcome: { outcome: "cancelled", }, };
+  }
 
   const allow = outcome.outcome in ALLOW_VERBS;
-  // No advertised option can carry the decision: an allow fails closed as a
-  // denial, a denial stays a denial.
-  if (options.length === 0) { return allow ? { outcome: "reject_once", } : outcome; }
 
   // Only an option of the SAME polarity may carry the decision: a denial
   // never rides an allow option, and an allow never rides a reject one.
@@ -125,10 +145,14 @@ export function wirePermissionOutcome(
   const chosen = samePolarity.find((option,) => option.optionId === outcome.optionId) ??
     ridableOption(samePolarity, outcome.outcome,);
 
-  if (chosen) { return { outcome: chosen.kind, optionId: chosen.optionId, }; }
+  if (!chosen) {
+    return {
+      ok: false,
+      reason: `no advertised permission option can carry the ${outcome.outcome} decision`,
+    };
+  }
 
-  // Nothing the harness advertised can carry this decision - fail closed.
-  return denial(options,);
+  return { ok: true, outcome: { outcome: "selected", optionId: chosen.optionId, }, };
 }
 
 /**
@@ -151,19 +175,4 @@ function ridableOption(
   }
 
   return undefined;
-}
-
-/**
- * The denial to send when no advertised option can carry the decision: the
- * harness's own reject spelling when it advertised one, else the spec verb.
- * @param options - the options the harness advertised
- * @returns the denial to put on the wire.
- */
-function denial(options: AdvertisedPermissionOption[],): WirePermissionOutcome {
-  const rejection = options.find((option,) => option.outcome === "reject_once") ??
-    options.find((option,) => option.outcome === "reject_always");
-
-  if (rejection) { return { outcome: rejection.kind, optionId: rejection.optionId, }; }
-
-  return { outcome: "reject_once", };
 }

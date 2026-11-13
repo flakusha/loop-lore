@@ -14,7 +14,7 @@
  *    admin-configured profile — every denial is a typed code, never a spawn;
  *  - the permission policy + queue (`classifyPermission` → `PermissionQueue`):
  *    a write-shaped ask is NEVER auto-allowed; it parks for a human and the
- *    harness is told `reject_once` when the human denies it.
+ *    harness is told the REJECTION option it advertised when the human denies.
  *
  * Both are exercised against a REAL child process speaking ACP (the fake ACP
  * server fixture), so the assertions are about bytes on the wire, not about a
@@ -158,7 +158,7 @@ afterEach(async () => {
 },);
 
 describe("ACP path — permission approval over the real wire", () => {
-  it("parks a write ask for a human and answers reject_once when the human denies", async () => {
+  it("parks a write ask for a human and answers the harness's rejection option when the human denies", async () => {
     const server = serve({ FAKE_PERMISSION: "1", FAKE_REPLY: "the harness spoke", FAKE_MODELS: MODEL, },);
     const acp = acpConfig(server.argv,);
     initHarnessAdminSettings(acp,);
@@ -184,9 +184,10 @@ describe("ACP path — permission approval over the real wire", () => {
     expect(runtime.permissions.pendingCount(),).toBe(0,);
 
     // The harness was told the operation was refused — the write never ran.
+    // The answer names the harness's own REJECTION option, never an allow one.
     const outcomes = server.readLog().filter((entry,) => entry.event === "permission_outcome");
     expect(outcomes,).toHaveLength(1,);
-    expect(JSON.stringify(outcomes[0]?.outcome,),).toContain("reject_once",);
+    expect(outcomes[0]?.outcome,).toEqual({ outcome: { outcome: "selected", optionId: "reject", }, },);
   });
 
   it("refuses a caller without the admin role before any turn runs", async () => {

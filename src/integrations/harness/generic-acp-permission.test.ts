@@ -3,8 +3,10 @@
 
 /**
  * GenericAcpAdapter permission-surface tests over the fake ACP fixture: the
- * `session/request_permission` round trip and the withdrawal callback when
- * a closed connection abandons a parked ask (TASK-permission-approval-flow).
+ * `session/request_permission` round trip in the protocol's answer shape
+ * (`selected` with the advertised option id, or `cancelled`), the closed
+ * request when no option can carry the decision, and the withdrawal callback
+ * when a closed connection abandons a parked ask (TASK-permission-approval-flow).
  *
  * Resource contract (parallel-safe): every test owns a fresh fixture
  * subprocess (startFakeAcp: unique mkdtemp dir, no ports) and a fresh
@@ -78,9 +80,31 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
     const result = await turn;
     expect(result.stopReason,).toBe("end_turn",);
     expect(adapter.pendingPermission(),).toBeNull();
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "selected", optionId: "allow", }, },);
   });
 
-  it("answers a hyphenated harness vocabulary in the harness's own spelling", async () => {
+  it("answers with the spec's selected variant, naming the advertised option id", async () => {
+    const server = serve({ FAKE_PERMISSION: "1", FAKE_MODELS: "m", },);
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    adapter.respondPermission({ outcome: "allow_once", },);
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "selected", optionId: "allow", }, },);
+  });
+
+  it("answers a hyphenated harness dialect with the advertised option id", async () => {
     const server = serve({
       FAKE_PERMISSION: "1",
       FAKE_MODELS: "m",
@@ -98,10 +122,10 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
       event: "permission_outcome";
     }> => item.event === "permission_outcome");
 
-    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "allow-once", optionId: "allow", }, },);
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "selected", optionId: "allow", }, },);
   });
 
-  it("denies when the harness advertised no outcome loop-lore knows", async () => {
+  it("fails the request closed with a JSON-RPC error when no option can carry the decision", async () => {
     const server = serve({
       FAKE_PERMISSION: "1",
       FAKE_MODELS: "m",
@@ -119,7 +143,72 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
       event: "permission_outcome";
     }> => item.event === "permission_outcome");
 
-    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "reject_once", }, },);
+    // No advertised option can carry the decision: the request fails with a
+    // JSON-RPC error instead of a shape the protocol does not allow.
+    expect(outcome?.outcome,).toEqual({
+      error: {
+        code: -32603,
+        message: "no advertised permission option can carry the allow_once decision",
+      },
+    },);
+
+    expect(adapter.pendingPermission(),).toBeNull();
+  });
+
+  it("fails the request closed when the harness advertised no options at all", async () => {
+    const server = serve({
+      FAKE_PERMISSION: "1",
+      FAKE_MODELS: "m",
+      FAKE_PERMISSION_NO_OPTIONS: "1",
+    },);
+
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    adapter.respondPermission({ outcome: "allow_once", },);
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({
+      error: {
+        code: -32603,
+        message: "no advertised permission option can carry the allow_once decision",
+      },
+    },);
+
+    expect(adapter.pendingPermission(),).toBeNull();
+  });
+
+  it("fails a denial closed when the harness advertised no options", async () => {
+    const server = serve({
+      FAKE_PERMISSION: "1",
+      FAKE_MODELS: "m",
+      FAKE_PERMISSION_NO_OPTIONS: "1",
+    },);
+
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    adapter.respondPermission({ outcome: "reject_once", },);
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    // A denial that cannot be expressed fails the request - it never turns
+    // into an allow.
+    expect(outcome?.outcome,).toEqual({
+      error: {
+        code: -32603,
+        message: "no advertised permission option can carry the reject_once decision",
+      },
+    },);
   });
 
   it("does not let a denial ride the harness's allow option", async () => {
@@ -135,7 +224,30 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
       event: "permission_outcome";
     }> => item.event === "permission_outcome");
 
-    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "reject_once", optionId: "reject", }, },);
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "selected", optionId: "reject", }, },);
+  });
+
+  it("answers a cancelled turn with the protocol's cancelled variant", async () => {
+    const server = serve({
+      FAKE_PERMISSION: "1",
+      FAKE_MODELS: "m",
+      FAKE_AWAIT_CANCEL: "1",
+    },);
+
+    const { adapter, nextAsk, withdrawn, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    await adapter.cancel();
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "cancelled", }, },);
+    expect(withdrawn(),).toBe(1,);
+    expect(adapter.pendingPermission(),).toBeNull();
   });
 
   it("closing the connection with a parked ask fires onPermissionWithdrawn once", async () => {

@@ -152,9 +152,13 @@ export interface HarnessAcpAdapter {
   close(): void;
 }
 
-/** The client's answer to a server-originated `session/request_permission`. */
+/**
+ * The client's DECISION about a server-originated `session/request_permission`
+ * — the internal vocabulary, not the wire shape. The wire answer is the
+ * spec's `RequestPermissionOutcome` (see permission-outcome.ts).
+ */
 export interface PermissionOutcome {
-  /** ACP outcome verbs the protocol defines. */
+  /** The decision's verb — the spec's `PermissionOptionKind` vocabulary. */
   outcome: "allow_once" | "allow_always" | "reject_once" | "reject_always" | "cancelled";
   /** Chosen option id, when the harness's permission options carry ids. */
   optionId?: string;

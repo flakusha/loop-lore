@@ -115,7 +115,7 @@ describe("HarnessDriver.approvePermission", () => {
     expect(result.ok,).toBe(true,);
     expect(driver.pendingPermission(),).toBeNull();
     expect(fixture.server.readLog(),).toEqual([
-      { event: "permission_outcome", outcome: { outcome: { outcome: "allow_once", optionId: "allow", }, }, },
+      { event: "permission_outcome", outcome: { outcome: { outcome: "selected", optionId: "allow", }, }, },
     ],);
   });
 
