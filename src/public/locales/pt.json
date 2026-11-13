@@ -583,6 +583,9 @@
       "missing": "O que falta",
       "missingFields": "Faltam campos obrigatórios",
       "configured": "Provedores configurados",
+      "delete": "Eliminar",
+      "confirmDelete": "Confirmar eliminação",
+      "deleteProvider": "Eliminar o provedor {name}",
       "importInstead": "Importar um ficheiro de configuração em vez disso"
     },
     "knowledgeGraph": "Grafo de conhecimento",
@@ -1943,6 +1946,7 @@
     "characterUpdated": "Personagem {name} atualizado",
     "failedUpdateCharacter": "Falha ao atualizar personagem",
     "providerSaved": "Provedor guardado",
+    "providerDeleted": "Provedor eliminado",
     "failedLoadKnowledgeGraph": "Falha ao carregar o grafo de conhecimento"
   },
   "status": {

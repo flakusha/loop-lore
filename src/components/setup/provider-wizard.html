@@ -78,13 +78,24 @@
           <template x-for="provider in wizard.providers" :key="provider.name">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px">
               <span x-text="provider.label || provider.name;"></span>
-              <button
-                type="button"
-                class="btn btn-secondary btn-xs"
-                @click="editProvider(provider.name);"
-                x-text="t('common.edit');"
-              >
-              </button>
+              <div style="display: flex; align-items: center; gap: 4px">
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-xs"
+                  @click="editProvider(provider.name);"
+                  x-text="t('common.edit');"
+                >
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-xs"
+                  @click="deleteProvider(provider.name);"
+                  :aria-label="wizard.pendingDelete === provider.name ? t('admin.providerWizard.confirmDelete') : t('admin.providerWizard.delete')"
+                  :title="t('admin.providerWizard.deleteProvider', { name: provider.label || provider.name })"
+                  x-text="wizard.pendingDelete === provider.name ? t('admin.providerWizard.confirmDelete') : t('admin.providerWizard.delete')"
+                >
+                </button>
+              </div>
             </div>
           </template>
         </div>

@@ -583,6 +583,9 @@
       "missing": "不足している項目",
       "missingFields": "必須項目が未入力です",
       "configured": "設定済みのプロバイダー",
+      "delete": "削除",
+      "confirmDelete": "削除を確認",
+      "deleteProvider": "プロバイダー {name} を削除",
       "importInstead": "代わりに設定ファイルをインポート"
     },
     "knowledgeGraph": "ナレッジグラフ",
@@ -1943,6 +1946,7 @@
     "characterUpdated": "キャラクター {name} を更新しました",
     "failedUpdateCharacter": "キャラクターの更新に失敗しました",
     "providerSaved": "プロバイダーを保存しました",
+    "providerDeleted": "プロバイダーを削除しました",
     "failedLoadKnowledgeGraph": "ナレッジグラフの読み込みに失敗しました"
   },
   "status": {

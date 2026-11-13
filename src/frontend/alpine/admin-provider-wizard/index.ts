@@ -5,7 +5,14 @@
 
 import { showToast, } from "../../ui";
 import { t, } from "../i18n";
-import { fetchSetupChecks, listSetupProviders, putModelRole, rescanProviderSummaries, saveSetupProvider, } from "./api";
+import {
+  deleteSetupProvider,
+  fetchSetupChecks,
+  listSetupProviders,
+  putModelRole,
+  rescanProviderSummaries,
+  saveSetupProvider,
+} from "./api";
 import type { ProviderPayload, } from "./api";
 import { deriveProviderName, MODEL_ROLES, PROVIDER_PRESETS, } from "./presets";
 import type { ProviderDescriptor, } from "./presets";
@@ -34,6 +41,8 @@ export interface ProviderWizardState {
   roleSaving: boolean;
   providers: ProviderDescriptor[];
   setupHints: string[];
+  /** Name of the provider whose delete button is armed, awaiting the confirm click. */
+  pendingDelete: string | null;
 }
 
 /**
@@ -64,6 +73,7 @@ export interface ProviderWizardSlice {
   selectPreset(this: ProviderWizardScope, presetId: string,): void;
   editProvider(this: ProviderWizardScope, name: string,): void;
   saveProvider(this: ProviderWizardScope,): Promise<void>;
+  deleteProvider(this: ProviderWizardScope, name: string,): Promise<void>;
   loadProviders(this: ProviderWizardScope,): Promise<void>;
   loadSetupState(this: ProviderWizardScope,): Promise<void>;
   testConnection(this: ProviderWizardScope,): Promise<void>;
@@ -103,6 +113,7 @@ export function createProviderWizard(): ProviderWizardSlice {
     roleSaving: false,
     providers: [],
     setupHints: [],
+    pendingDelete: null,
   };
 
   return {
@@ -135,6 +146,7 @@ export function createProviderWizard(): ProviderWizardSlice {
     closeWizard(this: ProviderWizardScope,): void {
       this.wizard.open = false;
       this.wizard.apiKey = "";
+      this.wizard.pendingDelete = null;
     },
 
     selectPreset(this: ProviderWizardScope, presetId: string,): void {
@@ -167,6 +179,7 @@ export function createProviderWizard(): ProviderWizardSlice {
       this.wizard.setDefault = false;
       this.wizard.error = "";
       this.wizard.step = 1;
+      this.wizard.pendingDelete = null;
     },
 
     async saveProvider(this: ProviderWizardScope,): Promise<void> {
@@ -202,6 +215,25 @@ export function createProviderWizard(): ProviderWizardSlice {
         if (status !== 400) { showToast("error", t("toasts.networkError",),); }
       } finally {
         this.wizard.saving = false;
+      }
+    },
+
+    async deleteProvider(this: ProviderWizardScope, name: string,): Promise<void> {
+      // Two-step confirm: the first click only arms the row, the second one deletes.
+      if (this.wizard.pendingDelete !== name) {
+        this.wizard.pendingDelete = name;
+        return;
+      }
+
+      this.wizard.pendingDelete = null;
+      this.wizard.error = "";
+      try {
+        await deleteSetupProvider(name,);
+        showToast("success", t("toasts.providerDeleted",),);
+        await this.loadProviders();
+      } catch (err) {
+        this.wizard.error = (err as Error).message || t("toasts.failed",);
+        showToast("error", this.wizard.error,);
       }
     },
 
