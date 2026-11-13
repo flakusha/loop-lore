@@ -10,6 +10,11 @@
  *   3. health — instance-owned ProfileBreaker skips open profiles
  *   4. cost — cheapest `costPer1kTokens` first among the survivors
  *
+ * Rule 4's price rides the DISCOVERED candidate: the model the harness
+ * advertised, priced from the provider registry
+ * (`ProviderCapabilities.costPer1kTokens`). Unknown when no provider
+ * publishes a price for it — then the failover order stands.
+ *
  * Candidate admission also carries the ToS acknowledgement guard
  * (TASK-harness-tos-acknowledgement-dispatch-guard, scoped by
  * BUG-tos-dispatch-guard-denies-local-api-profiles-that-the-bindin): only
@@ -37,8 +42,9 @@ import {
   type HarnessAdminSettingsView,
   isHarnessAdminSettingsSeeded,
 } from "./admin-settings";
+import { listedHarnessModels, toRoutableCandidates, } from "./model-discovery";
 import { ProfileBreaker, } from "./profile-breaker";
-import { type ProfileRegistry, } from "./profile-registry";
+import { type ProbeResult, type ProfileRegistry, } from "./profile-registry";
 import { providerTosGated, } from "./provider-tos";
 import { type UsageLedger, } from "./usage-ledger";
 
@@ -103,7 +109,10 @@ export interface ProfileSelectorDeps {
 
 /** Optional per-candidate cost metadata, resolved by the caller. */
 export interface ProfileSelectorOptions {
-  /** Cost per 1k tokens per model id, for the cost tiebreak (USD). */
+  /**
+   * Cost per 1k tokens per model id, for the cost tiebreak (USD). A price
+   * given here wins over the one the discovered candidate carries.
+   */
   costPer1kTokens?: Map<string, number>;
 }
 
@@ -122,6 +131,23 @@ export function compareCandidateCost(costA: number | undefined, costB: number | 
   if (costA === undefined) { return costB === undefined ? 0 : 1; }
   if (costB === undefined) { return -1; }
   return costA - costB;
+}
+
+/**
+ * The price of one DISCOVERED model: the routable candidate the harness
+ * advertised for it, priced from the provider registry. Unknown when the
+ * profile advertised no such model, or no provider publishes a price.
+ * @param options - the profile config, its probe result, and the model id
+ * @returns USD per 1k tokens, or undefined when unknown.
+ */
+function discoveredCost(options: {
+  profile: AcpProfileConfig;
+  probe: ProbeResult;
+  model: string;
+},): number | undefined {
+  const entries = listedHarnessModels({ profile: options.profile, models: options.probe.models, },);
+  const candidate = toRoutableCandidates(entries,).find((entry,) => entry.model === options.model);
+  return candidate?.costPer1kTokens;
 }
 
 /** */
@@ -205,8 +231,44 @@ export class ProfileSelector {
       candidates.push({ profile: name, tier: wantedTier, model: tier.model, },);
     }
 
-    candidates.sort((a, b,) => compareCandidateCost(this.costs.get(a.model,), this.costs.get(b.model,),));
+    // The price rides the DISCOVERED candidate: the harness advertised the
+    // model, and the provider publishing it names a price.
+    const discovered = await this.discoveredCosts(candidates,);
+    candidates.sort((a, b,) =>
+      compareCandidateCost(this.costOf(discovered, a.model,), this.costOf(discovered, b.model,),)
+    );
+
     return { candidates, skips, };
+  }
+
+  /**
+   * The prices the DISCOVERED candidates carry: each candidate's model, as
+   * the harness advertised it, priced from the provider registry.
+   * @param candidates - the admitted candidates
+   * @returns model id to USD per 1k tokens (absent when unknown).
+   */
+  private async discoveredCosts(candidates: TurnCandidate[],): Promise<Map<string, number>> {
+    const prices = new Map<string, number>();
+    for (const candidate of candidates) {
+      const probe = await this.registry.ensureProbed(candidate.profile,);
+      const cfg = this.registry.config(candidate.profile,);
+      if (!cfg) { continue; }
+
+      const cost = discoveredCost({ profile: cfg, probe, model: candidate.model, },);
+      if (cost !== undefined) { prices.set(candidate.model, cost,); }
+    }
+
+    return prices;
+  }
+
+  /**
+   * A candidate's price: a caller-supplied price wins over the discovered one.
+   * @param discovered - the prices the discovered candidates carry
+   * @param model - the candidate's model id
+   * @returns USD per 1k tokens, or undefined when unknown.
+   */
+  private costOf(discovered: Map<string, number>, model: string,): number | undefined {
+    return this.costs.get(model,) ?? discovered.get(model,);
   }
 
   /**

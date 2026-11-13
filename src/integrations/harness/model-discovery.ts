@@ -29,6 +29,7 @@ import type { Kysely, } from "kysely";
 import { resolveModelCapabilities, } from "../../admin/model-capabilities";
 import { type AcpProfileConfig, HARNESS_TIERS, type HarnessFlavor, } from "../../config/schema/harness";
 import type { DB, } from "../../db/schema";
+import { listProviders, } from "../../generation/providers/registry";
 import type { RoutableModel, } from "../../generation/routing/router";
 import type { TaskCapability, } from "../../generation/routing/task-signal";
 import { getChildLogger, } from "../../logger";
@@ -186,6 +187,35 @@ export function staticHarnessModels(options: {
 }
 
 /**
+ * Entries for the model ids a live harness listing reported: deduplicated,
+ * empty ids dropped, capabilities left for enrichment.
+ * @param options - the profile config and the advertised model ids
+ * @returns harness-reported entries.
+ */
+export function listedHarnessModels(options: {
+  profile: AcpProfileConfig;
+  models: string[];
+},): HarnessModelEntry[] {
+  const harness: HarnessFlavor = options.profile.harness ?? "omp";
+  const seen = new Set<string>();
+  const entries: HarnessModelEntry[] = [];
+  for (const model of options.models) {
+    if (model.length === 0 || seen.has(model,)) { continue; }
+
+    seen.add(model,);
+    entries.push({
+      source: "harness",
+      profile: options.profile.name,
+      harness,
+      model,
+      capabilities: null,
+    },);
+  }
+
+  return entries;
+}
+
+/**
  * Discover the models each configured profile offers, enriched from the
  * static capability table. Never spawns: live listings come only from
  * already-open connections; every other profile reports its static config.
@@ -232,7 +262,7 @@ async function discoverProfileModels(options: {
   if (!adapter) {
     entries = staticHarnessModels({ profile: cfg, name: cfg.name, reason: NO_LIVE_CONNECTION_REASON, },);
   } else {
-    entries = await listedOrStaticEntries({ adapter, profile: cfg, harness, },);
+    entries = await listedOrStaticEntries({ adapter, profile: cfg, },);
   }
 
   // Enrichment reads are independent I/O (capability-table lookups) — run
@@ -263,13 +293,12 @@ async function discoverProfileModels(options: {
  * List one profile's models over its live connection, deduplicated, or —
  * when the listing rejects — fall back to that profile's static config
  * with the failure detail as the reason. The failure never propagates.
- * @param options - the live adapter, the profile's config, and its flavor
+ * @param options - the live adapter, the profile's config
  * @returns harness-reported entries, or static fallback entries.
  */
 async function listedOrStaticEntries(options: {
   adapter: HarnessAcpAdapter;
   profile: AcpProfileConfig;
-  harness: HarnessFlavor;
 },): Promise<HarnessModelEntry[]> {
   let ids: string[];
   try {
@@ -284,29 +313,31 @@ async function listedOrStaticEntries(options: {
     return staticHarnessModels({ profile: options.profile, name: options.profile.name, reason: message, },);
   }
 
-  const seen = new Set<string>();
-  const entries: HarnessModelEntry[] = [];
-  for (const model of ids) {
-    if (model.length === 0 || seen.has(model,)) { continue; }
+  return listedHarnessModels({ profile: options.profile, models: ids, },);
+}
 
-    seen.add(model,);
-    entries.push({
-      source: "harness",
-      profile: options.profile.name,
-      harness: options.harness,
-      model,
-      capabilities: null,
-    },);
-  }
+/**
+ * USD per 1k tokens for a model id, from the provider registry: the id's
+ * provider prefix names the registered provider instance. Unknown when the
+ * prefix names no provider, or the provider publishes no price.
+ * @param model - the `provider/id` model id
+ * @returns the published price, or undefined when unknown.
+ */
+function publishedCost(model: string,): number | undefined {
+  const slash = model.indexOf("/",);
+  if (slash <= 0 || slash === model.length - 1) { return undefined; }
 
-  return entries;
+  const provider = listProviders().find((entry,) => entry.name === model.slice(0, slash,));
+  return provider?.capabilities.costPer1kTokens;
 }
 
 /**
  * Project discovered entries onto the shared router's candidate shape, so a
  * harness dispatch site can feed them to `ModelRouter.route` with an existing
  * `TaskSignal`. Input order is preserved (the router treats it as
- * preference).
+ * preference). Each candidate also carries the price its provider publishes
+ * (`ProviderCapabilities.costPer1kTokens`), looked up by the model id's
+ * provider prefix — unknown when the provider publishes none.
  * @param entries - discovered (already enriched) entries
  * @returns `RoutableModel` candidates.
  */
@@ -327,6 +358,7 @@ export function toRoutableCandidates(entries: HarnessModelEntry[],): RoutableMod
       capabilities,
       contextWindow: caps?.contextWindow ?? undefined,
       maxOutputTokens: caps?.maxOutput ?? undefined,
+      costPer1kTokens: publishedCost(entry.model,),
     };
   },);
 }
