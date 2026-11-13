@@ -25,7 +25,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { ByoKeyDecryptError, userApiKeyResolver, } from "../providers/user-api-key";
-import { generateImages, generateImagesWithFailover, } from "./index";
+import { comfyUiSkipAttempt, generateImages, generateImagesWithFailover, sdCppSkipAttempt, } from "./index";
 import type { FailoverAttempt, ImageGenFailure, } from "./types";
 
 // Backend warn paths and the workflow loader call getLogger(), which
@@ -477,5 +477,26 @@ describe("generateImagesWithFailover sd.cpp discovery gate", () => {
     expect(outcome.ok,).toBe(true,);
     expect((outcome as { attempts?: FailoverAttempt[] }).attempts,).toBeUndefined();
     expect(comfyProbed,).toBe(false,);
+  },);
+
+  itRealDispatch("sdCppSkipAttempt and comfyUiSkipAttempt report unreachable backends directly", async () => {
+    globalThis.fetch = (async () => {
+      throw new Error("connection refused",);
+    }) as unknown as typeof fetch;
+
+    const sd = await sdCppSkipAttempt(
+      { ...BASE, name: "sd-direct", apiFamily: "sdcpp", baseUrl: "http://127.0.0.1:9", timeout: 250, },
+      undefined,
+    );
+
+    const comfy = await comfyUiSkipAttempt(
+      { ...BASE, name: "comfy-direct", apiFamily: "comfyui", baseUrl: "http://127.0.0.1:9", timeout: 250, },
+      undefined,
+    );
+
+    expect(sd?.outcome,).toBe("skipped",);
+    expect(sd?.provider,).toBe("sd-direct",);
+    expect(comfy?.outcome,).toBe("skipped",);
+    expect(comfy?.provider,).toBe("comfy-direct",);
   },);
 });

@@ -18,6 +18,25 @@ import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
+  deleteSdSetup,
+  listSdSetups,
+  listStoredSdSetupProviders,
+  mergeSdSetups,
+  parseStoredSdSetup,
+  saveSdSetup,
+  sdDescriptorKey,
+  sdSecretKey,
+  sdStoredSetupToProviderConfig,
+} from "./sd-setup-store";
+import {
+  assertDefaultField,
+  assertValidSetupInput,
+  SD_SETUP_DEFAULTS,
+  SD_SETUP_GENERATION_TIMEOUT_MS,
+  SD_SETUP_NAME_PATTERN,
+  SD_SETUP_TIMEOUT_MS,
+} from "./sd-setup-validation";
+import {
   deleteSdCppSetup,
   listSdCppSetups,
   listStoredSdCppProviders,
@@ -243,5 +262,62 @@ describe("sd.cpp setup store", () => {
 
     expect(mergeSdCppSetups(undefined, stored,),).toEqual(stored,);
     expect(mergeSdCppSetups([], [],),).toEqual([],);
+  });
+
+  test("shared engine entry points serve the sdcpp family identically", async () => {
+    const saved = await saveSdSetup(db, "sdcpp", { ...VALID_INPUT, },);
+    expect(saved.name,).toBe(VALID_INPUT.name,);
+    expect(await listSdSetups(db, "sdcpp",),).toEqual(await listSdCppSetups(db,),);
+    expect(sdDescriptorKey("sdcpp", "n",),).toBe(sdCppDescriptorKey("n",),);
+    expect(sdSecretKey("sdcpp", "n",),).toBe(sdCppSecretKey("n",),);
+    expect(await listStoredSdSetupProviders(db, "sdcpp",),).toEqual(await listStoredSdCppProviders(db,),);
+    expect(mergeSdSetups(undefined, await listStoredSdSetupProviders(db, "sdcpp",),),)
+      .toEqual(mergeSdCppSetups(undefined, await listStoredSdCppProviders(db,),),);
+
+    expect(parseStoredSdSetup(JSON.stringify({
+      name: "a",
+      label: "a",
+      baseUrl: VALID_BASE,
+      purpose: "both",
+      defaults: { width: 1, height: 1, steps: 1, cfgScale: 1, sampler: "s", },
+    },),),).toEqual(parseStoredSdCppSetup(JSON.stringify({
+      name: "a",
+      label: "a",
+      baseUrl: VALID_BASE,
+      purpose: "both",
+      defaults: { width: 1, height: 1, steps: 1, cfgScale: 1, sampler: "s", },
+    },),),);
+
+    expect(sdStoredSetupToProviderConfig("sdcpp", {
+      name: "a",
+      label: "a",
+      baseUrl: VALID_BASE,
+      purpose: "both",
+      defaults: { width: 1, height: 1, steps: 1, cfgScale: 1, sampler: "s", },
+    },),).toEqual(sdCppSetupToProviderConfig({
+      name: "a",
+      label: "a",
+      baseUrl: VALID_BASE,
+      purpose: "both",
+      defaults: { width: 1, height: 1, steps: 1, cfgScale: 1, sampler: "s", },
+    },),);
+
+    await deleteSdSetup(db, "sdcpp", VALID_INPUT.name,);
+    expect(await listSdCppSetups(db,),).toEqual([],);
+  });
+
+  test("validation constants pin the boot auto-discovery shape", () => {
+    expect(SD_SETUP_TIMEOUT_MS,).toBe(30_000,);
+    expect(SD_SETUP_GENERATION_TIMEOUT_MS,).toBe(120_000,);
+    expect(SD_SETUP_DEFAULTS.steps,).toBe(20,);
+  });
+
+  test("validation primitives reject out-of-range operator input", () => {
+    expect(SD_SETUP_NAME_PATTERN.test("ok-name.1",),).toBe(true,);
+    expect(SD_SETUP_NAME_PATTERN.test("-bad",),).toBe(false,);
+    expect(assertDefaultField("steps", 3,),).toBe(3,);
+    expect(() => assertDefaultField("steps", 0,)).toThrow(SdCppSetupValidationError,);
+    expect(() => assertValidSetupInput({ name: "bad name!", baseUrl: VALID_BASE, },))
+      .toThrow(SdCppSetupValidationError,);
   });
 });
