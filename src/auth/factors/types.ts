@@ -19,7 +19,9 @@ export type ChallengeErrorCode =
   | "expired"
   | "consumed"
   | "invalid_code"
-  | "too_many_attempts";
+  | "too_many_attempts"
+  | "rate_limited"
+  | "delivery_failed";
 
 /** */
 export interface ChallengeError {
