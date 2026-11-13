@@ -43,6 +43,8 @@ export interface ProbeResult {
   profile: string;
   state: ProbeState;
   tiers: ProbedTier[];
+  /** The model ids the harness advertised (empty when the probe failed). */
+  models: string[];
   /** Error detail when state is `unhealthy`. */
   error?: string;
 }
@@ -133,7 +135,7 @@ export class ProfileRegistry {
   private async probe(name: string,): Promise<ProbeResult> {
     const cfg = this.config(name,);
     if (!cfg) {
-      return this.memoize({ profile: name, state: "unhealthy", tiers: [], error: "unknown profile", },);
+      return this.memoize({ profile: name, state: "unhealthy", tiers: [], models: [], error: "unknown profile", },);
     }
 
     try {
@@ -153,14 +155,20 @@ export class ProfileRegistry {
       },);
 
       this.connections.set(name, adapter,);
-      return this.memoize({ profile: name, state: "healthy", tiers, },);
+      return this.memoize({ profile: name, state: "healthy", tiers, models: [...advertised,], },);
     } catch (error) {
       log()?.warn("harness profile probe failed — marked unhealthy", {
         profile: name,
         error: (error as Error).message,
       },);
 
-      return this.memoize({ profile: name, state: "unhealthy", tiers: [], error: (error as Error).message, },);
+      return this.memoize({
+        profile: name,
+        state: "unhealthy",
+        tiers: [],
+        models: [],
+        error: (error as Error).message,
+      },);
     }
   }
 
