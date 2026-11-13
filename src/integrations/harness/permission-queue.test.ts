@@ -226,6 +226,29 @@ describe("PermissionQueue", () => {
     expect(queue.pendingCount(),).toBe(1,);
   });
 
+  it("an auto-allow whose delivery fails parks the ask instead of throwing", async () => {
+    const root = mkdtempSync(TMP_ROOT,);
+    sandboxes.push(root,);
+    const queue = new PermissionQueue({
+      connection: () => ({
+        respondPermission: () => {
+          throw new Error("no pending permission request",);
+        },
+      }),
+    },);
+
+    // The runtime submits fire-and-forget: an undeliverable decision must be
+    // a parked ask, never a rejection that escapes the queue.
+    const result = await queue.submit({
+      profile: "p",
+      pending: { params: { sessionId: "s", path: "notes.md", }, kind: "read", },
+      sandboxRoot: root,
+    },);
+
+    expect(result.decision,).toBe("pending",);
+    expect(queue.pendingCount(),).toBe(1,);
+  });
+
   it("idle() settles once concurrent submits finish", async () => {
     const h = harness();
     const inFlight = [h.queue.submit(editAsk(h.root,),), h.queue.submit(editAsk(h.root,),),];

@@ -133,14 +133,26 @@ export class PermissionQueue {
     if (verdict.decision === "auto_allow") {
       const connection = this.opts.connection(input.profile,);
       if (connection) {
-        connection.respondPermission(APPROVE_OUTCOME,);
-        log()?.info("harness permission auto-allowed", {
-          profile: input.profile,
-          kind: input.pending.kind,
-          reason: verdict.reason,
-        },);
+        try {
+          connection.respondPermission(APPROVE_OUTCOME,);
+          log()?.info("harness permission auto-allowed", {
+            profile: input.profile,
+            kind: input.pending.kind,
+            reason: verdict.reason,
+          },);
 
-        return { decision: "auto_allow", reason: verdict.reason, };
+          return { decision: "auto_allow", reason: verdict.reason, };
+        } catch (error) {
+          // The ask was answered before this verdict landed — a cancelled turn
+          // answers the parked ask — so the decision cannot be delivered. Park
+          // it instead: the submit is fire-and-forget, and nothing here throws.
+          log()?.warn("harness permission auto-allow could not be delivered", {
+            profile: input.profile,
+            kind: input.pending.kind,
+            reason: verdict.reason,
+            error: (error as Error).message,
+          },);
+        }
       }
 
       // Connection lost between ask and verdict: park it — a human can see
