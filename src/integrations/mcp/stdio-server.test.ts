@@ -172,7 +172,8 @@ describe("inbound MCP stdio server", () => {
   });
 
   test("tools/call chat.history runs the facade lifecycle with the inbound principal", async () => {
-    const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, principalScope: "read", },),);
+    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, },),);
     expect(client,).not.toBeNull();
 
     // listTools first: the SDK caches the declared outputSchema and validates
@@ -189,7 +190,8 @@ describe("inbound MCP stdio server", () => {
   });
 
   test("a read-tier principal is refused chat.send with the 403-class tool error", async () => {
-    const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, principalScope: "read", },),);
+    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, },),);
     expect(client,).not.toBeNull();
 
     const result = await client!.callTool({
