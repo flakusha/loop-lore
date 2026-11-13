@@ -2561,5 +2561,19 @@
     "reuniting": "Reuniting…",
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
+  },
+
+  "search": {
+    "title": "Search",
+    "placeholder": "Search chats, messages, and assets…",
+    "searching": "Searching…",
+    "error": "Something went wrong while searching. Try again.",
+    "noResults": "No results for \"{query}\"",
+    "emptyHint": "Try a different keyword.",
+    "chats": "Chats",
+    "messages": "Messages",
+    "assets": "Assets",
+    "openChat": "Open chat",
+    "openAsset": "Preview asset"
   }
 }

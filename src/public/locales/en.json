@@ -2163,6 +2163,20 @@
     "emptyDraft": "Type a message before scheduling.",
     "failed": "Could not schedule that message."
   },
+
+  "search": {
+    "title": "Search",
+    "placeholder": "Search chats, messages, and assets…",
+    "searching": "Searching…",
+    "error": "Something went wrong while searching. Try again.",
+    "noResults": "No results for \"{query}\"",
+    "emptyHint": "Try a different keyword.",
+    "chats": "Chats",
+    "messages": "Messages",
+    "assets": "Assets",
+    "openChat": "Open chat",
+    "openAsset": "Preview asset"
+  },
   "reminders": {
     "menu": "Remind me",
     "in10": "in 10 minutes",

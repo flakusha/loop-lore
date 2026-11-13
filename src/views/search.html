@@ -1,0 +1,136 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Omni-search view: unified cross-surface search (chats + messages + assets) -->
+<div x-data="omniSearch()">
+  <header
+    id="header-slot"
+    class="main-header"
+    data-page="search"
+    data-testid="omni-search-header"
+  >
+    <button
+      class="hamburger"
+      x-on:click="window.toggleSidebar()"
+      data-testid="hamburger"
+      aria-label="{{{t('accessibility.toggleSidebar')}}}"
+    >
+      ☰
+    </button>
+    <h1 class="title">{{{t("search.title")}}}</h1>
+  </header>
+
+  <div class="app-layout" data-testid="omni-search-page">
+    <main class="main-content">
+      <div class="chat-area" style="max-width: 760px; margin: 0 auto; width: 100%">
+        <!-- Search input (Ctrl+K focuses .list-search inputs app-wide) -->
+        <div class="list-toolbar">
+          <input
+            id="omni-search-input"
+            class="form-input list-search"
+            type="search"
+            x-model="q"
+            x-bind:placeholder="$t('search.placeholder')"
+            x-bind:aria-label="$t('search.placeholder')"
+            x-on:input.debounce.300ms="run()"
+            x-on:keydown.enter.prevent="run()"
+            style="flex: 1; min-width: 200px"
+            data-testid="omni-search-input"
+          />
+        </div>
+
+        <!-- Loading state -->
+        <div class="empty-state" x-show="loading" data-testid="omni-search-loading">
+          <span class="icon">⌛</span>
+          <div class="description">{{{t("search.searching")}}}</div>
+        </div>
+
+        <!-- Error state -->
+        <div class="empty-state" x-show="error && !loading" data-testid="omni-search-error">
+          <span class="icon">⚠️</span>
+          <div class="description">{{{t("search.error")}}}</div>
+        </div>
+
+        <!-- Empty state -->
+        <div
+          class="empty-state"
+          x-show="queried && !loading && !error && total() === 0"
+          data-testid="omni-search-empty"
+        >
+          <span class="icon">🔍</span>
+          <div class="title" x-text="$t('search.noResults', { query: queried })"></div>
+          <div class="description">{{{t("search.emptyHint")}}}</div>
+        </div>
+
+        <!-- Chat hits -->
+        <section x-show="results.chats.length > 0" data-testid="omni-search-chats">
+          <h2 class="section-title">
+            {{{t("search.chats")}}} <span x-text="`(${results.chats.length})`"></span>
+          </h2>
+          <template x-for="chat in results.chats" :key="chat.chatId">
+            <div
+              class="omni-item"
+              x-on:click="openChat(chat.chatId)"
+              role="link"
+              tabindex="0"
+              x-on:keydown.enter.prevent="openChat(chat.chatId)"
+              :aria-label="$t('search.openChat') + ': ' + chat.chatName"
+              :data-testid="'omni-chat-' + chat.chatId"
+            >
+              <span class="omni-icon">💬</span>
+              <div class="omni-body">
+                <div class="omni-title" x-text="chat.chatName"></div>
+              </div>
+            </div>
+          </template>
+        </section>
+
+        <!-- Message hits (open the containing chat) -->
+        <section x-show="results.messages.length > 0" data-testid="omni-search-messages">
+          <h2 class="section-title">
+            {{{t("search.messages")}}} <span x-text="`(${results.messages.length})`"></span>
+          </h2>
+          <template x-for="message in results.messages" :key="message.messageId">
+            <div
+              class="omni-item"
+              x-on:click="openChat(message.chatId)"
+              role="link"
+              tabindex="0"
+              x-on:keydown.enter.prevent="openChat(message.chatId)"
+              :aria-label="$t('search.openChat') + ': ' + message.snippet"
+              :data-testid="'omni-message-' + message.messageId"
+            >
+              <span class="omni-icon">💬</span>
+              <div class="omni-body">
+                <div class="omni-title omni-snippet" x-text="message.snippet"></div>
+              </div>
+            </div>
+          </template>
+        </section>
+
+        <!-- Asset hits (centered preview modal) -->
+        <section x-show="results.assets.length > 0" data-testid="omni-search-assets">
+          <h2 class="section-title">
+            {{{t("search.assets")}}} <span x-text="`(${results.assets.length})`"></span>
+          </h2>
+          <template x-for="asset in results.assets" :key="asset.assetId">
+            <div
+              class="omni-item"
+              x-on:click="openAsset(asset.assetId)"
+              role="button"
+              tabindex="0"
+              x-on:keydown.enter.prevent="openAsset(asset.assetId)"
+              :aria-label="$t('search.openAsset') + ': ' + asset.filename"
+              :data-testid="'omni-asset-' + asset.assetId"
+            >
+              <span class="omni-icon">🖼</span>
+              <div class="omni-body">
+                <div class="omni-title" x-text="asset.filename"></div>
+              </div>
+            </div>
+          </template>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>

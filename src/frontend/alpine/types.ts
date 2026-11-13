@@ -182,3 +182,44 @@ export interface NotificationCenterState {
   iconFor: (type: string,) => string;
   timeAgo: (iso: string | undefined,) => string;
 }
+
+/** One chat hit from the unified `/api/search` route. */
+export interface OmniChatHit {
+  chatId: string;
+  chatName: string;
+}
+
+/** One message hit from the unified `/api/search` route. */
+export interface OmniMessageHit {
+  messageId: string;
+  chatId: string;
+  snippet: string;
+}
+
+/** One asset hit from the unified `/api/search` route. */
+export interface OmniAssetHit {
+  assetId: string;
+  filename: string;
+  matchScore: number;
+}
+
+/** Grouped response payload of the unified `/api/search` route. */
+export interface OmniSearchResults {
+  chats: OmniChatHit[];
+  messages: OmniMessageHit[];
+  assets: OmniAssetHit[];
+}
+
+/** Omni-search page component (`/views/search`, unified cross-surface search). */
+export interface OmniSearchState {
+  q: string;
+  loading: boolean;
+  error: boolean;
+  /** Query the current `results` belong to ("" until a search succeeded). */
+  queried: string;
+  results: OmniSearchResults;
+  total: () => number;
+  run: () => Promise<void>;
+  openChat: (chatId: string,) => void;
+  openAsset: (assetId: string,) => void;
+}
