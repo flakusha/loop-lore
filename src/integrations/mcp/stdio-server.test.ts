@@ -224,7 +224,7 @@ describeOrSkip("inbound MCP stdio server main()", () => {
 
   test("the deny-by-default gate refuses the boot: no transport is attached", async () => {
     const prevExitCode = process.exitCode ?? 0;
-    let exitCodeAfter: string | number | undefined;
+    let exitCodeAfter: string | number | null | undefined;
     try {
       await main();
       exitCodeAfter = process.exitCode;
@@ -241,7 +241,7 @@ describeOrSkip("inbound MCP stdio server main()", () => {
     initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
     mainConfig = configWith({ mcpEnabled: true, principalUserId: USER, principalScope: "read", },);
     const prevExitCode = process.exitCode ?? 0;
-    let exitCodeAfter: string | number | undefined;
+    let exitCodeAfter: string | number | null | undefined;
     try {
       await main();
       exitCodeAfter = process.exitCode;

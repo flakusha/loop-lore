@@ -20,7 +20,6 @@ import {
   getChoices,
   getContainer,
   getSceneIndex,
-  initChoiceState,
   resetChoiceState,
   setChoices,
   syncPendingGate,
