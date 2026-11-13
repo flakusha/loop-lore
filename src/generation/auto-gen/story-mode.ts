@@ -192,6 +192,41 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   // events, etc. against the actual assistant message.
   await gm.acceptResponse(turnResult.turnId, turnResult.response,);
 
+  // Multi-assistant story cascade: the story path diverts before
+  // applyPostStoreEffects, so the group cascade never fires for story
+  // chats. Advance from depth 0 here; triggerGroupCascade enforces
+  // the chat max_turns/auto_advance caps and stops on a single
+  // participant. Awaited so multi-assistant rows settle
+  // deterministically in tests.
+  try {
+    const chatRow = await database
+      .selectFrom("chats",)
+      .select(["type", "max_turns", "auto_advance",],)
+      .where("id", "=", chatId,)
+      .executeTakeFirst();
+
+    const maxTurns = chatRow?.max_turns ?? 0;
+    const autoAdvance = (chatRow?.auto_advance ?? 0) > 0;
+    if (chatRow?.type === "group" && (autoAdvance || maxTurns > 1)) {
+      const { triggerGroupCascade, } = await import("./group-cascade");
+      await triggerGroupCascade({
+        database,
+        config,
+        chatId,
+        userId,
+        aiContent: turnResult.response,
+        previousActorId: turnResult.actorId,
+        depth: 0,
+        deps,
+      },);
+    }
+  } catch (error) {
+    log.warn("story-mode: cascade failed (non-fatal)", {
+      chatId,
+      err: error instanceof Error ? error.message : String(error,),
+    },);
+  }
+
   log.info("Story mode generation complete", {
     chatId,
     turnId: turnResult.turnId,

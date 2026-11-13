@@ -7,7 +7,7 @@
  * executeTurn: select an actor, produce a decision, record the turn.
  */
 import { randomUUID, } from "node:crypto";
-import { WorldEventType, } from "../../db/enums";
+import { GameMasterType, WorldEventType, } from "../../db/enums";
 import { processMovementTick, } from "../../rpg/npc-navigation/service/processing";
 import type { WorldEvent, } from "../story-events-types";
 import { getGmDecision, recordGmTurn, } from "./decisions";
@@ -31,17 +31,41 @@ export async function executeTurn(
   const context = await state.worldState.buildContext(state.chatId,);
   if (!context) { throw new Error("No story context available",); }
   const gmDecision = await getGmDecision(state, context, debugActorId,);
+
+  // Multi-assistant story rows: the GM decision carries a turn *prompt*,
+  // not the reply. Run the selected actor in-character and publish it
+  // as the turn response. Human/Hybrid modes keep `null` (the human
+  // speaks through the chat input, never the LLM).
+  let response: string | null = null;
+  if (state.config.type === GameMasterType.Llm) {
+    try {
+      const actorModel = state.config.actorModels?.[gmDecision.nextActorId];
+      const actor = context.actors.find((a,) => a.id === gmDecision.nextActorId);
+      const text = await state.generateText({
+        messages: [{ role: "user", content: gmDecision.turnPrompt, },],
+        systemPrompt: actor?.systemPrompt ?? state.config.llmConfig?.systemPrompt ?? state.systemPromptDefault,
+        provider: actorModel?.provider,
+        model: actorModel?.model,
+        maxTokens: gmDecision.turnConstraints?.maxTokens,
+      },);
+
+      response = text && text.trim() ? text : null;
+    } catch {
+      response = null;
+    }
+  }
+
   const turnId = randomUUID();
   // selectNextActor() increments currentTurn when debugActorId is not provided.
   // When debugActorId is provided, currentTurn is not incremented, so we add 1.
   const turnNumber = debugActorId ? state.turnManager.currentTurn + 1 : state.turnManager.currentTurn;
 
-  if (gmDecision.narration) {
+  if (gmDecision.narration && context.world.id !== "") {
     await injectNarration(state, context.world.id, gmDecision.narration,);
   }
 
   // Human-GM scene direction is broadcast to all participants as narration.
-  if (state.gmGuidance?.sceneDescription) {
+  if (state.gmGuidance?.sceneDescription && context.world.id !== "") {
     await injectNarration(state, context.world.id, state.gmGuidance.sceneDescription,);
   }
 
@@ -57,7 +81,7 @@ export async function executeTurn(
   // per pass. The HTTP story-step route has no movement dispatch behind it,
   // so it keeps the default (`true`) and still moves NPCs exactly as before.
   const movementEvents: WorldEvent[] = [];
-  if (options.moveNpcs !== false) {
+  if (options.moveNpcs !== false && context.world.id !== "") {
     const movementResults = await processMovementTick(state.db, context.world.id,);
     for (const r of movementResults) {
       if (r.success && r.toLocationId) {
@@ -82,7 +106,7 @@ export async function executeTurn(
     turnNumber,
     actorId: gmDecision.nextActorId,
     prompt: gmDecision.turnPrompt,
-    response: null,
+    response,
     qualityEvaluation: null,
     worldEvents: [...movementEvents,],
     gmDecision,

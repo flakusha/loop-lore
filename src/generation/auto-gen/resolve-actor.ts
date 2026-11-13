@@ -72,23 +72,47 @@ export async function resolveActor(
     return { characterId: selectedId, characterName: selectedName, };
   }
 
-  const character = await database
+  // Direct multi-LLM rotation (variant 6): with more than one non-user
+  // participant, the actor that just spoke must yield — pick the
+  // eligible candidate that did not send the most recent message
+  // instead of the same `executeTakeFirst()` row every turn.
+  const candidates = await database
     .selectFrom("chat_participants",)
     .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
     .where("chat_participants.chat_id", "=", chatId,)
     .where("chat_participants.actor_id", "!=", userId,)
     .select(["actors.id", "actors.display_name", "chat_participants.muted_until",],)
-    .executeTakeFirst();
+    .orderBy("actors.display_name",)
+    .execute();
 
-  if (!character) { return null; }
-  // Outbound mute enforcement (TASK-chat-feature-moderation AC3): a muted
-  // chat partner must not generate until muted_until elapses.
-  if (isMuted(character, Date.now(),)) {
-    logMuteSuppress(chatId, character.id,);
-    return null;
+  // Outbound mute enforcement (TASK-chat-feature-moderation AC3): a
+  // muted chat partner must not generate until muted_until elapses.
+  const now = Date.now();
+  const eligible = candidates.filter((c,) => {
+    if (isMuted(c, now,)) {
+      logMuteSuppress(chatId, c.id,);
+      return false;
+    }
+
+    return true;
+  },);
+
+  if (eligible.length === 0) { return null; }
+  if (eligible.length === 1) {
+    const only = eligible[0]!;
+    return { characterId: only.id, characterName: only.display_name, };
   }
 
-  return { characterId: character.id, characterName: character.display_name, };
+  const lastMessage = await database
+    .selectFrom("messages",)
+    .select("actor_id",)
+    .where("chat_id", "=", chatId,)
+    .orderBy("created_at", "desc",)
+    .limit(1,)
+    .executeTakeFirst();
+
+  const next = eligible.find((c,) => c.id !== lastMessage?.actor_id) ?? eligible[0]!;
+  return { characterId: next.id, characterName: next.display_name, };
 }
 
 /**

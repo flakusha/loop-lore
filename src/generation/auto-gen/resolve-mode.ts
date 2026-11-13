@@ -25,6 +25,10 @@ export interface ResolveModeOpts {
   userId: string;
   /** Chat row subset (type + mode + gm_config + world_id). */
   chat: { type?: string; mode?: string; gm_config?: string | null; world_id?: string | null } | undefined;
+  /** Cascade re-entry actor (set by triggerGroupCascade). */
+  _cascadeActorId?: string;
+  /** Cascade re-entry depth (set by triggerGroupCascade). */
+  _cascadeDepth?: number;
 }
 
 /** */
@@ -41,6 +45,14 @@ export type ResolveModeResult =
  */
 export async function resolveMode(opts: ResolveModeOpts,): Promise<ResolveModeResult> {
   const { d, database, config, chatId, parentMessageId, userId, chat, } = opts;
+
+  // Cascade re-entry: the next actor is pre-selected, so the story
+  // diversion must not fire again (it would recurse story-mode
+  // forever). Fall through to the normal single-reply path as that
+  // actor.
+  if (opts._cascadeActorId) {
+    return { handled: false, systemPromptOverride: undefined, };
+  }
 
   // ── Story mode: use GameMasterService for full GM orchestration ──
   if (chat?.mode === "story") {

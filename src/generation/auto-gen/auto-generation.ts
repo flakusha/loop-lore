@@ -136,6 +136,8 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       parentMessageId,
       userId,
       chat,
+      _cascadeActorId: cascadeActorId,
+      _cascadeDepth: cascadeDepth,
     },);
 
     if (mode.handled) { return; }

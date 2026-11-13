@@ -184,7 +184,9 @@ describe("AutonomyScheduler.tickOnce — movement + GM beat on one tick", () => 
     // beat ran rather than skipping: a skip would report 1 and make the
     // single-step assertion below pass for the wrong reason.
     expect(result.worlds[0]?.outcome,).toEqual({ dispatched: 2, },);
-    expect(generateCalls,).toBe(1,);
+    // T2 multi-assistant story rows: the GM decision LLM call plus the
+    // selected actor's in-character reply = 2 generateText calls per turn.
+    expect(generateCalls,).toBe(2,);
 
     // ONE route step: locA -> locB, patrolIndex 0 -> 1. A second movement
     // pass would carry the guard on to locA again (index 1 -> 0).
