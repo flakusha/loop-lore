@@ -49,16 +49,39 @@ export interface NpcScheduleEntry {
   location: string;
 }
 
-/** Relationship between two entities */
-export interface NpcRelationship {
+/** Actor entry for the relationships cast picker */
+export interface ActorSummary {
   id: string;
-  fromId: string;
-  fromName: string;
-  toId: string;
-  toName: string;
+  display_name: string;
+}
+
+/**
+ * Relationship row as served by GET /api/v1/actors/:actorId/relationships
+ * (camelCase service shape — see relationships-service/types.ts).
+ */
+export interface ActorRelationshipRow {
+  id: string;
+  actorId: string;
+  targetActorId: string;
+  worldId: string | null;
+  relationshipType: RelationshipType;
+  standing: number;
+  trust: number;
+  familiarity: number;
+  isBidirectional: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Panel-rendered relationship row with names resolved */
+export interface RelationshipDisplayRow {
+  id: string;
+  targetName: string;
   type: RelationshipType;
-  strength: number; // -100 to 100
-  history: string[];
+  standing: number;
+  trust: number;
+  familiarity: number;
+  isBidirectional: boolean;
 }
 
 /** Faction data */

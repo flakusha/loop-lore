@@ -1154,6 +1154,19 @@
     "typeBlogPost": "Blog post",
     "typeBlogComment": "Blog comment"
   },
+
+  "npc": {
+    "relationshipsTab": "Relationships",
+    "relationshipsTitle": "Relationships",
+    "relationshipsLoading": "Loading relationships...",
+    "relationshipsActorLabel": "Character",
+    "relationshipsEmpty": "No relationships recorded for this character yet.",
+    "relationshipsLoadError": "Failed to load relationships.",
+    "relationshipsUnknownActor": "Unknown character",
+    "relationshipsStanding": "Standing",
+    "relationshipsTrust": "Trust",
+    "relationshipsFamiliarity": "Familiarity"
+  },
   "placeholders": {
     "chatName": "Chat name",
     "filter": "Filter…",

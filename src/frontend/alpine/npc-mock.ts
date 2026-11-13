@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { NpcData, NpcRelationship, StandingTier, } from "./chat-types/npc.js";
+import type { NpcData, StandingTier, } from "./chat-types/npc.js";
 
 export const STANDING_TIERS: StandingTier[] = [
   { name: "Hated", min: -100, max: -76, color: "var(--accent-red)", },
@@ -139,68 +139,5 @@ export const MOCK_NPCS: NpcData[] = [
     ],
     factionId: null,
     portrait: null,
-  },
-];
-
-export const MOCK_RELATIONSHIPS: NpcRelationship[] = [
-  {
-    id: "rel-1",
-    fromId: "player",
-    fromName: "Player",
-    toId: "npc-merchant",
-    toName: "Merchant",
-    type: "friend",
-    strength: 75,
-    history: ["Traded多次", "Helped with delivery",],
-  },
-  {
-    id: "rel-2",
-    fromId: "player",
-    fromName: "Player",
-    toId: "npc-guard",
-    toName: "Guard",
-    type: "neutral",
-    strength: 10,
-    history: ["Brief encounter",],
-  },
-  {
-    id: "rel-3",
-    fromId: "player",
-    fromName: "Player",
-    toId: "npc-healer",
-    toName: "Healer",
-    type: "ally",
-    strength: 80,
-    history: ["Healed wounds", "Shared knowledge",],
-  },
-  {
-    id: "rel-4",
-    fromId: "npc-merchant",
-    fromName: "Merchant",
-    toId: "npc-blacksmith",
-    toName: "Blacksmith",
-    type: "friend",
-    strength: 60,
-    history: ["Business partners",],
-  },
-  {
-    id: "rel-5",
-    fromId: "npc-guard",
-    fromName: "Guard",
-    toId: "npc-stranger",
-    toName: "Mysterious Stranger",
-    type: "rival",
-    strength: -30,
-    history: ["Suspicious of stranger",],
-  },
-  {
-    id: "rel-6",
-    fromId: "npc-healer",
-    fromName: "Healer",
-    toId: "npc-merchant",
-    toName: "Merchant",
-    type: "friend",
-    strength: 40,
-    history: ["Heals merchant's ailments",],
   },
 ];

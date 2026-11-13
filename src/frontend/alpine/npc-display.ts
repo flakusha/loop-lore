@@ -3,9 +3,9 @@
 
 /**
  * NPC presentation helpers — disposition/relationship colors, tier and karma
- * labels, relationship partitioning. Pure; spread into the NPC component.
+ * labels, relationship row mapping. Pure; spread into the NPC component.
  */
-import type { NpcRelationship, } from "./chat-types/npc";
+import type { ActorRelationshipRow, RelationshipDisplayRow, } from "./chat-types/npc";
 import { STANDING_TIERS, } from "./npc-mock.js";
 
 export const npcDisplay = {
@@ -85,12 +85,26 @@ export const npcDisplay = {
     return "Minimal";
   },
 
-  playerRelationships(relationships: NpcRelationship[],): NpcRelationship[] {
-    return relationships.filter((r,) => r.fromId === "player" || r.toId === "player");
-  },
-
-  npcRelationships(relationships: NpcRelationship[],): NpcRelationship[] {
-    return relationships.filter((r,) => r.fromId !== "player" && r.toId !== "player");
+  /**
+   * Map wire relationship rows to display rows, resolving target names.
+   * @param relationships - rows from the relationships API
+   * @param opts.resolveName - actor id to display name resolver
+   * @param opts.unknownLabel - label used when a target actor is not in the cast
+   * @returns display rows in API order
+   */
+  relationshipRows(
+    relationships: ActorRelationshipRow[],
+    { resolveName, unknownLabel, }: { resolveName: (id: string,) => string; unknownLabel: string },
+  ): RelationshipDisplayRow[] {
+    return Array.from(relationships, (r,) => ({
+      id: r.id,
+      targetName: resolveName(r.targetActorId,) || unknownLabel,
+      type: r.relationshipType,
+      standing: r.standing,
+      trust: r.trust,
+      familiarity: r.familiarity,
+      isBidirectional: r.isBidirectional,
+    }),);
   },
 
   getFactionStandingColor(standing: number,): string {

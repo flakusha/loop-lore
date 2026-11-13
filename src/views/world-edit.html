@@ -1337,9 +1337,9 @@
                 <button
                   class="world-edit-tab"
                   :class="{ active: npcActivePanel === 'relationships' }"
-                  @click="npcActivePanel = 'relationships'"
+                  @click="npcActivePanel = 'relationships'; loadRelationships()"
                 >
-                  Relationships
+                  {{{t("npc.relationshipsTab")}}}
                 </button>
                 <button
                   class="world-edit-tab"
@@ -1504,56 +1504,73 @@
                 </div>
               </div>
 
-              <!-- Relationship Map Panel -->
+              <!-- Relationship Panel — real data via /api/v1/actors/:actorId/relationships -->
               <div x-show="npcActivePanel === 'relationships'">
                 <div x-show="loadingRelationships" class="empty-state" style="padding: var(--space-8)">
                   <div class="icon">⏳</div>
-                  <div class="title">Loading relationships...</div>
+                  <div class="title" x-text="t('npc.relationshipsLoading')"></div>
                 </div>
 
                 <div x-show="!loadingRelationships">
-                  <h4 style="margin: 0 0 var(--space-3)">Player Relationships</h4>
-                  <div style="display: grid; gap: var(--space-3); margin-bottom: var(--space-6)">
-                    <template x-for="rel in playerRelationships()" :key="rel.id">
-                      <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-md)">
-                        <div style="flex: 1">
-                          <span style="font-weight: 600">Player</span>
-                          <span style="color: var(--text-secondary)"> → </span>
-                          <span style="font-weight: 600" x-text="rel.toName"></span>
-                        </div>
-                        <span
-                          style="padding: 2px 8px; border-radius: var(--radius-sm); font-size: var(--fs-sm)"
-                          :style="{ color: getRelationshipColor(rel.type), border: '1px solid ' + getRelationshipColor(rel.type) }"
-                          x-text="rel.type"
-                        ></span>
-                        <span
-                          style="font-size: var(--fs-sm); color: var(--text-secondary)"
-                          x-text="getStrengthLabel(rel.strength) + ' (' + rel.strength + ')'"
-                        ></span>
-                      </div>
-                    </template>
+                  <p
+                    x-show="relationshipsError"
+                    x-text="relationshipsError"
+                    style="color: var(--accent-red); margin: 0 0 var(--space-3)"
+                    data-testid="npc-relationships-error"
+                  >
+                  </p>
+
+                  <div class="form-group" style="max-width: 360px; margin-bottom: var(--space-4)">
+                    <label class="form-label" for="npc-rel-actor" x-text="t('npc.relationshipsActorLabel')"></label>
+                    <select
+                      id="npc-rel-actor"
+                      class="form-input"
+                      x-model="relationshipActorId"
+                      @change="loadRelationships()"
+                      data-testid="npc-relationships-actor"
+                    >
+                      <template x-for="actor in cast" :key="actor.id">
+                        <option :value="actor.id" x-text="actor.display_name"></option>
+                      </template>
+                    </select>
                   </div>
 
-                  <h4 style="margin: 0 0 var(--space-3)">NPC-to-NPC Relationships</h4>
+                  <h4 style="margin: 0 0 var(--space-3)" x-text="t('npc.relationshipsTitle')"></h4>
                   <div style="display: grid; gap: var(--space-3)">
-                    <template x-for="rel in npcRelationships()" :key="rel.id">
-                      <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-md)">
+                    <template x-for="row in relationshipRows()" :key="row.id">
+                      <div
+                        style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-md)"
+                        data-testid="npc-relationship-row"
+                      >
                         <div style="flex: 1">
-                          <span style="font-weight: 600" x-text="rel.fromName"></span>
-                          <span style="color: var(--text-secondary)"> → </span>
-                          <span style="font-weight: 600" x-text="rel.toName"></span>
+                          <span style="font-weight: 600" x-text="row.targetName"></span>
+                          <span
+                            style="color: var(--text-muted); font-size: var(--fs-sm)"
+                            x-show="row.isBidirectional"
+                          >⇄</span>
                         </div>
                         <span
                           style="padding: 2px 8px; border-radius: var(--radius-sm); font-size: var(--fs-sm)"
-                          :style="{ color: getRelationshipColor(rel.type), border: '1px solid ' + getRelationshipColor(rel.type) }"
-                          x-text="rel.type"
+                          :style="{ color: getRelationshipColor(row.type), border: '1px solid ' + getRelationshipColor(row.type) }"
+                          x-text="row.type"
                         ></span>
                         <span
                           style="font-size: var(--fs-sm); color: var(--text-secondary)"
-                          x-text="getStrengthLabel(rel.strength) + ' (' + rel.strength + ')'"
+                          x-text="t('npc.relationshipsStanding') + ': ' + getStrengthLabel(row.standing) + ' (' + row.standing + ')'"
+                        ></span>
+                        <span
+                          style="font-size: var(--fs-sm); color: var(--text-muted)"
+                          x-text="t('npc.relationshipsTrust') + ': ' + row.trust + ' · ' + t('npc.relationshipsFamiliarity') + ': ' + row.familiarity"
                         ></span>
                       </div>
                     </template>
+                    <div
+                      x-show="relationshipRows().length === 0"
+                      style="padding: var(--space-4); text-align: center; color: var(--text-muted)"
+                      x-text="t('npc.relationshipsEmpty')"
+                      data-testid="npc-relationships-empty"
+                    >
+                    </div>
                   </div>
                 </div>
               </div>

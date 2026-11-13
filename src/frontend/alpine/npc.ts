@@ -5,24 +5,26 @@
  * NPC Management UI — Alpine.js Component
  *
  * Provides NPC viewer, relationship map, faction relations, and karma display.
- * Uses mock data for UI development — no backend dependency.
+ * Relationships come from the shipped relationships API (npc-relationships);
+ * the viewer, factions, and karma sub-panels still use mock data.
  * Follows rpg-stats.ts pattern: extends ChatState via (globalThis as any).
  */
 import type {
   NpcData,
   NpcFaction,
   NpcKarma,
-  NpcRelationship,
 } from "./chat-types/npc";
 
 import { npcDisplay, } from "./npc-display";
 import { MOCK_FACTIONS, MOCK_KARMA, } from "./npc-faction-mock.js";
-import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
+import { MOCK_NPCS, STANDING_TIERS, } from "./npc-mock.js";
+import { npcRelationshipsPanel, } from "./npc-relationships";
 
 // ── Component Registration ──────────────────────────────────
 npcManagementState = function() {
   return {
     ...npcDisplay,
+    ...npcRelationshipsPanel,
 
     // NPC Viewer
     npcs: [] as NpcData[],
@@ -30,10 +32,6 @@ npcManagementState = function() {
     npcSearch: "",
     npcFilter: "all",
     loadingNpcs: false,
-
-    // Relationships
-    relationships: [] as NpcRelationship[],
-    loadingRelationships: false,
 
     // Factions
     factions: [] as NpcFaction[],
@@ -52,7 +50,6 @@ npcManagementState = function() {
 
     init() {
       this.loadNpcs();
-      this.loadRelationships();
       this.loadFactions();
       this.loadKarma();
     },
@@ -97,22 +94,6 @@ npcManagementState = function() {
       }
 
       return result;
-    },
-
-    // ── Relationships ───────────────────────────────────────
-    async loadRelationships() {
-      this.loadingRelationships = true;
-      await new Promise((r,) => setTimeout(r, 200,));
-      this.relationships = MOCK_RELATIONSHIPS;
-      this.loadingRelationships = false;
-    },
-
-    playerRelationships(): NpcRelationship[] {
-      return npcDisplay.playerRelationships(this.relationships,);
-    },
-
-    npcRelationships(): NpcRelationship[] {
-      return npcDisplay.npcRelationships(this.relationships,);
     },
 
     // ── Factions ────────────────────────────────────────────
