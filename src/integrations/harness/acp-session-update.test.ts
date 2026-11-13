@@ -90,6 +90,53 @@ describe("narrowSessionUpdate", () => {
     },],);
   });
 
+  it("narrows a usage_update into a usage event with its cost", () => {
+    const events = narrowSessionUpdate({
+      update: {
+        sessionUpdate: "usage_update",
+        used: 120,
+        size: 1000,
+        cost: { amount: 0.012, currency: "USD", },
+      },
+    },);
+
+    expect(events,).toEqual([{
+      type: "usage",
+      used: 120,
+      size: 1000,
+      costUsd: 0.012,
+      currency: "USD",
+    },],);
+  });
+
+  it("keeps a usage_update without a cost as a null cost", () => {
+    const events = narrowSessionUpdate({
+      update: { sessionUpdate: "usage_update", used: 120, size: 1000, },
+    },);
+
+    expect(events,).toEqual([{
+      type: "usage",
+      used: 120,
+      size: 1000,
+      costUsd: null,
+      currency: null,
+    },],);
+  });
+
+  it("reads the cost of a usage_update that carried no context counters", () => {
+    const events = narrowSessionUpdate({
+      update: { sessionUpdate: "usage_update", cost: { amount: 0.012, currency: "USD", }, },
+    },);
+
+    expect(events,).toEqual([{
+      type: "usage",
+      used: null,
+      size: null,
+      costUsd: 0.012,
+      currency: "USD",
+    },],);
+  });
+
   it("ignores malformed payloads and unknown variants", () => {
     expect(narrowSessionUpdate(null,),).toEqual([],);
     expect(narrowSessionUpdate({},),).toEqual([],);

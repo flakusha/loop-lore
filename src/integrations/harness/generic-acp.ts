@@ -24,6 +24,7 @@ import {
   type PermissionOutcome,
 } from "./adapter-types";
 import { JsonRpcProcess, JsonRpcRequestError, } from "./jsonrpc-process";
+import { advertisedPermissionOptions, wirePermissionOutcome, } from "./permission-outcome";
 import { TurnTranscriptCollector, } from "./turn-transcript";
 
 /** ACP protocol version the adapter speaks. */
@@ -70,6 +71,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   private readonly opts: GenericAcpOptions;
   /** Everything the in-flight prompt streamed (text, reasoning, tool calls). */
   private transcript = new TurnTranscriptCollector();
+  /** Cost the harness reported for the in-flight turn (usage_update); null when none. */
+  private turnCostUsd: number | null = null;
   /** Open server-originated permission request, when one awaits an outcome. */
   private permission: {
     pending: PendingPermission;
@@ -184,6 +187,7 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     try {
       const sessionId = (await this.ensureSession()).sessionId;
       this.transcript = new TurnTranscriptCollector();
+      this.turnCostUsd = null;
       const requestPromise = this.rpc!.request("session/prompt", {
         sessionId,
         prompt: [{ type: "text", text: prompt, },],
@@ -196,7 +200,7 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       return {
         text: transcript.text,
         stopReason: typeof response.stopReason === "string" ? response.stopReason : "unknown",
-        usage: this.toUsage(response.usage,),
+        usage: this.toUsage(response.usage, this.turnCostUsd,),
         acpSessionId: sessionId,
         transcript,
       };
@@ -225,7 +229,9 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   }
 
   /**
-   * Answer the open permission request.
+   * Answer the open permission request. The answer carries the spelling of
+   * the option the harness advertised (a hyphenated dialect is understood);
+   * an allow the harness advertised no option for is denied instead.
    * @param outcome - the client's choice among the harness's options
    * @throws {HarnessAcpError} kind `session` when nothing is pending
    */
@@ -236,7 +242,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     }
 
     this.permission = null;
-    open.respond({ outcome, },);
+    const options = advertisedPermissionOptions(open.pending.params,);
+    open.respond({ outcome: wirePermissionOutcome(outcome, options,), },);
   }
 
   /**
@@ -294,6 +301,11 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       onNotification: (method, params,) => {
         if (method !== "session/update") { return; }
         for (const event of narrowSessionUpdate(params,)) {
+          if (event.type === "usage") {
+            this.turnCostUsd = event.costUsd;
+            continue;
+          }
+
           this.transcript.append(event,);
         }
       },
@@ -303,6 +315,7 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       await this.rpc.request("initialize", {
         protocolVersion: PROTOCOL_VERSION,
         clientInfo: { name: "loop-lore", version: "1", },
+        clientCapabilities: { fs: { readTextFile: this.opts.readTextFile !== undefined, }, },
       },);
 
       const session = await this.rpc.request("session/new", { cwd: this.opts.cwd ?? process.cwd(), },) as {
@@ -375,15 +388,17 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   /**
    * Normalize the wire usage object.
    * @param usage - raw usage from the prompt response
+   * @param costUsd - cost the harness reported for the turn (usage_update)
    * @returns usage, or null when unusable.
    */
-  private toUsage(usage: RawUsage | null | undefined,): HarnessTurnResult["usage"] {
+  private toUsage(usage: RawUsage | null | undefined, costUsd: number | null,): HarnessTurnResult["usage"] {
     if (!usage) { return null; }
     const num = (v: unknown,): number => (typeof v === "number" && Number.isFinite(v,) ? v : 0);
     return {
       inputTokens: num(usage.inputTokens,),
       outputTokens: num(usage.outputTokens,),
       totalTokens: num(usage.totalTokens,),
+      costUsd,
     };
   }
 }

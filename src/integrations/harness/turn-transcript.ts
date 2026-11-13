@@ -9,7 +9,7 @@
  * transcript.
  */
 
-import { type HarnessTurnEvent, isTerminalToolStatus, } from "./acp-session-update";
+import { type HarnessContentEvent, isTerminalToolStatus, } from "./acp-session-update";
 
 /** One tool call the harness reported, in the shape the message readers expect. */
 export interface HarnessToolCall {
@@ -66,7 +66,7 @@ export class TurnTranscriptCollector {
   private results: HarnessToolResult[] = [];
 
   /** Fold one event into the transcript. */
-  append(event: HarnessTurnEvent,): void {
+  append(event: HarnessContentEvent,): void {
     if (event.type === "text") {
       this.text += event.text;
       return;
@@ -96,7 +96,7 @@ export class TurnTranscriptCollector {
   }
 
   /** Record a tool call, replacing an earlier entry for the same id in place. */
-  private appendCall(event: Extract<HarnessTurnEvent, { type: "tool-call" }>,): void {
+  private appendCall(event: Extract<HarnessContentEvent, { type: "tool-call" }>,): void {
     const index = this.calls.findIndex((call,) => call.id === event.toolCallId);
     if (index === -1) {
       this.calls.push({ id: event.toolCallId, name: event.name, kind: event.kind, arguments: event.arguments, },);
@@ -113,7 +113,7 @@ export class TurnTranscriptCollector {
   }
 
   /** Record a tool result; a non-terminal status never displaces a terminal one. */
-  private appendResult(event: Extract<HarnessTurnEvent, { type: "tool-result" }>,): void {
+  private appendResult(event: Extract<HarnessContentEvent, { type: "tool-result" }>,): void {
     const index = this.results.findIndex((result,) => result.toolCallId === event.toolCallId);
     if (index === -1) {
       this.results.push({

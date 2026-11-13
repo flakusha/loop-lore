@@ -58,7 +58,7 @@ describe("HarnessDriver.runPrompt", () => {
     if (!result.ok) { return; }
     expect(result.turn.text,).toBe("hello",);
     expect(result.turn.stopReason,).toBe("end_turn",);
-    expect(result.turn.usage,).toEqual({ inputTokens: 10, outputTokens: 5, totalTokens: 15, },);
+    expect(result.turn.usage,).toEqual({ inputTokens: 10, outputTokens: 5, totalTokens: 15, costUsd: null, },);
     expect(result.turn.acpSessionId,).toBe("fake-session-1",);
   });
 

@@ -14,6 +14,8 @@
  *   `{ update: { sessionUpdate: "tool_call", toolCallId, title, name?, kind?, status?, rawInput? } }`
  * - `tool_call_update`:
  *   `{ update: { sessionUpdate: "tool_call_update", toolCallId, status?, content?, rawOutput? } }`
+ * - `usage_update`:
+ *   `{ update: { sessionUpdate: "usage_update", used, size, cost?: { amount, currency } } }`
  */
 
 import { jsonStringifyOr, } from "../../utils";
@@ -36,7 +38,20 @@ export type HarnessTurnEvent =
     status: string;
     content: string;
     error: boolean;
+  }
+  | {
+    type: "usage";
+    used: number | null;
+    size: number | null;
+    costUsd: number | null;
+    currency: string | null;
   };
+
+/**
+ * The events the transcript collector folds. `usage` is telemetry about the
+ * session, not turn content, so it stays out of the transcript.
+ */
+export type HarnessContentEvent = Exclude<HarnessTurnEvent, { type: "usage" }>;
 
 /** Tool-call statuses that mean the call is over — only these become rows. */
 const TERMINAL_TOOL_STATUSES = new Set(["completed", "failed",],);
@@ -62,6 +77,25 @@ function asRecord(value: unknown,): Record<string, unknown> | null {
 /** Narrow an unknown value to a string, or null. */
 function asString(value: unknown,): string | null {
   return typeof value === "string" ? value : null;
+}
+
+/** Narrow an unknown value to a finite number, or null. */
+function asNumber(value: unknown,): number | null {
+  return typeof value === "number" && Number.isFinite(value,) ? value : null;
+}
+
+/** Narrow a `usage_update` payload to its usage event (cost in USD). */
+function usageEvent(update: Record<string, unknown>,): HarnessTurnEvent[] {
+  const cost = asRecord(update.cost,);
+  const amount = cost ? asNumber(cost.amount,) : null;
+  const currency = cost ? asString(cost.currency,) : null;
+  return [{
+    type: "usage",
+    used: asNumber(update.used,),
+    size: asNumber(update.size,),
+    costUsd: amount !== null && currency?.toLowerCase() === "usd" ? amount : null,
+    currency,
+  },];
 }
 
 /** Readable text of a tool-call content list (text blocks and diffs). */
@@ -90,7 +124,8 @@ function toolContentText(content: unknown,): string {
 /**
  * Narrow a raw ACP `session/update` notification payload to the events
  * loop-lore persists. Unknown variants (plan, current_mode_update, ...) and
- * malformed payloads yield no events — they are telemetry-only for now.
+ * malformed payloads yield no events — they are telemetry-only for now;
+ * `usage_update` is kept as a usage event (the reported cost is USD).
  * @param params - the notification params, untrusted
  * @returns the narrowed events; empty when the payload carries none
  */
@@ -162,6 +197,10 @@ export function narrowSessionUpdate(params: unknown,): HarnessTurnEvent[] {
     },);
 
     return events;
+  }
+
+  if (variant === "usage_update") {
+    return usageEvent(update,);
   }
 
   return [];
