@@ -169,8 +169,8 @@ Repo-state audit to avoid re-implementing existing functionality. Verdicts groun
 | Blog | Wired (core) | `blog.ts` + `blog.html`; moderation/follower UI open |
 | Export | Wired | `export-progress.ts:139,154,169,230` + settings panel |
 | Actor traits/licensing/emotion-avatars/systems/notes/items/lore | Wired | `actor-traits.ts`, `actor-licensing.ts`, `actor-emotion-avatars.ts`, `actor-systems.ts`, `actor-entities.ts` via `character-panels-section.ts` |
-| Actor relationships | Missing | `npc.ts` renders `MOCK_RELATIONSHIPS`, no API call |
-| Actor availability | Missing | no frontend consumer of `/api/actors/:id/availability` |
+| Actor relationships | Wired | `npc-relationships.ts` → `/api/v1/actors/:actorId/relationships`, rendered in `world-edit.html` relationships sub-panel (reconciled 2026-11-13; `MOCK_RELATIONSHIPS` removed) |
+| Actor availability | Wired | `actor-availability.ts` → `/api/v1/actors/:actorId/availability`, panel in `character-panels-section.ts` (reconciled 2026-11-13) |
 | World lore entries | Missing | no frontend consumer of `/api/worlds/:id/lore-entries` |
 | Chat pins/transfer/location | Wired | `chat-pins.ts`, `chat-settings/ownership.ts`, `chat-location.ts` |
 | Chat story turns | Wired (list) | `story-state/api.ts:55`; single-turn nav open |
@@ -178,9 +178,9 @@ Repo-state audit to avoid re-implementing existing functionality. Verdicts groun
 | Message variants | Wired | `chat-variants.ts:29` GET `/variants` + `:68` PUT `/variant` — both match backend; earlier "singular mismatch" note stale |
 | Message quick emojis | Wired (picker) | reaction chips + picker in `message-list.html`; `/api/messages/quick-emojis` preference endpoint unfetched (separate gap; its ticket's scope was picker-only) |
 | Admin character overrides | Missing | no frontend consumer |
-| LoRA discovery | Missing | no frontend consumer |
+| LoRA discovery | Wired (admin) | `admin-lora.ts` → `/api/v1/lora/discover`, `/list`, `/status`, `/clear`; tab in `admin.html` (reconciled 2026-11-13) |
 
-**Epic status ruling:** `Done` was inaccurate — 7 subsystems still lack a frontend consumer (battle, NSFW intimacy/body, relationships, availability, world lore, admin overrides, LoRA) and analytics/blog/story-turns are partially wired. Reopened to In Progress.
+**Epic status ruling:** `Done` was inaccurate — 7 subsystems still lacked a frontend consumer (battle, NSFW intimacy/body, relationships, availability, world lore, admin overrides, LoRA) and analytics/blog/story-turns were partially wired. Reopened to In Progress. (Reconciled 2026-11-13: relationships, availability, and LoRA discovery now wired — remaining open: battle, NSFW intimacy/body, world lore, admin character overrides.)
 
 **Ticket corrections this audit:** `TASK-rpg-stats-frontend-wiring.md` (implemented core, stale mock-data claim — In Progress), `TASK-analytics-frontend-dashboard.md` (dashboard landed — In Progress), `TASK-chat-story-turns-frontend.md` (list endpoint wired — In Progress). `TASK-message-quick-emojis-frontend.md` stays Done — its scope was the reaction picker, which is wired; the unfetched `/api/messages/quick-emojis` preference endpoint is a separate, unfiled gap.
 
