@@ -100,6 +100,7 @@
     "db:reinit": "bun run src/db/reinit.ts",
     "db:sync-types": "bun run scripts/generate-db-types.ts",
     "db:sync-manifest": "bun run scripts/generate-schema-manifest.ts",
+    "db:growth": "bun run scripts/db-growth-report.ts",
     "seed:users": "bun run scripts/seed-users.ts",
     "migrate:character:legacy": "bun run src/scripts/migrate-character-legacy.ts",
     "backfill:users:encryption-secret": "bun run src/scripts/backfill-users-encryption-secret.ts",
