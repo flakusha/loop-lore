@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-chat-privacy.md
+**Epic:** epic-chat-privacy
 **Tags:** chat-privacy, prompt-assembly
 
 **Summary:**

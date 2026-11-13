@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-i18n.md
+**Epic:** epic-i18n
 **Tags:** i18n, commands
 
 **Summary:**

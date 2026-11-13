@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-first-run-auto-setup.md
+**Epic:** epic-first-run-auto-setup
 **Tags:** first-run, config, boot
 
 **Summary:**
