@@ -32,7 +32,7 @@ import { authorizeFacadeOp, } from "./authz";
 import { getFacadeRegistry, resetFacadeRegistry, } from "./instance";
 import { McpTransportBridge, } from "./mcp/bridge";
 import { buildMcpServer, MCP_SERVER_NAME, } from "./mcp/server";
-import { FacadeListMessagesBody, FacadeSendMessageBody, } from "./ops/chat";
+import { ChatHistoryOutputSchema, FacadeListMessagesBody, FacadeSendMessageBody, } from "./ops/chat";
 import { consumeFacadeBudget, } from "./rate-limit";
 import { createFacadeRegistry, facadeResultFromResponse, } from "./registry";
 import type { FacadeContext, FacadeOp, } from "./types";
@@ -173,6 +173,11 @@ describe("facade/video/messaging gap coverage", () => {
   test("facade chat body schemas require chatId", () => {
     expect(FacadeSendMessageBody.properties.chatId,).toBeDefined();
     expect(FacadeListMessagesBody.properties.chatId,).toBeDefined();
+  });
+
+  test("chat.history output schema pins the paginated envelope", () => {
+    expect(ChatHistoryOutputSchema.required,).toEqual(["data", "pagination",],);
+    expect(ChatHistoryOutputSchema.properties?.pagination,).toBeDefined();
   });
 
   test("getFacadeRegistry memoizes and reset rebuilds", () => {
