@@ -79,8 +79,9 @@ export function advertisedPermissionOptions(params: unknown,): AdvertisedPermiss
 
 /**
  * Map a decision onto the option the harness advertised, so the answer
- * carries that harness's own spelling. An allow the harness advertised no
- * option for is never sent — it fails closed as a denial.
+ * carries that harness's own spelling. Only an option of the SAME polarity
+ * may carry the decision (a denial never rides an allow option). An allow the
+ * harness advertised no option for is never sent — it fails closed as a denial.
  * @param outcome - the decision, in the spec union
  * @param options - the options the harness advertised
  * @returns the outcome to put on the wire.
