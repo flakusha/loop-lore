@@ -320,12 +320,13 @@ async function listedOrStaticEntries(options: {
 
 /**
  * USD per 1k tokens for a model id, from the provider registry. The id's
- * prefix is a HARNESS-side namespace (the flavor's own — `codex`, `claude`,
- * `openrouter`, `custom` — or, for the omp flavor, an upstream vendor prefix
- * like `zai`), NOT a registered provider instance name: it is matched
- * against the registry's instance names, so only an instance registered
- * under exactly that name resolves. Unknown when nothing matches, or the
- * provider publishes no price.
+ * prefix is a HARNESS-side namespace the adapter advertises (the flavor's own
+ * — `codex`, `claude`, `openrouter`, `custom` — or an upstream vendor prefix
+ * like `zai`/`anthropic`), NOT a registered provider instance name: it is
+ * matched against the registry's instance names, so only an instance
+ * registered under exactly that name resolves — and only the omp/opencode
+ * vendor prefixes can plausibly match one. Unknown when nothing matches, or
+ * the provider publishes no price.
  * @param model - the `provider/id` model id
  * @returns the published price, or undefined when unknown.
  */
