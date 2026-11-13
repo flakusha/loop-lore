@@ -23,7 +23,7 @@
 
 import { Client, } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport, } from "@modelcontextprotocol/sdk/inMemory.js";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
