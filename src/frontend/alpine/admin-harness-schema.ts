@@ -247,6 +247,29 @@ export const HarnessPermissionDecisionResponse = Type.Object({
   ok: Type.Boolean({},),
 },);
 
+/**
+ * One recorded root-change request waiting for an admin decision
+ * (`GET /api/v1/harness/escalations`).
+ */
+export const HarnessPendingEscalationSchema = Type.Object({
+  id: Type.String({},),
+  subjectId: Type.String({},),
+  kind: Type.String({},),
+  targetPath: Type.String({},),
+  rationale: Type.String({},),
+  createdAt: Type.String({},),
+},);
+
+/** `GET /api/v1/harness/escalations` body (oldest first). */
+export const HarnessEscalationsResponse = Type.Object({
+  items: Type.Array(HarnessPendingEscalationSchema,),
+},);
+
+/** `POST /api/v1/harness/escalations/:id/approve|deny` body. */
+export const HarnessEscalationDecisionResponse = Type.Object({
+  ok: Type.Boolean({},),
+},);
+
 /** Static view of {@link HarnessPendingPermissionSchema} for typed shaping. */
 export type HarnessPendingPermission = Static<typeof HarnessPendingPermissionSchema>;
 

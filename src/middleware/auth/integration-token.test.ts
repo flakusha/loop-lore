@@ -10,14 +10,15 @@
 // userRole null so the token never inherits RBAC); authenticateRequest's
 // no-solo-downgrade rule for a presented llri_ bearer.
 //
-// Resource contract: one :memory: SQLite via createTestDb, no ports, no env,
-// no sleeps (expiry uses explicit past instants, not timers).
+// Resource contract (parallel-safe): ONE :memory: SQLite PER TEST — created in
+// beforeEach, destroyed in afterEach, so no row, token, or principal survives
+// a test; the issuer principal is unique per test; no ports, no env, no sleeps
+// (expiry uses explicit past instants, not timers).
 
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { AuthConfig, } from "../../config/schema/auth";
 import type { DB, } from "../../db/schema";
-import { createLogger, } from "../../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertIntegrationTokens, insertUsers, } from "../../test-utils/insert-helpers";
 import { principalKind, } from "../principal-kind";
@@ -30,8 +31,6 @@ import {
   resolveIntegrationTokenAuth,
   verifyIntegrationToken,
 } from "./integration-token";
-
-const ISSUER = "it-issuer-admin";
 
 const JWT_SECRET = "test-secret-must-be-at-least-32-chars-long-aaaa";
 
@@ -52,15 +51,18 @@ const SOLO_CONFIG = { ...REQUIRED_CONFIG, required: false, } as const satisfies 
 
 let testDb: TestDb;
 let db: Kysely<DB>;
+/** Issuer principal — unique per test, so no two tests share a principal id. */
+let issuer = "";
+let idCounter = 0;
 
-beforeAll(async () => {
-  createLogger({ level: "error", },);
+beforeEach(async () => {
   testDb = await createTestDb();
   db = testDb.db;
-  await insertUsers(db, ISSUER, "Issuer Admin", { id: ISSUER, },);
+  issuer = `it-issuer-admin-${++idCounter}`;
+  await insertUsers(db, issuer, "Issuer Admin", { id: issuer, },);
 },);
 
-afterAll(async () => {
+afterEach(async () => {
   await destroyTestDb(testDb,);
 },);
 
@@ -72,7 +74,7 @@ async function seedToken(opts: {
   name?: string;
 } = {},): Promise<string> {
   const { raw, hash, } = mintIntegrationToken();
-  await insertIntegrationTokens(db, opts.name ?? "agent-token", hash, opts.scopes ?? "read", ISSUER, {
+  await insertIntegrationTokens(db, opts.name ?? "agent-token", hash, opts.scopes ?? "read", issuer, {
     revoked_at: opts.revokedAt ?? null,
     expires_at: opts.expiresAt ?? null,
   },);
@@ -112,7 +114,7 @@ describe("verifyIntegrationToken — fail-closed", () => {
     const resolved = await verifyIntegrationToken(db, raw,);
     expect(resolved,).not.toBeNull();
     expect(resolved!.scopes,).toBe("chat-write",);
-    expect(resolved!.issuerAdminUserId,).toBe(ISSUER,);
+    expect(resolved!.issuerAdminUserId,).toBe(issuer,);
   });
 
   test("first use stamps last_used_at on a NULL row (NULL < x never matches)", async () => {
@@ -223,11 +225,11 @@ describe("integationTokenContext — subject binding", () => {
       id: "tok-1",
       name: "agent-token",
       scopes: "read",
-      issuerAdminUserId: ISSUER,
+      issuerAdminUserId: issuer,
     },);
 
     expect(ctx.principalKind,).toBe(principalKind("external-agent",),);
-    expect(ctx.userId,).toBe(ISSUER,);
+    expect(ctx.userId,).toBe(issuer,);
     // userRole is deliberately null: the token is a scoped credential, not
     // the admin's session — `can(null, "admin.system")` is false everywhere.
     expect(ctx.userRole,).toBeNull();
@@ -250,7 +252,7 @@ describe("authenticateRequest — presented llri_ bearer never downgrades", () =
     expect("context" in result,).toBe(true,);
     if (!("context" in result)) { throw new Error("expected context",); }
     expect(result.context.principalKind,).toBe(principalKind("external-agent",),);
-    expect(result.context.userId,).toBe(ISSUER,);
+    expect(result.context.userId,).toBe(issuer,);
     expect(result.credential,).not.toBeNull();
   });
 

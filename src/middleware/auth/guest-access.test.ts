@@ -12,8 +12,13 @@
  *  - a solo deployment never degrades into a guest one;
  *  - a presented-but-invalid token never degrades to a guest;
  *  - a guest request cannot borrow another identity via `x-user-id`.
+ *
+ * Resource contract (parallel-safe): ONE :memory: SQLite PER TEST (created in
+ * beforeEach, destroyed in afterEach) — the "persists nothing" case asserts an
+ * empty users/sessions table, so a shared per-file database would make it
+ * order-dependent. No ports, no env, no sleeps.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { setStore, } from "../../async/store-registry";
 import { signJwt, } from "../../auth/jwt";
@@ -50,11 +55,11 @@ const SOLO_CONFIG = { ...GUEST_CONFIG, required: false, } as const satisfies Aut
 describe("authenticate — guest tier", () => {
   let db: Kysely<DB>;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     ({ db, } = await createTestDb());
   },);
 
-  afterAll(async () => {
+  afterEach(async () => {
     resetSoloUserCache();
     await db.destroy();
   },);
@@ -143,7 +148,7 @@ describe("guest tier — x-user-id spoofing", () => {
   let db: Kysely<DB>;
   let app: ReturnType<typeof createApp>;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     ({ db, } = await createTestDb());
     const config = loadConfig();
     config.auth.required = true;
@@ -157,7 +162,7 @@ describe("guest tier — x-user-id spoofing", () => {
     },);
   },);
 
-  afterAll(async () => {
+  afterEach(async () => {
     await db.destroy();
     // createApp registered THIS app's store in the module-level registry.
     // Clear it so a later suite cannot flush a store bound to a closed DB.
