@@ -82,6 +82,37 @@ describe("harness runtime fs/read_text_file bridge (fake ACP fixture)", () => {
     expect(readEntry(server.readLog(),)?.content,).toEqual({ content: "inside the sandbox", },);
   });
 
+  it("advertises the read capability the reader backs", async () => {
+    const root = tempDir("harness-acp-sandbox-",);
+    const server = serve({ FAKE_MODELS: "m", FAKE_LOG_PARAMS: "1", },);
+    const runtime = runtimeFor(root, server,);
+
+    await runtime.registry.ensureProbed("p",);
+    await runtime.registry.connection("p",)?.prompt("hello",);
+
+    const initialize = server.readLog().find((item,): item is Extract<
+      FakeAcpLogEntry,
+      { event: "initialize" }
+    > => item.event === "initialize");
+
+    const capabilities = initialize?.params.clientCapabilities as { fs?: { readTextFile?: boolean } } | undefined;
+
+    expect(capabilities?.fs?.readTextFile,).toBe(true,);
+  });
+
+  it("answers a missing file with a typed error, never a raw filesystem error", async () => {
+    const root = tempDir("harness-acp-sandbox-",);
+    const server = serve({ FAKE_MODELS: "m", FAKE_READ_FILE: join(root, "absent.txt",), },);
+    const runtime = runtimeFor(root, server,);
+
+    await runtime.registry.ensureProbed("p",);
+    await runtime.registry.connection("p",)?.prompt("read it",);
+
+    expect(readEntry(server.readLog(),)?.content,).toEqual({
+      error: { code: -32000, message: "the requested file could not be read", },
+    },);
+  });
+
   it("refuses a path outside the sandbox root with a typed error", async () => {
     const root = tempDir("harness-acp-sandbox-",);
     const outside = join(tempDir("harness-acp-outside-",), "secret.txt",);
