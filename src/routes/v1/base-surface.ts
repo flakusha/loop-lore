@@ -61,7 +61,7 @@ export function baseSurface(opts: RegisterPluginsOpts,) {
     .use(localInferenceRoutes(undefined, prefix,),)
     .use(ageGateRoutes({ database, }, prefix,),)
     // ── Auth-protected core ──────────────────────────────────
-    .use(authProtectedRoutes({ database, }, prefix,),)
+    .use(authProtectedRoutes(handleOpts, prefix,),)
     .use(usersRoutes(handleOpts, prefix,),)
     .use(sessionsRoutes(handleOpts, prefix,),)
     .use(switchSessionRoutes(handleOpts, prefix,),)
