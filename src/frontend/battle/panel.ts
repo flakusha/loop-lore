@@ -266,14 +266,16 @@ function render(): void {
  * Preview an attack roll over the shipped `/api/battle/resolution/attack`
  * endpoint and surface it immediately; the authoritative resolution still
  * arrives through the chat command path.
- * @param actingId - The acting combatant's id
  * @param targetId - The selected target's id
  */
-async function previewAttack(actingId: string | null, targetId: string | null,): Promise<void> {
+async function previewAttack(targetId: string | null,): Promise<void> {
   if (!ctx) { return; }
   const battle = deps.battle;
-  if (!battle || !actingId || !targetId) { return; }
-  const acting = battle.combatants.find((c,) => c.id === actingId);
+  if (!battle || !targetId || battle.combatants.length === 0) { return; }
+  // Mirror turn-order.ts: normalize an out-of-range turnIndex into the roster.
+  const total = battle.combatants.length;
+  const start = ((battle.turnIndex % total) + total) % total;
+  const acting = battle.combatants[start];
   const target = battle.combatants.find((c,) => c.id === targetId);
   if (typeof acting?.attackBonus !== "number" || typeof target?.ac !== "number") { return; }
 
@@ -299,10 +301,9 @@ async function previewAttack(actingId: string | null, targetId: string | null,):
 async function executeAction(kind: BattleActionKind,): Promise<void> {
   if (!ctx) { return; }
   const battle = deps.battle;
-  const acting = battle ? battle.combatants[battle.turnIndex] : undefined;
   if (kind === "attack") {
     // Fire and forget: the preview must not gate the command dispatch.
-    void previewAttack(acting?.id ?? null, deps.selectedTargetId,);
+    void previewAttack(deps.selectedTargetId,);
   }
 
   const command = battleCommandFor(kind, deps.selectedTargetId, battle?.combatants ?? [],);
