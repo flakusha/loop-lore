@@ -25161,6 +25161,20 @@
     "source": ".plan/tickets/TASK-1-0-0-gap-backup-restore-before-1-0-0-required-unstarted.md",
     "status": "open"
   },
+  "TASK-1-0-0-GAP-OMNI-SEARCH-FRONTEND-CONSUMER": {
+    "hash": "91d9e08",
+    "git_issue": "91d9e08",
+    "extid": "TASK-1-0-0-GAP-OMNI-SEARCH-FRONTEND-CONSUMER",
+    "type": "TASK",
+    "title": "1.0.0 GAP: omni-search frontend consumer",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-1-0-0-gap-omni-search-frontend-consumer.md",
+    "status": "open"
+  },
   "TASK-1-0-0-GAP-SD-CPP-LOCAL-IMAGE-WIRING-AS-OWNED-SCOPE": {
     "hash": "4bd966e",
     "git_issue": "4bd966e",
@@ -25251,7 +25265,7 @@
       "agentic"
     ],
     "source": ".plan/tickets/TASK-1-0-0-theme-1-3-3-inbound-mcp-acp-studio-servers-external-to.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "TASK-1-0-0-THEME-1-OPERATOR-CORRECT-AGENTIC-RUNTIME-HARNESS-LADDE": {
     "hash": "174eca7",
