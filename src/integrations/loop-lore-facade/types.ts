@@ -54,6 +54,33 @@ export type FacadeResult =
   | { ok: true; status: number; json: unknown }
   | { ok: false; status: number; json: unknown };
 
+/**
+ * MCP tool behaviour hints (the spec's `annotations` object). Every field is
+ * a HINT an MCP host MAY surface to the user - clients must not treat them
+ * as a guarantee, and an absent field keeps the spec's default.
+ */
+export interface FacadeToolAnnotations {
+  /** The op only reads - it never mutates the loop-lore store. */
+  readonly readOnlyHint?: boolean;
+  /** The op may perform destructive updates (deletes/overwrites). */
+  readonly destructiveHint?: boolean;
+  /** Repeated identical calls have no additional effect. */
+  readonly idempotentHint?: boolean;
+  /** The op may interact with entities outside the loop-lore store. */
+  readonly openWorldHint?: boolean;
+}
+
+/**
+ * JSON Schema of an op's structured result (the spec's `outputSchema`). The
+ * MCP SDK accepts an object schema here, so `type` is fixed; `properties`
+ * holds the JSON Schema of each member.
+ */
+export type FacadeOutputSchema = {
+  readonly type: "object";
+  readonly properties?: Record<string, object>;
+  readonly required?: string[];
+};
+
 /** One registrable facade operation. */
 export interface FacadeOp {
   /** Namespaced name (`chat.send`, `generation.generate`, ...). */
@@ -71,6 +98,10 @@ export interface FacadeOp {
    * through to a handler doing its own authoritative validation omit this.
    */
   readonly bodySchema?: TSchema;
+  /** Behavioural hints an MCP host MAY surface to the user (spec `annotations`). */
+  readonly annotations?: FacadeToolAnnotations;
+  /** JSON Schema of the op's structured result (spec `outputSchema`). */
+  readonly outputSchema?: FacadeOutputSchema;
   readonly handler: (ctx: FacadeContext, body: unknown,) => Promise<FacadeResult>;
 }
 

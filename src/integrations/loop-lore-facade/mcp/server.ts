@@ -58,7 +58,8 @@ export function buildMcpServer(deps: McpServerDeps,): Server {
 
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: registry.manifest().map((entry,) => {
-      const schema = registry.resolve(entry.name,)?.bodySchema;
+      const op = registry.resolve(entry.name,);
+      const schema = op?.bodySchema;
 
       return {
         name: entry.name,
@@ -68,6 +69,10 @@ export function buildMcpServer(deps: McpServerDeps,): Server {
           ? `${entry.description} (input: any JSON object)`
           : entry.description,
         inputSchema: schema ?? { type: "object", additionalProperties: true, },
+        // Behaviour hints + output schema are OPTIONAL per the spec; an op
+        // without them is emitted exactly as before.
+        ...(op?.annotations === undefined ? {} : { annotations: op.annotations, }),
+        ...(op?.outputSchema === undefined ? {} : { outputSchema: op.outputSchema, }),
       };
     },),
   }),);
