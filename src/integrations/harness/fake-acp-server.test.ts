@@ -98,7 +98,7 @@ class StdioClient {
     },);
 
     expect(init.error,).toBeUndefined();
-    const session = await this.request("session/new", { cwd: process.cwd(), },);
+    const session = await this.request("session/new", { cwd: process.cwd(), mcpServers: [], },);
     expect(session.error,).toBeUndefined();
     return (session.result as { sessionId: string }).sessionId;
   }
@@ -194,18 +194,20 @@ describe("fake ACP fixture: session/request_permission", () => {
     const ask = await client.waitFor((m,) => m.method === "session/request_permission");
     const params = ask.params as {
       sessionId: string;
-      kind: string;
+      toolCall: { toolCallId: string; kind: string; status: string };
       options: Array<{ optionId: string; kind: string }>;
     };
 
     expect(params.sessionId,).toBe(sessionId,);
-    expect(params.kind,).toBe("edit",);
+    // The spec carries the tool call in `toolCall`; its `kind` is the
+    // tool-call kind (vendored v1 schema, `RequestPermissionRequest`).
+    expect(params.toolCall.kind,).toBe("edit",);
     expect(params.options.map((o,) => o.kind),).toEqual(["allow_once", "reject_once",],);
 
-    client.send({ jsonrpc: "2.0", id: ask.id, result: { outcome: { outcome: "allow_once", optionId: "allow", }, }, },);
+    client.send({ jsonrpc: "2.0", id: ask.id, result: { outcome: { outcome: "selected", optionId: "allow", }, }, },);
     expect(stopReason(await prompt,),).toBe("end_turn",);
     expect(server.readLog(),).toEqual([
-      { event: "permission_outcome", outcome: { outcome: { outcome: "allow_once", optionId: "allow", }, }, },
+      { event: "permission_outcome", outcome: { outcome: { outcome: "selected", optionId: "allow", }, }, },
     ],);
   });
 
@@ -249,7 +251,7 @@ describe("fake ACP fixture: combined flows", () => {
     const prompt = promptOn(client, sessionId,);
 
     const perm = await client.waitFor((m,) => m.method === "session/request_permission");
-    client.send({ jsonrpc: "2.0", id: perm.id, result: { outcome: { outcome: "allow_once", optionId: "allow", }, }, },);
+    client.send({ jsonrpc: "2.0", id: perm.id, result: { outcome: { outcome: "selected", optionId: "allow", }, }, },);
     const read = await client.waitFor((m,) => m.method === "fs/read_text_file");
     client.send({ jsonrpc: "2.0", id: read.id, result: { content: "A", }, },);
     await client.request("session/cancel", { sessionId, },);

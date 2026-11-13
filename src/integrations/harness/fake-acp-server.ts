@@ -59,13 +59,14 @@ const runPromptFlow = async (promptId) => {
     cancelPromise = new Promise((resolve) => { cancelWaiter = resolve; });
   }
   if (process.env.FAKE_PERMISSION) {
+    const options = process.env.FAKE_PERMISSION_NO_OPTIONS ? [] : [
+      { optionId: "allow", name: "Allow", kind: permKinds[0] ?? "allow_once" },
+      { optionId: "reject", name: "Reject", kind: permKinds[1] ?? "reject_once" },
+    ];
     await askClient("session/request_permission", {
       sessionId: "fake-session-1",
-      kind: "edit",
-      options: [
-        { optionId: "allow", name: "Allow", kind: permKinds[0] ?? "allow_once" },
-        { optionId: "reject", name: "Reject", kind: permKinds[1] ?? "reject_once" },
-      ],
+      toolCall: { toolCallId: "call-1", title: "Edit file", kind: "edit", status: "pending" },
+      options: options,
     });
   }
   if (process.env.FAKE_READ_FILE) {
@@ -137,7 +138,7 @@ process.stdin.on("data", (c) => {
       }
       send({ jsonrpc: "2.0", id: m.id, result: {
         sessionId: "fake-session-1",
-        configOptions: [{ id: configId, type: "select", currentValue: models[0] ?? "", options: models.map((v) => ({ value: v })) }],
+        configOptions: [{ id: configId, name: "Model", type: "select", currentValue: models[0] ?? "", options: models.map((v) => ({ value: v })) }],
       } });
     } else if (m.method === "unstable_setSessionModel") {
       if (rejectModel && m.params.modelId === rejectModel) {
@@ -205,6 +206,8 @@ export interface FakeAcpEnv {
   FAKE_NO_USAGE?: string;
   /** Comma-separated kinds of the advertised permission options (allow, reject). */
   FAKE_PERMISSION_KINDS?: string;
+  /** When set, the permission ask advertises NO options (nothing to select). */
+  FAKE_PERMISSION_NO_OPTIONS?: string;
   /** When set, the fixture logs the initialize and session/new params it observed. */
   FAKE_LOG_PARAMS?: string;
   /** When set, session/prompt first asks the client to read this path via `fs/read_text_file`. */

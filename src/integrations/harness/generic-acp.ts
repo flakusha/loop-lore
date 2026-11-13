@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// size-allow: 290
+// size-allow: 300
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
@@ -111,6 +111,7 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   private permission: {
     pending: PendingPermission;
     respond: (result: unknown,) => void;
+    fail: (error: Error,) => void;
   } | null = null;
   /** Resolves once the in-flight prompt request has been written to the wire; `cancel` orders on it. */
   private promptDispatched: Promise<void> = Promise.resolve();
@@ -267,6 +268,15 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
 
     await this.promptDispatched;
     this.rpc.notify("session/cancel", { sessionId: this.session.sessionId, },);
+
+    // A cancelled turn MUST answer every pending permission ask with the
+    // protocol's cancelled outcome (vendored v1 schema, `RequestPermissionOutcome`).
+    const open = this.permission;
+    if (open) {
+      this.permission = null;
+      open.respond({ outcome: { outcome: "cancelled", }, },);
+      this.opts.onPermissionWithdrawn?.();
+    }
   }
 
   /** The open server-originated permission request, when one awaits an outcome. */
@@ -275,9 +285,12 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   }
 
   /**
-   * Answer the open permission request. The answer carries the spelling of
-   * the option the harness advertised (a hyphenated dialect is understood);
-   * an allow the harness advertised no option for is denied instead.
+   * Answer the open permission request with the protocol's answer shape: the
+   * option the decision rides, named by the id the harness advertised
+   * (`RequestPermissionOutcome`, vendored ACP v1 schema). A decision no
+   * advertised option can carry fails the request CLOSED with a JSON-RPC
+   * error — the spec's only other outcome, `cancelled`, would claim the turn
+   * was cancelled when it was not.
    * @param outcome - the client's choice among the harness's options
    * @throws {HarnessAcpError} kind `session` when nothing is pending
    */
@@ -288,8 +301,13 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     }
 
     this.permission = null;
-    const options = advertisedPermissionOptions(open.pending.params,);
-    open.respond({ outcome: wirePermissionOutcome(outcome, options,), },);
+    const answer = wirePermissionOutcome(outcome, advertisedPermissionOptions(open.pending.params,),);
+    if (!answer.ok) {
+      open.fail(new JsonRpcRequestError(answer.reason, -32603,),);
+      return;
+    }
+
+    open.respond({ outcome: answer.outcome, },);
   }
 
   /**
@@ -373,7 +391,10 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
         clientCapabilities: { fs: { readTextFile: this.opts.readTextFile !== undefined, }, },
       },);
 
-      const session = await this.rpc.request("session/new", { cwd: this.opts.cwd ?? process.cwd(), },) as {
+      const session = await this.rpc.request("session/new", {
+        cwd: this.opts.cwd ?? process.cwd(),
+        mcpServers: [],
+      },) as {
         sessionId?: unknown;
       };
 
@@ -409,20 +430,23 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
    */
   private handleServerRequest(method: string, params: unknown,): Promise<unknown> {
     if (method === "session/request_permission") {
-      const p = params as { kind?: unknown } | null;
+      // The spec carries the tool call in `toolCall` (required); its `kind` is
+      // the tool-call kind the policy classifies (vendored v1 schema,
+      // `RequestPermissionRequest`).
+      const p = params as { toolCall?: { kind?: unknown } } | null;
       if (this.permission) {
         return Promise.reject(new JsonRpcRequestError("permission request already pending", -32601,),);
       }
 
-      return new Promise<unknown>((resolve,) => {
-        const pending: PendingPermission = {
-          params,
-          kind: typeof p?.kind === "string" ? p.kind : null,
-        };
+      const { promise, resolve, reject, } = Promise.withResolvers<unknown>();
+      const pending: PendingPermission = {
+        params,
+        kind: typeof p?.toolCall?.kind === "string" ? p.toolCall.kind : null,
+      };
 
-        this.permission = { pending, respond: resolve, };
-        this.opts.onPermissionRequest?.(pending,);
-      },);
+      this.permission = { pending, respond: resolve, fail: reject, };
+      this.opts.onPermissionRequest?.(pending,);
+      return promise;
     }
 
     if (method === "fs/read_text_file") {
