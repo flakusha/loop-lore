@@ -15,12 +15,31 @@
  */
 import { MessageRole, MessageStatus, MessageVisibility, } from "../../../db/enums";
 import type { GenerationMessage, } from "../../../generation/gen-types-options";
+import { getChildLogger, } from "../../../logger";
 import { resolveMessageContent, } from "../../../routes/messages/helpers";
 import type { SectionBuilder, } from "../types";
 
+/**
+ * Chat purpose whose messages must never feed the LLM (epic-chat-privacy).
+ * `chats.purpose` is free text, so this is compared against the literal — the
+ * `ChatPurpose` enum deliberately does not carry the value.
+ */
+const COORDINATION_PURPOSE = "coordination";
+
 export const chatHistorySection: SectionBuilder = {
   name: "chatHistory",
-  enabled: () => true,
+  // Coordination chats are player-to-player OOC: their messages never reach
+  // the LLM. `enabled` is the single choke point — both the default assembly
+  // and the LLM-template path honour it.
+  enabled: (ctx,) => {
+    if (ctx.chat.purpose !== COORDINATION_PURPOSE) { return true; }
+
+    getChildLogger("assistant/prompt/chat-history",)?.debug("coordination chat excluded from prompt", {
+      chatId: ctx.chat.id,
+    },);
+
+    return false;
+  },
   build: async (ctx,) => {
     const maxMessages = Math.floor(ctx.tokenBudget / 4,);
     const rows = await ctx.db
