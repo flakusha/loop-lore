@@ -2062,7 +2062,13 @@
     "reunite": "Merge a split branch chat back into this chat (/reunite <secondaryChatId>)",
     "split": "Branch the party into per-location chats (/split <locationId>:<actorId[,actorId...]> ...)",
     "harness": "Run one turn on an external ACP harness (/harness <profile> <prompt>)",
-    "whatif": "Simulate a hypothetical branch (/whatif <hypothetical> [beats])"
+    "whatif": "Simulate a hypothetical branch (/whatif <hypothetical> [beats])",
+    "avatar": "Generate avatar art for the current character (/avatar <prompt>)",
+    "image": "Generate an image from a text prompt (/image <prompt>)",
+    "music": "Generate music or link an external music source (/music <prompt|url>)",
+    "sfx": "Generate a sound effect from a text prompt (/sfx <prompt>)",
+    "sound": "Generate a sound effect from a text prompt (/sound <prompt>) — alias for /sfx",
+    "video": "Generate a video from a text prompt (/video <prompt>)"
   },
   "participants": {
     "title": "Participants",
