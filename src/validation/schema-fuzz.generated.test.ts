@@ -40,6 +40,7 @@ import * as routes_gmNotes_schemas from "@/routes/gm-notes/schemas";
 import * as routes_harness_querySchema from "@/routes/harness/query-schema";
 import * as routes_nsfwModeration_appeals from "@/routes/nsfw-moderation/appeals";
 import * as routes_nsfwModeration_shared from "@/routes/nsfw-moderation/shared";
+import * as routes_omniSearch_types from "@/routes/omni-search/types";
 import * as routes_proactiveMessaging_schemas from "@/routes/proactive-messaging/schemas";
 import * as routes_quests_progress from "@/routes/quests/progress";
 import * as routes_quests_world from "@/routes/quests/world";
@@ -1955,6 +1956,36 @@ describe("NullableStringSchema", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_chatSections_types.NullableStringSchema,));
 });
 
+describe("OmniAssetHit", () => {
+  test("accepts generated values", () => checkAllValid(routes_omniSearch_types.OmniAssetHit,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_omniSearch_types.OmniAssetHit,));
+});
+
+describe("OmniChatHit", () => {
+  test("accepts generated values", () => checkAllValid(routes_omniSearch_types.OmniChatHit,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_omniSearch_types.OmniChatHit,));
+});
+
+describe("OmniMessageHit", () => {
+  test("accepts generated values", () => checkAllValid(routes_omniSearch_types.OmniMessageHit,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_omniSearch_types.OmniMessageHit,));
+});
+
+describe("OmniSearchQuery", () => {
+  test("accepts generated values", () => checkAllValid(routes_omniSearch_types.OmniSearchQuery,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_omniSearch_types.OmniSearchQuery,));
+});
+
+describe("OmniSearchResponse", () => {
+  test("accepts generated values", () => checkAllValid(routes_omniSearch_types.OmniSearchResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_omniSearch_types.OmniSearchResponse,));
+});
+
 describe("OptionalId", () => {
   test("accepts generated values", () => checkAllValid(validation_primitives.OptionalId,));
 
@@ -2645,6 +2676,12 @@ describe("UserStatusSchema", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_primitives.UserStatusSchema,));
 });
 
+describe("VerifyFactorBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_auth.VerifyFactorBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_auth.VerifyFactorBody,));
+});
+
 describe("WardrobeActorParams", () => {
   test("accepts generated values", () => checkAllValid(validation_wardrobe.WardrobeActorParams,));
 
@@ -2827,4 +2864,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 448 schemas discovered across 550 module(s).
+// 454 schemas discovered across 558 module(s).
