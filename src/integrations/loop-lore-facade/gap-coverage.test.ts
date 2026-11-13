@@ -184,10 +184,16 @@ describe("facade/video/messaging gap coverage", () => {
   });
 
   test("the declared chat.history schema rejects a drifted envelope", async () => {
+    // Resource contract: this test owns its registry, its transport pair, its
+    // server and its client - every one of them is closed in the finally, so a
+    // failed assertion cannot leak a transport into a sibling test. Its
+    // principal id and rate policy are unique to this test, so the shared
+    // budget limiter and the shared registry singleton stay untouched.
     const registry = createFacadeRegistry();
     registry.register({
       ...readOp(),
       name: "chat.history",
+      ratePolicy: { name: "gap-schema-test", windowMs: 60_000, max: 10, },
       outputSchema: ChatHistoryOutputSchema,
       handler: async () => ({
         ok: true,
@@ -198,19 +204,23 @@ describe("facade/video/messaging gap coverage", () => {
     },);
 
     const [serverTransport, clientTransport,] = InMemoryTransport.createLinkedPair();
-    const server = buildMcpServer({ registry, version: "test", ctx: userCtx("u1",), },);
-    await server.connect(serverTransport,);
+    const server = buildMcpServer({ registry, version: "test", ctx: userCtx("gap-schema-user",), },);
     const client = new Client({ name: "gap-schema-client", version: "0.0.0", },);
-    await client.connect(clientTransport,);
 
-    // listTools first: the SDK client caches the declared outputSchema and
-    // validates every later structured result against it.
-    await client.listTools();
-    await expect(
-      client.callTool({ name: "chat.history", arguments: {}, },),
-    ).rejects.toThrow("Structured content does not match the tool's output schema",);
+    try {
+      await server.connect(serverTransport,);
+      await client.connect(clientTransport,);
 
-    await client.close();
+      // listTools first: the SDK client caches the declared outputSchema and
+      // validates every later structured result against it.
+      await client.listTools();
+      await expect(
+        client.callTool({ name: "chat.history", arguments: {}, },),
+      ).rejects.toThrow("Structured content does not match the tool's output schema",);
+    } finally {
+      await client.close();
+      await server.close();
+    }
   });
 
   test("getFacadeRegistry memoizes and reset rebuilds", () => {
