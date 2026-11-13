@@ -19,6 +19,7 @@ import {
   buildCombatant,
 } from "../../rpg/service/battles.js";
 import { log, } from "../../rpg/service/log.js";
+import { abilityModifier, proficiencyBonus, } from "../../rpg/stats.js";
 import { getConditions, } from "../../worlds/conditions.js";
 
 /** */
@@ -274,6 +275,10 @@ export function serializeBattle(
     actions: number;
     bonusActions: number;
     reactions: number;
+    /** Armor class (the target number for incoming attack rolls). */
+    ac: number;
+    /** Melee attack bonus (STR mod + proficiency), matching the /attack default. */
+    attackBonus: number;
   }[];
   log: SerializedLogEntry[];
   environmentalEffects: EnvironmentalEffect[];
@@ -288,6 +293,10 @@ export function serializeBattle(
     actions: c.actions,
     bonusActions: c.bonusActions,
     reactions: c.reactions,
+    ac: c.ac,
+    // Mirror the engine's melee attack roll input (`/attack` defaults to STR):
+    // abilityModifier(STR) + proficiencyBonus(level).
+    attackBonus: abilityModifier(c.stats.str,) + proficiencyBonus(c.level,),
   }),);
 
   const log = Array.from(battle.log, (entry,) => {

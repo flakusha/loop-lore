@@ -8,7 +8,9 @@
  * The panel renders the active chat battle (roster + action bar) and lets the
  * user act on it with mouse or keyboard. Actions (`/attack`, `/heal`,
  * `/battle end`) are dispatched through `executeQuickReply`, so they reuse the
- * existing server-side slash-command path (`dispatchCommand`).
+ * existing server-side slash-command path (`dispatchCommand`); the attack
+ * action additionally resolves an instant preview roll over the shipped
+ * `POST /api/battle/resolution/attack` endpoint (see ../battle/api.ts).
  */
 import { type BattleView, destroyBattlePanel, mountBattlePanel, renderBattle, } from "../battle/panel";
 import type { ChatState, } from "./types";
@@ -30,6 +32,9 @@ export const chatBattle: Partial<ChatState> & ThisType<ChatState> = {
     mountBattlePanel(el, {
       sendCommand: async (command: string,) => {
         await this.executeQuickReply(command,);
+      },
+      notify: (message: string,) => {
+        this.$dispatch?.("show-toast", { type: "info", message, },);
       },
     },);
 

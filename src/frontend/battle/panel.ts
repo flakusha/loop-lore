@@ -30,6 +30,7 @@ import {
 } from "./commands.js";
 
 import { t, } from "../alpine/i18n";
+import { fetchAttackRollPreview, } from "./api.js";
 import { renderBattleLog, } from "./battle-log.js";
 import { buildFocusTargets, handlePanelKey, type PanelFocusDeps, rebuildFocus, } from "./panel-focus.js";
 import {
@@ -63,6 +64,8 @@ export {
 export interface BattlePanelContext {
   /** Send a slash command through the chat's message path. */
   sendCommand: (command: string,) => Promise<void>;
+  /** Surface a transient info message (e.g. an HTTP attack-roll preview). */
+  notify?: (message: string,) => void;
 }
 
 let container: HTMLElement | null = null;
@@ -260,11 +263,49 @@ function render(): void {
 // ── Action execution ───────────────────────────────────
 
 /**
+ * Preview an attack roll over the shipped `/api/battle/resolution/attack`
+ * endpoint and surface it immediately; the authoritative resolution still
+ * arrives through the chat command path.
+ * @param actingId - The acting combatant's id
+ * @param targetId - The selected target's id
+ */
+async function previewAttack(actingId: string | null, targetId: string | null,): Promise<void> {
+  if (!ctx) { return; }
+  const battle = deps.battle;
+  if (!battle || !actingId || !targetId) { return; }
+  const acting = battle.combatants.find((c,) => c.id === actingId);
+  const target = battle.combatants.find((c,) => c.id === targetId);
+  if (typeof acting?.attackBonus !== "number" || typeof target?.ac !== "number") { return; }
+
+  const preview = await fetchAttackRollPreview({
+    attackBonus: acting.attackBonus,
+    targetAC: target.ac,
+  },);
+
+  if (!preview) { return; }
+
+  ctx.notify?.(
+    t("battle.attackRollPreview", {
+      total: preview.total,
+      ac: preview.targetAC,
+      outcome: preview.outcome === "success" ? t("battle.rollSuccess",) : t("battle.rollFailure",),
+    },),
+  );
+}
+
+/**
  * @param kind
  */
 async function executeAction(kind: BattleActionKind,): Promise<void> {
   if (!ctx) { return; }
-  const command = battleCommandFor(kind, deps.selectedTargetId, deps.battle?.combatants ?? [],);
+  const battle = deps.battle;
+  const acting = battle ? battle.combatants[battle.turnIndex] : undefined;
+  if (kind === "attack") {
+    // Fire and forget: the preview must not gate the command dispatch.
+    void previewAttack(acting?.id ?? null, deps.selectedTargetId,);
+  }
+
+  const command = battleCommandFor(kind, deps.selectedTargetId, battle?.combatants ?? [],);
   if (command) { await ctx.sendCommand(command,); }
 }
 

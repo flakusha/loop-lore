@@ -249,6 +249,8 @@ describe("battle item helpers (pure)", () => {
       actions: view.combatants[0]!.actions,
       bonusActions: view.combatants[0]!.bonusActions,
       reactions: view.combatants[0]!.reactions,
+      ac: view.combatants[0]!.ac,
+      attackBonus: view.combatants[0]!.attackBonus,
     },);
 
     expect(view.log,).toEqual([],);
