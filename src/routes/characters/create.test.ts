@@ -172,7 +172,7 @@ describeOrSkip("createRoutes avatar asset linking", () => {
       new Request("http://test/api/actors", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ name: "Denied", },),
+        body: JSON.stringify({ displayName: "Denied", },),
       },),
     );
 

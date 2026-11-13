@@ -67,7 +67,10 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
       `${prefix}/worlds`,
       async (ctx: any,) => {
         const { userId, userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "world.create",)) {
+        // Unauthenticated callers fall through to handleCreateWorld, which
+        // returns the pinned 401 — the capability gate only judges callers
+        // with an identity (deny-closed via can() for null/unknown roles).
+        if (userId && !can(userRole, "world.create",)) {
           return jsonError({
             message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
             status: HttpStatus.Forbidden,
