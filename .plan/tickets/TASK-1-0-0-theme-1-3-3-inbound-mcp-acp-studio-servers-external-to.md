@@ -3,7 +3,7 @@
 
 # TASK: 1.0.0 theme-1 §3.3: inbound MCP/ACP studio servers (external tools connect INTO loop-lore)
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-agentic-integration-mcp-acp
@@ -23,3 +23,5 @@ Why: prior verification established the OUTBOUND direction is done (facade HTTP 
 - [x] Implementation complete
 - [x] Tests passing (21 pass across inbound/ + acp/ + mcp/stdio-server.test.ts, bun test --isolate)
 - [x] Documentation updated (CHANGELOG Unreleased entry; §3.3 wiring documented in the touched module headers)
+
+**Resolved:** 2026-11-13 registry-driven close: git issue 05bdec6 (registry tip: 432b29e03 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-1-0-0-THEME-1-3-3-INBOUND-M)
