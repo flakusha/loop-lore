@@ -176,6 +176,31 @@ describe("the MFA challenge store", () => {
     if (!locked.ok) { expect(locked.error.code,).toBe("too_many_attempts",); }
   });
 
+  test("concurrent wrong codes respect the attempt cap", async () => {
+    const { userId, factorId, } = await seedFactor();
+    const issued = await issueLoginChallenge(userId, factorId,);
+
+    // Bun runs all eight verifications against the same :memory: DB; each
+    // hashes (~100 ms) before touching the write lock, so the increments
+    // race. The conditional increment means at most the cap is recorded.
+    const results = await Promise.all(
+      Array.from({ length: 2 * MAX_CHALLENGE_ATTEMPTS, }, () =>
+        verifyChallenge({
+          database: db,
+          challengeId: issued.id,
+          userId,
+          code: "not-the-code",
+          purpose: ChallengePurpose.Login,
+          now,
+        },),),
+    );
+
+    const codes = results.map((result,) => result.ok ? "ok" : result.error.code);
+    expect(codes.filter((code,) => code === "invalid_code").length,).toBe(MAX_CHALLENGE_ATTEMPTS,);
+    expect(codes.filter((code,) => code === "too_many_attempts").length,).toBe(MAX_CHALLENGE_ATTEMPTS,);
+    expect((await storedChallenge(issued.id,)).attempts,).toBe(MAX_CHALLENGE_ATTEMPTS,);
+  });
+
   test("a challenge issued for another purpose is refused", async () => {
     const { userId, factorId, } = await seedFactor();
     const issued = await issueLoginChallenge(userId, factorId,);

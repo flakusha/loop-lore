@@ -132,12 +132,20 @@ export async function verifyChallenge(params: VerifyChallengeParams,): Promise<C
   }
 
   if (!(await verifyPassword(code, row.nonce_hash,))) {
-    await database
+    // The guard IS the increment: concurrent losers race this conditional
+    // update, so at most MAX_CHALLENGE_ATTEMPTS are ever recorded and losers
+    // past the cap report too_many_attempts instead of overshooting it.
+    const bumped = await database
       .updateTable("auth_challenges",)
       .set({ attempts: sql`attempts + 1`, },)
       .where("id", "=", challengeId,)
       .where("consumed", "=", 0,)
-      .execute();
+      .where("attempts", "<", MAX_CHALLENGE_ATTEMPTS,)
+      .executeTakeFirst();
+
+    if (Number(bumped.numUpdatedRows ?? 0,) === 0) {
+      return fail("too_many_attempts", "Too many failed attempts",);
+    }
 
     return fail("invalid_code", "Invalid code",);
   }

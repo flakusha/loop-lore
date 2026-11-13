@@ -197,6 +197,57 @@ describe("the MFA email channel", () => {
     }
   });
 
+  test("failed resend preserves the previously delivered code", async () => {
+    const { userId, factorId, } = await seedFactor();
+    const delivered: EmailTransportMessage[] = [];
+    const goodBridge = await fakeBridge(delivered,);
+
+    const first = await sendMfaEmail({
+      database: db,
+      bridge: goodBridge,
+      userId,
+      factorId,
+      purpose: ChallengePurpose.Login,
+      toEmail: "user@example.com",
+      limiter: createRateLimiter({ windowMs: 60_000, maxRequests: 1, },),
+      now,
+    },);
+
+    if (!first.ok) { throw new Error(`first send failed: ${first.error.code}`,); }
+    expect(delivered,).toHaveLength(1,);
+
+    // Resend while SMTP is down: the new code never arrives.
+    const lost: EmailTransportMessage[] = [];
+    const badBridge = await fakeBridge(lost, true,);
+    const resend = await sendMfaEmail({
+      database: db,
+      bridge: badBridge,
+      userId,
+      factorId,
+      purpose: ChallengePurpose.Login,
+      toEmail: "user@example.com",
+      limiter: createRateLimiter({ windowMs: 60_000, maxRequests: 1, },),
+      now,
+    },);
+
+    expect(resend.ok,).toBe(false,);
+    if (resend.ok) { throw new Error("resend should have failed",); }
+    expect(resend.error.code,).toBe("delivery_failed",);
+    expect(lost,).toHaveLength(0,);
+
+    // The previously delivered code still verifies — the user is not stranded.
+    const recovered = await verifyChallenge({
+      database: db,
+      challengeId: first.value.id,
+      userId,
+      code: first.value.code,
+      purpose: ChallengePurpose.Login,
+      now,
+    },);
+
+    expect(recovered.ok,).toBe(true,);
+  });
+
   test("delivery failure — transport error maps to delivery_failed without recording budget", async () => {
     const { userId, factorId, } = await seedFactor();
     const sent: EmailTransportMessage[] = [];

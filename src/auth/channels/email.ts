@@ -129,6 +129,18 @@ export async function sendMfaEmail(options: SendMfaEmailOptions,): Promise<Chall
 
   limiter.record(key, at,);
 
+  // The open challenge superseded below — re-activated if delivery fails, so
+  // a failed resend never strands a user holding a delivered code.
+  const prior = await database
+    .selectFrom("auth_challenges",)
+    .select("id",)
+    .where("user_id", "=", userId,)
+    .where("factor_id", "=", factorId,)
+    .where("purpose", "=", purpose,)
+    .where("consumed", "=", 0,)
+    .orderBy("created_at", "desc",)
+    .executeTakeFirst();
+
   const issued = await issueChallenge({
     database,
     userId,
@@ -158,6 +170,26 @@ export async function sendMfaEmail(options: SendMfaEmailOptions,): Promise<Chall
 
   if (!sent.ok) {
     limiter.refund(key,);
+    // Delivery failed: the new code never arrived, so consume it and
+    // re-activate the challenge it superseded — the user's delivered code
+    // still verifies.
+    await database.transaction().execute(async (trx,) => {
+      await trx
+        .updateTable("auth_challenges",)
+        .set({ consumed: 1, },)
+        .where("id", "=", issued.value.id,)
+        .execute();
+
+      if (prior) {
+        await trx
+          .updateTable("auth_challenges",)
+          .set({ consumed: 0, },)
+          .where("id", "=", prior.id,)
+          .where("consumed", "=", 1,)
+          .execute();
+      }
+    },);
+
     return fail("delivery_failed", `MFA email delivery failed: ${sent.message}`,);
   }
 
