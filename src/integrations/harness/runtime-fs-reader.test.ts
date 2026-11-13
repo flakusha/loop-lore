@@ -7,14 +7,20 @@
  * as a typed JSON-RPC error — never as a raw filesystem error.
  *
  * Resource contract (parallel-safe): every test owns a fresh fixture
- * subprocess (startFakeAcp: unique mkdtemp dir, no ports), its own temp dirs
- * and its own runtime; all reaped in afterEach including failure paths. The
- * fixture log is read before the server is stopped (stop removes its dir).
+ * subprocess (startFakeAcp: unique mkdtemp dir, no ports — the fixture's
+ * behaviour rides its own script file, so no process env is mutated), its own
+ * mkdtemp sandbox root, and its own runtime INSTANCE (createHarnessRuntime —
+ * never the process-global harness runtime singleton). All of it is reaped in
+ * afterEach, including failure paths. The fixture log is read before the
+ * server is stopped (stop removes its dir). The admin-settings store is
+ * process-shared, so it is reset before and after every case: the file starts
+ * from an UNSEEDED store whatever the cross-file order is.
  */
-import { afterEach, describe, expect, it, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { resetHarnessAdminSettings, } from "./admin-settings";
 import { type FakeAcpLogEntry, type FakeAcpServer, startFakeAcp, } from "./fake-acp-server";
 import { createHarnessRuntime, type HarnessRuntime, } from "./runtime";
 
@@ -59,7 +65,13 @@ function runtimeFor(root: string, server: FakeAcpServer,): HarnessRuntime {
   return runtime;
 }
 
+beforeEach(() => {
+  resetHarnessAdminSettings();
+},);
+
 afterEach(async () => {
+  resetHarnessAdminSettings();
+
   for (const runtime of runtimes.splice(0,)) {
     runtime.registry.connection("p",)?.close();
   }
