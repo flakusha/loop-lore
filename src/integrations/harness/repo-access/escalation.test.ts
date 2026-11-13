@@ -21,7 +21,11 @@ import {
   type EscalationRateLimiter,
   requestRepoRootChange,
 } from "./escalation";
-import { listPendingEscalations, resolveEscalation, } from "./escalation-queue";
+import {
+  listPendingEscalations,
+  type PendingEscalation,
+  resolveEscalation,
+} from "./escalation-queue";
 import { REPO_ACCESS_ESCALATION_TOOL, } from "./escalation-rows";
 import { type RepoAccessPrincipal, } from "./principal-scope";
 import { initRepoAccessSettings, resetRepoAccessSettings, } from "./settings";
@@ -67,6 +71,17 @@ async function escalationRows(): Promise<
     .select(["id", "verdict", "escalation_attempt", "tags",],)
     .where("tool", "=", REPO_ACCESS_ESCALATION_TOOL,)
     .execute();
+}
+
+/**
+ * The pending escalations, asserting the queue read SUCCEEDED.
+ * @returns the pending escalations
+ */
+async function pendingEscalations(): Promise<PendingEscalation[]> {
+  const result = await listPendingEscalations(db,);
+  expect(result.ok,).toBe(true,);
+
+  return result.ok ? result.items : [];
 }
 
 /**
@@ -154,7 +169,7 @@ describe("requestRepoRootChange — recorded, default deny", () => {
     },);
 
     expect(outcome.ok === false && outcome.code,).toBe("escalation_rate_limited",);
-    expect(await listPendingEscalations(db,),).toHaveLength(0,);
+    expect(await pendingEscalations(),).toHaveLength(0,);
   });
 
   it("refuses the request while the repo-access tier is disabled", async () => {
@@ -169,7 +184,7 @@ describe("requestRepoRootChange — recorded, default deny", () => {
 
     expect(outcome.ok === false && outcome.code,).toBe("repo_access_disabled",);
     expect(await escalationRows(),).toHaveLength(0,);
-    expect(await listPendingEscalations(db,),).toHaveLength(0,);
+    expect(await pendingEscalations(),).toHaveLength(0,);
   });
 
   it("refuses a principal that carries no identity at all", async () => {
@@ -183,7 +198,7 @@ describe("requestRepoRootChange — recorded, default deny", () => {
     expect(outcome.ok,).toBe(false,);
     expect(outcome.ok === false && outcome.code,).toBe("escalation_denied",);
     expect(await escalationRows(),).toHaveLength(0,);
-    expect(await listPendingEscalations(db,),).toHaveLength(0,);
+    expect(await pendingEscalations(),).toHaveLength(0,);
   });
 
   it("denies the request instead of throwing when the audit write fails", async () => {
@@ -224,7 +239,7 @@ describe("requestRepoRootChange — recorded, default deny", () => {
     const outcome = await requestRepoRootChange({ principal: subject, targetPath: "/etc", db, limiter: allowAll, },);
 
     expect(outcome.ok,).toBe(false,);
-    expect(await listPendingEscalations(db,),).toHaveLength(1,);
+    expect(await pendingEscalations(),).toHaveLength(1,);
   });
 });
 
@@ -280,7 +295,7 @@ describe("the credential-scoped key", () => {
     await requestRepoRootChange({ principal: credA, targetPath: "/etc", db, limiter: allowAll, },);
     await requestRepoRootChange({ principal: credB, targetPath: "/etc", db, limiter: allowAll, },);
 
-    expect(await listPendingEscalations(db,),).toHaveLength(2,);
+    expect(await pendingEscalations(),).toHaveLength(2,);
   });
 });
 
@@ -289,7 +304,7 @@ describe("the admin queue — list, approve, deny", () => {
     const subject = principal("internal-service",);
     await requestRepoRootChange({ principal: subject, targetPath: "/etc", db, limiter: allowAll, },);
 
-    const pending = await listPendingEscalations(db,);
+    const pending = await pendingEscalations();
     expect(pending,).toHaveLength(1,);
     expect(pending[0]?.targetPath,).toBe("/etc",);
     expect(String(pending[0]?.kind,),).toBe("internal-service",);
@@ -309,7 +324,7 @@ describe("the admin queue — list, approve, deny", () => {
     expect(rows[0]?.verdict,).toBe("denied",);
     expect(rows[0]?.escalation_attempt,).toBe(1,);
     expect(rows[1]?.verdict,).toBe("reviewed",);
-    expect(await listPendingEscalations(db,),).toHaveLength(0,);
+    expect(await pendingEscalations(),).toHaveLength(0,);
   });
 
   it("grants exactly ONE root change after an approval", async () => {
@@ -325,7 +340,7 @@ describe("the admin queue — list, approve, deny", () => {
     // The approval is consumed: the next request is denied and queued again.
     const again = await requestRepoRootChange({ principal: subject, targetPath: "/etc", db, limiter: allowAll, },);
     expect(again.ok,).toBe(false,);
-    expect(await listPendingEscalations(db,),).toHaveLength(1,);
+    expect(await pendingEscalations(),).toHaveLength(1,);
   });
 
   it("grants ONE root change to a concurrent pair of redemptions", async () => {
@@ -367,7 +382,7 @@ describe("the admin queue — list, approve, deny", () => {
 
     const decision = await resolveEscalation(db, { id: requestId, decision: "deny", adminId: "admin-1", },);
     expect(decision.ok,).toBe(true,);
-    expect(await listPendingEscalations(db,),).toHaveLength(0,);
+    expect(await pendingEscalations(),).toHaveLength(0,);
 
     const after = await requestRepoRootChange({ principal: subject, targetPath: "/etc", db, limiter: allowAll, },);
     expect(after.ok,).toBe(false,);
@@ -405,7 +420,7 @@ describe("the admin queue — list, approve, deny", () => {
 
     expect(decision.ok,).toBe(false,);
     expect(decision.ok === false && decision.code,).toBe("write_failed",);
-    expect(await listPendingEscalations(db,),).toHaveLength(1,);
+    expect(await pendingEscalations(),).toHaveLength(1,);
   });
 
   it("reports a failed read instead of throwing when the database is gone", async () => {
@@ -421,6 +436,21 @@ describe("the admin queue — list, approve, deny", () => {
 
     expect(decision.ok,).toBe(false,);
     expect(decision.ok === false && decision.code,).toBe("write_failed",);
+  });
+
+  it("reports a failed list read instead of throwing when the database is gone", async () => {
+    const subject = principal("user",);
+    await requestRepoRootChange({ principal: subject, targetPath: "/etc", db, limiter: allowAll, },);
+
+    // The DB handle is closed under the queue: the list read fails instead of
+    // throwing out of listPendingEscalations, and it does NOT report an empty
+    // queue either — a failed read is a failure, not "nothing pending".
+    await destroyTestDb(fixture,);
+
+    const listed = await listPendingEscalations(db,);
+
+    expect(listed.ok,).toBe(false,);
+    expect(listed.ok === false && listed.code,).toBe("write_failed",);
   });
 
   it("lets only one of two concurrent admins decide the same request", async () => {

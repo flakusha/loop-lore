@@ -15,6 +15,10 @@
  * so two admins deciding the same request race for ONE row and only one of
  * them writes it. A failed write is a FAILURE result, never a success: the
  * request stays pending and can be decided again.
+ *
+ * CONTRACT: every DB path in this module returns a Result, never a throw — a
+ * failed read or write is REPORTED (a `write_failed` code), so the caller can
+ * answer a declared HTTP status instead of leaking a driver error.
  */
 import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../../db/schema";
@@ -24,6 +28,7 @@ import { jsonStringifyOr, safeJsonStringify, } from "../../../utils";
 import {
   buildEscalationTags,
   type EscalationKey,
+  type EscalationRow,
   escalationRowId,
   type EscalationState,
   latestEscalationRow,
@@ -52,6 +57,17 @@ export interface PendingEscalation {
 
 /** The decision an admin can take on one recorded request. */
 export type EscalationDecision = "approve" | "deny";
+
+/**
+ * The outcome of the pending-escalation read — a Result, never a throw.
+ *
+ * The failure code is the module's own "the database operation failed" code
+ * (`write_failed`), the same one {@link resolveEscalation} reports when its
+ * READ fails — one vocabulary, not a second one.
+ */
+export type PendingEscalationList =
+  | { ok: true; items: PendingEscalation[] }
+  | { ok: false; code: "write_failed"; message: string };
 
 /** The outcome of one admin decision — a Result, never a throw. */
 export type EscalationResolution =
@@ -89,20 +105,12 @@ function keyId(key: EscalationKey,): string {
 }
 
 /**
- * List the escalation requests that are still waiting for an admin decision.
- * A request is pending while no later row for its key exists (an approval, a
- * denial or a redeemed approval closes it).
- * @param db - database handle
+ * The pending escalations among the recorded rows — the LAST row of a key
+ * decides it, and only a request row leaves the key pending.
+ * @param rows - the recorded escalation rows, oldest first
  * @returns the pending requests, oldest first
  */
-export async function listPendingEscalations(db: Kysely<DB>,): Promise<PendingEscalation[]> {
-  const rows = await db
-    .selectFrom("tool_call_audit",)
-    .select(["id", "user_id", "verdict", "rationale", "tags", "created_at",],)
-    .where("tool", "=", REPO_ACCESS_ESCALATION_TOOL,)
-    .orderBy(sql`rowid asc`,)
-    .execute();
-
+function pendingFromRows(rows: EscalationRow[],): PendingEscalation[] {
   const latest = new Map<string, EscalationState>();
   for (const row of rows) {
     const state = parseEscalationRow(row,);
@@ -126,6 +134,39 @@ export async function listPendingEscalations(db: Kysely<DB>,): Promise<PendingEs
   pending.sort((left, right,) => left.createdAt.localeCompare(right.createdAt,));
 
   return pending;
+}
+
+/**
+ * List the escalation requests that are still waiting for an admin decision.
+ * A request is pending while no later row for its key exists (an approval, a
+ * denial or a redeemed approval closes it).
+ *
+ * A failed read is REPORTED, never thrown: the whole module's contract is a
+ * Result. An empty list would hide a real outage behind "nothing pending".
+ * @param db - database handle
+ * @returns the pending requests (oldest first) or the read failure
+ */
+export async function listPendingEscalations(db: Kysely<DB>,): Promise<PendingEscalationList> {
+  try {
+    const rows = await db
+      .selectFrom("tool_call_audit",)
+      .select(["id", "user_id", "verdict", "rationale", "tags", "created_at",],)
+      .where("tool", "=", REPO_ACCESS_ESCALATION_TOOL,)
+      .orderBy(sql`rowid asc`,)
+      .execute();
+
+    return { ok: true, items: pendingFromRows(rows,), };
+  } catch (cause) {
+    getChildLogger("harness-repo-access",)?.warn("repo-access escalation list failed", {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
+
+    return {
+      ok: false,
+      code: "write_failed",
+      message: "the pending escalation queue could not be read",
+    };
+  }
 }
 
 /**

@@ -28,6 +28,7 @@ export {
   type EscalationResolution,
   listPendingEscalations,
   type PendingEscalation,
+  type PendingEscalationList,
   resolveEscalation,
 } from "./escalation-queue";
 export { REPO_ACCESS_ESCALATION_TOOL, } from "./escalation-rows";
