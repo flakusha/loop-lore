@@ -6,8 +6,10 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-auth-access.md
+**Epic:** epic-auth-access
 **Tags:** rbac, permissions, multi-user
+
+**Caveats:** TOCTOU: permission is checked per request at the route gate; concurrent role changes apply to the next request, not in-flight ones. Security: deny-closed — unknown roles and null roles fail the gate. Authorization: this ticket ADDS the missing gates; the broad `admin.character`/`admin.world` cross-user bypasses stay for tranche 2. Parallelism: route-layer guards are stateless; no shared state. Partial failure: each route fails independently with 403; no cross-route transaction. Rollback: removing a guard restores prior behavior; matrix lines are additive. Observability: denials flow through the existing 403 + audit-log path in the guard helpers.
 
 **Summary:**
 
@@ -28,8 +30,6 @@ Matrix change in `DEFAULT_PERMISSIONS` (`src/users/permissions.ts:56-88`, the on
 Denial message: `auth-narrowing.ts:41` and `middleware/permissions.ts:118` hardcode `admin.adminAccessRequired`; change both to `errors.forbidden` (both keys exist: `src/public/locales/en.json:441` and `:678` — no locale edit). Update the exhaustive contract test `permissions.test.ts:218-292` for the new `import.own` rows (and moderator rows if granted).
 
 Enforcement is ROUTE layer only by design: integration tokens (`llri_`, `src/middleware/auth/integration-token.ts:175-187`, `userRole: null`) and MCP/ACP inbound principals (`src/integrations/inbound/principal.ts:62`, `userRole: null`) are confined to `/integrations/*` with their own facade scope ladder (`FacadeScope`, `src/integrations/loop-lore-facade/types.ts:20`, `authz.ts:103`); service-layer checks would break the facade. Assistant slash commands and the LLM `create_character` tool call services directly with no role context — residual gaps, not this ticket.
-
-**Caveats:** TOCTOU: permission is checked per request at the route gate; concurrent role changes apply to the next request, not in-flight ones. Security: deny-closed — unknown roles and null roles fail the gate. Authorization: this ticket ADDS the missing gates; the broad `admin.character`/`admin.world` cross-user bypasses stay for tranche 2. Parallelism: route-layer guards are stateless; no shared state. Partial failure: each route fails independently with 403; no cross-route transaction. Rollback: removing a guard restores prior behavior; matrix lines are additive. Observability: denials flow through the existing 403 + audit-log path in the guard helpers.
 
 **Context:**
 

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-chat-variants-taxonomy.md
+**Epic:** epic-chat-variants-taxonomy
 **Tags:** group-chat, story-mode, auto-generation
 
 **Summary:**
