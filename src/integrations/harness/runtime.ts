@@ -108,6 +108,15 @@ const MAX_READ_BYTES = 1024 * 1024;
  * (`worktree-scope.ts`), so a traversal or an escaping symlink is refused.
  * A raw filesystem error never reaches the agent — the refusal is a typed
  * JSON-RPC error.
+ *
+ * The read is NOT routed through the permission queue: ACP models the fs
+ * bridge as a CLIENT capability — `fs/read_text_file` exists only when the
+ * client advertises `fs.readTextFile` (vendored v1 schema,
+ * `ReadTextFileRequest`) and its request carries no permission payload —
+ * while `session/request_permission` is the permission surface for TOOL
+ * CALLS (its request carries a required `toolCall` and an option list). The
+ * spec gives a file read no ask, so the bridge answers it directly and
+ * confines it to the very root the asks are judged against.
  * @param root - the sandbox root the read is confined to
  * @param path - the path the agent asked for
  * @returns the file's text
@@ -133,9 +142,8 @@ async function readSandboxedText(root: string, path: string,): Promise<string> {
   }
 
   try {
-    // ponytail: the answer is capped at 1 MiB (the bridge ignores the
-    // request's line/limit params); honour them when the reader grows a
-    // ranged signature.
+    // ponytail: the reader answers the whole file, capped at 1 MiB (the
+    // outer bound); the adapter slices the requested line range out of it.
     const handle = await open(resolved, "r",);
     try {
       const buffer = Buffer.alloc(MAX_READ_BYTES,);
@@ -177,7 +185,10 @@ function sandboxRootFor(acp: HarnessAcpConfig, profile: string,): string | undef
  * A configured root also becomes the adapter's cwd, so the agent works in
  * the very directory its asks are judged against, and it confines the
  * `fs/read_text_file` bridge — the advertised capability is backed by a real
- * reader, not by a bridge that answers "unsupported".
+ * reader, not by a bridge that answers "unsupported". With no configured
+ * root the bridge therefore serves the PROCESS cwd: the very directory the
+ * permission asks are judged against, so the bridge never reaches further
+ * than the permission surface does.
  * @param options - config snapshot + optional factory override
  * @returns the composed runtime.
  */
@@ -190,7 +201,8 @@ export function createHarnessRuntime(options: CreateHarnessRuntimeOptions,): Har
   const queueFactory: HarnessAdapterFactory = (profile, command, opts,) => {
     const configured = sandboxRootFor(options.acp, profile,);
     // The read bridge is confined to the SAME root the asks are judged
-    // against, so the advertised `fs.readTextFile` capability is backed.
+    // against, so the advertised `fs.readTextFile` capability is backed. ACP
+    // routes no permission ask through a file read (see readSandboxedText).
     const root = configured ?? opts?.cwd ?? process.cwd();
     return baseFactory(profile, command, {
       ...opts,

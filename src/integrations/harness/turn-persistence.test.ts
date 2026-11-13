@@ -186,6 +186,45 @@ describe("persistHarnessTurn", () => {
     }
   });
 
+  it("persists the cost a usage_update reported after the prompt response", async () => {
+    // The cost rides a session notification: it may arrive after the response,
+    // and the row must still carry it.
+    const server = startFakeAcp({
+      FAKE_MODELS: "m",
+      FAKE_NO_USAGE: "1",
+      FAKE_LATE_USAGE: JSON.stringify({
+        sessionUpdate: "usage_update",
+        used: 120,
+        size: 1000,
+        cost: { amount: 0.25, currency: "USD", },
+      },),
+    },);
+
+    const adapter = new OmpAcpAdapter({ command: server.argv, requestTimeoutMs: 4000, },);
+
+    try {
+      const turn = await adapter.prompt("hi",);
+
+      const persisted = await persistHarnessTurn({
+        database: fixture.db,
+        chatId,
+        actorId,
+        profile: "omp",
+        transcript: turn.transcript,
+        turn,
+        turnKey: "turn-late-usage-cost",
+      },);
+
+      const row = await fixture.db.selectFrom("messages",).selectAll()
+        .where("id", "=", persisted.assistantMessageId,).executeTakeFirstOrThrow();
+
+      expect(row.token_cost,).toBe(0.25,);
+    } finally {
+      adapter.close();
+      server.stop();
+    }
+  });
+
   it("writes the tool_calls column in the shape the message readers parse", async () => {
     const persisted = await persistHarnessTurn({
       database: fixture.db,

@@ -69,7 +69,10 @@ const runPromptFlow = async (promptId) => {
     });
   }
   if (process.env.FAKE_READ_FILE) {
-    await askClient("fs/read_text_file", { sessionId: "fake-session-1", path: process.env.FAKE_READ_FILE });
+    const readParams = { sessionId: "fake-session-1", path: process.env.FAKE_READ_FILE };
+    if (process.env.FAKE_READ_FILE_LINE) { readParams.line = Number(process.env.FAKE_READ_FILE_LINE); }
+    if (process.env.FAKE_READ_FILE_LIMIT) { readParams.limit = Number(process.env.FAKE_READ_FILE_LIMIT); }
+    await askClient("fs/read_text_file", readParams);
   }
   if (cancelPromise) { await cancelPromise; cancelWaiter = null; }
   if (process.env.FAKE_EVENTS) {
@@ -85,6 +88,12 @@ const runPromptFlow = async (promptId) => {
   const result = { stopReason: stop };
   if (!process.env.FAKE_NO_USAGE) { result.usage = { inputTokens: 10, outputTokens: 5, totalTokens: 15 }; }
   send({ jsonrpc: "2.0", id: promptId, result });
+  if (process.env.FAKE_LATE_USAGE) {
+    send({ jsonrpc: "2.0", method: "session/update", params: {
+      sessionId: "fake-session-1",
+      update: JSON.parse(process.env.FAKE_LATE_USAGE),
+    } });
+  }
 };
 process.stdin.setEncoding("utf8");
 process.stdin.on("data", (c) => {
@@ -200,6 +209,12 @@ export interface FakeAcpEnv {
   FAKE_LOG_PARAMS?: string;
   /** When set, session/prompt first asks the client to read this path via `fs/read_text_file`. */
   FAKE_READ_FILE?: string;
+  /** 1-based first line the `fs/read_text_file` ask requests. */
+  FAKE_READ_FILE_LINE?: string;
+  /** Maximum number of lines the `fs/read_text_file` ask requests. */
+  FAKE_READ_FILE_LIMIT?: string;
+  /** JSON `usage_update` payload the child sends AFTER the prompt response. */
+  FAKE_LATE_USAGE?: string;
   /** When set, the session/prompt reply waits for `session/cancel`; stopReason then defaults to "cancelled". */
   FAKE_AWAIT_CANCEL?: string;
   /** JSON array of ACP `session/update` payloads emitted before the reply chunk. */

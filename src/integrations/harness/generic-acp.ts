@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+// size-allow: 290
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
@@ -29,6 +30,33 @@ import { TurnTranscriptCollector, } from "./turn-transcript";
 
 /** ACP protocol version the adapter speaks. */
 const PROTOCOL_VERSION = 1;
+
+/**
+ * How long a turn waits for a `usage_update` the harness sends AFTER the
+ * prompt response. The cost rides a SESSION notification, so the response can
+ * overtake it; the wait is bounded and only runs when the harness has shown
+ * it reports costs (or has not been probed yet).
+ */
+const USAGE_DRAIN_MS = 250;
+
+/**
+ * Apply the ACP `fs/read_text_file` range to the text the reader returned.
+ * The request shape (vendored v1 schema, `ReadTextFileRequest`): `line` is the
+ * 1-based line to start reading from, `limit` the maximum number of lines to
+ * read; both nullable.
+ * @param text - the file's text
+ * @param line - the first line the request asked for
+ * @param limit - the maximum number of lines the request asked for
+ * @returns the requested slice.
+ */
+function sliceRequestedLines(text: string, line: unknown, limit: unknown,): string {
+  const first = typeof line === "number" && Number.isInteger(line,) && line > 0 ? line - 1 : 0;
+  const max = typeof limit === "number" && Number.isInteger(limit,) && limit >= 0 ? limit : null;
+  if (first === 0 && max === null) { return text; }
+
+  const lines = text.split("\n",);
+  return lines.slice(first, max === null ? lines.length : first + max,).join("\n",);
+}
 
 /**
  * Options shared by every generic-ACP harness adapter: the spawn command
@@ -71,8 +99,14 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   private readonly opts: GenericAcpOptions;
   /** Everything the in-flight prompt streamed (text, reasoning, tool calls). */
   private transcript = new TurnTranscriptCollector();
-  /** Cost the harness reported for the in-flight turn (usage_update); null when none. */
+  /** The session's latest REPORTED cost (usage_update); null when none was reported. */
+  private sessionCostUsd: number | null = null;
+  /** The cost reported DURING the in-flight turn; null when it reported none. */
   private turnCostUsd: number | null = null;
+  /** What the session's usage reports say about the harness's cost reporting. */
+  private usageState: "unknown" | "costing" | "costless" = "unknown";
+  /** Resolver parked on the next usage notification of this session. */
+  private usageWaiter: (() => void) | null = null;
   /** Open server-originated permission request, when one awaits an outcome. */
   private permission: {
     pending: PendingPermission;
@@ -196,12 +230,23 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       dispatched.resolve();
       const response = await requestPromise as { stopReason?: unknown; usage?: RawUsage | null };
 
+      // The harness may report the cost AFTER the response (the ACP cost
+      // rides a session notification, not the PromptResponse), so the turn
+      // waits - bounded - for that report instead of dropping it. The wait
+      // runs only while the harness may still report one: a harness that
+      // reported a cost keeps being waited for, one that was probed and never
+      // reported a cost is not waited for again.
+      if (this.turnCostUsd === null && this.usageState !== "costless") {
+        await this.drainUsage();
+        if (this.usageState === "unknown") { this.usageState = "costless"; }
+      }
+
       const transcript = this.transcript.snapshot();
       return {
         text: transcript.text,
         stopReason: typeof response.stopReason === "string" ? response.stopReason : "unknown",
         usage: this.toUsage(response.usage,),
-        costUsd: this.turnCostUsd,
+        costUsd: this.sessionCostUsd,
         acpSessionId: sessionId,
         transcript,
       };
@@ -303,7 +348,16 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
         if (method !== "session/update") { return; }
         for (const event of narrowSessionUpdate(params,)) {
           if (event.type === "usage") {
-            this.turnCostUsd = event.costUsd;
+            // A cost-less update never clears a reported cost: the session
+            // keeps the latest cost the harness REPORTED, and null means the
+            // harness never reported one.
+            if (event.costUsd !== null) {
+              this.sessionCostUsd = event.costUsd;
+              this.turnCostUsd = event.costUsd;
+              this.usageState = "costing";
+            }
+
+            this.usageWaiter?.();
             continue;
           }
 
@@ -377,10 +431,15 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
         return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
       }
 
-      const path = (params as { path?: unknown } | null)?.path;
-      return typeof path === "string"
-        ? reader(path,).then((content,) => ({ content, }))
-        : Promise.reject(new JsonRpcRequestError("fs/read_text_file missing path", -32602,),);
+      const request = params as { path?: unknown; line?: unknown; limit?: unknown } | null;
+      const path = request?.path;
+      if (typeof path !== "string") {
+        return Promise.reject(new JsonRpcRequestError("fs/read_text_file missing path", -32602,),);
+      }
+
+      return reader(path,).then((content,) => ({
+        content: sliceRequestedLines(content, request?.line, request?.limit,),
+      }));
     }
 
     return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
@@ -406,5 +465,25 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       outputTokens: num(usage.outputTokens,),
       totalTokens: num(usage.totalTokens,),
     };
+  }
+
+  /**
+   * Wait, bounded, for the next usage notification of this session.
+   *
+   * The ACP cost rides a session notification, so a harness may report it
+   * after the prompt response; without this wait the late report is dropped.
+   */
+  private async drainUsage(): Promise<void> {
+    await new Promise<void>((resolve,) => {
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const waiter = (): void => {
+        if (timer !== undefined) { clearTimeout(timer,); }
+        this.usageWaiter = null;
+        resolve();
+      };
+
+      timer = setTimeout(waiter, USAGE_DRAIN_MS,);
+      this.usageWaiter = waiter;
+    },);
   }
 }

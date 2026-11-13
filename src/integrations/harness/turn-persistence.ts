@@ -180,6 +180,10 @@ export async function persistHarnessTurn(
         token_count_prompt: turn.usage?.inputTokens ?? null,
         token_count_completion: turn.usage?.outputTokens ?? null,
         token_count_total: turn.usage?.totalTokens ?? null,
+        // The SESSION-cumulative cost the harness reported: the ACP
+        // `usage_update` cost is cumulative for the session, so N turns of one
+        // session record the same running total. Summing the column
+        // overstates the spend; the per-turn delta is never invented.
         token_cost: turn.costUsd ?? null,
       },).execute();
 
