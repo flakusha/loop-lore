@@ -36,7 +36,7 @@ function gmConfigVisualNovel(gmConfig: string,): "text" | "visual_novel" | null 
  */
 function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-chats", },)
-    .derive(() => ({ userId, }))
+    .derive(() => ({ userId, userRole: "user", }))
     .use(chatsRoutes({ database: db, config: {} as any, },),) as unknown as Elysia;
 }
 
@@ -960,7 +960,7 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
    */
   function createApp(db: Kysely<DB>, uid: string | null,): Elysia {
     return new Elysia({ name: "test-chats-c1", },)
-      .derive(() => ({ userId: uid, }))
+      .derive(() => ({ userId: uid, userRole: "user", }))
       .use(chatsRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
   }
 
