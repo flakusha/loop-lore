@@ -97,8 +97,10 @@ export interface DiscoverHarnessModelsOptions {
 }
 
 /**
- * Split a `provider/id` model id into the capability table's keys. A
- * prefix-less (or malformed) id keys on the profile's flavor instead.
+ * Split a `provider/id` model id into the capability table's keys. The
+ * prefix is the id's harness-side namespace: seeded rows use the flavor
+ * namespaces (`codex`, `claude`), health-scan rows a registry instance
+ * name. A prefix-less (or malformed) id keys on the profile's flavor.
  * @param options - the model id and the profile's flavor
  * @returns provider + model keys for the capability table.
  */
@@ -317,9 +319,13 @@ async function listedOrStaticEntries(options: {
 }
 
 /**
- * USD per 1k tokens for a model id, from the provider registry: the id's
- * provider prefix names the registered provider instance. Unknown when the
- * prefix names no provider, or the provider publishes no price.
+ * USD per 1k tokens for a model id, from the provider registry. The id's
+ * prefix is a HARNESS-side namespace (the flavor's own — `codex`, `claude`,
+ * `openrouter`, `custom` — or, for the omp flavor, an upstream vendor prefix
+ * like `zai`), NOT a registered provider instance name: it is matched
+ * against the registry's instance names, so only an instance registered
+ * under exactly that name resolves. Unknown when nothing matches, or the
+ * provider publishes no price.
  * @param model - the `provider/id` model id
  * @returns the published price, or undefined when unknown.
  */
@@ -335,9 +341,10 @@ function publishedCost(model: string,): number | undefined {
  * Project discovered entries onto the shared router's candidate shape, so a
  * harness dispatch site can feed them to `ModelRouter.route` with an existing
  * `TaskSignal`. Input order is preserved (the router treats it as
- * preference). Each candidate also carries the price its provider publishes
- * (`ProviderCapabilities.costPer1kTokens`), looked up by the model id's
- * provider prefix — unknown when the provider publishes none.
+ * preference). Each candidate also carries the price the provider instance
+ * publishes (`ProviderCapabilities.costPer1kTokens`), looked up by matching
+ * the model id's prefix against the registry's instance names — unknown when
+ * no instance matches or publishes no price.
  * @param entries - discovered (already enriched) entries
  * @returns `RoutableModel` candidates.
  */
