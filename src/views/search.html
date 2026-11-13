@@ -58,7 +58,7 @@
           data-testid="omni-search-empty"
         >
           <span class="icon">🔍</span>
-          <div class="title" x-text="$t('search.noResults', { query: queried })"></div>
+          <div class="title" x-text="noResultsLabel()"></div>
           <div class="description">{{{t("search.emptyHint")}}}</div>
         </div>
 
@@ -120,6 +120,7 @@
               role="button"
               tabindex="0"
               x-on:keydown.enter.prevent="openAsset(asset.assetId)"
+              x-on:keydown.space.prevent="openAsset(asset.assetId)"
               :aria-label="$t('search.openAsset') + ': ' + asset.filename"
               :data-testid="'omni-asset-' + asset.assetId"
             >

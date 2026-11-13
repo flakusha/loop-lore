@@ -5,6 +5,7 @@
 // transport is stubbed by overwriting globalThis.apiFetch. This file OWNS the
 // global for the duration of each test and restores it in afterEach — a
 // leaked stub would hijack every other suite in this worker.
+import "./i18n.test-helper";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { OmniSearchResults, } from "./types";
 import "./omni-search";
@@ -28,6 +29,7 @@ interface SearchState {
   queried: string;
   results: OmniSearchResults;
   total(): number;
+  noResultsLabel(): string;
   run(): Promise<void>;
   openChat(chatId: string,): void;
   openAsset(assetId: string,): void;
@@ -78,6 +80,12 @@ describe("omniSearch pure helpers", () => {
     expect(s.total(),).toBe(3,);
   });
 
+  test("noResultsLabel interpolates the queried text", () => {
+    const s = fresh();
+    s.queried = "tavern";
+    expect(s.noResultsLabel(),).toBe('No results for "tavern"',);
+  });
+
   test("openChat assigns the chat deep link", () => {
     const s = fresh();
     s.openChat("c1",);
@@ -113,7 +121,7 @@ describe("omniSearch run", () => {
     const s = fresh();
     s.q = " tavern ";
     await s.run();
-    expect(calls,).toEqual(["/api/search?q=tavern",],);
+    expect(calls,).toEqual(["/api/v1/search?q=tavern",],);
     expect(s.error,).toBe(false,);
     expect(s.loading,).toBe(false,);
     expect(s.queried,).toBe("tavern",);
