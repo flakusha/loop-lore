@@ -118,13 +118,17 @@ const BASELINE = [
   // of resolving the principal's actual worktree root). Unreachable from an
   // assistant command handler — the harness repo-access tier is gated by the
   // server-resolved principal, never by a tool param.
-  "src/integrations/harness/repo-access/principal-scope.ts",
-  "src/plugins/loader.ts",
   // Trust-boundary scope-root resolver: its realpath(repoRoot) call must
   // observe the REAL filesystem (a policed realpath would judge the sandbox
   // allowlist through the interceptor instead of resolving actual symlinks),
   // same deliberate interception-proof form as worktree-scope.ts above.
   "src/integrations/harness/repo-access/principal-scope.ts",
+  "src/plugins/loader.ts",
+  // ACP fs-read bridge: its `open` must observe the REAL filesystem — the
+  // bridge serves the agent's reads inside the profile's sandbox root, and
+  // `open` sits in the interceptor's WRITE member list, so a policed call
+  // would judge a legitimate read against the assistant's write allowlist.
+  "src/integrations/harness/runtime.ts",
   "src/routes/assets.ts",
   "src/routes/characters/export.ts",
   "src/routes/views/character-edit-form.ts",

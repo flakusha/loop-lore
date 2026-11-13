@@ -102,4 +102,40 @@ describe("GenericAcpAdapter usage cost (fake ACP fixture)", () => {
 
     expect(turn.costUsd,).toBeNull();
   });
+
+  it("carries the cost a usage_update reported after the prompt response", async () => {
+    // The ACP cost rides a session notification, so it may land AFTER the
+    // response; the turn waits for it instead of dropping it.
+    const server = serve({
+      FAKE_MODELS: "m",
+      FAKE_LATE_USAGE: JSON.stringify({
+        sessionUpdate: "usage_update",
+        used: 120,
+        size: 1000,
+        cost: { amount: 0.25, currency: "USD", },
+      },),
+    },);
+
+    const adapter = adapterFor(server,);
+
+    const turn = await adapter.prompt("hi",);
+
+    expect(turn.costUsd,).toBe(0.25,);
+  });
+
+  it("keeps a reported cost when a later usage_update carries none", async () => {
+    const server = serve({
+      FAKE_MODELS: "m",
+      FAKE_EVENTS: JSON.stringify([
+        { sessionUpdate: "usage_update", used: 120, size: 1000, cost: { amount: 0.25, currency: "USD", }, },
+        { sessionUpdate: "usage_update", used: 130, size: 1000, },
+      ],),
+    },);
+
+    const adapter = adapterFor(server,);
+
+    const turn = await adapter.prompt("hi",);
+
+    expect(turn.costUsd,).toBe(0.25,);
+  });
 });

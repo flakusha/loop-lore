@@ -94,6 +94,25 @@ describe("harness runtime fs/read_text_file bridge (fake ACP fixture)", () => {
     expect(readEntry(server.readLog(),)?.content,).toEqual({ content: "inside the sandbox", },);
   });
 
+  it("answers only the requested line range", async () => {
+    const root = tempDir("harness-acp-sandbox-",);
+    const file = join(root, "note.txt",);
+    writeFileSync(file, "one\ntwo\nthree\nfour\n", "utf8",);
+    const server = serve({
+      FAKE_MODELS: "m",
+      FAKE_READ_FILE: file,
+      FAKE_READ_FILE_LINE: "2",
+      FAKE_READ_FILE_LIMIT: "2",
+    },);
+
+    const runtime = runtimeFor(root, server,);
+
+    await runtime.registry.ensureProbed("p",);
+    await runtime.registry.connection("p",)?.prompt("read it",);
+
+    expect(readEntry(server.readLog(),)?.content,).toEqual({ content: "two\nthree", },);
+  });
+
   it("advertises the read capability the reader backs", async () => {
     const root = tempDir("harness-acp-sandbox-",);
     const server = serve({ FAKE_MODELS: "m", FAKE_LOG_PARAMS: "1", },);

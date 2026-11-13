@@ -147,6 +147,23 @@ describe("wirePermissionOutcome", () => {
     expect(wirePermissionOutcome({ outcome: "cancelled", }, options,),).toEqual({ outcome: "cancelled", },);
   });
 
+  it("rides the advertised reject kind when the decision names an unadvertised one", () => {
+    // The harness advertised only reject_always: the denial rides THAT
+    // option, never a verb it never offered.
+    const options = advertisedPermissionOptions({ options: [{ optionId: "no", kind: "reject_always", },], },);
+
+    expect(wirePermissionOutcome({ outcome: "reject_once", }, options,),).toEqual({
+      outcome: "reject_always",
+      optionId: "no",
+    },);
+  });
+
+  it("falls back to the spec verb only when the harness advertised no denial option", () => {
+    const options = advertisedPermissionOptions({ options: [{ optionId: "allow", kind: "allow_once", },], },);
+
+    expect(wirePermissionOutcome({ outcome: "reject_once", }, options,),).toEqual({ outcome: "reject_once", },);
+  });
+
   it("denies in the harness's own spelling when no option can carry the allow", () => {
     const options = advertisedPermissionOptions({
       options: [
