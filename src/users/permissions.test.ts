@@ -249,6 +249,7 @@ const CONTRACTS: readonly RoleContract[] = [
       "world.create",
       "world.edit_own",
       "export.own",
+      "import.own",
     ],
   },
   {
@@ -261,6 +262,7 @@ const CONTRACTS: readonly RoleContract[] = [
       "world.create",
       "world.edit_own",
       "export.own",
+      "import.own",
     ],
   },
   {

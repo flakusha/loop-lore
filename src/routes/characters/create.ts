@@ -4,12 +4,13 @@
 import { Elysia, t, } from "elysia";
 import { linkAsset, } from "../../assets/service/links";
 import { ActorType, AgentType, AssetLinkEntity, } from "../../db/enums";
+import { can, } from "../../users/permissions";
 import { jsonStringifyOr, uid, } from "../../utils";
 import {
   ActorCreateBody,
   ErrorResponse,
 } from "../../validation/schemas";
-import { jsonCreated, requireUserId, } from "../http-utils";
+import { forbiddenResponse, jsonCreated, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -28,6 +29,12 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
     .post(
       `${prefix}/actors`,
       async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        if (!can(ctx.userRole, "character.create",)) {
+          return forbiddenResponse(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+        }
+
         const {
           displayName,
           tags,
@@ -46,8 +53,6 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         } = ctx.body;
 
         const assetId = (ctx.body as { assetId?: string | null }).assetId ?? null;
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
 
         // Spec mandatory set (description/personality/appearance + wardrobe) is
         // enforced at the import/validator layer (parser strict gate,
@@ -106,6 +111,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         response: {
           201: t.Object({ id: t.String(), },),
           401: ErrorResponse,
+          403: ErrorResponse,
         },
         detail: {
           summary: "Create actor",

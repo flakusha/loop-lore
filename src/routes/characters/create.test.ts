@@ -154,4 +154,31 @@ describeOrSkip("createRoutes avatar asset linking", () => {
     const settings = JSON.parse(row?.settings ?? "{}",) as { tags?: string[] };
     expect(settings.tags,).toEqual(["fantasy", "elf", "mentor",],);
   });
+
+  test("viewer role gets 403 and writes no actor row", async () => {
+    const countRows = async (): Promise<number> => {
+      const row = await testEnv.db.selectFrom("actors",).select((eb,) => eb.fn.countAll().as("n",))
+        .executeTakeFirstOrThrow();
+
+      return Number(row.n,);
+    };
+
+    const before = await countRows();
+
+    const denied = new Elysia({ name: "test-create-denied", },);
+    denied.derive(() => ({ userId: USER, userRole: "viewer", }));
+    const deniedApp = denied.use(createRoutes({ database: testEnv.db, }, "/api",),) as unknown as Elysia;
+    const res = await deniedApp.handle(
+      new Request("http://test/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Denied", },),
+      },),
+    );
+
+    expect(res.status,).toBe(403,);
+    const body = await res.json() as { error?: string };
+    expect(body.error,).toBe("Forbidden",);
+    expect(await countRows(),).toBe(before,);
+  });
 },);

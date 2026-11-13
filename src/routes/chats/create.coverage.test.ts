@@ -47,7 +47,7 @@ function makeApp(db: Kysely<DB>, userId: string | null,) {
 
 /** POST a chat-creation body and return the response. */
 function postChat(
-  app: ReturnType<typeof makeApp>,
+  app: { handle(request: Request,): Promise<Response> },
   body: Record<string, unknown>,
 ): Promise<Response> {
   return app.handle(
@@ -316,6 +316,41 @@ describe("chats/create — variant taxonomy wiring", () => {
       expect(participants.map((p,) => p.talkativity),).toEqual([def.talkativity,],);
     }
 
+    await db.destroy();
+  });
+
+  test("viewer and custom roles get 403 and write no chat row", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    for (const userRole of ["viewer", "custom",]) {
+      const app = new Elysia()
+        .derive({ as: "scoped", }, () => ({ userId: USER_ID, userRole, }),)
+        .use(chatsRoutes({ database: db, config: testConfig, },),);
+
+      const res = await postChat(app, { name: `Denied ${userRole}`, },);
+
+      expect(res.status,).toBe(403,);
+      const body = await res.json() as { error?: string };
+      expect(body.error,).toBe("Forbidden",);
+      expect(await loadChat(db, `Denied ${userRole}`,),).toBeUndefined();
+    }
+
+    await db.destroy();
+  });
+
+  test("solo role still creates chats", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const app = new Elysia()
+      .derive({ as: "scoped", }, () => ({ userId: USER_ID, userRole: "solo", }),)
+      .use(chatsRoutes({ database: db, config: testConfig, },),);
+
+    const res = await postChat(app, { name: "Solo creates", },);
+
+    expect(res.status,).toBe(201,);
+    expect(await loadChat(db, "Solo creates",),).toBeDefined();
     await db.destroy();
   });
 });

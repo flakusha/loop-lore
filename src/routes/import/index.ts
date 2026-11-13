@@ -12,7 +12,9 @@ import type { Kysely, } from "kysely";
 import type { AuthConfig, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { authenticate, } from "../../middleware/auth";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
+import { HttpStatus, jsonError, } from "../http-utils";
 import { handleImport, } from "./handle";
 
 /**
@@ -35,7 +37,21 @@ export function importRoutes(
     // authenticate directly before .derive()
     const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);
     if (authResult instanceof Response) { return authResult; }
-    return handleImport(ctx.request, database, authResult.context.userId!, uploadDir,);
+    if (!authResult.context.userId) {
+      return jsonError({
+        message: "Missing or invalid Authorization header",
+        status: HttpStatus.Unauthorized,
+      },);
+    }
+
+    if (!can(authResult.context.userRole, "import.own",)) {
+      return jsonError({
+        message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+        status: HttpStatus.Forbidden,
+      },);
+    }
+
+    return handleImport(ctx.request, database, authResult.context.userId, uploadDir,);
   }, {
     // parse: "none" — handler uses ctx.request directly for both multipart
     // and JSON variants; sibling JSON routes in sub-plugins would otherwise
@@ -44,6 +60,7 @@ export function importRoutes(
     response: {
       200: SuccessResponse,
       401: ErrorResponse,
+      403: ErrorResponse,
     },
     detail: {
       summary: "Import a character",
