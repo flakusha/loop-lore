@@ -14,7 +14,7 @@
  */
 import { afterEach, describe, expect, it, } from "bun:test";
 import type { PendingPermission, } from "./adapter-types";
-import { type FakeAcpServer, startFakeAcp, } from "./fake-acp-server";
+import { type FakeAcpLogEntry, type FakeAcpServer, startFakeAcp, } from "./fake-acp-server";
 import { OpenCodeAcpAdapter, } from "./opencode";
 
 /** Servers started by the current test; reaped after each. */
@@ -78,6 +78,48 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
     const result = await turn;
     expect(result.stopReason,).toBe("end_turn",);
     expect(adapter.pendingPermission(),).toBeNull();
+  });
+
+  it("answers a hyphenated harness vocabulary in the harness's own spelling", async () => {
+    const server = serve({
+      FAKE_PERMISSION: "1",
+      FAKE_MODELS: "m",
+      FAKE_PERMISSION_KINDS: "allow-once,reject-once",
+    },);
+
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    adapter.respondPermission({ outcome: "allow_once", },);
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "allow-once", optionId: "allow", }, },);
+  });
+
+  it("denies when the harness advertised no outcome loop-lore knows", async () => {
+    const server = serve({
+      FAKE_PERMISSION: "1",
+      FAKE_MODELS: "m",
+      FAKE_PERMISSION_KINDS: "ask_user,ask_user",
+    },);
+
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    adapter.respondPermission({ outcome: "allow_once", },);
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "reject_once", }, },);
   });
 
   it("closing the connection with a parked ask fires onPermissionWithdrawn once", async () => {

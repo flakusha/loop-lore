@@ -52,7 +52,7 @@ function turn(overrides?: Partial<HarnessTurnResult>,): HarnessTurnResult {
   return {
     text: "the answer",
     stopReason: "end_turn",
-    usage: { inputTokens: 3, outputTokens: 4, totalTokens: 7, },
+    usage: { inputTokens: 3, outputTokens: 4, totalTokens: 7, costUsd: null, },
     acpSessionId: "sess-1",
     transcript: transcript(),
     ...overrides,
@@ -122,6 +122,25 @@ describe("persistHarnessTurn", () => {
     expect(row.token_count_total,).toBe(7,);
     expect(row.metadata,).toContain('"harness":"acp"',);
     expect(row.metadata,).toContain('"profile":"omp"',);
+  });
+
+  it("stores the cost the harness reported next to the token counts", async () => {
+    const persisted = await persistHarnessTurn({
+      database: fixture.db,
+      chatId,
+      actorId,
+      profile: "omp",
+      transcript: transcript(),
+      turn: turn({
+        usage: { inputTokens: 3, outputTokens: 4, totalTokens: 7, costUsd: 0.012, },
+      },),
+      turnKey: "turn-cost",
+    },);
+
+    const row = await fixture.db.selectFrom("messages",).selectAll()
+      .where("id", "=", persisted.assistantMessageId,).executeTakeFirstOrThrow();
+
+    expect(row.token_cost,).toBe(0.012,);
   });
 
   it("writes the tool_calls column in the shape the message readers parse", async () => {

@@ -100,7 +100,7 @@ describe("OpenCodeAcpAdapter (fake ACP fixture, opencode flavor)", () => {
     const turn = await adapter.prompt("do the thing",);
     expect(turn.text,).toBe("hello world",);
     expect(turn.stopReason,).toBe("end_turn",);
-    expect(turn.usage,).toEqual({ inputTokens: 10, outputTokens: 5, totalTokens: 15, },);
+    expect(turn.usage,).toEqual({ inputTokens: 10, outputTokens: 5, totalTokens: 15, costUsd: null, },);
     expect(turn.acpSessionId,).toBe("fake-session-1",);
     adapter.close();
   });

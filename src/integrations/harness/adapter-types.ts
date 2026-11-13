@@ -53,6 +53,8 @@ export interface HarnessTurnUsage {
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
+  /** Cost the harness reported for the turn, in USD; null when it reported none. */
+  costUsd: number | null;
 }
 
 /** Result of one harness turn. */

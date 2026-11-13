@@ -119,7 +119,7 @@ describe("HermesAcpAdapter (fake ACP fixture, hermes flavor)", () => {
     const turn = await adapter.prompt("add the feature",);
     expect(turn.text,).toBe("wrote it",);
     expect(turn.stopReason,).toBe("end_turn",);
-    expect(turn.usage,).toEqual({ inputTokens: 10, outputTokens: 5, totalTokens: 15, },);
+    expect(turn.usage,).toEqual({ inputTokens: 10, outputTokens: 5, totalTokens: 15, costUsd: null, },);
     expect(turn.acpSessionId,).toBe("fake-session-1",);
     adapter.close();
   });

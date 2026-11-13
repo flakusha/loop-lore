@@ -119,6 +119,8 @@ function sandboxRootFor(acp: HarnessAcpConfig, profile: string,): string | undef
  * `sandboxRoot` when it has one (resolved absolute), else the connection's
  * own cwd (session/new cwd); production profiles pass none, so that is
  * `process.cwd()` — the same default the adapter hands to session/new.
+ * A configured root also becomes the adapter's cwd, so the agent works in
+ * the very directory its asks are judged against.
  * @param options - config snapshot + optional factory override
  * @returns the composed runtime.
  */
@@ -131,6 +133,7 @@ export function createHarnessRuntime(options: CreateHarnessRuntimeOptions,): Har
   const queueFactory: HarnessAdapterFactory = (profile, command, opts,) =>
     baseFactory(profile, command, {
       ...opts,
+      cwd: sandboxRootFor(options.acp, profile,) ?? opts?.cwd,
       onPermissionRequest: (pending,) => {
         void permissions
           .submit({

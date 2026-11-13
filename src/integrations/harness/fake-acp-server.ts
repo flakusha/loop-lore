@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 280
 
 /**
  * Fake ACP server fixture (test-only; imported exclusively by *.test.ts).
@@ -13,7 +14,8 @@
  *
  * The child appends one JSON line per observed client reaction (a cancel, a
  * permission outcome, an fs-read response) to `acp-log.jsonl` next to its
- * script; `FakeAcpServer.readLog()` parses it, so tests assert what the
+ * script; with FAKE_LOG_PARAMS it logs the initialize and session/new params
+ * as well. `FakeAcpServer.readLog()` parses it, so tests assert what the
  * client actually sent back across the wire.
  *
  * Resource contract: ONE child process per test; the returned `stop()` (and
@@ -34,6 +36,7 @@ const LOG_FILENAME = "acp-log.jsonl";
 /** The fake server script, as it runs in the child. */
 const SCRIPT = String.raw`
 const models = (process.env.FAKE_MODELS ?? "").split(",").filter(Boolean);
+const permKinds = (process.env.FAKE_PERMISSION_KINDS ?? "allow_once,reject_once").split(",");
 const configId = process.env.FAKE_CONFIG_ID ?? "MODEL_CONFIG_ID";
 const rejectModel = process.env.FAKE_REJECT_MODEL ?? "";
 const fsmod = require("node:fs");
@@ -60,8 +63,8 @@ const runPromptFlow = async (promptId) => {
       sessionId: "fake-session-1",
       kind: "edit",
       options: [
-        { optionId: "allow", name: "Allow", kind: "allow_once" },
-        { optionId: "reject", name: "Reject", kind: "reject_once" },
+        { optionId: "allow", name: "Allow", kind: permKinds[0] ?? "allow_once" },
+        { optionId: "reject", name: "Reject", kind: permKinds[1] ?? "reject_once" },
       ],
     });
   }
@@ -107,10 +110,12 @@ process.stdin.on("data", (c) => {
       continue;
     }
     if (m.method === "initialize") {
+      if (process.env.FAKE_LOG_PARAMS) { logEvent({ event: "initialize", params: m.params }); }
       if (process.env.FAKE_HANG) { continue; }
       if (process.env.FAKE_MALFORMED) { process.stdout.write("this is not json\n{broken\n"); continue; }
       send({ jsonrpc: "2.0", id: m.id, result: { protocolVersion: 1, agentInfo: { name: "fake" } } });
     } else if (m.method === "session/new") {
+      if (process.env.FAKE_LOG_PARAMS) { logEvent({ event: "session_new", params: m.params }); }
       if (process.env.FAKE_NO_SESSION) {
         send({ jsonrpc: "2.0", id: m.id, result: {} });
         continue;
@@ -188,6 +193,10 @@ export interface FakeAcpEnv {
   FAKE_EXIT_ON_PROMPT?: string;
   /** When set, session/prompt first sends `session/request_permission` and awaits the client's outcome. */
   FAKE_PERMISSION?: string;
+  /** Comma-separated kinds of the advertised permission options (allow, reject). */
+  FAKE_PERMISSION_KINDS?: string;
+  /** When set, the fixture logs the initialize and session/new params it observed. */
+  FAKE_LOG_PARAMS?: string;
   /** When set, session/prompt first asks the client to read this path via `fs/read_text_file`. */
   FAKE_READ_FILE?: string;
   /** When set, the session/prompt reply waits for `session/cancel`; stopReason then defaults to "cancelled". */
@@ -200,10 +209,12 @@ export interface FakeAcpEnv {
 export type FakeAcpLogEntry =
   | { event: "cancel"; sessionId: string | null }
   | { event: "permission_outcome"; outcome: unknown }
-  | { event: "read_text"; path: string; content: unknown };
+  | { event: "read_text"; path: string; content: unknown }
+  | { event: "initialize"; params: Record<string, unknown> }
+  | { event: "session_new"; params: Record<string, unknown> };
 
 /** Event discriminators `readLog` accepts. */
-const LOG_EVENTS = new Set(["cancel", "permission_outcome", "read_text",],);
+const LOG_EVENTS = new Set(["cancel", "permission_outcome", "read_text", "initialize", "session_new",],);
 
 /** Narrow a parsed log line to a known event shape. */
 function isLogEntry(value: unknown,): value is FakeAcpLogEntry {
