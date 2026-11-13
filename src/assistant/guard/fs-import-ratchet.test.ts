@@ -114,6 +114,11 @@ const BASELINE = [
   // it in its own teardown — it never touches user paths.
   "src/integrations/harness/fake-acp-server.ts",
   "src/plugins/loader.ts",
+  // Trust-boundary scope-root resolver: its realpath(repoRoot) call must
+  // observe the REAL filesystem (a policed realpath would judge the sandbox
+  // allowlist through the interceptor instead of resolving actual symlinks),
+  // same deliberate interception-proof form as worktree-scope.ts above.
+  "src/integrations/harness/repo-access/principal-scope.ts",
   "src/routes/assets.ts",
   "src/routes/characters/export.ts",
   "src/routes/views/character-edit-form.ts",
