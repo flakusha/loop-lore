@@ -4,7 +4,11 @@
 # TASK: Escalation audit queue with no auto-approve
 
 **Status:** Done
-**Status Note:** escalation queue landed on branch `harness-principal-kind` — `src/integrations/harness/repo-access/escalation.ts` (the request path: recorded, default-deny, rate-limited; an approved key grants exactly ONE root change, CLAIMED ATOMICALLY — the consumption row is inserted with a deterministic id, so a concurrent second redemption is denied, and a failed consumption write denies as well) + `escalation-queue.ts` (the admin queue: list pending, append an approve/deny decision; the decision row claims the request, and a failed decision write is reported as a failure) + `src/routes/harness/escalations.ts` (the admin-gated API). The rows live in the EXISTING `tool_call_audit` table under their own tool name — no new table, no migration. The key is CREDENTIAL-SCOPED (credential id + agent worktree + user id), and the repo-access tier's master switch refuses the request path while the tier is off.
+**Status Note:** escalation queue landed on branch `harness-principal-kind` — `src/integrations/harness/repo-access/escalation.ts` (the request path: recorded, default-deny, rate-limited; each APPROVAL grants exactly ONE root change, CLAIMED ATOMICALLY — the consumption row is inserted with a deterministic id, so a concurrent second redemption is denied, and a failed consumption write denies as well) + `escalation-queue.ts` (the admin queue: list pending, append an approve/deny decision; the decision row claims the request, and a failed decision write is reported as a failure) + `src/routes/harness/escalations.ts` (the admin-gated API). The rows live in the EXISTING `tool_call_audit` table under their own tool name — no new table, no migration. The key is CREDENTIAL-SCOPED (credential id + agent worktree + user id), and the repo-access tier's master switch refuses the request path while the tier is off.
+
+The unit of the one-root-change grant is the APPROVAL, not the key: a key can be granted again after a second, independent admin decision (two approvals on one key yield two grants). The single-root-change claim is per approval — no approval is ever spendable twice.
+
+Status divergence (documented deferral): this ticket's `.md` and its git issue say Done, while `.plan/tickets/index.json` still says Not Started. `giwt` never writes `index.json` inside a linked worktree — the write is deferred to the target branch at finalize time — so the index row is regenerated when this branch lands; the deferral is repo-wide, not specific to this ticket.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-harness-rsi-repo-access
@@ -49,5 +53,5 @@ is the approvable surface; and the capability-grant PERSISTENCE slice
 
 - [x] Escalation requests are recorded, approvable, rate-limited; deny-by-default preserved; the repo-access tier's master switch refuses the request path while the tier is off
 - [x] NO auto-approve for any principal; audit rows land in the EXISTING tool_call_audit table (no new agent_actions table)
-- [x] An approved key grants exactly ONE root change, claimed atomically (the consumption row is inserted with a deterministic id, so a concurrent second redemption is denied; a failed consumption write denies the change)
+- [x] Each APPROVAL grants exactly ONE root change, claimed atomically (the consumption row is inserted with a deterministic id, so a concurrent second redemption of the same approval is denied; a failed consumption write denies the change). The unit is the approval, not the key: a second, independent admin decision on the same key grants a second root change.
 - [x] The approval is bound to a credential-scoped subject (credential id + agent worktree + user id); a principal that carries no identity is refused instead of sharing another principal's approval

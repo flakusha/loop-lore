@@ -7,10 +7,13 @@
  * root-change requests and decide on them. Admin-gated like the rest of the
  * harness surface.
  *
- * The queue lives in the repo-access audit table, and the tier's master
- * switch gates the WHOLE escalation path: while the repo-access tier is
- * disabled the request path refuses outright (nothing is recorded, so there
- * is nothing to decide on) and no approval can be redeemed.
+ * The queue lives in the repo-access audit table. The tier's master switch
+ * refuses the REQUEST path: while the repo-access tier is disabled a request
+ * is not recorded at all, so nothing is redeemed while the tier is off.
+ *
+ * The switch does NOT gate the admin side: pending requests stay listed and
+ * an admin can still decide them while the tier is off, and an approval
+ * decided then becomes redeemable once the tier is re-enabled.
  *
  * Approving grants ONE later root change for that principal and target;
  * denying closes the request. No principal is ever auto-approved.
