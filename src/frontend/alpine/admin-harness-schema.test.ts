@@ -13,6 +13,9 @@ import { Value, } from "@sinclair/typebox/value";
 import { describe, expect, it, } from "bun:test";
 import {
   HarnessAvailabilitySchema,
+  HarnessEscalationDecisionResponse,
+  HarnessEscalationsResponse,
+  HarnessPendingEscalationSchema,
   HarnessPendingPermissionSchema,
   HarnessPermissionDecisionResponse,
   HarnessPermissionsResponse,
@@ -63,6 +66,24 @@ describe("admin harness permission schemas", () => {
     expect(Value.Check(HarnessPermissionDecisionResponse, { ok: true, },),).toBe(true,);
     expect(Value.Check(HarnessPermissionDecisionResponse, { ok: false, },),).toBe(true,);
     expect(Value.Check(HarnessPermissionDecisionResponse, { ok: "yes", },),).toBe(false,);
+  });
+
+  it("escalation queue schemas accept the route bodies", () => {
+    const pending = {
+      id: "esc-1",
+      subjectId: "u-1",
+      kind: "user",
+      targetPath: "/etc",
+      rationale: "need root",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    };
+
+    expect(Value.Check(HarnessPendingEscalationSchema, pending,),).toBe(true,);
+    expect(Value.Check(HarnessPendingEscalationSchema, { ...pending, id: 7, },),).toBe(false,);
+    expect(Value.Check(HarnessEscalationsResponse, { items: [pending,], },),).toBe(true,);
+    expect(Value.Check(HarnessEscalationsResponse, { items: [pending, 3,], },),).toBe(false,);
+    expect(Value.Check(HarnessEscalationDecisionResponse, { ok: true, },),).toBe(true,);
+    expect(Value.Check(HarnessEscalationDecisionResponse, { ok: "yes", },),).toBe(false,);
   });
 });
 

@@ -26,7 +26,20 @@ import {
   type PendingEscalation,
   resolveEscalation,
 } from "./escalation-queue";
-import { REPO_ACCESS_ESCALATION_TOOL, } from "./escalation-rows";
+import {
+  buildEscalationKey,
+  buildEscalationTags,
+  escalationRowId,
+  escalationScope,
+  latestEscalationRow,
+  MARKER_DECISION,
+  MARKER_RATE_LIMITED,
+  MARKER_REQUEST,
+  MARKER_USED,
+  parseEscalationRow,
+  REPO_ACCESS_ESCALATION_TOOL,
+  writeEscalationRow,
+} from "./escalation-rows";
 import { type RepoAccessPrincipal, } from "./principal-scope";
 import { initRepoAccessSettings, resetRepoAccessSettings, } from "./settings";
 
@@ -467,5 +480,68 @@ describe("the admin queue — list, approve, deny", () => {
     expect(decisions.filter((decision,) => decision.ok),).toHaveLength(1,);
     const refused = decisions.filter((decision,) => !decision.ok);
     expect(refused[0]?.ok === false && refused[0]?.code,).toBe("already_decided",);
+  });
+});
+
+describe("escalation row vocabulary — markers, keys, round-trip", () => {
+  it("marker constants are the documented row lifecycle", () => {
+    expect(MARKER_REQUEST,).toBe("request",);
+    expect(MARKER_DECISION,).toBe("decision",);
+    expect(MARKER_USED,).toBe("used",);
+    expect(MARKER_RATE_LIMITED,).toBe("rate-limited",);
+  });
+
+  it("escalationScope refuses an identity-less principal", () => {
+    expect(escalationScope({ kind: "user", userId: null, } as never,),).toBe("",);
+    const scope = escalationScope(principal("user",),);
+    expect(scope,).toContain("user:",);
+  });
+
+  it("buildEscalationKey returns null without an identity to key on", () => {
+    expect(buildEscalationKey({ kind: "user", userId: null, } as never, "/etc",),).toBeNull();
+    const key = buildEscalationKey(principal("user",), "/etc",);
+    expect(key?.target,).toBe("/etc",);
+  });
+
+  it("row helpers round-trip: build tags, write, read latest, parse", async () => {
+    const subject = principal("user",);
+    const key = buildEscalationKey(subject, "/etc",)!;
+    const id = escalationRowId("request", key.scope + key.target,);
+    expect(id,).toHaveLength(32,);
+    const tags = buildEscalationTags(key, MARKER_REQUEST,);
+    expect(tags.marker,).toBe(MARKER_REQUEST,);
+    const adminTags = buildEscalationTags(key, MARKER_DECISION, "admin-1",);
+    expect(adminTags.adminId,).toBe("admin-1",);
+    const written = await writeEscalationRow(db, {
+      id,
+      userId: key.subjectId,
+      verdict: "denied",
+      rationale: "round-trip",
+      escalationAttempt: 1,
+      tags: JSON.stringify(tags,),
+    },);
+
+    expect(written,).toBe(true,);
+    expect(
+      await writeEscalationRow(db, {
+        id,
+        userId: key.subjectId,
+        verdict: "denied",
+        rationale: "round-trip",
+        escalationAttempt: 1,
+        tags: JSON.stringify(tags,),
+      },),
+    ).toBe(false,);
+
+    const latest = await latestEscalationRow(db, key,);
+    expect(latest?.marker,).toBe(MARKER_REQUEST,);
+    expect(parseEscalationRow({
+      id,
+      user_id: key.subjectId,
+      verdict: "denied",
+      rationale: "round-trip",
+      tags: "not-json{{{}",
+      created_at: "x",
+    },),).toBeNull();
   });
 });
