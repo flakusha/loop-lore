@@ -3421,6 +3421,38 @@ html {
   color: var(--text-secondary);
   margin-top: 2px;
 }
+
+/* ── Omni-search results (/views/search, unified cross-surface search) ── */
+.omni-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-default, #333);
+  cursor: pointer;
+}
+.omni-item:hover,
+.omni-item:focus-visible {
+  background: rgb(127 127 255 / 8%);
+}
+.omni-icon {
+  flex: 0 0 auto;
+  width: 20px;
+  text-align: center;
+}
+.omni-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.omni-title {
+  font-size: 13px;
+}
+.omni-snippet {
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .notif-dot {
   flex: 0 0 auto;
   width: 8px;

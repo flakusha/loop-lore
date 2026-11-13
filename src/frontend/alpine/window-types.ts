@@ -13,6 +13,7 @@ import type {
   NotificationBellState,
   NotificationCenterState,
   NotificationPrefsState,
+  OmniSearchState,
   WorldEditState,
 } from "./types";
 // Imported from the component (not the types barrel): the barrel is part of the
@@ -48,6 +49,7 @@ declare global {
     keynavHelp: () => KeynavHelpState;
     notificationPrefs: () => NotificationPrefsState;
     notificationCenter: () => NotificationCenterState;
+    omniSearch: () => OmniSearchState;
     chatState: () => AlpineState<ChatState>;
     worldEditState: () => AlpineState<WorldEditState>;
     adminPage: () => unknown;
@@ -88,6 +90,7 @@ declare global {
   var keynavHelp: Window["keynavHelp"];
   var notificationPrefs: Window["notificationPrefs"];
   var notificationCenter: Window["notificationCenter"];
+  var omniSearch: Window["omniSearch"];
   var __USER_ID: string | undefined;
   var __SESSION_ID: string | undefined;
 }

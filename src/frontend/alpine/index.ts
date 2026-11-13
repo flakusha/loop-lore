@@ -43,6 +43,7 @@ import "./message-translate";
 import "./model-manager";
 import "./notification-center";
 import "./notifications";
+import "./omni-search";
 import "./npc";
 import "./personas";
 import "./planning-kanban";

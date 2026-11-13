@@ -115,6 +115,19 @@
       <nav class="sidebar-nav" aria-label="{{{t("accessibility.navigation")}}}">
         <a
           class="nav-item"
+          href="/views/search"
+          hx-get="/views/search"
+          hx-target="#app-root"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          x-on:click="window.closeSidebar()"
+          data-testid="nav-search"
+        >
+          <span>🔍</span> <span>{{{t("search.title")}}}</span>
+        </a>
+
+        <a
+          class="nav-item"
           href="/views/chat-list"
           hx-get="/views/chat-list"
           hx-target="#app-root"
