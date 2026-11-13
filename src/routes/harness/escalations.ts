@@ -68,6 +68,27 @@ async function decide(
 }
 
 /**
+ * List the pending escalation requests.
+ *
+ * A failed read is a 500, never an empty list: an empty list would hide a
+ * real outage behind "nothing pending".
+ * @param database - the database handle
+ * @returns the JSON response
+ */
+async function listPending(
+  database: Kysely<DB>,
+): Promise<ReturnType<typeof jsonResponse> | ReturnType<typeof jsonError>> {
+  const result = await listPendingEscalations(database,);
+  if (result.ok) { return jsonResponse({ items: result.items, },); }
+
+  return jsonError({
+    message: result.message,
+    status: HttpStatus.InternalServerError,
+    code: ErrorCode.ServerError,
+  },);
+}
+
+/**
  * Build the harness escalation queue route plugin.
  * @param opts - the database handle
  * @param prefix - Mount prefix. Admin-gated like the rest of the harness
@@ -96,9 +117,9 @@ export function harnessEscalationRoutes(
     .guard({ beforeHandle: guard, }, (app,) =>
       app
         .get(`${prefix}/harness/escalations`, async () => {
-          return jsonResponse({ items: await listPendingEscalations(database,), },);
+          return listPending(database,);
         }, {
-          response: { 200: HarnessEscalationsResponse, ...denied, },
+          response: { 200: HarnessEscalationsResponse, 500: ErrorResponse, ...denied, },
         },)
         .post(`${prefix}/harness/escalations/:id/approve`, (ctx,) => {
           const { id, } = ctx.params as { id: string };
