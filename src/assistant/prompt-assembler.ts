@@ -177,6 +177,7 @@ export class PromptAssembler {
           "response_length_custom",
           "custom_instructions",
           "prompt_template_id",
+          "purpose",
         ],)
         .where("id", "=", params.chatId,)
         .executeTakeFirstOrThrow(),

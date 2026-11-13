@@ -190,6 +190,8 @@ export interface AssembleChat {
   custom_instructions?: string | null;
   /** Chat-level LLM prompt template override (FEAT-065-LLM). */
   prompt_template_id?: string | null;
+  /** Chat purpose (chats.purpose) — a "coordination" chat never feeds the LLM. */
+  purpose?: string | null;
 }
 
 /** Shared inputs handed to every section builder. */

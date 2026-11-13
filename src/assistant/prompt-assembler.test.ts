@@ -415,3 +415,58 @@ describe("PromptAssembler post-history position", () => {
     expect(postHistoryIdx,).toBe(assembled.messages.length - 1,);
   });
 });
+
+describe("PromptAssembler coordination-purpose exclusion", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+  let userId: string;
+  let actorId: string;
+  let coordChatId: string;
+  let mainChatId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, sqlite, } = await createTestDb());
+    userId = uid();
+    actorId = uid();
+    coordChatId = uid();
+    mainChatId = uid();
+    await insertUsers(db, "tester-coord", "Tester", { id: userId, } as never,);
+    await insertActors(db, "Alice", { id: actorId, user_id: userId, } as never,);
+    await insertChats(db, "Coordination chat", userId, { id: coordChatId, purpose: "coordination", },);
+    await insertChats(db, "Main chat", userId, { id: mainChatId, purpose: "main", },);
+    await insertChatParticipants(db, coordChatId, actorId,);
+    await insertChatParticipants(db, mainChatId, actorId,);
+    const confirmed = MessageStatus.Confirmed;
+    const visible = MessageVisibility.Visible;
+    await insertMessages(db, coordChatId, actorId, MessageRole.User, "coordination-ooc-marker", {
+      status: confirmed,
+      visibility: visible,
+    },);
+
+    await insertMessages(db, mainChatId, actorId, MessageRole.User, "main-chat-marker", {
+      status: confirmed,
+      visibility: visible,
+    },);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  test("a coordination-purpose chat contributes no message to the assembled prompt", async () => {
+    const assembler = new PromptAssembler(db,);
+    const assembled = await assembler.assemble({ actorId, chatId: coordChatId, modelId: "mock", },);
+
+    expect(assembled.messages.some((m,) => m.content.includes("coordination-ooc-marker",)),).toBe(false,);
+    expect(assembled.sections.some((s,) => s.name === "chatHistory"),).toBe(false,);
+  });
+
+  test("a normal chat is unaffected", async () => {
+    const assembler = new PromptAssembler(db,);
+    const assembled = await assembler.assemble({ actorId, chatId: mainChatId, modelId: "mock", },);
+
+    expect(assembled.messages.some((m,) => m.content.includes("main-chat-marker",)),).toBe(true,);
+  });
+});
