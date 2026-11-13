@@ -4,7 +4,7 @@
 # TASK: Escalation audit queue with no auto-approve
 
 **Status:** Done
-**Status Note:** escalation queue landed on branch `harness-principal-kind` — `src/integrations/harness/repo-access/escalation.ts` (the request path: recorded, default-deny, rate-limited; an approved key grants ONE root change and the approval is consumed by the request that redeems it) + `escalation-queue.ts` (the admin queue: list pending, append an approve/deny decision) + `src/routes/harness/escalations.ts` (the admin-gated API). The rows live in the EXISTING `tool_call_audit` table under their own tool name — no new table, no migration.
+**Status Note:** escalation queue landed on branch `harness-principal-kind` — `src/integrations/harness/repo-access/escalation.ts` (the request path: recorded, default-deny, rate-limited; an approved key grants exactly ONE root change, CLAIMED ATOMICALLY — the consumption row is inserted with a deterministic id, so a concurrent second redemption is denied, and a failed consumption write denies as well) + `escalation-queue.ts` (the admin queue: list pending, append an approve/deny decision; the decision row claims the request, and a failed decision write is reported as a failure) + `src/routes/harness/escalations.ts` (the admin-gated API). The rows live in the EXISTING `tool_call_audit` table under their own tool name — no new table, no migration. The key is CREDENTIAL-SCOPED (credential id + agent worktree + user id), and the repo-access tier's master switch refuses the request path while the tier is off.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-harness-rsi-repo-access
@@ -28,11 +28,13 @@ approval is consumed by the request that redeems it (one root change, not a
 standing grant).
 
 Constraints: no new table (amendment A7) and no migration — the queue IS the
-existing `tool_call_audit` trail, read back per key (subject principal, principal
-kind, target path). Every row for a key is appended, so the LAST row decides
-the key: a request is pending, an approval grants, a redeemed approval closes.
-A decision row references the request id, so the recorded request is never
-rewritten.
+existing `tool_call_audit` trail, read back per key (credential-scoped subject,
+principal kind, target path). Every row for a key is appended, so the LAST row
+decides the key: a request is pending, an approval grants, a redeemed approval
+closes. A decision row references the request id, so the recorded request is
+never rewritten. The approval is bound to ONE credential-scoped subject — a
+principal that carries no identity is refused, and two principals that share a
+user id but not a credential never share an approval.
 
 Alternatives considered: an in-memory queue (mirroring the ACP permission
 queue) was rejected — the decisions would not survive a restart and the audit
@@ -45,5 +47,7 @@ is the approvable surface; and the capability-grant PERSISTENCE slice
 
 **Acceptance Criteria:**
 
-- [x] Escalation requests are recorded, approvable, rate-limited; deny-by-default preserved
+- [x] Escalation requests are recorded, approvable, rate-limited; deny-by-default preserved; the repo-access tier's master switch refuses the request path while the tier is off
 - [x] NO auto-approve for any principal; audit rows land in the EXISTING tool_call_audit table (no new agent_actions table)
+- [x] An approved key grants exactly ONE root change, claimed atomically (the consumption row is inserted with a deterministic id, so a concurrent second redemption is denied; a failed consumption write denies the change)
+- [x] The approval is bound to a credential-scoped subject (credential id + agent worktree + user id); a principal that carries no identity is refused instead of sharing another principal's approval

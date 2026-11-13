@@ -10,20 +10,29 @@
  * The decision is APPENDED as its own audit row — the recorded request is
  * never rewritten — and there is NO auto-approve for any principal: a request
  * stays denied until an admin decides on it (amendment A2).
+ *
+ * The decision CLAIMS the request: its row id is derived from the request id,
+ * so two admins deciding the same request race for ONE row and only one of
+ * them writes it. A failed write is a FAILURE result, never a success: the
+ * request stays pending and can be decided again.
  */
 import { type Kysely, sql, } from "kysely";
-import { recordToolCallAudit, } from "../../../assistant/guard/audit";
 import type { DB, } from "../../../db/schema";
+import { getChildLogger, } from "../../../logger";
 import { type PrincipalKind, } from "../../../middleware/principal-kind";
+import { jsonStringifyOr, safeJsonStringify, } from "../../../utils";
 import {
   buildEscalationTags,
   type EscalationKey,
+  escalationRowId,
+  type EscalationState,
   latestEscalationRow,
   MARKER_DECISION,
   MARKER_REQUEST,
   parseEscalationRow,
   REPO_ACCESS_ESCALATION_TOOL,
-} from "./escalation";
+  writeEscalationRow,
+} from "./escalation-rows";
 
 /** One pending escalation request, as the admin queue lists it. */
 export interface PendingEscalation {
@@ -47,7 +56,37 @@ export type EscalationDecision = "approve" | "deny";
 /** The outcome of one admin decision — a Result, never a throw. */
 export type EscalationResolution =
   | { ok: true; decision: EscalationDecision }
-  | { ok: false; code: "unknown_request" | "already_decided"; message: string };
+  | {
+    ok: false;
+    code: "unknown_request" | "already_decided" | "write_failed";
+    message: string;
+  };
+
+/**
+ * The key one escalation row belongs to — the SAME key the request path
+ * builds, so the queue and the request path agree on what one escalation is.
+ * @param state - the parsed escalation row
+ * @returns the key of the row
+ */
+function keyOfState(state: EscalationState,): EscalationKey {
+  return {
+    subjectId: state.subjectId,
+    scope: state.scope,
+    kind: state.kind,
+    target: state.target,
+  };
+}
+
+/**
+ * The identity of one escalation key — the group of rows that share it.
+ * @param key - the key
+ * @returns the key's identity
+ */
+function keyId(key: EscalationKey,): string {
+  const encoded = safeJsonStringify([key.subjectId, key.scope, key.kind, key.target,],);
+
+  return encoded.ok ? encoded.value : "";
+}
 
 /**
  * List the escalation requests that are still waiting for an admin decision.
@@ -61,27 +100,19 @@ export async function listPendingEscalations(db: Kysely<DB>,): Promise<PendingEs
     .selectFrom("tool_call_audit",)
     .select(["id", "user_id", "verdict", "rationale", "tags", "created_at",],)
     .where("tool", "=", REPO_ACCESS_ESCALATION_TOOL,)
-    .where(sql<string>`json_extract(tags, '$[2]')`, "=", MARKER_REQUEST,)
-    .where(
-      sql<number>`NOT EXISTS (
-      SELECT 1 FROM tool_call_audit d
-      WHERE d.tool = ${REPO_ACCESS_ESCALATION_TOOL}
-        AND d.user_id = tool_call_audit.user_id
-        AND json_extract(d.tags, '$[0]') = json_extract(tool_call_audit.tags, '$[0]')
-        AND json_extract(d.tags, '$[1]') = json_extract(tool_call_audit.tags, '$[1]')
-        AND d.rowid > tool_call_audit.rowid
-    )`,
-      "=",
-      1,
-    )
-    .orderBy("created_at", "asc",)
+    .orderBy(sql`rowid asc`,)
     .execute();
 
-  const pending: PendingEscalation[] = [];
+  const latest = new Map<string, EscalationState>();
   for (const row of rows) {
     const state = parseEscalationRow(row,);
     if (state === null) { continue; }
+    latest.set(keyId(keyOfState(state,),), state,);
+  }
 
+  const pending: PendingEscalation[] = [];
+  for (const state of latest.values()) {
+    if (state.marker !== MARKER_REQUEST) { continue; }
     pending.push({
       id: state.id,
       subjectId: state.subjectId,
@@ -91,6 +122,8 @@ export async function listPendingEscalations(db: Kysely<DB>,): Promise<PendingEs
       createdAt: state.createdAt,
     },);
   }
+
+  pending.sort((left, right,) => left.createdAt.localeCompare(right.createdAt,));
 
   return pending;
 }
@@ -117,7 +150,7 @@ export async function resolveEscalation(
     return { ok: false, code: "unknown_request", message: `escalation request "${opts.id}" is unknown`, };
   }
 
-  const key: EscalationKey = { subjectId: state.subjectId, kind: state.kind, target: state.target, };
+  const key = keyOfState(state,);
   const deciding = await latestEscalationRow(db, key,);
   if (deciding !== null && deciding.id !== state.id) {
     return {
@@ -128,17 +161,35 @@ export async function resolveEscalation(
   }
 
   const approved = opts.decision === "approve";
-  await recordToolCallAudit(db, {
-    tool: REPO_ACCESS_ESCALATION_TOOL,
-    chatId: "",
-    userId: state.subjectId,
-    verdict: approved ? "reviewed" : "denied",
-    rationale: `escalation request "${state.id}" ${approved ? "approved" : "denied"} by ${opts.adminId}`,
-    escalationAttempt: false,
-    requiredRole: null,
-    tags: buildEscalationTags(key, MARKER_DECISION, opts.adminId,),
-    durationMs: 0,
-  },);
+  try {
+    const claimed = await writeEscalationRow(db, {
+      id: escalationRowId(MARKER_DECISION, state.id,),
+      userId: key.subjectId,
+      verdict: approved ? "reviewed" : "denied",
+      rationale: `escalation request "${state.id}" ${approved ? "approved" : "denied"} by ${opts.adminId}`,
+      escalationAttempt: 0,
+      tags: jsonStringifyOr(buildEscalationTags(key, MARKER_DECISION, opts.adminId,), "{}",),
+    },);
+
+    if (!claimed) {
+      return {
+        ok: false,
+        code: "already_decided",
+        message: `escalation request "${opts.id}" was already decided`,
+      };
+    }
+  } catch (cause) {
+    getChildLogger("harness-repo-access",)?.warn("repo-access escalation decision write failed", {
+      requestId: state.id,
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
+
+    return {
+      ok: false,
+      code: "write_failed",
+      message: `the decision on escalation request "${opts.id}" could not be recorded`,
+    };
+  }
 
   return { ok: true, decision: opts.decision, };
 }

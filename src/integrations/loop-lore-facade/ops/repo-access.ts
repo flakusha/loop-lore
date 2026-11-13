@@ -121,7 +121,11 @@ async function runGate(ctx: FacadeContext, required?: RepoCapability,): Promise<
   const verdict = await assertRepoAccessExecution({
     // The facade principal IS the server-resolved one (facadeContextFromRequestContext
     // mints it from the verified RequestContext); no body field can assert it.
-    principal: { kind: ctx.principal.kind, userId: ctx.principal.userId, },
+    principal: {
+      kind: ctx.principal.kind,
+      userId: ctx.principal.userId,
+      credentialId: ctx.principal.credentialId,
+    },
     required,
     db: ctx.database,
   },);

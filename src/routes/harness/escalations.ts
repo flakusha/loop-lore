@@ -5,8 +5,12 @@
  * Harness escalation audit queue API
  * (TASK-escalation-audit-queue-with-no-auto-approve): list the recorded
  * root-change requests and decide on them. Admin-gated like the rest of the
- * harness surface; the queue lives in the repo-access audit table, so a
- * disabled repo-access tier simply has nothing to decide on.
+ * harness surface.
+ *
+ * The queue lives in the repo-access audit table, and the tier's master
+ * switch gates the WHOLE escalation path: while the repo-access tier is
+ * disabled the request path refuses outright (nothing is recorded, so there
+ * is nothing to decide on) and no approval can be redeemed.
  *
  * Approving grants ONE later root change for that principal and target;
  * denying closes the request. No principal is ever auto-approved.
@@ -44,10 +48,19 @@ async function decide(
   const result = await resolveEscalation(database, { id, decision, adminId, },);
   if (result.ok) { return jsonResponse({ ok: true, },); }
 
+  const failed = result.code === "write_failed";
   return jsonError({
     message: result.message,
-    status: result.code === "unknown_request" ? HttpStatus.NotFound : HttpStatus.Conflict,
-    code: result.code === "unknown_request" ? ErrorCode.NotFound : ErrorCode.Conflict,
+    status: failed
+      ? HttpStatus.InternalServerError
+      : result.code === "unknown_request"
+      ? HttpStatus.NotFound
+      : HttpStatus.Conflict,
+    code: failed
+      ? ErrorCode.ServerError
+      : result.code === "unknown_request"
+      ? ErrorCode.NotFound
+      : ErrorCode.Conflict,
   },);
 }
 
@@ -67,7 +80,13 @@ export function harnessEscalationRoutes(
   const params = { params: t.Object({ id: t.String({},), },), } as const;
   /** Shared approve/deny response contract — one source of truth. */
   const decisionResponse = {
-    response: { 200: HarnessEscalationDecisionResponse, 404: ErrorResponse, 409: ErrorResponse, ...denied, },
+    response: {
+      200: HarnessEscalationDecisionResponse,
+      404: ErrorResponse,
+      409: ErrorResponse,
+      500: ErrorResponse,
+      ...denied,
+    },
   } as const;
 
   return new Elysia({ name: "harness-escalations", },)
