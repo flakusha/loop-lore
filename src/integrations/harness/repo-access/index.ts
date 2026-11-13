@@ -19,7 +19,6 @@ export {
 } from "./capabilities";
 export {
   type EscalationRateLimiter,
-  REPO_ACCESS_ESCALATION_TOOL,
   type RepoRootChangeInput,
   type RepoRootChangeOutcome,
   requestRepoRootChange,
@@ -31,6 +30,7 @@ export {
   type PendingEscalation,
   resolveEscalation,
 } from "./escalation-queue";
+export { REPO_ACCESS_ESCALATION_TOOL, } from "./escalation-rows";
 export {
   assertRepoAccessExecution,
   REPO_ACCESS_AUDIT_TOOL,

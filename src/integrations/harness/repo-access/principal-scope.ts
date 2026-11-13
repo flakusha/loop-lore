@@ -45,6 +45,11 @@ export interface RepoAccessPrincipal {
   /** Attributed user id, when the credential carries one. */
   readonly userId: string | null;
   /**
+   * The credential id the principal was resolved from, when the credential
+   * carries one. Scopes an approval to the credential that asked for it.
+   */
+  readonly credentialId?: string | null;
+  /**
    * The agent worktree assigned to this principal (`tree/agent-<id>/`),
    * server-side spawn context. Required for `external-agent`; ignored for
    * every other kind.

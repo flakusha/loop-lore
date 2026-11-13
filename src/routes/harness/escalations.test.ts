@@ -17,7 +17,9 @@ import { UserRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import {
   type EscalationRateLimiter,
+  initRepoAccessSettings,
   requestRepoRootChange,
+  resetRepoAccessSettings,
 } from "../../integrations/harness/repo-access";
 import { principalKind, } from "../../middleware/principal-kind";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
@@ -32,9 +34,11 @@ const allowAll: EscalationRateLimiter = { consume: () => ({ allowed: true, }), }
 beforeEach(async () => {
   fixture = await createTestDb();
   db = fixture.db;
+  initRepoAccessSettings({ enabled: true, },);
 },);
 
 afterEach(async () => {
+  resetRepoAccessSettings();
   await destroyTestDb(fixture,);
 },);
 
