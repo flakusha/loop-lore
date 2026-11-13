@@ -48,13 +48,15 @@ export interface HarnessUsageReport {
   resetsAt: string | null;
 }
 
-/** Token usage of one finished turn. */
+/**
+ * Token usage of one finished turn. Null when the harness reported no token
+ * counts - the counts never come from the `usage_update` event, whose `used`
+ * and `size` are CONTEXT-WINDOW metrics, not this turn's input/output tokens.
+ */
 export interface HarnessTurnUsage {
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
-  /** Cost the harness reported for the turn, in USD; null when it reported none. */
-  costUsd: number | null;
 }
 
 /** Result of one harness turn. */
@@ -64,6 +66,13 @@ export interface HarnessTurnResult {
   /** Harness stop reason (`end_turn`, `max_tokens`, ...). */
   stopReason: string;
   usage: HarnessTurnUsage | null;
+  /**
+   * Cost the harness reported, in USD; null when it reported none. The cost
+   * rides the `usage_update` event (the stable ACP v1 `PromptResponse` has no
+   * `usage` property at all), and the protocol reports it as the SESSION's
+   * cumulative cost - a multi-turn session stores the running total per turn.
+   */
+  costUsd: number | null;
   /** ACP session id the turn ran in, when the harness reported one. */
   acpSessionId: string | null;
   /** Everything the turn streamed: text, reasoning, tool calls, tool results. */

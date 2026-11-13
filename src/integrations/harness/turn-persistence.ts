@@ -180,7 +180,7 @@ export async function persistHarnessTurn(
         token_count_prompt: turn.usage?.inputTokens ?? null,
         token_count_completion: turn.usage?.outputTokens ?? null,
         token_count_total: turn.usage?.totalTokens ?? null,
-        token_cost: turn.usage?.costUsd ?? null,
+        token_cost: turn.costUsd ?? null,
       },).execute();
 
       const ids: string[] = [];

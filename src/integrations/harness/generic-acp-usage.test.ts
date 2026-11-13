@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * The cost a harness reports in `usage_update` reaches the turn's usage —
- * the figure the spend views and the persisted `token_cost` read.
+ * The cost a harness reports in `usage_update` reaches the turn — the figure
+ * the spend views and the persisted `token_cost` read.
  *
  * Resource contract (parallel-safe): every test owns a fresh fixture
  * subprocess (startFakeAcp: unique mkdtemp dir, no ports) and a fresh
@@ -53,7 +53,7 @@ describe("GenericAcpAdapter usage cost (fake ACP fixture)", () => {
 
     const turn = await adapter.prompt("hi",);
 
-    expect(turn.usage?.costUsd,).toBe(0.012,);
+    expect(turn.costUsd,).toBe(0.012,);
   });
 
   it("reports no cost when the harness reported none", async () => {
@@ -66,7 +66,26 @@ describe("GenericAcpAdapter usage cost (fake ACP fixture)", () => {
 
     const turn = await adapter.prompt("hi",);
 
-    expect(turn.usage?.costUsd,).toBeNull();
+    expect(turn.costUsd,).toBeNull();
+  });
+
+  it("carries the cost when the prompt response carries no usage", async () => {
+    // The stable ACP v1 PromptResponse has no `usage` property at all, so a
+    // conformant harness reports its cost ONLY through the usage_update.
+    const server = serve({
+      FAKE_MODELS: "m",
+      FAKE_NO_USAGE: "1",
+      FAKE_EVENTS: JSON.stringify([
+        { sessionUpdate: "usage_update", used: 120, size: 1000, cost: { amount: 0.5, currency: "USD", }, },
+      ],),
+    },);
+
+    const adapter = adapterFor(server,);
+
+    const turn = await adapter.prompt("hi",);
+
+    expect(turn.usage,).toBeNull();
+    expect(turn.costUsd,).toBe(0.5,);
   });
 
   it("reports no cost for a currency that is not USD", async () => {
@@ -81,6 +100,6 @@ describe("GenericAcpAdapter usage cost (fake ACP fixture)", () => {
 
     const turn = await adapter.prompt("hi",);
 
-    expect(turn.usage?.costUsd,).toBeNull();
+    expect(turn.costUsd,).toBeNull();
   });
 });

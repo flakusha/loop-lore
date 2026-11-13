@@ -70,7 +70,8 @@ export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapte
       const result: HarnessTurnResult = {
         text,
         stopReason: "end_turn",
-        usage: { inputTokens: 10, outputTokens: 5, totalTokens: 15, costUsd: null, },
+        usage: { inputTokens: 10, outputTokens: 5, totalTokens: 15, },
+        costUsd: null,
         acpSessionId: "fake-session",
         transcript: { text, thinking: [], toolCalls: [], toolResults: [], },
       };

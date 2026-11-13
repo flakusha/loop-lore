@@ -82,10 +82,9 @@ const runPromptFlow = async (promptId) => {
     update: { sessionUpdate: "agent_message_chunk", content: { type: "text", text: process.env.FAKE_REPLY ?? "ok" } },
   } });
   const stop = process.env.FAKE_STOP ?? (process.env.FAKE_AWAIT_CANCEL ? "cancelled" : "end_turn");
-  send({ jsonrpc: "2.0", id: promptId, result: {
-    stopReason: stop,
-    usage: { inputTokens: 10, outputTokens: 5, totalTokens: 15 },
-  } });
+  const result = { stopReason: stop };
+  if (!process.env.FAKE_NO_USAGE) { result.usage = { inputTokens: 10, outputTokens: 5, totalTokens: 15 }; }
+  send({ jsonrpc: "2.0", id: promptId, result });
 };
 process.stdin.setEncoding("utf8");
 process.stdin.on("data", (c) => {
@@ -193,6 +192,8 @@ export interface FakeAcpEnv {
   FAKE_EXIT_ON_PROMPT?: string;
   /** When set, session/prompt first sends `session/request_permission` and awaits the client's outcome. */
   FAKE_PERMISSION?: string;
+  /** When set, the prompt response omits `usage` (the stable ACP v1 PromptResponse shape). */
+  FAKE_NO_USAGE?: string;
   /** Comma-separated kinds of the advertised permission options (allow, reject). */
   FAKE_PERMISSION_KINDS?: string;
   /** When set, the fixture logs the initialize and session/new params it observed. */
