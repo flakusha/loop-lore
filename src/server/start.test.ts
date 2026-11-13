@@ -63,7 +63,19 @@ if (ISOLATED) {
   mock.module("../config/cert", () => ({ ensureTlsCerts: () => null, }),);
   mock.module("../config/load", () => ({ loadConfig: () => currentConfig, }),);
   mock.module("../cron", () => ({ getScheduler: () => ({ stop: () => {}, }), }),);
-  mock.module("../crypto", () => ({ initAnonymousMode: () => {}, initSmk: async () => {}, }),);
+  mock.module(
+    "../crypto",
+    () => ({
+      initAnonymousMode: () => {},
+      initSmk: async () => {},
+      encryptMessageContent: async () => {
+        throw new Error("not stubbed",);
+      },
+      getSmk: () => null,
+      isEncryptionEnabled: () => false,
+    }),
+  );
+
   mock.module("../db/index", () => ({ getDatabase: () => fakeDb, getSqliteDatabase: () => null, }),);
   mock.module("../db/migrate", () => ({ runDataMigrations: async () => {}, runMigrations: async () => {}, }),);
   mock.module("../db/seed", () => ({ seedDefaultActors: async () => {}, }),);
@@ -102,6 +114,7 @@ if (ISOLATED) {
     // linking for every importer; keep them on the file-config fallback.
     isHarnessAdminSettingsSeeded: () => false,
     getHarnessAdminSettings: () => ({ enabled: false, profiles: [], }),
+    getHarnessAdminFileConfig: () => ({ enabled: false, profiles: [], }),
   }),);
 
   mock.module("../plugins", () => ({
@@ -143,7 +156,14 @@ if (ISOLATED) {
   }),);
 
   mock.module("../admin/provider-health", () => ({ scanAllProviders: async () => [], }),);
-  mock.module("../admin/config", () => ({ seedDefaults: async () => {}, }),);
+  // Only seedDefaults is CALLED here (dynamic import in start()), but the
+  // graph statically links getConfigValue too — a mock without it breaks
+  // module linking for every importer under --isolate.
+  mock.module(
+    "../admin/config",
+    () => ({ seedDefaults: async () => {}, getConfigValue: async () => undefined, setConfig: async () => true, }),
+  );
+
   // The boot path materializes stored provider instances. The store drags in
   // the provider registry and the crypto barrel behind it, so it is mocked
   // like the sibling dynamic imports below — the real module has its own suite.
