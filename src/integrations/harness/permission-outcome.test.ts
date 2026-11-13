@@ -76,4 +76,54 @@ describe("wirePermissionOutcome", () => {
 
     expect(wirePermissionOutcome({ outcome: "reject_once", }, options,),).toEqual({ outcome: "reject_once", },);
   });
+
+  it("never lets a denial ride an allow option", () => {
+    const options = advertisedPermissionOptions({
+      options: [
+        { optionId: "allow", kind: "allow_once", },
+        { optionId: "reject", kind: "reject_once", },
+      ],
+    },);
+
+    expect(wirePermissionOutcome({ outcome: "reject_once", optionId: "allow", }, options,),).toEqual({
+      outcome: "reject_once",
+      optionId: "reject",
+    },);
+  });
+
+  it("never lets an allow ride a reject option", () => {
+    const options = advertisedPermissionOptions({
+      options: [
+        { optionId: "allow", kind: "allow_once", },
+        { optionId: "reject", kind: "reject_once", },
+      ],
+    },);
+
+    expect(wirePermissionOutcome({ outcome: "allow_once", optionId: "reject", }, options,),).toEqual({
+      outcome: "allow_once",
+      optionId: "allow",
+    },);
+  });
+
+  it("answers a cancellation as itself", () => {
+    const options = advertisedPermissionOptions({
+      options: [{ optionId: "allow", kind: "allow_once", },],
+    },);
+
+    expect(wirePermissionOutcome({ outcome: "cancelled", }, options,),).toEqual({ outcome: "cancelled", },);
+  });
+
+  it("denies in the harness's own spelling when no option can carry the allow", () => {
+    const options = advertisedPermissionOptions({
+      options: [
+        { optionId: "always", kind: "allow-always", },
+        { optionId: "no", kind: "reject-once", },
+      ],
+    },);
+
+    expect(wirePermissionOutcome({ outcome: "allow_once", }, options,),).toEqual({
+      outcome: "reject-once",
+      optionId: "no",
+    },);
+  });
 });
