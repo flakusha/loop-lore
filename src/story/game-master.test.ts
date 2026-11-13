@@ -391,7 +391,7 @@ describe("GameMasterService — executeTurn", () => {
     expect(result.turnNumber,).toBe(1,);
     expect(result.actorId,).toBe(actorId,);
     expect(result.prompt,).toBeDefined();
-    expect(result.response,).toBeNull();
+    expect(result.response,).toBe("*He nods thoughtfully.* I shall investigate the ancient ruins.",);
     expect(result.gmDecision,).toBeDefined();
     expect(result.gmDecision?.nextActorId,).toBe(actorId,);
     expect(result.narration,).toBeNull();
@@ -409,7 +409,10 @@ describe("GameMasterService — executeTurn", () => {
     let capturedMessages: { role: string; content: string }[] | undefined;
 
     const generateText: GenerateTextFn = (params,) => {
-      capturedMessages = params.messages;
+      // T2: executeTurn now makes two generateText calls (GM decision +
+      // actor reply). Only the decision call carries the assembled system
+      // prompt, so capture the decision call — the first one.
+      if (capturedMessages === undefined) { capturedMessages = params.messages; }
       return Promise.resolve("*He nods.* I understand the boundaries.",);
     };
 
@@ -444,7 +447,7 @@ describe("GameMasterService — executeTurn", () => {
     let capturedMessages: { role: string; content: string }[] | undefined;
 
     const generateText: GenerateTextFn = (params,) => {
-      capturedMessages = params.messages;
+      if (capturedMessages === undefined) { capturedMessages = params.messages; }
       return Promise.resolve("*He nods.* I understand the boundaries.",);
     };
 
@@ -470,7 +473,7 @@ describe("GameMasterService — executeTurn", () => {
     expect(systemMessages.some((m,) => m.content.includes("nsfw_policy",)),).toBe(false,);
   });
 
-  test("Human mode: returns minimal prompt, no LLM call", async () => {
+  test("Human mode: returns minimal prompt, no LLM call, null response", async () => {
     const { chatId, } = await seedStoryWorld();
     let generateCalled = false;
 
@@ -493,6 +496,7 @@ describe("GameMasterService — executeTurn", () => {
     expect(generateCalled,).toBe(false,);
     expect(result.prompt,).toContain("[Human GM]",);
     expect(result.gmDecision,).toBeDefined();
+    expect(result.response,).toBeNull();
   });
 
   test("Hybrid mode: calls LLM, works like LLM mode", async () => {
@@ -518,10 +522,12 @@ describe("GameMasterService — executeTurn", () => {
     expect(result.turnNumber,).toBe(1,);
   });
 
-  test("throws when no story context available (no world_id)", async () => {
+  test("worldless chat: synthesises an ephemeral context instead of throwing", async () => {
     const chatId = await seedChat(testDb,); // no world_id
+    const actorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, actorId,);
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test",);
+    const generateText: GenerateTextFn = () => Promise.resolve("The hero presses on.",);
     const gm = new GameMasterService({
       db: testDb,
       chatId,
@@ -529,7 +535,10 @@ describe("GameMasterService — executeTurn", () => {
       generateText,
     },);
 
-    await expect(gm.executeTurn(),).rejects.toThrow("No story context available",);
+    await gm.initialize();
+
+    const result = await gm.executeTurn();
+    expect(result.response,).toBe("The hero presses on.",);
   });
 
   test("throws when no actors available", async () => {

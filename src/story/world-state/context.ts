@@ -31,15 +31,23 @@ export async function buildContext(
     .where("id", "=", chatId,)
     .executeTakeFirst();
 
-  if (!chat?.world_id) { return null; }
+  if (!chat) { return null; }
 
-  const world = await state.db
-    .selectFrom("worlds",)
-    .selectAll()
-    .where("id", "=", chat.world_id,)
-    .executeTakeFirst();
+  const world = chat.world_id
+    ? await state.db
+      .selectFrom("worlds",)
+      .selectAll()
+      .where("id", "=", chat.world_id,)
+      .executeTakeFirst()
+    : null;
 
-  if (!world) { return null; }
+  if (chat.world_id && !world) { return null; }
+
+  // Worldless story chats (multi-assistant variants carry no world_id):
+  // synthesise an ephemeral context (empty world id, no location,
+  // current participants) so world-independent turns still produce a
+  // decision instead of throwing "No story context available".
+  const worldId = world?.id ?? "";
 
   let locationState: LocationState | null = null;
   let locName = "unknown";
@@ -79,7 +87,7 @@ export async function buildContext(
   const questRows = await state.db
     .selectFrom("quests",)
     .selectAll()
-    .where("world_id", "=", world.id,)
+    .where("world_id", "=", worldId,)
     .where("status", "=", "active",)
     .orderBy("priority", "desc",)
     .execute();
@@ -119,7 +127,10 @@ export async function buildContext(
     ? []
     : await state.db.selectFrom("npc_states",).selectAll().where("actor_id", "in", npcActorIds,).execute();
 
-  const inventoryByActor = await items.getNpcInventoryBatch(npcActorIds, world.id,);
+  const inventoryByActor = npcActorIds.length === 0 || worldId === ""
+    ? new Map()
+    : await items.getNpcInventoryBatch(npcActorIds, worldId,);
+
   const npcRowById = new Map(npcRows.map((r,) => [r.actor_id, r,]),);
 
   for (const p of participantRows) {
@@ -192,9 +203,9 @@ export async function buildContext(
 
   return {
     world: {
-      id: world.id,
-      name: world.name,
-      lore: world.lore ?? "",
+      id: worldId,
+      name: world?.name ?? "",
+      lore: world?.lore ?? "",
       currentLocation: {
         id: locId,
         name: locName,

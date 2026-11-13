@@ -67,10 +67,13 @@ describe("WorldStateService.buildContext", () => {
     expect(await svc.buildContext(uid(),),).toBeNull();
   });
 
-  test("returns null when chat has no world_id", async () => {
+  test("worldless chat: synthesises an ephemeral context", async () => {
     const chatId = await insertChats(db, "Chat", userId, { mode: "story", },);
     const svc = new WorldStateService(db,);
-    expect(await svc.buildContext(chatId,),).toBeNull();
+    const ctx = await svc.buildContext(chatId,);
+    expect(ctx,).not.toBeNull();
+    expect(ctx!.world.id,).toBe("",);
+    expect(ctx!.actors,).toEqual([],);
   });
 
   test("returns null when the world row is missing", async () => {
