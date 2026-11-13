@@ -29,6 +29,10 @@ export interface BattleCombatantView {
   bonusActions?: number;
   /** Reactions remaining this round. */
   reactions?: number;
+  /** Armor class (delivered so the panel can preview attack rolls over HTTP). */
+  ac?: number;
+  /** Melee attack bonus (STR mod + proficiency), matching the /attack default. */
+  attackBonus?: number;
 }
 
 /** Roll summary delivered with a battle-log entry (the d20 it was resolved with). */

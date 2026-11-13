@@ -46,6 +46,8 @@ function renderBattleFromPayload(
       actions: typeof c.actions === "number" ? c.actions : undefined,
       bonusActions: typeof c.bonusActions === "number" ? c.bonusActions : undefined,
       reactions: typeof c.reactions === "number" ? c.reactions : undefined,
+      ac: typeof c.ac === "number" ? c.ac : undefined,
+      attackBonus: typeof c.attackBonus === "number" ? c.attackBonus : undefined,
     },);
   }
 

@@ -157,6 +157,7 @@
     "rollResult": "{roll} {modifier} = {total} vs DC {dc}",
     "rollSuccess": "success",
     "rollFailure": "failure",
+    "attackRollPreview": "Attack roll {total} vs AC {ac}: {outcome}",
     "environmentalEffects": "Environmental effects",
     "targetSelection": "Target selection",
     "battleActions": "Battle actions",

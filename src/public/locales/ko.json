@@ -2494,7 +2494,8 @@
     "battleControls": "Battle controls",
     "battleSummary": "Battle summary",
     "showLog": "Show full log ({count})",
-    "hideLog": "Hide full log"
+    "hideLog": "Hide full log",
+    "attackRollPreview": "Attack roll {total} vs AC {ac}: {outcome}"
   },
   "frontend": {
     "keynav": {
