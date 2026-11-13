@@ -5,6 +5,15 @@
 
 export { DEFAULT_CONFIG_FILES, ENV_MAP, LOCAL_CONFIG_FILES, } from "./constants";
 export { applyProviderEnvVars, } from "./env";
+export {
+  ensureFirstBootPiiSecrets,
+  FIRST_BOOT_FILE,
+  generatePiiSecret,
+  hasAnyConfigFile,
+  renderFirstBootYaml,
+  writeFirstBootFile,
+} from "./first-boot";
+export type { FirstBootSecrets, } from "./first-boot";
 export { loadConfig, validateConfig, } from "./load";
 export { coerceValue, deepMerge, setByPath, } from "./parse";
 export { MIN_PII_SECRET_LENGTH, validatePiiSafety, } from "./pii-safety";

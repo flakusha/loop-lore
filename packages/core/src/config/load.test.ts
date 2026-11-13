@@ -1,6 +1,6 @@
 import { createLogger, getLogger, type Logger, setGlobalLogger, } from "@/logger";
 import { beforeAll, describe, expect, test, } from "bun:test";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import {
@@ -612,6 +612,34 @@ db:
 
       expect(config.templates.avatar.intentPatterns,).toContainEqual({ pattern: "swagger", emotion: "proud", },);
     } finally {
+      cleanup();
+    }
+  });
+
+  test("empty env + empty dir boots: promotes secrets instead of throwing", () => {
+    const saved = new Map<string, string | undefined>();
+    for (
+      const key of [
+        "NODE_ENV",
+        "NSFW_PII_SECRET",
+        "NSFW_FLAG_REPORTER_HASH_SECRET",
+        "NSFW_MODERATION_HMAC_SECRET",
+        "TELEMETRY_PII_SECRET",
+      ]
+    ) {
+      saved.set(key, process.env[key],);
+      delete process.env[key];
+    }
+    setupConfigFiles({},);
+    try {
+      const config = loadConfig(tmpDir,);
+      expect(config.nsfw.piiSecret!.length,).toBeGreaterThanOrEqual(32,);
+      expect(existsSync(join(tmpDir, "config.local.yaml",),),).toBe(true,);
+    } finally {
+      for (const [key, value,] of saved) {
+        if (value === undefined) { delete process.env[key]; }
+        else { process.env[key] = value; }
+      }
       cleanup();
     }
   });
