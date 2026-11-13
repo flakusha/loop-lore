@@ -277,7 +277,7 @@ describe("staticHarnessModels", () => {
 
 describe("listedHarnessModels", () => {
   it("drops empty ids and duplicates, tagging entries harness-source", () => {
-    const profile: AcpProfileConfig = { name: "p", command: ["fake", "p",], };
+    const profile: AcpProfileConfig = { name: "p", command: ["fake", "p",], tiers: {}, };
     const entries = listedHarnessModels({ profile, models: ["zai/glm-4.6", "", "zai/glm-4.6", "other/x",], },);
     expect(entries.map((entry,) => entry.model),).toEqual(["zai/glm-4.6", "other/x",],);
     expect(entries[0],).toMatchObject({ source: "harness", profile: "p", harness: "omp", capabilities: null, },);
