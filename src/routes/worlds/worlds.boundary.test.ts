@@ -132,4 +132,29 @@ describe("PUT /api/worlds/:worldId — character/world boundary", () => {
 
     expect(res.status,).toBe(403,);
   });
+
+  test("viewer role gets 403 on create with no world row written", async () => {
+    const countRows = async (): Promise<number> => {
+      const row = await db.selectFrom("worlds",).select((eb,) => eb.fn.countAll().as("n",))
+        .executeTakeFirstOrThrow();
+
+      return Number(row.n,);
+    };
+
+    const before = await countRows();
+    const viewerId = uid();
+    await insertUsers(db, "viewer-creator", "Viewer", { id: viewerId, } as never,);
+    const res = await appWithAuth(db, viewerId, "viewer",).handle(
+      new Request(`${BASE}/api/worlds`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "Denied Realm", },),
+      },),
+    );
+
+    expect(res.status,).toBe(403,);
+    const body = await res.json() as { error?: string };
+    expect(body.error,).toBe("Forbidden",);
+    expect(await countRows(),).toBe(before,);
+  });
 });

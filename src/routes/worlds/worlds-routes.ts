@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, SuccessResponse, WorldCreateBody, WorldUpdateBody, } from "../../validation/schemas";
 import { buildWorldBundle, } from "../export-shared";
 import { prettyJson, } from "../export-shared/helpers";
@@ -65,7 +66,14 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
     .post(
       `${prefix}/worlds`,
       async (ctx: any,) => {
-        const { userId, } = extractAuth(ctx,);
+        const { userId, userRole, } = extractAuth(ctx,);
+        if (!can(userRole, "world.create",)) {
+          return jsonError({
+            message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+            status: HttpStatus.Forbidden,
+          },);
+        }
+
         return handleCreateWorld(database, ctx.body as Record<string, unknown>, userId,);
       },
       {
@@ -73,6 +81,7 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         response: {
           201: t.Object({ id: t.String(), },),
           401: ErrorResponse,
+          403: ErrorResponse,
         },
         detail: {
           summary: "Create world",

@@ -14,6 +14,7 @@ import {
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
 import { getLogger, } from "../../logger";
 import { canAccessNsfw, getActorContentRating, isNsfwRating, } from "../../middleware/nsfw-gate";
+import { can, } from "../../users/permissions";
 import { jsonParseOr, uid, } from "../../utils";
 import { ChatCreateBody, } from "../../validation/schemas";
 import {
@@ -171,6 +172,9 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
+          if (!can(ctx.userRole, "chat.create",)) {
+            return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+          }
 
           const ageError = await checkAgeGate(database, userId,);
           if (ageError) { return ageError; }

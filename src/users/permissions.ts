@@ -68,6 +68,7 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, readonly string[]> = {
     "world.create",
     "world.edit_own",
     "export.own",
+    "import.own",
   ],
   creator: ["chat.*", "character.*", "world.*", "export.own", "import.own",],
   player: [
@@ -78,6 +79,7 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, readonly string[]> = {
     "world.create",
     "world.edit_own",
     "export.own",
+    "import.own",
   ],
   viewer: ["chat.join", "character.view", "world.view",],
   guest: ["chat.join", "character.view", "world.view",],

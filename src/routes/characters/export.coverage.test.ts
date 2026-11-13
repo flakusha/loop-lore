@@ -159,19 +159,30 @@ describe("characters exportRoutes coverage", () => {
     expect(badId.status,).toBe(422,);
   });
 
-  test("public actors export for strangers; admins bypass ownership", async () => {
+  test("public actors export for strangers; export.any bypasses private ownership", async () => {
     const outsider = makeApp(stranger, "user",);
     const pub = await outsider.handle(
       new Request(`http://localhost/api/actors/${publicActorId}/export`,),
     );
 
     expect(pub.status,).toBe(200,);
-    const admin = makeApp(stranger, "admin",);
-    const byAdmin = await admin.handle(
+    const withAny = makeApp(stranger, "admin",);
+    const byAny = await withAny.handle(
       new Request(`http://localhost/api/actors/${actorId}/export`,),
     );
 
-    expect(byAdmin.status,).toBe(200,);
+    expect(byAny.status,).toBe(200,);
+  });
+
+  test("owner without export.own gets 403 on own actors (404 stays cross-user)", async () => {
+    const viewerOwner = makeApp(owner, "viewer",);
+    const ownDenied = await viewerOwner.handle(
+      new Request(`http://localhost/api/actors/${actorId}/export`,),
+    );
+
+    expect(ownDenied.status,).toBe(403,);
+    const body = await ownDenied.json() as { error?: string };
+    expect(body.error,).toBe("Forbidden",);
   });
 
   test("default and ccv3 formats return character-card JSON", async () => {

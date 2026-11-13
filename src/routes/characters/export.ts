@@ -53,12 +53,22 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
         },);
       }
 
-      // Solo role is admin-equivalent for own actors
-      const isAdminOrSolo = can(ctx.userRole, "admin.character",);
-      if (!isAdminOrSolo && actor.visibility !== "public" && actor.user_id !== ctx.userId) {
+      // Own vs cross-user distinction: the own branch requires `export.own`;
+      // the cross-user branch requires `export.any` (tranche 2 makes the old
+      // broad `admin.character` bypass expressible per role). Cross-user
+      // denials keep the 404 shape so outsiders cannot probe for existence.
+      const isCrossUser = actor.user_id !== ctx.userId;
+      if (isCrossUser) {
+        if (actor.visibility !== "public" && !can(ctx.userRole, "export.any",)) {
+          return jsonError({
+            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
+      } else if (!can(ctx.userRole, "export.own",)) {
         return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
+          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          status: HttpStatus.Forbidden,
         },);
       }
 
@@ -247,6 +257,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
       params: ActorIdParams,
       response: {
         200: t.Any(),
+        403: ErrorResponse,
         404: ErrorResponse,
       },
     },);
