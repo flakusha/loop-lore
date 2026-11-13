@@ -588,7 +588,28 @@
     "knowledgeGraph": "知识图谱",
     "kgAssets": "资产",
     "kgEntities": "实体",
-    "noGraphData": "暂无知识图谱数据"
+    "noGraphData": "暂无知识图谱数据",
+    "lora": {
+      "tab": "LoRA",
+      "title": "LoRA models",
+      "help": "Discover LoRA models on the configured image backends (sd.cpp, ComfyUI) and inspect the discovery cache.",
+      "discover": "Discover",
+      "discovering": "Discovering…",
+      "refresh": "Refresh",
+      "clear": "Clear cache",
+      "searchPlaceholder": "Search models...",
+      "backendAll": "All backends",
+      "cacheEntries": "Cached entries",
+      "strength": "Strength",
+      "empty": "No LoRA models cached. Run discovery to scan the configured backends.",
+      "loadFailed": "Failed to load LoRA models",
+      "discoverDone": "Discovery complete",
+      "discoverFailed": "Discovery failed",
+      "discoverForbidden": "LoRA discovery requires admin rights",
+      "clearDone": "Discovery cache cleared",
+      "clearFailed": "Failed to clear the discovery cache",
+      "clearForbidden": "Clearing the cache requires admin rights"
+    }
   },
   "errors": {
     "notFound": "Not found",

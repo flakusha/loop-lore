@@ -62,6 +62,14 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'builder' }" @click="showTab('builder')">
           Builder
         </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'lora' }"
+          @click="showTab('lora')"
+          data-testid="admin-tab-lora"
+        >
+          {{{t("admin.lora.tab")}}}
+        </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'plugins' }" @click="showTab('plugins')">
           Plugins
         </button>
@@ -2925,6 +2933,136 @@
             </template>
           </div>
         </template>
+      </div>
+
+      <!-- LoRA Discovery Tab -->
+      <div x-show="activeTab === 'lora'" data-testid="admin-tab-lora-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4); gap: var(--space-3); flex-wrap: wrap">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600; margin: 0" x-text="t('admin.lora.title')"></h3>
+            <p
+              style="font-size: var(--fs-sm); color: var(--text-secondary); margin: var(--space-1) 0 0"
+              x-text="t('admin.lora.help')"
+            >
+            </p>
+          </div>
+          <div style="display: flex; gap: var(--space-2); flex-wrap: wrap">
+            <button
+              class="btn btn-primary btn-sm"
+              @click="discoverLora()"
+              :disabled="loraDiscovering"
+              data-testid="lora-discover"
+            >
+              <span x-show="!loraDiscovering" x-text="t('admin.lora.discover')"></span>
+              <span x-show="loraDiscovering" x-text="t('admin.lora.discovering')"></span>
+            </button>
+            <button
+              class="btn btn-secondary btn-sm"
+              @click="loadLora()"
+              :disabled="loraLoading"
+              data-testid="lora-refresh"
+            >
+              <span x-text="t('admin.lora.refresh')"></span>
+            </button>
+            <button
+              class="btn btn-danger btn-sm"
+              @click="clearLoraCache()"
+              :disabled="loraLoading"
+              data-testid="lora-clear"
+            >
+              <span x-text="t('admin.lora.clear')"></span>
+            </button>
+          </div>
+        </div>
+
+        <p
+          x-show="loraError"
+          x-text="loraError"
+          style="color: var(--accent-red); margin: 0 0 var(--space-3)"
+          data-testid="lora-error"
+        >
+        </p>
+        <p
+          x-show="loraMessage"
+          x-text="loraMessage"
+          style="color: var(--accent-green); margin: 0 0 var(--space-3)"
+          data-testid="lora-message"
+        >
+        </p>
+
+        <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-4); flex-wrap: wrap">
+          <input
+            class="form-input"
+            type="text"
+            x-model="loraSearch"
+            :placeholder="t('admin.lora.searchPlaceholder')"
+            style="flex: 1; min-width: 200px"
+            @change="loadLora()"
+            data-testid="lora-search"
+          />
+          <select
+            class="form-input"
+            x-model="loraBackend"
+            @change="loadLora()"
+            style="width: auto"
+            data-testid="lora-backend"
+          >
+            <option value="" x-text="t('admin.lora.backendAll')"></option>
+            <option value="comfyui">ComfyUI</option>
+            <option value="sd-server">sd.cpp</option>
+          </select>
+          <div
+            class="form-input"
+            style="width: auto; background: var(--bg-elevated); color: var(--text-secondary); display: flex; align-items: center"
+            x-show="loraStatus"
+            data-testid="lora-status"
+          >
+            <span x-text="t('admin.lora.cacheEntries') + ': ' + (loraStatus?.entries ?? 0)"></span>
+          </div>
+        </div>
+
+        <div x-show="loraLoading" class="empty-state" style="padding: var(--space-8)">
+          <div class="icon">⏳</div>
+          <div class="title" x-text="t('common.loading')"></div>
+        </div>
+
+        <div x-show="!loraLoading">
+          <div style="display: grid; gap: var(--space-2)" data-testid="lora-model-list">
+            <template x-for="model in loraModels" :key="model.backend + ':' + model.name">
+              <div
+                style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-md)"
+                data-testid="lora-model-row"
+              >
+                <div style="flex: 1">
+                  <div style="font-weight: 600" x-text="model.name"></div>
+                  <div style="font-size: var(--fs-sm); color: var(--text-secondary)" x-text="model.filename"></div>
+                </div>
+                <span style="font-size: var(--fs-sm); color: var(--text-muted)" x-text="model.backend"></span>
+                <span
+                  style="font-size: var(--fs-sm); color: var(--text-secondary)"
+                  x-text="loraSizeLabel(model)"
+                ></span>
+                <span
+                  x-show="model.triggerWords && model.triggerWords.length > 0"
+                  style="font-size: var(--fs-sm); color: var(--text-secondary)"
+                  x-text="(model.triggerWords ?? []).join(', ')"
+                ></span>
+                <span
+                  x-show="model.recommendedStrength != null"
+                  style="font-size: var(--fs-sm); color: var(--text-muted)"
+                  x-text="t('admin.lora.strength') + ': ' + model.recommendedStrength"
+                ></span>
+              </div>
+            </template>
+            <div
+              x-show="loraModels.length === 0"
+              style="padding: var(--space-4); text-align: center; color: var(--text-muted)"
+              x-text="t('admin.lora.empty')"
+              data-testid="lora-empty"
+            >
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Workflows Tab -->

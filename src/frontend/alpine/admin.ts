@@ -11,6 +11,7 @@ import { adminClassifierVocab, } from "./admin-classifier-vocab";
 import { adminFederation, } from "./admin-federation";
 import { adminHarness, } from "./admin-harness";
 import { adminKnowledgeGraph, } from "./admin-knowledge-graph";
+import { adminLora, } from "./admin-lora";
 import { adminModels, } from "./admin-models";
 import { createProviderWizard, } from "./admin-provider-wizard";
 import { adminReview, } from "./admin-review";
@@ -72,6 +73,7 @@ adminGlobals.adminPage = function() {
     ...adminHarness,
     ...adminWorldEvents,
     ...adminModels,
+    ...adminLora,
     ...adminReview,
     ...adminApprovals,
     ...adminSystem,
@@ -151,6 +153,11 @@ adminGlobals.adminPage = function() {
           this.loadModelCapabilities();
           this.loadComparisonHistory();
           this.loadModelNews();
+          break;
+        }
+
+        case "lora": {
+          this.loadLora();
           break;
         }
 
