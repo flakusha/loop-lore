@@ -11,6 +11,7 @@
  * principal, and the deny-by-default gate refuses to build the server at
  * all when `integrations.inbound` is unseeded/disabled/principal-less.
  *
+// hint: Logic changed on both sides. Requires understanding intent of each change.
  * Resource contract (parallel-safe): one :memory: SQLite per file, registry
  * reset per build/test, no ports/env, no fixed paths. The main() suite owns
  * the process seams it touches: logger/config/Stdio-transport module mocks
@@ -120,24 +121,14 @@ async function makeClient(cfg: Config,) {
   return client;
 }
 
-beforeAll(async () => {
+beforeAll(() => {
   createLogger({ level: "error", },);
-  testDb = await createTestDb();
-  db = testDb.db;
-  baseConfig = createConfigSchema().defaults as unknown as Config;
-
-  await insertUsers(db, USER, "MCP Operator", { id: USER, },);
-  await insertActors(db, "MCP Operator", { id: USER, user_id: USER, owner_id: USER, },);
-  await insertChats(db, "mcp-stdio", USER, { id: CHAT, },);
-  await insertChatParticipants(db, CHAT, USER, { role_in_chat: "owner", },);
 },);
-
-afterAll(async () => {
+afterEach(async () => {
   resetFacadeRegistry();
   resetInboundSettings();
   await destroyTestDb(testDb,);
 },);
-
 describe("inbound MCP stdio server", () => {
   test("the deny-by-default gate refuses unseeded / disabled / principal-less configs", async () => {
     // Unseeded store.
@@ -158,7 +149,7 @@ describe("inbound MCP stdio server", () => {
     expect(await connectInboundMcpServer({ database: db, config: baseConfig, }, t2,),).toBeNull();
   });
 
-  test("tools/list generates from the facade manifest", async () => {
+  test("tools/list generates from the facade manifest and carries the tool annotations", async () => {
     initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
     const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, },),);
     expect(client,).not.toBeNull();
@@ -167,6 +158,16 @@ describe("inbound MCP stdio server", () => {
     const names = tools.tools.map((tool,) => tool.name).sort();
     expect(names,).toContain("chat.send",);
     expect(names,).toContain("chat.history",);
+
+    // A host tells a read-only op from a mutating one by the annotations.
+    const history = tools.tools.find((tool,) => tool.name === "chat.history");
+    const send = tools.tools.find((tool,) => tool.name === "chat.send");
+    expect(history?.annotations?.readOnlyHint,).toBe(true,);
+    expect(send?.annotations?.readOnlyHint,).not.toBe(true,);
+    // chat.history declares the envelope it returns; the SDK client validates
+    // the structured result against it on every tools/call.
+    expect(history?.outputSchema?.type,).toBe("object",);
+
     await client!.close();
   });
 
@@ -174,6 +175,10 @@ describe("inbound MCP stdio server", () => {
     const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, principalScope: "read", },),);
     expect(client,).not.toBeNull();
 
+    // listTools first: the SDK caches the declared outputSchema and validates
+    // the structured result against it, so a schema that does not match the
+    // real envelope fails this call.
+    await client!.listTools();
     const result = await client!.callTool({ name: "chat.history", arguments: { chatId: CHAT, }, },);
     expect(result.isError,).toBeUndefined();
 
@@ -205,6 +210,7 @@ describe("inbound MCP stdio server", () => {
 });
 
 describeOrSkip("inbound MCP stdio server main()", () => {
+// hint: Structural and logic conflict. Both design and behavior differ.
   beforeEach(() => {
     resetFacadeRegistry();
     resetInboundSettings();
@@ -216,11 +222,11 @@ describeOrSkip("inbound MCP stdio server main()", () => {
     setTestDatabase(db, testDb.sqlite,);
   },);
 
-  afterEach(() => {
-    setTestDatabase(null,);
-    resetInboundSettings();
-    mainConfig = null;
-  },);
+afterEach(async () => {
+  resetFacadeRegistry();
+  resetInboundSettings();
+  await destroyTestDb(testDb,);
+},);
 
   test("the deny-by-default gate refuses the boot: no transport is attached", async () => {
     const prevExitCode = process.exitCode ?? 0;

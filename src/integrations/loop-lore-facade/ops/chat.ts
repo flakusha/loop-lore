@@ -23,7 +23,7 @@ import { listChatMessagesPage, type MessageListQuery, } from "../../../routes/me
 import { sendUserMessage, } from "../../../routes/messages/send-message";
 import { MessageCreateBody, MessagesQuery, } from "../../../validation/schemas";
 import { type FacadeRegistry, facadeResultFromResponse, } from "../registry";
-import type { FacadeContext, FacadeOp, FacadeResult, } from "../types";
+import type { FacadeContext, FacadeOp, FacadeOutputSchema, FacadeResult, } from "../types";
 
 /** Shared registration deps — the same shape HandlerOpts carries. */
 export interface ChatFacadeDeps {
@@ -45,6 +45,29 @@ export const FacadeListMessagesBody = t.Object({
   // can never validate more loosely than GET /api/v1/chats/:id/messages.
   ...MessagesQuery.properties,
 },);
+
+/**
+ * chat.history's structured result: the route's jsonPaginated envelope
+ * (`data` + `pagination`; `meta` rides along). The enriched message rows have
+ * a rendering-driven shape, so `data` is typed as an array of objects - the
+ * envelope itself is what the schema pins.
+ */
+export const ChatHistoryOutputSchema: FacadeOutputSchema = {
+  type: "object",
+  properties: {
+    data: { type: "array", items: { type: "object", }, },
+    pagination: {
+      type: "object",
+      properties: {
+        total: { type: "number", },
+        page: { type: "number", },
+        pageSize: { type: "number", },
+        totalPages: { type: "number", },
+      },
+    },
+  },
+  required: ["data", "pagination",],
+};
 
 /**
  * Synthetic request for the pipeline steps that only read headers
@@ -99,6 +122,15 @@ export function registerChatOps(registry: FacadeRegistry, deps: ChatFacadeDeps,)
       scope: "chat-write",
       ratePolicy: chatPolicy,
       bodySchema: FacadeSendMessageBody,
+      // chat.send APPENDS a message (and may trigger the auto-reply pipeline),
+      // so it is not read-only. destructiveHint stays unset: the spec default
+      // for a mutating tool is "may be destructive", and the pipeline can run
+      // slash commands / GM tools that overwrite entity fields.
+      annotations: {
+        readOnlyHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
       handler: async (ctx, body,) => {
         if (!Value.Check(FacadeSendMessageBody, body,)) { return badBody("chat.send",); }
         // Value.Check is a boolean guard; the narrowing cast is the typebox idiom.
@@ -127,6 +159,16 @@ export function registerChatOps(registry: FacadeRegistry, deps: ChatFacadeDeps,)
       scope: "read",
       ratePolicy: chatPolicy,
       bodySchema: FacadeListMessagesBody,
+      // The handler only SELECTs (access check, page, enrichment, avatar and
+      // translation attachment) - it never writes, so the op is read-only,
+      // non-destructive, idempotent, and closed to the outside world.
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+      outputSchema: ChatHistoryOutputSchema,
       handler: async (ctx, body,) => {
         if (!Value.Check(FacadeListMessagesBody, body,)) { return badBody("chat.history",); }
         const parsed = body as Static<typeof FacadeListMessagesBody>;
