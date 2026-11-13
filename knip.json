@@ -362,6 +362,10 @@
     "tests/e2e/flows/browser/character-panel-saves.browser.ts",
     "tests/e2e/flows/browser/chat-batch-ops.browser.ts",
     "tests/e2e/flows/browser/settings-data-actions.browser.ts",
+    // Offline outbox send-queue coverage (theme-4 AC2). Same class as the
+    // entries above: run-browser-tests.ts discovers by directory glob, knip
+    // cannot trace a shell glob as an import edge.
+    "tests/e2e/flows/browser/mobile-outbox.browser.ts",
     // Standalone CLI entry points, invoked via `bun run` shell strings
     // (package.json scripts), never statically imported — knip cannot trace
     // a shell-string invocation as an import edge. Same class as the

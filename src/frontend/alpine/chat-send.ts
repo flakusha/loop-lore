@@ -76,46 +76,6 @@ async function buildSendBody(
 }
 
 /**
- * Offline gate (slices 2-3): queue the composed send for replay and keep the
- * optimistic row marked `queued` instead of rolling it back. The connection
- * watcher drains the queue on reconnect with the SAME idempotency key.
- * @param ctx - chat state (activeChat, messages, toast dispatch)
- * @param tempId - the optimistic row to mark queued
- * @param idempotencyKey - the send's key; the replay reuses it verbatim
- * @param buildBody - builds the serialized POST body (encryption included)
- * @returns `true` when queued; `false` when the body could not be built and
- *   the caller must roll back like the online error path
- */
-async function queueOfflineSend(
-  ctx: ChatState,
-  tempId: string,
-  idempotencyKey: string,
-  buildBody: () => Promise<string>,
-): Promise<boolean> {
-  try {
-    enqueueOutboxSend({
-      chatId: ctx.activeChat ?? "",
-      idempotencyKey,
-      body: await buildBody(),
-    },);
-
-    ctx.messages = ctx.messages.map((m,) => m.id === tempId ? { ...m, status: "queued", } : m);
-    ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.messageQueued",), },);
-    return true;
-  } catch (error: unknown) {
-    // Never silent: a fast-path failure rolls the optimistic row back, so
-    // the cause must be observable or the offline queue looks "broken".
-    log.warn("offline enqueue failed", {
-      chatId: ctx.activeChat ?? "",
-      tempId,
-      error: error instanceof Error ? error.message : String(error,),
-    },);
-
-    return false;
-  }
-}
-
-/**
  * Remove one optimistic temp message after its send failed.
  *
  * Scoped to the exact temp id so a failure does not strip temp messages

@@ -7,7 +7,7 @@
  * bridge, and the pending-list view shape. Plus the i18n contract — every
  * new `chats.outbox*` key resolves in ALL 10 locale files.
  */
-import { afterAll, afterEach, describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { createOutbox, type OutboxSend, type OutboxStorage, } from "../pwa/outbox-store";

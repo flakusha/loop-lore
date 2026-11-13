@@ -1,5 +1,6 @@
 import { afterAll, afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { browserDecryptThenDecompress, type BrowserEncryptedPayload, browserGenerateKey, } from "../browser";
+import { keepFailedSendQueued, } from "./chat-send-offline";
 import "./i18n.test-helper";
 import { chatSendMethods, } from "./chat-send";
 import type { Message, } from "./types";
@@ -330,6 +331,57 @@ describe("chatSendMethods.sendMessage — offline fast-path root cause", () => {
 
     expect(ok,).toBe(false,);
     expect(ctx.messages,).toEqual([],);
+  });
+});
+
+describe("keepFailedSendQueued — failure-path replay", () => {
+  test("offline-class error with a built body queues and marks the row", async () => {
+    const ctx = buildCtx({
+      messages: [{
+        id: "tmp-1",
+        role: "user",
+        content: "hi",
+        created_at: "2026-01-01T00:00:00.000Z",
+      },],
+    },);
+
+    const ok = await keepFailedSendQueued(
+      ctx as never,
+      "tmp-1",
+      "key-9",
+      '{"content":"hi"}',
+      new TypeError("Failed to fetch",),
+    );
+
+    expect(ok,).toBe(true,);
+    expect(ctx.messages[0]?.status,).toBe("queued",);
+  });
+
+  test("null body or HTTP error returns false so the caller rolls back", async () => {
+    const ctx = buildCtx({
+      messages: [{
+        id: "tmp-1",
+        role: "user",
+        content: "hi",
+        created_at: "2026-01-01T00:00:00.000Z",
+      },],
+    },);
+
+    expect(
+      await keepFailedSendQueued(ctx as never, "tmp-1", "key-9", null, new TypeError("Failed to fetch",),),
+    ).toBe(false,);
+
+    expect(
+      await keepFailedSendQueued(
+        ctx as never,
+        "tmp-1",
+        "key-9",
+        '{"content":"hi"}',
+        Object.assign(new Error("HTTP 429",), { status: 429, },),
+      ),
+    ).toBe(false,);
+
+    expect(ctx.messages[0]?.status,).toBeUndefined();
   });
 });
 

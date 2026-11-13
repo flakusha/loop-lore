@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 101_worlds_prompt_budget_ratio
+ * 102_worlds_prompt_budget_ratio
  *
  * Per-world context-share ratio for the prompt-assembly token budgets
  * (1.0.0 THEME 4 AC5). `worlds.prompt_budget_ratio` scales the configured
