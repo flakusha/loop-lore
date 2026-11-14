@@ -211,3 +211,25 @@ describe("connectionStoreDefinition", () => {
     expect(connectionStoreDefinition.offline,).toBe(false,);
   });
 });
+
+describe("drainOutbox failure paths", () => {
+  test("logs instead of rejecting when the change broadcast blows up", async () => {
+    installDocument([], (type,) => {
+      if (type === OUTBOX_CHANGED_EVENT) { throw new Error("boom",); }
+    },);
+
+    await drainOutbox();
+  });
+
+  test("watchConnection tolerates a missing Alpine store", () => {
+    const listeners = new Map<string, Listener[]>();
+    installWindow(listeners,);
+    installNavigator(true,);
+    delete (globalThis as unknown as Record<string, unknown>).Alpine;
+
+    watchConnection();
+
+    expect(listeners.get("online",),).toHaveLength(1,);
+    expect(listeners.get("offline",),).toHaveLength(1,);
+  });
+});
