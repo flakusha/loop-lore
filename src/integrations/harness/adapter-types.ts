@@ -120,6 +120,21 @@ export class PermissionAskGoneError extends HarnessAcpError {
 }
 
 /**
+ * Raised when the harness REFUSES a decision it cannot express: the wire
+ * answer carries a rejection, so the decision did not take effect. The ask is
+ * answered either way - nothing is left to decide.
+ */
+export class PermissionDecisionRefusedError extends PermissionAskGoneError {
+  /**
+   * @param message - human-readable detail
+   */
+  constructor(message = "the harness refused the decision - the tool call was refused",) {
+    super(message,);
+    this.name = "PermissionDecisionRefusedError";
+  }
+}
+
+/**
  * One live connection to a harness profile. All methods may reject with
  * {@link HarnessAcpError}; the caller records the failure with its breaker.
  */

@@ -154,6 +154,35 @@ export function wirePermissionOutcome(
 }
 
 /**
+ * Whether the answer CARRIED the decision. An allow rides an allow-polarity
+ * option; a denial rides a rejection-polarity one — or the protocol's
+ * `cancelled` outcome, which refuses the tool call just as a denial does. A
+ * decision the harness cannot express is refused on the wire, and the caller
+ * must learn that its decision did not take effect.
+ * @param answer - the wire answer that was sent
+ * @param outcome - the decision that was sent
+ * @param options - the options the harness advertised
+ * @returns true when the answer carries the decision.
+ */
+export function answerCarriesDecision(
+  answer: WirePermissionOutcome,
+  outcome: PermissionOutcome,
+  options: AdvertisedPermissionOption[],
+): boolean {
+  // A cancellation decision is answered as itself.
+  if (outcome.outcome === "cancelled") { return true; }
+
+  // The protocol's cancellation refuses the tool call: it carries a denial,
+  // never an allow.
+  if (answer.outcome === "cancelled") { return !(outcome.outcome in ALLOW_VERBS); }
+
+  const selected = options.find((option,) => option.optionId === answer.optionId);
+  if (!selected || selected.outcome === null) { return false; }
+
+  return (selected.outcome in ALLOW_VERBS) === (outcome.outcome in ALLOW_VERBS);
+}
+
+/**
  * The option the decision NAMES, when that option may carry it. An explicit
  * option id never bypasses the ridability ladder: an "always" option cannot
  * carry a one-shot decision.

@@ -13,6 +13,7 @@
 import { describe, expect, it, } from "bun:test";
 import {
   advertisedPermissionOptions,
+  answerCarriesDecision,
   normalizePermissionOutcome,
   wirePermissionOutcome,
 } from "./permission-outcome";
@@ -50,6 +51,41 @@ describe("advertisedPermissionOptions", () => {
   it("reads no options from a payload that carries none", () => {
     expect(advertisedPermissionOptions(null,),).toEqual([],);
     expect(advertisedPermissionOptions({ options: "nope", },),).toEqual([],);
+  });
+});
+
+describe("answerCarriesDecision", () => {
+  const options = advertisedPermissionOptions({
+    options: [
+      { optionId: "allow", name: "Allow", kind: "allow_once", },
+      { optionId: "reject", name: "Reject", kind: "reject_once", },
+    ],
+  },);
+
+  it("carries a decision the harness expressed as itself", () => {
+    const answer = wirePermissionOutcome({ outcome: "allow_once", }, options,);
+
+    expect(answerCarriesDecision(answer, { outcome: "allow_once", }, options,),).toBe(true,);
+    expect(answerCarriesDecision(answer, { outcome: "reject_once", }, options,),).toBe(false,);
+  });
+
+  it("carries a denial the protocol cancelled", () => {
+    const answer = wirePermissionOutcome({ outcome: "reject_once", }, [],);
+
+    expect(answerCarriesDecision(answer, { outcome: "reject_once", }, [],),).toBe(true,);
+    expect(answerCarriesDecision(answer, { outcome: "allow_once", }, [],),).toBe(false,);
+    expect(answerCarriesDecision({ outcome: "cancelled", }, { outcome: "cancelled", }, [],),).toBe(true,);
+  });
+
+  it("does not carry an allow the harness refused", () => {
+    const refused = advertisedPermissionOptions({
+      options: [{ optionId: "reject", name: "Reject", kind: "reject_once", },],
+    },);
+
+    const answer = wirePermissionOutcome({ outcome: "allow_once", }, refused,);
+
+    expect(answer,).toEqual({ outcome: "selected", optionId: "reject", },);
+    expect(answerCarriesDecision(answer, { outcome: "allow_once", }, refused,),).toBe(false,);
   });
 });
 

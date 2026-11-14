@@ -13,7 +13,7 @@
 import { afterEach, describe, expect, it, } from "bun:test";
 import { mkdtempSync, rmSync, } from "node:fs";
 import { createLogger, setGlobalLogger, } from "../../logger";
-import { PermissionAskGoneError, type PermissionOutcome, } from "./adapter-types";
+import { PermissionAskGoneError, PermissionDecisionRefusedError, type PermissionOutcome, } from "./adapter-types";
 import type { PermissionRespondable, } from "./permission-queue";
 import { PermissionQueue, } from "./permission-queue";
 
@@ -193,6 +193,28 @@ describe("PermissionQueue", () => {
     if (result.ok) { throw new Error("expected a typed failure",); }
     expect(result.code,).toBe("no_connection",);
     expect(h.queue.pendingCount(),).toBe(0,);
+  });
+
+  it("does not report a decision the harness refused as decided", async () => {
+    const root = mkdtempSync(TMP_ROOT,);
+    sandboxes.push(root,);
+    const queue = new PermissionQueue({
+      connection: () => ({
+        respondPermission: () => {
+          throw new PermissionDecisionRefusedError();
+        },
+      }),
+    },);
+
+    const parked = await queue.submit(editAsk(root,),);
+    if (parked.decision !== "pending") { throw new Error("expected pending",); }
+
+    const result = queue.resolve({ id: parked.id, decision: "approve", },);
+    if (result.ok) { throw new Error("expected a typed failure",); }
+    expect(result.code,).toBe("ask_gone",);
+    expect(result.message,).toContain("the harness refused the decision",);
+    // The ask was answered on the wire, so the row goes with it.
+    expect(queue.pendingCount(),).toBe(0,);
   });
 
   it("withdrawProfile drops the profile's asks and reports their ids", async () => {
