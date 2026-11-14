@@ -11,6 +11,8 @@
 // beforeEach AND afterEach, unique principals per test; no ports, no env,
 // no sleeps, no ordering dependence. The concurrency cases use an EXPLICIT
 // barrier (a Kysely plugin), never a sleep.
+// The closed-DB case OWNS its fixture and closes it inside the test body;
+// destroyTestDb is idempotent, so the afterEach teardown stays a no-op there.
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { type Kysely, type KyselyPlugin, } from "kysely";
 import { randomUUID, } from "node:crypto";
