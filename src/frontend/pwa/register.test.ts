@@ -62,4 +62,70 @@ describe("registerServiceWorker", () => {
       }
     }
   });
+
+  test("the bound load listener registers /sw.js", async () => {
+    const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator",);
+    const originalAdd = globalThis.addEventListener;
+    const bound: LoadFn[] = [];
+    const registered: string[] = [];
+    Object.defineProperty(globalThis, "navigator", {
+      value: {
+        serviceWorker: {
+          register: (url: string,) => {
+            registered.push(url,);
+            return Promise.resolve({},);
+          },
+        },
+      },
+      configurable: true,
+      writable: true,
+    },);
+
+    (globalThis as unknown as Record<string, unknown>).addEventListener = (type: string, fn: LoadFn,) => {
+      if (type === "load") { bound.push(fn,); }
+    };
+
+    try {
+      const mod = await import("./register");
+      mod.registerServiceWorker();
+      await bound[0]?.();
+
+      expect(registered,).toEqual(["/sw.js",],);
+    } finally {
+      globalThis.addEventListener = originalAdd;
+      if (originalNavigator) {
+        Object.defineProperty(globalThis, "navigator", originalNavigator,);
+      } else {
+        delete (globalThis as unknown as Record<string, unknown>).navigator;
+      }
+    }
+  });
+
+  test("a rejected registration logs instead of throwing", async () => {
+    const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator",);
+    const originalAdd = globalThis.addEventListener;
+    const bound: LoadFn[] = [];
+    Object.defineProperty(globalThis, "navigator", {
+      value: { serviceWorker: { register: () => Promise.reject(new Error("denied",),), }, },
+      configurable: true,
+      writable: true,
+    },);
+
+    (globalThis as unknown as Record<string, unknown>).addEventListener = (type: string, fn: LoadFn,) => {
+      if (type === "load") { bound.push(fn,); }
+    };
+
+    try {
+      const mod = await import("./register");
+      mod.registerServiceWorker();
+      await bound[0]?.();
+    } finally {
+      globalThis.addEventListener = originalAdd;
+      if (originalNavigator) {
+        Object.defineProperty(globalThis, "navigator", originalNavigator,);
+      } else {
+        delete (globalThis as unknown as Record<string, unknown>).navigator;
+      }
+    }
+  });
 });
