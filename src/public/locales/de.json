@@ -2301,6 +2301,24 @@
         "openclaw": "OpenClaw leitet Anfragen an sein konfiguriertes Gateway weiter — der Zugriff unterliegt den Anbieter-Bedingungen des Gateway-Hosts, nicht einem Abo."
       }
     },
+    "escalations": {
+      "title": "Ausstehende Eskalationsanfragen",
+      "empty": "Keine Eskalationsanfrage wartet auf eine Entscheidung.",
+      "loadFailed": "Ausstehende Eskalationsanfragen konnten nicht geladen werden.",
+      "decideFailed": "Die Entscheidung konnte nicht gespeichert werden.",
+      "unavailableTitle": "Eskalationswarteschlange nicht verfügbar",
+      "unavailable": "Die Harness-Laufzeit ist nicht zusammengesetzt, daher können Eskalationsanfragen weder aufgelistet noch entschieden werden.",
+      "approve": "Genehmigen",
+      "deny": "Ablehnen",
+      "column": {
+        "subject": "Prinzipal",
+        "kind": "Art",
+        "target": "Zielpfad",
+        "rationale": "Begründung",
+        "requested": "Angefragt",
+        "decision": "Entscheidung"
+      }
+    },
     "permissions": {
       "title": "Ausstehende Berechtigungsanfragen",
       "empty": "Keine Berechtigungsanfrage wartet auf eine Entscheidung.",

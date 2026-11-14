@@ -2301,6 +2301,24 @@
         "openclaw": "OpenClaw는 구성된 게이트웨이로 프롬프트를 전달합니다 — 접근은 구독 계약이 아닌 게이트웨이 호스트의 공급자 약관을 따릅니다."
       }
     },
+    "escalations": {
+      "title": "대기 중인 에스컬레이션 요청",
+      "empty": "결정을 기다리는 에스컬레이션 요청이 없습니다.",
+      "loadFailed": "대기 중인 에스컬레이션 요청을 불러오지 못했습니다.",
+      "decideFailed": "결정을 기록하지 못했습니다.",
+      "unavailableTitle": "에스컬레이션 대기열을 사용할 수 없음",
+      "unavailable": "하네스 런타임이 구성되지 않아 에스컬레이션 요청을 조회하거나 결정할 수 없습니다.",
+      "approve": "승인",
+      "deny": "거부",
+      "column": {
+        "subject": "주체",
+        "kind": "유형",
+        "target": "대상 경로",
+        "rationale": "사유",
+        "requested": "요청 시각",
+        "decision": "결정"
+      }
+    },
     "permissions": {
       "title": "대기 중인 권한 요청",
       "empty": "결정을 기다리는 권한 요청이 없습니다.",

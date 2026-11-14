@@ -2301,6 +2301,24 @@
         "openclaw": "OpenClaw 将提示转发到其配置的网关 — 访问遵循网关主机的服务商条款，而非订阅协议。"
       }
     },
+    "escalations": {
+      "title": "待处理的升级请求",
+      "empty": "没有等待决定的升级请求。",
+      "loadFailed": "无法加载待处理的升级请求。",
+      "decideFailed": "无法记录该决定。",
+      "unavailableTitle": "升级队列不可用",
+      "unavailable": "harness 运行时未组装，因此无法列出或决定升级请求。",
+      "approve": "批准",
+      "deny": "拒绝",
+      "column": {
+        "subject": "主体",
+        "kind": "类型",
+        "target": "目标路径",
+        "rationale": "原因",
+        "requested": "请求时间",
+        "decision": "决定"
+      }
+    },
     "permissions": {
       "title": "待处理的权限请求",
       "empty": "没有等待决定的权限请求。",

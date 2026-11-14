@@ -2301,6 +2301,24 @@
         "openclaw": "OpenClaw reenvía las peticiones a su Gateway configurado — el acceso se rige por los términos del proveedor del host del Gateway, no por un acuerdo de suscripción."
       }
     },
+    "escalations": {
+      "title": "Solicitudes de escalación pendientes",
+      "empty": "Ninguna solicitud de escalación espera una decisión.",
+      "loadFailed": "No se pudieron cargar las solicitudes de escalación pendientes.",
+      "decideFailed": "No se pudo registrar la decisión.",
+      "unavailableTitle": "Cola de escalaciones no disponible",
+      "unavailable": "El runtime de harness no está compuesto, por lo que las solicitudes de escalación no se pueden listar ni decidir.",
+      "approve": "Aprobar",
+      "deny": "Denegar",
+      "column": {
+        "subject": "Principal",
+        "kind": "Tipo",
+        "target": "Ruta objetivo",
+        "rationale": "Motivo",
+        "requested": "Solicitado",
+        "decision": "Decisión"
+      }
+    },
     "permissions": {
       "title": "Solicitudes de permisos pendientes",
       "empty": "Ninguna solicitud de permiso espera una decisión.",

@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { adminHarness, } from "./admin-harness";
+import { buildStatCards, EMPTY_STATS, } from "./admin-harness-rows";
 
 import type { ApiFetchMock, } from "../tests/test-types";
 import { RUN, STATS, } from "./admin-harness-fixtures";
@@ -118,6 +119,7 @@ describe("adminHarness.loadHarness", () => {
     expect(state.harnessGapRows,).toEqual([{ toolingGap: "no-web-search", count: 4, },],);
     expect(state.harnessRunsEmpty(),).toBe(false,);
     expect(calls.sort(),).toEqual([
+      "/api/v1/harness/escalations",
       "/api/v1/harness/models",
       "/api/v1/harness/permissions",
       "/api/v1/harness/runs?limit=50",
@@ -202,6 +204,12 @@ describe("adminHarness.loadHarness", () => {
 
     expect(state.harnessRunRows,).toEqual([],);
     expect(toasts.filter((toast,) => toast.type === "error").length,).toBe(2,);
+
+    // The rejected stats body falls back to the empty rollup, so the cards
+    // read exactly the cards the empty rollup builds.
+    expect(state.harnessStatCards.map((card,) => card.value),).toEqual(
+      buildStatCards(EMPTY_STATS,).map((card,) => card.value),
+    );
   });
 });
 

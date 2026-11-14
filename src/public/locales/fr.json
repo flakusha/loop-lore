@@ -2301,6 +2301,24 @@
         "openclaw": "OpenClaw transmet les requêtes à sa passerelle configurée — l'accès est régi par les conditions du fournisseur de l'hôte de la passerelle, pas par un abonnement."
       }
     },
+    "escalations": {
+      "title": "Demandes d'escalade en attente",
+      "empty": "Aucune demande d'escalade n'attend de décision.",
+      "loadFailed": "Impossible de charger les demandes d'escalade en attente.",
+      "decideFailed": "Impossible d'enregistrer la décision.",
+      "unavailableTitle": "File d'escalade indisponible",
+      "unavailable": "Le runtime harness n'est pas composé : les demandes d'escalade ne peuvent être ni listées ni décidées.",
+      "approve": "Approuver",
+      "deny": "Refuser",
+      "column": {
+        "subject": "Principal",
+        "kind": "Type",
+        "target": "Chemin cible",
+        "rationale": "Motif",
+        "requested": "Demandé",
+        "decision": "Décision"
+      }
+    },
     "permissions": {
       "title": "Demandes d'autorisation en attente",
       "empty": "Aucune demande d'autorisation n'attend de décision.",
