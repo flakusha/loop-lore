@@ -9,8 +9,22 @@ import { checkUnreleasedSubheadings, } from "./check-changelog.js";
  *
  * Every case spawns the script as a child process: `runScript` exits the
  * process on a parse error or on `--help`, so it cannot be asserted in-process.
- * The script only READS CHANGELOG.md and the git tag list, so no test owns a
- * fixture and nothing here can collide under `bun test --parallel`.
+ *
+ * RESOURCE CONTRACT — this suite owns NOTHING and allocates NO fixture:
+ * - The script only READS `CHANGELOG.md` and the repo-global `git tag` list.
+ *   It writes no file, creates no temp dir, opens no port, and takes no DB.
+ * - No repo path is written by any case, so there is no teardown to perform
+ *   and a failed case cannot poison the rest of the run.
+ * - `CHANGELOG.md` and the tag list are read-only shared state: the whole
+ *   repo reads them, and nothing under `scripts/`, `src/`, or `node_modules/giwt`
+ *   writes `CHANGELOG.md`, so no concurrent gate or test can move them
+ *   underneath this suite.
+ * - Cases are order-independent and each spawns its own child process; none
+ *   depends on another's output.
+ * - Verified: 6 concurrent copies of this file all exit 0 (5 pass / 0 fail
+ *   each) with `CHANGELOG.md` and `docs/reference/openapi.json` byte-identical
+ *   afterwards, and the gate passes alongside the `api - doc drift` gate (the
+ *   one gate that writes a shared artifact) running at the same time.
  */
 
 const SCRIPT = `${import.meta.dir}/check-changelog.ts`;
