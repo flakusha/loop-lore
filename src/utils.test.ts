@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 import { describe, expect, test, } from "bun:test";
-import { asError, assertNever, secureToken, toErrorMessage, uid, } from "./utils.ts";
+import {
+  asError,
+  assertNever,
+  type FetchFailure,
+  safeFetch,
+  safeFetchWithRetry,
+  secureToken,
+  toErrorMessage,
+  uid,
+} from "./utils.ts";
 
 describe("utils.ts", () => {
   describe("uid", () => {
@@ -50,5 +59,14 @@ describe("utils.ts", () => {
     test("throws with unhandled case message", () => {
       expect(() => assertNever({ __brand: "unknown", } as never,)).toThrow("Unhandled case",);
     });
+  });
+});
+
+describe("safe-fetch barrel", () => {
+  test("re-exports fetch helpers and failure type", () => {
+    expect(typeof safeFetch,).toBe("function",);
+    expect(typeof safeFetchWithRetry,).toBe("function",);
+    const failure = { message: "denied", body: "denied", status: 403, } as FetchFailure;
+    expect(failure.body,).toBe("denied",);
   });
 });
