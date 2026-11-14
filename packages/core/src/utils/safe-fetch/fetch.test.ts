@@ -88,6 +88,48 @@ describe("safeFetch — success paths", () => {
   });
 });
 
+describe("safeFetch — failed responses", () => {
+  test("carries the failed response's body when the caller asked for it", async () => {
+    await withMockFetch(jsonFetch({ error: "already decided", }, 409,), async () => {
+      const result = await safeFetch("https://example.com/api", { includeErrorBody: true, },);
+      expect(result.ok,).toBe(false,);
+      if (!result.ok) {
+        const failure = result.error as Error & { body?: unknown };
+        // The body came back parsed, so the caller can show the server's own
+        // reason instead of a bare status line.
+        expect(failure.body,).toEqual({ error: "already decided", },);
+      }
+    },);
+  });
+
+  test("keeps a plain-text body as text", async () => {
+    await withMockFetch(
+      mock(() =>
+        new Response("upstream is down", { status: 502, headers: { "content-type": "text/plain", }, },)
+      ) as unknown as typeof fetch,
+      async () => {
+        const result = await safeFetch("https://example.com/api", { includeErrorBody: true, },);
+        expect(result.ok,).toBe(false,);
+        if (!result.ok) {
+          const failure = result.error as Error & { body?: unknown };
+          expect(failure.body,).toBe("upstream is down",);
+        }
+      },
+    );
+  });
+
+  test("reads no body unless the caller asked for it", async () => {
+    await withMockFetch(jsonFetch({ error: "already decided", }, 409,), async () => {
+      const result = await safeFetch("https://example.com/api",);
+      expect(result.ok,).toBe(false,);
+      if (!result.ok) {
+        const failure = result.error as Error & { body?: unknown };
+        expect(failure.body,).toBeUndefined();
+      }
+    },);
+  });
+});
+
 describe("safeFetch — 401 handling", () => {
   test("calls onAuthError and returns Unauthorized by default", async () => {
     const onAuthError = mock(() => {},);

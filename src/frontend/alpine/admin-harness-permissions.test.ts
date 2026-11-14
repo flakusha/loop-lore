@@ -231,6 +231,22 @@ describe("decideHarnessPermission", () => {
     expect(state.harnessDecisionError,).toBe("Could not record the decision.",);
   });
 
+  test("a rejected decision shows the server's own wording", async () => {
+    // The request helper carries the failed response's body on the thrown
+    // error, so the endpoint's reason reaches the operator.
+    handler = async () => {
+      throw Object.assign(new Error("HTTP 409: Conflict",), {
+        status: 409,
+        body: { error: "permission request ask-1 was already decided", code: "CONFLICT", },
+      },);
+    };
+
+    const state = emptyHarnessPermissionsState();
+    await decideHarnessPermission(state, "ask-1", "approve",);
+
+    expect(state.harnessDecisionError,).toBe("permission request ask-1 was already decided",);
+  });
+
   test("a second decision while one is in flight is ignored", async () => {
     handler = async () => Response.json({ ok: true, },);
 

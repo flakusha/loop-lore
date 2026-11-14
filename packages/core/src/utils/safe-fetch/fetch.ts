@@ -11,7 +11,7 @@ import type { JsonResult, } from "../safe-json";
 import { safeJsonParse, safeJsonStringify, } from "../safe-json";
 import { DEFAULT_MAX_SIZE, DEFAULT_TIMEOUT, } from "./constants";
 import { buildAuthHeaders, } from "./headers";
-import type { FetchAuth, FetchResult, SafeFetchOptions, } from "./types";
+import type { FetchAuth, FetchFailure, FetchResult, SafeFetchOptions, } from "./types";
 
 /**
  * Fetch with safety guarantees: timeout, safe JSON, Result type, size limits.
@@ -101,6 +101,36 @@ function buildRequestHeaders(
 }
 
 /**
+ * Read a failed response's body for the error: parsed JSON when the content
+ * type says JSON, otherwise the raw text.
+ *
+ * Bounded by `maxSize`, and a read that fails yields `undefined` — the error
+ * then keeps its transport message and the caller falls back to it.
+ * @param response - the failed response
+ * @param maxSize - the body size limit
+ * @returns the body, or undefined when it could not be read
+ */
+async function readErrorBody(response: Response, maxSize: number,): Promise<unknown> {
+  try {
+    const text = await response.text();
+    if (text.length > maxSize) { return undefined; }
+
+    const contentType = response.headers.get("content-type",) ?? "";
+    if (contentType.includes("json",)) {
+      try {
+        return JSON.parse(text,) as unknown;
+      } catch {
+        return text;
+      }
+    }
+
+    return text;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * @param url - URL to fetch
  * @param options - Fetch options with safety extensions (timeout, maxSize, auth, etc.)
  * @returns `Promise<FetchResult<T>>` — discriminated `{ ok, data, status, headers }` or `{ ok, error, status, headers }`.
@@ -116,6 +146,7 @@ export async function safeFetch<T = unknown,>(
     signal: externalSignal,
     parseJson = true,
     stream = false,
+    includeErrorBody = false,
     auth,
     handle401 = true,
     onAuthError,
@@ -183,9 +214,19 @@ export async function safeFetch<T = unknown,>(
     }
 
     if (!response.ok) {
+      const error = new Error(`HTTP ${response.status}: ${response.statusText}`,);
+      // The caller's own reason for the refusal lives in the body, so a
+      // caller that asked for it gets it on the error. Opt-in: reading a
+      // failed response's body costs memory, and only a caller that shows the
+      // server's reason needs it.
+      if (includeErrorBody && !stream) {
+        const body = await readErrorBody(response, maxSize,);
+        if (body !== undefined) { (error as FetchFailure).body = body; }
+      }
+
       return {
         ok: false,
-        error: new Error(`HTTP ${response.status}: ${response.statusText}`,),
+        error,
         status: response.status,
         headers: response.headers,
       };
