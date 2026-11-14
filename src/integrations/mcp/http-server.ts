@@ -20,6 +20,12 @@
  * SESSION SCOPING: a session pins the principal that opened it. Every later
  * request re-resolves the credential and must land on the SAME principal, so
  * a leaked session id cannot be replayed under another identity (403).
+ *
+ * SIZE: the live session set is BOUNDED by {@link MAX_LIVE_SESSIONS} — the
+ * oldest session is evicted (the spec lets the server end any session), so
+ * the map cannot grow for the process lifetime. The request body is read
+ * once, by the SDK transport, and is bounded by the app-wide Bun.serve limit:
+ * the repo sets no per-route body cap here (like every other JSON route).
  */
 
 import type { Server, } from "@modelcontextprotocol/sdk/server/index.js";
@@ -38,6 +44,16 @@ import { type FacadeContext, facadeContextFromRequestContext, } from "../loop-lo
 /** The MCP endpoint, relative to the versioned prefix. */
 const MCP_ENDPOINT = "integrations/mcp/streamable";
 
+/**
+ * Live sessions kept at once. The spec lets the server terminate a session at
+ * any time ("The server MAY terminate the session at any time, after which it
+ * MUST respond to requests containing that session ID with HTTP 404 Not
+ * Found"), so the cap evicts the OLDEST session instead of letting the map
+ * grow for the process lifetime. A client that sees the 404 re-initializes,
+ * which is the spec's own recovery path.
+ */
+export const MAX_LIVE_SESSIONS = 64;
+
 /** The server-resolved identity a session is pinned to. */
 interface McpPrincipal {
   readonly kind: PrincipalKind;
@@ -51,6 +67,8 @@ interface McpSession {
   readonly transport: WebStandardStreamableHTTPServerTransport;
   readonly server: Server;
   readonly principal: McpPrincipal;
+  /** Release the transport's streams and the server graph behind the session. */
+  close: () => Promise<void>;
 }
 
 /** The outcome of the auth boundary check. */
@@ -111,6 +129,21 @@ function samePrincipal(session: McpPrincipal, current: McpPrincipal,): boolean {
     session.userId === current.userId &&
     session.credentialId === current.credentialId &&
     session.credentialScope === current.credentialScope;
+}
+
+/**
+ * Evict the oldest live sessions until the set fits {@link MAX_LIVE_SESSIONS}.
+ * The map's insertion order IS the age order, so the first key is the oldest.
+ * @param sessions - the live session map
+ */
+async function evictOldestSessions(sessions: Map<string, McpSession>,): Promise<void> {
+  while (sessions.size >= MAX_LIVE_SESSIONS) {
+    const oldest = sessions.keys().next().value;
+    if (oldest === undefined) { return; }
+    const session = sessions.get(oldest,);
+    sessions.delete(oldest,);
+    await session?.close();
+  }
 }
 
 /**
@@ -271,12 +304,24 @@ export function createMcpHttpRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         // No session id: only an initialize request may open one. The
         // transport answers anything else with 400 ("Server not initialized").
+        await evictOldestSessions(sessions,);
+
         const registry = getFacadeRegistry({ database, config, },);
         const transport = new WebStandardStreamableHTTPServerTransport({
           sessionIdGenerator: () => crypto.randomUUID(),
           enableJsonResponse: true,
           onsessioninitialized: (id,) => {
-            sessions.set(id, { transport, server, principal, },);
+            sessions.set(id, {
+              transport,
+              server,
+              principal,
+              // The transport's close() fires onsessionclosed, which deletes
+              // the entry again (a no-op after an explicit delete).
+              close: async () => {
+                await transport.close();
+                await server.close();
+              },
+            },);
           },
           onsessionclosed: (id,) => {
             sessions.delete(id,);

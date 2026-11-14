@@ -13,6 +13,14 @@
  * required scope tier, and the rate policy name — everything a client needs
  * to decide whether it can call the op.
  *
+ * SHAPE: the envelope is FROZEN at `{ ops: [...] }` (one key). An op entry
+ * evolves ADDITIVELY — a new field appears, and a JSON client ignores the
+ * fields it does not know — so the manifest is forward-compatible without a
+ * version field. No version field is added because this surface has no prior
+ * version to negotiate and its sibling (`GET /api/v1/integrations/manifest`,
+ * the thin descriptor list) carries none either. That sibling stays as it is:
+ * it publishes descriptors, this one publishes the full capability.
+ *
  * AUTH: authenticated, like the facade's own manifest — the repo's rule is
  * "no anonymous discovery" (`integrations/loop-lore-facade/routes.ts`). The
  * guard fails closed for a request with no resolved principal, the handler
