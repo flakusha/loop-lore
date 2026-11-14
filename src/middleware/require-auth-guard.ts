@@ -149,7 +149,9 @@ function isNonApiGet(method: string, pathname: string,): boolean {
  * Whether a request path is an integration-agent surface — the ONLY routes a
  * `principalKind: "external-agent"` principal (an integration token, ADR
  * credentials-issuer-model admin-scoped slice) may reach: the facade REST op
- * surface, its manifest, and the MCP transport, all under `integrations/`.
+ * surface, its manifest, the MCP transport (all under `integrations/`), and
+ * the facade capability manifest (`/capabilities` — the machine-readable
+ * description of the ops: names and schemas only, never user data).
  * Deliberately EXCLUDES the webhook receivers under `integrations/webhooks/`
  * (their authority is the per-adapter HMAC proof checked in-handler, and a
  * token principal has no business there) and the admin token CRUD
@@ -157,14 +159,16 @@ function isNonApiGet(method: string, pathname: string,): boolean {
  * that surface stays JWT-admin-only). Every other path fail-closes for
  * token principals.
  * @param pathname - full request pathname (version prefix still on)
- * @returns true when the version-stripped path sits under `integrations`
- *   but outside `integrations/webhooks/`
+ * @returns true when the version-stripped path is the capability manifest,
+ *   or sits under `integrations` but outside `integrations/webhooks/`
  */
 export function isIntegrationAgentPath(pathname: string,): boolean {
   const stripped = stripApiVersion(pathname,);
+  if (stripped === null) { return false; }
   // `stripApiVersion` keeps the leading slash: "/integrations/...". Segment-
   // exact, so lookalikes like `/integrations-webhooks` never match.
-  if (stripped === null || !(stripped.startsWith("/integrations/",) || stripped === "/integrations")) {
+  if (stripped === "/capabilities") { return true; }
+  if (!(stripped.startsWith("/integrations/",) || stripped === "/integrations")) {
     return false;
   }
 

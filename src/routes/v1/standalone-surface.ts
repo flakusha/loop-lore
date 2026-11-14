@@ -23,12 +23,14 @@ import { Elysia, } from "elysia";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
 import { createMcpRoutes, } from "../../integrations/loop-lore-facade/mcp/routes";
 import { createFacadeRoutes, } from "../../integrations/loop-lore-facade/routes";
+import { createMcpHttpRoutes, } from "../../integrations/mcp/http-server";
 import { agencyRoutes, } from "../agency";
 import { configMenuRoutes, } from "../config-menu";
 import { gameStateRoutes, } from "../game-state";
 import { locationExplorerRoutes, } from "../location-explorer";
 import { omniSearchRoutes, } from "../omni-search";
 import { storyOrchestrationRoutes, } from "../story-orchestration";
+import { capabilityManifestRoutes, } from "./capabilities";
 
 /**
  * @param opts
@@ -47,5 +49,7 @@ export function standaloneSurface(opts: RegisterPluginsOpts,) {
     .use(configMenuRoutes({ database: handleOpts.database, }, prefix,),)
     .use(omniSearchRoutes({ database: handleOpts.database, }, prefix,),)
     .use(createFacadeRoutes(handleOpts, prefix,),)
-    .use(createMcpRoutes(handleOpts, prefix,),);
+    .use(createMcpRoutes(handleOpts, prefix,),)
+    .use(createMcpHttpRoutes(handleOpts, prefix,),)
+    .use(capabilityManifestRoutes(handleOpts, prefix,),);
 }
