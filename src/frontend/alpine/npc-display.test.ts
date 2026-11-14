@@ -7,9 +7,22 @@ import { npcDisplay, } from "./npc-display";
 describe("npcDisplay helpers", () => {
   test("disposition colors map every known tier, unknown falls back to muted", () => {
     expect(npcDisplay.getDispositionColor("hostile",),).toBe("var(--accent-red)",);
+    expect(npcDisplay.getDispositionColor("unfriendly",),).toBe("var(--accent-orange)",);
+    expect(npcDisplay.getDispositionColor("neutral",),).toBe("var(--text-muted)",);
     expect(npcDisplay.getDispositionColor("friendly",),).toBe("var(--accent-green)",);
+    expect(npcDisplay.getDispositionColor("honored",),).toBe("var(--accent-blue)",);
+    expect(npcDisplay.getDispositionColor("revered",),).toBe("var(--accent-purple)",);
     expect(npcDisplay.getDispositionColor("exalted",),).toBe("var(--accent-gold)",);
     expect(npcDisplay.getDispositionColor("whatever",),).toBe("var(--text-muted)",);
+  });
+
+  test("relationship colors map every known type, unknown falls back to muted", () => {
+    expect(npcDisplay.getRelationshipColor("friend",),).toBe("var(--accent-green)",);
+    expect(npcDisplay.getRelationshipColor("ally",),).toBe("var(--accent-blue)",);
+    expect(npcDisplay.getRelationshipColor("rival",),).toBe("var(--accent-orange)",);
+    expect(npcDisplay.getRelationshipColor("enemy",),).toBe("var(--accent-red)",);
+    expect(npcDisplay.getRelationshipColor("mentor",),).toBe("var(--accent-purple)",);
+    expect(npcDisplay.getRelationshipColor("whatever",),).toBe("var(--text-muted)",);
   });
 
   test("disposition labels capitalize, strength/karma label the bands", () => {
