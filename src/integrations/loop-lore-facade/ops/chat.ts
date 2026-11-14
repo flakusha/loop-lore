@@ -137,13 +137,15 @@ export function registerChatOps(registry: FacadeRegistry, deps: ChatFacadeDeps,)
       scope: "chat-write",
       ratePolicy: chatPolicy,
       bodySchema: FacadeSendMessageBody,
-      // chat.send APPENDS a message (and may trigger the auto-reply pipeline),
-      // so it is not read-only. destructiveHint stays unset: the spec default
-      // for a mutating tool is "may be destructive", and the pipeline can run
-      // slash commands / GM tools that overwrite entity fields.
+      // Annotation rule (types.ts, FacadeToolAnnotations): chat.send APPENDS
+      // a message (and may trigger the auto-reply pipeline), so it changes
+      // domain state and readOnlyHint is false. destructiveHint stays unset:
+      // the spec default for a mutating tool is "may be destructive", and the
+      // pipeline can run slash commands / GM tools that overwrite entity
+      // fields. A repeat is not effect-free, so idempotentHint stays UNSET
+      // (the MCP default is false - silence is the honest answer).
       annotations: {
         readOnlyHint: false,
-        idempotentHint: false,
         openWorldHint: true,
       },
       handler: async (ctx, body,) => {
@@ -174,16 +176,17 @@ export function registerChatOps(registry: FacadeRegistry, deps: ChatFacadeDeps,)
       scope: "read",
       ratePolicy: chatPolicy,
       bodySchema: FacadeListMessagesBody,
-      // NOT read-only: the facade registry appends a `log_entries` audit row
-      // on EVERY call, and avatar resolution materializes the actor's default
-      // outfit (a `wardrobe_items` insert - idempotent after the first touch).
-      // Both writes are additive INSERTs - no update, no delete - so the op is
-      // not read-only but not destructive either. The per-call audit row makes
-      // repeats NOT effect-free, so idempotency is false too.
+      // Annotation rule (types.ts, FacadeToolAnnotations): readOnlyHint
+      // tracks DOMAIN state - the registry's per-call `log_entries` audit row
+      // is bookkeeping and does NOT flip it. This op DOES create domain state
+      // (avatar resolution materializes the actor's default outfit in
+      // `wardrobe_items`), so readOnlyHint is false; the write is additive, so
+      // destructiveHint is false. A repeat is not effect-free (the audit row,
+      // plus materialization on demand), so idempotentHint stays UNSET - the
+      // MCP default is false and silence is the honest answer.
       annotations: {
         readOnlyHint: false,
         destructiveHint: false,
-        idempotentHint: false,
         openWorldHint: false,
       },
       outputSchema: ChatHistoryOutputSchema,

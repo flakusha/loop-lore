@@ -58,6 +58,19 @@ export type FacadeResult =
  * MCP tool behaviour hints (the spec's `annotations` object). Every field is
  * a HINT an MCP host MAY surface to the user - clients must not treat them
  * as a guarantee, and an absent field keeps the spec's default.
+ *
+ * THE RULE every facade op follows (the sibling `facade-domains` branch was
+ * cut before this rule and still ships false hints - this branch carries the
+ * truth):
+ *  - `readOnlyHint` tracks the caller's DOMAIN state only. The registry's
+ *    per-call `log_entries` audit row is bookkeeping, NOT a domain side
+ *    effect, so it does NOT flip the hint. An op that creates or updates
+ *    domain state (e.g. `chat.history`'s conditional `wardrobe_items`
+ *    materialization) MUST declare `readOnlyHint: false`.
+ *  - `idempotentHint` is left UNSET wherever a repeat is not effect-free -
+ *    the MCP default is false, so silence is the honest answer. Every op
+ *    appends an audit row, so NO op in this facade may claim
+ *    `idempotentHint: true`.
  */
 export interface FacadeToolAnnotations {
   /** The op only reads - it never mutates the loop-lore store. */
