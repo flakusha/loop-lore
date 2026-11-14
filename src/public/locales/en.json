@@ -2228,7 +2228,7 @@
     "assets": "Assets",
     "openChat": "Open chat",
     "openAsset": "Preview asset"
-  }
+  },
   "reminders": {
     "menu": "Remind me",
     "in10": "in 10 minutes",
@@ -2628,5 +2628,5 @@
     "reuniting": "Reuniting…",
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
-  },
+  }
 }
