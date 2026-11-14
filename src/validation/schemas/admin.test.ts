@@ -12,6 +12,10 @@
 import { describe, expect, test, } from "bun:test";
 import { Value, } from "@sinclair/typebox/value";
 import {
+  AdminComfyUIDiscoveryResponse,
+  AdminComfyUISetupBody,
+  AdminSdCppDiscoveryResponse,
+  AdminSdCppSetupBody,
   AdminServerProviderDescriptor,
   AdminSetupProviderBody,
   AdminSetupProviderResponse,
@@ -128,3 +132,43 @@ describe("AdminSetupProvidersResponse", () => {
     },)).toBe(false,);
   });
 });
+
+ describe("AdminSdCppSetupBody", () => {
+ test("accepts a named instance with a base URL", () => {
+ expect(Value.Check(AdminSdCppSetupBody, { name: "local-sd", baseUrl: "http://127.0.0.1:8080", },)).toBe(true,);
+ });
+
+ test("rejects an instance name the store could not address", () => {
+ expect(Value.Check(AdminSdCppSetupBody, { name: "-bad", baseUrl: "http://127.0.0.1:8080", },)).toBe(false,);
+ });
+ });
+
+ describe("AdminSdCppDiscoveryResponse", () => {
+ test("accepts a discovery response with one entry", () => {
+ expect(Value.Check(AdminSdCppDiscoveryResponse, { probedAt: "2026-11-14T00:00:00.000Z", providers: [{ name: "local-sd", baseUrl: "http://127.0.0.1:8080", source: "config", dispatching: true, reachable: true, },], },)).toBe(true,);
+ });
+
+ test("rejects an entry from an unknown source", () => {
+ expect(Value.Check(AdminSdCppDiscoveryResponse, { probedAt: "2026-11-14T00:00:00.000Z", providers: [{ name: "local-sd", baseUrl: "http://127.0.0.1:8080", source: "manual", dispatching: true, reachable: true, },], },)).toBe(false,);
+ });
+ });
+
+ describe("AdminComfyUISetupBody", () => {
+ test("accepts a named instance with a base URL", () => {
+ expect(Value.Check(AdminComfyUISetupBody, { name: "local-comfy", baseUrl: "http://127.0.0.1:8188", },)).toBe(true,);
+ });
+
+ test("rejects an instance name the store could not address", () => {
+ expect(Value.Check(AdminComfyUISetupBody, { name: "-bad", baseUrl: "http://127.0.0.1:8188", },)).toBe(false,);
+ });
+ });
+
+ describe("AdminComfyUIDiscoveryResponse", () => {
+ test("accepts a discovery response with one entry", () => {
+ expect(Value.Check(AdminComfyUIDiscoveryResponse, { probedAt: "2026-11-14T00:00:00.000Z", providers: [{ name: "local-comfy", baseUrl: "http://127.0.0.1:8188", source: "stored", dispatching: false, reachable: false, },], },)).toBe(true,);
+ });
+
+ test("rejects an entry from an unknown source", () => {
+ expect(Value.Check(AdminComfyUIDiscoveryResponse, { probedAt: "2026-11-14T00:00:00.000Z", providers: [{ name: "local-comfy", baseUrl: "http://127.0.0.1:8188", source: "manual", dispatching: false, reachable: false, },], },)).toBe(false,);
+ });
+ });
