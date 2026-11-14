@@ -24,10 +24,11 @@ import {
   type HarnessUsageReport,
   type PendingPermission,
   PermissionAskGoneError,
+  PermissionDecisionRefusedError,
   type PermissionOutcome,
 } from "./adapter-types";
 import { JsonRpcProcess, JsonRpcRequestError, } from "./jsonrpc-process";
-import { advertisedPermissionOptions, wirePermissionOutcome, } from "./permission-outcome";
+import { advertisedPermissionOptions, answerCarriesDecision, wirePermissionOutcome, } from "./permission-outcome";
 import { TurnTranscriptCollector, } from "./turn-transcript";
 
 /** ACP protocol version the adapter speaks. */
@@ -297,6 +298,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
    * JSON-RPC error the agent would have to interpret as a failed request.
    * @param outcome - the client's choice among the harness's options
    * @throws {PermissionAskGoneError} when nothing is pending
+   * @throws {PermissionDecisionRefusedError} when the harness could not
+   *   express the decision and refused the tool call instead
    */
   respondPermission(outcome: PermissionOutcome,): void {
     const open = this.permission;
@@ -305,7 +308,14 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     }
 
     this.permission = null;
-    open.respond({ outcome: wirePermissionOutcome(outcome, advertisedPermissionOptions(open.pending.params,),), },);
+    const options = advertisedPermissionOptions(open.pending.params,);
+    const answer = wirePermissionOutcome(outcome, options,);
+    open.respond({ outcome: answer, },);
+    if (!answerCarriesDecision(answer, outcome, options,)) {
+      // The harness could not express the decision: the wire carries a
+      // refusal, so the decision did not take effect.
+      throw new PermissionDecisionRefusedError();
+    }
   }
 
   /**

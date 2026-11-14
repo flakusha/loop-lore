@@ -68,7 +68,7 @@ export interface PendingPermissionEntry {
   readonly undeliverableReason: string | null;
 }
 
-/** Why a queued ask was parked instead of auto-allowed. */
+/** What became of one submitted ask: auto-allowed, parked for a decision, or gone. */
 export type SubmitResult =
   | { decision: "auto_allow"; reason: string }
   | { decision: "pending"; id: string; reason: string }
@@ -170,12 +170,12 @@ export class PermissionQueue {
             // The harness no longer holds the ask — the turn was cancelled or
             // the ask was withdrawn — so there is nothing left to decide and
             // nothing to park.
-            log()?.info("harness permission ask vanished before the auto-allow landed", {
+            log()?.info(`harness permission ask no longer awaits the decision: ${(error as Error).message}`, {
               profile: input.profile,
               kind: input.pending.kind,
             },);
 
-            return { decision: "withdrawn", reason: "the harness no longer holds the ask", };
+            return { decision: "withdrawn", reason: (error as Error).message, };
           }
 
           // A transient delivery failure: the ask may still be there, so it is
@@ -301,7 +301,7 @@ export class PermissionQueue {
         // The harness no longer holds the ask: nothing is left to decide, so
         // the entry goes with it — a stuck row would never clear.
         this.entries.delete(input.id,);
-        log()?.info("harness permission ask vanished before the decision landed", {
+        log()?.info(`harness permission ask no longer awaits the decision: ${(error as Error).message}`, {
           id: input.id,
           profile: entry.profile,
           decision: input.decision,
@@ -310,7 +310,7 @@ export class PermissionQueue {
         return {
           ok: false,
           code: "ask_gone",
-          message: `the harness no longer holds the permission request for profile "${entry.profile}"`,
+          message: `${(error as Error).message} (profile "${entry.profile}")`,
         };
       }
 

@@ -16,7 +16,7 @@
  * never a sleep — tests pass in any order.
  */
 import { afterEach, describe, expect, it, } from "bun:test";
-import type { PendingPermission, } from "./adapter-types";
+import { type PendingPermission, PermissionDecisionRefusedError, } from "./adapter-types";
 import { type FakeAcpLogEntry, type FakeAcpServer, startFakeAcp, } from "./fake-acp-server";
 import { OpenCodeAcpAdapter, } from "./opencode";
 
@@ -153,7 +153,9 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
 
     const turn = adapter.prompt("hi",);
     await nextAsk;
-    adapter.respondPermission({ outcome: "allow_once", },);
+    // The harness could not express the allow, so the caller learns the
+    // decision did not take effect.
+    expect(() => adapter.respondPermission({ outcome: "allow_once", },)).toThrow(PermissionDecisionRefusedError,);
     await turn;
 
     const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
@@ -179,7 +181,9 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
 
     const turn = adapter.prompt("hi",);
     await nextAsk;
-    adapter.respondPermission({ outcome: "allow_once", },);
+    // The harness could not express the allow, so the caller learns the
+    // decision did not take effect.
+    expect(() => adapter.respondPermission({ outcome: "allow_once", },)).toThrow(PermissionDecisionRefusedError,);
     await turn;
 
     const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
@@ -290,7 +294,9 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
 
     const turn = adapter.prompt("hi",);
     await nextAsk;
-    adapter.respondPermission({ outcome: "allow_once", },);
+    // The harness advertised a rejection option, so the refusal rides it -
+    // but the ALLOW it carried is not what the harness agreed to.
+    expect(() => adapter.respondPermission({ outcome: "allow_once", },)).toThrow(PermissionDecisionRefusedError,);
     await turn;
 
     const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
