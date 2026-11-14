@@ -490,17 +490,26 @@ describe("MCP Streamable HTTP transport", () => {
     caller.userId = otherPrincipalId;
     const foreign = await initialize(app,);
 
-    // The calling principal fills the rest of the cap.
+    // The calling principal's OLDEST session, opened on its own so the victim
+    // is unambiguous (the eviction takes the least recently used one, ties
+    // broken by insertion order).
     caller.userId = principalId;
+    const ownOldest = await initialize(app,);
+
+    // The rest of the calling principal's pool: independent requests, opened
+    // concurrently.
+    // The rest of the calling principal's pool. SEQUENTIAL on purpose: the
+    // work is CPU-bound (a server graph + a synchronous SQLite write per
+    // initialize), measured slower in parallel, and the age order is what
+    // names the eviction victim.
     const ids: string[] = [];
-    for (let index = 0; index < MAX_LIVE_SESSIONS - 1; index += 1) {
+    for (let index = 0; index < MAX_LIVE_SESSIONS - 2; index += 1) {
       ids.push(await initialize(app,),);
     }
 
     // One more connect from the SAME principal: its own oldest session goes.
     await initialize(app,);
 
-    const ownOldest = ids[0] as string;
     const evicted = await app.handle(
       rpc({ jsonrpc: "2.0", id: 35, method: "tools/list", params: {}, }, { "mcp-session-id": ownOldest, },),
     );
@@ -515,6 +524,19 @@ describe("MCP Streamable HTTP transport", () => {
     );
 
     expect(foreignAlive.status,).toBe(200,);
+
+    // The rest of the calling principal's pool is untouched: ONE of its own
+    // sessions went, not a sweep of them.
+    caller.userId = principalId;
+    const alive = await Promise.all(ids.map(async (id,) => {
+      const res = await app.handle(
+        rpc({ jsonrpc: "2.0", id: 37, method: "tools/list", params: {}, }, { "mcp-session-id": id, },),
+      );
+
+      return res.status;
+    },),);
+
+    expect(alive.every((status,) => status === 200),).toBe(true,);
   });
 
   test("the request body cannot assert a principal", async () => {
