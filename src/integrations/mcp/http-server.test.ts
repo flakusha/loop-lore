@@ -14,9 +14,17 @@
  *  - a request without the session id (400) or with an unknown one (404) is
  *    refused;
  *  - an unsupported MCP-Protocol-Version is refused (400);
- *  - a foreign Origin is refused (403);
+ *  - a foreign Origin is refused (403), and so is a rebinding request (the
+ *    attacker controls the Host header too);
+ *  - an absent Origin is allowed (a non-browser MCP client sends none);
+ *  - the SSE keep-alive beats the server's idle timeout;
  *  - an unauthenticated request is refused (401) and NO op runs;
+ *  - the request body cannot assert a principal;
  *  - a session belongs to the principal that opened it (403 otherwise);
+ *  - an idle session is reaped (404) and a new connect evicts the CALLER's
+ *    own oldest session, never another principal's;
+ *  - the initialize response is not cacheable;
+ *  - every refusal is one JSON-RPC error envelope;
  *  - GET opens the SSE stream, DELETE terminates the session.
  *
  * Resource contract (parallel-safe): ONE `:memory:` SQLite per test and
@@ -40,7 +48,14 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import { resetFacadeRegistry, } from "../loop-lore-facade/instance";
-import { createMcpHttpRoutes, MAX_LIVE_SESSIONS, } from "./http-server";
+import {
+  createMcpHttpRoutes,
+  MAX_LIVE_SESSIONS,
+  type McpHttpOptions,
+  SERVER_IDLE_TIMEOUT_MS,
+  SESSION_IDLE_TTL_MS,
+  SSE_KEEP_ALIVE_MS,
+} from "./http-server";
 
 const PREFIX = "/api/v1";
 const ENDPOINT = `${PREFIX}/integrations/mcp/streamable`;
@@ -62,7 +77,14 @@ beforeEach(async () => {
 
   testDb = await createTestDb();
   db = testDb.db;
-  config = createConfigSchema().defaults as unknown as Config;
+  const defaults = createConfigSchema().defaults;
+  config = {
+    ...defaults,
+    // The DNS-rebinding allowlist is derived from THIS: the instance's own
+    // public origin and the host it binds.
+    server: { ...defaults.server, host: "localhost", port: 3000, publicOrigin: "http://localhost:3000", },
+  } as unknown as Config;
+
   resetFacadeRegistry();
 
   await insertUsers(db, principalId, "MCP Stream User", { id: principalId, },);
@@ -107,7 +129,7 @@ interface Caller {
   userId: string | null;
 }
 
-function makeApp(caller: Caller, requestId = "req-mcp-stream",): Elysia {
+function makeApp(caller: Caller, requestId = "req-mcp-stream", options: McpHttpOptions = {},): Elysia {
   resetFacadeRegistry();
   const app = new Elysia({ name: "test-mcp-http", },);
   // The route ctx REQUIRES the kind (fail-closed seam) — the test derive
@@ -120,13 +142,16 @@ function makeApp(caller: Caller, requestId = "req-mcp-stream",): Elysia {
     requestId,
   }));
 
-  return app.use(createMcpHttpRoutes({ database: db, config, }, PREFIX,),);
+  return app.use(createMcpHttpRoutes({ database: db, config, }, { prefix: PREFIX, ...options, },),);
 }
+
+/** The Host header the app's own configuration allows. */
+const HOST_HEADERS = { host: "localhost:3000", };
 
 function rpc(body: unknown, headers: Record<string, string> = {},): Request {
   return new Request(`http://localhost${ENDPOINT}`, {
     method: "POST",
-    headers: { "content-type": "application/json", accept: ACCEPT, ...headers, },
+    headers: { "content-type": "application/json", accept: ACCEPT, ...HOST_HEADERS, ...headers, },
     body: JSON.stringify(body,),
   },);
 }
@@ -231,7 +256,7 @@ describe("MCP Streamable HTTP transport", () => {
     const res = await makeApp({ userId: principalId, },).handle(
       new Request(`http://localhost${ENDPOINT}`, {
         method: "POST",
-        headers: { "content-type": "application/json", accept: "application/json", },
+        headers: { "content-type": "application/json", accept: "application/json", ...HOST_HEADERS, },
         body: JSON.stringify({ jsonrpc: "2.0", id: 4, method: "tools/list", params: {}, },),
       },),
     );
@@ -316,7 +341,7 @@ describe("MCP Streamable HTTP transport", () => {
 
     const res = await app.handle(
       new Request(`http://localhost${ENDPOINT}`, {
-        headers: { accept: "text/event-stream", "mcp-session-id": sessionId, },
+        headers: { accept: "text/event-stream", "mcp-session-id": sessionId, ...HOST_HEADERS, },
       },),
     );
 
@@ -332,7 +357,7 @@ describe("MCP Streamable HTTP transport", () => {
     const deleted = await app.handle(
       new Request(`http://localhost${ENDPOINT}`, {
         method: "DELETE",
-        headers: { accept: ACCEPT, "mcp-session-id": sessionId, },
+        headers: { accept: ACCEPT, "mcp-session-id": sessionId, ...HOST_HEADERS, },
       },),
     );
 
@@ -343,5 +368,189 @@ describe("MCP Streamable HTTP transport", () => {
     );
 
     expect(after.status,).toBe(404,);
+  });
+
+  test("the SSE keep-alive beats the server's idle timeout", () => {
+    // The keep-alive must fire BEFORE Bun.serve's idle timeout severs the
+    // GET SSE stream — the repo's own SSE convention.
+    expect(SSE_KEEP_ALIVE_MS,).toBeLessThan(SERVER_IDLE_TIMEOUT_MS,);
+  });
+
+  test("a request without an Origin is allowed (a non-browser MCP client)", async () => {
+    const app = makeApp({ userId: principalId, },);
+    const sessionId = await initialize(app,);
+
+    const res = await app.handle(
+      rpc({ jsonrpc: "2.0", id: 30, method: "tools/list", params: {}, }, { "mcp-session-id": sessionId, },),
+    );
+
+    expect(res.status,).toBe(200,);
+  });
+
+  test("the instance's own Origin is allowed", async () => {
+    const app = makeApp({ userId: principalId, },);
+    const sessionId = await initialize(app,);
+
+    const res = await app.handle(
+      rpc(
+        { jsonrpc: "2.0", id: 31, method: "tools/list", params: {}, },
+        { "mcp-session-id": sessionId, origin: "http://localhost:3000", },
+      ),
+    );
+
+    expect(res.status,).toBe(200,);
+  });
+
+  test("a rebinding request is refused (403) — the Host header is not the allowlist", async () => {
+    // The attacker controls BOTH headers (its domain now resolves at the
+    // victim), so a host-relative check passes. Only the app's own
+    // allowlist refuses it.
+    const res = await makeApp({ userId: principalId, },).handle(
+      rpc(
+        { jsonrpc: "2.0", id: 32, method: "tools/list", params: {}, },
+        { origin: "http://evil.example", host: "evil.example", },
+      ),
+    );
+
+    expect(res.status,).toBe(403,);
+    expect(Object.keys(await res.json() as Record<string, unknown>,).sort(),).toEqual([
+      "error",
+      "id",
+      "jsonrpc",
+    ],);
+  });
+
+  test("a Host outside the allowlist is refused (403)", async () => {
+    const res = await makeApp({ userId: principalId, },).handle(
+      rpc(
+        { jsonrpc: "2.0", id: 33, method: "tools/list", params: {}, },
+        { host: "evil.example", },
+      ),
+    );
+
+    expect(res.status,).toBe(403,);
+  });
+
+  test("an idle session is reaped and answers 404", async () => {
+    let clock = 1_700_000_000_000;
+    const app = makeApp({ userId: principalId, }, "req-mcp-stream", { now: () => clock, },);
+    const sessionId = await initialize(app,);
+
+    clock += SESSION_IDLE_TTL_MS + 1;
+
+    const res = await app.handle(
+      rpc({ jsonrpc: "2.0", id: 34, method: "tools/list", params: {}, }, { "mcp-session-id": sessionId, },),
+    );
+
+    expect(res.status,).toBe(404,);
+  });
+
+  test("a client that connects again evicts its OWN oldest session, not another principal's", async () => {
+    const caller: Caller = { userId: principalId, };
+    const app = makeApp(caller,);
+
+    // Another principal's session, opened FIRST — under a global
+    // insertion-order eviction this is the one that would die.
+    caller.userId = otherPrincipalId;
+    const foreign = await initialize(app,);
+
+    // The calling principal fills the rest of the cap.
+    caller.userId = principalId;
+    const ids: string[] = [];
+    for (let index = 0; index < MAX_LIVE_SESSIONS - 1; index += 1) {
+      ids.push(await initialize(app,),);
+    }
+
+    // One more connect from the SAME principal: its own oldest session goes.
+    await initialize(app,);
+
+    const ownOldest = ids[0] as string;
+    const evicted = await app.handle(
+      rpc({ jsonrpc: "2.0", id: 35, method: "tools/list", params: {}, }, { "mcp-session-id": ownOldest, },),
+    );
+
+    expect(evicted.status,).toBe(404,);
+
+    // The other principal's session survived — connecting is not a way to
+    // push another client out.
+    caller.userId = otherPrincipalId;
+    const foreignAlive = await app.handle(
+      rpc({ jsonrpc: "2.0", id: 36, method: "tools/list", params: {}, }, { "mcp-session-id": foreign, },),
+    );
+
+    expect(foreignAlive.status,).toBe(200,);
+  });
+
+  test("the request body cannot assert a principal", async () => {
+    // If the body's principal-shaped fields were honoured, the op would run
+    // as "attacker" (no chat access -> an error result). It must run as the
+    // server-resolved principal.
+    const app = makeApp({ userId: principalId, }, "req-mcp-adv",);
+    const sessionId = await initialize(app,);
+
+    const res = await app.handle(
+      rpc(
+        {
+          jsonrpc: "2.0",
+          id: 37,
+          method: "tools/call",
+          params: { name: "chat.history", arguments: { chatId, userId: "attacker", userRole: "admin", }, },
+        },
+        { "mcp-session-id": sessionId, },
+      ),
+    );
+
+    expect(res.status,).toBe(200,);
+    const envelope = await res.json() as Envelope;
+    const result = envelope.result as unknown as HistoryResult;
+
+    expect(result.isError,).toBeUndefined();
+    expect(result.content[0]?.text,).toContain("hello stream",);
+
+    const row = await db.selectFrom("log_entries",).selectAll()
+      .where("event_type", "=", "facade.op",)
+      .where("request_id", "=", "req-mcp-adv",)
+      .executeTakeFirst();
+
+    expect(row?.user_id,).toBe(principalId,);
+  });
+
+  test("the initialize response is not cacheable", async () => {
+    const res = await makeApp({ userId: principalId, },).handle(
+      rpc({ jsonrpc: "2.0", id: 38, method: "initialize", params: INIT_PARAMS, },),
+    );
+
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("mcp-session-id",),).not.toBeNull();
+    expect(res.headers.get("cache-control",),).toBe("no-store",);
+  });
+
+  test("every refusal on this endpoint is one JSON-RPC error envelope", async () => {
+    const app = makeApp({ userId: principalId, },);
+
+    const unknown = await app.handle(
+      rpc(
+        { jsonrpc: "2.0", id: 39, method: "tools/list", params: {}, },
+        { "mcp-session-id": crypto.randomUUID(), },
+      ),
+    );
+
+    expect(unknown.status,).toBe(404,);
+    expect(Object.keys(await unknown.json() as Record<string, unknown>,).sort(),).toEqual([
+      "error",
+      "id",
+      "jsonrpc",
+    ],);
+
+    const unauthenticated = await makeApp({ userId: null, },).handle(
+      rpc({ jsonrpc: "2.0", id: 40, method: "tools/list", params: {}, },),
+    );
+
+    expect(unauthenticated.status,).toBe(401,);
+    expect(Object.keys(await unauthenticated.json() as Record<string, unknown>,).sort(),).toEqual([
+      "error",
+      "id",
+      "jsonrpc",
+    ],);
   });
 });

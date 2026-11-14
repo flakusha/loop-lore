@@ -13,13 +13,15 @@
  * required scope tier, and the rate policy name — everything a client needs
  * to decide whether it can call the op.
  *
- * SHAPE: the envelope is FROZEN at `{ ops: [...] }` (one key). An op entry
- * evolves ADDITIVELY — a new field appears, and a JSON client ignores the
- * fields it does not know — so the manifest is forward-compatible without a
- * version field. No version field is added because this surface has no prior
- * version to negotiate and its sibling (`GET /api/v1/integrations/manifest`,
- * the thin descriptor list) carries none either. That sibling stays as it is:
- * it publishes descriptors, this one publishes the full capability.
+ * SHAPE: the envelope is FROZEN at `{ ops: [...], meta: {...} }` — `ops` is
+ * the manifest, `meta` is the app-wide metadata block every JSON response
+ * carries (`jsonResponse` merges it). An op entry evolves ADDITIVELY — a new
+ * field appears, and a JSON client ignores the fields it does not know — so
+ * the manifest is forward-compatible without a version field. No version
+ * field is added because this surface has no prior version to negotiate and
+ * its sibling (`GET /api/v1/integrations/manifest`, the thin descriptor list)
+ * carries none either. That sibling stays as it is: it publishes descriptors,
+ * this one publishes the full capability.
  *
  * AUTH: authenticated, like the facade's own manifest — the repo's rule is
  * "no anonymous discovery" (`integrations/loop-lore-facade/routes.ts`). The
@@ -32,7 +34,7 @@
 import { Elysia, } from "elysia";
 import { getFacadeRegistry, } from "../../integrations/loop-lore-facade/instance";
 import type { FacadeOp, FacadeScope, } from "../../integrations/loop-lore-facade/types";
-import { jsonResponse, requireUserId, } from "../http-utils";
+import { type ApiResponseMeta, jsonResponse, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "../messages/types";
 
 /**
@@ -73,9 +75,11 @@ export interface CapabilityEntry {
   readonly ratePolicy: string;
 }
 
-/** The manifest body: one entry per registered op. */
+/** The manifest body: one entry per registered op, plus the app's meta block. */
 export interface CapabilityManifest {
   readonly ops: readonly CapabilityEntry[];
+  /** The app-wide metadata block every JSON response carries. */
+  readonly meta?: ApiResponseMeta;
 }
 
 /** The ctx fields this route reads (the app's auth derive populates them). */

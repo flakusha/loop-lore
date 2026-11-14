@@ -6,7 +6,9 @@
  * facade can do. Pinned here: the manifest is GENERATED from the op
  * registry (the op list is counted against the registry, so a newly
  * registered op cannot slip past), every entry carries a body + output
- * schema, and the route is AUTHENTICATED (no anonymous discovery).
+ * schema, the envelope and the op-entry key sets are pinned to the shapes
+ * the module doc claims, and the route is AUTHENTICATED (no anonymous
+ * discovery).
  *
  * Resource contract (parallel-safe): ONE `:memory:` SQLite per test and a
  * fresh registry per test (the registry singleton is process-global).
@@ -84,6 +86,33 @@ describe("capability manifest route", () => {
       expect(typeof op.annotations.idempotent,).toBe("boolean",);
       expect(["read", "chat-write",],).toContain(op.scope,);
       expect(op.ratePolicy.length,).toBeGreaterThan(0,);
+    }
+  });
+
+  test("the envelope is the frozen key set the doc claims", async () => {
+    const res = await makeApp("manifest-user",).handle(new Request(`http://localhost${PREFIX}/capabilities`,),);
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as Record<string, unknown>;
+    expect(Object.keys(body,).sort(),).toEqual(["meta", "ops",],);
+  });
+
+  test("every op entry carries the frozen key set", async () => {
+    const body = await manifest(makeApp("manifest-user",),);
+
+    expect(body.ops.length,).toBeGreaterThan(0,);
+    for (const op of body.ops) {
+      expect(Object.keys(op,).sort(),).toEqual([
+        "annotations",
+        "bodySchema",
+        "description",
+        "domain",
+        "name",
+        "outputSchema",
+        "ratePolicy",
+        "scope",
+        "summary",
+      ],);
     }
   });
 

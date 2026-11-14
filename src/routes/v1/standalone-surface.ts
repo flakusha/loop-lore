@@ -50,6 +50,6 @@ export function standaloneSurface(opts: RegisterPluginsOpts,) {
     .use(omniSearchRoutes({ database: handleOpts.database, }, prefix,),)
     .use(createFacadeRoutes(handleOpts, prefix,),)
     .use(createMcpRoutes(handleOpts, prefix,),)
-    .use(createMcpHttpRoutes(handleOpts, prefix,),)
+    .use(createMcpHttpRoutes(handleOpts, { prefix, },),)
     .use(capabilityManifestRoutes(handleOpts, prefix,),);
 }
