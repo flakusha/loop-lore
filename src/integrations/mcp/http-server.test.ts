@@ -370,6 +370,13 @@ describe("MCP Streamable HTTP transport", () => {
 
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-type",),).toContain("text/event-stream",);
+
+    // The stream is uncacheable AND untransformable — the SDK's own
+    // `no-transform` directive survives the no-store marking (a proxy that
+    // transforms an SSE stream breaks its framing).
+    const cacheControl = res.headers.get("cache-control",) ?? "";
+    expect(cacheControl,).toContain("no-store",);
+    expect(cacheControl,).toContain("no-transform",);
     await res.body?.cancel();
   });
 
