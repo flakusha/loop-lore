@@ -14,6 +14,7 @@ import { afterEach, describe, expect, it, } from "bun:test";
 import { mkdtempSync, rmSync, } from "node:fs";
 import { createLogger, setGlobalLogger, } from "../../logger";
 import { PermissionAskGoneError, PermissionDecisionRefusedError, type PermissionOutcome, } from "./adapter-types";
+import { PERMISSION_FAILURE, } from "./permission-failure";
 import type { PermissionRespondable, } from "./permission-queue";
 import { PermissionQueue, } from "./permission-queue";
 
@@ -228,7 +229,7 @@ describe("PermissionQueue", () => {
     const result = queue.resolve({ id: parked.id, decision: "approve", },);
     if (result.ok) { throw new Error("expected a typed failure",); }
     // A refusal is not a vanished ask: it has its own code.
-    expect(result.code,).toBe("refused",);
+    expect(result.code,).toBe(PERMISSION_FAILURE.refused,);
     expect(result.message,).toContain("the harness refused the decision",);
     // The ask was answered on the wire, so the row goes with it.
     expect(queue.pendingCount(),).toBe(0,);

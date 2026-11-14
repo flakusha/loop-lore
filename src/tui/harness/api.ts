@@ -38,7 +38,10 @@ export function setFetch(fn: typeof _realFetch,): void {
   _fetch = fn;
 }
 
-function buildResult<T,>(result: { ok: boolean; data?: T; error?: Error; status?: number },): HarnessFetchResult<T> {
+/** The raw result of a harness API call, before the public shape is derived. */
+type RawFetchResult<T,> = { ok: boolean; data?: T; error?: Error; status?: number };
+
+function buildResult<T,>(result: RawFetchResult<T>,): HarnessFetchResult<T> {
   if (!result.ok) {
     if (result.status === 403) {
       return { ok: false, error: "admin only", status: 403, };
@@ -157,7 +160,7 @@ export async function decidePermission(
 async function postDecision(
   url: string,
   sessionToken: string | undefined,
-): Promise<{ ok: boolean; data?: PermissionDecisionResponse; error?: Error; status?: number }> {
+): Promise<RawFetchResult<PermissionDecisionResponse>> {
   let response: Response;
   let text: string;
   try {

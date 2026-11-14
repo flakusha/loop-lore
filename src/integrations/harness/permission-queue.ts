@@ -30,6 +30,7 @@ import {
   PermissionDecisionRefusedError,
   type PermissionOutcome,
 } from "./adapter-types";
+import { type PermissionFailureCode, } from "./permission-failure";
 import { advertisedPermissionOptions, type WirePermissionOutcome, wirePermissionOutcome, } from "./permission-outcome";
 import { classifyPermission, } from "./permission-policy";
 
@@ -39,14 +40,12 @@ type AskInput = { profile: string; pending: PendingPermission; sandboxRoot: stri
 /** One ask's evaluation result, ready to park. */
 type ParkableAsk = { input: AskInput; reason: string; undeliverableReason: string | null; withdrawnAt: number };
 
-/** The adapter surface the queue needs to answer an ask. */
-export interface PermissionRespondable {
-  /**
-   * Answer the connection's open permission ask.
-   * @throws {PermissionAskGoneError} when the harness no longer holds the ask.
-   */
-  respondPermission(outcome: PermissionOutcome,): void;
-}
+/**
+ * The adapter surface the queue needs to answer an ask: respondPermission
+ * answers the connection's open permission ask.
+ * @throws {PermissionAskGoneError} when the harness no longer holds the ask.
+ */
+export type PermissionRespondable = { respondPermission(outcome: PermissionOutcome,): void };
 
 /** One ask parked for human approval, in FIFO arrival order. */
 export interface PendingPermissionEntry {
@@ -75,9 +74,6 @@ export type SubmitResult =
   | { decision: "auto_allow"; reason: string }
   | { decision: "pending"; id: string; reason: string }
   | { decision: "withdrawn"; reason: string };
-
-/** The queue's typed failure codes. */
-export type PermissionFailureCode = "unknown_request" | "no_connection" | "ask_gone" | "refused" | "not_delivered";
 
 /** The outcome of a decision — a Result, never a throw. */
 export type PermissionResolveResult =
