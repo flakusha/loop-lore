@@ -100,7 +100,6 @@ describe("db backup/restore service", () => {
     expect(listed.map((b,) => b.name),).toEqual([first.name, second.name,],);
     for (const entry of listed) {
       expect(entry.sizeBytes,).toBeGreaterThan(0,);
-      expect(entry.modifiedAt,).toBe(entry.modifiedAt,);
       expect(Number.isNaN(Date.parse(entry.modifiedAt,),),).toBe(false,);
     }
   });
