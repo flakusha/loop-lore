@@ -153,6 +153,20 @@ describe("facade characters ops", () => {
     expect(serialized,).not.toContain("SECRET-EXTENSION",);
   });
 
+  test("a malformed body is refused with the facade's own 400 shape", async () => {
+    const registry = buildRegistry();
+
+    const listed = await runFacadeOp(registry, ctxFor(USER,), "characters.list", { page: 0, },);
+    expect(listed.ok,).toBe(false,);
+    expect(listed.status,).toBe(400,);
+    expect((listed.json as { error: string }).error,).toBe("bad_request",);
+
+    const fetched = await runFacadeOp(registry, ctxFor(USER,), "characters.get", {},);
+    expect(fetched.ok,).toBe(false,);
+    expect(fetched.status,).toBe(400,);
+    expect((fetched.json as { error: string }).error,).toBe("bad_request",);
+  });
+
   test("characters.get hides another user's character behind a 404", async () => {
     await seedCharacters();
 
