@@ -179,6 +179,20 @@ describe("facade rpg ops", () => {
     expect(json.spatial.name,).toBe("The Village Square",);
   });
 
+  test("a malformed body is refused with the facade's own 400 shape", async () => {
+    const registry = buildRegistry();
+
+    const stats = await runFacadeOp(registry, ctxFor(USER,), "rpg.stats", {},);
+    expect(stats.ok,).toBe(false,);
+    expect(stats.status,).toBe(400,);
+    expect((stats.json as { error: string }).error,).toBe("bad_request",);
+
+    const inventory = await runFacadeOp(registry, ctxFor(USER,), "rpg.inventory", {},);
+    expect(inventory.ok,).toBe(false,);
+    expect(inventory.status,).toBe(400,);
+    expect((inventory.json as { error: string }).error,).toBe("bad_request",);
+  });
+
   test("rpg.stats hides another user's character behind a 404", async () => {
     await seedRpg();
 

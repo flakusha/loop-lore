@@ -185,6 +185,20 @@ describe("facade memory ops", () => {
     expect(JSON.stringify(result.json,),).not.toContain("PRIVATE-MEMORY-TEXT",);
   });
 
+  test("a malformed body is refused with the facade's own 400 shape", async () => {
+    const registry = buildRegistry();
+
+    const listed = await runFacadeOp(registry, ctxFor(USER,), "memory.list", { actorId: 5, },);
+    expect(listed.ok,).toBe(false,);
+    expect(listed.status,).toBe(400,);
+    expect((listed.json as { error: string }).error,).toBe("bad_request",);
+
+    const fetched = await runFacadeOp(registry, ctxFor(USER,), "memory.get", {},);
+    expect(fetched.ok,).toBe(false,);
+    expect(fetched.status,).toBe(400,);
+    expect((fetched.json as { error: string }).error,).toBe("bad_request",);
+  });
+
   test("memory.get hides another user's memory behind a 404", async () => {
     const memories = await seedMemories();
 

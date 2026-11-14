@@ -162,6 +162,20 @@ describe("facade assets ops", () => {
     expect(json.total,).toBe(2,);
   });
 
+  test("a malformed body is refused with the facade's own 400 shape", async () => {
+    const registry = buildRegistry();
+
+    const listed = await runFacadeOp(registry, ctxFor(USER,), "assets.list", { page: "many", },);
+    expect(listed.ok,).toBe(false,);
+    expect(listed.status,).toBe(400,);
+    expect((listed.json as { error: string }).error,).toBe("bad_request",);
+
+    const fetched = await runFacadeOp(registry, ctxFor(USER,), "assets.get", {},);
+    expect(fetched.ok,).toBe(false,);
+    expect(fetched.status,).toBe(400,);
+    expect((fetched.json as { error: string }).error,).toBe("bad_request",);
+  });
+
   test("assets.get honours the repo's share ACL — a shared asset is readable", async () => {
     const assets = await seedAssets();
 
