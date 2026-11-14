@@ -10,9 +10,13 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import { registerAssetsOps, } from "./ops/assets";
+import { registerCharactersOps, } from "./ops/characters";
 import { registerChatOps, } from "./ops/chat";
 import { registerGenerationOps, } from "./ops/generation";
+import { registerMemoryOps, } from "./ops/memory";
 import { registerRepoAccessOps, } from "./ops/repo-access";
+import { registerRpgOps, } from "./ops/rpg";
 import { createFacadeRegistry, type FacadeRegistry, } from "./registry";
 
 /** Deps the singleton ops close over — the app's handles, bound once. */
@@ -42,6 +46,15 @@ export function getFacadeRegistry(deps: FacadeRegistryDeps,): FacadeRegistry {
     // (repo-access/settings.ts), and every op re-runs the fail-closed gate
     // + audit inside the handler (ops/repo-access.ts).
     registerRepoAccessOps(registry, deps,);
+    // The four data domains (harness parity gap #6): assets, characters,
+    // memory and rpg reach the SAME registry, so every MCP/ACP surface that
+    // routes through it serves them. Each domain is admitted per principal
+    // kind by the facade authz (fail-closed) and scopes every read to the
+    // calling actor.
+    registerAssetsOps(registry, deps,);
+    registerCharactersOps(registry, deps,);
+    registerMemoryOps(registry, deps,);
+    registerRpgOps(registry, deps,);
     singleton = registry;
   }
 

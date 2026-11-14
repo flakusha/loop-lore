@@ -21,6 +21,21 @@
 import type { FacadeContext, FacadeOp, FacadeResult, FacadeScope, } from "./types";
 
 /**
+ * The principal kinds each data domain admits — DEFAULT DENY: a kind that is
+ * not listed for a domain is refused before the handler runs. `user` is the
+ * platform's own authenticated user; `external-agent` is the scoped
+ * integration token whose subject IS that user's id (the tier ladder below
+ * still applies to it). Every other kind (`user-worktree`,
+ * `internal-service`) is refused — no kind inherits another domain's access.
+ */
+const ADMITTED_PRINCIPAL_KINDS: Partial<Record<FacadeOp["domain"], readonly string[]>> = {
+  assets: ["user", "external-agent",],
+  characters: ["user", "external-agent",],
+  memory: ["user", "external-agent",],
+  rpg: ["user", "external-agent",],
+};
+
+/**
  * Admit (or reject) a facade call BEFORE any wrapped service runs.
  *
  * Fail-closed rules, this slice:
@@ -28,6 +43,12 @@ import type { FacadeContext, FacadeOp, FacadeResult, FacadeScope, } from "./type
  *    constructor is facadeContextFromRequestContext over a verified
  *    RequestContext) AND must carry a userId. Anonymous calls have no owner
  *    to attribute audit rows or budgets to, so they never proceed;
+ *  - PER-DOMAIN KIND ADMISSION (default deny): the data domains (assets,
+ *    characters, memory, rpg) admit an explicit list of principal kinds; a
+ *    kind that is not listed for that domain is refused with a typed 403
+ *    `forbidden` before any handler runs. The chat/generation domains keep
+ *    their existing kind behaviour, and the repo-access tier keeps its own
+ *    internal-service-only rule;
  *  - TIER ENFORCEMENT (ADR-credentials-issuer-model, admin-scoped slice):
  *    an integration-token principal (`external-agent` carrying a credential)
  *    must hold the tier the op demands. Tiers are cumulative — `chat-write`
@@ -72,6 +93,23 @@ export function authorizeFacadeOp(ctx: FacadeContext, op: FacadeOp,): FacadeResu
         error: "forbidden",
         message:
           `facade op "${op.name}" requires the internal-service principal (repo-access tier); kind "${ctx.principal.kind}" is never admitted`,
+      },
+    };
+  }
+
+  // PER-DOMAIN KIND ADMISSION (fail-closed, DEFAULT DENY): the data domains
+  // admit an explicit list of principal kinds; every other kind is refused
+  // BEFORE the handler runs, so the domain's data never reaches it. The rule
+  // is per domain — no kind inherits another domain's access implicitly.
+  const admitted = ADMITTED_PRINCIPAL_KINDS[op.domain];
+  if (admitted !== undefined && !admitted.includes(ctx.principal.kind,)) {
+    return {
+      ok: false,
+      status: 403,
+      json: {
+        error: "forbidden",
+        message:
+          `facade op "${op.name}" does not admit principal kind "${ctx.principal.kind}"; kind admission is per domain`,
       },
     };
   }
