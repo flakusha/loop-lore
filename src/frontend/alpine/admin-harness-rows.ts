@@ -32,6 +32,20 @@ export type HarnessRunDetail = Static<typeof HarnessRunDetailSchema>;
 /** The `GET /api/v1/harness/stats` body. */
 export type HarnessStats = Static<typeof HarnessStatsSchema>;
 
+/**
+ * The empty stats body — the fallback the stats loader decodes into when the
+ * endpoint answers with something else. It lives here, next to the stat-card
+ * builder that reads it, so the tab module does not carry a second copy of the
+ * stats shape.
+ */
+export const EMPTY_STATS: HarnessStats = {
+  totals: { runs: 0, failures: 0, costUsd: 0, tokensIn: 0, tokensOut: 0, avgMs: 0, },
+  byModel: [],
+  byTaskType: [],
+  byPattern: [],
+  toolingGaps: [],
+};
+
 /** A stat card: already-translated label + pre-formatted value. */
 export interface HarnessStatCard {
   key: string;

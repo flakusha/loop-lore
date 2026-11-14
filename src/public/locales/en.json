@@ -2524,6 +2524,24 @@
       "confirm": "I acknowledge — enable",
       "decline": "Cancel"
     },
+    "escalations": {
+      "title": "Pending escalation requests",
+      "empty": "No escalation request is waiting for a decision.",
+      "loadFailed": "Could not load pending escalation requests.",
+      "decideFailed": "Could not record the decision.",
+      "unavailableTitle": "Escalation queue unavailable",
+      "unavailable": "The harness runtime is not composed, so escalation requests cannot be listed or decided.",
+      "approve": "Approve",
+      "deny": "Deny",
+      "column": {
+        "subject": "Principal",
+        "kind": "Kind",
+        "target": "Target path",
+        "rationale": "Reason",
+        "requested": "Requested",
+        "decision": "Decision"
+      }
+    },
     "permissions": {
       "title": "Pending permission requests",
       "empty": "No permission request is waiting for a decision.",

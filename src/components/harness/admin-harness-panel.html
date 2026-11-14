@@ -134,6 +134,116 @@
   </div>
 
   <!--
+    Pending repo-access escalations (TASK-escalation-audit-queue-with-no-auto-approve).
+    Rows come from /api/v1/harness/escalations: recorded root-change requests
+    waiting for an admin decision. No principal is ever auto-approved, so a
+    recorded request stays parked until an operator approves or denies it. An
+    approval grants ONE later root change for that principal and target.
+  -->
+  <div style="margin-bottom: var(--space-6)" data-testid="harness-escalations-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); gap: var(--space-2)">
+      <h3 style="font-size: 14px; font-weight: 600; margin: 0">{{{t("harness.escalations.title")}}}</h3>
+      <button
+        class="btn btn-secondary btn-sm"
+        @click="refreshHarnessEscalations()"
+        data-testid="harness-escalations-refresh"
+      >
+        {{{t("common.retry")}}}
+      </button>
+    </div>
+    <div
+      x-show="harnessEscalationsError !== ''"
+      class="empty-state"
+      style="padding: var(--space-6)"
+      data-testid="harness-escalations-error"
+    >
+      <div class="icon">⚠️</div>
+      <div class="title">{{{t("harness.escalations.loadFailed")}}}</div>
+      <div class="description" x-text="harnessEscalationsError"></div>
+    </div>
+    <!--
+      The harness runtime is not composed: the queue cannot be listed or
+      decided at all. That is NOT an empty queue, so it gets its own state —
+      an empty list here would read as "nothing to approve".
+    -->
+    <div
+      x-show="harnessEscalationsUnavailable !== ''"
+      class="empty-state"
+      style="padding: var(--space-6)"
+      data-testid="harness-escalations-unavailable"
+    >
+      <div class="icon">🚧</div>
+      <div class="title">{{{t("harness.escalations.unavailableTitle")}}}</div>
+      <div class="description" x-text="harnessEscalationsUnavailable"></div>
+    </div>
+    <div
+      x-show="harnessEscalationsError === '' && harnessEscalationsUnavailable === '' && harnessEscalationRows.length === 0"
+      class="empty-state"
+      style="padding: var(--space-6)"
+      data-testid="harness-escalations-empty"
+    >
+      <div class="icon">🔔</div>
+      <div class="title">{{{t("harness.escalations.empty")}}}</div>
+    </div>
+    <!--
+      A failed DECISION is not a failed read: the recorded requests are still
+      there, so the table keeps listing them and only the failure is reported.
+    -->
+    <p
+      x-show="harnessEscalationDecisionError !== ''"
+      style="font-size: 12px; color: var(--color-danger); margin: var(--space-2) 0 0"
+      x-text="harnessEscalationDecisionError"
+      data-testid="harness-escalations-decision-error"
+    >
+    </p>
+    <table
+      x-show="harnessEscalationsError === '' && harnessEscalationsUnavailable === '' && harnessEscalationRows.length > 0"
+      class="admin-table"
+      data-testid="harness-escalations-table"
+    >
+      <thead>
+        <tr>
+          <th>{{{t("harness.escalations.column.subject")}}}</th>
+          <th>{{{t("harness.escalations.column.kind")}}}</th>
+          <th>{{{t("harness.escalations.column.target")}}}</th>
+          <th>{{{t("harness.escalations.column.rationale")}}}</th>
+          <th>{{{t("harness.escalations.column.requested")}}}</th>
+          <th>{{{t("harness.escalations.column.decision")}}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="row in harnessEscalationRows" :key="row.id">
+          <tr data-testid="harness-escalation-row">
+            <td x-text="row.subjectId"></td>
+            <td x-text="row.kind"></td>
+            <td x-text="row.targetPath"></td>
+            <td x-text="row.rationale"></td>
+            <td x-text="row.requested"></td>
+            <td>
+              <button
+                class="btn btn-sm"
+                @click="answerHarnessEscalation(row.id, 'approve')"
+                :disabled="harnessEscalationDecidingId !== ''"
+                data-testid="harness-escalation-approve"
+              >
+                {{{t("harness.escalations.approve")}}}
+              </button>
+              <button
+                class="btn btn-secondary btn-sm"
+                @click="answerHarnessEscalation(row.id, 'deny')"
+                :disabled="harnessEscalationDecidingId !== ''"
+                data-testid="harness-escalation-deny"
+              >
+                {{{t("harness.escalations.deny")}}}
+              </button>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+
+  <!--
     Settings + configured profiles (TASK-harness-provider-tos-usage-class-matrix).
     Rows come from /api/v1/harness/settings; usage-class badges and ToS notes
     arrive pre-shaped (labels/keys) from admin-harness-settings.ts, so markup

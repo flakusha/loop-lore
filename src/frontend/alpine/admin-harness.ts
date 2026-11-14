@@ -20,6 +20,7 @@ import {
   log,
   RUNS_URL,
 } from "./admin-harness-detail";
+import { harnessEscalations, } from "./admin-harness-escalations";
 import {
   editorFileRoot,
   loadHarnessFiles,
@@ -34,6 +35,7 @@ import {
   buildRunRows,
   buildRunsQuery,
   buildStatCards,
+  EMPTY_STATS,
   filterHarnessRuns,
   type HarnessDetailView,
   type HarnessGapRow,
@@ -41,7 +43,6 @@ import {
   type HarnessRunRow,
   type HarnessRunSummary,
   type HarnessStatCard,
-  type HarnessStats,
 } from "./admin-harness-rows";
 import { HarnessRunsResponse, HarnessStatsSchema, } from "./admin-harness-schema";
 import {
@@ -58,14 +59,6 @@ import { parseOr, } from "./validation";
 const STATS_URL = "/api/v1/harness/stats";
 /** Page size requested from `/runs`; the endpoint applies its own cap. */
 const RUNS_LIMIT = 50;
-
-const EMPTY_STATS: HarnessStats = {
-  totals: { runs: 0, failures: 0, costUsd: 0, tokensIn: 0, tokensOut: 0, avgMs: 0, },
-  byModel: [],
-  byTaskType: [],
-  byPattern: [],
-  toolingGaps: [],
-};
 
 export const adminHarness = {
   harnessRunRows: [] as HarnessRunRow[],
@@ -89,6 +82,9 @@ export const adminHarness = {
 
   // Pending permission asks (state owned by ./admin-harness-permissions).
   ...harnessPermissions,
+
+  // Pending escalation requests (state owned by ./admin-harness-escalations).
+  ...harnessEscalations,
 
   // Discovered models slice (state owned by ./admin-harness-models).
   ...harnessModels,
@@ -139,6 +135,7 @@ export const adminHarness = {
         apiFetch(MODELS_URL, JSON_HEADERS,),
         loadHarnessSettings(this,),
         this.refreshHarnessPermissions(),
+        this.refreshHarnessEscalations(),
       ],);
 
       if (runsRes.status === "fulfilled") { await this.applyRuns(runsRes.value,); }
