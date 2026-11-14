@@ -35,6 +35,7 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { readFile, } from "node:fs/promises";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
 import type { DB, } from "../../db/schema";
@@ -147,6 +148,28 @@ function makeApp(caller: Caller, requestId = "req-mcp-stream", options: McpHttpO
 
 /** The Host header the app's own configuration allows. */
 const HOST_HEADERS = { host: "localhost:3000", };
+
+/**
+ * The idle timeout the app's HTTP server actually applies, in ms: the value
+ * its `serve()` call sets (Bun takes SECONDS) or Bun's own default when it
+ * sets none. Read from the app's server source, so the SSE keep-alive is
+ * checked against the REAL timeout and not against a mirrored constant.
+ * @returns the effective idle timeout in ms (0 = the timeout is disabled)
+ * @throws when the app sets an idle timeout this test cannot read
+ */
+async function appIdleTimeoutMs(): Promise<number> {
+  const source = await readFile(new URL("../../server/start.ts", import.meta.url,), "utf8",);
+  const start = source.indexOf("const httpServer = serve({",);
+  const block = start === -1 ? "" : source.slice(start, source.indexOf("});", start,),);
+  if (!block.includes("idleTimeout",)) { return SERVER_IDLE_TIMEOUT_MS; }
+
+  const configured = /idleTimeout:\s*(\d+)/.exec(block,)?.[1];
+  if (configured === undefined) {
+    throw new Error("the app's idleTimeout is not a literal — extend this test to read it",);
+  }
+
+  return Number(configured,) * 1000;
+}
 
 function rpc(body: unknown, headers: Record<string, string> = {},): Request {
   return new Request(`http://localhost${ENDPOINT}`, {
@@ -370,10 +393,16 @@ describe("MCP Streamable HTTP transport", () => {
     expect(after.status,).toBe(404,);
   });
 
-  test("the SSE keep-alive beats the server's idle timeout", () => {
-    // The keep-alive must fire BEFORE Bun.serve's idle timeout severs the
-    // GET SSE stream — the repo's own SSE convention.
-    expect(SSE_KEEP_ALIVE_MS,).toBeLessThan(SERVER_IDLE_TIMEOUT_MS,);
+  test("the SSE keep-alive beats the server's effective idle timeout", async () => {
+    // The keep-alive must fire BEFORE the idle timeout severs the GET SSE
+    // stream — the repo's own SSE convention. The EFFECTIVE timeout is the
+    // one the app's own server applies, so this reads that call instead of
+    // trusting a mirrored constant: a shorter idle timeout there (or a
+    // raised one) is caught here, not in production.
+    const effective = await appIdleTimeoutMs();
+
+    // 0 disables the timeout entirely — the stream can never be severed.
+    expect(effective === 0 || SSE_KEEP_ALIVE_MS < effective,).toBe(true,);
   });
 
   test("a request without an Origin is allowed (a non-browser MCP client)", async () => {
