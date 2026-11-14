@@ -321,6 +321,36 @@ describe("AdminChatUpdateBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminChatUpdateBody,));
 });
 
+describe("AdminComfyUIDiscoveryEntry", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminComfyUIDiscoveryEntry,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminComfyUIDiscoveryEntry,));
+});
+
+describe("AdminComfyUIDiscoveryResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminComfyUIDiscoveryResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminComfyUIDiscoveryResponse,));
+});
+
+describe("AdminComfyUISetupBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminComfyUISetupBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminComfyUISetupBody,));
+});
+
+describe("AdminComfyUISetupDescriptor", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminComfyUISetupDescriptor,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminComfyUISetupDescriptor,));
+});
+
+describe("AdminComfyUISetupResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminComfyUISetupResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminComfyUISetupResponse,));
+});
+
 describe("AdminFederationBudget", () => {
   test("accepts generated values", () => checkAllValid(validation_responsesFederation.AdminFederationBudget,));
 
@@ -405,6 +435,36 @@ describe("AdminRoleUpdateBody", () => {
   test("accepts generated values", () => checkAllValid(validation_admin.AdminRoleUpdateBody,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminRoleUpdateBody,));
+});
+
+describe("AdminSdCppDiscoveryEntry", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminSdCppDiscoveryEntry,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSdCppDiscoveryEntry,));
+});
+
+describe("AdminSdCppDiscoveryResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminSdCppDiscoveryResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSdCppDiscoveryResponse,));
+});
+
+describe("AdminSdCppSetupBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminSdCppSetupBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSdCppSetupBody,));
+});
+
+describe("AdminSdCppSetupDescriptor", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminSdCppSetupDescriptor,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSdCppSetupDescriptor,));
+});
+
+describe("AdminSdCppSetupResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminSdCppSetupResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSdCppSetupResponse,));
 });
 
 describe("AdminServerProviderDescriptor", () => {
@@ -2864,4 +2924,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 454 schemas discovered across 565 module(s).
+// 464 schemas discovered across 568 module(s).
