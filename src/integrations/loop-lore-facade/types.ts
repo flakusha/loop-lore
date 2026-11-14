@@ -73,7 +73,7 @@ export type FacadeResult =
  *    `idempotentHint: true`.
  */
 export interface FacadeToolAnnotations {
-  /** The op only reads - it never mutates the loop-lore store. */
+  /** The op does not change the caller's domain state (an audit row is bookkeeping, not a domain write). */
   readonly readOnlyHint?: boolean;
   /** The op may perform destructive updates (deletes/overwrites). */
   readonly destructiveHint?: boolean;

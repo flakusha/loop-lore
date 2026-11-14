@@ -94,12 +94,14 @@ describe("facade op shared building blocks", () => {
     },);
   });
 
-  test("the shared annotations mark every op read-only", () => {
+  test("the shared annotations are honest - read-only, never idempotent", () => {
+    // The rule: every op appends an audit row, so no op may claim idempotency.
     expect(READ_ONLY_ANNOTATIONS,).toEqual({
       readOnlyHint: true,
       destructiveHint: false,
-      idempotentHint: true,
       openWorldHint: false,
     },);
+
+    expect(READ_ONLY_ANNOTATIONS.idempotentHint,).toBeUndefined();
   });
 });

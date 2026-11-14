@@ -280,6 +280,18 @@ describe("facade memory ops", () => {
     expect(rows[0]?.user_id,).toBe(USER,);
   });
 
+  test("memory.list declares honest annotations - read-only, never idempotent", () => {
+    const annotations = buildRegistry().resolve("memory.list",)?.annotations;
+    expect(annotations?.readOnlyHint,).toBe(true,);
+    expect(annotations?.idempotentHint,).toBeUndefined();
+  });
+
+  test("memory.get declares honest annotations - read-only, never idempotent", () => {
+    const annotations = buildRegistry().resolve("memory.get",)?.annotations;
+    expect(annotations?.readOnlyHint,).toBe(true,);
+    expect(annotations?.idempotentHint,).toBeUndefined();
+  });
+
   test("the memory ops carry the schemas a manifest generator needs", () => {
     const registry = buildRegistry();
 
