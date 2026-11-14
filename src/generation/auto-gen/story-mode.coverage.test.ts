@@ -470,4 +470,61 @@ describeOrSkip("triggerStoryModeGeneration", () => {
     expect(messages,).toHaveLength(0,);
     expect(capturedAcceptResponse,).toBeNull();
   });
+
+  test("resolveMode delegates a story chat and reports handled", async () => {
+    const { chatId, actorId, worldId, } = await seedScenario();
+    mockActorId = actorId;
+    const { resolveMode, } = await import("./resolve-mode");
+    // Dynamic import: a static import would evaluate story-mode before the
+    const result = await resolveMode({
+      d: makeDeps(),
+      database: testDb,
+      config: makeConfig(),
+      chatId,
+      parentMessageId: null,
+      userId: "user-1",
+      chat: { type: "direct", mode: "story", gm_config: makeGmConfigJson(), world_id: worldId, },
+    },);
+
+    expect(result,).toEqual({ handled: true, },);
+    expect(capturedAcceptResponse,).not.toBeNull();
+  });
+
+  test("group story chat attempts the multi-assistant cascade", async () => {
+    const { chatId, actorId, worldId, } = await seedScenario({
+      chat: { type: "group", auto_advance: 1, },
+    },);
+
+    mockActorId = actorId;
+    const otherActorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, otherActorId,);
+
+    await runTurn({ chatId, worldId, },);
+
+    const messages = await testDb.selectFrom("messages",).selectAll().where(
+      "chat_id",
+      "=",
+      chatId,
+    ).execute();
+
+    expect(messages.some((m,) => m.role === MessageRole.Assistant),).toBe(true,);
+    expect(capturedAcceptResponse,).not.toBeNull();
+  });
+
+  test("invented entity in the response runs the hallucination warn path", async () => {
+    const { chatId, actorId, worldId, } = await seedScenario();
+    mockActorId = actorId;
+    mockTurnResponse = "Zarthax the Destroyer storms the northern gates with fire.";
+
+    await runTurn({ chatId, worldId, },);
+
+    const messages = await testDb.selectFrom("messages",).selectAll().where(
+      "chat_id",
+      "=",
+      chatId,
+    ).execute();
+
+    expect(messages.some((m,) => m.role === MessageRole.Assistant),).toBe(true,);
+    expect(capturedAcceptResponse,).not.toBeNull();
+  });
 },);
