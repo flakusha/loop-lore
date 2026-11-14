@@ -1,17 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import {
-  closeSync,
-  copyFileSync,
-  existsSync,
-  mkdirSync,
-  openSync,
-  readdirSync,
-  readSync,
-  renameSync,
-  statSync,
-  unlinkSync,
-} from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import { DATA_DIR, } from "../config/constants";
 import { getLogger, } from "../logger";
@@ -85,14 +74,14 @@ export function liveDbPath(): string {
  * @returns true when the file starts with the SQLite 3 magic string
  */
 export function hasSqliteHeader(p: string,): boolean {
-  if (!existsSync(p,)) { return false; }
-  const fd = openSync(p, "r",);
+  if (!fs.existsSync(p,)) { return false; }
+  const fd = fs.openSync(p, "r",);
   try {
     const buf = Buffer.alloc(HEADER_LENGTH,);
-    const read = readSync(fd, buf, 0, HEADER_LENGTH, 0,);
+    const read = fs.readSync(fd, buf, 0, HEADER_LENGTH, 0,);
     return read === HEADER_LENGTH && buf.toString("latin1", 0, HEADER_LENGTH,) === SQLITE_HEADER;
   } finally {
-    closeSync(fd,);
+    fs.closeSync(fd,);
   }
 }
 
@@ -110,11 +99,11 @@ function log(): Logger {
  */
 export async function createDbBackup(opts: CreateDbBackupOpts,): Promise<CreateDbBackupResult> {
   const { sqlite, dir, } = opts;
-  mkdirSync(dir, { recursive: true, },);
+  fs.mkdirSync(dir, { recursive: true, },);
   const stamp = (opts.now ?? new Date()).toISOString().replace(/[:.]/g, "-",);
   let name = `loop-lore-${stamp}${BACKUP_EXTENSION}`;
   let seq = 0;
-  while (existsSync(path.join(dir, name,),)) {
+  while (fs.existsSync(path.join(dir, name,),)) {
     seq += 1;
     name = `loop-lore-${stamp}-${String(seq,).padStart(2, "0",)}${BACKUP_EXTENSION}`;
   }
@@ -125,7 +114,7 @@ export async function createDbBackup(opts: CreateDbBackupOpts,): Promise<CreateD
     throw new Error(`Backup file ${name} failed SQLite header verification`,);
   }
 
-  const sizeBytes = statSync(target,).size;
+  const sizeBytes = fs.statSync(target,).size;
   log().info("Database backup written", { name, sizeBytes, },);
   return { name, path: target, sizeBytes, };
 }
@@ -136,13 +125,13 @@ export async function createDbBackup(opts: CreateDbBackupOpts,): Promise<CreateD
  * @returns backup file metadata sorted by mtime ascending
  */
 export function listDbBackups(dir: string,): BackupFileMeta[] {
-  if (!existsSync(dir,)) { return []; }
+  if (!fs.existsSync(dir,)) { return []; }
   const entries: BackupFileMeta[] = [];
-  for (const name of readdirSync(dir,)) {
+  for (const name of fs.readdirSync(dir,)) {
     if (!name.endsWith(BACKUP_EXTENSION,)) { continue; }
     const full = path.join(dir, name,);
     try {
-      const st = statSync(full,);
+      const st = fs.statSync(full,);
       if (!st.isFile()) { continue; }
       entries.push({
         name,
@@ -172,7 +161,7 @@ export function resolveBackupPath(dir: string, name: string,): string {
     throw new Error("Invalid backup name",);
   }
 
-  if (!existsSync(resolved,)) {
+  if (!fs.existsSync(resolved,)) {
     throw new Error(`Backup "${name}" not found`,);
   }
 
@@ -209,12 +198,12 @@ export async function restoreDbBackup(opts: RestoreDbBackupOpts,): Promise<{ pre
   const pre = await createDbBackup({ sqlite, dir, },);
   await closeDb();
   for (const sidecar of [`${livePath}-wal`, `${livePath}-shm`,]) {
-    if (existsSync(sidecar,)) { unlinkSync(sidecar,); }
+    if (fs.existsSync(sidecar,)) { fs.unlinkSync(sidecar,); }
   }
 
   const tmp = `${livePath}.restore-tmp`;
-  copyFileSync(backupPath, tmp,);
-  renameSync(tmp, livePath,);
+  fs.copyFileSync(backupPath, tmp,);
+  fs.renameSync(tmp, livePath,);
   log().info("Database restored from backup", { backup: path.basename(backupPath,), preRestoreBackup: pre.name, },);
   return { preRestoreBackup: pre.name, };
 }
