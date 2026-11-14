@@ -158,8 +158,10 @@ describe("MCP Streamable HTTP transport", () => {
   test("every session gets a FRESH session id", async () => {
     const app = makeApp({ userId: principalId, },);
 
-    const first = await initialize(app,);
-    const second = await initialize(app,);
+    // The two initializes are INDEPENDENT (each mints its own transport,
+    // server graph and session), so they run concurrently - which also
+    // exercises the session map under concurrent creation.
+    const [first, second,] = await Promise.all([initialize(app,), initialize(app,),],);
 
     expect(first,).not.toBe(second,);
   });
