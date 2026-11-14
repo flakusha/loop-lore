@@ -187,6 +187,16 @@ export function registerRepoAccessOps(
         "pass/fail is the payload, not the op's status.",
       scope: "read",
       ratePolicy: repoAccessPolicy,
+      // Annotation rule (types.ts, FacadeToolAnnotations): this op is NOT a
+      // bounded read - it spawns the repo's own check suite as an external
+      // process in the repo root, so it reaches outside the loop-lore store
+      // (openWorldHint) and a host must not treat it as a pure read
+      // (readOnlyHint false). A repeat is not effect-free, so idempotentHint
+      // stays UNSET (the MCP default is false).
+      annotations: {
+        readOnlyHint: false,
+        openWorldHint: true,
+      },
       handler: async (ctx,) => {
         const gate = await runGate(ctx, "check:run",);
         if (!gate.ok) { return gate.denial; }

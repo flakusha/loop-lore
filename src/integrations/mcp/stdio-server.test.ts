@@ -179,7 +179,9 @@ describe("inbound MCP stdio server", () => {
     const history = tools.tools.find((tool,) => tool.name === "chat.history");
     const send = tools.tools.find((tool,) => tool.name === "chat.send");
     expect(history?.annotations?.readOnlyHint,).toBe(false,);
-    expect(history?.annotations?.idempotentHint,).toBe(false,);
+    // Left UNSET by rule: a repeat is not effect-free, and the MCP default
+    // for idempotentHint is false, so silence is the honest answer.
+    expect(history?.annotations?.idempotentHint,).not.toBe(true,);
     expect(send?.annotations?.readOnlyHint,).not.toBe(true,);
     // chat.history declares the envelope it returns; the SDK client validates
     // the structured result against it on every tools/call.

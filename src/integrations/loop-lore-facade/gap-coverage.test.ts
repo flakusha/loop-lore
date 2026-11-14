@@ -192,7 +192,7 @@ describe("facade/video/messaging gap coverage", () => {
     const registry = createFacadeRegistry();
     registry.register({
       ...readOp(),
-      name: "chat.history",
+      name: "chat.history.schema-probe",
       ratePolicy: { name: "gap-schema-test", windowMs: 60_000, max: 10, },
       outputSchema: ChatHistoryOutputSchema,
       handler: async () => ({
@@ -214,12 +214,39 @@ describe("facade/video/messaging gap coverage", () => {
       // listTools first: the SDK client caches the declared outputSchema and
       // validates every later structured result against it.
       await client.listTools();
+
+      // Behaviour, not the SDK's wording: the call FAILS because the payload
+      // does not match the declared output schema.
       await expect(
-        client.callTool({ name: "chat.history", arguments: {}, },),
-      ).rejects.toThrow("Structured content does not match the tool's output schema",);
+        client.callTool({ name: "chat.history.schema-probe", arguments: {}, },),
+      ).rejects.toThrow(/output schema/,);
     } finally {
       await client.close();
       await server.close();
+    }
+  });
+
+  test("no facade op claims idempotentHint, and the write-bearing ops say so", () => {
+    // The annotation rule (types.ts, FacadeToolAnnotations): every op appends
+    // an audit row, so no op may claim idempotentHint: true; an op that
+    // touches domain state must declare readOnlyHint: false. The registry
+    // singleton is process-global, so it is reset in the finally.
+    resetFacadeRegistry();
+    try {
+      const registry = getFacadeRegistry({ database: DB, config: CONFIG, },);
+
+      for (const entry of registry.manifest()) {
+        expect(registry.resolve(entry.name,)?.annotations?.idempotentHint,).not.toBe(true,);
+      }
+
+      // chat.history materializes the actor's default outfit (domain state).
+      expect(registry.resolve("chat.history",)?.annotations?.readOnlyHint,).toBe(false,);
+
+      // repo.check spawns the repo's check suite as an external process.
+      expect(registry.resolve("repo.check",)?.annotations?.readOnlyHint,).toBe(false,);
+      expect(registry.resolve("repo.check",)?.annotations?.openWorldHint,).toBe(true,);
+    } finally {
+      resetFacadeRegistry();
     }
   });
 
