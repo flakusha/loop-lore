@@ -26,11 +26,15 @@
  * route and keep the app envelope; they are not this endpoint's answer.)
  *
  * DNS REBINDING: the SDK's protection is ON and its allowlist comes from the
- * app's OWN configuration — the instance's public origin and the host it
- * binds — never from the request. A rebinding attack controls the Host
- * header too, so a host-relative check cannot stop it. An ABSENT Origin is
- * allowed: a non-browser MCP client sends none and its credential is not
- * ambient.
+ * app's OWN configuration — the instance's public origin, the host it binds
+ * and the loopback aliases — never from the request. A rebinding attack
+ * controls the Host header too, so a host-relative check cannot stop it. A
+ * WILDCARD bind (0.0.0.0, ::) makes the instance answer under names the
+ * config cannot enumerate, so the allowlist cannot be derived from the bind
+ * host: server.publicOrigin is then required, and its absence is answered
+ * with an actionable 503, not a 403 that looks like an attack. An ABSENT
+ * Origin is allowed: a non-browser MCP client sends none and its credential
+ * is not ambient.
  *
  * SESSION SCOPING: a session pins the principal that opened it. Every later
  * request re-resolves the credential and must land on the SAME principal, so
@@ -48,9 +52,6 @@ import type { Server, } from "@modelcontextprotocol/sdk/server/index.js";
 import { WebStandardStreamableHTTPServerTransport, } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { Elysia, } from "elysia";
 import { APP_VERSION, } from "../../config/constants";
-import type { Config, } from "../../config/schema";
-import { SERVER_DEFAULTS, } from "../../config/sections/server";
-import { publicOriginOf, } from "../../federation/gossip";
 import { getChildLogger, } from "../../logger";
 import { createRequestContext, type PrincipalKind, } from "../../middleware/types";
 import { requireUserId, } from "../../routes/http-utils";
@@ -60,6 +61,7 @@ import { getFacadeRegistry, } from "../loop-lore-facade/instance";
 import { buildMcpServer, } from "../loop-lore-facade/mcp/server";
 import type { FacadeRouteCtx, } from "../loop-lore-facade/routes";
 import { type FacadeContext, facadeContextFromRequestContext, } from "../loop-lore-facade/types";
+import { allowlistFor, } from "./http-allowlist";
 
 /** The MCP endpoint, relative to the versioned prefix. */
 const MCP_ENDPOINT = "integrations/mcp/streamable";
@@ -177,45 +179,6 @@ function noStore(response: Response,): Response {
 }
 
 /**
- * Normalize an origin to the form a browser sends (lowercase scheme and
- * host, no trailing slash, no default port).
- * @param origin - the origin to normalize
- * @returns the normalized origin, or null when the value is not an origin
- */
-function normalizeOrigin(origin: string,): string | null {
-  try {
-    return new URL(origin,).origin;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * The DNS-rebinding allowlist, derived from the app's OWN configuration: the
- * instance's public origin (`server.publicOrigin`, else the bound host and
- * port) plus the host it binds. The request's Host header is NEVER the
- * allowlist — a rebinding attack controls it.
- * @param config - the app config
- * @returns the allowed origins and hosts
- */
-function allowedTargets(config: Config | undefined,): { origins: string[]; hosts: string[] } {
-  // A mount without a server section (a bare app) falls back to the app's
-  // DEFAULT server config — never to the request's own Host header.
-  const server = config?.server ?? SERVER_DEFAULTS;
-  const { host, port, } = server;
-  const origin = normalizeOrigin(publicOriginOf(server,),) ??
-    normalizeOrigin(`http://${host}:${port}`,) ?? "";
-
-  const hosts = new Set([
-    ...(origin === "" ? [] : [new URL(origin,).host,]),
-    host.toLowerCase(),
-    `${host.toLowerCase()}:${port}`,
-  ],);
-
-  return { origins: origin === "" ? [] : [origin,], hosts: [...hosts,], };
-}
-
-/**
  * Whether a request's principal is the one the session was opened with.
  * @param session - the session's pinned principal
  * @param current - the principal this request resolved to
@@ -316,9 +279,26 @@ export function createMcpHttpRoutes(opts: HandlerOpts, options: McpHttpOptions =
   const { database, config, asyncStore, } = opts;
   const prefix = options.prefix ?? "/api";
   const now = options.now ?? Date.now;
-  const targets = allowedTargets(config,);
+  const allowlist = allowlistFor(config,);
   const sessions = new Map<string, McpSession>();
   const path = `${prefix}/${MCP_ENDPOINT}`;
+
+  if (!allowlist.ok) {
+    // The instance answers under names the configuration cannot enumerate (a
+    // wildcard bind with no public origin). Answer with the actionable
+    // message instead of a 403 that looks like an attack.
+    getLog()?.warn("the MCP HTTP transport has no usable DNS-rebinding allowlist", {
+      message: allowlist.message,
+    },);
+
+    const refuse = async (): Promise<Response> => noStore(rpcError(503, -32000, allowlist.message,),);
+    return new Elysia({ name: "loop-lore-mcp-http", },)
+      .post(path, refuse, { parse: "none", },)
+      .get(path, refuse,)
+      .delete(path, refuse,);
+  }
+
+  const targets = allowlist.allowlist;
 
   /**
    * BOUNDARY VALIDATION — every method of this endpoint runs it first: the
