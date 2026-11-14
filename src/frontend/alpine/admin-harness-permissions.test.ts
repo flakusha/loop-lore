@@ -300,4 +300,20 @@ describe("buildPermissionRows", () => {
 
     expect(rows[0]?.input,).toBe("\u2014",);
   });
+
+  test("a parked ask carries the reason it could not be answered", () => {
+    const rows = buildPermissionRows([
+      {
+        id: "ask-1",
+        profile: "p",
+        tool: "write",
+        input: null,
+        cwd: "/tmp",
+        arrival: 0,
+        undeliverableReason: "the decision could not be delivered",
+      },
+    ],);
+
+    expect(rows[0]?.undeliverableReason,).toBe("the decision could not be delivered",);
+  });
 });

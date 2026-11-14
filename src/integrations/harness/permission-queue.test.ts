@@ -13,7 +13,7 @@
 import { afterEach, describe, expect, it, } from "bun:test";
 import { mkdtempSync, rmSync, } from "node:fs";
 import { createLogger, setGlobalLogger, } from "../../logger";
-import type { PermissionOutcome, } from "./adapter-types";
+import { PermissionAskGoneError, type PermissionOutcome, } from "./adapter-types";
 import type { PermissionRespondable, } from "./permission-queue";
 import { PermissionQueue, } from "./permission-queue";
 
@@ -104,6 +104,7 @@ describe("PermissionQueue", () => {
     expect(items[0]?.tool,).toBe("edit",);
     expect(items[0]?.cwd,).toBe(h.root,);
     expect(items[0]?.arrival,).toBeGreaterThan(0,);
+    expect(items[0]?.undeliverableReason,).toBeNull();
     expect(h.outcomes.get("p",),).toBeUndefined();
   });
 
@@ -221,18 +222,43 @@ describe("PermissionQueue", () => {
 
     const result = queue.resolve({ id: parked.id, decision: "approve", },);
     if (result.ok) { throw new Error("expected a typed failure",); }
-    expect(result.code,).toBe("no_connection",);
+    expect(result.code,).toBe("not_delivered",);
     expect(result.message,).toBe('profile "p" did not accept the decision',);
     expect(queue.pendingCount(),).toBe(1,);
+
+    // The row says WHY it is parked: a retry may still deliver the decision.
+    expect(queue.listPending()[0]?.undeliverableReason,).toContain("could not be delivered",);
   });
 
-  it("an auto-allow whose delivery fails parks the ask instead of throwing", async () => {
+  it("a decision against an ask the harness no longer holds says so and drops the row", async () => {
     const root = mkdtempSync(TMP_ROOT,);
     sandboxes.push(root,);
     const queue = new PermissionQueue({
       connection: () => ({
         respondPermission: () => {
-          throw new Error("no pending permission request",);
+          throw new PermissionAskGoneError();
+        },
+      }),
+    },);
+
+    const parked = await queue.submit(editAsk(root,),);
+    if (parked.decision !== "pending") { throw new Error("expected pending",); }
+
+    const result = queue.resolve({ id: parked.id, decision: "approve", },);
+    if (result.ok) { throw new Error("expected a typed failure",); }
+    expect(result.code,).toBe("ask_gone",);
+
+    // Nothing is left to decide: the row goes with the ask.
+    expect(queue.pendingCount(),).toBe(0,);
+  });
+
+  it("an auto-allow whose delivery fails transiently parks the ask with the reason", async () => {
+    const root = mkdtempSync(TMP_ROOT,);
+    sandboxes.push(root,);
+    const queue = new PermissionQueue({
+      connection: () => ({
+        respondPermission: () => {
+          throw new Error("channel closed",);
         },
       }),
     },);
@@ -247,6 +273,44 @@ describe("PermissionQueue", () => {
 
     expect(result.decision,).toBe("pending",);
     expect(queue.pendingCount(),).toBe(1,);
+    expect(queue.listPending()[0]?.undeliverableReason,).toContain("could not be delivered",);
+  });
+
+  it("an auto-allow whose ask is gone drops the ask instead of parking a dead row", async () => {
+    const root = mkdtempSync(TMP_ROOT,);
+    sandboxes.push(root,);
+    const queue = new PermissionQueue({
+      connection: () => ({
+        respondPermission: () => {
+          throw new PermissionAskGoneError();
+        },
+      }),
+    },);
+
+    const result = await queue.submit({
+      profile: "p",
+      pending: { params: { sessionId: "s", path: "notes.md", }, kind: "read", },
+      sandboxRoot: root,
+    },);
+
+    // The harness no longer holds the ask: there is nothing left to decide,
+    // so no row is parked and none can ever clear.
+    expect(result.decision,).toBe("withdrawn",);
+    expect(queue.pendingCount(),).toBe(0,);
+  });
+
+  it("a withdrawal that lands while the ask is classified strands no row", async () => {
+    const h = harness();
+
+    // The withdrawal lands while the classification is still in flight: the
+    // ask is answered by the cancellation, so parking it would strand a row
+    // no decision can ever clear.
+    const submitted = h.queue.submit(editAsk(h.root,),);
+    h.queue.withdrawProfile("p",);
+
+    const result = await submitted;
+    expect(result.decision,).toBe("withdrawn",);
+    expect(h.queue.pendingCount(),).toBe(0,);
   });
 
   it("idle() settles once concurrent submits finish", async () => {

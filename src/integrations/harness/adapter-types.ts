@@ -105,6 +105,21 @@ export class HarnessAcpError extends Error {
 }
 
 /**
+ * Raised when a permission decision targets an ask the harness NO LONGER
+ * HOLDS — the turn was cancelled or the ask was withdrawn. Distinct from a
+ * transport failure: the ask is gone, so no retry can ever deliver it.
+ */
+export class PermissionAskGoneError extends HarnessAcpError {
+  /**
+   * @param message - human-readable detail
+   */
+  constructor(message = "no pending permission request",) {
+    super("session", message,);
+    this.name = "PermissionAskGoneError";
+  }
+}
+
+/**
  * One live connection to a harness profile. All methods may reject with
  * {@link HarnessAcpError}; the caller records the failure with its breaker.
  */
@@ -145,7 +160,7 @@ export interface HarnessAcpAdapter {
   /**
    * Answer the open permission request.
    * @param outcome - the client's choice among the harness's options
-   * @throws {HarnessAcpError} kind `session` when nothing is pending
+   * @throws {PermissionAskGoneError} when the harness no longer holds the ask
    */
   respondPermission(outcome: PermissionOutcome,): void;
   /** Terminate the underlying process/connection. Idempotent. */

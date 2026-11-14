@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 280
+// size-allow: 300
 
 /**
  * Fake ACP server fixture (test-only; imported exclusively by *.test.ts).
@@ -48,11 +48,18 @@ let serverReqId = 1000;
 const clientResolvers = new Map();
 let cancelWaiter = null;
 const send = (o) => process.stdout.write(JSON.stringify(o) + "\n");
-const askClient = (method, params) => new Promise((resolve) => {
-  serverReqId += 1;
-  clientResolvers.set(serverReqId, { resolve: resolve, method: method, params: params });
-  send({ jsonrpc: "2.0", id: serverReqId, method: method, params: params });
-});
+const askClientBurst = (entries) => {
+  const promises = [];
+  const lines = [];
+  for (const entry of entries) {
+    serverReqId += 1;
+    const id = serverReqId;
+    promises.push(new Promise((resolve) => { clientResolvers.set(id, { resolve: resolve, method: entry.method, params: entry.params }); }));
+    lines.push(JSON.stringify({ jsonrpc: "2.0", id: id, method: entry.method, params: entry.params }));
+  }
+  process.stdout.write(lines.join("\n") + "\n");
+  return promises;
+};
 const runPromptFlow = async (promptId) => {
   let cancelPromise = null;
   if (process.env.FAKE_AWAIT_CANCEL) {
@@ -63,17 +70,16 @@ const runPromptFlow = async (promptId) => {
       { optionId: "allow", name: "Allow", kind: permKinds[0] ?? "allow_once" },
       { optionId: "reject", name: "Reject", kind: permKinds[1] ?? "reject_once" },
     ];
-    await askClient("session/request_permission", {
-      sessionId: "fake-session-1",
-      toolCall: { toolCallId: "call-1", title: "Edit file", kind: "edit", status: "pending" },
-      options: options,
-    });
+    const askParams = (callId) => ({ sessionId: process.env.FAKE_ASK_SESSION_ID ?? "fake-session-1", toolCall: { toolCallId: callId, title: "Edit file", kind: "edit", status: "pending" }, options: options });
+    const entries = [{ method: "session/request_permission", params: askParams("call-1") }];
+    if (process.env.FAKE_PERMISSION_TWICE) { entries.push({ method: "session/request_permission", params: askParams("call-2") }); }
+    await Promise.all(askClientBurst(entries,));
   }
   if (process.env.FAKE_READ_FILE) {
-    const readParams = { sessionId: "fake-session-1", path: process.env.FAKE_READ_FILE };
+    const readParams = { sessionId: process.env.FAKE_ASK_SESSION_ID ?? "fake-session-1", path: process.env.FAKE_READ_FILE };
     if (process.env.FAKE_READ_FILE_LINE) { readParams.line = Number(process.env.FAKE_READ_FILE_LINE); }
     if (process.env.FAKE_READ_FILE_LIMIT) { readParams.limit = Number(process.env.FAKE_READ_FILE_LIMIT); }
-    await askClient("fs/read_text_file", readParams);
+    await Promise.all(askClientBurst([{ method: "fs/read_text_file", params: readParams },],),);
   }
   if (cancelPromise) { await cancelPromise; cancelWaiter = null; }
   if (process.env.FAKE_EVENTS) {
@@ -208,6 +214,10 @@ export interface FakeAcpEnv {
   FAKE_PERMISSION_KINDS?: string;
   /** When set, the permission ask advertises NO options (nothing to select). */
   FAKE_PERMISSION_NO_OPTIONS?: string;
+  /** When set, the asks name this session id instead of the fixture's own. */
+  FAKE_ASK_SESSION_ID?: string;
+  /** When set, the prompt sends a SECOND permission ask while the first is open. */
+  FAKE_PERMISSION_TWICE?: string;
   /** When set, the fixture logs the initialize and session/new params it observed. */
   FAKE_LOG_PARAMS?: string;
   /** When set, session/prompt first asks the client to read this path via `fs/read_text_file`. */
