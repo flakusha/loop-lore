@@ -328,6 +328,7 @@ describe("provider connection wizard", () => {
     await wizard.loadProviders();
 
     await wizard.deleteProvider("openai",);
+    // The first click armed the row; the second one confirms the delete.
     await wizard.deleteProvider("openai",);
 
     const deletes = calls.filter((call,) => call.method === "DELETE");
@@ -351,6 +352,7 @@ describe("provider connection wizard", () => {
     await wizard.loadProviders();
 
     await wizard.deleteProvider("openai",);
+    // The first click armed the row; the second one confirms the delete.
     await wizard.deleteProvider("openai",);
 
     expect(wizard.wizard.pendingDelete,).toBeNull();
