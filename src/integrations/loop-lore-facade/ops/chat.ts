@@ -137,7 +137,7 @@ export function registerChatOps(registry: FacadeRegistry, deps: ChatFacadeDeps,)
       scope: "chat-write",
       ratePolicy: chatPolicy,
       bodySchema: FacadeSendMessageBody,
-// hint: Logic changed on both sides. Requires understanding intent of each change.
+      // hint: Logic changed on both sides. Requires understanding intent of each change.
       // Annotation rule (types.ts, FacadeToolAnnotations): chat.send APPENDS
       // a message (and may trigger the auto-reply pipeline), so it changes
       // domain state and readOnlyHint is false. destructiveHint stays unset:
