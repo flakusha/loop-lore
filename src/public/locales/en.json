@@ -1175,7 +1175,6 @@
     "typeBlogPost": "Blog post",
     "typeBlogComment": "Blog comment"
   },
-
   "npc": {
     "relationshipsTab": "Relationships",
     "relationshipsTitle": "Relationships",
@@ -1188,7 +1187,6 @@
     "relationshipsTrust": "Trust",
     "relationshipsFamiliarity": "Familiarity"
   },
-
   "availability": {
     "title": "Availability",
     "help": "Control how and where this character can be used.",
@@ -1258,7 +1256,6 @@
     "advanceBy": "Advance by",
     "advanceProgress": "Advance Progress"
   },
-
   "rpg": {
     "forbidden": "You do not have access to this character.",
     "skills": {
@@ -2231,7 +2228,7 @@
     "assets": "Assets",
     "openChat": "Open chat",
     "openAsset": "Preview asset"
-  },
+  }
   "reminders": {
     "menu": "Remind me",
     "in10": "in 10 minutes",
@@ -2606,7 +2603,6 @@
     "payload": "Payload (JSON)",
     "preset": "Preset"
   },
-
   "partySplit": {
     "title": "Party Split",
     "splitTitle": "Split the Party",
@@ -2632,5 +2628,5 @@
     "reuniting": "Reuniting…",
     "reunited": "Party reunited",
     "failedReunite": "Failed to reunite the party."
-  }
+  },
 }
