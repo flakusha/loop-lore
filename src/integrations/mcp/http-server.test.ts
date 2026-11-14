@@ -40,7 +40,7 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import { resetFacadeRegistry, } from "../loop-lore-facade/instance";
-import { createMcpHttpRoutes, } from "./http-server";
+import { createMcpHttpRoutes, MAX_LIVE_SESSIONS, } from "./http-server";
 
 const PREFIX = "/api/v1";
 const ENDPOINT = `${PREFIX}/integrations/mcp/streamable`;
@@ -197,6 +197,34 @@ describe("MCP Streamable HTTP transport", () => {
 
     expect(result.isError,).toBeUndefined();
     expect(result.content[0]?.text,).toContain("hello stream",);
+  });
+
+  test("the live session set is bounded — the oldest session is evicted", async () => {
+    const app = makeApp({ userId: principalId, },);
+
+    // SEQUENTIAL on purpose: the assertion names the OLDEST session, so the
+    // mint order must be deterministic (concurrent mints would interleave).
+    const ids: string[] = [];
+    for (let index = 0; index < MAX_LIVE_SESSIONS + 1; index += 1) {
+      ids.push(await initialize(app,),);
+    }
+
+    const oldest = ids[0] as string;
+    const newest = ids[ids.length - 1] as string;
+
+    // The spec lets the server end a session at any time: the evicted id
+    // answers 404 (the client's documented recovery is to re-initialize).
+    const evicted = await app.handle(
+      rpc({ jsonrpc: "2.0", id: 20, method: "tools/list", params: {}, }, { "mcp-session-id": oldest, },),
+    );
+
+    expect(evicted.status,).toBe(404,);
+
+    const alive = await app.handle(
+      rpc({ jsonrpc: "2.0", id: 21, method: "tools/list", params: {}, }, { "mcp-session-id": newest, },),
+    );
+
+    expect(alive.status,).toBe(200,);
   });
 
   test("a POST that does not accept both content types is refused (406)", async () => {
