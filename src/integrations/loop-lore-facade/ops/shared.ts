@@ -53,11 +53,23 @@ export async function callerOwnsActor(opts: {
   return actor.owner_id === opts.userId || actor.user_id === opts.userId;
 }
 
-/** The behaviour hints every read-only facade op carries. */
+/**
+ * The behaviour hints every domain-read facade op carries.
+ *
+ * THE RULE every facade op follows:
+ *  - `readOnlyHint` means the op does not change the caller's DOMAIN state.
+ *    The audit `log_entries` row the registry writes for every call is
+ *    bookkeeping, NOT a domain side effect - it does not flip the hint. An op
+ *    that creates or updates domain state declares readOnlyHint: false.
+ *  - `idempotentHint` stays UNSET wherever a repeat is not effect-free (the
+ *    MCP default is false, so silence is the honest answer). Every op appends
+ *    an audit row, so NO op in this facade may claim idempotentHint: true.
+ *  - `openWorldHint` stays at the default unless the op touches the open
+ *    internet.
+ */
 export const READ_ONLY_ANNOTATIONS: FacadeToolAnnotations = {
   readOnlyHint: true,
   destructiveHint: false,
-  idempotentHint: true,
   openWorldHint: false,
 };
 

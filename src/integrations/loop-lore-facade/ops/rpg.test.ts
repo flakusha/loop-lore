@@ -274,6 +274,24 @@ describe("facade rpg ops", () => {
     expect(rows[0]?.user_id,).toBe(USER,);
   });
 
+  test("rpg.stats declares honest annotations - read-only, never idempotent", () => {
+    const annotations = buildRegistry().resolve("rpg.stats",)?.annotations;
+    expect(annotations?.readOnlyHint,).toBe(true,);
+    expect(annotations?.idempotentHint,).toBeUndefined();
+  });
+
+  test("rpg.inventory declares honest annotations - read-only, never idempotent", () => {
+    const annotations = buildRegistry().resolve("rpg.inventory",)?.annotations;
+    expect(annotations?.readOnlyHint,).toBe(true,);
+    expect(annotations?.idempotentHint,).toBeUndefined();
+  });
+
+  test("rpg.location declares honest annotations - read-only, never idempotent", () => {
+    const annotations = buildRegistry().resolve("rpg.location",)?.annotations;
+    expect(annotations?.readOnlyHint,).toBe(true,);
+    expect(annotations?.idempotentHint,).toBeUndefined();
+  });
+
   test("the rpg ops carry the schemas a manifest generator needs", () => {
     const registry = buildRegistry();
 

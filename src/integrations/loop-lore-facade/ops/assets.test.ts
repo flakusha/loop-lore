@@ -271,6 +271,18 @@ describe("facade assets ops", () => {
     expect(rows[0]?.module,).toBe("loop-lore-facade",);
   });
 
+  test("assets.list declares honest annotations - read-only, never idempotent", () => {
+    const annotations = buildRegistry().resolve("assets.list",)?.annotations;
+    expect(annotations?.readOnlyHint,).toBe(true,);
+    expect(annotations?.idempotentHint,).toBeUndefined();
+  });
+
+  test("assets.get declares honest annotations - read-only, never idempotent", () => {
+    const annotations = buildRegistry().resolve("assets.get",)?.annotations;
+    expect(annotations?.readOnlyHint,).toBe(true,);
+    expect(annotations?.idempotentHint,).toBeUndefined();
+  });
+
   test("the assets ops carry the schemas a manifest generator needs", () => {
     const registry = buildRegistry();
 
