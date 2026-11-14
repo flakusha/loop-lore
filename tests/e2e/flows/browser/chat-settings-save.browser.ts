@@ -22,7 +22,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { trackPageErrors, waitForAlpineReady, } from "../../helpers/htmx-alpine";
+import { trackPageErrors, waitForAlpineReady, waitForAlpineState, } from "../../helpers/htmx-alpine";
 import { SEED, } from "../../helpers/seed";
 
 const ERROR_ALLOWLIST = [
@@ -51,8 +51,33 @@ describe("Chat settings save + ownership transfer (B5)", () => {
 
     await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 30_000, },);
     await waitForAlpineReady(page, 15_000,);
-    await page.locator("[data-testid='toggle-chat-settings']",).click();
-    await page.locator("[data-testid='chat-settings-modal']",).waitFor({ state: "visible", timeout: 10_000, },);
+
+    // init() registers the open-chat-settings listener only after selectChat
+    // finishes; under gate load the toggle click can land first and be lost,
+    // leaving the modal hidden until the waitFor times out (run 117132:
+    // "24 x locator resolved to hidden" at line 55). Wait for the chat to
+    // be active (pattern proven in vn-settings/htmx-alpine), then retry the
+    // click until the modal shows.
+    await waitForAlpineState(
+      page,
+      "[x-data='chatState()']",
+      (state,) => !!(state as Record<string, unknown>).activeChat,
+      15_000,
+    );
+
+    const modal = page.locator("[data-testid='chat-settings-modal']",);
+
+    for (let attempt = 0; attempt < 5; attempt++) {
+      await page.locator("[data-testid='toggle-chat-settings']",).click();
+      try {
+        await modal.waitFor({ state: "visible", timeout: 5_000, },);
+        return;
+      } catch {
+        /* click landed before the panel handler was ready — retry */
+      }
+    }
+
+    await modal.waitFor({ state: "visible", timeout: 10_000, },);
   }
 
   beforeAll(async () => {
