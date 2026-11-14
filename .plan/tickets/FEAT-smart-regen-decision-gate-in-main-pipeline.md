@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** THEME 3 scripting-lite: shared macro engine, named args, per-command valves, pipe operator, smart-regen decision gate
 **Priority:** medium
 **Effort:** Medium
@@ -41,3 +41,5 @@ Config: `assistant.smartRegenGate` (default `false`) added to the assistant sect
 Tests: `src/assistant/commands/regen-gate.test.ts` (pure decisions) + `regen.test.ts` "regen decision gate wiring" describe (gate off menu, heuristic styles by size, explicit-action passthrough with the gate on).
 
 Not done here (kept out of scope): the FEAT's original "auto-trigger from quality heuristics in the main pipeline" framing — this lane implements the gate as the typed decision step at the `/regen` call site per the wave-3 assignment; no automatic mid-pipeline trigger fires without user action. Quality heuristics are message-size only (no LLM grading).
+
+**Resolved:** 2026-11-14 registry-driven close: git issue c2e2eec (registry tip: f2930ac1b Konstantin Fedotov Close issue)

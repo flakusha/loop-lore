@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** THEME 3 scripting-lite: shared macro engine, named args, per-command valves, pipe operator, smart-regen decision gate
 **Priority:** medium
 **Effort:** Medium
@@ -54,3 +54,4 @@ Behavior deltas (all deliberate, all covered by tests — the pre-existing suite
 
 Deferred: rewiring the two pre-existing template resolvers (`src/generation/prompt-templates/templates.ts resolveTemplate`, `src/assistant/prompt/template-render.ts substituteVars`) onto this engine — their nested-in-value expansion semantics differ from `"literal"` mode and both already behave correctly; migrating `resolveTemplate` is a small follow-up. No prompt-library surface consumes the engine yet.
 
+**Resolved:** 2026-11-14 registry-driven close: git issue 43e22b4 (registry tip: 9a17b686c Konstantin Fedotov Close issue)
