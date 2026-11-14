@@ -216,7 +216,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 - **Plumbing** — Kysely + `bun:sqlite` (PG dialect-swappable), encrypted DB backup/recovery, plugin system, structured logging, telemetry, auxiliary LLM pipeline, wiring gate (`scripts/check-wiring.ts`), e2e browser suite (19 flows).
 
-
 ### Added
 
 - **Split and Reunite are reachable from the web chat UI (TASK-web-ui-buttons-for-party-split-reunite-parity-with-split-reu)** — the slash commands `/split` and `/reunite` were the only way to run them. The `party-split-panel.html` modal (mounted in the chat view) is backed by `chatPartySplit` (`src/frontend/alpine/chat-party-split.ts`) and posts the same specs to `POST /api/v1/chats/:id/split` and `POST /api/v1/chats/:id/reunite`: a branch draft pairs a location with an actor set (the pickers are fed from the chat's own location and participant scope), the reunite picker lists the chat's child branches, and success or refusal is surfaced as a toast with a transcript refresh after a successful run. Tests: `src/frontend/alpine/chat-party-split.test.ts`.
