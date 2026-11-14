@@ -5,6 +5,8 @@ import { afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import {
   actorAvailability,
+  actorAvailabilityFactory,
+  AVAILABILITY_STATUS_OPTIONS,
   parseRestrictions,
 } from "./actor-availability";
 import type { CharacterAvailability, } from "./actor-availability";
@@ -184,5 +186,25 @@ describeOrSkip("actorAvailability.remove and cancelEdit", () => {
   test("describeStatus resolves i18n keys and passes unknown codes through", () => {
     expect(actorAvailability.describeStatus("available",),).toBe("availability.statusAvailable",);
     expect(actorAvailability.describeStatus("mystery",),).toBe("mystery",);
+  });
+},);
+
+describeOrSkip("actorAvailabilityFactory + status options", () => {
+  test("status options carry the four lifecycle states", () => {
+    expect([...AVAILABILITY_STATUS_OPTIONS,],).toEqual([
+      "available",
+      "limited",
+      "unavailable",
+      "retired",
+    ],);
+  });
+
+  test("factory binds the actor id and exposes the editor form", () => {
+    const state = actorAvailabilityFactory("actor-1",);
+
+    expect(state._availActorId,).toBe("actor-1",);
+    expect(state.availability,).toBeNull();
+    expect(state.statusOptions,).toBe(AVAILABILITY_STATUS_OPTIONS,);
+    expect(state.availabilityForm.status,).toBe("available",);
   });
 },);
