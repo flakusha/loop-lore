@@ -180,6 +180,20 @@ function rpc(body: unknown, headers: Record<string, string> = {},): Request {
   },);
 }
 
+/**
+ * The config with a different server section — the DNS-rebinding allowlist is
+ * derived from it.
+ * @param server - the server section
+ * @returns the config
+ */
+function configWithServer(server: Record<string, unknown>,): Config {
+  const defaults = createConfigSchema().defaults;
+  return {
+    ...config,
+    server: { ...defaults.server, ...server, },
+  } as unknown as Config;
+}
+
 async function initialize(app: Elysia,): Promise<string> {
   const res = await app.handle(rpc({ jsonrpc: "2.0", id: 1, method: "initialize", params: INIT_PARAMS, },),);
   const sessionId = res.headers.get("mcp-session-id",);
@@ -466,6 +480,80 @@ describe("MCP Streamable HTTP transport", () => {
     );
 
     expect(res.status,).toBe(403,);
+  });
+
+  test("a wildcard bind without a public origin is refused with an actionable answer", async () => {
+    // The instance answers under names the configuration cannot enumerate, so
+    // the allowlist cannot be derived from the bind host. The answer names
+    // the knob — it does not look like an attack.
+    config = configWithServer({ host: "0.0.0.0", port: 3000, },);
+    const res = await makeApp({ userId: principalId, },).handle(
+      rpc(
+        { jsonrpc: "2.0", id: 40, method: "initialize", params: INIT_PARAMS, },
+        { host: "localhost:3000", origin: "http://localhost:3000", },
+      ),
+    );
+
+    expect(res.status,).toBe(503,);
+    const envelope = await res.json() as Envelope;
+    expect(envelope.error?.message,).toContain("server.publicOrigin",);
+    expect(envelope.error?.message,).toContain("SERVER_PUBLIC_ORIGIN",);
+  });
+
+  test("a wildcard bind with a public origin answers under that origin's host", async () => {
+    config = configWithServer({ host: "0.0.0.0", port: 3000, publicOrigin: "https://lore.example.com", },);
+    const app = makeApp({ userId: principalId, },);
+
+    const allowed = await app.handle(
+      rpc(
+        { jsonrpc: "2.0", id: 41, method: "initialize", params: INIT_PARAMS, },
+        { host: "lore.example.com", origin: "https://lore.example.com", },
+      ),
+    );
+
+    expect(allowed.status,).toBe(200,);
+
+    // An unrelated host is still refused — the allowlist is the config's, not
+    // the request's.
+    const refused = await app.handle(
+      rpc(
+        { jsonrpc: "2.0", id: 42, method: "tools/list", params: {}, },
+        { host: "attacker.example", origin: "http://attacker.example", },
+      ),
+    );
+
+    expect(refused.status,).toBe(403,);
+  });
+
+  test("the default bind answers a client on the loopback alias", async () => {
+    const res = await makeApp({ userId: principalId, },).handle(
+      rpc(
+        { jsonrpc: "2.0", id: 43, method: "initialize", params: INIT_PARAMS, },
+        { host: "127.0.0.1:3000", origin: "http://127.0.0.1:3000", },
+      ),
+    );
+
+    expect(res.status,).toBe(200,);
+  });
+
+  test("a rebinding origin is refused in every configuration", async () => {
+    for (
+      const server of [
+        { host: "localhost", port: 3000, publicOrigin: "http://localhost:3000", },
+        { host: "0.0.0.0", port: 3000, publicOrigin: "https://lore.example.com", },
+        { host: "192.168.1.5", port: 3000, },
+      ]
+    ) {
+      config = configWithServer(server,);
+      const res = await makeApp({ userId: principalId, },).handle(
+        rpc(
+          { jsonrpc: "2.0", id: 44, method: "tools/list", params: {}, },
+          { host: "attacker.example", origin: "http://attacker.example", },
+        ),
+      );
+
+      expect(res.status,).toBe(403,);
+    }
   });
 
   test("an idle session is reaped and answers 404", async () => {
