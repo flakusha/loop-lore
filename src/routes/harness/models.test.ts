@@ -31,8 +31,11 @@ afterAll(async () => {
   await destroyTestDb(fixture,);
 },);
 
-beforeEach(() => {
+beforeEach(async () => {
   resetHarnessRuntime();
+  // The capability table is per-file state: a row seeded by one test must
+  // not enrich the entries another test reads.
+  await fixture.db.deleteFrom("model_capabilities",).execute();
 },);
 
 afterEach(() => {

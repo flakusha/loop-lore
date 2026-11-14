@@ -46,8 +46,9 @@ function decide(
   if (result.ok) { return jsonResponse({ ok: true, },); }
 
   // A vanished ask is gone (404); a live ask the decision could not reach is
-  // a service failure (503) the operator can retry.
-  const gone = result.code === "unknown_request" || result.code === "ask_gone";
+  // a service failure (503) the operator can retry. A refusal is a gone ask
+  // too: the harness answered, but not with the decision.
+  const gone = result.code === "unknown_request" || result.code === "ask_gone" || result.code === "refused";
   return jsonError({
     message: result.message,
     status: gone ? HttpStatus.NotFound : HttpStatus.ServiceUnavailable,

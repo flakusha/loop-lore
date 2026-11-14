@@ -134,8 +134,16 @@ describe("PermissionQueue", () => {
     const second = await h.queue.submit(editAsk(h.root,),);
     if (first.decision !== "pending" || second.decision !== "pending") { throw new Error("expected pending",); }
 
-    expect(h.queue.resolve({ id: second.id, decision: "approve", },),).toEqual({ ok: true, },);
-    expect(h.queue.resolve({ id: first.id, decision: "deny", },),).toEqual({ ok: true, },);
+    expect(h.queue.resolve({ id: second.id, decision: "approve", },),).toEqual({
+      ok: true,
+      answer: { outcome: "cancelled", },
+    },);
+
+    expect(h.queue.resolve({ id: first.id, decision: "deny", },),).toEqual({
+      ok: true,
+      answer: { outcome: "cancelled", },
+    },);
+
     expect(h.queue.pendingCount(),).toBe(0,);
     expect(h.outcomes.get("p",),).toEqual([{ outcome: "allow_once", }, { outcome: "reject_once", },],);
   });
@@ -146,8 +154,16 @@ describe("PermissionQueue", () => {
     const b = await h.queue.submit({ ...editAsk(h.root,), profile: "q", },);
     if (a.decision !== "pending" || b.decision !== "pending") { throw new Error("expected pending",); }
 
-    expect(h.queue.resolve({ id: a.id, decision: "deny", },),).toEqual({ ok: true, },);
-    expect(h.queue.resolve({ id: b.id, decision: "approve", },),).toEqual({ ok: true, },);
+    expect(h.queue.resolve({ id: a.id, decision: "deny", },),).toEqual({
+      ok: true,
+      answer: { outcome: "cancelled", },
+    },);
+
+    expect(h.queue.resolve({ id: b.id, decision: "approve", },),).toEqual({
+      ok: true,
+      answer: { outcome: "cancelled", },
+    },);
+
     expect(h.outcomes.get("p",),).toEqual([{ outcome: "reject_once", },],);
     expect(h.outcomes.get("q",),).toEqual([{ outcome: "allow_once", },],);
   });
@@ -211,10 +227,39 @@ describe("PermissionQueue", () => {
 
     const result = queue.resolve({ id: parked.id, decision: "approve", },);
     if (result.ok) { throw new Error("expected a typed failure",); }
-    expect(result.code,).toBe("ask_gone",);
+    // A refusal is not a vanished ask: it has its own code.
+    expect(result.code,).toBe("refused",);
     expect(result.message,).toContain("the harness refused the decision",);
     // The ask was answered on the wire, so the row goes with it.
     expect(queue.pendingCount(),).toBe(0,);
+  });
+
+  it("reports a denial the harness answered as delivered, with the wire shape", async () => {
+    const h = harness();
+    const parked = await h.queue.submit({
+      profile: "p",
+      pending: {
+        params: {
+          sessionId: "s",
+          kind: "edit",
+          options: [{ optionId: "allow", name: "Allow", kind: "allow_once", },],
+        },
+        kind: "edit",
+      },
+      sandboxRoot: h.root,
+    },);
+
+    if (parked.decision !== "pending") { throw new Error("expected pending",); }
+
+    const result = h.queue.resolve({ id: parked.id, decision: "deny", },);
+
+    // No advertised option can carry the denial, so the wire answer is the
+    // protocol's cancellation - and the queue reports the denial as DELIVERED,
+    // never as an approval.
+    expect(result.ok,).toBe(true,);
+    if (!result.ok) { throw new Error("expected the denial to be delivered",); }
+    expect(result.answer,).toEqual({ outcome: "cancelled", },);
+    expect(h.outcomes.get("p",),).toEqual([{ outcome: "reject_once", },],);
   });
 
   it("withdrawProfile drops the profile's asks and reports their ids", async () => {

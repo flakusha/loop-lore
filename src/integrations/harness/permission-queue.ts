@@ -27,8 +27,10 @@ import { getChildLogger, } from "../../logger";
 import {
   type PendingPermission,
   PermissionAskGoneError,
+  PermissionDecisionRefusedError,
   type PermissionOutcome,
 } from "./adapter-types";
+import { advertisedPermissionOptions, type WirePermissionOutcome, wirePermissionOutcome, } from "./permission-outcome";
 import { classifyPermission, } from "./permission-policy";
 
 /** One ask's inputs: the profile, the raw pending ask, and the session's sandbox cwd. */
@@ -74,10 +76,13 @@ export type SubmitResult =
   | { decision: "pending"; id: string; reason: string }
   | { decision: "withdrawn"; reason: string };
 
-/** Typed failure of a decision — a Result, never a throw. */
+/** The queue's typed failure codes. */
+export type PermissionFailureCode = "unknown_request" | "no_connection" | "ask_gone" | "refused" | "not_delivered";
+
+/** The outcome of a decision — a Result, never a throw. */
 export type PermissionResolveResult =
-  | { ok: true }
-  | { ok: false; code: "unknown_request" | "no_connection" | "ask_gone" | "not_delivered"; message: string };
+  | { ok: true; answer: WirePermissionOutcome }
+  | { ok: false; code: PermissionFailureCode; message: string };
 
 /** The human decision the web surface can express. */
 export type PermissionDecision = "approve" | "deny";
@@ -267,6 +272,10 @@ export class PermissionQueue {
   /**
    * Apply a human decision to one queued ask. Unknown id and a connection
    * that cannot accept the decision are typed failures, not throws.
+   *
+   * The decision's wire answer is the mapping the connection applies to the
+   * ask's advertised options. A refusal - the harness could not express the
+   * decision - reports the `refused` code; a vanished ask reports `ask_gone`.
    * @param input - the entry id and the decision
    * @returns ok, or a typed failure.
    */
@@ -294,6 +303,7 @@ export class PermissionQueue {
       return { ok: false, code: "no_connection", message: `profile "${entry.profile}" has no live connection`, };
     }
 
+    const answer = wirePermissionOutcome(outcome, advertisedPermissionOptions(entry.input,),);
     try {
       connection.respondPermission(outcome,);
     } catch (error) {
@@ -307,11 +317,8 @@ export class PermissionQueue {
           decision: input.decision,
         },);
 
-        return {
-          ok: false,
-          code: "ask_gone",
-          message: `${(error as Error).message} (profile "${entry.profile}")`,
-        };
+        const code = error instanceof PermissionDecisionRefusedError ? "refused" : "ask_gone";
+        return { ok: false, code, message: `${(error as Error).message} (profile "${entry.profile}")`, };
       }
 
       log()?.warn("harness permission decision rejected by the connection", {
@@ -327,11 +334,7 @@ export class PermissionQueue {
         this.entries.set(input.id, { ...parked, undeliverableReason: reason, },);
       }
 
-      return {
-        ok: false,
-        code: "not_delivered",
-        message: `profile "${entry.profile}" did not accept the decision`,
-      };
+      return { ok: false, code: "not_delivered", message: `profile "${entry.profile}" did not accept the decision`, };
     }
 
     this.entries.delete(input.id,);
@@ -339,9 +342,10 @@ export class PermissionQueue {
       id: input.id,
       profile: entry.profile,
       decision: input.decision,
+      answer,
     },);
 
-    return { ok: true, };
+    return { ok: true, answer, };
   }
 
   /**

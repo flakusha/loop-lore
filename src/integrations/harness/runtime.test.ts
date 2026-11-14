@@ -281,7 +281,11 @@ describe("runtime permission queue (TASK-permission-approval-flow)", () => {
 
     if (parked.decision !== "pending") { throw new Error("expected the edit ask to park",); }
 
-    expect(runtime.permissions.resolve({ id: parked.id, decision: "approve", },),).toEqual({ ok: true, },);
+    expect(runtime.permissions.resolve({ id: parked.id, decision: "approve", },),).toEqual({
+      ok: true,
+      answer: { outcome: "cancelled", },
+    },);
+
     expect(logs.get("p",)?.permissions,).toEqual([{ outcome: "allow_once", },],);
   });
 

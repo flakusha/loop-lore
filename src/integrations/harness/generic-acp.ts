@@ -296,6 +296,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
    * advertised option can carry is refused SPEC-LEGALLY — the harness's own
    * rejection option, or the protocol's `cancelled` outcome — never a
    * JSON-RPC error the agent would have to interpret as a failed request.
+   * In v1 a `cancelled` answer refuses the tool call, but it also tells the
+   * agent the TURN was cancelled: a conformant agent may abort the turn.
    * @param outcome - the client's choice among the harness's options
    * @throws {PermissionAskGoneError} when nothing is pending
    * @throws {PermissionDecisionRefusedError} when the harness could not
@@ -458,8 +460,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
 
       if (this.permission) {
         // One ask per connection. The concurrent ask is refused SPEC-LEGALLY:
-        // the protocol's `cancelled` outcome (vendored v1 schema,
-        // `RequestPermissionOutcome`), never a JSON-RPC error.
+        // the protocol's `cancelled` outcome (vendored v1 schema) — in v1 it
+        // tells the agent the TURN was cancelled, so it may abort the turn.
         return Promise.resolve({ outcome: { outcome: "cancelled", }, },);
       }
 

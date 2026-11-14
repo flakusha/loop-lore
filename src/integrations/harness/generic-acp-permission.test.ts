@@ -218,6 +218,99 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
     expect(outcome?.outcome,).toEqual({ outcome: { outcome: "cancelled", }, },);
   });
 
+  it("delivers a denial as the cancelled variant when the harness advertised only allow options", async () => {
+    const server = serve({
+      FAKE_PERMISSION: "1",
+      FAKE_MODELS: "m",
+      FAKE_PERMISSION_KINDS: "allow_once,allow_once",
+    },);
+
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    // No advertised option can carry the denial, so it goes out as the
+    // protocol's cancellation: the tool call is refused and the decision IS
+    // delivered (the caller is not told the decision failed).
+    expect(() => adapter.respondPermission({ outcome: "reject_once", },)).not.toThrow();
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "cancelled", }, },);
+  });
+
+  it("delivers a denial as the cancelled variant when the harness advertised no options", async () => {
+    const server = serve({
+      FAKE_PERMISSION: "1",
+      FAKE_MODELS: "m",
+      FAKE_PERMISSION_NO_OPTIONS: "1",
+    },);
+
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    // Nothing to select: the cancellation is the only shape a refusal can take,
+    // and the decision still lands.
+    expect(() => adapter.respondPermission({ outcome: "reject_once", },)).not.toThrow();
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "cancelled", }, },);
+  });
+
+  it("delivers an approval the advertised allow option carries", async () => {
+    const server = serve({
+      FAKE_PERMISSION: "1",
+      FAKE_MODELS: "m",
+      FAKE_PERMISSION_KINDS: "allow_once,allow_once",
+    },);
+
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    // Only allow-polarity options advertised, but an approval rides the
+    // advertised allow option: the decision is delivered.
+    expect(() => adapter.respondPermission({ outcome: "allow_once", },)).not.toThrow();
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "selected", optionId: "allow", }, },);
+  });
+
+  it("refuses an approval the harness cannot express when it advertised only allow options", async () => {
+    const server = serve({
+      FAKE_PERMISSION: "1",
+      FAKE_MODELS: "m",
+      FAKE_PERMISSION_KINDS: "allow_always,allow_always",
+    },);
+
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    // A one-shot approval never rides an "always" option, and no rejection
+    // option is advertised: the harness refused the decision.
+    expect(() => adapter.respondPermission({ outcome: "allow_once", },)).toThrow(PermissionDecisionRefusedError,);
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    expect(outcome?.outcome,).toEqual({ outcome: { outcome: "cancelled", }, },);
+  });
+
   it("does not let a denial ride the harness's allow option", async () => {
     const server = serve({ FAKE_PERMISSION: "1", FAKE_MODELS: "m", },);
     const { adapter, nextAsk, } = makePermissionAdapter(server,);

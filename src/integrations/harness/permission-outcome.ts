@@ -14,6 +14,11 @@
  *   advertised.
  * - `{ outcome: "cancelled" }` — the prompt turn was cancelled.
  *
+ * A `cancelled` answer REFUSES the tool call, but in v1 it also tells the
+ * agent the TURN was cancelled: a conformant agent may abort the whole turn.
+ * The outcome union has exactly two variants, so this is the only shape a
+ * refusal can take.
+ *
  * The verb vocabulary (`allow_once` | `allow_always` | `reject_once` |
  * `reject_always`) is NOT an outcome: it is the spec's `PermissionOptionKind`
  * — the kind of an ADVERTISED option. It decides WHICH option the answer
@@ -144,7 +149,9 @@ export function wirePermissionOutcome(
 
   // Fail closed, but spec-legally: the refusal rides the harness's own
   // rejection option; with no option left to select, the protocol's other
-  // outcome - `cancelled` - is the only shape that carries a refusal.
+  // outcome - `cancelled` - is the only shape that carries a refusal. In v1
+  // it also tells the agent the TURN was cancelled, so a conformant agent
+  // may abort the turn.
   const refusal = ridableOption(rejectOptions(options,), "reject_once",);
   if (refusal) {
     return { outcome: "selected", optionId: refusal.optionId, };
@@ -156,9 +163,10 @@ export function wirePermissionOutcome(
 /**
  * Whether the answer CARRIED the decision. An allow rides an allow-polarity
  * option; a denial rides a rejection-polarity one — or the protocol's
- * `cancelled` outcome, which refuses the tool call just as a denial does. A
- * decision the harness cannot express is refused on the wire, and the caller
- * must learn that its decision did not take effect.
+ * `cancelled` outcome, which refuses the tool call just as a denial does (in
+ * v1 it also tells the agent the TURN was cancelled). A decision the harness
+ * cannot express is refused on the wire, and the caller must learn that its
+ * decision did not take effect.
  * @param answer - the wire answer that was sent
  * @param outcome - the decision that was sent
  * @param options - the options the harness advertised
@@ -172,8 +180,9 @@ export function answerCarriesDecision(
   // A cancellation decision is answered as itself.
   if (outcome.outcome === "cancelled") { return true; }
 
-  // The protocol's cancellation refuses the tool call: it carries a denial,
-  // never an allow.
+  // The v1 cancellation refuses the tool call: it carries a denial, never an
+  // allow. It also tells the agent the TURN was cancelled, so a conformant
+  // agent may abort the turn.
   if (answer.outcome === "cancelled") { return !(outcome.outcome in ALLOW_VERBS); }
 
   const selected = options.find((option,) => option.optionId === answer.optionId);

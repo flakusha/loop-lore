@@ -17,6 +17,7 @@ import { APPROVE_KEY, DENY_KEY, PendingPermissions, } from "./pending";
 
 afterEach(() => {
   setFetch(safeFetch,);
+  globalThis.fetch = originalFetch;
 },);
 
 /** One parked ask. */
@@ -43,6 +44,31 @@ function route(body: unknown, status = 200,): Call[] {
   };
 
   setFetch(fetchStub as Parameters<typeof setFetch>[0],);
+  return calls;
+}
+
+/** The real fetch, restored after each test. */
+const originalFetch = globalThis.fetch;
+
+/** One raw fetch call, as the decision stub recorded it. */
+interface RawCall {
+  /** The request path. */
+  path: string;
+  /** The request method. */
+  method: string;
+}
+
+/**
+ * Route the decision POST with a raw fetch stub: the decision reads the error
+ * body itself, so it does not travel through the safeFetch seam.
+ */
+function routeDecision(body: unknown, status = 200,): RawCall[] {
+  const calls: RawCall[] = [];
+  globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit,) => {
+    calls.push({ path: new URL(String(input,),).pathname, method: init?.method ?? "GET", },);
+    return new Response(JSON.stringify(body,), { status, headers: { "Content-Type": "application/json", }, },);
+  }) as unknown as typeof fetch;
+
   return calls;
 }
 
@@ -80,21 +106,31 @@ describe("loadPendingPermissions", () => {
 
 describe("decidePermission", () => {
   it("posts the decision to the ask's own endpoint", async () => {
-    const calls = route({ ok: true, },);
+    const calls = routeDecision({ ok: true, },);
 
     const result = await decidePermission("ask-1", "approve", "tok",);
 
-    expect(calls[0]?.url,).toBe("/api/v1/harness/permissions/ask-1/approve",);
+    expect(calls[0]?.path,).toBe("/api/v1/harness/permissions/ask-1/approve",);
     expect(calls[0]?.method,).toBe("POST",);
     expect(result.ok,).toBe(true,);
   });
 
   it("encodes the ask id so a stray slash cannot escape the path", async () => {
-    const calls = route({ ok: true, },);
+    const calls = routeDecision({ ok: true, },);
 
     await decidePermission("a/b", "deny", undefined,);
 
-    expect(calls[0]?.url,).toBe("/api/v1/harness/permissions/a%2Fb/deny",);
+    expect(calls[0]?.path,).toBe("/api/v1/harness/permissions/a%2Fb/deny",);
+  });
+
+  it("surfaces the server's message when the decision was refused", async () => {
+    routeDecision({ error: "the harness refused the decision - the tool call was refused", }, 404,);
+
+    const result = await decidePermission("ask-1", "deny", "tok",);
+
+    expect(result.ok,).toBe(false,);
+    expect(result.ok ? "" : result.error,).toBe("the harness refused the decision - the tool call was refused",);
+    expect(result.ok ? undefined : result.status,).toBe(404,);
   });
 });
 
@@ -164,14 +200,14 @@ describe("PendingPermissions", () => {
   });
 
   it("decides the highlighted ask and reloads the queue", async () => {
-    const calls = route({ items: [ASK,], },);
+    route({ items: [ASK,], },);
+    const posts = routeDecision({ ok: true, },);
     const pending = new PendingPermissions();
 
     await pending.load("tok",);
     await pending.decide("approve", "tok",);
 
-    expect(calls.map((c,) => c.method),).toEqual(["GET", "POST", "GET",],);
-    expect(calls[1]?.url,).toBe("/api/v1/harness/permissions/ask-1/approve",);
+    expect(posts[0]?.path,).toBe("/api/v1/harness/permissions/ask-1/approve",);
   });
 
   it("does nothing when no ask is highlighted", async () => {
@@ -194,19 +230,23 @@ describe("PendingPermissions", () => {
 
     const fetchStub = async (url: string, opts?: SafeFetchOptions,) => {
       calls.push({ url: new URL(url,).pathname, method: opts?.method ?? "GET", },);
-      if (opts?.method === "POST") {
-        markStarted();
-        await new Promise<void>((resolve,) => {
-          releasePost = resolve;
-        },);
-
-        return { ok: true, data: { ok: true, }, status: 200, headers: new Headers(), } as FetchResult<unknown>;
-      }
 
       return { ok: true, data: { items: [ASK,], }, status: 200, headers: new Headers(), } as FetchResult<unknown>;
     };
 
     setFetch(fetchStub as Parameters<typeof setFetch>[0],);
+
+    // The decision travels on the raw fetch (it reads the error body itself).
+    const posts: RawCall[] = [];
+    globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit,) => {
+      posts.push({ path: new URL(String(input,),).pathname, method: init?.method ?? "GET", },);
+      markStarted();
+      await new Promise<void>((resolve,) => {
+        releasePost = resolve;
+      },);
+
+      return new Response(JSON.stringify({ ok: true, },), { status: 200, },);
+    }) as unknown as typeof fetch;
 
     const pending = new PendingPermissions();
     await pending.load("tok",);
@@ -219,7 +259,7 @@ describe("PendingPermissions", () => {
 
     // The ask is dropped once it is decided — a second POST would race it
     // into a 404, so the in-flight decision stands alone.
-    expect(calls.filter((c,) => c.method === "POST").length,).toBe(1,);
+    expect(posts.filter((c,) => c.method === "POST").length,).toBe(1,);
 
     releasePost();
     await first;

@@ -7,7 +7,7 @@ import type {
   HarnessPermissionDecisionResponse,
   HarnessPermissionsView,
 } from "../../frontend/alpine/admin-harness-schema";
-import { safeFetch as _realFetch, } from "../../utils";
+import { jsonParseOr, safeFetch as _realFetch, } from "../../utils";
 import { API_BASE, } from "../chat";
 import type { HarnessRunDetail, HarnessRunSummary, HarnessStats, } from "./types";
 
@@ -50,9 +50,11 @@ function buildResult<T,>(result: { ok: boolean; data?: T; error?: Error; status?
       return { ok: false, error: "harness runtime not composed", status: 503, };
     }
 
+    // The server's message says WHY (the ask is gone, the harness refused the
+    // decision); the status is the fallback when there is none.
     return {
       ok: false,
-      error: result.status !== undefined ? `HTTP ${result.status}` : result.error!.message,
+      error: result.error?.message ?? `HTTP ${result.status}`,
       status: result.status,
     };
   }
@@ -63,10 +65,9 @@ function buildResult<T,>(result: { ok: boolean; data?: T; error?: Error; status?
 async function doFetch<T,>(
   url: string,
   sessionToken: string | undefined,
-  method: "GET" | "POST" = "GET",
 ): Promise<HarnessFetchResult<T>> {
   const result = await _fetch<T>(url, {
-    method,
+    method: "GET",
     auth: sessionToken ? { sessionToken, } : undefined,
     handle401: false,
   },);
@@ -128,6 +129,11 @@ export async function loadPendingPermissions(
 
 /**
  * Decide one parked permission ask.
+ *
+ * The decision POST reads the error body itself: `safeFetch` drops the body of
+ * a non-2xx response, and the server's message is what tells the operator
+ * whether the ask is gone or the harness refused the decision — the same
+ * reason `chat-create-api.ts` posts with a raw fetch.
  * @param id - the queue-assigned ask id
  * @param decision - `approve` (allow_once) or `deny` (reject_once)
  * @param sessionToken - admin session token
@@ -139,5 +145,39 @@ export async function decidePermission(
   sessionToken: string | undefined,
 ): Promise<HarnessFetchResult<PermissionDecisionResponse>> {
   const url = `${API_BASE}/api/v1/harness/permissions/${encodeURIComponent(id,)}/${decision}`;
-  return doFetch(url, sessionToken, "POST",);
+  return buildResult(await postDecision(url, sessionToken,),);
+}
+
+/**
+ * Post the decision and keep the server's message.
+ * @param url - the decision endpoint
+ * @param sessionToken - admin session token
+ * @returns the raw fetch result: the body on success, the message on failure
+ */
+async function postDecision(
+  url: string,
+  sessionToken: string | undefined,
+): Promise<{ ok: boolean; data?: PermissionDecisionResponse; error?: Error; status?: number }> {
+  let response: Response;
+  let text: string;
+  try {
+    // eslint-disable-next-line no-restricted-syntax -- raw Response: safeFetch drops the error body for non-2xx.
+    response = await fetch(url, {
+      method: "POST",
+      headers: sessionToken ? { Authorization: `Bearer ${sessionToken}`, } : {},
+      signal: AbortSignal.timeout(30000,),
+    },);
+
+    text = await response.text();
+  } catch (error: unknown) {
+    return { ok: false, error: error instanceof Error ? error : new Error(String(error,),), };
+  }
+
+  if (!response.ok) {
+    // The error body carries the server's message (src/routes/http-utils/errors.ts:57).
+    const message = jsonParseOr<{ error?: string }>(text, {},).error;
+    return { ok: false, error: new Error(message ?? `HTTP ${response.status}`,), status: response.status, };
+  }
+
+  return { ok: true, data: jsonParseOr<PermissionDecisionResponse>(text, { ok: true, },), status: response.status, };
 }
