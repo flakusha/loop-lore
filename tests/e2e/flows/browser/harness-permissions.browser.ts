@@ -86,7 +86,7 @@ describe("Harness tab — pending permission queue", () => {
           await route.fulfill({
             status: 500,
             contentType: "application/json",
-            body: JSON.stringify({ message: "no live connection", },),
+            body: JSON.stringify({ error: "permission request ask-1 was already decided", },),
           },);
 
           return;
@@ -133,7 +133,7 @@ describe("Harness tab — pending permission queue", () => {
 
       expect(await row.isVisible(),).toBe(true,);
       expect(await page.locator("[data-testid='harness-permissions-error']",).isVisible(),).toBe(false,);
-      expect(await failure.innerText(),).toContain("Could not record the decision.",);
+      expect(await failure.innerText(),).toContain("permission request ask-1 was already decided",);
 
       // The decision must go out as a POST: the route is POST-only, so a GET
       // would 404 and the ask would stay parked forever.
