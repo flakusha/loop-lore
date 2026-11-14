@@ -71,14 +71,6 @@ export type WirePermissionOutcome =
   | { outcome: "selected"; optionId: string }
   | { outcome: "cancelled" };
 
-/**
- * The mapped answer: the spec shape, or why no advertised option can carry
- * the decision (a Result value, never a throw).
- */
-export type PermissionAnswer =
-  | { ok: true; outcome: WirePermissionOutcome }
-  | { ok: false; reason: string };
-
 /** One permission option the harness advertised. */
 export interface AdvertisedPermissionOption {
   /** Option id the harness gave. */
@@ -113,25 +105,26 @@ export function advertisedPermissionOptions(params: unknown,): AdvertisedPermiss
 /**
  * Map a decision onto the option the harness advertised, so the answer
  * selects that option. Only an option of the SAME polarity may carry the
- * decision (a denial never rides an allow option). The answer carries the
- * selected option's ID, never the option's kind — the spec has no field for
- * the kind.
+ * decision (a denial never rides an allow option), and only a kind the
+ * decision may ride (a one-shot allow never rides an "always" option). The
+ * answer carries the selected option's ID, never the option's kind — the spec
+ * has no field for the kind.
  *
- * A decision NO advertised option can carry cannot be expressed: the spec's
- * `selected` variant requires an option id, and the `cancelled` variant would
- * claim the turn was cancelled when it was not. The caller fails the request
- * closed instead.
+ * A decision NO advertised option can carry is refused SPEC-LEGALLY: the
+ * harness's own rejection option, or — with nothing to select — the
+ * protocol's `cancelled` outcome. It is never a JSON-RPC error: the agent
+ * must be able to act on the refusal.
  * @param outcome - the decision, in the spec union
  * @param options - the options the harness advertised
- * @returns the spec answer, or the reason it cannot be expressed.
+ * @returns the spec answer.
  */
 export function wirePermissionOutcome(
   outcome: PermissionOutcome,
   options: AdvertisedPermissionOption[],
-): PermissionAnswer {
+): WirePermissionOutcome {
   // A cancellation is not an option choice - the protocol answers it as itself.
   if (outcome.outcome === "cancelled") {
-    return { ok: true, outcome: { outcome: "cancelled", }, };
+    return { outcome: "cancelled", };
   }
 
   const allow = outcome.outcome in ALLOW_VERBS;
@@ -142,17 +135,51 @@ export function wirePermissionOutcome(
     option.outcome !== null && (option.outcome in ALLOW_VERBS) === allow
   );
 
-  const chosen = samePolarity.find((option,) => option.optionId === outcome.optionId) ??
+  const chosen = namedOption(samePolarity, outcome,) ??
     ridableOption(samePolarity, outcome.outcome,);
 
-  if (!chosen) {
-    return {
-      ok: false,
-      reason: `no advertised permission option can carry the ${outcome.outcome} decision`,
-    };
+  if (chosen) {
+    return { outcome: "selected", optionId: chosen.optionId, };
   }
 
-  return { ok: true, outcome: { outcome: "selected", optionId: chosen.optionId, }, };
+  // Fail closed, but spec-legally: the refusal rides the harness's own
+  // rejection option; with no option left to select, the protocol's other
+  // outcome - `cancelled` - is the only shape that carries a refusal.
+  const refusal = ridableOption(rejectOptions(options,), "reject_once",);
+  if (refusal) {
+    return { outcome: "selected", optionId: refusal.optionId, };
+  }
+
+  return { outcome: "cancelled", };
+}
+
+/**
+ * The option the decision NAMES, when that option may carry it. An explicit
+ * option id never bypasses the ridability ladder: an "always" option cannot
+ * carry a one-shot decision.
+ * @param options - the same-polarity options the harness advertised
+ * @param outcome - the decision, in the spec union
+ * @returns the named option, or undefined when it may not carry the decision.
+ */
+function namedOption(
+  options: AdvertisedPermissionOption[],
+  outcome: PermissionOutcome,
+): AdvertisedPermissionOption | undefined {
+  const ladder = RIDABLE_KINDS[outcome.outcome];
+  if (!outcome.optionId || !ladder) { return undefined; }
+
+  return options.find((option,) =>
+    option.optionId === outcome.optionId && option.outcome !== null && ladder.includes(option.outcome,)
+  );
+}
+
+/**
+ * The advertised options that REFUSE the tool call.
+ * @param options - the options the harness advertised
+ * @returns the rejection-polarity options.
+ */
+function rejectOptions(options: AdvertisedPermissionOption[],): AdvertisedPermissionOption[] {
+  return options.filter((option,) => option.outcome !== null && !(option.outcome in ALLOW_VERBS));
 }
 
 /**

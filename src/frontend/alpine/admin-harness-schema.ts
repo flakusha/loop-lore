@@ -235,6 +235,12 @@ export const HarnessPendingPermissionSchema = Type.Object({
   input: Type.Unknown(),
   cwd: Type.String({},),
   arrival: Type.Number({},),
+  /**
+   * Why the ask could not be answered when it arrived, or null while it
+   * awaits a decision. Optional for back-compat with cached clients; the
+   * server always sets it.
+   */
+  undeliverableReason: Type.Optional(Type.Union([Type.String({},), Type.Null(),],),),
 },);
 
 /** `GET /api/v1/harness/permissions` body (FIFO order, oldest first). */

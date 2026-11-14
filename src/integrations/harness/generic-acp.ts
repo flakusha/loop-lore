@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// size-allow: 300
+// size-allow: 330
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
@@ -13,6 +13,7 @@
  * adapter-types.ts.
  */
 
+import { getChildLogger, } from "../../logger";
 import { narrowSessionUpdate, } from "./acp-session-update";
 import {
   type HarnessAcpAdapter,
@@ -22,6 +23,7 @@ import {
   type HarnessTurnResult,
   type HarnessUsageReport,
   type PendingPermission,
+  PermissionAskGoneError,
   type PermissionOutcome,
 } from "./adapter-types";
 import { JsonRpcProcess, JsonRpcRequestError, } from "./jsonrpc-process";
@@ -30,6 +32,9 @@ import { TurnTranscriptCollector, } from "./turn-transcript";
 
 /** ACP protocol version the adapter speaks. */
 const PROTOCOL_VERSION = 1;
+
+/** Logger; null-safe — the adapter must work before logger init. */
+const log = (): ReturnType<typeof getChildLogger> => getChildLogger("harness-acp",);
 
 /**
  * How long a turn waits for a `usage_update` the harness sends AFTER the
@@ -111,7 +116,6 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   private permission: {
     pending: PendingPermission;
     respond: (result: unknown,) => void;
-    fail: (error: Error,) => void;
   } | null = null;
   /** Resolves once the in-flight prompt request has been written to the wire; `cancel` orders on it. */
   private promptDispatched: Promise<void> = Promise.resolve();
@@ -288,26 +292,20 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
    * Answer the open permission request with the protocol's answer shape: the
    * option the decision rides, named by the id the harness advertised
    * (`RequestPermissionOutcome`, vendored ACP v1 schema). A decision no
-   * advertised option can carry fails the request CLOSED with a JSON-RPC
-   * error — the spec's only other outcome, `cancelled`, would claim the turn
-   * was cancelled when it was not.
+   * advertised option can carry is refused SPEC-LEGALLY — the harness's own
+   * rejection option, or the protocol's `cancelled` outcome — never a
+   * JSON-RPC error the agent would have to interpret as a failed request.
    * @param outcome - the client's choice among the harness's options
-   * @throws {HarnessAcpError} kind `session` when nothing is pending
+   * @throws {PermissionAskGoneError} when nothing is pending
    */
   respondPermission(outcome: PermissionOutcome,): void {
     const open = this.permission;
     if (!open) {
-      throw new HarnessAcpError("session", "no pending permission request",);
+      throw new PermissionAskGoneError();
     }
 
     this.permission = null;
-    const answer = wirePermissionOutcome(outcome, advertisedPermissionOptions(open.pending.params,),);
-    if (!answer.ok) {
-      open.fail(new JsonRpcRequestError(answer.reason, -32603,),);
-      return;
-    }
-
-    open.respond({ outcome: answer.outcome, },);
+    open.respond({ outcome: wirePermissionOutcome(outcome, advertisedPermissionOptions(open.pending.params,),), },);
   }
 
   /**
@@ -364,6 +362,12 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       onRequest: (method, params,) => this.handleServerRequest(method, params,),
       onNotification: (method, params,) => {
         if (method !== "session/update") { return; }
+        const foreign = this.foreignSessionId(params,);
+        if (foreign !== null) {
+          log()?.warn("harness session update for another session ignored", { sessionId: foreign, },);
+          return;
+        }
+
         for (const event of narrowSessionUpdate(params,)) {
           if (event.type === "usage") {
             // A cost-less update never clears a reported cost: the session
@@ -422,29 +426,40 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
    * until `respondPermission`, fs-read asks go through the injected reader,
    * anything else answers unsupported. The permission slot stays SINGLE per
    * connection on purpose (harnesses serialize asks; a concurrent ask is
-   * refused `-32601`) — multiplexing across profiles is the runtime queue's
-   * job, not this engine's.
+   * refused with the protocol's `cancelled` outcome) — multiplexing across
+   * profiles is the runtime queue's job, not this engine's.
    * @param method - wire method the harness invoked
    * @param params - raw request params
    * @returns the response result payload.
    */
   private handleServerRequest(method: string, params: unknown,): Promise<unknown> {
+    // The spec REQUIRES `sessionId` on the session-scoped requests: a payload
+    // naming another session is refused as invalid params, never answered.
+    const foreign = this.foreignSessionId(params,);
+    if (foreign !== null) {
+      return Promise.reject(new JsonRpcRequestError(`${method} names session "${foreign}"`, -32602,),);
+    }
+
     if (method === "session/request_permission") {
       // The spec carries the tool call in `toolCall` (required); its `kind` is
       // the tool-call kind the policy classifies (vendored v1 schema,
       // `RequestPermissionRequest`).
       const p = params as { toolCall?: { kind?: unknown } } | null;
+
       if (this.permission) {
-        return Promise.reject(new JsonRpcRequestError("permission request already pending", -32601,),);
+        // One ask per connection. The concurrent ask is refused SPEC-LEGALLY:
+        // the protocol's `cancelled` outcome (vendored v1 schema,
+        // `RequestPermissionOutcome`), never a JSON-RPC error.
+        return Promise.resolve({ outcome: { outcome: "cancelled", }, },);
       }
 
-      const { promise, resolve, reject, } = Promise.withResolvers<unknown>();
+      const { promise, resolve, } = Promise.withResolvers<unknown>();
       const pending: PendingPermission = {
         params,
         kind: typeof p?.toolCall?.kind === "string" ? p.toolCall.kind : null,
       };
 
-      this.permission = { pending, respond: resolve, fail: reject, };
+      this.permission = { pending, respond: resolve, };
       this.opts.onPermissionRequest?.(pending,);
       return promise;
     }
@@ -467,6 +482,21 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     }
 
     return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
+  }
+
+  /**
+   * The session a server-originated payload names, when it is NOT the one
+   * this connection established. The spec requires `sessionId` on the
+   * session-scoped requests; a payload for another session is refused. A
+   * payload without a session id is accepted (the client cannot prove a
+   * mismatch, and a harness that omits it still works).
+   * @param params - the raw request/notification params
+   * @returns the foreign session id, or null when the payload names this session.
+   */
+  private foreignSessionId(params: unknown,): string | null {
+    const sessionId = (params as { sessionId?: unknown } | null)?.sessionId;
+    if (typeof sessionId !== "string" || sessionId === "") { return null; }
+    return this.session !== null && sessionId !== this.session.sessionId ? sessionId : null;
   }
 
   /**

@@ -9,11 +9,13 @@
  *
  * Resource contract (parallel-safe): the runtime is the per-test composed
  * singleton, reset in beforeEach AND afterEach via resetHarnessRuntime;
- * the DB is a per-file in-memory fixture (createTestDb/destroyTestDb); the
- * adapters are in-memory fakes. The provider registry is process-global, so
- * the one case that needs a published price owns a provider named for that
- * case and unregisters it in the case's finally. No ports, no sleeps, no
- * fixed paths — order-independent under the parallel runner.
+ * the DB is a per-file in-memory fixture (createTestDb/destroyTestDb) whose
+ * rows are dropped in beforeEach AND afterEach (resetTestDb), so no test's
+ * capability rows reach a sibling; the adapters are in-memory fakes. The
+ * provider registry is process-global, so the one case that needs a published
+ * price owns a provider named for that case and unregisters it in the case's
+ * finally. No ports, no sleeps, no fixed paths — order-independent under the
+ * parallel runner.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, } from "bun:test";
 import { upsertModelCapabilities, } from "../../admin/model-capabilities";
@@ -22,7 +24,7 @@ import { registerProvider, unregisterProvider, } from "../../generation/provider
 import type { LLMProvider, } from "../../generation/providers/types";
 import { ModelRouter, type RoutableModel, } from "../../generation/routing/router";
 import { INTERACTIVE_TURN, } from "../../generation/routing/task-signal";
-import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, resetTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import type { HarnessAcpAdapter, HarnessAdapterFactory, } from "./adapter-types";
 import { HarnessAcpError, } from "./adapter-types";
 import { fakeAdapter, fakeFactory, } from "./fakes";
@@ -48,10 +50,12 @@ afterAll(async () => {
 
 beforeEach(() => {
   resetHarnessRuntime();
+  resetTestDb(fixture.sqlite,);
 },);
 
 afterEach(() => {
   resetHarnessRuntime();
+  resetTestDb(fixture.sqlite,);
 },);
 
 const LIVE: AcpProfileConfig = {

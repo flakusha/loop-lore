@@ -65,18 +65,17 @@ describe("wirePermissionOutcome", () => {
     // The spec's answer is `{ outcome: "selected", optionId }` - the id the
     // harness advertised, never the option's kind.
     expect(wirePermissionOutcome({ outcome: "allow_once", }, options,),).toEqual({
-      ok: true,
-      outcome: { outcome: "selected", optionId: "allow", },
+      outcome: "selected",
+      optionId: "allow",
     },);
 
     expect(wirePermissionOutcome({ outcome: "reject_once", }, options,),).toEqual({
-      ok: true,
-      outcome: { outcome: "selected", optionId: "reject", },
+      outcome: "selected",
+      optionId: "reject",
     },);
 
     expect(wirePermissionOutcome({ outcome: "cancelled", }, options,),).toEqual({
-      ok: true,
-      outcome: { outcome: "cancelled", },
+      outcome: "cancelled",
     },);
   });
 
@@ -84,7 +83,7 @@ describe("wirePermissionOutcome", () => {
     const options = advertisedPermissionOptions({ options: [{ optionId: "allow", kind: "allow_once", },], },);
 
     expect(JSON.stringify(wirePermissionOutcome({ outcome: "allow_once", }, options,),),).toBe(
-      '{"ok":true,"outcome":{"outcome":"selected","optionId":"allow"}}',
+      '{"outcome":"selected","optionId":"allow"}',
     );
   });
 
@@ -92,8 +91,8 @@ describe("wirePermissionOutcome", () => {
     const options = advertisedPermissionOptions({ options: [{ optionId: "allow-once", kind: "allow-once", },], },);
 
     expect(wirePermissionOutcome({ outcome: "allow_once", }, options,),).toEqual({
-      ok: true,
-      outcome: { outcome: "selected", optionId: "allow-once", },
+      outcome: "selected",
+      optionId: "allow-once",
     },);
   });
 
@@ -101,31 +100,34 @@ describe("wirePermissionOutcome", () => {
     const options = advertisedPermissionOptions({ options: [{ optionId: "allow", kind: "allow_always", },], },);
 
     const answer = wirePermissionOutcome({ outcome: "allow_always", }, options,);
-    expect(answer.ok,).toBe(true,);
-    expect(Object.keys(answer.ok ? answer.outcome : {},),).toEqual(["outcome", "optionId",],);
+    expect(Object.keys(answer,),).toEqual(["outcome", "optionId",],);
     expect(JSON.stringify(answer,),).not.toContain("allow_always",);
   });
 
-  it("fails closed when the harness advertised no options", () => {
-    // The spec REQUIRES the options on a permission request, so a harness that
-    // advertises none offers nothing to select: no `selected` answer can name
-    // an option, and `cancelled` would lie about the turn.
-    expect(wirePermissionOutcome({ outcome: "allow_once", }, [],),).toEqual({
-      ok: false,
-      reason: "no advertised permission option can carry the allow_once decision",
-    },);
+  it("refuses with the harness's own rejection option when no allow option can carry the decision", () => {
+    // The decision cannot be carried, but the refusal is spec-shaped: the
+    // harness advertised a rejection option, so the answer selects it. The
+    // request is never failed with a JSON-RPC error.
+    const options = advertisedPermissionOptions({ options: [{ optionId: "no", kind: "reject_once", },], },);
 
-    expect(wirePermissionOutcome({ outcome: "reject_once", }, [],),).toEqual({
-      ok: false,
-      reason: "no advertised permission option can carry the reject_once decision",
+    expect(wirePermissionOutcome({ outcome: "allow_once", }, options,),).toEqual({
+      outcome: "selected",
+      optionId: "no",
     },);
   });
 
-  it("fails closed when no advertised option has the decision's polarity", () => {
+  it("answers cancelled when the harness advertised no options at all", () => {
+    // Nothing to select: the protocol's only other outcome carries the
+    // refusal.
+    expect(wirePermissionOutcome({ outcome: "allow_once", }, [],),).toEqual({ outcome: "cancelled", },);
+    expect(wirePermissionOutcome({ outcome: "reject_once", }, [],),).toEqual({ outcome: "cancelled", },);
+  });
+
+  it("never lets a decision ride an option of the other polarity", () => {
     const options = advertisedPermissionOptions({ options: [{ optionId: "ask", kind: "ask_user", },], },);
 
-    expect(wirePermissionOutcome({ outcome: "allow_once", }, options,),).toMatchObject({ ok: false, },);
-    expect(wirePermissionOutcome({ outcome: "reject_once", }, options,),).toMatchObject({ ok: false, },);
+    expect(wirePermissionOutcome({ outcome: "allow_once", }, options,),).toEqual({ outcome: "cancelled", },);
+    expect(wirePermissionOutcome({ outcome: "reject_once", }, options,),).toEqual({ outcome: "cancelled", },);
   });
 
   it("rides the nearest allow kind when the harness advertises no always-kind", () => {
@@ -137,8 +139,8 @@ describe("wirePermissionOutcome", () => {
     },);
 
     expect(wirePermissionOutcome({ outcome: "allow_always", }, options,),).toEqual({
-      ok: true,
-      outcome: { outcome: "selected", optionId: "allow", },
+      outcome: "selected",
+      optionId: "allow",
     },);
   });
 
@@ -151,8 +153,8 @@ describe("wirePermissionOutcome", () => {
     },);
 
     expect(wirePermissionOutcome({ outcome: "reject_always", }, options,),).toEqual({
-      ok: true,
-      outcome: { outcome: "selected", optionId: "reject", },
+      outcome: "selected",
+      optionId: "reject",
     },);
   });
 
@@ -165,8 +167,8 @@ describe("wirePermissionOutcome", () => {
     },);
 
     expect(wirePermissionOutcome({ outcome: "reject_once", optionId: "allow", }, options,),).toEqual({
-      ok: true,
-      outcome: { outcome: "selected", optionId: "reject", },
+      outcome: "selected",
+      optionId: "reject",
     },);
   });
 
@@ -179,8 +181,24 @@ describe("wirePermissionOutcome", () => {
     },);
 
     expect(wirePermissionOutcome({ outcome: "allow_once", optionId: "reject", }, options,),).toEqual({
-      ok: true,
-      outcome: { outcome: "selected", optionId: "allow", },
+      outcome: "selected",
+      optionId: "allow",
+    },);
+  });
+
+  it("never lets a one-shot decision ride an always option", () => {
+    // An explicit option id does not bypass the ridability ladder: an
+    // "always" option would grant more than the decision did.
+    const options = advertisedPermissionOptions({
+      options: [
+        { optionId: "once", kind: "allow_once", },
+        { optionId: "always", kind: "allow_always", },
+      ],
+    },);
+
+    expect(wirePermissionOutcome({ outcome: "allow_once", optionId: "always", }, options,),).toEqual({
+      outcome: "selected",
+      optionId: "once",
     },);
   });
 
@@ -190,8 +208,8 @@ describe("wirePermissionOutcome", () => {
     const options = advertisedPermissionOptions({ options: [{ optionId: "no", kind: "reject_always", },], },);
 
     expect(wirePermissionOutcome({ outcome: "reject_once", }, options,),).toEqual({
-      ok: true,
-      outcome: { outcome: "selected", optionId: "no", },
+      outcome: "selected",
+      optionId: "no",
     },);
   });
 });

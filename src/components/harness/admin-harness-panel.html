@@ -104,6 +104,12 @@
             <td x-text="row.input"></td>
             <td x-text="row.arrived"></td>
             <td>
+              <div
+                x-show="row.undeliverableReason"
+                x-text="row.undeliverableReason"
+                data-testid="harness-permission-undeliverable"
+              >
+              </div>
               <button
                 class="btn btn-sm"
                 @click="answerHarnessPermission(row.id, 'approve')"

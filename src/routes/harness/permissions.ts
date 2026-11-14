@@ -45,10 +45,13 @@ function decide(
   const result = queue.resolve({ id, decision, },);
   if (result.ok) { return jsonResponse({ ok: true, },); }
 
+  // A vanished ask is gone (404); a live ask the decision could not reach is
+  // a service failure (503) the operator can retry.
+  const gone = result.code === "unknown_request" || result.code === "ask_gone";
   return jsonError({
     message: result.message,
-    status: result.code === "unknown_request" ? HttpStatus.NotFound : HttpStatus.ServiceUnavailable,
-    code: result.code === "unknown_request" ? ErrorCode.NotFound : ErrorCode.ServiceUnavailable,
+    status: gone ? HttpStatus.NotFound : HttpStatus.ServiceUnavailable,
+    code: gone ? ErrorCode.NotFound : ErrorCode.ServiceUnavailable,
   },);
 }
 

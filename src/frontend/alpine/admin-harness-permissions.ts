@@ -41,6 +41,8 @@ export interface HarnessPermissionRow {
   input: string;
   /** Arrival time, localized. */
   arrived: string;
+  /** Why the ask could not be answered when it arrived; null while it awaits a decision. */
+  undeliverableReason: string | null;
 }
 
 /** The slice of tab state this module owns. */
@@ -134,6 +136,7 @@ export function buildPermissionRows(items: HarnessPendingPermission[],): Harness
     cwd: item.cwd,
     input: previewInput(item.input,),
     arrived: formatRunTs(toDate(item.arrival,).toISOString(),),
+    undeliverableReason: item.undeliverableReason ?? null,
   }));
 }
 
