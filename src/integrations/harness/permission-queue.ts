@@ -303,6 +303,9 @@ export class PermissionQueue {
       return { ok: false, code: "no_connection", message: `profile "${entry.profile}" has no live connection`, };
     }
 
+    // The answer the connection maps this decision to: the ask's raw params
+    // (the options the connection advertised) and the same mapping, so the log
+    // names what went on the wire.
     const answer = wirePermissionOutcome(outcome, advertisedPermissionOptions(entry.input,),);
     try {
       connection.respondPermission(outcome,);

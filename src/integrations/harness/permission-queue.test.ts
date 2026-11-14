@@ -262,6 +262,32 @@ describe("PermissionQueue", () => {
     expect(h.outcomes.get("p",),).toEqual([{ outcome: "reject_once", },],);
   });
 
+  it("reports the approval's wire answer when an advertised option carries it", async () => {
+    const h = harness();
+    const parked = await h.queue.submit({
+      profile: "p",
+      pending: {
+        params: {
+          sessionId: "s",
+          kind: "edit",
+          options: [{ optionId: "allow", name: "Allow", kind: "allow_once", },],
+        },
+        kind: "edit",
+      },
+      sandboxRoot: h.root,
+    },);
+
+    if (parked.decision !== "pending") { throw new Error("expected pending",); }
+
+    const result = h.queue.resolve({ id: parked.id, decision: "approve", },);
+
+    // The advertised allow option carries the approval, so the wire answer
+    // names it - not the fallback the empty option list would produce.
+    expect(result.ok,).toBe(true,);
+    if (!result.ok) { throw new Error("expected the approval to be delivered",); }
+    expect(result.answer,).toEqual({ outcome: "selected", optionId: "allow", },);
+  });
+
   it("withdrawProfile drops the profile's asks and reports their ids", async () => {
     const h = harness();
     const parked = await h.queue.submit(editAsk(h.root,),);
