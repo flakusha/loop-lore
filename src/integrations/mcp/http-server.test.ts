@@ -22,7 +22,8 @@
  *  - the request body cannot assert a principal;
  *  - a session belongs to the principal that opened it (403 otherwise);
  *  - an idle session is reaped (404) and a new connect evicts the CALLER's
- *    own oldest session, never another principal's;
+ *    own oldest session, never another principal's; a caller that owns no
+ *    session is refused (503) rather than taking another principal's slot;
  *  - the initialize response is not cacheable;
  *  - every refusal is one JSON-RPC error envelope;
  *  - GET opens the SSE stream, DELETE terminates the session.
@@ -496,8 +497,6 @@ describe("MCP Streamable HTTP transport", () => {
     caller.userId = principalId;
     const ownOldest = await initialize(app,);
 
-    // The rest of the calling principal's pool: independent requests, opened
-    // concurrently.
     // The rest of the calling principal's pool. SEQUENTIAL on purpose: the
     // work is CPU-bound (a server graph + a synchronous SQLite write per
     // initialize), measured slower in parallel, and the age order is what
@@ -531,6 +530,40 @@ describe("MCP Streamable HTTP transport", () => {
     const alive = await Promise.all(ids.map(async (id,) => {
       const res = await app.handle(
         rpc({ jsonrpc: "2.0", id: 37, method: "tools/list", params: {}, }, { "mcp-session-id": id, },),
+      );
+
+      return res.status;
+    },),);
+
+    expect(alive.every((status,) => status === 200),).toBe(true,);
+  });
+
+  test("a client that owns no session cannot take another principal's slot", async () => {
+    const caller: Caller = { userId: principalId, };
+    const app = makeApp(caller,);
+
+    // Fill the live-session cap with ONE principal's sessions.
+    const ids: string[] = [];
+    for (let index = 0; index < MAX_LIVE_SESSIONS; index += 1) {
+      ids.push(await initialize(app,),);
+    }
+
+    // A DIFFERENT principal, owning no session, connects: it is refused
+    // rather than evicting a live session that is not its own.
+    caller.userId = otherPrincipalId;
+    const refused = await app.handle(
+      rpc({ jsonrpc: "2.0", id: 38, method: "initialize", params: INIT_PARAMS, },),
+    );
+
+    expect(refused.status,).toBe(503,);
+    const envelope = await refused.json() as Envelope;
+    expect(envelope.error?.message,).toContain("session cap",);
+
+    // Every session of the first principal survived the refused connect.
+    caller.userId = principalId;
+    const alive = await Promise.all(ids.map(async (id,) => {
+      const res = await app.handle(
+        rpc({ jsonrpc: "2.0", id: 39, method: "tools/list", params: {}, }, { "mcp-session-id": id, },),
       );
 
       return res.status;

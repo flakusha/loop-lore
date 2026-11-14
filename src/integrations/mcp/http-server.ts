@@ -37,9 +37,10 @@
  * a leaked session id cannot be replayed under another identity (403).
  *
  * SIZE: the live session set is BOUNDED by {@link MAX_LIVE_SESSIONS} and an
- * idle session is reaped after {@link SESSION_IDLE_TTL_MS}. Eviction prefers
- * the CALLING principal's own oldest session, so one client cannot push
- * another client out by merely connecting. The request body is read once, by
+ * idle session is reaped after {@link SESSION_IDLE_TTL_MS}. Eviction takes the
+ * CALLING principal's own oldest session, and a caller that owns none is
+ * refused (503) rather than taking another principal's slot — one client can
+ * never push another client out by merely connecting. The request body is read once, by
  * the SDK transport, and is bounded by the SDK's own body cap (4 MiB -> 413).
  */
 
@@ -118,6 +119,9 @@ type AuthOutcome = { ok: true; principal: McpPrincipal } | { ok: false; refusal:
 
 /** The outcome of the session boundary check. */
 type SessionOutcome = { ok: true; session: McpSession } | { ok: false; refusal: Response };
+
+/** The outcome of making room for one more session. */
+type RoomOutcome = { ok: true } | { ok: false; refusal: Response };
 
 /** The context this plugin reads (the app's auth derive populates it). */
 interface McpHttpCtx extends FacadeRouteCtx {
@@ -225,20 +229,19 @@ function samePrincipal(session: McpPrincipal, current: McpPrincipal,): boolean {
 }
 
 /**
- * The least recently used session id, optionally restricted to one principal.
+ * The least recently used session id of ONE principal.
  * @param sessions - the live session map
- * @param principal - the principal to restrict to (null = any)
- * @returns the victim's session id, or undefined when no session matches
+ * @param principal - the principal whose own sessions are considered
+ * @returns the victim's session id, or undefined when the principal owns none
  */
 function leastRecentlyUsedId(
   sessions: Map<string, McpSession>,
-  principal: McpPrincipal | null,
+  principal: McpPrincipal,
 ): string | undefined {
   let foundId: string | undefined;
   let foundAt = Number.POSITIVE_INFINITY;
   for (const [id, session,] of sessions) {
-    if (principal !== null && !samePrincipal(session.principal, principal,)) { continue; }
-    if (session.lastUsedAt < foundAt) {
+    if (samePrincipal(session.principal, principal,) && session.lastUsedAt < foundAt) {
       foundId = id;
       foundAt = session.lastUsedAt;
     }
@@ -254,42 +257,43 @@ function leastRecentlyUsedId(
  * @param now - the current time
  */
 async function reapIdleSessions(sessions: Map<string, McpSession>, now: number,): Promise<void> {
-  const idle: string[] = [];
+  // Deleting the current entry while walking the map is safe (the Map
+  // iterator skips the removed entry).
   for (const [id, session,] of sessions) {
-    if (now - session.lastUsedAt > SESSION_IDLE_TTL_MS) { idle.push(id,); }
-  }
-
-  for (const id of idle) {
-    const session = sessions.get(id,);
+    if (now - session.lastUsedAt <= SESSION_IDLE_TTL_MS) { continue; }
     sessions.delete(id,);
-    await session?.close();
+    await session.close();
     getLog()?.warn("reaped an idle MCP session", { sessionId: id, },);
   }
 }
 
 /**
- * Make room for one more session: reap the idle ones, then evict. The
- * CALLING principal's own least recently used session goes first, so one
- * client cannot push another client out by merely connecting; only a caller
- * that owns no session at all falls back to the globally oldest one.
+ * Make room for one more session: reap the idle ones, then evict the CALLING
+ * principal's own least recently used session. A caller that owns no session
+ * never takes another principal's slot — it is refused instead; the server's
+ * capacity is not another client's to take.
  * @param sessions - the live session map
  * @param principal - the principal opening the new session
  * @param now - the current time
+ * @returns the outcome of making room
  */
 async function makeRoom(
   sessions: Map<string, McpSession>,
   principal: McpPrincipal,
   now: number,
-): Promise<void> {
+): Promise<RoomOutcome> {
   await reapIdleSessions(sessions, now,);
   while (sessions.size >= MAX_LIVE_SESSIONS) {
-    const id = leastRecentlyUsedId(sessions, principal,) ?? leastRecentlyUsedId(sessions, null,);
-    if (id === undefined) { return; }
+    const id = leastRecentlyUsedId(sessions, principal,);
+    if (id === undefined) { return { ok: false, refusal: rpcError(503, -32000, "The session cap is reached",), }; }
+
     const session = sessions.get(id,);
     sessions.delete(id,);
     await session?.close();
     getLog()?.warn("evicted an MCP session at the live-session cap", { sessionId: id, },);
   }
+
+  return { ok: true, };
 }
 
 /**
@@ -450,7 +454,8 @@ export function createMcpHttpRoutes(opts: HandlerOpts, options: McpHttpOptions =
 
         // No session id: only an initialize request may open one. The
         // transport answers anything else with 400 ("Server not initialized").
-        await makeRoom(sessions, principal, now(),);
+        const room = await makeRoom(sessions, principal, now(),);
+        if (!room.ok) { return noStore(room.refusal,); }
 
         const registry = getFacadeRegistry({ database, config, },);
         const transport = new WebStandardStreamableHTTPServerTransport({
