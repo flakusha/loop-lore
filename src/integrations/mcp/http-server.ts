@@ -153,13 +153,18 @@ function rpcError(status: number, code: number, message: string,): Response {
 
 /**
  * Mark a response as uncacheable. The initialize answer carries the session
- * id, so no cache may store it; the SDK sets no cache header of its own.
+ * id, so no cache may store it. The SDK's OWN directives are kept — its SSE
+ * stream sends `no-cache, no-transform` and a proxy must not transform it.
  * @param response - the response to mark
- * @returns the same answer with `cache-control: no-store`
+ * @returns the same answer with `no-store` in its cache-control
  */
 function noStore(response: Response,): Response {
   const headers = new Headers(response.headers,);
-  headers.set("cache-control", "no-store",);
+  const cacheControl = headers.get("cache-control",);
+
+  // Not a template literal: the size gate's scanner mis-lexes a template tail
+  // and then counts the rest of the file as code.
+  headers.set("cache-control", cacheControl === null ? "no-store" : cacheControl.concat(", no-store",),);
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
