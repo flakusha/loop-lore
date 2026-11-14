@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describe, expect, it, } from "bun:test";
-import { parseAttackPreview, } from "./api.js";
+import { afterEach, beforeEach, describe, expect, it, test, } from "bun:test";
+import { fetchAttackRollPreview, parseAttackPreview, } from "./api.js";
 
 /** A `/api/battle/resolution/attack` success body (result spread + meta). */
 function body(overrides: Record<string, unknown> = {},): unknown {
@@ -55,5 +55,43 @@ describe("parseAttackPreview", () => {
     expect(parseAttackPreview("nope", 15,),).toBeNull();
     expect(parseAttackPreview({ hit: true, }, 15,),).toBeNull();
     expect(parseAttackPreview({ roll: { results: [1,], total: 3, }, }, 15,),).toBeNull();
+  });
+});
+
+describe("fetchAttackRollPreview", () => {
+  let originalFetch: typeof fetch;
+  let handler: () => Response | Promise<Response>;
+
+  beforeEach(() => {
+    originalFetch = globalThis.fetch;
+    handler = () => Response.json({ roll: { results: [8, 15,], keptIdx: 1, total: 17, }, hit: true, },);
+    globalThis.fetch = (async () => handler()) as typeof fetch;
+  },);
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  },);
+
+  test("returns the parsed preview on success", async () => {
+    const preview = await fetchAttackRollPreview({ attackBonus: 2, targetAC: 15, },);
+    expect(preview?.total,).toBe(17,);
+  });
+
+  test("returns null when the endpoint answers non-ok", async () => {
+    handler = () => new Response("nope", { status: 500, },);
+    await expect(fetchAttackRollPreview({ attackBonus: 2, targetAC: 15, },),).resolves.toBeNull();
+  });
+
+  test("returns null when the body is unusable", async () => {
+    handler = () => Response.json({ nope: true, },);
+    await expect(fetchAttackRollPreview({ attackBonus: 2, targetAC: 15, },),).resolves.toBeNull();
+  });
+
+  test("returns null when fetch throws", async () => {
+    globalThis.fetch = (async () => {
+      throw new Error("down",);
+    }) as unknown as typeof fetch;
+
+    await expect(fetchAttackRollPreview({ attackBonus: 2, targetAC: 15, },),).resolves.toBeNull();
   });
 });
