@@ -65,7 +65,7 @@ describe("fetchAttackRollPreview", () => {
   beforeEach(() => {
     originalFetch = globalThis.fetch;
     handler = () => Response.json({ roll: { results: [8, 15,], keptIdx: 1, total: 17, }, hit: true, },);
-    globalThis.fetch = (async () => handler()) as typeof fetch;
+    globalThis.fetch = (async () => handler()) as unknown as typeof fetch;
   },);
 
   afterEach(() => {
