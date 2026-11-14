@@ -184,6 +184,15 @@ describe("isIntegrationAgentPath", () => {
     expect(isIntegrationAgentPath("/api/v1/integrations/mcp",),).toBe(true,);
   });
 
+  test("the capability manifest is an integration-agent path (segment-exact)", () => {
+    // The machine-readable op manifest is an integration surface: a token
+    // principal may read it, and the match stays segment-exact.
+    expect(isIntegrationAgentPath("/api/v1/capabilities",),).toBe(true,);
+    expect(isIntegrationAgentPath("/api/capabilities",),).toBe(true,);
+    expect(isIntegrationAgentPath("/api/v1/capabilities/admin",),).toBe(false,);
+    expect(isIntegrationAgentPath("/api/v1/capabilitiesx",),).toBe(false,);
+  });
+
   test("admin token CRUD and every non-integration path are NOT", () => {
     // Tokens can never mint or revoke tokens - the CRUD surface stays JWT-admin.
     expect(isIntegrationAgentPath("/api/v1/admin/integration-tokens",),).toBe(false,);
@@ -207,6 +216,16 @@ describe("requireAuthGuard - external-agent surface confinement", () => {
     expect(guardRes("POST", "/api/v1/integrations/chat.send", ISSUER, null, "external-agent",).allowed,).toBe(true,);
     expect(guardRes("GET", "/api/v1/integrations/manifest", ISSUER, null, "external-agent",).allowed,).toBe(true,);
     expect(guardRes("POST", "/api/v1/integrations/mcp", ISSUER, null, "external-agent",).allowed,).toBe(true,);
+    // The capability manifest is admitted for a token principal too.
+    expect(guardRes("GET", "/api/v1/capabilities", ISSUER, null, "external-agent",).allowed,).toBe(true,);
+  });
+
+  test("an ANONYMOUS caller is fail-closed 401 on the capability manifest", () => {
+    // The manifest is NOT a public entry: no resolved principal -> 401.
+    expect(guardRes("GET", "/api/v1/capabilities", null, null, "user",),).toEqual({
+      allowed: false,
+      status: 401,
+    },);
   });
 
   test("a token principal is fail-closed 401 on every other route, even with a userId", () => {
