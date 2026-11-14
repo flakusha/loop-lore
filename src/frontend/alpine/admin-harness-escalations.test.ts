@@ -271,6 +271,27 @@ describe("decideHarnessEscalation", () => {
     expect(state.harnessEscalationDecisionError,).toBe("Could not record the decision.",);
   });
 
+  test("a rejected decision shows the server's own wording", async () => {
+    // The request helper throws on a non-2xx and carries the response body on
+    // the error, so the endpoint's reason reaches the operator.
+    handler = async () => {
+      throw Object.assign(new Error("HTTP 409: Conflict",), {
+        status: 409,
+        body: { error: 'escalation request "esc-1" was already decided', code: "CONFLICT", },
+      },);
+    };
+
+    const state = emptyHarnessEscalationsState();
+    await decideHarnessEscalation(state, "esc-1", "approve",);
+
+    expect(state.harnessEscalationDecisionError,).toBe(
+      'escalation request "esc-1" was already decided',
+    );
+
+    // The queue stays readable: a failed decision changes nothing else.
+    expect(state.harnessEscalationsError,).toBe("",);
+  });
+
   test("a second decision while one is in flight is ignored", async () => {
     handler = async () => Response.json({ ok: true, },);
 

@@ -21,7 +21,7 @@
  * safe JSON, and error handling — unifying frontend and backend fetch behavior.
  */
 
-import { safeFetch, } from "../utils";
+import { type FetchFailure, safeFetch, } from "../utils";
 
 const API_BASE = "";
 
@@ -52,6 +52,49 @@ export function redirectToLogin(): void {
 
   const redirect = encodeURIComponent(location.pathname + location.search,);
   location.assign(`/views/login?redirect=${redirect}`,);
+}
+
+/**
+ * The server's own message for a failed request, or null when the failure
+ * carried no body (a network error) or no message in it.
+ *
+ * The backend answers an error with `{ error, code, meta }` — and with
+ * `{ message }` on some routes — so both fields are read; a plain-text body
+ * is used as it came.
+ * @param body - the carried body (parsed JSON or raw text)
+ * @returns the server's message, or null when there is none
+ */
+function serverMessageFromBody(body: unknown,): string | null {
+  if (typeof body === "string") {
+    const text = body.trim();
+    return text === "" ? null : text;
+  }
+
+  if (typeof body !== "object" || body === null) { return null; }
+  if (!("message" in body) && !("error" in body)) { return null; }
+
+  const message = "message" in body ? body.message : body.error;
+  if (typeof message !== "string") { return null; }
+
+  const text = message.trim();
+  return text === "" ? null : text;
+}
+
+/**
+ * The message a failed request carries: the server's own reason when the
+ * failure brought one, the fallback otherwise.
+ *
+ * The frontend's request helper throws on every non-2xx and carries the
+ * response body on the error, so the server's wording survives the trip.
+ * @param error - the error the request threw
+ * @param fallback - the message to use when the failure carried no body
+ * @returns the message to show
+ */
+export function getThrownErrorMessage(error: unknown, fallback: string,): string {
+  if (typeof error !== "object" || error === null) { return fallback; }
+  if (!("body" in error)) { return fallback; }
+
+  return serverMessageFromBody(error.body,) ?? fallback;
 }
 
 /**
@@ -98,6 +141,10 @@ export async function feFetch(
     keepalive: options.keepalive,
     parseJson: false,
     stream: options.stream,
+    // The server's own reason for a refusal is in the body; carrying it on
+    // the thrown error is what lets a caller show the reason instead of a
+    // bare status line.
+    includeErrorBody: true,
     auth: { csrfToken: csrf || undefined, },
     handle401: true,
     onAuthError: () => {
@@ -114,7 +161,13 @@ export async function feFetch(
     // (e.g. a designed 404 = "not created yet") from real failures in their
     // catch blocks — the Response is never surfaced for non-2xx bodies.
     if (result.error instanceof Error) {
-      (result.error as Error & { status?: number }).status = result.status;
+      const failure = result.error as FetchFailure;
+      failure.status = result.status;
+      // The server's own reason came back with the body: make it the error's
+      // message, so every consumer that shows `error.message` shows the
+      // reason and not a bare status line.
+      const serverMessage = serverMessageFromBody(failure.body,);
+      if (serverMessage !== null) { failure.message = serverMessage; }
     }
 
     throw result.error;

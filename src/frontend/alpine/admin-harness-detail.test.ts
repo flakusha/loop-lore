@@ -59,6 +59,30 @@ describe("harnessThrownMessage", () => {
       "Could not reach the harness API. Check that the server is running.",
     );
   });
+
+  test("the server's own reason wins over the generic message", () => {
+    // The request helper carries the failed response's body on the thrown
+    // error, so the endpoint's wording survives the trip.
+    const error = Object.assign(new Error("HTTP 409: Conflict",), {
+      status: 409,
+      body: { error: 'escalation request "esc-1" was already decided', code: "CONFLICT", },
+    },);
+
+    expect(harnessThrownMessage(error, "harness.escalations.decideFailed",),).toBe(
+      'escalation request "esc-1" was already decided',
+    );
+  });
+
+  test("a body carrying `message` is preferred too", () => {
+    const error = Object.assign(new Error("HTTP 500: Internal Server Error",), {
+      status: 500,
+      body: { message: "the pending escalation queue could not be read", },
+    },);
+
+    expect(harnessThrownMessage(error, "harness.escalations.loadFailed",),).toBe(
+      "the pending escalation queue could not be read",
+    );
+  });
 });
 
 describe("harnessTabLoadError", () => {

@@ -117,13 +117,10 @@ const NOT_COMPOSED_STATUS = 503;
  *
  * A 503 means the harness runtime is not composed, so the queue is not merely
  * empty — it cannot be reached. Every other failure keeps the endpoint's own
- * message when the response carries one, and the tab's generic failure message
- * otherwise.
- *
- * `apiFetch` never surfaces a non-2xx response — `feFetch` throws it, and the
- * thrown error carries the status but not the body — so in the browser a
- * rejected decision reads as the generic message; the endpoint's own wording
- * is what a resolved error response carries.
+ * message when the failure carried one: `feFetch` throws on a non-2xx and
+ * carries the failed response's body on the error, so a rejected decision
+ * reads as the endpoint's wording ("escalation request ... was already
+ * decided"), not as a generic message that hides what went wrong.
  * @param error - the error the request threw
  * @param key - i18n key for the endpoint's own failure message
  * @returns the message to show

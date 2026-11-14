@@ -11,6 +11,7 @@
  * This module is the single home for the harness endpoint constants and the
  * response guard, so the component imports rather than re-declares them.
  */
+import { getThrownErrorMessage, } from "../fe-fetch";
 import { getErrorMessage, } from "../pages/shared";
 import { buildDetailView, type HarnessDetailView, isStale, } from "./admin-harness-rows";
 import { HarnessRunDetailNullable, } from "./admin-harness-schema";
@@ -51,12 +52,21 @@ export async function harnessFailure(res: Response, key: string,): Promise<strin
  * `apiFetch` never surfaces a non-2xx response — `feFetch` throws it — so the
  * HTTP status arrives on the error, not on a Response. Without this every
  * failure reads as "the API is unreachable": a 403 (not an admin) and a 500
- * (the server refused) look identical to a dead server.
+ * (the server refused) look identical to a dead server. The thrown error also
+ * carries the response body, so the server's own reason is preferred over the
+ * generic message whenever the endpoint answered with one.
  * @param error - the error the request threw
  * @param key - i18n key for the endpoint's own failure message
  * @returns the message to show
  */
 export function harnessThrownMessage(error: unknown, key: string,): string {
+  // The server's own reason wins: the request helper carries the response
+  // body on the thrown error, so a rejected decision reads as the endpoint's
+  // wording ("escalation request ... was already decided"), not as a generic
+  // message that hides what went wrong.
+  const serverMessage = getThrownErrorMessage(error, "",);
+  if (serverMessage !== "") { return serverMessage; }
+
   const status = (error as { status?: number } | null)?.status;
   if (status === 403) { return t("harness.errorForbidden",); }
   // No status (or a zero one) means the request never got an answer — the

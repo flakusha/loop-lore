@@ -10,4 +10,4 @@
 export { DEFAULT_TIMEOUT, } from "./constants";
 export { safeFetch, } from "./fetch";
 export { safeFetchWithRetry, } from "./retry";
-export type { FetchAuth, FetchResult, SafeFetchOptions, } from "./types";
+export type { FetchAuth, FetchFailure, FetchResult, SafeFetchOptions, } from "./types";

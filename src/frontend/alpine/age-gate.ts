@@ -11,11 +11,11 @@
  * declared date is below `minimumAge`.
  *
  * `apiFetch` delegates to `feFetch`, which REJECTS on any non-2xx (src/frontend/
- * fe-fetch.ts:98-111) — the body is never surfaced, so the underage/invalid
- * text is unrecoverable client-side and the status is read off the thrown
- * error instead. Those messages are therefore rendered from the locale
- * catalog rather than echoed from the server, which also localizes them: the
- * controller's `jsonError` calls carry no `t`, so its English never translates.
+ * fe-fetch.ts) — the status is read off the thrown error. The failed response's
+ * body rides along with it now, but the underage/invalid text is still not
+ * echoed: those messages are rendered from the locale catalog, which localizes
+ * them, while the controller's `jsonError` calls carry no `t`, so its English
+ * never translates.
  */
 
 import { apiFetch, } from "./htmx";

@@ -11,6 +11,21 @@ export type FetchResult<T,> =
   | { ok: false; error: Error; status?: number; headers?: Headers };
 
 /**
+ * A failed request's error: the transport message, plus the HTTP status and
+ * — when the caller asked for it — the body the server answered with.
+ *
+ * `body` is the parsed JSON when the response's content type said JSON, and
+ * the raw text otherwise. It is what lets a caller show the server's own
+ * reason instead of a bare status line.
+ */
+export interface FetchFailure extends Error {
+  /** The HTTP status, when the server answered. */
+  status?: number;
+  /** The failed response's body — parsed JSON or raw text. */
+  body?: unknown;
+}
+
+/**
  * Authentication/CSRF configuration for safeFetch.
  *
  * Browser (cookie-only): pass `csrfToken` from `document.cookie`; auth rides
@@ -54,6 +69,14 @@ export interface SafeFetchOptions extends Omit<RequestInit, "body" | "signal" | 
   signal?: AbortSignal;
   /** If true, response body is parsed as JSON; if false, returned as text */
   parseJson?: boolean;
+  /**
+   * If true, a failed response's body is captured and attached to the
+   * returned error as `body` — parsed JSON when the content type said JSON,
+   * otherwise the raw text. Opt-in: reading the body of a failed response
+   * costs memory, and only a caller that shows the server's own reason needs
+   * it.
+   */
+  includeErrorBody?: boolean;
   /**
    * If true, the raw `Response` is returned as-is (`data` carries the live
    * `Response`, body unconsumed) and no timeout is armed. For streaming

@@ -244,6 +244,68 @@ describe("error paths", () => {
     expect((err as Error & { status?: number }).status,).toBe(404,);
   });
 
+  test("a failed request carries the server's JSON body", async () => {
+    fetchImpl = async () =>
+      Response.json(
+        { error: 'escalation request "esc-1" was already decided', code: "CONFLICT", },
+        { status: 409, },
+      );
+
+    const { feFetch, } = await importFeFetch();
+    const err = await feFetch("/x",).catch((e,) => e);
+    expect(err,).toBeInstanceOf(Error,);
+    const failure = err as Error & { status?: number; body?: unknown };
+    expect(failure.status,).toBe(409,);
+    // The body came back parsed, so a consumer reads the server's own reason
+    // instead of a bare status line.
+    expect(failure.body,).toEqual({
+      error: 'escalation request "esc-1" was already decided',
+      code: "CONFLICT",
+    },);
+
+    expect(failure.message,).toBe('escalation request "esc-1" was already decided',);
+  });
+
+  test("a failed request carries a plain-text body", async () => {
+    fetchImpl = async () =>
+      new Response("the queue is unreachable", {
+        status: 502,
+        headers: { "content-type": "text/plain", },
+      },);
+
+    const { feFetch, } = await importFeFetch();
+    const err = await feFetch("/x",).catch((e,) => e);
+    expect(err,).toBeInstanceOf(Error,);
+    const failure = err as Error & { status?: number; body?: unknown };
+    expect(failure.status,).toBe(502,);
+    // A body that is not JSON stays text.
+    expect(failure.body,).toBe("the queue is unreachable",);
+    expect(failure.message,).toBe("the queue is unreachable",);
+  });
+
+  test("the thrown message prefers the server's own reason", async () => {
+    const { getThrownErrorMessage, } = await importFeFetch();
+    const failure = Object.assign(new Error("HTTP 409: Conflict",), {
+      status: 409,
+      body: { error: "escalation request esc-1 was already decided", },
+    },);
+
+    expect(getThrownErrorMessage(failure, "Could not record the decision.",),).toBe(
+      "escalation request esc-1 was already decided",
+    );
+  });
+
+  test("the thrown message falls back when the failure carried no body", async () => {
+    const { getThrownErrorMessage, } = await importFeFetch();
+
+    expect(getThrownErrorMessage(new Error("offline",), "Could not record the decision.",),).toBe(
+      "Could not record the decision.",
+    );
+
+    // A body with no message in it is no reason at all.
+    expect(getThrownErrorMessage({ body: { code: "CONFLICT", }, }, "fallback",),).toBe("fallback",);
+  });
+
   test("fetch abort surfaces as an abort error", async () => {
     fetchImpl = async () => {
       const e = new Error("The operation was aborted",);
