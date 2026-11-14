@@ -143,7 +143,10 @@ export function listDbBackups(dir: string,): BackupFileMeta[] {
     }
   }
 
-  return entries.sort((a, b,) => a.modifiedAt.localeCompare(b.modifiedAt,));
+  return entries.sort((a, b,) => {
+    const byTime = a.modifiedAt.localeCompare(b.modifiedAt,);
+    return byTime !== 0 ? byTime : a.name.localeCompare(b.name,);
+  },);
 }
 
 /**
