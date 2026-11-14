@@ -176,7 +176,7 @@ describe("facade ops over the real services", () => {
   test("chat.history declares readOnlyHint false - the avatar resolver materializes a wardrobe row", () => {
     const annotations = buildRegistry().resolve("chat.history",)?.annotations;
     expect(annotations?.readOnlyHint,).toBe(false,);
-    expect(annotations?.idempotentHint,).toBe(false,);
+    expect(annotations?.idempotentHint,).toBeUndefined();
   });
 
   test("every registered op exposes a manifest descriptor with a scope", () => {
