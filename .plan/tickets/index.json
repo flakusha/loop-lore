@@ -23567,7 +23567,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-smart-regen-decision-gate-in-main-pipeline.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "smart-regen decision gate in main pipeline",
     "type": "FEAT"
@@ -35312,6 +35312,41 @@
     "title": "Client-Side Encryption (AES-256-GCM)",
     "type": "TASK"
   },
+  "TASK-CLOSE-THE-FIRST-BOOT-PII-CONFIG-GATE-AND-EXPOSE-SETUP-STATE": {
+    "hash": "62be90c",
+    "git_issue": "62be90c",
+    "extid": "TASK-CLOSE-THE-FIRST-BOOT-PII-CONFIG-GATE-AND-EXPOSE-SETUP-STATE",
+    "type": "TASK",
+    "title": "Close the first-boot PII config gate and expose setup state",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-first-run-auto-setup",
+    "project": "",
+    "tags": [
+      "first-run",
+      "config",
+      "boot"
+    ],
+    "source": ".plan/tickets/TASK-close-the-first-boot-pii-config-gate-and-expose-setup-state.md",
+    "status": "open"
+  },
+  "TASK-CLOSE-THE-I18N-COMMAND-REGISTRY-GAP-AND-ADD-A-RUNTIME-REGIST": {
+    "hash": "07a4fd0",
+    "git_issue": "07a4fd0",
+    "extid": "TASK-CLOSE-THE-I18N-COMMAND-REGISTRY-GAP-AND-ADD-A-RUNTIME-REGIST",
+    "type": "TASK",
+    "title": "Close the i18n command-registry gap and add a runtime-registry gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-i18n",
+    "project": "",
+    "tags": [
+      "i18n",
+      "commands"
+    ],
+    "source": ".plan/tickets/TASK-close-the-i18n-command-registry-gap-and-add-a-runtime-regist.md",
+    "status": "open"
+  },
   "TASK-CODE-QUALITY": {
     "epic": "epic-code-quality",
     "extid": "TASK-CODE-QUALITY",
@@ -40482,6 +40517,24 @@
     "source": ".plan/tickets/TASK-enforce-plugin-origin-at-request-time.md",
     "status": "Not Started"
   },
+  "TASK-ENFORCE-RBAC-TRANCHE-1-CAPABILITY-GATES-ON-THE-CREATE-IMPORT": {
+    "hash": "f3ab17a",
+    "git_issue": "f3ab17a",
+    "extid": "TASK-ENFORCE-RBAC-TRANCHE-1-CAPABILITY-GATES-ON-THE-CREATE-IMPORT",
+    "type": "TASK",
+    "title": "Enforce RBAC tranche-1 capability gates on the create/import/export/chat surface",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-auth-access",
+    "project": "",
+    "tags": [
+      "rbac",
+      "permissions",
+      "multi-user"
+    ],
+    "source": ".plan/tickets/TASK-enforce-rbac-tranche-1-capability-gates-on-the-create-import.md",
+    "status": "open"
+  },
   "TASK-ENFORCE-VIEWER-ID-CONTRACT-IN-MEMORY-INJECTION": {
     "hash": "b64e902",
     "git_issue": "b64e902",
@@ -40917,7 +40970,7 @@
       "audit"
     ],
     "source": ".plan/tickets/TASK-escalation-audit-queue-with-no-auto-approve.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-ETL-DAG-WRAPPED-INGEST-WITH-IDEMPOTENCY-AND-DLQ": {
     "hash": "f894c92",
@@ -40986,6 +41039,23 @@
     ],
     "title": "EventBus + ToolRegistry Core Wiring",
     "type": "TASK"
+  },
+  "TASK-EXCLUDE-COORDINATION-PURPOSE-CHATS-FROM-LLM-CONTEXT-ASSEMBLY": {
+    "hash": "0696438",
+    "git_issue": "0696438",
+    "extid": "TASK-EXCLUDE-COORDINATION-PURPOSE-CHATS-FROM-LLM-CONTEXT-ASSEMBLY",
+    "type": "TASK",
+    "title": "Exclude coordination-purpose chats from LLM context assembly",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-privacy",
+    "project": "",
+    "tags": [
+      "chat-privacy",
+      "prompt-assembly"
+    ],
+    "source": ".plan/tickets/TASK-exclude-coordination-purpose-chats-from-llm-context-assembly.md",
+    "status": "open"
   },
   "TASK-EXCLUDE-IMPERSONATED-ACTORS-FROM-AI-TURN-GENERATION": {
     "epic": "epic-actors",
@@ -49204,6 +49274,24 @@
     "source": ".plan/tickets/TASK-make-the-federation-config-panel-editable-in-the-config-ui.md",
     "status": "Not Started"
   },
+  "TASK-MAKE-THE-MULTI-ASSISTANT-AND-MULTI-LLM-CHAT-ROWS-ACTUALLY-PR": {
+    "hash": "25996be",
+    "git_issue": "25996be",
+    "extid": "TASK-MAKE-THE-MULTI-ASSISTANT-AND-MULTI-LLM-CHAT-ROWS-ACTUALLY-PR",
+    "type": "TASK",
+    "title": "Make the multi-assistant and multi-LLM chat rows actually produce messages",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-chat-variants-taxonomy",
+    "project": "",
+    "tags": [
+      "group-chat",
+      "story-mode",
+      "auto-generation"
+    ],
+    "source": ".plan/tickets/TASK-make-the-multi-assistant-and-multi-llm-chat-rows-actually-pr.md",
+    "status": "open"
+  },
   "TASK-MAKE-WORLD-ITEM-TRANSFER-ATOMIC-WHEN-THE-DESTINATION-ACTOR-I": {
     "hash": "1beccfa",
     "git_issue": "1beccfa",
@@ -51433,7 +51521,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-named-arguments-for-slash-commands.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Named arguments for slash commands",
     "type": "TASK"
@@ -53553,7 +53641,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-per-command-valves-like-options-schema.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Per-command Valves-like options schema",
     "type": "TASK"
@@ -53842,7 +53930,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-pipe-operator-chaining-slash-commands.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Pipe operator chaining slash commands",
     "type": "TASK"
@@ -60081,7 +60169,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-shared-macro-engine-for-templates-and-commands.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Shared macro engine for templates and commands",
     "type": "TASK"

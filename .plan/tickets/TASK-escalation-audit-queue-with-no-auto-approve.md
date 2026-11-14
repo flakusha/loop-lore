@@ -55,3 +55,5 @@ is the approvable surface; and the capability-grant PERSISTENCE slice
 - [x] NO auto-approve for any principal; audit rows land in the EXISTING tool_call_audit table (no new agent_actions table)
 - [x] Each APPROVAL grants exactly ONE root change, claimed atomically (the consumption row is inserted with a deterministic id, so a concurrent second redemption of the same approval is denied; a failed consumption write denies the change). The unit is the approval, not the key: a second, independent admin decision on the same key grants a second root change.
 - [x] The approval is bound to a credential-scoped subject (credential id + agent worktree + user id); a principal that carries no identity is refused instead of sharing another principal's approval
+
+**Resolved:** 2026-11-14 registry-driven close: git issue da9349c (registry tip: 855a10b79 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ESCALATION-AUDIT-QUEUE-WITH)

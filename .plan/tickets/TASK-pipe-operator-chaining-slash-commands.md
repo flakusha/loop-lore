@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** THEME 3 scripting-lite: shared macro engine, named args, per-command valves, pipe operator, smart-regen decision gate
 **Priority:** medium
 **Effort:** Medium
@@ -36,3 +36,4 @@ Cycle safety: a chain is linear and resolved once; handlers cannot invoke comman
 
 Deferred: workflow-runner multi-step composition remains the server-side path for loops/closures (explicitly out of scope here); no frontend affordance for chains yet.
 
+**Resolved:** 2026-11-14 registry-driven close: git issue 6fa44f0 (registry tip: dc368d2af Konstantin Fedotov Close issue)

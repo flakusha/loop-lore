@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** THEME 3 scripting-lite: shared macro engine, named args, per-command valves, pipe operator, smart-regen decision gate
 **Priority:** medium
 **Effort:** Medium
@@ -36,3 +36,4 @@ Design decisions:
 - Tokenizer is quote-aware (double/single, mid-word quotes like `--style="a b"`), unterminated quote consumes the rest.
 - Dispatch attaches `ctx.namedArgs` (valve-resolved when the command declares valves) and `ctx.positionalArgs` to the `CommandContext` per stage.
 
+**Resolved:** 2026-11-14 registry-driven close: git issue 4c2737a (registry tip: e9155a3a3 Konstantin Fedotov Close issue)

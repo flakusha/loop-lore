@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** THEME 3 scripting-lite: shared macro engine, named args, per-command valves, pipe operator, smart-regen decision gate
 **Priority:** high
 **Effort:** Medium
@@ -38,3 +38,4 @@ Deferred: chat-settings editing UI for valve values (the Open WebUI panel surfac
 
 Knip note: the `pipeText`/`pipeNone` helpers in `src/assistant/commands/pipe.ts` are part of the emit-contract API but currently have no production callers (tests only) — the `dead - code` finalize gate may flag them; remove or wire a handler if it does.
 
+**Resolved:** 2026-11-14 registry-driven close: git issue f402932 (registry tip: 65b401fac Konstantin Fedotov Close issue)
