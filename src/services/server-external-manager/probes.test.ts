@@ -6,7 +6,7 @@
  * startLivenessProbes, stopLivenessProbes, and checkAllLiveliness.
  *
  * The probe loop runs an async safeFetch against /health (llama-cpp),
- * /v1/models (llama-swap), or / (sd-cpp). We exercise the callback by
+ * /health expecting body "OK" (llama-swap), or / (sd-cpp). We exercise the callback by
  * spawning real Bun.serve instances on ephemeral ports and verifying
  * the probe logs the right warning level. mock.module isn't needed:
  * safeFetch just talks to localhost.
@@ -198,10 +198,13 @@ describe("probes.checkAllLiveliness", () => {
     }
   });
 
-  test("treats llama-swap /v1/models any-status as alive", async () => {
+  test("treats llama-swap /health with body OK as alive", async () => {
     const server = Bun.serve({
       port: 0,
-      fetch: () => new Response("missing", { status: 404, },), // 404 still counts as "alive"
+      fetch: (req,) => {
+        if (new URL(req.url,).pathname === "/health") { return new Response("OK",); }
+        return new Response("missing", { status: 404, },);
+      },
     },);
 
     const port = boundPort(server,);
@@ -222,6 +225,34 @@ describe("probes.checkAllLiveliness", () => {
       await server.stop();
     }
   });
+
+  for (const status of [404, 500,] as const) {
+    test(`treats llama-swap /health status ${status} as dead`, async () => {
+      const server = Bun.serve({
+        port: 0,
+        fetch: () => new Response("error", { status, },),
+      },);
+
+      const port = boundPort(server,);
+      try {
+        const host = makeHost();
+        host.instances.push({
+          type: "llama-swap",
+          process: makeFakeProcess(334,) as ServerInstance["process"],
+          port,
+          pid: 334,
+          startedAt: Date.now(),
+        },);
+
+        await checkAllLiveliness(host,);
+        const warns = host.logCalls.filter((c,) => c.level === "warn");
+        expect(warns,).toHaveLength(1,);
+        expect(warns[0]?.meta?.type,).toBe("llama-swap",);
+      } finally {
+        await server.stop();
+      }
+    });
+  }
 
   test("logs a warning for an sd-cpp instance without a running server", async () => {
     const host = makeHost();

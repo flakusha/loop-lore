@@ -18,7 +18,6 @@ import type { Logger, } from "../../../src/logger";
 import {
   findBinary,
   isHuggingFaceRef,
-  isPortFree,
   waitForHealth,
   waitForPort,
 } from "../../../src/services/external-server-utils";
@@ -33,6 +32,8 @@ export type LlamaCppOptions = Pick<
 
 export interface LlamaSwapOptions {
   configPath: string;
+  /** Proxy listen port for `--listen` (default: 8080, the upstream proxy default). */
+  listenPort?: number;
 }
 
 export type SdCppOptions = Pick<
@@ -85,7 +86,7 @@ export class ServerExternalManager {
       if (!alive) {
         this.log.warn("External server unresponsive", {
           type: instance.type,
-          port: instance.pid,
+          port: instance.port,
           pid: instance.pid,
         },);
       }
@@ -109,11 +110,8 @@ export class ServerExternalManager {
       return null;
     }
 
-    if (!(await isPortFree(opts.port,))) {
-      this.log.warn(`port ${opts.port} in use — skipping llama-cpp`,);
-      return null;
-    }
-
+    // No isPortFree pre-check (bind-then-release is racy — TOCTOU). Spawn
+    // directly; a busy port surfaces as a failed readiness wait below.
     const isHF = isHuggingFaceRef(opts.modelPath,);
     const modelFlag = isHF ? "-hf" : "-m";
     const modelValue = isHF ? opts.modelPath : resolve(opts.modelPath,);
@@ -173,24 +171,29 @@ export class ServerExternalManager {
       : opts.configPath;
 
     const resolvedConfig = resolve(expandedPath,);
+    // YAML `startPort` is the `${PORT}` macro base for the first model
+    // (upstream default 5800) — never the proxy port. The proxy listens on
+    // `listenPort` (default 8080, the upstream proxy default).
+    const port = opts.listenPort ?? 8080;
+    this.log.info("Starting llama-swap", { config: resolvedConfig, port, },);
     const proc = spawn({
-      cmd: [binary, "--config", resolvedConfig, "--host", "127.0.0.1",],
+      cmd: [binary, "--config", resolvedConfig, "--listen", `127.0.0.1:${port}`,],
       stdout: "pipe",
       stderr: "pipe",
     },);
 
-    // llama-swap exposes health on its first model port
-    const ready = await waitForHealth("http://127.0.0.1:8080/health", { timeoutMs: 30_000, },);
+    // Readiness on the proxy's /health, like production.
+    const ready = await waitForHealth(`http://127.0.0.1:${port}/health`, { timeoutMs: 30_000, },);
     if (!ready) {
       proc.kill();
-      this.log.warn("llama-swap did not become ready",);
+      this.log.warn("llama-swap did not become ready", { port, },);
       return null;
     }
 
     const instance: ServerInstance = {
       type: "llama-swap",
       process: proc,
-      port: 8080, // llama-swap default; actual ports from config
+      port,
       pid: proc.pid,
       startedAt: Date.now(),
     };
@@ -209,10 +212,8 @@ export class ServerExternalManager {
       return null;
     }
 
-    if (!(await isPortFree(opts.port,))) {
-      this.log.warn(`port ${opts.port} in use — skipping sd-cpp`,);
-      return null;
-    }
+    // No isPortFree pre-check (bind-then-release is racy — TOCTOU). Spawn
+    // directly; a busy port surfaces as a failed readiness wait below.
 
     const args: string[] = [
       binary,

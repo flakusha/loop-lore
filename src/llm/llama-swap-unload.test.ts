@@ -14,10 +14,13 @@ import {
   COMFYUI_PROXY_MODEL_ID,
   computeEvictionSet,
   DEFAULT_BASE,
+  DEFAULT_LISTEN_PORT,
   DRAIN_POLL_MS,
   DRAIN_TIMEOUT_MS,
   isLoopbackHost,
+  readRunningModels,
   REQUEST_TIMEOUT_MS,
+  resolveLlamaSwapBase,
   stripBase,
   unloadLlamaSwapModel,
 } from "./llama-swap-unload";
@@ -179,7 +182,15 @@ describe("computeEvictionSet", () => {
     expect(second,).toEqual(["llm-b",],);
   });
 
-  test("unreachable /running yields an empty set, never a throw", async () => {
+  test("unreachable /running yields ok:false, never a throw", async () => {
+    const readout = await readRunningModels({
+      llamaSwapBase: BASE,
+      fetchImpl: throwingFetch(new Error("down",),),
+    },);
+
+    expect(readout.ok,).toBe(false,);
+    expect(readout.ids,).toEqual([],);
+    // Legacy wrapper keeps the old shape for callers that do not care.
     const ids = await computeEvictionSet({
       llamaSwapBase: BASE,
       fetchImpl: throwingFetch(new Error("down",),),
@@ -188,23 +199,43 @@ describe("computeEvictionSet", () => {
     expect(ids,).toEqual([],);
   });
 
-  test("malformed /running yields an empty set, never a throw", async () => {
-    const ids = await computeEvictionSet({
+  test("malformed /running yields ok:false, never a throw", async () => {
+    const readout = await readRunningModels({
       llamaSwapBase: BASE,
       fetchImpl: makeMock([], () => json({ running: "nope", },),),
     },);
 
-    expect(ids,).toEqual([],);
+    expect(readout.ok,).toBe(false,);
+    expect(readout.ids,).toEqual([],);
   });
 });
 
 describe("unload constants + pure helpers", () => {
-  test("constants match llama-swap defaults", () => {
+  test("constants match the spawned proxy, not the YAML startPort", () => {
     expect(BASE_ENV_VAR,).toBe("LLAMA_SWAP_BASE_URL",);
+    expect(DEFAULT_LISTEN_PORT,).toBe(8080,);
     expect(DEFAULT_BASE,).toBe("http://127.0.0.1:8080",);
     expect(DRAIN_TIMEOUT_MS,).toBe(30_000,);
     expect(DRAIN_POLL_MS,).toBe(250,);
     expect(REQUEST_TIMEOUT_MS,).toBe(10_000,);
+  });
+
+  test("resolveLlamaSwapBase: explicit > env > listenPort", () => {
+    const saved = process.env[BASE_ENV_VAR];
+    try {
+      delete process.env[BASE_ENV_VAR];
+      expect(resolveLlamaSwapBase({ listenPort: 9099, },),).toBe("http://127.0.0.1:9099",);
+      expect(resolveLlamaSwapBase({},),).toBe(DEFAULT_BASE,);
+      expect(resolveLlamaSwapBase({ llamaSwapBase: "http://x:1", listenPort: 9099, },),).toBe("http://x:1",);
+      process.env[BASE_ENV_VAR] = "http://env:2";
+      expect(resolveLlamaSwapBase({ listenPort: 9099, },),).toBe("http://env:2",);
+      expect(resolveLlamaSwapBase({ llamaSwapBase: "http://x:1", listenPort: 9099, },),).toBe("http://x:1",);
+      // Blank stays blank here — the caller blank-checks and throws.
+      expect(resolveLlamaSwapBase({ llamaSwapBase: "", },),).toBe("",);
+    } finally {
+      if (saved === undefined) { delete process.env[BASE_ENV_VAR]; }
+      else { process.env[BASE_ENV_VAR] = saved; }
+    }
   });
 
   test("stripBase trims trailing slashes", () => {

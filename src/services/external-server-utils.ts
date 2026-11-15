@@ -51,6 +51,12 @@ export function findBinary(type: keyof typeof BINARY_CANDIDATES,): string | null
 // ── Port verification ─────────────────────────────────────
 
 /**
+ * Best-effort snapshot: does `port` look free *right now*?
+ *
+ * Bind-then-release is inherently racy (TOCTOU) — another process may grab
+ * the port between this check and the later spawn. Callers use it as a fast
+ * pre-spawn skip; a busy port can still surface later as a failed readiness
+ * wait at spawn.
  * @param port
  * @returns {boolean}
  */

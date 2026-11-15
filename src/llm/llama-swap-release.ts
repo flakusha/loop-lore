@@ -10,24 +10,26 @@
  */
 import { getChildLogger, } from "../logger";
 import {
-  BASE_ENV_VAR,
   baseHost,
   COMFYUI_PROXY_MODEL_ID,
-  computeEvictionSet,
-  DEFAULT_BASE,
   DRAIN_POLL_MS,
   DRAIN_TIMEOUT_MS,
   isLoopbackHost,
+  readRunningModels,
   REQUEST_TIMEOUT_MS,
+  resolveLlamaSwapBase,
   stripBase,
   unloadLlamaSwapModel,
 } from "./llama-swap-unload";
 
 const log = getChildLogger("llama-swap-release",);
 
-/** Options for the pre-dispatch hook. `llamaSwapBase` defaults to app config, never request input. */
+/** Options for the pre-dispatch hook. Base defaults to app config, never request input. */
 export interface ReleaseModelsOptions {
+  /** Explicit proxy base — highest precedence. */
   llamaSwapBase?: string;
+  /** Spawned-proxy listen port (the D1 `listenPort` knob start-llama spawns with). */
+  listenPort?: number;
   exclude?: string[];
   apiKey?: string;
   fetchImpl?: typeof fetch;
@@ -36,24 +38,29 @@ export interface ReleaseModelsOptions {
   requestTimeoutMs?: number;
 }
 
-/** What the hook released. Empty `released` = no-op (nothing warm, or nothing local to free). */
+/** What the hook released. `probeOk:false` = the proxy never answered (nothing was freed); `released` is empty either way. */
 export interface ReleaseSummary {
   released: string[];
+  probeOk: boolean;
 }
 
 /**
  * Pre-dispatch hook for the video serial gate: enumerate → unload (parallel)
  * → bounded drain poll → return. No-op when nothing needs releasing; failure
  * never aborts the caller (the render proceeds; failures are warned with ids).
- * The base resolves from app config (`LLAMA_SWAP_BASE_URL`, else the loopback
- * default) — never from request input. Unauthenticated non-loopback targets
- * are refused (fail-safe skips the release, still non-fatal).
+ * The base resolves from app config (explicit `llamaSwapBase`, else
+ * `LLAMA_SWAP_BASE_URL` env, else loopback at `listenPort`) — never from
+ * request input. Unauthenticated non-loopback targets are refused (fail-safe
+ * skips the release, still non-fatal). A dead probe is reported LOUD via
+ * `probeOk:false` (and a warn) — never misread as "drained".
  * @param opts - optional overrides; all default for production, injected in tests
- * @returns ids actually released (empty = no-op)
- * @throws {Error} On programmer errors (explicitly blank base) only.
+ * @returns ids actually released (empty = no-op or probe failure; check `probeOk`)
+ * @throws {Error} On probe failure when `throwOnProbeFailure` is set, or programmer errors.
  */
-export async function releaseModelsForRender(opts: ReleaseModelsOptions = {},): Promise<ReleaseSummary> {
-  const rawBase = opts.llamaSwapBase ?? process.env[BASE_ENV_VAR] ?? DEFAULT_BASE;
+export async function releaseModelsForRender(
+  opts: ReleaseModelsOptions & { throwOnProbeFailure?: boolean } = {},
+): Promise<ReleaseSummary> {
+  const rawBase = resolveLlamaSwapBase({ llamaSwapBase: opts.llamaSwapBase, listenPort: opts.listenPort, },);
   const base = stripBase(rawBase,);
   if (!base) {
     throw new Error("releaseModelsForRender: llamaSwapBase must not be blank",);
@@ -61,7 +68,7 @@ export async function releaseModelsForRender(opts: ReleaseModelsOptions = {},): 
 
   if (!opts.apiKey && !isLoopbackHost(baseHost(base,),)) {
     log?.warn("llama-swap release refused: non-loopback base without a credential", { base, },);
-    return { released: [], };
+    return { released: [], probeOk: false, };
   }
 
   const shared = {
@@ -71,9 +78,17 @@ export async function releaseModelsForRender(opts: ReleaseModelsOptions = {},): 
     timeoutMs: opts.requestTimeoutMs ?? REQUEST_TIMEOUT_MS,
   };
 
-  const evict = await computeEvictionSet({ ...shared, exclude: opts.exclude, },);
+  const probe = await readRunningModels({ ...shared, exclude: opts.exclude, },);
+  if (!probe.ok) {
+    const message = `llama-swap probe failed before render (${probe.error ?? "unknown"}) — VRAM NOT released`;
+    log?.warn(message, { base, },);
+    if (opts.throwOnProbeFailure) { throw new Error(message,); }
+    return { released: [], probeOk: false, };
+  }
+
+  const evict = probe.ids;
   if (evict.length === 0) {
-    return { released: [], };
+    return { released: [], probeOk: true, };
   }
 
   // Parallel: unloads are independent and each call is one cheap admin POST;
@@ -92,7 +107,7 @@ export async function releaseModelsForRender(opts: ReleaseModelsOptions = {},): 
   }
 
   await drainReleasedModels(shared, new Set(released,), opts,);
-  return { released, };
+  return { released, probeOk: true, };
 }
 
 /**
@@ -109,10 +124,16 @@ async function drainReleasedModels(
   const deadline = Date.now() + (opts.drainTimeoutMs ?? DRAIN_TIMEOUT_MS);
   const pollMs = opts.drainPollMs ?? DRAIN_POLL_MS;
   for (;;) {
-    // computeEvictionSet never throws operationally, but [] is ambiguous
-    // (drained vs unreachable) — stop polling on empty EITHER way; the render
-    // must proceed and the unload POSTs already landed.
-    const stillWarm = (await computeEvictionSet({ ...shared, exclude: [], },)).filter((id,) => pending.has(id,));
+    // readRunningModels never throws operationally; ok:false is a failed
+    // poll, not a drained set — stop polling and report loud (the unload
+    // POSTs already landed, the render still proceeds).
+    const poll = await readRunningModels({ ...shared, exclude: [], },);
+    if (!poll.ok) {
+      log?.warn("llama-swap drain probe failed — pool state unknown", { error: poll.error, },);
+      return;
+    }
+
+    const stillWarm = poll.ids.filter((id,) => pending.has(id,));
     if (stillWarm.length === 0 || Date.now() >= deadline) {
       if (stillWarm.length > 0) {
         log?.warn("llama-swap drain timed out", { models: stillWarm, },);

@@ -25,6 +25,11 @@ export { isSchedulerCancel, } from "./internal-handle";
 export {
   COMFYUI_PROXY_MODEL_ID,
   computeEvictionSet,
+  DEFAULT_BASE,
+  DEFAULT_LISTEN_PORT,
+  readRunningModels,
+  resolveLlamaSwapBase,
+  type RunningReadout,
   unloadLlamaSwapModel,
   type UnloadModelOptions,
   type UnloadOutcome,

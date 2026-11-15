@@ -179,9 +179,15 @@ export async function startLlamaSwap(
   }
 
   const resolvedConfig = resolve(expandPath(opts.configPath,),);
-  // llama-swap listens on `startPort` from its own config (default 8080).
-  // The spawn command does not pass --port, so read the real port here.
-  const port = resolveLlamaSwapPort(host, resolvedConfig,);
+  // YAML `startPort` is the `${PORT}` macro base for the first model
+  // (upstream default 5800) — never the proxy port. The proxy listens on
+  // `listenPort` (default 8080, the upstream proxy default).
+  const modelBasePort = resolveLlamaSwapPort(host, resolvedConfig,);
+  const port = opts.listenPort ?? 8080;
+  if (port === modelBasePort) {
+    host.log.warn("llama-swap listenPort equals YAML startPort — proxy collides with the first model", { port, },);
+  }
+
   host.log.info("Starting llama-swap", { binary, config: resolvedConfig, port, },);
   const proc = spawn({
     cmd: [binary, "--config", resolvedConfig, "--listen", `127.0.0.1:${port}`,],
@@ -211,9 +217,9 @@ export async function startLlamaSwap(
 }
 
 /**
- * Read `startPort` from a llama-swap config file.
- * llama-swap listens on this port (the spawn command does not override it).
- * Falls back to 8080 if the file is missing or unreadable.
+ * Read the `${PORT}` macro base (`startPort`) from a llama-swap config file.
+ * This is the first model's port (upstream default 5800), not the proxy port.
+ * Kept only for the collision warn; falls back to 8080 if unreadable.
  * @param host
  * @param configPath
  */

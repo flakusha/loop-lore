@@ -145,7 +145,7 @@ if (scenario === "llama-missing") {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "swap-cfg-",),);
   const cfgPath = path.join(dir, "config.yaml",);
   fs.writeFileSync(cfgPath, "startPort: " + port + "\\n", "utf8",);
-  const pending = mod.startLlamaSwap(host, { configPath: cfgPath, },);
+  const pending = mod.startLlamaSwap(host, { configPath: cfgPath, listenPort: port, },);
   await new Promise((r,) => setTimeout(r, 50,),);
   const server = Bun.serve({ port, fetch: () => new Response("ok",), },);
   try {
@@ -353,7 +353,7 @@ describe("start-llama child harness", () => {
     }
   }, 15000,);
 
-  test("swap-success: startPort from config passed via --listen", async () => {
+  test("swap-success: listenPort passed via --listen", async () => {
     const stub = makeStubDir(["llama-swap",],);
     try {
       const result = await runScenario(helperPath, modPath, "swap-success", {

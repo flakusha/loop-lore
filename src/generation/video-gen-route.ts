@@ -42,11 +42,14 @@ const ESTIMATED_VIDEO_BYTES = 50_000_000;
 /**
  * B1 composition: the gate owns the box slot, the sibling unload owns the
  * release semantics. Register once at module load; the box key is
- * intentionally unused (the base resolves from app config, never request
- * input). Failure never aborts the render (runVideoPreDispatchHook logs).
+ * intentionally unused (the base resolves from app config — explicit base or
+ * `generation.autoStart.llamaSwap.listenPort` from the spawned proxy — never
+ * request input). A dead proxy is reported loud (`probeOk:false` + warn) but
+ * never aborts the render (runVideoPreDispatchHook logs).
  */
 setVideoPreDispatchHook(async () => {
-  await releaseModelsForRender();
+  const listenPort = loadConfig().generation.autoStart?.llamaSwap?.listenPort;
+  await releaseModelsForRender({ listenPort, },);
 },);
 
 /** Request body — prompt is required unless a template renders it. */

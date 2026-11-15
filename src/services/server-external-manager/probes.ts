@@ -50,9 +50,16 @@ export async function checkAllLiveliness(host: ServerExternalHost,): Promise<voi
   for (const instance of host.instances) {
     const alive = await probeInstance(instance,);
     if (!alive) {
+      let port: number | undefined;
+      try {
+        port = instance.port;
+      } catch {
+        port = undefined;
+      }
+
       host.log.warn("External server unresponsive", {
         type: instance.type,
-        port: instance.pid,
+        port,
         pid: instance.pid,
       },);
     }
@@ -75,13 +82,14 @@ async function probeInstance(instance: ServerInstance,): Promise<boolean> {
     }
 
     if (instance.type === "llama-swap") {
-      // No guaranteed /health route; probe the OpenAI models endpoint.
-      const result = await safeFetch(`http://127.0.0.1:${instance.port}/v1/models`, {
+      // llama-swap serves GET /health with body "OK" (upstream server.go:457).
+      const result = await safeFetch<string>(`http://127.0.0.1:${instance.port}/health`, {
         timeout: 5_000,
+        parseJson: false,
       },);
 
-      // Any HTTP response (any status) means the server is alive.
-      return result.ok || result.status !== undefined;
+      // Non-2xx (404/500) surfaces as ok:false with no body — dead.
+      return result.ok && result.data === "OK";
     }
 
     // sd-cpp: any TCP response = alive

@@ -148,7 +148,11 @@ export async function initBackgroundServices(
       initJobs.push({
         name: "llama-swap",
         promise: (async () => {
-          const instance = await serverManager.startLlamaSwap({ configPath: llamaSwapCfg.configPath, },);
+          const instance = await serverManager.startLlamaSwap({
+            configPath: llamaSwapCfg.configPath,
+            listenPort: llamaSwapCfg.listenPort,
+          },);
+
           if (instance) {
             logger.info(`llama-swap ready → http://127.0.0.1:${instance.port}`,);
           } else {

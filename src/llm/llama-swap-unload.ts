@@ -37,10 +37,24 @@ export const DRAIN_TIMEOUT_MS = 30_000;
 export const DRAIN_POLL_MS = 250;
 /** Per-request timeout for the small admin calls. */
 export const REQUEST_TIMEOUT_MS = 10_000;
-/** Default base: llama-swap's default `startPort`, loopback-bound by the app's own spawn. */
-export const DEFAULT_BASE = "http://127.0.0.1:8080";
+/** Proxy listen-port default: the app spawns llama-swap with `--listen 127.0.0.1:<port>` (D1 knob `listenPort`). */
+export const DEFAULT_LISTEN_PORT = 8080;
+/** Default base: loopback proxy at the listen-port default — never the YAML `startPort` (upstream default 5800). */
+export const DEFAULT_BASE = `http://127.0.0.1:${DEFAULT_LISTEN_PORT}`;
 /** Env override for the operator's llama-swap base (app config, never request input). */
 export const BASE_ENV_VAR = "LLAMA_SWAP_BASE_URL";
+
+/**
+ * Resolve the proxy base: explicit `llamaSwapBase` > `LLAMA_SWAP_BASE_URL` env >
+ * loopback at `listenPort` (the D1 `listenPort` knob start-llama spawns with).
+ * @param opts - explicit base and/or spawned-proxy listen port
+ * @returns unstripped raw base (callers stripBase + blank-check it)
+ */
+export function resolveLlamaSwapBase(opts: { llamaSwapBase?: string; listenPort?: number } = {},): string {
+  const explicit = opts.llamaSwapBase ?? process.env[BASE_ENV_VAR];
+  if (explicit !== undefined) { return explicit; }
+  return `http://127.0.0.1:${opts.listenPort ?? DEFAULT_LISTEN_PORT}`;
+}
 
 /** Options for unloading ONE model. The id is a single string — no array, no empty-means-all. */
 export interface UnloadModelOptions {
@@ -162,15 +176,22 @@ interface RunningEntry {
   model?: unknown;
 }
 
+/** One `/running` read: `ok:false` is probe failure — never "drained". Only `ok:true` + empty `ids` means drained. */
+export interface RunningReadout {
+  ok: boolean;
+  ids: string[];
+  error?: string;
+}
+
 /**
- * Fetch the warm set from a FRESH `GET {base}/running` — stateless, never cached across awaits.
+ * Read the warm set from a FRESH `GET {base}/running` — stateless, never cached across awaits.
  * @param opts - base, extra spares beyond `comfyui_auto`, optional credential/fetch seam
- * @returns eviction set: running ids minus `comfyui_auto` (and `exclude`); [] on any fetch failure
+ * @returns readout; `ok:false` on any fetch failure (warned, never thrown)
  * @throws {Error} On programmer errors (blank base) only.
  */
-export async function computeEvictionSet(
+export async function readRunningModels(
   opts: { llamaSwapBase: string; exclude?: string[]; apiKey?: string; fetchImpl?: typeof fetch; timeoutMs?: number },
-): Promise<string[]> {
+): Promise<RunningReadout> {
   const base = stripBase(opts.llamaSwapBase,);
   if (!base) {
     throw new Error("computeEvictionSet: llamaSwapBase must not be blank",);
@@ -187,19 +208,19 @@ export async function computeEvictionSet(
 
     if (!resp.ok) {
       log?.warn("llama-swap /running failed", { status: resp.status, },);
-      return [];
+      return { ok: false, ids: [], error: `status ${resp.status}`, };
     }
 
     data = (await resp.json()) as { running?: unknown };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error,);
     log?.warn("llama-swap /running unreachable", { error: message, },);
-    return [];
+    return { ok: false, ids: [], error: message, };
   }
 
   if (typeof data !== "object" || data === null || !Array.isArray(data.running,)) {
     log?.warn("llama-swap /running malformed", {},);
-    return [];
+    return { ok: false, ids: [], error: "malformed", };
   }
 
   const ids: string[] = [];
@@ -209,5 +230,19 @@ export async function computeEvictionSet(
     ids.push(id,);
   }
 
-  return ids;
+  return { ok: true, ids, };
+}
+
+/**
+ * Fetch the warm set from a FRESH `GET {base}/running` — stateless, never cached across awaits.
+ * Legacy wrapper kept for callers that treat probe failure as "nothing to evict".
+ * Prefer {@link readRunningModels} when the failure/drained distinction matters.
+ * @param opts - base, extra spares beyond `comfyui_auto`, optional credential/fetch seam
+ * @returns eviction set: running ids minus `comfyui_auto` (and `exclude`); [] on any fetch failure
+ * @throws {Error} On programmer errors (blank base) only.
+ */
+export async function computeEvictionSet(
+  opts: { llamaSwapBase: string; exclude?: string[]; apiKey?: string; fetchImpl?: typeof fetch; timeoutMs?: number },
+): Promise<string[]> {
+  return (await readRunningModels(opts,)).ids;
 }

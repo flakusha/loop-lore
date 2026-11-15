@@ -93,12 +93,43 @@ describe("releaseModelsForRender", () => {
       },),
     },);
 
-    expect(summary,).toEqual({ released: ["llm-a",], },);
+    expect(summary,).toEqual({ released: ["llm-a",], probeOk: true, },);
     expect(hitForbidden(seen,),).toBe(false,);
     const posts = seen.filter((call,) => call.method === "POST");
     expect(posts.map((call,) => new URL(call.url,).pathname.replace(/\/+$/, "",)),).toEqual([
       "/api/models/unload/llm-a",
     ],);
+  });
+
+  test("listenPort resolves the spawned proxy base (no explicit base)", async () => {
+    const seen: SeenCall[] = [];
+    const summary = await releaseModelsForRender({
+      listenPort: 9099,
+      fetchImpl: makeMock(seen, () => json({ running: [], },),),
+    },);
+
+    expect(summary,).toEqual({ released: [], probeOk: true, },);
+    expect(seen,).toHaveLength(1,);
+    expect(seen[0]?.url,).toBe("http://127.0.0.1:9099/running",);
+  });
+
+  test("explicit base wins over env and listenPort", async () => {
+    const saved = process.env.LLAMA_SWAP_BASE_URL;
+    const seen: SeenCall[] = [];
+    try {
+      process.env.LLAMA_SWAP_BASE_URL = "http://env:1";
+      const summary = await releaseModelsForRender({
+        llamaSwapBase: BASE,
+        listenPort: 9099,
+        fetchImpl: makeMock(seen, () => json({ running: [], },),),
+      },);
+
+      expect(summary.probeOk,).toBe(true,);
+      expect(seen[0]?.url,).toBe(`${BASE}/running`,);
+    } finally {
+      if (saved === undefined) { delete process.env.LLAMA_SWAP_BASE_URL; }
+      else { process.env.LLAMA_SWAP_BASE_URL = saved; }
+    }
   });
 
   test("drain poll precedes the return; render submitted after resolves post-unload", async () => {
@@ -126,14 +157,14 @@ describe("releaseModelsForRender", () => {
     expect(polls,).toBeGreaterThanOrEqual(3,);
   });
 
-  test("already-unloaded model is a no-op", async () => {
+  test("already-unloaded model is a clean no-op (probe ok)", async () => {
     const seen: SeenCall[] = [];
     const summary = await releaseModelsForRender({
       llamaSwapBase: BASE,
       fetchImpl: makeMock(seen, () => json({ running: [], },),),
     },);
 
-    expect(summary,).toEqual({ released: [], },);
+    expect(summary,).toEqual({ released: [], probeOk: true, },);
     expect(seen.filter((call,) => call.method === "POST"),).toHaveLength(0,);
   });
 
@@ -156,13 +187,18 @@ describe("releaseModelsForRender", () => {
     expect(hitForbidden(seen,),).toBe(false,);
   });
 
-  test("unreachable llama-swap is non-fatal", async () => {
+  test("unreachable probe is loud (probeOk:false), still non-fatal, with a throwing opt-in", async () => {
     const summary = await releaseModelsForRender({
       llamaSwapBase: BASE,
       fetchImpl: throwingFetch(new Error("conn refused",),),
     },);
 
-    expect(summary,).toEqual({ released: [], },);
+    expect(summary,).toEqual({ released: [], probeOk: false, },);
+    await expect(releaseModelsForRender({
+      llamaSwapBase: BASE,
+      throwOnProbeFailure: true,
+      fetchImpl: throwingFetch(new Error("conn refused",),),
+    },),).rejects.toThrow(/VRAM NOT released/,);
   });
 
   test("refuses non-loopback base without a credential, without any fetch", async () => {
@@ -172,7 +208,7 @@ describe("releaseModelsForRender", () => {
       fetchImpl: makeMock(seen, () => json({ running: [{ model: "llm-a", },], },),),
     },);
 
-    expect(summary,).toEqual({ released: [], },);
+    expect(summary,).toEqual({ released: [], probeOk: false, },);
     expect(seen,).toHaveLength(0,);
   });
 
@@ -184,7 +220,7 @@ describe("releaseModelsForRender", () => {
       fetchImpl: makeMock(seen, () => json({ running: [], },),),
     },);
 
-    expect(summary,).toEqual({ released: [], },);
+    expect(summary,).toEqual({ released: [], probeOk: true, },);
     expect(seen,).toHaveLength(1,);
   });
 

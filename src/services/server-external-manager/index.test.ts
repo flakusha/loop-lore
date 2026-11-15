@@ -259,9 +259,9 @@ describeOrSkipStrict("ServerExternalManager.startLlamaSwap path", () => {
     const path = await import("node:path");
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "llama-swap-",),);
     const cfgPath = path.join(tmpDir, "config.yaml",);
-    fs.writeFileSync(cfgPath, "startPort: 9091\n", "utf8",);
+    fs.writeFileSync(cfgPath, "startPort: 5800\n", "utf8",);
     try {
-      const opts = { configPath: cfgPath, } as { configPath: string };
+      const opts = { configPath: cfgPath, listenPort: 9091, } as { configPath: string; listenPort: number };
       const instance = await mgr.startLlamaSwap(opts as unknown as { configPath: string },);
       expect(instance,).not.toBeNull();
       expect(instance?.type,).toBe("llama-swap",);

@@ -22,6 +22,8 @@ export type SdCppOptions = SdCppAutoStartConfig;
 /** */
 export interface LlamaSwapOptions {
   configPath: string;
+  /** Proxy listen port for `--listen` (default: 8080). */
+  listenPort?: number;
 }
 
 /**

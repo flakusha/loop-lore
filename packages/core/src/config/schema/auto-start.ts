@@ -171,6 +171,12 @@ export interface LlamaSwapAutoStartConfig {
   enabled: boolean;
   /** Path to llama-swap config YAML */
   configPath: string;
+  /**
+   * Proxy listen port passed as `--listen` (default: 8080, the upstream
+   * proxy default). The YAML `startPort` stays the `${PORT}` macro base
+   * for the first model (upstream default 5800) — keep them different.
+   */
+  listenPort?: number;
 }
 
 /** */

@@ -63,7 +63,7 @@ if (scenario === "llama-success") {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "facade-swap-",),);
   const cfgPath = path.join(dir, "config.yaml",);
   fs.writeFileSync(cfgPath, "startPort: " + port + "\\n", "utf8",);
-  const pending = mgr.startLlamaSwap({ configPath: cfgPath, },);
+  const pending = mgr.startLlamaSwap({ configPath: cfgPath, listenPort: port, },);
   await new Promise((r,) => setTimeout(r, 50,),);
   const server = Bun.serve({ port, fetch: () => new Response("ok",), },);
   try {
