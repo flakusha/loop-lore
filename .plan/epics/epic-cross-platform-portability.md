@@ -90,6 +90,8 @@ loop-lore is developed and CI-tested on Linux. This epic removes the Linux-only 
 - `TASK-cross-platform-dev-tooling-port.md` (T1.3 + T1.4 + T1.7)
 - `TASK-cross-platform-ci-matrix.md` (T1.6)
 - `TASK-cross-platform-single-binary.md` (T2.1 + T2.2)
+- `2b69e85` — TASK-lolo-symlink-in-local-bin: make `lolo` invocable as a bare command via a `~/.local/bin` link to `bin/lolo.ts` (or `bun link`) as part of install/setup; Windows has no `~/.local/bin`, so the link directory must be resolved per-platform; includes docs + staleness caveat (priority: medium)
+- `adda3c5` — TASK-windows-launch-scripts-bat-ps1: ship `start.bat` + `start.ps1` at repo root — one script holds the logic, the other forwards to it; install deps (`bun install --frozen-lockfile`) when `node_modules` is missing; `server`/`tui` modes over the existing `bun run start`/`bun run tui`; explicit `NODE_ENV` policy (plain-HTTP `production` breaks the login cookie); and a launcher-side pre-flight port-conflict hint (the server-side friendly message is still unshipped and the child's error text is Bun-version-specific) (priority: medium; gap G6)
 
 ## Related Epics
 
