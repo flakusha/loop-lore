@@ -149,4 +149,38 @@ describe("comparisonsExportRoutes", () => {
     expect(md,).toContain("5",);
     expect(md,).toContain("clearer",);
   });
+
+  test("falls back to the comparison record when no run row exists", async () => {
+    const comparisonId = uid();
+    await db
+      .insertInto("model_comparisons",)
+      .values({
+        id: comparisonId,
+        message_id: `missing-${comparisonId}`,
+        user_id: userId,
+        reference_model: "p1/m1",
+        preference: "m1",
+        confidence: 0.9,
+        created_at: "2026-01-15T10:00:00.000Z",
+      },)
+      .execute();
+
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/v1/comparisons/${comparisonId}/export`,),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as {
+      id: string;
+      prompt: string;
+      messageId: string;
+      referenceModel: string;
+    };
+
+    expect(body.id,).toBe(comparisonId,);
+    expect(body.prompt,).toBe("",);
+    expect(body.messageId,).toBe(`missing-${comparisonId}`,);
+    expect(body.referenceModel,).toBe("p1/m1",);
+  });
 });

@@ -191,3 +191,43 @@ describe("achievements CRUD + progress (auth-gated)", () => {
     expect(afterRes.status,).toBe(404,);
   });
 });
+
+describe("player routes — service failure surfaces generic 500", () => {
+  /**
+   * App wired to a non-database: every service call throws inside the
+   * route try block, so each catch maps it to the generic 500 envelope.
+   * @param actingUserId authenticated caller, also the player
+   */
+  function brokenApp(actingUserId: string,): Elysia {
+    return new Elysia({ name: "test-achievements-broken", },)
+      .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
+      .use(achievementsPlayerRoutes({ database: {} as never, config: {} as never, },),) as unknown as Elysia;
+  }
+
+  test("list failure → 500 without leaking internals", async () => {
+    const playerId = uid();
+    const res = await brokenApp(playerId,).handle(
+      new Request(`http://localhost/api/rpg/achievements/player/${playerId}`,),
+    );
+
+    expect(res.status,).toBe(500,);
+  });
+
+  test("stats failure → 500 without leaking internals", async () => {
+    const playerId = uid();
+    const res = await brokenApp(playerId,).handle(
+      new Request(`http://localhost/api/rpg/achievements/player/${playerId}/stats`,),
+    );
+
+    expect(res.status,).toBe(500,);
+  });
+
+  test("single-progress failure → 500 without leaking internals", async () => {
+    const playerId = uid();
+    const res = await brokenApp(playerId,).handle(
+      new Request(`http://localhost/api/rpg/achievements/player/${playerId}/some-achievement`,),
+    );
+
+    expect(res.status,).toBe(500,);
+  });
+});
