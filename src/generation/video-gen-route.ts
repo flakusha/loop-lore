@@ -48,7 +48,13 @@ const ESTIMATED_VIDEO_BYTES = 50_000_000;
  * never aborts the render (runVideoPreDispatchHook logs).
  */
 setVideoPreDispatchHook(async () => {
-  const listenPort = loadConfig().generation.autoStart?.llamaSwap?.listenPort;
+  let listenPort: number | undefined;
+  try {
+    listenPort = loadConfig().generation.autoStart?.llamaSwap?.listenPort;
+  } catch {
+    listenPort = undefined;
+  }
+
   await releaseModelsForRender({ listenPort, },);
 },);
 
