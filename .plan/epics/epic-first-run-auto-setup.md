@@ -19,7 +19,7 @@ Research round 3 verified that boot is shipped modulo one latent gate: `package.
 
 ## Scope
 
-- First ticket: close the NODE_ENV/PII boot gate (promoted-random-secret path or `NODE_ENV=development` default in `start`/`dev` scripts — pick one, document the other) + write effective defaults to `config.local.yaml` + `bun run init` alias; secret handling per approaches §7 C1 (generated ≥32-char secrets only where prod validation demands them, chmod 0600, gitignored names, never plaintext beyond the deliberate generated values).
+- First ticket: close the NODE_ENV/PII boot gate (promoted-random-secret path or `NODE_ENV=development` default in `start`/`dev` scripts — pick one, document the other) + write effective defaults to `config.local.yaml`; the `bun run init` alias is split out into its own ticket (`b7a0500`, thin entry point over the same writer); secret handling per approaches §7 C1 (generated ≥32-char secrets only where prod validation demands them, chmod 0600, gitignored names, never plaintext beyond the deliberate generated values).
 - Follow-up ticket: one off-capabilities log line at `ready=true` computed from the same checks module as the setup-state endpoint (`GET /api/v1/setup/state`, ticket below) — single source, no duplicated logic.
 - Shared dependency: the setup-state endpoint ticket is filed under this epic because its checks module powers the readiness summary; it deliberately does NOT extend `/api/health` (pinned unauthenticated contract) and does not add a doctor CLI.
 
@@ -28,6 +28,11 @@ Research round 3 verified that boot is shipped modulo one latent gate: `package.
 - `183003a` — TASK-config-init-close-pii-node-env-boot-gate-promote-defaults-to: close PII/NODE_ENV boot gate + promote defaults to config.local.yaml (priority: high)
 - `83b7049` — TASK-boot-readiness-summary-off-capabilities-log-line-at-ready-tr: off-capabilities log line at ready=true (priority: medium)
 - `205978b` — TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin: GET /api/v1/setup/state {checks:[{id,ok,hint}]} (priority: high; shared single source for the readiness summary, /doctor, and the wizard epic)
+- `b7a0500` — TASK-config-init-cli-alias-bun-run-init: `bun run init` alias over the C1 promotion writer; prints generated file path, exits 0; `--force` overwrites (default refuses) (priority: medium)
+- `233850e` — FEAT-backend-auto-provisioner-managed-binary-acquisition-backend-: backend auto-provisioner — universal backend registry + detect/fetch/verify/seed/probe pipeline, `lolo backends` CLI, `[generation.backends]` config, boot preflight report; core pipeline lands with first-boot (priority: high)
+- `b7b3eae` — TASK-deinstallation-scenarios-clean-removal: uninstall/clean-removal surface — artifact inventory (DB+uploads+certs+archives+configs), scenario table (app-only / data-only / full wipe), orphaned-artifact sweep, and the secrets-deletion caveat (no secure wipe exists; `config.local.yaml` holds plaintext PII); `lolo uninstall [--keep-data] [--purge] [--backup-first]` plus a documented removal section (priority: low)
+- `4660ff5` — TASK-startup-preparedness-for-all-application-parts: startup-preparedness audit across all application parts — explicit first-run detection branch at boot plus the off-capabilities readiness line naming the parts that warn-and-skipped (local backends not found, SD discovery empty, plugins failed, seeds failed, harness queue disabled); consumes the setup-state checks module (priority: medium)
+- `7662016` — TASK-demo-autosetup-observability: `auth.demoAutoSetup` is a dead knob (never read in src/) — one warn-level boot log naming the demo username and the passwordless `POST /api/demo-login` route when the flag is true (once per boot, no secret values); `auth.demoAutoSetup` pinned into the promoted config defaults (priority: low)
 
 ## Boundaries / Related Epics
 

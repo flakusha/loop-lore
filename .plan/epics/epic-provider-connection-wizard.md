@@ -28,6 +28,7 @@ Boot never fails without providers (warn only, `start.ts:95-99`) and features de
 
 - `bf6c766` — TASK-provider-connection-wizard-core-first-run-provider-connectio: wizard core with deps-on-C2 noted (priority: high)
 - `4293058` — TASK-frontend-setup-wizard-import-system-config-from-yaml-toml: frontend setup wizard import (priority: high) — ABSORBED by this epic; its import-wizard scope lands inside the wizard core ticket rather than as an independent parallel wizard.
+- `f6db84a` — TASK-first-run-welcome-surface-getting-started-banner: dismissible getting-started banner on the main chat view when any setup-state check reports `ok:false`; links to the wizard entry point and the `/doctor` assistant command; auto-hides once every check is ok (priority: medium; gap G12)
 
 ## Boundaries / Related Epics
 
@@ -41,7 +42,7 @@ No Jellyfin-length multi-screen funnel: two screens max. Skippable at every poin
 
 ## Open Questions
 
-1. **Wizard entry point on fresh installs:** auto-open on first admin visit vs a settings-page banner only (setup-state `ok:false` checks make either triggerable; decide at implementation).
+1. **Wizard entry point on fresh installs:** auto-open on first admin visit vs a banner only (setup-state `ok:false` checks make either triggerable). Answered by ticket `f6db84a` (TASK-first-run-welcome-surface-getting-started-banner): the banner variant — a dismissible getting-started banner on the MAIN CHAT view, linked to the wizard entry point and the `/doctor` assistant command, auto-hidden once every setup-state check is ok. No auto-open modal (the anti-goal above caps the funnel at two screens and keeps every point skippable).
 2. **Model-role defaults step:** fully automated best-guess roles after the connection test vs a confirmation screen — must stay within the 2-screen budget.
 3. **`4293058` disposition:** close it as absorbed when the wizard core lands, or keep it open tracking only the standalone import polish (decide at merge time; until then this epic is its canonical home).
 
