@@ -20,6 +20,7 @@ import "./create";
 import "./debug";
 import "./detail";
 import "./dice";
+import "./doctor";
 import "./duplicate";
 import "./gm-guidance";
 import "./harness-turn";
