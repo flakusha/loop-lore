@@ -394,7 +394,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 - **Plumbing** — Kysely + `bun:sqlite` (PG dialect-swappable), encrypted DB backup/recovery, plugin system, structured logging, telemetry, auxiliary LLM pipeline, wiring gate (`scripts/check-wiring.ts`), e2e browser suite (19 flows).
 
-
 ### Changed
 
 - **`giwt finalize` spends less wall time in its gates** — the scoped coverage gate now runs its two test passes side by side instead of one after the other: the collision companion (every touched subsystem's whole test dir, unscoped) and the scoped pass (the diff's own test files, isolated + coverage) are independent, since the companion writes no coverage output while the scoped pass writes the lcov the floor reads. `giwt finalize` Step 3 runs the unit suite with the same worker count the check runner's own src chunk gate measures on this host (12 workers, `CHECK_SRC_TEST_JOBS` overrides it) instead of the 4-worker default. The browser e2e suite hands its published frontend build down to the spec workers instead of letting each worker resolve its own: a frontend build that fails now fails the gate once, up front, rather than once per spec after a full build timeout.
@@ -584,7 +583,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Coverage run executes the bundled plugin engines' own tests** — the plugin engines under `plugins/` ship their own `*.test.ts`, but the coverage run's test set was `tests/e2e/ src/`, so those files never ran and the `plugins` module was measured at a fraction of what the tests actually cover. `test:coverage` now includes `plugins/`, and the parallel runner's coverage gate builds the same test set (it walks `plugins/` alongside `src/`, so the gate and the manual script agree). The plugin engines are in-process unit tests, so they belong inside the coverage invocation rather than in the separate scripts pass.
 
 - **Image-edit input images reach ComfyUI as uploaded bytes** — the ComfyUI image-edit provider now uploads every `image`-typed parameter (`input_image`, `mask_image`, `control_image`) before the workflow is built and substitutes the name ComfyUI stored the bytes under, so a `LoadImage` node no longer names a file the server never uploaded. The parameter carries the ASSET ID of an image the caller owns: the provider checks the owner, decrypts with the chat key when the asset is encrypted, and reads the bytes through the asset row — a path on the server is never opened. The run body is validated against one shared TypeBox schema (`src/validation/schemas/image-edit.ts`): the route declares it as its `body:` — so the served OpenAPI document carries the contract — and `handleRun` applies the same validator, which covers the chain-run executor that calls the handler directly.
-
 
 ### Removed
 
