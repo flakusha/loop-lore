@@ -16,6 +16,7 @@ import { verifyJwt, } from "../../auth/jwt";
 import type { Config, } from "../../config/schema";
 import { ChallengePurpose, FactorKind, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { createRateLimiter, } from "../../middleware/rate-limit";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertAuthFactors, insertUsers, } from "../../test-utils/insert-helpers";
 import { handleVerifyFactor, } from "./verify";
@@ -237,5 +238,46 @@ describe("POST /api/v1/auth/factors/verify", () => {
     },);
 
     expect(res.status,).toBe(401,);
+  });
+
+  test("rate-limited verify — exhausted per-user budget is 429 and the challenge stays open", async () => {
+    const { userId, factorId, sessionId, } = await seedSession();
+    const issued = await issueLoginChallenge(userId, factorId,);
+    const limiter = createRateLimiter({ windowMs: 60_000, maxRequests: 1, },);
+
+    const first = await handleVerifyFactor({
+      database: db,
+      config: makeConfig(),
+      userId,
+      sessionId,
+      userRole: "user",
+      challengeId: issued.id,
+      code: "000000",
+      purpose: ChallengePurpose.Login,
+      limiter,
+      now,
+    },);
+
+    expect(first.status,).toBe(401,);
+
+    const second = await handleVerifyFactor({
+      database: db,
+      config: makeConfig(),
+      userId,
+      sessionId,
+      userRole: "user",
+      challengeId: issued.id,
+      code: issued.code,
+      purpose: ChallengePurpose.Login,
+      limiter,
+      now,
+    },);
+
+    expect(second.status,).toBe(429,);
+
+    const row = await db.selectFrom("auth_challenges",).select("consumed",).where("id", "=", issued.id,)
+      .executeTakeFirst();
+
+    expect(row?.consumed,).toBe(0,);
   });
 });

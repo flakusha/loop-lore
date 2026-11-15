@@ -21,6 +21,7 @@ import {
 const LOGIN_MAX_ATTEMPTS = 10;
 const REGISTER_MAX_ATTEMPTS = 3;
 const DEMO_LOGIN_MAX_ATTEMPTS = 5;
+const VERIFY_MAX_ATTEMPTS = 10;
 
 // Module singletons are the production default; tests inject their own
 // instance per file so parallel files never share mutable limiter state
@@ -42,6 +43,7 @@ const DEMO_LOGIN_MAX_ATTEMPTS = 5;
 const loginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MAX_ATTEMPTS, },);
 const registerLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequests: REGISTER_MAX_ATTEMPTS, },);
 const demoLoginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: DEMO_LOGIN_MAX_ATTEMPTS, },);
+const verifyLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: VERIFY_MAX_ATTEMPTS, },);
 
 /**
  * Build an isolated login limiter (same policy as the production default).
@@ -66,6 +68,14 @@ export function createRegisterLimiter(): RateLimiter {
  */
 export function createDemoLoginLimiter(): RateLimiter {
   return createRateLimiter({ windowMs: 60_000, maxRequests: DEMO_LOGIN_MAX_ATTEMPTS, },);
+}
+
+/**
+ * Build an isolated factor-verify limiter (same policy as the production default).
+ * @returns {{ check: (key: string) => boolean; clear: () => void; consume: (key: string, now?: number) => RateLimitResult; destroy: () => void; peek: (key: string, now?: number) => RateLimitResult; record: (key: string, now?: number) => void; refund: (key: string) => void; reset: (key: string) => void; }}
+ */
+export function createVerifyLimiter(): RateLimiter {
+  return createRateLimiter({ windowMs: 60_000, maxRequests: VERIFY_MAX_ATTEMPTS, },);
 }
 
 // ── Cookie helpers ────────────────────────────────────────────
@@ -171,6 +181,13 @@ export function resetDemoLoginRateLimiter(): void {
   demoLoginLimiter.clear();
 }
 
+/**
+ * @returns {void}
+ */
+export function resetVerifyRateLimiter(): void {
+  verifyLimiter.clear();
+}
+
 export {
   COOKIE_PATH,
   demoLoginLimiter,
@@ -186,5 +203,6 @@ export {
   registerLimiter,
   setTokenCookie,
   TOKEN_COOKIE,
+  verifyLimiter,
   wantsJson,
 };

@@ -2742,6 +2742,12 @@ describe("UserStatusSchema", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_primitives.UserStatusSchema,));
 });
 
+describe("IssueChallengeBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_auth.IssueChallengeBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_auth.IssueChallengeBody,));
+});
+
 describe("VerifyFactorBody", () => {
   test("accepts generated values", () => checkAllValid(validation_auth.VerifyFactorBody,));
 

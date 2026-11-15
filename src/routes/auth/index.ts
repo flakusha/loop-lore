@@ -15,11 +15,15 @@
  */
 
 import { Elysia, } from "elysia";
+import { createMfaEmailLimiter, } from "../../auth/channels/email";
+import { createMfaMessengerLimiter, } from "../../auth/channels/messenger";
 import type { TranslatorFn, } from "../../i18n/types";
-import { ErrorResponse, SuccessResponse, VerifyFactorBody, } from "../../validation/schemas";
+import { ErrorResponse, IssueChallengeBody, SuccessResponse, VerifyFactorBody, } from "../../validation/schemas";
+import { handleIssueChallenge, } from "./challenge";
 import { handleDemoLogin, handleLogin, } from "./login";
 import { handleRegister, } from "./register";
 import { handleLogout, handleMe, } from "./session";
+import { verifyLimiter, } from "./shared";
 import type { HandleOpts, } from "./types";
 import { handleVerifyFactor, } from "./verify";
 
@@ -27,9 +31,11 @@ export {
   createDemoLoginLimiter,
   createLoginLimiter,
   createRegisterLimiter,
+  createVerifyLimiter,
   resetDemoLoginRateLimiter,
   resetLoginRateLimiter,
   resetRegisterRateLimiter,
+  resetVerifyRateLimiter,
 } from "./shared";
 
 // ── Public routes: auth runs but won't block ─────────────────
@@ -126,7 +132,7 @@ export function authPublicRoutes({ database, config, limiters, }: HandleOpts, pr
  * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
-export function authProtectedRoutes({ database, config, }: HandleOpts, prefix = "/api",): Elysia {
+export function authProtectedRoutes({ database, config, bridge, limiters, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "auth-protected", },)
     .post(
       `${prefix}/auth/logout`,
@@ -205,6 +211,7 @@ export function authProtectedRoutes({ database, config, }: HandleOpts, prefix = 
           challengeId,
           code,
           purpose,
+          limiter: limiters?.verifyLimiter ?? verifyLimiter,
         },);
       },
       {
@@ -219,6 +226,67 @@ export function authProtectedRoutes({ database, config, }: HandleOpts, prefix = 
         detail: {
           summary: "Verify MFA factor",
           description: "Consume an MFA challenge and elevate the session with amr + auth_time claims.",
+          tags: ["Auth",],
+        },
+      },
+    )
+    .post(
+      `${prefix}/auth/factors/challenge`,
+      async ({ body, ...rest },) => {
+        const userId = "userId" in rest && typeof rest.userId === "string"
+          ? rest.userId
+          : null;
+
+        const sessionId = "sessionId" in rest && typeof rest.sessionId === "string"
+          ? rest.sessionId
+          : null;
+
+        const userRole = "userRole" in rest && typeof rest.userRole === "string"
+          ? rest.userRole
+          : null;
+
+        const { factorId, channel, destination, purpose, } = body as {
+          factorId: string;
+          channel: "email" | "messenger";
+          destination: string;
+          purpose:
+            (typeof import("../../db/enums").ChallengePurpose)[keyof typeof import("../../db/enums").ChallengePurpose];
+        };
+
+        // Channel budgets are self-caching singletons resolved against the
+        // stored window — one issue shares the resend budget by design.
+        const { limiter: emailLimiter, } = await createMfaEmailLimiter({ database, },);
+        const { limiter: messengerLimiter, } = await createMfaMessengerLimiter({ database, },);
+
+        return handleIssueChallenge({
+          database,
+          bridge,
+          userId,
+          sessionId,
+          userRole,
+          factorId,
+          channel,
+          destination,
+          purpose,
+          emailLimiter,
+          messengerLimiter,
+        },);
+      },
+      {
+        body: IssueChallengeBody,
+        response: {
+          200: SuccessResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+          429: ErrorResponse,
+          502: ErrorResponse,
+          503: ErrorResponse,
+        },
+        detail: {
+          summary: "Issue MFA challenge",
+          description: "Issue a single-use code challenge and deliver it over email or messenger.",
           tags: ["Auth",],
         },
       },

@@ -13,6 +13,7 @@ import { signJwt, } from "../../auth/jwt";
 import type { Config, } from "../../config/schema";
 import type { ChallengePurpose, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import type { RateLimiter, } from "../../middleware/rate-limit";
 import { can, } from "../../users/permissions";
 import { notFound, unauthorized, } from "../../validation/middleware";
 import { HttpStatus, jsonError, } from "../http-utils";
@@ -34,7 +35,21 @@ export interface VerifyFactorOptions {
   challengeId: string;
   code: string;
   purpose: ChallengePurpose;
+  /** Per-user verify budget; omitted means unthrottled (tests). */
+  limiter?: RateLimiter;
   now?: () => number;
+}
+
+/** Consume one unit of the per-user verify budget.
+ * @param limiter Rate limiter owning the budget.
+ * @param userId Budget owner.
+ * @param now Injected clock.
+ * @returns True when the attempt may proceed, false when throttled. */
+function consumeVerifyBudget(limiter: RateLimiter, userId: string, now: () => number,): boolean {
+  const key = `verify:${userId}`;
+  if (!limiter.peek(key, now(),).allowed) { return false; }
+  limiter.record(key, now(),);
+  return true;
 }
 
 /** Verify an MFA challenge and elevate the session with step-up claims.
@@ -50,6 +65,15 @@ export async function handleVerifyFactor(options: VerifyFactorOptions,): Promise
   if (!userId || !sessionId) { return unauthorized(); }
   if (!can(userRole, MFA_VERIFY_PERMISSION,)) {
     return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
+  }
+
+  // Route-level verify budget per user — the store already caps attempts
+  // per challenge; this caps rapid-fire probing across challenges.
+  if (options.limiter !== undefined && !consumeVerifyBudget(options.limiter, userId, now,)) {
+    return jsonError({
+      message: "Too many verification attempts — try again shortly",
+      status: HttpStatus.TooManyRequests,
+    },);
   }
 
   const verified = await verifyChallenge({ database, challengeId, userId, code, purpose, now, },);

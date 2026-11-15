@@ -14,6 +14,24 @@ export const LoginBody = t.Object({
   password: t.String({ minLength: 1, },),
 },);
 
+// ── MFA factor issue ─────────────────────────────────────────
+
+export const IssueChallengeBody = t.Object({
+  factorId: t.String({ minLength: 1, },),
+  channel: t.Union([
+    t.Literal("email",),
+    t.Literal("messenger",),
+  ],),
+  destination: t.String({ minLength: 1, maxLength: 320, },),
+  purpose: t.Union([
+    t.Literal("login",),
+    t.Literal("stepup",),
+    t.Literal("enroll",),
+    t.Literal("address-change",),
+    t.Literal("unlock",),
+  ],),
+},);
+
 // ── MFA factor verify ────────────────────────────────────────
 
 export const VerifyFactorBody = t.Object({

@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import type { MessageBridge, } from "../../integrations/bridge";
 import type { RateLimiter, } from "../../middleware/rate-limit";
 
 /**
@@ -15,12 +16,15 @@ export interface LimiterOverrides {
   loginLimiter?: RateLimiter;
   registerLimiter?: RateLimiter;
   demoLoginLimiter?: RateLimiter;
+  verifyLimiter?: RateLimiter;
 }
 
 /** */
 export interface HandleOpts {
   database: Kysely<DB>;
   config: Config;
+  /** Delivery bridge for code-sending routes; undefined means unconfigured (503). */
+  bridge?: MessageBridge;
   /** Optional limiter overrides (tests); defaults to shared module singletons. */
   limiters?: LimiterOverrides;
 }
