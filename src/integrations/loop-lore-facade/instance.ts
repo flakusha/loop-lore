@@ -13,6 +13,7 @@ import type { DB, } from "../../db/schema";
 import { registerAssetsOps, } from "./ops/assets";
 import { registerCharactersOps, } from "./ops/characters";
 import { registerChatOps, } from "./ops/chat";
+import { registerDelegateTaskOps, } from "./ops/delegation";
 import { registerGenerationOps, } from "./ops/generation";
 import { registerMemoryOps, } from "./ops/memory";
 import { registerRepoAccessOps, } from "./ops/repo-access";
@@ -53,6 +54,7 @@ export function getFacadeRegistry(deps: FacadeRegistryDeps,): FacadeRegistry {
     // calling actor.
     registerAssetsOps(registry, deps,);
     registerCharactersOps(registry, deps,);
+    registerDelegateTaskOps(registry, deps,);
     registerMemoryOps(registry, deps,);
     registerRpgOps(registry, deps,);
     singleton = registry;
