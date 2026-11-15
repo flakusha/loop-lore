@@ -10,8 +10,10 @@ import { describe, expect, test, } from "bun:test";
 import {
   assertValidServerProviderName,
   descriptorNameFromKey,
+  isServerProviderKind,
   parseStoredServerProvider,
   resolveApprovedHosts,
+  SERVER_PROVIDER_KINDS,
   serverProviderDescriptorKey,
   serverProviderSecretKey,
   ServerProviderValidationError,
@@ -137,5 +139,23 @@ describe("descriptorNameFromKey", () => {
 
   test("an unrelated key does not name a descriptor", () => {
     expect(descriptorNameFromKey("default_provider",),).toBeNull();
+  });
+});
+
+describe("isServerProviderKind", () => {
+  test("names exactly the three materializable kinds", () => {
+    expect([...SERVER_PROVIDER_KINDS,],).toEqual(["openai-compatible", "anthropic", "ollama-native",],);
+  });
+
+  test("accepts each materializable kind", () => {
+    for (const kind of SERVER_PROVIDER_KINDS) {
+      expect(isServerProviderKind(kind,),).toBe(true,);
+    }
+  });
+
+  test("rejects an unknown kind and non-strings", () => {
+    expect(isServerProviderKind("openai-v2",),).toBe(false,);
+    expect(isServerProviderKind(undefined,),).toBe(false,);
+    expect(isServerProviderKind(42,),).toBe(false,);
   });
 });

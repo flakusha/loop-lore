@@ -20,6 +20,7 @@ import {
   AdminSetupProviderBody,
   AdminSetupProviderResponse,
   AdminSetupProvidersResponse,
+  ServerProviderKindSchema,
 } from "./admin";
 
 /** A stored provider instance as the route returns it. */
@@ -203,5 +204,17 @@ describe("AdminSetupProviderBody kind", () => {
       model: "demo-model",
       kind: "openai-v2",
     },),).toBe(false,);
+  });
+});
+
+describe("ServerProviderKindSchema", () => {
+  test("accepts every materializable kind on its own", () => {
+    for (const kind of ["openai-compatible", "anthropic", "ollama-native",]) {
+      expect(Value.Check(ServerProviderKindSchema, kind,),).toBe(true,);
+    }
+  });
+
+  test("rejects an unknown kind", () => {
+    expect(Value.Check(ServerProviderKindSchema, "openai-v2",),).toBe(false,);
   });
 });

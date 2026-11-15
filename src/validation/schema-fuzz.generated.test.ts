@@ -2334,6 +2334,12 @@ describe("SaveBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_combatSchemas.SaveBody,));
 });
 
+describe("ServerProviderKindSchema", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.ServerProviderKindSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.ServerProviderKindSchema,));
+});
+
 describe("SettingsUpdateBody", () => {
   test("accepts generated values", () => checkAllValid(validation_settings.SettingsUpdateBody,));
 
@@ -2924,4 +2930,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 464 schemas discovered across 569 module(s).
+// 465 schemas discovered across 569 module(s).
