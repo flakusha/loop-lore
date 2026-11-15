@@ -351,11 +351,13 @@ Companion files (under `docs/ops/bare-metal/systemd/`):
 | `backup-sqlite.service` + `.timer`   | Hourly logical DB snapshot                         |
 | `backup-zfs-send.service` + `.timer` | Daily off-box snapshot                             |
 
-> These units are provisioning **templates**, not turn-key: `loop-lore.service`
-> and `loop-lore-worker.service` reference ExecStart wrappers
-> (`scripts/run-app.sh`, `scripts/run-worker.sh`) that the repo does not ship —
-> point them at real start commands (see each unit's header) before installing.
-> The backup units target the repo's `scripts/backup-sqlite.ts` (via bun) and a
+> `loop-lore.service` is installable as-is: its `ExecStart`
+> (`/opt/loop-lore/scripts/run-app.sh`) is the in-repo `scripts/run-app.sh`
+> wrapper, which ships executable with the checkout — no extra provisioning.
+> `loop-lore-worker.service` is still a template: the repo defines no worker
+> entry point (background jobs run in-process), so point its `ExecStart` at a
+> real worker entry before installing (see its header). The backup units
+> target the repo's `scripts/backup-sqlite.ts` (via bun) and a
 > provision-your-own off-box push.
 > Known gap, tracked for the first-boot S2 slice (installable units): `loop-lore.service`
 > `ExecStart` points at `scripts/run-app.sh`, which does not exist in the repo (likewise
@@ -371,6 +373,10 @@ sudo cp docs/ops/bare-metal/systemd/*.timer /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now loop-lore llama-swap backup-sqlite.timer backup-zfs-send.timer
 ```
+
+No wrapper step: `scripts/run-app.sh` installs with the checkout at
+`/opt/loop-lore/scripts/run-app.sh` (executable bit ships in git) and the
+unit's `ExecStart` already points there. Verify with the §10.2 app checks.
 
 ### 7.2 Restart / reload policy
 
