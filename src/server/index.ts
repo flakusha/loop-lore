@@ -27,6 +27,7 @@ export function startupExitCode(error: unknown,): number {
   if (error instanceof FirstBootContentionError) { return FIRST_BOOT_RETRY_EXIT; }
   return 1;
 }
+
 const isMainModule = typeof Bun !== "undefined" && (Bun as { main?: string }).main === import.meta.path;
 if (isMainModule) {
   start().catch((error: unknown,) => {
