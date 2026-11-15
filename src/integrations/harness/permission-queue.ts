@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 260
 
 /**
  * permission-queue.ts — the runtime-owned queue of ACP permission asks that
@@ -31,7 +32,7 @@ import {
   type PermissionOutcome,
   type WirePermissionOutcome,
 } from "./adapter-types";
-import { type PermissionFailureCode, } from "./permission-failure";
+import { PERMISSION_FAILURE, type PermissionFailureCode, } from "./permission-failure";
 import { classifyPermission, } from "./permission-policy";
 
 /** One ask's inputs: the profile, the raw pending ask, and the session's sandbox cwd. */
@@ -45,6 +46,7 @@ type ParkableAsk = { input: AskInput; reason: string; undeliverableReason: strin
  * answers the connection's open permission ask and reports the answer it put
  * on the wire.
  * @throws {PermissionAskGoneError} when the harness no longer holds the ask.
+ * @throws {PermissionDecisionRefusedError} when the harness refused the decision.
  */
 export type PermissionRespondable = { respondPermission(outcome: PermissionOutcome,): WirePermissionOutcome };
 
@@ -168,6 +170,21 @@ export class PermissionQueue {
 
           return { decision: "auto_allow", reason: verdict.reason, };
         } catch (error) {
+          if (error instanceof PermissionDecisionRefusedError) {
+            // A refusal is not a vanished ask: the harness answered on the
+            // wire with a refusal, so the log names the answer it sent — the
+            // same refused/ask_gone split resolve() uses below. A vanished
+            // ask sent NOTHING, so its log names no answer. Either way the
+            // ask is answered or gone: nothing is left to decide or park.
+            log()?.info("harness permission decision refused", {
+              profile: input.profile,
+              kind: input.pending.kind,
+              answer: error.answer,
+            },);
+
+            return { decision: "withdrawn", reason: error.message, };
+          }
+
           if (error instanceof PermissionAskGoneError) {
             // The harness no longer holds the ask — the turn was cancelled or
             // the ask was withdrawn — so there is nothing left to decide and
@@ -279,7 +296,8 @@ export class PermissionQueue {
   resolve(input: { id: string; decision: PermissionDecision },): PermissionResolveResult {
     const entry = this.entries.get(input.id,);
     if (!entry) {
-      return { ok: false, code: "unknown_request", message: `no pending permission request with id "${input.id}"`, };
+      const message = `no pending permission request with id "${input.id}"`;
+      return { ok: false, code: PERMISSION_FAILURE.unknownRequest, message, };
     }
 
     const connection = this.opts.connection(entry.profile,);
@@ -296,7 +314,8 @@ export class PermissionQueue {
 
       log()?.warn("harness permission decided without a live connection", fields,);
 
-      return { ok: false, code: "no_connection", message: `profile "${entry.profile}" has no live connection`, };
+      const message = `profile "${entry.profile}" has no live connection`;
+      return { ok: false, code: PERMISSION_FAILURE.noConnection, message, };
     }
 
     try {
@@ -320,7 +339,7 @@ export class PermissionQueue {
           ...(refused ? { answer: error.answer, } : {}),
         },);
 
-        const code = refused ? "refused" : "ask_gone";
+        const code = refused ? PERMISSION_FAILURE.refused : PERMISSION_FAILURE.askGone;
         return { ok: false, code, message: `${error.message} (profile "${entry.profile}")`, };
       }
 
@@ -335,7 +354,8 @@ export class PermissionQueue {
         this.entries.set(input.id, { ...parked, undeliverableReason: reason, },);
       }
 
-      return { ok: false, code: "not_delivered", message: `profile "${entry.profile}" did not accept the decision`, };
+      const message = `profile "${entry.profile}" did not accept the decision`;
+      return { ok: false, code: PERMISSION_FAILURE.notDelivered, message, };
     }
   }
 

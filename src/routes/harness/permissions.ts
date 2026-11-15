@@ -16,6 +16,7 @@ import {
   HarnessPermissionDecisionResponse,
   HarnessPermissionsResponse,
 } from "../../frontend/alpine/admin-harness-schema";
+import { PERMISSION_FAILURE, } from "../../integrations/harness/permission-failure";
 import type { PermissionDecision, } from "../../integrations/harness/permission-queue";
 import { getHarnessRuntime, } from "../../integrations/harness/runtime";
 import { requirePermission, } from "../../middleware/permissions";
@@ -50,7 +51,7 @@ function decide(
   // too - the harness answered, but not with the decision - and it keeps its
   // own code, so a client can tell "refused" from "the ask is gone" without
   // reading the message.
-  if (result.code === "refused") {
+  if (result.code === PERMISSION_FAILURE.refused) {
     return jsonError({
       message: result.message,
       status: HttpStatus.NotFound,
@@ -58,7 +59,7 @@ function decide(
     },);
   }
 
-  const gone = result.code === "unknown_request" || result.code === "ask_gone";
+  const gone = result.code === PERMISSION_FAILURE.unknownRequest || result.code === PERMISSION_FAILURE.askGone;
   return jsonError({
     message: result.message,
     status: gone ? HttpStatus.NotFound : HttpStatus.ServiceUnavailable,

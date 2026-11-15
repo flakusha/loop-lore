@@ -15,7 +15,7 @@ import { mkdtempSync, rmSync, } from "node:fs";
 import { createLogger, getChildLogger, type LogEntry, type Logger, setGlobalLogger, } from "../../logger";
 import { PermissionAskGoneError, PermissionDecisionRefusedError, type PermissionOutcome, } from "./adapter-types";
 import { PERMISSION_FAILURE, } from "./permission-failure";
-import { advertisedPermissionOptions, wirePermissionOutcome, } from "./permission-outcome";
+import { advertisedPermissionOptions, answerCarriesDecision, wirePermissionOutcome, } from "./permission-outcome";
 import type { PermissionRespondable, } from "./permission-queue";
 import { PermissionQueue, } from "./permission-queue";
 
@@ -84,8 +84,14 @@ function harness(advertised: { optionId: string; kind: string }[] = [],): Harnes
         const log = outcomes.get(profile,) ?? [];
         log.push(outcome,);
         outcomes.set(profile, log,);
-        // The connection answers with the wire shape; the queue relays it.
-        return wirePermissionOutcome(outcome, options,);
+        // Mirror the production adapter: a decision no advertised option can
+        // carry is refused on the wire, never reported as delivered.
+        const answer = wirePermissionOutcome(outcome, options,);
+        if (!answerCarriesDecision(answer, outcome, options,)) {
+          throw new PermissionDecisionRefusedError(answer,);
+        }
+
+        return answer;
       },
     };
   };
@@ -122,7 +128,9 @@ function editAsk(root: string,) {
 
 describe("PermissionQueue", () => {
   it("auto-allows a read-only in-sandbox ask without queueing it", async () => {
-    const h = harness();
+    // The allow rides the harness's advertised allow option: with no option
+    // to carry it the production adapter refuses, so there is no auto-allow.
+    const h = harness([{ optionId: "allow", kind: "allow_once", },],);
     const result = await h.queue.submit({
       profile: "p",
       pending: { params: { sessionId: "s", path: "notes.md", }, kind: "read", },
@@ -177,8 +185,9 @@ describe("PermissionQueue", () => {
     if (first.decision !== "pending" || second.decision !== "pending") { throw new Error("expected pending",); }
 
     expect(h.queue.resolve({ id: second.id, decision: "approve", },),).toEqual({
-      ok: true,
-      answer: { outcome: "cancelled", },
+      ok: false,
+      code: "refused",
+      message: 'the harness refused the decision - the tool call was refused (profile "p")',
     },);
 
     expect(h.queue.resolve({ id: first.id, decision: "deny", },),).toEqual({
@@ -191,7 +200,10 @@ describe("PermissionQueue", () => {
   });
 
   it("approve answers allow_once and deny answers reject_once", async () => {
-    const h = harness();
+    // Both decisions ride what the harness advertised: the allow option
+    // carries the approval, and the denial falls back to the protocol's
+    // cancellation — the only shape that can carry it.
+    const h = harness([{ optionId: "allow", kind: "allow_once", },],);
     const a = await h.queue.submit(editAsk(h.root,),);
     const b = await h.queue.submit({ ...editAsk(h.root,), profile: "q", },);
     if (a.decision !== "pending" || b.decision !== "pending") { throw new Error("expected pending",); }
@@ -203,7 +215,7 @@ describe("PermissionQueue", () => {
 
     expect(h.queue.resolve({ id: b.id, decision: "approve", },),).toEqual({
       ok: true,
-      answer: { outcome: "cancelled", },
+      answer: { outcome: "selected", optionId: "allow", },
     },);
 
     expect(h.outcomes.get("p",),).toEqual([{ outcome: "reject_once", },],);
@@ -487,6 +499,32 @@ describe("PermissionQueue", () => {
     // so no row is parked and none can ever clear.
     expect(result.decision,).toBe("withdrawn",);
     expect(queue.pendingCount(),).toBe(0,);
+  });
+
+  it("an auto-allow the harness refused logs the wire answer and drops the ask", async () => {
+    const root = mkdtempSync(TMP_ROOT,);
+    sandboxes.push(root,);
+    const queue = new PermissionQueue({
+      connection: () => ({
+        respondPermission: () => {
+          throw new PermissionDecisionRefusedError({ outcome: "cancelled", },);
+        },
+      }),
+    },);
+
+    const result = await queue.submit({
+      profile: "p",
+      pending: { params: { sessionId: "s", path: "notes.md", }, kind: "read", },
+      sandboxRoot: root,
+    },);
+
+    // The ask was answered on the wire with a refusal: nothing is left to
+    // decide, so no row is parked — and the log names the answer it sent.
+    expect(result.decision,).toBe("withdrawn",);
+    expect(queue.pendingCount(),).toBe(0,);
+    await capture?.flush();
+    const entry = logEntries.find((item,) => item.message === "harness permission decision refused");
+    expect(entry?.meta?.answer,).toEqual({ outcome: "cancelled", },);
   });
 
   it("a withdrawal that lands while the ask is classified strands no row", async () => {

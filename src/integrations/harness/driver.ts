@@ -20,6 +20,7 @@ import {
   type HarnessTurnResult,
   type PendingPermission,
   type PermissionOutcome,
+  type WirePermissionOutcome,
 } from "./adapter-types";
 import { resolveAdapterFactory, } from "./flavor-factories";
 
@@ -57,9 +58,10 @@ export interface HarnessDriver {
   /**
    * Answer the open permission request.
    * @param outcome - the client's choice among the harness's options
+   * @returns the answer that went on the wire
    * @throws {HarnessAcpError} kind `session` when nothing is pending
    */
-  approvePermission(outcome: PermissionOutcome,): void;
+  approvePermission(outcome: PermissionOutcome,): WirePermissionOutcome;
   /** Terminate the underlying harness process. Idempotent. */
   close(): void;
 }

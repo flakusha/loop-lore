@@ -15,6 +15,7 @@
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { AcpProfileConfig, } from "../../config/schema/harness";
+import { type HarnessAdapterFactory, PermissionAskGoneError, } from "../../integrations/harness/adapter-types";
 import { resetHarnessAdminSettings, } from "../../integrations/harness/admin-settings";
 import { fakeFactory, } from "../../integrations/harness/fakes";
 import { getHarnessRuntime, initHarnessRuntime, resetHarnessRuntime, } from "../../integrations/harness/runtime";
@@ -54,6 +55,23 @@ const PROFILE: AcpProfileConfig = {
 /** Compose a runtime with one fake profile and probe its connection. */
 async function composeRuntime(): Promise<void> {
   const { factory, } = fakeFactory({ p: { models: ["p/fast",], }, },);
+  initHarnessRuntime({ enabled: true, profiles: [PROFILE,], }, factory,);
+  await getHarnessRuntime()?.registry.ensureProbed("p",);
+}
+
+/** Compose a runtime whose connection answers decisions by throwing. */
+async function composeThrowingRuntime(throw_: () => Error,): Promise<void> {
+  const { factory: base, } = fakeFactory({ p: { models: ["p/fast",], }, },);
+  const factory: HarnessAdapterFactory = async (profile, command, options,) => {
+    const adapter = await base(profile, command, options,);
+    return {
+      ...adapter,
+      respondPermission: () => {
+        throw throw_();
+      },
+    };
+  };
+
   initHarnessRuntime({ enabled: true, profiles: [PROFILE,], }, factory,);
   await getHarnessRuntime()?.registry.ensureProbed("p",);
 }
@@ -111,16 +129,20 @@ describe("harnessPermissionRoutes", () => {
     expect(body.items[0]?.cwd,).toBe(process.cwd(),);
   });
 
-  it("approving resolves the ask as allow_once", async () => {
+  it("approving an ask no option can carry reads 404 with its own code", async () => {
     const { factory, logs, } = fakeFactory({ p: { models: ["p/fast",], }, },);
     initHarnessRuntime({ enabled: true, profiles: [PROFILE,], }, factory,);
     await getHarnessRuntime()?.registry.ensureProbed("p",);
     const id = await parkEditAsk();
 
     const res = await hit("admin", "POST", `/api/v1/harness/permissions/${id}/approve`,);
-    expect(res.status,).toBe(200,);
-    const body = await res.json() as { ok: boolean };
-    expect(body.ok,).toBe(true,);
+
+    // The parked ask advertises no options, so the production adapter refuses
+    // an allow it cannot carry instead of reporting a green approval.
+    expect(res.status,).toBe(404,);
+    const body = await res.json() as { error: string; code: string };
+    expect(body.code,).toBe("PERMISSION_REFUSED",);
+    expect(body.error,).toContain("the harness refused the decision",);
     expect(getHarnessRuntime()?.permissions.pendingCount(),).toBe(0,);
     expect(logs.get("p",)?.permissions,).toEqual([{ outcome: "allow_once", },],);
   });
@@ -151,6 +173,26 @@ describe("harnessPermissionRoutes", () => {
     const body = await res.json() as { error: string; code: string };
     expect(body.code,).toBe("PERMISSION_REFUSED",);
     expect(body.error,).toContain("the harness refused the decision",);
+  });
+
+  it("a decision against a vanished ask reads 404", async () => {
+    await composeThrowingRuntime(() => new PermissionAskGoneError());
+    const id = await parkEditAsk();
+
+    const res = await hit("admin", "POST", `/api/v1/harness/permissions/${id}/approve`,);
+    expect(res.status,).toBe(404,);
+    const body = await res.json() as { error: string; code: string };
+    expect(body.code,).toBe("NOT_FOUND",);
+  });
+
+  it("an undeliverable decision reads 503", async () => {
+    await composeThrowingRuntime(() => new Error("channel closed",));
+    const id = await parkEditAsk();
+
+    const res = await hit("admin", "POST", `/api/v1/harness/permissions/${id}/approve`,);
+    expect(res.status,).toBe(503,);
+    const body = await res.json() as { error: string; code: string };
+    expect(body.code,).toBe("SERVICE_UNAVAILABLE",);
   });
 
   it("an unknown request id reads 404", async () => {

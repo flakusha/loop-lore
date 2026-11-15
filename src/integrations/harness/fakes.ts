@@ -16,7 +16,7 @@ import {
   PermissionDecisionRefusedError,
   type PermissionOutcome,
 } from "./adapter-types";
-import { wirePermissionOutcome, } from "./permission-outcome";
+import { answerCarriesDecision, wirePermissionOutcome, } from "./permission-outcome";
 
 /** Knobs for one fake profile connection. */
 export interface FakeAdapterSpec {
@@ -97,10 +97,15 @@ export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapte
         throw new PermissionDecisionRefusedError({ outcome: "cancelled", },);
       }
 
-      // The fake advertises no options, so the answer it reports is the
-      // protocol's cancellation - it does not refuse the way a real adapter
-      // refuses a decision no advertised option can carry.
-      return wirePermissionOutcome(outcome, [],);
+      // The fake advertises no options, so it mirrors the production
+      // adapter: a decision no advertised option can carry is refused on
+      // the wire, and the caller learns the decision did not take effect.
+      const answer = wirePermissionOutcome(outcome, [],);
+      if (!answerCarriesDecision(answer, outcome, [],)) {
+        throw new PermissionDecisionRefusedError(answer,);
+      }
+
+      return answer;
     },
     close: () => undefined,
   };

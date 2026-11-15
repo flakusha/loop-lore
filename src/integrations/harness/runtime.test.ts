@@ -268,7 +268,7 @@ describe("runtime permission queue (TASK-permission-approval-flow)", () => {
     expect(runtime.permissions,).toBeInstanceOf(PermissionQueue,);
   });
 
-  it("resolves a decision through the profile's registry connection", async () => {
+  it("refuses an approval no advertised option can carry", async () => {
     const { factory, logs, } = fakeFactory({ p: { models: ["p/fast",], }, },);
     const runtime = createHarnessRuntime({ acp: { enabled: true, profiles: [profile,], }, factory, },);
     await runtime.registry.ensureProbed("p",);
@@ -281,9 +281,12 @@ describe("runtime permission queue (TASK-permission-approval-flow)", () => {
 
     if (parked.decision !== "pending") { throw new Error("expected the edit ask to park",); }
 
+    // The parked ask advertises no options, so the production adapter refuses
+    // an allow it cannot carry — and the default fake mirrors that refusal.
     expect(runtime.permissions.resolve({ id: parked.id, decision: "approve", },),).toEqual({
-      ok: true,
-      answer: { outcome: "cancelled", },
+      ok: false,
+      code: "refused",
+      message: 'the harness refused the decision - the tool call was refused (profile "p")',
     },);
 
     expect(logs.get("p",)?.permissions,).toEqual([{ outcome: "allow_once", },],);
