@@ -53,6 +53,7 @@
     "test:unit:finalize": "bun test --parallel=${CHECK_SRC_TEST_JOBS:-12} src/ --isolate",
     "test:e2e": "E2E_SAFEGUARD=1 HTTP_PROXY= NO_PROXY=* bun test tests/e2e/",
     "test:e2e:browser": "E2E_SAFEGUARD=1 bun run scripts/run-browser-tests.ts",
+    "test:e2e:browser-qa-subset": "E2E_SAFEGUARD=1 bun run scripts/run-browser-qa-subset.ts",
     "test:e2e:smoke": "E2E_SAFEGUARD=1 bun test ./tests/e2e/flows/browser/smoke.browser.ts",
     "test:all": "bun run build:frontend && E2E_SAFEGUARD=1 bun test && E2E_SAFEGUARD=1 bun run test:e2e:browser",
     "test:coverage": "E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS:-4} tests/e2e/ src/ plugins/ --coverage --isolate --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=.tmp/coverage",
