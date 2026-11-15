@@ -180,6 +180,10 @@ DOMAIN=lore.example.com ACME_EMAIL=admin@example.com \
   POSTGRES_PASSWORD=<secret> docker compose -f deploy/docker-compose.yml up -d
 ```
 
+### Supervision on compose
+
+All three services run `restart: unless-stopped`: any exit code — including `75` (first-boot contention retry) and `1` (crash) — restarts the container, and `0` does too (the policy is exit-code-blind; `docker compose stop`/`down` is the clean stop). Ordering comes from `depends_on` (`app` waits for `db` `service_healthy`); the service `healthcheck` polls `/api/health` (liveness). Readiness of the app itself is the `/health/ready` gate — the contract supervisors gate on. The full hierarchy (outer owns the app, app owns its in-process children, app never owns siblings), the per-launcher exit-code table, and the rejected alternatives (no standalone watchdog, no `SIGHUP`-as-reload, no app-level sibling supervision, no watcher on `config.local.yaml`) are declared once in `docs/ops/bare-metal-deploy.md` (§§5.5.1/7.2.1) and not duplicated here.
+
 ## Platform Support
 
 See [`platform-support.md`](./platform-support.md) for Windows, Android (Termux), and cross-platform compatibility notes.

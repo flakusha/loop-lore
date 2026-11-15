@@ -305,6 +305,21 @@ First-token latency under 200 ms and sustained >=40 tok/s on RTX 4090 for an 8B 
 
 `llama-server` and `llama-swap` are managed by their own systemd units (see `docs/ops/bare-metal/systemd/`). loop-lore talks to `llama-swap` over a local Unix socket / loopback port; it never exposes GPU services on the LAN.
 
+#### 5.5.1 Supervision hierarchy (first-boot S5 decision)
+
+Three levels, strictly top-down — nothing supervises its siblings or its parent:
+
+1. **Outer (owns the app):** systemd on bare metal (`Restart=on-failure`, §7.2), compose (`restart: unless-stopped`) in containers, or the operator's re-run loop for manual starts. The outer layer restarts whole processes; it never reaches inside one.
+2. **App (owns its in-process children):** the `ServerExternalManager` supervises listeners, llama.cpp / llama-swap / sd.cpp backends, the scheduler, and plugin hosts — consecutive-failure counters, restart with backoff, fatal exit after budget exhaustion (S3 slice). Today's log-only liveness probes are the pre-supervision state, not the contract.
+3. **Siblings (owned by the outer layer, never by the app):** Postgres, Caddy, backup timers, and exporters are separate systemd units / compose services. The app must not start, stop, or health-gate siblings; what it owes this layer is observability — the `/health/ready` gate (§7.2) as the outer probe, plus documented `After=`/`Wants=` ordering (§7).
+
+Explicitly rejected (decided, not deferred — do not re-propose):
+
+- No standalone watchdog binary/daemon: a third supervisor between systemd/compose and the app triples the failure surface for zero closed-loop gain.
+- No `SIGHUP`-as-reload: `SIGHUP` stays graceful shutdown (exit 0); `ExecReload` restarts via the supervisor.
+- No app-level supervision of sibling/required services (inverts the hierarchy).
+- No domain config-watcher on `config.local.yaml`: first-boot promotion is a one-shot boot event signalled at the write site, not a file to watch.
+
 ---
 
 ## 6. Networking, TLS, Firewall
@@ -342,6 +357,10 @@ Companion files (under `docs/ops/bare-metal/systemd/`):
 > point them at real start commands (see each unit's header) before installing.
 > The backup units target the repo's `scripts/backup-sqlite.ts` (via bun) and a
 > provision-your-own off-box push.
+> Known gap, tracked for the first-boot S2 slice (installable units): `loop-lore.service`
+> `ExecStart` points at `scripts/run-app.sh`, which does not exist in the repo (likewise
+> `scripts/run-worker.sh` for the worker unit) — the S2 slice owns making these units
+> installable. Do not fix unit files in unrelated lanes.
 
 ### 7.1 Install pattern
 
@@ -356,8 +375,19 @@ sudo systemctl enable --now loop-lore llama-swap backup-sqlite.timer backup-zfs-
 ### 7.2 Restart / reload policy
 
 - Default to `Restart=on-failure` with `RestartSec=5s`.
-- Cert rotation: `SIGHUP` triggers a config-reload path (see `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota.md`).
+- Cert rotation: restart the unit (`systemctl restart loop-lore`). `SIGHUP` stays graceful shutdown (exit 0), so `ExecReload=/bin/kill -HUP $MAINPID` restarts via the supervisor — it does not hot-reload (`SIGHUP`-as-reload explicitly rejected, §5.5.1).
 - Crashes: `StartLimitIntervalSec=300`, `StartLimitBurst=5`.
+- Sibling ordering (when co-installed): order `After=` the services the app dials at boot (e.g. Postgres/Caddy units) with `Wants=`, never `Requires=` — ordering without binding the app's lifecycle to a sibling's. Readiness, not process start, is the real gate: the supervisor's probe is the `/health/ready` gate (ready only after config load, migrations/seeds, and listener bind); `/api/health` answering `200` is liveness, not readiness.
+
+#### 7.2.1 Exit-code contract
+
+| Exit | Meaning | systemd (`Restart=on-failure`) | compose (`restart: unless-stopped`) | Manual (`bun run start`) |
+| ---- | ------- | ------------------------------ | ----------------------------------- | ------------------------ |
+| `75` | First-boot contention retry: this boot lost the promotion race; the winner's `config.local.yaml` is on disk | Restarts (non-zero counts as failure) | Restarts | Re-run the command to adopt the winner's file |
+| `0` | Clean shutdown, including `SIGHUP` | No restart | Restarts (policy is exit-code-blind; `docker stop` is the clean stop) | Done |
+| `1` | Crash (uncaught exception/rejection, fatal escalation) | Restarts, burst cap applies | Restarts | Investigate before re-running |
+
+Code `75` (`EX_TEMPFAIL`) is reserved by this contract; the S1 slice implements the loser-exit path. Until then every boot exits `0`/`1` only.
 
 ---
 
