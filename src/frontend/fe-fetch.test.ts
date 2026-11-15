@@ -415,9 +415,13 @@ describe("redirectToLogin", () => {
 });
 
 describe("utils barrel", () => {
-  test("re-exports the shared fetch helpers", async () => {
-    const { safeFetch, safeFetchWithRetry, } = await import("../utils.ts");
-    expect(typeof safeFetch,).toBe("function",);
-    expect(typeof safeFetchWithRetry,).toBe("function",);
+  test("re-exports working fetch helpers and utils", async () => {
+    const barrel = await import("../utils");
+    expect(typeof barrel.safeFetch,).toBe("function",);
+    expect(typeof barrel.safeFetchWithRetry,).toBe("function",);
+    expect(typeof barrel.uid(),).toBe("string",);
+    expect(typeof barrel.secureToken(),).toBe("string",);
+    expect(barrel.asError(new Error("x",),),).toBeInstanceOf(Error,);
+    expect(barrel.toErrorMessage(new Error("y",),),).toBe("y",);
   });
 });
