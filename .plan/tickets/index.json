@@ -35328,7 +35328,7 @@
       "boot"
     ],
     "source": ".plan/tickets/TASK-close-the-first-boot-pii-config-gate-and-expose-setup-state.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CLOSE-THE-I18N-COMMAND-REGISTRY-GAP-AND-ADD-A-RUNTIME-REGIST": {
     "hash": "07a4fd0",
@@ -45547,7 +45547,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-wizard-landing-tracker-provider-backend-frontend-del.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HARNESS-WORK-TOPICS": {
     "hash": "4910513",

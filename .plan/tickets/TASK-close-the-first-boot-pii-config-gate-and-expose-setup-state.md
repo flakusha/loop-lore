@@ -3,7 +3,7 @@
 
 # TASK: Close the first-boot PII config gate and expose setup state
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-first-run-auto-setup
@@ -31,3 +31,5 @@ Why this ordering: the boot gate is the single most concrete first-run bug — n
 - [ ] Regression test on the empty-env boot path.
 
 **Related:** TASK-config-init-close-pii-node-env-boot-gate-promote-defaults-to.md, TASK-setup-state-endpoint-get-api-v1-setup-state-checks-id-ok-hin.md, epic-first-run-auto-setup.md
+
+**Resolved:** 2026-11-15 registry-driven close: git issue 62be90c (registry tip: 6f3b32169 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CLOSE-THE-FIRST-BOOT-PII-CO)

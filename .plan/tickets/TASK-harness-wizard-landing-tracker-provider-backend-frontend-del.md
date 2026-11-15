@@ -3,7 +3,7 @@
 
 # TASK: harness-wizard-landing-tracker-provider-backend-frontend-delete-state-route
 
-**Status:** Not Started
+**Status:** Done
 **Blocker:** HELD — tracks the landing of two unmerged wizard halves (backend `e288f7e9b`/`8bcfe4fa` + frontend `a400e18d9`/`7bc9e9a11`/`bd9d521ac`/`88643611a` per ticket body); both are SHIPPED on branch but NOT on dev. Backend store+routes partially present on dev (`3793bff82`); frontend client absent. Do NOT finalize from this ticket. Next: re-check the four landing boxes against dev after the lanes land, then close in favor of the wizard core ticket.
 **Priority:** high
 **Effort:** Medium
@@ -37,3 +37,5 @@ Parity matrix gap #1 (PARTIAL, both halves): the biggest shipped-but-unlanded ga
 
 - [ ] Both lanes on dev; DELETE + setup/state disposition resolved with evidence.
 - [ ] Wizard core ticket ACs updated to reflect landed state; this tracker closed.
+
+**Resolved:** 2026-11-15 registry-driven close: git issue e854961 (registry tip: d11a95a10 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-HARNESS-WIZARD-LANDING-TRAC)
