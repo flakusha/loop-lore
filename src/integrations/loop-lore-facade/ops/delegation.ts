@@ -125,8 +125,31 @@ const DelegateCancelBody = t.Object({
   delegationId: t.String({ minLength: 1, },),
 },);
 
-/** `delegate_task` body: exactly one of spawn | list | cancel. */
-export const DelegateTaskBody = t.Union([DelegateSpawnBody, DelegateListBody, DelegateCancelBody,],);
+/**
+ * `delegate_task` body: ONE flat object, never a union.
+ *
+ * MCP conformance forces the shape: tools/list publishes bodySchema verbatim
+ * as the tool inputSchema, and the protocol requires
+ * `inputSchema.type: "object"` — a `t.Union` of the per-action bodies
+ * serializes to `{ anyOf: [...] }` and breaks every MCP client (the
+ * stdio-server tools/list suite pins this). So the envelope carries the
+ * `action` discriminator plus every action's fields optional, and the
+ * handler re-validates against the strict per-action schema below — those
+ * stay the authoritative validators, the envelope is just the
+ * object-shaped carrier.
+ */
+export const DelegateTaskBody = t.Object({
+  action: t.Union([t.Literal("spawn",), t.Literal("list",), t.Literal("cancel",),],),
+  profile: t.Optional(t.String({ minLength: 1, },),),
+  prompt: t.Optional(t.String({ minLength: 1, },),),
+  chatId: t.Optional(t.String({ minLength: 1, },),),
+  actorId: t.Optional(t.String({ minLength: 1, },),),
+  maxSteps: t.Optional(t.Number(),),
+  timeoutMs: t.Optional(t.Number(),),
+  parentDelegationId: t.Optional(t.String({ minLength: 1, },),),
+  limit: t.Optional(t.Number(),),
+  delegationId: t.Optional(t.String({ minLength: 1, },),),
+},);
 
 /**
  * Handle `spawn`: validate, clamp, depth-check, enqueue one queue row.
@@ -348,12 +371,18 @@ export function registerDelegateTaskOps(
       const parsed = body as Static<typeof DelegateTaskBody>;
       const { userId, userRole, } = callerIdentity(ctx,);
       switch (parsed.action) {
+        // The envelope is permissive by MCP necessity (see DelegateTaskBody):
+        // each action re-validates against its strict schema, so a spawn
+        // missing its prompt still answers 400 exactly as before.
         case "spawn":
-          return handleSpawn({ userId, userRole, body: parsed, deps, caps, },);
+          if (!Value.Check(DelegateSpawnBody, parsed,)) { return badBodyResult("delegate_task",); }
+          return handleSpawn({ userId, userRole, body: parsed as Static<typeof DelegateSpawnBody>, deps, caps, },);
         case "list":
-          return handleList({ userId, body: parsed, deps, caps, },);
+          if (!Value.Check(DelegateListBody, parsed,)) { return badBodyResult("delegate_task",); }
+          return handleList({ userId, body: parsed as Static<typeof DelegateListBody>, deps, caps, },);
         case "cancel":
-          return handleCancel({ userId, body: parsed, deps, },);
+          if (!Value.Check(DelegateCancelBody, parsed,)) { return badBodyResult("delegate_task",); }
+          return handleCancel({ userId, body: parsed as Static<typeof DelegateCancelBody>, deps, },);
       }
     },
   };

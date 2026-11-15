@@ -14,6 +14,7 @@
 // Resource contract (parallel-safe): one :memory: SQLite per file via
 // createTestDb, no ports, no env, no sleeps.
 
+import { Value, } from "@sinclair/typebox/value";
 import { beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../../config/schema";
@@ -25,7 +26,7 @@ import { createTestDb, type TestDb, } from "../../../test-utils/create-test-db";
 import { insertActors, insertChats, insertUsers, } from "../../../test-utils/insert-helpers";
 import { createFacadeRegistry, runFacadeOp, } from "../registry";
 import { facadeContextFromRequestContext, } from "../types";
-import { DEFAULT_DELEGATION_CAPS, type DelegationCaps, registerDelegateTaskOps, } from "./delegation";
+import { DEFAULT_DELEGATION_CAPS, DelegateTaskBody, type DelegationCaps, registerDelegateTaskOps, } from "./delegation";
 
 const ALICE = "deleg-alice";
 const BOB = "deleg-bob";
@@ -88,6 +89,11 @@ async function spawnAs(
 }
 
 describe("delegate_task spawn", () => {
+  test("the published body schema is one object (MCP tools/list requires type: object)", async () => {
+    expect(Value.Check(DelegateTaskBody, spawnBody(),),).toBe(true,);
+    expect(Value.Check(DelegateTaskBody, { action: "steer", },),).toBe(false,);
+  });
+
   test("rejects a body missing the prompt with 400", async () => {
     const { prompt: _drop, ...noPrompt } = spawnBody();
     const result = await runFacadeOp(buildRegistry(), ctxFor(ALICE,), "delegate_task", noPrompt,);
