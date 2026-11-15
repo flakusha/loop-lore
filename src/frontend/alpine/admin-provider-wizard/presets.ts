@@ -7,6 +7,8 @@ export interface ProviderDescriptor {
   label: string;
   baseUrl: string;
   model: string;
+  /** Which provider family the instance materializes as — absent means openai-compatible. */
+  kind?: string;
   allowedHosts: string[];
   hasApiKey: boolean;
   /** Whether the instance is live in the provider registry. */
@@ -32,28 +34,81 @@ export interface SetupCheck {
   hint?: string;
 }
 
-/** OpenAI-compatible preset offered by the wizard picker. */
+/** Preset offered by the wizard picker. */
 export interface ProviderPreset {
   id: string;
   label: string;
   baseUrl: string;
   model: string;
+  /** Which provider family the backend materializes for this preset. */
+  kind: "openai-compatible" | "anthropic" | "ollama-native";
 }
 
-/** Presets are OpenAI-compatible endpoints only - the backend materializes those instances. */
+/** Endpoints the wizard picker offers — the backend materializes every kind. */
 export const PROVIDER_PRESETS: readonly ProviderPreset[] = [
-  { id: "openai", label: "OpenAI", baseUrl: "https://api.openai.com/v1", model: "gpt-4o-mini", },
-  { id: "openrouter", label: "OpenRouter", baseUrl: "https://openrouter.ai/api/v1", model: "openai/gpt-4o-mini", },
-  { id: "groq", label: "Groq", baseUrl: "https://api.groq.com/openai/v1", model: "llama-3.3-70b-versatile", },
+  {
+    id: "openai",
+    label: "OpenAI",
+    baseUrl: "https://api.openai.com/v1",
+    model: "gpt-4o-mini",
+    kind: "openai-compatible",
+  },
+  {
+    id: "openrouter",
+    label: "OpenRouter",
+    baseUrl: "https://openrouter.ai/api/v1",
+    model: "openai/gpt-4o-mini",
+    kind: "openai-compatible",
+  },
+  {
+    id: "groq",
+    label: "Groq",
+    baseUrl: "https://api.groq.com/openai/v1",
+    model: "llama-3.3-70b-versatile",
+    kind: "openai-compatible",
+  },
   {
     id: "together",
     label: "Together",
     baseUrl: "https://api.together.xyz/v1",
     model: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+    kind: "openai-compatible",
   },
-  { id: "ollama", label: "Ollama", baseUrl: "http://localhost:11434/v1", model: "llama3.2", },
-  { id: "lmstudio", label: "LM Studio", baseUrl: "http://localhost:1234/v1", model: "local-model", },
-  { id: "llamacpp", label: "llama.cpp", baseUrl: "http://localhost:8080/v1", model: "local-model", },
+  {
+    id: "ollama",
+    label: "Ollama",
+    baseUrl: "http://localhost:11434/v1",
+    model: "llama3.2",
+    kind: "openai-compatible",
+  },
+  {
+    id: "lmstudio",
+    label: "LM Studio",
+    baseUrl: "http://localhost:1234/v1",
+    model: "local-model",
+    kind: "openai-compatible",
+  },
+  {
+    id: "llamacpp",
+    label: "llama.cpp",
+    baseUrl: "http://localhost:8080/v1",
+    model: "local-model",
+    kind: "openai-compatible",
+  },
+  {
+    id: "anthropic",
+    label: "Anthropic",
+    baseUrl: "https://api.anthropic.com",
+    model: "claude-sonnet-4-5",
+    kind: "anthropic",
+  },
+  {
+    id: "ollama-native",
+    label: "Ollama (native)",
+    baseUrl: "http://localhost:11434",
+    model: "llama3.2",
+    kind: "ollama-native",
+  },
 ];
 
 /** Model roles the wizard can assign (mirrors VALID_ROLES in src/admin/model-roles.ts). */

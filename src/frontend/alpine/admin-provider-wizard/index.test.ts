@@ -375,4 +375,27 @@ describe("provider connection wizard", () => {
     expect(wizard.wizard.open,).toBe(true,);
     expect(renderedToasts(),).toHaveLength(0,);
   });
+
+  test("a native preset carries its kind onto the wire", async () => {
+    handler = async (_url: string, init: RequestInit,) => {
+      if (init.method === "POST") { return jsonResponse({ ok: true, provider: savedProvider, },); }
+      return jsonResponse({ providers: [], },);
+    };
+
+    const wizard = createProviderWizard();
+    wizard.selectPreset("anthropic",);
+    wizard.wizard.apiKey = "sk-secret";
+
+    await wizard.saveProvider();
+
+    expect(calls[0]?.body,).toEqual({
+      name: "anthropic",
+      label: "Anthropic",
+      baseUrl: "https://api.anthropic.com",
+      model: "claude-sonnet-4-5",
+      kind: "anthropic",
+      setDefault: false,
+      apiKey: "sk-secret",
+    },);
+  });
 });

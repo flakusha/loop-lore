@@ -172,3 +172,36 @@ describe("AdminSetupProvidersResponse", () => {
  expect(Value.Check(AdminComfyUIDiscoveryResponse, { probedAt: "2026-11-14T00:00:00.000Z", providers: [{ name: "local-comfy", baseUrl: "http://127.0.0.1:8188", source: "manual", dispatching: false, reachable: false, },], },)).toBe(false,);
  });
  });
+
+describe("AdminSetupProviderBody kind", () => {
+  test("accepts every materializable provider kind", () => {
+    for (const kind of ["openai-compatible", "anthropic", "ollama-native",]) {
+      expect(Value.Check(AdminSetupProviderBody, {
+        name: "acme",
+        label: "Acme",
+        baseUrl: "https://api.example.com/v1",
+        model: "demo-model",
+        kind,
+      },),).toBe(true,);
+    }
+  });
+
+  test("accepts a body without a kind — the openai-compatible default", () => {
+    expect(Value.Check(AdminSetupProviderBody, {
+      name: "acme",
+      label: "Acme",
+      baseUrl: "https://api.example.com/v1",
+      model: "demo-model",
+    },),).toBe(true,);
+  });
+
+  test("rejects an unknown provider kind", () => {
+    expect(Value.Check(AdminSetupProviderBody, {
+      name: "acme",
+      label: "Acme",
+      baseUrl: "https://api.example.com/v1",
+      model: "demo-model",
+      kind: "openai-v2",
+    },),).toBe(false,);
+  });
+});

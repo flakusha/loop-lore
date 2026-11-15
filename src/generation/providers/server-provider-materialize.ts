@@ -15,15 +15,19 @@ import type { Config, ProviderInstanceConfig, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { asError, } from "../../utils";
+import { AnthropicProvider, } from "./anthropic";
 import { circuitBreaker, } from "./circuit-breaker";
+import { OllamaNativeProvider, } from "./ollama-native";
 import { OpenAiCompatibleProvider, } from "./openai-compatible";
 import { registerProvider, unregisterProvider, } from "./registry";
 import {
   descriptorNameFromKey,
   parseStoredServerProvider,
   resolveApprovedHosts,
+  type ServerProviderKind,
   type StoredServerProvider,
 } from "./server-provider-descriptor";
+import type { LLMProvider, } from "./types";
 
 /**
  * Warn through the structured logger when one is installed.
@@ -78,8 +82,10 @@ export async function readStoredProviders(db: Kysely<DB>,): Promise<StoredServer
 export interface PreparedProvider {
   /** The instance config merged into the live provider list. */
   instance: ProviderInstanceConfig;
+  /** Which provider family the instance materializes as. */
+  kind: ServerProviderKind;
   /** The constructed provider, ready to register. */
-  provider: OpenAiCompatibleProvider;
+  provider: LLMProvider;
 }
 
 /**
@@ -116,6 +122,7 @@ export function prepareProvider(
   provider: StoredServerProvider,
   apiKey: string | undefined,
 ): PreparedProvider {
+  const kind = provider.kind ?? "openai-compatible";
   const instance: ProviderInstanceConfig = {
     name: provider.name,
     label: provider.label,
@@ -129,7 +136,14 @@ export function prepareProvider(
     allowedHosts: provider.allowedHosts,
   };
 
-  return { instance, provider: new OpenAiCompatibleProvider(instance,), };
+  switch (kind) {
+    case "anthropic":
+      return { instance, kind, provider: new AnthropicProvider(instance,), };
+    case "ollama-native":
+      return { instance, kind, provider: new OllamaNativeProvider(instance,), };
+    default:
+      return { instance, kind, provider: new OpenAiCompatibleProvider(instance,), };
+  }
 }
 
 /**
@@ -177,6 +191,18 @@ export function activateProvider(
   registerProvider(name, prepared.provider,);
   circuitBreaker.register(name,);
 
+  // The native families are singletons in the config schema — the last saved
+  // instance wins the slot while the registry keeps every name.
+  if (prepared.kind === "anthropic") {
+    config.generation.providers.anthropic = prepared.instance;
+    return;
+  }
+
+  if (prepared.kind === "ollama-native") {
+    config.generation.providers.ollamaNative = prepared.instance;
+    return;
+  }
+
   const instances = config.generation.providers.openaiCompatible;
   const index = instances.findIndex((entry,) => entry.name === name);
   if (index >= 0) {
@@ -196,6 +222,14 @@ export function removeServerProviderInstance(config: Config, name: string,): voi
   const index = instances.findIndex((entry,) => entry.name === name);
   if (index >= 0) {
     instances.splice(index, 1,);
+  }
+
+  if (config.generation.providers.anthropic?.name === name) {
+    config.generation.providers.anthropic = undefined;
+  }
+
+  if (config.generation.providers.ollamaNative?.name === name) {
+    config.generation.providers.ollamaNative = undefined;
   }
 
   if (config.generation.defaultProvider === name) {

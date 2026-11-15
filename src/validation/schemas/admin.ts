@@ -40,11 +40,21 @@ export const AdminSystemConfigImportBody = t.Object({
  * explicit host approval; when omitted the base URL's own host is approved. Its
  * entries are bare hostnames — no scheme, path, port or userinfo.
  */
+/**
+ * Provider kinds the first-run wizard can materialize. Optional on the wire —
+ * absent means openai-compatible, the only kind the wizard wrote before.
+ * An unknown kind fails validation (400); it never silently defaults.
+ */
+export const ServerProviderKindSchema = t.Union(
+  [t.Literal("openai-compatible"), t.Literal("anthropic"), t.Literal("ollama-native"),],
+);
+
 export const AdminSetupProviderBody = t.Object({
   name: t.String({ minLength: 1, maxLength: 64, pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$", },),
   label: t.String({ minLength: 1, maxLength: 200, },),
   baseUrl: t.String({ minLength: 1, maxLength: 2048, },),
   model: t.String({ minLength: 1, maxLength: 200, },),
+  kind: t.Optional(ServerProviderKindSchema,),
   apiKey: t.Optional(t.String({ maxLength: 4096, },),),
   allowedHosts: t.Optional(t.Array(t.String({ minLength: 1, maxLength: 253, },),),),
   setDefault: t.Optional(t.Boolean(),),
@@ -56,6 +66,7 @@ export const AdminServerProviderDescriptor = t.Object({
   label: t.String(),
   baseUrl: t.String(),
   model: t.String(),
+  kind: t.Optional(ServerProviderKindSchema,),
   allowedHosts: t.Array(t.String()),
   hasApiKey: t.Boolean(),
   /** Whether the instance is live in the provider registry. */
