@@ -344,6 +344,17 @@ export async function start() {
   // Plugins, seeds and assets are ready — open the traffic gate.
   ready = true;
 
+  // One-line boot readiness summary (TASK-boot-readiness-summary): check ids
+  // + ok/off only, never values, hints, or paths. Dynamic import keeps the
+  // boot graph lazy like the provider/materialize imports above.
+  try {
+    const { setupChecks, } = await import("../routes/setup/checks");
+    const { buildBootReadinessSummary, } = await import("./boot-readiness");
+    serverLogger.info(buildBootReadinessSummary(await setupChecks(config, database,),),);
+  } catch {
+    serverLogger.info("setup readiness: unknown (checks unavailable)",);
+  }
+
   // ── Start liveliness probes for managed servers ──────────
   serverManager.startLivenessProbes();
 
