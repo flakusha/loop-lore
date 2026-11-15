@@ -65505,6 +65505,20 @@
     "title": "Wiring Dead-Code Gate",
     "type": "TASK"
   },
+  "TASK-WIZARD-NON-OPENAI-COMPATIBLE-PROVIDER-MATERIALIZATION": {
+    "hash": "860e6ad",
+    "git_issue": "860e6ad",
+    "extid": "TASK-WIZARD-NON-OPENAI-COMPATIBLE-PROVIDER-MATERIALIZATION",
+    "type": "TASK",
+    "title": "Wizard non-openai-compatible provider materialization",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wizard-non-openai-compatible-provider-materialization.md",
+    "status": "open"
+  },
   "TASK-WLLAMA-GGUF-INFERENCE-ENGINE-BROWSER": {
     "epic": "epic-byok-local-models",
     "extid": "TASK-WLLAMA-GGUF-INFERENCE-ENGINE-BROWSER",
