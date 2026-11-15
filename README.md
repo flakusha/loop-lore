@@ -15,21 +15,24 @@
 
 Inspired by:
 
-- [SillyTavern](https://github.com/SillyTavern/SillyTavern).
+- [SillyTavern](https://github.com/SillyTavern/SillyTavern)
 - [Odysseus](https://github.com/pewdiepie-archdaemon/odysseus)
-- [Open WebUI](https://github.com/open-webui/open-webui).
+- [Open WebUI](https://github.com/open-webui/open-webui)
 
 loop-lore rebuilds the core — characters, chats, lorebooks, multi-backend
 LLM — on a sane foundation:
 
 - **TypeScript + Bun** — no compilation step, fast runtime
-- **Database-backed** — `bun:sqlite` local, PostgreSQL remote (Kysely query
-  builder)
+- **Database-backed** — `bun:sqlite` local via Kysely (`src/db/index.ts`
+  `createSqliteDialect`); PostgreSQL exists only as a `DbType` enum value,
+  no dialect wiring yet
 - **TUI mode** — pi-tui-based terminal interface (no browser needed)
-- **Web UI** — htmx + Alpine.js (lightweight, no build step)
+- **Web UI** — htmx + Alpine.js (lightweight; `bun run dev`/`build` run the
+  frontend build via `scripts/build-frontend.mjs`)
 - **Assets** — images/audio/video linked polymorphically to any entity
 - **Assistant** — user-focused help (ideas, suggestions, troubleshooting)
-- **Clean code** — small files, strict types, no 12K-line monoliths
+- **Clean code** — small files, strict types, size-gated
+  (`scripts/check-file-size.ts --strict`)
 
 See [`docs/spec/architecture.md`](docs/spec/architecture.md) for the system
 layers, design principles, and key decisions. The authoritative source for
@@ -38,7 +41,18 @@ listings in this README would go stale within days.
 
 Feature status lives in [`.plan/epics-index.md`](.plan/epics-index.md); the
 active workstack is the generated [`.plan/priority-matrix.md`](.plan/priority-matrix.md) — statuses
-are not duplicated here.
+are not duplicated here. Both files are generated (`bun run plan:artifacts`
+regenerates them) and may be absent on a fresh clone.
+
+## Branches
+
+- `dev` — default integration branch; all work lands here via `giwt finalize`.
+- `stg` — stable checkpoint on top of `dev`; patch fixes only (remote ref,
+  currently at the `master` tip).
+- `master` — finalized releases only; tag promotion, never direct commits.
+
+Full policy: [`docs/meta/workflow.md`](docs/meta/workflow.md) Branch tiers —
+linked, not duplicated.
 
 ---
 
@@ -89,5 +103,5 @@ Full guide: [`docs/guide/getting-started.md`](docs/guide/getting-started.md).
 
 ## License
 
-LGPL-3.0-or-later (core code), MIT (docs), Apache-2.0 OR MIT (plugins)\
+LGPL-3.0-or-later (core code), MIT (docs), Apache-2.0 OR MIT (plugins).
 See [LICENSE](./LICENSE) and [LICENSES/](./LICENSES/) for full texts.
