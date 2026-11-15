@@ -1,14 +1,11 @@
 /**
- * E2E: env-gated external-harness ACP scenario (TASK-e2e-env-gated-scenario).
+ * E2E: external-harness ACP scenario (TASK-e2e-env-gated-scenario).
  *
  * Drives the landed ACP harness surface end-to-end against the fake ACP
  * server fixture: the isolation gate decides, the driver spawns the fake
  * harness over stdio JSON-RPC, and the wire is observed through the
  * fixture's reaction log. Every test owns its fixture and driver, reaped
  * in afterEach — no shared ports, paths, or module state.
- *
- * Gated behind HARNESSE2E=1: without the marker the whole file skips
- * loudly and never touches a subprocess, so plain check runs stay green.
  */
 
 import { afterEach, describe, expect, it, } from "bun:test";
@@ -28,16 +25,6 @@ import {
 import {
   assertHarnessExecution,
 } from "../../../src/integrations/harness/isolation-gate";
-
-const ENABLED = process.env.HARNESSE2E === "1";
-
-if (!ENABLED) {
-  console.warn(
-    "[harness-acp-e2e] SKIPPING — external-harness ACP scenario is env-gated; set HARNESSE2E=1 to run it",
-  );
-}
-
-const describeGated = ENABLED ? describe : describe.skip;
 
 /** Fixtures opened by the current test; released after each. */
 const fixtures: HarnessFixture[] = [];
@@ -83,7 +70,7 @@ function harnessConfig(enabled: boolean,): HarnessConfig {
   };
 }
 
-describeGated("Harness ACP e2e scenario", () => {
+describe("Harness ACP e2e scenario", () => {
   it("denies execution at the isolation gate before any spawn", () => {
     expect(assertHarnessExecution({
       config: harnessConfig(false,),
@@ -149,8 +136,11 @@ describeGated("Harness ACP e2e scenario", () => {
     const result = await pending;
 
     expect(result.ok,).toBe(true,);
+    // The wire answer carries the SPEC's selected variant (the advertised
+    // option id), never the loop-lore verb — the same shape the driver unit
+    // suite pins (src/integrations/harness/driver.test.ts).
     expect(fixture.server.readLog(),).toEqual([
-      { event: "permission_outcome", outcome: { outcome: { outcome: "allow_once", optionId: "allow", }, }, },
+      { event: "permission_outcome", outcome: { outcome: { outcome: "selected", optionId: "allow", }, }, },
     ],);
   });
 
@@ -179,4 +169,4 @@ describeGated("Harness ACP e2e scenario", () => {
     expect(result.kind,).toBe("initialize",);
     expect(result.message,).toContain("timed out",);
   });
-},);
+});
