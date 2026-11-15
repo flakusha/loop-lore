@@ -8,7 +8,6 @@ import {
   stopAll as stopAllDispatch,
 } from "./lifecycle";
 import {
-  startLivenessProbes as startLivenessProbesDispatch,
   stopLivenessProbes as stopLivenessProbesDispatch,
 } from "./probes";
 import {
@@ -16,6 +15,7 @@ import {
   startLlamaSwap as startLlamaSwapDispatch,
 } from "./start-llama";
 import { startSdCpp as startSdCppDispatch, } from "./start-sd";
+import { startSupervisedProbes as startSupervisedProbesDispatch, } from "./supervise";
 import type {
   LlamaCppOptions,
   LlamaSwapOptions,
@@ -47,7 +47,7 @@ export type {
  * Servers are skipped (not failed) when binaries are missing or ports are busy.
  *
  * The method bodies live in sibling dispatcher modules (starts / lifecycle /
- * probes) threaded with an explicit `ServerExternalHost` handle. The class is
+ * probes / supervise) threaded with an explicit `ServerExternalHost` handle. The class is
  * kept so callers can `new ServerExternalManager(logger)`.
  */
 export class ServerExternalManager implements ServerExternalHost {
@@ -130,12 +130,14 @@ export class ServerExternalManager implements ServerExternalHost {
   // ── Liveliness probing ───────────────────────────────────
 
   /**
-   * Start periodic health checks on all managed servers.
-   * Logs warning on first failure, error on repeated failures.
+   * Start periodic supervised health checks on all managed servers.
+   * Misses warn (with consecutive-miss counts); N consecutive misses restart
+   * the instance via its spawn path with backoff; budget exhaustion exits the
+   * process non-zero for the outer supervisor.
    * @returns nothing; probing runs on the manager's own interval.
    */
   startLivenessProbes(): void {
-    return startLivenessProbesDispatch(this,);
+    return startSupervisedProbesDispatch(this,);
   }
 
   /** Stop periodic health checks */

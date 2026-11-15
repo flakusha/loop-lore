@@ -155,6 +155,7 @@ export async function startLlamaCpp(
     port: opts.port,
     pid: proc.pid,
     startedAt: Date.now(),
+    launch: { kind: "llama-cpp", opts, },
   };
 
   host.instances.push(instance,);
@@ -209,6 +210,7 @@ export async function startLlamaSwap(
     port,
     pid: proc.pid,
     startedAt: Date.now(),
+    launch: { kind: "llama-swap", opts, },
   };
 
   host.instances.push(instance,);
