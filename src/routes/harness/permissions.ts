@@ -47,8 +47,18 @@ function decide(
 
   // A vanished ask is gone (404); a live ask the decision could not reach is
   // a service failure (503) the operator can retry. A refusal is a gone ask
-  // too: the harness answered, but not with the decision.
-  const gone = result.code === "unknown_request" || result.code === "ask_gone" || result.code === "refused";
+  // too - the harness answered, but not with the decision - and it keeps its
+  // own code, so a client can tell "refused" from "the ask is gone" without
+  // reading the message.
+  if (result.code === "refused") {
+    return jsonError({
+      message: result.message,
+      status: HttpStatus.NotFound,
+      code: ErrorCode.PermissionRefused,
+    },);
+  }
+
+  const gone = result.code === "unknown_request" || result.code === "ask_gone";
   return jsonError({
     message: result.message,
     status: gone ? HttpStatus.NotFound : HttpStatus.ServiceUnavailable,

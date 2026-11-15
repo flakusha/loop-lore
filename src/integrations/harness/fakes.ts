@@ -13,8 +13,10 @@ import {
   type HarnessQuotaSurface,
   type HarnessTurnResult,
   type HarnessUsageReport,
+  PermissionDecisionRefusedError,
   type PermissionOutcome,
 } from "./adapter-types";
+import { wirePermissionOutcome, } from "./permission-outcome";
 
 /** Knobs for one fake profile connection. */
 export interface FakeAdapterSpec {
@@ -32,6 +34,8 @@ export interface FakeAdapterSpec {
   usageReports?: HarnessUsageReport[] | null;
   /** The quota surface the fake adapter declares (default "none"). */
   quotaSurface?: HarnessQuotaSurface;
+  /** respondPermission refuses the decision, as a harness that cannot express it does. */
+  refusePermissions?: boolean;
 }
 
 /** Calls made to one fake adapter (asserted by tests). */
@@ -87,6 +91,16 @@ export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapte
     pendingPermission: () => null,
     respondPermission: (outcome,) => {
       log.permissions.push(outcome,);
+      if (spec.refusePermissions) {
+        // The harness answered, but not with the decision: the tool call is
+        // refused and the caller learns the decision did not take effect.
+        throw new PermissionDecisionRefusedError({ outcome: "cancelled", },);
+      }
+
+      // The fake advertises no options, so the answer it reports is the
+      // protocol's cancellation - it does not refuse the way a real adapter
+      // refuses a decision no advertised option can carry.
+      return wirePermissionOutcome(outcome, [],);
     },
     close: () => undefined,
   };

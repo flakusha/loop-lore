@@ -39,7 +39,7 @@ export function setFetch(fn: typeof _realFetch,): void {
 }
 
 /** The raw result of a harness API call, before the public shape is derived. */
-type RawFetchResult<T,> = { ok: boolean; data?: T; error?: Error; status?: number };
+type RawFetchResult<T,> = { ok: boolean; data?: T; error?: Error; serverMessage?: string; status?: number };
 
 function buildResult<T,>(result: RawFetchResult<T>,): HarnessFetchResult<T> {
   if (!result.ok) {
@@ -48,16 +48,16 @@ function buildResult<T,>(result: RawFetchResult<T>,): HarnessFetchResult<T> {
     }
 
     // The harness runtime may not be composed at all (ACP integration
-    // disabled); say so instead of leaking a bare status code.
+    // disabled); the server's message wins when it sent one.
     if (result.status === 503) {
-      return { ok: false, error: "harness runtime not composed", status: 503, };
+      return { ok: false, error: result.serverMessage ?? "harness runtime not composed", status: 503, };
     }
 
     // The server's message says WHY (the ask is gone, the harness refused the
-    // decision); the status is the fallback when there is none.
+    // decision); the transport error and then the status are the fallbacks.
     return {
       ok: false,
-      error: result.error?.message ?? `HTTP ${result.status}`,
+      error: result.serverMessage ?? result.error?.message ?? `HTTP ${result.status}`,
       status: result.status,
     };
   }
@@ -178,9 +178,29 @@ async function postDecision(
 
   if (!response.ok) {
     // The error body carries the server's message (src/routes/http-utils/errors.ts:57).
-    const message = jsonParseOr<{ error?: string }>(text, {},).error;
-    return { ok: false, error: new Error(message ?? `HTTP ${response.status}`,), status: response.status, };
+    const message = bodyObject(text,)?.["error"];
+    const serverMessage = typeof message === "string" ? message : undefined;
+    return {
+      ok: false,
+      error: new Error(serverMessage ?? `HTTP ${response.status}`,),
+      serverMessage,
+      status: response.status,
+    };
   }
 
-  return { ok: true, data: jsonParseOr<PermissionDecisionResponse>(text, { ok: true, },), status: response.status, };
+  const body = bodyObject(text,);
+  return { ok: true, data: (body as PermissionDecisionResponse | null) ?? { ok: true, }, status: response.status, };
+}
+
+/**
+ * The response body as an object, when it is one.
+ * @param text - the raw response body
+ * @returns the body, or null when it is not a JSON object (a literal `null`,
+ *   a bare scalar, or a body that is not JSON at all).
+ */
+function bodyObject(text: string,): Record<string, unknown> | null {
+  const parsed = jsonParseOr<unknown>(text, null,);
+  if (typeof parsed !== "object" || parsed === null) { return null; }
+
+  return parsed as Record<string, unknown>;
 }

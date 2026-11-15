@@ -26,6 +26,7 @@ import {
   PermissionAskGoneError,
   PermissionDecisionRefusedError,
   type PermissionOutcome,
+  type WirePermissionOutcome,
 } from "./adapter-types";
 import { JsonRpcProcess, JsonRpcRequestError, } from "./jsonrpc-process";
 import { advertisedPermissionOptions, answerCarriesDecision, wirePermissionOutcome, } from "./permission-outcome";
@@ -299,25 +300,20 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
    * In v1 a `cancelled` answer refuses the tool call, but it also tells the
    * agent the TURN was cancelled: a conformant agent may abort the turn.
    * @param outcome - the client's choice among the harness's options
+   * @returns the answer that went on the wire
    * @throws {PermissionAskGoneError} when nothing is pending
    * @throws {PermissionDecisionRefusedError} when the harness could not
    *   express the decision and refused the tool call instead
    */
-  respondPermission(outcome: PermissionOutcome,): void {
+  respondPermission(outcome: PermissionOutcome,): WirePermissionOutcome {
     const open = this.permission;
-    if (!open) {
-      throw new PermissionAskGoneError();
-    }
-
+    if (!open) { throw new PermissionAskGoneError(); }
     this.permission = null;
     const options = advertisedPermissionOptions(open.pending.params,);
     const answer = wirePermissionOutcome(outcome, options,);
     open.respond({ outcome: answer, },);
-    if (!answerCarriesDecision(answer, outcome, options,)) {
-      // The harness could not express the decision: the wire carries a
-      // refusal, so the decision did not take effect.
-      throw new PermissionDecisionRefusedError();
-    }
+    if (!answerCarriesDecision(answer, outcome, options,)) { throw new PermissionDecisionRefusedError(answer,); }
+    return answer;
   }
 
   /**

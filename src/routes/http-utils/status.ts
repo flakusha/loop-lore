@@ -48,6 +48,7 @@ export const ErrorCode = {
   Unauthorized: "UNAUTHORIZED",
   Forbidden: "FORBIDDEN",
   NotFound: "NOT_FOUND",
+  PermissionRefused: "PERMISSION_REFUSED",
   ValidationError: "VALIDATION_ERROR",
   StaleChatKey: "STALE_CHAT_KEY",
   TooManyRequests: "TOO_MANY_REQUESTS",

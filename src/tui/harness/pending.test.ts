@@ -132,6 +132,35 @@ describe("decidePermission", () => {
     expect(result.ok ? "" : result.error,).toBe("the harness refused the decision - the tool call was refused",);
     expect(result.ok ? undefined : result.status,).toBe(404,);
   });
+
+  it("keeps the status as the fallback when the server sent no message", async () => {
+    routeDecision({}, 404,);
+
+    const result = await decidePermission("ask-1", "approve", "tok",);
+
+    expect(result.ok,).toBe(false,);
+    expect(result.ok ? "" : result.error,).toBe("HTTP 404",);
+    expect(result.ok ? undefined : result.status,).toBe(404,);
+  });
+
+  it("keeps the status as the fallback when the error body is not an object", async () => {
+    routeDecision(null, 404,);
+
+    const result = await decidePermission("ask-1", "approve", "tok",);
+
+    expect(result.ok,).toBe(false,);
+    expect(result.ok ? "" : result.error,).toBe("HTTP 404",);
+  });
+
+  it("surfaces the server's message when the runtime is not composed", async () => {
+    routeDecision({ error: "harness runtime not composed - the ACP integration is disabled", }, 503,);
+
+    const result = await decidePermission("ask-1", "approve", "tok",);
+
+    expect(result.ok,).toBe(false,);
+    expect(result.ok ? "" : result.error,).toBe("harness runtime not composed - the ACP integration is disabled",);
+    expect(result.ok ? undefined : result.status,).toBe(503,);
+  });
 });
 
 describe("formatPermissionInput", () => {
@@ -200,7 +229,7 @@ describe("PendingPermissions", () => {
   });
 
   it("decides the highlighted ask and reloads the queue", async () => {
-    route({ items: [ASK,], },);
+    const calls = route({ items: [ASK,], },);
     const posts = routeDecision({ ok: true, },);
     const pending = new PendingPermissions();
 
@@ -208,6 +237,8 @@ describe("PendingPermissions", () => {
     await pending.decide("approve", "tok",);
 
     expect(posts[0]?.path,).toBe("/api/v1/harness/permissions/ask-1/approve",);
+    // The queue is re-read after the decision, so the panel shows what is left.
+    expect(calls.map((call,) => call.method),).toEqual(["GET", "GET",],);
   });
 
   it("does nothing when no ask is highlighted", async () => {

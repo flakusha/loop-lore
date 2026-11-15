@@ -28,10 +28,13 @@
  * hyphenated dialect (`allow-once` — Cursor CLI). The internal union stays
  * spec-shaped; only the advertised kind is normalised.
  *
+ * The shape itself is declared in adapter-types.ts (the adapter contract);
+ * this module maps a decision onto it.
+ *
  * Pure: no IO, no clock, no framework.
  */
 
-import { type PermissionOutcome, } from "./adapter-types";
+import { type PermissionOutcome, type WirePermissionOutcome, } from "./adapter-types";
 
 /** The spec-shaped outcome verbs (the internal union's members). */
 const OUTCOME_VERBS: readonly PermissionOutcome["outcome"][] = [
@@ -67,14 +70,6 @@ export function normalizePermissionOutcome(value: string,): PermissionOutcome["o
   const key = value.trim().toLowerCase().split("-",).join("_",);
   return OUTCOME_VERBS.find((verb,) => verb === key) ?? null;
 }
-
-/**
- * The spec's answer to a permission request (vendored ACP v1 schema,
- * `RequestPermissionOutcome`) — the ONLY two shapes the protocol allows.
- */
-export type WirePermissionOutcome =
-  | { outcome: "selected"; optionId: string }
-  | { outcome: "cancelled" };
 
 /** One permission option the harness advertised. */
 export interface AdvertisedPermissionOption {

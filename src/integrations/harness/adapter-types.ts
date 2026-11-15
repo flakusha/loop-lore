@@ -120,17 +120,34 @@ export class PermissionAskGoneError extends HarnessAcpError {
 }
 
 /**
+ * The spec's answer to a permission request (vendored ACP v1 schema,
+ * `RequestPermissionOutcome`) — the ONLY two shapes the protocol allows. The
+ * mapping from a decision onto this shape lives in permission-outcome.ts.
+ */
+export type WirePermissionOutcome =
+  | { outcome: "selected"; optionId: string }
+  | { outcome: "cancelled" };
+
+/**
  * Raised when the harness REFUSES a decision it cannot express: the wire
  * answer carries a rejection, so the decision did not take effect. The ask is
  * answered either way - nothing is left to decide.
  */
 export class PermissionDecisionRefusedError extends PermissionAskGoneError {
+  /** The answer that went on the wire: it refused the tool call. */
+  readonly answer: WirePermissionOutcome;
+
   /**
+   * @param answer - the wire answer that carried the refusal
    * @param message - human-readable detail
    */
-  constructor(message = "the harness refused the decision - the tool call was refused",) {
+  constructor(
+    answer: WirePermissionOutcome,
+    message = "the harness refused the decision - the tool call was refused",
+  ) {
     super(message,);
     this.name = "PermissionDecisionRefusedError";
+    this.answer = answer;
   }
 }
 
@@ -175,9 +192,12 @@ export interface HarnessAcpAdapter {
   /**
    * Answer the open permission request.
    * @param outcome - the client's choice among the harness's options
+   * @returns the answer that went on the wire
    * @throws {PermissionAskGoneError} when the harness no longer holds the ask
+   * @throws {PermissionDecisionRefusedError} when the harness could not
+   *   express the decision and refused the tool call instead
    */
-  respondPermission(outcome: PermissionOutcome,): void;
+  respondPermission(outcome: PermissionOutcome,): WirePermissionOutcome;
   /** Terminate the underlying process/connection. Idempotent. */
   close(): void;
 }
@@ -185,7 +205,7 @@ export interface HarnessAcpAdapter {
 /**
  * The client's DECISION about a server-originated `session/request_permission`
  * — the internal vocabulary, not the wire shape. The wire answer is the
- * spec's `RequestPermissionOutcome` (see permission-outcome.ts).
+ * spec's `RequestPermissionOutcome` (see {@link WirePermissionOutcome}).
  */
 export interface PermissionOutcome {
   /** The decision's verb — the spec's `PermissionOptionKind` vocabulary. */

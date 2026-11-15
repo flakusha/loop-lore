@@ -136,6 +136,23 @@ describe("harnessPermissionRoutes", () => {
     expect(getHarnessRuntime()?.permissions.pendingCount(),).toBe(0,);
   });
 
+  it("a refused decision reads 404 with its own code", async () => {
+    const { factory, } = fakeFactory({ p: { models: ["p/fast",], refusePermissions: true, }, },);
+    initHarnessRuntime({ enabled: true, profiles: [PROFILE,], }, factory,);
+    await getHarnessRuntime()?.registry.ensureProbed("p",);
+    const id = await parkEditAsk();
+
+    const res = await hit("admin", "POST", `/api/v1/harness/permissions/${id}/approve`,);
+
+    // The ask is gone (the harness answered), but the refusal keeps its own
+    // code: a client can tell "refused" from "the ask is gone" without
+    // reading the message. The status stays 404 either way.
+    expect(res.status,).toBe(404,);
+    const body = await res.json() as { error: string; code: string };
+    expect(body.code,).toBe("PERMISSION_REFUSED",);
+    expect(body.error,).toContain("the harness refused the decision",);
+  });
+
   it("an unknown request id reads 404", async () => {
     await composeRuntime();
 

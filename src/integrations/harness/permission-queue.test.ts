@@ -10,11 +10,12 @@
  * afterEach; the connection registry is a per-test Map. No DB, no ports,
  * no shared globals, order-independent.
  */
-import { afterEach, describe, expect, it, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { mkdtempSync, rmSync, } from "node:fs";
-import { createLogger, setGlobalLogger, } from "../../logger";
+import { createLogger, getChildLogger, type LogEntry, type Logger, setGlobalLogger, } from "../../logger";
 import { PermissionAskGoneError, PermissionDecisionRefusedError, type PermissionOutcome, } from "./adapter-types";
 import { PERMISSION_FAILURE, } from "./permission-failure";
+import { advertisedPermissionOptions, wirePermissionOutcome, } from "./permission-outcome";
 import type { PermissionRespondable, } from "./permission-queue";
 import { PermissionQueue, } from "./permission-queue";
 
@@ -22,6 +23,31 @@ import { PermissionQueue, } from "./permission-queue";
 // child logger; a silent global logger exercises those real call sites
 // (line coverage) without console noise or IO.
 setGlobalLogger(createLogger({ console: false, dbEnabled: false, level: "error", },),);
+
+/** The log entries the current test captured. */
+const logEntries: LogEntry[] = [];
+
+/** The child logger the queue logs through (flushed by the log assertions). */
+let capture: Logger | null = null;
+
+/**
+ * Install a capturing global logger, so the queue's log entries are readable.
+ * The queue logs through the memoized `harness-permission` child, so the
+ * capture transport rides that child.
+ */
+function captureLogs(): void {
+  const logger = createLogger({ console: false, dbEnabled: false, level: "info", },);
+  setGlobalLogger(logger,);
+  capture = getChildLogger("harness-permission",);
+  capture?.addTransport({
+    name: "capture",
+    write: (entry,) => {
+      logEntries.push(entry,);
+      return Promise.resolve();
+    },
+    flush: () => Promise.resolve(),
+  },);
+}
 
 /** Shared parent for per-test sandboxes (the repo's .tmp scratchpad). */
 const TMP_ROOT = ".tmp/harness-permission-queue";
@@ -38,12 +64,15 @@ interface Harness {
 
 /**
  * A harness with one live profile "p" whose connection records every
- * outcome; `dropConnection` simulates the connection dying.
+ * outcome and answers with the wire shape the decision maps onto;
+ * `dropConnection` simulates the connection dying.
+ * @param advertised - the options the connection's harness advertised
  */
-function harness(): Harness & { dropConnection: () => void } {
+function harness(advertised: { optionId: string; kind: string }[] = [],): Harness & { dropConnection: () => void } {
   const root = mkdtempSync(TMP_ROOT,);
   sandboxes.push(root,);
   const outcomes = new Map<string, PermissionOutcome[]>();
+  const options = advertisedPermissionOptions({ options: advertised, },);
   let live = true;
   const connectionFor = (profile: string,): PermissionRespondable | undefined => {
     if (!live) { return undefined; }
@@ -52,6 +81,8 @@ function harness(): Harness & { dropConnection: () => void } {
         const log = outcomes.get(profile,) ?? [];
         log.push(outcome,);
         outcomes.set(profile, log,);
+        // The connection answers with the wire shape; the queue relays it.
+        return wirePermissionOutcome(outcome, options,);
       },
     };
   };
@@ -66,7 +97,14 @@ function harness(): Harness & { dropConnection: () => void } {
   };
 }
 
+beforeEach(() => {
+  logEntries.length = 0;
+  captureLogs();
+},);
+
 afterEach(() => {
+  logEntries.length = 0;
+  setGlobalLogger(createLogger({ console: false, dbEnabled: false, level: "error", },),);
   while (sandboxes.length > 0) { rmSync(sandboxes.pop() ?? "", { recursive: true, force: true, },); }
 },);
 
@@ -218,7 +256,7 @@ describe("PermissionQueue", () => {
     const queue = new PermissionQueue({
       connection: () => ({
         respondPermission: () => {
-          throw new PermissionDecisionRefusedError();
+          throw new PermissionDecisionRefusedError({ outcome: "cancelled", },);
         },
       }),
     },);
@@ -263,8 +301,36 @@ describe("PermissionQueue", () => {
     expect(h.outcomes.get("p",),).toEqual([{ outcome: "reject_once", },],);
   });
 
+  it("delivers a denial the harness cannot carry as the protocol's cancellation", async () => {
+    const h = harness([{ optionId: "allow", kind: "allow_once", },],);
+    const parked = await h.queue.submit({
+      profile: "p",
+      pending: {
+        params: {
+          sessionId: "s",
+          kind: "edit",
+          options: [{ optionId: "allow", name: "Allow", kind: "allow_once", },],
+        },
+        kind: "edit",
+      },
+      sandboxRoot: h.root,
+    },);
+
+    if (parked.decision !== "pending") { throw new Error("expected pending",); }
+
+    const result = h.queue.resolve({ id: parked.id, decision: "deny", },);
+
+    // Only allow-polarity options were advertised, so none can carry the
+    // denial: the wire answer is the protocol's cancellation. The tool call is
+    // refused and the decision IS delivered - never as an approval.
+    expect(result.ok,).toBe(true,);
+    if (!result.ok) { throw new Error("expected the denial to be delivered",); }
+    expect(result.answer,).toEqual({ outcome: "cancelled", },);
+    expect(h.outcomes.get("p",),).toEqual([{ outcome: "reject_once", },],);
+  });
+
   it("reports the approval's wire answer when an advertised option carries it", async () => {
-    const h = harness();
+    const h = harness([{ optionId: "allow", kind: "allow_once", },],);
     const parked = await h.queue.submit({
       profile: "p",
       pending: {
@@ -287,6 +353,33 @@ describe("PermissionQueue", () => {
     expect(result.ok,).toBe(true,);
     if (!result.ok) { throw new Error("expected the approval to be delivered",); }
     expect(result.answer,).toEqual({ outcome: "selected", optionId: "allow", },);
+  });
+
+  it("logs the wire answer next to the decision", async () => {
+    const h = harness([{ optionId: "allow", kind: "allow_once", },],);
+    const parked = await h.queue.submit({
+      profile: "p",
+      pending: {
+        params: {
+          sessionId: "s",
+          kind: "edit",
+          options: [{ optionId: "allow", name: "Allow", kind: "allow_once", },],
+        },
+        kind: "edit",
+      },
+      sandboxRoot: h.root,
+    },);
+
+    if (parked.decision !== "pending") { throw new Error("expected pending",); }
+
+    h.queue.resolve({ id: parked.id, decision: "approve", },);
+    await capture?.flush();
+
+    // The operator reads the log: it names the decision AND the answer that
+    // went on the wire, so a decision is never read as the other one.
+    const entry = logEntries.find((item,) => item.message === "harness permission decided");
+    expect(entry?.meta?.decision,).toBe("approve",);
+    expect(entry?.meta?.answer,).toEqual({ outcome: "selected", optionId: "allow", },);
   });
 
   it("withdrawProfile drops the profile's asks and reports their ids", async () => {

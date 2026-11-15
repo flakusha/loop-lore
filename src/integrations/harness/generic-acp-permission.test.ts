@@ -265,6 +265,55 @@ describe("GenericAcpAdapter permission surface (fake ACP fixture)", () => {
     expect(outcome?.outcome,).toEqual({ outcome: { outcome: "cancelled", }, },);
   });
 
+  it("reports the answer it put on the wire", async () => {
+    const server = serve({ FAKE_PERMISSION: "1", FAKE_MODELS: "m", },);
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    const answer = adapter.respondPermission({ outcome: "allow_once", },);
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    // The answer the adapter REPORTS is the answer the agent received: the
+    // queue logs what the connection reports, so the two must be one thing.
+    expect(answer,).toEqual({ outcome: "selected", optionId: "allow", },);
+    expect(outcome?.outcome,).toEqual({ outcome: answer, },);
+  });
+
+  it("a refused decision carries the answer it put on the wire", async () => {
+    const server = serve({
+      FAKE_PERMISSION: "1",
+      FAKE_MODELS: "m",
+      FAKE_PERMISSION_KINDS: "allow_always,allow_always",
+    },);
+
+    const { adapter, nextAsk, } = makePermissionAdapter(server,);
+
+    const turn = adapter.prompt("hi",);
+    await nextAsk;
+    let refusal: PermissionDecisionRefusedError | undefined;
+    try {
+      adapter.respondPermission({ outcome: "allow_once", },);
+    } catch (error) {
+      refusal = error as PermissionDecisionRefusedError;
+    }
+
+    await turn;
+
+    const outcome = server.readLog().find((item,): item is Extract<FakeAcpLogEntry, {
+      event: "permission_outcome";
+    }> => item.event === "permission_outcome");
+
+    // A refusal also went on the wire: the error carries that answer, so the
+    // operator log can name it.
+    expect(refusal?.answer,).toEqual({ outcome: "cancelled", },);
+    expect(outcome?.outcome,).toEqual({ outcome: refusal?.answer, },);
+  });
+
   it("delivers an approval the advertised allow option carries", async () => {
     const server = serve({
       FAKE_PERMISSION: "1",

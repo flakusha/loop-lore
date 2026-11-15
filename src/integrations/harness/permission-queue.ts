@@ -29,9 +29,9 @@ import {
   PermissionAskGoneError,
   PermissionDecisionRefusedError,
   type PermissionOutcome,
+  type WirePermissionOutcome,
 } from "./adapter-types";
 import { type PermissionFailureCode, } from "./permission-failure";
-import { advertisedPermissionOptions, type WirePermissionOutcome, wirePermissionOutcome, } from "./permission-outcome";
 import { classifyPermission, } from "./permission-policy";
 
 /** One ask's inputs: the profile, the raw pending ask, and the session's sandbox cwd. */
@@ -42,10 +42,11 @@ type ParkableAsk = { input: AskInput; reason: string; undeliverableReason: strin
 
 /**
  * The adapter surface the queue needs to answer an ask: respondPermission
- * answers the connection's open permission ask.
+ * answers the connection's open permission ask and reports the answer it put
+ * on the wire.
  * @throws {PermissionAskGoneError} when the harness no longer holds the ask.
  */
-export type PermissionRespondable = { respondPermission(outcome: PermissionOutcome,): void };
+export type PermissionRespondable = { respondPermission(outcome: PermissionOutcome,): WirePermissionOutcome };
 
 /** One ask parked for human approval, in FIFO arrival order. */
 export interface PendingPermissionEntry {
@@ -188,12 +189,11 @@ export class PermissionQueue {
             error: (error as Error).message,
           },);
 
+          const reason = `the decision could not be delivered: ${(error as Error).message} — a retry may deliver it`;
           return this.park({
             input,
             reason: verdict.reason,
-            undeliverableReason: `the decision could not be delivered: ${
-              (error as Error).message
-            } — a retry may deliver it`,
+            undeliverableReason: reason,
             withdrawnAt,
           },);
         }
@@ -269,9 +269,10 @@ export class PermissionQueue {
    * Apply a human decision to one queued ask. Unknown id and a connection
    * that cannot accept the decision are typed failures, not throws.
    *
-   * The decision's wire answer is the mapping the connection applies to the
-   * ask's advertised options. A refusal - the harness could not express the
-   * decision - reports the `refused` code; a vanished ask reports `ask_gone`.
+   * The wire answer is the one the CONNECTION reports - what actually went on
+   * the wire, never a recomputation of it. A refusal - the harness could not
+   * express the decision - reports the `refused` code; a vanished ask reports
+   * `ask_gone`.
    * @param input - the entry id and the decision
    * @returns ok, or a typed failure.
    */
@@ -283,6 +284,9 @@ export class PermissionQueue {
 
     const connection = this.opts.connection(entry.profile,);
     const outcome = input.decision === "approve" ? APPROVE_OUTCOME : DENY_OUTCOME;
+    // The log fields every decision entry carries: which ask, which profile,
+    // which choice.
+    const fields = { id: entry.id, profile: entry.profile, decision: input.decision, };
     if (!connection) {
       // Deny is terminal cleanup: the ask is unreachable, so drop it.
       // Approve is retriable: keep the entry in case the profile respawns.
@@ -290,40 +294,38 @@ export class PermissionQueue {
         this.entries.delete(input.id,);
       }
 
-      log()?.warn("harness permission decided without a live connection", {
-        id: input.id,
-        profile: entry.profile,
-        decision: input.decision,
-      },);
+      log()?.warn("harness permission decided without a live connection", fields,);
 
       return { ok: false, code: "no_connection", message: `profile "${entry.profile}" has no live connection`, };
     }
 
-    // The answer the connection maps this decision to: the ask's raw params
-    // (the options the connection advertised) and the same mapping, so the log
-    // names what went on the wire.
-    const answer = wirePermissionOutcome(outcome, advertisedPermissionOptions(entry.input,),);
     try {
-      connection.respondPermission(outcome,);
+      // The connection reports the answer it put on the wire: the log names
+      // what the agent received, never a recomputation of it.
+      const answer = connection.respondPermission(outcome,);
+      this.entries.delete(input.id,);
+      log()?.info("harness permission decided", { ...fields, answer, },);
+
+      return { ok: true, answer, };
     } catch (error) {
       if (error instanceof PermissionAskGoneError) {
-        // The harness no longer holds the ask: nothing is left to decide, so
-        // the entry goes with it — a stuck row would never clear.
+        // A REFUSAL is not a vanished ask: the harness answered on the wire
+        // with a refusal, so the log names the answer it sent. A vanished ask
+        // sent NOTHING, so its log names no answer.
+        const refused = error instanceof PermissionDecisionRefusedError;
         this.entries.delete(input.id,);
-        log()?.info(`harness permission ask no longer awaits the decision: ${(error as Error).message}`, {
-          id: input.id,
-          profile: entry.profile,
-          decision: input.decision,
+        log()?.info(refused ? "harness permission decision refused" : "harness permission ask gone", {
+          ...fields,
+          error: error.message,
+          ...(refused ? { answer: error.answer, } : {}),
         },);
 
-        const code = error instanceof PermissionDecisionRefusedError ? "refused" : "ask_gone";
-        return { ok: false, code, message: `${(error as Error).message} (profile "${entry.profile}")`, };
+        const code = refused ? "refused" : "ask_gone";
+        return { ok: false, code, message: `${error.message} (profile "${entry.profile}")`, };
       }
 
       log()?.warn("harness permission decision rejected by the connection", {
-        id: input.id,
-        profile: entry.profile,
-        decision: input.decision,
+        ...fields,
         error: (error as Error).message,
       },);
 
@@ -335,16 +337,6 @@ export class PermissionQueue {
 
       return { ok: false, code: "not_delivered", message: `profile "${entry.profile}" did not accept the decision`, };
     }
-
-    this.entries.delete(input.id,);
-    log()?.info("harness permission decided", {
-      id: input.id,
-      profile: entry.profile,
-      decision: input.decision,
-      answer,
-    },);
-
-    return { ok: true, answer, };
   }
 
   /**
