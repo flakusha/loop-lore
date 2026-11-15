@@ -17,7 +17,7 @@ import { ItemsService, } from "../../story/items";
 import { jsonParseOr, } from "../../utils";
 import { SuccessResponse, } from "../../validation/schemas";
 import { resolveActorAccess, } from "../actor-access";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { HttpStatus, } from "../http-utils/status";
 import { assertWorldOwner, } from "../rpg/crafting-station-instances";
 import { log, } from "./log";
@@ -39,8 +39,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
           const modifiers = calculateEquipmentModifiers(body.items,);
           return jsonResponse(modifiers,);
         } catch (error) {
-          log().error("Failed to calculate equipment modifiers", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate equipment modifiers", error,);
         }
       },
       {
@@ -91,8 +90,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(calculateEquipmentModifiers(equipment,),);
         } catch (error) {
-          log().error("Failed to calculate modifiers from item IDs", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate modifiers from item IDs", error,);
         }
       },
       {
@@ -117,8 +115,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
           const result = canEquipItem(body.item, body.characterLevel, body.characterStats,);
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to check equip eligibility", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to check equip eligibility", error,);
         }
       },
       {
@@ -138,8 +135,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
           const updated = applyDurabilityDamage(body.item, body.damage,);
           return jsonResponse(updated,);
         } catch (error) {
-          log().error("Failed to apply durability damage", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to apply durability damage", error,);
         }
       },
       {
@@ -164,8 +160,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
           const result = repairItem(body.item, body.repairAmount, body.goldCost,);
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to repair item", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to repair item", error,);
         }
       },
       {
@@ -238,8 +233,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse({ loot, worldItemIds, },);
         } catch (error) {
-          log().error("Failed to generate loot", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to generate loot", error,);
         }
       },
       {

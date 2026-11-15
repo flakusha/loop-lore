@@ -45,7 +45,7 @@ import {
   notFoundResponse,
   notOwnerResponse,
   parsePaginationParams,
-  requireUserId,
+  withUserAuth,
 } from "../routes/http-utils";
 import { jsonStringifyOr, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
@@ -213,52 +213,48 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           matted_asset_id: matted?.asset_id ?? null,
         },);
       },)
-      .patch(`${prefix}/assets/:id`, async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      .patch(`${prefix}/assets/:id`, (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const body = ctx.body as { visibility?: string };
+          if (
+            !body.visibility ||
+            ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public,].includes(
+              body.visibility as AssetVisibility,
+            )
+          ) {
+            return badRequestResponse("Invalid visibility. Must be private, shared, or public",);
+          }
 
-        const body = ctx.body as { visibility?: string };
-        if (
-          !body.visibility ||
-          ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public,].includes(
-            body.visibility as AssetVisibility,
-          )
-        ) {
-          return badRequestResponse("Invalid visibility. Must be private, shared, or public",);
-        }
+          const updated = await updateAssetVisibility({
+            database,
+            assetId: ctx.params.id,
+            visibility: body.visibility as AssetVisibility,
+            actorId: userId,
+          },);
 
-        const updated = await updateAssetVisibility({
-          database,
-          assetId: ctx.params.id,
-          visibility: body.visibility as AssetVisibility,
-          actorId: userId,
-        },);
+          if (!updated) {
+            return notOwnerResponse("Asset",);
+          }
 
-        if (!updated) {
-          return notOwnerResponse("Asset",);
-        }
+          return jsonResponse({ id: updated.id, visibility: updated.visibility, },);
+        },),)
+      .delete(`${prefix}/assets/:id`, (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+          if (owned instanceof Response) { return owned; }
 
-        return jsonResponse({ id: updated.id, visibility: updated.visibility, },);
-      },)
-      .delete(`${prefix}/assets/:id`, async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+          const deleted = await deleteAsset({
+            database,
+            assetId: ctx.params.id,
+            uploadDir: config.assets.uploadDir,
+          },);
 
-        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
-        if (owned instanceof Response) { return owned; }
+          if (!deleted) {
+            return notFoundResponse("Asset not found",);
+          }
 
-        const deleted = await deleteAsset({
-          database,
-          assetId: ctx.params.id,
-          uploadDir: config.assets.uploadDir,
-        },);
-
-        if (!deleted) {
-          return notFoundResponse("Asset not found",);
-        }
-
-        return jsonNoContent();
-      },)
+          return jsonNoContent();
+        },),)
       // -- Transform routes (face-anchor / framing metadata) ----
       .get(`${prefix}/assets/:id/transform`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
@@ -280,32 +276,31 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         if (!transform) { return notFoundResponse("No transform for this context",); }
         return jsonResponse(transform,);
       },)
-      .put(`${prefix}/assets/:id/transform`, async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
-        if (owned instanceof Response) { return owned; }
-        const { context: rawContext, ...values } = ctx.body as TransformValues & { context?: string };
-        const unknownKeys = Object.keys(values,).filter((key,) =>
-          !["cropX", "cropY", "cropW", "cropH", "zoom", "rotation", "focalPointX", "focalPointY",].includes(key,)
-        );
+      .put(`${prefix}/assets/:id/transform`, (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+          if (owned instanceof Response) { return owned; }
+          const { context: rawContext, ...values } = ctx.body as TransformValues & { context?: string };
+          const unknownKeys = Object.keys(values,).filter((key,) =>
+            !["cropX", "cropY", "cropW", "cropH", "zoom", "rotation", "focalPointX", "focalPointY",].includes(key,)
+          );
 
-        if (unknownKeys.length > 0) {
-          return badRequestResponse(`Unknown transform keys: ${unknownKeys.join(", ",)}`,);
-        }
+          if (unknownKeys.length > 0) {
+            return badRequestResponse(`Unknown transform keys: ${unknownKeys.join(", ",)}`,);
+          }
 
-        const context = rawContext ?? TransformContext.Default;
-        if (!(Object.values(TransformContext,) as string[]).includes(context,)) {
-          return badRequestResponse("Invalid context",);
-        }
+          const context = rawContext ?? TransformContext.Default;
+          if (!(Object.values(TransformContext,) as string[]).includes(context,)) {
+            return badRequestResponse("Invalid context",);
+          }
 
-        try {
-          const row = await upsertAssetTransform(database, ctx.params.id, context as TransformContext, values,);
-          return jsonResponse(row,);
-        } catch (err) {
-          return transformErrorResponse(err,);
-        }
-      },)
+          try {
+            const row = await upsertAssetTransform(database, ctx.params.id, context as TransformContext, values,);
+            return jsonResponse(row,);
+          } catch (err) {
+            return transformErrorResponse(err,);
+          }
+        },),)
       // ── File serving routes ──────────────────────────
       .get(`${prefix}/assets/:id/raw`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
@@ -365,147 +360,136 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       // Mint a time-limited HMAC URL for a serve action. Gates on the same
       // access check as serving; the token then authorizes session-less
       // fetching (e.g. <img src>) until expiry.
-      .post(`${prefix}/assets/:id/signed-url/:action`, async (ctx,) => {
-        // Minting is authenticated-only: the token authorizes session-less
-        // fetching until expiry without re-checking visibility, so a
-        // guest-minted token would survive a later flip to private. Guests
-        // fetch public bytes through the direct serve path instead.
-        const authedId = requireUserId(ctx,);
-        if (typeof authedId !== "string") { return authedId; }
-        const { userId, userRole, } = authOf(ctx,);
-        const resolved = await resolveAsset(database, ctx.params.id, userId, userRole,);
-        if (resolved instanceof Response) { return resolved; }
+      .post(`${prefix}/assets/:id/signed-url/:action`, (ctx,) =>
+        withUserAuth(ctx, async (_userId,) => {
+          // Minting is authenticated-only: the token authorizes session-less
+          // fetching until expiry without re-checking visibility, so a
+          // guest-minted token would survive a later flip to private. Guests
+          // fetch public bytes through the direct serve path instead.
+          const { userId, userRole, } = authOf(ctx,);
+          const resolved = await resolveAsset(database, ctx.params.id, userId, userRole,);
+          if (resolved instanceof Response) { return resolved; }
 
-        const actionParam = ctx.params.action;
-        if (!isSignedUrlAction(actionParam,)) {
-          return badRequestResponse("Invalid signed-URL action",);
-        }
+          const actionParam = ctx.params.action;
+          if (!isSignedUrlAction(actionParam,)) {
+            return badRequestResponse("Invalid signed-URL action",);
+          }
 
-        const secret = resolveSignedUrlSecret(config.assets.signedUrlSecret, config.auth.jwtSecret,);
-        if (!secret) {
-          return forbiddenResponse("Signed URLs are not configured",);
-        }
+          const secret = resolveSignedUrlSecret(config.assets.signedUrlSecret, config.auth.jwtSecret,);
+          if (!secret) {
+            return forbiddenResponse("Signed URLs are not configured",);
+          }
 
-        const expiresInSeconds = config.assets.signedUrlExpirySeconds ?? 900;
-        const signed = await signAssetUrl({
-          secret,
-          assetId: ctx.params.id,
-          action: actionParam,
-          expiresInSeconds,
-        },);
-
-        const url = `${prefix}/assets/${ctx.params.id}/${actionParam}?expires=${signed.expiresAt}&sig=${signed.token}`;
-        return jsonResponse({ url, token: signed.token, expiresAt: signed.expiresAt, action: actionParam, },);
-      },)
-      // ── Links sub-routes ─────────────────────────────
-      .get(`${prefix}/assets/:id/links`, async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-
-        // getAssetLinks keys on asset_id alone, so ownership is enforced here.
-        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
-        if (owned instanceof Response) { return owned; }
-
-        const links = await getAssetLinks(database, ctx.params.id,);
-        return jsonResponse(links,);
-      },)
-      .post(`${prefix}/assets/:id/links`, async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-
-        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
-        if (owned instanceof Response) { return owned; }
-
-        const body = ctx.body as { entityType: AssetLinkEntity; entityId: string; label?: string };
-        await linkAsset({
-          database,
-          assetId: ctx.params.id,
-          link: body,
-        },);
-
-        return jsonCreated({ id: ctx.params.id, },);
-      },)
-      .delete(`${prefix}/assets/:id/links/:linkId`, async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-
-        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
-        if (owned instanceof Response) { return owned; }
-
-        // :linkId is the linked entity's id; both the asset id and the link
-        // id must match. Unknown ids are a 404, never a silent success.
-        try {
-          const deleted = await deleteAssetLink({
-            database,
+          const expiresInSeconds = config.assets.signedUrlExpirySeconds ?? 900;
+          const signed = await signAssetUrl({
+            secret,
             assetId: ctx.params.id,
-            linkId: ctx.params.linkId,
+            action: actionParam,
+            expiresInSeconds,
           },);
 
-          if (!deleted) {
-            return notFoundResponse("Link not found",);
+          const url =
+            `${prefix}/assets/${ctx.params.id}/${actionParam}?expires=${signed.expiresAt}&sig=${signed.token}`;
+
+          return jsonResponse({ url, token: signed.token, expiresAt: signed.expiresAt, action: actionParam, },);
+        },),)
+      // ── Links sub-routes ─────────────────────────────
+      .get(`${prefix}/assets/:id/links`, (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          // getAssetLinks keys on asset_id alone, so ownership is enforced here.
+          const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+          if (owned instanceof Response) { return owned; }
+
+          const links = await getAssetLinks(database, ctx.params.id,);
+          return jsonResponse(links,);
+        },),)
+      .post(`${prefix}/assets/:id/links`, (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+          if (owned instanceof Response) { return owned; }
+
+          const body = ctx.body as { entityType: AssetLinkEntity; entityId: string; label?: string };
+          await linkAsset({
+            database,
+            assetId: ctx.params.id,
+            link: body,
+          },);
+
+          return jsonCreated({ id: ctx.params.id, },);
+        },),)
+      .delete(`${prefix}/assets/:id/links/:linkId`, (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+          if (owned instanceof Response) { return owned; }
+
+          // :linkId is the linked entity's id; both the asset id and the link
+          // id must match. Unknown ids are a 404, never a silent success.
+          try {
+            const deleted = await deleteAssetLink({
+              database,
+              assetId: ctx.params.id,
+              linkId: ctx.params.linkId,
+            },);
+
+            if (!deleted) {
+              return notFoundResponse("Link not found",);
+            }
+
+            return jsonNoContent();
+          } catch (err) {
+            // deleteAssetLink throws when the (asset_id, entity_id) pair
+            // matches more than one row across entity_types; the route lacks
+            // an entity_type path segment to disambiguate, so refuse with
+            // 409 instead of silently dropping unrelated links.
+            if (err instanceof Error && err.message.startsWith("Ambiguous link delete:",)) {
+              return conflictResponse(err.message,);
+            }
+
+            throw err;
+          }
+        },),)
+      .post(`${prefix}/assets/:id/share`, (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const body = ctx.body as { actor_id?: string };
+          if (!body.actor_id) {
+            return badRequestResponse("actor_id is required",);
           }
 
+          const share = await shareAsset({
+            database,
+            assetId: ctx.params.id,
+            sharedWithId: body.actor_id,
+            sharedById: userId,
+          },);
+
+          if (!share) {
+            return notOwnerResponse("Asset",);
+          }
+
+          return jsonCreated(share,);
+        },),)
+      .delete(`${prefix}/assets/:id/share`, (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+          if (owned instanceof Response) { return owned; }
+
+          const body = ctx.body as { actor_id?: string };
+          if (!body.actor_id) {
+            return badRequestResponse("actor_id is required",);
+          }
+
+          await unshareAsset({ database, assetId: ctx.params.id, sharedWithId: body.actor_id, },);
           return jsonNoContent();
-        } catch (err) {
-          // deleteAssetLink throws when the (asset_id, entity_id) pair
-          // matches more than one row across entity_types; the route lacks
-          // an entity_type path segment to disambiguate, so refuse with
-          // 409 instead of silently dropping unrelated links.
-          if (err instanceof Error && err.message.startsWith("Ambiguous link delete:",)) {
-            return conflictResponse(err.message,);
-          }
+        },),)
+      .get(`${prefix}/assets/:id/shares`, (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          // getAssetShares keys on asset_id alone, so ownership is enforced here.
+          const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+          if (owned instanceof Response) { return owned; }
 
-          throw err;
-        }
-      },)
-      .post(`${prefix}/assets/:id/share`, async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-
-        const body = ctx.body as { actor_id?: string };
-        if (!body.actor_id) {
-          return badRequestResponse("actor_id is required",);
-        }
-
-        const share = await shareAsset({
-          database,
-          assetId: ctx.params.id,
-          sharedWithId: body.actor_id,
-          sharedById: userId,
-        },);
-
-        if (!share) {
-          return notOwnerResponse("Asset",);
-        }
-
-        return jsonCreated(share,);
-      },)
-      .delete(`${prefix}/assets/:id/share`, async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-
-        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
-        if (owned instanceof Response) { return owned; }
-
-        const body = ctx.body as { actor_id?: string };
-        if (!body.actor_id) {
-          return badRequestResponse("actor_id is required",);
-        }
-
-        await unshareAsset({ database, assetId: ctx.params.id, sharedWithId: body.actor_id, },);
-        return jsonNoContent();
-      },)
-      .get(`${prefix}/assets/:id/shares`, async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-
-        // getAssetShares keys on asset_id alone, so ownership is enforced here.
-        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
-        if (owned instanceof Response) { return owned; }
-
-        const shares = await getAssetShares(database, ctx.params.id,);
-        return jsonResponse(shares,);
-      },)
+          const shares = await getAssetShares(database, ctx.params.id,);
+          return jsonResponse(shares,);
+        },),)
   );
 }
 

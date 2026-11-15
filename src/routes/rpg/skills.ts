@@ -25,7 +25,7 @@ import { SkillsService, } from "../../rpg/skills";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { checkActorOwnership, } from "../actor-auth";
-import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import {
@@ -103,8 +103,7 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         const mapped = Array.from(rows, (r,) => rowToSkillLike(r,),);
         return jsonResponse({ skills: mapped, },);
       } catch (error) {
-        log().error("Failed to list skills", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to list skills", error,);
       }
     }, {
       query: skillsQuery,
@@ -124,8 +123,7 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         const skill = await svc().createSkill(ctx.body as never,);
         return jsonResponse(skill, 201,);
       } catch (error) {
-        log().error("Failed to create skill", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to create skill", error,);
       }
     }, {
       body: skillBody,
@@ -151,8 +149,7 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
 
         return jsonResponse(skill,);
       } catch (error) {
-        log().error("Failed to get skill", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get skill", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),
@@ -180,8 +177,7 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         const updated = await svc().updateSkill(ctx.params.id, body,);
         return jsonResponse(updated,);
       } catch (error) {
-        log().error("Failed to update skill", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to update skill", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),
@@ -209,8 +205,7 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         await svc().deleteSkill(ctx.params.id,);
         return jsonResponse({ ok: true, },);
       } catch (error) {
-        log().error("Failed to delete skill", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to delete skill", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),

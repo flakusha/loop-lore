@@ -18,7 +18,7 @@
 import { Elysia, t, } from "elysia";
 import { WorldLocationTraitsService, } from "../../rpg/world-location-traits";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -51,8 +51,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
         const traits = await svc().getWorldTraits(actorId, ctx.params.worldId,);
         return jsonResponse({ traits, },);
       } catch (error) {
-        log().error("Failed to list world traits", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to list world traits", error,);
       }
     }, {
       params: t.Object({ worldId: t.String(), },),
@@ -73,8 +72,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
         const trait = await svc().createWorldTrait(ctx.body as never,);
         return jsonResponse(trait, 201,);
       } catch (error) {
-        log().error("Failed to create world trait", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to create world trait", error,);
       }
     }, {
       params: t.Object({ worldId: t.String(), },),
@@ -95,8 +93,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
         if (!trait) { return notFoundResponse("World trait",); }
         return jsonResponse(trait,);
       } catch (error) {
-        log().error("Failed to update world trait", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to update world trait", error,);
       }
     }, {
       params: idParams,
@@ -117,8 +114,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
         if (!ok) { return notFoundResponse("World trait",); }
         return jsonResponse({ ok: true, },);
       } catch (error) {
-        log().error("Failed to delete world trait", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to delete world trait", error,);
       }
     }, {
       params: idParams,
@@ -138,8 +134,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
         const traits = await svc().getLocationTraits(actorId, ctx.params.locationId,);
         return jsonResponse({ traits, },);
       } catch (error) {
-        log().error("Failed to list location traits", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to list location traits", error,);
       }
     }, {
       params: t.Object({ locationId: t.String(), },),
@@ -160,8 +155,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
         const trait = await svc().createLocationTrait(ctx.body as never,);
         return jsonResponse(trait, 201,);
       } catch (error) {
-        log().error("Failed to create location trait", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to create location trait", error,);
       }
     }, {
       params: t.Object({ locationId: t.String(), },),
@@ -182,8 +176,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
         if (!trait) { return notFoundResponse("Location trait",); }
         return jsonResponse(trait,);
       } catch (error) {
-        log().error("Failed to update location trait", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to update location trait", error,);
       }
     }, {
       params: idParams,
@@ -204,8 +197,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
         if (!ok) { return notFoundResponse("Location trait",); }
         return jsonResponse({ ok: true, },);
       } catch (error) {
-        log().error("Failed to delete location trait", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to delete location trait", error,);
       }
     }, {
       params: idParams,
@@ -224,8 +216,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
         const result = await svc().getAllTraitsForActor(ctx.params.actorId,);
         return jsonResponse(result,);
       } catch (error) {
-        log().error("Failed to get actor traits", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get actor traits", error,);
       }
     }, {
       params: t.Object({ actorId: t.String(), },),

@@ -20,7 +20,7 @@ import {
   type StatBlock,
   validateStatBlock,
 } from "../../rpg/stats.js";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
+import { internalError, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
 import { log, } from "./log.js";
 import { type HandlerOpts, StatsBody, StatsGenerateBody, } from "./types.js";
 
@@ -42,8 +42,7 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
             const body = ctx.body as { stats: StatBlock };
             return jsonResponse(computeModifiers(body.stats,),);
           } catch (error) {
-            log().error("Failed to calculate modifiers", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to calculate modifiers", error,);
           }
         },
         {
@@ -64,8 +63,7 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
             const body = ctx.body as { stats: StatBlock };
             return jsonResponse({ valid: validateStatBlock(body.stats,), },);
           } catch (error) {
-            log().error("Failed to validate stats", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to validate stats", error,);
           }
         },
         {
@@ -122,8 +120,7 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
               }
             }
           } catch (error) {
-            log().error("Failed to generate stats", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to generate stats", error,);
           }
         },
         {

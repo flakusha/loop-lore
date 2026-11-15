@@ -21,7 +21,7 @@ import type { DB, } from "../../db/schema";
 import { resolveProvider, } from "../../generation/providers/registry";
 import { safeJsonStringify, uid, } from "../../utils";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonResponse, requireUserId, } from "../http-utils";
+import { jsonResponse, withUserAuth, } from "../http-utils";
 
 interface HandleOpts {
   config: Config;
@@ -56,70 +56,68 @@ export function generationCompareRoutes(
   prefix = "/api/v1",
 ): Elysia {
   return new Elysia({ name: "generation-compare", },)
-    .post(`${prefix}/generation/compare`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .post(`${prefix}/generation/compare`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const body = ctx.body as {
+          prompt: string;
+          models: Array<{ provider: string; model: string; temperature?: number; topP?: number; maxTokens?: number }>;
+        };
 
-      const body = ctx.body as {
-        prompt: string;
-        models: Array<{ provider: string; model: string; temperature?: number; topP?: number; maxTokens?: number }>;
-      };
+        // Detect parameter-sweep: same provider+model across all entries
+        // with only temperature / topP / maxTokens differing. The label is
+        // surfaced in each result for the UI.
+        const firstKey = `${body.models[0]!.provider}::${body.models[0]!.model}`;
+        const isSweep = body.models.every(
+          (m,) => `${m.provider}::${m.model}` === firstKey,
+        );
 
-      // Detect parameter-sweep: same provider+model across all entries
-      // with only temperature / topP / maxTokens differing. The label is
-      // surfaced in each result for the UI.
-      const firstKey = `${body.models[0]!.provider}::${body.models[0]!.model}`;
-      const isSweep = body.models.every(
-        (m,) => `${m.provider}::${m.model}` === firstKey,
-      );
+        const results = await Promise.allSettled(
+          body.models.map(async (m,) => runOne({ config, database, }, m, body.prompt, userId,)),
+        );
 
-      const results = await Promise.allSettled(
-        body.models.map(async (m,) => runOne({ config, database, }, m, body.prompt, userId,)),
-      );
+        const out = results.map((r, i,) => {
+          const model = body.models[i]!;
+          if (r.status === "fulfilled") {
+            const v = r.value;
+            return {
+              model: { provider: model.provider, name: model.model, },
+              response: v.response,
+              latencyMs: v.latencyMs,
+              tokenCount: v.tokenCount,
+              cost: v.cost,
+              status: "success" as const,
+              metadata: isSweep ? { kind: "sweep", } : { kind: "ab", },
+            };
+          }
 
-      const out = results.map((r, i,) => {
-        const model = body.models[i]!;
-        if (r.status === "fulfilled") {
-          const v = r.value;
           return {
             model: { provider: model.provider, name: model.model, },
-            response: v.response,
-            latencyMs: v.latencyMs,
-            tokenCount: v.tokenCount,
-            cost: v.cost,
-            status: "success" as const,
+            response: "",
+            latencyMs: 0,
+            tokenCount: 0,
+            cost: 0,
+            status: "error" as const,
+            error: r.reason instanceof Error ? r.reason.message : String(r.reason,),
             metadata: isSweep ? { kind: "sweep", } : { kind: "ab", },
           };
-        }
+        },);
 
-        return {
-          model: { provider: model.provider, name: model.model, },
-          response: "",
-          latencyMs: 0,
-          tokenCount: 0,
-          cost: 0,
-          status: "error" as const,
-          error: r.reason instanceof Error ? r.reason.message : String(r.reason,),
-          metadata: isSweep ? { kind: "sweep", } : { kind: "ab", },
-        };
-      },);
+        const id = uid();
+        const createdAt = new Date().toISOString();
+        const resultsJson = safeJsonStringify(out,);
+        const metadataJson = safeJsonStringify({ sweep: isSweep, modelCount: body.models.length, },);
+        await database.insertInto("model_comparison_runs",).values({
+          id,
+          user_id: userId,
+          prompt: body.prompt,
+          results: resultsJson.ok ? resultsJson.value : "[]",
+          ratings: "{}",
+          metadata: metadataJson.ok ? metadataJson.value : "{}",
+          created_at: createdAt,
+        },).execute();
 
-      const id = uid();
-      const createdAt = new Date().toISOString();
-      const resultsJson = safeJsonStringify(out,);
-      const metadataJson = safeJsonStringify({ sweep: isSweep, modelCount: body.models.length, },);
-      await database.insertInto("model_comparison_runs",).values({
-        id,
-        user_id: userId,
-        prompt: body.prompt,
-        results: resultsJson.ok ? resultsJson.value : "[]",
-        ratings: "{}",
-        metadata: metadataJson.ok ? metadataJson.value : "{}",
-        created_at: createdAt,
-      },).execute();
-
-      return jsonResponse({ id, createdAt, results: out, sweep: isSweep, },);
-    }, {
+        return jsonResponse({ id, createdAt, results: out, sweep: isSweep, },);
+      },), {
       body: CompareBody,
       response: {
         200: SuccessResponse,

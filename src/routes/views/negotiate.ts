@@ -55,3 +55,25 @@ export function jsonViewModelResponse(viewModel: unknown,): Response {
     headers: { "Content-Type": "application/json", },
   },);
 }
+
+/**
+ * Fragment guard for `/dynamic/*` partials: direct navigation (no
+ * `HX-Request`, no JSON preference) bounces to `/views/`, while htmx swaps
+ * and JSON view-model callers proceed. Folds the `isHtmx + wantsJson +
+ * 302` triple repeated across the dynamic partials.
+ * @param ctx - route context (only `request` is read)
+ * @param wantsJson - the caller's `wantsJsonViewModel` answer; pass
+ * `false` for htmx-only partials with no JSON branch
+ * @returns the 302 to return verbatim, or `null` when the caller proceeds
+ */
+export function redirectUnlessFragment(
+  ctx: { request: Request },
+  wantsJson: boolean,
+): Response | null {
+  const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+  if (!isHtmx && !wantsJson) {
+    return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
+  }
+
+  return null;
+}

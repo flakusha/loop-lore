@@ -25,7 +25,7 @@ import {
   updateRelationship,
 } from "../../rpg/npc-memory";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { requireWorldOwner, } from "../worlds/access";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -79,8 +79,7 @@ export function npcMemoryRoutes({ database, }: HandlerOpts, prefix = "/api",): E
 
         return jsonResponse(memories,);
       } catch (error) {
-        log().error("Failed to recall NPC memories", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to recall NPC memories", error,);
       }
     }, {
       params: t.Object({ worldId: t.String(), npcId: t.String(), },),
@@ -120,8 +119,7 @@ export function npcMemoryRoutes({ database, }: HandlerOpts, prefix = "/api",): E
 
         return jsonResponse(memory,);
       } catch (error) {
-        log().error("Failed to record NPC memory", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to record NPC memory", error,);
       }
     }, {
       params: t.Object({ worldId: t.String(), npcId: t.String(), },),
@@ -192,8 +190,7 @@ export function npcMemoryRoutes({ database, }: HandlerOpts, prefix = "/api",): E
           },),
         },);
       } catch (error) {
-        log().error("Failed to update NPC relationship", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to update NPC relationship", error,);
       }
     }, {
       params: worldParams,
@@ -214,8 +211,7 @@ export function npcMemoryRoutes({ database, }: HandlerOpts, prefix = "/api",): E
       try {
         return jsonResponse(await decayMemories(database, new Date(),),);
       } catch (error) {
-        log().error("Failed to decay NPC memories", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to decay NPC memories", error,);
       }
     }, {
       params: worldParams,

@@ -36,7 +36,7 @@ import {
   TemplateDetailLevelSchema,
   TemplateSummaryResponse,
 } from "../../validation/schemas";
-import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { HttpStatus, jsonError, jsonResponse, withUserAuth, } from "../http-utils";
 
 /** Scene tags accepted per audio apply — matches the ambient route cap. */
 const MAX_AUDIO_TAGS = 8;
@@ -117,134 +117,128 @@ export function modalityTemplateRoutes(
       .slice(0, MAX_AUDIO_TAGS,);
 
   return new Elysia({ name: `template-modality-${modality}`, },)
-    .get(base, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const templates = await listTemplates(database, userId, modality,);
-      return jsonResponse({ templates, },);
-    }, {
+    .get(base, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const templates = await listTemplates(database, userId, modality,);
+        return jsonResponse({ templates, },);
+      },), {
       response: { 200: TemplateSummaryResponse, 401: ErrorResponse, },
       detail: { summary: `List ${modality} templates`, tags: ["Templates",], },
     },)
-    .post(base, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const body = ctx.body as Partial<CreateTemplateInput> & { modality?: string };
-      if (body.modality !== undefined && body.modality !== modality) {
-        return jsonError({
-          message: `Body modality must be "${modality}" or omitted`,
-          status: HttpStatus.BadRequest,
-        },);
-      }
+    .post(base, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const body = ctx.body as Partial<CreateTemplateInput> & { modality?: string };
+        if (body.modality !== undefined && body.modality !== modality) {
+          return jsonError({
+            message: `Body modality must be "${modality}" or omitted`,
+            status: HttpStatus.BadRequest,
+          },);
+        }
 
-      const input = { ...body, modality, } as CreateTemplateInput;
-      const serialized = serializeTemplateInput(input,);
-      if (!serialized.ok) {
-        return jsonError({ message: serialized.error, status: HttpStatus.BadRequest, },);
-      }
+        const input = { ...body, modality, } as CreateTemplateInput;
+        const serialized = serializeTemplateInput(input,);
+        if (!serialized.ok) {
+          return jsonError({ message: serialized.error, status: HttpStatus.BadRequest, },);
+        }
 
-      const row = await createTemplate(database, userId, input,);
-      return jsonResponse({ template: row, },);
-    }, {
+        const row = await createTemplate(database, userId, input,);
+        return jsonResponse({ template: row, },);
+      },), {
       body: ModalityCreateBody,
       response: { 200: SuccessResponse, 401: ErrorResponse, },
       detail: { summary: `Create a ${modality} template`, tags: ["Templates",], },
     },)
-    .get(`${base}/:id`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const row = await ownedMatchingRow(ctx.params.id, userId,);
-      if (!row) { return notFound("Template not found",); }
-      return jsonResponse({
-        template: { ...row, payload: parseTemplatePayload(row.payload, row.modality,), isPreset: false, },
-      },);
-    }, {
+    .get(`${base}/:id`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const row = await ownedMatchingRow(ctx.params.id, userId,);
+        if (!row) { return notFound("Template not found",); }
+        return jsonResponse({
+          template: { ...row, payload: parseTemplatePayload(row.payload, row.modality,), isPreset: false, },
+        },);
+      },), {
       params: IdParams,
       response: { 401: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: `Retrieve a ${modality} template`, tags: ["Templates",], },
     },)
-    .patch(`${base}/:id`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const patch = ctx.body as Partial<CreateTemplateInput>;
-      if (patch.modality !== undefined && patch.modality !== modality) {
-        return jsonError({
-          message: `Templates cannot move between modalities via this route`,
-          status: HttpStatus.BadRequest,
-        },);
-      }
+    .patch(`${base}/:id`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const patch = ctx.body as Partial<CreateTemplateInput>;
+        if (patch.modality !== undefined && patch.modality !== modality) {
+          return jsonError({
+            message: `Templates cannot move between modalities via this route`,
+            status: HttpStatus.BadRequest,
+          },);
+        }
 
-      // Pre-check before any write: a wrong-modality (or foreign) id must
-      // 404 without mutating the row. Kept OUTSIDE the try so a DB read
-      // failure propagates to the 500 boundary instead of being misclassified
-      // as a client 400.
-      const existing = await ownedMatchingRow(ctx.params.id, userId,);
-      if (!existing) { return notFound("Template not found",); }
-      try {
-        const row = await updateTemplate(database, ctx.params.id, userId, patch,);
-        if (!row) { return notFound("Template not found",); }
-        return jsonResponse({
-          template: { ...row, payload: parseTemplatePayload(row.payload, row.modality,), },
-        },);
-      } catch (error) {
-        return jsonError({
-          message: error instanceof Error ? error.message : "Invalid template update",
-          status: HttpStatus.BadRequest,
-        },);
-      }
-    }, {
+        // Pre-check before any write: a wrong-modality (or foreign) id must
+        // 404 without mutating the row. Kept OUTSIDE the try so a DB read
+        // failure propagates to the 500 boundary instead of being misclassified
+        // as a client 400.
+        const existing = await ownedMatchingRow(ctx.params.id, userId,);
+        if (!existing) { return notFound("Template not found",); }
+        try {
+          const row = await updateTemplate(database, ctx.params.id, userId, patch,);
+          if (!row) { return notFound("Template not found",); }
+          return jsonResponse({
+            template: { ...row, payload: parseTemplatePayload(row.payload, row.modality,), },
+          },);
+        } catch (error) {
+          return jsonError({
+            message: error instanceof Error ? error.message : "Invalid template update",
+            status: HttpStatus.BadRequest,
+          },);
+        }
+      },), {
       params: IdParams,
       body: ModalityUpdateBody,
       response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: `Update a ${modality} template`, tags: ["Templates",], },
     },)
-    .delete(`${base}/:id`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const row = await ownedMatchingRow(ctx.params.id, userId,);
-      if (!row) { return notFound("Template not found",); }
-      await deleteTemplate(database, ctx.params.id, userId,);
-      return new Response(null, { status: 204, },);
-    }, {
+    .delete(`${base}/:id`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const row = await ownedMatchingRow(ctx.params.id, userId,);
+        if (!row) { return notFound("Template not found",); }
+        await deleteTemplate(database, ctx.params.id, userId,);
+        return new Response(null, { status: 204, },);
+      },), {
       params: IdParams,
       response: { 401: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: `Delete a ${modality} template`, tags: ["Templates",], },
     },)
-    .post(`${base}/:id/apply`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const row = await ownedMatchingRow(ctx.params.id, userId,);
-      if (!row) { return notFound("Template not found",); }
+    .post(`${base}/:id/apply`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const row = await ownedMatchingRow(ctx.params.id, userId,);
+        if (!row) { return notFound("Template not found",); }
 
-      if (modality === "audio") {
-        const body = ctx.body as { context?: Record<string, string>; chatId?: string };
-        const payload = parseTemplatePayload(row.payload, "audio",) as { body?: string };
-        const tags = renderAudioTags(payload.body ?? "", body.context ?? {},);
-        if (tags.length === 0) {
-          return jsonError({
-            message: "audio template body rendered no scene tags (render previews via POST /api/templates/:id/apply)",
-            status: HttpStatus.BadRequest,
-          },);
+        if (modality === "audio") {
+          const body = ctx.body as { context?: Record<string, string>; chatId?: string };
+          const payload = parseTemplatePayload(row.payload, "audio",) as { body?: string };
+          const tags = renderAudioTags(payload.body ?? "", body.context ?? {},);
+          if (tags.length === 0) {
+            return jsonError({
+              message: "audio template body rendered no scene tags (render previews via POST /api/templates/:id/apply)",
+              status: HttpStatus.BadRequest,
+            },);
+          }
+
+          // Auth, IDOR scoping, generation and asset persistence live in the
+          // ambient route handler; this seam only renders + routes.
+          const userRole = (ctx as { userRole?: string | null }).userRole ?? undefined;
+          return handleAmbientGeneration({ tags, chatId: body.chatId, }, database, userId, userRole,);
         }
 
-        // Auth, IDOR scoping, generation and asset persistence live in the
-        // ambient route handler; this seam only renders + routes.
+        // Video apply: render the body into a prompt and dispatch to the video
+        // generation route (auth, IDOR scoping, generation and asset persistence
+        // live in that handler).
+        const body = ctx.body as { context?: Record<string, string>; chatId?: string };
+        const payload = parseTemplatePayload(row.payload, "video",) as { body?: string };
+        const prompt = (payload.body ?? "")
+          .replace(/\{\{(\w+)\}\}/g, (_match, name: string,) => body.context?.[name] ?? "",)
+          .trim();
+
         const userRole = (ctx as { userRole?: string | null }).userRole ?? undefined;
-        return handleAmbientGeneration({ tags, chatId: body.chatId, }, database, userId, userRole,);
-      }
-
-      // Video apply: render the body into a prompt and dispatch to the video
-      // generation route (auth, IDOR scoping, generation and asset persistence
-      // live in that handler).
-      const body = ctx.body as { context?: Record<string, string>; chatId?: string };
-      const payload = parseTemplatePayload(row.payload, "video",) as { body?: string };
-      const prompt = (payload.body ?? "")
-        .replace(/\{\{(\w+)\}\}/g, (_match, name: string,) => body.context?.[name] ?? "",)
-        .trim();
-
-      const userRole = (ctx as { userRole?: string | null }).userRole ?? undefined;
-      return handleVideoGeneration({ prompt, chatId: body.chatId, }, database, userId, userRole,);
-    }, {
+        return handleVideoGeneration({ prompt, chatId: body.chatId, }, database, userId, userRole,);
+      },), {
       params: IdParams,
       body: TemplateApplyBody,
       response: modality === "video" ? VideoApplyResponse : ApplyResponse,

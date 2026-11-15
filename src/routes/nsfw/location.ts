@@ -3,7 +3,7 @@
 
 import { Elysia, } from "elysia";
 import { LocationNsfwService, } from "../../rpg/location-nsfw/service";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, requireUserId, } from "../http-utils";
 import {
   log,
   nsfwAccessErrorResponse,
@@ -33,8 +33,7 @@ export function locationRoutes(opts: HandlerOpts, prefix = "/api",) {
             const configObj = await locationService.getConfig(ctx.params.locationId,);
             return jsonResponse(configObj,);
           } catch (error) {
-            log().error("Failed to get location config", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to get location config", error,);
           }
         },
       )
@@ -54,8 +53,7 @@ export function locationRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse({ success, },);
           } catch (error) {
-            log().error("Failed to update location config", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to update location config", error,);
           }
         },
       )

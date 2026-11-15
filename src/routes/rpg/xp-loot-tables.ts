@@ -9,7 +9,7 @@
 import { Elysia, t, } from "elysia";
 import { addLootEntry, createLootTable, rollLootTable, } from "../../rpg/service/loot-tables";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 import { AddEntryBody, CreateTableBody, } from "./xp-loot-schemas";
@@ -40,8 +40,7 @@ export function xpLootTablesRoutes({ database, }: HandlerOpts, prefix = "/api",)
 
           return jsonResponse({ id, },);
         } catch (error) {
-          log().error("Failed to create loot table", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to create loot table", error,);
         }
       }, {
         body: CreateTableBody,
@@ -84,8 +83,7 @@ export function xpLootTablesRoutes({ database, }: HandlerOpts, prefix = "/api",)
 
           return jsonResponse({ id, },);
         } catch (error) {
-          log().error("Failed to add loot entry", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to add loot entry", error,);
         }
       }, {
         params: t.Object({ id: t.String(), },),
@@ -106,8 +104,7 @@ export function xpLootTablesRoutes({ database, }: HandlerOpts, prefix = "/api",)
           if (!result) { return notFoundResponse("Loot table",); }
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to roll loot table", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to roll loot table", error,);
         }
       }, {
         params: t.Object({ id: t.String(), },),

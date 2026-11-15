@@ -22,7 +22,7 @@ import {
   serveChatsSearch,
 } from "./chats";
 import { loadGalleryGridViewModel, serveGalleryGrid, } from "./gallery";
-import { jsonViewModelResponse, wantsJsonViewModel, } from "./negotiate";
+import { jsonViewModelResponse, redirectUnlessFragment, wantsJsonViewModel, } from "./negotiate";
 import { loadGallerySearchViewModel, serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
 import { serveWorldDetailContent, serveWorldsListDb, } from "./worlds";
 
@@ -63,10 +63,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
     // ── Dynamic partials (server-rendered data) ─────────────
     .get("/dynamic/characters/grid", async (ctx,) => {
       const wantsJson = wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },);
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx && !wantsJson) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, wantsJson,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       const viewer = characterViewer(ctx,);
       if (viewer instanceof Response) { return viewer; }
@@ -81,10 +79,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
     },)
     .get("/dynamic/gallery/grid", async (ctx: any,) => {
       const wantsJson = wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },);
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx && !wantsJson) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, wantsJson,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       const url = new URL(ctx.request.url,);
       if (wantsJson) {
@@ -112,10 +108,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       response: { 200: SuccessResponse, },
     },)
     .get("/dynamic/worlds/list", async (ctx: any,) => {
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, false,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       return await serveWorldsListDb(database, ctx.userId as string | null, (ctx.userRole as string | null) ?? null,);
     }, {
@@ -124,10 +118,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
     // HTMX search endpoints
     .get("/dynamic/gallery/search", async (ctx: any,) => {
       const wantsJson = wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },);
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx && !wantsJson) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, wantsJson,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       const url = new URL(ctx.request.url,);
       if (wantsJson) {
@@ -151,10 +143,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       response: { 200: SuccessResponse, },
     },)
     .get("/dynamic/characters/search", async (ctx,) => {
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, false,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       // Same ownership rule as the grid: this fragment lists the same actor
       // rows, so it must not become a way around the grid's scoping.
@@ -167,10 +157,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       response: { 200: SuccessResponse, },
     },)
     .get("/dynamic/worlds/search", async (ctx: any,) => {
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, false,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       const url = new URL(ctx.request.url,);
       return await serveWorldsSearch(
@@ -184,10 +172,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
     },)
     .get("/dynamic/chats/list", async (ctx,) => {
       const wantsJson = wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },);
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx && !wantsJson) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, wantsJson,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       // Chats are private per user: every branch (JSON view-model and htmx
       // fragment) needs a viewer, and the loaders scope the query to it.
@@ -204,10 +190,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
     },)
     .get("/dynamic/chats/search", async (ctx,) => {
       const wantsJson = wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },);
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx && !wantsJson) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, wantsJson,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       const viewer = chatListViewer(ctx,);
       if (viewer instanceof Response) { return viewer; }
@@ -221,10 +205,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       response: { 200: SuccessResponse, },
     },)
     .get("/dynamic/worlds/:id/detail", async (ctx: any,) => {
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, false,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       return await serveWorldDetailContent(
         ctx.params.id,
@@ -240,10 +222,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       response: { 200: SuccessResponse, },
     },)
     .get("/dynamic/characters/:id/edit-form", async (ctx,) => {
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, false,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       const viewer = characterViewer(ctx,);
       if (viewer instanceof Response) { return viewer; }
@@ -253,10 +233,8 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       response: { 200: SuccessResponse, },
     },)
     .get("/dynamic/characters/:id/chat-list", async (ctx,) => {
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, false,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       const viewer = characterViewer(ctx,);
       if (viewer instanceof Response) { return viewer; }

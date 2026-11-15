@@ -17,7 +17,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
+import { jsonError, jsonResponse, withUserAuth, } from "./http-utils";
 
 interface HandleOpts {
   database: Kysely<DB>;
@@ -34,33 +34,74 @@ export function comparisonsExportRoutes(
   prefix = "/api/v1",
 ): Elysia {
   return new Elysia({ name: "comparisons-export", },)
-    .get(`${prefix}/comparisons/:id/export`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .get(`${prefix}/comparisons/:id/export`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const { id, } = ctx.params as { id: string };
+        const formatRaw = (ctx.query ?? {}) as { format?: string };
+        const format = (formatRaw.format ?? "json").toLowerCase();
 
-      const { id, } = ctx.params as { id: string };
-      const formatRaw = (ctx.query ?? {}) as { format?: string };
-      const format = (formatRaw.format ?? "json").toLowerCase();
+        const run = await database
+          .selectFrom("model_comparison_runs",)
+          .selectAll()
+          .where("id", "=", id,)
+          .where("user_id", "=", userId,)
+          .executeTakeFirst();
 
-      const run = await database
-        .selectFrom("model_comparison_runs",)
-        .selectAll()
-        .where("id", "=", id,)
-        .where("user_id", "=", userId,)
-        .executeTakeFirst();
+        if (run) {
+          const report = {
+            id: run.id,
+            prompt: run.prompt,
+            results: jsonParseOr(run.results, [],),
+            ratings: jsonParseOr(run.ratings, {},),
+            metadata: jsonParseOr(run.metadata, {},),
+            createdAt: run.created_at,
+          };
 
-      if (run) {
-        const report = {
-          id: run.id,
-          prompt: run.prompt,
-          results: jsonParseOr(run.results, [],),
-          ratings: jsonParseOr(run.ratings, {},),
-          metadata: jsonParseOr(run.metadata, {},),
-          createdAt: run.created_at,
-        };
+          if (format === "markdown") {
+            return new Response(renderRunMarkdown(report,), {
+              status: 200,
+              headers: {
+                "content-type": "text/markdown; charset=utf-8",
+                "content-disposition": `attachment; filename="comparison-${id}.md"`,
+              },
+            },);
+          }
+
+          return jsonResponse(report,);
+        }
+
+        const row = await database
+          .selectFrom("model_comparisons",)
+          .selectAll()
+          .where("id", "=", id,)
+          .where("user_id", "=", userId,)
+          .executeTakeFirst();
+
+        if (!row) {
+          return jsonError("Comparison not found", 404,);
+        }
+
+        const message = await database
+          .selectFrom("messages",)
+          .innerJoin("chats", "chats.id", "messages.chat_id",)
+          .select(["messages.id", "messages.content", "messages.role",],)
+          .where("messages.id", "=", row.message_id,)
+          .where("chats.created_by", "=", userId,)
+          .executeTakeFirst();
+
+        const prompt = message?.content ?? "";
 
         if (format === "markdown") {
-          return new Response(renderRunMarkdown(report,), {
+          const md = renderMarkdown({
+            comparisonId: row.id,
+            prompt,
+            referenceModel: row.reference_model,
+            preference: row.preference,
+            confidence: row.confidence,
+            createdAt: row.created_at,
+          },);
+
+          return new Response(md, {
             status: 200,
             headers: {
               "content-type": "text/markdown; charset=utf-8",
@@ -69,59 +110,16 @@ export function comparisonsExportRoutes(
           },);
         }
 
-        return jsonResponse(report,);
-      }
-
-      const row = await database
-        .selectFrom("model_comparisons",)
-        .selectAll()
-        .where("id", "=", id,)
-        .where("user_id", "=", userId,)
-        .executeTakeFirst();
-
-      if (!row) {
-        return jsonError("Comparison not found", 404,);
-      }
-
-      const message = await database
-        .selectFrom("messages",)
-        .innerJoin("chats", "chats.id", "messages.chat_id",)
-        .select(["messages.id", "messages.content", "messages.role",],)
-        .where("messages.id", "=", row.message_id,)
-        .where("chats.created_by", "=", userId,)
-        .executeTakeFirst();
-
-      const prompt = message?.content ?? "";
-
-      if (format === "markdown") {
-        const md = renderMarkdown({
-          comparisonId: row.id,
+        return jsonResponse({
+          id: row.id,
           prompt,
+          messageId: row.message_id,
           referenceModel: row.reference_model,
           preference: row.preference,
           confidence: row.confidence,
           createdAt: row.created_at,
         },);
-
-        return new Response(md, {
-          status: 200,
-          headers: {
-            "content-type": "text/markdown; charset=utf-8",
-            "content-disposition": `attachment; filename="comparison-${id}.md"`,
-          },
-        },);
-      }
-
-      return jsonResponse({
-        id: row.id,
-        prompt,
-        messageId: row.message_id,
-        referenceModel: row.reference_model,
-        preference: row.preference,
-        confidence: row.confidence,
-        createdAt: row.created_at,
-      },);
-    }, {
+      },), {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,

@@ -15,6 +15,7 @@ export {
   conflictResponse,
   emotionJobNotFoundResponse,
   forbiddenResponse,
+  internalError,
   internalErrorResponse,
   jsonError,
   notFoundResponse,

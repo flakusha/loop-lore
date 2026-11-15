@@ -9,14 +9,7 @@ import {
   ListResponse,
   SuccessResponse,
 } from "../../validation/schemas";
-import {
-  conflictResponse,
-  HttpStatus,
-  jsonCreated,
-  jsonError,
-  jsonResponse,
-  requireUserId,
-} from "../http-utils";
+import { conflictResponse, HttpStatus, jsonCreated, jsonError, jsonResponse, withUserAuth, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
 const OptionalString = t.Optional(t.String(),);
@@ -43,17 +36,15 @@ export function definitionRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "character-emotions-definitions", },)
       // ── List all emotion definitions ───────────────────────────
-      .get(`${prefix}/emotions`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      .get(`${prefix}/emotions`, (ctx: any,) =>
+        withUserAuth(ctx, async (_userId,) => {
+          const emotions = await database
+            .selectFrom("emotions",)
+            .selectAll()
+            .execute();
 
-        const emotions = await database
-          .selectFrom("emotions",)
-          .selectAll()
-          .execute();
-
-        return jsonResponse(emotions,);
-      }, {
+          return jsonResponse(emotions,);
+        },), {
         response: {
           200: EmotionDefinitionListResponse,
           401: ErrorResponse,
@@ -65,48 +56,46 @@ export function definitionRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Create a new emotion definition ────────────────────────
-      .post(`${prefix}/emotions`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-
-        if (!can(ctx.userRole as string | null, "admin.settings",)) {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, },);
-        }
-
-        const { name, displayName, category, valence, arousal, icon, } = ctx.body;
-
-        // `EmotionDefinitionCreateBody` declares only `name` (plus two unused
-        // optionals), so Elysia strips displayName/category/valence/arousal out
-        // of `ctx.body` — passing them through unchanged made every POST fail
-        // with NOT NULL on `emotions.display_name`. The columns are NOT NULL in
-        // the schema, so each needs a default that matches what the row needs.
-        const id = crypto.randomUUID();
-        try {
-          await database
-            .insertInto("emotions",)
-            .values({
-              id,
-              name,
-              display_name: displayName ?? name,
-              category: category ?? "neutral",
-              valence: valence ?? 0,
-              arousal: arousal ?? 0,
-              icon: icon ?? null,
-              created_at: new Date().toISOString(),
-            },)
-            .execute();
-        } catch (error) {
-          // `uq_emotions_name` makes a duplicate name a client conflict, not a
-          // server fault: without this the driver error surfaces as a 500.
-          if (!(error instanceof Error && error.message.includes("UNIQUE constraint failed",))) {
-            throw error;
+      .post(`${prefix}/emotions`, (ctx: any,) =>
+        withUserAuth(ctx, async (_userId,) => {
+          if (!can(ctx.userRole as string | null, "admin.settings",)) {
+            return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, },);
           }
 
-          return conflictResponse(`Emotion "${name}" already exists`,);
-        }
+          const { name, displayName, category, valence, arousal, icon, } = ctx.body;
 
-        return jsonCreated({ id, },);
-      }, {
+          // `EmotionDefinitionCreateBody` declares only `name` (plus two unused
+          // optionals), so Elysia strips displayName/category/valence/arousal out
+          // of `ctx.body` — passing them through unchanged made every POST fail
+          // with NOT NULL on `emotions.display_name`. The columns are NOT NULL in
+          // the schema, so each needs a default that matches what the row needs.
+          const id = crypto.randomUUID();
+          try {
+            await database
+              .insertInto("emotions",)
+              .values({
+                id,
+                name,
+                display_name: displayName ?? name,
+                category: category ?? "neutral",
+                valence: valence ?? 0,
+                arousal: arousal ?? 0,
+                icon: icon ?? null,
+                created_at: new Date().toISOString(),
+              },)
+              .execute();
+          } catch (error) {
+            // `uq_emotions_name` makes a duplicate name a client conflict, not a
+            // server fault: without this the driver error surfaces as a 500.
+            if (!(error instanceof Error && error.message.includes("UNIQUE constraint failed",))) {
+              throw error;
+            }
+
+            return conflictResponse(`Emotion "${name}" already exists`,);
+          }
+
+          return jsonCreated({ id, },);
+        },), {
         body: EmotionDefinitionCreateBody,
         response: {
           200: SuccessResponse,

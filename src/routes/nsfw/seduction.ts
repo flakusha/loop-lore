@@ -5,7 +5,7 @@ import { Elysia, } from "elysia";
 import { SeductionService, } from "../../rpg/seduction/service";
 import type { ReputationTier, } from "../../schemas";
 import { NsfwSeductionAttemptBody, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import {
   checkNsfwTargetAccess,
   log,
@@ -39,8 +39,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
             const profile = await seductionService.getDesireProfile(ctx.params.actorId,);
             return jsonResponse(profile,);
           } catch (error) {
-            log().error("Failed to get desire profile", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to get desire profile", error,);
           }
         },
       )
@@ -62,8 +61,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse({ success, },);
           } catch (error) {
-            log().error("Failed to update desire profile", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to update desire profile", error,);
           }
         },
       )
@@ -80,8 +78,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
             const skills = await seductionService.getActorSkills(ctx.params.actorId,);
             return jsonResponse(skills,);
           } catch (error) {
-            log().error("Failed to get seduction skills", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to get seduction skills", error,);
           }
         },
       )
@@ -122,8 +119,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(result,);
           } catch (error) {
-            log().error("Failed to attempt seduction", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to attempt seduction", error,);
           }
         },
         { body: NsfwSeductionAttemptBody, },
@@ -142,8 +138,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
             const arousal = await seductionService.getArousal(ctx.params.actorId, worldId,);
             return jsonResponse(arousal,);
           } catch (error) {
-            log().error("Failed to get arousal state", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to get arousal state", error,);
           }
         },
       )
@@ -167,8 +162,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse({ level: newLevel, },);
           } catch (error) {
-            log().error("Failed to modify arousal", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to modify arousal", error,);
           }
         },
       )

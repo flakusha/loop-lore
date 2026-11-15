@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { TranslatorFn, } from "../../i18n/types";
+import type { Logger, } from "../../logger";
 import { ErrorCode, HttpStatus, type HttpStatusCode, } from "./status";
 import type { ApiResponseMeta, JsonErrorOptions, } from "./types";
 
@@ -152,6 +153,23 @@ export function internalErrorResponse(message: string, data?: Record<string, unk
     code: ErrorCode.ServerError,
     ...(data ? { data, } : {}),
   },);
+}
+
+/**
+ * Log an unexpected failure and answer a generic 500.
+ *
+ * Folds the `log().error(operation, …) + return jsonError("Internal
+ * server error", 500,)` pair repeated across route catch blocks. The
+ * caller passes its own module-scoped logger so the record keeps its
+ * namespace; the wire body is byte-identical to the inlined pair.
+ * @param logger - the caller's module-scoped logger
+ * @param operation - what failed (log only, never sent on the wire)
+ * @param error - the caught value
+ * @returns {Response}
+ */
+export function internalError(logger: Logger, operation: string, error: unknown,): Response {
+  logger.error(operation, error instanceof Error ? error : undefined,);
+  return internalErrorResponse("Internal server error",);
 }
 
 /**

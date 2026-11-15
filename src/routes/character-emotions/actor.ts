@@ -11,7 +11,7 @@ import {
   SuccessResponse,
 } from "../../validation/schemas";
 import { checkActorOwnership, } from "../actor-auth";
-import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { HttpStatus, jsonCreated, jsonError, jsonResponse, withUserAuth, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
 const OptionalString = t.Optional(t.String(),);
@@ -46,27 +46,25 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "character-emotions-actor", },)
       // ── List emotions for an actor ─────────────────────────────
-      .get(`${prefix}/actors/:actorId/emotions`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      .get(`${prefix}/actors/:actorId/emotions`, (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const { actorId, } = ctx.params;
 
-        const { actorId, } = ctx.params;
+          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+            return jsonError({
+              message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+              status: HttpStatus.NotFound,
+            },);
+          }
 
-        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-          return jsonError({
-            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-            status: HttpStatus.NotFound,
-          },);
-        }
+          const emotions = await database
+            .selectFrom("character_emotions",)
+            .selectAll()
+            .where("actor_id", "=", actorId,)
+            .execute();
 
-        const emotions = await database
-          .selectFrom("character_emotions",)
-          .selectAll()
-          .where("actor_id", "=", actorId,)
-          .execute();
-
-        return jsonResponse(emotions,);
-      }, {
+          return jsonResponse(emotions,);
+        },), {
         params: ActorIdParams,
         response: {
           200: ActorEmotionsListResponse,
@@ -80,35 +78,33 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Get a specific emotion ─────────────────────────────────
-      .get(`${prefix}/actors/:actorId/emotions/:emotionId`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      .get(`${prefix}/actors/:actorId/emotions/:emotionId`, (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const { actorId, emotionId, } = ctx.params;
 
-        const { actorId, emotionId, } = ctx.params;
+          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+            return jsonError({
+              message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+              status: HttpStatus.NotFound,
+            },);
+          }
 
-        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-          return jsonError({
-            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-            status: HttpStatus.NotFound,
-          },);
-        }
+          const emotion = await database
+            .selectFrom("character_emotions",)
+            .selectAll()
+            .where("id", "=", emotionId,)
+            .where("actor_id", "=", actorId,)
+            .executeTakeFirst();
 
-        const emotion = await database
-          .selectFrom("character_emotions",)
-          .selectAll()
-          .where("id", "=", emotionId,)
-          .where("actor_id", "=", actorId,)
-          .executeTakeFirst();
+          if (!emotion) {
+            return jsonError({
+              message: ctx.t?.("characters.emotionNotFound",) ?? "Emotion not found",
+              status: HttpStatus.NotFound,
+            },);
+          }
 
-        if (!emotion) {
-          return jsonError({
-            message: ctx.t?.("characters.emotionNotFound",) ?? "Emotion not found",
-            status: HttpStatus.NotFound,
-          },);
-        }
-
-        return jsonResponse(emotion,);
-      }, {
+          return jsonResponse(emotion,);
+        },), {
         params: ActorEmotionParams,
         response: {
           200: ActorEmotionResponse,
@@ -122,77 +118,75 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Set/update an emotion for an actor ─────────────────────
-      .post(`${prefix}/actors/:actorId/emotions`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      .post(`${prefix}/actors/:actorId/emotions`, (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const { actorId, } = ctx.params;
 
-        const { actorId, } = ctx.params;
+          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+            return jsonError({
+              message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+              status: HttpStatus.NotFound,
+            },);
+          }
 
-        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-          return jsonError({
-            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-            status: HttpStatus.NotFound,
-          },);
-        }
+          const { emotionId, intensity, context, expiresAt, } = ctx.body;
 
-        const { emotionId, intensity, context, expiresAt, } = ctx.body;
+          // `character_emotions.emotion_id` is a FK to `emotions.id`: an unknown
+          // id would fail the insert with a driver error (500), so resolve the
+          // definition here and answer 404 like the read path does.
+          const definition = await database
+            .selectFrom("emotions",)
+            .select("id",)
+            .where("id", "=", emotionId,)
+            .executeTakeFirst();
 
-        // `character_emotions.emotion_id` is a FK to `emotions.id`: an unknown
-        // id would fail the insert with a driver error (500), so resolve the
-        // definition here and answer 404 like the read path does.
-        const definition = await database
-          .selectFrom("emotions",)
-          .select("id",)
-          .where("id", "=", emotionId,)
-          .executeTakeFirst();
+          if (!definition) {
+            return jsonError({
+              message: ctx.t?.("characters.emotionNotFound",) ?? "Emotion not found",
+              status: HttpStatus.NotFound,
+            },);
+          }
 
-        if (!definition) {
-          return jsonError({
-            message: ctx.t?.("characters.emotionNotFound",) ?? "Emotion not found",
-            status: HttpStatus.NotFound,
-          },);
-        }
+          // Upsert: check if emotion already exists for this actor
+          const existing = await database
+            .selectFrom("character_emotions",)
+            .selectAll()
+            .where("actor_id", "=", actorId,)
+            .where("emotion_id", "=", emotionId,)
+            .executeTakeFirst();
 
-        // Upsert: check if emotion already exists for this actor
-        const existing = await database
-          .selectFrom("character_emotions",)
-          .selectAll()
-          .where("actor_id", "=", actorId,)
-          .where("emotion_id", "=", emotionId,)
-          .executeTakeFirst();
+          if (existing) {
+            await database
+              .updateTable("character_emotions",)
+              .set({
+                intensity: intensity ?? existing.intensity,
+                context: context ?? existing.context,
+                expires_at: expiresAt ?? existing.expires_at,
+                updated_at: new Date().toISOString(),
+              },)
+              .where("id", "=", existing.id,)
+              .execute();
 
-        if (existing) {
+            return jsonResponse({ id: existing.id, updated: true, },);
+          }
+
+          const id = crypto.randomUUID();
           await database
-            .updateTable("character_emotions",)
-            .set({
-              intensity: intensity ?? existing.intensity,
-              context: context ?? existing.context,
-              expires_at: expiresAt ?? existing.expires_at,
+            .insertInto("character_emotions",)
+            .values({
+              id,
+              actor_id: actorId,
+              emotion_id: emotionId,
+              intensity: intensity ?? 0.5,
+              context: context ?? null,
+              expires_at: expiresAt ?? null,
+              created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             },)
-            .where("id", "=", existing.id,)
             .execute();
 
-          return jsonResponse({ id: existing.id, updated: true, },);
-        }
-
-        const id = crypto.randomUUID();
-        await database
-          .insertInto("character_emotions",)
-          .values({
-            id,
-            actor_id: actorId,
-            emotion_id: emotionId,
-            intensity: intensity ?? 0.5,
-            context: context ?? null,
-            expires_at: expiresAt ?? null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },)
-          .execute();
-
-        return jsonCreated({ id, },);
-      }, {
+          return jsonCreated({ id, },);
+        },), {
         params: ActorIdParams,
         body: CharacterEmotionBody,
         response: {
@@ -207,36 +201,34 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Delete an emotion ──────────────────────────────────────
-      .delete(`${prefix}/actors/:actorId/emotions/:emotionId`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      .delete(`${prefix}/actors/:actorId/emotions/:emotionId`, (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const { actorId, emotionId, } = ctx.params;
 
-        const { actorId, emotionId, } = ctx.params;
+          if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+            return jsonError({
+              message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+              status: HttpStatus.NotFound,
+            },);
+          }
 
-        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-          return jsonError({
-            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-            status: HttpStatus.NotFound,
-          },);
-        }
+          // Scoped to this actor, so a foreign row is never touched; the
+          // affected-row count is the existence check (a 404, not a silent 200).
+          const deleted = await database
+            .deleteFrom("character_emotions",)
+            .where("id", "=", emotionId,)
+            .where("actor_id", "=", actorId,)
+            .executeTakeFirst();
 
-        // Scoped to this actor, so a foreign row is never touched; the
-        // affected-row count is the existence check (a 404, not a silent 200).
-        const deleted = await database
-          .deleteFrom("character_emotions",)
-          .where("id", "=", emotionId,)
-          .where("actor_id", "=", actorId,)
-          .executeTakeFirst();
+          if (Number(deleted?.numDeletedRows ?? 0n,) === 0) {
+            return jsonError({
+              message: ctx.t?.("characters.emotionNotFound",) ?? "Emotion not found",
+              status: HttpStatus.NotFound,
+            },);
+          }
 
-        if (Number(deleted?.numDeletedRows ?? 0n,) === 0) {
-          return jsonError({
-            message: ctx.t?.("characters.emotionNotFound",) ?? "Emotion not found",
-            status: HttpStatus.NotFound,
-          },);
-        }
-
-        return jsonResponse({ ok: true, },);
-      }, {
+          return jsonResponse({ ok: true, },);
+        },), {
         params: ActorEmotionParams,
         response: {
           200: SuccessResponse,

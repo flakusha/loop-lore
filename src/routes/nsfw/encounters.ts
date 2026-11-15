@@ -5,7 +5,7 @@ import { Elysia, } from "elysia";
 import { EncounterService, } from "../../rpg/encounters/service";
 import { LocationNsfwService, } from "../../rpg/location-nsfw/service";
 import { NsfwEncounterCreateBody, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import {
   checkNsfwTargetAccess,
   log,
@@ -76,8 +76,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(encounter,);
           } catch (error) {
-            log().error("Failed to create encounter", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to create encounter", error,);
           }
         },
         { body: NsfwEncounterCreateBody, },
@@ -97,8 +96,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(encounter,);
           } catch (error) {
-            log().error("Failed to get encounter", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to get encounter", error,);
           }
         },
       )
@@ -113,8 +111,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
             const result = await encounterService.advancePhase(ctx.params.id,);
             return jsonResponse(result,);
           } catch (error) {
-            log().error("Failed to advance encounter", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to advance encounter", error,);
           }
         },
       )
@@ -129,8 +126,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
             const encounters = await encounterService.listEncounters(ctx.params.worldId,);
             return jsonResponse(encounters,);
           } catch (error) {
-            log().error("Failed to list encounters", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to list encounters", error,);
           }
         },
       )

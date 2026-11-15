@@ -20,7 +20,7 @@
 import { Elysia, t, } from "elysia";
 import { type AchievementCategory, AchievementsService, } from "../../rpg/achievements";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import {
   achievementBody,
   listAchievementsQuery,
@@ -53,8 +53,7 @@ export function achievementsRoutes({ database, }: HandlerOpts, prefix = "/api",)
         const achievements = await svc().listAchievements(category, includeSecret ?? false,);
         return jsonResponse({ achievements, },);
       } catch (error) {
-        log().error("Failed to list achievements", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to list achievements", error,);
       }
     }, {
       query: listAchievementsQuery,
@@ -74,8 +73,7 @@ export function achievementsRoutes({ database, }: HandlerOpts, prefix = "/api",)
         const achievement = await svc().createAchievement(body as never,);
         return jsonResponse(achievement, 201,);
       } catch (error) {
-        log().error("Failed to create achievement", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to create achievement", error,);
       }
     }, {
       body: achievementBody,
@@ -95,8 +93,7 @@ export function achievementsRoutes({ database, }: HandlerOpts, prefix = "/api",)
         if (!achievement) { return notFoundResponse("Achievement",); }
         return jsonResponse(achievement,);
       } catch (error) {
-        log().error("Failed to get achievement", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get achievement", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),
@@ -116,8 +113,7 @@ export function achievementsRoutes({ database, }: HandlerOpts, prefix = "/api",)
         const achievement = await svc().updateAchievement(ctx.params.id, body,);
         return jsonResponse(achievement,);
       } catch (error) {
-        log().error("Failed to update achievement", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to update achievement", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),
@@ -139,8 +135,7 @@ export function achievementsRoutes({ database, }: HandlerOpts, prefix = "/api",)
         await svc().deleteAchievement(ctx.params.id,);
         return jsonResponse({ ok: true, },);
       } catch (error) {
-        log().error("Failed to delete achievement", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to delete achievement", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),

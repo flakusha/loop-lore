@@ -16,7 +16,7 @@ import {
   composeLicenseRow,
   recordLicenseHistory,
 } from "./character-licensing-helpers";
-import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
+import { HttpStatus, jsonCreated, jsonError, jsonResponse, withUserAuth, } from "./http-utils";
 
 /**
  * @param opts
@@ -28,34 +28,32 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "character-licensing", },)
     // ── Get licensing for an actor ─────────────────────────────
-    .get(`${prefix}/actors/:actorId/licensing`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .get(`${prefix}/actors/:actorId/licensing`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const { actorId, } = ctx.params;
 
-      const { actorId, } = ctx.params;
+        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+          return jsonError({
+            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
 
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+        const licensing = await database
+          .selectFrom("character_licensing",)
+          .selectAll()
+          .where("actor_id", "=", actorId,)
+          .executeTakeFirst();
 
-      const licensing = await database
-        .selectFrom("character_licensing",)
-        .selectAll()
-        .where("actor_id", "=", actorId,)
-        .executeTakeFirst();
+        if (!licensing) {
+          return jsonError({
+            message: ctx.t?.("characters.licensingNotFound",) ?? "Licensing not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
 
-      if (!licensing) {
-        return jsonError({
-          message: ctx.t?.("characters.licensingNotFound",) ?? "Licensing not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
-
-      return jsonResponse(licensing,);
-    }, {
+        return jsonResponse(licensing,);
+      },), {
       params: ActorIdParams,
       response: {
         200: SuccessResponse,
@@ -69,28 +67,26 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     // ── License change history (audit) ───────────────────────
-    .get(`${prefix}/actors/:actorId/licensing/history`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .get(`${prefix}/actors/:actorId/licensing/history`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const { actorId, } = ctx.params;
 
-      const { actorId, } = ctx.params;
+        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+          return jsonError({
+            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
 
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+        const history = await database
+          .selectFrom("character_license_history",)
+          .selectAll()
+          .where("actor_id", "=", actorId,)
+          .orderBy("created_at", "desc",)
+          .execute();
 
-      const history = await database
-        .selectFrom("character_license_history",)
-        .selectAll()
-        .where("actor_id", "=", actorId,)
-        .orderBy("created_at", "desc",)
-        .execute();
-
-      return jsonResponse(history,);
-    }, {
+        return jsonResponse(history,);
+      },), {
       params: ActorIdParams,
       response: {
         200: t.Any(),
@@ -104,57 +100,79 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     // ── Create or update licensing ─────────────────────────────
-    .post(`${prefix}/actors/:actorId/licensing`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .post(`${prefix}/actors/:actorId/licensing`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const { actorId, } = ctx.params;
+        const { license_type, custom_license_text, attribution, allow_derivatives, allow_commercial, share_alike, } =
+          ctx.body;
 
-      const { actorId, } = ctx.params;
-      const { license_type, custom_license_text, attribution, allow_derivatives, allow_commercial, share_alike, } =
-        ctx.body;
+        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+          return jsonError({
+            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
 
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+        // BUG-character-licensing-upsert: licenses are character-only. Reject any
+        // non-character actor even if the caller owns it, otherwise licensing rows
+        // pollute reports that don't filter by actor_type.
+        const actorRow = await database
+          .selectFrom("actors",)
+          .select("actor_type",)
+          .where("id", "=", actorId,)
+          .executeTakeFirst();
 
-      // BUG-character-licensing-upsert: licenses are character-only. Reject any
-      // non-character actor even if the caller owns it, otherwise licensing rows
-      // pollute reports that don't filter by actor_type.
-      const actorRow = await database
-        .selectFrom("actors",)
-        .select("actor_type",)
-        .where("id", "=", actorId,)
-        .executeTakeFirst();
+        if (!actorRow || actorRow.actor_type !== "character") {
+          return jsonError({
+            message: "Licenses are only issued to character actors",
+            status: HttpStatus.BadRequest,
+          },);
+        }
 
-      if (!actorRow || actorRow.actor_type !== "character") {
-        return jsonError({
-          message: "Licenses are only issued to character actors",
-          status: HttpStatus.BadRequest,
-        },);
-      }
+        // Upsert
+        const existing = await database
+          .selectFrom("character_licensing",)
+          .selectAll()
+          .where("actor_id", "=", actorId,)
+          .executeTakeFirst();
 
-      // Upsert
-      const existing = await database
-        .selectFrom("character_licensing",)
-        .selectAll()
-        .where("actor_id", "=", actorId,)
-        .executeTakeFirst();
+        const body = {
+          license_type,
+          custom_license_text,
+          attribution,
+          allow_derivatives,
+          allow_commercial,
+          share_alike,
+        };
 
-      const body = {
-        license_type,
-        custom_license_text,
-        attribution,
-        allow_derivatives,
-        allow_commercial,
-        share_alike,
-      };
+        if (existing) {
+          const effective = composeLicenseRow(existing, body,);
+          try {
+            assertValidWrite("character_licensing", { ...effective, },);
+          } catch (error: unknown) {
+            return jsonError({
+              message: error instanceof Error ? error.message : "Invalid licensing",
+              status: HttpStatus.BadRequest,
+            },);
+          }
 
-      if (existing) {
-        const effective = composeLicenseRow(existing, body,);
+          await database
+            .updateTable("character_licensing",)
+            .set({
+              ...effective,
+              updated_at: new Date().toISOString(),
+            },)
+            .where("id", "=", existing.id,)
+            .execute();
+
+          await recordLicenseHistory(database, actorId, effective, userId,);
+          return jsonResponse({ id: existing.id, updated: true, },);
+        }
+
+        const id = crypto.randomUUID();
+        const created = composeLicenseRow(undefined, body,);
         try {
-          assertValidWrite("character_licensing", { ...effective, },);
+          assertValidWrite("character_licensing", { ...created, },);
         } catch (error: unknown) {
           return jsonError({
             message: error instanceof Error ? error.message : "Invalid licensing",
@@ -163,44 +181,20 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
 
         await database
-          .updateTable("character_licensing",)
-          .set({
-            ...effective,
+          .insertInto("character_licensing",)
+          .values({
+            id,
+            actor_id: actorId,
+            ...created,
+            created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           },)
-          .where("id", "=", existing.id,)
           .execute();
 
-        await recordLicenseHistory(database, actorId, effective, userId,);
-        return jsonResponse({ id: existing.id, updated: true, },);
-      }
+        await recordLicenseHistory(database, actorId, created, userId,);
 
-      const id = crypto.randomUUID();
-      const created = composeLicenseRow(undefined, body,);
-      try {
-        assertValidWrite("character_licensing", { ...created, },);
-      } catch (error: unknown) {
-        return jsonError({
-          message: error instanceof Error ? error.message : "Invalid licensing",
-          status: HttpStatus.BadRequest,
-        },);
-      }
-
-      await database
-        .insertInto("character_licensing",)
-        .values({
-          id,
-          actor_id: actorId,
-          ...created,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },)
-        .execute();
-
-      await recordLicenseHistory(database, actorId, created, userId,);
-
-      return jsonCreated({ id, },);
-    }, {
+        return jsonCreated({ id, },);
+      },), {
       params: ActorIdParams,
       body: LicensingBody,
       response: {
@@ -216,43 +210,41 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     // ── Delete licensing ───────────────────────────────────────
-    .delete(`${prefix}/actors/:actorId/licensing`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .delete(`${prefix}/actors/:actorId/licensing`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const { actorId, } = ctx.params;
 
-      const { actorId, } = ctx.params;
+        if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+          return jsonError({
+            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
 
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+        const existing = await database
+          .selectFrom("character_licensing",)
+          .selectAll()
+          .where("actor_id", "=", actorId,)
+          .executeTakeFirst();
 
-      const existing = await database
-        .selectFrom("character_licensing",)
-        .selectAll()
-        .where("actor_id", "=", actorId,)
-        .executeTakeFirst();
+        await database
+          .deleteFrom("character_licensing",)
+          .where("actor_id", "=", actorId,)
+          .execute();
 
-      await database
-        .deleteFrom("character_licensing",)
-        .where("actor_id", "=", actorId,)
-        .execute();
+        if (existing) {
+          await recordLicenseHistory(database, actorId, {
+            license_type: "removed",
+            custom_license_text: existing.custom_license_text,
+            attribution: existing.attribution,
+            allow_derivatives: existing.allow_derivatives,
+            allow_commercial: existing.allow_commercial,
+            share_alike: existing.share_alike,
+          }, userId,);
+        }
 
-      if (existing) {
-        await recordLicenseHistory(database, actorId, {
-          license_type: "removed",
-          custom_license_text: existing.custom_license_text,
-          attribution: existing.attribution,
-          allow_derivatives: existing.allow_derivatives,
-          allow_commercial: existing.allow_commercial,
-          share_alike: existing.share_alike,
-        }, userId,);
-      }
-
-      return jsonResponse({ ok: true, },);
-    }, {
+        return jsonResponse({ ok: true, },);
+      },), {
       params: ActorIdParams,
       response: {
         200: SuccessResponse,

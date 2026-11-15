@@ -11,7 +11,7 @@ import {
   type TerrainType,
 } from "../../battle";
 import { SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, } from "../http-utils";
+import { internalError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
@@ -35,8 +35,7 @@ export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
           const modifiers = getEnvironmentalModifiers(terrainState,);
           return jsonResponse(modifiers,);
         } catch (error) {
-          log().error("Failed to get environmental modifiers", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to get environmental modifiers", error,);
         }
       },
       {
@@ -60,8 +59,7 @@ export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
           const visibility = calculateVisibility(body.weather, body.timeOfDay,);
           return jsonResponse({ visibility, },);
         } catch (error) {
-          log().error("Failed to calculate visibility", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate visibility", error,);
         }
       },
       {
@@ -85,8 +83,7 @@ export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
           const hazard = generateEnvironmentalHazard(body.terrain, body.weather,);
           return jsonResponse(hazard,);
         } catch (error) {
-          log().error("Failed to generate hazard", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to generate hazard", error,);
         }
       },
       {

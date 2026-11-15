@@ -30,7 +30,7 @@ import {
   ErrorResponse,
   SuccessResponse,
 } from "../../validation/schemas";
-import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { HttpStatus, jsonCreated, jsonError, jsonResponse, withUserAuth, } from "../http-utils";
 
 const IdParams = Type.Object({ id: Type.String(), },);
 
@@ -45,76 +45,71 @@ export function builderChainRoutes(
   prefix = "/api",
 ) {
   return new Elysia({ name: "comfyui-builder-chains", },)
-    .get(`${prefix}/comfyui-builder/chains`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const chains = await listChains(database, userId,);
-      return jsonResponse({ chains, },);
-    }, {
+    .get(`${prefix}/comfyui-builder/chains`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const chains = await listChains(database, userId,);
+        return jsonResponse({ chains, },);
+      },), {
       response: { 200: SuccessResponse, 401: ErrorResponse, },
       detail: { summary: "List builder chains", tags: ["ComfyUI Builder",], },
     },)
-    .post(`${prefix}/comfyui-builder/chains`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const body = ctx.body as ChainCreateBodyT;
-      try {
-        const chain = await createChain(database, userId, {
-          name: body.name,
-          description: body.description,
-          steps: body.steps,
-        },);
+    .post(`${prefix}/comfyui-builder/chains`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const body = ctx.body as ChainCreateBodyT;
+        try {
+          const chain = await createChain(database, userId, {
+            name: body.name,
+            description: body.description,
+            steps: body.steps,
+          },);
 
-        return jsonCreated({ chain, },);
-      } catch (error) {
-        return jsonError({
-          message: error instanceof Error ? error.message : "Invalid chain",
-          status: HttpStatus.BadRequest,
-        },);
-      }
-    }, {
+          return jsonCreated({ chain, },);
+        } catch (error) {
+          return jsonError({
+            message: error instanceof Error ? error.message : "Invalid chain",
+            status: HttpStatus.BadRequest,
+          },);
+        }
+      },), {
       body: ChainCreateBody,
       response: { 201: SuccessResponse, 400: ErrorResponse, 401: ErrorResponse, },
       detail: { summary: "Create a builder chain", tags: ["ComfyUI Builder",], },
     },)
-    .get(`${prefix}/comfyui-builder/chains/:id`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const chain = await getChain(database, ctx.params.id, userId,);
-      if (!chain) { return notFound("Chain not found",); }
-      return jsonResponse({ chain, },);
-    }, {
+    .get(`${prefix}/comfyui-builder/chains/:id`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const chain = await getChain(database, ctx.params.id, userId,);
+        if (!chain) { return notFound("Chain not found",); }
+        return jsonResponse({ chain, },);
+      },), {
       params: IdParams,
       response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Retrieve a builder chain", tags: ["ComfyUI Builder",], },
     },)
-    .patch(`${prefix}/comfyui-builder/chains/:id`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const body = ctx.body as ChainUpdateBodyT;
-      try {
-        const chain = await updateChain(database, ctx.params.id, userId, body,);
-        if (!chain) { return notFound("Chain not found",); }
-        return jsonResponse({ chain, },);
-      } catch (error) {
-        return jsonError({
-          message: error instanceof Error ? error.message : "Invalid chain update",
-          status: HttpStatus.BadRequest,
-        },);
-      }
-    }, {
+    .patch(`${prefix}/comfyui-builder/chains/:id`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const body = ctx.body as ChainUpdateBodyT;
+        try {
+          const chain = await updateChain(database, ctx.params.id, userId, body,);
+          if (!chain) { return notFound("Chain not found",); }
+          return jsonResponse({ chain, },);
+        } catch (error) {
+          return jsonError({
+            message: error instanceof Error ? error.message : "Invalid chain update",
+            status: HttpStatus.BadRequest,
+          },);
+        }
+      },), {
       params: IdParams,
       body: ChainUpdateBody,
       response: { 200: SuccessResponse, 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Update a builder chain", tags: ["ComfyUI Builder",], },
     },)
-    .delete(`${prefix}/comfyui-builder/chains/:id`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const deleted = await deleteChain(database, ctx.params.id, userId,);
-      if (!deleted) { return notFound("Chain not found",); }
-      return new Response(null, { status: 204, },);
-    }, {
+    .delete(`${prefix}/comfyui-builder/chains/:id`, (ctx,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const deleted = await deleteChain(database, ctx.params.id, userId,);
+        if (!deleted) { return notFound("Chain not found",); }
+        return new Response(null, { status: 204, },);
+      },), {
       params: IdParams,
       response: { 204: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
       detail: { summary: "Delete a builder chain", tags: ["ComfyUI Builder",], },

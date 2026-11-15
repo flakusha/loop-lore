@@ -18,7 +18,7 @@
 import { Elysia, t, } from "elysia";
 import { type MovementPattern, NpcNavigationService, } from "../../rpg/npc-navigation";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { requireWorldOwner, } from "../worlds/access";
 import { log, } from "./log";
@@ -51,8 +51,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
         if (!state) { return notFoundResponse("Movement state",); }
         return jsonResponse(state,);
       } catch (error) {
-        log().error("Failed to get movement state", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get movement state", error,);
       }
     }, {
       params: t.Object({ actorId: t.String(), },),
@@ -73,8 +72,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
         await svc().updateMovementState(ctx.params.actorId, body.worldId, body.updates,);
         return jsonResponse({ ok: true, },);
       } catch (error) {
-        log().error("Failed to update movement state", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to update movement state", error,);
       }
     }, {
       params: t.Object({ actorId: t.String(), },),
@@ -105,8 +103,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
         await svc().setMovementPattern(ctx.params.actorId, body.worldId, body.pattern, body.config,);
         return jsonResponse({ ok: true, },);
       } catch (error) {
-        log().error("Failed to set movement pattern", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to set movement pattern", error,);
       }
     }, {
       params: t.Object({ actorId: t.String(), },),
@@ -127,8 +124,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
         const result = await svc().moveToLocation(ctx.params.actorId, body.worldId, body.targetLocationId,);
         return jsonResponse(result,);
       } catch (error) {
-        log().error("Failed to move NPC", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to move NPC", error,);
       }
     }, {
       params: t.Object({ actorId: t.String(), },),
@@ -151,8 +147,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
         const results = await svc().processMovementTick(ctx.params.worldId,);
         return jsonResponse({ results, },);
       } catch (error) {
-        log().error("Failed to process movement tick", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to process movement tick", error,);
       }
     }, {
       params: t.Object({ worldId: t.String(), },),

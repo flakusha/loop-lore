@@ -26,7 +26,7 @@ import {
 } from "../../rpg/combat";
 import type { AdvantageMode, DiceSides, } from "../../rpg/dice";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, requireUserId, } from "../http-utils";
 import { AttackBody, DamageBody, HealBody, InitiativeBody, SaveBody, } from "./combat-schemas";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -55,8 +55,7 @@ export function combatRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
           const sorted = sortByInitiative(withInitiative,);
           return jsonResponse({ combatants: sorted, },);
         } catch (error) {
-          log().error("Failed to roll initiative", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to roll initiative", error,);
         }
       }, {
         body: InitiativeBody,
@@ -98,8 +97,7 @@ export function combatRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
 
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to resolve attack", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to resolve attack", error,);
         }
       }, {
         body: AttackBody,
@@ -125,8 +123,7 @@ export function combatRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
           const result = makeSavingThrow(body.combatant, body.ability, body.dc, body.advantage ?? "normal",);
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to resolve saving throw", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to resolve saving throw", error,);
         }
       }, {
         body: SaveBody,
@@ -146,8 +143,7 @@ export function combatRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
           const result = applyDamage(body.combatant, body.amount,);
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to apply damage", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to apply damage", error,);
         }
       }, {
         body: DamageBody,
@@ -167,8 +163,7 @@ export function combatRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
           const updated = healCombatant(body.combatant, body.amount,);
           return jsonResponse({ updated, },);
         } catch (error) {
-          log().error("Failed to heal combatant", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to heal combatant", error,);
         }
       }, {
         body: HealBody,

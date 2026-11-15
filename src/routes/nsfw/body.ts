@@ -3,7 +3,7 @@
 
 import { Elysia, t, } from "elysia";
 import { BodySystemService, } from "../../rpg/body-systems/service";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, requireUserId, } from "../http-utils";
 import {
   log,
   nsfwAccessErrorResponse,
@@ -72,8 +72,7 @@ export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
             const profile = await bodyService.getProfile(ctx.params.actorId,);
             return jsonResponse(profile,);
           } catch (error) {
-            log().error("Failed to get body profile", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to get body profile", error,);
           }
         },
       )
@@ -96,8 +95,7 @@ export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse({ success, },);
           } catch (error) {
-            log().error("Failed to update body profile", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to update body profile", error,);
           }
         },
         { body: bodyUpdateSchema, },

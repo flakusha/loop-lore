@@ -18,7 +18,7 @@ import {
 } from "../../rpg/service/stat-allocation.js";
 import { statCost, } from "../../rpg/stats/types.js";
 import { requireActorAccess, } from "../actor-auth.js";
-import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils.js";
+import { internalError, jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils.js";
 import { log, } from "./log.js";
 import { type HandlerOpts, StatBlockSchema, } from "./types.js";
 
@@ -101,8 +101,7 @@ export function statAllocationRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(allocation,);
         } catch (error) {
-          log().error("Failed to get stat allocation", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to get stat allocation", error,);
         }
       },
       {
@@ -143,8 +142,7 @@ export function statAllocationRoutes(opts: HandlerOpts, prefix = "/api",) {
             return jsonError({ message: error.message, status: 422, data: { code: error.code, }, },);
           }
 
-          log().error("Failed to put stat allocation", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to put stat allocation", error,);
         }
       },
       {

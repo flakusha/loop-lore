@@ -26,7 +26,7 @@ import {
   jsonCreated,
   jsonError,
   jsonResponse,
-  requireUserId,
+  withUserAuth,
 } from "./http-utils";
 
 import { handleJobStream, } from "./character-emotion-avatars-stream";
@@ -246,29 +246,25 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       },
     },)
     // ── Get emotion prompt modifier ──────────────────────────────
-    .get(`${prefix}/emotions/prompt-modifier/:emotion`, (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .get(`${prefix}/emotions/prompt-modifier/:emotion`, (ctx: any,) =>
+      withUserAuth(ctx, async (_userId,) => {
+        const { emotion, } = ctx.params as { emotion: string };
+        const validEmotions = Object.values(EmotionType,) as string[];
+        if (!validEmotions.includes(emotion,)) {
+          return jsonError({ message: `Invalid emotion: ${emotion}`, status: HttpStatus.BadRequest, },);
+        }
 
-      const { emotion, } = ctx.params as { emotion: string };
-      const validEmotions = Object.values(EmotionType,) as string[];
-      if (!validEmotions.includes(emotion,)) {
-        return jsonError({ message: `Invalid emotion: ${emotion}`, status: HttpStatus.BadRequest, },);
-      }
-
-      const modifier = emotionAvatarService.getEmotionPromptModifier(emotion as EmotionType,);
-      return jsonResponse({ emotion, modifier, },);
-    },)
+        const modifier = emotionAvatarService.getEmotionPromptModifier(emotion as EmotionType,);
+        return jsonResponse({ emotion, modifier, },);
+      },),)
     // ── List available emotion types ───────────────────────────
-    .get(`${prefix}/emotions/types`, (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .get(`${prefix}/emotions/types`, (ctx: any,) =>
+      withUserAuth(ctx, async (_userId,) => {
+        const emotions = Array.from(Object.values(EmotionType,), (emotion,) => ({
+          value: emotion,
+          displayName: emotion.charAt(0,).toUpperCase() + emotion.slice(1,),
+        }),);
 
-      const emotions = Array.from(Object.values(EmotionType,), (emotion,) => ({
-        value: emotion,
-        displayName: emotion.charAt(0,).toUpperCase() + emotion.slice(1,),
-      }),);
-
-      return jsonResponse(emotions,);
-    },);
+        return jsonResponse(emotions,);
+      },),);
 }

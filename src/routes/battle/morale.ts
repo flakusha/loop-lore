@@ -9,7 +9,7 @@ import {
   processMoraleBreak,
 } from "../../battle";
 import { SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, } from "../http-utils";
+import { internalError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
@@ -28,8 +28,7 @@ export function moraleRoutes(_opts: HandlerOpts, prefix = "/api",) {
           const level = computeMoraleLevel(body.value,);
           return jsonResponse({ level, value: body.value, },);
         } catch (error) {
-          log().error("Failed to compute morale", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to compute morale", error,);
         }
       },
       {
@@ -53,8 +52,7 @@ export function moraleRoutes(_opts: HandlerOpts, prefix = "/api",) {
           const updated = applyMoraleModifier(body.state, body.modifier,);
           return jsonResponse(updated,);
         } catch (error) {
-          log().error("Failed to apply morale modifier", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to apply morale modifier", error,);
         }
       },
       {
@@ -74,8 +72,7 @@ export function moraleRoutes(_opts: HandlerOpts, prefix = "/api",) {
           const result = processMoraleBreak(body.state,);
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to process morale break", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to process morale break", error,);
         }
       },
       {

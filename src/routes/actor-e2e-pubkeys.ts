@@ -25,7 +25,7 @@ import { Elysia, t, } from "elysia";
 import { getActivePublicKey, registerPublicKey, revokePublicKey, } from "../crypto/e2e/server-registry";
 import { ErrorResponse, } from "../validation/schemas";
 import { type HandlerOpts, requireActorAccess, } from "./actor-auth";
-import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
+import { HttpStatus, jsonError, jsonResponse, withUserAuth, } from "./http-utils";
 
 const RegisterE2EPublicKeyBody = t.Object({
   publicKeyJwk: t.Object({
@@ -68,17 +68,15 @@ export function actorE2EPubkeyRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "actor-e2e-pubkeys", },)
     // ── Read active public key for an actor ──────────────────
 
-    .get(`${prefix}/actors/:actorId/e2e-public-key`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .get(`${prefix}/actors/:actorId/e2e-public-key`, (ctx,) =>
+      withUserAuth(ctx, async (_userId,) => {
+        const row = await getActivePublicKey({ database, actorId: ctx.params.actorId, },);
+        if (!row) {
+          return jsonError({ message: "No active public key for actor", status: HttpStatus.NotFound, },);
+        }
 
-      const row = await getActivePublicKey({ database, actorId: ctx.params.actorId, },);
-      if (!row) {
-        return jsonError({ message: "No active public key for actor", status: HttpStatus.NotFound, },);
-      }
-
-      return jsonResponse(row,);
-    }, {
+        return jsonResponse(row,);
+      },), {
       params: ActorIdE2EParams,
       response: {
         200: PublicKeyResponse,

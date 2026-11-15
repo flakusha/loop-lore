@@ -25,7 +25,7 @@ import type { DB, } from "../../db/schema";
 import { getChatParticipantUserIds, } from "../../middleware/nsfw-gate/access";
 import { hasActiveConsent, recordNsfwConsent, } from "../../middleware/nsfw-gate/consent-ledger";
 import { NsfwConsentBody, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
@@ -125,8 +125,7 @@ export function consentRoutes(opts: HandlerOpts, prefix = "/api",) {
               granted: hasActiveConsent(row,),
             },);
           } catch (error) {
-            log().error("Failed to record NSFW consent", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to record NSFW consent", error,);
           }
         },
         {

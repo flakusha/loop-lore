@@ -9,7 +9,7 @@
 import { Elysia, t, } from "elysia";
 import { AchievementsService, } from "../../rpg/achievements";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { forbiddenResponse, jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { forbiddenResponse, internalError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { progressBody, } from "./achievements-schemas";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -46,8 +46,7 @@ export function achievementsPlayerRoutes({ database, }: HandlerOpts, prefix = "/
         const progress = await svc().getPlayerAchievements(ctx.params.playerId,);
         return jsonResponse({ progress, },);
       } catch (error) {
-        log().error("Failed to get player achievements", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get player achievements", error,);
       }
     }, {
       params: t.Object({ playerId: t.String(), },),
@@ -66,8 +65,7 @@ export function achievementsPlayerRoutes({ database, }: HandlerOpts, prefix = "/
         const stats = await svc().getPlayerStats(ctx.params.playerId,);
         return jsonResponse(stats,);
       } catch (error) {
-        log().error("Failed to get player stats", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get player stats", error,);
       }
     }, {
       params: t.Object({ playerId: t.String(), },),
@@ -87,8 +85,7 @@ export function achievementsPlayerRoutes({ database, }: HandlerOpts, prefix = "/
         if (!progress) { return notFoundResponse("Player achievement",); }
         return jsonResponse(progress,);
       } catch (error) {
-        log().error("Failed to get player achievement", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get player achievement", error,);
       }
     }, {
       params: t.Object({ playerId: t.String(), achievementId: t.String(), },),
@@ -113,8 +110,7 @@ export function achievementsPlayerRoutes({ database, }: HandlerOpts, prefix = "/
 
         return jsonResponse(result,);
       } catch (error) {
-        log().error("Failed to update achievement progress", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to update achievement progress", error,);
       }
     }, {
       params: t.Object({ playerId: t.String(), achievementId: t.String(), },),
@@ -134,8 +130,7 @@ export function achievementsPlayerRoutes({ database, }: HandlerOpts, prefix = "/
         const rewards = await svc().claimRewards(ctx.params.playerId, ctx.params.achievementId,);
         return jsonResponse({ rewards, },);
       } catch (error) {
-        log().error("Failed to claim rewards", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to claim rewards", error,);
       }
     }, {
       params: t.Object({ playerId: t.String(), achievementId: t.String(), },),

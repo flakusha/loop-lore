@@ -36,7 +36,7 @@ import {
   jsonError,
   jsonResponse,
   notFoundResponse,
-  requireUserId,
+  withUserAuth,
 } from "../routes/http-utils";
 import { serveFile, } from "./serve-file";
 import { resolveForServe, signedUrlAuth, } from "./serve-handlers";
@@ -169,91 +169,87 @@ export function mattingRoutes(
           ...signedUrlAuth(searchParams, "matted", config,),
         },);
       },)
-      .post(`${prefix}/assets/:id/matte`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      .post(`${prefix}/assets/:id/matte`, (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const provider = resolveMattingProvider(config,);
+          if (!provider) {
+            return badRequestResponse(
+              "Matting is not configured (generation.matting)",
+            );
+          }
 
-        const provider = resolveMattingProvider(config,);
-        if (!provider) {
-          return badRequestResponse(
-            "Matting is not configured (generation.matting)",
+          const service = new MattingService({
+            database,
+            uploadDir: config.assets.uploadDir,
+            resolveProvider: () => provider,
+          },);
+
+          const assetId: string = ctx.params.id;
+          let started = await service.startMatting({ assetId, ownerId: userId, },);
+
+          // Restart recovery: `matting_pending` with no live in-memory job
+          // means the server restarted mid-job. Reset to matting_failed so the
+          // state machine allows a fresh enqueue, then retry once.
+          if (!started.ok && started.error === "not_eligible") {
+            const asset = await getAsset(database, assetId,);
+            const hasLiveJob = asset
+              ? listJobs(asset.owner_id,).some(
+                (job,) =>
+                  job.assetId === assetId &&
+                  (job.status === "pending" || job.status === "running"),
+              )
+              : false;
+
+            if (
+              asset &&
+              asset.alpha_status === AssetAlphaStatus.MattingPending &&
+              !hasLiveJob
+            ) {
+              await database
+                .updateTable("assets",)
+                .set({ alpha_status: AssetAlphaStatus.MattingFailed, },)
+                .where("id", "=", assetId,)
+                .execute();
+
+              started = await service.startMatting({ assetId, ownerId: userId, },);
+            }
+          }
+
+          if (!started.ok) {
+            switch (started.error) {
+              case "asset_not_found":
+                return notFoundResponse("Asset not found",);
+              case "forbidden":
+                return forbiddenResponse("Not the asset owner",);
+              case "not_eligible":
+                return jsonError({
+                  message: "Asset is not eligible for matting (unknown/native alpha, or a job is already pending)",
+                  status: HttpStatus.Conflict,
+                },);
+            }
+          }
+
+          return jsonCreated({ jobId: started.jobId, },);
+        },),)
+      .get(`${prefix}/assets/:id/matte`, (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const job = listJobs(userId,).find(
+            (candidate,) => candidate.assetId === ctx.params.id,
           );
-        }
 
-        const service = new MattingService({
-          database,
-          uploadDir: config.assets.uploadDir,
-          resolveProvider: () => provider,
-        },);
-
-        const assetId: string = ctx.params.id;
-        let started = await service.startMatting({ assetId, ownerId: userId, },);
-
-        // Restart recovery: `matting_pending` with no live in-memory job
-        // means the server restarted mid-job. Reset to matting_failed so the
-        // state machine allows a fresh enqueue, then retry once.
-        if (!started.ok && started.error === "not_eligible") {
-          const asset = await getAsset(database, assetId,);
-          const hasLiveJob = asset
-            ? listJobs(asset.owner_id,).some(
-              (job,) =>
-                job.assetId === assetId &&
-                (job.status === "pending" || job.status === "running"),
-            )
-            : false;
-
-          if (
-            asset &&
-            asset.alpha_status === AssetAlphaStatus.MattingPending &&
-            !hasLiveJob
-          ) {
-            await database
-              .updateTable("assets",)
-              .set({ alpha_status: AssetAlphaStatus.MattingFailed, },)
-              .where("id", "=", assetId,)
-              .execute();
-
-            started = await service.startMatting({ assetId, ownerId: userId, },);
+          if (!job) {
+            return notFoundResponse("No matting job for this asset",);
           }
-        }
 
-        if (!started.ok) {
-          switch (started.error) {
-            case "asset_not_found":
-              return notFoundResponse("Asset not found",);
-            case "forbidden":
-              return forbiddenResponse("Not the asset owner",);
-            case "not_eligible":
-              return jsonError({
-                message: "Asset is not eligible for matting (unknown/native alpha, or a job is already pending)",
-                status: HttpStatus.Conflict,
-              },);
-          }
-        }
-
-        return jsonCreated({ jobId: started.jobId, },);
-      },)
-      .get(`${prefix}/assets/:id/matte`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-
-        const job = listJobs(userId,).find(
-          (candidate,) => candidate.assetId === ctx.params.id,
-        );
-
-        if (!job) {
-          return notFoundResponse("No matting job for this asset",);
-        }
-
-        return jsonResponse({
-          jobId: job.id,
-          status: job.status,
-          providerName: job.providerName,
-          mattedAssetId: job.mattedAssetId,
-          error: job.error,
-          startedAt: job.startedAt,
-          completedAt: job.completedAt,
-        },);
-      },)
+          return jsonResponse({
+            jobId: job.id,
+            status: job.status,
+            providerName: job.providerName,
+            mattedAssetId: job.mattedAssetId,
+            error: job.error,
+            startedAt: job.startedAt,
+            completedAt: job.completedAt,
+          },);
+        },),)
   );
 }
