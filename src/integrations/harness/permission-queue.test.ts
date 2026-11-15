@@ -19,6 +19,9 @@ import { advertisedPermissionOptions, wirePermissionOutcome, } from "./permissio
 import type { PermissionRespondable, } from "./permission-queue";
 import { PermissionQueue, } from "./permission-queue";
 
+// TODO(env): bun-only — `bun:test` is Bun's test-runner API; add a node shim
+// (node:test) when a node test target lands.
+
 // The queue logs every auto-allow, park, and decision through the module
 // child logger; a silent global logger exercises those real call sites
 // (line coverage) without console noise or IO.
