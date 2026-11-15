@@ -44,6 +44,7 @@ export function createSqliteDialect(database: Database,): SqliteDialect {
   // (BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data).
   database.run("PRAGMA journal_mode = WAL",);
   database.run("PRAGMA foreign_keys = ON",);
+  database.run("PRAGMA busy_timeout = 5000",);
 
   const wrapped: BunSqliteWrapper = {
     /**
