@@ -28,6 +28,7 @@ import { type HarnessAcpConfig, } from "../../../src/config/schema/harness";
 import { getOrCreateBuffer, removeBuffer, } from "../../../src/generation/stream-buffer";
 import { resetExecLogPath, setExecLogPath, } from "../../../src/harness/exec-log";
 import {
+  getHarnessAdminFileConfig,
   initHarnessAdminSettings,
   resetHarnessAdminSettings,
 } from "../../../src/integrations/harness/admin-settings";
@@ -36,6 +37,7 @@ import {
   createHarnessFixture,
   type HarnessFixture,
 } from "../../../src/integrations/harness/harness-fixture";
+import { assertHarnessExecution, } from "../../../src/integrations/harness/isolation-gate";
 import { createHarnessRuntime, type HarnessRuntime, } from "../../../src/integrations/harness/runtime";
 import { type ApiClient, createClient, } from "../helpers/client";
 import { SEED, seedAll, } from "../helpers/seed";
@@ -181,5 +183,27 @@ describe("Harness turn e2e — chat SSE stream", () => {
     expect(sse,).toContain("event: harness-turn-end",);
     expect(sse,).toContain(`"messageId":"${outcome.messageId}"`,);
     expect(sse,).toContain('"stopReason":"end_turn"',);
+
+    // Default-deny at the stream's entry point: the same read without a
+    // session is refused, and the harness payload never reaches it.
+    const anonymous = await fetch(`${server.url}/api/v1/generation/stream/${SEED.chat.id}`, {
+      headers: { Accept: "text/event-stream", },
+    },);
+
+    expect(anonymous.status,).toBe(401,);
+    expect(await anonymous.text(),).not.toContain("harness-chunk",);
+  });
+
+  test("leaves the harness switch off for the files that follow", () => {
+    // The admin-settings store is process-global: a file that left the ACP
+    // switch on would widen every later file's dispatch rights.
+    const verdict = assertHarnessExecution({
+      config: { acp: getHarnessAdminFileConfig(), },
+      role: "admin",
+      userId: SEED.admin.id,
+      profileName: PROFILE,
+    },);
+
+    expect(verdict,).toMatchObject({ allowed: false, code: "harness_disabled", },);
   });
 });
