@@ -18,6 +18,14 @@
  * process-shared admin-settings store seeded and reset around every test.
  * Synchronization is promise-based (the dispatch resolves, the stream replays
  * the buffered frames), never a sleep.
+ *
+ * What each test owns:
+ * - "reaches the chat stream": the harness fixture (fake ACP child + its own
+ *   in-memory DB), the composed runtime and its adapter connection, the
+ *   exec-log temp dir, the chat's stream buffer, and the admin-settings seed.
+ *   All of them are released in afterEach — a failed test leaks nothing.
+ * - "leaves the harness switch off": nothing (a read-only check of the reset
+ *   store); it owns no resource and passes standalone.
  */
 
 import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
