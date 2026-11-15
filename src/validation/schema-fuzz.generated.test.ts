@@ -1534,6 +1534,12 @@ describe("InviteSchema", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_invites.InviteSchema,));
 });
 
+describe("IssueChallengeBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_auth.IssueChallengeBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_auth.IssueChallengeBody,));
+});
+
 describe("ItemCategorySchema", () => {
   test("accepts generated values", () => checkAllValid(validation_primitives.ItemCategorySchema,));
 
@@ -2742,12 +2748,6 @@ describe("UserStatusSchema", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_primitives.UserStatusSchema,));
 });
 
-describe("IssueChallengeBody", () => {
-  test("accepts generated values", () => checkAllValid(validation_auth.IssueChallengeBody,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_auth.IssueChallengeBody,));
-});
-
 describe("VerifyFactorBody", () => {
   test("accepts generated values", () => checkAllValid(validation_auth.VerifyFactorBody,));
 
@@ -2936,4 +2936,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 465 schemas discovered across 569 module(s).
+// 466 schemas discovered across 571 module(s).

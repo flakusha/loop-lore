@@ -21,7 +21,7 @@ import { createBridgeRegistry, } from "../../integrations/registry";
 import { createRateLimiter, } from "../../middleware/rate-limit";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertAuthFactors, insertUsers, } from "../../test-utils/insert-helpers";
-import { handleIssueChallenge, } from "./challenge";
+import { handleIssueChallenge, MFA_ISSUE_PERMISSION, } from "./challenge";
 
 /** Fixed epoch-ms start of the injected clock. */
 const T0 = 1_700_000_000_000;
@@ -369,6 +369,30 @@ describe("POST /api/v1/auth/factors/challenge", () => {
     },);
 
     expect(gated.status,).toBe(403,);
+    expect(sent,).toHaveLength(0,);
+  });
+
+  test("issue permission — the gate value is chat.join and the custom role is refused", async () => {
+    expect(MFA_ISSUE_PERMISSION,).toBe("chat.join",);
+
+    const { userId, emailFactorId, sessionId, } = await seedFactors();
+    const sent: EmailTransportMessage[] = [];
+    const bridge = await fakeEmailBridge(sent,);
+
+    const res = await handleIssueChallenge({
+      database: db,
+      bridge,
+      userId,
+      sessionId,
+      userRole: "custom",
+      factorId: emailFactorId,
+      channel: "email",
+      destination: "user@example.com",
+      purpose: ChallengePurpose.Login,
+      now,
+    },);
+
+    expect(res.status,).toBe(403,);
     expect(sent,).toHaveLength(0,);
   });
 

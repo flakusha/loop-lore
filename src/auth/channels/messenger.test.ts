@@ -11,6 +11,7 @@
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { getConfigValue, } from "../../admin/config";
 import { initSmk, } from "../../crypto/smk";
 import { ChallengePurpose, FactorKind, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -24,8 +25,11 @@ import { verifyChallenge, } from "../factors/challenge";
 import { verifyPassword, } from "../password";
 import {
   createMfaMessengerLimiter,
+  MFA_MESSENGER_BOT_TOKEN_KEY,
   MFA_MESSENGER_DEFAULT_SENDER,
   MFA_MESSENGER_DEFAULT_WINDOW_MS,
+  MFA_MESSENGER_RATE_LIMIT_WINDOW_MS_KEY,
+  MFA_MESSENGER_SENDER_KEY,
   readMfaMessengerBotToken,
   readMfaMessengerSender,
   readMfaMessengerWindowMs,
@@ -292,6 +296,21 @@ describe("the MFA messenger channel", () => {
     await expect(saveMfaMessengerBotToken({ database: db, token: "   ", },),).rejects.toThrow();
     await expect(saveMfaMessengerWindowMs({ database: db, windowMs: 0, },),).rejects.toThrow();
     await expect(saveMfaMessengerWindowMs({ database: db, windowMs: Number.NaN, },),).rejects.toThrow();
+  });
+
+  test("config keys map 1:1 to system_config slots", async () => {
+    expect(MFA_MESSENGER_BOT_TOKEN_KEY,).toBe("integrations.messenger.mfa_bot_token",);
+    expect(MFA_MESSENGER_SENDER_KEY,).toBe("integrations.messenger.mfa_sender",);
+    expect(MFA_MESSENGER_RATE_LIMIT_WINDOW_MS_KEY,).toBe("integrations.messenger.mfa_rate_limit_window_ms",);
+
+    await saveMfaMessengerSender({ database: db, sender: "key-probe-bot", },);
+    await saveMfaMessengerBotToken({ database: db, token: "key-probe-token", },);
+    await saveMfaMessengerWindowMs({ database: db, windowMs: 11_000, },);
+
+    // Each helper persists under exactly its own key — no aliasing.
+    expect(await getConfigValue(db, MFA_MESSENGER_SENDER_KEY,),).toBe("key-probe-bot",);
+    expect(await getConfigValue(db, MFA_MESSENGER_BOT_TOKEN_KEY,),).toBe("key-probe-token",);
+    expect(await getConfigValue(db, MFA_MESSENGER_RATE_LIMIT_WINDOW_MS_KEY,),).toBe("11000",);
   });
 
   test("createMfaMessengerLimiter resolves the stored window and caches per window", async () => {

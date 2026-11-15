@@ -15,11 +15,9 @@
  */
 
 import { Elysia, } from "elysia";
-import { createMfaEmailLimiter, } from "../../auth/channels/email";
-import { createMfaMessengerLimiter, } from "../../auth/channels/messenger";
 import type { TranslatorFn, } from "../../i18n/types";
-import { ErrorResponse, IssueChallengeBody, SuccessResponse, VerifyFactorBody, } from "../../validation/schemas";
-import { handleIssueChallenge, } from "./challenge";
+import { ErrorResponse, SuccessResponse, VerifyFactorBody, } from "../../validation/schemas";
+import { challengeRoute, } from "./challenge-routes";
 import { handleDemoLogin, handleLogin, } from "./login";
 import { handleRegister, } from "./register";
 import { handleLogout, handleMe, } from "./session";
@@ -230,65 +228,5 @@ export function authProtectedRoutes({ database, config, bridge, limiters, }: Han
         },
       },
     )
-    .post(
-      `${prefix}/auth/factors/challenge`,
-      async ({ body, ...rest },) => {
-        const userId = "userId" in rest && typeof rest.userId === "string"
-          ? rest.userId
-          : null;
-
-        const sessionId = "sessionId" in rest && typeof rest.sessionId === "string"
-          ? rest.sessionId
-          : null;
-
-        const userRole = "userRole" in rest && typeof rest.userRole === "string"
-          ? rest.userRole
-          : null;
-
-        const { factorId, channel, destination, purpose, } = body as {
-          factorId: string;
-          channel: "email" | "messenger";
-          destination: string;
-          purpose:
-            (typeof import("../../db/enums").ChallengePurpose)[keyof typeof import("../../db/enums").ChallengePurpose];
-        };
-
-        // Channel budgets are self-caching singletons resolved against the
-        // stored window — one issue shares the resend budget by design.
-        const { limiter: emailLimiter, } = await createMfaEmailLimiter({ database, },);
-        const { limiter: messengerLimiter, } = await createMfaMessengerLimiter({ database, },);
-
-        return handleIssueChallenge({
-          database,
-          bridge,
-          userId,
-          sessionId,
-          userRole,
-          factorId,
-          channel,
-          destination,
-          purpose,
-          emailLimiter,
-          messengerLimiter,
-        },);
-      },
-      {
-        body: IssueChallengeBody,
-        response: {
-          200: SuccessResponse,
-          400: ErrorResponse,
-          401: ErrorResponse,
-          403: ErrorResponse,
-          404: ErrorResponse,
-          429: ErrorResponse,
-          502: ErrorResponse,
-          503: ErrorResponse,
-        },
-        detail: {
-          summary: "Issue MFA challenge",
-          description: "Issue a single-use code challenge and deliver it over email or messenger.",
-          tags: ["Auth",],
-        },
-      },
-    );
+    .use(challengeRoute({ database, bridge, }, prefix,),);
 }

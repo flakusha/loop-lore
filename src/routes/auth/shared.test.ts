@@ -18,7 +18,7 @@
 import { describe, expect, test, } from "bun:test";
 import type { RateLimitResult, } from "../../middleware/rate-limit";
 import { rateLimitResponse as rateLimitResponseFromRequest, } from "./request";
-import { rateLimitResponse, } from "./shared";
+import { createVerifyLimiter, rateLimitResponse, resetVerifyRateLimiter, verifyLimiter, } from "./shared";
 
 const BLOCKED: RateLimitResult = { allowed: false, limit: 10, remaining: 0, resetSec: 42, };
 const MESSAGE = "Too many login attempts";
@@ -26,6 +26,39 @@ const MESSAGE = "Too many login attempts";
 function req(headers: Record<string, string> = {},): Request {
   return new Request("http://localhost/api/auth/login", { headers, },);
 }
+
+describe("verify limiter", () => {
+  test("createVerifyLimiter enforces a 10-per-minute per-user budget with window refill", () => {
+    const limiter = createVerifyLimiter();
+    try {
+      const key = "verify:probe-factory";
+      for (let i = 0; i < 10; i++) {
+        expect(limiter.peek(key, 1_700_000_000_000,).allowed,).toBe(true,);
+        limiter.record(key, 1_700_000_000_000,);
+      }
+
+      expect(limiter.peek(key, 1_700_000_000_000,).allowed,).toBe(false,);
+      expect(limiter.peek(key, 1_700_000_000_000 + 60_001,).allowed,).toBe(true,);
+    } finally {
+      limiter.destroy();
+    }
+  });
+
+  test("verifyLimiter singleton throttles and resetVerifyRateLimiter restores it", () => {
+    const key = "verify:probe-singleton";
+    try {
+      for (let i = 0; i < 10; i++) {
+        verifyLimiter.record(key, 1_700_000_000_000,);
+      }
+
+      expect(verifyLimiter.peek(key, 1_700_000_000_000,).allowed,).toBe(false,);
+      resetVerifyRateLimiter();
+      expect(verifyLimiter.peek(key, 1_700_000_000_000,).allowed,).toBe(true,);
+    } finally {
+      resetVerifyRateLimiter();
+    }
+  });
+});
 
 describe("rateLimitResponse", () => {
   test("is the same function re-exported by the request module", () => {
