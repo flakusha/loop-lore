@@ -2246,6 +2246,7 @@
     "debug": "Toggle prompt debug view",
     "detail": "Set detail level (immersion/basic/detailed)",
     "dice": "Roll dice (e.g., /dice 2d6+3) — alias for /roll",
+    "doctor": "Show setup health and next steps (/doctor)",
     "duplicate": "Duplicate an entity (/duplicate <character|world|location|item> <source-id> [--as \"Name\"])",
     "evaluate": "Appraise an item (/evaluate <item>)",
     "forage": "Forage for supplies (/forage [location])",

@@ -2119,7 +2119,8 @@
     "music": "Generate music or link an external music source (/music <prompt|url>)",
     "sfx": "Generate a sound effect from a text prompt (/sfx <prompt>)",
     "sound": "Generate a sound effect from a text prompt (/sound <prompt>) — alias for /sfx",
-    "video": "Generate a video from a text prompt (/video <prompt>)"
+    "video": "Generate a video from a text prompt (/video <prompt>)",
+    "doctor": "Show setup health and next steps (/doctor)"
   },
   "participants": {
     "title": "Participants",
