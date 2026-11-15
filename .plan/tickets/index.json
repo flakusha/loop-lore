@@ -20650,6 +20650,20 @@
     "title": "Avatar & Expression System",
     "type": "FEAT"
   },
+  "FEAT-BACKEND-AUTO-PROVISIONER-MANAGED-BINARY-ACQUISITION-BACKEND-": {
+    "hash": "233850e",
+    "git_issue": "233850e",
+    "extid": "FEAT-BACKEND-AUTO-PROVISIONER-MANAGED-BINARY-ACQUISITION-BACKEND-",
+    "type": "FEAT",
+    "title": "Backend auto-provisioner (managed binary acquisition + backend lifecycle)",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-first-run-auto-setup",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-backend-auto-provisioner-managed-binary-acquisition-backend-.md",
+    "status": "open"
+  },
   "FEAT-BACKGROUND": {
     "epic": "epic-avatar-alpha-vn-layering",
     "extid": "FEAT-BACKGROUND",
@@ -36569,6 +36583,20 @@
     "title": "Per-Domain Config Hot-Reload",
     "type": "TASK"
   },
+  "TASK-CONFIG-INIT-CLI-ALIAS-BUN-RUN-INIT": {
+    "hash": "b7a0500",
+    "git_issue": "b7a0500",
+    "extid": "TASK-CONFIG-INIT-CLI-ALIAS-BUN-RUN-INIT",
+    "type": "TASK",
+    "title": "Config init CLI alias (bun run init)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-first-run-auto-setup",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-init-cli-alias-bun-run-init.md",
+    "status": "open"
+  },
   "TASK-CONFIG-INIT-CLOSE-PII-NODE-ENV-BOOT-GATE-PROMOTE-DEFAULTS-TO": {
     "hash": "183003a",
     "git_issue": "183003a",
@@ -38563,6 +38591,20 @@
     "title": "Defined-but-not-enforced debt: unused schemas and dead validators",
     "type": "TASK"
   },
+  "TASK-DEINSTALLATION-SCENARIOS-CLEAN-REMOVAL": {
+    "hash": "b7b3eae",
+    "git_issue": "b7b3eae",
+    "extid": "TASK-DEINSTALLATION-SCENARIOS-CLEAN-REMOVAL",
+    "type": "TASK",
+    "title": "Deinstallation scenarios (clean removal)",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-first-run-auto-setup",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-deinstallation-scenarios-clean-removal.md",
+    "status": "open"
+  },
   "TASK-DELETE-69-DEAD-SRC-FILES-REPORTED-BY-KNIP": {
     "hash": "4612157",
     "git_issue": "4612157",
@@ -38762,6 +38804,20 @@
     "tags": [],
     "title": "deleteChat runs 9 sequential deletes without transaction (orphan risk)",
     "type": "TASK"
+  },
+  "TASK-DEMO-AUTOSETUP-OBSERVABILITY": {
+    "hash": "7662016",
+    "git_issue": "7662016",
+    "extid": "TASK-DEMO-AUTOSETUP-OBSERVABILITY",
+    "type": "TASK",
+    "title": "Demo autosetup observability",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-first-run-auto-setup",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-demo-autosetup-observability.md",
+    "status": "open"
   },
   "TASK-DENIED-ABANDONED-BATTLE-TRIGGER-WORLD-CHARACTER-NPC-INTERACT": {
     "hash": "f340961",
@@ -42330,6 +42386,20 @@
     "source": ".plan/tickets/TASK-finalize-phase-2-unit-suite-flakes-on-hard-5000ms-budgets-un.md",
     "status": "open"
   },
+  "TASK-FIRST-RUN-WELCOME-SURFACE-GETTING-STARTED-BANNER": {
+    "hash": "f6db84a",
+    "git_issue": "f6db84a",
+    "extid": "TASK-FIRST-RUN-WELCOME-SURFACE-GETTING-STARTED-BANNER",
+    "type": "TASK",
+    "title": "First-run welcome surface (getting-started banner)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-provider-connection-wizard",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-first-run-welcome-surface-getting-started-banner.md",
+    "status": "open"
+  },
   "TASK-FIT-COLUMN-ON-PROVIDERS-ADMIN-SURFACE": {
     "hash": "e2696e1",
     "git_issue": "e2696e1",
@@ -44112,6 +44182,20 @@
     "tags": [],
     "title": "GitHub Pages — VitePress Static Site Hosting",
     "type": "TASK"
+  },
+  "TASK-GITHUB-WORKFLOWS-AND-CI-FIXES-BUN-MIGRATION-DEPENDABOT-GPG": {
+    "hash": "020ded9",
+    "git_issue": "020ded9",
+    "extid": "TASK-GITHUB-WORKFLOWS-AND-CI-FIXES-BUN-MIGRATION-DEPENDABOT-GPG",
+    "type": "TASK",
+    "title": "GitHub workflows and CI fixes (bun migration, dependabot, GPG)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-github-workflows-and-ci-fixes-bun-migration-dependabot-gpg.md",
+    "status": "open"
   },
   "TASK-GIWT-BATCH-COMMAND-FOR-RUN-FINALIZE-CHECK": {
     "hash": "6461cbb",
@@ -48980,6 +49064,20 @@
     ],
     "title": "Logging System (Structured JSONL)",
     "type": "TASK"
+  },
+  "TASK-LOLO-SYMLINK-IN-LOCAL-BIN": {
+    "hash": "2b69e85",
+    "git_issue": "2b69e85",
+    "extid": "TASK-LOLO-SYMLINK-IN-LOCAL-BIN",
+    "type": "TASK",
+    "title": "lolo symlink in ~/.local/bin",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-cross-platform-portability",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lolo-symlink-in-local-bin.md",
+    "status": "open"
   },
   "TASK-LOOP-LORE-BACKUP-EXPORT-CONTRACT-SNAPSHOT-PRODUCER-ASSETS-MA": {
     "hash": "f2df1ce",
@@ -60096,6 +60194,20 @@
     "title": "Settings PATCH uses t.Any body allowing mass assignment",
     "type": "TASK"
   },
+  "TASK-SETUP-STATE-ANONYMOUS-BROWSING-SUPPORT-FOR-ALLOWED-PAGES": {
+    "hash": "d533dc6",
+    "git_issue": "d533dc6",
+    "extid": "TASK-SETUP-STATE-ANONYMOUS-BROWSING-SUPPORT-FOR-ALLOWED-PAGES",
+    "type": "TASK",
+    "title": "Setup-state: anonymous browsing support for allowed pages",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-setup-state-anonymous-browsing-support-for-allowed-pages.md",
+    "status": "open"
+  },
   "TASK-SETUP-STATE-ENDPOINT-GET-API-V1-SETUP-STATE-CHECKS-ID-OK-HIN": {
     "hash": "205978b",
     "git_issue": "205978b",
@@ -60947,6 +61059,20 @@
     "source": ".plan/tickets/TASK-stage-directives-swap-arm.md",
     "status": "Not Started"
   },
+  "TASK-STARTUP-PREPAREDNESS-FOR-ALL-APPLICATION-PARTS": {
+    "hash": "4660ff5",
+    "git_issue": "4660ff5",
+    "extid": "TASK-STARTUP-PREPAREDNESS-FOR-ALL-APPLICATION-PARTS",
+    "type": "TASK",
+    "title": "Startup preparedness for all application parts",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-first-run-auto-setup",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-startup-preparedness-for-all-application-parts.md",
+    "status": "open"
+  },
   "TASK-STATE-MANAGEMENT-MODE-TRANSITIONS": {
     "epic": "epic-rpg-mechanics",
     "extid": "TASK-STATE-MANAGEMENT-MODE-TRANSITIONS",
@@ -61415,6 +61541,20 @@
     "source": ".plan/tickets/TASK-synthetic-qa-capture-wire-or-remove-decision-admin-gated-cap.md",
     "status": "done"
   },
+  "TASK-SYSTEM-PROMPTS-SUFFICIENCY-AND-EXTENSIBILITY": {
+    "hash": "7ed661c",
+    "git_issue": "7ed661c",
+    "extid": "TASK-SYSTEM-PROMPTS-SUFFICIENCY-AND-EXTENSIBILITY",
+    "type": "TASK",
+    "title": "System prompts sufficiency and extensibility",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-config-templates",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-system-prompts-sufficiency-and-extensibility.md",
+    "status": "open"
+  },
   "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY": {
     "epic": "epic-chat-context-optimization",
     "extid": "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY",
@@ -61708,6 +61848,20 @@
     "tags": [],
     "title": "Test Contract",
     "type": "TASK"
+  },
+  "TASK-TEST-COVERAGE-UPLIFT-UNIT-E2E-FUZZ": {
+    "hash": "0ac8baf",
+    "git_issue": "0ac8baf",
+    "extid": "TASK-TEST-COVERAGE-UPLIFT-UNIT-E2E-FUZZ",
+    "type": "TASK",
+    "title": "Test coverage uplift (unit/e2e/fuzz)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-test-coverage-uplift-unit-e2e-fuzz.md",
+    "status": "open"
   },
   "TASK-TEST-DB-DIALECT-PARAMETERIZATION-POSTGRES-MATRIX": {
     "epic": "epic-testing-qa",
@@ -62299,6 +62453,20 @@
     "tags": [],
     "title": "TLS configuration audit and startup validation",
     "type": "TASK"
+  },
+  "TASK-TLS-MISSING-OPENSSL-FRIENDLY-ERROR-ON-BOOT": {
+    "hash": "6981da3",
+    "git_issue": "6981da3",
+    "extid": "TASK-TLS-MISSING-OPENSSL-FRIENDLY-ERROR-ON-BOOT",
+    "type": "TASK",
+    "title": "TLS missing OpenSSL friendly error on boot",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tls-missing-openssl-friendly-error-on-boot.md",
+    "status": "open"
   },
   "TASK-TMP-JANITOR-AND-STALENESS-MARKERS": {
     "epic": "",
@@ -64878,6 +65046,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-widen-typecheck-coverage-to-plugins-and-tests.md",
     "status": "Not Started"
+  },
+  "TASK-WINDOWS-LAUNCH-SCRIPTS-BAT-PS1": {
+    "hash": "adda3c5",
+    "git_issue": "adda3c5",
+    "extid": "TASK-WINDOWS-LAUNCH-SCRIPTS-BAT-PS1",
+    "type": "TASK",
+    "title": "Windows launch scripts (.bat/.ps1)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-cross-platform-portability",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-windows-launch-scripts-bat-ps1.md",
+    "status": "open"
   },
   "TASK-WIRE-ACHIEVEMENTS-ROUTES": {
     "epic": "epic-achievements",
