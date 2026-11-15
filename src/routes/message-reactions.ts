@@ -191,10 +191,15 @@ export function messageReactionsRoutes(opts: HandlerOpts, prefix = "/api",) {
             );
           }
 
-          // Add reaction
+          // Add reaction. The UNIQUE index on (message_id, user_id, emoji)
+          // is the arbiter: a twin POST that won the lookup race but lost
+          // the insert race becomes a no-op instead of a second row (the
+          // poll-votes idiom in chat/service/polls.ts). Either way one row
+          // exists afterwards, so the answer is the existing reaction.
           await database
             .insertInto("message_reactions",)
             .values({ id: uid(), message_id: messageId, user_id: userId, emoji, },)
+            .onConflict((oc,) => oc.doNothing())
             .execute();
 
           return jsonResponse({ toggled: true, emoji, },);

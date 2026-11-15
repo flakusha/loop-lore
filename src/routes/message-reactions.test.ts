@@ -192,6 +192,64 @@ describe("messageReactionsRoutes access checks", () => {
     expect(body.meta,).toBeDefined();
   });
 
+  test("concurrent identical toggles collapse to at most one row", async () => {
+    const app = reactionApp(db, ownerId, null,);
+    const raceMessageId = await insertMessages(db, chatId, ownerId, MessageRole.User, "race me", {},);
+
+    const results = await Promise.all(
+      Array.from({ length: 8, }, () => app.handle(toggle(`/api/messages/${raceMessageId}/reactions`, "👍",),),),
+    );
+
+    // The contract holds mid-race: every twin answers 200 with the reaction.
+    for (const res of results) {
+      expect(res.status,).toBe(200,);
+      const body = (await res.json()) as { toggled: boolean; emoji: string };
+      expect(typeof body.toggled,).toBe("boolean",);
+      expect(body.emoji,).toBe("👍",);
+    }
+
+    // ... but the table holds at most one row for the triple.
+    const rows = await db
+      .selectFrom("message_reactions",)
+      .selectAll()
+      .where("message_id", "=", raceMessageId,)
+      .execute();
+
+    expect(rows.length,).toBeLessThanOrEqual(1,);
+
+    const grouped = (await (
+      await app.handle(get(`/api/messages/${raceMessageId}/reactions`,),)
+    ).json()) as { emoji: string; count: number; userReacted: boolean }[];
+
+    expect(grouped.find((g,) => g.emoji === "👍")?.count ?? 0,).toBeLessThanOrEqual(1,);
+  });
+
+  test("repeated toggles add then remove without ever duplicating", async () => {
+    const app = reactionApp(db, ownerId, null,);
+    const seqMessageId = await insertMessages(db, chatId, ownerId, MessageRole.User, "sequence me", {},);
+
+    const count = async (): Promise<number> =>
+      (
+        await db
+          .selectFrom("message_reactions",)
+          .selectAll()
+          .where("message_id", "=", seqMessageId,)
+          .execute()
+      ).length;
+
+    const add = await app.handle(toggle(`/api/messages/${seqMessageId}/reactions`, "✨",),);
+    expect(((await add.json()) as { toggled: boolean }).toggled,).toBe(true,);
+    expect(await count(),).toBe(1,);
+
+    const remove = await app.handle(toggle(`/api/messages/${seqMessageId}/reactions`, "✨",),);
+    expect(((await remove.json()) as { toggled: boolean }).toggled,).toBe(false,);
+    expect(await count(),).toBe(0,);
+
+    const reAdd = await app.handle(toggle(`/api/messages/${seqMessageId}/reactions`, "✨",),);
+    expect(((await reAdd.json()) as { toggled: boolean }).toggled,).toBe(true,);
+    expect(await count(),).toBe(1,);
+  });
+
   test("quick-emojis returns the picker allowlist", async () => {
     const app = reactionApp(db, ownerId, null,);
     const res = await app.handle(get(`/api/messages/quick-emojis`,),);

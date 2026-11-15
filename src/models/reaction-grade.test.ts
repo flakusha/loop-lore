@@ -98,4 +98,32 @@ describe("reaction grading", () => {
       sqlite.close();
     }
   });
+
+  it("sees one sample per (message, user, emoji): duplicates are rejected at the database", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const userId = await insertUsers(db, "single-sample", "Single",);
+      const actorId = await insertActors(db, "npc",);
+      const chatId = await insertChats(db, "single-chat", userId,);
+      const messageId = await insertMessages(db, chatId, actorId, "assistant", "good reply", {
+        model_id: "qwen3-8b",
+        provider: "local-a",
+        status: "confirmed",
+        visibility: "visible",
+      },);
+
+      await insertMessageReactions(db, messageId, userId, "👍",);
+      // The UNIQUE index on (message_id, user_id, emoji) is the backstop:
+      // a raced twin insert aborts instead of doubling the sample.
+      await expect(insertMessageReactions(db, messageId, userId, "👍",),).rejects.toThrow(/UNIQUE/i,);
+
+      expect(await gradeModelsFromReactions(db,),).toBe(1,);
+      const rows = await db.selectFrom("model_rankings",).selectAll().execute();
+      expect(rows.length,).toBe(1,);
+      const meta = JSON.parse(rows[0]!.meta ?? "{}",) as { messages: number; reacted_messages: number };
+      expect(meta.reacted_messages,).toBe(1,);
+    } finally {
+      sqlite.close();
+    }
+  });
 });
