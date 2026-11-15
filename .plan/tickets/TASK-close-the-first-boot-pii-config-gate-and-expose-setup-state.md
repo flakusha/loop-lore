@@ -23,6 +23,8 @@ Out of scope: the provider-connection wizard, model bundling/auto-pull, HA-style
 
 Why this ordering: the boot gate is the single most concrete first-run bug — nothing else in the first-run story matters until an empty env boots. The setup-state surface already exists as a ticket; this ticket wires the boot outcome to it instead of inventing a second surface.
 
+Close-out (2026-11-15, verified against dev @ fdc71a1): implementation already in tree, no new code. `packages/core/src/config/load/first-boot.ts` implements the promoted-random-secret path, wired into the load order at `packages/core/src/config/load/load.ts:159` (`ensureFirstBootPiiSecrets` runs before `validatePiiSafety` at `:160`); `GET /api/v1/setup/state` served at `src/routes/setup/routes.ts:36`. Per REVIEW-setup-provision.md §2.
+
 **Acceptance Criteria:**
 
 - [ ] Empty-env boot (`env -u NODE_ENV`, no config files) is deterministic and documented: it boots with a stated outcome, never a PII-secret throw.

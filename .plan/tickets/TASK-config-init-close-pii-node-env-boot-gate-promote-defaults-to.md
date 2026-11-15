@@ -3,7 +3,7 @@
 
 # TASK: config-init: close PII/NODE_ENV boot gate + promote defaults to config.local.yaml on first boot
 
-**Status:** Not Started
+**Status:** Wontfix
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-first-run-auto-setup
@@ -48,6 +48,8 @@ Research principles P1/P7: first boot should promote defaults into a real, user-
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
+
+Close-out (2026-11-15): superseded duplicate of TASK-close-the-first-boot-pii-config-gate-and-expose-setup-state (review §2), which is now Done. This ticket cites the old `src/config/load/` paths; the code moved to `packages/core/src/config/load/` and the fix landed there. Option-B (`NODE_ENV=development` default in start/dev scripts) deliberately not taken — the promoted-secret path won. Per REVIEW-setup-provision.md §3.
 
 **Acceptance Criteria:**
 

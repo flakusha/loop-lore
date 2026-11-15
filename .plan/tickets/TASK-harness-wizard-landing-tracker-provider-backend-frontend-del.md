@@ -22,11 +22,22 @@ Parity matrix gap #1 (PARTIAL, both halves): the biggest shipped-but-unlanded ga
 
 ## Landing checklist
 
-- [ ] Backend lane finalized: GET/POST/DELETE `/api/v1/admin/setup/providers` + store + materialize + SSRF denylist + audit on dev.
-- [ ] Frontend lane finalized: wizard client (list/save/presets/reactivity/modal) on dev.
-- [ ] DELETE actually wired: frontend calls it (matrix F2 — never called on the branch).
-- [ ] `GET /api/v1/setup/state` backend route exists OR the tolerated-absent decision is recorded (matrix F3 — no backend route; wizard preview degrades).
+- [x] Backend lane finalized: GET/POST/DELETE `/api/v1/admin/setup/providers` + store + materialize + SSRF denylist + audit on dev.
+- [x] Frontend lane finalized: wizard client (list/save/presets/reactivity/modal) on dev.
+- [x] DELETE actually wired: frontend calls it (matrix F2 — never called on the branch).
+- [x] `GET /api/v1/setup/state` backend route exists OR the tolerated-absent decision is recorded (matrix F3 — no backend route; wizard preview degrades).
 - [ ] Wizard core ticket ACs re-checked after both halves land.
+
+
+## Close-out (2026-11-15, all four landing boxes verified TRUE against dev @ fdc71a1)
+
+- Box 1: `src/routes/admin/setup-providers.ts:80` GET, `:100` POST, `:145` DELETE; store `src/generation/providers/server-provider-store.ts` (`materializeServerProviders` `:347`, audit saved `:217` / deleted `:313`), SSRF allowlist (`server-provider-descriptor.ts:64`, `allowedHosts` at route `:111`), boot materialization `src/server/start.ts:291-292`.
+- Box 2: wizard client in tree — `src/frontend/alpine/admin-provider-wizard/` (`index.ts`, `api.ts`, `presets.ts`, `reactivity.test.ts` + tests).
+- Box 3 (F2 resolved): `index.ts:231` `await deleteSetupProvider(name)` → `api.ts:161-162` DELETE `/api/v1/admin/setup/providers/:name`.
+- Box 4 (F3 resolved): route exists at `src/routes/setup/routes.ts:36` — no tolerated-absent decision needed.
+- Box 5 left open: core-ticket AC re-check is the wizard core ticket's own work, not this tracker's.
+
+Closed in favor of the wizard core ticket. Per REVIEW-setup-provision.md §5.
 
 ## Do NOT touch
 
