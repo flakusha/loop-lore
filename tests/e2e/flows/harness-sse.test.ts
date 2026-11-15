@@ -21,7 +21,7 @@
  */
 
 import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
-import { mkdtempSync, } from "node:fs";
+import { mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { type HarnessAcpConfig, } from "../../../src/config/schema/harness";
@@ -54,6 +54,8 @@ let api: ApiClient;
 let fixture: HarnessFixture | null = null;
 /** The runtime composed by the current test; its adapter is closed after each. */
 let runtime: HarnessRuntime | null = null;
+/** The temp dir holding this test's exec log; removed after each. */
+let execLogDir = "";
 
 beforeAll(async () => {
   server = await createTestServer({ auth: { required: true, }, },);
@@ -77,6 +79,10 @@ afterEach(async () => {
   resetHarnessAdminSettings();
   resetExecLogPath();
   removeBuffer(SEED.chat.id,);
+  if (execLogDir) {
+    rmSync(execLogDir, { recursive: true, force: true, },);
+    execLogDir = "";
+  }
 },);
 
 /**
@@ -127,9 +133,13 @@ describe("Harness turn e2e — chat SSE stream", () => {
     initHarnessAdminSettings(acp,);
     runtime = createHarnessRuntime({ acp, },);
     // The exec log is a file write — keep it out of the worktree.
-    setExecLogPath(join(mkdtempSync(join(tmpdir(), "harness-sse-exec-",),), "executions.jsonl",),);
+    execLogDir = mkdtempSync(join(tmpdir(), "harness-sse-exec-",),);
+    setExecLogPath(join(execLogDir, "executions.jsonl",),);
 
     // The chat's live buffer — the turn's frames ride it (turn-sink → turn-sse).
+    // Start from an empty buffer: a buffer left by another file would replay
+    // its events into this stream.
+    removeBuffer(SEED.chat.id,);
     getOrCreateBuffer(SEED.chat.id,);
 
     const outcome = await dispatchHarnessTurn({
