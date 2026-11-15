@@ -258,6 +258,16 @@ export function getHarnessRuntime(): HarnessRuntime | null {
   return runtime;
 }
 
+/**
+ * Close every harness child process. Null-safe: a disabled/unconfigured
+ * runtime composes nothing, so there is nothing to close. Sync — safe to
+ * call from the `process.on("exit")` hard-exit guard, which cannot await.
+ * Idempotent (the registry clears closed connections).
+ */
+export function closeHarnessRuntime(): void {
+  runtime?.registry.closeAll();
+}
+
 /** Reset the composition. Dev/test only. */
 export function resetHarnessRuntime(): void {
   runtime = null;

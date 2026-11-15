@@ -128,6 +128,26 @@ export class ProfileRegistry {
   }
 
   /**
+   * Close every probed connection, terminating the underlying child
+   * processes. Idempotent; one throwing close never blocks the rest.
+   * Shutdown path — keeps a mid-turn agent from surviving server exit.
+   */
+  closeAll(): void {
+    for (const [name, adapter,] of this.connections) {
+      try {
+        adapter.close();
+      } catch (error) {
+        log()?.warn("harness profile close failed during shutdown", {
+          profile: name,
+          error: (error as Error).message,
+        },);
+      }
+    }
+
+    this.connections.clear();
+  }
+
+  /**
    * Run the actual probe for one profile.
    * @param name - profile name
    * @returns memoized probe result.

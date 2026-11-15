@@ -49,7 +49,7 @@ import {
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { initHarnessTurnQueue, } from "../integrations/harness/queue";
-import { getHarnessRuntime, initHarnessRuntime, } from "../integrations/harness/runtime";
+import { closeHarnessRuntime, getHarnessRuntime, initHarnessRuntime, } from "../integrations/harness/runtime";
 
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
@@ -366,6 +366,7 @@ export async function start() {
   // ── Hard-exit guard — kills subprocesses at OS level ──
   process.on("exit", () => {
     serverManager.killAllSync();
+    closeHarnessRuntime();
   },);
 
   // ── Graceful shutdown ────────────────────────────────────
@@ -375,6 +376,7 @@ export async function start() {
     getScheduler()?.stop();
     await flushActiveStore();
     await serverManager.stopAll();
+    closeHarnessRuntime();
     await unloadAllPlugins();
     httpServer.stop();
     httpsServer?.stop();
