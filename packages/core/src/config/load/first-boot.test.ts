@@ -5,7 +5,17 @@
 
 import { createLogger, } from "@/logger";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync, } from "node:fs";
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import type { Config, } from "../schema";
@@ -13,8 +23,11 @@ import { createConfigSchema, } from "../schema-class";
 import {
   ensureFirstBootPiiSecrets,
   FIRST_BOOT_FILE,
+  FirstBootContentionError,
   generatePiiSecret,
   hasAnyConfigFile,
+  publishOrAdoptFirstBootSecrets,
+  readWinnerFirstBootSecrets,
   renderFirstBootYaml,
   writeFirstBootFile,
 } from "./first-boot";
@@ -224,6 +237,132 @@ describe("ensureFirstBootPiiSecrets", () => {
       const out = ensureFirstBootPiiSecrets(dir, config,);
       expect(out.nsfw.piiSecret,).toBe("tiny",);
       expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+});
+
+describe("publishOrAdoptFirstBootSecrets (concurrent loser)", () => {
+  test("second boot adopts the winner's secrets; loser values nowhere", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      ensureFirstBootPiiSecrets(dir, freshConfig(),);
+      const winnerFile = readFileSync(join(dir, FIRST_BOOT_FILE,), "utf8",);
+      const winner = Bun.YAML.parse(winnerFile,) as {
+        nsfw: { piiSecret: string; reporterHashSecret: string };
+        observability: { telemetry: { piiSecret: string } };
+      };
+      // The loser generated its own values before losing the claim.
+      const loserGenerated = {
+        nsfwPiiSecret: "L".repeat(64,),
+        reporterHashSecret: "M".repeat(64,),
+        telemetryPiiSecret: "N".repeat(64,),
+      };
+      const adopted = publishOrAdoptFirstBootSecrets(dir, freshConfig(), loserGenerated,);
+      expect(adopted.nsfw.piiSecret,).toBe(winner.nsfw.piiSecret,);
+      expect(adopted.nsfw.reporterHashSecret,).toBe(winner.nsfw.reporterHashSecret,);
+      expect(adopted.observability?.telemetry?.piiSecret,).toBe(winner.observability.telemetry.piiSecret,);
+      const flat = JSON.stringify(adopted,);
+      expect(flat,).not.toContain(loserGenerated.nsfwPiiSecret,);
+      expect(flat,).not.toContain(loserGenerated.reporterHashSecret,);
+      expect(flat,).not.toContain(loserGenerated.telemetryPiiSecret,);
+      expect(readFileSync(join(dir, FIRST_BOOT_FILE,), "utf8",),).toBe(winnerFile,);
+      expect(() => validatePiiSafety(adopted,)).not.toThrow();
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("torn-file retry: slow writer still adopted", async () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    const target = join(dir, FIRST_BOOT_FILE,);
+    try {
+      const winnerSecrets = {
+        nsfwPiiSecret: generatePiiSecret(),
+        reporterHashSecret: generatePiiSecret(),
+        telemetryPiiSecret: generatePiiSecret(),
+      };
+      writeFileSync(target, 'nsfw:\n  piiSecret: "partial', { mode: 0o600, },);
+      chmodSync(target, 0o600,);
+      // Slow winner: lands the complete file while the loser is retrying.
+      const writer = Bun.spawn([
+        "bun",
+        "-e",
+        `await Bun.sleep(250); await Bun.write(${JSON.stringify(target,)}, ${
+          JSON.stringify(renderFirstBootYaml(winnerSecrets,),)
+        })`,
+      ], {
+        stdout: "ignore",
+        stderr: "ignore",
+      },);
+      const adopted = publishOrAdoptFirstBootSecrets(dir, freshConfig(), {
+        nsfwPiiSecret: "L".repeat(64,),
+        reporterHashSecret: "M".repeat(64,),
+        telemetryPiiSecret: "N".repeat(64,),
+      },);
+      await writer.exited;
+      expect(adopted.nsfw.piiSecret,).toBe(winnerSecrets.nsfwPiiSecret,);
+      expect(adopted.nsfw.reporterHashSecret,).toBe(winnerSecrets.reporterHashSecret,);
+      expect(adopted.observability?.telemetry?.piiSecret,).toBe(winnerSecrets.telemetryPiiSecret,);
+      expect(() => validatePiiSafety(adopted,)).not.toThrow();
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("budget exhaustion throws FirstBootContentionError naming the file", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      const target = join(dir, FIRST_BOOT_FILE,);
+      writeFileSync(target, 'nsfw:\n  piiSecret: "never-closes', { mode: 0o600, },);
+      chmodSync(target, 0o600,);
+      let thrown: unknown;
+      try {
+        readWinnerFirstBootSecrets(dir, 3, 5,);
+      } catch (error) {
+        thrown = error;
+      }
+      expect(thrown,).toBeInstanceOf(FirstBootContentionError,);
+      expect((thrown as Error).message,).toContain(FIRST_BOOT_FILE,);
+      expect((thrown as Error).message,).toContain("3x5ms",);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("symlink-planted target refused on publish and read", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      writeFileSync(join(dir, "real.yaml",), "nsfw:\n  piiSecret: planted\n",);
+      symlinkSync(join(dir, "real.yaml",), join(dir, FIRST_BOOT_FILE,),);
+      expect(() => writeFirstBootFile(dir, { nsfwPiiSecret: generatePiiSecret(), },)).toThrow(/symlink/,);
+      expect(() => readWinnerFirstBootSecrets(dir, 2, 5,)).toThrow(/symlink/,);
+      expect(() => publishOrAdoptFirstBootSecrets(dir, freshConfig(), { nsfwPiiSecret: "L".repeat(64,), },)).toThrow(
+        /symlink/,
+      );
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("group-readable secret file refused", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      const target = join(dir, FIRST_BOOT_FILE,);
+      writeFileSync(target, renderFirstBootYaml({ nsfwPiiSecret: generatePiiSecret(), },),);
+      chmodSync(target, 0o644,);
+      expect(() => readWinnerFirstBootSecrets(dir, 2, 5,)).toThrow(/group\/other/,);
     } finally {
       restore();
       cleanup();

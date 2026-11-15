@@ -8,8 +8,13 @@ export { applyProviderEnvVars, } from "./env";
 export {
   ensureFirstBootPiiSecrets,
   FIRST_BOOT_FILE,
+  FIRST_BOOT_READ_ATTEMPTS,
+  FIRST_BOOT_READ_INTERVAL_MS,
+  FirstBootContentionError,
   generatePiiSecret,
   hasAnyConfigFile,
+  publishOrAdoptFirstBootSecrets,
+  readWinnerFirstBootSecrets,
   renderFirstBootYaml,
   writeFirstBootFile,
 } from "./first-boot";
