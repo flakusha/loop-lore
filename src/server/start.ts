@@ -345,12 +345,17 @@ export async function start() {
   ready = true;
 
   // One-line boot readiness summary (TASK-boot-readiness-summary): check ids
-  // + ok/off only, never values, hints, or paths. Dynamic import keeps the
-  // boot graph lazy like the provider/materialize imports above.
+  // + ok/off only, never values, hints, or paths. The promotion field reports
+  // ensureFirstBootPiiSecrets' actual outcome (via its last-outcome register),
+  // never re-inferred env flags. Dynamic import keeps the boot graph lazy
+  // like the provider/materialize imports above.
   try {
     const { setupChecks, } = await import("../routes/setup/checks");
     const { buildBootReadinessSummary, } = await import("./boot-readiness");
-    serverLogger.info(buildBootReadinessSummary(await setupChecks(config, database,),),);
+    const { getLastFirstBootPromotion, } = await import("../config/load/first-boot");
+    serverLogger.info(
+      buildBootReadinessSummary(await setupChecks(config, database,), getLastFirstBootPromotion(),),
+    );
   } catch {
     serverLogger.info("setup readiness: unknown (checks unavailable)",);
   }

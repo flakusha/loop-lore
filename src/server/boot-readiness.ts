@@ -11,15 +11,24 @@
  * error text, or paths. The signature only admits `id`/`ok` so hints (which
  * name env vars and failing providers) cannot leak in.
  */
+import type { FirstBootPromotion, } from "../config/load/first-boot";
 import type { SetupCheck, } from "../routes/setup/checks";
 
 /**
  * Build the one-line boot readiness summary.
  * @param checks - Setup checks; only `id` and `ok` are read.
- * @returns The summary line, e.g. `setup readiness: degraded (off: tls, smk)`.
+ * @param promotion - First-boot promotion outcome from
+ * `ensureFirstBootPiiSecrets` (via `getLastFirstBootPromotion`); omitted
+ * when promotion did not run. A fixed literal union, so no secret, env
+ * value, or path can leak through it.
+ * @returns The summary line, e.g. `setup readiness: degraded (off: tls; promotion=created)`.
  */
-export function buildBootReadinessSummary(checks: ReadonlyArray<Pick<SetupCheck, "id" | "ok">>,): string {
+export function buildBootReadinessSummary(
+  checks: ReadonlyArray<Pick<SetupCheck, "id" | "ok">>,
+  promotion?: FirstBootPromotion,
+): string {
   const off = checks.filter((check,) => !check.ok).map((check,) => check.id);
-  if (off.length === 0) { return "setup readiness: ready (all checks ok)"; }
-  return `setup readiness: degraded (off: ${off.join(", ",)})`;
+  const suffix = promotion === undefined ? "" : `; promotion=${promotion}`;
+  if (off.length === 0) { return `setup readiness: ready (all checks ok${suffix})`; }
+  return `setup readiness: degraded (off: ${off.join(", ",)}${suffix})`;
 }

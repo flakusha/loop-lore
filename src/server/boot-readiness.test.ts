@@ -10,10 +10,28 @@
  *
  * Deterministic: no network, no ports, no sleeps.
  */
-import { describe, expect, test, } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
+import {
+  ensureFirstBootPiiSecrets,
+  FIRST_BOOT_FILE,
+  type FirstBootPromotion,
+  getLastFirstBootPromotion,
+  publishOrAdoptFirstBootSecretsWithOutcome,
+  renderFirstBootYaml,
+} from "../config/load/first-boot";
+import { deepMerge, } from "../config/load/parse";
 import type { Config, } from "../config/schema";
+import { createConfigSchema, } from "../config/schema-class";
+import { createLogger, } from "../logger";
 import { type SetupCheck, setupChecks, } from "../routes/setup/checks";
 import { buildBootReadinessSummary, } from "./boot-readiness";
+
+beforeAll(() => {
+  createLogger({ level: "error", },);
+},);
 
 const ALL_OK: SetupCheck[] = [
   { id: "env.pii", ok: true, },
@@ -82,5 +100,162 @@ describe("buildBootReadinessSummary", () => {
     expect(line,).not.toContain(sentinelSecret,);
     expect(line,).not.toContain(sentinelPath,);
     expect(line,).not.toContain("\n",);
+  });
+});
+
+describe("promotion field", () => {
+  const promotions: FirstBootPromotion[] = [
+    "created",
+    "existed-adopted",
+    "existed-restart",
+    "skipped-dev",
+    "skipped-operator-config",
+  ];
+
+  test("every outcome renders on the ready line", () => {
+    for (const promotion of promotions) {
+      expect(buildBootReadinessSummary(ALL_OK, promotion,),).toBe(
+        `setup readiness: ready (all checks ok; promotion=${promotion})`,
+      );
+    }
+  });
+
+  test("every outcome renders on the degraded line", () => {
+    const off = [{ id: "tls", ok: false, },];
+    for (const promotion of promotions) {
+      expect(buildBootReadinessSummary(off, promotion,),).toBe(
+        `setup readiness: degraded (off: tls; promotion=${promotion})`,
+      );
+    }
+  });
+
+  test("omitted promotion keeps today's exact lines", () => {
+    expect(buildBootReadinessSummary(ALL_OK,),).toBe("setup readiness: ready (all checks ok)",);
+    expect(buildBootReadinessSummary([{ id: "tls", ok: false, },],),).toBe(
+      "setup readiness: degraded (off: tls)",
+    );
+  });
+
+  test("promotion lines stay single-line", () => {
+    for (const promotion of promotions) {
+      expect(buildBootReadinessSummary(ALL_OK, promotion,),).not.toContain("\n",);
+    }
+  });
+});
+
+describe("promotion wiring (start.ts path: register into the line)", () => {
+  const SECRET_ENV = [
+    "NSFW_PII_SECRET",
+    "NSFW_FLAG_REPORTER_HASH_SECRET",
+    "NSFW_MODERATION_HMAC_SECRET",
+    "TELEMETRY_PII_SECRET",
+  ];
+
+  function emptyEnv(): () => void {
+    const saved = new Map<string, string | undefined>();
+    for (const key of [...SECRET_ENV, "NODE_ENV",]) {
+      saved.set(key, process.env[key],);
+      delete process.env[key];
+    }
+
+    return () => {
+      for (const [key, value,] of saved) {
+        if (value === undefined) { delete process.env[key]; }
+        else { process.env[key] = value; }
+      }
+    };
+  }
+
+  function freshConfig(): Config {
+    return structuredClone(createConfigSchema().defaults,) as Config;
+  }
+
+  function scratchDir(): { dir: string; cleanup: () => void } {
+    const dir = mkdtempSync(join(tmpdir(), "s4-summary-",),);
+    return { dir, cleanup: () => rmSync(dir, { recursive: true, force: true, },), };
+  }
+
+  test("created boot surfaces promotion=created", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      ensureFirstBootPiiSecrets(dir, freshConfig(),);
+      expect(buildBootReadinessSummary(ALL_OK, getLastFirstBootPromotion(),),).toBe(
+        "setup readiness: ready (all checks ok; promotion=created)",
+      );
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("dev boot surfaces promotion=skipped-dev", () => {
+    const { dir, cleanup, } = scratchDir();
+    process.env["NODE_ENV"] = "test";
+    try {
+      ensureFirstBootPiiSecrets(dir, freshConfig(),);
+      expect(buildBootReadinessSummary(ALL_OK, getLastFirstBootPromotion(),),).toBe(
+        "setup readiness: ready (all checks ok; promotion=skipped-dev)",
+      );
+    } finally {
+      delete process.env["NODE_ENV"];
+      cleanup();
+    }
+  });
+
+  test("operator-owned config surfaces promotion=skipped-operator-config", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      writeFileSync(join(dir, "config.yaml",), "server:\n  port: 3000\n",);
+      ensureFirstBootPiiSecrets(dir, freshConfig(),);
+      expect(buildBootReadinessSummary(ALL_OK, getLastFirstBootPromotion(),),).toBe(
+        "setup readiness: ready (all checks ok; promotion=skipped-operator-config)",
+      );
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("restart surfaces promotion=existed-restart", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      ensureFirstBootPiiSecrets(dir, freshConfig(),);
+      const before = readFileSync(join(dir, FIRST_BOOT_FILE,), "utf8",);
+      const loaded = deepMerge(freshConfig(), Bun.YAML.parse(before,) as Record<string, unknown>,);
+      ensureFirstBootPiiSecrets(dir, loaded,);
+      expect(buildBootReadinessSummary(ALL_OK, getLastFirstBootPromotion(),),).toBe(
+        "setup readiness: ready (all checks ok; promotion=existed-restart)",
+      );
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("concurrent loser surfaces promotion=existed-adopted", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      writeFileSync(
+        join(dir, FIRST_BOOT_FILE,),
+        renderFirstBootYaml({ nsfwPiiSecret: "W".repeat(48,), },),
+        { mode: 0o600, },
+      );
+
+      const { config, promotion, } = publishOrAdoptFirstBootSecretsWithOutcome(dir, freshConfig(), {
+        nsfwPiiSecret: "L".repeat(48,),
+      },);
+
+      expect(config.nsfw.piiSecret,).toBe("W".repeat(48,),);
+      expect(buildBootReadinessSummary(ALL_OK, promotion,),).toBe(
+        "setup readiness: ready (all checks ok; promotion=existed-adopted)",
+      );
+    } finally {
+      restore();
+      cleanup();
+    }
   });
 });

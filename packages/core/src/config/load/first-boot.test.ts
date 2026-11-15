@@ -22,11 +22,14 @@ import type { Config, } from "../schema";
 import { createConfigSchema, } from "../schema-class";
 import {
   ensureFirstBootPiiSecrets,
+  ensureFirstBootPiiSecretsWithOutcome,
   FIRST_BOOT_FILE,
   FirstBootContentionError,
   generatePiiSecret,
+  getLastFirstBootPromotion,
   hasAnyConfigFile,
   publishOrAdoptFirstBootSecrets,
+  publishOrAdoptFirstBootSecretsWithOutcome,
   readWinnerFirstBootSecrets,
   renderFirstBootYaml,
   writeFirstBootFile,
@@ -239,6 +242,137 @@ describe("ensureFirstBootPiiSecrets", () => {
       expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
     } finally {
       restore();
+      cleanup();
+    }
+  });
+});
+
+describe("ensureFirstBootPiiSecretsWithOutcome (S4 promotion outcome)", () => {
+  test("fresh boot reports created and records it", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      const { config, promotion, } = ensureFirstBootPiiSecretsWithOutcome(dir, freshConfig(),);
+      expect(promotion,).toBe("created",);
+      expect(getLastFirstBootPromotion(),).toBe("created",);
+      expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(true,);
+      expect(() => validatePiiSafety(config,)).not.toThrow();
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("dev env reports skipped-dev without touching disk", () => {
+    const { dir, cleanup, } = scratchDir();
+    process.env["NODE_ENV"] = "test";
+    try {
+      const config = freshConfig();
+      const { promotion, } = ensureFirstBootPiiSecretsWithOutcome(dir, config,);
+      expect(promotion,).toBe("skipped-dev",);
+      expect(getLastFirstBootPromotion(),).toBe("skipped-dev",);
+      expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
+    } finally {
+      delete process.env["NODE_ENV"];
+      cleanup();
+    }
+  });
+
+  test("operator config file with missing secrets reports skipped-operator-config", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      writeFileSync(join(dir, "config.yaml",), "server:\n  port: 3000\n",);
+      const config = freshConfig();
+      const { promotion, } = ensureFirstBootPiiSecretsWithOutcome(dir, config,);
+      expect(promotion,).toBe("skipped-operator-config",);
+      expect(getLastFirstBootPromotion(),).toBe("skipped-operator-config",);
+      expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
+      expect(() => validatePiiSafety(config,)).toThrow(/NSFW_PII_SECRET/,);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("fully env-provided secrets report skipped-operator-config", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    const long = "e".repeat(MIN_PII_SECRET_LENGTH,);
+    process.env["NSFW_PII_SECRET"] = long;
+    process.env["NSFW_FLAG_REPORTER_HASH_SECRET"] = long;
+    process.env["TELEMETRY_PII_SECRET"] = long;
+    try {
+      const { promotion, } = ensureFirstBootPiiSecretsWithOutcome(dir, freshConfig(),);
+      expect(promotion,).toBe("skipped-operator-config",);
+      expect(getLastFirstBootPromotion(),).toBe("skipped-operator-config",);
+      expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("restart with the promoted file reports existed-restart", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      ensureFirstBootPiiSecrets(dir, freshConfig(),);
+      const before = readFileSync(join(dir, FIRST_BOOT_FILE,), "utf8",);
+      // A real second boot merges the promoted file before promotion runs.
+      const loaded = deepMerge(freshConfig(), Bun.YAML.parse(before,) as Record<string, unknown>,);
+      const second = ensureFirstBootPiiSecretsWithOutcome(dir, loaded,);
+      expect(second.promotion,).toBe("existed-restart",);
+      expect(getLastFirstBootPromotion(),).toBe("existed-restart",);
+      expect(second.config,).toBe(loaded,);
+      expect(readFileSync(join(dir, FIRST_BOOT_FILE,), "utf8",),).toBe(before,);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("concurrent loser reports existed-adopted with the winner's secrets", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    try {
+      const winnerSecrets = {
+        nsfwPiiSecret: generatePiiSecret(),
+        reporterHashSecret: generatePiiSecret(),
+        telemetryPiiSecret: generatePiiSecret(),
+      };
+      writeFileSync(join(dir, FIRST_BOOT_FILE,), renderFirstBootYaml(winnerSecrets,), { mode: 0o600, },);
+      const loserGenerated = {
+        nsfwPiiSecret: "L".repeat(64,),
+        reporterHashSecret: "M".repeat(64,),
+        telemetryPiiSecret: "N".repeat(64,),
+      };
+      const { config, promotion, } = publishOrAdoptFirstBootSecretsWithOutcome(
+        dir,
+        freshConfig(),
+        loserGenerated,
+      );
+      expect(promotion,).toBe("existed-adopted",);
+      expect(config.nsfw.piiSecret,).toBe(winnerSecrets.nsfwPiiSecret,);
+      expect(config.nsfw.reporterHashSecret,).toBe(winnerSecrets.reporterHashSecret,);
+      expect(config.observability?.telemetry?.piiSecret,).toBe(winnerSecrets.telemetryPiiSecret,);
+      expect(JSON.stringify(config,),).not.toContain("L".repeat(64,),);
+      expect(() => validatePiiSafety(config,)).not.toThrow();
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("the original entry point records the same outcome", () => {
+    const { dir, cleanup, } = scratchDir();
+    process.env["NODE_ENV"] = "test";
+    try {
+      const config = freshConfig();
+      expect(ensureFirstBootPiiSecrets(dir, config,),).toBe(config,);
+      expect(getLastFirstBootPromotion(),).toBe("skipped-dev",);
+    } finally {
+      delete process.env["NODE_ENV"];
       cleanup();
     }
   });
