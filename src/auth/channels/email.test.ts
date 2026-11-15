@@ -29,7 +29,16 @@ import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/crea
 import { insertAuthFactors, insertUsers, } from "../../test-utils/insert-helpers";
 import { verifyChallenge, } from "../factors/challenge";
 import { verifyPassword, } from "../password";
-import { sendMfaEmail, } from "./email";
+import {
+  createMfaEmailLimiter,
+  MFA_EMAIL_DEFAULT_SENDER,
+  MFA_EMAIL_DEFAULT_WINDOW_MS,
+  readMfaEmailSender,
+  readMfaEmailWindowMs,
+  saveMfaEmailSender,
+  saveMfaEmailWindowMs,
+  sendMfaEmail,
+} from "./email";
 
 /** Fixed epoch-ms start of the injected clock. */
 const T0 = 1_700_000_000_000;
@@ -269,5 +278,70 @@ describe("the MFA email channel", () => {
     if (failed.ok) { throw new Error("delivery should have failed",); }
     expect(failed.error.code,).toBe("delivery_failed",);
     expect(sent,).toHaveLength(0,);
+  });
+
+  test("sender and window overrides round-trip through the admin helpers", async () => {
+    expect(await readMfaEmailSender({ database: db, },),).toBe(MFA_EMAIL_DEFAULT_SENDER,);
+    expect(await readMfaEmailWindowMs({ database: db, },),).toBe(MFA_EMAIL_DEFAULT_WINDOW_MS,);
+
+    await saveMfaEmailSender({ database: db, sender: "  mfa@example.com  ", },);
+    expect(await readMfaEmailSender({ database: db, },),).toBe("mfa@example.com",);
+
+    await saveMfaEmailWindowMs({ database: db, windowMs: 30_000.7, },);
+    expect(await readMfaEmailWindowMs({ database: db, },),).toBe(30_000,);
+
+    await expect(saveMfaEmailSender({ database: db, sender: "   ", },),).rejects.toThrow();
+    await expect(saveMfaEmailWindowMs({ database: db, windowMs: 0, },),).rejects.toThrow();
+    await expect(saveMfaEmailWindowMs({ database: db, windowMs: Number.NaN, },),).rejects.toThrow();
+  });
+
+  test("createMfaEmailLimiter resolves the stored window and caches per window", async () => {
+    await saveMfaEmailWindowMs({ database: db, windowMs: 5_000, },);
+
+    const first = await createMfaEmailLimiter({ database: db, },);
+    expect(first.windowMs,).toBe(5_000,);
+    expect((await createMfaEmailLimiter({ database: db, },)).limiter,).toBe(first.limiter,);
+
+    const explicit = await createMfaEmailLimiter({ database: db, windowMs: 7_000, },);
+    expect(explicit.windowMs,).toBe(7_000,);
+    expect(explicit.limiter,).not.toBe(first.limiter,);
+  });
+
+  test("issue failure refunds the send budget — retry with the right factor works", async () => {
+    const { userId, factorId, } = await seedFactor();
+    const otherId = await insertUsers(db, "other", "Other",);
+    const sent: EmailTransportMessage[] = [];
+    const bridge = await fakeBridge(sent,);
+    const limiter = createRateLimiter({ windowMs: 60_000, maxRequests: 1, },);
+
+    const failed = await sendMfaEmail({
+      database: db,
+      bridge,
+      userId: otherId,
+      factorId,
+      purpose: ChallengePurpose.Login,
+      toEmail: "user@example.com",
+      limiter,
+      now,
+    },);
+
+    expect(failed.ok,).toBe(false,);
+    if (failed.ok) { throw new Error("cross-user send should have failed",); }
+    expect(failed.error.code,).toBe("not_found",);
+
+    // The failed issue refunded the budget, so the retry on the same limiter passes.
+    const retried = await sendMfaEmail({
+      database: db,
+      bridge,
+      userId,
+      factorId,
+      purpose: ChallengePurpose.Login,
+      toEmail: "user@example.com",
+      limiter,
+      now,
+    },);
+
+    expect(retried.ok,).toBe(true,);
+    expect(sent,).toHaveLength(1,);
   });
 });
