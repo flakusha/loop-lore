@@ -413,3 +413,11 @@ describe("redirectToLogin", () => {
     expect(locAssigns,).toEqual([],);
   });
 });
+
+describe("utils barrel", () => {
+  test("re-exports the shared fetch helpers", async () => {
+    const { safeFetch, safeFetchWithRetry, } = await import("../utils.ts");
+    expect(typeof safeFetch,).toBe("function",);
+    expect(typeof safeFetchWithRetry,).toBe("function",);
+  });
+});
