@@ -116,7 +116,8 @@ export function visibleAssetFilter(
   const id = actorId ?? "";
   const visibilityColumn: "visibility" | "assets.visibility" = tablePrefix === "" ? "visibility" : "assets.visibility";
   const ownerColumn: "owner_id" | "assets.owner_id" = tablePrefix === "" ? "owner_id" : "assets.owner_id";
-  const idColumn: "id" | "assets.id" = tablePrefix === "" ? "id" : "assets.id";
+  // The share correlation always names the outer table explicitly: an
+  // unqualified "id" here would bind to asset_shares.id inside the subquery.
   return eb.or([
     eb(visibilityColumn, "=", AssetVisibility.Public,),
     eb(ownerColumn, "=", id,),
@@ -125,7 +126,7 @@ export function visibleAssetFilter(
       eb.exists(
         eb.selectFrom("asset_shares",)
           .select("asset_shares.id",)
-          .whereRef("asset_shares.asset_id", "=", idColumn,)
+          .whereRef("asset_shares.asset_id", "=", "assets.id",)
           .where("asset_shares.shared_with_id", "=", id,),
       ),
     ],),

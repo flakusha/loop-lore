@@ -18,7 +18,7 @@ import {
   insertAssetShares,
   insertUsers,
 } from "../../test-utils/insert-helpers";
-import { visibleAssetFilter, visibleGalleryAssetFilter, } from "./read";
+import { canAccessAsset, listAssets, visibleAssetFilter, visibleGalleryAssetFilter, } from "./read";
 
 let fixture: TestDb | undefined;
 let db: Kysely<DB>;
@@ -115,6 +115,28 @@ describe("visibleAssetFilter", () => {
         .execute();
 
       expect(forOther,).toEqual([],);
+    } finally {
+      await teardown();
+    }
+  });
+
+  test("shared-with-me is visible to the grantee in unjoined queries", async () => {
+    await freshDb();
+    try {
+      const { ownerId, viewerId, } = await seedUsers();
+      const otherId = await insertUsers(db, "vis-other", "Vis Other",);
+      await db.insertInto("actors",).values({ id: otherId, display_name: "Vis Other", },).execute();
+      const id = await seedAsset(ownerId, AssetVisibility.Shared,);
+      await insertAssetShares(db, id, viewerId, ownerId,);
+
+      await expect(visibleIds(viewerId,),).resolves.toEqual([id,],);
+      await expect(visibleIds(otherId,),).resolves.toEqual([],);
+      await expect(visibleIds(null,),).resolves.toEqual([],);
+
+      // Production paths agree: direct access and the main listing admit the grantee.
+      await expect(canAccessAsset(db, id, viewerId, null,),).resolves.toBe(true,);
+      const listed = await listAssets(db, { actorId: viewerId, },);
+      expect(listed.data.map((a,) => a.id),).toContain(id,);
     } finally {
       await teardown();
     }
