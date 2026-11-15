@@ -10,7 +10,8 @@
  * the caller supplied it.
  */
 import { describe, expect, test, } from "bun:test";
-import { internalErrorResponse, jsonError, } from "./errors";
+import type { Logger, } from "../../logger";
+import { internalError, internalErrorResponse, jsonError, } from "./errors";
 import { HttpStatus, } from "./status";
 
 /** Body shape every error helper produces. */
@@ -66,6 +67,49 @@ describe("internalErrorResponse", () => {
     // jsonError spreads `data` only when truthy — {} is truthy, so the key is
     // present; this pins the choice rather than leaving it incidental.
     expect(Object.hasOwn(body, "data",),).toBe(true,);
+  });
+});
+
+describe("internalError", () => {
+  /** Minimal spy: records logger.error calls, nothing else. */
+  function spyLogger(calls: unknown[][],) {
+    return {
+      error: (...args: unknown[]) => {
+        calls.push(args,);
+      },
+    } as unknown as Logger;
+  }
+
+  test("answers a generic 500 that never leaks the operation", async () => {
+    const calls: unknown[][] = [];
+    const res = internalError(spyLogger(calls,), "Failed to list keys", new Error("db down",),);
+
+    expect(res.status,).toBe(500,);
+    const body = await res.json() as ErrorBody;
+    // The wire body is the fixed envelope, not the log-only operation.
+    expect(body.error,).toBe("Internal server error",);
+    expect(body.code,).toBe("SERVER_ERROR",);
+  });
+
+  test("logs the operation with the caught Error attached", () => {
+    const calls: unknown[][] = [];
+    const cause = new Error("db down",);
+
+    internalError(spyLogger(calls,), "Failed to list keys", cause,);
+
+    expect(calls,).toHaveLength(1,);
+    expect(calls[0]![0],).toBe("Failed to list keys",);
+    expect(calls[0]![1],).toBe(cause,);
+  });
+
+  test("a non-Error throw still logs (without a cause) and 500s", async () => {
+    const calls: unknown[][] = [];
+
+    const res = internalError(spyLogger(calls,), "Failed to list keys", "string blowup",);
+
+    // error instanceof Error is false, so no cause is attached — must not throw.
+    expect(calls[0]![1],).toBeUndefined();
+    expect(res.status,).toBe(500,);
   });
 });
 

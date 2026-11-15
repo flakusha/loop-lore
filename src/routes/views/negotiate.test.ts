@@ -7,7 +7,7 @@
  * order- or run-dependent under parallel execution.
  */
 import { describe, expect, test, } from "bun:test";
-import { jsonViewModelResponse, wantsJsonViewModel, } from "./negotiate";
+import { jsonViewModelResponse, redirectUnlessFragment, wantsJsonViewModel, } from "./negotiate";
 
 describe("views/negotiate — wantsJsonViewModel", () => {
   test("no Accept header keeps the markup representation", () => {
@@ -57,5 +57,38 @@ describe("views/negotiate — jsonViewModelResponse", () => {
 
     expect(res.headers.get("content-type",),).toBe("application/json",);
     expect(await res.json(),).toEqual({ characters: [{ id: "actor-1", },], },);
+  });
+});
+
+describe("views/negotiate — redirectUnlessFragment", () => {
+  /** Minimal route ctx: only `request` is read, nothing else. */
+  function ctxWith(headers: Record<string, string>,) {
+    return { request: new Request("http://localhost/views/dynamic/x", { headers, },), };
+  }
+
+  test("an htmx swap proceeds even with no JSON preference", () => {
+    expect(redirectUnlessFragment(ctxWith({ "HX-Request": "true", },), false,),).toBeNull();
+  });
+
+  test("an htmx swap proceeds when the caller also wants JSON", () => {
+    expect(redirectUnlessFragment(ctxWith({ "HX-Request": "true", },), true,),).toBeNull();
+  });
+
+  test("a JSON view-model caller proceeds without htmx headers", () => {
+    expect(redirectUnlessFragment(ctxWith({},), true,),).toBeNull();
+  });
+
+  test("direct navigation bounces to /views/ with a 302", () => {
+    const res = redirectUnlessFragment(ctxWith({},), false,);
+
+    expect(res,).not.toBeNull();
+    expect(res!.status,).toBe(302,);
+    expect(res!.headers.get("Location",),).toBe("/views/",);
+  });
+
+  test("a non-true HX-Request value counts as direct navigation", () => {
+    const res = redirectUnlessFragment(ctxWith({ "HX-Request": "false", },), false,);
+
+    expect(res?.status,).toBe(302,);
   });
 });
