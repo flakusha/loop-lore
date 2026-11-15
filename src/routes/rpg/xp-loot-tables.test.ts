@@ -28,12 +28,12 @@ afterAll(() => sqlite.close());
 function authedApp(): Elysia {
   return new Elysia({ name: "test-loot", },)
     .derive({ as: "scoped", }, () => ({ userId: "user1", userRole: "user", }),)
-    .use(xpLootTablesRoutes({ database: db, },),) as unknown as Elysia;
+    .use(xpLootTablesRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
 }
 
 function anonApp(): Elysia {
   return new Elysia({ name: "test-loot-anon", },)
-    .use(xpLootTablesRoutes({ database: db, },),) as unknown as Elysia;
+    .use(xpLootTablesRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
 }
 
 /**

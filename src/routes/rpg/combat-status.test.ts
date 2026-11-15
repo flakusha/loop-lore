@@ -22,12 +22,12 @@ function makeCombatant(): Combatant {
 function authedApp(): Elysia {
   return new Elysia({ name: "test-combat-status", },)
     .derive({ as: "scoped", }, () => ({ userId: "user1", userRole: "user", }),)
-    .use(combatStatusRoutes({ database: {} as never, },),) as unknown as Elysia;
+    .use(combatStatusRoutes({ database: {} as never, config: {} as never, },),) as unknown as Elysia;
 }
 
 function anonApp(): Elysia {
   return new Elysia({ name: "test-combat-status-anon", },)
-    .use(combatStatusRoutes({ database: {} as never, },),) as unknown as Elysia;
+    .use(combatStatusRoutes({ database: {} as never, config: {} as never, },),) as unknown as Elysia;
 }
 
 /**

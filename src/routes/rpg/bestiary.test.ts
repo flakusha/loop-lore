@@ -52,12 +52,12 @@ afterAll(() => sqlite.close());
 function authedApp(actingUserId: string = userId,): Elysia {
   return new Elysia({ name: "test-bestiary", },)
     .derive({ as: "scoped", }, () => ({ userId: actingUserId, userRole: "user", }),)
-    .use(bestiaryRoutes({ database: db, },),) as unknown as Elysia;
+    .use(bestiaryRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
 }
 
 function anonApp(): Elysia {
   return new Elysia({ name: "test-bestiary-anon", },)
-    .use(bestiaryRoutes({ database: db, },),) as unknown as Elysia;
+    .use(bestiaryRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
 }
 
 /**

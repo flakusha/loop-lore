@@ -51,12 +51,12 @@ afterAll(() => sqlite.close());
 function authedApp(actingUserId: string = userId,): Elysia {
   return new Elysia({ name: "test-npc-memory", },)
     .derive({ as: "scoped", }, () => ({ userId: actingUserId, userRole: "user", }),)
-    .use(npcMemoryRoutes({ database: db, },),) as unknown as Elysia;
+    .use(npcMemoryRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
 }
 
 function anonApp(): Elysia {
   return new Elysia({ name: "test-npc-memory-anon", },)
-    .use(npcMemoryRoutes({ database: db, },),) as unknown as Elysia;
+    .use(npcMemoryRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
 }
 
 /**
