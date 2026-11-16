@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DATA_DIR, } from "../config/constants";
+import { resolveDbPath, } from "../config/state-dir";
 import { getLogger, } from "../logger";
 import type { Logger, } from "../logger";
 
@@ -61,11 +62,11 @@ export function dbBackupDir(): string {
 
 /**
  * Resolve the live database file path, mirroring `src/db/index.ts` singleton
- * resolution (path env override beats the data-dir default).
+ * resolution (explicit path env override beats the XDG per-instance default).
  * @returns the live SQLite database file path
  */
 export function liveDbPath(): string {
-  return process.env["LOOP_LORE_DB_PATH"] ?? path.resolve(DATA_DIR, "loop-lore.db",);
+  return resolveDbPath();
 }
 
 /**

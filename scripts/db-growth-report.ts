@@ -13,14 +13,13 @@
  * `SELECT COUNT(*)` per user table.
  *
  * Usage: `bun run db:growth [--json]` with `LOOP_LORE_DB_PATH` to override
- * the database path (defaults to `<DATA_DIR>/loop-lore.db`).
+ * the database path (defaults to the XDG per-instance `loop-lore.db`).
  */
 
 import { Database, } from "bun:sqlite";
-import path from "node:path";
-import { DATA_DIR, } from "../packages/core/src/config/constants";
+import { resolveDbPath, } from "../packages/core/src/config/state-dir";
 
-const DB_PATH = process.env.LOOP_LORE_DB_PATH ?? path.join(DATA_DIR, "loop-lore.db",);
+const DB_PATH = resolveDbPath();
 
 /** One per-table report row. */
 interface TableReport {
@@ -144,7 +143,7 @@ function renderTable(report: GrowthReport,): void {
 }
 
 if (import.meta.main) {
-  const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.join(DATA_DIR, "loop-lore.db",);
+  const dbPath = resolveDbPath();
   if (!Bun.file(dbPath,).exists()) {
     console.error(`ERROR: database not found at ${dbPath}`,);
     process.exit(1,);

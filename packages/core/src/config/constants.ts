@@ -2,15 +2,20 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /** Centralized runtime paths. Single source of truth — import from here, not hardcoded. */
-import path from "node:path";
-import { fileURLToPath, } from "node:url";
 import pkg from "../../package.json" with { type: "json", };
+import { resolveInstanceDir, } from "./state-dir";
 
-const __filename = fileURLToPath(import.meta.url,);
-const __dirname = path.dirname(__filename,);
-
-/** Resolve DATA_DIR relative to this file's location, not CWD */
-export const DATA_DIR = path.resolve(__dirname, "..", "..", "loop-lore-data",);
+/**
+ * Per-instance XDG state dir ($XDG_STATE_HOME/loop-lore/<instance>, fallback
+ * ~/.local/state/loop-lore/<instance>) — see ./state-dir.ts for precedence.
+ *
+ * Frozen at first import: production sets LOOP_LORE_INSTANCE/PORT before
+ * boot, so import-time freezing is correct there. Code that must react to a
+ * changed environment at runtime (getDatabase, liveDbPath) re-resolves via
+ * resolveDbPath() instead of reading this. Explicit path env
+ * (LOOP_LORE_DB_PATH, ASSETS_UPLOAD_DIR, …) always wins over this default.
+ */
+export const DATA_DIR = resolveInstanceDir();
 
 /**
  * Cache-Control max-age for immutable static assets (1 year in seconds).

@@ -6,6 +6,7 @@ import { Kysely, } from "kysely";
 import { existsSync, } from "node:fs";
 import path from "node:path";
 import { DATA_DIR, } from "../config/constants";
+import { resolveDbPath, } from "../config/state-dir";
 import { createLogger, getLogger, } from "../logger";
 import { seedHarnessModelCapabilities, } from "../seeding";
 import { createSqliteDialect, getDatabase, } from "./index";
@@ -19,7 +20,7 @@ async function reinit(): Promise<void> {
   createLogger();
   const log = getLogger().child({ module: "reinit", },);
 
-  const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db",);
+  const dbPath = resolveDbPath();
   const walPath = `${dbPath}-wal`;
   const shmPath = `${dbPath}-shm`;
 

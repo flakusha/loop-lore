@@ -12,8 +12,7 @@
 
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
-import path from "node:path";
-import { DATA_DIR, } from "../src/config/constants";
+import { resolveDbPath, } from "../packages/core/src/config/state-dir";
 import { generateEncryptionSecret, } from "../src/crypto/user-secret";
 import { ActorType, AgentType, UserRole, UserStatus, } from "../src/db/enums";
 import { createSqliteDialect, getDatabase, } from "../src/db/index";
@@ -119,7 +118,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const log = getLogger().child({ module: "seed-users", },);
   // Persist to the real configured database — createTestDb() is an
   // in-memory database that is destroyed on exit, seeding nothing.
-  const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db",);
+  const dbPath = resolveDbPath();
   // Release the eager module-level connection so the file lock moves to us.
   await getDatabase().destroy();
   const sqlite = new Database(dbPath,);

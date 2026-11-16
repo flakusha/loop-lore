@@ -5,7 +5,7 @@ import { Database, type SQLQueryBindings, } from "bun:sqlite";
 import { Kysely, SqliteDialect, } from "kysely";
 import fs from "node:fs";
 import path from "node:path";
-import { DATA_DIR, } from "../config/constants";
+import { findLegacyDb, LEGACY_DATA_DIR, resolveDbPath, } from "../config/state-dir";
 import type { DB, } from "./schema";
 
 interface BunSqliteStatement {
@@ -114,11 +114,17 @@ export function getTestDatabaseOverride(): Kysely<DB> | null {
 
 // Lazy production singleton — only created on the first getDatabase() call when no test
 // override is in effect. Eager initialization at module load forced every test that imports
-// `@/db` to materialize `loop-lore-data/loop-lore.db` (see BUG-eager-db-init-creates-on-disk-db-on-test-import).
+// `@/db` to materialize a repo-local loop-lore.db (see BUG-eager-db-init-creates-on-disk-db-on-test-import).
 let database: Kysely<DB> | null = null;
 
 /** Raw handle behind the production singleton (null until it materializes). */
 let singletonSqlite: Database | null = null;
+
+/** Filesystem path the production singleton was opened on (null until it materializes). */
+let singletonPath: string | null = null;
+
+/** Legacy-repo-data warning fires at most once per process. */
+let legacyMigrationWarned = false;
 
 /**
  * The raw `bun:sqlite` handle behind the CURRENT getDatabase() resolution —
@@ -135,19 +141,66 @@ export function getSqliteDatabase(): Database | null {
 }
 
 /**
- * @param _databasePath - path is unused when a test override is set; resolution falls back to the singleton DB otherwise.
- * @returns the Kysely DB handle (test override if set, otherwise the lazily-initialized singleton).
+ * Point the operator at a legacy repo-local database once per process.
+ * Docs-only migration: never moves anything, just prints the exact `cp -a`.
+ * @param dbPath - the resolved live path about to be opened
  */
-export function getDatabase(_databasePath?: string,): Kysely<DB> {
-  if (testDatabaseOverride) { return testDatabaseOverride; }
-  if (!database) {
-    const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db",);
-    // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
-    fs.mkdirSync(path.dirname(dbPath,), { recursive: true, },);
-    const sqlite = new Database(dbPath,);
-    singletonSqlite = sqlite;
-    database = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
+function warnOnLegacyData(dbPath: string,): void {
+  if (legacyMigrationWarned) {
+    return;
   }
+
+  legacyMigrationWarned = true;
+  const legacyDb = findLegacyDb(LEGACY_DATA_DIR, dbPath,);
+  if (!legacyDb) {
+    return;
+  }
+
+  // console, not the app logger: this fires before logging is initialized
+  // (getDatabase runs during boot and in logger-less tests).
+  // eslint-disable-next-line no-console
+  console.warn(
+    `[loop-lore] Legacy repo-local database found at ${legacyDb} — runtime state now lives under the XDG state dir (${dbPath}). ` +
+      `Move it with: cp -a ${legacyDb} ${dbPath} (then remove the legacy copy). No auto-migration is performed.`,
+  );
+}
+
+/**
+ * Precedence: explicit `databasePath` arg > LOOP_LORE_DB_PATH > XDG
+ * per-instance default. The config-file `db.sqliteFilename` knob is IGNORED
+ * (runtime never read it — see docs/spec/xdg-state-storage.md).
+ *
+ * Fails loud when the resolved path changes under a live singleton: silently
+ * serving the previous instance's database is exactly the multi-writer
+ * hazard per-instance dirs exist to prevent.
+ * @param databasePath - explicit path, wins over env and the XDG default
+ * @returns the Kysely DB handle (test override if set, otherwise the lazily-initialized singleton).
+ * @throws when the resolved path differs from the live singleton's path
+ */
+export function getDatabase(databasePath?: string,): Kysely<DB> {
+  if (testDatabaseOverride) {
+    return testDatabaseOverride;
+  }
+
+  const dbPath = databasePath ?? resolveDbPath();
+  if (database) {
+    if (singletonPath !== dbPath) {
+      throw new Error(
+        `getDatabase() resolved a different path under a live singleton (open: ${singletonPath}, requested: ${dbPath}). ` +
+          "Two instances must never share one process — call resetDatabaseSingleton() first (tests) or run separate processes (prod).",
+      );
+    }
+
+    return database;
+  }
+
+  warnOnLegacyData(dbPath,);
+  // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
+  fs.mkdirSync(path.dirname(dbPath,), { recursive: true, },);
+  const sqlite = new Database(dbPath,);
+  singletonSqlite = sqlite;
+  singletonPath = dbPath;
+  database = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
 
   return database;
 }
@@ -165,6 +218,7 @@ export async function resetDatabaseSingleton(): Promise<void> {
   const current = database;
   database = null;
   singletonSqlite = null;
+  singletonPath = null;
   if (current) { await current.destroy(); }
 }
 
