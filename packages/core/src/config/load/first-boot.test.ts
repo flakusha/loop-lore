@@ -63,6 +63,16 @@ function emptyEnv(): () => void {
   };
 }
 
+/** Set NODE_ENV for one test, restoring the prior value after — never delete: bun sets NODE_ENV=test for the test process and sibling files depend on it. */
+function withNodeEnv(value: string,): () => void {
+  const prior = process.env["NODE_ENV"];
+  process.env["NODE_ENV"] = value;
+  return () => {
+    if (prior === undefined) { delete process.env["NODE_ENV"]; }
+    else { process.env["NODE_ENV"] = prior; }
+  };
+}
+
 function freshConfig(): Config {
   return structuredClone(createConfigSchema().defaults,) as Config;
 }
@@ -184,13 +194,13 @@ describe("ensureFirstBootPiiSecrets", () => {
 
   test("dev env: no file, config untouched", () => {
     const { dir, cleanup, } = scratchDir();
-    process.env["NODE_ENV"] = "test";
+    const restoreNodeEnv = withNodeEnv("test",);
     try {
       const config = freshConfig();
       expect(ensureFirstBootPiiSecrets(dir, config,),).toBe(config,);
       expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
     } finally {
-      delete process.env["NODE_ENV"];
+      restoreNodeEnv();
       cleanup();
     }
   });
@@ -265,7 +275,7 @@ describe("ensureFirstBootPiiSecretsWithOutcome (S4 promotion outcome)", () => {
 
   test("dev env reports skipped-dev without touching disk", () => {
     const { dir, cleanup, } = scratchDir();
-    process.env["NODE_ENV"] = "test";
+    const restoreNodeEnv = withNodeEnv("test",);
     try {
       const config = freshConfig();
       const { promotion, } = ensureFirstBootPiiSecretsWithOutcome(dir, config,);
@@ -273,7 +283,7 @@ describe("ensureFirstBootPiiSecretsWithOutcome (S4 promotion outcome)", () => {
       expect(getLastFirstBootPromotion(),).toBe("skipped-dev",);
       expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
     } finally {
-      delete process.env["NODE_ENV"];
+      restoreNodeEnv();
       cleanup();
     }
   });
@@ -366,13 +376,13 @@ describe("ensureFirstBootPiiSecretsWithOutcome (S4 promotion outcome)", () => {
 
   test("the original entry point records the same outcome", () => {
     const { dir, cleanup, } = scratchDir();
-    process.env["NODE_ENV"] = "test";
+    const restoreNodeEnv = withNodeEnv("test",);
     try {
       const config = freshConfig();
       expect(ensureFirstBootPiiSecrets(dir, config,),).toBe(config,);
       expect(getLastFirstBootPromotion(),).toBe("skipped-dev",);
     } finally {
-      delete process.env["NODE_ENV"];
+      restoreNodeEnv();
       cleanup();
     }
   });
