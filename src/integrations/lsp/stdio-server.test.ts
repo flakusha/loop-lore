@@ -33,7 +33,7 @@ import {
 import { fakeFactory, } from "../harness/fakes";
 import { WRITE_OR_EXEC_TOOL_KINDS, } from "../harness/permission-policy";
 import { createHarnessRuntime, } from "../harness/runtime";
-import { createCompletionDispatcher, } from "./completion";
+import { CompletionTimeoutError, createCompletionDispatcher, } from "./completion";
 import { type OpenDoc, trackDidChange, trackDidOpen, } from "./documents";
 import { createLspMessageHandler, type InboundLspDeps, } from "./handler";
 import {
@@ -601,5 +601,42 @@ describe("lsp completion dispatcher", () => {
     },);
 
     expect(text,).toBe("done()",);
+  });
+
+  it("rejects a hung dispatch with CompletionTimeoutError, then serves the next completion", async () => {
+    const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], reply: "unused", }, },);
+    let calls = 0;
+    const dispatcher = createCompletionDispatcher({
+      database: fixture.db,
+      runtime: createHarnessRuntime({ acp: acpConfig(), factory, },),
+      role: "solo",
+      userId,
+      profile: "omp",
+      chatId: "",
+      actorId: "",
+      dispatchTurn: () => {
+        calls += 1;
+        if (calls === 1) {
+          return new Promise<DispatchHarnessTurnOutcome>(() => {},);
+        }
+
+        return Promise.resolve({
+          turn: { result: { text: "  back()", }, },
+          messageId: "recovered",
+        } as unknown as DispatchHarnessTurnOutcome,);
+      },
+      debounceMs: 0,
+      timeoutMs: 20,
+    },);
+
+    const target = {
+      doc: { languageId: "typescript", version: 1, text: "const a = ", },
+      uri: "file:///a.ts",
+      line: 0,
+      character: 10,
+    };
+
+    await expect(dispatcher.requestCompletion(target,),).rejects.toBeInstanceOf(CompletionTimeoutError,);
+    await expect(dispatcher.requestCompletion(target,),).resolves.toBe("back()",);
   });
 });
