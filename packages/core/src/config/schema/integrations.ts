@@ -23,6 +23,13 @@ export interface IntegrationInboundConfig {
   principalUserId: string;
   /** Facade tier granted to the inbound principal. Cumulative: chat-write implies read. Default "read". */
   principalScope: "read" | "chat-write";
+  /**
+   * Loopback bind for the stdio-proxy listener (Design B): the running
+   * server's local-only relay target for `--proxy` stdio shims. Default
+   * "127.0.0.1". A non-loopback value is REFUSED at boot — remote bind is
+   * the filed remote-harness epic, not this slice.
+   */
+  proxyBind: string;
 }
 
 /** Email (IMAP/SMTP) integration. Unconfigured = empty strings. */

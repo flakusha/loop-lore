@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { serve, } from "bun";
+import type { Kysely, } from "kysely";
 import { join, } from "node:path";
 import { initAgeGate, } from "../age-gate/controller";
 import { initAssistantQuota, } from "../assistant/quota/engine";
@@ -15,13 +16,14 @@ import { getScheduler, } from "../cron";
 import { initAnonymousMode, initSmk, } from "../crypto";
 import { getDatabase, } from "../db/index";
 import { runDataMigrations, runMigrations, } from "../db/migrate";
+import type { DB, } from "../db/schema";
 import { seedDefaultActors, } from "../db/seed";
 import { createApp, } from "../elysia-app";
 import { initializeProviders, } from "../generation";
 import { initDefaultHooks, } from "../generation/hooks";
 import { bindSharedQuotaEngine, } from "../generation/quota-engine";
 import { applyStoredHarnessSettings, initHarnessAdminSettings, } from "../integrations/harness/admin-settings";
-import { applyStoredInboundSettings, initInboundSettings, } from "../integrations/inbound/settings";
+import { applyStoredInboundSettings, getInboundSettings, initInboundSettings, } from "../integrations/inbound/settings";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
@@ -67,6 +69,26 @@ function autoProviderName(apiFamily: string,): string {
   return "sd-server-auto";
 }
 
+/**
+ * Start the stdio-proxy listener (Design B) when an inbound server is
+ * enabled: the local-only relay target for `--proxy` stdio shims. A
+ * shim's stdio EOF/close ends only its own connection, never the server.
+ * The bind is loopback-only by config — a non-loopback value throws
+ * (remote bind is the remote-harness epic, not this slice).
+ * @param database - the live database the proxied ops run against
+ * @param config - app config (carries the loopback bind)
+ * @returns the listener, or undefined when no inbound server is enabled
+ */
+async function maybeStartStdioProxyListener(
+  database: Kysely<DB>,
+  config: Config,
+): Promise<{ addr: string; close(): Promise<void> } | undefined> {
+  const inboundView = getInboundSettings();
+  if (!inboundView.mcpEnabled && !inboundView.acpEnabled) { return undefined; }
+  const { startStdioProxyListener, } = await import("../integrations/inbound/stdio-proxy-listener");
+  return startStdioProxyListener({ database, config, },);
+}
+
 export async function start() {
   // Bootstrap logger before config load (template expansion needs it)
   createLogger();
@@ -92,6 +114,9 @@ export async function start() {
       acpEnabled: false,
       principalUserId: "",
       principalScope: "read",
+      // Loopback default mirrors the schema default; remote bind is refused
+      // by the proxy listener, not defaulted here.
+      proxyBind: "127.0.0.1",
     },
   );
 
@@ -344,6 +369,15 @@ export async function start() {
   // Plugins, seeds and assets are ready — open the traffic gate.
   ready = true;
 
+  // ── stdio-proxy listener (Design B) ──────────────────────────
+  // Local-only relay target for `--proxy` stdio shims (see
+  // maybeStartStdioProxyListener): starts only when an inbound server is
+  // enabled, and never reads stdio itself.
+  const stdioProxy = await maybeStartStdioProxyListener(database, config,);
+  if (stdioProxy !== undefined) {
+    serverLogger.info(`stdio-proxy → ${stdioProxy.addr}`, { module: "server", },);
+  }
+
   // One-line boot readiness summary (TASK-boot-readiness-summary): check ids
   // + ok/off only, never values, hints, or paths. The promotion field reports
   // ensureFirstBootPiiSecrets' actual outcome (via its last-outcome register),
@@ -378,6 +412,7 @@ export async function start() {
     await serverManager.stopAll();
     closeHarnessRuntime();
     await unloadAllPlugins();
+    await stdioProxy?.close();
     httpServer.stop();
     httpsServer?.stop();
     const SHUTDOWN_TIMEOUT = 5000;

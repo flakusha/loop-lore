@@ -67,10 +67,24 @@ describe("inbound principal gate", () => {
   });
 
   test("disabled server refuses; enabled server with empty principal refuses", () => {
-    initInboundSettings({ mcpEnabled: false, acpEnabled: false, principalUserId: "", principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: false,
+      acpEnabled: false,
+      principalUserId: "",
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     expect(effectiveInboundSettings("mcp-stdio",),).toBeNull();
 
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: "", principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: "",
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     expect(effectiveInboundSettings("mcp-stdio",),).toBeNull();
     expect(
       buildInboundFacadeContext(db, baseConfig, "mcp-stdio", "req-2",),
@@ -78,7 +92,13 @@ describe("inbound principal gate", () => {
   });
 
   test("enabled + named principal yields the external-agent context with the configured tier", () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
 
     const ctx = buildInboundFacadeContext(db, baseConfig, "mcp-stdio", "req-3",);
     expect(ctx,).not.toBeNull();
@@ -91,7 +111,14 @@ describe("inbound principal gate", () => {
   });
 
   test("the facade tier ladder enforces the configured tier (read refused chat.write)", async () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     resetFacadeRegistry();
     const registry = getFacadeRegistry({ database: db, config: baseConfig, },);
     const ctx = buildInboundFacadeContext(db, baseConfig, "mcp-stdio", "req-4",)!;
@@ -105,7 +132,14 @@ describe("inbound principal gate", () => {
   });
 
   test("chat-write tier admits the write op (the cumulative ladder)", async () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "chat-write", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "chat-write",
+      proxyBind: "127.0.0.1",
+    },);
+
     resetFacadeRegistry();
     const registry = getFacadeRegistry({ database: db, config: baseConfig, },);
     const ctx = buildInboundFacadeContext(db, baseConfig, "mcp-stdio", "req-5",)!;

@@ -151,20 +151,41 @@ describe("inbound MCP stdio server", () => {
     expect(await connectInboundMcpServer({ database: db, config: baseConfig, }, t0,),).toBeNull();
 
     // Seeded but disabled (schema defaults).
-    initInboundSettings({ mcpEnabled: false, acpEnabled: false, principalUserId: "", principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: false,
+      acpEnabled: false,
+      principalUserId: "",
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     resetFacadeRegistry();
     const [t1, ,] = InMemoryTransport.createLinkedPair();
     expect(await connectInboundMcpServer({ database: db, config: baseConfig, }, t1,),).toBeNull();
 
     // Enabled but no principal.
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: "", principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: "",
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     resetFacadeRegistry();
     const [t2, ,] = InMemoryTransport.createLinkedPair();
     expect(await connectInboundMcpServer({ database: db, config: baseConfig, }, t2,),).toBeNull();
   });
 
   test("tools/list generates from the facade manifest and carries the tool annotations", async () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, },),);
     expect(client,).not.toBeNull();
 
@@ -191,7 +212,14 @@ describe("inbound MCP stdio server", () => {
   });
 
   test("tools/call chat.history runs the facade lifecycle with the inbound principal", async () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, },),);
     expect(client,).not.toBeNull();
 
@@ -209,7 +237,14 @@ describe("inbound MCP stdio server", () => {
   });
 
   test("a read-tier principal is refused chat.send with the 403-class tool error", async () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, },),);
     expect(client,).not.toBeNull();
 
@@ -264,8 +299,21 @@ describeOrSkip("inbound MCP stdio server main()", () => {
   });
 
   test("an admitted boot attaches the facade server to StdioServerTransport", async () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
-    mainConfig = configWith({ mcpEnabled: true, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
+    mainConfig = configWith({
+      mcpEnabled: true,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     const prevExitCode = process.exitCode ?? 0;
     let exitCodeAfter: string | number | null | undefined;
     try {

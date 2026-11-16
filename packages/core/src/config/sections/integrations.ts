@@ -12,6 +12,7 @@ export const INTEGRATIONS_DEFAULTS = {
     acpEnabled: false,
     principalUserId: "",
     principalScope: "read",
+    proxyBind: "127.0.0.1",
   },
   email: {
     enabled: false,
@@ -88,8 +89,14 @@ export const integrationsMeta = {
         acpEnabled: { type: "boolean", default: INTEGRATIONS_DEFAULTS.inbound.acpEnabled, },
         principalUserId: { type: "string", default: INTEGRATIONS_DEFAULTS.inbound.principalUserId, },
         principalScope: { type: "string", default: INTEGRATIONS_DEFAULTS.inbound.principalScope, },
+        proxyBind: {
+          type: "string",
+          default: INTEGRATIONS_DEFAULTS.inbound.proxyBind,
+          description:
+            "Loopback bind for the stdio-proxy listener. Non-loopback is refused; remote bind is a future ticket.",
+        },
       },
-      required: ["mcpEnabled", "acpEnabled", "principalUserId", "principalScope",] as const,
+      required: ["mcpEnabled", "acpEnabled", "principalUserId", "principalScope", "proxyBind",] as const,
     },
     email: {
       type: "object",

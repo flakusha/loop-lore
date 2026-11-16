@@ -24,6 +24,8 @@ else `port-$PORT`, else `default`:
 | `$STATE/<instance>/uploads/` | Gallery assets (`raw/`, `compressed/`, thumbs) |
 | `$STATE/<instance>/certs/` | TLS `key.pem` + `cert.pem` (auto-generated) |
 | `$STATE/loop-lore-data-backup/db/` | DB snapshots (shared across instances) |
+| `$STATE/<instance>/stdio-proxy.token` | Bearer token for the stdio-proxy listener (owner-only `0600`, minted at boot) |
+| `$STATE/<instance>/stdio-proxy.addr` | Listener `host:port` written at boot (read by bare `--proxy` shims; removed on clean shutdown) |
 
 Run a second copy with `--instance demo` (or
 `LOOP_LORE_INSTANCE=demo`) and the two never share a sqlite file.
@@ -41,8 +43,27 @@ Explicit paths always win and skip the instance dir:
 
 - `$STATE/<instance>/certs/key.pem` — TLS private key (openssl
   default permissions; restrict with `chmod 600` on shared hosts).
+- `$STATE/<instance>/stdio-proxy.token` — bearer token for the
+  local-only stdio-proxy listener (Design B). Minted at boot when an
+  inbound server is enabled, `0600`, self-healed on every read. A
+  `--proxy` shim presents it on its handshake line; bad/missing tokens
+  are refused and audited. Never copy it off the host.
 - `config.local.yaml` (`config/` dir, mode `0600`) — first-boot
   generated PII secrets. This one lives with config, not state.
+
+## Stdio while the server runs (Design B)
+
+The MCP/ACP stdio mains accept `--proxy [host:port]`: the thin shim
+process owns stdio and relays bytes to the running server's loopback-only
+listener instead of opening the database itself. Every op runs through the
+live facade registry and DB-backed history server-side, so proxied ops are
+audited exactly like local turns. With no address, `--proxy` reads
+`$STATE/<instance>/stdio-proxy.addr` (same instance dir, so the same
+environment the server runs with). The listener bind
+(`integrations.inbound.proxyBind`) defaults to `127.0.0.1`; a non-loopback
+value refuses to start — remote bind needs TLS+token and is a future
+ticket. Never-stop semantics: stdio EOF/close ends only that relay
+connection; the server and its listener keep running.
 
 ## Moving legacy repo-local data
 

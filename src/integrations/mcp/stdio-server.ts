@@ -28,6 +28,7 @@ import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { createLogger, getLogger, } from "../../logger";
 import { buildInboundFacadeContext, } from "../inbound/principal";
+import { parseProxyAddr, resolveProxyClient, runStdioProxyRelay, } from "../inbound/stdio-proxy";
 import { getFacadeRegistry, } from "../loop-lore-facade/instance";
 import { buildMcpServer, MCP_SERVER_NAME, } from "../loop-lore-facade/mcp/server";
 import type { FacadeContext, } from "../loop-lore-facade/types";
@@ -73,11 +74,56 @@ export async function connectInboundMcpServer(
 }
 
 /**
+ * `--proxy [addr]` entrypoint: own stdio, relay bytes to the running
+ * server's local-only listener, and exit when the relay ends. The database
+ * is never opened here — ops run (and are audited) server-side. stdio
+ * EOF/close ends only this relay; the server keeps running.
+ */
+async function mainProxy(addrArg: string,): Promise<void> {
+  createLogger();
+  const logger = getLogger();
+  let client;
+  try {
+    client = resolveProxyClient(addrArg,);
+  } catch (error) {
+    logger.warn(
+      `inbound MCP stdio proxy refused to start: ${(error as Error).message}`,
+      { module: MCP_SERVER_NAME, },
+    );
+
+    process.exitCode = 1;
+    return;
+  }
+
+  const code = await runStdioProxyRelay({
+    input: process.stdin,
+    output: process.stdout,
+    addr: client.addr,
+    token: client.token,
+    protocol: "mcp",
+  },);
+
+  if (code !== 0) {
+    logger.error("inbound MCP stdio proxy relay failed", undefined, { module: MCP_SERVER_NAME, },);
+    process.exitCode = 1;
+    return;
+  }
+
+  logger.info("inbound MCP stdio proxy closed; the server keeps running", { module: MCP_SERVER_NAME, },);
+}
+
+/**
  * Production entrypoint: load config, open the database, serve the facade
  * tools over stdio. Exits 1 with a stderr diagnostic when the inbound gate
  * refuses (deny-by-default).
  */
 export async function main(): Promise<void> {
+  const proxyArg = parseProxyAddr(process.argv,);
+  if (proxyArg !== undefined) {
+    await mainProxy(proxyArg,);
+    return;
+  }
+
   createLogger();
   const config = loadConfig();
   const logger = getLogger();

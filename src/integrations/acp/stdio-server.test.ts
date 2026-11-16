@@ -144,18 +144,39 @@ describe("connectInboundAcpServer — the admission gate + handler wiring", () =
     expect(connectInboundAcpServer({ database: db, config: baseConfig, }, () => {},),).toBeNull();
 
     // Seeded but disabled (schema defaults).
-    initInboundSettings({ mcpEnabled: false, acpEnabled: false, principalUserId: "", principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: false,
+      acpEnabled: false,
+      principalUserId: "",
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     resetFacadeRegistry();
     expect(connectInboundAcpServer({ database: db, config: baseConfig, }, () => {},),).toBeNull();
 
     // Enabled but no principal.
-    initInboundSettings({ mcpEnabled: false, acpEnabled: true, principalUserId: "", principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: false,
+      acpEnabled: true,
+      principalUserId: "",
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     resetFacadeRegistry();
     expect(connectInboundAcpServer({ database: db, config: baseConfig, }, () => {},),).toBeNull();
   });
 
   test("an admitted connection returns the real line handler over the write seam", async () => {
-    initInboundSettings({ mcpEnabled: false, acpEnabled: true, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: false,
+      acpEnabled: true,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     const { out, handler, } = makeServer(
       configWith({ acpEnabled: true, principalUserId: USER, principalScope: "read", },),
     );
@@ -215,8 +236,21 @@ describeOrSkip("inbound ACP stdio server main()", () => {
   });
 
   test("an admitted boot wires the handler to the stdin/stdout NDJSON loop", async () => {
-    initInboundSettings({ mcpEnabled: false, acpEnabled: true, principalUserId: USER, principalScope: "read", },);
-    mainConfig = configWith({ acpEnabled: true, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: false,
+      acpEnabled: true,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
+    mainConfig = configWith({
+      acpEnabled: true,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     rlLines = [
       JSON.stringify({ jsonrpc: "2.0", id: 1, method: "initialize", params: {}, },),
       "{this is not json",

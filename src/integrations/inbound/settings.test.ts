@@ -30,12 +30,16 @@ import {
 let testDb: TestDb;
 let db: Kysely<DB>;
 
-const FILE_LAYER = {
+/** The 4-field effective view the store reads back (no proxy bind). */
+const VIEW_LAYER = {
   mcpEnabled: false,
   acpEnabled: false,
   principalUserId: "",
   principalScope: "read" as const,
 };
+
+/** The full file-config section seeding the store (view + proxy bind). */
+const FILE_LAYER = { ...VIEW_LAYER, proxyBind: "127.0.0.1", };
 
 beforeAll(async () => {
   testDb = await createTestDb();
@@ -55,13 +59,13 @@ describe("inbound settings store", () => {
   test("unseeded store reads deny-by-default and reports unseeded", () => {
     expect(isInboundSettingsSeeded(),).toBe(false,);
     const view = getInboundSettings();
-    expect(view,).toEqual(FILE_LAYER,);
+    expect(view,).toEqual(VIEW_LAYER,);
   });
 
   test("seeding the file layer keeps the deny-by-default defaults", () => {
     initInboundSettings(FILE_LAYER,);
     expect(isInboundSettingsSeeded(),).toBe(true,);
-    expect(getInboundSettings(),).toEqual(FILE_LAYER,);
+    expect(getInboundSettings(),).toEqual(VIEW_LAYER,);
   });
 
   test("override layer wins over the file layer", async () => {
@@ -127,7 +131,7 @@ describe("inboundSettings — the singleton behind the read path", () => {
   test("is the same store the read function consults (unseeded)", () => {
     expect(inboundSettings.isSeeded(),).toBe(false,);
     expect(inboundSettings.get(),).toEqual(getInboundSettings(),);
-    expect(inboundSettings.get(),).toEqual(FILE_LAYER,);
+    expect(inboundSettings.get(),).toEqual(VIEW_LAYER,);
   });
 
   test("mirrors the init → override → reset lifecycle", async () => {
