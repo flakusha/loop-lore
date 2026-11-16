@@ -17874,6 +17874,29 @@
     "title": "Release 0.1.0",
     "type": "EPIC"
   },
+  "EPIC-REMOTE-HARNESS-FEDERATION": {
+    "hash": "pending",
+    "extid": "EPIC-REMOTE-HARNESS-FEDERATION",
+    "type": "EPIC",
+    "title": "Remote Harness / Federation (Future Work)",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "harness",
+      "remote",
+      "federation",
+      "tls",
+      "auth",
+      "worktree",
+      "git",
+      "jj",
+      "pijul"
+    ],
+    "source": ".plan/tickets/epic-remote-harness-federation.md",
+    "status": "open"
+  },
   "EPIC-RENPY-EXPORT": {
     "hash": "pending",
     "extid": "EPIC-RENPY-EXPORT",
@@ -47375,6 +47398,24 @@
     "source": ".plan/tickets/TASK-isolate-auth-cookies-per-local-instance-so-two-dev-servers-d.md",
     "status": "Not Started"
   },
+  "TASK-ISOLATED-PRIVATE-PROJECTS-GIT-JJ-PIJUL-EXPERIMENTAL": {
+    "hash": "a4ef99b",
+    "git_issue": "a4ef99b",
+    "extid": "TASK-ISOLATED-PRIVATE-PROJECTS-GIT-JJ-PIJUL-EXPERIMENTAL",
+    "type": "TASK",
+    "title": "isolated-private-projects-git-jj-pijul-experimental",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-remote-harness-federation.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "federation",
+      "vcs"
+    ],
+    "source": ".plan/tickets/TASK-isolated-private-projects-git-jj-pijul-experimental.md",
+    "status": "open"
+  },
   "TASK-ITEM-ASSET-AVATAR-DISPLAY-IN-INVENTORY-TRADING-AND-PROVISION": {
     "epic": "epic-inventory",
     "extid": "TASK-ITEM-ASSET-AVATAR-DISPLAY-IN-INVENTORY-TRADING-AND-PROVISION",
@@ -51661,6 +51702,24 @@
     "title": "Multi-Session Support",
     "type": "TASK"
   },
+  "TASK-MULTI-USER-COLLABORATION-PIJUL-EXPERIMENTAL": {
+    "hash": "c55543a",
+    "git_issue": "c55543a",
+    "extid": "TASK-MULTI-USER-COLLABORATION-PIJUL-EXPERIMENTAL",
+    "type": "TASK",
+    "title": "multi-user-collaboration-pijul-experimental",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-remote-harness-federation.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "federation",
+      "pijul"
+    ],
+    "source": ".plan/tickets/TASK-multi-user-collaboration-pijul-experimental.md",
+    "status": "open"
+  },
   "TASK-MULTIMODAL-ASSET-REUSE": {
     "epic": "epic-audio-video-sound",
     "extid": "TASK-MULTIMODAL-ASSET-REUSE",
@@ -55002,6 +55061,24 @@
     "title": "Professions Service & Routes (Crafting Disciplines)",
     "type": "TASK"
   },
+  "TASK-PROJECT-OWNER-ROOT-PERMISSIONS": {
+    "hash": "d12efef",
+    "git_issue": "d12efef",
+    "extid": "TASK-PROJECT-OWNER-ROOT-PERMISSIONS",
+    "type": "TASK",
+    "title": "project-owner-root-permissions",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-remote-harness-federation.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "auth",
+      "ownership"
+    ],
+    "source": ".plan/tickets/TASK-project-owner-root-permissions.md",
+    "status": "open"
+  },
   "TASK-PROJECT-SPACE-KIND-WORLDKIND-PROJECT-SCOPING-CONTRACT": {
     "hash": "87ac3b9",
     "git_issue": "87ac3b9",
@@ -57749,6 +57826,23 @@
     "source": ".plan/tickets/TASK-relevance-aware-decay-and-purge-signals-in-memory-purge.md",
     "status": "done"
   },
+  "TASK-REMOTE-HARNESS-TLS-TOKEN-AUTH": {
+    "hash": "1c71023",
+    "git_issue": "1c71023",
+    "extid": "TASK-REMOTE-HARNESS-TLS-TOKEN-AUTH",
+    "type": "TASK",
+    "title": "remote-harness-tls-token-auth",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-remote-harness-federation.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "remote"
+    ],
+    "source": ".plan/tickets/TASK-remote-harness-tls-token-auth.md",
+    "status": "open"
+  },
   "TASK-REMOVE-DEAD-FRONTEND-MODULES": {
     "epic": "epic-frontend-bundle-optimization",
     "extid": "TASK-REMOVE-DEAD-FRONTEND-MODULES",
@@ -60361,6 +60455,24 @@
     "tags": [],
     "title": "Shared macro engine for templates and commands",
     "type": "TASK"
+  },
+  "TASK-SHARED-MULTI-WORKTREE-GIT-PROJECTS": {
+    "hash": "795741c",
+    "git_issue": "795741c",
+    "extid": "TASK-SHARED-MULTI-WORKTREE-GIT-PROJECTS",
+    "type": "TASK",
+    "title": "shared-multi-worktree-git-projects",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-remote-harness-federation.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "federation",
+      "git"
+    ],
+    "source": ".plan/tickets/TASK-shared-multi-worktree-git-projects.md",
+    "status": "open"
   },
   "TASK-SHARED-SCHEMAS": {
     "epic": "epic-character-core-system",
