@@ -17,7 +17,7 @@
  */
 
 import { randomBytes, timingSafeEqual, } from "node:crypto";
-import { chmodSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync, } from "node:fs";
+import fs from "node:fs";
 import { dirname, join, } from "node:path";
 import type { Config, } from "../../config/schema";
 import { resolveInstanceDir, type StateEnv, } from "../../config/state-dir";
@@ -71,18 +71,18 @@ export function proxyAddrPath(env: StateEnv = process.env,): string {
  */
 export function ensureProxyToken(env: StateEnv = process.env,): string {
   const path = proxyTokenPath(env,);
-  mkdirSync(dirname(path,), { recursive: true, },);
-  if (existsSync(path,)) {
-    const raw = readFileSync(path, "utf8",).trim();
+  fs.mkdirSync(dirname(path,), { recursive: true, },);
+  if (fs.existsSync(path,)) {
+    const raw = fs.readFileSync(path, "utf8",).trim();
     if (raw !== "") {
-      if ((statSync(path,).mode & 0o777 & 0o077) !== 0) { chmodSync(path, 0o600,); }
+      if ((fs.statSync(path,).mode & 0o777 & 0o077) !== 0) { fs.chmodSync(path, 0o600,); }
       return raw;
     }
   }
 
   const token = randomBytes(32,).toString("base64url",);
-  writeFileSync(path, `${token}\n`, { mode: 0o600, },);
-  chmodSync(path, 0o600,);
+  fs.writeFileSync(path, `${token}\n`, { mode: 0o600, },);
+  fs.chmodSync(path, 0o600,);
   return token;
 }
 
@@ -92,8 +92,8 @@ export function ensureProxyToken(env: StateEnv = process.env,): string {
  */
 export function readProxyToken(env: StateEnv = process.env,): string | null {
   const path = proxyTokenPath(env,);
-  if (!existsSync(path,)) { return null; }
-  const raw = readFileSync(path, "utf8",).trim();
+  if (!fs.existsSync(path,)) { return null; }
+  const raw = fs.readFileSync(path, "utf8",).trim();
   return raw === "" ? null : raw;
 }
 
@@ -103,8 +103,8 @@ export function readProxyToken(env: StateEnv = process.env,): string | null {
  */
 export function writeProxyAddr(addr: string, env: StateEnv = process.env,): void {
   const path = proxyAddrPath(env,);
-  mkdirSync(dirname(path,), { recursive: true, },);
-  writeFileSync(path, `${addr.trim()}\n`,);
+  fs.mkdirSync(dirname(path,), { recursive: true, },);
+  fs.writeFileSync(path, `${addr.trim()}\n`,);
 }
 
 /**
@@ -113,8 +113,8 @@ export function writeProxyAddr(addr: string, env: StateEnv = process.env,): void
  */
 export function readProxyAddr(env: StateEnv = process.env,): string | null {
   const path = proxyAddrPath(env,);
-  if (!existsSync(path,)) { return null; }
-  const raw = readFileSync(path, "utf8",).trim();
+  if (!fs.existsSync(path,)) { return null; }
+  const raw = fs.readFileSync(path, "utf8",).trim();
   return raw === "" ? null : raw;
 }
 

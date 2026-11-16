@@ -25,7 +25,7 @@
 
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import { unlinkSync, } from "node:fs";
+import fs from "node:fs";
 import { createServer, type Server as NetServer, type Socket, } from "node:net";
 import type { Config, } from "../../config/schema";
 import { type StateEnv, } from "../../config/state-dir";
@@ -190,7 +190,7 @@ export async function startStdioProxyListener(
       server.close(() => finish());
       await done;
       try {
-        unlinkSync(proxyAddrPath(env,),);
+        fs.unlinkSync(proxyAddrPath(env,),);
       } catch {
         /* best-effort addr cleanup */
       }
