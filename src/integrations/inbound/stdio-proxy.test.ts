@@ -60,7 +60,7 @@ import {
 } from "./stdio-proxy";
 import { startStdioProxyListener, type StdioProxyListener, } from "./stdio-proxy-listener";
 import { readSocketLine, runStdioProxyRelay, } from "./stdio-proxy-relay";
-import { SocketProxyTransport, } from "./stdio-proxy-serve";
+import { serveProxiedAcp, serveProxiedMcp, SocketProxyTransport, } from "./stdio-proxy-serve";
 
 const USER = "proxy-test-user";
 const CHAT = "proxy-test-chat";
@@ -554,5 +554,39 @@ describe("runStdioProxyRelay", () => {
     const output = new PassThrough();
     input.end();
     expect(await runStdioProxyRelay({ input, output, addr: "not-an-addr", token: "t", protocol: "acp", },),).toBe(1,);
+  });
+});
+
+describe("serveProxiedMcp/serveProxiedAcp — gate-closed refusal", () => {
+  test("a gate-closed MCP socket is destroyed without serving", async () => {
+    resetInboundSettings();
+    let destroyed = 0;
+    const fake = {
+      on: () => {},
+      once: () => {},
+      off: () => {},
+      destroy: () => {
+        destroyed += 1;
+      },
+    };
+
+    await serveProxiedMcp(fake as unknown as Socket, { database: db, config: baseConfig, }, Buffer.alloc(0,),);
+    expect(destroyed,).toBe(1,);
+  });
+
+  test("a gate-closed ACP socket is destroyed without serving", () => {
+    resetInboundSettings();
+    let destroyed = 0;
+    const fake = {
+      on: () => {},
+      once: () => {},
+      off: () => {},
+      destroy: () => {
+        destroyed += 1;
+      },
+    };
+
+    serveProxiedAcp(fake as unknown as Socket, { database: db, config: baseConfig, }, Buffer.alloc(0,),);
+    expect(destroyed,).toBe(1,);
   });
 });
