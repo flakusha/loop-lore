@@ -33,13 +33,15 @@ import {
 import { fakeFactory, } from "../harness/fakes";
 import { WRITE_OR_EXEC_TOOL_KINDS, } from "../harness/permission-policy";
 import { createHarnessRuntime, } from "../harness/runtime";
+import { createCompletionDispatcher, } from "./completion";
+import { type OpenDoc, trackDidChange, trackDidOpen, } from "./documents";
+import { createLspMessageHandler, type InboundLspDeps, } from "./handler";
 import {
+  buildCompletionPrompt,
+  COMPLETION_CONTEXT_LIMIT,
   COMPLETION_READ_ONLY_DIRECTIVE,
-  createLspFrameParser,
-  createLspMessageHandler,
-  type InboundLspDeps,
-  LSP_ERRORS,
-} from "./stdio-server";
+} from "./prompt";
+import { createLspFrameParser, LSP_ERRORS, } from "./protocol";
 
 let userId: string;
 let actorId: string;
@@ -409,5 +411,126 @@ describe("lsp shutdown", () => {
 
     await second.handle(msg("exit", {}, null,),);
     expect(exits,).toEqual([0, 1,],);
+  });
+});
+
+describe("lsp completion prompt", () => {
+  it("carries the full text when under the context limit", () => {
+    const text = "const a = 1;\nconst b = 2;\n";
+    const prompt = buildCompletionPrompt({
+      uri: "file:///ws/a.ts",
+      languageId: "typescript",
+      text,
+      line: 1,
+      character: 3,
+    },);
+
+    expect(COMPLETION_CONTEXT_LIMIT,).toBe(16_000,);
+    expect(prompt,).toContain(COMPLETION_READ_ONLY_DIRECTIVE.split("\n",)[0],);
+    expect(prompt,).toContain(text,);
+    expect(prompt,).not.toContain("truncated",);
+    expect(prompt,).toContain("Cursor: line 1, character 3",);
+  });
+
+  it("windows an over-limit document around the cursor", () => {
+    const before = "x".repeat(14_000,);
+    const after = "y".repeat(5_000,);
+    const text = `${before}\n${after}`;
+    expect(text.length,).toBeGreaterThan(COMPLETION_CONTEXT_LIMIT,);
+
+    const prompt = buildCompletionPrompt({
+      uri: "file:///ws/big.ts",
+      languageId: "typescript",
+      text,
+      line: 1,
+      character: after.length,
+    },);
+
+    expect(prompt,).toContain("(truncated to the cursor window)",);
+    // The cursor-centred window keeps the tail; the far head is cut.
+    expect(prompt,).toContain(after,);
+    expect(prompt,).not.toContain(before,);
+    expect(prompt.length,).toBeLessThan(text.length,);
+  });
+
+  it("clamps out-of-range cursors and handles empty text", () => {
+    const clamped = buildCompletionPrompt({
+      uri: "file:///ws/a.ts",
+      languageId: "typescript",
+      text: "ab\ncd",
+      line: 99,
+      character: 99,
+    },);
+
+    expect(clamped,).toContain("Cursor: line 1, character 2",);
+
+    const empty = buildCompletionPrompt({
+      uri: "file:///ws/empty.ts",
+      languageId: "plaintext",
+      text: "",
+      line: 0,
+      character: 0,
+    },);
+
+    expect(empty,).toContain("Cursor: line 0, character 0",);
+    expect(empty,).toContain("Context:\n\n\nCompletion:",);
+  });
+});
+
+describe("lsp documents", () => {
+  it("tracks didOpen with defaults for missing fields and ignores malformed docs", () => {
+    const docs = new Map<string, OpenDoc>();
+    trackDidOpen(docs, { textDocument: { uri: "file:///a.ts", text: "hi", }, },);
+    expect(docs.get("file:///a.ts",),).toEqual({ languageId: "plaintext", version: 0, text: "hi", },);
+
+    trackDidOpen(docs, { textDocument: { uri: 42, text: "hi", }, },);
+    trackDidOpen(docs, {},);
+    expect(docs.size,).toBe(1,);
+  });
+
+  it("applies didChange full-sync with last text winning and skips bad shapes", () => {
+    const docs = new Map<string, OpenDoc>();
+    trackDidChange(docs, {
+      textDocument: { uri: "file:///a.ts", },
+      contentChanges: [{ text: "one", }, { text: "two", }, { text: 7, }, "nope",],
+    },);
+
+    expect(docs.get("file:///a.ts",)?.text,).toBe("two",);
+
+    trackDidChange(docs, { textDocument: { uri: 1, }, contentChanges: "nope", },);
+    expect(docs.size,).toBe(1,);
+  });
+});
+
+describe("lsp completion dispatcher", () => {
+  it("seats the actor binding and dispatches trimmed text", async () => {
+    const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], reply: "unused", }, },);
+    const dispatcher = createCompletionDispatcher({
+      database: fixture.db,
+      runtime: createHarnessRuntime({ acp: acpConfig(), factory, },),
+      role: "solo",
+      userId,
+      profile: "omp",
+      chatId: "",
+      actorId: "",
+      dispatchTurn: async () => ({
+        turn: { result: { text: "  done()", }, },
+        messageId: "dispatcher-stub",
+      } as unknown as DispatchHarnessTurnOutcome),
+      debounceMs: 0,
+    },);
+
+    await dispatcher.ensureBinding(userId,);
+    const actor = await fixture.db.selectFrom("actors",).select("id",).where("id", "=", userId,).executeTakeFirst();
+    expect(actor?.id,).toBe(userId,);
+
+    const text = await dispatcher.requestCompletion({
+      doc: { languageId: "typescript", version: 1, text: "const a = ", },
+      uri: "file:///a.ts",
+      line: 0,
+      character: 10,
+    },);
+
+    expect(text,).toBe("done()",);
   });
 });
