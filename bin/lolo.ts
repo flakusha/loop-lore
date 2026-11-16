@@ -17,6 +17,8 @@
  * `LOOP_LORE_API_BASE_URL` (default `http://localhost:3000`).
  */
 
+// --instance must apply before any config module freezes DATA_DIR at import.
+import "../src/config/instance-flag";
 import { randomUUID, } from "node:crypto";
 import {
   headlessAssetLink,
@@ -54,7 +56,8 @@ Headless:
   characters import <card.png|json|charx> [--json]
 
 Options:
-  -h, --help    Show this help text and exit
+  -h, --help       Show this help text and exit
+  --instance NAME  State instance dir ($STATE_ROOT/<name>/; default: LOOP_LORE_INSTANCE or port-derived)
 
 TUI (no subcommand):
   F1            Chat picker
@@ -83,6 +86,14 @@ function parseGlobal(argv: string[],): GlobalFlags {
   const tokenIdx = argv.findIndex((a,) => a === "--token");
   const token = tokenIdx >= 0 && tokenIdx + 1 < argv.length ? argv[tokenIdx + 1] : undefined;
   let rest = argv.filter((a,) => a !== "--json" && a !== "--help" && a !== "-h");
+  // --instance was already applied to the env at import; strip it (both forms)
+  // so it never masquerades as a subcommand in rest.
+  const instIdx = rest.findIndex((a,) => a === "--instance");
+  if (instIdx >= 0) {
+    rest = [...rest.slice(0, instIdx,), ...rest.slice(instIdx + 2,),];
+  }
+
+  rest = rest.filter((a,) => !a.startsWith("--instance=",));
   if (tokenIdx >= 0) {
     rest = [...rest.slice(0, rest.indexOf("--token",),), ...rest.slice(rest.indexOf("--token",) + 2,),];
   }

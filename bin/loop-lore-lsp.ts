@@ -9,6 +9,8 @@
  * client-config compatibility (Content-Length-framed stdio is the only
  * transport); auth rides `initializationOptions.token`, never argv.
  */
+// --instance must apply before any config module freezes DATA_DIR at import.
+import "../src/config/instance-flag";
 import { main, } from "../src/integrations/lsp/stdio-server";
 
 if (import.meta.main) {

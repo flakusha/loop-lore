@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// --instance must apply before any config module freezes DATA_DIR at import.
+// No-op unless the flag is present, so library/test imports are unaffected.
+import "../config/instance-flag";
 import { FirstBootContentionError, } from "../config/load";
 import { portConflictMessage, } from "./port-conflict";
 import { start, } from "./start";
