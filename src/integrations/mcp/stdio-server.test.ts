@@ -25,6 +25,10 @@ import { Client, } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport, } from "@modelcontextprotocol/sdk/inMemory.js";
 import { afterEach, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
+import { PassThrough, } from "node:stream";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
 import { setTestDatabase, } from "../../db/index";
@@ -34,8 +38,10 @@ import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/crea
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { initInboundSettings, resetInboundSettings, } from "../inbound/settings";
+import { ensureProxyToken, } from "../inbound/stdio-proxy";
+import { startStdioProxyListener, type StdioProxyListener, } from "../inbound/stdio-proxy-listener";
 import { resetFacadeRegistry, } from "../loop-lore-facade/instance";
-import { connectInboundMcpServer, main, } from "./stdio-server";
+import { connectInboundMcpServer, main, mainProxy, } from "./stdio-server";
 
 // ── main()'s module seams (ISOLATED-only: mock.module pins the process) ─────
 
@@ -262,6 +268,64 @@ describe("inbound MCP stdio server", () => {
     const rows = await db.selectFrom("messages",).selectAll().where("content", "=", "denied by stdio",).execute();
     expect(rows,).toHaveLength(0,);
     await client!.close();
+  });
+
+  test("--proxy relays stdio through a live listener; close ends only the shim", async () => {
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
+    const dir = mkdtempSync(join(tmpdir(), "mcp-proxy-main-",),);
+    const env = { LOOP_LORE_STATE_DIR: dir, };
+    let listener: StdioProxyListener | undefined;
+    const prevExitCode = process.exitCode ?? 0;
+    try {
+      ensureProxyToken(env,);
+      listener = await startStdioProxyListener({
+        database: db,
+        config: configWith({
+          mcpEnabled: true,
+          principalUserId: USER,
+          principalScope: "read",
+          proxyBind: "127.0.0.1",
+        },),
+      }, env,);
+
+      const input = new PassThrough();
+      const output = new PassThrough();
+      const lines: string[] = [];
+      let rest = "";
+      output.on("data", (chunk: Buffer,) => {
+        rest += chunk.toString("utf8",);
+        const parts = rest.split("\n",);
+        rest = parts.pop() ?? "";
+        for (const line of parts) {
+          if (line !== "") { lines.push(line,); }
+        }
+      },);
+
+      const relay = mainProxy(listener.addr, { input, output, env, },);
+      // A protocol ping proves bytes flow both ways through the shim.
+      input.write(`${JSON.stringify({ jsonrpc: "2.0", id: 1, method: "ping", },)}\n`,);
+      const deadline = Date.now() + 4000;
+      for (;;) {
+        if (lines.some((line,) => line.includes('"id":1',))) { break; }
+        if (Date.now() > deadline) { throw new Error("no ping reply through the shim",); }
+        await new Promise((resolve,) => setTimeout(resolve, 10,));
+      }
+
+      input.end();
+      await relay;
+      expect(process.exitCode ?? 0,).toBe(prevExitCode,);
+    } finally {
+      await listener?.close();
+      process.exitCode = prevExitCode;
+      rmSync(dir, { recursive: true, force: true, },);
+    }
   });
 });
 

@@ -18,6 +18,7 @@ import type { Kysely, } from "kysely";
 import { createInterface, } from "node:readline";
 import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
+import type { StateEnv, } from "../../config/state-dir";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { createLogger, getLogger, } from "../../logger";
@@ -66,13 +67,18 @@ export function connectInboundAcpServer(
  * server's local-only listener, and exit when the relay ends. The database
  * is never opened here — ops run (and are audited) server-side. stdio
  * EOF/close ends only this relay; the server keeps running.
+ * @param addrArg - the `--proxy` address arg ("" reads the addr file)
+ * @param opts - stdio/env seams (default: this process); tests pass fakes
  */
-async function mainProxy(addrArg: string,): Promise<void> {
+export async function mainProxy(
+  addrArg: string,
+  opts?: { input?: NodeJS.ReadableStream; output?: NodeJS.WritableStream; env?: StateEnv },
+): Promise<void> {
   createLogger();
   const logger = getLogger();
   let client;
   try {
-    client = resolveProxyClient(addrArg,);
+    client = resolveProxyClient(addrArg, opts?.env,);
   } catch (error) {
     logger.warn(
       `inbound ACP stdio proxy refused to start: ${(error as Error).message}`,
@@ -84,8 +90,8 @@ async function mainProxy(addrArg: string,): Promise<void> {
   }
 
   const code = await runStdioProxyRelay({
-    input: process.stdin,
-    output: process.stdout,
+    input: opts?.input ?? process.stdin,
+    output: opts?.output ?? process.stdout,
     addr: client.addr,
     token: client.token,
     protocol: "acp",

@@ -21,6 +21,10 @@
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
+import { PassThrough, } from "node:stream";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
 import { setTestDatabase, } from "../../db/index";
@@ -29,9 +33,11 @@ import { createLogger, } from "../../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { initInboundSettings, resetInboundSettings, } from "../inbound/settings";
+import { ensureProxyToken, } from "../inbound/stdio-proxy";
+import { startStdioProxyListener, type StdioProxyListener, } from "../inbound/stdio-proxy-listener";
 import { resetFacadeRegistry, } from "../loop-lore-facade/instance";
 import { ACP_ERRORS, ACP_PROTOCOL_VERSION, } from "./agent-server";
-import { connectInboundAcpServer, main, } from "./stdio-server";
+import { connectInboundAcpServer, main, mainProxy, } from "./stdio-server";
 
 // ── main()'s module seams (ISOLATED-only: mock.module pins the process) ─────
 
@@ -198,6 +204,47 @@ describe("connectInboundAcpServer — the admission gate + handler wiring", () =
     expect(out,).toHaveLength(2,);
     const parseErr = JSON.parse(out[1]!,) as { error?: { code?: number } };
     expect(parseErr.error?.code,).toBe(ACP_ERRORS.parse,);
+  });
+
+  test("--proxy relays stdio through a live listener; close ends only the shim", async () => {
+    initInboundSettings({
+      mcpEnabled: false,
+      acpEnabled: true,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
+    const dir = mkdtempSync(join(tmpdir(), "acp-proxy-main-",),);
+    const env = { LOOP_LORE_STATE_DIR: dir, };
+    let listener: StdioProxyListener | undefined;
+    const prevExitCode = process.exitCode ?? 0;
+    try {
+      ensureProxyToken(env,);
+      listener = await startStdioProxyListener({
+        database: db,
+        config: configWith({
+          acpEnabled: true,
+          principalUserId: USER,
+          principalScope: "read",
+          proxyBind: "127.0.0.1",
+        },),
+      }, env,);
+
+      const input = new PassThrough();
+      const output = new PassThrough();
+      output.resume();
+      const relay = mainProxy(listener.addr, { input, output, env, },);
+      // No traffic needed: a clean EOF proves the relay was accepted
+      // (refusals and dial failures resolve exit 1 instead).
+      input.end();
+      await relay;
+      expect(process.exitCode ?? 0,).toBe(prevExitCode,);
+    } finally {
+      await listener?.close();
+      process.exitCode = prevExitCode;
+      rmSync(dir, { recursive: true, force: true, },);
+    }
   });
 });
 

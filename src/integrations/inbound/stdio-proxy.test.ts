@@ -52,7 +52,11 @@ import {
   resolveProxyBind,
   resolveProxyClient,
   runStdioProxyRelay,
+  STDIO_PROXY_ADDR_FILE,
+  STDIO_PROXY_LINE_MAX_BYTES,
+  STDIO_PROXY_LINE_TIMEOUT_MS,
   STDIO_PROXY_LOOPBACK_DEFAULT,
+  STDIO_PROXY_TOKEN_FILE,
   verifyProxyToken,
   writeProxyAddr,
 } from "./stdio-proxy";
@@ -129,10 +133,12 @@ describe("stdio-proxy files and parsing", () => {
       const token = ensureProxyToken(env,);
       expect(token.length,).toBeGreaterThan(0,);
       expect(readProxyToken(env,),).toBe(token,);
+      expect(proxyTokenPath(env,).endsWith(STDIO_PROXY_TOKEN_FILE,),).toBe(true,);
       expect(statSync(proxyTokenPath(env,),).mode & 0o777,).toBe(0o600,);
       writeProxyAddr("127.0.0.1:4123", env,);
       expect(readProxyAddr(env,),).toBe("127.0.0.1:4123",);
       expect(proxyAddrPath(env,).startsWith(dir,),).toBe(true,);
+      expect(proxyAddrPath(env,).endsWith(STDIO_PROXY_ADDR_FILE,),).toBe(true,);
     } finally {
       rmSync(dir, { recursive: true, force: true, },);
     }
@@ -322,7 +328,8 @@ describe("stdio-proxy listener", () => {
     socket.once("connect", () => resolve(),);
     await promise;
     socket.write(encodeProxyHandshake({ protocol, token, },),);
-    const first = await readSocketLine(socket,);
+    // Line cap + deadline are the module defaults (named, not magic).
+    const first = await readSocketLine(socket, STDIO_PROXY_LINE_MAX_BYTES, STDIO_PROXY_LINE_TIMEOUT_MS,);
     expect(first,).not.toBeNull();
     if (first === null) { throw new Error("no ack line",); }
     expect(decodeProxyAck(first.line,),).toEqual({ ok: true, },);
