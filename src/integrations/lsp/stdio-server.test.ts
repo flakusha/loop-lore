@@ -426,7 +426,7 @@ describe("lsp completion prompt", () => {
     },);
 
     expect(COMPLETION_CONTEXT_LIMIT,).toBe(16_000,);
-    expect(prompt,).toContain(COMPLETION_READ_ONLY_DIRECTIVE.split("\n",)[0],);
+    expect(prompt,).toContain(COMPLETION_READ_ONLY_DIRECTIVE.split("\n",)[0] ?? "",);
     expect(prompt,).toContain(text,);
     expect(prompt,).not.toContain("truncated",);
     expect(prompt,).toContain("Cursor: line 1, character 3",);

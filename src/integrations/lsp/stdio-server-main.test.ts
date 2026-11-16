@@ -18,7 +18,7 @@
  * poison siblings.
  */
 
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
 import type { Config, } from "../../config/schema";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { main, } from "./stdio-server";
@@ -102,6 +102,8 @@ describeOrSkip("inbound LSP stdio server main()", () => {
       await main();
       exitCodeAfter = process.exitCode;
     } finally {
+      process.stdin.removeAllListeners("data",);
+      process.stdin.removeAllListeners("end",);
       process.exitCode = prevExitCode;
     }
 
