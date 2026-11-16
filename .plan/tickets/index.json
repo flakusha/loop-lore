@@ -14253,6 +14253,26 @@
     "title": "Economy & Trading Systems",
     "type": "EPIC"
   },
+  "EPIC-EDITOR-LSP-INTEGRATION": {
+    "hash": "pending",
+    "extid": "EPIC-EDITOR-LSP-INTEGRATION",
+    "type": "EPIC",
+    "title": "Editor LSP Integration",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "lsp",
+      "editor",
+      "helix",
+      "mitos",
+      "nvim",
+      "harness"
+    ],
+    "source": ".plan/tickets/epic-editor-lsp-integration.md",
+    "status": "open"
+  },
   "EPIC-EDITORIAL-WORKFLOW": {
     "hash": "f1a9f47",
     "extid": "EPIC-EDITORIAL-WORKFLOW",
@@ -49326,6 +49346,62 @@
     "tags": [],
     "title": "Lorebook unified search index",
     "type": "TASK"
+  },
+  "TASK-LSP-CLIENT-CONFIGS-DOCS": {
+    "hash": "093d15f",
+    "git_issue": "093d15f",
+    "extid": "TASK-LSP-CLIENT-CONFIGS-DOCS",
+    "type": "TASK",
+    "title": "lsp-client-configs-docs",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-editor-lsp-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lsp-client-configs-docs.md",
+    "status": "open"
+  },
+  "TASK-LSP-COMPLETION-VIA-HARNESS": {
+    "hash": "da2c5f4",
+    "git_issue": "da2c5f4",
+    "extid": "TASK-LSP-COMPLETION-VIA-HARNESS",
+    "type": "TASK",
+    "title": "lsp-completion-via-harness",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-editor-lsp-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lsp-completion-via-harness.md",
+    "status": "open"
+  },
+  "TASK-LSP-STDIO-SERVER-SKELETON": {
+    "hash": "6a6d22a",
+    "git_issue": "6a6d22a",
+    "extid": "TASK-LSP-STDIO-SERVER-SKELETON",
+    "type": "TASK",
+    "title": "lsp-stdio-server-skeleton",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-editor-lsp-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lsp-stdio-server-skeleton.md",
+    "status": "open"
+  },
+  "TASK-LSP-TOKEN-AUTH-PERMISSIONS": {
+    "hash": "0f9b52b",
+    "git_issue": "0f9b52b",
+    "extid": "TASK-LSP-TOKEN-AUTH-PERMISSIONS",
+    "type": "TASK",
+    "title": "lsp-token-auth-permissions",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-editor-lsp-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lsp-token-auth-permissions.md",
+    "status": "open"
   },
   "TASK-MAGIC-SPELL-CRAFTING": {
     "epic": "epic-magic-spell-systems",
