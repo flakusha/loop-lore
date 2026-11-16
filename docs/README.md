@@ -255,7 +255,8 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 | [`guide/worlds.md`](./guide/worlds.md)                   | Worlds and locations                     |
 | [`guide/gallery.md`](./guide/gallery.md)                 | Gallery assets and linking               |
 | [`guide/settings.md`](./guide/settings.md)               | Settings tabs                            |
-| [`guide/local-models.md`](./guide/local-models.md)       | Browser models, download policy, GGUF splits |
+| [`guide/local-models.md`](./guide/local-models.md)           | Browser models, download policy, GGUF splits |
+| [`guide/editor-lsp.md`](./guide/editor-lsp.md)             | Harness completions in helix, mitos, nvim via `loop-lore-lsp` |
 
 ---
 

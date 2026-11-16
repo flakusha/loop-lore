@@ -8,7 +8,8 @@
   "entryPoint": "src/server/index.ts",
   "license": "LGPL-3.0-or-later",
   "bin": {
-    "lolo": "./bin/lolo.ts"
+    "lolo": "./bin/lolo.ts",
+    "loop-lore-lsp": "./bin/loop-lore-lsp.ts"
   },
   "scripts": {
     "dev": "bun run build:frontend && bun run --watch src/server/index.ts",
