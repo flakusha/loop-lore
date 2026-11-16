@@ -124,6 +124,13 @@ if (ISOLATED) {
     unloadAllPlugins: async () => {},
   }),);
 
+  // Design B stdio shim: the listener graph (serve → MCP/ACP mains → facade
+  // registry) is the slice's own surface with its own suite — a stub here
+  // keeps this boot suite on the HTTP path it owns.
+  mock.module("../integrations/inbound/stdio-proxy-listener", () => ({
+    maybeStartStdioProxyListener: async () => undefined,
+  }),);
+
   mock.module("../seeding", () => ({
     applyEnvironmentOverrides: (cfg: unknown,) => cfg,
     seedConfiguredContent: async () => {},

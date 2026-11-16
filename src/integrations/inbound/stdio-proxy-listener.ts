@@ -5,10 +5,11 @@
  * stdio-proxy-listener.ts — Design B stdio shim, server half.
  *
  * A loopback-only TCP listener serving the SAME per-connection graphs as
- * the standalone stdio mains: an MCP connection gets `buildMcpServer` over
- * a socket Content-Length transport; an ACP connection gets the NDJSON line
- * handler. Every op runs through `runFacadeOp` with the server-minted
- * inbound principal, so proxied ops are audited exactly like local turns.
+ * the standalone stdio mains (see `stdio-proxy-serve.ts`): an MCP socket
+ * gets the MCP server graph over a line-delimited socket transport; an ACP
+ * socket gets the NDJSON line handler. Every op runs with the
+ * server-resolved inbound principal, so proxied ops are audited exactly
+ * like local turns.
  *
  * Trust: the first line of every connection is the JSON handshake
  * (`stdio-proxy.ts`); the bearer token is compared in constant time against
@@ -22,9 +23,6 @@
  * — and the server — keep running. stdio is never read here.
  */
 
-import { ReadBuffer, serializeMessage, } from "@modelcontextprotocol/sdk/shared/stdio.js";
-import type { Transport, } from "@modelcontextprotocol/sdk/shared/transport.js";
-import type { JSONRPCMessage, } from "@modelcontextprotocol/sdk/types.js";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { unlinkSync, } from "node:fs";
@@ -32,13 +30,12 @@ import { createServer, type Server as NetServer, type Socket, } from "node:net";
 import type { Config, } from "../../config/schema";
 import { type StateEnv, } from "../../config/state-dir";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
 import { principalKind, } from "../../middleware/principal-kind";
-import { safeJsonStringify, } from "../../utils";
-import { connectInboundAcpServer, } from "../acp/stdio-server";
 import { writeFacadeAudit, } from "../loop-lore-facade/audit";
 import type { FacadePrincipal, } from "../loop-lore-facade/types";
-import { connectInboundMcpServer, } from "../mcp/stdio-server";
 import { effectiveInboundSettings, type InboundTransport, } from "./principal";
+import { getInboundSettings, } from "./settings";
 import {
   decodeProxyHandshake,
   encodeProxyAck,
@@ -46,18 +43,17 @@ import {
   isLoopbackHost,
   proxyAddrPath,
   readProxyToken,
-  readSocketLine,
   resolveProxyBind,
   STDIO_PROXY_LOOPBACK_DEFAULT,
   verifyProxyToken,
   writeProxyAddr,
 } from "./stdio-proxy";
-
-/** What the listener closes over: the live database + config. */
-export interface StdioProxyListenerDeps {
-  database: Kysely<DB>;
-  config: Config;
-}
+import { readSocketLine, } from "./stdio-proxy-relay";
+import {
+  serveProxiedAcp,
+  serveProxiedMcp,
+  type StdioProxyListenerDeps,
+} from "./stdio-proxy-serve";
 
 /** A running listener: its addr file entry plus a stop handle. */
 export interface StdioProxyListener {
@@ -65,107 +61,6 @@ export interface StdioProxyListener {
   readonly host: string;
   readonly port: number;
   close(): Promise<void>;
-}
-
-/** Minimal socket seam the MCP transport drives (real sockets fit). */
-export interface ProxyTransportSocket {
-  write(chunk: string, cb?: (err?: Error | null,) => void,): boolean;
-  on(event: "data", listener: (chunk: Buffer,) => void,): unknown;
-  off(event: "data", listener: (chunk: Buffer,) => void,): unknown;
-  once(event: "close" | "error", listener: (arg?: unknown,) => void,): unknown;
-  destroy(): unknown;
-}
-
-/**
- * SDK Transport over a socket, line-delimited exactly like
- * StdioServerTransport (same ReadBuffer/serializeMessage pair) so framing
- * behavior never drifts between local and proxied stdio.
- */
-export class SocketProxyTransport implements Transport {
-  onclose?: () => void;
-  onerror?: (error: Error,) => void;
-  onmessage?: <T extends JSONRPCMessage,>(message: T,) => void;
-
-  private readonly readBuffer = new ReadBuffer();
-  private started = false;
-  private closed = false;
-
-  constructor(private readonly socket: ProxyTransportSocket,) {}
-
-  /** Replay bytes that arrived with the handshake chunk (post-connect). */
-  feed(chunk: Buffer,): void {
-    this.appendChunk(chunk,);
-  }
-
-  async start(): Promise<void> {
-    if (this.started) { throw new Error("SocketProxyTransport already started",); }
-    this.started = true;
-    this.socket.on("data", this.onData,);
-    this.socket.once("close", this.onClose,);
-    this.socket.once("error", this.onError,);
-  }
-
-  async send(message: JSONRPCMessage,): Promise<void> {
-    const json = serializeMessage(message,);
-    const { promise, resolve, reject, } = Promise.withResolvers<void>();
-    this.socket.write(json, (err?: Error | null,) => {
-      if (err) {
-        reject(err,);
-        return;
-      }
-
-      resolve();
-    },);
-
-    return promise;
-  }
-
-  async close(): Promise<void> {
-    if (this.closed) { return; }
-    this.closed = true;
-    this.socket.off("data", this.onData,);
-    this.readBuffer.clear();
-    this.socket.destroy();
-    this.onclose?.();
-  }
-
-  private readonly onData = (chunk: Buffer,): void => {
-    this.appendChunk(chunk,);
-  };
-
-  private readonly onClose = (): void => {
-    void this.close();
-  };
-
-  private readonly onError = (arg?: unknown,): void => {
-    this.onerror?.(arg instanceof Error ? arg : new Error(String(arg,),),);
-  };
-
-  private appendChunk(chunk: Buffer,): void {
-    try {
-      this.readBuffer.append(chunk,);
-    } catch (error) {
-      this.onerror?.(error instanceof Error ? error : new Error(String(error,),),);
-      return;
-    }
-
-    for (;;) {
-      let message: JSONRPCMessage | null;
-      try {
-        message = this.readBuffer.readMessage();
-      } catch (error) {
-        this.onerror?.(error instanceof Error ? error : new Error(String(error,),),);
-        return;
-      }
-
-      if (message === null) { break; }
-      try {
-        this.onmessage?.(message,);
-      } catch (error) {
-        this.onerror?.(error instanceof Error ? error : new Error(String(error,),),);
-      }
-    }
-  }
 }
 
 /** Principal stamped on refused-connection audit rows (no identity). */
@@ -232,55 +127,6 @@ async function handleProxyConnection(
   }
 
   serveProxiedAcp(socket, deps, first.rest,);
-}
-
-/** Attach the MCP server graph to an accepted socket. */
-async function serveProxiedMcp(socket: Socket, deps: StdioProxyListenerDeps, rest: Buffer,): Promise<void> {
-  const transport = new SocketProxyTransport(socket,);
-  // connect() wires onmessage + start() BEFORE leftover bytes replay, so no
-  // message delivered while the server was attaching is ever lost.
-  const server = await connectInboundMcpServer(deps, transport,);
-  if (server === null) {
-    // The gate raced closed after the pre-check: local close only. The shim
-    // sees EOF; the listener keeps serving everyone else.
-    socket.destroy();
-    return;
-  }
-
-  if (rest.length > 0) { transport.feed(rest,); }
-}
-
-/** Attach the ACP line handler to an accepted socket (serial, like stdio). */
-function serveProxiedAcp(socket: Socket, deps: StdioProxyListenerDeps, rest: Buffer,): void {
-  const writeLine = (message: unknown,): void => {
-    if (typeof message === "string") {
-      socket.write(`${message}\n`,);
-      return;
-    }
-
-    const serialized = safeJsonStringify(message,);
-    if (serialized.ok) { socket.write(`${serialized.value}\n`,); }
-  };
-
-  const handler = connectInboundAcpServer(deps, writeLine,);
-  if (handler === null) {
-    socket.destroy();
-    return;
-  }
-
-  let pending = rest.length > 0 ? rest.toString("utf8",) : "";
-  let tail: Promise<void> = Promise.resolve();
-  const onData = (chunk: Buffer,): void => {
-    pending += chunk.toString("utf8",);
-    const lines = pending.split("\n",);
-    pending = lines.pop() ?? "";
-    for (const line of lines) { tail = tail.then(() => handler(line,)); }
-  };
-
-  socket.on("data", onData,);
-  socket.once("close", () => {
-    socket.off("data", onData,);
-  },);
 }
 
 /**
@@ -350,4 +196,25 @@ export async function startStdioProxyListener(
       }
     },
   };
+}
+
+/**
+ * Boot wiring for the Design B listener: start it only when an inbound
+ * server is enabled, else leave it stopped (never reads stdio itself — it
+ * only serves `--proxy` shims). Logs once with the same shape as the other
+ * boot lines; shutdown stays with the caller.
+ * @param database - live database for proxied-op auditing
+ * @param config - app config (bind + feature gates)
+ * @returns the running listener, or undefined when both servers are disabled
+ */
+export async function maybeStartStdioProxyListener(
+  database: Kysely<DB>,
+  config: Config,
+): Promise<StdioProxyListener | undefined> {
+  const inbound = getInboundSettings();
+  if (!inbound.mcpEnabled && !inbound.acpEnabled) { return undefined; }
+
+  const listener = await startStdioProxyListener({ database, config, },);
+  getLogger().info(`stdio-proxy → ${listener.addr}`, { module: "server", },);
+  return listener;
 }

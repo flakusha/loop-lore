@@ -48,10 +48,8 @@ import {
   proxyTokenPath,
   readProxyAddr,
   readProxyToken,
-  readSocketLine,
   resolveProxyBind,
   resolveProxyClient,
-  runStdioProxyRelay,
   STDIO_PROXY_ADDR_FILE,
   STDIO_PROXY_LINE_MAX_BYTES,
   STDIO_PROXY_LINE_TIMEOUT_MS,
@@ -60,7 +58,9 @@ import {
   verifyProxyToken,
   writeProxyAddr,
 } from "./stdio-proxy";
-import { SocketProxyTransport, startStdioProxyListener, type StdioProxyListener, } from "./stdio-proxy-listener";
+import { startStdioProxyListener, type StdioProxyListener, } from "./stdio-proxy-listener";
+import { readSocketLine, runStdioProxyRelay, } from "./stdio-proxy-relay";
+import { SocketProxyTransport, } from "./stdio-proxy-serve";
 
 const USER = "proxy-test-user";
 const CHAT = "proxy-test-chat";

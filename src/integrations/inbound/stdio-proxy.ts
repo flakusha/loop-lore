@@ -2,14 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * stdio-proxy.ts — Design B stdio shim, shared + client half.
+ * stdio-proxy.ts — Design B stdio shim, shared vocabulary.
  *
- * The running server gains a local-only TCP listener
- * (`stdio-proxy-listener.ts`); the MCP/ACP stdio mains gain a `--proxy`
- * mode that runs HERE: the thin process owns stdio and relays bytes to the
- * listener instead of opening the database itself. One protocol per spawned
- * process (the `--proxy` flag selects `mcp` or `acp` framing by which main
- * was spawned) — no multiplexed MCP+ACP on one fd.
+ * Token/addr files, the handshake/ack codec, address parsing, and the
+ * `--proxy` argv/target resolution both ends share. The relay runtime lives
+ * in `stdio-proxy-relay.ts`; the server half in `stdio-proxy-listener.ts`.
  *
  * Wire shape per connection: the shim sends one JSON handshake line
  * (`{"protocol","token"}`), the server answers one JSON ack line
@@ -17,14 +14,10 @@
  * `$STATE/<instance>/stdio-proxy.token` (0600); the server writes its
  * `host:port` to `$STATE/<instance>/stdio-proxy.addr` so `--proxy` without
  * an address finds it.
- *
- * Never-stop semantics: stdio EOF/close ends ONLY this relay — the server
- * never reads process.stdin and the listener survives every disconnect.
  */
 
 import { randomBytes, timingSafeEqual, } from "node:crypto";
 import { chmodSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync, } from "node:fs";
-import { connect, type Socket, } from "node:net";
 import { dirname, join, } from "node:path";
 import type { Config, } from "../../config/schema";
 import { resolveInstanceDir, type StateEnv, } from "../../config/state-dir";
@@ -255,156 +248,4 @@ export function resolveProxyClient(addrArg: string, env: StateEnv = process.env,
   }
 
   return { addr, token, };
-}
-
-/**
- * Read one `\n`-terminated line, handing the bytes after it back so the
- * protocol stage starts mid-chunk with nothing lost.
- * @param socket - the connected socket (listener or relay side)
- * @param maxBytes - line cap; larger lines resolve null (refused)
- * @param timeoutMs - line deadline; expiry resolves null
- * @returns the line (no newline) plus the trailing bytes, or null
- */
-export function readSocketLine(
-  socket: Socket,
-  maxBytes = STDIO_PROXY_LINE_MAX_BYTES,
-  timeoutMs = STDIO_PROXY_LINE_TIMEOUT_MS,
-): Promise<{ line: string; rest: Buffer } | null> {
-  const { promise, resolve, } = Promise.withResolvers<{ line: string; rest: Buffer } | null>();
-  let buffer = Buffer.alloc(0,);
-  let settled = false;
-  const finish = (value: { line: string; rest: Buffer } | null,): void => {
-    if (settled) { return; }
-    settled = true;
-    clearTimeout(timer,);
-    socket.off("data", onData,);
-    socket.off("error", onError,);
-    socket.off("close", onClose,);
-    resolve(value,);
-  };
-
-  const timer = setTimeout(() => finish(null,), timeoutMs,);
-  const onData = (chunk: Buffer,): void => {
-    buffer = Buffer.concat([buffer, chunk,],);
-    if (buffer.length > maxBytes) {
-      finish(null,);
-      return;
-    }
-
-    const at = buffer.indexOf(0x0a,);
-    if (at !== -1) {
-      finish({ line: buffer.subarray(0, at,).toString("utf8",), rest: buffer.subarray(at + 1,), },);
-    }
-  };
-
-  const onError = (): void => {
-    finish(null,);
-  };
-
-  const onClose = (): void => {
-    finish(null,);
-  };
-
-  socket.on("data", onData,);
-  socket.once("error", onError,);
-  socket.once("close", onClose,);
-  return promise;
-}
-
-/** Narrowest pipe seams: real stdio, sockets, and PassThroughs all fit. */
-export interface ProxyPipeSource {
-  on(event: "data", listener: (chunk: Buffer,) => void,): unknown;
-  off(event: "data", listener: (chunk: Buffer,) => void,): unknown;
-  pause(): unknown;
-  resume(): unknown;
-  once(event: "end", listener: () => void,): unknown;
-}
-
-/** Narrowest pipe seams: real stdio, sockets, and PassThroughs all fit. */
-export interface ProxyPipeSink {
-  write(chunk: Uint8Array | string,): boolean;
-  once(event: "drain", listener: () => void,): unknown;
-}
-
-/** Pipe bytes with backpressure; the source pauses while the sink is full. */
-function pipeWithBackpressure(src: ProxyPipeSource, dst: ProxyPipeSink,): void {
-  const onData = (chunk: Buffer,): void => {
-    if (!dst.write(chunk,)) { src.pause(); }
-  };
-
-  dst.once("drain", () => {
-    src.resume();
-  },);
-
-  src.on("data", onData,);
-}
-
-/**
- * The shim's main loop: connect, handshake, ack, then relay stdio both ways
- * until the far end closes. Resolves (never throws, never exits) so the
- * mains map the outcome to an exit code in one place.
- * @param opts - stdio streams, listener address, token, and protocol
- * @returns 0 on a clean relay (EOF either side), 1 when the relay failed
- */
-export function runStdioProxyRelay(opts: {
-  input: NodeJS.ReadableStream;
-  output: NodeJS.WritableStream;
-  addr: string;
-  token: string;
-  protocol: StdioProxyProtocol;
-},): Promise<number> {
-  const { promise, resolve, } = Promise.withResolvers<number>();
-  let target: { host: string; port: number };
-  try {
-    target = parseProxyTarget(opts.addr,);
-  } catch {
-    resolve(1,);
-    return promise;
-  }
-
-  let settled = false;
-  // Declared before connect: the error handler below closes over it.
-  let socket: Socket;
-  const done = (code: number,): void => {
-    if (settled) { return; }
-    settled = true;
-    try {
-      socket.destroy();
-    } catch {
-      /* already gone */
-    }
-
-    resolve(code,);
-  };
-
-  socket = connect(target.port, target.host,);
-  socket.once("error", () => done(1,),);
-  socket.once("connect", () => {
-    socket.write(encodeProxyHandshake({ protocol: opts.protocol, token: opts.token, },),);
-    void readSocketLine(socket,).then((first,) => {
-      if (first === null) {
-        done(1,);
-        return;
-      }
-
-      const ack = decodeProxyAck(first.line,);
-      if (ack === null || !ack.ok) {
-        done(1,);
-        return;
-      }
-
-      // The ack may share a chunk with protocol bytes — replay them.
-      if (first.rest.length > 0) { opts.output.write(first.rest,); }
-      pipeWithBackpressure(opts.input as unknown as ProxyPipeSource, socket as unknown as ProxyPipeSink,);
-      pipeWithBackpressure(socket as unknown as ProxyPipeSource, opts.output as unknown as ProxyPipeSink,);
-      (opts.input as unknown as ProxyPipeSource).once("end", () => {
-        socket.end();
-      },);
-
-      socket.once("end", () => done(0,),);
-      socket.once("close", () => done(0,),);
-    },);
-  },);
-
-  return promise;
 }

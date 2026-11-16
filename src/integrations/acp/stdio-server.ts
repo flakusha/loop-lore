@@ -24,7 +24,8 @@ import type { DB, } from "../../db/schema";
 import { createLogger, getLogger, } from "../../logger";
 import { safeJsonStringify, } from "../../utils";
 import { buildInboundFacadeContext, } from "../inbound/principal";
-import { parseProxyAddr, resolveProxyClient, runStdioProxyRelay, } from "../inbound/stdio-proxy";
+import { parseProxyAddr, resolveProxyClient, } from "../inbound/stdio-proxy";
+import { runStdioProxyRelay, } from "../inbound/stdio-proxy-relay";
 import { getFacadeRegistry, } from "../loop-lore-facade/instance";
 import { createAcpAgentHandler, } from "./agent-server";
 
