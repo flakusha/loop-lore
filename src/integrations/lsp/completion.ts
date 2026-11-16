@@ -25,6 +25,21 @@ import { buildCompletionPrompt, } from "./prompt";
 /** Trailing debounce before a completion dispatches (ms); injectable for tests. */
 const DEFAULT_DEBOUNCE_MS = 150;
 
+/** Upper bound one completion waits for the harnessed turn (ms); injectable for tests. */
+const DEFAULT_COMPLETION_TIMEOUT_MS = 30_000;
+
+/**
+ * Rejection when the harnessed turn outlives the completion budget — e.g. the
+ * agent disobeyed the read-only directive and its write/exec ask parked with
+ * no timeout. The handler answers an empty list; single-flight is released.
+ */
+export class CompletionTimeoutError extends Error {
+  constructor() {
+    super("completion timed out",);
+    this.name = "CompletionTimeoutError";
+  }
+}
+
 /** What one completion runs against: the tracked doc, its uri, and the cursor. */
 export interface CompletionTarget {
   doc: OpenDoc;
@@ -43,6 +58,8 @@ export interface CompletionBinding {
   dispatchTurn?: (options: DispatchHarnessTurnOptions,) => Promise<DispatchHarnessTurnOutcome>;
   /** Completion debounce window; default 150ms, 0 in tests. */
   debounceMs?: number;
+  /** Completion budget; default 30000ms, small in tests. */
+  timeoutMs?: number;
   /** Issuing admin's role; set by `initialize`, null before. */
   role: string | null;
   /** Issuing admin's user id; set by `initialize`, null before. */
@@ -71,6 +88,7 @@ export interface CompletionDispatcher {
 export function createCompletionDispatcher(binding: CompletionBinding,): CompletionDispatcher {
   const dispatchTurn = binding.dispatchTurn ?? dispatchHarnessTurn;
   const debounceMs = binding.debounceMs ?? DEFAULT_DEBOUNCE_MS;
+  const timeoutMs = binding.timeoutMs ?? DEFAULT_COMPLETION_TIMEOUT_MS;
   let timer: NodeJS.Timeout | undefined;
   let inFlight: Promise<string> | null = null;
 
@@ -83,15 +101,22 @@ export function createCompletionDispatcher(binding: CompletionBinding,): Complet
       character: target.character,
     },);
 
-    const outcome = await dispatchTurn({
-      runtime: binding.runtime,
-      role: binding.role,
-      userId: binding.userId,
-      profile: binding.profile,
-      prompt,
-      database: binding.database,
-      chatId: binding.chatId,
-      actorId: binding.actorId,
+    const outcome = await new Promise<DispatchHarnessTurnOutcome>((resolve, reject,) => {
+      // Fail-closed: a parked disobedient turn never settles, so cap the wait.
+      // On expiry the race rejects, `runExclusive` releases single-flight, and
+      // the handler answers an empty list — the parked turn stays parked for
+      // the human, it just stops wedging this connection.
+      const timer = setTimeout(() => reject(new CompletionTimeoutError(),), timeoutMs,);
+      void dispatchTurn({
+        runtime: binding.runtime,
+        role: binding.role,
+        userId: binding.userId,
+        profile: binding.profile,
+        prompt,
+        database: binding.database,
+        chatId: binding.chatId,
+        actorId: binding.actorId,
+      },).then(resolve, reject,).finally(() => clearTimeout(timer,));
     },);
 
     return outcome.turn.result.text.trim();

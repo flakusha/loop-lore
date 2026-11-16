@@ -296,6 +296,75 @@ describe("lsp completion", () => {
     const answer = byId(writes, 2,);
     expect((answer.result as Record<string, unknown>)["items"],).toEqual([],);
   });
+
+  it("times out a parked disobedient turn to an incomplete empty list, then serves the next completion", async () => {
+    let calls = 0;
+    const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], reply: "unused", }, },);
+    const writes: Captured[] = [];
+    const prompts: string[] = [];
+    const handle = createLspMessageHandler({
+      database: fixture.db,
+      runtime: createHarnessRuntime({ acp: acpConfig(), factory, },),
+      profile: "omp",
+      chatId,
+      actorId,
+      debounceMs: 0,
+      timeoutMs: 20,
+      dispatchTurn: (options: DispatchHarnessTurnOptions,): Promise<DispatchHarnessTurnOutcome> => {
+        prompts.push(options.prompt,);
+        calls += 1;
+        if (calls === 1) {
+          // Disobedient turn: the write/exec ask parks with no timeout — never settles.
+          return new Promise<DispatchHarnessTurnOutcome>(() => {},);
+        }
+
+        return Promise.resolve({
+          turn: {
+            profile: "omp",
+            tier: "fast",
+            model: "zai/flash",
+            result: {
+              text: "  recovered()",
+              stopReason: "end_turn",
+              usage: null,
+              costUsd: null,
+              acpSessionId: null,
+              transcript: { text: "", thinking: [], toolCalls: [], toolResults: [], },
+            },
+          },
+          messageId: "second-turn",
+        } as DispatchHarnessTurnOutcome,);
+      },
+    }, (message,) => {
+      writes.push(message as Captured,);
+    },);
+
+    const raw = await seedToken(userId,);
+    await handle(msg("initialize", { initializationOptions: { token: raw, }, }, 1,),);
+    await handle(msg("textDocument/didOpen", {
+      textDocument: { uri: docUri, languageId: "typescript", version: 1, text: "const a = ", },
+    }, null,),);
+
+    await handle(msg("textDocument/completion", {
+      textDocument: { uri: docUri, },
+      position: { line: 0, character: 10, },
+    }, 2,),);
+
+    expect(byId(writes, 2,).result,).toEqual({ isIncomplete: true, items: [], },);
+
+    // The prompt still carried the read-only directive the agent disobeyed.
+    expect(prompts[0],).toContain(COMPLETION_READ_ONLY_DIRECTIVE.split("\n",)[0],);
+
+    await handle(msg("textDocument/completion", {
+      textDocument: { uri: docUri, },
+      position: { line: 0, character: 10, },
+    }, 3,),);
+
+    // Single-flight was released: the next completion dispatches fresh and answers.
+    const items = (byId(writes, 3,).result as Record<string, unknown>)["items"] as Array<Record<string, unknown>>;
+    expect(items,).toHaveLength(1,);
+    expect(items[0]?.["insertText"],).toBe("recovered()",);
+  });
 });
 
 describe("lsp completion path performs no writes", () => {

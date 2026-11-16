@@ -28,7 +28,7 @@ import type {
   DispatchHarnessTurnOutcome,
 } from "../harness/dispatch";
 import type { HarnessRuntime, } from "../harness/runtime";
-import { type CompletionBinding, createCompletionDispatcher, } from "./completion";
+import { type CompletionBinding, CompletionTimeoutError, createCompletionDispatcher, } from "./completion";
 import { type OpenDoc, trackDidChange, trackDidOpen, } from "./documents";
 import { LSP_ERRORS, type LspMessage, } from "./protocol";
 
@@ -52,6 +52,8 @@ export interface InboundLspDeps {
   actorId?: string;
   /** Completion debounce window; default 150ms, 0 in tests. */
   debounceMs?: number;
+  /** Completion budget; default 30000ms, small in tests. */
+  timeoutMs?: number;
   /** Dispatch seam; default the real `dispatchHarnessTurn` (read-only prompt). */
   dispatchTurn?: (options: DispatchHarnessTurnOptions,) => Promise<DispatchHarnessTurnOutcome>;
   /** Exit sink; default in `main` is `process.exit`. */
@@ -83,6 +85,7 @@ export function createLspMessageHandler(
     actorId: deps.actorId ?? "",
     dispatchTurn: deps.dispatchTurn,
     debounceMs: deps.debounceMs,
+    timeoutMs: deps.timeoutMs,
   };
 
   const completion = createCompletionDispatcher(binding,);
@@ -190,6 +193,14 @@ export function createLspMessageHandler(
     try {
       text = await completion.requestCompletion({ doc, uri, line, character, },);
     } catch (error) {
+      // Fail-closed: a disobedient turn parked on write/exec approval outlives
+      // the budget. Answer an empty list (incomplete: the client may re-ask)
+      // instead of hanging the connection; single-flight is already released.
+      if (error instanceof CompletionTimeoutError) {
+        respond(id, { isIncomplete: true, items: [], },);
+        return;
+      }
+
       fail(id, LSP_ERRORS.requestFailed, `completion dispatch failed: ${(error as Error).message}`,);
       return;
     }
