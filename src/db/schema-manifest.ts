@@ -215,6 +215,7 @@ export const SCHEMA = new SchemaManifest()
     user_id: col("text", { notNull: true, },),
     kind: col("text", { notNull: true, },),
     created_at: col("integer", { notNull: true, },),
+    target: col("text",),
   },)
   .table("autonomy_budget", {
     scope_kind: col("text", { notNull: true, },),
@@ -675,6 +676,7 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     started_at: col("text",),
     finished_at: col("text",),
+    owner_slug: col("text",),
   },)
   .table("immersion_decision_log", {
     id: col("text", { primaryKey: true, hasDefault: true, },),

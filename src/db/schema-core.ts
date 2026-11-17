@@ -2261,6 +2261,7 @@ export interface HarnessQueueTurns {
   created_at: Generated<string>;
   started_at: string | null;
   finished_at: string | null;
+  owner_slug: string | null;
 }
 
 // ── auth_factors ────────────────────────────────────────────
@@ -2269,6 +2270,7 @@ export interface AuthFactors {
   user_id: string;
   kind: FactorKind;
   created_at: number;
+  target: string | null;
 }
 
 // ── auth_challenges ────────────────────────────────────────────

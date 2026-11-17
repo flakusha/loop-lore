@@ -15,10 +15,12 @@
  * time (a policy flip between enqueue and run fails the turn, it does not
  * widen access).
  *
- * State is DB rows (`harness_queue_turns`, migration 100), not memory: a
- * crash loses at most the in-flight turn (boot recovery marks it failed
- * `interrupted`; no ACP session survives a restart) and rows left `queued`
- * are claimed by the next pump — the first one after boot.
+ * State is DB rows (`harness_queue_turns`, migrations 100/105), not memory:
+ * a crash loses at most this instance's in-flight turn (boot recovery fails
+ * only rows tagged with this instance's slug `interrupted`; another instance's
+ * running work is left alone) and rows left `queued` are claimed by the next
+ * pump. Claims check the profile's in-flight state in the DB, so the map below
+ * is only this instance's local concurrency count, not the exclusion itself.
  *
  * Failure semantics: a failed dispatch is TERMINAL. `error_code` records
  * the dispatch refusal (the `HarnessDispatchCode` vocabulary plus
@@ -29,6 +31,7 @@
  */
 import { type Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import { resolveInstanceSlug, } from "../../config/state-dir";
 import { HarnessQueueErrorCode, HarnessQueueTurnStatus, } from "../../db/enums";
 import { type DB, } from "../../db/schema";
 import { getChildLogger, type Logger, } from "../../logger";
@@ -100,6 +103,8 @@ export interface CreateHarnessTurnQueueOptions {
   dispatch?: HarnessQueueDispatch;
   /** Whole-queue in-flight cap; default {@link DEFAULT_MAX_CONCURRENT}. */
   maxConcurrent?: number;
+  /** Instance slug tagged on claims; resolved from the environment by default. */
+  instanceSlug?: string;
 }
 
 /** Why the queue refused an operation. Machine-readable, never a thrown string. */
@@ -143,7 +148,7 @@ export interface HarnessTurnQueue {
   /** List turns, newest first, optionally scoped to one batch. */
   listTurns(options?: { batchId?: string; limit?: number },): Promise<HarnessQueueTurnView[]>;
   /**
-   * Boot recovery + resume: fail rows left `running` by a dead process
+   * Boot recovery + resume: fail rows left `running` by THIS instance
    * `interrupted`, then pump so `queued` rows resume. Called by init; safe
    * to call again.
    * @returns how many interrupted rows were failed.
@@ -165,7 +170,8 @@ export interface HarnessTurnQueue {
 export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,): HarnessTurnQueue {
   const dispatch = options.dispatch ?? dispatchHarnessTurn;
   const maxConcurrent = options.maxConcurrent ?? DEFAULT_MAX_CONCURRENT;
-  /** profile → in-flight turn id: THE per-profile serialization lock. */
+  const instanceSlug = options.instanceSlug ?? resolveInstanceSlug();
+  /** profile → in-flight turn id: this instance's local concurrency count. */
   const inFlight = new Map<string, string>();
   let pumping = false;
   /** THIS instance's async-work count — never shared across instances. */
@@ -190,7 +196,11 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
     pumping = true;
     try {
       while (inFlight.size < maxConcurrent) {
-        const claimed = await claimNextQueuedTurn(options.database, [...inFlight.keys(),], new Date().toISOString(),);
+        const claimed = await claimNextQueuedTurn(options.database, {
+          now: new Date().toISOString(),
+          instanceSlug,
+        },);
+
         if (!claimed) { break; }
         inFlight.set(claimed.profile, claimed.id,);
         void track(runClaimed(claimed,),);
@@ -317,7 +327,7 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
 
     async recoverAndPump() {
       const now = new Date().toISOString();
-      const interrupted = await recoverInterruptedTurns(options.database, now,);
+      const interrupted = await recoverInterruptedTurns(options.database, { now, instanceSlug, },);
       if (interrupted > 0) {
         log()?.warn("harness queue recovered interrupted turns", { interrupted, },);
       }

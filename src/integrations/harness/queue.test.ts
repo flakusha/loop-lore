@@ -385,6 +385,7 @@ describe("recoverAndPump", () => {
     await fixture.db.updateTable("harness_queue_turns",).set({
       status: "running",
       started_at: "2026-01-01T00:00:00.500Z",
+      owner_slug: "instance-a",
     },).where("id", "=", "t-crash",).execute();
 
     // The NEW process's queue: recovery runs before the first pump.
@@ -392,6 +393,7 @@ describe("recoverAndPump", () => {
       database: fixture.db,
       runtime: () => FAKE_RUNTIME,
       dispatch: stub.dispatch,
+      instanceSlug: "instance-a",
     },);
 
     const interrupted = await next.recoverAndPump();

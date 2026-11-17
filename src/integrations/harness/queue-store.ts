@@ -10,12 +10,14 @@
  * crash safety is "the row IS the state", so the store only moves rows
  * between states and never interprets them.
  *
- * Concurrency: enqueue/observe may race freely; CLAIM is single-writer by
- * construction (the pump runs in one server process) and the claim UPDATE
- * re-checks `status = 'queued'`, so a row can only move queued → running
- * once even if that invariant ever changes.
+ * Concurrency: claim and boot recovery are safe across processes sharing one
+ * database. The claim is one conditional UPDATE ... RETURNING whose subquery
+ * checks the profile's in-flight state in the DB, so a losing UPDATE returns
+ * no row and the caller never executes a turn it did not win. Recovery only
+ * fails rows owned by the booting instance (rows claimed before migration
+ * 105 have no owner and are left alone).
  */
-import { type Generated, type Kysely, } from "kysely";
+import { type Generated, type Kysely, sql, } from "kysely";
 import { HarnessQueueErrorCode, HarnessQueueTurnStatus, } from "../../db/enums";
 import { type DB, type HarnessQueueTurns, } from "../../db/schema";
 
@@ -76,46 +78,57 @@ export async function insertQueuedTurns(
 }
 
 /**
- * Claim the next queued turn whose profile has nothing in flight. Scans in
- * enqueue order (created_at, then id) and claims the first row whose profile
- * is not running — the per-profile serialization primitive.
+ * Claim the oldest queued turn whose profile has nothing in flight. The DB
+ * check and the claim are one statement: SQLite serializes writes across
+ * connections, so two instances cannot claim the same row or drive one
+ * profile concurrently even though neither sees the other's memory.
+ */
+export interface ClaimNextQueuedTurnOptions {
+  /** Claim timestamp (ISO) written to `started_at`. */
+  now: string;
+  /** Resolved instance slug written to `owner_slug` at claim time. */
+  instanceSlug: string;
+}
+
+/**
+ * Claim the next claimable turn, tagging it with this instance.
  * @param database - the queue's database
- * @param runningProfiles - profiles with a turn in flight right now
- * @param now - claim timestamp (ISO)
- * @returns the claimed row (running, attempts bumped), or null when nothing
- * is claimable (queue drained or every queued profile is busy).
+ * @param options - claim timestamp and claiming instance's slug
+ * @returns the claimed row (running, attempts bumped), or null when the DB
+ * found nothing claimable (queue drained, profile busy, or a rival won).
  */
 export async function claimNextQueuedTurn(
   database: Kysely<DB>,
-  runningProfiles: readonly string[],
-  now: string,
+  options: ClaimNextQueuedTurnOptions,
 ): Promise<QueuedTurnRow | null> {
-  const candidates = await database
-    .selectFrom("harness_queue_turns",)
-    .selectAll()
-    .where("status", "=", HarnessQueueTurnStatus.Queued,)
-    .orderBy("created_at", "asc",)
-    .orderBy("id", "asc",)
-    .limit(100,)
-    .execute();
-
-  const next = candidates.find((row,) => !runningProfiles.includes(row.profile,));
-  if (!next) { return null; }
-
-  // The re-check makes the claim idempotent: a row can only leave `queued`
-  // once, whoever gets there first.
-  await database
+  const claimed = await database
     .updateTable("harness_queue_turns",)
     .set({
       status: HarnessQueueTurnStatus.Running,
-      started_at: now,
-      attempts: next.attempts + 1,
+      owner_slug: options.instanceSlug,
+      started_at: options.now,
+      attempts: sql`attempts + 1`,
     },)
-    .where("id", "=", next.id,)
     .where("status", "=", HarnessQueueTurnStatus.Queued,)
+    .where("id", "=", (eb,) =>
+      eb.selectFrom("harness_queue_turns as candidate",)
+        .select("candidate.id",)
+        .where("candidate.status", "=", HarnessQueueTurnStatus.Queued,)
+        .where((eb,) =>
+          eb.not(eb.exists(
+            eb.selectFrom("harness_queue_turns as active",)
+              .select("active.id",)
+              .whereRef("active.profile", "=", "candidate.profile",)
+              .where("active.status", "=", HarnessQueueTurnStatus.Running,),
+          ),)
+        )
+        .orderBy("candidate.created_at", "asc",)
+        .orderBy("candidate.id", "asc",)
+        .limit(1,),)
+    .returningAll()
     .execute();
 
-  return { ...next, status: HarnessQueueTurnStatus.Running, started_at: now, attempts: next.attempts + 1, };
+  return claimed[0] ?? null;
 }
 
 /** Mark a finished turn `completed` with the assistant row it produced. */
@@ -174,14 +187,27 @@ export async function cancelQueuedTurn(
 }
 
 /**
- * Boot recovery: fail every `running` row `interrupted`. Called before the
- * first pump — a turn observed running at boot was mid-flight in a process
- * that no longer exists.
+ * Boot recovery options: the booting instance's identity decides which rows
+ * are its own crashed work.
+ */
+export interface RecoverInterruptedTurnsOptions {
+  /** Recovery timestamp (ISO) written to `finished_at`. */
+  now: string;
+  /** Instance whose orphaned running rows may be failed. */
+  instanceSlug: string;
+}
+
+/**
+ * Boot recovery: fail this instance's `running` rows `interrupted`. A turn
+ * owned by another instance is still live there; a pre-105 row has no owner
+ * and cannot be attributed, so neither is touched.
+ * @param database - the queue's database
+ * @param options - recovery timestamp and booting instance's slug
  * @returns how many rows were failed.
  */
 export async function recoverInterruptedTurns(
   database: Kysely<DB>,
-  now: string,
+  options: RecoverInterruptedTurnsOptions,
 ): Promise<number> {
   const result = await database
     .updateTable("harness_queue_turns",)
@@ -189,9 +215,10 @@ export async function recoverInterruptedTurns(
       status: HarnessQueueTurnStatus.Failed,
       error_code: HarnessQueueErrorCode.Interrupted,
       error_message: "the process died while the turn was running — no harness session survives a restart",
-      finished_at: now,
+      finished_at: options.now,
     },)
     .where("status", "=", HarnessQueueTurnStatus.Running,)
+    .where("owner_slug", "=", options.instanceSlug,)
     .execute();
 
   return Number(result[0]?.numUpdatedRows ?? 0,);

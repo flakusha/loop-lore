@@ -6442,6 +6442,7 @@ export async function insertHarnessQueueTurns(
     created_at?: string;
     started_at?: string | null;
     finished_at?: string | null;
+    owner_slug?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -6465,7 +6466,7 @@ export async function insertAuthFactors(
   user_id: string,
   kind: FactorKind,
   created_at: number,
-  opts?: { id?: string },
+  opts?: { id?: string; target?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
