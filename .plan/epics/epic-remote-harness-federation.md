@@ -23,6 +23,10 @@ multi-worktree projects over git, isolated single-user private projects
 (experimental), and the ownership rule that the project owner holds permission
 on the project root in addition to worktree(s).
 
+## Offline-first P2P path (Radicle)
+
+Radicle is adopted as the offline-first P2P path for this epic's federation story: `FEAT-radicle-integration` (ticket file `.plan/tickets/FEAT-radicle-integration.md`) wraps the `rad` CLI / `radicle-node` HTTP API so world and character definitions sync as content-addressed, server-less Git repos — peers push and pull directly with no central server, and offline edits merge on the next sync. It complements rather than replaces the federation axes tracked in `epic-federation-swarm-sync.md`: ActivityPub handles cross-instance federation, swarm CRDT handles live multi-writer reconciliation, and Radicle covers the no-server, offline-first lane. Radicle's scope and acceptance criteria stay in that epic (Phase C) and in the ticket file.
+
 ## Minimal slices
 
 1. Remote TLS + token auth on top of the loopback listener (bind config,
