@@ -74,6 +74,6 @@ export function portConflictMessage(error: unknown,): string | null {
     `[server] ${where} is already in use — another instance or process holds it. ` +
     `Stop it, or run a separate instance with --instance NAME (LOOP_LORE_INSTANCE=NAME); ` +
     `each instance gets its own state dir; ` +
-    `changing PORT instead would silently switch databases).`
+    `changing PORT instead would silently switch databases.`
   );
 }
