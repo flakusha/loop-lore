@@ -3424,6 +3424,27 @@
     "title": "db-reinit archive directory has no rotation; PII accumulates indefinitely",
     "type": "BUG"
   },
+  "BUG-DB-TYPE-POSTGRES-ACCEPTED-BUT-NO-POSTGRES-RUNTIME": {
+    "hash": "424179d",
+    "git_issue": "424179d",
+    "extid": "BUG-DB-TYPE-POSTGRES-ACCEPTED-BUT-NO-POSTGRES-RUNTIME",
+    "type": "BUG",
+    "title": "db-type-postgres-accepted-but-no-postgres-runtime",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-multi-instance-reconciliation.md",
+    "project": "",
+    "tags": [
+      "config",
+      "db",
+      "postgres",
+      "boot",
+      "guard",
+      "honesty"
+    ],
+    "source": ".plan/tickets/BUG-db-type-postgres-accepted-but-no-postgres-runtime.md",
+    "status": "open"
+  },
   "BUG-DEAD-BEDROCK-CONFIG-PATH-ACCEPTED-BUT-NEVER-DISPATCHED": {
     "hash": "3edc50d",
     "git_issue": "3edc50d",
@@ -5702,6 +5723,67 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-harness-f1-non-admin-providers-callers-swallow-403.md",
+    "status": "open"
+  },
+  "BUG-HARNESS-QUEUE-BOOT-RECOVERY-FAILS-OTHER-INSTANCES-INFLIGHT-T": {
+    "hash": "6887ad6",
+    "git_issue": "6887ad6",
+    "extid": "BUG-HARNESS-QUEUE-BOOT-RECOVERY-FAILS-OTHER-INSTANCES-INFLIGHT-T",
+    "type": "BUG",
+    "title": "harness-queue-boot-recovery-fails-other-instances-inflight-turns",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-harness-integration.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "queue",
+      "boot",
+      "recovery",
+      "multi-instance",
+      "data-loss"
+    ],
+    "source": ".plan/tickets/BUG-harness-queue-boot-recovery-fails-other-instances-inflight-t.md",
+    "status": "open"
+  },
+  "BUG-HARNESS-QUEUE-CLAIM-IGNORES-AFFECTED-ROWS-DOUBLE-EXECUTES-TU": {
+    "hash": "df0d0cc",
+    "git_issue": "df0d0cc",
+    "extid": "BUG-HARNESS-QUEUE-CLAIM-IGNORES-AFFECTED-ROWS-DOUBLE-EXECUTES-TU",
+    "type": "BUG",
+    "title": "harness-queue-claim-ignores-affected-rows-double-executes-turn",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-harness-integration.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "queue",
+      "concurrency",
+      "duplicate-execution",
+      "spend"
+    ],
+    "source": ".plan/tickets/BUG-harness-queue-claim-ignores-affected-rows-double-executes-tu.md",
+    "status": "open"
+  },
+  "BUG-HARNESS-QUEUE-PER-PROFILE-SERIALIZATION-IS-PROCESS-LOCAL-NOT": {
+    "hash": "6fde7bb",
+    "git_issue": "6fde7bb",
+    "extid": "BUG-HARNESS-QUEUE-PER-PROFILE-SERIALIZATION-IS-PROCESS-LOCAL-NOT",
+    "type": "BUG",
+    "title": "harness-queue-per-profile-serialization-is-process-local-not-global",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-harness-integration.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "queue",
+      "concurrency",
+      "profile",
+      "multi-instance"
+    ],
+    "source": ".plan/tickets/BUG-harness-queue-per-profile-serialization-is-process-local-not.md",
     "status": "open"
   },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
@@ -9276,6 +9358,27 @@
     "tags": [],
     "title": "server.host config and HOST env override are dead - start.ts never passes hostname to Bun.serve",
     "type": "BUG"
+  },
+  "BUG-SERVER-SECOND-INSTANCE-SILENTLY-SPLITS-PORT-BY-ADDRESS-FAMIL": {
+    "hash": "a31dc0d",
+    "git_issue": "a31dc0d",
+    "extid": "BUG-SERVER-SECOND-INSTANCE-SILENTLY-SPLITS-PORT-BY-ADDRESS-FAMIL",
+    "type": "BUG",
+    "title": "server-second-instance-silently-splits-port-by-address-family",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-deployment-topologies.md",
+    "project": "",
+    "tags": [
+      "server",
+      "port",
+      "bind",
+      "address-family",
+      "ipv6",
+      "multi-instance"
+    ],
+    "source": ".plan/tickets/BUG-server-second-instance-silently-splits-port-by-address-famil.md",
+    "status": "open"
   },
   "BUG-SERVER-VIEW-DATE-DISPLAY-IGNORES-USER-TIMEZONE-LOCALE": {
     "epic": "epic-i18n",
@@ -57812,6 +57915,25 @@
     "tags": [],
     "title": "Relationships System Implementation",
     "type": "TASK"
+  },
+  "TASK-RELEASE-CUT-CHANGELOG-1-0-0-SECTION-AND-SYNC-WORKSPACE-VERSI": {
+    "hash": "582c93a",
+    "git_issue": "582c93a",
+    "extid": "TASK-RELEASE-CUT-CHANGELOG-1-0-0-SECTION-AND-SYNC-WORKSPACE-VERSI",
+    "type": "TASK",
+    "title": "release-cut-changelog-1-0-0-section-and-sync-workspace-version",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "release",
+      "changelog",
+      "version",
+      "release-yml"
+    ],
+    "source": ".plan/tickets/TASK-release-cut-changelog-1-0-0-section-and-sync-workspace-versi.md",
+    "status": "open"
   },
   "TASK-RELEVANCE-AWARE-DECAY-AND-PURGE-SIGNALS-IN-MEMORY-PURGE": {
     "hash": "660fcca",
