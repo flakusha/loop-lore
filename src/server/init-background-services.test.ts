@@ -11,12 +11,18 @@ import type { Kysely, } from "kysely";
 import { mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { setConfig, } from "../admin/config";
 import type { Config, } from "../config/schema";
 import { createConfigSchema, } from "../config/schema-class";
 import type { Db, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { getProvider, listProviders, } from "../generation";
 import { unregisterProvider, } from "../generation/providers/registry";
+import {
+  LLAMA_SWAP_AUTOSTART_CONFIG_PATH_KEY,
+  LLAMA_SWAP_AUTOSTART_ENABLED_KEY,
+  LLAMA_SWAP_AUTOSTART_LISTEN_PORT_KEY,
+} from "../llm/llama-swap-effective-config";
 import type { Logger, } from "../logger/types";
 import {
   getRegexTelemetrySnapshot,
@@ -367,6 +373,26 @@ describe("initBackgroundServices", () => {
         c.level === "warn" && String(c.message,).includes("llama-swap auto-start failed or skipped",)
       ),
     ).toBe(true,);
+  });
+
+  test("applies admin system_config overrides to llama-swap auto-start", async () => {
+    await setConfig(db, LLAMA_SWAP_AUTOSTART_ENABLED_KEY, "true", "test",);
+    await setConfig(db, LLAMA_SWAP_AUTOSTART_CONFIG_PATH_KEY, "/srv/llama-swap.yml", "test",);
+    await setConfig(db, LLAMA_SWAP_AUTOSTART_LISTEN_PORT_KEY, "9090", "test",);
+    const manager = makeManager({ llamaSwap: { port: 9090, pid: 9, }, },);
+    await initBackgroundServices(
+      db,
+      makeConfig({
+        charactersEnabled: false,
+        autoStart: { llamaSwap: { enabled: false, configPath: "/etc/ignored.yaml", }, },
+      },),
+      makeLogger().logger,
+      manager.manager,
+    );
+
+    expect(manager.calls.llamaSwap,).toEqual([
+      { configPath: "/srv/llama-swap.yml", listenPort: 9090, },
+    ],);
   });
 
   test("warns when sd-cpp fails to start and stays silent on success", async () => {

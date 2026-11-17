@@ -5,6 +5,7 @@ import type { Config, } from "../config/schema/config";
 import type { Db, } from "../db/index";
 import { OpenAiCompatibleProvider, registerProvider, } from "../generation";
 import { circuitBreaker, } from "../generation/providers/circuit-breaker";
+import { readEffectiveLlamaSwapConfig, } from "../llm/llama-swap-effective-config";
 import type { Logger, } from "../logger/types";
 import { setRegexTelemetryEnabled, } from "../regex/telemetry";
 import { flushRegexTelemetry, } from "../regex/telemetry-flush";
@@ -138,28 +139,31 @@ export async function initBackgroundServices(
       },);
     }
 
-    const llamaSwapCfg = autoStart?.llamaSwap;
-    if (llamaSwapCfg?.enabled) {
-      logger.info("auto-starting llama-swap", {
-        module: "server",
-        configPath: llamaSwapCfg.configPath,
-      },);
+    const llamaSwapFileCfg = autoStart?.llamaSwap;
+    if (llamaSwapFileCfg) {
+      const llamaSwapCfg = await readEffectiveLlamaSwapConfig(database, llamaSwapFileCfg,);
+      if (llamaSwapCfg?.enabled) {
+        logger.info("auto-starting llama-swap", {
+          module: "server",
+          configPath: llamaSwapCfg.configPath,
+        },);
 
-      initJobs.push({
-        name: "llama-swap",
-        promise: (async () => {
-          const instance = await serverManager.startLlamaSwap({
-            configPath: llamaSwapCfg.configPath,
-            listenPort: llamaSwapCfg.listenPort,
-          },);
+        initJobs.push({
+          name: "llama-swap",
+          promise: (async () => {
+            const instance = await serverManager.startLlamaSwap({
+              configPath: llamaSwapCfg.configPath,
+              listenPort: llamaSwapCfg.listenPort,
+            },);
 
-          if (instance) {
-            logger.info(`llama-swap ready → http://127.0.0.1:${instance.port}`,);
-          } else {
-            logger.warn("llama-swap auto-start failed or skipped", { module: "server", },);
-          }
-        })(),
-      },);
+            if (instance) {
+              logger.info(`llama-swap ready → http://127.0.0.1:${instance.port}`,);
+            } else {
+              logger.warn("llama-swap auto-start failed or skipped", { module: "server", },);
+            }
+          })(),
+        },);
+      }
     }
 
     const sdCppCfg = autoStart?.sdCpp;

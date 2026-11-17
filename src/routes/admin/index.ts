@@ -17,6 +17,8 @@ import { federationAdminRoutes, } from "./federation";
 import { integrationTokenRoutes, } from "./integration-tokens";
 import { itemPowerRoutes, } from "./item-power";
 import { keyRotationRoutes, } from "./key-rotation";
+import { llamaSwapRoutes, } from "./llama-swap";
+import { mfaConfigRoutes, } from "./mfa-config";
 import { modelCapabilitiesRoutes, } from "./model-capabilities";
 import { modelRolesRoutes, } from "./model-roles";
 import { newsRoutes, } from "./news";
@@ -108,5 +110,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(federationAdminRoutes(opts, prefix,),)
       // Integration tokens (ADR credentials-issuer-model admin-scoped slice).
       .use(integrationTokenRoutes(opts, prefix,),)
+      .use(llamaSwapRoutes(opts, prefix,),)
+      .use(mfaConfigRoutes(opts, prefix,),)
   );
 }

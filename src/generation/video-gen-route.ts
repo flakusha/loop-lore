@@ -20,6 +20,7 @@ import { loadConfig, } from "../config/load";
 import type { VideoProviderConfig, } from "../config/schema";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { readEffectiveLlamaSwapConfig, } from "../llm/llama-swap-effective-config";
 import { releaseModelsForRender, } from "../llm/llama-swap-release";
 import { getChildLogger, } from "../logger";
 import { forbiddenResponse, } from "../routes/http-utils";
@@ -50,7 +51,12 @@ const ESTIMATED_VIDEO_BYTES = 50_000_000;
 setVideoPreDispatchHook(async () => {
   let listenPort: number | undefined;
   try {
-    listenPort = loadConfig().generation.autoStart?.llamaSwap?.listenPort;
+    const effective = await readEffectiveLlamaSwapConfig(
+      getDatabase(),
+      loadConfig().generation.autoStart?.llamaSwap,
+    );
+
+    listenPort = effective?.listenPort;
   } catch {
     listenPort = undefined;
   }
