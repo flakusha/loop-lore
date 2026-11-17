@@ -38,6 +38,9 @@ const TEXT_DOCUMENT_SYNC_FULL = 1;
 /** `CompletionItemKind.Text` — the only kind this slice returns. */
 const COMPLETION_ITEM_KIND_TEXT = 1;
 
+/** Generic client-facing failure: never expose internal auth/config/DB details. */
+const GENERIC_FAILURE_MESSAGE = "request failed";
+
 /** Deps one LSP stdio connection needs, injectable for tests. */
 export interface InboundLspDeps {
   /** The database turns persist into and tokens verify against. */
@@ -129,7 +132,7 @@ export function createLspMessageHandler(
       .executeTakeFirst();
 
     if (!issuer) {
-      fail(id, LSP_ERRORS.requestFailed, "token issuer has no users row",);
+      fail(id, LSP_ERRORS.requestFailed, GENERIC_FAILURE_MESSAGE,);
       return;
     }
 
@@ -141,7 +144,7 @@ export function createLspMessageHandler(
     }
 
     if (binding.profile === "") {
-      fail(id, LSP_ERRORS.requestFailed, "no harness profile configured — only admin-configured profiles may run",);
+      fail(id, LSP_ERRORS.requestFailed, GENERIC_FAILURE_MESSAGE,);
       return;
     }
 
@@ -201,7 +204,7 @@ export function createLspMessageHandler(
         return;
       }
 
-      fail(id, LSP_ERRORS.requestFailed, `completion dispatch failed: ${(error as Error).message}`,);
+      fail(id, LSP_ERRORS.requestFailed, GENERIC_FAILURE_MESSAGE,);
       return;
     }
 
@@ -267,11 +270,13 @@ export function createLspMessageHandler(
       }
 
       case "textDocument/didOpen": {
+        if (!initialized) { return; }
         trackDidOpen(docs, params,);
         return;
       }
 
       case "textDocument/didChange": {
+        if (!initialized) { return; }
         trackDidChange(docs, params,);
         return;
       }

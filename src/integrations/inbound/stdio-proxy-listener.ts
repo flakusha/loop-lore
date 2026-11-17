@@ -91,8 +91,7 @@ async function refuseConnection(
     requestId: `proxy-${randomUUID()}`,
   },);
 
-  socket.write(encodeProxyAck(false, error,),);
-  socket.destroy();
+  socket.end(encodeProxyAck(false, error,),);
 }
 
 /** Serve one accepted socket with the connection's protocol graph. */

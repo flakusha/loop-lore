@@ -291,6 +291,27 @@ describe("lsp completion", () => {
     expect(byId(writes, 2,).error?.code,).toBe(LSP_ERRORS.invalidParams,);
   });
 
+  it("ignores didOpen/didChange sent before initialize completes", async () => {
+    const { handle, writes, } = connectStubbed("x",);
+    await handle(msg("textDocument/didOpen", {
+      textDocument: { uri: docUri, languageId: "typescript", version: 1, text: "pre-init", },
+    }, null,),);
+
+    await handle(msg("textDocument/didChange", {
+      textDocument: { uri: docUri, version: 2, },
+      contentChanges: [{ text: "pre-init change", },],
+    }, null,),);
+
+    const raw = await seedToken(userId,);
+    await handle(msg("initialize", { initializationOptions: { token: raw, }, }, 1,),);
+    await handle(msg("textDocument/completion", {
+      textDocument: { uri: docUri, },
+      position: { line: 0, character: 0, },
+    }, 2,),);
+
+    expect(byId(writes, 2,).error?.code,).toBe(LSP_ERRORS.invalidParams,);
+  });
+
   it("answers an empty dispatch with an empty list", async () => {
     const { writes, } = await openAndComplete("   \n  ", "x",);
     const answer = byId(writes, 2,);

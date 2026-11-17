@@ -28,6 +28,11 @@ import { join, } from "node:path";
 import { PassThrough, } from "node:stream";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
+import {
+  DEFAULT_INSTANCE_SLUG,
+  resetEffectiveServerBindForTests,
+  setEffectiveServerBind,
+} from "../../config/state-dir";
 import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
@@ -121,6 +126,7 @@ afterEach(async () => {
   setTestDatabase(null,);
   resetFacadeRegistry();
   resetInboundSettings();
+  resetEffectiveServerBindForTests();
   await destroyTestDb(testDb,);
 },);
 
@@ -375,7 +381,12 @@ describe("stdio-proxy listener", () => {
       error: "unauthorized: bad or missing proxy token",
     },);
 
-    bad.destroy();
+    // The refusal flushes the ack then ends the socket — no reset.
+    const hadError = await new Promise<boolean>((resolve,) => {
+      bad.once("close", (errored: boolean,) => resolve(errored,),);
+    },);
+
+    expect(hadError,).toBe(false,);
 
     const rows = await auditFor("proxy.connect",);
     expect(rows.length,).toBe(1,);
