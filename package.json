@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "loop-lore",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "workspaces": [
     "packages/*"
   ],
