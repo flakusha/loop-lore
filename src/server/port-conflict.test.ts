@@ -18,7 +18,8 @@ describe("portConflictMessage", () => {
     expect(message,).not.toBeNull();
     expect(message,).toContain("port 3000",);
     expect(message,).toContain("another instance or process",);
-    expect(message,).toContain("PORT",);
+    expect(message,).toContain("--instance",);
+    expect(message,).not.toContain("PORT=",);
   });
 
   test("includes the host when the error carries one", () => {
@@ -46,6 +47,6 @@ describe("portConflictMessage", () => {
     const message = portConflictMessage(error,);
     expect(message,).not.toBeNull();
     expect(message,).toContain("the configured port",);
-    expect(message,).toContain("PORT",);
+    expect(message,).toContain("--instance",);
   });
 });

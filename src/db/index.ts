@@ -5,7 +5,7 @@ import { Database, type SQLQueryBindings, } from "bun:sqlite";
 import { Kysely, SqliteDialect, } from "kysely";
 import fs from "node:fs";
 import path from "node:path";
-import { findLegacyDb, LEGACY_DATA_DIR, resolveDbPath, } from "../config/state-dir";
+import { findFirstLegacyDb, resolveDbPath, } from "../config/state-dir";
 import type { DB, } from "./schema";
 
 interface BunSqliteStatement {
@@ -151,7 +151,7 @@ function warnOnLegacyData(dbPath: string,): void {
   }
 
   legacyMigrationWarned = true;
-  const legacyDb = findLegacyDb(LEGACY_DATA_DIR, dbPath,);
+  const legacyDb = findFirstLegacyDb(dbPath,);
   if (!legacyDb) {
     return;
   }
@@ -196,7 +196,7 @@ export function getDatabase(databasePath?: string,): Kysely<DB> {
 
   warnOnLegacyData(dbPath,);
   // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
-  fs.mkdirSync(path.dirname(dbPath,), { recursive: true, },);
+  fs.mkdirSync(path.dirname(dbPath,), { recursive: true, mode: 0o700, },);
   const sqlite = new Database(dbPath,);
   singletonSqlite = sqlite;
   singletonPath = dbPath;

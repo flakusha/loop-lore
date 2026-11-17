@@ -7,5 +7,5 @@ port = 3000
 host = "localhost"
 
 [server.tls]
-key = "../loop-lore-data/certs/key.pem"
-cert = "../loop-lore-data/certs/cert.pem"
+# key = "../loop-lore-data/certs/key.pem" # WARNING: repo-sibling paths escape the per-instance state dir — keep commented for the XDG default
+# cert = "../loop-lore-data/certs/cert.pem" # WARNING: same as above

@@ -64,12 +64,9 @@ export function portConflictMessage(error: unknown,): string | null {
   const host = errorHost(shape,);
   const where = port === null ? "the configured port" : `port ${port}${host === null ? "" : ` on ${host}`}`;
 
-  const hint = port === null
-    ? "via the PORT env var (server.port)"
-    : `via the PORT env var (server.port), e.g. PORT=${port}`;
-
   return (
     `[server] ${where} is already in use — another instance or process holds it. ` +
-    `Stop it, or use a different port ${hint}.`
+    `Stop it, or run a separate instance with --instance NAME (each instance gets its own state dir; ` +
+    `changing PORT instead would silently switch databases).`
   );
 }
