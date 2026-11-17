@@ -3,9 +3,10 @@
 
 # TASK: 1.0.0 GAP: omni-search frontend consumer
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
+**Status Note (2026-11-18):** In Progress — verification evidence: `src/frontend/alpine/omni-search.ts` is on dev (commit `cc2f34085`), imported from `src/frontend/alpine/index.ts:48`, and calls `/api/v1/search?q=…`; `omni-search.test.ts` covers the helpers and fetch URL. The old "no frontend consumer" premise is stale. Remaining AC checks (gallery/chat/admin result rendering, permission gating) are unverified, so the ticket stays open.
 
 **Summary:**
 

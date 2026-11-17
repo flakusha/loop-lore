@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-harness-integration.md
+**Verification note (2026-11-18):** no claim-path fix is present in the dev tree; status stays Not Started. Instance identity now derives from the effective bind pinned at startup (`setEffectiveServerBind` in `src/server/start.ts`, uncommitted in `packages/core/src/config/state-dir.ts`), so a future owner discriminator should use `resolveInstanceSlug`'s result, not `PORT` alone.
 **Tags:** harness, queue, concurrency, duplicate-execution, spend
 
 **Summary:**

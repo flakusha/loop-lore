@@ -15,8 +15,23 @@ resolves the same root, so all of them see the same data.
 
 ## Per-instance directories
 
-`<instance>` is `--instance <name>`, else `$LOOP_LORE_INSTANCE`,
-else `port-$PORT`, else `default`:
+`<instance>` is selected in this order:
+
+1. `LOOP_LORE_INSTANCE` — the `--instance <name>` flag sets it and wins over
+   a pre-existing env value.
+2. The effective server bind (loaded `config.server`: flag > env > config file
+   > default): `port-<port>`, plus `-<host>` when the host differs from the
+   default `localhost`. The same port on different hosts therefore gets
+   different dirs.
+3. `PORT` / `HOST` env when no bind port is configured. When `PORT` alone
+   picks the dir, a one-line stderr warning names it (once per process).
+4. `default` when none of the above is set.
+
+An ephemeral port of `0` cannot name a stable dir: resolution throws and asks
+for `--instance` / `LOOP_LORE_INSTANCE`. The HTTP server and the MCP/ACP stdio
+mains pin the effective bind at startup (`setEffectiveServerBind`), so every
+resolver that omits an explicit `server` argument derives the DB and runtime
+dirs from the same slug; an explicit `server` argument still wins.
 
 | Path | Contents |
 | --- | --- |
@@ -40,10 +55,11 @@ Explicit paths always win and skip the instance dir:
 ### Database file
 
 The live SQLite file is chosen by the `getDatabase(path)` argument, else
-`LOOP_LORE_DB_PATH`, else `$STATE/<instance>/loop-lore.db`.
-`config.db.sqliteFilename` is currently ignored at runtime — the runtime
-never reads it — so set `LOOP_LORE_DB_PATH` (or pass a path to
-`getDatabase(path)`) to move the database.
+`LOOP_LORE_DB_PATH`, else `$STATE/<instance>/loop-lore.db`, where `<instance>`
+is resolved from the effective bind above. `config.db.sqliteFilename` is
+currently ignored at runtime — the runtime never reads it — so set
+`LOOP_LORE_DB_PATH` (or pass a path to `getDatabase(path)`) to move the
+database.
 
 ## Secret-bearing files
 

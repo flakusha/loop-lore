@@ -73,6 +73,15 @@ Related: .tmp/intercom/RELEASE-1.0.0.md (operator lists verbatim).
 - Characters + impersonation: epic-character-core-system.md (In Progress) + epic-impersonation.md (In Progress).
 - Platform tail: gallery epic-frontend-gallery.md (Done) + epic-asset-transform-metadata.md (In Progress); search has NO EPIC — closest epic-rag-retrieval.md + epic-rag-ui.md (both Not Started) → GAP (9d90969); llama-swap epic-llama-swap.md (Not Started); sd.cpp inside epic-local-process-swarm.md (Not Started, partial) vs comfyui epic-comfyui-plugin.md (In Progress) → GAP (4bd966e); harness RSI epic-recursive-self-improvement.md (Not Started) + ACP epic-external-harness-acp.md (In Progress) + epic-agentic-integration-mcp-acp.md (Not Started); grading epic-model-rankings-history.md (Not Started); web+TUI epic-terminal-ui.md (In Progress); settings epic-frontend-settings.md (Done); backup epic-database-backup-recovery.md (Not Started) + epic-db-asset-snapshot-recovery.md (Not Started) → GAP (942d357); logging epic-logging.md (In Progress); image/audio epic-image-video-scenario-studio.md (Not Started) + epic-audio-video-sound.md (Not Started) + epic-assistant-entity-access.md (In Progress).
 
+### Verification reconciliation (2026-11-18)
+
+- Omni-search UI: `TASK-1-0-0-gap-omni-search-frontend-consumer.md` moved Not Started → In Progress; `src/frontend/alpine/omni-search.ts` is on dev (`cc2f34085`) but its AC verification is unfinished.
+- Age-gate UI: `TASK-reconcile-epic-frontend-age-gate-verify-age-gate-frontend-ca.md` moved Not Started → In Progress; UI landed (`80a64eddc`, `3d09adbad`), epic reconciliation still open.
+- VN custom-typeable choices: `TASK-1-0-0-gap-vn-custom-typeable-choices.md` is already Done with landed commit `1c85d430c`; no status change needed.
+- MFA: `TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md` moved Not Started → In Progress; service/route commits landed but hardening is uncommitted in the dev tree.
+- Harness queue H1/H16/H17: three BUG tickets remain Not Started; no queue-fix code in the dev tree. Their notes point at the uncommitted effective-bind identity threading (`setEffectiveServerBind`).
+- No ticket in this tracker was marked Done without a landed commit.
+
 **Caveats:** TOCTOU: n/a, planning tracker. Security: n/a. Authorization: operator decides open questions. Parallelism: theme tickets proceed in sequence per roadmap §6. Partial failure: themes land independently. Rollback: n/a. Observability: this ticket tracks the six theme issues.
 
 **Context:**

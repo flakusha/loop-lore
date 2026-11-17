@@ -7,6 +7,26 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-18
+
+First stable release. An operator can install loop-lore, gate who runs what, import cards without silent loss, and run chat from a phone browser, with a finalize cadence fast enough to ship fixes the same day.
+
+### Added
+
+- **Per-instance isolation** — state, database, uploads and harness execution logs resolve under the effective server bind; a second instance on the same port fails loudly instead of silently splitting the address family.
+- **Harness and ACP integration** — repo-access tiers, delegation, MCP streamable HTTP, stdio proxy shims for MCP and ACP, an LSP stdio server, and a two-instance local-federation harness.
+- **MFA code channel** — factor enrollment, challenge issue/verify, destination binding to the enrolled factor, a production message bridge and a stdlib SMTP transport with fail-closed TLS.
+- **Operator surfaces** — database backup/restore, local-model discovery and setup for sd.cpp, ComfyUI and llama-swap, and MFA configuration, all reachable from the admin console.
+- **Frontend completion** — gallery, unified search, age gate, VN custom-typeable choices, settings and a mobile-ready web shell.
+
+### Fixed
+
+- **Harness queue is safe across processes** — claims honour the conditional update's affected-row count, boot recovery touches only turns owned by the booting instance, and per-profile exclusion is evaluated in the database.
+- **External-server supervision no longer crash-loops** — exhaustion is logged and disables the instance without calling `process.exit`; a healthy probe cannot refill the cumulative restart budget.
+- **LSP stdio server settles superseded debounce requests**, rejects unhandled failures, and caps the frame buffer so a bad frame cannot grow it without bound.
+- **First boot refuses to trust zero-byte or group-readable claim files**, guards symlink writes and reclaims stale claims only with fresh content.
+- **Runtime paths and shipped defaults stay inside the instance state directory**; upload dedup hits are scoped to this instance's upload dir.
+
 ### Added
 
 - **External agents can delegate bounded child harness turns (`delegate_task`, TASK-harness-subagent-delegation slice 1)** — the facade gains a `delegate_task` op (`spawn` | `list` | `cancel`, `src/integrations/loop-lore-facade/ops/delegation.ts`, registered in the facade instance registry): spawn enqueues one depth-1 child turn in the existing `harness_queue_turns` store (no migration — the child's lineage rides the row's `turn_key`, the principal rides `requested_by`), budgets clamped to admission caps at the trust boundary, and a child cannot delegate further (a depth-2 spawn is a 400). List shows only the caller's outstanding children; cancel flips a queued child to cancelled while a running turn answers 409 (it has no interrupt seam). Children are invisible across principals (404, never 403), and spawn/cancel write lineage through the existing exec-log. Tests: `src/integrations/loop-lore-facade/ops/delegation.test.ts` (11 tests).

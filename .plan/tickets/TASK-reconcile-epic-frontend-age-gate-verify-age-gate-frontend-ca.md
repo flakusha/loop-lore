@@ -8,10 +8,11 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** small
 **Epic:** epic-frontend-age-gate
+**Status Note (2026-11-18):** In Progress — verification evidence: `src/views/age-gate.html` (commit `80a64eddc`) and `src/frontend/alpine/age-gate.ts` (last commit `3d09adbad`) are on dev; send-time enforcement is recorded in TASK-1-0-0-theme-5-frontend-completion-against-shipped-backends-c.md. The epic header still reads Not Started, so the audit/gap-capture work is the remaining open item.
 
 ## Summary
 

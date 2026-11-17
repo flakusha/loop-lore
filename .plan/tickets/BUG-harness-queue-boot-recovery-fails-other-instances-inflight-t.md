@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-harness-integration.md
+**Verification note (2026-11-18):** no owner column or recovery scoping is present in the dev tree; status stays Not Started. The identity source in the Context section is now the effective bind pinned at startup (`setEffectiveServerBind` in `src/server/start.ts`, uncommitted in `packages/core/src/config/state-dir.ts`) — `resolveInstanceSlug` still supplies the slug, but it is no longer `PORT`-only.
 **Tags:** harness, queue, boot, recovery, multi-instance, data-loss
 
 **Summary:**
