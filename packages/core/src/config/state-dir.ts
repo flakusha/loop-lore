@@ -25,12 +25,20 @@ import { fileURLToPath, } from "node:url";
 export const STATE_DIR_ENV_VAR = "LOOP_LORE_STATE_DIR";
 /** XDG base dir; `loop-lore` is appended. Unset/empty falls back to ~/.local/state. */
 export const XDG_STATE_HOME_ENV_VAR = "XDG_STATE_HOME";
-/** Stable per-instance name. Unset falls back to the port slug, then "default". */
+/** Stable per-instance name. Unset falls back to the effective server bind, then "default". */
 export const INSTANCE_ENV_VAR = "LOOP_LORE_INSTANCE";
 /** Also the config `server.port` env (see schema-class/env-map.ts). */
 export const PORT_ENV_VAR = "PORT";
+/** Also the config `server.host` env (see schema-class/env-map.ts). */
+export const HOST_ENV_VAR = "HOST";
 /** Explicit live-database path. Wins over the XDG default. */
 export const DB_PATH_ENV_VAR = "LOOP_LORE_DB_PATH";
+/**
+ * Default bind host. Mirrors SERVER_DEFAULTS.host — kept as a literal to
+ * avoid an import cycle (sections/server.ts imports constants.ts, which
+ * imports this file). The slug only carries the host when it differs from this.
+ */
+export const DEFAULT_SERVER_HOST = "localhost";
 
 /** Directory name appended to $XDG_STATE_HOME. */
 export const APP_STATE_DIR_NAME = "loop-lore";
@@ -42,6 +50,17 @@ export const SQLITE_FILE_NAME = "loop-lore.db";
 /** Minimal env surface the resolvers read — `process.env` satisfies this. */
 export interface StateEnv {
   [key: string]: string | undefined;
+}
+
+/**
+ * Resolved server bind this instance listens on. Pass the loaded
+ * `config.server` (flag > env > config file > default) so the slug reflects
+ * the effective port, not just PORT env. Omit the whole param (or a field)
+ * when unconfigured so the single-instance `default` slug is preserved.
+ */
+export interface ServerBind {
+  port?: number | string;
+  host?: string;
 }
 
 /**
@@ -84,36 +103,96 @@ export function resolveStateRoot(env: StateEnv = process.env,): string {
 
 /**
  * @param env - environment to read (defaults to process.env)
- * @returns LOOP_LORE_INSTANCE, else `port-<PORT>`, else "default"
+ * @returns LOOP_LORE_INSTANCE, else `port-<effective-port>[-<host>]`, else "default"
+ *
+ * Precedence: explicit LOOP_LORE_INSTANCE (--instance flag) > effective
+ * `server` bind (loaded config.server: flag > env > config file > default) >
+ * PORT/HOST env > "default". The bind host is appended only when it differs
+ * from DEFAULT_SERVER_HOST, so same-port-different-host instances land in
+ * different dirs. Port 0 (ephemeral) throws — it cannot name a stable dir,
+ * so the operator must pin one via --instance / LOOP_LORE_INSTANCE.
+ *
+ * Side effect: when PORT is set without LOOP_LORE_INSTANCE the PORT env
+ * silently selects the database, so a one-line warning goes to stderr (once
+ * per process) naming the selected dir.
  */
-export function resolveInstanceSlug(env: StateEnv = process.env,): string {
+export function resolveInstanceSlug(env: StateEnv = process.env, server?: ServerBind,): string {
   const named = pick(env, INSTANCE_ENV_VAR,);
   if (named) {
     return sanitizeInstanceSlug(named,);
   }
-  const port = pick(env, PORT_ENV_VAR,);
-  if (port) {
-    return `port-${sanitizeInstanceSlug(port,)}`;
+  const rawPort = server?.port ?? pick(env, PORT_ENV_VAR,);
+  const portText = rawPort === undefined ? "" : String(rawPort,).trim();
+  if (portText !== "" && Number(portText,) === 0) {
+    throw new Error(
+      "ephemeral server.port 0 needs an explicit instance: set LOOP_LORE_INSTANCE or pass --instance <name> so the database path is stable across restarts",
+    );
   }
-  return DEFAULT_INSTANCE_SLUG;
+  emitPortWarningOnce(env,);
+  if (portText === "") {
+    return DEFAULT_INSTANCE_SLUG;
+  }
+  const rawHost = server?.host ?? pick(env, HOST_ENV_VAR,);
+  const host = rawHost === undefined ? "" : String(rawHost,).trim();
+  const slug = `port-${sanitizeInstanceSlug(portText,)}`;
+  if (host !== "" && host !== DEFAULT_SERVER_HOST) {
+    return `${slug}-${sanitizeInstanceSlug(host,)}`;
+  }
+  return slug;
+}
+
+/** Observed PORT-without-instance warnings, per process — env noise deserves noise, not spam. */
+let portWarningEmitted = false;
+
+/** Test-only reset for the once-per-process PORT warning. */
+export function resetPortWarningForTests(): void {
+  portWarningEmitted = false;
+}
+
+/**
+ * @param env - environment to read
+ * @returns the one-line stderr warning when PORT selects the state dir
+ * without LOOP_LORE_INSTANCE, else undefined (pure — test this, not stderr)
+ */
+export function portWithoutInstanceWarning(env: StateEnv,): string | undefined {
+  const port = pick(env, PORT_ENV_VAR,);
+  if (port === undefined || pick(env, INSTANCE_ENV_VAR,) !== undefined) {
+    return undefined;
+  }
+  return `LOOP_LORE_INSTANCE is unset and PORT=${port} selects state dir "port-${
+    sanitizeInstanceSlug(port,)
+  }" — set LOOP_LORE_INSTANCE (or --instance <name>) to pin the database explicitly.`;
+}
+/** @param env - environment to read */
+function emitPortWarningOnce(env: StateEnv,): void {
+  if (portWarningEmitted) {
+    return;
+  }
+  const warning = portWithoutInstanceWarning(env,);
+  if (warning !== undefined) {
+    portWarningEmitted = true;
+    console.warn(warning,);
+  }
 }
 
 /**
  * The per-instance state dir: every default runtime path (DB, uploads, TLS
  * certs) lives under here, so two instances never share a sqlite file.
  * @param env - environment to read (defaults to process.env)
+ * @param server - resolved server bind (loaded config.server); omit when unconfigured
  * @returns <state-root>/<instance-slug>
  */
-export function resolveInstanceDir(env: StateEnv = process.env,): string {
-  return path.join(resolveStateRoot(env,), resolveInstanceSlug(env,),);
+export function resolveInstanceDir(env: StateEnv = process.env, server?: ServerBind,): string {
+  return path.join(resolveStateRoot(env,), resolveInstanceSlug(env, server,),);
 }
 
 /**
  * @param env - environment to read (defaults to process.env)
+ * @param server - resolved server bind (loaded config.server); omit when unconfigured
  * @returns LOOP_LORE_DB_PATH, else the XDG per-instance default
  */
-export function resolveDbPath(env: StateEnv = process.env,): string {
-  return pick(env, DB_PATH_ENV_VAR,) ?? path.join(resolveInstanceDir(env,), SQLITE_FILE_NAME,);
+export function resolveDbPath(env: StateEnv = process.env, server?: ServerBind,): string {
+  return pick(env, DB_PATH_ENV_VAR,) ?? path.join(resolveInstanceDir(env, server,), SQLITE_FILE_NAME,);
 }
 
 const CORE_CONFIG_DIR = path.dirname(fileURLToPath(import.meta.url,),);
@@ -138,4 +217,36 @@ export function findLegacyDb(legacyDataDir: string, dbPath: string,): string | n
   } catch {
     return null;
   }
+}
+
+/** Repo root, anchored at this file — best effort, warning-only candidates below. */
+const REPO_ROOT = path.resolve(CORE_CONFIG_DIR, "..", "..", "..", "..",);
+
+/**
+ * Historical repo-local data dirs that actually held databases, in check
+ * order. The pre-monorepo checkout kept `loop-lore-data/` and `data/` at its
+ * root; the old `../loop-lore-data` config escape pointed at the checkout's
+ * sibling. Migration sources only, never written.
+ */
+export const LEGACY_DATA_DIRS: string[] = [
+  LEGACY_DATA_DIR,
+  path.resolve(REPO_ROOT, "loop-lore-data",),
+  path.resolve(REPO_ROOT, "data",),
+  path.resolve(REPO_ROOT, "..", "loop-lore-data",),
+];
+
+/**
+ * First legacy repo-local database found in any of `dirs`, or null.
+ * @param dbPath - the resolved live path
+ * @param dirs - candidate dirs, defaults to LEGACY_DATA_DIRS (injectable for tests)
+ * @returns the legacy db path to point the operator at, or null
+ */
+export function findFirstLegacyDb(dbPath: string, dirs: readonly string[] = LEGACY_DATA_DIRS,): string | null {
+  for (const dir of dirs) {
+    const found = findLegacyDb(dir, dbPath,);
+    if (found !== null) {
+      return found;
+    }
+  }
+  return null;
 }
