@@ -15,6 +15,14 @@
 
 Server at `http://localhost:3000`
 
+```bash
+git clone <repository-url>
+cd loop-lore
+bun install
+bun run db:migrate
+bun run dev
+```
+
 ### Windows
 
 TUI requires Windows Terminal or WSL. PowerShell/CMD unsupported.
@@ -51,14 +59,24 @@ Create `.env` in root:
 
 ```
 DB_TYPE=sqlite
-SQLITE_FILENAME=../loop-lore-data/loop-lore.db
 PORT=3000
 HOST=localhost
 ENABLE_TUI=true
 ENABLE_ASSISTANT=true
 DOCS_ENABLED=true
-ASSET_STORAGE_BACKEND=local
 ```
+
+Runtime state (SQLite database, uploads, TLS certs) lives outside the repo, under
+the XDG state dir — one directory per instance. The database path is chosen by
+environment variables, not config keys — put them in `.env` (or the shell):
+
+- `LOOP_LORE_DB_PATH` — absolute path of the SQLite file; wins over the per-instance default.
+- `LOOP_LORE_STATE_DIR` — the state root; wins over `$XDG_STATE_HOME/loop-lore`.
+- `XDG_STATE_HOME` — XDG base directory; `loop-lore` is appended to it.
+
+`config.db.sqliteFilename` is ignored at runtime: the server resolves the database
+path from `LOOP_LORE_DB_PATH` or the per-instance state dir. See
+[state and instances](./state-and-instances.md).
 
 ## Docker
 

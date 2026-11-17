@@ -3,8 +3,9 @@
 # Twin of config.database.example.toml
 
 db:
-  type: sqlite # "sqlite" or "postgres"
-  sqliteFilename: "../loop-lore-data/loop-lore.db"
+  # type: "sqlite" or "postgres"
+  type: sqlite
+  # sqliteFilename: "../loop-lore-data/loop-lore.db" # WARNING: repo-sibling paths escape the per-instance state dir — keep commented for the XDG default (the server ignores this knob — the DB path comes from LOOP_LORE_DB_PATH)
   # For Postgres:
   # type: postgres
   # url: "postgres://user:pass@localhost:5432/loop-lore"
