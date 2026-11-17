@@ -15,6 +15,7 @@ import {
   validateConfig,
   validateDatabaseSafety,
 } from "./load";
+import { resetDatabaseSafetyWarningsForTests, } from "./load/db-warnings";
 import { normalizeConfig, } from "./load/parse";
 import type { Config, } from "./schema";
 import { createConfigSchema, } from "./schema-class";
@@ -616,6 +617,27 @@ db:
     }
   });
 
+  test("boots on SQLite with db.type=postgres and says so loudly", () => {
+    setupConfigFiles({
+      "config.toml": `
+[db]
+type = "postgres"
+url = "postgresql://localhost/loop-lore"
+`,
+    },);
+    resetDatabaseSafetyWarningsForTests();
+    const loaded: { config?: ReturnType<typeof loadConfig> } = {};
+    const warnings = captureWarnings(() => {
+      loaded.config = loadConfig(tmpDir,);
+    },);
+
+    expect(loaded.config?.db.type,).toBe("postgres",);
+    const warning = warnings.find((line,) => line.includes("db.type=postgres",));
+    expect(warning,).toBeDefined();
+    expect(warning ?? "",).toContain("is not implemented in this build - running SQLite",);
+    expect(warning ?? "",).not.toContain("Postgres",);
+  });
+
   test("empty env + empty dir boots: promotes secrets instead of throwing", () => {
     const saved = new Map<string, string | undefined>();
     for (
@@ -644,6 +666,39 @@ db:
     }
   });
 },);
+
+/**
+ * @param run - the code whose log warnings are captured
+ * @returns the warning messages the logger received
+ */
+function captureWarnings(run: () => void,): string[] {
+  const warnings: string[] = [];
+  const stub: Logger = {
+    trace() {},
+    debug() {},
+    info() {},
+    warn(message,) {
+      warnings.push(String(typeof message === "string" ? message : JSON.stringify(message,),),);
+    },
+    error() {},
+    fatal() {},
+    child() {
+      return stub;
+    },
+    addTransport() {},
+    setBindings() {},
+    setLevel() {},
+    async flush() {},
+  };
+  const previous = getLogger();
+  setGlobalLogger(stub,);
+  try {
+    run();
+  } finally {
+    setGlobalLogger(previous,);
+  }
+  return warnings;
+}
 
 describe("validateDatabaseSafety", () => {
   /**
@@ -720,6 +775,74 @@ describe("validateDatabaseSafety", () => {
     } finally {
       if (original === undefined) { delete process.env.INSTANCE_COUNT; }
       else { process.env.INSTANCE_COUNT = original; }
+    }
+  });
+
+  test("keeps booting on SQLite when db.type=postgres is configured", () => {
+    const original = process.env.INSTANCE_COUNT;
+    try {
+      delete process.env.INSTANCE_COUNT;
+      const config = sqliteConfig({ type: "postgres", url: "postgresql://localhost/db", },);
+      expect(() => {
+        validateDatabaseSafety(config,);
+      },).not.toThrow();
+    } finally {
+      if (original === undefined) { delete process.env.INSTANCE_COUNT; }
+      else { process.env.INSTANCE_COUNT = original; }
+    }
+  });
+
+  test("warns that db.type=postgres is not implemented, without asking for a Postgres", () => {
+    resetDatabaseSafetyWarningsForTests();
+    const config = sqliteConfig({ type: "postgres", url: "postgresql://localhost/db", },);
+    const warnings = captureWarnings(() => {
+      validateDatabaseSafety(config,);
+    },);
+    const warning = warnings.find((line,) => line.includes("db.type=postgres",));
+    expect(warning,).toBeDefined();
+    expect(warning ?? "",).toContain("is not implemented in this build - running SQLite",);
+    expect(warning ?? "",).not.toContain("Postgres",);
+  });
+
+  test("the multi-instance message no longer recommends Postgres", () => {
+    const original = process.env.INSTANCE_COUNT;
+    try {
+      process.env.INSTANCE_COUNT = "3";
+      let message = "";
+      try {
+        validateDatabaseSafety(sqliteConfig(),);
+      } catch (error) {
+        message = error instanceof Error ? error.message : String(error,);
+      }
+      expect(message,).toContain("not safe with 3 instances",);
+      expect(message,).toContain("one instance per database file",);
+      expect(message,).not.toContain("Postgres",);
+    } finally {
+      if (original === undefined) { delete process.env.INSTANCE_COUNT; }
+      else { process.env.INSTANCE_COUNT = original; }
+    }
+  });
+
+  test("the shared-path guard is active without INSTANCE_COUNT or LOOP_LORE_INSTANCE", () => {
+    resetDatabaseSafetyWarningsForTests();
+    const saved = new Map<string, string | undefined>([
+      ["INSTANCE_COUNT", process.env.INSTANCE_COUNT,],
+      ["LOOP_LORE_INSTANCE", process.env.LOOP_LORE_INSTANCE,],
+      ["LOOP_LORE_DB_PATH", process.env.LOOP_LORE_DB_PATH,],
+    ],);
+    try {
+      delete process.env.INSTANCE_COUNT;
+      delete process.env.LOOP_LORE_INSTANCE;
+      process.env.LOOP_LORE_DB_PATH = "/tmp/shared-loop-lore.db";
+      const warnings = captureWarnings(() => {
+        validateDatabaseSafety(sqliteConfig(),);
+      },);
+      expect(warnings.some((line,) => line.includes("LOOP_LORE_DB_PATH",)),).toBe(true,);
+    } finally {
+      for (const [key, value,] of saved) {
+        if (value === undefined) { delete process.env[key]; }
+        else { process.env[key] = value; }
+      }
     }
   });
 });

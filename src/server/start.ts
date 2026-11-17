@@ -12,7 +12,7 @@ import { applyConfigChange, initConfigHotApply, onConfigChange, } from "../confi
 import { applyHotConfig, } from "../config/hot-apply-consumers";
 import { loadConfig, } from "../config/load";
 import type { Config, } from "../config/schema";
-import { resolveDbPath, } from "../config/state-dir";
+import { resolveDbPath, setEffectiveServerBind, } from "../config/state-dir";
 import { getScheduler, } from "../cron";
 import { initAnonymousMode, initSmk, } from "../crypto";
 import { getDatabase, } from "../db/index";
@@ -35,6 +35,7 @@ import {
   seedHarnessModelCapabilities,
 } from "../seeding";
 import { ServerExternalManager, } from "../services/server-external-manager";
+import { resolveBindHost, } from "./bind-host";
 import { seedDynamicContent, } from "./boot-seed";
 import { createRequestHandler, handleApiRequest, } from "./handler";
 import { initAssetCompression, } from "./init-asset-compression";
@@ -74,6 +75,9 @@ export async function start() {
   // Bootstrap logger before config load (template expansion needs it)
   createLogger();
   let config = loadConfig();
+  // Pin the effective server bind before any path resolution so the DB and
+  // runtime instance dirs derive the same slug (explicit args still win).
+  setEffectiveServerBind(config.server,);
   setGlobalLogger(createLogger(config.logging,),);
   initAgeGate(config.ageGate,);
   initNsfwRuntimeConfig(config.nsfw,);
@@ -240,15 +244,23 @@ export async function start() {
     throw new Error("TLS certificates could not be provisioned — refusing to start without HTTPS",);
   }
 
+  // ── Bind address (one family, pinned) ───────────────────────
+  // Bun resolves the host name itself and binds the FIRST address it gets:
+  // a second instance on the same port then binds the NEXT address of the
+  // same name instead of failing — a silent split across address families.
+  // Resolving once and pinning one literal makes the second instance
+  // collide with EADDRINUSE and land in the port-conflict path.
+  const bindAddress = await resolveBindHost({ host: config.server.host, },);
+
   // ── Start HTTP server ──────────────────────────────────────
   const httpServer = serve({
     port: config.server.port,
-    hostname: config.server.host,
+    hostname: bindAddress,
     fetch: (request, server,) => handleGatedRequest(request, server,),
     websocket: terminalGateway.websocket,
   },);
 
-  serverLogger.info(`HTTP  → http://localhost:${config.server.port}`,);
+  serverLogger.info(`HTTP  → http://${bindAddress}:${httpServer.port}`,);
 
   // ── HTTPS server (TLS certs configured or auto-generated) ─
   let httpsServer: ReturnType<typeof serve> | undefined;
@@ -256,16 +268,16 @@ export async function start() {
     const httpsPort = config.server.port + 443;
     httpsServer = serve({
       port: httpsPort,
-      hostname: config.server.host,
+      hostname: bindAddress,
       tls: { key: Bun.file(tlsFiles.key,), cert: Bun.file(tlsFiles.cert,), },
       fetch: (request, server,) => handleGatedRequest(request, server,),
       websocket: terminalGateway.websocket,
     },);
 
-    serverLogger.info(`HTTPS → https://localhost:${httpsPort}`,);
+    serverLogger.info(`HTTPS → https://${bindAddress}:${httpsServer.port}`,);
   }
 
-  serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`,);
+  serverLogger.info(`Docs  → http://${bindAddress}:${httpServer.port}/docs/`,);
 
   // Admin — seed system config defaults + wire DB log transport
   const { seedDefaults, } = await import("../admin/config");
