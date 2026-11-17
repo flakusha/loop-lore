@@ -1,0 +1,135 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Database backups tab — state lives in frontend/alpine/admin-db-backup.ts. -->
+<div x-data="adminDbBackup()" style="padding: var(--space-6)" data-testid="db-backup-panel">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-4)">
+    <div>
+      <h3 style="font-size: 14px; font-weight: 600; margin: 0">{{{t("admin.dbBackup.title")}}}</h3>
+      <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px">{{{t("admin.dbBackup.help")}}}</div>
+      <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px">
+        {{{t("admin.dbBackup.directory")}}}: <span x-text="dir" data-testid="db-backup-dir"></span>
+      </div>
+    </div>
+    <div style="display: flex; gap: var(--space-2)">
+      <button
+        class="btn btn-secondary btn-sm"
+        @click="loadBackups()"
+        :disabled="loading || creating || restoring"
+        data-testid="db-backup-refresh"
+      >
+        {{{t("admin.dbBackup.refresh")}}}
+      </button>
+      <button
+        class="btn btn-primary btn-sm"
+        @click="createBackup()"
+        :disabled="loading || creating || restoring"
+        data-testid="db-backup-create"
+      >
+        {{{t("admin.dbBackup.create")}}}
+      </button>
+    </div>
+  </div>
+
+  <div
+    x-show="loading"
+    style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-3)"
+    data-testid="db-backup-loading"
+  >
+    {{{t("admin.dbBackup.loading")}}}
+  </div>
+  <div
+    x-show="error !== ''"
+    style="padding: var(--space-3); background: #dc354522; border: 1px solid #dc354544; border-radius: 4px; font-size: 12px; color: var(--color-danger, #dc3545); margin-bottom: var(--space-3)"
+    x-text="error"
+    data-testid="db-backup-error"
+  >
+  </div>
+  <div
+    x-show="message !== ''"
+    style="padding: var(--space-3); background: #28a74522; border: 1px solid #28a74544; border-radius: 4px; font-size: 12px; margin-bottom: var(--space-3)"
+    x-text="message"
+    data-testid="db-backup-message"
+  >
+  </div>
+
+  <div
+    x-show="!loading && backups.length === 0"
+    class="empty-state"
+    style="padding: var(--space-8)"
+    data-testid="db-backup-empty"
+  >
+    <div class="icon">🗄️</div>
+    <div class="title">{{{t("admin.dbBackup.empty")}}}</div>
+  </div>
+
+  <template x-if="!loading && backups.length > 0">
+    <div style="display: grid; gap: var(--space-2)">
+      <template x-for="backup in backups" :key="backup.name">
+        <div
+          style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px"
+          data-testid="db-backup-row"
+        >
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-3)">
+            <div style="min-width: 0">
+              <div style="font-weight: 600; word-break: break-all" x-text="backup.name"></div>
+              <div style="font-size: 11px; color: var(--text-secondary)">
+                <span x-text="sizeLabel(backup.sizeBytes)"></span>
+                <span> · </span>
+                <span x-text="backup.modifiedAt"></span>
+              </div>
+            </div>
+            <button
+              class="btn btn-secondary btn-xs"
+              @click="beginRestore(backup.name)"
+              :disabled="loading || creating || restoring || restoreTarget !== null"
+              data-testid="db-backup-restore-open"
+            >
+              {{{t("admin.dbBackup.restore")}}}
+            </button>
+          </div>
+
+          <div
+            x-show="restoreTarget === backup.name"
+            style="margin-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef); padding-top: var(--space-3)"
+            data-testid="db-backup-confirm"
+          >
+            <div
+              style="font-size: 12px; font-weight: 600"
+              x-text="t('admin.dbBackup.confirmTitle', { name: backup.name })"
+            >
+            </div>
+            <div style="font-size: 12px; color: var(--color-danger, #dc3545); margin: var(--space-2) 0">
+              {{{t("admin.dbBackup.confirmWarning")}}}
+            </div>
+            <input
+              class="form-input"
+              style="font-size: 12px; max-width: 260px"
+              x-model="confirmation"
+              :placeholder="t('admin.dbBackup.confirmPlaceholder')"
+              data-testid="db-backup-confirmation"
+            />
+            <div style="display: flex; gap: var(--space-2); margin-top: var(--space-2)">
+              <button
+                class="btn btn-secondary btn-xs"
+                @click="cancelRestore()"
+                :disabled="restoring"
+                data-testid="db-backup-confirm-cancel"
+              >
+                {{{t("admin.dbBackup.cancel")}}}
+              </button>
+              <button
+                class="btn btn-danger btn-xs"
+                @click="confirmRestore()"
+                :disabled="restoring || confirmation !== 'RESTORE'"
+                data-testid="db-backup-confirm-restore"
+              >
+                {{{t("admin.dbBackup.confirmButton")}}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </template>
+</div>

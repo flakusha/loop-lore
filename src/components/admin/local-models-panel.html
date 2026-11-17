@@ -1,0 +1,399 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Local models tab — sd.cpp/ComfyUI discovery from admin-models/sd.ts, llama-swap from admin-llama-swap.ts. -->
+<div style="padding: var(--space-6)" data-testid="local-models-panel">
+  <h3 style="font-size: 14px; font-weight: 600; margin: 0">{{{t("admin.localModels.title")}}}</h3>
+  <div style="font-size: 12px; color: var(--text-secondary); margin: 4px 0 var(--space-5)">
+    {{{t("admin.localModels.help")}}}
+  </div>
+
+  <section style="margin-bottom: var(--space-6)" data-testid="local-models-sdcpp">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3)">
+      <h4 style="font-size: 13px; font-weight: 600; margin: 0">{{{t("admin.localModels.sdcpp.title")}}}</h4>
+      <button
+        class="btn btn-secondary btn-xs"
+        @click="loadSdCppDiscovery()"
+        :disabled="sdcppLoading || sdcppSaving"
+        data-testid="sdcpp-refresh"
+      >
+        {{{t("admin.localModels.refresh")}}}
+      </button>
+    </div>
+    <div
+      x-show="sdcppError !== ''"
+      style="font-size: 12px; color: var(--color-danger, #dc3545); margin-bottom: var(--space-2)"
+      x-text="sdcppError"
+      data-testid="sdcpp-error"
+    >
+    </div>
+    <div x-show="sdcppLoading" style="font-size: 12px; color: var(--text-secondary)">
+      {{{t("admin.localModels.discovering")}}}
+    </div>
+    <template x-if="!sdcppLoading && sdcppProviders.length === 0">
+      <div class="empty-state" style="padding: var(--space-5)">
+        <div class="title">{{{t("admin.localModels.sdcpp.empty")}}}</div>
+      </div>
+    </template>
+    <template x-if="!sdcppLoading && sdcppProviders.length > 0">
+      <div style="display: grid; gap: var(--space-2); margin-bottom: var(--space-4)">
+        <template x-for="provider in sdcppProviders" :key="provider.name + provider.baseUrl">
+          <div
+            style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px; font-size: 12px"
+            data-testid="sdcpp-row"
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-2)">
+              <div style="min-width: 0">
+                <div style="font-weight: 600" x-text="provider.name"></div>
+                <div style="color: var(--text-secondary); word-break: break-all" x-text="provider.baseUrl"></div>
+                <div style="color: var(--text-secondary)">
+                  <span x-text="provider.source"></span>
+                  <span> · </span>
+                  <span
+                    x-text="provider.reachable ? t('admin.localModels.reachable') : t('admin.localModels.unreachable')"
+                  ></span>
+                  <span> · </span>
+                  <span
+                    x-text="provider.dispatching ? t('admin.localModels.dispatching') : t('admin.localModels.notDispatching')"
+                  ></span>
+                </div>
+                <div x-show="provider.version" style="color: var(--text-secondary)">
+                  <span x-text="t('admin.localModels.version')"></span>: <span x-text="provider.version"></span>
+                </div>
+                <div
+                  x-show="provider.models && provider.models.length > 0"
+                  style="color: var(--text-secondary); word-break: break-all"
+                >
+                  <span x-text="t('admin.localModels.models')"></span>: <span
+                    x-text="provider.models.join(', ')"
+                  ></span>
+                </div>
+                <div
+                  x-show="provider.detail"
+                  style="color: var(--color-danger, #dc3545); word-break: break-all"
+                  x-text="provider.detail"
+                >
+                </div>
+              </div>
+              <button
+                class="btn btn-secondary btn-xs"
+                @click="sdcppDeleteTarget = sdcppDeleteTarget === provider.name ? null : provider.name"
+                :disabled="sdcppSaving"
+                data-testid="sdcpp-delete-open"
+              >
+                {{{t("admin.localModels.delete")}}}
+              </button>
+            </div>
+            <div x-show="sdcppDeleteTarget === provider.name" style="margin-top: var(--space-2)">
+              <span x-text="t('admin.localModels.confirmDelete', { name: provider.name })"></span>
+              <button
+                class="btn btn-danger btn-xs"
+                style="margin-left: var(--space-2)"
+                @click="deleteSdCppSetup(provider.name)"
+                :disabled="sdcppSaving"
+                data-testid="sdcpp-delete-confirm"
+              >
+                {{{t("admin.localModels.confirm")}}}
+              </button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </template>
+    <div
+      style="display: grid; gap: var(--space-2); max-width: 640px; padding: var(--space-3); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px"
+      data-testid="sdcpp-form"
+    >
+      <div style="font-size: 12px; font-weight: 600">{{{t("admin.localModels.sdcpp.setupTitle")}}}</div>
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        x-model="sdcppForm.name"
+        :placeholder="t('admin.localModels.name')"
+        data-testid="sdcpp-name"
+      />
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        x-model="sdcppForm.label"
+        :placeholder="t('admin.localModels.label')"
+        data-testid="sdcpp-label"
+      />
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        x-model="sdcppForm.baseUrl"
+        :placeholder="t('admin.localModels.baseUrl')"
+        data-testid="sdcpp-base-url"
+      />
+      <select class="form-input" style="font-size: 12px" x-model="sdcppForm.purpose" data-testid="sdcpp-purpose">
+        <option value="">{{{t("admin.localModels.purposeDefault")}}}</option>
+        <option value="generate">{{{t("admin.localModels.purposeGenerate")}}}</option>
+        <option value="edit">{{{t("admin.localModels.purposeEdit")}}}</option>
+        <option value="both">{{{t("admin.localModels.purposeBoth")}}}</option>
+      </select>
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        type="password"
+        x-model="sdcppForm.apiKey"
+        :placeholder="t('admin.localModels.apiKey')"
+        data-testid="sdcpp-api-key"
+      />
+      <div style="font-size: 11px; color: var(--text-secondary)">{{{t("admin.localModels.apiKeyHelp")}}}</div>
+      <div>
+        <button
+          class="btn btn-primary btn-xs"
+          @click="saveSdCppSetup()"
+          :disabled="sdcppLoading || sdcppSaving"
+          data-testid="sdcpp-save"
+        >
+          {{{t("admin.localModels.save")}}}
+        </button>
+      </div>
+    </div>
+  </section>
+  <section style="margin-bottom: var(--space-6)" data-testid="local-models-comfy">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3)">
+      <h4 style="font-size: 13px; font-weight: 600; margin: 0">{{{t("admin.localModels.comfy.title")}}}</h4>
+      <button
+        class="btn btn-secondary btn-xs"
+        @click="loadComfyDiscovery()"
+        :disabled="comfyLoading || comfySaving"
+        data-testid="comfy-refresh"
+      >
+        {{{t("admin.localModels.refresh")}}}
+      </button>
+    </div>
+    <div
+      x-show="comfyError !== ''"
+      style="font-size: 12px; color: var(--color-danger, #dc3545); margin-bottom: var(--space-2)"
+      x-text="comfyError"
+      data-testid="comfy-error"
+    >
+    </div>
+    <div x-show="comfyLoading" style="font-size: 12px; color: var(--text-secondary)">
+      {{{t("admin.localModels.discovering")}}}
+    </div>
+    <template x-if="!comfyLoading && comfyProviders.length === 0">
+      <div class="empty-state" style="padding: var(--space-5)">
+        <div class="title">{{{t("admin.localModels.comfy.empty")}}}</div>
+      </div>
+    </template>
+    <template x-if="!comfyLoading && comfyProviders.length > 0">
+      <div style="display: grid; gap: var(--space-2); margin-bottom: var(--space-4)">
+        <template x-for="provider in comfyProviders" :key="provider.name + provider.baseUrl">
+          <div
+            style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px; font-size: 12px"
+            data-testid="comfy-row"
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-2)">
+              <div style="min-width: 0">
+                <div style="font-weight: 600" x-text="provider.name"></div>
+                <div style="color: var(--text-secondary); word-break: break-all" x-text="provider.baseUrl"></div>
+                <div style="color: var(--text-secondary)">
+                  <span x-text="provider.source"></span>
+                  <span> · </span>
+                  <span
+                    x-text="provider.reachable ? t('admin.localModels.reachable') : t('admin.localModels.unreachable')"
+                  ></span>
+                </div>
+                <div x-show="provider.version" style="color: var(--text-secondary)">
+                  <span x-text="t('admin.localModels.version')"></span>: <span x-text="provider.version"></span>
+                </div>
+                <div
+                  x-show="provider.detail"
+                  style="color: var(--color-danger, #dc3545); word-break: break-all"
+                  x-text="provider.detail"
+                >
+                </div>
+              </div>
+              <button
+                class="btn btn-secondary btn-xs"
+                @click="comfyDeleteTarget = comfyDeleteTarget === provider.name ? null : provider.name"
+                :disabled="comfySaving"
+                data-testid="comfy-delete-open"
+              >
+                {{{t("admin.localModels.delete")}}}
+              </button>
+            </div>
+            <div x-show="comfyDeleteTarget === provider.name" style="margin-top: var(--space-2)">
+              <span x-text="t('admin.localModels.confirmDelete', { name: provider.name })"></span>
+              <button
+                class="btn btn-danger btn-xs"
+                style="margin-left: var(--space-2)"
+                @click="deleteComfySetup(provider.name)"
+                :disabled="comfySaving"
+                data-testid="comfy-delete-confirm"
+              >
+                {{{t("admin.localModels.confirm")}}}
+              </button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </template>
+    <div
+      style="display: grid; gap: var(--space-2); max-width: 640px; padding: var(--space-3); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px"
+      data-testid="comfy-form"
+    >
+      <div style="font-size: 12px; font-weight: 600">{{{t("admin.localModels.comfy.setupTitle")}}}</div>
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        x-model="comfyForm.name"
+        :placeholder="t('admin.localModels.name')"
+        data-testid="comfy-name"
+      />
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        x-model="comfyForm.label"
+        :placeholder="t('admin.localModels.label')"
+        data-testid="comfy-label"
+      />
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        x-model="comfyForm.baseUrl"
+        :placeholder="t('admin.localModels.baseUrl')"
+        data-testid="comfy-base-url"
+      />
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        x-model="comfyForm.workflow"
+        :placeholder="t('admin.localModels.comfy.workflow')"
+        data-testid="comfy-workflow"
+      />
+      <select class="form-input" style="font-size: 12px" x-model="comfyForm.purpose" data-testid="comfy-purpose">
+        <option value="">{{{t("admin.localModels.purposeDefault")}}}</option>
+        <option value="generate">{{{t("admin.localModels.purposeGenerate")}}}</option>
+        <option value="edit">{{{t("admin.localModels.purposeEdit")}}}</option>
+        <option value="both">{{{t("admin.localModels.purposeBoth")}}}</option>
+      </select>
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        type="password"
+        x-model="comfyForm.apiKey"
+        :placeholder="t('admin.localModels.apiKey')"
+        data-testid="comfy-api-key"
+      />
+      <div style="font-size: 11px; color: var(--text-secondary)">{{{t("admin.localModels.apiKeyHelp")}}}</div>
+      <div>
+        <button
+          class="btn btn-primary btn-xs"
+          @click="saveComfySetup()"
+          :disabled="comfyLoading || comfySaving"
+          data-testid="comfy-save"
+        >
+          {{{t("admin.localModels.save")}}}
+        </button>
+      </div>
+    </div>
+  </section>
+  <section x-data="adminLlamaSwap()" data-testid="local-models-llama-swap">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3)">
+      <h4 style="font-size: 13px; font-weight: 600; margin: 0">{{{t("admin.localModels.llamaSwap.title")}}}</h4>
+      <button
+        class="btn btn-secondary btn-xs"
+        @click="loadStatus()"
+        :disabled="loading || saving"
+        data-testid="llama-swap-refresh"
+      >
+        {{{t("admin.localModels.refresh")}}}
+      </button>
+    </div>
+    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-3)">
+      {{{t("admin.localModels.llamaSwap.help")}}}
+    </div>
+    <div
+      x-show="error !== ''"
+      style="font-size: 12px; color: var(--color-danger, #dc3545); margin-bottom: var(--space-2)"
+      x-text="error"
+      data-testid="llama-swap-error"
+    >
+    </div>
+    <div
+      x-show="message !== ''"
+      style="font-size: 12px; color: var(--color-success, #28a745); margin-bottom: var(--space-2)"
+      x-text="message"
+      data-testid="llama-swap-message"
+    >
+    </div>
+    <div x-show="loading" style="font-size: 12px; color: var(--text-secondary)">
+      {{{t("admin.localModels.loading")}}}
+    </div>
+    <div style="display: grid; gap: 4px; font-size: 12px; padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px">
+      <div>
+        <span x-text="t('admin.localModels.llamaSwap.configured')"></span>: <span
+          x-text="status.configured ? t('admin.localModels.yes') : t('admin.localModels.no')"
+          data-testid="llama-swap-configured"
+        ></span>
+      </div>
+      <div>
+        <span x-text="t('admin.localModels.llamaSwap.enabled')"></span>: <span
+          x-text="status.autoStartEnabled ? t('admin.localModels.yes') : t('admin.localModels.no')"
+          data-testid="llama-swap-enabled"
+        ></span>
+      </div>
+      <div>
+        <span x-text="t('admin.localModels.llamaSwap.port')"></span>: <span
+          x-text="status.listenPort === null ? '—' : status.listenPort"
+          data-testid="llama-swap-port"
+        ></span>
+      </div>
+      <div>
+        <span x-text="t('admin.localModels.llamaSwap.configPath')"></span>: <span
+          x-text="status.configPath ?? '—'"
+          data-testid="llama-swap-path"
+        ></span>
+      </div>
+      <div>
+        <span x-text="t('admin.localModels.llamaSwap.running')"></span>: <span
+          x-text="status.running ? t('admin.localModels.yes') : t('admin.localModels.no')"
+          data-testid="llama-swap-running"
+        ></span>
+      </div>
+      <div x-show="status.note" style="color: var(--text-secondary)" x-text="status.note" data-testid="llama-swap-note">
+      </div>
+    </div>
+    <div
+      style="display: grid; gap: var(--space-2); max-width: 640px; margin-top: var(--space-3); padding: var(--space-3); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px"
+      data-testid="llama-swap-form"
+    >
+      <label style="font-size: 12px; display: flex; align-items: center; gap: var(--space-2)">
+        <input type="checkbox" x-model="form.autoStartEnabled" data-testid="llama-swap-enabled-input" />
+        <span>{{{t("admin.localModels.llamaSwap.enabled")}}}</span>
+      </label>
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        type="number"
+        min="1"
+        max="65535"
+        x-model="form.listenPort"
+        :placeholder="t('admin.localModels.llamaSwap.portPlaceholder')"
+        data-testid="llama-swap-port-input"
+      />
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        x-model="form.configPath"
+        :placeholder="t('admin.localModels.llamaSwap.pathPlaceholder')"
+        data-testid="llama-swap-path-input"
+      />
+      <div>
+        <button
+          class="btn btn-primary btn-xs"
+          @click="saveConfig()"
+          :disabled="loading || saving"
+          data-testid="llama-swap-save"
+        >
+          {{{t("admin.localModels.save")}}}
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

@@ -98,6 +98,30 @@
         >
           {{{t("admin.federation")}}}
         </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'backups' }"
+          @click="showTab('backups')"
+          data-testid="admin-tab-backups"
+        >
+          {{{t("admin.dbBackup.tab")}}}
+        </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'localModels' }"
+          @click="showTab('localModels')"
+          data-testid="admin-tab-local-models"
+        >
+          {{{t("admin.localModels.tab")}}}
+        </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'mfa' }"
+          @click="showTab('mfa')"
+          data-testid="admin-tab-mfa"
+        >
+          {{{t("admin.mfa.tab")}}}
+        </button>
       </div>
 
       <!-- Overview Tab -->
@@ -3575,6 +3599,21 @@
     <!-- Federation Tab (TASK-federation-admin-usage-dashboard-ui) -->
     <div x-show="activeTab === 'federation'">
       {{> federation/admin-federation-panel.html }}
+    </div>
+
+    <!-- Database Backups Tab (R6) -->
+    <div x-show="activeTab === 'backups'">
+      {{> admin/db-backup-panel.html }}
+    </div>
+
+    <!-- Local Models Tab (R7/R8) -->
+    <div x-show="activeTab === 'localModels'">
+      {{> admin/local-models-panel.html }}
+    </div>
+
+    <!-- MFA Tab -->
+    <div x-show="activeTab === 'mfa'">
+      {{> admin/mfa-panel.html }}
     </div>
 
     <!-- Provider Connection Wizard (TASK-provider-connection-wizard-core-first-run-provider-connectio) -->

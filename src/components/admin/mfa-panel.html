@@ -1,0 +1,125 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- MFA tab — state lives in frontend/alpine/admin-mfa.ts. Tokens are write-only. -->
+<div x-data="adminMfa()" style="padding: var(--space-6)" data-testid="mfa-panel">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-4)">
+    <div>
+      <h3 style="font-size: 14px; font-weight: 600; margin: 0">{{{t("admin.mfa.title")}}}</h3>
+      <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px">{{{t("admin.mfa.help")}}}</div>
+    </div>
+    <div style="display: flex; gap: var(--space-2)">
+      <button
+        class="btn btn-secondary btn-sm"
+        @click="loadConfig()"
+        :disabled="loading || saving"
+        data-testid="mfa-refresh"
+      >
+        {{{t("admin.mfa.refresh")}}}
+      </button>
+      <button class="btn btn-primary btn-sm" @click="saveConfig()" :disabled="loading || saving" data-testid="mfa-save">
+        {{{t("admin.mfa.save")}}}
+      </button>
+    </div>
+  </div>
+  <div x-show="loading" style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-3)">
+    {{{t("admin.mfa.loading")}}}
+  </div>
+  <div
+    x-show="error !== ''"
+    style="padding: var(--space-3); background: #dc354522; border: 1px solid #dc354544; border-radius: 4px; font-size: 12px; color: var(--color-danger, #dc3545); margin-bottom: var(--space-3)"
+    x-text="error"
+    data-testid="mfa-error"
+  >
+  </div>
+  <div
+    x-show="message !== ''"
+    style="padding: var(--space-3); background: #28a74522; border: 1px solid #28a74544; border-radius: 4px; font-size: 12px; margin-bottom: var(--space-3)"
+    x-text="message"
+    data-testid="mfa-message"
+  >
+  </div>
+
+  <section
+    style="margin-bottom: var(--space-5); padding: var(--space-3); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px"
+    data-testid="mfa-email"
+  >
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3)">
+      <h4 style="font-size: 13px; font-weight: 600; margin: 0">{{{t("admin.mfa.email.title")}}}</h4>
+      <span
+        style="font-size: 12px"
+        x-text="config.email.configured ? t('admin.mfa.configured') : t('admin.mfa.notConfigured')"
+        data-testid="mfa-email-status"
+      ></span>
+    </div>
+    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-2)">
+      <span x-text="t('admin.mfa.sender')"></span>: <span x-text="config.email.sender || '—'"></span>
+      <span> · </span>
+      <span x-text="t('admin.mfa.window')"></span>: <span x-text="config.email.windowMs"></span>
+    </div>
+    <div style="display: grid; gap: var(--space-2); max-width: 520px">
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        x-model="form.email.sender"
+        :placeholder="t('admin.mfa.sender')"
+        data-testid="mfa-email-sender"
+      />
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        type="number"
+        min="1"
+        x-model="form.email.windowMs"
+        :placeholder="t('admin.mfa.windowPlaceholder')"
+        data-testid="mfa-email-window"
+      />
+    </div>
+  </section>
+  <section
+    style="padding: var(--space-3); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px"
+    data-testid="mfa-messenger"
+  >
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3)">
+      <h4 style="font-size: 13px; font-weight: 600; margin: 0">{{{t("admin.mfa.messenger.title")}}}</h4>
+      <span
+        style="font-size: 12px"
+        x-text="config.messenger.tokenConfigured ? t('admin.mfa.tokenConfigured') : t('admin.mfa.tokenMissing')"
+        data-testid="mfa-messenger-status"
+      ></span>
+    </div>
+    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-2)">
+      <span x-text="t('admin.mfa.sender')"></span>: <span x-text="config.messenger.sender || '—'"></span>
+      <span> · </span>
+      <span x-text="t('admin.mfa.window')"></span>: <span x-text="config.messenger.windowMs"></span>
+    </div>
+    <div style="display: grid; gap: var(--space-2); max-width: 520px">
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        x-model="form.messenger.sender"
+        :placeholder="t('admin.mfa.sender')"
+        data-testid="mfa-messenger-sender"
+      />
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        type="number"
+        min="1"
+        x-model="form.messenger.windowMs"
+        :placeholder="t('admin.mfa.windowPlaceholder')"
+        data-testid="mfa-messenger-window"
+      />
+      <input
+        class="form-input"
+        style="font-size: 12px"
+        type="password"
+        autocomplete="new-password"
+        x-model="form.messenger.botToken"
+        :placeholder="t('admin.mfa.botToken')"
+        data-testid="mfa-messenger-token"
+      />
+      <div style="font-size: 11px; color: var(--text-secondary)">{{{t("admin.mfa.tokenHelp")}}}</div>
+    </div>
+  </section>
+</div>
