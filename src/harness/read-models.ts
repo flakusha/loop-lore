@@ -37,6 +37,11 @@ export interface HarnessRunSummary {
    * line written before turn correlation existed.
    */
   turnId: string | null;
+  /**
+   * Instance slug that recorded the run; null for lines written before
+   * per-instance attribution. Lets spend/attribution split per instance.
+   */
+  instanceId: string | null;
 }
 
 /**

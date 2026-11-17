@@ -27,6 +27,7 @@ const RUN_BASE = {
   gitSha: null,
   pid: null,
   turnId: null,
+  instanceId: null,
 } as const;
 
 const RUNS: HarnessRunSummary[] = [

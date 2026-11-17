@@ -60,6 +60,11 @@ export interface HarnessRunRecord {
   tier?: HarnessTier | null;
   /** ACP session id reported by the harness, when any. */
   acpSessionId?: string | null;
+  /**
+   * Instance slug that recorded the run (H12 attribution). Null on lines
+   * written before per-instance attribution existed.
+   */
+  instanceId?: string | null;
 }
 
 // Read-model shapes (summaries, filters, stats rollups) live in ./read-models
@@ -101,6 +106,7 @@ export function toSummary(record: HarnessRunRecord,): HarnessRunSummary {
     gitSha: record.gitSha,
     pid: record.pid,
     turnId: record.turnId,
+    instanceId: record.instanceId ?? null,
   };
 }
 

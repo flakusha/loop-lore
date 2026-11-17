@@ -141,6 +141,8 @@ interface HarnessRunWire {
   tier?: string | null;
   /** ACP session id reported by the harness, when any. */
   acp_session_id?: string | null;
+  /** Instance slug that recorded the run; absent on pre-attribution lines. */
+  instance_id?: string | null;
 }
 
 /**
@@ -174,6 +176,7 @@ export function serializeRun(record: HarnessRunRecord,): HarnessRunWire {
     profile: record.profile,
     tier: record.tier,
     acp_session_id: record.acpSessionId,
+    instance_id: record.instanceId,
   };
 }
 
@@ -228,5 +231,6 @@ export function deserializeRun(line: string,): HarnessRunRecord | null {
     // "other": a hand-written tier must not leak into selector logic.
     tier: toTier(w.tier,),
     acpSessionId: typeof w.acp_session_id === "string" ? w.acp_session_id : null,
+    instanceId: typeof w.instance_id === "string" ? w.instance_id : null,
   };
 }

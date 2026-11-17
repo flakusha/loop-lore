@@ -66,6 +66,7 @@ describe("formatRunLine", () => {
     gitSha: "abc123def456",
     pid: 12345,
     turnId: "turn-1",
+    instanceId: null,
     ...overrides,
   });
 
@@ -139,6 +140,7 @@ describe("formatRunDetail", () => {
     gitSha: null,
     pid: null,
     turnId: null,
+    instanceId: null,
     tools: ["read", "write", "bash", "grep", "edit",],
     pattern: "agent.edit",
     // "" is what the server actually sends for a run with no pattern detail:

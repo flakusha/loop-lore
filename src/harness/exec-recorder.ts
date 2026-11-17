@@ -7,6 +7,7 @@
  * Lives here rather than in `call-with-failover.ts` so the provider layer
  * never imports harness code, and so the cost math has exactly one home.
  */
+import { resolveInstanceSlug, type ServerBind, } from "../config/state-dir";
 import { appendExecLog, } from "./exec-log";
 import { getGitContext, LOG_PID, newRunId, } from "./run-context";
 import type { HarnessResult, HarnessRunRecord, HarnessTaskType, HarnessTier, } from "./types";
@@ -53,6 +54,28 @@ export interface ExecRunInput {
   tier?: HarnessTier | null;
   /** ACP session id of the turn, when the harness reported one. */
   acpSessionId?: string | null;
+  /**
+   * Instance slug override. Omitted means "this instance": the record is
+   * stamped at build time (null when the slug is undeterminable).
+   */
+  instanceId?: string | null;
+}
+
+/**
+ * This instance's slug for a new record. Null when it cannot be determined
+ * (ephemeral port 0 without an explicit instance). Never throws: the
+ * recorder is fire-and-forget and must not break the egress call it logs.
+ * @param server - effective server bind (config.server); bind-aware like the
+ *   DB path, so a config-file port stamps its own slug instead of "default".
+ *   Omitted means env-only, matching the pre-bind behavior.
+ * @returns the slug, or null when slug resolution throws.
+ */
+function currentInstanceId(server?: ServerBind,): string | null {
+  try {
+    return resolveInstanceSlug(process.env, server,);
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -91,9 +114,12 @@ function tokenCount(v: number | undefined,): number {
 /**
  * Build the run record for one finished egress call.
  * @param input - what the seam observed
+ * @param server - effective server bind (config.server); forwarded to the
+ *   slug resolution so the stamp agrees with the DB path. Omitted preserves
+ *   the env-only behavior.
  * @returns The record, ready for `appendExecLog`.
  */
-export function buildRunRecord(input: ExecRunInput,): HarnessRunRecord {
+export function buildRunRecord(input: ExecRunInput, server?: ServerBind,): HarnessRunRecord {
   const { branch, gitSha, } = getGitContext();
   const tools = input.tools ?? [];
   return {
@@ -125,6 +151,7 @@ export function buildRunRecord(input: ExecRunInput,): HarnessRunRecord {
     profile: input.profile ?? null,
     tier: input.tier ?? null,
     acpSessionId: input.acpSessionId ?? null,
+    instanceId: input.instanceId ?? currentInstanceId(server,),
   };
 }
 
@@ -132,8 +159,10 @@ export function buildRunRecord(input: ExecRunInput,): HarnessRunRecord {
  * Record one finished call. Fire-and-forget: `appendExecLog` never throws and
  * this wrapper must not start one.
  * @param input - what the egress seam observed
+ * @param server - effective server bind (config.server); forwarded to the
+ *   slug resolution. Omitted preserves the env-only behavior.
  * @returns nothing
  */
-export function recordExecRun(input: ExecRunInput,): void {
-  appendExecLog(buildRunRecord(input,),);
+export function recordExecRun(input: ExecRunInput, server?: ServerBind,): void {
+  appendExecLog(buildRunRecord(input, server,),);
 }

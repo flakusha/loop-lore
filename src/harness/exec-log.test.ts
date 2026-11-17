@@ -48,6 +48,7 @@ function sample(overrides: Partial<HarnessRunRecord> = {},): HarnessRunRecord {
     profile: null,
     tier: null,
     acpSessionId: null,
+    instanceId: null,
     ...overrides,
   };
 }
@@ -67,6 +68,7 @@ describe("harness types", () => {
       "cost_usd",
       "error",
       "git_sha",
+      "instance_id",
       "model",
       "msg",
       "pattern",
@@ -109,6 +111,8 @@ describe("harness types", () => {
     expect(record?.taskType,).toBe("other",);
     // An absent cost_usd means "unknown", not "free" — it must NOT coerce to 0.
     expect(record?.costUsd,).toBeNull();
+    // A line written before per-instance attribution has no instance_id key.
+    expect(record?.instanceId,).toBeNull();
   });
 
   it("reads a non-union result back as a known member, never a number", () => {
