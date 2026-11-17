@@ -141,6 +141,11 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # A tag can be pushed at any commit, not only after the master verify job.
+      # Fail the release before publishing artifacts if that commit's unit suite is red.
+      - name: Run unit tests
+        run: bun run test:unit
+
       # The ONLY check that compiles app.rs and web.rs: lib.rs gates them behind
       # `#[cfg(target_arch = "wasm32")]`, so the host target never sees them.
       # A missing Rust toolchain is a SUPPORTED state: the steps are allowed to
