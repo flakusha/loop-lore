@@ -11,6 +11,7 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, readdirSync, rmSync, utimesSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import path from "node:path";
+import { resolveInstanceDir, } from "../config/state-dir";
 import type { Logger, } from "../logger";
 import {
   archiveDir,
@@ -130,7 +131,7 @@ describe("archiveFile", () => {
       archiveFile(sourcePath, noopLog,);
 
       expect(readdirSync(sourceDir,).length,).toBe(0,);
-      const archived = readdirSync(backupDir,);
+      const archived = readdirSync(archiveDir(),);
       expect(archived.length,).toBe(1,);
       expect(archived[0],).toMatch(/^\d{4}-\d{2}-\d{2}T[\d-]+Z?-loop-lore\.db$/,);
     } finally {
@@ -139,10 +140,13 @@ describe("archiveFile", () => {
     }
   });
 
-  test("archiveDir falls back to the data-dir sibling when env is unset", () => {
+  test("archiveDir falls back to this instance's dir when env is unset", () => {
     delete Bun.env.LOOP_LORE_BACKUP_DIR;
     const dir = archiveDir();
     // ponytail: don't snapshot absolute paths — just sanity check the suffix.
-    expect(dir.endsWith("loop-lore-data-backup",),).toBe(true,);
+    expect(dir.endsWith(path.join("backups",),),).toBe(true,);
+    // The archive root lives INSIDE the instance dir: a shared sibling root
+    // let one instance's retention pass prune another's rollback point.
+    expect(dir.startsWith(resolveInstanceDir(process.env,),),).toBe(true,);
   });
 });

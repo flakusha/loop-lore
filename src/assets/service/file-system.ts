@@ -5,23 +5,37 @@
  * Asset Service — local filesystem helpers
  */
 import fs from "node:fs";
-import { join, resolve, } from "node:path";
+import { isAbsolute, join, resolve, } from "node:path";
+import { resolveInstanceDir, } from "../../config/state-dir";
 
 /**
  * Dangerous root paths that must never be used as upload directories.
  */
 const FORBIDDEN_ROOTS = ["/", "/home", "/root", "/etc", "/usr", "/bin", "/lib", "/var", "/opt",];
 
+/** Options for {@link resolveUploadDir}. */
+export interface ResolveUploadDirOptions {
+  /**
+   * Instance dir a relative upload dir resolves against. Defaults to this
+   * instance's state dir.
+   */
+  instanceDir?: string;
+}
+
 /**
  * Resolve the upload directory path from config.
- * Supports both absolute and relative paths.
+ * Relative paths resolve against the instance dir — never the process cwd, so
+ * the location does not depend on where the app was launched. Absolute paths
+ * win as-is.
  * Throws if resolved path is a forbidden system root.
  * @param uploadDir
+ * @param opts
  * @returns the resolved absolute upload directory
  * @throws Error when resolved path is a forbidden system root.
  */
-export function resolveUploadDir(uploadDir: string,): string {
-  const resolved = uploadDir.startsWith("/",) ? uploadDir : join(process.cwd(), uploadDir,);
+export function resolveUploadDir(uploadDir: string, opts?: ResolveUploadDirOptions,): string {
+  const base = opts?.instanceDir ?? resolveInstanceDir(process.env,);
+  const resolved = isAbsolute(uploadDir,) ? uploadDir : join(base, uploadDir,);
   const normalized = resolve(resolved,);
 
   // Block dangerous system roots

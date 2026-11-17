@@ -6,10 +6,11 @@
  * guards, and the store/delete/get helpers.
  */
 
-import { describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { resolveInstanceDir, } from "../../config/state-dir";
 import { deleteFile, getAssetFilePath, isStoragePathInUploadDir, resolveUploadDir, storeFile, } from "./file-system";
 
 const ASSET_ID = "aabbccddeeff00112233445566778899";
@@ -17,7 +18,7 @@ const ASSET_ID = "aabbccddeeff00112233445566778899";
 describe("resolveUploadDir", () => {
   test("returns a normalised absolute path for a relative input", () => {
     const dir = resolveUploadDir("./test-uploads",);
-    expect(dir,).toBe(join(process.cwd(), "test-uploads",),);
+    expect(dir,).toBe(join(resolveInstanceDir(process.env,), "test-uploads",),);
   });
 
   test("returns a normalised absolute path for an absolute input", () => {
@@ -48,6 +49,56 @@ describe("resolveUploadDir", () => {
 
   test("allows deep paths under /home (e.g. /home/user/projects)", () => {
     expect(resolveUploadDir("/home/testuser/my-project/uploads",),).toBe("/home/testuser/my-project/uploads",);
+  });
+});
+
+describe("resolveUploadDir — instance anchoring (F10)", () => {
+  const ENV_STATE = "LOOP_LORE_STATE_DIR";
+  const ENV_INSTANCE = "LOOP_LORE_INSTANCE";
+  let savedState: string | undefined;
+  let savedInstance: string | undefined;
+  let stateRoot = "";
+
+  beforeEach(() => {
+    savedState = process.env[ENV_STATE];
+    savedInstance = process.env[ENV_INSTANCE];
+    stateRoot = mkdtempSync(join(tmpdir(), "loop-lore-instance-",),);
+    process.env[ENV_STATE] = stateRoot;
+    process.env[ENV_INSTANCE] = "alpha";
+  },);
+
+  afterEach(() => {
+    if (savedState === undefined) { delete process.env[ENV_STATE]; }
+    else { process.env[ENV_STATE] = savedState; }
+
+    if (savedInstance === undefined) { delete process.env[ENV_INSTANCE]; }
+    else { process.env[ENV_INSTANCE] = savedInstance; }
+
+    rmSync(stateRoot, { recursive: true, force: true, },);
+  },);
+
+  test("resolves a relative upload dir inside the instance dir", () => {
+    expect(resolveUploadDir("uploads",),).toBe(join(stateRoot, "alpha", "uploads",),);
+  });
+
+  test("does not depend on the process cwd", () => {
+    const before = resolveUploadDir("uploads",);
+    const cwd = spyOn(process, "cwd",).mockReturnValue("/tmp/some-other-cwd",);
+    try {
+      expect(resolveUploadDir("uploads",),).toBe(before,);
+    } finally {
+      cwd.mockRestore();
+    }
+  });
+
+  test("keeps an absolute upload dir as-is", () => {
+    const absolute = join(tmpdir(), "absolute-upload",);
+    expect(resolveUploadDir(absolute,),).toBe(absolute,);
+  });
+
+  test("honours an explicitly injected instance dir", () => {
+    const injected = join(tmpdir(), "injected-instance",);
+    expect(resolveUploadDir("uploads", { instanceDir: injected, },),).toBe(join(injected, "uploads",),);
   });
 });
 

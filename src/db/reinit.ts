@@ -4,8 +4,6 @@
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
 import { existsSync, } from "node:fs";
-import path from "node:path";
-import { DATA_DIR, } from "../config/constants";
 import { loadConfig, } from "../config/load";
 import { resolveDbPath, } from "../config/state-dir";
 import { createLogger, getLogger, } from "../logger";
@@ -16,6 +14,22 @@ import { archiveFile, } from "./reinit-archive";
 import type { DB, } from "./schema";
 import { seedDefaultActors, } from "./seed";
 
+/**
+ * The files `db:reinit` archives before it rebuilds the database.
+ *
+ * Only the live database and its WAL/SHM siblings. The historical "mangled
+ * path" branch (a cwd-joined absolute DATA_DIR) could never exist on disk,
+ * and resolving it against DATA_DIR instead would have pointed it at ANOTHER
+ * instance's database file. The repo-local legacy databases are surfaced by
+ * the runtime's legacy warning (`findFirstLegacyDb`), which tells the
+ * operator to copy them over — reinit never moves them.
+ * @param dbPath - the live database file path
+ * @returns the paths reinit archives
+ */
+export function reinitArchiveTargets(dbPath: string,): string[] {
+  return [dbPath, `${dbPath}-wal`, `${dbPath}-shm`,];
+}
+
 /** */
 async function reinit(): Promise<void> {
   createLogger();
@@ -23,23 +37,13 @@ async function reinit(): Promise<void> {
 
   const config = loadConfig();
   const dbPath = resolveDbPath(process.env, config.server,);
-  const walPath = `${dbPath}-wal`;
-  const shmPath = `${dbPath}-shm`;
-
-  // Clean up old mangled path (pre-fix: path.join with absolute DATA_DIR)
-  const oldPath = path.join(process.cwd(), DATA_DIR, "loop-lore.db",);
-  if (oldPath !== dbPath) {
-    for (const p of [oldPath, `${oldPath}-wal`, `${oldPath}-shm`,]) {
-      if (existsSync(p,)) { archiveFile(p, log,); }
-    }
-  }
 
   log.info(`Dropping database at ${dbPath}...`,);
 
   // Close the eager module-level connection so file locks release
   await getDatabase(dbPath,).destroy();
 
-  for (const p of [dbPath, walPath, shmPath,]) {
+  for (const p of reinitArchiveTargets(dbPath,)) {
     if (existsSync(p,)) {
       archiveFile(p, log,);
     }
@@ -58,4 +62,6 @@ async function reinit(): Promise<void> {
   log.info("Database reinitialized successfully",);
 }
 
-await reinit();
+if (import.meta.main) {
+  await reinit();
+}

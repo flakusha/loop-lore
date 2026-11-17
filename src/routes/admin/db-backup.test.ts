@@ -15,6 +15,7 @@ import type { Kysely, } from "kysely";
 import { mkdtempSync, rmSync, } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { resolveInstanceSlug, } from "../../config/state-dir";
 import { UserRole, } from "../../db/enums";
 import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
@@ -103,7 +104,7 @@ describe("admin db backup routes", () => {
     const res = await handle(app, "GET", `${PREFIX}/admin/db/backup`,);
     expect(res.status,).toBe(200,);
     const body = await res.json() as { backups: unknown[]; dir: string };
-    expect(body.dir,).toBe(path.join(backupRoot, "db",),);
+    expect(body.dir,).toBe(path.join(backupRoot, resolveInstanceSlug(process.env,), "db",),);
     expect(body.backups,).toEqual([],);
   });
 
@@ -140,7 +141,7 @@ describe("admin db backup routes", () => {
     const { createDbBackup, } = await import("../../db/backup-restore");
     const snap = await createDbBackup({
       sqlite: testDb.sqlite as unknown as Database,
-      dir: path.join(backupRoot, "db",),
+      dir: path.join(backupRoot, resolveInstanceSlug(process.env,), "db",),
     },);
 
     const app = makeApp(UserRole.Admin,);

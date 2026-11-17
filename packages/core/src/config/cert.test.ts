@@ -18,10 +18,10 @@
  */
 
 import { createLogger, } from "@/logger";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeAll, beforeEach, describe, expect, spyOn, test, } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
-import { join, } from "node:path";
+import { isAbsolute, join, } from "node:path";
 import { ensureTlsCerts, } from "./cert";
 
 type SpawnSync = typeof Bun.spawnSync;
@@ -81,6 +81,73 @@ describe("ensureTlsCerts — fast path", () => {
   });
 });
 
+describe("ensureTlsCerts — instance anchoring (F10)", () => {
+  const ENV_STATE = "LOOP_LORE_STATE_DIR";
+  const ENV_INSTANCE = "LOOP_LORE_INSTANCE";
+  let savedState: string | undefined;
+  let savedInstance: string | undefined;
+  let stateRoot = "";
+
+  beforeEach(() => {
+    savedState = process.env[ENV_STATE];
+    savedInstance = process.env[ENV_INSTANCE];
+    stateRoot = mkdtempSync(join(tmpdir(), "loop-lore-cert-instance-",),);
+    process.env[ENV_STATE] = stateRoot;
+    process.env[ENV_INSTANCE] = "alpha";
+  },);
+
+  afterEach(() => {
+    if (savedState === undefined) { delete process.env[ENV_STATE]; }
+    else { process.env[ENV_STATE] = savedState; }
+    if (savedInstance === undefined) { delete process.env[ENV_INSTANCE]; }
+    else { process.env[ENV_INSTANCE] = savedInstance; }
+    rmSync(stateRoot, { recursive: true, force: true, },);
+  },);
+
+  test("resolves relative cert paths inside the instance dir", () => {
+    const keyPath = join(stateRoot, "alpha", "certs", "key.pem",);
+    const certPath = join(stateRoot, "alpha", "certs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    const result = ensureTlsCerts({ key: "certs/key.pem", cert: "certs/cert.pem", },);
+
+    expect(result,).toEqual({ key: keyPath, cert: certPath, },);
+  });
+
+  test("does not depend on the process cwd", () => {
+    const keyPath = join(stateRoot, "alpha", "certs", "key.pem",);
+    const certPath = join(stateRoot, "alpha", "certs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    const before = ensureTlsCerts({ key: "certs/key.pem", cert: "certs/cert.pem", },);
+    const cwd = spyOn(process, "cwd",).mockReturnValue("/tmp/some-other-cwd",);
+    try {
+      expect(ensureTlsCerts({ key: "certs/key.pem", cert: "certs/cert.pem", },),).toEqual(before,);
+    } finally {
+      cwd.mockRestore();
+    }
+  });
+
+  test("keeps absolute cert paths as-is", () => {
+    const keyPath = join(tempDir, "abs", "key.pem",);
+    const certPath = join(tempDir, "abs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    expect(ensureTlsCerts({ key: keyPath, cert: certPath, },),).toEqual({ key: keyPath, cert: certPath, },);
+  });
+
+  test("honours an explicitly injected instance dir", () => {
+    const injected = join(tempDir, "injected-instance",);
+    const keyPath = join(injected, "certs", "key.pem",);
+    const certPath = join(injected, "certs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    expect(
+      ensureTlsCerts({ key: "certs/key.pem", cert: "certs/cert.pem", }, { instanceDir: injected, },),
+    ).toEqual({ key: keyPath, cert: certPath, },);
+  });
+});
+
 describe("ensureTlsCerts — generation path", () => {
   test("creates parent directories and returns paths when openssl succeeds", () => {
     const keyPath = join(tempDir, "new", "key.pem",);
@@ -103,6 +170,27 @@ describe("ensureTlsCerts — generation path", () => {
     expect(result,).toEqual({ key: keyPath, cert: certPath, },);
     expect(existsSync(keyPath,),).toBe(true,);
     expect(existsSync(certPath,),).toBe(true,);
+  });
+
+  test("returns the resolved absolute paths when a relative config is generated", () => {
+    const keyPath = join(tempDir, "rel", "key.pem",);
+    const certPath = join(tempDir, "rel", "cert.pem",);
+
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      expect(cmd,).toContain("-keyout",);
+      expect(cmd,).toContain(keyPath,);
+      writeFileSync(keyPath, "generated-key",);
+      writeFileSync(certPath, "generated-cert",);
+      return { success: true, stdout: Buffer.from("",), stderr: Buffer.from("",), exitCode: 0, };
+    }) as SpawnSync;
+
+    const result = ensureTlsCerts({ key: "rel/key.pem", cert: "rel/cert.pem", }, { instanceDir: tempDir, },);
+
+    // The caller loads these files — they must point at the generated certs,
+    // not at the relative config strings.
+    expect(result,).toEqual({ key: keyPath, cert: certPath, },);
+    expect(isAbsolute(result?.key ?? "",),).toBe(true,);
+    expect(isAbsolute(result?.cert ?? "",),).toBe(true,);
   });
 
   test("tries the next binary when the first one throws (only on win32 with two binaries)", () => {

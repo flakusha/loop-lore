@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import fs from "node:fs";
 import path from "node:path";
-import { DATA_DIR, } from "../config/constants";
-import { resolveDbPath, type ServerBind, } from "../config/state-dir";
+import { resolveDbPath, resolveInstanceSlug, type ServerBind, } from "../config/state-dir";
 import { getLogger, } from "../logger";
 import type { Logger, } from "../logger";
+import { archiveDir, } from "./reinit-archive";
 
 /** Magic bytes every SQLite 3 database file starts with. */
 const SQLITE_HEADER = "SQLite format 3\0";
@@ -48,16 +48,13 @@ export interface RestoreDbBackupOpts {
 }
 
 /**
- * Resolve the backup directory for database snapshots. Reuses the reinit
- * archive root (backup-dir env override / data-dir sibling) under a `db/`
- * subtree so file archives and db snapshots never collide.
+ * Resolve the backup directory for database snapshots. Lives under this
+ * instance's archive root (backup-dir env override / instance-dir `backups/`)
+ * in a `db/` subtree so file archives and db snapshots never collide.
  * @returns the directory database backups are written to
  */
 export function dbBackupDir(): string {
-  const root = process.env["LOOP_LORE_BACKUP_DIR"] ??
-    path.resolve(DATA_DIR, "..", "loop-lore-data-backup",);
-
-  return path.join(root, "db",);
+  return path.join(archiveDir(), "db",);
 }
 
 /**
@@ -103,11 +100,14 @@ export async function createDbBackup(opts: CreateDbBackupOpts,): Promise<CreateD
   const { sqlite, dir, } = opts;
   fs.mkdirSync(dir, { recursive: true, },);
   const stamp = (opts.now ?? new Date()).toISOString().replace(/[:.]/g, "-",);
-  let name = `loop-lore-${stamp}${BACKUP_EXTENSION}`;
+  // The slug keeps two instances' snapshots apart even when they share a
+  // backup volume.
+  const slug = resolveInstanceSlug(process.env,);
+  let name = `loop-lore-${slug}-${stamp}${BACKUP_EXTENSION}`;
   let seq = 0;
   while (fs.existsSync(path.join(dir, name,),)) {
     seq += 1;
-    name = `loop-lore-${stamp}-${String(seq,).padStart(2, "0",)}${BACKUP_EXTENSION}`;
+    name = `loop-lore-${slug}-${stamp}-${String(seq,).padStart(2, "0",)}${BACKUP_EXTENSION}`;
   }
 
   const target = path.join(dir, name,);

@@ -14,6 +14,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, } from "bun:tes
 import type { Kysely, } from "kysely";
 import path from "node:path";
 import type { Config, } from "../../config/schema";
+import { resolveInstanceDir, } from "../../config/state-dir";
 import { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -222,7 +223,7 @@ describe("runGuardedToolCall — the sandbox scope", () => {
       },
     }, db,);
 
-    const expected = path.resolve(process.cwd(), "relative-uploads",);
+    const expected = path.resolve(resolveInstanceDir(process.env,), "relative-uploads",);
     expect(captured?.allowedFsReadPaths,).toEqual([expected,],);
     expect(captured?.allowedFsWritePaths,).toEqual([expected,],);
   });
@@ -247,7 +248,8 @@ describe("runGuardedToolCall — the sandbox scope", () => {
       },
     }, db,);
 
-    const uploads = path.resolve(process.cwd(), "uploads",);
+    // The upload dir follows the instance dir; the log dir is still cwd-relative.
+    const uploads = path.resolve(resolveInstanceDir(process.env,), "uploads",);
     const logs = path.resolve(process.cwd(), "logs",);
     expect(captured?.allowedFsReadPaths,).toEqual([uploads,],);
     expect(captured?.allowedFsWritePaths,).toEqual([uploads, logs,],);

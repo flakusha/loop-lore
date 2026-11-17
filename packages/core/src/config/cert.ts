@@ -14,9 +14,10 @@
 
 import { getLogger, } from "@/logger";
 import { existsSync, mkdirSync, } from "node:fs";
-import { dirname, } from "node:path";
+import { dirname, isAbsolute, join, } from "node:path";
 import { platform, } from "node:process";
 import type { TlsConfig, } from "./schema";
+import { resolveInstanceDir, } from "./state-dir";
 
 /** */
 export type TlsFiles = TlsConfig;
@@ -29,20 +30,38 @@ function getTlsLog(): ReturnType<ReturnType<typeof getLogger>["child"]> {
   return tlsLog;
 }
 
+/** Options for {@link ensureTlsCerts}. */
+export interface EnsureTlsCertsOptions {
+  /**
+   * Instance dir relative cert paths resolve against. Defaults to this
+   * instance's state dir.
+   */
+  instanceDir?: string;
+}
+
 /**
  * Ensure TLS key + cert exist. Auto-generates self-signed if missing.
+ * Relative paths resolve against the instance dir — never the process cwd, so
+ * the cert location does not depend on where the app was launched.
  * @param configPath
+ * @param opts
  * @returns TlsFiles paths if available, null if TLS is unavailable.
  */
-export function ensureTlsCerts(configPath: TlsFiles,): TlsFiles | null {
+export function ensureTlsCerts(configPath: TlsFiles, opts?: EnsureTlsCertsOptions,): TlsFiles | null {
+  const base = opts?.instanceDir ?? resolveInstanceDir(process.env,);
+  const resolved: TlsFiles = {
+    key: isAbsolute(configPath.key,) ? configPath.key : join(base, configPath.key,),
+    cert: isAbsolute(configPath.cert,) ? configPath.cert : join(base, configPath.cert,),
+  };
+
   // Both exist — use as-is
-  if (existsSync(configPath.key,) && existsSync(configPath.cert,)) {
-    return configPath;
+  if (existsSync(resolved.key,) && existsSync(resolved.cert,)) {
+    return resolved;
   }
 
   // Ensure parent directory exists
-  mkdirSync(dirname(configPath.key,), { recursive: true, },);
-  mkdirSync(dirname(configPath.cert,), { recursive: true, },);
+  mkdirSync(dirname(resolved.key,), { recursive: true, },);
+  mkdirSync(dirname(resolved.cert,), { recursive: true, },);
 
   // Generate self-signed cert
   getTlsLog().info("Generating self-signed development certificate...",);
@@ -62,9 +81,9 @@ export function ensureTlsCerts(configPath: TlsFiles,): TlsFiles | null {
         "-newkey",
         "rsa:2048",
         "-keyout",
-        configPath.key,
+        resolved.key,
         "-out",
-        configPath.cert,
+        resolved.cert,
         "-subj",
         "/C=XX/ST=Development/L=Local/O=loop-lore/CN=localhost",
         "-addext",
@@ -72,8 +91,11 @@ export function ensureTlsCerts(configPath: TlsFiles,): TlsFiles | null {
       ],);
 
       if (result.success) {
-        getTlsLog().info(`Certificate generated: ${configPath.cert}`,);
-        return configPath;
+        getTlsLog().info(`Certificate generated: ${resolved.cert}`,);
+        // The RESOLVED paths: the caller loads these files (Bun.file), and a
+        // relative config path would resolve against the cwd, not the
+        // instance dir the cert was just written to.
+        return resolved;
       }
     } catch {
       // Try next binary

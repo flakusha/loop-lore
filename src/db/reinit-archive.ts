@@ -10,7 +10,7 @@
  */
 import { mkdirSync, readdirSync, renameSync, statSync, unlinkSync, } from "node:fs";
 import path from "node:path";
-import { DATA_DIR, } from "../config/constants";
+import { resolveInstanceDir, resolveInstanceSlug, } from "../config/state-dir";
 import type { Logger, } from "../logger";
 import { toDate, } from "../utils/date";
 
@@ -18,14 +18,23 @@ export const MAX_ARCHIVES = Number(process.env.LOOP_LORE_REINIT_MAX_ARCHIVES ?? 
 export const MAX_AGE_DAYS = Number(process.env.LOOP_LORE_REINIT_MAX_AGE_DAYS ?? 90,);
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-/** Resolve the archive directory. Env override beats the data-dir sibling —
- * operations may store archives on a separate volume (e.g. cheap object
- * storage) to keep the data volume small.
+/** Resolve the archive directory for THIS instance.
+ *
+ * The root lives inside the instance dir: a root shared by every instance let
+ * one instance's retention pass prune another instance's rollback point.
+ * `LOOP_LORE_BACKUP_DIR` overrides the root — operations may store archives on
+ * a separate volume (e.g. cheap object storage) to keep the data volume small.
+ * The override is a ROOT: each instance archives to `<root>/<instance-slug>/`,
+ * so instances never share a retention pool.
  * @returns the directory archives are written to
  */
 export function archiveDir(): string {
-  return process.env.LOOP_LORE_BACKUP_DIR ??
-    path.resolve(DATA_DIR, "..", "loop-lore-data-backup",);
+  const override = process.env.LOOP_LORE_BACKUP_DIR?.trim();
+  if (override !== undefined && override !== "") {
+    return path.join(override, resolveInstanceSlug(process.env,),);
+  }
+
+  return path.join(resolveInstanceDir(process.env,), "backups",);
 }
 
 /** Move `p` into the timestamped backup dir; fall back to unlink on
