@@ -35346,6 +35346,20 @@
     "source": ".plan/tickets/TASK-ci-no-check-gate-executes-scripts-smoke-tests.md",
     "status": "Not Started"
   },
+  "TASK-CLAIM-MANIFEST-MACHINE-CHECKABLE-LANE-OWNERSHIP-PROTOCOL": {
+    "hash": "4aa89fc",
+    "git_issue": "4aa89fc",
+    "extid": "TASK-CLAIM-MANIFEST-MACHINE-CHECKABLE-LANE-OWNERSHIP-PROTOCOL",
+    "type": "TASK",
+    "title": "claim manifest: machine-checkable lane ownership protocol",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-claim-manifest-machine-checkable-lane-ownership-protocol.md",
+    "status": "open"
+  },
   "TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION": {
     "epic": "epic-prompt-improvement",
     "extid": "TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION",
@@ -45022,6 +45036,34 @@
     "tags": [],
     "title": "Guided-regen frontend menu wiring on assistant messages",
     "type": "TASK"
+  },
+  "TASK-H4-BUILD-INSTANCE-SCOPED-SYSTEM-CONFIG-OVERRIDES-VIA-KEY-TAX": {
+    "hash": "ce2f585",
+    "git_issue": "ce2f585",
+    "extid": "TASK-H4-BUILD-INSTANCE-SCOPED-SYSTEM-CONFIG-OVERRIDES-VIA-KEY-TAX",
+    "type": "TASK",
+    "title": "H4 build: instance-scoped system_config overrides via key taxonomy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-h4-build-instance-scoped-system-config-overrides-via-key-tax.md",
+    "status": "open"
+  },
+  "TASK-H5-BUILD-DB-BACKED-CROSS-INSTANCE-PERMISSION-QUEUE-ARCHIVE": {
+    "hash": "acd3d1c",
+    "git_issue": "acd3d1c",
+    "extid": "TASK-H5-BUILD-DB-BACKED-CROSS-INSTANCE-PERMISSION-QUEUE-ARCHIVE",
+    "type": "TASK",
+    "title": "H5 build: DB-backed cross-instance permission queue + archive",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-h5-build-db-backed-cross-instance-permission-queue-archive.md",
+    "status": "open"
   },
   "TASK-HARDEN-CANACCESSNSFW-REQUIRE-BIRTH-DATE": {
     "epic": "epic-review-dev-2026-08-26-security-data-integrity-merges",
@@ -58915,6 +58957,20 @@
     "title": "Role-scoped assistant command visibility",
     "type": "TASK"
   },
+  "TASK-ROLLBACK-LEDGER-APPEND-ONLY-MUTATION-LOG-BLOB-STORE-FOR-TMP-": {
+    "hash": "58d47ee",
+    "git_issue": "58d47ee",
+    "extid": "TASK-ROLLBACK-LEDGER-APPEND-ONLY-MUTATION-LOG-BLOB-STORE-FOR-TMP-",
+    "type": "TASK",
+    "title": "rollback ledger: append-only mutation log + blob store for .tmp scratch",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rollback-ledger-append-only-mutation-log-blob-store-for-tmp-.md",
+    "status": "open"
+  },
   "TASK-ROUTE-PLUGIN-CALLS-THROUGH-THE-SHARED-PROVIDER-PATH": {
     "hash": "87881e3",
     "git_issue": "87881e3",
@@ -61875,6 +61931,20 @@
     "source": ".plan/tickets/TASK-swipe-preference-pair-extraction-dpo-groundwork.md",
     "status": "Not Started"
   },
+  "TASK-SYNC-INSTANCE-RESOLUTION-RULE-AND-DROP-IGNORED-SQLITEFILENAM": {
+    "hash": "f444817",
+    "git_issue": "f444817",
+    "extid": "TASK-SYNC-INSTANCE-RESOLUTION-RULE-AND-DROP-IGNORED-SQLITEFILENAM",
+    "type": "TASK",
+    "title": "sync-instance-resolution-rule-and-drop-ignored-sqlitefilename",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-deployment-topologies.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sync-instance-resolution-rule-and-drop-ignored-sqlitefilenam.md",
+    "status": "open"
+  },
   "TASK-SYNTHETIC-QA-CAPTURE-WIRE-OR-REMOVE-DECISION-ADMIN-GATED-CAP": {
     "hash": "de50ac4",
     "git_issue": "de50ac4",
@@ -63462,6 +63532,20 @@
     "tags": [],
     "title": "TTS Provider Interface + Edge-TTS Integration",
     "type": "TASK"
+  },
+  "TASK-TTS-INPUT-LENGTH-CAP-REJECT-OVER-LONG-TTS-INPUT-WITH-400": {
+    "hash": "ef54de5",
+    "git_issue": "ef54de5",
+    "extid": "TASK-TTS-INPUT-LENGTH-CAP-REJECT-OVER-LONG-TTS-INPUT-WITH-400",
+    "type": "TASK",
+    "title": "tts-input-length-cap: reject over-long TTS input with 400",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-tts-foundation.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tts-input-length-cap-reject-over-long-tts-input-with-400.md",
+    "status": "open"
   },
   "TASK-TTS-STT-BACKENDS-CHATTERBOX-SERVER-TTS-AUDIO-SUITE-PARAKEET-": {
     "hash": "0c2ed43",

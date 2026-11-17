@@ -23,7 +23,7 @@ Explicitly NOT building:
 
 **Context:**
 
-The only multi-user path in the remote/federation epic; everything else here is single-user. Builds on the isolated pijul backend work, adds identity plus per-patch permission checks. Related: epic-harness-integration.md, epic-federation-swarm-sync.md.
+The only multi-user path in the remote/federation epic; everything else here is single-user. It is blocked on the `giwt` VCS seam and on the undecided topology in `TASK-pijul-backend-clone-per-agent-or-channel` (clone-per-agent vs channel-per-agent), not built on existing backend work; pijul has no workspace primitive, no GPG identity and no issue substrate, so identity plus per-patch permission checks are out of scope until that topology decision lands. Related: epic-harness-integration.md, epic-federation-swarm-sync.md.
 
 **Acceptance Criteria:**
 

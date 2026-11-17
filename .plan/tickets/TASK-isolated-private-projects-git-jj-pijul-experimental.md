@@ -12,7 +12,7 @@
 
 **Summary:**
 
-Isolated single-user private projects with a selectable VCS backend: git stable, jj experimental, pijul experimental. Backend choice sits behind the existing VCS seam and defaults to git; experimental backends are clearly labelled and fenced off from multi-user paths.
+Isolated single-user private projects with a selectable VCS backend: git stable, jj experimental, pijul experimental. Backend choice sits behind the VCS seam owned by the `giwt` CLI (`TASK-vcs-backend-interface-and-git-adapter`) and defaults to git; until that seam lands this ticket is a research spike and ships no jj or pijul backend in loop-lore, and experimental backends are clearly labelled and fenced off from multi-user paths.
 
 Explicitly NOT building:
 
@@ -23,7 +23,7 @@ Explicitly NOT building:
 
 **Context:**
 
-Private projects must stay single-user and isolated while letting jj and pijul mature behind an experimental flag. Reuse the existing VCS seam; add no second abstraction. Related: epic-harness-integration.md.
+Private projects must stay single-user and isolated while letting jj and pijul mature behind an experimental flag. The VCS seam is being created in the `giwt` CLI (`TASK-vcs-backend-interface-and-git-adapter`); loop-lore consumes it and adds no second abstraction, so jj and pijul work in this repo stays a research spike until the seam lands. Related: epic-harness-integration.md.
 
 **Acceptance Criteria:**
 
