@@ -20,6 +20,7 @@ import {
   LLAMA_SWAP_AUTOSTART_LISTEN_PORT_KEY,
   readEffectiveLlamaSwapConfig,
 } from "../../llm/llama-swap-effective-config";
+import { readRunningModels, resolveLlamaSwapBase, } from "../../llm/llama-swap-unload";
 import { ErrorCode, HttpStatus, jsonError, withPermissionAuth, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
@@ -52,16 +53,19 @@ async function readStatus(opts: AdminRouteOpts,) {
     opts.config.generation?.autoStart?.llamaSwap,
   );
 
+  const base = resolveLlamaSwapBase({ listenPort: effective?.listenPort, },);
+  const probe = base.trim() === ""
+    ? { ok: false, ids: [], }
+    : await readRunningModels({ llamaSwapBase: base, timeoutMs: 1_500, },);
+
   return {
     configured: effective?.configPath !== undefined && effective.configPath !== "",
     autoStartEnabled: effective?.enabled ?? false,
     listenPort: effective?.listenPort ?? null,
     configPath: effective?.configPath || null,
-    // No honest running-state discovery exists here. readRunningModels() in
-    // src/llm/llama-swap-unload.ts reports an empty set for BOTH an unreachable
-    // proxy and a live proxy with no models, so a network probe cannot answer
-    // "is it up" without a new endpoint/false-positive contract. Never guess.
-    running: false,
+    // `ok` is a real reachability signal from GET /running: an idle proxy still
+    // answers ok:true with no ids; an unreachable/malformed proxy answers ok:false.
+    running: probe.ok,
   };
 }
 

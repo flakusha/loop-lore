@@ -23,8 +23,16 @@ import { llamaSwapRoutes, } from "./llama-swap";
 let fixture: TestDb;
 let db: Kysely<DB>;
 let fileConfig: Config;
+let originalFetch: typeof fetch;
+let probeReachable = false;
 
 beforeAll(async () => {
+  originalFetch = globalThis.fetch;
+  globalThis.fetch = (async () =>
+    probeReachable
+      ? Response.json({ running: [], },)
+      : Promise.reject(new Error("llama-swap unreachable",),)) as unknown as typeof fetch;
+
   fixture = await createTestDb();
   db = fixture.db;
   fileConfig = {
@@ -37,6 +45,7 @@ beforeAll(async () => {
 },);
 
 afterAll(async () => {
+  globalThis.fetch = originalFetch;
   await destroyTestDb(fixture,);
 },);
 
@@ -95,6 +104,17 @@ describe("admin llama-swap routes", () => {
       configPath: "/etc/llama-swap.yaml",
       running: false,
     },);
+  });
+
+  test("status reports running only when the proxy probe answers", async () => {
+    probeReachable = true;
+    try {
+      const res = await handle(makeApp("admin",), "GET", "/api/admin/llama-swap/status",);
+      expect(res.status,).toBe(200,);
+      expect(((await res.json()) as LlamaSwapStatus).running,).toBe(true,);
+    } finally {
+      probeReachable = false;
+    }
   });
 
   test("rejects invalid ports and empty config paths", async () => {
