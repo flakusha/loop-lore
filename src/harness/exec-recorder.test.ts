@@ -242,7 +242,18 @@ describe("harness exec recorder", () => {
 
     it("defaults an omitted instanceId to this instance's slug", () => {
       const r = buildRunRecord({ taskType: "chat", model: "m", runMs: 1, result: "ok", },);
-      expect(r.instanceId,).toBe(resolveInstanceSlug(),);
+      // The ambient env decides the slug, and PORT=0 makes it undecidable:
+      // the recorder swallows that into null, so the expectation does too.
+      // Reading the SAME env on both sides keeps this independent of which
+      // file ran before it in this worker.
+      let expected: string | null = null;
+      try {
+        expected = resolveInstanceSlug();
+      } catch {
+        expected = null;
+      }
+
+      expect(r.instanceId,).toBe(expected,);
     });
 
     it("stamps the config-file port, not 'default', when the bind carries it", () => {
