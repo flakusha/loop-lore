@@ -146,6 +146,33 @@ export async function assertMigrationsNotStale<DB,>(
 }
 
 /**
+ * Bounded time a boot waits for another process's migration run before
+ * failing loud. Matches the per-connection default in createSqliteDialect —
+ * set explicitly here so runMigrations never inherits an unbounded (or
+ * foreign) busy timeout from a caller-built handle.
+ */
+const MIGRATION_BUSY_TIMEOUT_MS = 5000;
+
+/**
+ * Best-effort filesystem path of the database behind this handle, for
+ * contention errors. `PRAGMA database_list` is connection-local and takes no
+ * locks, so it stays readable while another process holds the write lock.
+ * @param database
+ * @returns the `main` database file, or "(unknown)" when it cannot be read
+ */
+async function describeDatabaseFile<DB,>(database: Kysely<DB>,): Promise<string> {
+  try {
+    const { rows, } = await sql<{ name: string; file: string }>`PRAGMA database_list`.execute(database,);
+    const main = rows.find((row,) => row.name === "main");
+    if (main?.file) { return main.file; }
+  } catch {
+    // Fall through — the path is diagnostic, never load-bearing.
+  }
+
+  return "(unknown)";
+}
+
+/**
  * @param database
  * @returns void
  * @throws {Error}
@@ -156,24 +183,60 @@ export async function runMigrations(database: ReturnType<typeof getDatabase>,): 
   const migrations = await getMigrationFiles();
   await assertMigrationsNotStale(database, migrations,);
 
-  const migrator = new Migrator({
-    db: database,
-    provider: {
-      getMigrations: async (): Promise<Record<string, Migration>> => migrations,
-    },
-  },);
-
-  const { error, results, } = await migrator.migrateToLatest();
-
-  if (results) {
-    for (const result of results) {
-      log.info(`Migration ${result.migrationName}: ${result.status}`,);
-    }
+  // Cross-process guard (BUG-concurrent-migrations-race-on-a-shared-sqlite-file):
+  // the Kysely Migrator takes no SQLite lock of its own (SqliteAdapter's
+  // acquireMigrationLock is a no-op and it runs migration DDL without a
+  // transaction), so two processes sharing one file would both read the same
+  // kysely_migration state and apply the same DDL. BEGIN IMMEDIATE takes the
+  // RESERVED lock up front: a second process either waits for the first
+  // (bounded by the busy timeout, then sees the first's rows and applies
+  // nothing) or fails loud below. No shipped migration opens its own
+  // transaction (only trigger bodies contain BEGIN), so nothing inside can
+  // prematurely close this transaction.
+  await sql.raw(`PRAGMA busy_timeout = ${MIGRATION_BUSY_TIMEOUT_MS}`,).execute(database,);
+  const dbPath = await describeDatabaseFile(database,);
+  try {
+    await sql.raw("BEGIN IMMEDIATE",).execute(database,);
+  } catch (error) {
+    if (!(error instanceof Error) || !/database is locked|SQLITE_BUSY/i.test(error.message,)) { throw error; }
+    throw new Error(
+      `Migration lock contention on ${dbPath}: another process is migrating this database. ` +
+        `Wait for it to finish, then retry (BEGIN IMMEDIATE timed out after ${MIGRATION_BUSY_TIMEOUT_MS}ms).`,
+      { cause: error, },
+    );
   }
 
-  if (error) {
-    log.error("Migration failed", error instanceof Error ? error : undefined,);
-    throw new Error("Migration failed — see above", { cause: error, },);
+  try {
+    const migrator = new Migrator({
+      db: database,
+      provider: {
+        getMigrations: async (): Promise<Record<string, Migration>> => migrations,
+      },
+    },);
+
+    const { error, results, } = await migrator.migrateToLatest();
+
+    if (results) {
+      for (const result of results) {
+        log.info(`Migration ${result.migrationName}: ${result.status}`,);
+      }
+    }
+
+    if (error) {
+      log.error("Migration failed", error instanceof Error ? error : undefined,);
+      throw new Error("Migration failed — see above", { cause: error, },);
+    }
+
+    await sql.raw("COMMIT",).execute(database,);
+  } catch (error) {
+    try {
+      await sql.raw("ROLLBACK",).execute(database,);
+    } catch {
+      // Best-effort release: the connection may already be out of the
+      // transaction (e.g. COMMIT itself failed). Never mask the original error.
+    }
+
+    throw error;
   }
 
   log.info("Database migrations completed successfully",);
