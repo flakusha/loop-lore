@@ -6,6 +6,7 @@ import { Kysely, } from "kysely";
 import { existsSync, } from "node:fs";
 import path from "node:path";
 import { DATA_DIR, } from "../config/constants";
+import { loadConfig, } from "../config/load";
 import { resolveDbPath, } from "../config/state-dir";
 import { createLogger, getLogger, } from "../logger";
 import { seedHarnessModelCapabilities, } from "../seeding";
@@ -20,7 +21,8 @@ async function reinit(): Promise<void> {
   createLogger();
   const log = getLogger().child({ module: "reinit", },);
 
-  const dbPath = resolveDbPath();
+  const config = loadConfig();
+  const dbPath = resolveDbPath(process.env, config.server,);
   const walPath = `${dbPath}-wal`;
   const shmPath = `${dbPath}-shm`;
 
@@ -35,7 +37,7 @@ async function reinit(): Promise<void> {
   log.info(`Dropping database at ${dbPath}...`,);
 
   // Close the eager module-level connection so file locks release
-  await getDatabase().destroy();
+  await getDatabase(dbPath,).destroy();
 
   for (const p of [dbPath, walPath, shmPath,]) {
     if (existsSync(p,)) {

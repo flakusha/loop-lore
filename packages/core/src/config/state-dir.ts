@@ -112,9 +112,9 @@ export function resolveStateRoot(env: StateEnv = process.env,): string {
  * different dirs. Port 0 (ephemeral) throws — it cannot name a stable dir,
  * so the operator must pin one via --instance / LOOP_LORE_INSTANCE.
  *
- * Side effect: when PORT is set without LOOP_LORE_INSTANCE the PORT env
- * silently selects the database, so a one-line warning goes to stderr (once
- * per process) naming the selected dir.
+ * Side effect: when PORT is set without LOOP_LORE_INSTANCE (and no server
+ * bind port is set) the PORT env silently selects the database, so a
+ * one-line warning goes to stderr (once per process) naming the selected dir.
  */
 export function resolveInstanceSlug(env: StateEnv = process.env, server?: ServerBind,): string {
   const named = pick(env, INSTANCE_ENV_VAR,);
@@ -128,7 +128,7 @@ export function resolveInstanceSlug(env: StateEnv = process.env, server?: Server
       "ephemeral server.port 0 needs an explicit instance: set LOOP_LORE_INSTANCE or pass --instance <name> so the database path is stable across restarts",
     );
   }
-  emitPortWarningOnce(env,);
+  emitPortWarningOnce(env, server,);
   if (portText === "") {
     return DEFAULT_INSTANCE_SLUG;
   }
@@ -151,24 +151,35 @@ export function resetPortWarningForTests(): void {
 
 /**
  * @param env - environment to read
+ * @param server - resolved server bind; when its port is set the bind (not PORT env) selected the dir, so no warning
  * @returns the one-line stderr warning when PORT selects the state dir
  * without LOOP_LORE_INSTANCE, else undefined (pure — test this, not stderr)
  */
-export function portWithoutInstanceWarning(env: StateEnv,): string | undefined {
+export function portWithoutInstanceWarning(env: StateEnv, server?: ServerBind,): string | undefined {
+  if (pick(env, INSTANCE_ENV_VAR,) !== undefined) {
+    return undefined;
+  }
+  const serverPort = server?.port === undefined ? "" : String(server.port,).trim();
+  if (serverPort !== "") {
+    return undefined;
+  }
   const port = pick(env, PORT_ENV_VAR,);
-  if (port === undefined || pick(env, INSTANCE_ENV_VAR,) !== undefined) {
+  if (port === undefined) {
     return undefined;
   }
   return `LOOP_LORE_INSTANCE is unset and PORT=${port} selects state dir "port-${
     sanitizeInstanceSlug(port,)
   }" — set LOOP_LORE_INSTANCE (or --instance <name>) to pin the database explicitly.`;
 }
-/** @param env - environment to read */
-function emitPortWarningOnce(env: StateEnv,): void {
+/**
+ * @param env - environment to read
+ * @param server - resolved server bind, forwarded to the warning selector
+ */
+function emitPortWarningOnce(env: StateEnv, server?: ServerBind,): void {
   if (portWarningEmitted) {
     return;
   }
-  const warning = portWithoutInstanceWarning(env,);
+  const warning = portWithoutInstanceWarning(env, server,);
   if (warning !== undefined) {
     portWarningEmitted = true;
     console.warn(warning,);

@@ -111,6 +111,16 @@ describe("resolveInstanceSlug effective server bind", () => {
     expect(portWithoutInstanceWarning({ PORT: "4000", LOOP_LORE_INSTANCE: "x", },),).toBeUndefined();
   });
 
+  test("portWithoutInstanceWarning stays silent when the server bind selected the dir", () => {
+    // PORT+server disagreement: the slug comes from the bind (port-7169), so a
+    // warning naming port-4000 would point at the wrong dir.
+    expect(portWithoutInstanceWarning({ PORT: "4000", }, { port: 7169, },),).toBeUndefined();
+    expect(portWithoutInstanceWarning({}, { port: 7169, },),).toBeUndefined();
+    expect(portWithoutInstanceWarning({ PORT: "4000", }, { port: "7169", host: "0.0.0.0", },),).toBeUndefined();
+    // A blank server port is unset — PORT still selects, so the warning still fires.
+    expect(portWithoutInstanceWarning({ PORT: "4000", }, { port: "", },),).toContain("port-4000",);
+  });
+
   test("resolveInstanceSlug warns once per process on stderr", () => {
     resetPortWarningForTests();
     const warn = spyOn(console, "warn",).mockImplementation(() => {},);
@@ -119,6 +129,17 @@ describe("resolveInstanceSlug effective server bind", () => {
       resolveInstanceSlug({ PORT: "4000", },);
       expect(warn,).toHaveBeenCalledTimes(1,);
       expect(String(warn.mock.calls[0]?.[0],),).toContain("port-4000",);
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  test("resolveInstanceSlug with a disagreeing PORT stays silent and uses the bind", () => {
+    resetPortWarningForTests();
+    const warn = spyOn(console, "warn",).mockImplementation(() => {},);
+    try {
+      expect(resolveInstanceSlug({ PORT: "4000", }, { port: 7169, },),).toBe("port-7169",);
+      expect(warn,).not.toHaveBeenCalled();
     } finally {
       warn.mockRestore();
     }

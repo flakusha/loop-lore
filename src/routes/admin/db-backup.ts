@@ -37,7 +37,6 @@ import type { AdminRouteOpts, } from "./types";
  * @returns {Elysia}
  */
 export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
-  void opts;
   const dir = dbBackupDir();
   const log = (): ReturnType<ReturnType<typeof getLogger>["child"]> =>
     getLogger().child({ module: "admin-db-backup", },);
@@ -115,7 +114,7 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             const backupPath = resolveBackupPath(dir, ctx.body.name,);
             const result = await restoreDbBackup({
               backupPath,
-              livePath: liveDbPath(),
+              livePath: liveDbPath(opts.config.server,),
               sqlite,
               dir,
               closeDb: resetDatabaseSingleton,

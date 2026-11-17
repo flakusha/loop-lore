@@ -6,6 +6,8 @@ import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
+import { loadConfig, } from "../config/load";
+import { resolveDbPath, } from "../config/state-dir";
 import { createLogger, getLogger, } from "../logger";
 import { getDatabase, } from "./index";
 
@@ -180,7 +182,8 @@ export async function runMigrations(database: ReturnType<typeof getDatabase>,): 
 /** */
 async function migrate(): Promise<void> {
   createLogger();
-  const database = getDatabase();
+  const config = loadConfig();
+  const database = getDatabase(resolveDbPath(process.env, config.server,),);
   await runMigrations(database,);
   await database.destroy();
 }

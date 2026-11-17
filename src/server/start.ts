@@ -12,6 +12,7 @@ import { applyConfigChange, initConfigHotApply, onConfigChange, } from "../confi
 import { applyHotConfig, } from "../config/hot-apply-consumers";
 import { loadConfig, } from "../config/load";
 import type { Config, } from "../config/schema";
+import { resolveDbPath, } from "../config/state-dir";
 import { getScheduler, } from "../cron";
 import { initAnonymousMode, initSmk, } from "../crypto";
 import { getDatabase, } from "../db/index";
@@ -152,7 +153,7 @@ export async function start() {
     startLogger.info("all providers healthy", { module: "server", count: healthResults.length, },);
   }
 
-  const database = getDatabase();
+  const database = getDatabase(resolveDbPath(process.env, config.server,),);
   const logger = getLogger();
   bindSharedQuotaEngine(database,);
 

@@ -130,6 +130,34 @@ describe("xdg state paths", () => {
     rmSync(root, { recursive: true, force: true, },);
   });
 
+  test("config-file server port selects the db through getDatabase", async () => {
+    const saved = saveEnv();
+    const root = scratch();
+    delete process.env[ENV_DB];
+    delete process.env[ENV_STATE];
+    delete process.env[ENV_INSTANCE];
+    delete process.env[ENV_PORT];
+    process.env[ENV_XDG] = path.join(root, "xdg",);
+    let opened = "";
+    try {
+      // Same composition as src/server/start.ts: the loaded config.server
+      // wins over (empty) env, so a config-file port gets its own db file.
+      opened = resolveDbPath(process.env, { port: 7169, },);
+      expect(opened,).toBe(
+        path.join(root, "xdg", "loop-lore", "port-7169", "loop-lore.db",),
+      );
+
+      getDatabase(opened,);
+      expect(getSqliteDatabase(),).not.toBeNull();
+    } finally {
+      restoreEnv(saved,);
+    }
+
+    await resetDatabaseSingleton();
+    expect(opened.endsWith(path.join("port-7169", "loop-lore.db",),),).toBe(true,);
+    rmSync(root, { recursive: true, force: true, },);
+  });
+
   test("explicit getDatabase(path) arg wins over env", async () => {
     const saved = saveEnv();
     const root = scratch();

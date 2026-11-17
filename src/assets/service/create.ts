@@ -306,6 +306,13 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
     // NULL content_hash, the dedupe opt-out, because the dedup key is already
     // taken by that other row. The call then falls through to the normal path
     // below, which reports the local asset as a fresh upload.
+    // console, not the app logger: this path can run before logging is
+    // initialized, and the operator needs to see the silent dedupe opt-out.
+    // eslint-disable-next-line no-console
+    console.warn(
+      `asset dedupe key held by foreign row; storing local copy without content hash (owner=${input.ownerId} contentHash=${contentHash})`,
+    );
+
     await database.insertInto("assets",).values({ ...values, content_hash: null, },).execute();
   }
 
