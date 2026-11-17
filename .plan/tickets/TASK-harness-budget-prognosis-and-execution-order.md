@@ -100,6 +100,17 @@ folded in before 5; worker B (fast) runs 4 + 6 + 9 in parallel; worker C
 (good) takes 7 + 8 after one shared scope-design note. Total rough cost:
 6M + 2S + 1 doc-line.
 
+**Model/ACP selection policy (routing rules, evaluated in this priority order):**
+
+The "budget" is the routing rule the harness function applies per task. Each rule is if/then; the first matching rule in priority order decides, and rule 1 bypasses all below it.
+
+- Rule 1 (explicit override): IF the user names a backend ("Use Antigravity" / "Use Claude Code" / "Use Minimax" / "Use GLM" / etc.) THEN route directly to it when available, else through ACP. An explicit command bypasses every heuristic below.
+- Rule 2 (urgency): IF the task is urgent THEN use the fastest capable model/ACP even at higher cost; IF the task is delay-tolerant THEN free models are permitted subject to rate limits and low inference speed.
+- Rule 3 (capabilities): IF the task is judgment-class (authz source of truth, schema migration, check-and-claim atomicity, cross-instance design — the H2/H16/H17/H5/H4 class in the capability note above) THEN route to the good-worker pool only; IF the task is mechanical-class (affected-row-count pattern copy, family pin, additive field, doc edit — the H1/H3/H12/H13 class) THEN the fast-worker-safe pool is eligible. Capability fit gates price: never route a judgment task to a fast worker to save cost.
+- Rule 4 (cache economics): IF a provider holds usable cache allocation for this task AND that provider is capability-adequate per rule 3 THEN prefer it over switching providers (cache reads there are cheaper than a cold start elsewhere).
+- Rule 5 (budget limits): IF the load is sustained THEN subscription-first — a coding subscription carries the lower rate limit but also the lower relative price, so it is the default for bulk throughput; IF an urgency burst exceeds subscription rate limits THEN spill over to paid providers, consulting the current known remaining provider budget before routing paid.
+- Rule 6 (free models): IF a free model is sufficient for the task AND the task tolerates delay THEN free-model routing is allowed; otherwise it is not an option regardless of price (rules 2 and 3 dominate).
+
 **Acceptance Criteria:**
 
 - [ ] This ticket is filed under `epic-harness-integration` with the ranking, capability note, and execution order above.
