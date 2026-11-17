@@ -6466,7 +6466,7 @@ export async function insertAuthFactors(
   user_id: string,
   kind: FactorKind,
   created_at: number,
-  opts?: { id?: string; target?: string | null },
+  opts?: { id?: string },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();

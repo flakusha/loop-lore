@@ -215,7 +215,6 @@ export const SCHEMA = new SchemaManifest()
     user_id: col("text", { notNull: true, },),
     kind: col("text", { notNull: true, },),
     created_at: col("integer", { notNull: true, },),
-    target: col("text",),
   },)
   .table("autonomy_budget", {
     scope_kind: col("text", { notNull: true, },),
