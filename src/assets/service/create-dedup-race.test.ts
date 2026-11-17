@@ -10,14 +10,14 @@
  * so these tests exercise real interleavings rather than the serial path.
  */
 import { describe, expect, test, } from "bun:test";
-import { mkdtempSync, readdirSync, readFileSync, rmSync, } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { AssetType, } from "../../db/enums";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertUsers, } from "../../test-utils/insert-helpers";
+import { insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
 import { makeMinimalPng, } from "../test-helpers";
-import { createAsset, } from "./create";
+import { createAsset, hashBuffer, } from "./create";
 import type { CreateAssetInput, } from "./types";
 
 const ownerIdFor = async (
@@ -297,6 +297,72 @@ describe("createAsset concurrent dedup", () => {
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("a dedup hit on another instance's row is a miss, not a duplicate", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-asset-foreign-",),);
+    const foreignDir = mkdtempSync(join(tmpdir(), "ll-asset-foreign-other-",),);
+    await insertUsers(db, "foreign-owner", "Foreign Owner",);
+    const ownerId = await ownerIdFor(db, "foreign-owner",);
+    const buffer = makeMinimalPng(5, 4,);
+    const contentHash = hashBuffer(buffer,);
+
+    try {
+      // A row written by another instance: same owner, same bytes, same tier —
+      // so the dedup key fires — but its bytes live in another upload dir.
+      const foreignPath = join(foreignDir, "raw", "aa", "bb", "foreign.png",);
+      const foreignId = await insertAssets(
+        db,
+        ownerId,
+        "foreign.png",
+        "image/png",
+        AssetType.Image,
+        buffer.length,
+        foreignPath,
+        { content_hash: contentHash, encryption_tier: "public", encrypted_key_id: null, },
+      );
+
+      const result = await createAsset({
+        database: db,
+        input: {
+          ownerId,
+          filename: "foreign.png",
+          mimeType: "image/png",
+          assetType: AssetType.Image,
+          sizeBytes: buffer.length,
+          buffer,
+        },
+        uploadDir,
+      },);
+
+      // The foreign row must not be handed back: its bytes are not ours to
+      // serve or delete, so the caller gets the local copy instead.
+      expect(result.duplicate,).toBe(false,);
+      expect(result.asset.id,).not.toBe(foreignId,);
+      expect(result.asset.storage_path,).not.toBe(foreignPath,);
+
+      // The local copy is kept on disk and is what the caller gets.
+      expect(result.asset.storage_path,).toMatch(/^raw\//,);
+      expect(existsSync(join(uploadDir, result.asset.storage_path,),),).toBe(true,);
+
+      // The foreign row is untouched, and the local row is stored under its
+      // own id — with a NULL content_hash, since the dedup key is taken.
+      const rows = await db.selectFrom("assets",).select(["id", "storage_path", "content_hash",],).execute();
+      expect(rows.length,).toBe(2,);
+
+      const local = rows.find((row,) => row.id === result.asset.id);
+      expect(local?.storage_path,).toBe(result.asset.storage_path,);
+      expect(local?.content_hash,).toBeNull();
+
+      const foreign = rows.find((row,) => row.id === foreignId);
+      expect(foreign?.storage_path,).toBe(foreignPath,);
+      expect(foreign?.content_hash,).toBe(contentHash,);
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
+      rmSync(foreignDir, { recursive: true, force: true, },);
     }
   });
 });

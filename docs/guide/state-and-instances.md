@@ -36,8 +36,14 @@ Two writers on one file stay forbidden.
 Explicit paths always win and skip the instance dir:
 `LOOP_LORE_DB_PATH`, `ASSETS_UPLOAD_DIR`, `TLS_KEY` / `TLS_CERT`,
 `LOOP_LORE_BACKUP_DIR`, and the `getDatabase(path)` argument.
-`config.db.sqliteFilename` is ignored at runtime — set
-`LOOP_LORE_DB_PATH` instead.
+
+### Database file
+
+The live SQLite file is chosen by the `getDatabase(path)` argument, else
+`LOOP_LORE_DB_PATH`, else `$STATE/<instance>/loop-lore.db`.
+`config.db.sqliteFilename` is currently ignored at runtime — the runtime
+never reads it — so set `LOOP_LORE_DB_PATH` (or pass a path to
+`getDatabase(path)`) to move the database.
 
 ## Secret-bearing files
 

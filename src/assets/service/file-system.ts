@@ -42,6 +42,23 @@ export function resolveUploadDir(uploadDir: string,): string {
 }
 
 /**
+ * Whether a stored `storage_path` resolves inside the given upload dir.
+ *
+ * `storage_path` is DB-controlled, so a row can point at bytes that live
+ * outside this instance's upload dir (another instance's state dir, an
+ * absolute path left by an older install). Such a row must never be served
+ * or unlinked from here.
+ * @param uploadDir
+ * @param storagePath
+ * @returns true when the path resolves inside the resolved upload dir
+ */
+export function isStoragePathInUploadDir(uploadDir: string, storagePath: string,): boolean {
+  const root = resolveUploadDir(uploadDir,);
+  const fullPath = resolve(root, storagePath,);
+  return fullPath.startsWith(`${root}/`,);
+}
+
+/**
  * Store a file on the local filesystem.
  * Returns the relative storage path (e.g., "ab/cd/uuid.jpg").
  * @param uploadDir
@@ -55,7 +72,7 @@ export function storeFile(uploadDir: string, assetId: string, filename: string, 
   const root = resolveUploadDir(uploadDir,);
   const subDir = `${assetId.slice(0, 2,)}/${assetId.slice(2, 4,)}`;
   const fullDir = join(root, "raw", subDir,);
-  fs.mkdirSync(fullDir, { recursive: true, },);
+  fs.mkdirSync(fullDir, { recursive: true, mode: 0o700, },);
 
   // Preserve a sanitized extension only: basename (no separators), then a
   // strict charset/length whitelist. A raw filename like "../../evil" or

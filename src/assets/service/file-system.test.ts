@@ -10,7 +10,7 @@ import { describe, expect, test, } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
-import { deleteFile, getAssetFilePath, resolveUploadDir, storeFile, } from "./file-system";
+import { deleteFile, getAssetFilePath, isStoragePathInUploadDir, resolveUploadDir, storeFile, } from "./file-system";
 
 const ASSET_ID = "aabbccddeeff00112233445566778899";
 
@@ -238,6 +238,43 @@ describe("path traversal containment (DB-controlled storage_path)", () => {
       expect(existsSync(getAssetFilePath(uploadDir, storagePath,),),).toBe(false,);
     } finally {
       rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+});
+
+describe("isStoragePathInUploadDir", () => {
+  test("accepts a relative path inside the upload dir", () => {
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-fs-inscope-",),);
+    try {
+      expect(isStoragePathInUploadDir(uploadDir, "raw/aa/bb/x.png",),).toBe(true,);
+      expect(isStoragePathInUploadDir(uploadDir, join(uploadDir, "raw", "aa", "bb", "x.png",),),).toBe(true,);
+    } finally {
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("rejects a path outside the upload dir", () => {
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-fs-outscope-",),);
+    try {
+      expect(isStoragePathInUploadDir(uploadDir, "/etc/passwd",),).toBe(false,);
+      expect(isStoragePathInUploadDir(uploadDir, "../../../../etc/passwd",),).toBe(false,);
+    } finally {
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("rejects a sibling-directory prefix trap", () => {
+    // Root `<tmp>/up`, target `<tmp>/uploads-evil/x`. A naive `startsWith(root)`
+    // would accept this because `<tmp>/uploads-evil` starts with `<tmp>/up`.
+    const base = mkdtempSync(join(tmpdir(), "ll-fs-sibling-pfx-",),);
+    const root = join(base, "up",);
+    const sibling = join(base, "uploads-evil",);
+    mkdirSync(root, { recursive: true, },);
+    mkdirSync(sibling, { recursive: true, },);
+    try {
+      expect(isStoragePathInUploadDir(root, "../uploads-evil/x",),).toBe(false,);
+    } finally {
+      rmSync(base, { recursive: true, force: true, },);
     }
   });
 });

@@ -13,7 +13,7 @@ import { uid, } from "../../utils";
 import { isEncryptedAsset, } from "../encryption";
 import { extractImageMetadata, } from "../metadata";
 import { initialAlphaStatus, } from "./alpha-status";
-import { deleteFile, storeFile, } from "./file-system";
+import { deleteFile, isStoragePathInUploadDir, storeFile, } from "./file-system";
 import { writeThumbnail, } from "./thumbnail";
 import { seedBaseTransform, } from "./transforms";
 import type { AssetRecord, CreateAssetOpts, CreateAssetResult, } from "./types";
@@ -206,9 +206,6 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
   // nothing references them. The thumbnail lives under the same id-scoped
   // layout and goes with them.
   if (result.length > 0 && Number(result[0]!.numInsertedOrUpdatedRows,) === 0) {
-    if (thumbnailPath !== null) { deleteFile(uploadDir, thumbnailPath,); }
-    deleteFile(uploadDir, storagePath,);
-
     // Re-read on the SAME key as the conflict target. Filtering more loosely
     // here is a real bug: when one owner holds identical bytes at two tiers, an
     // unfiltered re-read returns the other tier's row, handing the caller a
@@ -245,7 +242,14 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       ? base.where("encrypted_key_id", "is", null,)
       : base.where("encrypted_key_id", "=", encryptedKeyId,)).executeTakeFirst();
 
-    if (existing) {
+    if (existing && isStoragePathInUploadDir(uploadDir, existing.storage_path,)) {
+      // In scope: hand back the winner and drop the bytes this call already
+      // wrote — storage_path is keyed by our own uid, so nothing references
+      // them. The thumbnail lives under the same id-scoped layout and goes
+      // with them.
+      if (thumbnailPath !== null) { deleteFile(uploadDir, thumbnailPath,); }
+      deleteFile(uploadDir, storagePath,);
+
       // Backup scheduling on the dedupe-hit path too: the upload resolved
       // to an existing row, still a completed upload. Failure-safe.
       // Payload carries assetId + contentHash (resolve keys) plus the row
@@ -293,6 +297,16 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
         duplicate: true,
       };
     }
+
+    // The dedup key is held by another row, so our own row was not written.
+    // If that row's bytes live outside this instance's upload dir (another
+    // instance wrote it, or an older install left an absolute path), it must
+    // not be handed back: the caller would link a file this instance does not
+    // own. Keep the local bytes and store the local copy instead — under a
+    // NULL content_hash, the dedupe opt-out, because the dedup key is already
+    // taken by that other row. The call then falls through to the normal path
+    // below, which reports the local asset as a fresh upload.
+    await database.insertInto("assets",).values({ ...values, content_hash: null, },).execute();
   }
 
   if (input.mimeType.startsWith("image/",)) {
