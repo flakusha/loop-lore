@@ -2989,6 +2989,26 @@
     "title": "computeContextWindow phase-3 trims newest instead of oldest",
     "type": "BUG"
   },
+  "BUG-CONCURRENT-MIGRATIONS-RACE-ON-A-SHARED-SQLITE-FILE": {
+    "hash": "ba4e666",
+    "git_issue": "ba4e666",
+    "extid": "BUG-CONCURRENT-MIGRATIONS-RACE-ON-A-SHARED-SQLITE-FILE",
+    "type": "BUG",
+    "title": "Concurrent migrations race on a shared SQLite file",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-multi-instance-reconciliation",
+    "project": "",
+    "tags": [
+      "db",
+      "sqlite",
+      "migrations",
+      "concurrency",
+      "boot"
+    ],
+    "source": ".plan/tickets/BUG-concurrent-migrations-race-on-a-shared-sqlite-file.md",
+    "status": "open"
+  },
   "BUG-CONFIG-FILE-RELOAD-SILENTLY-RE-ENABLES-NSFW-AFTER-THE-ADMIN-": {
     "hash": "b751a45",
     "extid": "BUG-CONFIG-FILE-RELOAD-SILENTLY-RE-ENABLES-NSFW-AFTER-THE-ADMIN-",
@@ -45068,6 +45088,23 @@
     "source": ".plan/tickets/TASK-harness-backlog-jira.md",
     "status": "Not Started",
     "git_issue": "7ab14da"
+  },
+  "TASK-HARNESS-BUDGET-PROGNOSIS-AND-EXECUTION-ORDER": {
+    "hash": "bdb22d9",
+    "git_issue": "bdb22d9",
+    "extid": "TASK-HARNESS-BUDGET-PROGNOSIS-AND-EXECUTION-ORDER",
+    "type": "TASK",
+    "title": "harness budget prognosis and execution order",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [
+      "harness",
+      "planning"
+    ],
+    "source": ".plan/tickets/TASK-harness-budget-prognosis-and-execution-order.md",
+    "status": "open"
   },
   "TASK-HARNESS-CACHE-BUDGETS": {
     "hash": "1bf6c77",
