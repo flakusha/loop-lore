@@ -9,9 +9,11 @@ import { createLogger, } from "../logger";
 import {
   createDbBackup,
   hasSqliteHeader,
+  InvalidSnapshotError,
   listDbBackups,
   resolveBackupPath,
   restoreDbBackup,
+  validateSqliteSnapshot,
 } from "./backup-restore";
 
 try {
@@ -211,5 +213,15 @@ describe("db backup/restore service", () => {
     },),).rejects.toThrow(/Snapshot/,);
 
     expect(readFileSync(livePath,),).toEqual(before,);
+  });
+
+  test("validateSqliteSnapshot reports a path-free InvalidSnapshotError for a schema-less snapshot", () => {
+    const empty = path.join(dir, "validator-empty.db",);
+    const emptyDb = new Database(empty,);
+    emptyDb.exec("PRAGMA user_version = 1;",);
+    emptyDb.close();
+
+    expect(() => validateSqliteSnapshot(empty,)).toThrow(InvalidSnapshotError,);
+    expect(() => validateSqliteSnapshot(empty,)).toThrow(/no user tables/,);
   });
 });
