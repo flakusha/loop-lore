@@ -16,6 +16,8 @@
 
 import { describe, expect, test, } from "bun:test";
 import { deflateSync, } from "node:zlib";
+import { callDecisionModel, } from "../../../src/aux-pipeline/decision-client";
+import { buildChoiceQuestion, } from "../../../src/aux-pipeline/decision-registry";
 import { ComfyUIClient, } from "../../../src/generation/providers/comfyui";
 import { OpenAiCompatibleProvider, } from "../../../src/generation/providers/openai-compatible";
 import { releaseModelsForRender, } from "../../../src/llm/llama-swap-release";
@@ -191,21 +193,55 @@ describe("local llama-swap proxy", () => {
         questions: {
           q1: {
             type: "choice",
-            question: "which reply is correct?",
-            choices: ["decision-ok", "wrong",],
-            criteria: { relevance: "pick the exact correct reply", },
+            instructions: "Which reply is correct?",
+            criteria: {
+              "decision-ok": "the exact correct reply",
+              wrong: "any other reply",
+            },
           },
         },
       },),
       signal: AbortSignal.timeout(120_000,),
     },);
 
-    if (!res.ok) { return; }
+    if (!res.ok) {
+      throw new Error(`systemone ${res.status}: ${await res.text()}`,);
+    }
+
     const body = await res.json() as { answers?: Record<string, { choice?: unknown; confidence?: unknown }> };
     const q1 = body.answers?.["q1"];
-    expect(typeof q1?.choice,).toBe("string",);
+    const rawChoice = q1?.choice;
+    expect(typeof rawChoice,).toBe("string",);
+    if (typeof rawChoice !== "string") { return; }
+    expect(["decision-ok", "wrong",],).toContain(rawChoice,);
     expect(q1?.confidence,).toBeGreaterThanOrEqual(0,);
   }, 120_000,);
+
+  test("live: app decision client answers a registry choice on the real proxy", async () => {
+    if (!LIVE) { return; }
+    const health = await probe("/health",);
+    if (!health?.ok) { return; }
+
+    const question = buildChoiceQuestion("intent",);
+    expect(question,).not.toBeNull();
+    if (!question || question.type !== "choice") { return; }
+
+    const result = await callDecisionModel({
+      baseUrl: `${BASE}/v1`,
+      model: DECISION_MODEL,
+      state: "Hello there!",
+      questions: [question,],
+      timeoutMs: 120_000,
+    },);
+
+    expect(result,).not.toBeNull();
+    const answer = result?.answers["intent"];
+    expect(answer?.type,).toBe("choice",);
+    const choice = answer?.choice;
+    expect(typeof choice,).toBe("string",);
+    if (typeof choice !== "string") { return; }
+    expect(Object.keys(question.criteria,),).toContain(choice,);
+  }, 180_000,);
 
   test("live: sdcpp renders an image while the proxy stays healthy", async () => {
     if (!LIVE) { return; }
@@ -327,7 +363,7 @@ describe("local llama-swap proxy", () => {
         questions: {
           q1: {
             type: "score",
-            question: "rate this",
+            instructions: "Rate this",
             criteria: ["bad", "ok", "good",],
           },
         },
