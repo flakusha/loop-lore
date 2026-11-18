@@ -133,14 +133,21 @@ export const OUTBOX_DRAIN_MESSAGE = "ll-drain-outbox";
  * every error that carries an HTTP response, so a missing status means the
  * transport failed; a `status` of 0 (or any out-of-range code — no HTTP
  * server answered) is the same transport failure, not a server answer.
- * The bare `Unauthorized` throw (401) is explicitly not offline — the
- * server answered.
+ * A transport-death message still wins over an attached in-range status
+ * (a wrapped/converted failure can carry one): only genuine HTTP answers
+ * count as non-offline. The bare `Unauthorized` throw (401) is explicitly
+ * not offline — the server answered.
  * @param error - thrown value from the send attempt
  * @returns `true` when the entry should stay queued rather than count as poison
  */
+/** Transport-death phrasing across engines plus safeFetch (timeout/abort). */
+const OFFLINE_MESSAGE_PATTERN =
+  /failed to fetch|fetch failed|load failed|networkerror|network request failed|timed out|request aborted|operation was aborted/i;
+
 export function isOfflineClassError(error: unknown,): boolean {
   if (typeof navigator !== "undefined" && navigator.onLine === false) { return true; }
   if (error instanceof Error && error.message === "Unauthorized") { return false; }
+  if (error instanceof Error && OFFLINE_MESSAGE_PATTERN.test(error.message,)) { return true; }
   if (error instanceof TypeError) { return true; }
   const status = (error as { status?: unknown } | null)?.status;
   if (typeof status !== "number") { return true; }
