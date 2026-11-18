@@ -16,7 +16,9 @@ export const chatUtilsGroupedData: Partial<ChatState> & ThisType<ChatState> = {
 export function computeGroupedMessages(state: ChatState,): GroupedMessage[] {
   const msgs = state.messages;
   if (!msgs || msgs.length === 0) { return []; }
-  const key = `${msgs.length}:${msgs[msgs.length - 1]?.id ?? ""}:${msgs[0]?.id ?? ""}`;
+  // Status changes (optimistic send -> queued) keep the same id and length but
+  // change what templates render; include it so the cache cannot serve a stale row.
+  const key = `${msgs.length}:${msgs.map((m,) => `${m.id}:${m.status ?? ""}`).join("|",)}`;
   if (state._groupedKey === key && state._groupedCache) { return state._groupedCache; }
   const groups: GroupedMessage[] = [];
   for (let i = 0; i < msgs.length; i++) {
