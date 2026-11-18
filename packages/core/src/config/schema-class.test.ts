@@ -91,13 +91,13 @@ describe("ConfigSchema", () => {
     },).toThrow("db.type",);
   });
 
-  test("validate throws for missing postgres url", () => {
+  test("validate accepts postgres without a url (the runtime is always SQLite)", () => {
     const cfg = structuredClone(createConfigSchema().defaults,);
     cfg.db.type = "postgres";
     cfg.db.url = undefined;
     expect(() => {
       validate(cfg,);
-    },).toThrow("db.url",);
+    },).not.toThrow();
   });
 
   test("validate throws for invalid port", () => {

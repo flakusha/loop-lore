@@ -11,6 +11,7 @@ import { createConfigSchema, validate, } from "../schema-class";
 import { findExpansionFile, runTemplateExpansion, validateExpansionConfigErrors, } from "../template-expansion";
 import { loadTemplateConfig, } from "../templates-loader";
 import { DEFAULT_CONFIG_FILES, ENV_MAP, LOCAL_CONFIG_FILES, } from "./constants";
+import { warnUnsupportedDbType, } from "./db-warnings";
 import { loadDomainConfigs, } from "./domain";
 import { applyEnvironmentOverrides, applyProviderEnvVars, liftFlatEnvKeys, } from "./env";
 import { ensureFirstBootPiiSecrets, } from "./first-boot";
@@ -153,6 +154,10 @@ export function loadConfig(cwd?: string,): Config {
     );
   }
 
+  // The unsupported-db-type warning fires BEFORE validation: the runtime is
+  // always SQLite, so the operator must see that even when a later check
+  // aborts the boot.
+  warnUnsupportedDbType(config.db?.type,);
   validateConfig(config,);
   validateDatabaseSafety(config,);
   validateAuthSafety(config,);

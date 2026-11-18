@@ -11,8 +11,8 @@ import {
   databaseLocation,
   networkFilesystemWarning,
   sharedDatabasePathWarning,
-  unsupportedDbTypeWarning,
   warnDatabaseSafety,
+  warnUnsupportedDbType,
 } from "./db-warnings";
 
 /**
@@ -63,7 +63,7 @@ export function sessionJwtDivergenceWarning(
 
 /**
  * Validate database safety constraints.
- * Rejects SQLite for multi-instance deployments and warns on network filesystems.
+ * Warns on an unsupported db.type and rejects unsafe SQLite multi-instance deployments.
  * @param config
  * @throws {Error} When SQLite is used in an unsafe multi-instance configuration
  * @returns {void}
@@ -76,11 +76,8 @@ export function validateDatabaseSafety(config: Config,): void {
 
   // ── Guard 0: an unsupported db.type is ignored, not honoured ──
   // The runtime is always SQLite, so the operator's setting changes nothing.
-  // Warn loudly and keep booting on SQLite.
-  const unsupported = unsupportedDbTypeWarning(db?.type,);
-  if (unsupported !== null) {
-    warnDatabaseSafety("unsupported-db-type", unsupported, { dbType: db?.type, supported: DbType.Sqlite, },);
-  }
+  // Warn loudly — loadConfig fires this before validation — and keep booting.
+  warnUnsupportedDbType(db?.type,);
 
   // ── Guard 1: Reject SQLite + multi-instance ──
   if (db.type === DbType.Sqlite && instanceCount > 1) {

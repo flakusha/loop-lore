@@ -15,9 +15,9 @@ export const validate = (config: Config,): void => {
     throw new Error(`Invalid db.type: "${config.db.type}"`,);
   }
 
-  if (config.db.type === "postgres" && !config.db.url) {
-    throw new Error("db.url is required when db.type is 'postgres'",);
-  }
+  // `db.type=postgres` is accepted here: the runtime is always SQLite and
+  // warns loudly about the ignored setting (see load/db-warnings.ts). A missing
+  // `db.url` must not abort the boot — the URL is ignored anyway.
 
   if (config.server.port < 0 || config.server.port > 65_535) {
     throw new Error(`Invalid server.port: ${config.server.port}. Must be 0-65535`,);

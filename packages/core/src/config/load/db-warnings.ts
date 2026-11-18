@@ -16,12 +16,15 @@ import { isNetworkFilesystem, } from "./fs";
 /**
  * The loud warning for a `db.type` this build cannot honour: the runtime is
  * always SQLite, so the configured value is ignored — not honoured.
+ *
+ * `db.url` is part of the ignored value: this build has no Postgres runtime,
+ * so a configured connection URL changes nothing.
  * @param dbType - the configured database type, when one is set
  * @returns the warning message, or null when the type is implemented or absent
  */
 export function unsupportedDbTypeWarning(dbType: DbType | undefined,): string | null {
   if (dbType === undefined || dbType === DbType.Sqlite) { return null; }
-  return `db.type=${dbType} is not implemented in this build - running SQLite`;
+  return `db.type=${dbType} is not implemented in this build - running SQLite; db.url is ignored`;
 }
 
 /**
@@ -87,4 +90,16 @@ export function warnDatabaseSafety(key: string, message: string, meta: Record<st
     return;
   }
   console.warn(message,);
+}
+
+/**
+ * Warn once per process that the configured `db.type` is not implemented.
+ * The runtime boots on SQLite either way — the warning IS the contract, so it
+ * must fire before any validation that could abort the boot.
+ * @param dbType - the configured database type, when one is set
+ */
+export function warnUnsupportedDbType(dbType: DbType | undefined,): void {
+  const message = unsupportedDbTypeWarning(dbType,);
+  if (message === null) { return; }
+  warnDatabaseSafety("unsupported-db-type", message, { dbType, supported: DbType.Sqlite, },);
 }

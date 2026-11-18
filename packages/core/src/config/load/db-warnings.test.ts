@@ -16,7 +16,7 @@ import {
 describe("unsupportedDbTypeWarning", () => {
   test("names the unsupported value and the supported one", () => {
     expect(unsupportedDbTypeWarning(DbType.Postgres,),).toBe(
-      "db.type=postgres is not implemented in this build - running SQLite",
+      "db.type=postgres is not implemented in this build - running SQLite; db.url is ignored",
     );
   });
 

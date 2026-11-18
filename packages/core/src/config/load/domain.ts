@@ -64,11 +64,15 @@ function validateServerDomain(parsed: Record<string, unknown>, filePath: string,
 }
 
 /**
- * Validate the database domain: type + postgres url requirement.
+ * Validate the database domain: the declared type only.
+ *
+ * `db.url` is NOT required for `db.type=postgres`: this build has no Postgres
+ * runtime, so the configured type and URL are ignored (the runtime boots on
+ * SQLite) and the operator is told so by a loud warning, not by a boot abort.
  * @param parsed
  * @param filePath
  * @returns void
- * @throws {Error} If db.type is not sqlite/postgres or db.url is missing for postgres.
+ * @throws {Error} If db.type is not sqlite/postgres.
  */
 function validateDatabaseDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const db = parsed.db as Record<string, unknown> | undefined;
@@ -77,10 +81,6 @@ function validateDatabaseDomain(parsed: Record<string, unknown>, filePath: strin
     throw new Error(
       `Invalid db.type in ${filePath}: "${db.type as unknown as string}". Must be "sqlite" or "postgres"`,
     );
-  }
-
-  if (db.type === "postgres" && !db.url) {
-    throw new Error(`db.url is required when db.type is 'postgres' in ${filePath}`,);
   }
 }
 

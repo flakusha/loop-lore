@@ -186,13 +186,13 @@ describe("validateConfig", () => {
     },).toThrow(/db\.type/,);
   });
 
-  test("throws on postgres without url", () => {
+  test("accepts postgres without url (the runtime is always SQLite)", () => {
     const config = validConfig();
     config.db.type = "postgres";
     (config.db as unknown as Record<string, unknown>).url = undefined;
     expect(() => {
       validateConfig(config,);
-    },).toThrow(/db\.url/,);
+    },).not.toThrow();
   });
 
   test("passes on postgres with url", () => {
@@ -636,6 +636,26 @@ url = "postgresql://localhost/loop-lore"
     expect(warning,).toBeDefined();
     expect(warning ?? "",).toContain("is not implemented in this build - running SQLite",);
     expect(warning ?? "",).not.toContain("Postgres",);
+  });
+
+  test("boots on SQLite with db.type=postgres and NO url, and says so loudly", () => {
+    setupConfigFiles({
+      "config.toml": `
+[db]
+type = "postgres"
+`,
+    },);
+    resetDatabaseSafetyWarningsForTests();
+    const loaded: { config?: ReturnType<typeof loadConfig> } = {};
+    const warnings = captureWarnings(() => {
+      loaded.config = loadConfig(tmpDir,);
+    },);
+
+    expect(loaded.config?.db.type,).toBe("postgres",);
+    const warning = warnings.find((line,) => line.includes("db.type=postgres",));
+    expect(warning,).toBeDefined();
+    expect(warning ?? "",).toContain("is not implemented in this build - running SQLite",);
+    expect(warning ?? "",).toContain("db.url is ignored",);
   });
 
   test("empty env + empty dir boots: promotes secrets instead of throwing", () => {
