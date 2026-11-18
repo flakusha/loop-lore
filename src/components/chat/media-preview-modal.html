@@ -56,13 +56,13 @@
       </template>
       <!-- Actions -->
       <div style="display: flex; gap: var(--space-2); justify-content: flex-end">
-        <button class="btn btn-ghost" x-on:click="window.copyAssetUrl && window.copyAssetUrl()" title="{{{ t("gallery.copyUrl") }}}">
+        <button class="btn btn-ghost" x-on:click="window.copyAssetUrl && window.copyAssetUrl()" title='{{{ t("gallery.copyUrl") }}}'>
           📋 {{{ t("gallery.copyUrl") }}}
         </button>
-        <button class="btn btn-ghost" x-on:click="window.downloadAsset && window.downloadAsset()" title="{{{ t("common.download") }}}">
+        <button class="btn btn-ghost" x-on:click="window.downloadAsset && window.downloadAsset()" title='{{{ t("common.download") }}}'>
           ⬇ {{{ t("common.download") }}}
         </button>
-        <button class="btn btn-danger" x-on:click="deletePreviewAsset()" title="{{{ t("common.delete") }}}" data-testid="preview-delete">
+        <button class="btn btn-danger" x-on:click="deletePreviewAsset()" title='{{{ t("common.delete") }}}' data-testid="preview-delete">
           🗑 {{{ t("common.delete") }}}
         </button>
       </div>

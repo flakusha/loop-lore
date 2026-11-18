@@ -31,7 +31,7 @@
       <button
         class="btn btn-sm btn-ghost"
         @click="stepTurn()"
-        title="{{{t("story.step")}}}"
+        title='{{{t("story.step")}}}'
         data-testid="story-step"
       >
         ⏭️
@@ -40,7 +40,7 @@
         class="btn btn-sm btn-ghost"
         @click="window.openGmAssistantTab('shadow')"
         :class="$store.ui.showGmPanel && $store.ui.gmAssistantTab === 'shadow' ? 'gm-toggle-active' : ''"
-        title="{{{t("story.gmPanel")}}}"
+        title='{{{t("story.gmPanel")}}}'
         data-testid="story-gm-panel"
       >
         🎭
@@ -49,7 +49,7 @@
         class="btn btn-sm btn-ghost"
         @click="window.openGmAssistantTab('quests')"
         :class="$store.ui.showGmPanel && $store.ui.gmAssistantTab === 'quests' ? 'gm-toggle-active' : ''"
-        title="{{{t("story.questLog")}}}"
+        title='{{{t("story.questLog")}}}'
         data-testid="story-quest-log"
       >
         📜
