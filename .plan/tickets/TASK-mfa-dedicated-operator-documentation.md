@@ -3,7 +3,7 @@
 
 # TASK: MFA dedicated operator documentation
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-auth-access.md
