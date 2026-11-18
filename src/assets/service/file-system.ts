@@ -5,7 +5,7 @@
  * Asset Service — local filesystem helpers
  */
 import fs from "node:fs";
-import { join, resolve, } from "node:path";
+import { isAbsolute, join, relative, resolve, sep, } from "node:path";
 import { resolveInstancePath, } from "../../config/instance-path";
 import { resolveInstanceDir, } from "../../config/state-dir";
 
@@ -58,6 +58,18 @@ export function resolveUploadDir(uploadDir: string, opts?: ResolveUploadDirOptio
 }
 
 /**
+ * Whether `target` is strictly inside `root`. Uses `relative()` so the check
+ * works with either platform's separator and rejects sibling-prefix traps.
+ * @param root - the resolved upload root
+ * @param target - the resolved candidate path
+ * @returns true only for a path under, but not equal to, the root
+ */
+function isInsideUploadRoot(root: string, target: string,): boolean {
+  const rel = relative(root, target,);
+  return rel !== "" && rel !== ".." && !rel.startsWith(`..${sep}`,) && !isAbsolute(rel,);
+}
+
+/**
  * Whether a stored `storage_path` resolves inside the given upload dir.
  *
  * `storage_path` is DB-controlled, so a row can point at bytes that live
@@ -71,7 +83,7 @@ export function resolveUploadDir(uploadDir: string, opts?: ResolveUploadDirOptio
 export function isStoragePathInUploadDir(uploadDir: string, storagePath: string,): boolean {
   const root = resolveUploadDir(uploadDir,);
   const fullPath = resolve(root, storagePath,);
-  return fullPath.startsWith(`${root}/`,);
+  return isInsideUploadRoot(root, fullPath,);
 }
 
 /**
@@ -101,7 +113,7 @@ export function storeFile(uploadDir: string, assetId: string, filename: string, 
 
   const target = join(root, storagePath,);
   // Containment assert: the resolved target must stay inside the upload root.
-  if (!target.startsWith(`${root}/`,)) {
+  if (!isInsideUploadRoot(root, target,)) {
     throw new Error(`Refusing to write outside upload dir: ${target}`,);
   }
 
@@ -122,7 +134,7 @@ export function deleteFile(uploadDir: string, storagePath: string,): void {
   // (`../../etc/passwd`, an absolute path, or a sibling-prefix trap such as
   // `../uploads-evil/x`) must never unlink a file outside the upload root.
   const fullPath = resolve(root, storagePath,);
-  if (!fullPath.startsWith(`${root}/`,)) {
+  if (!isInsideUploadRoot(root, fullPath,)) {
     throw new Error(`Refusing to delete outside upload dir: ${fullPath}`,);
   }
 
@@ -141,7 +153,7 @@ export function getAssetFilePath(uploadDir: string, storagePath: string,): strin
   // Containment assert: `storage_path` is DB-controlled, so a tampered row
   // must never redirect a read outside the upload root.
   const fullPath = resolve(root, storagePath,);
-  if (!fullPath.startsWith(`${root}/`,)) {
+  if (!isInsideUploadRoot(root, fullPath,)) {
     throw new Error(`Refusing to serve outside upload dir: ${fullPath}`,);
   }
 

@@ -424,4 +424,17 @@ describe("isStoragePathInUploadDir", () => {
       rmSync(base, { recursive: true, force: true, },);
     }
   });
+
+  test("separator-independent: accepts backslash segments and a '..foo' name", () => {
+    // On Windows `resolve()` emits `\`; a literal `${root}/` prefix check
+    // rejected every in-root path there. The relative-based guard does not.
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-fs-sep-",),);
+    try {
+      expect(isStoragePathInUploadDir(uploadDir, "raw\\aa\\bb\\x.png",),).toBe(true,);
+      expect(isStoragePathInUploadDir(uploadDir, "raw/..foo/x.png",),).toBe(true,);
+      expect(isStoragePathInUploadDir(uploadDir, "../uploads-evil/x",),).toBe(false,);
+    } finally {
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
 });

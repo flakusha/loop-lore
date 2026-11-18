@@ -8,7 +8,7 @@
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
-import { basename, dirname, join, } from "node:path";
+import { basename, dirname, isAbsolute, join, } from "node:path";
 import { resolveDbPath, resolveInstanceDir, resolveInstanceSlug, } from "../config/state-dir";
 import { getLogger, type Logger, setGlobalLogger, } from "../logger";
 import {
@@ -215,8 +215,8 @@ describe("appendExecLog", () => {
       // The log lives in the instance state dir, so two instances never share
       // one file. Assert the shape, not the absolute path.
       if (resolved !== null) {
-        expect(resolved.endsWith(`${HARNESS_DIR}/${HARNESS_LOG_FILENAME}`,),).toBe(true,);
-        expect(resolved.startsWith("/",),).toBe(true,);
+        expect(resolved.endsWith(join(HARNESS_DIR, HARNESS_LOG_FILENAME,),),).toBe(true,);
+        expect(isAbsolute(resolved,),).toBe(true,);
         expect(resolved.startsWith(resolveInstanceDir(process.env,),),).toBe(true,);
       }
 
