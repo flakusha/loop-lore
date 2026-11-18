@@ -1,0 +1,48 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+<div x-show="activeTab === 'chat'" class="settings-tab-content" data-testid="settings-chat">
+  <div class="settings-section">
+    <div class="form-group">
+      <span class="form-label">{{{t("settings.enterToSend")}}}<span
+          class="info-bubble-host"
+          x-data="infoBubble({ helpKey: 'help.settings.enterToSend' })"
+        >{{> info-bubble.html }}</span></span>
+      <label class="toggle">
+        <input type="checkbox" id="enter-to-send" x-model="enterToSend" @change="saveChat()" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="form-group">
+      <span class="form-label">{{{t("settings.autoScroll")}}}</span>
+      <label class="toggle">
+        <input type="checkbox" id="auto-scroll" x-model="autoScroll" @change="saveChat()" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="form-group">
+      <span class="form-label">{{{t("settings.inlinePreview")}}}</span>
+      <label class="toggle">
+        <input type="checkbox" id="inline-preview" x-model="inlinePreview" @change="saveChat()" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="form-group">
+      <span class="form-label">{{{t("settings.localInference")}}}</span>
+      <label class="toggle">
+        <input type="checkbox" id="local-inference" x-model="localInferenceOptIn" @change="saveChat()" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="detail-level">{{{t("settings.detailLevel")}}}<span
+          class="info-bubble-host"
+          x-data="infoBubble({ helpKey: 'help.settings.detailLevel' })"
+        >{{> info-bubble.html }}</span></label>
+      <select class="form-select" id="detail-level" x-model="detailLevel" @change="saveChat()">
+        <option value="Immersion">{{{t("settings.immersion")}}}</option>
+        <option value="Basic">{{{t("settings.basic")}}}</option>
+        <option value="Detailed">{{{t("settings.detailed")}}}</option>
+      </select>
+    </div>
+  </div>
+</div>

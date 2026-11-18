@@ -1,0 +1,14 @@
+<!-- Reminder horizon ladder (TASK-scheduled-messages-reminders) -->
+<div
+  class="dropdown-base reminder-picker"
+  x-show="_reminderFor !== null"
+  @click.outside="closeReminderPicker()"
+  data-testid="reminder-picker"
+  x-cloak
+>
+  <template x-for="mins in [10, 60, 1440]" :key="mins">
+    <button class="reminder-option" @click="armReminder(mins)" :data-testid="'reminder-' + mins">
+      <span x-text="t('reminders.in' + mins)"></span>
+    </button>
+  </template>
+</div>

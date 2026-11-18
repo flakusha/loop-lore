@@ -1,0 +1,35 @@
+<!--
+  Group-chat viewer strip (T8): turn indicators for multi-character
+  conversations. Reuses the `_turnOrder` snapshot the participants module
+  already loads on group-chat select — no extra request. Hidden for direct
+  chats and until the snapshot arrives.
+-->
+<div
+  x-show="$store.chat?.currentChat?.type === 'group' && _turnOrder && _turnOrder.order.length > 0"
+  x-cloak
+  class="group-turn-strip"
+  data-testid="group-turn-strip"
+>
+  <span class="group-turn-label" x-text="t('participants.turnOrder')"></span>
+  <template x-for="slot in (_turnOrder?.order || [])" :key="slot.actor_id">
+    <span
+      class="group-turn-slot"
+      :class="{ 'is-current': slot.isCurrent, 'is-next': slot.isNext }"
+      :title="slot.display_name"
+      data-testid="group-turn-slot"
+    >
+      <span class="group-turn-name" x-text="slot.display_name"></span>
+      <span class="badge badge-current" x-show="slot.isCurrent" x-text="t('participants.current')"></span>
+      <span class="badge badge-next" x-show="slot.isNext" x-text="t('participants.next')"></span>
+    </span>
+  </template>
+  <button
+    class="btn-icon btn-xs"
+    :title="window.isChatPaused($store.chat?.currentChat) ? t('chats.resumeAI') : t('chats.pauseAI')"
+    @click="window.toggleGroupPause()"
+    data-testid="group-turn-pause"
+  >
+    <span x-show="!window.isChatPaused($store.chat?.currentChat)">⏸</span>
+    <span x-show="window.isChatPaused($store.chat?.currentChat)">▶</span>
+  </button>
+</div>

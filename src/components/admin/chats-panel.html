@@ -1,0 +1,97 @@
+<!-- Chats Tab -->
+<div x-show="activeTab === 'chats'">
+  <div x-show="loadingChats" class="empty-state" style="padding: var(--space-12)">
+    <div class="icon">⏳</div>
+    <div class="title">Loading chats...</div>
+  </div>
+  <template x-if="!loadingChats">
+    <div style="padding: var(--space-6)">
+      <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; align-items: center">
+        <input
+          class="form-input"
+          type="search"
+          placeholder="Search chats..."
+          x-model="chatSearch"
+          @input.debounce.300ms="searchChats()"
+          style="flex: 1; min-width: 200px"
+        />
+        <select class="form-input" style="width: auto" x-model="chatTypeFilter" @change="searchChats()">
+          <option value="">All types</option>
+          <option value="direct">Direct</option>
+          <option value="group">Group</option>
+        </select>
+        <button
+          class="btn btn-secondary btn-xs"
+          x-show="chatSearch || chatTypeFilter"
+          @click="clearChatFilters()"
+        >
+          Clear
+        </button>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody aria-busy="true">
+          <template x-if="adminChats.length === 0">
+            <tr>
+              <td colspan="4" class="empty-state" style="padding: var(--space-8)">No chats found</td>
+            </tr>
+          </template>
+          <template x-for="c in adminChats" :key="c.id">
+            <tr>
+              <td x-text="c.name || 'Untitled'"></td>
+              <td x-text="c.type"></td>
+              <td x-text="formatDate(c.created_at)"></td>
+              <td>
+                <template x-if="confirmDeleteChat !== c.id">
+                  <button class="btn btn-danger btn-xs" @click="confirmDeleteChat = c.id">
+                    Delete
+                  </button>
+                </template>
+                <template x-if="confirmDeleteChat === c.id">
+                  <div style="display: flex; gap: 4px">
+                    <button class="btn btn-danger btn-xs" @click="deleteChat(c.id)">
+                      Confirm Delete
+                    </button>
+                    <button class="btn btn-secondary btn-xs" @click="confirmDeleteChat = ''">
+                      Cancel
+                    </button>
+                  </div>
+                </template>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <div
+        x-show="chatPages > 1"
+        style="display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-4)"
+      >
+        <button
+          class="btn btn-secondary btn-xs"
+          :disabled="chatPage === 1"
+          @click="goChatsPage(chatPage - 1)"
+        >
+          Prev
+        </button>
+        <span
+          style="display: flex; align-items: center; font-size: 13px"
+          x-text="'Page ' + chatPage + ' of ' + chatPages"
+        ></span>
+        <button
+          class="btn btn-secondary btn-xs"
+          :disabled="chatPage >= chatPages"
+          @click="goChatsPage(chatPage + 1)"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </template>
+</div>

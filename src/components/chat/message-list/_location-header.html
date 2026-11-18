@@ -1,0 +1,37 @@
+<!-- Sticky location header: current section while scrolling (Phase 3) -->
+<div
+  class="location-header"
+  x-show="activeChat && _currentSectionId && !_vnEnabled"
+  x-cloak
+  data-testid="location-header"
+>
+  <div class="location-header-label">
+    <span class="section-divider-icon" aria-hidden="true">📍</span>
+    <span x-text="currentSectionName"></span>
+    <span
+      class="location-header-count"
+      x-show="sectionMessageCounts().get(_currentSectionId)"
+      x-text="'(' + sectionMessageCounts().get(_currentSectionId) + ' msgs)'"
+    ></span>
+  </div>
+  <div class="location-header-actions">
+    <button
+      class="btn-icon btn-xs"
+      @click="toggleStoryMap()"
+      title="Story map"
+      aria-label="Story map"
+      data-testid="location-header-map"
+    >
+      🗺️
+    </button>
+    <button
+      class="btn-icon btn-xs"
+      @click="transferToSection(_currentSectionId)"
+      title="Transfer here"
+      aria-label="Transfer here"
+      data-testid="location-header-transfer"
+    >
+      ⤵
+    </button>
+  </div>
+</div>

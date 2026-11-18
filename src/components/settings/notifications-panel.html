@@ -1,0 +1,27 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+<div
+  x-show="activeTab === 'notifications'"
+  class="settings-tab-content"
+  data-testid="settings-notifications"
+>
+  <div class="settings-section" x-data="notificationPrefs()" x-init="init()">
+    <h3>{{{t("settings.notificationPrefs")}}}</h3>
+    <p class="muted">{{{t("settings.chooseNotifications")}}}</p>
+    <template x-for="t in types" :key="t.key">
+      <label class="pref-row">
+        <input type="checkbox" :checked="enabled[t.key]" @change="toggleType(t.key)" />
+        <span x-text="t.label"></span>
+      </label>
+    </template>
+    <h3>{{{t("settings.mutedWorlds")}}}</h3>
+    <p class="muted">{{{t("settings.mutedWorldsDesc")}}}</p>
+    <input
+      type="text"
+      class="text-input"
+      :value="mutedWorlds.join(', ')"
+      @change="mutedWorlds = $event.target.value.split(',').map(s => s.trim()).filter(Boolean); save()"
+    />
+    <p class="muted" x-show="saving">{{{t("settings.saving")}}}</p>
+  </div>
+</div>

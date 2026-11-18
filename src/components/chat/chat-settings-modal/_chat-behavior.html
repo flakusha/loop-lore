@@ -1,0 +1,167 @@
+<div class="form-group">
+  <label class="form-label" for="settings-thinking-visibility">Thinking Visibility</label>
+  <select
+    class="form-input"
+    id="settings-thinking-visibility"
+    x-model="_chatSettingsThinkingVisibility"
+    data-testid="settings-thinking-visibility"
+  >
+    <option value="hidden">Hidden (no spoilers)</option>
+    <option value="collapsed">Collapsed (click to expand)</option>
+    <option value="visible">Visible (always shown)</option>
+  </select>
+  <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+    Controls how LLM reasoning/thinking blocks are displayed. Hidden prevents context spoilers.
+  </small>
+</div>
+<div class="form-group">
+  <label class="form-label" for="settings-content-language">Content language</label>
+  <input
+    class="form-input"
+    type="text"
+    id="settings-content-language"
+    x-model="_chatContentLanguage"
+    placeholder="e.g. es (blank = off)"
+    data-testid="settings-content-language"
+  />
+  <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+    Language the LLM is directed to respond in AND the translation anchor for this chat (en es fr de ja ko zh pt ru ar).
+    Clear to turn it off.
+  </small>
+</div>
+<div class="form-group">
+  <label class="form-label" for="settings-custom-instructions">Custom Instructions (this story)</label>
+  <textarea
+    class="form-input form-textarea"
+    id="settings-custom-instructions"
+    rows="3"
+    maxlength="5000"
+    x-model="_customInstructions"
+    x-init="autoResize($el)"
+    @input="autoResize($el)"
+    placeholder="Free-text steering for this story. Applied after your account-wide instructions; on conflict these win."
+    data-testid="settings-custom-instructions"
+  ></textarea>
+  <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+    Stacks on top of your account-wide custom instructions. Travels with the story export.
+  </small>
+</div>
+<div class="form-group" x-show="currentChat?.mode === 'story' && !_chatOnline">
+  <label class="form-label" for="settings-assistant-role">Assistant Role</label>
+  <select
+    class="form-input"
+    id="settings-assistant-role"
+    x-model="_assistantRole"
+    data-testid="settings-assistant-role"
+  >
+    <option value="off">Off</option>
+    <option value="helper">Helper (text/image)</option>
+    <option value="gm">Game Master</option>
+    <option value="moderator">Moderator</option>
+  </select>
+</div>
+
+<div class="form-group" x-show="currentChat?.mode === 'story' && !_chatOnline">
+  <label class="form-label" for="settings-gm-type">GM Execution</label>
+  <select
+    class="form-input"
+    id="settings-gm-type"
+    x-model="_gmType"
+    data-testid="settings-gm-type"
+  >
+    <option value="llm">LLM (AI Game Master)</option>
+    <option value="human">Human GM</option>
+    <option value="hybrid">Hybrid (Human + LLM escalation)</option>
+  </select>
+  <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+    Choose who runs the story. Human/Hybrid require selecting the GM actor below.
+  </small>
+</div>
+
+<div class="form-group" x-show="(currentChat?.mode === 'story' && !_chatOnline) && _gmType !== 'llm'">
+  <label class="form-label" for="settings-gm-actor">Human GM Actor</label>
+  <select
+    class="form-input"
+    id="settings-gm-actor"
+    x-model="_gmHumanActorId"
+    data-testid="settings-gm-actor"
+  >
+    <option value="">— Select actor —</option>
+    <template x-for="p in _chatParticipants" :key="p.actor_id">
+      <option :value="p.actor_id" x-text="p.display_name || p.name"></option>
+    </template>
+  </select>
+</div>
+
+<div class="form-group" x-show="(currentChat?.mode === 'story' && !_chatOnline) && _gmType === 'hybrid'">
+  <label class="form-label" for="settings-gm-escalation">
+    Escalation Threshold (<span x-text="_gmEscalationThreshold"></span>)
+  </label>
+  <input
+    type="range"
+    id="settings-gm-escalation"
+    min="0"
+    max="1"
+    step="0.05"
+    x-model.number="_gmEscalationThreshold"
+    data-testid="settings-gm-escalation"
+  />
+  <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+    Hybrid: LLM takes over when GM inactivity exceeds this threshold.
+  </small>
+</div>
+
+<div class="form-group" x-show="currentChat?.mode === 'story' && !_chatOnline">
+  <label class="form-label" for="settings-gm-model">GM Model</label>
+  <input
+    class="form-input"
+    type="text"
+    id="settings-gm-model"
+    x-model="_gmModel"
+    placeholder="e.g. claude-3.5-sonnet"
+    data-testid="settings-gm-model"
+  />
+  <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+    Model that powers the LLM Game Master. Leave blank to use the chat's default model.
+  </small>
+</div>
+
+<div class="form-group" x-show="currentChat?.mode === 'story' && !_chatOnline">
+  <label class="form-label" for="settings-gm-provider">GM Provider</label>
+  <input
+    class="form-input"
+    type="text"
+    id="settings-gm-provider"
+    x-model="_gmProvider"
+    placeholder="e.g. anthropic"
+    data-testid="settings-gm-provider"
+  />
+</div>
+
+<div class="form-group" x-show="currentChat?.mode === 'story' && !_chatOnline">
+  <label class="form-label" for="settings-gm-temperature">
+    GM Temperature (<span x-text="_gmTemperature"></span>)
+  </label>
+  <input
+    type="range"
+    id="settings-gm-temperature"
+    min="0"
+    max="2"
+    step="0.1"
+    x-model.number="_gmTemperature"
+    data-testid="settings-gm-temperature"
+  />
+</div>
+
+<div class="form-group" x-show="currentChat?.mode === 'story' && !_chatOnline">
+  <label class="form-label" for="settings-gm-maxtokens">GM Max Tokens</label>
+  <input
+    class="form-input"
+    type="number"
+    id="settings-gm-maxtokens"
+    min="1"
+    max="8192"
+    x-model.number="_gmMaxTokens"
+    data-testid="settings-gm-maxtokens"
+  />
+</div>

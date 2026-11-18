@@ -1,0 +1,683 @@
+<!-- Models Tab -->
+<div x-show="activeTab === 'models'">
+  <div x-show="loadingModels" class="empty-state" style="padding: var(--space-12)">
+    <div class="icon">⏳</div>
+    <div class="title">Loading providers...</div>
+  </div>
+  <template x-if="!loadingModels">
+    <div style="padding: var(--space-6)">
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-2); margin-bottom: var(--space-4)">
+        <button
+          class="btn btn-primary btn-sm"
+          @click="openProviderWizard()"
+          x-text="t('admin.providerWizard.title')"
+        >
+        </button>
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="rescanProviders()"
+          :disabled="scanning"
+          x-text="scanning ? 'Scanning...' : 'Rescan Providers'"
+        >
+        </button>
+      </div>
+      <div style="margin-bottom: var(--space-6)">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
+          Model Role Assignments
+        </h3>
+        <div style="display: grid; gap: var(--space-3)">
+          <template x-for="r in modelRoleList" :key="r.role">
+            <div style="display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px">
+              <div style="display: grid; grid-template-columns: 120px 1fr 1fr auto; gap: var(--space-3); align-items: center">
+                <div style="font-weight: 500; text-transform: capitalize" x-text="r.role"></div>
+                <select
+                  class="form-input"
+                  style="font-size: 13px"
+                  x-model="r.provider"
+                  @change="onRoleProviderChange(r.role)"
+                >
+                  <option value="">Select provider...</option>
+                  <template x-for="p in providers" :key="p.name">
+                    <option :value="p.name" x-text="p.label"></option>
+                  </template>
+                </select>
+                <select class="form-input" style="font-size: 13px" x-model="r.model">
+                  <option value="">Select model...</option>
+                  <template x-for="m in getModelsForRole(r.role)" :key="m.id">
+                    <option :value="m.id" x-text="m.id + (modelSummary(m) ? ' — ' + modelSummary(m) : '')"></option>
+                  </template>
+                </select>
+                <div style="display: flex; gap: 4px">
+                  <button
+                    class="btn btn-primary btn-xs"
+                    @click="saveModelRole(r.role)"
+                    :disabled="!r.provider || !r.model"
+                  >
+                    Save
+                  </button>
+                  <button
+                    class="btn btn-secondary btn-xs"
+                    @click="clearModelRole(r.role)"
+                    x-show="overrides[r.role]"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+              <div
+                x-show="getSelectedModel(r.role)"
+                style="font-size: 11px; color: var(--text-secondary, #6c757d); display: flex; flex-wrap: wrap; gap: 6px; align-items: center"
+              >
+                <span x-text="modelSummary(getSelectedModel(r.role))"></span>
+                <span
+                  x-show="modelSuitability(getSelectedModel(r.role))"
+                  style="font-size: 10px; padding: 1px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                  x-text="modelSuitability(getSelectedModel(r.role))"
+                ></span>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <!-- Per-Role Tuning Defaults -->
+      <div style="margin-bottom: var(--space-6)">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
+          Tuning Defaults
+        </h3>
+        <p style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-3)">
+          Override default temperature and max tokens per role. Leave blank to inherit from chat/server defaults.
+        </p>
+        <div style="display: grid; gap: var(--space-3)">
+          <template x-for="r in modelRoleList" :key="'tuning-' + r.role">
+            <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px">
+              <div style="font-weight: 500; text-transform: capitalize; min-width: 100px" x-text="r.role"></div>
+              <div style="display: flex; gap: var(--space-3); flex: 1; flex-wrap: wrap; align-items: center">
+                <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 13px">
+                  Temp:
+                  <input
+                    type="number"
+                    class="form-input"
+                    style="width: 80px; font-size: 12px; padding: 2px 6px"
+                    x-model="roleTuning[r.role].temperature"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    placeholder="0.7"
+                  />
+                </label>
+                <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 13px">
+                  Max Tokens:
+                  <input
+                    type="number"
+                    class="form-input"
+                    style="width: 100px; font-size: 12px; padding: 2px 6px"
+                    x-model="roleTuning[r.role].maxTokens"
+                    min="256"
+                    max="128000"
+                    step="256"
+                    placeholder="2000"
+                  />
+                </label>
+                <button
+                  class="btn btn-primary btn-xs"
+                  @click="saveModelRole(r.role)"
+                  :disabled="!r.provider || !r.model"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Providers</h3>
+        <div style="display: grid; gap: var(--space-3)">
+          <template x-for="p in providers" :key="p.name">
+            <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2)">
+                <div style="display: flex; align-items: center; gap: var(--space-2)">
+                  <span
+                    style="display: inline-block; width: 8px; height: 8px; border-radius: 50%"
+                    :style="{background: p.status === 'healthy' ? '#28a745' : '#dc3545'}"
+                  ></span>
+                  <strong x-text="p.label"></strong>
+                  <span
+                    style="font-size: 12px; color: var(--text-secondary, #6c757d)"
+                    x-text="'(' + p.name + ')'"
+                  ></span>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-3); font-size: 12px; color: var(--text-secondary, #6c757d)">
+                  <span x-text="p.modelCount + ' model(s)'"></span>
+                  <span x-show="p.latencyMs" x-text="p.latencyMs + 'ms'"></span>
+                  <button
+                    class="btn btn-secondary btn-xs"
+                    @click="expandProvider = expandProvider === p.name ? '' : p.name"
+                    x-text="expandProvider === p.name ? 'Collapse' : 'Expand'"
+                  >
+                  </button>
+                </div>
+              </div>
+              <div
+                x-show="p.error"
+                style="font-size: 12px; color: #dc3545; margin-bottom: var(--space-2)"
+                x-text="p.error"
+              >
+              </div>
+              <div x-show="expandProvider === p.name" style="margin-top: var(--space-2)">
+                <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-1)">
+                  Available Models:
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                  <template x-for="m in getProviderModels(p.name)" :key="m.id">
+                    <div style="font-size: 11px; padding: 6px 8px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px; min-width: 150px">
+                      <div style="font-weight: 600; margin-bottom: 3px" x-text="m.id"></div>
+                      <div style="display: flex; flex-wrap: wrap; gap: 3px">
+                        <span
+                          x-show="m.fit"
+                          style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                          x-text="(m.fit.fitLevel ?? 'fit') + ' ' + Math.round(m.fit.score * 100) + '%'"
+                        ></span>
+                        <span
+                          x-show="m.globalScore"
+                          style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                          x-text="m.globalScore.source + ' ' + m.globalScore.value"
+                        ></span>
+                        <span
+                          x-show="m.contextWindow"
+                          style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                          x-text="m.contextWindow + ' ctx'"
+                        ></span>
+                        <span
+                          x-show="m.paramSize"
+                          style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                          x-text="m.paramSize"
+                        ></span>
+                        <span
+                          x-show="m.thinking"
+                          style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                        >thinking</span>
+                        <span
+                          x-show="m.toolCalling"
+                          style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                        >tools</span>
+                        <span
+                          x-show="m.modalities && m.modalities.length"
+                          style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                          x-text="(m.modalities || []).join(',')"
+                        ></span>
+                      </div>
+                    </div>
+                  </template>
+                  <span
+                    x-show="getProviderModels(p.name).length === 0"
+                    style="font-size: 12px; color: var(--text-secondary, #6c757d)"
+                  >No models discovered</span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <!-- Stable Diffusion Configuration -->
+      <div style="margin-top: var(--space-6)">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3)">
+          <h3 style="font-size: 16px; font-weight: 600; margin: 0">Stable Diffusion</h3>
+          <button
+            class="btn btn-secondary btn-xs"
+            @click="showSdConfig = !showSdConfig"
+            x-text="showSdConfig ? 'Hide Config' : 'Show Config'"
+          >
+          </button>
+        </div>
+        <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+          <!-- Status Bar -->
+          <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3)">
+            <span
+              style="display: inline-block; width: 8px; height: 8px; border-radius: 50%"
+              :style="{background: sdStatus === 'running' ? '#28a745' : sdStatus === 'stopped' ? '#dc3545' : '#ffc107'}"
+            ></span>
+            <strong
+              x-text="sdStatus === 'running' ? 'Running' : sdStatus === 'stopped' ? 'Stopped' : 'Unknown'"
+            ></strong>
+            <span style="font-size: 12px; color: var(--text-secondary, #6c757d)" x-show="sdPort">— Port <span
+                x-text="sdPort"
+              ></span></span>
+            <button class="btn btn-secondary btn-xs" @click="loadSdStatus()" style="margin-left: auto">
+              Refresh
+            </button>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); font-size: 13px; margin-bottom: var(--space-3)">
+            <div>
+              <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Status</div>
+              <div
+                style="font-weight: 500"
+                x-text="sdStatus === 'running' ? 'Active' : sdStatus === 'stopped' ? 'Not running' : 'Unknown'"
+              >
+              </div>
+            </div>
+            <div>
+              <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Latency</div>
+              <div style="font-weight: 500" x-text="sdLatencyMs != null ? sdLatencyMs + 'ms' : '—'"></div>
+            </div>
+            <div>
+              <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Port</div>
+              <div style="font-weight: 500" x-text="sdPort"></div>
+            </div>
+          </div>
+
+          <!-- SD Server Config Form -->
+          <div
+            x-show="showSdConfig"
+            style="padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef)"
+          >
+            <h4 style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2)">SD.CPP Server</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-3)">
+              <div>
+                <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                >Enabled</label>
+                <input type="checkbox" x-model="sdConfig.enabled" style="width: 16px; height: 16px" />
+              </div>
+              <div>
+                <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                >Port</label>
+                <input
+                  class="form-input"
+                  style="font-size: 12px; padding: 4px 8px"
+                  type="number"
+                  x-model.number="sdConfig.port"
+                />
+              </div>
+              <div>
+                <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                >Model Type</label>
+                <select class="form-input" style="font-size: 12px; padding: 4px 8px" x-model="sdConfig.modelType">
+                  <option value="checkpoint">Checkpoint</option>
+                  <option value="diffusion">Diffusion Component</option>
+                </select>
+              </div>
+              <div>
+                <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                >Model Path</label>
+                <input
+                  class="form-input"
+                  style="font-size: 12px; padding: 4px 8px"
+                  type="text"
+                  x-model="sdConfig.modelPath"
+                  placeholder="/path/to/model.safetensors"
+                />
+              </div>
+              <div>
+                <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                >LLM Encoder Path</label>
+                <input
+                  class="form-input"
+                  style="font-size: 12px; padding: 4px 8px"
+                  type="text"
+                  x-model="sdConfig.llmPath"
+                  placeholder="/path/to/encoder.gguf"
+                />
+              </div>
+            </div>
+
+            <h4 style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2); margin-top: var(--space-3)">
+              ComfyUI
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-3)">
+              <div>
+                <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                >Enabled</label>
+                <input type="checkbox" x-model="comfyuiConfig.enabled" style="width: 16px; height: 16px" />
+              </div>
+              <div>
+                <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                >URL</label>
+                <input
+                  class="form-input"
+                  style="font-size: 12px; padding: 4px 8px"
+                  type="text"
+                  x-model="comfyuiConfig.url"
+                  placeholder="http://localhost:8188"
+                />
+              </div>
+            </div>
+
+            <div style="padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef); font-size: 11px; color: var(--text-secondary); margin-bottom: var(--space-2)">
+              Note: SD.CPP and ComfyUI should not run simultaneously on the same machine due to GPU resource contention.
+              Configure one as primary and the other as fallback.
+            </div>
+            <button class="btn btn-primary btn-xs" @click="saveSdConfig()">Save SD Configuration</button>
+          </div>
+        </div>
+      </div>
+      <!-- Model Capabilities Registry -->
+      <div style="margin-top: var(--space-6)">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3)">
+          <h3 style="font-size: 16px; font-weight: 600; margin: 0">Model Capabilities Registry</h3>
+          <div style="display: flex; gap: var(--space-2); align-items: center">
+            <input
+              class="form-input"
+              style="font-size: 12px; max-width: 160px; padding: 3px 8px"
+              placeholder="Filter by provider…"
+              x-model="capabilityFilter"
+              @input.debounce.500ms="loadModelCapabilities()"
+            />
+            <button
+              class="btn btn-secondary btn-xs"
+              @click="loadModelCapabilities()"
+              :disabled="loadingCapabilities"
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
+        <div x-show="loadingCapabilities" style="font-size: 12px; color: var(--text-secondary)">Loading…</div>
+        <div
+          x-show="!loadingCapabilities && modelCapabilities.length === 0"
+          style="font-size: 12px; color: var(--text-secondary); padding: var(--space-4)"
+        >
+          No models registered yet. Models are auto-populated on provider rescan.
+        </div>
+        <div style="display: grid; gap: var(--space-2)">
+          <template x-for="cap in modelCapabilities" :key="cap.providerId + '/' + cap.modelId">
+            <div
+              style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)"
+              :style="cap.isStale ? 'opacity: 0.6' : ''"
+            >
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-1)">
+                <div style="display: flex; align-items: center; gap: var(--space-2)">
+                  <span
+                    style="font-size: 11px; padding: 1px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px"
+                    x-text="cap.providerId"
+                  ></span>
+                  <strong style="font-size: 13px" x-text="cap.modelId"></strong>
+                  <span
+                    x-show="cap.userOverride"
+                    style="font-size: 10px; padding: 1px 5px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 10px; color: #856404"
+                  >override</span>
+                  <span
+                    x-show="cap.isStale"
+                    style="font-size: 10px; padding: 1px 5px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 10px; color: #721c24"
+                  >stale</span>
+                </div>
+                <div style="display: flex; gap: 4px">
+                  <button
+                    class="btn btn-secondary btn-xs"
+                    @click="editingCapability = editingCapability === cap.providerId + '/' + cap.modelId ? null : cap.providerId + '/' + cap.modelId"
+                    x-text="editingCapability === cap.providerId + '/' + cap.modelId ? 'Close' : 'Edit'"
+                  >
+                  </button>
+                  <button
+                    class="btn btn-secondary btn-xs"
+                    x-show="cap.userOverride"
+                    @click="clearCapabilityOverride(cap.providerId, cap.modelId)"
+                  >
+                    Clear Override
+                  </button>
+                </div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; color: var(--text-secondary, #6c757d)">
+                <span x-show="cap.contextWindow" x-text="'ctx: ' + formatCtxWindow(cap.contextWindow)"></span>
+                <span x-show="cap.maxOutput" x-text="'max: ' + formatCtxWindow(cap.maxOutput)"></span>
+                <span x-show="cap.supportsTools" style="color: var(--color-success, #28a745)">tools</span>
+                <span x-show="cap.supportsVision" style="color: var(--color-success, #28a745)">vision</span>
+                <span x-show="cap.supportsThinking" style="color: var(--color-success, #28a745)">thinking</span>
+                <span x-show="cap.modalities && cap.modalities.length" x-text="cap.modalities.join(', ')"></span>
+                <span x-show="cap.paramSize" x-text="cap.paramSize"></span>
+                <span x-show="cap.ownedBy" x-text="'by ' + cap.ownedBy"></span>
+              </div>
+              <div
+                x-show="cap.notes"
+                style="font-size: 11px; color: var(--text-secondary); margin-top: 4px; font-style: italic"
+                x-text="cap.notes"
+              >
+              </div>
+              <!-- Edit Override Panel -->
+              <div
+                x-show="editingCapability === cap.providerId + '/' + cap.modelId"
+                x-cloak
+                style="margin-top: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px"
+              >
+                <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">Set Override</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-2)">
+                  <div>
+                    <label style="font-size: 11px; color: var(--text-secondary)">Context Window</label>
+                    <input
+                      class="form-input"
+                      style="font-size: 12px; padding: 3px 6px"
+                      type="number"
+                      :placeholder="cap.contextWindow ?? 'auto'"
+                      x-ref="ctxWindow"
+                    />
+                  </div>
+                  <div>
+                    <label style="font-size: 11px; color: var(--text-secondary)">Max Output</label>
+                    <input
+                      class="form-input"
+                      style="font-size: 12px; padding: 3px 6px"
+                      type="number"
+                      :placeholder="cap.maxOutput ?? 'auto'"
+                      x-ref="maxOutput"
+                    />
+                  </div>
+                  <div>
+                    <label style="font-size: 11px; color: var(--text-secondary)">Notes</label>
+                    <input
+                      class="form-input"
+                      style="font-size: 12px; padding: 3px 6px"
+                      type="text"
+                      :placeholder="cap.notes ?? ''"
+                      x-ref="capNotes"
+                    />
+                  </div>
+                  <div>
+                    <label style="font-size: 11px; color: var(--text-secondary)"
+                    >Native Locale (en es fr de ja ko zh pt ru ar)</label>
+                    <input
+                      class="form-input"
+                      style="font-size: 12px; padding: 3px 6px"
+                      type="text"
+                      :placeholder="cap.nativeLocale ?? 'auto'"
+                      x-ref="nativeLocale"
+                    />
+                  </div>
+                </div>
+                <div style="margin-top: var(--space-2)">
+                  <button
+                    class="btn btn-primary btn-xs"
+                    @click="saveCapabilityOverride(cap.providerId, cap.modelId, {
+                            contextWindow: $refs.ctxWindow.value ? Number($refs.ctxWindow.value) : null,
+                            maxOutput: $refs.maxOutput.value ? Number($refs.maxOutput.value) : null,
+                            notes: $refs.capNotes.value || null,
+                            nativeLocale: $refs.nativeLocale.value || null,
+                          })"
+                  >
+                    Save Override
+                  </button>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+        <!-- Fine-tuning -->
+        <div style="margin-top: var(--space-6)">
+          <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3)">
+            <h3 style="font-size: 16px; font-weight: 600; margin: 0">Fine-tuning</h3>
+            <span
+              x-show="trainingDispatchWired"
+              style="font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #28a74522; color: #28a745"
+            >
+              dispatch enabled
+            </span>
+            <span
+              x-show="!trainingDispatchWired"
+              style="font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #fff3cd; border: 1px solid #ffc107; color: #856404"
+            >
+              automated training not wired
+            </span>
+          </div>
+          <p
+            x-show="!trainingDispatchWired"
+            style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-3)"
+          >
+            No model provider exposes an automated fine-tune/train dispatch yet. This panel lists candidate base models
+            (from the live capability registry) with the metadata an operator needs to select a fine-tune seed and
+            assign it to a role above.
+          </p>
+          <div
+            x-show="fineTuneCandidates().length === 0"
+            style="font-size: 12px; color: var(--text-secondary); padding: var(--space-4)"
+          >
+            No models discovered. Rescan providers to populate fine-tune candidates.
+          </div>
+          <template x-if="fineTuneCandidates().length > 0">
+            <div style="border: 1px solid var(--border-default, #e9ecef); border-radius: 6px; overflow: hidden">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12px">
+                <thead>
+                  <tr style="text-align: left; background: var(--bg-secondary, #f8f9fa); color: var(--text-secondary, #6c757d)">
+                    <th style="padding: 6px 8px">Provider</th>
+                    <th style="padding: 6px 8px">Model</th>
+                    <th style="padding: 6px 8px">Params</th>
+                    <th style="padding: 6px 8px">Context</th>
+                    <th style="padding: 6px 8px">Modalities</th>
+                    <th style="padding: 6px 8px">Base-model readiness</th>
+                  </tr>
+                </thead>
+                <tbody aria-busy="true">
+                  <template x-for="c in fineTuneCandidates()" :key="c.provider + '/' + c.model">
+                    <tr style="border-top: 1px solid var(--border-default, #e9ecef)">
+                      <td style="padding: 6px 8px" x-text="c.provider"></td>
+                      <td style="padding: 6px 8px; font-weight: 500" x-text="c.model"></td>
+                      <td style="padding: 6px 8px" x-text="c.paramSize || '-'"></td>
+                      <td
+                        style="padding: 6px 8px"
+                        x-text="c.contextWindow ? formatCtxWindow(c.contextWindow) : '-'"
+                      >
+                      </td>
+                      <td style="padding: 6px 8px" x-text="c.modalities.join(', ') || '-'"></td>
+                      <td style="padding: 6px 8px; color: var(--text-secondary)" x-text="fineTuneReadiness(c)"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </template>
+        </div>
+        <div style="margin-top: var(--space-6); padding-top: var(--space-6); border-top: 1px solid var(--border-default, #e9ecef)">
+          <h3 style="font-size: 16px; font-weight: 600; margin: 0 0 var(--space-3)">Model Comparison</h3>
+          <textarea
+            class="form-input"
+            x-model="comparisonPrompt"
+            placeholder="Prompt to compare…"
+            rows="3"
+            style="width: 100%; margin-bottom: var(--space-3)"
+          ></textarea>
+          <template x-for="(model, index) in comparisonModels" :key="index">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 100px 100px 100px auto; gap: var(--space-2); margin-bottom: var(--space-2)">
+              <input class="form-input" x-model="model.provider" placeholder="Provider" />
+              <input class="form-input" x-model="model.model" placeholder="Model" />
+              <input class="form-input" x-model="model.temperature" type="number" step="0.1" placeholder="temp" />
+              <input class="form-input" x-model="model.topP" type="number" step="0.1" placeholder="top_p" />
+              <input class="form-input" x-model="model.maxTokens" type="number" placeholder="max tokens" />
+              <button class="btn btn-secondary btn-xs" @click="removeComparisonModel(index)">×</button>
+            </div>
+          </template>
+          <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-4)">
+            <button class="btn btn-secondary btn-xs" @click="addComparisonModel()">Add model</button>
+            <button
+              class="btn btn-primary btn-xs"
+              @click="runComparison()"
+              :disabled="loadingComparisons || !comparisonPrompt"
+            >
+              Compare
+            </button>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-3)">
+            <template
+              x-for="(result, index) in comparisonResults"
+              :key="result.model.name + index"
+            ><div style="padding: var(--space-3); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px">
+                <strong x-text="result.model.provider + ' / ' + result.model.name"></strong><div
+                  style="font-size: 11px; color: var(--text-secondary)"
+                  x-text="result.latencyMs + 'ms · ' + result.tokenCount + ' tokens · $' + result.cost"
+                >
+                </div>
+                <p x-text="result.response || result.error" style="white-space: pre-wrap; font-size: 12px"></p>
+                <div style="display: flex; gap: 4px; align-items: center">
+                  <select class="form-input" x-model="comparisonRatings['overall'].rating">
+                    <option value="">Rating</option><template x-for="n in [1,2,3,4,5]" :key="n"><option
+                        :value="n"
+                        x-text="n"
+                      >
+                      </option></template>
+                  </select><input
+                    class="form-input"
+                    x-model="comparisonRatings['overall'].notes"
+                    placeholder="Notes"
+                  /><button class="btn btn-secondary btn-xs" @click="rateComparison(index)">Save</button>
+                </div>
+              </div></template>
+          </div>
+          <div x-show="comparisonHistory.length" style="margin-top: var(--space-5)">
+            <h4 style="font-size: 13px">Recent comparisons</h4><template
+              x-for="run in comparisonHistory"
+              :key="run.id"
+            ><div style="font-size: 12px; padding: 4px 0">
+                <span x-text="run.createdAt"></span> — <span x-text="run.prompt.slice(0, 80)"></span>
+              </div></template>
+          </div>
+        </div>
+      </div>
+      <!-- Model News -->
+      <div style="margin-bottom: var(--space-6)">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3)">
+          <h3 style="font-size: 16px; font-weight: 600; margin: 0">
+            Model News
+          </h3>
+          <button
+            class="btn btn-secondary btn-xs"
+            @click="refreshModelNews()"
+            :disabled="loadingNews"
+            x-text="loadingNews ? 'Refreshing...' : 'Refresh'"
+          >
+          </button>
+        </div>
+        <template x-if="!loadingNews && modelNews.length === 0">
+          <p style="font-size: 12px; color: var(--text-secondary, #6c757d)">
+            No news polled yet.
+          </p>
+        </template>
+        <div style="display: grid; gap: var(--space-3)">
+          <template x-for="f in modelNews" :key="f.family">
+            <div style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px">
+              <div style="display: flex; justify-content: space-between; align-items: baseline">
+                <strong style="font-size: 13px" x-text="f.family"></strong>
+                <span
+                  style="font-size: 11px; color: var(--text-secondary, #6c757d)"
+                  x-text="f.refreshedAt ?? ''"
+                ></span>
+              </div>
+              <template x-for="item in f.items.slice(0, 5)" :key="item.id">
+                <div style="font-size: 12px; padding: 3px 0">
+                  <a
+                    :href="item.url"
+                    target="_blank"
+                    rel="noopener"
+                    x-show="item.url"
+                    x-text="item.title"
+                  ></a>
+                  <span x-show="!item.url" x-text="item.title"></span>
+                  <span
+                    style="color: var(--text-secondary, #6c757d)"
+                    x-show="item.publishedAt"
+                    x-text="' — ' + (item.publishedAt ?? '').slice(0, 10)"
+                  ></span>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>

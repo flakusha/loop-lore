@@ -1,0 +1,101 @@
+<!-- Compact mode (Immersion + Basic): hamburger menus -->
+<div class="actions-compact" x-show="detailLevel !== 'Detailed'" :data-detail="detailLevel">
+  <!-- Actions hamburger -->
+  <div class="action-hamburger">
+    <button
+      class="btn-icon-action"
+      :class="_hamburgerOpen[msg.id] ? 'action-active' : ''"
+      @click="_hamburgerOpen[msg.id] = !_hamburgerOpen[msg.id]"
+      title="Actions"
+    >
+      ⋮
+    </button>
+    <div
+      class="dropdown-base action-dropdown"
+      x-show="_hamburgerOpen[msg.id]"
+      @click.outside="_hamburgerOpen[msg.id] = false"
+    >
+      <button @click="copyMessage(msg.id, $event); _hamburgerOpen[msg.id] = false">
+        📋 {{{t("chats.copy")}}}
+      </button>
+      <button @click="startEdit(msg.id); _hamburgerOpen[msg.id] = false">
+        ✏️ {{{t("common.edit")}}}
+      </button>
+      <template x-if="msg.role === 'user'">
+        <button @click="improveMessage(msg.id); _hamburgerOpen[msg.id] = false">
+          ✨ {{{t("chats.improveMessage")}}}
+        </button>
+      </template>
+      <button @click="openAssetPicker(msg.id); _hamburgerOpen[msg.id] = false">
+        📎 {{{t("chats.attachAsset")}}}
+      </button>
+      <template x-if="msg.role === 'assistant'">
+        <button @click="regenerateVariant(msg.id); _hamburgerOpen[msg.id] = false">
+          ♻ {{{t("chats.regenerate")}}}
+        </button>
+      </template>
+      <template x-if="msg.role === 'assistant'">
+        <button
+          data-testid="hamburger-regen-style"
+          @click="openStylePicker(msg.id, $event); _hamburgerOpen[msg.id] = false"
+        >
+          ▾ {{{t("chats.regenWithStyle")}}}
+        </button>
+      </template>
+      <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
+        <button @click="switchVariant(msg.id, -1); _hamburgerOpen[msg.id] = false">
+          ◀ {{{t("chats.prevVariant")}}}
+        </button>
+      </template>
+      <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
+        <button @click="switchVariant(msg.id, 1); _hamburgerOpen[msg.id] = false">
+          ▶ {{{t("chats.nextVariant")}}}
+        </button>
+      </template>
+      <template x-if="msg.role === 'assistant'">
+        <button @click="openVariants(msg.id); _hamburgerOpen[msg.id] = false">
+          ⋯ Browse variants
+        </button>
+      </template>
+      <template x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')">
+        <button @click="continueMessage(msg.id); _hamburgerOpen[msg.id] = false">
+          ↳ {{{t("chats.continueAction")}}}
+        </button>
+      </template>
+      <template x-if="msg.role === 'assistant'">
+        <button
+          @click="toggleImpersonate(); _hamburgerOpen[msg.id] = false"
+          :class="impersonationActive ? 'dropdown-active' : ''"
+        >
+          🎭 {{{t("chats.impersonateAction")}}}
+        </button>
+      </template>
+      <button @click="generateImageFromMessage(msg.id); _hamburgerOpen[msg.id] = false">
+        🖼 {{{t("chats.generateImage")}}}
+      </button>
+      <template x-if="msg.attachments && msg.attachments.length > 0">
+        <button @click="captionMessage(msg.id); _hamburgerOpen[msg.id] = false">
+          💬 {{{t("chats.captionImages")}}}
+        </button>
+      </template>
+      <button @click="forwardMessage(msg.id); _hamburgerOpen[msg.id] = false">
+        ➦ {{{t("chats.forward")}}}
+      </button>
+      <button @click="runMessageAiAction(msg.id, 'summarize'); _hamburgerOpen[msg.id] = false">
+        📝 {{{t("chats.aiSummarize")}}}
+      </button>
+      <button @click="pinMessage(msg.id); _hamburgerOpen[msg.id] = false">
+        📌 Pin
+      </button>
+      <button @click="_archiveConfirmId = msg.id; _archiveConfirmOpen = true; _hamburgerOpen[msg.id] = false">
+        📦 Archive
+      </button>
+      <button
+        class="dropdown-danger"
+        @click="removeMessage(msg.id, $event); _hamburgerOpen[msg.id] = false"
+      >
+        🗑 {{{t("common.remove")}}}
+      </button>
+    </div>
+  </div>
+</div>

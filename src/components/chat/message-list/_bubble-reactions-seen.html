@@ -1,0 +1,82 @@
+<!-- Generic link preview: cached OpenGraph card (TASK-link-previews-unfurl) -->
+<template x-if="msg.type !== 'music_link' && linkPreviewUrlFor(msg)">
+  <div
+    class="link-preview"
+    data-testid="link-preview"
+    x-effect="const u = linkPreviewUrlFor(msg); if (u) loadLinkPreview(u)"
+  >
+    <template x-if="_linkPreviews[linkPreviewUrlFor(msg)]?.state === 'ready'">
+      <a
+        class="link-preview-card"
+        :href="linkPreviewUrlFor(msg)"
+        target="_blank"
+        rel="noopener noreferrer nofollow"
+      >
+        <template
+          x-if="_linkPreviews[linkPreviewUrlFor(msg)]?.state === 'ready' && _linkPreviews[linkPreviewUrlFor(msg)]?.imageUrl"
+        >
+          <img
+            class="link-preview-image"
+            :src="_linkPreviews[linkPreviewUrlFor(msg)]?.imageUrl"
+            loading="lazy"
+            alt=""
+          />
+        </template>
+        <span class="link-preview-body">
+          <span
+            class="link-preview-title"
+            x-text="_linkPreviews[linkPreviewUrlFor(msg)]?.title || linkPreviewUrlFor(msg)"
+          ></span>
+          <span
+            class="link-preview-desc"
+            x-text="_linkPreviews[linkPreviewUrlFor(msg)]?.description || ''"
+          ></span>
+        </span>
+      </a>
+    </template>
+  </div>
+</template>
+<!-- Emoji reactions: chips + quick-picker trigger -->
+<div class="message-reactions" data-testid="reaction-bar">
+  <template x-if="msg.reactions && msg.reactions.length > 0">
+    <template x-for="r in msg.reactions" :key="r.emoji">
+      <button
+        class="reaction-badge"
+        :class="{ 'reaction-active': r.userReacted }"
+        @click="toggleReaction(msg.id, r.emoji)"
+        data-testid="reaction-chip"
+      >
+        <span class="reaction-emoji" x-text="r.emoji"></span>
+        <span class="reaction-count" x-text="r.count"></span>
+      </button>
+    </template>
+  </template>
+  <button
+    class="reaction-add-btn"
+    @click="showReactionPicker(msg.id, $event)"
+    x-bind:title="t('chats.addReaction')"
+    :aria-label="t('chats.addReaction')"
+    aria-haspopup="menu"
+    :aria-expanded="_reactionPicker.visible && _reactionPicker.messageId === msg.id ? 'true' : 'false'"
+    data-testid="reaction-add"
+  >
+    🙂
+  </button>
+</div>
+<!-- Seen-state indicator: shows who has seen/processing the message -->
+<div class="message-seen" data-testid="seen-bar">
+  <template x-if="msg.seenState && msg.seenState.length > 0">
+    <button
+      class="seen-badge"
+      @click="openSeenPopover(msg.id, $event)"
+      x-bind:title="seenTitle(msg.seenState)"
+      data-testid="seen-badge"
+    >
+      <span class="seen-icon">👁</span>
+      <span class="seen-count" x-text="seenCount(msg.seenState)"></span>
+    </button>
+  </template>
+  <template x-if="!msg.seenState || msg.seenState.length === 0">
+    <span class="seen-badge seen-empty" data-testid="seen-empty">—</span>
+  </template>
+</div>

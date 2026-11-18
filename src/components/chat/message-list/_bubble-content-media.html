@@ -1,0 +1,84 @@
+<!--
+  Per-message translation variant (FEAT-language-selection-three-level):
+  rendered beneath the original, which always stays visible.
+-->
+<template x-if="editingMessageId !== msg.id && translationFor(msg.id)">
+  <div class="content translation-variant" data-testid="translation-variant">
+    <small style="color: var(--text-secondary)">
+      🌐 <span x-text="translationFor(msg.id)?.locale"></span>
+    </small>
+    <div x-html="renderMarkdown(translationFor(msg.id)?.content ?? '')"></div>
+  </div>
+</template>
+<template x-if="editingMessageId === msg.id">
+  <div class="edit-area">
+    <textarea
+      class="form-input edit-textarea"
+      x-model="editContent"
+      x-init="autoResize($el)"
+      @input="autoResize($el)"
+      @keydown.escape="cancelEdit()"
+      @keydown.ctrl.enter="saveEdit(msg.id)"
+    ></textarea>
+    <div class="edit-actions">
+      <button class="btn btn-ghost btn-sm" @click="cancelEdit()">{{{t("common.cancel")}}}</button>
+      <button class="btn btn-primary btn-sm" @click="saveEdit(msg.id)">{{{t("common.save")}}}</button>
+    </div>
+  </div>
+</template>
+<template x-if="msg.attachments && msg.attachments.length > 0">
+  <div class="media-attachments" :class="'count-' + msg.attachments.length">
+    <template x-for="(asset, aIdx) in msg.attachments" :key="asset.assetId">
+      <div
+        class="media-item"
+        :class="[
+                      (asset.type === 'image' ? 'media-image' : 'media-file') + (asset.label === 'voice-note' ? ' media-voice' : ''),
+                      { 'nsfw-blur nsfw-coverable': nsfwBlurOn(asset.nsfw, asset.assetId) },
+                    ]"
+        :style="getMediaStyle(asset, msg.attachments.length)"
+      >
+        <template x-if="asset.type === 'image'">
+          <img
+            :src="asset.url"
+            :alt="asset.caption || asset.filename"
+            loading="lazy"
+            @click="nsfwBlurOn(asset.nsfw, asset.assetId) ? revealNsfw(asset.assetId) : openMediaPreview(asset)"
+          />
+        </template>
+        <template x-if="asset.type === 'audio'">
+          <audio controls :src="asset.url"></audio>
+        </template>
+        <template x-if="asset.type === 'video'">
+          <video controls :src="asset.url"></video>
+        </template>
+        <template x-if="nsfwBlurOn(asset.nsfw, asset.assetId)">
+          <button
+            type="button"
+            class="nsfw-reveal-btn"
+            x-on:click="revealNsfw(asset.assetId)"
+            :aria-label="t('nsfw.blurReveal')"
+            x-text="t('nsfw.blurReveal')"
+            data-testid="nsfw-reveal"
+          >
+          </button>
+        </template>
+        <template x-if="asset.caption">
+          <div class="media-caption" x-text="asset.caption"></div>
+        </template>
+      </div>
+    </template>
+  </div>
+</template>
+<!-- Music embed: shown after media-attachments -->
+<template x-if="msg.type === 'music_link'">
+  <div class="music-embed" data-testid="music-embed">
+    <template x-if="!msg.nsfwHidden">
+      <div class="music-embed-player" x-html="renderMusicEmbed(msg)"></div>
+    </template>
+    <template x-if="msg.nsfwHidden">
+      <div class="music-embed-nsfw">
+        <span>🔒 Explicit content hidden</span>
+      </div>
+    </template>
+  </div>
+</template>

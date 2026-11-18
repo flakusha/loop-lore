@@ -1,0 +1,80 @@
+<!-- Remove/Resign Owner Modal — confirmation + optional reason -->
+<div
+  x-show="_removeOwnerModalOpen"
+  x-cloak
+  :class="{ open: _removeOwnerModalOpen }"
+  class="modal-overlay"
+  @click.self="closeRemoveOwnerModal()"
+  @keydown.escape.window="closeRemoveOwnerModal()"
+  data-testid="remove-owner-modal"
+>
+  <div class="modal" style="max-width: 380px">
+    <div class="modal-header">
+      <span
+        class="title"
+        x-text="_removeOwnerResign ? t('chat.owners.resignTitle') : t('chat.owners.removeTitle')"
+      ></span>
+      <button class="btn-icon" @click="closeRemoveOwnerModal()" data-testid="remove-owner-close">
+        &times;
+      </button>
+    </div>
+    <div class="modal-body">
+      <p
+        style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-3)"
+        data-testid="remove-owner-body"
+      >
+        <span
+          x-text="_removeOwnerResign
+            ? t('chat.owners.resignBody')
+            : t('chat.owners.removeBody', { name: ownerName(_removeOwnerId) })"
+        ></span>
+      </p>
+      <div class="form-group">
+        <label class="form-label" for="remove-owner-reason">{{{t("chat.owners.reasonLabel")}}}</label>
+        <textarea
+          class="form-input form-textarea"
+          id="remove-owner-reason"
+          rows="2"
+          maxlength="500"
+          x-model="_removeOwnerReason"
+          x-init="autoResize($el)"
+          @input="autoResize($el)"
+          :placeholder="t('chat.owners.reasonPlaceholder')"
+          data-testid="remove-owner-reason"
+        ></textarea>
+      </div>
+      <div
+        x-show="_removeOwnerError"
+        class="form-group"
+        style="color: var(--color-error, #c00); font-size: 13px"
+        data-testid="remove-owner-error"
+      >
+        <span x-text="_removeOwnerError"></span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button
+        class="btn btn-ghost"
+        @click="closeRemoveOwnerModal()"
+        data-testid="remove-owner-cancel"
+      >
+        {{{t("chat.owners.cancel")}}}
+      </button>
+      <button
+        class="btn btn-warning"
+        @click="submitRemoveOwner()"
+        :disabled="_removeOwnerSubmitting"
+        data-testid="remove-owner-submit"
+      >
+        <span
+          x-show="!_removeOwnerSubmitting"
+          x-text="_removeOwnerResign ? t('chat.owners.resignSubmit') : t('chat.owners.removeSubmit')"
+        ></span>
+        <span
+          x-show="_removeOwnerSubmitting"
+          x-text="_removeOwnerResign ? t('chat.owners.resignSubmitting') : t('chat.owners.removeSubmitting')"
+        ></span>
+      </button>
+    </div>
+  </div>
+</div>

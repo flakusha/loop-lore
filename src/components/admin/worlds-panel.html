@@ -1,0 +1,86 @@
+<!-- Worlds Tab -->
+<div x-show="activeTab === 'worlds'">
+  <div x-show="loadingWorlds" class="empty-state" style="padding: var(--space-12)">
+    <div class="icon">⏳</div>
+    <div class="title">Loading worlds...</div>
+  </div>
+  <template x-if="!loadingWorlds">
+    <div style="padding: var(--space-6)">
+      <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; align-items: center">
+        <input
+          class="form-input"
+          type="search"
+          placeholder="Search worlds..."
+          x-model="worldSearch"
+          @input.debounce.300ms="searchWorlds()"
+          style="flex: 1; min-width: 200px"
+        />
+        <button class="btn btn-secondary btn-xs" x-show="worldSearch" @click="clearWorldFilters()">
+          Clear
+        </button>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>ID</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody aria-busy="true">
+          <template x-if="worlds.length === 0">
+            <tr>
+              <td colspan="4" class="empty-state" style="padding: var(--space-8)">No worlds found</td>
+            </tr>
+          </template>
+          <template x-for="w in worlds" :key="w.id">
+            <tr>
+              <td x-text="w.name"></td>
+              <td x-text="w.id" style="font-size: 12px; color: var(--text-secondary)"></td>
+              <td x-text="formatDate(w.created_at)"></td>
+              <td>
+                <template x-if="confirmDeleteWorld !== w.id">
+                  <button class="btn btn-danger btn-xs" @click="confirmDeleteWorld = w.id">
+                    Delete
+                  </button>
+                </template>
+                <template x-if="confirmDeleteWorld === w.id">
+                  <div style="display: flex; gap: 4px">
+                    <button class="btn btn-danger btn-xs" @click="deleteWorld(w.id)">Confirm</button>
+                    <button class="btn btn-secondary btn-xs" @click="confirmDeleteWorld = ''">
+                      Cancel
+                    </button>
+                  </div>
+                </template>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <div
+        x-show="worldPages > 1"
+        style="display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-4)"
+      >
+        <button
+          class="btn btn-secondary btn-xs"
+          :disabled="worldPage === 1"
+          @click="goWorldsPage(worldPage - 1)"
+        >
+          Prev
+        </button>
+        <span
+          style="display: flex; align-items: center; font-size: 13px"
+          x-text="'Page ' + worldPage + ' of ' + worldPages"
+        ></span>
+        <button
+          class="btn btn-secondary btn-xs"
+          :disabled="worldPage >= worldPages"
+          @click="goWorldsPage(worldPage + 1)"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </template>
+</div>

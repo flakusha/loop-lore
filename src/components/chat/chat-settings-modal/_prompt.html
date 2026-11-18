@@ -1,0 +1,92 @@
+<!-- Prompt Template Preview -->
+<div class="form-group" style="margin-top: var(--space-3)">
+  <button
+    class="btn btn-ghost btn-sm"
+    style="width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center"
+    @click="_promptExpanded = !_promptExpanded"
+  >
+    <span class="form-label" style="margin: 0">Prompt Template</span>
+    <span x-text="_promptExpanded ? '▲' : '▼'" style="font-size: 11px; color: var(--text-secondary)"></span>
+  </button>
+  <div x-show="_promptExpanded" style="margin-top: var(--space-2)">
+    <template x-if="_promptLoading">
+      <div style="color: var(--text-secondary); font-size: var(--fs-sm)">Loading…</div>
+    </template>
+    <template x-if="!_promptLoading && _promptTemplate">
+      <div>
+        <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-2); font-size: var(--fs-sm)">
+          <span style="color: var(--text-secondary)">Purpose:</span>
+          <code x-text="_promptTemplate.purpose" style="font-size: var(--fs-xs)"></code>
+          <span
+            x-show="_promptTemplate.source === 'character'"
+            style="color: var(--text-accent); font-size: var(--fs-xs)"
+          >
+            (from <span x-text="_promptTemplate.characterName || 'character'"></span>)
+          </span>
+          <span
+            x-show="_promptTemplate.source === 'registry'"
+            style="color: var(--text-secondary); font-size: var(--fs-xs)"
+          >
+            (default)
+          </span>
+        </div>
+        <textarea
+          class="form-input form-textarea"
+          rows="6"
+          readonly
+          x-text="_promptTemplate.prompt"
+          style="font-size: var(--fs-xs); font-family: var(--font-mono, monospace); opacity: 0.9; resize: vertical"
+          data-testid="prompt-template-preview"
+        ></textarea>
+        <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+          Edit in character settings to customize per-character. Config overrides via
+          <code>configs/templates/llm.yaml</code>.
+        </small>
+
+        <!-- Per-chat prompt override -->
+        <div style="margin-top: var(--space-3); border-top: 1px solid var(--border-color, #333); padding-top: var(--space-2)">
+          <span class="form-label" style="display: block">Per-Chat Override</span>
+          <textarea
+            class="form-input form-textarea"
+            rows="4"
+            x-model="_promptOverrideDraft"
+            x-init="autoResize($el)"
+            @input="autoResize($el)"
+            placeholder="Leave empty to use the default above (character / world / registry)"
+            style="font-size: var(--fs-xs); font-family: var(--font-mono, monospace); resize: vertical"
+            data-testid="prompt-template-override"
+          ></textarea>
+          <div style="display: flex; gap: var(--space-2); margin-top: var(--space-2)">
+            <a
+              class="btn btn-ghost btn-sm open-in-editor"
+              data-editor-path="src/components/chat/chat-settings-modal.html"
+              data-editor-line="788"
+              href="#"
+              hidden
+            >{{{ t("common.openInEditor") }}}</a>
+            <button
+              class="btn btn-primary btn-sm"
+              @click="savePromptOverride()"
+              :disabled="_promptOverrideSaving || _promptOverrideDraft.trim() === (_promptTemplate?.override ?? '')"
+              data-testid="prompt-template-override-save"
+            >
+              <span x-show="!_promptOverrideSaving">Save Override</span>
+              <span x-show="_promptOverrideSaving">Saving…</span>
+            </button>
+            <button
+              class="btn btn-ghost btn-sm"
+              x-show="_promptTemplate?.override"
+              @click="_promptOverrideDraft = ''; savePromptOverride()"
+              data-testid="prompt-template-override-clear"
+            >
+              Clear
+            </button>
+          </div>
+          <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+            Overrides the character / world-setup / registry system prompt for this chat.
+          </small>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>

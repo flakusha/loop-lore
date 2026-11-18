@@ -1,0 +1,75 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+<div x-show="activeTab === 'data'" class="settings-tab-content" data-testid="settings-data">
+  <div class="settings-section">
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" @click="exportAllData()" data-testid="export-all">
+        {{{t("settings.exportAll")}}}
+      </button>
+      <button type="button" class="btn btn-secondary">{{{t("settings.importChats")}}}</button>
+    </div>
+    <div class="settings-subsection" style="margin-top: var(--space-5)" data-testid="settings-export-progress">
+      {{> export/export-progress-panel.html }}
+    </div>
+    <div class="settings-section" style="margin-top: var(--space-5)">
+      <div class="section-title">{{{t("settings.nsfwConsent")}}}</div>
+      <p class="zone-description">{{{t("settings.nsfwConsentDescription")}}}</p>
+      <template x-if="nsfwConsent">
+        <div style="display: grid; grid-template-columns: 200px 1fr; gap: var(--space-2) var(--space-4); margin-top: var(--space-3)">
+          <div style="font-size: 13px; font-weight: 500">{{{t("settings.nsfwStatus")}}}</div>
+          <div
+            style="font-size: 13px"
+            x-text="nsfwConsent.nsfwEnabled ? t('settings.nsfwEnabled') : t('settings.nsfwDisabled')"
+          >
+          </div>
+          <div style="font-size: 13px; font-weight: 500">{{{t("settings.nsfwMaxRating")}}}</div>
+          <div style="font-size: 13px" x-text="nsfwConsent.maxRating"></div>
+          <div style="font-size: 13px; font-weight: 500">{{{t("settings.nsfwRestrictions")}}}</div>
+          <div style="font-size: 13px" x-text="nsfwRestrictionText()"></div>
+          <div class="form-group" style="grid-column: 1 / -1; margin-top: var(--space-2)">
+            <span class="form-label">{{{t("settings.nsfwBlurMedia")}}}</span>
+            <label class="toggle">
+              <input
+                type="checkbox"
+                x-model="nsfwConsent.nsfwBlurMedia"
+                @change="onNsfwBlurChange()"
+                data-testid="nsfw-blur-toggle"
+              />
+              <span class="toggle-slider"></span>
+            </label>
+            <p class="zone-description">{{{t("help.settings.nsfwBlurMedia")}}}</p>
+          </div>
+        </div>
+      </template>
+      <template x-if="!nsfwConsent">
+        <p class="zone-description" style="margin-top: var(--space-2)">
+          {{{t("settings.nsfwConsentUnavailable")}}}
+        </p>
+      </template>
+    </div>
+    <div class="danger-zone">
+      <div class="zone-title">{{{t("settings.dangerZone")}}}</div>
+      <p class="zone-description">
+        {{{t("settings.deleteAllDescription")}}}
+      </p>
+      <input
+        type="text"
+        class="form-input"
+        id="confirm-delete-input"
+        x-model="confirmDeleteText"
+        @input="onConfirmDeleteInput()"
+        x-bind:placeholder="t('settings.deleteAllPlaceholder')"
+      />
+      <button
+        type="button"
+        class="btn btn-danger"
+        id="delete-all-btn"
+        :disabled="confirmDeleteText !== 'DELETE'"
+        @click="deleteAllData()"
+        data-testid="delete-all"
+      >
+        {{{t("settings.deleteAll")}}}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,103 @@
+<!-- Context menu (right-click / long-press) -->
+<div
+  class="dropdown-base context-menu"
+  x-show="_contextMenu.visible"
+  :style="{ left: _contextMenu.x + 'px', top: _contextMenu.y + 'px' }"
+  @click.outside="closeContextMenu()"
+  @keydown.escape.window="closeContextMenu()"
+  data-testid="context-menu"
+  x-cloak
+>
+  <button @click="copyMessage(_contextMenu.messageId, $event); closeContextMenu()">📋 {{{t("chats.copy")}}}</button>
+  <button @click="startEdit(_contextMenu.messageId); closeContextMenu()">✏️ {{{t("common.edit")}}}</button>
+  <template
+    x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && m.role === 'user'; })()"
+  >
+    <button @click="improveMessage(_contextMenu.messageId); closeContextMenu()">
+      ✨ {{{t("chats.improveMessage")}}}
+    </button>
+  </template>
+  <button @click="openAssetPicker(_contextMenu.messageId); closeContextMenu()">
+    📎 {{{t("chats.attachAsset")}}}
+  </button>
+  <template
+    x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && m.role === 'assistant'; })()"
+  >
+    <button @click="regenerateVariant(_contextMenu.messageId); closeContextMenu()">
+      ♻ {{{t("chats.regenerate")}}}
+    </button>
+    <button
+      data-testid="context-menu-regen-style"
+      @click="openStylePicker(_contextMenu.messageId, $event); closeContextMenu()"
+    >
+      ▾ {{{t("chats.regenWithStyle")}}}
+    </button>
+  </template>
+  <template
+    x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && (m.status === 'cancelled' || m.status === 'partial'); })()"
+  >
+    <button @click="continueMessage(_contextMenu.messageId); closeContextMenu()">
+      ↳ {{{t("chats.continueAction")}}}
+    </button>
+  </template>
+  <button @click="forwardMessage(_contextMenu.messageId); closeContextMenu()">
+    ➦ {{{t("chats.forward")}}}
+  </button>
+  <button @click="window.forkFromMessage(_contextMenu.messageId); closeContextMenu()" data-testid="context-menu-fork">
+    &#11010; {{{t("branches.fromHere")}}}
+  </button>
+  <button
+    x-show="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && m.role === 'assistant'; })()"
+    @click="window.openBranchMerge([{ tipMessageId: _contextMenu.messageId, branchId: null }]); closeContextMenu()"
+    data-testid="context-menu-merge-from"
+  >
+    &#8617; {{{t("branches.mergeFromHere")}}}
+  </button>
+  <button @click="runMessageAiAction(_contextMenu.messageId, 'summarize'); closeContextMenu()">
+    📝 {{{t("chats.aiSummarize")}}}
+  </button>
+  <button
+    @click="runMessageAiAction(_contextMenu.messageId, 'explain'); closeContextMenu()"
+    data-testid="context-menu-explain"
+  >
+    💡 {{{t("chats.aiExplain")}}}
+  </button>
+  <button
+    @click="runMessageAiAction(_contextMenu.messageId, 'action-items'); closeContextMenu()"
+    data-testid="context-menu-action-items"
+  >
+    ✅ {{{t("chats.aiActionItems")}}}
+  </button>
+  <button
+    @click="runMessageAiAction(_contextMenu.messageId, 'translate'); closeContextMenu()"
+    data-testid="context-menu-translate"
+  >
+    🌐 {{{t("chats.aiTranslate")}}}
+  </button>
+  <button @click="generateImageFromMessage(_contextMenu.messageId); closeContextMenu()">
+    🖼 {{{t("chats.generateImage")}}}
+  </button>
+  <button @click="pinMessage(_contextMenu.messageId); closeContextMenu()">
+    📌 Pin
+  </button>
+  <!-- Reminder ladder (TASK-scheduled-messages-reminders) -->
+  <button @click="openReminderPicker(_contextMenu.messageId); closeContextMenu()" data-testid="context-menu-remind">
+    ⏰ {{{t("reminders.menu")}}}
+  </button>
+  <button
+    @click="openFlagDialog('message', _contextMenu.messageId, activeChat); closeContextMenu()"
+    data-testid="context-menu-flag"
+  >
+    🚩 {{{t("chats.flag")}}}
+  </button>
+  <div class="context-menu-divider"></div>
+  <button @click="_archiveConfirmId = _contextMenu.messageId; _archiveConfirmOpen = true; closeContextMenu()">
+    📦 Archive
+  </button>
+  <button
+    class="dropdown-danger"
+    @click="removeMessage(_contextMenu.messageId, $event); closeContextMenu()"
+  >
+    🗑 {{{t("common.remove")}}}
+  </button>
+</div>

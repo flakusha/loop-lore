@@ -1,0 +1,10 @@
+<!-- "New message below" floating button -->
+<button
+  class="new-message-btn"
+  x-show="_isScrolledUp"
+  x-cloak
+  @click="scrollToBottomSmooth()"
+  data-testid="new-message-btn"
+>
+  {{{t("chats.newMessages")}}}
+</button>

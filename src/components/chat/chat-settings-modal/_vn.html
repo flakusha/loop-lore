@@ -1,0 +1,205 @@
+<!-- Visual Novel Mode -->
+<div
+  class="form-group"
+  style="margin-top: var(--space-3); border-top: 1px solid var(--border); padding-top: var(--space-3)"
+  data-testid="vn-settings"
+>
+  <label style="display: flex; align-items: center; gap: var(--space-2); cursor: pointer">
+    <input
+      type="checkbox"
+      x-model="_vnEnabled"
+      data-testid="vn-enabled-toggle"
+    />
+    <span class="form-label" style="margin: 0">Visual Novel Mode</span>
+  </label>
+  <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+    Renders the chat as cinematic scenes with background, portrait, transitions, and typewriter text instead of message
+    bubbles.
+  </small>
+
+  <div
+    x-show="_vnEnabled"
+    style="margin-top: var(--space-2); display: flex; flex-direction: column; gap: var(--space-2)"
+  >
+    <div>
+      <label class="form-label" for="settings-vn-layout">Layout</label>
+      <select
+        class="form-input"
+        id="settings-vn-layout"
+        x-model="_vnLayout"
+        data-testid="vn-layout-select"
+      >
+        <option value="overlay">Overlay (text over background)</option>
+        <option value="below">Below (image top, text bottom)</option>
+        <option value="split">Split (portrait left, text right)</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="form-label" for="settings-vn-transition">Scene Transition</label>
+      <select
+        class="form-input"
+        id="settings-vn-transition"
+        x-model="_vnTransition"
+        data-testid="vn-transition-select"
+      >
+        <option value="fade">Fade</option>
+        <option value="cut">Cut (instant)</option>
+        <option value="dissolve">Dissolve</option>
+        <option value="slide">Slide</option>
+        <option value="wipe">Wipe</option>
+      </select>
+    </div>
+
+    <div>
+      <label style="display: flex; align-items: center; gap: var(--space-2)">
+        <input
+          type="checkbox"
+          x-model="_vnTypewriter"
+          data-testid="vn-typewriter-toggle"
+        />
+        Typewriter Effect
+      </label>
+    </div>
+
+    <div x-show="_vnTypewriter">
+      <label class="form-label" for="settings-vn-typewriter-speed">
+        Typewriter Speed (<span x-text="_vnTypewriterSpeed"></span> ms/char)
+      </label>
+      <input
+        type="range"
+        id="settings-vn-typewriter-speed"
+        min="10"
+        max="120"
+        step="5"
+        x-model.number="_vnTypewriterSpeed"
+        data-testid="vn-typewriter-speed"
+      />
+    </div>
+
+    <div>
+      <label style="display: flex; align-items: center; gap: var(--space-2)">
+        <input
+          type="checkbox"
+          x-model="_vnAutoAdvance"
+          data-testid="vn-auto-advance-toggle"
+        />
+        Auto-advance Scenes
+      </label>
+      <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+        Advance to the next scene automatically after each message.
+      </small>
+    </div>
+
+    <div x-show="_vnAutoAdvance">
+      <label class="form-label" for="settings-vn-auto-advance-delay">
+        Auto-advance Delay (<span x-text="_autoAdvanceDelay"></span>s)
+      </label>
+      <input
+        type="range"
+        id="settings-vn-auto-advance-delay"
+        min="1"
+        max="30"
+        step="1"
+        x-model.number="_autoAdvanceDelay"
+        data-testid="vn-auto-advance-delay"
+      />
+    </div>
+
+    <div>
+      <label class="form-label" for="settings-vn-image-scaling">Image Scaling</label>
+      <select
+        class="form-input"
+        id="settings-vn-image-scaling"
+        x-model="_imageScaling"
+        data-testid="vn-image-scaling"
+      >
+        <option value="auto">Auto (background cover / portrait contain)</option>
+        <option value="contain">Contain</option>
+        <option value="cover">Cover</option>
+        <option value="fill">Fill</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="form-label" for="settings-vn-portrait-size">
+        Portrait Size (<span x-text="_portraitSize"></span>%)
+      </label>
+      <input
+        type="range"
+        id="settings-vn-portrait-size"
+        min="20"
+        max="80"
+        step="5"
+        x-model.number="_portraitSize"
+        data-testid="vn-portrait-size"
+      />
+    </div>
+
+    <div x-show="_vnLayout === 'overlay'">
+      <label class="form-label" for="settings-vn-dialogue-box-opacity">
+        Dialogue Box Opacity (<span x-text="_dialogueBoxOpacity"></span>)
+      </label>
+      <input
+        type="range"
+        id="settings-vn-dialogue-box-opacity"
+        min="0"
+        max="1"
+        step="0.05"
+        x-model.number="_dialogueBoxOpacity"
+        data-testid="vn-dialogue-box-opacity"
+      />
+    </div>
+
+    <div x-show="_vnLayout === 'split'">
+      <label class="form-label" for="settings-vn-split-ratio">
+        Split Ratio (<span x-text="_splitRatio"></span>%)
+      </label>
+      <input
+        type="range"
+        id="settings-vn-split-ratio"
+        min="20"
+        max="80"
+        step="5"
+        x-model.number="_splitRatio"
+        data-testid="vn-split-ratio"
+      />
+    </div>
+
+    <!-- QA check over the currently rendered scenes (TASK-vn-qa-mode) -->
+    <div style="border-top: 1px solid var(--border); padding-top: var(--space-2)">
+      <label class="form-label" style="margin: 0">QA Check</label>
+      <div style="display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-1)">
+        <button
+          type="button"
+          class="btn btn-secondary btn-xs"
+          @click="runVnQaCheck()"
+          data-testid="vn-qa-run"
+        >
+          Run QA Check
+        </button>
+        <span
+          x-show="_vnQaError"
+          style="color: #c66; font-size: 12px"
+          x-text="_vnQaError"
+          data-testid="vn-qa-error"
+        ></span>
+      </div>
+      <div data-testid="vn-qa-report" x-show="_vnQaReport"></div>
+    </div>
+
+    <!--
+      World-scoped custom template manager (TASK-vn-template-actions).
+      Own Alpine scope, like the autonomy panel above.
+    -->
+    <template x-if="currentChat?.world_id">
+      <div
+        style="border-top: 1px solid var(--border); padding-top: var(--space-2)"
+        x-data="vnTemplateManagerFactory(currentChat.world_id)"
+        data-testid="vn-template-manager"
+      >
+        {{> chat/vn-templates-panel.html }}
+      </div>
+    </template>
+  </div>
+</div>
