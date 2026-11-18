@@ -3,7 +3,7 @@
 
 # FEAT: dedicated rerank model role and task signal with aux/general fallback routing
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-memory-knowledge-systems.md
