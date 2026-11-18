@@ -27266,6 +27266,20 @@
     "source": ".plan/tickets/TASK-add-html-minify-parity-gate-for-templates-and-attribute-drif.md",
     "status": "done"
   },
+  "TASK-ADD-INIT-IMAGE-ATTACHMENT-AFFORDANCE": {
+    "hash": "4d84a63",
+    "git_issue": "4d84a63",
+    "extid": "TASK-ADD-INIT-IMAGE-ATTACHMENT-AFFORDANCE",
+    "type": "TASK",
+    "title": "Add init-image attachment affordance",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-init-image-attachment-affordance.md",
+    "status": "open"
+  },
   "TASK-ADD-MISSING-RPG-MODULE-BARRELS": {
     "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-ADD-MISSING-RPG-MODULE-BARRELS",
@@ -35707,6 +35721,20 @@
     "title": "Client-Side Encryption (AES-256-GCM)",
     "type": "TASK"
   },
+  "TASK-CLOSE-MULTI-INSTANCE-H18-PATH-HYGIENE": {
+    "hash": "6d125d3",
+    "git_issue": "6d125d3",
+    "extid": "TASK-CLOSE-MULTI-INSTANCE-H18-PATH-HYGIENE",
+    "type": "TASK",
+    "title": "Close multi-instance H18 path hygiene",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-close-multi-instance-h18-path-hygiene.md",
+    "status": "open"
+  },
   "TASK-CLOSE-REMAINING-RELEASE-GATE-DEBT": {
     "hash": "65a5e31",
     "git_issue": "65a5e31",
@@ -38774,6 +38802,48 @@
     "title": "Dead rejectBodyImpersonation guard never fires — Elysia TypeBox parser strips performedBy before beforeHandle",
     "type": "TASK"
   },
+  "TASK-DECIDE-1-0-0-EPIC-SCOPE-EXCLUSIONS": {
+    "hash": "90b91fc",
+    "git_issue": "90b91fc",
+    "extid": "TASK-DECIDE-1-0-0-EPIC-SCOPE-EXCLUSIONS",
+    "type": "TASK",
+    "title": "Decide 1.0.0 epic scope exclusions",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decide-1-0-0-epic-scope-exclusions.md",
+    "status": "open"
+  },
+  "TASK-DECIDE-1-0-0-QA-E2E-SUBSET": {
+    "hash": "76bc07f",
+    "git_issue": "76bc07f",
+    "extid": "TASK-DECIDE-1-0-0-QA-E2E-SUBSET",
+    "type": "TASK",
+    "title": "Decide 1.0.0 QA e2e subset",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decide-1-0-0-qa-e2e-subset.md",
+    "status": "open"
+  },
+  "TASK-DECIDE-API-VERSION-PIN-AND-ADR": {
+    "hash": "1e287f3",
+    "git_issue": "1e287f3",
+    "extid": "TASK-DECIDE-API-VERSION-PIN-AND-ADR",
+    "type": "TASK",
+    "title": "Decide API version pin and ADR",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decide-api-version-pin-and-adr.md",
+    "status": "open"
+  },
   "TASK-DECIDE-LLM-IMAGE-PROMPT-WRITER-FATE": {
     "hash": "534cfab",
     "git_issue": "534cfab",
@@ -38786,6 +38856,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-decide-llm-image-prompt-writer-fate.md",
     "status": "Not Started"
+  },
+  "TASK-DECIDE-TICKET-INDEX-SPLIT-TIMING": {
+    "hash": "fc7c398",
+    "git_issue": "fc7c398",
+    "extid": "TASK-DECIDE-TICKET-INDEX-SPLIT-TIMING",
+    "type": "TASK",
+    "title": "Decide ticket index split timing",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decide-ticket-index-split-timing.md",
+    "status": "open"
   },
   "TASK-DECISION-AV10-ALBUM-MESSAGE-KIND-AXIS": {
     "epic": "epic-asset-platform-capabilities",
@@ -65120,6 +65204,20 @@
     "source": ".plan/tickets/TASK-vector-gen-svg-serve-safety.md",
     "status": "Not Started",
     "git_issue": "c910362"
+  },
+  "TASK-VERIFY-ACTOR-KIND-PARTICIPANT-FILTER": {
+    "hash": "6438f76",
+    "git_issue": "6438f76",
+    "extid": "TASK-VERIFY-ACTOR-KIND-PARTICIPANT-FILTER",
+    "type": "TASK",
+    "title": "Verify actor-kind participant filter",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-verify-actor-kind-participant-filter.md",
+    "status": "open"
   },
   "TASK-VERIFY-LOGGING-CHANGES-GREEN": {
     "epic": "epic-logging-telemetry",

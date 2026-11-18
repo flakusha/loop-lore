@@ -38,10 +38,12 @@ Sequencing: theme 1 ladder rung (a) blocks all theme-1 3.3 features; theme-5 UI 
 Open questions for the operator:
 
 1. Version/tag policy: package.json + CHANGELOG are at 1.0.0; creating the git tag remains the operator's call.
-2. Which of the 211 Not-Started epics are explicitly OUT of 1.0.0?
+2. Which Not-Started epics are explicitly OUT of 1.0.0? Tracked by `TASK-decide-1-0-0-epic-scope-exclusions.md`.
 3. Status-vocab enforcement: hard gate now or advisory until R1 cleanup?
-4. 2MB tickets/index.json split: before or after 1.0.0 scope?
+4. tickets/index.json split: before or after 1.0.0 scope? Tracked by `TASK-decide-ticket-index-split-timing.md`.
 5. Confirm thin-client-over-API as the 1.0.0 mobile answer?
+6. API version pin and breaking-change ADR: tracked by `TASK-decide-api-version-pin-and-adr.md`.
+7. Which e2e/QA subset gates 1.0.0: tracked by `TASK-decide-1-0-0-qa-e2e-subset.md`.
 
 Related: .tmp/research/release-1.0.0-roadmap.md
 
@@ -90,6 +92,14 @@ Related: .tmp/intercom/RELEASE-1.0.0.md (operator lists verbatim).
 - New approval-backed tickets: `FEAT-honkbox-capability-descriptor-registry-and-feature-gate-help.md` (55f8fd5), `TASK-check-validate-and-verify-composer-commands-with-undefined-s.md` (b160346), `TASK-full-chatprivacy-model-profile-behind-a-documented-default.md` (d88966b), `TASK-backup-download-upload-scheduling-and-admin-panel-follow-up.md` (cd35549), `TASK-mfa-dedicated-operator-documentation.md` (26384e0), `TASK-natural-language-picture-of-the-character-dispatches-to-avat.md` (6e2d4a2), `TASK-persist-generated-image-as-chat-background.md` (2b21d43).
 - Existing tickets refreshed rather than duplicated: honkbox capability premise (stale BLOCKED removed, URL/DTO corrected), `TASK-img2img-init-image-plumbing.md` moved Blocked -> Not Started on operator approval, OpenAPI reference ticket fields captured, `FEAT-2026-009` scoped, `epic-frontend-internationalization.md` marked Done, gallery backlog labelled post-1.0.0. The two blocked browser skips stay on `TASK-provide-smk-secret-in-browser-test-server-config-so-key-gene.md` and `TASK-browser-chatflow-upload-deferred.md`.
 - Closed with landed code and verification notes on 2026-11-18: `BUG-moderator-hidden-message-readable-by-direct-id-in-public-cha.md` (`23e89fdca`), `BUG-memory-semantic-floor-evaluated-against-reranker-scores.md` (`73209dc56`), `BUG-admin-db-restore-validates-only-sqlite-header.md` (`23e89fdca`), `BUG-delete-all-data-calls-nonexistent-delete-users-me-route.md` (`d22bfa7bd`). Git issues auto-closed on the Done markers; index synced in `b2f155c93`. Delete-all scope deliberately excludes worlds/personas/assets/API keys/notifications per the ticket; dedicated MFA docs stay as the new follow-up ticket.
+
+### Followup coverage (2026-11-18 audit)
+
+- Decisions filed: `TASK-decide-1-0-0-epic-scope-exclusions.md` (90b91fc), `TASK-decide-ticket-index-split-timing.md` (fc7c398), `TASK-decide-api-version-pin-and-adr.md` (1e287f3), `TASK-decide-1-0-0-qa-e2e-subset.md` (76bc07f).
+- Verification filed: `TASK-verify-actor-kind-participant-filter.md` (6438f76), an open leg of `TASK-1-0-0-gap-verify-multi-assistant-and-multi-llm-chat-rows.md` (2f405b6).
+- Scope/polish filed: `TASK-add-init-image-attachment-affordance.md` (4d84a63), scoped against `TASK-img2img-init-image-plumbing.md`; `TASK-close-multi-instance-h18-path-hygiene.md` (6d125d3), scoped against `TASK-instance-path-hygiene-close-f18-h4-h5.md` (c5b2746).
+- Existing homes confirmed (no duplicate filing): status-vocab `TASK-ticket-status-enum-and-migration.md` (5af9ef9), mobile `TASK-1-0-0-theme-4-mobile-ready-web-without-a-native-package.md` (c137c78), API mechanism `TASK-openapi-specification.md` (ad49660), i18n `TASK-i18n-locale-completion.md` (270c4fb), e2e gate `TASK-browser-suite-release-gate-wiring.md` (6465282), backup UI `TASK-backup-download-upload-scheduling-and-admin-panel-follow-up.md` (cd35549), MFA docs `TASK-mfa-dedicated-operator-documentation.md` (26384e0), rerank `FEAT-dedicated-rerank-model-role-and-task-signal-with-aux-general.md` (d195a7c), release-gate debt `TASK-close-remaining-release-gate-debt.md` (65a5e31).
+- Required-scope epics already have implementation tickets; desirable items are tracked at epic level. No new epic-level tickets were filed for items that already have a home.
 
 **Caveats:** TOCTOU: n/a, planning tracker. Security: n/a. Authorization: operator decides open questions. Parallelism: theme tickets proceed in sequence per roadmap §6. Partial failure: themes land independently. Rollback: n/a. Observability: this ticket tracks the six theme issues.
 
