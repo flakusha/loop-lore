@@ -8,7 +8,6 @@
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-harness-integration.md
-**Verification note (2026-11-18):** the per-profile exclusion is still the process-local `Map` in `src/integrations/harness/queue.ts`; status stays Not Started. Any DB-backed claim must key the owner from the effective-bind instance slug (`setEffectiveServerBind`, uncommitted in `packages/core/src/config/state-dir.ts`), not `PORT` alone.
 **Tags:** harness, queue, concurrency, profile, multi-instance
 
 **Summary:**

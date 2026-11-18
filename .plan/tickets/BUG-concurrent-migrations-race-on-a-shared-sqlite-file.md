@@ -3,7 +3,8 @@
 
 # BUG: Concurrent migrations race on a shared SQLite file
 
-**Status:** Not Started
+**Status:** Done
+**Status Note (2026-11-18):** Closed by `7dec974bb`: `src/db/migrate.ts:190-204` runs the migrator inside `BEGIN IMMEDIATE` with a busy timeout and re-checks `kysely_migration` in the transaction, so two processes sharing one SQLite file cannot half-apply a migration.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-multi-instance-reconciliation
@@ -33,9 +34,10 @@ Minimal fix (report 01 section (c) F7): run the migrator inside `BEGIN IMMEDIATE
 
 **Acceptance Criteria:**
 
-- [ ] The migration run is serialized across processes on the same database file (e.g. `BEGIN IMMEDIATE` plus an in-transaction re-check of the applied-migration list).
-- [ ] A second process booting against an already-migrated file applies nothing and exits cleanly.
-- [ ] Two processes booting simultaneously against one file end with exactly one applied migration set and no partially-applied DDL.
-- [ ] The busy timeout is bounded and produces an actionable error rather than an unbounded hang.
-- [ ] A regression test covers two concurrent migrators against one SQLite file.
-- [ ] Tests passing, documentation updated.
+- [x] The migration run is serialized across processes on the same database file (e.g. `BEGIN IMMEDIATE` plus an in-transaction re-check of the applied-migration list).
+- [x] A second process booting against an already-migrated file applies nothing and exits cleanly.
+- [x] Two processes booting simultaneously against one file end with exactly one applied migration set and no partially-applied DDL.
+- [x] The busy timeout is bounded and produces an actionable error rather than an unbounded hang.
+- [x] A regression test covers two concurrent migrators against one SQLite file (`src/db/migrate.test.ts:45-79`).
+- [x] Tests passing, documentation updated.
+**Resolved:** 2026-11-18T05:38:50.610Z Closed by ticket reconciliation on dev (2026-11-18); verification notes cite the landed commits.

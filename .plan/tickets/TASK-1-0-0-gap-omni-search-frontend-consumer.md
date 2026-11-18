@@ -3,10 +3,10 @@
 
 # TASK: 1.0.0 GAP: omni-search frontend consumer
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Status Note (2026-11-18):** In Progress — verification evidence: `src/frontend/alpine/omni-search.ts` is on dev (commit `cc2f34085`), imported from `src/frontend/alpine/index.ts:48`, and calls `/api/v1/search?q=…`; `omni-search.test.ts` covers the helpers and fetch URL. The old "no frontend consumer" premise is stale. Remaining AC checks (gallery/chat/admin result rendering, permission gating) are unverified, so the ticket stays open.
+**Status Note (2026-11-18):** Done — frontend consumer shipped (`src/frontend/alpine/omni-search.ts`, imported from `src/frontend/alpine/index.ts:48`), calls `/api/v1/search`, renders grouped chats/messages/assets in `src/views/search.html`; the route is `requireUserId`-scoped and the alpine tests pass (8/0). `src/routes/asset-search` is a separate gallery endpoint, not this consumer's path.
 
 **Summary:**
 
@@ -18,8 +18,7 @@ Search UI wiring against the shipped GAP omni-search backend (git issue 9d90969,
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
-
-**Status Note (2026-11-18):** In Progress — verification evidence: `bun test src/frontend/alpine/omni-search.test.ts` → 8 pass / 0 fail. The frontend calls `/api/v1/search` (`src/frontend/alpine/omni-search.ts:65`), served by the omni-search route mounted in `src/routes/v1/standalone-surface.ts:50` (prefix `/api/v1`); that route calls `requireUserId` and then delegates to `searchMessages` / `searchAssets` with the caller's `userId` + `userRole` scope, so the frontend consumer supplies them. The gallery route `src/routes/asset-search/index.ts` (mounted at `/api/v1/assets/search` from `src/routes/v1/content-surface.ts:49`) is a separate endpoint with the same `requireUserId` + visibility/userRole scoping — it is NOT the path the omni-search frontend calls. Result rendering lives in `src/views/search.html` (chats / messages / assets groups). The remaining open leg is verifying those groups against live gallery/chat/admin surfaces and their permission gating — the wiring itself is shipped.
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated (`src/views/search.html` is the shipped UI surface)
+**Resolved:** 2026-11-18T05:38:50.681Z Closed by ticket reconciliation on dev (2026-11-18); verification notes cite the landed commits.

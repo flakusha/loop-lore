@@ -22,21 +22,21 @@ Theme tickets (this release scope):
 
 GAP tickets (2026-11-11):
 
-1. TASK-1-0-0-gap-unified-cross-surface-omni-search.md (issue 9d90969)
-2. TASK-1-0-0-gap-sd-cpp-local-image-wiring-as-owned-scope.md (issue 4bd966e)
-3. TASK-1-0-0-gap-verify-multi-assistant-and-multi-llm-chat-rows.md (issue 2f405b6)
-4. TASK-1-0-0-gap-backup-restore-before-1-0-0-required-unstarted.md (issue 942d357)
-5. TASK-1-0-0-gap-vn-custom-typeable-choices.md — closes the VN Required line's custom-typeable leg (typed question answers + typed branching actions, provenance-flagged; branch vn-free-text-choices)
-MFA (deferred-then-approved 2026-11-11): TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md — email/messenger first, TOTP later.
+1. TASK-1-0-0-gap-unified-cross-surface-omni-search.md (issue 9d90969) — Done
+2. TASK-1-0-0-gap-sd-cpp-local-image-wiring-as-owned-scope.md (issue 4bd966e) — Done for the owned discovery/setup/failover slice; listed remainders are separate tickets
+3. TASK-1-0-0-gap-verify-multi-assistant-and-multi-llm-chat-rows.md (issue 2f405b6) — In Progress: variants selectable; harness setting + picker filter open
+4. TASK-1-0-0-gap-backup-restore-before-1-0-0-required-unstarted.md (issue 942d357) — Done; download/upload, scheduling and admin UI deferred
+5. TASK-1-0-0-gap-vn-custom-typeable-choices.md — Done; closes the VN Required line's custom-typeable leg (typed question answers + typed branching actions, provenance-flagged; branch vn-free-text-choices)
+MFA (deferred-then-approved 2026-11-11): TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md — Done for email/messenger code delivery; TOTP later. Dedicated operator docs still absent.
 Flavors hermes/openclaw (IN decision 2026-11-11): implemented in tree/harness-flavor-parity @ fa95b7ca, landing pending; no flavor tickets needed.
 
-Baseline: 374 epics (211 Not Started / 110 In Progress / 52 Done / 1 Postponed); 4486 tickets (~2650 open-like / ~1830 closed-like); 32% no usable epic pointer; no 1.0.0 epic (only epic-release-010 for 0.1.0); package.json 0.1.0; zero git tags.
+Baseline (refreshed 2026-11-18): `package.json` and `CHANGELOG.md` are at 1.0.0; zero git tags (tagging stays an operator decision). Epic/ticket status counts are recomputed with `bun run plan:status` rather than pinned here.
 
 Sequencing: theme 1 ladder rung (a) blocks all theme-1 3.3 features; theme-5 UI lands behind the finalize wave (p0-battle-ui, world-mgmt-gaps, edge-case-tests-20261101, synthetic-qa-capture); theme-2 tag routing ships in the normalizer lane; theme-4 PWA shell precedes budget work; theme-6 research-only.
 
 Open questions for the operator:
 
-1. Version/tag policy: v1.0.0 tag + package.json bump at approval or first RC?
+1. Version/tag policy: package.json + CHANGELOG are at 1.0.0; creating the git tag remains the operator's call.
 2. Which of the 211 Not-Started epics are explicitly OUT of 1.0.0?
 3. Status-vocab enforcement: hard gate now or advisory until R1 cleanup?
 4. 2MB tickets/index.json split: before or after 1.0.0 scope?
@@ -73,14 +73,14 @@ Related: .tmp/intercom/RELEASE-1.0.0.md (operator lists verbatim).
 - Characters + impersonation: epic-character-core-system.md (In Progress) + epic-impersonation.md (In Progress).
 - Platform tail: gallery epic-frontend-gallery.md (Done) + epic-asset-transform-metadata.md (In Progress); search has NO EPIC — closest epic-rag-retrieval.md + epic-rag-ui.md (both Not Started) → GAP (9d90969); llama-swap epic-llama-swap.md (Not Started); sd.cpp inside epic-local-process-swarm.md (Not Started, partial) vs comfyui epic-comfyui-plugin.md (In Progress) → GAP (4bd966e); harness RSI epic-recursive-self-improvement.md (Not Started) + ACP epic-external-harness-acp.md (In Progress) + epic-agentic-integration-mcp-acp.md (Not Started); grading epic-model-rankings-history.md (Not Started); web+TUI epic-terminal-ui.md (In Progress); settings epic-frontend-settings.md (Done); backup epic-database-backup-recovery.md (Not Started) + epic-db-asset-snapshot-recovery.md (Not Started) → GAP (942d357); logging epic-logging.md (In Progress); image/audio epic-image-video-scenario-studio.md (Not Started) + epic-audio-video-sound.md (Not Started) + epic-assistant-entity-access.md (In Progress).
 
-### Verification reconciliation (2026-11-18)
+### Verification reconciliation (2026-11-18 closeout)
 
-- Omni-search UI: `TASK-1-0-0-gap-omni-search-frontend-consumer.md` moved Not Started → In Progress; `src/frontend/alpine/omni-search.ts` is on dev (`cc2f34085`) but its AC verification is unfinished.
-- Age-gate UI: `TASK-reconcile-epic-frontend-age-gate-verify-age-gate-frontend-ca.md` moved Not Started → In Progress; UI landed (`80a64eddc`, `3d09adbad`), epic reconciliation still open.
-- VN custom-typeable choices: `TASK-1-0-0-gap-vn-custom-typeable-choices.md` is already Done with landed commit `1c85d430c`; no status change needed.
-- MFA: `TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md` moved Not Started → In Progress; service/route commits landed but hardening is uncommitted in the dev tree.
-- Harness queue H1/H16/H17: three BUG tickets remain Not Started; no queue-fix code in the dev tree. Their notes point at the uncommitted effective-bind identity threading (`setEffectiveServerBind`).
-- No ticket in this tracker was marked Done without a landed commit.
+- Done with landed code: F7 migration serialization (`7dec974bb`), bind-first port conflict (`ddc22e015`, `b9adbc2a1`), Postgres honesty warning (`ab543ecb9`), the three harness-queue BUGs (H1/H16/H17), omni-search route + frontend, sd.cpp/ComfyUI owned setup slice, backup/restore + operator docs (`60e34f035`), MFA code channel + factor enrollment, age-gate audit, VN custom-typeable choices.
+- Contradictory “no fix present / stays Not Started” notes removed from the three harness-queue BUG tickets; their original verification notes now match the Done status.
+- `TASK-1-0-0-gap-verify-multi-assistant-and-multi-llm-chat-rows.md` stays In Progress with corrected scope: variants are selectable, the validation-harness setting and picker filter are the open legs.
+- New tickets filed from the audit: `FEAT-relay-swarm-node-mode` (Desirable/post-1.0.0), `TASK-wire-scenario-into-model-role-autoroute` (Required autoroute leg), `TASK-expose-validation-harness-name` (variants follow-up).
+- Index hashes for the three new tickets are deferred by `giwt sync --fix` in this linked worktree and regenerate post-merge on the target branch; no hand-edits to `.plan/tickets/index.json`.
+- MFA's “Documentation updated” AC is intentionally left unchecked — no dedicated operator docs section exists yet.
 
 **Caveats:** TOCTOU: n/a, planning tracker. Security: n/a. Authorization: operator decides open questions. Parallelism: theme tickets proceed in sequence per roadmap §6. Partial failure: themes land independently. Rollback: n/a. Observability: this ticket tracks the six theme issues.
 

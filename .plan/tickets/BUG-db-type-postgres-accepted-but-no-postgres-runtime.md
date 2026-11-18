@@ -3,7 +3,8 @@
 
 # BUG: db-type-postgres-accepted-but-no-postgres-runtime
 
-**Status:** Not Started
+**Status:** Done
+**Status Note (2026-11-18):** Warning-only scope landed in `ab543ecb9`: `packages/core/src/config/load/safety.ts:77-108` warns loudly that `db.type` is unsupported, keeps booting on SQLite, makes the shared-path guard active by default, and drops the “switch to Postgres” remedy. `docs/guide/installation.md:61,69-79` documents the supported value and authoritative path knobs. Hard rejection and a real Postgres dialect remain deferred with the Docker bundle per the ticket's own non-goals; spec docs that still mention Postgres are part of that deferred bundle.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-multi-instance-reconciliation.md
@@ -37,8 +38,9 @@ Minimal fix (warning-only scope): log a loud boot warning that db.type=postgres 
 
 **Acceptance Criteria:**
 
-- [ ] Booting with db.type=postgres logs a loud warning naming sqlite as the supported value; boot still succeeds on SQLite.
-- [ ] The multi-instance guard message no longer recommends Postgres.
-- [ ] The guard is active by default for the resolved database path, without requiring INSTANCE_COUNT to be set.
-- [ ] The operator guide states which db.type values are supported and what the multi-instance guard does.
-- [ ] Tests passing, documentation updated.
+- [x] Booting with db.type=postgres logs a loud warning naming sqlite as the supported value; boot still succeeds on SQLite.
+- [x] The multi-instance guard message no longer recommends Postgres.
+- [x] The guard is active by default for the resolved database path, without requiring INSTANCE_COUNT to be set.
+- [x] The operator guide states which db.type values are supported and what the multi-instance guard does (`docs/guide/installation.md:61,69-79`).
+- [x] Tests passing, documentation updated.
+**Resolved:** 2026-11-18T05:38:50.634Z Closed by ticket reconciliation on dev (2026-11-18); verification notes cite the landed commits.

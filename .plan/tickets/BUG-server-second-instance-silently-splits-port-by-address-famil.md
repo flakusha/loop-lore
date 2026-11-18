@@ -3,7 +3,8 @@
 
 # BUG: server-second-instance-silently-splits-port-by-address-family
 
-**Status:** Not Started
+**Status:** Done
+**Status Note (2026-11-18):** Closed by `b9adbc2a1` + `ddc22e015`: the effective server bind is resolved once before DB/state resolution and pinned to IPv4 first with an explicit unresolvable-host error; a second instance on the same host:port now fails with the actionable EADDRINUSE message from `src/server/port-conflict.ts`.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-deployment-topologies.md
@@ -34,9 +35,10 @@ Minimal fix (report 03 §(c) H3): pin the bind family explicitly — resolve the
 
 **Acceptance Criteria:**
 
-- [ ] The server binds exactly one address family, chosen deterministically, and logs the resolved host:port it bound.
-- [ ] Starting a second instance on the same port fails with EADDRINUSE and the existing port-conflict message, including the LOOP_LORE_INSTANCE hint.
-- [ ] A host = "0.0.0.0" deployment still binds all interfaces as configured.
-- [ ] A regression test starts two servers on one port and asserts the second one fails.
-- [ ] The operator guide documents the bind-family behaviour and how to run two local instances.
-- [ ] Tests passing, documentation updated.
+- [x] The server binds exactly one address family, chosen deterministically, and logs the resolved host:port it bound.
+- [x] Starting a second instance on the same port fails with EADDRINUSE and the existing port-conflict message, including the LOOP_LORE_INSTANCE hint.
+- [x] A host = "0.0.0.0" deployment still binds all interfaces as configured.
+- [x] A regression test starts two servers on one port and asserts the second one fails.
+- [x] The operator guide documents the bind-family behaviour and how to run two local instances (`docs/guide/state-and-instances.md`).
+- [x] Tests passing, documentation updated.
+**Resolved:** 2026-11-18T05:38:50.658Z Closed by ticket reconciliation on dev (2026-11-18); verification notes cite the landed commits.
