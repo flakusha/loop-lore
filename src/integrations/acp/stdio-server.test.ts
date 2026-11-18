@@ -27,6 +27,7 @@ import { join, } from "node:path";
 import { PassThrough, } from "node:stream";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
+import { resetEffectiveServerBindForTests, setEffectiveServerBind, } from "../../config/state-dir";
 import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
@@ -219,6 +220,11 @@ describe("connectInboundAcpServer — the admission gate + handler wiring", () =
     const env = { LOOP_LORE_STATE_DIR: dir, };
     let listener: StdioProxyListener | undefined;
     const prevExitCode = process.exitCode ?? 0;
+    const prevMainConfig = mainConfig;
+    // mainProxy loads config through the ISOLATED mock; seed it and pin the
+    // same effective bind so listener and shim resolve one instance dir.
+    mainConfig = baseConfig;
+    setEffectiveServerBind(baseConfig.server,);
     try {
       ensureProxyToken(env,);
       listener = await startStdioProxyListener({
@@ -234,7 +240,7 @@ describe("connectInboundAcpServer — the admission gate + handler wiring", () =
       const input = new PassThrough();
       const output = new PassThrough();
       output.resume();
-      const relay = mainProxy(listener.addr, { input, output, env, },);
+      const relay = mainProxy(listener.addr, { input, output, env, config: baseConfig, },);
       // No traffic needed: a clean EOF proves the relay was accepted
       // (refusals and dial failures resolve exit 1 instead).
       input.end();
@@ -242,6 +248,8 @@ describe("connectInboundAcpServer — the admission gate + handler wiring", () =
       expect(process.exitCode ?? 0,).toBe(prevExitCode,);
     } finally {
       await listener?.close();
+      mainConfig = prevMainConfig;
+      resetEffectiveServerBindForTests();
       process.exitCode = prevExitCode;
       rmSync(dir, { recursive: true, force: true, },);
     }

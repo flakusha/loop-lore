@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 290
 
 /**
  * Supervised liveness for external AI servers (llama.cpp / llama-swap / sd.cpp).
@@ -7,9 +8,10 @@
  * The raw ticker in `probes.ts` only warns. This layer adds the policy:
  * per-instance consecutive-miss counters, restart via the existing spawn
  * paths after N misses, jittered exponential backoff between attempts, and
- * fatal escalation (log + non-zero process exit, so the outer supervisor
- * restarts the app) once the restart budget is spent. Counters live only in
- * memory — a restarted supervisor starts with a fresh budget.
+ * terminal exhaustion (fatal log + permanently disabling the instance —
+ * never process.exit, which would crash-loop the app because in-memory
+ * counters reset on every restart) once the cumulative restart budget is
+ * spent. Counters live only in memory; exhaustion lasts for this process.
  *
  * Threat rules: restarts call the existing `start*` dispatchers only —
  * allowlisted binaries resolved by `findBinary`, argv built in code, no
@@ -31,7 +33,7 @@ import type {
 /** Consecutive probe misses before a restart is attempted. */
 export const SUPERVISION_MAX_MISSES = 3;
 
-/** Restart attempts per instance before fatal escalation. */
+/** Cumulative restart attempts per instance before permanent exhaustion. */
 export const SUPERVISION_MAX_RESTARTS = 5;
 
 /** Backoff base: the first retry waits ~1s (jittered). */
@@ -106,7 +108,7 @@ function countersFor(host: ServerExternalHost, key: string,): SupervisionCounter
 
   let counters = table.get(key,);
   if (!counters) {
-    counters = { misses: 0, restarts: 0, notBefore: 0, exhausted: false, };
+    counters = { misses: 0, restarts: 0, totalRestarts: 0, notBefore: 0, exhausted: false, };
     table.set(key, counters,);
   }
 
@@ -114,19 +116,21 @@ function countersFor(host: ServerExternalHost, key: string,): SupervisionCounter
 }
 
 /**
- * Fatal escalation: tests observe via `host.onSupervisionFatal`; production
- * exits non-zero so the outer supervisor (systemd / compose) restarts the app
- * instead of leaving it wedged with dead inference backends.
+ * Terminal escalation: a fatal log plus the `host.onSupervisionFatal` test
+ * hook. Never calls process.exit — a dead backend would crash-loop the app,
+ * and counters reset on each restart, so the loop would never converge.
+ * The caller marks the instance exhausted to stop all further work.
  * @param host
  * @param info
  */
 function escalate(host: ServerExternalHost, info: SupervisionFatalInfo,): void {
+  host.log.fatal("External server supervision budget exhausted — disabling instance (no process exit)", undefined, {
+    ...info,
+  },);
+
   if (host.onSupervisionFatal) {
     host.onSupervisionFatal(info,);
-    return;
   }
-
-  process.exit(1,);
 }
 
 /**
@@ -196,6 +200,7 @@ async function superviseInstance(
     counters.misses = 0;
     counters.restarts = 0;
     counters.notBefore = 0;
+    // totalRestarts is cumulative — a healthy probe must not refill the budget.
     return;
   }
 
@@ -211,17 +216,15 @@ async function superviseInstance(
     return;
   }
 
-  if (counters.restarts >= SUPERVISION_MAX_RESTARTS) {
+  if (counters.totalRestarts >= SUPERVISION_MAX_RESTARTS) {
     counters.exhausted = true;
+    // Sustained backoff: push the gate out forever; `exhausted` is the hard stop.
+    counters.notBefore = Number.POSITIVE_INFINITY;
     const info: SupervisionFatalInfo = {
       ...identity,
       consecutiveMisses: counters.misses,
-      restartAttempts: counters.restarts,
+      restartAttempts: counters.totalRestarts,
     };
-
-    host.log.fatal("External server supervision budget exhausted — exiting for supervised restart", undefined, {
-      ...info,
-    },);
 
     escalate(host, info,);
     return;
@@ -240,6 +243,7 @@ async function superviseInstance(
   }
 
   counters.restarts += 1;
+  counters.totalRestarts += 1;
   counters.notBefore = at + restartBackoffMs(counters.restarts,);
   host.log.error("Restarting unresponsive external server", undefined, {
     ...identity,
@@ -292,16 +296,27 @@ export async function superviseAllLiveliness(
 
 /**
  * Start periodic supervised health checks on all managed servers.
+ * Overlapping ticks are skipped so two async passes can never restart the
+ * same instance concurrently.
  * @param host
+ * @param deps
  */
-export function startSupervisedProbes(host: ServerExternalHost,): void {
+export function startSupervisedProbes(
+  host: ServerExternalHost,
+  deps: SupervisionDeps = {},
+): void {
   if (host.probeTimer) { return; }
+  let passInFlight = false;
   host.probeTimer = setInterval(() => {
+    if (passInFlight) { return; }
+    passInFlight = true;
     void (async () => {
       try {
-        await superviseAllLiveliness(host,);
+        await superviseAllLiveliness(host, deps,);
       } catch {
         /* supervision pass — non-critical */
+      } finally {
+        passInFlight = false;
       }
     })();
   }, host.PROBE_INTERVAL_MS,);

@@ -11,11 +11,13 @@
 import {
   describe,
   expect,
+  spyOn,
   test,
 } from "bun:test";
 import {
   restartBackoffMs,
   restartInstance,
+  startSupervisedProbes,
   superviseAllLiveliness,
   SUPERVISION_MAX_MISSES,
   SUPERVISION_MAX_RESTARTS,
@@ -272,5 +274,104 @@ describe("supervise.reset", () => {
     expect(calls.count,).toBe(0,);
     const warns = host.logCalls.filter((c,) => c.level === "warn" && c.msg === "External server unresponsive");
     expect(warns[warns.length - 1]?.meta?.consecutiveMisses,).toBe(2,);
+  });
+});
+
+describe("supervise.terminal policy", () => {
+  test("exhaustion never calls process.exit on the production path", async () => {
+    const host = makeHost();
+    delete host.onSupervisionFatal; // production: no test hook installed
+    host.instances.push(makeInstance(19_020, 880,),);
+    const calls = { count: 0, };
+    const restart = countingRestart(true, calls,);
+    const exit = spyOn(process, "exit",);
+    exit.mockImplementation(() => undefined as never);
+    let now = 1_000_000;
+
+    try {
+      for (let i = 0; i < 40; i += 1) {
+        now += 60_000;
+        await superviseAllLiveliness(host, { probe: deadProbe, restart, now: () => now, },);
+      }
+
+      expect(exit,).not.toHaveBeenCalled();
+      expect(calls.count,).toBe(SUPERVISION_MAX_RESTARTS,);
+      expect(host.logCalls.filter((c,) => c.level === "fatal"),).toHaveLength(1,);
+      expect(host.fatalInfos,).toHaveLength(0,);
+    } finally {
+      exit.mockRestore();
+    }
+  });
+
+  test("healthy probes never refill the cumulative restart budget", async () => {
+    const host = makeHost();
+    host.instances.push(makeInstance(19_021, 881,),);
+    const calls = { count: 0, };
+    const restart = countingRestart(true, calls,);
+    let now = 1_000_000;
+    let up = false;
+    const probe = async (_instance: ServerInstance,): Promise<boolean> => up;
+
+    for (let i = 0; i < SUPERVISION_MAX_RESTARTS; i += 1) {
+      for (let m = 0; m < SUPERVISION_MAX_MISSES; m += 1) {
+        now += 60_000;
+        await superviseAllLiveliness(host, { probe, restart, now: () => now, },);
+      }
+
+      // A healthy probe resets consecutive counters but not the cumulative budget.
+      up = true;
+      await superviseAllLiveliness(host, { probe, restart, now: () => now, },);
+      up = false;
+    }
+
+    expect(calls.count,).toBe(SUPERVISION_MAX_RESTARTS,);
+
+    // One more failing streak: budget already spent, so no 6th restart.
+    for (let m = 0; m < SUPERVISION_MAX_MISSES; m += 1) {
+      now += 60_000;
+      await superviseAllLiveliness(host, { probe, restart, now: () => now, },);
+    }
+
+    expect(calls.count,).toBe(SUPERVISION_MAX_RESTARTS,);
+    expect(host.fatalInfos,).toHaveLength(1,);
+    expect(host.fatalInfos[0]?.restartAttempts,).toBe(SUPERVISION_MAX_RESTARTS,);
+  });
+
+  test("overlapping interval passes are refused while one is in flight", async () => {
+    const originalSetInterval = globalThis.setInterval;
+    let tick: (() => void) | undefined;
+    globalThis.setInterval = ((fn: () => void,) => {
+      tick = fn;
+      return 1;
+    }) as unknown as typeof setInterval;
+
+    const host = makeHost();
+    host.instances.push(makeInstance(19_022, 882,),);
+    let releaseFirst: () => void = () => {};
+    const gate = new Promise<void>((resolve,) => {
+      releaseFirst = resolve;
+    },);
+
+    let probeCalls = 0;
+    const probe = async (_instance: ServerInstance,): Promise<boolean> => {
+      probeCalls += 1;
+      if (probeCalls === 1) { await gate; }
+      return true;
+    };
+
+    try {
+      startSupervisedProbes(host, { probe, },);
+      expect(typeof tick,).toBe("function",);
+      tick?.(); // pass 1 starts and blocks inside the probe
+      tick?.(); // pass 2 must be skipped while pass 1 is in flight
+      expect(probeCalls,).toBe(1,);
+
+      releaseFirst();
+      await new Promise((resolve,) => setTimeout(resolve, 0,));
+      tick?.(); // pass 1 has finished; a new pass is allowed
+      expect(probeCalls,).toBe(2,);
+    } finally {
+      globalThis.setInterval = originalSetInterval;
+    }
   });
 });

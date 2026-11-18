@@ -16,12 +16,14 @@ import {
   LEGACY_DATA_DIR,
   LEGACY_DATA_DIRS,
   portWithoutInstanceWarning,
+  resetEffectiveServerBindForTests,
   resetPortWarningForTests,
   resolveDbPath,
   resolveInstanceDir,
   resolveInstanceSlug,
   resolveStateRoot,
   sanitizeInstanceSlug,
+  setEffectiveServerBind,
   SQLITE_FILE_NAME,
   type StateEnv,
 } from "./state-dir";
@@ -143,6 +145,33 @@ describe("resolveInstanceSlug effective server bind", () => {
     } finally {
       warn.mockRestore();
     }
+  });
+});
+
+describe("effective server bind shared across path resolvers", () => {
+  test("setter unifies DB and runtime instance dirs; reset restores the no-bind default", () => {
+    const env: StateEnv = { XDG_STATE_HOME: "/xdg", }; // LOOP_LORE_INSTANCE/PORT unset
+    const server = { port: 3000, host: "localhost", };
+    const expectedDir = path.join("/xdg", APP_STATE_DIR_NAME, "port-3000",);
+    try {
+      setEffectiveServerBind(server,);
+      expect(resolveInstanceDir(env,),).toBe(expectedDir,);
+      expect(resolveDbPath(env, server,),).toBe(path.join(expectedDir, SQLITE_FILE_NAME,),);
+      expect(path.dirname(resolveDbPath(env, server,),),).toBe(resolveInstanceDir(env,),);
+      // explicit LOOP_LORE_INSTANCE still wins over the stored bind
+      expect(resolveInstanceDir({ ...env, LOOP_LORE_INSTANCE: "canary", },),).toBe(
+        path.join("/xdg", APP_STATE_DIR_NAME, "canary",),
+      );
+    } finally {
+      resetEffectiveServerBindForTests();
+    }
+    // after reset, no stored bind and no env bind -> default slug
+    expect(resolveInstanceDir(env,),).toBe(
+      path.join("/xdg", APP_STATE_DIR_NAME, DEFAULT_INSTANCE_SLUG,),
+    );
+    expect(resolveDbPath(env,),).toBe(
+      path.join("/xdg", APP_STATE_DIR_NAME, DEFAULT_INSTANCE_SLUG, SQLITE_FILE_NAME,),
+    );
   });
 });
 

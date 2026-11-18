@@ -17,6 +17,22 @@ export const LSP_ERRORS = {
   requestFailed: -32803,
 } as const;
 
+/** Largest accepted frame body (8 MiB); a bad frame must not grow the buffer without bound. */
+const MAX_FRAME_BYTES = 8 * 1024 * 1024;
+
+/**
+ * Parse a frame body length from its header.
+ * @param header - raw ASCII header text, terminator included
+ * @returns the byte length, or null when the header is missing/invalid/oversized
+ */
+function frameLength(header: string,): number | null {
+  // Capture the whole value so "1.5" is rejected, not silently truncated.
+  const raw = /content-length:\s*([^\r\n]*)/i.exec(header,)?.[1]?.trim();
+  if (raw === undefined || !/^\d+$/.test(raw,)) { return null; }
+  const length = Number(raw,);
+  return Number.isSafeInteger(length,) && length <= MAX_FRAME_BYTES ? length : null;
+}
+
 /** One parsed JSON-RPC message (batch arrays are rejected, not served). */
 export interface LspMessage {
   id?: unknown;
@@ -41,14 +57,21 @@ export function createLspFrameParser(onMessage: (text: string,) => void,): (chun
       const crlf = pending.indexOf("\r\n\r\n",);
       const lf = pending.indexOf("\n\n",);
       const end = crlf !== -1 && (lf === -1 || crlf < lf) ? crlf + 4 : lf !== -1 ? lf + 2 : -1;
-      if (end === -1) { return; }
+      if (end === -1) {
+        // No header terminator: drop a garbage stream before it grows unbounded.
+        if (pending.length > MAX_FRAME_BYTES) { pending = Buffer.alloc(0,); }
+        return;
+      }
 
       const header = pending.subarray(0, end,).toString("latin1",);
-      const match = /content-length:\s*(\d+)/i.exec(header,);
-      pending = pending.subarray(end,);
-      if (!match?.[1]) { continue; }
+      const length = frameLength(header,);
+      if (length === null) {
+        // Invalid frame: drop everything so a bad frame cannot grow the buffer.
+        pending = Buffer.alloc(0,);
+        return;
+      }
 
-      const length = Number(match[1],);
+      pending = pending.subarray(end,);
       if (pending.length < length) {
         // Body incomplete — put the ASCII header back and wait for more.
         pending = Buffer.concat([Buffer.from(header, "latin1",), pending,],);

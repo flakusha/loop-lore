@@ -24,7 +24,7 @@ import type { Kysely, } from "kysely";
 import { APP_VERSION, } from "../../config/constants";
 import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
-import type { StateEnv, } from "../../config/state-dir";
+import { setEffectiveServerBind, type StateEnv, } from "../../config/state-dir";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { createLogger, getLogger, } from "../../logger";
@@ -81,14 +81,16 @@ export async function connectInboundMcpServer(
  * is never opened here — ops run (and are audited) server-side. stdio
  * EOF/close ends only this relay; the server keeps running.
  * @param addrArg - the `--proxy` address arg ("" reads the addr file)
- * @param opts - stdio/env seams (default: this process); tests pass fakes
+ * @param opts - stdio/env/config seams (default: this process + loaded config); tests pass fakes
  */
 export async function mainProxy(
   addrArg: string,
-  opts?: { input?: NodeJS.ReadableStream; output?: NodeJS.WritableStream; env?: StateEnv },
+  opts?: { input?: NodeJS.ReadableStream; output?: NodeJS.WritableStream; env?: StateEnv; config?: Config },
 ): Promise<void> {
   createLogger();
   const logger = getLogger();
+  const config = opts?.config ?? loadConfig();
+  setEffectiveServerBind(config.server,);
   let client;
   try {
     client = resolveProxyClient(addrArg, opts?.env,);

@@ -64,7 +64,14 @@ export async function main(): Promise<void> {
 
   const handler = createLspMessageHandler({ database, runtime, }, write,);
   const feed = createLspFrameParser((text,) => {
-    void handler(text,);
+    void handler(text,).catch((error: unknown,) => {
+      // A rejected message must never surface as an unhandled rejection.
+      logger.error(
+        "inbound LSP message handler failed",
+        error instanceof Error ? error : undefined,
+        { module: "lsp-inbound", },
+      );
+    },);
   },);
 
   process.stdin.on("data", feed,);

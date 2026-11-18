@@ -38,11 +38,13 @@ export interface LlamaSwapOptions {
 export interface SupervisionCounters {
   /** Consecutive probe misses; reset on success. */
   misses: number;
-  /** Restart attempts spent; reset on success. */
+  /** Consecutive restart attempts spent; reset on success. */
   restarts: number;
+  /** Cumulative restart attempts; a healthy probe never resets this. */
+  totalRestarts: number;
   /** Earliest timestamp for the next restart attempt (backoff gate). */
   notBefore: number;
-  /** Budget exhausted and escalated; suppresses repeat fatal reports. */
+  /** Budget exhausted and escalated; suppresses all further restarts. */
   exhausted: boolean;
 }
 

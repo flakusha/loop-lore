@@ -64,6 +64,27 @@ export interface ServerBind {
 }
 
 /**
+ * Effective server bind for this process, stored at startup by
+ * `setEffectiveServerBind`. Path resolvers that omit their `server` argument
+ * fall back to this, so the DB and runtime instance dirs derive one slug.
+ */
+let effectiveServerBind: ServerBind | undefined;
+
+/**
+ * Store the effective server bind (loaded `config.server`) for path
+ * resolution. An explicit `server` argument passed to a resolver still wins.
+ * @param server - resolved server bind; omit when unconfigured
+ */
+export function setEffectiveServerBind(server?: ServerBind,): void {
+  effectiveServerBind = server;
+}
+
+/** Test-only reset: clear the stored bind so resolvers fall back to env/default. */
+export function resetEffectiveServerBindForTests(): void {
+  effectiveServerBind = undefined;
+}
+
+/**
  * @param env - environment to read
  * @param key - variable name
  * @returns the trimmed value, or undefined when unset/blank
@@ -116,7 +137,10 @@ export function resolveStateRoot(env: StateEnv = process.env,): string {
  * bind port is set) the PORT env silently selects the database, so a
  * one-line warning goes to stderr (once per process) naming the selected dir.
  */
-export function resolveInstanceSlug(env: StateEnv = process.env, server?: ServerBind,): string {
+export function resolveInstanceSlug(
+  env: StateEnv = process.env,
+  server: ServerBind | undefined = effectiveServerBind,
+): string {
   const named = pick(env, INSTANCE_ENV_VAR,);
   if (named) {
     return sanitizeInstanceSlug(named,);
@@ -190,19 +214,25 @@ function emitPortWarningOnce(env: StateEnv, server?: ServerBind,): void {
  * The per-instance state dir: every default runtime path (DB, uploads, TLS
  * certs) lives under here, so two instances never share a sqlite file.
  * @param env - environment to read (defaults to process.env)
- * @param server - resolved server bind (loaded config.server); omit when unconfigured
+ * @param server - resolved server bind; defaults to the stored effective bind
  * @returns <state-root>/<instance-slug>
  */
-export function resolveInstanceDir(env: StateEnv = process.env, server?: ServerBind,): string {
+export function resolveInstanceDir(
+  env: StateEnv = process.env,
+  server: ServerBind | undefined = effectiveServerBind,
+): string {
   return path.join(resolveStateRoot(env,), resolveInstanceSlug(env, server,),);
 }
 
 /**
  * @param env - environment to read (defaults to process.env)
- * @param server - resolved server bind (loaded config.server); omit when unconfigured
+ * @param server - resolved server bind; defaults to the stored effective bind
  * @returns LOOP_LORE_DB_PATH, else the XDG per-instance default
  */
-export function resolveDbPath(env: StateEnv = process.env, server?: ServerBind,): string {
+export function resolveDbPath(
+  env: StateEnv = process.env,
+  server: ServerBind | undefined = effectiveServerBind,
+): string {
   return pick(env, DB_PATH_ENV_VAR,) ?? path.join(resolveInstanceDir(env, server,), SQLITE_FILE_NAME,);
 }
 

@@ -14,6 +14,7 @@ import {
   rmSync,
   statSync,
   symlinkSync,
+  utimesSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir, } from "node:os";
@@ -24,6 +25,7 @@ import {
   ensureFirstBootPiiSecrets,
   ensureFirstBootPiiSecretsWithOutcome,
   FIRST_BOOT_FILE,
+  FIRST_BOOT_STALE_CLAIM_MS,
   FirstBootContentionError,
   generatePiiSecret,
   getLastFirstBootPromotion,
@@ -117,6 +119,21 @@ describe("hasAnyConfigFile", () => {
       }
     }
   });
+
+  test("zero-byte or unparsable promotion file is not an operator config", () => {
+    const { dir, cleanup, } = scratchDir();
+    try {
+      const target = join(dir, FIRST_BOOT_FILE,);
+      writeFileSync(target, "",);
+      expect(hasAnyConfigFile(dir,),).toBe(false,);
+      writeFileSync(target, 'nsfw: "unterminated',);
+      expect(hasAnyConfigFile(dir,),).toBe(false,);
+      writeFileSync(target, "nsfw:\n  piiSecret: operator-value\n",);
+      expect(hasAnyConfigFile(dir,),).toBe(true,);
+    } finally {
+      cleanup();
+    }
+  });
 });
 
 describe("renderFirstBootYaml", () => {
@@ -142,6 +159,32 @@ describe("writeFirstBootFile", () => {
       cleanup();
     }
   });
+
+  test("refuses a symlink planted at the predictable temp path", () => {
+    const { dir, cleanup, } = scratchDir();
+    try {
+      const victim = join(dir, "victim.yaml",);
+      writeFileSync(victim, "do not touch",);
+      symlinkSync(victim, `${join(dir, FIRST_BOOT_FILE,)}.${process.pid}.tmp`,);
+      expect(() => writeFirstBootFile(dir, { nsfwPiiSecret: generatePiiSecret(), },)).toThrow();
+      expect(readFileSync(victim, "utf8",),).toBe("do not touch",);
+      expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(false,);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("a fresh zero-byte claim is left intact and loses the race", () => {
+    const { dir, cleanup, } = scratchDir();
+    try {
+      const target = join(dir, FIRST_BOOT_FILE,);
+      writeFileSync(target, "", { mode: 0o600, },);
+      expect(writeFirstBootFile(dir, { nsfwPiiSecret: generatePiiSecret(), },),).toBe("existed",);
+      expect(statSync(target,).size,).toBe(0,);
+    } finally {
+      cleanup();
+    }
+  });
 });
 
 describe("ensureFirstBootPiiSecrets", () => {
@@ -153,6 +196,29 @@ describe("ensureFirstBootPiiSecrets", () => {
       expect(() => validatePiiSafety(promoted,)).not.toThrow();
       expect(existsSync(join(dir, FIRST_BOOT_FILE,),),).toBe(true,);
       expect(promoted.nsfw.piiSecret!.length,).toBeGreaterThanOrEqual(MIN_PII_SECRET_LENGTH,);
+    } finally {
+      restore();
+      cleanup();
+    }
+  });
+
+  test("stale zero-byte claim stub is reclaimed and a real secret published", () => {
+    const { dir, cleanup, } = scratchDir();
+    const restore = emptyEnv();
+    const target = join(dir, FIRST_BOOT_FILE,);
+    try {
+      writeFileSync(target, "",);
+      chmodSync(target, 0o600,);
+      const old = new Date(Date.now() - FIRST_BOOT_STALE_CLAIM_MS - 60_000,);
+      utimesSync(target, old, old,);
+      const promoted = ensureFirstBootPiiSecrets(dir, freshConfig(),);
+      expect(() => validatePiiSafety(promoted,)).not.toThrow();
+      const written = readFileSync(target, "utf8",);
+      expect(written.length,).toBeGreaterThan(0,);
+      expect(statSync(target,).mode & 0o777,).toBe(0o600,);
+      expect(promoted.nsfw.piiSecret,).toBe(
+        (Bun.YAML.parse(written,) as { nsfw: { piiSecret: string } }).nsfw.piiSecret,
+      );
     } finally {
       restore();
       cleanup();

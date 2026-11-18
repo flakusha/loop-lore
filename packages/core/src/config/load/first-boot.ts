@@ -11,9 +11,10 @@
 // secrets, persist them to gitignored `config.local.yaml` (chmod 0600), and
 // merge them into the in-memory config so the same boot validates.
 //
-// Write-once: any pre-existing config file skips promotion entirely (the
+// Write-once: a real pre-existing config file skips promotion entirely (the
 // operator owns that config; validatePiiSafety then throws its documented
-// error). Concurrent first boots serialize on an exactly-one-wins claim:
+// error). A zero-byte/unparsable config.local.yaml is a crash stub, treated
+// as absent. Concurrent first boots serialize on an exactly-one-wins claim:
 // the winner atomically publishes config.local.yaml while the loser discards
 // its own generated values, adopts the winner's via bounded re-read, and
 // boots as a non-generating follower (FirstBootContentionError after the
@@ -46,6 +47,9 @@ export const FIRST_BOOT_FILE = "config.local.yaml";
 
 /** Random bytes per generated secret: 48 bytes -> 64 base64 chars. */
 export const GENERATED_SECRET_BYTES = 48;
+
+/** Age after which a zero-byte promotion claim is treated as abandoned. */
+export const FIRST_BOOT_STALE_CLAIM_MS = 5_000;
 
 /**
  * Thrown when a first-boot loser cannot adopt the winner's file: the claim
@@ -123,17 +127,39 @@ export function generatePiiSecret(): string {
 }
 
 /**
+ * A zero-byte or unparsable promotion file is a crash stub, not an operator
+ * config: the winner O_EXCL-claims FIRST_BOOT_FILE before its atomic rename,
+ * and a crash in that gap leaves an empty file that would otherwise convince
+ * the admission check an operator owns the config, permanently bricking the
+ * exit-75 retry. Other local config files are always operator-owned.
+ * @param directory - Project root used to identify the promotion file.
+ * @param file - Candidate local config path.
+ * @returns True when the file counts as an operator-owned config.
+ */
+function isUsableLocalConfig(directory: string, file: string,): boolean {
+  if (file !== path.join(directory, FIRST_BOOT_FILE,)) { return true; }
+  try {
+    const content = fs.readFileSync(file, "utf8",);
+    if (content.length === 0) { return false; }
+    Bun.YAML.parse(content,);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * True when any user-editable config file exists (main, local, default,
  * domain, or env candidates — same search roots as loadConfig).
  * @param directory - Project root to probe.
  * @returns True when at least one config file exists.
  */
 export function hasAnyConfigFile(directory: string,): boolean {
-  if (
-    findConfigFile(directory,) ??
-      findConfigFile(directory, LOCAL_CONFIG_FILES,) ??
-      findConfigFile(directory, DEFAULT_CONFIG_FILES,)
-  ) {
+  const local = findConfigFile(directory, LOCAL_CONFIG_FILES,);
+  if (local && isUsableLocalConfig(directory, local.path,)) {
+    return true;
+  }
+  if (findConfigFile(directory,) ?? findConfigFile(directory, DEFAULT_CONFIG_FILES,)) {
     return true;
   }
 
@@ -211,11 +237,34 @@ function assertPromotionPathNotSymlink(target: string, phase: "publish" | "read"
 }
 
 /**
+ * Unlink an abandoned zero-byte claim stub so O_EXCL can be re-attempted.
+ * Fresh claims (another live boot mid-publish) and any non-empty file —
+ * including a real operator config — are left untouched.
+ * @param target - Promotion file path (already symlink-checked by caller).
+ */
+function reclaimStaleClaim(target: string,): void {
+  let stat: fs.Stats;
+  try {
+    stat = fs.lstatSync(target,);
+  } catch {
+    return;
+  }
+  if (stat.isSymbolicLink() || stat.size !== 0) { return; }
+  if (Date.now() - stat.mtimeMs <= FIRST_BOOT_STALE_CLAIM_MS) { return; }
+  // ponytail: lstat/unlink is racy, but only a stub older than the threshold
+  // (so no live publisher owns it) qualifies; add a dev/ino guard if a
+  // suspended publisher ever proves realistic.
+  fs.unlinkSync(target,);
+}
+
+/**
  * Persist the promotion file with exactly-one-wins semantics across
  * concurrent first boots, and chmod 0600.
  * @param directory - Project root receiving the file.
  * @param secrets - Generated secrets to persist.
  * @returns "created" for the winner, "existed" when another boot won the race.
+ * @throws If the target or predictable temp path is a symlink, or the temp
+ * path already exists, so a planted path can never redirect the secret.
  */
 export function writeFirstBootFile(directory: string, secrets: FirstBootSecrets,): "created" | "existed" {
   const target = path.join(directory, FIRST_BOOT_FILE,);
@@ -223,15 +272,19 @@ export function writeFirstBootFile(directory: string, secrets: FirstBootSecrets,
   // guarantee; first boot on NFS or any other shared volume is out of scope
   // (single-host only).
   assertPromotionPathNotSymlink(target, "publish",);
+  reclaimStaleClaim(target,);
   const tmp = `${target}.${process.pid}.tmp`;
-  fs.writeFileSync(tmp, renderFirstBootYaml(secrets,), { mode: 0o600, },);
-  fs.chmodSync(tmp, 0o600,);
-  const fd = fs.openSync(tmp, "r",);
+  const content = Buffer.from(renderFirstBootYaml(secrets,), "utf8",);
+  // O_EXCL fails closed when a symlink or leftover path already sits here,
+  // instead of following it and redirecting the secret to an attacker's file.
+  const tmpFd = fs.openSync(tmp, "wx", 0o600,);
   try {
-    fs.fsyncSync(fd,);
+    fs.writeSync(tmpFd, content,);
+    fs.fsyncSync(tmpFd,);
   } finally {
-    fs.closeSync(fd,);
+    fs.closeSync(tmpFd,);
   }
+  fs.chmodSync(tmp, 0o600,);
   // Claim the target itself with O_EXCL, then atomically rename the complete
   // tmp over the zero-byte claim. A loser either fails the claim (EEXIST) or
   // observes the claim stub and retries until this rename lands; it never

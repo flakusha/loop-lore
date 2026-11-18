@@ -16,7 +16,12 @@
 // ./health when supplied in the options (spec §4.4, §10).
 
 import type { AdapterMessage, AdapterMessageHandler, ProtocolAdapter, } from "./adapter";
-import { type AdapterHealth, type AdapterRateLimiter, classifyAdapterFailure, } from "./health";
+import {
+  type AdapterHealth,
+  type AdapterRateLimiter,
+  classifyAdapterFailure,
+  retryAfterMsFromFailure,
+} from "./health";
 import { type BridgeRegistry, unknownTargetResult, } from "./registry";
 
 /** Moderation verdict — `allowed: false` short-circuits the send. */
@@ -49,6 +54,16 @@ export type BridgeSendResult =
   | { ok: true; adapter: string; id: string; idempotencyKey: string }
   | BridgeSendError;
 
+/** Optional adapter capability: accept a token supplied at call time so an
+ * admin-rotated token reaches the adapter without reconnecting. */
+type TokenBoundSender = {
+  sendWithToken(token: string, target: string, message: AdapterMessage,): Promise<string>;
+};
+
+function hasTokenSend(adapter: ProtocolAdapter,): adapter is ProtocolAdapter & TokenBoundSender {
+  return "sendWithToken" in adapter && typeof adapter.sendWithToken === "function";
+}
+
 /** Options for {@link createMessageBridge} — all optional. */
 export interface MessageBridgeOptions {
   /** Outbound moderation gate; default allows everything. */
@@ -63,6 +78,10 @@ export interface MessageBridgeOptions {
   inboundGate?: InboundGate;
   /** Bot-token → adapter-name bindings; `sendWithToken` refuses unbound tokens. */
   tokenBindings?: Readonly<Record<string, string>>;
+  /** Dynamic token + target → adapter-name resolver, consulted before
+   * `tokenBindings` so a rotated token rebinds and the target picks the
+   * owning channel when several adapters share one MFA token. */
+  tokenBindingResolver?: (token: string, target: string,) => string | undefined;
   /** Clock injection for tests; default `Date.now`. */
   now?: () => number;
 }
@@ -123,11 +142,41 @@ export function createMessageBridge(
     }
   }
 
+  /** Map an adapter throw to a typed result: a 429 is surfaced with its
+   * retry delay and recorded by the limiter, never as an unhealthy verdict. */
+  function adapterFailureResult(
+    cause: unknown,
+    adapter: ProtocolAdapter,
+    target: string,
+  ): BridgeSendResult {
+    const code = classifyAdapterFailure(cause,);
+    health?.markFailure(adapter.name, code,);
+    if (code === "rate_limited") {
+      const retryAfterMs = retryAfterMsFromFailure(cause,) ?? 0;
+      rateLimiter?.observeRetryAfter(adapter.name, adapter.protocol, target, retryAfterMs,);
+      return {
+        ok: false,
+        code: "rate_limited",
+        message: `adapter ${adapter.name} is rate limited sending to ${target}`,
+        retryAfterMs,
+      };
+    }
+
+    const detail = cause instanceof Error ? cause.message : "unknown error";
+    return {
+      ok: false,
+      code: "send_failed",
+      message: `adapter ${adapter.name} failed to send to ${target}: ${detail}`,
+      cause,
+    };
+  }
+
   /** Shared outbound path for target-resolved and token-bound sends. */
   async function dispatch(
     adapter: ProtocolAdapter,
     target: string,
     message: AdapterMessage,
+    token?: string,
   ): Promise<BridgeSendResult> {
     // Rate-limit gate (spec §4.4): a limited target never reaches the
     // adapter — no gate call, no send.
@@ -167,19 +216,16 @@ export function createMessageBridge(
     const stamped: AdapterMessage = { ...message, target, idempotencyKey, };
 
     try {
-      const id = await adapter.sendMessage(target, stamped,);
+      // A token-bound send hands the fresh token to adapters that support it;
+      // everyone else keeps the plain ProtocolAdapter send path.
+      const id = token !== undefined && hasTokenSend(adapter,)
+        ? await adapter.sendWithToken(token, target, stamped,)
+        : await adapter.sendMessage(target, stamped,);
+
       health?.markSuccess(adapter.name,);
       return { ok: true, adapter: adapter.name, id, idempotencyKey, };
     } catch (cause) {
-      const code = classifyAdapterFailure(cause,);
-      health?.markFailure(adapter.name, code,);
-      const detail = cause instanceof Error ? cause.message : "unknown error";
-      return {
-        ok: false,
-        code: "send_failed",
-        message: `adapter ${adapter.name} failed to send to ${target}: ${detail}`,
-        cause,
-      };
+      return adapterFailureResult(cause, adapter, target,);
     }
   }
 
@@ -190,7 +236,9 @@ export function createMessageBridge(
       return dispatch(adapter, target, message,);
     },
     async sendWithToken(token, target, message,) {
-      const adapterName = options.tokenBindings?.[token];
+      // Resolver first: a rotated system_config token is absent from the
+      // frozen bindings map, yet still binds to the same adapter.
+      const adapterName = options.tokenBindingResolver?.(token, target,) ?? options.tokenBindings?.[token];
       if (adapterName === undefined) {
         return { ok: false, code: "send_failed", message: "no adapter is bound to the supplied token", };
       }
@@ -200,7 +248,7 @@ export function createMessageBridge(
         return { ok: false, code: "send_failed", message: "the token-bound adapter does not own the target", };
       }
 
-      return dispatch(adapter, target, message,);
+      return dispatch(adapter, target, message, token,);
     },
     onMessage(newHandler,) {
       handler = newHandler;

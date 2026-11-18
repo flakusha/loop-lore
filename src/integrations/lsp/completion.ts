@@ -90,6 +90,7 @@ export function createCompletionDispatcher(binding: CompletionBinding,): Complet
   const debounceMs = binding.debounceMs ?? DEFAULT_DEBOUNCE_MS;
   const timeoutMs = binding.timeoutMs ?? DEFAULT_COMPLETION_TIMEOUT_MS;
   let timer: NodeJS.Timeout | undefined;
+  let pendingResolve: ((value: string,) => void) | null = null;
   let inFlight: Promise<string> | null = null;
 
   const dispatchCompletion = async (target: CompletionTarget,): Promise<string> => {
@@ -142,10 +143,19 @@ export function createCompletionDispatcher(binding: CompletionBinding,): Complet
   };
 
   const requestCompletion = (target: CompletionTarget,): Promise<string> => {
-    const { promise, resolve, reject, } = Promise.withResolvers<string>();
+    // A superseded debounce window must settle: clearTimeout drops the only
+    // callback that would ever resolve its promise, so settle it empty first.
+    if (pendingResolve !== null) {
+      pendingResolve("",);
+      pendingResolve = null;
+    }
+
     clearTimeout(timer,);
+    const { promise, resolve, reject, } = Promise.withResolvers<string>();
+    pendingResolve = resolve;
     timer = setTimeout(() => {
       timer = undefined;
+      pendingResolve = null;
       void runExclusive(target,).then(resolve, reject,);
     }, debounceMs,);
 

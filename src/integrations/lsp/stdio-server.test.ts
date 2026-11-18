@@ -386,6 +386,34 @@ describe("lsp completion", () => {
     expect(items,).toHaveLength(1,);
     expect(items[0]?.["insertText"],).toBe("recovered()",);
   });
+
+  it("settles both requests when a rapid completion supersedes another (debounce > 0)", async () => {
+    const { handle, writes, prompts, } = connectStubbed("  from-latest()", { debounceMs: 30, },);
+    const raw = await seedToken(userId,);
+    await handle(msg("initialize", { initializationOptions: { token: raw, }, }, 1,),);
+    await handle(msg("textDocument/didOpen", {
+      textDocument: { uri: "file:///ws/main.ts", languageId: "typescript", version: 1, text: "const x = ", },
+    }, null,),);
+
+    const complete = (id: number,) =>
+      msg("textDocument/completion", {
+        textDocument: { uri: "file:///ws/main.ts", },
+        position: { line: 0, character: 10, },
+      }, id,);
+
+    // Both requests land inside one debounce window: the first must be settled
+    // by supersede instead of left pending forever after its timer is cleared.
+    const first = handle(complete(2,),);
+    const second = handle(complete(3,),);
+    await Promise.all([first, second,],);
+
+    expect(byId(writes, 2,).result,).toEqual({ isIncomplete: false, items: [], },);
+    const items = (byId(writes, 3,).result as Record<string, unknown>)["items"] as Array<Record<string, unknown>>;
+    expect(items,).toHaveLength(1,);
+    expect(items[0]?.["insertText"],).toBe("from-latest()",);
+    // Only the latest target dispatched.
+    expect(prompts,).toHaveLength(1,);
+  });
 });
 
 describe("lsp completion path performs no writes", () => {
@@ -474,6 +502,24 @@ describe("lsp framing", () => {
     feed(multiFramed.subarray(charSplit,),);
 
     expect(bodies,).toEqual([body, multi,],);
+  });
+
+  it("refuses oversized, non-integer, and header-less frames and recovers on a valid frame", () => {
+    const bodies: string[] = [];
+    const feed = createLspFrameParser((text,) => {
+      bodies.push(text,);
+    },);
+
+    const valid = JSON.stringify({ jsonrpc: "2.0", id: 1, method: "shutdown", },);
+    const validFrame = `Content-Length: ${Buffer.byteLength(valid,)}\r\n\r\n${valid}`;
+
+    feed(Buffer.from(`Content-Length: 9000000\r\n\r\npartial`,),); // > 8 MiB cap
+    feed(Buffer.from(`Content-Length: 1.5\r\n\r\npartial`,),); // non-integer
+    feed(Buffer.from(`Content-Length: 999999999999999999999999\r\n\r\npartial`,),); // oversized number
+    feed(Buffer.from(`Content-Type: application/json\r\n\r\npartial`,),); // no Content-Length
+    feed(Buffer.from(validFrame,),);
+
+    expect(bodies,).toEqual([valid,],);
   });
 });
 

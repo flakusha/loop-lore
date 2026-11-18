@@ -11,6 +11,7 @@ import {
   classifyAdapterFailure,
   createAdapterHealth,
   createAdapterRateLimiter,
+  retryAfterMsFromFailure,
 } from "./health";
 
 function makeClock(start = 1_000,): { now(): number; advance(ms: number,): void } {
@@ -50,6 +51,15 @@ describe("AdapterHealth verdict transitions", () => {
       expect(entry?.reason,).toBe(code,);
       health.reset();
     }
+  });
+
+  test("a 429 never flips an adapter to unhealthy", () => {
+    const health = createAdapterHealth();
+    health.markFailure("telegram", "rate_limited",);
+    health.markFailure("telegram", "rate_limited",);
+    expect(health.get("telegram",)?.verdict,).toBe("ok",);
+    expect(health.get("telegram",)?.consecutiveFailures,).toBe(0,);
+    expect(health.isHealthy("telegram",),).toBe(true,);
   });
 
   test("a successful send/receive recovers to ok and clears the streak", () => {
@@ -100,6 +110,19 @@ describe("classifyAdapterFailure", () => {
     expect(classifyAdapterFailure(new Error("malformed event envelope",),),).toBe("protocol",);
     expect(classifyAdapterFailure(new Error("segfault in native module",),),).toBe("crash",);
     expect(classifyAdapterFailure("not an error",),).toBe("crash",);
+  });
+
+  test("classifies 429 shapes and reads retry delays in either unit", () => {
+    const telegram = Object.assign(new Error("telegram rate limited",), { retryAfterMs: 7_000, },);
+    const matrix = Object.assign(new Error("429 Too Many Requests",), { retryAfterSeconds: 5, },);
+    expect(classifyAdapterFailure(telegram,),).toBe("rate_limited",);
+    expect(classifyAdapterFailure(matrix,),).toBe("rate_limited",);
+    expect(classifyAdapterFailure(new Error("HTTP 429 from provider",),),).toBe("rate_limited",);
+
+    expect(retryAfterMsFromFailure(telegram,),).toBe(7_000,);
+    expect(retryAfterMsFromFailure(matrix,),).toBe(5_000,);
+    expect(retryAfterMsFromFailure(Object.assign(new Error("retry_after",), { retry_after: 3, },),),).toBe(3_000,);
+    expect(retryAfterMsFromFailure(new Error("boom",),),).toBeUndefined();
   });
 });
 

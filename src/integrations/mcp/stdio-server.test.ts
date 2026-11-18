@@ -31,6 +31,7 @@ import { join, } from "node:path";
 import { PassThrough, } from "node:stream";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
+import { resetEffectiveServerBindForTests, setEffectiveServerBind, } from "../../config/state-dir";
 import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
@@ -283,6 +284,11 @@ describe("inbound MCP stdio server", () => {
     const env = { LOOP_LORE_STATE_DIR: dir, };
     let listener: StdioProxyListener | undefined;
     const prevExitCode = process.exitCode ?? 0;
+    const prevMainConfig = mainConfig;
+    // mainProxy loads config through the ISOLATED mock; seed it and pin the
+    // same effective bind so listener and shim resolve one instance dir.
+    mainConfig = baseConfig;
+    setEffectiveServerBind(baseConfig.server,);
     try {
       ensureProxyToken(env,);
       listener = await startStdioProxyListener({
@@ -308,7 +314,7 @@ describe("inbound MCP stdio server", () => {
         }
       },);
 
-      const relay = mainProxy(listener.addr, { input, output, env, },);
+      const relay = mainProxy(listener.addr, { input, output, env, config: baseConfig, },);
       // A protocol ping proves bytes flow both ways through the shim.
       input.write(`${JSON.stringify({ jsonrpc: "2.0", id: 1, method: "ping", },)}\n`,);
       const deadline = Date.now() + 4000;
@@ -323,6 +329,8 @@ describe("inbound MCP stdio server", () => {
       expect(process.exitCode ?? 0,).toBe(prevExitCode,);
     } finally {
       await listener?.close();
+      mainConfig = prevMainConfig;
+      resetEffectiveServerBindForTests();
       process.exitCode = prevExitCode;
       rmSync(dir, { recursive: true, force: true, },);
     }

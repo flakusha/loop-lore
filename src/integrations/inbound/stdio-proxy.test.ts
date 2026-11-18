@@ -210,6 +210,39 @@ describe("stdio-proxy files and parsing", () => {
     expect(isLoopbackHost("0.0.0.0",),).toBe(false,);
     expect(isLoopbackHost("example.com",),).toBe(false,);
   });
+
+  test("token/addr paths follow the effective server bind without LOOP_LORE_INSTANCE", () => {
+    const { env, dir, } = tempEnv(); // LOOP_LORE_STATE_DIR only
+    try {
+      resetEffectiveServerBindForTests();
+      expect(proxyTokenPath(env,),).toContain(DEFAULT_INSTANCE_SLUG,);
+
+      setEffectiveServerBind(baseConfig.server,);
+      const expected = `port-${baseConfig.server.port}`;
+      expect(expected,).toBe("port-3000",);
+      try {
+        expect(proxyTokenPath(env,),).toContain(expected,);
+        expect(proxyAddrPath(env,),).toContain(expected,);
+
+        const token = ensureProxyToken(env,);
+        writeProxyAddr("127.0.0.1:4123", env,);
+        expect(readProxyToken(env,),).toBe(token,);
+        expect(readProxyAddr(env,),).toBe("127.0.0.1:4123",);
+        expect(resolveProxyClient("", env,),).toEqual({ addr: "127.0.0.1:4123", token, },);
+
+        // An explicit instance still wins over the effective bind.
+        expect(proxyTokenPath({ ...env, LOOP_LORE_INSTANCE: "named", },),).toContain("named",);
+      } finally {
+        resetEffectiveServerBindForTests();
+      }
+
+      // No bind: the token written under the bind is not visible.
+      expect(readProxyToken(env,),).toBeNull();
+    } finally {
+      resetEffectiveServerBindForTests();
+      rmSync(dir, { recursive: true, force: true, },);
+    }
+  });
 });
 
 describe("SocketProxyTransport framing", () => {
