@@ -102,6 +102,8 @@ Post-generation: `src/generation/policy-detector.ts` — ruleset (banned topics,
 
 Native non-generative classifier transport (llama.cpp PR #29818): typed `choice` / `score` / `noul` questions answered with probabilities and zero generated text. `callAux` tries it first when the classifier role resolves to a configured model on an OpenAI-compatible base URL (`src/aux-pipeline/decision-client.ts`, questions from `decision-registry.ts` built off the task's label vocabulary); any failure — 400/501/502, timeout, unparseable body — falls back to the generative auxiliary path unchanged. Loopback only; no remote decision endpoint.
 
+Request body: `{ model, state, questions }` where `questions` is an object keyed by question name; each value carries `type` plus `instructions` and a `criteria` map (choice/noul) or list (score). Answers return keyed by the same names. This is the upstream shape from PR #29818 / the System One API — a name-keyed object, not an array with `id` fields.
+
 Upstream limits: a GGUF without `<arch>.decision.*` metadata answers 501; without a `systemone` chat template the server throws at load; options cap is per model family (52 openjev-style, up to 255 laya-style); probabilities are temperature-scaled and NOT calibrated, so confidence cutoffs live per model AND per quantization. Images need a loaded multimodal projector (the local llama-swap proxy 502s image payloads on this path while vision over chat completions works), video input is 400 upstream — the client sends text-only state, vision coverage stays on the generative path. Measured 2026-10-26 against the local proxy (`:7180`, `llama-d3-2b`): text `choice`+`noul` → 200, `output_tokens: 0`.
 
 ## Multi-Model: llama-swap
