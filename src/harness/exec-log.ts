@@ -210,12 +210,13 @@ export function setExecLogPath(path: string | null,): void {
   logPathForced = true;
 }
 
-/** Reset the memoized path. Test-only seam. */
+/** Reset the memoized path and the one-shot notices. Test-only seam. */
 export function resetExecLogPath(): void {
   logPath = null;
   logPathFor = "";
   logPathForced = false;
   warned = false;
+  legacyNoticeDone = false;
 }
 
 /**

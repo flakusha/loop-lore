@@ -6,10 +6,11 @@
  * best-effort contract (a write failure must never escape to the caller).
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { basename, dirname, join, } from "node:path";
 import { resolveDbPath, resolveInstanceDir, resolveInstanceSlug, } from "../config/state-dir";
+import { getLogger, type Logger, setGlobalLogger, } from "../logger";
 import {
   appendExecLog,
   getExecLogCounters,
@@ -396,6 +397,72 @@ describe("instance-scoped exec log (F13/H6/H12)", () => {
     } finally {
       if (savedPort === undefined) { delete process.env["PORT"]; }
       else { process.env["PORT"] = savedPort; }
+    }
+  });
+});
+
+/** The repo-root log left by pre-instance runs; its presence is the trigger. */
+const LEGACY_EXEC_LOG = join(import.meta.dir, "..", "..", ".harness", HARNESS_LOG_FILENAME,);
+
+/**
+ * Capture the structured warnings emitted by `run`.
+ * @param run - code under test
+ * @returns rendered warning lines
+ */
+function captureWarns(run: () => void,): string[] {
+  const lines: string[] = [];
+  let previous: Logger | null = null;
+  try {
+    previous = getLogger();
+  } catch {
+    // No root logger installed — nothing to restore.
+  }
+
+  setGlobalLogger({
+    child: () => ({
+      warn: (message: string, meta?: unknown,) => {
+        lines.push(`${message} ${JSON.stringify(meta,)}`,);
+      },
+    }),
+  } as unknown as Logger,);
+
+  try {
+    run();
+  } finally {
+    if (previous !== null) { setGlobalLogger(previous,); }
+  }
+
+  return lines;
+}
+
+describe("legacy exec-log notice (M3)", () => {
+  it("warns once per process and re-arms after resetExecLogPath", () => {
+    const existed = existsSync(LEGACY_EXEC_LOG,);
+    if (!existed) {
+      mkdirSync(dirname(LEGACY_EXEC_LOG,), { recursive: true, },);
+      writeFileSync(LEGACY_EXEC_LOG, "",);
+    }
+
+    try {
+      const first = captureWarns(() => {
+        resetExecLogPath();
+        getExecLogPath();
+        getExecLogPath();
+      },);
+
+      expect(first,).toHaveLength(1,);
+      expect(first[0],).toContain(LEGACY_EXEC_LOG,);
+
+      const second = captureWarns(() => {
+        resetExecLogPath();
+        getExecLogPath();
+      },);
+
+      expect(second,).toHaveLength(1,);
+    } finally {
+      if (!existed) { rmSync(LEGACY_EXEC_LOG,); }
+
+      resetExecLogPath();
     }
   });
 });
