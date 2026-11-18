@@ -27,6 +27,7 @@ const DUMMY_KEY = "sk-e2e-dummy-key";
 const LIVE_BASE_URL = process.env.BYOK_E2E_BASE_URL ?? "https://openrouter.ai/api/v1";
 const LIVE_HOST = new URL(LIVE_BASE_URL,).hostname;
 const LIVE_KEY = process.env.BYOK_E2E_API_KEY ?? "";
+const LIVE_MODEL = process.env.BYOK_E2E_MODEL ?? "openai/gpt-4o-mini";
 const LIVE = LIVE_KEY !== "" && process.env.BYOK_E2E_SKIP !== "1";
 const describeLive = LIVE ? describe : describe.skip;
 
@@ -39,13 +40,15 @@ describe("BYO key round-trip + KEK isolation (HTTP + ephemeral server)", () => {
       auth: { required: true, },
       byoKey: { enabled: true, encryptionKey: MASTER, },
       generation: {
+        defaultProvider: PROVIDER,
+        defaultModels: { [PROVIDER]: LIVE_MODEL, },
         providers: {
           openaiCompatible: [{
             name: PROVIDER,
             label: "BYOK E2E",
             baseUrl: LIVE_BASE_URL,
             allowedHosts: [LIVE_HOST,],
-            model: process.env.BYOK_E2E_MODEL ?? "openai/gpt-4o-mini",
+            model: LIVE_MODEL,
             timeout: 30_000,
             retries: 0,
             allowUserApiKey: true,
