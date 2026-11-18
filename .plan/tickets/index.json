@@ -3505,6 +3505,20 @@
     "source": ".plan/tickets/BUG-dead-code-guard-in-advancepartytravel.md",
     "status": "done"
   },
+  "BUG-DELETE-ALL-DATA-CALLS-NONEXISTENT-DELETE-USERS-ME-ROUTE": {
+    "hash": "8d44816",
+    "git_issue": "8d44816",
+    "extid": "BUG-DELETE-ALL-DATA-CALLS-NONEXISTENT-DELETE-USERS-ME-ROUTE",
+    "type": "BUG",
+    "title": "delete all data calls nonexistent DELETE users me route",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-frontend-settings.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-delete-all-data-calls-nonexistent-delete-users-me-route.md",
+    "status": "open"
+  },
   "BUG-DELETE-AUDIT-ACTION-HAS-NO-UNIT-TEST": {
     "epic": "",
     "extid": "BUG-DELETE-AUDIT-ACTION-HAS-NO-UNIT-TEST",
@@ -56899,6 +56913,20 @@
     "tags": [],
     "title": "RBAC capability matrix not enforced (25 of 30 caps decorative)",
     "type": "TASK"
+  },
+  "TASK-RE-ENABLE-STALE-SKIPPED-BROWSER-E2ES-FOR-SHIPPED-FIXES": {
+    "hash": "02b410d",
+    "git_issue": "02b410d",
+    "extid": "TASK-RE-ENABLE-STALE-SKIPPED-BROWSER-E2ES-FOR-SHIPPED-FIXES",
+    "type": "TASK",
+    "title": "re-enable stale skipped browser E2Es for shipped fixes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-e2e-integration-testing.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-re-enable-stale-skipped-browser-e2es-for-shipped-fixes.md",
+    "status": "open"
   },
   "TASK-RE-ROLL-TRANSFORM-INHERITANCE-FROM-PARENT-AVATAR": {
     "epic": "epic-asset-transform-metadata",
