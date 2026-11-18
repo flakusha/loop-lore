@@ -1,0 +1,41 @@
+{
+  "1": {
+    "inputs": { "ckpt_name": "sdxl/novaFurryXL_ilV180A.safetensors" },
+    "class_type": "CheckpointLoaderSimple"
+  },
+  "2": {
+    "inputs": { "text": "a red square", "clip": ["1", 1] },
+    "class_type": "CLIPTextEncode"
+  },
+  "3": {
+    "inputs": { "text": "", "clip": ["1", 1] },
+    "class_type": "CLIPTextEncode"
+  },
+  "4": {
+    "inputs": {
+      "seed": 1,
+      "steps": 2,
+      "cfg": 7.0,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1.0,
+      "model": ["1", 0],
+      "positive": ["2", 0],
+      "negative": ["3", 0],
+      "latent_image": ["5", 0]
+    },
+    "class_type": "KSampler"
+  },
+  "5": {
+    "inputs": { "width": 256, "height": 256, "batch_size": 1 },
+    "class_type": "EmptyLatentImage"
+  },
+  "6": {
+    "inputs": { "samples": ["4", 0], "vae": ["1", 2] },
+    "class_type": "VAEDecode"
+  },
+  "7": {
+    "inputs": { "images": ["6", 0], "filename_prefix": "e2e-basic" },
+    "class_type": "SaveImage"
+  }
+}

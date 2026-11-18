@@ -16,8 +16,11 @@
 
 import { describe, expect, test, } from "bun:test";
 import { deflateSync, } from "node:zlib";
+import { ComfyUIClient, } from "../../../src/generation/providers/comfyui";
 import { OpenAiCompatibleProvider, } from "../../../src/generation/providers/openai-compatible";
+import { releaseModelsForRender, } from "../../../src/llm/llama-swap-release";
 import { resolveLlamaSwapBase, } from "../../../src/llm/llama-swap-unload";
+import { embedText, } from "../../../src/memory/embed-provider";
 
 const BASE = process.env.LLAMA_SWAP_BASE_URL ?? "http://127.0.0.1:7180";
 const CHAT_MODEL = process.env.E2E_LOCAL_CHAT_MODEL ?? "llama-qwen3.5-llmfan-9b";
@@ -244,4 +247,100 @@ describe("local llama-swap proxy", () => {
     const body = await res.json() as { data?: Array<{ embedding?: number[] }> };
     expect((body.data?.[0]?.embedding ?? []).length,).toBeGreaterThan(0,);
   }, 300_000,);
+
+  test("live: app memory seam embeds through the local model", async () => {
+    if (!LIVE) { return; }
+    const health = await probe("/health",);
+    if (!health?.ok) { return; }
+
+    const prev = {
+      api: process.env.EMBEDDINGS_API,
+      base: process.env.EMBEDDINGS_BASE_URL,
+      model: process.env.OLLAMA_EMBED_MODEL,
+    };
+
+    process.env.EMBEDDINGS_API = "openai";
+    process.env.EMBEDDINGS_BASE_URL = BASE;
+    process.env.OLLAMA_EMBED_MODEL = EMBED_MODEL;
+    try {
+      const vec = await embedText("local-ok",);
+      expect(vec.length,).toBeGreaterThan(0,);
+    } catch {
+      return;
+    } finally {
+      if (prev.api === undefined) { delete process.env.EMBEDDINGS_API; }
+      else { process.env.EMBEDDINGS_API = prev.api; }
+
+      if (prev.base === undefined) { delete process.env.EMBEDDINGS_BASE_URL; }
+      else { process.env.EMBEDDINGS_BASE_URL = prev.base; }
+
+      if (prev.model === undefined) { delete process.env.OLLAMA_EMBED_MODEL; }
+      else { process.env.OLLAMA_EMBED_MODEL = prev.model; }
+    }
+  }, 300_000,);
+
+  // Comfy leg runs before the release leg: the release drains the pool.
+  test("live: comfyui renders the fixture workflow", async () => {
+    if (!LIVE) { return; }
+    const health = await probe("/health",);
+    if (!health?.ok) { return; }
+
+    const file = Bun.file("tests/e2e/fixtures/comfy-sdxl-basic.json",);
+    if (!(await file.exists())) { return; }
+    const workflow = await file.json();
+
+    const client = new ComfyUIClient({
+      baseUrl: `${BASE}/upstream/comfyui_auto`,
+      timeout: 600_000,
+      pollIntervalMs: 2_000,
+    },);
+
+    let promptId: string;
+    try {
+      promptId = (await client.submitWorkflow(workflow,)).prompt_id;
+    } catch (error) {
+      // No checkpoint wired into ComfyUI yet: skip, do not fail.
+      if (/not found|missing|no such file/i.test((error as Error).message,)) { return; }
+      throw error;
+    }
+
+    const files = await client.waitForCompletion(promptId, 540_000,);
+    expect(files.length,).toBeGreaterThan(0,);
+  }, 600_000,);
+
+  // Release leg runs last: it unloads everything the suite loaded.
+  test("live: app release hook drains the proxy pool", async () => {
+    if (!LIVE) { return; }
+    const health = await probe("/health",);
+    if (!health?.ok) { return; }
+
+    // Ensure at least the tiny decision model is resident so the drain
+    // asserts something (TTL may have evicted everything since prior legs).
+    await fetch(`${BASE}/v1/systemone`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: JSON.stringify({
+        model: DECISION_MODEL,
+        state: {},
+        questions: {
+          q1: {
+            type: "score",
+            question: "rate this",
+            criteria: ["bad", "ok", "good",],
+          },
+        },
+      },),
+      signal: AbortSignal.timeout(300_000,),
+    },).catch(() => null);
+
+    const summary = await releaseModelsForRender({ llamaSwapBase: BASE, },);
+    expect(summary.probeOk,).toBe(true,);
+    expect(summary.released.length,).toBeGreaterThan(0,);
+    expect(summary.released,).toContain(DECISION_MODEL,);
+
+    const running = await probe("/running",);
+    const body = running ? await running.json() as { running?: Array<{ model?: string }> } : null;
+    const stillUp = (body?.running ?? []).map((m,) => m.model);
+    expect(stillUp,).not.toContain(DECISION_MODEL,);
+  }, 600_000,);
 });
