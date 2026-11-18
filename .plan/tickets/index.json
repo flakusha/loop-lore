@@ -15231,7 +15231,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/epics/epic-frontend-internationalization.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "frontend",
       "i18n",
@@ -22365,6 +22365,20 @@
     ],
     "source": ".plan/tickets/FEAT-header-only-safetensors-metadata-parser.md",
     "status": "Not Started"
+  },
+  "FEAT-HONKBOX-CAPABILITY-DESCRIPTOR-REGISTRY-AND-FEATURE-GATE-HELP": {
+    "hash": "55f8fd5",
+    "git_issue": "55f8fd5",
+    "extid": "FEAT-HONKBOX-CAPABILITY-DESCRIPTOR-REGISTRY-AND-FEATURE-GATE-HELP",
+    "type": "FEAT",
+    "title": "honkbox capability descriptor registry and feature gate helper",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-platform-integrations.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-honkbox-capability-descriptor-registry-and-feature-gate-help.md",
+    "status": "open"
   },
   "FEAT-HUMAN-HYBRID-GM-CONFIG-AUTHORING-D3": {
     "hash": "dcbd923",
@@ -31349,6 +31363,20 @@
     "title": "Backup consistency: VACUUM INTO snapshots plus archive DBs",
     "type": "TASK"
   },
+  "TASK-BACKUP-DOWNLOAD-UPLOAD-SCHEDULING-AND-ADMIN-PANEL-FOLLOW-UP": {
+    "hash": "cd35549",
+    "git_issue": "cd35549",
+    "extid": "TASK-BACKUP-DOWNLOAD-UPLOAD-SCHEDULING-AND-ADMIN-PANEL-FOLLOW-UP",
+    "type": "TASK",
+    "title": "backup download upload scheduling and admin panel follow-up",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-database-backup-recovery.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-backup-download-upload-scheduling-and-admin-panel-follow-up.md",
+    "status": "open"
+  },
   "TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE": {
     "epic": "epic-database-backup-recovery, epic-db-asset-snapshot-recovery, epic-federation-swarm-sync",
     "extid": "TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE",
@@ -35465,6 +35493,20 @@
     ],
     "title": "feat(check): --gates/--skip-gates filter on parallel runner",
     "type": "TASK"
+  },
+  "TASK-CHECK-VALIDATE-AND-VERIFY-COMPOSER-COMMANDS-WITH-UNDEFINED-S": {
+    "hash": "b160346",
+    "git_issue": "b160346",
+    "extid": "TASK-CHECK-VALIDATE-AND-VERIFY-COMPOSER-COMMANDS-WITH-UNDEFINED-S",
+    "type": "TASK",
+    "title": "check validate and verify composer commands with undefined semantics",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-frontend-chat-commands.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-check-validate-and-verify-composer-commands-with-undefined-s.md",
+    "status": "open"
   },
   "TASK-CI-CD": {
     "epic": "epic-cicd-pipeline",
@@ -43980,6 +44022,20 @@
     "title": "FTS5 cross-session recall and summarization for RAG-unified memory",
     "type": "TASK"
   },
+  "TASK-FULL-CHATPRIVACY-MODEL-PROFILE-BEHIND-A-DOCUMENTED-DEFAULT": {
+    "hash": "d88966b",
+    "git_issue": "d88966b",
+    "extid": "TASK-FULL-CHATPRIVACY-MODEL-PROFILE-BEHIND-A-DOCUMENTED-DEFAULT",
+    "type": "TASK",
+    "title": "full ChatPrivacy model profile behind a documented default",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-privacy.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-full-chatprivacy-model-profile-behind-a-documented-default.md",
+    "status": "open"
+  },
   "TASK-FULL-EFFECTIVE-CONFIG-EXPORT-WITH-OMIT-ON-UNOPENABLE-ENVELOP": {
     "hash": "a3a2dea",
     "git_issue": "a3a2dea",
@@ -51399,6 +51455,20 @@
     "source": ".plan/tickets/TASK-metadata-detection-provenance-stamping.md",
     "status": "Not Started"
   },
+  "TASK-MFA-DEDICATED-OPERATOR-DOCUMENTATION": {
+    "hash": "26384e0",
+    "git_issue": "26384e0",
+    "extid": "TASK-MFA-DEDICATED-OPERATOR-DOCUMENTATION",
+    "type": "TASK",
+    "title": "MFA dedicated operator documentation",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-auth-access.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mfa-dedicated-operator-documentation.md",
+    "status": "open"
+  },
   "TASK-MID-MESSAGE-CHECKPOINT-RETRY-RETRY-CONTINUE-INSIDE-SWIPE-REP": {
     "hash": "afe18a4",
     "git_issue": "afe18a4",
@@ -52310,6 +52380,20 @@
     "tags": [],
     "title": "Native AWS Bedrock Adapter",
     "type": "TASK"
+  },
+  "TASK-NATURAL-LANGUAGE-PICTURE-OF-THE-CHARACTER-DISPATCHES-TO-AVAT": {
+    "hash": "6e2d4a2",
+    "git_issue": "6e2d4a2",
+    "extid": "TASK-NATURAL-LANGUAGE-PICTURE-OF-THE-CHARACTER-DISPATCHES-TO-AVAT",
+    "type": "TASK",
+    "title": "natural language picture of the character dispatches to avatar",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-assistant-generation-extensions.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-natural-language-picture-of-the-character-dispatches-to-avat.md",
+    "status": "open"
   },
   "TASK-NO-BROWSER-TEST-ADMIN-SUBPAGES-SETTINGS-TABS-I18N-THEME-APPL": {
     "epic": "epic-testing-qa",
@@ -54536,6 +54620,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-persist-delivered-mesh-payload-in-mesh-deliveries-not-metada.md",
     "status": "Not Started"
+  },
+  "TASK-PERSIST-GENERATED-IMAGE-AS-CHAT-BACKGROUND": {
+    "hash": "2b21d43",
+    "git_issue": "2b21d43",
+    "extid": "TASK-PERSIST-GENERATED-IMAGE-AS-CHAT-BACKGROUND",
+    "type": "TASK",
+    "title": "persist generated image as chat background",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-immersion-presentation.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-persist-generated-image-as-chat-background.md",
+    "status": "open"
   },
   "TASK-PERSIST-LOOT-DROPS": {
     "epic": "epic-item-systems-unification",

@@ -3,9 +3,9 @@
 
 # TASK: Auto-generate docs/reference/api.md from OpenAPI spec
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Generate `docs/reference/api.md` from the already-served `/api/v1/openapi/json` spec and wire that generation into `docs:build`; keep hand-written narrative in a delimited companion region.
+**Context:** Operator approved route annotations and docs regeneration on 2026-11-18. The spec already covers the surface; the remaining prerequisite is `detail`/`description` annotations on production routes so generated rows are not hollow (evidence in this ticket below).
+**Acceptance Criteria:** route annotations land first; generated `api.md` carries a DO NOT EDIT banner; `api - doc drift` becomes a regenerate-and-diff freshness gate; `docs:build` produces the spec in a fresh clone.
 
 
 **Status:** Not Started
