@@ -162,6 +162,25 @@ describe("chats/create — variant taxonomy wiring", () => {
     await db.destroy();
   });
 
+  test("llm_only variant accepts an operator validation harness", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const res = await postChat(makeApp(db, USER_ID,), {
+      name: "LLM validation",
+      variant: "llm_only",
+      gmConfig: { validation: { harness: "stay in character", }, },
+    },);
+
+    expect(res.status,).toBe(201,);
+    const chat = await loadChat(db, "LLM validation",);
+    expect(
+      (JSON.parse(chat!.gm_config!,) as { validation?: { harness?: string } }).validation?.harness,
+    ).toBe("stay in character",);
+
+    await db.destroy();
+  });
+
   test("a conflicting explicit triple is rejected with the expected value", async () => {
     const { db, } = await createTestDb();
     await seed(db,);

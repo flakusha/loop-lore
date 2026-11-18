@@ -89,8 +89,7 @@ existing snapshots with name, size, and modification time.
 ### Restoring a backup
 
 Admin panel → **Backups** tab → **Restore** on a snapshot, or
-`POST /api/admin/db/restore` with the snapshot name and the confirmation
-string `RESTORE`:
+`POST /api/admin/db/restore` with body `{ "name": "<snapshot>", "confirmation": "RESTORE" }`:
 
 1. The target is validated as a SQLite database (magic-byte check); a
    non-database file is rejected before anything is touched.

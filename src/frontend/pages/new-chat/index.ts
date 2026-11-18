@@ -230,6 +230,13 @@ async function loadNewChatPageInner(form: HTMLFormElement | null,): Promise<void
     if (ctx.worldSelect) {
       ctx.worldSelect.required = WORLD_REQUIRED_VARIANTS.has(ctx.variantSelect.value,);
     }
+
+    const harnessGroup = $<HTMLElement>("#validation-harness-group",);
+    if (harnessGroup) {
+      harnessGroup.style.display = ctx.variantSelect.value.startsWith("llm_only",)
+        ? ""
+        : "none";
+    }
   };
 
   // Entry-point branch: `/views/new-chat?variant=<id>` from an origin surface

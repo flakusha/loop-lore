@@ -103,6 +103,18 @@ export interface ImageRoutingConfig {
   comfyUiFirst?: boolean;
 }
 
+/** Use-case scenarios that can drive ranking-based model-role autoroute. */
+export const AUTOROUTE_SCENARIOS = [
+  "general",
+  "chat",
+  "coding",
+  "local",
+  "observed",
+] as const;
+
+/** One of {@link AUTOROUTE_SCENARIOS}. */
+export type AutorouteScenario = (typeof AUTOROUTE_SCENARIOS)[number];
+
 /** */
 export interface GenerationConfig {
   /** Provider configurations */
@@ -113,6 +125,9 @@ export interface GenerationConfig {
   defaultProvider: string;
   /** Default model per provider (providerName → modelId) */
   defaultModels: Record<string, string>;
+  /** Use-case scenario whose ranking rows select unassigned model roles.
+   * Unset (default) keeps the previous manual/default behavior. */
+  autorouteScenario?: AutorouteScenario;
   /** Auto-spawn external AI servers at startup (llama.cpp, sd.cpp) */
   autoStart?: AutoStartConfig;
   /** Default streaming mode when chat-level setting is null. null = use provider capability */

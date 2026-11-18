@@ -21,6 +21,11 @@ export const generationMeta = {
       type: "string",
       description: "Default provider name",
     },
+    autorouteScenario: {
+      type: "string",
+      enum: ["general", "chat", "coding", "local", "observed",],
+      description: "Scenario whose ranking rows select unassigned model roles (unset = manual/default)",
+    },
     flowControl: {
       type: "object",
       description: "Concurrency regulation for generation endpoints (0 = unbounded)",

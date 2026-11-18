@@ -85,7 +85,7 @@ async function scenarioDefault(
  * @param role - The role to resolve.
  * @param config - App config.
  * @param db - Database instance.
- * @param opts - Optional scenario for ranking-based selection.
+ * @param opts - Optional scenario for ranking-based selection; falls back to config.generation.autorouteScenario.
  * @returns The resolved model role.
  * @throws {Error}
  */
@@ -98,6 +98,10 @@ export async function resolveModelRole(
   if (!(VALID_ROLES as readonly string[]).includes(role,)) {
     throw new Error(`Invalid model role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,);
   }
+
+  // Config is the admin-controlled autoroute switch; an explicit caller
+  // scenario (tests, future per-role settings) wins over it.
+  const scenario = opts.scenario ?? config.generation?.autorouteScenario;
 
   // Graceful degradation: a missing/partial `config.generation` section must
   // resolve to an empty role (callAux treats empty provider/model as `null`
@@ -131,8 +135,8 @@ export async function resolveModelRole(
 
   // 3. Scenario ranking. An explicit DB/config assignment above already
   // bypassed it; a missing ranking degrades to the server default below.
-  if (opts.scenario) {
-    const ranked = await scenarioDefault(role, opts.scenario, config.generation.defaultModels, db,);
+  if (scenario) {
+    const ranked = await scenarioDefault(role, scenario, config.generation.defaultModels, db,);
     if (ranked !== null) {
       return { role, ...ranked, source: "ranking", };
     }

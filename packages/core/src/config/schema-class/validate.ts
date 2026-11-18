@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // src/config/schema-class/validate.ts — config validation
-import type { Config, } from "../schema";
+import { AUTOROUTE_SCENARIOS, type Config, } from "../schema";
 import { validateAcpProfiles, } from "../sections/harness";
 import { PROMPT_BUDGET_BOUNDS, } from "../sections/prompt";
 
@@ -18,6 +18,18 @@ export const validate = (config: Config,): void => {
   // `db.type=postgres` is accepted here: the runtime is always SQLite and
   // warns loudly about the ignored setting (see load/db-warnings.ts). A missing
   // `db.url` must not abort the boot — the URL is ignored anyway.
+
+  const autorouteScenario = config.generation.autorouteScenario;
+  if (
+    autorouteScenario !== undefined &&
+    !(AUTOROUTE_SCENARIOS as readonly string[]).includes(autorouteScenario,)
+  ) {
+    throw new Error(
+      `Invalid generation.autorouteScenario: "${autorouteScenario}". Must be one of: ${
+        AUTOROUTE_SCENARIOS.join(", ",)
+      }`,
+    );
+  }
 
   if (config.server.port < 0 || config.server.port > 65_535) {
     throw new Error(`Invalid server.port: ${config.server.port}. Must be 0-65535`,);

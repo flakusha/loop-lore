@@ -5,9 +5,9 @@
  * Admin database backup/restore panel state.
  *
  * Talks to the shipped routes in src/routes/admin/db-backup.ts:
- *   GET  /api/admin/db/backup  — list snapshot files
- *   POST /api/admin/db/backup  — create a consistent VACUUM INTO snapshot
- *   POST /api/admin/db/restore — replace the live database (restart required)
+ *   GET  /api/v1/admin/db/backup  — list snapshot files
+ *   POST /api/v1/admin/db/backup  — create a consistent VACUUM INTO snapshot
+ *   POST /api/v1/admin/db/restore — replace the live database (restart required)
  *
  * Restore is a two-step action: the operator selects a snapshot and types
  * RESTORE before the destructive request is sent.
@@ -86,7 +86,7 @@ export function createAdminDbBackup(): AdminDbBackupState {
       this.loading = true;
       this.error = "";
       try {
-        const res = await apiFetch("/api/admin/db/backup", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/v1/admin/db/backup", { headers: { Accept: "application/json", }, },);
         if (!res.ok) {
           this.error = await errorFromResponse(res, "admin.dbBackup.loadFailed",);
           return;
@@ -108,7 +108,7 @@ export function createAdminDbBackup(): AdminDbBackupState {
       this.error = "";
       this.message = "";
       try {
-        const res = await apiFetch("/api/admin/db/backup", {
+        const res = await apiFetch("/api/v1/admin/db/backup", {
           method: "POST",
           headers: { Accept: "application/json", },
         },);
@@ -145,7 +145,7 @@ export function createAdminDbBackup(): AdminDbBackupState {
       this.error = "";
       this.message = "";
       try {
-        const res = await apiFetch("/api/admin/db/restore", {
+        const res = await apiFetch("/api/v1/admin/db/restore", {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json", },
           body: jsonBody({ name: this.restoreTarget, confirmation: this.confirmation, },),

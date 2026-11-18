@@ -108,6 +108,17 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   const isVariant = variant !== "standard";
   if (isVariant) { fineTunePayload.variant = variant; }
 
+  const harness = variant.startsWith("llm_only",)
+    ? $<HTMLInputElement>("#chat-validation-harness",)?.value.trim()
+    : undefined;
+
+  if (harness) {
+    fineTunePayload.gmConfig = {
+      ...(fineTunePayload.gmConfig as Record<string, unknown> | undefined),
+      validation: { harness, },
+    };
+  }
+
   return {
     name,
     type: isVariant ? undefined : ctx.chatType?.value ?? "direct",

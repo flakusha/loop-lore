@@ -139,6 +139,17 @@
               <option value="rpg_group">{{{t("chats.variantRpgGroup")}}}</option>
             </select>
           </div>
+          <div class="form-group" id="validation-harness-group" style="display: none">
+            <label class="form-label" for="chat-validation-harness">{{{t("chats.validationHarness")}}}</label>
+            <input
+              type="text"
+              class="form-input"
+              id="chat-validation-harness"
+              name="validationHarness"
+              maxlength="2000"
+              data-testid="chat-validation-harness"
+            />
+          </div>
           <div class="form-group" id="participant-group">
             <label class="form-label" for="participant-search">{{{t("chats.characterParticipant")}}}</label>
             <div style="position: relative">

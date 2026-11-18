@@ -91,6 +91,19 @@ describe("ConfigSchema", () => {
     },).toThrow("db.type",);
   });
 
+  test("validate accepts a known autoroute scenario and rejects an unknown one", () => {
+    const cfg = structuredClone(createConfigSchema().defaults,);
+    cfg.generation.autorouteScenario = "chat";
+    expect(() => {
+      validate(cfg,);
+    },).not.toThrow();
+
+    (cfg.generation as unknown as Record<string, unknown>).autorouteScenario = "poetry";
+    expect(() => {
+      validate(cfg,);
+    },).toThrow("autorouteScenario",);
+  });
+
   test("validate accepts postgres without a url (the runtime is always SQLite)", () => {
     const cfg = structuredClone(createConfigSchema().defaults,);
     cfg.db.type = "postgres";

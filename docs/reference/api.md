@@ -830,6 +830,23 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 `DELETE /api/v1/admin/setup/providers/:name` — removes the stored instance, its sealed key and its registry/config-file entry, 204 (admin only). 400 for an unknown provider.
 
+### Database Backup — List and Create
+
+`GET /api/v1/admin/db/backup` — list SQLite snapshots (admin only).
+`POST /api/v1/admin/db/backup` — create a `VACUUM INTO` snapshot of the live database. See [state and instances](../guide/state-and-instances.md) for paths and the restore runbook.
+
+### Database Restore
+
+`POST /api/v1/admin/db/restore` — body `{ name, confirmation: "RESTORE" }`. Validates the snapshot, takes a pre-restore snapshot and atomically replaces the live file. Returns `restartRequired: true`; restart the server before using the app again.
+
+### MFA Factors
+
+`POST /api/v1/auth/factors` — enroll `{ kind, target }` for the authenticated caller; returns `factorId`. `POST /api/v1/auth/factors/challenge` — issue a code with `{ factorId, channel, destination, purpose }`. `POST /api/v1/auth/factors/verify` — consume `{ challengeId, code, purpose }` and activate the factor or elevate the session. See [multi-factor authentication](../guide/mfa.md).
+
+### MFA Configuration
+
+`GET/PATCH /api/v1/admin/mfa/config` — read or set email sender, channel windows and messenger bot token (requires `admin.system`). Secrets are returned as configured booleans only.
+
 ## Image Edit
 
 ### Workflow Templates — List

@@ -12,7 +12,7 @@
  * `listenPort`). DB overrides live in `system_config` under the mirrored dot
  * paths below and win over the file-plane `generation.autoStart.llamaSwap`.
  */
-import { type Context, Elysia, t, } from "elysia";
+import { type Context, Elysia, } from "elysia";
 import { setConfig, } from "../../admin/config";
 import {
   LLAMA_SWAP_AUTOSTART_CONFIG_PATH_KEY,
@@ -21,6 +21,11 @@ import {
   readEffectiveLlamaSwapConfig,
 } from "../../llm/llama-swap-effective-config";
 import { readRunningModels, resolveLlamaSwapBase, } from "../../llm/llama-swap-unload";
+import {
+  AdminLlamaSwapConfigBody,
+  AdminLlamaSwapStatusResponse,
+  ErrorResponse,
+} from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, withPermissionAuth, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
@@ -31,16 +36,9 @@ interface AuthContext {
 }
 type Ctx = Context & AuthContext;
 
-const patchSchema = t.Object({
-  autoStartEnabled: t.Optional(t.Boolean(),),
-  listenPort: t.Optional(t.Number(),),
-  configPath: t.Optional(t.String(),),
-},);
+// Boundary validation lives in AdminLlamaSwapConfigBody.
 
-/** Standard 400 body for boundary validation failures. */
-function invalid(message: string,): Response {
-  return jsonError({ message, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest, },);
-}
+// Boundary validation failures are mapped to 400 by the plugin's onError hook.
 
 /**
  * Resolve the honest status view from DB overrides + file config.
@@ -78,27 +76,26 @@ async function readStatus(opts: AdminRouteOpts,) {
 export function llamaSwapRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-llama-swap", },)
+      .onError(({ code, },) => {
+        if (code !== "VALIDATION") { return undefined; }
+        return jsonError({
+          message: "Invalid llama-swap config payload",
+          status: HttpStatus.BadRequest,
+          code: ErrorCode.ValidationError,
+        },);
+      },)
       .get(`${prefix}/admin/llama-swap/status`, async (ctx,) => {
         return withPermissionAuth(
           ctx as unknown as Ctx,
           "admin.system",
           async () => Response.json(await readStatus(opts,),),
         );
+      }, {
+        response: { 200: AdminLlamaSwapStatusResponse, 403: ErrorResponse, },
       },)
       .patch(`${prefix}/admin/llama-swap/config`, async (ctx,) => {
         const body = ctx.body;
         return withPermissionAuth(ctx as unknown as Ctx, "admin.system", async () => {
-          if (
-            body.listenPort !== undefined &&
-            (!Number.isInteger(body.listenPort,) || body.listenPort < 1 || body.listenPort > 65535)
-          ) {
-            return invalid("listenPort must be an integer between 1 and 65535",);
-          }
-
-          if (body.configPath !== undefined && body.configPath.trim() === "") {
-            return invalid("configPath must not be empty",);
-          }
-
           if (body.autoStartEnabled !== undefined) {
             await setConfig(
               opts.database,
@@ -128,6 +125,13 @@ export function llamaSwapRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
           return Response.json(await readStatus(opts,),);
         },);
-      }, { body: patchSchema, },)
+      }, {
+        body: AdminLlamaSwapConfigBody,
+        response: {
+          200: AdminLlamaSwapStatusResponse,
+          400: ErrorResponse,
+          403: ErrorResponse,
+        },
+      },)
   );
 }

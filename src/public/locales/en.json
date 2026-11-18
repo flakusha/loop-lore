@@ -1599,6 +1599,7 @@
     "variantLlmOnly": "LLM-only validation chat",
     "variantLlmOnlyGroup": "LLM-only group sandbox",
     "variantLlmOnlyGroupGm": "LLM group with GM (guided story)",
+    "validationHarness": "Validation harness instruction (LLM-only variants)",
     "variantRpg": "RPG",
     "variantRpgGroup": "RPG Group",
     "variantStandard": "Standard",

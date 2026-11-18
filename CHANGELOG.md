@@ -7,8 +7,16 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ## [Unreleased]
 
+### Added
+
+- **Ranking-based model-role autoroute is operator-configurable** — `generation.autorouteScenario` selects a use-case (`general`, `chat`, `coding`, `local`, `observed`) whose ranking rows fill unassigned model roles; explicit DB overrides, config roles and server defaults still win, and the admin model-roles response reports the active scenario.
+- **LLM-only validation chats carry a harness instruction** — the new-chat form exposes a validation-harness field for `llm_only` variants; the value is stored in `gm_config.validation.harness` and picked up by the existing prompt section without editing database rows.
+- **Operator guides for MFA and instance state** — enrollment/challenge/step-up and the backup/restore runbook are documented and linked from the guide index and API reference; the restore request body uses `confirmation: "RESTORE"`.
+
 ### Fixed
 
+- **Admin destructive/config boundaries validate at the edge** — restore bodies, llama-swap config patches, and sd.cpp/ComfyUI delete names now use bounded central schemas, with validation failures answered as 400 instead of escaping as 422; the operator-entered name pattern has one shared definition.
+- **Admin panels call the versioned API** — backup and local-model fetches use `/api/v1/...` directly instead of relying on the unversioned 308 shim, and the Local Models tab probes both backends when opened.
 - **Uploads and TLS certificates stay in the runtime instance dir** — the shipped path defaults are anchored at `DATA_DIR`, which freezes at import time (before the effective server bind is known), so an unnamed instance wrote its uploads and certificates to `<state>/default/` while its database, exec log and backups went to `<state>/port-<port>/`. A configured path that lies under the frozen `DATA_DIR` (or carries the portable `${DATA_DIR}` placeholder the published schema emits) is now re-anchored onto the runtime instance dir; a custom absolute path is still used verbatim.
 
 ## [1.0.0] - 2026-11-18

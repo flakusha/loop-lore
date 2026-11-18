@@ -8,7 +8,7 @@ import { jsonBody, jsonParseOr, } from "../json";
 import { log, } from "./shared";
 import type { ModelsState, } from "./types";
 
-/** One probed sd.cpp instance from GET /api/admin/sd-status/sdcpp. */
+/** One probed sd.cpp instance from GET /api/v1/admin/sd-status/sdcpp. */
 export interface SdCppDiscoveryEntry {
   name: string;
   baseUrl: string;
@@ -25,7 +25,7 @@ export interface SdCppDiscoveryEntry {
   serverError?: string;
 }
 
-/** One probed ComfyUI instance from GET /api/admin/sd-status/comfyui. */
+/** One probed ComfyUI instance from GET /api/v1/admin/sd-status/comfyui. */
 export interface ComfyDiscoveryEntry {
   name: string;
   baseUrl: string;
@@ -217,7 +217,7 @@ export const sdState: Partial<LocalModelsState> & ThisType<LocalModelsState> = {
     this.sdcppLoading = true;
     this.sdcppError = "";
     try {
-      const res = await apiFetch("/api/admin/sd-status/sdcpp", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/v1/admin/sd-status/sdcpp", { headers: { Accept: "application/json", }, },);
       if (!res.ok) {
         this.sdcppError = await errorFromResponse(res, "admin.localModels.sdcpp.loadFailed",);
         return;
@@ -242,7 +242,7 @@ export const sdState: Partial<LocalModelsState> & ThisType<LocalModelsState> = {
     this.comfyLoading = true;
     this.comfyError = "";
     try {
-      const res = await apiFetch("/api/admin/sd-status/comfyui", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/v1/admin/sd-status/comfyui", { headers: { Accept: "application/json", }, },);
       if (!res.ok) {
         this.comfyError = await errorFromResponse(res, "admin.localModels.comfy.loadFailed",);
         return;
@@ -268,7 +268,7 @@ export const sdState: Partial<LocalModelsState> & ThisType<LocalModelsState> = {
     this.sdcppError = "";
     const form = this.sdcppForm;
     try {
-      const res = await apiFetch("/api/admin/sd-status/sdcpp/setup", {
+      const res = await apiFetch("/api/v1/admin/sd-status/sdcpp/setup", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json", },
         body: jsonBody({
@@ -305,7 +305,7 @@ export const sdState: Partial<LocalModelsState> & ThisType<LocalModelsState> = {
     this.comfyError = "";
     const form = this.comfyForm;
     try {
-      const res = await apiFetch("/api/admin/sd-status/comfyui/setup", {
+      const res = await apiFetch("/api/v1/admin/sd-status/comfyui/setup", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json", },
         body: jsonBody({
@@ -343,7 +343,7 @@ export const sdState: Partial<LocalModelsState> & ThisType<LocalModelsState> = {
     this.sdcppSaving = true;
     this.sdcppError = "";
     try {
-      const res = await apiFetch(`/api/admin/sd-status/sdcpp/setup/${encodeURIComponent(name,)}`, {
+      const res = await apiFetch(`/api/v1/admin/sd-status/sdcpp/setup/${encodeURIComponent(name,)}`, {
         method: "DELETE",
       },);
 
@@ -371,7 +371,7 @@ export const sdState: Partial<LocalModelsState> & ThisType<LocalModelsState> = {
     this.comfySaving = true;
     this.comfyError = "";
     try {
-      const res = await apiFetch(`/api/admin/sd-status/comfyui/setup/${encodeURIComponent(name,)}`, {
+      const res = await apiFetch(`/api/v1/admin/sd-status/comfyui/setup/${encodeURIComponent(name,)}`, {
         method: "DELETE",
       },);
 

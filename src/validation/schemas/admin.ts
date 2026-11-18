@@ -12,6 +12,9 @@ import { OptionalId, } from "./primitives";
 
 export const ADMIN_ROLES = ["admin", "user", "viewer",] as const;
 
+/** Operator-entered resource names: one rule shared by every admin boundary. */
+export const ADMIN_NAME_PATTERN = "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$";
+
 export const AdminRoleUpdateBody = t.Object({
   // Plain string + runtime check in the route: Elysia 1.4 compiles t.UnionEnum
   // with "default": <first member>, so an ABSENT role would be silently
@@ -50,7 +53,7 @@ export const ServerProviderKindSchema = t.Union(
 );
 
 export const AdminSetupProviderBody = t.Object({
-  name: t.String({ minLength: 1, maxLength: 64, pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$", },),
+  name: t.String({ minLength: 1, maxLength: 64, pattern: ADMIN_NAME_PATTERN, },),
   label: t.String({ minLength: 1, maxLength: 200, },),
   baseUrl: t.String({ minLength: 1, maxLength: 2048, },),
   model: t.String({ minLength: 1, maxLength: 200, },),
@@ -97,7 +100,7 @@ export const AdminSetupProviderResponse = t.Object({
  * sd.cpp generation defaults when omitted.
  */
 export const AdminSdCppSetupBody = t.Object({
-  name: t.String({ minLength: 1, maxLength: 64, pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$", },),
+  name: t.String({ minLength: 1, maxLength: 64, pattern: ADMIN_NAME_PATTERN, },),
   label: t.Optional(t.String({ minLength: 1, maxLength: 200, },),),
   baseUrl: t.String({ minLength: 1, maxLength: 2048, },),
   purpose: t.Optional(t.Union([t.Literal("generate"), t.Literal("edit"), t.Literal("both")],),),
@@ -178,7 +181,7 @@ export const AdminSdCppDiscoveryResponse = t.Object({
  * generation defaults when omitted.
  */
 export const AdminComfyUISetupBody = t.Object({
-  name: t.String({ minLength: 1, maxLength: 64, pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$", },),
+  name: t.String({ minLength: 1, maxLength: 64, pattern: ADMIN_NAME_PATTERN, },),
   label: t.Optional(t.String({ minLength: 1, maxLength: 200, },),),
   baseUrl: t.String({ minLength: 1, maxLength: 2048, },),
   purpose: t.Optional(t.Union([t.Literal("generate"), t.Literal("edit"), t.Literal("both")],),),
@@ -250,6 +253,33 @@ export const AdminComfyUIDiscoveryEntry = t.Object({
 export const AdminComfyUIDiscoveryResponse = t.Object({
   probedAt: t.String(),
   providers: t.Array(AdminComfyUIDiscoveryEntry,),
+},);
+
+// ── Backup / llama-swap / setup-name boundaries ──────────
+
+/** Restore body: a bounded snapshot name plus an explicit destructive ack. */
+export const AdminDbBackupRestoreBody = t.Object({
+  name: t.String({ minLength: 1, maxLength: 64, pattern: ADMIN_NAME_PATTERN, }),
+  confirmation: t.Literal("RESTORE"),
+},);
+
+export const AdminLlamaSwapConfigBody = t.Object({
+  autoStartEnabled: t.Optional(t.Boolean(),),
+  listenPort: t.Optional(t.Integer({ minimum: 1, maximum: 65_535, },),),
+  configPath: t.Optional(t.String({ minLength: 1, maxLength: 4096, pattern: "\\S", },),),
+},);
+
+export const AdminLlamaSwapStatusResponse = t.Object({
+  configured: t.Boolean(),
+  autoStartEnabled: t.Boolean(),
+  listenPort: t.Union([t.Integer(), t.Null()],),
+  configPath: t.Union([t.String(), t.Null()],),
+  running: t.Boolean(),
+},);
+
+/** Path parameter for both sd.cpp and ComfyUI setup deletes. */
+export const AdminSdSetupNameParams = t.Object({
+  name: t.String({ minLength: 1, maxLength: 64, pattern: ADMIN_NAME_PATTERN, }),
 },);
 
 export const AdminModelRoleOverrideBody = t.Object({

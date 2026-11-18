@@ -66,7 +66,7 @@ test("createBackup POSTs, reloads the list and reports success", async () => {
 
   await state.createBackup();
 
-  expect(calls[0]?.url,).toBe("/api/admin/db/backup",);
+  expect(calls[0]?.url,).toBe("/api/v1/admin/db/backup",);
   expect(calls[0]?.opts?.method,).toBe("POST",);
   expect(calls[1]?.opts?.method,).toBeUndefined();
   expect(state.backups,).toEqual([BACKUP,],);
@@ -98,13 +98,13 @@ test("confirmed restore names the restart consequence and reloads", async () => 
   state.beginRestore(BACKUP.name,);
   state.confirmation = "RESTORE";
   handler = async (url,) =>
-    url === "/api/admin/db/restore"
+    url === "/api/v1/admin/db/restore"
       ? Response.json({ restored: true, restartRequired: true, preRestoreBackup: "pre", },)
       : Response.json({ backups: [], dir: "/d", },);
 
   await state.confirmRestore();
 
-  expect(calls[0]?.url,).toBe("/api/admin/db/restore",);
+  expect(calls[0]?.url,).toBe("/api/v1/admin/db/restore",);
   expect(JSON.parse(String(calls[0]?.opts?.body,),),).toEqual({ name: BACKUP.name, confirmation: "RESTORE", },);
   expect(state.message,).toContain(t("admin.dbBackup.restartRequired",),);
   expect(state.restoreTarget,).toBeNull();

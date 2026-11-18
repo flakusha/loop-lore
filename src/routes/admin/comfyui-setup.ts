@@ -28,6 +28,7 @@ import { sdServerAuthHeaders, } from "../../generation/image-engine/sd-server-jo
 import {
   AdminComfyUISetupBody,
   AdminComfyUISetupResponse,
+  AdminSdSetupNameParams,
   ErrorResponse,
 } from "../../validation/schemas";
 import {
@@ -147,6 +148,7 @@ export function comfyUISetupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
         return jsonNoContent();
       }, {
+        params: AdminSdSetupNameParams,
         detail: {
           summary: "Delete a ComfyUI instance",
           description: "Removes the stored setup descriptor and its sealed API key.",

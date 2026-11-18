@@ -189,6 +189,32 @@ describeReal("model-roles", () => {
 
       expect(bypassed.source,).toBe("config",);
       expect(bypassed.model,).toBe("cfg-model",);
+
+      const configured = await resolveModelRole(
+        ModelRole.Main,
+        makeConfig({
+          defaultModels: { [TEST_PROVIDER]: "ranked-model", },
+          autorouteScenario: "general",
+        },),
+        db,
+      );
+
+      expect(configured.source,).toBe("ranking",);
+      expect(configured.model,).toBe("ranked-model",);
+
+      await setModelRoleOverride(ModelRole.Main, TEST_PROVIDER, "db-model", db,);
+
+      const dbWins = await resolveModelRole(
+        ModelRole.Main,
+        makeConfig({
+          defaultModels: { [TEST_PROVIDER]: "ranked-model", },
+          autorouteScenario: "general",
+        },),
+        db,
+      );
+
+      expect(dbWins.source,).toBe("db",);
+      expect(dbWins.model,).toBe("db-model",);
     });
   });
 

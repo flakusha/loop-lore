@@ -11,7 +11,7 @@ import {
 } from "../../db/backup-restore";
 import { getSqliteDatabase, resetDatabaseSingleton, } from "../../db/index";
 import { getLogger, } from "../../logger";
-import { ErrorResponse, } from "../../validation/schemas";
+import { AdminDbBackupRestoreBody, ErrorResponse, } from "../../validation/schemas";
 import {
   ErrorCode,
   HttpStatus,
@@ -43,6 +43,14 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
   return (
     new Elysia({ name: "admin-db-backup", },)
+      .onError(({ code, },) => {
+        if (code !== "VALIDATION") { return undefined; }
+        return jsonError({
+          message: "Invalid database restore payload",
+          status: HttpStatus.BadRequest,
+          code: ErrorCode.ValidationError,
+        },);
+      },)
       .get(`${prefix}/admin/db/backup`, async (ctx: any,) => {
         return withPermissionAuth(ctx, "admin.system", async () => {
           return jsonResponse({ backups: listDbBackups(dir,), dir, },);
@@ -93,14 +101,6 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       },)
       .post(`${prefix}/admin/db/restore`, async (ctx: any,) => {
         return withPermissionAuth(ctx, "admin.system", async () => {
-          if (ctx.body.confirmation !== "RESTORE") {
-            return jsonError({
-              message: "Confirmation string mismatch",
-              status: HttpStatus.BadRequest,
-              code: ErrorCode.ValidationError,
-            },);
-          }
-
           const sqlite = getSqliteDatabase();
           if (!sqlite) {
             return jsonError({
@@ -141,7 +141,7 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           }
         },);
       }, {
-        body: t.Object({ name: t.String(), confirmation: t.String(), },),
+        body: AdminDbBackupRestoreBody,
         response: {
           200: t.Object({
             restored: t.Boolean(),

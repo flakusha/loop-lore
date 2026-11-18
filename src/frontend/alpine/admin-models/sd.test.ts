@@ -56,7 +56,7 @@ test("loadSdCppDiscovery stores probed instances", async () => {
 
   await sdState.loadSdCppDiscovery!.call(state,);
 
-  expect(calls[0]?.url,).toBe("/api/admin/sd-status/sdcpp",);
+  expect(calls[0]?.url,).toBe("/api/v1/admin/sd-status/sdcpp",);
   expect(state.sdcppProviders,).toHaveLength(1,);
   expect(state.sdcppProbedAt,).toBe("2026-11-18T00:00:00Z",);
   expect(state.sdcppLoading,).toBe(false,);
@@ -67,7 +67,7 @@ test("loadComfyDiscovery surfaces a server error message", async () => {
 
   await sdState.loadComfyDiscovery!.call(state,);
 
-  expect(calls[0]?.url,).toBe("/api/admin/sd-status/comfyui",);
+  expect(calls[0]?.url,).toBe("/api/v1/admin/sd-status/comfyui",);
   expect(state.comfyError,).toBe("admin rights required",);
   expect(state.comfyProviders,).toEqual([],);
   expect(state.comfyLoading,).toBe(false,);
@@ -84,7 +84,7 @@ test("saveSdCppSetup posts only supplied optional fields and reloads discovery",
 
   await sdState.saveSdCppSetup!.call(state,);
 
-  expect(calls[0]?.url,).toBe("/api/admin/sd-status/sdcpp/setup",);
+  expect(calls[0]?.url,).toBe("/api/v1/admin/sd-status/sdcpp/setup",);
   expect(calls[0]?.opts?.method,).toBe("POST",);
   expect(JSON.parse(String(calls[0]?.opts?.body,),),).toEqual({
     name: "local",
@@ -119,7 +119,7 @@ test("saveComfySetup sends the workflow field and clears the API key", async () 
 
   await sdState.saveComfySetup!.call(state,);
 
-  expect(calls[0]?.url,).toBe("/api/admin/sd-status/comfyui/setup",);
+  expect(calls[0]?.url,).toBe("/api/v1/admin/sd-status/comfyui/setup",);
   expect(JSON.parse(String(calls[0]?.opts?.body,),),).toEqual({
     name: "comfy",
     baseUrl: "http://127.0.0.1:8188",
@@ -136,7 +136,7 @@ test("deleteSdCppSetup encodes the name and reloads discovery", async () => {
 
   await sdState.deleteSdCppSetup!.call(state, "my instance",);
 
-  expect(calls[0]?.url,).toBe("/api/admin/sd-status/sdcpp/setup/my%20instance",);
+  expect(calls[0]?.url,).toBe("/api/v1/admin/sd-status/sdcpp/setup/my%20instance",);
   expect(calls[0]?.opts?.method,).toBe("DELETE",);
   expect(state.sdcppSaving,).toBe(false,);
 });

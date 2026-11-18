@@ -156,6 +156,12 @@ adminGlobals.adminPage = function() {
           break;
         }
 
+        case "localModels": {
+          this.loadSdCppDiscovery();
+          this.loadComfyDiscovery();
+          break;
+        }
+
         case "lora": {
           this.loadLora();
           break;
