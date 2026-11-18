@@ -15,7 +15,7 @@ export function joinableRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (
-    new Elysia({ name: "chat-search-joinable", },)
+    new Elysia({ name: "chat-membership-joinable", },)
       // ── Discover joinable chats ───────────────────────────────
       .get(
         `${prefix}/chats/joinable`,

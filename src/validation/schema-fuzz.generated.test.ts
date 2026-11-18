@@ -32,7 +32,7 @@ import * as routes_characterEmotions_actor from "@/routes/character-emotions/act
 import * as routes_characterEmotions_definitions from "@/routes/character-emotions/definitions";
 import * as routes_characterGrowth_helpers from "@/routes/character-growth/helpers";
 import * as routes_chatBackgrounds_shared from "@/routes/chat-backgrounds/shared";
-import * as routes_chatSearch_types from "@/routes/chat-search/types";
+import * as routes_chatMembership_types from "@/routes/chat-membership/types";
 import * as routes_chatSections_types from "@/routes/chat-sections/types";
 import * as routes_chats_branchShared from "@/routes/chats/branch-shared";
 import * as routes_crafting_recipesSchemas from "@/routes/crafting/recipes-schemas";
@@ -1098,12 +1098,6 @@ describe("ChatRow", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.ChatRow,));
 });
 
-describe("ChatSearchQuery", () => {
-  test("accepts generated values", () => checkAllValid(routes_chatSearch_types.ChatSearchQuery,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_chatSearch_types.ChatSearchQuery,));
-});
-
 describe("ChatSectionCreateBody", () => {
   test("accepts generated values", () => checkAllValid(routes_chatSections_types.ChatSectionCreateBody,));
 
@@ -1553,9 +1547,9 @@ describe("ItemRaritySchema", () => {
 });
 
 describe("JoinableQuery", () => {
-  test("accepts generated values", () => checkAllValid(routes_chatSearch_types.JoinableQuery,));
+  test("accepts generated values", () => checkAllValid(routes_chatMembership_types.JoinableQuery,));
 
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_chatSearch_types.JoinableQuery,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_chatMembership_types.JoinableQuery,));
 });
 
 describe("LevelBody", () => {

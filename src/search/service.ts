@@ -7,7 +7,7 @@
  * DB-free by design: tiers arrive as injected {@link TierProvider}s so the
  * service is unit-testable and reusable from routes, the assistant, and
  * chat context injection. Route layers wire the real providers:
- * FTS5 keyword (`src/routes/message-search/helpers.ts:buildFtsQuery`),
+ * FTS5 keyword (`src/search/query.ts:buildFtsQuery`),
  * vector (`src/memory/embeddings.ts:rankBySimilarity`), fuzzy gallery
  * (`fuzzyScore` in `./rank`), token (`deriveSearchTokens` in
  * `./encrypted-tokens` over the `message_search_tokens` table; rows are

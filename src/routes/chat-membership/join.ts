@@ -19,7 +19,7 @@ export function joinRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (
-    new Elysia({ name: "chat-search-join", },)
+    new Elysia({ name: "chat-membership-join", },)
       // ── Join a chat ──────────────────────────────────────────
       .post(
         `${prefix}/chats/:id/join`,

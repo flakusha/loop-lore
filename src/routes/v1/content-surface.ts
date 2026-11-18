@@ -15,7 +15,6 @@ import { personaRoutes, } from "../../personas/controller";
 import { activityRoutes, } from "../activity";
 import { activityStreamRoutes, } from "../activity-stream";
 import { analyticsRoutes, } from "../analytics";
-import { assetSearchRoutes, } from "../asset-search";
 import { assetTagRoutes, } from "../asset-tags";
 import { assetsRoutes, } from "../assets";
 import { blogRoutes, } from "../blog";
@@ -46,7 +45,6 @@ export function contentSurface(opts: RegisterPluginsOpts,) {
     .use(assetRoutes({ database, config, }, prefix,),)
     .use(assetsRoutes(handleOpts, prefix,),)
     .use(mattingRoutes({ database, config, }, prefix,),)
-    .use(assetSearchRoutes(handleOpts, prefix,),)
     .use(assetTagRoutes({ database, }, prefix,),)
     .use(gifSearchRoutes(handleOpts, prefix,),)
     .use(imageEditRoutes({ database, }, prefix,),)

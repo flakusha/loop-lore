@@ -5,7 +5,7 @@
  * Message tier providers — DB-backed `exact`, `keyword`, and `token`.
  *
  * `keyword` reuses the route's FTS5 query builder
- * (`routes/message-search/helpers.ts:buildFtsQuery`) and the `messages_fts`
+ * (`src/search/query.ts:buildFtsQuery`) and the `messages_fts`
  * table from `parts/016_fts.ts`; `token` serves client-pre-encrypted rows
  * via `message_search_tokens`. Authz mirrors the route: chat participants,
  * chat creators, and admins — enforced in SQL, not by importing route code.
@@ -13,8 +13,8 @@
 import { type Kysely, sql, } from "kysely";
 import { isUsableEncryptionSecret, } from "../../crypto/user-secret";
 import type { DB, } from "../../db";
-import { buildFtsQuery, } from "../../routes/message-search/helpers";
 import { deriveSearchTokens, } from "../encrypted-tokens";
+import { buildFtsQuery, } from "../query";
 import { bm25ToScore, } from "../rank";
 import { matchMessageIdsByTokens, } from "../token-store";
 import type { SearchHit, SearchScope, TierProvider, } from "../types";

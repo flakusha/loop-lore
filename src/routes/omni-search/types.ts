@@ -14,15 +14,19 @@ export interface HandlerOpts {
 }
 
 export const OmniSearchQuery = t.Object({
-  /** Raw query fanned out to every surface (required, like asset-search). */
+  /** Raw query fanned out to every surface (required). */
   q: t.String({ minLength: 1, maxLength: 200, },),
   /** Per-surface cap. */
   limit: t.Optional(t.Numeric({ minimum: 1, maximum: 50, default: 10, },),),
+  /** Scope message hits to one chat (in-chat search). */
+  chatId: t.Optional(t.String({ format: "uuid", },),),
 },);
 
 export const OmniChatHit = t.Object({
   chatId: t.String(),
   chatName: t.String(),
+  characterName: t.String(),
+  characterAvatar: t.Union([t.String(), t.Null(),],),
 },);
 
 export const OmniMessageHit = t.Object({

@@ -113,7 +113,7 @@ async function serveChatsListDb(
 }
 
 /**
- * Fetch and project one page of chat-search results — the single data path
+ * Fetch and project one page of chat search results — the single data path
  * behind the htmx search fragment and the JSON view-model branch.
  * @param options
  * @returns the view-model both representations share
@@ -180,7 +180,7 @@ export async function loadChatsSearchViewModel(
 /**
  * @param database
  * @param params
- * @returns the paginated chat-search HTML fragment
+ * @returns the paginated chat search HTML fragment
  */
 async function serveChatsSearch(
   database: Kysely<DB>,

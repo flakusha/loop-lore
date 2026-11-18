@@ -7,5 +7,5 @@ import { getLogger, type Logger, } from "../../logger";
  * @returns {Logger}
  */
 export function log(): Logger {
-  return getLogger().child({ module: "chat-search", },);
+  return getLogger().child({ module: "chat-membership", },);
 }

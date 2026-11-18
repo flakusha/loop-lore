@@ -15,7 +15,7 @@
  *   app.use(gifSearchRoutes(handleOpts,),);
  */
 import { Elysia, t, } from "elysia";
-import type { HandlerOpts, } from "../chat-search/types";
+import type { HandlerOpts, } from "../chat-membership/types";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 
 /** Route opts — fetchImpl and tenorApiKey are test seams. */

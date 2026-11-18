@@ -26,6 +26,7 @@ let db: Kysely<DB>;
 let sqlite: Database;
 let userId: string;
 let chatId: string;
+let otherChatId: string;
 
 function app(user: string | null,): Elysia {
   return new Elysia({ name: "test-omni-search", },)
@@ -67,6 +68,14 @@ beforeAll(async () => {
     content_plaintext: "a round of tavern ale",
   },);
 
+  otherChatId = uid();
+  await insertChats(db, "Tavern Annex", userId, { id: otherChatId, mode: "story", } as never,);
+  await insertChatParticipants(db, otherChatId, userId, {},);
+  await insertMessages(db, otherChatId, userId, "user", "another round of tavern ale", {
+    id: uid(),
+    content_plaintext: "another round of tavern ale",
+  },);
+
   await insertAssets(db, userId, "Tavern interior.png", "image/png", AssetType.Image, 1024, "/t.png", {
     visibility: "private",
   } as never,);
@@ -102,5 +111,13 @@ describe("omniSearchRoutes — GET /api/search", () => {
     expect(body.chats,).toEqual([],);
     expect(body.messages,).toEqual([],);
     expect(body.assets.map((a,) => a.filename),).not.toContain("Tavern interior.png",);
+  });
+
+  test("chatId scopes message hits to one chat", async () => {
+    const res = await get(app(userId,), `/api/search?q=tavern&chatId=${otherChatId}`,);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as OmniBody;
+    expect(body.messages.length,).toBeGreaterThan(0,);
+    expect(body.messages.every((m,) => m.chatId === otherChatId),).toBe(true,);
   });
 });

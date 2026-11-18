@@ -25,7 +25,7 @@ const testConfig = {
 } as unknown as Config;
 
 /**
- * Auth-context app via derive, mirroring message-search helpers.
+ * Auth-context app via derive, mirroring the search route helpers.
  * @param db
  * @param userId
  * @param userRole

@@ -6,7 +6,7 @@
 // Unified cross-surface search (GAP ticket TASK-1-0-0-gap-...): one route
 // over chats + messages + assets, reusing the shipped retrieval pieces.
 // Permission gating is inherited from each surface, not re-implemented:
-// chats — participant-or-creator visibility (same INNER JOIN as chat-search);
+// chats — participant-or-creator visibility (participant-scoped INNER JOIN);
 // messages — message providers' accessWhere (participant/creator/admin);
 // assets — visibleAssetFilter via searchAssets (public/owned/shared, admins
 // see all). TOCTOU: last-committed snapshot per surface; per-surface failure
@@ -15,10 +15,10 @@ import { Elysia, } from "elysia";
 import { sql, } from "kysely";
 import { getLogger, } from "../../logger";
 import { searchAssets, searchMessages, } from "../../search";
+import { escapeLike, } from "../../search/query";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { extractAuth, jsonResponse, requireUserId, } from "../http-utils";
-import { escapeLike, } from "../message-search/helpers";
 import { type HandlerOpts, OmniSearchQuery, OmniSearchResponse, } from "./types";
 
 export type { HandlerOpts, } from "./types";
@@ -53,7 +53,12 @@ export function omniSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
               .selectFrom("chats",)
               .innerJoin("chat_participants", "chat_participants.chat_id", "chats.id",)
               .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
-              .select(["chats.id as chatId", "chats.name as chatName",],)
+              .select([
+                "chats.id as chatId",
+                "chats.name as chatName",
+                "actors.display_name as characterName",
+                "actors.avatar_asset_id as characterAvatar",
+              ],)
               .where("chat_participants.actor_id", "=", userId,)
               .where("chats.is_pinned", "!=", "archived",)
               .where((eb,) =>
@@ -66,7 +71,12 @@ export function omniSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
               .orderBy("chats.updated_at", "desc",)
               .limit(limit,)
               .execute(),
-            searchMessages(database, q, { userId, topK: limit, isAdmin: can(userRole, "admin.chat",), },),
+            searchMessages(database, q, {
+              userId,
+              topK: limit,
+              chatId: query.chatId,
+              isAdmin: can(userRole, "admin.chat",),
+            },),
             searchAssets(database, q, { userId, userRole, topK: limit, },),
           ],);
 
@@ -83,7 +93,12 @@ export function omniSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse({
             query: q,
-            chats: chatRows.map((row,) => ({ chatId: row.chatId, chatName: row.chatName, })),
+            chats: chatRows.map((row,) => ({
+              chatId: row.chatId,
+              chatName: row.chatName,
+              characterName: row.characterName ?? "",
+              characterAvatar: row.characterAvatar ?? null,
+            })),
             messages: messageHits.map((hit,) => ({
               messageId: hit.payload.messageId,
               chatId: hit.payload.chatId,

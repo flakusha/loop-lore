@@ -89,11 +89,11 @@ export function trackSearchError(error: unknown,): never {
  *
  * Archived chats (`is_pinned = "archived"`) are hidden from default listings
  * and must not surface in RAG recall by default. Callers (the recall orchestrator
- * and any chat-search route that feeds the recall layer) feed the candidate
+ * and any search route that feeds the recall layer) feed the candidate
  * id set; this helper returns the subset that survives the archive filter.
  *
  * `includeArchived = true` is the explicit opt-in for the archived view
- * (`include_archived` query param on `GET /api/chats/search`).
+ * (`include_archived` query param on archived-view search requests).
  *
  * Single batch query — one `IN` plus a `NOT IN (archived-set)` predicate.
  * Empty / unknown ids fall through unchanged so callers can pass the result

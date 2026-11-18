@@ -28,7 +28,7 @@ function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
     .use(transferRoutes({ database: db, config: {} as unknown as Config, },),) as unknown as Elysia;
 }
 
-describe("chat-search transfer", () => {
+describe("chat membership transfer", () => {
   let db: Kysely<DB>;
   const userId: string = crypto.randomUUID();
   const worldId: string = crypto.randomUUID();

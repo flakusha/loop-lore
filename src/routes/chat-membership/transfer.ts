@@ -19,7 +19,7 @@ export function transferRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (
-    new Elysia({ name: "chat-search-transfer", },)
+    new Elysia({ name: "chat-membership-transfer", },)
       // ── Transfer chat to new location ────────────────────────
       .post(
         `${prefix}/chats/:id/transfer`,
