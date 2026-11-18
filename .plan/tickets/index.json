@@ -326,6 +326,20 @@
     "source": ".plan/tickets/BUG-admin-dashboard-browser-tests-repeat-the-login-hx-redirect-r.md",
     "status": "done"
   },
+  "BUG-ADMIN-DB-RESTORE-VALIDATES-ONLY-SQLITE-HEADER": {
+    "hash": "29d1529",
+    "git_issue": "29d1529",
+    "extid": "BUG-ADMIN-DB-RESTORE-VALIDATES-ONLY-SQLITE-HEADER",
+    "type": "BUG",
+    "title": "admin DB restore validates only SQLite header",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-database-backup-recovery.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-db-restore-validates-only-sqlite-header.md",
+    "status": "open"
+  },
   "BUG-ADMIN-MODEL-NEWS-WEIGHT-CHANGE-TEST-TIMES-OUT-UNDER-PARALLEL": {
     "hash": "3880301",
     "git_issue": "3880301",
@@ -6903,6 +6917,20 @@
     "source": ".plan/tickets/BUG-memory-panel-never-renders-memories-in-any-chat-response-env.md",
     "status": "done"
   },
+  "BUG-MEMORY-SEMANTIC-FLOOR-EVALUATED-AGAINST-RERANKER-SCORES": {
+    "hash": "e7fa219",
+    "git_issue": "e7fa219",
+    "extid": "BUG-MEMORY-SEMANTIC-FLOOR-EVALUATED-AGAINST-RERANKER-SCORES",
+    "type": "BUG",
+    "title": "memory semantic floor evaluated against reranker scores",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-semantic-floor-evaluated-against-reranker-scores.md",
+    "status": "open"
+  },
   "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES": {
     "epic": "",
     "extid": "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES",
@@ -7246,6 +7274,20 @@
     "tags": [],
     "title": "moderateComment has no authorization — any caller can change any comment's status (IDOR/moderation bypass)",
     "type": "BUG"
+  },
+  "BUG-MODERATOR-HIDDEN-MESSAGE-READABLE-BY-DIRECT-ID-IN-PUBLIC-CHA": {
+    "hash": "5113af5",
+    "git_issue": "5113af5",
+    "extid": "BUG-MODERATOR-HIDDEN-MESSAGE-READABLE-BY-DIRECT-ID-IN-PUBLIC-CHA",
+    "type": "BUG",
+    "title": "moderator-hidden message readable by direct ID in public chats",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-chat-privacy.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-moderator-hidden-message-readable-by-direct-id-in-public-cha.md",
+    "status": "open"
   },
   "BUG-MODULE-LEVEL-IN-MEMORY-STATE-GROWS-WITHOUT-EVICTION": {
     "hash": "368aa6d",
@@ -21576,6 +21618,20 @@
     "title": "decay timeline visualization for memory lifecycle",
     "type": "FEAT"
   },
+  "FEAT-DEDICATED-RERANK-MODEL-ROLE-AND-TASK-SIGNAL-WITH-AUX-GENERAL": {
+    "hash": "d195a7c",
+    "git_issue": "d195a7c",
+    "extid": "FEAT-DEDICATED-RERANK-MODEL-ROLE-AND-TASK-SIGNAL-WITH-AUX-GENERAL",
+    "type": "FEAT",
+    "title": "dedicated rerank model role and task signal with aux/general fallback routing",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-dedicated-rerank-model-role-and-task-signal-with-aux-general.md",
+    "status": "open"
+  },
   "FEAT-DIRECTOR-S-MODE-CAMERA-SCENE-CUT-MUSIC-METADATA": {
     "epic": "(none — proposed epic never materialized)",
     "extid": "FEAT-DIRECTOR-S-MODE-CAMERA-SCENE-CUT-MUSIC-METADATA",
@@ -27654,6 +27710,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-admin-user-management-ui-session-revoke-password-reset-accou.md",
     "status": "Not Started"
+  },
+  "TASK-ADMIT-EXTERNAL-AGENT-TO-WORKTREE-CONFINED-REPO-CHECK": {
+    "hash": "fde2df0",
+    "git_issue": "fde2df0",
+    "extid": "TASK-ADMIT-EXTERNAL-AGENT-TO-WORKTREE-CONFINED-REPO-CHECK",
+    "type": "TASK",
+    "title": "admit external agent to worktree confined repo check",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-rsi-repo-access.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admit-external-agent-to-worktree-confined-repo-check.md",
+    "status": "open"
   },
   "TASK-ADOPT-BUN-ARRAYBUFFERSINK-FOR-BUFFER-BUILDING": {
     "epic": "epic-platform-api-adoption",
@@ -35581,6 +35651,20 @@
     "title": "Client-Side Encryption (AES-256-GCM)",
     "type": "TASK"
   },
+  "TASK-CLOSE-REMAINING-RELEASE-GATE-DEBT": {
+    "hash": "65a5e31",
+    "git_issue": "65a5e31",
+    "extid": "TASK-CLOSE-REMAINING-RELEASE-GATE-DEBT",
+    "type": "TASK",
+    "title": "close remaining release gate debt",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-code-quality.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-close-remaining-release-gate-debt.md",
+    "status": "open"
+  },
   "TASK-CLOSE-THE-FIRST-BOOT-PII-CONFIG-GATE-AND-EXPOSE-SETUP-STATE": {
     "hash": "62be90c",
     "git_issue": "62be90c",
@@ -36683,6 +36767,20 @@
     ],
     "source": ".plan/tickets/TASK-composer-primitive-extraction.md",
     "status": "done"
+  },
+  "TASK-COMPOSER-UP-DOWN-RECALL-OF-PRIOR-TYPED-TEXT": {
+    "hash": "dd0970d",
+    "git_issue": "dd0970d",
+    "extid": "TASK-COMPOSER-UP-DOWN-RECALL-OF-PRIOR-TYPED-TEXT",
+    "type": "TASK",
+    "title": "composer Up Down recall of prior typed text",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-composer-flows.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-composer-up-down-recall-of-prior-typed-text.md",
+    "status": "open"
   },
   "TASK-CONDITION-DRIVEN-NPC-BEHAVIOR": {
     "epic": "epic-npcs",
@@ -39170,6 +39268,20 @@
     "source": ".plan/tickets/TASK-derived-map-origin-links.md",
     "status": "Not Started",
     "git_issue": "74cea0f"
+  },
+  "TASK-DESIRED-CONTEXT-WINDOW-AND-PROMOTE-PRUNED-MESSAGES-TO-MEMORY": {
+    "hash": "3e9a8e5",
+    "git_issue": "3e9a8e5",
+    "extid": "TASK-DESIRED-CONTEXT-WINDOW-AND-PROMOTE-PRUNED-MESSAGES-TO-MEMORY",
+    "type": "TASK",
+    "title": "desired context window and promote pruned messages to memory",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-context-optimization.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-desired-context-window-and-promote-pruned-messages-to-memory.md",
+    "status": "open"
   },
   "TASK-DEV-TOOLING-UPDATES": {
     "epic": "",
@@ -47446,6 +47558,20 @@
     ],
     "title": "Installed Plugins",
     "type": "TASK"
+  },
+  "TASK-INSTANCE-PATH-HYGIENE-CLOSE-F18-H4-H5": {
+    "hash": "c5b2746",
+    "git_issue": "c5b2746",
+    "extid": "TASK-INSTANCE-PATH-HYGIENE-CLOSE-F18-H4-H5",
+    "type": "TASK",
+    "title": "instance path hygiene close F18 H4 H5",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-configs-path-resolution.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-instance-path-hygiene-close-f18-h4-h5.md",
+    "status": "open"
   },
   "TASK-INSTANCE-STATE-ADVERTISEMENT-ENDPOINT": {
     "epic": "epic-federation-swarm-sync",
@@ -56918,6 +57044,20 @@
     "title": "# TASK-recon-test-coverage: Backend reconciliation — Phase 3 test coverage",
     "type": "TASK"
   },
+  "TASK-RECONCILE-1-0-0-TRACKER-AND-TICKET-STATUSES-WITH-SHIPPED-COD": {
+    "hash": "a9012f2",
+    "git_issue": "a9012f2",
+    "extid": "TASK-RECONCILE-1-0-0-TRACKER-AND-TICKET-STATUSES-WITH-SHIPPED-COD",
+    "type": "TASK",
+    "title": "reconcile 1.0.0 tracker and ticket statuses with shipped code",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-docs-reconciliation.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-1-0-0-tracker-and-ticket-statuses-with-shipped-cod.md",
+    "status": "open"
+  },
   "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES": {
     "epic": "epic-replayability",
     "extid": "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES",
@@ -58192,6 +58332,20 @@
     "source": ".plan/tickets/TASK-relevance-aware-decay-and-purge-signals-in-memory-purge.md",
     "status": "done"
   },
+  "TASK-RELEVANCE-AWARE-MEMORY-DECAY-AND-TUNABLE-INJECTION-POLICY": {
+    "hash": "c233bc9",
+    "git_issue": "c233bc9",
+    "extid": "TASK-RELEVANCE-AWARE-MEMORY-DECAY-AND-TUNABLE-INJECTION-POLICY",
+    "type": "TASK",
+    "title": "relevance aware memory decay and tunable injection policy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-relevance-aware-memory-decay-and-tunable-injection-policy.md",
+    "status": "open"
+  },
   "TASK-REMOTE-HARNESS-TLS-TOKEN-AUTH": {
     "hash": "1c71023",
     "git_issue": "1c71023",
@@ -58234,6 +58388,20 @@
     "tags": [],
     "title": "Remove dist/server.js Build Artifact",
     "type": "TASK"
+  },
+  "TASK-REMOVE-INJECTED-DEFAULTS-FROM-KEY-MECHANIC-ENUMS": {
+    "hash": "2b99d96",
+    "git_issue": "2b99d96",
+    "extid": "TASK-REMOVE-INJECTED-DEFAULTS-FROM-KEY-MECHANIC-ENUMS",
+    "type": "TASK",
+    "title": "remove injected defaults from key mechanic enums",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-api-validation-guardrails.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-remove-injected-defaults-from-key-mechanic-enums.md",
+    "status": "open"
   },
   "TASK-REMOVE-NOOP-OXLINT-CORRECTNESS-GATE": {
     "epic": "(none — hygiene/self-contained)",
@@ -58308,6 +58476,20 @@
     "tags": [],
     "title": "Render path resolveTransform in chat bubbles",
     "type": "TASK"
+  },
+  "TASK-RENDER-STORED-CHAT-BACKGROUND-ON-STANDARD-CHAT-SURFACE": {
+    "hash": "9c69f09",
+    "git_issue": "9c69f09",
+    "extid": "TASK-RENDER-STORED-CHAT-BACKGROUND-ON-STANDARD-CHAT-SURFACE",
+    "type": "TASK",
+    "title": "render stored chat background on standard chat surface",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-immersion-presentation.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-render-stored-chat-background-on-standard-chat-surface.md",
+    "status": "open"
   },
   "TASK-RENPY-EXPORT-BUTTON-IN-CHAT-LIST-BATCH-BAR": {
     "hash": "d2bbfa1",
@@ -62681,6 +62863,20 @@
     "tags": [],
     "title": "Test Telemetry Module",
     "type": "TASK"
+  },
+  "TASK-TEST-UNIFIED-SEARCH-ADMIN-SCOPE-AND-PARTIAL-FAILURE": {
+    "hash": "13c2ea3",
+    "git_issue": "13c2ea3",
+    "extid": "TASK-TEST-UNIFIED-SEARCH-ADMIN-SCOPE-AND-PARTIAL-FAILURE",
+    "type": "TASK",
+    "title": "test unified search admin scope and partial failure",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-api-routes.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-test-unified-search-admin-scope-and-partial-failure.md",
+    "status": "open"
   },
   "TASK-TEST-UNTESTED-ROUTES": {
     "epic": "epic-logic-reconciliation",
