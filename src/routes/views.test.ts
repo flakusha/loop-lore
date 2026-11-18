@@ -228,6 +228,18 @@ describe("applyI18n", () => {
     expect(applyI18n(input, t,),).toBe('<button title="common.save">common.cancel</button>',);
   });
 
+  test("substitutes both inner quote styles and leaves fallback forms intact", () => {
+    const t = (key: string,) => `T:${key}`;
+    const input = `<span aria-label="{{{t('accessibility.toggleSidebar')}}}">` +
+      `{{{ t( 'settings.sessions' ) }}}` +
+      `{{{t("settings.sessions") || "Sessions"}}}</span>`;
+
+    expect(applyI18n(input, t,),).toBe(
+      `<span aria-label="T:accessibility.toggleSidebar">T:settings.sessions` +
+        `{{{t("settings.sessions") || "Sessions"}}}</span>`,
+    );
+  });
+
   test("passes through content without template expressions unchanged", () => {
     const t = (_key: string,) => "should-not-be-called";
     expect(applyI18n("<p>Hello world</p>", t,),).toBe("<p>Hello world</p>",);

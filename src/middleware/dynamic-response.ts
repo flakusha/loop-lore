@@ -164,6 +164,8 @@ export class DynamicResponsePolicy {
   private async runMinifier(body: string, kind: "html" | "css" | "js",): Promise<string> {
     switch (kind) {
       case "html": {
+        // Contract: keep data-testid, hx-*, Alpine, mustache and nonce hooks;
+        // no attribute stripping here — see TASK-document-and-enforce-runtime-html-response-attribute-policy.
         return minifyHTMLContent(body,);
       }
 

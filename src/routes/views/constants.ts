@@ -11,8 +11,8 @@ const COMPONENTS_DIR = join(import.meta.dir, "..", "..", "components",);
 const DIST_PUBLIC_DIR = join(import.meta.dir, "..", "..", "..", "dist", "public",);
 const ICONS_DIR = join(import.meta.dir, "..", "..", "..", "dist", "public", "icons", "tabler",);
 
-/** Match {{{ t("key") }}} or {{{t("key")}}} with optional whitespace. */
-const I18N_TEMPLATE_RE = /\{\{\{\s*t\("([^"]+)"\)\s*\}\}\}/g;
+/** Match {{{ t("key") }}} / {{{t('key')}}} with optional whitespace. */
+const I18N_TEMPLATE_RE = /\{\{\{\s*t\(\s*["']([^"']+)["']\s*\)\s*\}\}\}/g;
 
 /**
  * Auto-discover allowed views from src/views/ directory.

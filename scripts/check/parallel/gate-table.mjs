@@ -207,6 +207,9 @@ export const checks = {
   "coverage - per-module line %": NOOP_OK, // placeholder; replaced before run
   // Blocking: resolve every physical view through production includes/icons.
   "frontend - template preflight": "bun run scripts/check-frontend-templates.ts",
+  // Blocking: every tracked template must parse with the production options
+  // and keep its data-testid / Alpine / htmx attribute counts.
+  "frontend - minify parity": "bun run scripts/check-html-minify-parity.ts",
   // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
   "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
   // Browser baseline: one serial gate runs the complete Playwright surface.

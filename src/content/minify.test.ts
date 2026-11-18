@@ -62,6 +62,31 @@ describe("minifyHTMLContent", () => {
     expect(result,).not.toContain('type="text/javascript"',);
   });
 
+  test("preserves the runtime HTML attribute contract", async () => {
+    const input =
+      `<div data-testid="chat" hx-get="/api/chat" hx-swap-oob="true" x-data="app()" @click="go()" :href="'/w/' + id" role="region" aria-live="polite" nonce="{{cspNonce}}">
+  {{{t('chat.title')}}}
+</div>`;
+
+    const result = await minifyHTMLContent(input,);
+    for (
+      const kept of [
+        'data-testid="chat"',
+        'hx-get="/api/chat"',
+        'hx-swap-oob="true"',
+        'x-data="app()"',
+        '@click="go()"',
+        ":href=\"'/w/' + id\"",
+        'role="region"',
+        'aria-live="polite"',
+        'nonce="{{cspNonce}}"',
+        "{{{t('chat.title')}}}",
+      ]
+    ) {
+      expect(result,).toContain(kept,);
+    }
+  });
+
   test("handles empty input", async () => {
     const result = await minifyHTMLContent("",);
     expect(result,).toBe("",);
