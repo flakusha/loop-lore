@@ -22,6 +22,7 @@ import {
   classifyRequest,
   isShellAssetPath,
   PRECACHE_URLS,
+  shouldServeOfflinePage,
   strategyFor,
   VIEW_NETWORK_TIMEOUT_MS,
 } from "./sw-strategy";
@@ -129,6 +130,13 @@ async function networkFirstOfflinePage(request: Request,): Promise<Response> {
     return response;
   } catch {
     lastOfflineFallbackAt = Date.now();
+    if (!shouldServeOfflinePage(request.mode,)) {
+      return new Response("Offline", {
+        status: 503,
+        headers: { "Content-Type": "text/plain", },
+      },);
+    }
+
     const cache = await caches.open(cacheName(),);
     const offline = await cache.match("/offline.html",);
     return offline ?? new Response("Offline", {

@@ -9,6 +9,7 @@ import {
   isShellAssetPath,
   PRECACHE_URLS,
   RUNTIME_CACHE_PREFIXES,
+  shouldServeOfflinePage,
   strategyFor,
   SW_CACHE_VERSION,
   VIEW_NETWORK_TIMEOUT_MS,
@@ -132,5 +133,35 @@ describe("precache manifest hygiene", () => {
   test("cache name embeds the version constant for versioned purge", () => {
     expect(cacheName(),).toBe(`${CACHE_NAME_PREFIX}-${SW_CACHE_VERSION}`,);
     expect(SW_CACHE_VERSION,).toMatch(/^v\d+$/,);
+  });
+});
+
+describe("hashed shell bundles", () => {
+  test("hashed layout bundles classify as shell", () => {
+    for (
+      const path of [
+        "/alpine-init-2gaz7rpx.js",
+        "/chat-vendor-abc123.js",
+        "/pages-def456.js",
+        "/locale-init-a1b2c3d4.js",
+      ]
+    ) {
+      expect(isShellAssetPath(path,),).toBe(true,);
+      expect(classifyRequest(url(path,), "GET", "no-cors", ORIGIN,),).toBe("shell",);
+    }
+  });
+
+  test("bare JS bundles are no longer precached", () => {
+    for (const entry of ["/alpine-init.js", "/chat-vendor.js", "/pages.js", "/locale-init.js",]) {
+      expect(PRECACHE_URLS,).not.toContain(entry,);
+    }
+  });
+});
+
+describe("offline fallback mode", () => {
+  test("only top-level navigations receive offline.html", () => {
+    expect(shouldServeOfflinePage("navigate",),).toBe(true,);
+    expect(shouldServeOfflinePage("cors",),).toBe(false,);
+    expect(shouldServeOfflinePage("same-origin",),).toBe(false,);
   });
 });
