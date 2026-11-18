@@ -36297,6 +36297,23 @@
     "status": "done",
     "git_issue": "7fe2a33"
   },
+  "TASK-COMFYUI-NODE-OWNERSHIP-BOUNDARY": {
+    "hash": "123cae3",
+    "git_issue": "123cae3",
+    "extid": "TASK-COMFYUI-NODE-OWNERSHIP-BOUNDARY",
+    "type": "TASK",
+    "title": "ComfyUI node ownership boundary",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-comfyui-first-class-citizen",
+    "project": "",
+    "tags": [
+      "comfyui",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-node-ownership-boundary.md",
+    "status": "open"
+  },
   "TASK-COMFYUI-OUTPUT-DIRECTORY-CONFIG": {
     "hash": "f2b36c5",
     "extid": "TASK-COMFYUI-OUTPUT-DIRECTORY-CONFIG",
@@ -38953,6 +38970,23 @@
     "tags": [],
     "title": "Dedicated gallery pages for assistant functionalities",
     "type": "TASK"
+  },
+  "TASK-DEDICATED-MEDIA-SCORER-PACK-EVALUATION": {
+    "hash": "a620b71",
+    "git_issue": "a620b71",
+    "extid": "TASK-DEDICATED-MEDIA-SCORER-PACK-EVALUATION",
+    "type": "TASK",
+    "title": "Dedicated media scorer pack evaluation",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-multimodal-asset-reuse",
+    "project": "",
+    "tags": [
+      "scoring",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-dedicated-media-scorer-pack-evaluation.md",
+    "status": "open"
   },
   "TASK-DEDUP-INVITES-REDEEM-AND-AUTH-FORM-FLOWS": {
     "epic": "epic-auth-channel-provisioning",
@@ -46560,6 +46594,23 @@
     "title": "Hold inbound http 3 until bun ws over h3",
     "type": "TASK"
   },
+  "TASK-HONKBOX-MEDIA-EDITING-OFFLOAD": {
+    "hash": "ce6deca",
+    "git_issue": "ce6deca",
+    "extid": "TASK-HONKBOX-MEDIA-EDITING-OFFLOAD",
+    "type": "TASK",
+    "title": "Honkbox media editing offload",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-external-creative-tool-bridge",
+    "project": "",
+    "tags": [
+      "honkbox",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-honkbox-media-editing-offload.md",
+    "status": "open"
+  },
   "TASK-HONKBOX-PROVIDER-WIRING-AND-GPU-ADMISSION-OWNERSHIP": {
     "hash": "a7794f8",
     "git_issue": "a7794f8",
@@ -46599,6 +46650,23 @@
     "tags": [],
     "title": "Add a canonical context-carrier wrapper to HookResult.data",
     "type": "TASK"
+  },
+  "TASK-HOSTED-VIDEO-AND-AUDIO-API-BENCHMARK-TIER": {
+    "hash": "121ec39",
+    "git_issue": "121ec39",
+    "extid": "TASK-HOSTED-VIDEO-AND-AUDIO-API-BENCHMARK-TIER",
+    "type": "TASK",
+    "title": "Hosted video and audio API benchmark tier",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "video",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-hosted-video-and-audio-api-benchmark-tier.md",
+    "status": "open"
   },
   "TASK-HOUSING-BASE-BUILDING": {
     "epic": "epic-housing",
@@ -47519,6 +47587,23 @@
     "tags": [],
     "title": "In-chat asset edit flow",
     "type": "TASK"
+  },
+  "TASK-IN-COMFYUI-TRAINER-EVALUATION": {
+    "hash": "9b554fe",
+    "git_issue": "9b554fe",
+    "extid": "TASK-IN-COMFYUI-TRAINER-EVALUATION",
+    "type": "TASK",
+    "title": "In-ComfyUI trainer evaluation",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-training-finetune-datasets",
+    "project": "",
+    "tags": [
+      "training",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-in-comfyui-trainer-evaluation.md",
+    "status": "open"
   },
   "TASK-IN-PLACE-GENERATION-OWNER-BACKFILL": {
     "epic": "epic-assistant-gm-flows",
@@ -49055,6 +49140,23 @@
     "source": ".plan/tickets/TASK-listener-leak-checker-exempt-top-level-module-registrations-.md",
     "status": "Not Started"
   },
+  "TASK-LIVE-AND-REEL-BATCH-PRODUCTION-TIERS": {
+    "hash": "1cec367",
+    "git_issue": "1cec367",
+    "extid": "TASK-LIVE-AND-REEL-BATCH-PRODUCTION-TIERS",
+    "type": "TASK",
+    "title": "Live and reel batch production tiers",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "video",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-live-and-reel-batch-production-tiers.md",
+    "status": "open"
+  },
   "TASK-LIVE-AVATAR-SPIKE": {
     "hash": "2564bd2",
     "git_issue": "2564bd2",
@@ -50105,6 +50207,23 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-lsp-token-auth-permissions.md",
+    "status": "open"
+  },
+  "TASK-LTX-FOLEY-AND-NATIVE-AUDIO-ALTERNATIVES": {
+    "hash": "7764a0d",
+    "git_issue": "7764a0d",
+    "extid": "TASK-LTX-FOLEY-AND-NATIVE-AUDIO-ALTERNATIVES",
+    "type": "TASK",
+    "title": "LTX Foley and native audio alternatives",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "audio",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-ltx-foley-and-native-audio-alternatives.md",
     "status": "open"
   },
   "TASK-MAGIC-SPELL-CRAFTING": {
@@ -51601,6 +51720,23 @@
     "tags": [],
     "source": ".plan/tickets/TASK-mid-message-checkpoint-retry-retry-continue-inside-swipe-rep.md",
     "status": "Not Started"
+  },
+  "TASK-MID-SAMPLER-RESUME-FEASIBILITY": {
+    "hash": "21158f5",
+    "git_issue": "21158f5",
+    "extid": "TASK-MID-SAMPLER-RESUME-FEASIBILITY",
+    "type": "TASK",
+    "title": "Mid-sampler resume feasibility",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "video",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-mid-sampler-resume-feasibility.md",
+    "status": "open"
   },
   "TASK-MIDDLEWARE-ACCEPT-FRONTEND-SUPPLIED-REQUEST-ID-UUID-WITH-SER": {
     "epic": "epic-middleware-request-lifecycle",
@@ -56590,6 +56726,23 @@
     "tags": [],
     "title": "Quiet Hours / Do-Not-Disturb",
     "type": "TASK"
+  },
+  "TASK-QUIET-HOURS-PRIORITY-RENDER-SCHEDULING": {
+    "hash": "5180cf2",
+    "git_issue": "5180cf2",
+    "extid": "TASK-QUIET-HOURS-PRIORITY-RENDER-SCHEDULING",
+    "type": "TASK",
+    "title": "Quiet-hours priority render scheduling",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "video",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-quiet-hours-priority-render-scheduling.md",
+    "status": "open"
   },
   "TASK-QWEN-IMAGE-EDIT-21-REFERENCE-TEMPLATE": {
     "hash": "9cba818",
