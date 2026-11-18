@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 270
 
 /**
  * AUX Pipeline — Runner
@@ -25,6 +26,7 @@ import { getSchedulerManager, } from "../generation/scheduler";
 import { PriorityLevel, } from "../llm";
 import { getLogger, } from "../logger";
 import { isTelemetryEnabled, record, } from "../telemetry/service";
+import { tryDecisionTransport, } from "./decision-registry";
 import { AUX_CLASSIFICATION_TASKS, } from "./template-registry";
 import type { AuxCallOptions, AuxCallResult, AuxTaskName, } from "./types";
 
@@ -162,6 +164,22 @@ export async function callAux(
       },
     },);
   };
+
+  // Decision-model transport: a configured classifier role on an
+  // OpenAI-compatible base URL tries POST <base>/systemone first; any
+  // failure (501, timeout, unconfigured) falls through to the generative
+  // auxiliary path below unchanged.
+  if (auxRole.role === ModelRole.Classifier && auxRole.source !== "default") {
+    const decided = await tryDecisionTransport({ task, config, auxRole, messages, timeoutMs, },);
+
+    if (decided) {
+      const transport: AuxCallResult = { ...decided, latencyMs: Date.now() - startedAt, };
+
+      recordCall(true, { transport: "decision", },);
+
+      return transport;
+    }
+  }
 
   try {
     // Aux bypass routed through failover + scheduler: the aux provider

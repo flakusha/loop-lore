@@ -5,7 +5,6 @@ import { serve, } from "bun";
 import { join, } from "node:path";
 import { initAgeGate, } from "../age-gate/controller";
 import { initAssistantQuota, } from "../assistant/quota/engine";
-import { flushActiveStore, } from "../async";
 import { reconcileInterruptedJobs, } from "../characters/services/emotion-avatar-service/restart-reconcile";
 import { ensureTlsCerts, } from "../config/cert";
 import { applyConfigChange, initConfigHotApply, onConfigChange, } from "../config/hot-apply";
@@ -13,7 +12,6 @@ import { applyHotConfig, } from "../config/hot-apply-consumers";
 import { loadConfig, } from "../config/load";
 import type { Config, } from "../config/schema";
 import { resolveDbPath, setEffectiveServerBind, } from "../config/state-dir";
-import { getScheduler, } from "../cron";
 import { initAnonymousMode, initSmk, } from "../crypto";
 import { getDatabase, } from "../db/index";
 import { runDataMigrations, runMigrations, } from "../db/migrate";
@@ -27,7 +25,7 @@ import { applyStoredInboundSettings, initInboundSettings, } from "../integration
 import { maybeStartStdioProxyListener, } from "../integrations/inbound/stdio-proxy-listener";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
-import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
+import { loadAllPlugins, } from "../plugins";
 import {
   applyEnvironmentOverrides,
   seedConfiguredContent,
@@ -40,6 +38,7 @@ import { seedDynamicContent, } from "./boot-seed";
 import { createRequestHandler, handleApiRequest, } from "./handler";
 import { initAssetCompression, } from "./init-asset-compression";
 import { initBackgroundServices, } from "./init-background-services";
+import { registerShutdownHandlers, } from "./shutdown";
 import { createNonApiHandler, } from "./static-files";
 import { createTerminalGateway, type TerminalSocketData, } from "./terminal-ws";
 import { isTerminalUpgradeRequest, } from "./terminal-ws-protocol";
@@ -53,12 +52,7 @@ import {
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { initHarnessTurnQueue, } from "../integrations/harness/queue";
-import { closeHarnessRuntime, getHarnessRuntime, initHarnessRuntime, } from "../integrations/harness/runtime";
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+import { getHarnessRuntime, initHarnessRuntime, } from "../integrations/harness/runtime";
 
 /** Warn loudly when BYOK is on but no master secret can seal stored keys. */
 function warnByokWithoutSecret(config: Config, logger: ReturnType<typeof getLogger>,): void {
@@ -397,84 +391,14 @@ export async function start() {
   // ── Start liveliness probes for managed servers ──────────
   serverManager.startLivenessProbes();
 
-  // ── Hard-exit guard — kills subprocesses at OS level ──
-  process.on("exit", () => {
-    serverManager.killAllSync();
-    closeHarnessRuntime();
-  },);
-
-  // ── Graceful shutdown ────────────────────────────────────
-  const shutdown = async ({ exitCode, }: { exitCode: number },): Promise<void> => {
-    (domainConfigWatcher as { __close?: () => void } | undefined)?.__close?.();
-    backgroundServices.stop();
-    getScheduler()?.stop();
-    await flushActiveStore();
-    await serverManager.stopAll();
-    closeHarnessRuntime();
-    await unloadAllPlugins();
-    await stdioProxy?.close();
-    httpServer.stop();
-    httpsServer?.stop();
-    const SHUTDOWN_TIMEOUT = 5000;
-    const flushed = logger.flush();
-    const timer = setTimeout(() => {
-      process.stderr.write(`[logger] flush timed out after ${SHUTDOWN_TIMEOUT}ms\n`,);
-      process.exit(1,);
-    }, SHUTDOWN_TIMEOUT,);
-
-    await flushed;
-    clearTimeout(timer,);
-    process.exit(exitCode,);
-  };
-
-  /** Run the graceful shutdown, guaranteeing a rejected shutdown step (a
-   *  stuck store flush or plugin unload) still exits the process instead of
-   *  surfacing an unhandled rejection from inside the signal / fatal-error
-   * @param opts
-   *  handlers below. */
-  function runShutdown({ signal, exitCode, }: { signal: string; exitCode: number },): void {
-    shutdown({ exitCode, },).catch((err,) => {
-      process.stderr.write(`[shutdown] ${signal} failed: ${String(err,)}\n`,);
-      process.exit(1,);
-    },);
-  }
-
-  process.on("SIGTERM", () => runShutdown({ signal: "SIGTERM", exitCode: CLEAN_EXIT_CODE, },),);
-  process.on("SIGINT", () => runShutdown({ signal: "SIGINT", exitCode: CLEAN_EXIT_CODE, },),);
-  // SIGHUP is unsupported on Windows — registering a handler there throws at
-  // boot. Windows never delivers SIGHUP, so omitting the handler is safe.
-  if (process.platform !== "win32") {
-    process.on("SIGHUP", () => runShutdown({ signal: "SIGHUP", exitCode: CLEAN_EXIT_CODE, },),);
-  }
-
-  process.on("uncaughtException", (err,) => {
-    try {
-      // Pass the Error object (not String(err)) so the logger captures the
-      // full stack for maxStackBytes post-mortem analysis.
-      logger.fatal({ message: "Uncaught exception", }, err,);
-    } catch {
-      /* last resort */
-    }
-
-    runShutdown({ signal: "uncaughtException", exitCode: CRASH_EXIT_CODE, },);
-  },);
-
-  process.on("unhandledRejection", (reason,) => {
-    try {
-      const err = reason instanceof Error ? reason : new Error(String(reason,),);
-      logger.fatal({ message: "Unhandled rejection", }, err,);
-    } catch {
-      /* last resort */
-    }
-
-    runShutdown({ signal: "unhandledRejection", exitCode: CRASH_EXIT_CODE, },);
+  // ── Shutdown wiring ───────────────────────────────────────
+  registerShutdownHandlers({
+    domainConfigWatcher,
+    backgroundServices,
+    serverManager,
+    stdioProxy,
+    httpServer,
+    httpsServer,
+    logger,
   },);
 }
-
-/** Exit code for a clean, signal-triggered shutdown. */
-const CLEAN_EXIT_CODE = 0;
-
-/** Exit code for a crash-path shutdown (uncaughtException/unhandledRejection):
- * a supervisor must see a non-zero code so the crash is not reported as a
- * clean stop. */
-const CRASH_EXIT_CODE = 1;
