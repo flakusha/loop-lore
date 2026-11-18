@@ -338,7 +338,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-db-restore-validates-only-sqlite-header.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-ADMIN-MODEL-NEWS-WEIGHT-CHANGE-TEST-TIMES-OUT-UNDER-PARALLEL": {
     "hash": "3880301",
@@ -3517,7 +3517,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-delete-all-data-calls-nonexistent-delete-users-me-route.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-DELETE-AUDIT-ACTION-HAS-NO-UNIT-TEST": {
     "epic": "",
@@ -6943,7 +6943,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-memory-semantic-floor-evaluated-against-reranker-scores.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES": {
     "epic": "",
@@ -7301,7 +7301,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-moderator-hidden-message-readable-by-direct-id-in-public-cha.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-MODULE-LEVEL-IN-MEMORY-STATE-GROWS-WITHOUT-EVICTION": {
     "hash": "368aa6d",
