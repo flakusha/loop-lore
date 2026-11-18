@@ -8,10 +8,10 @@
  * Live presence (fast, always attempted): /health, /running shape, and the
  * /v1/models roster carrying the ids the operator's config defines. Skips
  * cleanly when the proxy is down.
- * Live completion (expensive — first request loads the model): gated on
- * E2E_LOCAL_LIVE=1, one short completion through the app's own
- * OpenAiCompatibleProvider pointed at the proxy. Defaults to the smallest
- * model (llama-d3-2b, the decision-tuned 2B) so the load is cheap.
+ * Live tests (expensive — first request loads the model) are gated on
+ * E2E_LOCAL_LIVE=1. Completion/vision use E2E_LOCAL_CHAT_MODEL (default
+ * llama-qwen3.5-llmfan-9b); decision checks use E2E_LOCAL_DECISION_MODEL
+ * (default llama-d3-2b) against the proxy's systemone endpoint.
  */
 
 import { describe, expect, test, } from "bun:test";
