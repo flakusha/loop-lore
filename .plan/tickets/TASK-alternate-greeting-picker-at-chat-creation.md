@@ -3,7 +3,8 @@
 
 # TASK: Alternate greeting picker at chat creation
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Alternate greeting picker at chat creation
 **Priority:** high
 **Effort:** Medium
 
