@@ -3,7 +3,8 @@
 
 # TASK: Add init-image attachment affordance
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Init-image backend plumbing plus UI affordance
 **Priority:** medium
 **Effort:** Medium
 

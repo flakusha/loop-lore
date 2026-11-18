@@ -3,7 +3,8 @@
 
 # TASK: img2img init-image plumbing (prerequisite for the edit rung)
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Init-image backend plumbing plus UI affordance
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-reactive-actor-appearance
