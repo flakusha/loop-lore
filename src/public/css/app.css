@@ -2598,6 +2598,12 @@ body {
     max-width: 95%;
   }
 
+  /* The inline token meter is the actions row's widest child; keep it narrow
+     enough that the row (plus the bell's reserved space) fits a 360px phone. */
+  .ctx-meter-bar {
+    width: 60px;
+  }
+
   .main-header {
     padding: var(--space-3) var(--space-4);
     min-height: 56px;
