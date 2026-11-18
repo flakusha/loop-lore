@@ -3,7 +3,8 @@
 
 # TASK: Regen with custom instruction free-text action
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Custom free-text regen instruction
 **Priority:** medium
 **Effort:** Medium
 
