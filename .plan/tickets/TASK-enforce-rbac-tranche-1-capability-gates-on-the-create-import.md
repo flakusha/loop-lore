@@ -3,7 +3,8 @@
 
 # TASK: Enforce RBAC tranche-1 capability gates on the create/import/export/chat surface
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Required permission gating on create/import routes
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-auth-access
