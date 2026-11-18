@@ -3,7 +3,8 @@
 
 # BUG: harness-queue-boot-recovery-fails-other-instances-inflight-turns
 
-**Status:** Not Started
+**Status:** Done
+**Status Note (2026-11-18):** Summary defect addressed: `recoverInterruptedTurns` in `src/integrations/harness/queue-store.ts` scopes boot recovery with `WHERE status = 'running' AND owner_slug = <booting instanceSlug>`, so a second instance no longer fails the first instance's in-flight turns; `owner_slug` is written at claim time and added by migration `105_harness_queue_owner` (nullable, pre-105 rows left alone). This ticket does not demand `setEffectiveServerBind` identity threading — identity here is the resolved instance slug passed as `instanceSlug` — so no remainder.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-harness-integration.md

@@ -3,7 +3,8 @@
 
 # BUG: harness-queue-per-profile-serialization-is-process-local-not-global
 
-**Status:** Not Started
+**Status:** Done
+**Status Note (2026-11-18):** Summary defect addressed: the per-profile exclusion is now DB-side — `claimNextQueuedTurn` in `src/integrations/harness/queue-store.ts` folds the "no other running turn for this profile" check (`NOT EXISTS` on `running` rows for the candidate profile) into the same single claim `UPDATE` statement, backed by the `(profile, status)` index from migration `105_harness_queue_owner`, so two instances sharing one database cannot drive the same profile concurrently. This ticket does not demand `setEffectiveServerBind` identity threading — so no remainder.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-harness-integration.md

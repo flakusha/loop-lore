@@ -21,3 +21,5 @@ Search UI wiring against the shipped GAP omni-search backend (git issue 9d90969,
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Status Note (2026-11-18):** In Progress — verification evidence: `bun test src/frontend/alpine/omni-search.test.ts` → 8 pass / 0 fail. The frontend calls `/api/v1/search` (`src/frontend/alpine/omni-search.ts:65`), served by the omni-search route mounted in `src/routes/v1/standalone-surface.ts:50` (prefix `/api/v1`); that route calls `requireUserId` and then delegates to `searchMessages` / `searchAssets` with the caller's `userId` + `userRole` scope, so the frontend consumer supplies them. The gallery route `src/routes/asset-search/index.ts` (mounted at `/api/v1/assets/search` from `src/routes/v1/content-surface.ts:49`) is a separate endpoint with the same `requireUserId` + visibility/userRole scoping — it is NOT the path the omni-search frontend calls. Result rendering lives in `src/views/search.html` (chats / messages / assets groups). The remaining open leg is verifying those groups against live gallery/chat/admin surfaces and their permission gating — the wiring itself is shipped.

@@ -23,3 +23,5 @@ Epic marked Not Started but src/age-gate + frontend/alpine/age-gate exist (29 re
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Status Note (2026-11-18):** In Progress — verification evidence: send-time suites pass 20/0; the age-gate UI is on dev (`src/views/age-gate.html`, `src/frontend/alpine/age-gate.ts`); the `epic-frontend-age-gate` epic header now reads Done. The remaining open work is audit/gap-capture only — no further implementation is implied by this ticket.

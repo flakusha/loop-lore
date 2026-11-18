@@ -3,7 +3,8 @@
 
 # BUG: harness-queue-claim-ignores-affected-rows-double-executes-turn
 
-**Status:** Not Started
+**Status:** Done
+**Status Note (2026-11-18):** Summary defect addressed: `claimNextQueuedTurn` in `src/integrations/harness/queue-store.ts` is a single conditional `UPDATE ... WHERE status = 'queued' ... RETURNING`; zero rows returned (lost race) yields `null` instead of reading back and executing a turn the caller did not win, and `owner_slug` is written at claim time. This ticket does not demand `setEffectiveServerBind` identity threading — so no remainder.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-harness-integration.md
