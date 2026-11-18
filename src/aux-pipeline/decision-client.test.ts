@@ -85,7 +85,7 @@ describe("validateDecisionResponse", () => {
   });
 
   test("accepts score and noul answers", () => {
-    const scoreQ: DecisionQuestion = { id: "s", type: "score", instructions: "s", levels: ["low", "high",], };
+    const scoreQ: DecisionQuestion = { id: "s", type: "score", instructions: "s", criteria: ["low", "high",], };
     const noulQ: DecisionQuestion = { id: "n", type: "noul", instructions: "n", };
     const res = validateDecisionResponse({
       model: "m",
@@ -129,6 +129,29 @@ describe("callDecisionModel", () => {
     expect(res?.answers["intent"],).toMatchObject({ choice: "greeting", },);
   });
 
+  test("posts the upstream named-questions object, not an id array", async () => {
+    let sent: Record<string, unknown> | undefined;
+    const spy = ((_url: string, init?: RequestInit,) => {
+      sent = JSON.parse(String(init?.body,),) as Record<string, unknown>;
+      return Promise.resolve(stubFetch(200, GOLDEN,)(_url, init,),);
+    }) as unknown as typeof fetch;
+
+    await callDecisionModel({ ...base, fetchImpl: spy, },);
+
+    expect(Array.isArray(sent?.["questions"],),).toBe(false,);
+    expect(sent,).toMatchObject({
+      model: "llama-d3-2b",
+      state: [{ role: "user", content: "hi", },],
+      questions: {
+        intent: {
+          type: "choice",
+          instructions: "intent",
+          criteria: CHOICE_Q.criteria,
+        },
+      },
+    },);
+  });
+
   test("resolves null on 400/401/501/502", async () => {
     for (const status of [400, 401, 501, 502,]) {
       const res = await callDecisionModel({ ...base, fetchImpl: stubFetch(status, {},), },);
@@ -166,5 +189,16 @@ describe("callDecisionModel", () => {
 
     expect(await callDecisionModel({ ...base, baseUrl: "http://example.com/v1", fetchImpl: spy, },),).toBeNull();
     expect(called,).toBe(false,);
+  });
+
+  test("accepts an IPv6 loopback literal", async () => {
+    let called = false;
+    const spy = (async () => {
+      called = true;
+      return new Response("{}", { status: 200, },);
+    }) as unknown as typeof fetch;
+
+    await callDecisionModel({ ...base, baseUrl: "http://[::1]:7180/v1", fetchImpl: spy, },);
+    expect(called,).toBe(true,);
   });
 });

@@ -29,15 +29,15 @@ export type DecisionQuestion =
     readonly id: string;
     readonly type: "score";
     readonly instructions: string;
-    /** 2–10 level descriptions, lowest first. */
-    readonly levels: readonly string[];
+    /** 2–10 level descriptions, lowest first. Upstream field: `criteria`. */
+    readonly criteria: readonly string[];
   }
   | {
     readonly id: string;
     readonly type: "noul";
     readonly instructions: string;
-    readonly true?: string;
-    readonly false?: string;
+    /** Optional true/false descriptions, keyed by those names upstream. */
+    readonly criteria?: Readonly<Record<string, string | null>>;
   };
 
 /** Validated answers keyed by question id. */
@@ -86,7 +86,8 @@ function isLoopback(url: string,): boolean {
     return false;
   }
 
-  return host === "localhost" || host === "127.0.0.1" || host === "::1";
+  // WHATWG URL keeps the brackets on IPv6 literals: `http://[::1]` → `[::1]`.
+  return host === "localhost" || host === "127.0.0.1" || host === "::1" || host === "[::1]";
 }
 
 function isFiniteProb(n: unknown,): n is number {
@@ -183,7 +184,15 @@ export async function callDecisionModel(
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs,);
   timer.unref?.();
-  const serialized = safeJsonStringify({ model, state, questions, },);
+  // Upstream expects `questions` as an object keyed by question name, not an
+  // array with an `id` field. Answers come back keyed by the same name.
+  const namedQuestions: Record<string, unknown> = {};
+  for (const q of questions) {
+    const { id, ...body } = q;
+    namedQuestions[id] = body;
+  }
+
+  const serialized = safeJsonStringify({ model, state, questions: namedQuestions, },);
   if (!serialized.ok) { return null; }
   try {
     const res = await fetchImpl(url, {
