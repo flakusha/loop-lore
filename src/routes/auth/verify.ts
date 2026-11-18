@@ -11,7 +11,7 @@ import type { Kysely, } from "kysely";
 import { verifyChallenge, } from "../../auth/factors/challenge";
 import { signJwt, } from "../../auth/jwt";
 import type { Config, } from "../../config/schema";
-import type { ChallengePurpose, } from "../../db/enums";
+import { ChallengePurpose, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { RateLimiter, } from "../../middleware/rate-limit";
 import { can, } from "../../users/permissions";
@@ -76,6 +76,25 @@ export async function handleVerifyFactor(options: VerifyFactorOptions,): Promise
     },);
   }
 
+  // Unverified factors have zero auth power. Check BEFORE verifyChallenge so
+  // a refused challenge is not consumed. Enroll is the one purpose that may
+  // activate an unverified factor.
+  const challengeState = await database
+    .selectFrom("auth_challenges",)
+    .innerJoin("auth_factors", "auth_factors.id", "auth_challenges.factor_id",)
+    .select("auth_factors.verified_at",)
+    .where("auth_challenges.id", "=", challengeId,)
+    .where("auth_challenges.user_id", "=", userId,)
+    .where("auth_challenges.purpose", "=", purpose,)
+    .executeTakeFirst();
+
+  if (
+    challengeState === undefined ||
+    (purpose !== ChallengePurpose.Enroll && challengeState.verified_at === null)
+  ) {
+    return notFound("Not found",);
+  }
+
   const verified = await verifyChallenge({ database, challengeId, userId, code, purpose, now, },);
   if (!verified.ok) {
     const errorCode = verified.error.code;
@@ -86,6 +105,20 @@ export async function handleVerifyFactor(options: VerifyFactorOptions,): Promise
       : HttpStatus.Unauthorized;
 
     return jsonError({ message: verified.error.message, status, },);
+  }
+
+  if (purpose === ChallengePurpose.Enroll) {
+    // Ownership proved on the enrolled channel: activate it once. No JWT —
+    // enrollment is not a login or step-up event.
+    await database
+      .updateTable("auth_factors",)
+      .set({ verified_at: now(), },)
+      .where("id", "=", verified.value.factorId,)
+      .where("user_id", "=", userId,)
+      .where("verified_at", "is", null,)
+      .execute();
+
+    return new Response("OK", { status: HttpStatus.OK, },);
   }
 
   const factor = await database

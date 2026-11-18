@@ -11,6 +11,7 @@
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { MFA_MESSENGER_BOT_TOKEN_KEY, } from "../../auth/channels/messenger";
 import { verifyChallenge, } from "../../auth/factors/challenge";
 import { ChallengePurpose, FactorKind, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -25,6 +26,11 @@ import { handleIssueChallenge, MFA_ISSUE_PERMISSION, } from "./challenge";
 
 /** Fixed epoch-ms start of the injected clock. */
 const T0 = 1_700_000_000_000;
+
+/** Enrolled destinations seeded on each factor. */
+const EMAIL_TARGET = "user@example.com";
+const MESSENGER_TARGET = "@user:matrix.org";
+const MESSENGER_TOKEN = "test-messenger-token";
 
 let fixture: TestDb | undefined;
 let db: Kysely<DB>;
@@ -54,8 +60,23 @@ async function seedFactors(): Promise<{
   sessionId: string;
 }> {
   const userId = await insertUsers(db, "mfa-user", "MFA User",);
-  const emailFactorId = await insertAuthFactors(db, userId, FactorKind.Email, clock,);
-  const messengerFactorId = await insertAuthFactors(db, userId, FactorKind.MessengerMatrix, clock,);
+  const emailFactorId = await insertAuthFactors(db, userId, FactorKind.Email, clock, {
+    target: EMAIL_TARGET,
+    verified_at: clock,
+  },);
+
+  const messengerFactorId = await insertAuthFactors(db, userId, FactorKind.MessengerMatrix, clock, {
+    target: MESSENGER_TARGET,
+    verified_at: clock,
+  },);
+
+  // Legacy plain-text row: openConfigValue passes it through without SMK.
+  await db.insertInto("system_config",).values({
+    key: MFA_MESSENGER_BOT_TOKEN_KEY,
+    value: MESSENGER_TOKEN,
+    description: null,
+  },).execute();
+
   return { userId, emailFactorId, messengerFactorId, sessionId: `sess-${userId}`, };
 }
 
@@ -105,7 +126,7 @@ async function fakeMessengerBridge(
   const registry = createBridgeRegistry();
   const registered = registry.register(adapter,);
   if (!registered.ok) { throw new Error("fake adapter registration failed",); }
-  return createMessageBridge(registry,);
+  return createMessageBridge(registry, { tokenBindings: { [MESSENGER_TOKEN]: "fake-messenger", }, },);
 }
 
 /** A bridge that owns no target — every send misses. */
@@ -416,5 +437,144 @@ describe("POST /api/v1/auth/factors/challenge", () => {
 
     expect(res.status,).toBe(400,);
     expect(sent,).toHaveLength(0,);
+  });
+
+  test("destination mismatch — a third-party address is refused with the unknown-factor 404", async () => {
+    const { userId, emailFactorId, messengerFactorId, sessionId, } = await seedFactors();
+    const sent: EmailTransportMessage[] = [];
+    const dmSent: AdapterMessage[] = [];
+    const emailBridge = await fakeEmailBridge(sent,);
+    const messengerBridge = await fakeMessengerBridge(dmSent,);
+    const limiter = (): ReturnType<typeof createRateLimiter> =>
+      createRateLimiter({ windowMs: 60_000, maxRequests: 1, },);
+
+    const unknown = await handleIssueChallenge({
+      database: db,
+      bridge: emailBridge,
+      userId,
+      sessionId,
+      userRole: "user",
+      factorId: "no-such-factor",
+      channel: "email",
+      destination: EMAIL_TARGET,
+      purpose: ChallengePurpose.Login,
+      emailLimiter: limiter(),
+      now,
+    },);
+
+    for (
+      const [factorId, channel, destination,] of [
+        [emailFactorId, "email", "attacker@example.com",],
+        [messengerFactorId, "messenger", "@attacker:matrix.org",],
+      ] as const
+    ) {
+      const res = await handleIssueChallenge({
+        database: db,
+        bridge: channel === "email" ? emailBridge : messengerBridge,
+        userId,
+        sessionId,
+        userRole: "user",
+        factorId,
+        channel,
+        destination,
+        purpose: ChallengePurpose.Login,
+        emailLimiter: limiter(),
+        messengerLimiter: limiter(),
+        now,
+      },);
+
+      expect(res.status,).toBe(404,);
+      const text = await res.text();
+      expect(text,).toBe(await unknown.clone().text(),);
+      expect(text,).not.toContain(destination,);
+    }
+
+    expect(sent,).toHaveLength(0,);
+    expect(dmSent,).toHaveLength(0,);
+  });
+
+  test("destination normalization — case and whitespace do not block the enrolled target", async () => {
+    const { userId, emailFactorId, messengerFactorId, sessionId, } = await seedFactors();
+    const sent: EmailTransportMessage[] = [];
+    const dmSent: AdapterMessage[] = [];
+
+    const email = await handleIssueChallenge({
+      database: db,
+      bridge: await fakeEmailBridge(sent,),
+      userId,
+      sessionId,
+      userRole: "user",
+      factorId: emailFactorId,
+      channel: "email",
+      destination: `  ${EMAIL_TARGET.toUpperCase()}  `,
+      purpose: ChallengePurpose.Login,
+      emailLimiter: createRateLimiter({ windowMs: 60_000, maxRequests: 1, },),
+      now,
+    },);
+
+    expect(email.status,).toBe(200,);
+
+    const messenger = await handleIssueChallenge({
+      database: db,
+      bridge: await fakeMessengerBridge(dmSent,),
+      userId,
+      sessionId,
+      userRole: "user",
+      factorId: messengerFactorId,
+      channel: "messenger",
+      destination: ` ${MESSENGER_TARGET.toUpperCase()} `,
+      purpose: ChallengePurpose.Login,
+      messengerLimiter: createRateLimiter({ windowMs: 60_000, maxRequests: 1, },),
+      now,
+    },);
+
+    expect(messenger.status,).toBe(200,);
+  });
+
+  test("unverified factor — login issue is 404, enroll issue delivers to the stored target", async () => {
+    const userId = await insertUsers(db, "mfa-user", "MFA User",);
+    const factorId = await insertAuthFactors(db, userId, FactorKind.Email, clock, {
+      target: EMAIL_TARGET,
+      verified_at: null,
+    },);
+
+    const sent: EmailTransportMessage[] = [];
+    const bridge = await fakeEmailBridge(sent,);
+    const sessionId = `sess-${userId}`;
+
+    const login = await handleIssueChallenge({
+      database: db,
+      bridge,
+      userId,
+      sessionId,
+      userRole: "user",
+      factorId,
+      channel: "email",
+      destination: EMAIL_TARGET,
+      purpose: ChallengePurpose.Login,
+      emailLimiter: createRateLimiter({ windowMs: 60_000, maxRequests: 2, },),
+      now,
+    },);
+
+    expect(login.status,).toBe(404,);
+    expect(sent,).toHaveLength(0,);
+
+    const enroll = await handleIssueChallenge({
+      database: db,
+      bridge,
+      userId,
+      sessionId,
+      userRole: "user",
+      factorId,
+      channel: "email",
+      destination: ` ${EMAIL_TARGET.toUpperCase()} `,
+      purpose: ChallengePurpose.Enroll,
+      emailLimiter: createRateLimiter({ windowMs: 60_000, maxRequests: 2, },),
+      now,
+    },);
+
+    expect(enroll.status,).toBe(200,);
+    expect(sent,).toHaveLength(1,);
+    expect(sent[0]?.to,).toBe(EMAIL_TARGET,);
   });
 });

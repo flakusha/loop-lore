@@ -17,6 +17,7 @@ export interface LimiterOverrides {
   registerLimiter?: RateLimiter;
   demoLoginLimiter?: RateLimiter;
   verifyLimiter?: RateLimiter;
+  enrollLimiter?: RateLimiter;
 }
 
 /** */

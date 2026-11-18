@@ -42,6 +42,9 @@ import {
 /** Fixed epoch-ms start of the injected clock. */
 const T0 = 1_700_000_000_000;
 
+/** Bot token bound to the fake adapter in every delivery test. */
+const TEST_TOKEN = "bound-messenger-token";
+
 let fixture: TestDb | undefined;
 let db: Kysely<DB>;
 let clock: number;
@@ -63,6 +66,7 @@ beforeEach(async () => {
   fixture = await createTestDb();
   db = fixture.db;
   clock = T0;
+  await saveMfaMessengerBotToken({ database: db, token: TEST_TOKEN, },);
 },);
 
 afterEach(async () => {
@@ -110,7 +114,7 @@ async function fakeBridge(
   const registry = createBridgeRegistry();
   const registered = registry.register(adapter,);
   if (!registered.ok) { throw new Error("fake adapter registration failed",); }
-  return createMessageBridge(registry,);
+  return createMessageBridge(registry, { tokenBindings: { [TEST_TOKEN]: "fake-messenger", }, },);
 }
 
 describe("the MFA messenger channel", () => {
@@ -281,7 +285,7 @@ describe("the MFA messenger channel", () => {
   test("sender, bot token and window overrides round-trip through the admin helpers", async () => {
     expect(await readMfaMessengerSender({ database: db, },),).toBe(MFA_MESSENGER_DEFAULT_SENDER,);
     expect(await readMfaMessengerWindowMs({ database: db, },),).toBe(MFA_MESSENGER_DEFAULT_WINDOW_MS,);
-    expect(await readMfaMessengerBotToken({ database: db, },),).toBeUndefined();
+    expect(await readMfaMessengerBotToken({ database: db, },),).toBe(TEST_TOKEN,);
 
     await saveMfaMessengerSender({ database: db, sender: "  mfa-bot  ", },);
     expect(await readMfaMessengerSender({ database: db, },),).toBe("mfa-bot",);
@@ -323,5 +327,33 @@ describe("the MFA messenger channel", () => {
     const explicit = await createMfaMessengerLimiter({ database: db, windowMs: 7_000, },);
     expect(explicit.windowMs,).toBe(7_000,);
     expect(explicit.limiter,).not.toBe(first.limiter,);
+  });
+
+  test("token binding fails closed — no token or an unbound one delivers nothing", async () => {
+    const { userId, factorId, } = await seedFactor();
+    const sent: AdapterMessage[] = [];
+    const bridge = await fakeBridge(sent,);
+    const send = (): ReturnType<typeof sendMfaMessenger> =>
+      sendMfaMessenger({
+        database: db,
+        bridge,
+        userId,
+        factorId,
+        purpose: ChallengePurpose.Login,
+        toHandle: "@user:matrix.org",
+        limiter: createRateLimiter({ windowMs: 60_000, maxRequests: 1, },),
+        now,
+      },);
+
+    await db.deleteFrom("system_config",).where("key", "=", MFA_MESSENGER_BOT_TOKEN_KEY,).execute();
+    const missing = await send();
+    expect(missing.ok,).toBe(false,);
+    if (!missing.ok) { expect(missing.error.code,).toBe("delivery_failed",); }
+
+    await saveMfaMessengerBotToken({ database: db, token: "unbound-token", },);
+    const unbound = await send();
+    expect(unbound.ok,).toBe(false,);
+    if (!unbound.ok) { expect(unbound.error.code,).toBe("delivery_failed",); }
+    expect(sent,).toHaveLength(0,);
   });
 });

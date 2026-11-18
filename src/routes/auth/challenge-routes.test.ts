@@ -76,7 +76,11 @@ function postIssue(app: Elysia, factorId: string,): Promise<Response> {
 describe("challengeRoute", () => {
   test("mounted route issues over email — 200 carries id + expiry, code verifies", async () => {
     const userId = await insertUsers(db, "mfa-user", "MFA User",);
-    const factorId = await insertAuthFactors(db, userId, FactorKind.Email, T0,);
+    const factorId = await insertAuthFactors(db, userId, FactorKind.Email, T0, {
+      target: "user@example.com",
+      verified_at: T0,
+    },);
+
     const sent: EmailTransportMessage[] = [];
     const bridge = await fakeEmailBridge(sent,);
     const app = new Elysia()
@@ -105,7 +109,11 @@ describe("challengeRoute", () => {
 
   test("mounted route without identity — 401 and no code sent", async () => {
     const userId = await insertUsers(db, "mfa-user", "MFA User",);
-    const factorId = await insertAuthFactors(db, userId, FactorKind.Email, T0,);
+    const factorId = await insertAuthFactors(db, userId, FactorKind.Email, T0, {
+      target: "user@example.com",
+      verified_at: T0,
+    },);
+
     const sent: EmailTransportMessage[] = [];
     const bridge = await fakeEmailBridge(sent,);
     const app = new Elysia().use(challengeRoute({ database: db, bridge, }, "/api",),);

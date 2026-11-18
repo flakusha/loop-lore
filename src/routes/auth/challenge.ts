@@ -14,8 +14,7 @@
 import type { Kysely, } from "kysely";
 import { sendMfaEmail, } from "../../auth/channels/email";
 import { sendMfaMessenger, } from "../../auth/channels/messenger";
-import type { ChallengePurpose, } from "../../db/enums";
-import { FactorKind, } from "../../db/enums";
+import { ChallengePurpose, FactorKind, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { MessageBridge, } from "../../integrations/bridge";
 import type { RateLimiter, } from "../../middleware/rate-limit";
@@ -88,18 +87,30 @@ export async function handleIssueChallenge(options: IssueChallengeOptions,): Pro
 
   const factor = await database
     .selectFrom("auth_factors",)
-    .select("kind",)
+    .select(["kind", "target", "verified_at",],)
     .where("id", "=", factorId,)
     .where("user_id", "=", userId,)
     .executeTakeFirst();
 
-  // Unknown factor, foreign factor, and channel-kind mismatch share one
-  // 404 — a differing body would let a caller probe factor existence.
+  // Unknown factor, foreign factor, channel-kind mismatch, unverified factor,
+  // un-enrolled destination and destination mismatch share ONE 404 — a
+  // differing body would let a caller probe factor existence or state.
+  // Enrollment is the only purpose allowed to address an unverified factor.
   const kindOk = factor !== undefined && (channel === "email"
     ? factor.kind === FactorKind.Email
     : factor.kind === FactorKind.MessengerMatrix || factor.kind === FactorKind.MessengerIm);
 
-  if (!kindOk) { return notFound("Not found",); }
+  if (
+    !kindOk || factor === undefined || factor.target === null ||
+    (purpose !== ChallengePurpose.Enroll && factor.verified_at === null)
+  ) {
+    return notFound("Not found",);
+  }
+
+  const normalize = (value: string,): string => value.trim().toLowerCase();
+  if (normalize(factor.target,) !== normalize(destination,)) {
+    return notFound("Not found",);
+  }
 
   if (!bridge) {
     return jsonError({
@@ -115,7 +126,7 @@ export async function handleIssueChallenge(options: IssueChallengeOptions,): Pro
       userId,
       factorId,
       purpose,
-      toEmail: to,
+      toEmail: factor.target,
       ...(options.emailLimiter === undefined ? {} : { limiter: options.emailLimiter, }),
       now,
     },)
@@ -125,7 +136,7 @@ export async function handleIssueChallenge(options: IssueChallengeOptions,): Pro
       userId,
       factorId,
       purpose,
-      toHandle: to,
+      toHandle: factor.target,
       ...(options.messengerLimiter === undefined ? {} : { limiter: options.messengerLimiter, }),
       now,
     },);

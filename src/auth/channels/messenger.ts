@@ -154,6 +154,15 @@ export async function sendMfaMessenger(
   const at = now();
   const key = `mfa-messenger:${userId}`;
 
+  // The configured bot token selects the ONLY adapter allowed to deliver.
+  // No token (or a bridge without token binding) fails closed before any
+  // challenge is issued or budget consumed — never route by target alone.
+  const token = await readMfaMessengerBotToken({ database, },);
+  const sendBound = bridge.sendWithToken;
+  if (token === undefined || sendBound === undefined) {
+    return fail("delivery_failed", "MFA messenger token is not bound to a delivery adapter",);
+  }
+
   if (!limiter.peek(key, at,).allowed) {
     return fail("rate_limited", "MFA code already sent — try again shortly",);
   }
@@ -191,7 +200,7 @@ export async function sendMfaMessenger(
     minutes === 1 ? "" : "s"
   }. If you did not request this, ignore this message.`;
 
-  const sent = await bridge.send(toHandle, {
+  const sent = await sendBound(token, toHandle, {
     id: randomUUID(),
     author: await readMfaMessengerSender({ database, },),
     target: toHandle,
