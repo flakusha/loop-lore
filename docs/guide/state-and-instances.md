@@ -38,7 +38,7 @@ dirs from the same slug; an explicit `server` argument still wins.
 | `$STATE/<instance>/loop-lore.db` | Live SQLite database |
 | `$STATE/<instance>/uploads/` | Gallery assets (`raw/`, `compressed/`, thumbs) |
 | `$STATE/<instance>/certs/` | TLS `key.pem` + `cert.pem` (auto-generated) |
-| `$STATE/loop-lore-data-backup/db/` | DB snapshots (shared across instances) |
+| `$STATE/<instance>/backups/db/` | DB snapshots (see "Database backup and restore") |
 | `$STATE/<instance>/stdio-proxy.token` | Bearer token for the stdio-proxy listener (owner-only `0600`, minted at boot) |
 | `$STATE/<instance>/stdio-proxy.addr` | Listener `host:port` written at boot (read by bare `--proxy` shims; removed on clean shutdown) |
 
@@ -60,6 +60,46 @@ is resolved from the effective bind above. `config.db.sqliteFilename` is
 currently ignored at runtime — the runtime never reads it — so set
 `LOOP_LORE_DB_PATH` (or pass a path to `getDatabase(path)`) to move the
 database.
+
+## Database backup and restore
+
+### Where backups land
+
+Snapshots go to a `db/` subtree of the instance archive root, so they never
+mix with file archives:
+
+- Default: `$STATE/<instance>/backups/db/`
+- With `LOOP_LORE_BACKUP_DIR=<root>`: `<root>/<instance-slug>/db/` — the env
+  value is a root, not the snapshot dir itself; the instance slug is still
+  appended, so two instances on a shared volume keep separate pools.
+
+### Taking a backup
+
+Admin panel → **Backups** tab → **Create backup**, or
+`POST /api/admin/db/backup` (admin permission required). The snapshot is
+taken with SQLite `VACUUM INTO`, which serializes against writers for a
+consistent point-in-time copy, and the result is verified to be a SQLite
+database before it is reported as created. `GET /api/admin/db/backup` lists
+existing snapshots with name, size, and modification time.
+
+### Restoring a backup
+
+Admin panel → **Backups** tab → **Restore** on a snapshot, or
+`POST /api/admin/db/restore` with the snapshot name and the confirmation
+string `RESTORE`:
+
+1. The target is validated as a SQLite database (magic-byte check); a
+   non-database file is rejected before anything is touched.
+2. A snapshot of the current live database is written first — your rollback
+   point, reported back as `preRestoreBackup`.
+3. The live handles are closed, stale `-wal`/`-shm` sidecars are removed, and
+   the snapshot atomically replaces the live database file.
+4. The response carries `restartRequired: true`.
+
+**Restart the server after a restore.** Handles captured before the restore
+are dead once the file is replaced, so the process must be restarted before
+the restored database is served. If a restore turns out wrong, restore the
+pre-restore snapshot from the same `db/` directory the same way.
 
 ## Secret-bearing files
 
