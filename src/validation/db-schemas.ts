@@ -3986,6 +3986,8 @@ export const AuthFactorsSchema = t.Object({
   user_id: t.String(),
   kind: FactorKindSchema,
   created_at: t.Number(),
+  target: t.Optional(t.String(),),
+  verified_at: t.Optional(t.Number(),),
 },);
 
 // ── auth_challenges ────────────────────────────────────────────

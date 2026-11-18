@@ -2270,6 +2270,8 @@ export interface AuthFactors {
   user_id: string;
   kind: FactorKind;
   created_at: number;
+  target: string | null;
+  verified_at: number | null;
 }
 
 // ── auth_challenges ────────────────────────────────────────────
