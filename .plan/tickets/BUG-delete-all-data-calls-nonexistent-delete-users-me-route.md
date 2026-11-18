@@ -3,7 +3,7 @@
 
 # BUG: delete all data calls nonexistent DELETE users me route
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-frontend-settings.md
@@ -19,11 +19,15 @@ Settings exposes a Delete All Data action that calls DELETE /api/v1/users/me, bu
 
 **Acceptance Criteria:**
 
-- [ ] authenticated owner gets 2xx and their chats, messages, participants, asset links and memories are removed
-- [ ] other users rows are unchanged
-- [ ] unauthenticated callers get the established auth error, not a 500
-- [ ] repeated DELETE is idempotent
-- [ ] browser E2E passes with E2E_SAFEGUARD=1
+- [x] authenticated owner gets 2xx and their chats, messages, participants, asset links and memories are removed
+- [x] other users rows are unchanged
+- [x] unauthenticated callers get the established auth error, not a 500
+- [x] repeated DELETE is idempotent
+- [x] browser E2E passes with E2E_SAFEGUARD=1
+
+## Verification Notes (2026-11-18)
+
+`DELETE /api/v1/users/me` in `src/routes/users/me.ts` derives the user from auth and deletes owned rows in one transaction; `src/frontend/alpine/settings/general.ts` redirects to `/views/login` on 2xx and toasts `toasts.failedDelete` on failure. `E2E_SAFEGUARD=1 ... bun test --max-concurrency=1 ./tests/e2e/flows/browser/settings-data-actions.browser.ts` → 2 pass, 2 pre-existing SMK skips, 0 fail (fresh `dist/public` build). Direct HTTP probe with `auth.required=true`: expired bearer 401, valid user A 200 with A chats 0 and B chats 1, repeat with A 401 after session wipe. `src/frontend/alpine/settings/general.test.ts` → 39 pass. Out of scope per ticket: worlds, personas, assets, API keys and notifications rows remain.
 
 **Context:**
 

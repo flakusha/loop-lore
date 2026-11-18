@@ -179,12 +179,7 @@ describe("Settings data actions E2E", () => {
     }
   }, 60_000,);
 
-  // SKIPPED with evidence (see BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use):
-  // the UI calls
-  // DELETE /api/v1/users/me, but src/routes/users/me.ts defines only
-  // GET/PUT/PATCH — the server answers 422, so delete-all can never succeed.
-  // Product bug BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use.
-  test.skip("delete-all wipes the solo user's data after typed confirmation", async () => {
+  test("delete-all wipes the solo user's data after typed confirmation", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
@@ -198,6 +193,29 @@ describe("Settings data actions E2E", () => {
           type: "direct",
           mode: "direct",
           created_by: SEED.solo.id,
+        },)
+        .execute();
+
+      // Another user's chat must survive the wipe.
+      const otherUserId = crypto.randomUUID();
+      await ctx.db
+        .insertInto("users",)
+        .values({
+          id: otherUserId,
+          username: `delete-all-witness-${Date.now()}`,
+          display_name: "Other user",
+          settings: "{}",
+        },)
+        .execute();
+
+      await ctx.db
+        .insertInto("chats",)
+        .values({
+          id: crypto.randomUUID(),
+          name: "Other user's chat",
+          type: "direct",
+          mode: "direct",
+          created_by: otherUserId,
         },)
         .execute();
 
@@ -221,14 +239,39 @@ describe("Settings data actions E2E", () => {
       await deleteBtn.click();
       expect((await delRes).ok(),).toBe(true,);
 
-      // Post-condition: the seeded chat (all solo-user chats) is gone.
+      await page.waitForURL("**/views/login", { timeout: 15_000, },);
+
+      // Post-condition: the seeded chat (all solo-user chats) is gone,
+      // but the other user's chat is untouched.
       const rows = await ctx.db
         .selectFrom("chats",)
         .select("id",)
         .where("created_by", "=", SEED.solo.id,)
         .execute();
 
+      const otherRows = await ctx.db
+        .selectFrom("chats",)
+        .select("id",)
+        .where("created_by", "=", otherUserId,)
+        .execute();
+
       expect(rows,).toHaveLength(0,);
+      expect(otherRows,).toHaveLength(1,);
+
+      // Repeated DELETE is a no-op, not a 500. Use the browser's CSRF cookie.
+      const repeatStatus = await page.evaluate(async () => {
+        const token = document.cookie.split("; ",).find((entry,) => entry.startsWith("csrf_token=",))?.split("=",)[1] ??
+          "";
+
+        const res = await fetch("/api/v1/users/me", {
+          method: "DELETE",
+          headers: { "X-CSRF-Token": token, },
+        },);
+
+        return res.status;
+      },);
+
+      expect(repeatStatus,).toBe(200,);
     } finally {
       errors.assert();
       errors.detach();

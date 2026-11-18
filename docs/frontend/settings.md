@@ -58,8 +58,10 @@ persisting partial/invalid keys.
 - **Import Chats** — opens a file picker for a JSON archive
 - **NSFW consent** — shows current NSFW status, max rating, and restrictions
 - **Danger zone** (red-bordered): **Delete All Data** — requires typing
-  `DELETE` into the confirmation input to activate; on confirm, wipes data and
-  redirects to login
+  `DELETE` into the confirmation input to activate; on confirm, `DELETE
+  /api/v1/users/me` wipes the caller's chats, messages, participants, asset
+  links, memories and factors/sessions in one transaction, then redirects to
+  login. Other users' rows are untouched; a failed request shows an error toast.
 
 ### Keys
 
@@ -80,7 +82,8 @@ change sends a request to the settings API. API settings require the explicit
 | Saving (Notifications) | "Saving…" muted text                                             |
 | Testing API connection | Button shows spinner                                             |
 | Danger zone — delete   | Confirmation input appears; button activates once `DELETE` typed |
-| Delete complete        | Redirect to /login, data wiped                                   |
+| Delete complete        | Redirect to /views/login, own data wiped                         |
+| Delete failed          | Error toast; stays on the settings page                          |
 
 ## See Also
 

@@ -3,7 +3,7 @@
 
 # BUG: memory semantic floor evaluated against reranker scores
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-memory-knowledge-systems.md
@@ -19,10 +19,14 @@ Hybrid retrieval replaces cosine scores with rerank scores, then the memory prom
 
 **Acceptance Criteria:**
 
-- [ ] rerank ordering is unchanged
-- [ ] low rerank numeric score does not reject a cosine-passing memory
-- [ ] cosine score below floor still rejects
-- [ ] no new config key
+- [x] rerank ordering is unchanged
+- [x] low rerank numeric score does not reject a cosine-passing memory
+- [x] cosine score below floor still rejects
+- [x] no new config key
+
+## Verification Notes (2026-11-18)
+
+Commit `73209dc56`. `SemanticMatch.cosineScore` keeps the cosine value through rerank (`src/memory/embeddings.ts`), and `src/assistant/prompt/sections/memories.ts` feeds `cosineScoreMap` (not the rerank `scoreMap`) into the injection gate. Rerank order and tiny/negative rerank values are covered in `src/memory/embeddings.test.ts`; both gate directions are covered in `src/memory/injection/decide.test.ts`. Fail-open and config keys unchanged.
 
 **Context:**
 

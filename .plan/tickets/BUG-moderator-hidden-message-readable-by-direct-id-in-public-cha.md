@@ -3,7 +3,7 @@
 
 # BUG: moderator-hidden message readable by direct ID in public chats
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-chat-privacy.md
@@ -19,10 +19,14 @@ Direct message read selects by id with no visibility filter; the public-chat bra
 
 **Acceptance Criteria:**
 
-- [ ] hidden message returns 404 for an authenticated stranger in a public chat
-- [ ] owner, admin and author still read it
-- [ ] variant endpoints omit hidden messages
-- [ ] encrypted hidden content never reaches render helpers
+- [x] hidden message returns 404 for an authenticated stranger in a public chat
+- [x] owner, admin and author still read it
+- [x] variant endpoints omit hidden messages
+- [x] encrypted hidden content never reaches render helpers
+
+## Verification Notes (2026-11-18)
+
+Commit `23e89fdca`. `getMessageWithAccess` requires `MessageVisibility.Visible` in the public-chat branch (`src/chat/service/read.ts`); both variant queries apply the same predicate (`src/routes/messages/read.ts`). Stranger/guest 404, owner/admin/author 200 and hidden-sibling omission are covered in `src/chat/service/visibility.test.ts` and `src/routes/messages/read.coverage.test.ts`. No direct-id render helper runs before the 404; list/export paths were already filtered.
 
 **Context:**
 

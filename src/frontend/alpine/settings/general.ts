@@ -211,8 +211,10 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       try {
         const res = await apiFetch("/api/v1/users/me", { method: "DELETE", },);
         if (!res.ok) { throw new Error("Delete failed",); }
+        globalThis.location.href = "/views/login";
       } catch (error) {
         log.warn("deleteAllData failed", { error: String(error,), },);
+        showToast("error", t("toasts.failedDelete",),);
       }
     },
   };

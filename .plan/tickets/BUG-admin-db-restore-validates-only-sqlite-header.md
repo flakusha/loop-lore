@@ -3,7 +3,7 @@
 
 # BUG: admin DB restore validates only SQLite header
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-database-backup-recovery.md
@@ -19,9 +19,13 @@ The admin restore path verifies the 16-byte SQLite magic string and then replace
 
 **Acceptance Criteria:**
 
-- [ ] corrupt or empty-schema snapshot is rejected and the live DB stays byte-identical
-- [ ] valid restore still returns restartRequired
-- [ ] tests cover header-valid corrupt input
+- [x] corrupt or empty-schema snapshot is rejected and the live DB stays byte-identical
+- [x] valid restore still returns restartRequired
+- [x] tests cover header-valid corrupt input
+
+## Verification Notes (2026-11-18)
+
+Commit `23e89fdca`. `validateSqliteSnapshot` runs `PRAGMA integrity_check` and requires a user table before the pre-restore snapshot and file replacement (`src/db/backup-restore.ts`); `InvalidSnapshotError` maps to a path-free 400 (`src/routes/admin/db-backup.ts`). Header-valid empty-schema and corrupt files are covered in `src/db/backup-restore.test.ts` and `src/routes/admin/db-backup.test.ts`; live file bytes are asserted unchanged. Valid-restore `restartRequired` coverage is unchanged.
 
 **Context:**
 
