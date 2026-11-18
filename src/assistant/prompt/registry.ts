@@ -39,10 +39,14 @@ import { taskClarificationSection, } from "./sections/task-clarification";
 import { travelSection, } from "./sections/travel";
 import { turnSkipAbsenceSection, } from "./sections/turn-skip-absence";
 import { userPersonaSection, } from "./sections/user-persona";
+import { validationHarnessSection, } from "./sections/validation-harness";
 import type { SectionBuilder, } from "./types";
 
 export const PROMPT_SECTIONS: SectionBuilder[] = [
   systemSection,
+  // Validation-subject instruction (llm_only / llm_only_group variants).
+  // build() returns [] until gm_config.validation.harness is configured.
+  validationHarnessSection,
   styleSection,
   taskClarificationSection,
   nsfwPolicySection,

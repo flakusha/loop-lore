@@ -129,6 +129,34 @@ async function fakeMessengerBridge(
   return createMessageBridge(registry, { tokenBindings: { [MESSENGER_TOKEN]: "fake-messenger", }, },);
 }
 
+/** Build a connected bridge over a fake Telegram-style adapter owning
+ * numeric chat ids (messenger-im). */
+async function fakeImBridge(
+  sent: AdapterMessage[],
+): Promise<ReturnType<typeof createMessageBridge>> {
+  const adapter: ProtocolAdapter = {
+    name: "fake-im",
+    protocol: "telegram",
+    connect: async () => {},
+    disconnect: async () => {},
+    isConnected: () => true,
+    isEncrypted: () => false,
+    capabilities: () => ["auth-challenge",],
+    ownsTarget: (target,) => /^\d+$/.test(target,),
+    sendMessage: async (target, message,) => {
+      sent.push({ id: "fake-id", target, ...message, },);
+      return "fake-id";
+    },
+    onMessage: () => {},
+  };
+
+  await adapter.connect({},);
+  const registry = createBridgeRegistry();
+  const registered = registry.register(adapter,);
+  if (!registered.ok) { throw new Error("fake adapter registration failed",); }
+  return createMessageBridge(registry, { tokenBindings: { [MESSENGER_TOKEN]: "fake-im", }, },);
+}
+
 /** A bridge that owns no target — every send misses. */
 async function emptyBridge(): Promise<ReturnType<typeof createMessageBridge>> {
   return createMessageBridge(createBridgeRegistry(),);
@@ -576,5 +604,65 @@ describe("POST /api/v1/auth/factors/challenge", () => {
     expect(enroll.status,).toBe(200,);
     expect(sent,).toHaveLength(1,);
     expect(sent[0]?.to,).toBe(EMAIL_TARGET,);
+  });
+
+  test("messenger target shape — a Telegram chat id sent to a Matrix factor is 400", async () => {
+    const { userId, messengerFactorId, sessionId, } = await seedFactors();
+    const sent: AdapterMessage[] = [];
+    const bridge = await fakeMessengerBridge(sent,);
+
+    const res = await handleIssueChallenge({
+      database: db,
+      bridge,
+      userId,
+      sessionId,
+      userRole: "user",
+      factorId: messengerFactorId,
+      channel: "messenger",
+      destination: "12345",
+      purpose: ChallengePurpose.Login,
+      messengerLimiter: createRateLimiter({ windowMs: 60_000, maxRequests: 1, },),
+      now,
+    },);
+
+    expect(res.status,).toBe(400,);
+    expect(sent,).toHaveLength(0,);
+  });
+
+  test("messenger-im target shape — numeric chat ids pass, handles are refused", async () => {
+    const userId = await insertUsers(db, "mfa-user", "MFA User",);
+    const target = "123456789012345";
+    const factorId = await insertAuthFactors(db, userId, FactorKind.MessengerIm, clock, {
+      target,
+      verified_at: clock,
+    },);
+
+    await db.insertInto("system_config",).values({
+      key: MFA_MESSENGER_BOT_TOKEN_KEY,
+      value: MESSENGER_TOKEN,
+      description: null,
+    },).execute();
+
+    const sent: AdapterMessage[] = [];
+    const base = {
+      database: db,
+      bridge: await fakeImBridge(sent,),
+      userId,
+      sessionId: `sess-${userId}`,
+      userRole: "user",
+      factorId,
+      channel: "messenger" as const,
+      purpose: ChallengePurpose.Login,
+      messengerLimiter: createRateLimiter({ windowMs: 60_000, maxRequests: 2, },),
+      now,
+    };
+
+    const bad = await handleIssueChallenge({ ...base, destination: "@user:matrix.org", },);
+    expect(bad.status,).toBe(400,);
+    expect(sent,).toHaveLength(0,);
+
+    const good = await handleIssueChallenge({ ...base, destination: target, },);
+    expect(good.status,).toBe(200,);
+    expect(sent,).toHaveLength(1,);
   });
 });

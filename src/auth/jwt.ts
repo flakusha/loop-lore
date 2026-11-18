@@ -207,6 +207,8 @@ export async function verifyJwt(opts: VerifyJwtOpts,): Promise<JwtResult> {
       return { valid: false, error: "Invalid payload", };
     }
 
+    // TODO(auth): verify an issuer claim once the JWT contract gains `iss`;
+    // today authenticity is the HMAC signature plus session/user-row checks.
     const payload = parsed.value;
 
     // Required claims — token is useless without a subject, role, or session.

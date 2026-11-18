@@ -60,6 +60,17 @@ function configuredConfig(): Config {
   } as unknown as Config;
 }
 
+/** Minimal config with Telegram only — no email section, so the old
+ * email-only gate would have returned undefined. */
+function telegramOnlyConfig(): Config {
+  return {
+    integrations: {
+      enabled: true,
+      telegram: { enabled: true, botToken: "config-token", },
+    },
+  } as unknown as Config;
+}
+
 /** A bridge with a capture transport for the mounted-path delivery probe. */
 function captureBridge(sent: EmailTransportMessage[],) {
   const adapter = createEmailAdapter({
@@ -107,6 +118,53 @@ describe("createMfaBridge", () => {
 
     expect(delivered.ok,).toBe(true,);
     expect(sent,).toHaveLength(1,);
+  });
+
+  test("email-only config binds a rotated token to the email adapter", async () => {
+    const sent: EmailTransportMessage[] = [];
+    const bridge = createMfaBridge(configuredConfig(), {
+      send: async (message,) => {
+        sent.push(message,);
+        return "<mfa@test.example>";
+      },
+    },);
+
+    expect(bridge,).toBeDefined();
+    if (bridge === undefined) { throw new Error("bridge missing",); }
+
+    const delivered = await bridge.sendWithToken?.("rotated-token", TARGET, {
+      id: "mfa-probe",
+      author: "bot@example.com",
+      target: TARGET,
+      body: "code",
+      timestamp: T0,
+    },);
+
+    expect(delivered?.ok,).toBe(true,);
+    if (delivered?.ok !== true) { throw new Error(`delivery failed: ${JSON.stringify(delivered,)}`,); }
+    expect(delivered.adapter,).toBe("email",);
+    expect(sent,).toHaveLength(1,);
+  });
+
+  test("telegram-only config gets a bridge and rotated tokens reach the transport", async () => {
+    const calls: Array<{ token: string; chatId: string; text: string }> = [];
+    const bridge = createMfaBridge(telegramOnlyConfig(), undefined, {
+      async sendMessage(token, chatId, text,) {
+        calls.push({ token, chatId, text, },);
+        return { ok: true, result: { message_id: 77, }, };
+      },
+    },);
+
+    expect(bridge,).toBeDefined();
+    if (bridge === undefined) { throw new Error("bridge missing",); }
+
+    const message = { id: "mfa-probe", author: "bot", target: "12345", body: "code", timestamp: T0, };
+    const first = await bridge.sendWithToken?.("first-token", "12345", message,);
+    const rotated = await bridge.sendWithToken?.("rotated-token", "12345", message,);
+
+    expect(first?.ok,).toBe(true,);
+    expect(rotated?.ok,).toBe(true,);
+    expect(calls.map((call,) => call.token),).toEqual(["first-token", "rotated-token",],);
   });
 });
 

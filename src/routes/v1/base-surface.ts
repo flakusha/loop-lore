@@ -8,9 +8,15 @@ import { ageGateRoutes, } from "../../age-gate/controller";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
 import { localInferenceRoutes, } from "../../inference/routes";
 import { createMessageBridge, type MessageBridge, } from "../../integrations/bridge";
-import { createEmailAdapter, type EmailTransport, } from "../../integrations/email/adapter";
+import { createEmailAdapter, EMAIL_ADAPTER_NAME, type EmailTransport, } from "../../integrations/email/adapter";
 import { createSmtpTransport, } from "../../integrations/email/smtp-transport";
 import { createBridgeRegistry, } from "../../integrations/registry";
+import {
+  createTelegramAdapter,
+  isTelegramChatId,
+  TELEGRAM_ADAPTER_NAME,
+  type TelegramTransport,
+} from "../../integrations/telegram/adapter";
 import { actorPlanRoutes, } from "../actor-plan";
 import { apiKeysRoutes, } from "../api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "../auth";
@@ -33,40 +39,69 @@ import { telemetryRoutes, } from "../telemetry";
 import { usersRoutes, } from "../users";
 
 /**
- * Build the production MFA delivery bridge from the loaded email config.
- * Unconfigured email returns undefined so issue routes fail closed (503).
+ * Build the production MFA delivery bridge from the loaded integrations
+ * config. Email and Telegram configure independently; neither configured
+ * returns undefined so issue routes fail closed (503).
  * @param config Loaded application config.
- * @param transport Explicit transport for tests; production builds one from the email config.
- * @returns The bridge, or undefined when email is not configured.
+ * @param transport Explicit email transport for tests; production builds one from config.
+ * @param telegramTransport Explicit Telegram transport for tests.
+ * @returns The bridge, or undefined when no delivery channel is configured.
  */
 export function createMfaBridge(
   config: RegisterPluginsOpts["config"],
   transport?: EmailTransport,
+  telegramTransport?: TelegramTransport,
 ): MessageBridge | undefined {
   const integrations = config.integrations;
-  if (
-    integrations?.enabled !== true ||
-    integrations.email?.enabled !== true ||
-    integrations.email.smtpHost.trim() === "" ||
-    integrations.email.smtpUser.trim() === ""
-  ) {
-    return undefined;
+  if (integrations?.enabled !== true) { return undefined; }
+
+  const email = integrations.email;
+  const telegram = integrations.telegram;
+  const emailConfigured = email?.enabled === true &&
+    email.smtpHost.trim() !== "" && email.smtpUser.trim() !== "";
+
+  const telegramConfigured = telegram?.enabled === true;
+  if (!emailConfigured && !telegramConfigured) { return undefined; }
+
+  const registry = createBridgeRegistry();
+  if (emailConfigured) {
+    const emailTransport = transport ?? createSmtpTransport({
+      host: email.smtpHost,
+      port: email.smtpPort,
+      user: email.smtpUser,
+      password: email.smtpPass,
+    },);
+
+    const adapter = createEmailAdapter({ transport: emailTransport, },);
+    // connect() has no awaits in its body — the connected flags are set before
+    // the bridge can see a request, so fire-and-forget is safe here.
+    void adapter.connect({ ...email, },);
+    registry.register(adapter,);
   }
 
-  const emailTransport = transport ?? createSmtpTransport({
-    host: integrations.email.smtpHost,
-    port: integrations.email.smtpPort,
-    user: integrations.email.smtpUser,
-    password: integrations.email.smtpPass,
-  },);
+  if (telegramConfigured) {
+    const adapter = createTelegramAdapter(
+      telegramTransport === undefined ? {} : { transport: telegramTransport, },
+    );
 
-  const adapter = createEmailAdapter({ transport: emailTransport, },);
-  // connect() has no awaits in its body — the connected flags are set before
-  // the bridge can see a request, so fire-and-forget is safe here.
-  void adapter.connect({ ...integrations.email, },);
-  const registry = createBridgeRegistry();
-  registry.register(adapter,);
-  return createMessageBridge(registry,);
+    // An empty config token is fine: the MFA token is read fresh from
+    // system_config and handed to the adapter at call time.
+    void adapter.connect({ botToken: telegram.botToken, },);
+    registry.register(adapter,);
+  }
+
+  return createMessageBridge(registry, {
+    // The admin can rotate the system_config token at any time; a frozen
+    // token → adapter map would strand every token issued after startup.
+    tokenBindingResolver: (token, target,) => {
+      if (token.trim() === "") { return undefined; }
+      // One MFA token can serve both channels: bind by target shape, then
+      // let each adapter's ownsTarget reject anything it does not own.
+      if (telegramConfigured && isTelegramChatId(target,)) { return TELEGRAM_ADAPTER_NAME; }
+      if (emailConfigured) { return EMAIL_ADAPTER_NAME; }
+      return undefined;
+    },
+  },);
 }
 
 /**

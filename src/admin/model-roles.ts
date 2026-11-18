@@ -17,6 +17,7 @@ import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getProvider, } from "../generation/providers/registry";
 import { getLogger, } from "../logger";
+import { recommendScenarioModel, } from "../models/scenario-ranking";
 
 import { ModelRole, } from "../db/enums-core";
 export type { ModelRole, } from "../db/enums-core";
@@ -35,19 +36,56 @@ export interface ResolvedModelRole {
   role: ModelRole;
   provider: string;
   model: string;
-  source: "db" | "config" | "default";
+  source: "db" | "config" | "ranking" | "default";
+}
+
+/**
+ * Pick a scenario-ranked model from the configured default models.
+ * @param role - role being resolved (warning context only)
+ * @param scenario - requested use case
+ * @param defaultModels - provider → model map
+ * @param db - database instance
+ * @returns the ranked provider/model, or null when nothing can be ranked
+ */
+async function scenarioDefault(
+  role: ModelRole,
+  scenario: string,
+  defaultModels: Record<string, string>,
+  db: Kysely<DB>,
+): Promise<{ provider: string; model: string } | null> {
+  const entries = Object.entries(defaultModels ?? {},);
+  try {
+    const recommended = await recommendScenarioModel(
+      db,
+      scenario,
+      entries.map(([, model,],) => model),
+    );
+
+    if (recommended === null) { return null; }
+
+    const provider = entries.find(([, model,],) => model === recommended.modelId)?.[0] ?? "";
+    return { provider, model: recommended.modelId, };
+  } catch (error) {
+    getLogger()
+      .child({ module: "model-roles", },)
+      .warn("Failed to read scenario ranking", { role, error: (error as Error).message, },);
+
+    return null;
+  }
 }
 
 /**
  * Resolve a model role assignment.
  *
  * Resolution order:
- * 1. DB override (model_role_overrides table)
- * 2. Config default (config.generation.modelRoles)
- * 3. Server default (config.generation.defaultProvider + defaultModels)
+ * 1. DB override (model_role_overrides table) — bypasses ranking
+ * 2. Config default (config.generation.modelRoles) — bypasses ranking
+ * 3. Scenario ranking, when a scenario is supplied and ranking rows exist
+ * 4. Server default (config.generation.defaultProvider + defaultModels)
  * @param role - The role to resolve.
  * @param config - App config.
  * @param db - Database instance.
+ * @param opts - Optional scenario for ranking-based selection.
  * @returns The resolved model role.
  * @throws {Error}
  */
@@ -55,6 +93,7 @@ export async function resolveModelRole(
   role: ModelRole,
   config: Config,
   db: Kysely<DB>,
+  opts: { scenario?: string } = {},
 ): Promise<ResolvedModelRole> {
   if (!(VALID_ROLES as readonly string[]).includes(role,)) {
     throw new Error(`Invalid model role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,);
@@ -90,7 +129,16 @@ export async function resolveModelRole(
     return { role, provider: configRole.provider, model: configRole.model, source: "config", };
   }
 
-  // 3. Server defaults
+  // 3. Scenario ranking. An explicit DB/config assignment above already
+  // bypassed it; a missing ranking degrades to the server default below.
+  if (opts.scenario) {
+    const ranked = await scenarioDefault(role, opts.scenario, config.generation.defaultModels, db,);
+    if (ranked !== null) {
+      return { role, ...ranked, source: "ranking", };
+    }
+  }
+
+  // 4. Server defaults
   const defaultProvider = config.generation.defaultProvider;
   if (defaultProvider) {
     const defaultModel = config.generation.defaultModels[defaultProvider] ?? "";

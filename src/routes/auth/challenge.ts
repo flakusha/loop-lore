@@ -51,6 +51,31 @@ function isEmailDestination(destination: string,): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(destination,);
 }
 
+/** Matrix user-id shape: @localpart:server. */
+function isMatrixDestination(destination: string,): boolean {
+  return destination.length <= 320 && /^@[^@\s:]+:[^@\s:]+$/.test(destination,);
+}
+
+/** Telegram chat-id shape: signed decimal digits (52-bit ids stay strings). */
+function isTelegramDestination(destination: string,): boolean {
+  return /^-?\d{1,19}$/.test(destination,);
+}
+
+/** Per-kind address grammar: messenger-im and messenger-matrix targets are
+ * not interchangeable, so a length check alone is not a destination check. */
+function isDestinationForKind(destination: string, kind: FactorKind,): boolean {
+  switch (kind) {
+    case FactorKind.Email:
+      return isEmailDestination(destination,);
+    case FactorKind.MessengerMatrix:
+      return isMatrixDestination(destination,);
+    case FactorKind.MessengerIm:
+      return isTelegramDestination(destination,);
+    case FactorKind.FederatedOidc:
+      return false;
+  }
+}
+
 /** Issue an MFA challenge and deliver its code over the requested channel.
  * The session must already be authenticated and hold the step-up
  * permission; the factor must belong to the caller and match the channel.
@@ -77,11 +102,7 @@ export async function handleIssueChallenge(options: IssueChallengeOptions,): Pro
   }
 
   const to = destination.trim();
-  const destinationOk = channel === "email"
-    ? isEmailDestination(to,)
-    : to !== "" && to.length <= 320;
-
-  if (!destinationOk) {
+  if (to === "" || to.length > 320) {
     return jsonError({ message: "Invalid destination for the requested channel", status: HttpStatus.BadRequest, },);
   }
 
@@ -105,6 +126,10 @@ export async function handleIssueChallenge(options: IssueChallengeOptions,): Pro
     (purpose !== ChallengePurpose.Enroll && factor.verified_at === null)
   ) {
     return notFound("Not found",);
+  }
+
+  if (!isDestinationForKind(to, factor.kind,)) {
+    return jsonError({ message: "Invalid destination for the requested channel", status: HttpStatus.BadRequest, },);
   }
 
   const normalize = (value: string,): string => value.trim().toLowerCase();

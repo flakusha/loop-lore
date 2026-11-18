@@ -251,6 +251,8 @@ export interface SectionBuilder {
 // Lower rank = kept longer when trimming
 export const PRIORITY = {
   system: 0,
+  /** Validation-subject instruction — empty unless a harness is configured. */
+  validationHarness: 0,
   taskClarification: 0,
   actorHeader: 0,
   authorNote: 0,
@@ -306,6 +308,7 @@ export type Losslessness = "lossless" | "lossy";
  */
 export const SECTION_LOSSLESSNESS = {
   system: "lossless",
+  validationHarness: "lossless",
   taskClarification: "lossless",
   actorHeader: "lossless",
   authorNote: "lossless",

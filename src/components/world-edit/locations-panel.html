@@ -1,0 +1,146 @@
+<!-- Locations Tab (Alpine-rendered from loadLocations()) -->
+<div x-show="activeTab === 'locations'">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
+    <h3 style="margin: 0">{{{t("worlds.tabLocations")}}}</h3>
+    <button
+      class="btn btn-primary"
+      @click="showAddForm = !showAddForm"
+      x-text="showAddForm ? t('common.cancel') : t('worlds.addLocation')"
+    >
+    </button>
+  </div>
+  <input
+    class="form-input"
+    type="text"
+    id="location-search"
+    x-model="locationSearch"
+    @input="filterLocations()"
+    placeholder="Search locations…"
+    style="margin-bottom: var(--space-3)"
+  />
+
+  <div class="add-location-form" x-show="showAddForm" x-cloak>
+    <div class="form-group">
+      <label class="form-label" for="loc-name">{{{t("worlds.locationNameRequired")}}}</label>
+      <input
+        class="form-input"
+        type="text"
+        id="loc-name"
+        x-model="newLocName"
+        :placeholder="t('worlds.locationNamePlaceholder')"
+      />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="loc-desc">{{{t("worlds.description")}}}</label>
+      <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+        <textarea
+          class="form-input form-textarea"
+          id="loc-desc"
+          x-model="newLocDesc"
+          rows="2"
+          style="flex: 1"
+          :placeholder="t('worlds.locationDescriptionPlaceholder')"
+          @input="autoResize($el)"
+        ></textarea>
+        <div x-data="textToolbar({ target: '#loc-desc' })">
+          {{> text-toolbar.html }}
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="loc-parent">{{{t("worlds.parentLocation")}}}</label>
+      <select class="form-input" id="loc-parent" x-model="newLocParentId">
+        <option value="">{{{t("worlds.none")}}}</option>
+        <template x-for="loc in locations" :key="loc.id">
+          <option :value="loc.id" x-text="loc.name"></option>
+        </template>
+      </select>
+    </div>
+    <div class="form-group" x-show="locations.length > 0">
+      <span class="form-label">{{{t("worlds.connections")}}}</span>
+      <template x-for="loc in locations" :key="loc.id">
+        <label style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1)">
+          <input type="checkbox" :value="loc.id" x-model="newLocConnections" />
+          <span x-text="loc.name"></span>
+        </label>
+      </template>
+    </div>
+    <button class="btn btn-primary" @click="addLocation()" :disabled="!newLocName.trim()">
+      {{{t("common.add")}}}
+    </button>
+  </div>
+
+  <div x-show="loadingLocations" class="empty-state" style="padding: var(--space-8)">
+    <div class="icon">⏳</div>
+    <div class="title">{{{t("worlds.loadingLocations")}}}</div>
+  </div>
+
+  <div id="location-list" x-show="!loadingLocations && locations.length > 0">
+    <template x-for="loc in locations" :key="loc.id">
+      <div
+        class="location-item"
+        style="padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-md); cursor: pointer"
+        @click="expandLoc(loc.id)"
+      >
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div class="location-info">
+            <div class="location-name" x-text="loc.name"></div>
+            <div
+              class="location-desc"
+              x-show="loc.description && expandedLoc !== loc.id"
+              x-text="loc.description"
+            >
+            </div>
+          </div>
+          <div class="location-actions" @click.stop>
+            <button
+              class="btn btn-danger"
+              style="font-size: var(--fs-sm); padding: var(--space-1) var(--space-3)"
+              @click="deleteLocation(loc.id)"
+            >
+              {{{t("common.delete")}}}
+            </button>
+          </div>
+        </div>
+        <div
+          x-show="expandedLoc === loc.id"
+          @click.stop
+          style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-default)"
+        >
+          <div style="display: grid; gap: var(--space-2)">
+            <input
+              class="form-input"
+              style="font-size: var(--fs-base-sm)"
+              x-model="editLocName"
+            />
+            <textarea
+              class="form-input form-textarea"
+              rows="2"
+              style="font-size: var(--fs-base-sm)"
+              x-model="editLocDesc"
+              :placeholder="t('worlds.description')"
+              @input="autoResize($el)"
+            ></textarea>
+            <button
+              class="btn btn-primary btn-xs"
+              @click="saveLocation(loc.id)"
+              style="justify-self: flex-start"
+            >
+              {{{t("common.save")}}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <div
+    x-show="!loadingLocations && locationsLoaded && locations.length === 0"
+    class="empty-state"
+    style="padding: var(--space-12)"
+  >
+    <div class="icon">🗺️</div>
+    <div class="title">{{{t("worlds.noLocationsYet")}}}</div>
+    <div class="description">{{{t("worlds.addLocationsHint")}}}</div>
+  </div>
+</div>
