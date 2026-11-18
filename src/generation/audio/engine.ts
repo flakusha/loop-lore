@@ -10,6 +10,7 @@
 import type { Config, } from "../../config/schema/config";
 import { createComfyAudioProvider, } from "./providers/comfyui";
 import { createLocalAudioProvider, } from "./providers/local";
+import { createOpenRouterTtsProvider, } from "./providers/openrouter-tts";
 import { getAudioProvider, listAudioProviders, registerAudioProvider, } from "./types";
 import type { AudioGenOutcome, AudioGenRequest, AudioProvider, } from "./types";
 
@@ -26,6 +27,10 @@ export type ResolvedAudioProvider =
  */
 export function registerAudioProviders(config?: Config,): string[] {
   registerAudioProvider(createLocalAudioProvider(),);
+
+  // TTS is addressed explicitly by id ("tts:openrouter"); it never wins the
+  // ambient/music resolution order.
+  registerAudioProvider(createOpenRouterTtsProvider(),);
 
   for (const entry of config?.generation.providers.audio ?? []) {
     if (entry.apiFamily !== "comfyui") { continue; }
