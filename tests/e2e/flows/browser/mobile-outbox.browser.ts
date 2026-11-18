@@ -345,7 +345,7 @@ describe("Phone viewport shell + offline outbox badge (theme-4 AC4)", () => {
         .where("content", "in", ["discard-a", "discard-b",],)
         .executeTakeFirst();
 
-      expect(row,).toBeNull();
+      expect(row,).toBeUndefined();
     } finally {
       errors.assert();
       errors.detach();
