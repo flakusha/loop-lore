@@ -117,7 +117,7 @@ export const MODEL_ROLES = ["main", "auxiliary", "captioning", "classifier", "tr
 /**
  * Derive an instance name from a custom base URL.
  *
- * The backend accepts `^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$` for provider names,
+ * The backend accepts ADMIN_NAME_PATTERN for provider names,
  * so dots and dashes survive while everything else collapses to a dash. The
  * first character has to be alphanumeric, so leading symbols are dropped.
  * @param baseUrl - Operator-entered base URL.

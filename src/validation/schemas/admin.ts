@@ -6,14 +6,15 @@
  */
 
 import { t, } from "elysia";
+import { ADMIN_NAME_PATTERN, } from "./name-pattern";
 import { OptionalId, } from "./primitives";
+
+export { ADMIN_NAME_PATTERN, };
 
 // ── Admin routes ───────────────────────────────────────────
 
 export const ADMIN_ROLES = ["admin", "user", "viewer",] as const;
 
-/** Operator-entered resource names: one rule shared by every admin boundary. */
-export const ADMIN_NAME_PATTERN = "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$";
 
 export const AdminRoleUpdateBody = t.Object({
   // Plain string + runtime check in the route: Elysia 1.4 compiles t.UnionEnum
