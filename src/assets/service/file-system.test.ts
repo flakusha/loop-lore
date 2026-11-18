@@ -179,6 +179,23 @@ describe("resolveUploadDir — runtime instance dir (B1)", () => {
 
     expect(resolveUploadDir("${DATA_DIR}/uploads",),).toBe(join(runtimeDir, "uploads",),);
   });
+
+  test("resolves a bare ${DATA_DIR} placeholder to the instance dir itself", () => {
+    process.env[ENV_INSTANCE] = "alpha";
+    const runtimeDir = resolveInstanceDir(process.env,);
+
+    expect(resolveUploadDir("${DATA_DIR}",),).toBe(runtimeDir,);
+  });
+
+  test("keeps a path that only shares a prefix with DATA_DIR verbatim", () => {
+    const sibling = `${DATA_DIR}-backup/uploads`;
+    expect(resolveUploadDir(sibling,),).toBe(sibling,);
+  });
+
+  test("keeps another instance's upload dir verbatim", () => {
+    const other = join(stateRoot, "other", "uploads",);
+    expect(resolveUploadDir(other,),).toBe(other,);
+  });
 });
 
 describe("storeFile", () => {
