@@ -4,6 +4,7 @@ import { Elysia, t, } from "elysia";
 import {
   createDbBackup,
   dbBackupDir,
+  InvalidSnapshotError,
   listDbBackups,
   liveDbPath,
   resolveBackupPath,
@@ -133,8 +134,12 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           } catch (error) {
             log().error("Database restore failed", error as Error,);
+            const message = error instanceof InvalidSnapshotError
+              ? "Restore failed: snapshot is not a valid SQLite database"
+              : `Restore failed: ${(error as Error).message}`;
+
             return jsonError({
-              message: `Restore failed: ${(error as Error).message}`,
+              message,
               status: HttpStatus.BadRequest,
               code: ErrorCode.BadRequest,
             },);

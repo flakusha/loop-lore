@@ -160,6 +160,8 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectFrom("messages",)
           .selectAll()
           .where("parent_id", "=", parentId,)
+          // BUG-moderator-hidden-message: hidden siblings are not public.
+          .where("visibility", "=", "visible",)
           .orderBy("swipe_index", "asc",)
           .orderBy("created_at", "asc",)
           .execute();
@@ -216,6 +218,8 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectAll()
           .where("parent_id", "=", message.parent_id as string,)
           .where("chat_id", "=", message.chat_id as string,)
+          // BUG-moderator-hidden-message: hidden siblings are not selectable.
+          .where("visibility", "=", "visible",)
           .orderBy("swipe_index", "asc",)
           .orderBy("created_at", "asc",)
           .execute();

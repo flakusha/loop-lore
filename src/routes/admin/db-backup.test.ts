@@ -12,7 +12,7 @@ import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { mkdtempSync, rmSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { resolveInstanceSlug, } from "../../config/state-dir";
@@ -135,6 +135,31 @@ describe("admin db backup routes", () => {
     },);
 
     expect(res.status,).toBe(400,);
+  });
+
+  test("POST restore rejects a header-valid empty-schema snapshot with a path-free 400", async () => {
+    const { hasSqliteHeader, } = await import("../../db/backup-restore");
+    const backupDir = path.join(backupRoot, resolveInstanceSlug(process.env,), "db",);
+    mkdirSync(backupDir, { recursive: true, },);
+    const emptyPath = path.join(backupDir, "empty-schema.db",);
+    const empty = new Database(emptyPath,);
+    empty.exec("PRAGMA user_version = 1;",); // header written, no user tables
+    empty.close();
+    expect(hasSqliteHeader(emptyPath,),).toBe(true,);
+
+    const liveBefore = readFileSync(livePath,);
+    const app = makeApp(UserRole.Admin,);
+    const res = await handle(app, "POST", `${PREFIX}/admin/db/restore`, {
+      name: "empty-schema.db",
+      confirmation: "RESTORE",
+    },);
+
+    expect(res.status,).toBe(400,);
+    const body = await res.json() as { error: string };
+    expect(body.error,).toContain("snapshot is not a valid SQLite database",);
+    expect(body.error,).not.toContain(backupRoot,);
+    expect(body.error,).not.toContain(livePath,);
+    expect(readFileSync(livePath,),).toEqual(liveBefore,);
   });
 
   test("POST restore swaps the live file and reports restart required", async () => {

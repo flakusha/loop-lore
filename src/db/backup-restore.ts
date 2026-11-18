@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+import { Database, } from "bun:sqlite";
 import fs from "node:fs";
 import path from "node:path";
 import { resolveDbPath, resolveInstanceSlug, type ServerBind, } from "../config/state-dir";
@@ -81,6 +82,49 @@ export function hasSqliteHeader(p: string,): boolean {
     return read === HEADER_LENGTH && buf.toString("latin1", 0, HEADER_LENGTH,) === SQLITE_HEADER;
   } finally {
     fs.closeSync(fd,);
+  }
+}
+
+/** Thrown when a snapshot is structurally unusable for restore. */
+export class InvalidSnapshotError extends Error {
+  constructor(message: string,) {
+    super(message,);
+    this.name = "InvalidSnapshotError";
+  }
+}
+
+/**
+ * Stronger pre-restore validation than the magic-header check: require a
+ * passing `PRAGMA integrity_check` and at least one user table so a truncated
+ * or schema-less but header-valid file cannot replace the live DB.
+ * @throws InvalidSnapshotError (path-free message) when the file is unusable
+ */
+export function validateSqliteSnapshot(p: string,): void {
+  let db: Database;
+  try {
+    db = new Database(p, { readonly: true, },);
+  } catch {
+    throw new InvalidSnapshotError("Snapshot is not a readable SQLite database",);
+  }
+
+  try {
+    const integrity = db.query<{ integrity_check: string }, []>("PRAGMA integrity_check;",).get();
+    if (integrity?.integrity_check !== "ok") {
+      throw new InvalidSnapshotError("Snapshot failed SQLite integrity check",);
+    }
+
+    const table = db.query<{ name: string }, []>(
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' LIMIT 1;",
+    ).get();
+
+    if (!table) {
+      throw new InvalidSnapshotError("Snapshot has no user tables",);
+    }
+  } catch (err) {
+    if (err instanceof InvalidSnapshotError) { throw err; }
+    throw new InvalidSnapshotError("Snapshot is not a valid SQLite database",);
+  } finally {
+    db.close();
   }
 }
 
@@ -182,7 +226,7 @@ export function resolveBackupPath(dir: string, name: string,): string {
  * destroyed connection; replacing the file while a connection is open leaves
  * that connection writing to the unlinked inode. The safe sequence here is:
  * 1. snapshot the CURRENT live db (rollback path),
- * 2. validate the target snapshot (SQLite magic header),
+ * 2. validate the target snapshot (SQLite magic header, integrity_check, user tables),
  * 3. close the live handles (checkpoint/flush),
  * 4. atomically rename the snapshot over the live path (stale `-wal`/`-shm`
  *    sidecars are removed first).
@@ -190,14 +234,16 @@ export function resolveBackupPath(dir: string, name: string,): string {
  * restarted to serve from the restored database (`restartRequired: true` in
  * the route response). This is an explicit, documented limitation — not a
  * silent fake success.
- * @throws when the target file is not a SQLite database
+ * @throws InvalidSnapshotError when the target snapshot fails validation
  * @throws when replacing the live file fails after the close
  */
 export async function restoreDbBackup(opts: RestoreDbBackupOpts,): Promise<{ preRestoreBackup: string }> {
   const { backupPath, livePath, sqlite, dir, closeDb, } = opts;
   if (!hasSqliteHeader(backupPath,)) {
-    throw new Error(`"${path.basename(backupPath,)}" is not a SQLite database file`,);
+    throw new InvalidSnapshotError("Snapshot is not a SQLite database file",);
   }
+
+  validateSqliteSnapshot(backupPath,);
 
   // Rollback path first: snapshot the current live data before touching it.
   const pre = await createDbBackup({ sqlite, dir, },);

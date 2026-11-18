@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createLogger, } from "../logger";
@@ -163,5 +163,53 @@ describe("db backup/restore service", () => {
     },),).rejects.toThrow(/not a SQLite database/,);
 
     expect(readUsers(livePath,),).toEqual([{ id: 1, name: "safe", },],);
+  });
+
+  test("restoreDbBackup rejects a header-valid empty-schema snapshot before touching live data", async () => {
+    insertUser(db, 1, "safe",);
+    const before = readFileSync(livePath,);
+    const empty = path.join(dir, "empty-schema.db",);
+    const emptyDb = new Database(empty,);
+    emptyDb.exec("PRAGMA user_version = 1;",); // header written, no user tables
+    emptyDb.close();
+    expect(hasSqliteHeader(empty,),).toBe(true,);
+
+    let closed = false;
+    await expect(restoreDbBackup({
+      backupPath: empty,
+      livePath,
+      sqlite: db,
+      dir,
+      closeDb: async () => {
+        closed = true;
+      },
+    },),).rejects.toThrow(/no user tables/,);
+
+    expect(closed,).toBe(false,);
+    expect(readFileSync(livePath,),).toEqual(before,);
+  });
+
+  test("restoreDbBackup rejects a header-valid corrupt snapshot before touching live data", async () => {
+    insertUser(db, 1, "safe",);
+    const before = readFileSync(livePath,);
+    const valid = await createDbBackup({ sqlite: db, dir, },);
+    const bytes = readFileSync(valid.path,);
+    // Corrupt page-1 content past the 16-byte magic header.
+    for (let i = 100; i < 160; i += 1) { bytes[i] = 0xff; }
+    const corrupt = path.join(dir, "corrupt.db",);
+    writeFileSync(corrupt, bytes,);
+
+    expect(hasSqliteHeader(corrupt,),).toBe(true,);
+    await expect(restoreDbBackup({
+      backupPath: corrupt,
+      livePath,
+      sqlite: db,
+      dir,
+      closeDb: async () => {
+        throw new Error("closeDb must not run",);
+      },
+    },),).rejects.toThrow(/Snapshot/,);
+
+    expect(readFileSync(livePath,),).toEqual(before,);
   });
 });
