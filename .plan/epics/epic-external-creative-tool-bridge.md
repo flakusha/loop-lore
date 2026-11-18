@@ -118,6 +118,7 @@ B1 -> B2 -> {B3, B4}. B3 is worth doing even if no creative-app adapter ever lan
 | `TASK-bridge-mlt-melt-render-tier` | MLT XML EDL generation + `melt` subprocess render (LGPL-2.1, capability-probed, timeout-bounded, provenance-stamped) — the headless video-editing backend for scenario assembly (IVSS, filed 2026-10-28) |
 | `TASK-bridge-auto-editor-handoff` | auto-editor (Unlicense) subprocess tier: silence-cut generated clips + export NLE XML (Kdenlive/Shotcut/Resolve/FCP/Premiere) handoff (IVSS, filed 2026-10-28) |
 | `TASK-bridge-rawtherapee-ingestion` | photographic reference → 16-bit TIFF ingestion: rawtherapee-cli (GPL-3) AND darktable-cli (GPL-3) as supported co-tiers behind one capability-probed wrapper (decision 2026-10-29) (IVSS, filed 2026-10-28) |
+| `TASK-honkbox-media-editing-offload` | Low-priority revisit: honkbox as optional media-editing/data-extraction offload instead of direct ffmpeg; no hard dependency, overlap with melt/auto-editor checked first (filed 2026-11-19) |
 
 **MCP-servers table refresh (2026-10-28):** krita-mcp (CC0, active) is now
 verified — resolve its row above; an official Blender Lab MCP server exists

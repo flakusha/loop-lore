@@ -84,6 +84,14 @@ build-time device assumption.
 - [ ] Kling partner-node tier behind BYOK keys and explicit consent (in scope for the first release, consent gate required)
 - [ ] Veo-via-Gemini tier (later)
 
+### Deferred (low priority, revisit — filed 2026-11-19)
+
+- [ ] `TASK-hosted-video-and-audio-api-benchmark-tier` — Sora/Runway/Pika and Suno/Udio as benchmark-only tiers; Kling/Veo already scoped above
+- [ ] `TASK-live-and-reel-batch-production-tiers` — live stream, reels batch, multi-user render farm; unproven product need
+- [ ] `TASK-mid-sampler-resume-feasibility` — true mid-sampler checkpointing; existing resume is post-sampling/artifact-based
+- [ ] `TASK-ltx-foley-and-native-audio-alternatives` — LTX Foley V2A / Hunyuan-Foley / MMAudio matrix, gated on validation and territory licence
+- [ ] `TASK-quiet-hours-priority-render-scheduling` — quiet hours, priority and pause-with-saved-cache across limited/quota-bound swarms
+
 ## Key integrations
 
 - ComfyUI provider (`src/generation/providers/comfyui.ts`) — video-kind

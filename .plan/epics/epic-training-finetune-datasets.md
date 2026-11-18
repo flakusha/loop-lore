@@ -38,6 +38,7 @@ Training data loop for loop-lore: where training sets come from (asset/caption e
 - `TASK-generation-fact-capture-at-queue-time` (`31df5ce`, High, pre-existing) — capture rendered prompt + sampler params + seed at generation-queue time; fixes the B2 gap (emotion-avatar job records lack the rendered prompt).
 - `TASK-character-identity-lora-flywheel-avatar-dataset-assembly-and` (`cce0386`, High) — per-character ai-toolkit dataset assembly from `character_avatars` + `asset_links`; depends on `31df5ce`.
 - Eval/promotion-gate ticket owned by `epic-finetune-eval-promotion-gate.md`: `TASK-val-split-and-blake3-dataset-fingerprint-at-export` (`b03de66`, High).
+- `TASK-in-comfyui-trainer-evaluation` (Low, deferred 2026-11-19) — revisit in-ComfyUI trainers only if train-outside/infer-inside is overturned; gated on stable core nodes and versioned datasets.
 
 
 git issue: 3efca64

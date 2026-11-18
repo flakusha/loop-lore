@@ -667,6 +667,10 @@ git issue. Workflow JSON is inert — no secrets.
 
 Downstream consumers of the converter (Phase 6 pipeline): `TASK-comfyui-parameter-map-derivation-from-marked-workflows.md`, `TASK-comfyui-workflow-acceptance-probe-scaffold.md`, `TASK-workflow-library-ui-format-ingest.md`.
 
+## Annex: deferred node-ownership boundary (filed 2026-11-19)
+
+- `TASK-comfyui-node-ownership-boundary` (Low) — workflow JSON stays versioned project data; custom node code remains in the ComfyUI soft fork with pinned refs. Revisit only when no upstream pack can express a required workflow.
+
 ## Related Epics
 
 - `epic-comfyui-plugin` — the client/loader/template foundation this builds on
