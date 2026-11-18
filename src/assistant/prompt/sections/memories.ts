@@ -102,6 +102,7 @@ export const memorySection: SectionBuilder = {
     const pinned = allAccepted.filter((m,) => m.pinned);
     const mutable = allAccepted.filter((m,) => !m.pinned);
     const scoreMap = new Map<string, number>();
+    const cosineScoreMap = new Map<string, number>();
     if (mutable.length > 0) {
       try {
         const recent = await ctx.db
@@ -123,7 +124,11 @@ export const memorySection: SectionBuilder = {
           );
 
           if (matched.length > 0) {
-            for (const m of matched) { scoreMap.set(m.memoryId, m.score,); }
+            for (const m of matched) {
+              scoreMap.set(m.memoryId, m.score,);
+              cosineScoreMap.set(m.memoryId, m.cosineScore,);
+            }
+
             mutable.sort((a, b,) => {
               const sa = scoreMap.get(a.id,) ?? 0;
               const sb = scoreMap.get(b.id,) ?? 0;
@@ -198,7 +203,7 @@ export const memorySection: SectionBuilder = {
       // Test seam: `decide.ts` falls back to `Math.random()` when this is
       // absent, which makes any `memorySection` end-to-end test probabilistic.
       randomFn: ctx.randomFn,
-      semanticScores: scoreMap,
+      semanticScores: cosineScoreMap,
     };
 
     const injectionResult = selectMemoriesForInjection(

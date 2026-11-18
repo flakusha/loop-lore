@@ -248,6 +248,7 @@ describe("rankBySimilarity", () => {
 
     expect(matches.map((m: SemanticMatch,) => m.memoryId),).toEqual(["a", "c", "b",],);
     expect(matches[0]?.score,).toBeCloseTo(1, 5,);
+    expect(matches[0]?.cosineScore,).toBeCloseTo(1, 5,);
     expect(matches[1]?.score,).toBeCloseTo(0.6, 5,);
     expect(matches[2]?.score,).toBeCloseTo(0, 5,);
   });
@@ -486,10 +487,31 @@ describe("semanticRecall", () => {
     // before the shortlist, so only the two surviving matches are reranked.
     expect(lastRerankBody?.documents,).toEqual(["blue text", "red text",],);
     expect(lastRerankBody?.top_n,).toBe(2,);
-    // Rerank order wins and carries rerank scores, not cosine scores.
+    // Rerank order wins; `score` is the rerank value while `cosineScore` keeps
+    // the cosine value the injection gate compares against its floor.
     expect(matches.map((m,) => m.memoryId),).toEqual(["rerank-2", "rerank-1",],);
     expect(matches[0]?.score,).toBeCloseTo(0.99, 5,);
     expect(matches[1]?.score,).toBeCloseTo(0.42, 5,);
+    expect(matches[0]?.cosineScore,).toBeCloseTo(0.6, 4,);
+    expect(matches[1]?.cosineScore,).toBeCloseTo(1, 4,);
+  });
+
+  test("tiny rerank scores never overwrite the preserved cosine values", async () => {
+    process.env.RERANK_MODEL = "bge-reranker-under-test";
+    nextEmbeddings = [[0.6, 0.8,],];
+    // Rerankers may emit tiny/negative relevance numbers that are meaningless
+    // on the cosine scale; the injection gate must still see the cosine values.
+    nextRerank = { results: [{ index: 1, relevance_score: 0.01, }, { index: 0, relevance_score: -2.5, },], };
+    rerankHits = 0;
+
+    const matches = await semanticRecall(db, ["rerank-1", "rerank-2",], "tiny rerank", 2, 0.3,);
+
+    expect(rerankHits,).toBe(1,);
+    expect(matches.map((m,) => m.memoryId),).toEqual(["rerank-2", "rerank-1",],); // rerank order
+    expect(matches[0]?.score,).toBeCloseTo(0.01, 5,);
+    expect(matches[1]?.score,).toBeCloseTo(-2.5, 5,);
+    expect(matches[0]?.cosineScore,).toBeCloseTo(0.6, 4,);
+    expect(matches[1]?.cosineScore,).toBeCloseTo(1, 4,);
   });
 
   test("rerank failure fails open to the cosine order and scores", async () => {

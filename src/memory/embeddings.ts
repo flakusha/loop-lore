@@ -40,10 +40,13 @@ export interface EmbeddedMemory {
   vector: Float32Array;
 }
 
-/** */
+/** A cosine-ranked candidate returned by semantic recall. */
 export interface SemanticMatch {
   memoryId: string;
+  /** Ordering score: cosine, or reranker relevance when the rerank stage ran. */
   score: number;
+  /** Original cosine similarity, preserved across rerank (not comparable to `score`). */
+  cosineScore: number;
 }
 
 // ── Storage ────────────────────────────────────────────────────────────────
@@ -124,7 +127,10 @@ export function rankBySimilarity(
   minScore = 0.5,
 ): SemanticMatch[] {
   return candidates
-    .map(({ memoryId, vector, },) => ({ memoryId, score: dot(queryVec, vector,), }))
+    .map(({ memoryId, vector, },) => {
+      const score = dot(queryVec, vector,);
+      return { memoryId, score, cosineScore: score, };
+    },)
     .filter((m,) => m.score >= minScore)
     .sort((a, b,) => b.score - a.score)
     .slice(0, topK,);
@@ -168,8 +174,9 @@ export async function getStoredVectors(
  *   3. rank by cosine similarity (minScore gates this stage)
  *   4. optional cross-encoder rerank of the shortlist (RERANK_MODEL)
  *
- * Returns ids sorted by relevance — cosine scores, or reranker relevance
- * scores when the rerank stage runs (the two are not comparable).
+ * Returns ids sorted by relevance. `score` is reranker relevance when the
+ * rerank stage runs; `cosineScore` always keeps the original cosine value (the
+ * two are not comparable — callers with a cosine floor must read `cosineScore`).
  * @param db
  * @param candidateIds
  * @param queryText
@@ -221,7 +228,7 @@ export async function semanticRecall(
     for (const { index, score, } of hits) {
       const match = shortlist[index];
       if (!match) { throw new Error(`Rerank index ${index} outside the shortlist.`,); }
-      reordered.push({ memoryId: match.memoryId, score, },);
+      reordered.push({ memoryId: match.memoryId, score, cosineScore: match.cosineScore, },);
     }
 
     return reordered.slice(0, topK,);
