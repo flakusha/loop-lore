@@ -6,6 +6,8 @@ import { Kysely, SqliteDialect, } from "kysely";
 import fs from "node:fs";
 import path from "node:path";
 import { findFirstLegacyDb, resolveDbPath, } from "../config/state-dir";
+import { findLegacyBackupPool, warnLegacyBackupPoolOnce, } from "./legacy-backup-pool";
+import { archiveDir, } from "./reinit-archive";
 import type { DB, } from "./schema";
 
 interface BunSqliteStatement {
@@ -166,6 +168,24 @@ function warnOnLegacyData(dbPath: string,): void {
 }
 
 /**
+ * Point the operator at the legacy backup pool once per process.
+ * The pool is the SIBLING of the legacy data dir and nothing reads it any
+ * more, so the operator's rollback points would sit there unmentioned.
+ */
+function warnOnLegacyBackupPool(): void {
+  const pool = findLegacyBackupPool();
+  if (pool === null) {
+    return;
+  }
+
+  try {
+    warnLegacyBackupPoolOnce(pool, archiveDir(),);
+  } catch {
+    // No stable instance dir (ephemeral port): no archive root to name.
+  }
+}
+
+/**
  * Precedence: explicit `databasePath` arg > LOOP_LORE_DB_PATH > XDG
  * per-instance default. The config-file `db.sqliteFilename` knob is IGNORED
  * (runtime never read it — see docs/spec/xdg-state-storage.md).
@@ -195,6 +215,7 @@ export function getDatabase(databasePath?: string,): Kysely<DB> {
   }
 
   warnOnLegacyData(dbPath,);
+  warnOnLegacyBackupPool();
   // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
   fs.mkdirSync(path.dirname(dbPath,), { recursive: true, mode: 0o700, },);
   const sqlite = new Database(dbPath,);
