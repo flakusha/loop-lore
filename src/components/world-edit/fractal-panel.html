@@ -13,43 +13,20 @@
       <div x-show="loadedTree && tree.length === 0" class="empty-state">
         <div class="title">No locations yet</div>
       </div>
-      <ul style="list-style: none; padding-left: 0; margin: 0">
-        <template x-for="node in tree" :key="node.id">
-          <li>
-            <div x-data="{ open: true }" style="padding: 2px 0">
-              <span
-                x-show="node.children.length > 0"
-                @click="open = !open"
-                style="cursor: pointer; user-select: none"
-              >
-                <span x-text="open ? '▾' : '▸'"></span>
-              </span>
-              <span x-text="node.name"></span>
-            </div>
-            <ul x-show="open" style="list-style: none; padding-left: 18px; margin: 0">
-              <template x-for="child in node.children" :key="child.id">
-                <li>
-                  <div x-data="{ open: true }" style="padding: 2px 0">
-                    <span
-                      x-show="child.children.length > 0"
-                      @click="open = !open"
-                      style="cursor: pointer; user-select: none"
-                    >
-                      <span x-text="open ? '▾' : '▸'"></span>
-                    </span>
-                    <span x-text="child.name"></span>
-                  </div>
-                  <ul x-show="open" style="list-style: none; padding-left: 18px; margin: 0">
-                    <template x-for="leaf in child.children" :key="leaf.id">
-                      <li x-text="leaf.name"></li>
-                    </template>
-                  </ul>
-                </li>
-              </template>
-            </ul>
-          </li>
+      <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-2)">
+        <template x-for="kind in fractalKindOptions" :key="kind">
+          <button
+            type="button"
+            class="btn btn-sm"
+            :class="filterKind === (kind === 'All' ? '' : kind) ? 'btn-primary' : 'btn-ghost'"
+            @click="filterKind = kind === 'All' ? '' : kind"
+            x-text="kind"
+            :data-testid="'fractal-kind-' + kind"
+          >
+          </button>
         </template>
-      </ul>
+      </div>
+      <div data-testid="fractal-tree" x-html="fractalTreeMarkup(tree, routeMeta, filterKind)"></div>
     </div>
 
     <!-- Routes column -->

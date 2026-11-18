@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { readFileSync, } from "node:fs";
+import { join, } from "node:path";
 import { buildFractalState, } from "./fractal-locations";
 import type { FractalState, } from "./fractal-locations";
 import { formatTransportBadge, renderTreeMarkup, } from "./fractal-tree-render";
@@ -200,5 +202,18 @@ describe("renderTreeMarkup", () => {
     const html = renderTreeMarkup(tree, {}, "Transport",);
     expect(html.match(/data-testid="fractal-tree-node"/g,)?.length,).toBe(3,);
     expect(renderTreeMarkup(tree, {}, "Pocket",),).not.toContain("fractal-tree-node",);
+  });
+});
+
+describe("fractal panel wiring", () => {
+  test("mounts the recursive renderer and kind filter chips", () => {
+    const html = readFileSync(
+      join(import.meta.dir, "..", "..", "components", "world-edit", "fractal-panel.html",),
+      "utf8",
+    );
+
+    expect(html,).toContain('x-html="fractalTreeMarkup(tree, routeMeta, filterKind)"',);
+    expect(html,).toContain('x-for="kind in fractalKindOptions"',);
+    expect(html,).not.toContain('<template x-for="node in tree"',);
   });
 });
