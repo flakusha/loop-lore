@@ -7,6 +7,7 @@
  *
  * Uses a temp dir per test so the real backup dir is untouched.
  */
+// TODO(env): bun-only test seam (bun:test, Bun.env) — add a node shim when a node test target lands.
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, readdirSync, rmSync, utimesSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
