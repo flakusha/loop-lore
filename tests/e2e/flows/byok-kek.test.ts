@@ -128,19 +128,31 @@ describe("BYO key round-trip + KEK isolation (HTTP + ephemeral server)", () => {
       expect(store.status,).toBe(200,);
 
       try {
-        const res = await api.post<{ ok: boolean; content: string }>("/api/v1/generation/generate", {
+        const res = await api.post<{
+          ok: boolean;
+          content: string;
+          messageId?: string;
+          tokenUsage?: { totalTokens: number };
+        }>("/api/v1/generation/generate", {
           chatId: SEED.chat.id,
           parentMessageId: SEED.message.id,
           actorId: SEED.character.id,
           idempotencyKey: `byok-e2e-live-${crypto.randomUUID()}`,
           provider: PROVIDER,
           prompt: [{ role: "user", content: "Reply with exactly: OK", },],
-          maxTokens: 20,
+          stream: false,
+          // Reasoning-style free models can burn the whole budget on
+          // reasoning (content null, finish_reason length) — leave headroom.
+          maxTokens: 100,
           temperature: 0,
         },);
 
         expect(res.status,).toBe(200,);
-        expect(res.data?.content,).toBeTruthy();
+        // Heavy-reasoning free models can return null content while still
+        // completing: assert the pipeline ran and the vendor billed the key.
+        expect(res.data?.ok,).toBe(true,);
+        expect(res.data?.messageId,).toBeDefined();
+        expect(res.data?.tokenUsage?.totalTokens,).toBeGreaterThan(0,);
       } finally {
         await api.del(`/api/v1/user-api-keys/${PROVIDER}`,);
       }
