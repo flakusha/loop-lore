@@ -66,7 +66,7 @@ describe("Admin dashboard panels — empty", () => {
     try {
       await page.getByRole("button", { name: "Health", },).click();
       await page.waitForSelector("text=No AUX generation calls recorded yet", { timeout: 10_000, },);
-      await page.getByRole("button", { name: "Models", },).click();
+      await page.getByRole("button", { name: "Models", exact: true, },).click();
       await page.waitForSelector("text=automated training not wired", { timeout: 10_000, },);
       await page.waitForSelector("text=No models discovered.", { timeout: 10_000, },);
     } finally {

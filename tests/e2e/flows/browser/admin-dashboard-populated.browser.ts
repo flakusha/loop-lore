@@ -115,7 +115,7 @@ describe("Admin dashboard panels — populated", () => {
   test("models tab renders fine-tuning panel with candidates and not-wired status", async () => {
     const { page, errors, } = await loginAsAdmin(ctx,);
     try {
-      await page.getByRole("button", { name: "Models", },).click();
+      await page.getByRole("button", { name: "Models", exact: true, },).click();
       await page.waitForSelector("text=Fine-tuning", { timeout: 10_000, },);
       await page.waitForSelector("text=automated training not wired", { timeout: 10_000, },);
       await page.waitForSelector("text=test-8b", { timeout: 10_000, },);
