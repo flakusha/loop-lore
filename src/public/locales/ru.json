@@ -1635,7 +1635,11 @@
     "outboxQueuedAt": "В очереди с {time}",
     "outboxDiscard": "Убрать",
     "outboxDiscardConfirm": "Убрать это сообщение из очереди? Оно не будет отправлено.",
-    "validationHarness": "Validation harness instruction (LLM-only variants)"
+    "validationHarness": "Validation harness instruction (LLM-only variants)",
+    "participantKindAll": "All kinds",
+    "participantKindUser": "Users",
+    "participantKindCharacter": "Characters",
+    "participantKindAssistant": "Assistants"
   },
   "personas": {
     "title": "Personas",

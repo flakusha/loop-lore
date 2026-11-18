@@ -152,6 +152,18 @@
           </div>
           <div class="form-group" id="participant-group">
             <label class="form-label" for="participant-search">{{{t("chats.characterParticipant")}}}</label>
+            <select
+              class="form-select"
+              id="participant-kind-filter"
+              data-testid="participant-kind-filter"
+              aria-label="{{{t('common.filter')}}}"
+              style="margin-bottom: var(--space-2)"
+            >
+              <option value="all">{{{t("chats.participantKindAll")}}}</option>
+              <option value="user">{{{t("chats.participantKindUser")}}}</option>
+              <option value="character">{{{t("chats.participantKindCharacter")}}}</option>
+              <option value="assistant">{{{t("chats.participantKindAssistant")}}}</option>
+            </select>
             <div style="position: relative">
               <input
                 type="text"

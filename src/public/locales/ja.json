@@ -1635,7 +1635,11 @@
     "outboxQueuedAt": "{time} に待機",
     "outboxDiscard": "破棄",
     "outboxDiscardConfirm": "この待機メッセージを破棄しますか？送信されません。",
-    "validationHarness": "Validation harness instruction (LLM-only variants)"
+    "validationHarness": "Validation harness instruction (LLM-only variants)",
+    "participantKindAll": "All kinds",
+    "participantKindUser": "Users",
+    "participantKindCharacter": "Characters",
+    "participantKindAssistant": "Assistants"
   },
   "personas": {
     "title": "Personas",

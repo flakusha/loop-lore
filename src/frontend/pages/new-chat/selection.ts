@@ -1,9 +1,39 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { ActorType, AgentType, } from "../../../db/enums-core/actors";
 import { filterActors, } from "../shared";
 import { loadMemoriesForActor, } from "./memory";
 import { isGroup, type NewChatCtx, } from "./state";
+
+/** The subset of an `/api/v1/actors` row the kind filter inspects. */
+interface KindableActor {
+  id?: string;
+  actor_type?: string;
+  agent_type?: string;
+}
+
+/**
+ * Narrow actor rows by the participant picker's kind facet. Pure: no DOM,
+ * no mutation of the input array. Unknown/missing kind behaves like "all";
+ * rows missing the field a non-all kind needs are excluded.
+ * @param actors
+ * @param kind - "all" | "user" | "character" | "assistant"
+ * @returns {KindableActor[]}
+ */
+export function filterActorsByKind(actors: KindableActor[], kind: string,): KindableActor[] {
+  switch (kind) {
+    case "user":
+      return actors.filter((a,) => a.actor_type === ActorType.User);
+    case "character":
+      return actors.filter((a,) => a.actor_type === ActorType.Character);
+    case "assistant":
+      return actors.filter((a,) => a.agent_type === AgentType.Ai);
+    default:
+      return actors;
+  }
+}
+
 /**
  * @param ctx
  * @returns {void}
@@ -179,15 +209,20 @@ export function bindSelectionHandlers(ctx: NewChatCtx,): void {
     selectActorFromList(ctx, id,);
   };
 
-  ctx.searchInput!.addEventListener("input", function() {
-    const q = this.value.toLowerCase().trim();
+  const kindSelect = document.querySelector<HTMLSelectElement>("#participant-kind-filter",);
+
+  const renderFromQuery = () => {
+    const q = (ctx.searchInput?.value ?? "").toLowerCase().trim();
     if (!q) {
       if (ctx.resultsEl) { ctx.resultsEl.style.display = "none"; }
       return;
     }
 
-    renderResults(ctx, filterActors(ctx.actors, q,),);
-  },);
+    const inKind = filterActorsByKind(ctx.actors, kindSelect?.value ?? "all",);
+    renderResults(ctx, filterActors(inKind, q,),);
+  };
+
+  ctx.searchInput!.addEventListener("input", renderFromQuery,);
 
   ctx.searchInput!.addEventListener("blur", function() {
     setTimeout(() => {
@@ -195,9 +230,8 @@ export function bindSelectionHandlers(ctx: NewChatCtx,): void {
     }, 200,);
   },);
 
-  ctx.searchInput!.addEventListener("focus", function() {
-    const q = this.value.toLowerCase().trim();
-    if (!q) { return; }
-    renderResults(ctx, filterActors(ctx.actors, q,),);
-  },);
+  ctx.searchInput!.addEventListener("focus", renderFromQuery,);
+
+  kindSelect?.addEventListener("change", renderFromQuery,);
+  kindSelect?.addEventListener("input", renderFromQuery,);
 }

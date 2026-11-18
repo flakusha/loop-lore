@@ -1635,7 +1635,11 @@
     "outboxQueuedAt": "En cola {time}",
     "outboxDiscard": "Descartar",
     "outboxDiscardConfirm": "¿Descartar este mensaje en cola? No se enviará.",
-    "validationHarness": "Validation harness instruction (LLM-only variants)"
+    "validationHarness": "Validation harness instruction (LLM-only variants)",
+    "participantKindAll": "All kinds",
+    "participantKindUser": "Users",
+    "participantKindCharacter": "Characters",
+    "participantKindAssistant": "Assistants"
   },
   "personas": {
     "title": "Personas",

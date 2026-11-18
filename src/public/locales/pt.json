@@ -1635,7 +1635,11 @@
     "outboxQueuedAt": "Na fila {time}",
     "outboxDiscard": "Descartar",
     "outboxDiscardConfirm": "Descartar esta mensagem na fila? Ela não será enviada.",
-    "validationHarness": "Validation harness instruction (LLM-only variants)"
+    "validationHarness": "Validation harness instruction (LLM-only variants)",
+    "participantKindAll": "All kinds",
+    "participantKindUser": "Users",
+    "participantKindCharacter": "Characters",
+    "participantKindAssistant": "Assistants"
   },
   "personas": {
     "title": "Personas",

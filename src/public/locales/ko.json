@@ -1635,7 +1635,11 @@
     "outboxQueuedAt": "{time}에 대기됨",
     "outboxDiscard": "버리기",
     "outboxDiscardConfirm": "대기 중인 메시지를 버리시겠습니까? 전송되지 않습니다.",
-    "validationHarness": "Validation harness instruction (LLM-only variants)"
+    "validationHarness": "Validation harness instruction (LLM-only variants)",
+    "participantKindAll": "All kinds",
+    "participantKindUser": "Users",
+    "participantKindCharacter": "Characters",
+    "participantKindAssistant": "Assistants"
   },
   "personas": {
     "title": "Personas",
