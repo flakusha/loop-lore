@@ -39680,6 +39680,20 @@
     "title": "E2E browser reliability hardening",
     "type": "TASK"
   },
+  "TASK-E2E-BUILD-LOCK-WAITS-WITHOUT-BOUND-BURNS-BROWSER-HOOK-BUDGET": {
+    "hash": "13cc99f",
+    "git_issue": "13cc99f",
+    "extid": "TASK-E2E-BUILD-LOCK-WAITS-WITHOUT-BOUND-BURNS-BROWSER-HOOK-BUDGET",
+    "type": "TASK",
+    "title": "e2e build lock waits without bound, burns browser hook budget",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-build-lock-waits-without-bound-burns-browser-hook-budget.md",
+    "status": "open"
+  },
   "TASK-E2E-ENV-GATED-SCENARIO": {
     "hash": "e8e777f",
     "git_issue": "e8e777f",
