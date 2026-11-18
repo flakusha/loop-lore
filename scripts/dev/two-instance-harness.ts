@@ -347,12 +347,15 @@ async function bootMode(layouts: readonly InstanceLayout[], scratch: string,): P
     console.log(`--- second instance on port ${first.port} exited with code ${exitCode} ---`,);
     console.log(output.length > 0 ? output.slice(-4000,) : "(no output)",);
 
-    const loud = /EADDRINUSE|already in use|port \d+/i.test(output,);
-    if (!loud || exitCode === 0) {
-      console.error("FAIL: the second instance on the bound port did not fail loudly with a port-conflict error",);
+    // The generic Bun startup error contains "port <n>", so accepting it would
+    // pass even when portConflictMessage() never ran. Require the friendly text.
+    const friendly = /already in use — another instance or process holds it/.test(output,) &&
+      /--instance NAME/.test(output,);
+    if (!friendly || exitCode === 0) {
+      console.error("FAIL: the second instance did not print the port-conflict message with the --instance NAME hint",);
       return 1;
     }
-    console.log("OK: the second instance failed loudly on the bound port (port-conflict / EADDRINUSE).",);
+    console.log("OK: the second instance failed with the port-conflict message naming --instance NAME.",);
     return 0;
   } finally {
     for (const one of booted) { one.child.kill("SIGKILL",); }
