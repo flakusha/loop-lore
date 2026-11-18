@@ -3,7 +3,7 @@
 
 # TASK: Remove unused bun-plugin-html dependency
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-code-quality.md
@@ -25,10 +25,10 @@ Pure hygiene: no runtime or gate benefit. Requires a manifest + `bun.lock` chang
 
 **Acceptance criteria**
 
-- [ ] `bun-plugin-html` removed from `package.json` and `bun.lock`.
-- [ ] No source, config or test references it (grep repo-wide).
-- [ ] Install from the updated lockfile succeeds and `bun run check` is green (no new failures).
-- [ ] Build output (`bun run build:frontend`) is unchanged for a representative HTML template.
+- [x] `bun-plugin-html` removed from `package.json` and `bun.lock`.
+- [x] No source, config or test references it (grep repo-wide).
+- [x] Install from the updated lockfile succeeds and `bun run check` is green (no new failures).
+- [x] Build output (`bun run build:frontend`) is unchanged for a representative HTML template.
 
 **Verification command for the implementer**
 `bun install --frozen-lockfile`, `bun run check`, `bun run build:frontend`.
@@ -39,6 +39,7 @@ Pure hygiene: no runtime or gate benefit. Requires a manifest + `bun.lock` chang
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+**Resolved:** 2026-11-18T10:14:23.087Z Implemented on dev: a0057c6aa743b7c39c2604faf153588738e8a5ba (parity gate, minifier notes, runtime policy test, i18n fix) and f6d78d2bb64b07c5d7b36353380a25f1a9c2016e (bun-plugin-html removal).

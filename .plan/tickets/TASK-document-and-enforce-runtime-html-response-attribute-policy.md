@@ -3,7 +3,7 @@
 
 # TASK: Document and enforce runtime HTML response attribute policy
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-architecture.md
@@ -26,10 +26,10 @@ Policy/documentation only — there is no live stripping at runtime (`src/build/
 
 **Acceptance criteria**
 
-- [ ] A written policy enumerates the must-keep attribute classes above with the file:line evidence, colocated with the runtime response code or the plan docs.
-- [ ] The policy states that removing `data-testid` requires renaming the contract and migrating all 7 production query sites plus the e2e selectors before any strip — not a build flag or env threshold.
-- [ ] A regression test asserts the runtime minifier preserves `data-testid`, `hx-*`, `x-*`, `@*`, `:*`, `role`/`aria-*` and `nonce` on a representative fragment (extend `src/content/minify.test.ts`).
-- [ ] No runtime stripping of any of these attributes is introduced.
+- [x] A written policy enumerates the must-keep attribute classes above with the file:line evidence, colocated with the runtime response code or the plan docs.
+- [x] The policy states that removing `data-testid` requires renaming the contract and migrating all 7 production query sites plus the e2e selectors before any strip — not a build flag or env threshold.
+- [x] A regression test asserts the runtime minifier preserves `data-testid`, `hx-*`, `x-*`, `@*`, `:*`, `role`/`aria-*` and `nonce` on a representative fragment (extend `src/content/minify.test.ts`).
+- [x] No runtime stripping of any of these attributes is introduced.
 
 **Verification command for the implementer**
 `bun test src/content/minify.test.ts`, `bun run test:e2e:browser`, `bun run check:parallel --diff-base <base>`.
@@ -40,6 +40,7 @@ Policy/documentation only — there is no live stripping at runtime (`src/build/
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+**Resolved:** 2026-11-18T10:14:23.111Z Implemented on dev: a0057c6aa743b7c39c2604faf153588738e8a5ba (parity gate, minifier notes, runtime policy test, i18n fix) and f6d78d2bb64b07c5d7b36353380a25f1a9c2016e (bun-plugin-html removal).

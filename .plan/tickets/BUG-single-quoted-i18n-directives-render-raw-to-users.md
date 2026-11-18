@@ -3,7 +3,7 @@
 
 # BUG: Single-quoted i18n directives render raw to users
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-i18n.md
@@ -27,10 +27,10 @@ User-visible but cosmetic: affected strings are aria-labels, placeholders and to
 
 **Acceptance criteria**
 
-- [ ] `applyI18n` substitutes single-quoted inner `t('key')` directives as well as double-quoted `t("key")`, with and without surrounding whitespace.
-- [ ] The 28 distinct keys resolve to their translated values (no raw `{{{t(...)}}}` left in rendered HTML for the affected pages).
-- [ ] Existing `|| "Fallback"` text-position forms (e.g. `src/views/settings.html:114`, `src/components/security/sessions-panel.html:10,12,18,41,49,58`) keep working — the change must not swallow a fallback into the key.
-- [ ] `src/regex/template.edge.test.ts:120` updated to assert the new substitution, plus a targeted test for one of the file:line examples above.
+- [x] `applyI18n` substitutes single-quoted inner `t('key')` directives as well as double-quoted `t("key")`, with and without surrounding whitespace.
+- [x] The 28 distinct keys resolve to their translated values (no raw `{{{t(...)}}}` left in rendered HTML for the affected pages).
+- [x] Existing `|| "Fallback"` text-position forms (e.g. `src/views/settings.html:114`, `src/components/security/sessions-panel.html:10,12,18,41,49,58`) keep working — the change must not swallow a fallback into the key.
+- [x] `src/regex/template.edge.test.ts:120` updated to assert the new substitution, plus a targeted test for one of the file:line examples above.
 
 **Verification command for the implementer**
 `bun test src/routes/i18n.test.ts src/routes/views.test.ts src/regex/template.edge.test.ts`, `bun run i18n:keys`, `bun run scripts/check-frontend-templates.ts`, and a rendered-HTML grep for raw `{{{t('` directives.
@@ -41,6 +41,7 @@ User-visible but cosmetic: affected strings are aria-labels, placeholders and to
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+**Resolved:** 2026-11-18T10:14:23.133Z Implemented on dev: a0057c6aa743b7c39c2604faf153588738e8a5ba (parity gate, minifier notes, runtime policy test, i18n fix) and f6d78d2bb64b07c5d7b36353380a25f1a9c2016e (bun-plugin-html removal).

@@ -9601,7 +9601,7 @@
       "frontend"
     ],
     "source": ".plan/tickets/BUG-single-quoted-i18n-directives-render-raw-to-users.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-SIZE-STRICT-PRE-EXISTING-DEV-DRIFT": {
     "epic": "epic-code-quality",
@@ -27180,7 +27180,7 @@
       "gates"
     ],
     "source": ".plan/tickets/TASK-add-html-minify-parity-gate-for-templates-and-attribute-drif.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ADD-MISSING-RPG-MODULE-BARRELS": {
     "epic": "epic-nsfw-game-mechanics",
@@ -39570,7 +39570,7 @@
       "contract"
     ],
     "source": ".plan/tickets/TASK-document-and-enforce-runtime-html-response-attribute-policy.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-DOCUMENT-ASSET-RELATION-GRAPH-ON-2D-CANVAS": {
     "hash": "afdce38",
@@ -58264,7 +58264,7 @@
       "html"
     ],
     "source": ".plan/tickets/TASK-remove-unused-bun-plugin-html-dependency.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-RENDER-JUDGE-LOOP": {
     "hash": "4c11089",
@@ -59064,7 +59064,7 @@
       "configuration"
     ],
     "source": ".plan/tickets/TASK-review-html-minifier-options-and-record-never-enable-list.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-REVIEW-THREAD-COMMENT-MODEL": {
     "hash": "807530b",

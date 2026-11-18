@@ -3,7 +3,7 @@
 
 # TASK: Add HTML minify-parity gate for templates and attribute drift
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-code-quality.md
@@ -26,11 +26,11 @@ All 194 templates now parse and the harmful build-time strip is gone; this gate 
 
 **Acceptance criteria**
 
-- [ ] A check enumerates every tracked `*.html` under `src/views`, `src/components`, `src/partials` (including `src/views/partials`) and minifies each with the production options imported from `src/content/minify.ts`.
-- [ ] The check exits non-zero with the offending file:line on any parse error.
-- [ ] The check exits non-zero on attribute-count drift (before vs after minify) for `data-testid`, `x-*`, `@*`, `:*`, `hx-*`.
-- [ ] Registered in `scripts/check/parallel/gate-table.mjs` as a blocking gate (NOT in `ADVISORY_GATES`).
-- [ ] A controlled regression (one injected nested-quote directive and one injected attribute-stripping option) makes the gate fail.
+- [x] A check enumerates every tracked `*.html` under `src/views`, `src/components`, `src/partials` (including `src/views/partials`) and minifies each with the production options imported from `src/content/minify.ts`.
+- [x] The check exits non-zero with the offending file:line on any parse error.
+- [x] The check exits non-zero on attribute-count drift (before vs after minify) for `data-testid`, `x-*`, `@*`, `:*`, `hx-*`.
+- [x] Registered in `scripts/check/parallel/gate-table.mjs` as a blocking gate (NOT in `ADVISORY_GATES`).
+- [x] A controlled regression (one injected nested-quote directive and one injected attribute-stripping option) makes the gate fail.
 
 **Verification command for the implementer**
 `bun run scripts/check-frontend-templates.ts` and `bun run check:parallel --diff-base <base>`. Baseline to preserve: 194/194 parse.
@@ -41,6 +41,7 @@ All 194 templates now parse and the harmful build-time strip is gone; this gate 
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+**Resolved:** 2026-11-18T10:14:23.035Z Implemented on dev: a0057c6aa743b7c39c2604faf153588738e8a5ba (parity gate, minifier notes, runtime policy test, i18n fix) and f6d78d2bb64b07c5d7b36353380a25f1a9c2016e (bun-plugin-html removal).

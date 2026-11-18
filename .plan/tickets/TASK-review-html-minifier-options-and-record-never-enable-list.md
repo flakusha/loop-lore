@@ -3,7 +3,7 @@
 
 # TASK: Review HTML minifier options and record never-enable list
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-frontend-bundle-optimization.md
@@ -28,10 +28,10 @@ Review the shared HTML minifier option set, keep the spacing-safe choices, and r
 
 **Acceptance criteria**
 
-- [ ] Explicit decision recorded on `conservativeCollapse` / `collapseInlineTagWhitespace` with a before/after spacing check on inline-tag sequences.
-- [ ] `ignoreCustomFragments` / `ignoreCustomComments` either left unset with the reason recorded (194/194 parse) or added with a test proving the locale anchor at `src/views/layout.html:72` survives.
-- [ ] A test (or comment next to `src/content/minify.ts:8-20`) permanently forbids `removeAttributeQuotes` and `removeEmptyElements` with the two concrete failure modes above.
-- [ ] No attribute drift for `data-testid`, `x-*`, `@*`, `:*`, `hx-*`.
+- [x] Explicit decision recorded on `conservativeCollapse` / `collapseInlineTagWhitespace` with a before/after spacing check on inline-tag sequences.
+- [x] `ignoreCustomFragments` / `ignoreCustomComments` either left unset with the reason recorded (194/194 parse) or added with a test proving the locale anchor at `src/views/layout.html:72` survives.
+- [x] A test (or comment next to `src/content/minify.ts:8-20`) permanently forbids `removeAttributeQuotes` and `removeEmptyElements` with the two concrete failure modes above.
+- [x] No attribute drift for `data-testid`, `x-*`, `@*`, `:*`, `hx-*`.
 
 **Verification command for the implementer**
 `bun test src/content/minify.test.ts`, `bun run scripts/check-frontend-templates.ts`, `bun run lint:html`, and `bun run test:e2e:browser` (Alpine/htmx smoke). Baseline: 194/194 parse, testid count unchanged.
@@ -42,6 +42,7 @@ Review the shared HTML minifier option set, keep the spacing-safe choices, and r
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+**Resolved:** 2026-11-18T10:14:23.061Z Implemented on dev: a0057c6aa743b7c39c2604faf153588738e8a5ba (parity gate, minifier notes, runtime policy test, i18n fix) and f6d78d2bb64b07c5d7b36353380a25f1a9c2016e (bun-plugin-html removal).
