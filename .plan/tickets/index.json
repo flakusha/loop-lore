@@ -9585,6 +9585,20 @@
     "source": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md",
     "status": "done"
   },
+  "BUG-SINGLE-QUOTED-I18N-DIRECTIVES-RENDER-RAW-TO-USERS": {
+    "hash": "9286218",
+    "git_issue": "9286218",
+    "extid": "BUG-SINGLE-QUOTED-I18N-DIRECTIVES-RENDER-RAW-TO-USERS",
+    "type": "BUG",
+    "title": "Single-quoted i18n directives render raw to users",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-single-quoted-i18n-directives-render-raw-to-users.md",
+    "status": "open"
+  },
   "BUG-SIZE-STRICT-PRE-EXISTING-DEV-DRIFT": {
     "epic": "epic-code-quality",
     "extid": "BUG-SIZE-STRICT-PRE-EXISTING-DEV-DRIFT",
@@ -27144,6 +27158,20 @@
     "title": "Add HeatPhase state machine for character_heat_cycle.current_phase",
     "type": "TASK"
   },
+  "TASK-ADD-HTML-MINIFY-PARITY-GATE-FOR-TEMPLATES-AND-ATTRIBUTE-DRIF": {
+    "hash": "f253dfe",
+    "git_issue": "f253dfe",
+    "extid": "TASK-ADD-HTML-MINIFY-PARITY-GATE-FOR-TEMPLATES-AND-ATTRIBUTE-DRIF",
+    "type": "TASK",
+    "title": "Add HTML minify-parity gate for templates and attribute drift",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-html-minify-parity-gate-for-templates-and-attribute-drif.md",
+    "status": "open"
+  },
   "TASK-ADD-MISSING-RPG-MODULE-BARRELS": {
     "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-ADD-MISSING-RPG-MODULE-BARRELS",
@@ -39513,6 +39541,20 @@
     "tags": [],
     "title": "Docs UI endpoint linkage",
     "type": "TASK"
+  },
+  "TASK-DOCUMENT-AND-ENFORCE-RUNTIME-HTML-RESPONSE-ATTRIBUTE-POLICY": {
+    "hash": "a05e15d",
+    "git_issue": "a05e15d",
+    "extid": "TASK-DOCUMENT-AND-ENFORCE-RUNTIME-HTML-RESPONSE-ATTRIBUTE-POLICY",
+    "type": "TASK",
+    "title": "Document and enforce runtime HTML response attribute policy",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-document-and-enforce-runtime-html-response-attribute-policy.md",
+    "status": "open"
   },
   "TASK-DOCUMENT-ASSET-RELATION-GRAPH-ON-2D-CANVAS": {
     "hash": "afdce38",
@@ -58189,6 +58231,20 @@
     "source": ".plan/tickets/TASK-remove-or-record-intent-for-stale-empty-diff-worktrees-g2-ti.md",
     "status": "Not Started"
   },
+  "TASK-REMOVE-UNUSED-BUN-PLUGIN-HTML-DEPENDENCY": {
+    "hash": "49947e0",
+    "git_issue": "49947e0",
+    "extid": "TASK-REMOVE-UNUSED-BUN-PLUGIN-HTML-DEPENDENCY",
+    "type": "TASK",
+    "title": "Remove unused bun-plugin-html dependency",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-remove-unused-bun-plugin-html-dependency.md",
+    "status": "open"
+  },
   "TASK-RENDER-JUDGE-LOOP": {
     "hash": "4c11089",
     "git_issue": "4c11089",
@@ -58968,6 +59024,20 @@
     ],
     "source": ".plan/tickets/TASK-retire-the-scripts-worktree-fork-of-giwt-migration-not-delet.md",
     "status": "⬜ Not Started"
+  },
+  "TASK-REVIEW-HTML-MINIFIER-OPTIONS-AND-RECORD-NEVER-ENABLE-LIST": {
+    "hash": "bfe627d",
+    "git_issue": "bfe627d",
+    "extid": "TASK-REVIEW-HTML-MINIFIER-OPTIONS-AND-RECORD-NEVER-ENABLE-LIST",
+    "type": "TASK",
+    "title": "Review HTML minifier options and record never-enable list",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-review-html-minifier-options-and-record-never-enable-list.md",
+    "status": "open"
   },
   "TASK-REVIEW-THREAD-COMMENT-MODEL": {
     "hash": "807530b",
