@@ -91,17 +91,88 @@ function normalise(vec: Float32Array,): Float32Array {
 // ── Embedding ─────────────────────────────────────────────────────────────
 
 /**
+ * True for a loopback base URL — a local llama.cpp / llama-swap server.
+ * @param base
+ * @returns {boolean}
+ */
+function isLoopback(base: string,): boolean {
+  return /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(?:\/|$)/i.test(base,);
+}
+
+/**
+ * Bearer key for the OpenAI-compatible embeddings transport.
+ *
+ * E2E_EMBEDDINGS_KEY is the surface-specific key and is always used.
+ * BYOK_E2E_API_KEY is the shared OpenRouter key: it is only sent to a remote
+ * endpoint, never to a loopback one, so a local llama.cpp server keeps
+ * working unauthenticated exactly as before.
+ * @param base
+ * @returns {string | undefined}
+ */
+function resolveEmbeddingsApiKey(base: string,): string | undefined {
+  const explicit = process.env.E2E_EMBEDDINGS_KEY?.trim();
+  if (explicit) { return explicit; }
+  const shared = process.env.BYOK_E2E_API_KEY?.trim();
+  if (!shared) { return undefined; }
+  return isLoopback(base,) ? undefined : shared;
+}
+
+/**
+ * Input role for asymmetric embedding models (NVIDIA Nemotron wants
+ * "query" | "passage"). EMBEDDINGS_INPUT_TYPE; unset → not sent.
+ * @throws When set to a value other than "query" or "passage".
+ * @returns {"query" | "passage" | undefined}
+ */
+function resolveEmbeddingsInputType(): "query" | "passage" | undefined {
+  const value = process.env.EMBEDDINGS_INPUT_TYPE?.trim();
+  if (value === undefined || value === "") { return undefined; }
+  if (value !== "query" && value !== "passage") {
+    throw new Error(`EMBEDDINGS_INPUT_TYPE must be "query" or "passage" (got "${value}").`,);
+  }
+
+  return value;
+}
+
+/**
  * Embed via an OpenAI-compatible POST /v1/embeddings endpoint (llama.cpp
- * server / llama-swap expose no Ollama /api/embed route).
+ * server / llama-swap expose no Ollama /api/embed route; OpenRouter serves
+ * the same shape under /api/v1).
  * @param text
  * @param model
  * @param baseUrl
+ * @param opts
+ * @param opts.inputType  Role hint for asymmetric embedding models.
  * @throws On transport failure, non-OK status, or an empty response.
  */
-async function embedViaOpenAI(text: string, model: string, baseUrl: string,): Promise<number[]> {
+async function embedViaOpenAI(
+  text: string,
+  model: string,
+  baseUrl: string,
+  opts: { inputType?: "query" | "passage" } = {},
+): Promise<number[]> {
+  const base = baseUrl.replace(/\/+$/, "",);
+  // OpenRouter's base already ends in /v1; llama.cpp's does not.
+  const url = base.endsWith("/v1",) ? `${base}/embeddings` : `${base}/v1/embeddings`;
+  const apiKey = resolveEmbeddingsApiKey(base,);
+  const inputType = opts.inputType ?? resolveEmbeddingsInputType();
+  const body: Record<string, unknown> = { model, input: text, };
+  if (inputType !== undefined) {
+    // NVIDIA's NIM API requires `input_type` ("query" | "passage"). It is sent
+    // twice on purpose: as the documented top-level field and as a provider
+    // option (OpenRouter forwards provider options to the matched provider).
+    const slug = model.includes("/",) ? model.split("/",)[0]! : "nvidia";
+    body.input_type = inputType;
+    body.provider = { options: { [slug]: { input_type: inputType, }, }, };
+  }
+
   const result = await safeFetch<{ data?: { embedding?: number[] }[] }>(
-    `${baseUrl}/v1/embeddings`,
-    { method: "POST", body: { model, input: text, }, timeout: 30_000, },
+    url,
+    {
+      method: "POST",
+      body,
+      headers: apiKey === undefined ? undefined : { Authorization: `Bearer ${apiKey}`, },
+      timeout: 30_000,
+    },
   );
 
   if (!result.ok) {
@@ -113,14 +184,25 @@ async function embedViaOpenAI(text: string, model: string, baseUrl: string,): Pr
   return emb;
 }
 
+/** Options for embedText. */
+export interface EmbedTextOptions {
+  /**
+   * Input role for asymmetric embedding models (NVIDIA Nemotron): "query" for
+   * a search query, "passage" for a stored document. Falls back to
+   * EMBEDDINGS_INPUT_TYPE.
+   */
+  inputType?: "query" | "passage";
+}
+
 /**
  * Embed a single text string via the configured embedding transport
  * (EMBEDDINGS_API: "ollama" default | "openai" for llama.cpp / llama-swap).
  * @param text
+ * @param opts
  * @throws If the embedding call fails or returns no results.
  * @returns {Promise<Float32Array<ArrayBufferLike>>}
  */
-export async function embedText(text: string,): Promise<Float32Array> {
+export async function embedText(text: string, opts: EmbedTextOptions = {},): Promise<Float32Array> {
   const model = resolveEmbedModel();
   // Exec log: embeddings is a background transport (raw HTTP or a provider
   // dispatch, neither of which passes through callWithFailover), so it records
@@ -130,7 +212,9 @@ export async function embedText(text: string,): Promise<Float32Array> {
   try {
     let emb: number[] | undefined;
     if (process.env.EMBEDDINGS_API === "openai") {
-      emb = await embedViaOpenAI(text, model, resolveEmbeddingsBaseUrl(),);
+      emb = await embedViaOpenAI(text, model, resolveEmbeddingsBaseUrl(), {
+        inputType: opts.inputType,
+      },);
     } else {
       emb = (await embedDispatch(buildOllamaState(), text, model,))[0];
     }

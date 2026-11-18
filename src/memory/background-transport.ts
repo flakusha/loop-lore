@@ -33,6 +33,38 @@ function envUrl(name: string,): string | undefined {
   return value !== undefined && value.trim() !== "" ? value : undefined;
 }
 
+/** Rerank wire provider: "ollama" (default, llama.cpp) | "openrouter". */
+export type RerankProvider = "ollama" | "openrouter";
+
+/** OpenRouter's OpenAI-compatible API base. */
+export const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
+
+/**
+ * Provider selection for the rerank wire: E2E_RERANK_PROVIDER=openrouter picks
+ * the OpenRouter wire; anything else keeps the default llama.cpp wire.
+ * @returns {RerankProvider}
+ */
+export function resolveRerankProvider(): RerankProvider {
+  return process.env.E2E_RERANK_PROVIDER === "openrouter" ? "openrouter" : "ollama";
+}
+
+/**
+ * Bearer key for the rerank wire (E2E_RERANK_KEY, else the shared
+ * BYOK_E2E_API_KEY). The shared key is only sent to a remote endpoint, never
+ * to a loopback one. Unset → no Authorization header.
+ * @param base - The endpoint base the key would be sent to.
+ * @returns {string | undefined}
+ */
+export function resolveRerankApiKey(base: string,): string | undefined {
+  const explicit = process.env.E2E_RERANK_KEY?.trim();
+  if (explicit) { return explicit; }
+  const shared = process.env.BYOK_E2E_API_KEY?.trim();
+  if (!shared) { return undefined; }
+  return /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(?:\/|$)/i.test(base,)
+    ? undefined
+    : shared;
+}
+
 /**
  * Resolve the endpoint for a background model call.
  * @param envNames - Env vars in descending precedence; the first match wins

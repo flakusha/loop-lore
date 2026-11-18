@@ -2,9 +2,17 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Cross-encoder rerank via the llama.cpp `/rerank` endpoint (llama-server /
- * llama-swap).  Rerank scores are model-specific and never comparable to
- * cosine similarity — callers fail open to the cosine ordering on any error.
+ * Cross-encoder rerank.  Two wire formats share one response shape:
+ *
+ *   - default: the llama.cpp `/rerank` endpoint (llama-server / llama-swap),
+ *     reached at `{base}/rerank` with a Cohere-style body
+ *     `{model, query, documents, top_n}` and results ordered by relevance.
+ *   - OpenRouter (`E2E_RERANK_PROVIDER=openrouter`): the same body and result
+ *     shape at `{base}/rerank`, where base defaults to
+ *     `https://openrouter.ai/api/v1`, plus a Bearer header.
+ *
+ * Rerank scores are model-specific and never comparable to cosine similarity
+ * — callers fail open to the cosine ordering on any error.
  */
 
 import type { Kysely, } from "kysely";
@@ -13,7 +21,12 @@ import type { GenerationRoutingConfig, } from "../generation/routing/routing-con
 import { BACKGROUND, toHarnessTaskType, } from "../generation/routing/task-signal";
 import { recordExecRun, } from "../harness/exec-recorder";
 import { safeFetch, } from "../utils/safe-fetch";
-import { resolveBackgroundEndpoint, } from "./background-transport";
+import {
+  OPENROUTER_BASE_URL,
+  resolveBackgroundEndpoint,
+  resolveRerankApiKey,
+  resolveRerankProvider,
+} from "./background-transport";
 
 /** One rerank result: input document position + model relevance score. */
 export interface RerankHit {
@@ -52,12 +65,17 @@ export async function rerankViaLlamaCpp(
   if (docs.length === 0) { return []; }
   const model = opts.model ?? process.env.RERANK_MODEL;
   if (!model) { throw new Error("RERANK_MODEL is not set; rerank is disabled.",); }
+  const provider = resolveRerankProvider();
   // OFF the chat hot path: declare the `background` task signal so the router
   // orders these endpoint candidates instead of taking env precedence blindly.
-  const baseUrl = opts.baseUrl ?? resolveBackgroundEndpoint(
-    ["RERANK_BASE_URL", "EMBEDDINGS_BASE_URL", "OLLAMA_BASE_URL",],
-    { routing: opts.routing, model, },
-  );
+  // The OpenRouter wire has its own base (the local llama.cpp base is a
+  // different host); RERANK_BASE_URL overrides it for self-hosted proxies.
+  const baseUrl = opts.baseUrl ?? (provider === "openrouter"
+    ? (process.env.RERANK_BASE_URL ?? OPENROUTER_BASE_URL)
+    : resolveBackgroundEndpoint(
+      ["RERANK_BASE_URL", "EMBEDDINGS_BASE_URL", "OLLAMA_BASE_URL",],
+      { routing: opts.routing, model, },
+    ));
 
   // Exec log: rerank is a raw HTTP call, not an LLMProvider dispatch, so it
   // bypasses callWithFailover and records here. No cost metadata exists on a
@@ -75,13 +93,17 @@ export async function rerankViaLlamaCpp(
     },);
   };
 
+  const apiKey = provider === "openrouter" ? resolveRerankApiKey(baseUrl,) : undefined;
+
   try {
     const result = await safeFetch<{ results?: { index?: unknown; relevance_score?: unknown }[] }>(
-      `${baseUrl}/rerank`,
+      `${baseUrl.replace(/\/+$/, "",)}/rerank`,
       {
         method: "POST",
         body: { model, query, documents: docs, top_n: opts.topN, },
-        timeout: opts.timeoutMs ?? 2000,
+        headers: apiKey === undefined ? undefined : { Authorization: `Bearer ${apiKey}`, },
+        // A remote rerank is far slower than a local llama.cpp one.
+        timeout: opts.timeoutMs ?? (provider === "openrouter" ? 30_000 : 2000),
       },
     );
 
@@ -97,7 +119,7 @@ export async function rerankViaLlamaCpp(
     }
 
     recordExec("ok", null,);
-    return payload.results.map((entry,) => {
+    const hits = payload.results.map((entry,) => {
       const { index, relevance_score: score, } = entry;
       if (typeof index !== "number" || index < 0 || index >= docs.length) {
         recordExec("error", `result index ${String(index,)} out of range`,);
@@ -111,6 +133,10 @@ export async function rerankViaLlamaCpp(
 
       return { index, score, };
     },);
+
+    // Relevance order is the contract: the caller reorders its shortlist by
+    // hit order, so sort defensively (both servers already sort).
+    return hits.sort((a, b,) => b.score - a.score);
   } catch (error) {
     recordExec("error", (error as Error).message,);
     throw error;
