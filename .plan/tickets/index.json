@@ -24429,6 +24429,24 @@
     "title": "gallery uploadChatAssets runs uploads sequentially",
     "type": "PERF"
   },
+  "SOL-BLENDER-JOB-BOUNDARY-AND-CONTRACT": {
+    "hash": "98a44e1",
+    "git_issue": "98a44e1",
+    "extid": "SOL-BLENDER-JOB-BOUNDARY-AND-CONTRACT",
+    "type": "SOL",
+    "title": "Blender job boundary and contract",
+    "label": "sol",
+    "priority": "medium",
+    "epic": "epic-external-creative-tool-bridge",
+    "project": "",
+    "tags": [
+      "blender",
+      "integration",
+      "contract"
+    ],
+    "source": ".plan/tickets/SOL-blender-job-boundary-and-contract.md",
+    "status": "open"
+  },
   "TASK-001": {
     "epic": "epic-frontend-components",
     "extid": "TASK-001",
@@ -42865,6 +42883,24 @@
     "tags": [],
     "source": ".plan/tickets/TASK-federation-workload-routing-policy.md",
     "status": "done"
+  },
+  "TASK-FENCE-3D-WORKFLOW-NODE-LICENSES": {
+    "hash": "90bebe1",
+    "git_issue": "90bebe1",
+    "extid": "TASK-FENCE-3D-WORKFLOW-NODE-LICENSES",
+    "type": "TASK",
+    "title": "Fence 3D workflow node licenses",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-3d-generation",
+    "project": "",
+    "tags": [
+      "3d",
+      "license",
+      "comfyui"
+    ],
+    "source": ".plan/tickets/TASK-fence-3d-workflow-node-licenses.md",
+    "status": "open"
   },
   "TASK-FETCHSKIPCOOLDOWNS-ISSUES-ONE-QUERY-PER-COOLING-ACTOR": {
     "hash": "8383ed3",
