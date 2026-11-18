@@ -51,6 +51,9 @@ export const HarnessRunSummarySchema = Type.Object({
   // Turn correlation id; null on every line written before turns were
   // correlated, and on paths with no turn in scope (an initial greeting).
   turnId: Type.Union([Type.String(), Type.Null(),],),
+  // Instance slug that recorded the run; null on every line written before
+  // per-instance attribution existed.
+  instanceId: Type.Union([Type.String(), Type.Null(),],),
 },);
 
 /**

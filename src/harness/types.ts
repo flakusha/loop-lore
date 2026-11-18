@@ -5,7 +5,7 @@
  * Harness exec log record types.
  *
  * The TS interface is camelCase; the persisted JSONL uses snake_case wire names
- * so `.harness/executions.jsonl` greps the same as the agent ledger's
+ * so `<instance-dir>/harness/executions.jsonl` greps the same as the agent ledger's
  * `.ledger.jsonl`. That wire half — `HarnessRunWire`, `serializeRun` and
  * `deserializeRun` — lives in ./types-wire, and is re-exported here so
  * existing `from "./types"` imports keep working.
@@ -21,7 +21,7 @@ export type { HarnessResult, HarnessTaskType, HarnessTier, } from "./types-wire"
 /** Tools the run touched (tool names, not payloads). */
 export type HarnessTool = string;
 
-/** One line of `.harness/executions.jsonl` in camelCase. */
+/** One line of `<instance-dir>/harness/executions.jsonl` in camelCase. */
 export interface HarnessRunRecord {
   runId: string;
   ts: string;

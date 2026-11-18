@@ -68,6 +68,9 @@ export interface HarnessRunRow {
   tools: number;
   branch: string;
   gitSha: string;
+  // Instance slug that recorded the run; the dash when the run predates
+  // per-instance attribution.
+  instanceId: string;
 }
 
 /** One per-model rollup row, pre-formatted. */
@@ -169,6 +172,7 @@ export function buildRunRows(runs: HarnessRunSummary[],): HarnessRunRow[] {
     tools: run.toolCount,
     branch: textOrDash(run.branch,),
     gitSha: textOrDash(run.gitSha,),
+    instanceId: textOrDash(run.instanceId,),
   }));
 }
 

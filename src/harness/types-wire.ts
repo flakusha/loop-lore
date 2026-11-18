@@ -3,7 +3,7 @@
 
 /**
  * Harness exec log WIRE format: the snake_case shape written to
- * `.harness/executions.jsonl`, plus the two functions that translate between
+ * `<instance-dir>/harness/executions.jsonl`, plus the two functions that translate between
  * it and the camelCase `HarnessRunRecord`.
  *
  * Split from `types.ts` because read and write are two concerns: that file
