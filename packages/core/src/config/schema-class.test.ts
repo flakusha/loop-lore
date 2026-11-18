@@ -104,6 +104,20 @@ describe("ConfigSchema", () => {
     },).toThrow("autorouteScenario",);
   });
 
+  test("validate rejects a short BYOK master secret but allows an unset one", () => {
+    const cfg = structuredClone(createConfigSchema().defaults,);
+    cfg.byoKey.enabled = true;
+    cfg.byoKey.encryptionKey = "short";
+    expect(() => {
+      validate(cfg,);
+    },).toThrow("byoKey.encryptionKey",);
+
+    cfg.byoKey.encryptionKey = undefined;
+    expect(() => {
+      validate(cfg,);
+    },).not.toThrow();
+  });
+
   test("validate accepts postgres without a url (the runtime is always SQLite)", () => {
     const cfg = structuredClone(createConfigSchema().defaults,);
     cfg.db.type = "postgres";

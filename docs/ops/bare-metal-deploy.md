@@ -460,6 +460,8 @@ If it fails: open a ticket, fix the backup script before continuing the cycle.
 
 DB passwords, ACME account keys, BYOK provider tokens live in `/etc/loop-lore/secrets.env` with `chmod 0600`, owned by `loop-lore:loop-lore`. The runbook does not inline secrets; use your existing secret manager (Vault, sops, age, etc.).
 
+When BYOK is enabled, set `byoKey.encryptionKey` to a stable secret of at least 32 characters. Boot warns loudly if it is missing; stored v3 keys are sealed per user and cannot be decrypted after the secret changes.
+
 ---
 
 ## 10. Verification Checklist (Run Once After Deploy)

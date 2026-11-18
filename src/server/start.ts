@@ -60,6 +60,15 @@ import { closeHarnessRuntime, getHarnessRuntime, initHarnessRuntime, } from "../
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/** Warn loudly when BYOK is on but no master secret can seal stored keys. */
+function warnByokWithoutSecret(config: Config, logger: ReturnType<typeof getLogger>,): void {
+  if (config.byoKey?.enabled && !config.byoKey.encryptionKey) {
+    logger.warn("BYOK enabled without byoKey.encryptionKey; stored keys cannot be sealed", {
+      module: "server",
+    },);
+  }
+}
+
 /**
  * Bootstrap the Loop Lore HTTP/HTTPS server: init subsystems, seed the DB,
  * pre-compress static assets, load plugins, and wire graceful shutdown.
@@ -148,6 +157,7 @@ export async function start() {
   }
 
   const startLogger = getLogger();
+  warnByokWithoutSecret(config, startLogger,);
   if (failedProviders.length > 0) {
     startLogger.warn("providers unreachable on startup", {
       module: "server",

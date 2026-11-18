@@ -71,8 +71,8 @@ SERVER_ENCRYPTION_KEY (env var, hex 64 chars = 256 bit)
 
 ## BYOK — `src/crypto/byok.ts`
 
-AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iterations, SHA-256).
-`encryptValue(plaintext, secret)` / `decryptValue(ciphertext, secret)`.
+AES-256-GCM for API key encryption at rest. Rows written since the v3 envelope use a per-user KEK derived with HKDF-SHA256 from `byoKey.encryptionKey` and the user id; legacy v1/v2 rows keep the global-secret path.
+`encryptValue` / `decryptValue` handle legacy rows; `encryptVersioned` / `decryptValue` handle tagged v3 rows with AAD binding user id and provider name.
 
 ---
 

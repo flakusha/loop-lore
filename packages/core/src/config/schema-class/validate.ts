@@ -7,6 +7,17 @@ import { validateAcpProfiles, } from "../sections/harness";
 import { PROMPT_BUDGET_BOUNDS, } from "../sections/prompt";
 
 /**
+ * @param config - Merged config to check.
+ * @throws {Error} If an enabled BYOK store has a too-short master secret.
+ */
+function validateByoKey(config: Config,): void {
+  const secret = config.byoKey?.encryptionKey;
+  if (config.byoKey?.enabled && secret && secret.length < 32) {
+    throw new Error("byoKey.encryptionKey must be at least 32 characters when BYOK is enabled",);
+  }
+}
+
+/**
  * @param config - Fully merged config to check, after defaults are applied.
  * @throws {Error} If any config value fails schema validation.
  */
@@ -30,6 +41,8 @@ export const validate = (config: Config,): void => {
       }`,
     );
   }
+
+  validateByoKey(config,);
 
   if (config.server.port < 0 || config.server.port > 65_535) {
     throw new Error(`Invalid server.port: ${config.server.port}. Must be 0-65535`,);
