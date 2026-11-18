@@ -94,6 +94,11 @@ const BASELINE = [
   "src/characters/seed/avatar.ts",
   "src/characters/seed/promote.ts",
   "src/content/hash-injection.ts",
+  // Boot-time legacy backup-pool warning only: `existsSync` checks a FIXED
+  // path derived from LEGACY_DATA_DIRS, never a command-handler-supplied path,
+  // and the warning fires from getDatabase() during startup. No tool can
+  // steer it, so the interception-proof named binding is harmless here.
+  "src/db/legacy-backup-pool.ts",
   "src/db/migrate.ts",
   "src/db/reinit-archive.ts",
   "src/db/reinit.ts",
