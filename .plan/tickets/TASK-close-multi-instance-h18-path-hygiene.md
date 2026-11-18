@@ -3,7 +3,8 @@
 
 # TASK: Close multi-instance H18 path hygiene
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Close H18 instance path hygiene leg
 **Priority:** medium
 **Effort:** Small
 
