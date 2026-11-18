@@ -226,8 +226,8 @@ describe("handleErrorResponse", () => {
     }
   });
 
-  test("maps 400 and 422 to non-retryable errors", async () => {
-    for (const status of [400, 422,]) {
+  test("maps 400, 422 and 501 to non-retryable errors", async () => {
+    for (const status of [400, 422, 501,]) {
       const resp = Response.json({ error: { message: "nope", }, }, { status, },);
       try {
         await handleErrorResponse(resp,);

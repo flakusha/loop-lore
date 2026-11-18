@@ -262,6 +262,14 @@ export async function handleErrorResponse(response: Response,): Promise<never> {
       throw new ProviderError(message, undefined, 422, false,);
     }
 
+    case 501: {
+      // Unsupported capability (e.g. decision model without an image
+      // projector, non-decision GGUF) — permanent for this provider+model,
+      // never worth a retry. Failover across providers stays in
+      // callWithFailover, which sees a terminal error, not a backoff.
+      throw new ProviderError(message, undefined, 501, false,);
+    }
+
     case 500:
     case 502:
     case 503: {
