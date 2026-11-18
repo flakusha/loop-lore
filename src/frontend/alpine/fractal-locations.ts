@@ -11,18 +11,13 @@
 
 import { jsonStringifyOr, } from "../../utils";
 import type { TravelRouteStopRow, } from "../../validation/schemas/travel-wire";
+import { type BadgeMeta, renderTreeMarkup, type TreeNode, } from "./fractal-tree-render";
 import { apiFetch, } from "./htmx";
+import { kindOptions, } from "./location-explorer-controls";
 import { log as rootLog, } from "./logger";
 import { fetchWorldJson, } from "./world-fetch";
 
 const log = rootLog.child({ module: "fractal-locations", },);
-
-interface TreeNode {
-  id: string;
-  name: string;
-  parent_location_id: string | null;
-  children: TreeNode[];
-}
 
 interface RouteRow {
   id: string;
@@ -52,10 +47,13 @@ export interface FractalState {
   attaching: boolean;
   selectedRouteId: string;
   routeDetail: RouteDetail | null;
+  filterKind: string;
+  routeMeta: Record<string, BadgeMeta>;
   readonly flatLocations: Array<{ id: string; label: string; depth: number }>;
   init(): void;
   loadTree(): Promise<void>;
   loadRoutes(): Promise<void>;
+  loadRouteMeta(): Promise<void>;
   selectRoute(routeId: string,): Promise<void>;
   createRoute(): Promise<void>;
   attachTransport(): Promise<void>;
@@ -83,6 +81,8 @@ export function buildFractalState(worldId: string,): FractalState {
     attaching: false,
     selectedRouteId: "",
     routeDetail: null,
+    filterKind: "",
+    routeMeta: {},
 
     get flatLocations(): Array<{ id: string; label: string; depth: number }> {
       const out: Array<{ id: string; label: string; depth: number }> = [];
@@ -137,6 +137,7 @@ export function buildFractalState(worldId: string,): FractalState {
         if (body) {
           this.routes = body.data ?? [];
           this.loadedRoutes = true;
+          await this.loadRouteMeta();
           if (this.routes.length > 0 && !this.selectedRouteId) {
             await this.selectRoute(this.routes[0]!.id,);
           }
@@ -145,6 +146,27 @@ export function buildFractalState(worldId: string,): FractalState {
         log.warn("routes load failed",);
       } finally {
         this.loadingRoutes = false;
+      }
+    },
+
+    /**
+     * Cache a stop count per route so tree badges can compute ETA.
+     * @returns {Promise<void>}
+     */
+    async loadRouteMeta() {
+      for (const route of this.routes) {
+        const body = this.routeMeta[route.id]
+          ? null
+          : await fetchWorldJson<{ data?: RouteDetail }>(
+            this.worldId,
+            `/travel-routes/${encodeURIComponent(route.id,)}`,
+          );
+
+        this.routeMeta[route.id] ??= [
+          route.name,
+          Math.max(body?.data?.stops?.length ?? 0, 1,),
+          Math.max(route.seconds_per_unit, 1,),
+        ];
       }
     },
 
@@ -230,5 +252,7 @@ export function buildFractalState(worldId: string,): FractalState {
   };
 }
 
-(globalThis as unknown as { fractalLocationsState?: (id: string,) => FractalState }).fractalLocationsState =
-  buildFractalState;
+const globals = globalThis as unknown as Record<string, unknown>;
+globals.fractalLocationsState = buildFractalState;
+globals.fractalKindOptions = kindOptions;
+globals.fractalTreeMarkup = renderTreeMarkup;

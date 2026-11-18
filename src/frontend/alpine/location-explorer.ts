@@ -9,7 +9,7 @@
 // parent_location_id), and shows a detail pane for the selected location.
 // It is read-only — location CRUD lives in the Locations tab (world-locations.ts).
 import { jsonParseOr, } from "../../utils";
-import { locationExplorerControls, } from "./location-explorer-controls";
+import { locationExplorerControls, matchesKind, } from "./location-explorer-controls";
 import { log as rootLog, } from "./logger";
 import { fetchWorldJson, } from "./world-fetch";
 
@@ -22,6 +22,13 @@ export interface ExplorerLocation {
   parent_location_id: string | null;
   connections: string;
   publication_status: string;
+  // Fractal tree rows carry these; legacy rows may not.
+  kind?: string | null;
+  mobility_mode?: string | null;
+  path?: string | null;
+  depth?: number | null;
+  current_route_id?: string | null;
+  travel_progress?: number | null;
 }
 
 /** */
@@ -68,6 +75,7 @@ globalThis.locationExplorerState = function(worldId: string,) {
     expandedIds: {} as Record<string, boolean>,
     // ── Filter fields (all optional / empty = no filter) ──
     filterStatus: "" as string,
+    filterKind: "" as string,
     filterHasState: "" as "" | "yes" | "no",
     filterAtmosphere: "" as string,
     filterWeather: "" as string,
@@ -122,6 +130,49 @@ globalThis.locationExplorerState = function(worldId: string,) {
       this.expandedIds[id] = !this.expandedIds[id];
     },
 
+    /** IDs surviving the current filters — shared by flat and hierarchical views. */
+    get filteredIds(): Set<string> {
+      return new Set(this.filteredLocations.map((l,) => l.id),);
+    },
+
+    /** Filtered top-level rows; roots are always visible in the tree. */
+    get visibleRoots(): ExplorerLocation[] {
+      const allowed = this.filteredIds;
+      return this.roots.filter((l,) => allowed.has(l.id,));
+    },
+
+    /** Filtered children, gated on the parent being expanded. */
+    visibleChildrenOf(id: string,): ExplorerLocation[] {
+      if (!this.isExpanded(id,)) { return []; }
+      const allowed = this.filteredIds;
+      return this.childrenOf(id,).filter((l,) => allowed.has(l.id,));
+    },
+
+    /** Flat DFS pre-order of the visible tree — collapse hides every descendant. */
+    get visibleLocations(): ExplorerLocation[] {
+      const out: ExplorerLocation[] = [];
+      const seen = new Set<string>();
+      const walk = (nodes: ExplorerLocation[],) => {
+        for (const node of nodes) {
+          if (seen.has(node.id,)) { continue; }
+          seen.add(node.id,);
+          out.push(node,);
+          walk(this.visibleChildrenOf(node.id,),);
+        }
+      };
+
+      walk(this.visibleRoots,);
+      return out;
+    },
+
+    /**
+     * @param id row id
+     * @returns true when the row is in the visible (filtered + expanded) tree
+     */
+    isVisible(id: string,): boolean {
+      return this.visibleLocations.some((l,) => l.id === id);
+    },
+
     get filteredLocations(): ExplorerLocation[] {
       const q = this.search.trim().toLowerCase();
       const status = this.filterStatus;
@@ -130,6 +181,7 @@ globalThis.locationExplorerState = function(worldId: string,) {
       const weather = this.filterWeather;
       const timeOfDay = this.filterTimeOfDay;
       const topLevelOnly = this.filterTopLevelOnly;
+      const kindFilter = this.filterKind;
       const stateByLoc: Record<string, ExplorerLocationState | undefined> = {};
       for (const s of this.states) { stateByLoc[s.location_id] = s; }
       const out: ExplorerLocation[] = [];
@@ -143,6 +195,8 @@ globalThis.locationExplorerState = function(worldId: string,) {
 
         // Status
         if (status && l.publication_status !== status) { continue; }
+        // Fractal kind (chip label or lowercase kind value)
+        if (!matchesKind(l, kindFilter,)) { continue; }
         // Top-level only
         if (topLevelOnly && l.parent_location_id) { continue; }
         // State-driven filters (skip if state absent — only filter when state has value)

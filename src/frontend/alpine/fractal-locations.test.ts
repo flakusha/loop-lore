@@ -4,6 +4,7 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { buildFractalState, } from "./fractal-locations";
 import type { FractalState, } from "./fractal-locations";
+import { formatTransportBadge, renderTreeMarkup, } from "./fractal-tree-render";
 
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 
@@ -135,5 +136,69 @@ describe("createRoute", () => {
     s.newRoute = { name: "   ", kind: "sea", loop: false, secondsPerUnit: 60, };
     await s.createRoute();
     expect(calls.length,).toBe(0,);
+  });
+});
+
+type TreeRow = FractalState["tree"][number];
+
+const mk = (
+  id: string,
+  depth: number,
+  kind = "region",
+  currentRouteId: string | null = null,
+  travelProgress = 0,
+  children: TreeRow[] = [],
+): TreeRow => ({
+  id,
+  name: id,
+  path: `/${id}/`,
+  depth,
+  kind,
+  mobility_mode: kind === "transport" ? "free" : "static",
+  current_route_id: currentRouteId,
+  travel_progress: travelProgress,
+  children,
+});
+
+describe("renderTreeMarkup", () => {
+  test("renders every level of a 4-level chain", () => {
+    const deep = mk("d", 3, "room", null, 0, [],);
+    deep.name = "Deep & Co";
+    const tree = [
+      mk("a", 0, "region", null, 0, [
+        mk("b", 1, "settlement", null, 0, [mk("c", 2, "building", null, 0, [deep,],),],),
+      ],),
+    ];
+
+    const html = renderTreeMarkup(tree, {},);
+    expect(html.match(/data-testid="fractal-tree-node"/g,)?.length,).toBe(4,);
+    for (const depth of [0, 1, 2, 3,]) {
+      expect(html,).toContain(`data-depth="${depth}"`,);
+    }
+
+    expect(html,).toContain("Deep &amp; Co",);
+  });
+
+  test("transport badge formats route name, progress % and ETA", () => {
+    const ship = mk("ship", 1, "transport", "r1", 2,);
+    const meta = { r1: ["Sea Lane", 5, 30,] as const, };
+    expect(formatTransportBadge(ship, meta.r1,),).toBe("Sea Lane · 50% · ETA 1m",);
+    const html = renderTreeMarkup([ship,], meta,);
+    expect(html,).toContain('data-testid="fractal-transport-badge"',);
+    expect(html,).toContain("Sea Lane · 50% · ETA 1m",);
+  });
+
+  test("static nodes render no transport badge", () => {
+    const html = renderTreeMarkup([mk("home", 0,),], {},);
+    expect(html,).toContain("home",);
+    expect(html,).not.toContain("fractal-transport-badge",);
+  });
+
+  test("kind filter keeps matches and their ancestors", () => {
+    const ship = mk("ship", 2, "transport",);
+    const tree = [mk("a", 0, "region", null, 0, [mk("b", 1, "building", null, 0, [ship,],),],),];
+    const html = renderTreeMarkup(tree, {}, "Transport",);
+    expect(html.match(/data-testid="fractal-tree-node"/g,)?.length,).toBe(3,);
+    expect(renderTreeMarkup(tree, {}, "Pocket",),).not.toContain("fractal-tree-node",);
   });
 });

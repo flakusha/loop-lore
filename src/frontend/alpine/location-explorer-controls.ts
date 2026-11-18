@@ -12,7 +12,23 @@
  * Kept separate from `location-explorer.ts` so the core data layer
  * stays under the 250L size-strict gate.
  */
+import { LocationKind, } from "../../db/enums-story/world";
 import type { ExplorerLocation, ExplorerLocationState, } from "./location-explorer";
+
+/** Chip labels for the fractal-kind filter (All + every LocationKind, in enum order). */
+export const kindOptions: readonly string[] = [
+  "All",
+  ...Object.values(LocationKind,).map((kind,) => kind.charAt(0,).toUpperCase() + kind.slice(1,)),
+];
+
+/**
+ * True when `filterKind` is unset/"All" or matches the row's fractal kind
+ * (case-insensitive, so chips labelled "Transport" match `kind='transport'`).
+ */
+export function matchesKind(loc: { kind?: string | null }, filterKind: string,): boolean {
+  if (!filterKind || filterKind.toLowerCase() === "all") { return true; }
+  return (loc.kind ?? "").toLowerCase() === filterKind.toLowerCase();
+}
 
 interface ExplorerControlState {
   worldId: string;
@@ -25,6 +41,7 @@ interface ExplorerControlState {
   filterAtmosphere: string;
   filterWeather: string;
   filterTimeOfDay: string;
+  filterKind?: string;
   filterTopLevelOnly: boolean;
   atmosphereOptions: string[];
   weatherOptions: string[];
@@ -86,6 +103,7 @@ export const locationExplorerControls = {
     return Boolean(
       this.search.trim() ||
         this.filterStatus ||
+        this.filterKind ||
         this.filterHasState ||
         this.filterAtmosphere ||
         this.filterWeather ||
@@ -101,6 +119,7 @@ export const locationExplorerControls = {
   clearFilters(this: ExplorerControlState,) {
     this.search = "";
     this.filterStatus = "";
+    this.filterKind = "";
     this.filterHasState = "";
     this.filterAtmosphere = "";
     this.filterWeather = "";
