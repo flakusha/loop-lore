@@ -7,6 +7,10 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ## [Unreleased]
 
+### Fixed
+
+- **Uploads and TLS certificates stay in the runtime instance dir** — the shipped path defaults are anchored at `DATA_DIR`, which freezes at import time (before the effective server bind is known), so an unnamed instance wrote its uploads and certificates to `<state>/default/` while its database, exec log and backups went to `<state>/port-<port>/`. A configured path that lies under the frozen `DATA_DIR` (or carries the portable `${DATA_DIR}` placeholder the published schema emits) is now re-anchored onto the runtime instance dir; a custom absolute path is still used verbatim.
+
 ## [1.0.0] - 2026-11-18
 
 First stable release. An operator can install loop-lore, gate who runs what, import cards without silent loss, and run chat from a phone browser, with a finalize cadence fast enough to ship fixes the same day.

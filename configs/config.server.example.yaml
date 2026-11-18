@@ -6,6 +6,6 @@
 server:
   port: 3000
   host: "localhost"
-  # tls: # WARNING: repo-sibling paths escape the per-instance state dir — keep commented for the XDG default
-  #   key: "../loop-lore-data/certs/key.pem"
-  #   cert: "../loop-lore-data/certs/cert.pem"
+  # tls: # resolves inside THIS instance's state dir
+  #   key: "${DATA_DIR}/certs/key.pem"
+  #   cert: "${DATA_DIR}/certs/cert.pem"

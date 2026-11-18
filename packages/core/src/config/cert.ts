@@ -14,8 +14,9 @@
 
 import { getLogger, } from "@/logger";
 import { existsSync, mkdirSync, } from "node:fs";
-import { dirname, isAbsolute, join, } from "node:path";
+import { dirname, } from "node:path";
 import { platform, } from "node:process";
+import { resolveInstancePath, } from "./instance-path";
 import type { TlsConfig, } from "./schema";
 import { resolveInstanceDir, } from "./state-dir";
 
@@ -42,7 +43,9 @@ export interface EnsureTlsCertsOptions {
 /**
  * Ensure TLS key + cert exist. Auto-generates self-signed if missing.
  * Relative paths resolve against the instance dir — never the process cwd, so
- * the cert location does not depend on where the app was launched.
+ * the cert location does not depend on where the app was launched. A path
+ * anchored at the import-frozen DATA_DIR (the shipped default) is re-anchored
+ * onto the runtime instance dir; every other absolute path wins as-is.
  * @param configPath
  * @param opts
  * @returns TlsFiles paths if available, null if TLS is unavailable.
@@ -50,8 +53,8 @@ export interface EnsureTlsCertsOptions {
 export function ensureTlsCerts(configPath: TlsFiles, opts?: EnsureTlsCertsOptions,): TlsFiles | null {
   const base = opts?.instanceDir ?? resolveInstanceDir(process.env,);
   const resolved: TlsFiles = {
-    key: isAbsolute(configPath.key,) ? configPath.key : join(base, configPath.key,),
-    cert: isAbsolute(configPath.cert,) ? configPath.cert : join(base, configPath.cert,),
+    key: resolveInstancePath(configPath.key, { instanceDir: base, },),
+    cert: resolveInstancePath(configPath.cert, { instanceDir: base, },),
   };
 
   // Both exist — use as-is

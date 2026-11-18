@@ -9,8 +9,10 @@
 import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
-import { join, } from "node:path";
-import { resolveInstanceDir, } from "../../config/state-dir";
+import { dirname, join, } from "node:path";
+import { DATA_DIR, } from "../../config/constants";
+import { ASSETS_DEFAULTS, } from "../../config/sections/assets";
+import { resolveDbPath, resolveInstanceDir, } from "../../config/state-dir";
 import { deleteFile, getAssetFilePath, isStoragePathInUploadDir, resolveUploadDir, storeFile, } from "./file-system";
 
 const ASSET_ID = "aabbccddeeff00112233445566778899";
@@ -99,6 +101,83 @@ describe("resolveUploadDir — instance anchoring (F10)", () => {
   test("honours an explicitly injected instance dir", () => {
     const injected = join(tmpdir(), "injected-instance",);
     expect(resolveUploadDir("uploads", { instanceDir: injected, },),).toBe(join(injected, "uploads",),);
+  });
+});
+
+describe("resolveUploadDir — runtime instance dir (B1)", () => {
+  const ENV_STATE = "LOOP_LORE_STATE_DIR";
+  const ENV_INSTANCE = "LOOP_LORE_INSTANCE";
+  const ENV_PORT = "PORT";
+  const ENV_DB_PATH = "LOOP_LORE_DB_PATH";
+  let savedState: string | undefined;
+  let savedInstance: string | undefined;
+  let savedPort: string | undefined;
+  let savedDbPath: string | undefined;
+  let stateRoot = "";
+
+  beforeEach(() => {
+    savedState = process.env[ENV_STATE];
+    savedInstance = process.env[ENV_INSTANCE];
+    savedPort = process.env[ENV_PORT];
+    savedDbPath = process.env[ENV_DB_PATH];
+    stateRoot = mkdtempSync(join(tmpdir(), "loop-lore-b1-instance-",),);
+    process.env[ENV_STATE] = stateRoot;
+    delete process.env[ENV_INSTANCE];
+    delete process.env[ENV_PORT];
+    delete process.env[ENV_DB_PATH];
+  },);
+
+  afterEach(() => {
+    if (savedState === undefined) { delete process.env[ENV_STATE]; }
+    else { process.env[ENV_STATE] = savedState; }
+
+    if (savedInstance === undefined) { delete process.env[ENV_INSTANCE]; }
+    else { process.env[ENV_INSTANCE] = savedInstance; }
+
+    if (savedPort === undefined) { delete process.env[ENV_PORT]; }
+    else { process.env[ENV_PORT] = savedPort; }
+
+    if (savedDbPath === undefined) { delete process.env[ENV_DB_PATH]; }
+    else { process.env[ENV_DB_PATH] = savedDbPath; }
+
+    rmSync(stateRoot, { recursive: true, force: true, },);
+  },);
+
+  test("unnamed instance on port 4000: the shipped default lands in the runtime instance dir", () => {
+    process.env[ENV_PORT] = "4000";
+    const bind = { port: 4000, host: "localhost", };
+    const runtimeDir = resolveInstanceDir(process.env, bind,);
+    const dbDir = dirname(resolveDbPath(process.env, bind,),);
+
+    expect(dbDir,).toBe(runtimeDir,);
+    expect(resolveUploadDir(ASSETS_DEFAULTS.uploadDir,),).toBe(join(runtimeDir, "uploads",),);
+  });
+
+  test("named instance: the shipped default lands in the named instance dir", () => {
+    process.env[ENV_INSTANCE] = "alpha";
+    const runtimeDir = resolveInstanceDir(process.env,);
+
+    expect(runtimeDir,).toBe(join(stateRoot, "alpha",),);
+    expect(resolveUploadDir(ASSETS_DEFAULTS.uploadDir,),).toBe(join(runtimeDir, "uploads",),);
+  });
+
+  test("keeps a custom absolute upload dir verbatim", () => {
+    const custom = join(tmpdir(), "mnt", "assets",);
+    expect(resolveUploadDir(custom,),).toBe(custom,);
+  });
+
+  test("re-anchors a legacy absolute DATA_DIR upload dir onto the runtime instance dir", () => {
+    process.env[ENV_INSTANCE] = "alpha";
+    const runtimeDir = resolveInstanceDir(process.env,);
+
+    expect(resolveUploadDir(join(DATA_DIR, "uploads",),),).toBe(join(runtimeDir, "uploads",),);
+  });
+
+  test("resolves the portable ${DATA_DIR} placeholder onto the runtime instance dir", () => {
+    process.env[ENV_INSTANCE] = "alpha";
+    const runtimeDir = resolveInstanceDir(process.env,);
+
+    expect(resolveUploadDir("${DATA_DIR}/uploads",),).toBe(join(runtimeDir, "uploads",),);
   });
 });
 

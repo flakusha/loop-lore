@@ -23,6 +23,9 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node
 import { tmpdir, } from "node:os";
 import { isAbsolute, join, } from "node:path";
 import { ensureTlsCerts, } from "./cert";
+import { DATA_DIR, } from "./constants";
+import { SERVER_DEFAULTS, } from "./sections/server";
+import { resolveInstanceDir, } from "./state-dir";
 
 type SpawnSync = typeof Bun.spawnSync;
 
@@ -145,6 +148,91 @@ describe("ensureTlsCerts — instance anchoring (F10)", () => {
     expect(
       ensureTlsCerts({ key: "certs/key.pem", cert: "certs/cert.pem", }, { instanceDir: injected, },),
     ).toEqual({ key: keyPath, cert: certPath, },);
+  });
+});
+
+describe("ensureTlsCerts — runtime instance dir (B1)", () => {
+  const ENV_STATE = "LOOP_LORE_STATE_DIR";
+  const ENV_INSTANCE = "LOOP_LORE_INSTANCE";
+  const ENV_PORT = "PORT";
+  let savedState: string | undefined;
+  let savedInstance: string | undefined;
+  let savedPort: string | undefined;
+  let stateRoot = "";
+
+  beforeEach(() => {
+    savedState = process.env[ENV_STATE];
+    savedInstance = process.env[ENV_INSTANCE];
+    savedPort = process.env[ENV_PORT];
+    stateRoot = mkdtempSync(join(tmpdir(), "loop-lore-b1-cert-",),);
+    process.env[ENV_STATE] = stateRoot;
+    delete process.env[ENV_INSTANCE];
+    delete process.env[ENV_PORT];
+  },);
+
+  afterEach(() => {
+    if (savedState === undefined) { delete process.env[ENV_STATE]; }
+    else { process.env[ENV_STATE] = savedState; }
+
+    if (savedInstance === undefined) { delete process.env[ENV_INSTANCE]; }
+    else { process.env[ENV_INSTANCE] = savedInstance; }
+
+    if (savedPort === undefined) { delete process.env[ENV_PORT]; }
+    else { process.env[ENV_PORT] = savedPort; }
+
+    rmSync(stateRoot, { recursive: true, force: true, },);
+  },);
+
+  test("unnamed instance on port 4000: certs are generated inside the runtime instance dir", () => {
+    process.env[ENV_PORT] = "4000";
+    const runtimeDir = resolveInstanceDir(process.env, { port: 4000, host: "localhost", },);
+    const keyPath = join(runtimeDir, "certs", "key.pem",);
+    const certPath = join(runtimeDir, "certs", "cert.pem",);
+    let keyOut = "";
+    let certOut = "";
+
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      keyOut = cmd[cmd.indexOf("-keyout",) + 1] as string;
+      certOut = cmd[cmd.indexOf("-out",) + 1] as string;
+      writeFileSync(keyOut, "generated-key",);
+      writeFileSync(certOut, "generated-cert",);
+      return { success: true, stdout: Buffer.from("",), stderr: Buffer.from("",), exitCode: 0, };
+    }) as SpawnSync;
+
+    const result = ensureTlsCerts(SERVER_DEFAULTS.tls,);
+
+    expect(result,).toEqual({ key: keyPath, cert: certPath, },);
+    expect(keyOut,).toBe(keyPath,);
+    expect(certOut,).toBe(certPath,);
+  });
+
+  test("named instance: certs stay in the named instance dir", () => {
+    process.env[ENV_INSTANCE] = "alpha";
+    const runtimeDir = resolveInstanceDir(process.env,);
+    const keyPath = join(runtimeDir, "certs", "key.pem",);
+    const certPath = join(runtimeDir, "certs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    expect(ensureTlsCerts(SERVER_DEFAULTS.tls,),).toEqual({ key: keyPath, cert: certPath, },);
+  });
+
+  test("keeps custom absolute cert paths verbatim", () => {
+    const keyPath = join(tempDir, "custom", "key.pem",);
+    const certPath = join(tempDir, "custom", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    expect(ensureTlsCerts({ key: keyPath, cert: certPath, },),).toEqual({ key: keyPath, cert: certPath, },);
+  });
+
+  test("re-anchors a legacy absolute DATA_DIR cert path onto the runtime instance dir", () => {
+    process.env[ENV_INSTANCE] = "alpha";
+    const runtimeDir = resolveInstanceDir(process.env,);
+    const keyPath = join(runtimeDir, "certs", "key.pem",);
+    const certPath = join(runtimeDir, "certs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    const legacy = { key: join(DATA_DIR, "certs", "key.pem",), cert: join(DATA_DIR, "certs", "cert.pem",), };
+    expect(ensureTlsCerts(legacy,),).toEqual({ key: keyPath, cert: certPath, },);
   });
 });
 
