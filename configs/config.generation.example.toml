@@ -7,6 +7,11 @@ defaultModels = {} # { openaiCompatible = "gpt-4" }
 
 [generation.providers]
 openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
+# OpenRouter (OpenAI-compatible; any vendor/model id flows through verbatim):
+# { name = "openrouter", label = "OpenRouter", baseUrl = "https://openrouter.ai/api/v1", apiKey = "sk-or-...", model = "openai/gpt-4o-mini", timeout = 30000, retries = 3, allowUserApiKey = true }
+# Free-tier trial: same instance with a :free model id, e.g. model = "meta-llama/llama-3.3-70b-instruct:free"
+# (no code change needed — model is free text). Or skip files entirely:
+# LLM_PROVIDER_BASE_URL=https://openrouter.ai/api/v1 LLM_PROVIDER_API_KEY=sk-or-... bun run start
 # anthropic = { name = "anthropic", label = "Anthropic", apiKey = "sk-ant-...", model = "claude-3-5-sonnet-latest", timeout = 30000, retries = 3, allowUserApiKey = true }
 # sd = [] # stable diffusion providers; allowUserApiKey (default true) gates per-user BYOK keys
 # video = [] # ComfyUI video workflow providers ({ name, baseUrl, apiFamily: comfyui, workflow, allowUserApiKey?, localBox?, timeout, generationTimeout }); localBox serializes one render per named box, omit = external (bypasses the gate)

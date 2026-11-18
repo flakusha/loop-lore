@@ -2414,7 +2414,8 @@
         "codex": "Codex 通过 ChatGPT 套餐订阅登录 — 将其作为 loop-lore 服务商用于 RPG 或其他非聊天功能可能与 OpenAI 条款冲突，需要明确确认。",
         "claude-code": "Claude Code 通过 Claude 套餐订阅登录 — 将其作为 loop-lore 服务商用于 RPG 或其他非聊天功能可能与 Anthropic 条款冲突，需要明确确认。",
         "hermes": "Hermes 使用其自身配置的 API 密钥和服务商运行 — 直接 API 访问按服务商的 API 条款计费，而非订阅协议。",
-        "openclaw": "OpenClaw 将提示转发到其配置的网关 — 访问遵循网关主机的服务商条款，而非订阅协议。"
+        "openclaw": "OpenClaw 将提示转发到其配置的网关 — 访问遵循网关主机的服务商条款，而非订阅协议。",
+        "antigravity": "Antigravity 使用 Google 账号登录 — 将其用作 RPG 或其他非聊天功能的 loop-lore 服务商可能违反 Google 条款，需要明确确认。"
       }
     },
     "escalations": {

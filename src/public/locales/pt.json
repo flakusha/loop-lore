@@ -2414,7 +2414,8 @@
         "codex": "O Codex entra com uma assinatura de plano ChatGPT — usá-lo como provedor do loop-lore para RPG ou outras funções fora do chat pode conflitar com os termos da OpenAI e exige confirmação explícita.",
         "claude-code": "O Claude Code entra com uma assinatura de plano Claude — usá-lo como provedor do loop-lore para RPG ou outras funções fora do chat pode conflitar com os termos da Anthropic e exige confirmação explícita.",
         "hermes": "O Hermes é executado com as chaves de API e provedores configurados no próprio Hermes — o acesso direto por API é faturado sob os termos de API do provedor, não sob um contrato de assinatura.",
-        "openclaw": "O OpenClaw encaminha os prompts ao seu Gateway configurado — o acesso segue os termos do provedor do host do Gateway, não um contrato de assinatura."
+        "openclaw": "O OpenClaw encaminha os prompts ao seu Gateway configurado — o acesso segue os termos do provedor do host do Gateway, não um contrato de assinatura.",
+        "antigravity": "O Antigravity entra com uma conta Google — usá-lo como provedor do loop-lore para RPG ou outras funções não-chat pode infringir os termos da Google e exige confirmação explícita."
       }
     },
     "escalations": {

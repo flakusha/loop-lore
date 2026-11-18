@@ -40,9 +40,9 @@ LLM provider configuration. Requires explicit save (`Save` top-right) to avoid
 persisting partial/invalid keys.
 
 - Provider (select): "OpenAI", "Anthropic", "OpenRouter", "Custom"
-- API key (password input; **Clear** button resets it)
+- API key (password input; **Clear** button resets it) — sealed server-side on save, never echoed back (API responses carry `hasApiKey` only)
 - API endpoint URL (shown only for **Custom** provider)
-- Model (text input)
+- Model (text input) — any vendor/model id flows through verbatim; on OpenRouter, `:free`-suffixed ids (e.g. `meta-llama/llama-3.3-70b-instruct:free`) try the free tier with no other change
 - Max tokens (number, step 256, default 128000, min 1024, max 128000)
 - Temperature (range slider 0.0–2.0, step 0.1)
 - **Test Connection** button — sends a minimal request to verify the provider

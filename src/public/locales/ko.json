@@ -2414,7 +2414,8 @@
         "codex": "Codex는 ChatGPT 플랜 구독으로 로그인합니다 — RPG 등 채트 외 기능을 위해 loop-lore 공급자로 사용하면 OpenAI 약관에 어긋날 수 있으며 명시적 확인이 필요합니다.",
         "claude-code": "Claude Code는 Claude 플랜 구독으로 로그인합니다 — RPG 등 채트 외 기능을 위해 loop-lore 공급자로 사용하면 Anthropic 약관에 어긋날 수 있으며 명시적 확인이 필요합니다.",
         "hermes": "Hermes는 Hermes 자체에 구성된 API 키와 공급자로 실행됩니다 — 직접 API 접근은 구독 계약이 아닌 공급자의 API 약관에 따라 청구됩니다.",
-        "openclaw": "OpenClaw는 구성된 게이트웨이로 프롬프트를 전달합니다 — 접근은 구독 계약이 아닌 게이트웨이 호스트의 공급자 약관을 따릅니다."
+        "openclaw": "OpenClaw는 구성된 게이트웨이로 프롬프트를 전달합니다 — 접근은 구독 계약이 아닌 게이트웨이 호스트의 공급자 약관을 따릅니다.",
+        "antigravity": "Antigravity는 Google 계정으로 로그인합니다 — RPG나 기타 비채팅 기능용 loop-lore 공급자로 사용하면 Google 약관에 저촉될 수 있으며 명시적 확인이 필요합니다."
       }
     },
     "escalations": {

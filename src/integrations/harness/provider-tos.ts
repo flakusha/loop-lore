@@ -94,6 +94,15 @@ export const HARNESS_PROVIDER_TOS: Record<HarnessFlavor, HarnessProviderTosInfo>
     subscriptionBacked: false,
     noteKey: "harness.tos.note.openclaw",
   },
+  // Antigravity signs in with a Google account and Google collects
+  // interaction data (opt-out in settings); driving a signed-in account as a
+  // loop-lore provider is the same subscription-backed grayzone as codex, so
+  // it gates on acknowledgement like codex/claude-code.
+  antigravity: {
+    usageClasses: ["subscription-backed", "api",],
+    subscriptionBacked: true,
+    noteKey: "harness.tos.note.antigravity",
+  },
 };
 
 /**

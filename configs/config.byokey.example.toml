@@ -4,5 +4,8 @@
 [byoKey]
 enabled = true
 
-# Optional: server-side encryption key for stored keys
+# Server-side secret sealing the stored user keys (AES-256-GCM, per-record salt).
+# Env-only in production: set BYO_KEY_ENCRYPTION_KEY and leave this commented — a
+# value written here sits on disk in plaintext, while sealing only protects DB
+# dumps/backups, never a host compromise.
 # encryptionKey = "base64-encoded-32-byte-key"

@@ -15,7 +15,7 @@
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
-import { encryptValue, } from "../crypto";
+import { BYOK_KEY_VERSION, encryptVersioned, } from "../crypto";
 import type { DB, } from "../db/schema";
 import {
   listProviderInstances,
@@ -93,10 +93,13 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
           return jsonError({ message: `Unknown provider: ${providerName}`, status: HttpStatus.BadRequest, },);
         }
 
-        // Encrypt the key
+        // Versioned envelope (v2): the row's key_version records which key
+        // generation sealed it, so a future rotation can branch per record
+        // instead of mass re-encrypting under one global secret. Reads accept
+        // all generations (decryptValue), so no migration pass is needed.
         let encrypted: string;
         try {
-          encrypted = await encryptValue(apiKey, encryptionSecret,);
+          encrypted = await encryptVersioned(apiKey, encryptionSecret,);
         } catch {
           return jsonError({
             message: (ctx as any).t?.("crypto.keyEncryptFailed",) ?? "Failed to encrypt API key",
@@ -117,10 +120,12 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
             user_id: userId,
             provider_name: providerName,
             api_key_encrypted: encrypted,
+            key_version: BYOK_KEY_VERSION,
           },)
           .onConflict((oc,) =>
             oc.columns(["user_id", "provider_name",],).doUpdateSet({
               api_key_encrypted: encrypted,
+              key_version: BYOK_KEY_VERSION,
               updated_at: new Date().toISOString(),
             },)
           )

@@ -184,9 +184,9 @@ OpenAI-compatible. Same `LLMProvider` + `ProviderInstanceConfig` seams (`src/gen
 
 ## Other LLM Integrations (Future)
 
-Ollama (OpenAI-compatible mode via /v1) and LM Studio, text-generation-webui, KoboldCpp, LocalAI, Mistral API, Groq, Together AI, Fireworks AI (Tier-1 — supported via openaiCompatible config entries; none are in the example config today). Mistral API, Groq, and others already work as openaiCompatible instances.
+Ollama (OpenAI-compatible mode via /v1) and LM Studio, text-generation-webui, KoboldCpp, LocalAI, Mistral API, Groq, Together AI, Fireworks AI (Tier-1 — supported via openaiCompatible config entries; OpenRouter ships as a commented example in `configs/config.generation.example.toml`). Mistral API, Groq, and others already work as openaiCompatible instances.
 
-Google AI (Gemini) remains a separate native adapter (FEAT-077, TASK-gemini-provider.md, Not Started).
+Google AI (Gemini) has no native adapter (FEAT-077, TASK-gemini-provider.md, Not Started) — reach it two ways: an `openaiCompatible` instance pointed at OpenRouter with a `google/gemini-*` model id (`:free`-suffixed ids work with no code change), or the `antigravity` ACP harness flavor driving `agy acp` (`harness.acp.profiles[]` with `harness: "antigravity"`; subscription-backed, ToS-acknowledgement-gated like codex).
 
 Anthropic native API and Ollama native API are implemented (src/generation/providers/anthropic/, src/generation/providers/ollama-native/).
 

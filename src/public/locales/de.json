@@ -2414,7 +2414,8 @@
         "codex": "Codex meldet sich über ein ChatGPT-Abo an — der Einsatz als loop-lore-Anbieter für RPG oder andere Nicht-Chat-Funktionen kann den OpenAI-Bedingungen widersprechen und erfordert eine ausdrückliche Bestätigung.",
         "claude-code": "Claude Code meldet sich über ein Claude-Abo an — der Einsatz als loop-lore-Anbieter für RPG oder andere Nicht-Chat-Funktionen kann den Anthropic-Bedingungen widersprechen und erfordert eine ausdrückliche Bestätigung.",
         "hermes": "Hermes läuft mit den in Hermes selbst konfigurierten API-Schlüsseln und Anbietern — direkter API-Zugriff wird über die API-Bedingungen des Anbieters abgerechnet, nicht über ein Abo.",
-        "openclaw": "OpenClaw leitet Anfragen an sein konfiguriertes Gateway weiter — der Zugriff unterliegt den Anbieter-Bedingungen des Gateway-Hosts, nicht einem Abo."
+        "openclaw": "OpenClaw leitet Anfragen an sein konfiguriertes Gateway weiter — der Zugriff unterliegt den Anbieter-Bedingungen des Gateway-Hosts, nicht einem Abo.",
+        "antigravity": "Antigravity meldet sich mit einem Google-Konto an — die Nutzung als loop-lore-Provider für RPG oder andere Nicht-Chat-Funktionen kann gegen die Google-Bedingungen verstoßen und erfordert eine ausdrückliche Bestätigung."
       }
     },
     "escalations": {

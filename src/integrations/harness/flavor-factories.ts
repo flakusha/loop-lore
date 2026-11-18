@@ -14,6 +14,7 @@
 
 import { type HarnessFlavor, } from "../../config/schema/harness";
 import { type HarnessAdapterFactory, type HarnessQuotaSurface, } from "./adapter-types";
+import { createAntigravityAdapter, } from "./antigravity";
 import { createClaudeCodeAdapter, } from "./claude-code";
 import { createCodexAdapter, } from "./codex";
 import { createHermesAdapter, } from "./hermes";
@@ -32,6 +33,7 @@ export const HARNESS_ADAPTER_FACTORIES: Record<HarnessFlavor, HarnessAdapterFact
   "claude-code": createClaudeCodeAdapter,
   hermes: createHermesAdapter,
   openclaw: createOpenClawAdapter,
+  antigravity: createAntigravityAdapter,
 };
 
 /**
@@ -48,6 +50,7 @@ export const FLAVOR_QUOTA_SURFACES: Record<HarnessFlavor, HarnessQuotaSurface> =
   "claude-code": "none",
   hermes: "none",
   openclaw: "none",
+  antigravity: "none",
 };
 /**
  * Resolve the adapter factory for a profile's `harness` flavor.

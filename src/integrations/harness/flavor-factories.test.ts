@@ -9,6 +9,7 @@
 import { describe, expect, it, } from "bun:test";
 import { HARNESS_FLAVORS, } from "../../config/schema/harness";
 import { HARNESS_QUOTA_SURFACES, type HarnessQuotaSurface, } from "./adapter-types";
+import { AntigravityAcpAdapter, } from "./antigravity";
 import { ClaudeCodeAcpAdapter, } from "./claude-code";
 import { CodexAcpAdapter, } from "./codex";
 import {
@@ -30,6 +31,7 @@ describe("harness adapter flavor dispatch", () => {
     expect(HARNESS_ADAPTER_FACTORIES.opencode("p", CMD,),).toBeInstanceOf(OpenCodeAcpAdapter,);
     expect(HARNESS_ADAPTER_FACTORIES.codex("p", CMD,),).toBeInstanceOf(CodexAcpAdapter,);
     expect(HARNESS_ADAPTER_FACTORIES["claude-code"]("p", CMD,),).toBeInstanceOf(ClaudeCodeAcpAdapter,);
+    expect(HARNESS_ADAPTER_FACTORIES.antigravity("p", CMD,),).toBeInstanceOf(AntigravityAcpAdapter,);
   });
 
   it("resolves each flavor via resolveAdapterFactory", () => {
@@ -37,6 +39,7 @@ describe("harness adapter flavor dispatch", () => {
     expect(resolveAdapterFactory("opencode",)("p", CMD,),).toBeInstanceOf(OpenCodeAcpAdapter,);
     expect(resolveAdapterFactory("codex",)("p", CMD,),).toBeInstanceOf(CodexAcpAdapter,);
     expect(resolveAdapterFactory("claude-code",)("p", CMD,),).toBeInstanceOf(ClaudeCodeAcpAdapter,);
+    expect(resolveAdapterFactory("antigravity",)("p", CMD,),).toBeInstanceOf(AntigravityAcpAdapter,);
   });
 
   it("defaults an omitted flavor to omp", () => {
