@@ -3,7 +3,7 @@
 
 # TASK: re-enable stale skipped browser E2Es for shipped fixes
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-e2e-integration-testing.md

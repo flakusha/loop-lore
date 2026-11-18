@@ -3,7 +3,7 @@
 
 # TASK: close remaining release gate debt
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-code-quality.md
