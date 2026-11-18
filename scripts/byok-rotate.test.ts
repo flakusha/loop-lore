@@ -3,11 +3,13 @@
 
 /**
  * Offline BYOK rotation — fail-closed behavior against in-memory SQLite.
- * No network, no real database files.
+ * Resource contract: each test owns a fresh `:memory:` DB created by
+ * `withFixture` and released in `finally`; no files, ports, globals, module
+ * mocks, or cross-test state. Safe under any parallel/ordering mode.
  */
 
 import { Database, } from "bun:sqlite";
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import {
   BYOK_KEY_VERSION,
@@ -31,11 +33,13 @@ const V3_PLAINTEXT = "sk-v3-value";
 const LEGACY_PLAINTEXT = "sk-legacy-value";
 const MESH_PLAINTEXT = "mesh-token-value";
 
-let raw: Database;
-let db: Kysely<DB>;
+interface Fixture {
+  raw: Database;
+  db: Kysely<DB>;
+}
 
-beforeEach(() => {
-  raw = new Database(":memory:",);
+function createFixture(): Fixture {
+  const raw = new Database(":memory:",);
   raw.exec(`
     CREATE TABLE user_api_keys (
       id TEXT PRIMARY KEY,
@@ -50,17 +54,22 @@ beforeEach(() => {
       key_version INTEGER NOT NULL
     );
   `,);
-  db = new Kysely<DB>({ dialect: createSqliteDialect(raw,), },);
-},);
+  return { raw, db: new Kysely<DB>({ dialect: createSqliteDialect(raw,), },), };
+}
 
-afterEach(async () => {
-  await db.destroy();
-  raw.close();
-},);
+async function withFixture(run: (fixture: Fixture,) => Promise<void>,): Promise<void> {
+  const fixture = createFixture();
+  try {
+    await run(fixture,);
+  } finally {
+    await fixture.db.destroy();
+    fixture.raw.close();
+  }
+}
 
 /** One current KEK-sealed row, one legacy global-secret row, one mesh token
  * plus one mesh row with no token (must be skipped). */
-async function seed(): Promise<void> {
+async function seed({ raw, db, }: Fixture,): Promise<void> {
   await db
     .insertInto("user_api_keys",)
     .values([
@@ -93,7 +102,7 @@ async function seed(): Promise<void> {
     .run("peer-no-token", null, 1,);
 }
 
-async function snapshot() {
+async function snapshot({ db, }: Fixture,) {
   return {
     users: await db.selectFrom("user_api_keys",).selectAll().orderBy("id",).execute(),
     peers: await db.selectFrom("mesh_peers",).selectAll().orderBy("origin",).execute(),
@@ -102,89 +111,98 @@ async function snapshot() {
 
 describe("rotateByokSecrets", () => {
   test("re-seals every row under the new secret and stamps the current key version", async () => {
-    await seed();
+    await withFixture(async (fixture,) => {
+      const { db, } = fixture;
+      await seed(fixture,);
 
-    const result = await rotateByokSecrets({ database: db, oldSecret: OLD, newSecret: NEW, },);
+      const result = await rotateByokSecrets({ database: db, oldSecret: OLD, newSecret: NEW, },);
 
-    expect(result,).toEqual({
-      usersReencrypted: 2,
-      peersReencrypted: 1,
-      failures: [],
+      expect(result,).toEqual({
+        usersReencrypted: 2,
+        peersReencrypted: 1,
+        failures: [],
+      },);
+
+      const users = await db.selectFrom("user_api_keys",).selectAll().execute();
+      const byId = new Map(users.map((row,) => [row.id, row,]),);
+
+      const v3 = byId.get("row-v3",)!;
+      expect(v3.key_version,).toBe(BYOK_KEY_VERSION,);
+      expect(
+        await decryptValue(
+          v3.api_key_encrypted,
+          await deriveUserKek(NEW, USER_ID,),
+          kekAad(USER_ID, PROVIDER,),
+        ),
+      ).toBe(V3_PLAINTEXT,);
+      await expect(
+        decryptValue(
+          v3.api_key_encrypted,
+          await deriveUserKek(OLD, USER_ID,),
+          kekAad(USER_ID, PROVIDER,),
+        ),
+      ).rejects.toThrow();
+
+      const legacy = byId.get("row-legacy",)!;
+      expect(legacy.key_version,).toBe(BYOK_KEY_VERSION,);
+      expect(
+        await decryptValue(
+          legacy.api_key_encrypted,
+          await deriveUserKek(NEW, USER_ID,),
+          kekAad(USER_ID, LEGACY_PROVIDER,),
+        ),
+      ).toBe(LEGACY_PLAINTEXT,);
+
+      const peers = await db.selectFrom("mesh_peers",).selectAll().orderBy("origin",).execute();
+      const peer = peers.find((row,) => row.origin === "peer-1")!;
+      expect(peer.key_version,).toBe(BYOK_KEY_VERSION,);
+      expect(await decryptValue(peer.shared_token_enc!, NEW,),).toBe(MESH_PLAINTEXT,);
+      expect(peers.find((row,) => row.origin === "peer-no-token")!.shared_token_enc,).toBeNull();
     },);
-
-    const users = await db.selectFrom("user_api_keys",).selectAll().execute();
-    const byId = new Map(users.map((row,) => [row.id, row,]),);
-
-    const v3 = byId.get("row-v3",)!;
-    expect(v3.key_version,).toBe(BYOK_KEY_VERSION,);
-    expect(
-      await decryptValue(
-        v3.api_key_encrypted,
-        await deriveUserKek(NEW, USER_ID,),
-        kekAad(USER_ID, PROVIDER,),
-      ),
-    ).toBe(V3_PLAINTEXT,);
-    await expect(
-      decryptValue(
-        v3.api_key_encrypted,
-        await deriveUserKek(OLD, USER_ID,),
-        kekAad(USER_ID, PROVIDER,),
-      ),
-    ).rejects.toThrow();
-
-    const legacy = byId.get("row-legacy",)!;
-    expect(legacy.key_version,).toBe(BYOK_KEY_VERSION,);
-    expect(
-      await decryptValue(
-        legacy.api_key_encrypted,
-        await deriveUserKek(NEW, USER_ID,),
-        kekAad(USER_ID, LEGACY_PROVIDER,),
-      ),
-    ).toBe(LEGACY_PLAINTEXT,);
-
-    const peers = await db.selectFrom("mesh_peers",).selectAll().orderBy("origin",).execute();
-    const peer = peers.find((row,) => row.origin === "peer-1")!;
-    expect(peer.key_version,).toBe(BYOK_KEY_VERSION,);
-    expect(await decryptValue(peer.shared_token_enc!, NEW,),).toBe(MESH_PLAINTEXT,);
-    expect(peers.find((row,) => row.origin === "peer-no-token")!.shared_token_enc,).toBeNull();
   });
 
   test("wrong old secret fails every row closed and leaves rows byte-identical", async () => {
-    await seed();
-    const before = await snapshot();
+    await withFixture(async (fixture,) => {
+      const { db, } = fixture;
+      await seed(fixture,);
+      const before = await snapshot(fixture,);
 
-    const result = await rotateByokSecrets({ database: db, oldSecret: WRONG, newSecret: NEW, },);
+      const result = await rotateByokSecrets({ database: db, oldSecret: WRONG, newSecret: NEW, },);
 
-    expect(result.usersReencrypted,).toBe(0,);
-    expect(result.peersReencrypted,).toBe(0,);
-    expect(result.failures,).toHaveLength(3,);
-    expect(new Set(result.failures.map((failure,) => failure.table),),).toEqual(
-      new Set(["user_api_keys", "mesh_peers",],),
-    );
-    expect(await snapshot(),).toEqual(before,);
+      expect(result.usersReencrypted,).toBe(0,);
+      expect(result.peersReencrypted,).toBe(0,);
+      expect(result.failures,).toHaveLength(3,);
+      expect(new Set(result.failures.map((failure,) => failure.table),),).toEqual(
+        new Set(["user_api_keys", "mesh_peers",],),
+      );
+      expect(await snapshot(fixture,),).toEqual(before,);
+    },);
   });
 
   test("an unknown version tag surfaces as a failure and leaves that row untouched", async () => {
-    await seed();
-    await db
-      .updateTable("user_api_keys",)
-      .set({ api_key_encrypted: `v99:${await encryptValue(V3_PLAINTEXT, OLD,)}`, },)
-      .where("id", "=", "row-v3",)
-      .execute();
-    const before = await snapshot();
+    await withFixture(async (fixture,) => {
+      const { db, } = fixture;
+      await seed(fixture,);
+      await db
+        .updateTable("user_api_keys",)
+        .set({ api_key_encrypted: `v99:${await encryptValue(V3_PLAINTEXT, OLD,)}`, },)
+        .where("id", "=", "row-v3",)
+        .execute();
+      const before = await snapshot(fixture,);
 
-    const result = await rotateByokSecrets({ database: db, oldSecret: OLD, newSecret: NEW, },);
+      const result = await rotateByokSecrets({ database: db, oldSecret: OLD, newSecret: NEW, },);
 
-    expect(result.usersReencrypted,).toBe(1,);
-    expect(result.peersReencrypted,).toBe(1,);
-    expect(result.failures,).toHaveLength(1,);
-    expect(result.failures[0]!.table,).toBe("user_api_keys",);
-    expect(result.failures[0]!.id,).toBe("row-v3",);
-    expect(result.failures[0]!.reason,).toContain("Unsupported BYOK key version: 99",);
+      expect(result.usersReencrypted,).toBe(1,);
+      expect(result.peersReencrypted,).toBe(1,);
+      expect(result.failures,).toHaveLength(1,);
+      expect(result.failures[0]!.table,).toBe("user_api_keys",);
+      expect(result.failures[0]!.id,).toBe("row-v3",);
+      expect(result.failures[0]!.reason,).toContain("Unsupported BYOK key version: 99",);
 
-    const after = await snapshot();
-    expect(
-      after.users.find((row,) => row.id === "row-v3"),
-    ).toEqual(before.users.find((row,) => row.id === "row-v3"),);
+      const after = await snapshot(fixture,);
+      expect(
+        after.users.find((row,) => row.id === "row-v3"),
+      ).toEqual(before.users.find((row,) => row.id === "row-v3"),);
+    },);
   });
 });
