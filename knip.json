@@ -372,5 +372,8 @@
     // scripts/check/*.mjs entries above.
     "src/config/generate-domain-schemas.ts",
     "src/scripts/smoke-app.ts",
+    // Invoked directly by shell string in docs/guide/two-instance-federation.md
+    // (`bun scripts/dev/two-instance-harness.ts ...`), not import-reachable.
+    "scripts/dev/two-instance-harness.ts",
   ]
 }
