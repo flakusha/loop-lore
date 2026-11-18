@@ -209,6 +209,43 @@ describe("ComfyUIClient", () => {
       );
     });
 
+    test("resolves the real /history object status shape", async () => {
+      await withMockFetch(
+        async () =>
+          jsonResponse({
+            "p1": {
+              status: { status_str: "success", completed: true, messages: [], },
+              outputs: {
+                "9": { images: [{ filename: "img1.png", },], },
+              },
+            },
+          },),
+        async () => {
+          const client = new ComfyUIClient({ baseUrl: "http://localhost:8188", },);
+          const result = await client.pollResult("p1",);
+          expect(result.done,).toBe(true,);
+          expect(result.images,).toEqual([{ filename: "img1.png", },],);
+        },
+      );
+    });
+
+    test("reports the real /history object error shape", async () => {
+      await withMockFetch(
+        async () =>
+          jsonResponse({
+            "p1": {
+              status: { status_str: "error", completed: true, messages: [], },
+            },
+          },),
+        async () => {
+          const client = new ComfyUIClient({ baseUrl: "http://localhost:8188", },);
+          const result = await client.pollResult("p1",);
+          expect(result.done,).toBe(true,);
+          expect(result.error,).toBe("execution error",);
+        },
+      );
+    });
+
     test("throws when the history fetch fails", async () => {
       await withMockFetch(
         async () => jsonResponse({}, 503,),

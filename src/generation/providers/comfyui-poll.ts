@@ -63,7 +63,13 @@ export async function pollComfyResult(
     return { done: false, };
   }
 
-  if (entry.status === "completed") {
+  // ComfyUI /history entries carry status as an object
+  // ({ status_str: "success" | "error", completed }) — normalize the
+  // legacy string form unit tests use into the same comparison.
+  const raw = entry.status;
+  const state = typeof raw === "string" ? raw : raw.status_str;
+
+  if (state === "completed" || state === "success") {
     const images: ComfyUIOutputFile[] = [];
     const files: { kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[] = [];
     if (entry.outputs) {
@@ -84,8 +90,8 @@ export async function pollComfyResult(
     return { done: true, images, files, };
   }
 
-  if (entry.status === "failed" || entry.status === "cancelled") {
-    return { done: true, error: entry.error ?? `execution ${entry.status}`, };
+  if (state === "failed" || state === "error" || state === "cancelled") {
+    return { done: true, error: entry.error ?? `execution ${state}`, };
   }
 
   return { done: false, };

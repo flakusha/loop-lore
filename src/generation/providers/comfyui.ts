@@ -34,10 +34,23 @@ export interface ComfyUIPromptResult {
   node_errors?: Record<string, { class_type: string; errors: unknown[] }>;
 }
 
+/** Status object ComfyUI actually returns in /history entries. */
+export interface ComfyUIHistoryStatus {
+  status_str: "success" | "error" | string;
+  completed: boolean;
+  messages?: Array<[string, Record<string, unknown>,]>;
+}
+
 /** */
 export interface ComfyUIExecutionStatus {
   prompt_id: string;
-  status: "pending" | "running" | "completed" | "failed" | "cancelled";
+  status:
+    | "pending"
+    | "running"
+    | "completed"
+    | "failed"
+    | "cancelled"
+    | ComfyUIHistoryStatus;
   progress?: { value: number; max: number };
   outputs?: Record<string, ComfyUINodeOutput>;
   error?: string;
