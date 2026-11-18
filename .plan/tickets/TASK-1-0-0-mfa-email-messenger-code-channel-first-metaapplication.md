@@ -28,11 +28,11 @@ Related epics, Status lines quoted verbatim from each epic header:
 
 ```text
 .plan/epics/epic-two-factor-auth.md
-**Status:** Not Started
+**Status:** Done
 **Status Note:** Not Started. 2026-11-09 T10 verify: still no implementation (no TOTP/WebAuthn/backup-code symbols in src/); TASK-two-factor-multi-factor-auth.md explicitly carried, not built in T10 lane.
 
 .plan/epics/epic-auth-channel-provisioning.md
-**Status:** Not Started
+**Status:** Done
 **Status Note:** this bundle
 ```
 

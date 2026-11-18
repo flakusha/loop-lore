@@ -3007,7 +3007,7 @@
       "boot"
     ],
     "source": ".plan/tickets/BUG-concurrent-migrations-race-on-a-shared-sqlite-file.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-CONFIG-FILE-RELOAD-SILENTLY-RE-ENABLES-NSFW-AFTER-THE-ADMIN-": {
     "hash": "b751a45",
@@ -3463,7 +3463,7 @@
       "honesty"
     ],
     "source": ".plan/tickets/BUG-db-type-postgres-accepted-but-no-postgres-runtime.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-DEAD-BEDROCK-CONFIG-PATH-ACCEPTED-BUT-NEVER-DISPATCHED": {
     "hash": "3edc50d",
@@ -9398,7 +9398,7 @@
       "multi-instance"
     ],
     "source": ".plan/tickets/BUG-server-second-instance-silently-splits-port-by-address-famil.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-SERVER-VIEW-DATE-DISPLAY-IGNORES-USER-TIMEZONE-LOCALE": {
     "epic": "epic-i18n",
@@ -23606,6 +23606,20 @@
     "title": "Relationships",
     "type": "FEAT"
   },
+  "FEAT-RELAY-SWARM-NODE-MODE": {
+    "hash": "f308ebc",
+    "git_issue": "f308ebc",
+    "extid": "FEAT-RELAY-SWARM-NODE-MODE",
+    "type": "FEAT",
+    "title": "Relay/swarm node mode",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-federation-offload-quotas.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-relay-swarm-node-mode.md",
+    "status": "open"
+  },
   "FEAT-RELEVANCE-GATED-MEMORY-INJECTION-WITH-CLASSIFIER-OR-RERANKER": {
     "hash": "ef636a2",
     "git_issue": "ef636a2",
@@ -25345,7 +25359,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-gap-backup-restore-before-1-0-0-required-unstarted.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-GAP-OMNI-SEARCH-FRONTEND-CONSUMER": {
     "hash": "91d9e08",
@@ -25359,7 +25373,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-gap-omni-search-frontend-consumer.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-GAP-SD-CPP-LOCAL-IMAGE-WIRING-AS-OWNED-SCOPE": {
     "hash": "4bd966e",
@@ -25373,7 +25387,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-gap-sd-cpp-local-image-wiring-as-owned-scope.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-GAP-UNIFIED-CROSS-SURFACE-OMNI-SEARCH": {
     "hash": "9d90969",
@@ -25387,7 +25401,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-gap-unified-cross-surface-omni-search.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-GAP-VERIFY-MULTI-ASSISTANT-AND-MULTI-LLM-CHAT-ROWS": {
     "hash": "2f405b6",
@@ -25434,7 +25448,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-THEME-1-3-3-INBOUND-MCP-ACP-STUDIO-SERVERS-EXTERNAL-TO": {
     "hash": "05bdec6",
@@ -41429,6 +41443,20 @@
     "source": ".plan/tickets/TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md",
     "status": "Not Started"
   },
+  "TASK-EXPOSE-VALIDATION-HARNESS-NAME": {
+    "hash": "f5c960b",
+    "git_issue": "f5c960b",
+    "extid": "TASK-EXPOSE-VALIDATION-HARNESS-NAME",
+    "type": "TASK",
+    "title": "Expose validation harness name",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-variants-taxonomy.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-expose-validation-harness-name.md",
+    "status": "open"
+  },
   "TASK-EXTEND-FE-BE-HARMONIZATION-GATE-TO-COVER-EXTERNAL-NON-HTMX-A": {
     "hash": "229d7a3",
     "git_issue": "229d7a3",
@@ -56809,7 +56837,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-reconcile-epic-frontend-age-gate-verify-age-gate-frontend-ca.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Reconcile epic-frontend-age-gate: verify age-gate frontend, capture gaps",
     "type": "TASK"
@@ -65839,6 +65867,20 @@
     "tags": [],
     "title": "Wire Replayability Routes",
     "type": "TASK"
+  },
+  "TASK-WIRE-SCENARIO-INTO-MODEL-ROLE-AUTOROUTE": {
+    "hash": "aef1299",
+    "git_issue": "aef1299",
+    "extid": "TASK-WIRE-SCENARIO-INTO-MODEL-ROLE-AUTOROUTE",
+    "type": "TASK",
+    "title": "Wire scenario into model role autoroute",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-model-rankings-history.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-scenario-into-model-role-autoroute.md",
+    "status": "open"
   },
   "TASK-WIRE-SKILLS-ROUTES": {
     "epic": "epic-skills",
