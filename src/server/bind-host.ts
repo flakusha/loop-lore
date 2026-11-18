@@ -52,7 +52,8 @@ export function selectBindAddress(addresses: readonly string[],): string | null 
  * interface and "::1" still binds IPv6 only); a name is resolved once and
  * pinned to one address.
  * @param options - the configured host
- * @throws {Error} When the host is a name that resolves to no address
+ * @throws {Error} When the host is a name that cannot be resolved, or resolves
+ *   to no address
  * @returns the literal address to bind
  */
 export async function resolveBindHost(options: ResolveBindHostOptions,): Promise<string> {
@@ -60,7 +61,13 @@ export async function resolveBindHost(options: ResolveBindHostOptions,): Promise
   const literal = ipLiteral(host,);
   if (host === "") { return host; }
   if (literal !== null) { return literal; }
-  const resolved = await lookup(host, { all: true, verbatim: true, },);
+  const resolved = await lookup(host, { all: true, verbatim: true, },).catch((cause: unknown,) => {
+    const reason = cause instanceof Error ? cause.message : String(cause,);
+    throw new Error(`host "${host}" could not be resolved: ${reason} — set server.host to an address that resolves`, {
+      cause,
+    },);
+  },);
+
   const address = selectBindAddress(resolved.map((entry,) => entry.address),);
   if (address === null) {
     throw new Error(`host "${host}" resolves to no address — set server.host to an address that exists`,);

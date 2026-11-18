@@ -96,6 +96,11 @@ that literal is what the listener binds. A second instance on the same port
 therefore fails with `EADDRINUSE` and the port-conflict message, which names
 the port and points at `--instance NAME`.
 
+The pinned address is the first IPv4 result for the configured name; IPv6 is
+used only when no IPv4 address exists. A name that cannot be resolved fails at
+boot with a message naming the host and the `server.host` fix, not a raw DNS
+error.
+
 Without that pinning, the second instance would silently take the NEXT
 address of the same host name (for example `::1` after `127.0.0.1`) and both
 instances would look "running" on one port, with no error and no log line.

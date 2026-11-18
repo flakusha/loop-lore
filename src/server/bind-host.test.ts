@@ -35,6 +35,18 @@ describe("resolveBindHost", () => {
     expect(await resolveBindHost({ host: "127.0.0.1", },),).toBe("127.0.0.1",);
     expect(await resolveBindHost({ host: "[::1]", },),).toBe("::1",);
   });
+
+  test("a name that cannot resolve reports the host and the fix", async () => {
+    const failure = await resolveBindHost({ host: "loop-lore-no-such-host.invalid", },).catch(
+      (error: unknown,) => error,
+    );
+
+    expect(failure,).toBeInstanceOf(Error,);
+    const message = (failure as Error).message;
+    expect(message,).toContain("loop-lore-no-such-host.invalid",);
+    expect(message,).toContain("could not be resolved",);
+    expect(message,).toContain("set server.host",);
+  });
 });
 
 /**
