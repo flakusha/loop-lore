@@ -251,7 +251,7 @@ export function defaultJobs(): CronJobDef[] {
       run: async ({ database, logger, },) => {
         const { TravelTickEngine, } = await import("../locations/travel-engine");
         const engine = new TravelTickEngine(database,);
-        const summary = await engine.tick({ elapsedSeconds: 120, },);
+        const summary = await engine.tick({ elapsedSeconds: 120, tickIndex: Date.now(), },);
         logger.info("travel tick complete", { module: "cron", ...summary, },);
         return summary;
       },

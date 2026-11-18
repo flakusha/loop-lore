@@ -110,4 +110,26 @@ describe("ActorPositionService", () => {
     expect(pos!.physicalLocationId,).toBe(ship,);
     expect(pos!.spatialLocationId,).toBe(portB,);
   });
+
+  test("propagateTransportArrival moves riders' spatial only, batched", async () => {
+    const svc = new ActorPositionService(testDb.db,);
+    const worldId = await makeWorld();
+    const ship = await makeLoc(worldId, "transport", "free", "ship",);
+    const portA = await makeLoc(worldId, "transit", "static", "portA",);
+    const portB = await makeLoc(worldId, "transit", "static", "portB",);
+    await svc.setPosition("rider-1", ship, portA,);
+    await svc.setPosition("rider-2", ship, portA,);
+    await svc.setPosition("bystander", portA, portA,);
+
+    const updated = await svc.propagateTransportArrival(ship, portB,);
+
+    expect(updated,).toBe(2,);
+    const r1 = await svc.getPosition("rider-1",);
+    const r2 = await svc.getPosition("rider-2",);
+    const bystander = await svc.getPosition("bystander",);
+    expect(r1!.physicalLocationId,).toBe(ship,);
+    expect(r1!.spatialLocationId,).toBe(portB,);
+    expect(r2!.spatialLocationId,).toBe(portB,);
+    expect(bystander!.spatialLocationId,).toBe(portA,);
+  });
 });

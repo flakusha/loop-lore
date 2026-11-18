@@ -29,7 +29,7 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
-import { LOCATION_DEPTH_LIMIT, } from "../db/enums-story/world";
+import { LOCATION_DEPTH_LIMIT, type LocationKind, type MobilityMode, } from "../db/enums-story/world";
 
 export interface LocationTreeNode {
   id: string;
@@ -38,9 +38,13 @@ export interface LocationTreeNode {
   depth: number;
 }
 
-/** A `LocationTreeNode` plus its immediate children, recursively. `tree()` also emits `name` for display. */
+/** A `LocationTreeNode` plus its immediate children, recursively. `tree()` also emits the display name and the materialized fractal-location fields. */
 export type LocationTreeBranch = LocationTreeNode & {
   name: string;
+  kind: LocationKind;
+  mobility_mode: MobilityMode;
+  current_route_id: string | null;
+  travel_progress: number;
   children: LocationTreeBranch[];
 };
 
@@ -230,11 +234,20 @@ export class LocationTreeService {
     const all = await this.db
       .selectFrom("locations",)
       .where("world_id", "=", worldId,)
-      .select(["id", "name", "parent_location_id",],)
+      .select([
+        "id",
+        "name",
+        "parent_location_id",
+        "path",
+        "kind",
+        "mobility_mode",
+        "current_route_id",
+        "travel_progress",
+      ],)
       .orderBy("name", "asc",)
       .execute();
 
-    type Flat = { id: string; name: string; parent_location_id: string | null };
+    type Flat = Omit<LocationTreeBranch, "children">;
     const byParent = new Map<string | null, Flat[]>();
     for (const row of all as Flat[]) {
       const key = row.parent_location_id;
@@ -246,11 +259,8 @@ export class LocationTreeService {
     const build = (parentId: string | null,): LocationTreeBranch[] => {
       const kids = byParent.get(parentId,) ?? [];
       return kids.map((k,) => ({
-        id: k.id,
-        name: k.name,
-        parent_location_id: k.parent_location_id,
-        depth: 0,
-        path: k.id,
+        ...k,
+        depth: k.path.split("/",).length - 2,
         children: build(k.id,),
       }));
     };

@@ -14,17 +14,24 @@
  *   3. Add (elapsed seconds / seconds_per_unit) to travel_progress.
  *   4. If progress >= stop_count, wrap to 0 (loop=1) or pin to stop_count-1
  *      (loop=0, transport arrives and waits).
+ *   5. On a crossing, snap the transport's coords to the destination stop,
+ *      move every rider's spatial position, and emit transport:arrived /
+ *      transport:departed events.
  *
  * The function returns a summary — the cron body just logs and moves on.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
+import { jsonStringifyOr, } from "../utils";
+import { ActorPositionService, } from "./positions";
 
 export interface TickOptions {
   /** Seconds of in-game time advanced this tick. Default 60 (= 1 minute). */
   elapsedSeconds?: number;
   /** Cap per tick to bound work; default 1000 transports. */
   maxTransports?: number;
+  /** Simulation tick index stamped onto emitted transport events. Default 0. */
+  tickIndex?: number;
 }
 
 export interface TickSummary {
@@ -36,6 +43,7 @@ export interface TickSummary {
 
 interface ActiveTransport {
   id: string;
+  world_id: string;
   current_route_id: string;
   travel_progress: number;
   seconds_per_unit: number;
@@ -66,6 +74,7 @@ export class TravelTickEngine {
       .where("locations.current_route_id", "is not", null,)
       .select((eb,) => [
         "locations.id as id",
+        "locations.world_id as world_id",
         "locations.current_route_id as current_route_id",
         "locations.travel_progress as travel_progress",
         "travel_routes.seconds_per_unit as seconds_per_unit",
@@ -74,6 +83,7 @@ export class TravelTickEngine {
       ])
       .groupBy([
         "locations.id",
+        "locations.world_id",
         "locations.current_route_id",
         "locations.travel_progress",
         "travel_routes.seconds_per_unit",
@@ -82,6 +92,7 @@ export class TravelTickEngine {
       .limit(cap,)
       .execute();
 
+    const tickIndex = opts.tickIndex ?? 0;
     let advanced = 0;
     let arrived = 0;
     let capped = 0;
@@ -91,12 +102,16 @@ export class TravelTickEngine {
         const units = elapsed / Math.max(row.seconds_per_unit, 1,);
         const target = row.travel_progress + units;
         let next: number;
+        let crossing = false;
+        let wrapped = false;
         if (row.stop_count <= 1) {
           // Degenerate route — pin at 0.
           next = 0;
         } else if (target >= row.stop_count) {
+          crossing = true;
           if (row.loop === 1) {
             next = (target as number) % row.stop_count;
+            wrapped = true;
           } else {
             next = row.stop_count - 1;
             arrived += 1;
@@ -109,6 +124,10 @@ export class TravelTickEngine {
           travel_progress: next,
         } as never,).execute();
 
+        if (crossing) {
+          await this.applyStopArrival(row, next, wrapped, tickIndex,);
+        }
+
         advanced += 1;
       } catch {
         capped += 1;
@@ -116,5 +135,91 @@ export class TravelTickEngine {
     }
 
     return { advanced, arrived, capped, skipped: 0, };
+  }
+
+  /**
+   * The transport reached the end of its route — snap its coords to the
+   * destination stop, move every rider's spatial position, and log it.
+   */
+  private async applyStopArrival(
+    transport: ActiveTransport,
+    nextProgress: number,
+    wrapped: boolean,
+    tickIndex: number,
+  ): Promise<void> {
+    const stops = await this.db
+      .selectFrom("travel_route_stops",)
+      .where("route_id", "=", transport.current_route_id,)
+      .orderBy("stop_order",)
+      .select("location_id",)
+      .execute();
+
+    if (stops.length === 0) { return; }
+
+    const stopIndex = Math.min(Math.floor(nextProgress,), stops.length - 1,);
+    const stopId = stops[stopIndex]!.location_id;
+    const stopLoc = await this.db
+      .selectFrom("locations",)
+      .where("id", "=", stopId,)
+      .select(["coord_x", "coord_y", "coord_z",],)
+      .executeTakeFirst();
+
+    const coords = {
+      x: stopLoc?.coord_x ?? null,
+      y: stopLoc?.coord_y ?? null,
+      z: stopLoc?.coord_z ?? null,
+    };
+
+    await this.db
+      .updateTable("locations",)
+      .where("id", "=", transport.id,)
+      .set({ coord_x: coords.x, coord_y: coords.y, coord_z: coords.z, } as never,)
+      .execute();
+
+    await new ActorPositionService(this.db,)
+      .propagateTransportArrival(transport.id, stopId,);
+
+    const payload = jsonStringifyOr({
+      routeId: transport.current_route_id,
+      stopId,
+      progress: nextProgress,
+      coords,
+    },);
+
+    await this.emitTransportEvent(transport.world_id, "transport:arrived", transport.id, stopId, tickIndex, payload,);
+    if (wrapped) {
+      await this.emitTransportEvent(
+        transport.world_id,
+        "transport:departed",
+        transport.id,
+        stopId,
+        tickIndex,
+        payload,
+      );
+    }
+  }
+
+  /** Append one transport event; a replayed tick loses the insert. */
+  private async emitTransportEvent(
+    worldId: string,
+    eventType: "transport:arrived" | "transport:departed",
+    transportId: string,
+    stopId: string,
+    tickIndex: number,
+    payload: string,
+  ): Promise<void> {
+    await this.db
+      .insertInto("world_event_log",)
+      .values({
+        world_id: worldId,
+        event_type: eventType,
+        subject_id: transportId,
+        actor_id: null,
+        tick_index: tickIndex,
+        payload,
+        dedupe_key: `${eventType}:${transportId}:${stopId}:${tickIndex}`,
+      },)
+      .onConflict((oc,) => oc.column("dedupe_key",).doNothing())
+      .execute();
   }
 }

@@ -3,17 +3,23 @@
 
 /**
  * Fractal-locations invariants tests — DB triggers + service-layer rules
- * established in 013_locations_fractal.ts. Each invariant below has an
- * explicit "what happens if it's violated" assertion so a regression to the
- * underlying trigger or service code surfaces immediately.
+ * established in 013_locations_fractal.ts (INSERT guards) and
+ * 106_locations_integrity.ts (UPDATE twins + depth ceiling). Each invariant
+ * below has an explicit "what happens if it's violated" assertion so a
+ * regression to the underlying trigger or service code surfaces immediately.
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { type Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { ActorPositionService, } from "../locations/positions";
 import { TravelRouteService, } from "../locations/routes";
 import { LocationTreeService, } from "../locations/tree";
 import { createTestDb, resetTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../test-utils/insert-helpers";
+import { down, up, } from "./migrations/106_locations_integrity";
+
+/** `up`/`down` are typed against the untyped handle the migrator passes them. */
+type UntypedDb = Kysely<unknown>;
 
 let testDb: TestDb;
 const OWNER = "fractal-inv-owner";
@@ -32,6 +38,34 @@ async function rawInsertLoc(worldId: string, parentId: string | null = null, nam
   );
 
   return id;
+}
+
+const NEW_TRIGGERS = [
+  "trg_locations_no_self_parent_on_update",
+  "trg_locations_cross_world_parent_on_update",
+  "trg_locations_depth_limit_on_insert",
+  "trg_locations_depth_limit_on_update",
+] as const;
+
+/** Raw inserts so the depth tests exercise the trigger, not the service. */
+async function rawChain(worldId: string, depth: number,): Promise<string[]> {
+  const ids: string[] = [];
+  let parent: string | null = null;
+  for (let i = 0; i < depth; i += 1) {
+    parent = await rawInsertLoc(worldId, parent, `chain-${i}`,);
+    ids.push(parent,);
+  }
+
+  return ids;
+}
+
+function integrityTriggers(sqlite: TestDb["sqlite"],): string[] {
+  return (sqlite.query(
+    `SELECT name FROM sqlite_master WHERE type = 'trigger' AND name LIKE 'trg_locations_%'`,
+  ).all() as { name: string }[])
+    .map((row,) => row.name)
+    .filter((name,) => (NEW_TRIGGERS as readonly string[]).includes(name,))
+    .sort();
 }
 
 beforeAll(async () => {
@@ -199,5 +233,73 @@ describe("fractal locations invariants", () => {
 
     const ship = await rawInsertLoc(worldId, null, "ship",);
     await expect(routes.attachTransport(ship, routeId,),).rejects.toThrow(/transport|mobility/i,);
+  });
+
+  test("trigger: rejects self-parent on UPDATE", async () => {
+    const worldId = await makeWorld();
+    const id = await rawInsertLoc(worldId, null, "self",);
+    expect(() => testDb.sqlite.run(`UPDATE locations SET parent_location_id = ? WHERE id = ?`, [id, id,],)).toThrow(
+      /own parent/i,
+    );
+  });
+
+  test("trigger: rejects cross-world parent on UPDATE", async () => {
+    const wA = await makeWorld();
+    const wB = await makeWorld();
+    const a = await rawInsertLoc(wA, null, "a",);
+    const b = await rawInsertLoc(wB, null, "b",);
+    expect(() => testDb.sqlite.run(`UPDATE locations SET parent_location_id = ? WHERE id = ?`, [b, a,],)).toThrow(
+      /cross.world/i,
+    );
+  });
+
+  test("trigger: rejects depth 13 on INSERT", async () => {
+    const worldId = await makeWorld();
+    const chain = await rawChain(worldId, 12,);
+    const deepest = chain[chain.length - 1]!;
+    const row = testDb.sqlite.query(`SELECT path FROM locations WHERE id = ?`,).get(deepest,) as { path: string };
+    // depth = separators - 1; the 12th level is still inside the limit.
+    expect(row.path.split("/",).length - 2,).toBe(12,);
+    await expect(rawInsertLoc(worldId, deepest, "too-deep",),).rejects.toThrow(/depth exceeds limit/i,);
+  });
+
+  test("trigger: rejects depth 13 on UPDATE", async () => {
+    const worldId = await makeWorld();
+    const chain = await rawChain(worldId, 12,);
+    const deepest = chain[chain.length - 1]!;
+    const subtree = await rawInsertLoc(worldId, null, "subtree",);
+    expect(() => testDb.sqlite.run(`UPDATE locations SET parent_location_id = ? WHERE id = ?`, [deepest, subtree,],))
+      .toThrow(/depth exceeds limit/i,);
+  });
+
+  test("trigger: valid reparent still rewrites descendant paths", async () => {
+    const worldId = await makeWorld();
+    const r1 = await rawInsertLoc(worldId, null, "r1",);
+    const r2 = await rawInsertLoc(worldId, null, "r2",);
+    const child = await rawInsertLoc(worldId, r1, "c",);
+    const gc = await rawInsertLoc(worldId, child, "gc",);
+    testDb.sqlite.run(`UPDATE locations SET parent_location_id = ? WHERE id = ?`, [r2, child,],);
+    const paths = new Map(
+      (testDb.sqlite.query(`SELECT id, path FROM locations`,).all() as { id: string; path: string }[])
+        .map((row,) => [row.id, row.path,] as const),
+    );
+
+    expect(paths.get(child,),).toBe(`/${r2}/${child}/`,);
+    expect(paths.get(gc,),).toBe(`/${r2}/${child}/${gc}/`,);
+  });
+
+  test("migration 106: up creates and down removes exactly its triggers", async () => {
+    const expected = [...NEW_TRIGGERS,].sort();
+    const { db, sqlite, } = await createTestDb();
+    try {
+      expect(integrityTriggers(sqlite,),).toEqual(expected,);
+      await down(db as unknown as UntypedDb,);
+      expect(integrityTriggers(sqlite,),).toEqual([],);
+      await up(db as unknown as UntypedDb,);
+      expect(integrityTriggers(sqlite,),).toEqual(expected,);
+    } finally {
+      await db.destroy();
+      sqlite.close();
+    }
   });
 });
