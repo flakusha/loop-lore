@@ -16,12 +16,13 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import { recordRanking, } from "../../models/rankings";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { MockLLMProvider, } from "../../test-utils/mock-provider";
 import type { ResolvedProvider, } from "../providers/registry";
 import type { ProviderCapabilities, } from "../providers/types";
-import { resolveOptions, } from "./resolve-options";
+import { resolveGenerateTarget, resolveOptions, } from "./resolve-options";
 import type { GenerateRequest, } from "./types";
 
 let testDb: Kysely<DB>;
@@ -166,5 +167,47 @@ describe("resolveOptions stream resolution chain", () => {
   test("an explicit chat id with no row falls through to the config default", async () => {
     const { resolvedStream, } = await resolve(makeInput({ chatId: "does-not-exist", },), makeCfg(true,), false,);
     expect(resolvedStream,).toBe(true,);
+  });
+});
+
+describe("resolveGenerateTarget scenario autoroute", () => {
+  const SUBJECT = "hf:org/autoroute-wiring-model";
+
+  test("admin autorouteScenario selects the ranked main model", async () => {
+    await recordRanking(testDb, {
+      scope: "global",
+      scopeKey: "",
+      subjectKey: SUBJECT,
+      metric: "quality_score",
+      value: 0.9,
+      basis: "imported",
+      source: "livebench",
+      observedAt: "2026-11-01T00:00:00.000Z",
+    },);
+
+    try {
+      const cfg = {
+        generation: {
+          autorouteScenario: "general",
+          defaultProvider: "target-provider",
+          defaultModels: { "target-provider": "autoroute-wiring-model", },
+        },
+      } as unknown as Config;
+
+      const target = await resolveGenerateTarget({ input: makeInput(), cfg, database: testDb, },);
+      expect(target,).toEqual({ provider: "target-provider", model: "autoroute-wiring-model", },);
+    } finally {
+      await testDb.deleteFrom("model_rankings",).where("subject_key", "=", SUBJECT,).execute();
+    }
+  });
+
+  test("an explicit client provider/model bypasses role resolution", async () => {
+    const target = await resolveGenerateTarget({
+      input: makeInput({ provider: "client-provider", modelId: "client-model", },),
+      cfg: {} as Config,
+      database: testDb,
+    },);
+
+    expect(target,).toEqual({ provider: "client-provider", model: "client-model", },);
   });
 });

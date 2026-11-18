@@ -12,12 +12,39 @@
  * Extracted from handler.ts (pure refactor, no behavior change).
  */
 import type { Kysely, } from "kysely";
+import { resolveModelRole, } from "../../admin/model-roles";
 import type { Config, } from "../../config/schema";
+import { ModelRole, } from "../../db/enums-core";
 import type { DB, } from "../../db/schema";
 import { parseAssistantTuning, resolveAssistantMaxTokens, resolveAssistantTemperature, } from "../assistant-tuning";
 import type { ResolvedProvider, } from "../providers/registry";
 import type { GenerationMessage, GenerationOptions, } from "../types";
 import type { GenerateRequest, } from "./types";
+
+/** Provider/model chosen for one generation request. */
+export interface GenerateTarget {
+  provider: string | undefined;
+  model: string | undefined;
+}
+
+/**
+ * Pick the main generation target. An explicit client provider/model wins;
+ * otherwise the admin-controlled role chain runs (DB override > config role
+ * > scenario ranking > server default). `autorouteScenario` is read inside
+ * `resolveModelRole`, so ranking needs no new request field.
+ */
+export async function resolveGenerateTarget({
+  input,
+  cfg,
+  database,
+}: { input: GenerateRequest; cfg: Config; database: Kysely<DB> },): Promise<GenerateTarget> {
+  if (input.provider !== undefined || input.modelId !== undefined) {
+    return { provider: input.provider, model: input.modelId, };
+  }
+
+  const main = await resolveModelRole(ModelRole.Main, cfg, database,);
+  return { provider: main.provider || undefined, model: main.model || undefined, };
+}
 
 /** Inputs for {@link resolveOptions}. */
 interface ResolveOpts {

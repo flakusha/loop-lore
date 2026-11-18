@@ -4,6 +4,7 @@
 [generation]
 defaultProvider = "" # e.g. "openaiCompatible"
 defaultModels = {} # { openaiCompatible = "gpt-4" }
+# autorouteScenario = "general" # optional: general|chat|coding|local|observed; ranks unassigned model roles from model_rankings
 
 [generation.providers]
 openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
