@@ -45,6 +45,14 @@ Open questions for the operator:
 6. API version pin and breaking-change ADR: tracked by `TASK-decide-api-version-pin-and-adr.md`.
 7. Which e2e/QA subset gates 1.0.0: tracked by `TASK-decide-1-0-0-qa-e2e-subset.md`.
 
+## Decision log (2026-11-19)
+
+- Gemini Decision 1 adapter: **post-1.0.0**. It is a remote API (`generativelanguage.googleapis.com/v1beta/decisions`, `x-goog-api-key`), not a local model and not a config-only change — the current decision client is loopback-only and unauthenticated. Keep `llama-swap`/`d3-2b` as the 1.0.0 decision oracle; file a `FEAT` before building a Gemini adapter.
+- Credential/availability-gated live e2e tiers: **not strict per-run release gates**. The OpenRouter embed/rerank/TTS default model ids are gone from the current free catalog; those tiers run only when credentials and live models are available. The stale defaults are a followup, not a release blocker.
+- Push/tag timing and the e2e/QA release subset: **deferred to a later operator session**. `dev` stays unpushed and untagged; no gate subset is pinned yet.
+- Still need filing before scope can close: the API version pin + breaking-change ADR (`TASK-decide-api-version-pin-and-adr.md`), the explicit Not-Started epic OUT list (`TASK-decide-1-0-0-epic-scope-exclusions.md`), and dedicated MFA operator docs (`TASK-mfa-dedicated-operator-documentation.md`). These are tracked tickets, not yet decisions; do not infer values for them.
+- Remaining operator items (status-vocab enforcement, index split timing, thin-client mobile confirmation, actor-kind verification, init-image affordance, H18 path hygiene) stay deferred per their existing tickets.
+
 Related: .tmp/research/release-1.0.0-roadmap.md
 
 ## Operator-approved scope (2026-11-11)
