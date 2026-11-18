@@ -3,7 +3,8 @@
 
 # TASK: Consume honkbox capabilities contract
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Honkbox registry, capability consumption, provider wiring
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-platform-integrations

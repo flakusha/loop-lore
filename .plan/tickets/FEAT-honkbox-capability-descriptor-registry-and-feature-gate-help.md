@@ -3,7 +3,7 @@
 
 # FEAT: honkbox capability descriptor registry and feature gate helper
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-platform-integrations.md
