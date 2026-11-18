@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-code-quality.md
+**Tags:** build, dependencies, cleanup, html
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 **Summary:**

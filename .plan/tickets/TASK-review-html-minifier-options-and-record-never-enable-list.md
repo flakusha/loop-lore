@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-frontend-bundle-optimization.md
+**Tags:** frontend, build, html, minify, configuration
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 **Summary:**

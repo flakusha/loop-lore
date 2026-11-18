@@ -9593,9 +9593,13 @@
     "title": "Single-quoted i18n directives render raw to users",
     "label": "bug",
     "priority": "low",
-    "epic": "",
+    "epic": "epic-i18n.md",
     "project": "",
-    "tags": [],
+    "tags": [
+      "i18n",
+      "templates",
+      "frontend"
+    ],
     "source": ".plan/tickets/BUG-single-quoted-i18n-directives-render-raw-to-users.md",
     "status": "open"
   },
@@ -27166,9 +27170,15 @@
     "title": "Add HTML minify-parity gate for templates and attribute drift",
     "label": "task",
     "priority": "low",
-    "epic": "",
+    "epic": "epic-code-quality.md",
     "project": "",
-    "tags": [],
+    "tags": [
+      "frontend",
+      "build",
+      "html",
+      "minify",
+      "gates"
+    ],
     "source": ".plan/tickets/TASK-add-html-minify-parity-gate-for-templates-and-attribute-drif.md",
     "status": "open"
   },
@@ -39550,9 +39560,15 @@
     "title": "Document and enforce runtime HTML response attribute policy",
     "label": "task",
     "priority": "low",
-    "epic": "",
+    "epic": "epic-architecture.md",
     "project": "",
-    "tags": [],
+    "tags": [
+      "architecture",
+      "runtime",
+      "html",
+      "frontend",
+      "contract"
+    ],
     "source": ".plan/tickets/TASK-document-and-enforce-runtime-html-response-attribute-policy.md",
     "status": "open"
   },
@@ -58239,9 +58255,14 @@
     "title": "Remove unused bun-plugin-html dependency",
     "label": "task",
     "priority": "low",
-    "epic": "",
+    "epic": "epic-code-quality.md",
     "project": "",
-    "tags": [],
+    "tags": [
+      "build",
+      "dependencies",
+      "cleanup",
+      "html"
+    ],
     "source": ".plan/tickets/TASK-remove-unused-bun-plugin-html-dependency.md",
     "status": "open"
   },
@@ -59033,9 +59054,15 @@
     "title": "Review HTML minifier options and record never-enable list",
     "label": "task",
     "priority": "low",
-    "epic": "",
+    "epic": "epic-frontend-bundle-optimization.md",
     "project": "",
-    "tags": [],
+    "tags": [
+      "frontend",
+      "build",
+      "html",
+      "minify",
+      "configuration"
+    ],
     "source": ".plan/tickets/TASK-review-html-minifier-options-and-record-never-enable-list.md",
     "status": "open"
   },
