@@ -33,6 +33,8 @@ import { AdminFederationBudgetBody, AdminFederationMatrixBody, } from "../../val
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, withPermissionAuth, } from "../http-utils";
 import {
   auditFederationChange,
+  badOriginResponse,
+  decodeOriginParam,
   federationOffResponse,
   isBudgetMode,
   isWorkloadClass,
@@ -122,9 +124,12 @@ export function federationBudgetRoutes(opts: AdminFederationRouteOpts, prefix = 
           return notInEnumResponse("workloadClass", ctx.params.workloadClass, PEER_WORKLOAD_CLASSES,);
         }
 
+        const origin = decodeOriginParam(ctx.params.origin,);
+        if (origin === null) { return badOriginResponse(); }
+
         const cleared = await clearPerformanceBudget({
           database: db,
-          origin: ctx.params.origin,
+          origin: origin,
           workloadClass: ctx.params.workloadClass,
         },);
 
@@ -134,9 +139,9 @@ export function federationBudgetRoutes(opts: AdminFederationRouteOpts, prefix = 
           eventType: "federation.budget_cleared",
           action: "budget_clear",
           entityType: "federation_performance_budget",
-          entityId: `${ctx.params.origin}/${ctx.params.workloadClass}`,
-          message: `Performance budget cleared: ${ctx.params.origin} ${ctx.params.workloadClass}`,
-          meta: { origin: ctx.params.origin, workloadClass: ctx.params.workloadClass, cleared, },
+          entityId: `${origin}/${ctx.params.workloadClass}`,
+          message: `Performance budget cleared: ${origin} ${ctx.params.workloadClass}`,
+          meta: { origin, workloadClass: ctx.params.workloadClass, cleared, },
         },);
 
         return jsonResponse({ ok: true, cleared, },);
