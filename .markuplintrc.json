@@ -219,6 +219,35 @@
         }
       }
     },
+    "src/components/admin/{analytics-panel,audit-panel,chats-panel,health-panel,models-panel,system-panel,users-panel,world-events-panel,worlds-panel,workflows-panel}.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> / <template x-if> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
+    "src/components/world-edit/fractal-panel.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
+    "src/components/admin/models-panel.html": {
+      "nodeRules": [
+        {
+          "selector": "a[x-show]",
+          "rules": {
+            "no-disallowed-attr": {
+              "severity": "off",
+              "reason": "The href is Alpine-bound (:href) and toggled with x-show, invisible to the static mustache parser — the linter sees an <a> without href, where target/rel are disallowed. At runtime the anchor only renders when item.url is truthy and carries that external href."
+            }
+          }
+        }
+      ]
+    },
     "src/views/partials/character-growth-editor.html": {
       "rules": {
         "require-owned-elements": {
