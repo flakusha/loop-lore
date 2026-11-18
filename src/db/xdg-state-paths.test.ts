@@ -15,6 +15,7 @@ import path from "node:path";
 import { resolveDbPath, } from "../config/state-dir";
 import { liveDbPath, } from "./backup-restore";
 import { getDatabase, getSqliteDatabase, resetDatabaseSingleton, setTestDatabase, } from "./index";
+import type { DB, } from "./schema";
 
 const ENV_DB = "LOOP_LORE_DB_PATH";
 const ENV_XDG = "XDG_STATE_HOME";
@@ -180,7 +181,7 @@ describe("xdg state paths", () => {
     const { Database, } = await import("bun:sqlite");
     const { createSqliteDialect, } = await import("./index");
     const sqlite = new Database(":memory:",);
-    const override = new Kysely({ dialect: createSqliteDialect(sqlite,), },);
+    const override = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
     const root = scratch();
     process.env[ENV_DB] = path.join(root, "should-never-open.db",);
     try {

@@ -134,6 +134,7 @@ describe("local llama-swap proxy", () => {
       timeout: 300_000,
       retries: 0,
       allowUserApiKey: false,
+      models: {},
     },);
 
     const res = await provider.complete({
@@ -159,6 +160,7 @@ describe("local llama-swap proxy", () => {
       timeout: 300_000,
       retries: 0,
       allowUserApiKey: false,
+      models: {},
     },);
 
     const res = await provider.complete({
