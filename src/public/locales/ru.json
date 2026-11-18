@@ -1634,7 +1634,8 @@
     "outboxEmpty": "Очередь пуста — оффлайн-отправки доставляются автоматически.",
     "outboxQueuedAt": "В очереди с {time}",
     "outboxDiscard": "Убрать",
-    "outboxDiscardConfirm": "Убрать это сообщение из очереди? Оно не будет отправлено."
+    "outboxDiscardConfirm": "Убрать это сообщение из очереди? Оно не будет отправлено.",
+    "validationHarness": "Validation harness instruction (LLM-only variants)"
   },
   "personas": {
     "title": "Personas",

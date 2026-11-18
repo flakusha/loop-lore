@@ -12,10 +12,15 @@
 import { describe, expect, test, } from "bun:test";
 import { Value, } from "@sinclair/typebox/value";
 import {
+  ADMIN_NAME_PATTERN,
   AdminComfyUIDiscoveryResponse,
   AdminComfyUISetupBody,
+  AdminDbBackupRestoreBody,
+  AdminLlamaSwapConfigBody,
+  AdminLlamaSwapStatusResponse,
   AdminSdCppDiscoveryResponse,
   AdminSdCppSetupBody,
+  AdminSdSetupNameParams,
   AdminServerProviderDescriptor,
   AdminSetupProviderBody,
   AdminSetupProviderResponse,
@@ -216,5 +221,57 @@ describe("ServerProviderKindSchema", () => {
 
   test("rejects an unknown kind", () => {
     expect(Value.Check(ServerProviderKindSchema, "openai-v2",),).toBe(false,);
+  });
+});
+
+describe("bounded admin boundaries", () => {
+  test("the shared name pattern admits slugs and rejects path traversal", () => {
+    const pattern = new RegExp(ADMIN_NAME_PATTERN,);
+    expect(pattern.test("local-sdcpp.01",),).toBe(true,);
+    expect(pattern.test("../secret"),).toBe(false,);
+  });
+
+  test("restore requires the exact confirmation and a bounded name", () => {
+    expect(Value.Check(AdminDbBackupRestoreBody, {
+      name: "loop-lore-port-3000-backup.db",
+      confirmation: "RESTORE",
+    },),).toBe(true,);
+
+    expect(Value.Check(AdminDbBackupRestoreBody, {
+      name: "backup.db",
+      confirmation: "yes",
+    },),).toBe(false,);
+
+    expect(Value.Check(AdminDbBackupRestoreBody, {
+      name: "../outside.db",
+      confirmation: "RESTORE",
+    },),).toBe(false,);
+  });
+
+  test("llama-swap config checks port and non-blank path at the boundary", () => {
+    expect(Value.Check(AdminLlamaSwapConfigBody, {
+      listenPort: 8_080,
+      configPath: " /srv/llama-swap.yml ",
+    },),).toBe(true,);
+
+    expect(Value.Check(AdminLlamaSwapConfigBody, { listenPort: 65_536, },),).toBe(false,);
+    expect(Value.Check(AdminLlamaSwapConfigBody, { configPath: "   ", },),).toBe(false,);
+  });
+
+  test("llama-swap status response requires the reachability flag", () => {
+    expect(Value.Check(AdminLlamaSwapStatusResponse, {
+      configured: true,
+      autoStartEnabled: false,
+      listenPort: 8_080,
+      configPath: "/srv/llama-swap.yml",
+      running: true,
+    },),).toBe(true,);
+
+    expect(Value.Check(AdminLlamaSwapStatusResponse, { configured: true, },),).toBe(false,);
+  });
+
+  test("setup delete names use the same boundary as create names", () => {
+    expect(Value.Check(AdminSdSetupNameParams, { name: "my-sdcpp" },),).toBe(true,);
+    expect(Value.Check(AdminSdSetupNameParams, { name: "../x" },),).toBe(false,);
   });
 });

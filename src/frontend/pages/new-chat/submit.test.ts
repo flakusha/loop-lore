@@ -67,6 +67,7 @@ beforeEach(() => {
   els.set("#chat-mode", makeEl("direct",),);
   els.set("#gm-guided-toggle", makeEl("", false,),);
   els.set("#chat-variant", makeEl("standard",),);
+  els.set("#chat-validation-harness", makeEl(),);
   els.set("#chat-turn-strategy", makeEl(),);
   els.set("#chat-world", makeEl(),);
   els.set("#chat-visibility", makeEl(),);
@@ -158,5 +159,22 @@ describeOrSkip("new-chat create payload", () => {
 
     expect(body.variant,).toBe("rpg",);
     expect(body.worldId,).toBe("world-9",);
+  });
+
+  test("llm_only variants carry a trimmed validation harness", async () => {
+    els.get("#chat-variant",)!.value = "llm_only";
+    els.get("#chat-validation-harness",)!.value = "  stay in character  ";
+
+    const body = await submitForm("direct",);
+    const gmConfig = body.gmConfig as { validation?: { harness?: string } };
+    expect(gmConfig.validation?.harness,).toBe("stay in character",);
+  });
+
+  test("other variants do not send a validation harness", async () => {
+    els.get("#chat-variant",)!.value = "rpg";
+    els.get("#chat-validation-harness",)!.value = "ignored";
+
+    const body = await submitForm("direct",);
+    expect(body.gmConfig,).toBeUndefined();
   });
 },);

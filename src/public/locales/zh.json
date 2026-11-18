@@ -1634,7 +1634,8 @@
     "outboxEmpty": "队列中没有消息 — 离线发送会自动送达。",
     "outboxQueuedAt": "{time} 入队",
     "outboxDiscard": "丢弃",
-    "outboxDiscardConfirm": "丢弃这条待发送的消息？它将不会被发送。"
+    "outboxDiscardConfirm": "丢弃这条待发送的消息？它将不会被发送。",
+    "validationHarness": "Validation harness instruction (LLM-only variants)"
   },
   "personas": {
     "title": "Personas",

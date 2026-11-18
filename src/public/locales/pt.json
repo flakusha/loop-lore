@@ -1634,7 +1634,8 @@
     "outboxEmpty": "Nada na fila — envios offline são entregues automaticamente.",
     "outboxQueuedAt": "Na fila {time}",
     "outboxDiscard": "Descartar",
-    "outboxDiscardConfirm": "Descartar esta mensagem na fila? Ela não será enviada."
+    "outboxDiscardConfirm": "Descartar esta mensagem na fila? Ela não será enviada.",
+    "validationHarness": "Validation harness instruction (LLM-only variants)"
   },
   "personas": {
     "title": "Personas",

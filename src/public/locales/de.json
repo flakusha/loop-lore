@@ -1634,7 +1634,8 @@
     "outboxEmpty": "Nichts in der Warteschlange — Offline-Sendungen werden automatisch zugestellt.",
     "outboxQueuedAt": "Eingereiht {time}",
     "outboxDiscard": "Verwerfen",
-    "outboxDiscardConfirm": "Diese wartende Nachricht verwerfen? Sie wird nicht gesendet."
+    "outboxDiscardConfirm": "Diese wartende Nachricht verwerfen? Sie wird nicht gesendet.",
+    "validationHarness": "Validation harness instruction (LLM-only variants)"
   },
   "personas": {
     "title": "Personas",

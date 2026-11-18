@@ -1634,7 +1634,8 @@
     "outboxEmpty": "Nada en cola: los envíos sin conexión se entregan automáticamente.",
     "outboxQueuedAt": "En cola {time}",
     "outboxDiscard": "Descartar",
-    "outboxDiscardConfirm": "¿Descartar este mensaje en cola? No se enviará."
+    "outboxDiscardConfirm": "¿Descartar este mensaje en cola? No se enviará.",
+    "validationHarness": "Validation harness instruction (LLM-only variants)"
   },
   "personas": {
     "title": "Personas",

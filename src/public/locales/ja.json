@@ -1634,7 +1634,8 @@
     "outboxEmpty": "待機中のメッセージはありません。オフライン送信は自動的に配信されます。",
     "outboxQueuedAt": "{time} に待機",
     "outboxDiscard": "破棄",
-    "outboxDiscardConfirm": "この待機メッセージを破棄しますか？送信されません。"
+    "outboxDiscardConfirm": "この待機メッセージを破棄しますか？送信されません。",
+    "validationHarness": "Validation harness instruction (LLM-only variants)"
   },
   "personas": {
     "title": "Personas",
