@@ -28,6 +28,7 @@ import { connect, } from "node:net";
 import { join, sep, } from "node:path";
 import { resolveDbPath, resolveInstanceDir, resolveInstanceSlug, } from "../../packages/core/src/config/state-dir";
 import { resolveUploadDir, } from "../../src/assets/service/file-system";
+import { ASSETS_DEFAULTS, } from "../../src/config/sections/assets";
 import { getExecLogPath, } from "../../src/harness/exec-log";
 
 /** Repo root — this file lives at <root>/scripts/dev/. */
@@ -110,10 +111,9 @@ function resolveLayout(slug: string, port: number,): InstanceLayout {
 
   const stateDir = resolveInstanceDir(env,);
   const dbPath = resolveDbPath(env,);
-  // The shipped default upload dir is `${DATA_DIR}/uploads`, i.e. uploads live
-  // inside the instance dir. resolveUploadDir() resolves a relative upload dir
-  // against the instance dir, so it yields the same per-instance path.
-  const uploadsDir = resolveUploadDir("uploads", { instanceDir: stateDir, },);
+  // Use the shipped default, not a hand-written "uploads": the B1 re-anchor
+  // in resolveInstancePath() is part of what the harness is meant to verify.
+  const uploadsDir = resolveUploadDir(ASSETS_DEFAULTS.uploadDir, { instanceDir: stateDir, },);
 
   // The exec log path is owned by src/harness/exec-log.ts (getExecLogPath():
   // <instance dir>/harness/executions.jsonl). It reads process.env, so the
