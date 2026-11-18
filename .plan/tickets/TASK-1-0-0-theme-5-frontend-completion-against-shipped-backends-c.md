@@ -9,7 +9,7 @@
 
 **Summary:**
 
-Rationale: Cheapest user-visible wins are UI over already-wired backends (age-gate: routes+hot-reload+migrations shipped, UI absent). The 23-epic frontend matrix is still Proposed/design-stage, and parked UI branches (battle, world-mgmt, a11y, nsfw, story-mode) risk colliding — sequence behind the finalize wave with the API-contract gate green.
+Rationale: Cheapest user-visible wins are UI over already-wired backends (age-gate: UI and send-time enforcement shipped). The 23-epic frontend matrix is still Proposed/design-stage, and parked UI branches (battle, world-mgmt, a11y, nsfw, story-mode) risk colliding — sequence behind the finalize wave with the API-contract gate green.
 
 Feeds: epic-priority-analysis §B1/C1 (age-gate); matrix-frontend-backend-integration (23 epics, contract gate); matrix-cross-mechanics §0.1.0 alignment (NSFW x chat, gallery x chat, assistant-tooling x wizards, memory+template x chat); next-epic-selection §2(d) collision warning; parked branches per receipt
 

@@ -9,7 +9,7 @@
 
 **Summary:**
 
-Rationale: No embedded-backend app: Bun ships no iOS/Android target, so ship a thin client over /api/v1+SSE. The layout tier already ships (767/768/479px + 44px targets); remaining work is the PWA shell/outbox ticket plus replacing the hardcoded 1024-token memory cap with a context-share budget wired to per-world token_budget.
+Rationale: No embedded-backend app: Bun ships no iOS/Android target, so ship a thin client over /api/v1+SSE. The layout tier ships (767/768/479px + 44px targets); the PWA shell/outbox and the context-share memory budget also shipped. Remaining work is verification and polish on the shipped surfaces, not new builds.
 
 Feeds: mobile-packaged-feasibility-2026-11-03 (SKIP packaged app; ADOPT shipped CSS tiers; FOLLOW-UP PWA ticket TASK-pwa-cached-shell-plus-send-queue + getMaxMemoryRatio gap §4)
 
@@ -45,7 +45,7 @@ Still open (not started, do not half-build):
 **Implementation note (2026-11-12, phone-viewport spec — this worktree):**
 
 `tests/e2e/flows/browser/mobile-outbox.browser.ts` LANDED covering AC4's
-phone-viewport leg, with two tests `test.skip`-ed carrying inline diagnoses:
+phone-viewport leg; the skips described below were re-enabled 2026-11-18 and the file now has three active tests:
 - Horizontal overflow at 375px + 360px: the ~1200px chat-header `.actions`
   row forced a ~900px page overflow — FIXED here (app.css ≤768px block:
   `flex-wrap` + row-gap + flex-end on `.main-header .actions`). A residual
@@ -65,7 +65,7 @@ phone-viewport leg, with two tests `test.skip`-ed carrying inline diagnoses:
 Acceptance note: AC4's "queued sends survive offline→online" is verified at
 the unit level (outbox-store + chat-send-offline suites) and the 44px
 tap-target rule is applied on the new badge surface; the end-to-end browser
-demonstration stays skipped until the enqueue-classification fix lands.
+demonstration now runs: `tests/e2e/flows/browser/mobile-outbox.browser.ts` has three active tests (re-enabled 2026-11-18); the enqueue-classification bug behind the skip is fixed.
 
 Landed since (2026-11-12, worktree theme4-pwa-caps):
 - AC4 offline send outbox — the dedicated slice ticket

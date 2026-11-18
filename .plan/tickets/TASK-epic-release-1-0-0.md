@@ -3,7 +3,7 @@
 
 # TASK: EPIC release-1.0.0
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** Medium
 
@@ -27,6 +27,7 @@ GAP tickets (2026-11-11):
 3. TASK-1-0-0-gap-verify-multi-assistant-and-multi-llm-chat-rows.md (issue 2f405b6) — In Progress: variants selectable; harness setting + picker filter open
 4. TASK-1-0-0-gap-backup-restore-before-1-0-0-required-unstarted.md (issue 942d357) — Done; download/upload, scheduling and admin UI deferred
 5. TASK-1-0-0-gap-vn-custom-typeable-choices.md — Done; closes the VN Required line's custom-typeable leg (typed question answers + typed branching actions, provenance-flagged; branch vn-free-text-choices)
+6. TASK-1-0-0-gap-omni-search-frontend-consumer.md (issue 91d9e08) — Done; Alpine search callers and the browser flow use the unified endpoint.
 MFA (deferred-then-approved 2026-11-11): TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md — Done for email/messenger code delivery; TOTP later. Dedicated operator docs still absent.
 Flavors hermes/openclaw (IN decision 2026-11-11): implemented in tree/harness-flavor-parity @ fa95b7ca, landing pending; no flavor tickets needed.
 

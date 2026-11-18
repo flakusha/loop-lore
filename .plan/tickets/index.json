@@ -13314,7 +13314,7 @@
       "audit"
     ],
     "source": ".plan/epics/epic-chat-multi-ownership.md",
-    "status": "in_progress",
+    "status": "done",
     "git_issue": "0befebe",
     "project": ""
   },
@@ -23822,7 +23822,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-style-picker-ui-for-smart-regen.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "style picker UI for smart-regen",
     "type": "FEAT"
@@ -24252,26 +24252,28 @@
   "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL": {
     "epic": "epic-chat-product-features",
     "extid": "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL",
-    "hash": "8ae1e91",
+    "hash": "14f1f1d",
     "label": "idea",
     "priority": "low",
     "source": ".plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md",
     "status": "Not Started",
     "tags": [],
     "title": "Chat composer — predictive inline text suggestions (proposal)",
-    "type": "IDEA"
+    "type": "IDEA",
+    "git_issue": "14f1f1d"
   },
   "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS": {
     "epic": "epic-chat-product-features",
     "extid": "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS",
-    "hash": "056e932",
+    "hash": "e37ccde",
     "label": "idea",
     "priority": "low",
     "source": ".plan/tickets/IDEA-chat-composer-predictive-inline-text-suggestions.md",
     "status": "Not Started",
     "tags": [],
     "title": "Chat composer: predictive inline text suggestions",
-    "type": "IDEA"
+    "type": "IDEA",
+    "git_issue": "e37ccde"
   },
   "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF": {
     "epic": "epic-platform-research",
@@ -28755,6 +28757,20 @@
     "tags": [],
     "title": "Anthropic Provider",
     "type": "TASK"
+  },
+  "TASK-ANTIGRAVITY-ACP-FLAVOR-PLUS-BYOK-HARDENING-AND-PROVIDER-DOCS": {
+    "hash": "9c66da0",
+    "git_issue": "9c66da0",
+    "extid": "TASK-ANTIGRAVITY-ACP-FLAVOR-PLUS-BYOK-HARDENING-AND-PROVIDER-DOCS",
+    "type": "TASK",
+    "title": "antigravity ACP flavor plus BYOK hardening and provider docs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-antigravity-acp-flavor-plus-byok-hardening-and-provider-docs.md",
+    "status": "done"
   },
   "TASK-API-FIRST-FOUNDATION": {
     "epic": "epic-api-library-distribution",
@@ -66760,8 +66776,8 @@
   "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION": {
     "epic": "epic-emotion-avatar-message-binding",
     "extid": "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION",
-    "git_issue": "3da357e",
-    "hash": "3da357e",
+    "git_issue": "42a2cc7",
+    "hash": "42a2cc7",
     "label": "test",
     "priority": "P2",
     "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md",
@@ -66896,8 +66912,8 @@
   "WIRE-FRONTEND-KEYBOARD-HELP-OVERLAY": {
     "epic": "(none — proposed epic never materialized)",
     "extid": "WIRE-FRONTEND-KEYBOARD-HELP-OVERLAY",
-    "git_issue": "837bc93",
-    "hash": "837bc93",
+    "git_issue": "bdc214c",
+    "hash": "bdc214c",
     "label": "wire",
     "priority": "Medium",
     "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md",
