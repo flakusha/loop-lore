@@ -13,7 +13,7 @@ Explicit path env > XDG default > config-file value:
 | Live DB | `LOOP_LORE_DB_PATH` / `getDatabase(path)` arg | `$STATE/<instance>/loop-lore.db` | `db.sqliteFilename` **IGNORED** at runtime |
 | Uploads | `ASSETS_UPLOAD_DIR` | `$STATE/<instance>/uploads` | `assets.uploadDir` honored when no env is set |
 | TLS key/cert | `TLS_KEY` / `TLS_CERT` | `$STATE/<instance>/certs/key.pem`, `cert.pem` | `server.tls` honored when no env is set |
-| Backups | `LOOP_LORE_BACKUP_DIR` | `$STATE/loop-lore-data-backup/db/` | n/a |
+| Backups | `LOOP_LORE_BACKUP_DIR` | `$STATE/<instance>/backups/db/`; with `LOOP_LORE_BACKUP_DIR=<root>` → `<root>/<instance-slug>/db/` | n/a |
 | Whole tree | `LOOP_LORE_STATE_DIR` | — | n/a |
 
 `$STATE` is `$LOOP_LORE_STATE_DIR`, else `$XDG_STATE_HOME/loop-lore`, else
@@ -51,7 +51,8 @@ cp -a packages/core/loop-lore-data/loop-lore.db \
 ```
 
 Uploads move the same way (`uploads/` under the legacy dir to
-`$STATE/<instance>/uploads/`); backups under `loop-lore-data-backup/` keep
-working via `LOOP_LORE_BACKUP_DIR`. Config-file ports without a matching
+`$STATE/<instance>/uploads/`); backups under the instance dir
+(`<state>/<instance>/backups/`) keep working via `LOOP_LORE_BACKUP_DIR`.
+Config-file ports without a matching
 `PORT` env or `LOOP_LORE_INSTANCE` share the `default` instance dir — set
 `LOOP_LORE_INSTANCE` for a stable name.

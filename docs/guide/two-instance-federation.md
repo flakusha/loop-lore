@@ -35,7 +35,14 @@ Per-instance layout under the state root:
 | --- | --- |
 | `<state>/<instance>/loop-lore.db` | Live SQLite database |
 | `<state>/<instance>/uploads/` | Gallery assets |
+| `<state>/<instance>/certs/` | TLS `key.pem` + `cert.pem` |
+| `<state>/<instance>/backups/` | Instance archive root (DB snapshots in `backups/db/`) |
 | `<state>/<instance>/harness/executions.jsonl` | Harness exec log |
+
+Every row above resolves to the SAME instance dir: the database, uploads,
+certs, backups and exec log never split across two directories. With no
+`--instance`, `<instance>` follows the effective bind (`port-<port>`), so the
+whole set stays together.
 
 ## Run the harness
 
@@ -49,9 +56,10 @@ bun scripts/dev/two-instance-harness.ts --slug a --slug b --slug c
 
 Reading the table: one row per instance, columns `slug`, `port`, instance
 state dir, db path, uploads dir and exec log path. All four paths must differ
-per row, and the db path must sit inside the instance state dir. The script
-exits non-zero and prints `FAIL: ...` lines when an invariant breaks, so it is
-usable as a smoke check in CI as well.
+per row; the db path, uploads dir and exec log path must each sit inside that
+instance's state dir; and the requested slug must survive the resolver
+unchanged. The script exits non-zero and prints `FAIL: ...` lines when an
+invariant breaks, so it is usable as a smoke check in CI as well.
 
 Add `--boot` to actually start the instances and probe the port conflict:
 
@@ -73,8 +81,8 @@ already-bound port and requires that instance to fail loudly.
    (`sqlite3 <state>/alpha/loop-lore.db` and the `beta` one). They are
    different files with different content; a row written in one instance is
    not visible in the other.
-3. List the two uploads dirs. Each holds only its own assets
-   (`raw/`, `compressed/`, thumbnails).
+3. List the two uploads dirs. Each holds only its own assets (`raw/`
+   originals, `compressed/` variants and thumbnails).
 4. Read the two exec logs (`<state>/<instance>/harness/executions.jsonl`).
    Every record carries the instance slug, so a log line says which instance
    ran the harness.
@@ -102,8 +110,13 @@ would silently switch databases.
   keeps its own copy of everything it owns.
 - Backups are already per-instance (`<state>/<instance>/backups/`, and a
   `LOOP_LORE_BACKUP_DIR` root gets the slug appended). What still needs
-  operator triage is a PRE-XDG install: its backup pool and database live in
-  the repo-local legacy dirs (`packages/core/loop-lore-data/`, `data/`), which
-  the runtime only reports — it never moves or reads them.
+  operator triage is a PRE-XDG install: the runtime names BOTH legacy
+  locations once per process and prints the exact `cp -a` move for each — the
+  legacy DATABASE (`packages/core/loop-lore-data/loop-lore.db`,
+  `loop-lore-data/loop-lore.db`, `data/loop-lore.db`,
+  `../loop-lore-data/loop-lore.db`) and the legacy BACKUP POOL, the sibling
+  `loop-lore-data-backup/` (`packages/core/loop-lore-data-backup/`,
+  `loop-lore-data-backup/`, `../loop-lore-data-backup/`). It never moves or
+  reads either one.
 - jj / pijul support is NOT here. It is filed in the `giwt` repository, which
   owns the VCS seam; this repo has no jj or pijul source.

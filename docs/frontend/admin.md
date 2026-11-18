@@ -605,7 +605,7 @@ locale keys (`src/public/locales/en.json`).
 
 ### Run Telemetry
 
-Read endpoints served from the append-only exec log (`.harness/executions.jsonl`):
+Read endpoints served from the append-only exec log (`<state>/<instance>/harness/executions.jsonl`):
 
 | Endpoint                                 | Content                                  |
 | ---------------------------------------- | ---------------------------------------- |

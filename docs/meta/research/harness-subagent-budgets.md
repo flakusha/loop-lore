@@ -20,7 +20,7 @@ without introducing a second scheduler?
 
 ### 1. What a run record already captures (no new telemetry needed)
 
-`HarnessRunRecord` (one line of `.harness/executions.jsonl`) already carries
+`HarnessRunRecord` (one line of `<instance-dir>/harness/executions.jsonl`) already carries
 everything needed to measure per-call consumption: `runMs`, `tokensIn`,
 `tokensOut`, `costUsd`, `result` (`ok|error|timeout|cancelled`), `tools`,
 `toolCount`, `task`, `taskType`, `model`, `branch`, `gitSha`, `pid`,

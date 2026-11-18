@@ -403,7 +403,7 @@ exec log:
 
 | File | Role |
 | --- | --- |
-| `src/harness/exec-log.ts` | append-only writer for `.harness/executions.jsonl`; never throws |
+| `src/harness/exec-log.ts` | append-only writer for `<instance-dir>/harness/executions.jsonl`; never throws |
 | `src/harness/exec-recorder.ts` | called at the egress seam after every LLM call |
 | `src/harness/query.ts` | bounded-tail reader (`MAX_LINES = 20_000`, `READ_WINDOW_BYTES = 4 MiB`) |
 | `src/harness/stats.ts` | per-model / per-task-type / per-pattern rollup |
@@ -522,7 +522,7 @@ loop-lore's LLM egress — model, task type, token cost, pattern. That is
 application telemetry for this product, not agent-tooling telemetry. Keeping it
 in `src/harness/` is correct; only its *retention* lesson (§4.3) is portable.
 
-**Add time-based retention to `.harness/executions.jsonl`.** `exec-log.ts:9-10`
+**Add time-based retention to `<instance-dir>/harness/executions.jsonl`.** `exec-log.ts:9-10`
 states the no-rotation choice deliberately: pruning deletes the old failures
 worth mining. `.harness/` is gitignored (`.gitignore:76`), so it costs nothing to
 keep. Revisit on size, not now.

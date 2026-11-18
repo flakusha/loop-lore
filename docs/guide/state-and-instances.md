@@ -42,9 +42,13 @@ dirs from the same slug; an explicit `server` argument still wins.
 | `$STATE/<instance>/stdio-proxy.token` | Bearer token for the stdio-proxy listener (owner-only `0600`, minted at boot) |
 | `$STATE/<instance>/stdio-proxy.addr` | Listener `host:port` written at boot (read by bare `--proxy` shims; removed on clean shutdown) |
 
+Every row above uses the SAME resolved `<instance>`: the database, exec log, uploads, certs and backups all live in that one directory. A configured absolute `assets.uploadDir` or `server.tls` path is the operator's explicit choice and wins.
+
 Run a second copy with `--instance demo` (or
 `LOOP_LORE_INSTANCE=demo`) and the two never share a sqlite file.
-Two writers on one file stay forbidden.
+Two writers on one file stay forbidden: the runtime warns loudly when
+`LOOP_LORE_DB_PATH` is pinned, but it cannot detect a second process on the
+same file.
 
 ## Overrides
 
