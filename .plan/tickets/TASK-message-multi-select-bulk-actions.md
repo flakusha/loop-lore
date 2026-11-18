@@ -3,7 +3,8 @@
 
 # TASK: Message multi-select bulk actions
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Message multi-select bulk actions
 **Priority:** medium
 **Effort:** Medium
 
