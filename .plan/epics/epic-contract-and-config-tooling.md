@@ -41,3 +41,6 @@ server actually exposes. This epic owns closing both gaps.
 - Generated OpenAPI spec contains every served `/api/v1/harness/*` path; VitePress API pages match.
 - `bun run config:generate-schema` (and TOML sibling) exit 0 with the schema written, or fail loudly with the real error.
 - `bun run plan:validate` green.
+
+
+git issue: d2dd7ed

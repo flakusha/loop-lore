@@ -60,3 +60,6 @@ Background: `.tmp/research/editor-lsp-integration.md`.
 - `TASK-lsp-completion-via-harness`
 - `TASK-lsp-token-auth-permissions`
 - `TASK-lsp-client-configs-docs`
+
+
+git issue: 0a45cea

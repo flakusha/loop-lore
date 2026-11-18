@@ -66,3 +66,6 @@ Radicle is adopted as the offline-first P2P path for this epic's federation stor
 - `TASK-isolated-private-projects-git-jj-pijul-experimental`
 - `TASK-multi-user-collaboration-pijul-experimental`
 - `TASK-project-owner-root-permissions`
+
+
+git issue: 287aa65

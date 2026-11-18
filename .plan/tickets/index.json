@@ -5764,7 +5764,7 @@
       "data-loss"
     ],
     "source": ".plan/tickets/BUG-harness-queue-boot-recovery-fails-other-instances-inflight-t.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-HARNESS-QUEUE-CLAIM-IGNORES-AFFECTED-ROWS-DOUBLE-EXECUTES-TU": {
     "hash": "df0d0cc",
@@ -5784,7 +5784,7 @@
       "spend"
     ],
     "source": ".plan/tickets/BUG-harness-queue-claim-ignores-affected-rows-double-executes-tu.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-HARNESS-QUEUE-PER-PROFILE-SERIALIZATION-IS-PROCESS-LOCAL-NOT": {
     "hash": "6fde7bb",
@@ -5804,7 +5804,7 @@
       "multi-instance"
     ],
     "source": ".plan/tickets/BUG-harness-queue-per-profile-serialization-is-process-local-not.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
     "epic": "epic-nsfw-moderation-priority",
@@ -13787,7 +13787,7 @@
     "type": "EPIC"
   },
   "EPIC-CONTRACT-AND-CONFIG-TOOLING": {
-    "hash": "pending",
+    "hash": "d2dd7ed",
     "extid": "EPIC-CONTRACT-AND-CONFIG-TOOLING",
     "type": "EPIC",
     "title": "Contract and config tooling gaps",
@@ -13803,8 +13803,9 @@
       "schema",
       "generator"
     ],
-    "source": ".plan/tickets/epic-contract-and-config-tooling.md",
-    "status": "open"
+    "source": ".plan/epics/epic-contract-and-config-tooling.md",
+    "status": "open",
+    "git_issue": "d2dd7ed"
   },
   "EPIC-CONVERSATION-BRANCHING": {
     "epic": "",
@@ -14254,7 +14255,7 @@
     "type": "EPIC"
   },
   "EPIC-DISPLAY-TRANSITIONS": {
-    "hash": "pending",
+    "hash": "a7b7f0e",
     "extid": "EPIC-DISPLAY-TRANSITIONS",
     "type": "EPIC",
     "title": "Display Transitions — world ↔ chat ↔ map ↔ inventory ↔ battle",
@@ -14270,8 +14271,9 @@
       "arrival-events",
       "writeback"
     ],
-    "source": ".plan/tickets/epic-display-transitions.md",
-    "status": "open"
+    "source": ".plan/epics/epic-display-transitions.md",
+    "status": "open",
+    "git_issue": "a7b7f0e"
   },
   "EPIC-DISTRIBUTED-COMPUTE-SHARING": {
     "epic": "",
@@ -14377,7 +14379,7 @@
     "type": "EPIC"
   },
   "EPIC-EDITOR-LSP-INTEGRATION": {
-    "hash": "pending",
+    "hash": "0a45cea",
     "extid": "EPIC-EDITOR-LSP-INTEGRATION",
     "type": "EPIC",
     "title": "Editor LSP Integration",
@@ -14393,8 +14395,9 @@
       "nvim",
       "harness"
     ],
-    "source": ".plan/tickets/epic-editor-lsp-integration.md",
-    "status": "open"
+    "source": ".plan/epics/epic-editor-lsp-integration.md",
+    "status": "open",
+    "git_issue": "0a45cea"
   },
   "EPIC-EDITORIAL-WORKFLOW": {
     "hash": "f1a9f47",
@@ -14866,7 +14869,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/epics/epic-fractal-locations.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "locations",
       "hierarchy",
@@ -16782,7 +16785,7 @@
     "project": ""
   },
   "EPIC-MULTI-AGENT-ORCHESTRATION": {
-    "hash": "pending",
+    "hash": "fbf71e8",
     "extid": "EPIC-MULTI-AGENT-ORCHESTRATION",
     "type": "EPIC",
     "title": "Multi-agent orchestration (turn queue)",
@@ -16798,8 +16801,9 @@
       "subagents",
       "parallelism"
     ],
-    "source": ".plan/tickets/epic-multi-agent-orchestration.md",
-    "status": "in_progress"
+    "source": ".plan/epics/epic-multi-agent-orchestration.md",
+    "status": "in_progress",
+    "git_issue": "fbf71e8"
   },
   "EPIC-MULTI-INSTANCE-RECONCILIATION": {
     "epic": "",
@@ -17998,7 +18002,7 @@
     "type": "EPIC"
   },
   "EPIC-REMOTE-HARNESS-FEDERATION": {
-    "hash": "pending",
+    "hash": "287aa65",
     "extid": "EPIC-REMOTE-HARNESS-FEDERATION",
     "type": "EPIC",
     "title": "Remote Harness / Federation (Future Work)",
@@ -18017,11 +18021,12 @@
       "jj",
       "pijul"
     ],
-    "source": ".plan/tickets/epic-remote-harness-federation.md",
-    "status": "open"
+    "source": ".plan/epics/epic-remote-harness-federation.md",
+    "status": "open",
+    "git_issue": "287aa65"
   },
   "EPIC-RENPY-EXPORT": {
-    "hash": "pending",
+    "hash": "56f8f61",
     "extid": "EPIC-RENPY-EXPORT",
     "type": "EPIC",
     "title": "Ren'Py Conversion Export",
@@ -18035,8 +18040,9 @@
       "plugin",
       "vn"
     ],
-    "source": ".plan/tickets/epic-renpy-export.md",
-    "status": "open"
+    "source": ".plan/epics/epic-renpy-export.md",
+    "status": "open",
+    "git_issue": "56f8f61"
   },
   "EPIC-REPLAYABILITY": {
     "epic": "",
@@ -25398,7 +25404,7 @@
     "status": "open"
   },
   "TASK-1-0-0-GAP-VN-CUSTOM-TYPEABLE-CHOICES": {
-    "hash": "pending",
+    "hash": "6f48dd7",
     "extid": "TASK-1-0-0-GAP-VN-CUSTOM-TYPEABLE-CHOICES",
     "type": "TASK",
     "title": "1.0.0 GAP — VN custom-typeable choices (typed answers and typed actions)",
@@ -25413,7 +25419,8 @@
       "release-1-0-0"
     ],
     "source": ".plan/tickets/TASK-1-0-0-gap-vn-custom-typeable-choices.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "6f48dd7"
   },
   "TASK-1-0-0-MFA-EMAIL-MESSENGER-CODE-CHANNEL-FIRST-METAAPPLICATION": {
     "hash": "7466fb8",
@@ -25487,7 +25494,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-theme-3-chat-as-the-product-scripting-lite-product-res.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-THEME-4-MOBILE-READY-WEB-WITHOUT-A-NATIVE-PACKAGE": {
     "hash": "c137c78",
@@ -36957,6 +36964,20 @@
     "title": "Consolidate unsafe Date/Buffer/JSON usage into shared utils",
     "type": "TASK"
   },
+  "TASK-CONSUME-HONKBOX-CAPABILITIES-CONTRACT": {
+    "hash": "48bc41a",
+    "git_issue": "48bc41a",
+    "extid": "TASK-CONSUME-HONKBOX-CAPABILITIES-CONTRACT",
+    "type": "TASK",
+    "title": "Consume honkbox capabilities contract",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-consume-honkbox-capabilities-contract.md",
+    "status": "open"
+  },
   "TASK-CONSUME-SIDE-MCP-COMFYUI-LOCAL-BLENDER-MCP-NODES-AS-TOOLS": {
     "hash": "01b1c19",
     "git_issue": "01b1c19",
@@ -46107,6 +46128,20 @@
     "title": "Hold inbound http 3 until bun ws over h3",
     "type": "TASK"
   },
+  "TASK-HONKBOX-PROVIDER-WIRING-AND-GPU-ADMISSION-OWNERSHIP": {
+    "hash": "a7794f8",
+    "git_issue": "a7794f8",
+    "extid": "TASK-HONKBOX-PROVIDER-WIRING-AND-GPU-ADMISSION-OWNERSHIP",
+    "type": "TASK",
+    "title": "Honkbox provider wiring and GPU admission ownership",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-honkbox-provider-wiring-and-gpu-admission-ownership.md",
+    "status": "open"
+  },
   "TASK-HOOK-CHAIN-AND-MODERATION-ROBUSTNESS-IN-GENERATION-PIPELINE": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "TASK-HOOK-CHAIN-AND-MODERATION-ROBUSTNESS-IN-GENERATION-PIPELINE",
@@ -49028,7 +49063,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-location-explorer-recursive-tree.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "ui",
       "alpine",
@@ -49132,7 +49167,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-locations-fractal-migration.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "locations",
       "schema",
@@ -49151,7 +49186,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-locations-tree-integrity-service.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "locations",
       "tree",
@@ -58012,7 +58047,7 @@
       "release-yml"
     ],
     "source": ".plan/tickets/TASK-release-cut-changelog-1-0-0-section-and-sync-workspace-versi.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-RELEVANCE-AWARE-DECAY-AND-PURGE-SIGNALS-IN-MEMORY-PURGE": {
     "hash": "660fcca",
@@ -63428,7 +63463,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-travel-routes-schema-and-crud.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "routes",
       "travel",
@@ -63466,7 +63501,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-travel-scheduler-tick.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "scheduler",
       "transport",

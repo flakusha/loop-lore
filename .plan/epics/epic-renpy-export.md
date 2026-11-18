@@ -85,3 +85,6 @@ finish in Ren'Py.
 - `TASK-renpy-export-model-gather-from-db` (dc2e726)
 - `TASK-renpy-export-core-plugin-route-versioned-path` (43f862e)
 - `TASK-renpy-export-button-in-chat-list-batch-bar` (d2bbfa1)
+
+
+git issue: 56f8f61

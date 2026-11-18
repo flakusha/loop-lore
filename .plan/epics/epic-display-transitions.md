@@ -45,3 +45,6 @@ This epic is the glue between them, not a replacement.
   (Task 1 decides; leans to extending the existing feed.)
 - Party engine: mount to cron/route or delete? (Task 2 decides; deletion is
   acceptable — the NPC movement tick already covers live movement.)
+
+
+git issue: a7b7f0e
