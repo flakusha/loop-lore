@@ -8,7 +8,8 @@
 **Acceptance Criteria:** route annotations land first; generated `api.md` carries a DO NOT EDIT banner; `api - doc drift` becomes a regenerate-and-diff freshness gate; `docs:build` produces the spec in a fresh clone.
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Generate API reference from served OpenAPI spec and wire docs build
 **Epic:** epic-openapi-reference
 **Priority:** Medium
 **Effort:** Medium
