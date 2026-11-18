@@ -39709,6 +39709,20 @@
     "title": "Dynamic Memory Writes via Tool-Call",
     "type": "TASK"
   },
+  "TASK-E2E-ADMIN-STATUS-LIVE-LEG-LOCAL-LLAMA-SWAP": {
+    "hash": "18e7433",
+    "extid": "TASK-E2E-ADMIN-STATUS-LIVE-LEG-LOCAL-LLAMA-SWAP",
+    "type": "TASK",
+    "title": "e2e admin-status live leg against local llama-swap",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-admin-status-live-leg-local-llama-swap.md",
+    "status": "open",
+    "git_issue": "18e7433"
+  },
   "TASK-E2E-ALPINE-STATE-HARNESS": {
     "epic": "epic-e2e-integration-testing",
     "extid": "TASK-E2E-ALPINE-STATE-HARNESS",
@@ -66873,8 +66887,8 @@
   "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION": {
     "epic": "epic-emotion-avatar-message-binding",
     "extid": "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION",
-    "git_issue": "42a2cc7",
-    "hash": "42a2cc7",
+    "git_issue": "0eaeb43",
+    "hash": "0eaeb43",
     "label": "test",
     "priority": "P2",
     "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md",
@@ -67009,8 +67023,8 @@
   "WIRE-FRONTEND-KEYBOARD-HELP-OVERLAY": {
     "epic": "(none — proposed epic never materialized)",
     "extid": "WIRE-FRONTEND-KEYBOARD-HELP-OVERLAY",
-    "git_issue": "bdc214c",
-    "hash": "bdc214c",
+    "git_issue": "920d2c7",
+    "hash": "920d2c7",
     "label": "wire",
     "priority": "Medium",
     "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md",
