@@ -29,7 +29,7 @@ When the hamburger sidebar is open, a search input sits at the top of the
 **Server-side search** (for when client-side list is insufficient):
 
 ```
-GET /api/chats/search?q=<query>&type=<direct|group>&world=<worldId>&limit=20
+GET /api/v1/search?q=<query>&limit=50
 ```
 
 Returns chats matching the query across all user's chats. Response:
@@ -39,7 +39,7 @@ interface ChatSearchResult {
   chatId: string;
   chatName: string; // auto-generated or user-set name
   characterName: string;
-  characterAvatar: string; // URL
+  characterAvatar: string | null; // URL
   worldName?: string;
   lastMessagePreview: string;
   lastMessageAt: string;
@@ -178,9 +178,10 @@ Within an open chat, a search icon in the chat header opens a search bar:
 From the sidebar or a global search (future), search across all chats:
 
 ```
-GET /api/messages/search?q=<query>&chatId=<optional>&role=<optional>&
-    hasAttachment=<optional>&attachmentType=<optional>&
-    dateFrom=<optional>&dateTo=<optional>&limit=50&offset=0
+GET /api/v1/search?q=<query>&chatId=<optional>&limit=50
+
+The `messages` array carries `{ messageId, chatId, snippet }` hits; the
+attachment/date filters sketched below are not currently exposed.
 ```
 
 ```typescript
@@ -211,7 +212,7 @@ interface MessageSearchResult {
 Filter messages that contain attachments:
 
 ```
-GET /api/messages/search?chatId=<id>&hasAttachment=true&attachmentType=image
+GET /api/v1/search?chatId=<id>&q=<query> // attachment-type filter not currently exposed
 ```
 
 Attachment types: `image`, `audio`, `video`, `document`, `archive`
@@ -224,7 +225,7 @@ attachments, filterable by type. Grid or list view of asset thumbnails.
 Regex-based search for URL patterns in messages:
 
 ```
-GET /api/messages/search?chatId=<id>&linkPattern=youtube|spotify|soundcloud
+GET /api/v1/search?chatId=<id>&q=<query> // link-pattern filter not currently exposed
 ```
 
 **UI:** "🔗 Links" button in chat search → shows messages containing URLs,
@@ -263,9 +264,9 @@ message insert/edit. Rebuild on migration.
 
 ## Integration Points
 
-<!-- GAP: src/frontend/alpine/chat-search.ts, src/routes/chat-search.ts,
-     src/db/fts.ts, src/routes/views.ts are aspirational. Current implementation
-     lives at src/frontend/alpine/chat/search.ts and src/routes/activity.ts. -->
+<!-- GAP: src/frontend/alpine/chat-search.ts, src/db/fts.ts, src/routes/views.ts
+     are aspirational. Current implementation lives at
+     src/frontend/alpine/chat/search.ts and src/routes/omni-search/. -->
 
 - **Chat list panel** (`src/views/chat-list-panel.html`, `src/components/chat/chat-list-panel.html`): integrates sidebar search + filter chips
 - **Chat header**: integrates in-chat search bar
@@ -286,7 +287,7 @@ message insert/edit. Rebuild on migration.
 ### Planned (aspirational)
 
 - `src/frontend/alpine/chat-search.ts` — search state, debounce, navigation
-- `src/routes/chat-search.ts` — search endpoints (chat search, message search)
+- `src/routes/omni-search/index.ts` — unified search endpoint (chats, messages, assets)
 - `src/db/fts.ts` — FTS5 setup, index management
 - `src/routes/views.ts` — register search HTMX routes
 

@@ -18,7 +18,14 @@
 import { describe, expect, test, } from "bun:test";
 import type { RateLimitResult, } from "../../middleware/rate-limit";
 import { rateLimitResponse as rateLimitResponseFromRequest, } from "./request";
-import { createVerifyLimiter, rateLimitResponse, resetVerifyRateLimiter, verifyLimiter, } from "./shared";
+import {
+  createVerifyLimiter,
+  enrollLimiter,
+  rateLimitResponse,
+  resetEnrollRateLimiter,
+  resetVerifyRateLimiter,
+  verifyLimiter,
+} from "./shared";
 
 const BLOCKED: RateLimitResult = { allowed: false, limit: 10, remaining: 0, resetSec: 42, };
 const MESSAGE = "Too many login attempts";
@@ -56,6 +63,23 @@ describe("verify limiter", () => {
       expect(verifyLimiter.peek(key, 1_700_000_000_000,).allowed,).toBe(true,);
     } finally {
       resetVerifyRateLimiter();
+    }
+  });
+});
+
+describe("enroll limiter", () => {
+  test("enrollLimiter singleton throttles and resetEnrollRateLimiter restores it", () => {
+    const key = "enroll:probe-singleton";
+    try {
+      for (let i = 0; i < 5; i++) {
+        enrollLimiter.record(key, 1_700_000_000_000,);
+      }
+
+      expect(enrollLimiter.peek(key, 1_700_000_000_000,).allowed,).toBe(false,);
+      resetEnrollRateLimiter();
+      expect(enrollLimiter.peek(key, 1_700_000_000_000,).allowed,).toBe(true,);
+    } finally {
+      resetEnrollRateLimiter();
     }
   });
 });

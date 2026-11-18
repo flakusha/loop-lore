@@ -11,6 +11,7 @@ import path from "node:path";
 import { getLogger, type Logger, setGlobalLogger, } from "../logger";
 import {
   findLegacyBackupPool,
+  LEGACY_BACKUP_POOL_DIR_NAME,
   legacyBackupPoolCandidates,
   resetLegacyBackupPoolWarningForTests,
   warnLegacyBackupPoolOnce,
@@ -46,6 +47,7 @@ describe("legacy backup pool", () => {
     expect(candidates,).toContain(path.join(repoRoot, "packages", "core", "loop-lore-data-backup",),);
     expect(candidates,).toContain(path.join(repoRoot, "loop-lore-data-backup",),);
     expect(candidates,).toContain(path.join(repoRoot, "..", "loop-lore-data-backup",),);
+    expect(candidates.some((candidate,) => candidate.endsWith(LEGACY_BACKUP_POOL_DIR_NAME,)),).toBe(true,);
   });
 
   test("warns ONCE for two calls, naming the pool and the archive root", () => {

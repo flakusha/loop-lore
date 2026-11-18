@@ -9,8 +9,8 @@
 
 One query, fanned out over three surfaces (chats, messages, assets), reusing the
 shipped retrieval pieces instead of re-implementing them. The route adds no
-search engine of its own: it composes `src/routes/chat-search/`'s chat lookup
-with `searchMessages` and `searchAssets` (`src/search/convenience.ts`), and
+search engine of its own: it runs a participant-scoped chat lookup alongside
+`searchMessages` and `searchAssets` (`src/search/convenience.ts`), and
 inherits each surface's own permission gate.
 
 ## Endpoint
@@ -22,6 +22,7 @@ registers no unversioned twin). Session-cookie auth: 401 when unauthenticated.
 | --- | --- | --- | --- |
 | `q` | string | 1–200 chars, **required** | Trimmed before dispatch; `LIKE` wildcards are escaped |
 | `limit` | number | 1–50, default `10` | Per-surface cap (each surface returns up to `limit` hits) |
+| `chatId` | string (uuid) | optional | Scopes message hits to one chat (in-chat search) |
 
 Validation is Elysia/TypeBox (`src/routes/omni-search/types.ts`): a missing `q`,
 an empty `q`, or a `limit` outside 1–50 answers **422** with the standard
@@ -32,7 +33,7 @@ Response shape (plus the usual `meta.api_version` envelope):
 ```json
 {
   "query": "tavern",
-  "chats": [{ "chatId": "…", "chatName": "…" }],
+  "chats": [{ "chatId": "…", "chatName": "…", "characterName": "…", "characterAvatar": null }],
   "messages": [{ "messageId": "…", "chatId": "…", "snippet": "…" }],
   "assets": [{ "assetId": "…", "filename": "…", "matchScore": 0.82 }]
 }
@@ -43,9 +44,8 @@ Response shape (plus the usual `meta.api_version` envelope):
 Each surface keeps its own gate — the route adds no cross-surface authorization
 of its own, so querying the union cannot widen a surface.
 
-- **Chats** — the same `INNER JOIN chat_participants` as `chat-search`
-  (`src/routes/chat-search/search.ts`): chats the caller participates in (the
-  creator is inserted as a participant row at creation, so creator-owned chats
+- **Chats** — an `INNER JOIN chat_participants`: chats the caller participates in
+  (the creator is inserted as a participant row at creation, so creator-owned chats
   are covered); archived chats excluded (`is_pinned != 'archived'`). Substring
   match on the chat name or the joined participant actor's display name; `LIKE`
   wildcards in `q` are escaped.
@@ -59,7 +59,7 @@ of its own, so querying the union cannot widen a surface.
 
 A whitespace-only `q` trims to the empty string and answers **200** with
 `{ "query": "", "chats": [], "messages": [], "assets": [] }` — no surface is
-queried (the same short-circuit as `src/routes/asset-search/index.ts:52`).
+queried (the short-circuit in `src/routes/omni-search/index.ts`).
 An absent or zero-length `q` never reaches the handler: the schema rejects it
 with 422.
 

@@ -14,9 +14,9 @@ exist; zero search-related deps in `package.json`):
 
 | Stack | Location | Technique |
 |---|---|---|
-| Message search | `src/routes/message-search/`, `parts/016_fts.ts` | FTS5 (`porter unicode61`), `snippet()` + `bm25()` ordering, hand-built `MATCH` query with operator-injection neutralization |
+| Message search | `src/search/providers/messages.ts`, `parts/016_fts.ts` | FTS5 (`porter unicode61`), `snippet()` + `bm25()` ordering, hand-built `MATCH` query with operator-injection neutralization |
 | Memory recall | `src/memory/embeddings.ts`, `parts/012_memory.ts` | Ollama `nomic-embed-text`, float32 BLOBs, exact linear-scan cosine in JS (`rankBySimilarity`, minScore 0.5; `semanticRecall` 0.3) |
-| Name/substring | `src/routes/chat-search/`, `gallery.ts` | SQL `ILIKE %q%` / client-side substring, no ranking |
+| Name/substring | `src/routes/omni-search/`, `gallery.ts` | SQL `ILIKE %q%` / client-side substring, no ranking |
 | Injection gate | `src/memory/injection/relevance.ts` | Keyword-set overlap (≥2 shared or ≥20%) |
 
 Hard limits found: client-pre-encrypted rows store `content_plaintext = NULL` and
@@ -111,7 +111,7 @@ remains. Structured filters (chat/role/date/visibility/tag/type) apply
 
 Per-surface tier wiring:
 
-- **Messages**: T0 (id lookup) → T1 (existing `message-search/`) → T2
+- **Messages**: T0 (id lookup) → T1 (existing `src/search/providers/messages.ts`) → T2
   (trigram + HMAC tokens when `includeEncrypted`) → T3 only for
   `rag-deep-retrieval` intent. T4 never.
 - **Gallery/assets**: T0 → T2 first (names are typo-prone; keyword BM25 adds
