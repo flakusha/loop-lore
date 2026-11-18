@@ -8,7 +8,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
-import { BYOK_KEY_VERSION, decryptValue, } from "../crypto";
+import { BYOK_KEY_VERSION, decryptValue, deriveUserKek, kekAad, } from "../crypto";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -152,13 +152,13 @@ describe("apiKeysRoutes coverage", () => {
       .execute();
 
     expect(rows,).toHaveLength(1,);
-    // Versioned envelope: the row records its key generation so a future
-    // rotation can branch per record. Decrypt still round-trips.
+    // v3 KEK envelope: sealed under the per-user KEK with userId:provider AAD,
+    // so only this user's resolver opens it. Decrypt round-trips via the KEK.
     expect(rows[0]!.key_version,).toBe(BYOK_KEY_VERSION,);
     expect(rows[0]!.api_key_encrypted.startsWith(`v${BYOK_KEY_VERSION}:`,),).toBe(true,);
     const envelope: string = rows[0]!.api_key_encrypted;
-    const secret: string = testConfig().byoKey.encryptionKey!;
-    expect(await decryptValue(envelope, secret,),).toBe("sk-second",);
+    const userKek = await deriveUserKek(testConfig().byoKey.encryptionKey!, userId,);
+    expect(await decryptValue(envelope, userKek, kekAad(userId, "test-prov",),),).toBe("sk-second",);
 
     const del = await app.handle(
       new Request("http://localhost/api/user-api-keys/test-prov", { method: "DELETE", },),

@@ -15,7 +15,7 @@
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
-import { BYOK_KEY_VERSION, encryptVersioned, } from "../crypto";
+import { BYOK_KEY_VERSION, deriveUserKek, encryptVersioned, kekAad, } from "../crypto";
 import type { DB, } from "../db/schema";
 import {
   listProviderInstances,
@@ -93,13 +93,15 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
           return jsonError({ message: `Unknown provider: ${providerName}`, status: HttpStatus.BadRequest, },);
         }
 
-        // Versioned envelope (v2): the row's key_version records which key
-        // generation sealed it, so a future rotation can branch per record
-        // instead of mass re-encrypting under one global secret. Reads accept
-        // all generations (decryptValue), so no migration pass is needed.
+        // Per-user KEK (v3): the row is sealed under a key derived from the
+        // master secret + userId, with userId:provider bound as AAD. Another
+        // user's KEK opens nothing, and a transplanted row fails auth.
+        // v1/v2 rows keep the legacy global-secret path in the resolver, so no
+        // migration pass is needed.
         let encrypted: string;
         try {
-          encrypted = await encryptVersioned(apiKey, encryptionSecret,);
+          const userKek = await deriveUserKek(encryptionSecret, userId,);
+          encrypted = await encryptVersioned(apiKey, userKek, kekAad(userId, providerName,),);
         } catch {
           return jsonError({
             message: (ctx as any).t?.("crypto.keyEncryptFailed",) ?? "Failed to encrypt API key",

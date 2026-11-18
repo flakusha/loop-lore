@@ -8,4 +8,8 @@ enabled = true
 # Env-only in production: set BYO_KEY_ENCRYPTION_KEY and leave this commented — a
 # value written here sits on disk in plaintext, while sealing only protects DB
 # dumps/backups, never a host compromise.
+#
+# Per-user KEKs (v3 rows): each key is sealed under HKDF(master, userId) with
+# userId:provider bound as AAD — no per-user config needed, and rotation is
+# just rotating this master (legacy v1/v2 rows keep working).
 # encryptionKey = "base64-encoded-32-byte-key"

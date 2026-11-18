@@ -152,10 +152,10 @@ _TBD — expand with detailed requirements from the epic._
 
 Implemented in `src/routes/api-keys.ts` over `src/crypto/byok.ts` (AES-256-GCM, HKDF-SHA256, per-record salt):
 
-- `POST /api/user-api-keys` validates the provider against every registry-backed, image, and video instance, seals the key in the versioned `v2:` envelope, and upserts one row per user+provider (migration 078 unique index; write path carries `key_version: 2`, reads accept all generations).
+- `POST /api/user-api-keys` validates the provider against every registry-backed, image, and video instance, seals the key in the versioned `v3:` envelope, and upserts one row per user+provider (migration 078 unique index; write path carries `key_version: 3`, reads accept generations 2+3).
 - Resolution order per request: user BYO key → chat default → actor default → server default (`src/generation/providers/registry.ts`). A stored key that no longer decrypts (secret rotated/removed) throws `ByoKeyDecryptError` — the request fails instead of silently billing the server key — and a failover attempt against another vendor resolves ITS OWN key, never the primary's.
 - Operator keys: `LLM_PROVIDER_API_KEY` env, config-file `apiKey`, or the admin setup wizard; wizard/file keys persist to `system_config` sealed in the `secret:v1:` envelope (never plaintext at rest for new writes; legacy plaintext rows pass through). List endpoints return `hasApiKey` only.
-- `BYO_KEY_ENCRYPTION_KEY` is env-only in production: the envelope protects DB dumps/backups, not a host compromise. Single global secret for all users (per-user KEKs deferred — self-host only).
+- `BYO_KEY_ENCRYPTION_KEY` is env-only in production: the envelope protects DB dumps/backups, not a host compromise. Per-user KEKs: each row is sealed under HKDF(master, userId) with `userId:provider` bound as AAD, so one user's KEK opens nothing of another's and transplanted rows fail auth. v1/v2 rows keep the legacy global-secret path (no migration); rotation = rotate the master (per-row re-seal and previous-secret reads are future work).
 
 ### Integration Points
 
