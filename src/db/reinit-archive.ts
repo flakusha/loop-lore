@@ -10,13 +10,19 @@
  */
 import { mkdirSync, readdirSync, renameSync, statSync, unlinkSync, } from "node:fs";
 import path from "node:path";
-import { resolveInstanceDir, resolveInstanceSlug, } from "../config/state-dir";
+import { resolveInstanceDir, resolveInstanceSlug, type ServerBind, } from "../config/state-dir";
 import type { Logger, } from "../logger";
 import { toDate, } from "../utils/date";
 
 export const MAX_ARCHIVES = Number(process.env.LOOP_LORE_REINIT_MAX_ARCHIVES ?? 10,);
 export const MAX_AGE_DAYS = Number(process.env.LOOP_LORE_REINIT_MAX_AGE_DAYS ?? 90,);
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/** Options for {@link archiveDir} and {@link archiveFile}. */
+export interface ArchiveDirOptions {
+  /** Loaded server config: resolves the same slug the DB path used. */
+  server?: ServerBind;
+}
 
 /** Resolve the archive directory for THIS instance.
  *
@@ -26,26 +32,29 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
  * a separate volume (e.g. cheap object storage) to keep the data volume small.
  * The override is a ROOT: each instance archives to `<root>/<instance-slug>/`,
  * so instances never share a retention pool.
+ * @param options - the loaded server bind, when the caller has one
  * @returns the directory archives are written to
  */
-export function archiveDir(): string {
+export function archiveDir(options: ArchiveDirOptions = {},): string {
+  const server = options.server;
   const override = process.env.LOOP_LORE_BACKUP_DIR?.trim();
   if (override !== undefined && override !== "") {
-    return path.join(override, resolveInstanceSlug(process.env,),);
+    return path.join(override, resolveInstanceSlug(process.env, server,),);
   }
 
-  return path.join(resolveInstanceDir(process.env,), "backups",);
+  return path.join(resolveInstanceDir(process.env, server,), "backups",);
 }
 
 /** Move `p` into the timestamped backup dir; fall back to unlink on
  * cross-device rename. After the move, retention is enforced via
  * {@link pruneArchives}.  * @param {string} p
  * @param p
- * @param {Logger} log
+ * @param log
+ * @param options - the loaded server bind, when the caller has one
  * @returns {void}
  */
-export function archiveFile(p: string, log: Logger,): void {
-  const dir = archiveDir();
+export function archiveFile(p: string, log: Logger, options: ArchiveDirOptions = {},): void {
+  const dir = archiveDir(options,);
   mkdirSync(dir, { recursive: true, },);
   const stamp = new Date().toISOString().replace(/[:.]/g, "-",);
   try {

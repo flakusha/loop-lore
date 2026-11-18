@@ -45,7 +45,7 @@ async function reinit(): Promise<void> {
 
   for (const p of reinitArchiveTargets(dbPath,)) {
     if (existsSync(p,)) {
-      archiveFile(p, log,);
+      archiveFile(p, log, { server: config.server, },);
     }
   }
 

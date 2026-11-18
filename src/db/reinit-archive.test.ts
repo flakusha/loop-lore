@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, readdirSync, rmSync, utimesSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import path from "node:path";
-import { resolveInstanceDir, } from "../config/state-dir";
+import { resolveDbPath, resolveInstanceDir, } from "../config/state-dir";
 import type { Logger, } from "../logger";
 import {
   archiveDir,
@@ -148,5 +148,41 @@ describe("archiveFile", () => {
     // The archive root lives INSIDE the instance dir: a shared sibling root
     // let one instance's retention pass prune another's rollback point.
     expect(dir.startsWith(resolveInstanceDir(process.env,),),).toBe(true,);
+  });
+});
+
+describe("archiveDir — standalone db:reinit (B2)", () => {
+  const server = { host: "localhost", port: 4321, };
+
+  test("the archive root shares the DB's server-derived instance dir", () => {
+    const savedStateDir = Bun.env.LOOP_LORE_STATE_DIR;
+    const savedDbPath = Bun.env.LOOP_LORE_DB_PATH;
+    Bun.env.LOOP_LORE_STATE_DIR = tmpDir!;
+    delete Bun.env.LOOP_LORE_DB_PATH;
+    delete Bun.env.LOOP_LORE_BACKUP_DIR;
+    try {
+      const dbPath = resolveDbPath(process.env, server,);
+      const root = archiveDir({ server, },);
+
+      expect(path.dirname(dbPath,),).toContain("port-4321",);
+      expect(root,).toBe(path.join(path.dirname(dbPath,), "backups",),);
+    } finally {
+      if (savedStateDir === undefined) { delete Bun.env.LOOP_LORE_STATE_DIR; }
+      else { Bun.env.LOOP_LORE_STATE_DIR = savedStateDir; }
+
+      if (savedDbPath === undefined) { delete Bun.env.LOOP_LORE_DB_PATH; }
+      else { Bun.env.LOOP_LORE_DB_PATH = savedDbPath; }
+    }
+  });
+
+  test("the backup-root override uses the same server-derived slug", () => {
+    const savedOverride = Bun.env.LOOP_LORE_BACKUP_DIR;
+    Bun.env.LOOP_LORE_BACKUP_DIR = path.join(tmpDir!, "override",);
+    try {
+      expect(archiveDir({ server, },),).toBe(path.join(tmpDir!, "override", "port-4321",),);
+    } finally {
+      if (savedOverride === undefined) { delete Bun.env.LOOP_LORE_BACKUP_DIR; }
+      else { Bun.env.LOOP_LORE_BACKUP_DIR = savedOverride; }
+    }
   });
 });
