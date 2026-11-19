@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI output kind by format
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-image-video-scenario-studio

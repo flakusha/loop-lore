@@ -16,8 +16,9 @@ import {
   SceneMode,
   SceneStatus,
 } from "../../db/enums-generation";
+import { getLogger, type Logger, setGlobalLogger, } from "../../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
-import type { ComfyUIOutputFile, ComfyUIWorkflow, } from "../providers/comfyui";
+import type { ComfyUIOutputFile, ComfyUIOutputKind, ComfyUIWorkflow, } from "../providers/comfyui";
 import { cancelVideoJob, getVideoJob, listVideoJobs, } from "../video-jobs";
 import { uploadIvssReferences, } from "./reference-upload";
 import {
@@ -393,5 +394,164 @@ describe("IVSS ComfyUI run pipeline", () => {
     expect(calls.masks,).toHaveLength(1,);
     expect(calls.masks[0]?.original,).toBe(`comfy-${calls.uploaded[0]}`,);
     expect(String(loaded[0]?.vars.reference_slots,),).toContain("mask",);
+  });
+
+  test("cancel during reference upload never submits", async () => {
+    const seeded = await seedScene();
+    const assetId = await seedReferenceAsset(seeded.ownerId, "ref.png",);
+    await insertScenarioReferences(seeded.db, seeded.scenarioId, ReferenceLane.Image, assetId, {
+      role: "identity",
+      sort_order: 0,
+    },);
+
+    const { resolve: entered, promise: entered$, } = Promise.withResolvers<void>();
+    const { resolve: release, promise: gate, } = Promise.withResolvers<void>();
+    const { client, calls, } = makeClient({
+      async uploadImage(_buffer, filename,) {
+        calls.uploaded.push(filename,);
+        entered();
+        await gate;
+        return `comfy-${filename}`;
+      },
+    },);
+
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: makeLoader([],),
+      dispatch: immediateDispatch,
+    },);
+
+    await entered$;
+    await handle.cancel();
+    release();
+    const result = await handle.done;
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { throw new Error("expected cancellation",); }
+    expect(result.status,).toBe(499,);
+    expect(calls.submitted,).toHaveLength(0,);
+    expect(calls.cancelled,).toHaveLength(0,);
+    const fragment = await seeded.db.selectFrom("scenario_fragments",).select("status",)
+      .where("id", "=", seeded.fragmentId,).executeTakeFirstOrThrow();
+
+    expect(fragment.status,).toBe(FragmentStatus.Cancelled,);
+    expect(getVideoJob(handle.jobId,)?.status,).toBe("failed",);
+  });
+
+  test("cancel after submit cancels the remote execution once", async () => {
+    const seeded = await seedScene();
+    const { resolve: entered, promise: entered$, } = Promise.withResolvers<void>();
+    const { resolve: release, promise: gate, } = Promise.withResolvers<
+      Array<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }>
+    >();
+
+    const { client, calls, } = makeClient({
+      async waitForFiles(promptId, timeoutMs,) {
+        calls.waited.push(promptId,);
+        expect(timeoutMs,).toBe(300_000,);
+        entered();
+        return gate;
+      },
+    },);
+
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: makeLoader([],),
+      dispatch: immediateDispatch,
+    },);
+
+    await entered$;
+    await handle.cancel();
+    expect(calls.cancelled,).toEqual(["prompt-1",],);
+    release([
+      { kind: "video", file: { filename: "clip.webm", }, },
+    ],);
+
+    const result = await handle.done;
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { throw new Error("expected cancellation",); }
+    expect(result.status,).toBe(499,);
+    expect(calls.submitted,).toHaveLength(1,);
+    expect(calls.cancelled,).toEqual(["prompt-1",],);
+    const fragment = await seeded.db.selectFrom("scenario_fragments",).select("status",)
+      .where("id", "=", seeded.fragmentId,).executeTakeFirstOrThrow();
+
+    expect(fragment.status,).toBe(FragmentStatus.Cancelled,);
+    expect(getVideoJob(handle.jobId,)?.status,).toBe("failed",);
+  });
+
+  test("a failing remote cancel still leaves the run cancelled", async () => {
+    const seeded = await seedScene();
+    const { resolve: entered, promise: entered$, } = Promise.withResolvers<void>();
+    const { resolve: release, promise: gate, } = Promise.withResolvers<
+      Array<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }>
+    >();
+
+    const { client, calls, } = makeClient({
+      async waitForFiles(promptId,) {
+        calls.waited.push(promptId,);
+        entered();
+        return gate;
+      },
+      async cancelExecution(promptId,) {
+        calls.cancelled.push(promptId ?? "",);
+        throw new Error("comfy refused",);
+      },
+    },);
+
+    const priorLogger = getLogger();
+    const cancelWarnings: unknown[] = [];
+    const noop = () => {};
+    const stub = {
+      warn: (...args: unknown[]) => {
+        cancelWarnings.push(args,);
+      },
+      debug: noop,
+      info: noop,
+      error: noop,
+      child: () => stub,
+    } as unknown as Logger;
+
+    setGlobalLogger(stub,);
+    try {
+      const handle = await startIvssFragmentRun({
+        database: seeded.db,
+        uploadDir,
+        ownerId: seeded.ownerId,
+        fragmentId: seeded.fragmentId,
+        client,
+        loadWorkflow: makeLoader([],),
+        dispatch: immediateDispatch,
+      },);
+
+      await entered$;
+      await handle.cancel();
+      release([
+        { kind: "video", file: { filename: "clip.webm", }, },
+      ],);
+
+      const result = await handle.done;
+      expect(result.ok,).toBe(false,);
+      if (result.ok) { throw new Error("expected cancellation",); }
+      expect(result.status,).toBe(499,);
+      expect(calls.cancelled,).toEqual(["prompt-1",],);
+      expect(
+        cancelWarnings.some((entry,) => String(entry,).includes("IVSS ComfyUI cancel failed",)),
+      ).toBe(true,);
+
+      const fragment = await seeded.db.selectFrom("scenario_fragments",).select("status",)
+        .where("id", "=", seeded.fragmentId,).executeTakeFirstOrThrow();
+
+      expect(fragment.status,).toBe(FragmentStatus.Cancelled,);
+    } finally {
+      setGlobalLogger(priorLogger,);
+    }
   });
 });

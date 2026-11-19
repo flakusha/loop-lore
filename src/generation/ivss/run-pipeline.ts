@@ -33,7 +33,15 @@ import { compileShotGrammar, } from "./shot-grammar";
 /** Subset of `ComfyUIClient` the pipeline needs; the real client satisfies it. */
 export interface IvssComfyClient {
   submitWorkflow(workflow: ComfyUIWorkflow,): Promise<{ prompt_id: string }>;
-  waitForFiles(promptId: string,): Promise<Array<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }>>;
+  /**
+   * Wait for the workflow's output files.
+   * Implementations must honor `timeoutMs` as the poll deadline when given,
+   * so the tracked job deadline and the poll deadline cannot diverge.
+   */
+  waitForFiles(
+    promptId: string,
+    timeoutMs?: number,
+  ): Promise<Array<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }>>;
   downloadFile(file: ComfyUIOutputFile,): Promise<Buffer>;
   cancelExecution(promptId?: string,): Promise<void>;
   uploadImage(buffer: Buffer, filename: string,): Promise<string>;
@@ -171,6 +179,19 @@ export async function startIvssFragmentRun(
   let cancelled = false;
   let promptId: string | undefined;
   let notifyCancel: (() => void) | undefined;
+  /** Cancel-before-submit and raced-cancel both funnel here; never twice. */
+  let remoteCancelStarted = false;
+  const tryCancelRemote = (): Promise<void> => {
+    if (!promptId || remoteCancelStarted) { return Promise.resolve(); }
+    remoteCancelStarted = true;
+    return opts.client.cancelExecution(promptId,).catch((error,) => {
+      log?.warn("IVSS ComfyUI cancel failed", {
+        promptId,
+        error: error instanceof Error ? error.message : String(error,),
+      },);
+    },);
+  };
+
   const cancelSignal = new Promise<void>((resolve,) => {
     notifyCancel = resolve;
   },);
@@ -205,15 +226,23 @@ export async function startIvssFragmentRun(
 
           const workflow = await load(fragment.workflow_id, variables,);
 
+          // Cancel during upload/load must win before the prompt is submitted.
+          if (cancelled) { throw cancellation(); }
+
           const submitted = await opts.client.submitWorkflow(workflow,);
           promptId = submitted.prompt_id;
 
           const raced = await Promise.race([
-            opts.client.waitForFiles(promptId,).then((files,) => ({ files, })),
+            opts.client.waitForFiles(promptId, timeoutMs,).then((files,) => ({ files, })),
             cancelSignal.then(() => ({ cancelled: true as const, })),
           ],);
 
-          if ("cancelled" in raced) { throw cancellation(); }
+          if ("cancelled" in raced) {
+            // Submitted before cancel landed: stop the remote render.
+            await tryCancelRemote();
+            throw cancellation();
+          }
+
           if (cancelled) { throw cancellation(); }
           const refs = raced.files;
 
@@ -327,16 +356,7 @@ export async function startIvssFragmentRun(
       if (cancelled) { return; }
       cancelled = true;
       notifyCancel?.();
-      if (promptId) {
-        try {
-          await opts.client.cancelExecution(promptId,);
-        } catch (error) {
-          log?.warn("IVSS ComfyUI cancel failed", {
-            promptId,
-            error: error instanceof Error ? error.message : String(error,),
-          },);
-        }
-      }
+      await tryCancelRemote();
 
       cancelVideoJob(jobId, "IVSS run cancelled",);
       await db.updateTable("scenario_fragments",).set({

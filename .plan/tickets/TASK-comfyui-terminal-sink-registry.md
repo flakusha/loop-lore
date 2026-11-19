@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI terminal sink registry
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-image-video-scenario-studio
@@ -18,6 +18,6 @@ Discovered in the 2026-11-19 ComfyUI-side audit. A converted v-0010 graph has un
 
 **Acceptance Criteria:**
 
-- [ ] UNREFERENCED_LIVE_CLASSES reused; DaSiWa_EnhancedVideoCombine, DaSiWaH3ClipAssemble, VHS_VideoCombine added to TERMINAL_SINK_CLASSES
+- [ ] UNREFERENCED_LIVE_CLASSES reused; DaSiWa_EnhancedVideoCombine, DaSiWaH3ClipAssemble, VHS_VideoCombine added to TERMINAL_SINK_CLASSES; DaSiWaH3ContinuityPublish accepted as a terminal sink via the live-class set or the media-sink list
 - [ ] v-0010 DaSiWa fixture loads with no dead-node warning
 - [ ] A genuinely unreferenced unknown node is still rejected

@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI latent output bucket capture
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-image-video-scenario-studio
