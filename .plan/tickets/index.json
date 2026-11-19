@@ -58501,7 +58501,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-regen-with-custom-instruction-free-text-action.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-REGEX-EXTRACTION-PIPELINE-IMPLEMENTATION": {
     "epic": "(none — proposed epic never materialized)",
