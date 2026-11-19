@@ -77,6 +77,9 @@ export interface ChatLocationState {
   setBackground(backgroundId: string,): Promise<void>;
   removeBackground(): Promise<void>;
 
+  /** Raw-asset URL for the current chat background, or null when unset. */
+  backgroundImageUrl(): string | null;
+
   // ── Chat Location (change / transfer / join at location) ─────
   _locations: {
     id: string;

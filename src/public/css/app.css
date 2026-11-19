@@ -2432,6 +2432,19 @@ body {
   min-width: 0;
 }
 
+/* Stored chat background — sits behind bubbles / VN scene, never interactive. */
+.chat-background-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.18;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
 /* Main message area - centered (scoped to chat container) */
 .chat-container .chat-area {
   max-width: var(--chat-width, 720px);

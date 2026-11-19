@@ -32,6 +32,17 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
   _backgroundsOpen: false,
 
   /**
+   * Raw-asset URL for the chat's current background. Derived from reactive
+   * `_background`, so Alpine re-evaluates bindings when a background is
+   * loaded, changed, or cleared.
+   * @returns {string | null}
+   */
+  backgroundImageUrl() {
+    const assetId = this._background?.asset_id ?? null;
+    return assetId ? `/api/v1/assets/${assetId}/raw` : null;
+  },
+
+  /**
    * @returns {void}
    */
   toggleBackgroundPanel() {

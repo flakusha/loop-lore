@@ -29,6 +29,12 @@ import {
 } from "./template-service";
 import { type ImageTemplatePayload, parseTemplatePayload, } from "./template-types";
 
+import { setAssetAsChatBackground, } from "../routes/chat-backgrounds/service";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 270
+
 /**
  * Flat per-image byte estimate for the PRE-PROVIDER quota gate, taken before
  * the output size is known. One 1024x1024 PNG is roughly this big; refusing
@@ -67,6 +73,12 @@ interface ImageGenBody {
    * the provider runs so a refused request never pays for generation.
    */
   bindActorAvatar?: string;
+  /**
+   * When set (and `chatId` is present), bind the first generated image as the
+   * chat's active background via a `static` catalog row. Chat access is
+   * checked by `chatId` above; without `chatId` this flag is a no-op.
+   */
+  setAsChatBackground?: boolean;
 }
 
 /**
@@ -347,6 +359,16 @@ export async function handleImageGeneration(
 
   if (bound instanceof Response) { return bound; }
   const avatarIds = bound ?? [];
+
+  // Persist the first generated image as the chat's active background when
+  // requested. Requires `chatId` (authorized above); otherwise a no-op.
+  if (req.setAsChatBackground && req.chatId && persisted.length > 0) {
+    await setAssetAsChatBackground({
+      database: db,
+      chatId: req.chatId,
+      assetId: persisted[0]!.asset.id,
+    },);
+  }
 
   const assets = persisted.map(({ asset, }, index,) => ({
     id: asset.id,

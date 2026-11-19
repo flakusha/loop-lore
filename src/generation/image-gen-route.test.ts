@@ -20,10 +20,10 @@ import * as realConfigLoad from "../config/load";
 import { createConfigSchema, } from "../config/schema-class";
 // (no realDb import: ../db/index is intentionally unstubbed; see NOTE above)
 import type { Kysely, } from "kysely";
-import type { TemplateModality, } from "../db/enums";
+import { AssetType, type TemplateModality, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertChats, } from "../test-utils/insert-helpers";
+import { insertAssets, insertChats, } from "../test-utils/insert-helpers";
 import * as realImageEngine from "./image-engine";
 import type * as imageGenRoute from "./image-gen-route";
 
@@ -918,6 +918,108 @@ describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 
       expect(bindAvatarCalls,).toHaveLength(0,);
       const json = await res.json() as { data: Array<{ avatarId: string | null }> };
       expect(json.data[0]?.avatarId,).toBeNull();
+    } finally {
+      await db.destroy();
+    }
+  });
+},);
+
+// ── setAsChatBackground: persist generated image as active chat background ──
+
+describeOrSkip("handleImageGeneration — setAsChatBackground", () => {
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    persistGeneratedCalls.length = 0;
+  },);
+
+  /** Seed a user + a chat owned by that user (passes checkChatAccess). */
+  async function seedBgChat(db: Kysely<DB>, userId: string, chatId: string,) {
+    await db.insertInto("users",).values({
+      id: userId,
+      username: userId,
+      display_name: "Bg User",
+      role: "solo",
+      status: "active",
+      settings: "{}",
+    },).execute();
+
+    await insertChats(db, "BG Chat", userId, { id: chatId, },);
+  }
+
+  it("leaves default generation unchanged (no catalog row or assignment)", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await seedBgChat(db, "bg-user", "bg-chat-default",);
+      const res = await handleImageGeneration(
+        makeBody({ chatId: "bg-chat-default", },),
+        db,
+        "bg-user",
+      );
+
+      expect(res.status,).toBe(200,);
+      const backgrounds = await db.selectFrom("chat_backgrounds",).selectAll().execute();
+      const assignments = await db.selectFrom("chat_background_assignments",).selectAll().execute();
+      expect(backgrounds,).toHaveLength(0,);
+      expect(assignments,).toHaveLength(0,);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("flag creates a static catalog row + assignment using the first asset", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await seedBgChat(db, "bg-user", "bg-chat-flag",);
+      // The mocked persist result is "asset-1"; asset_id has an FK to assets.
+      await insertAssets(
+        db,
+        "bg-user",
+        "generated-abc12345.png",
+        "image/png",
+        AssetType.Image,
+        1,
+        "/tmp/generated-abc12345.png",
+        {
+          id: "asset-1",
+        },
+      );
+
+      const res = await handleImageGeneration(
+        makeBody({ chatId: "bg-chat-flag", setAsChatBackground: true, },),
+        db,
+        "bg-user",
+      );
+
+      expect(res.status,).toBe(200,);
+      const bg = await db.selectFrom("chat_backgrounds",).selectAll().executeTakeFirst();
+      expect(bg,).toMatchObject({
+        name: "Generated image asset-1",
+        type: "static",
+        asset_id: "asset-1",
+      },);
+
+      const assignment = await db
+        .selectFrom("chat_background_assignments",)
+        .selectAll()
+        .where("chat_id", "=", "bg-chat-flag",)
+        .executeTakeFirst();
+
+      expect(assignment?.background_id,).toBe(bg!.id,);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("flag without chatId is a no-op", async () => {
+    const { db, } = await createTestDb();
+    try {
+      const res = await handleImageGeneration(makeBody({ setAsChatBackground: true, },), db, "bg-user",);
+
+      expect(res.status,).toBe(200,);
+      const backgrounds = await db.selectFrom("chat_backgrounds",).selectAll().execute();
+      const assignments = await db.selectFrom("chat_background_assignments",).selectAll().execute();
+      expect(backgrounds,).toHaveLength(0,);
+      expect(assignments,).toHaveLength(0,);
     } finally {
       await db.destroy();
     }

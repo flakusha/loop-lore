@@ -29,6 +29,14 @@
 
       <!-- Chat container (centered) — switches between VN and bubble layout -->
       <div class="chat-container">
+        <!-- Stored chat background: non-interactive backdrop behind bubbles / VN scene. -->
+        <div
+          class="chat-background-backdrop"
+          :style="backgroundImageUrl() ? { backgroundImage: 'url(' + backgroundImageUrl() + ')' } : {}"
+          aria-hidden="true"
+        >
+        </div>
+
         <!-- VN mode: scene renderer overlay -->
         <div
           x-show="_vnEnabled"

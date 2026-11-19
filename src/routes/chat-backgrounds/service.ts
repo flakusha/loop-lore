@@ -43,6 +43,40 @@ export async function setChatBackground(
 }
 
 /**
+ * Insert a `static` catalog background pointing at a persisted asset and set
+ * it as the chat's active background. Used when image generation opts into
+ * using its first generated image as the chat background. The asset's
+ * ownership is untouched — the catalog row only references it by id.
+ * @param database
+ * @param chatId
+ * @param assetId
+ * @returns The created background row id.
+ */
+export async function setAssetAsChatBackground({
+  database,
+  chatId,
+  assetId,
+}: {
+  database: Kysely<DB>;
+  chatId: string;
+  assetId: string;
+},): Promise<string> {
+  const backgroundId = uid();
+  await database
+    .insertInto("chat_backgrounds",)
+    .values({
+      id: backgroundId,
+      name: `Generated image ${assetId}`,
+      type: "static",
+      asset_id: assetId,
+    },)
+    .execute();
+
+  await setChatBackground(database, chatId, backgroundId,);
+  return backgroundId;
+}
+
+/**
  * Auto-sync a chat's background after its location changes.
  *
  * Resolution: the highest priority (lowest `priority` number) background whose
