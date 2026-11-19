@@ -58112,7 +58112,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-recursive-self-improvement-smoke-gate-fast-ci-loop.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "smoke",
       "ci",
