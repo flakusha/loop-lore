@@ -71,8 +71,8 @@ Spawn official binary only; never extract credentials; single-user/single-machin
 - [x] ToS acknowledgement frontend confirmation (done-if-landed: feat-tos-frontend)
 - [x] hermes adapter + flavor registration (harness-flavor-parity `584c178c7`: HARNESS_FLAVORS += hermes, ToS matrix {api, local} ungated, 10-locale notes, `session/set_session_model` adapter on the generic engine)
 - [x] openclaw adapter + flavor registration (harness-flavor-parity `584c178c7`: HARNESS_FLAVORS += openclaw, ToS matrix {api, local} ungated, 10-locale notes, no-model-surface adapter on the generic engine)
-- [ ] Provider quota surfaces beyond omp (TASK-harness-provider-quota-surfaces-beyond-omp)
-- [ ] codex/claude capability-table enrichment seeds (TASK-seed-codex-and-claude-model-capability-rows-for-harness-enri)
+- [x] Provider quota surfaces beyond omp (TASK-harness-provider-quota-surfaces-beyond-omp) — Done 2026-11-12 (registry close); see ticket.
+- [x] codex/claude capability-table enrichment seeds (TASK-seed-codex-and-claude-model-capability-rows-for-harness-enri) — Done 2026-11-12 (registry close); see ticket.
 
 ## Dependencies
 

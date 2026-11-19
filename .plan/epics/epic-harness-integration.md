@@ -5,13 +5,21 @@
 
 **Overview:** (see sections below)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** 1.0.0 harness topic reconciled 2026-11-19 — ACP adapter surface + queue + gates + persistence shipped; 41 design-section task boxes remain open and are post-1.0.0 unless separately ticketed (two of them were stale-Done and are ticked by this reconciliation — `TASK-harness-inflight-job-handles`, `TASK-harness-worktree-scope-guard` — leaving 39 open).
 **Priority:** High
 **Effort:** Very High (phased; each phase ships standalone value)
 **Type:** Feature Epic
 **Tags:** harness, orchestration, agents, routing, telemetry, worktree, giwt, skills, subagents, dashboard, eval, sandbox, topics, context-tier
 **Depends on:** Workflow Engine (`epic-workflow-engine.md`), LLM Request Scheduler (`epic-llm-request-scheduler.md`), Group Chat (`epic-group-chat.md`), Plugin System (`epic-plugin-system.md`), Configurable Template System (`epic-config-templates.md`)
 **Spec:** `docs/meta/workflow.md` (dev-harness flow), `docs/giwt-scripts-map.md` (giwt wrap map)
+
+## 1.0.0 closeout note (2026-11-19)
+
+- **Shipped ACP surface:** seven flavors in `packages/core/src/config/schema/harness.ts:24-32` and `src/integrations/harness/flavor-factories.ts:29-37` (omp/opencode/codex/claude-code/hermes/openclaw/antigravity).
+- **OpenCode v2:** loop-lore's adapter serves stable ACP v1 (`src/integrations/harness/opencode.ts:7-12`); no v2 binary probe and no v2 adapter. Closeout labels the adapter **v1 only** and does not claim v2 parity (OpenCode v2 breaks plugin/server APIs: https://dev.opencode.ai/v2/docs/migrate-v1).
+- **Antigravity evidence:** ACP e2e confirmed only at fixture tier plus opt-in live **discovery** tier, no prompt turn in live tier (`.tmp/intercom/LANE-antigravity-acp-e2e.md:11-12`). No real in-repo code-editing or subagent/subspace run has been performed; do not claim real-run parity.
+- **Delegation parity:** `TASK-harness-subagent-delegation` remains Not Started; explicitly **descoped from 1.0.0** with real-run validation carried as post-1.0.0/RSI intake, because all four comparators ship spawn/steer/stop and loop-lore has no delegation infra (`epic-harness-integration.md:224-225`).
 
 ## Summary
 
@@ -215,6 +223,8 @@ Taken terms (do not use bare):
   subagent `parentRunId` agent tree: no run spawns another run, so a
   parent/child hierarchy cannot be reconstructed from the log today. The agent
   tree remains unbuilt and is owned by `TASK-harness-subagent-delegation`.
+
+Closeout 2026-11-19: shipped as turn correlation only — every exec-log record carries a `turn_id`, so dispatch-to-turn provenance is closed; the agent tree (parent/child run hierarchy) remains unbuilt.
 
 ### 9. Polyglot + skills + backlog + external integrations
 
@@ -528,11 +538,13 @@ Concrete gaps with evidence; each has an explicit `IN or OUT?` marker.
 - [ ] TASK-harness-hook-contract — event→matcher→handler type, veto/bracket seams, HookResult
 - [ ] TASK-harness-canonical-usage — cache/reasoning/requestCount counters replacing ExecUsage
 - [ ] TASK-harness-scoped-fallback-chain — ordered scoped fallback lists ([] disables)
-- [ ] TASK-harness-inflight-job-handles — job-status messages on the existing chat chain (Option B first slice)
+- [x] TASK-harness-inflight-job-handles — job-status messages on the existing chat chain (Option B first slice) — Done (`TASK-harness-inflight-job-handles`)
 - [ ] TASK-harness-context-op-events — context add/remove/compact/rotate as first-class event records
 - [ ] TASK-harness-delegated-permission-grants — spawn-time capability grants persisted on chat_branches
-- [ ] TASK-harness-worktree-scope-guard — worktree-root path guard + explicit request_root_change escalation
+- [x] TASK-harness-worktree-scope-guard — worktree-root path guard + explicit request_root_change escalation — Done (`TASK-harness-worktree-scope-guard`)
 - [ ] TASK-harness-multi-agent-turn-queue — assistant participant turns + detached-job parallelism (deferred until Option C); harness-profile turn queue + admin surface delivered on `orchestration-queue` (migration `100_harness_queue_turns`, `src/integrations/harness/queue.ts`, `/api/v1/harness/queue`) — assistant-participant flavor remains
+
+Closeout 2026-11-19: shipped — harness-profile turn queue + admin surface (migration `100_harness_queue_turns`, `src/integrations/harness/queue.ts`, `/api/v1/harness/queue`); the assistant-participant flavor remains unbuilt.
 
 ## Dependencies
 

@@ -91,7 +91,7 @@ export interface AcpProfileConfig {
    * Explicit user acknowledgement that driving this profile for RPG/other
    * non-chat functionalities may conflict with the provider's ToS when the
    * profile is subscription-backed. Absent/false by default; records consent
-   * only — it does not gate dispatch (see the dispatch-guard ticket).
+   * and gates subscription-backed flavors at dispatch via the profile selector.
    */
   tosGrayzoneAcknowledged?: boolean;
 }

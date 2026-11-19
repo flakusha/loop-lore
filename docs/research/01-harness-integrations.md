@@ -11,6 +11,18 @@ marked `[UNVERIFIED]`. Absence claims state what was searched.
 
 > **Verification:** see [`05-claim-verification.md`](./05-claim-verification.md) — claim set independently verified (12 confirmed / 4 partial / 1 refuted); corrections are applied inline below.
 
+## 2026-11-19 supersession note
+
+The historical audit below is preserved verbatim; these claims in it are now stale (evidence at current `dev`):
+
+- `:245-249` "no MCP surface" is **false** — loop-lore ships MCP: `src/integrations/loop-lore-facade/mcp/server.ts:20,31`, `mcp/routes.ts:41-53`.
+- Harness HTTP surface is admin read **+ command**, not read-only — PUT `src/routes/harness/index.ts:198-236`; POST `escalations.ts:124,130`, `permissions.ts:96,99`, `queue.ts:61,131`.
+- `:479-481,530` `.omp/receipt.toml` absence is **false** — it is live (`:1-2`, n=3281).
+- TTS exists — `src/generation/audio/providers/openrouter-tts.ts:80-88`.
+- Plugin security fixes landed — `src/plugins/loader.ts:432-449,329`, `plugins/community/nsfw-cards/routes.ts:22-39`.
+- Token estimator consolidated — `src/chat/token-utils.ts:12,23-25`.
+- giwt command table is now 51 keys — `node_modules/giwt/src/cli-commands.ts:65-280`.
+
 ## 0. The harness, concretely
 
 "Harness" here is three cooperating layers, and the audit must keep them distinct because they

@@ -17,10 +17,12 @@ Only the omp adapter resolves non-null quota reports (src/integrations/harness/o
 
 (fill in before starting: why this change, constraints, alternatives considered.)
 
+Closure was by registry-driven close on 2026-11-12, not a new implementation.
+
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
 
 **Resolved:** 2026-11-12 registry-driven close: git issue 56a6267 (registry tip: f4ca8761b Konstantin Fedotov Close issue)
