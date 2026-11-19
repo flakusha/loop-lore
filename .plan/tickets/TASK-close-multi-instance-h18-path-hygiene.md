@@ -3,7 +3,7 @@
 
 # TASK: Close multi-instance H18 path hygiene
 
-**Status:** In Progress
+**Status:** Done
 **Ruling:** Wontfix (no independent H18 requirement; see Ruling section)
 **Scope:** Close H18 instance path hygiene leg
 **Priority:** medium
@@ -80,3 +80,5 @@ Commands run in `tree/h18-path-hygiene` on 2026-11-19:
 
 Residual: F18/H4/H5 stay open under their own ticket (out of scope here). No full `bun run check` —
 lane scope asks for the narrowest meaningful verification only.
+
+**Resolved:** 2026-11-19 registry-driven close: git issue 6d125d3 (registry tip: ba0b9a77a Konstantin Fedotov Close issue)

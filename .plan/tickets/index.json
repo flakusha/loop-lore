@@ -35751,7 +35751,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-close-multi-instance-h18-path-hygiene.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CLOSE-REMAINING-RELEASE-GATE-DEBT": {
     "hash": "65a5e31",
