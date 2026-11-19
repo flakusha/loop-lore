@@ -46980,7 +46980,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-i18n-locale-completion.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [],
     "title": "i18n Locale Completion (Phase 1)",
     "type": "TASK"
