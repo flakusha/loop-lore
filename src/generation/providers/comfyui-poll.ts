@@ -8,6 +8,7 @@
  */
 import type {
   ComfyUIExecutionStatus,
+  ComfyUINodeOutput,
   ComfyUIOutputFile,
   ComfyUIOutputKind,
 } from "./comfyui";
@@ -17,7 +18,23 @@ const NON_IMAGE_BUCKETS = [
   ["audio", "audio",],
   ["videos", "video",],
   ["gifs", "video",],
+  ["files", "other",],
 ] as const;
+
+/** Core SaveVideo emits `animated: (True,)`, which JSON serializes as [true]. */
+function isAnimatedMarker(value: unknown,): boolean {
+  if (value === true || value === "true") { return true; }
+  return Array.isArray(value,) && value.some((entry,) => entry === true || entry === "true");
+}
+
+const VIDEO_CONTAINER_RE = /\.(mp4|webm|mkv|mov)$/i;
+
+/** Classify an `images`-bucket entry; stock SaveVideo lands there with a marker. */
+function isVideoImage(file: ComfyUIOutputFile, animated: boolean,): boolean {
+  if (animated) { return true; }
+  if (typeof file.format === "string" && file.format.toLowerCase().startsWith("video/",)) { return true; }
+  return VIDEO_CONTAINER_RE.test(file.filename,);
+}
 
 /** Terminal state of one prompt, or not-done-yet. */
 export interface ComfyUIPollResult {
@@ -30,6 +47,29 @@ export interface ComfyUIPollResult {
 /** Auth headers for proxy-fronted engines; empty for stock ComfyUI. */
 function authHeaders(apiKey: string | undefined,): Record<string, string> {
   return apiKey ? { authorization: `Bearer ${apiKey}`, } : {};
+}
+
+/** Flatten history node outputs into the kind-indexed file list pollers consume. */
+function collectOutputFiles(
+  outputs: Record<string, ComfyUINodeOutput> | undefined,
+): { images: ComfyUIOutputFile[]; files: Array<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }> } {
+  const images: ComfyUIOutputFile[] = [];
+  const files: Array<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }> = [];
+  for (const nodeOutput of Object.values(outputs ?? {},)) {
+    const animated = isAnimatedMarker(nodeOutput.animated,);
+    for (const file of nodeOutput.images ?? []) {
+      images.push(file,);
+      files.push({ kind: isVideoImage(file, animated,) ? "video" : "image", file, },);
+    }
+
+    for (const [bucket, kind,] of NON_IMAGE_BUCKETS) {
+      for (const file of nodeOutput[bucket] ?? []) {
+        files.push({ kind, file, },);
+      }
+    }
+  }
+
+  return { images, files, };
 }
 
 /**
@@ -70,24 +110,7 @@ export async function pollComfyResult(
   const state = typeof raw === "string" ? raw : raw.status_str;
 
   if (state === "completed" || state === "success") {
-    const images: ComfyUIOutputFile[] = [];
-    const files: { kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[] = [];
-    if (entry.outputs) {
-      for (const nodeOutput of Object.values(entry.outputs,)) {
-        for (const file of nodeOutput.images ?? []) {
-          images.push(file,);
-          files.push({ kind: "image", file, },);
-        }
-
-        for (const [bucket, kind,] of NON_IMAGE_BUCKETS) {
-          for (const file of nodeOutput[bucket] ?? []) {
-            files.push({ kind, file, },);
-          }
-        }
-      }
-    }
-
-    return { done: true, images, files, };
+    return { done: true, ...collectOutputFiles(entry.outputs,), };
   }
 
   if (state === "failed" || state === "error" || state === "cancelled") {

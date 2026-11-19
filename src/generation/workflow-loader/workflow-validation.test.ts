@@ -53,7 +53,21 @@ describe("findDeadNodes", () => {
   });
 
   it("treats every known sink class as terminal", () => {
-    for (const classType of ["SaveImage", "PreviewImage", "Note", "SaveVideo",]) {
+    for (
+      const classType of [
+        "SaveImage",
+        "PreviewImage",
+        "Note",
+        "SaveVideo",
+        "DaSiWa_EnhancedVideoCombine",
+        "DaSiWaH3ClipAssemble",
+        "VHS_VideoCombine",
+        "DaSiWaH3ContinuityPublish",
+        "DaSiWa_NodeStatusSwitch",
+        "ResolutionSelector",
+        "ModelPatchTorchSettings",
+      ]
+    ) {
       const wf: ComfyUIWorkflow = { "9": { class_type: classType, inputs: {}, }, };
       expect(findDeadNodes(wf,),).toEqual([],);
     }

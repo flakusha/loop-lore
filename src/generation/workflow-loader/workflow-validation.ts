@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { UNREFERENCED_LIVE_CLASSES, } from "../comfyui-converter/types";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
 
 /**
@@ -18,6 +19,12 @@ export const TERMINAL_SINK_CLASSES: ReadonlySet<string> = new Set([
   "SaveAnimatedWEBP",
   "SaveImage",
   "SaveVideo",
+  // Media sinks used by the pinned H3 workflow catalog.
+  "DaSiWa_EnhancedVideoCombine",
+  "DaSiWaH3ClipAssemble",
+  "VHS_VideoCombine",
+  // Control/config nodes the converter submits unreferenced but live.
+  ...UNREFERENCED_LIVE_CLASSES,
 ],);
 
 /**

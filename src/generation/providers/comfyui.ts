@@ -62,15 +62,24 @@ export interface ComfyUIOutputFile {
   filename: string;
   subfolder?: string;
   type?: string;
+  /** MIME type when the save node supplies one (DaSiWa, VHS). */
+  format?: string;
 }
 
 /** Media kind of an output bucket (SaveImage / SaveAudio / SaveVideo). */
-export type ComfyUIOutputKind = "image" | "audio" | "video";
+export type ComfyUIOutputKind = "image" | "audio" | "video" | "other";
 
-/** Per-node execution outputs — audio workflows emit `audio`/`videos` instead of `images`. */
-export type ComfyUINodeOutput = Partial<
-  Record<"images" | "audio" | "videos" | "gifs", ComfyUIOutputFile[]>
->;
+/** Per-node execution outputs; buckets vary by save node, not by media type. */
+export interface ComfyUINodeOutput {
+  images?: ComfyUIOutputFile[];
+  audio?: ComfyUIOutputFile[];
+  videos?: ComfyUIOutputFile[];
+  gifs?: ComfyUIOutputFile[];
+  /** KJNodes checkpoint bucket; carries .safetensors latent packages. */
+  files?: ComfyUIOutputFile[];
+  /** Core SaveVideo marks animated output; JSON delivers the tuple as [true]. */
+  animated?: unknown;
+}
 
 /** A downloaded output file with the kind of media it holds. */
 export interface ComfyUIDownloadedFile {

@@ -85,7 +85,7 @@ describe("IVSS ComfyUI run pipeline", () => {
         calls.waited.push(promptId,);
         return [
           { kind: "video", file: { filename: "clip.webm", }, },
-          { kind: "image", file: { filename: "h3-state.safetensors", }, },
+          { kind: "other", file: { filename: "h3-state.safetensors", }, },
         ];
       },
       async downloadFile(file,) {

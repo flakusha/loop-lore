@@ -106,9 +106,12 @@ describe("v-0010 Director workflow", () => {
     expect(report.notesSkipped,).toHaveLength(11,);
   });
 
-  it("exposes the converted dead set for the validator's converted mode", () => {
+  it("accepts converted control/config nodes as legitimate unreferenced sinks", () => {
     const { graph, report, } = convertDirector();
-    expect([...report.unreferencedLive,].toSorted(),).toEqual(findDeadNodes(graph,).toSorted(),);
+    expect(report.unreferencedLive.length,).toBeGreaterThan(0,);
+    // The converter reports these ids for UI bookkeeping; the sink registry
+    // now knows their classes are live, so the flat graph loads without an override.
+    expect(findDeadNodes(graph,),).toEqual([],);
     const payload = {
       body: graph,
       category: "txt2img",
@@ -116,10 +119,7 @@ describe("v-0010 Director workflow", () => {
       requiredNodes: [],
     };
 
-    expect(validateWorkflowPayload(payload,).ok,).toBe(false,);
-    expect(
-      validateWorkflowPayload(payload, { unreferencedLive: report.unreferencedLive, },).ok,
-    ).toBe(true,);
+    expect(validateWorkflowPayload(payload,).ok,).toBe(true,);
   });
 });
 
