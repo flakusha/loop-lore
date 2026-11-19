@@ -176,7 +176,7 @@ describe("validateWorkflowPayload converted mode", () => {
     }
   });
 
-  it("accepts a converted graph whose dead set equals the report set", () => {
+  it("accepts a graph with converter-live control nodes, report or not", () => {
     const payload = {
       ...BASE,
       body: {
@@ -185,7 +185,10 @@ describe("validateWorkflowPayload converted mode", () => {
       },
     };
 
-    expect(validateWorkflowPayload(payload,).ok,).toBe(false,);
+    // ResolutionSelector is in UNREFERENCED_LIVE_CLASSES, which the sink
+    // registry treats as globally live — strict mode accepts it and the
+    // converter report is harmless but vacuous for such classes.
+    expect(validateWorkflowPayload(payload,).ok,).toBe(true,);
     expect(validateWorkflowPayload(payload, { unreferencedLive: ["9",], },).ok,).toBe(true,);
   });
 

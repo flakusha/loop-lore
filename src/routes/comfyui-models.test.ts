@@ -9,7 +9,7 @@ import { createConfigSchema, } from "../config/schema-class";
 import type { DB, } from "../db/schema";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
-import { comfyUIModelRoutes, } from "./comfyui-models";
+import { comfyUIModelConfigKey, comfyUIModelRoutes, } from "./comfyui-models";
 
 const USER_ID = "model-settings-user";
 const originalFetch = globalThis.fetch;
@@ -103,5 +103,11 @@ describe("GET /api/v1/comfyui/models", () => {
     expect(body.clipRole,).toMatchObject({ selected: "user-clip.safetensors", source: "user", },);
     expect(body.diffusionRole,).toMatchObject({ selected: "pinned.safetensors", source: "config", },);
     expect(body.vaeRole,).toMatchObject({ selected: "vae-a.safetensors", source: "discovery", },);
+  });
+});
+
+describe("comfyUIModelConfigKey", () => {
+  test("namespaces the key by provider", () => {
+    expect(comfyUIModelConfigKey("h3-local",),).toBe("comfyui.models.h3-local",);
   });
 });

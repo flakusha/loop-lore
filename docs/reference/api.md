@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-389 of 1032 operations have no `summary`/`description` in the spec; those rows render as `—`.
+390 of 1033 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -532,6 +532,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | POST | /api/v1/comfyui-builder/runs | Start a builder chain run |
 | GET | /api/v1/comfyui-builder/runs/{jobId} | Poll a builder chain run |
 | POST | /api/v1/comfyui-builder/validate | Statically validate a ComfyUI graph |
+| GET | /api/v1/comfyui/models | — |
 | GET | /api/v1/commands | List registered chat commands |
 | GET | /api/v1/comparisons | — |
 | GET | /api/v1/comparisons/{id}/export | Export a model comparison |

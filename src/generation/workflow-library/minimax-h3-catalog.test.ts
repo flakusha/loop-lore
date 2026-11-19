@@ -17,13 +17,19 @@
  * resets it and uses its own fixture directory, mirroring loader.test.ts.
  */
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
-import { mkdir, rm, writeFile, } from "node:fs/promises";
+import { mkdtemp, rm, writeFile, } from "node:fs/promises";
 
+import { createLogger, } from "../../logger";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import { getWorkflowLoader, resetWorkflowLoaderForTests, } from "../workflow-loader/loader";
 import { TERMINAL_SINK_CLASSES, } from "../workflow-loader/workflow-validation";
 
-const DIR = ".tmp/wf-fixtures-minimax-catalog";
+/**
+ * Per-process fixture directory: the check gate runs this file in two
+ * concurrent processes (collision companion + scoped pass) sharing one
+ * checkout, so a fixed path races (one rm wipes the other's fixtures).
+ */
+let DIR = "";
 
 /** Fragment graph: six-variable contract, video sink, continuity emitter. */
 function fragmentGraph(mode: string,): ComfyUIWorkflow {
@@ -94,7 +100,9 @@ const ASSEMBLE_VARS = { segment_slots: "[]", transition: "cut", fps: 24, };
 const AUDIO_VARS = { video_slot: "clip.webm", prompt: "wind", seed: "7", };
 
 async function fixtures(): Promise<void> {
-  await mkdir(DIR, { recursive: true, },);
+  // mkdtemp prefix stays under the repo .tmp: the loader joins the dir
+  // onto process.cwd(), so an absolute tmpdir would resolve outside root.
+  DIR = await mkdtemp(".tmp/wf-fixtures-minimax-catalog-",);
   for (const [name, graph,] of Object.entries(FIXTURES,)) {
     await writeFile(`${DIR}/${name}.json`, JSON.stringify(graph,),);
   }
@@ -110,6 +118,7 @@ function inputOf(workflow: ComfyUIWorkflow, nodeId: string,): Record<string, unk
 }
 
 beforeAll(async () => {
+  createLogger({ level: "error", },);
   resetWorkflowLoaderForTests();
   await fixtures();
 },);

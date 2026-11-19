@@ -133,7 +133,7 @@ describe("repairParameters", () => {
     expect((await storedPayload("plain-row",)).parameters,).toEqual([],);
   });
 
-  it("repairs a probe-ingested converted row in converted mode", async () => {
+  it("repairs a probe-ingested converted row with globally-live converter nodes", async () => {
     const body = {
       ...graphWith("input_image",),
       "9": { class_type: "DaSiWa_NodeStatusSwitch", inputs: { enabled: true, }, },
@@ -142,14 +142,9 @@ describe("repairParameters", () => {
     const broken = payloadText(body, [],);
     await insertRow("converted-row", broken,);
 
-    expect(await repairParameters(db, { payload: broken, }, "converted-row",),).toBe(false,);
-
-    const repaired = await repairParameters(
-      db,
-      { payload: broken, },
-      "converted-row",
-      { unreferencedLive: ["9",], },
-    );
+    // DaSiWa_NodeStatusSwitch is in UNREFERENCED_LIVE_CLASSES, which the
+    // sink registry treats as globally live — no converter report needed.
+    const repaired = await repairParameters(db, { payload: broken, }, "converted-row",);
 
     expect(repaired,).toBe(true,);
     expect((await storedPayload("converted-row",)).parameters.map((parameter,) => parameter.name),)

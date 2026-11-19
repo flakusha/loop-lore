@@ -74,6 +74,7 @@ import * as validation_characterRelations from "@/validation/schemas/character-r
 import * as validation_characterSystems from "@/validation/schemas/character-systems";
 import * as validation_chat from "@/validation/schemas/chat";
 import * as validation_comfyuiBuilder from "@/validation/schemas/comfyui-builder";
+import * as validation_comfyuiModels from "@/validation/schemas/comfyui-models";
 import * as validation_emotionAvatars from "@/validation/schemas/emotion-avatars";
 import * as validation_entities from "@/validation/schemas/entities";
 import * as validation_imageEdit from "@/validation/schemas/image-edit";
@@ -1186,6 +1187,24 @@ describe("CombatantSchema", () => {
   test("accepts generated values", () => checkAllValid(routes_rpg_combatSchemas.CombatantSchema,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_combatSchemas.CombatantSchema,));
+});
+
+describe("ComfyUIModelQuery", () => {
+  test("accepts generated values", () => checkAllValid(validation_comfyuiModels.ComfyUIModelQuery,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_comfyuiModels.ComfyUIModelQuery,));
+});
+
+describe("ComfyUIModelSelectionSchema", () => {
+  test("accepts generated values", () => checkAllValid(validation_comfyuiModels.ComfyUIModelSelectionSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_comfyuiModels.ComfyUIModelSelectionSchema,));
+});
+
+describe("ComfyUIModelsResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_comfyuiModels.ComfyUIModelsResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_comfyuiModels.ComfyUIModelsResponse,));
 });
 
 describe("completePlaythroughBody", () => {
@@ -2912,4 +2931,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 462 schemas discovered across 574 module(s).
+// 465 schemas discovered across 576 module(s).

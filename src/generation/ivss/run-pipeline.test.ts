@@ -28,6 +28,7 @@ import {
   type IvssRunDispatch,
   type IvssWorkflowLoader,
   startIvssFragmentRun,
+  stubHonkboxVideoOffload,
 } from "./run-pipeline";
 
 import {
@@ -735,5 +736,18 @@ describe("IVSS ComfyUI run pipeline", () => {
     expect(remote.calls.submitted,).toHaveLength(1,);
     expect(local.calls.submitted,).toHaveLength(0,);
     expect(getVideoJob(handle.jobId,)?.status,).toBe("done",);
+  });
+
+  test("stub honkbox offload fails closed with a reason", async () => {
+    const decision = await stubHonkboxVideoOffload({
+      fragmentId: "frag-1",
+      workflowId: "h3-local",
+      prompt: "a shot",
+    },);
+
+    expect(decision.ok,).toBe(false,);
+    if (!decision.ok) {
+      expect(decision.reason.length,).toBeGreaterThan(0,);
+    }
   });
 });

@@ -297,7 +297,8 @@
     "backupDrift": "Some backups differ from the server.",
     "backupRestored": "Backup verified and restored.",
     "backupRecoverFailed": "Recovery failed: integrity check did not pass.",
-    "backupConfirmRequired": "Recovery requires explicit confirmation."
+    "backupConfirmRequired": "Recovery requires explicit confirmation.",
+    "comfyuiModels": "ComfyUI video models"
   },
   "admin": {
     "title": "Administration",

@@ -263,6 +263,7 @@
     "data": "Data",
     "keys": "Keys",
     "models": "Models",
+    "comfyuiModels": "ComfyUI video models",
     "browserModels": "Browser Models",
     "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
     "hostCatalog": "Host catalog",

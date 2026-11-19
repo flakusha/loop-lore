@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, describe, expect, test, } from "bun:test";
-import { pollComfyResult, } from "./comfyui-poll";
+import { latentPackageDescriptor, pollComfyResult, } from "./comfyui-poll";
 
 const originalFetch = globalThis.fetch;
 
@@ -99,5 +99,24 @@ describe("pollComfyResult output classification", () => {
     expect(result.files,).toEqual([
       { kind: "other", file: { filename: "h3-state.safetensors", }, },
     ],);
+  });
+});
+
+describe("latentPackageDescriptor", () => {
+  test("maps absolute and bare package paths to the latent file", () => {
+    expect(latentPackageDescriptor("/a/output/h3_lq_stash/proj/shot1",),).toEqual({
+      filename: "latent.safetensors",
+      subfolder: "h3_lq_stash/proj/shot1",
+      type: "output",
+    },);
+
+    expect(latentPackageDescriptor("h3_lq_stash/proj/shot1/latent.safetensors",)?.subfolder,).toBe(
+      "h3_lq_stash/proj/shot1",
+    );
+  });
+
+  test("rejects non-package strings", () => {
+    expect(latentPackageDescriptor("not a path",),).toBeUndefined();
+    expect(latentPackageDescriptor(42,),).toBeUndefined();
   });
 });

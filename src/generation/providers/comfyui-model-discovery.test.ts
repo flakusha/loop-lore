@@ -5,10 +5,14 @@ import { createLogger, } from "@loop-lore/core/logger";
 import { beforeAll, describe, expect, test, } from "bun:test";
 import {
   assertComfyUIModelName,
+  COMFYUI_MODEL_EXTENSIONS,
+  COMFYUI_MODEL_FOLDERS,
+  COMFYUI_MODEL_ROLES,
   type ComfyUIModelCandidates,
   type ComfyUIModelClient,
   discoverComfyUIModels,
   filterComfyUIModelNames,
+  hasComfyUIModelExtension,
   resolveComfyUIModels,
 } from "./comfyui-model-discovery";
 
@@ -113,5 +117,22 @@ describe("resolveComfyUIModels", () => {
         config: { clip: "clip.json", },
       },)
     ).toThrow(/Invalid ComfyUI clip model/,);
+  });
+});
+
+describe("catalog constants", () => {
+  test("roles cover every folder map key", () => {
+    expect([...COMFYUI_MODEL_ROLES,],).toEqual(["clip", "diffusion", "vae",],);
+    expect(Object.keys(COMFYUI_MODEL_FOLDERS,).sort(),).toEqual(["clip", "diffusion", "vae",],);
+  });
+
+  test("re-exported extensions match the core provider schema", () => {
+    expect(COMFYUI_MODEL_EXTENSIONS.clip,).toContain(".safetensors",);
+    expect(COMFYUI_MODEL_EXTENSIONS.diffusion,).toContain(".ckpt",);
+  });
+
+  test("hasComfyUIModelExtension accepts role extensions, rejects others", () => {
+    expect(hasComfyUIModelExtension("clip", "enc.gguf",),).toBe(true,);
+    expect(hasComfyUIModelExtension("clip", "vae.bin",),).toBe(false,);
   });
 });
