@@ -65,7 +65,7 @@ type MessageBulkCtx = ChatState & MessageBulkState;
  */
 function reportBulkResult(result: BulkResult, successKey: string,): void {
   if (result.failed.length > 0) {
-    showToast("error", `${t(successKey,)}: ${t("chats.bulkPartialFailure",)} (${result.failed.length},)`,);
+    showToast("error", `${t(successKey,)}: ${t("chats.bulkPartialFailure",)} (${result.failed.length})`,);
   } else {
     showToast("success", t(successKey,),);
   }
