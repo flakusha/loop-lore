@@ -126,5 +126,12 @@ const spec = await Bun.file(SPEC_PATH,).json() as { paths: Record<string, Record
 const currentFile = Bun.file(DOC_PATH,);
 const current = await currentFile.exists() ? await currentFile.text() : null;
 const { markdown, hollow, total, } = render(spec, handwrittenFrom(current,),);
-await Bun.write(DOC_PATH, markdown,);
-process.stdout.write(`wrote docs/reference/api.md (${total} operations, ${hollow} hollow)\n`,);
+// The check runner runs gates in parallel (default 4 jobs). Writing an
+// unchanged tracked file would race gates that read it (md - lint), so only
+// write on real change. Drift still lands on disk for the freshness gate.
+if (current !== markdown) {
+  await Bun.write(DOC_PATH, markdown,);
+  process.stdout.write(`wrote docs/reference/api.md (${total} operations, ${hollow} hollow)\n`,);
+} else {
+  process.stdout.write(`docs/reference/api.md up to date (${total} operations, ${hollow} hollow)\n`,);
+}
