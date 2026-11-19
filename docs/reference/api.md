@@ -30,7 +30,7 @@ The generated tables above cover every operation in the served spec, including R
 
 ## Error Responses
 
-All errors follow `{ error: { message, code, details? } }`. Common codes:
+All errors follow a flat `{ error, code, meta, data? }` envelope (no nested error object). Common codes:
 
 - `VALIDATION_ERROR` — invalid request data
 - `UNAUTHORIZED` — missing/invalid auth
@@ -38,10 +38,12 @@ All errors follow `{ error: { message, code, details? } }`. Common codes:
 - `NOT_FOUND` — resource not found
 - `CONFLICT` — resource conflict (e.g. duplicate username)
 - `INTERNAL_ERROR` — unexpected server error
+- `TOO_MANY_REQUESTS` — rate limit exceeded
+- `NOT_IMPLEMENTED` — reserved v1 operation
 
 ## Rate Limiting
 
-429 response: `{ error: { message: "Rate limit exceeded", code: "RATE_LIMITED", details: { limit, remaining, reset } } }`
+429 response: flat envelope with `code: "TOO_MANY_REQUESTS"`; limit, remaining, reset and retry-after travel in `ratelimit-*` / `retry-after` headers.
 
 ## Pagination
 

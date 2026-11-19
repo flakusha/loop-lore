@@ -12,10 +12,8 @@
 import { describe, expect, test, } from "bun:test";
 import { Value, } from "@sinclair/typebox/value";
 import {
-  MessageAttachmentSchema,
   MessageCreateBody,
   MessagesQuery,
-  MessageSearchQuery,
   MessageStatusUpdateBody,
   MessageVariantQuery,
   MessageVisibilityUpdateBody,
@@ -155,23 +153,6 @@ describe("MessageCreateBody — additional field edge cases", () => {
   });
 },);
 
-describe("MessageAttachmentSchema — standalone", () => {
-  test("accepts an object with only assetId", () => {
-    expect(Value.Check(MessageAttachmentSchema, body({ assetId: "a1", },),),).toBe(true,);
-  });
-
-  test("rejects an object missing assetId", () => {
-    expect(Value.Check(MessageAttachmentSchema, body({ caption: "no id", },),),).toBe(false,);
-  });
-
-  test("accepts assetId as empty string (no minLength)", () => {
-    // Schema pin: assetId is t.String() with no length constraint. The
-    // ownership check downstream (AttachmentOwnershipError) is what
-    // rejects unknown IDs — schema does not.
-    expect(Value.Check(MessageAttachmentSchema, body({ assetId: "", },),),).toBe(true,);
-  });
-},);
-
 describe("MessageVariantQuery", () => {
   test("accepts variantIndex 0 (lower bound)", () => {
     expect(Value.Check(MessageVariantQuery, body({ variantIndex: 0, },),),).toBe(true,);
@@ -263,55 +244,3 @@ describe("MessagesQuery — pagination edge cases", () => {
   });
 },);
 
-describe("MessageSearchQuery — search boundaries", () => {
-  test("accepts q at the maximum (500 chars)", () => {
-    expect(
-      Value.Check(MessageSearchQuery, body({ q: "x".repeat(500,), },),),
-    ).toBe(true,);
-  });
-
-  test("rejects q above the maximum (501 chars)", () => {
-    expect(
-      Value.Check(MessageSearchQuery, body({ q: "x".repeat(501,), },),),
-    ).toBe(false,);
-  });
-
-  test("accepts limit=100 (max)", () => {
-    expect(Value.Check(MessageSearchQuery, body({ limit: 100, },),),).toBe(true,);
-  });
-
-  test("rejects limit=101", () => {
-    expect(Value.Check(MessageSearchQuery, body({ limit: 101, },),),).toBe(false,);
-  });
-
-  test("accepts offset=0 (min)", () => {
-    expect(Value.Check(MessageSearchQuery, body({ offset: 0, },),),).toBe(true,);
-  });
-
-  test("rejects offset=-1 (below min)", () => {
-    expect(Value.Check(MessageSearchQuery, body({ offset: -1, },),),).toBe(false,);
-  });
-
-  test("hasAttachment accepts only the strings 'true' or 'false'", () => {
-    expect(
-      Value.Check(MessageSearchQuery, body({ hasAttachment: "true", },),),
-    ).toBe(true,);
-
-    expect(
-      Value.Check(MessageSearchQuery, body({ hasAttachment: "false", },),),
-    ).toBe(true,);
-
-    // Booleans rejected — must be the strings.
-    expect(
-      Value.Check(MessageSearchQuery, body({ hasAttachment: true as unknown as string, },),),
-    ).toBe(false,);
-  });
-
-  test("dateFrom/dateTo accept arbitrary strings (no ISO format check)", () => {
-    // Pin: no format validation. Downstream SQL is responsible for date
-    // parsing; bad dates likely surface as SQL errors.
-    expect(
-      Value.Check(MessageSearchQuery, body({ dateFrom: "not-a-date", },),),
-    ).toBe(true,);
-  });
-},);

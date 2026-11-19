@@ -653,24 +653,6 @@ describe("AssetIdParams", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_assetTags_helpers.AssetIdParams,));
 });
 
-describe("AssetSearchQuery", () => {
-  test("accepts generated values", () => checkAllValid(validation_assets.AssetSearchQuery,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetSearchQuery,));
-});
-
-describe("AssetSearchResponse", () => {
-  test("accepts generated values", () => checkAllValid(validation_assets.AssetSearchResponse,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetSearchResponse,));
-});
-
-describe("AssetSearchResult", () => {
-  test("accepts generated values", () => checkAllValid(validation_assets.AssetSearchResult,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetSearchResult,));
-});
-
 describe("AssetTagListResponse", () => {
   test("accepts generated values", () => checkAllValid(validation_assetTags.AssetTagListResponse,));
 
@@ -1739,12 +1721,6 @@ describe("MessageAttachment", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.MessageAttachment,));
 });
 
-describe("MessageAttachmentSchema", () => {
-  test("accepts generated values", () => checkAllValid(validation_messages.MessageAttachmentSchema,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageAttachmentSchema,));
-});
-
 describe("MessageContentTypeSchema", () => {
   test("accepts generated values", () => checkAllValid(validation_primitives.MessageContentTypeSchema,));
 
@@ -1785,24 +1761,6 @@ describe("MessageRow", () => {
   test("accepts generated values", () => checkAllValid(validation_responses.MessageRow,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.MessageRow,));
-});
-
-describe("MessageSearchQuery", () => {
-  test("accepts generated values", () => checkAllValid(validation_messages.MessageSearchQuery,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageSearchQuery,));
-});
-
-describe("MessageSearchResponse", () => {
-  test("accepts generated values", () => checkAllValid(validation_messages.MessageSearchResponse,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageSearchResponse,));
-});
-
-describe("MessageSearchResult", () => {
-  test("accepts generated values", () => checkAllValid(validation_messages.MessageSearchResult,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageSearchResult,));
 });
 
 describe("MessageSectionAssignBody", () => {
@@ -2954,4 +2912,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 469 schemas discovered across 573 module(s).
+// 462 schemas discovered across 573 module(s).
