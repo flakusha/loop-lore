@@ -40,18 +40,19 @@ Open questions for the operator:
 1. Version/tag policy: package.json + CHANGELOG are at 1.0.0; creating the git tag remains the operator's call.
 2. Which Not-Started epics are explicitly OUT of 1.0.0? Tracked by `TASK-decide-1-0-0-epic-scope-exclusions.md`.
 3. Status-vocab enforcement: hard gate now or advisory until R1 cleanup?
-4. tickets/index.json split: before or after 1.0.0 scope? Tracked by `TASK-decide-ticket-index-split-timing.md`.
-5. Confirm thin-client-over-API as the 1.0.0 mobile answer?
-6. API version pin and breaking-change ADR: tracked by `TASK-decide-api-version-pin-and-adr.md`.
-7. Which e2e/QA subset gates 1.0.0: tracked by `TASK-decide-1-0-0-qa-e2e-subset.md`.
+Resolved items 4–7 are recorded in the decision log below; only operator-owned items remain open here.
 
 ## Decision log (2026-11-19)
 
 - Gemini Decision 1 adapter: **post-1.0.0**. It is a remote API (`generativelanguage.googleapis.com/v1beta/decisions`, `x-goog-api-key`), not a local model and not a config-only change — the current decision client is loopback-only and unauthenticated. Keep `llama-swap`/`d3-2b` as the 1.0.0 decision oracle; file a `FEAT` before building a Gemini adapter.
 - Credential/availability-gated live e2e tiers: **not strict per-run release gates**. The OpenRouter embed/rerank/TTS default model ids are gone from the current free catalog; those tiers run only when credentials and live models are available. The stale defaults are a followup, not a release blocker.
-- Push/tag timing and the e2e/QA release subset: **deferred to a later operator session**. `dev` stays unpushed and untagged; no gate subset is pinned yet.
-- Still need filing before scope can close: the API version pin + breaking-change ADR (`TASK-decide-api-version-pin-and-adr.md`), the explicit Not-Started epic OUT list (`TASK-decide-1-0-0-epic-scope-exclusions.md`), and dedicated MFA operator docs (`TASK-mfa-dedicated-operator-documentation.md`). These are tracked tickets, not yet decisions; do not infer values for them.
-- Remaining operator items (status-vocab enforcement, index split timing, thin-client mobile confirmation, actor-kind verification, init-image affordance, H18 path hygiene) stay deferred per their existing tickets.
+- Push/tag timing: **deferred to a later operator session**. `dev` stays unpushed and untagged.
+- QA e2e subset: **required/blocking**. `tests/e2e/flows/browser/qa-subset.txt` (7 critical-path specs) is the 1.0.0 release gate; `e2e - browser (qa subset)` was flipped from advisory to blocking in `scripts/check/parallel/gate-table.mjs`. Credential/availability-gated live tiers remain advisory; SMK/chatState skips stay explicitly documented as blocked.
+- Ticket index split: **required before 1.0.0**. Follow-up implementation ticket filed; giwt sync-tooling sharding is an upstream prerequisite. Until it lands, `index.json` stays the single tracked snapshot.
+- Thin-client mobile: **confirmed**. The shipped `/api/v1` + SSE thin client is the 1.0.0 mobile answer; theme 4 stays verification-only, no native package.
+- API version: **frozen independent v1**, additive-only; route-level 501 stubs for planned v1 APIs (openapi validate/diff/changelog, tasks family) plus ADR `ADR-api-version-v1.md`. Product SemVer and API version remain decoupled; breaking changes require a new major API surface.
+- Still need filing before scope can close: the explicit Not-Started epic OUT list (`TASK-decide-1-0-0-epic-scope-exclusions.md`) and dedicated MFA operator docs (`TASK-mfa-dedicated-operator-documentation.md`). These are tracked tickets, not yet decisions; do not infer values for them.
+- Remaining operator items (status-vocab enforcement, actor-kind verification, init-image affordance, H18 path hygiene) stay deferred per their existing tickets.
 
 Related: .tmp/research/release-1.0.0-roadmap.md
 

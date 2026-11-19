@@ -219,9 +219,8 @@ export const checks = {
   // QA subset: the critical-path-only browser slice (qa-subset.txt, ~7 flows,
   // target <5 min wall) — the fast-trustworthy answer to the baseline's ~9
   // min. Static spec list, so a plain string entry (no gates.mjs builder).
-  // ADVISORY-FIRST: flipping to blocking is one line — delete the
-  // ADVISORY_GATES entry below. Operator decides; blocking changes finalize
-  // behavior for every lane.
+  // BLOCKING per operator ruling 2026-11-19 (TASK-decide-1-0-0-qa-e2e-subset):
+  // the curated critical-path subset gates 1.0.0 and every finalize.
   "e2e - browser (qa subset)": "E2E_SAFEGUARD=1 bun run test:e2e:browser-qa-subset",
   // Banned-pattern findings are collected in the non-blocking report below.
   // Epic coverage remains manual; current planning debt is non-blocking.
@@ -275,9 +274,5 @@ export const ADVISORY_GATES = new Set([
   "jscpd ratchet",
   // Branch audit: verdicts drift as dev lands branch work — see the gate entry.
   "branches - audit",
-  // QA subset: ADVISORY-FIRST by design. The subset names fixed spec files;
-  // a rename/delete on dev turns a missing spec into a hard failure that
-  // would block every lane's finalize until reconciled. Keep advisory until
-  // the operator flips it: FLIP = delete this entry (one line) to block.
-  "e2e - browser (qa subset)",
+  // e2e - browser (qa subset) is BLOCKING (see its entry in `checks`).
 ],);

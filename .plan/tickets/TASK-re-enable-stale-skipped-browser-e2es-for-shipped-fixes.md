@@ -17,6 +17,8 @@ Several browser tests remain skipped even though their blocking BUGs are Done an
 
 **Scope:** remove the stale skips, update assertions to the shipped UI, and keep each spec parallel-safe. Separately record the two genuinely blocked skips (SMK secret in the browser server, chatState init to loadChats) under their existing Not-Started tickets rather than folding them into this slice.
 
+**Gate decision (2026-11-19):** `TASK-decide-1-0-0-qa-e2e-subset.md` rules the curated `qa-subset.txt` suite required/blocking; `e2e - browser (qa subset)` is no longer advisory. This ticket owns stale-skip cleanup inside that suite; blocked skips stay documented, not silently removed.
+
 **Acceptance Criteria:**
 
 - [ ] previously skipped tests for shipped fixes run and pass under E2E_SAFEGUARD=1
