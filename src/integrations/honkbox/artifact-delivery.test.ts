@@ -1,0 +1,289 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/** Tests for the honkbox artifact-delivery surface (`artifacts.ts`, `result-ingest.ts`). */
+
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { createHash, } from "node:crypto";
+import { existsSync, mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
+import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
+import { insertUsers, } from "../../test-utils/insert-helpers";
+import {
+  cleanupHonkboxArtifact,
+  DEFAULT_HONKBOX_ARTIFACT_MAX_BYTES,
+  downloadHonkboxArtifactToTempFile,
+  getHonkboxArtifactBytes,
+  HONKBOX_ARTIFACTS_PATH,
+  honkboxArtifactByteCap,
+  HonkboxArtifactDeliveryUnavailableError,
+  HonkboxArtifactValidationError,
+  putHonkboxArtifact,
+} from "./artifacts";
+import { type HonkboxProbeResult, parseHonkboxCapabilities, } from "./index";
+import { ingestHonkboxJobResult, parseHonkboxJobEvent, } from "./result-ingest";
+
+const originalFetch = globalThis.fetch;
+
+afterAll(() => {
+  globalThis.fetch = originalFetch;
+},);
+
+/** Probe with artifact delivery and a present storage data dir. */
+function deliveryProbe(): HonkboxProbeResult {
+  const parsed = parseHonkboxCapabilities({
+    api_version: "v1",
+    features: { artifact_delivery: true, },
+    storage: { data_dir_present: true, },
+    openapi: "/v1/openapi.json",
+    models: "/v1/models",
+  },);
+
+  if (!parsed.ok) { throw new Error("delivery probe fixture did not parse",); }
+  return { ok: true, capabilities: parsed.capabilities, supported: true, latencyMs: 1, };
+}
+
+/** Swap globalThis.fetch for the duration of `fn`. */
+async function withMockFetch(
+  handler: (url: string,) => Response | Promise<Response>,
+  fn: () => Promise<void>,
+): Promise<void> {
+  globalThis.fetch = (async (url: string | URL | Request,) => handler(String(url,),)) as typeof fetch;
+  try {
+    await fn();
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
+const GLB_BYTES = Buffer.from("glTFbinary-fixture-bytes",);
+const GLB_SHA256 = createHash("sha256",).update(GLB_BYTES,).digest("hex",);
+
+describe("artifact registry constants", () => {
+  test("collection path and default byte cap are stable", () => {
+    expect(HONKBOX_ARTIFACTS_PATH,).toBe("/artifacts",);
+    expect(DEFAULT_HONKBOX_ARTIFACT_MAX_BYTES,).toBe(64 * 1_048_576,);
+  });
+
+  test("error classes carry their names", () => {
+    expect(new HonkboxArtifactDeliveryUnavailableError("x",).name,).toBe(
+      "HonkboxArtifactDeliveryUnavailableError",
+    );
+
+    expect(new HonkboxArtifactValidationError("x",).name,).toBe("HonkboxArtifactValidationError",);
+  });
+
+  test("byte cap falls back to the floor without a probed limit", () => {
+    expect(honkboxArtifactByteCap(deliveryProbe().capabilities,),).toBe(
+      DEFAULT_HONKBOX_ARTIFACT_MAX_BYTES,
+    );
+  });
+});
+
+describe("parseHonkboxJobEvent", () => {
+  test("parses a result frame with artifact identity", () => {
+    const event = parseHonkboxJobEvent({
+      event: "job_result",
+      id: "job-1",
+      artifact_id: "a1",
+      size_bytes: 4,
+      sha256: GLB_SHA256,
+    }, "job_result",);
+
+    expect(event?.event,).toBe("job_result",);
+    expect(event?.artifactId,).toBe("a1",);
+    expect(event?.sizeBytes,).toBe(4,);
+    expect(event?.sha256,).toBe(GLB_SHA256,);
+    expect(event?.cancelled,).toBe(false,);
+  });
+
+  test("rejects non-objects and result frames without an artifact", () => {
+    expect(parseHonkboxJobEvent(null, "job_result",),).toBeUndefined();
+    expect(parseHonkboxJobEvent("nope", "job_result",),).toBeUndefined();
+    expect(parseHonkboxJobEvent({ event: "job_result", }, "job_result",),).toBeUndefined();
+  });
+
+  test("marks cancelled frames", () => {
+    const event = parseHonkboxJobEvent({ event: "job_cancelled", id: "job-1", cancelled: true, }, "job_cancelled",);
+    expect(event?.event,).toBe("job_cancelled",);
+    expect(event?.cancelled,).toBe(true,);
+  });
+});
+
+describe("artifact store client", () => {
+  test("putHonkboxArtifact refuses bytes over the cap before any I/O", async () => {
+    await expect(putHonkboxArtifact(
+      { baseUrl: "http://127.0.0.1:9010/v1", maxBytes: 2, },
+      Buffer.from("three",),
+      "model/gltf-binary",
+    ),).rejects.toBeInstanceOf(HonkboxArtifactValidationError,);
+  });
+
+  test("putHonkboxArtifact returns the server descriptor", async () => {
+    await withMockFetch(async () =>
+      new Response(
+        JSON.stringify({ artifact_id: "a1", sha256: GLB_SHA256, size_bytes: GLB_BYTES.length, },),
+        { headers: { "content-type": "application/json", }, },
+      ), async () => {
+      const stored = await putHonkboxArtifact(
+        { baseUrl: "http://127.0.0.1:9010/v1", maxBytes: 1024, },
+        GLB_BYTES,
+        "model/gltf-binary",
+      );
+
+      expect(stored.artifactId,).toBe("a1",);
+      expect(stored.sha256,).toBe(GLB_SHA256,);
+      expect(stored.sizeBytes,).toBe(GLB_BYTES.length,);
+    },);
+  });
+
+  test("download stages bytes to a temp file and cleanup removes the dir", async () => {
+    await withMockFetch(async () =>
+      new Response(
+        GLB_BYTES,
+        {
+          headers: {
+            "content-type": "model/gltf-binary",
+            "content-range": `bytes 0-${GLB_BYTES.length - 1}/${GLB_BYTES.length}`,
+          },
+        },
+      ), async () => {
+      const client = { baseUrl: "http://127.0.0.1:9010/v1", maxBytes: 1024, };
+      const downloaded = await downloadHonkboxArtifactToTempFile(client, "a1",);
+      expect(downloaded.sizeBytes,).toBe(GLB_BYTES.length,);
+      expect(downloaded.sha256,).toBe(GLB_SHA256,);
+      expect(downloaded.contentType,).toBe("model/gltf-binary",);
+      expect(existsSync(downloaded.path,),).toBe(true,);
+
+      const bytes = await getHonkboxArtifactBytes(client, "a1",);
+      expect(await bytes.text(),).toBe(GLB_BYTES.toString(),);
+
+      await cleanupHonkboxArtifact(downloaded,);
+      expect(existsSync(join(downloaded.path, "..",),),).toBe(false,);
+    },);
+  });
+});
+
+describe("ingestHonkboxJobResult", () => {
+  let fixture: TestDb;
+  const uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-hb-ingest-",),);
+
+  beforeAll(async () => {
+    fixture = await createTestDb();
+  },);
+
+  afterAll(async () => {
+    await destroyTestDb(fixture,);
+    rmSync(uploadDir, { recursive: true, force: true, },);
+  },);
+
+  /** @param db - test database
+   * @param username - login to look up
+   * @returns the user id
+   */
+  async function ownerIdFor(db: TestDb["db"], username: string,): Promise<string> {
+    return (await db.selectFrom("users",).select("id",).where(
+      "username",
+      "=",
+      username,
+    ).executeTakeFirstOrThrow()).id;
+  }
+
+  test("no-result when neither the stream nor the snapshot carries an artifact", async () => {
+    const outcome = await ingestHonkboxJobResult({
+      baseUrl: "http://127.0.0.1:9010/v1",
+      probe: deliveryProbe(),
+      events: new Response('event: job_progress\ndata: {"id":"job-9"}\n\n',),
+      jobId: "job-9",
+      database: fixture.db,
+      uploadDir,
+      ownerId: "owner-no-result",
+      links: [],
+      listJobs: async () => [],
+    },);
+
+    expect(outcome.ok,).toBe(false,);
+    if (outcome.ok) { return; }
+    expect(outcome.reason,).toBe("no-result",);
+  });
+
+  test("cancelled wins over a later result", async () => {
+    const outcome = await ingestHonkboxJobResult({
+      baseUrl: "http://127.0.0.1:9010/v1",
+      probe: deliveryProbe(),
+      events: new Response('event: job_cancelled\ndata: {"id":"job-2"}\n\n',),
+      jobId: "job-2",
+      database: fixture.db,
+      uploadDir,
+      ownerId: "owner-cancelled",
+      links: [],
+      listJobs: async () => [],
+    },);
+
+    expect(outcome.ok,).toBe(false,);
+    if (outcome.ok) { return; }
+    expect(outcome.reason,).toBe("cancelled",);
+  });
+
+  test("failed jobs report failure without ingesting", async () => {
+    const outcome = await ingestHonkboxJobResult({
+      baseUrl: "http://127.0.0.1:9010/v1",
+      probe: deliveryProbe(),
+      events: new Response('event: job_finished\ndata: {"id":"job-3","status":"failed"}\n\n',),
+      jobId: "job-3",
+      database: fixture.db,
+      uploadDir,
+      ownerId: "owner-failed",
+      links: [],
+      listJobs: async () => [],
+    },);
+
+    expect(outcome.ok,).toBe(false,);
+    if (outcome.ok) { return; }
+    expect(outcome.reason,).toBe("failed",);
+  });
+
+  test("a matching result persists a model asset", async () => {
+    await insertUsers(fixture.db, "hb-owner", "Honkbox Owner",);
+    const ownerId = await ownerIdFor(fixture.db, "hb-owner",);
+    const frame = {
+      event: "job_result",
+      id: "job-4",
+      artifact_id: "a4",
+      size_bytes: GLB_BYTES.length,
+      sha256: GLB_SHA256,
+    };
+
+    await withMockFetch(async () =>
+      new Response(
+        GLB_BYTES,
+        {
+          headers: {
+            "content-type": "model/gltf-binary",
+            "content-range": `bytes 0-${GLB_BYTES.length - 1}/${GLB_BYTES.length}`,
+          },
+        },
+      ), async () => {
+      const outcome = await ingestHonkboxJobResult({
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: deliveryProbe(),
+        events: new Response(`event: job_result\ndata: ${JSON.stringify(frame,)}\n\n`,),
+        jobId: "job-4",
+        database: fixture.db,
+        uploadDir,
+        ownerId,
+        links: [],
+        listJobs: async () => [],
+      },);
+
+      expect(outcome.ok,).toBe(true,);
+      if (!outcome.ok) { return; }
+      expect(outcome.artifactId,).toBe("a4",);
+      expect(outcome.sha256,).toBe(GLB_SHA256,);
+      expect(outcome.sizeBytes,).toBe(GLB_BYTES.length,);
+      expect(outcome.asset.asset_type,).toBe("model",);
+      expect(outcome.asset.filename,).toBe(`${GLB_SHA256}.glb`,);
+    },);
+  });
+});

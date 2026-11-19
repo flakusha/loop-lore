@@ -12,7 +12,7 @@
  */
 
 import { createHash, randomUUID, } from "node:crypto";
-import { mkdtemp, open, rm, } from "node:fs/promises";
+import fs from "node:fs/promises";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { safeFetch, } from "../../utils";
@@ -245,9 +245,9 @@ export async function downloadHonkboxArtifactToTempFile(
 
   // ponytail: one private temp dir per artifact, removed by the caller after
   // createAsset copies the bytes into the asset store; no caller path accepted.
-  const dir = await mkdtemp(join(tmpdir(), "honkbox-artifact-",),);
+  const dir = await fs.mkdtemp(join(tmpdir(), "honkbox-artifact-",),);
   const path = join(dir, `${randomUUID()}.bin`,);
-  const handle = await open(path, "wx", 0o600,);
+  const handle = await fs.open(path, "wx", 0o600,);
   const hasher = createHash("sha256",);
   const reader = response.body.getReader();
   let position = 0;
@@ -280,14 +280,14 @@ export async function downloadHonkboxArtifactToTempFile(
   } catch (error) {
     reader.releaseLock();
     await handle.close().catch(() => undefined);
-    await rm(dir, { recursive: true, force: true, },).catch(() => undefined);
+    await fs.rm(dir, { recursive: true, force: true, },).catch(() => undefined);
     throw error;
   }
 
   reader.releaseLock();
   await handle.close();
   if (position === 0) {
-    await rm(dir, { recursive: true, force: true, },);
+    await fs.rm(dir, { recursive: true, force: true, },);
     throw new HonkboxArtifactValidationError("honkbox artifact download was empty",);
   }
 
@@ -302,5 +302,5 @@ export async function cleanupHonkboxArtifact(
   downloaded: DownloadedHonkboxArtifact,
 ): Promise<void> {
   const dir = join(downloaded.path, "..",);
-  await rm(dir, { recursive: true, force: true, },);
+  await fs.rm(dir, { recursive: true, force: true, },);
 }

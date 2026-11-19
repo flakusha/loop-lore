@@ -13,7 +13,7 @@
  */
 
 import type { Kysely, } from "kysely";
-import { readFile, } from "node:fs/promises";
+import fs from "node:fs/promises";
 import { createAsset, } from "../../assets/service/create";
 import { extensionForMime, } from "../../assets/service/detect";
 import { linkAsset, } from "../../assets/service/links";
@@ -333,7 +333,7 @@ export async function ingestHonkboxJobResult(
   try {
     // ponytail: createAsset still takes a Buffer, so the staged file is read
     // once here; add a streaming store seam when GLBs outgrow the byte cap.
-    const bytes = await readFile(downloaded.path,);
+    const bytes = await fs.readFile(downloaded.path,);
     if (bytes.byteLength !== downloaded.sizeBytes) {
       throw new HonkboxArtifactValidationError("staged artifact size changed while reading",);
     }
