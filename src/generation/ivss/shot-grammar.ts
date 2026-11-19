@@ -100,7 +100,7 @@ export function compileShotGrammar(
   }
 
   const shots = [...input.shots,].sort((a, b,) =>
-    a.sort_order - b.sort_order || a.start_ms - b.start_ms || a.id.localeCompare(b.id,)
+    a.sort_order - b.sort_order || a.start_ms - b.start_ms || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)
   );
 
   for (const shot of shots) {
@@ -109,12 +109,16 @@ export function compileShotGrammar(
     }
   }
 
+  const rawSections: Record<"style" | "music" | "soundscape", string | undefined> = {
+    style: input.style?.trim() || undefined,
+    music: input.music?.trim() || undefined,
+    soundscape: input.soundscape?.trim() || undefined,
+  };
+
   const sections: Record<"style" | "music" | "soundscape", string | undefined> = {
-    style: input.style?.trim() ? `style_bible:\n${input.style.trim()}` : undefined,
-    music: input.music?.trim() ? `non_diegetic_music:\n${input.music.trim()}` : undefined,
-    soundscape: input.soundscape?.trim()
-      ? `overall_soundscape:\n${input.soundscape.trim()}`
-      : undefined,
+    style: rawSections.style ? `style_bible:\n${rawSections.style}` : undefined,
+    music: rawSections.music ? `non_diegetic_music:\n${rawSections.music}` : undefined,
+    soundscape: rawSections.soundscape ? `overall_soundscape:\n${rawSections.soundscape}` : undefined,
   };
 
   let shotLines = shots.map((shot, index,) => {
@@ -135,6 +139,7 @@ export function compileShotGrammar(
     const next = DROP_ORDER.find((key,) => Boolean(sections[key],));
     if (next) {
       sections[next] = undefined;
+      rawSections[next] = undefined;
       truncated.push(next,);
       continue;
     }
@@ -159,12 +164,12 @@ export function compileShotGrammar(
     duration: durationSecs,
     ref: {
       detailed_description: prompt,
-      style_line: sections.style ?? "",
-      soundscape: sections.soundscape ?? "",
-      music: sections.music ?? "",
+      style_line: rawSections.style ?? "",
+      soundscape: rawSections.soundscape ?? "",
+      music: rawSections.music ?? "",
     },
-    soundscape: sections.soundscape ?? "",
-    music: sections.music ?? "",
+    soundscape: rawSections.soundscape ?? "",
+    music: rawSections.music ?? "",
   };
 
   const timelineData = {

@@ -84,11 +84,13 @@ describe("IVSS shot grammar", () => {
     expect(serialized,).toContain("9007199254740993",);
 
     const builder = JSON.parse(compiled.variables.builder_state,) as {
-      ref: { detailed_description: string };
+      ref: { detailed_description: string; soundscape: string; music: string };
     };
 
     const timeline = JSON.parse(compiled.variables.timeline_data,) as { items: unknown[] };
     expect(builder.ref.detailed_description,).toBe(compiled.prompt,);
+    expect(builder.ref.soundscape,).toBe("Wind through the alley.",);
+    expect(builder.ref.music,).toBe("Low drone.",);
     expect(timeline.items,).toHaveLength(3,);
   });
 
