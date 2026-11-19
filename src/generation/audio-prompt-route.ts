@@ -22,6 +22,7 @@ import { forbiddenResponse, } from "../routes/http-utils";
 import { uid, } from "../utils";
 import { generateAudio, registerAudioProviders, resolveAudioProvider, } from "./audio/engine";
 import { registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
+import { resolveWorkflowForUseCase, } from "./workflow-selection";
 
 /** Max prompt length accepted per request. */
 const MAX_PROMPT = 2_000;
@@ -46,6 +47,8 @@ interface AudioGenBody {
   seed?: number;
   /** Audio provider id (default: first configured ComfyUI, else local). */
   provider?: string;
+  /** Explicit workflow id; overrides the user's stored selection and config defaults. */
+  workflow?: string;
   /** Chat the track belongs to; linkage requires access. */
   chatId?: string;
   /** Message the track belongs to; linkage requires access. */
@@ -129,14 +132,34 @@ export async function handleAudioGeneration(
     );
   }
 
-  const outcome = await generateAudio({
-    request: {
-      prompt,
-      seconds: Math.round(seconds,),
-      seed: typeof req.seed === "number" && Number.isFinite(req.seed,) ? req.seed : undefined,
-    },
-    provider: req.provider,
-  },);
+  // ComfyUI provider ids are `comfyui:<workflow from config>`, so the suffix is
+  // the configured workflow to fall back to when the user has no selection.
+  const configuredWorkflow = resolved.provider.id.startsWith("comfyui:",)
+    ? resolved.provider.id.slice("comfyui:".length,)
+    : undefined;
+
+  const bodyWorkflow = typeof req.workflow === "string" && req.workflow.trim()
+    ? req.workflow.trim()
+    : undefined;
+
+  let workflow = bodyWorkflow;
+  if (!workflow) {
+    workflow = await resolveWorkflowForUseCase({
+      database: db,
+      userId,
+      useCase: "audio.generate",
+      fallback: configuredWorkflow,
+    },) ?? configuredWorkflow;
+  }
+
+  const request = {
+    prompt,
+    seconds: Math.round(seconds,),
+    seed: typeof req.seed === "number" && Number.isFinite(req.seed,) ? req.seed : undefined,
+    workflow,
+  };
+
+  const outcome = await generateAudio({ request, provider: req.provider, },);
 
   if (!outcome.ok) {
     return Response.json(

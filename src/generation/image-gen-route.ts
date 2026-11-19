@@ -35,6 +35,17 @@ import { type ImageTemplatePayload, parseTemplatePayload, } from "./template-typ
 
 import { setAssetAsChatBackground, } from "../routes/chat-backgrounds/service";
 
+import { resolveWorkflowForUseCase, } from "./workflow-selection";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// One linear request pipeline; phase extraction would scatter the flow.
+// size-allow: 335
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// One linear request pipeline; phase extraction would scatter the flow.
+// size-allow: 335
+
 /**
  * Flat per-image byte estimate for the PRE-PROVIDER quota gate, taken before
  * the output size is known. One 1024x1024 PNG is roughly this big; refusing
@@ -388,6 +399,16 @@ export async function handleImageGeneration(
     throw error;
   }
 
+  // Workflow precedence: explicit body field > stored user selection > config
+  // default. The resolver owns the DB read and config fallback; this route
+  // only decides whether an explicit request bypasses it.
+  const workflow = req.workflow ?? await resolveWorkflowForUseCase({
+    database: db,
+    userId,
+    useCase: "image.generate",
+    fallback: req.workflow,
+  },);
+
   const outcome = await generateImagesWithFailover(
     editCandidates,
     "generate",
@@ -407,7 +428,7 @@ export async function handleImageGeneration(
       enableHr: req.enable_hr,
       hrScale: req.hr_scale,
       denoise: req.denoising_strength,
-      workflow: req.workflow,
+      workflow,
       initImage,
       lora: req.lora,
       model: req.model,

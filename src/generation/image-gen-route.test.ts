@@ -31,6 +31,13 @@ import type { ActiveGeneration, } from "./cancellation-tracker/types";
 import * as realImageEngine from "./image-engine";
 import type * as imageGenRoute from "./image-gen-route";
 
+/** Selection the mocked resolver returns; undefined = no stored selection. */
+let resolvedWorkflowForTests: string | undefined;
+/** Resolver calls, for precedence assertions. */
+const workflowResolverCalls: Array<Record<string, unknown>> = [];
+/** Options handed to the failover engine, captured at the route boundary. */
+const failoverOptsCalls: Array<Record<string, unknown>> = [];
+
 // ── Mutable call-history containers (mutated in beforeEach, read in tests) ──────
 
 const generateImagesCalls: Array<[unknown, Record<string, unknown>,]> = [];
@@ -152,6 +159,12 @@ if (ISOLATED) {
   mock.module("./image-engine", () => ({
     ...realImageEngine,
     generateImages: mockGenerateImages,
+    generateImagesWithFailover: async (
+      ...args: Parameters<typeof realImageEngine.generateImagesWithFailover>
+    ) => {
+      failoverOptsCalls.push(args[2] as unknown as Record<string, unknown>,);
+      return realImageEngine.generateImagesWithFailover(...args,);
+    },
   }),);
 
   // Narrow mocks to the specific submodules the SUT imports. Mocking the
@@ -171,6 +184,15 @@ if (ISOLATED) {
   }),);
 
   // No ../db/index stub (see NOTE above).
+
+  // Workflow selection is resolved in the route; stub it so tests pin the
+  // precedence contract without depending on config file contents.
+  mock.module("./workflow-selection", () => ({
+    resolveWorkflowForUseCase: async (opts: Record<string, unknown>,) => {
+      workflowResolverCalls.push(opts,);
+      return resolvedWorkflowForTests;
+    },
+  }),);
 
   // Dynamic import is required: mock.module must be registered BEFORE the
   // SUT module is evaluated, which a static import cannot guarantee.
@@ -1130,5 +1152,64 @@ describeOrSkip("handleImageGeneration — discard on cancel", () => {
       globalThis.fetch = originalFetch;
       await db.destroy();
     }
+  });
+},);
+
+// ── Stored workflow selection (useCase: image.generate) ─────────────────────────
+
+describeOrSkip("handleImageGeneration — workflow selection", () => {
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    workflowResolverCalls.length = 0;
+    failoverOptsCalls.length = 0;
+    resolvedWorkflowForTests = undefined;
+  },);
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    resolvedWorkflowForTests = undefined;
+  },);
+
+  it("uses the resolved stored workflow when the body omits workflow", async () => {
+    stubDiscoveryProbesHealthy();
+    resolvedWorkflowForTests = "stored-image-wf";
+
+    const res = await handleImageGeneration(makeBody(), await migratedDb(), "test-user",);
+
+    expect(res.status,).toBe(200,);
+    expect(workflowResolverCalls,).toHaveLength(1,);
+    expect(workflowResolverCalls[0],).toMatchObject({
+      userId: "test-user",
+      useCase: "image.generate",
+      fallback: undefined,
+    },);
+
+    const opts = failoverOptsCalls[0]!;
+    expect(opts.workflow,).toBe("stored-image-wf",);
+  });
+
+  it("keeps an explicit body workflow and skips the resolver", async () => {
+    stubDiscoveryProbesHealthy();
+    resolvedWorkflowForTests = "stored-image-wf";
+
+    await handleImageGeneration(
+      makeBody({ workflow: "explicit-image-wf", },),
+      await migratedDb(),
+      "test-user",
+    );
+
+    expect(workflowResolverCalls,).toHaveLength(0,);
+    const opts = failoverOptsCalls[0]!;
+    expect(opts.workflow,).toBe("explicit-image-wf",);
+  });
+
+  it("passes the resolver result through when nothing is stored", async () => {
+    stubDiscoveryProbesHealthy();
+
+    await handleImageGeneration(makeBody(), await migratedDb(), "test-user",);
+
+    expect(workflowResolverCalls,).toHaveLength(1,);
+    const opts = failoverOptsCalls[0]!;
+    expect(opts.workflow,).toBeUndefined();
   });
 },);

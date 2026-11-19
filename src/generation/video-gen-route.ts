@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * POST /api/v1/generation/video — generate one video clip via a configured
  * ComfyUI video workflow (epic-video-generation Phase A / TASK-video-gen-route).
@@ -10,29 +9,29 @@
  * `checkChatAccess` (IDOR write guard), BYO keys resolved per provider name
  * with fail-closed decrypt (epic-byok-api-keys.md).
  */
-
-import type { Kysely, } from "kysely";
-import { randomUUID, } from "node:crypto";
-import { persistGeneratedImages, } from "../assets/service";
-import { extensionForMime, } from "../assets/service/detect";
-import { checkChatAccess, } from "../chat/service";
-import { loadConfig, } from "../config/load";
-import type { VideoProviderConfig, } from "../config/schema";
-import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
+import type { Kysely, } from "kysely";
+import type { VideoProviderConfig, } from "../config/schema";
+import { ErrorCode, } from "../routes/http-utils/status";
+import { cancelVideoJob, completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./video-jobs";
+import { checkChatAccess, } from "../chat/service";
+import { dispatchThroughVideoGate, setVideoPreDispatchHook, VIDEO_QUEUE_WAIT_MS, } from "./video-dispatch-gate";
+import { extensionForMime, } from "../assets/service/detect";
+import { forbiddenResponse, } from "../routes/http-utils";
+import { generateVideoWithFailover, type VideoApiKeyResolver, type VideoGenRequest, } from "./video-engine";
+import { getChildLogger, } from "../logger";
+import { getDatabase, } from "../db/index";
+import { getOwnedTemplate, } from "./template-service";
+import { loadConfig, } from "../config/load";
+import { parseTemplatePayload, type SimpleTemplatePayload, } from "./template-types";
+import { persistGeneratedImages, } from "../assets/service";
+import { preflightRequest, } from "./preflight";
+import { randomUUID, } from "node:crypto";
 import { readEffectiveLlamaSwapConfig, } from "../llm/llama-swap-effective-config";
 import { releaseModelsForRender, } from "../llm/llama-swap-release";
-import { getChildLogger, } from "../logger";
-import { forbiddenResponse, } from "../routes/http-utils";
-import { ErrorCode, } from "../routes/http-utils/status";
+import { resolveWorkflowForUseCase, } from "./workflow-selection";
 import { type DiscardOnCancelHandle, registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
-import { preflightRequest, } from "./preflight";
 import { userApiKeyResolver, } from "./providers/user-api-key";
-import { getOwnedTemplate, } from "./template-service";
-import { parseTemplatePayload, type SimpleTemplatePayload, } from "./template-types";
-import { dispatchThroughVideoGate, setVideoPreDispatchHook, VIDEO_QUEUE_WAIT_MS, } from "./video-dispatch-gate";
-import { generateVideoWithFailover, type VideoApiKeyResolver, type VideoGenRequest, } from "./video-engine";
-import { cancelVideoJob, completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./video-jobs";
 export { handleVideoGenerationStatus, } from "./video-gen-status";
 
 /**
@@ -90,8 +89,8 @@ interface VideoGenBody {
   chatId?: string;
   /** Message the clip belongs to; linkage requires access. */
   messageId?: string;
-  /** Raw graph when a structured caller supplies one — validated, not submitted. */
-  workflow?: unknown;
+  /** Explicit per-request workflow; overrides the stored/config selection. */
+  workflow?: string;
   /** LoRA config when a structured caller supplies one — validated, not applied. */
   lora?: unknown;
 }
@@ -127,6 +126,7 @@ export async function handleVideoGeneration(
   }
 
   const req = body as VideoGenBody;
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 
   // Reject malformed structured input before any job is stored or a provider
   // is submitted. Failure follows this route's existing 4xx envelope.
@@ -219,6 +219,20 @@ export async function handleVideoGeneration(
     throw error;
   }
 
+  // Workflow precedence: explicit body field > stored user selection > config
+  // default. Config is process-global: copy every provider before overriding
+  // its workflow so one user's selection cannot leak into another request.
+  const workflow = req.workflow ?? await resolveWorkflowForUseCase({
+    database: db,
+    userId,
+    useCase: "video.generate",
+    fallback: providers[0]?.workflow,
+  },);
+
+  const requestProviders = workflow === undefined
+    ? providers
+    : providers.map((provider,) => ({ ...provider, workflow, }));
+
   // Async submit: the render runs as a floating promise so one HTTP
   // request is not held through a multi-minute ComfyUI render. The
   // background continuation does the same settle flow (failover engine
@@ -235,7 +249,7 @@ export async function handleVideoGeneration(
 
   // Deadline: the slowest candidate's generationTimeout. The quota gate
   // above already rejected providers-less config, so max() never sees [].
-  const generationTimeoutMs = Math.max(...providers.map((provider,) => provider.generationTimeout ?? 0),);
+  const generationTimeoutMs = Math.max(...requestProviders.map((provider,) => provider.generationTimeout ?? 0),);
   if (discard.isDiscarded()) { return cancelledResponse(); }
 
   const jobId = randomUUID();
@@ -246,7 +260,7 @@ export async function handleVideoGeneration(
     request,
     chatId: resolvedChatId,
     messageId: req.messageId,
-    providers: [...providers,],
+    providers: [...requestProviders,],
     deadline: Date.now() + generationTimeoutMs,
     createdAt: Date.now(),
   },);
@@ -254,7 +268,7 @@ export async function handleVideoGeneration(
   runVideoRender({
     jobId,
     prompt,
-    providers,
+    providers: requestProviders,
     generationTimeout: generationTimeoutMs,
     request,
     resolveApiKey: userApiKeyResolver({ userId, config, db, },),
