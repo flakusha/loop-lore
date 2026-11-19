@@ -18,6 +18,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Fixed
 
+- **Blender LTS builds satisfy the version pin** — the capability probe strips the `LTS` suffix from `bpy.app.version_string`, so an official `4.5.15 LTS` build is reported as supported instead of being rejected as an unknown version.
 - **Admin destructive/config boundaries validate at the edge** — restore bodies, llama-swap config patches, and sd.cpp/ComfyUI delete names now use bounded central schemas, with validation failures answered as 400 instead of escaping as 422; the operator-entered name pattern has one shared definition.
 - **Admin panels call the versioned API** — backup and local-model fetches use `/api/v1/...` directly instead of relying on the unversioned 308 shim, and the Local Models tab probes both backends when opened.
 - **Uploads and TLS certificates stay in the runtime instance dir** — the shipped path defaults are anchored at `DATA_DIR`, which freezes at import time (before the effective server bind is known), so an unnamed instance wrote its uploads and certificates to `<state>/default/` while its database, exec log and backups went to `<state>/port-<port>/`. A configured path that lies under the frozen `DATA_DIR` (or carries the portable `${DATA_DIR}` placeholder the published schema emits) is now re-anchored onto the runtime instance dir; a custom absolute path is still used verbatim.

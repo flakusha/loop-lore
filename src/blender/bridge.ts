@@ -171,7 +171,9 @@ export function parseBlenderCapabilities(stdout: string,): BlenderCapabilityInfo
   const raw = parsed.value;
   if (!raw || typeof raw !== "object") { return null; }
   const doc = raw as Record<string, unknown>;
-  const version = typeof doc.version === "string" ? doc.version : "";
+  // Official LTS builds report e.g. "4.5.15 LTS"; the pin is the numeric part.
+  const rawVersion = typeof doc.version === "string" ? doc.version.trim() : "";
+  const version = rawVersion.replace(/\s+LTS$/i, "",);
   const stages = Array.isArray(doc.stages,)
     ? doc.stages.filter((s,): s is BlenderStage =>
       typeof s === "string" && (BLENDER_STAGES as readonly string[]).includes(s,)

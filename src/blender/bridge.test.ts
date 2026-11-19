@@ -38,7 +38,7 @@ test("probe reports pinned version and stage set from a fake Blender", async () 
   const argvPath = join(dir, "argv",);
   const stub = writeStub(
     "probe.sh",
-    `printf '%s\\n' "$@" > ${argvPath}\necho 'BLENDER_CAP={"version":"4.5.15","stages":["bake","export-glb","bogus"]}'`,
+    `printf '%s\\n' "$@" > ${argvPath}\necho 'BLENDER_CAP={"version":"4.5.15 LTS","stages":["bake","export-glb","bogus"]}'`,
   );
 
   const result = await probeBlender({ binary: stub, timeoutMs: 2_000, },);
@@ -87,6 +87,15 @@ test("parser ignores unrelated lines and non-object payloads", () => {
   expect(parseBlenderCapabilities("noise\nBLENDER_CAP=not-json",),).toBeNull();
   expect(parseBlenderCapabilities("BLENDER_CAP=null",),).toBeNull();
   expect(parseBlenderCapabilities('BLENDER_CAP={"stages":[]}',),).toBeNull();
+});
+
+test("parser strips the official LTS suffix before checking the pin", () => {
+  const info = parseBlenderCapabilities(
+    'BLENDER_CAP={"version":"4.5.15 LTS","stages":["bake"]}',
+  );
+
+  expect(info?.version,).toBe("4.5.15",);
+  expect(info?.supported,).toBe(true,);
 });
 
 test("job checks exit codes and stamps provenance even on failure", async () => {
