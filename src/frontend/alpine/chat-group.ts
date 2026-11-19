@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+import { recallComposerHistory, } from "./composer-history";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
@@ -228,13 +229,32 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
         event.preventDefault();
         if (event.shiftKey) { this.movePaletteSelection(-1,); }
         else { this.acceptPaletteAtIndex(this._paletteActiveIndex,); }
+
+        return;
       } else if (event.key === "ArrowDown") {
         event.preventDefault();
         this.movePaletteSelection(1,);
+        return;
       } else if (event.key === "ArrowUp") {
         event.preventDefault();
         this.movePaletteSelection(-1,);
+        return;
       }
+    }
+
+    // Composer history (TASK-composer-up-down-recall-of-prior-typed-text).
+    // The template also calls handleSlashKeydown for this same event, so
+    // popover ownership is read from state here, not from defaultPrevented.
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+      if (
+        this._showMentionAutocomplete || this._showCommandPalette ||
+        this._showSlashPopover || this._showEmojiPopover || this._emojiPickerOpen
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      recallComposerHistory(this, event.target as HTMLTextAreaElement, event.key === "ArrowUp" ? -1 : 1,);
     }
 
     // ESC when no autocomplete/palette open → flush the debounced draft so

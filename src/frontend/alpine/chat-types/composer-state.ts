@@ -8,6 +8,12 @@ export interface ChatCoreComposerState {
   _draftTimer: ReturnType<typeof setTimeout> | null;
   /** Last non-empty draft before clear — session-level Ctrl+Z undo. */
   _draftBackup: string | undefined;
+  /** Sent composer lines per chat, oldest first. */
+  _composerHistory: Map<string, string[]>;
+  /** Chat the cursor below belongs to; reset when activeChat changes. */
+  _composerHistoryChat: string | null;
+  /** Index into the active chat's history; length === empty draft. */
+  _composerHistoryCursor: number;
   sendMessage(): Promise<void>;
   interceptSlashSend(text: string, input: HTMLTextAreaElement,): Promise<boolean>;
   saveComposerDraft(store?: DraftStore,): void;

@@ -1,6 +1,7 @@
 import { afterAll, afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { browserDecryptThenDecompress, type BrowserEncryptedPayload, browserGenerateKey, } from "../browser";
 import { keepFailedSendQueued, } from "./chat-send-offline";
+import { rememberComposerText, } from "./composer-history";
 import "./i18n.test-helper";
 import { chatSendMethods, } from "./chat-send";
 import type { Message, } from "./types";
@@ -49,6 +50,7 @@ interface SendCtx {
   _chatKey: CryptoKey | null;
   _keyId: string | null;
   _activeChatEncryptionLevel: string | null;
+  _composerHistory: Map<string, string[]>;
   keyFetches: number;
   loadChatKey: (chatId: string, encryptionLevel?: string | null,) => Promise<void>;
   $refs: { messageInput: { value: string } };
@@ -81,6 +83,7 @@ function buildCtx(overrides?: Partial<SendCtx>,): SendCtx {
     _chatKey: null,
     _keyId: null,
     _activeChatEncryptionLevel: null,
+    _composerHistory: new Map<string, string[]>(),
     keyFetches: 0,
     loadChatKey: async () => {
       ctx.keyFetches += 1;
@@ -769,6 +772,14 @@ describe("chatSendMethods.interceptSlashSend", () => {
     handler = async () => Response.json({ id: "m1", },);
     await chatSendMethods.sendMessage!.call(bare as never,);
     expect(calls.length,).toBeGreaterThan(0,);
+  });
+});
+
+describe("rememberComposerText", () => {
+  test("stores the sent line under the active chat", () => {
+    const ctx = buildCtx();
+    rememberComposerText(ctx as never, "hello",);
+    expect(ctx._composerHistory.get("chat-1",),).toEqual(["hello",],);
   });
 });
 

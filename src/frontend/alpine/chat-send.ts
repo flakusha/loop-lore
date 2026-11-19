@@ -21,6 +21,7 @@ import { isVnDecisionPending, } from "../vn/pending-decision";
 import { requireActiveChat, } from "./chat-guards";
 import { keepFailedSendQueued, queueOfflineSend, } from "./chat-send-offline";
 import { interceptSlashSend, } from "./chat-slash";
+import { rememberComposerText, } from "./composer-history";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
@@ -166,6 +167,10 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
     // never lost (BUG-chat-input-fills-up-but-send-is-impossible).
     input.value = "";
     this.autoResize(input,);
+
+    // Slash commands and the VN gate return above; a failed send still
+    // restores the input via restoreInput().
+    rememberComposerText(this, text,);
 
     const restoreInput = () => {
       // Only when the user has not started typing a new message meanwhile.
