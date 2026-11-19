@@ -38863,7 +38863,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-decide-1-0-0-qa-e2e-subset.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-DECIDE-API-VERSION-PIN-AND-ADR": {
     "hash": "1e287f3",
@@ -38877,7 +38877,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-decide-api-version-pin-and-adr.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-DECIDE-LLM-IMAGE-PROMPT-WRITER-FATE": {
     "hash": "534cfab",
@@ -38904,7 +38904,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-decide-ticket-index-split-timing.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-DECISION-AV10-ALBUM-MESSAGE-KIND-AXIS": {
     "epic": "epic-asset-platform-capabilities",
@@ -62121,6 +62121,20 @@
     "epic": "(none — hygiene/self-contained)",
     "tags": [],
     "source": ".plan/tickets/TASK-split-the-visibility-column-across-its-five-vocabularies.md",
+    "status": "open"
+  },
+  "TASK-SPLIT-TICKET-INDEX-BEFORE-1-0-0": {
+    "hash": "f7e7988",
+    "git_issue": "f7e7988",
+    "extid": "TASK-SPLIT-TICKET-INDEX-BEFORE-1-0-0",
+    "type": "TASK",
+    "title": "Split ticket index before 1.0.0",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-split-ticket-index-before-1-0-0.md",
     "status": "open"
   },
   "TASK-SPLIT-UTILS-GOD-MODULE": {
