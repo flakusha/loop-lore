@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 270
 
 /**
  * ComfyUI Provider — HTTP/WebSocket client for ComfyUI API. Submits
@@ -15,7 +16,7 @@ import {
   pollComfyResult,
   waitForComfyFiles,
 } from "./comfyui-poll";
-import { uploadImageToComfy, } from "./comfyui-upload";
+import { type ComfyUIMaskOriginalRef, uploadImageToComfy, uploadMaskToComfy, } from "./comfyui-upload";
 
 /** */
 export type ComfyUIWorkflow = Record<
@@ -303,5 +304,20 @@ export class ComfyUIClient {
    */
   async uploadImage(buffer: Buffer, filename: string,): Promise<string> {
     return uploadImageToComfy(this.baseUrl, this.timeout, buffer, filename, this.apiKey,);
+  }
+
+  /**
+   * Upload a mask for a previously uploaded input image.
+   * @param buffer - mask image bytes
+   * @param filename - name for the stored mask
+   * @param originalRef - the input image the mask overlays
+   * @returns the stored mask filename
+   */
+  async uploadMask(
+    buffer: Buffer,
+    filename: string,
+    originalRef: ComfyUIMaskOriginalRef,
+  ): Promise<string> {
+    return uploadMaskToComfy(this.baseUrl, this.timeout, buffer, filename, originalRef, this.apiKey,);
   }
 }

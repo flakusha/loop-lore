@@ -20,11 +20,14 @@ import { AssetLinkEntity, } from "../../db/enums-content";
 import { FragmentStatus, SceneStatus, } from "../../db/enums-generation";
 import type { DB, } from "../../db/schema";
 import { getChildLogger, } from "../../logger";
+import { safeJsonStringify, } from "../../utils";
 import { toDate, } from "../../utils/date";
 import type { ComfyUIOutputFile, ComfyUIOutputKind, ComfyUIWorkflow, } from "../providers/comfyui";
+import type { ComfyUIMaskOriginalRef, } from "../providers/comfyui-upload";
 import { dispatchThroughVideoGate, VIDEO_QUEUE_WAIT_MS, type VideoGateDispatchOptions, } from "../video-dispatch-gate";
 import { cancelVideoJob, completeVideoJob, failVideoJob, storeVideoJob, } from "../video-jobs";
 import { getWorkflowLoader, } from "../workflow-loader";
+import { uploadIvssReferences, } from "./reference-upload";
 import { compileShotGrammar, } from "./shot-grammar";
 
 /** Subset of `ComfyUIClient` the pipeline needs; the real client satisfies it. */
@@ -33,6 +36,8 @@ export interface IvssComfyClient {
   waitForFiles(promptId: string,): Promise<Array<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }>>;
   downloadFile(file: ComfyUIOutputFile,): Promise<Buffer>;
   cancelExecution(promptId?: string,): Promise<void>;
+  uploadImage(buffer: Buffer, filename: string,): Promise<string>;
+  uploadMask?(buffer: Buffer, filename: string, originalRef: ComfyUIMaskOriginalRef,): Promise<string>;
 }
 
 /** Resolve a pinned workflow name plus the shot-grammar variables to a graph. */
@@ -124,7 +129,7 @@ export async function startIvssFragmentRun(
   const scene = await db.selectFrom("scenario_scenes",).selectAll()
     .where("id", "=", fragment.scene_id,).executeTakeFirstOrThrow();
 
-  const scenario = await db.selectFrom("scenarios",).select("world_id",)
+  const scenario = await db.selectFrom("scenarios",).select(["id", "world_id",],)
     .where("id", "=", scene.scenario_id,).executeTakeFirstOrThrow();
 
   const shots = await db.selectFrom("scenario_shots",).selectAll()
@@ -183,10 +188,22 @@ export async function startIvssFragmentRun(
             updated_at: timestamp(),
           },).where("id", "=", fragment.id,).execute();
 
-          const workflow = await load(
-            fragment.workflow_id,
-            compiled.variables as unknown as Record<string, string | number | boolean>,
-          );
+          const slots = await uploadIvssReferences({
+            database: db,
+            uploadDir: opts.uploadDir,
+            ownerId: opts.ownerId,
+            scenarioId: scenario.id,
+            sceneId: scene.id,
+            shotId: fragment.shot_id,
+            client: opts.client,
+          },);
+
+          const encodedSlots = safeJsonStringify(slots,);
+          if (!encodedSlots.ok) { throw new Error("IVSS reference slots could not be serialized",); }
+
+          const variables = { ...compiled.variables, reference_slots: encodedSlots.value, };
+
+          const workflow = await load(fragment.workflow_id, variables,);
 
           const submitted = await opts.client.submitWorkflow(workflow,);
           promptId = submitted.prompt_id;

@@ -3,14 +3,23 @@
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { randomUUID, } from "node:crypto";
-import { mkdtemp, rm, } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile, } from "node:fs/promises";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
-import { FragmentOperation, FragmentStatus, SceneMode, SceneStatus, } from "../../db/enums-generation";
+import { AssetType, } from "../../db/enums";
+import {
+  FragmentOperation,
+  FragmentStatus,
+  ReferenceLane,
+  ReferenceScope,
+  SceneMode,
+  SceneStatus,
+} from "../../db/enums-generation";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import type { ComfyUIOutputFile, ComfyUIWorkflow, } from "../providers/comfyui";
 import { cancelVideoJob, getVideoJob, listVideoJobs, } from "../video-jobs";
+import { uploadIvssReferences, } from "./reference-upload";
 import {
   type IvssComfyClient,
   type IvssRunDispatch,
@@ -19,7 +28,9 @@ import {
 } from "./run-pipeline";
 
 import {
+  insertAssets,
   insertScenarioFragments,
+  insertScenarioReferences,
   insertScenarios,
   insertScenarioScenes,
   insertScenarioShots,
@@ -51,10 +62,20 @@ describe("IVSS ComfyUI run pipeline", () => {
     waited: string[];
     downloaded: ComfyUIOutputFile[];
     cancelled: string[];
+    uploaded: string[];
+    masks: Array<{ filename: string; original: string }>;
   }
 
   const makeClient = (overrides: Partial<IvssComfyClient> = {},) => {
-    const calls: StubCalls = { submitted: [], waited: [], downloaded: [], cancelled: [], };
+    const calls: StubCalls = {
+      submitted: [],
+      waited: [],
+      downloaded: [],
+      cancelled: [],
+      uploaded: [],
+      masks: [],
+    };
+
     const base: IvssComfyClient = {
       async submitWorkflow(workflow,) {
         calls.submitted.push(workflow,);
@@ -73,6 +94,14 @@ describe("IVSS ComfyUI run pipeline", () => {
       },
       async cancelExecution(promptId,) {
         calls.cancelled.push(promptId ?? "",);
+      },
+      async uploadImage(_buffer, filename,) {
+        calls.uploaded.push(filename,);
+        return `comfy-${filename}`;
+      },
+      async uploadMask(_buffer, filename, originalRef,) {
+        calls.masks.push({ filename, original: originalRef.filename, },);
+        return `comfy-${filename}`;
       },
     };
 
@@ -101,13 +130,24 @@ describe("IVSS ComfyUI run pipeline", () => {
       status: SceneStatus.Planned,
     },);
 
-    await insertScenarioShots(db, sceneId, 1500, "Dusk",);
+    const shotId = await insertScenarioShots(db, sceneId, 1500, "Dusk",);
     const fragmentId = await insertScenarioFragments(db, sceneId, FragmentOperation.Render, "h3-local", "sha256:abc", {
+      shot_id: shotId,
       seed: BIG_SEED,
       status: FragmentStatus.Planned,
     },);
 
-    return { db, ownerId, worldId, sceneId, fragmentId, };
+    return { db, ownerId, scenarioId, worldId, sceneId, fragmentId, };
+  };
+
+  const seedReferenceAsset = async (ownerId: string, filename: string,) => {
+    const id = `ref-asset-${randomUUID()}`;
+    const storagePath = `refs/${id}.png`;
+    await mkdir(join(uploadDir, "refs",), { recursive: true, },);
+    await writeFile(join(uploadDir, storagePath,), Buffer.from(`bytes:${id}`,),);
+    return insertAssets(fixture.db, ownerId, filename, "image/png", AssetType.Image, 12, storagePath, {
+      id,
+    },);
   };
 
   test("stubbed ComfyUI run persists the clip", async () => {
@@ -262,5 +302,96 @@ describe("IVSS ComfyUI run pipeline", () => {
 
     expect(scene.status,).toBe(SceneStatus.Failed,);
     expect(getVideoJob(handle.jobId,)?.status,).toBe("failed",);
+  });
+
+  test("uploads scenario, scene and shot references before submit", async () => {
+    const seeded = await seedScene();
+    const shot = await seeded.db.selectFrom("scenario_shots",).select("id",)
+      .where("scene_id", "=", seeded.sceneId,).executeTakeFirstOrThrow();
+
+    const assetId = await seedReferenceAsset(seeded.ownerId, "ref.png",);
+
+    await insertScenarioReferences(seeded.db, seeded.scenarioId, ReferenceLane.Image, assetId, {
+      role: "identity",
+      sort_order: 0,
+    },);
+
+    await insertScenarioReferences(seeded.db, seeded.scenarioId, ReferenceLane.Video, assetId, {
+      scope: ReferenceScope.Scene,
+      scene_id: seeded.sceneId,
+      sort_order: 1,
+      trim_out_ms: 2000,
+    },);
+
+    await insertScenarioReferences(seeded.db, seeded.scenarioId, ReferenceLane.Audio, assetId, {
+      scope: ReferenceScope.Shot,
+      scene_id: seeded.sceneId,
+      shot_id: shot.id,
+      sort_order: 2,
+    },);
+
+    const { client, calls, } = makeClient();
+    const loaded: Array<{ name: string; vars: Record<string, string | number | boolean> }> = [];
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: makeLoader(loaded,),
+      dispatch: immediateDispatch,
+    },);
+
+    const result = await handle.done;
+    expect(result.ok,).toBe(true,);
+    expect(calls.uploaded,).toHaveLength(3,);
+    expect(calls.masks,).toHaveLength(0,);
+    const slots = JSON.parse(String(loaded[0]?.vars.reference_slots,),) as Array<{ lane: string }>;
+    expect(slots.map((slot,) => slot.lane),).toEqual(["image", "video", "audio",],);
+
+    const direct = await uploadIvssReferences({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      scenarioId: seeded.scenarioId,
+      sceneId: seeded.sceneId,
+      shotId: shot.id,
+      client: makeClient().client,
+    },);
+
+    expect(direct,).toHaveLength(3,);
+  });
+
+  test("a mask reference overlays the preceding image", async () => {
+    const seeded = await seedScene();
+    const assetId = await seedReferenceAsset(seeded.ownerId, "ref.png",);
+    await insertScenarioReferences(seeded.db, seeded.scenarioId, ReferenceLane.Image, assetId, {
+      role: "identity",
+      sort_order: 0,
+    },);
+
+    await insertScenarioReferences(seeded.db, seeded.scenarioId, ReferenceLane.Image, assetId, {
+      role: "mask",
+      sort_order: 1,
+    },);
+
+    const { client, calls, } = makeClient();
+    const loaded: Array<{ name: string; vars: Record<string, string | number | boolean> }> = [];
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: makeLoader(loaded,),
+      dispatch: immediateDispatch,
+    },);
+
+    const result = await handle.done;
+    expect(result.ok,).toBe(true,);
+    expect(calls.uploaded,).toHaveLength(1,);
+    expect(calls.masks,).toHaveLength(1,);
+    expect(calls.masks[0]?.original,).toBe(`comfy-${calls.uploaded[0]}`,);
+    expect(String(loaded[0]?.vars.reference_slots,),).toContain("mask",);
   });
 });

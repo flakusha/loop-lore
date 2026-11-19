@@ -28,9 +28,11 @@ for the one-render-per-local-box gate, `persistGeneratedImages` for asset rows,
 and the `video-jobs` store for list/cancel/poll. The fragment row owns the
 queue-time facts (workflow id/hash/version, seed, take, prompt snapshot, frame
 count), so a retake never rewrites a sibling. Seeds remain text above 2^53.
-Reference upload and `POST /upload/mask` are deferred: `scenario_references`
-is still an unbuilt schema tail and the shared `ComfyUIClient` has no mask
-endpoint. honkbox render offload stays behind its own live flag.
+Reference upload now reads scenario/scene/shot-scoped `scenario_references`
+rows, uploads owned asset bytes with `ComfyUIClient.uploadImage`, and sends
+`role = "mask"` rows through `POST /upload/mask` overlaying the preceding
+image. The stored names are passed to the workflow loader as
+`reference_slots`. honkbox render offload stays behind its own live flag.
 
 **Acceptance Criteria:**
 
@@ -48,5 +50,8 @@ endpoint. honkbox render offload stays behind its own live flag.
 - [x] The video job is listed as pending then done; cancel before submit marks
       the fragment cancelled and never submits; an engine failure marks the
       fragment and job failed
+- [x] Scenario-, scene- and shot-scoped references upload before submit, mask
+      rows use `POST /upload/mask` with a preceding image, and slot names reach
+      the workflow variables
 - [x] Tests exercise the full flow against a stubbed ComfyUI, are per-test
       isolated, and targeted tests/gates are green
