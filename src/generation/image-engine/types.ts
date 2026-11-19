@@ -30,6 +30,8 @@ export interface ImageGenOptions {
   steps?: number;
   cfgScale?: number;
   samplerName?: string;
+  /** ComfyUI scheduler name; falls back to `simple`. */
+  schedulerName?: string;
   negativePrompt?: string;
   seed?: number;
   enableHr?: boolean;

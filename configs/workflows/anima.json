@@ -65,7 +65,7 @@
       "steps": "{{steps}}",
       "cfg": "{{cfg_scale}}",
       "sampler_name": "{{sampler}}",
-      "scheduler": "simple",
+      "scheduler": "{{scheduler}}",
       "denoise": 1,
       "model": [
         "8",

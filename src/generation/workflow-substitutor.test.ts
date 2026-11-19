@@ -88,6 +88,11 @@ describe("buildSubstitutionVars", () => {
     expect(vars.width,).toBe(512,);
     expect(vars.steps,).toBe(20,);
     expect(vars.sampler,).toBe("euler",);
+    expect(vars.scheduler,).toBe("simple",);
+  });
+
+  it("passes an explicit scheduler through", () => {
+    expect(buildSubstitutionVars({ prompt: "cat", scheduler: "karras", },).scheduler,).toBe("karras",);
   });
 
   it("passes explicit values and extras through", () => {

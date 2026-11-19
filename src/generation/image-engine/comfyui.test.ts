@@ -425,6 +425,18 @@ describe("generateComfyUI", () => {
     expect(stub.submitted(),).not.toContain("input_image",);
   });
 
+  it("submits `simple` by default and an explicit scheduler when supplied", async () => {
+    const stub = stubComfyRun();
+    expect((await generateComfyUI(CONFIG, OPTS,)).ok,).toBe(true,);
+    const parsed = JSON.parse(stub.submitted(),) as SubmittedPrompt;
+    expect(parsed.prompt["5"]?.inputs.scheduler,).toBe("simple",);
+
+    const explicit = stubComfyRun();
+    expect((await generateComfyUI(CONFIG, { ...OPTS, schedulerName: "karras", },)).ok,).toBe(true,);
+    const overridden = JSON.parse(explicit.submitted(),) as SubmittedPrompt;
+    expect(overridden.prompt["5"]?.inputs.scheduler,).toBe("karras",);
+  });
+
   it("fails the generation when the init-image upload fails", async () => {
     const stub = stubComfyRun({ uploadFail: true, },);
     const outcome = await generateComfyUI(CONFIG, {

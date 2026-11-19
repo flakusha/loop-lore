@@ -75,6 +75,8 @@ interface ImageGenBody {
   steps?: number;
   cfgScale?: number;
   sampler_name?: string;
+  /** ComfyUI scheduler name (defaults to `simple`). */
+  scheduler?: string;
   negative_prompt?: string;
   seed?: number;
   enable_hr?: boolean;
@@ -423,6 +425,7 @@ export async function handleImageGeneration(
       steps: req.steps,
       cfgScale: req.cfgScale,
       samplerName: req.sampler_name,
+      schedulerName: req.scheduler,
       negativePrompt,
       seed: req.seed,
       enableHr: req.enable_hr,

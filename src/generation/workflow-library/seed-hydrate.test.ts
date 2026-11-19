@@ -101,6 +101,7 @@ describe("seedWorkflowLibrary", () => {
       const placeholders = collectPlaceholders(graph,);
       expect(placeholders.has("prompt",),).toBe(true,);
       expect(placeholders.has("negative_prompt",),).toBe(true,);
+      expect(placeholders.has("scheduler",),).toBe(true,);
     }
   });
 
