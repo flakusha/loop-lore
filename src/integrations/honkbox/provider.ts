@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 340
 
 /**
  * Honkbox Custom-provider wiring.
@@ -36,7 +37,8 @@ import type {
   GenerateResponse,
 } from "../../generation/providers/types";
 import { getChildLogger, } from "../../logger";
-import { safeFetch, } from "../../utils";
+import { jsonStringifyOr, safeFetch, } from "../../utils";
+import { HonkboxArtifactDeliveryUnavailableError, } from "./artifacts";
 import {
   assertNoDoubleGpuAdmission,
   getHonkboxCapabilities,
@@ -183,6 +185,117 @@ export async function runHonkboxChatTurn(
   return await provider.complete(request,);
 }
 
+/** Wire DTO `ImageArtifact` returned by artifact-delivery image responses. */
+export interface HonkboxImageArtifact {
+  readonly artifact_id: string;
+  readonly content_type: string;
+  readonly size_bytes: number;
+  readonly job_id?: string;
+}
+
+/** Outcome of an artifact-delivery image job. */
+export interface HonkboxArtifactDeliveryOutcome {
+  readonly ok: true;
+  readonly artifacts: readonly HonkboxImageArtifact[];
+  readonly bundle?: string;
+  readonly job_id?: string;
+}
+
+/** Switch `runHonkboxImageJob` to artifact delivery. */
+export interface HonkboxArtifactDeliveryOptions {
+  /** Send `X-Honkbox-Delivery: artifact` instead of the inline b64_json default. */
+  readonly artifactDelivery: boolean;
+}
+
+/** @param value - unknown JSON value
+ * @returns an image artifact descriptor, or undefined when malformed
+ */
+function parseImageArtifact(value: unknown,): HonkboxImageArtifact | undefined {
+  if (typeof value !== "object" || value === null || Array.isArray(value,)) { return undefined; }
+  const row = value as Record<string, unknown>;
+  if (typeof row.artifact_id !== "string" || row.artifact_id.length === 0) { return undefined; }
+  const jobId = typeof row.job_id === "string" && row.job_id.length > 0 ? row.job_id : undefined;
+  return {
+    artifact_id: row.artifact_id,
+    content_type: typeof row.content_type === "string" ? row.content_type : "application/octet-stream",
+    size_bytes: typeof row.size_bytes === "number" && Number.isFinite(row.size_bytes,)
+      ? row.size_bytes
+      : 0,
+    ...(jobId ? { job_id: jobId, } : {}),
+  };
+}
+
+/** Direct POST with the artifact-delivery header; the openai image engine only
+ * decodes inline b64_json, so this path parses the artifact DTOs itself.
+ * @param opts - dispatch settings
+ * @param imageOpts - generation request
+ * @returns artifact descriptors for the ingest path
+ */
+async function runHonkboxArtifactDelivery(
+  opts: HonkboxDispatchOptions,
+  imageOpts: ImageGenOptions,
+): Promise<HonkboxArtifactDeliveryOutcome> {
+  if (!usableCapabilities(opts.probe,)?.storage.dataDirPresent) {
+    throw new HonkboxArtifactDeliveryUnavailableError(
+      "honkbox storage.data_dir_present is false",
+    );
+  }
+
+  const base = normalizeHonkboxBaseUrl(opts.config.baseUrl,);
+  const apiKey = imageOpts.apiKey ?? opts.config.apiKey;
+  const payload = {
+    prompt: imageOpts.prompt,
+    n: imageOpts.n,
+    size: imageOpts.size ?? "1024x1024",
+    output_format: imageOpts.outputFormat,
+    ...(imageOpts.negativePrompt ? { negative_prompt: imageOpts.negativePrompt, } : {}),
+  };
+
+  const result = await safeFetch<unknown>(`${base}/images/generations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Honkbox-Delivery": "artifact",
+      ...(apiKey ? { Authorization: `Bearer ${apiKey}`, } : {}),
+    },
+    body: jsonStringifyOr(payload,),
+    timeout: opts.config.timeout,
+    maxSize: Number.MAX_SAFE_INTEGER,
+    handle401: false,
+  },);
+
+  if (!result.ok) {
+    throw new HonkboxCapabilityUnavailableError(
+      `honkbox artifact-delivery request failed: ${result.error.message}`,
+    );
+  }
+
+  const doc = typeof result.data === "object" && result.data !== null && !Array.isArray(result.data,)
+    ? result.data as Record<string, unknown>
+    : {};
+
+  const artifacts = Array.isArray(doc.artifacts,)
+    ? doc.artifacts.map((entry,) => parseImageArtifact(entry,)).filter(
+      (entry,): entry is HonkboxImageArtifact => entry !== undefined,
+    )
+    : [];
+
+  if (artifacts.length === 0) {
+    throw new HonkboxArtifactDeliveryUnavailableError(
+      "honkbox artifact-delivery response carried no artifacts",
+    );
+  }
+
+  const bundle = typeof doc.bundle === "string" && doc.bundle.length > 0 ? doc.bundle : undefined;
+  const jobId = typeof doc.job_id === "string" && doc.job_id.length > 0 ? doc.job_id : undefined;
+  return {
+    ok: true,
+    artifacts,
+    ...(bundle ? { bundle, } : {}),
+    ...(jobId ? { job_id: jobId, } : {}),
+  };
+}
+
 /** Submit one honkbox image job through the existing `openai` image engine
  * (`{baseUrl}/images/generations`). `jobs` capability is required so the job
  * can be observed through `/v1/jobs`.
@@ -193,8 +306,28 @@ export async function runHonkboxChatTurn(
 export async function runHonkboxImageJob(
   opts: HonkboxDispatchOptions,
   imageOpts: ImageGenOptions,
-): Promise<ImageGenOutcome> {
-  assertDispatchable(opts.probe, opts.localAdmission ?? false, ["jobs",],);
+): Promise<ImageGenOutcome>;
+/** Artifact-delivery overload: returns descriptors instead of inline bytes. */
+export async function runHonkboxImageJob(
+  opts: HonkboxDispatchOptions,
+  imageOpts: ImageGenOptions,
+  delivery: { readonly artifactDelivery: true },
+): Promise<HonkboxArtifactDeliveryOutcome>;
+/** Implementation signature; the inline path keeps its original outcome type. */
+export async function runHonkboxImageJob(
+  opts: HonkboxDispatchOptions,
+  imageOpts: ImageGenOptions,
+  delivery?: HonkboxArtifactDeliveryOptions,
+): Promise<ImageGenOutcome | HonkboxArtifactDeliveryOutcome> {
+  const required: readonly HonkboxFeatureKey[] = delivery?.artifactDelivery
+    ? ["jobs", "artifactDelivery",]
+    : ["jobs",];
+
+  assertDispatchable(opts.probe, opts.localAdmission ?? false, required,);
+  if (delivery?.artifactDelivery) {
+    return await runHonkboxArtifactDelivery(opts, imageOpts,);
+  }
+
   const imageConfig: ImageProviderConfig = {
     name: opts.config.name,
     label: opts.config.label,

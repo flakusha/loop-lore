@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 700
+// size-allow: 800
 
 /**
  * Honkbox capability registry.
@@ -42,6 +42,7 @@ export const HONKBOX_FEATURE_KEYS = [
   "vad",
   "experimentalAshSd",
   "blender",
+  "artifactDelivery",
   "imageOps",
   "tools",
   "recognition",
@@ -88,6 +89,7 @@ export interface HonkboxFeatureFlags {
   readonly vad: boolean;
   readonly experimentalAshSd: boolean;
   readonly blender: boolean;
+  readonly artifactDelivery: boolean;
 }
 
 /** One writable container (`Formats::write`). */
@@ -155,6 +157,7 @@ export interface HonkboxCapabilities {
       readonly unavailable?: string;
     }[];
   };
+  readonly storage: { readonly dataDirPresent: boolean };
   readonly openapi: string;
   readonly models: string;
 }
@@ -475,12 +478,16 @@ export function isHonkboxFeatureEnabled(
       return capabilities.features.experimentalAshSd;
     case "blender":
       return capabilities.features.blender;
+    case "artifactDelivery":
+      return capabilities.features.artifactDelivery;
   }
 }
 
 /** External-tool gate: usable supported probe, available tool, matching id
  * and exact capability when supplied. Never throws.
  * @param probe - cached or fresh probe outcome
+ * @param toolId - external tool id (e.g. `"blender"`)
+ * @param capability - optional exact capability the tool must advertise
  * @returns whether the tool is available
  */
 export function isHonkboxExternalToolAvailable(
@@ -533,6 +540,7 @@ export function parseHonkboxCapabilities(
   const tools = asObject(doc.tools,);
   const recognition = asObject(doc.recognition,);
   const externalTools = asObject(doc.external_tools,);
+  const storage = asObject(doc.storage,);
 
   return {
     ok: true,
@@ -558,6 +566,7 @@ export function parseHonkboxCapabilities(
         vad: asBool(features?.vad,),
         experimentalAshSd: asBool(features?.experimental_ash_sd,),
         blender: asBool(features?.blender,),
+        artifactDelivery: asBool(features?.artifact_delivery,),
       },
       formats: {
         read: asStringArray(formats?.read,),
@@ -622,6 +631,7 @@ export function parseHonkboxCapabilities(
           },
         }
         : {}),
+      storage: { dataDirPresent: asBool(storage?.data_dir_present,), },
       openapi: asString(doc.openapi,) ?? "",
       models: asString(doc.models,) ?? "",
     },

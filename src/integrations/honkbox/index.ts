@@ -4,6 +4,23 @@
 /** Honkbox integration — capability registry and Custom-provider wiring. */
 
 export {
+  cleanupHonkboxArtifact,
+  DEFAULT_HONKBOX_ARTIFACT_MAX_BYTES,
+  downloadHonkboxArtifactToTempFile,
+  getHonkboxArtifactBytes,
+  HONKBOX_ARTIFACTS_PATH,
+  honkboxArtifactByteCap,
+  HonkboxArtifactDeliveryUnavailableError,
+  HonkboxArtifactValidationError,
+  putHonkboxArtifact,
+} from "./artifacts";
+export type {
+  DownloadedHonkboxArtifact,
+  HonkboxArtifactByteRange,
+  HonkboxArtifactClientOptions,
+  HonkboxStoredArtifact,
+} from "./artifacts";
+export {
   assertNoDoubleGpuAdmission,
   clearHonkboxCapabilitiesCache,
   DEFAULT_HONKBOX_PROBE_TIMEOUT_MS,
@@ -55,7 +72,10 @@ export {
   setupHonkboxCustomProvider,
 } from "./provider";
 export type {
+  HonkboxArtifactDeliveryOptions,
+  HonkboxArtifactDeliveryOutcome,
   HonkboxDispatchOptions,
+  HonkboxImageArtifact,
 } from "./provider";
 export {
   honkboxChatBaseUrl,
@@ -65,3 +85,13 @@ export {
 export type {
   HonkboxCustomProviderOptions,
 } from "./provider-config";
+
+export {
+  ingestHonkboxJobResult,
+  parseHonkboxJobEvent,
+} from "./result-ingest";
+export type {
+  HonkboxJobEvent,
+  IngestHonkboxJobResultOptions,
+  IngestHonkboxJobResultOutcome,
+} from "./result-ingest";
