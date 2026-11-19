@@ -28,6 +28,7 @@ import { dispatchThroughVideoGate, VIDEO_QUEUE_WAIT_MS, type VideoGateDispatchOp
 import { cancelVideoJob, completeVideoJob, failVideoJob, storeVideoJob, } from "../video-jobs";
 import { getWorkflowLoader, } from "../workflow-loader";
 import { uploadIvssReferences, } from "./reference-upload";
+import { resolveRetakeLatent, } from "./retake";
 import { compileShotGrammar, } from "./shot-grammar";
 
 /** Subset of `ComfyUIClient` the pipeline needs; the real client satisfies it. */
@@ -108,6 +109,8 @@ export interface StartIvssFragmentRunOptions {
   /** Render deadline used by the tracked job; default 5 minutes. */
   timeoutMs?: number;
   maxPromptTokens?: number;
+  /** Parent fragment whose latent package seeds this render (retake/resume). */
+  resumeFromFragmentId?: string;
 }
 
 export interface IvssRunSuccess {
@@ -119,6 +122,8 @@ export interface IvssRunSuccess {
   filename: string;
   mimeType: string;
   latentAssetId?: string;
+  /** Take label of the parent when this render resumed from a latent. */
+  resumedFromTake?: string;
   truncated: string[];
 }
 
@@ -187,6 +192,24 @@ export async function startIvssFragmentRun(
     shots,
   }, opts.maxPromptTokens === undefined ? {} : { maxTokens: opts.maxPromptTokens, },);
 
+  const retake = opts.resumeFromFragmentId
+    ? await resolveRetakeLatent({
+      database: db,
+      uploadDir: opts.uploadDir,
+      ownerId: opts.ownerId,
+      fragment,
+      resumeFromFragmentId: opts.resumeFromFragmentId,
+    },)
+    : undefined;
+
+  const retakeInputs = retake
+    ? safeJsonStringify({ latent: retake.assetId, parent_fragment: opts.resumeFromFragmentId, },)
+    : undefined;
+
+  if (retake && (!retakeInputs?.ok)) {
+    throw new Error("IVSS retake inputs could not be serialized",);
+  }
+
   const backend = opts.videoBackend ?? "comfyui";
   let renderClient = opts.client;
   if (backend === "honkbox") {
@@ -207,6 +230,7 @@ export async function startIvssFragmentRun(
     seed,
     duration_frames: compiled.variables.duration_frames,
     error: null,
+    ...(retakeInputs?.ok ? { input_assets: retakeInputs.value, } : {}),
     updated_at: timestamp(),
   },).where("id", "=", fragment.id,)
     .where("status", "in", [FragmentStatus.Planned, FragmentStatus.Failed,],)
@@ -273,7 +297,17 @@ export async function startIvssFragmentRun(
           const encodedSlots = safeJsonStringify(slots,);
           if (!encodedSlots.ok) { throw new Error("IVSS reference slots could not be serialized",); }
 
-          const variables = { ...compiled.variables, reference_slots: encodedSlots.value, };
+          const variables = {
+            ...compiled.variables,
+            reference_slots: encodedSlots.value,
+            ...(retake
+              ? {
+                latent_path: retake.path,
+                latent_asset_id: retake.assetId,
+                resume_from_take: retake.parentTake,
+              }
+              : {}),
+          };
 
           const workflow = await load(fragment.workflow_id, variables,);
 
@@ -380,6 +414,7 @@ export async function startIvssFragmentRun(
             filename: asset.filename,
             mimeType: asset.mime_type,
             latentAssetId,
+            ...(retake ? { resumedFromTake: retake.parentTake, } : {}),
             truncated: compiled.truncated,
           };
         },
