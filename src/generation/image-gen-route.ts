@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 270
+
 import type { Kysely, } from "kysely";
 import { extractImageMetadata, } from "../assets/metadata";
 import { getAssetData, getOwnedAsset, persistGeneratedImages, } from "../assets/service";
