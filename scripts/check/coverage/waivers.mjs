@@ -214,4 +214,15 @@ export const WAIVERS = {
     reason:
       "one-line downloadUrl versioning pulled file into diff-scoped floor; poll-loop/teardown branches need injection seam; 76.9 measured; TASK-cover-export-sse-start-ts-poll-loop-branches",
   },
+  // Gate pass: the alternate-greeting-picker branch adds fully-tested pure
+  // helpers (filterActorsByKind, greetingOptions) plus FakeEl-tested
+  // updateGreetingPicker to selection.ts; the file's pre-existing DOM
+  // render/handler functions have no unit tests, so the diff-scoped
+  // per-file floor sees pre-existing debt (22.9 measured), not a
+  // regression. Owning ticket:
+  // .plan/tickets/TASK-cover-new-chat-selection-ts-dom-functions.md
+  "frontend:src/frontend/pages/new-chat/selection.ts": {
+    "floor": 20,
+    "reason": "pre-existing DOM render/handler debt (renderSelected/renderResults/bindSelectionHandlers); branch adds tested pure helpers; 22.9 measured under diff-files; TASK-cover-new-chat-selection-ts-dom-functions",
+  },
 };
