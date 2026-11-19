@@ -3,7 +3,7 @@
 
 # TASK: Decide 1.0.0 epic scope exclusions
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Record bounded local multi-instance scope and gallery OUT recommendation
 **Priority:** high
 **Effort:** Small
@@ -45,3 +45,5 @@ Decide which Not-Started epics are explicitly OUT of release 1.0.0 and record th
   deliberately NOT invented here. It stays open question 2 in
   `TASK-epic-release-1-0-0.md`; only the three scope decisions above are
   settled.
+
+**Resolved:** 2026-11-19 registry-driven close: git issue 90b91fc (registry tip: f56038ac7 Konstantin Fedotov Close issue)
