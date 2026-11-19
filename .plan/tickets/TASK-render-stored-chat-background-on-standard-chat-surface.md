@@ -3,7 +3,7 @@
 
 # TASK: render stored chat background on standard chat surface
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-immersion-presentation.md
@@ -19,10 +19,10 @@ Chat background storage, API and location sync are shipped, but no view consumes
 
 **Acceptance Criteria:**
 
-- [ ] selected background appears in standard chat
-- [ ] changing or clearing it updates without reload
-- [ ] no background yields current appearance
+- [x] selected background appears in standard chat
+- [x] changing or clearing it updates without reload
+- [x] no background yields current appearance
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Shipped on branch `image-to-background`: `backgroundImageUrl` derives the raw asset URL, the standard chat view renders the backdrop, and CSS keeps it behind chat content. Reused the existing `loadBackground` callers; no background leaves the current appearance. Focused frontend tests cover URL derivation plus load/toggle/set/remove paths and reach 100% line coverage of `src/frontend/alpine/chat-backgrounds.ts`.

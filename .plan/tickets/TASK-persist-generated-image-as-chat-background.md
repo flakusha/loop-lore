@@ -3,7 +3,7 @@
 
 # TASK: persist generated image as chat background
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-immersion-presentation.md
@@ -19,10 +19,10 @@ Generated scene or character images are not written back as chat backgrounds; th
 
 **Acceptance Criteria:**
 
-- [ ] generated image can be assigned as the active chat background
-- [ ] no new schema; existing asset ownership rules apply
-- [ ] default generation path unchanged
+- [x] generated image can be assigned as the active chat background
+- [x] no new schema; existing asset ownership rules apply
+- [x] default generation path unchanged
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Shipped on branch `image-to-background`: optional background target in the image generation request calls the existing `setAssetAsChatBackground` helper after persistence. No schema change; default generation is unchanged when no target is sent. Route tests cover both the target and default paths; scoped coverage gate passes with `CHECK_TEST_JOBS=2` (default parallelism caused unrelated hook-timeout flakes).
