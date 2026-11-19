@@ -32165,6 +32165,20 @@
     "title": "PostgreSQL Backup Compatibility Layer",
     "type": "TASK"
   },
+  "TASK-BLENDER-BINARY-DISCOVERY-AND-ADMIN-CAPABILITY-PROBE": {
+    "hash": "baeddef",
+    "git_issue": "baeddef",
+    "extid": "TASK-BLENDER-BINARY-DISCOVERY-AND-ADMIN-CAPABILITY-PROBE",
+    "type": "TASK",
+    "title": "Blender binary discovery and admin capability probe",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-creative-tool-bridge",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-blender-binary-discovery-and-admin-capability-probe.md",
+    "status": "done"
+  },
   "TASK-BLENDER-HEADLESS-NODE-BRIDGE": {
     "hash": "ec74d7a",
     "git_issue": "ec74d7a",
@@ -32179,7 +32193,7 @@
       "blender"
     ],
     "source": ".plan/tickets/TASK-blender-headless-node-bridge.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-BLOG-FRONTEND-AUTHORING": {
     "epic": "epic-frontend-backend-integration",

@@ -3,7 +3,7 @@
 
 # TASK: Blender headless node bridge
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** local Blender headless capability probe and job bridge
 **Priority:** high
 **Effort:** Medium
@@ -28,3 +28,5 @@ directory holds inbound servers only.
 - [x] Version-pinned invocation and capability probe covered by test
 - [x] Timeout, exit-code check, provenance stamp, per-instance serialization tested
 - [x] No MCP client added under `src/integrations/mcp/`
+
+**Resolved:** 2026-11-19 registry-driven close: git issue ec74d7a (registry tip: 02d2275b9 Konstantin Fedotov Close issue)
