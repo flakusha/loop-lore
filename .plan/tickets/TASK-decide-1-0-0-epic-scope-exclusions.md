@@ -3,7 +3,8 @@
 
 # TASK: Decide 1.0.0 epic scope exclusions
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Record bounded local multi-instance scope and gallery OUT recommendation
 **Priority:** high
 **Effort:** Small
 
