@@ -52677,7 +52677,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-natural-language-picture-of-the-character-dispatches-to-avat.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-NO-BROWSER-TEST-ADMIN-SUBPAGES-SETTINGS-TABS-I18N-THEME-APPL": {
     "epic": "epic-testing-qa",
