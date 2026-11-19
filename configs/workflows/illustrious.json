@@ -1,0 +1,9 @@
+{
+  "1": {
+    "inputs": {
+      "text": "Illustrious placeholder workflow. Replace this file with the operator-supplied ComfyUI Export (API) graph for the Illustrious model."
+    },
+    "class_type": "Note",
+    "_meta": { "title": "PLACEHOLDER — Illustrious" }
+  }
+}

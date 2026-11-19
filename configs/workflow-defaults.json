@@ -1,0 +1,36 @@
+{
+  "image.generate": {
+    "default": "txt2img",
+    "supported": [
+      "txt2img",
+      "sdxl",
+      "illustrious",
+      "noob",
+      "krea2",
+      "moss",
+      "minimax-h3-image"
+    ]
+  },
+  "image.edit": {
+    "default": "img2img",
+    "supported": [
+      "img2img",
+      "qwen-edit"
+    ]
+  },
+  "video.generate": {
+    "default": "minimax-h3-t2v-fragment-v1",
+    "supported": [
+      "minimax-h3-t2v-fragment-v1",
+      "minimax-h3-i2v-fragment-v1",
+      "minimax-h3-ref2va-fragment-v1",
+      "minimax-h3-fragment-assemble-v1"
+    ]
+  },
+  "audio.generate": {
+    "default": "minimax-h3-audio-fallback-v1",
+    "supported": [
+      "minimax-h3-audio-fallback-v1"
+    ]
+  }
+}

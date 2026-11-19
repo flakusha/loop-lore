@@ -1,0 +1,9 @@
+{
+  "1": {
+    "inputs": {
+      "text": "PLACEHOLDER — minimax-h3-fragment-assemble-v1. Replace with the operator-supplied ComfyUI Export (API) graph that assembles MiniMax H3 fragments into a final segment. Required workflow variables: segment_slots, transition, fps."
+    },
+    "class_type": "Note",
+    "_meta": { "title": "PLACEHOLDER — minimax-h3-fragment-assemble-v1" }
+  }
+}

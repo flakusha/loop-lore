@@ -1,0 +1,9 @@
+{
+  "1": {
+    "inputs": {
+      "text": "Moss image generation. Placeholder for an operator-supplied ComfyUI Export (API) graph."
+    },
+    "class_type": "Note",
+    "_meta": { "title": "PLACEHOLDER — Moss" }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "1": {
+    "inputs": {
+      "text": "Krea 2 image generation placeholder workflow. Replace this file with the operator-supplied ComfyUI Export (API) graph for the Krea 2 model."
+    },
+    "class_type": "Note",
+    "_meta": { "title": "PLACEHOLDER — Krea 2" }
+  }
+}

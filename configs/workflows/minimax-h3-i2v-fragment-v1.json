@@ -1,0 +1,9 @@
+{
+  "1": {
+    "inputs": {
+      "text": "PLACEHOLDER — minimax-h3-i2v-fragment-v1. Replace with the operator-supplied ComfyUI Export (API) graph for the MiniMax H3 image-to-video fragment run. Required workflow variables: prompt, timeline_data, builder_state, duration_seconds, seed, reference_slots."
+    },
+    "class_type": "Note",
+    "_meta": { "title": "PLACEHOLDER — minimax-h3-i2v-fragment-v1" }
+  }
+}

@@ -33,6 +33,17 @@ import {
 import { buildWorkflowGraph, rowToPayload, rowToTemplate, } from "./row";
 import { resetSeedOwnerForTests, seedWorkflowLibrary, } from "./seed";
 
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * Library round-trip tests: seed -> read back -> hydrate -> build graph.
+ *
+ * These seams only break at boot, so they run against a real migrated SQLite
+ * DB rather than a stub. A temp dir is used for the bad-file case because the
+ * seed scans a directory, not a list of injected records.
+ */
+
 const SHIPPED_DIR = "./configs/workflows";
 
 let db: Kysely<DB>;
@@ -87,7 +98,12 @@ describe("seedWorkflowLibrary", () => {
   it("is idempotent - a second run imports nothing new", async () => {
     const outcome = await seedWorkflowLibrary(db, SHIPPED_DIR,);
     expect(outcome.imported,).toEqual([],);
-    expect(outcome.skipped.map((s,) => s.reason),).toEqual(["already in library", "already in library",],);
+    // The catalog grows as operators add ComfyUI exports; every shipped
+    // `.json` is already in the library after the first test.
+    const shipped = (await readdir(SHIPPED_DIR,)).filter((entry,) => entry.endsWith(".json",));
+    expect(outcome.skipped.map((s,) => s.reason),).toEqual(
+      shipped.map(() => "already in library"),
+    );
   });
 
   it("skips one bad file without failing the whole seed", async () => {

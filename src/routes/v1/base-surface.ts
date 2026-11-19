@@ -42,6 +42,14 @@ import { setupRoutes, } from "../setup/routes";
 import { telemetryRoutes, } from "../telemetry";
 import { usersRoutes, } from "../users";
 
+import { workflowSelectionRoutes, } from "../workflow-selection/catalog";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * v1 baseSurface barrel (split out: one Elysia chain per file keeps TS2589 away).
+ */
+
 /**
  * Build the production MFA delivery bridge from the loaded integrations
  * config. Email and Telegram configure independently; neither configured
@@ -152,6 +160,7 @@ export function baseSurface(opts: RegisterPluginsOpts & { bridge?: MessageBridge
     .use(ivssAuthoringRoutes({ database, }, prefix,),)
     .use(ivssAssemblyRoutes({ config, database, uploadDir: config.assets?.uploadDir ?? "", },),)
     .use(ivssRunRoutes({ config, database, uploadDir: config.assets?.uploadDir ?? "", },),)
+    .use(workflowSelectionRoutes({ database, }, prefix,),)
     .use(planningRoutes({ database, }, prefix,),)
     .use(planningBoardRoutes({ database, }, prefix,),)
     .use(actorPlanRoutes({ database, }, prefix,),)
