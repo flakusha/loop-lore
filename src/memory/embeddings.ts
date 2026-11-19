@@ -27,7 +27,7 @@ import type { DB, } from "../db";
 import { getLogger, } from "../logger";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import { dot, embedText, resolveEmbedModel, } from "./embed-provider";
-import { fetchMemoryTexts, rerankViaLlamaCpp, } from "./rerank";
+import { fetchMemoryTexts, rerankViaLlamaCpp, resolveRerankModel, } from "./rerank";
 
 export { embedText, } from "./embed-provider";
 
@@ -207,8 +207,11 @@ export async function semanticRecall(
 
   const ranked = rankBySimilarity(candidates, queryVec, topK, minScore,);
 
-  const rerankModel = process.env.RERANK_MODEL;
-  if (!rerankModel || ranked.length === 0) { return ranked; }
+  if (ranked.length === 0) { return ranked; }
+  const config = loadConfig();
+  // Explicit rerank role wins; env-only legacy setups keep working unchanged.
+  const rerankModel = (await resolveRerankModel(config, db,)) ?? process.env.RERANK_MODEL;
+  if (!rerankModel) { return ranked; }
 
   // Rerank stage: shortlist the top cosine matches, rerank via llama.cpp,
   // slice to topK.  Rerank scores are not comparable to cosine scores, so
@@ -217,11 +220,11 @@ export async function semanticRecall(
   try {
     const documents = await fetchMemoryTexts(db, shortlist.map((m,) => m.memoryId),);
     // `routing` lets the router order the rerank endpoint candidates for the
-    // `background` task signal; absent it, env precedence wins unchanged.
+    // `reranking` task signal; absent it, env precedence wins unchanged.
     const hits = await rerankViaLlamaCpp(queryText, documents, {
       model: rerankModel,
       topN: topK,
-      routing: loadConfig().generation.routing,
+      routing: config.generation.routing,
     },);
 
     const reordered: SemanticMatch[] = [];

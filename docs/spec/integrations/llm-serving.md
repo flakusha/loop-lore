@@ -208,7 +208,7 @@ Server lifecycle NOT managed by loop-lore — run separately via a llama-server 
 
 ### Model Roles
 
-A model role names the provider + model used for one class of work. Roles resolve DB override → config `generation.modelRoles.<role>` → server default (`src/admin/model-roles.ts`), and are assignable per role from the admin panel (PUT `/api/admin/model-roles/:role`). Roles currently exposed there: `main`, `auxiliary`, `captioning`, `classifier`, `translator`.
+A model role names the provider + model used for one class of work. Roles resolve DB override → config `generation.modelRoles.<role>` → server default (`src/admin/model-roles.ts`), and are assignable per role from the admin panel (PUT `/api/admin/model-roles/:role`). Roles currently exposed there: `main`, `auxiliary`, `captioning`, `classifier`, `translator`, `rerank`.
 
 `generation.autorouteScenario` is the ranking switch (`general`, `chat`, `coding`, `local`, `observed`). When a role has no DB override or config assignment, `resolveModelRole` picks the highest-ranked configured default model from `model_rankings`; explicit role assignments still win. The chat turn reaches that chain through `resolveGenerateTarget` (`src/generation/generate-route/resolve-options.ts`) when the request pins neither provider nor model; a client-pinned provider/model always wins. Retry order is provider-level failover (`buildFailoverList`), not a per-model ranked chain. Provider-side autorouting needs no loop-lore switch: set an OpenAI-compatible instance's `model` to that provider's router id (for example `openrouter/auto`).
 
@@ -217,6 +217,8 @@ The `translator` role selects the model for `/translate`, its `/tl` alias, and p
 Config env vars (manual overrides in `src/config/schema-class/env-map.ts`): `LLM_TRANSLATOR_PROVIDER`, `LLM_TRANSLATOR_MODEL`.
 
 A `translator` naming an unregistered provider is not silently swapped for another model: the translation degrades to the untranslated original (auto-translate) or the local-heuristic note (`/translate`), with a warn log.
+
+The `rerank` role selects the cross-encoder for memory reranking. Only an explicit DB override or config assignment is used; when unset, rerank keeps its `RERANK_MODEL` env fallback and fail-open behaviour. The `general` autoroute scenario never supplies a rerank model.
 
 ## References
 

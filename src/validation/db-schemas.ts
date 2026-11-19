@@ -396,6 +396,7 @@ export const ModelRoleSchema = t.UnionEnum([
   "summarization",
   "classifier",
   "translator",
+  "rerank",
 ],);
 export const ModerationActionSchema = t.UnionEnum(["none", "warned", "content_removed", "nsfw_revoked", "banned",],);
 export const ModerationFlagReasonSchema = t.UnionEnum([

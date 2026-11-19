@@ -4,7 +4,8 @@
 /**
  * Model Role Resolution
  *
- * Resolves model role assignments (main, auxiliary, captioning, classifier)
+ * Resolves model role assignments (main, auxiliary, captioning, classifier,
+ * translator, rerank)
  * with fallback: DB overrides → config defaults → server defaults.
  *
  * Error-handling strategy (deliberate, do not "unify"): reads degrade to
@@ -29,6 +30,7 @@ export const VALID_ROLES = [
   ModelRole.Captioning,
   ModelRole.Classifier,
   ModelRole.Translator,
+  ModelRole.Rerank,
 ] as const;
 
 /** A resolved model role with its provider, model, and source. */

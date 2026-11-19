@@ -29,6 +29,7 @@ describe("model roles", () => {
       "captioning",
       "classifier",
       "translator",
+      "rerank",
     ],);
   });
 

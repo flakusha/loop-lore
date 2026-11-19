@@ -112,7 +112,7 @@ export const PROVIDER_PRESETS: readonly ProviderPreset[] = [
 ];
 
 /** Model roles the wizard can assign (mirrors VALID_ROLES in src/admin/model-roles.ts). */
-export const MODEL_ROLES = ["main", "auxiliary", "captioning", "classifier", "translator",] as const;
+export const MODEL_ROLES = ["main", "auxiliary", "captioning", "classifier", "translator", "rerank",] as const;
 
 /**
  * Derive an instance name from a custom base URL.

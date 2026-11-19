@@ -148,6 +148,8 @@ export interface GenerationConfig {
      * model — see resolveTranslatorProvider.
      */
     translator?: ModelRoleAssignment;
+    /** Dedicated cross-encoder rerank; unset falls back to RERANK_MODEL. */
+    rerank?: ModelRoleAssignment;
   };
   /** Model routing policy (see generation/routing/). Default is a no-op. */
   routing?: GenerationRoutingConfig;
