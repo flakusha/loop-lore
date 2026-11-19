@@ -279,8 +279,8 @@ Operator runbooks for on-prem / dedicated-server deployment. Pair with `spec/bui
 
 | Document                                 | Topics             |
 | ---------------------------------------- | ------------------ |
-| [`reference/api.md`](./reference/api.md) | REST API reference (hand-written overview) |
-| `reference/openapi.json` (gitignored, regenerate via `bun run openapi`) | Generated OpenAPI contract (600 paths / 807 operations) |
+| [`reference/api.md`](./reference/api.md) | REST API reference (generated from the spec; hand-written prose in a delimited region) |
+| `reference/openapi.json` (gitignored, regenerate via `bun run openapi`) | Generated OpenAPI contract |
 
 ---
 
