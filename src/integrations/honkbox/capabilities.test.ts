@@ -22,6 +22,7 @@ import {
   HonkboxAdmissionError,
   honkboxCacheKey,
   honkboxCustomProviderConfig,
+  isHonkboxExternalToolAvailable,
   isHonkboxFeatureEnabled,
   normalizeHonkboxBaseUrl,
   parseHonkboxCapabilities,
@@ -66,6 +67,7 @@ function capabilitiesDoc(overrides: Record<string, unknown> = {},): Record<strin
       events: true,
       vad: false,
       experimental_ash_sd: false,
+      blender: true,
     },
     formats: {
       read: ["png", "jpeg",],
@@ -90,6 +92,12 @@ function capabilitiesDoc(overrides: Record<string, unknown> = {},): Record<strin
       parallel_tool_calls: false,
     },
     recognition: { barcode: true, ocr: false, },
+    external_tools: {
+      tools: [
+        { id: "blender", version: "4.2", capabilities: ["render", "op:x",], devices: ["cuda:0",], available: true, },
+        { id: "comfyui", capabilities: ["workflow",], devices: [], available: true, },
+      ],
+    },
     openapi: "/v1/openapi.json",
     models: "/v1/models",
     ...overrides,
@@ -114,6 +122,14 @@ describe("parseHonkboxCapabilities", () => {
     expect(caps.features.controlnet,).toEqual({ available: false, models: 0, },);
     expect(caps.features.video,).toBe(false,);
     expect(caps.features.jobs,).toBe(true,);
+    expect(caps.features.blender,).toBe(true,);
+    expect(caps.externalTools,).toEqual({
+      tools: [
+        { id: "blender", version: "4.2", capabilities: ["render", "op:x",], devices: ["cuda:0",], available: true, },
+        { id: "comfyui", capabilities: ["workflow",], devices: [], available: true, },
+      ],
+    },);
+
     expect(caps.formats.read,).toEqual(["png", "jpeg",],);
     expect(caps.formats.write,).toEqual([
       { format: "png", compression: false, },
@@ -235,6 +251,78 @@ describe("probeHonkboxCapabilities", () => {
   });
 });
 
+describe("external tool availability gate", () => {
+  test("usable probe gates on the exact tool id and capability", async () => {
+    await withMockFetch(() => capsResponse(), async () => {
+      const probe = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+      expect(isHonkboxFeatureEnabled(probe, "blender",),).toBe(true,);
+      expect(isHonkboxExternalToolAvailable(probe, "blender",),).toBe(true,);
+      expect(isHonkboxExternalToolAvailable(probe, "blender", "render",),).toBe(true,);
+      expect(isHonkboxExternalToolAvailable(probe, "blender", "op:x",),).toBe(true,);
+      expect(isHonkboxExternalToolAvailable(probe, "blender", "cycles",),).toBe(false,);
+      expect(isHonkboxExternalToolAvailable(probe, "comfyui", "workflow",),).toBe(true,);
+      expect(isHonkboxExternalToolAvailable(probe, "comfyui", "render",),).toBe(false,);
+      expect(isHonkboxExternalToolAvailable(probe, "unknown",),).toBe(false,);
+    },);
+  });
+
+  test("missing, unsupported and malformed probes never grant a tool", async () => {
+    expect(isHonkboxExternalToolAvailable(undefined, "blender",),).toBe(false,);
+    await withMockFetch(
+      () => capsResponse(capabilitiesDoc({ api_version: "v2", },),),
+      async () => {
+        const unsupported = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+        expect(isHonkboxExternalToolAvailable(unsupported, "blender", "render",),).toBe(false,);
+      },
+    );
+
+    await withMockFetch(
+      () => new Response("down", { status: 503, },),
+      async () => {
+        const failed = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+        expect(isHonkboxExternalToolAvailable(failed, "blender",),).toBe(false,);
+      },
+    );
+
+    const doc = capabilitiesDoc();
+    delete doc.external_tools;
+    await withMockFetch(() => capsResponse(doc,), async () => {
+      const noTools = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+      expect(isHonkboxExternalToolAvailable(noTools, "blender", "render",),).toBe(false,);
+    },);
+
+    const unavailableDoc = capabilitiesDoc({
+      external_tools: {
+        tools: [
+          { id: "blender", capabilities: ["render",], devices: [], available: false, unavailable: "not installed", },
+        ],
+      },
+    },);
+
+    await withMockFetch(() => capsResponse(unavailableDoc,), async () => {
+      const probe = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+      expect(probe.ok && probe.capabilities.externalTools?.tools[0],).toEqual({
+        id: "blender",
+        capabilities: ["render",],
+        devices: [],
+        available: false,
+        unavailable: "not installed",
+      },);
+
+      expect(isHonkboxExternalToolAvailable(probe, "blender", "render",),).toBe(false,);
+    },);
+
+    const malformed = {
+      ok: true,
+      supported: true,
+      capabilities: { externalTools: { tools: "nope", }, },
+    } as unknown as Parameters<typeof isHonkboxExternalToolAvailable>[0];
+
+    expect(() => isHonkboxExternalToolAvailable(malformed, "blender",)).not.toThrow();
+    expect(isHonkboxExternalToolAvailable(malformed, "blender",),).toBe(false,);
+  });
+});
+
 describe("capability cache", () => {
   test("one probe per setup/refresh, keyed by baseUrl plus credential fingerprint", async () => {
     let calls = 0;
@@ -258,6 +346,33 @@ describe("capability cache", () => {
       expect(key,).toContain("http://127.0.0.1:9010/v1",);
       expect(key,).not.toContain("k",);
       expect(first.ok,).toBe(true,);
+    },);
+  });
+
+  test("cached descriptor keeps external tools; changed payload needs a refresh", async () => {
+    let doc = capabilitiesDoc();
+    await withMockFetch(() => capsResponse(doc,), async () => {
+      const first = await getHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+      const cached = peekHonkboxCapabilities("http://127.0.0.1:9010/v1",);
+      expect(cached?.capabilities,).toEqual(first.ok ? first.capabilities : undefined,);
+      expect(isHonkboxExternalToolAvailable(cached, "blender", "render",),).toBe(true,);
+
+      doc = capabilitiesDoc({
+        external_tools: {
+          tools: [
+            { id: "blender", capabilities: ["cycles",], devices: [], available: true, },
+            { id: "comfyui", capabilities: ["workflow",], devices: [], available: true, },
+          ],
+        },
+      },);
+
+      const stale = await getHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+      expect(isHonkboxExternalToolAvailable(stale, "blender", "render",),).toBe(true,);
+
+      const refreshed = await refreshHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+      expect(refreshed.ok,).toBe(true,);
+      expect(isHonkboxExternalToolAvailable(refreshed, "blender", "render",),).toBe(false,);
+      expect(isHonkboxExternalToolAvailable(refreshed, "blender", "cycles",),).toBe(true,);
     },);
   });
 
@@ -322,6 +437,7 @@ describe("registry constants and URL helpers", () => {
       "events",
       "vad",
       "experimentalAshSd",
+      "blender",
       "imageOps",
       "tools",
       "recognition",

@@ -10,22 +10,19 @@
  * The ComfyUI client, workflow loader and dispatch gate are injected so CI can
  * drive the whole flow against a stub.
  */
-import type { Kysely, } from "kysely";
+import type { Kysely, Selectable, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { extensionForMime, mimeFromExtension, } from "../../assets/service/detect";
 import { persistGeneratedImages, } from "../../assets/service/persist-generated";
 import { getAssetData, getOwnedAsset, } from "../../assets/service/read";
 import { AssetLinkEntity, } from "../../db/enums-content";
-import { FragmentStatus, type ScenarioDocKind, } from "../../db/enums-generation";
+import { FragmentStatus, } from "../../db/enums-generation";
 import type { DB, } from "../../db/schema";
 import { safeJsonStringify, } from "../../utils";
 import { toDate, } from "../../utils/date";
 import { VIDEO_QUEUE_WAIT_MS, } from "../video-dispatch-gate";
 import { getWorkflowLoader, } from "../workflow-loader";
 import type { IvssComfyClient, IvssRunDispatch, IvssWorkflowLoader, } from "./run-pipeline";
-
-/** The doc kind is plain text in the DB; the enum has no assembly member yet. */
-export const ASSEMBLY_DOC_KIND = "assembly" as ScenarioDocKind;
 
 /** Options for {@link assembleScenario}. */
 export interface AssembleScenarioOptions {
@@ -73,7 +70,38 @@ export interface AssemblyHandle {
   done: Promise<AssemblyResult>;
 }
 
-/** Error carrying the status the doc and result report. */
+/** One persisted assembly row. */
+export type AssemblyRow = Selectable<DB["scenario_assemblies"]>;
+
+/**
+ * List a scenario's assembly history, newest version first.
+ * @param database - typed DB instance
+ * @param scenarioId - scenario whose assemblies to list
+ * @returns all assembly rows ordered by descending version
+ */
+export async function listAssemblies(
+  database: Kysely<DB>,
+  scenarioId: string,
+): Promise<AssemblyRow[]> {
+  return database.selectFrom("scenario_assemblies",).selectAll()
+    .where("scenario_id", "=", scenarioId,).orderBy("version", "desc",).execute();
+}
+
+/**
+ * Read the latest assembly row for a scenario.
+ * @param database - typed DB instance
+ * @param scenarioId - scenario whose latest assembly to read
+ * @returns newest assembly row, or undefined when the scenario has none
+ */
+export async function getAssembly(
+  database: Kysely<DB>,
+  scenarioId: string,
+): Promise<AssemblyRow | undefined> {
+  return database.selectFrom("scenario_assemblies",).selectAll()
+    .where("scenario_id", "=", scenarioId,).orderBy("version", "desc",).executeTakeFirst();
+}
+
+/** Error carrying the status the assembly row and result report. */
 function assemblyError(message: string, status: number,): Error & { status: number } {
   const error = new Error(message,) as Error & { status: number };
   error.status = status;
@@ -81,7 +109,7 @@ function assemblyError(message: string, status: number,): Error & { status: numb
 }
 
 /**
- * Claim a scenario's completed fragments as a pending assembly doc, then stitch
+ * Claim a scenario's completed fragments as a pending assembly row, then stitch
  * them through the pinned workflow in the background.
  * @param opts - database, identity, client and injectable seams
  * @throws {Error} When the scenario is missing, unowned, or has no completed fragments
@@ -142,51 +170,45 @@ export async function assembleScenario(
 
   const fragmentIds = fragments.map((fragment,) => fragment.id);
 
-  const previous = await db.selectFrom("scenario_docs",).select("version",)
-    .where("scenario_id", "=", scenario.id,).where("kind", "=", ASSEMBLY_DOC_KIND,)
+  const previous = await db.selectFrom("scenario_assemblies",).select("version",)
+    .where("scenario_id", "=", scenario.id,)
     .orderBy("version", "desc",).executeTakeFirst();
 
+  // ponytail: concurrent calls can allocate the same version; add a unique
+  // (scenario_id, version) constraint plus retry if parallel assembly ships.
   const version = (previous?.version ?? 0) + 1;
   const assemblyId = randomUUID();
-  // ponytail: one assembly doc per scenario; history needs its own table.
-  await db.deleteFrom("scenario_docs",)
-    .where("scenario_id", "=", scenario.id,).where("kind", "=", ASSEMBLY_DOC_KIND,)
-    .execute();
 
   /**
-   * @param body - assembly manifest payload
-   * @throws {Error} When the manifest cannot be serialized
+   * @param value - JSON column payload
+   * @throws {Error} When the payload cannot be serialized
    */
-  const encode = (body: unknown,): string => {
-    const encoded = safeJsonStringify(body,);
-    if (!encoded.ok) { throw new Error("IVSS assembly manifest could not be serialized",); }
+  const encode = (value: unknown,): string => {
+    const encoded = safeJsonStringify(value,);
+    if (!encoded.ok) { throw new Error("IVSS assembly row could not be serialized",); }
     return encoded.value;
   };
 
-  const pendingBody = {
-    status: "pending",
-    workflowId: opts.workflowId,
-    workflowHash: opts.workflowHash,
-    workflowVersion: opts.workflowVersion,
-    fragmentIds,
-    cutPoints,
-  };
-
-  await db.insertInto("scenario_docs",).values({
+  await db.insertInto("scenario_assemblies",).values({
     id: assemblyId,
     scenario_id: scenario.id,
-    kind: ASSEMBLY_DOC_KIND,
-    title: null,
-    body: encode(pendingBody,),
     version,
+    status: "pending",
+    workflow_id: opts.workflowId,
+    workflow_hash: opts.workflowHash,
+    workflow_version: opts.workflowVersion ?? null,
+    fragment_ids: encode(fragmentIds,),
+    cut_points: encode(cutPoints,),
+    output_asset_id: null,
+    error: null,
     created_at: timestamp(),
     updated_at: timestamp(),
   },).execute();
 
-  const updateDoc = async (body: unknown, docVersion: number,): Promise<void> => {
-    await db.updateTable("scenario_docs",).set({
-      body: encode(body,),
-      version: docVersion,
+  const markCompleted = async (assetId: string,): Promise<void> => {
+    await db.updateTable("scenario_assemblies",).set({
+      status: "completed",
+      output_asset_id: assetId,
       updated_at: timestamp(),
     },).where("id", "=", assemblyId,).execute();
   };
@@ -213,7 +235,11 @@ export async function assembleScenario(
 
   const markFailed = async (message: string,): Promise<void> => {
     try {
-      await updateDoc({ status: "failed", error: message, }, version,);
+      await db.updateTable("scenario_assemblies",).set({
+        status: "failed",
+        error: message,
+        updated_at: timestamp(),
+      },).where("id", "=", assemblyId,).execute();
     } catch {
       // Best effort: an unreachable DB cannot be told about its own failure.
     }
@@ -258,15 +284,7 @@ export async function assembleScenario(
       const asset = persisted?.asset;
       if (!asset) { throw new Error("IVSS assembly video persistence failed",); }
 
-      await updateDoc({
-        status: "completed",
-        assetId: asset.id,
-        workflowId: opts.workflowId,
-        workflowHash: opts.workflowHash,
-        workflowVersion: opts.workflowVersion,
-        fragmentIds,
-        cutPoints,
-      }, version,);
+      await markCompleted(asset.id,);
 
       assetId = asset.id;
     };

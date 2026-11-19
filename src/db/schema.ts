@@ -264,4 +264,5 @@ export interface DB {
   scenario_references: import("./schema-generation").ScenarioReferences;
   scenario_docs: import("./schema-generation").ScenarioDocs;
   annotations: import("./schema-generation").Annotations;
+  scenario_assemblies: import("./schema-generation").ScenarioAssemblies;
 }

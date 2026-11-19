@@ -177,3 +177,20 @@ export interface Annotations {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── scenario_assemblies ────────────────────────────────────────────
+export interface ScenarioAssemblies {
+  id: string;
+  scenario_id: string;
+  version: number;
+  status: string;
+  workflow_id: string | null;
+  workflow_hash: string | null;
+  workflow_version: string | null;
+  fragment_ids: string;
+  cut_points: string;
+  output_asset_id: string | null;
+  error: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}

@@ -1300,6 +1300,21 @@ export const SCHEMA = new SchemaManifest()
     max_value: col("integer",),
     effect: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("scenario_assemblies", {
+    id: col("text", { primaryKey: true, },),
+    scenario_id: col("text", { notNull: true, },),
+    version: col("integer", { notNull: true, },),
+    status: col("text", { notNull: true, },),
+    workflow_id: col("text",),
+    workflow_hash: col("text",),
+    workflow_version: col("text",),
+    fragment_ids: col("text", { notNull: true, },),
+    cut_points: col("text", { notNull: true, },),
+    output_asset_id: col("text",),
+    error: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("scenario_docs", {
     id: col("text", { primaryKey: true, },),
     scenario_id: col("text", { notNull: true, },),

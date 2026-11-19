@@ -27,6 +27,7 @@ import { healthRoutes, } from "../health";
 import { i18nRoutes, } from "../i18n";
 import { ivssAssemblyRoutes, } from "../ivss/assembly";
 import { ivssAuthoringRoutes, } from "../ivss/authoring";
+import { ivssRunRoutes, } from "../ivss/run";
 import { keyManagementRoutes, } from "../key-management";
 import { messageEncryptionRoutes, } from "../message-encryption";
 import { deprecationAfterHandle, } from "../middleware/deprecation-headers";
@@ -150,6 +151,7 @@ export function baseSurface(opts: RegisterPluginsOpts & { bridge?: MessageBridge
     .use(comfyUIModelRoutes(handleOpts, prefix,),)
     .use(ivssAuthoringRoutes({ database, }, prefix,),)
     .use(ivssAssemblyRoutes({ config, database, uploadDir: config.assets?.uploadDir ?? "", },),)
+    .use(ivssRunRoutes({ config, database, uploadDir: config.assets?.uploadDir ?? "", },),)
     .use(planningRoutes({ database, }, prefix,),)
     .use(planningBoardRoutes({ database, }, prefix,),)
     .use(actorPlanRoutes({ database, }, prefix,),)

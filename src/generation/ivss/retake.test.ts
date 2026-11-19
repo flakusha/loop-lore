@@ -86,6 +86,25 @@ describe("IVSS latent retake", () => {
     },).where("id", "=", fragmentId,).execute();
   };
 
+  const renderClient = (): IvssComfyClient => ({
+    async submitWorkflow() {
+      return { prompt_id: "prompt-1", };
+    },
+    async waitForFiles() {
+      return [
+        { kind: "video", file: { filename: "clip.webm", }, },
+        { kind: "other", file: { filename: "state.safetensors", }, },
+      ];
+    },
+    async downloadFile() {
+      return Buffer.from("bytes",);
+    },
+    async cancelExecution() {},
+    async uploadImage() {
+      return "comfy-input";
+    },
+  });
+
   test("creates a child fragment pinned to the parent latent", async () => {
     const seeded = await seed();
     const latentId = await seedLatent(seeded.ownerId,);
@@ -125,24 +144,6 @@ describe("IVSS latent retake", () => {
     },);
 
     const loaded: Array<Record<string, string | number | boolean>> = [];
-    const client: IvssComfyClient = {
-      async submitWorkflow() {
-        return { prompt_id: "prompt-1", };
-      },
-      async waitForFiles() {
-        return [
-          { kind: "video", file: { filename: "clip.webm", }, },
-          { kind: "other", file: { filename: "state.safetensors", }, },
-        ];
-      },
-      async downloadFile() {
-        return Buffer.from("bytes",);
-      },
-      async cancelExecution() {},
-      async uploadImage() {
-        return "comfy-input";
-      },
-    };
 
     const handle = await startIvssFragmentRun({
       database: seeded.db,
@@ -150,7 +151,8 @@ describe("IVSS latent retake", () => {
       ownerId: seeded.ownerId,
       fragmentId: retake.fragmentId,
       resumeFromFragmentId: seeded.fragmentId,
-      client,
+      assetUrl: async (assetId,) => `https://comfy.example/assets/${assetId}`,
+      client: renderClient(),
       loadWorkflow: async (_name, vars,) => {
         loaded.push(vars,);
         return { "1": { class_type: "Stub", inputs: {}, }, };
@@ -166,6 +168,7 @@ describe("IVSS latent retake", () => {
     if (!result.ok) { return; }
     expect(result.resumedFromTake,).toBe("0",);
     expect(String(loaded[0]?.latent_path,),).toContain(`${latentId}.latent`,);
+    expect(loaded[0]?.latent_url,).toBe(`https://comfy.example/assets/${latentId}`,);
     expect(loaded[0]?.latent_asset_id,).toBe(latentId,);
     expect(loaded[0]?.resume_from_take,).toBe("0",);
     const child = await seeded.db.selectFrom("scenario_fragments",).selectAll()
@@ -175,6 +178,39 @@ describe("IVSS latent retake", () => {
       latent: retake.latentAssetId,
       parent_fragment: seeded.fragmentId,
     },);
+  });
+
+  test("resume without a resolver exposes no latent_url", async () => {
+    const seeded = await seed();
+    const latentId = await seedLatent(seeded.ownerId,);
+    await completeSource(seeded.fragmentId, latentId,);
+    const retake = await createIvssFragmentRetake({
+      database: seeded.db,
+      fragmentId: seeded.fragmentId,
+      ownerId: seeded.ownerId,
+    },);
+
+    const loaded: Array<Record<string, string | number | boolean>> = [];
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: retake.fragmentId,
+      resumeFromFragmentId: seeded.fragmentId,
+      client: renderClient(),
+      loadWorkflow: async (_name, vars,) => {
+        loaded.push(vars,);
+        return { "1": { class_type: "Stub", inputs: {}, }, };
+      },
+      dispatch: async (opts,) => {
+        await opts.run?.();
+      },
+    },);
+
+    const result = await handle.done;
+    expect(result.ok,).toBe(true,);
+    expect(loaded[0]?.latent_url,).toBeUndefined();
+    expect(String(loaded[0]?.latent_path,),).toContain(`${latentId}.latent`,);
   });
 
   test("rejects a parent with a different workflow pin", async () => {

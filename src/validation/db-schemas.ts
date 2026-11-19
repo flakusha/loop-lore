@@ -4144,3 +4144,19 @@ export const AnnotationsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── scenario_assemblies ────────────────────────────────────────────
+export const ScenarioAssembliesSchema = t.Object({
+  scenario_id: t.String(),
+  version: t.Number(),
+  status: t.String(),
+  fragment_ids: t.String(),
+  cut_points: t.String(),
+  workflow_id: t.Optional(t.String(),),
+  workflow_hash: t.Optional(t.String(),),
+  workflow_version: t.Optional(t.String(),),
+  output_asset_id: t.Optional(t.String(),),
+  error: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);

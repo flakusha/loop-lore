@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 360
+// size-allow: 420
 
 /**
  * IVSS fragment run pipeline — one render fragment through local ComfyUI.
@@ -111,6 +111,8 @@ export interface StartIvssFragmentRunOptions {
   maxPromptTokens?: number;
   /** Parent fragment whose latent package seeds this render (retake/resume). */
   resumeFromFragmentId?: string;
+  /** Optional signed URL resolver for a remote ComfyUI latent source. */
+  assetUrl?: (assetId: string,) => Promise<string>;
 }
 
 export interface IvssRunSuccess {
@@ -199,6 +201,7 @@ export async function startIvssFragmentRun(
       ownerId: opts.ownerId,
       fragment,
       resumeFromFragmentId: opts.resumeFromFragmentId,
+      ...(opts.assetUrl ? { assetUrl: opts.assetUrl, } : {}),
     },)
     : undefined;
 
@@ -303,6 +306,7 @@ export async function startIvssFragmentRun(
             ...(retake
               ? {
                 latent_path: retake.path,
+                ...(retake.url ? { latent_url: retake.url, } : {}),
                 latent_asset_id: retake.assetId,
                 resume_from_take: retake.parentTake,
               }

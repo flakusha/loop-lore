@@ -14,6 +14,7 @@ export {
   honkboxAdmissionDecision,
   HonkboxAdmissionError,
   honkboxCacheKey,
+  isHonkboxExternalToolAvailable,
   isHonkboxFeatureEnabled,
   normalizeHonkboxBaseUrl,
   parseHonkboxCapabilities,

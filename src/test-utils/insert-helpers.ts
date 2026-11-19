@@ -6721,3 +6721,36 @@ export async function insertAnnotations(
   } as any,).execute();
   return id;
 }
+
+/** Insert a scenario_assemblies row. */
+export async function insertScenarioAssemblies(
+  db: Db,
+  scenario_id: string,
+  version: number,
+  status: string,
+  fragment_ids: string,
+  cut_points: string,
+  opts?: {
+    id?: string;
+    workflow_id?: string | null;
+    workflow_hash?: string | null;
+    workflow_version?: string | null;
+    output_asset_id?: string | null;
+    error?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_assemblies",).values({
+    id,
+    scenario_id,
+    version,
+    status,
+    fragment_ids,
+    cut_points,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}

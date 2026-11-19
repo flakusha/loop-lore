@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 500
+// size-allow: 700
 
 /**
  * Honkbox capability registry.
@@ -41,6 +41,7 @@ export const HONKBOX_FEATURE_KEYS = [
   "events",
   "vad",
   "experimentalAshSd",
+  "blender",
   "imageOps",
   "tools",
   "recognition",
@@ -86,6 +87,7 @@ export interface HonkboxFeatureFlags {
   readonly events: boolean;
   readonly vad: boolean;
   readonly experimentalAshSd: boolean;
+  readonly blender: boolean;
 }
 
 /** One writable container (`Formats::write`). */
@@ -143,6 +145,16 @@ export interface HonkboxCapabilities {
     readonly parallelToolCalls: boolean;
   };
   readonly recognition?: { readonly barcode: boolean; readonly ocr: boolean };
+  readonly externalTools?: {
+    readonly tools: readonly {
+      readonly id: string;
+      readonly version?: string;
+      readonly capabilities: readonly string[];
+      readonly devices: readonly string[];
+      readonly available: boolean;
+      readonly unavailable?: string;
+    }[];
+  };
   readonly openapi: string;
   readonly models: string;
 }
@@ -461,6 +473,31 @@ export function isHonkboxFeatureEnabled(
       return capabilities.features.vad;
     case "experimentalAshSd":
       return capabilities.features.experimentalAshSd;
+    case "blender":
+      return capabilities.features.blender;
+  }
+}
+
+/** External-tool gate: usable supported probe, available tool, matching id
+ * and exact capability when supplied. Never throws.
+ * @param probe - cached or fresh probe outcome
+ * @returns whether the tool is available
+ */
+export function isHonkboxExternalToolAvailable(
+  probe: HonkboxProbeResult | undefined,
+  toolId: string,
+  capability?: string,
+): boolean {
+  if (!probe?.ok || !probe.supported) { return false; }
+  try {
+    const tools = probe.capabilities.externalTools?.tools ?? [];
+    return tools.some((tool,) =>
+      tool.available === true &&
+      tool.id === toolId &&
+      (capability === undefined || tool.capabilities.includes(capability,))
+    );
+  } catch {
+    return false;
   }
 }
 
@@ -495,6 +532,7 @@ export function parseHonkboxCapabilities(
   const imageOps = asObject(doc.image_ops,);
   const tools = asObject(doc.tools,);
   const recognition = asObject(doc.recognition,);
+  const externalTools = asObject(doc.external_tools,);
 
   return {
     ok: true,
@@ -519,6 +557,7 @@ export function parseHonkboxCapabilities(
         events: asBool(features?.events,),
         vad: asBool(features?.vad,),
         experimentalAshSd: asBool(features?.experimental_ash_sd,),
+        blender: asBool(features?.blender,),
       },
       formats: {
         read: asStringArray(formats?.read,),
@@ -562,6 +601,24 @@ export function parseHonkboxCapabilities(
           recognition: {
             barcode: asBool(recognition.barcode,),
             ocr: asBool(recognition.ocr,),
+          },
+        }
+        : {}),
+      ...(externalTools
+        ? {
+          externalTools: {
+            tools: asObjectArray(externalTools.tools,).map((row,) => {
+              const version = asString(row.version,);
+              const unavailable = asString(row.unavailable,);
+              return {
+                id: asString(row.id,) ?? "",
+                ...(version ? { version, } : {}),
+                capabilities: asStringArray(row.capabilities,),
+                devices: asStringArray(row.devices,),
+                available: asBool(row.available,),
+                ...(unavailable ? { unavailable, } : {}),
+              };
+            },),
           },
         }
         : {}),

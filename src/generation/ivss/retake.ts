@@ -29,6 +29,8 @@ export interface RetakeLatent {
   assetId: string;
   /** Local filesystem path exposed to the workflow as `{{latent_path}}` */
   path: string;
+  /** Signed remote URL exposed to the workflow as `{{latent_url}}` */
+  url?: string;
   /** Take label of the parent fragment */
   parentTake: string;
 }
@@ -115,9 +117,9 @@ export async function createIvssFragmentRetake(opts: {
 
 /**
  * Resolve the reusable latent of a fragment's declared parent.
- * @param opts - database, upload root, caller and the target fragment
+ * @param opts - database, upload root, caller, target fragment and optional asset URL resolver
  * @throws {Error} When lineage, workflow pin, ownership or the latent file is invalid
- * @returns asset id, local path and parent take label
+ * @returns asset id, local path, optional signed URL and parent take label
  */
 export async function resolveRetakeLatent(opts: {
   database: Kysely<DB>;
@@ -125,6 +127,7 @@ export async function resolveRetakeLatent(opts: {
   ownerId: string;
   fragment: RetakeTargetFragment;
   resumeFromFragmentId: string;
+  assetUrl?: (assetId: string,) => Promise<string>;
 },): Promise<RetakeLatent> {
   const parent = await opts.database.selectFrom("scenario_fragments",).selectAll()
     .where("id", "=", opts.resumeFromFragmentId,).executeTakeFirstOrThrow();
@@ -147,9 +150,9 @@ export async function resolveRetakeLatent(opts: {
   const asset = await getOwnedAsset(opts.database, parent.latent_asset_id, opts.ownerId,);
   if (!asset) { throw new Error("IVSS retake latent asset is missing or not owned by caller",); }
 
-  // ponytail: local filesystem path only; remote ComfyUI boxes need an asset URL contract.
   const path = getAssetFilePath(opts.uploadDir, asset.storage_path,);
   if (!existsSync(path,)) { throw new Error("IVSS retake latent file is missing on disk",); }
 
-  return { assetId: asset.id, path, parentTake: parent.take, };
+  const url = opts.assetUrl ? await opts.assetUrl(asset.id,) : undefined;
+  return { assetId: asset.id, path, ...(url ? { url, } : {}), parentTake: parent.take, };
 }

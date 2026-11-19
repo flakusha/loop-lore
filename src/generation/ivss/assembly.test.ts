@@ -23,7 +23,7 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
-import { assembleScenario, type AssemblyCutPoint, } from "./assembly";
+import { assembleScenario, type AssemblyCutPoint, getAssembly, listAssemblies, } from "./assembly";
 import type { IvssComfyClient, IvssWorkflowLoader, } from "./run-pipeline";
 
 // Resource contract: each test owns a fresh in-memory DB, temp upload dir,
@@ -180,22 +180,21 @@ describe("IVSS workflow-driven assembly", () => {
       scenario_id: seeded.scenarioId,
     },);
 
-    const doc = await seeded.db.selectFrom("scenario_docs",).selectAll()
+    const row = await seeded.db.selectFrom("scenario_assemblies",).selectAll()
       .where("id", "=", handle.assemblyId,).executeTakeFirstOrThrow();
 
-    expect(doc.kind as string,).toBe("assembly",);
-    expect(doc.version,).toBe(1,);
-    const body = JSON.parse(doc.body,) as Record<string, unknown>;
-    expect(body.status,).toBe("completed",);
-    expect(body.assetId,).toBe(result.assetId,);
-    expect(body.workflowId,).toBe("wf",);
-    expect(body.workflowHash,).toBe("sha256:seed",);
-    expect(body.workflowVersion,).toBe("v1",);
-    expect(body.fragmentIds,).toEqual([seeded.fragment1, seeded.fragment2,],);
-    expect(body.cutPoints,).toEqual(seeded.cutPoints,);
+    expect(row.version,).toBe(1,);
+    expect(row.status,).toBe("completed",);
+    expect(row.output_asset_id,).toBe(result.assetId,);
+    expect(row.workflow_id,).toBe("wf",);
+    expect(row.workflow_hash,).toBe("sha256:seed",);
+    expect(row.workflow_version,).toBe("v1",);
+    expect(row.error,).toBeNull();
+    expect(JSON.parse(row.fragment_ids,),).toEqual([seeded.fragment1, seeded.fragment2,],);
+    expect(JSON.parse(row.cut_points,),).toEqual(seeded.cutPoints,);
   });
 
-  test("records a failed doc when ComfyUI emits no video", async () => {
+  test("persists status and error on a failed assembly", async () => {
     const seeded = await seed();
     const calls: StubCalls = { uploaded: [], loaded: [], submitted: 0, };
     const client = makeClient(calls, {
@@ -222,10 +221,72 @@ describe("IVSS workflow-driven assembly", () => {
     expect(result.error,).toContain("no video output",);
     expect(result.status,).toBe(502,);
 
-    const doc = await seeded.db.selectFrom("scenario_docs",).selectAll()
+    const row = await seeded.db.selectFrom("scenario_assemblies",).selectAll()
       .where("id", "=", handle.assemblyId,).executeTakeFirstOrThrow();
 
-    const body = JSON.parse(doc.body,) as Record<string, unknown>;
-    expect(body,).toEqual({ status: "failed", error: result.error, },);
+    expect(row.status,).toBe("failed",);
+    expect(row.error,).toBe(result.error,);
+    expect(row.output_asset_id,).toBeNull();
+    expect(await listAssemblies(seeded.db, seeded.scenarioId,),).toHaveLength(1,);
+  });
+
+  test("allocates versions 1 and 2 and lists newest first", async () => {
+    const seeded = await seed();
+    const calls: StubCalls = { uploaded: [], loaded: [], submitted: 0, };
+    const opts = {
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      scenarioId: seeded.scenarioId,
+      client: makeClient(calls,),
+      workflowId: "wf",
+      workflowHash: "sha256:seed",
+      loadWorkflow: makeLoader(calls,),
+    };
+
+    const first = await assembleScenario(opts,);
+    const firstResult = await first.done;
+    expect(firstResult.ok,).toBe(true,);
+
+    const second = await assembleScenario(opts,);
+    const secondResult = await second.done;
+    expect(secondResult.ok,).toBe(true,);
+
+    const history = await listAssemblies(seeded.db, seeded.scenarioId,);
+    expect(history.map((row,) => row.version),).toEqual([2, 1,],);
+    expect(history.map((row,) => row.id),).toEqual([second.assemblyId, first.assemblyId,],);
+    expect(await getAssembly(seeded.db, seeded.scenarioId,),).toMatchObject({
+      id: second.assemblyId,
+      version: 2,
+    },);
+  });
+
+  test("isolates assembly history by scenario", async () => {
+    const seeded = await seed();
+    const otherScenarioId = await insertScenarios(
+      seeded.db,
+      seeded.worldId,
+      seeded.ownerId,
+      "Other scenario",
+    );
+
+    const calls: StubCalls = { uploaded: [], loaded: [], submitted: 0, };
+    const handle = await assembleScenario({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      scenarioId: seeded.scenarioId,
+      client: makeClient(calls,),
+      workflowId: "wf",
+      workflowHash: "sha256:seed",
+      loadWorkflow: makeLoader(calls,),
+    },);
+
+    const result = await handle.done;
+    expect(result.ok,).toBe(true,);
+
+    expect(await listAssemblies(seeded.db, otherScenarioId,),).toEqual([],);
+    expect(await getAssembly(seeded.db, otherScenarioId,),).toBeUndefined();
+    expect((await listAssemblies(seeded.db, seeded.scenarioId,)).length,).toBe(1,);
   });
 });

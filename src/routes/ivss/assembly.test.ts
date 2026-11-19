@@ -39,7 +39,7 @@ function makeConfig(): Config {
   return config;
 }
 
-/** Client that parks at upload — before the default loader runs — so the doc stays pending. */
+/** Client that parks at upload — before the default loader runs — so the assembly stays pending. */
 function pendingClient(): IvssComfyClient {
   return {
     async submitWorkflow() {
@@ -134,7 +134,7 @@ describe("IVSS assembly routes", () => {
     },);
   }
 
-  test("GET returns 404 when the scenario has no assembly doc", async () => {
+  test("GET returns 404 when the scenario has no assembly", async () => {
     const res = await makeApp(ownerId,).handle(getRequest(ownedScenarioId,),);
     expect(res.status,).toBe(404,);
   });
@@ -144,7 +144,7 @@ describe("IVSS assembly routes", () => {
     expect(res.status,).toBe(403,);
   });
 
-  test("POST returns 202 with a pending doc", async () => {
+  test("POST returns 202 with a pending assembly", async () => {
     const res = await makeApp(ownerId, () => pendingClient(),).handle(
       postRequest(ownedScenarioId, {
         workflowId: "wf",
@@ -158,15 +158,14 @@ describe("IVSS assembly routes", () => {
     expect(body.status,).toBe("pending",);
     expect(body.assemblyId,).toBeString();
 
-    const doc = await fixture.db.selectFrom("scenario_docs",).selectAll()
+    const assembly = await fixture.db.selectFrom("scenario_assemblies",).selectAll()
       .where("id", "=", body.assemblyId,).executeTakeFirstOrThrow();
 
-    expect(doc.kind as string,).toBe("assembly",);
-    const docBody = JSON.parse(doc.body,) as Record<string, unknown>;
-    expect(docBody.status,).toBe("pending",);
-    expect(docBody.workflowId,).toBe("wf",);
-    expect(docBody.workflowHash,).toBe("sha256:seed",);
-    expect(docBody.workflowVersion,).toBe("v1",);
+    expect(assembly.status,).toBe("pending",);
+    expect(assembly.version,).toBe(1,);
+    expect(assembly.workflow_id,).toBe("wf",);
+    expect(assembly.workflow_hash,).toBe("sha256:seed",);
+    expect(assembly.workflow_version,).toBe("v1",);
   });
 
   test("POST rejects a scenario owned by another user", async () => {
@@ -175,5 +174,22 @@ describe("IVSS assembly routes", () => {
     );
 
     expect(res.status,).toBe(403,);
+  });
+
+  test("GET history returns every assembly newest first", async () => {
+    const app = makeApp(ownerId, () => pendingClient(),);
+    const body = { workflowId: "wf", workflowHash: "sha256:seed", };
+    await app.handle(postRequest(ownedScenarioId, body,),);
+    await app.handle(postRequest(ownedScenarioId, body,),);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/v1/ivss/scenarios/${ownedScenarioId}/assemblies`,),
+    );
+
+    expect(res.status,).toBe(200,);
+    const rows = await res.json() as { version: number; status: string }[];
+    expect(rows.length,).toBe(2,);
+    expect(rows.map((row,) => row.version),).toEqual([2, 1,],);
+    expect(rows[0]?.status,).toBe("pending",);
   });
 });
