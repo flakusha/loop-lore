@@ -20,6 +20,7 @@ import {
 import { actorPlanRoutes, } from "../actor-plan";
 import { apiKeysRoutes, } from "../api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "../auth";
+import { comfyUIModelRoutes, } from "../comfyui-models";
 import { emojiRoutes, } from "../emoji";
 import { frontendLogsRoutes, } from "../frontend-logs";
 import { healthRoutes, } from "../health";
@@ -144,6 +145,7 @@ export function baseSurface(opts: RegisterPluginsOpts & { bridge?: MessageBridge
     .use(switchSessionRoutes(handleOpts, prefix,),)
     .use(apiKeysRoutes(handleOpts, prefix,),)
     .use(settingsRoutes(handleOpts, prefix,),)
+    .use(comfyUIModelRoutes(handleOpts, prefix,),)
     .use(planningRoutes({ database, }, prefix,),)
     .use(planningBoardRoutes({ database, }, prefix,),)
     .use(actorPlanRoutes({ database, }, prefix,),)

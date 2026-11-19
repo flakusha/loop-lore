@@ -13,4 +13,15 @@ generation:
 # libretranslate: { name: "libretranslate", label: "LibreTranslate", baseUrl: "https://libretranslate.example.com", apiKey: "optional", model: "en", timeout: 30000, retries: 3, allowUserApiKey: false }
 # googleTranslate: { name: "google-translate", label: "Google Translate", apiKey: "AIza...", model: "en", timeout: 30000, retries: 3, allowUserApiKey: true }
 # sd: [] # stable diffusion providers; allowUserApiKey (default true) gates per-user BYOK keys
-# video: [] # ComfyUI video workflow providers ({ name, baseUrl, apiFamily: comfyui, workflow, allowUserApiKey?, localBox?, timeout, generationTimeout }); localBox serializes one render per named box, omit = external (bypasses the gate)
+# video: [] # ComfyUI video workflow providers ({ name, baseUrl, apiFamily: comfyui, workflow, allowUserApiKey?, localBox?, timeout, generationTimeout, models? }); localBox serializes one render per named box, omit = external (bypasses the gate)
+# video:
+#   - name: h3-local
+#     baseUrl: http://127.0.0.1:8188
+#     apiFamily: comfyui
+#     workflow: minimax-h3-t2v-fragment-v1
+#     timeout: 30000
+#     generationTimeout: 600000
+#     models:
+#       clip: umt5_xxl_fp8_e4m3fn_scaled.safetensors
+#       diffusion: MinimaxH3_i2v.safetensors
+#       vae: h3_vae.safetensors # omit when the model has no VAE; set noVae: true instead

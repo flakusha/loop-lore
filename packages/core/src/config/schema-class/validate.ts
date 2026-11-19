@@ -3,6 +3,7 @@
 
 // src/config/schema-class/validate.ts — config validation
 import { AUTOROUTE_SCENARIOS, type Config, } from "../schema";
+import { isComfyUIModelName, } from "../schema/providers";
 import { validateAcpProfiles, } from "../sections/harness";
 import { PROMPT_BUDGET_BOUNDS, } from "../sections/prompt";
 
@@ -14,6 +15,28 @@ function validateByoKey(config: Config,): void {
   const secret = config.byoKey?.encryptionKey;
   if (config.byoKey?.enabled && secret && secret.length < 32) {
     throw new Error("byoKey.encryptionKey must be at least 32 characters when BYOK is enabled",);
+  }
+}
+
+/**
+ * @param config - Fully merged config to check, after defaults are applied.
+ * @throws {Error} If a pinned ComfyUI model name is incompatible with its slot.
+ */
+function validateComfyUIModels(config: Config,): void {
+  for (const provider of config.generation.providers.video ?? []) {
+    const models = provider.models;
+    if (!models) { continue; }
+    if (models.noVae && models.vae) {
+      throw new Error(`Video provider ${provider.name} sets models.noVae and models.vae — pick one`,);
+    }
+    for (const role of ["clip", "diffusion", "vae",] as const) {
+      const name = models[role];
+      if (name !== undefined && !isComfyUIModelName(role, name,)) {
+        throw new Error(
+          `Invalid ComfyUI ${role} model "${name}" on video provider ${provider.name}`,
+        );
+      }
+    }
   }
 }
 
@@ -156,4 +179,5 @@ export const validate = (config: Config,): void => {
   // External harness profiles: duplicate names, unknown tier keys, and
   // non-`provider/id` models are config rot — reject at load, not at dispatch.
   validateAcpProfiles(config.harness.acp,);
+  validateComfyUIModels(config,);
 };

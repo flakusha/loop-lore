@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 270
+// size-allow: 380
 
 /**
  * ComfyUI Provider — HTTP/WebSocket client for ComfyUI API. Submits
@@ -241,6 +241,45 @@ export class ComfyUIClient {
     }
 
     return (await resp.json()) as Record<string, ComfyUINodeInfo>;
+  }
+
+  /**
+   * List model folder names advertised by `/models`.
+   * @returns folder names (e.g. `diffusion_models`, `clip`, `vae`)
+   * @throws {Error} When the models endpoint returns a non-OK status.
+   */
+  async listModelFolders(): Promise<string[]> {
+    const resp = await fetch(`${this.baseUrl}/models`, {
+      headers: this.authHeaders(),
+      signal: AbortSignal.timeout(10_000,),
+    },);
+
+    if (!resp.ok) {
+      throw new Error(`ComfyUI models failed [${resp.status}]`,);
+    }
+
+    return (await resp.json()) as string[];
+  }
+
+  /**
+   * List model file names in one folder (including subfolders, ComfyUI's
+   * `recursive: true` default).
+   * @param folder - ComfyUI model folder name
+   * @returns file names; nested files use `<subfolder>/<file>`
+   * @throws {Error} When the folder endpoint returns a non-OK status.
+   */
+  async listModelFolder(folder: string,): Promise<string[]> {
+    const url = `${this.baseUrl}/models/${encodeURIComponent(folder,)}`;
+    const resp = await fetch(url, {
+      headers: this.authHeaders(),
+      signal: AbortSignal.timeout(10_000,),
+    },);
+
+    if (!resp.ok) {
+      throw new Error(`ComfyUI model folder ${folder} failed [${resp.status}]`,);
+    }
+
+    return (await resp.json()) as string[];
   }
 
   /**

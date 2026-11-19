@@ -520,4 +520,47 @@ describe("ComfyUIClient", () => {
       expect(calls.filter((u,) => u.includes("/view?",)),).toHaveLength(1,);
     });
   });
+
+  describe("model folders", () => {
+    test("lists model folders and folder contents with auth headers", async () => {
+      const calls: Array<{ url: string; auth?: string }> = [];
+      await withMockFetch(
+        async (url, init,) => {
+          calls.push({
+            url,
+            auth: (init.headers as Record<string, string> | undefined)?.authorization,
+          },);
+
+          if (url.endsWith("/models",)) {
+            return jsonResponse(["clip", "diffusion_models",],);
+          }
+
+          return jsonResponse(["clip-a.safetensors",],);
+        },
+        async () => {
+          const client = new ComfyUIClient({
+            baseUrl: "http://localhost:8188",
+            apiKey: "secret",
+          },);
+
+          expect(await client.listModelFolders(),).toEqual(["clip", "diffusion_models",],);
+          expect(await client.listModelFolder("diffusion_models",),).toEqual(["clip-a.safetensors",],);
+        },
+      );
+
+      expect(calls[0]?.url,).toBe("http://localhost:8188/models",);
+      expect(calls[1]?.url,).toBe("http://localhost:8188/models/diffusion_models",);
+      expect(calls.every((call,) => call.auth === "Bearer secret"),).toBe(true,);
+    });
+
+    test("throws for non-OK folder responses", async () => {
+      await withMockFetch(
+        async () => jsonResponse({ error: "missing", }, 404,),
+        async () => {
+          const client = new ComfyUIClient({ baseUrl: "http://localhost:8188", },);
+          expect(client.listModelFolder("vae",),).rejects.toThrow(/failed \[404\]/,);
+        },
+      );
+    });
+  });
 });

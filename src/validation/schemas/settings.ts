@@ -14,6 +14,7 @@
  */
 
 import { t, } from "elysia";
+import { ComfyUIModelSelectionSchema, } from "./comfyui-models";
 
 // ── Settings update keys (closed allowlist) ─────────────────
 
@@ -40,6 +41,7 @@ export const SettingsUpdateAllowedKeys = [
   "notifications",
   "backupEnabled",
   "backupTypes",
+  "comfyUiModels",
 ] as const;
 
 /** */
@@ -78,6 +80,9 @@ export const SettingsUpdateBody = t.Object(
     notifications: t.Optional(t.Record(t.String(), t.Unknown(),),),
     backupEnabled: t.Optional(t.Boolean(),),
     backupTypes: t.Optional(t.Record(t.String(), t.Boolean(),),),
+    comfyUiModels: t.Optional(
+      t.Record(t.String(), ComfyUIModelSelectionSchema,),
+    ),
   },
   { additionalProperties: false, },
 );
